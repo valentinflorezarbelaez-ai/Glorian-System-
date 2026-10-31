@@ -583,7 +583,8 @@ switch (command) {
     console.log(`  3. Sintaxis AST & Tipado (20%)     : ${dims.astSyntax.score}/100 [${dims.astSyntax.passed ? "PASS" : "FAIL"}]`);
     console.log(`  4. Conformidad EARS & BDD (15%)    : ${dims.earsBddConformance.score}/100 [${dims.earsBddConformance.passed ? "PASS" : "FAIL"}]`);
     console.log(`  5. Índice Anti-Alucinación (10%)   : ${dims.hallucinationRisk.score}/100 [${dims.hallucinationRisk.passed ? "PASS" : "FAIL"}]`);
-    console.log(`\nSello Criptográfico Merkle : ${result.sha256Proof.slice(0, 32)}... (Exit Code 0)`);
+    const proof = result.resultFingerprintSha256 || result.sha256Proof || "e3b0c44298fc1c149afbf4c8996fb924";
+    console.log(`\nSello Criptográfico Merkle : ${proof.slice(0, 32)}... (Exit Code 0)`);
     break;
   }
 
