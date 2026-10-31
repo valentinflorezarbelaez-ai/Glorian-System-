@@ -501,6 +501,10 @@ import { EosTrueTimeEngine } from "../core/eosTrueTimeEngine.ts";
 import { EosLsmTreeStorageEngine } from "../core/eosLsmTreeStorageEngine.ts";
 import { EosThresholdCryptography } from "../core/eosThresholdCryptography.ts";
 import { EosMicroVmEnclaveLauncher } from "../core/eosMicroVmEnclaveLauncher.ts";
+import {
+  EosVercelCanaryObservability,
+  type CanaryTelemetryInput
+} from "../core/eosVercelCanaryObservability.ts";
 
 import {
   annotateAndFilterTools,
@@ -2114,6 +2118,23 @@ export class EosMcpServer {
                       versionTarget: { type: "string", description: "Target deployment version" },
                       previousVersion: { type: "string", description: "Previous stable version" }
                     }
+                  }
+                },
+                {
+                  name: "eos_canary_telemetry_evaluate",
+                  description: "Evaluates real-time canary telemetry metrics (error rate, P99 latency, sample volume) to calculate Canary Health Index (CHI) and determine automated progressive promotion or instant circuit breaker rollback.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      deploymentId: { type: "string", description: "Vercel or fleet deployment identifier" },
+                      environment: { type: "string", enum: ["production", "preview"], description: "Deployment environment" },
+                      stage: { type: "string", enum: ["CANARY_1_PCT", "CANARY_5_PCT", "CANARY_25_PCT", "FULL_PRODUCTION_100_PCT"], description: "Progressive canary stage" },
+                      errorRate5xx: { type: "number", description: "Observed 5xx error rate between 0.0 and 1.0" },
+                      latencyP99Ms: { type: "number", description: "Observed P99 latency in milliseconds" },
+                      requestCount: { type: "number", description: "Sample request count during evaluation window" },
+                      criticalErrorThreshold: { type: "number", description: "Optional critical error threshold ceiling (default: 0.01)" }
+                    },
+                    required: ["deploymentId", "environment", "stage", "errorRate5xx", "latencyP99Ms", "requestCount"]
                   }
                 },
                 {
@@ -4115,6 +4136,19 @@ export class EosMcpServer {
               { stage: "FULL_PRODUCTION_100_PCT", sampleRequests: 1000000, failedRequests: 5, p99LatencyMs: 48, baselineP99LatencyMs: 44 }
             ];
         return mesh.executeRollout(telemetry as any);
+      }
+
+      case "eos_canary_telemetry_evaluate": {
+        const input: CanaryTelemetryInput = {
+          deploymentId: String(args.deploymentId || ""),
+          environment: args.environment === "preview" ? "preview" : "production",
+          stage: String(args.stage || "CANARY_1_PCT") as any,
+          errorRate5xx: Number(args.errorRate5xx ?? 0),
+          latencyP99Ms: Number(args.latencyP99Ms ?? 0),
+          requestCount: Number(args.requestCount ?? 0),
+          criticalErrorThreshold: args.criticalErrorThreshold !== undefined ? Number(args.criticalErrorThreshold) : undefined
+        };
+        return EosVercelCanaryObservability.evaluateMetrics(input);
       }
 
       case "eos_antigravity_direct": {

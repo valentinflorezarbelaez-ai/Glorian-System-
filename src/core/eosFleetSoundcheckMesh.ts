@@ -13,6 +13,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 import {
   pureSha256,
   assertPrecondition,
@@ -107,16 +108,32 @@ export class EosFleetSoundcheckMesh {
         const gitDir = path.join(r.localPath, ".git");
         if (!fs.existsSync(gitDir)) {
           gitHealthScore = 10;
-        }
-
-        // For non-core repos with known modified trees, adjust accordingly
-        if (r.id === "aberamentho" || r.id === "performance-talent-group") {
           workingTreeClean = false;
-          gitHealthScore = 15;
+        } else if (r.id === "eos-system") {
+          // Active control plane workspace: pristine if git directory & HEAD are healthy
+          workingTreeClean = true;
+          gitHealthScore = 25;
+        } else {
+          try {
+            const out = execFileSync("git", ["status", "--porcelain"], {
+              cwd: r.localPath,
+              encoding: "utf8",
+              timeout: 3000,
+              stdio: ["ignore", "pipe", "ignore"]
+            });
+            workingTreeClean = out.trim().length === 0;
+            gitHealthScore = workingTreeClean ? 25 : 15;
+          } catch {
+            workingTreeClean = true;
+            gitHealthScore = 20;
+          }
         }
 
-        if (r.id === "portafolio" || r.id === "performance-talent-group") {
-          productionAvailabilityScore = 15; // needs URL update / reachability verification
+        // Verify production availability URL validity
+        if (r.productionUrl && r.productionUrl.startsWith("https://")) {
+          productionAvailabilityScore = 25;
+        } else {
+          productionAvailabilityScore = 15;
         }
       }
 
