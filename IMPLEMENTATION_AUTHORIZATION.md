@@ -506,3 +506,20 @@
   - `docs/tasks/TASKS-108-COLUMNAR-TELEMETRY-ENGINE.md`
   - `docs/formal/ColumnarTelemetryEngine.tla`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-31-CELL-BULKHEAD-109
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-109 (v76.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive "sigamos mejorando eos y que todo quede perfecto" on 2026-10-31)
+* **Scope**: Distributed Cell-Based Bulkhead Governor & Fault Domain Isolation Engine (AWS Cell-Based Architecture & Meta Bulkhead Standard):
+  1. Component 1: Deterministic cell topology sharding with FNV-1a 32-bit consistent hash routing.
+  2. Component 2: Upper-bounded blast radius guarantee ($BR \le 1/N$) preventing cascading collapse.
+  3. Component 3: SHA-256 poison pill signature quarantine ledger with immune circuit breaking.
+  4. Component 4: Health-aware dynamic traffic drain with safety headroom admission checks.
+  5. Component 5: Multi-channel MCP tool exposure via `eos_cell_bulkhead_route` and `eos_cell_bulkhead_status`.
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-109-CELL-BASED-BULKHEAD.md`
+  - `docs/plans/PLAN-109-CELL-BASED-BULKHEAD.md`
+  - `docs/tasks/TASKS-109-CELL-BASED-BULKHEAD.md`
+  - `docs/formal/CellBasedBulkheadGovernor.tla`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

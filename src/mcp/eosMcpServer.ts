@@ -509,12 +509,18 @@ import {
   EosColumnarTelemetryEngine,
   type ColumnarQueryFilter
 } from "../core/eosColumnarTelemetryEngine.ts";
+import {
+  EosCellBasedBulkheadGovernor,
+  type CellHealthStatus
+} from "../core/eosCellBasedBulkheadGovernor.ts";
 
 import {
   annotateAndFilterTools,
   normalizeToolProfile,
   type McpToolProfile
 } from "./eosMcpToolCatalog.ts";
+
+const globalBulkheadGovernor = new EosCellBasedBulkheadGovernor({ cellCount: 8, cellCapacity: 100 });
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -2154,6 +2160,29 @@ export class EosMcpServer {
                       minTimestamp: { type: "number", description: "Minimum epoch timestamp in milliseconds" },
                       maxTimestamp: { type: "number", description: "Maximum epoch timestamp in milliseconds" },
                       syntheticSamplesCount: { type: "number", description: "Optional seed sample count for synthetic benchmarks (default: 1000)" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_cell_bulkhead_route",
+                  description: "Evaluates and routes incoming fleet requests into autonomous bulkhead cells (AWS/Meta Cell-Based Architecture standard), guaranteeing bounded blast radius (<= 1/N), poison pill immunity quarantine, and health-aware failover draining.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      partitionKey: { type: "string", description: "Partition key (tenantId, repoId, or requestId) for deterministic FNV-1a consistent hash routing" },
+                      payload: { type: "string", description: "Optional request payload serialized as JSON or string to evaluate against the poison pill quarantine ledger" }
+                    },
+                    required: ["partitionKey"]
+                  }
+                },
+                {
+                  name: "eos_cell_bulkhead_status",
+                  description: "Retrieves complete health metrics, active in-flight counts, blast radius guarantees, and quarantined poison pill signatures across all partitioned bulkhead cells.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      cellId: { type: "number", description: "Optional filter or target cell ID (0..N-1)" },
+                      setStatus: { type: "string", enum: ["HEALTHY", "DEGRADED", "DRAINING", "QUARANTINED"], description: "Optional state change for target cell" }
                     }
                   }
                 },
@@ -4204,6 +4233,29 @@ export class EosMcpServer {
         };
 
         return engine.query(filter);
+      }
+
+      case "eos_cell_bulkhead_route": {
+        const partitionKey = String(args.partitionKey || "default-fleet-task");
+        const payload = args.payload;
+        return globalBulkheadGovernor.route(partitionKey, payload);
+      }
+
+      case "eos_cell_bulkhead_status": {
+        if (args.cellId !== undefined && args.setStatus !== undefined) {
+          const cellId = Number(args.cellId);
+          const status = String(args.setStatus) as CellHealthStatus;
+          globalBulkheadGovernor.setCellStatus(cellId, status);
+        }
+        const metrics = globalBulkheadGovernor.getMetrics();
+        if (args.cellId !== undefined) {
+          const filteredCell = metrics.cells.find(c => c.cellId === Number(args.cellId));
+          return {
+            ...metrics,
+            targetCell: filteredCell ?? null
+          };
+        }
+        return metrics;
       }
 
       case "eos_antigravity_direct": {

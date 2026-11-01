@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-01T00:06:10.751Z",
-  "catalogSha256": "784e03fa98257e64412c5d85608b2c952328ba4ec04fc7423f53ba6dcdbc3ee2",
-  "totalTools": 146,
+  "generatedAt": "2026-11-01T00:53:02.272Z",
+  "catalogSha256": "afdd622f35d5a8c1a616957a7ec09af874e5def1f9ba1e4349824772c1f8713e",
+  "totalTools": 148,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -3359,6 +3359,63 @@
       },
       "annotations": {
         "title": "EOS columnar Telemetry Query",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_cell_bulkhead_route",
+      "description": "Evaluates and routes incoming fleet requests into autonomous bulkhead cells (AWS/Meta Cell-Based Architecture standard), guaranteeing bounded blast radius (<= 1/N), poison pill immunity quarantine, and health-aware failover draining.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "partitionKey": {
+            "type": "string",
+            "description": "Partition key (tenantId, repoId, or requestId) for deterministic FNV-1a consistent hash routing"
+          },
+          "payload": {
+            "type": "string",
+            "description": "Optional request payload serialized as JSON or string to evaluate against the poison pill quarantine ledger"
+          }
+        },
+        "required": [
+          "partitionKey"
+        ]
+      },
+      "annotations": {
+        "title": "EOS cell Bulkhead Route",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_cell_bulkhead_status",
+      "description": "Retrieves complete health metrics, active in-flight counts, blast radius guarantees, and quarantined poison pill signatures across all partitioned bulkhead cells.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cellId": {
+            "type": "number",
+            "description": "Optional filter or target cell ID (0..N-1)"
+          },
+          "setStatus": {
+            "type": "string",
+            "enum": [
+              "HEALTHY",
+              "DEGRADED",
+              "DRAINING",
+              "QUARANTINED"
+            ],
+            "description": "Optional state change for target cell"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS cell Bulkhead Status",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

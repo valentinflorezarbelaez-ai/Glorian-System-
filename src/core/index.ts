@@ -69,3 +69,6 @@ export * from "./eosKubernetesFleetOperator.ts";
 export * from "./eosSingleExecutablePackager.ts";
 export * from "./eosOtlpTelemetryEngine.ts";
 export * from "./eosFleetDogfoodingEngine.ts";
+export * from "./eosVercelCanaryObservability.ts";
+export * from "./eosColumnarTelemetryEngine.ts";
+export * from "./eosCellBasedBulkheadGovernor.ts";
