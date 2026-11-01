@@ -695,7 +695,8 @@ export function runAllFormalVerifications() {
     verifyMultiWindowSloGovernorModel(),
     verifyAdaptiveHedgedDeadlineMeshModel(),
     verifyAdaptiveConcurrencyGovernorModel(),
-    verifyTailBasedTraceSamplerModel()
+    verifyTailBasedTraceSamplerModel(),
+    verifyPredictiveRemediationEngineModel()
   ];
 }
 
@@ -1100,6 +1101,92 @@ export function verifyTailBasedTraceSamplerModel(steps = 200) {
 
   return {
     specification: "TailBasedTraceSampler.tla",
+    moduleName: parsed.moduleName,
+    sourceFileRead: true,
+    extractedVariables: parsed.variables,
+    extractedInvariantNames: parsed.invariants,
+    stepsExecuted,
+    executionMode: "bounded-javascript-simulation",
+    simulationAssertionsPassed: true
+  };
+}
+
+export function verifyPredictiveRemediationEngineModel(steps = 200) {
+  const filePath = path.join(formalDir, "PredictiveRemediationEngine.tla");
+  const parsed = parseTlaModule(filePath);
+
+  const cooldownTicks = 3;
+  let engineState = "IDLE";
+  let totalEvaluations = 0;
+  let remediationsExecuted = 0;
+  let remediationsSuppressedCooldown = 0;
+  let nominalEvaluations = 0;
+  let cooldownTicksRemaining = 0;
+  let activeArchetype = "NOMINAL";
+  let healthScore = 100;
+  let stepsExecuted = 0;
+
+  for (let i = 0; i < steps; i++) {
+    stepsExecuted++;
+
+    // Invariants
+    assert.strictEqual(
+      totalEvaluations,
+      remediationsExecuted + remediationsSuppressedCooldown + nominalEvaluations,
+      "VIOLATION: ConservationInvariant"
+    );
+    if (engineState === "COOLDOWN") {
+      assert.ok(cooldownTicksRemaining >= 0, "VIOLATION: CooldownSafetyInvariant");
+    }
+    assert.ok(healthScore >= 0 && healthScore <= 100, "VIOLATION: HealthScoreBoundsInvariant");
+
+    const action = i % 5;
+    if (action === 0) {
+      // EvaluateNominal
+      if (engineState === "IDLE" || engineState === "RECOVERED") {
+        totalEvaluations++;
+        nominalEvaluations++;
+        activeArchetype = "NOMINAL";
+        healthScore = 95;
+        engineState = "IDLE";
+      }
+    } else if (action === 1) {
+      // DetectAndRemediateIncident
+      if ((engineState === "IDLE" || engineState === "RECOVERED") && cooldownTicksRemaining === 0) {
+        totalEvaluations++;
+        remediationsExecuted++;
+        activeArchetype = "CASCADE_TIMEOUT";
+        healthScore = 45;
+        engineState = "COOLDOWN";
+        cooldownTicksRemaining = cooldownTicks;
+      }
+    } else if (action === 2) {
+      // SuppressIncidentDuringCooldown
+      if (cooldownTicksRemaining > 0) {
+        totalEvaluations++;
+        remediationsSuppressedCooldown++;
+        cooldownTicksRemaining--;
+      }
+    } else if (action === 3) {
+      // CooldownTickDown
+      if (cooldownTicksRemaining > 0) {
+        cooldownTicksRemaining--;
+        if (cooldownTicksRemaining === 0) {
+          engineState = "RECOVERED";
+        }
+      }
+    } else {
+      // RestoreNominalState
+      if (engineState === "RECOVERED" && cooldownTicksRemaining === 0) {
+        activeArchetype = "NOMINAL";
+        healthScore = 100;
+        engineState = "IDLE";
+      }
+    }
+  }
+
+  return {
+    specification: "PredictiveRemediationEngine.tla",
     moduleName: parsed.moduleName,
     sourceFileRead: true,
     extractedVariables: parsed.variables,

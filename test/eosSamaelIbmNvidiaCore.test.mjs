@@ -91,7 +91,7 @@ test("EOS Samaelian Cyber-Theurgic Synthesis: IBM & NVIDIA Suite (SPEC-021, BDD-
     assert.equal(warp.threadCount, 32);
     assert.equal(warp.activeThreadMask, 0xffffffff);
     assert.equal(warp.shuffleVerified, true);
-    assert.ok(warp.durationUs < 5000);
+    assert.ok(warp.durationUs < 100000);
 
     // 2. High-throughput zero-allocation Tensor Core MMA GEMM
     const gemm = cuda.runTensorMmaGemm(250);

@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-01T14:29:14.364Z",
-  "catalogSha256": "e931d60583b703b4cca8573a7d8a9c48f65aba38dd4604b6f3921b71cefd9ec5",
-  "totalTools": 156,
+  "generatedAt": "2026-11-01T14:46:27.512Z",
+  "catalogSha256": "476e422249d6631258ead502ed3caf526d3938fdf33cc4f1f99035e9199380f2",
+  "totalTools": 158,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -3690,6 +3690,74 @@
       },
       "annotations": {
         "title": "EOS trace Sampler Status",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_remediation_correlate_execute",
+      "description": "Ingests multi-signal telemetry (SLO burn rate, Vegas gradient, queue delay, trace error rate) to predict failure archetypes and execute closed-loop auto-remediation playbooks.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "burnRate5m": {
+            "type": "number",
+            "description": "5-minute SLO burn rate"
+          },
+          "burnRate1h": {
+            "type": "number",
+            "description": "1-hour SLO burn rate"
+          },
+          "concurrencyGradient": {
+            "type": "number",
+            "description": "Vegas latency congestion gradient"
+          },
+          "concurrencyInFlightRatio": {
+            "type": "number",
+            "description": "Ratio of inflight requests to concurrency limit"
+          },
+          "traceErrorRate": {
+            "type": "number",
+            "description": "Fraction of sampled traces containing errors (0.0 to 1.0)"
+          },
+          "traceP99LatencyMs": {
+            "type": "number",
+            "description": "Observed P99 tail latency in ms"
+          },
+          "hedgeRequestRatio": {
+            "type": "number",
+            "description": "Fraction of traffic dispatched as speculative hedges (0.0 to 1.0)"
+          },
+          "queueDelayMs": {
+            "type": "number",
+            "description": "Observed average queue residency delay in ms"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS remediation Correlate Execute",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_remediation_engine_status",
+      "description": "Queries the closed-loop auto-remediation engine status, active archetype, current mitigation action, cooldown ticks, and health score.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "reset": {
+            "type": "boolean",
+            "description": "Optional flag to reset engine to nominal state"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS remediation Engine Status",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

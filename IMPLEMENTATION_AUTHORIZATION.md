@@ -591,3 +591,20 @@
   - `docs/tasks/TASKS-113-TAIL-BASED-TRACE-SAMPLER.md`
   - `docs/formal/TailBasedTraceSampler.tla`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-01-PREDICTIVE-REMEDIATION-114
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-114 (v76.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive "dale con toda" on 2026-11-01)
+* **Scope**: Predictive Failure Correlator & Closed-Loop Auto-Remediation Engine (Google SRE & Meta Sherlock Standard):
+  1. Component 1: Multi-signal health vector ingestion across SLO burn rate, Vegas gradient, queue wait, and trace error density.
+  2. Component 2: Deterministic failure archetype pattern matching (`CASCADE_TIMEOUT`, `RETRY_STORM`, `CONCURRENCY_COLLAPSE`, `RELEASE_REGRESSION`).
+  3. Component 3: Closed-loop automated mitigation playbooks (`CONCURRENCY_THROTTLE`, `SUPPRESS_HEDGES`, `SHED_BEST_EFFORT`, `CANARY_ROLLBACK`).
+  4. Component 4: Anti-flapping hysteresis cooldown gate (30s) and automatic nominal restoration on recovery.
+  5. Component 5: Multi-channel MCP tool exposure via `eos_remediation_correlate_execute` and `eos_remediation_engine_status`.
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-114-PREDICTIVE-REMEDIATION-ENGINE.md`
+  - `docs/plans/PLAN-114-PREDICTIVE-REMEDIATION-ENGINE.md`
+  - `docs/tasks/TASKS-114-PREDICTIVE-REMEDIATION-ENGINE.md`
+  - `docs/formal/PredictiveRemediationEngine.tla`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

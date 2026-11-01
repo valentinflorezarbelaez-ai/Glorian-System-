@@ -538,6 +538,12 @@ import {
   type TraceSamplingDecision,
   type TailSamplerStatus
 } from "../core/eosTailBasedTraceSampler.ts";
+import {
+  EosPredictiveRemediationEngine,
+  type TelemetryHealthVector,
+  type RemediationExecutionResult,
+  type RemediationEngineStatus
+} from "../core/eosPredictiveRemediationEngine.ts";
 
 import {
   annotateAndFilterTools,
@@ -550,6 +556,7 @@ const globalSloGovernor = new EosMultiWindowSloGovernor();
 const globalHedgedMesh = new EosAdaptiveHedgedDeadlineMesh();
 const globalConcurrencyGovernor = new EosAdaptiveConcurrencyGovernor();
 const globalTraceSampler = new EosTailBasedTraceSampler();
+const globalRemediationEngine = new EosPredictiveRemediationEngine();
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -2326,6 +2333,33 @@ export class EosMcpServer {
                     properties: {
                       evictStale: { type: "boolean", description: "Optional flag to trigger immediate TTL-based sweep of idle traces" },
                       reset: { type: "boolean", description: "Optional flag to reset sampler counters to zero" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_remediation_correlate_execute",
+                  description: "Ingests multi-signal telemetry (SLO burn rate, Vegas gradient, queue delay, trace error rate) to predict failure archetypes and execute closed-loop auto-remediation playbooks.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      burnRate5m: { type: "number", description: "5-minute SLO burn rate" },
+                      burnRate1h: { type: "number", description: "1-hour SLO burn rate" },
+                      concurrencyGradient: { type: "number", description: "Vegas latency congestion gradient" },
+                      concurrencyInFlightRatio: { type: "number", description: "Ratio of inflight requests to concurrency limit" },
+                      traceErrorRate: { type: "number", description: "Fraction of sampled traces containing errors (0.0 to 1.0)" },
+                      traceP99LatencyMs: { type: "number", description: "Observed P99 tail latency in ms" },
+                      hedgeRequestRatio: { type: "number", description: "Fraction of traffic dispatched as speculative hedges (0.0 to 1.0)" },
+                      queueDelayMs: { type: "number", description: "Observed average queue residency delay in ms" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_remediation_engine_status",
+                  description: "Queries the closed-loop auto-remediation engine status, active archetype, current mitigation action, cooldown ticks, and health score.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      reset: { type: "boolean", description: "Optional flag to reset engine to nominal state" }
                     }
                   }
                 },
@@ -4510,6 +4544,27 @@ export class EosMcpServer {
           globalTraceSampler.evictStaleTraces();
         }
         return globalTraceSampler.getStatus();
+      }
+
+      case "eos_remediation_correlate_execute": {
+        const vector: TelemetryHealthVector = {
+          burnRate5m: args.burnRate5m !== undefined ? Number(args.burnRate5m) : 0,
+          burnRate1h: args.burnRate1h !== undefined ? Number(args.burnRate1h) : 0,
+          concurrencyGradient: args.concurrencyGradient !== undefined ? Number(args.concurrencyGradient) : 1.0,
+          concurrencyInFlightRatio: args.concurrencyInFlightRatio !== undefined ? Number(args.concurrencyInFlightRatio) : 0,
+          traceErrorRate: args.traceErrorRate !== undefined ? Number(args.traceErrorRate) : 0,
+          traceP99LatencyMs: args.traceP99LatencyMs !== undefined ? Number(args.traceP99LatencyMs) : 0,
+          hedgeRequestRatio: args.hedgeRequestRatio !== undefined ? Number(args.hedgeRequestRatio) : 0,
+          queueDelayMs: args.queueDelayMs !== undefined ? Number(args.queueDelayMs) : 0,
+        };
+        return globalRemediationEngine.evaluateAndRemediate(vector);
+      }
+
+      case "eos_remediation_engine_status": {
+        if (args.reset) {
+          globalRemediationEngine.reset();
+        }
+        return globalRemediationEngine.getStatus();
       }
 
       case "eos_antigravity_direct": {

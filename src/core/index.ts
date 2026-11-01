@@ -76,3 +76,4 @@ export * from "./eosMultiWindowSloGovernor.ts";
 export * from "./eosAdaptiveHedgedDeadlineMesh.ts";
 export * from "./eosAdaptiveConcurrencyGovernor.ts";
 export * from "./eosTailBasedTraceSampler.ts";
+export * from "./eosPredictiveRemediationEngine.ts";
