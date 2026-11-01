@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-01T01:34:15.662Z",
-  "catalogSha256": "419741961f1e3b8fb45c3ee4e21d855371f38747754f82debca2b18954f38291",
-  "totalTools": 152,
+  "generatedAt": "2026-11-01T14:12:09.571Z",
+  "catalogSha256": "53d988faf9e0ac922cd9c65eb184ea9c7453533945178eff1177112c3e1871de",
+  "totalTools": 154,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -3555,6 +3555,64 @@
       },
       "annotations": {
         "title": "EOS hedge Metrics Status",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_concurrency_evaluate",
+      "description": "Evaluates adaptive concurrency admission and priority-tier load shedding under the Netflix Vegas gradient algorithm and CoDel queue delay management.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "type": "string",
+            "enum": [
+              "CRITICAL",
+              "HIGH",
+              "NORMAL",
+              "BEST_EFFORT"
+            ],
+            "description": "Priority tier of the request (default: NORMAL)"
+          },
+          "queueWaitMs": {
+            "type": "number",
+            "description": "Observed queue waiting residency time in ms (CoDel check)"
+          },
+          "releaseAfterSimulatedRttMs": {
+            "type": "number",
+            "description": "Optional simulated RTT in ms to record on immediate slot release"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS concurrency Evaluate",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_concurrency_status",
+      "description": "Queries current Vegas gradient, active concurrency limits, in-flight slots, baseline vs smoothed RTT, and shedding statistics by priority tier.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "recordLatencyMs": {
+            "type": "number",
+            "description": "Optional RTT in ms to feed into the Vegas gradient calculator"
+          },
+          "reset": {
+            "type": "boolean",
+            "description": "Optional flag to reset governor to nominal state"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS concurrency Status",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

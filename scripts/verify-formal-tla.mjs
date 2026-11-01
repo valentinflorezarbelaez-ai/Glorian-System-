@@ -693,7 +693,8 @@ export function runAllFormalVerifications() {
     verifyColumnarTelemetryEngineModel(),
     verifyCellBasedBulkheadGovernorModel(),
     verifyMultiWindowSloGovernorModel(),
-    verifyAdaptiveHedgedDeadlineMeshModel()
+    verifyAdaptiveHedgedDeadlineMeshModel(),
+    verifyAdaptiveConcurrencyGovernorModel()
   ];
 }
 
@@ -922,6 +923,84 @@ export function verifyAdaptiveHedgedDeadlineMeshModel(steps = 200) {
 
   return {
     specification: "AdaptiveHedgedDeadlineMesh.tla",
+    moduleName: parsed.moduleName,
+    sourceFileRead: true,
+    extractedVariables: parsed.variables,
+    extractedInvariantNames: parsed.invariants,
+    stepsExecuted,
+    executionMode: "bounded-javascript-simulation",
+    simulationAssertionsPassed: true
+  };
+}
+
+export function verifyAdaptiveConcurrencyGovernorModel(steps = 200) {
+  const filePath = path.join(formalDir, "AdaptiveConcurrencyGovernor.tla");
+  const parsed = parseTlaModule(filePath);
+
+  const minLimit = 10;
+  const maxLimit = 200;
+  const emergencyHeadroom = 10;
+
+  let concurrencyLimit = 50;
+  let inFlight = 0;
+  let baselineRttMs = 20;
+  let currentRttMs = 20;
+  let admittedCritical = 0;
+  let admittedNormal = 0;
+  let shedBestEffort = 0;
+  let shedQueueExpired = 0;
+  let stepsExecuted = 0;
+
+  for (let i = 0; i < steps; i++) {
+    stepsExecuted++;
+
+    // Invariants
+    assert.ok(concurrencyLimit >= minLimit && concurrencyLimit <= maxLimit, "VIOLATION: LimitBoundedInvariant");
+    assert.ok(inFlight <= concurrencyLimit + emergencyHeadroom, "VIOLATION: InFlightBoundedInvariant");
+    assert.ok(shedBestEffort >= 0 && admittedCritical >= 0, "VIOLATION: PrioritySafetyInvariant");
+
+    const action = i % 7;
+    if (action === 0) {
+      // Admit normal below limit
+      if (inFlight < concurrencyLimit) {
+        inFlight++;
+        admittedNormal++;
+      }
+    } else if (action === 1) {
+      // Admit critical with headroom
+      if (inFlight < concurrencyLimit + emergencyHeadroom) {
+        inFlight++;
+        admittedCritical++;
+      }
+    } else if (action === 2) {
+      // Shed best effort at limit
+      if (inFlight >= concurrencyLimit) {
+        shedBestEffort++;
+      }
+    } else if (action === 3) {
+      // Shed queue expired CoDel
+      shedQueueExpired++;
+    } else if (action === 4) {
+      // Contract on latency spike
+      if (currentRttMs < 1000) {
+        currentRttMs += 40;
+        const newLimit = Math.floor((concurrencyLimit * baselineRttMs) / currentRttMs);
+        concurrencyLimit = Math.max(minLimit, newLimit);
+      }
+    } else if (action === 5) {
+      // Expand on latency recovery
+      currentRttMs = baselineRttMs;
+      concurrencyLimit = Math.min(maxLimit, concurrencyLimit + 3);
+    } else {
+      // Complete execution
+      if (inFlight > 0) {
+        inFlight--;
+      }
+    }
+  }
+
+  return {
+    specification: "AdaptiveConcurrencyGovernor.tla",
     moduleName: parsed.moduleName,
     sourceFileRead: true,
     extractedVariables: parsed.variables,

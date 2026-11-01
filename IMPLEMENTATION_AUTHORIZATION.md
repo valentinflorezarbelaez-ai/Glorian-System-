@@ -557,3 +557,20 @@
   - `docs/tasks/TASKS-111-HEDGED-REQUESTS-DEADLINE-MESH.md`
   - `docs/formal/AdaptiveHedgedDeadlineMesh.tla`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-01-ADAPTIVE-CONCURRENCY-112
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-112 (v76.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive "dale con toda perfecion" on 2026-11-01)
+* **Scope**: Distributed Adaptive Concurrency Control & Priority-Tier Load Shedding (Netflix Vegas & CoDel Queue Management Standard):
+  1. Component 1: Minimum baseline RTT tracking ($RTT_{\text{baseline}}$) and exponential smoothing RTT estimator.
+  2. Component 2: Dynamic Vegas gradient calculation and self-tuning concurrency limit bounds.
+  3. Component 3: 4-tier priority admission gate (`CRITICAL`, `HIGH`, `NORMAL`, `BEST_EFFORT`) with reserved headroom.
+  4. Component 4: CoDel queue residency delay bounding with fail-fast bufferbloat shedding.
+  5. Component 5: Multi-channel MCP tool exposure via `eos_concurrency_evaluate` and `eos_concurrency_status`.
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-112-ADAPTIVE-CONCURRENCY-GOVERNOR.md`
+  - `docs/plans/PLAN-112-ADAPTIVE-CONCURRENCY-GOVERNOR.md`
+  - `docs/tasks/TASKS-112-ADAPTIVE-CONCURRENCY-GOVERNOR.md`
+  - `docs/formal/AdaptiveConcurrencyGovernor.tla`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

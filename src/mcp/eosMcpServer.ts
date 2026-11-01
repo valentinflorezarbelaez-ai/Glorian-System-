@@ -526,6 +526,12 @@ import {
   type HedgedExecutionResult,
   type MeshMetricsSnapshot
 } from "../core/eosAdaptiveHedgedDeadlineMesh.ts";
+import {
+  EosAdaptiveConcurrencyGovernor,
+  type AdmissionDecision,
+  type ConcurrencyGovernorStatus,
+  type PriorityTier
+} from "../core/eosAdaptiveConcurrencyGovernor.ts";
 
 import {
   annotateAndFilterTools,
@@ -536,6 +542,7 @@ import {
 const globalBulkheadGovernor = new EosCellBasedBulkheadGovernor({ cellCount: 8, cellCapacity: 100 });
 const globalSloGovernor = new EosMultiWindowSloGovernor();
 const globalHedgedMesh = new EosAdaptiveHedgedDeadlineMesh();
+const globalConcurrencyGovernor = new EosAdaptiveConcurrencyGovernor();
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -2260,6 +2267,29 @@ export class EosMcpServer {
                     properties: {
                       endpointId: { type: "string", description: "Optional filter for a specific endpoint ID" },
                       recordSampleLatencyMs: { type: "number", description: "Optional raw latency sample in ms to record for the target endpoint" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_concurrency_evaluate",
+                  description: "Evaluates adaptive concurrency admission and priority-tier load shedding under the Netflix Vegas gradient algorithm and CoDel queue delay management.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      priority: { type: "string", enum: ["CRITICAL", "HIGH", "NORMAL", "BEST_EFFORT"], description: "Priority tier of the request (default: NORMAL)" },
+                      queueWaitMs: { type: "number", description: "Observed queue waiting residency time in ms (CoDel check)" },
+                      releaseAfterSimulatedRttMs: { type: "number", description: "Optional simulated RTT in ms to record on immediate slot release" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_concurrency_status",
+                  description: "Queries current Vegas gradient, active concurrency limits, in-flight slots, baseline vs smoothed RTT, and shedding statistics by priority tier.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      recordLatencyMs: { type: "number", description: "Optional RTT in ms to feed into the Vegas gradient calculator" },
+                      reset: { type: "boolean", description: "Optional flag to reset governor to nominal state" }
                     }
                   }
                 },
@@ -4387,6 +4417,28 @@ export class EosMcpServer {
           };
         }
         return globalHedgedMesh.getMetrics();
+      }
+
+      case "eos_concurrency_evaluate": {
+        const priority = String(args.priority || "NORMAL") as PriorityTier;
+        const waitMs = args.queueWaitMs !== undefined ? Number(args.queueWaitMs) : 0;
+        const decision = globalConcurrencyGovernor.tryAcquire(priority, waitMs);
+
+        if (decision.admitted && args.releaseAfterSimulatedRttMs !== undefined) {
+          globalConcurrencyGovernor.release(Number(args.releaseAfterSimulatedRttMs));
+        }
+
+        return decision;
+      }
+
+      case "eos_concurrency_status": {
+        if (args.reset) {
+          globalConcurrencyGovernor.reset();
+        }
+        if (args.recordLatencyMs !== undefined) {
+          globalConcurrencyGovernor.recordLatency(Number(args.recordLatencyMs));
+        }
+        return globalConcurrencyGovernor.getStatus();
       }
 
       case "eos_antigravity_direct": {
