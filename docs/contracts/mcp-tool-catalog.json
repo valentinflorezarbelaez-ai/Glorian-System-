@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-01T16:20:45.964Z",
-  "catalogSha256": "3bd6ea6085ded798160827e89a88ab150d13a671ede7ddb42b1c666075534d21",
-  "totalTools": 167,
+  "generatedAt": "2026-11-01T16:39:31.488Z",
+  "catalogSha256": "cb0bdf3cd1a939d1fde9214450c27674d5dac0c8273f1a1b5dad40937aff5a73",
+  "totalTools": 170,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -3999,6 +3999,125 @@
       },
       "annotations": {
         "title": "EOS finops Wallet Status",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_planetary_sparse_project",
+      "description": "Projects the minimum hermetic transitive closure from a virtual planet-scale monorepo (Google Piper / Meta EdenFS pattern), yielding sublinear memory consumption and SHA-256 Merkle root.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "targetFile": {
+            "type": "string",
+            "description": "Target root file or package path to project closure from"
+          },
+          "monorepoNodes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "dependencies": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "path",
+                "dependencies"
+              ]
+            },
+            "description": "Adjacency nodes of the virtual monorepo graph"
+          }
+        },
+        "required": [
+          "targetFile",
+          "monorepoNodes"
+        ]
+      },
+      "annotations": {
+        "title": "EOS planetary Sparse Project",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_jpl_power_of_ten_audit",
+      "description": "Audits source code against Gerard Holzmann's NASA/JPL Power of Ten safety-critical rules (bounded loops, assertion density >= 2, zero dynamic heap allocations, restricted recursion).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sourceCode": {
+            "type": "string",
+            "description": "Source code to audit against JPL flight safety standards"
+          }
+        },
+        "required": [
+          "sourceCode"
+        ]
+      },
+      "annotations": {
+        "title": "EOS jpl Power Of Ten Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_tmr_consensus_adjudicate",
+      "description": "Adjudicates Byzantine Triple Modular Redundancy (TMR) 2-out-of-3 consensus across independent reasoning voter decisions for Tier 0 infrastructure mutations.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "votes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "modelId": {
+                  "type": "string"
+                },
+                "approved": {
+                  "type": "boolean"
+                },
+                "assertionHash": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "modelId",
+                "approved",
+                "assertionHash",
+                "rationale"
+              ]
+            },
+            "description": "List of voter decisions to adjudicate"
+          }
+        },
+        "required": [
+          "votes"
+        ]
+      },
+      "annotations": {
+        "title": "EOS tmr Consensus Adjudicate",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

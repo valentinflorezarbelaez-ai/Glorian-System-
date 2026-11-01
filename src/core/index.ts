@@ -81,3 +81,4 @@ export * from "./eosUnifiedKernelOrchestrator.ts";
 export * from "./eosBigTechTranscendenceNexus.ts";
 export * from "./eosEliteDesignStudioEngine.ts";
 export * from "./eosAgenticFinOpsGovernor.ts";
+export * from "./eosPlanetaryMonorepoGovernor.ts";

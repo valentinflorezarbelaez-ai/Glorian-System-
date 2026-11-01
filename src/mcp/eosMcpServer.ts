@@ -573,6 +573,16 @@ import {
   type CodeSurvivalEvaluationResult,
   type FinOpsGovernorStatus
 } from "../core/eosAgenticFinOpsGovernor.ts";
+import {
+  EosPlanetaryMonorepoGovernor,
+  type VirtualMonorepoNode,
+  type SparseProjectionResult,
+  type JplPowerOfTenResult,
+  type RosiePlanResult,
+  type TmrVoterDecision,
+  type TmrConsensusResult,
+  type PlanetaryGovernorStatus
+} from "../core/eosPlanetaryMonorepoGovernor.ts";
 
 import {
   annotateAndFilterTools,
@@ -590,6 +600,7 @@ const globalKernelOrchestrator = EosUnifiedKernelOrchestrator.getInstance();
 const globalTranscendenceNexus = EosBigTechTranscendenceNexus.getInstance();
 const globalDesignStudio = EosEliteDesignStudioEngine.getInstance();
 const globalFinOpsGovernor = EosAgenticFinOpsGovernor.getInstance();
+const globalPlanetaryGovernor = EosPlanetaryMonorepoGovernor.getInstance();
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -2508,6 +2519,65 @@ export class EosMcpServer {
                       missionId: { type: "string", description: "Optional mission or task ID to query wallet for" },
                       reset: { type: "boolean", description: "Optional flag to reset governor status" }
                     }
+                  }
+                },
+                {
+                  name: "eos_planetary_sparse_project",
+                  description: "Projects the minimum hermetic transitive closure from a virtual planet-scale monorepo (Google Piper / Meta EdenFS pattern), yielding sublinear memory consumption and SHA-256 Merkle root.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      targetFile: { type: "string", description: "Target root file or package path to project closure from" },
+                      monorepoNodes: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            id: { type: "string" },
+                            path: { type: "string" },
+                            dependencies: { type: "array", items: { type: "string" } }
+                          },
+                          required: ["id", "path", "dependencies"]
+                        },
+                        description: "Adjacency nodes of the virtual monorepo graph"
+                      }
+                    },
+                    required: ["targetFile", "monorepoNodes"]
+                  }
+                },
+                {
+                  name: "eos_jpl_power_of_ten_audit",
+                  description: "Audits source code against Gerard Holzmann's NASA/JPL Power of Ten safety-critical rules (bounded loops, assertion density >= 2, zero dynamic heap allocations, restricted recursion).",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      sourceCode: { type: "string", description: "Source code to audit against JPL flight safety standards" }
+                    },
+                    required: ["sourceCode"]
+                  }
+                },
+                {
+                  name: "eos_tmr_consensus_adjudicate",
+                  description: "Adjudicates Byzantine Triple Modular Redundancy (TMR) 2-out-of-3 consensus across independent reasoning voter decisions for Tier 0 infrastructure mutations.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      votes: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            modelId: { type: "string" },
+                            approved: { type: "boolean" },
+                            assertionHash: { type: "string" },
+                            rationale: { type: "string" }
+                          },
+                          required: ["modelId", "approved", "assertionHash", "rationale"]
+                        },
+                        description: "List of voter decisions to adjudicate"
+                      }
+                    },
+                    required: ["votes"]
                   }
                 },
                 {
@@ -4776,6 +4846,22 @@ export class EosMcpServer {
           return globalFinOpsGovernor.recordTokenUsage(missionId, 0, 0, "TIER_1_LOCAL_SLM");
         }
         return globalFinOpsGovernor.getStatus();
+      }
+
+      case "eos_planetary_sparse_project": {
+        const targetFile = String(args.targetFile || "");
+        const monorepoNodes = Array.isArray(args.monorepoNodes) ? args.monorepoNodes : [];
+        return globalPlanetaryGovernor.projectSparseClosure(targetFile, monorepoNodes);
+      }
+
+      case "eos_jpl_power_of_ten_audit": {
+        const sourceCode = String(args.sourceCode || "");
+        return globalPlanetaryGovernor.auditJplPowerOfTen(sourceCode);
+      }
+
+      case "eos_tmr_consensus_adjudicate": {
+        const votes = Array.isArray(args.votes) ? args.votes : [];
+        return globalPlanetaryGovernor.adjudicateTmrConsensus(votes);
       }
 
       case "eos_antigravity_direct": {

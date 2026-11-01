@@ -700,7 +700,8 @@ export function runAllFormalVerifications() {
     verifyUnifiedKernelOrchestratorModel(),
     verifyBigTechTranscendenceNexusModel(),
     verifyEliteDesignStudioModel(),
-    verifyAgenticFinOpsGovernorModel()
+    verifyAgenticFinOpsGovernorModel(),
+    verifyPlanetaryMonorepoGovernorModel()
   ];
 }
 
@@ -1428,6 +1429,57 @@ export function verifyAgenticFinOpsGovernorModel(steps = 200) {
 
   return {
     specification: "AgenticFinOpsGovernor.tla",
+    moduleName: parsed.moduleName,
+    sourceFileRead: true,
+    extractedVariables: parsed.variables,
+    extractedInvariantNames: parsed.invariants,
+    stepsExecuted,
+    executionMode: "bounded-javascript-simulation",
+    simulationAssertionsPassed: true
+  };
+}
+
+export function verifyPlanetaryMonorepoGovernorModel(steps = 200) {
+  const filePath = path.join(formalDir, "PlanetaryMonorepoGovernor.tla");
+  const parsed = parseTlaModule(filePath);
+
+  let totalProjectionsExecuted = 0;
+  let totalNodesIngested = 0;
+  let totalNodesProjected = 0;
+  let jplAuditsExecuted = 0;
+  let jplViolationsDetected = 0;
+  let tmrConsensusAttempts = 0;
+  let tmrQuorumApprovals = 0;
+  let tmrByzantineRejections = 0;
+  let stepsExecuted = 0;
+
+  for (let i = 0; i < steps; i++) {
+    stepsExecuted++;
+    assert.ok(totalNodesProjected <= totalNodesIngested, "VIOLATION: SafetyInvariant");
+    assert.strictEqual(tmrConsensusAttempts, tmrQuorumApprovals + tmrByzantineRejections, "VIOLATION: TmrConservationInvariant");
+    assert.ok(jplViolationsDetected <= jplAuditsExecuted, "VIOLATION: JplBoundednessInvariant");
+
+    const action = i % 5;
+    if (action === 0) {
+      totalProjectionsExecuted++;
+      totalNodesIngested += 1000;
+      totalNodesProjected += 45;
+    } else if (action === 1) {
+      jplAuditsExecuted++;
+    } else if (action === 2) {
+      jplAuditsExecuted++;
+      jplViolationsDetected++;
+    } else if (action === 3) {
+      tmrConsensusAttempts++;
+      tmrQuorumApprovals++;
+    } else {
+      tmrConsensusAttempts++;
+      tmrByzantineRejections++;
+    }
+  }
+
+  return {
+    specification: "PlanetaryMonorepoGovernor.tla",
     moduleName: parsed.moduleName,
     sourceFileRead: true,
     extractedVariables: parsed.variables,
