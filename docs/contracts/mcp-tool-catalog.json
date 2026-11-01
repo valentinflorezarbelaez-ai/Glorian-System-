@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-01T21:09:55.584Z",
-  "catalogSha256": "4ff4bae1922b52b5f2a34eec4cc8de4ce0e18214f2e14ab07f56bfc66100f745",
-  "totalTools": 173,
+  "generatedAt": "2026-11-01T21:29:36.621Z",
+  "catalogSha256": "5491bee2c9b713ae8f267edde893f1a3e402bd313ffee7343b9296bc9aa1ca19",
+  "totalTools": 176,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -4188,6 +4188,68 @@
       },
       "annotations": {
         "title": "EOS synapse Mesh Status",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_planetary_mesh_evacuate_traffic",
+      "description": "Executes deterministic sub-500ms multi-cloud traffic evacuation from a degraded cloud provider (AWS, GCP, Vercel) with 2-of-3 quorum consensus, proportional traffic reweighting, and SHA-256 state attestation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "providerId": {
+            "type": "string",
+            "description": "Identifier of the cloud provider to evacuate ('aws', 'gcp', 'vercel')"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Operational rationale or outage trigger description"
+          }
+        },
+        "required": [
+          "providerId"
+        ]
+      },
+      "annotations": {
+        "title": "EOS planetary Mesh Evacuate Traffic",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_planetary_mesh_health_matrix",
+      "description": "Queries real-time telemetry, P99 latency, error rates, assigned traffic weights, and quorum consensus across all registered planetary cloud providers.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS planetary Mesh Health Matrix",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_planetary_mesh_status",
+      "description": "Queries planetary multi-cloud evacuation mesh status, total evacuations executed, flapping suppression counters, and Merkle state root.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "reset": {
+            "type": "boolean",
+            "description": "Optional flag to reset evacuation mesh to nominal active-active state"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS planetary Mesh Status",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

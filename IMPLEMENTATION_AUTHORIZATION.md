@@ -715,5 +715,23 @@
   - `docs/formal/CrossFleetNeuralSynapse.tla`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
 
+## Authorization Record: AUTH-2026-11-01-PLANETARY-MULTI-CLOUD-EVACUATION-121
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-121 (v83.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive "todas" on 2026-11-01)
+* **Scope**: Planetary Multi-Cloud Disaster Resilience & Auto-Evacuation Mesh:
+  1. Component 1: Active-Active weighted health topology across AWS, GCP, and Vercel with sub-500ms deterministic evacuation decision.
+  2. Component 2: Distributed 2-of-3 quorum consensus protecting against split-brain mutations during cloud partition events.
+  3. Component 3: Flapping circuit breaker dampening rapid oscillation with synthetic verification probe bursts.
+  4. Component 4: Cross-cloud Merkle state snapshot attestation with SHA-256 signatures.
+  5. Component 5: MCP tool exposure via `eos_planetary_mesh_evacuate_traffic`, `eos_planetary_mesh_health_matrix`, and `eos_planetary_mesh_status`.
+* **Artifacts Approved**:
+  - `docs/intake/INTAKE-121-PLANETARY-MULTI-CLOUD-EVACUATION.md`
+  - `openspec/specs/SPEC-121-PLANETARY-MULTI-CLOUD-EVACUATION.md`
+  - `docs/plans/PLAN-121-PLANETARY-MULTI-CLOUD-EVACUATION.md`
+  - `docs/tasks/TASKS-121-PLANETARY-MULTI-CLOUD-EVACUATION.md`
+  - `docs/formal/PlanetaryMultiCloudEvacuation.tla`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
 
 

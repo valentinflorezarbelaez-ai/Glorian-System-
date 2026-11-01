@@ -592,6 +592,15 @@ import {
   type FleetKnowledgeQueryResult,
   type SynapseMeshStatus
 } from "../core/eosCrossFleetNeuralSynapse.ts";
+import {
+  EosPlanetaryMultiCloudEvacuationMesh,
+  type CloudProviderId,
+  type CloudNodeStatus,
+  type CloudNodeTelemetry,
+  type EvacuationDirective,
+  type PlanetaryHealthMatrix,
+  type PlanetaryMeshStatus
+} from "../core/eosPlanetaryMultiCloudEvacuationMesh.ts";
 
 import {
   annotateAndFilterTools,
@@ -611,6 +620,7 @@ const globalDesignStudio = EosEliteDesignStudioEngine.getInstance();
 const globalFinOpsGovernor = EosAgenticFinOpsGovernor.getInstance();
 const globalPlanetaryGovernor = EosPlanetaryMonorepoGovernor.getInstance();
 const globalCrossFleetSynapse = EosCrossFleetNeuralSynapse.getInstance();
+const globalMultiCloudEvacuationMesh = EosPlanetaryMultiCloudEvacuationMesh.getInstance();
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -2619,6 +2629,36 @@ export class EosMcpServer {
                     type: "object",
                     properties: {
                       reset: { type: "boolean", description: "Optional flag to reset synapse status and knowledge graph" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_planetary_mesh_evacuate_traffic",
+                  description: "Executes deterministic sub-500ms multi-cloud traffic evacuation from a degraded cloud provider (AWS, GCP, Vercel) with 2-of-3 quorum consensus, proportional traffic reweighting, and SHA-256 state attestation.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      providerId: { type: "string", description: "Identifier of the cloud provider to evacuate ('aws', 'gcp', 'vercel')" },
+                      reason: { type: "string", description: "Operational rationale or outage trigger description" }
+                    },
+                    required: ["providerId"]
+                  }
+                },
+                {
+                  name: "eos_planetary_mesh_health_matrix",
+                  description: "Queries real-time telemetry, P99 latency, error rates, assigned traffic weights, and quorum consensus across all registered planetary cloud providers.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {}
+                  }
+                },
+                {
+                  name: "eos_planetary_mesh_status",
+                  description: "Queries planetary multi-cloud evacuation mesh status, total evacuations executed, flapping suppression counters, and Merkle state root.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      reset: { type: "boolean", description: "Optional flag to reset evacuation mesh to nominal active-active state" }
                     }
                   }
                 },
@@ -4920,6 +4960,21 @@ export class EosMcpServer {
       case "eos_synapse_mesh_status": {
         if (args.reset) globalCrossFleetSynapse.reset();
         return globalCrossFleetSynapse.getStatus();
+      }
+
+      case "eos_planetary_mesh_evacuate_traffic": {
+        const providerId = String(args.providerId || "");
+        const reason = args.reason ? String(args.reason) : undefined;
+        return globalMultiCloudEvacuationMesh.evacuateCloudProvider(providerId, reason);
+      }
+
+      case "eos_planetary_mesh_health_matrix": {
+        return globalMultiCloudEvacuationMesh.getHealthMatrix();
+      }
+
+      case "eos_planetary_mesh_status": {
+        if (args.reset) globalMultiCloudEvacuationMesh.reset();
+        return globalMultiCloudEvacuationMesh.getStatus();
       }
 
       case "eos_antigravity_direct": {
