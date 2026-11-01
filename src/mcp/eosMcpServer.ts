@@ -550,6 +550,12 @@ import {
   type KernelReconciliationReceipt,
   type KernelOrchestratorStatus
 } from "../core/eosUnifiedKernelOrchestrator.ts";
+import {
+  EosBigTechTranscendenceNexus,
+  type TranscendencePillarId,
+  type MasterTranscendenceReceipt,
+  type TranscendenceNexusStatus
+} from "../core/eosBigTechTranscendenceNexus.ts";
 
 import {
   annotateAndFilterTools,
@@ -564,6 +570,7 @@ const globalConcurrencyGovernor = new EosAdaptiveConcurrencyGovernor();
 const globalTraceSampler = new EosTailBasedTraceSampler();
 const globalRemediationEngine = new EosPredictiveRemediationEngine();
 const globalKernelOrchestrator = EosUnifiedKernelOrchestrator.getInstance();
+const globalTranscendenceNexus = EosBigTechTranscendenceNexus.getInstance();
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -2392,6 +2399,29 @@ export class EosMcpServer {
                     type: "object",
                     properties: {
                       reset: { type: "boolean", description: "Optional flag to reset orchestrator history and state" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_transcendence_execute",
+                  description: "Executes Big Tech transcendence engineering pillars (Google Vizier, Netflix Chaos Kong, AWS SMT, Meta PGO, Apple Secure Enclave, Microsoft BFT) individually or as an all-pillar consolidated master run.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      pillar: {
+                        type: "string",
+                        description: "Optional specific pillar to execute ('GOOGLE_VIZIER', 'NETFLIX_CHAOS_KONG', 'AWS_SMT_REASONING', 'META_PGO_LAYOUT', 'APPLE_SECURE_ENCLAVE', 'MICROSOFT_BFT_COUNCIL', or omit for ALL_PILLARS)"
+                      }
+                    }
+                  }
+                },
+                {
+                  name: "eos_transcendence_status",
+                  description: "Queries the Big Tech Transcendence Nexus operational status, total executions, pillar successes, and latest master cryptographic receipt.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      reset: { type: "boolean", description: "Optional flag to reset nexus status and history" }
                     }
                   }
                 },
@@ -4615,6 +4645,18 @@ export class EosMcpServer {
           globalKernelOrchestrator.reset();
         }
         return globalKernelOrchestrator.getStatus();
+      }
+
+      case "eos_transcendence_execute": {
+        const pillar = args.pillar ? (String(args.pillar).toUpperCase() as TranscendencePillarId) : undefined;
+        return globalTranscendenceNexus.executeMasterNexus(pillar);
+      }
+
+      case "eos_transcendence_status": {
+        if (args.reset) {
+          globalTranscendenceNexus.reset();
+        }
+        return globalTranscendenceNexus.getStatus();
       }
 
       case "eos_antigravity_direct": {

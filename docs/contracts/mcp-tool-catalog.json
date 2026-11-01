@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-01T15:04:39.774Z",
-  "catalogSha256": "fc756ab317e26aa0c83d68082b3964b0a2cff8f6363210091575decc223fc2cd",
-  "totalTools": 160,
+  "generatedAt": "2026-11-01T15:33:23.356Z",
+  "catalogSha256": "1a044f4435c78dd48833fae259d29a4280be7f70d25c86cf33c4a55feda5f6ca",
+  "totalTools": 162,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -3818,6 +3818,46 @@
       },
       "annotations": {
         "title": "EOS kernel Orchestrator Status",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_transcendence_execute",
+      "description": "Executes Big Tech transcendence engineering pillars (Google Vizier, Netflix Chaos Kong, AWS SMT, Meta PGO, Apple Secure Enclave, Microsoft BFT) individually or as an all-pillar consolidated master run.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "pillar": {
+            "type": "string",
+            "description": "Optional specific pillar to execute ('GOOGLE_VIZIER', 'NETFLIX_CHAOS_KONG', 'AWS_SMT_REASONING', 'META_PGO_LAYOUT', 'APPLE_SECURE_ENCLAVE', 'MICROSOFT_BFT_COUNCIL', or omit for ALL_PILLARS)"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS transcendence Execute",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_transcendence_status",
+      "description": "Queries the Big Tech Transcendence Nexus operational status, total executions, pillar successes, and latest master cryptographic receipt.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "reset": {
+            "type": "boolean",
+            "description": "Optional flag to reset nexus status and history"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS transcendence Status",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
