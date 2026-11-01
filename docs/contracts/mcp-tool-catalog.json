@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-10-31T23:39:15.101Z",
-  "catalogSha256": "16db9456dd2e37f1195c6bfd589e0086c460a89b25bdd6f8a58af8e6a99d0261",
-  "totalTools": 145,
+  "generatedAt": "2026-11-01T00:06:10.751Z",
+  "catalogSha256": "784e03fa98257e64412c5d85608b2c952328ba4ec04fc7423f53ba6dcdbc3ee2",
+  "totalTools": 146,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -3315,6 +3315,50 @@
       },
       "annotations": {
         "title": "EOS canary Telemetry Evaluate",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_columnar_telemetry_query",
+      "description": "Executes sub-millisecond in-memory columnar slice aggregations (P50, P90, P99, mean, anomaly counts) across fleet telemetry using Meta SCUBA / Google Monarch standard contiguous TypedArrays.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "repoId": {
+            "type": "string",
+            "description": "Optional fleet repository filter"
+          },
+          "stage": {
+            "type": "string",
+            "description": "Optional deployment or canary stage filter"
+          },
+          "minStatusCode": {
+            "type": "number",
+            "description": "Minimum HTTP status code (e.g. 400 for errors)"
+          },
+          "maxStatusCode": {
+            "type": "number",
+            "description": "Maximum HTTP status code"
+          },
+          "minTimestamp": {
+            "type": "number",
+            "description": "Minimum epoch timestamp in milliseconds"
+          },
+          "maxTimestamp": {
+            "type": "number",
+            "description": "Maximum epoch timestamp in milliseconds"
+          },
+          "syntheticSamplesCount": {
+            "type": "number",
+            "description": "Optional seed sample count for synthetic benchmarks (default: 1000)"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS columnar Telemetry Query",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

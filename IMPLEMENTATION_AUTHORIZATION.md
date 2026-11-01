@@ -489,3 +489,20 @@
   - `docs/tasks/TASKS-107-VERCEL-CANARY-OBSERVABILITY.md`
   - `formal/tla/VercelCanaryObservability.tla`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-31-COLUMNAR-TELEMETRY-108
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-108 (v76.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive "deja todo perfecto y sigamos mejorando eos como lo harian las grandes big tech" on 2026-10-31)
+* **Scope**: In-Memory Columnar Telemetry Slice Engine & Real-Time Anomaly Detector (Meta SCUBA / Google Monarch Standard):
+  1. Component 1: Contiguous TypedArray columnar storage (`Float64Array`, `Uint32Array`, `Uint16Array`) with circular ring overwrite.
+  2. Component 2: 16-bit dictionary encoding for zero-allocation high-cardinality dimensions.
+  3. Component 3: Sub-millisecond vector aggregations and Quickselect percentile computation ($P_{50}, P_{90}, P_{99}$).
+  4. Component 4: Real-time streaming $Z$-score anomaly detector with cryptographic receipts.
+  5. Component 5: Multi-channel MCP tool exposure via `eos_columnar_telemetry_query`.
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-108-COLUMNAR-TELEMETRY-ENGINE.md`
+  - `docs/plans/PLAN-108-COLUMNAR-TELEMETRY-ENGINE.md`
+  - `docs/tasks/TASKS-108-COLUMNAR-TELEMETRY-ENGINE.md`
+  - `docs/formal/ColumnarTelemetryEngine.tla`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
