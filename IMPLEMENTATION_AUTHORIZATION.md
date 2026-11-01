@@ -733,5 +733,23 @@
   - `docs/formal/PlanetaryMultiCloudEvacuation.tla`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
 
+## Authorization Record: AUTH-2026-11-01-AVOPAK-ATTENDANCE-122
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-122 (`control-de-asistencia-abopack`)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive on 2026-11-01 to build and deploy `CONTROL DE ASISTENCIA AVO-PAK` at `https://github.com/valentinflorezarbelaez-ai/Control-De-Asistencia-Abopack.git` and `https://control-de-asistencia-abopack.vercel.app/`)
+* **Scope**: Control de Asistencia Avo-Pak S.A.S. (Planta de Alimentos):
+  1. Component 1: Colombian Labor Law Engine (42h/week limit starting Monday, 40m meal break deduction, daytime vs. post-8:00 PM nighttime overtime differential).
+  2. Component 2: Group (by work area) and Individual flexible schedule & attendance registration for all 44 plant employees.
+  3. Component 3: Printable QR Badges & Live Camera/Scanner QR Reader for entry, meal break out/in, and shift exit.
+  4. Component 4: Permits (Paid/Unpaid, stipulated vs. actual time, payroll deduction toggle), Photographic Evidence attachment, and Unjustified Absences (deducting scheduled shift hours).
+  5. Component 5: Multi-Administrator RBAC managed by Federico (`8160032` / `Avopak2026*.@`) with area-scoped administrator profiles (`Empaque`, `Despulpe y Destupe`, `Sanitización`) and native multi-sheet Excel (`.xlsx`) download.
+* **Artifacts Approved**:
+  - `docs/intake/control-de-asistencia-abopack/PROJECT_CONTEXT.md`
+  - `openspec/specs/SPEC-122-AVOPAK-ATTENDANCE-CONTROL.md`
+  - `docs/audits/AUDIT-AVOPAK-001.md`
+  - `docs/plans/PLAN-AVOPAK-001.md`
+  - `docs/tasks/TASKS-AVOPAK-001.md`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
 
 

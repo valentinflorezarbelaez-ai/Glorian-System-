@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-01T21:29:36.621Z",
+  "generatedAt": "2026-11-01T22:11:56.633Z",
   "catalogSha256": "5491bee2c9b713ae8f267edde893f1a3e402bd313ffee7343b9296bc9aa1ca19",
   "totalTools": 176,
   "coreTier0Count": 46,

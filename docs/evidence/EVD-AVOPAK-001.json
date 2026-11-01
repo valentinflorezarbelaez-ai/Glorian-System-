@@ -1,0 +1,26 @@
+{
+  "evidenceId": "EVD-AVOPAK-001",
+  "projectId": "control-de-asistencia-abopack",
+  "specId": "SPEC-122-AVOPAK-ATTENDANCE-CONTROL",
+  "epistemicState": "PRODUCTION_READY",
+  "confidenceLevel": "VERIFIED",
+  "timestamp": "2026-11-01T22:10:00Z",
+  "repository": "https://github.com/valentinflorezarbelaez-ai/Control-De-Asistencia-Abopack.git",
+  "productionUrl": "https://control-de-asistencia-abopack.vercel.app/",
+  "healthEndpoint": "https://control-de-asistencia-abopack.vercel.app/api/health",
+  "commitSha": "631b2d4",
+  "verificationSummary": {
+    "strictStagesPassed": "7/7",
+    "unitBddTestsPassed": "8/8",
+    "exitCode": 0,
+    "runtimeDependencies": 0,
+    "employeesLoaded": 43,
+    "workAreasConfigured": 17,
+    "colombianLaborRules": {
+      "weeklyMaxOrdinaryHours": 42,
+      "mealBreakDeductedMinutes": 40,
+      "nightOvertimeStart": "20:00",
+      "weekStartsOn": "Lunes"
+    }
+  }
+}
