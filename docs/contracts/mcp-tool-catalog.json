@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-01T01:15:26.201Z",
-  "catalogSha256": "06bb769a386a4c3fb1227ea7dc045e0cf3662f5885533b04836cde2b627b5e37",
-  "totalTools": 150,
+  "generatedAt": "2026-11-01T01:30:04.161Z",
+  "catalogSha256": "419741961f1e3b8fb45c3ee4e21d855371f38747754f82debca2b18954f38291",
+  "totalTools": 152,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -3492,6 +3492,69 @@
       },
       "annotations": {
         "title": "EOS slo Budget Status",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_hedge_request_execute",
+      "description": "Executes a fleet RPC request with Google 'The Tail at Scale' adaptive hedged duplicate dispatch, deadline budget propagation, and cooperative cancellation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "endpointId": {
+            "type": "string",
+            "description": "Target fleet service or endpoint ID"
+          },
+          "deadlineMs": {
+            "type": "number",
+            "description": "Optional request deadline budget in ms"
+          },
+          "hedgingDelayMs": {
+            "type": "number",
+            "description": "Optional explicit hedging delay in ms (defaults to endpoint P95)"
+          },
+          "simulatedPrimaryDelayMs": {
+            "type": "number",
+            "description": "Optional simulated primary replica latency in ms for synthetic probes"
+          },
+          "simulatedHedgedDelayMs": {
+            "type": "number",
+            "description": "Optional simulated hedged replica latency in ms for synthetic probes"
+          }
+        },
+        "required": [
+          "endpointId"
+        ]
+      },
+      "annotations": {
+        "title": "EOS hedge Request Execute",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_hedge_metrics_status",
+      "description": "Retrieves running P50, P95, and P99 latency reservoirs, hedging ratios, deadline shed counts, and anti-storm token bucket health across all endpoints.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "endpointId": {
+            "type": "string",
+            "description": "Optional filter for a specific endpoint ID"
+          },
+          "recordSampleLatencyMs": {
+            "type": "number",
+            "description": "Optional raw latency sample in ms to record for the target endpoint"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS hedge Metrics Status",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

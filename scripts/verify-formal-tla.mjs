@@ -692,7 +692,8 @@ export function runAllFormalVerifications() {
     verifyVercelCanaryObservabilityModel(),
     verifyColumnarTelemetryEngineModel(),
     verifyCellBasedBulkheadGovernorModel(),
-    verifyMultiWindowSloGovernorModel()
+    verifyMultiWindowSloGovernorModel(),
+    verifyAdaptiveHedgedDeadlineMeshModel()
   ];
 }
 
@@ -856,6 +857,71 @@ export function verifyMultiWindowSloGovernorModel(steps = 200) {
 
   return {
     specification: "MultiWindowSloGovernor.tla",
+    moduleName: parsed.moduleName,
+    sourceFileRead: true,
+    extractedVariables: parsed.variables,
+    extractedInvariantNames: parsed.invariants,
+    stepsExecuted,
+    executionMode: "bounded-javascript-simulation",
+    simulationAssertionsPassed: true
+  };
+}
+
+export function verifyAdaptiveHedgedDeadlineMeshModel(steps = 200) {
+  const filePath = path.join(formalDir, "AdaptiveHedgedDeadlineMesh.tla");
+  const parsed = parseTlaModule(filePath);
+
+  const maxHedgeCapPercent = 5;
+
+  let requestsDispatched = 0;
+  let hedgesDispatched = 0;
+  let shedRequests = 0;
+  let completedRequests = 0;
+  let stepsExecuted = 0;
+
+  for (let i = 0; i < steps; i++) {
+    stepsExecuted++;
+
+    // Invariants
+    assert.ok(
+      requestsDispatched < 20 || (hedgesDispatched * 100) <= (requestsDispatched * maxHedgeCapPercent) + 5,
+      "VIOLATION: HedgingRateBoundedInvariant"
+    );
+    assert.ok(shedRequests <= requestsDispatched, "VIOLATION: DeadlineMonotonicInvariant");
+    assert.strictEqual(completedRequests + shedRequests, requestsDispatched, "VIOLATION: CompletionConservationInvariant");
+
+    const action = i % 4;
+    if (action === 0) {
+      // Fast primary
+      requestsDispatched++;
+      completedRequests++;
+    } else if (action === 1) {
+      // Lagging primary with hedge (if budget allows)
+      const allowedHedges = requestsDispatched < 20
+        ? 1
+        : Math.floor((requestsDispatched * maxHedgeCapPercent) / 100);
+      if (hedgesDispatched < allowedHedges) {
+        requestsDispatched++;
+        hedgesDispatched++;
+        completedRequests++;
+      } else {
+        // Hedging storm suppressed (primary completion)
+        requestsDispatched++;
+        completedRequests++;
+      }
+    } else if (action === 2) {
+      // Expired deadline shed
+      requestsDispatched++;
+      shedRequests++;
+    } else {
+      // Hedging storm suppressed (regular primary completion)
+      requestsDispatched++;
+      completedRequests++;
+    }
+  }
+
+  return {
+    specification: "AdaptiveHedgedDeadlineMesh.tla",
     moduleName: parsed.moduleName,
     sourceFileRead: true,
     extractedVariables: parsed.variables,

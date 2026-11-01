@@ -519,6 +519,13 @@ import {
   type SloTargetConfig,
   type SloTelemetryEvent
 } from "../core/eosMultiWindowSloGovernor.ts";
+import {
+  EosAdaptiveHedgedDeadlineMesh,
+  EosDeadlineContext,
+  type EndpointPercentileStats,
+  type HedgedExecutionResult,
+  type MeshMetricsSnapshot
+} from "../core/eosAdaptiveHedgedDeadlineMesh.ts";
 
 import {
   annotateAndFilterTools,
@@ -528,6 +535,7 @@ import {
 
 const globalBulkheadGovernor = new EosCellBasedBulkheadGovernor({ cellCount: 8, cellCapacity: 100 });
 const globalSloGovernor = new EosMultiWindowSloGovernor();
+const globalHedgedMesh = new EosAdaptiveHedgedDeadlineMesh();
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -2226,6 +2234,32 @@ export class EosMcpServer {
                     properties: {
                       serviceId: { type: "string", description: "Optional filter for a specific service ID" },
                       checkDeploymentAllowed: { type: "boolean", description: "If true, explicitly returns whether deployment is permitted (fail-closed check)" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_hedge_request_execute",
+                  description: "Executes a fleet RPC request with Google 'The Tail at Scale' adaptive hedged duplicate dispatch, deadline budget propagation, and cooperative cancellation.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      endpointId: { type: "string", description: "Target fleet service or endpoint ID" },
+                      deadlineMs: { type: "number", description: "Optional request deadline budget in ms" },
+                      hedgingDelayMs: { type: "number", description: "Optional explicit hedging delay in ms (defaults to endpoint P95)" },
+                      simulatedPrimaryDelayMs: { type: "number", description: "Optional simulated primary replica latency in ms for synthetic probes" },
+                      simulatedHedgedDelayMs: { type: "number", description: "Optional simulated hedged replica latency in ms for synthetic probes" }
+                    },
+                    required: ["endpointId"]
+                  }
+                },
+                {
+                  name: "eos_hedge_metrics_status",
+                  description: "Retrieves running P50, P95, and P99 latency reservoirs, hedging ratios, deadline shed counts, and anti-storm token bucket health across all endpoints.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      endpointId: { type: "string", description: "Optional filter for a specific endpoint ID" },
+                      recordSampleLatencyMs: { type: "number", description: "Optional raw latency sample in ms to record for the target endpoint" }
                     }
                   }
                 },
@@ -4322,6 +4356,37 @@ export class EosMcpServer {
           totalServices: globalSloGovernor.getAllServiceStatuses().length,
           services: globalSloGovernor.getAllServiceStatuses()
         };
+      }
+
+      case "eos_hedge_request_execute": {
+        const endpointId = String(args.endpointId || "default-endpoint");
+        const deadlineMs = args.deadlineMs !== undefined ? Number(args.deadlineMs) : undefined;
+        const hedgingDelayMs = args.hedgingDelayMs !== undefined ? Number(args.hedgingDelayMs) : undefined;
+        const primaryDelay = Math.max(0, Number(args.simulatedPrimaryDelayMs ?? 20));
+        const hedgedDelay = Math.max(0, Number(args.simulatedHedgedDelayMs ?? 15));
+
+        return globalHedgedMesh.executeHedgedSync({
+          endpointId,
+          deadlineMs,
+          hedgingDelayMs,
+          simulatedPrimaryDelayMs: primaryDelay,
+          simulatedHedgedDelayMs: hedgedDelay
+        });
+      }
+
+      case "eos_hedge_metrics_status": {
+        if (args.endpointId && args.recordSampleLatencyMs !== undefined) {
+          globalHedgedMesh.recordSample(String(args.endpointId), Number(args.recordSampleLatencyMs));
+        }
+        if (args.endpointId) {
+          const endpointId = String(args.endpointId);
+          return {
+            endpointId,
+            stats: globalHedgedMesh.getEndpointStats(endpointId),
+            meshMetrics: globalHedgedMesh.getMetrics()
+          };
+        }
+        return globalHedgedMesh.getMetrics();
       }
 
       case "eos_antigravity_direct": {

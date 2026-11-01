@@ -540,3 +540,20 @@
   - `docs/tasks/TASKS-110-MULTI-WINDOW-SLO-GOVERNOR.md`
   - `docs/formal/MultiWindowSloGovernor.tla`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-31-HEDGED-REQUESTS-111
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-111 (v76.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive "continuemos con perfeccion" on 2026-10-31)
+* **Scope**: Distributed Adaptive Hedged Requests & Deadline Propagation Mesh (Google "The Tail at Scale" Standard):
+  1. Component 1: Running percentile reservoir tracking $P50$, $P95$, and $P99$ per endpoint.
+  2. Component 2: Speculative hedged duplicate dispatch on $P95$ threshold breach with cooperative `AbortController` cancellation.
+  3. Component 3: Contextual end-to-end deadline budget propagation ($\Delta t_{\text{budget}}$) with fail-fast early shedding.
+  4. Component 4: Anti-storm token bucket enforcing a strict $\le 5\%$ volume cap on speculative requests.
+  5. Component 5: Multi-channel MCP tool exposure via `eos_hedge_request_execute` and `eos_hedge_metrics_status`.
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-111-HEDGED-REQUESTS-DEADLINE-MESH.md`
+  - `docs/plans/PLAN-111-HEDGED-REQUESTS-DEADLINE-MESH.md`
+  - `docs/tasks/TASKS-111-HEDGED-REQUESTS-DEADLINE-MESH.md`
+  - `docs/formal/AdaptiveHedgedDeadlineMesh.tla`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

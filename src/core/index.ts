@@ -73,3 +73,4 @@ export * from "./eosVercelCanaryObservability.ts";
 export * from "./eosColumnarTelemetryEngine.ts";
 export * from "./eosCellBasedBulkheadGovernor.ts";
 export * from "./eosMultiWindowSloGovernor.ts";
+export * from "./eosAdaptiveHedgedDeadlineMesh.ts";
