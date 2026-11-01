@@ -75,3 +75,4 @@ export * from "./eosCellBasedBulkheadGovernor.ts";
 export * from "./eosMultiWindowSloGovernor.ts";
 export * from "./eosAdaptiveHedgedDeadlineMesh.ts";
 export * from "./eosAdaptiveConcurrencyGovernor.ts";
+export * from "./eosTailBasedTraceSampler.ts";

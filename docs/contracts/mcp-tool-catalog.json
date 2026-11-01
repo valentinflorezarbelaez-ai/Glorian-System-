@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-01T14:12:09.571Z",
-  "catalogSha256": "53d988faf9e0ac922cd9c65eb184ea9c7453533945178eff1177112c3e1871de",
-  "totalTools": 154,
+  "generatedAt": "2026-11-01T14:29:14.364Z",
+  "catalogSha256": "e931d60583b703b4cca8573a7d8a9c48f65aba38dd4604b6f3921b71cefd9ec5",
+  "totalTools": 156,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -3613,6 +3613,83 @@
       },
       "annotations": {
         "title": "EOS concurrency Status",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_trace_span_record",
+      "description": "Ingests an OpenTelemetry-compatible span into the dynamic tail-based trace buffer ring, with optional immediate evaluation on root span completion.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "traceId": {
+            "type": "string",
+            "description": "Unique distributed trace identifier"
+          },
+          "spanId": {
+            "type": "string",
+            "description": "Unique span identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Span operation name"
+          },
+          "durationMs": {
+            "type": "number",
+            "description": "Span execution duration in ms"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP or gRPC status code (5xx triggers 100% sampling)"
+          },
+          "hasError": {
+            "type": "boolean",
+            "description": "Explicit error flag triggering 100% sampling"
+          },
+          "isResilienceEvent": {
+            "type": "boolean",
+            "description": "Flag indicating hedging, load-shedding, or circuit breaking"
+          },
+          "isEndSpan": {
+            "type": "boolean",
+            "description": "Whether this span completes the trace, triggering immediate sampling decision"
+          }
+        },
+        "required": [
+          "traceId",
+          "spanId",
+          "name"
+        ]
+      },
+      "annotations": {
+        "title": "EOS trace Span Record",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_trace_sampler_status",
+      "description": "Queries tail-based trace sampling telemetry, active buffer counts, retention statistics, and sampled-by-reason metrics.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "evictStale": {
+            "type": "boolean",
+            "description": "Optional flag to trigger immediate TTL-based sweep of idle traces"
+          },
+          "reset": {
+            "type": "boolean",
+            "description": "Optional flag to reset sampler counters to zero"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS trace Sampler Status",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

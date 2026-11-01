@@ -574,3 +574,20 @@
   - `docs/tasks/TASKS-112-ADAPTIVE-CONCURRENCY-GOVERNOR.md`
   - `docs/formal/AdaptiveConcurrencyGovernor.tla`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-01-TAIL-TRACE-SAMPLER-113
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-113 (v76.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive "demosle con toda" on 2026-11-01)
+* **Scope**: Dynamic Tail-Based Distributed Trace Sampler (Google Dapper & Honeycomb Tail-Sampling Standard):
+  1. Component 1: In-flight span aggregation and memory ring buffering keyed by `traceId`.
+  2. Component 2: 100% deterministic sampling engine for errors, exceptions, and HTTP 5xx responses.
+  3. Component 3: 100% deterministic sampling for tail latency stragglers and resilience interventions (hedges, load-shedding).
+  4. Component 4: Low nominal baseline sampling for healthy traces and memory-safe TTL buffer eviction.
+  5. Component 5: Multi-channel MCP tool exposure via `eos_trace_span_record` and `eos_trace_sampler_status`.
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-113-TAIL-BASED-TRACE-SAMPLER.md`
+  - `docs/plans/PLAN-113-TAIL-BASED-TRACE-SAMPLER.md`
+  - `docs/tasks/TASKS-113-TAIL-BASED-TRACE-SAMPLER.md`
+  - `docs/formal/TailBasedTraceSampler.tla`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

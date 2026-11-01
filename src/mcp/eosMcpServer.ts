@@ -532,6 +532,12 @@ import {
   type ConcurrencyGovernorStatus,
   type PriorityTier
 } from "../core/eosAdaptiveConcurrencyGovernor.ts";
+import {
+  EosTailBasedTraceSampler,
+  type TraceSpan,
+  type TraceSamplingDecision,
+  type TailSamplerStatus
+} from "../core/eosTailBasedTraceSampler.ts";
 
 import {
   annotateAndFilterTools,
@@ -543,6 +549,7 @@ const globalBulkheadGovernor = new EosCellBasedBulkheadGovernor({ cellCount: 8, 
 const globalSloGovernor = new EosMultiWindowSloGovernor();
 const globalHedgedMesh = new EosAdaptiveHedgedDeadlineMesh();
 const globalConcurrencyGovernor = new EosAdaptiveConcurrencyGovernor();
+const globalTraceSampler = new EosTailBasedTraceSampler();
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -2290,6 +2297,35 @@ export class EosMcpServer {
                     properties: {
                       recordLatencyMs: { type: "number", description: "Optional RTT in ms to feed into the Vegas gradient calculator" },
                       reset: { type: "boolean", description: "Optional flag to reset governor to nominal state" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_trace_span_record",
+                  description: "Ingests an OpenTelemetry-compatible span into the dynamic tail-based trace buffer ring, with optional immediate evaluation on root span completion.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      traceId: { type: "string", description: "Unique distributed trace identifier" },
+                      spanId: { type: "string", description: "Unique span identifier" },
+                      name: { type: "string", description: "Span operation name" },
+                      durationMs: { type: "number", description: "Span execution duration in ms" },
+                      statusCode: { type: "integer", description: "HTTP or gRPC status code (5xx triggers 100% sampling)" },
+                      hasError: { type: "boolean", description: "Explicit error flag triggering 100% sampling" },
+                      isResilienceEvent: { type: "boolean", description: "Flag indicating hedging, load-shedding, or circuit breaking" },
+                      isEndSpan: { type: "boolean", description: "Whether this span completes the trace, triggering immediate sampling decision" }
+                    },
+                    required: ["traceId", "spanId", "name"]
+                  }
+                },
+                {
+                  name: "eos_trace_sampler_status",
+                  description: "Queries tail-based trace sampling telemetry, active buffer counts, retention statistics, and sampled-by-reason metrics.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      evictStale: { type: "boolean", description: "Optional flag to trigger immediate TTL-based sweep of idle traces" },
+                      reset: { type: "boolean", description: "Optional flag to reset sampler counters to zero" }
                     }
                   }
                 },
@@ -4439,6 +4475,41 @@ export class EosMcpServer {
           globalConcurrencyGovernor.recordLatency(Number(args.recordLatencyMs));
         }
         return globalConcurrencyGovernor.getStatus();
+      }
+
+      case "eos_trace_span_record": {
+        const traceId = String(args.traceId || "");
+        const spanId = String(args.spanId || "");
+        const name = String(args.name || "");
+        const durationMs = args.durationMs !== undefined ? Number(args.durationMs) : 0;
+        const statusCode = args.statusCode !== undefined ? Number(args.statusCode) : undefined;
+        const hasError = args.hasError !== undefined ? Boolean(args.hasError) : undefined;
+        const isResilienceEvent = args.isResilienceEvent !== undefined ? Boolean(args.isResilienceEvent) : undefined;
+        const isEndSpan = Boolean(args.isEndSpan);
+
+        const span: TraceSpan = {
+          traceId,
+          spanId,
+          name,
+          startTimeMs: Date.now() - durationMs,
+          durationMs,
+          statusCode,
+          hasError,
+          isResilienceEvent,
+          attributes: args.attributes && typeof args.attributes === "object" ? args.attributes : undefined
+        };
+
+        return globalTraceSampler.recordAndEvaluate(span, isEndSpan);
+      }
+
+      case "eos_trace_sampler_status": {
+        if (args.reset) {
+          globalTraceSampler.reset();
+        }
+        if (args.evictStale) {
+          globalTraceSampler.evictStaleTraces();
+        }
+        return globalTraceSampler.getStatus();
       }
 
       case "eos_antigravity_direct": {

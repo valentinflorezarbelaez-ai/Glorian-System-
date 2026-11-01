@@ -694,7 +694,8 @@ export function runAllFormalVerifications() {
     verifyCellBasedBulkheadGovernorModel(),
     verifyMultiWindowSloGovernorModel(),
     verifyAdaptiveHedgedDeadlineMeshModel(),
-    verifyAdaptiveConcurrencyGovernorModel()
+    verifyAdaptiveConcurrencyGovernorModel(),
+    verifyTailBasedTraceSamplerModel()
   ];
 }
 
@@ -1001,6 +1002,104 @@ export function verifyAdaptiveConcurrencyGovernorModel(steps = 200) {
 
   return {
     specification: "AdaptiveConcurrencyGovernor.tla",
+    moduleName: parsed.moduleName,
+    sourceFileRead: true,
+    extractedVariables: parsed.variables,
+    extractedInvariantNames: parsed.invariants,
+    stepsExecuted,
+    executionMode: "bounded-javascript-simulation",
+    simulationAssertionsPassed: true
+  };
+}
+
+export function verifyTailBasedTraceSamplerModel(steps = 200) {
+  const filePath = path.join(formalDir, "TailBasedTraceSampler.tla");
+  const parsed = parseTlaModule(filePath);
+
+  const maxActiveTraces = 1000;
+  const latencyThresholdMs = 500;
+
+  let activeTraces = 0;
+  let totalSpansReceived = 0;
+  let tracesCompleted = 0;
+  let tracesSampledErrors = 0;
+  let tracesSampledLatency = 0;
+  let tracesSampledResilience = 0;
+  let tracesSampledNominal = 0;
+  let tracesDroppedNominal = 0;
+  let tracesEvicted = 0;
+  let stepsExecuted = 0;
+
+  for (let i = 0; i < steps; i++) {
+    stepsExecuted++;
+
+    // Invariants
+    assert.ok(activeTraces <= maxActiveTraces, "VIOLATION: BufferCapacityInvariant");
+    assert.strictEqual(
+      tracesCompleted,
+      tracesSampledErrors + tracesSampledLatency + tracesSampledResilience + tracesSampledNominal + tracesDroppedNominal,
+      "VIOLATION: ConservationInvariant"
+    );
+    assert.ok(totalSpansReceived >= 0, "VIOLATION: NonNegativeCountsInvariant");
+
+    const action = i % 8;
+    if (action === 0) {
+      // IngestSpanNewTrace
+      if (activeTraces < maxActiveTraces) {
+        activeTraces++;
+        totalSpansReceived++;
+      }
+    } else if (action === 1) {
+      // IngestSpanExistingTrace
+      if (activeTraces > 0) {
+        totalSpansReceived++;
+      }
+    } else if (action === 2) {
+      // CompleteTraceWithError
+      if (activeTraces > 0) {
+        activeTraces--;
+        tracesCompleted++;
+        tracesSampledErrors++;
+      }
+    } else if (action === 3) {
+      // CompleteTraceWithHighLatency
+      if (activeTraces > 0) {
+        activeTraces--;
+        tracesCompleted++;
+        tracesSampledLatency++;
+      }
+    } else if (action === 4) {
+      // CompleteTraceWithResilienceEvent
+      if (activeTraces > 0) {
+        activeTraces--;
+        tracesCompleted++;
+        tracesSampledResilience++;
+      }
+    } else if (action === 5) {
+      // CompleteTraceNominalSampled
+      if (activeTraces > 0) {
+        activeTraces--;
+        tracesCompleted++;
+        tracesSampledNominal++;
+      }
+    } else if (action === 6) {
+      // CompleteTraceNominalDropped
+      if (activeTraces > 0) {
+        activeTraces--;
+        tracesCompleted++;
+        tracesDroppedNominal++;
+      }
+    } else {
+      // EvictStaleTrace
+      if (activeTraces > 0) {
+        activeTraces--;
+        tracesEvicted++;
+      }
+    }
+  }
+
+  return {
+    specification: "TailBasedTraceSampler.tla",
     moduleName: parsed.moduleName,
     sourceFileRead: true,
     extractedVariables: parsed.variables,
