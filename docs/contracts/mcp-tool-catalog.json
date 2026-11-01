@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-01T16:39:31.488Z",
-  "catalogSha256": "cb0bdf3cd1a939d1fde9214450c27674d5dac0c8273f1a1b5dad40937aff5a73",
-  "totalTools": 170,
+  "generatedAt": "2026-11-01T21:09:55.584Z",
+  "catalogSha256": "4ff4bae1922b52b5f2a34eec4cc8de4ce0e18214f2e14ab07f56bfc66100f745",
+  "totalTools": 173,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -4118,6 +4118,76 @@
       },
       "annotations": {
         "title": "EOS tmr Consensus Adjudicate",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_synapse_propagate_golden_path",
+      "description": "Propagates an architectural discovery or Golden Path across registered fleet repositories with topological ordering and Merkle validation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "patternId": {
+            "type": "string",
+            "description": "Identifier of the architectural pattern or Golden Path"
+          },
+          "targetRepos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of target repositories"
+          }
+        },
+        "required": [
+          "patternId"
+        ]
+      },
+      "annotations": {
+        "title": "EOS synapse Propagate Golden Path",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_synapse_fleet_knowledge_query",
+      "description": "Queries cross-fleet architectural knowledge patterns and returns fleet health score synthesis and Merkle root.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "categoryFilter": {
+            "type": "string",
+            "description": "Optional filter: 'PERFORMANCE_OPT', 'SECURITY_HARDENING', 'FINOPS_GOVERNANCE', 'AEROSPACE_SAFETY', 'GOLDEN_PATH'"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS synapse Fleet Knowledge Query",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_synapse_mesh_status",
+      "description": "Queries real-time operational status, synchronization events, and Merkle root of the Cross-Fleet Neural Synapse mesh.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "reset": {
+            "type": "boolean",
+            "description": "Optional flag to reset synapse status and knowledge graph"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS synapse Mesh Status",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

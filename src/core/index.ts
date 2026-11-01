@@ -82,3 +82,4 @@ export * from "./eosBigTechTranscendenceNexus.ts";
 export * from "./eosEliteDesignStudioEngine.ts";
 export * from "./eosAgenticFinOpsGovernor.ts";
 export * from "./eosPlanetaryMonorepoGovernor.ts";
+export * from "./eosCrossFleetNeuralSynapse.ts";

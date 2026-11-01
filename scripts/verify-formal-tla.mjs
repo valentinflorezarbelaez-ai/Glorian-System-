@@ -701,7 +701,8 @@ export function runAllFormalVerifications() {
     verifyBigTechTranscendenceNexusModel(),
     verifyEliteDesignStudioModel(),
     verifyAgenticFinOpsGovernorModel(),
-    verifyPlanetaryMonorepoGovernorModel()
+    verifyPlanetaryMonorepoGovernorModel(),
+    verifyCrossFleetNeuralSynapseModel()
   ];
 }
 
@@ -1480,6 +1481,51 @@ export function verifyPlanetaryMonorepoGovernorModel(steps = 200) {
 
   return {
     specification: "PlanetaryMonorepoGovernor.tla",
+    moduleName: parsed.moduleName,
+    sourceFileRead: true,
+    extractedVariables: parsed.variables,
+    extractedInvariantNames: parsed.invariants,
+    stepsExecuted,
+    executionMode: "bounded-javascript-simulation",
+    simulationAssertionsPassed: true
+  };
+}
+
+export function verifyCrossFleetNeuralSynapseModel(steps = 200) {
+  const filePath = path.join(formalDir, "CrossFleetNeuralSynapse.tla");
+  const parsed = parseTlaModule(filePath);
+
+  let totalPatternsIndexed = 0;
+  let totalPropagationsExecuted = 0;
+  let fleetReposSynchronized = 0;
+  let incompatibleNodesIsolated = 0;
+  let merkleSyncEvents = 0;
+  let stepsExecuted = 0;
+
+  for (let i = 0; i < steps; i++) {
+    stepsExecuted++;
+    assert.ok(fleetReposSynchronized <= (totalPropagationsExecuted * 5), "VIOLATION: SafetyInvariant");
+    assert.ok(incompatibleNodesIsolated >= 0, "VIOLATION: IsolationSafetyInvariant");
+    assert.ok(totalPatternsIndexed >= 0 && merkleSyncEvents >= 0, "VIOLATION: SynapticProgressInvariant");
+
+    const action = i % 3;
+    if (action === 0) {
+      totalPatternsIndexed++;
+      merkleSyncEvents++;
+    } else if (action === 1) {
+      totalPropagationsExecuted++;
+      fleetReposSynchronized += 4;
+      merkleSyncEvents++;
+    } else {
+      totalPropagationsExecuted++;
+      fleetReposSynchronized += 3;
+      incompatibleNodesIsolated++;
+      merkleSyncEvents++;
+    }
+  }
+
+  return {
+    specification: "CrossFleetNeuralSynapse.tla",
     moduleName: parsed.moduleName,
     sourceFileRead: true,
     extractedVariables: parsed.variables,

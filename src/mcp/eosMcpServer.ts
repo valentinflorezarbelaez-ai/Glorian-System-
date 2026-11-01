@@ -583,6 +583,15 @@ import {
   type TmrConsensusResult,
   type PlanetaryGovernorStatus
 } from "../core/eosPlanetaryMonorepoGovernor.ts";
+import {
+  EosCrossFleetNeuralSynapse,
+  type SynapticPatternCategory,
+  type SynapticPattern,
+  type PropagationDirective,
+  type PropagationPlanResult,
+  type FleetKnowledgeQueryResult,
+  type SynapseMeshStatus
+} from "../core/eosCrossFleetNeuralSynapse.ts";
 
 import {
   annotateAndFilterTools,
@@ -601,6 +610,7 @@ const globalTranscendenceNexus = EosBigTechTranscendenceNexus.getInstance();
 const globalDesignStudio = EosEliteDesignStudioEngine.getInstance();
 const globalFinOpsGovernor = EosAgenticFinOpsGovernor.getInstance();
 const globalPlanetaryGovernor = EosPlanetaryMonorepoGovernor.getInstance();
+const globalCrossFleetSynapse = EosCrossFleetNeuralSynapse.getInstance();
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -2578,6 +2588,38 @@ export class EosMcpServer {
                       }
                     },
                     required: ["votes"]
+                  }
+                },
+                {
+                  name: "eos_synapse_propagate_golden_path",
+                  description: "Propagates an architectural discovery or Golden Path across registered fleet repositories with topological ordering and Merkle validation.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      patternId: { type: "string", description: "Identifier of the architectural pattern or Golden Path" },
+                      targetRepos: { type: "array", items: { type: "string" }, description: "Optional list of target repositories" }
+                    },
+                    required: ["patternId"]
+                  }
+                },
+                {
+                  name: "eos_synapse_fleet_knowledge_query",
+                  description: "Queries cross-fleet architectural knowledge patterns and returns fleet health score synthesis and Merkle root.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      categoryFilter: { type: "string", description: "Optional filter: 'PERFORMANCE_OPT', 'SECURITY_HARDENING', 'FINOPS_GOVERNANCE', 'AEROSPACE_SAFETY', 'GOLDEN_PATH'" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_synapse_mesh_status",
+                  description: "Queries real-time operational status, synchronization events, and Merkle root of the Cross-Fleet Neural Synapse mesh.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      reset: { type: "boolean", description: "Optional flag to reset synapse status and knowledge graph" }
+                    }
                   }
                 },
                 {
@@ -4862,6 +4904,22 @@ export class EosMcpServer {
       case "eos_tmr_consensus_adjudicate": {
         const votes = Array.isArray(args.votes) ? args.votes : [];
         return globalPlanetaryGovernor.adjudicateTmrConsensus(votes);
+      }
+
+      case "eos_synapse_propagate_golden_path": {
+        const patternId = String(args.patternId || "");
+        const targetRepos = Array.isArray(args.targetRepos) ? args.targetRepos.map(String) : undefined;
+        return globalCrossFleetSynapse.propagateGoldenPath(patternId, targetRepos);
+      }
+
+      case "eos_synapse_fleet_knowledge_query": {
+        const filter = args.categoryFilter ? (String(args.categoryFilter).toUpperCase() as SynapticPatternCategory) : undefined;
+        return globalCrossFleetSynapse.queryFleetKnowledge(filter);
+      }
+
+      case "eos_synapse_mesh_status": {
+        if (args.reset) globalCrossFleetSynapse.reset();
+        return globalCrossFleetSynapse.getStatus();
       }
 
       case "eos_antigravity_direct": {
