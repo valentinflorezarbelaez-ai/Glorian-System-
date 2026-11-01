@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-01T15:56:35.021Z",
-  "catalogSha256": "46b39616754e175a5604a17baa05e964b1319a4713e4a0b2db3b9b3d906cd341",
-  "totalTools": 164,
+  "generatedAt": "2026-11-01T16:20:45.964Z",
+  "catalogSha256": "3bd6ea6085ded798160827e89a88ab150d13a671ede7ddb42b1c666075534d21",
+  "totalTools": 167,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -3917,6 +3917,88 @@
       },
       "annotations": {
         "title": "EOS design Audit Markup",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_finops_route_task",
+      "description": "Evaluates an engineering directive's cognitive entropy and routes it to the lowest viable cost tier (Tier 1 Local SLM, Tier 2 Balanced, Tier 3 Frontier Reasoning) according to Spotify Xirp and Nubank Meta FinOps standards.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "directive": {
+            "type": "string",
+            "description": "Engineering task or directive to classify"
+          },
+          "estimatedTokens": {
+            "type": "number",
+            "description": "Estimated tokens required for task"
+          }
+        },
+        "required": [
+          "directive"
+        ]
+      },
+      "annotations": {
+        "title": "EOS finops Route Task",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_finops_evaluate_stagnation",
+      "description": "Evaluates consecutive diff similarity across failed agent cycles. Dispatches SIGSTOP emergency breaker if similarity >= 85% across 3 cycles to stop infinite token bleed.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "diffHistory": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Sequential list of code diffs produced by agent"
+          },
+          "testPassed": {
+            "type": "boolean",
+            "description": "Whether the latest verification tests passed"
+          }
+        },
+        "required": [
+          "diffHistory",
+          "testPassed"
+        ]
+      },
+      "annotations": {
+        "title": "EOS finops Evaluate Stagnation",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_finops_wallet_status",
+      "description": "Queries the ephemeral task wallet status, accumulated spend, remaining budget, and code survival ROI analytics.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "missionId": {
+            "type": "string",
+            "description": "Optional mission or task ID to query wallet for"
+          },
+          "reset": {
+            "type": "boolean",
+            "description": "Optional flag to reset governor status"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS finops Wallet Status",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

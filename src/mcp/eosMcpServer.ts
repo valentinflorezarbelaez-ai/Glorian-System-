@@ -564,6 +564,15 @@ import {
   type DesignAuditResult,
   type DesignStudioStatus
 } from "../core/eosEliteDesignStudioEngine.ts";
+import {
+  EosAgenticFinOpsGovernor,
+  type FinOpsCostTier,
+  type TaskCostRoutingResult,
+  type StagnationEvaluationResult,
+  type EphemeralTaskWallet,
+  type CodeSurvivalEvaluationResult,
+  type FinOpsGovernorStatus
+} from "../core/eosAgenticFinOpsGovernor.ts";
 
 import {
   annotateAndFilterTools,
@@ -580,6 +589,7 @@ const globalRemediationEngine = new EosPredictiveRemediationEngine();
 const globalKernelOrchestrator = EosUnifiedKernelOrchestrator.getInstance();
 const globalTranscendenceNexus = EosBigTechTranscendenceNexus.getInstance();
 const globalDesignStudio = EosEliteDesignStudioEngine.getInstance();
+const globalFinOpsGovernor = EosAgenticFinOpsGovernor.getInstance();
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -2463,6 +2473,41 @@ export class EosMcpServer {
                       markup: { type: "string", description: "HTML markup or CSS to audit" }
                     },
                     required: ["markup"]
+                  }
+                },
+                {
+                  name: "eos_finops_route_task",
+                  description: "Evaluates an engineering directive's cognitive entropy and routes it to the lowest viable cost tier (Tier 1 Local SLM, Tier 2 Balanced, Tier 3 Frontier Reasoning) according to Spotify Xirp and Nubank Meta FinOps standards.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      directive: { type: "string", description: "Engineering task or directive to classify" },
+                      estimatedTokens: { type: "number", description: "Estimated tokens required for task" }
+                    },
+                    required: ["directive"]
+                  }
+                },
+                {
+                  name: "eos_finops_evaluate_stagnation",
+                  description: "Evaluates consecutive diff similarity across failed agent cycles. Dispatches SIGSTOP emergency breaker if similarity >= 85% across 3 cycles to stop infinite token bleed.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      diffHistory: { type: "array", items: { type: "string" }, description: "Sequential list of code diffs produced by agent" },
+                      testPassed: { type: "boolean", description: "Whether the latest verification tests passed" }
+                    },
+                    required: ["diffHistory", "testPassed"]
+                  }
+                },
+                {
+                  name: "eos_finops_wallet_status",
+                  description: "Queries the ephemeral task wallet status, accumulated spend, remaining budget, and code survival ROI analytics.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      missionId: { type: "string", description: "Optional mission or task ID to query wallet for" },
+                      reset: { type: "boolean", description: "Optional flag to reset governor status" }
+                    }
                   }
                 },
                 {
@@ -4710,6 +4755,27 @@ export class EosMcpServer {
       case "eos_design_audit_markup": {
         const markup = String(args.markup || "");
         return globalDesignStudio.auditDesignMarkup(markup);
+      }
+
+      case "eos_finops_route_task": {
+        const directive = String(args.directive || "");
+        const tokens = typeof args.estimatedTokens === "number" ? args.estimatedTokens : undefined;
+        return globalFinOpsGovernor.classifyTaskCostTier(directive, tokens);
+      }
+
+      case "eos_finops_evaluate_stagnation": {
+        const diffs = Array.isArray(args.diffHistory) ? args.diffHistory.map(String) : [];
+        const passed = Boolean(args.testPassed);
+        return globalFinOpsGovernor.evaluateStagnation(diffs, passed);
+      }
+
+      case "eos_finops_wallet_status": {
+        if (args.reset) globalFinOpsGovernor.reset();
+        const missionId = args.missionId ? String(args.missionId) : undefined;
+        if (missionId) {
+          return globalFinOpsGovernor.recordTokenUsage(missionId, 0, 0, "TIER_1_LOCAL_SLM");
+        }
+        return globalFinOpsGovernor.getStatus();
       }
 
       case "eos_antigravity_direct": {

@@ -660,3 +660,22 @@
   - `docs/tasks/TASKS-117-ELITE-DESIGN-STUDIO-ENGINE.md`
   - `docs/formal/EliteDesignStudio.tla`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-01-AGENTIC-FINOPS-GOVERNOR-118
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-118 (v80.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive "todo esto lod ebe dominar y tener perfectamente claro eos" and confirmation "si" on 2026-11-01)
+* **Scope**: Autonomous Agentic FinOps Governor & Cognitive Stagnation Breaker:
+  1. Component 1: Mid-task dynamic model cost routing across 3 discrete tiers (Tier 1 Local SLM, Tier 2 Balanced, Tier 3 Frontier Reasoning).
+  2. Component 2: Cognitive stagnation & token bleed circuit breaker via AST/diff convergence detection (Levenshtein >= 85% across 3 cycles with failing tests -> SIGSTOP).
+  3. Component 3: Ephemeral task wallets with hard dollar caps, 80% proactive warning, and 100% fail-closed cutoff with offline local fallback.
+  4. Component 4: 30-day code survival rate tracking, net-negative AI debt detection (churn > 30%), and human engineering ROI evaluation.
+  5. Component 5: MCP tool exposure via `eos_finops_route_task`, `eos_finops_evaluate_stagnation`, and `eos_finops_wallet_status`.
+* **Artifacts Approved**:
+  - `docs/intake/INTAKE-118-AGENTIC-FINOPS-GOVERNOR.md`
+  - `openspec/specs/SPEC-118-AGENTIC-FINOPS-GOVERNOR.md`
+  - `docs/plans/PLAN-118-AGENTIC-FINOPS-GOVERNOR.md`
+  - `docs/tasks/TASKS-118-AGENTIC-FINOPS-GOVERNOR.md`
+  - `docs/formal/AgenticFinOpsGovernor.tla`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
