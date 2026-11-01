@@ -523,3 +523,20 @@
   - `docs/tasks/TASKS-109-CELL-BASED-BULKHEAD.md`
   - `docs/formal/CellBasedBulkheadGovernor.tla`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-31-SLO-GOVERNOR-110
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-110 (v76.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive "continuemos con perfeccion" on 2026-10-31)
+* **Scope**: Multi-Window Multi-Burn-Rate SLO & Error Budget Governor (Google Site Reliability Engineering Standard):
+  1. Component 1: Continuous error budget accounting and multi-window burn rate calculation (1h, 6h, 30m, 5m).
+  2. Component 2: Dual-window correlation alert engine suppressing transient non-actionable spikes.
+  3. Component 3: Autonomous fleet deployment freeze gatekeeper enforcing fail-closed release blocking on budget exhaustion.
+  4. Component 4: Cooldown recovery detector with cryptographic SHA-256 thawing receipts.
+  5. Component 5: Multi-channel MCP tool exposure via `eos_slo_burn_rate_evaluate` and `eos_slo_budget_status`.
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-110-MULTI-WINDOW-SLO-GOVERNOR.md`
+  - `docs/plans/PLAN-110-MULTI-WINDOW-SLO-GOVERNOR.md`
+  - `docs/tasks/TASKS-110-MULTI-WINDOW-SLO-GOVERNOR.md`
+  - `docs/formal/MultiWindowSloGovernor.tla`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

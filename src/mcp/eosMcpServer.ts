@@ -513,6 +513,12 @@ import {
   EosCellBasedBulkheadGovernor,
   type CellHealthStatus
 } from "../core/eosCellBasedBulkheadGovernor.ts";
+import {
+  EosMultiWindowSloGovernor,
+  type ServiceSloStatus,
+  type SloTargetConfig,
+  type SloTelemetryEvent
+} from "../core/eosMultiWindowSloGovernor.ts";
 
 import {
   annotateAndFilterTools,
@@ -521,6 +527,7 @@ import {
 } from "./eosMcpToolCatalog.ts";
 
 const globalBulkheadGovernor = new EosCellBasedBulkheadGovernor({ cellCount: 8, cellCapacity: 100 });
+const globalSloGovernor = new EosMultiWindowSloGovernor();
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -2183,6 +2190,42 @@ export class EosMcpServer {
                     properties: {
                       cellId: { type: "number", description: "Optional filter or target cell ID (0..N-1)" },
                       setStatus: { type: "string", enum: ["HEALTHY", "DEGRADED", "DRAINING", "QUARANTINED"], description: "Optional state change for target cell" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_slo_burn_rate_evaluate",
+                  description: "Evaluates Google SRE multi-window multi-burn-rate alerting and sliding-window error budget consumption for a fleet service, returning burn rates across 5m, 30m, 1h, and 6h windows, remaining error budget, and deployment freeze status.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      serviceId: { type: "string", description: "Target fleet service ID or repository name" },
+                      events: {
+                        type: "array",
+                        description: "Optional telemetry events batch to ingest prior to evaluation",
+                        items: {
+                          type: "object",
+                          properties: {
+                            timestamp: { type: "number", description: "Epoch ms timestamp" },
+                            isError: { type: "boolean", description: "Whether request resulted in error" },
+                            statusCode: { type: "number", description: "HTTP status code" },
+                            latencyMs: { type: "number", description: "Request latency in ms" }
+                          }
+                        }
+                      },
+                      evaluationTimestamp: { type: "number", description: "Optional timestamp epoch ms for evaluation (defaults to now)" }
+                    },
+                    required: ["serviceId"]
+                  }
+                },
+                {
+                  name: "eos_slo_budget_status",
+                  description: "Queries error budget health and deployment freeze state across all fleet services or a specific service, verifying if canaries or production deployments are permitted under Google SRE error budget governance.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      serviceId: { type: "string", description: "Optional filter for a specific service ID" },
+                      checkDeploymentAllowed: { type: "boolean", description: "If true, explicitly returns whether deployment is permitted (fail-closed check)" }
                     }
                   }
                 },
@@ -4256,6 +4299,29 @@ export class EosMcpServer {
           };
         }
         return metrics;
+      }
+
+      case "eos_slo_burn_rate_evaluate": {
+        const serviceId = String(args.serviceId || "default-service");
+        if (Array.isArray(args.events)) {
+          globalSloGovernor.ingestBatch(serviceId, args.events as SloTelemetryEvent[]);
+        }
+        const evalTs = args.evaluationTimestamp !== undefined ? Number(args.evaluationTimestamp) : undefined;
+        return globalSloGovernor.evaluateService(serviceId, evalTs);
+      }
+
+      case "eos_slo_budget_status": {
+        if (args.serviceId) {
+          const serviceId = String(args.serviceId);
+          if (args.checkDeploymentAllowed) {
+            return globalSloGovernor.isDeploymentAllowed(serviceId);
+          }
+          return globalSloGovernor.evaluateService(serviceId);
+        }
+        return {
+          totalServices: globalSloGovernor.getAllServiceStatuses().length,
+          services: globalSloGovernor.getAllServiceStatuses()
+        };
       }
 
       case "eos_antigravity_direct": {

@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-01T00:53:02.272Z",
-  "catalogSha256": "afdd622f35d5a8c1a616957a7ec09af874e5def1f9ba1e4349824772c1f8713e",
-  "totalTools": 148,
+  "generatedAt": "2026-11-01T01:15:26.201Z",
+  "catalogSha256": "06bb769a386a4c3fb1227ea7dc045e0cf3662f5885533b04836cde2b627b5e37",
+  "totalTools": 150,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -3416,6 +3416,82 @@
       },
       "annotations": {
         "title": "EOS cell Bulkhead Status",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_slo_burn_rate_evaluate",
+      "description": "Evaluates Google SRE multi-window multi-burn-rate alerting and sliding-window error budget consumption for a fleet service, returning burn rates across 5m, 30m, 1h, and 6h windows, remaining error budget, and deployment freeze status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "serviceId": {
+            "type": "string",
+            "description": "Target fleet service ID or repository name"
+          },
+          "events": {
+            "type": "array",
+            "description": "Optional telemetry events batch to ingest prior to evaluation",
+            "items": {
+              "type": "object",
+              "properties": {
+                "timestamp": {
+                  "type": "number",
+                  "description": "Epoch ms timestamp"
+                },
+                "isError": {
+                  "type": "boolean",
+                  "description": "Whether request resulted in error"
+                },
+                "statusCode": {
+                  "type": "number",
+                  "description": "HTTP status code"
+                },
+                "latencyMs": {
+                  "type": "number",
+                  "description": "Request latency in ms"
+                }
+              }
+            }
+          },
+          "evaluationTimestamp": {
+            "type": "number",
+            "description": "Optional timestamp epoch ms for evaluation (defaults to now)"
+          }
+        },
+        "required": [
+          "serviceId"
+        ]
+      },
+      "annotations": {
+        "title": "EOS slo Burn Rate Evaluate",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_slo_budget_status",
+      "description": "Queries error budget health and deployment freeze state across all fleet services or a specific service, verifying if canaries or production deployments are permitted under Google SRE error budget governance.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "serviceId": {
+            "type": "string",
+            "description": "Optional filter for a specific service ID"
+          },
+          "checkDeploymentAllowed": {
+            "type": "boolean",
+            "description": "If true, explicitly returns whether deployment is permitted (fail-closed check)"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS slo Budget Status",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

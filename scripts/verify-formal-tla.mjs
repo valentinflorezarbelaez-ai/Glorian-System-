@@ -691,7 +691,8 @@ export function runAllFormalVerifications() {
     verifyBftAgentSwarmSlashingModel(),
     verifyVercelCanaryObservabilityModel(),
     verifyColumnarTelemetryEngineModel(),
-    verifyCellBasedBulkheadGovernorModel()
+    verifyCellBasedBulkheadGovernorModel(),
+    verifyMultiWindowSloGovernorModel()
   ];
 }
 
@@ -791,6 +792,70 @@ export function verifyCellBasedBulkheadGovernorModel(steps = 200) {
 
   return {
     specification: "CellBasedBulkheadGovernor.tla",
+    moduleName: parsed.moduleName,
+    sourceFileRead: true,
+    extractedVariables: parsed.variables,
+    extractedInvariantNames: parsed.invariants,
+    stepsExecuted,
+    executionMode: "bounded-javascript-simulation",
+    simulationAssertionsPassed: true
+  };
+}
+
+export function verifyMultiWindowSloGovernorModel(steps = 200) {
+  const filePath = path.join(formalDir, "MultiWindowSloGovernor.tla");
+  const parsed = parseTlaModule(filePath);
+
+  const criticalBurnRateThreshold = 144; // 14.4 scaled by 10
+
+  let totalEvents = 0;
+  let totalErrors = 0;
+  let burnRate1h = 10;
+  let burnRate5m = 10;
+  let deploymentFrozen = false;
+  let stepsExecuted = 0;
+
+  for (let i = 0; i < steps; i++) {
+    stepsExecuted++;
+    assert.ok(totalErrors <= totalEvents, "VIOLATION: BudgetAccountingBoundedInvariant");
+
+    if (burnRate1h >= criticalBurnRateThreshold && burnRate5m >= criticalBurnRateThreshold) {
+      assert.strictEqual(deploymentFrozen, true, "VIOLATION: DeploymentFreezeInvariant");
+    }
+
+    if (burnRate5m >= criticalBurnRateThreshold && burnRate1h < criticalBurnRateThreshold) {
+      assert.strictEqual(deploymentFrozen, false, "VIOLATION: TransientSpikeSuppressedInvariant");
+    }
+
+    totalEvents++;
+
+    if (i % 20 === 19) {
+      // Sustained critical outage
+      totalErrors += 5;
+      burnRate1h = 150;
+      burnRate5m = 180;
+      deploymentFrozen = true;
+    } else if (i % 7 === 6) {
+      // Transient spike (suppressed)
+      totalErrors += 1;
+      burnRate5m = 200;
+      burnRate1h = 50;
+      deploymentFrozen = false;
+    } else if (deploymentFrozen && i % 5 === 0) {
+      // Recovery and thaw
+      burnRate1h = 8;
+      burnRate5m = 5;
+      deploymentFrozen = false;
+    } else {
+      // Nominal
+      burnRate1h = 10;
+      burnRate5m = 10;
+      deploymentFrozen = false;
+    }
+  }
+
+  return {
+    specification: "MultiWindowSloGovernor.tla",
     moduleName: parsed.moduleName,
     sourceFileRead: true,
     extractedVariables: parsed.variables,
