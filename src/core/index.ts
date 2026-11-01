@@ -79,3 +79,4 @@ export * from "./eosTailBasedTraceSampler.ts";
 export * from "./eosPredictiveRemediationEngine.ts";
 export * from "./eosUnifiedKernelOrchestrator.ts";
 export * from "./eosBigTechTranscendenceNexus.ts";
+export * from "./eosEliteDesignStudioEngine.ts";

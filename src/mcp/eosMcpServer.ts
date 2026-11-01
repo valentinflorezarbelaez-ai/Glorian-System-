@@ -556,6 +556,14 @@ import {
   type MasterTranscendenceReceipt,
   type TranscendenceNexusStatus
 } from "../core/eosBigTechTranscendenceNexus.ts";
+import {
+  EosEliteDesignStudioEngine,
+  type DesignArchetype,
+  type DesignComponentType,
+  type DesignGenerationResult,
+  type DesignAuditResult,
+  type DesignStudioStatus
+} from "../core/eosEliteDesignStudioEngine.ts";
 
 import {
   annotateAndFilterTools,
@@ -571,6 +579,7 @@ const globalTraceSampler = new EosTailBasedTraceSampler();
 const globalRemediationEngine = new EosPredictiveRemediationEngine();
 const globalKernelOrchestrator = EosUnifiedKernelOrchestrator.getInstance();
 const globalTranscendenceNexus = EosBigTechTranscendenceNexus.getInstance();
+const globalDesignStudio = EosEliteDesignStudioEngine.getInstance();
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -2423,6 +2432,37 @@ export class EosMcpServer {
                     properties: {
                       reset: { type: "boolean", description: "Optional flag to reset nexus status and history" }
                     }
+                  }
+                },
+                {
+                  name: "eos_design_scaffold_component",
+                  description: "Scaffolds world-class UI components in elite design archetypes (Spotify XIRP, Palantir Foundry, Anduril Lattice) with accessible semantic HTML5, scoped CSS3, and WCAG contrast validation.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      archetype: {
+                        type: "string",
+                        description: "Design system archetype ('SPOTIFY_XIRP', 'PALANTIR_FOUNDRY', 'ANDURIL_LATTICE')"
+                      },
+                      componentType: {
+                        type: "string",
+                        description: "Component type ('INCIDENT_TIMELINE', 'WAVEFORM_MONITOR', 'TELEMETRY_GRID', 'TACTICAL_HUD', 'MISSION_CONTROL_DECK')"
+                      },
+                      title: { type: "string", description: "Optional title for the component" },
+                      subtitle: { type: "string", description: "Optional subtitle for the component" }
+                    },
+                    required: ["archetype", "componentType"]
+                  }
+                },
+                {
+                  name: "eos_design_audit_markup",
+                  description: "Audits HTML/CSS markup for world-class design system conformance, evaluating contrast ratio (WCAG AA/AAA >= 4.5:1), 8px spatial grid harmony, and prefers-reduced-motion safety.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      markup: { type: "string", description: "HTML markup or CSS to audit" }
+                    },
+                    required: ["markup"]
                   }
                 },
                 {
@@ -4657,6 +4697,19 @@ export class EosMcpServer {
           globalTranscendenceNexus.reset();
         }
         return globalTranscendenceNexus.getStatus();
+      }
+
+      case "eos_design_scaffold_component": {
+        const archetype = String(args.archetype || "SPOTIFY_XIRP").toUpperCase() as DesignArchetype;
+        const componentType = String(args.componentType || "INCIDENT_TIMELINE").toUpperCase() as DesignComponentType;
+        const title = args.title ? String(args.title) : undefined;
+        const subtitle = args.subtitle ? String(args.subtitle) : undefined;
+        return globalDesignStudio.scaffoldComponent(archetype, componentType, { title, subtitle });
+      }
+
+      case "eos_design_audit_markup": {
+        const markup = String(args.markup || "");
+        return globalDesignStudio.auditDesignMarkup(markup);
       }
 
       case "eos_antigravity_direct": {

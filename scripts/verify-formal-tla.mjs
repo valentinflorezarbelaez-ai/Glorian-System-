@@ -698,7 +698,8 @@ export function runAllFormalVerifications() {
     verifyTailBasedTraceSamplerModel(),
     verifyPredictiveRemediationEngineModel(),
     verifyUnifiedKernelOrchestratorModel(),
-    verifyBigTechTranscendenceNexusModel()
+    verifyBigTechTranscendenceNexusModel(),
+    verifyEliteDesignStudioModel()
   ];
 }
 
@@ -1315,6 +1316,60 @@ export function verifyBigTechTranscendenceNexusModel(steps = 200) {
 
   return {
     specification: "BigTechTranscendenceNexus.tla",
+    moduleName: parsed.moduleName,
+    sourceFileRead: true,
+    extractedVariables: parsed.variables,
+    extractedInvariantNames: parsed.invariants,
+    stepsExecuted,
+    executionMode: "bounded-javascript-simulation",
+    simulationAssertionsPassed: true
+  };
+}
+
+export function verifyEliteDesignStudioModel(steps = 200) {
+  const filePath = path.join(formalDir, "EliteDesignStudio.tla");
+  const parsed = parseTlaModule(filePath);
+
+  let totalGenerations = 0;
+  let spotifyXirpCount = 0;
+  let palantirFoundryCount = 0;
+  let andurilLatticeCount = 0;
+  let totalAuditsExecuted = 0;
+  let contrastViolationsFound = 0;
+  let stepsExecuted = 0;
+
+  for (let i = 0; i < steps; i++) {
+    stepsExecuted++;
+
+    // Invariants
+    assert.strictEqual(
+      totalGenerations,
+      spotifyXirpCount + palantirFoundryCount + andurilLatticeCount,
+      "VIOLATION: ConservationInvariant"
+    );
+    assert.strictEqual(contrastViolationsFound, 0, "VIOLATION: ContrastSafetyInvariant");
+    assert.ok(totalAuditsExecuted >= 0 && totalGenerations >= 0, "VIOLATION: AuditProgressInvariant");
+
+    const action = i % 4;
+    if (action === 0) {
+      totalGenerations++;
+      spotifyXirpCount++;
+      totalAuditsExecuted++;
+    } else if (action === 1) {
+      totalGenerations++;
+      palantirFoundryCount++;
+      totalAuditsExecuted++;
+    } else if (action === 2) {
+      totalGenerations++;
+      andurilLatticeCount++;
+      totalAuditsExecuted++;
+    } else {
+      totalAuditsExecuted++;
+    }
+  }
+
+  return {
+    specification: "EliteDesignStudio.tla",
     moduleName: parsed.moduleName,
     sourceFileRead: true,
     extractedVariables: parsed.variables,

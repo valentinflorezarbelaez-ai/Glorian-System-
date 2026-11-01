@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-01T15:33:23.356Z",
-  "catalogSha256": "1a044f4435c78dd48833fae259d29a4280be7f70d25c86cf33c4a55feda5f6ca",
-  "totalTools": 162,
+  "generatedAt": "2026-11-01T15:56:35.021Z",
+  "catalogSha256": "46b39616754e175a5604a17baa05e964b1319a4713e4a0b2db3b9b3d906cd341",
+  "totalTools": 164,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -3858,6 +3858,65 @@
       },
       "annotations": {
         "title": "EOS transcendence Status",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_design_scaffold_component",
+      "description": "Scaffolds world-class UI components in elite design archetypes (Spotify XIRP, Palantir Foundry, Anduril Lattice) with accessible semantic HTML5, scoped CSS3, and WCAG contrast validation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "archetype": {
+            "type": "string",
+            "description": "Design system archetype ('SPOTIFY_XIRP', 'PALANTIR_FOUNDRY', 'ANDURIL_LATTICE')"
+          },
+          "componentType": {
+            "type": "string",
+            "description": "Component type ('INCIDENT_TIMELINE', 'WAVEFORM_MONITOR', 'TELEMETRY_GRID', 'TACTICAL_HUD', 'MISSION_CONTROL_DECK')"
+          },
+          "title": {
+            "type": "string",
+            "description": "Optional title for the component"
+          },
+          "subtitle": {
+            "type": "string",
+            "description": "Optional subtitle for the component"
+          }
+        },
+        "required": [
+          "archetype",
+          "componentType"
+        ]
+      },
+      "annotations": {
+        "title": "EOS design Scaffold Component",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_design_audit_markup",
+      "description": "Audits HTML/CSS markup for world-class design system conformance, evaluating contrast ratio (WCAG AA/AAA >= 4.5:1), 8px spatial grid harmony, and prefers-reduced-motion safety.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "markup": {
+            "type": "string",
+            "description": "HTML markup or CSS to audit"
+          }
+        },
+        "required": [
+          "markup"
+        ]
+      },
+      "annotations": {
+        "title": "EOS design Audit Markup",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
