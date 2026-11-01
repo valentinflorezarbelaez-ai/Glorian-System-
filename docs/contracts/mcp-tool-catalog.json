@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-01T14:46:27.512Z",
-  "catalogSha256": "476e422249d6631258ead502ed3caf526d3938fdf33cc4f1f99035e9199380f2",
-  "totalTools": 158,
+  "generatedAt": "2026-11-01T15:04:39.774Z",
+  "catalogSha256": "fc756ab317e26aa0c83d68082b3964b0a2cff8f6363210091575decc223fc2cd",
+  "totalTools": 160,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -3758,6 +3758,66 @@
       },
       "annotations": {
         "title": "EOS remediation Engine Status",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_kernel_orchestrator_reconcile",
+      "description": "Executes a unified Sense-Analyze-Predict-Mitigate-Reconcile-Attest control cycle, computing the Omni-System Equilibrium Index (OSEI) and dispatching proportional mitigations.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fleetSoundcheckScore": {
+            "type": "number",
+            "description": "Fleet Soundcheck score (0-100)"
+          },
+          "sloErrorBudgetConsumptionPct": {
+            "type": "number",
+            "description": "SLO error budget consumed percentage (0-100)"
+          },
+          "predictiveHazardSeverityPct": {
+            "type": "number",
+            "description": "Predictive failure hazard severity percentage (0-100)"
+          },
+          "concurrencyHeadroomPct": {
+            "type": "number",
+            "description": "Adaptive concurrency headroom percentage (0-100)"
+          },
+          "syntheticSocketBacklog": {
+            "type": "number",
+            "description": "Synthetic socket backlog queue size (0-1000)"
+          },
+          "virtualPagePressurePct": {
+            "type": "number",
+            "description": "Synthetic virtual page pressure percentage (0-100)"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS kernel Orchestrator Reconcile",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_kernel_orchestrator_status",
+      "description": "Queries the unified autonomous kernel orchestrator operational status, historical cycle count, running average OSEI score, and latest reconciliation receipt.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "reset": {
+            "type": "boolean",
+            "description": "Optional flag to reset orchestrator history and state"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS kernel Orchestrator Status",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

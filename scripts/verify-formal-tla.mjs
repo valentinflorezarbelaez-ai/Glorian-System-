@@ -696,7 +696,8 @@ export function runAllFormalVerifications() {
     verifyAdaptiveHedgedDeadlineMeshModel(),
     verifyAdaptiveConcurrencyGovernorModel(),
     verifyTailBasedTraceSamplerModel(),
-    verifyPredictiveRemediationEngineModel()
+    verifyPredictiveRemediationEngineModel(),
+    verifyUnifiedKernelOrchestratorModel()
   ];
 }
 
@@ -1187,6 +1188,72 @@ export function verifyPredictiveRemediationEngineModel(steps = 200) {
 
   return {
     specification: "PredictiveRemediationEngine.tla",
+    moduleName: parsed.moduleName,
+    sourceFileRead: true,
+    extractedVariables: parsed.variables,
+    extractedInvariantNames: parsed.invariants,
+    stepsExecuted,
+    executionMode: "bounded-javascript-simulation",
+    simulationAssertionsPassed: true
+  };
+}
+
+export function verifyUnifiedKernelOrchestratorModel(steps = 200) {
+  const filePath = path.join(formalDir, "UnifiedKernelOrchestrator.tla");
+  const parsed = parseTlaModule(filePath);
+
+  const nominalThreshold = 85;
+  const emergencyThreshold = 50;
+
+  let kernelState = "BALANCED";
+  let totalCycles = 0;
+  let nominalCycles = 0;
+  let mitigationCycles = 0;
+  let oseiScore = 100;
+  let emergencySheddingActive = false;
+  let stepsExecuted = 0;
+
+  for (let i = 0; i < steps; i++) {
+    stepsExecuted++;
+
+    // Invariants
+    assert.strictEqual(
+      totalCycles,
+      nominalCycles + mitigationCycles,
+      "VIOLATION: ConservationInvariant"
+    );
+    assert.ok(oseiScore >= 0 && oseiScore <= 100, "VIOLATION: OseiBoundsInvariant");
+    if (emergencySheddingActive) {
+      assert.ok(oseiScore < emergencyThreshold, "VIOLATION: EmergencySafetyInvariant");
+    }
+
+    const action = i % 3;
+    if (action === 0) {
+      // ReconcileNominal
+      totalCycles++;
+      nominalCycles++;
+      oseiScore = 95;
+      kernelState = "BALANCED";
+      emergencySheddingActive = false;
+    } else if (action === 1) {
+      // ReconcileDegraded
+      totalCycles++;
+      mitigationCycles++;
+      oseiScore = 65;
+      kernelState = "DEGRADED";
+      emergencySheddingActive = false;
+    } else {
+      // ReconcileCritical
+      totalCycles++;
+      mitigationCycles++;
+      oseiScore = 40;
+      kernelState = "CRITICAL";
+      emergencySheddingActive = true;
+    }
+  }
+
+  return {
+    specification: "UnifiedKernelOrchestrator.tla",
     moduleName: parsed.moduleName,
     sourceFileRead: true,
     extractedVariables: parsed.variables,

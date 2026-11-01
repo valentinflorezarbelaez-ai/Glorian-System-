@@ -544,6 +544,12 @@ import {
   type RemediationExecutionResult,
   type RemediationEngineStatus
 } from "../core/eosPredictiveRemediationEngine.ts";
+import {
+  EosUnifiedKernelOrchestrator,
+  type KernelSystemTelemetry,
+  type KernelReconciliationReceipt,
+  type KernelOrchestratorStatus
+} from "../core/eosUnifiedKernelOrchestrator.ts";
 
 import {
   annotateAndFilterTools,
@@ -557,6 +563,7 @@ const globalHedgedMesh = new EosAdaptiveHedgedDeadlineMesh();
 const globalConcurrencyGovernor = new EosAdaptiveConcurrencyGovernor();
 const globalTraceSampler = new EosTailBasedTraceSampler();
 const globalRemediationEngine = new EosPredictiveRemediationEngine();
+const globalKernelOrchestrator = EosUnifiedKernelOrchestrator.getInstance();
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -2360,6 +2367,31 @@ export class EosMcpServer {
                     type: "object",
                     properties: {
                       reset: { type: "boolean", description: "Optional flag to reset engine to nominal state" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_kernel_orchestrator_reconcile",
+                  description: "Executes a unified Sense-Analyze-Predict-Mitigate-Reconcile-Attest control cycle, computing the Omni-System Equilibrium Index (OSEI) and dispatching proportional mitigations.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      fleetSoundcheckScore: { type: "number", description: "Fleet Soundcheck score (0-100)" },
+                      sloErrorBudgetConsumptionPct: { type: "number", description: "SLO error budget consumed percentage (0-100)" },
+                      predictiveHazardSeverityPct: { type: "number", description: "Predictive failure hazard severity percentage (0-100)" },
+                      concurrencyHeadroomPct: { type: "number", description: "Adaptive concurrency headroom percentage (0-100)" },
+                      syntheticSocketBacklog: { type: "number", description: "Synthetic socket backlog queue size (0-1000)" },
+                      virtualPagePressurePct: { type: "number", description: "Synthetic virtual page pressure percentage (0-100)" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_kernel_orchestrator_status",
+                  description: "Queries the unified autonomous kernel orchestrator operational status, historical cycle count, running average OSEI score, and latest reconciliation receipt.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      reset: { type: "boolean", description: "Optional flag to reset orchestrator history and state" }
                     }
                   }
                 },
@@ -4565,6 +4597,24 @@ export class EosMcpServer {
           globalRemediationEngine.reset();
         }
         return globalRemediationEngine.getStatus();
+      }
+
+      case "eos_kernel_orchestrator_reconcile": {
+        const telemetry: Partial<KernelSystemTelemetry> = {};
+        if (args.fleetSoundcheckScore !== undefined) telemetry.fleetSoundcheckScore = Number(args.fleetSoundcheckScore);
+        if (args.sloErrorBudgetConsumptionPct !== undefined) telemetry.sloErrorBudgetConsumptionPct = Number(args.sloErrorBudgetConsumptionPct);
+        if (args.predictiveHazardSeverityPct !== undefined) telemetry.predictiveHazardSeverityPct = Number(args.predictiveHazardSeverityPct);
+        if (args.concurrencyHeadroomPct !== undefined) telemetry.concurrencyHeadroomPct = Number(args.concurrencyHeadroomPct);
+        if (args.syntheticSocketBacklog !== undefined) telemetry.syntheticSocketBacklog = Number(args.syntheticSocketBacklog);
+        if (args.virtualPagePressurePct !== undefined) telemetry.virtualPagePressurePct = Number(args.virtualPagePressurePct);
+        return globalKernelOrchestrator.reconcile(telemetry);
+      }
+
+      case "eos_kernel_orchestrator_status": {
+        if (args.reset) {
+          globalKernelOrchestrator.reset();
+        }
+        return globalKernelOrchestrator.getStatus();
       }
 
       case "eos_antigravity_direct": {
