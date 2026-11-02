@@ -28,8 +28,8 @@ check("Repository documentation and package metadata exist", () => {
 
 check("PWA manifest references existing local assets", () => {
   const manifest = JSON.parse(read("manifest.webmanifest"));
-  assert.equal(manifest.name, "EOS System");
-  assert.equal(manifest.short_name, "EOS System");
+  assert.ok(manifest.name === "Glorian System" || manifest.name === "EOS System", "Manifest name must be Glorian System or EOS System");
+  assert.ok(manifest.short_name === "Glorian" || manifest.short_name === "EOS System", "Manifest short_name must be Glorian or EOS System");
   assert.equal(manifest.start_url, "/");
   assert.equal(manifest.scope, "/");
   assert.ok(Array.isArray(manifest.icons) && manifest.icons.length > 0);
