@@ -119,7 +119,7 @@
     },
     {
       "id": "eos-system",
-      "name": "EOS System (Control Plane Core)",
+      "name": "Glorian (Control Plane Core)",
       "resolvedLocalDir": "Eos-System",
       "localPathEnv": "EOS_FLEET_EOS_SYSTEM_PATH",
       "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Eos-System.git",

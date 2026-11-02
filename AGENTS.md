@@ -7,7 +7,7 @@
 
 ## 1. Declared Component Metadata
 - **Component ID**: ` eos-system-control-plane `
-- **Component Title**: ` EOS System (Engineering Operating System) `
+- **Component Title**: ` Glorian System (formerly EOS System) `
 - **Owner Squad**: ` user:valentin-florez-arbelaez `
 - **Tribe**: ` NOT_DECLARED `
 - **Lifecycle Tier**: ` production `

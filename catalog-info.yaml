@@ -2,7 +2,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: eos-system-control-plane
-  title: EOS System (Engineering Operating System)
+  title: Glorian System (formerly EOS System)
   description: Sovereign deterministic control plane for AI-assisted engineering. Zero Vibe Coding, Layer-0 Hexagonal (0-Deps), Xirp Worktrees, and SpaceX/NVIDIA/Google/xAI Tier-1 Synthesis.
   annotations:
     github.com/project-slug: valentinflorezarbelaez-ai/Eos-System

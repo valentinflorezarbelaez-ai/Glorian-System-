@@ -1,4 +1,4 @@
-# EOS System
+# Glorian System (formerly EOS System)
 
 EOS System is a repository of browser UI, Node.js command-line utilities, local analysis modules, and Vercel serverless routes for software-engineering workflows.
 

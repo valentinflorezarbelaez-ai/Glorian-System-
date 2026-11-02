@@ -36,7 +36,7 @@ function httpGet(url) {
 }
 
 test("BDD-191: Dashboard server starts, binds port, and shuts down cleanly", async () => {
-  const testPort = 4441;
+  const testPort = 14441;
   const dashboard = new EosTelemetryDashboard(projectRoot, testPort);
 
   try {
@@ -57,7 +57,7 @@ test("BDD-191: Dashboard server starts, binds port, and shuts down cleanly", asy
 });
 
 test("BDD-192: GET /api/telemetry returns valid JSON snapshot with zero runtime dependencies", async () => {
-  const testPort = 4442;
+  const testPort = 14442;
   const dashboard = new EosTelemetryDashboard(projectRoot, testPort);
 
   try {
@@ -83,7 +83,7 @@ test("BDD-192: GET /api/telemetry returns valid JSON snapshot with zero runtime 
 });
 
 test("BDD-193: GET /api/ledger returns SQLite entries, pagination, and SHA-256 chain status", async () => {
-  const testPort = 4443;
+  const testPort = 14443;
   const dashboard = new EosTelemetryDashboard(projectRoot, testPort);
 
   try {
@@ -102,7 +102,7 @@ test("BDD-193: GET /api/ledger returns SQLite entries, pagination, and SHA-256 c
 });
 
 test("BDD-194: GET /api/topology returns acyclic subagent DAG and active agents", async () => {
-  const testPort = 4444;
+  const testPort = 14444;
   const dashboard = new EosTelemetryDashboard(projectRoot, testPort);
 
   try {
@@ -121,7 +121,7 @@ test("BDD-194: GET /api/topology returns acyclic subagent DAG and active agents"
 });
 
 test("BDD-195: GET / delivers responsive HTML5 UI with SVG DAG and accessibility landmarks", async () => {
-  const testPort = 4445;
+  const testPort = 14445;
   const dashboard = new EosTelemetryDashboard(projectRoot, testPort);
 
   try {

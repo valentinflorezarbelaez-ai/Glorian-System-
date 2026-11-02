@@ -45,8 +45,8 @@ describe("SPEC-034: NSA Defense-in-Depth & CNSA 2.0 Verification", () => {
     test("fails closed if ciphertext or AAD is tampered", () => {
       const envelope = EosNsaCryptoSuite.encryptAesGcm256(plaintext, key, aad);
 
-      // Tampered ciphertext
-      const tamperedCiphertext = envelope.ciphertext.slice(0, -2) + "ff";
+      // Tampered ciphertext (deterministic bit flip)
+      const tamperedCiphertext = (envelope.ciphertext[0] === "0" ? "1" : "0") + envelope.ciphertext.slice(1);
       const tamperedEnvelope = { ...envelope, ciphertext: tamperedCiphertext };
 
       assert.throws(
