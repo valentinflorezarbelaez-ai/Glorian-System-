@@ -62,13 +62,17 @@ for (const file of allFiles) {
 }
 
 // ---------------------------------------------------------------------------
-// STAGE 1: SPEC-123 UNIVERSAL FLEET SECRET-SCAN GATE & UI LEAK DETECTOR
+// STAGE 1: SPEC-123 & SPEC-124 FLEET SECRET-SCAN & DYNAMIC REGISTRY GATE
 // ---------------------------------------------------------------------------
 execFileSync(process.execPath, [path.join(root, "scripts/eos-secret-scan.mjs"), "."], {
   cwd: root,
   stdio: "inherit"
 });
-console.log(`[PASS] Stage 1/7 — SPEC-123 Canonical Zero-Plain-Secrets & UI Leak Detector (exit code 0).`);
+execFileSync(process.execPath, [path.join(root, "scripts/eos-fleet-registry-sync.mjs"), "--dry-run"], {
+  cwd: root,
+  stdio: "inherit"
+});
+console.log(`[PASS] Stage 1/7 — SPEC-123 Canonical Zero-Plain-Secrets & SPEC-124 Fleet Registry Sentinel (exit code 0).`);
 
 // ---------------------------------------------------------------------------
 // STAGE 2: CONSTITUTIONAL SDD & 7 INVIOLABLE LAWS GATE (LAWS I, II, VII)

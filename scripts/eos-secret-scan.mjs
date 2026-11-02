@@ -431,7 +431,9 @@ if (process.argv[1] && process.argv[1].endsWith("eos-secret-scan.mjs")) {
     };
 
     for (const proj of registry.projects || []) {
-      const localPath = process.env[proj.localPathEnv] || path.resolve("..", proj.id);
+      const localPath =
+        process.env[proj.localPathEnv] ||
+        path.resolve("..", proj.resolvedLocalDir || proj.id);
       if (fs.existsSync(localPath)) {
         const res = await scanDirectory(localPath);
         report.projectsScanned++;

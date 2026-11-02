@@ -905,6 +905,18 @@ export class EosMcpServer {
                   }
                 },
                 {
+                  name: "eos_fleet_registry_sync",
+                  description: "Autonomously scans local workspace roots to discover active Git repositories, reconciling them into docs/projects/registry.json with cryptographic SHA-256 seal.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      dryRun: { type: "boolean", description: "Simulate discovery and reconciliation without writing to disk (default: true)" },
+                      audit: { type: "boolean", description: "Run read-only secret and health audits on all discovered fleet repos (default: false)" },
+                      workspaceRoot: { type: "string", description: "Root directory to scan for Git repositories (optional)" }
+                    }
+                  }
+                },
+                {
                   name: "eos_health_check",
                   description: "Reports MCP handler liveness and process memory. It does not probe dependent subsystems or external services.",
                   inputSchema: {
@@ -3374,6 +3386,29 @@ export class EosMcpServer {
             hooks: "NOT_PROBED"
           }))
         };
+      }
+
+      case "eos_fleet_registry_sync": {
+        const dryRun = args?.dryRun !== false;
+        const audit = Boolean(args?.audit ?? false);
+        const cliArgs = [
+          path.join(this.projectRoot, "scripts/eos-fleet-registry-sync.mjs"),
+          "--json"
+        ];
+        if (dryRun) {
+          cliArgs.push("--dry-run");
+        }
+        if (audit) {
+          cliArgs.push("--audit");
+        }
+        const out = execFileSync(process.execPath, cliArgs, {
+          cwd: this.projectRoot,
+          encoding: "utf8",
+          timeout: 60000,
+          stdio: ["ignore", "pipe", "pipe"],
+          windowsHide: true
+        });
+        return JSON.parse(out.trim());
       }
 
       case "eos_health_check": {

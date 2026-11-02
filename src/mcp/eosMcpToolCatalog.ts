@@ -100,7 +100,8 @@ const MUTATION_CAPABLE_TOOLS: ReadonlySet<string> = new Set([
   "eos_surgical_healing",
   "eos_sapfix_autoshipper",
   "eos_content_addressable_cache",
-  "eos_chaos_monkey_live"
+  "eos_chaos_monkey_live",
+  "eos_fleet_registry_sync"
 ]);
 
 const DESTRUCTIVE_CAPABLE_TOOLS: ReadonlySet<string> = new Set([

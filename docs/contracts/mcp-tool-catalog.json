@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-02T12:18:20.175Z",
-  "catalogSha256": "5491bee2c9b713ae8f267edde893f1a3e402bd313ffee7343b9296bc9aa1ca19",
-  "totalTools": 176,
+  "generatedAt": "2026-11-02T12:47:03.318Z",
+  "catalogSha256": "87907aa359bcbb073831e220047bc58e80e992113cc227d9d3d63ea53e2f39bb",
+  "totalTools": 177,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -82,6 +82,34 @@
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_fleet_registry_sync",
+      "description": "Autonomously scans local workspace roots to discover active Git repositories, reconciling them into docs/projects/registry.json with cryptographic SHA-256 seal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "dryRun": {
+            "type": "boolean",
+            "description": "Simulate discovery and reconciliation without writing to disk (default: true)"
+          },
+          "audit": {
+            "type": "boolean",
+            "description": "Run read-only secret and health audits on all discovered fleet repos (default: false)"
+          },
+          "workspaceRoot": {
+            "type": "string",
+            "description": "Root directory to scan for Git repositories (optional)"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS fleet Registry Sync",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
         "openWorldHint": false
       }
     },
