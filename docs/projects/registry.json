@@ -1,6 +1,6 @@
 {
   "version": "11.0.0-autonomous-fleet-registry",
-  "updatedAt": "2026-11-02T12:43:33.522Z",
+  "updatedAt": "2026-11-02T13:25:29.554Z",
   "masterOrchestrator": "EOS System control plane (SPEC-124)",
   "complianceStandard": "EOS_CONSTITUTION_LAW_IV_EXTERNAL_WRITE_BARRIER",
   "totalFleetProjects": 9,
@@ -32,10 +32,11 @@
       "productionUrl": "https://atp-strength.vercel.app",
       "type": "athletic-performance-monolith",
       "status": "REGISTERED",
-      "intake": "PENDING_INTAKE",
-      "specification": "PENDING_SPECIFICATION",
-      "audit": "PENDING_AUDIT",
-      "authorization": "LEVEL_1_READ_ONLY",
+      "intake": "INTAKE_COMPLETE",
+      "specification": "SPECIFICATION_APPROVED",
+      "audit": "AUDIT_COMPLETE",
+      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
+      "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "npm test",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
@@ -43,17 +44,18 @@
     },
     {
       "id": "biblioteca-gnostica-1",
-      "name": "biblioteca-gnostica",
+      "name": "Biblioteca Gnóstica — Preservación Digital de Textos Sagrados",
       "resolvedLocalDir": "Biblioteca-gnostica-1",
       "localPathEnv": "EOS_FLEET_BIBLIOTECA_GNOSTICA_1_PATH",
       "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Biblioteca-gnostica.git",
-      "productionUrl": "",
-      "type": "general-application",
+      "productionUrl": "https://biblioteca-gnostica.vercel.app",
+      "type": "cultural-archive-platform",
       "status": "REGISTERED",
-      "intake": "PENDING_INTAKE",
-      "specification": "PENDING_SPECIFICATION",
-      "audit": "PENDING_AUDIT",
-      "authorization": "LEVEL_1_READ_ONLY",
+      "intake": "INTAKE_COMPLETE",
+      "specification": "SPECIFICATION_APPROVED",
+      "audit": "AUDIT_COMPLETE",
+      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
+      "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "scripts/verify-strict.mjs",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
@@ -131,7 +133,7 @@
       "cicdGateScript": "scripts/verify-cicd-pipeline.mjs",
       "autoShipScript": "scripts/ship-sovereign.mjs",
       "currentBranch": "main",
-      "headCommitSha": "ab5000200a1b8f2dc0cbbe18dea7a8759f03cedd"
+      "headCommitSha": "d87230132aeb00bfdbcbb2aebb68b6ce290e6ef1"
     },
     {
       "id": "performance-talent-group",
@@ -170,5 +172,5 @@
       "headCommitSha": "36ba9c3b11406979f07a29fe8a544b14f8ec3c7a"
     }
   ],
-  "registrySha256": "984c0ef249475f1d1b76b54a6db9359c6ed683d72f8d18ec3fad921241ffcbc9"
+  "registrySha256": "2f105adc69600b5de1c1c269db5e8ae68432125b399e4d7839722cfca76d9f1e"
 }

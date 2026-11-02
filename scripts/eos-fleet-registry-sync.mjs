@@ -179,6 +179,16 @@ export function inferProjectMetadata(repoPath) {
     productionUrl = "https://eos-system-ten.vercel.app";
     type = "control-plane-monolith";
     cicdGateScript = "scripts/verify-cicd-pipeline.mjs";
+  } else if (lower.includes("biblioteca-gnostica")) {
+    name = "Biblioteca Gnóstica — Preservación Digital de Textos Sagrados";
+    productionUrl = "https://biblioteca-gnostica.vercel.app";
+    type = "cultural-archive-platform";
+    cicdGateScript = "npm test";
+  } else if (lower.includes("donaciones")) {
+    name = "Portal de Donaciones — Sede AGEAC & Tercer Factor";
+    productionUrl = "https://donaciones-drab.vercel.app";
+    type = "philanthropic-portal";
+    cicdGateScript = "npm test";
   }
 
   return { name, productionUrl, type, cicdGateScript };

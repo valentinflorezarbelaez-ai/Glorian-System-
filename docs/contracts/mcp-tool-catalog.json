@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-02T12:47:03.318Z",
-  "catalogSha256": "87907aa359bcbb073831e220047bc58e80e992113cc227d9d3d63ea53e2f39bb",
-  "totalTools": 177,
+  "generatedAt": "2026-11-02T13:34:08.040Z",
+  "catalogSha256": "fe36fedcc226d1e90505b2c4e9d94911fc2651a7aaeb7c14fefeaf230dd80828",
+  "totalTools": 178,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -110,6 +110,26 @@
         "readOnlyHint": false,
         "destructiveHint": false,
         "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_fleet_mission_control",
+      "description": "Generates an executive Mission Control report and optional synthetic latency/SSL probes across all 9 registered fleet projects.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "probe": {
+            "type": "boolean",
+            "description": "Execute live synthetic latency/SSL probes (default: false)"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS fleet Mission Control",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
         "openWorldHint": false
       }
     },

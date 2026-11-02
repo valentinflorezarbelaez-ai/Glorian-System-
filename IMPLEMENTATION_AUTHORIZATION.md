@@ -783,6 +783,48 @@
   - `scripts/eos-fleet-registry-sync.mjs`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
 
+## Authorization Record: AUTH-2026-11-02-FLEET-MISSION-CONTROL-125
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 2`)
+* **Milestone**: SPEC-125 (v86.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive on 2026-11-02: "todos 3 dale con toda")
+* **Scope**: EOS Fleet Mission Control Dashboard & Synthetic Health Sentinel:
+  1. Component 1: Engine Core (`src/core/eosFleetMissionControl.ts`) with synthetic endpoint probing, latency tracking, and availability quorum.
+  2. Component 2: Serverless Fleet Endpoint (`api/fleet.js`) updated with authorization tier, archetype, and dual-mode probing.
+  3. Component 3: Executive Mission Control Web Cockpit in `index.html` and `js/eos.js`.
+  4. Component 4: MCP Tool `eos_fleet_mission_control` in `src/mcp/eosMcpServer.ts` and `src/mcp/eosMcpToolCatalog.ts`.
+  5. Component 5: Unit test suite `test/eosFleetMissionControl.test.mjs` and cryptographic evidence `docs/evidence/EVD-SPEC-125.json`.
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-125-FLEET-MISSION-CONTROL-SENTINEL.md`
+  - `src/core/eosFleetMissionControl.ts`
+  - `test/eosFleetMissionControl.test.mjs`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-02-ATP-STRENGTH-ELEVATION-126
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-126 (v86.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive on 2026-11-02: "todos 3 dale con toda")
+* **Scope**: Elevation of ATP Strength Platform (`atp-strength`) to `LEVEL_3_PRODUCTION_AUTHORIZED`:
+  1. Validation of Git working tree and commit synchronization.
+  2. Read-only secret scan verification (0 findings).
+  3. Live production reachability verification on `https://atp-strength.vercel.app`.
+  4. Updating `docs/projects/registry.json` governance metadata to `LEVEL_3_PRODUCTION_AUTHORIZED`.
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-126-ATP-STRENGTH-GOVERNANCE-ELEVATION.md`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-02-BIBLIOTECA-GNOSTICA-ELEVATION-127
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-127 (v86.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive on 2026-11-02: "todos 3 dale con toda")
+* **Scope**: Elevation of Biblioteca Gnóstica (`biblioteca-gnostica-1`) to `LEVEL_3_PRODUCTION_AUTHORIZED`:
+  1. Permanent binding of `https://biblioteca-gnostica.vercel.app` in `docs/projects/registry.json`.
+  2. Read-only secret scan verification (0 findings).
+  3. Live production reachability verification (HTTP 200).
+  4. Updating `docs/projects/registry.json` governance metadata to `LEVEL_3_PRODUCTION_AUTHORIZED`.
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-127-BIBLIOTECA-GNOSTICA-ELEVATION.md`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
 
 
 

@@ -13,6 +13,7 @@
     "eos": "./bin/eos.mjs"
   },
   "scripts": {
+    "fleet:mission": "node scripts/eos-fleet-mission-control.mjs",
     "fleet:sync": "node scripts/eos-fleet-registry-sync.mjs",
     "secret-scan": "node scripts/eos-secret-scan.mjs",
     "quickstart": "node scripts/quickstart.mjs",

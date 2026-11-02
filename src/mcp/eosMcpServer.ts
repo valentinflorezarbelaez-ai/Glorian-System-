@@ -917,6 +917,16 @@ export class EosMcpServer {
                   }
                 },
                 {
+                  name: "eos_fleet_mission_control",
+                  description: "Generates an executive Mission Control report and optional synthetic latency/SSL probes across all 9 registered fleet projects.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      probe: { type: "boolean", description: "Execute live synthetic latency/SSL probes (default: false)" }
+                    }
+                  }
+                },
+                {
                   name: "eos_health_check",
                   description: "Reports MCP handler liveness and process memory. It does not probe dependent subsystems or external services.",
                   inputSchema: {
@@ -3400,6 +3410,25 @@ export class EosMcpServer {
         }
         if (audit) {
           cliArgs.push("--audit");
+        }
+        const out = execFileSync(process.execPath, cliArgs, {
+          cwd: this.projectRoot,
+          encoding: "utf8",
+          timeout: 60000,
+          stdio: ["ignore", "pipe", "pipe"],
+          windowsHide: true
+        });
+        return JSON.parse(out.trim());
+      }
+
+      case "eos_fleet_mission_control": {
+        const probe = Boolean(args?.probe ?? false);
+        const cliArgs = [
+          path.join(this.projectRoot, "scripts/eos-fleet-mission-control.mjs"),
+          "--json"
+        ];
+        if (probe) {
+          cliArgs.push("--probe");
         }
         const out = execFileSync(process.execPath, cliArgs, {
           cwd: this.projectRoot,

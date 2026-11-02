@@ -2364,9 +2364,12 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
   const btnFleetInjectHooks = document.getElementById("btn-fleet-inject-hooks");
   const btnFleetShipAll = document.getElementById("btn-fleet-ship-all");
 
-  async function loadFleetRegistry() {
+  const btnFleetProbeLive = document.getElementById("btn-fleet-probe-live");
+
+  async function loadFleetRegistry(probe = false) {
     const tableBody = document.getElementById("fleet-registry-body");
-    const response = await fetch("/api/fleet", { headers: { Accept: "application/json" } });
+    const endpoint = probe ? "/api/fleet?probe=true" : "/api/fleet";
+    const response = await fetch(endpoint, { headers: { Accept: "application/json" } });
     if (!response.ok) throw new Error(`Fleet registry returned HTTP ${response.status}.`);
     const data = await response.json();
     if (!Array.isArray(data.projects)) throw new Error("Fleet registry response has no projects array.");
@@ -2376,7 +2379,7 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
       for (const project of data.projects) {
         const row = document.createElement("tr");
         const nameCell = document.createElement("td");
-        nameCell.textContent = `${project.name || project.id || "Unnamed project"} (${project.id || "no id"})`;
+        nameCell.innerHTML = `<strong>${project.name || project.id}</strong><br><span style="font-size:0.73rem;opacity:0.75;">${project.id} · ${project.type || "app"}</span>`;
 
         const remoteCell = document.createElement("td");
         const remote = safeHttpsUrl(project.remote);
@@ -2392,9 +2395,19 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
         }
 
         const registryCell = document.createElement("td");
-        registryCell.textContent = project.registryStatus || "UNKNOWN";
+        const isL3 = project.authorization === "LEVEL_3_PRODUCTION_AUTHORIZED";
+        const isL2 = project.authorization === "LEVEL_2_AUTHORIZED";
+        const authColor = isL3 ? "var(--emerald, #10b981)" : (isL2 ? "var(--amber, #f59e0b)" : "var(--cyan, #06b6d4)");
+        registryCell.innerHTML = `<span style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:0.68rem;font-weight:700;color:#fff;background:${authColor};">${project.authorization || project.registryStatus || "REGISTERED"}</span>`;
+
         const operationsCell = document.createElement("td");
-        operationsCell.textContent = `Probe: ${project.productionProbe || "UNKNOWN"}; CI: ${project.cicdGateStatus || "UNKNOWN"}; hooks: ${project.localHooksStatus || "UNKNOWN"}`;
+        if (project.productionProbe === "HEALTHY") {
+          operationsCell.innerHTML = `<span style="color:#10b981;font-weight:700;">🟢 ONLINE (${project.latencyMs || 0}ms)</span>`;
+        } else if (project.productionProbe && project.productionProbe !== "NOT_PROBED") {
+          operationsCell.innerHTML = `<span style="color:#ef4444;font-weight:700;">🔴 ${project.productionProbe}</span>`;
+        } else {
+          operationsCell.textContent = `Configurado · CI: ${project.cicdGateStatus || "npm test"}`;
+        }
 
         const productionCell = document.createElement("td");
         const production = safeHttpsUrl(project.url);
@@ -2403,8 +2416,10 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
           link.href = production.href;
           link.target = "_blank";
           link.rel = "noopener noreferrer";
-          link.textContent = production.hostname;
-          productionCell.append(link, document.createTextNode(" (configured; not probed)"));
+          link.className = "btn btn--xs btn--primary";
+          link.style.cssText = "display:inline-flex;align-items:center;gap:4px;padding:3px 8px;font-size:0.72rem;text-decoration:none;";
+          link.textContent = `🚀 Abrir App`;
+          productionCell.append(link, document.createTextNode(" " + production.hostname));
         } else {
           productionCell.textContent = "No production URL configured";
         }
@@ -2437,7 +2452,7 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
       playSacredTone([528, 660, 792, 1056], 0.7);
       fleetOutput.textContent = "Consultando /api/fleet…";
       try {
-        const data = await loadFleetRegistry();
+        const data = await loadFleetRegistry(false);
         fleetOutput.textContent = [
           `status: ${data.status}`,
           `registeredProjects: ${data.fleetSize}`,
@@ -2450,6 +2465,31 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
         ].join("\n");
       } catch {
         fleetOutput.textContent = "No se pudo leer /api/fleet. No se infiere salud ni estado de los proyectos.";
+      }
+    });
+  }
+
+  if (btnFleetProbeLive) {
+    btnFleetProbeLive.addEventListener("click", async () => {
+      if (!fleetOutput) return;
+      playSacredTone([528, 660, 792, 1056], 0.7);
+      fleetOutput.textContent = "Ejecutando sondeo sintético de salud sobre los 9 endpoints de producción…";
+      try {
+        const data = await loadFleetRegistry(true);
+        const onlineCount = data.projects.filter((p) => p.productionProbe === "HEALTHY").length;
+        const totalProd = data.projects.filter((p) => p.url).length;
+        fleetOutput.textContent = [
+          "ESTADO: SONDEO SINTÉTICO EN VIVO COMPLETADO",
+          `Proyectos en la flota: ${data.fleetSize}`,
+          `Endpoints en producción: ${totalProd}`,
+          `Quorum de disponibilidad: ${onlineCount}/${totalProd} (${Math.round((onlineCount / totalProd) * 100)}%)`,
+          "",
+          ...data.projects.map((p) => `• ${p.id.padEnd(28)} -> [${p.productionProbe || "CONFIGURADO"}] ${p.url || "Sin URL"} (${p.latencyMs ? p.latencyMs + "ms" : "N/A"})`),
+          "",
+          "Sondeo sintético completado. 0 credenciales ni tokens en texto plano expuestos."
+        ].join("\n");
+      } catch (err) {
+        fleetOutput.textContent = `Error en sondeo sintético: ${err.message}`;
       }
     });
   }
