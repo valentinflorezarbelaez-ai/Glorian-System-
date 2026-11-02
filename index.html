@@ -32,7 +32,7 @@
   <link rel="preload" href="/css/eos.css?v=15.0" as="style" />
   <link rel="preload" href="/js/eos.js?v=18.0" as="script" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/eos.css?v=15.0" integrity="sha384-gaaC09Jx345fn0H7/MzHXzqcy4ZHYSe4mVpEWdi+wvMMQUt9tjeM2vJEYuSkLAog" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/css/eos.css?v=15.0" integrity="sha384-lboIYgJ21T9qH1/EdnQsWlfAFMABV0jl6TSGy2KAXbQoN+bT3GiOizBBwfKKntA+" crossorigin="anonymous" />
 
   <!-- Xirp-Grade Speculative Prerendering (0ms Instant Navigation) -->
   <script type="speculationrules">
@@ -105,7 +105,7 @@
           <li><a href="#primeros-pasos">Primeros pasos</a></li>
           <li><a href="#tier1-control-nexus">Herramientas</a></li>
           <li><a href="#fleet-synapse-radar">Flota Radar</a></li>
-          <li><a href="#openspecs-explorer">129 Specs</a></li>
+          <li><a href="#openspecs-explorer">130 Specs</a></li>
           <li><a href="#performance-guide">Guía técnica</a></li>
           <li><a href="#consola">Laboratorio</a></li>
         </ul>
@@ -165,6 +165,29 @@
             </div>
           </div>
 
+          <!-- GLORIAN MULTI-ARCHETYPE LIVE SWITCHER (SPEC-117 / SPEC-130) -->
+          <div class="archetype-hud-switcher" role="radiogroup" aria-label="Selector de Arquetipo de Diseño Industrial">
+            <span class="archetype-hud-label">ARQUETIPO:</span>
+            <div class="archetype-pill-group">
+              <button type="button" class="archetype-pill archetype-pill--active" data-archetype="GLORIAN_SOLAR" role="radio" aria-checked="true">
+                <span class="archetype-dot" style="background: #F59E0B; box-shadow: 0 0 8px #F59E0B;"></span>
+                ☀️ GLORIAN SOLAR
+              </button>
+              <button type="button" class="archetype-pill" data-archetype="SPOTIFY_XIRP" role="radio" aria-checked="false">
+                <span class="archetype-dot" style="background: #1DB954; box-shadow: 0 0 8px #1DB954;"></span>
+                🟢 SPOTIFY XIRP
+              </button>
+              <button type="button" class="archetype-pill" data-archetype="PALANTIR_FOUNDRY" role="radio" aria-checked="false">
+                <span class="archetype-dot" style="background: #06B6D4; box-shadow: 0 0 8px #06B6D4;"></span>
+                🔷 PALANTIR FOUNDRY
+              </button>
+              <button type="button" class="archetype-pill" data-archetype="ANDURIL_LATTICE" role="radio" aria-checked="false">
+                <span class="archetype-dot" style="background: #10B981; box-shadow: 0 0 8px #10B981;"></span>
+                🔺 ANDURIL LATTICE
+              </button>
+            </div>
+          </div>
+
           <!-- TIER S-0 TACTICAL BENTO HUD (SPEC-129) -->
           <div class="hero-bento-hud" role="region" aria-label="Telemetría táctica de EOS">
             <div class="bento-hud-card">
@@ -174,12 +197,12 @@
             </div>
             <div class="bento-hud-card">
               <div class="bento-hud-card__tag">OPENSPECS</div>
-              <div class="bento-hud-card__value" style="color: #fbbf24;">129 SPECS</div>
+              <div class="bento-hud-card__value" style="color: #fbbf24;">130 SPECS</div>
               <div class="bento-hud-card__sub" style="color: var(--text-muted);">EARS + BDD FORMAL</div>
             </div>
             <div class="bento-hud-card">
               <div class="bento-hud-card__tag">CI/CD SUITES</div>
-              <div class="bento-hud-card__value" style="color: #10b981;">133 SUITES</div>
+              <div class="bento-hud-card__value" style="color: #10b981;">138 SUITES</div>
               <div class="bento-hud-card__sub" style="color: var(--text-muted);">7 ETAPAS PASADAS</div>
             </div>
             <div class="bento-hud-card">
@@ -2397,12 +2420,12 @@ Probes, hooks, gates, commits, pushes, and deployments are not run by this page.
       </div>
     </section>
 
-    <!-- 129 OPENSPECS INTERACTIVE EXPLORER (SPEC-129) -->
+    <!-- 130 OPENSPECS INTERACTIVE EXPLORER (SPEC-129 / SPEC-130) -->
     <section class="section deferred-section" id="openspecs-explorer">
       <div class="container">
         <div class="section__head">
           <div class="eyebrow">ARQUITECTURA FORMAL · IEEE 830 &amp; ISO 29148</div>
-          <h2 class="section__title">129 OpenSpecs · Catálogo Formal de Especificaciones</h2>
+          <h2 class="section__title">130 OpenSpecs · Catálogo Formal de Especificaciones</h2>
           <p class="section__sub">
             Cada módulo de EOS se gobierna bajo la Ley I (Cero Vibe Coding) con especificaciones formales versionadas, requisitos EARS y criterios de aceptación BDD.
           </p>
@@ -2413,11 +2436,11 @@ Probes, hooks, gates, commits, pushes, and deployments are not run by this page.
             type="search"
             id="specs-search-input"
             class="specs-search-box"
-            placeholder="Buscar por ID (ej. SPEC-128) o palabra clave..."
-            aria-label="Buscar en el catálogo de 129 especificaciones"
+            placeholder="Buscar por ID (ej. SPEC-130) o palabra clave..."
+            aria-label="Buscar en el catálogo de 130 especificaciones"
           />
           <div class="specs-filter-group" role="group" aria-label="Filtro de especificaciones">
-            <button type="button" class="btn btn--ghost btn--sm active" data-spec-filter="ALL">Todas (129)</button>
+            <button type="button" class="btn btn--ghost btn--sm active" data-spec-filter="ALL">Todas (130)</button>
             <button type="button" class="btn btn--ghost btn--sm" data-spec-filter="APPROVED">Approved</button>
             <button type="button" class="btn btn--ghost btn--sm" data-spec-filter="PRODUCTION_READY">Production Ready</button>
             <button type="button" class="btn btn--ghost btn--sm" data-spec-filter="VERIFIED">Verified</button>
@@ -2953,6 +2976,6 @@ No se ejecutan comandos, auditorías, sondeos ni despliegues.</pre>
     </div>
   </dialog>
 
-  <script src="/js/eos.js?v=18.0" integrity="sha384-p6fzFZBU4ULEmG7zBrACgAeddyK5oGX7006mCzu5nv4ezohQ5H+YfGkfMtXTwxuz" crossorigin="anonymous" defer></script>
+  <script src="/js/eos.js?v=18.0" integrity="sha384-4lImNVMzMMG27Myl3rLcZT9JW+EahCiVYDHBzjPzFM0DldXl2awN2nICB6Vahuvk" crossorigin="anonymous" defer></script>
 </body>
 </html>

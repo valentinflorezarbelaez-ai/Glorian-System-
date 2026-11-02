@@ -2215,6 +2215,71 @@ body {
   color: var(--text-muted);
 }
 
+/* ==========================================================================
+   GLORIAN MULTI-ARCHETYPE LIVE SWITCHER (SPEC-117 / SPEC-130)
+   ========================================================================== */
+.archetype-hud-switcher {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 1.25rem;
+  margin-bottom: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.archetype-hud-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.archetype-pill-group {
+  display: inline-flex;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.75);
+  padding: 4px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.archetype-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.archetype-pill:hover {
+  color: var(--text-white);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.archetype-pill--active {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.5);
+  color: #fbbf24;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+}
+
+.archetype-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+
 
 
 

@@ -4162,9 +4162,134 @@ Comandos disponibles:
     });
   }
 
+  function initMultiArchetypeSwitcher() {
+    const pills = document.querySelectorAll(".archetype-pill");
+    if (!pills.length) return;
+
+    let audioCtx = null;
+    function playHarmonicChime(freq) {
+      try {
+        const frequency = freq || 432;
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) audioCtx = new AudioContextClass();
+        }
+        if (audioCtx && audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        if (!audioCtx) return;
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(frequency * 1.5, audioCtx.currentTime + 0.12);
+
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.22);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.24);
+      } catch {
+        // Fallback for restricted audio permissions
+      }
+    }
+
+    const ARCHETYPE_CONFIGS = {
+      GLORIAN_SOLAR: {
+        bgVoid: "#050508",
+        bgDeep: "#0D0E15",
+        bgCard: "rgba(22, 24, 36, 0.85)",
+        gold: "#F59E0B",
+        goldBright: "#FBBF24",
+        goldGlow: "rgba(245, 158, 11, 0.28)",
+        cyan: "#F59E0B",
+        freq: 432
+      },
+      SPOTIFY_XIRP: {
+        bgVoid: "#121212",
+        bgDeep: "#181818",
+        bgCard: "rgba(36, 36, 36, 0.85)",
+        gold: "#1DB954",
+        goldBright: "#1ED760",
+        goldGlow: "rgba(29, 185, 84, 0.28)",
+        cyan: "#1DB954",
+        freq: 528
+      },
+      PALANTIR_FOUNDRY: {
+        bgVoid: "#0B0F19",
+        bgDeep: "#111827",
+        bgCard: "rgba(31, 41, 55, 0.85)",
+        gold: "#06B6D4",
+        goldBright: "#38BDF8",
+        goldGlow: "rgba(6, 182, 212, 0.25)",
+        cyan: "#06B6D4",
+        freq: 587.33
+      },
+      ANDURIL_LATTICE: {
+        bgVoid: "#08090A",
+        bgDeep: "#0F1012",
+        bgCard: "rgba(22, 23, 26, 0.85)",
+        gold: "#10B981",
+        goldBright: "#34D399",
+        goldGlow: "rgba(16, 185, 129, 0.25)",
+        cyan: "#10B981",
+        freq: 659.25
+      }
+    };
+
+    function applyArchetype(archetype, userTriggered) {
+      const cfg = ARCHETYPE_CONFIGS[archetype] || ARCHETYPE_CONFIGS.GLORIAN_SOLAR;
+      const root = document.documentElement;
+
+      root.style.setProperty("--bg-void", cfg.bgVoid);
+      root.style.setProperty("--bg-deep", cfg.bgDeep);
+      root.style.setProperty("--bg-card", cfg.bgCard);
+      root.style.setProperty("--gold", cfg.gold);
+      root.style.setProperty("--gold-bright", cfg.goldBright);
+      root.style.setProperty("--gold-glow", cfg.goldGlow);
+      root.style.setProperty("--cyan", cfg.cyan);
+      root.setAttribute("data-archetype", archetype);
+
+      pills.forEach((p) => {
+        const matches = p.getAttribute("data-archetype") === archetype;
+        p.classList.toggle("archetype-pill--active", matches);
+        p.setAttribute("aria-checked", matches ? "true" : "false");
+      });
+
+      if (userTriggered) {
+        playHarmonicChime(cfg.freq);
+        try {
+          localStorage.setItem("glorian_archetype", archetype);
+        } catch {
+          // ignore localStorage restrictions
+        }
+      }
+    }
+
+    pills.forEach((p) => {
+      p.addEventListener("click", () => {
+        const target = p.getAttribute("data-archetype");
+        if (target) applyArchetype(target, true);
+      });
+    });
+
+    try {
+      const saved = localStorage.getItem("glorian_archetype");
+      if (saved && ARCHETYPE_CONFIGS[saved]) {
+        applyArchetype(saved, false);
+      }
+    } catch {
+      // fallback
+    }
+  }
+
   initTier1Nexus();
   initJarvis3DQuantumCore();
   initSovereignFleetTopology();
   initZenithHyperscalerVisualizers();
   initInteractiveTerminalAndChaosArena();
+  initMultiArchetypeSwitcher();
 });
