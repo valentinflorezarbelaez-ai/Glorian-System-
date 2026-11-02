@@ -2237,7 +2237,7 @@ body {
 
 .archetype-pill-group {
   display: inline-flex;
-  gap: 6px;
+  gap: 8px;
   background: rgba(15, 23, 42, 0.75);
   padding: 4px;
   border-radius: 9999px;
@@ -2247,14 +2247,14 @@ body {
 .archetype-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   background: transparent;
   border: 1px solid transparent;
   color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 0.68rem;
   font-weight: 700;
-  padding: 4px 10px;
+  padding: 4px 8px;
   border-radius: 9999px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
