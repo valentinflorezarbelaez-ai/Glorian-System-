@@ -13,6 +13,7 @@
     "eos": "./bin/eos.mjs"
   },
   "scripts": {
+    "secret-scan": "node scripts/eos-secret-scan.mjs",
     "quickstart": "node scripts/quickstart.mjs",
     "sea:build": "node scripts/build-sea-binary.mjs",
     "fleet:audit": "node scripts/eos-fleet-dogfood-audit.mjs",

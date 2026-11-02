@@ -62,31 +62,13 @@ for (const file of allFiles) {
 }
 
 // ---------------------------------------------------------------------------
-// STAGE 1: CONFIGURED CREDENTIAL-PATTERN SCAN (NOT GENERAL SAST)
+// STAGE 1: SPEC-123 UNIVERSAL FLEET SECRET-SCAN GATE & UI LEAK DETECTOR
 // ---------------------------------------------------------------------------
-const secretPatterns = [
-  { name: "Live Stripe/OpenAI Key", regex: new RegExp("sk-" + "live-[0-9a-zA-Z]{16,}") },
-  { name: "GitHub Personal Access Token", regex: new RegExp("ghp_" + "[0-9a-zA-Z]{24,}") },
-  { name: "AWS Access Key ID", regex: new RegExp("AKIA" + "[0-9A-Z]{16}") },
-  { name: "Google API Key", regex: new RegExp("AIza" + "[0-9A-Za-z\\-_]{35}") },
-  { name: "PEM Private Key Block", regex: new RegExp("-----BEGIN " + "(RSA |EC |OPENSSH )?PRIVATE KEY-----") }
-];
-
-let scannedTextFiles = 0;
-for (const file of allFiles) {
-  const ext = path.extname(file).toLowerCase();
-  if ([".png", ".jpg", ".jpeg", ".webp", ".ico", ".woff2"].includes(ext)) continue;
-  const content = fs.readFileSync(file, "utf8");
-  scannedTextFiles++;
-  for (const pat of secretPatterns) {
-    assert.equal(
-      pat.regex.test(content),
-      false,
-      `[STAGE 1 FAIL] Security violation (${pat.name}) detected in ${path.relative(root, file)}`
-    );
-  }
-}
-console.log(`[PASS] Stage 1/7 — Configured credential-pattern scan (${scannedTextFiles} text files scanned; no configured patterns matched).`);
+execFileSync(process.execPath, [path.join(root, "scripts/eos-secret-scan.mjs"), "."], {
+  cwd: root,
+  stdio: "inherit"
+});
+console.log(`[PASS] Stage 1/7 — SPEC-123 Canonical Zero-Plain-Secrets & UI Leak Detector (exit code 0).`);
 
 // ---------------------------------------------------------------------------
 // STAGE 2: CONSTITUTIONAL SDD & 7 INVIOLABLE LAWS GATE (LAWS I, II, VII)

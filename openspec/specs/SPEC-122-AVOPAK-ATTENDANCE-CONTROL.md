@@ -72,7 +72,7 @@ ESCENARIO: BDD-339 Lectura de Código QR de Asistencia y Generación de Carnets 
   ENTONCES el sistema registra en orden: Ingreso de Labores, Salida a Alimentación, Regreso de Alimentación y Salida de Labores
 
 ESCENARIO: BDD-340 Control de Acceso Basado en Roles (RBAC) para Federico (8160032) y Administradores de Área
-  DADO el inicio de sesión con Usuario "8160032" y contraseña "Avopak2026*.@" (Federico - Administrador General)
+  DADO el inicio de sesión con Usuario "8160032" y contraseña "[REDACTED_PASSWORD]" (Federico - Administrador General)
   CUANDO Federico asigna el área "Empaque T1" y "Empaque T2" al perfil "Admin Empaque"
   ENTONCES el "Admin Empaque" solo visualiza y verifica a los operarios de Empaque T1/T2
   Y Federico conserva visibilidad y edición sobre los 44 trabajadores y todas las áreas de la planta
