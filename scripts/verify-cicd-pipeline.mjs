@@ -190,9 +190,13 @@ for (const testFile of filesToRun) {
 console.log(`[PASS] Stage 4/7 — JavaScript syntax, TypeScript type-check, and all discovered Node test suites (${jsFilesToCheck.length} JS/MJS modules; ${tsCoreFiles.length} core TS modules; ${testFiles.length} suites).`);
 
 // ---------------------------------------------------------------------------
-// STAGE 5: WCAG 2.1 AA ACCESSIBILITY, SEO & PERFORMANCE BUDGET GATE
+// STAGE 5: WCAG 2.1 AA ACCESSIBILITY, SEO, PERFORMANCE & SPEC-128 S-0 DESIGN GOVERNOR GATE
 // ---------------------------------------------------------------------------
 execFileSync(process.execPath, [path.join(root, "scripts/verify-cwv-budget.mjs")], {
+  cwd: root,
+  stdio: "inherit"
+});
+execFileSync(process.execPath, [path.join(root, "scripts/eos-design-system-govern.mjs")], {
   cwd: root,
   stdio: "inherit"
 });

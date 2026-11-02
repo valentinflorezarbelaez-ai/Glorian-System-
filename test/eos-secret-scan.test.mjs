@@ -1,6 +1,9 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   detectVendorTokens,
   detectCredentialAssignments,
@@ -151,6 +154,31 @@ describe("SPEC-123: Fleet Secret-Scan Gate & UI Leak Detector", () => {
       const allowed = isAllowlisted(secret, "src/old.js", allowlist);
       assert.equal(allowed.isAllowed, false);
       assert.equal(allowed.rejectionReason, "EXPIRED");
+    });
+
+    it("ships the synthetic fixture ledger in a path CI can see", () => {
+      const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+      const gitignore = fs.readFileSync(path.join(root, ".gitignore"), "utf8");
+      assert.match(gitignore, /^!\.eos\/secret-allowlist\.json$/m);
+
+      const allowlist = JSON.parse(fs.readFileSync(path.join(root, ".eos", "secret-allowlist.json"), "utf8"));
+      const fixtures = [
+        ["Avopak2026*.@", "test/eos-secret-scan.test.mjs"],
+        ["UltraSecret99!", "test/eos-secret-scan.test.mjs"],
+        ["super_classified_token_xyz", "test/eos-secret-scan.test.mjs"],
+        ["SOVEREIGN_AUTHORIZATION_RESET_TOKEN_NSA_41", "test/eosNsaZeroTrustDefense.test.mjs"]
+      ];
+      for (const [literal, fixturePath] of fixtures) {
+        const fingerprintSha256 = crypto.createHash("sha256").update(literal).digest("hex");
+        const entry = allowlist.find((item) => item.fingerprintSha256 === fingerprintSha256 && item.path === fixturePath);
+        assert.ok(entry, `missing allowlist entry for ${fixturePath}`);
+        assert.ok(entry.reason && entry.reason.length > 0);
+        assert.ok(entry.expiresAt > new Date().toISOString().slice(0, 10));
+      }
+
+      const corpus = fs.readFileSync(path.join(root, "test", "eos-secret-scan.test.mjs"), "utf8");
+      const findings = scanFileContent(corpus, path.join(root, "test", "eos-secret-scan.test.mjs"), allowlist);
+      assert.equal(findings.length, 0);
     });
   });
 

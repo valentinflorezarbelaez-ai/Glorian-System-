@@ -164,6 +164,8 @@
     "project:list": "node bin/eos.mjs project list",
     "project:inspect": "node bin/eos.mjs project inspect .",
     "project:verify": "node bin/eos.mjs project verify .",
+    "design:govern": "node scripts/eos-design-system-govern.mjs",
+    "test:design": "node --test test/eosS0DesignSystemGovernor.test.mjs",
     "sync:stack": "node scripts/sync-gentle-ai-stack.mjs",
     "mcp:sync": "node scripts/sync-gentle-ai-stack.mjs"
   },

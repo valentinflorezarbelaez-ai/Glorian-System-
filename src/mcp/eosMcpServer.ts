@@ -608,6 +608,11 @@ import {
   type McpToolProfile
 } from "./eosMcpToolCatalog.ts";
 
+import {
+  EosS0DesignSystemGovernor,
+  type VisualAuditReport
+} from "../core/eosS0DesignSystemGovernor.ts";
+
 const globalBulkheadGovernor = new EosCellBasedBulkheadGovernor({ cellCount: 8, cellCapacity: 100 });
 const globalSloGovernor = new EosMultiWindowSloGovernor();
 const globalHedgedMesh = new EosAdaptiveHedgedDeadlineMesh();
@@ -3127,6 +3132,24 @@ export class EosMcpServer {
                       rootfsPath: { type: "string", description: "Root filesystem image path" },
                       vsockCid: { type: "number", description: "Vsock Context Identifier (default: 3)" },
                       recordToLedger: { type: "boolean", description: "Whether to record enclave descriptor into SQLite WAL ledger" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_design_system_govern",
+                  description: "Tier S-0 Machine-Readable Design System Governor & AST Visual Linter (SPEC-128): audits markup (HTML, CSS, JSX/TSX) against the S-0 Design System Contract (4px grid, elevation shadows, spring transitions, contrast ratios, and dark tactical palette).",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      targetPaths: {
+                        type: "array",
+                        items: { type: "string" },
+                        description: "List of file paths relative to project root to audit (defaults to index.html and css/eos.css)"
+                      },
+                      strict: {
+                        type: "boolean",
+                        description: "If true, non-blocking anti-pattern warnings will also fail the audit"
+                      }
                     }
                   }
                 }
@@ -5961,6 +5984,25 @@ export class EosMcpServer {
           enclaveId,
           hostCapabilities: hostCaps,
           firecrackerProfile: profile,
+          timestampIso: new Date().toISOString()
+        };
+      }
+
+      case "eos_design_system_govern": {
+        const governor = new EosS0DesignSystemGovernor(this.projectRoot);
+        const targetPaths = Array.isArray(args?.targetPaths)
+          ? args.targetPaths.map(String)
+          : undefined;
+        const report = governor.auditWorkspace(targetPaths);
+        return {
+          compliant: report.compliant,
+          inspectedFiles: report.inspectedFiles,
+          violationCount: report.violations.length,
+          warningCount: report.warnings.length,
+          violations: report.violations,
+          warnings: report.warnings,
+          score: report.score,
+          contractHash: report.contractHash,
           timestampIso: new Date().toISOString()
         };
       }

@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-02T13:34:08.040Z",
-  "catalogSha256": "fe36fedcc226d1e90505b2c4e9d94911fc2651a7aaeb7c14fefeaf230dd80828",
-  "totalTools": 178,
+  "generatedAt": "2026-11-02T14:08:12.653Z",
+  "catalogSha256": "c53b4ff12a6e0caf3f9ab76d6121d4291b99efa4b15acefa7baea31d2b024447",
+  "totalTools": 179,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -5559,6 +5559,33 @@
       },
       "annotations": {
         "title": "EOS microvm Enclave Generate",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_design_system_govern",
+      "description": "Tier S-0 Machine-Readable Design System Governor & AST Visual Linter (SPEC-128): audits markup (HTML, CSS, JSX/TSX) against the S-0 Design System Contract (4px grid, elevation shadows, spring transitions, contrast ratios, and dark tactical palette).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "targetPaths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of file paths relative to project root to audit (defaults to index.html and css/eos.css)"
+          },
+          "strict": {
+            "type": "boolean",
+            "description": "If true, non-blocking anti-pattern warnings will also fail the audit"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS design System Govern",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

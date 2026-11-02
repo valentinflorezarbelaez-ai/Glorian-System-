@@ -27,6 +27,9 @@ jobs:
         with:
           node-version: 24
 
+      - name: Install locked development toolchain
+        run: npm ci
+
       - name: Setup Java 21 (for Leslie Lamport TLC Formal Model Checker)
         uses: actions/setup-java@v4
         with:

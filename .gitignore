@@ -1,6 +1,9 @@
 .vercel
 node_modules/
-.eos/
+# Local control-plane state stays untracked. The fingerprint allowlist is the
+# SPEC-123 exception ledger and must be present in CI; it stores hashes, not secrets.
+.eos/**
+!.eos/secret-allowlist.json
 .worktrees/
 docs/evidence/LOCAL-CHECKS-RECEIPT.json
 docs/evidence/local-checks.sarif

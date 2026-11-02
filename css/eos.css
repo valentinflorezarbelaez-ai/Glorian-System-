@@ -393,7 +393,7 @@ body {
 .announcement-chip__sparkle {
   color: #38bdf8;
   font-size: 0.85rem;
-  animation: eosSparkle 3s linear infinite;
+  animation: eosSparkle 3s ease-in-out infinite;
 }
 
 @keyframes eosSparkle {
