@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-02T18:36:20.057Z",
-  "catalogSha256": "c53b4ff12a6e0caf3f9ab76d6121d4291b99efa4b15acefa7baea31d2b024447",
+  "generatedAt": "2026-11-02T19:03:47.629Z",
+  "catalogSha256": "02686299cc613028abcc1a26a01e2ba928b1061f0bcdfd2d1735f6cd99102262",
   "totalTools": 179,
   "coreTier0Count": 46,
   "tools": [
@@ -3914,13 +3914,13 @@
     },
     {
       "name": "eos_design_scaffold_component",
-      "description": "Scaffolds world-class UI components in elite design archetypes (Spotify XIRP, Palantir Foundry, Anduril Lattice) with accessible semantic HTML5, scoped CSS3, and WCAG contrast validation.",
+      "description": "Scaffolds world-class UI components in elite design archetypes (Spotify XIRP, Palantir Foundry, Anduril Lattice, Glorian Solar) with accessible semantic HTML5, scoped CSS3, and WCAG contrast validation.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "archetype": {
             "type": "string",
-            "description": "Design system archetype ('SPOTIFY_XIRP', 'PALANTIR_FOUNDRY', 'ANDURIL_LATTICE')"
+            "description": "Design system archetype ('SPOTIFY_XIRP', 'PALANTIR_FOUNDRY', 'ANDURIL_LATTICE', 'GLORIAN_SOLAR')"
           },
           "componentType": {
             "type": "string",

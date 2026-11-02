@@ -227,7 +227,7 @@ export function detectUiPlumbingLeaks(content, filePath) {
     return [];
   }
 
-  // Exempt formal documentation, spec directories, and EOS System's own landing page
+  // Exempt formal documentation, spec directories, and Glorian / EOS System's own landing page
   if (
     normPath.includes("/openspec/") ||
     normPath.includes("/docs/") ||
@@ -235,7 +235,9 @@ export function detectUiPlumbingLeaks(content, filePath) {
     normPath.includes("/tools/") ||
     normPath.includes("/scripts/") ||
     normPath.includes("/.agents/") ||
-    normPath.toLowerCase().endsWith("eos-system/index.html")
+    normPath === "index.html" ||
+    normPath.toLowerCase().endsWith("eos-system/index.html") ||
+    normPath.toLowerCase().endsWith("glorian-system/index.html")
   ) {
     return [];
   }

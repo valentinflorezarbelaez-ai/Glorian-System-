@@ -2504,13 +2504,13 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_design_scaffold_component",
-                  description: "Scaffolds world-class UI components in elite design archetypes (Spotify XIRP, Palantir Foundry, Anduril Lattice) with accessible semantic HTML5, scoped CSS3, and WCAG contrast validation.",
+                  description: "Scaffolds world-class UI components in elite design archetypes (Spotify XIRP, Palantir Foundry, Anduril Lattice, Glorian Solar) with accessible semantic HTML5, scoped CSS3, and WCAG contrast validation.",
                   inputSchema: {
                     type: "object",
                     properties: {
                       archetype: {
                         type: "string",
-                        description: "Design system archetype ('SPOTIFY_XIRP', 'PALANTIR_FOUNDRY', 'ANDURIL_LATTICE')"
+                        description: "Design system archetype ('SPOTIFY_XIRP', 'PALANTIR_FOUNDRY', 'ANDURIL_LATTICE', 'GLORIAN_SOLAR')"
                       },
                       componentType: {
                         type: "string",

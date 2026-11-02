@@ -34,7 +34,7 @@ const command = (args[0] || "help").toLowerCase();
 
 function printBanner() {
   console.log("======================================================================");
-  console.log(` EOS SYSTEM v${packageMetadata.version} — LOCAL ENGINEERING TOOLKIT`);
+  console.log(` GLORIAN SYSTEM v${packageMetadata.version} — SOVEREIGN CONTROL PLANE & ENGINEERING ENGINE`);
   console.log(" Local checks · drafts · repository tools · bounded sandbox");
   console.log("======================================================================");
 }

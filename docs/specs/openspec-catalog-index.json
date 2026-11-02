@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-02T18:36:55.880Z",
-  "totalSpecs": 129,
-  "catalogSha256": "49b1d35477fff6befeb8f193e3b954034794da9df6068f0e823342f8d28256c6",
+  "timestampIso": "2026-11-02T19:04:43.778Z",
+  "totalSpecs": 130,
+  "catalogSha256": "60caa9a2243f930fb57abbbce9496a53a62d9be13a00a8c38b9cd30046ca3999",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1163,6 +1163,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-129-TIER-S0-TACTICAL-APEX-COMMAND-SUITE.md",
       "sha256": "77cf6500191e360e3940efba15680bfb4924517b2839af78fd1d07783f611c30"
+    },
+    {
+      "id": "SPEC-130",
+      "title": "Glorian Sovereign Identity, Solar Design Archetype & Unified CLI Elevation",
+      "status": "UNKNOWN",
+      "frCount": 1,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-130-GLORIAN-SOVEREIGN-IDENTITY-ELEVATION.md",
+      "sha256": "209d6556711a7a51f1a941ab4e751e4dfa8f79a54ee86ecd840e0d8a26172d9b"
     }
   ]
 }

@@ -8,7 +8,7 @@ metadata:
     github.com/project-slug: valentinflorezarbelaez-ai/Eos-System
     backstage.io/techdocs-ref: dir:.
     backstage.io/managed-by-location: url:https://github.com/valentinflorezarbelaez-ai/Eos-System/blob/main/catalog-info.yaml
-    vercel.com/project-url: https://eos-system-ten.vercel.app
+    vercel.com/project-url: https://glorian-system.vercel.app
   tags:
     - control-plane
     - layer-0-sovereign
@@ -24,7 +24,7 @@ metadata:
     - frontier-model-router
     - lmax-disruptor-nanosecond
   links:
-    - url: https://eos-system-ten.vercel.app
+    - url: https://glorian-system.vercel.app
       title: Production Control Plane
       icon: dashboard
     - url: https://github.com/valentinflorezarbelaez-ai/Eos-System

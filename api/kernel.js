@@ -1,4 +1,5 @@
 import handleBigTech from "./_bigtech.js";
+import handleSpecs from "./_specs.js";
 import { createHash } from "node:crypto";
 
 const LINUX_CONCEPT_FIXTURES = Object.freeze({
@@ -51,6 +52,10 @@ export default function handler(req, res) {
 
   if (url.includes("/api/omega") || query.module === "omega" || query.mode === "omega" || query.action === "omega") {
     return respondWithOmegaDemo(req, res);
+  }
+
+  if (url.includes("/api/specs") || query.module === "specs" || query.mode === "specs") {
+    return handleSpecs(req, res);
   }
 
   const vfsPath = query.path === undefined ? "/proc/eos/version" : query.path;

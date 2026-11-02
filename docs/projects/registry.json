@@ -123,7 +123,7 @@
       "resolvedLocalDir": "Eos-System",
       "localPathEnv": "EOS_FLEET_EOS_SYSTEM_PATH",
       "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Eos-System.git",
-      "productionUrl": "https://eos-system-ten.vercel.app",
+      "productionUrl": "https://glorian-system.vercel.app",
       "type": "control-plane-monolith",
       "status": "REGISTERED",
       "intake": "INTAKE_COMPLETE",

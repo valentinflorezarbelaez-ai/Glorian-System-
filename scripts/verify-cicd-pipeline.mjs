@@ -221,7 +221,7 @@ const apiEndpoints = [
   { file: "api/kernel.js" },
   { file: "api/cicd.js" },
   { file: "api/fleet.js" },
-  { file: "api/specs.js" },
+  { file: "api/kernel.js", query: { module: "specs" } },
   { file: "api/jarvis.js", method: "POST", body: { directive: "status check" } },
   { file: "api/health.js" },
   { file: "api/graph.js" },

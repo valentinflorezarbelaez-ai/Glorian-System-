@@ -10,7 +10,7 @@
 
 import { createHash } from "node:crypto";
 
-export type DesignArchetype = "SPOTIFY_XIRP" | "PALANTIR_FOUNDRY" | "ANDURIL_LATTICE";
+export type DesignArchetype = "SPOTIFY_XIRP" | "PALANTIR_FOUNDRY" | "ANDURIL_LATTICE" | "GLORIAN_SOLAR";
 
 export type DesignComponentType =
   | "INCIDENT_TIMELINE"
@@ -129,6 +129,23 @@ export class EosEliteDesignStudioEngine {
           fontFamilyHeading: "'JetBrains Mono', monospace",
           fontFamilyMono: "'JetBrains Mono', monospace",
           borderRadius: "2px",
+          spatialGridBasePx: 8
+        };
+
+      case "GLORIAN_SOLAR":
+        return {
+          background: "#050508", // Deep Pleromic Obsidian
+          surface: "#0D0E15",
+          surfaceElevated: "#161824",
+          foreground: "#FFFFFF", // Pure Radiant Light
+          mutedForeground: "#A1A1AA",
+          primaryAccent: "#F59E0B", // Solar Gold
+          secondaryAccent: "#FBBF24", // Radiant Amber
+          borderColor: "#27272A",
+          glowEffect: "0 0 28px rgba(245, 158, 11, 0.35)",
+          fontFamilyHeading: "'Space Grotesk', sans-serif",
+          fontFamilyMono: "'JetBrains Mono', monospace",
+          borderRadius: "8px",
           spatialGridBasePx: 8
         };
     }
@@ -395,7 +412,7 @@ export class EosEliteDesignStudioEngine {
       totalAudits: this.totalAudits,
       lastArchetypeGenerated: this.lastArchetypeGenerated,
       state: "CONFORMANT",
-      activeArchetypesCount: 3
+      activeArchetypesCount: 4
     };
   }
 

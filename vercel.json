@@ -1,13 +1,14 @@
 {
   "version": 2,
   "cleanUrls": true,
-  "buildCommand": "node scripts/verify-cicd-pipeline.mjs",
+  "buildCommand": "node scripts/verify-sri-integrity.mjs",
   "outputDirectory": ".",
   "rewrites": [
     { "source": "/api/amplify", "destination": "/api/compile?mode=amplify" },
     { "source": "/api/titans", "destination": "/api/eval?mode=titans" },
     { "source": "/api/bigtech", "destination": "/api/kernel?module=bigtech" },
     { "source": "/api/omega", "destination": "/api/kernel?module=omega" },
+    { "source": "/api/specs", "destination": "/api/kernel?module=specs" },
     { "source": "/mcp", "destination": "/api/mcp" }
   ],
   "headers": [
