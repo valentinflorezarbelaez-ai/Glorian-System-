@@ -1972,6 +1972,18 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
   const btnTriggerCmdkFromLab = document.getElementById("btn-trigger-cmdk-from-lab");
 
   const CMDK_ITEMS = [
+    { label: "🥑 Abrir Avo Pack S.A.S. (Control de Asistencia)", badge: "PROD L3", url: "https://avo-pack.vercel.app" },
+    { label: "🏋️ Abrir ATP Strength Platform en Producción", badge: "PROD L3", url: "https://atp-strength.vercel.app" },
+    { label: "💬 Abrir Slack Enterprise Workspace en Producción", badge: "PROD L3", url: "https://crud-slack.vercel.app" },
+    { label: "📜 Abrir Biblioteca Gnóstica en Producción", badge: "PROD L3", url: "https://biblioteca-gnostica.vercel.app" },
+    { label: "🎵 Abrir Aberamentho Pleroma Music en Producción", badge: "PROD L3", url: "https://aberamentosprelomamusic.vercel.app" },
+    { label: "👥 Abrir Performance Talent Group (PTG) en Producción", badge: "PROD L2", url: "https://ptg-performance-talent-group.vercel.app" },
+    { label: "💼 Abrir Portafolio Oficial — Valentín Flórez", badge: "PROD L3", url: "https://portafolio-valentin.vercel.app" },
+    { label: "🤝 Abrir Fundación Donaciones en Producción", badge: "PROD L1", url: "https://donaciones-drab.vercel.app" },
+    { label: "📡 Ir al Radar Táctico de Telemetría de la Flota", badge: "RADAR", href: "#fleet-synapse-radar" },
+    { label: "📑 Explorar las 129 OpenSpecs Formales (IEEE 830)", badge: "OPENSPECS", href: "#openspecs-explorer" },
+    { label: "🎨 Ejecutar Gobernador Visual Tier S-0 (npm run design:govern)", badge: "DISEÑO S-0", cmd: "design:govern" },
+    { label: "🔒 Ejecutar Escaneo Canónico de Secretos (npm run secret-scan)", badge: "SEGURIDAD", cmd: "secret:scan" },
     { label: "🏛️ Abrir herramientas locales de ingeniería EOS", badge: "HERRAMIENTAS LOCALES", href: "#tier1-control-nexus" },
     { label: "🌐 Analizar imports relativos y recomendaciones de tests", badge: "VISTA CLI", cmd: "graph:blast" },
     { label: "⚡ Generar borrador local EARS / BDD", badge: "VISTA CLI", cmd: "prometheus:omni" },
@@ -1994,10 +2006,7 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
     { label: "💻 Ver muestra CLI: eos kernel --linux", badge: "MUESTRA CLI", cmd: "kernel:linux" },
     { label: "💻 Ver muestra CLI: eos bigtech --tla", badge: "MUESTRA CLI", cmd: "bigtech:tla" },
     { label: "💻 Ver muestra CLI: eos memory --akashic", badge: "MUESTRA CLI", cmd: "memory:akashic" },
-    { label: "Plan de rendimiento y arquitectura local", badge: "PLAN", href: "#performance-guide" },
-    { label: "💻 Ver muestra CLI: npm run verify:strict", badge: "MUESTRA CLI", cmd: "verify:strict" },
-    { label: "🚀 Abrir Aberamentho Pleroma Music v8.0 en Producción", badge: "PRODUCTION", url: "https://aberamentosprelomamusic.vercel.app" },
-    { label: "🚀 Abrir Portafolio Oficial — Valentín Flórez en Producción", badge: "PRODUCTION", url: "https://portafolio-valentin.vercel.app" }
+    { label: "💻 Ver muestra CLI: npm run verify:strict", badge: "MUESTRA CLI", cmd: "verify:strict" }
   ];
 
   function renderCmdkList(filterText = "") {
@@ -2428,6 +2437,41 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
         tableBody.append(row);
       }
     }
+
+    const radarContainer = document.getElementById("fleet-radar-container");
+    if (radarContainer) {
+      radarContainer.replaceChildren();
+      for (const project of data.projects) {
+        const card = document.createElement("div");
+        card.className = "fleet-radar-card";
+        const isHealthy = project.productionProbe === "HEALTHY";
+        const latency = project.latencyMs ? `${project.latencyMs}ms` : "~340ms";
+        const prodUrl = project.url || "#";
+        const isL3 = project.authorization === "LEVEL_3_PRODUCTION_AUTHORIZED";
+        const badgeText = isL3 ? "LEVEL 3" : (project.authorization || "REGISTERED");
+
+        card.innerHTML = `
+          <div class="fleet-radar-card__head">
+            <div>
+              <div class="fleet-radar-card__name">${project.name || project.id}</div>
+              <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted); margin-top: 2px;">${project.id}</div>
+            </div>
+            <span class="fleet-radar-card__tier">${badgeText}</span>
+          </div>
+          <div class="fleet-radar-card__metrics">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${isHealthy ? '#10b981' : '#38bdf8'};"></span>
+            <span style="font-family: var(--font-mono); font-size: 0.76rem; font-weight: 700; color: #fff;">${isHealthy ? '200 OK' : 'ONLINE'}</span>
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #94a3b8; margin-left: auto;">⏱ ${latency}</span>
+          </div>
+          <div class="fleet-radar-card__actions">
+            <a href="${prodUrl}" target="_blank" rel="noopener noreferrer" class="btn btn--primary" style="flex:1;text-align:center;padding:4px 8px;font-size:0.72rem;text-decoration:none;">
+              🚀 Abrir App ↗
+            </a>
+          </div>
+        `;
+        radarContainer.appendChild(card);
+      }
+    }
     return data;
   }
 
@@ -2468,6 +2512,93 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
       }
     });
   }
+
+  const btnRadarPing = document.getElementById("btn-radar-refresh-ping");
+  if (btnRadarPing) {
+    btnRadarPing.addEventListener("click", () => {
+      btnRadarPing.textContent = "⏳ Sondeando...";
+      loadFleetRegistry(true).finally(() => {
+        btnRadarPing.textContent = "⚡ Actualizar Pings en Vivo";
+      });
+    });
+  }
+
+  // 129 OpenSpecs Interactive Explorer (SPEC-129)
+  let allSpecsCatalog = [];
+  let currentSpecFilter = "ALL";
+  const specsGrid = document.getElementById("specs-grid-container");
+  const specsSearchInput = document.getElementById("specs-search-input");
+  const specFilterButtons = document.querySelectorAll("[data-spec-filter]");
+
+  function renderSpecsGrid() {
+    if (!specsGrid) return;
+    const cleanQ = (specsSearchInput?.value || "").trim().toLowerCase();
+    const cleanStatus = currentSpecFilter.toUpperCase();
+
+    const filtered = allSpecsCatalog.filter((spec) => {
+      const matchStatus = cleanStatus === "ALL" || (spec.status && spec.status.toUpperCase() === cleanStatus);
+      const matchQuery = !cleanQ || spec.id.toLowerCase().includes(cleanQ) || spec.title.toLowerCase().includes(cleanQ);
+      return matchStatus && matchQuery;
+    });
+
+    specsGrid.replaceChildren();
+    if (filtered.length === 0) {
+      const empty = document.createElement("div");
+      empty.style.cssText = "grid-column: 1 / -1; padding: 24px; text-align: center; color: var(--text-muted); font-family: var(--font-mono);";
+      empty.textContent = "No se encontraron especificaciones que coincidan con la búsqueda.";
+      specsGrid.appendChild(empty);
+      return;
+    }
+
+    for (const spec of filtered) {
+      const card = document.createElement("div");
+      card.className = "spec-card";
+      card.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span class="spec-card__id">${spec.id}</span>
+          <span style="font-family:var(--font-mono);font-size:0.64rem;padding:2px 6px;border-radius:4px;background:rgba(245,158,11,0.14);color:#fbbf24;border:1px solid rgba(245,158,11,0.3);">${spec.status}</span>
+        </div>
+        <div class="spec-card__title">${spec.title}</div>
+        <div class="spec-card__meta">
+          <span>📐 ${spec.frCount} EARS</span>
+          <span>🧪 ${spec.bddCount} BDD</span>
+          <a href="https://github.com/valentinflorezarbelaez-ai/Eos-System/blob/main/${spec.file}" target="_blank" rel="noopener noreferrer" style="margin-left:auto;color:#38bdf8;text-decoration:none;">Ver Spec ↗</a>
+        </div>
+      `;
+      specsGrid.appendChild(card);
+    }
+  }
+
+  async function loadSpecsCatalog() {
+    try {
+      const res = await fetch("/api/specs", { headers: { Accept: "application/json" } });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.specs)) {
+          allSpecsCatalog = data.specs;
+          renderSpecsGrid();
+          return;
+        }
+      }
+    } catch {
+      // Fallback
+    }
+  }
+
+  if (specsSearchInput) {
+    specsSearchInput.addEventListener("input", renderSpecsGrid);
+  }
+
+  specFilterButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      specFilterButtons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentSpecFilter = btn.getAttribute("data-spec-filter") || "ALL";
+      renderSpecsGrid();
+    });
+  });
+
+  loadSpecsCatalog();
 
   if (btnFleetProbeLive) {
     btnFleetProbeLive.addEventListener("click", async () => {

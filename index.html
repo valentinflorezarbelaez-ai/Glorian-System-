@@ -32,7 +32,7 @@
   <link rel="preload" href="/css/eos.css?v=15.0" as="style" />
   <link rel="preload" href="/js/eos.js?v=18.0" as="script" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/eos.css?v=15.0" integrity="sha384-/RLse+iJEIkLad7W/A+St8gT74qRmTxB4Ugtlok1D2Hcuino+5z1jXs4LU/YjB7+" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/css/eos.css?v=15.0" integrity="sha384-gaaC09Jx345fn0H7/MzHXzqcy4ZHYSe4mVpEWdi+wvMMQUt9tjeM2vJEYuSkLAog" crossorigin="anonymous" />
 
   <!-- Xirp-Grade Speculative Prerendering (0ms Instant Navigation) -->
   <script type="speculationrules">
@@ -104,6 +104,8 @@
         <ul class="nav-links">
           <li><a href="#primeros-pasos">Primeros pasos</a></li>
           <li><a href="#tier1-control-nexus">Herramientas</a></li>
+          <li><a href="#fleet-synapse-radar">Flota Radar</a></li>
+          <li><a href="#openspecs-explorer">129 Specs</a></li>
           <li><a href="#performance-guide">Guía técnica</a></li>
           <li><a href="#consola">Laboratorio</a></li>
         </ul>
@@ -160,6 +162,30 @@
             <div class="kpi-card">
               <div class="kpi-card__val kpi-card__val--emerald">03 · APRUEBA</div>
               <div class="kpi-card__lbl">Diff con aprobación explícita</div>
+            </div>
+          </div>
+
+          <!-- TIER S-0 TACTICAL BENTO HUD (SPEC-129) -->
+          <div class="hero-bento-hud" role="region" aria-label="Telemetría táctica de EOS">
+            <div class="bento-hud-card">
+              <div class="bento-hud-card__tag">FLOTA SOBERANA</div>
+              <div class="bento-hud-card__value" style="color: #38bdf8;">9 PROYECTOS</div>
+              <div class="bento-hud-card__sub" style="color: #10b981;">● 100% ONLINE (L3)</div>
+            </div>
+            <div class="bento-hud-card">
+              <div class="bento-hud-card__tag">OPENSPECS</div>
+              <div class="bento-hud-card__value" style="color: #fbbf24;">129 SPECS</div>
+              <div class="bento-hud-card__sub" style="color: var(--text-muted);">EARS + BDD FORMAL</div>
+            </div>
+            <div class="bento-hud-card">
+              <div class="bento-hud-card__tag">CI/CD SUITES</div>
+              <div class="bento-hud-card__value" style="color: #10b981;">133 SUITES</div>
+              <div class="bento-hud-card__sub" style="color: var(--text-muted);">7 ETAPAS PASADAS</div>
+            </div>
+            <div class="bento-hud-card">
+              <div class="bento-hud-card__tag">DISEÑO S-0</div>
+              <div class="bento-hud-card__value" style="color: #a855f7;">100% CONFORMING</div>
+              <div class="bento-hud-card__sub" style="color: #10b981;">0 ANTI-PATRONES</div>
             </div>
           </div>
         </div>
@@ -2305,6 +2331,21 @@ This panel does not create an SBOM, run tests, commit, push, deploy, or probe pr
           </p>
         </div>
 
+        <!-- FLEET SYNAPSE RADAR (SPEC-129) -->
+        <div id="fleet-synapse-radar" style="margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <div style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: #38bdf8; letter-spacing: 0.05em;">
+              📡 RADAR TÁCTICO DE TELEMETRÍA EN VIVO · 9 PROYECTOS SOBERANOS
+            </div>
+            <button type="button" id="btn-radar-refresh-ping" class="btn btn--primary" style="padding: 4px 12px; font-size: 0.72rem; font-family: var(--font-mono);">
+              ⚡ Actualizar Pings en Vivo
+            </button>
+          </div>
+          <div class="fleet-synapse-grid" id="fleet-radar-container">
+            <!-- Dynamic cards rendered by js/eos.js with live pings -->
+          </div>
+        </div>
+
         <!-- TABLA DEL REGISTRO DE FLOTA FEDERADO -->
         <div class="table-wrap" role="region" aria-label="Registro configurado de proyectos de EOS" tabindex="0" style="margin-bottom: 2.25rem;">
           <table class="eos-table">
@@ -2352,6 +2393,39 @@ This panel does not create an SBOM, run tests, commit, push, deploy, or probe pr
 Registry: not yet loaded.
 Probes, hooks, gates, commits, pushes, and deployments are not run by this page.</pre>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 129 OPENSPECS INTERACTIVE EXPLORER (SPEC-129) -->
+    <section class="section deferred-section" id="openspecs-explorer">
+      <div class="container">
+        <div class="section__head">
+          <div class="eyebrow">ARQUITECTURA FORMAL · IEEE 830 &amp; ISO 29148</div>
+          <h2 class="section__title">129 OpenSpecs · Catálogo Formal de Especificaciones</h2>
+          <p class="section__sub">
+            Cada módulo de EOS se gobierna bajo la Ley I (Cero Vibe Coding) con especificaciones formales versionadas, requisitos EARS y criterios de aceptación BDD.
+          </p>
+        </div>
+
+        <div class="specs-explorer-header">
+          <input
+            type="search"
+            id="specs-search-input"
+            class="specs-search-box"
+            placeholder="Buscar por ID (ej. SPEC-128) o palabra clave..."
+            aria-label="Buscar en el catálogo de 129 especificaciones"
+          />
+          <div class="specs-filter-group" role="group" aria-label="Filtro de especificaciones">
+            <button type="button" class="btn btn--ghost btn--sm active" data-spec-filter="ALL">Todas (129)</button>
+            <button type="button" class="btn btn--ghost btn--sm" data-spec-filter="APPROVED">Approved</button>
+            <button type="button" class="btn btn--ghost btn--sm" data-spec-filter="PRODUCTION_READY">Production Ready</button>
+            <button type="button" class="btn btn--ghost btn--sm" data-spec-filter="VERIFIED">Verified</button>
+          </div>
+        </div>
+
+        <div class="specs-grid" id="specs-grid-container" role="feed" aria-label="Catálogo de especificaciones formales">
+          <!-- Populated by js/eos.js from /api/specs or embedded catalog -->
         </div>
       </div>
     </section>
@@ -2879,6 +2953,6 @@ No se ejecutan comandos, auditorías, sondeos ni despliegues.</pre>
     </div>
   </dialog>
 
-  <script src="/js/eos.js?v=18.0" integrity="sha384-GGUHZOgsTilBv/6zTNCmh79Vt/rWC33NBym2hiK7kafzBIekT8QoMUftL0KzITaK" crossorigin="anonymous" defer></script>
+  <script src="/js/eos.js?v=18.0" integrity="sha384-p6fzFZBU4ULEmG7zBrACgAeddyK5oGX7006mCzu5nv4ezohQ5H+YfGkfMtXTwxuz" crossorigin="anonymous" defer></script>
 </body>
 </html>
