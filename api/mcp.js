@@ -202,12 +202,39 @@ function addLocalScope(response, toolName) {
   return response;
 }
 
+const STATIC_ALLOWED_ORIGINS = new Set([
+  "https://glorian-system.vercel.app",
+  "https://eos-system.vercel.app",
+  "https://portafolio-valentin.vercel.app",
+  "https://avo-pack.vercel.app",
+  "https://crud-slack.vercel.app",
+  "https://atp-strength.vercel.app",
+  "https://biblioteca-gnostica.vercel.app",
+  "https://donaciones-drab.vercel.app",
+  "https://aberamentosprelomamusic.vercel.app",
+  "https://ptg-performance-talent-group.vercel.app",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000"
+]);
+
+function isAllowedOrigin(origin) {
+  if (typeof origin !== "string" || !origin || /[\r\n]/.test(origin)) return false;
+  if (STATIC_ALLOWED_ORIGINS.has(origin)) return true;
+  if (/^https:\/\/(?:[a-zA-Z0-9-]+\.)*vercel\.app$/i.test(origin)) return true;
+  if (process.env.EOS_ALLOWED_ORIGINS) {
+    const custom = process.env.EOS_ALLOWED_ORIGINS.split(",").map((s) => s.trim());
+    if (custom.includes(origin)) return true;
+  }
+  return false;
+}
+
 export default async function handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
   res.setHeader("X-Content-Type-Options", "nosniff");
   const origin = req.headers?.origin;
-  if (typeof origin === "string" && origin && !/[\r\n]/.test(origin)) {
+  const isAllowed = isAllowedOrigin(origin);
+  if (isAllowed) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Access-Control-Allow-Credentials", "true");
   }
@@ -215,7 +242,12 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Authorization, Mcp-Session-Id, MCP-Protocol-Version");
   res.setHeader("Vary", "Origin");
 
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (req.method === "OPTIONS") {
+    if (origin && !isAllowed) {
+      return res.status(403).json({ error: "Origin is not allowed." });
+    }
+    return res.status(204).end();
+  }
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST, OPTIONS");
     return res.status(405).json({

@@ -454,4 +454,12 @@ test("BDD-376: Serverless stateless edge execution in api/mcp.js", async () => {
   assert.equal(corsRes.headers["access-control-allow-origin"], testOrigin);
   assert.equal(corsRes.headers["access-control-allow-credentials"], "true");
   assert.equal(corsRes.headers.vary, "Origin");
+
+  // 5. Unauthorized Origin is strictly rejected on preflight with 403
+  const { req: evilReq, res: evilRes } = mockServerless("OPTIONS", {
+    headers: { origin: "https://evil-unauthorized-attacker.com" }
+  });
+  await serverlessHandler(evilReq, evilRes);
+  assert.equal(evilRes.statusCode, 403);
+  assert.equal(evilRes.headers["access-control-allow-origin"], undefined);
 });

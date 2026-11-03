@@ -3,6 +3,11 @@
   "cleanUrls": true,
   "buildCommand": "node scripts/verify-sri-integrity.mjs",
   "outputDirectory": ".",
+  "functions": {
+    "api/mcp.js": {
+      "includeFiles": "docs/evidence/**"
+    }
+  },
   "rewrites": [
     { "source": "/api/amplify", "destination": "/api/compile?mode=amplify" },
     { "source": "/api/titans", "destination": "/api/eval?mode=titans" },
