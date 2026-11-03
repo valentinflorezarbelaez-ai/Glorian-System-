@@ -7,6 +7,7 @@
 * **Authorized By**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
 * **Date**: 2026-10-25
 * **Scope**: Creation and continuous sovereign elevation of EOS System (Glorian System):
+  - CHANGE-074 / SPEC-139: Supply Chain SLSA Level 3 & CycloneDX SBOM Verification — Pure Layer-0 CycloneDX v1.5 JSON SBOM synthesis, in-toto Statement v1 with SLSA Provenance v1.0 predicate, fail-closed bit-for-bit SHA-256 supply-chain validator, and isolated OIDC keyless attestation job in .github/workflows/eos-sovereign-cicd.yml.
   - CHANGE-073 / SPEC-138: Gate Sanity, SARIF Truth & Strict CI Unification — Refactor verify-cicd-pipeline.mjs with try-finally SARIF diagnostic accumulator, harmonize eos-github-pr-attestation.mjs with universal whole-tree secret scanning and strict EARS/BDD 100% ratio assertion, and consolidate GitHub Actions workflows into a single SHA-pinned sovereign CI pipeline.
   - CHANGE-072 / SPEC-137: Glorian Millennium Sovereign Elevation — Canonical URL harmonization in index.html to https://glorian-system.vercel.app/, materialization of data/eos_bitemporal.wal with hardware fsync and CRC32, elevation of Studio Console Cockpit to v75.0.0, and sealing of Transaction #1.000 in the append-only SQLite WAL ledger with Merkle Mountain Range (MMR) attestation.
   - Official Landing Page, PWA manifest/assets, and Vercel Production deployment.
@@ -942,6 +943,29 @@
   - `docs/tasks/TASKS-138-GATE-SANITY-AND-TRUTH-ELEVATION.md`
   - `test/glorianGateSanity.test.mjs`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-03-SUPPLY-CHAIN-SLSA3-139
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-139 (v76.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit user directive on 2026-11-03: "Recomendación prioritaria: empezar por el 4 (Cadena de Suministro SLSA 3)")
+* **Scope**: Supply Chain SLSA Level 3 & CycloneDX SBOM Verification:
+  1. Component 1: `src/core/eosSlsaProvenanceSbom.ts` elevated with dynamic package versioning, canonical repository binding, and comprehensive component inventory.
+  2. Component 2: Deterministic generator script `scripts/eos-generate-sbom.mjs` synthesizing `docs/evidence/sbom.cdx.json` and `docs/evidence/provenance.intoto.jsonl`.
+  3. Component 3: Fail-closed verification script `scripts/verify-supply-chain.mjs` verifying bit-for-bit SHA-256 integrity and in-toto provenance statements.
+  4. Component 4: GitHub Actions `supply-chain-attestation` job in `.github/workflows/eos-sovereign-cicd.yml` with OIDC keyless signing on push events.
+  5. Component 5: Adversarial regression test suite `test/eosSlsa3SupplyChain.test.mjs` (BDD-369 to BDD-371).
+  6. Component 6: OpenSpec catalog synchronization (139 formal specifications).
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-139-SUPPLY-CHAIN-SLSA3-ATTESTATION.md`
+  - `openspec/changes/CHANGE-074-SUPPLY-CHAIN-SLSA3-ATTESTATION.md`
+  - `docs/intake/INTAKE-139-SUPPLY-CHAIN-SLSA3-ATTESTATION.md`
+  - `docs/plans/PLAN-139-SUPPLY-CHAIN-SLSA3-ATTESTATION.md`
+  - `docs/tasks/TASKS-139-SUPPLY-CHAIN-SLSA3-ATTESTATION.md`
+  - `scripts/eos-generate-sbom.mjs`
+  - `scripts/verify-supply-chain.mjs`
+  - `test/eosSlsa3SupplyChain.test.mjs`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
 
 
 

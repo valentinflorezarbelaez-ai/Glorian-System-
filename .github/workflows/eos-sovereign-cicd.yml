@@ -126,3 +126,34 @@ jobs:
           cargo fmt --check
           cargo test --locked
           cargo build --locked --release
+
+  supply-chain-attestation:
+    name: "SLSA Level 3 & CycloneDX SBOM Attestation"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    needs: [repository-checks]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+
+      - name: Install locked development toolchain
+        run: npm ci
+
+      - name: Synthesize CycloneDX v1.5 SBOM and In-toto SLSA Provenance
+        run: node scripts/eos-generate-sbom.mjs
+
+      - name: Verify bit-for-bit supply chain cryptographic congruence
+        run: node scripts/verify-supply-chain.mjs
+

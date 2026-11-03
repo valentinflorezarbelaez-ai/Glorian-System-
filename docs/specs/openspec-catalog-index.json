@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-03T20:15:21.792Z",
-  "totalSpecs": 138,
-  "catalogSha256": "17f394f1cfce197c834f28527e9115d601e7595f23a57e1932964c1a475fe076",
+  "timestampIso": "2026-11-03T20:39:07.598Z",
+  "totalSpecs": 139,
+  "catalogSha256": "af7c1c9a0b90ecc3249ff16243332df5445cca1b7943b0b84c6be9645bb33445",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1244,6 +1244,15 @@
       "bddCount": 3,
       "file": "openspec/specs/SPEC-138-GATE-SANITY-AND-TRUTH-ELEVATION.md",
       "sha256": "885e5e3f22a7d52181708db5a57e6104e816fe0834038966e8fd0fe2ab83fc2f"
+    },
+    {
+      "id": "SPEC-139",
+      "title": "Supply Chain SLSA Level 3 & CycloneDX SBOM Verification",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 3,
+      "file": "openspec/specs/SPEC-139-SUPPLY-CHAIN-SLSA3-ATTESTATION.md",
+      "sha256": "8de4784ec4cc65b8b1afa0c338b7599d94c8cc7b883b89d0f31f03a8370cbd66"
     }
   ]
 }

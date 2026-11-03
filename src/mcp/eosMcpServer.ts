@@ -5885,6 +5885,12 @@ export class EosMcpServer {
         const recordToLedger = args?.recordToLedger !== false;
 
         const result: Record<string, any> = {};
+        if (mode === "verify") {
+          const sbomPath = args?.sbomPath ? String(args.sbomPath) : undefined;
+          const provenancePath = args?.provenancePath ? String(args.provenancePath) : undefined;
+          result.verification = EosSlsaProvenanceSbom.verifySupplyChain(this.projectRoot, sbomPath, provenancePath);
+          return result;
+        }
         if (mode === "sbom" || mode === "both") {
           result.sbom = EosSlsaProvenanceSbom.generateCycloneDxSbom(this.projectRoot);
           if (recordToLedger) {
