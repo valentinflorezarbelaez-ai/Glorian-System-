@@ -14,8 +14,8 @@ Some pages and endpoints are demonstrations. Static fixtures, generated drafts, 
 
 ```sh
 node --version
-git clone https://github.com/valentinflorezarbelaez-ai/Eos-System.git
-cd Eos-System
+git clone https://github.com/valentinflorezarbelaez-ai/Glorian-System-.git
+cd Glorian-System-
 npm ci
 node bin/eos.mjs help
 node bin/eos.mjs flow inspect "<ruta-a-tu-repositorio-git>"

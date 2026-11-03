@@ -6,13 +6,14 @@
   <title>Glorian System — Sovereign Studio Console</title>
   <style>
     :root {
-      --bg-pure: #000000;
-      --surface-clean: #0a0a0a;
-      --border-strict: #1a1a1a;
+      --bg-pure: #050508;
+      --surface-clean: #0d0e15;
+      --border-strict: #161824;
       --text-primary: #ffffff;
-      --text-secondary: #888888;
-      --accent-majestic: #0066ff;
-      --accent-success: #00ff66;
+      --text-secondary: #94a3b8;
+      --accent-majestic: #f59e0b;
+      --accent-gold-bright: #fbbf24;
+      --accent-success: #10b981;
     }
     body {
       background-color: var(--bg-pure);
@@ -139,10 +140,10 @@
   </div>
   <h2>SOVEREIGN DISPATCH LOGS</h2>
   <div class="console-terminal" id="eosTerminal">
-    <div class="terminal-line"><span class="terminal-prompt">eos init --sovereign</span> Loading Layer-0 Hexagonal Topology... Done (0.4ms)</div>
-    <div class="terminal-line"><span class="terminal-prompt">eos mcp --status</span> 18 high-assurance tools exposed to Antigravity/Cursor.</div>
-    <div class="terminal-line"><span class="terminal-prompt">eos fleet --dispatch</span> Synchronizing telemetry with satellites.</div>
-    <div class="terminal-line"><span class="terminal-prompt">eos verify:strict</span> 7-stage CI/CD SecDevOps gate executed. Merkle Root sealed.</div>
+    <div class="terminal-line"><span class="terminal-prompt">glorian init --sovereign</span> Loading Layer-0 Hexagonal Topology... Done (0.4ms)</div>
+    <div class="terminal-line"><span class="terminal-prompt">glorian mcp --status</span> 18 high-assurance tools exposed to Antigravity/Cursor.</div>
+    <div class="terminal-line"><span class="terminal-prompt">glorian fleet --dispatch</span> Synchronizing telemetry with satellites.</div>
+    <div class="terminal-line"><span class="terminal-prompt">glorian verify:strict</span> 7-stage CI/CD SecDevOps gate executed. Merkle Root sealed.</div>
   </div>
   <script>
     const consoleTerminal = document.getElementById('eosTerminal');
@@ -157,7 +158,7 @@
       if (index < tasks.length) {
         const line = document.createElement('div');
         line.className = 'terminal-line';
-        line.innerHTML = `<span class="terminal-prompt">eos monitor --stream</span> ${tasks[index]}`;
+        line.innerHTML = `<span class="terminal-prompt">glorian monitor --stream</span> ${tasks[index]}`;
         consoleTerminal.appendChild(line);
         consoleTerminal.scrollTop = consoleTerminal.scrollHeight;
         index++;
