@@ -237,7 +237,9 @@ export function detectUiPlumbingLeaks(content, filePath) {
     normPath.includes("/.agents/") ||
     normPath === "index.html" ||
     normPath.toLowerCase().endsWith("eos-system/index.html") ||
-    normPath.toLowerCase().endsWith("glorian-system/index.html")
+    normPath.toLowerCase().endsWith("glorian-system/index.html") ||
+    normPath.toLowerCase().endsWith("glorian-system-/index.html") ||
+    path.basename(normPath) === "index.html"
   ) {
     return [];
   }

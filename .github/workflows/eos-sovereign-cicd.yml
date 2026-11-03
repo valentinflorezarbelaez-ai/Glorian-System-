@@ -157,3 +157,12 @@ jobs:
       - name: Verify bit-for-bit supply chain cryptographic congruence
         run: node scripts/verify-supply-chain.mjs
 
+      - name: Attest build provenance via GitHub OIDC & Sigstore
+        uses: actions/attest-build-provenance@c074443f1b5fb4a48297316607badb9f57853487 # v2.2.3
+        with:
+          subject-path: |
+            bin/eos.mjs
+            src/index.ts
+            package.json
+            docs/evidence/sbom.cdx.json
+

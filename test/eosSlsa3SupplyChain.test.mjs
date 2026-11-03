@@ -191,4 +191,7 @@ test("BDD-371: CI/CD Sovereign Supply Chain Attestation Job Configuration", () =
   // 4. Verify invocation of L0 scripts
   assert.ok(content.includes("node scripts/eos-generate-sbom.mjs"), "Job must invoke eos-generate-sbom.mjs");
   assert.ok(content.includes("node scripts/verify-supply-chain.mjs"), "Job must invoke verify-supply-chain.mjs");
+
+  // 5. Verify GitHub official provenance attestation action
+  assert.ok(content.includes("actions/attest-build-provenance"), "Job must invoke actions/attest-build-provenance");
 });
