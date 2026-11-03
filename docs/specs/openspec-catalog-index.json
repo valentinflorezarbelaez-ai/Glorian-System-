@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-03T15:57:31.162Z",
-  "totalSpecs": 136,
-  "catalogSha256": "85cbc494ae70b60dfb30d8b47d414eb65038e67b778c95ff61e03c28062d508c",
+  "timestampIso": "2026-11-03T19:32:28.701Z",
+  "totalSpecs": 137,
+  "catalogSha256": "102ee2aad028176e64f84357fd391018ba1482fbaa96566126689a8df50721cf",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1226,6 +1226,15 @@
       "bddCount": 3,
       "file": "openspec/specs/SPEC-136-GLORIAN-FLEET-RADAR-COCKPIT.md",
       "sha256": "6037bd689cb4631a25caf0106ec4d807139f205aa9ebf783df09d837bf87af10"
+    },
+    {
+      "id": "SPEC-137",
+      "title": "Glorian Millennium Sovereign Elevation",
+      "status": "APPROVED",
+      "frCount": 4,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-137-GLORIAN-MILLENNIUM-ELEVATION.md",
+      "sha256": "c14ad30d4f490dc858822709511106edb11f899dd907b117c569fc461eb43e7f"
     }
   ]
 }

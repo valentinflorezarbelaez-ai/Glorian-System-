@@ -6,7 +6,8 @@
 * **Project**: `EOS System — Sovereign Landing Page & Interactive Control Plane` (repository root)
 * **Authorized By**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
 * **Date**: 2026-10-25
-* **Scope**: Creation and continuous sovereign elevation of EOS System:
+* **Scope**: Creation and continuous sovereign elevation of EOS System (Glorian System):
+  - CHANGE-072 / SPEC-137: Glorian Millennium Sovereign Elevation — Canonical URL harmonization in index.html to https://glorian-system.vercel.app/, materialization of data/eos_bitemporal.wal with hardware fsync and CRC32, elevation of Studio Console Cockpit to v75.0.0, and sealing of Transaction #1.000 in the append-only SQLite WAL ledger with Merkle Mountain Range (MMR) attestation.
   - Official Landing Page, PWA manifest/assets, and Vercel Production deployment.
   - Core L0 Engines, Samaelian Sanctum, Nanosecond Engine, and Akashic Memory.
   - Linux Kernel architecture, Omega Post-Quantum Singularity, and Federated CI/CD Dispatcher.
