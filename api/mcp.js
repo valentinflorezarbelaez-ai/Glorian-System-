@@ -7,7 +7,8 @@ const EXPOSED_TOOLS = new Set([
   "eos_check_architecture",
   "eos_evaluate_decision",
   "eos_spotify_shuffle",
-  "eos_optimize_context"
+  "eos_optimize_context",
+  "eos_slsa_provenance_sbom"
 ]);
 const ALLOWED_MODELS = new Set(["grok", "claude", "openai", "gemini", "deepseek", "llama", "universal"]);
 const ALLOWED_STRICTNESS = new Set(["standard", "hardened", "sovereign"]);
@@ -100,6 +101,14 @@ function validatePublicTool(toolName, rawArguments) {
       break;
     case "eos_health_check":
       break;
+    case "eos_slsa_provenance_sbom":
+      if (args.mode !== undefined && (typeof args.mode !== "string" || !["verify", "sbom", "slsa", "both"].includes(args.mode))) {
+        return { error: rpcError(null, -32602, "mode must be one of: verify, sbom, slsa, both.") };
+      }
+      if (args.commitSha !== undefined && typeof args.commitSha !== "string") {
+        return { error: rpcError(null, -32602, "commitSha must be a string.") };
+      }
+      break;
   }
 
   return { args };
@@ -125,7 +134,8 @@ function limitPublicTools(response) {
     eos_check_architecture: "Runs a bounded static analysis on the repository src directory; it does not execute tests or establish production readiness.",
     eos_evaluate_decision: "Applies deterministic local keyword heuristics. Its score is a screening signal, not a verified decision.",
     eos_spotify_shuffle: "Runs a local deterministic track-ordering algorithm on at most 128 supplied tracks. It does not call Spotify.",
-    eos_optimize_context: "Compresses caller-supplied text only. It does not read repository files; savings vary by input."
+    eos_optimize_context: "Compresses caller-supplied text only. It does not read repository files; savings vary by input.",
+    eos_slsa_provenance_sbom: "Verifies or generates pure Layer-0 CycloneDX v1.5 SBOM and SLSA Provenance attestations."
   };
 
   response.result.tools = response.result.tools
@@ -158,6 +168,19 @@ function limitPublicTools(response) {
         if (schema.properties.tracks) schema.properties.tracks = { ...schema.properties.tracks, minItems: 1, maxItems: 128 };
         return { ...tool, description: descriptions[tool.name], inputSchema: schema };
       }
+      if (tool.name === "eos_slsa_provenance_sbom") {
+        return {
+          ...tool,
+          description: descriptions[tool.name],
+          inputSchema: {
+            type: "object",
+            properties: {
+              mode: { type: "string", enum: ["verify", "sbom", "slsa", "both"], description: "Execution mode (verify, sbom, slsa, both)." },
+              commitSha: { type: "string", description: "Optional commit SHA for SLSA statement." }
+            }
+          }
+        };
+      }
       return { ...tool, description: descriptions[tool.name] };
     });
   return response;
@@ -183,15 +206,22 @@ export default async function handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
   res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  const origin = req.headers?.origin;
+  if (typeof origin === "string" && origin && !/[\r\n]/.test(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+  }
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Authorization, Mcp-Session-Id, MCP-Protocol-Version");
   res.setHeader("Vary", "Origin");
 
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST, OPTIONS");
-    return res.status(405).json({ status: "METHOD_NOT_ALLOWED", transport: "stateless JSON-RPC POST; server-sent events are not supported" });
+    return res.status(405).json({
+      status: "METHOD_NOT_ALLOWED",
+      transport: "stateless JSON-RPC POST; server-sent events are not supported in serverless mode (ADR-0172)"
+    });
   }
 
   const contentTypeValue = req.headers?.["content-type"];
@@ -202,6 +232,13 @@ export default async function handler(req, res) {
   const acceptValue = req.headers?.accept;
   const accept = Array.isArray(acceptValue) ? acceptValue.join(",") : acceptValue;
   if (typeof accept === "string" && accept && !accept.includes("application/json") && !accept.includes("*/*")) {
+    if (accept.includes("text/event-stream")) {
+      return res.status(406).json({
+        status: "NOT_ACCEPTABLE",
+        message: "Serverless MCP transport operates in stateless JSON-RPC mode only (ADR-0172). For persistent streaming sessions (text/event-stream), connect to the local persistent daemon (src/mcp/eosMcpStreamServer.ts).",
+        supported: "application/json"
+      });
+    }
     return res.status(406).json({ status: "NOT_ACCEPTABLE", supported: "application/json" });
   }
 

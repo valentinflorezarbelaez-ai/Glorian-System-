@@ -218,8 +218,11 @@ export function detectPrefilledPasswordInputs(content, filePath) {
   return findings;
 }
 
-export function detectUiPlumbingLeaks(content, filePath) {
+export function detectUiPlumbingLeaks(content, filePath, rootDir = process.cwd()) {
   const normPath = path.resolve(filePath).replace(/\\/g, "/");
+  const normRoot = path.resolve(rootDir).replace(/\\/g, "/");
+  let relPath = path.relative(normRoot, normPath).replace(/\\/g, "/");
+  if (relPath.startsWith("./")) relPath = relPath.slice(2);
   const ext = path.extname(normPath).toLowerCase();
 
   // UI leak detector only inspects client-facing markup/HTML files
@@ -227,19 +230,15 @@ export function detectUiPlumbingLeaks(content, filePath) {
     return [];
   }
 
-  // Exempt formal documentation, spec directories, and Glorian / EOS System's own landing page
+  // Exempt formal documentation, spec directories, and ONLY the canonical root index.html
   if (
-    normPath.includes("/openspec/") ||
-    normPath.includes("/docs/") ||
-    normPath.includes("/test/") ||
-    normPath.includes("/tools/") ||
-    normPath.includes("/scripts/") ||
-    normPath.includes("/.agents/") ||
-    normPath === "index.html" ||
-    normPath.toLowerCase().endsWith("eos-system/index.html") ||
-    normPath.toLowerCase().endsWith("glorian-system/index.html") ||
-    normPath.toLowerCase().endsWith("glorian-system-/index.html") ||
-    path.basename(normPath) === "index.html"
+    relPath.startsWith("openspec/") ||
+    relPath.startsWith("docs/") ||
+    relPath.startsWith("test/") ||
+    relPath.startsWith("tools/") ||
+    relPath.startsWith("scripts/") ||
+    relPath.startsWith(".agents/") ||
+    relPath === "index.html"
   ) {
     return [];
   }
@@ -250,7 +249,7 @@ export function detectUiPlumbingLeaks(content, filePath) {
   while ((match = leakRegex.exec(content)) !== null) {
     findings.push({
       rule: "UI_SPEC_BADGE_LEAK",
-      filePath,
+      filePath: relPath,
       matchValue: match[0],
       description: `Internal technical governance badge '${match[0]}' leaked into public client-facing HTML markup`
     });
@@ -292,12 +291,12 @@ export function isAllowlisted(secret, relativePath, allowlist = []) {
   return { isAllowed: false };
 }
 
-export function scanFileContent(content, filePath, allowlist = [], knownSecrets = new Set()) {
+export function scanFileContent(content, filePath, allowlist = [], knownSecrets = new Set(), rootDir = process.cwd()) {
   const rawFindings = [
     ...detectVendorTokens(content, filePath),
     ...detectCredentialAssignments(content, filePath),
     ...detectPrefilledPasswordInputs(content, filePath),
-    ...detectUiPlumbingLeaks(content, filePath)
+    ...detectUiPlumbingLeaks(content, filePath, rootDir)
   ];
 
   // D4: Literal propagation check
@@ -389,7 +388,7 @@ export async function scanDirectory(targetDir, options = {}) {
     const relPath = path.relative(resolvedDir, filePath);
     try {
       const content = fs.readFileSync(filePath, "utf8");
-      const fileFindings = scanFileContent(content, filePath, allowlist, knownSecrets);
+      const fileFindings = scanFileContent(content, filePath, allowlist, knownSecrets, resolvedDir);
       for (const f of fileFindings) {
         f.filePath = relPath;
         findings.push(f);

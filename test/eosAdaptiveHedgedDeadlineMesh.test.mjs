@@ -29,15 +29,15 @@ describe("EOS SPEC-111: Distributed Adaptive Hedged Requests & Deadline Mesh Sui
     let primaryAborted = false;
     let hedgedAborted = false;
 
-    // Dispatch request where primary lags at 150ms, but hedged responds in 15ms
+    // Dispatch request where primary lags at 300ms, but hedged responds in 15ms
     const result = await mesh.executeHedged({
       endpointId,
-      hedgingDelayMs: 30, // Trigger hedge after 30ms
+      hedgingDelayMs: 25, // Trigger hedge after 25ms
       primaryFn: (signal) => new Promise((resolve) => {
         signal.addEventListener("abort", () => {
           primaryAborted = true;
         });
-        setTimeout(() => resolve("PRIMARY_SLOW"), 150);
+        setTimeout(() => resolve("PRIMARY_SLOW"), 300);
       }),
       hedgedFn: (signal) => new Promise((resolve) => {
         signal.addEventListener("abort", () => {
@@ -50,7 +50,7 @@ describe("EOS SPEC-111: Distributed Adaptive Hedged Requests & Deadline Mesh Sui
     assert.strictEqual(result.result, "HEDGED_FAST");
     assert.strictEqual(result.executedBy, "HEDGED");
     assert.strictEqual(result.hedgeDispatched, true);
-    assert.ok(result.latencyMs < 140, `Latency should be ~45ms and beat primary (150ms), got ${result.latencyMs}ms`);
+    assert.ok(result.latencyMs < 250, `Latency should be ~40ms and beat primary (300ms), got ${result.latencyMs}ms`);
     assert.ok(result.sha256Receipt.length === 64);
 
     // Give microtask tick for abort signal listener

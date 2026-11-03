@@ -106,6 +106,25 @@ describe("SPEC-123: Fleet Secret-Scan Gate & UI Leak Detector", () => {
       const findings = detectUiPlumbingLeaks(specDoc, "openspec/specs/SPEC-122.md");
       assert.equal(findings.length, 0);
     });
+
+    it("exempts the canonical root index.html across both local and CI paths", () => {
+      const rootHtml = `<span class="spec">SPEC-138 and SPEC-139</span>`;
+      // Local root
+      const localFindings = detectUiPlumbingLeaks(rootHtml, "index.html", process.cwd());
+      assert.equal(localFindings.length, 0);
+
+      // Simulated Linux GitHub Actions CI runner root
+      const ciRoot = "/home/runner/work/Glorian-System-/Glorian-System-";
+      const ciFindings = detectUiPlumbingLeaks(rootHtml, path.join(ciRoot, "index.html"), ciRoot);
+      assert.equal(ciFindings.length, 0);
+    });
+
+    it("strictly flags nested index.html files containing technical badges", () => {
+      const nestedHtml = `<span class="badge">SPEC-120</span>`;
+      const findings = detectUiPlumbingLeaks(nestedHtml, "templates/demo/index.html", process.cwd());
+      assert.ok(findings.length > 0);
+      assert.equal(findings[0].rule, "UI_SPEC_BADGE_LEAK");
+    });
   });
 
   describe("FR-371 / BDD-356: Secret Masking Engine", () => {
