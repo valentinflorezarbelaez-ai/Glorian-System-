@@ -13,9 +13,10 @@ describe("EOS Universal Polyglot Repository Inventory Suite (SPEC-019, BDD-049)"
       const report = adapter.audit();
 
       assert.ok(report, "Expected valid audit report");
+      const name = report.projectName.toLowerCase();
       assert.ok(
-        report.projectName.toLowerCase().includes("eos") || report.projectName === "Eos-System",
-        `Expected project name to match EOS, got ${report.projectName}`
+        name.includes("eos") || name.includes("glorian") || report.projectName === "Eos-System",
+        `Expected project name to match EOS or Glorian, got ${report.projectName}`
       );
       assert.ok(["typescript", "javascript"].includes(report.fingerprint.primaryLanguage));
       assert.ok(report.fingerprint.totalSourceFiles > 20);

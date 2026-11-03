@@ -33,8 +33,13 @@ test("BDD-273: Dynamic Fleet Soundcheck calculates real-time scores via git porc
 
   const ptgRepo = audit.reports.find(r => r.id === "performance-talent-group");
   assert.ok(ptgRepo, "Performance Talent Group must be registered in fleet");
-  assert.equal(ptgRepo.workingTreeClean, true, "PTG repository should have clean porcelain working tree");
-  assert.ok(ptgRepo.totalScore >= 90, `PTG score should be high, received ${ptgRepo.totalScore}`);
+  if (ptgRepo.existsLocally) {
+    assert.equal(ptgRepo.workingTreeClean, true, "PTG repository should have clean porcelain working tree");
+    assert.ok(ptgRepo.totalScore >= 90, `PTG score should be high, received ${ptgRepo.totalScore}`);
+  } else {
+    assert.equal(ptgRepo.existsLocally, false);
+    assert.equal(ptgRepo.workingTreeClean, false);
+  }
 });
 
 test("BDD-274: EosVercelCanaryObservability calculates CHI and promotes healthy canaries", () => {

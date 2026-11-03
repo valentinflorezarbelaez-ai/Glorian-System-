@@ -3,7 +3,7 @@
   "specRef": "SPEC-140",
   "changeRef": "CHANGE-075",
   "title": "Modern MCP Streamable HTTP Transport & Architectural Split",
-  "timestampIso": "2026-11-03T22:07:12.175Z",
+  "timestampIso": "2026-11-03T22:20:54.342Z",
   "epistemicState": "VERIFIED",
   "attestation": {
     "mcpStreamableVersion": "2025-06-18",
@@ -33,9 +33,9 @@
     "sarifPath": "docs/evidence/local-checks.sarif",
     "sarifFile": "docs/evidence/local-checks.sarif",
     "sarifErrorCount": 0,
-    "sbomFileSha256": "fce13aeb16039fb141a5fcb8ea6efa521244c0d9b599d9a5682631e4f22f5e3e",
+    "sbomFileSha256": "8019fc29811dd78b25050ce5d01682cc7314bc911daf11d20560333027792f3c",
     "sbomComponentsCataloged": 181,
-    "provenanceFileSha256": "df9bd06b378f365fe3e4720e8ae41cc6c491513689585efe61583ceb22416e13",
+    "provenanceFileSha256": "3f2249a66f3fb3bf60218e5d546a5346bbd0986674e9955ab6339c25896e45dd",
     "executionEnvironment": {
       "isCI": false,
       "platform": "win32",
