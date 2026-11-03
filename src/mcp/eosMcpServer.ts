@@ -27,6 +27,11 @@ import {
 } from "../core/eosNeuralVectorCore.ts";
 
 import {
+  EosHybridKnowledgeEngine,
+  getDefaultHybridKnowledgeEngine
+} from "../core/eosHybridKnowledgeEngine.ts";
+
+import {
   evaluateDirectiveWithTMR,
   interpretJarvisDirective,
   JARVIS_INTENT_REGISTRY
@@ -729,6 +734,7 @@ export class EosMcpServer {
   private static globalMeshRing = EosAgentTopologyMesh.createRingBufferMesh(256);
   private static globalLsmEngine = new EosLsmTreeStorageEngine(10);
   private readonly knowledgeStore = createDefaultEosKnowledgeStore();
+  private readonly hybridKnowledge: EosHybridKnowledgeEngine;
   private readonly projectRoot: string;
   private readonly serverVersion: string;
   private toolProfile: McpToolProfile;
@@ -760,6 +766,7 @@ export class EosMcpServer {
       // The MCP server can still operate when package metadata is unavailable.
     }
     this.serverVersion = version;
+    this.hybridKnowledge = getDefaultHybridKnowledgeEngine(this.projectRoot);
   }
 
   public setToolProfile(profile: McpToolProfile): void {
@@ -902,8 +909,9 @@ export class EosMcpServer {
                     type: "object",
                     properties: {
                       query: { type: "string", description: "Natural language query to search" },
-                      topK: { type: "number", description: "Maximum number of results to return (default: 3)" },
-                      mode: { type: "string", enum: ["hybrid", "vector"], description: "Search mode: hybrid (RRF) or pure vector" }
+                      topK: { type: "number", description: "Maximum number of results to return (default: 5)" },
+                      mode: { type: "string", enum: ["hybrid", "vector", "lexical"], description: "Search mode: hybrid (RRF), pure vector, or lexical (FTS5)" },
+                      category: { type: "string", enum: ["SPEC", "CHANGE", "ADR", "CODE", "PLAN", "DOC", "ALL"], description: "Optional category filter" }
                     },
                     required: ["query"]
                   }
@@ -3525,20 +3533,45 @@ export class EosMcpServer {
     switch (toolName) {
       case "eos_semantic_search": {
         const query = String(args.query || "");
-        const topK = Number(args.topK) || 3;
-        const mode = args.mode === "vector" ? "vector" : "hybrid";
+        const topK = Number(args.topK) || 5;
+        const mode = (args.mode === "vector" || args.mode === "lexical") ? args.mode : "hybrid";
+        const category = args.category || "ALL";
+
+        const hybridMatches = this.hybridKnowledge.search(query, { topK, mode, category });
+        if (hybridMatches.length > 0) {
+          return {
+            query,
+            mode,
+            category,
+            matchCount: hybridMatches.length,
+            matches: hybridMatches.map((m) => ({
+              id: m.id,
+              score: m.score,
+              title: m.title,
+              snippet: m.snippet,
+              filePath: m.filePath,
+              category: m.category,
+              lexicalRank: m.lexicalRank,
+              vectorRank: m.vectorRank
+            }))
+          };
+        }
+
         const matches = mode === "vector"
           ? this.knowledgeStore.search(query, topK)
           : this.knowledgeStore.searchHybrid(query, topK);
         return {
           query,
           mode,
+          category,
           matchCount: matches.length,
           matches: matches.map((m) => ({
             id: m.id,
             score: Number(m.score.toFixed(4)),
-            text: m.text,
-            domain: (m.metadata as any)?.domain || "General"
+            title: m.id,
+            snippet: m.text,
+            filePath: "",
+            category: (m.metadata as any)?.domain || "General"
           }))
         };
       }

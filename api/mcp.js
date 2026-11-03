@@ -8,7 +8,8 @@ const EXPOSED_TOOLS = new Set([
   "eos_evaluate_decision",
   "eos_spotify_shuffle",
   "eos_optimize_context",
-  "eos_slsa_provenance_sbom"
+  "eos_slsa_provenance_sbom",
+  "eos_semantic_search"
 ]);
 const ALLOWED_MODELS = new Set(["grok", "claude", "openai", "gemini", "deepseek", "llama", "universal"]);
 const ALLOWED_STRICTNESS = new Set(["standard", "hardened", "sovereign"]);
@@ -109,6 +110,20 @@ function validatePublicTool(toolName, rawArguments) {
         return { error: rpcError(null, -32602, "commitSha must be a string.") };
       }
       break;
+    case "eos_semantic_search":
+      if (!boundedString(args.query, MAX_TEXT_BYTES)) {
+        return { error: rpcError(null, -32602, "query must be a non-empty string no larger than 16 KiB.") };
+      }
+      if (args.topK !== undefined && (typeof args.topK !== "number" || !Number.isSafeInteger(args.topK) || args.topK < 1 || args.topK > 50)) {
+        return { error: rpcError(null, -32602, "topK must be a safe integer between 1 and 50.") };
+      }
+      if (args.mode !== undefined && (typeof args.mode !== "string" || !["hybrid", "vector", "lexical"].includes(args.mode))) {
+        return { error: rpcError(null, -32602, "mode must be one of: hybrid, vector, lexical.") };
+      }
+      if (args.category !== undefined && (typeof args.category !== "string" || !["SPEC", "CHANGE", "ADR", "CODE", "PLAN", "DOC", "ALL"].includes(args.category))) {
+        return { error: rpcError(null, -32602, "category is not supported.") };
+      }
+      break;
   }
 
   return { args };
@@ -135,7 +150,8 @@ function limitPublicTools(response) {
     eos_evaluate_decision: "Applies deterministic local keyword heuristics. Its score is a screening signal, not a verified decision.",
     eos_spotify_shuffle: "Runs a local deterministic track-ordering algorithm on at most 128 supplied tracks. It does not call Spotify.",
     eos_optimize_context: "Compresses caller-supplied text only. It does not read repository files; savings vary by input.",
-    eos_slsa_provenance_sbom: "Verifies or generates pure Layer-0 CycloneDX v1.5 SBOM and SLSA Provenance attestations."
+    eos_slsa_provenance_sbom: "Verifies or generates pure Layer-0 CycloneDX v1.5 SBOM and SLSA Provenance attestations.",
+    eos_semantic_search: "Search EOS sovereign architecture and knowledge base using deterministic Layer-0 hybrid vector and BM25 RRF fusion."
   };
 
   response.result.tools = response.result.tools

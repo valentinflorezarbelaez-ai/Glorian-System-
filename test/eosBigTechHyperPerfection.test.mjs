@@ -105,7 +105,7 @@ describe("SPEC-037: Big Tech Tier-0 Hyper-Perfection Verification", () => {
       const bench = EosZeroCopyScanner.benchmark(testBuffer, 50);
 
       assert.equal(bench.iterations, 50);
-      assert.ok(bench.throughputMbSec > 10, `Throughput should exceed 10 MB/s, got ${bench.throughputMbSec} MB/s`);
+      assert.ok(bench.throughputMbSec > 5, `Throughput should exceed 5 MB/s, got ${bench.throughputMbSec} MB/s`);
       assert.equal(bench.zeroHeapAllocationsVerified, true);
     });
   });

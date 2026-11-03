@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:69a136e8-25dc-4bca-9a28-c5841df71929",
+  "serialNumber": "urn:uuid:658212c5-97c0-49ef-9d84-306f2f623455",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-03T22:53:59.652Z",
+    "timestamp": "2026-11-03T23:50:51.404Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "c455acdea0b2c923e66fab662bc5e7feeaa29a13f406b788b55f6ae5ea000291"
+          "content": "b92c9e0a5af89e57a89c43f7c1affda4eed33961bcdeac5deb3c3f7f553d685f"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -1031,6 +1031,19 @@
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosHotPatchEngine.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosHybridKnowledgeEngine.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosHybridKnowledgeEngine.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5af84650840d781385e2c321e833ca71ef12323b1d9af37bc5903230a683c9af"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosHybridKnowledgeEngine.ts"
     },
     {
       "type": "file",
@@ -2385,5 +2398,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "017740e15c19614b6080e78912c71f2336954f8bcc94daae36c4f30140abf593"
+  "sha256Receipt": "c124dbe77549337c9494fccc0db80497eb166fb33c08f5e2d3f3bba27070e817"
 }

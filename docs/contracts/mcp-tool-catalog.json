@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-03T22:50:15.524Z",
-  "catalogSha256": "09afc8cc2c2a22bafa05d4b659c7f1860370e1030b37ff565f5198868734fefc",
+  "generatedAt": "2026-11-03T23:42:29.110Z",
+  "catalogSha256": "88e110986db8b77dd6c0a75e2482368b94c95a1bcf182fb5c03727ea3c22b287",
   "totalTools": 184,
   "coreTier0Count": 48,
   "tools": [
@@ -19,15 +19,29 @@
           },
           "topK": {
             "type": "number",
-            "description": "Maximum number of results to return (default: 3)"
+            "description": "Maximum number of results to return (default: 5)"
           },
           "mode": {
             "type": "string",
             "enum": [
               "hybrid",
-              "vector"
+              "vector",
+              "lexical"
             ],
-            "description": "Search mode: hybrid (RRF) or pure vector"
+            "description": "Search mode: hybrid (RRF), pure vector, or lexical (FTS5)"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "SPEC",
+              "CHANGE",
+              "ADR",
+              "CODE",
+              "PLAN",
+              "DOC",
+              "ALL"
+            ],
+            "description": "Optional category filter"
           }
         },
         "required": [

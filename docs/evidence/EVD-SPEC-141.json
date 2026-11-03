@@ -1,0 +1,25 @@
+{
+  "evidenceId": "EVD-SPEC-141",
+  "specRef": "SPEC-141",
+  "changeRef": "CHANGE-076",
+  "title": "Automated Sovereign Specification Verification",
+  "timestampIso": "2026-11-03T23:19:46.394Z",
+  "epistemicState": "VERIFIED",
+  "attestation": {
+    "sarifFile": "docs/evidence/local-checks.sarif",
+    "sarifErrorCount": 0,
+    "sbomFileSha256": "39e68118865b0ba64b21d093dd16651a48abd29e1bae2f08d8e224e81de529a8",
+    "sbomComponentsCataloged": 182,
+    "provenanceFileSha256": "ad96749d2cef3819fe5ee276cb63f44a9f91c71a64e59ed49c265bdcbc659d57",
+    "layer0PurityRuntimeDeps": 0,
+    "exitCode": 0,
+    "executionEnvironment": {
+      "isCI": false,
+      "platform": "win32",
+      "arch": "x64",
+      "nodeVersion": "v24.19.0",
+      "ciRunId": null
+    }
+  },
+  "verifiedBy": "EOS Sovereign Sentinel (Local Workstation: win32/x64)"
+}
