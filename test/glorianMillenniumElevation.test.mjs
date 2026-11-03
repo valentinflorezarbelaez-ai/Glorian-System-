@@ -9,8 +9,8 @@ test("BDD-362: Materialización y Verificación de data/eos_bitemporal.wal", () 
   const walPath = path.resolve("data/eos_bitemporal.wal");
   if (!fs.existsSync(walPath)) {
     fs.mkdirSync(path.dirname(walPath), { recursive: true });
-    const walInit = new EosDurableWal(walPath, false);
-    walInit.appendFrame({
+    const walInit = new EosDurableWal(walPath, true);
+    walInit.append({
       entityId: "system:genesis",
       attribute: "lifecycle",
       val: "SOVEREIGN_OPERATIONAL",
