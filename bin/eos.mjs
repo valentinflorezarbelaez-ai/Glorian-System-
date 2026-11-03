@@ -2747,6 +2747,29 @@ switch (command) {
     break;
   }
 
+  case "fleet:pulse":
+  case "pulse": {
+    printBanner();
+    const { EosFleetPulseEngine } = await import("../src/core/eosFleetPulseEngine.ts");
+    const engine = new EosFleetPulseEngine(root);
+    const report = engine.auditFleetPulse();
+    console.log(EosFleetPulseEngine.formatPulseTable(report));
+    console.log("");
+    break;
+  }
+
+  case "night:evolve":
+  case "evolve": {
+    printBanner();
+    const targetDir = args[1] || "src/core";
+    const { EosNocturnalEvolutionEngine } = await import("../src/core/eosNocturnalEvolutionEngine.ts");
+    const engine = new EosNocturnalEvolutionEngine(root);
+    const report = engine.runEvolutionSweep({ targetDir });
+    console.log(EosNocturnalEvolutionEngine.formatNocturnalSummary(report));
+    console.log("");
+    break;
+  }
+
   case "fleet:soundcheck": {
     printBanner();
     console.log("[FLEET SOUNDCHECK] Auditoría de Dimensiones de Salud de la Flota (Spotify Backstage)...\n");

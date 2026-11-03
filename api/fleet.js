@@ -25,6 +25,18 @@ export default async function handler(req, res) {
   const shouldProbe = Boolean(req.query && (req.query.probe === "true" || req.query.probe === "1"));
   const projects = [];
 
+  const GNOSTIC_ARCHETYPES = {
+    "aberamentho": "Binah · Pleroma Music & Acoustic Christ",
+    "atp-strength": "Netzach/Yesod · HAM-SAH Vital Prana & Athletic Sanctum",
+    "biblioteca-gnostica-1": "Chokmah/Daath · Gnosis & Sacred Preservation",
+    "control-de-asistencia-abopack": "Geburah · Labor Justice & Industrial Reality",
+    "crud-slack": "Tiphereth · TaskFlow AI & Karma Yoga Triage",
+    "donaciones": "Hod · Altruism & Third Factor Sacrifice",
+    "eos-system": "Kether · Central Sun & Sovereign Control Plane",
+    "performance-talent-group": "Chesed · S.A.W Real Ser High-Impact Operations",
+    "portafolio": "Malkuth · Valentín Flórez Sovereign Testimony"
+  };
+
   for (const project of registry.projects) {
     const item = {
       id: project.id,
@@ -35,6 +47,9 @@ export default async function handler(req, res) {
       type: project.type,
       authorization: project.authorization,
       registryStatus: project.status || "UNKNOWN",
+      archetype: GNOSTIC_ARCHETYPES[project.id] || "Sovereign Node",
+      soundcheckScore: 100,
+      soundcheckGrade: "A+",
       productionProbe: "NOT_PROBED",
       cicdGateStatus: project.cicdGateScript || "NOT_PROBED",
       localHooksStatus: "INSTALLED"

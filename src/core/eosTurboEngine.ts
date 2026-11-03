@@ -14,7 +14,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-import { scanArchitecture } from "./eosArchitectureGuard.ts";
+import { clearArchitectureCache, scanArchitecture } from "./eosArchitectureGuard.ts";
 
 export interface CacheEntry {
   readonly sha256: string;
@@ -235,9 +235,13 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
     const stat = fs.statSync(f, { bigint: true });
     const size = Number(stat.size);
     const cachedInv = INVENTORY_HASH_CACHE.get(f);
+    const cachedVer = VERIFICATION_CACHE.get(f);
     let fileSha256: string;
     if (cachedInv && cachedInv.mtimeNs === stat.mtimeNs && cachedInv.size === size) {
       fileSha256 = cachedInv.sha256;
+    } else if (cachedVer && cachedVer.mtimeNs === stat.mtimeNs && cachedVer.size === size) {
+      fileSha256 = cachedVer.sha256;
+      INVENTORY_HASH_CACHE.set(f, { mtimeNs: stat.mtimeNs, size, sha256: fileSha256 });
     } else {
       const bytes = fs.readFileSync(f);
       fileSha256 = crypto.createHash("sha256").update(bytes).digest("hex");
@@ -313,4 +317,5 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
 export function clearVerificationCache(): void {
   VERIFICATION_CACHE.clear();
   INVENTORY_HASH_CACHE.clear();
+  clearArchitectureCache();
 }

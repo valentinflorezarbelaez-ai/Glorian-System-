@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-02T19:57:00.797Z",
-  "totalSpecs": 130,
-  "catalogSha256": "60caa9a2243f930fb57abbbce9496a53a62d9be13a00a8c38b9cd30046ca3999",
+  "timestampIso": "2026-11-03T00:29:15.505Z",
+  "totalSpecs": 133,
+  "catalogSha256": "4f3d4950b89eb5a6fcd8b3af443c75d205aa31aa2497ba1087ef01b0c149b1bc",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1167,11 +1167,38 @@
     {
       "id": "SPEC-130",
       "title": "Glorian Sovereign Identity, Solar Design Archetype & Unified CLI Elevation",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 1,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-130-GLORIAN-SOVEREIGN-IDENTITY-ELEVATION.md",
-      "sha256": "209d6556711a7a51f1a941ab4e751e4dfa8f79a54ee86ecd840e0d8a26172d9b"
+      "sha256": "b4ba939fbf7b4f14f7bd4b6c5fc1e28739304ea67c740f56717ae5dbdddf7fca"
+    },
+    {
+      "id": "SPEC-131",
+      "title": "Glorian Neuro-Symbolic Fleet LSC & Closed-Loop Autonomous Healing Control Plane",
+      "status": "APPROVED",
+      "frCount": 4,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-131-NEUROSYMBOLIC-FLEET-LSC-HEALING.md",
+      "sha256": "05b2cd03b81e35b8ee0da1360d17e37158c45903a11fad4905fbbed1612dc380"
+    },
+    {
+      "id": "SPEC-132",
+      "title": "Glorian Fleet Pulse & Tactical Sovereignty Radar",
+      "status": "APPROVED",
+      "frCount": 4,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-132-GLORIAN-FLEET-PULSE-RADAR.md",
+      "sha256": "d7ed3df3c98adbce33aa3655bff44e43d2bc34ebbf7c80504cb27dd3bbbd0103"
+    },
+    {
+      "id": "SPEC-133",
+      "title": "Glorian Nocturnal Darwinian Evolution & Dead-Code Eradication Engine",
+      "status": "APPROVED",
+      "frCount": 4,
+      "bddCount": 3,
+      "file": "openspec/specs/SPEC-133-NOCTURNAL-EVOLUTION-ENGINE.md",
+      "sha256": "0205bae5cb5cf02baf1d2d63c25c8533d82b55f73c449b9ed18670a579554c44"
     }
   ]
 }

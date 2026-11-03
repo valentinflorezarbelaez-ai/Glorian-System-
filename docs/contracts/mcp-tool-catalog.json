@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "02686299cc613028abcc1a26a01e2ba928b1061f0bcdfd2d1735f6cd99102262",
-  "totalTools": 179,
+  "generatedAt": "2026-11-03T00:25:55.547Z",
+  "catalogSha256": "b51cdd5e41918f97cbda9df8566ed4994ad10bbf6367c3249358b2597bb5e64a",
+  "totalTools": 182,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -5586,6 +5586,126 @@
       },
       "annotations": {
         "title": "EOS design System Govern",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_neurosymbolic_fleet_healing",
+      "description": "Glorian Neuro-Symbolic Fleet LSC & Closed-Loop Autonomous Healing Control Plane (SPEC-131, v89.0.0): AWS-grade SMT DPLL formal invariant proving, Meta-grade closed-loop AST surgical fault remediation, and Google Rosie-grade fleet-wide Large Scale Change (LSC) campaign sharding and attestation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "prove_invariant",
+              "heal_fault",
+              "run_lsc_campaign"
+            ],
+            "description": "Neuro-symbolic action to execute"
+          },
+          "theoremName": {
+            "type": "string",
+            "description": "Theorem name for SMT invariant proving"
+          },
+          "clauses": {
+            "type": "array",
+            "description": "CNF clauses for invariant proof (array of arrays of literal strings)"
+          },
+          "faultId": {
+            "type": "string",
+            "description": "Unique fault identifier for closed-loop healing"
+          },
+          "targetFilePath": {
+            "type": "string",
+            "description": "Target file path for AST surgical patch synthesis"
+          },
+          "failingLine": {
+            "type": "number",
+            "description": "Failing line number (1-based)"
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Error message or diagnostic signal"
+          },
+          "campaignId": {
+            "type": "string",
+            "description": "LSC campaign identifier"
+          },
+          "description": {
+            "type": "string",
+            "description": "Campaign description"
+          },
+          "targetModules": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of target modules or fleet repository paths"
+          },
+          "transformationRule": {
+            "type": "string",
+            "description": "Declarative refactoring rule"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS neurosymbolic Fleet Healing",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_fleet_pulse",
+      "description": "Glorian Fleet Tactical Sovereignty Radar & Health Pulse (SPEC-132, v90.0.0): Real-time multi-repo porcelain health, branch, commit, production URL, Soundcheck score, and esoteric-gnostic archetype audit across all 9 fleet repositories.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "type": "string",
+            "enum": [
+              "json",
+              "table"
+            ],
+            "description": "Format of the output report: structured JSON or formatted ANSI TUI table (default: json)"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS fleet Pulse",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_nocturnal_evolution",
+      "description": "Glorian Nocturnal Darwinian Evolution & Dead-Code Eradication Engine (SPEC-133, v91.0.0): Autonomous background refactoring audit, AST dead-code eradication, cyclomatic complexity reduction, and DeepMind AlphaEvolve multivariate fitness scoring.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "targetDir": {
+            "type": "string",
+            "description": "Target directory relative to project root to audit (defaults to 'src/core')"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "json",
+              "summary"
+            ],
+            "description": "Format of the report: structured JSON or formatted ANSI TUI summary (default: json)"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS nocturnal Evolution",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

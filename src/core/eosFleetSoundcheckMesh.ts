@@ -79,6 +79,30 @@ export class EosFleetSoundcheckMesh {
       name: "TaskFlow AI — Omnichannel Request-to-Task CRUD & Triage",
       localPath: "c:\\Users\\valen\\Crud-slack",
       productionUrl: "https://crud-slack.vercel.app"
+    },
+    {
+      id: "atp-strength",
+      name: "ATP Strength & Hypertrophy Platform",
+      localPath: "c:\\Users\\valen\\ATP-STRENGTH-1",
+      productionUrl: "https://atp-strength.vercel.app"
+    },
+    {
+      id: "biblioteca-gnostica-1",
+      name: "Biblioteca Gnóstica — Preservación Digital de Textos Sagrados",
+      localPath: "c:\\Users\\valen\\Biblioteca-gnostica-1",
+      productionUrl: "https://biblioteca-gnostica.vercel.app"
+    },
+    {
+      id: "control-de-asistencia-abopack",
+      name: "Avo Pack S.A.S. — Central de Asistencia y Liquidación Laboral",
+      localPath: "c:\\Users\\valen\\Control-De-Asistencia-Abopack",
+      productionUrl: "https://avo-pack.vercel.app"
+    },
+    {
+      id: "donaciones",
+      name: "Portal de Donaciones — Sede AGEAC & Tercer Factor",
+      localPath: "c:\\Users\\valen\\Donaciones",
+      productionUrl: "https://donaciones-drab.vercel.app"
     }
   ];
 
@@ -213,7 +237,14 @@ export class EosFleetSoundcheckMesh {
             resolvedPath = path.resolve(p.localPath.trim());
           } else {
             const defaultMatch = this.DEFAULT_REPOS.find(d => d.id === p.id);
-            if (defaultMatch) resolvedPath = defaultMatch.localPath;
+            if (defaultMatch && defaultMatch.localPath) {
+              resolvedPath = defaultMatch.localPath;
+            } else if (typeof p.resolvedLocalDir === "string" && p.resolvedLocalDir.trim().length > 0) {
+              const candidate = path.resolve(path.dirname(resolvedRoot), p.resolvedLocalDir.trim());
+              if (fs.existsSync(candidate)) {
+                resolvedPath = candidate;
+              }
+            }
           }
 
           return {

@@ -85,14 +85,14 @@ test("BDD-317: CLI Banner Displays Glorian System Sovereign Control Plane", () =
   );
 });
 
-test("BDD-318: OpenSpec Catalog Index Synchronized to 130 Specifications", () => {
+test("BDD-318: OpenSpec Catalog Index Synchronized to 130+ Specifications", () => {
   const tacticalEngine = new EosTacticalCommandEngine(root);
   const indexPath = tacticalEngine.exportOpenSpecsJson();
 
   assert.ok(fs.existsSync(indexPath), "OpenSpec catalog index must exist");
   const catalog = JSON.parse(fs.readFileSync(indexPath, "utf8"));
 
-  assert.equal(catalog.totalSpecs, 130, "Total OpenSpecs must equal 130");
+  assert.ok(catalog.totalSpecs >= 130, "Total OpenSpecs must be at least 130");
   const spec130 = catalog.specs.find((s) => s.id === "SPEC-130");
   assert.ok(spec130, "SPEC-130 must be cataloged in openspec-catalog-index.json");
   assert.ok(

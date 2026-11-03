@@ -613,6 +613,18 @@ import {
   type VisualAuditReport
 } from "../core/eosS0DesignSystemGovernor.ts";
 
+import {
+  EosNeuroSymbolicFleetHealingEngine
+} from "../core/eosNeuroSymbolicFleetHealingEngine.ts";
+
+import {
+  EosFleetPulseEngine
+} from "../core/eosFleetPulseEngine.ts";
+
+import {
+  EosNocturnalEvolutionEngine
+} from "../core/eosNocturnalEvolutionEngine.ts";
+
 const globalBulkheadGovernor = new EosCellBasedBulkheadGovernor({ cellCount: 8, cellCapacity: 100 });
 const globalSloGovernor = new EosMultiWindowSloGovernor();
 const globalHedgedMesh = new EosAdaptiveHedgedDeadlineMesh();
@@ -3149,6 +3161,93 @@ export class EosMcpServer {
                       strict: {
                         type: "boolean",
                         description: "If true, non-blocking anti-pattern warnings will also fail the audit"
+                      }
+                    }
+                  }
+                },
+                {
+                  name: "eos_neurosymbolic_fleet_healing",
+                  description: "Glorian Neuro-Symbolic Fleet LSC & Closed-Loop Autonomous Healing Control Plane (SPEC-131, v89.0.0): AWS-grade SMT DPLL formal invariant proving, Meta-grade closed-loop AST surgical fault remediation, and Google Rosie-grade fleet-wide Large Scale Change (LSC) campaign sharding and attestation.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      action: {
+                        type: "string",
+                        enum: ["prove_invariant", "heal_fault", "run_lsc_campaign"],
+                        description: "Neuro-symbolic action to execute"
+                      },
+                      theoremName: {
+                        type: "string",
+                        description: "Theorem name for SMT invariant proving"
+                      },
+                      clauses: {
+                        type: "array",
+                        description: "CNF clauses for invariant proof (array of arrays of literal strings)"
+                      },
+                      faultId: {
+                        type: "string",
+                        description: "Unique fault identifier for closed-loop healing"
+                      },
+                      targetFilePath: {
+                        type: "string",
+                        description: "Target file path for AST surgical patch synthesis"
+                      },
+                      failingLine: {
+                        type: "number",
+                        description: "Failing line number (1-based)"
+                      },
+                      errorMessage: {
+                        type: "string",
+                        description: "Error message or diagnostic signal"
+                      },
+                      campaignId: {
+                        type: "string",
+                        description: "LSC campaign identifier"
+                      },
+                      description: {
+                        type: "string",
+                        description: "Campaign description"
+                      },
+                      targetModules: {
+                        type: "array",
+                        items: { type: "string" },
+                        description: "List of target modules or fleet repository paths"
+                      },
+                      transformationRule: {
+                        type: "string",
+                        description: "Declarative refactoring rule"
+                      }
+                    }
+                  }
+                },
+                {
+                  name: "eos_fleet_pulse",
+                  description: "Glorian Fleet Tactical Sovereignty Radar & Health Pulse (SPEC-132, v90.0.0): Real-time multi-repo porcelain health, branch, commit, production URL, Soundcheck score, and esoteric-gnostic archetype audit across all 9 fleet repositories.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      format: {
+                        type: "string",
+                        enum: ["json", "table"],
+                        description: "Format of the output report: structured JSON or formatted ANSI TUI table (default: json)"
+                      }
+                    }
+                  }
+                },
+                {
+                  name: "eos_nocturnal_evolution",
+                  description: "Glorian Nocturnal Darwinian Evolution & Dead-Code Eradication Engine (SPEC-133, v91.0.0): Autonomous background refactoring audit, AST dead-code eradication, cyclomatic complexity reduction, and DeepMind AlphaEvolve multivariate fitness scoring.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      targetDir: {
+                        type: "string",
+                        description: "Target directory relative to project root to audit (defaults to 'src/core')"
+                      },
+                      format: {
+                        type: "string",
+                        enum: ["json", "summary"],
+                        description: "Format of the report: structured JSON or formatted ANSI TUI summary (default: json)"
                       }
                     }
                   }
@@ -6005,6 +6104,75 @@ export class EosMcpServer {
           contractHash: report.contractHash,
           timestampIso: new Date().toISOString()
         };
+      }
+
+      case "eos_neurosymbolic_fleet_healing": {
+        const engine = new EosNeuroSymbolicFleetHealingEngine(this.projectRoot);
+        const action = String(args?.action || "prove_invariant").toLowerCase();
+
+        if (action === "heal_fault") {
+          return engine.executeClosedLoopHealing({
+            faultId: String(args?.faultId || `FAULT_${Date.now()}`),
+            targetFilePath: String(args?.targetFilePath || "src/index.ts"),
+            failingLine: Number(args?.failingLine || 1),
+            errorMessage: String(args?.errorMessage || "Unknown fault"),
+            offendingExpression: args?.offendingExpression ? String(args.offendingExpression) : undefined,
+            mockOriginalContent: args?.mockOriginalContent ? String(args.mockOriginalContent) : undefined
+          });
+        }
+
+        if (action === "run_lsc_campaign") {
+          return engine.planAndExecuteLscCampaign({
+            campaignId: String(args?.campaignId || `LSC_${Date.now()}`),
+            description: String(args?.description || "Automated fleet LSC campaign"),
+            targetModules: Array.isArray(args?.targetModules) ? args.targetModules.map(String) : ["src/core"],
+            transformationRule: String(args?.transformationRule || "STRICT_HEXAGONAL_ENFORCEMENT"),
+            invariantClauses: Array.isArray(args?.clauses) ? args.clauses : [["INVARIANT_SAFE"]]
+          });
+        }
+
+        // Default: prove_invariant
+        return engine.verifyInvariantProof({
+          theoremName: String(args?.theoremName || "NEURO_SYMBOLIC_CANONICAL_INVARIANT"),
+          clauses: Array.isArray(args?.clauses) ? args.clauses : [["SAFE_STATE"], ["!UNAUTHORIZED_ACCESS", "FAIL_CLOSED"]],
+          safetyNegationClause: Array.isArray(args?.safetyNegationClause) ? args.safetyNegationClause : undefined
+        });
+      }
+
+      case "eos_fleet_pulse": {
+        const engine = new EosFleetPulseEngine(this.projectRoot);
+        const report = engine.auditFleetPulse();
+        const format = String(args?.format || "json").toLowerCase();
+
+        if (format === "table") {
+          return {
+            table: EosFleetPulseEngine.formatPulseTable(report),
+            totalProjects: report.totalProjects,
+            quorumPercentage: report.fleetHealthQuorumPercentage,
+            sha256Receipt: report.sha256Receipt,
+            timestampIso: report.timestampIso
+          };
+        }
+
+        return report;
+      }
+
+      case "eos_nocturnal_evolution": {
+        const engine = new EosNocturnalEvolutionEngine(this.projectRoot);
+        const targetDir = args?.targetDir ? String(args.targetDir) : "src/core";
+        const format = String(args?.format || "json").toLowerCase();
+        const report = engine.runEvolutionSweep({ targetDir });
+
+        if (format === "summary") {
+          return {
+            summary: EosNocturnalEvolutionEngine.formatNocturnalSummary(report),
+            compositeFitnessScore: report.compositeFitnessScore,
+            sha256Receipt: report.sha256Receipt,
+            timestampIso: report.timestampIso
+          };
+        }
+
+        return report;
       }
 
       default:

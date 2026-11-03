@@ -1,5 +1,9 @@
 # SPEC-130: Glorian Sovereign Identity, Solar Design Archetype & Unified CLI Elevation
 
+**Version**: 1.0.0  
+**Status**: APPROVED  
+**Author**: Valentín Flórez Arbeláez (Principal Architect)  
+
 ## 1. Metadata & Formal Intake
 - **Specification ID**: `SPEC-130`
 - **Standard**: IEEE 830 / ISO/IEC/IEEE 29148 / WCAG 2.1 AAA
