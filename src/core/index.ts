@@ -84,3 +84,4 @@ export * from "./eosAgenticFinOpsGovernor.ts";
 export * from "./eosPlanetaryMonorepoGovernor.ts";
 export * from "./eosCrossFleetNeuralSynapse.ts";
 export * from "./eosPlanetaryMultiCloudEvacuationMesh.ts";
+export * from "./glorianFleetHealthWatchdog.ts";

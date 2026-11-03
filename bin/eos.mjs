@@ -2758,6 +2758,19 @@ switch (command) {
     break;
   }
 
+  case "fleet:health":
+  case "watchdog":
+  case "health": {
+    printBanner();
+    const { GlorianFleetHealthWatchdog } = await import("../src/core/glorianFleetHealthWatchdog.ts");
+    const watchdog = new GlorianFleetHealthWatchdog(root);
+    const dryRun = args.includes("--dry-run");
+    const report = await watchdog.runFleetHealthAudit({ dryRun });
+    console.log(watchdog.formatHealthReport(report));
+    console.log("");
+    break;
+  }
+
   case "night:evolve":
   case "evolve": {
     printBanner();

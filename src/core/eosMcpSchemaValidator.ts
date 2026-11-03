@@ -67,11 +67,11 @@ export class EosMcpSchemaValidator {
     const validJsonTypes = new Set(["string", "number", "integer", "boolean", "object", "array"]);
 
     for (const tool of tools) {
-      if (!tool.name || typeof tool.name !== "string" || !tool.name.startsWith("eos_")) {
+      if (!tool.name || typeof tool.name !== "string" || (!tool.name.startsWith("eos_") && !tool.name.startsWith("glorian_"))) {
         issues.push({
           toolName: tool.name || "UNKNOWN",
           field: "name",
-          reason: "Tool name must be a non-empty string prefixed with 'eos_'"
+          reason: "Tool name must be a non-empty string prefixed with 'eos_' or 'glorian_'"
         });
       }
 

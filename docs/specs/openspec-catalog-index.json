@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-03T03:42:24.920Z",
-  "totalSpecs": 133,
-  "catalogSha256": "4f3d4950b89eb5a6fcd8b3af443c75d205aa31aa2497ba1087ef01b0c149b1bc",
+  "timestampIso": "2026-11-03T04:37:25.250Z",
+  "totalSpecs": 134,
+  "catalogSha256": "a782b5571d9af0aefa7266535783b79afa06fb459d868d3dd78f371f356c6265",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1199,6 +1199,15 @@
       "bddCount": 3,
       "file": "openspec/specs/SPEC-133-NOCTURNAL-EVOLUTION-ENGINE.md",
       "sha256": "0205bae5cb5cf02baf1d2d63c25c8533d82b55f73c449b9ed18670a579554c44"
+    },
+    {
+      "id": "SPEC-134",
+      "title": "Glorian Sovereign Fleet Health Watchdog & Synthetic Security Sentinel",
+      "status": "APPROVED",
+      "frCount": 4,
+      "bddCount": 3,
+      "file": "openspec/specs/SPEC-134-GLORIAN-FLEET-HEALTH-SENTINEL.md",
+      "sha256": "45ef11da65ac4707f042623fa580361ffd7667122f8516ab5c87c2ee476279cc"
     }
   ]
 }

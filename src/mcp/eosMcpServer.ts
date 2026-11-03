@@ -625,6 +625,10 @@ import {
   EosNocturnalEvolutionEngine
 } from "../core/eosNocturnalEvolutionEngine.ts";
 
+import {
+  GlorianFleetHealthWatchdog
+} from "../core/glorianFleetHealthWatchdog.ts";
+
 const globalBulkheadGovernor = new EosCellBasedBulkheadGovernor({ cellCount: 8, cellCapacity: 100 });
 const globalSloGovernor = new EosMultiWindowSloGovernor();
 const globalHedgedMesh = new EosAdaptiveHedgedDeadlineMesh();
@@ -3248,6 +3252,24 @@ export class EosMcpServer {
                         type: "string",
                         enum: ["json", "summary"],
                         description: "Format of the report: structured JSON or formatted ANSI TUI summary (default: json)"
+                      }
+                    }
+                  }
+                },
+                {
+                  name: "glorian_fleet_health_watchdog",
+                  description: "Glorian Sovereign Fleet Health Watchdog & Synthetic Security Sentinel (SPEC-134, v92.0.0): Non-blocking synthetic availability probing, TTFB latency measurement, anti-SSRF isolation, and HSTS/CSP security header compliance across all registered fleet projects.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      dryRun: {
+                        type: "boolean",
+                        description: "Whether to run in simulated nominal dry-run mode (default: false)"
+                      },
+                      format: {
+                        type: "string",
+                        enum: ["json", "summary"],
+                        description: "Output format: structured JSON or high-density terminal dashboard (default: json)"
                       }
                     }
                   }
@@ -6169,6 +6191,24 @@ export class EosMcpServer {
             compositeFitnessScore: report.compositeFitnessScore,
             sha256Receipt: report.sha256Receipt,
             timestampIso: report.timestampIso
+          };
+        }
+
+        return report;
+      }
+
+      case "glorian_fleet_health_watchdog": {
+        const watchdog = new GlorianFleetHealthWatchdog(this.projectRoot);
+        const dryRun = Boolean(args?.dryRun);
+        const format = String(args?.format || "json").toLowerCase();
+        const report = watchdog.runFleetHealthAuditSync({ dryRun });
+
+        if (format === "summary") {
+          return {
+            summary: watchdog.formatHealthReport(report),
+            compositeHealthIndex: report.compositeHealthIndex,
+            auditStatus: report.auditStatus,
+            sha256Receipt: report.sha256Receipt
           };
         }
 

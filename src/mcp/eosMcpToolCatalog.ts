@@ -74,7 +74,8 @@ export const CORE_TIER0_TOOL_NAMES: ReadonlySet<string> = new Set([
   "eos_smt_reasoning_prover",
   "eos_chaos_monkey_live",
   "eos_bft_swarm_consensus",
-  "eos_health_check"
+  "eos_health_check",
+  "glorian_fleet_health_watchdog"
 ]);
 
 /**
