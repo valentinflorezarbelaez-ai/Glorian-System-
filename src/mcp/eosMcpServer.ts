@@ -629,6 +629,10 @@ import {
   GlorianFleetHealthWatchdog
 } from "../core/glorianFleetHealthWatchdog.ts";
 
+import {
+  GlorianConstitutionalTribunal
+} from "../core/glorianConstitutionalTribunal.ts";
+
 const globalBulkheadGovernor = new EosCellBasedBulkheadGovernor({ cellCount: 8, cellCapacity: 100 });
 const globalSloGovernor = new EosMultiWindowSloGovernor();
 const globalHedgedMesh = new EosAdaptiveHedgedDeadlineMesh();
@@ -3272,6 +3276,42 @@ export class EosMcpServer {
                         description: "Output format: structured JSON or high-density terminal dashboard (default: json)"
                       }
                     }
+                  }
+                },
+                {
+                  name: "glorian_constitutional_tribunal",
+                  description: "Glorian Multi-Model Consensus Engine & Constitutional Tribunal (SPEC-135, v93.0.0): Tier-0 3-Judge Byzantine consensus auditing proposed code mutations, commands, and architecture plans against the 7 Inviolable Commandments with automatic fail-closed veto.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      actionId: {
+                        type: "string",
+                        description: "Unique mutation or action identifier (e.g. 'MUT-001-ARCH-UPGRADE')"
+                      },
+                      category: {
+                        type: "string",
+                        enum: ["ARCHITECTURE", "DEPLOYMENT", "CODE_MUTATION", "CONFIG"],
+                        description: "Category of the proposed action"
+                      },
+                      description: {
+                        type: "string",
+                        description: "Detailed description of the proposed action and intended outcomes"
+                      },
+                      diffOrPayload: {
+                        type: "string",
+                        description: "Proposed code snippet, diff, or script payload to inspect"
+                      },
+                      targetDirectory: {
+                        type: "string",
+                        description: "Target directory or file path of the operation"
+                      },
+                      format: {
+                        type: "string",
+                        enum: ["json", "summary"],
+                        description: "Output format: structured JSON or formatted ANSI TUI summary (default: json)"
+                      }
+                    },
+                    required: ["actionId", "category", "description"]
                   }
                 }
               ], this.toolProfile)
@@ -6208,6 +6248,40 @@ export class EosMcpServer {
             summary: watchdog.formatHealthReport(report),
             compositeHealthIndex: report.compositeHealthIndex,
             auditStatus: report.auditStatus,
+            sha256Receipt: report.sha256Receipt
+          };
+        }
+
+        return report;
+      }
+
+      case "glorian_constitutional_tribunal": {
+        const tribunal = new GlorianConstitutionalTribunal(this.projectRoot);
+        const actionId = String(args?.actionId || "MUT-ANONYMOUS");
+        const category = (args?.category as any) || "CODE_MUTATION";
+        const description = String(args?.description || "No description provided");
+        const diffOrPayload = args?.diffOrPayload ? String(args.diffOrPayload) : undefined;
+        const targetDirectory = args?.targetDirectory ? String(args.targetDirectory) : undefined;
+        const declaredInvariants = Array.isArray(args?.declaredInvariants)
+          ? args.declaredInvariants.map(String)
+          : undefined;
+        const format = String(args?.format || "json").toLowerCase();
+
+        const report = tribunal.adjudicate({
+          actionId,
+          category,
+          description,
+          diffOrPayload,
+          targetDirectory,
+          declaredInvariants
+        });
+
+        if (format === "summary") {
+          return {
+            summary: tribunal.formatTribunalSummary(report),
+            overallVerdict: report.overallVerdict,
+            compositeScore: report.compositeScore,
+            quorumMet: report.quorumMet,
             sha256Receipt: report.sha256Receipt
           };
         }

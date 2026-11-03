@@ -2,10 +2,10 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-03T04:36:40.906Z",
-  "catalogSha256": "f23d80b0f5195bb80173d9118dbfbda00a55e192d6083ce2dbf833b176718ad8",
-  "totalTools": 183,
-  "coreTier0Count": 47,
+  "generatedAt": "2026-11-03T09:06:46.179Z",
+  "catalogSha256": "09afc8cc2c2a22bafa05d4b659c7f1860370e1030b37ff565f5198868734fefc",
+  "totalTools": 184,
+  "coreTier0Count": 48,
   "tools": [
     {
       "name": "eos_semantic_search",
@@ -5734,6 +5734,61 @@
       },
       "annotations": {
         "title": "Glorian Fleet Health Watchdog",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "glorian_constitutional_tribunal",
+      "description": "Glorian Multi-Model Consensus Engine & Constitutional Tribunal (SPEC-135, v93.0.0): Tier-0 3-Judge Byzantine consensus auditing proposed code mutations, commands, and architecture plans against the 7 Inviolable Commandments with automatic fail-closed veto.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "actionId": {
+            "type": "string",
+            "description": "Unique mutation or action identifier (e.g. 'MUT-001-ARCH-UPGRADE')"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ARCHITECTURE",
+              "DEPLOYMENT",
+              "CODE_MUTATION",
+              "CONFIG"
+            ],
+            "description": "Category of the proposed action"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the proposed action and intended outcomes"
+          },
+          "diffOrPayload": {
+            "type": "string",
+            "description": "Proposed code snippet, diff, or script payload to inspect"
+          },
+          "targetDirectory": {
+            "type": "string",
+            "description": "Target directory or file path of the operation"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "json",
+              "summary"
+            ],
+            "description": "Output format: structured JSON or formatted ANSI TUI summary (default: json)"
+          }
+        },
+        "required": [
+          "actionId",
+          "category",
+          "description"
+        ]
+      },
+      "annotations": {
+        "title": "Glorian Constitutional Tribunal",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

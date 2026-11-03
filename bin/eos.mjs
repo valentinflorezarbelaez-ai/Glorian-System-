@@ -2771,6 +2771,25 @@ switch (command) {
     break;
   }
 
+  case "tribunal":
+  case "adjudicate": {
+    printBanner();
+    const actionId = args[1] || `MUT-CLI-${Date.now()}`;
+    const description = args[2] || "Autonomous CLI proposed action evaluation";
+    const { GlorianConstitutionalTribunal } = await import("../src/core/glorianConstitutionalTribunal.ts");
+    const tribunal = new GlorianConstitutionalTribunal(root);
+    const report = tribunal.adjudicate({
+      actionId,
+      category: "CODE_MUTATION",
+      description,
+      targetDirectory: "src/core",
+      declaredInvariants: ["SafetyInvariant"]
+    });
+    console.log(tribunal.formatTribunalSummary(report));
+    console.log("");
+    break;
+  }
+
   case "night:evolve":
   case "evolve": {
     printBanner();
