@@ -21,3 +21,17 @@ Governs all engineering agents, automated pipelines, and human developers operat
 - `VERIFIED`
 - `PRODUCTION_READY_WITHIN_TESTED_SCOPE`
 - `PRODUCTION_READY`
+
+## 4. Requirements (EARS)
+- **UBIQUITOUS**: THE SYSTEM SHALL enforce Zero Vibe Coding across all automated pipelines and human agents.
+- **ERROR/UNWANTED**: IF an implementation change lacks formal specification package approval, THEN THE SYSTEM SHALL abort with exit code 1.
+- **UBIQUITOUS**: THE SYSTEM SHALL require cryptographic verifiable evidence output before claiming VERIFIED or PRODUCTION_READY.
+
+## 5. Acceptance Criteria (BDD Standard)
+```gherkin
+SCENARIO: Constitutional Invariant Enforcement
+  GIVEN the EOS System sovereign governance runtime
+  WHEN any change is evaluated against the 7 Inviolable Commandments
+  THEN zero plain secrets, zero runtime dependencies, and formal specifications must be strictly verified
+  AND unverified claims must be rejected with fail-closed semantics
+```

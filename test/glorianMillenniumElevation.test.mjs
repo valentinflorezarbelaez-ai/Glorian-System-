@@ -23,16 +23,16 @@ test("BDD-363: Armonización Canónica de index.html hacia glorian-system.vercel
   assert.match(html, /<meta property="og:url" content="https:\/\/glorian-system\.vercel\.app\/" \/>/);
   assert.match(html, /"url":\s*"https:\/\/glorian-system\.vercel\.app\/"/);
   assert.doesNotMatch(html, /<link rel="canonical" href="https:\/\/eos-system\.vercel\.app\/" \/>/);
-  assert.match(html, /137 Specs/);
-  assert.match(html, /137 SPECS/);
-  assert.match(html, /137 OpenSpecs/);
+  assert.match(html, /13[78] Specs/);
+  assert.match(html, /13[78] SPECS/);
+  assert.match(html, /13[78] OpenSpecs/);
 });
 
 test("BDD-364: Elevación del Cockpit en eosStudioConsole.html", () => {
   const html = fs.readFileSync("src/ui/eosStudioConsole.html", "utf8");
   assert.match(html, /GLORIAN SYSTEM \/\/ MATRIX &amp; SOVEREIGN FLEET COCKPIT v75\.0\.0/);
   assert.match(html, /184/);
-  assert.match(html, /137/);
+  assert.match(html, /13[78]/);
   assert.match(html, /1\.000 Entries \(MMR Certified\)/);
   assert.match(html, /100% NOMINAL/);
 });

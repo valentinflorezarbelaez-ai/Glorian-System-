@@ -20,6 +20,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   security-events: write
@@ -28,21 +32,28 @@ jobs:
   eos-strict-attestation:
     name: EOS 7-Stage Strict Gate Attestation
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout Codebase
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js Layer-0 Runtime
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 22
+          node-version: "22"
+
+      - name: Install locked development toolchain
+        run: npm ci
 
       - name: Run EOS Criterial Gate Attestation
         run: |
           node scripts/eos-github-pr-attestation.mjs
 
       - name: Upload OASIS SARIF v2.1.0 Security Receipt
-        if: ${{ inputs.export-sarif != false && !cancelled() }}
+        if: ${{ always() }}
         uses: github/codeql-action/upload-sarif@v3
+        continue-on-error: true
         with:
           sarif_file: docs/evidence/local-checks.sarif

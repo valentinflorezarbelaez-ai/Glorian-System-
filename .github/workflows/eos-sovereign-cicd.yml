@@ -44,6 +44,9 @@ jobs:
     name: "Full Node repository checks"
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
     strategy:
       fail-fast: false
       matrix:
@@ -64,6 +67,16 @@ jobs:
 
       - name: Run all repository checks and discovered Node test suites before build
         run: node scripts/verify-cicd-pipeline.mjs
+
+      - name: Evaluate EOS Pull Request Gate & Attestation
+        run: node scripts/eos-github-pr-attestation.mjs
+
+      - name: Upload OASIS SARIF v2.1.0 Security Receipt
+        if: ${{ always() }}
+        uses: github/codeql-action/upload-sarif@v3
+        continue-on-error: true
+        with:
+          sarif_file: docs/evidence/local-checks.sarif
 
   go-template-checks:
     name: Go example module tests and build

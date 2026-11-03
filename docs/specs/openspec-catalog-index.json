@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-03T19:39:25.661Z",
-  "totalSpecs": 137,
-  "catalogSha256": "102ee2aad028176e64f84357fd391018ba1482fbaa96566126689a8df50721cf",
+  "timestampIso": "2026-11-03T20:10:27.722Z",
+  "totalSpecs": 138,
+  "catalogSha256": "17f394f1cfce197c834f28527e9115d601e7595f23a57e1932964c1a475fe076",
   "specs": [
     {
       "id": "SPEC-001",
@@ -10,7 +10,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-001-CONSTITUTION.md",
-      "sha256": "2dc48c9fb89847ae2cd53331208b3340452fd717a07a58652621ccea01c5e4e2"
+      "sha256": "5a9bcb32c1cb68b4f14dcfe8eb4eb03b03967c907dc87228c4c8ed0a92930511"
     },
     {
       "id": "SPEC-002",
@@ -55,7 +55,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-006-TITANS-MATRIX.md",
-      "sha256": "8c0d4081a0d353081c0b1d035b4c5cbddd877e57391ee7d54ec74bdfff439b41"
+      "sha256": "ef9aa2956fbdb5db7f1a13ef311fb817cdbba1c950e832fa8f452e28afce3794"
     },
     {
       "id": "SPEC-007",
@@ -118,7 +118,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-013-AUDIO-DSP-KERNEL.md",
-      "sha256": "ccc13d6e753dea00dc1127cd4147d6d1b35a001f0de368a85c730d628db669ac"
+      "sha256": "1134aaa371f46445b348c1f4f5758f46cdb72c74d3d4c3a02385ebbdffe130f8"
     },
     {
       "id": "SPEC-014",
@@ -1235,6 +1235,15 @@
       "bddCount": 4,
       "file": "openspec/specs/SPEC-137-GLORIAN-MILLENNIUM-ELEVATION.md",
       "sha256": "c14ad30d4f490dc858822709511106edb11f899dd907b117c569fc461eb43e7f"
+    },
+    {
+      "id": "SPEC-138",
+      "title": "SARIF Diagnostic Accumulation, Universal Secret Gate & Strict CI Unification",
+      "status": "UNKNOWN",
+      "frCount": 5,
+      "bddCount": 3,
+      "file": "openspec/specs/SPEC-138-GATE-SANITY-AND-TRUTH-ELEVATION.md",
+      "sha256": "885e5e3f22a7d52181708db5a57e6104e816fe0834038966e8fd0fe2ab83fc2f"
     }
   ]
 }

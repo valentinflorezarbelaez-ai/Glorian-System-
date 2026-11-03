@@ -22,8 +22,8 @@ test("BDD-267: Validación de estructura de flujo reutilizable de GitHub Actions
   assert.ok(workflowContent.includes("push:"), "Must trigger on push");
 
   // 2. Verify critical steps
-  assert.ok(workflowContent.includes("actions/checkout@v4"), "Must check out repository");
-  assert.ok(workflowContent.includes("actions/setup-node@v4"), "Must setup Node.js runtime");
+  assert.ok(workflowContent.includes("actions/checkout"), "Must check out repository");
+  assert.ok(workflowContent.includes("actions/setup-node"), "Must setup Node.js runtime");
   assert.ok(workflowContent.includes("node scripts/eos-github-pr-attestation.mjs"), "Must run PR attestation script");
   assert.ok(workflowContent.includes("github/codeql-action/upload-sarif@v3"), "Must upload SARIF report");
   assert.ok(workflowContent.includes("docs/evidence/local-checks.sarif"), "Must target local-checks.sarif");
@@ -53,7 +53,8 @@ test("BDD-268: Verificación determinista de PR gate y generación de reporte SA
 
   const run = sarif.runs[0];
   assert.equal(run.tool.driver.name, "EOS-Strict-Sovereign-Gate");
-  assert.equal(run.tool.driver.version, "74.0.0");
+  const pkg = JSON.parse(fs.readFileSync(path.join(projectRoot, "package.json"), "utf8"));
+  assert.equal(run.tool.driver.version, pkg.version);
   assert.equal(run.invocations[0].executionSuccessful, true, "Execution must be successful");
   assert.equal(run.results.length, 0, "Gate must find 0 violations in clean repository");
 
