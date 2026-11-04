@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2020-11-17T21:01:32.000Z",
-  "catalogSha256": "85581dac6cdaaa981eef3422eece942c3bb836b3f3841ac878571be64f47203f",
-  "totalTools": 188,
+  "generatedAt": "2022-11-28T17:17:23.000Z",
+  "catalogSha256": "2b18fb23788043d6ddd86740439cecd6b5b35a30fdb3891cea7d6c58aa67e6cd",
+  "totalTools": 189,
   "coreTier0Count": 49,
   "tools": [
     {
@@ -3197,6 +3197,30 @@
       },
       "annotations": {
         "title": "EOS product Deliver Status",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_platform_ops_ceiling",
+      "description": "LADDER-16 Platform Ops Ceiling: evaluate IDP SLOs, dogfood scorecard, progressive canary (1→5→25→100), and IV&V readiness. Returns SOVEREIGN_CEILING_10_OF_10_WITHIN_TESTED_SCOPE — never NSA_GRADE.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "runCanary": {
+            "type": "boolean",
+            "description": "Run progressive canary mesh (default true)"
+          },
+          "controlPlanePristine": {
+            "type": "boolean",
+            "description": "Working tree porcelain signal (default true)"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS platform Ops Ceiling",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

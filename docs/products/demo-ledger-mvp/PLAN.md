@@ -1,7 +1,7 @@
 # ADR: ADR Product Delivery demo-ledger-mvp
 
 ## Context
-Ceiling dogfood re-seal
+Hermetic dogfood product for LADDER-15 Product Delivery Orchestrator
 
 ## Decision
 Deliver via EosProductDeliveryOrchestrator Golden Path.

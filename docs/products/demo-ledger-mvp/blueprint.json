@@ -3,7 +3,7 @@
     "id": "demo-ledger-mvp",
     "name": "Demo Ledger MVP",
     "domain": "fintech-ledger",
-    "description": "Ceiling dogfood re-seal",
+    "description": "Hermetic dogfood product for LADDER-15 Product Delivery Orchestrator",
     "tier": "MVP",
     "platforms": [
       "distributed-backend",
@@ -16,9 +16,12 @@
     "commands": [
       "PostEntry",
       "ReconcileBooks"
+    ],
+    "compliance": [
+      "SLSA_4"
     ]
   },
-  "timestamp": "2026-11-04T03:26:13.130Z",
+  "timestamp": "2026-11-04T03:33:26.656Z",
   "boundedContexts": [
     "fintech-ledger-core-domain",
     "fintech-ledger-operations-mesh",
@@ -166,5 +169,5 @@
     "Suggested (not run): smoke-test handlers with real contracts and representative integration setup",
     "Not run: deployment, production probe, or rollback"
   ],
-  "sha256MerkleRoot": "dbb79ac1ba0325c49cf78597e375e98baf038ec2b97bcd872cdf2c0ccd223833"
+  "sha256MerkleRoot": "bc261bcd200d7a811c68bf880637487f4a1ece725277b365134df8ff96a3e8e5"
 }
