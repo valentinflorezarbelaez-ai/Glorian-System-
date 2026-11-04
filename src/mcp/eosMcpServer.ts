@@ -775,6 +775,11 @@ export class EosMcpServer {
     this.serverVersion = version;
     this.hybridKnowledge = getDefaultHybridKnowledgeEngine(this.projectRoot);
     this.wasmSandbox = getDefaultWasmSandboxEngine(this.projectRoot);
+    try {
+      this.hybridKnowledge.ensureCorpusIndexed();
+    } catch {
+      // Graceful degradation in read-only or confined file systems
+    }
   }
 
   public setToolProfile(profile: McpToolProfile): void {
@@ -912,7 +917,7 @@ export class EosMcpServer {
               tools: annotateAndFilterTools([
                 {
                   name: "eos_semantic_search",
-                  description: "Search EOS sovereign architecture and knowledge base using deterministic Layer-0 hybrid vector and BM25 RRF fusion.",
+                  description: "Search EOS sovereign architecture and knowledge base using deterministic Layer-0 hybrid lexical-vector search (FTS5 BM25 + 64-dim token hash projection with RRF k=60; zero neural weights).",
                   inputSchema: {
                     type: "object",
                     properties: {
@@ -2973,10 +2978,11 @@ export class EosMcpServer {
                     properties: {
                       tier: { type: "string", enum: ["WASM", "ISOLATE", "MICROVM_SPEC"], description: "Execution tier (default: ISOLATE)" },
                       code: { type: "string", description: "JavaScript code snippet or base64-encoded Wasm bytecode" },
-                      template: { type: "string", enum: ["ADD", "TRAP", "OOB"], description: "Optional built-in test Wasm template" },
+                      template: { type: "string", enum: ["ADD", "TRAP", "OOB", "LOOP"], description: "Optional built-in test Wasm template (ADD, TRAP, OOB, LOOP)" },
                       functionArgs: { type: "array", items: { type: "number" }, description: "Arguments for Wasm exported function" },
                       timeoutMs: { type: "number", description: "Execution timeout in milliseconds (default: 2000)" },
-                      memoryPages: { type: "number", description: "Initial memory pages for Wasm (default: 1, max: 256)" }
+                      memoryPages: { type: "number", description: "Initial memory pages for Wasm (default: 1, max: 256)" },
+                      worker: { type: "boolean", description: "Whether to run in a dedicated worker thread with preemptive timeout termination" }
                     }
                   }
                 },
@@ -3356,7 +3362,28 @@ export class EosMcpServer {
             throw new TypeError("Tool name must contain 1 to 128 characters.");
           }
           if (!isPlainRecord(args)) throw new TypeError("Tool arguments must be a JSON object.");
-          const result = this.dispatchTool(toolName, args, onProgress);
+          const rawResult = this.dispatchTool(toolName, args, onProgress);
+          if (rawResult instanceof Promise) {
+            return rawResult.then((result) => {
+              const resultText = typeof result === "string" ? result : JSON.stringify(result, null, 2) ?? "null";
+              if (Buffer.byteLength(resultText, "utf8") > MAX_MCP_REQUEST_BYTES - 4096) {
+                throw new RangeError("MCP tool output exceeds the 1 MiB response limit.");
+              }
+              return {
+                jsonrpc: "2.0",
+                id,
+                result: {
+                  content: [
+                    {
+                      type: "text",
+                      text: resultText
+                    }
+                  ]
+                }
+              };
+            }) as any;
+          }
+          const result = rawResult;
           const resultText = typeof result === "string" ? result : JSON.stringify(result, null, 2) ?? "null";
           if (Buffer.byteLength(resultText, "utf8") > MAX_MCP_REQUEST_BYTES - 4096) {
             throw new RangeError("MCP tool output exceeds the 1 MiB response limit.");
@@ -5827,14 +5854,26 @@ export class EosMcpServer {
 
         if (tier === "WASM") {
           let wasmBytes: Uint8Array;
+          let isLoop = false;
           if (args?.template === "TRAP") {
             wasmBytes = WASM_BYTECODE_TEMPLATES.TRAP;
           } else if (args?.template === "OOB") {
             wasmBytes = WASM_BYTECODE_TEMPLATES.OOB;
+          } else if (args?.template === "LOOP") {
+            wasmBytes = WASM_BYTECODE_TEMPLATES.LOOP;
+            isLoop = true;
           } else if (args?.template === "ADD" || (!args?.code && !args?.template)) {
             wasmBytes = WASM_BYTECODE_TEMPLATES.ADD;
           } else {
             wasmBytes = typeof args?.code === "string" ? Buffer.from(args.code, "base64") : new Uint8Array();
+          }
+
+          if (isLoop || args?.worker === true || args?.useWorker === true) {
+            return this.wasmSandbox.executeWasmWorker(wasmBytes, {
+              initialPages: args?.memoryPages || 1,
+              functionArgs: Array.isArray(args?.functionArgs) ? args.functionArgs : [],
+              timeoutMs
+            });
           }
 
           return this.wasmSandbox.executeWasm(wasmBytes, {

@@ -75,6 +75,7 @@ export class EosHybridKnowledgeEngine {
 
   // In-memory cache of normalized dense vectors for sub-microsecond k-NN scans
   private vectorCache: Map<string, { vector: Float32Array; category: DocCategory }> = new Map();
+  private corpusIndexed = false;
 
   constructor(projectRoot: string = process.cwd(), dbPath?: string) {
     this.projectRoot = path.resolve(projectRoot);
@@ -177,9 +178,14 @@ export class EosHybridKnowledgeEngine {
   }
 
   /**
-   * Deterministic 64-dimensional dense semantic embedding generator.
-   * Uses subword character n-grams and positional term weighting.
-   * L2 normalized to unit sphere: ||v|| = 1.0.
+   * Layer-0 Deterministic 64-dimensional subword hash vector projection generator.
+   *
+   * EPISTEMIC GROUND TRUTH (SPEC-141b / SPEC-143):
+   * This function generates a deterministic structural token-hash projection using FNV-1a
+   * whole-word and character 3-gram hashing with position-weighted L2 unit-sphere normalization.
+   * It is NOT an external neural network or transformer embedding (zero weights / zero ONNX models),
+   * preserving 100% Layer-0 purity without runtime dependencies. Cosine similarity reflects
+   * subword and lexical structural similarity rather than deep abstract conceptual synonymy.
    */
   public generateDenseEmbedding(text: string): Float32Array {
     const dim = EosHybridKnowledgeEngine.VECTOR_DIMENSIONS;
@@ -381,11 +387,32 @@ export class EosHybridKnowledgeEngine {
   }
 
   /**
+   * Lazily checks if the corpus metadata table is empty, bootstrapping indexing if needed.
+   */
+  public ensureCorpusIndexed(force = false): boolean {
+    if (this.corpusIndexed && !force) return false;
+    try {
+      const row = this.db.prepare("SELECT count(*) as count FROM eos_docs_metadata").get() as { count: number } | undefined;
+      if (!row || Number(row.count) === 0 || force) {
+        this.indexCorpus();
+        this.corpusIndexed = true;
+        return true;
+      }
+      this.corpusIndexed = true;
+      return false;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
    * Executes hybrid search combining FTS5 lexical BM25 and vector cosine ranking via RRF.
    */
   public search(query: string, options?: SearchOptions): HybridSearchResult[] {
     const trimmed = (query || "").trim();
     if (!trimmed) return [];
+
+    this.ensureCorpusIndexed();
 
     const topK = Math.max(1, options?.topK || 5);
     const mode = options?.mode || "hybrid";

@@ -7,6 +7,7 @@
 * **Authorized By**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
 * **Date**: 2026-10-25
 * **Scope**: Creation and continuous sovereign elevation of EOS System (Glorian System):
+  - CHANGE-078 / SPEC-143: Engineering Ground Truth, Preemptive Sandbox Isolation & Attack Surface Hardening — Hardening of public serverless endpoint api/mcp.js by eliminating unauthenticated guest isolate/wasm execution, preemptive WebAssembly worker thread isolation with hard timeoutMs termination (worker.terminate()) preventing event-loop freezing, ground-truth nominal documentation of eos_semantic_search as Layer-0 Hybrid Lexical-Vector search (FTS5 BM25 + 64-dim FNV-1a hash projection with RRF k=60), automatic lazy corpus indexing on MCP initialization, and MCP Streamable HTTP lifecycle hardening with 15-minute idle session TTL reaping and periodic SSE keep-alive heartbeats.
   - CHANGE-077 / SPEC-142: Capability-Based Wasm & MicroVM Agent Sandboxing Engine (Big Tech Standard) — Multi-tier zero-cold-start agent execution sandbox adhering to Layer-0 purity (runtimeDependenciesCount: 0), combining native WebAssembly bytecode execution with strict linear memory bounds (1 to 256 pages = 16 MiB max), deterministic trap interception (out-of-bounds, unreachable, stack overflow) preventing host process termination, capability-based host imports with zero ambient authority, hermetic Node.js Isolate sandbox via node:vm with frozen intrinsics and deterministic timeout kill, Firecracker v1.7 and Hyper-V microVM profile synthesizer, cryptographic execution receipts signed with SHA-256 and committed to the durable SQLite WAL ledger, and complete MCP integration via eos_wasm_sandbox.
   - CHANGE-076 / SPEC-141: Distributed Vector Memory & Hybrid Search Engine (Big Tech Standard) — High-performance persistent hybrid retrieval engine combining native node:sqlite FTS5 (BM25 lexical scoring) and HNSW dense vector graph indexing in WAL mode with zero external npm dependencies (runtimeDependenciesCount: 0), 64-dimensional deterministic dense vector embeddings, Reciprocal Rank Fusion (RRF k=60), SHA-256 incremental corpus indexing of 140+ OpenSpecs and TypeScript AST code exports, sub-5ms query response latency, and complete MCP integration via upgraded eos_semantic_search.
   - CHANGE-075 / SPEC-140: Modern MCP Streamable HTTP Transport & Architectural Split — Dual-model Streamable HTTP transport adhering to Layer-0 purity (runtimeDependenciesCount: 0), separating stateless serverless edge execution (api/mcp.js) from persistent local daemon streaming (src/mcp/eosMcpStreamServer.ts), with timing-safe 256-bit CSPRNG session binding, LRU eviction (cap 16), bounded ring buffer replay (Last-Event-ID), strict Origin/Host allowlists, 1 MiB hard payload bound, and full verification of eos_slsa_provenance_sbom.
@@ -967,10 +968,82 @@
   - `scripts/eos-generate-sbom.mjs`
   - `scripts/verify-supply-chain.mjs`
   - `test/eosSlsa3SupplyChain.test.mjs`
+## Authorization Record: AUTH-2026-11-03-MCP-STREAMABLE-HTTP-140
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-140 (v76.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit user directive on 2026-11-03: "Autorización Nivel 3 concedida para la apertura e implementación de SPEC-140")
+* **Scope**: Modern MCP Streamable HTTP Transport & Architectural Split:
+  1. Component 1: Split between Serverless Edge (`api/mcp.js`) and persistent local daemon (`src/mcp/eosMcpStreamServer.ts`).
+  2. Component 2: Unified endpoint `POST /api/mcp` with dual negotiation (`application/json` vs `text/event-stream`).
+  3. Component 3: Session management bound to SHA-256 token hashes, LRU eviction (capacity 16), and bounded ring-buffer replay via `Last-Event-ID`.
+  4. Component 4: Regression test suite `test/eosMcpStreamableHttp.test.mjs` verifying BDD-372 to BDD-376.
+  5. Component 5: OpenSpec catalog synchronization (140 formal specifications).
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-140-MCP-STREAMABLE-HTTP-TRANSPORT.md`
+  - `openspec/changes/CHANGE-075-MCP-STREAMABLE-HTTP-TRANSPORT.md`
+  - `docs/intake/INTAKE-140-MCP-STREAMABLE-HTTP-TRANSPORT.md`
+  - `docs/plans/PLAN-140-MCP-STREAMABLE-HTTP-TRANSPORT.md`
+  - `docs/tasks/TASKS-140-MCP-STREAMABLE-HTTP-TRANSPORT.md`
+  - `test/eosMcpStreamableHttp.test.mjs`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
 
+## Authorization Record: AUTH-2026-11-03-DISTRIBUTED-VECTOR-MEMORY-141
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-141 (v76.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit user directive on 2026-11-03: "dale con toda con os mejores lenguajes con toda")
+* **Scope**: Distributed Vector Memory & Hybrid Search Engine (Big Tech Standard):
+  1. Component 1: `src/core/eosHybridKnowledgeEngine.ts` persistent SQLite WAL engine with FTS5 BM25 and dense vector projections.
+  2. Component 2: Reciprocal Rank Fusion ($k=60$) combining BM25 lexical ranking and cosine similarity vector rankings.
+  3. Component 3: Incremental SHA-256 corpus indexer over OpenSpecs, Changes, Plans, and TypeScript code.
+  4. Component 4: Regression test suite `test/eosHybridVectorKnowledge.test.mjs` verifying BDD-377 to BDD-381.
+  5. Component 5: OpenSpec catalog synchronization (141 formal specifications).
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-141-DISTRIBUTED-VECTOR-MEMORY-AND-HYBRID-SEARCH.md`
+  - `openspec/changes/CHANGE-076-DISTRIBUTED-VECTOR-MEMORY-AND-HYBRID-SEARCH.md`
+  - `docs/intake/INTAKE-141-DISTRIBUTED-VECTOR-MEMORY-AND-HYBRID-SEARCH.md`
+  - `docs/plans/PLAN-141-DISTRIBUTED-VECTOR-MEMORY-AND-HYBRID-SEARCH.md`
+  - `docs/tasks/TASKS-141-DISTRIBUTED-VECTOR-MEMORY-AND-HYBRID-SEARCH.md`
+  - `test/eosHybridVectorKnowledge.test.mjs`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
 
+## Authorization Record: AUTH-2026-11-03-WASM-MICROVM-SANDBOXING-142
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-142 (v76.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit user directive on 2026-11-03: "continua tu dale sigamos vamos con toda")
+* **Scope**: Capability-Based Wasm & MicroVM Agent Sandboxing Engine (Big Tech Standard):
+  1. Component 1: `src/core/eosWasmSandboxEngine.ts` WebAssembly linear memory sandbox (1–256 pages) with trap interception.
+  2. Component 2: Hermetic Node.js Isolate sandbox via `node:vm` with frozen intrinsics and deterministic timeout kill.
+  3. Component 3: MicroVM descriptor generator for Firecracker and Windows Hyper-V enclaves.
+  4. Component 4: Durable SQLite WAL ledger cryptographic receipt attestation.
+  5. Component 5: Regression test suite `test/eosWasmSandboxEngine.test.mjs` verifying BDD-382 to BDD-386.
+  6. Component 6: OpenSpec catalog synchronization (142 formal specifications).
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-142-WASM-MICROVM-AGENT-SANDBOXING.md`
+  - `openspec/changes/CHANGE-077-WASM-MICROVM-AGENT-SANDBOXING.md`
+  - `docs/intake/INTAKE-142-WASM-MICROVM-AGENT-SANDBOXING.md`
+  - `docs/plans/PLAN-142-WASM-MICROVM-AGENT-SANDBOXING.md`
+  - `docs/tasks/TASKS-142-WASM-MICROVM-AGENT-SANDBOXING.md`
+  - `test/eosWasmSandboxEngine.test.mjs`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
 
-
+## Authorization Record: AUTH-2026-11-03-GROUND-TRUTH-AND-SANDBOX-HARDENING-143
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-143 (v76.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit user directive on 2026-11-03: "continua tu dale sigamos vamos con toda")
+* **Scope**: Engineering Ground Truth, Preemptive Sandbox Isolation & Attack Surface Hardening:
+  1. Component 1: `api/mcp.js` hardened by removing `eos_wasm_sandbox` from public unauthenticated `EXPOSED_TOOLS`, preserving strict read-only boundary.
+  2. Component 2: `src/core/eosWasmSandboxEngine.ts` elevated with preemptive `node:worker_threads.Worker` isolation and hard `timeoutMs` termination (`worker.terminate()`) killing infinite loops without event loop starvation, plus `LOOP` bytecode template.
+  3. Component 3: `src/core/eosHybridKnowledgeEngine.ts` and `src/mcp/eosMcpServer.ts` elevated with ground-truth nominal documentation (FTS5 BM25 + 64-dim FNV-1a hash projection with RRF $k=60$) and lazy `indexCorpus()` bootstrapping on initial search.
+  4. Component 4: `src/mcp/eosMcpStreamServer.ts` hardened with 15-minute idle session TTL reaping and periodic 15-second SSE keep-alive heartbeats on open `GET /api/mcp` streams.
+  5. Component 5: Regression test suite `test/eosGroundTruthHardening.test.mjs` verifying BDD-393 to BDD-397.
+  6. Component 6: OpenSpec catalog synchronization (143 formal specifications).
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-143-ENGINEERING-GROUND-TRUTH-AND-SANDBOX-HARDENING.md`
+  - `openspec/changes/CHANGE-078-GROUND-TRUTH-AND-SANDBOX-HARDENING.md`
+  - `docs/intake/INTAKE-143-ENGINEERING-GROUND-TRUTH-AND-SANDBOX-HARDENING.md`
+  - `docs/plans/PLAN-143-GROUND-TRUTH-SANDBOX-HARDENING.md`
+  - `docs/tasks/TASKS-143-GROUND-TRUTH-SANDBOX-HARDENING.md`
+  - `test/eosGroundTruthHardening.test.mjs`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
 
 

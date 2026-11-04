@@ -104,6 +104,7 @@ export class StreamableSession {
   public readonly ringBuffer: StreamableEvent[] = [];
   public nextEventId = 1;
   public activeResponse: http.ServerResponse | null = null;
+  private heartbeatTimer: NodeJS.Timeout | null = null;
   private readonly maxBufferSize: number;
 
   constructor(id: string, tokenHash: string, maxBufferSize = DEFAULT_MAX_BUFFERED_EVENTS) {
@@ -112,6 +113,37 @@ export class StreamableSession {
     this.createdAt = Date.now();
     this.lastActivity = Date.now();
     this.maxBufferSize = maxBufferSize;
+  }
+
+  public attachResponse(res: http.ServerResponse, heartbeatIntervalMs = 15000): void {
+    this.detachResponse();
+    this.activeResponse = res;
+    if (heartbeatIntervalMs > 0) {
+      this.heartbeatTimer = setInterval(() => {
+        this.sendHeartbeat();
+      }, heartbeatIntervalMs);
+      if (this.heartbeatTimer.unref) {
+        this.heartbeatTimer.unref();
+      }
+    }
+  }
+
+  public detachResponse(): void {
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = null;
+    }
+    this.activeResponse = null;
+  }
+
+  public sendHeartbeat(): void {
+    if (this.activeResponse && !this.activeResponse.writableEnded && this.activeResponse.writable) {
+      try {
+        this.activeResponse.write(": keep-alive\n\n");
+      } catch {
+        this.detachResponse();
+      }
+    }
   }
 
   public addEvent(event: string, data: any): StreamableEvent {
@@ -142,6 +174,7 @@ export class StreamableSession {
   }
 
   public close(): void {
+    this.detachResponse();
     if (this.activeResponse && !this.activeResponse.writableEnded) {
       try {
         this.activeResponse.end();
@@ -149,7 +182,6 @@ export class StreamableSession {
         // ignore
       }
     }
-    this.activeResponse = null;
     this.ringBuffer.length = 0;
   }
 }
@@ -294,6 +326,7 @@ export class EosMcpSessionManager {
 }
 
 export class EosMcpStreamServer {
+  public static readonly DEFAULT_IDLE_SESSION_TTL_MS = 15 * 60 * 1000; // 15 minutes
   public readonly mcpServer: EosMcpServer;
   public readonly sessionManager: EosMcpSessionManager;
   public readonly authToken: string;
@@ -303,12 +336,15 @@ export class EosMcpStreamServer {
   private readonly maxSessions: number;
   private readonly maxRequestBytes: number;
   private readonly requestTimeoutMs: number;
+  private readonly heartbeatIntervalMs: number;
+  private reaperInterval: NodeJS.Timeout | null = null;
   private readonly streamableSessions = new Map<string, StreamableSession>();
 
   constructor(projectRoot?: string, heartbeatIntervalMs = 15000, options: EosMcpStreamServerOptions = {}) {
     this.projectRoot = projectRoot || process.cwd();
     this.mcpServer = new EosMcpServer(this.projectRoot);
     this.sessionManager = new EosMcpSessionManager(heartbeatIntervalMs);
+    this.heartbeatIntervalMs = heartbeatIntervalMs;
     const configuredToken = options.authToken ?? process.env.EOS_MCP_HTTP_TOKEN;
     if (configuredToken !== undefined && Buffer.byteLength(configuredToken, "utf8") < 32) {
       throw new Error("EOS MCP HTTP bearer tokens must contain at least 32 bytes.");
@@ -332,12 +368,29 @@ export class EosMcpStreamServer {
   }
 
   /**
+   * Reaps streamable sessions that have been idle beyond their TTL window.
+   */
+  public reapIdleSessions(maxIdleMs = EosMcpStreamServer.DEFAULT_IDLE_SESSION_TTL_MS): number {
+    const now = Date.now();
+    let reapedCount = 0;
+    for (const [id, session] of this.streamableSessions.entries()) {
+      if (now - session.lastActivity > maxIdleMs) {
+        session.close();
+        this.streamableSessions.delete(id);
+        reapedCount++;
+      }
+    }
+    return reapedCount;
+  }
+
+  /**
    * Retrieves or creates a Streamable HTTP session bound to the client's token hash.
    */
   public getOrCreateStreamableSession(token: string, requestedSessionId?: string): {
     session: StreamableSession | null;
     error?: { statusCode: number; message: string };
   } {
+    this.reapIdleSessions();
     const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
 
     if (requestedSessionId) {
@@ -532,9 +585,9 @@ export class EosMcpStreamServer {
           "MCP-Protocol-Version": "2025-06-18"
         });
         res.flushHeaders?.();
-        session.activeResponse = res;
+        session.attachResponse(res, this.heartbeatIntervalMs);
         req.on("close", () => {
-          if (session.activeResponse === res) session.activeResponse = null;
+          session.detachResponse();
         });
         return;
       }
@@ -930,6 +983,12 @@ export class EosMcpStreamServer {
       });
 
       this.server.listen(port, host, () => {
+        this.reaperInterval = setInterval(() => {
+          this.reapIdleSessions();
+        }, 60000);
+        if (this.reaperInterval.unref) {
+          this.reaperInterval.unref();
+        }
         resolve(this.server!);
       });
     });
@@ -939,6 +998,10 @@ export class EosMcpStreamServer {
    * Closes active server and all sessions
    */
   public close(): Promise<void> {
+    if (this.reaperInterval) {
+      clearInterval(this.reaperInterval);
+      this.reaperInterval = null;
+    }
     this.sessionManager.closeAll();
     for (const session of this.streamableSessions.values()) {
       session.close();

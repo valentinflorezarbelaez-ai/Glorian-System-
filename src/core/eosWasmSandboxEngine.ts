@@ -16,6 +16,7 @@
 import crypto from "node:crypto";
 import path from "node:path";
 import vm from "node:vm";
+import { Worker } from "node:worker_threads";
 
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
@@ -99,6 +100,15 @@ export const WASM_BYTECODE_TEMPLATES = {
     0x00, 0x00, 0x03, 0x02, 0x01, 0x00, 0x05, 0x03, 0x01, 0x00, 0x01, 0x07,
     0x07, 0x01, 0x03, 0x6f, 0x6f, 0x62, 0x00, 0x00, 0x0a, 0x0c, 0x01, 0x0a,
     0x00, 0x41, 0xa0, 0x8d, 0x06, 0x28, 0x02, 0x00, 0x1a, 0x0b
+  ]),
+
+  // void loop() -> infinite computation loop (loop (br 0))
+  LOOP: new Uint8Array([
+    0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00,
+    0x01, 0x04, 0x01, 0x60, 0x00, 0x00,
+    0x03, 0x02, 0x01, 0x00,
+    0x07, 0x08, 0x01, 0x04, 0x6c, 0x6f, 0x6f, 0x70, 0x00, 0x00,
+    0x0a, 0x09, 0x01, 0x07, 0x00, 0x03, 0x40, 0x0c, 0x00, 0x0b, 0x0b
   ])
 };
 
@@ -221,15 +231,9 @@ export class EosWasmSandboxEngine {
 
     const durationNs = Number(process.hrtime.bigint() - startNs);
     const memoryConsumedBytes = memory.buffer.byteLength;
-    const outputPayload = JSON.stringify({ returnValue, stdout, stderr, status });
-    const outputSha256 = crypto.createHash("sha256").update(outputPayload).digest("hex");
-
-    const receiptPayload = `${executionId}:${inputSha256}:${outputSha256}:${status}:${durationNs}:${memoryConsumedBytes}`;
-    const receiptSha256 = crypto.createHash("sha256").update(receiptPayload).digest("hex");
-
-    const result: SandboxExecutionResult = {
+    const result = this.buildResult(
       executionId,
-      tier: "WASM",
+      "WASM",
       status,
       exitCode,
       returnValue,
@@ -237,17 +241,222 @@ export class EosWasmSandboxEngine {
       stderr,
       durationNs,
       memoryConsumedBytes,
-      inputSha256,
-      outputSha256,
-      receiptSha256
-    };
+      inputSha256
+    );
 
     this.commitExecutionReceipt(result);
     return result;
   }
 
   /**
+   * Tier 1 (Preemptive Worker Isolation):
+   * Executes WebAssembly bytecode inside a dedicated node:worker_threads.Worker thread.
+   * If execution exceeds timeoutMs (default: 2000ms), worker.terminate() is called
+   * immediately by the supervisor, guaranteeing that infinite loops do NOT starve
+   * or block the host Node.js event loop.
+   */
+  public executeWasmWorker(
+    wasmInput: Uint8Array | Buffer | string,
+    options?: WasmSandboxOptions
+  ): Promise<SandboxExecutionResult> {
+    const executionId = crypto.randomUUID();
+    const startNs = process.hrtime.bigint();
+    const stdout: string[] = [];
+    const stderr: string[] = [];
+
+    let wasmBytes: Uint8Array;
+    if (typeof wasmInput === "string") {
+      wasmBytes = Buffer.from(wasmInput, "base64");
+    } else if (Buffer.isBuffer(wasmInput)) {
+      wasmBytes = new Uint8Array(wasmInput.buffer, wasmInput.byteOffset, wasmInput.byteLength);
+    } else {
+      wasmBytes = wasmInput;
+    }
+
+    const inputSha256 = crypto.createHash("sha256").update(wasmBytes).digest("hex");
+    const initialPages = Math.max(1, Math.min(64, options?.initialPages || 1));
+    const maxPages = Math.max(initialPages, Math.min(EosWasmSandboxEngine.MAX_WASM_PAGES_LIMIT, options?.maxPages || 256));
+    const timeoutMs = Math.max(20, Math.min(30000, options?.timeoutMs || 2000));
+    const entryFunction = options?.entryFunction;
+    const functionArgs = options?.functionArgs || [];
+
+    const workerScript = `
+      import { workerData, parentPort } from "node:worker_threads";
+      try {
+        const memory = new WebAssembly.Memory({
+          initial: workerData.initialPages,
+          maximum: workerData.maxPages
+        });
+        const imports = {
+          env: {
+            memory,
+            host_log: (ptr, len) => {
+              try {
+                const buf = new Uint8Array(memory.buffer, ptr, len);
+                const str = new TextDecoder("utf-8").decode(buf);
+                parentPort?.postMessage({ type: "stdout", text: str });
+              } catch {}
+            },
+            host_sha256: () => {},
+            host_time_ns: () => Number(process.hrtime.bigint() & 0x7fffffffffffffffn)
+          }
+        };
+        const module = new WebAssembly.Module(workerData.wasmBytes);
+        const instance = new WebAssembly.Instance(module, imports);
+        const entryName = workerData.entryFunction || Object.keys(instance.exports)[0];
+        const fn = instance.exports[entryName];
+        let returnValue = null;
+        if (typeof fn === "function") {
+          returnValue = fn(...workerData.functionArgs);
+        } else {
+          returnValue = "Instantiated with exports: " + Object.keys(instance.exports).join(", ");
+        }
+        parentPort?.postMessage({
+          type: "result",
+          returnValue,
+          memoryConsumedBytes: memory.buffer.byteLength
+        });
+      } catch (err) {
+        parentPort?.postMessage({
+          type: "error",
+          message: String(err?.message || err),
+          isRuntimeError: err instanceof WebAssembly.RuntimeError
+        });
+      }
+    `;
+
+    return new Promise<SandboxExecutionResult>((resolve) => {
+      let resolved = false;
+      let timedOut = false;
+      let status: SandboxStatus = "COMPLETED";
+      let exitCode = 0;
+      let returnValue: unknown = null;
+      let memoryConsumedBytes = initialPages * EosWasmSandboxEngine.WASM_PAGE_SIZE_BYTES;
+
+      let worker: Worker;
+      try {
+        worker = new Worker(workerScript, {
+          eval: true,
+          workerData: {
+            wasmBytes,
+            initialPages,
+            maxPages,
+            entryFunction,
+            functionArgs
+          }
+        });
+      } catch (err: any) {
+        status = "EXECUTION_FAILED";
+        exitCode = 1;
+        stderr.push(String(err?.message || err));
+        const durationNs = Number(process.hrtime.bigint() - startNs);
+        const result = this.buildResult(
+          executionId,
+          "WASM",
+          status,
+          exitCode,
+          null,
+          stdout,
+          stderr,
+          durationNs,
+          memoryConsumedBytes,
+          inputSha256
+        );
+        this.commitExecutionReceipt(result);
+        return resolve(result);
+      }
+
+      const timer = setTimeout(async () => {
+        timedOut = true;
+        try {
+          await worker.terminate();
+        } catch {}
+      }, timeoutMs);
+
+      worker.on("message", (msg: any) => {
+        if (!msg || typeof msg !== "object") return;
+        if (msg.type === "stdout" && typeof msg.text === "string") {
+          stdout.push(msg.text);
+        } else if (msg.type === "result") {
+          returnValue = msg.returnValue;
+          if (typeof msg.memoryConsumedBytes === "number") {
+            memoryConsumedBytes = msg.memoryConsumedBytes;
+          }
+          status = "COMPLETED";
+          exitCode = 0;
+        } else if (msg.type === "error") {
+          exitCode = 1;
+          const errMsg = String(msg.message || "Wasm execution error");
+          stderr.push(errMsg);
+          if (msg.isRuntimeError) {
+            if (errMsg.includes("out of bounds") || errMsg.includes("memory access")) {
+              status = "TRAPPED_OOB";
+            } else if (errMsg.includes("unreachable")) {
+              status = "TRAPPED_UNREACHABLE";
+            } else {
+              status = "EXECUTION_FAILED";
+            }
+          } else {
+            status = "EXECUTION_FAILED";
+          }
+        }
+      });
+
+      worker.on("error", (err: any) => {
+        if (!timedOut) {
+          exitCode = 1;
+          status = "EXECUTION_FAILED";
+          stderr.push(String(err?.message || err));
+        }
+      });
+
+      worker.on("exit", () => {
+        clearTimeout(timer);
+        if (resolved) return;
+        resolved = true;
+
+        if (timedOut) {
+          status = "TIMEOUT_KILLED";
+          exitCode = 1;
+          stderr.push(`Wasm execution exceeded deadline of ${timeoutMs}ms and was terminated by worker supervisor.`);
+        }
+
+        const durationNs = Number(process.hrtime.bigint() - startNs);
+        const result = this.buildResult(
+          executionId,
+          "WASM",
+          status,
+          exitCode,
+          returnValue,
+          stdout,
+          stderr,
+          durationNs,
+          memoryConsumedBytes,
+          inputSha256
+        );
+        this.commitExecutionReceipt(result);
+        resolve(result);
+      });
+    });
+  }
+
+  public async executeWasmAsync(
+    wasmInput: Uint8Array | Buffer | string,
+    options?: WasmSandboxOptions
+  ): Promise<SandboxExecutionResult> {
+    return this.executeWasmWorker(wasmInput, options);
+  }
+
+  /**
    * Tier 2: Executes prospective JavaScript inside an isolated, hardened node:vm context.
+   *
+   * SECURITY NOTICE (Epistemic Ground Truth):
+   * In standard V8 and Node.js runtimes, node:vm is NOT an adversarial security sandbox.
+   * Host context escapes (e.g. constructor prototype chain traversal) are documented V8
+   * behaviors. This tier is intended strictly as an evaluation convenience context
+   * for prospective syntax checks and pure math/string manipulation with frozen intrinsics.
+   * Hostile untrusted agent execution MUST use Tier 1 (WebAssembly memory bounding)
+   * or Tier 3 (MicroVM hardware enclaves).
    */
   public executeIsolate(
     code: string,
@@ -313,15 +522,9 @@ export class EosWasmSandboxEngine {
 
     const durationNs = Number(process.hrtime.bigint() - startNs);
     const memoryConsumedBytes = 1024 * 1024; // Baseline estimated 1 MiB isolate heap
-    const outputPayload = JSON.stringify({ returnValue, stdout, stderr, status });
-    const outputSha256 = crypto.createHash("sha256").update(outputPayload).digest("hex");
-
-    const receiptPayload = `${executionId}:${inputSha256}:${outputSha256}:${status}:${durationNs}:${memoryConsumedBytes}`;
-    const receiptSha256 = crypto.createHash("sha256").update(receiptPayload).digest("hex");
-
-    const result: SandboxExecutionResult = {
+    const result = this.buildResult(
       executionId,
-      tier: "ISOLATE",
+      "ISOLATE",
       status,
       exitCode,
       returnValue,
@@ -329,10 +532,8 @@ export class EosWasmSandboxEngine {
       stderr,
       durationNs,
       memoryConsumedBytes,
-      inputSha256,
-      outputSha256,
-      receiptSha256
-    };
+      inputSha256
+    );
 
     this.commitExecutionReceipt(result);
     return result;
@@ -428,6 +629,39 @@ export class EosWasmSandboxEngine {
       // In read-only or in-memory contexts, graceful degradation
       return false;
     }
+  }
+
+  private buildResult(
+    executionId: string,
+    tier: SandboxTier,
+    status: SandboxStatus,
+    exitCode: number,
+    returnValue: unknown,
+    stdout: string[],
+    stderr: string[],
+    durationNs: number,
+    memoryConsumedBytes: number,
+    inputSha256: string
+  ): SandboxExecutionResult {
+    const outputPayload = JSON.stringify({ returnValue, stdout, stderr, status });
+    const outputSha256 = crypto.createHash("sha256").update(outputPayload).digest("hex");
+    const receiptPayload = `${executionId}:${inputSha256}:${outputSha256}:${status}:${durationNs}:${memoryConsumedBytes}`;
+    const receiptSha256 = crypto.createHash("sha256").update(receiptPayload).digest("hex");
+
+    return {
+      executionId,
+      tier,
+      status,
+      exitCode,
+      returnValue,
+      stdout,
+      stderr,
+      durationNs,
+      memoryConsumedBytes,
+      inputSha256,
+      outputSha256,
+      receiptSha256
+    };
   }
 
   private detectWasmEntryPoint(exports: Record<string, any>): string {

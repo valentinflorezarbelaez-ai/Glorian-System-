@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-04T00:15:02.421Z",
-  "totalSpecs": 142,
-  "catalogSha256": "68162ff36d25833cd1c8155494d08b4fc4790ff5952c2c37a285230185b39ba0",
+  "timestampIso": "2026-11-04T00:47:02.260Z",
+  "totalSpecs": 143,
+  "catalogSha256": "f4d4ee85c155947a238b86e7070d217d4070af5747f6766bb60c0b20fdd5c05e",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1280,6 +1280,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-142-WASM-MICROVM-AGENT-SANDBOXING.md",
       "sha256": "5db7b206c3488c1e22709250b421bfcec1298c855bc2e95bf32129eaf68e6ace"
+    },
+    {
+      "id": "SPEC-143",
+      "title": "Engineering Ground Truth, Preemptive Sandbox Isolation & Attack Surface Hardening",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-143-ENGINEERING-GROUND-TRUTH-AND-SANDBOX-HARDENING.md",
+      "sha256": "22d9db21e24bc4428e4654e2146a567ecae4495231e32b43853f708db10b245c"
     }
   ]
 }
