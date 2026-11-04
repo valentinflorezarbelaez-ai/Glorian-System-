@@ -22,3 +22,4 @@ data/*.db-wal
 test/_sandbox/
 
 .tmp-screensketch-frames/
+scripts/tmp-absolute-*.mjs

@@ -1,7 +1,7 @@
 {
   "title": "Glorian Career Evidence Pack",
   "owner": "Valentín Flórez Arbeláez",
-  "generatedAtIso": "2026-11-04T16:50:53.159Z",
+  "generatedAtIso": "2026-11-04T17:04:42.615Z",
   "epistemicState": "CAREER_EVIDENCE_WITHIN_TESTED_SCOPE",
   "claimsDenied": [
     "Level 5",
@@ -55,8 +55,8 @@
     "mission": {
       "status": "SUCCESS",
       "epistemicState": "MISSION_GOLDEN_PATH_WITHIN_TESTED_SCOPE",
-      "sha256Receipt": "f2b4cf82b285f8d82e080b09e5187be50c35ede403ed293916260f128f2741d3",
-      "durationMs": 851,
+      "sha256Receipt": "53919825602dbe9a535b4d39ce1f92430118f568bc8440f3f230bf56e54af3e1",
+      "durationMs": 779,
       "stages": [
         {
           "id": "INPUT_VALIDATION",
@@ -110,7 +110,7 @@
           "id": "LEDGER_SEAL",
           "exitCode": 0,
           "mandatory": true,
-          "summary": "Ledger sealed EOS-LEDGER-000001-526608fb2e"
+          "summary": "Ledger sealed EOS-LEDGER-000001-966f254f48"
         }
       ]
     },
@@ -128,28 +128,17 @@
     },
     "turbo": {
       "success": true,
-      "totalDurationMs": 199.399,
+      "totalDurationMs": 124.585,
       "epistemicState": "LOCAL_CHECKS_PASSED",
-      "sourceInventoryDigest": "sha256:ad8ed8ec7a521eac1f4da8c1f0255ae2de6dea486100b3349a76c854290b5965"
+      "sourceInventoryDigest": "sha256:d97e039e29a7be601c7f327081b51f63a18ea5597c52d683bdc13f710449fd64"
     },
     "fleetSoundcheck": {
-      "fleetAverageScore": 98,
+      "fleetAverageScore": 100,
       "deploymentAuthorizedQuorum": true,
       "totalRepositories": 10,
       "reposAtGradeA": 10,
-      "dirtyTrees": [
-        {
-          "id": "aberamentho",
-          "score": 90,
-          "grade": "A"
-        },
-        {
-          "id": "portafolio",
-          "score": 90,
-          "grade": "A"
-        }
-      ],
-      "sha256Receipt": "26ab606a1374588dee439ddafb62dbf44c37e9d3fbc3823b532e77a00fbab42b"
+      "dirtyTrees": [],
+      "sha256Receipt": "255fbb03a64a7520679dd482fadd3f6ebf0ef5c1fb567ff0f783ce38eef469d3"
     },
     "spotifyInstitutional": {
       "institutionalScore": 100,
@@ -171,5 +160,5 @@
       "OpenSpec formal catalog"
     ]
   },
-  "sha256Pack": "fe2672f18dbd202f7038391a8c776bf799acbf5e6d8c1f9a1b3bcb5a1f427a0d"
+  "sha256Pack": "1fa3095f51aaf62f33839c10ef10e5b3afb19b7b0f2f51a53ca6be1851cce0c3"
 }

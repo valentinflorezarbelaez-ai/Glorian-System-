@@ -2524,6 +2524,42 @@ switch (command) {
     break;
   }
 
+  case "mission":
+  case "mission:run": {
+    printBanner();
+    console.log("[EOS MISSION] Golden Path NL → Fail-Closed SDLC (SPEC-156)\n");
+    const { runMissionGoldenPath } = await import("../src/core/eosMissionGoldenPathOrchestrator.ts");
+    const directiveParts = args.slice(1).filter((a) => !a.startsWith("--"));
+    const directive = directiveParts.join(" ").trim() || "audit control plane health";
+    const domainArg = args.find((a) => a.startsWith("--domain="));
+    const domainHint = domainArg ? domainArg.split("=")[1] : undefined;
+    const persistLedger = args.includes("--persist-ledger");
+    const { EosDurableSqliteLedger } = await import("../src/core/eosDurableSqliteLedger.ts");
+    const result = runMissionGoldenPath(directive, {
+      projectRoot: root,
+      target: "eos-system",
+      domainHint,
+      sealLedger: true,
+      ledgerPath: persistLedger
+        ? EosDurableSqliteLedger.defaultLedgerPath(root)
+        : ":memory:"
+    });
+    console.log(`  Estado           : ${result.status}${result.failingStage ? ` @ ${result.failingStage}` : ""}`);
+    console.log(`  Dominio          : ${result.domainHint}`);
+    console.log(`  Epistemic        : ${result.epistemicState}`);
+    console.log(`  Duración         : ${result.durationMs} ms`);
+    console.log(`  Ledger entry     : ${result.ledgerEntryId || "n/a"}`);
+    console.log("  Stages:");
+    for (const stage of result.stages) {
+      const icon = stage.exitCode === 0 ? "✔" : "✖";
+      const mand = stage.mandatory ? "M" : "S";
+      console.log(`    ${icon} [${mand}] ${stage.stageId} → ${stage.summary}`);
+    }
+    console.log(`  Receipt          : sha256:${result.sha256Receipt}\n`);
+    if (result.status !== "SUCCESS") process.exitCode = 1;
+    break;
+  }
+
   case "product:deliver": {
     printBanner();
     console.log("[EOS PRODUCT DELIVER] Golden Path IDP — Foundry → SDD → Loop → Gates → Scorecard\n");
@@ -4567,6 +4603,8 @@ switch (command) {
   eos search <termino>       Búsqueda instantánea FTS5 en specs, plans y ADRs (~100ms)
   eos test                   Ejecuta las 86 suites de prueba automatizadas (node:test)
   eos turbo                  Verificación en memoria con telemetría en microsegundos (<350ms)
+  eos mission "<directive>" [--domain=platform|fintech|audio] [--persist-ledger]
+                             SPEC-156 Mission Golden Path (NL→amplify→gates→turbo→ledger)
   eos coverage               Reporte de cobertura nativa V8 sin dependencias externas
   eos quickstart             Sanity check de 6 subsistemas en <200ms
   eos product:deliver [name] [domain] [tier] [--write] [--canary]
