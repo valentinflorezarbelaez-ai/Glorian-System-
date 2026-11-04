@@ -1,0 +1,11 @@
+{
+  "specCoverage": 100,
+  "gatePassRate": 100,
+  "mutationFloor": 100,
+  "layer0Purity": 100,
+  "timeToGreenMs": 2.903,
+  "blastRadiusKnown": 100,
+  "score": 100,
+  "grade": "A+",
+  "sha256Receipt": "c9a8baf551329eb6593f0defb3f184e3be230224c8ed3f15b2befb137173b67e"
+}

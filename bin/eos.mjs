@@ -2524,6 +2524,46 @@ switch (command) {
     break;
   }
 
+  case "product:deliver": {
+    printBanner();
+    console.log("[EOS PRODUCT DELIVER] Golden Path IDP — Foundry → SDD → Loop → Gates → Scorecard\n");
+    const { EosProductDeliveryOrchestrator } = await import("../src/core/eosProductDeliveryOrchestrator.ts");
+    const name = args[1] || "Demo Ledger MVP";
+    const domain = args[2] || "fintech-ledger";
+    const tier = (args[3] || "MVP").toUpperCase();
+    const dryRun = !args.includes("--write");
+    const manifest = {
+      id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      name,
+      domain,
+      description: `Golden Path delivery: ${name}`,
+      tier,
+      platforms: ["distributed-backend", "web"],
+      entities: ["LedgerEntry", "Account"],
+      commands: ["PostEntry", "ReconcileBooks"],
+      compliance: ["SLSA_4"]
+    };
+    const result = EosProductDeliveryOrchestrator.deliverProduct(manifest, {
+      dryRun,
+      projectRoot: process.cwd(),
+      enforceGates: true,
+      externalSatellite: false
+    });
+    console.log(`  Estado           : ${result.status}${result.reason ? ` (${result.reason})` : ""}`);
+    console.log(`  Track            : ${result.track}`);
+    console.log(`  Dry-run          : ${result.dryRun ? "SÍ (default; use --write to materialize)" : "NO — SDD written"}`);
+    console.log(`  INTEL+GOV stages : ${result.intelGovernanceStagesCompleted}`);
+    console.log(`  Gates            : ${result.gateResults.map((g) => `${g.name}=${g.exitCode}`).join(", ") || "n/a"}`);
+    if (result.scorecard) {
+      console.log(`  Scorecard        : ${result.scorecard.score}/100 grade ${result.scorecard.grade}`);
+    }
+    console.log(`  SDD path         : ${result.sddPackagePath || "n/a"}`);
+    console.log(`  Epistemic        : ${result.epistemicState}`);
+    console.log(`  Receipt          : sha256:${result.sha256Receipt}\n`);
+    if (result.status === "FAILED" || result.status === "BLOCKED") process.exitCode = 1;
+    break;
+  }
+
   case "loop":
   case "sovereign": {
     printBanner();
@@ -4395,6 +4435,8 @@ switch (command) {
   eos turbo                  Verificación en memoria con telemetría en microsegundos (<350ms)
   eos coverage               Reporte de cobertura nativa V8 sin dependencias externas
   eos quickstart             Sanity check de 6 subsistemas en <200ms
+  eos product:deliver [name] [domain] [tier] [--write]
+                             Golden Path IDP (Foundry→SDD→Loop→Gates→Scorecard); dry-run by default
 
 🛡️ SEGURIDAD, CADENA DE SUMINISTRO & FORMAL METHODS:
   eos sbom                   Genera inventario CycloneDX v1.5 con atestación SHA-256

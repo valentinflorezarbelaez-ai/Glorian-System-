@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:60fbb2ea-adb2-5101-afd2-8341ee9c0e2d",
+  "serialNumber": "urn:uuid:490629c3-0fa2-56d5-b57c-f28906be36f2",
   "version": 1,
   "metadata": {
-    "timestamp": "2021-07-21T06:27:54.000Z",
+    "timestamp": "2028-10-25T20:51:15.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "8759248ba6805e6ea35912460e25c32fcace822c68355639f3a0e1c388294a15"
+          "content": "723c716eebf65d2a8098cbfd875dcecd62cdae4d2a12bc2b1babd5e87514244c"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -1645,6 +1645,19 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosProductDeliveryOrchestrator.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosProductDeliveryOrchestrator.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "42a8fd17116412bab4bb3e4f760a24211557239587db30674aea39e41d34bba8"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosProductDeliveryOrchestrator.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosProductionChaosMonkey.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosProductionChaosMonkey.ts@75.0.0",
@@ -2392,7 +2405,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "64908888d76033a2fa2774ff1e387a866fb8a435e294a50a62d0f88bcd81fd52"
+          "content": "698a39f724bbc73c41d2a4fe153e39c3ccc7347a5d45b89b381d1dd196e82259"
         }
       ],
       "description": "Glorian System root entrypoint: bin/eos.mjs"
@@ -2437,5 +2450,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "de9fee9d4e7364e928e41217aab158b9047b50861a5567c8d3c17d6f88296113"
+  "sha256Receipt": "d628e7f6cc9e4bff5a6edd915696940915d2eb39fad005ca1e6055388f8512fb"
 }

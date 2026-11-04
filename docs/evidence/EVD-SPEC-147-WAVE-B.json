@@ -1,0 +1,16 @@
+{
+  "evidenceId": "EVD-SPEC-147-WAVE-B",
+  "specId": "SPEC-147",
+  "ladder": "LADDER-15",
+  "wave": "B_ENFORCE",
+  "epistemicState": "PDO_GATES_ENFORCED_WITHIN_SCOPE",
+  "wiredGates": ["turbo_purity", "secret_scan", "mutation_floor"],
+  "failClosed": true,
+  "mutationFloor": 80,
+  "claims": [
+    "VerificationGatePort hermetic adapters record exitCode evidence",
+    "Any gate exitCode !== 0 sets REMEDIATION_REQUIRED and blocks deployment",
+    "Dual-track FastTrack vs HeavySddTrack by product tier"
+  ],
+  "disclaimer": "Hermetic in-process gates for Layer-0 purity; process adapters may be injected at CLI boundary"
+}

@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2021-12-14T05:03:49.000Z",
-  "totalSpecs": 146,
-  "catalogSha256": "acfbf83575c4f066f7ee6f75f91749252f6cf372894c6758630470090766c34f",
+  "timestampIso": "2021-12-28T04:18:47.000Z",
+  "totalSpecs": 147,
+  "catalogSha256": "3c2e95a76156091fd74de8f2953d5e5deb3fa777eea9be1a1714b893ab9b3300",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1316,6 +1316,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-146-PEAK-ASSURANCE-TCB.md",
       "sha256": "166defe0adf6e15c3349fed2026f4211e7db8817955a3cec20e7d781d5e1d57d"
+    },
+    {
+      "id": "SPEC-147",
+      "title": "Product Delivery Orchestrator (LADDER-15 Big-Tech IDP)",
+      "status": "APPROVED",
+      "frCount": 7,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-147-PRODUCT-DELIVERY-ORCHESTRATOR.md",
+      "sha256": "1e1b1ba731675767b89b3c78814ff03abb05b18a9f79b0d4f16b4b8d498e2a9d"
     }
   ]
 }

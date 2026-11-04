@@ -335,6 +335,10 @@ import {
 } from "../core/eosUniversalProductFoundry.ts";
 
 import {
+  EosProductDeliveryOrchestrator
+} from "../core/eosProductDeliveryOrchestrator.ts";
+
+import {
   EosHnswVectorEngine
 } from "../core/eosHnswVectorEngine.ts";
 
@@ -2225,6 +2229,30 @@ export class EosMcpServer {
                 {
                   name: "eos_sovereign_loop_stages",
                   description: "Returns the complete definition of the 21 Master Engineering Pipeline stages and phase groups.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {}
+                  }
+                },
+                {
+                  name: "eos_product_deliver_run",
+                  description: "LADDER-15 Golden Path: Foundry blueprint → SDD package → Sovereign Loop → verification gates → Product Quality Scorecard. Defaults to dry-run; set write=true to materialize under docs/products/<id>/ on the control plane only.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      name: { type: "string", description: "Product name" },
+                      domain: { type: "string", description: "Domain (e.g. fintech-ledger)" },
+                      tier: { type: "string", enum: ["MVP", "ENTERPRISE", "MISSION_CRITICAL", "PLANETARY"], description: "Complexity tier (default MVP)" },
+                      write: { type: "boolean", description: "When true, materialize SDD under docs/products/<id>/ (control plane only)" },
+                      entities: { type: "array", items: { type: "string" }, description: "Domain entities" },
+                      commands: { type: "array", items: { type: "string" }, description: "Application commands" }
+                    },
+                    required: ["name", "domain"]
+                  }
+                },
+                {
+                  name: "eos_product_deliver_status",
+                  description: "Returns LADDER-15 Product Delivery Orchestrator status, epistemic target, and tool surface.",
                   inputSchema: {
                     type: "object",
                     properties: {}
@@ -5006,6 +5034,57 @@ export class EosMcpServer {
           totalStages: SOVEREIGN_21_STAGES.length,
           stages: SOVEREIGN_21_STAGES
         };
+      }
+
+      case "eos_product_deliver_run": {
+        onProgress?.(15, 100, "Starting LADDER-15 Product Delivery Golden Path");
+        const name = String(args.name || "Demo Ledger MVP");
+        const domain = String(args.domain || "fintech-ledger");
+        const tier = (args.tier as ProductManifest["tier"]) || "MVP";
+        const write = args.write === true;
+        const entities = Array.isArray(args.entities) && args.entities.length > 0
+          ? args.entities.map(String)
+          : ["LedgerEntry", "Account"];
+        const commands = Array.isArray(args.commands) && args.commands.length > 0
+          ? args.commands.map(String)
+          : ["PostEntry", "ReconcileBooks"];
+        const manifest: ProductManifest = {
+          id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+          name,
+          domain,
+          description: `Golden Path delivery for ${name}`,
+          tier,
+          platforms: ["distributed-backend", "web"],
+          entities,
+          commands,
+          compliance: ["SLSA_4"]
+        };
+        onProgress?.(45, 100, "Foundry + Sovereign Loop + verification gates");
+        const result = EosProductDeliveryOrchestrator.deliverProduct(manifest, {
+          dryRun: !write,
+          projectRoot: this.projectRoot,
+          enforceGates: true,
+          externalSatellite: false
+        });
+        onProgress?.(100, 100, `Delivery ${result.status}`);
+        return {
+          status: result.status,
+          reason: result.reason ?? null,
+          track: result.track,
+          dryRun: result.dryRun,
+          intelGovernanceStagesCompleted: result.intelGovernanceStagesCompleted,
+          gateResults: result.gateResults,
+          scorecard: result.scorecard,
+          sddPackagePath: result.sddPackagePath,
+          epistemicState: result.epistemicState,
+          sha256Receipt: result.sha256Receipt,
+          deploymentAttempted: result.deploymentAttempted,
+          durationMs: result.durationMs
+        };
+      }
+
+      case "eos_product_deliver_status": {
+        return EosProductDeliveryOrchestrator.getStatus();
       }
 
       case "eos_ontology_query": {
