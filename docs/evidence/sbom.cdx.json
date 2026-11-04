@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:148b1917-5f76-5d00-83be-c99651bdc3d0",
+  "serialNumber": "urn:uuid:0e29405a-dee6-5c98-bfb0-74808371ac85",
   "version": 1,
   "metadata": {
-    "timestamp": "2020-12-02T02:57:27.000Z",
+    "timestamp": "2027-07-12T19:41:14.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "f2bb807c63a0edf95397fc1d66cfa83c6d4cbf18883b89602fb14ff7fd4e93c3"
+          "content": "074dccc49d9ecd6465bedfa9f0a903e16136b28f9b288c5170459c2540e14a5a"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -25,7 +25,7 @@
       },
       {
         "name": "Node.js",
-        "version": "v24.21.0"
+        "version": "v24.19.0"
       }
     ],
     "runtimeDependenciesCount": 0
@@ -1528,6 +1528,19 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosOtelDistributedTracing.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosOtelDistributedTracing.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6fef2cea2f11027e3bbb3a5f604cfa8bf1b5a393c3c728240eb2bb4ccdd3eb2d"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosOtelDistributedTracing.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosOtlpTelemetryEngine.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosOtlpTelemetryEngine.ts@75.0.0",
@@ -1664,7 +1677,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "42a8fd17116412bab4bb3e4f760a24211557239587db30674aea39e41d34bba8"
+          "content": "7be251a408f1c96b045b868d41275b9b91d3658c4814e22243ed8f12abf5e9a7"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosProductDeliveryOrchestrator.ts"
@@ -2418,7 +2431,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "7369598d83314dff09a5080246abcfdaa66600970691be0db53fac5b4ca19d70"
+          "content": "de553da15871088f04be1de64a23f0026f859a353f6216f83bf31179eacc8deb"
         }
       ],
       "description": "Glorian System root entrypoint: bin/eos.mjs"
@@ -2463,5 +2476,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "482550f69b8493b91af10c79b765b64b863c616ce34dd3567fae3b9282397b23"
+  "sha256Receipt": "ad0303d89a3b94b66f6cdd32b7da0b4b64331af6b5e960f3ba3d49bd8f484eb1"
 }

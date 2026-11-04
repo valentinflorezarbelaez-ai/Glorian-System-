@@ -4439,6 +4439,63 @@ switch (command) {
     break;
   }
 
+  case "trace:query": {
+    printBanner();
+    const { EosOtelTraceEngine } = await import("../src/core/eosOtelDistributedTracing.ts");
+    const engine = EosOtelTraceEngine.getInstance({ projectRoot: root });
+    const nameFilter = args[1] && !args[1].startsWith("--") ? args[1] : undefined;
+    const limitIdx = args.indexOf("--limit");
+    const limit = limitIdx >= 0 && args[limitIdx + 1] ? parseInt(args[limitIdx + 1], 10) : 20;
+    const minMsIdx = args.indexOf("--min");
+    const minDurationMs = minMsIdx >= 0 && args[minMsIdx + 1] ? parseFloat(args[minMsIdx + 1]) : undefined;
+    
+    console.log(`[EOS OTEL] Querying traces${nameFilter ? ` (filter: ${nameFilter})` : ""}...`);
+    const result = engine.queryTraces({ name: nameFilter, minDurationMs, limit });
+    console.log(`\nFound ${result.traceCount} trace(s):`);
+    for (const t of result.traces) {
+      console.log(`  - [${t.traceId}] ${t.rootSpanName} (${t.spanCount} spans, ${t.durationMs.toFixed(2)} ms)`);
+    }
+    break;
+  }
+
+  case "trace:waterfall": {
+    printBanner();
+    const traceId = args[1];
+    if (!traceId) {
+      console.error("[FAIL] Error: traceId argument is required. Usage: eos trace:waterfall <traceId>");
+      process.exit(1);
+    }
+    const { EosOtelTraceEngine } = await import("../src/core/eosOtelDistributedTracing.ts");
+    const engine = EosOtelTraceEngine.getInstance({ projectRoot: root });
+    const wf = engine.computeTraceWaterfall(traceId);
+    if (!wf) {
+      console.error(`[FAIL] No spans found for traceId: ${traceId}`);
+      process.exit(1);
+    }
+    console.log(`[EOS OTEL WATERFALL] Trace ${wf.traceId}`);
+    console.log(`Root: ${wf.rootSpanName} | Total Duration: ${wf.totalDurationMs.toFixed(2)} ms | Spans: ${wf.spanCount}`);
+    if (wf.bottleneckSpanId) {
+      console.log(`Bottleneck: Span ${wf.bottleneckSpanId} (${wf.bottleneckDurationMs.toFixed(2)} ms)`);
+    }
+    console.log("\nExecution Timeline:");
+    for (const s of wf.spans) {
+      const indent = "  ".repeat(s.depth);
+      const bar = "█".repeat(Math.max(1, Math.round(s.durationPercent / 5)));
+      const bottleneckTag = s.isBottleneck ? " [CRITICAL BOTTLENECK]" : "";
+      console.log(`${indent}├─ [${s.status}] ${s.name} (+${s.offsetMs.toFixed(1)}ms, ${s.durationMs.toFixed(2)}ms, ${s.durationPercent.toFixed(1)}%) ${bar}${bottleneckTag}`);
+    }
+    break;
+  }
+
+  case "trace:export": {
+    const traceId = args[1] && !args[1].startsWith("--") ? args[1] : undefined;
+    const { EosOtelTraceEngine } = await import("../src/core/eosOtelDistributedTracing.ts");
+    const engine = EosOtelTraceEngine.getInstance({ projectRoot: root });
+    const payload = engine.exportOtlpJson(traceId);
+    console.log(JSON.stringify(payload, null, 2));
+    break;
+  }
+
   case "guide":
   case "cheat-sheet": {
     printBanner();
@@ -4505,6 +4562,9 @@ switch (command) {
 
 📊 OBSERVABILIDAD & ESTADO:
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
+  eos trace:query [name]     Consulta trazas distribuidas OpenTelemetry en SQLite WAL
+  eos trace:waterfall <id>   Muestra cascada jerárquica con aislamiento de cuello de botella
+  eos trace:export [id]      Exporta trazas a esquema canónico OTLP/JSON v1.3.0
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
   eos health                 Muestra el estado de salud SRE / CNCF del sistema
 

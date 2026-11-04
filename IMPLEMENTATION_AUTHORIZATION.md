@@ -7,6 +7,7 @@
 * **Authorized By**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
 * **Date**: 2026-10-25
 * **Scope**: Creation and continuous sovereign elevation of EOS System (Glorian System):
+  - CHANGE-084 / SPEC-149: Sovereign OpenTelemetry Distributed Tracing & Real-Time Cockpit Observability — Pure Layer-0 OpenTelemetry OTLP/JSON v1.3.0 distributed tracing engine in SQLite WAL mode (data/eos_telemetry.db), W3C Trace Context level 1 propagation (traceparent), nanosecond-precision span recording, automated MCP tool middleware instrumentation, hierarchical trace waterfall computation with critical path bottleneck isolation, and live interactive Cockpit stream in eosStudioConsole.html; epistemic `OTEL_DISTRIBUTED_TRACING_VERIFIED_WITHIN_SCOPE`.
   - CHANGE-083 / SPEC-148: Platform Ops Ceiling LADDER-16 — IDP SLOs fail-closed, progressive canary 1→5→25→100 on Golden Path, dogfood ceiling gate, IV&V checklist, epistemic `SOVEREIGN_CEILING_10_OF_10_WITHIN_TESTED_SCOPE` (explicitly NOT NSA_GRADE / AEROSPACE_CERTIFIED / FEDERAL_ATO / ABSOLUTE_UNIVERSAL_PERFECTION).
   - CHANGE-082 / SPEC-147: Product Delivery Orchestrator LADDER-15 — Big-Tech IDP Golden Path composing Foundry + Sovereign Loop + VerificationGatePort (turbo/secrets/mutation) + ProductQualityScorecard; CLI `product:deliver` and MCP `eos_product_deliver_run` / `eos_product_deliver_status`; hermetic dogfood `docs/products/demo-ledger-mvp`; epistemic `PRODUCT_DELIVERY_ORCHESTRATOR_VERIFIED_WITHIN_SCOPE` (control plane only; Law IV still gates satellites).
   - CHANGE-081 / SPEC-146: Peak Assurance LADDER-14 — Formal TCB predicates for MCP Streamable admission and Law IV (`eosPeakAssuranceTcb`), TLA+ `McpStreamableSecurity` bounded simulation, mutation score floor >= 80, NIST SP 800-53 Rev.5 subset control map with assurance binder, IV&V playbook (builder != verifier), adversarial campaign receipt, and tip-seal epistemic state `HIGH_ASSURANCE_CANDIDATE` (explicitly NOT NSA_GRADE / AEROSPACE_CERTIFIED / federal ATO).
@@ -1069,6 +1070,25 @@
   - `docs/plans/PLAN-144-STREAMABLE-HTTP-AND-WASM-ISOLATION-HARDENING.md`
   - `docs/tasks/TASKS-144-STREAMABLE-HTTP-AND-WASM-ISOLATION-HARDENING.md`
   - `test/eosStreamWasmHardening.test.mjs`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-04-OPENTELEMETRY-DISTRIBUTED-TRACING-149
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-149 / CHANGE-084 / LADDER-17
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit user directive: "dale lo que harian las grandes big techs")
+* **Scope**: Sovereign OpenTelemetry Distributed Tracing & Real-Time Cockpit Observability on control plane SSOT:
+  1. `src/core/eosOtelDistributedTracing.ts` — W3C Traceparent, nanosecond spans, SQLite WAL persistence (`data/eos_telemetry.db`), OTLP/JSON v1.3.0 exporter, waterfall calculator with bottleneck detection.
+  2. Integration in `src/mcp/eosMcpServer.ts` — automatic tool call tracing + tools `eos_otel_query_traces`, `eos_otel_trace_waterfall`, `eos_otel_export_otlp`.
+  3. CLI in `bin/eos.mjs` — `eos trace:query`, `eos trace:waterfall`, `eos trace:export`.
+  4. Cockpit in `public/eosStudioConsole.html` — real-time trace stream and waterfall latency visualization.
+  5. Test suite `test/eosOtelDistributedTracing.test.mjs` — BDD-440..BDD-445.
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-149-OPENTELEMETRY-DISTRIBUTED-TRACING.md`
+  - `openspec/changes/CHANGE-084-OPENTELEMETRY-DISTRIBUTED-TRACING.md`
+  - `docs/intake/eos-system/INTAKE-149-OPENTELEMETRY-DISTRIBUTED-TRACING.md`
+  - `docs/plans/PLAN-149-OPENTELEMETRY-DISTRIBUTED-TRACING.md`
+  - `docs/tasks/TASKS-149-OPENTELEMETRY-DISTRIBUTED-TRACING.md`
+  - `test/eosOtelDistributedTracing.test.mjs`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
 
 ## Authorization Record: AUTH-2026-11-04-PLATFORM-OPS-CEILING-148

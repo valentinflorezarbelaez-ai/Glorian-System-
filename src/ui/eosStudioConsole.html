@@ -293,6 +293,70 @@
       color: var(--accent-danger);
     }
 
+    /* OPENTELEMETRY TRACE WATERFALL */
+    .trace-container {
+      background-color: var(--surface-clean);
+      border: 1px solid var(--border-strict);
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .trace-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+      padding: 16px;
+      background-color: var(--surface-elevated);
+      border: 1px solid var(--border-strict);
+      font-family: monospace;
+    }
+    .waterfall-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: monospace;
+      font-size: 0.84rem;
+      margin-top: 16px;
+    }
+    .waterfall-table th {
+      background-color: var(--surface-elevated);
+      color: var(--text-secondary);
+      text-align: left;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-strict);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+    .waterfall-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-strict);
+    }
+    .waterfall-bar-container {
+      width: 100%;
+      height: 16px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      position: relative;
+    }
+    .waterfall-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-majestic), var(--accent-gold-bright));
+      border-radius: 4px;
+      position: absolute;
+    }
+    .waterfall-bar.bottleneck {
+      background: linear-gradient(90deg, #ef4444, #f87171);
+    }
+    .badge-bottleneck {
+      background-color: rgba(239, 68, 68, 0.2);
+      color: var(--accent-danger);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      padding: 4px 8px;
+      font-size: 0.7rem;
+      border-radius: 4px;
+      font-weight: bold;
+      margin-left: 8px;
+    }
+
     /* TERMINAL STREAM */
     .console-terminal {
       background-color: var(--surface-clean);
@@ -323,6 +387,7 @@
       <span>● Ledger: 1.000 Entries (MMR Certified)</span>
       <span>● Fleet Health: 100% NOMINAL</span>
       <span>● Tribunal: OPERATIONAL</span>
+      <span>● OTel Tracing: ACTIVE (v1.3.0)</span>
     </div>
   </header>
 
@@ -512,6 +577,62 @@
     </div>
   </div>
 
+  <!-- OPENTELEMETRY TRACE WATERFALL COCKPIT -->
+  <div class="section-title">⚡ OPENTELEMETRY DISTRIBUTED TRACING &amp; WATERFALL COCKPIT</div>
+  <div class="trace-container">
+    <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+      <button class="btn-action" id="btnTraceMcpSearch">Trace: MCP Semantic Search</button>
+      <button class="btn-action" id="btnTraceWasmEngine" style="background-color: var(--accent-cyan); color: #000;">Trace: Wasm Sandbox Exec</button>
+      <button class="btn-action" id="btnTraceCanaryDeploy" style="background-color: var(--accent-gold-bright); color: #000;">Trace: Canary Rollout</button>
+      <button class="btn-secondary" id="btnExportOtlp">Exportar OTLP/JSON</button>
+    </div>
+
+    <div class="trace-summary" id="traceSummary">
+      <div>
+        <div class="metric-unit">TRACE ID</div>
+        <div id="statTraceId" style="font-weight: 700; color: var(--accent-majestic); font-size: 0.85rem;">4bf92f3577b34da6a3ce929d0e0e4736</div>
+      </div>
+      <div>
+        <div class="metric-unit">ROOT OPERATION</div>
+        <div id="statRootName" style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem;">mcp.tool.eos_semantic_search</div>
+      </div>
+      <div>
+        <div class="metric-unit">TOTAL LATENCY</div>
+        <div id="statDuration" style="font-weight: 700; color: var(--accent-success); font-size: 0.85rem;">12.45 ms</div>
+      </div>
+      <div>
+        <div class="metric-unit">SPAN COUNT</div>
+        <div id="statSpanCount" style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem;">4 spans</div>
+      </div>
+      <div>
+        <div class="metric-unit">CRITICAL BOTTLENECK</div>
+        <div id="statBottleneck" style="font-weight: 700; color: var(--accent-danger); font-size: 0.85rem;">hnsw.cosine_similarity (9.80 ms)</div>
+      </div>
+    </div>
+
+    <table class="waterfall-table">
+      <thead>
+        <tr>
+          <th style="width: 32%;">Span Operation &amp; Hierarchy</th>
+          <th style="width: 10%;">Status</th>
+          <th style="width: 14%;">Duration (ms)</th>
+          <th style="width: 44%;">Timeline Waterfall (% of Root Duration)</th>
+        </tr>
+      </thead>
+      <tbody id="waterfallBody">
+        <!-- Rendered dynamically -->
+      </tbody>
+    </table>
+
+    <div id="otlpModal" style="display: none; margin-top: 16px; padding: 16px; background-color: var(--bg-pure); border: 1px solid var(--border-strict);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="font-family: monospace; font-size: 0.8rem; color: var(--accent-gold-bright);">CANONICAL OTLP/JSON v1.3.0 PAYLOAD</span>
+        <button class="btn-secondary" id="btnCloseOtlp" style="padding: 4px 8px; font-size: 0.75rem;">Cerrar</button>
+      </div>
+      <pre id="otlpJsonDisplay" style="font-family: monospace; font-size: 0.75rem; color: var(--accent-cyan); overflow-x: auto; max-height: 200px; margin: 0;"></pre>
+    </div>
+  </div>
+
   <!-- SOVEREIGN DISPATCH STREAM -->
   <div class="section-title">📡 SOVEREIGN DISPATCH LOGS</div>
   <div class="console-terminal" id="eosTerminal">
@@ -613,6 +734,137 @@
         receiptText.innerText = 'SHA-256: 84aa3309a684... (CERTIFIED)';
       }
     }
+
+    // OpenTelemetry Distributed Tracing & Waterfall Cockpit
+    const traceScenarios = {
+      search: {
+        traceId: "4bf92f3577b34da6a3ce929d0e0e4736",
+        rootSpanName: "mcp.tool.eos_semantic_search",
+        totalDurationMs: 12.45,
+        spanCount: 4,
+        bottleneckSpanId: "hnsw-cosine-01",
+        bottleneckName: "hnsw.cosine_similarity",
+        bottleneckDurationMs: 9.80,
+        spans: [
+          { spanId: "root-01", name: "mcp.tool.eos_semantic_search", depth: 0, status: "OK", offsetMs: 0.0, durationMs: 12.45, durationPercent: 100.0, isBottleneck: false },
+          { spanId: "sqlite-fts-01", name: "sqlite.wal.query_fts5", depth: 1, status: "OK", offsetMs: 0.3, durationMs: 1.80, durationPercent: 14.5, isBottleneck: false },
+          { spanId: "hnsw-cosine-01", name: "hnsw.cosine_similarity", depth: 1, status: "OK", offsetMs: 2.2, durationMs: 9.80, durationPercent: 78.7, isBottleneck: true },
+          { spanId: "rrf-fuse-01", name: "reciprocal_rank_fusion", depth: 1, status: "OK", offsetMs: 12.0, durationMs: 0.45, durationPercent: 3.6, isBottleneck: false }
+        ]
+      },
+      wasm: {
+        traceId: "a1c73e9188d249f0b83e44281f62c019",
+        rootSpanName: "mcp.tool.eos_wasm_sandbox",
+        totalDurationMs: 4.60,
+        spanCount: 4,
+        bottleneckSpanId: "wasm-compile-01",
+        bottleneckName: "wasm.module_compile",
+        bottleneckDurationMs: 2.90,
+        spans: [
+          { spanId: "root-wasm-01", name: "mcp.tool.eos_wasm_sandbox", depth: 0, status: "OK", offsetMs: 0.0, durationMs: 4.60, durationPercent: 100.0, isBottleneck: false },
+          { spanId: "wasm-compile-01", name: "wasm.module_compile", depth: 1, status: "OK", offsetMs: 0.2, durationMs: 2.90, durationPercent: 63.0, isBottleneck: true },
+          { spanId: "wasm-inst-01", name: "wasm.instance_instantiate", depth: 1, status: "OK", offsetMs: 3.2, durationMs: 0.80, durationPercent: 17.4, isBottleneck: false },
+          { spanId: "wasm-bounds-01", name: "wasm.memory_bounds_check", depth: 1, status: "OK", offsetMs: 4.1, durationMs: 0.35, durationPercent: 7.6, isBottleneck: false }
+        ]
+      },
+      canary: {
+        traceId: "7f81e6205ba3485089304a08e13d9411",
+        rootSpanName: "canary.progressive_rollout",
+        totalDurationMs: 45.20,
+        spanCount: 5,
+        bottleneckSpanId: "stage-canary-10",
+        bottleneckName: "stage.canary_10_percent",
+        bottleneckDurationMs: 32.40,
+        spans: [
+          { spanId: "root-canary-01", name: "canary.progressive_rollout", depth: 0, status: "OK", offsetMs: 0.0, durationMs: 45.20, durationPercent: 100.0, isBottleneck: false },
+          { spanId: "preflight-01", name: "fleet.preflight_health_check", depth: 1, status: "OK", offsetMs: 0.5, durationMs: 5.10, durationPercent: 11.3, isBottleneck: false },
+          { spanId: "stage-canary-10", name: "stage.canary_10_percent", depth: 1, status: "OK", offsetMs: 6.0, durationMs: 32.40, durationPercent: 71.7, isBottleneck: true },
+          { spanId: "mwu-eval-01", name: "mann_whitney_u_statistical_eval", depth: 2, status: "OK", offsetMs: 39.0, durationMs: 3.80, durationPercent: 8.4, isBottleneck: false },
+          { spanId: "stage-canary-100", name: "stage.canary_100_percent", depth: 1, status: "OK", offsetMs: 41.5, durationMs: 3.20, durationPercent: 7.1, isBottleneck: false }
+        ]
+      }
+    };
+
+    let activeScenarioKey = "search";
+
+    function renderWaterfall(scenarioKey) {
+      activeScenarioKey = scenarioKey;
+      const data = traceScenarios[scenarioKey];
+      if (!data) return;
+
+      document.getElementById('statTraceId').innerText = data.traceId;
+      document.getElementById('statRootName').innerText = data.rootSpanName;
+      document.getElementById('statDuration').innerText = data.totalDurationMs.toFixed(2) + " ms";
+      document.getElementById('statSpanCount').innerText = data.spanCount + " spans";
+      document.getElementById('statBottleneck').innerText = data.bottleneckName + " (" + data.bottleneckDurationMs.toFixed(2) + " ms)";
+
+      const tbody = document.getElementById('waterfallBody');
+      tbody.innerHTML = '';
+
+      for (const span of data.spans) {
+        const tr = document.createElement('tr');
+        const indent = span.depth > 0 ? '&nbsp;&nbsp;'.repeat(span.depth) + '└─ ' : '';
+        const bottleneckBadge = span.isBottleneck ? '<span class="badge-bottleneck">BOTTLENECK</span>' : '';
+        const offsetPercent = data.totalDurationMs > 0 ? (span.offsetMs / data.totalDurationMs) * 100 : 0;
+        const widthPercent = Math.max(1, Math.min(100 - offsetPercent, span.durationPercent));
+
+        tr.innerHTML = `
+          <td>${indent}<code>${span.name}</code>${bottleneckBadge}</td>
+          <td><span class="badge-status nominal">${span.status}</span></td>
+          <td>+${span.offsetMs.toFixed(1)}ms (${span.durationMs.toFixed(2)}ms)</td>
+          <td>
+            <div class="waterfall-bar-container">
+              <div class="waterfall-bar ${span.isBottleneck ? 'bottleneck' : ''}" style="left: ${offsetPercent.toFixed(1)}%; width: ${widthPercent.toFixed(1)}%;"></div>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    renderWaterfall("search");
+
+    document.getElementById('btnTraceMcpSearch').addEventListener('click', () => renderWaterfall('search'));
+    document.getElementById('btnTraceWasmEngine').addEventListener('click', () => renderWaterfall('wasm'));
+    document.getElementById('btnTraceCanaryDeploy').addEventListener('click', () => renderWaterfall('canary'));
+
+    const btnExportOtlp = document.getElementById('btnExportOtlp');
+    const otlpModal = document.getElementById('otlpModal');
+    const otlpJsonDisplay = document.getElementById('otlpJsonDisplay');
+    const btnCloseOtlp = document.getElementById('btnCloseOtlp');
+
+    btnExportOtlp.addEventListener('click', () => {
+      const data = traceScenarios[activeScenarioKey];
+      const otlpPayload = {
+        resourceSpans: [{
+          resource: {
+            attributes: [
+              { key: "service.name", value: { stringValue: "glorian-system-control-plane" } },
+              { key: "service.version", value: { stringValue: "75.0.0" } },
+              { key: "telemetry.sdk.name", value: { stringValue: "glorian-otel-layer0" } },
+              { key: "telemetry.sdk.language", value: { stringValue: "nodejs" } }
+            ]
+          },
+          scopeSpans: [{
+            scope: { name: "glorian.system.core", version: "75.0.0" },
+            spans: data.spans.map(s => ({
+              traceId: data.traceId,
+              spanId: s.spanId,
+              name: s.name,
+              kind: s.depth === 0 ? 1 : 3,
+              durationMs: s.durationMs,
+              status: { code: s.status === "OK" ? 1 : 2 }
+            }))
+          }]
+        }]
+      };
+      otlpJsonDisplay.innerText = JSON.stringify(otlpPayload, null, 2);
+      otlpModal.style.display = 'block';
+    });
+
+    btnCloseOtlp.addEventListener('click', () => {
+      otlpModal.style.display = 'none';
+    });
   </script>
 </body>
 </html>

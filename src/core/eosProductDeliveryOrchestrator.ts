@@ -237,6 +237,20 @@ export function computeProductQualityScorecard(input: {
   };
 }
 
+function safeWriteFileSync(filePath: string, content: string): void {
+  const maxAttempts = 5;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      fs.writeFileSync(filePath, content, "utf8");
+      return;
+    } catch (err: any) {
+      if (attempt === maxAttempts) throw err;
+      const end = Date.now() + 15 * attempt;
+      while (Date.now() < end) {}
+    }
+  }
+}
+
 function materializeSddPackage(
   projectRoot: string,
   manifest: ProductManifest,
@@ -280,11 +294,11 @@ function materializeSddPackage(
 
   if (!dryRun) {
     fs.mkdirSync(abs, { recursive: true });
-    fs.writeFileSync(path.join(abs, "INTAKE.md"), intake, "utf8");
-    fs.writeFileSync(path.join(abs, "SPEC.md"), spec, "utf8");
-    fs.writeFileSync(path.join(abs, "PLAN.md"), plan, "utf8");
-    fs.writeFileSync(path.join(abs, "TASKS.md"), tasks, "utf8");
-    fs.writeFileSync(path.join(abs, "blueprint.json"), blueprintJson, "utf8");
+    safeWriteFileSync(path.join(abs, "INTAKE.md"), intake);
+    safeWriteFileSync(path.join(abs, "SPEC.md"), spec);
+    safeWriteFileSync(path.join(abs, "PLAN.md"), plan);
+    safeWriteFileSync(path.join(abs, "TASKS.md"), tasks);
+    safeWriteFileSync(path.join(abs, "blueprint.json"), blueprintJson);
   }
 
   return rel.replace(/\\/g, "/");
@@ -451,7 +465,7 @@ export class EosProductDeliveryOrchestrator {
     // Persist scorecard on real materialization
     if (!dryRun && sddPackagePath) {
       const scorePath = path.join(projectRoot, sddPackagePath, "scorecard.json");
-      fs.writeFileSync(scorePath, JSON.stringify(scorecard, null, 2) + "\n", "utf8");
+      safeWriteFileSync(scorePath, JSON.stringify(scorecard, null, 2) + "\n");
     }
 
     return {

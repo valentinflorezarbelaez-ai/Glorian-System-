@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2022-11-28T17:17:23.000Z",
-  "catalogSha256": "2b18fb23788043d6ddd86740439cecd6b5b35a30fdb3891cea7d6c58aa67e6cd",
-  "totalTools": 189,
+  "generatedAt": "2023-04-04T15:43:34.000Z",
+  "catalogSha256": "faaff626b38cb5b58901996f17df7cd352d41099a6cef86ddeb9426875a5cf72",
+  "totalTools": 192,
   "coreTier0Count": 49,
   "tools": [
     {
@@ -3221,6 +3221,86 @@
       },
       "annotations": {
         "title": "EOS platform Ops Ceiling",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_otel_query_traces",
+      "description": "Query recorded OpenTelemetry distributed traces from SQLite WAL. Filter by name, minimum duration, status code, or limit.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Filter by span or trace name"
+          },
+          "minDurationMs": {
+            "type": "number",
+            "description": "Filter traces exceeding this duration in milliseconds"
+          },
+          "statusCode": {
+            "type": "string",
+            "enum": [
+              "UNSET",
+              "OK",
+              "ERROR"
+            ],
+            "description": "Filter by status code"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Maximum traces to return (default 20, max 100)"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS otel Query Traces",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_otel_trace_waterfall",
+      "description": "Compute hierarchical trace waterfall with parent-child offsets, duration percentages, and automated bottleneck isolation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "traceId": {
+            "type": "string",
+            "description": "Trace ID (32-character hex)"
+          }
+        },
+        "required": [
+          "traceId"
+        ]
+      },
+      "annotations": {
+        "title": "EOS otel Trace Waterfall",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_otel_export_otlp",
+      "description": "Export trace data into canonical OpenTelemetry OTLP/JSON schema v1.3.0 for Jaeger, Honeycomb, or Grafana Tempo ingestion.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "traceId": {
+            "type": "string",
+            "description": "Optional specific trace ID to export"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS otel Export Otlp",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

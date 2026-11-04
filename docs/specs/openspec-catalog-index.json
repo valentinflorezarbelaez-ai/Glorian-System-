@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2020-02-03T17:01:11.000Z",
-  "totalSpecs": 148,
-  "catalogSha256": "710c3dd7776c54bd000e636a3a27e62b3857f4d990bb2c2b384bd6f4e5a19d66",
+  "timestampIso": "2026-06-22T20:58:39.000Z",
+  "totalSpecs": 149,
+  "catalogSha256": "a2ad7cff388019da977076dac7ebcf196337ca98f2977db612bdbb78e0b8f6fb",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1334,6 +1334,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-148-PLATFORM-OPS-CEILING.md",
       "sha256": "a0037ee36cffe56bfbea2eeb0672f1f1aed84eb0176dc2ae9b5b2e75d90eff06"
+    },
+    {
+      "id": "SPEC-149",
+      "title": "Sovereign OpenTelemetry Distributed Tracing & Real-Time Cockpit Observability",
+      "status": "APPROVED",
+      "frCount": 7,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-149-OPENTELEMETRY-DISTRIBUTED-TRACING.md",
+      "sha256": "84af52ee060536a2e4747d87f2efb8477829d977f65dac9e8ad63c0b858ceef1"
     }
   ]
 }

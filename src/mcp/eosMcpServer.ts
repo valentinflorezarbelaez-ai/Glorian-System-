@@ -343,6 +343,13 @@ import {
 } from "../core/eosPlatformOpsCeiling.ts";
 
 import {
+  EosOtelTraceEngine,
+  formatW3cTraceparent,
+  parseW3cTraceparent,
+  type SpanStatusCode
+} from "../core/eosOtelDistributedTracing.ts";
+
+import {
   EosHnswVectorEngine
 } from "../core/eosHnswVectorEngine.ts";
 
@@ -2274,6 +2281,40 @@ export class EosMcpServer {
                   }
                 },
                 {
+                  name: "eos_otel_query_traces",
+                  description: "Query recorded OpenTelemetry distributed traces from SQLite WAL. Filter by name, minimum duration, status code, or limit.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      name: { type: "string", description: "Filter by span or trace name" },
+                      minDurationMs: { type: "number", description: "Filter traces exceeding this duration in milliseconds" },
+                      statusCode: { type: "string", enum: ["UNSET", "OK", "ERROR"], description: "Filter by status code" },
+                      limit: { type: "number", description: "Maximum traces to return (default 20, max 100)" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_otel_trace_waterfall",
+                  description: "Compute hierarchical trace waterfall with parent-child offsets, duration percentages, and automated bottleneck isolation.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      traceId: { type: "string", description: "Trace ID (32-character hex)" }
+                    },
+                    required: ["traceId"]
+                  }
+                },
+                {
+                  name: "eos_otel_export_otlp",
+                  description: "Export trace data into canonical OpenTelemetry OTLP/JSON schema v1.3.0 for Jaeger, Honeycomb, or Grafana Tempo ingestion.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      traceId: { type: "string", description: "Optional specific trace ID to export" }
+                    }
+                  }
+                },
+                {
                   name: "eos_ontology_query",
                   description: "Palantir Bi-Temporal Ontology Cyclotron: sub-microsecond graph reachability, node status, and historical asOf(t) state.",
                   inputSchema: {
@@ -3450,27 +3491,58 @@ export class EosMcpServer {
             throw new TypeError("Tool name must contain 1 to 128 characters.");
           }
           if (!isPlainRecord(args)) throw new TypeError("Tool arguments must be a JSON object.");
-          const rawResult = this.dispatchTool(toolName, args, onProgress);
-          if (rawResult instanceof Promise) {
-            return rawResult.then((result) => {
-              const resultText = typeof result === "string" ? result : JSON.stringify(result, null, 2) ?? "null";
-              if (Buffer.byteLength(resultText, "utf8") > MAX_MCP_REQUEST_BYTES - 4096) {
-                throw new RangeError("MCP tool output exceeds the 1 MiB response limit.");
-              }
-              return {
-                jsonrpc: "2.0",
-                id,
-                result: {
-                  content: [
-                    {
-                      type: "text",
-                      text: resultText
-                    }
-                  ]
-                }
-              };
-            }) as any;
+
+          const traceEngine = EosOtelTraceEngine.getInstance({ projectRoot: this.projectRoot });
+          const traceparent = (params?._meta as any)?.traceparent || (params as any)?.traceparent;
+          const span = traceEngine.startSpan(`mcp.tool.${toolName}`, {
+            parentContext: traceparent,
+            kind: "SERVER",
+            attributes: {
+              "mcp.tool_name": toolName,
+              "mcp.request_id": String(id)
+            }
+          });
+
+          let rawResult: any;
+          try {
+            rawResult = this.dispatchTool(toolName, args, onProgress);
+          } catch (dispatchErr: any) {
+            span.recordException(dispatchErr);
+            span.end();
+            throw dispatchErr;
           }
+
+          if (rawResult instanceof Promise) {
+            return rawResult.then(
+              (result) => {
+                span.setAttribute("mcp.success", true);
+                span.end();
+                const resultText = typeof result === "string" ? result : JSON.stringify(result, null, 2) ?? "null";
+                if (Buffer.byteLength(resultText, "utf8") > MAX_MCP_REQUEST_BYTES - 4096) {
+                  throw new RangeError("MCP tool output exceeds the 1 MiB response limit.");
+                }
+                return {
+                  jsonrpc: "2.0",
+                  id,
+                  result: {
+                    content: [
+                      {
+                        type: "text",
+                        text: resultText
+                      }
+                    ]
+                  }
+                };
+              },
+              (promiseErr) => {
+                span.recordException(promiseErr);
+                span.end();
+                throw promiseErr;
+              }
+            ) as any;
+          }
+          span.setAttribute("mcp.success", true);
+          span.end();
           const result = rawResult;
           const resultText = typeof result === "string" ? result : JSON.stringify(result, null, 2) ?? "null";
           if (Buffer.byteLength(resultText, "utf8") > MAX_MCP_REQUEST_BYTES - 4096) {
@@ -5129,6 +5201,49 @@ export class EosMcpServer {
           sha256Receipt: att.sha256Receipt,
           durationMs: att.durationMs
         };
+      }
+
+      case "eos_otel_query_traces": {
+        onProgress?.(10, 100, "Querying OpenTelemetry distributed traces from SQLite WAL");
+        const traceEngine = EosOtelTraceEngine.getInstance({ projectRoot: this.projectRoot });
+        const validStatuses: SpanStatusCode[] = ["UNSET", "OK", "ERROR"];
+        const status = typeof args.statusCode === "string" && (validStatuses as string[]).includes(args.statusCode)
+          ? (args.statusCode as SpanStatusCode)
+          : undefined;
+        const result = traceEngine.queryTraces({
+          name: args.name ? String(args.name) : undefined,
+          minDurationMs: typeof args.minDurationMs === "number" ? args.minDurationMs : undefined,
+          statusCode: status,
+          limit: typeof args.limit === "number" ? args.limit : 20
+        });
+        onProgress?.(100, 100, `Found ${result.traceCount} matching traces`);
+        return {
+          total: result.traceCount,
+          traces: result.traces,
+          sha256Receipt: crypto.createHash("sha256").update(JSON.stringify(result)).digest("hex")
+        };
+      }
+
+      case "eos_otel_trace_waterfall": {
+        const traceId = String(args.traceId || "").trim();
+        if (!traceId) throw new Error("traceId is required for eos_otel_trace_waterfall");
+        onProgress?.(20, 100, `Computing trace waterfall for trace ${traceId}`);
+        const traceEngine = EosOtelTraceEngine.getInstance({ projectRoot: this.projectRoot });
+        const waterfall = traceEngine.computeTraceWaterfall(traceId);
+        if (!waterfall) {
+          throw new Error(`Trace not found: ${traceId}`);
+        }
+        onProgress?.(100, 100, `Trace waterfall computed: ${waterfall.spanCount} spans, bottleneck: ${waterfall.bottleneckSpanId || "none"}`);
+        return waterfall;
+      }
+
+      case "eos_otel_export_otlp": {
+        const traceId = args.traceId ? String(args.traceId).trim() : undefined;
+        onProgress?.(20, 100, traceId ? `Exporting trace ${traceId} to OTLP JSON` : "Exporting all traces to OTLP JSON");
+        const traceEngine = EosOtelTraceEngine.getInstance({ projectRoot: this.projectRoot });
+        const otlp = traceEngine.exportOtlpJson(traceId);
+        onProgress?.(100, 100, `OTLP payload generated with ${otlp.resourceSpans?.[0]?.scopeSpans?.[0]?.spans?.length || 0} spans`);
+        return otlp;
       }
 
       case "eos_ontology_query": {
