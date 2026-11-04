@@ -1,7 +1,7 @@
 {
   "title": "Glorian Career Evidence Pack",
   "owner": "Valentín Flórez Arbeláez",
-  "generatedAtIso": "2026-11-04T16:40:35.149Z",
+  "generatedAtIso": "2026-11-04T16:50:53.159Z",
   "epistemicState": "CAREER_EVIDENCE_WITHIN_TESTED_SCOPE",
   "claimsDenied": [
     "Level 5",
@@ -55,8 +55,8 @@
     "mission": {
       "status": "SUCCESS",
       "epistemicState": "MISSION_GOLDEN_PATH_WITHIN_TESTED_SCOPE",
-      "sha256Receipt": "b075f1e8b7f191121c84f0000b41b39ffd370b2933dfedd4c08bf2f653ea5f8c",
-      "durationMs": 387,
+      "sha256Receipt": "f2b4cf82b285f8d82e080b09e5187be50c35ede403ed293916260f128f2741d3",
+      "durationMs": 851,
       "stages": [
         {
           "id": "INPUT_VALIDATION",
@@ -104,13 +104,13 @@
           "id": "TURBO_VERIFY",
           "exitCode": 0,
           "mandatory": true,
-          "summary": "Turbo PASS files=1086"
+          "summary": "Turbo PASS files=1087"
         },
         {
           "id": "LEDGER_SEAL",
           "exitCode": 0,
           "mandatory": true,
-          "summary": "Ledger sealed EOS-LEDGER-000001-24f7c984a9"
+          "summary": "Ledger sealed EOS-LEDGER-000001-526608fb2e"
         }
       ]
     },
@@ -128,12 +128,12 @@
     },
     "turbo": {
       "success": true,
-      "totalDurationMs": 80.995,
+      "totalDurationMs": 199.399,
       "epistemicState": "LOCAL_CHECKS_PASSED",
-      "sourceInventoryDigest": "sha256:8ce5543f36cd617f2773a6c58aa6070fd64b9ca366b5e0c9644695403bcd6d8c"
+      "sourceInventoryDigest": "sha256:ad8ed8ec7a521eac1f4da8c1f0255ae2de6dea486100b3349a76c854290b5965"
     },
     "fleetSoundcheck": {
-      "fleetAverageScore": 99,
+      "fleetAverageScore": 98,
       "deploymentAuthorizedQuorum": true,
       "totalRepositories": 10,
       "reposAtGradeA": 10,
@@ -142,9 +142,14 @@
           "id": "aberamentho",
           "score": 90,
           "grade": "A"
+        },
+        {
+          "id": "portafolio",
+          "score": 90,
+          "grade": "A"
         }
       ],
-      "sha256Receipt": "d20f6a2e6fbbe75e583624e9626cbb1aef49571967b2ae815489c36aab58b34c"
+      "sha256Receipt": "26ab606a1374588dee439ddafb62dbf44c37e9d3fbc3823b532e77a00fbab42b"
     },
     "spotifyInstitutional": {
       "institutionalScore": 100,
@@ -166,5 +171,5 @@
       "OpenSpec formal catalog"
     ]
   },
-  "sha256Pack": "eda5fb585f77fda0c555469a8ee67a3a52f628f503e38a5f46eeec1a150a4f04"
+  "sha256Pack": "fe2672f18dbd202f7038391a8c776bf799acbf5e6d8c1f9a1b3bcb5a1f427a0d"
 }
