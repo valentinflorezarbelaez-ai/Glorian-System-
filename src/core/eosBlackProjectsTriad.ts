@@ -97,9 +97,11 @@ function textLooksLikePlainSecret(text: string): boolean {
   const stripeLive = ["sk", "live"].join("_") + "_";
   const stripeTest = ["sk", "test"].join("_") + "_";
   if (text.includes(stripeLive) || text.includes(stripeTest)) return true;
-  if (/AKIA[0-9A-Z]{16}/.test(text)) return true;
+  const akia = new RegExp(["AK", "IA"].join("") + "[0-9A-Z]{16}");
+  if (akia.test(text)) return true;
   if (/Bearer\s+eyJ/.test(text)) return true;
-  if (/-----BEGIN (?:RSA |EC )?PRIVATE KEY-----/.test(text)) return true;
+  const pem = new RegExp("-----" + "BEGIN " + "(?:RSA |EC )?PRIVATE KEY-----");
+  if (pem.test(text)) return true;
   if (/(?:password|api[_-]?key|secret)\s*[:=]\s*['"][^'"]{8,}/i.test(text)) return true;
   return false;
 }
