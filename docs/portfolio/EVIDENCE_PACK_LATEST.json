@@ -1,7 +1,7 @@
 {
   "title": "Glorian Career Evidence Pack",
   "owner": "Valentín Flórez Arbeláez",
-  "generatedAtIso": "2026-11-04T18:37:59.622Z",
+  "generatedAtIso": "2026-11-04T20:40:42.459Z",
   "epistemicState": "CAREER_EVIDENCE_WITHIN_TESTED_SCOPE",
   "claimsDenied": [
     "Level 5",
@@ -55,8 +55,8 @@
     "mission": {
       "status": "SUCCESS",
       "epistemicState": "MISSION_GOLDEN_PATH_WITHIN_TESTED_SCOPE",
-      "sha256Receipt": "5c96fa4884961148176acdc0baa453a4ce4446b77ad25363fba81804ad81ca08",
-      "durationMs": 247,
+      "sha256Receipt": "9e345fda11e1253351df894c7ca6258953e838ca95a89efaf8419076a779ab10",
+      "durationMs": 701,
       "stages": [
         {
           "id": "INPUT_VALIDATION",
@@ -104,13 +104,13 @@
           "id": "TURBO_VERIFY",
           "exitCode": 0,
           "mandatory": true,
-          "summary": "Turbo PASS files=1091"
+          "summary": "Turbo PASS files=1111"
         },
         {
           "id": "LEDGER_SEAL",
           "exitCode": 0,
           "mandatory": true,
-          "summary": "Ledger sealed EOS-LEDGER-000001-01e13e34dc"
+          "summary": "Ledger sealed EOS-LEDGER-000001-96506af9e5"
         }
       ]
     },
@@ -128,9 +128,9 @@
     },
     "turbo": {
       "success": true,
-      "totalDurationMs": 48.578,
+      "totalDurationMs": 179.959,
       "epistemicState": "LOCAL_CHECKS_PASSED",
-      "sourceInventoryDigest": "sha256:9a4ba50388ab2d1f22c5ae06d9a64baa8e82fcd12aea17e0c00ca9bbe222e525"
+      "sourceInventoryDigest": "sha256:5f53965baa4587d63dacee7f3aab23edaa62d8f1acd9ef9aada4a210e964f7a2"
     },
     "fleetSoundcheck": {
       "fleetAverageScore": 100,
@@ -138,7 +138,7 @@
       "totalRepositories": 10,
       "reposAtGradeA": 10,
       "dirtyTrees": [],
-      "sha256Receipt": "1d0a29d43ba31d70d525b9f7401d55fbd8e71d82a733c738bccae58880fba7b4"
+      "sha256Receipt": "27200483dfce773e9601070eed3ca7ad4caee3d1f7a9d0c27c7e6c94e5dd4167"
     },
     "spotifyInstitutional": {
       "institutionalScore": 100,
@@ -147,6 +147,20 @@
     "nubankInstitutional": {
       "institutionalScore": 100,
       "tier": "BUILDING_NU_APEX"
+    },
+    "planetaryApexDoctrine": {
+      "status": "APEX_DRILL_PASS",
+      "overallScore": 100,
+      "epistemicState": "APEX_DRILL_WITHIN_TESTED_SCOPE",
+      "pillarsPassing": 5,
+      "sha256Receipt": "6cf40c91062822671a895f8c68e54c0566aaf0ed1006e92e618d5fa59807659a"
+    },
+    "blackProjectsTriad": {
+      "status": "TRIAD_DRILL_PASS",
+      "overallScore": 100,
+      "epistemicState": "TRIAD_DRILL_WITHIN_TESTED_SCOPE",
+      "pillarsPassing": 3,
+      "sha256Receipt": "baccfb6c83e038996d59932c857301d129b49a0bb3252d8611d48ff3fc43bac1"
     }
   },
   "employerPitch": {
@@ -157,8 +171,10 @@
       "Layer-0 architecture purity 100",
       "Gentleman stack co-governance APEX",
       "Fleet Soundcheck quorum",
+      "Planetary Apex doctrine drills (SPEC-158)",
+      "Black Projects Triad drills (SPEC-159)",
       "OpenSpec formal catalog"
     ]
   },
-  "sha256Pack": "77bb027eddc75e24d0360fb53d298ce451ec528431804f457a58499e22ba5eea"
+  "sha256Pack": "ea1c31635a2438fa1033abc6d60b85d0b4c890b22d0c6e68e4e1dc5d77547d3d"
 }

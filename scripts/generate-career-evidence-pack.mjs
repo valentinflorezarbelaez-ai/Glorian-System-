@@ -15,6 +15,8 @@ import { runTurboPipeline } from "../src/core/eosTurboEngine.ts";
 import { EosFleetSoundcheckMesh } from "../src/core/eosFleetSoundcheckMesh.ts";
 import { evaluateSpotifyArchitectureHealth } from "../src/core/eosSpotifyInstitutionalCodex.ts";
 import { evaluateNubankArchitectureHealth } from "../src/core/eosNubankCodex.ts";
+import { EosPlanetaryApexDoctrine } from "../src/core/eosPlanetaryApexDoctrine.ts";
+import { EosBlackProjectsTriad } from "../src/core/eosBlackProjectsTriad.ts";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const outDir = path.join(root, "docs", "portfolio");
@@ -30,6 +32,9 @@ const gentleman = EosGentlemanStackBridge.auditStack(root);
 const arch = scanArchitecture(path.join(root, "src/core"), root);
 const turbo = runTurboPipeline(root);
 const soundcheck = EosFleetSoundcheckMesh.auditFleet(root);
+
+const apex = new EosPlanetaryApexDoctrine(root).auditPillars();
+const triad = new EosBlackProjectsTriad(root).auditTriad();
 
 const spotify = evaluateSpotifyArchitectureHealth({
   usesGoldenPath: true,
@@ -107,6 +112,20 @@ const pack = {
     nubankInstitutional: {
       institutionalScore: nubank.institutionalScore,
       tier: nubank.tier
+    },
+    planetaryApexDoctrine: {
+      status: apex.status,
+      overallScore: apex.overallScore,
+      epistemicState: apex.epistemicState,
+      pillarsPassing: apex.pillars.filter((p) => p.compliant).length,
+      sha256Receipt: apex.sha256Receipt
+    },
+    blackProjectsTriad: {
+      status: triad.status,
+      overallScore: triad.overallScore,
+      epistemicState: triad.epistemicState,
+      pillarsPassing: triad.pillars.filter((p) => p.compliant).length,
+      sha256Receipt: triad.sha256Receipt
     }
   },
   employerPitch: {
@@ -118,6 +137,8 @@ const pack = {
       "Layer-0 architecture purity 100",
       "Gentleman stack co-governance APEX",
       "Fleet Soundcheck quorum",
+      "Planetary Apex doctrine drills (SPEC-158)",
+      "Black Projects Triad drills (SPEC-159)",
       "OpenSpec formal catalog"
     ]
   }
@@ -157,6 +178,8 @@ ${pack.employerPitch.oneLiner}
 | Fleet Soundcheck avg | **${soundcheck.fleetAverageScore}** · quorum=${soundcheck.deploymentAuthorizedQuorum} |
 | Spotify institutional | **${spotify.institutionalScore}** · ${spotify.soundcheckTier} |
 | Nubank institutional | **${nubank.institutionalScore}** · ${nubank.tier} |
+| Planetary Apex (SPEC-158) | **${apex.status}** · ${apex.overallScore}/100 |
+| Black Projects Triad (SPEC-159) | **${triad.status}** · ${triad.overallScore}/100 |
 
 ## Dirty fleet trees (Soundcheck git health debt)
 ${dirtyLines}

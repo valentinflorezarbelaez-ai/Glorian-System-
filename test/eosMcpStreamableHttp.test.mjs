@@ -1,11 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import http from "node:http";
+import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 
 import { EosMcpStreamServer, StreamableSession } from "../src/mcp/eosMcpStreamServer.ts";
+import { EosSlsaProvenanceSbom } from "../src/core/eosSlsaProvenanceSbom.ts";
 import serverlessHandler from "../api/mcp.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -80,16 +83,28 @@ function mockServerless(method, { headers = {}, body } = {}) {
 // BDD-372: Dual Negotiation on Unified /api/mcp Endpoint
 // =============================================================================
 test("BDD-372: Dual negotiation on unified /api/mcp endpoint (application/json vs text/event-stream)", async () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-slsa-stream-"));
+  const tmpSbom = path.join(tmpDir, "sbom.cdx.json");
+  const tmpProv = path.join(tmpDir, "provenance.intoto.jsonl");
+  const sbom = EosSlsaProvenanceSbom.generateCycloneDxSbom(projectRoot);
+  const slsa = EosSlsaProvenanceSbom.generateSlsaProvenance(projectRoot, "HEAD");
+  fs.writeFileSync(tmpSbom, `${JSON.stringify(sbom, null, 2)}\n`, "utf8");
+  fs.writeFileSync(tmpProv, `${JSON.stringify(slsa)}\n`, "utf8");
+
   const running = await startServer();
   try {
-    // 1. JSON Request for eos_slsa_provenance_sbom
+    // 1. JSON Request for eos_slsa_provenance_sbom (hermetic temp attestations)
     const jsonReqBody = JSON.stringify({
       jsonrpc: "2.0",
       id: "req-verify-1",
       method: "tools/call",
       params: {
         name: "eos_slsa_provenance_sbom",
-        arguments: { mode: "verify" }
+        arguments: {
+          mode: "verify",
+          sbomPath: tmpSbom,
+          provenancePath: tmpProv
+        }
       }
     });
 
@@ -111,7 +126,11 @@ test("BDD-372: Dual negotiation on unified /api/mcp endpoint (application/json v
     assert.equal(jsonRes.body.id, "req-verify-1");
     assert.ok(jsonRes.body.result?.content?.[0]?.text, "Result must contain content");
     const parsedVerification = JSON.parse(jsonRes.body.result.content[0].text);
-    assert.equal(parsedVerification.verification?.valid, true);
+    assert.equal(
+      parsedVerification.verification?.valid,
+      true,
+      `Hermetic stream SLSA verify failed: ${JSON.stringify(parsedVerification.verification?.errors || [])}`
+    );
 
     // 2. Streamable SSE Request on same session
     const sseReqBody = JSON.stringify({
@@ -183,6 +202,11 @@ test("BDD-372: Dual negotiation on unified /api/mcp endpoint (application/json v
     assert.equal(reuseRes.status, 404);
   } finally {
     await running.close();
+    try {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    } catch {
+      /* ignore */
+    }
   }
 });
 
@@ -419,30 +443,54 @@ test("BDD-376: Serverless stateless edge execution in api/mcp.js", async () => {
   assert.equal(sseRes.body?.status, "NOT_ACCEPTABLE");
   assert.match(sseRes.body?.message, /stateless JSON-RPC mode only \(ADR-0172\)/);
 
-  // 3. Valid tool call for eos_slsa_provenance_sbom in mode: verify returns 200 with local scope
-  const { req: toolReq, res: toolRes } = mockServerless("POST", {
-    headers: {
-      "content-type": "application/json",
-      accept: "application/json"
-    },
-    body: {
-      jsonrpc: "2.0",
-      id: "slsa-test-1",
-      method: "tools/call",
-      params: {
-        name: "eos_slsa_provenance_sbom",
-        arguments: { mode: "verify" }
+  // 3. Hermetic SLSA verify: use temp attestations so parallel suites cannot stale docs/evidence.
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-slsa-"));
+  const tmpSbom = path.join(tmpDir, "sbom.cdx.json");
+  const tmpProv = path.join(tmpDir, "provenance.intoto.jsonl");
+  try {
+    const sbom = EosSlsaProvenanceSbom.generateCycloneDxSbom(projectRoot);
+    const slsa = EosSlsaProvenanceSbom.generateSlsaProvenance(projectRoot, "HEAD");
+    fs.writeFileSync(tmpSbom, `${JSON.stringify(sbom, null, 2)}\n`, "utf8");
+    fs.writeFileSync(tmpProv, `${JSON.stringify(slsa)}\n`, "utf8");
+
+    const { req: toolReq, res: toolRes } = mockServerless("POST", {
+      headers: {
+        "content-type": "application/json",
+        accept: "application/json"
+      },
+      body: {
+        jsonrpc: "2.0",
+        id: "slsa-test-1",
+        method: "tools/call",
+        params: {
+          name: "eos_slsa_provenance_sbom",
+          arguments: {
+            mode: "verify",
+            sbomPath: tmpSbom,
+            provenancePath: tmpProv
+          }
+        }
       }
+    });
+    await serverlessHandler(toolReq, toolRes);
+    assert.equal(toolRes.statusCode, 200);
+    assert.equal(toolRes.body.id, "slsa-test-1");
+    assert.ok(toolRes.body.result?.content?.[0]?.text);
+    const parsedScopeResult = JSON.parse(toolRes.body.result.content[0].text);
+    assert.equal(parsedScopeResult.scope, "LOCAL_ONLY");
+    assert.equal(parsedScopeResult.tool, "eos_slsa_provenance_sbom");
+    assert.equal(
+      parsedScopeResult.result.verification?.valid,
+      true,
+      `Hermetic SLSA verify failed: ${JSON.stringify(parsedScopeResult.result.verification?.errors || [])}`
+    );
+  } finally {
+    try {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    } catch {
+      /* ignore */
     }
-  });
-  await serverlessHandler(toolReq, toolRes);
-  assert.equal(toolRes.statusCode, 200);
-  assert.equal(toolRes.body.id, "slsa-test-1");
-  assert.ok(toolRes.body.result?.content?.[0]?.text);
-  const parsedScopeResult = JSON.parse(toolRes.body.result.content[0].text);
-  assert.equal(parsedScopeResult.scope, "LOCAL_ONLY");
-  assert.equal(parsedScopeResult.tool, "eos_slsa_provenance_sbom");
-  assert.equal(parsedScopeResult.result.verification?.valid, true);
+  }
 
   // 4. Safe dynamic Origin reflection in CORS
   const testOrigin = "https://my-dashboard.vercel.app";

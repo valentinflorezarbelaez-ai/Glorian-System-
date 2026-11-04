@@ -51,6 +51,7 @@
     "pts": "node bin/eos.mjs pts",
     "sbom": "node bin/eos.mjs sbom",
     "sbom:generate": "node scripts/eos-generate-sbom.mjs",
+    "tip-seal": "node scripts/eos-generate-sbom.mjs --tip-seal",
     "slsa": "node bin/eos.mjs slsa",
     "supply-chain:verify": "node scripts/verify-supply-chain.mjs",
     "sapfix": "node bin/eos.mjs sapfix",

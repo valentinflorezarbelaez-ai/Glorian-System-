@@ -25,7 +25,7 @@ import {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, "..");
-const testDir = path.join(root, "test/_sandbox");
+const testDir = path.join(root, "test/_sandbox", `healer-${process.pid}`);
 const testFile = path.join(testDir, "anomalousFile.ts");
 const generatedReceipts = [];
 
@@ -45,10 +45,20 @@ describe("EOS Sovereign Autonomous Healer & FDIR Suite", () => {
   });
 
   after(() => {
-    if (fs.existsSync(testFile)) fs.unlinkSync(testFile);
-    if (fs.existsSync(testDir)) fs.rmdirSync(testDir);
+    try {
+      if (fs.existsSync(testFile)) fs.unlinkSync(testFile);
+      if (fs.existsSync(testDir)) fs.rmSync(testDir, { recursive: true, force: true });
+    } catch {
+      // Ignore teardown races under parallel suite batches.
+    }
     for (const receiptPath of generatedReceipts) {
-      if (fs.existsSync(receiptPath)) fs.unlinkSync(receiptPath);
+      if (fs.existsSync(receiptPath)) {
+        try {
+          fs.unlinkSync(receiptPath);
+        } catch {
+          /* ignore */
+        }
+      }
     }
   });
 

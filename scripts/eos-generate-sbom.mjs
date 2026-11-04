@@ -12,6 +12,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 import { EosSlsaProvenanceSbom } from "../src/core/eosSlsaProvenanceSbom.ts";
@@ -72,7 +73,23 @@ try {
 
   // 2. Generate In-Toto SLSA Provenance v1.0 Statement
   console.log("\n[2/3] Synthesizing In-Toto SLSA Provenance v1.0 Statement...");
-  const commitSha = process.env.GITHUB_SHA || "HEAD";
+  // Tip-seal: EOS_TIP_SEAL=1 or --tip-seal forces an explicit git SHA pin (not soft "HEAD" reuse).
+  const tipSeal =
+    process.env.EOS_TIP_SEAL === "1" ||
+    process.argv.includes("--tip-seal") ||
+    process.argv.includes("tip-seal");
+  let commitSha = process.env.GITHUB_SHA || "HEAD";
+  if (tipSeal && (!process.env.GITHUB_SHA || process.env.GITHUB_SHA === "HEAD")) {
+    try {
+      commitSha = execFileSync("git", ["rev-parse", "HEAD"], {
+        cwd: root,
+        encoding: "utf8"
+      }).trim();
+      console.log(`  ✔ Tip-seal mode  : forcing commit pin ${commitSha.slice(0, 12)}…`);
+    } catch {
+      console.log("  ⚠ Tip-seal requested but git rev-parse failed; falling back to HEAD soft pin.");
+    }
+  }
   const slsa = EosSlsaProvenanceSbom.generateSlsaProvenance(root, commitSha);
   const provenancePath = path.join(evidenceDir, "provenance.intoto.jsonl");
   const provenanceContent = JSON.stringify(slsa) + "\n";
