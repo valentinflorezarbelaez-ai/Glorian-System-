@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2021-12-12T08:44:52.000Z",
+  "timestampIso": "2022-12-30T13:10:05.000Z",
   "totalSpecs": 159,
-  "catalogSha256": "61b9ab04e86f7e59af5faf7d61734e05417d0dee194b0c64b452a9161a6f0d68",
+  "catalogSha256": "3e12e8ad70817bceeabca7c5a0f398a8a6a3a1ab2275caa324e64812df841ea8",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1432,7 +1432,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-159-BLACK-PROJECTS-TRIAD-DOCTRINE.md",
-      "sha256": "0a5c76db60fbc6671337622b5618de8de13d28a3f80749f71c0d815f26771b42"
+      "sha256": "c292768074dfde5f6932cb4b518240369ff314a1fbd1eaeef0313a52a891185a"
     }
   ]
 }

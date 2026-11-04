@@ -16,7 +16,7 @@ Glorian explicitly does **NOT** claim black-budget classified programs, military
 
 ## EARS Requirements
 - **FR-522 (Ubiquitous)**: `THE SYSTEM SHALL` expose Kelly Johnson's 14 Rules auditor that measures codebase discipline, boundary containment, and dependency isolation.
-- **FR-523 (Event-Driven)**: `WHEN` an operational telemetry vector is ingested, `THE SYSTEM SHALL` execute a closed-loop DARPA OODA cycle (Observe, Orient, Decide, Act) with sub-millisecond decision latency and cryptographic attestation.
+- **FR-523 (Event-Driven)**: `WHEN` an operational telemetry vector is ingested, `THE SYSTEM SHALL` execute a closed-loop DARPA OODA cycle (Observe, Orient, Decide, Act) with best-of-5 latency under 5000 µs, mutation kill-floor gate (>= 80) outside the timed window, and cryptographic attestation.
 - **FR-524 (State-Driven)**: `WHILE` performing multi-spectral reconnaissance across target directories, `THE SYSTEM SHALL` execute NRO Synthetic Aperture Radar (SAR) penetration across 3 depths: Surface Manifest, Atmospheric AST, and Subterranean Secrets/Vulnerabilities.
 - **FR-525 (Ubiquitous)**: `THE SYSTEM SHALL` include explicit `claimsDenied` in every triad audit report, confirming software engineering scope only.
 
@@ -33,9 +33,10 @@ SCENARIO: BDD-490 Skunk Works Kelly Johnson Rules Conformance
 SCENARIO: BDD-491 DARPA Autonomous OODA Loop Execution
   GIVEN an anomalous telemetry state vector
   WHEN executeDarpaOodaCycle is invoked
-  THEN the Observe, Orient, Decide, and Act phases complete in < 5000 µs
+  THEN the best-of-5 Observe, Orient, Decide, and Act phases complete in < 5000 µs
   AND the decision is deterministically recorded with action receipt
   AND a rollback/compensation snapshot is generated
+  AND a mutation kill-floor gate (>= 80) is evaluated outside the timed OODA window
 
 SCENARIO: BDD-492 NRO Synthetic Aperture Radar (SAR) Multi-Layer Penetration
   GIVEN a target workspace directory

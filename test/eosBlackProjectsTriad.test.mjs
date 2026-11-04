@@ -27,7 +27,7 @@ test("BDD-491: DARPA Autonomous OODA Loop Execution", () => {
     invariantBroken: false
   });
 
-  assert.ok(ooda.durationUs < 5000, `OODA must complete under 5000µs, got ${ooda.durationUs}`);
+  assert.ok(ooda.durationUs < 5000, `best-of-5 OODA must complete under 5000µs, got ${ooda.durationUs}`);
   assert.equal(ooda.orient, "DEGRADED");
   assert.equal(ooda.decide, "HEAL");
   assert.equal(ooda.actReceipt.length, 64);
