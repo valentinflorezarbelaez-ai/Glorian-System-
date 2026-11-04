@@ -25,7 +25,7 @@
       },
       {
         "name": "Node.js",
-        "version": "v24.21.0"
+        "version": "v24.19.0"
       }
     ],
     "runtimeDependenciesCount": 0

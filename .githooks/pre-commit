@@ -2,13 +2,4 @@
 set -eu
 REPO_ROOT=$(git rev-parse --show-toplevel)
 unset GIT_DIR GIT_INDEX_FILE GIT_WORK_TREE GIT_PREFIX
-node "$REPO_ROOT/scripts/verify-cicd-pipeline.mjs"
-# verify:strict regenerates tip-seal evidence after the index snapshot; fold those
-# bytes into the commit so the control plane stays porcelain for fleet pulse A+.
-git add -u -- \
-  "$REPO_ROOT/docs/evidence/sbom.cdx.json" \
-  "$REPO_ROOT/docs/evidence/provenance.intoto.jsonl" \
-  "$REPO_ROOT/docs/evidence/fleet-audit.sarif" \
-  "$REPO_ROOT/docs/contracts/mcp-tool-catalog.json" \
-  "$REPO_ROOT/docs/specs/openspec-catalog-index.json" \
-  || true
+exec node "$REPO_ROOT/scripts/verify-cicd-pipeline.mjs"
