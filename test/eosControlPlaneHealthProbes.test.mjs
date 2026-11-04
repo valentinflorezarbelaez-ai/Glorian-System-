@@ -11,6 +11,10 @@ import { fileURLToPath } from "node:url";
 import { runControlPlaneHealthProbes } from "../src/core/eosControlPlaneHealthProbes.ts";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 import { PHASE4_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpPhase4InstitutionalHandlers.ts";
+import {
+  PHASE5_MIGRATED_TOOL_NAMES,
+  PHASE5_PURGED_DEAD_SWITCH_ARMS
+} from "../src/mcp/tools/eosMcpPhase5ToolNames.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, "..");
@@ -92,4 +96,32 @@ test("BDD-483 Phase-4 institutional tools dispatch via registry", () => {
   });
   const slsaPayload = JSON.parse(slsa.result.content[0].text);
   assert.ok(slsaPayload.verification);
+});
+
+test("BDD-484 Phase-5 Spotify domain extract + dead glorian purge", () => {
+  assert.equal(PHASE5_MIGRATED_TOOL_NAMES.length, 12);
+  assert.equal(PHASE5_PURGED_DEAD_SWITCH_ARMS.length, 2);
+  const server = new EosMcpServer(projectRoot, "full");
+  const god = fs.readFileSync(path.join(projectRoot, "src/mcp/eosMcpServer.ts"), "utf8");
+  for (const name of [...PHASE5_MIGRATED_TOOL_NAMES, ...PHASE5_PURGED_DEAD_SWITCH_ARMS]) {
+    assert.equal(god.includes(`case "${name}"`), false, `god-file still has live case for ${name}`);
+  }
+
+  const shuffle = server.handleRequest({
+    jsonrpc: "2.0",
+    id: 5,
+    method: "tools/call",
+    params: { name: "eos_spotify_shuffle", arguments: { seed: 42108 } }
+  });
+  assert.ok(shuffle?.result?.content?.[0]?.text);
+  const shufflePayload = JSON.parse(shuffle.result.content[0].text);
+  assert.ok(shufflePayload);
+
+  const audit = server.handleRequest({
+    jsonrpc: "2.0",
+    id: 6,
+    method: "tools/call",
+    params: { name: "eos_spotify_audit", arguments: { targetPath: "." } }
+  });
+  assert.ok(audit?.result?.content?.[0]?.text);
 });

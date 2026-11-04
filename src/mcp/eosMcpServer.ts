@@ -102,10 +102,6 @@ import {
 } from "../core/eosTitansMatrix.ts";
 
 import {
-  EosSpotifyCodex
-} from "../core/eosSpotifyCodex.ts";
-
-import {
   EosGoAccelerator
 } from "../core/eosGoAccelerator.ts";
 
@@ -126,14 +122,6 @@ import {
 } from "../core/eosApolloHermesMesh.ts";
 
 import {
-  EosGaplessMixEngine
-} from "../core/eosGaplessMixEngine.ts";
-
-import {
-  EosAcousticFeatureStore
-} from "../core/eosAcousticFeatureStore.ts";
-
-import {
   EosUniversalProjectAdapter
 } from "../core/eosUniversalProjectAdapter.ts";
 
@@ -142,10 +130,8 @@ import {
 } from "../core/eosPolyglotAdapter.ts";
 
 import {
-  executeSpotifySmartShuffle,
   EosBitemporalLedger,
-  verifyBackwardCompatibility,
-  type TrackNode
+  verifyBackwardCompatibility
 } from "../core/eosSpotifyNubankEngine.ts";
 
 import {
@@ -651,6 +637,10 @@ import {
 } from "./tools/eosMcpPhase4InstitutionalHandlers.ts";
 
 import {
+  createPhase5DomainHandlers
+} from "./tools/eosMcpPhase5DomainHandlers.ts";
+
+import {
   EosS0DesignSystemGovernor,
   type VisualAuditReport
 } from "../core/eosS0DesignSystemGovernor.ts";
@@ -666,14 +656,6 @@ import {
 import {
   EosNocturnalEvolutionEngine
 } from "../core/eosNocturnalEvolutionEngine.ts";
-
-import {
-  GlorianFleetHealthWatchdog
-} from "../core/glorianFleetHealthWatchdog.ts";
-
-import {
-  GlorianConstitutionalTribunal
-} from "../core/glorianConstitutionalTribunal.ts";
 
 import {
   EosAutonomousCodeSynthesizer
@@ -831,7 +813,7 @@ export class EosMcpServer {
     }
     this.knowledgeGraph = kg;
     this.agentSessionContract = getDefaultAgentSessionContract(this.projectRoot);
-    // SPEC-155 Phase-1/2/3/4: Tier-0 + institutional tools dispatch via registry (god-file residual shrinks).
+    // SPEC-155 Phase-1..5: Tier-0 + institutional + Spotify domain via registry (god-file residual shrinks).
     this.dispatchRegistry.registerAll(PHASE1_CORE_UTILITARIAN_HANDLERS);
     this.dispatchRegistry.registerAll(PHASE2_CORE_UTILITARIAN_HANDLERS);
     this.dispatchRegistry.registerAll(
@@ -846,6 +828,12 @@ export class EosMcpServer {
       })
     );
     this.dispatchRegistry.registerAll(createPhase4InstitutionalHandlers(this.projectRoot));
+    this.dispatchRegistry.registerAll(
+      createPhase5DomainHandlers({
+        projectRoot: this.projectRoot,
+        resolveProjectPath: (value, kind, fallback) => this.resolveProjectPath(value, kind, fallback)
+      })
+    );
   }
 
   public setToolProfile(profile: McpToolProfile): void {
@@ -4079,37 +4067,7 @@ export class EosMcpServer {
         return matrix.reconcileGoogleBorg();
       }
 
-      case "eos_spotify_audit": {
-        const codex = new EosSpotifyCodex(this.projectRoot);
-        const targetPath = this.resolveProjectPath(args.targetPath, "directory", ".");
-        return codex.auditUniversalProject(targetPath);
-      }
-
-      case "eos_spotify_scaffold": {
-        const codex = new EosSpotifyCodex(this.projectRoot);
-        const targetPath = this.resolveProjectPath(args.targetPath, "directory", ".");
-        return codex.scaffoldBackstageCatalog(targetPath, {
-          name: args.name ? String(args.name) : undefined,
-          owner: args.owner ? String(args.owner) : undefined,
-          write: args.apply === true
-        });
-      }
-
-      case "eos_spotify_standup": {
-        const codex = new EosSpotifyCodex(this.projectRoot);
-        return codex.generateAsyncStandup(args);
-      }
-
-      case "eos_spotify_postmortem": {
-        const codex = new EosSpotifyCodex(this.projectRoot);
-        return codex.synthesizeBlamelessPostMortem(args);
-      }
-
-      case "eos_spotify_experiment": {
-        const codex = new EosSpotifyCodex(this.projectRoot);
-        return codex.designCanaryExperiment(args);
-      }
-
+      // SPEC-155 Phase-5: eos_spotify_audit/scaffold/standup/postmortem/experiment → registry
       case "eos_go_accelerator": {
         const accelerator = new EosGoAccelerator(this.projectRoot);
         const mode = String(args.mode || "benchmark").toLowerCase();
@@ -4119,45 +4077,7 @@ export class EosMcpServer {
         return accelerator.runBenchmark(Number(args.concurrency) || 2000);
       }
 
-      case "eos_spotify_honk_dispatch": {
-        const factory = new EosSpotifyAgenticFactory(this.projectRoot);
-        return factory.dispatchHonk({
-          taskName: String(args.taskName || "Autonomous task"),
-          stack: args.stack,
-          specDescription: String(args.specDescription || ""),
-          dryRun: true
-        });
-      }
-
-      case "eos_spotify_xirp_context": {
-        const factory = new EosSpotifyAgenticFactory(this.projectRoot);
-        if (args.syncFiles === true) {
-          return factory.syncXirpContextFiles();
-        }
-        return factory.compileXirpContext();
-      }
-
-      case "eos_spotify_fleetshift_batch": {
-        const factory = new EosSpotifyAgenticFactory(this.projectRoot);
-        return factory.executeFleetshift({
-          migrationId: String(args.migrationId || `FS-${Date.now()}`),
-          description: `Fleetshift migration batch`,
-          action: args.action || "apply_backstage_rfc42",
-          targetFleet: Array.isArray(args.targetFleet) ? args.targetFleet : undefined,
-          dryRun: args.apply !== true
-        });
-      }
-
-      case "eos_spotify_canary_manifest": {
-        const factory = new EosSpotifyAgenticFactory(this.projectRoot);
-        return factory.generateProgressiveCanary(
-          String(args.serviceName || "spotify-service"),
-          String(args.squad || "Audio-Platform"),
-          Number(args.p99LatencyMs) || 100,
-          Number(args.maxErrorRatePercent) || 0.1
-        );
-      }
-
+      // SPEC-155 Phase-5: eos_spotify_honk/xirp/fleetshift_batch/canary_manifest → registry
       case "eos_audio_dsp_benchmark": {
         const kernel = new EosAudioDspKernel();
         return kernel.benchmarkDsp(Number(args.frames) || 65536, Number(args.iterations) || 20);
@@ -4198,24 +4118,7 @@ export class EosMcpServer {
         };
       }
 
-      case "eos_spotify_mix_plan": {
-        const engine = new EosGaplessMixEngine();
-        const keyA = String(args.keyA || "8A");
-        const keyB = String(args.keyB || "9A");
-        return engine.planTransition(
-          { trackId: "track-A", title: `Track A (${keyA})`, bpm: Number(args.bpmA) || 126, camelotKey: keyA, sampleRateHz: 44100 },
-          { trackId: "track-B", title: `Track B (${keyB})`, bpm: Number(args.bpmB) || 128, camelotKey: keyB, sampleRateHz: 44100 },
-          Number(args.duration) || 5.0
-        );
-      }
-
-      case "eos_spotify_taste_profile": {
-        const store = new EosAcousticFeatureStore();
-        const userId = String(args.userId || "user-listener");
-        store.recordListen(userId, "track-sample", { tempo: 0.7, energy: 0.85, danceability: 0.8, valence: 0.7, acousticness: 0.1, instrumentalness: 0.2, liveness: 0.15, speechiness: 0.08 }, 200, 200);
-        return store.computeTasteCentroid(userId);
-      }
-
+      // SPEC-155 Phase-5: eos_spotify_mix_plan + taste_profile → registry
       case "eos_universal_adapt": {
         const target = this.resolveProjectPath(args.targetPath, "directory", ".");
         const adapter = new EosUniversalProjectAdapter(target);
@@ -4258,20 +4161,7 @@ export class EosMcpServer {
         return { status: "ONLINE", merkleRoot: ledger.getMerkleRoot() };
       }
 
-      case "eos_spotify_shuffle": {
-        const tracks: TrackNode[] = Array.isArray(args.tracks) && args.tracks.length > 0
-          ? args.tracks
-          : [
-              { id: "spotify:track:001", artistId: "Armin van Buuren", bpm: 132, camelotKey: "8A" },
-              { id: "spotify:track:002", artistId: "Armin van Buuren", bpm: 134, camelotKey: "8A" },
-              { id: "spotify:track:003", artistId: "Paul Oakenfold", bpm: 130, camelotKey: "9A" },
-              { id: "spotify:track:004", artistId: "Paul Oakenfold", bpm: 132, camelotKey: "9A" },
-              { id: "spotify:track:005", artistId: "Ferry Corsten", bpm: 130, camelotKey: "8B" }
-            ];
-        const seed = Number(args.seed) || 42108;
-        return executeSpotifySmartShuffle(tracks, seed);
-      }
-
+      // SPEC-155 Phase-5: eos_spotify_shuffle → registry
       case "eos_global_edge_route": {
         const arbiter = new EosGlobalEdgeArbiter("mcp-arbiter");
         if (args.city && typeof args.city === "string") {
@@ -6469,47 +6359,7 @@ export class EosMcpServer {
         return report;
       }
 
-      case "glorian_fleet_health_watchdog": {
-        const watchdog = new GlorianFleetHealthWatchdog(this.projectRoot);
-        const dryRun = Boolean(args?.dryRun ?? false);
-        const report = watchdog.runFleetHealthAuditSync({ dryRun });
-        const format = String(args?.format || "json").toLowerCase();
-
-        if (format === "summary" || format === "dashboard") {
-          return {
-            formattedSummary: watchdog.formatHealthReport(report),
-            auditStatus: report.auditStatus,
-            compositeHealthIndex: report.compositeHealthIndex,
-            sha256Receipt: report.sha256Receipt
-          };
-        }
-
-        return report;
-      }
-
-      case "glorian_constitutional_tribunal": {
-        const tribunal = new GlorianConstitutionalTribunal(this.projectRoot);
-        const report = tribunal.adjudicate({
-          actionId: String(args?.actionId || "MUT-MCP-001"),
-          category: (args?.category as any) || "CODE_MUTATION",
-          description: String(args?.description || "MCP Adjudication Request"),
-          diffOrPayload: args?.diffOrPayload ? String(args.diffOrPayload) : undefined,
-          targetDirectory: args?.targetDirectory ? String(args.targetDirectory) : undefined
-        });
-        const format = String(args?.format || "json").toLowerCase();
-
-        if (format === "summary") {
-          return {
-            summary: tribunal.formatTribunalSummary(report),
-            verdict: report.overallVerdict,
-            compositeScore: report.compositeScore,
-            sha256Attestation: report.sha256Receipt
-          };
-        }
-
-        return report;
-      }
-
+      // SPEC-155 Phase-5: dead glorian_* switch arms purged (Phase-3 registry)
       case "eos_autonomous_synthesize": {
         const synthesizer = new EosAutonomousCodeSynthesizer(this.projectRoot);
         const directive = String(args?.directive || "").trim();

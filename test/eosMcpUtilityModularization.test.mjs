@@ -17,6 +17,7 @@ import { PHASE1_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpCoreUtilitari
 import { PHASE2_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpPhase2UtilitarianHandlers.ts";
 import { PHASE3_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpPhase3CoreHandlers.ts";
 import { PHASE4_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpPhase4InstitutionalHandlers.ts";
+import { PHASE5_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpPhase5ToolNames.ts";
 import { evaluateApexDoctrineScorecard } from "../src/core/eosApexDoctrineScorecard.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -117,6 +118,7 @@ test("BDD-479 Phase-2 registry path smoke (eos_check_openspec + eos_audit_fleet)
 test("BDD-480 Phase-3 completes CORE_TIER0 migration + apex doctrine scorecard", () => {
   assert.equal(PHASE3_MIGRATED_TOOL_NAMES.length, 13);
   assert.equal(PHASE4_MIGRATED_TOOL_NAMES.length, 11);
+  assert.equal(PHASE5_MIGRATED_TOOL_NAMES.length, 12);
   for (const name of CORE_TIER0_TOOL_NAMES) {
     assert.ok(
       PHASE1_MIGRATED_TOOL_NAMES.includes(name) ||
@@ -131,5 +133,5 @@ test("BDD-480 Phase-3 completes CORE_TIER0 migration + apex doctrine scorecard",
   assert.ok(["A+", "A"].includes(card.grade));
   assert.ok(card.claimsDenied.includes("Level 5"));
   const modular = card.dimensions.find((d) => d.id === "MODULAR_PURITY");
-  assert.ok(modular?.evidence.includes("Phase-1..4"));
+  assert.ok(modular?.evidence.includes("Phase-1..5"));
 });

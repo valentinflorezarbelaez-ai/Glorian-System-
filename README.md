@@ -15,7 +15,7 @@
 
 ## 🏛️ Executive Overview
 
-**Glorian System** is a Level-5 autonomous platform engineering control plane, specification-driven development (SDD) runtime, and cryptographic governance engine. It translates natural-language engineering intent into formal IEEE 830 / ISO 29148 EARS specifications, Gherkin BDD scenarios, and dependency-ordered DAG tasks—executing multi-repository workflows with mathematical verification and zero unverified claims.
+**Glorian System** is a sovereign autonomous platform engineering control plane, specification-driven development (SDD) runtime, and cryptographic governance engine — verified **within tested scope** (not Level 5 / not absolute perfection). It translates natural-language engineering intent into formal IEEE 830 / ISO 29148 EARS specifications, Gherkin BDD scenarios, and dependency-ordered DAG tasks—executing multi-repository workflows with mathematical verification and zero unverified claims.
 
 ### The Six Inviolable Pillars
 

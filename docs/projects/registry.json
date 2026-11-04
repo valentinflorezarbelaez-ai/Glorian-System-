@@ -1,29 +1,10 @@
 {
   "version": "11.0.0-autonomous-fleet-registry",
-  "updatedAt": "2026-11-04T15:38:09.057Z",
+  "updatedAt": "2026-11-04T21:28:49.860Z",
   "masterOrchestrator": "EOS System control plane (SPEC-124)",
   "complianceStandard": "EOS_CONSTITUTION_LAW_IV_EXTERNAL_WRITE_BARRIER",
   "totalFleetProjects": 10,
   "projects": [
-    {
-      "id": "kegel-ham-sah",
-      "name": "HAM-SAH + Kegel — Transmutación Solar y Fortalecimiento Pélvico",
-      "resolvedLocalDir": "Kegel-Ham-Sah-trasnmutacion-y-fortalecimiento-pelvico",
-      "localPathEnv": "EOS_FLEET_KEGEL_HAM_SAH_PATH",
-      "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Kegel-Ham-Sah-trasnmutacion-y-fortalecimiento-pelvico.git",
-      "productionUrl": "https://kegel-ham-sah-trasnmutacion-y-forta.vercel.app",
-      "type": "sacred-embodiment-protocol",
-      "status": "REGISTERED",
-      "intake": "INTAKE_COMPLETE",
-      "specification": "SPECIFICATION_APPROVED",
-      "audit": "AUDIT_COMPLETE",
-      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
-      "ownerApproval": "OWNER_APPROVAL",
-      "cicdGateScript": "scripts/verify-landing.mjs",
-      "autoShipScript": "git push origin main",
-      "currentBranch": "main",
-      "headCommitSha": "4e5f5c4bd0825a706541e3cd7bb53863a3695355"
-    },
     {
       "id": "aberamentho",
       "name": "Aberamentho Pleroma Music",
@@ -37,10 +18,11 @@
       "specification": "SPECIFICATION_APPROVED",
       "audit": "AUDIT_COMPLETE",
       "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
+      "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "scripts/verify-landing.mjs",
       "autoShipScript": "npm run ship:sovereign",
       "currentBranch": "main",
-      "headCommitSha": "77b9733c029d1a6e916c877410e5f0869100edec"
+      "headCommitSha": "6b39e4d8e3642afbfc7f0a2f7a8713061a693590"
     },
     {
       "id": "atp-strength",
@@ -59,7 +41,7 @@
       "cicdGateScript": "scripts/verify-landing.mjs",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "a58e1a3352e8f7dbe7a720ac700b50bb0809265e"
+      "headCommitSha": "39a24d2fdd757edd589251aab2ca905039109500"
     },
     {
       "id": "biblioteca-gnostica-1",
@@ -78,7 +60,7 @@
       "cicdGateScript": "scripts/verify-strict.mjs",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "ac436e0a758f6bd4461bb319397d4dfe7c73a0a1"
+      "headCommitSha": "4030be0c41d6f66ef87909e4a4c1ba5d97f29595"
     },
     {
       "id": "control-de-asistencia-abopack",
@@ -97,7 +79,7 @@
       "cicdGateScript": "npm test",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "5ba39af35e4229cac499579a8e76e36692431fc5"
+      "headCommitSha": "9f5f1d39ebfa6b1177b4556d51f8fd9b8939e077"
     },
     {
       "id": "crud-slack",
@@ -116,7 +98,7 @@
       "cicdGateScript": "scripts/verify-strict.mjs",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "d8a8be196bdc1b1ae130983e8f3caadafab2b5c5"
+      "headCommitSha": "0f16176e18c6bdf573c498809535f53f23d6a78a"
     },
     {
       "id": "donaciones",
@@ -135,7 +117,7 @@
       "cicdGateScript": "scripts/verify-landing.mjs",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "99dfa2efc71cb818d5e1e95b8241c0c2f6a95bf2"
+      "headCommitSha": "2f45b0ab86c70e00066d6d442690c446942d3cf4"
     },
     {
       "id": "eos-system",
@@ -150,10 +132,30 @@
       "specification": "SPECIFICATION_APPROVED",
       "audit": "AUDIT_COMPLETE",
       "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
+      "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "scripts/verify-cicd-pipeline.mjs",
       "autoShipScript": "scripts/ship-sovereign.mjs",
       "currentBranch": "main",
-      "headCommitSha": "8cd6c6e3f01b8867b526d5257c5b61e6070a1852"
+      "headCommitSha": "5d1ea182edbd9abe0b7eb69dbb4a005da899b2d6"
+    },
+    {
+      "id": "kegel-ham-sah",
+      "name": "HAM-SAH + Kegel — Transmutación Solar y Fortalecimiento Pélvico",
+      "resolvedLocalDir": "Kegel-Ham-Sah-trasnmutacion-y-fortalecimiento-pelvico",
+      "localPathEnv": "EOS_FLEET_KEGEL_HAM_SAH_PATH",
+      "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Kegel-Ham-Sah-trasnmutacion-y-fortalecimiento-pelvico.git",
+      "productionUrl": "https://kegel-ham-sah-trasnmutacion-y-forta.vercel.app",
+      "type": "sacred-embodiment-protocol",
+      "status": "REGISTERED",
+      "intake": "INTAKE_COMPLETE",
+      "specification": "SPECIFICATION_APPROVED",
+      "audit": "AUDIT_COMPLETE",
+      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
+      "ownerApproval": "OWNER_APPROVAL",
+      "cicdGateScript": "scripts/verify-landing.mjs",
+      "autoShipScript": "git push origin main",
+      "currentBranch": "main",
+      "headCommitSha": "772c6c220a32da64591502c81041f1600e78ff98"
     },
     {
       "id": "performance-talent-group",
@@ -172,7 +174,7 @@
       "cicdGateScript": "scripts/smoke-test.ps1",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "581de7a5e7fc2624c851551a82ba142ae1c8b9c8"
+      "headCommitSha": "f0882a07c0acc2a449ad34bfec6cd754f9efe3b8"
     },
     {
       "id": "portafolio",
@@ -187,11 +189,12 @@
       "specification": "SPECIFICATION_APPROVED",
       "audit": "AUDIT_COMPLETE",
       "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
+      "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "scripts/verify-landing.mjs",
       "autoShipScript": "npm run ship:sovereign",
       "currentBranch": "main",
-      "headCommitSha": "36ba9c3b11406979f07a29fe8a544b14f8ec3c7a"
+      "headCommitSha": "e89aaa934469d81f9d7407e8c4895adc0f86a60e"
     }
   ],
-  "registrySha256": "d01d199b6cce4f9fff7ad7121ad96ba1f4eab38e33a320a2de822d9baddf9f6a"
+  "registrySha256": "81c6817917e54ff45cc81453779a3b2c0c934c82c2da1b0023dbf9a844a62554"
 }

@@ -14,6 +14,7 @@ import { PHASE1_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpCoreUtilitarianHa
 import { PHASE2_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase2UtilitarianHandlers.ts";
 import { PHASE3_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase3CoreHandlers.ts";
 import { PHASE4_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase4ToolNames.ts";
+import { PHASE5_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase5ToolNames.ts";
 
 export interface ApexDoctrineDimension {
   readonly id: string;
@@ -49,7 +50,8 @@ export function evaluateApexDoctrineScorecard(projectRoot: string = process.cwd(
     ...PHASE1_MIGRATED_TOOL_NAMES,
     ...PHASE2_MIGRATED_TOOL_NAMES,
     ...PHASE3_MIGRATED_TOOL_NAMES,
-    ...PHASE4_MIGRATED_TOOL_NAMES
+    ...PHASE4_MIGRATED_TOOL_NAMES,
+    ...PHASE5_MIGRATED_TOOL_NAMES
   ]);
   const coreMigrated = [...CORE_TIER0_TOOL_NAMES].filter((t) => migrated.has(t)).length;
   const coreTotal = CORE_TIER0_TOOL_NAMES.size;
@@ -78,7 +80,7 @@ export function evaluateApexDoctrineScorecard(projectRoot: string = process.cwd(
       softwareMeaning: "Handlers extracted from god-file into Phase modules",
       score: Math.min(25, Math.round((migrated.size / 30) * 25)),
       max: 25,
-      evidence: `${migrated.size} tools in Phase-1..4 modules; god-file ~${godLines} lines`
+      evidence: `${migrated.size} tools in Phase-1..5 modules; god-file ~${godLines} lines`
     },
     {
       id: "ZERO_PLAIN_SECRETS",
