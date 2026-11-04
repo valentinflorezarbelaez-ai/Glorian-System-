@@ -135,6 +135,7 @@
     "ship:sovereign": "node scripts/ship-sovereign.mjs",
     "fleet:verify": "node scripts/fleet-autonomous-cicd.mjs",
     "fleet:ship": "node scripts/fleet-autonomous-cicd.mjs --ship",
+    "fleet:ship:all": "node scripts/fleet-autonomous-cicd.mjs --ship-all --confirm-fleet-ship=AUTHORIZED",
     "fleet:hooks": "node scripts/install-fleet-cicd-hooks.mjs",
     "jarvis": "node scripts/eos-jarvis-daemon.mjs",
     "jarvis:daemon": "node scripts/eos-jarvis-daemon.mjs --loop",

@@ -6,9 +6,12 @@ import { resolveFleetProjectPath } from "./lib/fleet-project-path.mjs";
 const root = process.cwd();
 const registryFile = path.join(root, "docs/projects/registry.json");
 const isShipMode = process.argv.includes("--ship");
+const isShipAllMode = process.argv.includes("--ship-all");
+const effectiveShip = isShipMode || isShipAllMode;
 const getOption = (name) => process.argv.find((arg) => arg.startsWith(`${name}=`))?.slice(name.length + 1);
 const selectedProjectId = getOption("--project");
 const confirmation = getOption("--confirm-project");
+const fleetShipConfirm = getOption("--confirm-fleet-ship");
 const commitMessage = getOption("--msg") || "chore: fleet sync and verification";
 
 function fail(message) {
@@ -22,6 +25,17 @@ function runGate(project, checkoutRoot) {
   }
 
   const configuredPath = project.cicdGateScript.trim();
+
+  // Allow registered npm scripts (e.g. "npm test", "npm run verify") without path traversal.
+  if (/^npm(\.cmd)?\s+/i.test(configuredPath)) {
+    const tokens = configuredPath.split(/\s+/).filter(Boolean);
+    const npmBin = process.platform === "win32" ? "npm.cmd" : "npm";
+    const npmArgs = tokens.slice(1);
+    console.log(`  CI gate        : RUNNING (${configuredPath})`);
+    execFileSync(npmBin, npmArgs, { cwd: checkoutRoot, stdio: "inherit", shell: process.platform === "win32" });
+    return;
+  }
+
   const gatePath = path.resolve(checkoutRoot, configuredPath);
   const relative = path.relative(checkoutRoot, gatePath);
   if (relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
@@ -45,7 +59,31 @@ function runGate(project, checkoutRoot) {
     const powershell = process.platform === "win32" ? "powershell.exe" : "pwsh";
     execFileSync(powershell, ["-NoProfile", "-File", realGate], { cwd: realCheckout, stdio: "inherit" });
   } else {
-    throw new Error(`Unsupported CI gate type: ${extension || "no extension"}. Use .js, .mjs, or .ps1.`);
+    throw new Error(`Unsupported CI gate type: ${extension || "no extension"}. Use .js, .mjs, .ps1, or npm <script>.`);
+  }
+}
+
+function countCommitsAheadOfOrigin(checkoutRoot) {
+  try {
+    const out = execFileSync("git", ["rev-list", "--count", "@{u}..HEAD"], {
+      cwd: checkoutRoot,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"]
+    }).trim();
+    const n = Number(out);
+    return Number.isFinite(n) ? n : 0;
+  } catch {
+    try {
+      const out = execFileSync("git", ["rev-list", "--count", "origin/main..HEAD"], {
+        cwd: checkoutRoot,
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"]
+      }).trim();
+      const n = Number(out);
+      return Number.isFinite(n) ? n : 0;
+    } catch {
+      return -1; // unknown / no upstream yet — still attempt push -u
+    }
   }
 }
 
@@ -98,19 +136,33 @@ if (!fs.existsSync(registryFile)) {
     let selected = projects;
     if (selectedProjectId) selected = projects.filter((project) => project.id === selectedProjectId);
 
+    let canProceed = true;
     if (selected.length === 0) {
       fail(selectedProjectId ? `Unknown project id: ${selectedProjectId}` : "Fleet registry contains no projects.");
+      canProceed = false;
+    } else if (isShipAllMode) {
+      if (fleetShipConfirm !== "AUTHORIZED") {
+        fail("Ship-all mode requires --confirm-fleet-ship=AUTHORIZED. No repository was changed.");
+        canProceed = false;
+      } else if (selectedProjectId) {
+        fail("Ship-all mode cannot combine with --project. No repository was changed.");
+        canProceed = false;
+      }
     } else if (isShipMode && (!selectedProjectId || selected.length !== 1 || confirmation !== selectedProjectId)) {
       fail("Ship mode requires one --project=<id> and a matching --confirm-project=<id>. No repository was changed.");
-    } else {
+      canProceed = false;
+    }
+
+    if (canProceed) {
       let productionProbes = 0;
       let healthyProbes = 0;
       let localCheckFailures = 0;
+      let shipsCompleted = 0;
 
       for (const project of selected) {
         console.log(`\n▶ Project: ${project.name} [${project.id}]`);
         const productionUrl = normalizeProductionUrl(project.productionUrl);
-        if (isShipMode && !productionUrl) {
+        if (effectiveShip && !productionUrl) {
           localCheckFailures++;
           fail(`A valid HTTPS productionUrl is required for ${project.id}. No repository was changed.`);
           break;
@@ -119,14 +171,14 @@ if (!fs.existsSync(registryFile)) {
         const projectPath = resolveFleetProjectPath(project, root);
         if (!projectPath) {
           console.log(`  Local checkout : NOT CONFIGURED (${project.localPathEnv || "no environment variable"})`);
-          if (isShipMode) {
+          if (effectiveShip) {
             localCheckFailures++;
             fail(`Local checkout for ${project.id} is not configured. No repository was changed.`);
             break;
           }
         } else if (!fs.existsSync(projectPath)) {
           console.log("  Local checkout : NOT FOUND");
-          if (isShipMode) {
+          if (effectiveShip) {
             localCheckFailures++;
             fail(`Local checkout for ${project.id} was not found. No repository was changed.`);
             break;
@@ -150,7 +202,7 @@ if (!fs.existsSync(registryFile)) {
               stdio: ["ignore", "pipe", "pipe"]
             }).trim();
             console.log(`  Git checkout   : VERIFIED (${changes ? "working tree has changes" : "clean"})`);
-            if (isShipMode) {
+            if (effectiveShip) {
               const expectedRemote = normalizeGitRemote(project.remoteUrl);
               const actualRemote = execFileSync("git", ["remote", "get-url", "origin"], {
                 cwd: checkoutRoot,
@@ -165,13 +217,13 @@ if (!fs.existsSync(registryFile)) {
           } catch (error) {
             localCheckFailures++;
             console.error(`  Git checkout   : CHECK FAILED (${error.message})`);
-            if (isShipMode) {
+            if (effectiveShip) {
               fail(`Git checkout validation failed for ${project.id}; no further actions will run.`);
               break;
             }
           }
 
-          if (checkoutRoot && isShipMode) {
+          if (checkoutRoot && effectiveShip) {
             try {
               runGate(project, checkoutRoot);
               console.log("  CI gate        : PASSED");
@@ -191,10 +243,19 @@ if (!fs.existsSync(registryFile)) {
               if (changes) {
                 execFileSync("git", ["add", "-A"], { cwd: checkoutRoot, stdio: "inherit" });
                 execFileSync("git", ["commit", "-m", commitMessage], { cwd: checkoutRoot, stdio: "inherit" });
-                execFileSync("git", ["push", "origin", "HEAD"], { cwd: checkoutRoot, stdio: "inherit" });
-                console.log("  Ship           : commit and push completed");
+                console.log("  Ship           : local commit completed");
               } else {
-                console.log("  Ship           : no changes to commit");
+                console.log("  Ship           : working tree clean (no new commit)");
+              }
+
+              const ahead = countCommitsAheadOfOrigin(checkoutRoot);
+              if (ahead === 0) {
+                console.log("  Ship           : already synced with upstream (nothing to push)");
+              } else {
+                console.log(`  Ship           : pushing HEAD to origin (ahead=${ahead < 0 ? "unknown/new-upstream" : ahead})`);
+                execFileSync("git", ["push", "-u", "origin", "HEAD"], { cwd: checkoutRoot, stdio: "inherit" });
+                console.log("  Ship           : push completed (Vercel auto-deploy if linked)");
+                shipsCompleted += 1;
               }
             } catch (error) {
               localCheckFailures++;
@@ -222,7 +283,7 @@ if (!fs.existsSync(registryFile)) {
         }
       }
 
-      console.log(`\nFleet report: ${healthyProbes}/${productionProbes} production probes returned HTTP 200; ${localCheckFailures} check(s) failed or were unreachable.`);
+      console.log(`\nFleet report: ${healthyProbes}/${productionProbes} production probes returned HTTP 200; ${localCheckFailures} check(s) failed or were unreachable; shipsCompleted=${shipsCompleted}.`);
       if (localCheckFailures > 0 || productionProbes === 0) process.exitCode = 1;
       else console.log("All requested checks completed successfully.");
     }
