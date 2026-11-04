@@ -19,3 +19,4 @@ data/*.wal
 data/*.db
 data/*.db-shm
 data/*.db-wal
+test/_sandbox/

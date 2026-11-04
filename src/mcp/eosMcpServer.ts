@@ -786,19 +786,17 @@ export class EosMcpServer {
     } catch {
       // Graceful degradation in read-only or confined file systems
     }
+    let kg: EosKnowledgeGraphEngine;
     try {
-      this.knowledgeGraph = getDefaultKnowledgeGraphEngine(this.projectRoot);
-      const gStats = this.knowledgeGraph.getGraphStats();
+      kg = getDefaultKnowledgeGraphEngine(this.projectRoot);
+      const gStats = kg.getGraphStats();
       if (gStats.totalNodes === 0) {
-        this.knowledgeGraph.syncGraph();
+        kg.syncGraph();
       }
     } catch {
-      try {
-        this.knowledgeGraph = new EosKnowledgeGraphEngine(this.projectRoot, ":memory:");
-      } catch {
-        // Graceful degradation in read-only or confined file systems
-      }
+      kg = new EosKnowledgeGraphEngine(this.projectRoot, ":memory:");
     }
+    this.knowledgeGraph = kg;
   }
 
   public setToolProfile(profile: McpToolProfile): void {

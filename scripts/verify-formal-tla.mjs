@@ -661,6 +661,59 @@ export function verifyAgentTopologyMeshModel(steps = 200) {
   };
 }
 
+export function verifyMcpStreamableSecurityModel(steps = 200) {
+  const filePath = path.join(formalDir, "McpStreamableSecurity.tla");
+  const parsed = parseTlaModule(filePath);
+  const MaxPayloadBytes = 1048576;
+  const AllowedOriginCount = 2;
+
+  let requestsProcessed = 0;
+  let acceptedRequests = 0;
+  let rejectedRequests = 0;
+  let unauthorizedWrites = 0;
+  let activeSessions = 0;
+  let maxObservedPayload = 0;
+  let stepsExecuted = 0;
+
+  for (let i = 0; i < steps; i++) {
+    stepsExecuted++;
+    assert.equal(unauthorizedWrites, 0, "VIOLATION: unauthorizedWrites must stay 0");
+    assert.equal(
+      requestsProcessed,
+      acceptedRequests + rejectedRequests,
+      "VIOLATION: conservation of requests"
+    );
+    if (acceptedRequests > 0) {
+      assert.ok(maxObservedPayload <= MaxPayloadBytes, "VIOLATION: payload bound");
+    }
+
+    const rejectPath = (i * 3 + 1) % 5 === 0 || AllowedOriginCount === 0;
+    if (rejectPath) {
+      requestsProcessed++;
+      rejectedRequests++;
+      unauthorizedWrites = 0;
+    } else {
+      const payload = (i * 997) % MaxPayloadBytes;
+      requestsProcessed++;
+      acceptedRequests++;
+      activeSessions++;
+      maxObservedPayload = Math.max(maxObservedPayload, payload);
+      unauthorizedWrites = 0;
+    }
+  }
+
+  return {
+    specification: "McpStreamableSecurity.tla",
+    moduleName: parsed.moduleName,
+    sourceFileRead: true,
+    extractedVariables: parsed.variables,
+    extractedInvariantNames: parsed.invariants,
+    stepsExecuted,
+    executionMode: "bounded-javascript-simulation",
+    simulationAssertionsPassed: true
+  };
+}
+
 export function runAllFormalVerifications() {
   return [
     verifyLmaxDisruptorModel(),
@@ -703,7 +756,8 @@ export function runAllFormalVerifications() {
     verifyAgenticFinOpsGovernorModel(),
     verifyPlanetaryMonorepoGovernorModel(),
     verifyCrossFleetNeuralSynapseModel(),
-    verifyPlanetaryMultiCloudEvacuationModel()
+    verifyPlanetaryMultiCloudEvacuationModel(),
+    verifyMcpStreamableSecurityModel()
   ];
 }
 

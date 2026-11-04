@@ -1,9 +1,9 @@
 # EOS SYSTEM — RELEASE CAPABILITY MATRIX
 
 **Version**: v75.0.0 (Glorian Control Plane — tip-refresh 2026-11-04)  
-**Governing Standard**: IEEE 830 / ISO 29148 / RFC 9110 / Clean Hexagonal Architecture  
-**Active Gate**: GATE-13 (`LADDER-13`)  
-**Inventory SSOT**: 145 OpenSpecs · 88 changes · 180 `src/core` TS modules · 154 test suites · 41 TLA+ models · `dependencies: {}`  
+**Governing Standard**: IEEE 830 / ISO 29148 / RFC 9110 / Clean Hexagonal Architecture / NIST 800-53 subset (self-attested)  
+**Active Gate**: GATE-14 (`LADDER-14` Peak Assurance — `HIGH_ASSURANCE_CANDIDATE`)  
+**Inventory SSOT**: 146 OpenSpecs · 89 changes · Peak Assurance TCB + 42 TLA+ models · `dependencies: {}`  
 
 ---
 

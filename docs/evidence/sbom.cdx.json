@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:4f748415-335d-428b-8f60-4b0f89feaee1",
+  "serialNumber": "urn:uuid:a1ec70e8-d54f-458d-a816-c53d34477ec2",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-04T02:32:47.233Z",
+    "timestamp": "2026-11-04T02:45:17.940Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "f18ef989b76ff2cae51923ac5b5f0a2c6fe9730646a4490319cad129219c1cf5"
+          "content": "8759248ba6805e6ea35912460e25c32fcace822c68355639f3a0e1c388294a15"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -1554,6 +1554,19 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosPeakAssuranceTcb.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosPeakAssuranceTcb.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "08ba134f61038dd1f581f6845adb1ba12711924bae7b9380e6ff843ee262c3fc"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosPeakAssuranceTcb.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosPeerNetworkMesh.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosPeerNetworkMesh.ts@75.0.0",
@@ -2424,5 +2437,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "794f385f436d1232ad832e05e6b68aec7c0434e10f3c957a3b4e211d77d7e86c"
+  "sha256Receipt": "3c1f7b2a72a109e05eb7ef34d768c2964d9f0164f3a864a37c75d6b016254ddb"
 }
