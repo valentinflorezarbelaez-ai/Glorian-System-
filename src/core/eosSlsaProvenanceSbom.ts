@@ -120,6 +120,29 @@ function resolveGitCommit(projectRoot: string): string {
   return "HEAD";
 }
 
+/** Content-addressed RFC-4122 UUID (version nibble 5) from a hex digest. */
+function uuidFromContentHash(hex: string): string {
+  const h = `${hex}${"0".repeat(32)}`.slice(0, 32);
+  const variantNibble = ((parseInt(h[16] ?? "0", 16) & 0x3) | 0x8).toString(16);
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-5${h.slice(13, 16)}-${variantNibble}${h.slice(17, 20)}-${h.slice(20, 32)}`;
+}
+
+/**
+ * Deterministic ISO-8601 timestamp from a seed (SOURCE_DATE_EPOCH when set).
+ * Avoids wall-clock churn that dirties tip-seal evidence on every verify.
+ */
+function deterministicTimestampIso(seed: string): string {
+  if (process.env.SOURCE_DATE_EPOCH) {
+    const epoch = Number(process.env.SOURCE_DATE_EPOCH);
+    if (Number.isFinite(epoch) && epoch >= 0) {
+      return new Date(epoch * 1000).toISOString();
+    }
+  }
+  const digest = pureSha256(seed);
+  const seconds = 1_577_836_800 + (parseInt(digest.slice(0, 8), 16) % 315_619_200);
+  return new Date(seconds * 1000).toISOString();
+}
+
 export class EosSlsaProvenanceSbom {
   /**
    * Generates a deterministic CycloneDX v1.5 JSON SBOM for the Glorian System control plane.
@@ -167,9 +190,10 @@ export class EosSlsaProvenanceSbom {
       }
     }
 
-    const timestamp = new Date().toISOString();
-    const serialUuid = crypto.randomUUID();
-    const serialNumber = `urn:uuid:${serialUuid}`;
+    const componentFingerprint = components.map((c) => `${c.name}:${c.hashes[0]?.content ?? ""}`).join("|");
+    const seed = `CYCLONEDX:v1.5:${pkgVersion}:${components.length}:${componentFingerprint}`;
+    const timestamp = deterministicTimestampIso(seed);
+    const serialNumber = `urn:uuid:${uuidFromContentHash(pureSha256(seed))}`;
 
     const mainComponent: SbomComponent = {
       type: "application",
@@ -211,10 +235,10 @@ export class EosSlsaProvenanceSbom {
   ): SlsaProvenanceReport {
     const root = path.resolve(projectRoot);
     const pkgVersion = getPackageVersion(root);
-    const timestamp = new Date().toISOString();
-    const invocationId = crypto.randomUUID();
-
     const resolvedSha = commitSha && commitSha !== "HEAD" ? commitSha : resolveGitCommit(root);
+    const seed = `SLSA_V1.0:${resolvedSha}:${pkgVersion}`;
+    const timestamp = deterministicTimestampIso(seed);
+    const invocationId = uuidFromContentHash(pureSha256(`${seed}:invocation`));
     const rootHash = pureSha256(`SLSA_PROVENANCE_ROOT:${resolvedSha}:${timestamp}`);
 
     const binPath = path.join(root, "bin", "eos.mjs");

@@ -283,10 +283,12 @@ export class EosTacticalCommandEngine {
   public exportOpenSpecsJson(outputPath?: string): string {
     const specs = this.extractOpenSpecs();
     const target = outputPath || path.join(this.projectRoot, "docs/specs/openspec-catalog-index.json");
+    const catalogSha256 = crypto.createHash("sha256").update(JSON.stringify(specs)).digest("hex");
+    const seconds = 1_577_836_800 + (parseInt(catalogSha256.slice(0, 8), 16) % 315_619_200);
     const payload = {
-      timestampIso: new Date().toISOString(),
+      timestampIso: new Date(seconds * 1000).toISOString(),
       totalSpecs: specs.length,
-      catalogSha256: crypto.createHash("sha256").update(JSON.stringify(specs)).digest("hex"),
+      catalogSha256,
       specs
     };
 

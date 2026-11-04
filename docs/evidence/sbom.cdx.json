@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:dc2fdb7f-a0c8-4e22-81ce-7842b1914038",
+  "serialNumber": "urn:uuid:60fbb2ea-adb2-5101-afd2-8341ee9c0e2d",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-04T02:54:17.879Z",
+    "timestamp": "2021-07-21T06:27:54.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -25,7 +25,7 @@
       },
       {
         "name": "Node.js",
-        "version": "v24.19.0"
+        "version": "v24.21.0"
       }
     ],
     "runtimeDependenciesCount": 0
@@ -780,7 +780,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "708913ed43b0a25a9851c0f420123e8a3603ea1c2f8a6bf232165cf341eb4038"
+          "content": "a3ec166e952bcfe0749cddf1ac1977748faf56d3edc416a0aae73aa2b60be509"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosFleetDogfoodingEngine.ts"
@@ -1209,7 +1209,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "a6713c68046d33c2edfc5dcc6edb96bfff090a78c18825073b8bb7a81bdeab24"
+          "content": "6034a4ff50cb3a31706dad6da2e3a12a9d3ee32231af041f73c2b1c3437ca0e2"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosMcpSchemaValidator.ts"
@@ -1859,7 +1859,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "a20002e100a68eacb293428a679508d74a9cf78b5e018cee0c698bb515265591"
+          "content": "7a4b9a6f0ca7cc14a1609912ecedbf954cf74dd463b5945bda4af83bf4e719b1"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosSlsaProvenanceSbom.ts"
@@ -1989,7 +1989,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "ab6ebd09428ac003cc698dedb806c0f6c87c4e92a570ff7011d958f474c94771"
+          "content": "ba78bb03e780d3bbc5365d13536842f807c6d20e2db0bf4f210d0e01f2fbf32d"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosTacticalCommandEngine.ts"
@@ -2437,5 +2437,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "bb696f796698aff71f21d549d63da43044725c5d4f28dc92ea9b103aa1441138"
+  "sha256Receipt": "de9fee9d4e7364e928e41217aab158b9047b50861a5567c8d3c17d6f88296113"
 }

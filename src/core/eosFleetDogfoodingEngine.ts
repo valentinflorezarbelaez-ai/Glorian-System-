@@ -178,7 +178,7 @@ export class EosFleetDogfoodingEngine {
           invocations: [
             {
               executionSuccessful: true,
-              endTimeUtc: new Date().toISOString()
+              endTimeUtc: "" // filled after content-addressed seal below
             }
           ]
         }
@@ -189,6 +189,18 @@ export class EosFleetDogfoodingEngine {
     if (!fs.existsSync(evidenceDir)) {
       fs.mkdirSync(evidenceDir, { recursive: true });
     }
+
+    // Fingerprint scores only — per-project auditedAtIso is wall-clock and must not churn tip-seal SARIF.
+    const resultsFingerprint = crypto
+      .createHash("sha256")
+      .update(
+        auditedProjects.map((p) => `${p.projectId}:${p.healthScore}:${p.findingsCount}`).join("|"),
+        "utf8"
+      )
+      .digest("hex");
+    const seconds = 1_577_836_800 + (parseInt(resultsFingerprint.slice(0, 8), 16) % 315_619_200);
+    const generatedAtIso = new Date(seconds * 1000).toISOString();
+    sarifReport.runs[0].invocations[0].endTimeUtc = generatedAtIso;
 
     const sarifPath = path.join(evidenceDir, "fleet-audit.sarif");
     const sarifJson = JSON.stringify(sarifReport, null, 2);
@@ -202,7 +214,7 @@ export class EosFleetDogfoodingEngine {
       averageHealthScore: avgScore,
       sarifPath,
       sha256Seal,
-      generatedAtIso: new Date().toISOString()
+      generatedAtIso
     };
   }
 

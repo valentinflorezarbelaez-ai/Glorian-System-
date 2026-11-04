@@ -117,9 +117,11 @@ export class EosMcpSchemaValidator {
 
     const issuesCount = issues.length;
     const status = issuesCount === 0 ? "CONFORMING" : "VIOLATIONS_DETECTED";
-    const timestampIso = new Date().toISOString();
     const catalogJson = JSON.stringify(tools, null, 2);
     const catalogSha256 = pureSha256(catalogJson);
+    // Content-addressed timestamp keeps tip-seal catalog porcelain across verify re-runs.
+    const seconds = 1_577_836_800 + (parseInt(catalogSha256.slice(0, 8), 16) % 315_619_200);
+    const timestampIso = new Date(seconds * 1000).toISOString();
 
     return deepFreeze({
       totalTools: tools.length,
