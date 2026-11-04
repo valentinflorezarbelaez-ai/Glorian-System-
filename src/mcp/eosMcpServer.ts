@@ -781,19 +781,23 @@ export class EosMcpServer {
     this.serverVersion = version;
     this.hybridKnowledge = getDefaultHybridKnowledgeEngine(this.projectRoot);
     this.wasmSandbox = getDefaultWasmSandboxEngine(this.projectRoot);
-    this.knowledgeGraph = getDefaultKnowledgeGraphEngine(this.projectRoot);
     try {
       this.hybridKnowledge.ensureCorpusIndexed();
     } catch {
       // Graceful degradation in read-only or confined file systems
     }
     try {
+      this.knowledgeGraph = getDefaultKnowledgeGraphEngine(this.projectRoot);
       const gStats = this.knowledgeGraph.getGraphStats();
       if (gStats.totalNodes === 0) {
         this.knowledgeGraph.syncGraph();
       }
     } catch {
-      // Graceful degradation in read-only or confined file systems
+      try {
+        this.knowledgeGraph = new EosKnowledgeGraphEngine(this.projectRoot, ":memory:");
+      } catch {
+        // Graceful degradation in read-only or confined file systems
+      }
     }
   }
 

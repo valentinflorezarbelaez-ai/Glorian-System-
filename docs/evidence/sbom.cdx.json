@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:c6f58e13-0ff9-4c1e-91c8-6ccfaaf1deb5",
+  "serialNumber": "urn:uuid:4f748415-335d-428b-8f60-4b0f89feaee1",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-04T02:25:00.404Z",
+    "timestamp": "2026-11-04T02:32:47.233Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -1144,7 +1144,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "62e7613732c37338d69a6ed1dcdb2ceab79e34578c58a690a0e858b341674054"
+          "content": "6752bbd03f583e97017fb7b82b1bb971c5fca40d3cf22031827d3256b3d1081d"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosKnowledgeGraphEngine.ts"
@@ -2424,5 +2424,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "56e6383388f96f9fd958fe41ff8897680a23d09216143a682fc19f8cf2f02947"
+  "sha256Receipt": "794f385f436d1232ad832e05e6b68aec7c0434e10f3c957a3b4e211d77d7e86c"
 }

@@ -106,6 +106,7 @@ export class EosKnowledgeGraphEngine {
       try {
         fs.mkdirSync(path.dirname(this.dbPath), { recursive: true });
         this.db = new DatabaseSync(this.dbPath);
+        this.db.exec("PRAGMA busy_timeout = 10000;");
         this.db.exec("PRAGMA journal_mode = WAL;");
       } catch {
         this.db = new DatabaseSync(":memory:");
@@ -114,40 +115,70 @@ export class EosKnowledgeGraphEngine {
       this.db = new DatabaseSync(":memory:");
     }
 
-    this.db.exec("PRAGMA synchronous = NORMAL;");
-    this.db.exec("PRAGMA foreign_keys = ON;");
+    try {
+      this.db.exec("PRAGMA busy_timeout = 10000;");
+      this.db.exec("PRAGMA synchronous = NORMAL;");
+      this.db.exec("PRAGMA foreign_keys = ON;");
 
-    // Nodes Table
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS eos_kg_nodes (
-        id TEXT PRIMARY KEY,
-        type TEXT NOT NULL,
-        title TEXT NOT NULL,
-        file TEXT NOT NULL,
-        metadata TEXT,
-        sha256 TEXT NOT NULL,
-        updated_at INTEGER NOT NULL
-      );
-      CREATE INDEX IF NOT EXISTS idx_kg_nodes_type ON eos_kg_nodes(type);
-    `);
+      // Nodes Table
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS eos_kg_nodes (
+          id TEXT PRIMARY KEY,
+          type TEXT NOT NULL,
+          title TEXT NOT NULL,
+          file TEXT NOT NULL,
+          metadata TEXT,
+          sha256 TEXT NOT NULL,
+          updated_at INTEGER NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_kg_nodes_type ON eos_kg_nodes(type);
+      `);
 
-    // Edges Table
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS eos_kg_edges (
-        source_id TEXT NOT NULL,
-        target_id TEXT NOT NULL,
-        relation TEXT NOT NULL,
-        weight REAL DEFAULT 1.0,
-        metadata TEXT,
-        created_at INTEGER NOT NULL,
-        PRIMARY KEY (source_id, target_id, relation),
-        FOREIGN KEY (source_id) REFERENCES eos_kg_nodes(id) ON DELETE CASCADE,
-        FOREIGN KEY (target_id) REFERENCES eos_kg_nodes(id) ON DELETE CASCADE
-      );
-      CREATE INDEX IF NOT EXISTS idx_kg_edges_source ON eos_kg_edges(source_id);
-      CREATE INDEX IF NOT EXISTS idx_kg_edges_target ON eos_kg_edges(target_id);
-      CREATE INDEX IF NOT EXISTS idx_kg_edges_relation ON eos_kg_edges(relation);
-    `);
+      // Edges Table
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS eos_kg_edges (
+          source_id TEXT NOT NULL,
+          target_id TEXT NOT NULL,
+          relation TEXT NOT NULL,
+          weight REAL DEFAULT 1.0,
+          metadata TEXT,
+          created_at INTEGER NOT NULL,
+          PRIMARY KEY (source_id, target_id, relation),
+          FOREIGN KEY (source_id) REFERENCES eos_kg_nodes(id) ON DELETE CASCADE,
+          FOREIGN KEY (target_id) REFERENCES eos_kg_nodes(id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS idx_kg_edges_source ON eos_kg_edges(source_id);
+        CREATE INDEX IF NOT EXISTS idx_kg_edges_target ON eos_kg_edges(target_id);
+        CREATE INDEX IF NOT EXISTS idx_kg_edges_relation ON eos_kg_edges(relation);
+      `);
+    } catch {
+      // In concurrent multi-process environments, if busy, fallback to :memory: safely
+      try {
+        this.db = new DatabaseSync(":memory:");
+        this.db.exec("PRAGMA synchronous = NORMAL;");
+        this.db.exec("PRAGMA foreign_keys = ON;");
+        this.db.exec(`
+          CREATE TABLE IF NOT EXISTS eos_kg_nodes (
+            id TEXT PRIMARY KEY,
+            type TEXT NOT NULL,
+            title TEXT NOT NULL,
+            file TEXT NOT NULL,
+            metadata TEXT,
+            sha256 TEXT NOT NULL,
+            updated_at INTEGER NOT NULL
+          );
+          CREATE TABLE IF NOT EXISTS eos_kg_edges (
+            source_id TEXT NOT NULL,
+            target_id TEXT NOT NULL,
+            relation TEXT NOT NULL,
+            weight REAL DEFAULT 1.0,
+            metadata TEXT,
+            created_at INTEGER NOT NULL,
+            PRIMARY KEY (source_id, target_id, relation)
+          );
+        `);
+      } catch {}
+    }
   }
 
   public close(): void {

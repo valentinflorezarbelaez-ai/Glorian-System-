@@ -8,9 +8,9 @@
   "attestation": {
     "sarifFile": "docs/evidence/local-checks.sarif",
     "sarifErrorCount": 0,
-    "sbomFileSha256": "aa71aec200ad4ee1444da98a40dea8cc800bc79e308c2485a6a1e52e2743b050",
+    "sbomFileSha256": "70b0896ae95efcd84ada8f6d4f192fbf32c3386cdc20a74d831fde54c16e48c7",
     "sbomComponentsCataloged": 184,
-    "provenanceFileSha256": "32db55140cea8d1e5758e5a340155e60933f9965ba2695aa3d6aedbc8c4a8cad",
+    "provenanceFileSha256": "93ad4e8f04c1925d142d0fcd1b8525a254f92c674d2eeb3d31655c7fdcdfdbaf",
     "layer0PurityRuntimeDeps": 0,
     "scenariosVerified": [
       "BDD-404",
