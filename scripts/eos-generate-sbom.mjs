@@ -45,17 +45,29 @@ try {
     fs.mkdirSync(evidenceDir, { recursive: true });
   }
 
+  function writeIfChanged(filePath, content) {
+    if (fs.existsSync(filePath)) {
+      const previous = fs.readFileSync(filePath, "utf8");
+      if (previous === content) {
+        return false;
+      }
+    }
+    safeWriteFileSync(filePath, content);
+    return true;
+  }
+
   // 1. Generate CycloneDX v1.5 SBOM
   console.log("\n[1/3] Synthesizing CycloneDX v1.5 Software Bill of Materials...");
   const sbom = EosSlsaProvenanceSbom.generateCycloneDxSbom(root);
   const sbomPath = path.join(evidenceDir, "sbom.cdx.json");
-  safeWriteFileSync(sbomPath, JSON.stringify(sbom, null, 2) + "\n");
+  const sbomContent = JSON.stringify(sbom, null, 2) + "\n";
+  const sbomWrote = writeIfChanged(sbomPath, sbomContent);
 
   console.log(`  ✔ Serial Number   : ${sbom.serialNumber}`);
   console.log(`  ✔ Main Component  : ${sbom.metadata.component.name} (v${sbom.metadata.component.version})`);
   console.log(`  ✔ Modules Scanned : ${sbom.components.length} files`);
   console.log(`  ✔ Runtime Deps    : ${sbom.metadata.runtimeDependenciesCount} (Strict Layer-0 Pure)`);
-  console.log(`  ✔ SBOM File       : ${path.relative(root, sbomPath)}`);
+  console.log(`  ✔ SBOM File       : ${path.relative(root, sbomPath)} (${sbomWrote ? "updated" : "unchanged"})`);
   console.log(`  ✔ SHA-256 Receipt : sha256:${sbom.sha256Receipt}`);
 
   // 2. Generate In-Toto SLSA Provenance v1.0 Statement
@@ -63,13 +75,15 @@ try {
   const commitSha = process.env.GITHUB_SHA || "HEAD";
   const slsa = EosSlsaProvenanceSbom.generateSlsaProvenance(root, commitSha);
   const provenancePath = path.join(evidenceDir, "provenance.intoto.jsonl");
-  safeWriteFileSync(provenancePath, JSON.stringify(slsa) + "\n");
+  const provenanceContent = JSON.stringify(slsa) + "\n";
+  const provenanceWrote = writeIfChanged(provenancePath, provenanceContent);
 
   console.log(`  ✔ Statement Type  : ${slsa._type}`);
   console.log(`  ✔ Predicate Type  : ${slsa.predicateType}`);
   console.log(`  ✔ Builder ID      : ${slsa.predicate.runDetails.builder.id}`);
   console.log(`  ✔ Subjects Signed : ${slsa.subject.length} artifacts`);
-  console.log(`  ✔ Provenance File : ${path.relative(root, provenancePath)}`);
+  console.log(`  ✔ Commit Pin      : ${slsa.predicate.buildDefinition.externalParameters.commitSha}`);
+  console.log(`  ✔ Provenance File : ${path.relative(root, provenancePath)} (${provenanceWrote ? "updated" : "unchanged"})`);
   console.log(`  ✔ SHA-256 Receipt : sha256:${slsa.sha256Receipt}`);
 
   // 3. Record Attestations in SQLite WAL Ledger

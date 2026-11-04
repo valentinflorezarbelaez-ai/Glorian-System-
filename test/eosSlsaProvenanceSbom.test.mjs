@@ -61,3 +61,44 @@ test("BDD-189: In-Toto SLSA Provenance v1.0 Attestation", () => {
     }
   }
 });
+
+test("BDD-189b: Tip-seal stable provenance pin when material subjects unchanged", () => {
+  const sealed = EosSlsaProvenanceSbom.generateSlsaProvenance(process.cwd(), "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+  const evidenceDir = path.join(process.cwd(), "docs", "evidence");
+  const provenancePath = path.join(evidenceDir, "provenance.intoto.jsonl");
+  const previous = fs.existsSync(provenancePath) ? fs.readFileSync(provenancePath, "utf8") : null;
+
+  try {
+    fs.mkdirSync(evidenceDir, { recursive: true });
+    fs.writeFileSync(provenancePath, `${JSON.stringify(sealed)}\n`, "utf8");
+
+    const reused = EosSlsaProvenanceSbom.generateSlsaProvenance(process.cwd(), "HEAD");
+    assert.equal(
+      reused.predicate.buildDefinition.externalParameters.commitSha,
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "must reuse sealed commit when material subjects are unchanged"
+    );
+    assert.equal(reused.subject[0].digest.sha256, sealed.subject[0].digest.sha256);
+    assert.equal(reused.sha256Receipt, sealed.sha256Receipt);
+
+    const forced = EosSlsaProvenanceSbom.generateSlsaProvenance(
+      process.cwd(),
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    );
+    assert.equal(
+      forced.predicate.buildDefinition.externalParameters.commitSha,
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "explicit CI commit pins must still regenerate"
+    );
+  } finally {
+    if (previous === null) {
+      try {
+        fs.unlinkSync(provenancePath);
+      } catch {
+        // ignore
+      }
+    } else {
+      fs.writeFileSync(provenancePath, previous, "utf8");
+    }
+  }
+});

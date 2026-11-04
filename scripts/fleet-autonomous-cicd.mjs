@@ -280,16 +280,34 @@ if (!fs.existsSync(registryFile)) {
         }
 
         if (productionUrl) {
-          try {
-            productionProbes++;
-            const response = await fetch(productionUrl, { cache: "no-store", signal: AbortSignal.timeout(10000) });
+          productionProbes++;
+          let lastError = null;
+          let response = null;
+          for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+              response = await fetch(productionUrl, {
+                cache: "no-store",
+                signal: AbortSignal.timeout(12000)
+              });
+              lastError = null;
+              break;
+            } catch (error) {
+              lastError = error;
+              const code = error?.cause?.code || error?.code || "";
+              // Transient local resolver failures (ENOTFOUND/EAI_AGAIN) get bounded retries.
+              if (!/ENOTFOUND|EAI_AGAIN|UND_ERR_CONNECT|timeout|TimeoutError/i.test(`${code} ${error.message}`)) {
+                break;
+              }
+              await new Promise((resolve) => setTimeout(resolve, 350 * attempt));
+            }
+          }
+          if (response) {
             console.log(`  Production     : HTTP ${response.status}`);
             if (response.status === 200) healthyProbes++;
             else localCheckFailures++;
-          } catch (error) {
-            productionProbes++;
+          } else {
             localCheckFailures++;
-            console.log(`  Production     : UNREACHABLE (${error.message})`);
+            console.log(`  Production     : UNREACHABLE (${lastError?.message || "fetch failed"})`);
           }
         } else {
           console.log("  Production     : NOT CONFIGURED OR INVALID HTTPS URL");

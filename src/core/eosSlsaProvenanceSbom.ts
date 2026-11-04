@@ -120,6 +120,41 @@ function resolveGitCommit(projectRoot: string): string {
   return "HEAD";
 }
 
+const MATERIAL_SUBJECT_NAMES = ["bin/eos.mjs", "src/index.ts", "package.json"] as const;
+
+/**
+ * When local verify re-runs after a tip-seal commit, HEAD advances but material bytes do not.
+ * Reuse the sealed commit SHA from the existing provenance statement so evidence stays clean.
+ */
+function readPinnedCommitIfMaterialUnchanged(
+  projectRoot: string,
+  materialDigests: Readonly<Record<(typeof MATERIAL_SUBJECT_NAMES)[number], string>>
+): string | null {
+  try {
+    const provenancePath = path.join(projectRoot, "docs", "evidence", "provenance.intoto.jsonl");
+    if (!fs.existsSync(provenancePath)) return null;
+    const line = fs.readFileSync(provenancePath, "utf8").split(/\r?\n/).find((l) => l.trim());
+    if (!line) return null;
+    const statement = JSON.parse(line) as {
+      subject?: Array<{ name?: string; digest?: { sha256?: string } }>;
+      predicate?: { buildDefinition?: { externalParameters?: { commitSha?: string } } };
+    };
+    if (!Array.isArray(statement.subject)) return null;
+    for (const name of MATERIAL_SUBJECT_NAMES) {
+      const entry = statement.subject.find((s) => s && s.name === name);
+      const expected = materialDigests[name];
+      if (!entry?.digest?.sha256 || entry.digest.sha256 !== expected) return null;
+    }
+    const pinned = statement.predicate?.buildDefinition?.externalParameters?.commitSha;
+    if (typeof pinned === "string" && /^[0-9a-f]{7,64}$/i.test(pinned.trim())) {
+      return pinned.trim();
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
 /** Content-addressed RFC-4122 UUID (version nibble 5) from a hex digest. */
 function uuidFromContentHash(hex: string): string {
   const h = `${hex}${"0".repeat(32)}`.slice(0, 32);
@@ -228,6 +263,12 @@ export class EosSlsaProvenanceSbom {
 
   /**
    * Generates an in-toto compliant SLSA Provenance v1.0 statement.
+   *
+   * Tip-seal stability (local verify loops): when `commitSha` is `"HEAD"` and an existing
+   * provenance attestation still matches on-disk material subjects (`bin/eos.mjs`,
+   * `src/index.ts`, `package.json`), reuse that attestation's commit SHA so advancing HEAD
+   * after a tip-seal commit does not immediately re-dirty `provenance.intoto.jsonl`.
+   * Explicit commit SHAs (CI `GITHUB_SHA`) always regenerate against that pin.
    */
   public static generateSlsaProvenance(
     projectRoot: string = process.cwd(),
@@ -235,38 +276,52 @@ export class EosSlsaProvenanceSbom {
   ): SlsaProvenanceReport {
     const root = path.resolve(projectRoot);
     const pkgVersion = getPackageVersion(root);
-    const resolvedSha = commitSha && commitSha !== "HEAD" ? commitSha : resolveGitCommit(root);
-    const seed = `SLSA_V1.0:${resolvedSha}:${pkgVersion}`;
-    const timestamp = deterministicTimestampIso(seed);
-    const invocationId = uuidFromContentHash(pureSha256(`${seed}:invocation`));
-    const rootHash = pureSha256(`SLSA_PROVENANCE_ROOT:${resolvedSha}:${timestamp}`);
 
     const binPath = path.join(root, "bin", "eos.mjs");
     const indexPath = path.join(root, "src", "index.ts");
     const pkgPath = path.join(root, "package.json");
+    const fallbackMaterial = pureSha256(`SLSA_MATERIAL_FALLBACK:${pkgVersion}`);
+    const materialDigests = {
+      "bin/eos.mjs": fs.existsSync(binPath) ? computeFileSha256(binPath) : fallbackMaterial,
+      "src/index.ts": fs.existsSync(indexPath) ? computeFileSha256(indexPath) : fallbackMaterial,
+      "package.json": fs.existsSync(pkgPath) ? computeFileSha256(pkgPath) : fallbackMaterial
+    };
+    const materialFingerprint = [
+      materialDigests["bin/eos.mjs"],
+      materialDigests["src/index.ts"],
+      materialDigests["package.json"]
+    ].join(":");
+    // Virtual subject is content-addressed from material digests only (never HEAD/time).
+    const virtualCoreDigest = pureSha256(`VIRTUAL_DIST_CORE:${materialFingerprint}`);
+
+    let resolvedSha: string;
+    if (commitSha && commitSha !== "HEAD") {
+      resolvedSha = commitSha;
+    } else {
+      const pinned = readPinnedCommitIfMaterialUnchanged(root, materialDigests);
+      resolvedSha = pinned || resolveGitCommit(root);
+    }
+
+    const seed = `SLSA_V1.0:${resolvedSha}:${pkgVersion}:${materialFingerprint}`;
+    const timestamp = deterministicTimestampIso(seed);
+    const invocationId = uuidFromContentHash(pureSha256(`${seed}:invocation`));
 
     const subject = [
       {
         name: "bin/eos.mjs",
-        digest: {
-          sha256: fs.existsSync(binPath) ? computeFileSha256(binPath) : rootHash
-        }
+        digest: { sha256: materialDigests["bin/eos.mjs"] }
       },
       {
         name: "src/index.ts",
-        digest: {
-          sha256: fs.existsSync(indexPath) ? computeFileSha256(indexPath) : rootHash
-        }
+        digest: { sha256: materialDigests["src/index.ts"] }
       },
       {
         name: "package.json",
-        digest: {
-          sha256: fs.existsSync(pkgPath) ? computeFileSha256(pkgPath) : rootHash
-        }
+        digest: { sha256: materialDigests["package.json"] }
       },
       {
         name: "dist/glorian-system-core",
-        digest: { sha256: rootHash }
+        digest: { sha256: virtualCoreDigest }
       }
     ];
 
