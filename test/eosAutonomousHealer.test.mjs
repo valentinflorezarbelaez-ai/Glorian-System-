@@ -8,7 +8,7 @@
  * 4. Model Context Protocol (MCP) tool dispatch.
  */
 
-import { describe, it, before, after } from "node:test";
+import { describe, it, before, after, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
@@ -29,12 +29,19 @@ const testDir = path.join(root, "test/_sandbox");
 const testFile = path.join(testDir, "anomalousFile.ts");
 const generatedReceipts = [];
 
+function resetTestFile() {
+  if (!fs.existsSync(testDir)) fs.mkdirSync(testDir, { recursive: true });
+  const badContent = "export function sampleMath(): number {\r\n  return 42;   \r\n}\r\n";
+  fs.writeFileSync(testFile, badContent, "utf8");
+}
+
 describe("EOS Sovereign Autonomous Healer & FDIR Suite", () => {
   before(() => {
-    if (!fs.existsSync(testDir)) fs.mkdirSync(testDir, { recursive: true });
-    // Write an anomalous file with CRLF line endings and trailing whitespace
-    const badContent = "export function sampleMath(): number {\r\n  return 42;   \r\n}\r\n";
-    fs.writeFileSync(testFile, badContent, "utf8");
+    resetTestFile();
+  });
+
+  beforeEach(() => {
+    resetTestFile();
   });
 
   after(() => {
