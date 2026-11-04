@@ -24,7 +24,7 @@ NL→SDLC is now a single fail-closed entry (`eos_mission_run` / SPEC-156). Rema
 - MCP `core` profile <= 30 (SPEC-044/155/156)
 
 ## FIX / PERFECT (still open)
-1. **MCP god-file** — Phase-1..5 registry live (41+12 Spotify domain); T7c partial — need more bundles for ≥25% LOC vs peak (~7122)
+1. **MCP god-file** — Phase-1..6 registry live (78 tools); god-file ~6269 LOC (−12% vs peak 7122); T7c still open until ≥25% (~5341)
 2. **Fleet dirty trees** — remediated to Soundcheck 100/10 (re-check after each ship)
 3. **"Dead exports" noise** — mostly MCP-wired; do not delete blindly
 4. **Engram project ambiguity** — cwd resolves outside repo; pin Engram identity harder
@@ -36,6 +36,11 @@ NL→SDLC is now a single fail-closed entry (`eos_mission_run` / SPEC-156). Rema
 - [x] Phase-5 Spotify residual extract + dead `glorian_*` purge
 - [x] Registry `ownerApproval` on `aberamentho` + `eos-system` (10/10)
 - [x] README Level-5 marketing scrub → WITHIN_TESTED_SCOPE language
+
+## FIXED THIS WAVE (Max-2 · 2026-11-04)
+- [x] Phase-6 Fleet/Apex/FinOps/Product/Synapse/Planetary extract (25 tools)
+- [x] Sovereign 5/5 WITHIN_TESTED_SCOPE scorecard (`evaluateSovereignFiveScorecard`) — 100% pillars; Level-5 / NSA_GRADE denied
+- [x] BDD-485 + tip-seal after Phase-6 ship
 
 ## BUILD (shipped this pass)
 - [x] `eos_mission_run` NL entry: amplify → Law IV direction → architecture → tribunal → Spotify → Nubank (hard if fintech) → turbo → ledger

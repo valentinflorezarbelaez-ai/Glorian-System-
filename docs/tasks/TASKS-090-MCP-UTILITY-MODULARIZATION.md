@@ -9,4 +9,5 @@
 - [x] T7a: purge dead god-file switch arms for Phase-1/2 migrated tools (`scripts/purge-migrated-mcp-switch-cases.mjs`, −201 lines / −2.8% of god-file; 100% of migrated dead paths removed)
 - [x] T7b-core: Phase-3 migrates remaining 13 CORE_TIER0 tools (`eosMcpPhase3CoreHandlers.ts`); purge −354 lines; **30/30 core tools registry-only**
 - [x] T7c-a (2026-11-04): Phase-5 Spotify residual domain bundle (12 tools) + purge dead `glorian_*` switch arms; registry `ownerApproval` 10/10; README Level-5 drift scrubbed
-- [ ] T7c Later: continue full-profile bundles (`eos_fleet_`, `eos_apex_`, finops/product/synapse/planetary) until cumulative god-file LOC reduction >= 25% of peak; delete unused imports after soak
+- [x] T7c-b (2026-11-04): Phase-6 Fleet/Apex/FinOps/Product/Synapse/Planetary (25 tools); god-file ~6269 LOC (~12% vs peak); Sovereign 5/5 WITHIN_TESTED_SCOPE scorecard
+- [ ] T7c Later: continue residual full-profile bundles until cumulative god-file LOC reduction >= 25% of peak (~5341); delete unused imports after soak

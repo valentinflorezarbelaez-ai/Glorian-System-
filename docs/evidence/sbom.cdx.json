@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:4edfbe01-c378-5880-a8e6-d3f28df9641b",
+  "serialNumber": "urn:uuid:87784df8-0515-540b-b7e3-3c2483764681",
   "version": 1,
   "metadata": {
-    "timestamp": "2021-12-04T19:26:57.000Z",
+    "timestamp": "2022-01-04T15:40:40.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0a73488a3ca39469927e3d61b986c9d296d8c90c7468e95bc5822a9d8cc11ae4"
+          "content": "f2d4b7b4fe5b6841e6f95741ffb33cca27e5719cde468a0be5bab27cdcbbfae8"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -234,7 +234,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0ec9e247e5587f28e1b09af6cfea8ac042dc93b9b7684088c16e18161f9945c3"
+          "content": "172e8e80c75fd743d48ace32a21f759eb879032c537182cf6127c31a8d221d3e"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosApexDoctrineScorecard.ts"
@@ -2009,6 +2009,19 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosSovereignFiveScorecard.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosSovereignFiveScorecard.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "bb425cd2798ce21152e86207d39c74266f65c2924d25c3f7ac7daedd78e5b2d7"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosSovereignFiveScorecard.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosSovereignLoop.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosSovereignLoop.ts@75.0.0",
@@ -2580,5 +2593,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "c6ed2368509e5122570eb4932f76c830f51f615a109acf6b28572dbc0d96438d"
+  "sha256Receipt": "b5287b64cd03c34f8d445626b620147af2e94e97f13946eb9b97e122e2fb6d40"
 }

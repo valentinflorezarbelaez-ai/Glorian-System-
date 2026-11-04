@@ -15,6 +15,8 @@ import {
   PHASE5_MIGRATED_TOOL_NAMES,
   PHASE5_PURGED_DEAD_SWITCH_ARMS
 } from "../src/mcp/tools/eosMcpPhase5ToolNames.ts";
+import { PHASE6_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpPhase6ToolNames.ts";
+import { evaluateSovereignFiveScorecard } from "../src/core/eosSovereignFiveScorecard.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, "..");
@@ -124,4 +126,27 @@ test("BDD-484 Phase-5 Spotify domain extract + dead glorian purge", () => {
     params: { name: "eos_spotify_audit", arguments: { targetPath: "." } }
   });
   assert.ok(audit?.result?.content?.[0]?.text);
+});
+
+test("BDD-485 Phase-6 domain extract + Sovereign 5/5 within tested scope", () => {
+  assert.equal(PHASE6_MIGRATED_TOOL_NAMES.length, 25);
+  const god = fs.readFileSync(path.join(projectRoot, "src/mcp/eosMcpServer.ts"), "utf8");
+  for (const name of PHASE6_MIGRATED_TOOL_NAMES) {
+    assert.equal(god.includes(`case "${name}"`), false, `god-file still has live case for ${name}`);
+  }
+  const server = new EosMcpServer(projectRoot, "full");
+  const pulse = server.handleRequest({
+    jsonrpc: "2.0",
+    id: 7,
+    method: "tools/call",
+    params: { name: "eos_fleet_pulse", arguments: {} }
+  });
+  assert.ok(pulse?.result?.content?.[0]?.text);
+
+  const five = evaluateSovereignFiveScorecard(projectRoot);
+  assert.equal(five.grade, "5/5");
+  assert.equal(five.epistemicState, "SOVEREIGN_5_OF_5_WITHIN_TESTED_SCOPE");
+  assert.ok(five.claimsDenied.includes("Level 5"));
+  assert.ok(five.migratedTools >= 70);
+  assert.ok(five.locCutPercentVsPeak >= 10);
 });

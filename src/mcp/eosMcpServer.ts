@@ -641,6 +641,10 @@ import {
 } from "./tools/eosMcpPhase5DomainHandlers.ts";
 
 import {
+  createPhase6DomainHandlers
+} from "./tools/eosMcpPhase6DomainHandlers.ts";
+
+import {
   EosS0DesignSystemGovernor,
   type VisualAuditReport
 } from "../core/eosS0DesignSystemGovernor.ts";
@@ -830,6 +834,12 @@ export class EosMcpServer {
     this.dispatchRegistry.registerAll(createPhase4InstitutionalHandlers(this.projectRoot));
     this.dispatchRegistry.registerAll(
       createPhase5DomainHandlers({
+        projectRoot: this.projectRoot,
+        resolveProjectPath: (value, kind, fallback) => this.resolveProjectPath(value, kind, fallback)
+      })
+    );
+    this.dispatchRegistry.registerAll(
+      createPhase6DomainHandlers({
         projectRoot: this.projectRoot,
         resolveProjectPath: (value, kind, fallback) => this.resolveProjectPath(value, kind, fallback)
       })
@@ -3997,47 +4007,9 @@ export class EosMcpServer {
         }
       }
 
-      case "eos_fleet_registry_sync": {
-        const dryRun = args?.dryRun !== false;
-        const audit = Boolean(args?.audit ?? false);
-        const cliArgs = [
-          path.join(this.projectRoot, "scripts/eos-fleet-registry-sync.mjs"),
-          "--json"
-        ];
-        if (dryRun) {
-          cliArgs.push("--dry-run");
-        }
-        if (audit) {
-          cliArgs.push("--audit");
-        }
-        const out = execFileSync(process.execPath, cliArgs, {
-          cwd: this.projectRoot,
-          encoding: "utf8",
-          timeout: 60000,
-          stdio: ["ignore", "pipe", "pipe"],
-          windowsHide: true
-        });
-        return JSON.parse(out.trim());
-      }
+            // SPEC-155 Phase-6: eos_fleet_registry_sync → registry
 
-      case "eos_fleet_mission_control": {
-        const probe = Boolean(args?.probe ?? false);
-        const cliArgs = [
-          path.join(this.projectRoot, "scripts/eos-fleet-mission-control.mjs"),
-          "--json"
-        ];
-        if (probe) {
-          cliArgs.push("--probe");
-        }
-        const out = execFileSync(process.execPath, cliArgs, {
-          cwd: this.projectRoot,
-          encoding: "utf8",
-          timeout: 60000,
-          stdio: ["ignore", "pipe", "pipe"],
-          windowsHide: true
-        });
-        return JSON.parse(out.trim());
-      }
+            // SPEC-155 Phase-6: eos_fleet_mission_control → registry
 
       case "eos_run_eval": {
         const evaluator = new EosCognitiveEval();
@@ -4083,23 +4055,7 @@ export class EosMcpServer {
         return kernel.benchmarkDsp(Number(args.frames) || 65536, Number(args.iterations) || 20);
       }
 
-      case "eos_fleet_elevate": {
-        const inventory = new EosFleetElevator(this.projectRoot).elevateFleet({ dryRun: true });
-        if (args.apply !== true) return { status: "LOCAL_INVENTORY_ONLY", inventory, writeApplied: false };
-        const targetProject = typeof args.targetProjectId === "string" ? args.targetProjectId : "";
-        if (!targetProject || Buffer.byteLength(targetProject, "utf8") > 128) {
-          throw new Error("Applying requires one registered targetProjectId no longer than 128 bytes.");
-        }
-        const factory = new EosSpotifyAgenticFactory(this.projectRoot);
-        const result = factory.executeFleetshift({
-          migrationId: `MCP-${Date.now()}`,
-          description: "Create one missing local catalog-info.yaml template after checkout verification.",
-          action: "apply_backstage_rfc42",
-          targetFleet: [targetProject],
-          dryRun: false
-        });
-        return { status: "SINGLE_PROJECT_ACTION", inventory, result };
-      }
+            // SPEC-155 Phase-6: eos_fleet_elevate → registry
 
       case "eos_apollo_rpc": {
         const mesh = new EosApolloHermesMesh();
@@ -4193,26 +4149,13 @@ export class EosMcpServer {
       }
 
       // SPEC-155 Phase-4: nubank_*, spotify institutional/canary/golden_path/fleetshift → registry
-      case "eos_apex_route_model": {
-        const router = new EosApexModelRouter(this.projectRoot);
-        return router.routeTask(String(args.directivePrompt || ""), String(args.sourceContext || ""));
-      }
+            // SPEC-155 Phase-6: eos_apex_route_model → registry
 
-      case "eos_apex_compress_context": {
-        const router = new EosApexModelRouter(this.projectRoot);
-        return router.compressContext(String(args.sourceContent || ""), String(args.fileName || "source.ts"));
-      }
+            // SPEC-155 Phase-6: eos_apex_compress_context → registry
 
-      case "eos_apex_autonomous_heal": {
-        const router = new EosApexModelRouter(this.projectRoot);
-        const filePath = this.resolveProjectPath(args.filePath, "file");
-        return router.healFile(filePath, args.apply !== true);
-      }
+            // SPEC-155 Phase-6: eos_apex_autonomous_heal → registry
 
-      case "eos_apex_go_benchmark": {
-        const router = new EosApexModelRouter(this.projectRoot);
-        return router.runGoThroughputBenchmark();
-      }
+            // SPEC-155 Phase-6: eos_apex_go_benchmark → registry
 
       case "eos_wasm_benchmark": {
         return runBenchmark(Number(args.iterations || 100000));
@@ -4408,12 +4351,7 @@ export class EosMcpServer {
         };
       }
 
-      case "eos_finops_budget_check": {
-        onProgress?.(50, 100, "Auditing token spend ledger and Cajitas status");
-        const budget = new EosFinOpsBudget(15.00);
-        onProgress?.(100, 100, "FinOps report compiled");
-        return budget.getReport();
-      }
+            // SPEC-155 Phase-6: eos_finops_budget_check → registry
 
       case "eos_clave_de_sol_evaluate": {
         onProgress?.(50, 100, "Evaluating Subject-Object-Place consciousness metrics");
@@ -4813,54 +4751,9 @@ export class EosMcpServer {
         }
       }
 
-      case "eos_product_foundry_create": {
-        onProgress?.(30, 100, "Synthesizing hexagonal product blueprint");
-        const name = String(args.name || "Apex Product Core");
-        const domain = String(args.domain || "general");
-        const tier = (args.tier as any) || "ENTERPRISE";
-        const entities = Array.isArray(args.entities) && args.entities.length > 0 ? args.entities : ["PrimaryRecord", "AuditTrail"];
-        const commands = Array.isArray(args.commands) && args.commands.length > 0 ? args.commands : ["CreateRecord", "VerifyRecord"];
-        const platforms = Array.isArray(args.platforms) && args.platforms.length > 0 ? args.platforms : ["web", "distributed-backend"];
-        const manifest: ProductManifest = {
-          id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-          name,
-          domain,
-          description: `Autonomous product blueprint for ${name}`,
-          tier,
-          platforms,
-          entities,
-          commands,
-        };
-        const blueprint = EosUniversalProductFoundry.createProductBlueprint(manifest);
-        const report = EosUniversalProductFoundry.validateProductTopology(blueprint);
-        onProgress?.(100, 100, "Product blueprint created and verified");
-        return {
-          status: "BLUEPRINT_CREATED",
-          blueprint,
-          validation: report,
-          totalFilesGenerated: blueprint.domainEntities.length + blueprint.useCases.length + 2
-        };
-      }
+            // SPEC-155 Phase-6: eos_product_foundry_create → registry
 
-      case "eos_product_foundry_validate": {
-        onProgress?.(30, 100, "Validating product topology and boundary rules");
-        const domain = String(args.domain || "fintech");
-        const tier = (args.tier as any) || "MISSION_CRITICAL";
-        const manifest: ProductManifest = {
-          id: `${domain}-validation-probe`,
-          name: `${domain} Validation Probe`,
-          domain,
-          description: "Topological verification probe",
-          tier,
-          platforms: ["distributed-backend"],
-          entities: ["SampleEntity"],
-          commands: ["ExecuteSample"],
-        };
-        const blueprint = EosUniversalProductFoundry.createProductBlueprint(manifest);
-        const report = EosUniversalProductFoundry.validateProductTopology(blueprint);
-        onProgress?.(100, 100, "Topology validation complete");
-        return report;
-      }
+            // SPEC-155 Phase-6: eos_product_foundry_validate → registry
 
       case "eos_sovereign_loop_run": {
         onProgress?.(10, 100, "Initializing 21-Step Sovereign Engineering Loop");
@@ -4887,56 +4780,9 @@ export class EosMcpServer {
         };
       }
 
-      case "eos_product_deliver_run": {
-        onProgress?.(15, 100, "Starting LADDER-15 Product Delivery Golden Path");
-        const name = String(args.name || "Demo Ledger MVP");
-        const domain = String(args.domain || "fintech-ledger");
-        const tier = (args.tier as ProductManifest["tier"]) || "MVP";
-        const write = args.write === true;
-        const entities = Array.isArray(args.entities) && args.entities.length > 0
-          ? args.entities.map(String)
-          : ["LedgerEntry", "Account"];
-        const commands = Array.isArray(args.commands) && args.commands.length > 0
-          ? args.commands.map(String)
-          : ["PostEntry", "ReconcileBooks"];
-        const manifest: ProductManifest = {
-          id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-          name,
-          domain,
-          description: `Golden Path delivery for ${name}`,
-          tier,
-          platforms: ["distributed-backend", "web"],
-          entities,
-          commands,
-          compliance: ["SLSA_4"]
-        };
-        onProgress?.(45, 100, "Foundry + Sovereign Loop + verification gates");
-        const result = EosProductDeliveryOrchestrator.deliverProduct(manifest, {
-          dryRun: !write,
-          projectRoot: this.projectRoot,
-          enforceGates: true,
-          externalSatellite: false
-        });
-        onProgress?.(100, 100, `Delivery ${result.status}`);
-        return {
-          status: result.status,
-          reason: result.reason ?? null,
-          track: result.track,
-          dryRun: result.dryRun,
-          intelGovernanceStagesCompleted: result.intelGovernanceStagesCompleted,
-          gateResults: result.gateResults,
-          scorecard: result.scorecard,
-          sddPackagePath: result.sddPackagePath,
-          epistemicState: result.epistemicState,
-          sha256Receipt: result.sha256Receipt,
-          deploymentAttempted: result.deploymentAttempted,
-          durationMs: result.durationMs
-        };
-      }
+            // SPEC-155 Phase-6: eos_product_deliver_run → registry
 
-      case "eos_product_deliver_status": {
-        return EosProductDeliveryOrchestrator.getStatus();
-      }
+            // SPEC-155 Phase-6: eos_product_deliver_status → registry
 
       case "eos_platform_ops_ceiling": {
         onProgress?.(20, 100, "Evaluating LADDER-16 platform ops ceiling");
@@ -5104,10 +4950,7 @@ export class EosMcpServer {
         return res;
       }
 
-      case "eos_synapse_arbitrate": {
-        const candidates = Array.isArray(args.candidates) ? args.candidates : [];
-        return EosMetaCognitiveSynapse.arbitrateIntents(candidates);
-      }
+            // SPEC-155 Phase-6: eos_synapse_arbitrate → registry
 
       case "eos_canary_rollout": {
         const versionTarget = String(args.versionTarget || "v50.0.0");
@@ -5370,32 +5213,13 @@ export class EosMcpServer {
         return globalDesignStudio.auditDesignMarkup(markup);
       }
 
-      case "eos_finops_route_task": {
-        const directive = String(args.directive || "");
-        const tokens = typeof args.estimatedTokens === "number" ? args.estimatedTokens : undefined;
-        return globalFinOpsGovernor.classifyTaskCostTier(directive, tokens);
-      }
+            // SPEC-155 Phase-6: eos_finops_route_task → registry
 
-      case "eos_finops_evaluate_stagnation": {
-        const diffs = Array.isArray(args.diffHistory) ? args.diffHistory.map(String) : [];
-        const passed = Boolean(args.testPassed);
-        return globalFinOpsGovernor.evaluateStagnation(diffs, passed);
-      }
+            // SPEC-155 Phase-6: eos_finops_evaluate_stagnation → registry
 
-      case "eos_finops_wallet_status": {
-        if (args.reset) globalFinOpsGovernor.reset();
-        const missionId = args.missionId ? String(args.missionId) : undefined;
-        if (missionId) {
-          return globalFinOpsGovernor.recordTokenUsage(missionId, 0, 0, "TIER_1_LOCAL_SLM");
-        }
-        return globalFinOpsGovernor.getStatus();
-      }
+            // SPEC-155 Phase-6: eos_finops_wallet_status → registry
 
-      case "eos_planetary_sparse_project": {
-        const targetFile = String(args.targetFile || "");
-        const monorepoNodes = Array.isArray(args.monorepoNodes) ? args.monorepoNodes : [];
-        return globalPlanetaryGovernor.projectSparseClosure(targetFile, monorepoNodes);
-      }
+            // SPEC-155 Phase-6: eos_planetary_sparse_project → registry
 
       case "eos_jpl_power_of_ten_audit": {
         const sourceCode = String(args.sourceCode || "");
@@ -5407,36 +5231,17 @@ export class EosMcpServer {
         return globalPlanetaryGovernor.adjudicateTmrConsensus(votes);
       }
 
-      case "eos_synapse_propagate_golden_path": {
-        const patternId = String(args.patternId || "");
-        const targetRepos = Array.isArray(args.targetRepos) ? args.targetRepos.map(String) : undefined;
-        return globalCrossFleetSynapse.propagateGoldenPath(patternId, targetRepos);
-      }
+            // SPEC-155 Phase-6: eos_synapse_propagate_golden_path → registry
 
-      case "eos_synapse_fleet_knowledge_query": {
-        const filter = args.categoryFilter ? (String(args.categoryFilter).toUpperCase() as SynapticPatternCategory) : undefined;
-        return globalCrossFleetSynapse.queryFleetKnowledge(filter);
-      }
+            // SPEC-155 Phase-6: eos_synapse_fleet_knowledge_query → registry
 
-      case "eos_synapse_mesh_status": {
-        if (args.reset) globalCrossFleetSynapse.reset();
-        return globalCrossFleetSynapse.getStatus();
-      }
+            // SPEC-155 Phase-6: eos_synapse_mesh_status → registry
 
-      case "eos_planetary_mesh_evacuate_traffic": {
-        const providerId = String(args.providerId || "");
-        const reason = args.reason ? String(args.reason) : undefined;
-        return globalMultiCloudEvacuationMesh.evacuateCloudProvider(providerId, reason);
-      }
+            // SPEC-155 Phase-6: eos_planetary_mesh_evacuate_traffic → registry
 
-      case "eos_planetary_mesh_health_matrix": {
-        return globalMultiCloudEvacuationMesh.getHealthMatrix();
-      }
+            // SPEC-155 Phase-6: eos_planetary_mesh_health_matrix → registry
 
-      case "eos_planetary_mesh_status": {
-        if (args.reset) globalMultiCloudEvacuationMesh.reset();
-        return globalMultiCloudEvacuationMesh.getStatus();
-      }
+            // SPEC-155 Phase-6: eos_planetary_mesh_status → registry
 
       case "eos_enterprise_workspace": {
         const action = String(args?.action || "list").trim().toLowerCase();
@@ -5936,18 +5741,7 @@ export class EosMcpServer {
         };
       }
 
-      case "eos_fleet_verify": {
-        const target = typeof args?.target === "string" ? args.target.trim() : "all";
-        const recordToLedger = args?.recordToLedger === true;
-        const simulateDegraded = args?.simulateDegraded === true;
-
-        return EosFleetProductionVerifier.evaluateFleetSync({
-          target,
-          projectRoot: this.projectRoot,
-          recordToLedger,
-          simulateDegraded
-        });
-      }
+            // SPEC-155 Phase-6: eos_fleet_verify → registry
 
       case "eos_unitotal_evaluate": {
         const action = String(args?.action || "evaluate").trim().toLowerCase();
@@ -6341,23 +6135,7 @@ export class EosMcpServer {
         });
       }
 
-      case "eos_fleet_pulse": {
-        const engine = new EosFleetPulseEngine(this.projectRoot);
-        const report = engine.auditFleetPulse();
-        const format = String(args?.format || "json").toLowerCase();
-
-        if (format === "table") {
-          return {
-            table: EosFleetPulseEngine.formatPulseTable(report),
-            totalProjects: report.totalProjects,
-            quorumPercentage: report.fleetHealthQuorumPercentage,
-            sha256Receipt: report.sha256Receipt,
-            timestampIso: report.timestampIso
-          };
-        }
-
-        return report;
-      }
+            // SPEC-155 Phase-6: eos_fleet_pulse → registry
 
       // SPEC-155 Phase-5: dead glorian_* switch arms purged (Phase-3 registry)
       case "eos_autonomous_synthesize": {
