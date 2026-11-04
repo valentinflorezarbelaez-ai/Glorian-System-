@@ -229,8 +229,12 @@ if (!fs.existsSync(registryFile)) {
               console.log("  CI gate        : PASSED");
             } catch (error) {
               localCheckFailures++;
-              fail(`CI gate failed for ${project.id}; no commit or push was attempted. ${error.message}`);
-              break;
+              console.error(`  CI gate        : FAILED for ${project.id}; skipping push. ${error.message}`);
+              if (!isShipAllMode) {
+                fail(`CI gate failed for ${project.id}; no commit or push was attempted. ${error.message}`);
+                break;
+              }
+              continue;
             }
 
             try {
@@ -259,8 +263,12 @@ if (!fs.existsSync(registryFile)) {
               }
             } catch (error) {
               localCheckFailures++;
-              fail(`Ship operation failed for ${project.id}. ${error.message}`);
-              break;
+              console.error(`  Ship           : FAILED for ${project.id}. ${error.message}`);
+              if (!isShipAllMode) {
+                fail(`Ship operation failed for ${project.id}. ${error.message}`);
+                break;
+              }
+              continue;
             }
           }
         }
