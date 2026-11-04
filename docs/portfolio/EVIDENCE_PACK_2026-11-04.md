@@ -2,7 +2,7 @@
 
 **Owner**: Valentín Flórez Arbeláez  
 **Epistemic**: `CAREER_EVIDENCE_WITHIN_TESTED_SCOPE` (explicitly NOT Level 5)  
-**Pack SHA-256**: `1fa3095f51aaf62f33839c10ef10e5b3afb19b7b0f2f51a53ca6be1851cce0c3`
+**Pack SHA-256**: `77bb027eddc75e24d0360fb53d298ce451ec528431804f457a58499e22ba5eea`
 
 ## Employer one-liner
 Verified Engineering OS for AI agents: natural language in, fail-closed Big-Tech SDLC out (Spotify + Nubank + Gentleman bars).
@@ -11,10 +11,10 @@ Verified Engineering OS for AI agents: natural language in, fail-closed Big-Tech
 
 | Signal | Result |
 |---|---|
-| Mission Golden Path | **SUCCESS** · `53919825602dbe9a…` |
+| Mission Golden Path | **SUCCESS** · `5c96fa4884961148…` |
 | Gentleman stack | **100/100** · SOVEREIGN_GENTLEMAN_APEX |
 | Architecture purity | **100** · clean=true |
-| Turbo verify | **PASS** · 124.585 ms |
+| Turbo verify | **PASS** · 48.578 ms |
 | Fleet Soundcheck avg | **100** · quorum=true |
 | Spotify institutional | **100** · SOUNDCHECK_APEX |
 | Nubank institutional | **100** · BUILDING_NU_APEX |

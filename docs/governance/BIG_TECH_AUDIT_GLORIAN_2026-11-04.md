@@ -24,10 +24,13 @@ NL→SDLC is now a single fail-closed entry (`eos_mission_run` / SPEC-156). Rema
 - MCP `core` profile <= 30 (SPEC-044/155/156)
 
 ## FIX / PERFECT (still open)
-1. **MCP god-file** still huge — continue SPEC-155 extraction beyond Phase-1
-2. **Fleet dirty trees** — Soundcheck git health capped at 15/25 on 9 repos
+1. **MCP god-file** — Phase-2 migrated (+7 utilitarian handlers); T7 still open (delete dead switch cases + LOC ≥25%)
+2. **Fleet dirty trees** — remediated to Soundcheck 100/10 (re-check after each ship)
 3. **"Dead exports" noise** — mostly MCP-wired; do not delete blindly
 4. **Engram project ambiguity** — cwd resolves outside repo; pin Engram identity harder
+5. **Crud-slack Law VI** — remove hardcoded DB connection defaults (opaque env handles only)
+6. **Shallow landing gates** — deepen ATP/Donaciones/Biblioteca/Portafolio verify scripts beyond file-presence
+7. **Portfolio evidence refresh** — keep `portafolio` careerEvidence.ts synced when regenerating packs
 
 ## BUILD (shipped this pass)
 - [x] `eos_mission_run` NL entry: amplify → Law IV direction → architecture → tribunal → Spotify → Nubank (hard if fintech) → turbo → ledger

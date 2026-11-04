@@ -1,7 +1,7 @@
 {
   "title": "Glorian Career Evidence Pack",
   "owner": "Valentín Flórez Arbeláez",
-  "generatedAtIso": "2026-11-04T17:04:42.615Z",
+  "generatedAtIso": "2026-11-04T18:37:59.622Z",
   "epistemicState": "CAREER_EVIDENCE_WITHIN_TESTED_SCOPE",
   "claimsDenied": [
     "Level 5",
@@ -55,8 +55,8 @@
     "mission": {
       "status": "SUCCESS",
       "epistemicState": "MISSION_GOLDEN_PATH_WITHIN_TESTED_SCOPE",
-      "sha256Receipt": "53919825602dbe9a535b4d39ce1f92430118f568bc8440f3f230bf56e54af3e1",
-      "durationMs": 779,
+      "sha256Receipt": "5c96fa4884961148176acdc0baa453a4ce4446b77ad25363fba81804ad81ca08",
+      "durationMs": 247,
       "stages": [
         {
           "id": "INPUT_VALIDATION",
@@ -104,13 +104,13 @@
           "id": "TURBO_VERIFY",
           "exitCode": 0,
           "mandatory": true,
-          "summary": "Turbo PASS files=1087"
+          "summary": "Turbo PASS files=1091"
         },
         {
           "id": "LEDGER_SEAL",
           "exitCode": 0,
           "mandatory": true,
-          "summary": "Ledger sealed EOS-LEDGER-000001-966f254f48"
+          "summary": "Ledger sealed EOS-LEDGER-000001-01e13e34dc"
         }
       ]
     },
@@ -128,9 +128,9 @@
     },
     "turbo": {
       "success": true,
-      "totalDurationMs": 124.585,
+      "totalDurationMs": 48.578,
       "epistemicState": "LOCAL_CHECKS_PASSED",
-      "sourceInventoryDigest": "sha256:d97e039e29a7be601c7f327081b51f63a18ea5597c52d683bdc13f710449fd64"
+      "sourceInventoryDigest": "sha256:9a4ba50388ab2d1f22c5ae06d9a64baa8e82fcd12aea17e0c00ca9bbe222e525"
     },
     "fleetSoundcheck": {
       "fleetAverageScore": 100,
@@ -138,7 +138,7 @@
       "totalRepositories": 10,
       "reposAtGradeA": 10,
       "dirtyTrees": [],
-      "sha256Receipt": "255fbb03a64a7520679dd482fadd3f6ebf0ef5c1fb567ff0f783ce38eef469d3"
+      "sha256Receipt": "1d0a29d43ba31d70d525b9f7401d55fbd8e71d82a733c738bccae58880fba7b4"
     },
     "spotifyInstitutional": {
       "institutionalScore": 100,
@@ -160,5 +160,5 @@
       "OpenSpec formal catalog"
     ]
   },
-  "sha256Pack": "1fa3095f51aaf62f33839c10ef10e5b3afb19b7b0f2f51a53ca6be1851cce0c3"
+  "sha256Pack": "77bb027eddc75e24d0360fb53d298ce451ec528431804f457a58499e22ba5eea"
 }

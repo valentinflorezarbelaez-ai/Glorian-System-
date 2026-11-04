@@ -658,6 +658,10 @@ import {
 } from "./tools/eosMcpCoreUtilitarianHandlers.ts";
 
 import {
+  PHASE2_CORE_UTILITARIAN_HANDLERS
+} from "./tools/eosMcpPhase2UtilitarianHandlers.ts";
+
+import {
   EosS0DesignSystemGovernor,
   type VisualAuditReport
 } from "../core/eosS0DesignSystemGovernor.ts";
@@ -833,8 +837,9 @@ export class EosMcpServer {
     }
     this.knowledgeGraph = kg;
     this.agentSessionContract = getDefaultAgentSessionContract(this.projectRoot);
-    // SPEC-155 Phase-1: conscious core handlers live outside the god-file switch.
+    // SPEC-155 Phase-1/2: conscious utilitarian handlers live outside the god-file switch.
     this.dispatchRegistry.registerAll(PHASE1_CORE_UTILITARIAN_HANDLERS);
+    this.dispatchRegistry.registerAll(PHASE2_CORE_UTILITARIAN_HANDLERS);
   }
 
   public setToolProfile(profile: McpToolProfile): void {
