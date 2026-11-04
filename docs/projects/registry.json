@@ -56,7 +56,7 @@
       "audit": "AUDIT_COMPLETE",
       "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
       "ownerApproval": "OWNER_APPROVAL",
-      "cicdGateScript": "npm test",
+      "cicdGateScript": "scripts/verify-landing.mjs",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
       "headCommitSha": "a58e1a3352e8f7dbe7a720ac700b50bb0809265e"
@@ -132,7 +132,7 @@
       "audit": "AUDIT_COMPLETE",
       "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
       "ownerApproval": "OWNER_APPROVAL",
-      "cicdGateScript": "npm test",
+      "cicdGateScript": "scripts/verify-landing.mjs",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
       "headCommitSha": "99dfa2efc71cb818d5e1e95b8241c0c2f6a95bf2"

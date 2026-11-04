@@ -257,7 +257,13 @@ if (!fs.existsSync(registryFile)) {
                 console.log("  Ship           : already synced with upstream (nothing to push)");
               } else {
                 console.log(`  Ship           : pushing HEAD to origin (ahead=${ahead < 0 ? "unknown/new-upstream" : ahead})`);
-                execFileSync("git", ["push", "-u", "origin", "HEAD"], { cwd: checkoutRoot, stdio: "inherit" });
+                try {
+                  execFileSync("git", ["push", "-u", "origin", "HEAD"], { cwd: checkoutRoot, stdio: "inherit" });
+                } catch (pushError) {
+                  console.log("  Ship           : non-fast-forward; attempting pull --rebase then retry push");
+                  execFileSync("git", ["pull", "--rebase", "origin", "HEAD"], { cwd: checkoutRoot, stdio: "inherit" });
+                  execFileSync("git", ["push", "-u", "origin", "HEAD"], { cwd: checkoutRoot, stdio: "inherit" });
+                }
                 console.log("  Ship           : push completed (Vercel auto-deploy if linked)");
                 shipsCompleted += 1;
               }
