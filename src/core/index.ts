@@ -87,3 +87,4 @@ export * from "./eosPlanetaryMultiCloudEvacuationMesh.ts";
 export * from "./glorianFleetHealthWatchdog.ts";
 export * from "./glorianConstitutionalTribunal.ts";
 export * from "./eosMissionGoldenPathOrchestrator.ts";
+export * from "./eosAutonomousCodeSynthesizer.ts";

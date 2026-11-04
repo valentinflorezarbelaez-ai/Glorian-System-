@@ -3866,6 +3866,7 @@ export class EosMcpServer {
     }
 
     // SPEC-155: prefer modular utilitarian facades before the legacy god-file switch.
+    // SPEC-155 T7: Phase-1/2 utilitarian tools dispatch via registry only (dead switch arms purged).
     const modular = this.dispatchRegistry.tryDispatch(toolName, args, {
       projectRoot: this.projectRoot,
       resolveProjectPath: (value, kind, fallback) => this.resolveProjectPath(value, kind, fallback),
@@ -3992,45 +3993,6 @@ export class EosMcpServer {
         }
       }
 
-      case "eos_tmr_consensus": {
-        const directive = String(args.directive || "");
-        const tmr = evaluateDirectiveWithTMR(directive);
-        const thought = interpretJarvisDirective(directive);
-        return {
-          directive,
-          consensusAchieved: tmr.consensusAchieved,
-          agreementRatio: tmr.agreementRatio,
-          selectedAction: tmr.selectedAction,
-          consensusHash: tmr.consensusHash,
-          sandboxes: tmr.sandboxes,
-          voiceScript: thought.voiceTranscript
-        };
-      }
-
-      case "eos_audit_fleet": {
-        const registryCandidate = path.join(this.projectRoot, "docs/projects/registry.json");
-        let registry: { projects?: unknown } = { projects: [] };
-        if (fs.existsSync(registryCandidate)) {
-          const registryPath = this.resolveProjectPath("docs/projects/registry.json", "file");
-          registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
-        }
-        const registeredProjects = Array.isArray(registry.projects) ? registry.projects : [];
-        return {
-          scope: "LOCAL_REGISTRY_ONLY",
-          externalProbesRun: false,
-          fleetStatus: "NOT_PROBED",
-          totalRegisteredProjects: registeredProjects.length,
-          projects: registeredProjects.filter(isPlainRecord).map((project) => ({
-            id: typeof project.id === "string" ? project.id : null,
-            name: typeof project.name === "string" ? project.name : null,
-            remoteUrl: typeof project.remoteUrl === "string" ? project.remoteUrl : null,
-            health: "NOT_PROBED",
-            ci: "NOT_PROBED",
-            hooks: "NOT_PROBED"
-          }))
-        };
-      }
-
       case "eos_fleet_registry_sync": {
         const dryRun = args?.dryRun !== false;
         const audit = Boolean(args?.audit ?? false);
@@ -4071,117 +4033,6 @@ export class EosMcpServer {
           windowsHide: true
         });
         return JSON.parse(out.trim());
-      }
-
-      case "eos_health_check": {
-        const mem = process.memoryUsage();
-        return {
-          status: "HANDLER_ALIVE",
-          scope: "Process liveness only; no subsystem checks or external probes ran.",
-          uptimeSeconds: Math.floor(process.uptime()),
-          memoryRssMb: (mem.rss / (1024 * 1024)).toFixed(2),
-          heapUsedMb: (mem.heapUsed / (1024 * 1024)).toFixed(2),
-          subsystemProbes: "NOT_RUN"
-        };
-      }
-
-      case "eos_validate_patch": {
-        if (typeof args.filePath !== "string" || !args.filePath || Buffer.byteLength(args.filePath, "utf8") > 4096) {
-          throw new TypeError("A project-relative target file path no longer than 4096 bytes is required.");
-        }
-        if (path.isAbsolute(args.filePath)) throw new Error("Patch validation accepts project-relative paths only.");
-        if (typeof args.content !== "string" || Buffer.byteLength(args.content, "utf8") > MAX_MCP_STRING_BYTES) {
-          throw new RangeError("Patch content must be a string no larger than 256 KiB.");
-        }
-        const root = fs.realpathSync(this.projectRoot);
-        const candidate = path.resolve(root, args.filePath);
-        if (candidate === root || !isPathWithin(root, candidate)) {
-          throw new Error("Patch target must stay inside the configured project root.");
-        }
-        let ancestor = path.dirname(candidate);
-        const missingSegments: string[] = [];
-        while (true) {
-          try {
-            fs.lstatSync(ancestor);
-            break;
-          } catch (error) {
-            if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
-            const parent = path.dirname(ancestor);
-            if (parent === ancestor) throw new Error("Unable to resolve the patch target's parent directory.");
-            missingSegments.unshift(path.basename(ancestor));
-            ancestor = parent;
-          }
-        }
-        const ancestorStat = fs.statSync(ancestor);
-        if (!ancestorStat.isDirectory()) throw new Error("Patch target parent must be a directory.");
-        const realAncestor = fs.realpathSync(ancestor);
-        if (!isPathWithin(root, realAncestor)) throw new Error("Patch target parent resolves outside the configured project root.");
-        const realParent = path.join(realAncestor, ...missingSegments);
-        const safeTarget = path.join(realParent, path.basename(candidate));
-        if (!isPathWithin(root, safeTarget)) throw new Error("Patch target must stay inside the configured project root.");
-        try {
-          const stat = fs.lstatSync(safeTarget);
-          if (stat.isSymbolicLink() || !stat.isFile()) throw new Error("Patch target must be a regular non-symlink file.");
-          const realTarget = fs.realpathSync(safeTarget);
-          if (!isPathWithin(root, realTarget)) throw new Error("Patch target resolves outside the configured project root.");
-        } catch (error) {
-          if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
-        }
-        return validatePatch(path.relative(root, safeTarget), args.content, root);
-      }
-
-      case "eos_optimize_context": {
-        const filePath = typeof args.filePath === "string" ? args.filePath : "";
-        let content = typeof args.content === "string" ? args.content : "";
-        if (Buffer.byteLength(content, "utf8") > MAX_MCP_STRING_BYTES) {
-          throw new RangeError("Context input exceeds the 256 KiB limit.");
-        }
-        if (!content && filePath) {
-          const full = this.resolveProjectPath(filePath, "file");
-          content = fs.readFileSync(full, "utf8");
-        }
-        return compressSourceContext(content, filePath);
-      }
-
-      case "eos_amplify_prompt": {
-        const rawPrompt = String(args.rawPrompt || "");
-        const targetModel = (args.targetModel || "universal") as ModelFamily;
-        const strictLevel = (args.strictLevel || "hardened") as StrictnessLevel;
-        return amplifyPrompt({
-          rawPrompt,
-          targetModel,
-          strictLevel
-        });
-      }
-
-      case "eos_check_architecture": {
-        const targetDir = this.resolveProjectPath(args.targetDir, "directory", "src");
-        return scanArchitecture(targetDir, this.projectRoot);
-      }
-
-      case "eos_evaluate_decision": {
-        return evaluateDecision({
-          title: String(args.title || "Architectural Evaluation"),
-          description: String(args.description || ""),
-          proposedAction: String(args.proposedAction || ""),
-          codeSnippet: args.codeSnippet ? String(args.codeSnippet) : undefined,
-          targetDomain: args.targetDomain ? String(args.targetDomain) : undefined
-        });
-      }
-
-      case "eos_turbo_verify": {
-        return runTurboPipeline(this.projectRoot);
-      }
-
-      case "eos_get_blast_radius": {
-        const filePath = String(args.filePath || "");
-        const graph = new EosSemanticGraph(this.projectRoot);
-        return graph.calculateBlastRadius(filePath);
-      }
-
-      case "eos_query_code_graph": {
-        const graph = new EosSemanticGraph(this.projectRoot);
-        return graph.getSummary();
       }
 
       case "eos_autonomous_heal": {
@@ -4233,14 +4084,6 @@ export class EosMcpServer {
         }
         const target = this.resolveProjectPath(args.target, "file");
         return { scope: "LOCAL_HEURISTIC", certificationIssued: false, result: evaluator.evaluate(target) };
-      }
-
-      case "eos_check_openspec": {
-        const synchronizer = new EosOpenSpecSync(this.projectRoot);
-        const action = String(args.action || "audit");
-        if (action === "list_specs") return synchronizer.listSpecs();
-        if (action === "list_changes") return synchronizer.listChanges();
-        return synchronizer.audit();
       }
 
       case "eos_titans_benchmark": {
@@ -5588,11 +5431,6 @@ export class EosMcpServer {
         return EosMetaCognitiveSynapse.arbitrateIntents(candidates);
       }
 
-      case "eos_fleet_soundcheck": {
-        const safeRoot = this.resolveProjectPath(args?.projectRoot, "directory", ".");
-        return EosFleetSoundcheckMesh.auditFleet(safeRoot);
-      }
-
       case "eos_mcts_tune": {
         const iterations = Number(args.iterations) || 120;
         const seed = Number(args.seed) || 42;
@@ -5989,27 +5827,6 @@ export class EosMcpServer {
         } finally {
           ledger.close();
         }
-      }
-
-      case "eos_ast_analyze": {
-        if (typeof args?.projectId === "string" && args.projectId.trim().length > 0 && args.projectId.trim().toLowerCase() !== "eos-system") {
-          const resolved = EosEnterpriseWorkspaceGovernor.resolveAuthorizedWorkspace(
-            args.projectId.trim(),
-            typeof args?.targetDir === "string" && args.targetDir.trim().length > 0 ? args.targetDir.trim() : ".",
-            "READ_ONLY",
-            this.projectRoot
-          );
-          return EosTypeScriptAstAnalyzer.analyzeDirectory(resolved.resolvedTargetPath, resolved.workspaceRoot);
-        }
-        const safeDir = this.resolveProjectPath(args?.targetDir, "directory", "src/core");
-        return EosTypeScriptAstAnalyzer.analyzeDirectory(safeDir, this.projectRoot);
-      }
-
-      case "eos_gentleman_audit": {
-        const geminiDir = typeof args.geminiConfigDir === "string" && args.geminiConfigDir.trim().length > 0
-          ? args.geminiConfigDir.trim()
-          : undefined;
-        return EosGentlemanStackBridge.auditStack(this.projectRoot, geminiDir);
       }
 
       case "eos_gentleman_update": {
@@ -6981,24 +6798,6 @@ export class EosMcpServer {
             table: EosFleetPulseEngine.formatPulseTable(report),
             totalProjects: report.totalProjects,
             quorumPercentage: report.fleetHealthQuorumPercentage,
-            sha256Receipt: report.sha256Receipt,
-            timestampIso: report.timestampIso
-          };
-        }
-
-        return report;
-      }
-
-      case "eos_nocturnal_evolution": {
-        const engine = new EosNocturnalEvolutionEngine(this.projectRoot);
-        const targetDir = args?.targetDir ? String(args.targetDir) : "src/core";
-        const format = String(args?.format || "json").toLowerCase();
-        const report = engine.runEvolutionSweep({ targetDir });
-
-        if (format === "summary") {
-          return {
-            summary: EosNocturnalEvolutionEngine.formatNocturnalSummary(report),
-            compositeFitnessScore: report.compositeFitnessScore,
             sha256Receipt: report.sha256Receipt,
             timestampIso: report.timestampIso
           };
