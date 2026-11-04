@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-04T00:47:02.260Z",
-  "totalSpecs": 143,
-  "catalogSha256": "f4d4ee85c155947a238b86e7070d217d4070af5747f6766bb60c0b20fdd5c05e",
+  "timestampIso": "2026-11-04T01:26:48.418Z",
+  "totalSpecs": 144,
+  "catalogSha256": "c403748a85f18fb73fd12968bb707d25b89ff7f9c40cbc3486336b7145110ee7",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1289,6 +1289,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-143-ENGINEERING-GROUND-TRUTH-AND-SANDBOX-HARDENING.md",
       "sha256": "22d9db21e24bc4428e4654e2146a567ecae4495231e32b43853f708db10b245c"
+    },
+    {
+      "id": "SPEC-144",
+      "title": "MCP Streamable HTTP Lifecycle & Preemptive Wasm Worker Hardening",
+      "status": "APPROVED",
+      "frCount": 7,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-144-STREAMABLE-HTTP-AND-WASM-ISOLATION-HARDENING.md",
+      "sha256": "687c6eca2b7eb17dc5e53c8fbdbba3fae01525aa6a71ed0b8386686572053683"
     }
   ]
 }

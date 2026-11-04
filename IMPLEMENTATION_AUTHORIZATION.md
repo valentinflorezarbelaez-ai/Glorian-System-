@@ -7,6 +7,7 @@
 * **Authorized By**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
 * **Date**: 2026-10-25
 * **Scope**: Creation and continuous sovereign elevation of EOS System (Glorian System):
+  - CHANGE-079 / SPEC-144: MCP Streamable HTTP Lifecycle & Preemptive Wasm Worker Hardening — Inconditional preemptive Worker thread isolation for all arbitrary external WebAssembly bytecode (args.code) with hard timeout termination (worker.terminate()) and 512 KiB pre-spawn payload bounding, hermetic socket teardown in StreamableSession.close() with local reference capture, graceful session_closing notification and res.end() before detachment, idempotent session closing, output stream disconnect binding via res.on("close"), active stream heartbeat activity renewal preventing false idle reaping, and auditable droppedEventsCount backpressure tracking.
   - CHANGE-078 / SPEC-143: Engineering Ground Truth, Preemptive Sandbox Isolation & Attack Surface Hardening — Hardening of public serverless endpoint api/mcp.js by eliminating unauthenticated guest isolate/wasm execution, preemptive WebAssembly worker thread isolation with hard timeoutMs termination (worker.terminate()) preventing event-loop freezing, ground-truth nominal documentation of eos_semantic_search as Layer-0 Hybrid Lexical-Vector search (FTS5 BM25 + 64-dim FNV-1a hash projection with RRF k=60), automatic lazy corpus indexing on MCP initialization, and MCP Streamable HTTP lifecycle hardening with 15-minute idle session TTL reaping and periodic SSE keep-alive heartbeats.
   - CHANGE-077 / SPEC-142: Capability-Based Wasm & MicroVM Agent Sandboxing Engine (Big Tech Standard) — Multi-tier zero-cold-start agent execution sandbox adhering to Layer-0 purity (runtimeDependenciesCount: 0), combining native WebAssembly bytecode execution with strict linear memory bounds (1 to 256 pages = 16 MiB max), deterministic trap interception (out-of-bounds, unreachable, stack overflow) preventing host process termination, capability-based host imports with zero ambient authority, hermetic Node.js Isolate sandbox via node:vm with frozen intrinsics and deterministic timeout kill, Firecracker v1.7 and Hyper-V microVM profile synthesizer, cryptographic execution receipts signed with SHA-256 and committed to the durable SQLite WAL ledger, and complete MCP integration via eos_wasm_sandbox.
   - CHANGE-076 / SPEC-141: Distributed Vector Memory & Hybrid Search Engine (Big Tech Standard) — High-performance persistent hybrid retrieval engine combining native node:sqlite FTS5 (BM25 lexical scoring) and HNSW dense vector graph indexing in WAL mode with zero external npm dependencies (runtimeDependenciesCount: 0), 64-dimensional deterministic dense vector embeddings, Reciprocal Rank Fusion (RRF k=60), SHA-256 incremental corpus indexing of 140+ OpenSpecs and TypeScript AST code exports, sub-5ms query response latency, and complete MCP integration via upgraded eos_semantic_search.
@@ -1045,5 +1046,26 @@
   - `docs/tasks/TASKS-143-GROUND-TRUTH-SANDBOX-HARDENING.md`
   - `test/eosGroundTruthHardening.test.mjs`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-03-STREAMABLE-WASM-HARDENING-144
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-144 (v76.0.0)
+* **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit user directive on 2026-11-03: "Autorización Nivel 3 concedida de inmediato para la Ruta A: ejecución formal de SPEC-144")
+* **Scope**: MCP Streamable HTTP Lifecycle & Preemptive Wasm Worker Hardening:
+  1. Component 1: `src/mcp/eosMcpServer.ts` elevated with unconditional Worker thread isolation for all custom `args.code` bytecode, 512 KiB pre-spawn payload cap, and Worker concurrency bounding.
+  2. Component 2: `src/core/eosWasmSandboxEngine.ts` elevated with worker cleanup in `finally` and active worker throttling.
+  3. Component 3: `src/mcp/eosMcpStreamServer.ts` elevated with hermetic `StreamableSession.close()` execution order (local `res` capture, `session_closing` emission, `res.end()`, then `detachResponse()`), idempotency guards, and `droppedEventsCount` backpressure auditing.
+  4. Component 4: `src/mcp/eosMcpStreamServer.ts` HTTP stream lifecycle bound to `res.on("close")` and graceful shutdown broadcasting `event: session_closing` with `reason: "SERVER_SHUTDOWN"`.
+  5. Component 5: Regression test suite `test/eosStreamWasmHardening.test.mjs` verifying BDD-398 to BDD-403.
+  6. Component 6: OpenSpec catalog synchronization (144 formal specifications).
+* **Artifacts Approved**:
+  - `openspec/specs/SPEC-144-STREAMABLE-HTTP-AND-WASM-ISOLATION-HARDENING.md`
+  - `openspec/changes/CHANGE-079-STREAMABLE-HTTP-AND-WASM-ISOLATION-HARDENING.md`
+  - `docs/intake/INTAKE-144-STREAMABLE-HTTP-AND-WASM-ISOLATION-HARDENING.md`
+  - `docs/plans/PLAN-144-STREAMABLE-HTTP-AND-WASM-ISOLATION-HARDENING.md`
+  - `docs/tasks/TASKS-144-STREAMABLE-HTTP-AND-WASM-ISOLATION-HARDENING.md`
+  - `test/eosStreamWasmHardening.test.mjs`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
 
 

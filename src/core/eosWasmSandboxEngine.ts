@@ -29,6 +29,7 @@ export type SandboxStatus =
   | "TIMEOUT_KILLED"
   | "MEMORY_EXCEEDED"
   | "CAPABILITY_VIOLATION"
+  | "RESOURCE_EXHAUSTED"
   | "EXECUTION_FAILED";
 
 export interface WasmSandboxOptions {
@@ -115,6 +116,9 @@ export const WASM_BYTECODE_TEMPLATES = {
 export class EosWasmSandboxEngine {
   public static readonly WASM_PAGE_SIZE_BYTES = 65536; // 64 KiB
   public static readonly MAX_WASM_PAGES_LIMIT = 256;   // 16 MiB
+  public static readonly MAX_CONCURRENT_WORKERS = 8;
+  public static readonly MAX_BYTECODE_SIZE_BYTES = 512 * 1024; // 512 KiB
+  public static activeWorkerCount = 0;
 
   private readonly projectRoot: string;
   private readonly ledgerPath: string;
@@ -255,7 +259,7 @@ export class EosWasmSandboxEngine {
    * immediately by the supervisor, guaranteeing that infinite loops do NOT starve
    * or block the host Node.js event loop.
    */
-  public executeWasmWorker(
+  public async executeWasmWorker(
     wasmInput: Uint8Array | Buffer | string,
     options?: WasmSandboxOptions
   ): Promise<SandboxExecutionResult> {
@@ -279,6 +283,44 @@ export class EosWasmSandboxEngine {
     const timeoutMs = Math.max(20, Math.min(30000, options?.timeoutMs || 2000));
     const entryFunction = options?.entryFunction;
     const functionArgs = options?.functionArgs || [];
+
+    // Pre-spawn payload size validation (512 KiB max)
+    if (wasmBytes.byteLength > EosWasmSandboxEngine.MAX_BYTECODE_SIZE_BYTES) {
+      const durationNs = Number(process.hrtime.bigint() - startNs);
+      const result = this.buildResult(
+        executionId,
+        "WASM",
+        "EXECUTION_FAILED",
+        1,
+        null,
+        [],
+        [`WebAssembly bytecode exceeds maximum allowed size of ${EosWasmSandboxEngine.MAX_BYTECODE_SIZE_BYTES} bytes.`],
+        durationNs,
+        0,
+        inputSha256
+      );
+      this.commitExecutionReceipt(result);
+      return result;
+    }
+
+    // Active worker concurrency check
+    if (EosWasmSandboxEngine.activeWorkerCount >= EosWasmSandboxEngine.MAX_CONCURRENT_WORKERS) {
+      const durationNs = Number(process.hrtime.bigint() - startNs);
+      const result = this.buildResult(
+        executionId,
+        "WASM",
+        "RESOURCE_EXHAUSTED",
+        1,
+        null,
+        [],
+        [`Worker concurrency limit reached (max ${EosWasmSandboxEngine.MAX_CONCURRENT_WORKERS} concurrent workers).`],
+        durationNs,
+        0,
+        inputSha256
+      );
+      this.commitExecutionReceipt(result);
+      return result;
+    }
 
     const workerScript = `
       import { workerData, parentPort } from "node:worker_threads";
@@ -334,6 +376,7 @@ export class EosWasmSandboxEngine {
       let memoryConsumedBytes = initialPages * EosWasmSandboxEngine.WASM_PAGE_SIZE_BYTES;
 
       let worker: Worker;
+      EosWasmSandboxEngine.activeWorkerCount++;
       try {
         worker = new Worker(workerScript, {
           eval: true,
@@ -346,6 +389,7 @@ export class EosWasmSandboxEngine {
           }
         });
       } catch (err: any) {
+        EosWasmSandboxEngine.activeWorkerCount = Math.max(0, EosWasmSandboxEngine.activeWorkerCount - 1);
         status = "EXECUTION_FAILED";
         exitCode = 1;
         stderr.push(String(err?.message || err));
@@ -372,6 +416,9 @@ export class EosWasmSandboxEngine {
           await worker.terminate();
         } catch {}
       }, timeoutMs);
+      if (timer.unref) {
+        timer.unref();
+      }
 
       worker.on("message", (msg: any) => {
         if (!msg || typeof msg !== "object") return;
@@ -384,6 +431,7 @@ export class EosWasmSandboxEngine {
           }
           status = "COMPLETED";
           exitCode = 0;
+          try { worker.terminate(); } catch {}
         } else if (msg.type === "error") {
           exitCode = 1;
           const errMsg = String(msg.message || "Wasm execution error");
@@ -399,6 +447,7 @@ export class EosWasmSandboxEngine {
           } else {
             status = "EXECUTION_FAILED";
           }
+          try { worker.terminate(); } catch {}
         }
       });
 
@@ -411,6 +460,7 @@ export class EosWasmSandboxEngine {
       });
 
       worker.on("exit", () => {
+        EosWasmSandboxEngine.activeWorkerCount = Math.max(0, EosWasmSandboxEngine.activeWorkerCount - 1);
         clearTimeout(timer);
         if (resolved) return;
         resolved = true;

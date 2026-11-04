@@ -104,6 +104,9 @@ export class StreamableSession {
   public readonly ringBuffer: StreamableEvent[] = [];
   public nextEventId = 1;
   public activeResponse: http.ServerResponse | null = null;
+  public droppedEventsCount = 0;
+  public isClosing = false;
+  public isClosed = false;
   private heartbeatTimer: NodeJS.Timeout | null = null;
   private readonly maxBufferSize: number;
 
@@ -140,6 +143,7 @@ export class StreamableSession {
     if (this.activeResponse && !this.activeResponse.writableEnded && this.activeResponse.writable) {
       try {
         this.activeResponse.write(": keep-alive\n\n");
+        this.lastActivity = Date.now();
       } catch {
         this.detachResponse();
       }
@@ -156,6 +160,7 @@ export class StreamableSession {
     this.ringBuffer.push(record);
     if (this.ringBuffer.length > this.maxBufferSize) {
       this.ringBuffer.shift();
+      this.droppedEventsCount++;
     }
     this.lastActivity = Date.now();
     return record;
@@ -173,16 +178,23 @@ export class StreamableSession {
     return this.ringBuffer.filter((e) => e.id > lastEventId);
   }
 
-  public close(): void {
-    this.detachResponse();
-    if (this.activeResponse && !this.activeResponse.writableEnded) {
+  public close(reason: string = "SESSION_CLOSED"): void {
+    if (this.isClosing || this.isClosed) return;
+    this.isClosing = true;
+
+    const res = this.activeResponse;
+    if (res && !res.writableEnded && !res.destroyed) {
       try {
-        this.activeResponse.end();
+        res.write(`event: session_closing\ndata: ${JSON.stringify({ reason, sessionId: this.id })}\n\n`);
+        res.end();
       } catch {
-        // ignore
+        // Socket already closed or destroyed at TCP level
       }
     }
+
+    this.detachResponse();
     this.ringBuffer.length = 0;
+    this.isClosed = true;
   }
 }
 
@@ -375,7 +387,7 @@ export class EosMcpStreamServer {
     let reapedCount = 0;
     for (const [id, session] of this.streamableSessions.entries()) {
       if (now - session.lastActivity > maxIdleMs) {
-        session.close();
+        session.close("SESSION_EXPIRED_IDLE");
         this.streamableSessions.delete(id);
         reapedCount++;
       }
@@ -423,7 +435,7 @@ export class EosMcpStreamServer {
       }
       if (oldestId) {
         const evicted = this.streamableSessions.get(oldestId);
-        evicted?.close();
+        evicted?.close("SESSION_EVICTED_LRU");
         this.streamableSessions.delete(oldestId);
       }
     }
@@ -440,7 +452,7 @@ export class EosMcpStreamServer {
     if (!session || session.tokenHash !== tokenHash) {
       return false;
     }
-    session.close();
+    session.close("SESSION_TERMINATED");
     this.streamableSessions.delete(sessionId);
     return true;
   }
@@ -586,7 +598,10 @@ export class EosMcpStreamServer {
         });
         res.flushHeaders?.();
         session.attachResponse(res, this.heartbeatIntervalMs);
-        req.on("close", () => {
+        res.on("close", () => {
+          session.detachResponse();
+        });
+        res.on("error", () => {
           session.detachResponse();
         });
         return;
@@ -672,7 +687,11 @@ export class EosMcpStreamServer {
           }
           const foundEvents = session.getEventsSince(lastId);
           if (foundEvents === null) {
-            this.writeJson(res, 400, { error: "Last-Event-ID not found in session buffer." });
+            this.writeJson(res, 400, {
+              error: "Last-Event-ID not found in session buffer.",
+              code: "BUFFER_OVERRUN",
+              droppedEventsCount: session.droppedEventsCount
+            });
             return;
           }
           replayEvents = foundEvents;
@@ -1004,7 +1023,7 @@ export class EosMcpStreamServer {
     }
     this.sessionManager.closeAll();
     for (const session of this.streamableSessions.values()) {
-      session.close();
+      session.close("SERVER_SHUTDOWN");
     }
     this.streamableSessions.clear();
     return new Promise((resolve) => {

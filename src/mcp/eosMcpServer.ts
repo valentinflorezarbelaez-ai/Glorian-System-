@@ -5855,6 +5855,15 @@ export class EosMcpServer {
         if (tier === "WASM") {
           let wasmBytes: Uint8Array;
           let isLoop = false;
+          const hasCustomCode = Boolean(args?.code);
+
+          if (hasCustomCode) {
+            const rawCode = String(args.code);
+            if (rawCode.length > 700000 || Buffer.byteLength(rawCode, "base64") > 512 * 1024) {
+              throw new Error("WebAssembly bytecode exceeds maximum allowed size of 512 KiB.");
+            }
+          }
+
           if (args?.template === "TRAP") {
             wasmBytes = WASM_BYTECODE_TEMPLATES.TRAP;
           } else if (args?.template === "OOB") {
@@ -5868,10 +5877,14 @@ export class EosMcpServer {
             wasmBytes = typeof args?.code === "string" ? Buffer.from(args.code, "base64") : new Uint8Array();
           }
 
-          if (isLoop || args?.worker === true || args?.useWorker === true) {
+          // Inconditional Preemptive Worker Isolation (FR-420 / ADR-0181)
+          // All arbitrary bytecode (args.code), loops, or default executions route strictly through Worker threads.
+          const forceWorker = hasCustomCode || isLoop || args?.worker !== false;
+
+          if (forceWorker) {
             return this.wasmSandbox.executeWasmWorker(wasmBytes, {
               initialPages: args?.memoryPages || 1,
-              functionArgs: Array.isArray(args?.functionArgs) ? args.functionArgs : [],
+              functionArgs: Array.isArray(args?.functionArgs) ? args.functionArgs : (args?.template === "ADD" ? [20, 22] : []),
               timeoutMs
             });
           }
