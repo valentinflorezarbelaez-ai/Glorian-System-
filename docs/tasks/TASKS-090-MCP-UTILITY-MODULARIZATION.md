@@ -10,4 +10,5 @@
 - [x] T7b-core: Phase-3 migrates remaining 13 CORE_TIER0 tools (`eosMcpPhase3CoreHandlers.ts`); purge −354 lines; **30/30 core tools registry-only**
 - [x] T7c-a (2026-11-04): Phase-5 Spotify residual domain bundle (12 tools) + purge dead `glorian_*` switch arms; registry `ownerApproval` 10/10; README Level-5 drift scrubbed
 - [x] T7c-b (2026-11-04): Phase-6 Fleet/Apex/FinOps/Product/Synapse/Planetary (25 tools); god-file ~6269 LOC (~12% vs peak); Sovereign 5/5 WITHIN_TESTED_SCOPE scorecard
-- [ ] T7c Later: continue residual full-profile bundles until cumulative god-file LOC reduction >= 25% of peak (~5341); delete unused imports after soak
+- [x] T7c-c (2026-11-04): Phase-7 largest residual extract (29 tools); god-file ≤5341 LOC (−25% vs peak 7122); Engram pin + deepened landing gates; WITHIN_TESTED_SCOPE only (not Level-5)
+- [ ] T7c Later: delete unused god-file imports after soak; continue residual full-profile diet beyond −25%

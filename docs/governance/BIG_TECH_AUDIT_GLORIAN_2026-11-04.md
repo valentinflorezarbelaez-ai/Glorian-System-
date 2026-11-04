@@ -24,12 +24,12 @@ NL→SDLC is now a single fail-closed entry (`eos_mission_run` / SPEC-156). Rema
 - MCP `core` profile <= 30 (SPEC-044/155/156)
 
 ## FIX / PERFECT (still open)
-1. **MCP god-file** — Phase-1..6 registry live (78 tools); god-file ~6269 LOC (−12% vs peak 7122); T7c still open until ≥25% (~5341)
-2. **Fleet dirty trees** — remediated to Soundcheck 100/10 (re-check after each ship)
+1. **MCP god-file** — Phase-1..7 registry live; T7c −25% LOC target met (≤5341). Residual: unused import soak + further diet beyond −25%
+2. **Fleet dirty trees** — Soundcheck 100/10 (re-check after each ship)
 3. **"Dead exports" noise** — mostly MCP-wired; do not delete blindly
-4. **Engram project ambiguity** — cwd resolves outside repo; pin Engram identity harder
+4. **Engram project pin** — `.engram/config.json` added for `eos-system` (re-verify from parent cwd)
 5. **Crud-slack Law VI** — wave sealed env-only; IA-5 rotation still PARTIAL
-6. **Shallow landing gates** — deepen ATP/Donaciones/Biblioteca/Portafolio verify scripts beyond file-presence
+6. **Landing gates** — Eos-System verify-landing deepened (Layer-0 + Engram + T7c LOC + ownerApproval). Fleet product e2e/CWV still shallow
 7. **Portfolio evidence refresh** — keep `portafolio` careerEvidence.ts synced when regenerating packs
 
 ## FIXED THIS WAVE (Max-1 · 2026-11-04)
@@ -41,6 +41,12 @@ NL→SDLC is now a single fail-closed entry (`eos_mission_run` / SPEC-156). Rema
 - [x] Phase-6 Fleet/Apex/FinOps/Product/Synapse/Planetary extract (25 tools)
 - [x] Sovereign 5/5 WITHIN_TESTED_SCOPE scorecard (`evaluateSovereignFiveScorecard`) — 100% pillars; Level-5 / NSA_GRADE denied
 - [x] BDD-485 + tip-seal after Phase-6 ship
+
+## FIXED THIS WAVE (Max-3 Absolute · 2026-11-04)
+- [x] Phase-7 largest residual extract (29 tools) — T7c ≥25% LOC cut sealed
+- [x] Engram `.engram/config.json` pin for eos-system
+- [x] Deepened `verify-landing.mjs` (Layer-0 deps, Engram, T7c LOC, ownerApproval quorum)
+- [x] Explicit denial: not Level-5 / not absolute infallibility — WITHIN_TESTED_SCOPE only
 
 ## BUILD (shipped this pass)
 - [x] `eos_mission_run` NL entry: amplify → Law IV direction → architecture → tribunal → Spotify → Nubank (hard if fintech) → turbo → ledger

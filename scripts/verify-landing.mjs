@@ -105,4 +105,29 @@ check("Offline shell and deployment security configuration are present", () => {
   assert.ok(exists("favicon.svg"));
 });
 
+check("Layer-0 runtime purity and control-plane scripts are declared", () => {
+  const pkg = JSON.parse(read("package.json"));
+  assert.equal(Object.keys(pkg.dependencies || {}).length, 0, "Layer-0 must keep dependencies: {}");
+  assert.equal(typeof pkg.scripts?.typecheck, "string");
+  assert.equal(typeof pkg.scripts?.["mcp:verify"], "string");
+  assert.equal(typeof pkg.scripts?.["tip-seal"], "string");
+  assert.ok(exists("bin/eos.mjs"), "eos CLI entry must exist");
+  assert.ok(exists("src/mcp/eosMcpServer.ts"), "MCP control plane must exist");
+  assert.ok(exists(".engram/config.json"), "Engram project pin must exist");
+  const engram = JSON.parse(read(".engram/config.json"));
+  assert.equal(engram.project, "eos-system");
+});
+
+check("OpenSpec catalog and fleet registry are structurally live", () => {
+  assert.ok(exists("docs/projects/registry.json"));
+  const registry = JSON.parse(read("docs/projects/registry.json"));
+  assert.ok(Array.isArray(registry.projects) && registry.projects.length >= 10);
+  const ownerOk = registry.projects.filter((p) => p.ownerApproval).length;
+  assert.equal(ownerOk, registry.projects.length, "Every fleet project needs ownerApproval");
+  assert.ok(exists("openspec") || exists("docs/specs/spec.md"));
+  const god = read("src/mcp/eosMcpServer.ts");
+  const godLines = god.split(/\r?\n/).length;
+  assert.ok(godLines <= 5341, `God-file LOC ${godLines} must meet T7c ≤5341 (−25% vs peak)`);
+});
+
 console.log(`Landing contract checks passed: ${checks.length}/${checks.length}.`);

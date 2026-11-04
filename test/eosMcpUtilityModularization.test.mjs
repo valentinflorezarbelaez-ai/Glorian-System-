@@ -135,5 +135,5 @@ test("BDD-480 Phase-3 completes CORE_TIER0 migration + apex doctrine scorecard",
   assert.ok(["A+", "A"].includes(card.grade));
   assert.ok(card.claimsDenied.includes("Level 5"));
   const modular = card.dimensions.find((d) => d.id === "MODULAR_PURITY");
-  assert.ok(modular?.evidence.includes("Phase-1..6"));
+  assert.ok(modular?.evidence.includes("Phase-1..7"));
 });

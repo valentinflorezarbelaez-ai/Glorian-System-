@@ -16,6 +16,7 @@ import {
   PHASE5_PURGED_DEAD_SWITCH_ARMS
 } from "../src/mcp/tools/eosMcpPhase5ToolNames.ts";
 import { PHASE6_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpPhase6ToolNames.ts";
+import { PHASE7_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpPhase7ToolNames.ts";
 import { evaluateSovereignFiveScorecard } from "../src/core/eosSovereignFiveScorecard.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -149,4 +150,29 @@ test("BDD-485 Phase-6 domain extract + Sovereign 5/5 within tested scope", () =>
   assert.ok(five.claimsDenied.includes("Level 5"));
   assert.ok(five.migratedTools >= 70);
   assert.ok(five.locCutPercentVsPeak >= 10);
+});
+
+test("BDD-486 Phase-7 largest residual extract hits T7c −25% LOC", () => {
+  assert.equal(PHASE7_MIGRATED_TOOL_NAMES.length, 29);
+  const godPath = path.join(projectRoot, "src/mcp/eosMcpServer.ts");
+  const god = fs.readFileSync(godPath, "utf8");
+  const godLines = god.split(/\r?\n/).length;
+  assert.ok(godLines <= 5341, `god-file ${godLines} LOC must be ≤5341`);
+  for (const name of PHASE7_MIGRATED_TOOL_NAMES) {
+    assert.equal(god.includes(`case "${name}"`), false, `god-file still has live case for ${name}`);
+  }
+  const server = new EosMcpServer(projectRoot, "full");
+  const wal = server.handleRequest({
+    jsonrpc: "2.0",
+    id: 8,
+    method: "tools/call",
+    params: { name: "eos_wal_status", arguments: {} }
+  });
+  assert.ok(wal?.result?.content?.[0]?.text);
+
+  const five = evaluateSovereignFiveScorecard(projectRoot);
+  assert.equal(five.grade, "5/5");
+  assert.ok(five.locCutPercentVsPeak >= 25);
+  assert.ok(five.migratedTools >= 100);
+  assert.ok(fs.existsSync(path.join(projectRoot, ".engram/config.json")));
 });

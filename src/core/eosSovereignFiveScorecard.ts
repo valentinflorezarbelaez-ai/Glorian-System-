@@ -13,6 +13,7 @@ import { PHASE3_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase3CoreHandler
 import { PHASE4_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase4ToolNames.ts";
 import { PHASE5_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase5ToolNames.ts";
 import { PHASE6_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase6ToolNames.ts";
+import { PHASE7_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase7ToolNames.ts";
 
 export interface SovereignFivePillar {
   readonly id: string;
@@ -58,7 +59,8 @@ export function evaluateSovereignFiveScorecard(
     ...PHASE3_MIGRATED_TOOL_NAMES,
     ...PHASE4_MIGRATED_TOOL_NAMES,
     ...PHASE5_MIGRATED_TOOL_NAMES,
-    ...PHASE6_MIGRATED_TOOL_NAMES
+    ...PHASE6_MIGRATED_TOOL_NAMES,
+    ...PHASE7_MIGRATED_TOOL_NAMES
   ]);
   const locCutPercentVsPeak = Math.round(
     ((PEAK_GOD_LOC - godFileLines) / PEAK_GOD_LOC) * 1000

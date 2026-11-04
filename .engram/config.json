@@ -1,0 +1,6 @@
+{
+  "project": "eos-system",
+  "displayName": "Glorian System (Eos-System Control Plane)",
+  "rootMarkers": ["package.json", "src/mcp/eosMcpServer.ts", "docs/projects/registry.json"],
+  "notes": "Pins Engram identity to eos-system so cwd parent multi-repo ambiguity cannot hijack memory writes. WITHIN_TESTED_SCOPE only."
+}

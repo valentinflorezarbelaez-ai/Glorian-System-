@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:87784df8-0515-540b-b7e3-3c2483764681",
+  "serialNumber": "urn:uuid:fc2933c3-2065-537c-9e06-ac1687c666fe",
   "version": 1,
   "metadata": {
-    "timestamp": "2022-01-04T15:40:40.000Z",
+    "timestamp": "2024-01-15T19:10:59.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -234,7 +234,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "172e8e80c75fd743d48ace32a21f759eb879032c537182cf6127c31a8d221d3e"
+          "content": "737ac0622a3055f9ca331862ca0964fc1ef4e2d8c203ac45ab6fa39fb8380fce"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosApexDoctrineScorecard.ts"
@@ -2015,7 +2015,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "bb425cd2798ce21152e86207d39c74266f65c2924d25c3f7ac7daedd78e5b2d7"
+          "content": "62aaec9c882e44cbbb082cbe6b541819b8e8c2a33b0b0fbf656d2c40388ab79a"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosSovereignFiveScorecard.ts"
@@ -2593,5 +2593,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "b5287b64cd03c34f8d445626b620147af2e94e97f13946eb9b97e122e2fb6d40"
+  "sha256Receipt": "355acb78e417e9a4a9ea612facebacb957d5c22356dc18393282dd67032470af"
 }
