@@ -690,6 +690,14 @@ import {
   GlorianConstitutionalTribunal
 } from "../core/glorianConstitutionalTribunal.ts";
 
+import {
+  EosAutonomousCodeSynthesizer
+} from "../core/eosAutonomousCodeSynthesizer.ts";
+
+import {
+  EosPlanetaryApexDoctrine
+} from "../core/eosPlanetaryApexDoctrine.ts";
+
 const globalBulkheadGovernor = new EosCellBasedBulkheadGovernor({ cellCount: 8, cellCapacity: 100 });
 const globalSloGovernor = new EosMultiWindowSloGovernor();
 const globalHedgedMesh = new EosAdaptiveHedgedDeadlineMesh();
@@ -3611,6 +3619,47 @@ export class EosMcpServer {
                     },
                     required: ["actionId", "category", "description"]
                   }
+                },
+                {
+                  name: "eos_autonomous_synthesize",
+                  description: "Autonomous Multi-Tier Code Synthesizer (SPEC-157): Synthesizes complete 4-tier hexagonal software bundles (Domain, Application, Infrastructure, Test) complying with NASA JPL Power of 10, Nubank Datomic, and fail-closed invariants.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      directive: {
+                        type: "string",
+                        description: "Natural language specification of software capability to synthesize"
+                      },
+                      domain: {
+                        type: "string",
+                        enum: ["fintech", "audio", "platform", "govtech", "general"],
+                        description: "Optional architectural domain specialization"
+                      },
+                      write: {
+                        type: "boolean",
+                        description: "Materialize synthesized files directly to disk (default false)"
+                      },
+                      outDir: {
+                        type: "string",
+                        description: "Target directory for disk materialization (default 'generated-software')"
+                      }
+                    },
+                    required: ["directive"]
+                  }
+                },
+                {
+                  name: "eos_planetary_doctrine_audit",
+                  description: "Planetary Apex Operating Doctrine (SPEC-158): Audits the system against the 5 Apex Pillars: ASML Sub-Micron Precision, SpaceX Starship TMR Avionics, DeepMind Invariants, DARPA Hermetic Isolation, and NSA/Livermore Immutability.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      format: {
+                        type: "string",
+                        enum: ["json", "summary"],
+                        description: "Output format: structured JSON or human-readable summary"
+                      }
+                    }
+                  }
                 }
               ], this.toolProfile)
             }
@@ -6514,6 +6563,95 @@ export class EosMcpServer {
             quorumPercentage: report.fleetHealthQuorumPercentage,
             sha256Receipt: report.sha256Receipt,
             timestampIso: report.timestampIso
+          };
+        }
+
+        return report;
+      }
+
+      case "glorian_fleet_health_watchdog": {
+        const watchdog = new GlorianFleetHealthWatchdog(this.projectRoot);
+        const dryRun = Boolean(args?.dryRun ?? false);
+        const report = watchdog.runFleetHealthAuditSync({ dryRun });
+        const format = String(args?.format || "json").toLowerCase();
+
+        if (format === "summary" || format === "dashboard") {
+          return {
+            formattedSummary: watchdog.formatHealthReport(report),
+            auditStatus: report.auditStatus,
+            compositeHealthIndex: report.compositeHealthIndex,
+            sha256Receipt: report.sha256Receipt
+          };
+        }
+
+        return report;
+      }
+
+      case "glorian_constitutional_tribunal": {
+        const tribunal = new GlorianConstitutionalTribunal(this.projectRoot);
+        const report = tribunal.adjudicate({
+          actionId: String(args?.actionId || "MUT-MCP-001"),
+          category: (args?.category as any) || "CODE_MUTATION",
+          description: String(args?.description || "MCP Adjudication Request"),
+          diffOrPayload: args?.diffOrPayload ? String(args.diffOrPayload) : undefined,
+          targetDirectory: args?.targetDirectory ? String(args.targetDirectory) : undefined
+        });
+        const format = String(args?.format || "json").toLowerCase();
+
+        if (format === "summary") {
+          return {
+            summary: tribunal.formatTribunalSummary(report),
+            verdict: report.overallVerdict,
+            compositeScore: report.compositeScore,
+            sha256Attestation: report.sha256Receipt
+          };
+        }
+
+        return report;
+      }
+
+      case "eos_autonomous_synthesize": {
+        const synthesizer = new EosAutonomousCodeSynthesizer(this.projectRoot);
+        const directive = String(args?.directive || "").trim();
+        if (!directive) {
+          throw new Error("directive is required for eos_autonomous_synthesize");
+        }
+        const domainHint = args?.domain ? (String(args.domain) as any) : undefined;
+        const bundle = synthesizer.synthesizeBundle(directive, domainHint);
+        const shouldWrite = Boolean(args?.write ?? false);
+
+        if (shouldWrite) {
+          const outDir = String(args?.outDir || "generated-software");
+          const materialized = synthesizer.materializeBundle(bundle, outDir, true);
+          return {
+            bundle,
+            materialized
+          };
+        }
+
+        return bundle;
+      }
+
+      case "eos_planetary_doctrine_audit": {
+        const doctrine = new EosPlanetaryApexDoctrine(this.projectRoot);
+        const report = doctrine.auditPillars();
+        const format = String(args?.format || "json").toLowerCase();
+
+        if (format === "summary") {
+          return {
+            status: report.status,
+            overallScore: report.overallScore,
+            totalDurationUs: report.totalDurationUs,
+            pillarsAudited: report.pillars.length,
+            sha256Receipt: report.sha256Receipt,
+            pillars: report.pillars.map((p) => ({
+              pillarId: p.pillarId,
+              name: p.name,
+              compliant: p.compliant,
+              score: p.score,
+              latencyUs: p.latencyUs,
+              details: p.details
+            }))
           };
         }
 

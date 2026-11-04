@@ -2604,6 +2604,63 @@ switch (command) {
     break;
   }
 
+  case "doctrine": {
+    printBanner();
+    console.log("[EOS DOCTRINE] Planetary Apex Operating Doctrine — SPEC-158\n");
+    const { EosPlanetaryApexDoctrine } = await import("../src/core/eosPlanetaryApexDoctrine.ts");
+    const doctrine = new EosPlanetaryApexDoctrine(root);
+    const directives = args.slice(1).filter((a) => !a.startsWith("--"));
+
+    if (directives.length === 0) {
+      // Audit all 5 pillars
+      const audit = doctrine.auditPillars();
+      console.log(`  Overall Status   : ${audit.status}`);
+      console.log(`  Overall Score    : ${audit.overallScore}/100`);
+      console.log(`  Total Duration   : ${audit.totalDurationUs}µs`);
+      console.log(`  Pillars Audited  : ${audit.pillars.length}`);
+      console.log(`  SHA-256 Receipt  : ${audit.sha256Receipt}`);
+      console.log("");
+      audit.pillars.forEach((p) => {
+        const icon = p.compliant ? "✔" : "✘";
+        console.log(`  ${icon} [${p.pillarId}] — ${p.name}`);
+        console.log(`      Score        : ${p.score}/100 (Latency: ${p.latencyUs}µs)`);
+        console.log(`      Details      : ${p.details}`);
+      });
+      const passing = audit.pillars.filter((p) => p.compliant).length;
+      console.log(`\n  Pillars Passing  : ${passing}/${audit.pillars.length}`);
+      console.log(`  Epistemic        : ${audit.epistemicState}`);
+      console.log(`  Claims Denied    : ${(audit.claimsDenied || []).slice(0, 3).join(" · ")}…`);
+      console.log(`\n[${audit.status === "APEX_DRILL_PASS" ? "PASS" : "FAIL"}] Planetary Apex Doctrine drill complete (within tested scope).`);
+    } else {
+      // TMR adjudication mode
+      const raw = directives.slice(0, 3);
+      if (raw.length < 3) {
+        console.error("[ERROR] TMR mode requires 3 inputs. Ex: eos doctrine true true false");
+        process.exitCode = 1;
+        break;
+      }
+      const parseVal = (v) => {
+        if (v === "true") return true;
+        if (v === "false") return false;
+        const n = Number(v);
+        return isNaN(n) ? v : n;
+      };
+      const result = EosPlanetaryApexDoctrine.executeTmrVoting({
+        vectorA: parseVal(raw[0]),
+        vectorB: parseVal(raw[1]),
+        vectorC: parseVal(raw[2])
+      });
+      console.log(`  Input Vectors    : A=${raw[0]}, B=${raw[1]}, C=${raw[2]}`);
+      console.log(`  Agreed Value     : ${JSON.stringify(result.agreedValue)}`);
+      console.log(`  Quorum Reached   : ${result.quorumReached}`);
+      console.log(`  Unanimous        : ${result.unanimous}`);
+      console.log(`  Dissenting Node  : ${result.dissentingNode}`);
+      console.log(`  Receipt SHA-256  : ${result.sha256Receipt}`);
+      console.log(`\n[PASS] SpaceX Avionics TMR voting adjudication complete.`);
+    }
+    break;
+  }
+
   case "product:deliver": {
     printBanner();
     console.log("[EOS PRODUCT DELIVER] Golden Path IDP — Foundry → SDD → Loop → Gates → Scorecard\n");

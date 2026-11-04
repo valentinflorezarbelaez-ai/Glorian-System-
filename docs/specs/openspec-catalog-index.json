@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2025-12-30T07:27:03.000Z",
+  "timestampIso": "2028-04-25T02:35:22.000Z",
   "totalSpecs": 158,
-  "catalogSha256": "a1c759c788bb81ae81321bd695bfc4c579367a2ace46907e0144211bc9f54671",
+  "catalogSha256": "0fa3ffead040c034e9d6e95b57d67e202369aa861a36b4028a797b342a9e89d9",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1418,12 +1418,12 @@
     },
     {
       "id": "SPEC-158",
-      "title": "Planetary Apex Operating Doctrine (ASML · SpaceX · DeepMind · DARPA · Skunk Works Standard)",
-      "status": "APPROVED",
+      "title": "Planetary Apex Operating Doctrine (Software Drills)",
+      "status": "APPROVED_WITHIN_TESTED_SCOPE",
       "frCount": 4,
-      "bddCount": 3,
+      "bddCount": 2,
       "file": "openspec/specs/SPEC-158-PLANETARY-APEX-OPERATING-DOCTRINE.md",
-      "sha256": "c0e9959fe963db208f68dafd9a72992494977f5873fccee8dbdcf06d9a17789c"
+      "sha256": "920f5a9e5bf61a3b21c52b6734496d6699152c76ec63d6830a922c297ee965e7"
     }
   ]
 }
