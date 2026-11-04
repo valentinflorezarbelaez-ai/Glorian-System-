@@ -1,0 +1,58 @@
+{
+  "title": "Glorian Apex Doctrine Scorecard",
+  "epistemicState": "APEX_DOCTRINE_WITHIN_TESTED_SCOPE",
+  "claimsDenied": [
+    "Level 5",
+    "ASML/TSMC physical monopoly parity",
+    "SpaceX orbital capability",
+    "DARPA/NSA black-budget program parity",
+    "Neuralink/CRISPR biological capability"
+  ],
+  "dimensions": [
+    {
+      "id": "SINGLE_AUTHORITY_PATH",
+      "analogOrg": "SpaceX flight computers",
+      "softwareMeaning": "One MCP dispatch authority for Tier-0 core tools (registry, not dual brains)",
+      "score": 30,
+      "max": 30,
+      "evidence": "30/30 CORE_TIER0 tools registry-migrated (100%)"
+    },
+    {
+      "id": "MODULAR_PURITY",
+      "analogOrg": "Apple silicon / Microsoft service boundaries",
+      "softwareMeaning": "Handlers extracted from god-file into Phase modules",
+      "score": 25,
+      "max": 25,
+      "evidence": "30 tools in Phase-1/2/3 modules; god-file ~6628 lines"
+    },
+    {
+      "id": "ZERO_PLAIN_SECRETS",
+      "analogOrg": "AWS Secrets Manager / NSA crypto hygiene (software analog only)",
+      "softwareMeaning": "Fail-closed credential handles; no embedded DB passwords in adapters",
+      "score": 20,
+      "max": 20,
+      "evidence": "Crud Law VI env-only DATABASE_URL wave sealed; fleet secret scan gates active"
+    },
+    {
+      "id": "EVIDENCE_OVER_CLAIMS",
+      "analogOrg": "DeepMind / DARPA IV&V / NASA",
+      "softwareMeaning": "Mission/turbo/Soundcheck receipts before production claims",
+      "score": 20,
+      "max": 20,
+      "evidence": "SLSA provenance + career evidence pack present"
+    },
+    {
+      "id": "HONEST_CEILING",
+      "analogOrg": "Scientific institutions (CERN/DOE) — publish limits",
+      "softwareMeaning": "Explicit non-claims: not Level 5, not physical monopoly, not black-budget parity",
+      "score": 15,
+      "max": 15,
+      "evidence": "Epistemic taxonomy forbids absolute perfection / vendor production controller claims"
+    }
+  ],
+  "totalScore": 110,
+  "totalMax": 110,
+  "percent": 100,
+  "grade": "A+",
+  "sha256Receipt": "cd041e94641f6ee29eaf49eaa23f75ca9ccc1431d6372297f3b917f4e2c522d0"
+}

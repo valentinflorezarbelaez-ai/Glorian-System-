@@ -7,10 +7,15 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { PHASE1_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpCoreUtilitarianHandlers.ts";
 import { PHASE2_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpPhase2UtilitarianHandlers.ts";
+import { PHASE3_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpPhase3CoreHandlers.ts";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const target = path.join(root, "src/mcp/eosMcpServer.ts");
-const migrated = new Set([...PHASE1_MIGRATED_TOOL_NAMES, ...PHASE2_MIGRATED_TOOL_NAMES]);
+const migrated = new Set([
+  ...PHASE1_MIGRATED_TOOL_NAMES,
+  ...PHASE2_MIGRATED_TOOL_NAMES,
+  ...PHASE3_MIGRATED_TOOL_NAMES
+]);
 
 const before = fs.readFileSync(target, "utf8");
 const beforeLines = before.split(/\r?\n/).length;

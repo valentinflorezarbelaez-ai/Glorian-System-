@@ -662,6 +662,10 @@ import {
 } from "./tools/eosMcpPhase2UtilitarianHandlers.ts";
 
 import {
+  createPhase3CoreHandlers
+} from "./tools/eosMcpPhase3CoreHandlers.ts";
+
+import {
   EosS0DesignSystemGovernor,
   type VisualAuditReport
 } from "../core/eosS0DesignSystemGovernor.ts";
@@ -777,7 +781,8 @@ function isPathWithin(rootPath: string, candidatePath: string): boolean {
 }
 
 export class EosMcpServer {
-  private static globalHnsw = new EosHnswVectorEngine({ dimensions: 128, m: 16 });
+  /** Shared HNSW index for MCP vector tools (Phase-3 handlers bind the same instance). */
+  public static readonly globalHnsw = new EosHnswVectorEngine({ dimensions: 128, m: 16 });
   private static globalHashChain = new EosMonotonicHashChain();
   private static globalMeshRing = EosAgentTopologyMesh.createRingBufferMesh(256);
   private static globalLsmEngine = new EosLsmTreeStorageEngine(10);
@@ -837,9 +842,20 @@ export class EosMcpServer {
     }
     this.knowledgeGraph = kg;
     this.agentSessionContract = getDefaultAgentSessionContract(this.projectRoot);
-    // SPEC-155 Phase-1/2: conscious utilitarian handlers live outside the god-file switch.
+    // SPEC-155 Phase-1/2/3: Tier-0 core tools dispatch via registry (god-file switch is legacy residual).
     this.dispatchRegistry.registerAll(PHASE1_CORE_UTILITARIAN_HANDLERS);
     this.dispatchRegistry.registerAll(PHASE2_CORE_UTILITARIAN_HANDLERS);
+    this.dispatchRegistry.registerAll(
+      createPhase3CoreHandlers({
+        projectRoot: this.projectRoot,
+        resolveProjectPath: (value, kind, fallback) => this.resolveProjectPath(value, kind, fallback),
+        resolveConfinedLedgerPath: (value) => this.resolveConfinedLedgerPath(value),
+        hybridKnowledge: this.hybridKnowledge,
+        knowledgeStore: this.knowledgeStore,
+        agentSessionContract: this.agentSessionContract,
+        hnsw: EosMcpServer.globalHnsw
+      })
+    );
   }
 
   public setToolProfile(profile: McpToolProfile): void {
@@ -3877,51 +3893,6 @@ export class EosMcpServer {
     }
 
     switch (toolName) {
-      case "eos_semantic_search": {
-        const query = String(args.query || "");
-        const topK = Number(args.topK) || 5;
-        const mode = (args.mode === "vector" || args.mode === "lexical") ? args.mode : "hybrid";
-        const category = args.category || "ALL";
-
-        const hybridMatches = this.hybridKnowledge.search(query, { topK, mode, category });
-        if (hybridMatches.length > 0) {
-          return {
-            query,
-            mode,
-            category,
-            matchCount: hybridMatches.length,
-            matches: hybridMatches.map((m) => ({
-              id: m.id,
-              score: m.score,
-              title: m.title,
-              snippet: m.snippet,
-              filePath: m.filePath,
-              category: m.category,
-              lexicalRank: m.lexicalRank,
-              vectorRank: m.vectorRank
-            }))
-          };
-        }
-
-        const matches = mode === "vector"
-          ? this.knowledgeStore.search(query, topK)
-          : this.knowledgeStore.searchHybrid(query, topK);
-        return {
-          query,
-          mode,
-          category,
-          matchCount: matches.length,
-          matches: matches.map((m) => ({
-            id: m.id,
-            score: Number(m.score.toFixed(4)),
-            title: m.id,
-            snippet: m.text,
-            filePath: "",
-            category: (m.metadata as any)?.domain || "General"
-          }))
-        };
-      }
-
       case "eos_query_knowledge_graph": {
         const action = String(args.action || "stats").toLowerCase();
         const target = args.target ? String(args.target) : "";
@@ -4033,45 +4004,6 @@ export class EosMcpServer {
           windowsHide: true
         });
         return JSON.parse(out.trim());
-      }
-
-      case "eos_autonomous_heal": {
-        const healer = new EosAutonomousHealer(this.projectRoot);
-        return healer.executeHealing({
-          targetFile: args.targetFile === undefined ? undefined : String(args.targetFile),
-          dryRun: args.apply !== true,
-          autoApply: args.apply === true
-        });
-      }
-
-      case "eos_manage_worktree": {
-        const orchestrator = new EosWorktreeOrchestrator(this.projectRoot);
-        const action = String(args.action || "list");
-        if (action === "create") {
-          const branch = typeof args.branch === "string" ? args.branch : `agent-${Date.now()}`;
-          if (Buffer.byteLength(branch, "utf8") > 256) throw new RangeError("Worktree branch names are limited to 256 UTF-8 bytes.");
-          if (!/^[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(branch) || branch.includes("..") || branch.includes("//") ||
-            branch.endsWith("/") || branch.endsWith(".") || /(^|\/)\./.test(branch) || /(^|\/)[^/]+\.lock(\/|$)/.test(branch)) {
-            throw new Error("Worktree branch must be a valid, project-relative Git branch name.");
-          }
-          if (args.apply !== true) return { status: "PLAN_ONLY", action, branch, writeRequired: true };
-          const worktreeRoot = path.join(this.projectRoot, ".worktrees");
-          try {
-            const worktreeStat = fs.lstatSync(worktreeRoot);
-            if (worktreeStat.isSymbolicLink() || !worktreeStat.isDirectory() || !isPathWithin(this.projectRoot, fs.realpathSync(worktreeRoot))) {
-              throw new Error("The .worktrees directory must be a regular directory inside the configured project root.");
-            }
-          } catch (error) {
-            if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
-          }
-          return orchestrator.createWorktree(branch);
-        } else if (action === "remove") {
-          const targetPath = this.resolveProjectPath(args.targetPath, "directory");
-          if (args.apply !== true) return { status: "PLAN_ONLY", action, targetPath, force: args.force === true, writeRequired: true };
-          return orchestrator.removeWorktree(targetPath, { force: args.force === true });
-        }
-        if (action !== "list") throw new Error("Unsupported worktree action.");
-        return orchestrator.listWorktrees();
       }
 
       case "eos_run_eval": {
@@ -4942,27 +4874,6 @@ export class EosMcpServer {
         };
       }
 
-      case "eos_hnsw_knn_search": {
-        onProgress?.(20, 100, "Navigating HNSW small-world graph");
-        const k = typeof args.k === "number" ? args.k : 5;
-        const ef = typeof args.efSearch === "number" ? args.efSearch : 32;
-        let results;
-        if (args.query) {
-          results = EosMcpServer.globalHnsw.searchByText(String(args.query), k, ef);
-        } else if (Array.isArray(args.vector)) {
-          results = EosMcpServer.globalHnsw.searchKnn(new Float32Array(args.vector), k, ef);
-        } else {
-          throw new Error("Must provide either 'query' string or 'vector' array.");
-        }
-        onProgress?.(100, 100, "k-NN search complete");
-        return {
-          query: args.query ?? "custom_vector",
-          k,
-          count: results.length,
-          results
-        };
-      }
-
       case "eos_vector_similarity": {
         const textA = String(args.textA || "");
         const textB = String(args.textB || "");
@@ -5109,96 +5020,6 @@ export class EosMcpServer {
           totalStages: SOVEREIGN_21_STAGES.length,
           stages: SOVEREIGN_21_STAGES
         };
-      }
-
-      case "eos_agent_session_contract": {
-        const action = String(args.action || "").toLowerCase();
-        switch (action) {
-          case "open": {
-            const opened = this.agentSessionContract.openSession({
-              ideFamily: String(args.ideFamily || ""),
-              directive: String(args.directive || ""),
-              target: args.target ? String(args.target) : "eos-system"
-            });
-            return { action: "open", preferred: ["cursor", "antigravity"], ...opened };
-          }
-          case "ensure": {
-            const ensured = this.agentSessionContract.ensurePreferredIdeSession({
-              ideFamily: String(args.ideFamily || ""),
-              directive: args.directive ? String(args.directive) : undefined,
-              target: args.target ? String(args.target) : "eos-system"
-            });
-            return {
-              action: "ensure",
-              preferred: true,
-              ...ensured,
-              gentlemanAlignment: this.agentSessionContract.getGentlemanAlignment(),
-              coGovernanceMessage: this.agentSessionContract.formatCoGovernanceSessionMessage(
-                String(args.ideFamily || "cursor"),
-                ensured
-              )
-            };
-          }
-          case "record_tool": {
-            const sessionId = String(args.sessionId || "");
-            const toolName = String(args.toolName || "");
-            const recorded = this.agentSessionContract.recordToolInvocation(sessionId, toolName);
-            return { action: "record_tool", sessionId, toolName, ...recorded };
-          }
-          case "authorize_write": {
-            const decision = this.agentSessionContract.authorizeWrite({
-              sessionId: String(args.sessionId || ""),
-              sessionReceipt: args.sessionReceipt ? String(args.sessionReceipt) : undefined,
-              paths: Array.isArray(args.paths) ? args.paths.map(String) : undefined
-            });
-            return {
-              action: "authorize_write",
-              allowed: decision.decision === "allow",
-              ...decision
-            };
-          }
-          case "evaluate_write": {
-            const decision = this.agentSessionContract.evaluatePreferredWriteGate(
-              String(args.ideFamily || ""),
-              Array.isArray(args.paths) ? args.paths.map(String) : undefined
-            );
-            return {
-              action: "evaluate_write",
-              allowed: decision.decision === "allow",
-              ...decision
-            };
-          }
-          case "align_gentleman": {
-            const alignment = this.agentSessionContract.alignGentlemanStack();
-            return {
-              action: "align_gentleman",
-              source: alignment.source,
-              readinessScore: alignment.readinessScore,
-              status: alignment.status,
-              constitutionPreserved: alignment.constitutionPreserved,
-              sha256Receipt: alignment.sha256Receipt,
-              coGovernanceProtocol: alignment.protocol,
-              canon: EosGentlemanStackBridge.EXTERNAL_CANON,
-              divisionOfLabor: {
-                glorian: "constitution, Law IV, session write gates, product/mission golden path",
-                gentleAi:
-                  "Engram memory, ODD+SDD workflow (gentle-ai), focused agents, GGA native review, Context7 docs, agent-teams-lite; doctrine from gentlemanprogramming.com + YouTube main/VODs"
-              }
-            };
-          }
-          case "status": {
-            const status = this.agentSessionContract.getSessionStatus(String(args.sessionId || ""));
-            return {
-              action: "status",
-              ...status,
-              gentlemanAlignment: this.agentSessionContract.getGentlemanAlignment()
-            };
-          }
-          default:
-            throw new Error(
-              "Unsupported eos_agent_session_contract action. Expected: open, ensure, record_tool, authorize_write, evaluate_write, align_gentleman, status"
-            );
-        }
       }
 
       case "eos_product_deliver_run": {
@@ -5392,14 +5213,6 @@ export class EosMcpServer {
         return EosQuantumLatticeShield.generateLatticeSeal(payload);
       }
 
-      case "eos_refactor_audit": {
-        const rawTarget = typeof args?.dirPath === "string"
-          ? args.dirPath
-          : (typeof args?.targetDir === "string" ? args.targetDir : "src/core");
-        const safeTarget = this.resolveProjectPath(rawTarget, "directory", "src/core");
-        return EosContinuousRefactorEngine.auditDirectory(safeTarget);
-      }
-
       case "eos_refactor_execute": {
         const safeRoot = this.resolveProjectPath(args?.projectRoot, "directory", ".");
         return EosContinuousRefactorEngine.executeRefactorAudit(safeRoot);
@@ -5429,13 +5242,6 @@ export class EosMcpServer {
       case "eos_synapse_arbitrate": {
         const candidates = Array.isArray(args.candidates) ? args.candidates : [];
         return EosMetaCognitiveSynapse.arbitrateIntents(candidates);
-      }
-
-      case "eos_mcts_tune": {
-        const iterations = Number(args.iterations) || 120;
-        const seed = Number(args.seed) || 42;
-        const tuner = new EosMctsHyperTuner(seed);
-        return tuner.tuneParameters(iterations);
       }
 
       case "eos_canary_rollout": {
@@ -5765,98 +5571,6 @@ export class EosMcpServer {
       case "eos_planetary_mesh_status": {
         if (args.reset) globalMultiCloudEvacuationMesh.reset();
         return globalMultiCloudEvacuationMesh.getStatus();
-      }
-
-      case "eos_antigravity_direct": {
-        const directive = String(args.directive || "");
-        const target = args.target ? String(args.target) : "eos-system";
-        return EosAntigravityDirector.directMission(directive, target, this.projectRoot);
-      }
-
-      case "eos_antigravity_doctor": {
-        const geminiDir = typeof args.geminiConfigDir === "string" && args.geminiConfigDir.trim().length > 0
-          ? args.geminiConfigDir.trim()
-          : undefined;
-        return EosAntigravityDirector.auditAntigravityIntegration(this.projectRoot, geminiDir);
-      }
-
-      case "eos_sqlite_ledger": {
-        const action = String(args.action || "verify").trim().toLowerCase();
-        const dbPath = this.resolveConfinedLedgerPath(args.databasePath);
-        const ledger = new EosDurableSqliteLedger(dbPath);
-        try {
-          if (action === "record") {
-            const validCategories: readonly LedgerCategory[] = [
-              "MISSION_DIRECTION",
-              "ARCHITECTURE_DECISION",
-              "SECURITY_AUDIT",
-              "VERIFICATION_RECEIPT",
-              "GENTLEMAN_ENGRAM_SYNC"
-            ];
-            const rawCat = String(args.category || "VERIFICATION_RECEIPT") as LedgerCategory;
-            const category: LedgerCategory = validCategories.includes(rawCat)
-              ? rawCat
-              : "VERIFICATION_RECEIPT";
-            return ledger.appendEntry({
-              category,
-              projectId: typeof args.projectId === "string" && args.projectId.trim().length > 0
-                ? args.projectId.trim()
-                : "eos-system",
-              title: String(args.title || "EOS Ledger Event"),
-              payload: isPlainRecord(args.payload) ? args.payload : {},
-              engramTopicKey: typeof args.engramTopicKey === "string" ? args.engramTopicKey : undefined
-            });
-          }
-          if (action === "search") {
-            const limit = typeof args.limit === "number" ? args.limit : 10;
-            return {
-              action: "search",
-              query: String(args.query || ""),
-              records: ledger.searchEntries(String(args.query || ""), limit)
-            };
-          }
-          if (action === "recent") {
-            const limit = typeof args.limit === "number" ? args.limit : 10;
-            const projectId = typeof args.projectId === "string" ? args.projectId : undefined;
-            return {
-              action: "recent",
-              records: ledger.listRecent(limit, projectId)
-            };
-          }
-          return ledger.verifyChainIntegrity();
-        } finally {
-          ledger.close();
-        }
-      }
-
-      case "eos_gentleman_update": {
-        const action = String(args.action || "status").trim().toLowerCase();
-        if (action === "status") {
-          return {
-            action: "status",
-            isDue: EosGentlemanAutoUpdater.isAutoUpdateDue(this.projectRoot),
-            state: EosGentlemanAutoUpdater.readState(this.projectRoot),
-            constitutionSha256: EosGentlemanAutoUpdater.computeConstitutionDigest(this.projectRoot)
-          };
-        }
-        const cliArgs = [
-          path.join(this.projectRoot, "bin", "eos.mjs"),
-          "gentleman",
-          "update",
-          action === "apply" ? "--apply" : "--check",
-          "--json"
-        ];
-        if (args.force === true) {
-          cliArgs.push("--force");
-        }
-        const out = execFileSync(process.execPath, cliArgs, {
-          cwd: this.projectRoot,
-          encoding: "utf8",
-          timeout: 180000,
-          stdio: ["ignore", "pipe", "pipe"],
-          windowsHide: true
-        });
-        return JSON.parse(out.trim());
       }
 
       case "eos_enterprise_workspace": {
@@ -6800,58 +6514,6 @@ export class EosMcpServer {
             quorumPercentage: report.fleetHealthQuorumPercentage,
             sha256Receipt: report.sha256Receipt,
             timestampIso: report.timestampIso
-          };
-        }
-
-        return report;
-      }
-
-      case "glorian_fleet_health_watchdog": {
-        const watchdog = new GlorianFleetHealthWatchdog(this.projectRoot);
-        const dryRun = Boolean(args?.dryRun);
-        const format = String(args?.format || "json").toLowerCase();
-        const report = watchdog.runFleetHealthAuditSync({ dryRun });
-
-        if (format === "summary") {
-          return {
-            summary: watchdog.formatHealthReport(report),
-            compositeHealthIndex: report.compositeHealthIndex,
-            auditStatus: report.auditStatus,
-            sha256Receipt: report.sha256Receipt
-          };
-        }
-
-        return report;
-      }
-
-      case "glorian_constitutional_tribunal": {
-        const tribunal = new GlorianConstitutionalTribunal(this.projectRoot);
-        const actionId = String(args?.actionId || "MUT-ANONYMOUS");
-        const category = (args?.category as any) || "CODE_MUTATION";
-        const description = String(args?.description || "No description provided");
-        const diffOrPayload = args?.diffOrPayload ? String(args.diffOrPayload) : undefined;
-        const targetDirectory = args?.targetDirectory ? String(args.targetDirectory) : undefined;
-        const declaredInvariants = Array.isArray(args?.declaredInvariants)
-          ? args.declaredInvariants.map(String)
-          : undefined;
-        const format = String(args?.format || "json").toLowerCase();
-
-        const report = tribunal.adjudicate({
-          actionId,
-          category,
-          description,
-          diffOrPayload,
-          targetDirectory,
-          declaredInvariants
-        });
-
-        if (format === "summary") {
-          return {
-            summary: tribunal.formatTribunalSummary(report),
-            overallVerdict: report.overallVerdict,
-            compositeScore: report.compositeScore,
-            quorumMet: report.quorumMet,
-            sha256Receipt: report.sha256Receipt
           };
         }
 

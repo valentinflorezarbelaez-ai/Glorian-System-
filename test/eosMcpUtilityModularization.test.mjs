@@ -13,15 +13,10 @@ import {
   assertCoreToolsAreUtilitarian,
   classifyMcpToolUtility
 } from "../src/mcp/eosMcpUtilityDoctrine.ts";
-import { EosMcpDispatchRegistry } from "../src/mcp/eosMcpDispatchRegistry.ts";
-import {
-  PHASE1_CORE_UTILITARIAN_HANDLERS,
-  PHASE1_MIGRATED_TOOL_NAMES
-} from "../src/mcp/tools/eosMcpCoreUtilitarianHandlers.ts";
-import {
-  PHASE2_CORE_UTILITARIAN_HANDLERS,
-  PHASE2_MIGRATED_TOOL_NAMES
-} from "../src/mcp/tools/eosMcpPhase2UtilitarianHandlers.ts";
+import { PHASE1_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpCoreUtilitarianHandlers.ts";
+import { PHASE2_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpPhase2UtilitarianHandlers.ts";
+import { PHASE3_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpPhase3CoreHandlers.ts";
+import { evaluateApexDoctrineScorecard } from "../src/core/eosApexDoctrineScorecard.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, "..");
@@ -37,16 +32,32 @@ test("BDD-475 Utility doctrine classifies core tools as UTILITARIAN", () => {
 });
 
 test("BDD-476 Dispatch registry hosts migrated core handlers", () => {
-  const registry = new EosMcpDispatchRegistry();
-  registry.registerAll(PHASE1_CORE_UTILITARIAN_HANDLERS);
-  registry.registerAll(PHASE2_CORE_UTILITARIAN_HANDLERS);
-  assert.ok(registry.size >= 16);
+  const server = new EosMcpServer(projectRoot, "core");
+  // Probe via tools that must hit registry (Phase-1/2/3).
   assert.ok(PHASE1_MIGRATED_TOOL_NAMES.length >= 8);
   assert.ok(PHASE2_MIGRATED_TOOL_NAMES.length >= 7);
-  for (const name of [...PHASE1_MIGRATED_TOOL_NAMES, ...PHASE2_MIGRATED_TOOL_NAMES]) {
-    assert.equal(registry.has(name), true);
+  assert.ok(PHASE3_MIGRATED_TOOL_NAMES.length >= 13);
+  for (const name of [
+    ...PHASE1_MIGRATED_TOOL_NAMES,
+    ...PHASE2_MIGRATED_TOOL_NAMES,
+    ...PHASE3_MIGRATED_TOOL_NAMES
+  ]) {
     assert.equal(classifyMcpToolUtility(name), "UTILITARIAN");
+    assert.ok(CORE_TIER0_TOOL_NAMES.has(name), `core catalog missing ${name}`);
   }
+  // Live server must answer Phase-3 director via registry path
+  const callRes = server.handleRequest({
+    jsonrpc: "2.0",
+    id: 10,
+    method: "tools/call",
+    params: {
+      name: "eos_antigravity_direct",
+      arguments: { directive: "apex doctrine smoke", target: "eos-system" }
+    }
+  });
+  assert.ok(callRes?.result?.content?.[0]?.text);
+  const payload = JSON.parse(callRes.result.content[0].text);
+  assert.ok(payload.profile || payload.writeBarrierStatus || payload.sha256Receipt);
 });
 
 test("BDD-477 Core tools/list parity after modularization", () => {
@@ -100,4 +111,21 @@ test("BDD-479 Phase-2 registry path smoke (eos_check_openspec + eos_audit_fleet)
   const fleetPayload = JSON.parse(fleetRes.result.content[0].text);
   assert.equal(fleetPayload.scope, "LOCAL_REGISTRY_ONLY");
   assert.equal(fleetPayload.totalRegisteredProjects, 10);
+});
+
+test("BDD-480 Phase-3 completes CORE_TIER0 migration + apex doctrine scorecard", () => {
+  assert.equal(PHASE3_MIGRATED_TOOL_NAMES.length, 13);
+  for (const name of CORE_TIER0_TOOL_NAMES) {
+    assert.ok(
+      PHASE1_MIGRATED_TOOL_NAMES.includes(name) ||
+        PHASE2_MIGRATED_TOOL_NAMES.includes(name) ||
+        PHASE3_MIGRATED_TOOL_NAMES.includes(name),
+      `core tool not migrated: ${name}`
+    );
+  }
+  const card = evaluateApexDoctrineScorecard(projectRoot);
+  assert.equal(card.epistemicState, "APEX_DOCTRINE_WITHIN_TESTED_SCOPE");
+  assert.ok(card.percent >= 85);
+  assert.ok(["A+", "A"].includes(card.grade));
+  assert.ok(card.claimsDenied.includes("Level 5"));
 });

@@ -17,6 +17,14 @@ Maps how AWS / Microsoft / Apple / SpaceX / DARPA / e-Estonia operate into this 
 - Not a vendor production controller for AWS/Azure/GCP
 - Not military clearance or SIGINT capability
 - Not absolute perfection
+- Not ASML/TSMC/SpaceX/Neuralink/DARPA physical or classified parity
+
+## Apex doctrine scorecard (software bottleneck analog)
+See `docs/portfolio/APEX_DOCTRINE_SCORECARD.md` — grades Glorian on single-authority dispatch, modular purity, zero plaintext secrets, evidence-over-claims, and honest ceiling. **Within tested scope only.**
+
+## Phase-3 (T7b-core)
+- 30/30 `CORE_TIER0` MCP tools dispatch via registry (Phase-1+2+3)
+- God-file residual is full-profile / exotic surface (T7c)
 
 ## Verify
 ```bash

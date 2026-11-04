@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:5324c00d-dcbe-5073-895c-de6179ce46b9",
+  "serialNumber": "urn:uuid:6589bf94-0535-5c1b-a208-9b4b81fd1237",
   "version": 1,
   "metadata": {
-    "timestamp": "2024-03-12T21:03:09.000Z",
+    "timestamp": "2023-12-22T17:44:52.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "af671233837f964cbb7fc9081b79c42c989730e13f5c54a65e9ca4f40b078a38"
+          "content": "0fe2785efabaa666bf568a76c4b21f86a1a17f491559309244fdce11e3c90d15"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -225,6 +225,19 @@
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosAntigravityDirector.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosApexDoctrineScorecard.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosApexDoctrineScorecard.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d85cd8767dc3cb8c5befb62fda9d45f5df2d1e958a12f6d9fa1c46c48418779b"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosApexDoctrineScorecard.ts"
     },
     {
       "type": "file",
@@ -1632,6 +1645,19 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosPlanetaryApexDoctrine.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosPlanetaryApexDoctrine.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a8163d5aac04f93d196da6bd40c210c0dcf9a354f09d903c8b2d95cfb53df183"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosPlanetaryApexDoctrine.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosPlanetaryConsensusEngine.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosPlanetaryConsensusEngine.ts@75.0.0",
@@ -2457,7 +2483,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "f74434472a515154ceff54b4bce01a10c52bf8f0c4895c91b720eb5a89de2e6f"
+          "content": "21a3e9e0eb04fa8157544b059ef5ef8ceabb41c58da3d62b1262a5ba129dad78"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: index.ts"
@@ -2483,7 +2509,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "e20a4288f881b53f7636e7ffc50e376bd812b7127c71ce86a8cdc7eacc3cf176"
+          "content": "f960767830a2d22703ca8b5afb0ac247a7243341175ea39b6d6ddc4fba04d473"
         }
       ],
       "description": "Glorian System root entrypoint: bin/eos.mjs"
@@ -2528,5 +2554,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "fe82355a9dfa6d78dc690737600d866a9cac2541c489d46540acacf63256530c"
+  "sha256Receipt": "c13088e017cc4ea43eff27d663b0661a54ea7d3ffd609d390f5633dc90eae9bf"
 }
