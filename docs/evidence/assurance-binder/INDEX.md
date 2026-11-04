@@ -19,5 +19,9 @@ Continuous evidence pack for external IV&V. Paths are relative to repository roo
 | B-13 | `docs/evidence/EVD-SPEC-147-WAVE-B.json` | PDO Gates seal |
 | B-14 | `docs/evidence/EVD-SPEC-147-WAVE-C.json` | PDO Dogfood + tip-seal |
 | B-15 | `docs/products/demo-ledger-mvp/` | Hermetic Golden Path dogfood |
+| B-16 | `docs/assurance/PLATFORM_IVV_CEILING_CHECKLIST.md` | Platform ceiling IV&V |
+| B-17 | `docs/evidence/EVD-SPEC-148-WAVE-A.json` | Platform SLO seal |
+| B-18 | `docs/evidence/EVD-SPEC-148-WAVE-B.json` | Canary + dogfood seal |
+| B-19 | `docs/evidence/EVD-SPEC-148-WAVE-C.json` | 10/10 ceiling tip-seal |
 
 **Binder rule**: Verifier regenerates B-01..B-04 via scripts before trusting timestamps.

@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2021-12-28T04:18:47.000Z",
-  "totalSpecs": 147,
-  "catalogSha256": "3c2e95a76156091fd74de8f2953d5e5deb3fa777eea9be1a1714b893ab9b3300",
+  "timestampIso": "2020-02-03T17:01:11.000Z",
+  "totalSpecs": 148,
+  "catalogSha256": "710c3dd7776c54bd000e636a3a27e62b3857f4d990bb2c2b384bd6f4e5a19d66",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1325,6 +1325,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-147-PRODUCT-DELIVERY-ORCHESTRATOR.md",
       "sha256": "1e1b1ba731675767b89b3c78814ff03abb05b18a9f79b0d4f16b4b8d498e2a9d"
+    },
+    {
+      "id": "SPEC-148",
+      "title": "Platform Ops Ceiling (LADDER-16)",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-148-PLATFORM-OPS-CEILING.md",
+      "sha256": "a0037ee36cffe56bfbea2eeb0672f1f1aed84eb0176dc2ae9b5b2e75d90eff06"
     }
   ]
 }

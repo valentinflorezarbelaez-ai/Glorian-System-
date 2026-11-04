@@ -2532,6 +2532,7 @@ switch (command) {
     const domain = args[2] || "fintech-ledger";
     const tier = (args[3] || "MVP").toUpperCase();
     const dryRun = !args.includes("--write");
+    const runCanary = args.includes("--canary");
     const manifest = {
       id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
       name,
@@ -2559,8 +2560,42 @@ switch (command) {
     }
     console.log(`  SDD path         : ${result.sddPackagePath || "n/a"}`);
     console.log(`  Epistemic        : ${result.epistemicState}`);
-    console.log(`  Receipt          : sha256:${result.sha256Receipt}\n`);
+    console.log(`  Receipt          : sha256:${result.sha256Receipt}`);
+    if (runCanary && result.status === "SUCCESS") {
+      const { EosPlatformOpsCeiling } = await import("../src/core/eosPlatformOpsCeiling.ts");
+      const ceiling = EosPlatformOpsCeiling.promoteDeliveryWithCanary(result, {
+        projectRoot: process.cwd(),
+        controlPlanePristine: true
+      });
+      console.log(`  Canary           : ${ceiling.canary?.finalStage} safe=${ceiling.canary?.verifiedSafe}`);
+      console.log(`  Ceiling          : ${ceiling.ceilingMet ? "MET" : "NOT_MET"} (${ceiling.epistemicState})`);
+      console.log(`  Ceiling receipt  : sha256:${ceiling.sha256Receipt}`);
+      if (!ceiling.ceilingMet) process.exitCode = 1;
+    }
+    console.log("");
     if (result.status === "FAILED" || result.status === "BLOCKED") process.exitCode = 1;
+    break;
+  }
+
+  case "platform:ops":
+  case "platform:ceiling": {
+    printBanner();
+    console.log("[EOS PLATFORM OPS] LADDER-16 Sovereign Ceiling — SLOs · Canary · Dogfood · IV&V\n");
+    const { EosPlatformOpsCeiling } = await import("../src/core/eosPlatformOpsCeiling.ts");
+    const att = EosPlatformOpsCeiling.runCeilingAttestation({
+      projectRoot: process.cwd(),
+      controlPlanePristine: !args.includes("--dirty"),
+      runCanary: !args.includes("--no-canary")
+    });
+    console.log(`  Epistemic        : ${att.epistemicState}`);
+    console.log(`  SLO health       : ${att.slo.healthState} freeze=${att.slo.freezeDeployments}`);
+    console.log(`  Dogfood          : score=${att.dogfood.score} grade=${att.dogfood.grade} ok=${att.dogfood.ok}`);
+    console.log(`  Canary           : ${att.canary ? `${att.canary.finalStage} safe=${att.canary.verifiedSafe}` : "skipped"}`);
+    console.log(`  IV&V ready       : ${att.ivv.ready} missing=${att.ivv.missing.length}`);
+    console.log(`  Ceiling met      : ${att.ceilingMet ? "YES (10/10 within tested scope)" : "NO"}`);
+    console.log(`  Forbidden claims : ${att.forbiddenClaims.join(", ")}`);
+    console.log(`  Receipt          : sha256:${att.sha256Receipt}\n`);
+    if (!att.ceilingMet) process.exitCode = 1;
     break;
   }
 
@@ -4435,8 +4470,10 @@ switch (command) {
   eos turbo                  Verificación en memoria con telemetría en microsegundos (<350ms)
   eos coverage               Reporte de cobertura nativa V8 sin dependencias externas
   eos quickstart             Sanity check de 6 subsistemas en <200ms
-  eos product:deliver [name] [domain] [tier] [--write]
+  eos product:deliver [name] [domain] [tier] [--write] [--canary]
                              Golden Path IDP (Foundry→SDD→Loop→Gates→Scorecard); dry-run by default
+  eos platform:ops [--no-canary] [--dirty]
+                             LADDER-16 ceiling: IDP SLOs + canary + dogfood + IV&V readiness
 
 🛡️ SEGURIDAD, CADENA DE SUMINISTRO & FORMAL METHODS:
   eos sbom                   Genera inventario CycloneDX v1.5 con atestación SHA-256

@@ -1,9 +1,9 @@
 # EOS SYSTEM — RELEASE CAPABILITY MATRIX
 
-**Version**: v75.0.0 (Glorian Control Plane — tip-seal LADDER-15 2026-11-04)  
+**Version**: v75.0.0 (Glorian Control Plane — tip-seal LADDER-16 ceiling 2026-11-04)  
 **Governing Standard**: IEEE 830 / ISO 29148 / RFC 9110 / Clean Hexagonal Architecture / NIST 800-53 subset (self-attested)  
-**Active Gate**: GATE-15 (`LADDER-15` Product Delivery Orchestrator — `PRODUCT_DELIVERY_ORCHESTRATOR_VERIFIED_WITHIN_SCOPE`)  
-**Inventory SSOT**: 147 OpenSpecs · 90 changes · Peak Assurance TCB + Product Delivery IDP + 42 TLA+ models · `dependencies: {}`  
+**Active Gate**: GATE-16 (`LADDER-16` Platform Ops Ceiling — `SOVEREIGN_CEILING_10_OF_10_WITHIN_TESTED_SCOPE`)  
+**Inventory SSOT**: 148 OpenSpecs · 91 changes · Peak Assurance + Product Delivery IDP + Platform Ops Ceiling + 42 TLA+ models · `dependencies: {}`  
 
 ---
 

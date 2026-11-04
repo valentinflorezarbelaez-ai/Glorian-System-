@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:490629c3-0fa2-56d5-b57c-f28906be36f2",
+  "serialNumber": "urn:uuid:148b1917-5f76-5d00-83be-c99651bdc3d0",
   "version": 1,
   "metadata": {
-    "timestamp": "2028-10-25T20:51:15.000Z",
+    "timestamp": "2020-12-02T02:57:27.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "723c716eebf65d2a8098cbfd875dcecd62cdae4d2a12bc2b1babd5e87514244c"
+          "content": "f2bb807c63a0edf95397fc1d66cfa83c6d4cbf18883b89602fb14ff7fd4e93c3"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -1619,6 +1619,19 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosPlatformOpsCeiling.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosPlatformOpsCeiling.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e79a38468c4d0301c55929b70ac7e50022aedcebe4f32ab84d1e7a7a6dfab5bf"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosPlatformOpsCeiling.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosPolyglotAdapter.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosPolyglotAdapter.ts@75.0.0",
@@ -2405,7 +2418,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "698a39f724bbc73c41d2a4fe153e39c3ccc7347a5d45b89b381d1dd196e82259"
+          "content": "7369598d83314dff09a5080246abcfdaa66600970691be0db53fac5b4ca19d70"
         }
       ],
       "description": "Glorian System root entrypoint: bin/eos.mjs"
@@ -2450,5 +2463,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "d628e7f6cc9e4bff5a6edd915696940915d2eb39fad005ca1e6055388f8512fb"
+  "sha256Receipt": "482550f69b8493b91af10c79b765b64b863c616ce34dd3567fae3b9282397b23"
 }

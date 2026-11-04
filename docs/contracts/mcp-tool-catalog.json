@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2027-11-26T08:31:01.000Z",
-  "catalogSha256": "cafcebc5613137ec61f481008b5a5c8dfbdc4ca937c5706685d328b2a9746170",
-  "totalTools": 186,
+  "generatedAt": "2020-11-17T21:01:32.000Z",
+  "catalogSha256": "85581dac6cdaaa981eef3422eece942c3bb836b3f3841ac878571be64f47203f",
+  "totalTools": 188,
   "coreTier0Count": 49,
   "tools": [
     {
@@ -3126,6 +3126,77 @@
       },
       "annotations": {
         "title": "EOS sovereign Loop Stages",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_product_deliver_run",
+      "description": "LADDER-15 Golden Path: Foundry blueprint → SDD package → Sovereign Loop → verification gates → Product Quality Scorecard. Defaults to dry-run; set write=true to materialize under docs/products/<id>/ on the control plane only.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Product name"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Domain (e.g. fintech-ledger)"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "MVP",
+              "ENTERPRISE",
+              "MISSION_CRITICAL",
+              "PLANETARY"
+            ],
+            "description": "Complexity tier (default MVP)"
+          },
+          "write": {
+            "type": "boolean",
+            "description": "When true, materialize SDD under docs/products/<id>/ (control plane only)"
+          },
+          "entities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Domain entities"
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Application commands"
+          }
+        },
+        "required": [
+          "name",
+          "domain"
+        ]
+      },
+      "annotations": {
+        "title": "EOS product Deliver Run",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_product_deliver_status",
+      "description": "Returns LADDER-15 Product Delivery Orchestrator status, epistemic target, and tool surface.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS product Deliver Status",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

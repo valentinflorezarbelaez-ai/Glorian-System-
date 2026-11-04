@@ -339,6 +339,10 @@ import {
 } from "../core/eosProductDeliveryOrchestrator.ts";
 
 import {
+  EosPlatformOpsCeiling
+} from "../core/eosPlatformOpsCeiling.ts";
+
+import {
   EosHnswVectorEngine
 } from "../core/eosHnswVectorEngine.ts";
 
@@ -2256,6 +2260,17 @@ export class EosMcpServer {
                   inputSchema: {
                     type: "object",
                     properties: {}
+                  }
+                },
+                {
+                  name: "eos_platform_ops_ceiling",
+                  description: "LADDER-16 Platform Ops Ceiling: evaluate IDP SLOs, dogfood scorecard, progressive canary (1→5→25→100), and IV&V readiness. Returns SOVEREIGN_CEILING_10_OF_10_WITHIN_TESTED_SCOPE — never NSA_GRADE.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      runCanary: { type: "boolean", description: "Run progressive canary mesh (default true)" },
+                      controlPlanePristine: { type: "boolean", description: "Working tree porcelain signal (default true)" }
+                    }
                   }
                 },
                 {
@@ -5085,6 +5100,35 @@ export class EosMcpServer {
 
       case "eos_product_deliver_status": {
         return EosProductDeliveryOrchestrator.getStatus();
+      }
+
+      case "eos_platform_ops_ceiling": {
+        onProgress?.(20, 100, "Evaluating LADDER-16 platform ops ceiling");
+        const att = EosPlatformOpsCeiling.runCeilingAttestation({
+          projectRoot: this.projectRoot,
+          controlPlanePristine: args.controlPlanePristine !== false,
+          runCanary: args.runCanary !== false
+        });
+        onProgress?.(100, 100, att.ceilingMet ? "Ceiling met within tested scope" : "Ceiling not met");
+        return {
+          epistemicState: att.epistemicState,
+          ceilingMet: att.ceilingMet,
+          slo: att.slo,
+          dogfood: att.dogfood,
+          canary: att.canary
+            ? {
+                finalStage: att.canary.finalStage,
+                verifiedSafe: att.canary.verifiedSafe,
+                rollbackExecuted: att.canary.rollbackExecuted,
+                sha256Receipt: att.canary.sha256Receipt
+              }
+            : null,
+          ivvReady: att.ivv.ready,
+          ivvMissing: att.ivv.missing,
+          forbiddenClaims: att.forbiddenClaims,
+          sha256Receipt: att.sha256Receipt,
+          durationMs: att.durationMs
+        };
       }
 
       case "eos_ontology_query": {

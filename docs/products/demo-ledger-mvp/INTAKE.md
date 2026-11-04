@@ -1,6 +1,6 @@
 # Intake: Demo Ledger MVP
 
-Hermetic dogfood product for LADDER-15 Product Delivery Orchestrator
+Ceiling dogfood re-seal
 
 Tier: MVP
 Domain: fintech-ledger
