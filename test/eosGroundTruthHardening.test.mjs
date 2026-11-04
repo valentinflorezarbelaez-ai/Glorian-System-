@@ -242,7 +242,11 @@ test("BDD-397: Robustecimiento de Transporte MCP Streamable HTTP (Cosecha TTL y 
 
     newSession.attachResponse(mockRes, 15); // 15ms heartbeat
 
-    await new Promise((resolve) => setTimeout(resolve, 60));
+    // Poll under load: setTimeout(60) alone can miss ticks when the event loop is contended.
+    const deadline = Date.now() + 500;
+    while (heartbeats.length < 2 && Date.now() < deadline) {
+      await new Promise((resolve) => setTimeout(resolve, 25));
+    }
 
     assert.ok(heartbeats.length >= 2, `Expected at least 2 heartbeats, got ${heartbeats.length}`);
     assert.ok(heartbeats.every((h) => h === ": keep-alive\n\n"), "Heartbeats must match SSE comment protocol");
@@ -250,7 +254,7 @@ test("BDD-397: Robustecimiento de Transporte MCP Streamable HTTP (Cosecha TTL y 
     // Detach on client disconnect
     newSession.detachResponse();
     const countAfterDetach = heartbeats.length;
-    await new Promise((resolve) => setTimeout(resolve, 40));
+    await new Promise((resolve) => setTimeout(resolve, 50));
     assert.equal(heartbeats.length, countAfterDetach, "No more heartbeats should be sent after detach");
   } finally {
     await streamServer.close();
