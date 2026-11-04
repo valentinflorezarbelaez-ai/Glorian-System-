@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:658212c5-97c0-49ef-9d84-306f2f623455",
+  "serialNumber": "urn:uuid:fce87750-4a35-434c-a96a-c38ab49c4b53",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-03T23:50:51.404Z",
+    "timestamp": "2026-11-04T00:15:35.734Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b92c9e0a5af89e57a89c43f7c1affda4eed33961bcdeac5deb3c3f7f553d685f"
+          "content": "3c6f9535e11ee2f152db86d60a14234c36451c90664162e092755507330da2a6"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -2230,6 +2230,19 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosWasmSandboxEngine.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosWasmSandboxEngine.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a6a74394bb1a2243d5da97ed4037a36490d5726595bdbb151fc0830458c62512"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosWasmSandboxEngine.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosWebGpuTensorEngine.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosWebGpuTensorEngine.ts@75.0.0",
@@ -2398,5 +2411,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "c124dbe77549337c9494fccc0db80497eb166fb33c08f5e2d3f3bba27070e817"
+  "sha256Receipt": "1de74002a4cfb08cb695e56421fa0053c68ede4ac76d1474883bb1212946a8dd"
 }

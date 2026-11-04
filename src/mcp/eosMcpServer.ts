@@ -32,6 +32,12 @@ import {
 } from "../core/eosHybridKnowledgeEngine.ts";
 
 import {
+  EosWasmSandboxEngine,
+  getDefaultWasmSandboxEngine,
+  WASM_BYTECODE_TEMPLATES
+} from "../core/eosWasmSandboxEngine.ts";
+
+import {
   evaluateDirectiveWithTMR,
   interpretJarvisDirective,
   JARVIS_INTENT_REGISTRY
@@ -735,6 +741,7 @@ export class EosMcpServer {
   private static globalLsmEngine = new EosLsmTreeStorageEngine(10);
   private readonly knowledgeStore = createDefaultEosKnowledgeStore();
   private readonly hybridKnowledge: EosHybridKnowledgeEngine;
+  private readonly wasmSandbox: EosWasmSandboxEngine;
   private readonly projectRoot: string;
   private readonly serverVersion: string;
   private toolProfile: McpToolProfile;
@@ -767,6 +774,7 @@ export class EosMcpServer {
     }
     this.serverVersion = version;
     this.hybridKnowledge = getDefaultHybridKnowledgeEngine(this.projectRoot);
+    this.wasmSandbox = getDefaultWasmSandboxEngine(this.projectRoot);
   }
 
   public setToolProfile(profile: McpToolProfile): void {
@@ -2954,6 +2962,21 @@ export class EosMcpServer {
                       memoryLimitMb: { type: "number", description: "Memory limit in MB (default 512)" },
                       timeoutMs: { type: "number", description: "Timeout limit in ms (default 15000)" },
                       recordToLedger: { type: "boolean", description: "Whether to record execution receipt in SQLite WAL ledger" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_wasm_sandbox",
+                  description: "Capability-Based WebAssembly & MicroVM Agent Sandboxing Engine (SPEC-142): Executes Wasm bytecode or hermetic JS isolate with bounded linear memory (1-256 pages), deterministic trap interception (OOB/unreachable), zero ambient host authority, and SQLite WAL ledger receipt attestation.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      tier: { type: "string", enum: ["WASM", "ISOLATE", "MICROVM_SPEC"], description: "Execution tier (default: ISOLATE)" },
+                      code: { type: "string", description: "JavaScript code snippet or base64-encoded Wasm bytecode" },
+                      template: { type: "string", enum: ["ADD", "TRAP", "OOB"], description: "Optional built-in test Wasm template" },
+                      functionArgs: { type: "array", items: { type: "number" }, description: "Arguments for Wasm exported function" },
+                      timeoutMs: { type: "number", description: "Execution timeout in milliseconds (default: 2000)" },
+                      memoryPages: { type: "number", description: "Initial memory pages for Wasm (default: 1, max: 256)" }
                     }
                   }
                 },
@@ -5789,6 +5812,41 @@ export class EosMcpServer {
         }
 
         return runResult;
+      }
+
+      case "eos_wasm_sandbox": {
+        const tier = String(args?.tier || (args?.template ? "WASM" : "ISOLATE")).trim().toUpperCase();
+        const timeoutMs = typeof args?.timeoutMs === "number" ? Math.floor(args.timeoutMs) : 2000;
+
+        if (tier === "MICROVM_SPEC") {
+          return this.wasmSandbox.generateMicroVmDescriptor({
+            vcpuCount: args?.vcpuCount,
+            memSizeMib: args?.memSizeMib
+          });
+        }
+
+        if (tier === "WASM") {
+          let wasmBytes: Uint8Array;
+          if (args?.template === "TRAP") {
+            wasmBytes = WASM_BYTECODE_TEMPLATES.TRAP;
+          } else if (args?.template === "OOB") {
+            wasmBytes = WASM_BYTECODE_TEMPLATES.OOB;
+          } else if (args?.template === "ADD" || (!args?.code && !args?.template)) {
+            wasmBytes = WASM_BYTECODE_TEMPLATES.ADD;
+          } else {
+            wasmBytes = typeof args?.code === "string" ? Buffer.from(args.code, "base64") : new Uint8Array();
+          }
+
+          return this.wasmSandbox.executeWasm(wasmBytes, {
+            initialPages: args?.memoryPages || 1,
+            functionArgs: Array.isArray(args?.functionArgs) ? args.functionArgs : [20, 22],
+            timeoutMs
+          });
+        }
+
+        // Default: Tier 2 ISOLATE
+        const code = String(args?.code || "1 + 1");
+        return this.wasmSandbox.executeIsolate(code, { timeoutMs });
       }
 
       case "eos_dashboard_status": {

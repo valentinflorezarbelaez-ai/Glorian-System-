@@ -2,10 +2,10 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-03T23:42:29.110Z",
-  "catalogSha256": "88e110986db8b77dd6c0a75e2482368b94c95a1bcf182fb5c03727ea3c22b287",
-  "totalTools": 184,
-  "coreTier0Count": 48,
+  "generatedAt": "2026-11-04T00:14:28.372Z",
+  "catalogSha256": "a161086ccf7789619f41f9e2946f863b24885b5c4079a7b8956f97fff3217b7a",
+  "totalTools": 185,
+  "coreTier0Count": 49,
   "tools": [
     {
       "name": "eos_semantic_search",
@@ -4976,6 +4976,59 @@
       },
       "annotations": {
         "title": "EOS microvm Sandbox",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_wasm_sandbox",
+      "description": "Capability-Based WebAssembly & MicroVM Agent Sandboxing Engine (SPEC-142): Executes Wasm bytecode or hermetic JS isolate with bounded linear memory (1-256 pages), deterministic trap interception (OOB/unreachable), zero ambient host authority, and SQLite WAL ledger receipt attestation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tier": {
+            "type": "string",
+            "enum": [
+              "WASM",
+              "ISOLATE",
+              "MICROVM_SPEC"
+            ],
+            "description": "Execution tier (default: ISOLATE)"
+          },
+          "code": {
+            "type": "string",
+            "description": "JavaScript code snippet or base64-encoded Wasm bytecode"
+          },
+          "template": {
+            "type": "string",
+            "enum": [
+              "ADD",
+              "TRAP",
+              "OOB"
+            ],
+            "description": "Optional built-in test Wasm template"
+          },
+          "functionArgs": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "Arguments for Wasm exported function"
+          },
+          "timeoutMs": {
+            "type": "number",
+            "description": "Execution timeout in milliseconds (default: 2000)"
+          },
+          "memoryPages": {
+            "type": "number",
+            "description": "Initial memory pages for Wasm (default: 1, max: 256)"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS wasm Sandbox",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

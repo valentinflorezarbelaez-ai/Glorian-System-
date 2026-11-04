@@ -9,7 +9,8 @@ const EXPOSED_TOOLS = new Set([
   "eos_spotify_shuffle",
   "eos_optimize_context",
   "eos_slsa_provenance_sbom",
-  "eos_semantic_search"
+  "eos_semantic_search",
+  "eos_wasm_sandbox"
 ]);
 const ALLOWED_MODELS = new Set(["grok", "claude", "openai", "gemini", "deepseek", "llama", "universal"]);
 const ALLOWED_STRICTNESS = new Set(["standard", "hardened", "sovereign"]);
@@ -124,6 +125,20 @@ function validatePublicTool(toolName, rawArguments) {
         return { error: rpcError(null, -32602, "category is not supported.") };
       }
       break;
+    case "eos_wasm_sandbox":
+      if (args.tier !== undefined && (typeof args.tier !== "string" || !["WASM", "ISOLATE", "MICROVM_SPEC"].includes(args.tier.toUpperCase()))) {
+        return { error: rpcError(null, -32602, "tier must be one of: WASM, ISOLATE, MICROVM_SPEC.") };
+      }
+      if (args.code !== undefined && !boundedString(args.code, MAX_CONTEXT_BYTES, true)) {
+        return { error: rpcError(null, -32602, "code must be a string no larger than 256 KiB.") };
+      }
+      if (args.template !== undefined && (typeof args.template !== "string" || !["ADD", "TRAP", "OOB"].includes(args.template.toUpperCase()))) {
+        return { error: rpcError(null, -32602, "template must be one of: ADD, TRAP, OOB.") };
+      }
+      if (args.timeoutMs !== undefined && (typeof args.timeoutMs !== "number" || !Number.isSafeInteger(args.timeoutMs) || args.timeoutMs < 50 || args.timeoutMs > 10000)) {
+        return { error: rpcError(null, -32602, "timeoutMs must be an integer between 50 and 10000.") };
+      }
+      break;
   }
 
   return { args };
@@ -151,7 +166,8 @@ function limitPublicTools(response) {
     eos_spotify_shuffle: "Runs a local deterministic track-ordering algorithm on at most 128 supplied tracks. It does not call Spotify.",
     eos_optimize_context: "Compresses caller-supplied text only. It does not read repository files; savings vary by input.",
     eos_slsa_provenance_sbom: "Verifies or generates pure Layer-0 CycloneDX v1.5 SBOM and SLSA Provenance attestations.",
-    eos_semantic_search: "Search EOS sovereign architecture and knowledge base using deterministic Layer-0 hybrid vector and BM25 RRF fusion."
+    eos_semantic_search: "Search EOS sovereign architecture and knowledge base using deterministic Layer-0 hybrid vector and BM25 RRF fusion.",
+    eos_wasm_sandbox: "Capability-Based WebAssembly & MicroVM Agent Sandboxing Engine (SPEC-142): Executes Wasm or JS isolate with bounded memory and zero ambient authority."
   };
 
   response.result.tools = response.result.tools

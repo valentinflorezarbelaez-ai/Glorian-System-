@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-03T23:43:09.201Z",
-  "totalSpecs": 141,
-  "catalogSha256": "51ce41a7726b44d5a20e2e98cfa09dd79b3a1130f8a87a9f5d317de0e97e3f04",
+  "timestampIso": "2026-11-04T00:15:02.421Z",
+  "totalSpecs": 142,
+  "catalogSha256": "68162ff36d25833cd1c8155494d08b4fc4790ff5952c2c37a285230185b39ba0",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1271,6 +1271,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-141-DISTRIBUTED-VECTOR-MEMORY-AND-HYBRID-SEARCH.md",
       "sha256": "fa5b5325b811b6f91458f5dc9b2daef444d16215c0faf74dd000c3a5f7ddd8ea"
+    },
+    {
+      "id": "SPEC-142",
+      "title": "Capability-Based Wasm & MicroVM Agent Sandboxing Engine (Big Tech Standard)",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-142-WASM-MICROVM-AGENT-SANDBOXING.md",
+      "sha256": "5db7b206c3488c1e22709250b421bfcec1298c855bc2e95bf32129eaf68e6ace"
     }
   ]
 }
