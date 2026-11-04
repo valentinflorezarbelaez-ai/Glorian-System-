@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2021-09-22T16:05:47.000Z",
-  "catalogSha256": "bf5f1e5bd0c2911fa0686b831b8cb1a82f6b08003cd9146cc1ca8a44017108f8",
+  "generatedAt": "2022-03-19T16:48:59.000Z",
+  "catalogSha256": "4f6a067b5560e75e029e52369b2139f8fc0f00abdde2298457503d2f41cae952",
   "totalTools": 200,
   "coreTier0Count": 30,
   "tools": [
@@ -198,7 +198,7 @@
     },
     {
       "name": "eos_health_check",
-      "description": "Reports MCP handler liveness and process memory. It does not probe dependent subsystems or external services.",
+      "description": "Runs local control-plane health probes (Layer-0 deps, SBOM, provenance, fleet registry, tip-seal pin). No network or multi-region SRE.",
       "inputSchema": {
         "type": "object",
         "properties": {}

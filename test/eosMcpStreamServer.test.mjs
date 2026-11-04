@@ -159,7 +159,14 @@ test("HTTP MCP lists and dispatches only the bounded read-only tool surface", as
     const health = await call({ jsonrpc: "2.0", id: "health", method: "tools/call", params: { name: "eos_health_check", arguments: {} } });
     assert.equal(health.status, 200);
     assert.equal(health.body.id, "health");
-    assert.equal(JSON.parse(health.body.result.content[0].text).status, "HANDLER_ALIVE");
+    {
+      const healthPayload = JSON.parse(health.body.result.content[0].text);
+      assert.ok(["HEALTHY", "DEGRADED", "CRITICAL"].includes(healthPayload.status));
+      assert.equal(healthPayload.subsystemProbes, "RUN");
+      assert.equal(healthPayload.epistemicState, "CONTROL_PLANE_HEALTH_WITHIN_TESTED_SCOPE");
+      assert.ok(healthPayload.probesTotal >= 6);
+      assert.ok(healthPayload.probesPassing >= 1);
+    }
 
     const mutation = await call({ jsonrpc: "2.0", id: "mutate", method: "tools/call", params: { name: "eos_autonomous_heal", arguments: { apply: true } } });
     assert.equal(mutation.body.error.code, -32601);

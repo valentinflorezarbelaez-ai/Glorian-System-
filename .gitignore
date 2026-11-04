@@ -11,7 +11,8 @@ docs/evidence/local-checks.sarif
 docs/evidence/HEAL-*.json
 bin/*.exe
 *.exe
-tools/
+# Repo-root vendor/toolchain dumps only — never ignore src/mcp/tools (SPEC-155 handlers).
+/tools/
 *.jar
 .coverage/
 dist/

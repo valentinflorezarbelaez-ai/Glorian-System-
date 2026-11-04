@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:51675cc6-215f-5bba-a88e-5d43da7b4128",
+  "serialNumber": "urn:uuid:6826e539-8381-5691-b203-5a9458b46ebf",
   "version": 1,
   "metadata": {
-    "timestamp": "2023-04-10T01:00:54.000Z",
+    "timestamp": "2025-05-13T07:11:53.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "6b87d96cc1cba1abb6eaed127f663921f25dcce8d78f99b228b77a703bf1ef91"
+          "content": "0a73488a3ca39469927e3d61b986c9d296d8c90c7468e95bc5822a9d8cc11ae4"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -234,7 +234,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "d85cd8767dc3cb8c5befb62fda9d45f5df2d1e958a12f6d9fa1c46c48418779b"
+          "content": "0b08db776bcd192d7c60bbeeffa734111480468f170e41b52b74c0f7b366cff5"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosApexDoctrineScorecard.ts"
@@ -615,6 +615,19 @@
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosContractEvolutionGovernor.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosControlPlaneHealthProbes.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosControlPlaneHealthProbes.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c371ebee30895c7404514f89120f4e88ef157e5283466fcd24a4f3578521126d"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosControlPlaneHealthProbes.ts"
     },
     {
       "type": "file",
@@ -2567,5 +2580,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "51f3aa9c1a6be84380cacebf78cff313a873f5d495dc0050ca4c853b7f3cf3fa"
+  "sha256Receipt": "1115e1c297151bd8abb42fb0ac2969dedcefb21b73b38a6be9f0f56fc178f7c1"
 }

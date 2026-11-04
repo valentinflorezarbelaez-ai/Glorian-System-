@@ -144,7 +144,7 @@ async function getServer() {
 function limitPublicTools(response) {
   if (!response?.result || !Array.isArray(response.result.tools)) return response;
   const descriptions = {
-    eos_health_check: "Reports this handler's liveness and process memory. Subsystems and external services are not probed.",
+    eos_health_check: "Runs local control-plane health probes (Layer-0 deps, SBOM, provenance, fleet registry, tip-seal pin). No network or multi-region SRE.",
     eos_amplify_prompt: "Creates a local EARS/BDD draft. No remote model is called and the output is not verified.",
     eos_check_architecture: "Runs a bounded static analysis on the repository src directory; it does not execute tests or establish production readiness.",
     eos_evaluate_decision: "Applies deterministic local keyword heuristics. Its score is a screening signal, not a verified decision.",

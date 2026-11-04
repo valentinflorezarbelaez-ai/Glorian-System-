@@ -161,21 +161,6 @@ import {
 } from "../core/eosDisruptorRingEngine.ts";
 
 import {
-  evaluateNubankArchitectureHealth,
-  verifySachemContract,
-  synthesizeNubankBlamelessPostmortem,
-  transactDatomic,
-  createEmptyDatomicDb
-} from "../core/eosNubankCodex.ts";
-
-import {
-  evaluateSpotifyArchitectureHealth,
-  verifyBackstageGoldenPath,
-  evaluateCanaryStage,
-  planFleetshiftMigration
-} from "../core/eosSpotifyInstitutionalCodex.ts";
-
-import {
   EosApexModelRouter
 } from "../core/eosApexModelRouter.ts";
 
@@ -519,10 +504,6 @@ import {
 } from "../core/eosSapFixAutoshipper.ts";
 
 import {
-  EosSlsaProvenanceSbom
-} from "../core/eosSlsaProvenanceSbom.ts";
-
-import {
   EosContentAddressableCache
 } from "../core/eosContentAddressableCache.ts";
 
@@ -666,6 +647,10 @@ import {
 } from "./tools/eosMcpPhase3CoreHandlers.ts";
 
 import {
+  createPhase4InstitutionalHandlers
+} from "./tools/eosMcpPhase4InstitutionalHandlers.ts";
+
+import {
   EosS0DesignSystemGovernor,
   type VisualAuditReport
 } from "../core/eosS0DesignSystemGovernor.ts";
@@ -693,14 +678,6 @@ import {
 import {
   EosAutonomousCodeSynthesizer
 } from "../core/eosAutonomousCodeSynthesizer.ts";
-
-import {
-  EosPlanetaryApexDoctrine
-} from "../core/eosPlanetaryApexDoctrine.ts";
-
-import {
-  EosBlackProjectsTriad
-} from "../core/eosBlackProjectsTriad.ts";
 
 const globalBulkheadGovernor = new EosCellBasedBulkheadGovernor({ cellCount: 8, cellCapacity: 100 });
 const globalSloGovernor = new EosMultiWindowSloGovernor();
@@ -854,7 +831,7 @@ export class EosMcpServer {
     }
     this.knowledgeGraph = kg;
     this.agentSessionContract = getDefaultAgentSessionContract(this.projectRoot);
-    // SPEC-155 Phase-1/2/3: Tier-0 core tools dispatch via registry (god-file switch is legacy residual).
+    // SPEC-155 Phase-1/2/3/4: Tier-0 + institutional tools dispatch via registry (god-file residual shrinks).
     this.dispatchRegistry.registerAll(PHASE1_CORE_UTILITARIAN_HANDLERS);
     this.dispatchRegistry.registerAll(PHASE2_CORE_UTILITARIAN_HANDLERS);
     this.dispatchRegistry.registerAll(
@@ -868,6 +845,7 @@ export class EosMcpServer {
         hnsw: EosMcpServer.globalHnsw
       })
     );
+    this.dispatchRegistry.registerAll(createPhase4InstitutionalHandlers(this.projectRoot));
   }
 
   public setToolProfile(profile: McpToolProfile): void {
@@ -1090,7 +1068,7 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_health_check",
-                  description: "Reports MCP handler liveness and process memory. It does not probe dependent subsystems or external services.",
+                  description: "Runs local control-plane health probes (Layer-0 deps, SBOM, provenance, fleet registry, tip-seal pin). No network or multi-region SRE.",
                   inputSchema: {
                     type: "object",
                     properties: {}
@@ -3949,7 +3927,7 @@ export class EosMcpServer {
     }
 
     // SPEC-155: prefer modular utilitarian facades before the legacy god-file switch.
-    // SPEC-155 T7: Phase-1/2 utilitarian tools dispatch via registry only (dead switch arms purged).
+    // SPEC-155 T7/T8: Phase-1..4 tools dispatch via registry (migrated switch arms purged).
     const modular = this.dispatchRegistry.tryDispatch(toolName, args, {
       projectRoot: this.projectRoot,
       resolveProjectPath: (value, kind, fallback) => this.resolveProjectPath(value, kind, fallback),
@@ -4324,77 +4302,7 @@ export class EosMcpServer {
         return engine.runMasterSpeedBenchmark(events, bytes);
       }
 
-      case "eos_nubank_audit": {
-        return evaluateNubankArchitectureHealth({
-          hasMutableStateInDomain: args.hasMutableStateInDomain === true,
-          usesHexagonalLayerIsolation: args.usesHexagonalLayerIsolation === undefined || args.usesHexagonalLayerIsolation === true,
-          usesContractTestingInsteadOfE2E: args.usesContractTestingInsteadOfE2E === undefined || args.usesContractTestingInsteadOfE2E === true,
-          enforcesKafkaIdempotencyTokens: args.enforcesKafkaIdempotencyTokens === undefined || args.enforcesKafkaIdempotencyTokens === true,
-          usesImmutableBitemporalLedgers: args.usesImmutableBitemporalLedgers === undefined || args.usesImmutableBitemporalLedgers === true,
-          hasBlamelessPostmortemProcess: args.hasBlamelessPostmortemProcess === undefined || args.hasBlamelessPostmortemProcess === true,
-          unitTestCoveragePercent: Number(args.unitTestCoveragePercent) || 90
-        });
-      }
-
-      case "eos_nubank_sachem_verify": {
-        if (!args.previousSchema || !args.proposedSchema) {
-          throw new Error("Missing previousSchema or proposedSchema argument");
-        }
-        return verifySachemContract(args.previousSchema, args.proposedSchema);
-      }
-
-      case "eos_nubank_postmortem": {
-        return synthesizeNubankBlamelessPostmortem(args as any);
-      }
-
-      case "eos_nubank_datomic_transact": {
-        const txData = Array.isArray(args.txData) ? args.txData : [];
-        const db = createEmptyDatomicDb();
-        return transactDatomic(db, txData);
-      }
-
-      case "eos_spotify_audit_institutional": {
-        return evaluateSpotifyArchitectureHealth({
-          usesGoldenPath: args.usesGoldenPath !== false,
-          hasCatalogInfoYaml: args.hasCatalogInfoYaml !== false,
-          hasTechDocsAndRunbook: args.hasTechDocsAndRunbook !== false,
-          compliesWithBS1770Loudness: args.compliesWithBS1770Loudness !== false,
-          hasProgressiveCanaryPipeline: args.hasProgressiveCanaryPipeline !== false,
-          hasAutomatedKillSwitch: args.hasAutomatedKillSwitch !== false,
-          hasBlamelessPostmortemProcess: args.hasBlamelessPostmortemProcess !== false,
-          unitTestCoveragePercent: Number(args.unitTestCoveragePercent) || 90
-        });
-      }
-
-      case "eos_spotify_golden_path_verify": {
-        return verifyBackstageGoldenPath({
-          serviceName: String(args.serviceName || "service"),
-          filesPresent: Array.isArray(args.filesPresent) ? args.filesPresent : [],
-          catalogInfoContent: args.catalogInfoContent ? String(args.catalogInfoContent) : undefined
-        });
-      }
-
-      case "eos_spotify_canary_gate": {
-        return evaluateCanaryStage({
-          stage: args.stage || "5%",
-          trafficPercentage: Number(args.trafficPercentage) || 5,
-          totalRequests: Number(args.totalRequests) || 10000,
-          errorCount: Number(args.errorCount) || 0,
-          p99LatencyMs: Number(args.p99LatencyMs) || 30,
-          maxAllowedP99Ms: Number(args.maxAllowedP99Ms) || 50,
-          observationWindowMinutes: Number(args.observationWindowMinutes) || 15
-        });
-      }
-
-      case "eos_spotify_fleetshift_plan": {
-        return planFleetshiftMigration({
-          migrationId: String(args.migrationId || "MIG-AUTO"),
-          description: String(args.description || "Automated Fleet Migration"),
-          targetRepos: Array.isArray(args.targetRepos) ? args.targetRepos : [],
-          action: String(args.action || "apply_golden_path")
-        });
-      }
-
+      // SPEC-155 Phase-4: nubank_*, spotify institutional/canary/golden_path/fleetshift → registry
       case "eos_apex_route_model": {
         const router = new EosApexModelRouter(this.projectRoot);
         return router.routeTask(String(args.directivePrompt || ""), String(args.sourceContext || ""));
@@ -6241,33 +6149,7 @@ export class EosMcpServer {
         return report;
       }
 
-      case "eos_slsa_provenance_sbom": {
-        const mode = String(args?.mode || "both").toLowerCase();
-        const commitSha = args?.commitSha ? String(args.commitSha) : undefined;
-        const recordToLedger = args?.recordToLedger !== false;
-
-        const result: Record<string, any> = {};
-        if (mode === "verify") {
-          const sbomPath = args?.sbomPath ? String(args.sbomPath) : undefined;
-          const provenancePath = args?.provenancePath ? String(args.provenancePath) : undefined;
-          result.verification = EosSlsaProvenanceSbom.verifySupplyChain(this.projectRoot, sbomPath, provenancePath);
-          return result;
-        }
-        if (mode === "sbom" || mode === "both") {
-          result.sbom = EosSlsaProvenanceSbom.generateCycloneDxSbom(this.projectRoot);
-          if (recordToLedger) {
-            EosSlsaProvenanceSbom.recordReceiptInLedger(result.sbom, this.projectRoot);
-          }
-        }
-        if (mode === "slsa" || mode === "both") {
-          result.slsa = EosSlsaProvenanceSbom.generateSlsaProvenance(this.projectRoot, commitSha);
-          if (recordToLedger) {
-            EosSlsaProvenanceSbom.recordReceiptInLedger(result.slsa, this.projectRoot);
-          }
-        }
-        return result;
-      }
-
+      // SPEC-155 Phase-4: eos_slsa_provenance_sbom → registry
       case "eos_content_addressable_cache": {
         const action = String(args?.action || "stats").toLowerCase();
         const cas = new EosContentAddressableCache(this.projectRoot);
@@ -6650,60 +6532,7 @@ export class EosMcpServer {
         return bundle;
       }
 
-      case "eos_planetary_doctrine_audit": {
-        const doctrine = new EosPlanetaryApexDoctrine(this.projectRoot);
-        const report = doctrine.auditPillars();
-        const format = String(args?.format || "json").toLowerCase();
-
-        if (format === "summary") {
-          return {
-            status: report.status,
-            overallScore: report.overallScore,
-            totalDurationUs: report.totalDurationUs,
-            pillarsAudited: report.pillars.length,
-            sha256Receipt: report.sha256Receipt,
-            pillars: report.pillars.map((p) => ({
-              pillarId: p.pillarId,
-              name: p.name,
-              compliant: p.compliant,
-              score: p.score,
-              latencyUs: p.latencyUs,
-              details: p.details
-            }))
-          };
-        }
-
-        return report;
-      }
-
-      case "eos_black_projects_triad_audit": {
-        const triad = new EosBlackProjectsTriad(this.projectRoot);
-        const report = triad.auditTriad();
-        const format = String(args?.format || "json").toLowerCase();
-
-        if (format === "summary") {
-          return {
-            status: report.status,
-            overallScore: report.overallScore,
-            totalDurationUs: report.totalDurationUs,
-            pillarsAudited: report.pillars.length,
-            epistemicState: report.epistemicState,
-            claimsDenied: report.claimsDenied,
-            sha256Receipt: report.sha256Receipt,
-            pillars: report.pillars.map((p) => ({
-              pillarId: p.pillarId,
-              name: p.name,
-              compliant: p.compliant,
-              score: p.score,
-              latencyUs: p.latencyUs,
-              details: p.details
-            }))
-          };
-        }
-
-        return report;
-      }
-
+      // SPEC-155 Phase-4: planetary_doctrine_audit + black_projects_triad_audit → registry
       default:
         throw new Error(`Unknown tool: ${toolName}`);
     }

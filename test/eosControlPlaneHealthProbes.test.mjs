@@ -1,0 +1,95 @@
+/**
+ * BDD — Control plane health probes + SPEC-155 Phase-4 institutional MCP extract
+ */
+
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+import { runControlPlaneHealthProbes } from "../src/core/eosControlPlaneHealthProbes.ts";
+import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
+import { PHASE4_MIGRATED_TOOL_NAMES } from "../src/mcp/tools/eosMcpPhase4InstitutionalHandlers.ts";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const projectRoot = path.resolve(__dirname, "..");
+
+test("BDD-481 Control plane health probes return WITHIN_TESTED_SCOPE report", () => {
+  const report = runControlPlaneHealthProbes(projectRoot);
+  assert.equal(report.epistemicState, "CONTROL_PLANE_HEALTH_WITHIN_TESTED_SCOPE");
+  assert.ok(["HEALTHY", "DEGRADED", "CRITICAL"].includes(report.status));
+  assert.equal(report.probesTotal, 6);
+  assert.ok(report.probesPassing >= 4);
+  assert.ok(report.claimsDenied.includes("Level 5"));
+  assert.ok(report.sha256Receipt.length === 64);
+  const ids = report.probes.map((p) => p.id);
+  assert.ok(ids.includes("LAYER0_RUNTIME_DEPS"));
+  assert.ok(ids.includes("TIP_SEAL_PIN"));
+});
+
+test("BDD-482 eos_health_check MCP path runs subsystem probes", () => {
+  const server = new EosMcpServer(projectRoot, "core");
+  const res = server.handleRequest({
+    jsonrpc: "2.0",
+    id: 1,
+    method: "tools/call",
+    params: { name: "eos_health_check", arguments: {} }
+  });
+  const payload = JSON.parse(res.result.content[0].text);
+  assert.equal(payload.subsystemProbes, "RUN");
+  assert.equal(payload.epistemicState, "CONTROL_PLANE_HEALTH_WITHIN_TESTED_SCOPE");
+  assert.ok(payload.probesTotal >= 6);
+});
+
+test("BDD-483 Phase-4 institutional tools dispatch via registry", () => {
+  assert.equal(PHASE4_MIGRATED_TOOL_NAMES.length, 11);
+  const server = new EosMcpServer(projectRoot, "full");
+  const source = path.join(projectRoot, "src/mcp/eosMcpServer.ts");
+  // Migrated cases must not remain as live switch arms
+  const god = fs.readFileSync(source, "utf8");
+  for (const name of PHASE4_MIGRATED_TOOL_NAMES) {
+    assert.equal(
+      god.includes(`case "${name}"`),
+      false,
+      `god-file still has live case for ${name}`
+    );
+  }
+
+  const canary = server.handleRequest({
+    jsonrpc: "2.0",
+    id: 2,
+    method: "tools/call",
+    params: {
+      name: "eos_spotify_canary_gate",
+      arguments: {
+        stage: "5%",
+        trafficPercentage: 5,
+        totalRequests: 1000,
+        errorCount: 0,
+        p99LatencyMs: 20
+      }
+    }
+  });
+  assert.ok(canary?.result?.content?.[0]?.text);
+  const canaryPayload = JSON.parse(canary.result.content[0].text);
+  assert.ok(canaryPayload);
+
+  const doctrine = server.handleRequest({
+    jsonrpc: "2.0",
+    id: 3,
+    method: "tools/call",
+    params: { name: "eos_planetary_doctrine_audit", arguments: { format: "summary" } }
+  });
+  const doctrinePayload = JSON.parse(doctrine.result.content[0].text);
+  assert.ok(doctrinePayload.sha256Receipt || doctrinePayload.overallScore !== undefined);
+
+  const slsa = server.handleRequest({
+    jsonrpc: "2.0",
+    id: 4,
+    method: "tools/call",
+    params: { name: "eos_slsa_provenance_sbom", arguments: { mode: "verify", recordToLedger: false } }
+  });
+  const slsaPayload = JSON.parse(slsa.result.content[0].text);
+  assert.ok(slsaPayload.verification);
+});
