@@ -1,0 +1,145 @@
+{
+  "auditedAt": "2026-11-04T15:41:06.937Z",
+  "rows": [
+    {
+      "id": "ham-sah",
+      "url": "https://kegel-ham-sah-trasnmutacion-y-forta.vercel.app/",
+      "status": 0,
+      "error": "fetch failed",
+      "gaps": [
+        "AVAILABILITY"
+      ]
+    },
+    {
+      "id": "donaciones",
+      "url": "https://donaciones-drab.vercel.app/",
+      "status": 0,
+      "error": "fetch failed",
+      "gaps": [
+        "AVAILABILITY"
+      ]
+    },
+    {
+      "id": "biblioteca",
+      "url": "https://biblioteca-gnostica.vercel.app/",
+      "status": 0,
+      "error": "fetch failed",
+      "gaps": [
+        "AVAILABILITY"
+      ]
+    },
+    {
+      "id": "portafolio",
+      "url": "https://portafolio-valentin.vercel.app/",
+      "status": 200,
+      "bytes": 139467,
+      "vercelError": null,
+      "title": "Valentín Flórez Arbeláez | Software Engineer &amp; Full-Stack Developer",
+      "description": "Portafolio oficial de Valentín Flórez Arbeláez: ingeniería de software, plataformas web comerciales en producción, Next.js, Astro y TypeScript.",
+      "ogTitle": "Valentín Flórez Arbeláez | Software Engineer &amp; Full-Stack Developer",
+      "ogImage": "https://portafolio-valentin.vercel.app/profile.png",
+      "h1": "Diseño sistemas que dejan huella.",
+      "hasMain": true,
+      "hasNav": true,
+      "hasFavicon": true,
+      "typoSistemasque": false,
+      "headers": {
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https:; media-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self';",
+        "x-frame-options": "SAMEORIGIN"
+      },
+      "gaps": []
+    },
+    {
+      "id": "atp-strength",
+      "url": "https://atp-strength.vercel.app/",
+      "status": 200,
+      "bytes": 18399,
+      "vercelError": null,
+      "title": "S.A.W — Potencia máxima | ATP Strength",
+      "description": "Protocolo personalizado de potencia máxima, fuerza explosiva y recuperación ATP-PCr para atletas de alto rendimiento.",
+      "ogTitle": "S.A.W — Potencia máxima",
+      "ogImage": "",
+      "h1": "Forja interior",
+      "hasMain": true,
+      "hasNav": true,
+      "hasFavicon": true,
+      "typoSistemasque": false,
+      "headers": {
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "permissions-policy": "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+        "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' https: blob:; connect-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+        "x-frame-options": "DENY"
+      },
+      "gaps": []
+    },
+    {
+      "id": "aberamentho",
+      "url": "https://aberamentosprelomamusic.vercel.app/",
+      "status": 0,
+      "error": "fetch failed",
+      "gaps": [
+        "AVAILABILITY"
+      ]
+    },
+    {
+      "id": "glorian",
+      "url": "https://eos-system-ten.vercel.app/",
+      "status": 0,
+      "error": "fetch failed",
+      "gaps": [
+        "AVAILABILITY"
+      ]
+    },
+    {
+      "id": "taskflow",
+      "url": "https://crud-slack.vercel.app/",
+      "status": 0,
+      "error": "fetch failed",
+      "gaps": [
+        "AVAILABILITY"
+      ]
+    },
+    {
+      "id": "avo-pack",
+      "url": "https://avo-pack.vercel.app/",
+      "status": 200,
+      "bytes": 100549,
+      "vercelError": null,
+      "title": "AVO PACK S.A.S.",
+      "description": "Sistema oficial de Control de Asistencia para Avo Pack S.A.S. Liquidación semanal de 42 horas (Ley 2101 Colombia), descuento de 40 minutos de alimentación, horas extras diurnas y nocturnas (>= 8:00 PM), lector QR imprimible, permisos con evidencia fotográfica, faltas no justificadas y exportación nativa a Excel (.xlsx).",
+      "ogTitle": "AVO PACK S.A.S.",
+      "ogImage": "",
+      "h1": "",
+      "hasMain": true,
+      "hasNav": true,
+      "hasFavicon": true,
+      "typoSistemasque": false,
+      "headers": {
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "permissions-policy": "camera=(self), microphone=(), geolocation=()",
+        "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://jpzcchjepmynivckfmzy.supabase.co wss://jpzcchjepmynivckfmzy.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'",
+        "x-frame-options": "SAMEORIGIN"
+      },
+      "gaps": [
+        "A11Y_H1"
+      ]
+    },
+    {
+      "id": "ptg",
+      "url": "https://ptg-performance-talent-group.vercel.app/",
+      "status": 0,
+      "error": "fetch failed",
+      "gaps": [
+        "AVAILABILITY"
+      ]
+    }
+  ]
+}

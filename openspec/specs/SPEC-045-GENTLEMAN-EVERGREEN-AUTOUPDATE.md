@@ -22,7 +22,7 @@
   `MIENTRAS se sincronicen los skills upstream de agent-teams-lite hacia .agents/skills/, EL SISTEMA escaneará todos los archivos entrantes rechazando enlaces simbólicos y patrones de secretos en texto plano, preservará intactos todos los skills soberanos con prefijo eos-* y garantizará que el hash SHA-256 de la Constitución EOS (AGENTS.md) permanezca inalterado.`
 
 * **FR-141 (Triple-Trigger Unattended Evergreen Automation)**:
-  `EL SISTEMA mantendrá actualizado el stack Gentleman de forma desatendida mediante tres disparadores coordinados con control de concurrencia (lockfile con expiración) e intervalo configurable (TTL 6 horas): (1) Tarea Programada silenciosa del sistema operativo (Windows Task Scheduler sin ventana emergente), (2) disparo oportunista desacoplado en segundo plano durante el evento SessionStart de Google Antigravity cuando el TTL haya expirado, y (3) ejecución directa vía CLI (eos gentleman update) y MCP (eos_gentleman_update).`
+  `EL SISTEMA mantendrá actualizado el stack Gentleman de forma desatendida mediante tres disparadores coordinados con control de concurrencia (lockfile con expiración) e intervalo configurable (TTL 6 horas): (1) Tarea Programada silenciosa del sistema operativo (Windows Task Scheduler sin ventana emergente), (2) disparo oportunista desacoplado en segundo plano durante el evento SessionStart de Cursor y Google Antigravity cuando el TTL haya expirado, y (3) ejecución directa vía CLI (eos gentleman update) y MCP (eos_gentleman_update).`
 
 ---
 
@@ -48,7 +48,7 @@ ESCENARIO: BDD-135 — Sincronización segura de skills agent-teams-lite preserv
   Y verifica que el hash SHA-256 de AGENTS.md antes y después de la actualización sea idéntico
 
 ESCENARIO: BDD-136 — Control de concurrencia por lockfile, TTL de 6 horas y disparo oportunista en SessionStart
-  DADO el estado persistente .eos/state/gentleman-auto-update.json y el hook SessionStart de Antigravity
+  DADO el estado persistente .eos/state/gentleman-auto-update.json y los hooks SessionStart de Cursor y Antigravity
   CUANDO el estado tiene menos de 6 horas de antigüedad
   ENTONCES el hook SessionStart omite el proceso de actualización en <15 ms sin impacto de latencia
   Y CUANDO el TTL expiró, lanza el actualizador desacoplado en segundo plano protegido por lockfile atómico y sella el recibo en EosDurableSqliteLedger

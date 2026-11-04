@@ -740,9 +740,15 @@ export class EosGentlemanAutoUpdater {
 
       try {
         copyDirClean(path.join(cloneDir, "lib"), libTargetDir);
+        // Upstream gga prints `gga vdev` unless GGA_VERSION is pinned. Bake the
+        // installed SemVer tag so evergreen probes and --version stay deterministic.
         const ggaScriptSource = fs
           .readFileSync(path.join(cloneDir, "bin", "gga"), "utf8")
-          .replace('LIB_DIR="$SCRIPT_DIR/../lib"', 'LIB_DIR="$SCRIPT_DIR/lib/gga"');
+          .replace('LIB_DIR="$SCRIPT_DIR/../lib"', 'LIB_DIR="$SCRIPT_DIR/lib/gga"')
+          .replace(
+            /VERSION="\$\{GGA_VERSION:-dev\}"/,
+            `VERSION="\${GGA_VERSION:-${latestVersion}}"`
+          );
         const candidateGga = path.join(tmpDir, "gga");
         fs.writeFileSync(candidateGga, ggaScriptSource, { encoding: "utf8", mode: 0o755 });
 
@@ -766,18 +772,21 @@ export class EosGentlemanAutoUpdater {
         const probeTarget = process.platform === "win32" && fs.existsSync(path.join(binDir, "gga.bat"))
           ? path.join(binDir, "gga.bat")
           : swapTarget;
+        const probeEnv = { ...process.env, GGA_VERSION: latestVersion };
         const out = process.platform === "win32" && probeTarget.endsWith(".bat")
           ? execFileSync("cmd.exe", ["/d", "/s", "/c", probeTarget, "--version"], {
               encoding: "utf8",
               timeout: 6000,
               stdio: ["ignore", "pipe", "pipe"],
-              windowsHide: true
+              windowsHide: true,
+              env: probeEnv
             })
           : execFileSync(probeTarget, ["--version"], {
               encoding: "utf8",
               timeout: 6000,
               stdio: ["ignore", "pipe", "pipe"],
-              windowsHide: true
+              windowsHide: true,
+              env: probeEnv
             });
 
         if (!String(out || "").includes(latestVersion)) {

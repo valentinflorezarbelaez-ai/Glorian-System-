@@ -62,7 +62,8 @@ const ESOTERIC_ARCHETYPES: Readonly<Record<string, string>> = {
   "aberamentho": "Armonía Acústica del Pleroma (Música Sagrada & DSP)",
   "eos-system": "El Sol Central / Plano de Control Soberano (Glorian)",
   "crud-slack": "Orden Mental & Eficiencia Diaria (TaskFlow AI)",
-  "control-de-asistencia-abopack": "Justicia y Verdad en la Obra Material (Avo Pack S.A.S.)"
+  "control-de-asistencia-abopack": "Justicia y Verdad en la Obra Material (Avo Pack S.A.S.)",
+  "kegel-ham-sah": "Transmutación Solar & Fuerza Vital (HAM-SAH / Prana)"
 };
 
 export class EosFleetPulseEngine {
@@ -275,7 +276,7 @@ export class EosFleetPulseEngine {
     }
 
     lines.push("==========================================================================================");
-    lines.push(" ✅ ALL 9 REPOSITORIES GOVERNED UNDER GLORIAN CONSTITUTION & ZERO-REGRESSION BARRIER");
+    lines.push(` ✅ ALL ${report.totalProjects} REPOSITORIES GOVERNED UNDER GLORIAN CONSTITUTION & ZERO-REGRESSION BARRIER`);
     lines.push("==========================================================================================");
 
     return lines.join("\n");

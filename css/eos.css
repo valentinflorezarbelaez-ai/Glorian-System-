@@ -423,6 +423,19 @@ body {
   transform: translateX(2px);
 }
 
+.brand-hero-signal {
+  margin: 0 0 0.85rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 5vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  background: linear-gradient(120deg, #fbbf24 0%, #38bdf8 55%, #e2e8f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -438,6 +451,12 @@ body {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   margin-bottom: 1.25rem;
+}
+
+.hero__kpis,
+.archetype-hud-switcher,
+.hero-bento-hud {
+  display: none !important;
 }
 
 .hero__title {
@@ -470,7 +489,8 @@ body {
 }
 
 .hero__kpis {
-  display: grid;
+  /* Hidden on first viewport (Fleet UI UX craft bar); keep grid tokens for below-fold reuse */
+  display: none;
   grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
   gap: 0.75rem;
 }
@@ -2219,7 +2239,7 @@ body {
    GLORIAN MULTI-ARCHETYPE LIVE SWITCHER (SPEC-117 / SPEC-130)
    ========================================================================== */
 .archetype-hud-switcher {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 12px;
   margin-top: 1.25rem;

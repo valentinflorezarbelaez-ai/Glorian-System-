@@ -124,12 +124,14 @@ test("BDD-129: Modular MCP 2025-03-26 ToolAnnotations enrich 100% of tools and s
   const coreRes = coreServer.handleRequest({ jsonrpc: "2.0", id: 2, method: "tools/list" });
   const coreTools = coreRes?.result?.tools || [];
   assert.equal(coreTools.length, CORE_TIER0_TOOL_NAMES.size);
-  assert.ok(coreTools.length <= 50, `Expected <= 50 curated core tools, got ${coreTools.length}`);
+  assert.ok(coreTools.length <= 30, `Expected <= 30 curated core tools per BDD-129, got ${coreTools.length}`);
   const coreNames = new Set(coreTools.map((t) => t.name));
   assert.ok(coreNames.has("eos_antigravity_direct"));
   assert.ok(coreNames.has("eos_gentleman_audit"));
   assert.ok(coreNames.has("eos_sqlite_ledger"));
   assert.ok(coreNames.has("eos_ast_analyze"));
+  assert.ok(coreNames.has("eos_agent_session_contract"));
+  assert.ok(coreNames.has("eos_nocturnal_evolution"));
 });
 
 test("BDD-130: EosDurableSqliteLedger persists WAL + FTS5 across restarts and detects cryptographic hash tampering", () => {

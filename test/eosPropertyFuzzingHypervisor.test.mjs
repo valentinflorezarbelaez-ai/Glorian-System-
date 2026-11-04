@@ -177,9 +177,9 @@ test("BDD-214: Despacho MCP de eos_fuzz_hypervisor y Atestación Criptográfica"
   const dbPath = path.join(tmpDir, "fuzz_mcp_ledger.sqlite");
 
   try {
-    const server = new EosMcpServer(projectRoot, "core");
+    const server = new EosMcpServer(projectRoot, "full");
 
-    // Verify tool catalog registration in Tier-0 core
+    // Verify tool catalog registration in full profile (outside lean core)
     const listRes = server.handleRequest({
       jsonrpc: "2.0",
       id: 1,
@@ -187,8 +187,8 @@ test("BDD-214: Despacho MCP de eos_fuzz_hypervisor y Atestación Criptográfica"
     });
     const tools = listRes?.result?.tools || [];
     const fuzzTool = tools.find((t) => t.name === "eos_fuzz_hypervisor");
-    assert.ok(fuzzTool, "eos_fuzz_hypervisor must be present in core profile");
-    assert.ok(CORE_TIER0_TOOL_NAMES.has("eos_fuzz_hypervisor"));
+    assert.ok(fuzzTool, "eos_fuzz_hypervisor must be present in full profile");
+    assert.ok(!CORE_TIER0_TOOL_NAMES.has("eos_fuzz_hypervisor"), "eos_fuzz_hypervisor belongs to full profile");
 
     // Invoke tool
     const callRes = server.handleRequest({

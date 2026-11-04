@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, "..");
 
-test("BDD-359: Live Fleet Radar Renders All 9 Registered Projects", () => {
+test("BDD-359: Live Fleet Radar Renders All 10 Registered Projects", () => {
   const htmlPath = path.join(root, "src/ui/eosStudioConsole.html");
   const html = fs.readFileSync(htmlPath, "utf8");
 
@@ -24,7 +24,7 @@ test("BDD-359: Live Fleet Radar Renders All 9 Registered Projects", () => {
   const registry = JSON.parse(fs.readFileSync(path.join(root, "docs/projects/registry.json"), "utf8"));
   const expectedProjects = registry.projects.map((p) => p.id);
 
-  assert.equal(expectedProjects.length, 9);
+  assert.ok(expectedProjects.length >= 10);
   for (const projId of expectedProjects) {
     assert.ok(html.includes(projId), `eosStudioConsole.html must include project '${projId}'`);
   }

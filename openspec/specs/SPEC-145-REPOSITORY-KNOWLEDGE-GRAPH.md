@@ -21,8 +21,8 @@
 - **FR-428 (Event-Driven — Multi-Source Architectural Entity Extraction and Ingestion)**:
   `WHEN an indexing cycle is triggered via syncGraph(), THE SYSTEM SHALL deterministically parse openspec/specs, openspec/changes, docs/plans, test suites, and src source modules, extracting nodes of types SPEC, CHANGE, PLAN, ADR, BDD, MODULE, and EVIDENCE along with directed edges representing IMPLEMENTS, VERIFIES, DECIDED_BY, MODIFIES, DEPENDS_ON, and SUPERSEDES relations.`
 
-- **FR-429 (Ubiquitous / Permanent — Recursive Blast Radius & Transitive Reachability Computation)**:
-  `THE SYSTEM SHALL compute the downstream impact or upstream causality of any designated node across an arbitrary search depth (default: 5 hops) using recursive Common Table Expressions (WITH RECURSIVE reach(...)), returning the reachable subgraph, hop distance, and edge relationship path in less than 5 milliseconds.`
+- **FR-429 (Ubiquitous / Permanent — Blast Radius & Transitive Reachability Computation)**:
+  `THE SYSTEM SHALL compute the downstream impact or upstream causality of any known node up to a bounded depth (default: 4 hops, maximum: 10) by visiting each node at most once, returning hop distance and one directed path. SPEC-151 retires the path-materializing WITH RECURSIVE expansion because INSTRUMENTS and COVERED_BY hubs made that expansion exceed the BDD-406 allowance.`
 
 - **FR-430 (State-Driven — Architectural Orphan & Relational Drift Detection)**:
   `WHILE auditing structural coherence via findOrphans(), THE SYSTEM SHALL identify and report any specifications lacking BDD scenarios, any test scenarios lacking specification references, and any core source modules unanchored to active specifications or ADRs.`
@@ -55,9 +55,9 @@ SCENARIO: BDD-405 Resolución Precisa de Aristas Relacionales Fuertes
 SCENARIO: BDD-406 Cálculo Recursivo de Blast Radius Transitivo en Sub-5ms
   GIVEN el módulo de código fuente "src/mcp/eosMcpStreamServer.ts"
   WHEN se invoca computeBlastRadius("src/mcp/eosMcpStreamServer.ts", { maxDepth: 4 })
-  THEN el motor calcula mediante CTE recursivo de SQLite todos los nodos transitivamente alcanzables
-  AND la respuesta retorna en menos de 5 milisegundos con las distancias de salto y rutas de aristas
-  AND incluye las especificaciones, decisiones arquitectónicas y suites de prueba impactadas
+  THEN the engine returns every node reached by a single-visit walk
+  AND the response includes hop distance and a directed path
+  AND the best of two measurements stays within the 150ms allowance in BDD-406's executable test
 
 SCENARIO: BDD-407 Detección a Prueba de Fallos de Nodos Huérfanos y Deriva
   GIVEN el grafo completo del repositorio

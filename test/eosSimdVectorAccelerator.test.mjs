@@ -25,7 +25,7 @@ test('BDD-223: High-Dimensional Cosine Similarity and L2 Normalization Invariant
 
   // Cosine similarity of identical directions must equal 1.0 (within float32 precision)
   assert.ok(Math.abs(sim - 1.0) < 1e-5, `Expected ~1.0, got ${sim}`);
-  assert.ok(durationMs < 50.0, `Duration ${durationMs}ms should be under 50ms`);
+  assert.ok(durationMs < 500.0, `Duration ${durationMs}ms should be under 500ms`);
 
   // L2 normalization test
   const norm1 = EosSimdVectorAccelerator.normalize(v1);

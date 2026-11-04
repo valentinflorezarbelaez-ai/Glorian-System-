@@ -1,0 +1,33 @@
+{
+  "auditedAt": "2026-11-04T15:52:00.000Z",
+  "closedAt": "2026-11-04T16:35:00.000Z",
+  "bar": ["composition", "typography", "atmosphere", "motion", "states", "a11y", "mobile", "cwv"],
+  "gaps": {
+    "ham-sah": ["brand_not_hero_dominant", "system_adjacent_fonts", "weak_motion", "no_empty_error_states"],
+    "donaciones": ["hero_stats_clutter_first_viewport", "cta_not_dominant_above_fold"],
+    "biblioteca": ["cwv_heavy_html_400kb", "intro_vs_lcp"],
+    "portafolio": ["intro_transition_polish", "motion_restraint"],
+    "atp-strength": ["brand_first_hero", "typography_default_stack_risk"],
+    "aberamentho": ["cockpit_density", "telemetry_vs_booth_hierarchy"],
+    "glorian": ["dense_first_viewport", "multi_message_hero"],
+    "taskflow": ["post_login_empty_states", "shell_density"],
+    "avo-pack": ["header_legal_clutter", "mobile_ops_clarity"],
+    "ptg": ["brand_first_hero", "competing_blocks"]
+  },
+  "remediationStatus": {
+    "ham-sah": "ADDRESSED_WITHIN_TESTED_SCOPE",
+    "donaciones": "ADDRESSED_WITHIN_TESTED_SCOPE",
+    "biblioteca": "PARTIAL_HTML_STILL_GT_250KB",
+    "portafolio": "ADDRESSED_WITHIN_TESTED_SCOPE",
+    "atp-strength": "ADDRESSED_WITHIN_TESTED_SCOPE",
+    "aberamentho": "ADDRESSED_WITHIN_TESTED_SCOPE",
+    "glorian": "ADDRESSED_WITHIN_TESTED_SCOPE",
+    "taskflow": "ADDRESSED_WITHIN_TESTED_SCOPE",
+    "avo-pack": "ADDRESSED_WITHIN_TESTED_SCOPE",
+    "ptg": "ADDRESSED_WITHIN_TESTED_SCOPE"
+  },
+  "wave4Evidence": [
+    "docs/evidence/fleet-uiux-wave4-probe.json",
+    "docs/evidence/EVD-FLEET-UIUX-WAVE4.json"
+  ]
+}

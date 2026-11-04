@@ -339,13 +339,13 @@ test("BDD-141: Bounded structural verification gates pass clean enterprise works
   }
 });
 
-test("BDD-142: Unified MCP eos_enterprise_workspace dispatch in 'core' profile with MCP 2025-03-26 ToolAnnotations", () => {
-  const coreServer = new EosMcpServer(projectRoot, "core");
+test("BDD-142: Unified MCP eos_enterprise_workspace dispatch in 'full' profile with MCP 2025-03-26 ToolAnnotations", () => {
+  const coreServer = new EosMcpServer(projectRoot, "full");
   const listToolsRes = coreServer.handleRequest({ jsonrpc: "2.0", id: 1, method: "tools/list" });
   const tools = listToolsRes?.result?.tools || [];
   const entTool = tools.find((t) => t.name === "eos_enterprise_workspace");
 
-  assert.ok(entTool, "eos_enterprise_workspace must be present in 'core' MCP profile");
+  assert.ok(entTool, "eos_enterprise_workspace must be present in 'full' MCP profile");
   assert.equal(entTool.annotations.readOnlyHint, false);
   assert.equal(entTool.annotations.destructiveHint, false);
 

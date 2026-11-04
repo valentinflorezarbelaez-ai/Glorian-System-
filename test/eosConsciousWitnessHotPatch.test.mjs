@@ -133,10 +133,10 @@ test("BDD-220: Rollback Automático ante Discrepancia o Reversión Solicitada", 
   assert.equal(mockKernel.compute(), 100, "Must be cleanly restored to original function");
 });
 
-test("BDD-221: Despacho MCP de eos_conscious_witness en Perfil Core", () => {
-  const server = new EosMcpServer(projectRoot, "core");
+test("BDD-221: Despacho MCP de eos_conscious_witness en Perfil Full", () => {
+  const server = new EosMcpServer(projectRoot, "full");
 
-  // Verify tool is present in core tools
+  // Verify tool is present in full catalog (outside lean core)
   const listRes = server.handleRequest({
     jsonrpc: "2.0",
     id: 10,
@@ -144,8 +144,8 @@ test("BDD-221: Despacho MCP de eos_conscious_witness en Perfil Core", () => {
   });
   const tools = listRes?.result?.tools || [];
   const witnessTool = tools.find((t) => t.name === "eos_conscious_witness");
-  assert.ok(witnessTool, "eos_conscious_witness must exist in core profile");
-  assert.ok(CORE_TIER0_TOOL_NAMES.has("eos_conscious_witness"));
+  assert.ok(witnessTool, "eos_conscious_witness must exist in full profile");
+  assert.ok(!CORE_TIER0_TOOL_NAMES.has("eos_conscious_witness"), "eos_conscious_witness belongs to full profile");
 
   // Invoke tool via MCP
   const callRes = server.handleRequest({

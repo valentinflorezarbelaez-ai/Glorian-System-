@@ -1,10 +1,29 @@
 {
   "version": "11.0.0-autonomous-fleet-registry",
-  "updatedAt": "2026-11-02T13:25:29.554Z",
+  "updatedAt": "2026-11-04T15:38:09.057Z",
   "masterOrchestrator": "EOS System control plane (SPEC-124)",
   "complianceStandard": "EOS_CONSTITUTION_LAW_IV_EXTERNAL_WRITE_BARRIER",
-  "totalFleetProjects": 9,
+  "totalFleetProjects": 10,
   "projects": [
+    {
+      "id": "kegel-ham-sah",
+      "name": "HAM-SAH + Kegel — Transmutación Solar y Fortalecimiento Pélvico",
+      "resolvedLocalDir": "Kegel-Ham-Sah-trasnmutacion-y-fortalecimiento-pelvico",
+      "localPathEnv": "EOS_FLEET_KEGEL_HAM_SAH_PATH",
+      "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Kegel-Ham-Sah-trasnmutacion-y-fortalecimiento-pelvico.git",
+      "productionUrl": "https://kegel-ham-sah-trasnmutacion-y-forta.vercel.app",
+      "type": "sacred-embodiment-protocol",
+      "status": "REGISTERED",
+      "intake": "INTAKE_COMPLETE",
+      "specification": "SPECIFICATION_APPROVED",
+      "audit": "AUDIT_COMPLETE",
+      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
+      "ownerApproval": "OWNER_APPROVAL",
+      "cicdGateScript": "scripts/verify-landing.mjs",
+      "autoShipScript": "git push origin main",
+      "currentBranch": "main",
+      "headCommitSha": "4e5f5c4bd0825a706541e3cd7bb53863a3695355"
+    },
     {
       "id": "aberamentho",
       "name": "Aberamentho Pleroma Music",
@@ -124,7 +143,7 @@
       "resolvedLocalDir": "Eos-System",
       "localPathEnv": "EOS_FLEET_EOS_SYSTEM_PATH",
       "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Glorian-System-.git",
-      "productionUrl": "https://glorian-system.vercel.app",
+      "productionUrl": "https://eos-system-ten.vercel.app",
       "type": "control-plane-monolith",
       "status": "REGISTERED",
       "intake": "INTAKE_COMPLETE",
@@ -174,5 +193,5 @@
       "headCommitSha": "36ba9c3b11406979f07a29fe8a544b14f8ec3c7a"
     }
   ],
-  "registrySha256": "2f105adc69600b5de1c1c269db5e8ae68432125b399e4d7839722cfca76d9f1e"
+  "registrySha256": "d01d199b6cce4f9fff7ad7121ad96ba1f4eab38e33a320a2de822d9baddf9f6a"
 }

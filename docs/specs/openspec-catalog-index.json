@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-06-22T20:58:39.000Z",
-  "totalSpecs": 149,
-  "catalogSha256": "a2ad7cff388019da977076dac7ebcf196337ca98f2977db612bdbb78e0b8f6fb",
+  "timestampIso": "2020-09-04T03:14:50.000Z",
+  "totalSpecs": 156,
+  "catalogSha256": "0145d02ab589b8760e6f0cb0b9d815635e99a43b541e5a55b782c3a13b33681e",
   "specs": [
     {
       "id": "SPEC-001",
@@ -460,7 +460,7 @@
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-045-GENTLEMAN-EVERGREEN-AUTOUPDATE.md",
-      "sha256": "ce3d35c8897b098e9b485ea684a694f9a2d74661e3566812c5b76257e52be943"
+      "sha256": "f83179e71db61ebe4906ca07188e522d2aa7e9ce350716e963eafa1806587c76"
     },
     {
       "id": "SPEC-046",
@@ -1306,7 +1306,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-145-REPOSITORY-KNOWLEDGE-GRAPH.md",
-      "sha256": "7e60d874e769ad68b50011a69a5b9e9c8e6529e23289514ea6b07313beafdf07"
+      "sha256": "678988864a2baaee79f20dc15f075c8d2fd9036d623b588ebd08a4339ea52ce0"
     },
     {
       "id": "SPEC-146",
@@ -1343,6 +1343,69 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-149-OPENTELEMETRY-DISTRIBUTED-TRACING.md",
       "sha256": "84af52ee060536a2e4747d87f2efb8477829d977f65dac9e8ad63c0b858ceef1"
+    },
+    {
+      "id": "SPEC-150",
+      "title": "Autonomous Closed-Loop Self-Healing & AST Mutation Engine (Level 5 Foundation)",
+      "status": "PROPOSED",
+      "frCount": 7,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-150-AUTONOMOUS-CLOSED-LOOP-SELF-HEALING.md",
+      "sha256": "bb0f6ec5dd80f757640328f6caba2adca21728677c780601c44406966aa2a8d7"
+    },
+    {
+      "id": "SPEC-151",
+      "title": "Relational Closure on the Repository Knowledge Graph",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-151-RELATIONAL-CLOSURE.md",
+      "sha256": "f3b0609cc1eb9387e8bf1712601782b2984c59fdcb45e03180d3eac5944ef171"
+    },
+    {
+      "id": "SPEC-152",
+      "title": "Universal Agent Session Contract & Product Golden Path Enforcement",
+      "status": "APPROVED",
+      "frCount": 7,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-152-UNIVERSAL-AGENT-SESSION-CONTRACT.md",
+      "sha256": "03a269398eeb079ad80f25e49f8b172aefc5f6538fc15800438aeddc5038a73d"
+    },
+    {
+      "id": "SPEC-153",
+      "title": "Cursor & Antigravity Session Hook Enforcement",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-153-CURSOR-ANTIGRAVITY-SESSION-HOOKS.md",
+      "sha256": "0273b7d9d42452dc1bd4bc9962b30010835b2332dcdbcd3034c1e170f8f2841b"
+    },
+    {
+      "id": "SPEC-154",
+      "title": "Glorian ↔ Gentleman Gentle-AI Stack Co-Governance Bind",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 3,
+      "file": "openspec/specs/SPEC-154-GENTLE-AI-COGOVERNANCE-BIND.md",
+      "sha256": "d00bce760e406b98b53d3b557b6c2e2689672ae0c2893fa2e7acef0c403c7650"
+    },
+    {
+      "id": "SPEC-155",
+      "title": "MCP Utility Modularization & Conscious Tool Surface",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-155-MCP-UTILITY-MODULARIZATION.md",
+      "sha256": "6a08c99c25e2b0e3c7e29ce7d851ff4b4742ea9beda1b1ee54666edd3bdd1349"
+    },
+    {
+      "id": "SPEC-156",
+      "title": "Mission Golden Path (Natural Language → Fail-Closed Big-Tech SDLC)",
+      "status": "APPROVED",
+      "frCount": 4,
+      "bddCount": 3,
+      "file": "openspec/specs/SPEC-156-MISSION-GOLDEN-PATH.md",
+      "sha256": "1ee3a608b2e3ff67915fa51433be1b24cc8196370e3dac9729fb1d02c7f627a4"
     }
   ]
 }

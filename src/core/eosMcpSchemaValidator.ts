@@ -158,7 +158,21 @@ export class EosMcpSchemaValidator {
       tools
     };
 
-    fs.writeFileSync(exportPath, JSON.stringify(payload, null, 2) + "\n", "utf8");
+    safeWriteFileSync(exportPath, JSON.stringify(payload, null, 2) + "\n");
     return exportPath;
+  }
+}
+
+function safeWriteFileSync(filePath: string, content: string): void {
+  const maxAttempts = 10;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      fs.writeFileSync(filePath, content, "utf8");
+      return;
+    } catch (err: any) {
+      if (attempt === maxAttempts) throw err;
+      const end = Date.now() + 25 * attempt;
+      while (Date.now() < end) {}
+    }
   }
 }

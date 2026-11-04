@@ -61,7 +61,15 @@ import {
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export const REGISTERED_FLEET_TARGETS: readonly string[] = deepFreeze([
+  "https://kegel-ham-sah-trasnmutacion-y-forta.vercel.app/",
+  "https://donaciones-drab.vercel.app/",
+  "https://biblioteca-gnostica.vercel.app/",
   "https://portafolio-valentin.vercel.app/",
+  "https://atp-strength.vercel.app/",
+  "https://aberamentosprelomamusic.vercel.app/",
+  "https://eos-system-ten.vercel.app/",
+  "https://crud-slack.vercel.app/",
+  "https://avo-pack.vercel.app/",
   "https://ptg-performance-talent-group.vercel.app/"
 ]);
 

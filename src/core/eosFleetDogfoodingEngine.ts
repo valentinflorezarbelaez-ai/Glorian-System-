@@ -204,7 +204,7 @@ export class EosFleetDogfoodingEngine {
 
     const sarifPath = path.join(evidenceDir, "fleet-audit.sarif");
     const sarifJson = JSON.stringify(sarifReport, null, 2);
-    fs.writeFileSync(sarifPath, sarifJson, "utf8");
+    safeWriteFileSync(sarifPath, sarifJson);
 
     const sha256Seal = crypto.createHash("sha256").update(sarifJson, "utf8").digest("hex");
 
@@ -226,6 +226,20 @@ export class EosFleetDogfoodingEngine {
       throw new LawIvExternalWriteBarrierViolation(
         `Direct write to external path ${targetPath} denied under Law IV of the EOS Constitution.`
       );
+    }
+  }
+}
+
+function safeWriteFileSync(filePath: string, content: string): void {
+  const maxAttempts = 10;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      fs.writeFileSync(filePath, content, "utf8");
+      return;
+    } catch (err: any) {
+      if (attempt === maxAttempts) throw err;
+      const end = Date.now() + 25 * attempt;
+      while (Date.now() < end) {}
     }
   }
 }

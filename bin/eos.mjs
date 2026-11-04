@@ -3068,7 +3068,7 @@ switch (command) {
       console.log(`  Tarea Programada       : ${installed.taskName}`);
       console.log(`  Frecuencia             : Cada ${installed.intervalHours} horas (100% silencioso en segundo plano)`);
       console.log(`  Lanzador Silencioso    : ${installed.launcherPath}`);
-      console.log(`  Hook Antigravity       : SessionStart oportunista (>6h TTL) ACTIVO`);
+      console.log(`  Hook Cursor+Antigravity: SessionStart oportunista (>6h TTL) ACTIVO`);
       console.log(`  Verificación SO        : ${status.registered ? "REGISTERED & ACTIVE" : "UNVERIFIED"}\n`);
       if (!status.registered) process.exit(1);
       break;
@@ -4496,6 +4496,48 @@ switch (command) {
     break;
   }
 
+  case "heal:loop": {
+    printBanner();
+    const targetFile = args[1] && !args[1].startsWith("--") ? args[1] : undefined;
+    const archIdx = args.indexOf("--archetype");
+    const archetype = archIdx >= 0 && args[archIdx + 1] ? args[archIdx + 1] : undefined;
+    const dryRun = !args.includes("--apply");
+
+    console.log(`[EOS AUTONOMOUS HEALING] Initiating closed-loop cycle (${dryRun ? "DRY-RUN" : "APPLY"})...`);
+    const { EosAutonomousSelfHealingEngine } = await import("../src/core/eosAutonomousSelfHealingEngine.ts");
+    const engine = EosAutonomousSelfHealingEngine.getInstance({ projectRoot: root });
+    const report = engine.runAutonomousHealingLoop({
+      targetFile,
+      archetype,
+      dryRun
+    });
+
+    console.log(`\n  Healing ID    : ${report.healingId}`);
+    console.log(`  Target File   : ${report.targetFile}`);
+    console.log(`  Archetype     : ${report.archetype}`);
+    console.log(`  Final Status  : ${report.status}`);
+    console.log(`  Trace ID      : ${report.traceId}`);
+    console.log(`  Duration      : ${report.durationMs.toFixed(2)} ms`);
+    console.log(`  SHA-256 Seal  : sha256:${report.sha256Receipt}\n`);
+    if (report.appliedMutation) {
+      console.log("Applied Surgical Mutation:");
+      console.log(report.appliedMutation.diff);
+    }
+    break;
+  }
+
+  case "heal:status": {
+    printBanner();
+    const { EosAutonomousSelfHealingEngine } = await import("../src/core/eosAutonomousSelfHealingEngine.ts");
+    const engine = EosAutonomousSelfHealingEngine.getInstance({ projectRoot: root });
+    const history = engine.getHealingHistory();
+    console.log(`[EOS AUTONOMOUS HEALING STATUS] Total Cycles: ${history.length}`);
+    for (const h of history.slice(0, 5)) {
+      console.log(`  - [${h.healingId}] ${h.status} | ${h.archetype} on ${h.targetFile} (${h.durationMs.toFixed(2)} ms)`);
+    }
+    break;
+  }
+
   case "guide":
   case "cheat-sheet": {
     printBanner();
@@ -4554,6 +4596,8 @@ switch (command) {
   eos raft                   Consenso distribuido Raft y sincronización WAL multi-nodo (Spanner)
   eos fuzzer [ciclos]        Fuzzing genético guiado por cobertura continuo 24/7 (OSS-Fuzz)
   eos aca [metrica]          Análisis canario estadístico Mann-Whitney U (Netflix Kayenta)
+  eos heal:loop [file]       Bucle autónomo de auto-reparación y mutación AST (Meta SapFix)
+  eos heal:status            Consulta el historial y estado del bucle de auto-reparación
   eos sapfix                 Bucle FDIR de auto-reparación AST y generación de PR (Meta SapFix)
   eos cas                    Estadísticas de Content-Addressable Storage (Google Bazel)
   eos chaos:live [url]       Inyección de caos en producción con circuit breaker (Netflix)

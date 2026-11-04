@@ -167,13 +167,13 @@ test("BDD-165: Cryptographic Contract Attestation & SQLite WAL Attestation", () 
 });
 
 test("BDD-166: MCP Dispatch of eos_contract_governor", () => {
-  const server = new EosMcpServer(projectRoot, "core");
+  const server = new EosMcpServer(projectRoot, "full");
 
   // 1. Verify existence in tools/list
   const listRes = server.handleRequest({ jsonrpc: "2.0", id: 1, method: "tools/list" });
   const tools = listRes?.result?.tools || [];
   const govTool = tools.find((t) => t.name === "eos_contract_governor");
-  assert.ok(govTool, "eos_contract_governor must be present in core profile");
+  assert.ok(govTool, "eos_contract_governor must be present in full profile");
 
   // 2. Invoke diff via snippets
   const baseSnippet = `

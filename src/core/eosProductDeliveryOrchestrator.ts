@@ -1,9 +1,10 @@
 /**
  * EOS SYSTEM — PRODUCT DELIVERY ORCHESTRATOR (Layer 0)
- * Governed by SPEC-147 / CHANGE-082 / LADDER-15 (Big-Tech IDP Golden Path)
+ * Governed by SPEC-147 / CHANGE-082 / LADDER-15 and SPEC-152 / CHANGE-087
  *
  * Composes Universal Product Foundry + Sovereign Loop + VerificationGatePort
  * + ProductQualityScorecard. Zero external runtime dependencies.
+ * SPEC-152: real gates on materialization; scorecard floor fail-closed.
  */
 
 import crypto from "node:crypto";
@@ -73,6 +74,8 @@ export interface DeliveryOptions {
   readonly gates?: VerificationGatePort;
   readonly enforceGates?: boolean;
   readonly authLevel?: number;
+  /** When false, scorecard penalizes unknown blast radius (SPEC-152). Default true. */
+  readonly blastRadiusKnown?: boolean;
 }
 
 export interface DeliveryResult {
@@ -122,6 +125,9 @@ export function deliveryAdmitOracle(code: string): boolean {
 
 const SECRET_PATTERN = /(api[_-]?key|secret|bearer\s+[a-z0-9_-]{20,}|sk-[a-z0-9]{20,})/i;
 
+/** Minimum Product Quality Scorecard score for SUCCESS (SPEC-152 FR-488). */
+export const PRODUCT_SCORECARD_FLOOR = 80;
+
 export function resolveDeliveryTrack(tier: ProductManifest["tier"]): DeliveryTrack {
   return tier === "MVP" ? "FastTrack" : "HeavySddTrack";
 }
@@ -139,7 +145,7 @@ export function evaluateLawIvComplete(lawIv: LawIvPreconditions): boolean {
 
 /**
  * Hermetic in-process gates: Layer-0 safe, no child_process.
- * Used by dry-run, unit tests, and default MCP dispatch.
+ * Used by dry-run defaults and injected unit-test stubs.
  */
 export function createHermeticVerificationGatePort(
   overrides?: Partial<{ turboExit: number; secretExit: number; mutationExit: number }>
@@ -182,6 +188,64 @@ export function createHermeticVerificationGatePort(
       const tester = new EosMutationTester();
       const report = tester.evaluateTestSuite(DELIVERY_MUTATION_TARGET_SNIPPET, deliveryAdmitOracle);
       const exit = report.mutationScore >= 80 ? 0 : 1;
+      return {
+        name: "mutation_floor",
+        exitCode: exit,
+        evidence: `mutationScore=${report.mutationScore};grade=${report.grade}`,
+        durationMs: Number((performance.now() - t0).toFixed(3))
+      };
+    }
+  };
+}
+
+/**
+ * Real verification gates for product materialization (SPEC-152 FR-487).
+ * Inspects package.json runtime dependencies instead of stubbing turbo exit 0.
+ */
+export function createRealVerificationGatePort(projectRoot: string): VerificationGatePort {
+  return {
+    runTurboPurity(): GateResult {
+      const t0 = performance.now();
+      try {
+        const pkgPath = path.join(projectRoot, "package.json");
+        const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8")) as {
+          dependencies?: Record<string, string>;
+        };
+        const deps = pkg.dependencies && typeof pkg.dependencies === "object" ? pkg.dependencies : {};
+        const count = Object.keys(deps).length;
+        return {
+          name: "turbo_purity",
+          exitCode: count === 0 ? 0 : 1,
+          evidence:
+            count === 0
+              ? "RUNTIME_DEPENDENCIES_EMPTY"
+              : `RUNTIME_DEPENDENCIES_COUNT=${count}`,
+          durationMs: Number((performance.now() - t0).toFixed(3))
+        };
+      } catch (err) {
+        return {
+          name: "turbo_purity",
+          exitCode: 1,
+          evidence: `RUNTIME_DEPENDENCIES_READ_FAILED:${err instanceof Error ? err.message : "unknown"}`,
+          durationMs: Number((performance.now() - t0).toFixed(3))
+        };
+      }
+    },
+    runSecretScan(payload: string): GateResult {
+      const t0 = performance.now();
+      const hit = SECRET_PATTERN.test(payload);
+      return {
+        name: "secret_scan",
+        exitCode: hit ? 1 : 0,
+        evidence: hit ? "SECRET_PATTERN_DETECTED" : "NO_PLAIN_SECRET_PATTERNS",
+        durationMs: Number((performance.now() - t0).toFixed(3))
+      };
+    },
+    runMutationFloor(): GateResult {
+      const t0 = performance.now();
+      const tester = new EosMutationTester();
+      const report = tester.evaluateTestSuite(DELIVERY_MUTATION_TARGET_SNIPPET, deliveryAdmitOracle);
+      const exit = report.mutationScore >= PRODUCT_SCORECARD_FLOOR ? 0 : 1;
       return {
         name: "mutation_floor",
         exitCode: exit,
@@ -324,7 +388,11 @@ export class EosProductDeliveryOrchestrator {
       ownerApproval: true,
       implementationAuthorized: true
     };
-    const gates = options.gates ?? createHermeticVerificationGatePort();
+    const gates =
+      options.gates ??
+      (dryRun
+        ? createHermeticVerificationGatePort()
+        : createRealVerificationGatePort(projectRoot));
     const enforceGates = options.enforceGates !== false;
     const authLevel = options.authLevel ?? 3;
 
@@ -452,7 +520,7 @@ export class EosProductDeliveryOrchestrator {
       gateResults,
       mutationScore,
       timeToGreenMs: durationMs,
-      blastRadiusKnown: true
+      blastRadiusKnown: options.blastRadiusKnown !== false
     });
 
     const sha256Receipt = crypto
@@ -468,8 +536,32 @@ export class EosProductDeliveryOrchestrator {
       safeWriteFileSync(scorePath, JSON.stringify(scorecard, null, 2) + "\n");
     }
 
+    if (scorecard.score < PRODUCT_SCORECARD_FLOOR) {
+      const blockedReceipt = crypto
+        .createHash("sha256")
+        .update(`BLOCKED:SCORECARD_FLOOR:${manifest.id}:${scorecard.score}:${sha256Receipt}`)
+        .digest("hex");
+      return {
+        status: "BLOCKED",
+        reason: "SCORECARD_FLOOR",
+        track,
+        dryRun,
+        blueprint,
+        topology,
+        loopSummary,
+        intelGovernanceStagesCompleted,
+        gateResults,
+        scorecard,
+        sddPackagePath,
+        deploymentAttempted: false,
+        epistemicState: "BLOCKED",
+        sha256Receipt: blockedReceipt,
+        durationMs
+      };
+    }
+
     return {
-      status: scorecard.score >= 80 ? "SUCCESS" : "PARTIAL",
+      status: "SUCCESS",
       track,
       dryRun,
       blueprint,

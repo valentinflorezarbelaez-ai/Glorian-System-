@@ -5,8 +5,11 @@
  * Implements a persistent, zero-dependency directed property graph in SQLite WAL mode.
  *
  * Models architectural entities (SPEC, CHANGE, PLAN, ADR, BDD, MODULE, EVIDENCE)
- * and directed edges (IMPLEMENTS, VERIFIES, DECIDED_BY, MODIFIES, DEPENDS_ON, SUPERSEDES).
- * Supports sub-5ms recursive CTE blast radius calculation and orphan drift detection.
+ * and directed edges (IMPLEMENTS, VERIFIES, DECIDED_BY, MODIFIES, DEPENDS_ON,
+ * SUPERSEDES, HAS_SCENARIO, INSTRUMENTS, COVERED_BY).
+ * Supports a single-visit blast-radius walk, an in-memory adjacency
+ * closure projected through EosOntologyCyclotron, and orphan drift detection.
+ * Governed together with SPEC-151.
  *
  * ZERO runtime NPM dependencies — 100% Layer-0 Pure TypeScript.
  */
@@ -15,6 +18,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { DatabaseSync } from "node:sqlite";
+import { EosOntologyCyclotron } from "./eosOntologyCyclotron.ts";
 
 export type NodeType = "SPEC" | "CHANGE" | "PLAN" | "ADR" | "BDD" | "MODULE" | "EVIDENCE";
 export type EdgeRelation =
@@ -25,7 +29,9 @@ export type EdgeRelation =
   | "TOUCHES"
   | "DEPENDS_ON"
   | "SUPERSEDES"
-  | "HAS_SCENARIO";
+  | "HAS_SCENARIO"
+  | "INSTRUMENTS"
+  | "COVERED_BY";
 
 export interface GraphNode {
   readonly id: string;
@@ -56,6 +62,16 @@ export interface BlastRadiusResult {
   readonly durationMs: number;
 }
 
+export interface MemoryClosureResult {
+  readonly rootNodeId: string;
+  readonly maxDepth: number;
+  readonly reachableNodeIds: readonly string[];
+  readonly totalReachable: number;
+  readonly depth: number;
+  readonly executionUs: number;
+  readonly index: "memory-adjacency";
+}
+
 export interface OrphanReport {
   readonly totalOrphans: number;
   readonly specsWithoutBdd: string[];
@@ -83,6 +99,9 @@ export class EosKnowledgeGraphEngine {
   public readonly dbPath: string;
   public readonly isMemory: boolean;
   public db!: DatabaseSync;
+  private memoryGraph: EosOntologyCyclotron | null = null;
+  private pendingCoverage: Array<{ sourceId: string; targetId: string }> = [];
+  private declaredMcpTools: ReadonlySet<string> = new Set();
 
   constructor(projectRoot: string = process.cwd(), dbPath?: string) {
     this.projectRoot = path.resolve(projectRoot);
@@ -291,6 +310,9 @@ export class EosKnowledgeGraphEngine {
     graphSha256: string;
   } {
     const t0 = Date.now();
+    this.pendingCoverage = [];
+    this.declaredMcpTools = this.loadDeclaredMcpTools();
+    this.memoryGraph = null;
 
     this.db.exec("BEGIN IMMEDIATE;");
     try {
@@ -299,11 +321,14 @@ export class EosKnowledgeGraphEngine {
       this.ingestPlansAndAdrs();
       this.ingestTests();
       this.ingestSourceModules();
+      this.flushCoverage();
       this.db.exec("COMMIT;");
     } catch (err) {
       this.db.exec("ROLLBACK;");
       throw err;
     }
+
+    this.projectMemoryIndex();
 
     const durationMs = Date.now() - t0;
     const stats = this.getGraphStats();
@@ -422,7 +447,58 @@ export class EosKnowledgeGraphEngine {
           });
         }
       }
+
+      for (const toolName of this.mentionedMcpTools(content)) {
+        const toolId = `mcp:${toolName}`;
+        this.upsertNode({
+          id: toolId,
+          type: "MODULE",
+          title: toolName,
+          file: "src/mcp/eosMcpServer.ts",
+          metadata: { role: "MCP_TOOL" }
+        });
+        this.upsertEdge({
+          sourceId: specId,
+          targetId: toolId,
+          relation: "INSTRUMENTS"
+        });
+      }
     }
+  }
+
+  private loadDeclaredMcpTools(): ReadonlySet<string> {
+    const serverFile = path.join(this.projectRoot, "src", "mcp", "eosMcpServer.ts");
+    if (!fs.existsSync(serverFile)) return new Set();
+    const text = fs.readFileSync(serverFile, "utf8");
+    const names = new Set<string>();
+    const matcher = /name:\s*"(eos_[a-z0-9_]+)"/g;
+    let match: RegExpExecArray | null;
+    while ((match = matcher.exec(text)) !== null) {
+      names.add(match[1]);
+    }
+    return names;
+  }
+
+  private mentionedMcpTools(content: string): string[] {
+    const found = content.match(/\beos_[a-z0-9_]+\b/g) || [];
+    return Array.from(new Set(found)).filter((name) => this.declaredMcpTools.has(name));
+  }
+
+  private queueCoverage(sourceId: string, targetId: string): void {
+    this.pendingCoverage.push({ sourceId, targetId });
+  }
+
+  private flushCoverage(): void {
+    for (const link of this.pendingCoverage) {
+      if (this.getNode(link.sourceId) && this.getNode(link.targetId)) {
+        this.upsertEdge({
+          sourceId: link.sourceId,
+          targetId: link.targetId,
+          relation: "COVERED_BY"
+        });
+      }
+    }
+    this.pendingCoverage = [];
   }
 
   private ingestChanges(): void {
@@ -574,6 +650,20 @@ export class EosKnowledgeGraphEngine {
           targetId: specId,
           relation: "VERIFIES"
         });
+        this.queueCoverage(specId, testId);
+      }
+
+      const importMatcher = /from\s+["'](\.\.?\/[^"']+)["']/g;
+      let importMatch: RegExpExecArray | null;
+      while ((importMatch = importMatcher.exec(content)) !== null) {
+        const resolved = path.normalize(path.join(path.dirname(fullPath), importMatch[1]));
+        let rel = path.relative(this.projectRoot, resolved).replace(/\\/g, "/");
+        if (!/\.(?:ts|mjs|js)$/.test(rel) && fs.existsSync(`${resolved}.ts`)) {
+          rel = `${rel}.ts`;
+        }
+        if (rel.startsWith("src/") || rel.startsWith("api/")) {
+          this.queueCoverage(rel, testId);
+        }
       }
     }
   }
@@ -626,90 +716,70 @@ export class EosKnowledgeGraphEngine {
     rootNodeId: string,
     options: { maxDepth?: number; direction?: "BOTH" | "OUT" | "IN" } = {}
   ): BlastRadiusResult {
+    this.requireKnownNode(rootNodeId);
     const t0 = process.hrtime.bigint();
     const maxDepth = Math.max(1, Math.min(10, options.maxDepth || 4));
     const direction = options.direction || "BOTH";
 
-    let query: string;
-    let params: any[];
+    const reached = new Map<string, { depth: number; path: string }>();
+    const queue: Array<{ id: string; depth: number; path: string }> = [];
+    let head = 0;
+    reached.set(rootNodeId, { depth: 0, path: rootNodeId });
+    queue.push({ id: rootNodeId, depth: 0, path: rootNodeId });
 
-    if (direction === "OUT") {
-      query = `
-        WITH RECURSIVE reach(node_id, depth, path) AS (
-          SELECT id, 0, id FROM eos_kg_nodes WHERE id = ?
-          UNION
-          SELECT
-            e.target_id,
-            r.depth + 1,
-            r.path || ' -> ' || e.relation || ' -> ' || e.target_id
-          FROM reach r
-          JOIN eos_kg_edges e ON r.node_id = e.source_id
-          WHERE r.depth < ? AND instr(r.path, e.target_id) = 0
-        )
-        SELECT DISTINCT n.*, r.depth, r.path
-        FROM reach r
-        JOIN eos_kg_nodes n ON r.node_id = n.id
-        ORDER BY r.depth ASC, n.id ASC;
-      `;
-      params = [rootNodeId, maxDepth];
-    } else if (direction === "IN") {
-      query = `
-        WITH RECURSIVE reach(node_id, depth, path) AS (
-          SELECT id, 0, id FROM eos_kg_nodes WHERE id = ?
-          UNION
-          SELECT
-            e.source_id,
-            r.depth + 1,
-            r.path || ' <- ' || e.relation || ' <- ' || e.source_id
-          FROM reach r
-          JOIN eos_kg_edges e ON r.node_id = e.target_id
-          WHERE r.depth < ? AND instr(r.path, e.source_id) = 0
-        )
-        SELECT DISTINCT n.*, r.depth, r.path
-        FROM reach r
-        JOIN eos_kg_nodes n ON r.node_id = n.id
-        ORDER BY r.depth ASC, n.id ASC;
-      `;
-      params = [rootNodeId, maxDepth];
-    } else {
-      query = `
-        WITH RECURSIVE reach(node_id, depth, path) AS (
-          SELECT id, 0, id FROM eos_kg_nodes WHERE id = ?
-          UNION
-          SELECT
-            e.target_id,
-            r.depth + 1,
-            r.path || ' -> ' || e.relation || ' -> ' || e.target_id
-          FROM reach r
-          JOIN eos_kg_edges e ON r.node_id = e.source_id
-          WHERE r.depth < ? AND instr(r.path, e.target_id) = 0
-          UNION
-          SELECT
-            e.source_id,
-            r.depth + 1,
-            r.path || ' <- ' || e.relation || ' <- ' || e.source_id
-          FROM reach r
-          JOIN eos_kg_edges e ON r.node_id = e.target_id
-          WHERE r.depth < ? AND instr(r.path, e.source_id) = 0
-        )
-        SELECT DISTINCT n.*, r.depth, r.path
-        FROM reach r
-        JOIN eos_kg_nodes n ON r.node_id = n.id
-        ORDER BY r.depth ASC, n.id ASC;
-      `;
-      params = [rootNodeId, maxDepth, maxDepth];
+    const outStmt = this.db.prepare(
+      "SELECT target_id, relation FROM eos_kg_edges WHERE source_id = ?"
+    );
+    const inStmt = this.db.prepare(
+      "SELECT source_id, relation FROM eos_kg_edges WHERE target_id = ?"
+    );
+
+    while (head < queue.length) {
+      const current = queue[head];
+      head += 1;
+      if (current.depth >= maxDepth) continue;
+
+      if (direction === "OUT" || direction === "BOTH") {
+        const outgoing = outStmt.all(current.id) as Array<{ target_id: string; relation: string }>;
+        for (const edge of outgoing) {
+          if (reached.has(edge.target_id)) continue;
+          const nextPath = `${current.path} -> ${edge.relation} -> ${edge.target_id}`;
+          const next = { id: edge.target_id, depth: current.depth + 1, path: nextPath };
+          reached.set(edge.target_id, { depth: next.depth, path: next.path });
+          queue.push(next);
+        }
+      }
+
+      if (direction === "IN" || direction === "BOTH") {
+        const incoming = inStmt.all(current.id) as Array<{ source_id: string; relation: string }>;
+        for (const edge of incoming) {
+          if (reached.has(edge.source_id)) continue;
+          const nextPath = `${current.path} <- ${edge.relation} <- ${edge.source_id}`;
+          const next = { id: edge.source_id, depth: current.depth + 1, path: nextPath };
+          reached.set(edge.source_id, { depth: next.depth, path: next.path });
+          queue.push(next);
+        }
+      }
     }
 
-    const stmt = this.db.prepare(query);
-    const rows = stmt.all(...params) as any[];
+    const orderedIds = Array.from(reached.entries())
+      .sort((a, b) => a[1].depth - b[1].depth || (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0))
+      .map(([id]) => id);
 
-    const nodes = rows.map((r) => ({
-      ...this.mapNodeRow(r),
-      depth: Number(r.depth),
-      path: String(r.path)
-    }));
-
-    const nodeIds = new Set(nodes.map((n) => n.id));
+    const nodes: Array<GraphNode & { depth: number; path: string }> = [];
+    const nodeIds = new Set<string>();
+    const nodeStmt = this.db.prepare("SELECT * FROM eos_kg_nodes WHERE id = ?");
+    for (const id of orderedIds) {
+      const row = nodeStmt.get(id) as any;
+      if (!row) continue;
+      const meta = reached.get(id)!;
+      nodes.push({
+        ...this.mapNodeRow(row),
+        depth: meta.depth,
+        path: meta.path
+      });
+      nodeIds.add(id);
+    }
     const edges: GraphEdge[] = [];
     if (nodeIds.size > 0) {
       const idsArray = Array.from(nodeIds);
@@ -740,6 +810,46 @@ export class EosKnowledgeGraphEngine {
       edges,
       durationMs
     };
+  }
+
+  public computeMemoryClosure(
+    rootNodeId: string,
+    options: { maxDepth?: number } = {}
+  ): MemoryClosureResult {
+    this.requireKnownNode(rootNodeId);
+    if (!this.memoryGraph) this.projectMemoryIndex();
+    const maxDepth = Math.max(1, Math.min(16, options.maxDepth || 8));
+    const closure = this.memoryGraph!.computeTransitiveClosure(rootNodeId, undefined, maxDepth);
+    return {
+      rootNodeId,
+      maxDepth,
+      reachableNodeIds: closure.reachableNodeIds,
+      totalReachable: closure.totalReachable,
+      depth: closure.depth,
+      executionUs: closure.executionUs,
+      index: "memory-adjacency"
+    };
+  }
+
+  private requireKnownNode(nodeId: string): void {
+    if (!nodeId || !this.getNode(nodeId)) {
+      throw new Error(`Unknown knowledge graph node: ${nodeId}`);
+    }
+  }
+
+  private projectMemoryIndex(): void {
+    const cyclotron = new EosOntologyCyclotron();
+    const nodeRows = this.db.prepare("SELECT id, type FROM eos_kg_nodes").all() as Array<{ id: string; type: string }>;
+    for (const row of nodeRows) {
+      cyclotron.registerNode(row.id, row.type, {});
+    }
+    const edgeRows = this.db.prepare(
+      "SELECT source_id, target_id, relation FROM eos_kg_edges"
+    ).all() as Array<{ source_id: string; target_id: string; relation: string }>;
+    for (const row of edgeRows) {
+      cyclotron.registerEdge(row.source_id, row.target_id, row.relation);
+    }
+    this.memoryGraph = cyclotron;
   }
 
   public getNeighbors(

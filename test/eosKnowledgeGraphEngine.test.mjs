@@ -16,6 +16,7 @@ import {
   EosKnowledgeGraphEngine,
   getDefaultKnowledgeGraphEngine
 } from "../src/core/eosKnowledgeGraphEngine.ts";
+import { EosOntologyCyclotron } from "../src/core/eosOntologyCyclotron.ts";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
 test("BDD-404: Ingesta Determinista de Entidades Arquitectónicas Centrales (Nodos)", async () => {
@@ -268,4 +269,113 @@ test("BDD-409: Persistencia Durable en SQLite WAL y Sellado Criptográfico", asy
       fs.rmSync(tempDir, { recursive: true, force: true });
     } catch {}
   }
+});
+
+test("BDD-456: INSTRUMENTS and COVERED_BY edges from SPEC-151", async () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-kg-rel-"));
+  const dbFile = path.join(tempDir, "kg_rel.db");
+  try {
+    const engine = new EosKnowledgeGraphEngine(process.cwd(), dbFile);
+    engine.syncGraph();
+    const spec = engine.getNeighbors("SPEC-151", "OUT");
+    assert.ok(spec.node, "SPEC-151 must be ingested");
+    const instruments = spec.outgoing.filter((row) => row.edge.relation === "INSTRUMENTS").map((row) => row.target.id);
+    assert.ok(instruments.includes("mcp:eos_query_knowledge_graph"), `INSTRUMENTS targets: ${instruments.join(", ")}`);
+    const covered = spec.outgoing.filter((row) => row.edge.relation === "COVERED_BY").map((row) => row.target.id);
+    assert.ok(covered.includes("test/eosKnowledgeGraphEngine.test.mjs"), `COVERED_BY targets: ${covered.join(", ")}`);
+    const moduleNeighbors = engine.getNeighbors("src/core/eosKnowledgeGraphEngine.ts", "OUT");
+    const moduleCovered = moduleNeighbors.outgoing.filter((row) => row.edge.relation === "COVERED_BY").map((row) => row.target.id);
+    assert.ok(moduleCovered.includes("test/eosKnowledgeGraphEngine.test.mjs"));
+    engine.close();
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("BDD-457: memory closure reports microseconds for a known node", async () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-kg-mem-"));
+  const dbFile = path.join(tempDir, "kg_mem.db");
+  try {
+    const engine = new EosKnowledgeGraphEngine(process.cwd(), dbFile);
+    engine.syncGraph();
+    engine.computeMemoryClosure("SPEC-145", { maxDepth: 8 });
+    const closure = engine.computeMemoryClosure("SPEC-145", { maxDepth: 8 });
+    assert.equal(closure.index, "memory-adjacency");
+    assert.equal(typeof closure.executionUs, "number");
+    assert.ok(closure.executionUs > 0);
+    assert.ok(closure.totalReachable > 0);
+    engine.close();
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("BDD-458: unknown blast-radius target fails closed", async () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-kg-unknown-"));
+  const dbFile = path.join(tempDir, "kg_unknown.db");
+  try {
+    const engine = new EosKnowledgeGraphEngine(process.cwd(), dbFile);
+    engine.syncGraph();
+    assert.throws(
+      () => engine.computeBlastRadius("NO-SUCH-NODE"),
+      /Unknown knowledge graph node: NO-SUCH-NODE/
+    );
+    engine.close();
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("BDD-459: 32-edge memory closure stays under 1000 microseconds after warmup", () => {
+  const cyclotron = new EosOntologyCyclotron();
+  for (let i = 0; i < 33; i += 1) {
+    cyclotron.registerNode(`n${i}`, "MODULE", {});
+  }
+  for (let i = 0; i < 32; i += 1) {
+    cyclotron.registerEdge(`n${i}`, `n${i + 1}`, "COVERED_BY");
+  }
+  cyclotron.computeTransitiveClosure("n0", undefined, 64);
+  const measured = cyclotron.computeTransitiveClosure("n0", undefined, 64);
+  assert.equal(measured.totalReachable, 32);
+  assert.ok(measured.executionUs < 1000, `executionUs ${measured.executionUs} exceeded 1000`);
+});
+
+test("BDD-460: MCP memory_closure dispatch and unknown-node rejection", async () => {
+  const mcpServer = new EosMcpServer(process.cwd(), "full");
+  const syncRes = await mcpServer.handleRequest({
+    jsonrpc: "2.0",
+    id: "spec150-sync",
+    method: "tools/call",
+    params: {
+      name: "eos_query_knowledge_graph",
+      arguments: { action: "sync" }
+    }
+  });
+  assert.ok(syncRes.result, syncRes.error?.message || "sync failed");
+
+  const closureRes = await mcpServer.handleRequest({
+    jsonrpc: "2.0",
+    id: "spec150-closure",
+    method: "tools/call",
+    params: {
+      name: "eos_query_knowledge_graph",
+      arguments: { action: "memory_closure", target: "SPEC-145", maxDepth: 8 }
+    }
+  });
+  assert.ok(closureRes.result, closureRes.error?.message || "memory_closure failed");
+  const body = JSON.parse(closureRes.result.content[0].text);
+  assert.equal(body.action, "memory_closure");
+  assert.ok(body.executionUs > 0);
+
+  const missingRes = await mcpServer.handleRequest({
+    jsonrpc: "2.0",
+    id: "spec150-missing",
+    method: "tools/call",
+    params: {
+      name: "eos_query_knowledge_graph",
+      arguments: { action: "memory_closure", target: "NO-SUCH-NODE" }
+    }
+  });
+  assert.ok(missingRes.error);
+  assert.match(missingRes.error.message, /Unknown knowledge graph node/);
 });

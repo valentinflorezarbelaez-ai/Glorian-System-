@@ -21,6 +21,12 @@ This skill defines how **EOS System** (Supreme Constitutional Control Plane) and
 
 ## 2. End-to-End 6-Phase Co-Governance Workflow
 
+0. **Preferred IDE Session Bind (Cursor / Antigravity — SPEC-152/153/154)**
+   - On SessionStart, Glorian ensures a preferred session and aligns Gentleman Gentle-AI Stack (`eos_agent_session_contract` → `ensure` / `align_gentleman`).
+   - Glorian fail-closes writes until the mandatory MCP DAG completes; Gentle AI supplies Engram memory, ODD/`gentle-ai` workflow, focused agents, GGA review, Context7 docs, and `agent-teams-lite` SDD skills.
+   - **Media canon (Alan Buscaglia)**: https://gentlemanprogramming.com/ · https://github.com/Gentleman-Programming · https://www.youtube.com/@gentlemanprogramming/videos · https://www.youtube.com/@GentlemanProgrammingVods — encoded in `EosGentlemanStackBridge.EXTERNAL_CANON` / `docs/governance/GENTLEMAN_MEDIA_CANON.md`.
+   - Honor Gentleman doctrine: verification over generation; requirements before code; ODD scales (inline small / delegate large); humans keep push/PR/merge.
+   - Division of labor: **Glorian = constitution & gates**; **Gentle AI = memory, workflow, review**. Never replace one with the other.
 1. **Recall & Direct**
    - Query `engram` (`mem_search` or `mem_context`) for relevant project history.
    - Invoke `eos_antigravity_direct` (`ServerName: "eos-system"`) to verify Law IV authorization and retrieve the mission DAG.

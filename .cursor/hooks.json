@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "node scripts/eos-ide-session-hook.mjs cursor sessionStart",
+        "timeout": 15
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": "node scripts/eos-ide-session-hook.mjs cursor preToolUse",
+        "matcher": "Write|StrReplace|Delete|EditNotebook",
+        "failClosed": true,
+        "timeout": 15
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": "node scripts/eos-ide-session-hook.mjs cursor beforeShellExecution",
+        "failClosed": false,
+        "timeout": 15
+      }
+    ],
+    "beforeMCPExecution": [
+      {
+        "command": "node scripts/eos-ide-session-hook.mjs cursor beforeMCPExecution",
+        "timeout": 10
+      }
+    ]
+  }
+}

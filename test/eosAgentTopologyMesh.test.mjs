@@ -122,13 +122,13 @@ test("BDD-153: Atestación Criptográfica y Registro en Ledger SQLite WAL", () =
 });
 
 test("BDD-154: Invocación MCP Integrada de eos_agent_topology_mesh", () => {
-  const server = new EosMcpServer(projectRoot, "core");
+  const server = new EosMcpServer(projectRoot, "full");
 
-  // 0. Verify presence in core profile
+  // 0. Verify presence in full profile
   const listToolsRes = server.handleRequest({ jsonrpc: "2.0", id: 1, method: "tools/list" });
   const tools = listToolsRes?.result?.tools || [];
   const meshTool = tools.find((t) => t.name === "eos_agent_topology_mesh");
-  assert.ok(meshTool, "eos_agent_topology_mesh must exist in 'core' profile");
+  assert.ok(meshTool, "eos_agent_topology_mesh must exist in 'full' profile");
   assert.equal(meshTool.annotations.readOnlyHint, false);
 
   // 1. Compile DAG via MCP

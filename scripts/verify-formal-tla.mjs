@@ -757,7 +757,9 @@ export function runAllFormalVerifications() {
     verifyPlanetaryMonorepoGovernorModel(),
     verifyCrossFleetNeuralSynapseModel(),
     verifyPlanetaryMultiCloudEvacuationModel(),
-    verifyMcpStreamableSecurityModel()
+    verifyMcpStreamableSecurityModel(),
+    verifyRelationalClosureModel(),
+    verifyUniversalAgentSessionContractModel()
   ];
 }
 
@@ -2266,6 +2268,98 @@ export function verifyInvariantVerificationEngineModel(steps = 200) {
 
   return {
     specification: "InvariantVerificationEngine.tla",
+    moduleName: parsed.moduleName,
+    sourceFileRead: true,
+    extractedVariables: parsed.variables,
+    extractedInvariantNames: parsed.invariants,
+    stepsExecuted,
+    executionMode: "bounded-javascript-simulation",
+    simulationAssertionsPassed: true
+  };
+}
+
+export function verifyUniversalAgentSessionContractModel(steps = 100) {
+  const filePath = path.join(formalDir, "UniversalAgentSessionContract.tla");
+  const parsed = parseTlaModule(filePath);
+  const tools = new Set(["eos_turbo_verify", "eos_validate_patch"]);
+  let sessionOpen = false;
+  let completed = new Set();
+  let writeAllowed = false;
+  let stepsExecuted = 0;
+
+  sessionOpen = true;
+  completed = new Set();
+  writeAllowed = false;
+  stepsExecuted += 1;
+
+  writeAllowed = completed.size === tools.size;
+  assert.equal(writeAllowed, false, "Write must be denied while DAG incomplete");
+
+  for (const t of tools) {
+    completed.add(t);
+    stepsExecuted += 1;
+  }
+  writeAllowed = sessionOpen && completed.size === tools.size;
+  assert.equal(writeAllowed, true, "WriteRequiresFullDagInvariant");
+  assert.ok(sessionOpen && [...completed].every((t) => tools.has(t)));
+
+  while (stepsExecuted < steps) {
+    stepsExecuted += 1;
+    assert.equal(writeAllowed, true, "WriteRequiresFullDagInvariant");
+    assert.ok(sessionOpen && [...completed].every((t) => tools.has(t)));
+  }
+
+  return {
+    specification: "UniversalAgentSessionContract.tla",
+    moduleName: parsed.moduleName,
+    sourceFileRead: true,
+    extractedVariables: parsed.variables,
+    extractedInvariantNames: parsed.invariants,
+    stepsExecuted,
+    executionMode: "bounded-javascript-simulation",
+    simulationAssertionsPassed: true
+  };
+}
+
+export function verifyRelationalClosureModel(steps = 100) {
+  const filePath = path.join(formalDir, "RelationalClosure.tla");
+  const parsed = parseTlaModule(filePath);
+  const nodes = new Set(["SPEC-145", "mcp:eos_query_knowledge_graph", "test/eosKnowledgeGraphEngine.test.mjs"]);
+  const maxDepth = 8;
+  const seen = new Set();
+  let depth = 0;
+  let stepsExecuted = 0;
+
+  const close = (start) => {
+    if (!nodes.has(start)) return false;
+    if (depth >= maxDepth) return false;
+    seen.add(start);
+    depth += 1;
+    stepsExecuted += 1;
+    return true;
+  };
+
+  assert.equal(close("missing-node"), false, "Unknown start must not extend the closure");
+  assert.equal(seen.size, 0);
+  assert.equal(close("SPEC-145"), true);
+  while (depth < 3) {
+    assert.equal(close("mcp:eos_query_knowledge_graph"), true);
+  }
+  assert.ok(depth <= maxDepth, "ClosureBoundInvariant: depth stays within MaxDepth");
+  for (const id of seen) {
+    assert.ok(nodes.has(id), "ClosureBoundInvariant: seen set stays inside Nodes");
+  }
+
+  while (stepsExecuted < steps) {
+    stepsExecuted += 1;
+    assert.ok(depth <= maxDepth, "ClosureBoundInvariant: depth stays within MaxDepth");
+    for (const id of seen) {
+      assert.ok(nodes.has(id), "ClosureBoundInvariant: seen set stays inside Nodes");
+    }
+  }
+
+  return {
+    specification: "RelationalClosure.tla",
     moduleName: parsed.moduleName,
     sourceFileRead: true,
     extractedVariables: parsed.variables,

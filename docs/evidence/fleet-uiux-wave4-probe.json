@@ -1,0 +1,223 @@
+{
+    "epistemicState":  "PRODUCTION_READY_WITHIN_TESTED_SCOPE",
+    "wave":  "ux4-evidence",
+    "probedAt":  "2026-11-04T16:31:20.8730257Z",
+    "method":  "curl.exe -sL",
+    "fleetSoundcheck":  {
+                            "sha256Receipt":  "c54aa072deefcc1e3675e2869651aed13f2f2881fce774ba9d858f09c05b7082",
+                            "quorum":  true,
+                            "average":  91
+                        },
+    "turboVerify":  "LOCAL_CHECKS_PASSED",
+    "architecturePurity":  100,
+    "deploys":  {
+                    "HAM_SAH":  {
+                                    "readyState":  "READY",
+                                    "url":  "https://kegel-ham-sah-trasnmutacion-y-forta.vercel.app"
+                                },
+                    "Donaciones":  {
+                                       "readyState":  "READY",
+                                       "url":  "https://donaciones-drab.vercel.app"
+                                   },
+                    "Glorian":  {
+                                    "readyState":  "READY",
+                                    "url":  "https://eos-system-ten.vercel.app"
+                                },
+                    "Aberamentho":  {
+                                        "readyState":  "READY",
+                                        "url":  "https://aberamentosprelomamusic.vercel.app"
+                                    },
+                    "Portafolio":  {
+                                       "readyState":  "READY",
+                                       "url":  "https://portafolio-valentin.vercel.app"
+                                   },
+                    "ATP":  {
+                                "url":  "https://atp-strength.vercel.app",
+                                "note":  "deployed from atp-strength-frontend cwd; root package.json now declares next for framework detect",
+                                "readyState":  "READY"
+                            },
+                    "Biblioteca":  {
+                                       "readyState":  "READY",
+                                       "url":  "https://biblioteca-gnostica.vercel.app"
+                                   },
+                    "TaskFlow":  {
+                                     "readyState":  "READY",
+                                     "url":  "https://crud-slack.vercel.app"
+                                 },
+                    "Avo_Pack":  {
+                                     "readyState":  "READY",
+                                     "url":  "https://avo-pack.vercel.app"
+                                 },
+                    "PTG":  {
+                                "readyState":  "READY",
+                                "url":  "https://ptg-performance-talent-group.vercel.app"
+                            }
+                },
+    "sites":  [
+                  {
+                      "site":  "HAM_SAH",
+                      "url":  "https://kegel-ham-sah-trasnmutacion-y-forta.vercel.app",
+                      "status":  200,
+                      "ttfb_ms":  420,
+                      "html_bytes":  5655,
+                      "a11y_main":  true,
+                      "a11y_h1":  true,
+                      "a11y_skip":  true,
+                      "a11y_landmarks":  true,
+                      "craft_signals":  {
+                                            "brand_or_font":  true,
+                                            "hero_h1":  true
+                                        },
+                      "cwv_html_under_250kb":  true
+                  },
+                  {
+                      "site":  "Donaciones",
+                      "url":  "https://donaciones-drab.vercel.app",
+                      "status":  200,
+                      "ttfb_ms":  499,
+                      "html_bytes":  69899,
+                      "a11y_main":  true,
+                      "a11y_h1":  true,
+                      "a11y_skip":  false,
+                      "a11y_landmarks":  true,
+                      "craft_signals":  {
+                                            "brand_or_font":  true,
+                                            "hero_h1":  true
+                                        },
+                      "cwv_html_under_250kb":  true
+                  },
+                  {
+                      "site":  "PTG",
+                      "url":  "https://ptg-performance-talent-group.vercel.app",
+                      "status":  200,
+                      "ttfb_ms":  453,
+                      "html_bytes":  123415,
+                      "a11y_main":  true,
+                      "a11y_h1":  true,
+                      "a11y_skip":  false,
+                      "a11y_landmarks":  true,
+                      "craft_signals":  {
+                                            "brand_or_font":  true,
+                                            "hero_h1":  true
+                                        },
+                      "cwv_html_under_250kb":  true
+                  },
+                  {
+                      "site":  "Aberamentho",
+                      "url":  "https://aberamentosprelomamusic.vercel.app",
+                      "status":  200,
+                      "ttfb_ms":  512,
+                      "html_bytes":  83532,
+                      "a11y_main":  true,
+                      "a11y_h1":  true,
+                      "a11y_skip":  false,
+                      "a11y_landmarks":  true,
+                      "craft_signals":  {
+                                            "brand_or_font":  true,
+                                            "hero_h1":  true
+                                        },
+                      "cwv_html_under_250kb":  true
+                  },
+                  {
+                      "site":  "Avo_Pack",
+                      "url":  "https://avo-pack.vercel.app",
+                      "status":  200,
+                      "ttfb_ms":  479,
+                      "html_bytes":  101461,
+                      "a11y_main":  true,
+                      "a11y_h1":  true,
+                      "a11y_skip":  true,
+                      "a11y_landmarks":  true,
+                      "craft_signals":  {
+                                            "brand_or_font":  true,
+                                            "hero_h1":  true
+                                        },
+                      "cwv_html_under_250kb":  true
+                  },
+                  {
+                      "site":  "TaskFlow",
+                      "url":  "https://crud-slack.vercel.app",
+                      "status":  200,
+                      "ttfb_ms":  385,
+                      "html_bytes":  68120,
+                      "a11y_main":  true,
+                      "a11y_h1":  true,
+                      "a11y_skip":  true,
+                      "a11y_landmarks":  true,
+                      "craft_signals":  {
+                                            "brand_or_font":  true,
+                                            "hero_h1":  true
+                                        },
+                      "cwv_html_under_250kb":  true
+                  },
+                  {
+                      "site":  "Portafolio",
+                      "url":  "https://portafolio-valentin.vercel.app",
+                      "status":  200,
+                      "ttfb_ms":  462,
+                      "html_bytes":  139958,
+                      "a11y_main":  true,
+                      "a11y_h1":  true,
+                      "a11y_skip":  false,
+                      "a11y_landmarks":  true,
+                      "craft_signals":  {
+                                            "brand_or_font":  true,
+                                            "hero_h1":  true
+                                        },
+                      "cwv_html_under_250kb":  true
+                  },
+                  {
+                      "site":  "ATP",
+                      "url":  "https://atp-strength.vercel.app",
+                      "status":  200,
+                      "ttfb_ms":  393,
+                      "html_bytes":  18474,
+                      "a11y_main":  true,
+                      "a11y_h1":  true,
+                      "a11y_skip":  false,
+                      "a11y_landmarks":  true,
+                      "craft_signals":  {
+                                            "brand_or_font":  true,
+                                            "hero_h1":  true
+                                        },
+                      "cwv_html_under_250kb":  true
+                  },
+                  {
+                      "site":  "Biblioteca",
+                      "url":  "https://biblioteca-gnostica.vercel.app",
+                      "status":  200,
+                      "ttfb_ms":  562,
+                      "html_bytes":  406094,
+                      "a11y_main":  true,
+                      "a11y_h1":  true,
+                      "a11y_skip":  false,
+                      "a11y_landmarks":  true,
+                      "craft_signals":  {
+                                            "brand_or_font":  true,
+                                            "hero_h1":  true
+                                        },
+                      "cwv_html_under_250kb":  false
+                  },
+                  {
+                      "site":  "Glorian",
+                      "url":  "https://eos-system-ten.vercel.app",
+                      "status":  200,
+                      "ttfb_ms":  537,
+                      "html_bytes":  211463,
+                      "a11y_main":  true,
+                      "a11y_h1":  true,
+                      "a11y_skip":  true,
+                      "a11y_landmarks":  true,
+                      "craft_signals":  {
+                                            "brand_or_font":  true,
+                                            "hero_h1":  true
+                                        },
+                      "cwv_html_under_250kb":  true
+                  }
+              ],
+    "notes":  [
+                  "Not eternal perfection; PRODUCTION_READY_WITHIN_TESTED_SCOPE only.",
+                  "Biblioteca HTML still \u003e250KB — residual LCP risk noted.",
+                  "DNS flakes observed on Invoke-WebRequest; curl succeeded."
+              ]
+}

@@ -10,11 +10,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, "..");
 
-test("BDD-340: EosFleetPulseEngine audits all 9 fleet repositories and verifies health quorum", () => {
+test("BDD-340: EosFleetPulseEngine audits all 10 fleet repositories and verifies health quorum", () => {
   const engine = new EosFleetPulseEngine(root);
   const report = engine.auditFleetPulse();
 
-  assert.equal(report.totalProjects, 9, "Expected exactly 9 projects in registry");
+  assert.equal(report.totalProjects, 10, "Expected exactly 10 projects in registry");
   assert.ok(report.localProjectsFound >= 1, `Expected at least 1 local project (self), got ${report.localProjectsFound}`);
   if (!process.env.CI && !process.env.GITHUB_ACTIONS) {
     assert.ok(report.localProjectsFound >= 8, `Expected at least 8 local projects on workstation, got ${report.localProjectsFound}`);
@@ -24,7 +24,7 @@ test("BDD-340: EosFleetPulseEngine audits all 9 fleet repositories and verifies 
   }
   assert.ok(report.sha256Receipt.length === 64, "Expected valid 64-character SHA-256 seal");
   assert.ok(report.durationMs >= 0);
-  assert.equal(report.projects.length, 9);
+  assert.equal(report.projects.length, 10);
 });
 
 test("BDD-341: EosFleetPulseEngine maps esoteric-gnostic archetypes to every sovereign project", () => {
@@ -59,7 +59,7 @@ test("BDD-342: formatPulseTable generates high-density ANSI terminal output", ()
   assert.ok(table.includes("eos-system"));
   assert.ok(table.includes("atp-strength"));
   assert.ok(table.includes("Production: https://"));
-  assert.ok(table.includes("ALL 9 REPOSITORIES GOVERNED"));
+  assert.ok(table.includes("ALL 10 REPOSITORIES GOVERNED"));
 });
 
 test("BDD-343: EosMcpServer dispatches eos_fleet_pulse for both json and table formats", () => {
@@ -80,7 +80,7 @@ test("BDD-343: EosMcpServer dispatches eos_fleet_pulse for both json and table f
 
   assert.ok(jsonRes?.result?.content?.[0]?.text);
   const jsonParsed = JSON.parse(jsonRes.result.content[0].text);
-  assert.equal(jsonParsed.totalProjects, 9);
+  assert.equal(jsonParsed.totalProjects, 10);
   if (!process.env.CI && !process.env.GITHUB_ACTIONS) {
     assert.ok(jsonParsed.fleetHealthQuorumPercentage >= 85);
   } else {
@@ -102,6 +102,6 @@ test("BDD-343: EosMcpServer dispatches eos_fleet_pulse for both json and table f
 
   assert.ok(tableRes?.result?.content?.[0]?.text);
   const tableParsed = JSON.parse(tableRes.result.content[0].text);
-  assert.equal(tableParsed.totalProjects, 9);
+  assert.equal(tableParsed.totalProjects, 10);
   assert.ok(tableParsed.table.includes("GLORIAN FLEET TACTICAL SOVEREIGNTY RADAR"));
 });

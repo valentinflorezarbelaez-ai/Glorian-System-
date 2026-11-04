@@ -339,6 +339,11 @@ import {
 } from "../core/eosProductDeliveryOrchestrator.ts";
 
 import {
+  EosUniversalAgentSessionContract,
+  getDefaultAgentSessionContract
+} from "../core/eosUniversalAgentSessionContract.ts";
+
+import {
   EosPlatformOpsCeiling
 } from "../core/eosPlatformOpsCeiling.ts";
 
@@ -348,6 +353,11 @@ import {
   parseW3cTraceparent,
   type SpanStatusCode
 } from "../core/eosOtelDistributedTracing.ts";
+
+import {
+  EosAutonomousSelfHealingEngine,
+  type HealingArchetype
+} from "../core/eosAutonomousSelfHealingEngine.ts";
 
 import {
   EosHnswVectorEngine
@@ -640,6 +650,14 @@ import {
 } from "./eosMcpToolCatalog.ts";
 
 import {
+  EosMcpDispatchRegistry
+} from "./eosMcpDispatchRegistry.ts";
+
+import {
+  PHASE1_CORE_UTILITARIAN_HANDLERS
+} from "./tools/eosMcpCoreUtilitarianHandlers.ts";
+
+import {
   EosS0DesignSystemGovernor,
   type VisualAuditReport
 } from "../core/eosS0DesignSystemGovernor.ts";
@@ -763,9 +781,11 @@ export class EosMcpServer {
   private readonly hybridKnowledge: EosHybridKnowledgeEngine;
   private readonly wasmSandbox: EosWasmSandboxEngine;
   private readonly knowledgeGraph: EosKnowledgeGraphEngine;
+  private readonly agentSessionContract: EosUniversalAgentSessionContract;
   private readonly projectRoot: string;
   private readonly serverVersion: string;
   private toolProfile: McpToolProfile;
+  private readonly dispatchRegistry = new EosMcpDispatchRegistry();
 
   constructor(projectRoot?: string, profile?: McpToolProfile) {
     this.toolProfile = normalizeToolProfile(profile ?? process.env.EOS_MCP_PROFILE);
@@ -812,6 +832,9 @@ export class EosMcpServer {
       kg = new EosKnowledgeGraphEngine(this.projectRoot, ":memory:");
     }
     this.knowledgeGraph = kg;
+    this.agentSessionContract = getDefaultAgentSessionContract(this.projectRoot);
+    // SPEC-155 Phase-1: conscious core handlers live outside the god-file switch.
+    this.dispatchRegistry.registerAll(PHASE1_CORE_UTILITARIAN_HANDLERS);
   }
 
   public setToolProfile(profile: McpToolProfile): void {
@@ -969,12 +992,12 @@ export class EosMcpServer {
                     properties: {
                       action: {
                         type: "string",
-                        enum: ["stats", "neighbors", "blast_radius", "find_orphans", "subgraph", "sync"],
+                        enum: ["stats", "neighbors", "blast_radius", "find_orphans", "subgraph", "sync", "memory_closure"],
                         description: "Graph operation to execute"
                       },
                       target: {
                         type: "string",
-                        description: "Target node ID (e.g., 'SPEC-145', 'src/mcp/eosMcpServer.ts') for neighbors, blast_radius, or subgraph"
+                        description: "Target node ID (e.g., 'SPEC-145', 'src/mcp/eosMcpServer.ts') for neighbors, blast_radius, subgraph, or memory_closure"
                       },
                       maxDepth: {
                         type: "number",
@@ -1062,6 +1085,26 @@ export class EosMcpServer {
                       content: { type: "string", description: "Source code to compress (optional, if omitted reads from filePath)" }
                     },
                     required: ["filePath"]
+                  }
+                },
+                {
+                  name: "eos_mission_run",
+                  description: "SPEC-156 Mission Golden Path: fail-closed NL→SDLC composing amplify, Law IV direction, architecture, tribunal, Spotify institutional gate, Nubank domain gate (hard for fintech), turbo verify, and ledger seal. Returns SUCCESS only when all mandatory stages exit 0. Epistemic: MISSION_GOLDEN_PATH_WITHIN_TESTED_SCOPE (not Level 5).",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      directive: { type: "string", description: "Natural-language engineering mission directive" },
+                      target: { type: "string", description: "Registered project id or path (default: eos-system)" },
+                      domainHint: {
+                        type: "string",
+                        enum: ["general", "audio", "fintech", "nubank", "spotify", "platform"],
+                        description: "Domain hint; fintech/nubank enables hard Nubank gate"
+                      },
+                      architectureTargetDir: { type: "string", description: "Architecture scan dir (default: src/core)" },
+                      persistLedger: { type: "boolean", description: "When true, seal to durable project ledger; default in-memory" },
+                      sealLedger: { type: "boolean", description: "When false, skip ledger stage (tests only)" }
+                    },
+                    required: ["directive"]
                   }
                 },
                 {
@@ -2246,8 +2289,34 @@ export class EosMcpServer {
                   }
                 },
                 {
+                  name: "eos_agent_session_contract",
+                  description: "SPEC-152 Universal Agent Session Contract: open a multi-IDE session (cursor, antigravity, claude-code, vscode), record mandatory MCP DAG progress, and authorize writes fail-closed until the DAG completes.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      action: {
+                        type: "string",
+                        enum: ["open", "ensure", "record_tool", "authorize_write", "status", "evaluate_write", "align_gentleman"],
+                        description: "Session contract ops; align_gentleman binds Gentleman Programming Gentle-AI Stack (SPEC-154)"
+                      },
+                      ideFamily: {
+                        type: "string",
+                        enum: ["cursor", "antigravity", "claude-code", "vscode"],
+                        description: "IDE family for open/ensure/evaluate_write"
+                      },
+                      directive: { type: "string", description: "Mission directive for action open" },
+                      target: { type: "string", description: "Target project id or path (default eos-system)" },
+                      sessionId: { type: "string", description: "Session id for record_tool, authorize_write, status" },
+                      sessionReceipt: { type: "string", description: "Optional receipt check for authorize_write" },
+                      toolName: { type: "string", description: "MCP tool name for record_tool" },
+                      paths: { type: "array", items: { type: "string" }, description: "Optional write paths for authorize_write" }
+                    },
+                    required: ["action"]
+                  }
+                },
+                {
                   name: "eos_product_deliver_run",
-                  description: "LADDER-15 Golden Path: Foundry blueprint → SDD package → Sovereign Loop → verification gates → Product Quality Scorecard. Defaults to dry-run; set write=true to materialize under docs/products/<id>/ on the control plane only.",
+                  description: "LADDER-15 Golden Path: Foundry blueprint → SDD package → Sovereign Loop → verification gates → Product Quality Scorecard. Defaults to dry-run; set write=true to materialize under docs/products/<id>/ on the control plane only. write=true uses real package.json purity gates (SPEC-152); scorecard < 80 returns BLOCKED.",
                   inputSchema: {
                     type: "object",
                     properties: {
@@ -2312,6 +2381,48 @@ export class EosMcpServer {
                     properties: {
                       traceId: { type: "string", description: "Optional specific trace ID to export" }
                     }
+                  }
+                },
+                {
+                  name: "eos_autonomous_heal_loop",
+                  description: "Meta SapFix / Google Auto-Remediation autonomous closed-loop self-healing: isolates fault, synthesizes AST candidate patches, evaluates in sandbox, and promotes verified zero-regression fix.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      diagnosticReport: { type: "string", description: "Error diagnostic message or test failure log" },
+                      targetFile: { type: "string", description: "Optional target source file path to repair" },
+                      archetype: {
+                        type: "string",
+                        enum: ["NULL_POINTER_GUARD", "TIMEOUT_BACKOFF_RETRY", "GRID_SPACING_CONFORMANCE", "IMPORT_CYCLE_BREAK", "FALLBACK_VALUE_INJECT"],
+                        description: "Specific self-healing archetype to execute"
+                      },
+                      dryRun: { type: "boolean", description: "Evaluate in sandbox without modifying disk (default true)" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_ast_mutation_synthesize",
+                  description: "Synthesizes surgical AST candidate mutation patches matching a target healing archetype (SapFix standard).",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      targetFile: { type: "string", description: "Target source file path" },
+                      archetype: {
+                        type: "string",
+                        enum: ["NULL_POINTER_GUARD", "TIMEOUT_BACKOFF_RETRY", "GRID_SPACING_CONFORMANCE", "IMPORT_CYCLE_BREAK", "FALLBACK_VALUE_INJECT"],
+                        description: "Target healing archetype"
+                      },
+                      symbol: { type: "string", description: "Target symbol name or property" }
+                    },
+                    required: ["targetFile", "archetype"]
+                  }
+                },
+                {
+                  name: "eos_self_healing_status",
+                  description: "Returns the real-time operational status and historical audit ledger of the Autonomous Closed-Loop Self-Healing Engine.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {}
                   }
                 },
                 {
@@ -3129,7 +3240,7 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_fleet_verify",
-                  description: "Fleet Production Living Verification & Bautismo de Fuego Engine (SPEC-056, v62.0.0): Executes live synthetic quality & security audits on deployed production targets (portafolio-valentin.vercel.app, ptg-performance-talent-group.vercel.app), auditing TLS headers, WCAG 2.1 AA landmarks, and CWV.",
+                  description: "Fleet Production Living Verification & Bautismo de Fuego Engine (SPEC-056, v62.0.0): Executes live synthetic quality & security audits on all 10 registered production targets (HAM-SAH, Donaciones, Biblioteca, Portafolio, ATP, Aberamentho, Glorian/eos-system-ten, TaskFlow, Avo Pack, PTG), auditing TLS headers, WCAG 2.1 AA landmarks, and CWV.",
                   inputSchema: {
                     type: "object",
                     properties: {
@@ -3740,6 +3851,25 @@ export class EosMcpServer {
     args: Record<string, any>,
     onProgress?: (progress: number, total?: number, message?: string) => void
   ): any {
+    // SPEC-153: auto-record dispatched tools onto live session DAGs (Cursor/Antigravity preferred).
+    try {
+      if (toolName !== "eos_agent_session_contract") {
+        this.agentSessionContract.recordToolAcrossLiveSessions(toolName);
+      }
+    } catch {
+      // Never block tool dispatch on session ledger I/O
+    }
+
+    // SPEC-155: prefer modular utilitarian facades before the legacy god-file switch.
+    const modular = this.dispatchRegistry.tryDispatch(toolName, args, {
+      projectRoot: this.projectRoot,
+      resolveProjectPath: (value, kind, fallback) => this.resolveProjectPath(value, kind, fallback),
+      onProgress
+    });
+    if (modular.handled) {
+      return modular.result;
+    }
+
     switch (toolName) {
       case "eos_semantic_search": {
         const query = String(args.query || "");
@@ -3842,8 +3972,18 @@ export class EosMcpServer {
               ...orphans
             };
           }
+          case "memory_closure": {
+            if (!target) {
+              throw new Error("Action 'memory_closure' requires a 'target' node identifier");
+            }
+            const closure = this.knowledgeGraph.computeMemoryClosure(target, { maxDepth });
+            return {
+              action: "memory_closure",
+              ...closure
+            };
+          }
           default:
-            throw new Error(`Unsupported knowledge graph action: '${action}'. Expected: stats, neighbors, blast_radius, find_orphans, subgraph, sync`);
+            throw new Error(`Unsupported knowledge graph action: '${action}'. Expected: stats, neighbors, blast_radius, find_orphans, subgraph, sync, memory_closure`);
         }
       }
 
@@ -5123,6 +5263,96 @@ export class EosMcpServer {
         };
       }
 
+      case "eos_agent_session_contract": {
+        const action = String(args.action || "").toLowerCase();
+        switch (action) {
+          case "open": {
+            const opened = this.agentSessionContract.openSession({
+              ideFamily: String(args.ideFamily || ""),
+              directive: String(args.directive || ""),
+              target: args.target ? String(args.target) : "eos-system"
+            });
+            return { action: "open", preferred: ["cursor", "antigravity"], ...opened };
+          }
+          case "ensure": {
+            const ensured = this.agentSessionContract.ensurePreferredIdeSession({
+              ideFamily: String(args.ideFamily || ""),
+              directive: args.directive ? String(args.directive) : undefined,
+              target: args.target ? String(args.target) : "eos-system"
+            });
+            return {
+              action: "ensure",
+              preferred: true,
+              ...ensured,
+              gentlemanAlignment: this.agentSessionContract.getGentlemanAlignment(),
+              coGovernanceMessage: this.agentSessionContract.formatCoGovernanceSessionMessage(
+                String(args.ideFamily || "cursor"),
+                ensured
+              )
+            };
+          }
+          case "record_tool": {
+            const sessionId = String(args.sessionId || "");
+            const toolName = String(args.toolName || "");
+            const recorded = this.agentSessionContract.recordToolInvocation(sessionId, toolName);
+            return { action: "record_tool", sessionId, toolName, ...recorded };
+          }
+          case "authorize_write": {
+            const decision = this.agentSessionContract.authorizeWrite({
+              sessionId: String(args.sessionId || ""),
+              sessionReceipt: args.sessionReceipt ? String(args.sessionReceipt) : undefined,
+              paths: Array.isArray(args.paths) ? args.paths.map(String) : undefined
+            });
+            return {
+              action: "authorize_write",
+              allowed: decision.decision === "allow",
+              ...decision
+            };
+          }
+          case "evaluate_write": {
+            const decision = this.agentSessionContract.evaluatePreferredWriteGate(
+              String(args.ideFamily || ""),
+              Array.isArray(args.paths) ? args.paths.map(String) : undefined
+            );
+            return {
+              action: "evaluate_write",
+              allowed: decision.decision === "allow",
+              ...decision
+            };
+          }
+          case "align_gentleman": {
+            const alignment = this.agentSessionContract.alignGentlemanStack();
+            return {
+              action: "align_gentleman",
+              source: alignment.source,
+              readinessScore: alignment.readinessScore,
+              status: alignment.status,
+              constitutionPreserved: alignment.constitutionPreserved,
+              sha256Receipt: alignment.sha256Receipt,
+              coGovernanceProtocol: alignment.protocol,
+              canon: EosGentlemanStackBridge.EXTERNAL_CANON,
+              divisionOfLabor: {
+                glorian: "constitution, Law IV, session write gates, product/mission golden path",
+                gentleAi:
+                  "Engram memory, ODD+SDD workflow (gentle-ai), focused agents, GGA native review, Context7 docs, agent-teams-lite; doctrine from gentlemanprogramming.com + YouTube main/VODs"
+              }
+            };
+          }
+          case "status": {
+            const status = this.agentSessionContract.getSessionStatus(String(args.sessionId || ""));
+            return {
+              action: "status",
+              ...status,
+              gentlemanAlignment: this.agentSessionContract.getGentlemanAlignment()
+            };
+          }
+          default:
+            throw new Error(
+              "Unsupported eos_agent_session_contract action. Expected: open, ensure, record_tool, authorize_write, evaluate_write, align_gentleman, status"
+            );
+        }
+      }
+
       case "eos_product_deliver_run": {
         onProgress?.(15, 100, "Starting LADDER-15 Product Delivery Golden Path");
         const name = String(args.name || "Demo Ledger MVP");
@@ -5244,6 +5474,48 @@ export class EosMcpServer {
         const otlp = traceEngine.exportOtlpJson(traceId);
         onProgress?.(100, 100, `OTLP payload generated with ${otlp.resourceSpans?.[0]?.scopeSpans?.[0]?.spans?.length || 0} spans`);
         return otlp;
+      }
+
+      case "eos_autonomous_heal_loop": {
+        onProgress?.(15, 100, "Initiating autonomous closed-loop self-healing cycle");
+        const healingEngine = EosAutonomousSelfHealingEngine.getInstance({ projectRoot: this.projectRoot });
+        const report = healingEngine.runAutonomousHealingLoop({
+          diagnosticReport: args.diagnosticReport ? String(args.diagnosticReport) : undefined,
+          targetFile: args.targetFile ? String(args.targetFile) : undefined,
+          archetype: args.archetype as HealingArchetype | undefined,
+          dryRun: args.dryRun !== false
+        });
+        onProgress?.(100, 100, `Autonomous healing finished with status ${report.status}`);
+        return report;
+      }
+
+      case "eos_ast_mutation_synthesize": {
+        const targetFile = String(args.targetFile || "").trim();
+        if (!targetFile) throw new Error("targetFile is required for eos_ast_mutation_synthesize");
+        const archetype = (args.archetype || "NULL_POINTER_GUARD") as HealingArchetype;
+        onProgress?.(30, 100, `Synthesizing AST mutations for archetype ${archetype}`);
+        const healingEngine = EosAutonomousSelfHealingEngine.getInstance({ projectRoot: this.projectRoot });
+        const candidates = healingEngine.synthesizeCandidateMutations(targetFile, archetype, {
+          symbol: args.symbol ? String(args.symbol) : undefined
+        });
+        onProgress?.(100, 100, `Synthesized ${candidates.length} candidate mutations`);
+        return {
+          total: candidates.length,
+          candidates,
+          sha256Receipt: crypto.createHash("sha256").update(JSON.stringify(candidates)).digest("hex")
+        };
+      }
+
+      case "eos_self_healing_status": {
+        onProgress?.(50, 100, "Querying autonomous self-healing operational status");
+        const healingEngine = EosAutonomousSelfHealingEngine.getInstance({ projectRoot: this.projectRoot });
+        const history = healingEngine.getHealingHistory();
+        return {
+          status: "AUTONOMOUS_HEALING_ACTIVE",
+          totalCycles: history.length,
+          recentHeals: history.slice(0, 10),
+          sha256Receipt: crypto.createHash("sha256").update(JSON.stringify(history)).digest("hex")
+        };
       }
 
       case "eos_ontology_query": {

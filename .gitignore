@@ -20,3 +20,5 @@ data/*.db
 data/*.db-shm
 data/*.db-wal
 test/_sandbox/
+
+.tmp-screensketch-frames/

@@ -161,13 +161,13 @@ test("BDD-147: Cryptographic Interface Lock (InterfaceLock)", () => {
   assert.match(verification.driftDetails, /initializeKernel/);
 });
 
-test("BDD-148: MCP eos_evolve_module dispatch in 'core' profile", () => {
-  const coreServer = new EosMcpServer(projectRoot, "core");
+test("BDD-148: MCP eos_evolve_module dispatch in 'full' profile", () => {
+  const coreServer = new EosMcpServer(projectRoot, "full");
   const listToolsRes = coreServer.handleRequest({ jsonrpc: "2.0", id: 1, method: "tools/list" });
   const tools = listToolsRes?.result?.tools || [];
   const evolveTool = tools.find((t) => t.name === "eos_evolve_module");
 
-  assert.ok(evolveTool, "eos_evolve_module must exist in 'core' profile");
+  assert.ok(evolveTool, "eos_evolve_module must exist in 'full' profile");
   assert.equal(evolveTool.annotations.readOnlyHint, false);
 
   const evalCall = coreServer.handleRequest({

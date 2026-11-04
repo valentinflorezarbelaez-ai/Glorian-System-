@@ -40,7 +40,8 @@ test("BDD-245: Integridad del punto de entrada unificado src/index.ts (SPEC-085)
   // 2. Verify MCP Server and Catalog tools
   assert.equal(typeof EosRoot.EosMcpServer, "function");
   assert.ok(EosRoot.CORE_TIER0_TOOL_NAMES instanceof Set);
-  assert.ok(EosRoot.CORE_TIER0_TOOL_NAMES.size >= 46);
+  assert.ok(EosRoot.CORE_TIER0_TOOL_NAMES.size <= 30);
+  assert.ok(EosRoot.CORE_TIER0_TOOL_NAMES.size >= 20);
 
   // 3. Verify Pure Layer-0 Kernel Primitives
   assert.equal(typeof EosRoot.pureSha256, "function");

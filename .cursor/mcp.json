@@ -4,7 +4,11 @@
       "command": "node",
       "args": [
         "c:\\Users\\valen\\Eos-System\\src\\mcp\\eosMcpServer.ts"
-      ]
+      ],
+      "env": {
+        "EOS_MCP_PROFILE": "core",
+        "EOS_PROJECT_ROOT": "c:\\Users\\valen\\Eos-System"
+      }
     },
     "engram": {
       "command": "C:\\Users\\valen\\AppData\\Local\\engram\\bin\\engram.exe",

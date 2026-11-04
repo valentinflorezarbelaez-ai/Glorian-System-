@@ -56,14 +56,73 @@ const REQUIRED_GENTLEMAN_SDD_SKILLS = [
   "eos-gentleman-synergy"
 ] as const;
 
+/**
+ * External Gentle-AI canon (Alan Buscaglia / Gentleman Programming).
+ * Site + GitHub + primary channel + VODs are first-class references for co-governance.
+ */
+export interface GentlemanExternalCanon {
+  readonly site: string;
+  readonly github: string;
+  readonly youtubeMain: string;
+  readonly youtubeVods: string;
+  readonly author: string;
+  readonly stackTools: readonly string[];
+  readonly fourLayers: readonly string[];
+  readonly operatingPrinciples: readonly string[];
+  readonly keyTeachingVideos: readonly { readonly title: string; readonly url: string }[];
+}
+
 export class EosGentlemanStackBridge {
+  public static readonly EXTERNAL_CANON: GentlemanExternalCanon = deepFreeze({
+    site: "https://gentlemanprogramming.com/",
+    github: "https://github.com/Gentleman-Programming",
+    youtubeMain: "https://www.youtube.com/@gentlemanprogramming/videos",
+    youtubeVods: "https://www.youtube.com/@GentlemanProgrammingVods",
+    author: "Alan Buscaglia (Gentleman Programming)",
+    stackTools: Object.freeze([
+      "gentle-ai",
+      "engram",
+      "gga",
+      "context7",
+      "agent-teams-lite",
+      "gentle-shell",
+      "Gentleman.Dots"
+    ]),
+    fourLayers: Object.freeze([
+      "1. el Gentleman — coordinate intent; ask only real decisions; push/PR/merge stay human",
+      "2. ODD — Organic Driven Development; scale workflow with complexity (inline small / feature doc large)",
+      "3. Focused agents — read-only explorer, writer that never commits, read-only verifier; delegate for named reasons only",
+      "4. Native review (GGA) — freeze the exact change; evidence-based review before commit leaves the machine"
+    ]),
+    operatingPrinciples: Object.freeze([
+      "Configure agents already on the machine; never silently install agent runtimes",
+      "Engram persists decisions, conventions, and bug fixes across sessions and agents",
+      "Requirements / exploration before code; one focused question when a real decision is open",
+      "Test-first changes in small human-readable commits; tests and docs travel with the code",
+      "Verification over generation: quality first, speed as a consequence",
+      "ODD scales: low-risk work stays inline; large work gets a feature document in the user's words",
+      "SDD / OpenSpec skills guide the AI; the model is not the process",
+      "Review is on by default; humans retain merge authority"
+    ]),
+    keyTeachingVideos: Object.freeze([
+      {
+        title: "El ECOSISTEMA de IA (Engram + SDD + Skills)",
+        url: "https://www.youtube.com/watch?v=UoS_LP-PCG8"
+      },
+      {
+        title: "SDD es una de esas cosas que tenés que saber",
+        url: "https://www.youtube.com/watch?v=YOVvo84AAu4"
+      }
+    ])
+  });
+
   public static readonly CO_GOVERNANCE_PROTOCOL: readonly string[] = Object.freeze([
-    "1. MEMORY RECALL (Engram MCP): Query `mem_context` / `mem_search` for prior architectural decisions and session handoffs.",
-    "2. SOVEREIGN DIRECTION & LAW IV GATE (EOS MCP): Run `eos_antigravity_direct` to classify mission profile and enforce External Write Barrier.",
+    "1. MEMORY RECALL (Engram MCP): Query `mem_context` / `mem_search` for prior architectural decisions and session handoffs (Gentleman channel doctrine: sessions must not start from zero).",
+    "2. SOVEREIGN DIRECTION & LAW IV GATE (EOS MCP): Run `eos_antigravity_direct` / `eos_mission_run` to classify mission profile and enforce External Write Barrier.",
     "3. LIVE DOCUMENTATION (Context7 MCP): Resolve up-to-date framework/SDK contracts via `resolve-library-id` + `query-docs`.",
-    "4. SDD SUB-AGENT DELEGATION (Agent-Teams-Lite + EOS SDD): Execute `sdd-explore` -> `sdd-spec` (`eos_amplify_prompt` EARS/BDD) -> `sdd-design` -> `sdd-tasks` -> `sdd-apply`.",
-    "5. COMPILER AST & ADVERSARIAL DUAL REVIEW (`eos_ast_analyze` + `judgment-day` + `gga`): Run real TypeScript AST check, dual blind sub-agent review, and Gentleman Guardian Angel rules check.",
-    "6. DURABLE DUAL SEAL (`eos_sqlite_ledger` + Engram `mem_save`): Record SHA-256 hash-chained WAL entry and save structured episodic memory."
+    "4. ODD + SDD DELEGATION (gentle-ai + Agent-Teams-Lite + EOS): Inline low-risk work; for large work run `sdd-explore` -> `sdd-spec` (`eos_amplify_prompt` EARS/BDD) -> `sdd-design` -> `sdd-tasks` -> `sdd-apply` with focused explorer/writer/verifier agents.",
+    "5. COMPILER AST & ADVERSARIAL DUAL REVIEW (`eos_ast_analyze` + `judgment-day` + `gga`): Freeze the change, run AST check, dual blind review, and Gentleman Guardian Angel rules check before commit leaves the machine.",
+    "6. DURABLE DUAL SEAL (`eos_sqlite_ledger` + Engram `mem_save`): Record SHA-256 hash-chained WAL entry and save structured episodic memory (What/Why/Where/Learned)."
   ]);
 
   public static resolveExtraToolPaths(homeDir: string = os.homedir()): string[] {

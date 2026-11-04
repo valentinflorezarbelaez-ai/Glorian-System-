@@ -161,13 +161,13 @@ test("BDD-159: Cryptographic State Hash Chain & SQLite WAL Attestation", () => {
 });
 
 test("BDD-160: MCP Dispatch of eos_invariant_engine", () => {
-  const server = new EosMcpServer(projectRoot, "core");
+  const server = new EosMcpServer(projectRoot, "full");
 
   // 1. Verify existence in tools/list
   const listRes = server.handleRequest({ jsonrpc: "2.0", id: 1, method: "tools/list" });
   const tools = listRes?.result?.tools || [];
   const invTool = tools.find((t) => t.name === "eos_invariant_engine");
-  assert.ok(invTool, "eos_invariant_engine must be present in core profile");
+  assert.ok(invTool, "eos_invariant_engine must be present in full profile");
 
   // 2. Explore transfer model via MCP
   const exploreRes = server.handleRequest({

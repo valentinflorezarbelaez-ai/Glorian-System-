@@ -293,7 +293,21 @@ export class EosTacticalCommandEngine {
     };
 
     fs.mkdirSync(path.dirname(target), { recursive: true });
-    fs.writeFileSync(target, JSON.stringify(payload, null, 2) + "\n", "utf8");
+    safeWriteFileSync(target, JSON.stringify(payload, null, 2) + "\n");
     return target;
+  }
+}
+
+function safeWriteFileSync(filePath: string, content: string): void {
+  const maxAttempts = 10;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      fs.writeFileSync(filePath, content, "utf8");
+      return;
+    } catch (err: any) {
+      if (attempt === maxAttempts) throw err;
+      const end = Date.now() + 25 * attempt;
+      while (Date.now() < end) {}
+    }
   }
 }

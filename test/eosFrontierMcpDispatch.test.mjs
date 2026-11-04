@@ -10,8 +10,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "..");
 
-test("BDD-199: Dispatch of 6 Big Tech Frontier Tools via Native MCP Server (Core Profile)", () => {
-  const server = new EosMcpServer(projectRoot, "core");
+test("BDD-199: Dispatch of 6 Big Tech Frontier Tools via Native MCP Server (Full Profile)", () => {
+  const server = new EosMcpServer(projectRoot, "full");
 
   // 1. Verify tools exist in tools/list
   const listRes = server.handleRequest({
@@ -33,7 +33,7 @@ test("BDD-199: Dispatch of 6 Big Tech Frontier Tools via Native MCP Server (Core
 
   for (const name of expectedFrontierTools) {
     assert.ok(toolNames.has(name), `Expected ${name} in MCP tools/list`);
-    assert.ok(CORE_TIER0_TOOL_NAMES.has(name), `Expected ${name} in CORE_TIER0_TOOL_NAMES`);
+    assert.ok(!CORE_TIER0_TOOL_NAMES.has(name), `Frontier tool ${name} must stay outside CORE (<=30) and live in full`);
   }
 
   // 2. Invoke eos_sapfix_autoshipper

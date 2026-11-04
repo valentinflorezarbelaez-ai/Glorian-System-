@@ -29,10 +29,10 @@
   <!-- Typography & Critical Asset Preload -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" href="/css/eos.css?v=15.0" as="style" />
+  <link rel="preload" href="/css/eos.css?v=15.1" as="style" />
   <link rel="preload" href="/js/eos.js?v=18.0" as="script" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/eos.css?v=15.0" integrity="sha384-k/3UHkJYxfUcXm3+viPZ66GyO+AaQbaZAmIb15a4bP1gQzc8uddT9N9E32e69Apm" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/css/eos.css?v=15.1" integrity="sha384-Cis7CmP5AfIKH30CcVH3auid0lkGl+gEHJXFlVqXX3VguOBjU8ue4oIpNdkOUZVG" crossorigin="anonymous" />
 
   <!-- Xirp-Grade Speculative Prerendering (0ms Instant Navigation) -->
   <script type="speculationrules">
@@ -130,43 +130,24 @@
     <section class="hero" id="top">
       <div class="container hero__grid">
         <div>
-          <div class="announcement-chip">
-            <span class="announcement-chip__text">CLI Node.js · MCP local · cambios revisables</span>
-            <a href="#primeros-pasos" class="announcement-chip__link">Cómo empezar →</a>
-          </div>
-
+          <p class="brand-hero-signal">Glorian System</p>
           <div class="eyebrow">
-            <span>HERRAMIENTAS LOCALES PARA REPOSITORIOS</span>
+            <span>CONTROL PLANE LOCAL</span>
           </div>
           <h1 class="hero__title">
             Revisa cambios de código con un <span class="text-gradient-cyan">flujo local y controlado</span>
           </h1>
           <p class="hero__lead">
-            <strong>Glorian System</strong> inspecciona repositorios, prepara un worktree aislado, valida cambios en un contenedor sin red y muestra el diff antes de aplicarlo. Tú mantienes el control de cada paso. La página web presenta ejemplos y demostraciones; no ejecuta comandos en tu equipo.
+            Inspecciona el repo, valida en aislamiento y aprueba el diff antes de aplicar. Tú decides cada paso.
           </p>
 
           <div class="hero__actions">
-            <a class="btn btn--primary" href="#primeros-pasos">Empezar con una inspección</a>
-            <a class="btn btn--gold" href="#tier1-control-nexus">Explorar herramientas</a>
-          </div>
-
-          <div class="hero__kpis">
-            <div class="kpi-card">
-              <div class="kpi-card__val">01 · LEE</div>
-              <div class="kpi-card__lbl">Solo lectura; no cambia el repositorio</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-card__val kpi-card__val--gold">02 · VALIDA</div>
-              <div class="kpi-card__lbl">Worktree y Docker local sin red</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-card__val kpi-card__val--emerald">03 · APRUEBA</div>
-              <div class="kpi-card__lbl">Diff con aprobación explícita</div>
-            </div>
+            <a class="btn btn--primary" href="#primeros-pasos">Empezar</a>
+            <a class="btn btn--gold" href="#tier1-control-nexus">Ver herramientas</a>
           </div>
 
           <!-- GLORIAN MULTI-ARCHETYPE LIVE SWITCHER (SPEC-117 / SPEC-130) -->
-          <div class="archetype-hud-switcher" role="radiogroup" aria-label="Selector de Arquetipo de Diseño Industrial">
+          <div class="archetype-hud-switcher" hidden role="radiogroup" aria-label="Selector de Arquetipo de Diseño Industrial">
             <span class="archetype-hud-label">ARQUETIPO:</span>
             <div class="archetype-pill-group">
               <button type="button" class="archetype-pill archetype-pill--active" data-archetype="GLORIAN_SOLAR" role="radio" aria-checked="true">
@@ -189,7 +170,7 @@
           </div>
 
           <!-- TIER S-0 TACTICAL BENTO HUD (SPEC-129) -->
-          <div class="hero-bento-hud" role="region" aria-label="Telemetría táctica de EOS">
+          <div class="hero-bento-hud" hidden role="region" aria-label="Telemetría táctica de EOS">
             <div class="bento-hud-card">
               <div class="bento-hud-card__tag">FLOTA SOBERANA</div>
               <div class="bento-hud-card__value" style="color: #38bdf8;">9 PROYECTOS</div>
@@ -270,6 +251,29 @@ npm ci</code></pre>
           <strong>¿Quieres validar o aplicar un cambio?</strong>
           Para eso necesitas Docker local, una rama limpia y revisar el diff. Consulta el <a href="https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/README.md#approval-gated-project-workflow">flujo completo y sus requisitos</a> antes de continuar.
         </div>
+      </div>
+    </section>
+
+    <section class="section" id="carrera-evidencia">
+      <div class="container">
+        <div class="section__head">
+          <div class="eyebrow">CAREER LEVERAGE · EMPLOYER-READABLE PROOF</div>
+          <h2 class="section__title">De lenguaje natural a SDLC verificable</h2>
+          <p class="section__sub">
+            Glorian es un control plane de ingeniería para agentes de IA: intent → EARS/BDD → gates Spotify/Nubank → turbo → recibo.
+            Co-gobiermo Gentle AI (Alan Buscaglia). Evidencia sellada dentro del alcance probado — no Level 5.
+          </p>
+        </div>
+        <p>
+          Pack para hiring managers:
+          <a href="https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/portfolio/EVIDENCE_PACK_LATEST.md">docs/portfolio/EVIDENCE_PACK_LATEST.md</a>
+          · Entrada diaria MCP: <code>eos_mission_run</code>
+          · Canon Gentleman:
+          <a href="https://www.youtube.com/@gentlemanprogramming/videos" target="_blank" rel="noopener noreferrer">YouTube</a>
+          /
+          <a href="https://www.youtube.com/@GentlemanProgrammingVods" target="_blank" rel="noopener noreferrer">VODs</a>
+        </p>
+        <pre class="quickstart-command"><code>node scripts/generate-career-evidence-pack.mjs</code></pre>
       </div>
     </section>
 

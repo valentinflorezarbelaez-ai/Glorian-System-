@@ -25,6 +25,20 @@ console.log(" EOS SYSTEM — SUPPLY CHAIN ATTESTATION & SBOM GENERATOR ");
 console.log(` [INFO] Root: ${root}`);
 console.log("======================================================================");
 
+function safeWriteFileSync(filePath, content) {
+  const maxAttempts = 10;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      fs.writeFileSync(filePath, content, "utf8");
+      return;
+    } catch (err) {
+      if (attempt === maxAttempts) throw err;
+      const end = Date.now() + 25 * attempt;
+      while (Date.now() < end) {}
+    }
+  }
+}
+
 try {
   const evidenceDir = path.join(root, "docs", "evidence");
   if (!fs.existsSync(evidenceDir)) {
@@ -35,7 +49,7 @@ try {
   console.log("\n[1/3] Synthesizing CycloneDX v1.5 Software Bill of Materials...");
   const sbom = EosSlsaProvenanceSbom.generateCycloneDxSbom(root);
   const sbomPath = path.join(evidenceDir, "sbom.cdx.json");
-  fs.writeFileSync(sbomPath, JSON.stringify(sbom, null, 2) + "\n", "utf8");
+  safeWriteFileSync(sbomPath, JSON.stringify(sbom, null, 2) + "\n");
 
   console.log(`  ✔ Serial Number   : ${sbom.serialNumber}`);
   console.log(`  ✔ Main Component  : ${sbom.metadata.component.name} (v${sbom.metadata.component.version})`);
@@ -49,7 +63,7 @@ try {
   const commitSha = process.env.GITHUB_SHA || "HEAD";
   const slsa = EosSlsaProvenanceSbom.generateSlsaProvenance(root, commitSha);
   const provenancePath = path.join(evidenceDir, "provenance.intoto.jsonl");
-  fs.writeFileSync(provenancePath, JSON.stringify(slsa) + "\n", "utf8");
+  safeWriteFileSync(provenancePath, JSON.stringify(slsa) + "\n");
 
   console.log(`  ✔ Statement Type  : ${slsa._type}`);
   console.log(`  ✔ Predicate Type  : ${slsa.predicateType}`);

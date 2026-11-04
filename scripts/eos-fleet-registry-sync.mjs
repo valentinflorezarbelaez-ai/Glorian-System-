@@ -176,9 +176,14 @@ export function inferProjectMetadata(repoPath) {
     cicdGateScript = "scripts/smoke-test.ps1";
   } else if (lower === "eos-system" || /^glorian-system-?$/.test(lower)) {
     name = "Glorian (Control Plane Core)";
-    productionUrl = "https://glorian-system.vercel.app";
+    productionUrl = "https://eos-system-ten.vercel.app";
     type = "control-plane-monolith";
     cicdGateScript = "scripts/verify-cicd-pipeline.mjs";
+  } else if (lower.includes("kegel") || lower.includes("ham-sah")) {
+    name = "HAM-SAH + Kegel — Transmutación Solar y Fortalecimiento Pélvico";
+    productionUrl = "https://kegel-ham-sah-trasnmutacion-y-forta.vercel.app";
+    type = "sacred-embodiment-protocol";
+    cicdGateScript = "scripts/verify-landing.mjs";
   } else if (lower.includes("biblioteca-gnostica")) {
     name = "Biblioteca Gnóstica — Preservación Digital de Textos Sagrados";
     productionUrl = "https://biblioteca-gnostica.vercel.app";
@@ -224,6 +229,8 @@ function resolveDiscoveredProjectId(disc) {
       id = "performance-talent-group";
     } else if (dirLower.includes("crud-slack")) {
       id = "crud-slack";
+    } else if (dirLower.includes("kegel") || dirLower.includes("ham-sah")) {
+      id = "kegel-ham-sah";
     } else if (dirLower === "eos-system" || /^glorian-system-?$/.test(dirLower)) {
       id = "eos-system";
     } else {
