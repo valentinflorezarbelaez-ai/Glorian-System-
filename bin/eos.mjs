@@ -2661,6 +2661,64 @@ switch (command) {
     break;
   }
 
+  case "triad":
+  case "black": {
+    printBanner();
+    console.log("[EOS BLACK PROJECTS TRIAD] Skunk Works · DARPA · NRO Doctrine — SPEC-159\n");
+    const { EosBlackProjectsTriad } = await import("../src/core/eosBlackProjectsTriad.ts");
+    const triad = new EosBlackProjectsTriad(root);
+    const sub = (args[1] || "audit").toLowerCase();
+
+    if (sub === "skunk" || sub === "rules") {
+      const report = triad.auditKellyJohnsonRules();
+      console.log(`  Kelly Johnson Compliance : ${report.compliancePercent}%`);
+      console.log(`  Rules Audited            : ${report.rules.length}`);
+      console.log(`  Receipt SHA-256          : ${report.sha256Receipt}\n`);
+      report.rules.forEach((r) => {
+        const icon = r.passed ? "✔" : "✘";
+        console.log(`  ${icon} [Rule ${r.ruleId}] ${r.title}`);
+        console.log(`      ${r.evidence}`);
+      });
+    } else if (sub === "darpa" || sub === "ooda") {
+      const res = triad.executeDarpaOodaCycle({
+        anomalyScore: 0.55,
+        errorBudgetBurned: true,
+        invariantBroken: false
+      });
+      console.log(`  DARPA Orient       : ${res.orient}`);
+      console.log(`  DARPA Decide       : ${res.decide}`);
+      console.log(`  Act Receipt        : ${res.actReceipt}`);
+      console.log(`  Snapshot           : ${res.compensationSnapshot}`);
+      console.log(`  OODA Duration      : ${res.durationUs}µs`);
+      console.log(`  Receipt SHA-256    : ${res.sha256Receipt}`);
+    } else if (sub === "nro" || sub === "radar") {
+      const radar = triad.runNroSarDeepScan();
+      console.log(`  Zero Plain Secrets : ${radar.zeroPlainSecrets ? "CONFIRMED" : "VIOLATION"}`);
+      console.log(`  Layers Probed      : ${radar.layers.length}`);
+      console.log(`  Radar Duration     : ${radar.durationUs}µs`);
+      console.log(`  Receipt SHA-256    : ${radar.sha256Receipt}\n`);
+      radar.layers.forEach((l) => {
+        console.log(`  ✔ [${l.layer}] Findings: ${l.findings} — ${l.details}`);
+      });
+    } else {
+      // Full triad audit
+      const full = triad.auditTriad();
+      console.log(`  Triad Status       : ${full.status}`);
+      console.log(`  Overall Score      : ${full.overallScore}/100`);
+      console.log(`  Total Duration     : ${full.totalDurationUs}µs`);
+      console.log(`  Receipt SHA-256    : ${full.sha256Receipt}\n`);
+      full.pillars.forEach((p) => {
+        const icon = p.compliant ? "✔" : "✘";
+        console.log(`  ${icon} [${p.pillarId}] — ${p.name}`);
+        console.log(`      Score: ${p.score}/100 | Latency: ${p.latencyUs}µs`);
+        console.log(`      Details: ${p.details}`);
+      });
+      console.log(`\n  [CLAIMS DENIED]    : ${full.claimsDenied.join(", ")}`);
+      console.log(`\n[${full.status === "TRIAD_DRILL_PASS" ? "PASS" : "FAIL"}] Black Projects Triad audit complete.`);
+    }
+    break;
+  }
+
   case "product:deliver": {
     printBanner();
     console.log("[EOS PRODUCT DELIVER] Golden Path IDP — Foundry → SDD → Loop → Gates → Scorecard\n");

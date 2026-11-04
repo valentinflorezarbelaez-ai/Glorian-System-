@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2028-04-25T02:35:22.000Z",
-  "totalSpecs": 158,
-  "catalogSha256": "0fa3ffead040c034e9d6e95b57d67e202369aa861a36b4028a797b342a9e89d9",
+  "timestampIso": "2021-12-12T08:44:52.000Z",
+  "totalSpecs": 159,
+  "catalogSha256": "61b9ab04e86f7e59af5faf7d61734e05417d0dee194b0c64b452a9161a6f0d68",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1424,6 +1424,15 @@
       "bddCount": 2,
       "file": "openspec/specs/SPEC-158-PLANETARY-APEX-OPERATING-DOCTRINE.md",
       "sha256": "920f5a9e5bf61a3b21c52b6734496d6699152c76ec63d6830a922c297ee965e7"
+    },
+    {
+      "id": "SPEC-159",
+      "title": "Black Projects Triad Operating Doctrine (Skunk Works, DARPA, NRO Software Analogs)",
+      "status": "APPROVED_WITHIN_TESTED_SCOPE",
+      "frCount": 4,
+      "bddCount": 3,
+      "file": "openspec/specs/SPEC-159-BLACK-PROJECTS-TRIAD-DOCTRINE.md",
+      "sha256": "0a5c76db60fbc6671337622b5618de8de13d28a3f80749f71c0d815f26771b42"
     }
   ]
 }

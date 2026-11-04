@@ -698,6 +698,10 @@ import {
   EosPlanetaryApexDoctrine
 } from "../core/eosPlanetaryApexDoctrine.ts";
 
+import {
+  EosBlackProjectsTriad
+} from "../core/eosBlackProjectsTriad.ts";
+
 const globalBulkheadGovernor = new EosCellBasedBulkheadGovernor({ cellCount: 8, cellCapacity: 100 });
 const globalSloGovernor = new EosMultiWindowSloGovernor();
 const globalHedgedMesh = new EosAdaptiveHedgedDeadlineMesh();
@@ -3650,6 +3654,20 @@ export class EosMcpServer {
                 {
                   name: "eos_planetary_doctrine_audit",
                   description: "Planetary Apex Operating Doctrine (SPEC-158): Audits the system against the 5 Apex Pillars: ASML Sub-Micron Precision, SpaceX Starship TMR Avionics, DeepMind Invariants, DARPA Hermetic Isolation, and NSA/Livermore Immutability.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      format: {
+                        type: "string",
+                        enum: ["json", "summary"],
+                        description: "Output format: structured JSON or human-readable summary"
+                      }
+                    }
+                  }
+                },
+                {
+                  name: "eos_black_projects_triad_audit",
+                  description: "Black Projects Triad Operating Doctrine (SPEC-159): Software analogs of Skunk Works Kelly Johnson rules, DARPA OODA, and NRO multi-layer SAR. Denies black-budget/Area-51/Level-5 claims.",
                   inputSchema: {
                     type: "object",
                     properties: {
@@ -6643,6 +6661,34 @@ export class EosMcpServer {
             overallScore: report.overallScore,
             totalDurationUs: report.totalDurationUs,
             pillarsAudited: report.pillars.length,
+            sha256Receipt: report.sha256Receipt,
+            pillars: report.pillars.map((p) => ({
+              pillarId: p.pillarId,
+              name: p.name,
+              compliant: p.compliant,
+              score: p.score,
+              latencyUs: p.latencyUs,
+              details: p.details
+            }))
+          };
+        }
+
+        return report;
+      }
+
+      case "eos_black_projects_triad_audit": {
+        const triad = new EosBlackProjectsTriad(this.projectRoot);
+        const report = triad.auditTriad();
+        const format = String(args?.format || "json").toLowerCase();
+
+        if (format === "summary") {
+          return {
+            status: report.status,
+            overallScore: report.overallScore,
+            totalDurationUs: report.totalDurationUs,
+            pillarsAudited: report.pillars.length,
+            epistemicState: report.epistemicState,
+            claimsDenied: report.claimsDenied,
             sha256Receipt: report.sha256Receipt,
             pillars: report.pillars.map((p) => ({
               pillarId: p.pillarId,

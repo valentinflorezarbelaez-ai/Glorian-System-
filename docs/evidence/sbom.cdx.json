@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:9b1a2276-97ec-59dc-a797-92d3e3e781b7",
+  "serialNumber": "urn:uuid:ddd475cb-84db-5e8f-9c26-d712ef2bb1f8",
   "version": 1,
   "metadata": {
-    "timestamp": "2022-06-12T20:07:18.000Z",
+    "timestamp": "2027-12-02T02:22:03.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0fe2785efabaa666bf568a76c4b21f86a1a17f491559309244fdce11e3c90d15"
+          "content": "6b87d96cc1cba1abb6eaed127f663921f25dcce8d78f99b228b77a703bf1ef91"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -420,6 +420,19 @@
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosBitwiseAccelerator.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosBlackProjectsTriad.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosBlackProjectsTriad.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2615152d02f0f89e017f6c4f9026a9f6a3ac489bcba64d8b4cfe9267ae7660cc"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosBlackProjectsTriad.ts"
     },
     {
       "type": "file",
@@ -2483,7 +2496,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "21a3e9e0eb04fa8157544b059ef5ef8ceabb41c58da3d62b1262a5ba129dad78"
+          "content": "a33c6a013ee6d2add2e69dd8ae22fcd43f09e737e9041fe2055a6e11291bcd72"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: index.ts"
@@ -2509,7 +2522,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "521f53d4d963e044bc1355c4a301ca36f0906cac7d603c89dd455836fdcd6cd2"
+          "content": "63f22e1a31b1b5fd4a741167268c543b767f1fc92d999df9ca3c41bb1bedd455"
         }
       ],
       "description": "Glorian System root entrypoint: bin/eos.mjs"
@@ -2554,5 +2567,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "b93f628d7d6b23f8db06c40a893086ff31878a9620678d1e64a5f3374cec2928"
+  "sha256Receipt": "35a834d804ec77481bca3620ac4022e6af00b80269882afd0b68114e2fe6d8c3"
 }
