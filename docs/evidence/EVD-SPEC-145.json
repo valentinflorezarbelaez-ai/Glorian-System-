@@ -1,0 +1,35 @@
+{
+  "evidenceId": "EVD-SPEC-145",
+  "specRef": "SPEC-145",
+  "changeRef": "CHANGE-080",
+  "title": "Repository Knowledge Graph & Relational Impact Engine",
+  "timestampIso": "2026-11-04T02:05:00.000Z",
+  "epistemicState": "VERIFIED",
+  "attestation": {
+    "sarifFile": "docs/evidence/local-checks.sarif",
+    "sarifErrorCount": 0,
+    "sbomFileSha256": "aa71aec200ad4ee1444da98a40dea8cc800bc79e308c2485a6a1e52e2743b050",
+    "sbomComponentsCataloged": 184,
+    "provenanceFileSha256": "32db55140cea8d1e5758e5a340155e60933f9965ba2695aa3d6aedbc8c4a8cad",
+    "layer0PurityRuntimeDeps": 0,
+    "scenariosVerified": [
+      "BDD-404",
+      "BDD-405",
+      "BDD-406",
+      "BDD-407",
+      "BDD-408",
+      "BDD-409"
+    ],
+    "testSuite": "test/eosKnowledgeGraphEngine.test.mjs",
+    "testSuitesPassed": 154,
+    "exitCode": 0,
+    "executionEnvironment": {
+      "isCI": false,
+      "platform": "win32",
+      "arch": "x64",
+      "nodeVersion": "v24.19.0",
+      "ciRunId": null
+    }
+  },
+  "verifiedBy": "EOS Sovereign Sentinel (Local Workstation: win32/x64)"
+}

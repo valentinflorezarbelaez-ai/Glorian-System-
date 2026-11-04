@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-04T01:26:48.418Z",
-  "totalSpecs": 144,
-  "catalogSha256": "c403748a85f18fb73fd12968bb707d25b89ff7f9c40cbc3486336b7145110ee7",
+  "timestampIso": "2026-11-04T02:22:15.997Z",
+  "totalSpecs": 145,
+  "catalogSha256": "cb6efaf336e8b24f2c64224cf9db1f040973f6df6de385cefa42cb00b6437c6c",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1298,6 +1298,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-144-STREAMABLE-HTTP-AND-WASM-ISOLATION-HARDENING.md",
       "sha256": "687c6eca2b7eb17dc5e53c8fbdbba3fae01525aa6a71ed0b8386686572053683"
+    },
+    {
+      "id": "SPEC-145",
+      "title": "Repository Knowledge Graph & Relational Impact Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-145-REPOSITORY-KNOWLEDGE-GRAPH.md",
+      "sha256": "7e60d874e769ad68b50011a69a5b9e9c8e6529e23289514ea6b07313beafdf07"
     }
   ]
 }

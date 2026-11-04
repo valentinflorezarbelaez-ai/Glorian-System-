@@ -1,0 +1,39 @@
+{
+  "evidenceId": "EVD-MATURITY-P0-P1",
+  "program": "Glorian Max Maturity",
+  "phases": ["P0_SSOT_Baseline", "P1_Security"],
+  "timestampIso": "2026-11-04T01:47:00.000Z",
+  "epistemicState": "PRODUCTION_READY_WITHIN_TESTED_SCOPE",
+  "ssot": {
+    "canonicalRoot": "c:\\Users\\valen\\Eos-System",
+    "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Glorian-System-.git",
+    "headCommitSha": "8cd6c6e3f01b8867b526d5257c5b61e6070a1852",
+    "twinCheckout": "Glorian-System- remains a physical twin; fleet sync skips it when Eos-System exists; NTFS junction deferred because path was locked by Cursor",
+    "registryRemoteCorrected": true
+  },
+  "gates": {
+    "npm_run_typecheck": 0,
+    "node_bin_eos_turbo": 0,
+    "npm_run_mcp_verify": 0,
+    "npm_run_verify_strict": 0,
+    "scripts_verify_supply_chain": 0,
+    "fleet_registry_sync_tests": 0
+  },
+  "security": {
+    "eos_nsa_zero_trust_check": "permitted READ under Bell-LaPadula",
+    "eos_military_shield_audit": "IMPREGNABLE",
+    "zeroPlaintextSecrets": true,
+    "layer0PurityEnforced": true,
+    "merkleChainValid": true,
+    "supplyChainBitForBit": true,
+    "sbomFileSha256": "sha256:32b5389743d79d1a4b3ab15a755eaff86c4c9fe3e3d511ac1dc4f69dc483f504",
+    "provenanceFileSha256": "sha256:794271c9f3150d8393c94bc5e06ea4055b682feb96169f1c489650fc62e85976",
+    "mcpSurface": {
+      "payloadLimitBytes": 1048576,
+      "originAllowlistEnforced": true,
+      "streamableHostOriginValidation": true
+    }
+  },
+  "ledgerEntryHash": "04e51c0a847579ca4c4f96acc9af175af072bd78cb6272832f556a48f3db102d",
+  "verifiedBy": "EOS Sovereign Agent (Composer) — BUILDER!=VERIFIER: gates executed via npm/node exit codes"
+}

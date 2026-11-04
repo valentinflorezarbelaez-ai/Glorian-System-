@@ -123,7 +123,7 @@
       "name": "Glorian (Control Plane Core)",
       "resolvedLocalDir": "Eos-System",
       "localPathEnv": "EOS_FLEET_EOS_SYSTEM_PATH",
-      "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Eos-System.git",
+      "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Glorian-System-.git",
       "productionUrl": "https://glorian-system.vercel.app",
       "type": "control-plane-monolith",
       "status": "REGISTERED",
@@ -134,7 +134,7 @@
       "cicdGateScript": "scripts/verify-cicd-pipeline.mjs",
       "autoShipScript": "scripts/ship-sovereign.mjs",
       "currentBranch": "main",
-      "headCommitSha": "d87230132aeb00bfdbcbb2aebb68b6ce290e6ef1"
+      "headCommitSha": "8cd6c6e3f01b8867b526d5257c5b61e6070a1852"
     },
     {
       "id": "performance-talent-group",

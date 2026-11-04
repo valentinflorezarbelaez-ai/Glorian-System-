@@ -32,6 +32,11 @@ import {
 } from "../core/eosHybridKnowledgeEngine.ts";
 
 import {
+  EosKnowledgeGraphEngine,
+  getDefaultKnowledgeGraphEngine
+} from "../core/eosKnowledgeGraphEngine.ts";
+
+import {
   EosWasmSandboxEngine,
   getDefaultWasmSandboxEngine,
   WASM_BYTECODE_TEMPLATES
@@ -742,6 +747,7 @@ export class EosMcpServer {
   private readonly knowledgeStore = createDefaultEosKnowledgeStore();
   private readonly hybridKnowledge: EosHybridKnowledgeEngine;
   private readonly wasmSandbox: EosWasmSandboxEngine;
+  private readonly knowledgeGraph: EosKnowledgeGraphEngine;
   private readonly projectRoot: string;
   private readonly serverVersion: string;
   private toolProfile: McpToolProfile;
@@ -775,8 +781,17 @@ export class EosMcpServer {
     this.serverVersion = version;
     this.hybridKnowledge = getDefaultHybridKnowledgeEngine(this.projectRoot);
     this.wasmSandbox = getDefaultWasmSandboxEngine(this.projectRoot);
+    this.knowledgeGraph = getDefaultKnowledgeGraphEngine(this.projectRoot);
     try {
       this.hybridKnowledge.ensureCorpusIndexed();
+    } catch {
+      // Graceful degradation in read-only or confined file systems
+    }
+    try {
+      const gStats = this.knowledgeGraph.getGraphStats();
+      if (gStats.totalNodes === 0) {
+        this.knowledgeGraph.syncGraph();
+      }
     } catch {
       // Graceful degradation in read-only or confined file systems
     }
@@ -927,6 +942,34 @@ export class EosMcpServer {
                       category: { type: "string", enum: ["SPEC", "CHANGE", "ADR", "CODE", "PLAN", "DOC", "ALL"], description: "Optional category filter" }
                     },
                     required: ["query"]
+                  }
+                },
+                {
+                  name: "eos_query_knowledge_graph",
+                  description: "Query and traverse the persistent SQLite WAL knowledge graph of repository architectural entities (SPECs, CHANGEs, ADRs, BDDs, MODULEs), transitive blast radius, neighbors, and orphan drift detection.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      action: {
+                        type: "string",
+                        enum: ["stats", "neighbors", "blast_radius", "find_orphans", "subgraph", "sync"],
+                        description: "Graph operation to execute"
+                      },
+                      target: {
+                        type: "string",
+                        description: "Target node ID (e.g., 'SPEC-145', 'src/mcp/eosMcpServer.ts') for neighbors, blast_radius, or subgraph"
+                      },
+                      maxDepth: {
+                        type: "number",
+                        description: "Maximum search depth for blast_radius and subgraph traversal (default: 4, min: 1, max: 10)"
+                      },
+                      direction: {
+                        type: "string",
+                        enum: ["BOTH", "OUT", "IN"],
+                        description: "Edge direction for traversal (default: 'BOTH')"
+                      }
+                    },
+                    required: ["action"]
                   }
                 },
                 {
@@ -3624,6 +3667,67 @@ export class EosMcpServer {
             category: (m.metadata as any)?.domain || "General"
           }))
         };
+      }
+
+      case "eos_query_knowledge_graph": {
+        const action = String(args.action || "stats").toLowerCase();
+        const target = args.target ? String(args.target) : "";
+        const maxDepth = typeof args.maxDepth === "number" ? Math.max(1, Math.min(10, args.maxDepth)) : 4;
+        const direction = (args.direction === "OUT" || args.direction === "IN") ? args.direction : "BOTH";
+
+        switch (action) {
+          case "sync": {
+            const syncResult = this.knowledgeGraph.syncGraph();
+            return {
+              action: "sync",
+              status: "COMPLETED",
+              ...syncResult
+            };
+          }
+          case "stats": {
+            const stats = this.knowledgeGraph.getGraphStats();
+            return {
+              action: "stats",
+              ...stats
+            };
+          }
+          case "neighbors": {
+            if (!target) {
+              throw new Error("Action 'neighbors' requires a 'target' node identifier");
+            }
+            const res = this.knowledgeGraph.getNeighbors(target, direction);
+            return {
+              action: "neighbors",
+              target,
+              direction,
+              node: res.node,
+              outgoingCount: res.outgoing.length,
+              incomingCount: res.incoming.length,
+              outgoing: res.outgoing,
+              incoming: res.incoming
+            };
+          }
+          case "blast_radius":
+          case "subgraph": {
+            if (!target) {
+              throw new Error(`Action '${action}' requires a 'target' node identifier`);
+            }
+            const blast = this.knowledgeGraph.computeBlastRadius(target, { maxDepth, direction });
+            return {
+              action,
+              ...blast
+            };
+          }
+          case "find_orphans": {
+            const orphans = this.knowledgeGraph.findOrphans();
+            return {
+              action: "find_orphans",
+              ...orphans
+            };
+          }
+          default:
+            throw new Error(`Unsupported knowledge graph action: '${action}'. Expected: stats, neighbors, blast_radius, find_orphans, subgraph, sync`);
+        }
       }
 
       case "eos_tmr_consensus": {

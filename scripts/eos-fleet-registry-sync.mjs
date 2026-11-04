@@ -174,9 +174,9 @@ export function inferProjectMetadata(repoPath) {
     productionUrl = "https://ptg-performance-talent-group.vercel.app";
     type = "enterprise-operations";
     cicdGateScript = "scripts/smoke-test.ps1";
-  } else if (lower === "eos-system") {
-    name = "EOS System (Control Plane Core)";
-    productionUrl = "https://eos-system-ten.vercel.app";
+  } else if (lower === "eos-system" || /^glorian-system-?$/.test(lower)) {
+    name = "Glorian (Control Plane Core)";
+    productionUrl = "https://glorian-system.vercel.app";
     type = "control-plane-monolith";
     cicdGateScript = "scripts/verify-cicd-pipeline.mjs";
   } else if (lower.includes("biblioteca-gnostica")) {
@@ -210,37 +210,64 @@ export function computeRegistrySignature(registry) {
   return crypto.createHash("sha256").update(normalized).digest("hex");
 }
 
+function resolveDiscoveredProjectId(disc) {
+  const dirLower = String(disc.dirName || "").toLowerCase();
+  let id = disc.id;
+  if (!id) {
+    if (dirLower.includes("abopack") || dirLower.includes("avopak")) {
+      id = "control-de-asistencia-abopack";
+    } else if (dirLower.includes("atp-strength")) {
+      id = "atp-strength";
+    } else if (dirLower.includes("aberamentho")) {
+      id = "aberamentho";
+    } else if (dirLower.includes("performance-talent")) {
+      id = "performance-talent-group";
+    } else if (dirLower.includes("crud-slack")) {
+      id = "crud-slack";
+    } else if (dirLower === "eos-system" || /^glorian-system-?$/.test(dirLower)) {
+      id = "eos-system";
+    } else {
+      id = disc.dirName.toLowerCase();
+    }
+  } else if (id === "glorian-system-" || /^glorian-system-?$/.test(String(id).toLowerCase())) {
+    id = "eos-system";
+  }
+  return id;
+}
+
+function preferControlPlaneCheckout(existingMerged, candidateMerged) {
+  if (!existingMerged) return candidateMerged;
+  const existingIsEos = existingMerged.resolvedLocalDir === "Eos-System";
+  const candidateIsEos = candidateMerged.resolvedLocalDir === "Eos-System";
+  const preferred = candidateIsEos && !existingIsEos ? candidateMerged : existingMerged;
+  const discarded = preferred === candidateMerged ? existingMerged : candidateMerged;
+  // Preserve the strongest prior governance fields across twin checkouts.
+  return {
+    ...preferred,
+    name: preferred.name || discarded.name,
+    authorization: preferred.authorization || discarded.authorization,
+    intake: preferred.intake || discarded.intake,
+    specification: preferred.specification || discarded.specification,
+    audit: preferred.audit || discarded.audit,
+    status: preferred.status || discarded.status,
+    productionUrl: preferred.productionUrl || discarded.productionUrl,
+    cicdGateScript: preferred.cicdGateScript || discarded.cicdGateScript,
+    localPathEnv: preferred.localPathEnv || discarded.localPathEnv,
+    ownerApproval: preferred.ownerApproval || discarded.ownerApproval
+  };
+}
+
 export function reconcileFleetRegistry(existingRegistry, discoveredList) {
   const existingProjects = new Map();
   for (const p of existingRegistry.projects || []) {
     existingProjects.set(p.id, p);
   }
 
-  const updatedProjects = [];
+  const mergedById = new Map();
 
   for (const disc of discoveredList) {
-    // Generate canonical ID
-    const dirLower = disc.dirName.toLowerCase();
-    let id = disc.id;
-    if (!id) {
-      if (dirLower.includes("abopack") || dirLower.includes("avopak")) {
-        id = "control-de-asistencia-abopack";
-      } else if (dirLower.includes("atp-strength")) {
-        id = "atp-strength";
-      } else if (dirLower.includes("aberamentho")) {
-        id = "aberamentho";
-      } else if (dirLower.includes("performance-talent")) {
-        id = "performance-talent-group";
-      } else if (dirLower.includes("crud-slack")) {
-        id = "crud-slack";
-      } else if (dirLower === "eos-system") {
-        id = "eos-system";
-      } else {
-        id = disc.dirName.toLowerCase();
-      }
-    }
-
-    const prev = existingProjects.get(id);
+    const id = resolveDiscoveredProjectId(disc);
+    const prev = mergedById.get(id) || existingProjects.get(id);
 
     const merged = {
       id,
@@ -265,9 +292,11 @@ export function reconcileFleetRegistry(existingRegistry, discoveredList) {
     // Clean undefined fields
     if (!merged.ownerApproval) delete merged.ownerApproval;
 
-    updatedProjects.push(merged);
+    mergedById.set(id, preferControlPlaneCheckout(mergedById.get(id), merged));
     existingProjects.delete(id);
   }
+
+  const updatedProjects = [...mergedById.values()];
 
   // Retain any projects from existing registry that were not discovered locally
   for (const [, remaining] of existingProjects) {
@@ -310,6 +339,11 @@ export async function runFleetRegistrySync(options = {}) {
   for (const r of rawRepos) {
     // Skip backup or auxiliary copies like Eos-System-1, Eos-System-2 etc.
     if (/^Eos-System-\d+$/i.test(r.name)) continue;
+    // Skip Glorian-System- twin when Eos-System control-plane checkout exists (SSOT).
+    if (/^Glorian-System-?$/i.test(r.name)) {
+      const eosSibling = path.join(workspaceRoot, "Eos-System");
+      if (fs.existsSync(path.join(eosSibling, ".git"))) continue;
+    }
 
     const gitMeta = extractGitMetadata(r.fullPath);
     const projMeta = inferProjectMetadata(r.fullPath);

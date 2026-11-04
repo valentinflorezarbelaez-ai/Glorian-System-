@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
-  "generatedAt": "2026-11-04T01:26:17.232Z",
-  "catalogSha256": "a76542aff1420b0decaccc3497c9d92c714e3088f3e8f40fc928d1cf049e0cdd",
-  "totalTools": 185,
+  "generatedAt": "2026-11-04T02:21:32.880Z",
+  "catalogSha256": "cafcebc5613137ec61f481008b5a5c8dfbdc4ca937c5706685d328b2a9746170",
+  "totalTools": 186,
   "coreTier0Count": 49,
   "tools": [
     {
@@ -50,6 +50,54 @@
       },
       "annotations": {
         "title": "EOS semantic Search",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_query_knowledge_graph",
+      "description": "Query and traverse the persistent SQLite WAL knowledge graph of repository architectural entities (SPECs, CHANGEs, ADRs, BDDs, MODULEs), transitive blast radius, neighbors, and orphan drift detection.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "stats",
+              "neighbors",
+              "blast_radius",
+              "find_orphans",
+              "subgraph",
+              "sync"
+            ],
+            "description": "Graph operation to execute"
+          },
+          "target": {
+            "type": "string",
+            "description": "Target node ID (e.g., 'SPEC-145', 'src/mcp/eosMcpServer.ts') for neighbors, blast_radius, or subgraph"
+          },
+          "maxDepth": {
+            "type": "number",
+            "description": "Maximum search depth for blast_radius and subgraph traversal (default: 4, min: 1, max: 10)"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "BOTH",
+              "OUT",
+              "IN"
+            ],
+            "description": "Edge direction for traversal (default: 'BOTH')"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "annotations": {
+        "title": "EOS query Knowledge Graph",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

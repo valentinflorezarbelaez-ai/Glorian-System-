@@ -232,7 +232,15 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
   for (const f of files.sort()) {
     const rel = path.relative(projectRoot, f).replace(/\\/g, "/");
     if (rel.includes("node_modules") || rel.includes(".git") || rel.startsWith(".eos/")) continue;
-    const stat = fs.statSync(f, { bigint: true });
+    // Skip ephemeral SQLite sidecars that can appear/disappear between readdir and stat.
+    if (rel.endsWith("-wal") || rel.endsWith("-shm") || rel.endsWith("-journal")) continue;
+    let stat: fs.Stats | fs.BigIntStats;
+    try {
+      stat = fs.statSync(f, { bigint: true });
+    } catch (err: any) {
+      if (err && (err.code === "ENOENT" || err.code === "UNKNOWN")) continue;
+      throw err;
+    }
     const size = Number(stat.size);
     const cachedInv = INVENTORY_HASH_CACHE.get(f);
     const cachedVer = VERIFICATION_CACHE.get(f);
@@ -243,7 +251,13 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
       fileSha256 = cachedVer.sha256;
       INVENTORY_HASH_CACHE.set(f, { mtimeNs: stat.mtimeNs, size, sha256: fileSha256 });
     } else {
-      const bytes = fs.readFileSync(f);
+      let bytes: Buffer;
+      try {
+        bytes = fs.readFileSync(f);
+      } catch (err: any) {
+        if (err && (err.code === "ENOENT" || err.code === "UNKNOWN")) continue;
+        throw err;
+      }
       fileSha256 = crypto.createHash("sha256").update(bytes).digest("hex");
       INVENTORY_HASH_CACHE.set(f, { mtimeNs: stat.mtimeNs, size: bytes.length, sha256: fileSha256 });
     }

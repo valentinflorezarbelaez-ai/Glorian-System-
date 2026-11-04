@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:2c085ff6-d9f4-4e03-99b4-a8998c17d934",
+  "serialNumber": "urn:uuid:c6f58e13-0ff9-4c1e-91c8-6ccfaaf1deb5",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-04T01:26:28.120Z",
+    "timestamp": "2026-11-04T02:25:00.404Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "3c6f9535e11ee2f152db86d60a14234c36451c90664162e092755507330da2a6"
+          "content": "f18ef989b76ff2cae51923ac5b5f0a2c6fe9730646a4490319cad129219c1cf5"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -1138,6 +1138,19 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosKnowledgeGraphEngine.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosKnowledgeGraphEngine.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "62e7613732c37338d69a6ed1dcdb2ceab79e34578c58a690a0e858b341674054"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosKnowledgeGraphEngine.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosKubernetesFleetOperator.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosKubernetesFleetOperator.ts@75.0.0",
@@ -1885,7 +1898,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "bd26d6f521fb73e000b35e532c99f432def6fca2882f9f825d7dfd9d4536d635"
+          "content": "5d0942a84555341267e518301c7825edb3738d07edc716f7c13608e787de7a44"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosSpotifyAgenticFactory.ts"
@@ -2119,7 +2132,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "21d4c5fff2e9e5c560cdfbdb0e25afa6e8c8735e86db56ade10a63ff0db81504"
+          "content": "67c5667f373860fa3cf687c2abcaa683ccc1d8415ce094d20716657d6240a029"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosTurboEngine.ts"
@@ -2411,5 +2424,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "e593995432bb51213cc34a7f8cca47c36bf6e6cda0b2880549e5cd8dc4aecdea"
+  "sha256Receipt": "56e6383388f96f9fd958fe41ff8897680a23d09216143a682fc19f8cf2f02947"
 }

@@ -203,7 +203,20 @@ export class EosSpotifyAgenticFactory {
       fs.writeFileSync(descriptor, content, "utf8");
       fs.closeSync(descriptor);
       descriptorOpen = false;
-      fs.renameSync(temporaryPath, targetPath);
+      try {
+        fs.renameSync(temporaryPath, targetPath);
+      } catch (renameErr: any) {
+        if (
+          renameErr &&
+          (renameErr.code === "EPERM" || renameErr.code === "EBUSY" || renameErr.code === "EACCES") &&
+          process.platform === "win32"
+        ) {
+          fs.copyFileSync(temporaryPath, targetPath);
+          try { fs.unlinkSync(temporaryPath); } catch {}
+        } else {
+          throw renameErr;
+        }
+      }
     } catch (error) {
       if (descriptorOpen) {
         try { fs.closeSync(descriptor); } catch {}

@@ -1,0 +1,44 @@
+{
+  "evidenceId": "EVD-MATURITY-P2-P5",
+  "program": "Glorian Max Maturity",
+  "phases": ["P2_SDD_Governance", "P3_Fleet_Ops", "P4_DX_Cockpit", "P5_TipSeal_Formal"],
+  "timestampIso": "2026-11-04T01:49:00.000Z",
+  "epistemicState": "PRODUCTION_READY_WITHIN_TESTED_SCOPE",
+  "finalVerifyStrictExitCode": 0,
+  "p2": {
+    "freezeTipRefresh": "docs/releases/EOS_FREEZE_GATE_STATUS.md",
+    "releaseMatrixTipRefresh": "docs/releases/RELEASE_CAPABILITY_MATRIX.md",
+    "changeClassification": "docs/governance/OPENSPEC_CHANGE_CLASSIFICATION.md",
+    "openspecValid": true,
+    "totalSpecs": 145,
+    "totalChanges": 88,
+    "orphanLinks": 0,
+    "activeInFlight": ["CHANGE-080 / SPEC-145 materialized — BDD-404..409 green; owner Level-3 EVD seal pending"]
+  },
+  "p3": {
+    "fleetSoundcheckAverage": 100,
+    "reposAtGradeA": 9,
+    "watchdog": {
+      "auditStatus": "FLEET_HEALTH_CERTIFIED",
+      "compositeHealthIndex": 100,
+      "sha256Receipt": "0a139c988d0db04c9950c3901085f5f2d1afb3d127d73e147f0fb22eadcaf36d"
+    },
+    "nocturnalEvolution": {
+      "status": "EVOLUTION_CYCLE_COMPLETED",
+      "compositeFitnessScore": 80,
+      "deadCodeExportsReported": 46,
+      "complexityBottlenecks": 76,
+      "note": "Audit-only; no autonomous eradication applied without dedicated CHANGE authorization",
+      "sha256Receipt": "c80f4ae659a69a1421cf6e27fc3c96c064af7ab2daa87d318dcfe1fbb5d71cec"
+    },
+    "pulseNote": "Control plane working tree dirty during maturity WIP; soundcheck security/architecture dimensions remain A+. Pristine pulse resumes after owner commit."
+  },
+  "p4": {
+    "engramConfig": ".engram/config.json",
+    "projectBinding": "eos-system"
+  },
+  "p5": {
+    "frontiersEvidenceMatrix": "docs/governance/FRONTIERS_16_20_EVIDENCE_MATRIX.md",
+    "supplyChainVerified": true
+  }
+}

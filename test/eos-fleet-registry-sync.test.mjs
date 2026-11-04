@@ -163,6 +163,59 @@ describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => 
     });
   });
 
+  describe("BDD-366: Glorian twin checkout collapses to eos-system SSOT", () => {
+    it("maps Glorian-System- directory identity to eos-system and prefers Eos-System resolvedLocalDir", () => {
+      const existingRegistry = {
+        version: "11.0.0-autonomous-fleet-registry",
+        projects: [
+          {
+            id: "eos-system",
+            name: "Glorian (Control Plane Core)",
+            resolvedLocalDir: "Eos-System",
+            authorization: "LEVEL_3_PRODUCTION_AUTHORIZED",
+            status: "REGISTERED",
+            intake: "INTAKE_COMPLETE",
+            specification: "SPECIFICATION_APPROVED",
+            audit: "AUDIT_COMPLETE",
+            productionUrl: "https://glorian-system.vercel.app",
+            cicdGateScript: "scripts/verify-cicd-pipeline.mjs"
+          }
+        ]
+      };
+      const discovered = [
+        {
+          dirName: "Glorian-System-",
+          fullPath: "C:\\Users\\valen\\Glorian-System-",
+          remoteUrl: "https://github.com/valentinflorezarbelaez-ai/Glorian-System-.git",
+          currentBranch: "main",
+          headCommitSha: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          name: "Glorian twin",
+          productionUrl: "https://glorian-system.vercel.app",
+          type: "control-plane-monolith",
+          cicdGateScript: "scripts/verify-cicd-pipeline.mjs"
+        },
+        {
+          dirName: "Eos-System",
+          fullPath: "C:\\Users\\valen\\Eos-System",
+          remoteUrl: "https://github.com/valentinflorezarbelaez-ai/Glorian-System-.git",
+          currentBranch: "main",
+          headCommitSha: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          name: "Glorian (Control Plane Core)",
+          productionUrl: "https://glorian-system.vercel.app",
+          type: "control-plane-monolith",
+          cicdGateScript: "scripts/verify-cicd-pipeline.mjs"
+        }
+      ];
+      const reconciled = reconcileFleetRegistry(existingRegistry, discovered);
+      const eosEntries = reconciled.projects.filter((p) => p.id === "eos-system");
+      assert.equal(eosEntries.length, 1);
+      assert.equal(eosEntries[0].authorization, "LEVEL_3_PRODUCTION_AUTHORIZED");
+      assert.equal(eosEntries[0].resolvedLocalDir, "Eos-System");
+      assert.equal(eosEntries[0].headCommitSha, "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+      assert.equal(reconciled.projects.some((p) => p.id === "glorian-system-"), false);
+    });
+  });
+
   describe("BDD-367: MCP Tool Execution (eos_fleet_registry_sync)", async () => {
     it("dispatches eos_fleet_registry_sync tool via EosMcpServer in dryRun mode", async () => {
       const { EosMcpServer } = await import("../src/mcp/eosMcpServer.ts");
