@@ -40,12 +40,12 @@ AI Engineer ≠ ML Engineer ≠ AI Researcher. This path is **software that ship
 
 Ordered by product value, not ceremony:
 
-1. **Cost / token truth UX** — ~~mission stage~~ **DONE 2026-11-05**: `FINOPS_COST_RECEIPT` on Mission Golden Path (SPEC-156 FR-514). Cockpit UI surface still open.
-2. **RAG golden path demo** — one fleet product (e.g. Biblioteca / Donaciones) with docs→vectors→MCP Q&A fail-closed.
-3. **Tool-calling evals** — ~~partial~~ **DONE hermetic**: `test/eosToolCallingFinOpsEval.test.mjs` (tier routing + wallet cutoff). Wrong-tool MCP arg fuzz still open.
-4. **Model routing policy card** — cheap vs frontier matrix with abort on budget (FinOps already partial; receipt now on mission path).
+1. **Cost / token truth UX** — **DONE**: mission `FINOPS_COST_RECEIPT` + Studio `/api/finops` cockpit panel (2026-11-05 w1/w2).
+2. **RAG golden path demo** — **DONE hermetic**: `eosFleetRagGoldenPath` + BDD (Biblioteca/Spotify fixtures). Live Biblioteca UI wiring still open.
+3. **Tool-calling evals** — **DONE hermetic**: `test/eosToolCallingFinOpsEval.test.mjs`. Wrong-tool MCP arg fuzz still open.
+4. **Model routing policy card** — FinOps receipt on mission + API; dedicated policy card UI still open.
 5. **LLMOps privacy lane** — optional local/open-weight path documented; no plaintext secrets (Law VI).
-6. **Portfolio evidence** — map this roadmap into `portafolio` careerEvidence when regenerating packs.
+6. **Portfolio evidence** — regenerate via `generate-career-evidence-pack` + `sync-career-evidence-to-portafolio` (wave-2).
 
 ## 4. 30-day action DAG (Glorian)
 

@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:f277af94-7461-5f60-a5e4-c783af208815",
+  "serialNumber": "urn:uuid:27b50543-1a35-5551-b3d1-223956130660",
   "version": 1,
   "metadata": {
-    "timestamp": "2028-11-20T12:33:24.000Z",
+    "timestamp": "2021-02-08T08:33:07.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "f2d4b7b4fe5b6841e6f95741ffb33cca27e5719cde468a0be5bab27cdcbbfae8"
+          "content": "065571070128c7aec20166d29fd37be006ed6e6899a7cd8256013be8ec282b66"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -901,6 +901,19 @@
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosFleetPulseEngine.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosFleetRagGoldenPath.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosFleetRagGoldenPath.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f49dd86a5c8e569388df1f3b4adf182feb9945850417b7e59b3253fff8a4c648"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosFleetRagGoldenPath.ts"
     },
     {
       "type": "file",
@@ -2522,7 +2535,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "a33c6a013ee6d2add2e69dd8ae22fcd43f09e737e9041fe2055a6e11291bcd72"
+          "content": "2c2bc4d4fab0036bd02eec0ffbab902fe5cf73da91b3441e4473f7dc8aa31818"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: index.ts"
@@ -2593,5 +2606,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "ae562820d65e31ac750fe643e00196b71eafe341c174b88be79c506f1d86fe58"
+  "sha256Receipt": "bbba9b8a69cf79dbb7114bb11772663e9d49b5f9171d26328cdd6958beebff13"
 }

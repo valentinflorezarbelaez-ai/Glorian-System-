@@ -23,7 +23,10 @@ const signals = [
   { id: "viewport", re: /<meta[^>]+name=["']viewport["']/i },
   { id: "description", re: /<meta[^>]+name=["']description["']/i },
   { id: "defer_or_module", re: /<script[^>]+type=["']module["']|<script[^>]+defer/i },
-  { id: "perf_hint", re: /fetchpriority=|content-visibility|speculationrules|preconnect|preload/i }
+  { id: "perf_hint", re: /fetchpriority=|content-visibility|speculationrules|preconnect|preload/i },
+  { id: "font_display", re: /font-display\s*:\s*swap|display=swap|next\/font/i },
+  { id: "img_priority", re: /loading=["']lazy["']|fetchpriority=["']high["']|sizes=["']|imagesizes=/i },
+  { id: "security_headers_hint", re: /Content-Security-Policy|X-Content-Type-Options|Strict-Transport-Security|headers\s*\(\s*\)\s*\{/i }
 ];
 
 function resolveLocalHtml(project) {
@@ -91,6 +94,15 @@ for (const p of targets) {
   if (!found.defer_or_module && /from\s+["']next\//.test(html)) {
     found.defer_or_module = true;
   }
+  if (!found.font_display && /next\/font|@font-face/i.test(html)) {
+    found.font_display = true;
+  }
+  if (!found.img_priority && /<Image\b|next\/image/i.test(html)) {
+    found.img_priority = true;
+  }
+  if (!found.security_headers_hint && /vercel\.json|headers\s*:\s*\[|Content-Security-Policy/i.test(html)) {
+    found.security_headers_hint = true;
+  }
   const score = Object.values(found).filter(Boolean).length;
   results.push({
     id: p.id,
@@ -103,13 +115,17 @@ for (const p of targets) {
   });
 }
 
-const passing = results.filter((r) => r.source !== "none" && r.score >= 3);
+/** Pass bar: ≥4 of 7 signals (deepened CWV static probe). */
+const PASS_SCORE = 4;
+const passing = results.filter((r) => r.source !== "none" && r.score >= PASS_SCORE);
 console.log(
   JSON.stringify(
     {
       epistemic: "FLEET_CWV_STATIC_WITHIN_TESTED_SCOPE",
       probed: results.length,
       passing: passing.length,
+      passScore: PASS_SCORE,
+      signalCount: signals.length,
       results
     },
     null,
@@ -119,8 +135,8 @@ console.log(
 
 assert.ok(
   passing.length >= Math.ceil(results.length * 0.7),
-  `Expected ≥70% fleet targets with ≥3/4 CWV static signals; got ${passing.length}/${results.length}`
+  `Expected ≥70% fleet targets with ≥${PASS_SCORE}/${signals.length} CWV static signals; got ${passing.length}/${results.length}`
 );
 console.log(
-  `[PASS] Fleet CWV static probe ${passing.length}/${results.length} (≥70% with score≥3)`
+  `[PASS] Fleet CWV static probe ${passing.length}/${results.length} (≥70% with score≥${PASS_SCORE}/${signals.length})`
 );

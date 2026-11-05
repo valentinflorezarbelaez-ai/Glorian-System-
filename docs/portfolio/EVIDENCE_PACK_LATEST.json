@@ -1,7 +1,7 @@
 {
   "title": "Glorian Career Evidence Pack",
   "owner": "Valentín Flórez Arbeláez",
-  "generatedAtIso": "2026-11-04T20:40:42.459Z",
+  "generatedAtIso": "2026-11-05T15:34:42.550Z",
   "epistemicState": "CAREER_EVIDENCE_WITHIN_TESTED_SCOPE",
   "claimsDenied": [
     "Level 5",
@@ -55,14 +55,20 @@
     "mission": {
       "status": "SUCCESS",
       "epistemicState": "MISSION_GOLDEN_PATH_WITHIN_TESTED_SCOPE",
-      "sha256Receipt": "9e345fda11e1253351df894c7ca6258953e838ca95a89efaf8419076a779ab10",
-      "durationMs": 701,
+      "sha256Receipt": "6ffe74f8ae8812b105250b62d85d7379ff80ec0e471dcaabe682c6010d3dc655",
+      "durationMs": 273,
       "stages": [
         {
           "id": "INPUT_VALIDATION",
           "exitCode": 0,
           "mandatory": true,
           "summary": "Directive admitted"
+        },
+        {
+          "id": "FINOPS_COST_RECEIPT",
+          "exitCode": 0,
+          "mandatory": true,
+          "summary": "Tier TIER_2_BALANCED · est $0.002375 · gemini-2.5-pro"
         },
         {
           "id": "AMPLIFY",
@@ -89,6 +95,12 @@
           "summary": "Tribunal approved score=91"
         },
         {
+          "id": "SPOTIFY_ONLY_NORTH_STAR",
+          "exitCode": 0,
+          "mandatory": true,
+          "summary": "Spotify-only North Star doctrine pack present"
+        },
+        {
           "id": "SPOTIFY_INSTITUTIONAL",
           "exitCode": 0,
           "mandatory": true,
@@ -104,13 +116,13 @@
           "id": "TURBO_VERIFY",
           "exitCode": 0,
           "mandatory": true,
-          "summary": "Turbo PASS files=1111"
+          "summary": "Turbo PASS files=1160"
         },
         {
           "id": "LEDGER_SEAL",
           "exitCode": 0,
           "mandatory": true,
-          "summary": "Ledger sealed EOS-LEDGER-000001-96506af9e5"
+          "summary": "Ledger sealed EOS-LEDGER-000001-bb0cfcbf9c"
         }
       ]
     },
@@ -128,9 +140,9 @@
     },
     "turbo": {
       "success": true,
-      "totalDurationMs": 179.959,
+      "totalDurationMs": 55.057,
       "epistemicState": "LOCAL_CHECKS_PASSED",
-      "sourceInventoryDigest": "sha256:5f53965baa4587d63dacee7f3aab23edaa62d8f1acd9ef9aada4a210e964f7a2"
+      "sourceInventoryDigest": "sha256:b3302a3dbf7b6e5be7bccc616332ecae7ef597a8b612838de0642627a996f740"
     },
     "fleetSoundcheck": {
       "fleetAverageScore": 100,
@@ -138,7 +150,7 @@
       "totalRepositories": 10,
       "reposAtGradeA": 10,
       "dirtyTrees": [],
-      "sha256Receipt": "27200483dfce773e9601070eed3ca7ad4caee3d1f7a9d0c27c7e6c94e5dd4167"
+      "sha256Receipt": "6a582de272df85adc9bc5be80e409e63db9edc78b1dc394796471714a0a8eaea"
     },
     "spotifyInstitutional": {
       "institutionalScore": 100,
@@ -153,14 +165,14 @@
       "overallScore": 100,
       "epistemicState": "APEX_DRILL_WITHIN_TESTED_SCOPE",
       "pillarsPassing": 5,
-      "sha256Receipt": "6cf40c91062822671a895f8c68e54c0566aaf0ed1006e92e618d5fa59807659a"
+      "sha256Receipt": "e67352c10227810ee224a36f836925525c81645d6bf5df3d75c43fd3f2b2dd5e"
     },
     "blackProjectsTriad": {
       "status": "TRIAD_DRILL_PASS",
       "overallScore": 100,
       "epistemicState": "TRIAD_DRILL_WITHIN_TESTED_SCOPE",
       "pillarsPassing": 3,
-      "sha256Receipt": "baccfb6c83e038996d59932c857301d129b49a0bb3252d8611d48ff3fc43bac1"
+      "sha256Receipt": "c7b25414820171f1c1118aa958badb63dfa76bace220302dc5d603f036fb61b7"
     }
   },
   "employerPitch": {
@@ -176,5 +188,5 @@
       "OpenSpec formal catalog"
     ]
   },
-  "sha256Pack": "ea1c31635a2438fa1033abc6d60b85d0b4c890b22d0c6e68e4e1dc5d77547d3d"
+  "sha256Pack": "6d21633e36d4855b56192bbbaebf8a3c679f5ec910bd8b8e3a203b898a038462"
 }

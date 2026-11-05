@@ -307,6 +307,7 @@ try {
       { file: "api/kernel.js", query: { module: "specs" } },
       { file: "api/jarvis.js", method: "POST", body: { directive: "status check" } },
       { file: "api/health.js" },
+      { file: "api/finops.js" },
       { file: "api/graph.js" },
       { file: "api/eval.js" },
       { file: "api/spotify.js" },

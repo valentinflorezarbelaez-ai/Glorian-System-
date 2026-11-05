@@ -42,6 +42,7 @@ export * from "./eosSmtAutomatedReasoningProver.ts";
 export * from "./eosProductionChaosMonkey.ts";
 export * from "./eosBftAgentSwarmSlashing.ts";
 export * from "./eosDocumentationSearch.ts";
+export * from "./eosFleetRagGoldenPath.ts";
 export * from "./eosBenchmarkTracker.ts";
 export * from "./eosMcpSchemaValidator.ts";
 
