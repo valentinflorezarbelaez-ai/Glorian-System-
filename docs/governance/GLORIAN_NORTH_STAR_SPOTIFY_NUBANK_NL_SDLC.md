@@ -1,8 +1,9 @@
-# GLORIAN NORTH STAR — Natural Language → Big-Tech SDLC (Spotify · Nubank · Soto/Salas Bar)
+# GLORIAN NORTH STAR — Natural Language → Big-Tech SDLC (Spotify-primary · institutional refs)
 
 **Status**: ACTIVE PRODUCT DOCTRINE (not a Level-5 claim)  
 **Owner**: Valentín Flórez Arbeláez  
-**Updated**: 2026-11-04
+**Updated**: 2026-11-04  
+**Optimization priority**: **Spotify-only** — see `GLORIAN_SPOTIFY_ONLY_NORTH_STAR.md` (user · artist · music · Samaelian rigor). Nubank/Soto-Salas remain secondary institutional reference bars, not the soul of Glorian.
 
 ## Mission (plain language)
 
@@ -10,8 +11,8 @@ Glorian exists so Valentín can say **what he wants in natural language**, and G
 
 1. **Translates** that intent into formal engineering (EARS, BDD, ADRs, task DAG).
 2. **Executes** the SDLC behind the scenes with Big-Tech quality bars.
-3. **Optimizes** especially for **Spotify** and **Nubank** engineering standards, with the professional bar associated with **Alejandro Soto**, **Mariano Salas**, and **la Pera** lineage (taste, rigor, aligned autonomy, evidence over vibes).
-4. **Becomes a master daily tool** — industry-grade control plane that compounds career leverage: better shipping, portfolio proof employers trust, doors to elite teams (not marketing hype).
+3. **Optimizes exclusively to elevate Spotify-grade music streaming** (listeners, artists, music) under Samaelian gnostic rigor — with Soundcheck/Backstage DX and the professional taste bar associated with **Alejandro Soto**, **Mariano Salas**, and **la Pera** lineage (aligned autonomy, evidence over vibes).
+4. **Becomes a master daily tool** — industry-grade control plane that compounds career leverage toward Spotify permanence and music-platform excellence (not marketing hype).
 
 ## Career & industry-standard leverage (why this exists for Valentín)
 

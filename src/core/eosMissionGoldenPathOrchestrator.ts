@@ -1,9 +1,10 @@
 /**
  * EOS SYSTEM — MISSION GOLDEN PATH ORCHESTRATOR (Layer 0)
- * Governed by SPEC-156 / CHANGE-091 / North Star Spotify+Nubank NL→SDLC
+ * Governed by SPEC-156 / CHANGE-091 / GLORIAN_SPOTIFY_ONLY_NORTH_STAR
  *
  * Composes amplify → Antigravity direction → architecture → tribunal →
- * Spotify institutional probe → Nubank domain probe → turbo → ledger seal.
+ * Spotify-only North Star doctrine probe → Spotify institutional probe →
+ * Nubank advisory (hard only for fintech) → turbo → ledger seal.
  * Fail-closed: no SUCCESS / DONE without mandatory stage exitCode 0.
  * Epistemic: MISSION_GOLDEN_PATH_WITHIN_TESTED_SCOPE (explicitly NOT Level 5).
  *
@@ -50,6 +51,7 @@ export type MissionStageId =
   | "MISSION_DIRECTION"
   | "ARCHITECTURE"
   | "CONSTITUTIONAL_TRIBUNAL"
+  | "SPOTIFY_ONLY_NORTH_STAR"
   | "SPOTIFY_INSTITUTIONAL"
   | "NUBANK_INSTITUTIONAL"
   | "TURBO_VERIFY"
@@ -99,11 +101,42 @@ function inferDomainHint(directive: string, explicit?: MissionDomainHint): Missi
   if (explicit) return explicit;
   const d = directive.toLowerCase();
   if (/\bnubank\b|\bfintech\b|\bbanking\b|\bdatomic\b|\bsachem\b/.test(d)) return "fintech";
-  if (/\bspotify\b|\bsoundcheck\b|\bbs\.?1770\b|\bloudness\b|\baudio\b/.test(d)) {
-    return /\baudio\b|\bbs\.?1770\b|\bloudness\b/.test(d) ? "audio" : "spotify";
+  if (
+    /\bspotify\b|\bsoundcheck\b|\bbs\.?1770\b|\bloudness\b|\baudio\b|\bcamelot\b|\bplaylist\b|\bartist\b|\bmusic expression\b|\boctav/.test(
+      d
+    )
+  ) {
+    return /\baudio\b|\bbs\.?1770\b|\bloudness\b|\bcamelot\b/.test(d) ? "audio" : "spotify";
   }
   if (/\bplatform\b|\bcontrol.?plane\b|\bmcp\b|\bfleet\b/.test(d)) return "platform";
   return "general";
+}
+
+/** Spotify-only North Star doctrine presence (Glorian control-plane repos). */
+function probeSpotifyOnlyNorthStar(projectRoot: string): {
+  readonly doctrinePresent: boolean;
+  readonly octavesMethodPresent: boolean;
+  readonly workCompanionPresent: boolean;
+  readonly unitotalVowPresent: boolean;
+  readonly missing: readonly string[];
+} {
+  const required: ReadonlyArray<{ readonly rel: string; readonly id: string }> = [
+    { rel: "docs/governance/GLORIAN_SPOTIFY_ONLY_NORTH_STAR.md", id: "spotify_only_north_star" },
+    { rel: "docs/governance/HOW_WE_IMPROVE_SPOTIFY_WITH_OCTAVES.md", id: "octaves_method" },
+    { rel: "docs/career/SPOTIFY_WORK_COMPANION_OS.md", id: "work_companion_os" },
+    { rel: "docs/governance/SPOTIFY_UNITOTAL_EXCELLENCE_COMMITMENT.md", id: "unitotal_vow" }
+  ];
+  const missing: string[] = [];
+  for (const item of required) {
+    if (!existsRel(projectRoot, item.rel)) missing.push(item.id);
+  }
+  return {
+    doctrinePresent: !missing.includes("spotify_only_north_star"),
+    octavesMethodPresent: !missing.includes("octaves_method"),
+    workCompanionPresent: !missing.includes("work_companion_os"),
+    unitotalVowPresent: !missing.includes("unitotal_vow"),
+    missing
+  };
 }
 
 function estimateCoveragePercent(projectRoot: string): number {
@@ -138,7 +171,10 @@ function probeSpotifyMetrics(projectRoot: string, domain: MissionDomainHint): Sp
     existsRel(projectRoot, "docs/governance") ||
     existsRel(projectRoot, "openspec/specs/SPEC-024-SPOTIFY-INSTITUTIONAL-CODEX.md");
   return {
-    usesGoldenPath: existsRel(projectRoot, "openspec") || existsRel(projectRoot, "docs/governance/GLORIAN_NORTH_STAR_SPOTIFY_NUBANK_NL_SDLC.md"),
+    usesGoldenPath:
+      existsRel(projectRoot, "openspec") ||
+      existsRel(projectRoot, "docs/governance/GLORIAN_SPOTIFY_ONLY_NORTH_STAR.md") ||
+      existsRel(projectRoot, "docs/governance/GLORIAN_NORTH_STAR_SPOTIFY_NUBANK_NL_SDLC.md"),
     hasCatalogInfoYaml: existsRel(projectRoot, "catalog-info.yaml"),
     hasTechDocsAndRunbook: existsRel(projectRoot, "docs"),
     // Non-audio domains treat BS.1770 as N/A-pass (FR-512).
@@ -322,7 +358,7 @@ export function runMissionGoldenPath(
       title: "Mission Golden Path Tribunal",
       description: cleanDirective,
       proposedAction:
-        "Execute fail-closed NL→SDLC Mission Golden Path with Spotify/Nubank institutional gates, turbo evidence, and ledger seal. Derived from SPEC-156 EARS/BDD. No vibe coding.",
+        "Execute fail-closed NL→SDLC Mission Golden Path with Spotify-only North Star, Spotify institutional gates, Nubank advisory (hard if fintech), turbo evidence, and ledger seal. Derived from SPEC-156 EARS/BDD. No vibe coding.",
       targetDomain: "CORE"
     });
     const ms = Number((process.hrtime.bigint() - t0) / 1_000_000n);
@@ -343,6 +379,35 @@ export function runMissionGoldenPath(
       )
     );
     if (!ok) return fail("BLOCKED", "CONSTITUTIONAL_TRIBUNAL", "BLOCKED");
+  }
+
+  // 4b. Spotify-only North Star doctrine (mandatory for eos-system / glorian control plane)
+  {
+    const t0 = process.hrtime.bigint();
+    const probe = probeSpotifyOnlyNorthStar(projectRoot);
+    const ms = Number((process.hrtime.bigint() - t0) / 1_000_000n);
+    const isControlPlane =
+      existsRel(projectRoot, "src/mcp/eosMcpServer.ts") &&
+      existsRel(projectRoot, "docs/projects/registry.json");
+    const ok = !isControlPlane || probe.missing.length === 0;
+    stages.push(
+      stage(
+        "SPOTIFY_ONLY_NORTH_STAR",
+        isControlPlane,
+        ok ? 0 : 1,
+        ms,
+        ok
+          ? isControlPlane
+            ? "Spotify-only North Star doctrine pack present"
+            : "Spotify-only North Star advisory (non control-plane)"
+          : `Missing Spotify-only doctrine: ${probe.missing.join(", ")}`,
+        {
+          isControlPlane,
+          ...probe
+        }
+      )
+    );
+    if (!ok) return fail("FAILED", "SPOTIFY_ONLY_NORTH_STAR", "REMEDIATION_REQUIRED");
   }
 
   // 5. Spotify institutional (always mandatory)

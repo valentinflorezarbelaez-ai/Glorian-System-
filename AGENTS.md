@@ -15,8 +15,9 @@
 - **Active Formal Architectural Specs (OpenSpec)**: 159
 
 ## 2. Proposed Engineering Conventions (Not Audited)
+- **Glorian North Star (Spotify-only):** optimize exclusively to elevate Spotify-grade music streaming for **user · artist · music** under Samaelian gnostic rigor — see `docs/governance/GLORIAN_SPOTIFY_ONLY_NORTH_STAR.md`. All fleet projects judged at Spotify-quality bars (Soundcheck / Expression / AuthZ). WITHIN_TESTED_SCOPE only.
 - Consider Go for network services and Rust for performance-sensitive components; this snapshot has not measured the repository's language mix.
-- Select audio loudness and peak targets per product requirements; no mastering or conformance check is performed here.
+- Select audio loudness and peak targets per product requirements; no mastering or conformance check is performed here. Java/JVM ramp is required for Spotify Platform/Music hire signal.
 
 ## 3. Review Checklist (Suggestions Only)
 1. Link planned changes to project requirements.

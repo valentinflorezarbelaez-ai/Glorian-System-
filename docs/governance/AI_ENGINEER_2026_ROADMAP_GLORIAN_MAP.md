@@ -31,6 +31,10 @@ AI Engineer ≠ ML Engineer ≠ AI Researcher. This path is **software that ship
 | Routing / FinOps | apex model router, FinOps wallet/budget tools |
 | Heal / closed loop | autonomous heal, surgical healing, mission golden path |
 | Ops honesty | Soundcheck, turbo, tip-seal, Sovereign 5/5 WITHIN_TESTED_SCOPE |
+| Spotify Platform bar | Authorization / permissions / creator multi-principal systems (`SPOTIFY_AUTHORIZATION_PLATFORM_LENS.md`) — not Soundcheck theater alone |
+| Spotify Music Expression bar | Full-stack Java + React/TypeScript; artist→fan (Canvas/video/countdown/listening parties) (`SPOTIFY_MUSIC_EXPRESSION_FULLSTACK_LENS.md`) |
+| Spotify dual-track hire prep | Index: `SPOTIFY_CAREERS_DUAL_TRACK.md` — product excellence + their stack + evidence |
+| Glorian soul | Spotify-only North Star (`GLORIAN_SPOTIFY_ONLY_NORTH_STAR.md`) — user·artist·music · Samaelian rigor · fleet Spotify-quality |
 
 ## 3. Gaps vs Fazt roadmap (build next)
 

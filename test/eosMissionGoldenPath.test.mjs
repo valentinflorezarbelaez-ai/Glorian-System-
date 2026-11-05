@@ -34,9 +34,27 @@ test("BDD-480: Nominal mission on eos-system succeeds within tested scope", () =
       assert.equal(stage.exitCode, 0, `${stage.stageId} must exit 0`);
     }
   }
+  assert.ok(result.stages.some((s) => s.stageId === "SPOTIFY_ONLY_NORTH_STAR"));
   assert.ok(result.stages.some((s) => s.stageId === "SPOTIFY_INSTITUTIONAL"));
   assert.ok(result.stages.some((s) => s.stageId === "TURBO_VERIFY"));
   assert.ok(result.ledgerEntryId);
+});
+
+test("BDD-483: Spotify-only North Star doctrine pack is mandatory on control plane", () => {
+  const result = runMissionGoldenPath("elevate music expression harmonic recommendations under Spotify-only North Star", {
+    projectRoot: ROOT,
+    target: "eos-system",
+    sealLedger: true,
+    ledgerPath: ":memory:"
+  });
+  assert.equal(result.status, "SUCCESS");
+  assert.equal(result.domainHint, "spotify");
+  const north = result.stages.find((s) => s.stageId === "SPOTIFY_ONLY_NORTH_STAR");
+  assert.ok(north);
+  assert.equal(north.mandatory, true);
+  assert.equal(north.exitCode, 0);
+  assert.equal(north.evidence.doctrinePresent, true);
+  assert.equal(north.evidence.workCompanionPresent, true);
 });
 
 test("BDD-481: Empty directive fail-closed", () => {

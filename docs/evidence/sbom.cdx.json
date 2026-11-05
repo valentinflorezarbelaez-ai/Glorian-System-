@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:fc2933c3-2065-537c-9e06-ac1687c666fe",
+  "serialNumber": "urn:uuid:e5ff991e-085d-5a7e-b14e-3c291ec9412d",
   "version": 1,
   "metadata": {
-    "timestamp": "2024-01-15T19:10:59.000Z",
+    "timestamp": "2022-04-05T06:22:22.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -25,7 +25,7 @@
       },
       {
         "name": "Node.js",
-        "version": "v24.19.0"
+        "version": "v24.21.0"
       }
     ],
     "runtimeDependenciesCount": 0
@@ -1391,7 +1391,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "a24ebd5040cca46fb752ecb691be0723e9a1d912d0aae2ad6ba49b943f3ee48a"
+          "content": "11ba1b32e249bb7cd59b15661a369a87cf4c99c5d272dd2a1b36d3e8716a90f4"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosMissionGoldenPathOrchestrator.ts"
@@ -2593,5 +2593,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "355acb78e417e9a4a9ea612facebacb957d5c22356dc18393282dd67032470af"
+  "sha256Receipt": "cf67a2333d3c33d7ea560ea423d747eeb3fd3417c1f97a1f8c6715668dd96ea4"
 }
