@@ -126,7 +126,22 @@ const pack = {
       epistemicState: triad.epistemicState,
       pillarsPassing: triad.pillars.filter((p) => p.compliant).length,
       sha256Receipt: triad.sha256Receipt
-    }
+    },
+    finopsCostReceipt: (() => {
+      const stage = mission.stages.find((s) => s.stageId === "FINOPS_COST_RECEIPT");
+      return {
+        present: Boolean(stage),
+        exitCode: stage ? stage.exitCode : 1,
+        tier: stage && stage.evidence ? stage.evidence.tier : null,
+        estimatedCostUsd:
+          stage && stage.evidence && typeof stage.evidence.estimatedCostUsd === "number"
+            ? stage.evidence.estimatedCostUsd
+            : null,
+        sha256Attestation:
+          stage && stage.evidence ? stage.evidence.sha256Attestation : null,
+        epistemicNote: "Estimate only — not a live provider invoice"
+      };
+    })()
   },
   employerPitch: {
     oneLiner:
@@ -134,6 +149,7 @@ const pack = {
     dailyUse: "eos_mission_run + Gentle Engram/ODD/GGA",
     proofArtifacts: [
       "Mission Golden Path receipts (SPEC-156)",
+      "FinOps cost receipt on every mission (FR-514)",
       "Layer-0 architecture purity 100",
       "Gentleman stack co-governance APEX",
       "Fleet Soundcheck quorum",
@@ -180,6 +196,7 @@ ${pack.employerPitch.oneLiner}
 | Nubank institutional | **${nubank.institutionalScore}** · ${nubank.tier} |
 | Planetary Apex (SPEC-158) | **${apex.status}** · ${apex.overallScore}/100 |
 | Black Projects Triad (SPEC-159) | **${triad.status}** · ${triad.overallScore}/100 |
+| FinOps cost receipt | **${pack.signals.finopsCostReceipt.present && pack.signals.finopsCostReceipt.exitCode === 0 ? "PASS" : "FAIL"}** · tier=${pack.signals.finopsCostReceipt.tier || "n/a"} · est USD (estimate only) |
 
 ## Dirty fleet trees (Soundcheck git health debt)
 ${dirtyLines}

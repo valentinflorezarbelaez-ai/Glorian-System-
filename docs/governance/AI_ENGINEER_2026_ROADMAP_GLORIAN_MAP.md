@@ -41,7 +41,7 @@ AI Engineer ≠ ML Engineer ≠ AI Researcher. This path is **software that ship
 Ordered by product value, not ceremony:
 
 1. **Cost / token truth UX** — **DONE**: mission `FINOPS_COST_RECEIPT` + Studio `/api/finops` cockpit panel (2026-11-05 w1/w2).
-2. **RAG golden path demo** — **DONE hermetic**: `eosFleetRagGoldenPath` + BDD (Biblioteca/Spotify fixtures). Live Biblioteca UI wiring still open.
+2. **RAG golden path demo** — **DONE hermetic + Biblioteca UI** (wave-2/3): `eosFleetRagGoldenPath` + `SacredRagPanel` on `/biblioteca` (retrieval only, no LLM invention).
 3. **Tool-calling evals** — **DONE hermetic**: `test/eosToolCallingFinOpsEval.test.mjs`. Wrong-tool MCP arg fuzz still open.
 4. **Model routing policy card** — FinOps receipt on mission + API; dedicated policy card UI still open.
 5. **LLMOps privacy lane** — optional local/open-weight path documented; no plaintext secrets (Law VI).

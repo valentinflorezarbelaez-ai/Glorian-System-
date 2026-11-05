@@ -1,7 +1,7 @@
 {
   "title": "Glorian Career Evidence Pack",
   "owner": "Valentín Flórez Arbeláez",
-  "generatedAtIso": "2026-11-05T15:34:42.550Z",
+  "generatedAtIso": "2026-11-05T15:42:37.342Z",
   "epistemicState": "CAREER_EVIDENCE_WITHIN_TESTED_SCOPE",
   "claimsDenied": [
     "Level 5",
@@ -55,8 +55,8 @@
     "mission": {
       "status": "SUCCESS",
       "epistemicState": "MISSION_GOLDEN_PATH_WITHIN_TESTED_SCOPE",
-      "sha256Receipt": "6ffe74f8ae8812b105250b62d85d7379ff80ec0e471dcaabe682c6010d3dc655",
-      "durationMs": 273,
+      "sha256Receipt": "29eaa56de44fc6a86f3e6f2c83f68124ff7cf9ba1f021558699247241c870857",
+      "durationMs": 482,
       "stages": [
         {
           "id": "INPUT_VALIDATION",
@@ -116,13 +116,13 @@
           "id": "TURBO_VERIFY",
           "exitCode": 0,
           "mandatory": true,
-          "summary": "Turbo PASS files=1160"
+          "summary": "Turbo PASS files=1164"
         },
         {
           "id": "LEDGER_SEAL",
           "exitCode": 0,
           "mandatory": true,
-          "summary": "Ledger sealed EOS-LEDGER-000001-bb0cfcbf9c"
+          "summary": "Ledger sealed EOS-LEDGER-000001-d0fd56e7ac"
         }
       ]
     },
@@ -140,17 +140,23 @@
     },
     "turbo": {
       "success": true,
-      "totalDurationMs": 55.057,
+      "totalDurationMs": 155.066,
       "epistemicState": "LOCAL_CHECKS_PASSED",
-      "sourceInventoryDigest": "sha256:b3302a3dbf7b6e5be7bccc616332ecae7ef597a8b612838de0642627a996f740"
+      "sourceInventoryDigest": "sha256:33a1bfcd67c8a9280ee20e64bf1e57eb083a1fc5fb3a3d417e984fc0dec2c37c"
     },
     "fleetSoundcheck": {
-      "fleetAverageScore": 100,
+      "fleetAverageScore": 99,
       "deploymentAuthorizedQuorum": true,
       "totalRepositories": 10,
       "reposAtGradeA": 10,
-      "dirtyTrees": [],
-      "sha256Receipt": "6a582de272df85adc9bc5be80e409e63db9edc78b1dc394796471714a0a8eaea"
+      "dirtyTrees": [
+        {
+          "id": "biblioteca-gnostica-1",
+          "score": 90,
+          "grade": "A"
+        }
+      ],
+      "sha256Receipt": "564d09e8eea66ed4f14c6fd7ceb5bcc62abe070adc0baf09e91daf21ca9c70a2"
     },
     "spotifyInstitutional": {
       "institutionalScore": 100,
@@ -165,14 +171,22 @@
       "overallScore": 100,
       "epistemicState": "APEX_DRILL_WITHIN_TESTED_SCOPE",
       "pillarsPassing": 5,
-      "sha256Receipt": "e67352c10227810ee224a36f836925525c81645d6bf5df3d75c43fd3f2b2dd5e"
+      "sha256Receipt": "39f22598457ea607d43b28191eb94038a2c0ce417429bd6f7b6ad8af310d6df5"
     },
     "blackProjectsTriad": {
       "status": "TRIAD_DRILL_PASS",
       "overallScore": 100,
       "epistemicState": "TRIAD_DRILL_WITHIN_TESTED_SCOPE",
       "pillarsPassing": 3,
-      "sha256Receipt": "c7b25414820171f1c1118aa958badb63dfa76bace220302dc5d603f036fb61b7"
+      "sha256Receipt": "0d87916a1a113a5e85bda19961352a005db9ad460a637e7a9c68a6aa30a4c58a"
+    },
+    "finopsCostReceipt": {
+      "present": true,
+      "exitCode": 0,
+      "tier": "TIER_2_BALANCED",
+      "estimatedCostUsd": 0.002375,
+      "sha256Attestation": "17672a8d177232b1d8171853ff233299c9a5b24c34f867e44897ed18474f0163",
+      "epistemicNote": "Estimate only — not a live provider invoice"
     }
   },
   "employerPitch": {
@@ -180,6 +194,7 @@
     "dailyUse": "eos_mission_run + Gentle Engram/ODD/GGA",
     "proofArtifacts": [
       "Mission Golden Path receipts (SPEC-156)",
+      "FinOps cost receipt on every mission (FR-514)",
       "Layer-0 architecture purity 100",
       "Gentleman stack co-governance APEX",
       "Fleet Soundcheck quorum",
@@ -188,5 +203,5 @@
       "OpenSpec formal catalog"
     ]
   },
-  "sha256Pack": "6d21633e36d4855b56192bbbaebf8a3c679f5ec910bd8b8e3a203b898a038462"
+  "sha256Pack": "b1d914cd38a59e53ccfbe43d2e41b2034a2cf33cbce5e0800413cdb3b9822e95"
 }

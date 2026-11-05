@@ -80,6 +80,22 @@ export const careerEvidence = {
         `${pack.signals.spotifyInstitutional.institutionalScore} / ${pack.signals.nubankInstitutional.institutionalScore}`
       )},
       detail: "Institutional bars within tested scope"
+    },
+    {
+      label: "FinOps mission receipt",
+      value: ${JSON.stringify(
+        pack.signals.finopsCostReceipt &&
+          pack.signals.finopsCostReceipt.present &&
+          pack.signals.finopsCostReceipt.exitCode === 0
+          ? String(pack.signals.finopsCostReceipt.tier || "PASS")
+          : "MISSING"
+      )},
+      detail: ${JSON.stringify(
+        pack.signals.finopsCostReceipt &&
+          typeof pack.signals.finopsCostReceipt.estimatedCostUsd === "number"
+          ? `est $${Number(pack.signals.finopsCostReceipt.estimatedCostUsd).toFixed(6)} · estimate only`
+          : "FINOPS_COST_RECEIPT on eos_mission_run"
+      )}
     }
   ] as const satisfies readonly CareerEvidenceSignal[],
   githubEvidenceUrl:
