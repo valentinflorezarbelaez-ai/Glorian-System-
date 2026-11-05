@@ -2,16 +2,17 @@
 
 ## Executive verdict
 Glorian is a **real control plane** (not vaporware). Architecture is clean. Co-governance works.  
-NL→SDLC is now a single fail-closed entry (`eos_mission_run` / SPEC-156). Remaining debt: mass/complexity + dirty fleet trees.
+NL→SDLC is a single fail-closed entry (`eos_mission_run` / SPEC-156).  
+**Big Tech Max (software doctrine)** sealed 2026-11-05: `BIG_TECH_MAX_SOFTWARE_DOCTRINE_WITHIN_TESTED_SCOPE` — see `BIG_TECH_MAX_SOFTWARE_DOCTRINE_2026-11-05.md`.
 
 | Signal | Result |
 |---|---|
 | Architecture purity | 100 / 0 cycles |
 | Turbo verify | PASS |
-| OpenSpec catalog | 156 specs valid |
+| OpenSpec catalog | 156+ specs valid |
 | Gentleman stack | 100/100 APEX |
-| Fleet average | 91 (9/10 dirty trees) |
-| Nocturnal fitness | 82/100 |
+| Fleet Soundcheck | 100 / 10 A+ (re-check after dirty satellites) |
+| God-file T7c | ≈4684 LOC (~34% below peak 7122; floor ≤5341 held) |
 | MCP core diet | 30 tools (`eos_mission_run` in core) |
 | Mission Golden Path | SUCCESS within tested scope |
 
@@ -23,15 +24,20 @@ NL→SDLC is now a single fail-closed entry (`eos_mission_run` / SPEC-156). Rema
 - Product delivery orchestrator + scorecard floor (SPEC-147/152)
 - MCP `core` profile <= 30 (SPEC-044/155/156)
 
-## FIX / PERFECT (still open)
-1. **MCP god-file** — Phase-1..7 + **import soak** (−134 dead symbols / ≈−336 LOC on `eosMcpServer.ts`); T7c ≤5341 held. Further diet optional.
-2. **Fleet dirty trees** — Soundcheck 100/10 (re-check after each ship)
+## FIX / PERFECT (still open — ops / optional beyond Max)
+1. **MCP god-file import soak** — optional diet beyond −25% (T7c Max already held at ≈4684 LOC)
+2. **Fleet dirty trees** — re-check Soundcheck after satellite WIP (e.g. Aberamentho)
 3. **"Dead exports" noise** — mostly MCP-wired; do not delete blindly
-4. **Engram project pin** — `.engram/config.json` + preferredCwd note
-5. **Crud-slack Law VI / IA-5** — fail-closed `SESSION_SECRET` + `GOOGLE_CLIENT_ID`; rotation runbook sealed
-6. **Landing + fleet CWV** — Eos-System verify-landing deep; `scripts/verify-fleet-cwv-static.mjs` static CWV probe (≥70% fleet)
-7. **Java Music Expression lab** — `labs/java-music-expression/` Camelot twin for hire-signal practice
-8. **Portfolio evidence refresh** — keep `portafolio` careerEvidence.ts synced when regenerating packs
+4. **Landing + fleet CWV browser** — static probe shipped; Lighthouse optional when installed
+5. **Java Music Expression smoke** — lab sources present; JDK/`javac` required for PermissionGateSmoke
+6. **Portfolio evidence refresh** — keep `portafolio` careerEvidence.ts synced when regenerating packs
+7. **External human IV&V** — binder ready; accreditation still requires independent verifier letter
+
+## CLOSED FOR SOFTWARE-DOCTRINE MAX
+- Engram pin (`.engram/config.json`)
+- Crud IA-5 index (`docs/assurance/IA5_AUTHENTICATOR_ROTATION.md` → Crud-slack runbook)
+- Linux CI matrix (`eos-sovereign-cicd.yml` ubuntu/win/mac)
+- Phase-5..7 T7c + ownerApproval 10/10 + README WITHIN_TESTED_SCOPE
 
 ## FIXED THIS WAVE (Max-1 · 2026-11-04)
 - [x] Phase-5 Spotify residual extract + dead `glorian_*` purge
