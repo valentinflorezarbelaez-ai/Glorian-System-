@@ -33,8 +33,9 @@ Canonical rotation procedure (fail-closed `SESSION_SECRET`, `GOOGLE_CLIENT_ID`, 
 ## Evidence
 
 - NIST map row IA-5 → this index + Crud-slack runbook
-- Crud-slack remediation HEAD (see satellite git log for `10ee18f` Law VI wave)
-- External human IV&V still required for any accreditation narrative (`docs/assurance/IVV_PLAYBOOK.md`)
+- Crud-slack remediation HEAD `10ee18f` + 2026-11-05 host rotation attestation SHA-256 `565877da8d9277abb167f4fbffddffc86144c6cbd728546fb641f42482dca4e9` (plaintext never logged)
+- External human IV&V packet: `docs/assurance/EXTERNAL_IVV_AUDITOR_PACKET.md` (`READY_FOR_EXTERNAL_HUMAN_IVV`)
+- Ops EVD: `docs/evidence/EVD-OPS-EXCELLENCE-2026-11-05.json`
 
 ## Non-claims
 
