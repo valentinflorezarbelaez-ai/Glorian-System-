@@ -52,6 +52,7 @@
     "sbom": "node bin/eos.mjs sbom",
     "sbom:generate": "node scripts/eos-generate-sbom.mjs",
     "tip-seal": "node scripts/eos-generate-sbom.mjs --tip-seal",
+    "fleet:cwv-static": "node scripts/verify-fleet-cwv-static.mjs",
     "slsa": "node bin/eos.mjs slsa",
     "supply-chain:verify": "node scripts/verify-supply-chain.mjs",
     "sapfix": "node bin/eos.mjs sapfix",

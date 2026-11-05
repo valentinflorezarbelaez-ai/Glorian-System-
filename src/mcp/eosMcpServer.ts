@@ -13,18 +13,12 @@
  * Zero external runtime dependencies.
  */
 
-import { execFileSync } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import {
-  createDefaultEosKnowledgeStore,
-  tokenize,
-  computeTermFrequency,
-  cosineSimilarity
-} from "../core/eosNeuralVectorCore.ts";
+import { createDefaultEosKnowledgeStore } from "../core/eosNeuralVectorCore.ts";
 
 import {
   EosHybridKnowledgeEngine,
@@ -36,66 +30,11 @@ import {
   getDefaultKnowledgeGraphEngine
 } from "../core/eosKnowledgeGraphEngine.ts";
 
-import {
-  EosWasmSandboxEngine,
-  getDefaultWasmSandboxEngine,
-  WASM_BYTECODE_TEMPLATES
-} from "../core/eosWasmSandboxEngine.ts";
-
-import {
-  evaluateDirectiveWithTMR,
-  interpretJarvisDirective,
-  JARVIS_INTENT_REGISTRY
-} from "../core/eosJarvisMonad.ts";
-
-import {
-  validatePatch
-} from "../core/eosPatchValidator.ts";
-
-import {
-  compressSourceContext
-} from "../core/eosContextOptimizer.ts";
-
-import {
-  amplifyPrompt
-} from "../core/eosPromptAmplifier.ts";
-
-import type {
-  ModelFamily,
-  StrictnessLevel
-} from "../core/eosPromptAmplifier.ts";
-
-import {
-  scanArchitecture
-} from "../core/eosArchitectureGuard.ts";
-
-import {
-  evaluateDecision
-} from "../core/eosCognitiveJudge.ts";
-
-import {
-  runTurboPipeline
-} from "../core/eosTurboEngine.ts";
-
-import {
-  EosSemanticGraph
-} from "../core/eosSemanticGraph.ts";
-
-import {
-  EosAutonomousHealer
-} from "../core/eosAutonomousHealer.ts";
-
-import {
-  EosWorktreeOrchestrator
-} from "../core/eosWorktreeOrchestrator.ts";
+import { EosWasmSandboxEngine, getDefaultWasmSandboxEngine } from "../core/eosWasmSandboxEngine.ts";
 
 import {
   EosCognitiveEval
 } from "../core/eosCognitiveEval.ts";
-
-import {
-  EosOpenSpecSync
-} from "../core/eosOpenSpecSync.ts";
 
 import {
   EosTitansMatrix
@@ -106,16 +45,8 @@ import {
 } from "../core/eosGoAccelerator.ts";
 
 import {
-  EosSpotifyAgenticFactory
-} from "../core/eosSpotifyAgenticFactory.ts";
-
-import {
   EosAudioDspKernel
 } from "../core/eosAudioDspKernel.ts";
-
-import {
-  EosFleetElevator
-} from "../core/eosFleetElevator.ts";
 
 import {
   EosApolloHermesMesh
@@ -129,10 +60,7 @@ import {
   detectPolyglotPlan
 } from "../core/eosPolyglotAdapter.ts";
 
-import {
-  EosBitemporalLedger,
-  verifyBackwardCompatibility
-} from "../core/eosSpotifyNubankEngine.ts";
+import { EosBitemporalLedger } from "../core/eosSpotifyNubankEngine.ts";
 
 import {
   EosGlobalEdgeArbiter
@@ -161,11 +89,7 @@ import {
   compressContext as compressWasmContext
 } from "../core/eosWasmEngine.ts";
 
-import {
-  evaluateAlignment as evaluateSoulAlignment,
-  getArchitectIdentity,
-  getMasterKanbanState
-} from "../core/eosJarvisSoul.ts";
+import { evaluateAlignment } from "../core/eosJarvisSoul.ts";
 
 import {
   EosIntrospectionEngine
@@ -180,17 +104,10 @@ import {
 } from "../core/eosDatalogVerifier.ts";
 
 import {
-  EosMutationTester
-} from "../core/eosMutationTester.ts";
-
-import {
   EosTimeTravelSim
 } from "../core/eosTimeTravelSim.ts";
 
-import {
-  EosDurableWal,
-  computeCrc32
-} from "../core/eosDurableWal.ts";
+import { computeCrc32 } from "../core/eosDurableWal.ts";
 
 import {
   EosPrometheusExporter
@@ -225,20 +142,12 @@ import {
 } from "../core/eosGnosticTemple.ts";
 
 import {
-  EosFinOpsBudget
-} from "../core/eosFinOpsBudget.ts";
-
-import {
   EosBitwiseAccelerator
 } from "../core/eosBitwiseAccelerator.ts";
 
 import {
   EosBufferPool
 } from "../core/eosBufferPool.ts";
-
-import {
-  EosApexProfiler
-} from "../core/eosApexProfiler.ts";
 
 import {
   EosMindLevelsIntrospector
@@ -259,10 +168,6 @@ import {
 import {
   EosNsaZeroTrustCompartment
 } from "../core/eosNsaZeroTrustCompartment.ts";
-
-import {
-  EosNsaAnomalyDetector
-} from "../core/eosNsaAnomalyDetector.ts";
 
 import {
   EosTrueTimeBoundedClock
@@ -293,37 +198,15 @@ import {
 } from "../core/eosGoDaemonIpc.ts";
 
 import {
-  EosZeroCopyScanner
-} from "../core/eosZeroCopyScanner.ts";
-
-import {
   EosAutonomousChaosRunner
 } from "../core/eosAutonomousChaosRunner.ts";
-
-import {
-  EosUniversalProductFoundry,
-  type ProductManifest
-} from "../core/eosUniversalProductFoundry.ts";
-
-import {
-  EosProductDeliveryOrchestrator
-} from "../core/eosProductDeliveryOrchestrator.ts";
 
 import {
   EosUniversalAgentSessionContract,
   getDefaultAgentSessionContract
 } from "../core/eosUniversalAgentSessionContract.ts";
 
-import {
-  EosPlatformOpsCeiling
-} from "../core/eosPlatformOpsCeiling.ts";
-
-import {
-  EosOtelTraceEngine,
-  formatW3cTraceparent,
-  parseW3cTraceparent,
-  type SpanStatusCode
-} from "../core/eosOtelDistributedTracing.ts";
+import { EosOtelTraceEngine, type SpanStatusCode } from "../core/eosOtelDistributedTracing.ts";
 
 import {
   EosAutonomousSelfHealingEngine,
@@ -333,10 +216,6 @@ import {
 import {
   EosHnswVectorEngine
 } from "../core/eosHnswVectorEngine.ts";
-
-import {
-  EosMonteCarloEngine
-} from "../core/eosMonteCarloEngine.ts";
 
 import {
   EosMonotonicHashChain
@@ -356,10 +235,6 @@ import {
 } from "../core/eosQuantumLatticeShield.ts";
 
 import {
-  EosMetaCognitiveSynapse
-} from "../core/eosMetaCognitiveSynapse.ts";
-
-import {
   EosContinuousRefactorEngine
 } from "../core/eosContinuousRefactorEngine.ts";
 
@@ -367,20 +242,7 @@ import {
   EosDeterministicSimulator
 } from "../core/eosDeterministicSimulator.ts";
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  assertInvariant,
-  deepFreeze
-} from "../core/eosKernelPrimitives.ts";
-
-import {
-  EosFleetSoundcheckMesh
-} from "../core/eosFleetSoundcheckMesh.ts";
-
-import {
-  EosMctsHyperTuner
-} from "../core/eosMctsHyperTuner.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze } from "../core/eosKernelPrimitives.ts";
 
 import {
   EosProgressiveCanaryMesh
@@ -390,225 +252,46 @@ import {
   EosAntigravityDirector
 } from "../core/eosAntigravityDirector.ts";
 
-import {
-  EosDurableSqliteLedger,
-  type LedgerCategory
-} from "../core/eosDurableSqliteLedger.ts";
+import { EosDurableSqliteLedger } from "../core/eosDurableSqliteLedger.ts";
 
-import {
-  EosTypeScriptAstAnalyzer
-} from "../core/eosTypeScriptAstAnalyzer.ts";
+import { EosAgentTopologyMesh } from "../core/eosAgentTopologyMesh.ts";
 
-import {
-  EosGentlemanStackBridge
-} from "../core/eosGentlemanStackBridge.ts";
+import { EosTlcFormalChecker } from "../core/eosTlcFormalChecker.ts";
 
-import {
-  EosGentlemanAutoUpdater
-} from "../core/eosGentlemanAutoUpdater.ts";
-
-import {
-  EosEnterpriseWorkspaceGovernor
-} from "../core/eosEnterpriseWorkspaceGovernor.ts";
-
-import {
-  EosEvolutionaryHarness,
-  type CandidateMutation
-} from "../core/eosEvolutionaryHarness.ts";
-
-import {
-  EosAgentTopologyMesh,
-  type AgentNode,
-  type MeshEventType
-} from "../core/eosAgentTopologyMesh.ts";
-
-import {
-  EosInvariantVerificationEngine,
-  type StateMachineModel
-} from "../core/eosInvariantVerificationEngine.ts";
-
-import {
-  EosContractEvolutionGovernor,
-  type SchemaContract,
-  type SchemaField
-} from "../core/eosContractEvolutionGovernor.ts";
-
-import {
-  EosSurgicalSelfHealingKernel,
-  type FaultDiagnostic,
-  type RepairStrategy
-} from "../core/eosSurgicalSelfHealingKernel.ts";
-
-import {
-  EosTlcFormalChecker,
-  type TlcRuntimeDiagnostic,
-  type TlcVerificationResult
-} from "../core/eosTlcFormalChecker.ts";
-
-import {
-  EosGithubPrGate,
-  type GithubPrContext,
-  type PrEvaluationResult
-} from "../core/eosGithubPrGate.ts";
-
-import {
-  EosMicroVmSandbox,
-  type SandboxDoctorReport,
-  type SandboxRunResult
-} from "../core/eosMicroVmSandbox.ts";
-
-import {
-  EosTelemetryDashboard,
-  type TelemetrySnapshot
-} from "../core/eosTelemetryDashboard.ts";
-
-import {
-  EosFleetProductionVerifier,
-  REGISTERED_FLEET_TARGETS,
-  type ProbeResult
-} from "../core/eosFleetProductionVerifier.ts";
-
-import {
-  EosSamaelUnitotalNexus,
-  type UnitotalAuditReport
-} from "../core/eosSamaelUnitotalNexus.ts";
-
-import {
-  EosPropertyFuzzingHypervisor
-} from "../core/eosPropertyFuzzingHypervisor.ts";
+import { EosTelemetryDashboard } from "../core/eosTelemetryDashboard.ts";
 
 import {
   EosConsciousWitness
 } from "../core/eosConsciousWitness.ts";
 
 import {
-  EosHotPatchEngine
-} from "../core/eosHotPatchEngine.ts";
-
-import {
   EosSapFixAutoshipper
 } from "../core/eosSapFixAutoshipper.ts";
-
-import {
-  EosContentAddressableCache
-} from "../core/eosContentAddressableCache.ts";
-
-import {
-  EosSmtAutomatedReasoningProver
-} from "../core/eosSmtAutomatedReasoningProver.ts";
 
 import {
   EosProductionChaosMonkey
 } from "../core/eosProductionChaosMonkey.ts";
 
-import {
-  EosBftAgentSwarmSlashing
-} from "../core/eosBftAgentSwarmSlashing.ts";
-
-import { EosTrueTimeEngine } from "../core/eosTrueTimeEngine.ts";
 import { EosLsmTreeStorageEngine } from "../core/eosLsmTreeStorageEngine.ts";
-import { EosThresholdCryptography } from "../core/eosThresholdCryptography.ts";
-import { EosMicroVmEnclaveLauncher } from "../core/eosMicroVmEnclaveLauncher.ts";
 import {
   EosVercelCanaryObservability,
   type CanaryTelemetryInput
 } from "../core/eosVercelCanaryObservability.ts";
 import {
-  EosColumnarTelemetryEngine,
-  type ColumnarQueryFilter
-} from "../core/eosColumnarTelemetryEngine.ts";
-import {
   EosCellBasedBulkheadGovernor,
   type CellHealthStatus
 } from "../core/eosCellBasedBulkheadGovernor.ts";
-import {
-  EosMultiWindowSloGovernor,
-  type ServiceSloStatus,
-  type SloTargetConfig,
-  type SloTelemetryEvent
-} from "../core/eosMultiWindowSloGovernor.ts";
-import {
-  EosAdaptiveHedgedDeadlineMesh,
-  EosDeadlineContext,
-  type EndpointPercentileStats,
-  type HedgedExecutionResult,
-  type MeshMetricsSnapshot
-} from "../core/eosAdaptiveHedgedDeadlineMesh.ts";
-import {
-  EosAdaptiveConcurrencyGovernor,
-  type AdmissionDecision,
-  type ConcurrencyGovernorStatus,
-  type PriorityTier
-} from "../core/eosAdaptiveConcurrencyGovernor.ts";
-import {
-  EosTailBasedTraceSampler,
-  type TraceSpan,
-  type TraceSamplingDecision,
-  type TailSamplerStatus
-} from "../core/eosTailBasedTraceSampler.ts";
-import {
-  EosPredictiveRemediationEngine,
-  type TelemetryHealthVector,
-  type RemediationExecutionResult,
-  type RemediationEngineStatus
-} from "../core/eosPredictiveRemediationEngine.ts";
-import {
-  EosUnifiedKernelOrchestrator,
-  type KernelSystemTelemetry,
-  type KernelReconciliationReceipt,
-  type KernelOrchestratorStatus
-} from "../core/eosUnifiedKernelOrchestrator.ts";
-import {
-  EosBigTechTranscendenceNexus,
-  type TranscendencePillarId,
-  type MasterTranscendenceReceipt,
-  type TranscendenceNexusStatus
-} from "../core/eosBigTechTranscendenceNexus.ts";
-import {
-  EosEliteDesignStudioEngine,
-  type DesignArchetype,
-  type DesignComponentType,
-  type DesignGenerationResult,
-  type DesignAuditResult,
-  type DesignStudioStatus
-} from "../core/eosEliteDesignStudioEngine.ts";
-import {
-  EosAgenticFinOpsGovernor,
-  type FinOpsCostTier,
-  type TaskCostRoutingResult,
-  type StagnationEvaluationResult,
-  type EphemeralTaskWallet,
-  type CodeSurvivalEvaluationResult,
-  type FinOpsGovernorStatus
-} from "../core/eosAgenticFinOpsGovernor.ts";
-import {
-  EosPlanetaryMonorepoGovernor,
-  type VirtualMonorepoNode,
-  type SparseProjectionResult,
-  type JplPowerOfTenResult,
-  type RosiePlanResult,
-  type TmrVoterDecision,
-  type TmrConsensusResult,
-  type PlanetaryGovernorStatus
-} from "../core/eosPlanetaryMonorepoGovernor.ts";
-import {
-  EosCrossFleetNeuralSynapse,
-  type SynapticPatternCategory,
-  type SynapticPattern,
-  type PropagationDirective,
-  type PropagationPlanResult,
-  type FleetKnowledgeQueryResult,
-  type SynapseMeshStatus
-} from "../core/eosCrossFleetNeuralSynapse.ts";
-import {
-  EosPlanetaryMultiCloudEvacuationMesh,
-  type CloudProviderId,
-  type CloudNodeStatus,
-  type CloudNodeTelemetry,
-  type EvacuationDirective,
-  type PlanetaryHealthMatrix,
-  type PlanetaryMeshStatus
-} from "../core/eosPlanetaryMultiCloudEvacuationMesh.ts";
+import { EosMultiWindowSloGovernor, type SloTelemetryEvent } from "../core/eosMultiWindowSloGovernor.ts";
+import { EosAdaptiveHedgedDeadlineMesh } from "../core/eosAdaptiveHedgedDeadlineMesh.ts";
+import { EosAdaptiveConcurrencyGovernor, type PriorityTier } from "../core/eosAdaptiveConcurrencyGovernor.ts";
+import { EosPredictiveRemediationEngine, type TelemetryHealthVector } from "../core/eosPredictiveRemediationEngine.ts";
+import { EosUnifiedKernelOrchestrator, type KernelSystemTelemetry } from "../core/eosUnifiedKernelOrchestrator.ts";
+import { EosBigTechTranscendenceNexus, type TranscendencePillarId } from "../core/eosBigTechTranscendenceNexus.ts";
+import { EosEliteDesignStudioEngine, type DesignArchetype, type DesignComponentType } from "../core/eosEliteDesignStudioEngine.ts";
+import { EosAgenticFinOpsGovernor } from "../core/eosAgenticFinOpsGovernor.ts";
+import { EosPlanetaryMonorepoGovernor } from "../core/eosPlanetaryMonorepoGovernor.ts";
+import { EosCrossFleetNeuralSynapse } from "../core/eosCrossFleetNeuralSynapse.ts";
+import { EosPlanetaryMultiCloudEvacuationMesh } from "../core/eosPlanetaryMultiCloudEvacuationMesh.ts";
 
 import {
   annotateAndFilterTools,
@@ -652,26 +335,7 @@ import {
   globalTraceSampler
 } from "./eosMcpSharedRuntime.ts";
 
-import {
-  EosS0DesignSystemGovernor,
-  type VisualAuditReport
-} from "../core/eosS0DesignSystemGovernor.ts";
-
-import {
-  EosNeuroSymbolicFleetHealingEngine
-} from "../core/eosNeuroSymbolicFleetHealingEngine.ts";
-
-import {
-  EosFleetPulseEngine
-} from "../core/eosFleetPulseEngine.ts";
-
-import {
-  EosNocturnalEvolutionEngine
-} from "../core/eosNocturnalEvolutionEngine.ts";
-
-import {
-  EosAutonomousCodeSynthesizer
-} from "../core/eosAutonomousCodeSynthesizer.ts";
+import { EosS0DesignSystemGovernor } from "../core/eosS0DesignSystemGovernor.ts";
 
 const globalBulkheadGovernor = new EosCellBasedBulkheadGovernor({ cellCount: 8, cellCapacity: 100 });
 const globalSloGovernor = new EosMultiWindowSloGovernor();
@@ -4190,7 +3854,7 @@ export class EosMcpServer {
       }
 
       case "eos_soul_alignment": {
-        return evaluateSoulAlignment(String(args.directive || ""));
+        return evaluateAlignment(String(args.directive || ""));
       }
 
       case "eos_autonomous_introspect": {

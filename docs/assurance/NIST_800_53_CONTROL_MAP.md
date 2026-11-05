@@ -14,7 +14,7 @@
 | CM-2 | Baseline Configuration | COVERED | Freeze gate + OpenSpec catalog + SBOM |
 | CM-3 | Configuration Change Control | COVERED | SDD Intake→Spec→EVD; GGA hooks |
 | IA-2 | Identification & Authentication | COVERED | 256-bit CSPRNG bearer + timingSafeEqual |
-| IA-5 | Authenticator Management | PARTIAL | Tokens ephemeral; rotation runbook in IVV playbook |
+| IA-5 | Authenticator Management | COVERED (TaskFlow remediated) | MCP bearer ephemeral; Crud-slack `SESSION_SECRET`/`GOOGLE_CLIENT_ID` fail-closed env-only + `docs/assurance/IA5_AUTHENTICATOR_ROTATION.md` |
 | SC-7 | Boundary Protection | COVERED | Host/Origin validation, 1 MiB cutoff, no wildcard CORS on sensitive routes |
 | SC-8 | Transmission Confidentiality | PARTIAL | TLS at edge (Vercel/GitHub); local stdio MCP is loopback |
 | SC-12 | Cryptographic Key Establishment | PARTIAL | Hash/HMAC local; OIDC keyless CI attestation present |
@@ -27,7 +27,7 @@
 | SA-15 | Development Process | COVERED | EOS 7-Law constitution + OpenSpec EARS/BDD |
 
 ## Summary
-- COVERED: 15
-- PARTIAL: 3
+- COVERED: 16
+- PARTIAL: 2 (SC-8, SC-12)
 - GAP (TCB AC/IA/SC): 0
-- Coverage ratio (COVERED / total listed): 15/18 ≈ **83.3%** (>= 80% Wave B DONE)
+- Coverage ratio (COVERED / total listed): 16/18 ≈ **88.9%** (>= 80% Wave B DONE)
