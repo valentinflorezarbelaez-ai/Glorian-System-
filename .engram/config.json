@@ -1,5 +1,6 @@
 {
   "project": "eos-system",
+  "project_name": "eos-system",
   "displayName": "Glorian System (Eos-System Control Plane)",
   "rootMarkers": ["package.json", "src/mcp/eosMcpServer.ts", "docs/projects/registry.json"],
   "preferredCwd": "C:/Users/valen/Eos-System",
