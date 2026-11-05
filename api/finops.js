@@ -22,7 +22,33 @@ export default async function handler(req, res) {
       service: "eos-finops-cost-receipt",
       methods: ["GET", "POST"],
       body: { directive: "string", estimatedTokens: "number?" },
-      epistemicState: "FINOPS_COST_RECEIPT_WITHIN_TESTED_SCOPE"
+      epistemicState: "FINOPS_COST_RECEIPT_WITHIN_TESTED_SCOPE",
+      policyCard: {
+        note: "Estimate only — subscription chat ≠ production API invoice",
+        tiers: [
+          {
+            id: "TIER_1_LOCAL_SLM",
+            label: "Local / Flash",
+            when: "Low-entropy format, lint, outline, boilerplate",
+            model: "local-slm-or-gemini-flash",
+            rateHintUsdPerMTok: { prompt: 0.075, completion: 0.3 }
+          },
+          {
+            id: "TIER_2_BALANCED",
+            label: "Balanced",
+            when: "Standard component / business logic / verification",
+            model: "gemini-2.5-pro",
+            rateHintUsdPerMTok: { prompt: 1.25, completion: 5.0 }
+          },
+          {
+            id: "TIER_3_FRONTIER_REASONING",
+            label: "Frontier",
+            when: "Formal proofs, TLA+, deep architecture adjudication",
+            model: "claude-3-7-sonnet-or-o1",
+            rateHintUsdPerMTok: { prompt: 3.0, completion: 15.0 }
+          }
+        ]
+      }
     });
   }
 

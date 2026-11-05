@@ -525,13 +525,30 @@
     </tbody>
   </table>
 
-  <!-- FINOPS COST RECEIPT (Mission Golden Path FR-514) -->
-  <div class="section-title">💸 FINOPS COST RECEIPT · MISSION GOLDEN PATH</div>
+  <!-- FINOPS COST RECEIPT + ROUTING POLICY CARD (Mission Golden Path FR-514) -->
+  <div class="section-title">FINOPS COST RECEIPT · ROUTING POLICY CARD</div>
   <div class="tribunal-container" id="finopsPanel">
     <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 12px;">
       Estimate only (WITHIN_TESTED_SCOPE). Subscription chat ≠ production API invoice.
       Same tiering as <code>FINOPS_COST_RECEIPT</code> on <code>eos_mission_run</code>.
     </p>
+    <div id="finopsPolicyCard" aria-label="Model routing policy" style="margin-bottom: 16px; overflow-x: auto;">
+      <table class="fleet-table" style="font-size: 0.85rem;">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>When</th>
+            <th>Model</th>
+            <th>Rate hint (USD / MTok)</th>
+          </tr>
+        </thead>
+        <tbody id="finopsPolicyBody">
+          <tr><td>TIER_1_LOCAL_SLM</td><td>Low-entropy format / lint / outline</td><td>local-slm-or-gemini-flash</td><td>0.075 / 0.3</td></tr>
+          <tr><td>TIER_2_BALANCED</td><td>Standard component / verification</td><td>gemini-2.5-pro</td><td>1.25 / 5.0</td></tr>
+          <tr><td>TIER_3_FRONTIER_REASONING</td><td>Formal / TLA+ / deep adjudication</td><td>claude-3-7-sonnet-or-o1</td><td>3.0 / 15.0</td></tr>
+        </tbody>
+      </table>
+    </div>
     <div class="input-group" style="margin-bottom: 12px;">
       <label for="finopsDirective">Engineering directive</label>
       <textarea id="finopsDirective" class="input-field" rows="2">format and lint local AST outline for control plane</textarea>
@@ -539,6 +556,7 @@
     <button class="btn-action" id="btnFinopsReceipt" type="button">Compute FinOps receipt</button>
     <div class="verdict-banner verdict-approved" id="finopsBanner" style="margin-top: 14px;">
       <span id="finopsText">Awaiting directive…</span>
+      <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 6px;" id="finopsRationale">Policy rationale: —</span>
       <span style="font-size: 0.8rem; color: var(--text-muted);" id="finopsReceipt">SHA-256: —</span>
     </div>
   </div>
@@ -735,14 +753,30 @@
       }
     }, 3500);
 
-    // FinOps cost receipt (POST /api/finops)
+    // FinOps cost receipt + routing policy card (GET/POST /api/finops)
     const btnFinops = document.getElementById('btnFinopsReceipt');
     const finopsDirective = document.getElementById('finopsDirective');
     const finopsText = document.getElementById('finopsText');
     const finopsReceipt = document.getElementById('finopsReceipt');
+    const finopsRationale = document.getElementById('finopsRationale');
+    const finopsPolicyBody = document.getElementById('finopsPolicyBody');
+    (async () => {
+      try {
+        const res = await fetch('/api/finops', { method: 'GET' });
+        const data = await res.json();
+        const tiers = data && data.policyCard && Array.isArray(data.policyCard.tiers) ? data.policyCard.tiers : null;
+        if (tiers && finopsPolicyBody) {
+          finopsPolicyBody.innerHTML = tiers.map((t) => {
+            const rate = t.rateHintUsdPerMTok || {};
+            return `<tr><td>${t.id}</td><td>${t.when}</td><td>${t.model}</td><td>${rate.prompt} / ${rate.completion}</td></tr>`;
+          }).join('');
+        }
+      } catch (_) { /* static host: keep baked-in policy rows */ }
+    })();
     if (btnFinops && finopsDirective && finopsText && finopsReceipt) {
       btnFinops.addEventListener('click', async () => {
         finopsText.textContent = 'Computing FinOps receipt…';
+        if (finopsRationale) finopsRationale.textContent = 'Policy rationale: …';
         try {
           const res = await fetch('/api/finops', {
             method: 'POST',
@@ -753,14 +787,19 @@
           if (!res.ok || !data.ok) {
             finopsText.textContent = `FinOps fail-closed: ${data.error || res.status}`;
             finopsReceipt.textContent = 'SHA-256: —';
+            if (finopsRationale) finopsRationale.textContent = 'Policy rationale: —';
             return;
           }
           finopsText.textContent =
-            `Tier ${data.tier} · est $${Number(data.estimatedCostUsd).toFixed(6)} · ${data.recommendedProviderModel}`;
+            `Tier ${data.tier} · est $${Number(data.estimatedCostUsd).toFixed(6)} · ${data.recommendedProviderModel} · ~${data.estimatedTokens} tok`;
+          if (finopsRationale) {
+            finopsRationale.textContent = `Policy rationale: ${data.rationale || '—'} · rate $${Number(data.ratePerMillionUsd || 0).toFixed(3)}/MTok`;
+          }
           finopsReceipt.textContent = `SHA-256: ${String(data.sha256Attestation || '').slice(0, 16)}…`;
         } catch (err) {
           finopsText.textContent = 'FinOps endpoint unavailable (local static host?)';
           finopsReceipt.textContent = 'SHA-256: —';
+          if (finopsRationale) finopsRationale.textContent = 'Policy rationale: —';
         }
       });
     }
