@@ -34,6 +34,7 @@ import {
 } from "./eosNubankCodex.ts";
 import { runTurboPipeline } from "./eosTurboEngine.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
+import { EosAgenticFinOpsGovernor } from "./eosAgenticFinOpsGovernor.ts";
 
 export type MissionDomainHint =
   | "general"
@@ -47,6 +48,7 @@ export type MissionStatus = "SUCCESS" | "BLOCKED" | "FAILED";
 
 export type MissionStageId =
   | "INPUT_VALIDATION"
+  | "FINOPS_COST_RECEIPT"
   | "AMPLIFY"
   | "MISSION_DIRECTION"
   | "ARCHITECTURE"
@@ -276,6 +278,44 @@ export function runMissionGoldenPath(
       domainHint
     })
   );
+
+  // 0b. FinOps cost receipt (API cost truth — subscription ≠ production spend)
+  {
+    const t0 = process.hrtime.bigint();
+    const finops = EosAgenticFinOpsGovernor.getInstance();
+    const estimatedTokens = Math.min(
+      32_000,
+      Math.max(1_000, Math.ceil(Buffer.byteLength(cleanDirective, "utf8") / 4) * 8)
+    );
+    const routing = finops.classifyTaskCostTier(cleanDirective, estimatedTokens);
+    const ms = Number((process.hrtime.bigint() - t0) / 1_000_000n);
+    const ok =
+      typeof routing.estimatedCostUsd === "number" &&
+      Number.isFinite(routing.estimatedCostUsd) &&
+      routing.sha256Attestation.length === 64;
+    stages.push(
+      stage(
+        "FINOPS_COST_RECEIPT",
+        true,
+        ok ? 0 : 1,
+        ms,
+        ok
+          ? `Tier ${routing.tier} · est $${routing.estimatedCostUsd.toFixed(6)} · ${routing.recommendedProviderModel}`
+          : "FinOps cost receipt failed",
+        {
+          tier: routing.tier,
+          recommendedProviderModel: routing.recommendedProviderModel,
+          estimatedTokens,
+          estimatedCostUsd: routing.estimatedCostUsd,
+          ratePerMillionUsd: routing.ratePerMillionUsd,
+          rationale: routing.rationale,
+          sha256Attestation: routing.sha256Attestation,
+          epistemicNote: "Estimate only — not a live provider invoice; WITHIN_TESTED_SCOPE"
+        }
+      )
+    );
+    if (!ok) return fail("FAILED", "FINOPS_COST_RECEIPT", "REMEDIATION_REQUIRED");
+  }
 
   // 1. Amplify
   {

@@ -37,7 +37,28 @@ test("BDD-480: Nominal mission on eos-system succeeds within tested scope", () =
   assert.ok(result.stages.some((s) => s.stageId === "SPOTIFY_ONLY_NORTH_STAR"));
   assert.ok(result.stages.some((s) => s.stageId === "SPOTIFY_INSTITUTIONAL"));
   assert.ok(result.stages.some((s) => s.stageId === "TURBO_VERIFY"));
+  const finops = result.stages.find((s) => s.stageId === "FINOPS_COST_RECEIPT");
+  assert.ok(finops);
+  assert.equal(finops.mandatory, true);
+  assert.equal(finops.exitCode, 0);
+  assert.equal(typeof finops.evidence.estimatedCostUsd, "number");
+  assert.match(String(finops.evidence.sha256Attestation), /^[a-f0-9]{64}$/);
   assert.ok(result.ledgerEntryId);
+});
+
+test("BDD-484: FinOps cost receipt is mandatory after input validation", () => {
+  const result = runMissionGoldenPath("format and lint local AST outline for control plane", {
+    projectRoot: ROOT,
+    target: "eos-system",
+    sealLedger: true,
+    ledgerPath: ":memory:"
+  });
+  assert.equal(result.status, "SUCCESS");
+  const finops = result.stages.find((s) => s.stageId === "FINOPS_COST_RECEIPT");
+  assert.ok(finops);
+  assert.equal(finops.exitCode, 0);
+  assert.equal(finops.evidence.tier, "TIER_1_LOCAL_SLM");
+  assert.ok(Number.isFinite(finops.evidence.estimatedCostUsd));
 });
 
 test("BDD-483: Spotify-only North Star doctrine pack is mandatory on control plane", () => {

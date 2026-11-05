@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2022-12-30T13:10:05.000Z",
+  "timestampIso": "2024-03-04T08:27:27.000Z",
   "totalSpecs": 159,
-  "catalogSha256": "3e12e8ad70817bceeabca7c5a0f398a8a6a3a1ab2275caa324e64812df841ea8",
+  "catalogSha256": "e9993eef9c567512484a521c6190098ab27744ee961278014cbf8be1b53de5a8",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1402,10 +1402,10 @@
       "id": "SPEC-156",
       "title": "Mission Golden Path (Natural Language → Fail-Closed Big-Tech SDLC)",
       "status": "APPROVED",
-      "frCount": 4,
-      "bddCount": 3,
+      "frCount": 5,
+      "bddCount": 4,
       "file": "openspec/specs/SPEC-156-MISSION-GOLDEN-PATH.md",
-      "sha256": "1ee3a608b2e3ff67915fa51433be1b24cc8196370e3dac9729fb1d02c7f627a4"
+      "sha256": "2de1276b949093f227d3ef36fc991a36fca7d2ce737fe7f7c137ba5df32e1581"
     },
     {
       "id": "SPEC-157",

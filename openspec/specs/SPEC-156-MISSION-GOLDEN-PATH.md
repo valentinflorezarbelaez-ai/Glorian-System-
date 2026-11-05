@@ -7,10 +7,11 @@
 - **Module**: `src/core/eosMissionGoldenPathOrchestrator.ts`, MCP `eos_mission_run`, `test/eosMissionGoldenPath.test.mjs`
 
 ## EARS
-- **FR-510 (Event-Driven)**: WHEN `eos_mission_run` receives a non-empty natural-language directive, THE SYSTEM SHALL execute ordered stages: amplify → mission direction → architecture → constitutional tribunal → Spotify institutional probe → domain Nubank probe (hard when fintech) → turbo verify → ledger seal.
+- **FR-510 (Event-Driven)**: WHEN `eos_mission_run` receives a non-empty natural-language directive, THE SYSTEM SHALL execute ordered stages: FinOps cost receipt → amplify → mission direction → architecture → constitutional tribunal → Spotify institutional probe → domain Nubank probe (hard when fintech) → turbo verify → ledger seal.
 - **FR-511 (Error)**: IF any mandatory stage fails, THEN THE SYSTEM SHALL return status BLOCKED or FAILED, SHALL NOT claim DONE, and SHALL include the failing stage id.
 - **FR-512 (Ubiquitous)**: THE SYSTEM SHALL treat Spotify audio BS.1770 as N/A-pass for non-audio domains and SHALL hard-fail Nubank gates only for fintech/nubank domains.
 - **FR-513 (Ubiquitous)**: THE SYSTEM SHALL NOT claim Level 5 or absolute perfection; epistemic label is MISSION_GOLDEN_PATH_WITHIN_TESTED_SCOPE.
+- **FR-514 (Event-Driven)**: WHEN a directive is admitted, THE SYSTEM SHALL emit a FINOPS_COST_RECEIPT stage with tier, estimatedCostUsd, and SHA-256 attestation (estimate only — not a live provider invoice).
 
 ## BDD
 ```gherkin
@@ -32,4 +33,12 @@ SCENARIO: BDD-482 Fintech domain applies Nubank hard gate
   WHEN runMission executes
   THEN stages include NUBANK_INSTITUTIONAL
   AND that stage is mandatory
+
+SCENARIO: BDD-484 FinOps cost receipt is mandatory after input validation
+  GIVEN a non-empty directive on eos-system
+  WHEN runMissionGoldenPath executes
+  THEN stages include FINOPS_COST_RECEIPT with exitCode 0
+  AND evidence.estimatedCostUsd is a finite number
+  AND evidence.sha256Attestation matches /^[a-f0-9]{64}$/
 ```
+

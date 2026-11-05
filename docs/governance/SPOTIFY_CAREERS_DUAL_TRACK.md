@@ -17,6 +17,11 @@
 4. **Cross-functional delivery** — product, design, data, marketing/labels as relevant.
 5. **Evidence over claims** — tip-seal, tests, receipts; never Level-5 self-certification.
 
+## Stack · Golden Paths · Backstage (how they avoid chaos)
+
+Public map + deepen order (P0 Backend/Golden Paths → P1 Interviews → P2 ML):  
+`SPOTIFY_STACK_GOLDEN_PATHS_MAP.md`
+
 ## Prep doctrine (get the job)
 
 - Build a **portfolio narrative**: one AuthZ/platform story *or* one Music Expression full-stack story (Java service + React/TS + API), ideally both over time.
