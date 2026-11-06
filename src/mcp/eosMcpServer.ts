@@ -566,6 +566,26 @@ export class EosMcpServer {
             result: {}
           };
 
+        // ── MCP Logging: logging/setLevel ────────────────────────────────
+        // Capabilities advertise `logging: {}` — clients (Cursor, Claude Code) will
+        // call this. Without a handler they receive -32601 Method not found.
+        // Per MCP 2024-11-05 spec, setLevel must be accepted and best-effort honored.
+        case "logging/setLevel": {
+          const level = params?.level as string | undefined;
+          const VALID_LEVELS = new Set(["debug", "info", "notice", "warning", "error", "critical", "alert", "emergency"]);
+          if (level && !VALID_LEVELS.has(level)) {
+            return {
+              jsonrpc: "2.0", id,
+              error: { code: -32602, message: `Invalid log level: "${level}". Valid: ${[...VALID_LEVELS].join(", ")}` }
+            };
+          }
+          // Best-effort: propagate to EOS logger if available
+          if (level && process.env["EOS_LOG_LEVEL"] !== undefined) {
+            process.env["EOS_LOG_LEVEL"] = level;
+          }
+          return { jsonrpc: "2.0", id, result: {} };
+        }
+
         // ── Antigravity / Gemini: prompts/list ────────────────────────────
         case "prompts/list":
           return {

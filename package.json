@@ -1,7 +1,7 @@
 {
   "name": "eos-system-landing",
-  "version": "63.0.0",
-  "description": "EOS System v63.0 — 12 Big Tech gaps closed: 14/14 API rate limited, CORS allowlist enforced, POST /message rate limit, prompts/get complete, serverInfo.version dynamic, SecretsManager circuit breaker, CI chaos tests enabled, all actions pinned to SHA, NODE_ENV=production in CI, sub-packages synced to v62",
+  "version": "64.0.0",
+  "description": "EOS System v64.0 — P0: request timeout enforcement, SIGTERM/SIGINT graceful shutdown, logging/setLevel MCP handler; P1: setup-node pinned SHA, SLSA provenance job, spec uniqueness gate, OpenAPI structure gate; P2: feature flags percentage rollout + runtime refresh + expiry; P3: CSP unsafe-inline removed, pipeline wall-clock deadline",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",

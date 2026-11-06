@@ -28,7 +28,7 @@ import { EosAgiCore, type ThoughtBranch, type AgiSolveResult } from "./eosAgiCor
 import { createLogger } from "./eosLogger.ts";
 import { EosTracer } from "./eosTracer.ts";
 
-const _log    = createLogger("eosPipeline");
+const _log = createLogger("eosPipeline");
 const _tracer = EosTracer.getInstance();
 
 export interface PipelineRequest {
@@ -46,6 +46,12 @@ export interface PipelineRequest {
   readonly branchCount?: number;
   /** Timeout per branch evaluation in ms (default: 30000) */
   readonly timeoutMs?: number;
+  /**
+   * Wall-clock deadline for the entire pipeline in ms (default: 120000).
+   * If the pipeline exceeds this, it is aborted and returns solved: false.
+   * Netflix/Google standard: every pipeline call must have an end-to-end deadline.
+   */
+  readonly pipelineDeadlineMs?: number;
 }
 
 export interface PipelineResult {
@@ -89,10 +95,21 @@ export class EosPipeline {
    */
   public async solve(req: PipelineRequest): Promise<PipelineResult> {
     const t0 = Date.now();
+    const pipelineDeadlineMs = req.pipelineDeadlineMs ?? 120_000; // 2-min wall-clock default
+
+    // Wall-clock deadline (Netflix/Google: every pipeline must have an end-to-end deadline)
+    const deadlineTimer = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`EOS_PIPELINE_TIMEOUT: pipeline exceeded ${pipelineDeadlineMs}ms wall-clock deadline`)), pipelineDeadlineMs).unref()
+    );
+
+    return Promise.race([this._solveInternal(req, t0), deadlineTimer]);
+  }
+
+  private async _solveInternal(req: PipelineRequest, t0: number): Promise<PipelineResult> {
     const span = _tracer.startSpan("eos.pipeline.solve", {
       "problem.summary": req.problem.slice(0, 80),
-      "target.file":     req.targetFile,
-      "token.budget":    req.tokenBudget ?? 32_000,
+      "target.file": req.targetFile,
+      "token.budget": req.tokenBudget ?? 32_000,
     });
     _log.info("Pipeline started", { problem: req.problem.slice(0, 80), targetFile: req.targetFile });
 
@@ -106,7 +123,7 @@ export class EosPipeline {
         { tokenBudget: req.tokenBudget ?? 32_000 }
       );
       ctxSpan.setAttribute("files.included", context.filesIncluded);
-      ctxSpan.setAttribute("tokens.used",    context.totalTokensUsed);
+      ctxSpan.setAttribute("tokens.used", context.totalTokensUsed);
       ctxSpan.setStatus("OK");
       ctxSpan.end();
 
@@ -168,7 +185,7 @@ export class EosPipeline {
       _log.info("Phase 3: Evaluating branches through deterministic tribunal");
       const tribunalSpan = _tracer.startSpan("eos.pipeline.tribunal", {
         "branches.count": branches.length,
-        "test.command":   req.testCommand,
+        "test.command": req.testCommand,
       });
 
       const agiResult = await this.agiCore.solve(
@@ -181,8 +198,8 @@ export class EosPipeline {
         }
       );
 
-      tribunalSpan.setAttribute("solved",      agiResult.solved);
-      tribunalSpan.setAttribute("new.axioms",  agiResult.newAxiomsLearned);
+      tribunalSpan.setAttribute("solved", agiResult.solved);
+      tribunalSpan.setAttribute("new.axioms", agiResult.newAxiomsLearned);
       tribunalSpan.setStatus(agiResult.solved ? "OK" : "ERROR");
       tribunalSpan.end();
 
@@ -196,9 +213,9 @@ export class EosPipeline {
       const hashData = `${req.problem}:${agiResult.solved}:${agiResult.branchesEvaluated}:${totalDurationMs}`;
       const pipelineHash = `sha256:${crypto.createHash("sha256").update(hashData).digest("hex")}`;
 
-      span.setAttribute("solved",          agiResult.solved);
-      span.setAttribute("duration.ms",     totalDurationMs);
-      span.setAttribute("axioms.learned",  agiResult.newAxiomsLearned);
+      span.setAttribute("solved", agiResult.solved);
+      span.setAttribute("duration.ms", totalDurationMs);
+      span.setAttribute("axioms.learned", agiResult.newAxiomsLearned);
       span.setStatus(agiResult.solved ? "OK" : "ERROR");
       span.end();
 

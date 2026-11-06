@@ -703,8 +703,26 @@ export class EosMcpStreamServer {
             }
           };
 
-          // ── Fully async dispatch ────────────────────────────────────────
-          const response = await this.dispatchJsonRpc(jsonRpcReq, progressCallback);
+          // ── Fully async dispatch with timeout (requestTimeoutMs enforcement) ──
+          // Without this, a slow tool blocks the connection indefinitely.
+          // Stripe/Anthropic: every RPC dispatch must have a deadline.
+          const timeoutMs = this.requestTimeoutMs;
+          let dispatchTimer: ReturnType<typeof setTimeout> | null = null;
+
+          const dispatchWithTimeout = new Promise<JsonRpcResponse | null>((resolve, reject) => {
+            dispatchTimer = setTimeout(() => {
+              reject(new Error(`EOS_DISPATCH_TIMEOUT: request exceeded ${timeoutMs}ms`));
+            }, timeoutMs);
+            dispatchTimer.unref();
+            this.dispatchJsonRpc(jsonRpcReq, progressCallback).then(resolve).catch(reject);
+          });
+
+          let response: JsonRpcResponse | null;
+          try {
+            response = await dispatchWithTimeout;
+          } finally {
+            if (dispatchTimer !== null) clearTimeout(dispatchTimer);
+          }
 
           // Clean up dedup key on completion
           if (jsonRpcReq.id !== undefined && jsonRpcReq.id !== null) {
@@ -759,7 +777,7 @@ export class EosMcpStreamServer {
     return Promise.resolve(this.mcpServer.handleRequest(req, onProgress));
   }
 
-  /** Starts the HTTP server. */
+  /** Starts the HTTP server and registers SIGTERM/SIGINT graceful shutdown (Kubernetes standard). */
   public listen(port = 3333, host = "127.0.0.1"): Promise<http.Server> {
     return new Promise((resolve, reject) => {
       this.server = http.createServer((req, res) => {
@@ -770,7 +788,25 @@ export class EosMcpStreamServer {
         });
       });
       this.server.on("error", reject);
-      this.server.listen(port, host, () => resolve(this.server!));
+      this.server.listen(port, host, () => {
+        // ── Graceful shutdown on SIGTERM / SIGINT (Kubernetes terminationGracePeriodSeconds) ──
+        // Without this, in-flight SSE sessions are abruptly cut when the process receives SIGTERM.
+        // Netflix/Google: all servers must drain connections before exiting.
+        const shutdown = (signal: string): void => {
+          process.stderr.write(`[EOS MCP] Received ${signal} — graceful shutdown started\n`);
+          this.close().then(() => {
+            process.stderr.write("[EOS MCP] Graceful shutdown complete\n");
+            process.exit(0);
+          }).catch((err: unknown) => {
+            process.stderr.write(`[EOS MCP] Shutdown error: ${String(err)}\n`);
+            process.exit(1);
+          });
+        };
+        process.once("SIGTERM", () => shutdown("SIGTERM"));
+        process.once("SIGINT", () => shutdown("SIGINT"));
+
+        resolve(this.server!);
+      });
     });
   }
 

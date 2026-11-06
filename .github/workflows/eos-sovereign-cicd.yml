@@ -1,4 +1,4 @@
-name: EOS Sovereign CI/CD — TypeCheck · 7-Stage SecDevOps · Matrix · DORA
+name: EOS Sovereign CI/CD — TypeCheck · 7-Stage SecDevOps · Matrix · DORA · SLSA
 
 on:
   push:
@@ -11,6 +11,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Minimal permissions at workflow level; jobs that need more declare it explicitly.
+# Google SLSA L3 + Stripe supply-chain standard: principle of least privilege.
 permissions:
   contents: read
 
@@ -23,12 +25,12 @@ jobs:
     continue-on-error: false
     steps:
       - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pinned SHA — SLSA L3
         with:
           persist-credentials: false
 
       - name: Setup Node.js 22 LTS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1d0ff469b12c6b44b14610a574a4e3163f0d34a5 # pinned SHA — SLSA L3
         with:
           node-version: "22"
           cache: "npm"
@@ -46,7 +48,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pinned SHA — SLSA L3
 
       - name: Setup Node.js 22 LTS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1d0ff469b12c6b44b14610a574a4e3163f0d34a5 # pinned SHA — SLSA L3
         with:
           node-version: "22"
           cache: "npm"
@@ -75,7 +77,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pinned SHA — SLSA L3
 
       - name: Setup Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1d0ff469b12c6b44b14610a574a4e3163f0d34a5 # pinned SHA — SLSA L3
         with:
           node-version: ${{ matrix.node }}
           cache: "npm"
@@ -105,7 +107,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pinned SHA — SLSA L3
 
       - name: Setup Node.js 22 LTS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1d0ff469b12c6b44b14610a574a4e3163f0d34a5 # pinned SHA — SLSA L3
         with:
           node-version: "22"
           cache: "npm"
@@ -134,7 +136,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pinned SHA — SLSA L3
 
       - name: Setup Node.js 22 LTS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1d0ff469b12c6b44b14610a574a4e3163f0d34a5 # pinned SHA — SLSA L3
         with:
           node-version: "22"
 
@@ -149,3 +151,54 @@ jobs:
           echo " ALL GATES PASSED — EOS v${VERSION} is PRODUCTION_READY"
           echo " TypeCheck ✔ | PBT ✔ | SecDevOps Matrix ✔ | Mutation ✔"
           echo "======================================================================"
+
+  # ── JOB 6: SLSA Provenance Attestation (runs on main push only) ────────────
+  # Google SLSA L2+: the build platform must generate signed provenance.
+  # Uses GitHub's native build attestation (OIDC-based, no external sigstore needed).
+  slsa-provenance:
+    name: "SLSA Provenance Attestation"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [integration-summary]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: write    # needed to create GitHub release (if triggered)
+      id-token: write    # needed for OIDC token → sigstore attestation
+      attestations: write # needed for actions/attest-build-provenance
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pinned SHA — SLSA L3
+
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@1d0ff469b12c6b44b14610a574a4e3163f0d34a5 # pinned SHA — SLSA L3
+        with:
+          node-version: "22"
+
+      - name: Generate SBOM & In-Toto Provenance Document
+        run: node scripts/eos-generate-sbom.mjs
+        env:
+          NODE_ENV: "production"
+
+      - name: Attest Build Provenance (GitHub native SLSA L2)
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            docs/evidence/SBOM-CICD-RECEIPT.json
+            package.json
+
+      - name: Upload SBOM Evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: eos-sbom-provenance
+          path: docs/evidence/
+          retention-days: 90
+
+      - name: Tag Release Version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${VERSION}" -m "EOS System v${VERSION} — SLSA-attested release" || echo "Tag already exists"
+          git push origin "v${VERSION}" || echo "Tag push skipped"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

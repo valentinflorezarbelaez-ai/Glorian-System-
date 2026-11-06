@@ -6,6 +6,71 @@ Auto-generated from `IMPLEMENTATION_AUTHORIZATION.md` — run `npm run changelog
 
 ## [Unreleased]
 
+## [64.0.0] — 2026-11-05
+
+### Added / Fixed — 16 Big Tech Gaps Closed (v64)
+
+#### P0: Request Timeout Enforcement (`eosMcpStreamServer.ts`)
+- `requestTimeoutMs` was stored and validated in the constructor but NEVER applied to the actual
+  dispatch path. Every slow tool call blocked its connection indefinitely.
+  Fixed with `Promise.race([dispatchWithTimeout, timeout])` wrapping `dispatchJsonRpc()`.
+  Timeout sends a `-32603` JSON-RPC error response. Stripe/Anthropic: all RPC dispatches need deadlines.
+
+#### P0: SIGTERM/SIGINT Graceful Shutdown (`eosMcpStreamServer.ts`)
+- No signal handlers existed — SIGTERM from Kubernetes would abruptly kill all SSE connections.
+  Added `process.once("SIGTERM")` and `process.once("SIGINT")` in `listen()` that call `this.close()`
+  (which drains sessions + closes the HTTP server) before calling `process.exit(0)`.
+  Netflix/Google: Kubernetes pod termination requires graceful drain within terminationGracePeriodSeconds.
+
+#### P0: `logging/setLevel` MCP Handler (`eosMcpServer.ts`)
+- Capabilities advertised `logging: {}` but there was no `logging/setLevel` handler.
+  Clients (Cursor, Claude Code) send this on connect and received `-32601 Method not found`.
+  Added handler with RFC-5424 level validation (8 levels: debug → emergency).
+  Best-effort: propagates level change to `EOS_LOG_LEVEL` env var when set.
+
+#### P1: `setup-node@v4` Pinned to Commit SHA (SLSA L3 / Supply Chain)
+- All 5 `actions/setup-node@v4` instances in the workflow (unpinned tag) replaced with
+  `actions/setup-node@1d0ff469b12c6b44b14610a574a4e3163f0d34a5` (pinned SHA).
+  Stripe and Google require ALL third-party GitHub Actions pinned to a commit SHA.
+
+#### P1: SLSA Provenance Attestation Job (Google SLSA L2+)
+- Added new Job 6 `slsa-provenance` that runs on main push only.
+  Uses GitHub's native `actions/attest-build-provenance@v2` (OIDC-based, no external sigstore).
+  Generates SBOM + In-Toto provenance document, attests the receipt + package.json,
+  uploads evidence artifacts (90-day retention), and tags the release version.
+  Requires `id-token: write` + `attestations: write` permissions (declared at job level only).
+
+#### P1: SPEC Number Uniqueness Gate (Stage 3.91 in CI pipeline)
+- Added Stage 3.91 in `verify-cicd-pipeline.mjs`: scans `openspec/specs/*.md`,
+  detects duplicate SPEC numbers (was 6 collisions: 020, 021, 022, 044, 045, 046),
+  records them as SARIF findings. Non-fatal warning for now (duplicates are legacy).
+
+#### P1: OpenAPI Contract Structure Validation (Stage 3.92 in CI pipeline)
+- Added Stage 3.92: validates `openspec/openapi.yaml` has required sections (`openapi:`, `info:`,
+  `paths:`) and declares at least 10 API paths. Fails CI if the spec is structurally invalid.
+
+#### P2: Feature Flags — Percentage Rollout + Runtime Refresh + Expiry (Netflix LaunchDarkly)
+- Added `rolloutPercentage` field: `isEnabledForUser(key, userId)` uses SHA-256 stable hash
+  for consistent sticky assignment. Same user always gets the same cohort bucket.
+- Added runtime refresh: `_maybeRefresh()` re-reads `flags.json` every 30s without restart.
+  Netflix standard: flag changes must propagate in <30s.
+- Added `expiresAt` field with ISO-8601 date. Expired flags emit a `process.stderr` warning.
+  Google/Anthropic: flags must have expiry dates to prevent permanent accumulation.
+- Added `crypto` import for SHA-256 hash (zero external deps preserved).
+
+#### P3: Pipeline Wall-Clock Deadline (`eosPipeline.ts`)
+- `EosPipeline.solve()` now wraps `_solveInternal()` with a `Promise.race()` against a
+  configurable `pipelineDeadlineMs` timeout (default: 120s).
+  Prevents unbounded pipeline runs when a branch evaluation hangs.
+
+#### P3: CSP `unsafe-inline` Removed (`vercel.json`)
+- `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com` → `style-src 'self' https://fonts.googleapis.com`
+  Google/Anthropic prohibit `unsafe-inline` in style-src. Nonce-based styles are the replacement.
+- `img-src 'self' data: https:` (overly broad) → `img-src 'self' data: https://eos-system-ten.vercel.app`
+  Pins image sources to known origins instead of all HTTPS.
+- Added `worker-src 'none'` and `manifest-src 'self'` directives.
+- `Cross-Origin-Opener-Policy: same-origin-allow-popups` → kept (popups required for OAuth flows).
+
 ## [63.0.0] — 2026-11-05
 
 ### Added / Fixed — 12 Big Tech Gaps Closed (Google · Stripe · Netflix · Anthropic · Cognition)
