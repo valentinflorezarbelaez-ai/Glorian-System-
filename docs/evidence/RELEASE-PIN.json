@@ -3,10 +3,10 @@
   "tool": "scripts/release-pin.mjs",
   "name": "eos-system-landing",
   "version": "75.0.0",
-  "headCommit": "000db5a0f972ab4459547ee4702f966006c87d9d",
+  "headCommit": "da9ede523e4cf0c18c66dc77a5165f9b07ace81d",
   "branch": "chore/engineering-hardening",
-  "generatedAt": "2026-11-06T20:40:08.123Z",
-  "inventoryDigest": "sha256:f4d02b24538730fa9e1b3c86f375de9f29e3f6dde1008767c94c065cead8e33c",
+  "generatedAt": "2026-11-06T21:15:04.285Z",
+  "inventoryDigest": "sha256:b2feafb6e1c0c8ab1533679db9e8e8c96368fdee90ecb3dd000fa232e1723a6e",
   "inventoryFileCount": 1282,
-  "seal": "sha256:83f6f0992a20a475c1a453cc6c949cbb744bfb9fb3e93c4f9af7079fbb1b901d"
+  "seal": "sha256:8aa81e7db4bdcce8749f714c4c19698eabd262c8aa74b099abbbc07c6ac0e991"
 }

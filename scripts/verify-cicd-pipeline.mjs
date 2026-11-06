@@ -70,6 +70,40 @@ function listRepoFiles(dir, acc = []) {
   return acc;
 }
 
+// Snapshot of every tracked file's content hash, used to prove that test suites
+// never mutate the repository they are checking.
+function snapshotTrackedTree() {
+  const tracked = execFileSync("git", ["ls-files", "-z"], {
+    cwd: root,
+    encoding: "utf8",
+    maxBuffer: 64 * 1024 * 1024
+  })
+    .split("\0")
+    .filter(Boolean);
+
+  const snapshot = new Map();
+  for (const relativePath of tracked) {
+    try {
+      const bytes = fs.readFileSync(path.join(root, relativePath));
+      snapshot.set(relativePath, crypto.createHash("sha256").update(bytes).digest("hex"));
+    } catch {
+      snapshot.set(relativePath, "MISSING");
+    }
+  }
+  return snapshot;
+}
+
+function diffTrackedTree(before, after) {
+  const changed = [];
+  for (const [relativePath, hash] of after) {
+    if (before.get(relativePath) !== hash) changed.push(relativePath);
+  }
+  for (const relativePath of before.keys()) {
+    if (!after.has(relativePath)) changed.push(relativePath);
+  }
+  return changed.sort();
+}
+
 let stagesPassedCount = 0;
 let fatalError = null;
 let sourceInventoryDigest = "sha256:0000000000000000000000000000000000000000000000000000000000000000";
@@ -270,6 +304,7 @@ try {
     }
 
     // Execute in balanced parallel batches (chunks of 6 files) to maximize CPU throughput
+    const trackedBeforeTests = snapshotTrackedTree();
     const BATCH_SIZE = 6;
     for (let i = 0; i < filesToRun.length; i += BATCH_SIZE) {
       const batch = filesToRun.slice(i, i + BATCH_SIZE);
@@ -279,6 +314,15 @@ try {
         cwd: root,
         stdio: "inherit"
       });
+    }
+
+    const leakedMutations = diffTrackedTree(trackedBeforeTests, snapshotTrackedTree());
+    if (leakedMutations.length > 0) {
+      const sample = leakedMutations.slice(0, 10).join(", ");
+      const suffix = leakedMutations.length > 10 ? ` (+${leakedMutations.length - 10} more)` : "";
+      const err = `[STAGE 4 FAIL] Test suites mutated tracked files instead of using fixtures: ${sample}${suffix}`;
+      recordFinding("EOS-TEST-007", err, leakedMutations[0]);
+      throw new Error(err);
     }
 
     stagesPassedCount++;
