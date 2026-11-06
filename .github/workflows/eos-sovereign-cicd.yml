@@ -1,4 +1,4 @@
-name: EOS Sovereign 7-Stage CI/CD & SecDevOps Gate
+name: EOS Sovereign CI/CD — TypeCheck · 7-Stage SecDevOps · Matrix · DORA
 
 on:
   push:
@@ -11,17 +11,130 @@ permissions:
   contents: read
 
 jobs:
-  sovereign-7-stage-gate:
-    name: "7-Stage SecDevOps Gate (SAST · SDD · SLSA L4 SBOM · AST · WCAG/CWV · Serverless Smoke)"
+  # ── JOB 1: TypeScript strict type-check ────────────────────────────────────
+  typecheck:
+    name: "TypeScript Strict Type Check"
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    continue-on-error: false
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 22 LTS (Zero External Deps)
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Run TypeScript Strict Type Check
+        run: node scripts/verify-typescript.mjs
+
+  # ── JOB 2: Property-based tests (fast, runs in parallel) ───────────────────
+  property-tests:
+    name: "Property-Based Tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Run Property-Based Test Suite
+        run: node --test test/eosPropertyBased.test.mjs
+
+  # ── JOB 3: 7-Stage SecDevOps gate — matrix across OS × Node version ────────
+  sovereign-gate:
+    name: "7-Stage SecDevOps Gate (${{ matrix.os }} · Node ${{ matrix.node }})"
+    needs: [typecheck]
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os:   [ubuntu-latest, windows-latest]
+        node: ["22", "23"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: "npm"
+
+      - name: Execute Stage 1–7 Strict SecDevOps & Constitutional Pipeline
+        run: node scripts/verify-cicd-pipeline.mjs
+
+      - name: Upload CI/CD Evidence Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: eos-cicd-receipts-${{ matrix.os }}-node${{ matrix.node }}
+          path: docs/evidence/
+          retention-days: 30
+
+      - name: Track DORA Metrics
+        run: node scripts/track-dora-metrics.mjs
+        continue-on-error: true
+
+  # ── JOB 4: Mutation testing (runs after sovereign gate passes) ─────────────
+  mutation-testing:
+    name: "Mutation Testing — Kill Score Gate"
+    needs: [sovereign-gate]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Run Mutation Testing Runner
+        run: node scripts/run-mutation-testing.mjs
+        env:
+          EOS_MUTATION_THRESHOLD: "60"
+          EOS_MAX_MUTANTS: "15"
+
+      - name: Upload Mutation Receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: eos-mutation-receipt
+          path: docs/evidence/MUTATION-RECEIPT.json
+          retention-days: 30
+
+  # ── JOB 5: Integration summary & release gate ──────────────────────────────
+  integration-summary:
+    name: "Integration Summary & Release Gate"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [typecheck, property-tests, sovereign-gate, mutation-testing]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22 LTS
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
-      - name: Execute Stage 1–7 Strict SecDevOps & Constitutional Pipeline
-        run: node scripts/verify-cicd-pipeline.mjs
+      - name: Generate CHANGELOG
+        run: node scripts/generate-changelog.mjs
+        continue-on-error: true
+
+      - name: Print Final Integration Summary
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "======================================================================"
+          echo " ALL GATES PASSED — EOS v${VERSION} is PRODUCTION_READY"
+          echo " TypeCheck ✔ | PBT ✔ | SecDevOps Matrix ✔ | Mutation ✔"
+          echo "======================================================================"

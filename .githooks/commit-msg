@@ -1,0 +1,38 @@
+#!/bin/sh
+# EOS Sovereign Fleet Gate — commit-msg
+# Enforces Conventional Commits format: https://www.conventionalcommits.org/
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Strip comment lines (lines starting with #) before validation
+STRIPPED=$(echo "$COMMIT_MSG" | grep -v '^#' | head -1)
+
+PATTERN='^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .{1,100}$'
+
+if echo "$STRIPPED" | grep -qE "$PATTERN"; then
+  exit 0
+fi
+
+echo ""
+echo "❌ Commit message does not follow Conventional Commits format."
+echo ""
+echo "   Expected format:  <type>(<scope>): <description>"
+echo "   Example:          feat(auth): add OAuth2 login support"
+echo ""
+echo "   Valid types:"
+echo "     feat     — a new feature"
+echo "     fix      — a bug fix"
+echo "     docs     — documentation changes only"
+echo "     style    — formatting, whitespace (no logic change)"
+echo "     refactor — code restructuring (no feature/fix)"
+echo "     perf     — performance improvements"
+echo "     test     — adding or updating tests"
+echo "     chore    — build process, tooling, dependencies"
+echo "     ci       — CI/CD configuration changes"
+echo "     build    — build system or external dependency changes"
+echo "     revert   — reverts a previous commit"
+echo ""
+echo "   Your message: \"$STRIPPED\""
+echo ""
+exit 1

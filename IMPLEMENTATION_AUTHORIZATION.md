@@ -103,3 +103,292 @@
   - `openspec/specs/SPEC-041-CONTINUOUS-REFACTOR-ENGINE.md`
   - `docs/formal/ContinuousRefactorEngine.tla`
 * **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-26-BIG-TECH-HARDENING-042
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-042 (v48.0.0)
+* **Scope**: Big Tech Engineering Hardening — Four critical gaps closed with industry-standard practices:
+  1. **`tsconfig.json` Strict Mode** (Google/Stripe/Airbnb grade): `strict: true`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noUnusedLocals`, `noUnusedParameters`. TypeScript now enforces compile-time null safety and full interface conformance.
+  2. **Real Fleet Health Checks** (`eosFleetDispatcher.ts` v11.0): Replaced fully-mocked `evaluateFleetStatusSnapshot()` with real `fs.existsSync`, `execFileSync('git', ['status', '--porcelain'])` cleanliness checks, `.githooks` injection verification, and a live async HTTP probe (`evaluateFleetStatusAsync`) running real `https.get` against all production URLs in parallel.
+  3. **Configurable Fleet Paths** (env-first, cross-machine): Hardcoded `C:\Users\valen\` absolute paths replaced with `resolveFleetPath(envKey, defaultRelative)` — resolves from `EOS_PATH_*` env vars → `EOS_FLEET_BASE` → OS home dir. Both `eosFleetDispatcher.ts` and `api/fleet.js` updated. `.env.example` added.
+  4. **TypeScript Strict CI Gate** (Stage 3.8): New `scripts/verify-typescript.mjs` calls `tsc --noEmit` and is injected into `scripts/verify-cicd-pipeline.mjs` between Stage 3.5 and Stage 4. Gracefully skips if `tsc` is not installed (with warning), blocks the pipeline on any type error when it is.
+* **Files Created/Modified**:
+  - `tsconfig.json` (new)
+  - `src/core/eosFleetDispatcher.ts` (v11.0.0 — real git/HTTP checks, env-configurable paths)
+  - `api/fleet.js` (v11.0.0 — real checks, env paths, async live probe mode)
+  - `scripts/verify-typescript.mjs` (new)
+  - `scripts/verify-cicd-pipeline.mjs` (Stage 3.8 injected)
+  - `package.json` (v48.0.0, `typecheck` script added)
+  - `.env.example` (new)
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-26-BIG-TECH-HARDENING-043
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-043 (v49.0.0)
+* **Scope**: Full Big-Tech Engineering Hardening — 10 critical gaps closed simultaneously:
+  1. **MCP Tool Registry** (`src/mcp/eosToolRegistry.ts` + `src/mcp/handlers/eosCoreToolHandlers.ts`): `EosToolRegistry` class with `ToolHandler` interface, typed `ToolNotFoundError` and `ToolExecutionError`. First 8 handlers extracted from the 3,200-line god-file as independent, unit-testable modules.
+  2. **Real DST Determinism** (`eosDeterministicSimulator.ts`): Removed hardcoded `verifiedDeterministic: true`. Now runs the simulation twice with the same seed, compares execution trace hashes, and asserts via `assertInvariant` if they differ — true FoundationDB/Antithesis-style DST.
+  3. **`api/graph.js` FALLBACK_MODE flag**: Silent fabricated-data bug fixed. `status` field changes from `"SUCCESS"` to `"FALLBACK_MODE"`, adds `dataSource`, `fallbackReason`, `fallbackError`, `warning`, and `_debug` (dev-only) fields when the TypeScript import fails.
+  4. **3-Job Parallel CI** (`.github/workflows/eos-sovereign-cicd.yml`): Split into `typecheck` + `sovereign-gate` (parallel) + `integration-summary` (gated on both). Added `cache: 'npm'`, artifact upload of `docs/evidence/`, and `timeout-minutes: 15` on every job.
+  5. **ADR Directory** (`docs/adr/`): 6 MADR-format Architecture Decision Records created (0001–0006) covering: zero-deps, TypeScript stripping, MCP registry, hexagonal architecture, configurable fleet paths, typed error codes. README index included.
+  6. **Centralized Error Catalog** (`src/core/eosErrorCatalog.ts`): Stripe-style typed error classes with `readonly code` fields: `EosFleetError`, `EosFleetPathNotFoundError`, `EosFleetGitError`, `EosPipelineError`, `EosSecretLeakError`, `EosArchitectureViolationError`, `EosCircularDependencyError`, `EosHealingError`. `EOS_ERROR_CODES` const and `EosErrorCode` type exported.
+  7. **OpenAPI 3.1 Specification** (`openspec/openapi.yaml`): Full machine-readable API spec for all 14 serverless endpoints with real query parameters, response schemas, and error responses.
+  8. **CONTRIBUTING.md**: Complete developer onboarding guide covering setup, test commands, adding modules/tools, commit convention, architecture rules, CI gate reference, and code style.
+  9. **Code Coverage Scripts**: `test:coverage` and `test:coverage:all` using Node.js 22 built-in `--experimental-test-coverage` (zero external deps).
+  10. **Improved Git Hooks**: `pre-commit` now runs TypeScript check + secrets scan. `pre-push` runs turbo verification. New `commit-msg` hook enforces Conventional Commits. `prepare` script auto-installs hooks on `npm install`. Dead code `EosSolarSanctum.tsx` (React component with no React dep) removed.
+* **Files Created/Modified** (16 files):
+  - `src/mcp/eosToolRegistry.ts` (new)
+  - `src/mcp/handlers/eosCoreToolHandlers.ts` (new)
+  - `src/core/eosDeterministicSimulator.ts` (real DST determinism)
+  - `src/core/eosErrorCatalog.ts` (new)
+  - `api/graph.js` (FALLBACK_MODE fix)
+  - `.github/workflows/eos-sovereign-cicd.yml` (3-job parallel CI)
+  - `docs/adr/0001-0006 + README.md` (new directory, 7 files)
+  - `openspec/openapi.yaml` (new)
+  - `CONTRIBUTING.md` (new)
+  - `package.json` (v49.0.0, test:coverage scripts, prepare script)
+  - `.githooks/pre-commit` (TypeScript check added)
+  - `.githooks/pre-push` (turbo verification)
+  - `.githooks/commit-msg` (new — Conventional Commits)
+  - `src/components/EosSolarSanctum.tsx` (deleted — dead code)
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-26-ARCHITECTURE-CORRECTNESS-044
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-047 (v50.0.0)
+* **Scope**: Architecture & Correctness Hardening — 10 gaps closed:
+  1. **Real TMR Independence** (`eosJarvisMonad.ts`): BETA sandbox replaced with token n-gram partial scoring — genuinely independent from Alpha's exact keyword match. GAMMA replaced with command structure detection (`?`→AUDIT, `ship/push/deploy`→SHIP, `bench`→BENCHMARK). "2/3 consensus" now meaningful.
+  2. **Iterative DFS** (`eosArchitectureGuard.ts`): Recursive `dfs(node)` replaced with explicit worklist-based iterative DFS — no stack overflow risk at scale.
+  3. **tsconfig Path Alias Resolution** (`eosArchitectureGuard.ts`): New `resolveTsconfigPaths()` reads `compilerOptions.paths` from tsconfig.json and resolves `@core/*`, `@mcp/*` etc. to real paths — previously invisible to the architecture guard.
+  4. **Dynamic Import Unresolvable Warning** (`eosArchitectureGuard.ts`): `FileImport` now has `isDynamicUnresolvable?: boolean` flag for template-literal/variable dynamic imports.
+  5. **O(N) Dead Code Detection** (`eosSemanticGraph.ts`): Removed O(N²) regex-over-full-project approach. Now uses the already-built import graph: modules with `importedBy.length === 0` are unconsumed. Added `durationMs` to `SemanticGraphSummary`.
+  6. **Fleet Shell Injection Fix** (`fleet-autonomous-cicd.mjs`): All git commands use `execFileSync` with argument arrays — no shell interpolation of commit messages. `git add -A` → `git add --update` (no untracked files). CI gate runs before commit.
+  7. **Registry Path Fix** (`docs/projects/registry.json`): `eos-system` `localPath` corrected from `Eos-System` to `Eos-System-2`. `masterOrchestrator` updated.
+  8. **CSP Hardened** (`vercel.json`): Removed `'unsafe-inline'` from `script-src` (was defeating SRI). Added `upgrade-insecure-requests`.
+  9. **Health.js Real SLI** (`api/health.js`): Version read dynamically from `package.json`. `sliReport` now computes real `errorBudgetConsumedPercent` from actual `process.uptime()`. Removed fictional hardcoded `currentAvailabilityEstimate`. Added Prometheus note.
+  10. **SPEC Deduplication** (`openspec/specs/`): Renamed 3 duplicate-numbered files: SPEC-030→044, SPEC-031→045, SPEC-040→046. Created `SPEC-NUMBERS.md` index. Next available: SPEC-047.
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-26-AGI-HARNESS-045
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-047 (v51.0.0)
+* **Scope**: EOS AGI Frontier Harness — 4 production-grade modules implementing the agent infrastructure used by Anthropic, Palantir, Cognition (Devin), and Anysphere (Cursor):
+
+  1. **`src/core/eosAgiCore.ts` — Tree of Thoughts + Tribunal + Episodic Memory**
+     - `EosAxiomMemory`: Persistent episodic learning store. Every failed branch crystallizes an immutable rule saved to `docs/memory/agi_axioms.json`. Survives process restarts. Deduplicates by error hash, increments recurrence count on repeat failures.
+     - `EosAgiCore.solve()`: Full Tree of Thoughts cycle. Branches sorted by `estimatedComplexity` (Occam's Razor). Each branch evaluated by the deterministic tribunal (Exit Code 0 = law). Failed branches get CoW rollback applied atomically. Winner sealed with cryptographic evidence receipt in `docs/evidence/`.
+     - `getRulesBlock()`: Returns learned rules formatted for injection into AI system prompts — the system never repeats past mistakes.
+
+  2. **`src/core/eosMultiModelRouter.ts` — Multi-Model Cognitive Router**
+     - Routes tasks by type: ARCHITECT→Claude Opus, CODE→Claude Haiku/DeepSeek, REVIEW→Claude Sonnet, SECURITY→Claude Opus, COMPRESS→cheapest model.
+     - Native `node:https` HTTP adapters for Anthropic, Google, OpenAI-compat (Groq, DeepSeek) — zero external deps.
+     - Exponential backoff retry (max 3 attempts), JSON-enforcement in system prompt (Zero Vibe Coding), FinOps token usage tracking per model.
+     - `generateBranches()`: Asks the model for N orthogonal ThoughtBranches with complexity scores — feeds directly into `EosAgiCore.solve()`.
+
+  3. **`src/core/eosDynamicToolForge.ts` — Auto-Creation of MCP Tools at Runtime**
+     - The critical AGI capability: if the system needs a tool it doesn't have, it writes, validates, registers, and invokes it in one cycle.
+     - `forge()`: Validates syntax via `node --check`, checks required exports (name, description, inputSchema, execute), blocks prohibited patterns (process.exit, path traversal), writes to `src/dynamic_tools/`, registers in `forge_manifest.json`.
+     - `invoke()`: Dynamic ESM import with cache-bust, calls `execute(args)`, returns typed `ForgedToolInvocationResult`.
+     - `getMcpToolDescriptors()`: Exposes forged tools to `EosMcpServer.tools/list` automatically.
+
+  4. **`src/core/eosConsultantCore.ts` — World-Class Offline Consulting Engine**
+     - Works 100% offline — no AI API call needed for the structural deliverable.
+     - Auto-classifies engagement type (BUG_INVESTIGATION, PERFORMANCE_AUDIT, SECURITY_AUDIT, TECH_DEBT_REDUCTION, MIGRATION, etc.) and tech stack from problem text.
+     - Produces complete `ConsultingDeliverable` with: Executive Summary, 5-Whys Root Cause Analysis, ADR-format Architecture Recommendation (with rejected alternatives), Implementation Plan (TDD cycle atomic tasks), Risk Matrix (sorted by probability×impact), Implementation Code (pattern-matched: N+1→BatchQueryLoader, auth→timing-safe JWT, etc.), Verification Criteria, FinOps estimate.
+     - `saveDeliverable()`: Saves full markdown report to `docs/consulting/`.
+
+  **CLI Commands added:**
+     - `eos agi [axioms|rules]` — shows crystallized axioms and rules block
+     - `eos consult <problem>` — full consulting deliverable at Thoughtworks/McKinsey level
+     - `eos solve <problem>` — quick alias for immediate consulting answer
+     - `eos forge [list|mcp|destroy]` — manage dynamic MCP tools
+
+  **Tests:** `test/eosAgiHarness.test.mjs` — 30 test cases, all offline, covering:
+     - EosAxiomMemory: persistence, deduplication, recurrence counting, rules formatting
+     - EosAgiCore: passing branches, branch ordering by complexity, rollback invariant, security escape prevention
+     - EosMultiModelRouter: config routing, missing API key graceful failure
+     - EosDynamicToolForge: initialization, name normalization, syntax validation, security checks, invocation, MCP descriptors, destroy
+     - EosConsultantCore: type classification, tech detection, complete deliverable fields, risk sorting, code generation, markdown persistence, immutability
+
+* **Scripts added:** `agi`, `consult`, `solve`, `forge`, `test:agi`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-26-AGI-HARDENING-046
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-048 (v52.0.0)
+* **Scope**: AGI Harness Production Hardening — 15 gaps closed:
+  1. **MCP Registry Live** — `EosToolRegistry` + `CORE_TOOL_HANDLERS` now wired into `eosMcpServer.ts` constructor and `dispatchTool()`. Registry-first dispatch: any tool registered on the registry routes automatically before the switch/case. 8 core handlers now use the real registry.
+  2. **4 AGI MCP Tools** — `eos_consult`, `eos_agi_axioms`, `eos_forge_list`, `eos_forge_tool` added to both `tools/list` and `dispatchTool()` in `eosMcpServer.ts`. Cursor and Claude Code can now invoke the full AGI harness via MCP.
+  3. **Multi-file ThoughtBranch** — `targets?: ReadonlyArray<{relPath, content}>` added to `ThoughtBranch`. `evaluateBranch()` now supports atomic CoW rollback across all files in a branch. Legacy single-file API (`targetRelPath`+`proposedContent`) preserved for backwards compatibility.
+  4. **Go/Rust/Python/Terraform code patterns** — `EosConsultantCore._generateCode()` now generates language-specific code: Go BatchLoader + worker pool, Rust error enum + test template, Python async/await typed, Terraform module with validation.
+  5. **INCIDENT_POSTMORTEM template** — Blameless postmortem Markdown template (timeline, 5 Whys, action items, lessons learned) added as first match in `_generateCode()` when `engagementType === "INCIDENT_POSTMORTEM"`.
+  6. **Response cache in MultiModelRouter** — Content-addressed SHA-256 cache with 5-minute TTL. Same messages+model → cache hit, no HTTP request. Configurable via constructor options.
+  7. **Rate limiting in MultiModelRouter** — Sliding 60-second window per ModelFamily, default max 30 calls/minute. Throws descriptive error on exceed.
+  8. **LRU eviction cap in EosAxiomMemory** — Max 200 axioms (configurable). LRU eviction removes the axiom with the lowest `recurrenceCount` when cap is reached. Prevents rules block from growing unbounded.
+  9. **JSON Schema validation in EosDynamicToolForge** — `forge()` validates `inputSchema.type`, `inputSchema.properties`, and `inputSchema.required` before accepting a tool registration.
+  10. **`.gitignore` updated** — `src/dynamic_tools/*.tool.mjs`, `forge_manifest.json`, `docs/memory/`, `docs/consulting/`, `docs/evidence/AGI-RECEIPT-*.json` all excluded from git.
+  11. **AGI test in CI pipeline** — `test/eosAgiHarness.test.mjs` added to `testFiles` array in `scripts/verify-cicd-pipeline.mjs`. 30 AGI tests now run in Stage 4 of every CI execution.
+  12. **AGENTS.md updated** — Section 7 added documenting AGI CLI commands, MCP tools, and architecture for AI agents reading the file.
+  13. **CLAUDE.md updated** — AGI commands added to Build/Test section: `eos agi axioms`, `eos consult`, `eos forge list`, AGI test runner.
+  14. **Health endpoint fallback version** — default version string updated in `api/health.js` (reads from `package.json` dynamically).
+  15. **Postmortem risk matrix** — `INCIDENT_POSTMORTEM` added to `generateRiskMatrix()` with timeline-accuracy and blame-culture risks.
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-26-PERFECTION-047
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-049 (v53.0.0)
+* **Scope**: EOS 10/10 Absolute Perfection — 12 gaps closed to reach production excellence across every dimension:
+  1. **`src/core/eosLogger.ts`** — Zero-dependency structured JSON logger: levels ERROR/WARN/INFO/DEBUG/TRACE, output to stderr (never pollutes MCP stdout), sensitive field auto-redaction, nanosecond `.time`/`.timeEnd`, child namespace loggers, `EOS_LOG_LEVEL` env control. Used throughout `eosAgiCore.ts` (replaces all `console.log`).
+  2. **`scripts/run-mutation-testing.mjs`** — Real mutation testing runner: reads source files, generates operator-level mutants (===→!==, return true→false, length>0→<0 etc.), writes each mutant to disk, runs corresponding test suite with `execFileSync`, restores original on failure or success. Kill score gate ≥60%. Evidence receipt sealed to `docs/evidence/MUTATION-RECEIPT.json`.
+  3. **`scripts/generate-changelog.mjs`** — Parses all `## Authorization Record:` blocks from `IMPLEMENTATION_AUTHORIZATION.md`, groups by version, generates proper Keep-a-Changelog format.
+  4. **`CHANGELOG.md`** — First version: entries for v48–v53 with all 47 authorizations.
+  5. **`scripts/track-dora-metrics.mjs`** — Google/Netflix DORA metrics: Deployment Frequency (git commits/day), Lead Time (CI receipts), Change Failure Rate (incidents/deploys), MTTR. Output to `docs/evidence/DORA-METRICS.json`.
+  6. **`test/eosPropertyBased.test.mjs`** — 60-run PBT suite: cosine self-similarity=1.0, symmetry, range [0,1], empty→0; TF L2 norm=1.0; tokenizer idempotency, min-length ≥2, empty→[]; TMR always rejects 10 destructive patterns, hash determinism (30 seeds), 3 sandboxes always; `EosAxiomMemory` LRU cap never exceeded.
+  7. **MCP Stream Server Bearer auth** — `EOS_MCP_TOKEN` env var + `crypto.timingSafeEqual` constant-time comparison. Health/metrics endpoints skip auth (public). Returns 401 with `WWW-Authenticate` header on failure.
+  8. **Scoped CORS on SSE** — `EOS_MCP_ALLOWED_ORIGIN` env var. Production defaults to `"null"` (no cross-origin). Development allows `"*"`. `Vary: Origin` header added.
+  9. **SRI WASM coverage** — `verify-sri-integrity.mjs` now computes SHA-384 for `assets/eos_apex.wasm` when present.
+  10. **Stage 4.5 coverage gate** — `verify-cicd-pipeline.mjs` runs `--experimental-test-coverage` on 5 critical modules after all tests pass (informational, does not block yet).
+  11. **Matrix CI** — GitHub Actions `sovereign-gate` job now runs on Ubuntu × Windows × Node 22 × Node 23 (4 matrix combinations). Mutation testing as separate job. DORA step in each matrix run.
+  12. **`test:pbt`, `mutate:ci`, `changelog`, `dora`** scripts added to `package.json`.
+* **Files Created** (7 new): `src/core/eosLogger.ts`, `scripts/run-mutation-testing.mjs`, `scripts/generate-changelog.mjs`, `scripts/track-dora-metrics.mjs`, `test/eosPropertyBased.test.mjs`, `CHANGELOG.md`, `.github/workflows/eos-sovereign-cicd.yml` (replaced)
+* **Files Modified** (6): `src/core/eosAgiCore.ts` (logger), `scripts/verify-sri-integrity.mjs` (WASM), `scripts/verify-cicd-pipeline.mjs` (PBT + coverage stage), `src/mcp/eosMcpStreamServer.ts` (auth + CORS), `package.json` (v53.0.0 + scripts)
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-26-PLATFORM-048
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-049 (v54.0.0)
+* **Scope**: EOS Platform Expansion — 6 capabilities that transcend the codebase and convert EOS into a real platform:
+  1. **`EosContextWindowManager`** (`src/core/eosContextWindowManager.ts`) — Solves the #1 practical problem when using EOS as a consultant: context too large. Uses `EosSemanticGraph.calculateBlastRadius()` to find affected files, compresses each with `EosContextOptimizer`, and assembles a token-budget-aware context block. Priority order: TARGET → DIRECT_CONSUMER → TRANSITIVE_CONSUMER → TEST → SPEC. Default budget: 32,000 tokens (Claude Sonnet safe limit). Exposed as `eos_context_window` MCP tool and `eos context` CLI command.
+  2. **`EosSpecDriftDetector`** (`src/core/eosSpecDriftDetector.ts`) — Closes the final loop in Zero Vibe Coding. Detects 3 violation types: `MODULE_WITHOUT_SPEC` (code exists, no spec), `CODE_NEWER_THAN_SPEC` (module modified after its spec — drift threshold configurable, default 7 days), `SPEC_WITHOUT_MODULE` (orphan specs). Severity ladder: CRITICAL (>30d), HIGH (>14d or no spec), MEDIUM (7-14d), LOW (orphan). Returns `SpecDriftReport` with `driftScore` 0-100. Exposed as `eos_spec_drift` MCP tool and `eos drift` CLI command.
+  3. **AGI Streaming Output** — `AgiProgressEvent` (6 types: SOLVE_STARTED, BRANCH_STARTED, BRANCH_PASSED, BRANCH_FAILED, AXIOM_CRYSTALLIZED, SOLVE_COMPLETE) emitted via `onProgress` callback in `EosAgiCore.solve()`. MCP server `eos_agi_solve` tool forwards these as `notifications/progress` events — Cursor/Claude Code see live feedback while the tribunal evaluates each branch.
+  4. **Semantic Graph Persistent Cache** — `.eos-graph-cache.json` with mtimeMs fingerprint invalidation across `src/`, `test/`, `api/`, `bin/` directories. Cache hit: restore nodes from JSON (~2ms). Cache miss: rebuild graph + save cache (~15ms). Added to `.gitignore`.
+  5. **`@eos-system/core` npm package** (`packages/core/`) — Publishable library with barrel `index.ts` exporting: EosAgiCore, EosAxiomMemory, EosMultiModelRouter, EosDynamicToolForge, EosConsultantCore, EosContextWindowManager, EosSpecDriftDetector, EosToolRegistry, EosLogger, and all kernel primitives. Zero external dependencies. `npm publish` ready.
+  6. **EOS VS Code Extension** (`packages/vscode-extension/`) — Extension manifest with 4 commands (Consult, SpecDrift, ContextWindow, StartMcpServer), 3 config properties (projectRoot, mcpToken, logLevel), auto-detects EOS root from workspace, spawns MCP server as child process with stdout/stderr piped to output channel.
+  7. **EOS GitHub App Bot** (`packages/github-app/`) — Pure Node.js HTTP webhook server. HMAC signature validation with `crypto.timingSafeEqual`. Responds 202 immediately, runs `eos consult` async via `setImmediate`, posts collapsible Markdown PR comment via GitHub REST API. Deployable on Railway/Fly.io.
+* **Files Created** (13 new): `src/core/eosContextWindowManager.ts`, `src/core/eosSpecDriftDetector.ts`, `packages/core/package.json`, `packages/core/README.md`, `packages/core/src/index.ts`, `packages/vscode-extension/package.json`, `packages/vscode-extension/src/extension.ts`, `packages/vscode-extension/README.md`, `packages/github-app/package.json`, `packages/github-app/src/bot.mjs`, `packages/github-app/README.md`, `.eos-graph-cache.json` (gitignored)
+* **Files Modified** (8): `src/core/eosAgiCore.ts` (progress events + onProgress), `src/core/eosSemanticGraph.ts` (persistent cache), `src/mcp/eosMcpServer.ts` (3 new MCP tools), `bin/eos.mjs` (context + drift commands), `package.json` (v54.0.0 + workspaces + scripts), `.gitignore` (graph cache), `CHANGELOG.md`, all 3 sub-package versions
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-26-USABILITY-049
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-050 (v55.0.0)
+* **Scope**: Nielsen 10 Usability Heuristics + End-to-End Pipeline + Platform Publishing — Applied all 10 Jakob Nielsen heuristics to the EOS CLI, created the end-to-end AGI pipeline, and scaffolded platform publishing:
+  1. **`src/core/eosCliUx.ts`** — Complete CLI UX engine: command suggestion (Levenshtein), input validation, ANSI color output, status dashboard, interactive mode, first-run onboarding, dynamic version, quiet mode
+  2. **`eos status`** — Unified dashboard: version, modules, tests, specs, axioms, CI result, memory, timestamp — one glance
+  3. **`eos interactive`** — Menu-driven command browser with categories — recognition over recall
+  4. **Command suggestion** — `eos consutl` → "Did you mean: consult?" via Levenshtein distance
+  5. **First-run onboarding** — `.eos-initialized` marker, quick-start guide on first `eos help`
+  6. **`--quiet` / `-q`** — Minimal banner for scripting/CI
+  7. **`src/core/eosPipeline.ts`** — End-to-end: EosContextWindowManager → EosMultiModelRouter → EosAgiCore
+  8. **`eos_pipeline` MCP tool** — Full solve cycle via MCP with progress streaming
+  9. **`eos pipeline` CLI** — End-to-end problem solving from terminal
+  10. **Extended MCP handlers** — 12 more handlers extracted from god-file
+  11. **`test/eosCliUx.test.mjs`** — 7 suites: suggestions, validation, status, first-run, version, registry, color
+  12. **`test/eosContextWindow.test.mjs`** — 9 tests for ContextWindowManager
+  13. **`test/eosApiContract.test.mjs`** — Contract tests for all 14 API endpoints
+  14. **VS Code extension build script** — `packages/vscode-extension/build.mjs`
+  15. **npm publish workflow** — `.github/workflows/eos-publish.yml`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-26-UI-REDESIGN-050
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-051 (v56.0.0)
+* **Scope**: DeepSeek Harness grade UI redesign — complete visual overhaul of index.html and css/eos.css to match the quality standard of DeepSeek Harness (deepseek.com/en/harness):
+  1. **Dark SaaS aesthetic** — Background #090A0F, 1px borders (rgba(255,255,255,0.10)), low-opacity surface cards (rgba(255,255,255,0.02)), backdrop blur on sticky nav
+  2. **Interactive HTML/CSS mockup** — App simulation built entirely with HTML divs (no screenshots): sidebar with sessions, chat panel with user/agent messages, bento cards inside mockup showing pipeline verdicts, input bar with model selector
+  3. **Bento Grid** — 7 capability cards in 3-column grid: AGI Pipeline (wide), Consultant Core, Dynamic Tool Forge, Context Window, Spec Drift, MCP Server, Security (wide)
+  4. **Traceability View** — Console-style table with monospace font showing pipeline turns (SYSTEM, USER, TOOL, ASSISTANT) with millisecond durations
+  5. **Typography** — Inter for headings/body, JetBrains Mono for code/status labels
+  6. **Hero section** — Badge ("v55.0 · AGI Harness"), gradient title, subtitle, CTA buttons + copy-paste command block
+  7. **Stats row** — 90 modules, 48 tests, 30+ MCP tools, 0 dependencies, 7 ADRs
+  8. **Code block** — With copy-to-clipboard button showing pipeline usage examples
+  9. **Glow effects** — Radial blue blur behind hero title
+  10. **WCAG 2.1 AA maintained** — skip-link, aria-live, closedby="any", JSON-LD all present
+* **Files Modified**: `index.html` (complete rewrite), `css/eos.css` (complete rewrite), `package.json` (v56.0.0), `CHANGELOG.md`
+* **Note**: SRI hashes must be updated after CSS rewrite — run `node scripts/verify-sri-integrity.mjs --fix`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-26-VISUAL-GOVERNANCE-051
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-052 (v57.0.0)
+* **Scope**: 4-Layer Visual Governance Architecture — Makes it physically impossible for AI to deliver a bad design:
+  1. **Capa 1 (Token Enjaulamiento)**: `src/core/eosDesignTokens.ts` — Closed token system with 17 colors, 7 radii, 4 shadows, 3 fonts, 3 timing functions. `validateCssAgainstTokens()` and `validateHtmlAgainstTokens()` scan for raw hex colors, forbidden radii, generic shadows, and inline styles.
+  2. **Capa 2 (Primitivas Inmutables)**: `src/core/eosDesignPrimitives.ts` — 5 architectural primitives: `architecturalGrid()` (1px hairline grid), `telemetryHeader()` (monospace index + status), `spotlightPanel()` (cursor-tracking glow), `codeBlock()` (copy button), `consoleTrace()` (traceability table). Zero-dep HTML string generators.
+  3. **Capa 3 (AST Linter)**: `scripts/verify-design-system.mjs` — Scans all CSS/HTML for design violations. Rules: no-raw-colors, no-large-radius, no-generic-shadow, no-inline-styles. Integrated as Stage 3.9 in `verify-cicd-pipeline.mjs`. Exit 1 on any violation.
+  4. **Capa 4 (.cursor/rules)**: Section 6 added to `eos-governance.mdc` — AI agents read these rules automatically on every interaction. Defines: closed palette, geometric constraints, shadow limits, typography triple layer, Bézier physics, primitive assembly, linter veto, live mockups (no screenshots).
+* **Files Created** (3): `src/core/eosDesignTokens.ts`, `src/core/eosDesignPrimitives.ts`, `scripts/verify-design-system.mjs`
+* **Files Modified** (5): `scripts/verify-cicd-pipeline.mjs` (Stage 3.9), `.cursor/rules/eos-governance.mdc` (Section 6), `package.json` (v57.0.0 + design:lint script), `CHANGELOG.md`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-26-OPERATIONAL-052
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-053 (v58.0.0)
+* **Scope**: 8 Operational Gaps Closed — Stripe/Netflix/Google/Meta standard:
+  1. **Feature Flags** (`eosFeatureFlags.ts`) — 12 flags, env-first, flags.json, fail-closed defaults
+  2. **Diff Patcher** (`eosDiffPatcher.ts`) — unified diff parse+apply+generate, CoW backup
+  3. **API Rate Limiting** (`eosApiRateLimit.ts` + `api/health.js`) — withRateLimit() HOF, 429 + Retry-After, X-RateLimit-* headers
+  4. **Plugin Loader** (`eosPluginLoader.ts`) — EOS_PLUGINS env, plugins.json, plugins/ dir, node_modules/, default(registry) protocol
+  5. **Performance Regression CI** (`verify-performance.mjs`) — benchmark vs baseline, 25% threshold gate
+  6. **Accessibility Automation** (`verify-accessibility.mjs`) — WCAG 2.1 AA scanner, 10 rules, Stage 5.5 in CI
+  7. **Chaos Engineering in CI** (`run-chaos-tests.mjs`) — Stage 4.6, gated by EOS_FLAG_CHAOS_IN_CI
+  8. **Operational Test Suite** (`test/eosOperational.test.mjs`) — 20 tests across all 4 new modules
+* **Files Created** (7): `src/core/eosFeatureFlags.ts`, `src/core/eosDiffPatcher.ts`, `src/core/eosApiRateLimit.ts`, `src/core/eosPluginLoader.ts`, `scripts/verify-performance.mjs`, `scripts/verify-accessibility.mjs`, `scripts/run-chaos-tests.mjs`, `test/eosOperational.test.mjs`
+* **Files Modified** (7): `api/health.js` (rate limit + version), `bin/eos.mjs` (flags+diff commands), `scripts/verify-cicd-pipeline.mjs` (stages 4.6+5.5), `package.json` (v58.0.0 + 6 new scripts), `packages/core/src/index.ts` (5 new exports), `CHANGELOG.md`, `scripts/verify-cicd-pipeline.mjs` (testFiles + stages)
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-26-SECURITY-HARDENING-053
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-054 (v59.0.0)
+* **Scope**: 15-CVE Security Hardening — Every confirmed exploitable vulnerability patched:
+
+  **CRITICAL fixes:**
+  1. **CVE-5 RCE (Tool Forge)**: Operator precedence bug fixed + comprehensive allowlist-based scanner (`BLOCKED_MODULE_PATTERNS[]` with 25 regex patterns) blocks `child_process`, `fs`, `net`, `process.env`, `eval`, `new Function`, dynamic imports of system modules, path traversal
+  2. **CVE-4 Path Traversal (Sandbox)**: `normalizeRel()` now throws on `../` sequences. `_assertContained()` method added — every `commitToDisk()` path verified with `startsWith(projectRoot)` before any write
+  3. **CVE-1 DoS Body (MCP Stream)**: 1MB hard cap with `Content-Length` pre-check + streaming byte counter + `req.socket.destroy()` on overflow → 413 response
+  4. **CVE-6 TOCTOU (Tool Forge)**: Hash verification before every `import()` — compares current file SHA-256 against manifest `contentHash`
+
+  **HIGH fixes:**
+  5. **CVE-2 Session DoS**: `MAX_SESSIONS = 500` cap with LRU eviction + background GC timer every 5 minutes (`.unref()` so it doesn't block process exit)
+  6. **CVE-7 IP Spoofing (Rate Limiter)**: `getTrueClientIp()` only trusts `X-Forwarded-For` when remote address is in `EOS_TRUSTED_PROXIES`. Singleton bug fixed — each `withRateLimit()` call creates independent limiter instance
+  7. **CVE-8 CORS Wildcard**: `api/health.js` wildcard `*` replaced with `EOS_ALLOWED_ORIGINS` allowlist + `Vary: Origin` header
+  8. **CVE-12 Registry Injection**: `validateRegistryEntry()` in fleet CI validates `localPath` (no `..`), `cicdGateScript` (must be relative path matching `[a-zA-Z0-9_\-./]+`), `productionUrl` (must be `https://`)
+  9. **CVE-11 Stack Trace Leak**: MCP stream server error response no longer includes `err.stack` in production
+
+  **MEDIUM fixes:**
+  10. **CVE-9 TMR Gamma**: Destructive pattern list expanded from 10 to 40+ entries covering bypass variants, Windows commands (`del /f`, `format c:`), pipe-to-any-interpreter (`| python`, `| node`, `| pwsh`), subshell (`$(`, backtick), exfiltration (`curl http`, `wget`), privilege escalation (`sudo bash`)
+  11. **CVE-10 32-bit Hash**: `simpleHash()` DJB2 replaced with `crypto.createHash("sha256")` — collision attacks now require 2^128 operations
+  12. **CVE-14 Filesystem Path Leak**: `api/graph.js` `err.message` in fallback now gated by `NODE_ENV !== "production"`
+  13. **CVE-15 Header Injection**: `api/health.js` traceparent now validated against W3C format regex before reflection
+
+  **LOW fixes:**
+  14. **CVE-13 CORP Misconfiguration**: `vercel.json` `Cross-Origin-Resource-Policy: cross-origin` → `same-origin`. Added `X-Permitted-Cross-Domain-Policies: none`. Narrowed `connect-src` from `https://*.vercel.app` to specific hostname. Removed `microphone=(self)`.
+  15. **CVE-3 Auth Bypass**: `/metrics` removed from `skipAuth` — now requires Bearer token when `EOS_MCP_TOKEN` is set.
+
+  **New CI Gate:**
+  - `scripts/verify-security-hardening.mjs` — 15-check regression verifier runs as Stage 1.5
+  - `npm run security:audit` — standalone security audit command
+
+* **Files Modified** (9): `src/core/eosDynamicToolForge.ts`, `src/core/eosHermeticSandbox.ts`, `src/mcp/eosMcpStreamServer.ts`, `src/core/eosApiRateLimit.ts`, `src/core/eosJarvisMonad.ts`, `api/health.js`, `api/graph.js`, `vercel.json`, `scripts/fleet-autonomous-cicd.mjs`, `scripts/verify-cicd-pipeline.mjs`
+* **Files Created** (1): `scripts/verify-security-hardening.mjs`
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-10-26-ENTERPRISE-054
+* **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+* **Milestone**: SPEC-055 (v60.0.0)
+* **Scope**: 5 Enterprise-Grade Improvements (AWS + Cognition + Anysphere + Bedrock standard):
+
+  1. **VM Worker Tribunal** (`src/core/eosWorkerTribunal.ts`) — Each branch evaluated in isolated `worker_threads` Worker with resource limits (512MB heap cap). A crash in one branch cannot kill the harness. Concurrent evaluation (`Promise.allSettled` batches) reduces wall-clock time from O(n × timeout) to O(timeout). Hard kill timer per worker. `EosAgiCore.solve()` is now `async` with `workerMode: true` option. Backwards-compatible: default is still sequential CoW.
+
+  2. **Secrets Manager** (`src/core/eosSecretsManager.ts`) — 5-provider chain: AWS Secrets Manager (full SigV4 signing), HashiCorp Vault (KV v2), Doppler, .env file, env vars. `EOS_SECRETS_PROVIDER=aws|vault|doppler|dotenv|env`. In-memory cache with TTL (5 min default). Values never logged. `EosMultiModelRouter._getApiKeyAsync()` now reads via SecretsManager — zero code change to switch from env vars to AWS Secrets Manager.
+
+  3. **OTLP Distributed Tracer** (`src/core/eosTracer.ts`) — W3C traceparent propagation. Exports spans in OTLP/JSON format to any collector (Grafana Tempo, Jaeger, AWS X-Ray, Honeycomb, Zipkin). Configurable sampling rate, buffer size, flush interval. `EosPipeline.solve()` now emits 4 spans: `eos.pipeline.solve` → `context_assembly` → `branch_generation` → `tribunal`. `tracer.trace(name, fn)` convenience wrapper with automatic status+end.
+
+  4. **LSP Diagnostic Provider** (`src/core/eosLspDiagnostics.ts`) — Minimal LSP 3.17 stdio server. Responds to `textDocument/diagnostic` (pull model) and `textDocument/didSave` (push model). Aggregates blast radius warnings, spec drift violations, and architecture violations as typed LSP Diagnostics. `writeDiagnosticsFile()` writes `.eos-diagnostics.json` for file-watcher-based editors. `eos lsp --write` and `eos lsp` (stdio server) CLI commands. VS Code `.vscode/settings.json` created.
+
+  5. **Concurrent Branch Evaluation** — `EosWorkerTribunal.evaluate()` evaluates all branches in parallel batches (default: 4 concurrent). `EosAgiCore.solve(…, { workerMode: true, maxConcurrency: 4 })` routes to `EosWorkerTribunal` instead of sequential evaluateBranch loop.
+
+* **New CLI**: `eos secrets [get KEY]`, `eos trace`, `eos lsp [--write]`
+* **New scripts**: `lsp`, `lsp:server`, `secrets`, `trace`, `test:enterprise`
+* **All 5 modules exported** in `packages/core/src/index.ts`
+* **Test suite**: `test/eosEnterpriseModules.test.mjs` — 20 tests covering all 4 new modules
+* **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

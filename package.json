@@ -1,12 +1,13 @@
 {
   "name": "eos-system-landing",
-  "version": "47.0.0",
-  "description": "EOS System (Engineering Operating System) — Sovereign Apex Matrix v47.0 (Autonomous Continuous Refactoring Engine, Design by Contract & FoundationDB/Antithesis Deterministic Simulation Testing)",
+  "version": "61.0.0",
+  "description": "EOS System v61.0 — Antigravity/Gemini MCP prompts+resources, SSE per-IP rate limit, request deduplication, async dispatch, idle session timeout, dynamic version, resources/read for all 5 URIs",
   "type": "module",
   "bin": {
     "eos": "./bin/eos.mjs"
   },
   "scripts": {
+    "prepare": "node scripts/install-fleet-cicd-hooks.mjs",
     "turbo": "node bin/eos.mjs turbo",
     "heal": "node bin/eos.mjs heal",
     "worktree": "node bin/eos.mjs worktree",
@@ -17,6 +18,7 @@
     "spotify": "node bin/eos.mjs spotify",
     "pts": "node bin/eos.mjs pts",
     "test": "node scripts/verify-cicd-pipeline.mjs",
+    "typecheck": "node scripts/verify-typescript.mjs",
     "test:pts": "node bin/eos.mjs pts",
     "test:unit": "node --test test/eosCore.test.mjs",
     "test:chaos": "node --test test/chaosResilience.test.mjs",
@@ -105,11 +107,44 @@
     "synapse": "node bin/eos.mjs synapse",
     "test:refactor": "node --test test/eosContinuousRefactorEngine.test.mjs",
     "refactor": "node bin/eos.mjs refactor",
-    "dst": "node bin/eos.mjs dst"
+    "dst": "node bin/eos.mjs dst",
+    "agi": "node bin/eos.mjs agi",
+    "consult": "node bin/eos.mjs consult",
+    "solve": "node bin/eos.mjs solve",
+    "forge": "node bin/eos.mjs forge",
+    "test:agi": "node --test test/eosAgiHarness.test.mjs",
+    "test:pbt": "node --test test/eosPropertyBased.test.mjs",
+    "test:coverage": "node --experimental-test-coverage --test test/eosCore.test.mjs test/eosTurbo.test.mjs test/eosSemanticGraph.test.mjs test/eosAutonomousHealer.test.mjs",
+    "test:coverage:all": "node --experimental-test-coverage --test test/*.test.mjs",
+    "mutate:ci": "node scripts/run-mutation-testing.mjs",
+    "changelog": "node scripts/generate-changelog.mjs",
+    "dora": "node scripts/track-dora-metrics.mjs",
+    "pipeline": "node bin/eos.mjs pipeline",
+    "status": "node bin/eos.mjs status",
+    "interactive": "node bin/eos.mjs interactive",
+    "test:cli:ux": "node --test test/eosCliUx.test.mjs",
+    "test:context": "node --test test/eosContextWindow.test.mjs",
+    "test:contracts": "node --test test/eosApiContract.test.mjs",
+    "context": "node bin/eos.mjs context",
+    "drift": "node bin/eos.mjs drift",
+    "spec:drift": "node bin/eos.mjs drift",
+    "design:lint": "node scripts/verify-design-system.mjs",
+    "perf:regression": "node scripts/verify-performance.mjs",
+    "a11y": "node scripts/verify-accessibility.mjs",
+    "chaos:ci": "node scripts/run-chaos-tests.mjs",
+    "flags": "node bin/eos.mjs flags",
+    "diff": "node bin/eos.mjs diff",
+    "security:audit": "node scripts/verify-security-hardening.mjs",
+    "lsp": "node bin/eos.mjs lsp --write",
+    "lsp:server": "node bin/eos.mjs lsp",
+    "secrets": "node bin/eos.mjs secrets",
+    "trace": "node bin/eos.mjs trace",
+    "test:enterprise": "node --test test/eosEnterpriseModules.test.mjs"
   },
   "engines": {
     "node": ">=22.0.0"
   },
   "author": "Valentín Flórez Arbeláez",
-  "license": "MIT"
+  "license": "MIT",
+  "workspaces": ["packages/*"]
 }

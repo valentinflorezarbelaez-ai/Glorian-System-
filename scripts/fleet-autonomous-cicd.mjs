@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -17,6 +17,33 @@ if (!fs.existsSync(registryFile)) {
 }
 
 const registry = JSON.parse(fs.readFileSync(registryFile, "utf8"));
+
+// SECURITY: validate all registry entries before use — tampered registry could inject paths
+function validateRegistryEntry(proj) {
+  // localPath must be an absolute path or start with known base
+  if (typeof proj.localPath !== "string" || proj.localPath.includes("..")) {
+    throw new Error(`Security: invalid localPath in registry for "${proj.id}": "${proj.localPath}"`);
+  }
+  // cicdGateScript must be a relative path (no absolute, no traversal)
+  if (proj.cicdGateScript) {
+    if (
+      typeof proj.cicdGateScript !== "string" ||
+      path.isAbsolute(proj.cicdGateScript) ||
+      proj.cicdGateScript.includes("..") ||
+      !proj.cicdGateScript.match(/^[a-zA-Z0-9_\-./]+$/)
+    ) {
+      throw new Error(`Security: invalid cicdGateScript in registry for "${proj.id}": "${proj.cicdGateScript}"`);
+    }
+  }
+  // productionUrl must be https:// only
+  if (proj.productionUrl && !proj.productionUrl.startsWith("https://")) {
+    throw new Error(`Security: productionUrl must use https:// for "${proj.id}"`);
+  }
+}
+
+for (const proj of registry.projects) {
+  validateRegistryEntry(proj);
+}
 let audited = 0;
 let healthyCount = 0;
 
@@ -30,16 +57,24 @@ for (const proj of registry.projects) {
   } else {
     // Check working tree status
     try {
-      const statusOutput = execSync("git status --short", { cwd: proj.localPath, encoding: "utf8" }).trim();
+      const statusOutput = execFileSync("git", ["status", "--short"], { cwd: proj.localPath, encoding: "utf8" }).trim();
       const hasChanges = statusOutput.length > 0;
       console.log(`  Working Tree   : ${hasChanges ? "MODIFIED (Pending changes)" : "CLEAN"}`);
 
       if (hasChanges && isShipMode) {
         console.log(`  [AUTONOMOUS ACTION] Shipping modified project: ${proj.name}...`);
-        execSync("git add -A", { cwd: proj.localPath, stdio: "inherit" });
-        execSync(`git commit -m "${commitMessage}"`, { cwd: proj.localPath, stdio: "inherit" });
+        // Stage only tracked modified files (not untracked new files)
+        execFileSync("git", ["add", "--update"], { cwd: proj.localPath, stdio: "inherit" });
+        // Run CI gate before committing if a gate script is configured and exists
+        const gateScript = path.join(proj.localPath, proj.cicdGateScript || "");
+        if (proj.cicdGateScript && fs.existsSync(gateScript)) {
+          console.log(`  [CI GATE] Running ${proj.cicdGateScript} before commit...`);
+          execFileSync(process.execPath, [gateScript], { cwd: proj.localPath, stdio: "inherit" });
+          console.log(`  [CI GATE] PASSED`);
+        }
+        execFileSync("git", ["commit", "-m", commitMessage], { cwd: proj.localPath, stdio: "inherit" });
         if (proj.remoteUrl) {
-          execSync("git push origin HEAD", { cwd: proj.localPath, stdio: "inherit" });
+          execFileSync("git", ["push", "origin", "HEAD"], { cwd: proj.localPath, stdio: "inherit" });
           console.log(`  [PUSHED] Changes pushed to ${proj.remoteUrl}`);
         }
       }

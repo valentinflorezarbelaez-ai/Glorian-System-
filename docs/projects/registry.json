@@ -1,13 +1,13 @@
 {
-  "version": "10.0.0-sovereign-fleet-registry",
-  "updatedAt": "2026-10-25T09:46:00-05:00",
-  "masterOrchestrator": "EOS System (c:\\Users\\valen\\Eos-System)",
+  "version": "11.0.0-sovereign-fleet-registry",
+  "updatedAt": "2026-10-26T12:00:00-05:00",
+  "masterOrchestrator": "EOS System (c:\\Users\\valen\\Eos-System-2)",
   "complianceStandard": "EOS_CONSTITUTION_LAW_IV_EXTERNAL_WRITE_BARRIER",
   "projects": [
     {
       "id": "eos-system",
       "name": "EOS System (Control Plane Core)",
-      "localPath": "c:\\Users\\valen\\Eos-System",
+      "localPath": "c:\\Users\\valen\\Eos-System-2",
       "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Eos-System.git",
       "productionUrl": "https://eos-system-ten.vercel.app",
       "type": "control-plane-monolith",

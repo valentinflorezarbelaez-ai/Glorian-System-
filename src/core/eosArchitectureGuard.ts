@@ -21,6 +21,7 @@ export interface FileImport {
   resolvedPath: string | null;
   isExternal: boolean;
   lineNumber: number;
+  isDynamicUnresolvable?: boolean;
 }
 
 export interface FileAnalysis {
@@ -63,16 +64,112 @@ export function classifyLayer(relativePath: string): ArchitecturalLayer {
 }
 
 /**
+ * Reads tsconfig.json from projectRoot and extracts path alias → real directory mappings.
+ * e.g. { "@core/*": ["src/core/*"] } → { "@core/": "src/core/" }
+ */
+export function resolveTsconfigPaths(projectRoot: string): Record<string, string> {
+  const tsconfigPath = path.join(projectRoot, "tsconfig.json");
+  if (!fs.existsSync(tsconfigPath)) return {};
+
+  let raw: string;
+  try {
+    raw = fs.readFileSync(tsconfigPath, "utf8");
+  } catch {
+    return {};
+  }
+
+  let tsconfig: Record<string, unknown>;
+  try {
+    // Strip single-line comments and trailing commas for lenient JSON parsing
+    const stripped = raw
+      .replace(/\/\/[^\n]*/g, "")
+      .replace(/,(\s*[}\]])/g, "$1");
+    tsconfig = JSON.parse(stripped) as Record<string, unknown>;
+  } catch {
+    return {};
+  }
+
+  const compilerOptions = tsconfig["compilerOptions"] as Record<string, unknown> | undefined;
+  if (!compilerOptions) return {};
+
+  const paths = compilerOptions["paths"] as Record<string, string[]> | undefined;
+  if (!paths || typeof paths !== "object") return {};
+
+  const baseUrl = typeof compilerOptions["baseUrl"] === "string"
+    ? compilerOptions["baseUrl"]
+    : ".";
+
+  const aliasMap: Record<string, string> = {};
+  for (const [aliasPattern, targets] of Object.entries(paths)) {
+    if (!Array.isArray(targets) || targets.length === 0) continue;
+    // Convert glob patterns: "@core/*" → "@core/"  and  "src/core/*" → "src/core/"
+    const aliasPrefix = aliasPattern.endsWith("/*")
+      ? aliasPattern.slice(0, -1)   // "@core/*" → "@core/"
+      : aliasPattern + "/";
+
+    const targetPattern = targets[0];
+    const realPrefix = targetPattern.endsWith("/*")
+      ? path.join(projectRoot, baseUrl, targetPattern.slice(0, -1))
+      : path.join(projectRoot, baseUrl, targetPattern);
+
+    aliasMap[aliasPrefix] = realPrefix.replace(/\\/g, "/");
+  }
+
+  return aliasMap;
+}
+
+/**
  * Extracts import/require statements from source code text.
  */
-export function extractImports(sourceCode: string, sourceFilePath: string, projectRoot: string): FileImport[] {
+export function extractImports(
+  sourceCode: string,
+  sourceFilePath: string,
+  projectRoot: string,
+  aliasMap: Record<string, string> = {}
+): FileImport[] {
   const imports: FileImport[] = [];
   const lines = sourceCode.split(/\r?\n/);
 
   // Regex patterns for static imports and dynamic imports/requires
   const staticImportRegex = /import\s+(?:(?:[\w*\s{},]+)\s+from\s+)?['"]([^'"]+)['"]/g;
   const requireRegex = /require\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
+  // Matches only string-literal dynamic imports
   const dynamicImportRegex = /import\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
+  // Matches non-literal dynamic imports (template literals, variables, concatenation)
+  const dynamicImportUnresolvableRegex = /import\s*\(\s*(?!['"])([^)]+)\)/g;
+
+  const resolveSpecifier = (specifier: string): string | null => {
+    const extensions = ["", ".ts", ".tsx", ".js", ".mjs", ".jsx", "/index.ts", "/index.js"];
+
+    if (specifier.startsWith(".")) {
+      const sourceDir = path.dirname(sourceFilePath);
+      const candidate = path.resolve(sourceDir, specifier);
+      for (const ext of extensions) {
+        const testPath = candidate + ext;
+        if (fs.existsSync(testPath) && fs.statSync(testPath).isFile()) {
+          return path.resolve(testPath);
+        }
+      }
+      return null;
+    }
+
+    // Alias resolution
+    for (const [aliasPrefix, realPrefix] of Object.entries(aliasMap)) {
+      if (specifier.startsWith(aliasPrefix)) {
+        const remainder = specifier.slice(aliasPrefix.length);
+        const candidate = path.join(realPrefix, remainder);
+        for (const ext of extensions) {
+          const testPath = candidate + ext;
+          if (fs.existsSync(testPath) && fs.statSync(testPath).isFile()) {
+            return path.resolve(testPath);
+          }
+        }
+        return null;
+      }
+    }
+
+    return null;
+  };
 
   lines.forEach((line, idx) => {
     const trimmed = line.trim();
@@ -80,27 +177,14 @@ export function extractImports(sourceCode: string, sourceFilePath: string, proje
       return; // Skip comments
     }
 
-    const checkMatch = (regex: RegExp) => {
+    const checkMatch = (regex: RegExp, isDynamic = false) => {
       let match: RegExpExecArray | null;
+      // Reset lastIndex to avoid cross-line state issues
+      regex.lastIndex = 0;
       while ((match = regex.exec(line)) !== null) {
         const specifier = match[1];
         const isExternal = !specifier.startsWith(".") && !specifier.startsWith("/") && !specifier.startsWith("node:");
-        let resolved: string | null = null;
-
-        if (specifier.startsWith(".")) {
-          // Resolve relative path
-          const sourceDir = path.dirname(sourceFilePath);
-          const candidate = path.resolve(sourceDir, specifier);
-
-          const extensions = ["", ".ts", ".tsx", ".js", ".mjs", ".jsx", "/index.ts", "/index.js"];
-          for (const ext of extensions) {
-            const testPath = candidate + ext;
-            if (fs.existsSync(testPath) && fs.statSync(testPath).isFile()) {
-              resolved = path.resolve(testPath);
-              break;
-            }
-          }
-        }
+        const resolved = resolveSpecifier(specifier);
 
         imports.push({
           rawSpecifier: specifier,
@@ -111,9 +195,26 @@ export function extractImports(sourceCode: string, sourceFilePath: string, proje
       }
     };
 
+    // Handle non-literal dynamic imports — warn and flag as unresolvable
+    const checkDynamicUnresolvable = (regex: RegExp) => {
+      regex.lastIndex = 0;
+      let match: RegExpExecArray | null;
+      while ((match = regex.exec(line)) !== null) {
+        const rawExpr = match[1].trim();
+        imports.push({
+          rawSpecifier: rawExpr,
+          resolvedPath: null,
+          isExternal: false,
+          lineNumber: idx + 1,
+          isDynamicUnresolvable: true
+        });
+      }
+    };
+
     checkMatch(staticImportRegex);
     checkMatch(requireRegex);
-    checkMatch(dynamicImportRegex);
+    checkMatch(dynamicImportRegex, true);
+    checkDynamicUnresolvable(dynamicImportUnresolvableRegex);
   });
 
   return imports;
@@ -182,7 +283,8 @@ export function validateLayerInvariants(analysis: FileAnalysis): string[] {
 }
 
 /**
- * Detects circular dependencies in the module import graph using Depth-First Search (DFS).
+ * Detects circular dependencies in the module import graph using an iterative DFS.
+ * Uses an explicit worklist to avoid call-stack overflow on large graphs.
  */
 export function detectCircularDependencies(analyses: Map<string, FileAnalysis>): string[][] {
   const adj = new Map<string, string[]>();
@@ -200,35 +302,50 @@ export function detectCircularDependencies(analyses: Map<string, FileAnalysis>):
   const cycles: string[][] = [];
   const visited = new Set<string>();
   const inStack = new Set<string>();
-  const stack: string[] = [];
 
-  function dfs(node: string) {
-    visited.add(node);
-    inStack.add(node);
-    stack.push(node);
+  for (const startNode of adj.keys()) {
+    if (visited.has(startNode)) continue;
 
-    const neighbors = adj.get(node) || [];
-    for (const neighbor of neighbors) {
-      if (!visited.has(neighbor)) {
-        dfs(neighbor);
-      } else if (inStack.has(neighbor)) {
-        // Cycle detected
-        const cycleStartIndex = stack.indexOf(neighbor);
-        if (cycleStartIndex !== -1) {
-          const cyclePath = stack.slice(cycleStartIndex);
-          cyclePath.push(neighbor); // Close loop
-          cycles.push(cyclePath);
+    // Each worklist entry records the node and which neighbor index to explore next.
+    // The `path` array mirrors the DFS call stack (nodes currently being explored).
+    const worklist: Array<{ node: string; neighborIndex: number }> = [];
+    const currentPath: string[] = [];
+
+    // Push the start node
+    worklist.push({ node: startNode, neighborIndex: 0 });
+    visited.add(startNode);
+    inStack.add(startNode);
+    currentPath.push(startNode);
+
+    while (worklist.length > 0) {
+      const frame = worklist[worklist.length - 1];
+      const neighbors = adj.get(frame.node) ?? [];
+
+      if (frame.neighborIndex < neighbors.length) {
+        const neighbor = neighbors[frame.neighborIndex];
+        frame.neighborIndex++;
+
+        if (inStack.has(neighbor)) {
+          // Back-edge → cycle detected
+          const cycleStartIndex = currentPath.indexOf(neighbor);
+          if (cycleStartIndex !== -1) {
+            const cyclePath = currentPath.slice(cycleStartIndex);
+            cyclePath.push(neighbor); // close the loop
+            cycles.push(cyclePath);
+          }
+        } else if (!visited.has(neighbor)) {
+          visited.add(neighbor);
+          inStack.add(neighbor);
+          currentPath.push(neighbor);
+          worklist.push({ node: neighbor, neighborIndex: 0 });
         }
+        // Already visited but not in stack → cross/forward edge, skip
+      } else {
+        // All neighbors exhausted — pop this frame
+        worklist.pop();
+        inStack.delete(frame.node);
+        currentPath.pop();
       }
-    }
-
-    stack.pop();
-    inStack.delete(node);
-  }
-
-  for (const node of adj.keys()) {
-    if (!visited.has(node)) {
-      dfs(node);
     }
   }
 
@@ -248,6 +365,9 @@ export function scanArchitecture(targetDir: string, projectRoot: string = proces
     UNKNOWN: 0
   };
 
+  // Resolve tsconfig path aliases once for the whole scan
+  const aliasMap = resolveTsconfigPaths(projectRoot);
+
   function walk(dir: string) {
     if (!fs.existsSync(dir)) return;
     const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -264,7 +384,7 @@ export function scanArchitecture(targetDir: string, projectRoot: string = proces
         layerCounts[layer] = (layerCounts[layer] || 0) + 1;
 
         const content = fs.readFileSync(fullPath, "utf8");
-        const imports = extractImports(content, fullPath, projectRoot);
+        const imports = extractImports(content, fullPath, projectRoot, aliasMap);
 
         const analysis: FileAnalysis = {
           filePath: fullPath,

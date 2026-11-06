@@ -43,3 +43,25 @@
 3. **Audio Standards**: LUFS normalization strictly targets **-14.0 LUFS** with a **-1.0 dBTP** true peak ceiling.
 4. **Asynchronous Communication**: Cross-squad contracts (Stockholm/London/NYC/São Paulo/Bogotá) must be documented in code comments and Backstage catalogs.
 5. **No Plaintext Secrets**: Hardcoded credentials result in immediate CI/CD rejection.
+
+## 7. EOS AGI Frontier Harness (SPEC-047 — v51.0.0)
+
+The EOS AGI Harness provides four frontier-level capabilities accessible via CLI and MCP:
+
+### CLI Commands
+- `eos agi [axioms|rules]` — Show crystallized axioms learned from past failed branches
+- `eos consult "<problem>"` — Full consulting deliverable: 5-Whys, ADR, code, risk matrix, FinOps
+- `eos solve "<problem>"` — Quick alias for immediate consulting answer
+- `eos forge [list|mcp|destroy]` — Manage dynamically forged MCP tools
+
+### MCP Tools (invoke via Cursor / Claude Code)
+- `eos_consult` — World-class consulting deliverable offline (no API key needed)
+- `eos_agi_axioms` — Get learned rules to prevent repeat errors in prompts
+- `eos_forge_list` — List all runtime-forged MCP tools
+- `eos_forge_tool` — Create a new MCP tool from ESM source at runtime
+
+### Architecture
+- **EosAgiCore**: Tree of Thoughts + Deterministic Tribunal (Exit Code 0 = law) + Episodic Axiom Memory
+- **EosMultiModelRouter**: Routes tasks by type to optimal model (Anthropic/Google/DeepSeek) with caching + rate limiting
+- **EosDynamicToolForge**: If the AGI lacks a tool, it writes, validates, registers, and uses it in one cycle
+- **EosConsultantCore**: Offline consulting at Thoughtworks/McKinsey level — no API call needed

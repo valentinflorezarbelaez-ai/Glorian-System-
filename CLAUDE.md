@@ -11,6 +11,10 @@
 - Go Titan Native Benchmark: `node bin/eos.mjs go benchmark`
 - Honk Background Dispatch: `node bin/eos.mjs honk dispatch --directive "<directive>"`
 - Xirp Context Sync: `node bin/eos.mjs xirp sync`
+- AGI Harness — Axioms: `eos agi axioms`
+- AGI Consult: `eos consult "<problem>"`  
+- AGI Forge List: `eos forge list`
+- AGI Test Suite: `node --test test/eosAgiHarness.test.mjs`
 
 ## Code & Architecture Standards
 - **90/10 Rule**: 90% Go for cloud microservices/APIs, 10% Rust for low-level audio DSP.

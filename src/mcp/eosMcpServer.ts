@@ -361,6 +361,9 @@ import {
   deepFreeze
 } from "../core/eosKernelPrimitives.ts";
 
+import { EosToolRegistry } from "./eosToolRegistry.ts";
+import { CORE_TOOL_HANDLERS } from "./handlers/eosCoreToolHandlers.ts";
+
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
   id?: string | number | null;
@@ -384,6 +387,7 @@ export class EosMcpServer {
   private static globalHashChain = new EosMonotonicHashChain();
   private readonly knowledgeStore = createDefaultEosKnowledgeStore();
   private readonly projectRoot: string;
+  private readonly registry: EosToolRegistry;
 
   constructor(projectRoot?: string) {
     const currentDir = typeof __dirname !== "undefined"
@@ -401,6 +405,12 @@ export class EosMcpServer {
       this.projectRoot = process.cwd();
     } else {
       this.projectRoot = repoCandidate;
+    }
+
+    // Initialize tool registry and register core handlers
+    this.registry = new EosToolRegistry();
+    for (const handler of CORE_TOOL_HANDLERS) {
+      this.registry.register(handler);
     }
   }
 
@@ -427,15 +437,108 @@ export class EosMcpServer {
               protocolVersion: "2024-11-05",
               capabilities: {
                 tools: {},
-                resources: {}
+                resources: { subscribe: false, listChanged: false },
+                prompts: { listChanged: false },
+                logging: {},
               },
               serverInfo: {
                 name: "eos-system-mcp",
-                version: "18.0.0",
-                description: "EOS Sovereign Engineering Operating System MCP Interface"
-              }
-            }
+                version: "61.0.0",
+                description: "EOS Sovereign Engineering Operating System — AGI Harness, Consulting Engine, Dynamic Tool Forge",
+              },
+            },
           };
+
+        // ── Antigravity / Gemini: prompts/list ────────────────────────────
+        case "prompts/list":
+          return {
+            jsonrpc: "2.0",
+            id,
+            result: {
+              prompts: [
+                {
+                  name: "eos-consult",
+                  description: "Get a world-class consulting deliverable (5-Whys, ADR, code, risk matrix, FinOps) offline — no API key needed.",
+                  arguments: [{ name: "problem", description: "Engineering problem, bug, or architecture question", required: true }],
+                },
+                {
+                  name: "eos-pipeline",
+                  description: "AGI end-to-end pipeline: context assembly → Tree of Thoughts → deterministic tribunal → verified code.",
+                  arguments: [
+                    { name: "problem", description: "Problem description", required: true },
+                    { name: "targetFile", description: "Primary file to fix", required: true },
+                    { name: "testCommand", description: "Test command (exit 0 = law)", required: true },
+                  ],
+                },
+                {
+                  name: "eos-drift",
+                  description: "Detect spec drift — modules modified without updating their formal specification.",
+                  arguments: [{ name: "daysThreshold", description: "Days threshold (default: 7)", required: false }],
+                },
+                {
+                  name: "eos-context",
+                  description: "Assemble a token-budget context block using semantic blast radius.",
+                  arguments: [
+                    { name: "objective", description: "What to do", required: true },
+                    { name: "targetFile", description: "Primary file", required: true },
+                    { name: "tokenBudget", description: "Max tokens (default: 32000)", required: false },
+                  ],
+                },
+              ],
+            },
+          };
+
+        // ── Antigravity / Gemini: prompts/get ─────────────────────────────
+        case "prompts/get": {
+          const promptName = params?.name;
+          const promptArgs = params?.arguments ?? {};
+          switch (promptName) {
+            case "eos-consult":
+              return {
+                jsonrpc: "2.0", id,
+                result: {
+                  description: "EOS consulting prompt",
+                  messages: [{
+                    role: "user",
+                    content: {
+                      type: "text",
+                      text: `Use the eos_consult tool with problem: "${promptArgs.problem ?? "describe your problem"}"`,
+                    },
+                  }],
+                },
+              };
+            default:
+              return { jsonrpc: "2.0", id, error: { code: -32602, message: `Unknown prompt: ${promptName}` } };
+          }
+        }
+
+        // ── Antigravity / Gemini: resources/list ──────────────────────────
+        case "resources/list":
+          return {
+            jsonrpc: "2.0",
+            id,
+            result: {
+              resources: [
+                { uri: "eos://specs/constitution", name: "EOS Constitution", description: "7 Inviolable Laws and EARS/BDD standards", mimeType: "text/markdown" },
+                { uri: "eos://evidence/receipt", name: "Last CI/CD Receipt", description: "Cryptographically sealed SBOM from last CI run", mimeType: "application/json" },
+                { uri: "eos://projects/registry", name: "Fleet Registry", description: "Fleet project registry with paths and URLs", mimeType: "application/json" },
+                { uri: "eos://memory/axioms", name: "AGI Axiom Memory", description: "Learned rules from past failed branches — inject into prompts", mimeType: "application/json" },
+                { uri: "eos://openapi", name: "EOS OpenAPI Spec", description: "OpenAPI 3.1 for all 14 serverless API endpoints", mimeType: "application/yaml" },
+              ],
+            },
+          };
+
+        // ── Antigravity / Gemini: resources/read ──────────────────────────
+        case "resources/read": {
+          const uri = params?.uri as string;
+          const content = this.readResource(uri);
+          return {
+            jsonrpc: "2.0", id,
+            result: {
+              contents: [{ uri, mimeType: "application/json", text: content }],
+            },
+          };
+        }
 
         case "tools/list":
           return {
@@ -1767,6 +1870,101 @@ export class EosMcpServer {
                       sampleValue: { type: "number", description: "Sample numeric input to assert against preconditions" }
                     }
                   }
+                },
+                {
+                  name: "eos_consult",
+                  description: "World-class consulting deliverable: 5-Whys root cause, ADR recommendation, implementation plan, risk matrix, and exact code — offline, no AI call needed.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      problem: { type: "string", description: "Describe the problem, bug, architecture question, or decision" },
+                      engagementType: { type: "string", enum: ["ARCHITECTURE_REVIEW", "NEW_FEATURE", "BUG_INVESTIGATION", "PERFORMANCE_AUDIT", "SECURITY_AUDIT", "TECH_DEBT_REDUCTION", "MIGRATION", "INCIDENT_POSTMORTEM", "GENERAL"] },
+                      techStack: { type: "string", enum: ["typescript", "javascript", "go", "rust", "python", "java", "sql", "terraform", "kubernetes"] },
+                      context: { type: "string", description: "Relevant code, error messages, or system context" },
+                      constraints: { type: "string", description: "Team size, timeline, performance budget" }
+                    },
+                    required: ["problem"]
+                  }
+                },
+                {
+                  name: "eos_agi_solve",
+                  description: "Runs the Tree of Thoughts solve cycle with live progress streaming — generates branches, evaluates each through the deterministic tribunal, crystallizes axioms from failures.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      objective: { type: "string", description: "The engineering objective to solve" },
+                      branches: { type: "array", description: "Array of ThoughtBranch objects from eos_agi_axioms + model router" },
+                      testCommand: { type: "string", description: "Test command to use as tribunal (default: npm test)" },
+                      timeoutMs: { type: "number", description: "Timeout per branch in ms (default: 60000)" },
+                    },
+                    required: ["objective", "branches"]
+                  }
+                },
+                {
+                  name: "eos_pipeline",
+                  description: "End-to-end pipeline: assembles context → generates branches via model router → evaluates through tribunal → returns verified solution. Requires API key for model routing.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      problem: { type: "string", description: "Natural language problem description" },
+                      targetFile: { type: "string", description: "Primary file to fix/modify (relative path)" },
+                      testCommand: { type: "string", description: "Test command as tribunal (must exit 0 on success)" },
+                      tokenBudget: { type: "number", description: "Max tokens for context (default: 32000)" },
+                      branchCount: { type: "number", description: "Number of solution branches (default: 3)" },
+                      timeoutMs: { type: "number", description: "Timeout per branch in ms (default: 30000)" }
+                    },
+                    required: ["problem", "targetFile", "testCommand"]
+                  }
+                },
+                {
+                  name: "eos_agi_axioms",
+                  description: "Returns all crystallized axioms learned from past failed branches — inject into AI prompts to prevent repeat errors.",
+                  inputSchema: { type: "object", properties: {} }
+                },
+                {
+                  name: "eos_forge_list",
+                  description: "Lists all dynamically forged MCP tools created at runtime by the AGI Core.",
+                  inputSchema: { type: "object", properties: {} }
+                },
+                {
+                  name: "eos_forge_tool",
+                  description: "Creates and registers a new MCP tool at runtime from provided ESM module source code.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      toolName: { type: "string", description: "Tool name (eos_ prefix added automatically)" },
+                      description: { type: "string", description: "One-sentence tool description" },
+                      inputSchema: { type: "object", description: "JSON Schema for tool arguments" },
+                      moduleSource: { type: "string", description: "Complete ESM module source code exporting name, description, inputSchema, execute" }
+                    },
+                    required: ["toolName", "description", "moduleSource"]
+                  }
+                },
+                {
+                  name: "eos_context_window",
+                  description: "Assembles an LLM-ready context block for a target file within a token budget — selects relevant files via blast radius, compresses each, prioritizes by relevance.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      objective: { type: "string", description: "What the AI needs to do" },
+                      targetFile: { type: "string", description: "Relative path to the primary file" },
+                      tokenBudget: { type: "number", description: "Max tokens (default: 32000)" },
+                      includeTests: { type: "boolean" },
+                      includeSpecs: { type: "boolean" },
+                    },
+                    required: ["objective", "targetFile"]
+                  }
+                },
+                {
+                  name: "eos_spec_drift",
+                  description: "Detects drift between source code and formal specs — finds modules without specs, specs without modules, and code newer than its spec.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      driftThresholdDays: { type: "number", description: "Days of drift to flag (default: 7)" },
+                      checkOrphanSpecs: { type: "boolean" }
+                    }
+                  }
                 }
               ]
             }
@@ -1861,6 +2059,12 @@ export class EosMcpServer {
     args: Record<string, any>,
     onProgress?: (progress: number, total?: number, message?: string) => void
   ): any {
+    // Try registry first — handlers registered via EosToolRegistry take priority
+    const registryCtx = { projectRoot: this.projectRoot, knowledgeStore: this.knowledgeStore };
+    if (this.registry.listTools().some(h => h.name === toolName)) {
+      return this.registry.dispatch(toolName, args, registryCtx);
+    }
+
     switch (toolName) {
       case "eos_semantic_search": {
         const query = String(args.query || "");
@@ -2209,12 +2413,12 @@ export class EosMcpServer {
         const tracks: TrackNode[] = Array.isArray(args.tracks) && args.tracks.length > 0
           ? args.tracks
           : [
-              { id: "spotify:track:001", artistId: "Armin van Buuren", bpm: 132, camelotKey: "8A" },
-              { id: "spotify:track:002", artistId: "Armin van Buuren", bpm: 134, camelotKey: "8A" },
-              { id: "spotify:track:003", artistId: "Paul Oakenfold", bpm: 130, camelotKey: "9A" },
-              { id: "spotify:track:004", artistId: "Paul Oakenfold", bpm: 132, camelotKey: "9A" },
-              { id: "spotify:track:005", artistId: "Ferry Corsten", bpm: 130, camelotKey: "8B" }
-            ];
+            { id: "spotify:track:001", artistId: "Armin van Buuren", bpm: 132, camelotKey: "8A" },
+            { id: "spotify:track:002", artistId: "Armin van Buuren", bpm: 134, camelotKey: "8A" },
+            { id: "spotify:track:003", artistId: "Paul Oakenfold", bpm: 130, camelotKey: "9A" },
+            { id: "spotify:track:004", artistId: "Paul Oakenfold", bpm: 132, camelotKey: "9A" },
+            { id: "spotify:track:005", artistId: "Ferry Corsten", bpm: 130, camelotKey: "8B" }
+          ];
         const seed = Number(args.seed) || 42108;
         return executeSpotifySmartShuffle(tracks, seed);
       }
@@ -2891,10 +3095,10 @@ export class EosMcpServer {
         const tasks = Array.isArray(args.tasks) && args.tasks.length > 0
           ? args.tasks
           : [
-              { id: "T1", name: "Core Architecture", optimistic: 4, nominal: 8, pessimistic: 16 },
-              { id: "T2", name: "Automated QA & Gates", optimistic: 2, nominal: 4, pessimistic: 8 },
-              { id: "T3", name: "Edge Deployment & Verify", optimistic: 1, nominal: 2, pessimistic: 4 }
-            ];
+            { id: "T1", name: "Core Architecture", optimistic: 4, nominal: 8, pessimistic: 16 },
+            { id: "T2", name: "Automated QA & Gates", optimistic: 2, nominal: 4, pessimistic: 8 },
+            { id: "T3", name: "Edge Deployment & Verify", optimistic: 1, nominal: 2, pessimistic: 4 }
+          ];
         const iterations = typeof args.iterations === "number" ? args.iterations : 10000;
         const seed = typeof args.seed === "number" ? args.seed : 42;
         const deadlineHours = typeof args.deadlineHours === "number" ? args.deadlineHours : 20;
@@ -3078,6 +3282,115 @@ export class EosMcpServer {
         return EosMetaCognitiveSynapse.arbitrateIntents(candidates);
       }
 
+      case "eos_consult": {
+        const { EosConsultantCore } = await import("../core/eosConsultantCore.ts");
+        const consultant = new EosConsultantCore(this.projectRoot);
+        const problem = String(args.problem || "");
+        if (!problem) return { error: "problem field is required" };
+        const deliverable = consultant.engage({
+          problem,
+          engagementType: args.engagementType as any,
+          techStack: args.techStack as any,
+          context: args.context ? String(args.context) : undefined,
+          constraints: args.constraints ? String(args.constraints) : undefined,
+        });
+        const filePath = consultant.saveDeliverable(deliverable);
+        return { ...deliverable, savedTo: filePath };
+      }
+
+      case "eos_agi_solve": {
+        const { EosAgiCore } = await import("../core/eosAgiCore.ts");
+        const core = new EosAgiCore(this.projectRoot);
+        const branches = Array.isArray(args.branches) ? args.branches : [];
+        const objective = String(args.objective || "");
+        const testCommand = String(args.testCommand || "node scripts/verify-cicd-pipeline.mjs");
+
+        const progressEvents: unknown[] = [];
+        const result = core.solve(objective, branches, {
+          testCommand,
+          testCwd: this.projectRoot,
+          timeoutMs: Number(args.timeoutMs) || 60_000,
+          onProgress: (event) => {
+            progressEvents.push(event);
+            // Send MCP progress notification
+            onProgress?.(progressEvents.length, branches.length, event.message);
+          },
+        });
+        return { ...result, progressEvents };
+      }
+
+      case "eos_agi_axioms": {
+        const { EosAgiCore } = await import("../core/eosAgiCore.ts");
+        const core = new EosAgiCore(this.projectRoot);
+        return {
+          axioms: core.getAxioms(),
+          rulesBlock: core.getRulesBlock(),
+          totalAxioms: core.getAxioms().length,
+        };
+      }
+
+      case "eos_forge_list": {
+        const { EosDynamicToolForge } = await import("../core/eosDynamicToolForge.ts");
+        const forge = new EosDynamicToolForge(this.projectRoot);
+        return {
+          tools: forge.listTools(),
+          mcpDescriptors: forge.getMcpToolDescriptors(),
+          forgeDirectory: forge.forgeDirectory,
+        };
+      }
+
+      case "eos_forge_tool": {
+        const { EosDynamicToolForge } = await import("../core/eosDynamicToolForge.ts");
+        const forge = new EosDynamicToolForge(this.projectRoot);
+        const result = forge.forge({
+          toolName: String(args.toolName || ""),
+          description: String(args.description || ""),
+          inputSchema: (args.inputSchema as Record<string, unknown>) || { type: "object", properties: {} },
+          moduleSource: String(args.moduleSource || ""),
+          requestedBy: "eos_mcp_server",
+        });
+        if (!result.ok) return { success: false, error: result.error.message };
+        return result.value;
+      }
+
+      case "eos_context_window": {
+        const { EosContextWindowManager } = await import("../core/eosContextWindowManager.ts");
+        const mgr = new EosContextWindowManager(this.projectRoot);
+        return mgr.assemble(
+          String(args.objective || ""),
+          String(args.targetFile || ""),
+          {
+            tokenBudget: args.tokenBudget ? Number(args.tokenBudget) : undefined,
+            includeTests: args.includeTests !== false,
+            includeSpecs: args.includeSpecs !== false,
+          }
+        );
+      }
+
+      case "eos_spec_drift": {
+        const { EosSpecDriftDetector } = await import("../core/eosSpecDriftDetector.ts");
+        const detector = new EosSpecDriftDetector(this.projectRoot);
+        return detector.detect({
+          driftThresholdDays: args.driftThresholdDays ? Number(args.driftThresholdDays) : undefined,
+          checkOrphanSpecs: args.checkOrphanSpecs !== false,
+        });
+      }
+
+      case "eos_pipeline": {
+        const { EosPipeline } = await import("../core/eosPipeline.ts");
+        const pipeline = new EosPipeline(this.projectRoot);
+        const result = await pipeline.solve({
+          problem: String(args.problem || ""),
+          targetFile: String(args.targetFile || ""),
+          testCommand: String(args.testCommand || "node scripts/verify-cicd-pipeline.mjs"),
+          testCwd: this.projectRoot,
+          tokenBudget: args.tokenBudget ? Number(args.tokenBudget) : undefined,
+          branchCount: args.branchCount ? Number(args.branchCount) : undefined,
+          timeoutMs: args.timeoutMs ? Number(args.timeoutMs) : undefined,
+        });
+        return result;
+      }
+
       default:
         throw new Error(`Unknown tool: ${toolName}`);
     }
@@ -3099,6 +3412,16 @@ export class EosMcpServer {
         const regPath = path.join(this.projectRoot, "docs/projects/registry.json");
         if (fs.existsSync(regPath)) return fs.readFileSync(regPath, "utf8");
         return JSON.stringify({ projects: [] });
+      }
+      case "eos://memory/axioms": {
+        const axiomsPath = path.join(this.projectRoot, "docs/memory/agi_axioms.json");
+        if (fs.existsSync(axiomsPath)) return fs.readFileSync(axiomsPath, "utf8");
+        return JSON.stringify([]);
+      }
+      case "eos://openapi": {
+        const openapiPath = path.join(this.projectRoot, "openspec/openapi.yaml");
+        if (fs.existsSync(openapiPath)) return fs.readFileSync(openapiPath, "utf8");
+        return "openapi: 3.1.0\ninfo:\n  title: EOS System API\n  version: 61.0.0";
       }
       default:
         throw new Error(`Unknown resource URI: ${uri}`);

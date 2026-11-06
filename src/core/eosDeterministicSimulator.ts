@@ -58,11 +58,11 @@ export class EosDeterministicSimulator {
   private readonly totalSteps: number;
   private readonly nodesCount: number;
   private readonly faultRate: number;
-  private readonly prng: () => number;
 
   private virtualTimeMs = 0;
   private eventQueue: SimulatedEvent[] = [];
   private eventHistory: string[] = [];
+  private invariantsViolated = 0;
   private faultCounts: Record<FaultType, number> = {
     PACKET_DROP: 0,
     DISK_CORRUPT: 0,
@@ -78,24 +78,67 @@ export class EosDeterministicSimulator {
     this.totalSteps = config.totalSteps;
     this.nodesCount = config.nodesCount ?? 5;
     this.faultRate = config.faultInjectionRate ?? 0.05;
-    this.prng = createMulberry32(this.seed);
   }
 
   /**
-   * Runs the complete deterministic simulation loop.
+   * Resets all mutable simulation state and runs the simulation loop exactly
+   * once using a fresh PRNG seeded from `this.seed`.
+   *
+   * Returns the SHA-256 hash of the execution trace produced by that run, and
+   * leaves the instance fields populated with the last run's data so that
+   * `runSimulation()` can read them after the first call.
    */
-  public runSimulation(): SimulationResult {
-    let steps = 0;
-    let invariantsViolated = 0;
+  private _runOnce(): string {
+    // Reset all mutable state so every call is fully independent of prior runs
+    this.virtualTimeMs = 0;
+    this.eventQueue = [];
+    this.eventHistory = [];
+    this.invariantsViolated = 0;
+    this.faultCounts = {
+      PACKET_DROP: 0,
+      DISK_CORRUPT: 0,
+      NODE_CRASH: 0,
+      LATENCY_JITTER: 0
+    };
+
+    // Fresh PRNG from the same seed — the core of DST reproducibility
+    const prng = createMulberry32(this.seed);
+
+    // Local helper mirrors scheduleRandomEvent but uses the local prng
+    const scheduleRandomEvent = (atTick: number): void => {
+      const senderId = `node-${Math.floor(prng() * this.nodesCount)}`;
+      let receiverId = `node-${Math.floor(prng() * this.nodesCount)}`;
+      if (receiverId === senderId) {
+        receiverId = `node-${(Math.floor(prng() * this.nodesCount) + 1) % this.nodesCount}`;
+      }
+
+      const isFault = prng() < this.faultRate;
+      let faultType: FaultType | undefined;
+      if (isFault) {
+        const types: FaultType[] = ["PACKET_DROP", "DISK_CORRUPT", "NODE_CRASH", "LATENCY_JITTER"];
+        faultType = types[Math.floor(prng() * types.length)];
+      }
+
+      const eventId = `evt-${atTick}-${Math.floor(prng() * 1000000).toString(16)}`;
+      this.eventQueue.push({
+        id: eventId,
+        tick: atTick,
+        sender: senderId,
+        receiver: receiverId,
+        payload: `data:${Math.floor(prng() * 0xffff).toString(16)}`,
+        isFault,
+        faultType
+      });
+    };
 
     // Bootstrap initial message queue
     for (let i = 0; i < 10; i++) {
-      this.scheduleRandomEvent(0);
+      scheduleRandomEvent(0);
     }
 
+    let steps = 0;
     while (steps < this.totalSteps && this.eventQueue.length > 0) {
       steps++;
-      // Sort priority queue by tick ascending, then event id deterministically
       this.eventQueue.sort((a, b) => (a.tick === b.tick ? a.id.localeCompare(b.id) : a.tick - b.tick));
       const current = this.eventQueue.shift()!;
 
@@ -104,70 +147,75 @@ export class EosDeterministicSimulator {
         `T=${current.tick}|${current.sender}->${current.receiver}|${current.payload}|fault=${current.isFault ? current.faultType : "none"}`
       );
 
-      // Fault handling & state transition
       if (current.isFault && current.faultType) {
         this.faultCounts[current.faultType]++;
       } else {
-        // Normal processing: schedule subsequent dependent event
-        if (this.prng() > 0.3) {
-          const delay = 1 + Math.floor(this.prng() * 50);
-          this.scheduleRandomEvent(this.virtualTimeMs + delay);
+        if (prng() > 0.3) {
+          const delay = 1 + Math.floor(prng() * 50);
+          scheduleRandomEvent(this.virtualTimeMs + delay);
         }
       }
 
-      // Check continuous system safety invariants
       const invariantOk = this.verifyStepInvariants(current);
       if (!invariantOk) {
-        invariantsViolated++;
+        this.invariantsViolated++;
       }
     }
 
-    assertPostcondition(steps > 0, "At least one simulation step must execute.");
+    return pureSha256(this.eventHistory.join("\n"));
+  }
+
+  /**
+   * Runs the complete deterministic simulation loop.
+   *
+   * Executes the simulation twice with the same seed and compares the resulting
+   * execution-trace hashes.  A mismatch means non-determinism was introduced
+   * somewhere in the simulation kernel and is surfaced as a ContractError via
+   * `assertInvariant`.
+   */
+  public runSimulation(): SimulationResult {
+    // First run — populates instance state we'll read for the result fields
+    const executionTraceHash = this._runOnce();
+
+    // Snapshot the meaningful outputs of the first run before _runOnce() clobbers them
+    const firstVirtualTimeMs = this.virtualTimeMs;
+    const firstEventHistory = [...this.eventHistory];
+    const firstFaultCounts = { ...this.faultCounts };
+    const firstInvariantsViolated = this.invariantsViolated;
+
+    // Second run with the identical seed — must produce the same hash
+    const verificationHash = this._runOnce();
+
+    // Restore first-run state so the result reflects the canonical first execution
+    this.virtualTimeMs = firstVirtualTimeMs;
+    this.eventHistory = firstEventHistory;
+    this.faultCounts = firstFaultCounts;
+    this.invariantsViolated = firstInvariantsViolated;
+
+    assertPostcondition(this.eventHistory.length > 0, "At least one simulation step must execute.");
     assertInvariant(this.virtualTimeMs >= 0, "Virtual clock must be non-negative.");
 
-    const rawTrace = this.eventHistory.join("\n");
-    const executionTraceHash = pureSha256(rawTrace);
+    // Core DST invariant: same seed → same trace
+    const verifiedDeterministic = executionTraceHash === verificationHash;
+    assertInvariant(
+      verifiedDeterministic,
+      "DETERMINISM_VIOLATED: Same seed produced different execution traces"
+    );
 
     const result: SimulationResult = {
       seed: this.seed,
-      totalStepsExecuted: steps,
+      totalStepsExecuted: this.eventHistory.length,
       virtualTimeElapsedMs: this.virtualTimeMs,
       totalEventsProcessed: this.eventHistory.length,
       totalFaultsInjected: Object.values(this.faultCounts).reduce((a, b) => a + b, 0),
       faultsByType: { ...this.faultCounts },
-      invariantsViolated,
+      invariantsViolated: this.invariantsViolated,
       executionTraceHash,
       reproducibleCommand: `eos dst ${this.seed} ${this.totalSteps} ${this.faultRate}`,
-      verifiedDeterministic: true
+      verifiedDeterministic
     };
 
     return deepFreeze(result);
-  }
-
-  private scheduleRandomEvent(atTick: number): void {
-    const senderId = `node-${Math.floor(this.prng() * this.nodesCount)}`;
-    let receiverId = `node-${Math.floor(this.prng() * this.nodesCount)}`;
-    if (receiverId === senderId) {
-      receiverId = `node-${(Math.floor(this.prng() * this.nodesCount) + 1) % this.nodesCount}`;
-    }
-
-    const isFault = this.prng() < this.faultRate;
-    let faultType: FaultType | undefined;
-    if (isFault) {
-      const types: FaultType[] = ["PACKET_DROP", "DISK_CORRUPT", "NODE_CRASH", "LATENCY_JITTER"];
-      faultType = types[Math.floor(this.prng() * types.length)];
-    }
-
-    const eventId = `evt-${atTick}-${Math.floor(this.prng() * 1000000).toString(16)}`;
-    this.eventQueue.push({
-      id: eventId,
-      tick: atTick,
-      sender: senderId,
-      receiver: receiverId,
-      payload: `data:${Math.floor(this.prng() * 0xffff).toString(16)}`,
-      isFault,
-      faultType
-    });
   }
 
   private verifyStepInvariants(evt: SimulatedEvent): boolean {

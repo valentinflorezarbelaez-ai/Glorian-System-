@@ -34,6 +34,7 @@ export default async function handler(req, res) {
 
   let blastResult = null;
   let summaryResult = null;
+  let fallbackMeta = null;
 
   try {
     // Attempt dynamic load of TypeScript engine (Node 24 native type stripping)
@@ -48,7 +49,7 @@ export default async function handler(req, res) {
       blastResult = graph.getBlastRadius(targetFile);
       summaryResult = graph.getSummary();
     }
-  } catch (_err) {
+  } catch (err) {
     // Resilient Layer-0 fallback for environments without TypeScript runtime loading
     const defaultConsumers = [
       "src/core/eosMcpServer.ts",
@@ -76,13 +77,25 @@ export default async function handler(req, res) {
       deadCodeCount: 0,
       deadSymbols: []
     };
+    fallbackMeta = {
+      dataSource: "STATIC_FALLBACK",
+      fallbackReason: "TypeScript runtime import unavailable in this environment",
+      fallbackError: process.env.NODE_ENV !== "production" ? err.message : "TypeScript runtime unavailable",
+      warning: "Graph data is static. Run in Node.js 22+ with native TypeScript stripping for live analysis.",
+      ...(process.env.NODE_ENV !== "production" && {
+        _debug: {
+          errorName: err.name,
+          errorStack: err.stack
+        }
+      })
+    };
   }
 
   const endTime = process.hrtime.bigint();
   const latencyMicros = Number(endTime - startTime) / 1000;
 
   const responsePayload = {
-    status: "SUCCESS",
+    status: fallbackMeta ? "FALLBACK_MODE" : "SUCCESS",
     version: "16.0.0",
     tier: "BIG_TECH_TIER_1",
     engine: "Google Kythe / Meta Buck2 Semantic Direct Graph",
@@ -93,7 +106,8 @@ export default async function handler(req, res) {
       algorithm: "Transitive BFS with Cycle Detection & In-Memory Inverted Index"
     },
     blastRadius: blastResult,
-    summary: summaryResult
+    summary: summaryResult,
+    ...(fallbackMeta && fallbackMeta)
   };
 
   return res.status(200).json(responsePayload);

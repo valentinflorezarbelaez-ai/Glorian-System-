@@ -59,6 +59,7 @@ export interface SemanticGraphSummary {
   readonly totalEdges: number;
   readonly deadCodeCount: number;
   readonly deadSymbols: readonly DeadCodeSymbol[];
+  readonly durationMs: number;
 }
 
 /**
@@ -149,10 +150,71 @@ export class EosSemanticGraph {
   public readonly nodes = new Map<string, FileNode>();
   public readonly symbolIndex = new Map<string, ExportedSymbol[]>();
   public readonly projectRoot: string;
+  private readonly _cacheFile: string;
+  private static readonly _CACHE_VERSION = "1";
 
   constructor(projectRoot: string = process.cwd()) {
     this.projectRoot = projectRoot;
+    this._cacheFile = path.join(this.projectRoot, ".eos-graph-cache.json");
+    this._loadOrBuild();
+  }
+
+  private _loadOrBuild(): void {
+    // Compute a fast fingerprint of all source files (mtimeMs sum)
+    const fingerprint = this._computeFingerprint();
+
+    // Try loading from cache
+    if (fs.existsSync(this._cacheFile)) {
+      try {
+        const cache = JSON.parse(fs.readFileSync(this._cacheFile, "utf8"));
+        if (cache.version === EosSemanticGraph._CACHE_VERSION && cache.fingerprint === fingerprint) {
+          // Restore nodes from cache
+          for (const [k, v] of Object.entries(cache.nodes as Record<string, unknown>)) {
+            this.nodes.set(k, v as FileNode);
+          }
+          return; // cache hit
+        }
+      } catch {
+        // corrupt cache — rebuild
+      }
+    }
+
+    // Cache miss or stale — rebuild and save
     this.buildGraph();
+    this._saveCache(fingerprint);
+  }
+
+  private _computeFingerprint(): string {
+    // Scan directories directly for fingerprint (pre-build, nodes map is empty)
+    const dirs = ["src", "test", "api", "bin"];
+    let fsum = 0n;
+    for (const dir of dirs) {
+      const d = path.join(this.projectRoot, dir);
+      if (!fs.existsSync(d)) continue;
+      const walk = (p: string) => {
+        for (const e of fs.readdirSync(p, { withFileTypes: true })) {
+          const full = path.join(p, e.name);
+          if (e.isDirectory() && e.name !== "node_modules" && !e.name.startsWith(".")) walk(full);
+          else if (e.isFile() && /\.(ts|tsx|js|mjs)$/.test(e.name)) {
+            try { fsum += BigInt(Math.floor(fs.statSync(full).mtimeMs)); } catch { /* skip */ }
+          }
+        }
+      };
+      walk(d);
+    }
+    return fsum.toString(16);
+  }
+
+  private _saveCache(fingerprint: string): void {
+    try {
+      const cache = {
+        version: EosSemanticGraph._CACHE_VERSION,
+        fingerprint,
+        savedAt: new Date().toISOString(),
+        nodes: Object.fromEntries(this.nodes),
+      };
+      fs.writeFileSync(this._cacheFile, JSON.stringify(cache), "utf8");
+    } catch { /* best-effort */ }
   }
 
   private buildGraph(): void {
@@ -325,27 +387,25 @@ export class EosSemanticGraph {
 
   /**
    * Identifies exported symbols with zero active consumers across the codebase.
+   *
+   * Uses the already-built import/export graph — O(N) over file nodes, no regex,
+   * no file I/O. A module whose `importedBy` array is empty has no consumers, so
+   * every symbol it exports is considered dead.
    */
   public detectDeadSymbols(): DeadCodeSymbol[] {
     const deadSymbols: DeadCodeSymbol[] = [];
 
-    // Aggregate all source code text
-    const allCodeBuffers: string[] = [];
     for (const node of this.nodes.values()) {
-      try {
-        allCodeBuffers.push(fs.readFileSync(node.fullPath, "utf8"));
-      } catch {
-        // Skip locked file
-      }
-    }
-    const combinedCode = allCodeBuffers.join("\n");
-
-    for (const [name, syms] of this.symbolIndex.entries()) {
-      // Look for occurrences outside the definition file
-      const matches = combinedCode.match(new RegExp(`\\b${name}\\b`, "g")) || [];
-      // If it only appears once or twice (just definition and export in its own file)
-      if (matches.length <= 1) {
-        deadSymbols.push(syms[0]);
+      // No other module imports this file → all its exports are unreachable.
+      if (node.importedBy.length === 0 && node.exports.length > 0) {
+        for (const sym of node.exports) {
+          deadSymbols.push({
+            name: sym.name,
+            kind: sym.kind,
+            filePath: sym.filePath,
+            lineNumber: sym.lineNumber
+          });
+        }
       }
     }
 
@@ -364,14 +424,17 @@ export class EosSemanticGraph {
       totalEdges += node.imports.length;
     }
 
+    const startMs = Date.now();
     const deadSymbols = this.detectDeadSymbols();
+    const durationMs = Date.now() - startMs;
 
     return {
       totalFiles: this.nodes.size,
       totalExports,
       totalEdges,
       deadCodeCount: deadSymbols.length,
-      deadSymbols
+      deadSymbols,
+      durationMs
     };
   }
 

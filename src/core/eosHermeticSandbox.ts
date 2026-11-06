@@ -61,10 +61,33 @@ export class EosHermeticSandbox {
 
   /**
    * Normalizes a relative path within projectRoot.
+   * SECURITY: rejects any path that attempts to escape via ../ sequences.
    */
   private normalizeRel(relPath: string): string {
     const clean = path.normalize(relPath).replace(/^[\\/]+/, "");
+    // CRITICAL: block path traversal — any ../ after normalization is an escape attempt
+    if (clean.startsWith("..") || clean.includes("/../") || clean.includes("\\..\\")) {
+      throw new Error(
+        `Security violation: path traversal attempt detected in staged path "${relPath}" → "${clean}". ` +
+        `Staged paths must remain within projectRoot.`
+      );
+    }
     return clean.replace(/\\/g, "/");
+  }
+
+  /**
+   * Validates that a full absolute path stays within projectRoot.
+   * Throws if the path would escape.
+   */
+  private _assertContained(fullPath: string, relPath: string): void {
+    const normalizedRoot = this.projectRoot.replace(/\\/g, "/");
+    const normalizedFull = fullPath.replace(/\\/g, "/");
+    if (!normalizedFull.startsWith(normalizedRoot + "/") && normalizedFull !== normalizedRoot) {
+      throw new Error(
+        `Security violation: resolved path "${fullPath}" escapes projectRoot "${this.projectRoot}". ` +
+        `Origin relPath: "${relPath}"`
+      );
+    }
   }
 
   /**
@@ -339,6 +362,8 @@ export class EosHermeticSandbox {
     // Physical disk write
     for (const entry of entries) {
       const fullPath = path.join(this.projectRoot, entry.relPath);
+      // CRITICAL: containment check — ensure we never write outside projectRoot
+      this._assertContained(fullPath, entry.relPath);
       if (entry.isDeletion) {
         if (fs.existsSync(fullPath)) {
           fs.unlinkSync(fullPath);

@@ -1,5 +1,10 @@
 #!/bin/sh
-echo "🔒 [EOS Sovereign Fleet Gate] Executing SAST, Zero-Secrets & Integrity Check..."
+# EOS Sovereign Fleet Gate — pre-push
+# 1. Secret scan
+# 2. Turbo verification
+
+# ── 1. Secret scan ────────────────────────────────────────────────────────────
+echo "🔒 [EOS pre-push] Scanning for secrets..."
 node -e '
 const fs = require("fs");
 const path = require("path");
@@ -21,4 +26,17 @@ function scan(dir) {
 scan(process.cwd());
 console.log("✅ [PASSED] 0 secrets detected. Gate clear.");
 '
-exit $?
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+# ── 2. Turbo verification ─────────────────────────────────────────────────────
+echo "🚀 [EOS pre-push] Running turbo verification..."
+node bin/eos.mjs turbo
+if [ $? -ne 0 ]; then
+  echo "❌ Turbo verification failed. Fix before pushing."
+  exit 1
+fi
+
+echo "✅ Pre-push gate passed."
+exit 0

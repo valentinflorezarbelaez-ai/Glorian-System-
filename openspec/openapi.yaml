@@ -1,0 +1,1464 @@
+openapi: 3.1.0
+info:
+  title: EOS System Sovereign API
+  version: 48.0.0
+  description: EOS Engineering Operating System — 14 Serverless Edge API Endpoints
+servers:
+  - url: https://eos-system-ten.vercel.app
+    description: Production (Vercel Edge)
+  - url: http://localhost:3000
+    description: Local development
+
+paths:
+
+  /api/health:
+    get:
+      summary: System health and SLI/SLO report
+      description: >
+        CNCF-compliant health check endpoint. Returns runtime status, uptime,
+        memory telemetry, W3C traceparent, and Google SRE SLI/SLO report for
+        all core subsystems. Zero external dependencies.
+      parameters:
+        - name: traceparent
+          in: header
+          required: false
+          description: W3C Trace Context propagation header (RFC 7230)
+          schema:
+            type: string
+            example: "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+        - name: x-trace-id
+          in: header
+          required: false
+          description: Legacy trace ID header (propagated if traceparent is absent)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: System is healthy
+          headers:
+            traceparent:
+              schema:
+                type: string
+              description: W3C traceparent generated or propagated
+            X-Trace-Id:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/graph:
+    get:
+      summary: Semantic dependency graph and blast-radius analysis
+      description: >
+        Calculates transitive blast radius for a given source file using a BFS
+        inverted-index graph (inspired by Google Kythe / Meta Glean). Also
+        returns Predictive Test Selection (PTS) and dead-code detection.
+        Falls back to a deterministic static payload when the TypeScript engine
+        cannot be loaded (e.g., Node < 22).
+      parameters:
+        - name: file
+          in: query
+          required: false
+          description: Relative path to the target source file to analyse
+          schema:
+            type: string
+            default: src/core/eosPromptAmplifier.ts
+            example: src/core/eosSemanticGraph.ts
+        - name: action
+          in: query
+          required: false
+          description: >
+            `blast` (default) — compute blast radius for `file`.
+            `summary` — return graph-wide summary only.
+          schema:
+            type: string
+            enum: [blast, summary]
+            default: blast
+      responses:
+        "200":
+          description: Blast-radius result and graph summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GraphResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/compile:
+    get:
+      summary: Zero-allocation SoA nanosecond compiler benchmark
+      description: >
+        Runs a pre-allocated 64 KB L1-cache Struct-of-Arrays (SoA) benchmark
+        with 8-wide loop unrolling and zero heap allocations during the hot
+        path. Reports nanoseconds-per-op and million-ops/sec throughput.
+      parameters:
+        - name: instruction
+          in: query
+          required: false
+          description: Natural-language instruction describing the desired compilation target
+          schema:
+            type: string
+            default: "Construir aplicación de velocidad extrema a 120 FPS"
+        - name: profile
+          in: query
+          required: false
+          description: Compiler profile identifier
+          schema:
+            type: string
+            default: zed-gpui-120fps
+      responses:
+        "200":
+          description: Benchmark result with nanosecond telemetry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompileResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/amplify:
+    get:
+      summary: Prometheus Omni-Model prompt amplifier
+      description: >
+        Transforms an informal prompt into EARS formal requirements, BDD
+        acceptance scenarios, and model-specific scaffolding. Served by the
+        same handler as `/api/compile` — the `prompt` query parameter (or
+        `mode=amplify`) routes to the amplifier branch.
+      parameters:
+        - name: prompt
+          in: query
+          required: false
+          description: Raw natural-language prompt to amplify
+          schema:
+            type: string
+            example: "Diseñar módulo de autenticación biométrica y rate-limiting"
+        - name: model
+          in: query
+          required: false
+          description: Target AI model to scaffold for
+          schema:
+            type: string
+            enum: [claude, grok, openai, gemini, deepseek, universal]
+            default: claude
+        - name: strict
+          in: query
+          required: false
+          description: Strictness level for the amplification
+          schema:
+            type: string
+            enum: [sovereign, strict, standard]
+            default: sovereign
+        - name: mode
+          in: query
+          required: false
+          description: Set to `amplify` to force the amplifier branch
+          schema:
+            type: string
+            enum: [amplify]
+      responses:
+        "200":
+          description: Amplified EARS + BDD specification
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmplifyResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/eval:
+    get:
+      summary: Sovereign cognitive evaluation across 5 quality dimensions
+      description: >
+        Evaluates a source file or inline code snippet across five weighted
+        dimensions: OWASP security (30%), hexagonal purity (25%), AST syntax
+        (20%), EARS/BDD conformance (15%), and hallucination risk (10%).
+        Returns a composite score and `PRODUCTION_READY` / `NEEDS_REVIEW`
+        verdict.
+      parameters:
+        - name: target
+          in: query
+          required: false
+          description: Relative path to the file to evaluate
+          schema:
+            type: string
+            default: src/core/eosPromptAmplifier.ts
+        - name: code
+          in: query
+          required: false
+          description: Inline code snippet to evaluate (overrides `target`)
+          schema:
+            type: string
+        - name: mode
+          in: query
+          required: false
+          description: Set to `titans` to run the Big Tech Titans benchmark instead
+          schema:
+            type: string
+            enum: [titans]
+      responses:
+        "200":
+          description: Evaluation result with composite score
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EvalResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/titans:
+    get:
+      summary: Big Tech Titans benchmark matrix
+      description: >
+        Benchmarks system performance against seven Big-Tech engineering
+        archetypes: Spotify Xirp, SpaceX Flight TMR, NVIDIA Tensor SIMD,
+        Google Borg Reconcile, xAI Colossus Fabric, Nubank Datomic Ledger,
+        and Spotify Smart Shuffle. Served by the same handler as `/api/eval`
+        via `mode=titans` or a `titan` query parameter.
+      parameters:
+        - name: titan
+          in: query
+          required: false
+          description: >
+            Run a single titan benchmark. One of: `xirp`, `spacex`, `nvidia`,
+            `google`, `xai`, `nubank`, `shuffle`. Omit (or `all`) for the full
+            matrix.
+          schema:
+            type: string
+            enum: [xirp, spacex, nvidia, google, xai, nubank, shuffle, all]
+            default: all
+        - name: action
+          in: query
+          required: false
+          description: Alias for `titan`
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Titans benchmark results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TitansResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/fleet:
+    get:
+      summary: Sovereign fleet health and CI/CD dispatcher
+      description: >
+        Reports real-time health of all fleet projects: local path existence,
+        Git working-tree cleanliness, and optional live HTTP production probes.
+        Use `?action=live` to trigger full HTTP probes; default is fast
+        filesystem + git mode only.
+      parameters:
+        - name: action
+          in: query
+          required: false
+          description: >
+            `status` (default) — filesystem + git check only.
+            `live` — also probe production URLs via HTTP.
+          schema:
+            type: string
+            enum: [status, live]
+            default: status
+      responses:
+        "200":
+          description: Fleet health report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FleetResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/cicd:
+    get:
+      summary: 7-stage CI/CD pipeline status and SAST gate
+      description: >
+        Exposes real-time status of the 7-stage EOS CI/CD pipeline, SLSA
+        Level 4 SBOM Merkle root, and a live SAST scanner. Pass a `payload`
+        query parameter containing a suspected secret string to test the
+        fail-closed SAST gate.
+      parameters:
+        - name: mode
+          in: query
+          required: false
+          description: Pipeline view mode (currently only `full-pipeline`)
+          schema:
+            type: string
+            default: full-pipeline
+        - name: payload
+          in: query
+          required: false
+          description: >
+            Optional string to test the SAST secret scanner. If a plaintext
+            secret pattern is detected (e.g., `sk-live-*`, `ghp_*`, `AKIA*`),
+            the response `blockedBySast` will be `true`.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: CI/CD pipeline status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CicdResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/jarvis:
+    get:
+      summary: Jarvis sovereign cognitive monad directive processor
+      description: >
+        Accepts a natural-language directive in Spanish or English, classifies
+        intent (STATUS_REPORT, FLEET_AUDIT, FLEET_SHIP, SECURITY_GATE,
+        NANOSECOND_BENCHMARK, VECTOR_SEMANTIC_SEARCH, THEURGIC_ORACLE), and
+        returns a voice response text, recommended CLI action, and TMR
+        consensus result.
+      parameters:
+        - name: directive
+          in: query
+          required: false
+          description: Natural-language directive for Jarvis
+          schema:
+            type: string
+            default: "Estado general del sistema"
+            example: "Audita la flota soberana"
+      responses:
+        "200":
+          description: Jarvis cognitive response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JarvisResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/kernel:
+    get:
+      summary: Linux Kernel Ring-0 VFS node reader
+      description: >
+        Exposes virtual filesystem nodes under `/proc/eos/`, `/sys/kernel/`,
+        and `/dev/` namespaces (eBPF verifier proof, EEVDF scheduler trace,
+        RCU stats). Also multiplexes to `/api/omega` (PQC + ZK-STARK) and
+        `/api/bigtech` (TLA+ Chaos FDIR) via query parameters.
+      parameters:
+        - name: path
+          in: query
+          required: false
+          description: VFS node path to read
+          schema:
+            type: string
+            enum:
+              - /proc/eos/version
+              - /proc/eos/rcu_stats
+              - /proc/eos/eevdf_sched
+              - /sys/kernel/ebpf_verifier
+              - /dev/anubis_law_gate
+            default: /proc/eos/version
+        - name: mode
+          in: query
+          required: false
+          description: Set to `omega` to route to the Omega Singularity handler
+          schema:
+            type: string
+            enum: [omega, bigtech]
+        - name: module
+          in: query
+          required: false
+          description: Alias for `mode`
+          schema:
+            type: string
+            enum: [omega, bigtech]
+      responses:
+        "200":
+          description: Kernel VFS node content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KernelResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/omega:
+    get:
+      summary: Omega Singularity — PQC, ZK-STARK, BFT consensus, and time-travel epochs
+      description: >
+        Returns the Omega Singularity seal: NIST FIPS 203/204/205
+        post-quantum cryptography, ZK-STARK FRI Merkle proof, HotStuff-BFT
+        4/4 quorum consensus, deterministic time-travel epochs, and the
+        sovereign fleet ABI matrix. Served by `/api/kernel` via
+        `mode=omega`, `statement`, or `epoch` parameters.
+      parameters:
+        - name: statement
+          in: query
+          required: false
+          description: Arbitrary statement to SHA-256 seal into the PQC receipt
+          schema:
+            type: string
+            default: EOS_V8_OMEGA_7_LAWS_100_PERCENT_VERIFIED
+        - name: epoch
+          in: query
+          required: false
+          description: Time-travel epoch index to inspect (routes to Omega handler)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 6
+      responses:
+        "200":
+          description: Omega Singularity verification receipt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OmegaResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/memory:
+    get:
+      summary: Akashic Memory — sovereign knowledge store operations
+      description: >
+        Layer-0 serverless Akashic Memory store. Supports `mem_context`
+        (list/search observations), `mem_save` (upsert with Merkle seal),
+        `mem_judge` / `mem_compare` (Anubic conflict tribunal), `mem_doctor`
+        (health check), and `mem_session_summary`. All records are sealed with
+        SHA-256 Merkle hashes.
+      parameters:
+        - name: action
+          in: query
+          required: false
+          description: Memory operation to perform
+          schema:
+            type: string
+            enum:
+              - mem_context
+              - mem_save
+              - mem_judge
+              - mem_compare
+              - mem_doctor
+              - mem_session_summary
+              - mem_suggest_topic_key
+              - odd_route
+              - rdd_review
+            default: mem_context
+        - name: q
+          in: query
+          required: false
+          description: Full-text search query (FTS5-style substring match across all fields)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Memory operation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemoryResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/spotify:
+    get:
+      summary: Spotify engineering platform — DSP, Camelot mixing, Apollo/Hermes mesh
+      description: >
+        Exposes the EOS Spotify Engineering Codex: ITU-R BS.1770 loudness
+        normalisation (−14 LUFS, −1.0 dBTP), Camelot harmonic key transitions,
+        gapless mix engine, 8D acoustic feature store, and Apollo/Hermes
+        event-mesh telemetry. Defaults to a comprehensive platform status
+        report.
+      parameters:
+        - name: action
+          in: query
+          required: false
+          description: >
+            `status` (default) — full platform overview.
+            `dsp` — audio DSP kernel benchmark.
+            `camelot` — harmonic key transitions for a given Camelot key.
+            `mesh` — Apollo/Hermes event-mesh report.
+            `mix` — gapless transition plan between two tracks.
+            `features` — acoustic taste-centroid computation.
+          schema:
+            type: string
+            enum: [status, dsp, camelot, mesh, mix, features]
+            default: status
+        - name: key
+          in: query
+          required: false
+          description: Camelot key (e.g., `8A`, `11B`) — used when `action=camelot`
+          schema:
+            type: string
+            example: "8A"
+        - name: keyA
+          in: query
+          required: false
+          description: First track Camelot key — used when `action=mix`
+          schema:
+            type: string
+        - name: keyB
+          in: query
+          required: false
+          description: Second track Camelot key — used when `action=mix`
+          schema:
+            type: string
+        - name: bpmA
+          in: query
+          required: false
+          description: BPM of the first track — used when `action=mix`
+          schema:
+            type: number
+        - name: bpmB
+          in: query
+          required: false
+          description: BPM of the second track — used when `action=mix`
+          schema:
+            type: number
+        - name: duration
+          in: query
+          required: false
+          description: Transition duration in seconds — used when `action=mix`
+          schema:
+            type: number
+            default: 5.0
+        - name: userId
+          in: query
+          required: false
+          description: User ID for taste-centroid computation — used when `action=features`
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Spotify platform response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpotifyResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/mcp:
+    get:
+      summary: MCP server status and SSE handshake
+      description: >
+        Returns server info and tool count as JSON. If the `Accept` header
+        includes `text/event-stream`, performs an SSE handshake and returns
+        the MCP endpoint URL as an `endpoint` event.
+      responses:
+        "200":
+          description: MCP server status or SSE stream
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpStatusResponse"
+            text/event-stream:
+              schema:
+                type: string
+                description: SSE stream with `endpoint` event
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      summary: MCP JSON-RPC 2.0 endpoint
+      description: >
+        Implements Model Context Protocol (spec 2024-11-05) over JSON-RPC 2.0.
+        Supports `initialize`, `ping`, `tools/list`, `tools/call`,
+        `prompts/list`, and `resources/list` methods. Exposes 8 EOS tools:
+        `eos_health_check`, `eos_turbo_verify`, `eos_amplify_prompt`,
+        `eos_check_architecture`, `eos_evaluate_decision`,
+        `eos_titans_benchmark`, `eos_spotify_shuffle`,
+        `eos_optimize_context`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/McpRequest"
+      responses:
+        "200":
+          description: JSON-RPC 2.0 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpResponse"
+        "400":
+          description: Parse error or invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/McpErrorResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/teurgia:
+    get:
+      summary: Cyber-Theurgic Sephirotic Oracle
+      description: >
+        EOS Sovereign Cyber-Theurgic Oracle operating under the Samaelian
+        Gnosis. Returns a sephirotic dictamen, mantram, cosmic frequency,
+        and Anubic Tribunal verdict based on the selected esfera (sphere)
+        and dharma/karma balance. Zero external dependencies.
+      parameters:
+        - name: consulta
+          in: query
+          required: false
+          description: Natural-language spiritual or philosophical query (max 500 chars)
+          schema:
+            type: string
+            default: "Síntesis de los Tres Factores y Gobernanza del Gran Arquitecto"
+        - name: esfera
+          in: query
+          required: false
+          description: Sephirotic sphere to consult
+          schema:
+            type: string
+            enum: [morir, nacer, tribunal, proteccion, lifaros, daath, absoluto]
+            default: tribunal
+        - name: dharma
+          in: query
+          required: false
+          description: Accumulated dharma capital (0–100)
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
+            default: 75
+        - name: enJuicio
+          in: query
+          required: false
+          description: Number of karmic aggregates currently under tribunal judgement
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        "200":
+          description: Theurgic oracle response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeurgiaResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+components:
+
+  responses:
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              message:
+                type: string
+
+  schemas:
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: UP
+        timestamp:
+          type: string
+          format: date-time
+        uptimeSeconds:
+          type: integer
+        service:
+          type: object
+          properties:
+            name:
+              type: string
+            version:
+              type: string
+            tier:
+              type: string
+            runtime:
+              type: string
+        telemetry:
+          type: object
+          properties:
+            traceparent:
+              type: string
+            latencyMicroseconds:
+              type: number
+            memory:
+              type: object
+              properties:
+                rss:
+                  type: string
+                heapTotal:
+                  type: string
+                heapUsed:
+                  type: string
+        subsystems:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              status:
+                type: string
+              latencyMs:
+                type: string
+        sliReport:
+          type: object
+          properties:
+            availabilitySloTarget:
+              type: string
+            currentAvailabilityEstimate:
+              type: string
+            errorBudgetRemaining:
+              type: string
+            p50LatencyTargetMs:
+              type: number
+            p95LatencyTargetMs:
+              type: number
+            p99LatencyTargetMs:
+              type: number
+
+    GraphResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [SUCCESS, FALLBACK_MODE]
+        version:
+          type: string
+        tier:
+          type: string
+        engine:
+          type: string
+        action:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        telemetry:
+          type: object
+          properties:
+            latencyMicroseconds:
+              type: number
+            algorithm:
+              type: string
+        blastRadius:
+          type: object
+          nullable: true
+          properties:
+            targetFile:
+              type: string
+            directConsumers:
+              type: array
+              items:
+                type: string
+            transitiveConsumers:
+              type: array
+              items:
+                type: string
+            totalImpactedFiles:
+              type: integer
+            impactPercentage:
+              type: number
+            riskLevel:
+              type: string
+              enum: [LOW, MEDIUM, HIGH, CRITICAL]
+            affectedLayers:
+              type: array
+              items:
+                type: string
+            predictiveTestSuites:
+              type: array
+              items:
+                type: string
+        summary:
+          type: object
+          properties:
+            totalFiles:
+              type: integer
+            totalExports:
+              type: integer
+            totalEdges:
+              type: integer
+            deadCodeCount:
+              type: integer
+            deadSymbols:
+              type: array
+              items:
+                type: string
+
+    CompileResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: EOS_NANOSECOND_BLUEPRINT_VERIFIED
+        instruction:
+          type: string
+        profile:
+          type: string
+        benchmark:
+          type: object
+          properties:
+            totalOperations:
+              type: integer
+            elapsedNanoseconds:
+              type: integer
+            nanosecondsPerOp:
+              type: number
+            throughputMillionOpsPerSec:
+              type: number
+            heapAllocationsBytes:
+              type: integer
+            l1CacheFootprintBytes:
+              type: integer
+        sha256Seal:
+          type: string
+
+    AmplifyResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: SUCCESS
+        version:
+          type: string
+        engine:
+          type: string
+        targetModel:
+          type: string
+        latencyMicroseconds:
+          type: number
+        amplification:
+          type: object
+          properties:
+            domain:
+              type: string
+            earsRequirements:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  pattern:
+                    type: string
+                  statement:
+                    type: string
+                  verificationMethod:
+                    type: string
+            bddScenarios:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  given:
+                    type: string
+                  when:
+                    type: string
+                  then:
+                    type: string
+            antiHallucinationContract:
+              type: string
+            sha256Proof:
+              type: string
+
+    EvalResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: SUCCESS
+        version:
+          type: string
+        tier:
+          type: string
+        engine:
+          type: string
+        latencyMicroseconds:
+          type: number
+        evaluation:
+          type: object
+          properties:
+            target:
+              type: string
+            compositeScore:
+              type: integer
+              minimum: 0
+              maximum: 100
+            verdict:
+              type: string
+              enum: [PRODUCTION_READY, NEEDS_REVIEW, BLOCKED]
+            dimensions:
+              type: object
+              properties:
+                securityOwasp:
+                  $ref: "#/components/schemas/EvalDimension"
+                hexagonalPurity:
+                  $ref: "#/components/schemas/EvalDimension"
+                astSyntax:
+                  $ref: "#/components/schemas/EvalDimension"
+                earsBddConformance:
+                  $ref: "#/components/schemas/EvalDimension"
+                hallucinationRisk:
+                  $ref: "#/components/schemas/EvalDimension"
+            totalLinesScanned:
+              type: integer
+            durationUs:
+              type: number
+            sha256Proof:
+              type: string
+            timestamp:
+              type: string
+              format: date-time
+
+    EvalDimension:
+      type: object
+      properties:
+        score:
+          type: integer
+        weight:
+          type: integer
+        passed:
+          type: boolean
+        findings:
+          type: array
+          items:
+            type: string
+
+    TitansResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: SUCCESS
+        version:
+          type: string
+        tier:
+          type: string
+        action:
+          type: string
+        latencyMicroseconds:
+          type: number
+        data:
+          type: object
+          properties:
+            overallStatus:
+              type: string
+              example: APEX_PERFECTION
+            totalDurationUs:
+              type: number
+            results:
+              type: array
+              items:
+                type: object
+                properties:
+                  titan:
+                    type: string
+                  latencyUs:
+                    type: number
+                  status:
+                    type: string
+                    enum: [PASS, FAIL]
+                  throughputOpsSec:
+                    type: number
+                  metrics:
+                    type: object
+
+    FleetResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [FLEET_FULLY_HEALTHY, FLEET_NEEDS_AUDIT]
+        version:
+          type: string
+        liveProbeMode:
+          type: boolean
+        fleetSize:
+          type: integer
+        allPassFailClosed:
+          type: boolean
+        note:
+          type: string
+        commands:
+          type: object
+          properties:
+            fleetShip:
+              type: string
+            fleetVerify:
+              type: string
+            fleetInjectHooks:
+              type: string
+        reports:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              localPath:
+                type: string
+              remoteUrl:
+                type: string
+              productionUrl:
+                type: string
+              authorization:
+                type: string
+              pathExists:
+                type: boolean
+              isGitRepo:
+                type: boolean
+              workingTreeClean:
+                type: boolean
+              gitDirtyFiles:
+                type: array
+                items:
+                  type: string
+              productionHealth:
+                type: string
+                enum: [HEALTHY_200, UNREACHABLE, PENDING]
+              epistemicState:
+                type: string
+                enum: [PRODUCTION_READY, VERIFIED, NEEDS_AUDIT]
+              healthCheckMs:
+                type: integer
+        merkleDigest:
+          type: string
+
+    CicdResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: CICD_7_STAGES_VERIFIED_AND_DEPLOY_READY
+        version:
+          type: string
+        deployedCommit:
+          type: string
+          nullable: true
+        deploymentEnv:
+          type: string
+        failClosedActive:
+          type: boolean
+        blockedBySast:
+          type: boolean
+        enforcedHooks:
+          type: array
+          items:
+            type: string
+        commands:
+          type: object
+          properties:
+            verifyGate:
+              type: string
+            autoShip:
+              type: string
+        gates:
+          type: array
+          items:
+            type: object
+            properties:
+              stage:
+                type: integer
+              id:
+                type: string
+              name:
+                type: string
+              status:
+                type: string
+                enum: [PASSED, FAILED, BLOCKED]
+              findings:
+                type: integer
+              latencyMs:
+                type: integer
+        sbomMerkleRoot:
+          type: string
+
+    JarvisResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: JARVIS_COGNITION_ENGAGED
+        telemetry:
+          type: object
+          properties:
+            version:
+              type: string
+            arcReactorState:
+              type: string
+            cognitiveMode:
+              type: string
+            autonomousCapabilities:
+              type: array
+              items:
+                type: string
+        directiveReceived:
+          type: string
+        intent:
+          type: string
+          enum:
+            - STATUS_REPORT
+            - FLEET_AUDIT
+            - FLEET_SHIP
+            - SECURITY_GATE
+            - NANOSECOND_BENCHMARK
+            - VECTOR_SEMANTIC_SEARCH
+            - THEURGIC_ORACLE
+        voiceResponseText:
+          type: string
+        actionCommand:
+          type: string
+        reactorPulseHz:
+          type: integer
+        tmrConsensus:
+          type: object
+          properties:
+            sandboxes:
+              type: array
+              items:
+                type: string
+            consensusAchieved:
+              type: boolean
+            ratio:
+              type: string
+            decision:
+              type: string
+        merkleReceipt:
+          type: string
+
+    KernelResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: RING0_KERNEL_VERIFIED
+        kernelVersion:
+          type: string
+        vfsPath:
+          type: string
+        content:
+          type: string
+        pillarsVerified:
+          type: array
+          items:
+            type: string
+        sha256Seal:
+          type: string
+
+    OmegaResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: OMEGA_SINGULARITY_VERIFIED
+        version:
+          type: string
+        postQuantumSeal:
+          type: object
+          properties:
+            kem:
+              type: string
+            signature:
+              type: string
+            zkStarkProof:
+              type: string
+            trustedSetupRequired:
+              type: boolean
+            privateSecretsExposed:
+              type: integer
+        bftConsensus:
+          type: object
+          properties:
+            protocol:
+              type: string
+            quorum:
+              type: string
+            verdict:
+              type: string
+        timeTravelEpochs:
+          type: array
+          items:
+            type: object
+            properties:
+              tick:
+                type: integer
+              seed:
+                type: string
+              event:
+                type: string
+              subsystem:
+                type: string
+              dharmaDelta:
+                type: string
+        sovereignFleet:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              url:
+                type: string
+              abi:
+                type: string
+              state:
+                type: string
+        pillars:
+          type: array
+          items:
+            type: object
+        sha256Receipt:
+          type: string
+
+    MemoryResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: OK
+        engine:
+          type: string
+        action:
+          type: string
+        totalObservations:
+          type: integer
+        engramToolsCount:
+          type: integer
+        rootMerkleSha256:
+          type: string
+        observations:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              project:
+                type: string
+              scope:
+                type: string
+              type:
+                type: string
+              title:
+                type: string
+              topic_key:
+                type: string
+              samaelianFactor:
+                type: string
+                enum: [NACER, MORIR, SACRIFICIO]
+              sephirah:
+                type: string
+              pinned:
+                type: boolean
+              what:
+                type: string
+              why:
+                type: string
+              where:
+                type: string
+              learned:
+                type: string
+              created_at:
+                type: string
+                format: date-time
+              merkleHash:
+                type: string
+
+    SpotifyResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        action:
+          type: string
+        durationUs:
+          type: number
+        data:
+          type: object
+          description: Shape varies by `action` parameter
+          properties:
+            platform:
+              type: string
+            audioStandards:
+              type: object
+              properties:
+                targetLufs:
+                  type: number
+                truePeakCeilingDbTP:
+                  type: number
+                sampleRateHz:
+                  type: integer
+                biquadFilter:
+                  type: string
+                throughputSamplesSec:
+                  type: number
+                realTimeSpeedFactor:
+                  type: number
+            apolloHermesMesh:
+              type: object
+              properties:
+                status:
+                  type: string
+                registeredProcedures:
+                  type: integer
+                eventsPublished:
+                  type: integer
+                eventsDelivered:
+                  type: integer
+                droppedEvents:
+                  type: integer
+            goldenPathStatus:
+              type: object
+              properties:
+                backstageRfc42Compliant:
+                  type: boolean
+                specificationsActive:
+                  type: integer
+                layer0Pure:
+                  type: boolean
+            timestamp:
+              type: string
+              format: date-time
+
+    McpStatusResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          example: eos-system
+        version:
+          type: string
+          example: "19.0.0"
+        protocol:
+          type: string
+          example: mcp
+        protocolVersion:
+          type: string
+          example: "2024-11-05"
+        status:
+          type: string
+          example: ready
+        toolsCount:
+          type: integer
+          example: 8
+
+    McpRequest:
+      type: object
+      required: [jsonrpc, method]
+      properties:
+        jsonrpc:
+          type: string
+          enum: ["2.0"]
+        id:
+          oneOf:
+            - type: string
+            - type: integer
+            - type: "null"
+        method:
+          type: string
+          enum:
+            - initialize
+            - ping
+            - tools/list
+            - tools/call
+            - prompts/list
+            - resources/list
+            - notifications/initialized
+        params:
+          type: object
+          description: Method-specific parameters
+          properties:
+            name:
+              type: string
+              description: Tool name (for `tools/call`)
+            arguments:
+              type: object
+              description: Tool arguments (for `tools/call`)
+
+    McpResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+          example: "2.0"
+        id:
+          oneOf:
+            - type: string
+            - type: integer
+            - type: "null"
+        result:
+          type: object
+          description: Method-specific result payload
+
+    McpErrorResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+          example: "2.0"
+        id:
+          oneOf:
+            - type: string
+            - type: integer
+            - type: "null"
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+
+    TeurgiaResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: VERIFIED_BY_ANUBIC_TRIBUNAL
+        divisa:
+          type: string
+          example: "THELEMA (Voluntad Consciente)"
+        consultaRecibida:
+          type: string
+        sephirahActiva:
+          type: string
+        mantramRecomendado:
+          type: string
+        frecuenciaResonanciaHz:
+          type: number
+        notaEscalaCosmica:
+          type: string
+        ecuacionBalanza:
+          type: object
+          properties:
+            capitalDharma:
+              type: integer
+            agregadosEnJuicio:
+              type: integer
+            indiceNetoLuz:
+              type: integer
+            veredictoTribunal:
+              type: string
+        dictamenTeurgico:
+          type: string
+        selloSha256:
+          type: string
+        saludoFinal:
+          type: string
+          example: "AMÉN... AMÉN... AMÉN... PAZ INVERENCIAL."

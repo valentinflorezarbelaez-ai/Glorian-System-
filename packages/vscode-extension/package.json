@@ -1,0 +1,66 @@
+{
+  "name": "eos-system-vscode",
+  "displayName": "EOS System — Engineering Operating System",
+  "description": "AI-assisted engineering at Big Tech level. Connects EOS sovereign tools to VS Code and Cursor via MCP.",
+  "version": "58.0.0",
+  "publisher": "valentinflorezarbelaez",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["AI", "Programming Languages", "Other"],
+  "keywords": ["eos", "mcp", "consulting", "agi", "copilot"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "eos.consult",
+        "title": "EOS: Consult — Get a world-class engineering deliverable",
+        "icon": "$(lightbulb)"
+      },
+      {
+        "command": "eos.specDrift",
+        "title": "EOS: Spec Drift — Detect code/spec drift",
+        "icon": "$(warning)"
+      },
+      {
+        "command": "eos.contextWindow",
+        "title": "EOS: Context Window — Assemble token-budget context",
+        "icon": "$(symbol-namespace)"
+      },
+      {
+        "command": "eos.startMcpServer",
+        "title": "EOS: Start MCP Server",
+        "icon": "$(server)"
+      }
+    ],
+    "configuration": {
+      "title": "EOS System",
+      "properties": {
+        "eos.projectRoot": {
+          "type": "string",
+          "default": "",
+          "description": "Path to EOS System project root (auto-detected if empty)"
+        },
+        "eos.mcpToken": {
+          "type": "string",
+          "default": "",
+          "description": "Bearer token for MCP server authentication (EOS_MCP_TOKEN)"
+        },
+        "eos.logLevel": {
+          "type": "string",
+          "enum": ["SILENT", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"],
+          "default": "INFO",
+          "description": "EOS log level"
+        }
+      }
+    }
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/vscode": "^1.85.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/valentinflorezarbelaez-ai/Eos-System"
+  },
+  "license": "MIT"
+}

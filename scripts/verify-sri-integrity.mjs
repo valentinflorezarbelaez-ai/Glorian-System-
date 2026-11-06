@@ -15,7 +15,18 @@ function computeSri(filePath) {
 }
 
 const cssSri = computeSri("css/eos.css");
-const jsSri = computeSri("js/eos.js");
+const jsSri  = computeSri("js/eos.js");
+
+// WASM SRI (optional — Go must be compiled first)
+const wasmPath = path.join(root, "assets/eos_apex.wasm");
+let wasmSriNote = "WASM not present (run npm run build:apex to compile)";
+if (fs.existsSync(wasmPath)) {
+  const wasmBytes  = fs.readFileSync(wasmPath);
+  const wasmDigest = crypto.createHash("sha384").update(wasmBytes).digest("base64");
+  const wasmSri    = `sha384-${wasmDigest}`;
+  wasmSriNote = `${wasmSri.slice(0, 32)}...`;
+  console.log(`[INFO] WASM SRI computed: ${wasmSriNote}`);
+}
 
 let html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 
@@ -41,3 +52,4 @@ assert.ok(html.includes(cssSri), `index.html missing matching CSS SRI hash: expe
 assert.ok(html.includes(jsSri), `index.html missing matching JS SRI hash: expected ${jsSri}`);
 
 console.log("[PASS] Subresource Integrity (SRI) SHA-384 verified for CSS & JS bundles.");
+console.log(`[INFO] WASM SRI status: ${wasmSriNote}`);

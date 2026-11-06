@@ -29,13 +29,46 @@ const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, "..");
 
 const args = process.argv.slice(2);
-const command = (args[0] || "help").toLowerCase();
+const quietMode = args.includes("--quiet") || args.includes("-q");
+const rawCommand = args.find(a => !a.startsWith("-")) || "help";
+const command = rawCommand.toLowerCase();
+
+// ── Import CLI UX module ────────────────────────────────────────────────────
+const eosCliUx = await import("../src/core/eosCliUx.ts");
+const { printMinimalBanner, printFullBanner: printUxBanner, suggestCommands, isFirstRun, markInitialized, showOnboarding, collectStatus, formatStatusDashboard, interactiveMode, EOS_COMMANDS, cl } = eosCliUx;
 
 function printBanner() {
-  console.log("======================================================================");
-  console.log(" EOS SYSTEM v47.0 — SOVEREIGN CONTROL PLANE CLI (UNIVERSAL)            ");
-  console.log(" Zero Vibe Coding · Layer-0 Hexagonal · Big Tech Tier 1 · SLSA Level 4");
-  console.log("======================================================================");
+  if (quietMode) {
+    printMinimalBanner();
+  } else {
+    printUxBanner();
+  }
+}
+
+// ── First-run onboarding (Heuristic: Learnability) ──────────────────────────
+if (isFirstRun(root) && command === "help" && !quietMode) {
+  showOnboarding();
+  markInitialized(root);
+  process.exit(0);
+}
+
+// ── Command suggestion for unknown commands (Heuristic: Error Recovery) ────
+const knownCommands = new Set(EOS_COMMANDS.flatMap(c => [c.name, ...c.aliases, "help", "--help", "-h", "mcp"]));
+if (!knownCommands.has(command) && !command.startsWith("--")) {
+  const suggestions = suggestCommands(command);
+  if (suggestions.length > 0) {
+    console.error(`\n${cl.red("✘")} Comando desconocido: ${cl.bold(command)}`);
+    console.error(`\n${cl.yellow("¿Quisiste decir...?")}`);
+    suggestions.forEach(s => {
+      console.error(`  ${cl.green(s.name.padEnd(14))} ${s.summary}`);
+      if (s.example) console.error(`  ${cl.gray("Ej:")} ${s.example}`);
+    });
+    console.error("");
+  } else {
+    console.error(`\n${cl.red("✘")} Comando desconocido: ${cl.bold(command)}`);
+    console.error(`${cl.gray("Ejecuta 'eos help' para ver todos los comandos disponibles.\n")}`);
+  }
+  process.exit(1);
 }
 
 switch (command) {
@@ -2511,13 +2544,456 @@ switch (command) {
     break;
   }
 
+  // ══════════════════════════════════════════════════════════════════
+  // AGI HARNESS — FRONTIER AGENT COMMANDS (SPEC-047 / v50.0)
+  // ══════════════════════════════════════════════════════════════════
+
+  case "agi":
+  case "agi:solve": {
+    printBanner();
+    console.log("[EOS AGI CORE] Tree of Thoughts + Deterministic Tribunal + Episodic Memory\n");
+    const { EosAgiCore } = await import("../src/core/eosAgiCore.ts");
+    const core = new EosAgiCore(root);
+
+    const subAction = (args[1] || "axioms").toLowerCase();
+
+    if (subAction === "axioms") {
+      const axioms = core.getAxioms();
+      if (axioms.length === 0) {
+        console.log("Memoria epistémica vacía — el sistema aprende de cada fallo.\n");
+        console.log("Cuando el AGI Core resuelva objetivos, los axiomas aprendidos aparecerán aquí.");
+      } else {
+        console.log(`Axiomas Cristalizados (${axioms.length} reglas inmutables):\n`);
+        axioms.forEach((a, i) => {
+          console.log(`  [${i + 1}] [x${a.recurrenceCount}] ${a.immutableRule.slice(0, 120)}`);
+          console.log(`      Error: ${a.errorPattern.slice(0, 80)}`);
+          console.log(`      Hash : ${a.errorHash} | ${a.crystallizedAt}\n`);
+        });
+        console.log(core.getRulesBlock());
+      }
+    } else if (subAction === "rules") {
+      const block = core.getRulesBlock();
+      console.log(block || "Sin axiomas aprendidos aún.");
+    } else {
+      console.log("EOS AGI Core — Arnés de Frontera (SPEC-047)\n");
+      console.log("Uso:");
+      console.log("  eos agi axioms       Lista todos los axiomas aprendidos de fallos pasados");
+      console.log("  eos agi rules        Imprime el bloque de reglas para inyectar en prompts");
+      console.log("\nPara ejecutar un ciclo completo de resolución, usa desde código:");
+      console.log("  const core = new EosAgiCore(root);");
+      console.log("  const result = core.solve(objective, branches, { testCommand: 'npm test' });");
+    }
+    break;
+  }
+
+  case "consult": {
+    printBanner();
+    console.log("[EOS CONSULTANT] Motor de Consultoría de Alto Nivel (Thoughtworks / McKinsey)\n");
+    const { EosConsultantCore } = await import("../src/core/eosConsultantCore.ts");
+    const consultant = new EosConsultantCore(root);
+
+    const problem = args.slice(1).join(" ");
+    if (!problem) {
+      console.log("Uso: eos consult <descripción del problema>\n");
+      console.log("Ejemplos:");
+      console.log("  eos consult El endpoint /users tarda 8s con 10k registros");
+      console.log("  eos consult N+1 query en ORM de usuarios TypeScript");
+      console.log("  eos consult JWT vulnerable a timing attacks en autenticación");
+      console.log("  eos consult Tech debt: god class de 800 líneas en módulo de auth");
+      console.log("  eos consult Migrar de REST a GraphQL en API de portafolio\n");
+      break;
+    }
+
+    const deliverable = consultant.engage({ problem });
+    const filePath = consultant.saveDeliverable(deliverable);
+
+    console.log(`╔══════════════════════════════════════════════════════════════╗`);
+    console.log(`  ENGAGEMENT: ${deliverable.engagementId}`);
+    console.log(`  TIPO:       ${deliverable.engagementType}`);
+    console.log(`  STACK:      ${deliverable.techStack}`);
+    console.log(`╚══════════════════════════════════════════════════════════════╝\n`);
+
+    console.log("RESUMEN EJECUTIVO:");
+    console.log(`  ${deliverable.executiveSummary}\n`);
+
+    console.log("CAUSA RAÍZ (5 Porqués):");
+    const rca = deliverable.rootCauseAnalysis;
+    console.log(`  Por qué 1: ${rca.why1}`);
+    console.log(`  Por qué 2: ${rca.why2}`);
+    console.log(`  Por qué 3: ${rca.why3}`);
+    console.log(`  Por qué 4: ${rca.why4}`);
+    console.log(`  Por qué 5: ${rca.why5}`);
+    console.log(`  CAUSA RAÍZ: ${rca.rootCause}\n`);
+
+    console.log("RECOMENDACIÓN ARQUITECTÓNICA:");
+    console.log(`  ${deliverable.architectureRecommendation.decision.slice(0, 300)}\n`);
+
+    console.log("PLAN DE IMPLEMENTACIÓN:");
+    deliverable.implementationPlan.forEach((t) => {
+      console.log(`  [${t.id}] ${t.title} (~${t.estimatedHours}h) [${t.priority}]`);
+      console.log(`         ↳ Done: ${t.doneCriteria}`);
+    });
+    console.log("");
+
+    console.log("MATRIZ DE RIESGOS (ordenada por score):");
+    deliverable.riskMatrix.slice(0, 3).forEach((r) => {
+      console.log(`  [Score ${r.riskScore}] ${r.risk.slice(0, 70)}`);
+      console.log(`         ↳ Mitigación: ${r.mitigation.slice(0, 80)}`);
+    });
+    console.log("");
+
+    console.log("ESTIMACIÓN FINOPS:");
+    const fe = deliverable.finOpsEstimate;
+    console.log(`  Horas: ${fe.totalEstimatedHours}h | Complejidad: ${fe.complexityScore}/10 | Equipo: ${fe.recommendedTeamSize} ing.`);
+    console.log(`  Costo: $${fe.estimatedCostUsd.low} – $${fe.estimatedCostUsd.high} USD\n`);
+
+    if (deliverable.implementationCode.length > 0) {
+      console.log("CÓDIGO DE IMPLEMENTACIÓN:");
+      deliverable.implementationCode.forEach((c) => {
+        console.log(`  ── ${c.filename} (${c.language})`);
+        console.log(`     ${c.description}`);
+        console.log(c.content.split("\n").slice(0, 20).map(l => `     ${l}`).join("\n"));
+        console.log("     ... [ver entregable completo]\n");
+      });
+    }
+
+    console.log(`ENTREGABLE COMPLETO GUARDADO: ${filePath}`);
+    console.log(`INTEGRIDAD: ${deliverable.integrityHash}\n`);
+    break;
+  }
+
+  case "forge": {
+    printBanner();
+    console.log("[EOS DYNAMIC TOOL FORGE] Creación y Registro Automático de Herramientas MCP\n");
+    const { EosDynamicToolForge } = await import("../src/core/eosDynamicToolForge.ts");
+    const forge = new EosDynamicToolForge(root);
+    const subAction = (args[1] || "list").toLowerCase();
+
+    if (subAction === "list") {
+      const tools = forge.listTools();
+      if (tools.length === 0) {
+        console.log("No hay herramientas forjadas aún.");
+        console.log("\nCrea una con:");
+        console.log("  eos forge create <nombre_tool>  (interactivo)");
+      } else {
+        console.log(`Herramientas Forjadas (${tools.length}):\n`);
+        tools.forEach((t, i) => {
+          console.log(`  [${i + 1}] ${t.name}`);
+          console.log(`      ${t.description}`);
+          console.log(`      Módulo  : ${t.moduleRelPath}`);
+          console.log(`      Forjado : ${t.forgedAt}`);
+          console.log(`      Válido  : ${t.validated ? "✔" : "✗"}\n`);
+        });
+      }
+    } else if (subAction === "mcp") {
+      const descriptors = forge.getMcpToolDescriptors();
+      console.log("Herramientas MCP disponibles para tools/list:");
+      console.log(JSON.stringify(descriptors, null, 2));
+    } else if (subAction === "destroy") {
+      const toolName = args[2];
+      if (!toolName) {
+        console.error("Uso: eos forge destroy <nombre_tool>");
+        process.exit(1);
+      }
+      const removed = forge.destroy(toolName);
+      console.log(removed ? `✔ Tool "${toolName}" eliminada.` : `Tool "${toolName}" no encontrada.`);
+    } else {
+      console.log("EOS Dynamic Tool Forge — Auto-Creación de Herramientas MCP (SPEC-047)\n");
+      console.log("Uso:");
+      console.log("  eos forge list       Lista todas las herramientas forjadas");
+      console.log("  eos forge mcp        Muestra descriptores MCP en formato JSON");
+      console.log("  eos forge destroy <nombre>  Elimina una herramienta forjada");
+    }
+    break;
+  }
+
+  case "pipeline": {
+    printBanner();
+    console.log("[EOS PIPELINE] Flujo End-to-End: Contexto → Router → Tribunal → Solución\n");
+    const { EosPipeline } = await import("../src/core/eosPipeline.ts");
+    const pipeline = new EosPipeline(root);
+
+    const problem     = args[1] || "Optimize the turbo engine cache for faster cold starts";
+    const targetFile  = args[2] || "src/core/eosTurboEngine.ts";
+    const testCommand  = args[3] || "node --test test/eosTurbo.test.mjs";
+
+    console.log(`Problema     : ${problem}`);
+    console.log(`Archivo      : ${targetFile}`);
+    console.log(`Tribunal     : ${testCommand}`);
+    console.log(`Modelo Router : Claude Haiku (CODE task)\n`);
+
+    const result = await pipeline.solve({ problem, targetFile, testCommand });
+
+    console.log("\n======================================================================");
+    console.log(" RESULTADO DEL PIPELINE");
+    console.log("======================================================================");
+    console.log(`Resuelto        : ${result.solved ? "✔ SÍ" : "✘ NO"}`);
+    console.log(`Branch Ganador   : ${result.winningBranchId ?? "(ninguno)"}`);
+    console.log(`Estrategia       : ${result.winningStrategy ?? "(ninguna)"}`);
+    console.log(`Contexto         : ${result.contextAssembled.filesIncluded} archivos, ${result.contextAssembled.tokensUsed}/${result.contextAssembled.tokenBudget} tokens`);
+    console.log(`Branches         : ${result.branchesGenerated} generadas, ${result.branchesEvaluated} evaluadas`);
+    console.log(`Axiomas          : ${result.newAxiomsLearned} nuevos`);
+    console.log(`Duración Total   : ${result.totalDurationMs}ms`);
+    if (result.error) console.log(`Error            : ${result.error}`);
+    console.log(`Sello            : ${result.pipelineHash}`);
+    console.log("======================================================================\n");
+
+    if (result.agiResult) {
+      console.log("Veredictos por Branch:");
+      result.agiResult.verdicts.forEach((v) => {
+        const icon = v.passed ? "✔" : "✘";
+        console.log(`  ${icon} [${v.branchId}] ${v.strategy.slice(0, 60)} — ${v.durationMs}ms`);
+      });
+    }
+    break;
+  }
+
+  case "status": {
+    printMinimalBanner();
+    const dashboard = await collectStatus(root);
+    console.log(formatStatusDashboard(dashboard));
+    break;
+  }
+
+  case "flags":
+  case "feature-flags": {    printBanner();
+    console.log("[EOS FEATURE FLAGS] Progressive Delivery — Stripe/Netflix Standard\n");
+    const { EosFeatureFlags } = await import("../src/core/eosFeatureFlags.ts");
+    const flags = new EosFeatureFlags(root);
+    const summary = flags.getSummary();
+    console.log(`Total: ${summary.total} flags | Enabled: ${summary.enabled} | Disabled: ${summary.disabled}\n`);
+    summary.flags.forEach(f => {
+      const icon = f.enabled ? cl.green("✔") : cl.gray("✘");
+      const src  = cl.gray(`[${f.source}]`);
+      console.log(`  ${icon} ${f.key.padEnd(25)} ${src.padEnd(12)} ${f.description}`);
+    });
+    console.log(`\nPara habilitar un flag: export EOS_FLAG_<NOMBRE>=1`);
+    console.log(`Ejemplo: export EOS_FLAG_CHAOS_IN_CI=1\n`);
+    break;
+  }
+
+  case "diff":
+  case "patch": {
+    printBanner();
+    const subAction = (args[1] || "help").toLowerCase();
+    const { parseDiff, applyDiff, generateDiff } = await import("../src/core/eosDiffPatcher.ts");
+
+    if (subAction === "apply") {
+      const diffFile = args[2];
+      if (!diffFile) {
+        console.error("Uso: eos diff apply <archivo.diff>\n");
+        process.exit(1);
+      }
+      const diffContent = fs.readFileSync(path.resolve(root, diffFile), "utf8");
+      const parsed = parseDiff(diffContent);
+      console.log(`[EOS DIFF] Aplicando patch a: ${parsed.newPath || parsed.oldPath}`);
+      console.log(`  Hunks: ${parsed.hunks.length} | SHA-256: ${parsed.sha256.slice(0, 16)}...`);
+      const result = applyDiff(parsed, root);
+      if (result.success) {
+        console.log(`[PASS] Patch aplicado: +${result.linesAdded} -${result.linesRemoved} líneas en ${result.durationMs}ms`);
+      } else {
+        console.error(`[FAIL] Patch fallido: ${result.error}`);
+        process.exit(1);
+      }
+    } else if (subAction === "generate") {
+      const oldFile = args[2];
+      const newFile = args[3];
+      if (!oldFile || !newFile) {
+        console.error("Uso: eos diff generate <archivo-viejo> <archivo-nuevo>\n");
+        process.exit(1);
+      }
+      const oldContent = fs.readFileSync(path.resolve(root, oldFile), "utf8");
+      const newContent = fs.readFileSync(path.resolve(root, newFile), "utf8");
+      const diff = generateDiff(oldContent, newContent, oldFile);
+      console.log(diff);
+    } else {
+      console.log("EOS Diff Patcher — Diff-Based Patch Application\n");
+      console.log("Uso:");
+      console.log("  eos diff apply <archivo.diff>           Aplica un patch unified diff");
+      console.log("  eos diff generate <viejo> <nuevo>       Genera diff entre dos archivos");
+    }
+    break;
+  }
+
+  case "secrets": {
+    printBanner();
+    console.log("[EOS SECRETS MANAGER] Production Secrets — AWS/Vault/Doppler/Dotenv\n");
+    const { EosSecretsManager } = await import("../src/core/eosSecretsManager.ts");
+    const sm = EosSecretsManager.getInstance();
+    console.log(`Provider activo : ${sm.providerType}`);
+    console.log(`Configura con   : EOS_SECRETS_PROVIDER=aws|vault|doppler|dotenv|env`);
+    const secretSub = args[1];
+    if (secretSub === "get" && args[2]) {
+      const key = args[2];
+      const val = await sm.get(key);
+      console.log(`\n${key} : ${val ? "[FOUND — valor oculto por seguridad]" : "[NOT FOUND]"}`);
+    } else {
+      console.log(`\nUso: eos secrets get <KEY>    Verifica si un secreto está disponible`);
+      console.log(`\nProveedores:`);
+      console.log(`  env       Variables de entorno (default)`);
+      console.log(`  dotenv    Archivo .env (EOS_DOTENV_FILE=.env)`);
+      console.log(`  aws       AWS Secrets Manager (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)`);
+      console.log(`  vault     HashiCorp Vault (VAULT_ADDR, VAULT_TOKEN)`);
+      console.log(`  doppler   Doppler (DOPPLER_TOKEN)`);
+    }
+    break;
+  }
+
+  case "trace":
+  case "tracer": {
+    printBanner();
+    console.log("[EOS TRACER] Distributed Tracing — OTLP/Jaeger/AWS X-Ray/Zipkin\n");
+    const endpoint = process.env["OTEL_EXPORTER_OTLP_ENDPOINT"] || "";
+    console.log(`Estado    : ACTIVE`);
+    console.log(`Endpoint  : ${endpoint || "(no endpoint — set OTEL_EXPORTER_OTLP_ENDPOINT)"}`);
+    console.log(`\nPara activar trazas:`);
+    console.log(`  export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318/v1/traces`);
+    console.log(`\nCompatible con: Grafana Tempo · Jaeger · AWS X-Ray · Honeycomb · Zipkin`);
+    console.log(`\nCada llamada a eos pipeline genera spans automáticamente:`);
+    console.log(`  eos.pipeline.solve → eos.pipeline.context_assembly → eos.pipeline.branch_generation → eos.pipeline.tribunal`);
+    break;
+  }
+
+  case "lsp": {
+    printBanner();
+    const lspMode = (args[1] || "--stdio").toLowerCase();
+    if (lspMode === "--write" || lspMode === "write") {
+      console.log("[EOS LSP] Escribiendo diagnósticos para todos los módulos core...\n");
+      const { writeDiagnosticsFile } = await import("../src/core/eosLspDiagnostics.ts");
+      const outPath = await writeDiagnosticsFile(root);
+      console.log(`Diagnósticos escritos en: ${outPath}`);
+      console.log("Tu editor los detectará automáticamente.");
+    } else {
+      // Start LSP stdio server (for use as language server in VS Code/Cursor/Neovim)
+      const { startLspServer } = await import("../src/core/eosLspDiagnostics.ts");
+      startLspServer(root);
+    }
+    break;
+  }
+
+  case "interactive":
+  case "menu": {
+    await interactiveMode();
+    break;
+  }
+
+  case "--onboarding": {
+    showOnboarding();
+    break;
+  }
+
+  case "context":
+  case "context-window": {
+    printBanner();
+    console.log("[EOS CONTEXT WINDOW] Ensamblador de Contexto con Presupuesto de Tokens\n");
+    const { EosContextWindowManager } = await import("../src/core/eosContextWindowManager.ts");
+    const mgr = new EosContextWindowManager(root);
+
+    const objective  = args[1] || "Analyze and fix this file";
+    const targetFile = args[2] || "src/core/eosTurboEngine.ts";
+    const budget     = args[3] ? parseInt(args[3], 10) : 32000;
+
+    const result = mgr.assemble(objective, targetFile, { tokenBudget: budget });
+
+    console.log(`Objetivo       : ${objective}`);
+    console.log(`Archivo Objetivo: ${targetFile}`);
+    console.log(`Presupuesto    : ${result.totalTokensUsed}/${result.tokenBudget} tokens`);
+    console.log(`Archivos       : ${result.filesIncluded} incluidos, ${result.filesExcluded} excluidos`);
+    console.log(`Compresión     : ${result.compressionRatio}% promedio\n`);
+
+    result.includedFiles.forEach((f) => {
+      console.log(`  [${f.role.padEnd(20)}] ${f.relPath}`);
+      console.log(`    ${f.originalTokens} → ${f.compressedTokens} tokens (${f.compressionRatio.toFixed(0)}% ahorro)`);
+    });
+
+    if (result.excludedFiles.length > 0) {
+      console.log(`\nExcluidos (presupuesto excedido):`);
+      result.excludedFiles.forEach((f) => console.log(`  ✘ ${f}`));
+    }
+
+    console.log(`\nSello SHA-256: ${result.sha256}`);
+    console.log(`\nPara usar: pega el bloque de contexto en tu prompt de IA.`);
+    console.log(`El contexto ensamblado se muestra a continuación:\n`);
+    console.log("---CONTEXTO ENSAMBLJADO---");
+    console.log(result.contextBlock);
+    break;
+  }
+
+  case "drift":
+  case "spec:drift": {
+    printBanner();
+    console.log("[EOS SPEC DRIFT] Detector de Deriva Especificación/Código\n");
+    const { EosSpecDriftDetector } = await import("../src/core/eosSpecDriftDetector.ts");
+    const detector = new EosSpecDriftDetector(root);
+    const threshold = args[1] ? parseInt(args[1], 10) : 7;
+    const report = detector.detect({ driftThresholdDays: threshold });
+
+    console.log(`Módulos Escaneados : ${report.totalModulesScanned}`);
+    console.log(`Specs Escaneados   : ${report.totalSpecsScanned}`);
+    console.log(`Drift Score        : ${report.driftScore}/100`);
+    console.log(`Violaciones         : ${report.violations.length} (CRITICAL: ${report.criticalCount}, HIGH: ${report.highCount}, MEDIUM: ${report.mediumCount})\n`);
+
+    if (report.isClean) {
+      console.log("[PASS] Cero deriva detectada — todas las specs están sincronizadas con el código. ✔");
+    } else {
+      console.log("[FAIL] Deriva detectada:\n");
+      report.violations.forEach((v) => {
+        const icon = v.severity === "CRITICAL" ? "🔴" : v.severity === "HIGH" ? "🟠" : v.severity === "MEDIUM" ? "🟡" : "⚪";
+        console.log(`  ${icon} [${v.severity}] ${v.type}: ${v.message}`);
+        console.log(`     Módulo: ${v.modulePath}`);
+        if (v.specPath) console.log(`     Spec  : ${v.specPath}`);
+        if (v.driftDays > 0) console.log(`     Drift : ${v.driftDays} días`);
+        console.log(`     Fix   : ${v.remediation}\n`);
+      });
+      process.exit(1);
+    }
+    break;
+  }
+
+  case "case":
+  case "helpme":
+  case "solve": {
+    // Alias: eos solve <problema> → mismo que eos consult <problema>
+    const { EosConsultantCore } = await import("../src/core/eosConsultantCore.ts");
+    const consultant = new EosConsultantCore(root);
+    const problem = args.slice(1).join(" ");
+    if (!problem) {
+      console.log("Uso: eos solve <descripción del problema>\n");
+      console.log("EOS produce un plan de consultoría de alto nivel al instante.\n");
+      break;
+    }
+    const deliverable = consultant.engage({ problem });
+    const filePath = consultant.saveDeliverable(deliverable);
+    console.log(`[EOS SOLVE] ${deliverable.engagementId} — ${deliverable.engagementType}`);
+    console.log(`CAUSA RAÍZ: ${deliverable.rootCauseAnalysis.rootCause}`);
+    console.log(`DECISIÓN: ${deliverable.architectureRecommendation.decision.slice(0, 200)}`);
+    console.log(`ENTREGABLE: ${filePath}`);
+    break;
+  }
+
   case "help":
   case "--help":
   case "-h":
   default: {
+    if (!knownCommands.has(command)) {
+      // Already handled by the suggestion engine above — should not reach here
+      process.exit(1);
+    }
     printBanner();
+    const v = eosCliUx.getEosVersion();
     console.log(`
-Uso Universal:
+EOS SYSTEM v${v} — Manual de Operaciones Universal
+======================================================================
+
+${cl.bold("INICIO RÁPIDO:")}
+  ${cl.green("eos status")}       Dashboard del estado del sistema en un vistazo
+  ${cl.green("eos turbo")}        Verificación ultrarrápida del proyecto (<350ms)
+  ${cl.green("eos consult")}      Consulta cualquier problema de ingeniería
+  ${cl.green("eos interactive")}  Menú guiado (no necesitas memorizar comandos)
+
+${cl.bold("COMANDOS POR CATEGORÍA:")}
+
+${cl.cyan("CORE")} — Verificación y Arquitectura:
   eos turbo                  Verificación ultrarrápida en memoria con telemetría en microsegundos (<350ms)
   eos verify                 Ejecuta las 7 aduanas de seguridad SecDevOps (fail-closed)
   eos audit                  Audita en paralelo todos los repositorios de la flota
@@ -2591,6 +3067,17 @@ Uso Universal:
   eos refactor [audit|dbc]   Auditoría de deuda técnica, código muerto, DRY y dieta de código
   eos dst [seed] [steps]     Pruebas de Simulación Determinista FoundationDB / Antithesis con inyección de fallos
   eos synapse                Arbitraje Bayesiano multi-agente sin bloqueos ni colisiones
+
+AGI HARNESS (SPEC-047 — Frontier Agent Infrastructure):
+  eos agi [axioms|rules]     AGI Core: muestra axiomas cristalizados y reglas aprendidas de fallos
+  eos consult <problema>     Consultor de élite: entregable completo (5 Porqués, ADR, código, riesgos, FinOps)
+  eos solve <problema>       Alias rápido de eos consult — solución inmediata al más alto nivel
+  eos forge [list|mcp|destroy] Dynamic Tool Forge: crea y registra herramientas MCP en caliente
+
+PLATFORM (SPEC-049 — v54.0):
+  eos context <objetivo> <archivo> [presupuesto]  Ensambla contexto con presupuesto de tokens via blast radius
+  eos drift [dias]                Detecta deriva entre código y specs (Law I enforcement)
+
   eos help                   Muestra este manual de operaciones
 
 Integración con IDEs:

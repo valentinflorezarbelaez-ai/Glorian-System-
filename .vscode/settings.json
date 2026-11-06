@@ -1,0 +1,19 @@
+{
+  "eos.diagnostics.enable": true,
+  "eos.diagnostics.blastRadiusThreshold": 5,
+  "eos.projectRoot": "${workspaceFolder}",
+
+  "[typescript]": {
+    "editor.formatOnSave": true
+  },
+  "[javascript]": {
+    "editor.formatOnSave": true
+  },
+
+  "files.watcherExclude": {
+    "**/.eos-graph-cache.json": true,
+    "**/docs/memory/**": true,
+    "**/docs/consulting/**": true,
+    "**/src/dynamic_tools/*.tool.mjs": true
+  }
+}

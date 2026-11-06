@@ -66,6 +66,14 @@ for (const file of allFiles) {
 console.log(`[PASS] Stage 1/7 — SAST & Zero-Plaintext-Secrets Gate (${scannedTextFiles} files scanned, 0 leaks).`);
 
 // ---------------------------------------------------------------------------
+// STAGE 1.5: SECURITY HARDENING REGRESSION GATE (15-CVE Verification)
+// ---------------------------------------------------------------------------
+execFileSync(process.execPath, [path.join(root, "scripts/verify-security-hardening.mjs")], {
+  cwd: root,
+  stdio: "inherit"
+});
+
+// ---------------------------------------------------------------------------
 // STAGE 2: CONSTITUTIONAL SDD & 7 INVIOLABLE LAWS GATE (LAWS I, II, VII)
 // ---------------------------------------------------------------------------
 execFileSync(process.execPath, [path.join(root, "scripts/verify-landing.mjs")], {
@@ -111,6 +119,22 @@ execFileSync(process.execPath, [path.join(root, "scripts/verify-formal-tla.mjs")
   stdio: "inherit"
 });
 console.log(`[PASS] Stage 3.5/7 — TLA+ Formal Verification Gate (3/3 models, 800 states checked).`);
+
+// ---------------------------------------------------------------------------
+// STAGE 3.8: TYPESCRIPT STRICT TYPE-CHECK GATE (Google/Stripe/Airbnb grade)
+// ---------------------------------------------------------------------------
+execFileSync(process.execPath, [path.join(root, "scripts/verify-typescript.mjs")], {
+  cwd: root,
+  stdio: "inherit"
+});
+
+// ---------------------------------------------------------------------------
+// STAGE 3.9: DESIGN SYSTEM LINTER — VISUAL GOVERNANCE GATE (Capa 3)
+// ---------------------------------------------------------------------------
+execFileSync(process.execPath, [path.join(root, "scripts/verify-design-system.mjs")], {
+  cwd: root,
+  stdio: "inherit"
+});
 
 // ---------------------------------------------------------------------------
 // STAGE 4: STATIC AST, SYNTAX & BYTECODE VERIFICATION (node --check + L0 TS)
@@ -168,7 +192,12 @@ const testFiles = [
   "test/eosUniversalProductFoundry.test.mjs",
   "test/eosSovereignLoop.test.mjs",
   "test/eosOmegaTranscendentalApex.test.mjs",
-  "test/eosContinuousRefactorEngine.test.mjs"
+  "test/eosContinuousRefactorEngine.test.mjs",
+  "test/eosAgiHarness.test.mjs",
+  "test/eosPropertyBased.test.mjs",
+  "test/eosCliUx.test.mjs",
+  "test/eosOperational.test.mjs",
+  "test/eosEnterpriseModules.test.mjs",
 ];
 
 const isPts = process.argv.includes("--pts");
@@ -217,6 +246,40 @@ for (const testFile of filesToRun) {
 console.log(`[PASS] Stage 4/7 — Static AST, Syntax, Unit & Chaos Gate (${jsFilesToCheck.length} JS/MJS modules + ${tsCoreFiles.length} L0 TS modules + node:test passed).`);
 
 // ---------------------------------------------------------------------------
+// STAGE 4.5: CODE COVERAGE MEASUREMENT (informational — does not fail gate)
+// ---------------------------------------------------------------------------
+const coverageFiles = [
+  "test/eosCore.test.mjs",
+  "test/eosTurbo.test.mjs",
+  "test/eosSemanticGraph.test.mjs",
+  "test/eosAutonomousHealer.test.mjs",
+  "test/eosPropertyBased.test.mjs",
+];
+console.log(`[STAGE 4.5] Measuring code coverage on ${coverageFiles.length} critical core modules...`);
+try {
+  execFileSync(process.execPath, [
+    "--experimental-test-coverage",
+    "--test",
+    ...coverageFiles.map((f) => path.join(root, f)),
+  ], { cwd: root, stdio: "pipe", timeout: 90_000 });
+  console.log("[PASS] Stage 4.5 — Coverage measurement complete (check output for percentages).");
+} catch {
+  console.log("[INFO] Stage 4.5 — Coverage measurement finished (informational — gate not blocked).");
+}
+
+// ---------------------------------------------------------------------------
+// STAGE 4.6: CHAOS ENGINEERING — Netflix Standard (SPEC-053)
+// ---------------------------------------------------------------------------
+if (process.env["EOS_FLAG_CHAOS_IN_CI"] === "1" || process.env["EOS_FLAG_CHAOS_IN_CI"] === "true") {
+  execFileSync(process.execPath, [path.join(root, "scripts/run-chaos-tests.mjs")], {
+    cwd: root,
+    stdio: "inherit"
+  });
+} else {
+  console.log("[INFO] Stage 4.6 — Chaos engineering skipped (set EOS_FLAG_CHAOS_IN_CI=1 to enable).");
+}
+
+// ---------------------------------------------------------------------------
 // STAGE 5: WCAG 2.1 AA ACCESSIBILITY, SEO & PERFORMANCE BUDGET GATE
 // ---------------------------------------------------------------------------
 execFileSync(process.execPath, [path.join(root, "scripts/verify-cwv-budget.mjs")], {
@@ -233,6 +296,14 @@ const cssSizeKb = (fs.statSync(path.join(root, "css/eos.css")).size / 1024).toFi
 assert.ok(Number(jsSizeKb) < 250, `JS bundle exceeded budget: ${jsSizeKb} KB`);
 assert.ok(Number(cssSizeKb) < 120, `CSS bundle exceeded budget: ${cssSizeKb} KB`);
 console.log(`[PASS] Stage 5/7 — WCAG 2.1 AA, SEO & Performance Budget Gate (JS: ${jsSizeKb} KB, CSS: ${cssSizeKb} KB).`);
+
+// ---------------------------------------------------------------------------
+// STAGE 5.5: AUTOMATED ACCESSIBILITY SCAN (Google/Microsoft Standard)
+// ---------------------------------------------------------------------------
+execFileSync(process.execPath, [path.join(root, "scripts/verify-accessibility.mjs")], {
+  cwd: root,
+  stdio: "inherit"
+});
 
 // ---------------------------------------------------------------------------
 // STAGE 6: IN-PROCESS SMOKE TESTS OF ALL 11 SERVERLESS API ENDPOINTS (/api/*)

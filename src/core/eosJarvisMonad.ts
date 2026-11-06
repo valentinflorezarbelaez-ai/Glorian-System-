@@ -9,10 +9,7 @@
  * Zero external runtime dependencies.
  */
 
-import {
-  createDefaultEosKnowledgeStore,
-  tokenize
-} from "./eosNeuralVectorCore.ts";
+import crypto from "node:crypto";
 
 export type JarvisCognitiveState =
   | "IDLE_AWARENESS"
@@ -103,22 +100,27 @@ export const JARVIS_INTENT_REGISTRY: readonly JarvisIntentMapping[] = [
   }
 ] as const;
 
-const defaultKnowledge = createDefaultEosKnowledgeStore();
-
+/**
+ * Cryptographic hash for TMR checksums.
+ * FIXED: replaced 32-bit DJB2 (collision-trivial) with SHA-256 truncated to 16 hex chars.
+ * This prevents audit log forgery via hash collisions.
+ */
 function simpleHash(input: string): string {
-  let h = 0;
-  for (let i = 0; i < input.length; i++) {
-    h = ((h << 5) - h + input.charCodeAt(i)) | 0;
-  }
-  return Math.abs(h).toString(16).padStart(8, "0");
+  return crypto.createHash("sha256").update(input, "utf8").digest("hex").slice(0, 16);
 }
 
 /**
  * Triple-Modular Redundancy (TMR) Byzantine consensus evaluation.
- * Evaluates directive in 3 concurrent logical sandboxes:
- * - Alpha: Keyword rule matching
- * - Beta: Semantic Vector Space projection
- * - Gamma: Fail-Closed Security Policy & Boundary Invariant verification
+ * Evaluates directive in 3 genuinely independent logical sandboxes:
+ * - Alpha: Exact keyword rule matching against JARVIS_INTENT_REGISTRY
+ * - Beta:  Token n-gram partial scoring — tokenizes the directive and scores
+ *          each intent by partial substring matches, allowing "bench" to match
+ *          "benchmark" keywords; defaults to the intent with the most trigger
+ *          keywords on zero-score, never copying Alpha's result structurally
+ * - Gamma: Command structure detection (surface signals: ?, audit, ship/push/deploy,
+ *          bench/benchmark, search/busca) with a hard destructive-input gate that
+ *          halts execution before any classification runs
+ * The three classifiers can now genuinely disagree, making 2/3 consensus meaningful.
  */
 export function evaluateDirectiveWithTMR(directive: string): TmrExecutionReceipt {
   const norm = (directive || "").trim().toLowerCase();
@@ -133,34 +135,100 @@ export function evaluateDirectiveWithTMR(directive: string): TmrExecutionReceipt
   }
   const checkAlpha = simpleHash(`ALPHA:${intentAlpha}:${norm}`);
 
-  // Sandbox Beta: Semantic Vector Search
-  const searchResults = defaultKnowledge.search(directive, 1);
-  let intentBeta = intentAlpha;
-  if (searchResults.length > 0 && searchResults[0].score > 0.15) {
-    const docId = searchResults[0].id;
-    if (docId === "DOC-FLEET-DEPLOY") intentBeta = "SHIP_FLEET";
-    else if (docId === "DOC-SECURITY-SAST") intentBeta = "VERIFY_SECURITY_GATES";
-    else if (docId === "DOC-NANOSECOND-ENGINE") intentBeta = "RUN_NANOSECOND_BENCHMARK";
-    else if (docId === "DOC-AKASHIC-MEMORY") intentBeta = "QUERY_AKASHIC_MEMORY";
-    else intentBeta = "AUDIT_FLEET";
+  // Sandbox Beta: Token N-gram Partial Scoring (independent from Alpha's exact keyword match)
+  // Tokenize the directive and score each intent by partial substring matches against tokens.
+  // This allows "deplo" to match "despliega"/"deploy", diverging from Alpha's exact-keyword logic.
+  const tokens = norm.split(/\s+/).filter((t) => t.length > 0);
+  const betaScores: Record<string, number> = {};
+  for (const item of JARVIS_INTENT_REGISTRY) {
+    let score = 0;
+    for (const kw of item.triggerKeywords) {
+      for (const token of tokens) {
+        if (token.includes(kw) || kw.includes(token)) {
+          score += 1;
+        }
+      }
+    }
+    betaScores[item.intent] = score;
+  }
+  // Pick highest scoring intent; on tie or zero matches fall back to the most frequent intent
+  // in the registry (the one with the most triggerKeywords — a structural property, not Alpha's result).
+  let intentBeta = "";
+  let topBetaScore = -1;
+  for (const item of JARVIS_INTENT_REGISTRY) {
+    const s = betaScores[item.intent] ?? 0;
+    if (s > topBetaScore) {
+      topBetaScore = s;
+      intentBeta = item.intent;
+    }
+  }
+  if (topBetaScore === 0) {
+    // Zero matches: default to the registry entry with the most triggerKeywords (structural default)
+    let mostKeywords = -1;
+    for (const item of JARVIS_INTENT_REGISTRY) {
+      if (item.triggerKeywords.length > mostKeywords) {
+        mostKeywords = item.triggerKeywords.length;
+        intentBeta = item.intent;
+      }
+    }
   }
   const checkBeta = simpleHash(`BETA:${intentBeta}:${norm}`);
 
-  // Sandbox Gamma: Invariant Security Check (never allow destructive execution without explicit audit)
+  // Sandbox Gamma: Invariant Security Check + Command Structure Detection
+  // First gate: hard-block destructive and exfiltration patterns.
+  // SECURITY FIX: Expanded from 10 to 40+ patterns covering bypass variants,
+  // Windows commands, pipe-to-any-interpreter, subshell injection, and data exfiltration.
   const destructivePatterns = [
-    "rm -rf",
-    "drop table",
-    "drop database",
-    "delete from",
-    "truncate table",
-    "| bash",
-    "| sh",
+    // Unix filesystem destruction
+    "rm -rf", "rm -r /", "rm -f /",
+    // Windows filesystem destruction
+    "del /f", "del /s", "del /q", "rmdir /s",
+    "format c:", "format d:", "format e:",
+    // SQL destruction
+    "drop table", "drop database", "drop schema", "drop view", "drop index",
+    "delete from", "truncate table", "truncate database",
+    // Pipe to any interpreter (not just bash/sh)
+    "| bash", "| sh ", "| sh\t", "| zsh", "| fish",
+    "| pwsh", "| powershell", "| cmd", "| python", "| python3",
+    "| node", "| ruby", "| perl", "| php",
+    // Subshell injection
+    "$(",   // bash subshell
+    "`",    // backtick subshell
+    // Fork bomb
     ":(){",
-    "/etc/shadow",
-    "/etc/passwd"
+    // Sensitive file access
+    "/etc/shadow", "/etc/passwd", "/etc/sudoers", "/etc/crontab",
+    "c:\\windows\\system32", "c:/windows/system32",
+    // Filesystem tools
+    "mkfs", "fdisk", "wipefs", "shred",
+    // Network exfiltration
+    "curl http", "curl https", "wget http", "wget https",
+    "nc -e", "netcat -e",
+    // Kernel / privilege escalation
+    "chmod 777", "chmod +s", "sudo su", "sudo bash",
+    "sudo sh", "sudo -s",
   ];
-  const isDestructive = destructivePatterns.some((p) => norm.includes(p));
-  const intentGamma = isDestructive ? "SECURITY_VIOLATION_HALT" : intentAlpha;
+  const isDestructive = destructivePatterns.some((p) => norm.includes(p.toLowerCase()));
+  let intentGamma: string;
+  if (isDestructive) {
+    intentGamma = "SECURITY_VIOLATION_HALT";
+  } else {
+    // Command structure detection: structural surface signals take precedence over keyword lookup.
+    if (norm.includes("?")) {
+      intentGamma = "AUDIT_FLEET"; // query-style → fleet status/audit
+    } else if (norm.includes("audit")) {
+      intentGamma = "AUDIT_FLEET";
+    } else if (norm.includes("ship") || norm.includes("push") || norm.includes("deploy")) {
+      intentGamma = "SHIP_FLEET";
+    } else if (norm.includes("bench") || norm.includes("benchmark")) {
+      intentGamma = "RUN_NANOSECOND_BENCHMARK";
+    } else if (norm.includes("search") || norm.includes("busca")) {
+      intentGamma = "QUERY_AKASHIC_MEMORY";
+    } else {
+      // No structural signal detected — defer to Alpha as secondary authority
+      intentGamma = intentAlpha;
+    }
+  }
   const safeGamma = !isDestructive;
   const checkGamma = simpleHash(`GAMMA:${intentGamma}:${norm}`);
 

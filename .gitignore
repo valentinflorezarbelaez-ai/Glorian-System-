@@ -1,3 +1,18 @@
 .vercel
 bin/*.exe
 *.exe
+
+# Dynamic AGI-forged tool modules (auto-created at runtime, not for git)
+src/dynamic_tools/*.tool.mjs
+src/dynamic_tools/forge_manifest.json
+
+# AGI runtime artifacts
+docs/memory/
+docs/consulting/
+docs/evidence/AGI-RECEIPT-*.json
+
+# CLI UX first-run marker
+.eos-initialized
+
+# Semantic graph build cache
+.eos-graph-cache.json
