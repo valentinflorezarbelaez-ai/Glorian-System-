@@ -408,8 +408,13 @@ try {
       assert.ok(capturedBody && typeof capturedBody === "object", `[STAGE 6 FAIL] Consolidated mode ${cm.desc} did not return valid JSON`);
     }
 
+    execFileSync(process.execPath, [path.join(root, "scripts/verify-mcp-catalog.mjs")], {
+      cwd: root,
+      stdio: "inherit"
+    });
+
     stagesPassedCount++;
-    console.log(`[PASS] Stage 6/7 — In-process handler smoke checks (${apiEndpoints.length} handlers + ${consolidatedModes.length} consolidated modes returned mocked HTTP 200 responses).`);
+    console.log(`[PASS] Stage 6/7 — In-process handler smoke checks (${apiEndpoints.length} handlers + ${consolidatedModes.length} consolidated modes returned mocked HTTP 200 responses) and MCP catalog contract parity.`);
   } catch (err) {
     recordFinding("EOS-API-006", `Stage 6 serverless API smoke check error: ${err.message}`, "api/");
     throw err;

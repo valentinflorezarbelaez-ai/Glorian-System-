@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "EOS System MCP Tool Catalog Contract",
-  "version": "66.0.0",
-  "generatedAt": "2022-03-19T16:48:59.000Z",
-  "catalogSha256": "4f6a067b5560e75e029e52369b2139f8fc0f00abdde2298457503d2f41cae952",
+  "version": "75.0.0",
+  "generatedAt": "2024-12-25T00:18:32.000Z",
+  "catalogSha256": "095f6e58e8ba735bf5224f702969db4d826441522bb790ba3763588e006aec8f",
   "totalTools": 200,
   "coreTier0Count": 30,
   "tools": [
@@ -47,13 +47,6 @@
         "required": [
           "query"
         ]
-      },
-      "annotations": {
-        "title": "EOS semantic Search",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -96,13 +89,6 @@
         "required": [
           "action"
         ]
-      },
-      "annotations": {
-        "title": "EOS query Knowledge Graph",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -119,13 +105,6 @@
         "required": [
           "directive"
         ]
-      },
-      "annotations": {
-        "title": "EOS tmr Consensus",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -139,13 +118,6 @@
             "description": "Run deep git inspection (default: false)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS audit Fleet",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -167,13 +139,6 @@
             "description": "Root directory to scan for Git repositories (optional)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS fleet Registry Sync",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -187,13 +152,6 @@
             "description": "Execute live synthetic latency/SSL probes (default: false)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS fleet Mission Control",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -202,13 +160,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS health Check",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -230,13 +181,6 @@
           "filePath",
           "content"
         ]
-      },
-      "annotations": {
-        "title": "EOS validate Patch",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -257,13 +201,6 @@
         "required": [
           "filePath"
         ]
-      },
-      "annotations": {
-        "title": "EOS optimize Context",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -308,13 +245,6 @@
         "required": [
           "directive"
         ]
-      },
-      "annotations": {
-        "title": "EOS mission Run",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -353,13 +283,6 @@
         "required": [
           "rawPrompt"
         ]
-      },
-      "annotations": {
-        "title": "EOS amplify Prompt",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -373,13 +296,6 @@
             "description": "Directory to scan relative to project root (default: 'src')"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS check Architecture",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -414,13 +330,6 @@
           "description",
           "proposedAction"
         ]
-      },
-      "annotations": {
-        "title": "EOS evaluate Decision",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -429,13 +338,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS turbo Verify",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -452,13 +354,6 @@
         "required": [
           "filePath"
         ]
-      },
-      "annotations": {
-        "title": "EOS get Blast Radius",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -467,13 +362,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS query Code Graph",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -491,13 +379,6 @@
             "description": "Only the JSON boolean true requests local file writes; defaults to a read-only report."
           }
         }
-      },
-      "annotations": {
-        "title": "EOS autonomous Heal",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -535,13 +416,6 @@
         "required": [
           "action"
         ]
-      },
-      "annotations": {
-        "title": "EOS manage Worktree",
-        "readOnlyHint": false,
-        "destructiveHint": true,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -562,13 +436,6 @@
         "required": [
           "target"
         ]
-      },
-      "annotations": {
-        "title": "EOS run Eval",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -587,13 +454,6 @@
             "description": "Action: audit (default), list_specs, or list_changes"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS check Openspec",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -615,13 +475,6 @@
             "description": "Titan subsystem to benchmark (default: all)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS titans Benchmark",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -630,13 +483,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS reconcile State",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -650,13 +496,6 @@
             "description": "Path to project root (default: current project)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS spotify Audit",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -682,13 +521,6 @@
             "description": "Only the JSON boolean true writes the new file."
           }
         }
-      },
-      "annotations": {
-        "title": "EOS spotify Scaffold",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -727,13 +559,6 @@
             "description": "Blockers or external dependencies"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS spotify Standup",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -763,13 +588,6 @@
             "description": "Root cause summary"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS spotify Postmortem",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -795,13 +613,6 @@
             "description": "Primary evaluation metric"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS spotify Experiment",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -827,13 +638,6 @@
             "description": "Episodes for BaRT Thompson Sampling"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS go Accelerator",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -869,13 +673,6 @@
           "taskName",
           "specDescription"
         ]
-      },
-      "annotations": {
-        "title": "EOS spotify Honk Dispatch",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -889,13 +686,6 @@
             "description": "Whether to sync AGENTS.md and CLAUDE.md to disk"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS spotify Xirp Context",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -933,13 +723,6 @@
           "migrationId",
           "action"
         ]
-      },
-      "annotations": {
-        "title": "EOS spotify Fleetshift Batch",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -969,13 +752,6 @@
           "serviceName",
           "squad"
         ]
-      },
-      "annotations": {
-        "title": "EOS spotify Canary Manifest",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -993,13 +769,6 @@
             "description": "DSP iterations (default: 20)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS audio DSP Benchmark",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1017,13 +786,6 @@
             "description": "Single registered project ID to update when apply=true."
           }
         }
-      },
-      "annotations": {
-        "title": "EOS fleet Elevate",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -1049,13 +811,6 @@
           "serviceName",
           "endpoint"
         ]
-      },
-      "annotations": {
-        "title": "EOS apollo Rpc",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1089,13 +844,6 @@
           "keyA",
           "keyB"
         ]
-      },
-      "annotations": {
-        "title": "EOS spotify Mix Plan",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1112,13 +860,6 @@
         "required": [
           "userId"
         ]
-      },
-      "annotations": {
-        "title": "EOS spotify Taste Profile",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1136,13 +877,6 @@
             "description": "Only the JSON boolean true writes scaffold files."
           }
         }
-      },
-      "annotations": {
-        "title": "EOS universal Adapt",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1156,13 +890,6 @@
             "description": "Path to project root (default: current project)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS universal Fingerprint",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1184,13 +911,6 @@
             "description": "Write files to disk"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS universal Scaffold",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -1204,13 +924,6 @@
             "description": "Target repository root directory (default: current workspace)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS polyglot Bridge",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1248,13 +961,6 @@
         "required": [
           "action"
         ]
-      },
-      "annotations": {
-        "title": "EOS bitemporal Ledger",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1295,13 +1001,6 @@
             "description": "Deterministic PRNG seed"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS spotify Shuffle",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1323,13 +1022,6 @@
             "description": "Client longitude coordinate"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS global Edge Route",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1347,13 +1039,6 @@
             "description": "P95 delay threshold before hedged request (default: 28.0)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS global Edge Benchmark",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1367,13 +1052,6 @@
             "description": "Task goal to drive through the conscious octave"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS samael Ibm Nvidia",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1391,13 +1069,6 @@
             "description": "Payload size for structural delimiter scanning (default: 1,048,576)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS disruptor Benchmark",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1435,13 +1106,6 @@
             "description": "Pure domain unit test coverage percentage"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS nubank Audit",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1463,13 +1127,6 @@
           "previousSchema",
           "proposedSchema"
         ]
-      },
-      "annotations": {
-        "title": "EOS nubank Sachem Verify",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1560,13 +1217,6 @@
           "cognitiveFactors",
           "systemicRemediations"
         ]
-      },
-      "annotations": {
-        "title": "EOS nubank Postmortem",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1583,13 +1233,6 @@
         "required": [
           "txData"
         ]
-      },
-      "annotations": {
-        "title": "EOS nubank Datomic Transact",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1631,13 +1274,6 @@
             "description": "Unit test coverage percentage"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS spotify Audit Institutional",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1666,13 +1302,6 @@
           "serviceName",
           "filesPresent"
         ]
-      },
-      "annotations": {
-        "title": "EOS spotify Golden Path Verify",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1725,13 +1354,6 @@
           "maxAllowedP99Ms",
           "observationWindowMinutes"
         ]
-      },
-      "annotations": {
-        "title": "EOS spotify Canary Gate",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1778,13 +1400,6 @@
           "targetRepos",
           "action"
         ]
-      },
-      "annotations": {
-        "title": "EOS spotify Fleetshift Plan",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1805,13 +1420,6 @@
         "required": [
           "directivePrompt"
         ]
-      },
-      "annotations": {
-        "title": "EOS apex Route Model",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1832,13 +1440,6 @@
         "required": [
           "sourceContent"
         ]
-      },
-      "annotations": {
-        "title": "EOS apex Compress Context",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1859,13 +1460,6 @@
         "required": [
           "filePath"
         ]
-      },
-      "annotations": {
-        "title": "EOS apex Autonomous Heal",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -1874,13 +1468,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS apex Go Benchmark",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1894,13 +1481,6 @@
             "description": "Number of benchmark iterations (default: 100000)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS wasm Benchmark",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1921,13 +1501,6 @@
         "required": [
           "sourceCode"
         ]
-      },
-      "annotations": {
-        "title": "EOS wasm Compress",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1944,13 +1517,6 @@
         "required": [
           "nodeId"
         ]
-      },
-      "annotations": {
-        "title": "EOS topology Blast Radius",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1967,13 +1533,6 @@
         "required": [
           "directive"
         ]
-      },
-      "annotations": {
-        "title": "EOS soul Alignment",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1982,13 +1541,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS autonomous Introspect",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -1997,13 +1549,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS military Shield Audit",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2012,13 +1557,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS query Topology",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2039,13 +1577,6 @@
         "required": [
           "directivePrompt"
         ]
-      },
-      "annotations": {
-        "title": "EOS model Route",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2062,13 +1593,6 @@
         "required": [
           "targetModule"
         ]
-      },
-      "annotations": {
-        "title": "EOS datalog Query",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2085,13 +1609,6 @@
         "required": [
           "targetSnippet"
         ]
-      },
-      "annotations": {
-        "title": "EOS mutation Test",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2109,13 +1626,6 @@
             "description": "Maximum simulation steps to run (default 50)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS time Travel Simulate",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2129,13 +1639,6 @@
             "description": "Optional path to binary WAL file (defaults to data/eos_bitemporal.wal)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS wal Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2144,13 +1647,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS prometheus Metrics",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2172,13 +1668,6 @@
           "relPath",
           "content"
         ]
-      },
-      "annotations": {
-        "title": "EOS sandbox Evaluate",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2187,13 +1676,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS simulate Bounded Models",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2211,13 +1693,6 @@
             "description": "Simulation event horizon (default 30)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS simulate Jepsen Partition",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2231,13 +1706,6 @@
             "description": "Whether to execute in-place zero-entropy wipe on all stored tokens"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS vault Memory Audit",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2259,13 +1727,6 @@
             "description": "Hours dedicated to physical gym/temple hygiene"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS gnostic Temple Audit",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2274,13 +1735,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS finops Budget Check",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2307,13 +1761,6 @@
           "objectFocused",
           "placePresent"
         ]
-      },
-      "annotations": {
-        "title": "EOS clave De Sol Evaluate",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2327,13 +1774,6 @@
             "description": "Sample iterations (default 5000)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS nano Benchmark",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2342,13 +1782,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS sentinel Tick",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2362,13 +1795,6 @@
             "description": "Target source code file path"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS alchemical Transmute",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2386,13 +1812,6 @@
             "description": "Iterations (default 1000)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS bitwise Accelerate",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2401,13 +1820,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS buffer Pool Stats",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2457,13 +1869,6 @@
           "description",
           "category"
         ]
-      },
-      "annotations": {
-        "title": "EOS introspect Mind Levels",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2497,13 +1902,6 @@
             "type": "boolean"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS three Mountains Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2517,13 +1915,6 @@
             "description": "Instantaneous incoming queue depth (default: 0)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS autotuner Tick",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2553,13 +1944,6 @@
         "required": [
           "plaintext"
         ]
-      },
-      "annotations": {
-        "title": "EOS nsa Encrypt",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2611,13 +1995,6 @@
           "objectClassification",
           "action"
         ]
-      },
-      "annotations": {
-        "title": "EOS nsa Zero Trust Check",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2626,13 +2003,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS nsa Audit Logs",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2641,13 +2011,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS consensus Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2661,13 +2024,6 @@
             "description": "Clock drift uncertainty parameter in ms (default 2.0)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS truetime Now",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2676,13 +2032,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS adaptive Concurrency Stats",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2710,13 +2059,6 @@
         "required": [
           "key"
         ]
-      },
-      "annotations": {
-        "title": "EOS hash Ring Lookup",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2725,13 +2067,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS merkle Sync Diff",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2757,13 +2092,6 @@
             "description": "Refill rate (default 20)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS token Bucket Check",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2784,13 +2112,6 @@
         "required": [
           "action"
         ]
-      },
-      "annotations": {
-        "title": "EOS hft Ipc Dispatch",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2808,13 +2129,6 @@
             "description": "Optional file path to read and scan"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS zero Copy Scan",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2832,13 +2146,6 @@
             "description": "Number of fault injection cycles"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS chaos Inject Eval",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2870,13 +2177,6 @@
         "required": [
           "id"
         ]
-      },
-      "annotations": {
-        "title": "EOS hnsw Index Add",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -2905,13 +2205,6 @@
             "description": "Exploration queue factor (default: 32)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS hnsw Knn Search",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2941,13 +2234,6 @@
           "textA",
           "textB"
         ]
-      },
-      "annotations": {
-        "title": "EOS vector Similarity",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -2999,13 +2285,6 @@
             "description": "Target SLA delivery deadline in hours"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS monte Carlo Sim",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3040,13 +2319,6 @@
             "description": "Optional metadata"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS hash Chain Verify",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3099,13 +2371,6 @@
           "name",
           "domain"
         ]
-      },
-      "annotations": {
-        "title": "EOS product Foundry Create",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -3123,13 +2388,6 @@
             "description": "Complexity tier"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS product Foundry Validate",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3160,13 +2418,6 @@
           "title",
           "userPrompt"
         ]
-      },
-      "annotations": {
-        "title": "EOS sovereign Loop Run",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3175,13 +2426,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS sovereign Loop Stages",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3244,13 +2488,6 @@
         "required": [
           "action"
         ]
-      },
-      "annotations": {
-        "title": "EOS agent Session Contract",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -3300,13 +2537,6 @@
           "name",
           "domain"
         ]
-      },
-      "annotations": {
-        "title": "EOS product Deliver Run",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3315,13 +2545,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS product Deliver Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3339,13 +2562,6 @@
             "description": "Working tree porcelain signal (default true)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS platform Ops Ceiling",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3376,13 +2592,6 @@
             "description": "Maximum traces to return (default 20, max 100)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS otel Query Traces",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3399,13 +2608,6 @@
         "required": [
           "traceId"
         ]
-      },
-      "annotations": {
-        "title": "EOS otel Trace Waterfall",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3419,13 +2621,6 @@
             "description": "Optional specific trace ID to export"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS otel Export Otlp",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3458,13 +2653,6 @@
             "description": "Evaluate in sandbox without modifying disk (default true)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS autonomous Heal Loop",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3497,13 +2685,6 @@
           "targetFile",
           "archetype"
         ]
-      },
-      "annotations": {
-        "title": "EOS ast Mutation Synthesize",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3512,13 +2693,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS self Healing Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3544,13 +2718,6 @@
             "description": "Target historical timestamp for asOf(t)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS ontology Query",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3567,13 +2734,6 @@
         "required": [
           "payload"
         ]
-      },
-      "annotations": {
-        "title": "EOS quantum Lattice Seal",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3587,13 +2747,6 @@
             "description": "Target directory to audit (defaults to 'src/core')"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS refactor Audit",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3607,13 +2760,6 @@
             "description": "Root directory of the project (defaults to '.')"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS refactor Execute",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3630,13 +2776,6 @@
         "required": [
           "candidates"
         ]
-      },
-      "annotations": {
-        "title": "EOS synapse Arbitrate",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3661,13 +2800,6 @@
         "required": [
           "seed"
         ]
-      },
-      "annotations": {
-        "title": "EOS dst Simulate",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3681,13 +2813,6 @@
             "description": "Sample numeric input to assert against preconditions"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS dbc Verify",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3701,13 +2826,6 @@
             "description": "Optional project root path"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS fleet Soundcheck",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3725,13 +2843,6 @@
             "description": "Deterministic PRNG seed (default: 42)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS mcts Tune",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3749,13 +2860,6 @@
             "description": "Previous stable version"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS canary Rollout",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3811,13 +2915,6 @@
           "latencyP99Ms",
           "requestCount"
         ]
-      },
-      "annotations": {
-        "title": "EOS canary Telemetry Evaluate",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3855,13 +2952,6 @@
             "description": "Optional seed sample count for synthetic benchmarks (default: 1000)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS columnar Telemetry Query",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3882,13 +2972,6 @@
         "required": [
           "partitionKey"
         ]
-      },
-      "annotations": {
-        "title": "EOS cell Bulkhead Route",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3912,13 +2995,6 @@
             "description": "Optional state change for target cell"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS cell Bulkhead Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3964,13 +3040,6 @@
         "required": [
           "serviceId"
         ]
-      },
-      "annotations": {
-        "title": "EOS slo Burn Rate Evaluate",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -3988,13 +3057,6 @@
             "description": "If true, explicitly returns whether deployment is permitted (fail-closed check)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS slo Budget Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4027,13 +3089,6 @@
         "required": [
           "endpointId"
         ]
-      },
-      "annotations": {
-        "title": "EOS hedge Request Execute",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4051,13 +3106,6 @@
             "description": "Optional raw latency sample in ms to record for the target endpoint"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS hedge Metrics Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4085,13 +3133,6 @@
             "description": "Optional simulated RTT in ms to record on immediate slot release"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS concurrency Evaluate",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4109,13 +3150,6 @@
             "description": "Optional flag to reset governor to nominal state"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS concurrency Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4162,13 +3196,6 @@
           "spanId",
           "name"
         ]
-      },
-      "annotations": {
-        "title": "EOS trace Span Record",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4186,13 +3213,6 @@
             "description": "Optional flag to reset sampler counters to zero"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS trace Sampler Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4234,13 +3254,6 @@
             "description": "Observed average queue residency delay in ms"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS remediation Correlate Execute",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4254,13 +3267,6 @@
             "description": "Optional flag to reset engine to nominal state"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS remediation Engine Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4294,13 +3300,6 @@
             "description": "Synthetic virtual page pressure percentage (0-100)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS kernel Orchestrator Reconcile",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4314,13 +3313,6 @@
             "description": "Optional flag to reset orchestrator history and state"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS kernel Orchestrator Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4334,13 +3326,6 @@
             "description": "Optional specific pillar to execute ('GOOGLE_VIZIER', 'NETFLIX_CHAOS_KONG', 'AWS_SMT_REASONING', 'META_PGO_LAYOUT', 'APPLE_SECURE_ENCLAVE', 'MICROSOFT_BFT_COUNCIL', or omit for ALL_PILLARS)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS transcendence Execute",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4354,13 +3339,6 @@
             "description": "Optional flag to reset nexus status and history"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS transcendence Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4390,13 +3368,6 @@
           "archetype",
           "componentType"
         ]
-      },
-      "annotations": {
-        "title": "EOS design Scaffold Component",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4413,13 +3384,6 @@
         "required": [
           "markup"
         ]
-      },
-      "annotations": {
-        "title": "EOS design Audit Markup",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4440,13 +3404,6 @@
         "required": [
           "directive"
         ]
-      },
-      "annotations": {
-        "title": "EOS finops Route Task",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4471,13 +3428,6 @@
           "diffHistory",
           "testPassed"
         ]
-      },
-      "annotations": {
-        "title": "EOS finops Evaluate Stagnation",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4495,13 +3445,6 @@
             "description": "Optional flag to reset governor status"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS finops Wallet Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4545,13 +3488,6 @@
           "targetFile",
           "monorepoNodes"
         ]
-      },
-      "annotations": {
-        "title": "EOS planetary Sparse Project",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4568,13 +3504,6 @@
         "required": [
           "sourceCode"
         ]
-      },
-      "annotations": {
-        "title": "EOS jpl Power Of Ten Audit",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4614,13 +3543,6 @@
         "required": [
           "votes"
         ]
-      },
-      "annotations": {
-        "title": "EOS tmr Consensus Adjudicate",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4644,13 +3566,6 @@
         "required": [
           "patternId"
         ]
-      },
-      "annotations": {
-        "title": "EOS synapse Propagate Golden Path",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4664,13 +3579,6 @@
             "description": "Optional filter: 'PERFORMANCE_OPT', 'SECURITY_HARDENING', 'FINOPS_GOVERNANCE', 'AEROSPACE_SAFETY', 'GOLDEN_PATH'"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS synapse Fleet Knowledge Query",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4684,13 +3592,6 @@
             "description": "Optional flag to reset synapse status and knowledge graph"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS synapse Mesh Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4711,13 +3612,6 @@
         "required": [
           "providerId"
         ]
-      },
-      "annotations": {
-        "title": "EOS planetary Mesh Evacuate Traffic",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4726,13 +3620,6 @@
       "inputSchema": {
         "type": "object",
         "properties": {}
-      },
-      "annotations": {
-        "title": "EOS planetary Mesh Health Matrix",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4746,13 +3633,6 @@
             "description": "Optional flag to reset evacuation mesh to nominal active-active state"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS planetary Mesh Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4773,13 +3653,6 @@
         "required": [
           "directive"
         ]
-      },
-      "annotations": {
-        "title": "EOS antigravity Direct",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4793,13 +3666,6 @@
             "description": "Optional path to ~/.gemini/config directory"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS antigravity Doctor",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4858,13 +3724,6 @@
             "description": "Optional confined ledger database path within projectRoot or ':memory:'"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS sqlite Ledger",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -4882,13 +3741,6 @@
             "description": "Optional registered fleet projectId from docs/projects/registry.json"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS ast Analyze",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4902,13 +3754,6 @@
             "description": "Optional path to ~/.gemini/config directory"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS gentleman Audit",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -4931,13 +3776,6 @@
             "description": "Force re-verification/re-sync even when versions match"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS gentleman Update",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -4981,13 +3819,6 @@
             "description": "Preview onboarding artifacts without writing to control-plane disk (default: true)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS enterprise Workspace",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -5039,13 +3870,6 @@
             }
           }
         }
-      },
-      "annotations": {
-        "title": "EOS evolve Module",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -5136,13 +3960,6 @@
             "description": "Whether to record cryptographic batch attestation in SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS agent Topology Mesh",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -5191,13 +4008,6 @@
             "description": "Whether to record attestation in SQLite WAL durable ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS invariant Engine",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5244,13 +4054,6 @@
             "description": "Whether to persist attestation into SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS contract Governor",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5296,13 +4099,6 @@
             "description": "Whether to record healing receipt in SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS surgical Healing",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -5333,13 +4129,6 @@
             "description": "Whether to record verification receipt in SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS tlc Checker",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5370,13 +4159,6 @@
             "description": "Whether to record PR evaluation receipt in SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS github Gate",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5410,13 +4192,6 @@
             "description": "Whether to record execution receipt in SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS microvm Sandbox",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5468,13 +4243,6 @@
             "description": "Whether to run in a dedicated worker thread with preemptive timeout termination"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS wasm Sandbox",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5501,13 +4269,6 @@
             "description": "Whether to record snapshot receipt in SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS dashboard Status",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5529,13 +4290,6 @@
             "description": "Whether to persist attestation receipts in SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS fleet Verify",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5562,13 +4316,6 @@
             "description": "Whether to persist attestation receipt in SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS unitotal Evaluate",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5604,13 +4351,6 @@
             "description": "Whether to commit cryptographic verification receipt into SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS fuzz Hypervisor",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5650,13 +4390,6 @@
             "description": "Specific code symbols claimed to exist or be modified"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS conscious Witness",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5686,13 +4419,6 @@
             "description": "If true, simulates repair cycle without opening PR or committing"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS sapfix Autoshipper",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5719,13 +4445,6 @@
             "description": "Whether to record cryptographic receipt into SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS slsa Provenance Sbom",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5767,13 +4486,6 @@
             "description": "Whether to record stats receipt into SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS content Addressable Cache",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -5818,13 +4530,6 @@
             "description": "Whether to commit proof receipt into SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS smt Reasoning Prover",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5866,13 +4571,6 @@
             "description": "Whether to persist chaos report into SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS chaos Monkey Live",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -5915,13 +4613,6 @@
             "description": "Whether to commit consensus report into SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS bft Swarm Consensus",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5939,13 +4630,6 @@
             "description": "Whether to record TrueTime attestation into SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS truetime Commit Wait",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -5977,13 +4661,6 @@
             "description": "Whether to record operation receipt into SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS lsm Storage Put Get",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -6021,13 +4698,6 @@
             "description": "Whether to record quorum attestation into SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS threshold Secret Split Combine",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -6065,13 +4735,6 @@
             "description": "Whether to record enclave descriptor into SQLite WAL ledger"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS microvm Enclave Generate",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -6092,13 +4755,6 @@
             "description": "If true, non-blocking anti-pattern warnings will also fail the audit"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS design System Govern",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -6160,13 +4816,6 @@
             "description": "Declarative refactoring rule"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS neurosymbolic Fleet Healing",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -6184,13 +4833,6 @@
             "description": "Format of the output report: structured JSON or formatted ANSI TUI table (default: json)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS fleet Pulse",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -6212,13 +4854,6 @@
             "description": "Format of the report: structured JSON or formatted ANSI TUI summary (default: json)"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS nocturnal Evolution",
-        "readOnlyHint": false,
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false
       }
     },
     {
@@ -6240,13 +4875,6 @@
             "description": "Output format: structured JSON or high-density terminal dashboard (default: json)"
           }
         }
-      },
-      "annotations": {
-        "title": "Glorian Fleet Health Watchdog",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -6295,13 +4923,6 @@
           "category",
           "description"
         ]
-      },
-      "annotations": {
-        "title": "Glorian Constitutional Tribunal",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -6337,13 +4958,6 @@
         "required": [
           "directive"
         ]
-      },
-      "annotations": {
-        "title": "EOS autonomous Synthesize",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -6361,13 +4975,6 @@
             "description": "Output format: structured JSON or human-readable summary"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS planetary Doctrine Audit",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     },
     {
@@ -6385,13 +4992,6 @@
             "description": "Output format: structured JSON or human-readable summary"
           }
         }
-      },
-      "annotations": {
-        "title": "EOS black Projects Triad Audit",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
       }
     }
   ]

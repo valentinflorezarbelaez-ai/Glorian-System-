@@ -66,6 +66,8 @@
     "coverage": "node scripts/run-coverage.mjs",
     "packaging:verify": "node scripts/verify-packaging.mjs",
     "mcp:verify": "node --test test/eosMcpSchemaValidator.test.mjs",
+    "mcp:catalog:sync": "node scripts/sync-mcp-catalog.mjs",
+    "mcp:catalog:verify": "node scripts/verify-mcp-catalog.mjs",
     "test": "node scripts/verify-cicd-pipeline.mjs",
     "test:workflow": "node --test test/eosEngineeringWorkflow.test.mjs test/eosFlowCliSmoke.test.mjs",
     "test:pts": "node bin/eos.mjs pts",

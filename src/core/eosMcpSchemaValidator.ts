@@ -150,7 +150,7 @@ export class EosMcpSchemaValidator {
     const payload = {
       $schema: "https://json-schema.org/draft/2020-12/schema",
       title: "EOS System MCP Tool Catalog Contract",
-      version: "66.0.0",
+      version: this.readPackageVersion(),
       generatedAt: report.timestampIso,
       catalogSha256: report.catalogSha256,
       totalTools: report.totalTools,
@@ -160,6 +160,17 @@ export class EosMcpSchemaValidator {
 
     safeWriteFileSync(exportPath, JSON.stringify(payload, null, 2) + "\n");
     return exportPath;
+  }
+
+  private readPackageVersion(): string {
+    try {
+      const raw = JSON.parse(
+        fs.readFileSync(path.join(this.projectRoot, "package.json"), "utf8")
+      ) as { version?: unknown };
+      return typeof raw.version === "string" ? raw.version : "0.0.0";
+    } catch {
+      return "0.0.0";
+    }
   }
 }
 
