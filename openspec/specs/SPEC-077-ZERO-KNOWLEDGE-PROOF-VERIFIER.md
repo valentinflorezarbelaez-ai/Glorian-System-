@@ -47,3 +47,13 @@ ESCENARIO: Rechazo Estricto de Prueba con Respuesta o Desafío Falsificado
   ENTONCES el verificador detecta la discrepancia matemática y retorna resultado REJECTED
   Y emite una alerta de seguridad inmutable
 ```
+
+### BDD-335: CSPRNG Ephemeral Nonce Non-Reuse (Nonce Unpredictability)
+```gherkin
+ESCENARIO: No Reutilización del Nonce Efímero bajo Contexto Idéntico
+  DADO un secreto de autorización 'x' y un contexto idéntico con el reloj lógico congelado
+  CUANDO se generan dos pruebas consecutivas
+  ENTONCES los compromisos 'R' y las respuestas 's' difieren entre ambas pruebas
+  Y ambas pruebas siguen verificándose con resultado PASS (completitud preservada)
+  Y el nonce procede de un CSPRNG con rejection sampling (sin sesgo de módulo)
+```

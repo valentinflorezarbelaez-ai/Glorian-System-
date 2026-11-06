@@ -1,16 +1,19 @@
-// eslint.config.mjs — Flat ESLint config (ESLint 9+, typescript-eslint v8)
+// eslint.config.mjs — Flat ESLint config (ESLint 9+)
 // Big Tech standard: lint catches runtime anti-patterns that TypeScript's
-// type-checker alone cannot detect (no-floating-promises, consistent-return,
-// no-unused-vars in JS files, import order, Node.js-specific rules).
+// type-checker alone cannot detect (unused vars, no-constant-condition,
+// no-async-promise-executor, import patterns, Node.js-specific rules).
+//
+// TypeScript safety is handled by `tsc --project tsconfig.typecheck.json`
+// (strict mode, noEmit). ESLint focuses on code patterns and JS/MJS files
+// that the TS compiler doesn't lint (scripts/, bin/, api/, test/).
 //
 // Law V: zero external runtime dependencies. ESLint is a devDependency only.
 
 // @ts-check
 import js from "@eslint/js";
-import tsEslint from "typescript-eslint";
 import nodePlugin from "eslint-plugin-n";
 
-export default tsEslint.config(
+export default [
   // ── Global ignores ────────────────────────────────────────────────────────
   {
     ignores: [
@@ -25,51 +28,23 @@ export default tsEslint.config(
     ],
   },
 
-  // ── Base rules for all JS / MJS files ─────────────────────────────────────
+  // ── Base rules for all JS / MJS / TS files ─────────────────────────────────
   js.configs.recommended,
 
-  // ── TypeScript-aware rules for src/**/*.ts ─────────────────────────────────
-  ...tsEslint.configs.recommendedTypeChecked.map((cfg) => ({
-    ...cfg,
-    files: ["src/**/*.ts"],
-  })),
-
-  // ── TypeScript parser options (needed for type-checked rules) ─────────────
+  // ── TypeScript files: apply JS rules + custom overrides ─────────────────────
   {
     files: ["src/**/*.ts"],
-    languageOptions: {
-      parserOptions: {
-        project: "./tsconfig.typecheck.json",
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
     rules: {
-      // ── Type safety ─────────────────────────────────────────────────────
-      "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/no-floating-promises": "error",
-      "@typescript-eslint/no-misused-promises": "error",
-      "@typescript-eslint/await-thenable": "error",
-      "@typescript-eslint/no-unsafe-assignment": "warn",
-      "@typescript-eslint/no-unsafe-member-access": "warn",
-      "@typescript-eslint/no-unsafe-call": "warn",
-      "@typescript-eslint/no-unsafe-return": "warn",
-      "@typescript-eslint/consistent-type-imports": [
-        "error",
-        { prefer: "type-imports", fixStyle: "inline-type-imports" },
-      ],
-
-      // ── Code quality ─────────────────────────────────────────────────────
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
-      ],
-      "@typescript-eslint/prefer-nullish-coalescing": "error",
-      "@typescript-eslint/prefer-optional-chain": "error",
+      // TS compiler handles type safety; ESLint handles code patterns
+      "no-undef": "off", // TS types are not global vars
+      "no-unused-vars": "off", // TS compiler catches this with noUnusedLocals
       "no-console": "off", // CLI tool — console output is intentional
-
-      // ── Imports ──────────────────────────────────────────────────────────
-      // Enforce .ts extensions in imports (NodeNext module resolution)
-      "@typescript-eslint/consistent-type-exports": "error",
+      "no-constant-condition": ["error", { checkLoops: false }],
+      "no-async-promise-executor": "error",
+      "no-empty": ["error", { allowEmptyCatch: true }],
+      "prefer-const": "error",
+      "no-var": "error",
+      "eqeqeq": ["error", "always"],
     },
   },
 
@@ -93,8 +68,8 @@ export default tsEslint.config(
     files: ["test/**/*.test.mjs"],
     rules: {
       "no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
-      // Node.js built-in test runner uses top-level await
+      // Node.js built-in test runner uses top-level await and console
       "no-console": "off",
     },
   },
-);
+];

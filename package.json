@@ -193,8 +193,7 @@
     "@types/node": "24.19.2",
     "eslint": "9.28.0",
     "eslint-plugin-n": "17.18.0",
-    "typescript": "7.0.2",
-    "typescript-eslint": "8.34.0"
+    "typescript": "7.0.2"
   },
   "author": "Valentín Flórez Arbeláez",
   "license": "MIT"

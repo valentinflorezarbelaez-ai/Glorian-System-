@@ -2,8 +2,10 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import path from "node:path";
 import fs from "node:fs";
+import os from "node:os";
 import { fileURLToPath } from "node:url";
 import { EosTacticalCommandEngine } from "../src/core/eosTacticalCommandEngine.ts";
+import { writeDeterministicArtifact } from "../src/core/eosDeterministicArtifact.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -70,6 +72,29 @@ describe("SPEC-129: Tier S-0 Tactical Apex — Command Engine & OpenSpec Indexer
       assert.ok(content.totalSpecs >= 128);
       assert.ok(content.catalogSha256.length === 64);
       assert.ok(Array.isArray(content.specs));
+    });
+
+    it("BDD-337: honors changed payload while preserving the committed volatile stamp", () => {
+      const tmp = path.join(os.tmpdir(), `eos-det-artifact-${process.pid}-${Date.now()}.json`);
+      try {
+        writeDeterministicArtifact(tmp, { timestampIso: "seed", value: 1 }, {
+          stampField: "timestampIso",
+          stampFor: () => "STAMP-A"
+        });
+        const committedStamp = JSON.parse(fs.readFileSync(tmp, "utf8")).timestampIso;
+
+        const result = writeDeterministicArtifact(tmp, { timestampIso: "seed", value: 2 }, {
+          stampField: "timestampIso",
+          stampFor: () => "STAMP-B"
+        });
+
+        const after = JSON.parse(fs.readFileSync(tmp, "utf8"));
+        assert.equal(result.changed, true, "a changed payload must rewrite the artifact");
+        assert.equal(after.value, 2, "the current payload must be honored, not the stale file");
+        assert.equal(after.timestampIso, committedStamp, "the committed volatile stamp must be reused");
+      } finally {
+        fs.rmSync(tmp, { force: true });
+      }
     });
   });
 });

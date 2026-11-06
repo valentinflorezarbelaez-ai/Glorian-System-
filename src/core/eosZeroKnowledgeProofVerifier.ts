@@ -12,6 +12,7 @@
  * Zero external runtime dependencies. Node 24 strip-only compliant.
  */
 
+import crypto from "node:crypto";
 import {
   assertPrecondition,
   assertPostcondition,
@@ -99,6 +100,25 @@ export class EosZeroKnowledgeProofVerifier {
   }
 
   /**
+   * Draws a uniformly random BigInt in [0, upperBound) from the OS CSPRNG.
+   * Rejection sampling is used so the result carries no modulo bias.
+   */
+  private static secureRandomBelow(upperBound: bigint): bigint {
+    assertPrecondition(upperBound > 1n, "upperBound must be greater than 1");
+    const byteLength = Math.ceil(upperBound.toString(2).length / 8);
+    for (;;) {
+      const bytes = crypto.randomBytes(byteLength);
+      let candidate = 0n;
+      for (const b of bytes) {
+        candidate = (candidate << 8n) | BigInt(b);
+      }
+      if (candidate < upperBound) {
+        return candidate;
+      }
+    }
+  }
+
+  /**
    * Prover creates a non-interactive Schnorr zero-knowledge proof without disclosing secret x.
    */
   public createProof(
@@ -109,8 +129,11 @@ export class EosZeroKnowledgeProofVerifier {
     const { p, q, g } = this.params;
     const y = this.deriveStatement(secretX);
 
-    // Ephemeral nonce
-    const v = ephemeralNonceV ?? (BigInt("0x" + pureSha256(`${secretX}:${contextMessage}:${Date.now()}`)) % (q - 1n) + 1n);
+    // Ephemeral nonce MUST be drawn from a CSPRNG. A predictable nonce (e.g.
+    // one derived from Date.now()) can be reused across proofs, and two proofs
+    // sharing a nonce leak the secret witness: x = (s1 - s2) / (c2 - c1) mod q.
+    // `ephemeralNonceV` remains a deterministic injection seam for testing.
+    const v = ephemeralNonceV ?? (EosZeroKnowledgeProofVerifier.secureRandomBelow(q - 1n) + 1n);
     const R = EosZeroKnowledgeProofVerifier.modPow(g, v, p);
 
     // Fiat-Shamir challenge: c = H(g || y || R || contextMessage) mod q
@@ -165,8 +188,11 @@ export class EosZeroKnowledgeProofVerifier {
   }
 
   private concludeVerification(valid: boolean, proof: ZkSchnorrProof): ZkVerificationResult {
+    // Deterministic, content-bound attestation (BUILDER != VERIFIER): the
+    // receipt is a pure function of the proof tuple and the verdict, so it is
+    // reproducible and carries no wall-clock entropy.
     const attestationSha256 = pureSha256(
-      `zk-receipt:${proof.statementY}:${proof.contextMessage}:${valid}:${Date.now()}`
+      `zk-receipt:${proof.statementY}:${proof.commitmentR}:${proof.responseS}:${proof.contextMessage}:${valid}`
     );
 
     const result: ZkVerificationResult = deepFreeze({

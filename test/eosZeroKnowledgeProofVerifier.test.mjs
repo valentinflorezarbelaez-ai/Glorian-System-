@@ -49,3 +49,28 @@ test('BDD-230: Rejection of Forged or Tampered Zero-Knowledge Proofs', () => {
   const r3 = verifier.verifyProof(forgedCommitmentProof);
   assert.equal(r3.valid, false);
 });
+
+test('BDD-335: CSPRNG Ephemeral Nonce Is Never Reused Across Proofs', () => {
+  const verifier = new EosZeroKnowledgeProofVerifier();
+  const secretX = 55512345678901234567890n;
+  const contextMessage = 'authorize:treasury:release';
+
+  // Freeze the wall clock so the assertion is deterministic. A nonce derived
+  // from Date.now() is identical for both proofs, which reuses v and leaks the
+  // witness: x = (s1 - s2) / (c2 - c1) mod q. A CSPRNG nonce never repeats.
+  const originalNow = Date.now;
+  Date.now = () => 1700000000000;
+  try {
+    const proofA = verifier.createProof(secretX, contextMessage);
+    const proofB = verifier.createProof(secretX, contextMessage);
+
+    assert.notEqual(proofA.commitmentR, proofB.commitmentR, 'ephemeral nonce was reused across proofs');
+    assert.notEqual(proofA.responseS, proofB.responseS, 'responses must differ when nonces differ');
+
+    // Completeness is preserved: both fresh proofs still verify.
+    assert.equal(verifier.verifyProof(proofA).valid, true);
+    assert.equal(verifier.verifyProof(proofB).valid, true);
+  } finally {
+    Date.now = originalNow;
+  }
+});

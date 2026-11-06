@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
   "totalSpecs": 130,
-  "catalogSha256": "60caa9a2243f930fb57abbbce9496a53a62d9be13a00a8c38b9cd30046ca3999",
+  "catalogSha256": "f134e6ca940f4b85e67d20198910b8c528ec0fa8752d1d4666fb04cc7934944e",
   "specs": [
     {
       "id": "SPEC-001",
@@ -746,9 +746,9 @@
       "title": "— ZERO-KNOWLEDGE PROOF OF INVARIANT VERIFIER (SCHNORR / FIAT-SHAMIR)",
       "status": "APPROVED",
       "frCount": 4,
-      "bddCount": 2,
+      "bddCount": 3,
       "file": "openspec/specs/SPEC-077-ZERO-KNOWLEDGE-PROOF-VERIFIER.md",
-      "sha256": "514b1d56587506c503fd2a781020a43a6c81308e7660371165fe65b317020bc1"
+      "sha256": "763dfcc2b9d046b8a62e752d48e5fa6508def7935c39120d371a5ae42c491fd0"
     },
     {
       "id": "SPEC-078",
@@ -773,9 +773,9 @@
       "title": "— THRESHOLD CRYPTOGRAPHY & MULTI-PARTY COMPUTATION (SHAMIR / FROST)",
       "status": "APPROVED",
       "frCount": 4,
-      "bddCount": 2,
+      "bddCount": 3,
       "file": "openspec/specs/SPEC-080-THRESHOLD-CRYPTOGRAPHY.md",
-      "sha256": "a9ca62a608b827c2e00c6cb9f9a0e14ee69d9f367fe1d39bb0b3a55685a0065f"
+      "sha256": "ab198464cbb972f3a4caf9d8a77d8b7c00f138280f96b34161eac67512b5f335"
     },
     {
       "id": "SPEC-081",

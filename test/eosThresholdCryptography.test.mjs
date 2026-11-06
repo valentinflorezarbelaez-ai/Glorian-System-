@@ -38,3 +38,27 @@ test('BDD-236: Mathematical Impossibility of Reconstruction with Insufficient Sh
     tss.reconstructSecret(insufficientShares, 3);
   }, /Insufficient shares/);
 });
+
+test('BDD-336: CSPRNG Polynomial Coefficients Never Repeat Across Splits', () => {
+  const tss = new EosThresholdCryptography();
+  const secret = 424242424242424242n;
+
+  // Freeze the wall clock so the assertion is deterministic. Coefficients
+  // derived from the secret plus Date.now() repeat for identical inputs, which
+  // collapses the polynomial entropy and breaks Shamir's guarantee that any
+  // coalition of < t shares has zero information about the secret.
+  const originalNow = Date.now;
+  Date.now = () => 1700000000000;
+  try {
+    const first = tss.splitSecret(secret, 3, 5).map((share) => share.yHex);
+    const second = tss.splitSecret(secret, 3, 5).map((share) => share.yHex);
+    assert.notDeepEqual(first, second, 'polynomial coefficients were reused (predictable entropy)');
+  } finally {
+    Date.now = originalNow;
+  }
+
+  // Reconstructability is preserved with a fresh split.
+  const shares = tss.splitSecret(secret, 3, 5);
+  const reconstructed = tss.reconstructSecret([shares[0], shares[2], shares[4]], 3);
+  assert.equal(reconstructed, secret);
+});

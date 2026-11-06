@@ -46,3 +46,13 @@ ESCENARIO: Rechazo de Intento con Fragmentos Insuficientes
   ENTONCES el sistema rechaza la operación por insuficiencia de quórum
   Y no se emite ninguna clave válida
 ```
+
+### BDD-336: CSPRNG Polynomial Coefficients Non-Reuse (Entropy Preservation)
+```gherkin
+ESCENARIO: Independencia de Coeficientes entre Particiones del Mismo Secreto
+  DADO un secreto maestro 'S' y parámetros (t=3, n=5)
+  CUANDO se ejecutan dos particiones consecutivas con el reloj lógico congelado
+  ENTONCES los fragmentos resultantes difieren en sus valores 'y'
+  Y la reconstrucción exacta del secreto sigue garantizada con cualquier quórum t
+  Y se preserva la garantía de información H(S | < t fragments) = H(S)
+```
