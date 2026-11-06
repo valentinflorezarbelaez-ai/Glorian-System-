@@ -85,6 +85,26 @@ test("CI-POL-04: every job has a timeout and automated triggers declare concurre
   }
 });
 
+test("CI-POL-06: workflows install with npm ci --ignore-scripts only", () => {
+  let installCommands = 0;
+
+  for (const file of workflows) {
+    const text = readWorkflow(file);
+    for (const match of text.matchAll(/\bnpm\s+(?:ci|install|i)\b[^\n]*/g)) {
+      const command = match[0].trim();
+      installCommands += 1;
+      assert.match(command, /^npm ci\b/, `${file} must install with npm ci, found: ${command}`);
+      assert.match(
+        command,
+        /--ignore-scripts\b/,
+        `${file} must pass --ignore-scripts to avoid lifecycle code execution, found: ${command}`
+      );
+    }
+  }
+
+  assert.ok(installCommands > 0, "no npm install commands were found to verify");
+});
+
 test("CI-POL-05: CI runs the minimum supported Node major and never an older one", () => {
   assert.ok(minimumNodeMajor > 0, "package.json engines.node must declare a minimum major");
 

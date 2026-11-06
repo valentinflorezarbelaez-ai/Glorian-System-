@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+REPO_ROOT=$(git rev-parse --show-toplevel)
+exec node "$REPO_ROOT/scripts/verify-commit-message.mjs" "$1"
