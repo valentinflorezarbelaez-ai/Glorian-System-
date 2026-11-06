@@ -467,14 +467,22 @@ export class EosKnowledgeGraphEngine {
   }
 
   private loadDeclaredMcpTools(): ReadonlySet<string> {
-    const serverFile = path.join(this.projectRoot, "src", "mcp", "eosMcpServer.ts");
-    if (!fs.existsSync(serverFile)) return new Set();
-    const text = fs.readFileSync(serverFile, "utf8");
+    // Tool schemas live in eosMcpToolDefinitions.ts; the dispatcher stays in
+    // eosMcpServer.ts. Scan both so declarations are never missed.
+    const candidates = [
+      path.join(this.projectRoot, "src", "mcp", "eosMcpServer.ts"),
+      path.join(this.projectRoot, "src", "mcp", "eosMcpToolDefinitions.ts")
+    ];
     const names = new Set<string>();
     const matcher = /name:\s*"(eos_[a-z0-9_]+)"/g;
-    let match: RegExpExecArray | null;
-    while ((match = matcher.exec(text)) !== null) {
-      names.add(match[1]);
+    for (const serverFile of candidates) {
+      if (!fs.existsSync(serverFile)) continue;
+      const text = fs.readFileSync(serverFile, "utf8");
+      let match: RegExpExecArray | null;
+      while ((match = matcher.exec(text)) !== null) {
+        names.add(match[1]);
+      }
+      matcher.lastIndex = 0;
     }
     return names;
   }

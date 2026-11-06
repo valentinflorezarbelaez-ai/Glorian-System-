@@ -7,6 +7,8 @@
  * and supports focused tool catalog profiles (`core` vs `full`) to prevent LLM tool-bloat.
  */
 
+import { CORE_TIER0_TOOL_NAMES } from "../core/eosMcpToolTaxonomy.ts";
+
 export type McpToolProfile = "core" | "full";
 
 export interface McpToolAnnotations {
@@ -27,39 +29,9 @@ export interface AnnotatedMcpToolDefinition {
 /**
  * Curated Tier-0 Core Engineering Profile (<= 30 high-signal control-plane tools).
  * BDD-129 / FR-133: exotic frontier tools stay in `full`. Activate with `EOS_MCP_PROFILE=core`.
+ * Re-exported from Layer 0 so core scorecards never import the MCP layer.
  */
-export const CORE_TIER0_TOOL_NAMES: ReadonlySet<string> = new Set([
-  "eos_antigravity_direct",
-  "eos_antigravity_doctor",
-  "eos_gentleman_audit",
-  "eos_gentleman_update",
-  "eos_agent_session_contract",
-  "eos_amplify_prompt",
-  "eos_semantic_search",
-  "eos_hnsw_knn_search",
-  "eos_check_architecture",
-  "eos_check_openspec",
-  "eos_ast_analyze",
-  "eos_get_blast_radius",
-  "eos_query_code_graph",
-  "eos_evaluate_decision",
-  "eos_tmr_consensus",
-  "eos_validate_patch",
-  "eos_turbo_verify",
-  "eos_optimize_context",
-  "eos_refactor_audit",
-  "eos_nocturnal_evolution",
-  "eos_mission_run",
-  "eos_autonomous_heal",
-  "eos_sqlite_ledger",
-  "eos_manage_worktree",
-  "eos_fleet_soundcheck",
-  "eos_audit_fleet",
-  "eos_health_check",
-  "eos_mcts_tune",
-  "glorian_fleet_health_watchdog",
-  "glorian_constitutional_tribunal"
-]);
+export { CORE_TIER0_TOOL_NAMES };
 
 const MUTATION_CAPABLE_TOOLS: ReadonlySet<string> = new Set([
   "eos_autonomous_heal",

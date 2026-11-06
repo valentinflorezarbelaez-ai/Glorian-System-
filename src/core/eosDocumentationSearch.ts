@@ -125,33 +125,42 @@ export class EosDocumentationSearch {
       SELECT content_hash FROM eos_docs_metadata WHERE doc_path = ?
     `);
 
-    for (const dir of targetDirs) {
-      if (!fs.existsSync(dir)) continue;
+    // One transaction for the whole scan: per-document commits make a full
+    // reindex quadratic-ish on Windows and can take tens of seconds.
+    this.db.exec("BEGIN IMMEDIATE");
+    try {
+      for (const dir of targetDirs) {
+        if (!fs.existsSync(dir)) continue;
 
-      const entries = fs.readdirSync(dir, { recursive: true });
-      for (const entry of entries) {
-        const fullPath = path.join(dir, String(entry));
-        if (!fs.statSync(fullPath).isFile() || !fullPath.endsWith(".md")) continue;
+        const entries = fs.readdirSync(dir, { recursive: true });
+        for (const entry of entries) {
+          const fullPath = path.join(dir, String(entry));
+          if (!fs.statSync(fullPath).isFile() || !fullPath.endsWith(".md")) continue;
 
-        const relPath = path.relative(this.projectRoot, fullPath).replace(/\\/g, "/");
-        const content = fs.readFileSync(fullPath, "utf8");
-        const contentHash = pureSha256(content);
+          const relPath = path.relative(this.projectRoot, fullPath).replace(/\\/g, "/");
+          const content = fs.readFileSync(fullPath, "utf8");
+          const contentHash = pureSha256(content);
 
-        const existing = selectHash.get(relPath) as { content_hash: string } | undefined;
-        if (existing && existing.content_hash === contentHash) {
-          continue; // Unmodified, skip indexing
+          const existing = selectHash.get(relPath) as { content_hash: string } | undefined;
+          if (existing && existing.content_hash === contentHash) {
+            continue; // Unmodified, skip indexing
+          }
+
+          const docType = this.detectDocType(relPath);
+          const title = this.extractTitle(content, path.basename(relPath, ".md"));
+
+          // Update FTS index
+          deleteFts.run(relPath);
+          insertFts.run(relPath, docType, title, content);
+          insertMeta.run(relPath, docType, title, contentHash, nowIso);
+
+          indexedCount++;
         }
-
-        const docType = this.detectDocType(relPath);
-        const title = this.extractTitle(content, path.basename(relPath, ".md"));
-
-        // Update FTS index
-        deleteFts.run(relPath);
-        insertFts.run(relPath, docType, title, content);
-        insertMeta.run(relPath, docType, title, contentHash, nowIso);
-
-        indexedCount++;
       }
+      this.db.exec("COMMIT");
+    } catch (err) {
+      this.db.exec("ROLLBACK");
+      throw err;
     }
 
     return indexedCount;

@@ -9,14 +9,16 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
-import { CORE_TIER0_TOOL_NAMES } from "../mcp/eosMcpToolCatalog.ts";
-import { PHASE1_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpCoreUtilitarianHandlers.ts";
-import { PHASE2_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase2UtilitarianHandlers.ts";
-import { PHASE3_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase3CoreHandlers.ts";
-import { PHASE4_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase4ToolNames.ts";
-import { PHASE5_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase5ToolNames.ts";
-import { PHASE6_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase6ToolNames.ts";
-import { PHASE7_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase7ToolNames.ts";
+import {
+  CORE_TIER0_TOOL_NAMES,
+  PHASE1_MIGRATED_TOOL_NAMES,
+  PHASE2_MIGRATED_TOOL_NAMES,
+  PHASE3_MIGRATED_TOOL_NAMES,
+  PHASE4_MIGRATED_TOOL_NAMES,
+  PHASE5_MIGRATED_TOOL_NAMES,
+  PHASE6_MIGRATED_TOOL_NAMES,
+  PHASE7_MIGRATED_TOOL_NAMES
+} from "./eosMcpToolTaxonomy.ts";
 
 export interface ApexDoctrineDimension {
   readonly id: string;

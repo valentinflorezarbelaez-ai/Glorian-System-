@@ -15,7 +15,7 @@ import {
   deepFreeze,
   pureSha256
 } from "./eosKernelPrimitives.ts";
-import { CORE_TIER0_TOOL_NAMES } from "../mcp/eosMcpToolCatalog.ts";
+import { CORE_TIER0_TOOL_NAMES } from "./eosMcpToolTaxonomy.ts";
 
 export interface McpToolPropertyDef {
   readonly type: string;

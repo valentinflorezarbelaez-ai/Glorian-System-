@@ -429,18 +429,4 @@ export function createPhase3CoreHandlers(
   };
 }
 
-export const PHASE3_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
-  "eos_agent_session_contract",
-  "eos_antigravity_direct",
-  "eos_antigravity_doctor",
-  "eos_autonomous_heal",
-  "eos_gentleman_update",
-  "eos_hnsw_knn_search",
-  "eos_manage_worktree",
-  "eos_mcts_tune",
-  "eos_refactor_audit",
-  "eos_semantic_search",
-  "eos_sqlite_ledger",
-  "glorian_constitutional_tribunal",
-  "glorian_fleet_health_watchdog"
-]);
+export { PHASE3_MIGRATED_TOOL_NAMES } from "../../core/eosMcpToolTaxonomy.ts";

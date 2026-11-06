@@ -2,34 +2,4 @@
  * Phase-7 migrated tool name catalog (no core imports — breaks Layer-0 cycles).
  */
 
-export const PHASE7_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
-  "eos_invariant_engine",
-  "eos_contract_governor",
-  "eos_surgical_healing",
-  "eos_wasm_sandbox",
-  "eos_enterprise_workspace",
-  "eos_agent_topology_mesh",
-  "eos_content_addressable_cache",
-  "eos_threshold_secret_split_combine",
-  "eos_neurosymbolic_fleet_healing",
-  "eos_columnar_telemetry_query",
-  "eos_smt_reasoning_prover",
-  "eos_evolve_module",
-  "eos_fuzz_hypervisor",
-  "eos_hash_chain_verify",
-  "eos_platform_ops_ceiling",
-  "eos_truetime_commit_wait",
-  "eos_lsm_storage_put_get",
-  "eos_monte_carlo_sim",
-  "eos_nsa_zero_trust_check",
-  "eos_bft_swarm_consensus",
-  "eos_trace_span_record",
-  "eos_autonomous_synthesize",
-  "eos_unitotal_evaluate",
-  "eos_wal_status",
-  "eos_github_gate",
-  "eos_microvm_sandbox",
-  "eos_mutation_test",
-  "eos_zero_copy_scan",
-  "eos_microvm_enclave_generate"
-]);
+export { PHASE7_MIGRATED_TOOL_NAMES } from "../../core/eosMcpToolTaxonomy.ts";

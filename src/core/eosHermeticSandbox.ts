@@ -13,7 +13,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
-import type { EosDurableWal } from "./eosDurableWal.js";
+import type { EosDurableWal } from "./eosDurableWal.ts";
 
 export interface StagedEntry {
   relPath: string;

@@ -130,6 +130,4 @@ export const PHASE1_CORE_UTILITARIAN_HANDLERS: Readonly<Record<string, McpToolHa
   }
 };
 
-export const PHASE1_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze(
-  Object.keys(PHASE1_CORE_UTILITARIAN_HANDLERS).sort()
-);
+export { PHASE1_MIGRATED_TOOL_NAMES } from "../../core/eosMcpToolTaxonomy.ts";

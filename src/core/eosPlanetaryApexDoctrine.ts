@@ -18,10 +18,12 @@ import {
   pureSha256
 } from "./eosKernelPrimitives.ts";
 import { evaluateApexDoctrineScorecard } from "./eosApexDoctrineScorecard.ts";
-import { CORE_TIER0_TOOL_NAMES } from "../mcp/eosMcpToolCatalog.ts";
-import { PHASE1_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpCoreUtilitarianHandlers.ts";
-import { PHASE2_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase2UtilitarianHandlers.ts";
-import { PHASE3_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase3CoreHandlers.ts";
+import {
+  CORE_TIER0_TOOL_NAMES,
+  PHASE1_MIGRATED_TOOL_NAMES,
+  PHASE2_MIGRATED_TOOL_NAMES,
+  PHASE3_MIGRATED_TOOL_NAMES
+} from "./eosMcpToolTaxonomy.ts";
 
 export type ApexPillarId =
   | "ASML_TSMC_PRECISION"
