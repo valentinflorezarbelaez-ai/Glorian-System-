@@ -9,7 +9,7 @@ function classifyDirective(directive) {
   return "UNCLASSIFIED_DIRECTIVE";
 }
 
-export default function handler(req, res) {
+function _handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -51,3 +51,7 @@ export default function handler(req, res) {
     }
   });
 }
+
+// Rate limiting — 10 req/min burst per IP (POST-only, higher cost)
+import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+export default withRateLimit({ capacity: 10, refillPerSecond: 0.17 })(_handler);

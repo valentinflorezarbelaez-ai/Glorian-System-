@@ -5,7 +5,7 @@
  * runtime behavior.
  */
 
-export default async function handler(req, res) {
+async function _handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -81,21 +81,21 @@ export default async function handler(req, res) {
     const graph = new EosSemanticGraph(process.cwd());
     let blastRadius = null;
 
-  const responsePayload = {
-    status: fallbackMeta ? "FALLBACK_MODE" : "SUCCESS",
-    version: "16.0.0",
-    tier: "BIG_TECH_TIER_1",
-    engine: "Google Kythe / Meta Buck2 Semantic Direct Graph",
-    action,
-    timestamp: new Date().toISOString(),
-    telemetry: {
-      latencyMicroseconds: latencyMicros,
-      algorithm: "Transitive BFS with Cycle Detection & In-Memory Inverted Index"
-    },
-    blastRadius: blastResult,
-    summary: summaryResult,
-    ...(fallbackMeta && fallbackMeta)
-  };
+    const responsePayload = {
+      status: fallbackMeta ? "FALLBACK_MODE" : "SUCCESS",
+      version: "16.0.0",
+      tier: "BIG_TECH_TIER_1",
+      engine: "Google Kythe / Meta Buck2 Semantic Direct Graph",
+      action,
+      timestamp: new Date().toISOString(),
+      telemetry: {
+        latencyMicroseconds: latencyMicros,
+        algorithm: "Transitive BFS with Cycle Detection & In-Memory Inverted Index"
+      },
+      blastRadius: blastResult,
+      summary: summaryResult,
+      ...(fallbackMeta && fallbackMeta)
+    };
 
     const summary = graph.getSummary();
     const durationMicroseconds = Number(process.hrtime.bigint() - start) / 1000;
@@ -116,3 +116,7 @@ export default async function handler(req, res) {
     });
   }
 }
+
+// Rate limiting — 20 req/min burst per IP
+import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+export default withRateLimit({ capacity: 20, refillPerSecond: 0.33 })(_handler);

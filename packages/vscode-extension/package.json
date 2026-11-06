@@ -2,7 +2,7 @@
   "name": "eos-system-vscode",
   "displayName": "EOS System — Engineering Operating System",
   "description": "AI-assisted engineering at Big Tech level. Connects EOS sovereign tools to VS Code and Cursor via MCP.",
-  "version": "58.0.0",
+  "version": "62.0.0",
   "publisher": "valentinflorezarbelaez",
   "engines": { "vscode": "^1.85.0" },
   "categories": ["AI", "Programming Languages", "Other"],

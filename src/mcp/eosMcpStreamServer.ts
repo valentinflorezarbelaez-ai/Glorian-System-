@@ -338,6 +338,34 @@ export class EosMcpStreamServer {
   private readonly maxRequestBytes: number;
   private readonly requestTimeoutMs: number;
 
+  /**
+   * Per-IP token-bucket rate limiter for POST /message (Stripe/Anthropic standard).
+   * 60 requests/min burst per IP — prevents a single client from flooding the dispatch queue.
+   * Each bucket refills at 1 token/sec (60/min steady state).
+   */
+  private readonly _messageBuckets = new Map<string, { tokens: number; lastRefill: number }>();
+  private static readonly _MSG_CAPACITY = 60;
+  private static readonly _MSG_REFILL_PER_SEC = 1;
+
+  private _consumeMessageToken(clientIp: string): boolean {
+    const now = Date.now();
+    let bucket = this._messageBuckets.get(clientIp);
+    if (!bucket) {
+      bucket = { tokens: EosMcpStreamServer._MSG_CAPACITY, lastRefill: now };
+      this._messageBuckets.set(clientIp, bucket);
+    }
+    // Refill based on elapsed time
+    const elapsed = (now - bucket.lastRefill) / 1000;
+    bucket.tokens = Math.min(
+      EosMcpStreamServer._MSG_CAPACITY,
+      bucket.tokens + elapsed * EosMcpStreamServer._MSG_REFILL_PER_SEC
+    );
+    bucket.lastRefill = now;
+    if (bucket.tokens < 1) return false;
+    bucket.tokens -= 1;
+    return true;
+  }
+
   /** In-flight request IDs for deduplication (prevents double-dispatch on network retry). */
   private readonly inFlight = new Set<string>();
 
@@ -432,14 +460,27 @@ export class EosMcpStreamServer {
    * Main HTTP request router implementing the MCP 2024-11-05 spec.
    * Optimized for Antigravity (prompts/resources), Cursor, and Claude Code.
    */
+  /**
+   * Resolves the correct `Access-Control-Allow-Origin` value for a given request:
+   * - If `this.allowedOrigins` has entries, only exact-match origins are reflected.
+   * - If empty (no allowlist configured), dev defaults to `*`; production to `"null"`.
+   */
+  private _getCorsOrigin(req: http.IncomingMessage): string {
+    const requestOrigin = (req.headers["origin"] ?? "") as string;
+    if (this.allowedOrigins.size > 0) {
+      // Strict allowlist — only reflect known origins (Google/Stripe standard)
+      return this.allowedOrigins.has(requestOrigin) ? requestOrigin : "null";
+    }
+    // No allowlist — permissive in dev, locked down in production
+    return process.env["NODE_ENV"] === "production" ? "null" : "*";
+  }
+
   public async handleHttpRequest(
     req: http.IncomingMessage,
     res: http.ServerResponse
   ): Promise<void> {
-    // ── CORS ────────────────────────────────────────────────────────────────
-    const allowedOrigin =
-      process.env["EOS_MCP_ALLOWED_ORIGIN"] ??
-      (process.env["NODE_ENV"] === "production" ? "null" : "*");
+    // ── CORS (enforces this.allowedOrigins allowlist when configured) ────────
+    const allowedOrigin = this._getCorsOrigin(req);
     res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
     res.setHeader("Vary", "Origin");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -553,8 +594,23 @@ export class EosMcpStreamServer {
       return;
     }
 
-    // ── /message — async, deduplicated JSON-RPC dispatch ─────────────────────
+    // ── /message — async, deduplicated, rate-limited JSON-RPC dispatch ──────
     if (req.method === "POST" && pathname === "/message") {
+      // Per-IP rate limit (Stripe/Anthropic: all mutation endpoints rate-limited)
+      const msgClientIp =
+        (req.headers["x-forwarded-for"] as string | undefined)?.split(",")[0]?.trim() ??
+        req.socket.remoteAddress ??
+        "unknown";
+      if (!this._consumeMessageToken(msgClientIp)) {
+        this.writeJson(res, 429, {
+          jsonrpc: "2.0",
+          id: null,
+          error: { code: -32000, message: "Rate limit exceeded. Retry after 1 second." },
+        }, { "Retry-After": "1", "X-RateLimit-Limit": String(EosMcpStreamServer._MSG_CAPACITY) });
+        req.resume();
+        return;
+      }
+
       const sessionId =
         parsedUrl.searchParams.get("sessionId") ??
         (req.headers["x-session-id"] as string | undefined);

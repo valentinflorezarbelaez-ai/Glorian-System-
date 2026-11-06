@@ -102,7 +102,7 @@ const GENESIS_AKASHIC_OBSERVATIONS = [
   sha256Fingerprint: `sha256:${computeSha256(JSON.stringify(observation))}`
 }));
 
-export default function handler(req, res) {
+function _handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -213,10 +213,10 @@ export default function handler(req, res) {
 
   const results = query
     ? GENESIS_AKASHIC_OBSERVATIONS.filter((o) =>
-        `${o.title} ${o.topic_key} ${o.what} ${o.why} ${o.where} ${o.learned} ${o.samaelianFactor}`
-          .toLowerCase()
-          .includes(query)
-      )
+      `${o.title} ${o.topic_key} ${o.what} ${o.why} ${o.where} ${o.learned} ${o.samaelianFactor}`
+        .toLowerCase()
+        .includes(query)
+    )
     : GENESIS_AKASHIC_OBSERVATIONS;
 
   const fixtureFingerprint = computeSha256(JSON.stringify(results.map((record) => record.sha256Fingerprint)));
@@ -231,3 +231,7 @@ export default function handler(req, res) {
     observations: results
   });
 }
+
+// Rate limiting — 20 req/min burst per IP
+import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+export default withRateLimit({ capacity: 20, refillPerSecond: 0.33 })(_handler);

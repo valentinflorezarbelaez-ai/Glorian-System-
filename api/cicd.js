@@ -59,7 +59,7 @@ const SEVEN_CICD_GATES = [
   }
 ];
 
-export default function handler(req, res) {
+function _handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -126,3 +126,7 @@ export default function handler(req, res) {
     simulationFingerprintSha256: `sha256:${simulationFingerprint}`
   });
 }
+
+// Rate limiting — 20 req/min burst per IP
+import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+export default withRateLimit({ capacity: 20, refillPerSecond: 0.33 })(_handler);

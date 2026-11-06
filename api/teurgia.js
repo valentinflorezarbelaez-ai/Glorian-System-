@@ -67,7 +67,7 @@ const SEPHIROTIC_DIRECTIONS = {
   }
 };
 
-export default function handler(req, res) {
+function _handler(req, res) {
   const method = req.method || "GET";
   if (method !== "GET" && method !== "POST") {
     res.statusCode = 405;
@@ -157,3 +157,7 @@ export default function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   return res.end(JSON.stringify(payload, null, 2));
 }
+
+// Rate limiting — 20 req/min burst per IP
+import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+export default withRateLimit({ capacity: 20, refillPerSecond: 0.33 })(_handler);

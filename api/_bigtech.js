@@ -126,7 +126,7 @@ function runMonteCarloJs(tasks, iterations = 5000, deadlineHours = 18.0) {
   };
 }
 
-export default function handler(req, res) {
+function _handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -259,3 +259,7 @@ export default function handler(req, res) {
     drill
   });
 }
+
+// Rate limiting — 20 req/min burst per IP
+import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+export default withRateLimit({ capacity: 20, refillPerSecond: 0.33 })(_handler);

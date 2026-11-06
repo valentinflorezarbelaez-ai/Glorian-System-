@@ -9,7 +9,7 @@
  * ============================================================================
  */
 
-export default async function handler(req, res) {
+async function _handler(req, res) {
   const startTime = process.hrtime.bigint();
 
   res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -119,3 +119,7 @@ export default async function handler(req, res) {
     data: result
   });
 }
+
+// Rate limiting — 30 req/min burst per IP (Stripe/Google standard: every public endpoint)
+import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+export default withRateLimit({ capacity: 30, refillPerSecond: 0.5 })(_handler);

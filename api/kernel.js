@@ -31,7 +31,7 @@ function respondWithOmegaDemo(req, res) {
   });
 }
 
-export default function handler(req, res) {
+function _handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -78,3 +78,7 @@ export default function handler(req, res) {
     kernelOperationsPerformed: false
   });
 }
+
+// Rate limiting — 20 req/min burst per IP
+import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+export default withRateLimit({ capacity: 20, refillPerSecond: 0.33 })(_handler);

@@ -5,7 +5,7 @@
 
 const MAX_DIRECTIVE_BYTES = 32 * 1024;
 
-export default async function handler(req, res) {
+async function _handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Cache-Control", "no-store, max-age=0, must-revalidate");
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -94,3 +94,7 @@ export default async function handler(req, res) {
     return res.status(503).json({ ok: false, error: "FINOPS_ENGINE_UNAVAILABLE" });
   }
 }
+
+// Rate limiting — 20 req/min burst per IP
+import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+export default withRateLimit({ capacity: 20, refillPerSecond: 0.33 })(_handler);

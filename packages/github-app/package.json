@@ -1,6 +1,6 @@
 {
   "name": "@eos-system/github-app",
-  "version": "58.0.0",
+  "version": "62.0.0",
   "description": "EOS System GitHub App — auto-comments consulting deliverables on PRs",
   "type": "module",
   "main": "./src/bot.mjs",

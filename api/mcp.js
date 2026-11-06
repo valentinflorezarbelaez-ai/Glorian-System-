@@ -174,7 +174,8 @@ function limitPublicTools(response) {
           description: descriptions[tool.name],
           inputSchema: {
             type: "object",
-            properties: { targetDir: { type: "string", enum: ["src"], description: "Only the repository src directory can be scanned." }
+            properties: {
+              targetDir: { type: "string", enum: ["src"], description: "Only the repository src directory can be scanned." }
             }
           }
         };
@@ -206,7 +207,7 @@ function addLocalScope(response, toolName) {
   const text = response?.result?.content?.[0]?.text;
   if (typeof text !== "string") return response;
   let result = text;
-  try { result = JSON.parse(text); } catch {}
+  try { result = JSON.parse(text); } catch { }
   response.result.content[0].text = JSON.stringify({
     scope: "LOCAL_ONLY",
     tool: toolName,
@@ -244,7 +245,7 @@ function isAllowedOrigin(origin) {
   return false;
 }
 
-export default async function handler(req, res) {
+async function _handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
   res.setHeader("X-Content-Type-Options", "nosniff");
@@ -361,3 +362,7 @@ export default async function handler(req, res) {
     return res.status(503).json({ status: "MCP_ENGINE_UNAVAILABLE", externalSystemsQueried: false });
   }
 }
+
+// Rate limiting — 30 req/min burst per IP (MCP requests can be high-frequency from agents)
+import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+export default withRateLimit({ capacity: 30, refillPerSecond: 0.5 })(_handler);

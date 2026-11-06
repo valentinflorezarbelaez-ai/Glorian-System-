@@ -6,6 +6,70 @@ Auto-generated from `IMPLEMENTATION_AUTHORIZATION.md` — run `npm run changelog
 
 ## [Unreleased]
 
+## [63.0.0] — 2026-11-05
+
+### Added / Fixed — 12 Big Tech Gaps Closed (Google · Stripe · Netflix · Anthropic · Cognition)
+
+#### P0: API Rate Limiting — 14/14 Endpoints Protected (Stripe Standard)
+- **SPEC-053 fully implemented**: All 14 serverless API handlers now wrapped with `withRateLimit()`.
+  Previously only `api/health.js` was protected. Now all 13 remaining handlers are rate-limited:
+  `api/spotify.js`, `api/graph.js`, `api/memory.js`, `api/teurgia.js`, `api/kernel.js`,
+  `api/jarvis.js`, `api/cicd.js`, `api/eval.js`, `api/fleet.js`, `api/compile.js`,
+  `api/_bigtech.js`, `api/mcp.js`, `api/finops.js`.
+  Rates tuned by workload: 30/min for agents (mcp, spotify), 20/min for read endpoints, 10/min for
+  expensive compute (eval, fleet, jarvis). All return `Retry-After` + `X-RateLimit-*` headers.
+
+#### P0: CORS Allowlist Enforcement Fixed (`eosMcpStreamServer.ts`)
+- `this.allowedOrigins` Set was constructed with strict validation but never used in `handleHttpRequest`.
+  Added `_getCorsOrigin(req)` private method: when `allowedOrigins.size > 0`, only exact-match
+  origins are reflected; non-matching origins get `"null"`. When no allowlist is configured,
+  dev defaults to `*` and production defaults to `"null"`.
+
+#### P0: POST /message Rate Limit (`eosMcpStreamServer.ts`)
+- Added per-IP token-bucket limiter on the JSON-RPC dispatch endpoint (60 req/min burst, 1/sec refill).
+  Returns 429 with `Retry-After: 1` and `X-RateLimit-Limit` header. Stored in `_messageBuckets` Map
+  (inline, zero deps). Prevents a single Antigravity retry storm from flooding the dispatch queue.
+
+#### P1: EosSecretsManager — Circuit Breaker + Stale-On-Failure (Google SRE / Netflix Hystrix)
+- Added circuit breaker state machine: after 3 consecutive provider failures, circuit OPENS for 30s,
+  short-circuiting to stale cache or `process.env` fallback without retrying the failing provider.
+- Added stale-on-failure (Netflix Hystrix pattern): on fetch failure, returns expired cache value
+  instead of `null` — safer for long-running services.
+- Added 2-attempt retry with 200ms delay before counting a failure.
+- Half-open probe after 30s timeout allows recovery detection.
+- Added `_isCircuitOpen()` and `providerCircuitStatus` for observability.
+
+#### P1: `serverInfo.version` Now Dynamic (`eosMcpServer.ts`)
+- Hardcoded `"version": "61.0.0"` in the MCP `initialize` response replaced with
+  `this.serverVersion` (read from `package.json` in constructor). Clients will always see
+  the correct version after each release.
+
+#### P1: `prompts/get` Complete for All 4 Advertised Prompts (`eosMcpServer.ts`)
+- Previously only `eos-consult` was resolvable; `eos-pipeline`, `eos-drift`, `eos-context`
+  returned `-32602 Unknown prompt`. Now all 4 advertised prompts return full structured
+  `messages[]` responses (Anthropic MCP spec: every listed prompt must be gettable).
+  Default error now lists all 4 valid prompt names.
+
+#### P2: CI — Chaos Tests Now Run on Every Push (Netflix Standard)
+- Added `EOS_FLAG_CHAOS_IN_CI: "1"` to `sovereign-gate` job env block.
+  Chaos tests (Stage 4.6, `scripts/run-chaos-tests.mjs`) now run unconditionally on every
+  push to main, not just when the flag is manually set.
+
+#### P2: CI — All `actions/checkout` Pinned to Commit SHA (SLSA L3 / SPEC-139)
+- `property-tests`, `sovereign-gate`, `mutation-testing`, and `integration-summary` jobs all used
+  unpinned `actions/checkout@v4`. All 4 now pinned to
+  `actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1` (same SHA as `typecheck` job).
+
+#### P2: CI — `NODE_ENV=production` Set in Sovereign Gate (Security Standard)
+- Added `NODE_ENV: "production"` to `sovereign-gate` job env block.
+  Ensures error messages don't expose internals (stack traces, internal paths) in the
+  production-equivalent CI run.
+
+#### P2: Package Version Sync — vscode-extension + github-app
+- `packages/vscode-extension` bumped from `58.0.0` → `62.0.0`.
+- `packages/github-app` bumped from `58.0.0` → `62.0.0`.
+  Both sub-packages now match the main package version (monorepo consistency standard).
+
 ## [62.0.0] — 2026-11-05
 
 ### Fixed — Critical Merge Artifact in eosMcpStreamServer.ts (v62 Clean Rewrite)

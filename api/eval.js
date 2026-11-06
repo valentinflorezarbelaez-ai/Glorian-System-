@@ -52,7 +52,7 @@ async function handleTitans(action, res) {
   }
 }
 
-export default async function handler(req, res) {
+async function _handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -110,3 +110,7 @@ export default async function handler(req, res) {
     });
   }
 }
+
+// Rate limiting — 10 req/min burst per IP (heavy eval workloads)
+import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+export default withRateLimit({ capacity: 10, refillPerSecond: 0.17 })(_handler);

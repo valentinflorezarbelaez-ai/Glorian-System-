@@ -68,7 +68,7 @@ class DotenvProvider implements SecretProvider {
       if (!trimmed || trimmed.startsWith("#")) continue;
       const eqIdx = trimmed.indexOf("=");
       if (eqIdx < 1) continue;
-      const key   = trimmed.slice(0, eqIdx).trim();
+      const key = trimmed.slice(0, eqIdx).trim();
       const value = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, "");
       this.values.set(key, value);
     }
@@ -94,7 +94,7 @@ class AwsSecretsManagerProvider implements SecretProvider {
 
   async getSecret(key: string): Promise<string | null> {
     const secretArn = process.env[`EOS_SECRET_ARN_${key}`] ?? key;
-    const token     = process.env["AWS_SESSION_TOKEN"] ?? "";
+    const token = process.env["AWS_SESSION_TOKEN"] ?? "";
     const accessKey = process.env["AWS_ACCESS_KEY_ID"] ?? "";
     const secretKey = process.env["AWS_SECRET_ACCESS_KEY"] ?? "";
 
@@ -104,8 +104,8 @@ class AwsSecretsManagerProvider implements SecretProvider {
     }
 
     const endpoint = `https://secretsmanager.${this.region}.amazonaws.com/`;
-    const body     = JSON.stringify({ SecretId: secretArn });
-    const amzDate  = new Date().toISOString().replace(/[:-]|\.\d{3}/g, "");
+    const body = JSON.stringify({ SecretId: secretArn });
+    const amzDate = new Date().toISOString().replace(/[:-]|\.\d{3}/g, "");
     const dateOnly = amzDate.slice(0, 8);
 
     // AWS SigV4 signing (minimal implementation)
@@ -116,21 +116,21 @@ class AwsSecretsManagerProvider implements SecretProvider {
       crypto.createHash("sha256").update(body).digest("hex"),
     ].join("\n");
 
-    const credScope    = `${dateOnly}/${this.region}/secretsmanager/aws4_request`;
+    const credScope = `${dateOnly}/${this.region}/secretsmanager/aws4_request`;
     const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${credScope}\n${crypto.createHash("sha256").update(canonicalRequest).digest("hex")}`;
 
     const hmac = (key: Buffer, data: string) => crypto.createHmac("sha256", key).update(data).digest();
     const signingKey = hmac(hmac(hmac(hmac(Buffer.from("AWS4" + secretKey, "utf8"), dateOnly), this.region), "secretsmanager"), "aws4_request");
-    const signature  = crypto.createHmac("sha256", signingKey).update(stringToSign).digest("hex");
+    const signature = crypto.createHmac("sha256", signingKey).update(stringToSign).digest("hex");
 
     const authorization = `AWS4-HMAC-SHA256 Credential=${accessKey}/${credScope}, SignedHeaders=content-type;host;x-amz-date;x-amz-target, Signature=${signature}`;
 
     try {
       const result = await this._post(endpoint, body, {
-        "Content-Type":    "application/x-amz-json-1.1",
-        "X-Amz-Date":      amzDate,
-        "X-Amz-Target":    "secretsmanager.GetSecretValue",
-        "Authorization":   authorization,
+        "Content-Type": "application/x-amz-json-1.1",
+        "X-Amz-Date": amzDate,
+        "X-Amz-Target": "secretsmanager.GetSecretValue",
+        "Authorization": authorization,
         ...(token ? { "X-Amz-Security-Token": token } : {}),
       });
 
@@ -186,9 +186,9 @@ class VaultProvider implements SecretProvider {
   private readonly mountPath: string;
 
   constructor() {
-    this.address   = process.env["VAULT_ADDR"]        ?? "http://127.0.0.1:8200";
-    this.token     = process.env["VAULT_TOKEN"]       ?? "";
-    this.mountPath = process.env["VAULT_MOUNT_PATH"]  ?? "secret";
+    this.address = process.env["VAULT_ADDR"] ?? "http://127.0.0.1:8200";
+    this.token = process.env["VAULT_TOKEN"] ?? "";
+    this.mountPath = process.env["VAULT_MOUNT_PATH"] ?? "secret";
   }
 
   async getSecret(key: string): Promise<string | null> {
@@ -203,7 +203,7 @@ class VaultProvider implements SecretProvider {
     try {
       const result = await this._get(url, { "X-Vault-Token": this.token });
       const parsed = JSON.parse(result);
-      const value  = parsed?.data?.data?.[key] ?? parsed?.data?.[key] ?? null;
+      const value = parsed?.data?.data?.[key] ?? parsed?.data?.[key] ?? null;
       return value ? String(value) : process.env[key] ?? null;
     } catch {
       _log.error("Vault fetch failed", { key: key.slice(0, 20) });
@@ -214,7 +214,7 @@ class VaultProvider implements SecretProvider {
   private _get(url: string, headers: Record<string, string>): Promise<string> {
     return new Promise((resolve, reject) => {
       const parsed = new URL(url);
-      const lib    = parsed.protocol === "https:" ? https : require("node:http");
+      const lib = parsed.protocol === "https:" ? https : require("node:http");
       const req = lib.get({ hostname: parsed.hostname, port: parsed.port, path: parsed.pathname + parsed.search, headers, timeout: 5000 }, (res: import("node:http").IncomingMessage) => {
         let data = "";
         res.on("data", (c: Buffer) => { data += c.toString(); });
@@ -283,8 +283,17 @@ export class EosSecretsManager {
   private readonly cache = new Map<string, CacheEntry>();
   private readonly cacheTtlMs: number;
 
+  // ── Circuit breaker (Google SRE / Stripe standard) ───────────────────────
+  // Prevents hammering a failing remote provider on every get() call.
+  // After CIRCUIT_OPEN_THRESHOLD consecutive failures, the circuit opens
+  // and short-circuits to env fallback for CIRCUIT_OPEN_TTL_MS.
+  private _consecutiveFailures = 0;
+  private _circuitOpenedAt: number | null = null;
+  private static readonly CIRCUIT_OPEN_THRESHOLD = 3;
+  private static readonly CIRCUIT_OPEN_TTL_MS = 30_000; // 30 s half-open window
+
   private constructor(provider: SecretProvider, cacheTtlMs = 5 * 60 * 1000) {
-    this.provider   = provider;
+    this.provider = provider;
     this.cacheTtlMs = cacheTtlMs;
     _log.info("SecretsManager initialized", { provider: provider.type });
   }
@@ -299,26 +308,92 @@ export class EosSecretsManager {
   private static _create(): EosSecretsManager {
     const type = (process.env["EOS_SECRETS_PROVIDER"] ?? "env").toLowerCase() as SecretProviderType;
     switch (type) {
-      case "aws":    return new EosSecretsManager(new AwsSecretsManagerProvider());
-      case "vault":  return new EosSecretsManager(new VaultProvider());
-      case "doppler":return new EosSecretsManager(new DopplerProvider());
+      case "aws": return new EosSecretsManager(new AwsSecretsManagerProvider());
+      case "vault": return new EosSecretsManager(new VaultProvider());
+      case "doppler": return new EosSecretsManager(new DopplerProvider());
       case "dotenv": {
         const envFile = process.env["EOS_DOTENV_FILE"] ?? path.join(process.cwd(), ".env");
         return new EosSecretsManager(new DotenvProvider(envFile));
       }
-      default:       return new EosSecretsManager(new EnvProvider());
+      default: return new EosSecretsManager(new EnvProvider());
     }
   }
 
-  /** Fetches a secret. Returns null if not found. Never throws. */
+  /** Returns true if the circuit breaker is currently open (provider in failure state). */
+  private _isCircuitOpen(): boolean {
+    if (this._circuitOpenedAt === null) return false;
+    if (Date.now() - this._circuitOpenedAt > EosSecretsManager.CIRCUIT_OPEN_TTL_MS) {
+      // Half-open: allow one probe through to check if provider recovered
+      this._circuitOpenedAt = null;
+      this._consecutiveFailures = 0;
+      _log.info("SecretsManager circuit half-open — probing provider");
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Fetches a secret with circuit breaker + stale-on-failure (Netflix Hystrix pattern).
+   * - If circuit is open: returns stale cached value (if any) or env fallback.
+   * - On success: resets failure counter.
+   * - On failure: increments counter; opens circuit after threshold; returns stale cache.
+   *
+   * Returns null only if no cached value AND no env fallback exists.
+   * Never throws.
+   */
   async get(key: string): Promise<string | null> {
     const cached = this.cache.get(key);
-    if (cached && (Date.now() - cached.fetchedAt) < this.cacheTtlMs) {
+    const isFresh = cached !== undefined && (Date.now() - cached.fetchedAt) < this.cacheTtlMs;
+
+    // Fresh cache hit — no network call needed
+    if (isFresh) return cached!.value;
+
+    // Circuit open — serve stale cache or env fallback (never retry failing provider)
+    if (this._isCircuitOpen()) {
+      _log.warn("SecretsManager circuit OPEN — serving stale value", { key: key.slice(0, 20) });
+      return cached?.value ?? process.env[key] ?? null;
+    }
+
+    // Attempt provider fetch with exponential backoff (up to 2 retries)
+    let value: string | null = null;
+    let lastError: unknown = null;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        value = await this.provider.getSecret(key);
+        // Success — reset circuit
+        this._consecutiveFailures = 0;
+        this._circuitOpenedAt = null;
+        this.cache.set(key, { value, fetchedAt: Date.now() });
+        return value;
+      } catch (err) {
+        lastError = err;
+        if (attempt === 0) await new Promise(r => setTimeout(r, 200 * (attempt + 1)));
+      }
+    }
+
+    // All retries failed — increment circuit breaker
+    this._consecutiveFailures += 1;
+    if (this._consecutiveFailures >= EosSecretsManager.CIRCUIT_OPEN_THRESHOLD) {
+      this._circuitOpenedAt = Date.now();
+      _log.error("SecretsManager circuit OPENED after repeated failures", {
+        provider: this.provider.type,
+        failures: this._consecutiveFailures,
+      });
+    }
+
+    // Stale-on-failure (Netflix Hystrix pattern): serve expired cache over null
+    if (cached !== undefined) {
+      _log.warn("SecretsManager returning stale cache after fetch failure", { key: key.slice(0, 20) });
       return cached.value;
     }
-    const value = await this.provider.getSecret(key).catch(() => null);
-    this.cache.set(key, { value, fetchedAt: Date.now() });
-    return value;
+
+    // Last resort: env fallback
+    const envFallback = process.env[key] ?? null;
+    if (envFallback) {
+      _log.warn("SecretsManager falling back to process.env", { key: key.slice(0, 20) });
+      this.cache.set(key, { value: envFallback, fetchedAt: Date.now() });
+    }
+    return envFallback;
   }
 
   /** Fetches a required secret. Throws if not found. */

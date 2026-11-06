@@ -33,7 +33,7 @@ function runTypedArrayBenchmark(iterations = 500) {
   for (let iter = 0; iter < iterations; iter++) {
     const gain = 1.0001 + (iter & 7) * 0.0001;
     for (let i = 0; i < VECTOR_CAPACITY; i += 8) {
-      SOA_OUT[i]     = SOA_PRICES[i]     * SOA_VOLUMES[i]     * gain;
+      SOA_OUT[i] = SOA_PRICES[i] * SOA_VOLUMES[i] * gain;
       SOA_OUT[i + 1] = SOA_PRICES[i + 1] * SOA_VOLUMES[i + 1] * gain;
       SOA_OUT[i + 2] = SOA_PRICES[i + 2] * SOA_VOLUMES[i + 2] * gain;
       SOA_OUT[i + 3] = SOA_PRICES[i + 3] * SOA_VOLUMES[i + 3] * gain;
@@ -104,7 +104,7 @@ async function handleAmplify(req, res, body = {}) {
   });
 }
 
-export default async function handler(req, res) {
+async function _handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -174,3 +174,7 @@ export default async function handler(req, res) {
     note: "This measures the local typed-array arithmetic loop only. The fingerprint is not a signature, proof, or hardware-performance claim."
   });
 }
+
+// Rate limiting — 20 req/min burst per IP
+import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+export default withRateLimit({ capacity: 20, refillPerSecond: 0.33 })(_handler);

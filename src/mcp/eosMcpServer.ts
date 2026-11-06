@@ -470,6 +470,15 @@ export class EosMcpServer {
     for (const handler of CORE_TOOL_HANDLERS) {
       this.registry.register(handler);
     }
+
+    // Dynamic version from package.json (never hardcoded — ops standard)
+    try {
+      const pkgPath = path.join(this.projectRoot, "package.json");
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8")) as { version?: string };
+      this.serverVersion = pkg.version ?? "62.0.0";
+    } catch {
+      this.serverVersion = "62.0.0";
+    }
   }
 
   public handleRequest(
@@ -543,7 +552,7 @@ export class EosMcpServer {
               },
               serverInfo: {
                 name: "eos-system-mcp",
-                version: "61.0.0",
+                version: this.serverVersion,   // ← dynamic, no longer hardcoded
                 description: "EOS Sovereign Engineering Operating System — AGI Harness, Consulting Engine, Dynamic Tool Forge",
               },
             },
@@ -605,7 +614,7 @@ export class EosMcpServer {
               return {
                 jsonrpc: "2.0", id,
                 result: {
-                  description: "EOS consulting prompt",
+                  description: "EOS consulting prompt — offline world-class deliverable",
                   messages: [{
                     role: "user",
                     content: {
@@ -615,8 +624,71 @@ export class EosMcpServer {
                   }],
                 },
               };
+            case "eos-pipeline":
+              return {
+                jsonrpc: "2.0", id,
+                result: {
+                  description: "EOS AGI end-to-end pipeline prompt",
+                  messages: [{
+                    role: "user",
+                    content: {
+                      type: "text",
+                      text: [
+                        `Run the eos_agi_pipeline tool with:`,
+                        `  problem: "${promptArgs.problem ?? "describe the problem"}"`,
+                        `  targetFile: "${promptArgs.targetFile ?? "src/path/to/file.ts"}"`,
+                        `  testCommand: "${promptArgs.testCommand ?? "node --test test/*.test.mjs"}"`,
+                        `The pipeline will assemble context, generate thought branches via EosMultiModelRouter,`,
+                        `evaluate each against the tribunal (exit 0 = law), and return the winning branch`,
+                        `or crystallized axioms from all failures.`,
+                      ].join("\n"),
+                    },
+                  }],
+                },
+              };
+            case "eos-drift":
+              return {
+                jsonrpc: "2.0", id,
+                result: {
+                  description: "EOS spec drift detection prompt",
+                  messages: [{
+                    role: "user",
+                    content: {
+                      type: "text",
+                      text: [
+                        `Use the eos_detect_spec_drift tool to find modules that were modified`,
+                        `without updating their formal specification.`,
+                        `daysThreshold: ${typeof promptArgs.daysThreshold === "number" ? promptArgs.daysThreshold : 7}`,
+                        `Any module whose source was changed more recently than its spec EARS file`,
+                        `(by the configured threshold) will be flagged as drifted.`,
+                      ].join("\n"),
+                    },
+                  }],
+                },
+              };
+            case "eos-context":
+              return {
+                jsonrpc: "2.0", id,
+                result: {
+                  description: "EOS token-budget context assembly prompt",
+                  messages: [{
+                    role: "user",
+                    content: {
+                      type: "text",
+                      text: [
+                        `Use the eos_assemble_context tool with:`,
+                        `  objective: "${promptArgs.objective ?? "describe what you need to do"}"`,
+                        `  targetFile: "${promptArgs.targetFile ?? "src/path/to/file.ts"}"`,
+                        `  tokenBudget: ${typeof promptArgs.tokenBudget === "number" ? promptArgs.tokenBudget : 32000}`,
+                        `This will run a semantic blast-radius analysis and return a token-budget-aware`,
+                        `context block containing the target file, its direct imports, and spec references.`,
+                      ].join("\n"),
+                    },
+                  }],
+                },
+              };
             default:
-              return { jsonrpc: "2.0", id, error: { code: -32602, message: `Unknown prompt: ${promptName}` } };
+              return { jsonrpc: "2.0", id, error: { code: -32602, message: `Unknown prompt: ${String(promptName)}. Available: eos-consult, eos-pipeline, eos-drift, eos-context` } };
           }
         }
 
@@ -2623,9 +2695,9 @@ export class EosMcpServer {
         }
       }
 
-            // SPEC-155 Phase-6: eos_fleet_registry_sync → registry
+      // SPEC-155 Phase-6: eos_fleet_registry_sync → registry
 
-            // SPEC-155 Phase-6: eos_fleet_mission_control → registry
+      // SPEC-155 Phase-6: eos_fleet_mission_control → registry
 
       case "eos_run_eval": {
         const evaluator = new EosCognitiveEval();
@@ -2671,7 +2743,7 @@ export class EosMcpServer {
         return kernel.benchmarkDsp(Number(args.frames) || 65536, Number(args.iterations) || 20);
       }
 
-            // SPEC-155 Phase-6: eos_fleet_elevate → registry
+      // SPEC-155 Phase-6: eos_fleet_elevate → registry
 
       case "eos_apollo_rpc": {
         const mesh = new EosApolloHermesMesh();
@@ -2778,13 +2850,13 @@ export class EosMcpServer {
       }
 
       // SPEC-155 Phase-4: nubank_*, spotify institutional/canary/golden_path/fleetshift → registry
-            // SPEC-155 Phase-6: eos_apex_route_model → registry
+      // SPEC-155 Phase-6: eos_apex_route_model → registry
 
-            // SPEC-155 Phase-6: eos_apex_compress_context → registry
+      // SPEC-155 Phase-6: eos_apex_compress_context → registry
 
-            // SPEC-155 Phase-6: eos_apex_autonomous_heal → registry
+      // SPEC-155 Phase-6: eos_apex_autonomous_heal → registry
 
-            // SPEC-155 Phase-6: eos_apex_go_benchmark → registry
+      // SPEC-155 Phase-6: eos_apex_go_benchmark → registry
 
       case "eos_wasm_benchmark": {
         return runBenchmark(Number(args.iterations || 100000));
@@ -2844,7 +2916,7 @@ export class EosMcpServer {
         return blast;
       }
 
-            // SPEC-155 Phase-7: eos_mutation_test → registry
+      // SPEC-155 Phase-7: eos_mutation_test → registry
 
       case "eos_time_travel_simulate": {
         onProgress?.(30, 100, "Initializing deterministic discrete clock hypervisor");
@@ -2860,7 +2932,7 @@ export class EosMcpServer {
         return receipt;
       }
 
-            // SPEC-155 Phase-7: eos_wal_status → registry
+      // SPEC-155 Phase-7: eos_wal_status → registry
 
       case "eos_prometheus_metrics": {
         onProgress?.(50, 100, "Collecting system gauges and counters");
@@ -2937,7 +3009,7 @@ export class EosMcpServer {
         };
       }
 
-            // SPEC-155 Phase-6: eos_finops_budget_check → registry
+      // SPEC-155 Phase-6: eos_finops_budget_check → registry
 
       case "eos_clave_de_sol_evaluate": {
         onProgress?.(50, 100, "Evaluating Subject-Object-Place consciousness metrics");
@@ -3060,7 +3132,7 @@ export class EosMcpServer {
         };
       }
 
-            // SPEC-155 Phase-7: eos_nsa_zero_trust_check → registry
+      // SPEC-155 Phase-7: eos_nsa_zero_trust_check → registry
 
       case "eos_nsa_audit_logs": {
         onProgress?.(50, 100, "Reading Red/Black cryptographically sealed audit trail");
@@ -3174,7 +3246,7 @@ export class EosMcpServer {
         };
       }
 
-            // SPEC-155 Phase-7: eos_zero_copy_scan → registry
+      // SPEC-155 Phase-7: eos_zero_copy_scan → registry
 
       case "eos_chaos_inject_eval": {
         onProgress?.(30, 100, "Executing Netflix Chaos Battery");
@@ -3275,11 +3347,11 @@ export class EosMcpServer {
         };
       }
 
-            // SPEC-155 Phase-6: eos_product_deliver_run → registry
+      // SPEC-155 Phase-6: eos_product_deliver_run → registry
 
-            // SPEC-155 Phase-6: eos_product_deliver_status → registry
+      // SPEC-155 Phase-6: eos_product_deliver_status → registry
 
-            // SPEC-155 Phase-7: eos_platform_ops_ceiling → registry
+      // SPEC-155 Phase-7: eos_platform_ops_ceiling → registry
 
       case "eos_otel_query_traces": {
         onProgress?.(10, 100, "Querying OpenTelemetry distributed traces from SQLite WAL");
@@ -3418,7 +3490,7 @@ export class EosMcpServer {
         return res;
       }
 
-            // SPEC-155 Phase-6: eos_synapse_arbitrate → registry
+      // SPEC-155 Phase-6: eos_synapse_arbitrate → registry
 
       case "eos_canary_rollout": {
         const versionTarget = String(args.versionTarget || "v50.0.0");
@@ -3427,11 +3499,11 @@ export class EosMcpServer {
         const telemetry = Array.isArray(args.telemetry)
           ? args.telemetry
           : [
-              { stage: "CANARY_1_PCT", sampleRequests: 10000, failedRequests: 0, p99LatencyMs: 45, baselineP99LatencyMs: 44 },
-              { stage: "CANARY_5_PCT", sampleRequests: 50000, failedRequests: 1, p99LatencyMs: 46, baselineP99LatencyMs: 44 },
-              { stage: "CANARY_25_PCT", sampleRequests: 250000, failedRequests: 2, p99LatencyMs: 47, baselineP99LatencyMs: 44 },
-              { stage: "FULL_PRODUCTION_100_PCT", sampleRequests: 1000000, failedRequests: 5, p99LatencyMs: 48, baselineP99LatencyMs: 44 }
-            ];
+            { stage: "CANARY_1_PCT", sampleRequests: 10000, failedRequests: 0, p99LatencyMs: 45, baselineP99LatencyMs: 44 },
+            { stage: "CANARY_5_PCT", sampleRequests: 50000, failedRequests: 1, p99LatencyMs: 46, baselineP99LatencyMs: 44 },
+            { stage: "CANARY_25_PCT", sampleRequests: 250000, failedRequests: 2, p99LatencyMs: 47, baselineP99LatencyMs: 44 },
+            { stage: "FULL_PRODUCTION_100_PCT", sampleRequests: 1000000, failedRequests: 5, p99LatencyMs: 48, baselineP99LatencyMs: 44 }
+          ];
         return mesh.executeRollout(telemetry as any);
       }
 

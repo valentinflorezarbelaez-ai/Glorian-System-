@@ -108,7 +108,7 @@ function probeUrl(url, timeoutMs = 4_000) {
 // Handler
 // ---------------------------------------------------------------------------
 
-export default async function handler(req, res) {
+async function _handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -188,3 +188,7 @@ export default async function handler(req, res) {
     merkleDigest: `sha256:${digest}`,
   });
 }
+
+// Rate limiting — 10 req/min burst per IP (git/HTTP calls per request)
+import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+export default withRateLimit({ capacity: 10, refillPerSecond: 0.17 })(_handler);
