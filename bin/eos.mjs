@@ -28,6 +28,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, "..");
 const packageMetadata = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
+const testSuiteCount = fs
+  .readdirSync(path.join(root, "test"))
+  .filter((name) => name.endsWith(".test.mjs")).length;
 
 const args = process.argv.slice(2);
 const command = (args[0] || "help").toLowerCase();
@@ -4754,18 +4757,18 @@ switch (command) {
     if (!showAll) {
       console.log(`
 ======================================================================
- EOS SYSTEM — MANUAL RÁPIDO Y ERGONOMÍA DE DESARROLLO (v68.0.0)
+ EOS SYSTEM — MANUAL RÁPIDO Y ERGONOMÍA DE DESARROLLO (v${packageMetadata.version})
 ======================================================================
 
 🎯 DESARROLLO RÁPIDO & PRUEBAS (DAILY WORKFLOW):
   eos pts                    Corre únicamente las pruebas impactadas por el diff (~350ms)
   eos search <termino>       Búsqueda instantánea FTS5 en specs, plans y ADRs (~100ms)
-  eos test                   Ejecuta las 86 suites de prueba automatizadas (node:test)
+  eos test                   Ejecuta las ${testSuiteCount} suites de prueba automatizadas (node:test)
   eos turbo                  Verificación en memoria con telemetría en microsegundos (<350ms)
   eos mission "<directive>" [--domain=platform|fintech|audio] [--persist-ledger]
                              SPEC-156 Mission Golden Path (NL→amplify→gates→turbo→ledger)
   eos coverage               Reporte de cobertura nativa V8 sin dependencias externas
-  eos quickstart             Sanity check de 6 subsistemas en <200ms
+  eos quickstart             Sanity check de 6 subsistemas en menos de 1 segundo
   eos product:deliver [name] [domain] [tier] [--write] [--canary]
                              Golden Path IDP (Foundry→SDD→Loop→Gates→Scorecard); dry-run by default
   eos platform:ops [--no-canary] [--dirty]

@@ -1,0 +1,8 @@
+# Default owner for every path.
+* @valentinflorezarbelaez-ai
+
+# Security-sensitive surfaces require explicit review.
+/.github/ @valentinflorezarbelaez-ai
+/api/ @valentinflorezarbelaez-ai
+/src/mcp/ @valentinflorezarbelaez-ai
+/SECURITY.md @valentinflorezarbelaez-ai

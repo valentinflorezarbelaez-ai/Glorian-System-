@@ -25,8 +25,60 @@ test("BDD-267: Validación de estructura de flujo reutilizable de GitHub Actions
   assert.ok(workflowContent.includes("actions/checkout"), "Must check out repository");
   assert.ok(workflowContent.includes("actions/setup-node"), "Must setup Node.js runtime");
   assert.ok(workflowContent.includes("node scripts/eos-github-pr-attestation.mjs"), "Must run PR attestation script");
-  assert.ok(workflowContent.includes("github/codeql-action/upload-sarif@v3"), "Must upload SARIF report");
+  assert.match(
+    workflowContent,
+    /github\/codeql-action\/upload-sarif@[0-9a-f]{40}\b/,
+    "Must upload SARIF with an action pinned to a 40-hex commit SHA"
+  );
+  assert.doesNotMatch(workflowContent, /upload-sarif@v\d/, "Floating action tags are not allowed");
   assert.ok(workflowContent.includes("docs/evidence/local-checks.sarif"), "Must target local-checks.sarif");
+});
+
+test("BDD-269: Todo workflow declara least-privilege, timeout y checkout sin credenciales", () => {
+  const workflowsDir = path.join(projectRoot, ".github", "workflows");
+  const files = fs.readdirSync(workflowsDir).filter((file) => /\.ya?ml$/.test(file));
+  assert.ok(files.length > 0, "At least one workflow must exist");
+
+  for (const file of files) {
+    const content = fs.readFileSync(path.join(workflowsDir, file), "utf8");
+    const label = `.github/workflows/${file}`;
+
+    // Least privilege at workflow scope; jobs may widen explicitly when justified.
+    assert.match(content, /^permissions:/m, `${label} must declare top-level permissions`);
+
+    const jobs = content.match(/^\s{4}runs-on:/gm) ?? [];
+    const timeouts = content.match(/^\s{4}timeout-minutes:/gm) ?? [];
+    assert.ok(jobs.length > 0, `${label} must define at least one job`);
+    assert.equal(timeouts.length, jobs.length, `${label} must bound every job with timeout-minutes`);
+
+    const checkouts = content.match(/uses:\s*actions\/checkout@/g) ?? [];
+    const nonPersisted = content.match(/persist-credentials:\s*false/g) ?? [];
+    assert.equal(
+      nonPersisted.length,
+      checkouts.length,
+      `${label} must set persist-credentials: false on every actions/checkout step`
+    );
+
+    assert.doesNotMatch(content, /^\s*pull_request_target:/m, `${label} must not use pull_request_target`);
+
+    for (const [, ref] of content.matchAll(/uses:\s*([^\s#]+)/g)) {
+      if (ref.startsWith("./") || ref.startsWith("docker://")) continue;
+      assert.match(ref, /@[0-9a-f]{40}$/, `${label} must pin ${ref} to a 40-hex commit SHA`);
+    }
+  }
+});
+
+test("BDD-270: El paquete no es publicable por accidente y declara su licencia", () => {
+  const pkg = JSON.parse(fs.readFileSync(path.join(projectRoot, "package.json"), "utf8"));
+
+  assert.equal(pkg.private, true, "package.json must set private:true to block accidental npm publish");
+  assert.equal(pkg.license, "MIT", "package.json must declare the repository license");
+  assert.ok(pkg.engines?.node, "package.json must declare the supported Node.js range");
+  assert.equal(Object.keys(pkg.dependencies ?? {}).length, 0, "Layer-0 runtime dependencies must stay empty");
+
+  const licensePath = path.join(projectRoot, "LICENSE");
+  assert.ok(fs.existsSync(licensePath), "LICENSE file must exist");
+  assert.match(fs.readFileSync(licensePath, "utf8"), /^MIT License/, "LICENSE must match the declared MIT license");
 });
 
 test("BDD-268: Verificación determinista de PR gate y generación de reporte SARIF (SPEC-096)", () => {

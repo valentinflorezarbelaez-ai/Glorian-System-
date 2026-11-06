@@ -188,6 +188,20 @@ try {
   }
 
   // ---------------------------------------------------------------------------
+  // STAGE 3.6: ARCHITECTURE FITNESS FUNCTION (import graph invariants)
+  // ---------------------------------------------------------------------------
+  try {
+    execFileSync(process.execPath, [path.join(root, "scripts/verify-architecture-boundaries.mjs")], {
+      cwd: root,
+      stdio: "inherit"
+    });
+    console.log("[PASS] Stage 3.6/7 — Architecture fitness function: no external imports, layer inversions, cycles or harness leaks.");
+  } catch (err) {
+    recordFinding("EOS-ARCH-009", `Stage 3.6 architecture boundary failure: ${err.message}`, "scripts/verify-architecture-boundaries.mjs");
+    throw err;
+  }
+
+  // ---------------------------------------------------------------------------
   // STAGE 4: STATIC AST, SYNTAX & BYTECODE VERIFICATION (node --check + L0 TS)
   // ---------------------------------------------------------------------------
   try {
@@ -195,6 +209,10 @@ try {
     for (const jsFile of jsFilesToCheck) {
       execFileSync(process.execPath, ["--check", jsFile], { cwd: root, stdio: "pipe" });
     }
+    execFileSync(process.execPath, [path.join(root, "scripts", "verify-code-hygiene.mjs")], {
+      cwd: root,
+      stdio: "inherit"
+    });
     const typeScriptCompiler = path.join(root, "node_modules", "typescript", "bin", "tsc");
     assert.ok(fs.existsSync(typeScriptCompiler), "TypeScript compiler is missing; install locked dev toolchain with npm ci.");
     execFileSync(process.execPath, [typeScriptCompiler, "--project", path.join(root, "tsconfig.typecheck.json")], {
@@ -252,7 +270,8 @@ try {
     for (let i = 0; i < filesToRun.length; i += BATCH_SIZE) {
       const batch = filesToRun.slice(i, i + BATCH_SIZE);
       console.log(`[STAGE 4 RUNNER] Executing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(filesToRun.length / BATCH_SIZE)} (${batch.length} suites)...`);
-      execFileSync(process.execPath, ["--test", ...batch.map((f) => path.join(root, f))], {
+      // Per-test hang guard: no single suite may stall a batch indefinitely.
+      execFileSync(process.execPath, ["--test", "--test-timeout=180000", ...batch.map((f) => path.join(root, f))], {
         cwd: root,
         stdio: "inherit"
       });

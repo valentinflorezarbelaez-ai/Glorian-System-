@@ -3,7 +3,7 @@
 [![CI/CD Strict Sovereign Gate](https://img.shields.io/badge/CI%2FCD%20Gate-7%2F7%20PASSED-00FF66?style=for-the-badge&logo=githubactions&logoColor=black)](docs/evidence/fleet-audit.sarif)
 [![Layer-0 Runtime Pure](https://img.shields.io/badge/Runtime%20Deps-0%20(Pure%20Layer--0)-gold?style=for-the-badge)](package.json)
 [![Supply Chain Security](https://img.shields.io/badge/Supply%20Chain-SLSA%20v1.0%20Level%204-blue?style=for-the-badge&logo=shield)](docs/evidence/provenance.intoto.jsonl)
-[![Formal Methods](https://img.shields.io/badge/TLA%2B%20Invariants-44%20Verified%20Specs-purple?style=for-the-badge)](docs/tla/)
+[![Formal Methods](https://img.shields.io/badge/TLA%2B%20Invariants-44%20Verified%20Specs-purple?style=for-the-badge)](docs/formal/)
 [![Spotify Soundcheck](https://img.shields.io/badge/Fleet%20Soundcheck-10%2F10%20Quorum%20(100%25)-1DB954?style=for-the-badge&logo=spotify&logoColor=white)](docs/projects/registry.json)
 [![Design System Governor](https://img.shields.io/badge/Tier%20S--0%20Design-100%25%20Perfection-FF3366?style=for-the-badge)](DESIGN.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
@@ -67,9 +67,9 @@ flowchart TD
     S1["Stage 1: Secrets & Fleet Sentinel\n(1,170+ files scanned · 0 plain secrets)"] --> S2["Stage 2: Landing & SRI SHA-384\n(HTML5 contracts · Subresource Integrity)"]
     S2 --> S3["Stage 3: Layer-0 Purity & Source Inventory\n(0 runtime deps · SHA-256 digest)"]
     S3 --> S35["Stage 3.5: TLA+ Formal Invariant Simulations\n(44 specifications · 8,800 steps)"]
-    S35 --> S4["Stage 4: 28 Test Batches\n(164 test suites · 224 JS/MJS · 187 TS modules)"]
+    S35 --> S4["Stage 4: Test Batches\n(all discovered suites · JS/MJS · TS modules)"]
     S4 --> S5["Stage 5: Tier S-0 Design Governor\n(DESIGN.md · 4px rigid grid · WCAG AAA)"]
-    S5 --> S6["Stage 6: In-Process Microservice Smokes\n(13 API endpoints tested hermetically)"]
+    S5 --> S6["Stage 6: In-Process Microservice Smokes\n(API handlers tested hermetically)"]
     S6 --> S7["Stage 7: Supply Chain Attestation & SARIF\n(CycloneDX SBOM + In-Toto SLSA v1.0 Provenance)"]
     style S7 fill:#00FF66,stroke:#000,stroke-width:2px,color:#000
 ```
@@ -94,7 +94,7 @@ cd Glorian-System-
 # Install locked development tools (TypeScript compiler & Node type defs only)
 npm ci
 
-# Verify the complete sovereign gate (7 stages, 164 test suites)
+# Verify the complete sovereign gate (7 stages, all discovered suites)
 npm run verify:strict
 
 # Check supply chain cryptographic congruence

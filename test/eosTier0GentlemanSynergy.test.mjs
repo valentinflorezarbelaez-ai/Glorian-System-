@@ -52,15 +52,24 @@ test("BDD-128: MCP Path Confinement resolves relative to projectRoot when CWD is
     })
   ].join("\n") + "\n";
 
+  const childEnv = { ...process.env, EOS_PROJECT_ROOT: projectRoot };
+  // Coverage instrumentation slows the child enough to trip tight timeouts.
+  delete childEnv.NODE_V8_COVERAGE;
+
+  // Hang guard, not an SLA: parallel gates on slow runners legitimately exceed 25s.
   const proc = spawnSync(process.execPath, [path.join(projectRoot, "src", "mcp", "eosMcpServer.ts")], {
     cwd: os.tmpdir(),
-    env: { ...process.env, EOS_PROJECT_ROOT: projectRoot },
+    env: childEnv,
     input: requests,
     encoding: "utf8",
-    timeout: 25000
+    timeout: 90000
   });
 
-  assert.equal(proc.status, 0, `MCP subprocess exited non-zero: ${proc.stderr}`);
+  assert.equal(
+    proc.status,
+    0,
+    `MCP subprocess exited non-zero (signal=${proc.signal ?? "none"}, error=${proc.error?.message ?? "none"}): ${proc.stderr}`
+  );
   const responses = proc.stdout
     .trim()
     .split("\n")

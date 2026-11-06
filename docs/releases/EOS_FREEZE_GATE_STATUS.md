@@ -22,7 +22,7 @@
 | **Platform Ops Ceiling** | `SOVEREIGN_CEILING_10_OF_10_WITHIN_TESTED_SCOPE` | TIP-SEALED |
 | **Forbidden Claims** | NSA_GRADE / AEROSPACE_CERTIFIED / FEDERAL_ATO / ABSOLUTE_UNIVERSAL_PERFECTION | NEVER ISSUED |
 | **Supply Chain** | CycloneDX 1.5 + in-toto SLSA local bit-for-bit | VERIFIED |
-| **Control Plane SSOT** | `c:\Users\valen\Eos-System` | PINNED |
+| **Control Plane SSOT** | `repository root` (git-tracked, no local absolute path) | PINNED |
 
 ---
 

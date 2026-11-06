@@ -15,7 +15,12 @@ describe("EOS Xirp-Grade Multi-Agent Worktree Orchestrator Suite", () => {
 
       const main = list.find((w) => w.isMain);
       assert.ok(main, "Expected primary main worktree to be identified");
-      assert.equal(path.resolve(main.path).toLowerCase(), path.resolve(process.cwd()).toLowerCase());
+      assert.equal(list.filter((w) => w.isMain).length, 1, "Exactly one worktree may be primary");
+      // The gate also runs from linked worktrees, where the primary checkout is not cwd.
+      assert.ok(
+        list.some((w) => path.resolve(w.path).toLowerCase() === path.resolve(process.cwd()).toLowerCase()),
+        "Expected the current checkout to appear in the worktree list"
+      );
       assert.ok(typeof main.headCommit === "string" && main.headCommit.length > 0);
     });
 
@@ -24,7 +29,8 @@ describe("EOS Xirp-Grade Multi-Agent Worktree Orchestrator Suite", () => {
       assert.ok(typeof status.clean === "boolean");
       assert.ok(Array.isArray(status.modifiedFiles));
       assert.ok(Array.isArray(status.untrackedFiles));
-      assert.ok(typeof status.currentBranch === "string" && status.currentBranch.length > 0);
+      // CI checkouts can be detached; an empty branch label is still valid.
+      assert.equal(typeof status.currentBranch, "string");
     });
   });
 

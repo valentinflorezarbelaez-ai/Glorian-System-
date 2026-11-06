@@ -35,13 +35,15 @@ function httpGet(url) {
   });
 }
 
+// Ephemeral ports: fixed ports collide when suites run in parallel or two gates overlap.
 test("BDD-191: Dashboard server starts, binds port, and shuts down cleanly", async () => {
-  const testPort = 14441;
-  const dashboard = new EosTelemetryDashboard(projectRoot, testPort);
+  const dashboard = new EosTelemetryDashboard(projectRoot, 0);
 
   try {
     assert.equal(dashboard.isListening(), false);
     const server = await dashboard.start();
+    const testPort = server.address().port;
+    assert.ok(testPort > 0);
     assert.equal(dashboard.isListening(), true);
     assert.ok(server);
 
@@ -57,11 +59,11 @@ test("BDD-191: Dashboard server starts, binds port, and shuts down cleanly", asy
 });
 
 test("BDD-192: GET /api/telemetry returns valid JSON snapshot with zero runtime dependencies", async () => {
-  const testPort = 14442;
-  const dashboard = new EosTelemetryDashboard(projectRoot, testPort);
+  const dashboard = new EosTelemetryDashboard(projectRoot, 0);
 
   try {
-    await dashboard.start();
+    const server = await dashboard.start();
+    const testPort = server.address().port;
     const res = await httpGet(`http://127.0.0.1:${testPort}/api/telemetry`);
     assert.equal(res.statusCode, 200);
     assert.ok(res.headers["content-type"].includes("application/json"));
@@ -83,11 +85,11 @@ test("BDD-192: GET /api/telemetry returns valid JSON snapshot with zero runtime 
 });
 
 test("BDD-193: GET /api/ledger returns SQLite entries, pagination, and SHA-256 chain status", async () => {
-  const testPort = 14443;
-  const dashboard = new EosTelemetryDashboard(projectRoot, testPort);
+  const dashboard = new EosTelemetryDashboard(projectRoot, 0);
 
   try {
-    await dashboard.start();
+    const server = await dashboard.start();
+    const testPort = server.address().port;
     const res = await httpGet(`http://127.0.0.1:${testPort}/api/ledger?limit=10`);
     assert.equal(res.statusCode, 200);
 
@@ -102,11 +104,11 @@ test("BDD-193: GET /api/ledger returns SQLite entries, pagination, and SHA-256 c
 });
 
 test("BDD-194: GET /api/topology returns acyclic subagent DAG and active agents", async () => {
-  const testPort = 14444;
-  const dashboard = new EosTelemetryDashboard(projectRoot, testPort);
+  const dashboard = new EosTelemetryDashboard(projectRoot, 0);
 
   try {
-    await dashboard.start();
+    const server = await dashboard.start();
+    const testPort = server.address().port;
     const res = await httpGet(`http://127.0.0.1:${testPort}/api/topology`);
     assert.equal(res.statusCode, 200);
 
@@ -121,11 +123,11 @@ test("BDD-194: GET /api/topology returns acyclic subagent DAG and active agents"
 });
 
 test("BDD-195: GET / delivers responsive HTML5 UI with SVG DAG and accessibility landmarks", async () => {
-  const testPort = 14445;
-  const dashboard = new EosTelemetryDashboard(projectRoot, testPort);
+  const dashboard = new EosTelemetryDashboard(projectRoot, 0);
 
   try {
-    await dashboard.start();
+    const server = await dashboard.start();
+    const testPort = server.address().port;
     const res = await httpGet(`http://127.0.0.1:${testPort}/`);
     assert.equal(res.statusCode, 200);
 

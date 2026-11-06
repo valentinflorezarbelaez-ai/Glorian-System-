@@ -5,6 +5,7 @@
 
 import { performance } from 'node:perf_hooks';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { EosDurableSqliteLedger } from '../src/core/eosDurableSqliteLedger.ts';
@@ -66,10 +67,18 @@ async function runQuickstart() {
   });
 
   // Check 4: Full-Text Architecture Search (FTS5)
+  // Verify the engine against a bounded fixture; reindexing the whole corpus here
+  // made quickstart take tens of seconds as the docs grew.
   let searchOk = false;
   let searchResultsCount = 0;
+  const searchFixture = fs.mkdtempSync(path.join(os.tmpdir(), 'eos-quickstart-search-'));
   try {
-    const searchEngine = new EosDocumentationSearch(rootDir, ':memory:');
+    fs.mkdirSync(path.join(searchFixture, 'docs', 'specs'), { recursive: true });
+    fs.writeFileSync(
+      path.join(searchFixture, 'docs', 'specs', 'sample.md'),
+      '# SLSA Provenance\n\nSupply chain attestation fixture.\n'
+    );
+    const searchEngine = new EosDocumentationSearch(searchFixture, ':memory:');
     searchEngine.indexDocumentation();
     const results = searchEngine.search('SLSA', 5);
     searchResultsCount = results.length;
@@ -77,6 +86,8 @@ async function runQuickstart() {
     searchEngine.close();
   } catch (err) {
     searchOk = false;
+  } finally {
+    fs.rmSync(searchFixture, { recursive: true, force: true });
   }
   checks.push({
     name: 'Documentation Search Engine (FTS5 unicode61)',

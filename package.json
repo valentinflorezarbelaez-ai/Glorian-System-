@@ -1,6 +1,8 @@
 {
   "name": "eos-system-landing",
   "version": "75.0.0",
+  "private": true,
+  "packageManager": "npm@11.19.0",
   "description": "Local software engineering toolkit with a Node.js CLI, MCP server, repository analysis, templates, and bounded demonstrations.",
   "type": "module",
   "main": "./src/index.ts",
@@ -131,6 +133,9 @@
     "build:apex": "go build -ldflags=\"-s -w\" -o bin/eos-apex.exe src/native/eos_apex_orchestrator.go",
     "build:wasm": "go build -ldflags=\"-s -w\" -o assets/eos_apex.wasm src/native/eos_wasm_bridge.go",
     "verify:cwv": "node scripts/verify-cwv-budget.mjs",
+    "hygiene": "node scripts/verify-code-hygiene.mjs",
+    "arch:verify": "node scripts/verify-architecture-boundaries.mjs",
+    "test:coverage": "node scripts/verify-coverage.mjs",
     "verify:sri": "node scripts/verify-sri-integrity.mjs",
     "verify:strict": "node scripts/verify-cicd-pipeline.mjs",
     "typecheck": "tsc --project tsconfig.typecheck.json",

@@ -11,13 +11,13 @@
 
 | Seal Index | Name | Esoteric Principle | Big Tech Benchmark | Implementation Anchor |
 |---|---|---|---|---|
-| **SEAL-1** | `Anu-Balanza` | Morir al Ego Técnico | Google Critique / Zero Vibe Coding | [`src/core/eosPromptAmplifier.ts`](file:///c:/Users/valen/Eos-System/src/core/eosPromptAmplifier.ts) |
-| **SEAL-2** | `To Soma Heliakon` | Cuerpo Solar de Capa 0 | seL4 / Zero Runtime NPM Deps | [`src/core/eosTypeScriptAstAnalyzer.ts`](file:///c:/Users/valen/Eos-System/src/core/eosTypeScriptAstAnalyzer.ts) |
-| **SEAL-3** | `Andrógino Divino` | El Matrimonio Perfecto | NASA IV&V (Builder != Verifier) | [`src/core/eosCognitiveEval.ts`](file:///c:/Users/valen/Eos-System/src/core/eosCognitiveEval.ts) |
-| **SEAL-4** | `EosAstral` | Desdoblamiento 5D | BlackRock Aladdin / Git Worktrees | [`src/core/EosAstral.ts`](file:///c:/Users/valen/Eos-System/src/core/EosAstral.ts) |
-| **SEAL-5** | `EosElohim` | Runa NOT (Disyuntor) | ASML Twinscan / Circuit Breakers | [`src/core/EosElohim.ts`](file:///c:/Users/valen/Eos-System/src/core/EosElohim.ts) |
-| **SEAL-6** | `EosAin` | Retorno al Vacío Radical | IBM Parallel Sysplex / Zero Entropy | [`src/core/EosAin.ts`](file:///c:/Users/valen/Eos-System/src/core/EosAin.ts) |
-| **SEAL-7** | `Pistis Sophia` | Resurrección Crística | FDIR Closed-Loop / Self-Healing | [`src/core/eosAutonomousHealer.ts`](file:///c:/Users/valen/Eos-System/src/core/eosAutonomousHealer.ts) |
+| **SEAL-1** | `Anu-Balanza` | Morir al Ego Técnico | Google Critique / Zero Vibe Coding | [`src/core/eosPromptAmplifier.ts`](../../src/core/eosPromptAmplifier.ts) |
+| **SEAL-2** | `To Soma Heliakon` | Cuerpo Solar de Capa 0 | seL4 / Zero Runtime NPM Deps | [`src/core/eosTypeScriptAstAnalyzer.ts`](../../src/core/eosTypeScriptAstAnalyzer.ts) |
+| **SEAL-3** | `Andrógino Divino` | El Matrimonio Perfecto | NASA IV&V (Builder != Verifier) | [`src/core/eosCognitiveEval.ts`](../../src/core/eosCognitiveEval.ts) |
+| **SEAL-4** | `EosAstral` | Desdoblamiento 5D | BlackRock Aladdin / Git Worktrees | [`src/core/EosAstral.ts`](../../src/core/EosAstral.ts) |
+| **SEAL-5** | `EosElohim` | Runa NOT (Disyuntor) | ASML Twinscan / Circuit Breakers | [`src/core/EosElohim.ts`](../../src/core/EosElohim.ts) |
+| **SEAL-6** | `EosAin` | Retorno al Vacío Radical | IBM Parallel Sysplex / Zero Entropy | [`src/core/EosAin.ts`](../../src/core/EosAin.ts) |
+| **SEAL-7** | `Pistis Sophia` | Resurrección Crística | FDIR Closed-Loop / Self-Healing | [`src/core/eosAutonomousHealer.ts`](../../src/core/eosAutonomousHealer.ts) |
 
 ---
 
@@ -44,12 +44,12 @@
 
 | Pillar | Frontier Tech | Module | Specification | Formal / Verification Anchor |
 |---|---|---|---|---|
-| **Pillar 1** | Meta SapFix Autonomous PR Engine | [`src/core/eosSapFixAutoshipper.ts`](file:///c:/Users/valen/Eos-System/src/core/eosSapFixAutoshipper.ts) | SPEC-060 | [`test/eosSapFixAutoshipper.test.mjs`](file:///c:/Users/valen/Eos-System/test/eosSapFixAutoshipper.test.mjs) |
-| **Pillar 2** | CycloneDX 1.5 SBOM & In-Toto SLSA 4 | [`src/core/eosSlsaProvenanceSbom.ts`](file:///c:/Users/valen/Eos-System/src/core/eosSlsaProvenanceSbom.ts) | SPEC-061 | [`test/eosSlsaProvenanceSbom.test.mjs`](file:///c:/Users/valen/Eos-System/test/eosSlsaProvenanceSbom.test.mjs) |
-| **Pillar 3** | Google Bazel CAS & Action Cache | [`src/core/eosContentAddressableCache.ts`](file:///c:/Users/valen/Eos-System/src/core/eosContentAddressableCache.ts) | SPEC-062 | [`test/eosContentAddressableCache.test.mjs`](file:///c:/Users/valen/Eos-System/test/eosContentAddressableCache.test.mjs) |
-| **Pillar 4** | AWS SMT Automated Reasoning DPLL | [`src/core/eosSmtAutomatedReasoningProver.ts`](file:///c:/Users/valen/Eos-System/src/core/eosSmtAutomatedReasoningProver.ts) | SPEC-063 | [`test/eosSmtAutomatedReasoningProver.test.mjs`](file:///c:/Users/valen/Eos-System/test/eosSmtAutomatedReasoningProver.test.mjs) |
-| **Pillar 5** | Netflix Production Chaos Monkey | [`src/core/eosProductionChaosMonkey.ts`](file:///c:/Users/valen/Eos-System/src/core/eosProductionChaosMonkey.ts) | SPEC-064 | [`test/eosProductionChaosMonkey.test.mjs`](file:///c:/Users/valen/Eos-System/test/eosProductionChaosMonkey.test.mjs) |
-| **Pillar 6** | DeepMind BFT Swarm & Quadratic Slashing | [`src/core/eosBftAgentSwarmSlashing.ts`](file:///c:/Users/valen/Eos-System/src/core/eosBftAgentSwarmSlashing.ts) | SPEC-065 | [`docs/formal/BftAgentSwarmSlashing.tla`](file:///c:/Users/valen/Eos-System/docs/formal/BftAgentSwarmSlashing.tla) |
+| **Pillar 1** | Meta SapFix Autonomous PR Engine | [`src/core/eosSapFixAutoshipper.ts`](../../src/core/eosSapFixAutoshipper.ts) | SPEC-060 | [`test/eosSapFixAutoshipper.test.mjs`](../../test/eosSapFixAutoshipper.test.mjs) |
+| **Pillar 2** | CycloneDX 1.5 SBOM & In-Toto SLSA 4 | [`src/core/eosSlsaProvenanceSbom.ts`](../../src/core/eosSlsaProvenanceSbom.ts) | SPEC-061 | [`test/eosSlsaProvenanceSbom.test.mjs`](../../test/eosSlsaProvenanceSbom.test.mjs) |
+| **Pillar 3** | Google Bazel CAS & Action Cache | [`src/core/eosContentAddressableCache.ts`](../../src/core/eosContentAddressableCache.ts) | SPEC-062 | [`test/eosContentAddressableCache.test.mjs`](../../test/eosContentAddressableCache.test.mjs) |
+| **Pillar 4** | AWS SMT Automated Reasoning DPLL | [`src/core/eosSmtAutomatedReasoningProver.ts`](../../src/core/eosSmtAutomatedReasoningProver.ts) | SPEC-063 | [`test/eosSmtAutomatedReasoningProver.test.mjs`](../../test/eosSmtAutomatedReasoningProver.test.mjs) |
+| **Pillar 5** | Netflix Production Chaos Monkey | [`src/core/eosProductionChaosMonkey.ts`](../../src/core/eosProductionChaosMonkey.ts) | SPEC-064 | [`test/eosProductionChaosMonkey.test.mjs`](../../test/eosProductionChaosMonkey.test.mjs) |
+| **Pillar 6** | DeepMind BFT Swarm & Quadratic Slashing | [`src/core/eosBftAgentSwarmSlashing.ts`](../../src/core/eosBftAgentSwarmSlashing.ts) | SPEC-065 | [`docs/formal/BftAgentSwarmSlashing.tla`](../../docs/formal/BftAgentSwarmSlashing.tla) |
 
 ---
 
