@@ -1,0 +1,180 @@
+{
+  "title": "Glorian Career Evidence Pack",
+  "owner": "Valentín Flórez Arbeláez",
+  "generatedAtIso": "2026-11-04T20:40:42.459Z",
+  "epistemicState": "CAREER_EVIDENCE_WITHIN_TESTED_SCOPE",
+  "claimsDenied": [
+    "Level 5",
+    "absolute perfection",
+    "vendor production controller"
+  ],
+  "northStar": "docs/governance/GLORIAN_NORTH_STAR_SPOTIFY_NUBANK_NL_SDLC.md",
+  "gentlemanCanon": {
+    "site": "https://gentlemanprogramming.com/",
+    "github": "https://github.com/Gentleman-Programming",
+    "youtubeMain": "https://www.youtube.com/@gentlemanprogramming/videos",
+    "youtubeVods": "https://www.youtube.com/@GentlemanProgrammingVods",
+    "author": "Alan Buscaglia (Gentleman Programming)",
+    "stackTools": [
+      "gentle-ai",
+      "engram",
+      "gga",
+      "context7",
+      "agent-teams-lite",
+      "gentle-shell",
+      "Gentleman.Dots"
+    ],
+    "fourLayers": [
+      "1. el Gentleman — coordinate intent; ask only real decisions; push/PR/merge stay human",
+      "2. ODD — Organic Driven Development; scale workflow with complexity (inline small / feature doc large)",
+      "3. Focused agents — read-only explorer, writer that never commits, read-only verifier; delegate for named reasons only",
+      "4. Native review (GGA) — freeze the exact change; evidence-based review before commit leaves the machine"
+    ],
+    "operatingPrinciples": [
+      "Configure agents already on the machine; never silently install agent runtimes",
+      "Engram persists decisions, conventions, and bug fixes across sessions and agents",
+      "Requirements / exploration before code; one focused question when a real decision is open",
+      "Test-first changes in small human-readable commits; tests and docs travel with the code",
+      "Verification over generation: quality first, speed as a consequence",
+      "ODD scales: low-risk work stays inline; large work gets a feature document in the user's words",
+      "SDD / OpenSpec skills guide the AI; the model is not the process",
+      "Review is on by default; humans retain merge authority"
+    ],
+    "keyTeachingVideos": [
+      {
+        "title": "El ECOSISTEMA de IA (Engram + SDD + Skills)",
+        "url": "https://www.youtube.com/watch?v=UoS_LP-PCG8"
+      },
+      {
+        "title": "SDD es una de esas cosas que tenés que saber",
+        "url": "https://www.youtube.com/watch?v=YOVvo84AAu4"
+      }
+    ]
+  },
+  "signals": {
+    "mission": {
+      "status": "SUCCESS",
+      "epistemicState": "MISSION_GOLDEN_PATH_WITHIN_TESTED_SCOPE",
+      "sha256Receipt": "9e345fda11e1253351df894c7ca6258953e838ca95a89efaf8419076a779ab10",
+      "durationMs": 701,
+      "stages": [
+        {
+          "id": "INPUT_VALIDATION",
+          "exitCode": 0,
+          "mandatory": true,
+          "summary": "Directive admitted"
+        },
+        {
+          "id": "AMPLIFY",
+          "exitCode": 0,
+          "mandatory": true,
+          "summary": "EARS/BDD draft synthesized"
+        },
+        {
+          "id": "MISSION_DIRECTION",
+          "exitCode": 0,
+          "mandatory": true,
+          "summary": "Profile SDD_FULL_21_STEP"
+        },
+        {
+          "id": "ARCHITECTURE",
+          "exitCode": 0,
+          "mandatory": true,
+          "summary": "Architecture clean score=100"
+        },
+        {
+          "id": "CONSTITUTIONAL_TRIBUNAL",
+          "exitCode": 0,
+          "mandatory": true,
+          "summary": "Tribunal approved score=91"
+        },
+        {
+          "id": "SPOTIFY_INSTITUTIONAL",
+          "exitCode": 0,
+          "mandatory": true,
+          "summary": "Spotify score=100 tier=SOUNDCHECK_APEX"
+        },
+        {
+          "id": "NUBANK_INSTITUTIONAL",
+          "exitCode": 0,
+          "mandatory": false,
+          "summary": "Nubank advisory score=100 (soft)"
+        },
+        {
+          "id": "TURBO_VERIFY",
+          "exitCode": 0,
+          "mandatory": true,
+          "summary": "Turbo PASS files=1111"
+        },
+        {
+          "id": "LEDGER_SEAL",
+          "exitCode": 0,
+          "mandatory": true,
+          "summary": "Ledger sealed EOS-LEDGER-000001-96506af9e5"
+        }
+      ]
+    },
+    "gentleman": {
+      "readinessScore": 100,
+      "status": "SOVEREIGN_GENTLEMAN_APEX",
+      "constitutionPreserved": true,
+      "sha256Receipt": "ff597b8c545c1703b628e36303c46f79a4d1d657f8b783a11bfc2d1bb99354f8"
+    },
+    "architecture": {
+      "architecturePurityScore": 100,
+      "isClean": true,
+      "circularDependencies": 0,
+      "totalViolations": 0
+    },
+    "turbo": {
+      "success": true,
+      "totalDurationMs": 179.959,
+      "epistemicState": "LOCAL_CHECKS_PASSED",
+      "sourceInventoryDigest": "sha256:5f53965baa4587d63dacee7f3aab23edaa62d8f1acd9ef9aada4a210e964f7a2"
+    },
+    "fleetSoundcheck": {
+      "fleetAverageScore": 100,
+      "deploymentAuthorizedQuorum": true,
+      "totalRepositories": 10,
+      "reposAtGradeA": 10,
+      "dirtyTrees": [],
+      "sha256Receipt": "27200483dfce773e9601070eed3ca7ad4caee3d1f7a9d0c27c7e6c94e5dd4167"
+    },
+    "spotifyInstitutional": {
+      "institutionalScore": 100,
+      "soundcheckTier": "SOUNDCHECK_APEX"
+    },
+    "nubankInstitutional": {
+      "institutionalScore": 100,
+      "tier": "BUILDING_NU_APEX"
+    },
+    "planetaryApexDoctrine": {
+      "status": "APEX_DRILL_PASS",
+      "overallScore": 100,
+      "epistemicState": "APEX_DRILL_WITHIN_TESTED_SCOPE",
+      "pillarsPassing": 5,
+      "sha256Receipt": "6cf40c91062822671a895f8c68e54c0566aaf0ed1006e92e618d5fa59807659a"
+    },
+    "blackProjectsTriad": {
+      "status": "TRIAD_DRILL_PASS",
+      "overallScore": 100,
+      "epistemicState": "TRIAD_DRILL_WITHIN_TESTED_SCOPE",
+      "pillarsPassing": 3,
+      "sha256Receipt": "baccfb6c83e038996d59932c857301d129b49a0bb3252d8611d48ff3fc43bac1"
+    }
+  },
+  "employerPitch": {
+    "oneLiner": "Verified Engineering OS for AI agents: natural language in, fail-closed Big-Tech SDLC out (Spotify + Nubank + Gentleman bars).",
+    "dailyUse": "eos_mission_run + Gentle Engram/ODD/GGA",
+    "proofArtifacts": [
+      "Mission Golden Path receipts (SPEC-156)",
+      "Layer-0 architecture purity 100",
+      "Gentleman stack co-governance APEX",
+      "Fleet Soundcheck quorum",
+      "Planetary Apex doctrine drills (SPEC-158)",
+      "Black Projects Triad drills (SPEC-159)",
+      "OpenSpec formal catalog"
+    ]
+  },
+  "sha256Pack": "ea1c31635a2438fa1033abc6d60b85d0b4c890b22d0c6e68e4e1dc5d77547d3d"
+}

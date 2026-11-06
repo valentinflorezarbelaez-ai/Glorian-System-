@@ -1,0 +1,24 @@
+{
+  "eos-sovereign-director": {
+    "enabled": true,
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "node ./scripts/eos-hook.mjs SessionStart",
+        "timeout": 10
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ./scripts/eos-hook.mjs PreToolUse",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

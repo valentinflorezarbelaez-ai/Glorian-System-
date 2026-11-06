@@ -127,10 +127,13 @@ test("Chaos Testing 4/4 — Invariant Stress on /api/health Endpoint", () => {
     };
 
     healthHandler(req, res);
-    assert.ok(statusCode === 200, `Health endpoint must return 200 even under malformed input`);
-    if (req.method !== "OPTIONS") {
+    const expectedStatus = req.method === "POST" ? 405 : 200;
+    assert.equal(statusCode, expectedStatus, `Health endpoint must enforce method semantics for ${req.method}`);
+    if (req.method === "GET") {
       assert.ok(body && body.status === "UP", "Health body must maintain status UP");
       assert.ok(body.telemetry && body.telemetry.traceparent, "Traceparent must always be issued");
+    } else if (req.method === "POST") {
+      assert.equal(body.status, "METHOD_NOT_ALLOWED");
     }
   }
 });

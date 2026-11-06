@@ -1,4 +1,6 @@
-# GOLDEN SEAL REGISTRY — SACRED SOLAR HEXALOGY & SUPREME EOS EVOLUTION LEDGER (10/10 PERFECTION)
+# Historical project status claims — unverified
+
+> Esta página conserva afirmaciones registradas anteriormente sobre producción, despliegues y puntuaciones. No se comprobaron en este cambio y no constituyen estado operativo, certificación ni evidencia de disponibilidad. Confirma cada proyecto con su repositorio y proveedor antes de usar estos datos.
 
 ## I. Sealed & Immutable Production Platforms (`GOLDEN_SEAL_LOCKED` — 6 Officially Culminated Projects)
 The following **6 production platforms** are officially completed, verified at **10/10 Solar Samaelian Perfection**, and sealed under `GOLDEN_SEAL_LOCKED` (Immutable Production Status — Zero Further Modifications):
@@ -15,9 +17,9 @@ The following **6 production platforms** are officially completed, verified at *
 ## II. Continuous Sporadic Evolution Platforms (`SPORADIC_CONTINUOUS_EVOLUTION_10X10` — 2 Projects)
 The following **2 platforms** are maintained at **10/10 Solar Perfection** with sporadic, occasional refinement:
 
-1. **Valentín Flórez — Portafolio Oficial** (`C:\Users\valen\portafolio`)
+1. **Valentín Flórez — Portafolio Oficial** (local checkout configured by environment)
    - **Production URL**: `https://portafolio-valentin.vercel.app` (`dpl_E5Tuo3HKF5SmPYaDDDHQWydTuZsk` · `commit 5e04e44`)
-2. **PTG — Performance Talent Group** (`C:\Users\valen\Performance-Talent-Group-1`)
+2. **PTG — Performance Talent Group** (local checkout configured by environment)
    - **Production URL**: `https://ptg-performance-talent-group.vercel.app` (`dpl_5btSWAgYRhJB4K3pFfowiziqqV61` · `commit b0ed7b2` · `13/13` Smoke Tests Passing)
 
 ---
@@ -25,7 +27,7 @@ The following **2 platforms** are maintained at **10/10 Solar Perfection** with 
 ## III. Sole Perpetual & Sequential Evolution Core (`SOLE_SUPREME_EVOLUTION_CORE`)
 100% of ongoing sequential engineering capacity is dedicated to the infinite perfection of:
 - **EOS System (Engineering Operating System)**
-  - **Workspace**: `C:\Users\valen\Eos-System`
+  - **Workspace**: EOS System repository root
   - **Production Control Plane URL**: `https://eos-system-ten.vercel.app`
   - **GitHub Repository**: `https://github.com/valentinflorezarbelaez-ai/Eos-System`
   - **Doctrine**: Vision Gnóstica Esotérica Solar Samaeliana + Zero Vibe Coding + Xirp Multi-Agent Worktree Isolation + MCP Architecture Graph + Hexagonal L0 (0-Deps) + Go High-Concurrency Gateways + 24/7 SHA-256 Sentinel & Clinical Ontology Healing (`EOSFDIROntology`).

@@ -18,7 +18,7 @@ import path from "node:path";
 export interface FleetProjectManifest {
   readonly id: string;
   readonly name: string;
-  readonly localPath: string;
+  readonly localPathEnv: string;
   readonly remoteUrl: string;
   readonly productionUrl: string;
   readonly type: string;
@@ -43,8 +43,8 @@ export interface FleetDispatchResult {
   readonly dispatchId: string;
   readonly version: "11.0.0-sovereign-fleet-dispatcher";
   readonly timestamp: string;
-  readonly projectsAudited: number;
-  readonly allPassFailClosed: boolean;
+  readonly projectsRegistered: number;
+  readonly checksRun: false;
   readonly reports: readonly FleetProjectStatusReport[];
 }
 
@@ -97,7 +97,7 @@ export const CANONICAL_FLEET_PROJECTS: readonly FleetProjectManifest[] = Object.
     authorization: "LEVEL_3_PRODUCTION_AUTHORIZED",
   },
   {
-    id: "ptg",
+    id: "performance-talent-group",
     name: "PTG — Performance Talent Group",
     localPath: resolveFleetPath("EOS_PATH_PTG", "Performance-Talent-Group-1"),
     remoteUrl: "https://github.com/valentinflorezarbelaez-ai/Performance-Talent-Group.git",

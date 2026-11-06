@@ -1,0 +1,8 @@
+{
+  "project": "eos-system",
+  "project_name": "eos-system",
+  "displayName": "Glorian System (Eos-System Control Plane)",
+  "rootMarkers": ["package.json", "src/mcp/eosMcpServer.ts", "docs/projects/registry.json"],
+  "preferredCwd": "C:/Users/valen/Eos-System",
+  "notes": "Pins Engram identity to eos-system so cwd parent multi-repo ambiguity cannot hijack memory writes. Agents should mem_save with project=eos-system when MCP cwd is the user home. WITHIN_TESTED_SCOPE only."
+}

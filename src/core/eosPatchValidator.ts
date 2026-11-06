@@ -68,7 +68,8 @@ export function validatePatch(
   const resolvedPath = path.resolve(projectRoot, targetPath || "");
   const normalizedRoot = path.resolve(projectRoot);
 
-  if (targetPath.includes("..") || !resolvedPath.startsWith(normalizedRoot)) {
+  const relativeTarget = path.relative(normalizedRoot, resolvedPath);
+  if (relativeTarget === ".." || relativeTarget.startsWith(`..${path.sep}`) || path.isAbsolute(relativeTarget)) {
     pathTraversalsFound = true;
     errors.push(`[Law IV Barrier] Path traversal detected: "${targetPath}" attempts to escape project root.`);
   }

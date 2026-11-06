@@ -1,20 +1,24 @@
 /**
- * EOS SYSTEM — SPOTIFY-GRADE ENGINEERING CODEX & UNIVERSAL PROJECT ENGINE (Layer 0)
- * Governed by ADR-024, FR-038 & BDD-036, BDD-037
- *
- * Implements full architectural modeling of Spotify's systems:
- * 1. Spotify Backstage RFC-42 Golden Path validation & catalog auditing.
- * 2. ITU-R BS.1770 / EBU R128 Loudness Normalization (-14 LUFS, -1 dBTP ceiling).
- * 3. 8-Dimensional Acoustic Vector Recommendation Engine (Cosine Similarity & Harmonic Camelot Wheel).
- * 4. Microservice Resilience & Hermes/Apollo rate-limit exponential backoff with full jitter.
- * 5. Universal Project Auditor: evaluates ANY project for Spotify-grade engineering excellence.
- *
- * Zero external runtime dependencies.
+ * Local audio-math examples, metadata utilities, and text-template generators.
+ * No integration with Spotify, Backstage, incident systems, or deployment services.
  */
 
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+
+function isPathWithin(root: string, candidate: string): boolean {
+  const relative = path.relative(root, candidate);
+  return relative === "" || (relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative));
+}
+
+function readRegularFileWithin(rootPath: string, filePath: string): string {
+  const root = fs.realpathSync(rootPath);
+  const realFile = fs.realpathSync(filePath);
+  if (!isPathWithin(root, realFile)) throw new Error("File must resolve inside the selected project directory.");
+  if (!fs.statSync(realFile).isFile()) throw new Error("Expected a regular file inside the selected project directory.");
+  return fs.readFileSync(realFile, "utf8");
+}
 
 export interface AcousticVector {
   readonly tempo: number;          // BPM normalized or raw (e.g. 120)
@@ -58,14 +62,17 @@ export interface AudioStreamingReport {
   readonly totalChunksProcessed: number;
   readonly totalBytesStreamed: number;
   readonly throughputMbSec: number;
-  readonly bufferUnderrunRisk: number;
-  readonly prefetchHorizonChunks: number;
-  readonly locklessRingBufferVerified: boolean;
+  readonly bufferUnderrunRiskPercent: null;
+  readonly ringBufferCapacityChunks: number;
+  readonly locklessConcurrencyTested: false;
+  readonly simulationOnly: true;
   readonly durationUs: number;
 }
 
 export interface ScaffoldResult {
+  readonly templateOnly: true;
   readonly created: boolean;
+  readonly writeApplied: boolean;
   readonly filePath: string;
   readonly catalogYaml: string;
   readonly message: string;
@@ -80,8 +87,8 @@ export interface CamelotTransition {
 
 export interface SpotifyProjectAuditReport {
   readonly projectPath: string;
-  readonly isBackstageCompliant: boolean;
-  readonly goldenPathScore: number; // 0 - 100
+  readonly catalogInfoMarkersPresent: boolean;
+  readonly localInventoryScore: number;
   readonly catalogInfoExists: boolean;
   readonly catalogInfoDetails?: {
     readonly apiVersion: string;
@@ -90,17 +97,17 @@ export interface SpotifyProjectAuditReport {
     readonly owner: string;
     readonly lifecycle: string;
   };
-  readonly audioCompliance: {
+  readonly audioInventory: {
     readonly audioAssetsDetected: number;
-    readonly streamingBufferCompliant: boolean;
-    readonly loudnessStandardCompliant: boolean;
+    readonly standardsChecked: false;
   };
   readonly recommendations: readonly string[];
-  readonly sha256Proof: string;
+  readonly resultFingerprintSha256: string;
   readonly timestamp: string;
 }
 
 export interface SquadManifest {
+  readonly scope: "TEMPLATE_ONLY";
   readonly squadName: string;
   readonly tribe: string;
   readonly chapter: "Backend (Java/Python/Go)" | "Web (TypeScript/React)" | "Mobile (Kotlin/Swift)" | "Data & Machine Learning";
@@ -127,6 +134,7 @@ export interface AsyncStandupOptions {
 }
 
 export interface AsyncStandupReport {
+  readonly scope: "DRAFT_ONLY";
   readonly timestamp: string;
   readonly author: string;
   readonly squad: string;
@@ -142,7 +150,7 @@ export interface AsyncStandupReport {
 export interface BlamelessPostMortemOptions {
   readonly incidentId?: string;
   readonly title?: string;
-  readonly severity?: "SEV-1 (Critical Outage)" | "SEV-2 (Degraded Experience)" | "SEV-3 (Minor / Internal)";
+  readonly severity?: string;
   readonly durationMinutes?: number;
   readonly userImpactSummary?: string;
   readonly trigger?: string;
@@ -150,34 +158,37 @@ export interface BlamelessPostMortemOptions {
   readonly fiveWhys?: readonly string[];
   readonly whatWentWell?: readonly string[];
   readonly whereWeGotLucky?: readonly string[];
-  readonly actionItems?: readonly Array<{
+  readonly actionItems?: ReadonlyArray<{
     readonly action: string;
     readonly owner: string;
     readonly priority: "P0" | "P1" | "P2";
     readonly jiraTicket: string;
   }>;
+  readonly timeline?: ReadonlyArray<{ readonly time: string; readonly event: string }>;
 }
 
 export interface BlamelessPostMortem {
+  readonly templateOnly: true;
   readonly incidentId: string;
   readonly title: string;
   readonly severity: string;
-  readonly durationMinutes: number;
+  readonly durationMinutes: number | null;
   readonly userImpact: string;
-  readonly timeline: readonly Array<{ time: string; event: string }>;
+  readonly trigger: string;
+  readonly timeline: ReadonlyArray<{ time: string; event: string }>;
   readonly fiveWhys: readonly string[];
   readonly rootCauseSummary: string;
   readonly systemicWeakness: string;
   readonly whatWentWell: readonly string[];
   readonly whereWeGotLucky: readonly string[];
-  readonly actionItems: readonly Array<{
+  readonly actionItems: ReadonlyArray<{
     readonly action: string;
     readonly owner: string;
     readonly priority: "P0" | "P1" | "P2";
     readonly jiraTicket: string;
   }>;
   readonly markdown: string;
-  readonly sha256Proof: string;
+  readonly resultFingerprintSha256: string;
 }
 
 export interface CanaryExperimentOptions {
@@ -186,7 +197,7 @@ export interface CanaryExperimentOptions {
   readonly hypothesis?: string;
   readonly squad?: string;
   readonly primaryMetric?: string;
-  readonly guardrails?: readonly Array<{
+  readonly guardrails?: ReadonlyArray<{
     readonly metric: string;
     readonly maxThreshold: string;
     readonly autoRevert: boolean;
@@ -194,18 +205,19 @@ export interface CanaryExperimentOptions {
 }
 
 export interface CanaryExperimentSpec {
+  readonly scope: "TEMPLATE_ONLY";
   readonly experimentKey: string;
   readonly featureName: string;
   readonly hypothesis: string;
   readonly ownerSquad: string;
-  readonly rolloutStages: readonly Array<{
+  readonly rolloutStages: ReadonlyArray<{
     readonly stage: string;
     readonly trafficPercentage: number;
     readonly minimumObservationHours: number;
     readonly passCriteria: string;
   }>;
   readonly primaryMetric: string;
-  readonly guardrails: readonly Array<{
+  readonly guardrails: ReadonlyArray<{
     readonly metric: string;
     readonly maxThreshold: string;
     readonly autoRevert: boolean;
@@ -224,6 +236,7 @@ export interface GoldenPathScaffoldOptions {
 }
 
 export interface GoldenPathPackage {
+  readonly templateOnly: true;
   readonly serviceName: string;
   readonly serviceType: string;
   readonly files: Record<string, string>;
@@ -371,22 +384,22 @@ export class EosSpotifyCodex {
   }
 
   /**
-   * 6. Universal Project Auditor: Evaluates ANY project against Spotify Backstage & Golden Path.
+   * 6. Local inventory with bounded catalog-header checks and a simple score.
    */
   public auditUniversalProject(targetDir?: string): SpotifyProjectAuditReport {
     const resolvedPath = path.resolve(targetDir || this.projectRoot);
     const catalogPath = path.join(resolvedPath, "catalog-info.yaml");
     const recommendations: string[] = [];
-    let goldenPathScore = 40; // Base score
+    let localInventoryScore = 0;
 
     let catalogInfoExists = false;
-    let isBackstageCompliant = false;
+    let catalogInfoMarkersPresent = false;
     let catalogInfoDetails: SpotifyProjectAuditReport["catalogInfoDetails"];
 
     if (fs.existsSync(catalogPath)) {
       catalogInfoExists = true;
       try {
-        const content = fs.readFileSync(catalogPath, "utf8");
+        const content = readRegularFileWithin(resolvedPath, catalogPath);
         const hasApiVersion = content.includes("apiVersion: backstage.io/v1alpha1");
         const hasKind = content.includes("kind: Component");
         const nameMatch = content.match(/name:\s*([a-zA-Z0-9_-]+)/);
@@ -394,14 +407,14 @@ export class EosSpotifyCodex {
         const lifecycleMatch = content.match(/lifecycle:\s*([a-zA-Z0-9_-]+)/);
 
         if (hasApiVersion && hasKind) {
-          isBackstageCompliant = true;
-          goldenPathScore += 30;
+          catalogInfoMarkersPresent = true;
+          localInventoryScore += 50;
           catalogInfoDetails = {
             apiVersion: "backstage.io/v1alpha1",
             kind: "Component",
             name: nameMatch ? nameMatch[1] : "unknown",
-            owner: ownerMatch ? ownerMatch[1] : "guest",
-            lifecycle: lifecycleMatch ? lifecycleMatch[1] : "production"
+            owner: ownerMatch ? ownerMatch[1] : "not-declared",
+            lifecycle: lifecycleMatch ? lifecycleMatch[1] : "not-declared"
           };
         } else {
           recommendations.push("Ensure catalog-info.yaml declares 'apiVersion: backstage.io/v1alpha1' and 'kind: Component'.");
@@ -416,7 +429,7 @@ export class EosSpotifyCodex {
     // Check Package.json and Architecture Purity
     const pkgPath = path.join(resolvedPath, "package.json");
     if (fs.existsSync(pkgPath)) {
-      goldenPathScore += 15;
+      localInventoryScore += 25;
     } else {
       recommendations.push("Ensure package.json exists with explicit scripts and metadata.");
     }
@@ -441,46 +454,41 @@ export class EosSpotifyCodex {
       // Non-fatal
     }
 
-    if (audioFilesCount > 0) {
-      goldenPathScore += 15;
-    } else {
-      goldenPathScore += 15; // Non-audio projects receive general engineering score
-    }
-
-    goldenPathScore = Math.min(100, goldenPathScore);
+    const sourceDirectoryPresent = fs.existsSync(path.join(resolvedPath, "src"));
+    if (sourceDirectoryPresent) localInventoryScore += 25;
+    localInventoryScore = Math.min(100, localInventoryScore);
 
     const payload = JSON.stringify({
       resolvedPath,
-      goldenPathScore,
-      isBackstageCompliant,
+      localInventoryScore,
+      catalogInfoMarkersPresent,
       catalogInfoExists,
       audioFilesCount
     });
-    const sha256Proof = crypto.createHash("sha256").update(payload).digest("hex");
+    const resultFingerprintSha256 = crypto.createHash("sha256").update(payload).digest("hex");
 
     return {
       projectPath: resolvedPath,
-      isBackstageCompliant,
-      goldenPathScore,
+      catalogInfoMarkersPresent,
+      localInventoryScore,
       catalogInfoExists,
       catalogInfoDetails,
-      audioCompliance: {
+      audioInventory: {
         audioAssetsDetected: audioFilesCount,
-        streamingBufferCompliant: true,
-        loudnessStandardCompliant: true
+        standardsChecked: false
       },
       recommendations,
-      sha256Proof,
+      resultFingerprintSha256,
       timestamp: new Date().toISOString()
     };
   }
 
   /**
-   * 7. Scaffolds an RFC-42 compliant Backstage descriptor (catalog-info.yaml) for ANY repository.
+   * 7. Creates a local catalog descriptor template; conformance is not checked.
    */
   public scaffoldBackstageCatalog(
     targetDir?: string,
-    options: { name?: string; owner?: string; type?: string; description?: string } = {}
+    options: { name?: string; owner?: string; type?: string; description?: string; write?: boolean } = {}
   ): ScaffoldResult {
     const resolvedPath = path.resolve(targetDir || this.projectRoot);
     const catalogPath = path.join(resolvedPath, "catalog-info.yaml");
@@ -490,7 +498,7 @@ export class EosSpotifyCodex {
       const pkgPath = path.join(resolvedPath, "package.json");
       if (fs.existsSync(pkgPath)) {
         try {
-          const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+          const pkg = JSON.parse(readRegularFileWithin(resolvedPath, pkgPath));
           if (pkg.name) componentName = String(pkg.name).replace(/^@[^/]+\//, "");
         } catch {
           // ignore
@@ -499,35 +507,59 @@ export class EosSpotifyCodex {
       if (!componentName) componentName = path.basename(resolvedPath).toLowerCase().replace(/[^a-z0-9_-]/g, "-");
     }
 
-    const owner = options.owner || "user";
+    const owner = options.owner || "user:unassigned";
     const compType = options.type || "service";
-    const description = options.description || `${componentName} service governed by Spotify Golden Path standard`;
+    const description = options.description || `${componentName} local component template`;
+    if (!/^[a-z0-9][a-z0-9._-]{0,62}$/.test(componentName)) {
+      throw new Error("Component name must be 1-63 lowercase letters, digits, dots, underscores, or hyphens.");
+    }
+
+    if (fs.existsSync(catalogPath)) {
+      return {
+        templateOnly: true,
+        created: false,
+        writeApplied: false,
+        filePath: catalogPath,
+        catalogYaml: readRegularFileWithin(resolvedPath, catalogPath),
+        message: "catalog-info.yaml already exists; it was left unchanged."
+      };
+    }
 
     const catalogYaml = `apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: ${componentName}
-  description: ${description}
-  tags:
-    - spotify-golden-path
-    - xirp-grade
-    - clean-hexagonal
-    - eos-governed
+  name: ${JSON.stringify(componentName)}
+  description: ${JSON.stringify(description)}
   annotations:
     backstage.io/techdocs-ref: dir:.
 spec:
-  type: ${compType}
-  lifecycle: production
-  owner: ${owner}
+  type: ${JSON.stringify(compType)}
+  lifecycle: experimental
+  owner: ${JSON.stringify(owner)}
 `;
 
-    fs.writeFileSync(catalogPath, catalogYaml, "utf8");
+    const writeApplied = options.write !== false;
+    if (writeApplied) {
+      const root = fs.realpathSync(resolvedPath);
+      const parent = fs.realpathSync(path.dirname(catalogPath));
+      if (!isPathWithin(root, parent)) throw new Error("Catalog file must stay inside the selected project directory.");
+      const descriptor = fs.openSync(catalogPath, "wx");
+      try {
+        fs.writeFileSync(descriptor, catalogYaml, "utf8");
+      } finally {
+        fs.closeSync(descriptor);
+      }
+    }
 
     return {
-      created: true,
+      templateOnly: true,
+      created: writeApplied,
+      writeApplied,
       filePath: catalogPath,
       catalogYaml,
-      message: `Successfully scaffolded Backstage RFC-42 catalog-info.yaml for ${componentName} at ${catalogPath}`
+      message: writeApplied
+        ? `Created a local catalog descriptor template at ${catalogPath}; conformance was not checked.`
+        : `Prepared a local catalog descriptor template for ${catalogPath}; no file was written.`
     };
   }
 
@@ -535,6 +567,9 @@ spec:
    * 8. Simulates Spotify Xirp chunked audio streaming pipeline with lockless ring buffer.
    */
   public simulateAudioStreamingPipeline(chunkCount: number = 8): AudioStreamingReport {
+    if (!Number.isInteger(chunkCount) || chunkCount < 1 || chunkCount > 1024) {
+      throw new RangeError("chunkCount must be an integer from 1 to 1024.");
+    }
     const start = process.hrtime.bigint();
     const chunkSizeKb = 512; // 512 KB per chunk (~10 seconds at 320 kbps)
     const chunkSizeBytes = chunkSizeKb * 1024;
@@ -563,9 +598,10 @@ spec:
       totalChunksProcessed: chunkCount,
       totalBytesStreamed,
       throughputMbSec,
-      bufferUnderrunRisk: 0.0,
-      prefetchHorizonChunks: 3,
-      locklessRingBufferVerified: true,
+      bufferUnderrunRiskPercent: null,
+      ringBufferCapacityChunks: 4,
+      locklessConcurrencyTested: false,
+      simulationOnly: true,
       durationUs
     };
   }
@@ -593,27 +629,19 @@ spec:
    */
   public generateSquadManifest(opts: Partial<SquadManifest> = {}): SquadManifest {
     return {
-      squadName: opts.squadName || "Core Playback Resilience Squad",
-      tribe: opts.tribe || "Playback & Core Experience Tribe",
+      scope: "TEMPLATE_ONLY",
+      squadName: opts.squadName || "Example squad (not configured)",
+      tribe: opts.tribe || "Not provided",
       chapter: opts.chapter || "Backend (Java/Python/Go)",
-      mission: opts.mission || "Ensure 99.999% gapless audio playback across 600M+ active users with sub-100ms buffering latency.",
-      productManager: opts.productManager || "Spotify Product Lead",
-      techLead: opts.techLead || "Staff Engineer",
-      guilds: opts.guilds || ["AI Guild", "Accessibility (a11y) Guild", "Microservices & SRE Guild"],
-      kpis: opts.kpis || [
-        "Playback Failure Rate < 0.005%",
-        "Time-To-First-Audio-Byte (TTFB) < 120ms",
-        "P99 Microservice API Latency < 45ms",
-        "SLSA Level 4 CI/CD Compliance (0 Secret Leaks)"
-      ],
+      mission: opts.mission || "Define a mission with the project team.",
+      productManager: opts.productManager || "Not provided",
+      techLead: opts.techLead || "Not provided",
+      guilds: opts.guilds || [],
+      kpis: opts.kpis || ["Define measurable project-specific indicators."],
       timezoneOverlap: {
-        localTimezone: opts.timezoneOverlap?.localTimezone || "America/Bogota (COT / GMT-5)",
-        targetHubs: opts.timezoneOverlap?.targetHubs || [
-          "Stockholm HQ (CET / GMT+1 / GMT+2)",
-          "London Engineering Office (GMT / BST)",
-          "New York Tech Center (EST / EDT)"
-        ],
-        synchronousWindow: opts.timezoneOverlap?.synchronousWindow || "08:00 - 11:30 COT (Overlap with Stockholm/London afternoon & NYC morning)"
+        localTimezone: opts.timezoneOverlap?.localTimezone || "Not provided",
+        targetHubs: opts.timezoneOverlap?.targetHubs || [],
+        synchronousWindow: opts.timezoneOverlap?.synchronousWindow || "Not provided"
       }
     };
   }
@@ -622,60 +650,54 @@ spec:
    * 11. Generates an asynchronous daily standup update formatted for Spotify Slack/Jira.
    */
   public generateAsyncStandup(opts: AsyncStandupOptions = {}): AsyncStandupReport {
-    const author = opts.author || "Valentín Flórez Arbeláez (Remote Software Engineer · Colombia)";
-    const squad = opts.squadName || "Playback Resilience & Control Plane Squad";
-    const timezone = "America/Bogota (COT / GMT-5 · Overlap with CET & EST)";
+    const author = opts.author || "Not provided";
+    const squad = opts.squadName || "Not provided";
+    const timezone = "Not provided";
     const timestamp = new Date().toISOString();
 
     const yesterday = opts.yesterdayTasks && opts.yesterdayTasks.length > 0
       ? opts.yesterdayTasks
-      : [
-          "Audited and verified 7-Stage SecDevOps gates (SAST, SLSA L4 SBOM, WCAG 2.1 AA).",
-          "Reviewed and merged PR #42: Backstage RFC-42 Golden Path descriptor calibration.",
-          "Ran 72 automated unit/chaos tests (100% pass, 0 regressions in 1.07s)."
-        ];
+      : ["No completed tasks supplied."];
 
     const today = opts.todayTasks && opts.todayTasks.length > 0
       ? opts.todayTasks
-      : [
-          "Deep work: Implement Canary progressive rollout spec with automated kill-switch.",
-          "Code review: Review teammate PRs in GitHub before Stockholm evening sync.",
-          "Pair programming session on microsecond rate-limiting with European lead."
-        ];
+      : ["No planned tasks supplied."];
 
     const blockers = opts.blockers && opts.blockers.length > 0
       ? opts.blockers
-      : ["None. Autonomous CI/CD pipeline clear and green."];
+      : ["Blocker status not supplied."];
 
     const prLinks = opts.prLinks && opts.prLinks.length > 0
       ? opts.prLinks
-      : ["https://github.com/valentinflorezarbelaez-ai/Eos-System/pull/18"];
+      : [];
 
     const handoffToEurope = opts.handoffNotes ||
-      "Good morning Stockholm & London! All tests green on main. PRs ready for asynchronous review. I am online from 07:00 COT (13:00 CET) for real-time Slack/Zoom sync if needed.";
+      "No handoff notes supplied.";
 
     const markdown = [
-      `### 🎙️ Spotify Async Daily Standup — ${squad}`,
+      `### Async Standup Draft — ${squad}`,
+      `> Draft template only. Content and completion status were not independently verified.`,
       `**Author:** ${author} | **Zone:** ${timezone}`,
       `**Date:** ${timestamp.slice(0, 10)}`,
       "",
-      `#### 🟢 Yesterday (Completed)`,
-      ...yesterday.map((t) => `- [x] ${t}`),
+      `#### Yesterday (user-supplied or placeholder)`,
+      ...yesterday.map((t) => `- ${t}`),
       "",
-      `#### 🚀 Today (Planned Deep Work)`,
-      ...today.map((t) => `- [ ] ${t}`),
+      `#### Today (user-supplied or placeholder)`,
+      ...today.map((t) => `- ${t}`),
       "",
       `#### 🛑 Blockers / Dependencies`,
       ...blockers.map((b) => `- ${b}`),
       "",
-      `#### 🔗 Active PRs for Review`,
+      `#### PR links supplied`,
       ...prLinks.map((p) => `- ${p}`),
       "",
-      `#### 🌍 Asynchronous Timezone Handoff (Stockholm / London / NYC)`,
+      `#### Handoff notes`,
       `> ${handoffToEurope}`
     ].join("\n");
 
     return {
+      scope: "DRAFT_ONLY",
       timestamp,
       author,
       squad,
@@ -693,63 +715,41 @@ spec:
    * 12. Blameless Culture: Synthesizes certified Spotify SRE Blameless Post-Mortems (5 Whys & Action Items).
    */
   public synthesizeBlamelessPostMortem(opts: BlamelessPostMortemOptions): BlamelessPostMortem {
-    const incidentId = opts.incidentId || `INC-SPOTIFY-${Date.now().toString().slice(-6)}`;
-    const title = opts.title || "Degraded Search Latency during Peak European Evening Traffic";
-    const severity = opts.severity || "SEV-2 (Degraded Experience)";
-    const durationMinutes = opts.durationMinutes ?? 23;
-    const userImpact = opts.userImpactSummary || "Approximately 0.38% of active listeners in Western Europe experienced search query latency > 1,200ms between 19:15 and 19:38 CET. Zero stream interruptions recorded.";
-    const trigger = opts.trigger || "Database index migration lock contention combined with high concurrent search traffic spikes.";
-    const rootCauseSummary = opts.rootCause || "A database schema modification caused an unindexed table scan under high concurrency, exhausting the connection pool in the Hermes API gateway.";
+    const incidentId = opts.incidentId || "INCIDENT-DRAFT";
+    const title = opts.title || "Untitled incident draft";
+    const severity = opts.severity || "Not provided";
+    const durationMinutes = opts.durationMinutes ?? null;
+    const userImpact = opts.userImpactSummary || "Not provided";
+    const trigger = opts.trigger || "Not provided";
+    const rootCauseSummary = opts.rootCause || "Not provided";
 
     const fiveWhys = opts.fiveWhys && opts.fiveWhys.length > 0
       ? opts.fiveWhys
-      : [
-          "Why did query latency increase? The connection pool in the Search service was saturated.",
-          "Why was the pool saturated? Queries were holding connections 12x longer than baseline (180ms vs 15ms).",
-          "Why were queries slow? An unindexed scan was executed across the recent track catalog partition.",
-          "Why was the scan unindexed? The migration script deployed earlier had omitted the composite index on (artist_id, release_year).",
-          "Why did the migration omit the index? The Golden Path pre-deployment AST linter did not enforce composite index validation for multi-tenant queries."
-        ];
+      : [];
 
-    const timeline = [
-      { time: "19:15 CET", event: "Automated Prometheus alert fired: Search Service p99 latency > 800ms." },
-      { time: "19:18 CET", event: `On-Call Engineer acknowledged pager alert; initiated incident channel #${incidentId.toLowerCase()}` },
-      { time: "19:22 CET", event: "Canary kill-switch activated: diverted 100% of read traffic to cached read-replicas." },
-      { time: "19:31 CET", event: "Hotfix index applied to primary cluster; connection pool drain normalized." },
-      { time: "19:38 CET", event: "P99 latency restored to 24ms; incident resolved and monitoring stabilized." }
-    ];
+    const timeline = opts.timeline || [];
 
     const whatWentWell = opts.whatWentWell && opts.whatWentWell.length > 0
       ? opts.whatWentWell
-      : [
-          "Automated Prometheus alert detected latency breach within 90 seconds.",
-          "On-call runbook provided exact command to engage read-replica fallback.",
-          "Zero listener streams stopped; audio playback remained unaffected.",
-          "Post-incident Slack channel and cross-squad collaboration was blameless and swift."
-        ];
+      : [];
 
     const whereWeGotLucky = opts.whereWeGotLucky && opts.whereWeGotLucky.length > 0
       ? opts.whereWeGotLucky
-      : [
-          "The incident occurred during staffed hours in both Stockholm (evening) and Colombia/NYC (afternoon).",
-          "Read-replicas had sufficient headroom to handle 100% peak traffic without autoscaling delay."
-        ];
+      : [];
 
     const actionItems = opts.actionItems && opts.actionItems.length > 0
       ? opts.actionItems
-      : [
-          { action: "Add composite index validation rule to Golden Path CI linter", owner: "Backend Chapter Lead", priority: "P0", jiraTicket: "SEARCH-1042" },
-          { action: "Configure automated Canary rollbacks for latency breaches > 500ms", owner: "SRE / Infrastructure Squad", priority: "P1", jiraTicket: "INFRA-892" },
-          { action: "Conduct squad chaos drill testing replica failover under synthetic burst", owner: "Resilience Squad", priority: "P2", jiraTicket: "CHAOS-301" }
-        ];
+      : [];
 
     const rawMarkdown = [
-      `# 📄 Spotify Blameless Post-Mortem: ${incidentId}`,
+      `# Incident Review Draft: ${incidentId}`,
+      `> TEMPLATE ONLY. The report uses only supplied values and does not query incident systems.`,
       `**Title:** ${title}`,
-      `**Severity:** ${severity} | **Duration:** ${durationMinutes} minutes`,
+      `**Severity:** ${severity} | **Duration:** ${durationMinutes === null ? "Not provided" : `${durationMinutes} minutes`}`,
       `**Impact:** ${userImpact}`,
+      `**Trigger:** ${trigger}`,
       "",
-      `## 1. Summary & Systemic Root Cause (Zero Blame)`,
+      `## 1. Summary and root cause (complete from incident evidence)`,
       `> ${rootCauseSummary}`,
       "",
       `## 2. 5 Whys Root Cause Analysis`,
@@ -767,28 +767,30 @@ spec:
       `## 6. Preventative Action Items (Systemic Fixes)`,
       `| Priority | Action Item | Owner | Jira Ticket |`,
       `|:---:|---|---|:---:|`,
-      ...actionItems.map((a) => `| **${a.priority}** | ${a.action} | ${a.owner} | [${a.jiraTicket}](https://jira.spotify.net/browse/${a.jiraTicket}) |`),
+      ...actionItems.map((a) => `| **${a.priority}** | ${a.action} | ${a.owner} | ${a.jiraTicket ? `\`${a.jiraTicket}\`` : "Not provided"} |`),
       "",
-      `*Signed by Squad On-Call & Chapter Leadership — Governed by Spotify Blameless Culture Protocol.*`
+      `*Draft only; no approval, signature, or incident verification was recorded.*`
     ].join("\n");
 
-    const sha256Proof = crypto.createHash("sha256").update(rawMarkdown).digest("hex");
+    const resultFingerprintSha256 = crypto.createHash("sha256").update(rawMarkdown).digest("hex");
 
     return {
+      templateOnly: true,
       incidentId,
       title,
       severity,
       durationMinutes,
       userImpact,
+      trigger,
       timeline,
       fiveWhys,
       rootCauseSummary,
-      systemicWeakness: "Lack of pre-deployment index validation in automated CI gate.",
+      systemicWeakness: "Not provided",
       whatWentWell,
       whereWeGotLucky,
       actionItems,
       markdown: rawMarkdown,
-      sha256Proof
+      resultFingerprintSha256
     };
   }
 
@@ -796,27 +798,24 @@ spec:
    * 13. Data-Driven Culture: Designs A/B Testing & Canary Progressive Rollouts with Kill-Switches.
    */
   public designCanaryExperiment(opts: CanaryExperimentOptions = {}): CanaryExperimentSpec {
-    const experimentKey = opts.experimentKey || "exp_spotify_smart_shuffle_v2";
-    const featureName = opts.featureName || "Smart Shuffle ML Contextual Transition";
-    const hypothesis = opts.hypothesis || "Introducing harmonic-aware track transitions in Smart Shuffle will increase listener 30-minute session retention by 4.2% without degrading battery life.";
-    const ownerSquad = opts.squad || "Personalization & Playback Squad";
-    const primaryMetric = opts.primaryMetric || "30-Minute Continuous Session Retention (%)";
+    const experimentKey = opts.experimentKey || "example_experiment";
+    const featureName = opts.featureName || "Example feature";
+    const hypothesis = opts.hypothesis || "Write a measurable hypothesis here.";
+    const ownerSquad = opts.squad || "Not provided";
+    const primaryMetric = opts.primaryMetric || "Define a primary metric";
 
     const rolloutStages = [
-      { stage: "Stage 1: Internal Employee Dogfooding", trafficPercentage: 0.1, minimumObservationHours: 24, passCriteria: "0 crash reports; p99 audio latency < 80ms" },
-      { stage: "Stage 2: Canary 1% Public Rollout (Sweden & Colombia)", trafficPercentage: 1.0, minimumObservationHours: 48, passCriteria: "Playback error rate < 0.005%; retention trend positive" },
-      { stage: "Stage 3: Expanded 10% Global Rollout", trafficPercentage: 10.0, minimumObservationHours: 72, passCriteria: "Statistically significant retention delta (p < 0.01)" },
-      { stage: "Stage 4: 50% Staged Population", trafficPercentage: 50.0, minimumObservationHours: 96, passCriteria: "Guardrail metrics intact; cluster CPU < 65%" },
-      { stage: "Stage 5: 100% General Availability (GA)", trafficPercentage: 100.0, minimumObservationHours: 0, passCriteria: "Full feature graduation" }
+      { stage: "Stage 1: Internal cohort", trafficPercentage: 0.1, minimumObservationHours: 24, passCriteria: "Define acceptance criteria" },
+      { stage: "Stage 2: Small canary", trafficPercentage: 1.0, minimumObservationHours: 48, passCriteria: "Define acceptance criteria" },
+      { stage: "Stage 3: Expanded cohort", trafficPercentage: 10.0, minimumObservationHours: 72, passCriteria: "Define acceptance criteria" },
+      { stage: "Stage 4: Broad cohort", trafficPercentage: 50.0, minimumObservationHours: 96, passCriteria: "Define acceptance criteria" },
+      { stage: "Stage 5: General availability decision", trafficPercentage: 100.0, minimumObservationHours: 0, passCriteria: "Requires explicit release approval" }
     ];
 
     const guardrails = opts.guardrails && opts.guardrails.length > 0
       ? opts.guardrails
       : [
-          { metric: "P99 Audio Buffering Latency", maxThreshold: "< 200 ms", autoRevert: true },
-          { metric: "Playback Failure Rate", maxThreshold: "< 0.01 %", autoRevert: true },
-          { metric: "App Crash-Free User Sessions", maxThreshold: "> 99.95 %", autoRevert: true },
-          { metric: "Client Battery Drain / Hour", maxThreshold: "< 3.5 %", autoRevert: false }
+          { metric: "Define a guardrail metric", maxThreshold: "Not set", autoRevert: false }
         ];
 
     const killSwitchFlag = `${experimentKey}_kill_switch_active`;
@@ -825,24 +824,25 @@ spec:
       flagKey: experimentKey,
       enabled: false,
       killSwitch: false,
-      rolloutPercentage: 1.0,
+      rolloutPercentage: 0,
       targeting: {
-        regions: ["SE", "CO", "US", "GB"],
-        minAppVersion: "8.9.40"
+        regions: [],
+        minAppVersion: "Not set"
       },
       guardrails: guardrails.map((g) => ({ metric: g.metric, limit: g.maxThreshold, failClosed: g.autoRevert }))
     };
 
     const markdown = [
-      `# 🧪 Spotify Canary Experiment Spec: ${experimentKey}`,
+      `# Canary Experiment Template: ${experimentKey}`,
+      `> TEMPLATE ONLY. No feature flag, rollout, monitoring, or rollback integration is connected.`,
       `**Feature:** ${featureName} | **Owner Squad:** ${ownerSquad}`,
       `**Hypothesis:** *${hypothesis}*`,
       "",
       `### 1. Primary Success Metric`,
       `- **${primaryMetric}** (Target: Statistical Significance p < 0.01)`,
       "",
-      `### 2. Guardrail Metrics (Automated Fail-Closed Trigger)`,
-      ...guardrails.map((g) => `- **${g.metric}**: Must remain **${g.maxThreshold}** ${g.autoRevert ? "(⚠️ AUTO-KILL TRIGGER)" : ""}`),
+      `### 2. Guardrail suggestions (not connected to monitoring)`,
+      ...guardrails.map((g) => `- **${g.metric}**: proposed threshold **${g.maxThreshold}** ${g.autoRevert ? "(rollback behavior must be implemented and verified)" : ""}`),
       "",
       `### 3. Progressive Rollout Schedule`,
       `| Stage | Traffic % | Min Duration | Exit Pass Criteria |`,
@@ -850,10 +850,11 @@ spec:
       ...rolloutStages.map((s) => `| **${s.stage}** | ${s.trafficPercentage}% | ${s.minimumObservationHours}h | ${s.passCriteria} |`),
       "",
       `### 4. Emergency Kill-Switch`,
-      `In the event of a guardrail breach, toggling \`${killSwitchFlag}: true\` instantly reverts 100% of traffic to baseline within 250ms via Backstage Remote Config.`
+      `Configure and test a rollback mechanism in the target deployment platform before relying on a kill switch. This document does not change traffic or trigger a rollback.`
     ].join("\n");
 
     return {
+      scope: "TEMPLATE_ONLY",
       experimentKey,
       featureName,
       hypothesis,
@@ -871,42 +872,35 @@ spec:
    * 14. Golden Paths: Scaffolds complete Backstage software templates (catalog-info, TechDocs, Runbooks).
    */
   public scaffoldGoldenPath(opts: GoldenPathScaffoldOptions = {}): GoldenPathPackage {
-    const serviceName = opts.serviceName || "eos-spotify-service";
+    const serviceName = opts.serviceName || "example-service";
     const serviceType = opts.serviceType || "backend-microservice";
-    const description = opts.description || "Spotify Golden Path compliant microservice governed by Backstage RFC-42.";
-    const ownerSquad = opts.ownerSquad || "squad:core-playback";
-    const systemName = opts.systemName || "spotify-ecosystem";
+    const description = opts.description || "Local starter template; replace this description.";
+    const ownerSquad = opts.ownerSquad || "user:unassigned";
+    const systemName = opts.systemName || "local-system";
 
     const catalogInfoYaml = [
       `apiVersion: backstage.io/v1alpha1`,
       `kind: Component`,
       `metadata:`,
-      `  name: ${serviceName}`,
-      `  title: ${serviceName}`,
-      `  description: ${description}`,
+      `  name: ${JSON.stringify(serviceName)}`,
+      `  title: ${JSON.stringify(serviceName)}`,
+      `  description: ${JSON.stringify(description)}`,
       `  annotations:`,
       `    backstage.io/techdocs-ref: dir:.`,
-      `    spotify.com/golden-path-certified: "true"`,
-      `    prometheus.io/scrape: "true"`,
-      `    prometheus.io/path: "/metrics"`,
-      `    prometheus.io/port: "8080"`,
       `  tags:`,
-      `    - spotify-golden-path`,
       `    - ${serviceType}`,
-      `    - slsa-level-4`,
-      `    - backstage-rfc42`,
       `spec:`,
-      `  type: service`,
-      `  lifecycle: production`,
-      `  owner: ${ownerSquad}`,
-      `  system: ${systemName}`,
+      `  type: ${JSON.stringify(serviceType)}`,
+      `  lifecycle: experimental`,
+      `  owner: ${JSON.stringify(ownerSquad)}`,
+      `  system: ${JSON.stringify(systemName)}`,
       `  providesApis:`,
-      `    - ${serviceName}-api`
+      `    - ${JSON.stringify(`${serviceName}-api`)}`
     ].join("\n");
 
     const mkdocsYaml = [
-      `site_name: "${serviceName} Documentation"`,
-      `site_description: "${description}"`,
+      `site_name: ${JSON.stringify(`${serviceName} Documentation`)}`,
+      `site_description: ${JSON.stringify(description)}`,
       `plugins:`,
       `  - techdocs-core`,
       `nav:`,
@@ -922,37 +916,29 @@ spec:
       `> ${description}`,
       "",
       `## Overview`,
-      `This service was created using the **Spotify Backstage Golden Path Software Template**.`,
-      `It adheres to the 5 Core Tenets of Spotify Engineering:`,
-      `1. **Aligned Autonomy**: Built and maintained autonomously by \`${ownerSquad}\`.`,
-      `2. **You Build It, You Run It**: Full on-call rotation with runbooks.`,
-      `3. **Layer-0 Hexagonal Boundary**: Core business logic has zero external framework dependencies.`,
-      `4. **Observability**: Prometheus metrics exported at \`/metrics\`; health probe at \`/health\`.`,
-      `5. **Continuous Verification**: 7-stage SecDevOps gate prevents secret leaks and regression.`
+      `This is a starter template. Replace placeholders and verify architecture, ownership, observability, and release requirements.`,
     ].join("\n");
 
     const runbookMd = [
       `# 🚨 On-Call Runbook: ${serviceName}`,
-      `**Owner Squad:** ${ownerSquad} | **Tier:** Critical Service`,
+      `**Owner:** ${ownerSquad} | **Service tier:** Not assigned`,
       "",
       `## Service-Level Objectives (SLO)`,
-      `- **Availability:** 99.99% monthly uptime.`,
-      `- **Latency:** P99 request response < 45ms.`,
-      `- **Error Rate:** 5xx response codes < 0.01%.`,
+      `- Availability: define from product requirements.`,
+      `- Latency: define from product requirements.`,
+      `- Error rate: define from product requirements.`,
       "",
       `## Common Alerts & Remediation Procedures`,
-      `### 1. Alert: HighLatencyWarning (P99 > 100ms)`,
-      `1. Check Prometheus Grafana dashboard: \`https://dashboards.spotify.net/d/${serviceName}\`.`,
-      `2. Verify downstream database connection pool utilization.`,
-      `3. If connection pool is exhausted, scale horizontal replicas: \`kubectl scale deploy ${serviceName} --replicas=8\`.`,
+      `### Placeholder: latency alert`,
+      `1. Add the service dashboard and alert links.`,
+      `2. Document actual diagnostic and mitigation steps.`,
       "",
-      `### 2. Alert: PodCrashLoopBackOff`,
-      `1. Inspect pod logs: \`kubectl logs -l app=${serviceName} --tail=100\`.`,
-      `2. Check memory limit and OOM kills.`,
-      `3. If bad deployment: trigger immediate rollback \`kubectl rollout undo deployment/${serviceName}\`.`
+      `### Placeholder: process restart or crash`,
+      `1. Add platform-specific log and recovery steps after review.`
     ].join("\n");
 
     return {
+      templateOnly: true,
       serviceName,
       serviceType,
       files: {

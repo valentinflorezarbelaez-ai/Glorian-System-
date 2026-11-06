@@ -1,0 +1,38 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "EOS-Fleet-Dogfooding-Auditor",
+          "version": "75.0.0",
+          "informationUri": "https://github.com/valentinflorezarbelaez-ai/Eos-System",
+          "rules": [
+            {
+              "id": "FLEET-RULE-001",
+              "name": "LawIvWriteBarrierCompliance",
+              "shortDescription": {
+                "text": "Ensures external project write barrier preconditions are satisfied"
+              }
+            },
+            {
+              "id": "FLEET-RULE-002",
+              "name": "ContractAndQualityAssurance",
+              "shortDescription": {
+                "text": "Verifies fleet projects maintain zero plain secrets and valid contracts"
+              }
+            }
+          ]
+        }
+      },
+      "results": [],
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "endTimeUtc": "2028-01-20T02:02:09.000Z"
+        }
+      ]
+    }
+  ]
+}

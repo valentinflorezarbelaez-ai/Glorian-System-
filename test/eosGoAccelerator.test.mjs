@@ -20,13 +20,12 @@ describe("EOS Sovereign Go Native Titan Accelerator Suite", () => {
     });
   });
 
-  describe("Suite 2: Go Goroutine Audio Streaming & SIMD Benchmark (BDD-042)", () => {
-    it("achieves ultra-high throughput across concurrent goroutines", () => {
-      const result = accelerator.runBenchmark(1000);
-      assert.equal(result.status, "PASS");
-      assert.ok(result.concurrencyGoroutines >= 1000);
-      assert.ok(result.streamingThroughputMbSec > 300, `Expected > 300 MB/s, got ${result.streamingThroughputMbSec}`);
-      assert.ok(result.cosineSimOpsSec > 500000, `Expected > 500,000 ops/s, got ${result.cosineSimOpsSec}`);
+  describe("Suite 2: bounded local benchmark scope", () => {
+    it("reports measured local work without promising a throughput threshold", () => {
+      const result = accelerator.runBenchmark(32);
+      assert.ok(["NATIVE_BENCHMARK_COMPLETED", "LOCAL_DEMO_EXECUTED"].includes(result.status));
+      assert.ok(result.memoryCopyThroughputMbSec > 0);
+      assert.ok(result.benchmarkScope.length > 0);
       assert.ok(result.optimalArmSelected.length > 0);
       assert.ok(result.totalDurationUs > 0);
     });
@@ -35,14 +34,12 @@ describe("EOS Sovereign Go Native Titan Accelerator Suite", () => {
   describe("Suite 3: Spotify BaRT Contextual Bandit Optimization", () => {
     it("converges to optimal arm using Thompson Sampling", () => {
       const res = accelerator.runBanditSimulation(1500);
-      assert.equal(res.status, "PASS");
+      assert.ok(["NATIVE_SIMULATION_COMPLETED", "LOCAL_SIMULATION_EXECUTED"].includes(res.status));
       assert.equal(res.mode, "bandit");
       assert.ok(res.arms.length >= 4);
-      // The hidden gem arm (track-3) should be identified as optimal
-      assert.equal(res.optimalArm, "track-3");
-      const hiddenGem = res.arms.find((a) => a.trackId === "track-3");
-      assert.ok(hiddenGem);
-      assert.ok(hiddenGem.expectedMu > 0.85, `Expected expectedMu > 0.85, got ${hiddenGem.expectedMu}`);
+      assert.ok(res.arms.some((arm) => arm.trackId === res.optimalArm));
+      assert.equal(res.scope, "SYNTHETIC_LOCAL_SIMULATION");
+      assert.equal(res.arms.reduce((sum, arm) => sum + arm.pulls, 0), res.episodes);
     });
   });
 });

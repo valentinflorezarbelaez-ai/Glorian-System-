@@ -4,210 +4,216 @@ import http from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import {
-  EosMcpStreamServer,
-  EosMcpSessionManager,
-  EosMcpSession
-} from "../src/mcp/eosMcpStreamServer.ts";
+import { EosMcpStreamServer } from "../src/mcp/eosMcpStreamServer.ts";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, "..");
 
-test("SPEC-027 / BDD-061: SSE Connection Handshake and Endpoint Negotiation", async () => {
-  const streamServer = new EosMcpStreamServer(projectRoot, 100); // 100ms keepalive for fast test
-  const testPort = 39871;
-  await streamServer.listen(testPort, "127.0.0.1");
+async function startServer(options = {}) {
+  const server = new EosMcpStreamServer(projectRoot, 0, options);
+  const listener = await server.listen(0, "127.0.0.1");
+  const port = listener.address().port;
+  return { server, port, close: () => server.close() };
+}
 
-  try {
-    const sseChunks = [];
-    let receivedEndpoint = false;
-    let assignedSessionId = "";
-
-    const req = http.request(
-      `http://127.0.0.1:${testPort}/sse`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "text/event-stream"
-        }
-      },
-      (res) => {
-        assert.equal(res.statusCode, 200);
-        assert.ok(res.headers["content-type"].includes("text/event-stream"));
-
-        res.on("data", (chunk) => {
-          const text = chunk.toString();
-          sseChunks.push(text);
-
-          if (text.includes("event: endpoint")) {
-            receivedEndpoint = true;
-            const match = text.match(/sessionId=([a-f0-9\-]+)/);
-            if (match) {
-              assignedSessionId = match[1];
-            }
-          }
-        });
-      }
-    );
-
-    req.end();
-
-    // Wait for initial SSE endpoint event
-    await new Promise((resolve) => setTimeout(resolve, 200));
-
-    assert.ok(receivedEndpoint, "Server must emit 'event: endpoint' upon SSE connection");
-    assert.ok(assignedSessionId.length > 0, "Server must assign a valid sessionId");
-
-    // Verify session manager tracked the session
-    const activeSessions = streamServer.sessionManager.getActiveSessions();
-    assert.equal(activeSessions.length, 1);
-    assert.equal(activeSessions[0].id, assignedSessionId);
-
-    // Abort connection to test cleanup
-    req.destroy();
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    // Verify session was purged on client disconnect (BDD-063)
-    const afterDisconnectSessions = streamServer.sessionManager.getActiveSessions();
-    assert.equal(afterDisconnectSessions.length, 0, "Session must be removed immediately on socket disconnect");
-  } finally {
-    await streamServer.close();
-  }
-});
-
-test("SPEC-027 / BDD-062: Bi-Directional Message Dispatching & Progress Streaming over SSE", async () => {
-  const streamServer = new EosMcpStreamServer(projectRoot, 20000);
-  const testPort = 39872;
-  await streamServer.listen(testPort, "127.0.0.1");
-
-  try {
-    const sseMessages = [];
-    let assignedSessionId = "";
-
-    // 1. Establish SSE stream
-    const sseReq = http.request(
-      `http://127.0.0.1:${testPort}/sse`,
-      { method: "GET" },
-      (res) => {
-        res.on("data", (chunk) => {
-          const text = chunk.toString();
-          sseMessages.push(text);
-          if (text.includes("event: endpoint")) {
-            const match = text.match(/sessionId=([a-f0-9\-]+)/);
-            if (match) assignedSessionId = match[1];
-          }
-        });
-      }
-    );
-    sseReq.end();
-
-    // Wait for SSE handshake
-    await new Promise((resolve) => setTimeout(resolve, 150));
-    assert.ok(assignedSessionId, "Expected valid assignedSessionId");
-
-    // 2. Dispatch tool call via POST /message?sessionId=<id>
-    const toolPayload = JSON.stringify({
-      jsonrpc: "2.0",
-      id: "req-topo-1",
-      method: "tools/call",
-      params: {
-        name: "eos_query_topology",
-        arguments: {}
-      }
-    });
-
-    const postResponse = await new Promise((resolve, reject) => {
-      const postReq = http.request(
-        `http://127.0.0.1:${testPort}/message?sessionId=${assignedSessionId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Content-Length": Buffer.byteLength(toolPayload)
-          }
-        },
-        (res) => {
-          let data = "";
-          res.on("data", (chunk) => (data += chunk));
-          res.on("end", () => resolve({ statusCode: res.statusCode, body: JSON.parse(data) }));
-        }
-      );
-      postReq.on("error", reject);
-      postReq.write(toolPayload);
-      postReq.end();
-    });
-
-    // 3. Verify HTTP response
-    assert.equal(postResponse.statusCode, 200);
-    assert.equal(postResponse.body.id, "req-topo-1");
-    assert.ok(postResponse.body.result, "Expected tool execution result");
-
-    const contentText = postResponse.body.result.content[0].text;
-    const topoResult = JSON.parse(contentText);
-    assert.equal(topoResult.nodes.length, 14, "Expected 14 Sovereign fleet nodes");
-    assert.equal(topoResult.rings.length, 3, "Expected 3 concentric rings");
-    assert.ok(topoResult.metrics.totalNodes === 14);
-
-    // 4. Verify SSE stream received both progress notification and result event
-    await new Promise((resolve) => setTimeout(resolve, 150));
-    const allSseText = sseMessages.join("");
-    assert.ok(allSseText.includes("notifications/progress"), "SSE stream must receive progress notification");
-    assert.ok(allSseText.includes("req-topo-1"), "SSE stream must receive response with request id");
-
-    sseReq.destroy();
-  } finally {
-    await streamServer.close();
-  }
-});
-
-test("SPEC-027: Health, Status & Stdio Error Handling Invariants", async () => {
-  const streamServer = new EosMcpStreamServer(projectRoot);
-  const testPort = 39873;
-  await streamServer.listen(testPort, "127.0.0.1");
-
-  try {
-    // 1. Health check
-    const healthRes = await new Promise((resolve) => {
-      http.get(`http://127.0.0.1:${testPort}/health`, (res) => {
-        let data = "";
-        res.on("data", (c) => (data += c));
-        res.on("end", () => resolve(JSON.parse(data)));
+function request(port, pathname, { method = "GET", token, origin, body, headers = {} } = {}) {
+  return new Promise((resolve, reject) => {
+    const requestHeaders = { ...headers };
+    if (token) requestHeaders.Authorization = `Bearer ${token}`;
+    if (origin) requestHeaders.Origin = origin;
+    if (body !== undefined) {
+      requestHeaders["Content-Type"] ||= "application/json";
+      requestHeaders["Content-Length"] ||= Buffer.byteLength(body);
+    }
+    const req = http.request(`http://127.0.0.1:${port}${pathname}`, { method, headers: requestHeaders }, (res) => {
+      const chunks = [];
+      res.on("data", (chunk) => chunks.push(chunk));
+      res.on("end", () => {
+        const text = Buffer.concat(chunks).toString("utf8");
+        let parsed;
+        try { parsed = text ? JSON.parse(text) : null; } catch { parsed = text; }
+        resolve({ status: res.statusCode, headers: res.headers, body: parsed, text });
       });
     });
+    req.on("error", reject);
+    if (body !== undefined) req.write(body);
+    req.end();
+  });
+}
 
-    assert.equal(healthRes.status, "UP");
-    assert.equal(healthRes.server, "eos-system-mcp-stream");
-    assert.equal(healthRes.protocolVersion, "2024-11-05");
-    assert.ok(healthRes.transports.includes("sse"));
+async function connectSse(port, token) {
+  return new Promise((resolve, reject) => {
+    const req = http.request(`http://127.0.0.1:${port}/sse`, {
+      method: "GET",
+      headers: { Accept: "text/event-stream", Authorization: `Bearer ${token}` }
+    }, (res) => {
+      if (res.statusCode !== 200) {
+        res.resume();
+        reject(new Error(`SSE connection failed with HTTP ${res.statusCode}`));
+        return;
+      }
+      let buffer = "";
+      const messages = [];
+      res.on("data", (chunk) => {
+        const text = chunk.toString();
+        messages.push(text);
+        buffer += text;
+        const match = buffer.match(/event: endpoint\ndata: \/message\?sessionId=([a-f0-9-]+)/);
+        if (match) resolve({ req, sessionId: match[1], messages });
+      });
+    });
+    req.on("error", reject);
+    req.end();
+  });
+}
 
-    // 2. Malformed JSON handling on /message
-    const malformedRes = await new Promise((resolve) => {
-      const req = http.request(
-        `http://127.0.0.1:${testPort}/message`,
-        { method: "POST", headers: { "Content-Type": "application/json" } },
-        (res) => {
-          let data = "";
-          res.on("data", (c) => (data += c));
-          res.on("end", () => resolve({ status: res.statusCode, body: JSON.parse(data) }));
-        }
-      );
-      req.write("{ malformed json ... ");
-      req.end();
+test("local MCP HTTP transport requires bearer auth and reports the package version", async () => {
+  const running = await startServer();
+  try {
+    const unauthorized = await request(running.port, "/health");
+    assert.equal(unauthorized.status, 401);
+    assert.equal(unauthorized.headers["www-authenticate"], "Bearer");
+    assert.equal(JSON.stringify(unauthorized.body).includes(running.server.authToken), false);
+
+    const health = await request(running.port, "/health", { token: running.server.authToken });
+    assert.equal(health.status, 200);
+    assert.equal(health.body.server, "eos-system-mcp-stream");
+    assert.equal(health.body.version, JSON.parse(await import("node:fs/promises").then((fs) => fs.readFile(new URL("../package.json", import.meta.url), "utf8"))).version);
+    assert.equal(health.body.protocolVersion, "2024-11-05");
+    assert.deepEqual(health.body.transports, ["stdio", "sse"]);
+  } finally {
+    await running.close();
+  }
+});
+
+test("CORS accepts only configured exact origins and preflight does not grant access", async () => {
+  const allowedOrigin = "https://ide.example.test";
+  const running = await startServer({ allowedOrigins: [allowedOrigin] });
+  try {
+    const preflight = await request(running.port, "/sse", { method: "OPTIONS", origin: allowedOrigin });
+    assert.equal(preflight.status, 204);
+    assert.equal(preflight.headers["access-control-allow-origin"], allowedOrigin);
+    assert.equal(preflight.headers.vary, "Origin");
+
+    const denied = await request(running.port, "/health", { token: running.server.authToken, origin: "https://attacker.example" });
+    assert.equal(denied.status, 403);
+    assert.equal(denied.headers["access-control-allow-origin"], undefined);
+
+    const noOriginPreflight = await request(running.port, "/health", { method: "OPTIONS" });
+    assert.equal(noOriginPreflight.status, 403);
+
+    const allowed = await request(running.port, "/health", { token: running.server.authToken, origin: allowedOrigin });
+    assert.equal(allowed.status, 200);
+    assert.equal(allowed.headers["access-control-allow-origin"], allowedOrigin);
+  } finally {
+    await running.close();
+  }
+});
+
+test("SSE sessions are authenticated, bounded, and cleaned up when clients disconnect", async () => {
+  const running = await startServer({ maxSessions: 1 });
+  try {
+    const noToken = await request(running.port, "/sse");
+    assert.equal(noToken.status, 401);
+
+    const first = await connectSse(running.port, running.server.authToken);
+    assert.match(first.sessionId, /^[a-f0-9-]{36}$/);
+    assert.equal(running.server.sessionManager.getActiveSessions().length, 1);
+    const capacity = await request(running.port, "/sse", { token: running.server.authToken });
+    assert.equal(capacity.status, 503);
+
+    first.req.destroy();
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    assert.equal(running.server.sessionManager.getActiveSessions().length, 0);
+  } finally {
+    await running.close();
+  }
+});
+
+test("HTTP MCP lists and dispatches only the bounded read-only tool surface", async () => {
+  const running = await startServer();
+  try {
+    const sse = await connectSse(running.port, running.server.authToken);
+    const call = (payload) => request(running.port, `/message?sessionId=${sse.sessionId}`, {
+      method: "POST",
+      token: running.server.authToken,
+      body: JSON.stringify(payload)
     });
 
-    assert.equal(malformedRes.status, 400);
-    assert.equal(malformedRes.body.error.code, -32700);
+    const list = await call({ jsonrpc: "2.0", id: "list", method: "tools/list", params: {} });
+    assert.equal(list.status, 200);
+    assert.deepEqual(list.body.result.tools.map((tool) => tool.name).sort(), [
+      "eos_amplify_prompt",
+      "eos_check_architecture",
+      "eos_evaluate_decision",
+      "eos_health_check",
+      "eos_optimize_context",
+      "eos_spotify_shuffle"
+    ].sort());
+    const optimizeSchema = list.body.result.tools.find((tool) => tool.name === "eos_optimize_context").inputSchema;
+    assert.deepEqual(optimizeSchema.required, ["content"]);
+    assert.equal(Object.hasOwn(optimizeSchema.properties, "filePath"), false);
+    const architectureSchema = list.body.result.tools.find((tool) => tool.name === "eos_check_architecture").inputSchema;
+    assert.deepEqual(architectureSchema.properties.targetDir.enum, ["src"]);
 
-    // 3. Stdio direct call validation
-    const mcpServer = streamServer.mcpServer;
-    const listRes = mcpServer.handleRequest({ jsonrpc: "2.0", id: "tools-test", method: "tools/list", params: {} });
-    assert.equal(listRes.id, "tools-test");
-    const hasQueryTopo = listRes.result.tools.some((t) => t.name === "eos_query_topology");
-    const hasWasmCompress = listRes.result.tools.some((t) => t.name === "eos_wasm_compress");
-    assert.ok(hasQueryTopo, "tools/list must include eos_query_topology");
-    assert.ok(hasWasmCompress, "tools/list must include eos_wasm_compress");
+    const health = await call({ jsonrpc: "2.0", id: "health", method: "tools/call", params: { name: "eos_health_check", arguments: {} } });
+    assert.equal(health.status, 200);
+    assert.equal(health.body.id, "health");
+    {
+      const healthPayload = JSON.parse(health.body.result.content[0].text);
+      assert.ok(["HEALTHY", "DEGRADED", "CRITICAL"].includes(healthPayload.status));
+      assert.equal(healthPayload.subsystemProbes, "RUN");
+      assert.equal(healthPayload.epistemicState, "CONTROL_PLANE_HEALTH_WITHIN_TESTED_SCOPE");
+      assert.ok(healthPayload.probesTotal >= 6);
+      assert.ok(healthPayload.probesPassing >= 1);
+    }
+
+    const mutation = await call({ jsonrpc: "2.0", id: "mutate", method: "tools/call", params: { name: "eos_autonomous_heal", arguments: { apply: true } } });
+    assert.equal(mutation.body.error.code, -32601);
+    const arbitraryRead = await call({ jsonrpc: "2.0", id: "topology", method: "tools/call", params: { name: "eos_query_topology", arguments: {} } });
+    assert.equal(arbitraryRead.body.error.code, -32601);
+    const fileRead = await call({ jsonrpc: "2.0", id: "file", method: "tools/call", params: { name: "eos_optimize_context", arguments: { filePath: "README.md" } } });
+    assert.equal(fileRead.body.error.code, -32602);
+
+    sse.req.destroy();
   } finally {
-    await streamServer.close();
+    await running.close();
   }
+});
+
+test("HTTP MCP enforces request size, content type, session presence, and generic parse errors", async () => {
+  const running = await startServer({ maxRequestBytes: 128 });
+  try {
+    const missingSession = await request(running.port, "/message?sessionId=missing", {
+      method: "POST", token: running.server.authToken, body: "{}"
+    });
+    assert.equal(missingSession.status, 404);
+
+    const sse = await connectSse(running.port, running.server.authToken);
+    const wrongType = await request(running.port, `/message?sessionId=${sse.sessionId}`, {
+      method: "POST", token: running.server.authToken, headers: { "Content-Type": "text/plain" }, body: "{}"
+    });
+    assert.equal(wrongType.status, 415);
+
+    const malformed = await request(running.port, `/message?sessionId=${sse.sessionId}`, {
+      method: "POST", token: running.server.authToken, body: "{ malformed json ... "
+    });
+    assert.equal(malformed.status, 400);
+    assert.equal(malformed.body.error.code, -32700);
+    assert.doesNotMatch(JSON.stringify(malformed.body), /SyntaxError|stack|at .*\.mjs/);
+
+    const tooLarge = await request(running.port, `/message?sessionId=${sse.sessionId}`, {
+      method: "POST", token: running.server.authToken, body: "x".repeat(129)
+    });
+    assert.equal(tooLarge.status, 413);
+
+    sse.req.destroy();
+  } finally {
+    await running.close();
+  }
+});
+
+test("invalid tokens and wildcard CORS origins are rejected at construction", () => {
+  assert.throws(() => new EosMcpStreamServer(projectRoot, 0, { authToken: "short" }), /at least 32 bytes/);
+  assert.throws(() => new EosMcpStreamServer(projectRoot, 0, { allowedOrigins: ["*"] }), /Invalid EOS MCP allowed origin/);
 });

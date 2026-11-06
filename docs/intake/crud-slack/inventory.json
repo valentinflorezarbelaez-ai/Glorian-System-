@@ -1,0 +1,25 @@
+{
+  "projectId": "crud-slack",
+  "name": "TaskFlow AI — Omnichannel Request-to-Task CRUD & Anti-Hallucination Triage",
+  "intakeStatus": "INTAKE_COMPLETE",
+  "recordedAt": "2026-10-30T14:50:00-05:00",
+  "remoteRepository": "https://github.com/valentinflorezarbelaez-ai/Crud-slack.git",
+  "localWorkspace": "c:\\Users\\valen\\Crud-slack",
+  "initialRemoteState": "EMPTY_REPOSITORY_GREENFIELD",
+  "stakeholders": [
+    {
+      "name": "Valentín Flórez Arbeláez",
+      "role": "Principal Architect & System Owner"
+    },
+    {
+      "name": "Luis Soto",
+      "role": "Evaluator — SharePoint Platform Software Developer"
+    }
+  ],
+  "channelsSupported": ["slack", "teams", "email", "whatsapp"],
+  "exportFormats": ["sharepoint-csv", "slack-markdown", "json"],
+  "aiEngines": {
+    "primary": "gemini-3.8-flash (/v1beta/interactions Structured JSON Schema)",
+    "verifierAndFallback": "Layer-0 Deterministic Neuro-Symbolic Clause & Temporal Grounding Engine"
+  }
+}

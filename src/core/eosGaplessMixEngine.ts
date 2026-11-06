@@ -183,8 +183,8 @@ export class EosGaplessMixEngine {
       if (absVal > maxAbs) maxAbs = absVal;
     }
 
-    // Apply lookahead True Peak limiter on the blended output to ensure -1.0 dBTP ceiling
-    this.dspKernel.applyTruePeakLimiterInPlace(outputBuffer);
+    // Apply a sample-peak clamp to the blended output; this does not estimate inter-sample peaks.
+    this.dspKernel.applySamplePeakLimiterInPlace(outputBuffer);
 
     const maxTruePeakDb = maxAbs > 0 ? Number((20 * Math.log10(maxAbs)).toFixed(2)) : -100.0;
     const proof = crypto.createHash("sha256")

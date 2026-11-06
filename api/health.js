@@ -50,6 +50,10 @@ function handler(req, res) {
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    res.setHeader("Allow", "GET, HEAD, OPTIONS");
+    return res.status(405).json({ status: "METHOD_NOT_ALLOWED" });
+  }
 
   const mem = process.memoryUsage();
   const formatMb = (bytes) => (bytes / (1024 * 1024)).toFixed(2) + " MB";
@@ -78,16 +82,16 @@ function handler(req, res) {
         arrayBuffers: formatMb(mem.arrayBuffers || 0)
       }
     },
-    subsystems: {
-      jarvisSovereignMonad: { status: "UP", engine: "L0 Monad + WebGL 3D", latencyMs: "< 1ms" },
-      neuralVectorCore: { status: "UP", algorithm: "Cosine Similarity L2", latencyMs: "< 0.5ms" },
-      linuxKernelModularCore: { status: "UP", architecture: "Ring-0 VFS + RCU", latencyMs: "< 0.2ms" },
-      nanosecondEngine: { status: "UP", cacheStrategy: "Struct-of-Arrays L1", latencyMs: "< 0.05ms" },
-      akashicMemoryStore: { status: "UP", storage: "Deterministic SHA-256 Ontological Vault", latencyMs: "< 0.8ms" },
-      secdevopsSevenGates: { status: "UP", enforcement: "SLSA Level 4 Fail-Closed", latencyMs: "< 1.5ms" },
-      federatedFleetDispatcher: { status: "UP", fleetSize: 4, protocol: "Autonomous Git Hooks", latencyMs: "< 2ms" }
-    },
+    subsystems: Object.fromEntries([
+      "jarvis",
+      "semanticGraph",
+      "kernelDemo",
+      "browserMemory",
+      "repositoryChecks",
+      "projectRegistry"
+    ].map((name) => [name, { status: "NOT_PROBED" }])),
     sliReport: {
+      measurementStatus: "TARGETS_ONLY_NOT_MEASURED",
       availabilitySloTarget: "99.99%",
       p50LatencyTargetMs: 2.0,
       p95LatencyTargetMs: 15.0,

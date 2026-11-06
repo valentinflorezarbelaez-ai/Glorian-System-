@@ -1,13 +1,13 @@
 /**
- * EOS SYSTEM — LMAX DISRUPTOR RING BUFFER & NANOSECOND OPTIMIZATION TEST SUITE
+ * EOS SYSTEM — SINGLE-THREAD RING BUFFER AND LOCAL BENCHMARK TEST SUITE
  * Governed by ADR-029, SPEC-022, FR-052 & BDD-052
  *
  * Verifies:
  * 1. Power-of-2 ring buffer indexing and bitwise masking.
- * 2. 64-byte cache line padded sequencer preventing false-sharing.
- * 3. Extreme event throughput (> 10,000,000 events/sec) with sub-100ns latency.
- * 4. Zero heap allocation verification (0 B/op).
- * 5. High-speed 64-byte chunk byte scanning (> 1,500 MB/s).
+ * 2. Sequencer cursor layout and ring state.
+ * 3. Positive elapsed-time measurements without hardware-specific thresholds.
+ * 4. Explicitly unmeasured heap allocation status.
+ * 5. Eight-byte-unrolled JavaScript delimiter scanning.
  */
 
 import test from "node:test";
@@ -18,7 +18,7 @@ import {
   FastStructuralByteScanner
 } from "../src/core/eosDisruptorRingEngine.ts";
 
-test("EOS LMAX Disruptor Ring Buffer & Nanosecond Speed Suite (SPEC-022, BDD-052)", async (t) => {
+test("EOS typed-array ring and local benchmark suite (SPEC-022, BDD-052)", async (t) => {
   const engine = new EosDisruptorRingEngine(12); // 4096 slots
 
   await t.test("Suite 1: Power-of-2 Capacity & Bitwise Mask Indexing", () => {
@@ -42,7 +42,7 @@ test("EOS LMAX Disruptor Ring Buffer & Nanosecond Speed Suite (SPEC-022, BDD-052
     assert.equal(slotLast.payloadB, 2047 * 2);
   });
 
-  await t.test("Suite 2: 64-Byte Cache Line Padding & False Sharing Prevention", () => {
+  await t.test("Suite 2: Ring capacity and initial cursor", () => {
     const ring = engine.getRingBuffer();
     assert.equal(ring.capacity, 4096);
     assert.equal(ring.mask, 4095);
@@ -51,30 +51,19 @@ test("EOS LMAX Disruptor Ring Buffer & Nanosecond Speed Suite (SPEC-022, BDD-052
     assert.ok(ring.cursor >= 0n);
   });
 
-  await t.test("Suite 3: Extreme Event Throughput (> 10,000,000 ops/s & < 100ns/op)", () => {
+  await t.test("Suite 3: Local event loop returns observed timing and scope", () => {
     const ring = engine.getRingBuffer();
     const bench = ring.benchmarkThroughput(500_000);
 
     assert.equal(bench.totalEvents, 500_000);
-    assert.equal(bench.zeroAllocationVerified, true);
-    assert.equal(bench.falseSharingPadded, true);
-
-    // Hot-path latency should be under 450 ns under heavy parallel CI load (< 100ns standalone)
-    assert.ok(
-      bench.nanosecondsPerEvent < 450.0,
-      `Expected < 450 ns/event, got ${bench.nanosecondsPerEvent} ns`
-    );
-
-    // Throughput should exceed 2,000,000 events/sec even under heavy background tasks
-    assert.ok(
-      bench.eventsPerSecond > 2_000_000,
-      `Expected > 2,000,000 ops/sec, got ${bench.eventsPerSecond}`
-    );
-
-    assert.ok(bench.sha256Proof.length === 64);
+    assert.equal(bench.heapAllocationMeasurement, "NOT_MEASURED");
+    assert.equal(bench.cursorPaddingConfigured, true);
+    assert.ok(Number.isFinite(bench.nanosecondsPerEvent) && bench.nanosecondsPerEvent > 0);
+    assert.ok(Number.isFinite(bench.eventsPerSecond) && bench.eventsPerSecond > 0);
+    assert.equal(bench.resultFingerprintSha256.length, 64);
   });
 
-  await t.test("Suite 4: Zero-Copy 64-Byte Structural Delimiter Byte Scanner", () => {
+  await t.test("Suite 4: Eight-byte-unrolled JavaScript delimiter scan", () => {
     const scanner = engine.getScanner();
 
     // 1 MB structured test buffer
@@ -89,22 +78,16 @@ test("EOS LMAX Disruptor Ring Buffer & Nanosecond Speed Suite (SPEC-022, BDD-052
 
     assert.equal(report.totalBytesScanned, size);
     assert.ok(report.structuralDelimitersFound > 100_000);
-    assert.equal(report.chunkSizeBytes, 64);
-
-    // Scanning throughput should exceed 15 MB/s in pure JavaScript under heavy CI/battery load
-    assert.ok(
-      report.throughputMbSec > 15.0,
-      `Expected > 15 MB/s scanning speed, got ${report.throughputMbSec} MB/s`
-    );
-
-    assert.ok(report.sha256Proof.length === 64);
+    assert.equal(report.unrolledWidthBytes, 8);
+    assert.ok(Number.isFinite(report.throughputMiBPerSecond) && report.throughputMiBPerSecond >= 0);
+    assert.equal(report.resultFingerprintSha256.length, 64);
   });
 
-  await t.test("Suite 5: Master Speed Synthesis Benchmark & Merkle Seal", () => {
+  await t.test("Suite 5: Combined benchmark report and result fingerprint", () => {
     const master = engine.runMasterSpeedBenchmark(250_000, 524_288);
-    assert.equal(master.status, "APEX_SPEED_VERIFIED");
-    assert.ok(master.unifiedSpeedProof.length === 64);
-    assert.equal(master.disruptorReport.zeroAllocationVerified, true);
+    assert.equal(master.status, "BENCHMARK_COMPLETED");
+    assert.equal(master.combinedFingerprintSha256.length, 64);
+    assert.equal(master.disruptorReport.heapAllocationMeasurement, "NOT_MEASURED");
     assert.ok(master.byteScanReport.structuralDelimitersFound > 0);
   });
 });

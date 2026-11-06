@@ -1,6 +1,6 @@
 use spotify_audio_core::{
-    calculate_spotify_loudness_gain, equal_power_crossfade, is_camelot_compatible,
-    normalize_audio_frame, LocklessAudioRingBuffer, TARGET_LUFS,
+    LocklessAudioRingBuffer, TARGET_LUFS, calculate_spotify_loudness_gain, equal_power_crossfade,
+    is_camelot_compatible, normalize_audio_frame,
 };
 use std::time::Instant;
 
@@ -21,13 +21,20 @@ fn main() {
     }
     let elapsed = start.elapsed();
     let ops_per_sec = (iterations as f64) / elapsed.as_secs_f64();
-    println!("Lockless SPSC Throughput : {:.2} Mops/s ({:?})", ops_per_sec / 1_000_000.0, elapsed);
+    println!(
+        "Lockless SPSC Throughput : {:.2} Mops/s ({:?})",
+        ops_per_sec / 1_000_000.0,
+        elapsed
+    );
 
     // 2. Normalization verification
     let mut audio_chunk = vec![0.5f32; 4096];
     let gain = calculate_spotify_loudness_gain(-18.0, TARGET_LUFS);
     normalize_audio_frame(&mut audio_chunk, gain, 0.99);
-    println!("Measured -18 LUFS Gain   : {:.4} (Normalized to -14 LUFS)", gain);
+    println!(
+        "Measured -18 LUFS Gain   : {:.4} (Normalized to -14 LUFS)",
+        gain
+    );
 
     // 3. Harmonic wheel check
     let compatible = is_camelot_compatible("8A", "8B");

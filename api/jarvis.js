@@ -1,92 +1,53 @@
-import crypto from "node:crypto";
+const MAX_DIRECTIVE_LENGTH = 4096;
 
-/**
- * EOS SYSTEM — JARVIS SOVEREIGN MONAD COGNITIVE SERVERLESS ENDPOINT (/api/jarvis)
- * Accepts natural-language directives, returns structured execution plans,
- * voice response scripts, and autonomous cognitive status.
- * Zero external dependencies.
- */
-
-const JARVIS_SYSTEM_TELEMETRY = {
-  version: "12.0.0-jarvis-omni-core",
-  arcReactorState: "ONLINE_MAX_POWER",
-  cognitiveMode: "AUTONOMOUS_AGI_ENGINEERING_NEXUS",
-  voiceEngine: "WEB_SPEECH_API_NEURAL_SYNTHESIS",
-  monadNousCore: "ACTIVE_HEART_LEFT_VENTRICLE",
-  autonomousCapabilities: [
-    "Autonomous Multi-Repo CI/CD Dispatch",
-    "Fail-Closed SAST & Zero-Secrets Enforcement",
-    "Self-Healing FDIR Graph Repair",
-    "Real-Time Voice Recognition & Speech Synthesis",
-    "Goal-Oriented Task DAG Decomposition",
-    "Triple-Modular Redundancy (TMR) Byzantine Consensus",
-    "Deterministic High-Dimensional Vector Search",
-    "Hardware-Accelerated 3D WebGL Particle Core"
-  ]
-};
+function classifyDirective(directive) {
+  const normalized = directive.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  if (/\b(despliega|despliegue|publica|ship|deploy|produccion)\b/.test(normalized)) return "DEPLOYMENT_REQUEST_NOT_EXECUTED";
+  if (/\b(estado|status|salud|health)\b/.test(normalized)) return "STATUS_REQUEST_NOT_PROBED";
+  if (/\b(audita|auditoria|fleet|flota|repositorio)\b/.test(normalized)) return "AUDIT_REQUEST_NOT_EXECUTED";
+  if (/\b(seguridad|sast|secretos|vulnerabilidad)\b/.test(normalized)) return "SECURITY_REQUEST_NOT_EXECUTED";
+  return "UNCLASSIFIED_DIRECTIVE";
+}
 
 export default function handler(req, res) {
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader("Cache-Control", "public, max-age=0, s-maxage=60, stale-while-revalidate=300");
+  res.setHeader("Cache-Control", "no-store");
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST, OPTIONS");
+    return res.status(405).json({ status: "METHOD_NOT_ALLOWED" });
   }
 
-  const queryDirective = (req.query && req.query.directive) || (req.body && req.body.directive) || "Estado general del sistema";
-  const norm = String(queryDirective).toLowerCase();
-
-  let intent = "STATUS_REPORT";
-  let voiceText = "A la orden, Arquitecto Valentín. Todos los sistemas del núcleo EOS y la Flota Soberana operan con latencia de nanosegundos y cero hallazgos de seguridad.";
-  let actionCmd = "npm run verify:strict";
-
-  if (norm.includes("audita") || norm.includes("flota") || norm.includes("fleet")) {
-    intent = "FLEET_AUDIT";
-    voiceText = "Iniciando auditoría de toda la Flota Soberana. Verificando repositorios locales y producción en vivo.";
-    actionCmd = "npm run fleet:verify";
-  } else if (norm.includes("despliega") || norm.includes("ship") || norm.includes("produccion")) {
-    intent = "FLEET_SHIP";
-    voiceText = "Ejecutando despliegue autónomo total. Comprobando las 7 aduanas de seguridad y actualizando la producción.";
-    actionCmd = "npm run fleet:ship";
-  } else if (norm.includes("seguridad") || norm.includes("sast") || norm.includes("secretos")) {
-    intent = "SECURITY_GATE";
-    voiceText = "Aduana de seguridad de siete etapas activada. Escáner SAST ejecutado, cero secretos tolerados.";
-    actionCmd = "npm run cicd:gate";
-  } else if (norm.includes("nanosegundo") || norm.includes("hft")) {
-    intent = "NANOSECOND_BENCHMARK";
-    voiceText = "Motor Struct of Arrays L1 activado. Procesamiento contiguo a velocidad de caché de medio nanosegundo.";
-    actionCmd = "npm run test";
-  } else if (norm.includes("vector") || norm.includes("semantico") || norm.includes("embedding")) {
-    intent = "VECTOR_SEMANTIC_SEARCH";
-    voiceText = "Consultando el espacio vectorial de altas dimensiones de Capa-0. Similitud coseno calculada en sub-microsegundos.";
-    actionCmd = "node -e 'import(\"./src/core/eosNeuralVectorCore.js\").then(m=>console.log(\"Vector Core Online\"))'";
-  } else if (norm.includes("belilin") || norm.includes("teurgia") || norm.includes("oraculo")) {
-    intent = "THEURGIC_ORACLE";
-    voiceText = "Círculo de protección de Belilin trazado. Consultando la balanza del Dharma ante el Tribunal de Anubis.";
-    actionCmd = "curl.exe -s https://eos-system-ten.vercel.app/api/teurgia";
+  const body = req.body && typeof req.body === "object" && !Array.isArray(req.body) ? req.body : {};
+  const directive = body.directive ?? "";
+  if (typeof directive !== "string" || directive.length > MAX_DIRECTIVE_LENGTH) {
+    return res.status(400).json({ status: "INVALID_DIRECTIVE", maxLength: MAX_DIRECTIVE_LENGTH });
   }
 
-  const digest = crypto
-    .createHash("sha256")
-    .update(`JARVIS_COGNITION_V12:${intent}:${queryDirective}:${Date.now()}`)
-    .digest("hex");
+  const intent = classifyDirective(directive);
+  const responseText = intent === "DEPLOYMENT_REQUEST_NOT_EXECUTED"
+    ? "La solicitud fue clasificada como despliegue. No se ejecutó ninguna acción; revisa el proyecto y autoriza el flujo de publicación por separado."
+    : intent === "STATUS_REQUEST_NOT_PROBED"
+      ? "La solicitud fue clasificada como consulta de estado. Este endpoint no sondea procesos, subsistemas ni producción."
+      : "Directiva recibida y clasificada localmente por reglas de palabras clave. No se llamó a un modelo de IA.";
 
   return res.status(200).json({
-    status: "JARVIS_COGNITION_ENGAGED",
-    telemetry: JARVIS_SYSTEM_TELEMETRY,
-    directiveReceived: queryDirective,
+    status: "INTENT_CLASSIFIED",
+    directiveReceived: directive,
     intent,
-    voiceResponseText: voiceText,
-    actionCommand: actionCmd,
-    reactorPulseHz: 528,
-    tmrConsensus: {
-      sandboxes: ["ALPHA_REGEX", "BETA_VECTOR", "GAMMA_SECURITY_BARRIER"],
-      consensusAchieved: true,
-      ratio: "3/3",
-      decision: intent
-    },
-    merkleReceipt: `sha256:${digest}`
+    responseText,
+    scope: "clasificación por palabras clave; sin agente ni acciones sobre proyectos",
+    execution: {
+      externalModelCalled: false,
+      repositoriesRead: false,
+      commandsRun: false,
+      testsRun: false,
+      deploymentRun: false,
+      consensusRun: false
+    }
   });
 }

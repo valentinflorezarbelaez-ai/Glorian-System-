@@ -1,5 +1,7 @@
 # ARCHITECTURE PLAN & ADRs (PLAN-0001) — EOS SYSTEM LANDING PAGE
 
+> **Estado documental:** plan histórico. Las métricas, certificaciones, integraciones y estados de producción descritos aquí son objetivos o afirmaciones del plan, no evidencia de implementación actual.
+
 ## 1. Hexagonal Web Architecture
 * **Domain Layer (Pure Data & Telemetry Contracts)**: Embedded deterministic data structures defining the 7 Inviolable Commandments, the 21-Step Pipeline phases, Epistemic States, CLI command outputs, and the Sovereign Fleet Registry.
 * **Application Layer (Interactive Controllers)**: Zero-dependency ES6 controller managing the Interactive Control Plane Terminal, Pipeline Phase Filter, Fleet Category Filter, and Clipboard Copy actions.
@@ -52,37 +54,16 @@
 * **Rejected Alternatives**:
   * *Depending Solely on External Unsigned SQLite Files*: Rejected because EOS requires cryptographic SHA-256 Merkle sealing on every observation, native browser + edge execution without binary installation friction, and Samaelian epistemic classification.
 
-### ADR-007: Big Tech 7-Crown-Jewels Synthesis (`src/core/eosBigTechPantheon.ts` + `api/bigtech.js` + `#bigtech-pantheon`) & Native `<dialog closedby="any">` Command Palette (`Ctrl+K`)
-* **Decision**: Integrate the 7 Crown Jewels of Big Tech (`Google Spanner TrueTime & Bazel Hermetic Graph`, `AWS TLA+ Formal Temporal Verification`, `Netflix Chaos Monkey + NASA FDIR`, `Stripe Idempotent Double-Entry Ledger`, `Meta TAO/Buck2 7-Layer RTM Graph`, `Apple Metal Unified L1 Zero-Copy Memory`, and `Linear/Raycast Sub-8ms Command Palette`) alongside a native HTML `<dialog id="eos-cmdk-dialog" closedby="any">` Command Palette (`Ctrl+K` / `Cmd+K`) with progressive fallback per `modern-web-guidance: light-dismiss-a-dialog`.
-* **Rationale**: Combines formal mathematical verification (TLA+), active fault-injection resilience (Chaos Engineering), content-addressable hermetic determinism (Bazel), and sub-2ms keyboard-first operator ergonomics (`⌘K`) with zero external dependencies.
-* **Rejected Alternatives**:
-  * *Custom Non-Semantic `<div>` Modal Overlay*: Rejected in favor of native `<dialog closedby="any">` + `showModal()` for top-layer rendering, built-in focus trapping, `Esc` handling, and declarative light-dismiss.
+### ADR-007: Engineering reference demos and native command palette
+* **Decision**: Treat the vendor patterns as educational references. `/api/bigtech` provides bounded local examples and static scenario descriptions; the browser command palette searches and navigates this page. Neither component integrates vendor services or runs TLA+, chaos experiments, or FDIR remediation.
+* **Rationale**: Keep product claims aligned with the observable behavior of the local demos.
+### ADR-008: Linux concept demonstration (`src/core/eosLinuxKernelCore.ts` + `api/kernel.js` + `#linux-kernel-core`)
+* **Decision**: Keep the Linux section educational. `api/kernel.js` serves static explanatory fixtures, and the browser measurement reports only a local JavaScript loop duration. EOS does not implement a kernel, RCU, eBPF verifier, EEVDF scheduler, VFS nodes, or ABI auditor.
+* **Rationale**: Clearly distinguish references to operating-system concepts from EOS capabilities and measured behavior.
 
-### ADR-008: Linux Kernel (`v6.x PREEMPT_RT`) Ring-0 Architecture in EOS (`src/core/eosLinuxKernelCore.ts` + `api/kernel.js` + `#linux-kernel-core`)
-* **Decision**: Codify and implement the 7 foundational subsystems of the Linux Kernel inside EOS System:
-  1. **RCU (Read-Copy-Update)** for zero-contention lockless reads and atomic pointer publication (`rcu_assign_pointer` + `synchronize_rcu`).
-  2. **eBPF Static Verifier** for compile-time/pre-execution verification of bounded loops, valid memory access, and Constitutional Law conformance.
-  3. **EEVDF (`Earliest Eligible Virtual Deadline First`) + `PREEMPT_RT` Scheduler** for deterministic virtual-deadline task dispatch.
-  4. **SLUB (`kmem_cache`) 64-Byte Cache-Line Allocator** over the L1 SoA Arena (`0%` fragmentation).
-  5. **VFS (`/proc/eos/*`, `/sys/kernel/eos/*`, `/dev/anubis`)** virtual filesystem introspection.
-  6. **`cgroups v2` + `Namespaces` + `Seccomp-BPF`** subagent syscall/resource isolation.
-  7. **Linus Torvalds's `"Good Taste"` (Branchless Data Structures) & `"Never Break Userspace"` ABI Invariant**.
-* **Rationale**: The Linux Kernel is the gold standard of reliability, scalability, and low-level elegance on Earth; embedding its exact architectural primitives into EOS elevates the Control Plane to Ring-0 systems perfection.
-* **Rejected Alternatives**:
-  * *Coarse-Grained Reader-Writer Locks (`rwlock`)*: Rejected in favor of `RCU` because reader locks cause cache-line bouncing across CPU cores.
-
-### ADR-009: The Omega Singularity (`v8.0` — Post-Quantum FIPS 203/204/205, ZK-STARKs, Byzantine Consensus `3f+1`, Deterministic Time-Travel Replay & Live 9-System Fleet Radar)
-* **Decision**: Implement `src/core/eosOmegaSingularity.ts`, serverless endpoint `api/omega.js`, and interactive Control Plane section `#omega-singularity` integrating:
-  1. **NIST Post-Quantum Cryptography (`ML-KEM-1024`, `ML-DSA-87 / Dilithium-5`, `SLH-DSA / SPHINCS+`)** for quantum-resistant artifact sealing.
-  2. **Transparent Zero-Knowledge Proofs (`ZK-STARK` FRI Polynomial Commitment)** to prove Law I–VII compliance without revealing proprietary source code.
-  3. **Byzantine Fault-Tolerant (`BFT 3f+1`) Multi-Auditor Quorum** to eliminate single-agent hallucination or Byzantine drift.
-  4. **Deterministic Time-Travel Debugging (`Mozilla rr` / `FoundationDB DST`)** for nanosecond-exact state replay and karmic retrocognition.
-  5. **E-Graph Equality Saturation Superoptimization (`MLIR` / `Souper`)** & **`WASI` Capability-Based Sandbox**.
-  6. **Live 9-System Sovereign Fleet Health Matrix** inside `#omega-singularity-lab`.
-* **Rationale**: Future-proofs EOS against quantum cryptanalysis (Shor's/Grover's algorithms), multi-agent Byzantine faults, and non-deterministic heisenbugs while providing a unified real-time command radar across all 9 Sovereign Fleet repositories.
-* **Rejected Alternatives**:
-  * *Legacy RSA-2048 / ECDSA P-256 Only*: Rejected because Shor's algorithm on fault-tolerant quantum computers breaks integer factorization and discrete logarithms in polynomial time.
-  * *ZK-SNARKs Requiring Trusted Setup Ceremony*: Rejected in favor of **ZK-STARKs** (transparent hash/polynomial commitments with zero toxic waste and post-quantum security).
+### ADR-009: Omega concept demonstration (`src/core/eosOmegaSingularity.ts` + `/api/omega` + `#omega-singularity`)
+* **Decision**: Keep PQC, ZK, BFT, deterministic replay, E-Graphs, and WASI as references and local UI examples. `/api/omega` routes to the kernel handler's static demo and returns a SHA-256 text fingerprint; it does not implement or certify any of those technologies. The project list is sourced from `/api/fleet`.
+* **Rationale**: Avoid representing illustrative data or a text fingerprint as cryptographic operations, consensus, replay, or live fleet health.
 
 ### ADR-010: Autonomous 7-Stage Sovereign CI/CD & SecDevOps Pipeline (`v9.0` — `.github/workflows/eos-sovereign-cicd.yml`, `.githooks/*`, `scripts/verify-cicd-pipeline.mjs`, `src/core/eosCicdPipeline.ts`, `api/cicd.js` & `#cicd-secdevops`)
 * **Decision**: Establish a mandatory, zero-bypass **7-Stage Sovereign CI/CD & SecDevOps Pipeline** that runs automatically on every local commit/push (`.githooks/pre-commit`, `.githooks/pre-push`), on every `npm run verify:strict` / `npm run ship:sovereign` invocation, and on every GitHub push/PR (`.github/workflows/eos-sovereign-cicd.yml`):
@@ -91,7 +72,7 @@
   3. **Stage 3 (SLSA Level 4 Supply-Chain & SHA-256 SBOM Gate)**: Verifies `0` external runtime dependencies and computes a deterministic Merkle root over all production files.
   4. **Stage 4 (Static Syntax & Bytecode Gate)**: Runs `node --check` on every `.js` and `.mjs` file and validates all TypeScript L0 core modules.
   5. **Stage 5 (WCAG 2.1 AA, SEO & Modern Web Performance Gate)**: Verifies semantic landmarks, `<dialog closedby="any">`, `content-visibility: auto` + `contain-intrinsic-size`, and Speculation Rules.
-  6. **Stage 6 (In-Process Serverless API Smoke Gate)**: Executes real HTTP handler invocations against all 7 serverless endpoints (`/api/teurgia`, `/api/compile`, `/api/memory`, `/api/bigtech`, `/api/kernel`, `/api/omega`, `/api/cicd`) asserting `200 OK` and valid cryptographic JSON payloads.
+  6. **Stage 6 (In-Process Serverless API Smoke Gate)**: Invokes configured handlers and checks their declared response contracts. A successful handler response does not establish cryptographic validity, production health, or deployment status.
   7. **Stage 7 (Automated Production Deployment & Live Post-Deploy Attestation)**: Deploys to Vercel Production and pushes to GitHub only when Stages 1–6 pass with `0` findings.
 * **Enforcement Topology (defense in depth, 4 independent layers)**:
   1. `.githooks/pre-commit` (activated via `git config core.hooksPath .githooks`).
@@ -106,20 +87,19 @@
 ### ADR-011: Sovereign Fleet Autonomous CI/CD Dispatcher & Hook Propagator (`v10.0` — `docs/projects/registry.json`, `src/core/eosFleetDispatcher.ts`, `api/fleet.js`, `scripts/fleet-autonomous-cicd.mjs`, `scripts/install-fleet-cicd-hooks.mjs` & `#fleet-cicd-orchestrator`)
 * **Decision**: Expand EOS from a single-project CI/CD engine into the **Federated Master CI/CD & SecDevOps Orchestrator for all repositories in the Sovereign Fleet**:
   1. **Canonical Fleet Registry (`docs/projects/registry.json`)**: Formally registers each fleet repository (`EOS System`, `Aberamentho Pleroma Music`, `Portafolio Valentín Flórez`, `PTG`, etc.) with local path, GitHub remote, Vercel production URL, and verification state per Law IV.
-  2. **Federated Hook Propagator (`scripts/install-fleet-cicd-hooks.mjs`)**: Injects and activates identical 7-stage pre-commit and pre-push Git hooks into every local fleet project, guaranteeing zero secrets and zero broken invariants across all repositories on the workstation.
-  3. **Autonomous Fleet Dispatcher (`scripts/fleet-autonomous-cicd.mjs` / `npm run fleet:ship`)**: Scans all fleet projects, detects modifications or unpushed commits, executes their respective test suites, commits, pushes to origin, triggers production builds, and asserts live `HTTP 200 OK` health.
-  4. **Live Fleet Control HUD & API (`#fleet-cicd-orchestrator` + `api/fleet.js`)**: Real-time multi-repo CI/CD telemetry directly inside the EOS Control Plane.
-* **Rationale**: Satisfies the Sovereign Architect's direct mandate: whenever a change or improvement is made to *any* project in the ecosystem, EOS autonomously audits, tests, secures, and ships it to production without manual overhead.
+  2. **Explicit Hook Installer (`scripts/install-fleet-cicd-hooks.mjs`)**: Configures the selected repository's `pre-commit` and `pre-push` hooks to run its registered gate. Installation requires a matching project confirmation and does not propagate to other repositories.
+  3. **Selected Project Dispatcher (`scripts/fleet-autonomous-cicd.mjs` / `npm run fleet:ship`)**: Requires one confirmed project, validates its Git root, HTTPS production URL, and in-repository gate, runs that gate, then commits and pushes the selected checkout. It probes for HTTP 200 but does not verify the deployed commit or sign commits.
+  4. **Fleet Status HUD & API (`#fleet-cicd-orchestrator` + `api/fleet.js`)**: Presents the local registry and the checks that are explicitly implemented; it is not complete live CI/CD telemetry.
+* **Rationale**: Keep fleet operations scoped, inspectable, and fail-closed before an explicitly selected repository is changed or pushed.
 * **Rejected Alternatives**:
   * *Maintaining Disconnected Manual Deployments Per Project*: Rejected because lack of unified gate propagation leads to drift, configuration rot, and potential secret leaks in satellite repos.
 
-### ADR-012: EOS JARVIS Sovereign Monad & Cognitive Voice/Action Orchestrator (`v11.0` — `src/core/eosJarvisMonad.ts`, `api/jarvis.js`, `scripts/eos-jarvis-daemon.mjs` & `#eos-jarvis-nexus`)
-* **Decision**: Elevate EOS into **JARVIS** — an omnipotent, autonomous Cognitive AI System that listens, speaks, plans, and executes the entire engineering lifecycle across all projects:
-  1. **Cognitive Voice Nexus**: Native Web Speech API integration (Speech Recognition & Neural Speech Synthesis) paired with Web Audio API Belilin sacred acoustic formants.
-  2. **Intent Parser & Atomic Goal DAG Generator**: Translates any natural-language command from Valentín into deterministic system actions (running audits, executing nanosecond benchmarks, querying Akashic memory, deploying to production).
-  3. **Visual Arc-Reactor Holographic HUD (`#eos-jarvis-nexus`)**: Audio-reactive SVG/CSS visualization reflecting cognitive state transitions (`IDLE`, `LISTENING`, `THINKING_SAMAELIAN`, `SECURING_GATES`, `DEPLOYING`).
-  4. **Autonomous Sentinel Watcher Daemon (`scripts/eos-jarvis-daemon.mjs` / `npm run jarvis`)**: Continuous background watcher that monitors repos, executes FDIR self-healing, and enforces autonomous fleet-wide delivery.
-* **Rationale**: Directly realizes the user's vision: "todo lo debe hacer eos todo eos debe ser jarvis todo" — transforming EOS from an operating system dashboard into a proactive, sovereign autonomous partner.
+### ADR-012: JARVIS Local Classification and Status Monitor (`api/jarvis.js`, `scripts/eos-jarvis-daemon.mjs`)
+* **Decision**: Keep JARVIS actions bounded and report their evidence explicitly:
+  1. The API classifies a limited directive using keyword rules; it does not call a language model, execute commands, read repositories, or deploy.
+  2. The daemon runs bounded local repository checks, the read-only fleet verifier, and a time-limited HTTP probe of the configured process-liveness endpoint.
+  3. `npm run jarvis:daemon` repeats cycles serially at 60-second intervals and reports each check as pass or fail. It does not heal files or ship projects.
+* **Rationale**: Provide an inspectable monitor with truthful scope and keep repository writes and deployment in separately confirmed workflows.
 * **Rejected Alternatives**:
   * *Proprietary Cloud-Only Voice Assistants (Alexa/Siri)*: Rejected due to vendor lock-in, latency, plaintext telemetry risks (Law VI), and inability to execute low-level compiler/Git/Vercel operations.
 
@@ -245,10 +225,25 @@
   * *Storing all raw historical vectors indefinitely in memory*: Rejected to prevent memory bloat and stale preference bias.
 
 ### ADR-030: Universal Polyglot Repository Adapter & Golden Path Scaffolding (`src/core/eosUniversalProjectAdapter.ts`)
-* **Decision**: Implement a universal multi-stack repository intelligence engine capable of fingerprinting, diagnosing, and elevating any software project of any language or complexity:
+* **Decision**: Implement a bounded local repository inventory that fingerprints recognized software stacks and drafts optional project templates:
   1. Auto-detects 20+ software archetypes across TypeScript, Go, Rust, Python, Flutter, C/C++, Java, Docker, and Kubernetes.
-  2. Evaluates a 5-Pillar Architectural Health Index (0-100) assessing Layer Purity, Test Automation, Secret Security, CI/CD Gateways, and AI Agent Context.
+  2. Evaluates five groups of bounded local structural signals and reports a 0-100 inventory signal score. The score is not a health rating or maturity tier; production readiness is explicitly not assessed, and the report states that it does not execute tests, verify CI results, or replace dedicated security scanners.
   3. Synthesizes stack-tailored Backstage RFC-42 descriptors (`catalog-info.yaml`), GitHub Actions CI workflows (`.github/workflows/ci.yml`), pre-commit secret scanners, and AI agent context files (`AGENTS.md`).
-* **Rationale**: Directly operationalizes the sovereign mandate for EOS System to operate on ANY external target project with mathematical perfection, zero vibe coding, and complete architectural purity.
+* **Rationale**: Gives engineers a quick, repeatable local inventory and stack-specific starting points while preserving human review. Its file and pattern heuristics do not certify architecture, security, or production readiness.
 * **Rejected Alternatives**:
   * *Invoking external CLIs (SonarQube, Snyk, Semgrep)*: Rejected to preserve Layer-0 zero-dependency portability and instant (< 50ms) execution time.
+
+### ADR-031: Context-Safe Rendering of Browser-Backed User Data (`js/eos.js`)
+* **Decision**: Treat user input and browser storage as untrusted at every DOM rendering boundary. Validate persisted record shapes, discard invalid records, and encode dynamic text and attribute values before interpolating them into existing templates. Keep canonical stored values unescaped so valid data remains readable and portable.
+* **Rationale**: The static landing page has no framework or runtime sanitization dependency. Contextual escaping and validation close persistent DOM injection paths while preserving its zero-dependency architecture.
+* **Rejected Alternatives**:
+  * *Trusting values because they originated in same-origin `localStorage`*: Rejected because users can enter attacker-controlled markup and local storage can be modified or corrupted.
+  * *Adding a third-party HTML sanitizer*: Rejected to preserve the zero-runtime-dependency browser bundle.
+
+### ADR-032: Project-Bounded Evaluation and Honest Operational Reporting (`api/eval.js`, `api/cicd.js`, `api/fleet.js`, `api/health.js`)
+* **Decision**: Resolve requested evaluation paths against the real project root and reject paths or symlinks that escape it. Bound submitted source code to 100 KiB, use `Cache-Control: no-store`, and return `503` when the evaluator is unavailable. Label CI/CD output as a simulation, report blocked or unrun stages accurately, omit local host paths from fleet responses, and mark subsystem/availability data as unprobed or unmeasured.
+* **Rationale**: The API accepts untrusted input, and an evaluator failure must never become a false readiness claim. The interactive control plane should distinguish demonstrations and registry metadata from repository verification, live health measurements, or deployment.
+* **Rejected Alternatives**:
+  * *Returning a synthetic passing evaluation when runtime loading fails*: Rejected because failure is not evidence of correctness or readiness.
+  * *Showing every pipeline stage as passed after an early SAST block*: Rejected because it contradicts fail-closed behavior and gives operators a false deployment signal.
+  * *Publishing workstation paths or declaring fleet health from static registry data*: Rejected because it exposes host details and presents unverified metadata as operational evidence.

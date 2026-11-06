@@ -1,0 +1,9 @@
+# Gentleman Guardian Angel (GGA) Configuration — EOS System Sovereign Control Plane
+# Governed by SPEC-044 / ADR-050 (v50.0.0)
+
+PROVIDER="gemini"
+FILE_PATTERNS="*.ts,*.mjs,*.js"
+EXCLUDE_PATTERNS="node_modules/*,docs/evidence/*,assets/*,*.wasm"
+RULES_FILE="AGENTS.md"
+STRICT_MODE="true"
+TIMEOUT="300"

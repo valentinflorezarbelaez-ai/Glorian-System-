@@ -7,6 +7,7 @@
  */
 
 import { calculateBlastRadius } from "./eosFleetTopology.ts";
+import type { BlastRadiusResult } from "./eosFleetTopology.ts";
 
 export interface WasmCompressionResult {
   compressed: string;

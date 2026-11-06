@@ -1,15 +1,11 @@
 /**
- * EOS SYSTEM — SOVEREIGN COGNITIVE EVALUATION & MODEL BENCHMARK ENGINE (Layer 0)
+ * EOS SYSTEM — LOCAL HEURISTIC SOURCE REVIEW (Layer 0)
  * Governed by ADR-023, FR-036 & BDD-030, BDD-031
  *
- * Implements a Google Vertex / Anthropic Evals inspired evaluation harness:
- * 1. Hallucination Risk Score (detects ungrounded imports, invented APIs, hallucinated libraries).
- * 2. EARS / BDD Conformance Score (verifies formal requirement syntax and Gherkin scenarios).
- * 3. Hexagonal Purity Score (verifies domain layer isolation and dependency direction).
- * 4. Security & Zero Secrets Score (verifies clean SAST, OWASP compliance, zero plain keys).
- * 5. AST Syntax & Type Safety Score (verifies valid ECMAScript/TypeScript compilation).
+ * Applies string patterns and local checks over one input. It is not a model
+ * evaluation, complete SAST, standards audit, TypeScript compiler, or release gate.
  *
- * Emits formal Composite Readiness Index (CRI) and cryptographic Merkle evaluation receipt.
+ * Emits a heuristic score and a SHA-256 result fingerprint. Neither is a certificate.
  *
  * Zero external runtime dependencies.
  */
@@ -20,7 +16,7 @@ import crypto from "node:crypto";
 import os from "node:os";
 import { execFileSync } from "node:child_process";
 
-export type EpistemicVerdict = "PRODUCTION_READY" | "VERIFIED" | "REMEDIATION_REQUIRED" | "REJECTED";
+export type EpistemicVerdict = "LOCAL_RULES_PASSED" | "REVIEW_REQUIRED" | "FINDINGS_IDENTIFIED";
 
 export interface DimensionResult {
   readonly score: number; // 0 - 100
@@ -42,7 +38,7 @@ export interface CognitiveEvalResult {
   };
   readonly totalLinesScanned: number;
   readonly durationUs: number;
-  readonly sha256Proof: string;
+  readonly resultFingerprintSha256: string;
   readonly timestamp: string;
 }
 
@@ -115,21 +111,17 @@ export class EosCognitiveEval {
       hallucinationResult.score * (hallucinationResult.weight / 100)
     );
 
-    let verdict: EpistemicVerdict = "REJECTED";
-    if (compositeScore >= 95 && securityResult.passed && astResult.passed) {
-      verdict = "PRODUCTION_READY";
-    } else if (compositeScore >= 80 && securityResult.passed) {
-      verdict = "VERIFIED";
+    let verdict: EpistemicVerdict = "FINDINGS_IDENTIFIED";
+    if (compositeScore >= 80 && securityResult.passed && astResult.passed) {
+      verdict = "LOCAL_RULES_PASSED";
     } else if (compositeScore >= 50) {
-      verdict = "REMEDIATION_REQUIRED";
-    } else {
-      verdict = "REJECTED";
+      verdict = "REVIEW_REQUIRED";
     }
 
     const endTime = process.hrtime.bigint();
     const durationUs = Number(endTime - startTime) / 1000;
 
-    const sha256Proof = crypto
+    const resultFingerprintSha256 = crypto
       .createHash("sha256")
       .update(`EOS_EVAL:${targetLabel}:${compositeScore}:${verdict}:${durationUs}`)
       .digest("hex");
@@ -147,7 +139,7 @@ export class EosCognitiveEval {
       },
       totalLinesScanned: totalLines,
       durationUs,
-      sha256Proof,
+      resultFingerprintSha256,
       timestamp: new Date().toISOString()
     };
   }

@@ -1,0 +1,28 @@
+{
+  "id": "EVD-TASKFLOW-AVO-ROSTER-CRAFT",
+  "timestamp": "2026-11-04T17:19:00Z",
+  "epistemicState": "PRODUCTION_READY_WITHIN_TESTED_SCOPE",
+  "sites": {
+    "TaskFlow": {
+      "url": "https://crud-slack.vercel.app",
+      "readyState": "READY",
+      "deploymentId": "dpl_2VnA8TjY3LUUEpPMuurYXHtp43Eo",
+      "roster": [
+        { "id": "usr_valentin", "full_name": "Valentín Flórez Arbelaez", "initials": "VF" },
+        { "id": "usr_ana", "full_name": "Jacobo Flórez Galeano", "initials": "JF" },
+        { "id": "usr_carlos", "full_name": "Edison Flórez López", "initials": "EF" },
+        { "id": "usr_elena", "full_name": "Roberto Urrea", "initials": "RU" }
+      ],
+      "neonSync": "GET /api/auth/team upsert confirmed live",
+      "verifyStrict": "7/7 PASS exit 0"
+    },
+    "Avo_Pack": {
+      "url": "https://avo-pack.vercel.app",
+      "readyState": "READY",
+      "deploymentId": "dpl_FvmrQKvuNsNkYZqVzA1m9KbzjidB",
+      "craftDelta": "Inter replaced with Syne; skip-link retained; ops launchpad preserved",
+      "note": "Functional multi-app portal; brand-first hero not required for dense plant ops UX"
+    }
+  },
+  "fleetSoundcheckSha256": "f981084f6f570492383c00d71896a54cec5191c4ddc03e133688c0e8f61ef2cd"
+}

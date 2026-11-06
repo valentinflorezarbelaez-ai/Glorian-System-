@@ -1,7 +1,9 @@
-# OPENSPEC CHANGE DELTA: SPOTIFY AGENTIC SDLC FACTORY (CHANGE-007)
+# HISTORICAL CHANGE RECORD: LOCAL SDLC PLANNING TOOLS (CHANGE-007)
 
-- **Status**: APPLIED_AND_VERIFIED
-- **Authorization Level**: LEVEL_3_PRODUCTION_AUTHORIZED
+> The original status and verification statements were not revalidated in this checkout. They do not establish production authorization or current capabilities.
+
+- **Status**: SUPERSEDED
+- **Authorization Level**: LEVEL_2_AUTHORIZED
 - **Impacted Specifications**: `SPEC-001-CONSTITUTION.md`, `SPEC-002-HEXAGONAL-L0.md`, `SPEC-003-XIRP-WORKTREE.md`, `SPEC-004-SPOTIFY-XIRP-ENGINE.md`, `SPEC-011-GO-NATIVE-ACCELERATOR.md`, `SPEC-012-SPOTIFY-AGENTIC-FACTORY.md`
 - **Modules Added / Modified**:
   - `src/core/eosSpotifyAgenticFactory.ts`
@@ -10,4 +12,5 @@
   - `.github/workflows/eos-honk-agent.yml`
   - `bin/eos.mjs`
   - `src/mcp/eosMcpServer.ts`
-- **Verification Evidence**: `test/eosSpotifyFactory.test.mjs`, `test/eosOpenSpec.test.mjs`, `npm run verify:strict` (Exit code 0).
+- **Current Scope**: See `SPEC-012-SPOTIFY-AGENTIC-FACTORY.md`; Honk is a local planner, Xirp writes context only when explicitly invoked, Fleetshift has a narrowly scoped catalog action, and canary output is a local artifact.
+- **Historical Verification Reference**: `test/eosSpotifyFactory.test.mjs`, `test/eosOpenSpec.test.mjs`, `npm run verify:strict` were listed by the original record; they were not run during this revision.

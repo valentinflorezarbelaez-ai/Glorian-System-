@@ -1,0 +1,96 @@
+{
+  "spec": "SPEC-123",
+  "title": "Universal Fleet Secret-Scan Gate & UI Leak Detector",
+  "version": "1.0.0",
+  "status": "VERIFIED",
+  "epistemicState": "PRODUCTION_READY_WITHIN_TESTED_SCOPE",
+  "timestamp": "2026-11-02T12:21:00Z",
+  "project": "EOS System (Control Plane Core)",
+  "compliance": {
+    "constitution": "EOS_CONSTITUTION_LAWS_I_II_VI_VII",
+    "zeroPlainSecrets": true,
+    "zeroVibeCoding": true,
+    "uiLeakProtection": true
+  },
+  "detectors": [
+    {
+      "id": "D1",
+      "name": "Vendor Token Detector",
+      "patterns": [
+        "sk-proj-",
+        "sk-live-",
+        "ghp_",
+        "gho_",
+        "AKIA",
+        "AIzaSy",
+        "Supabase service_role JWT",
+        "PEM PRIVATE KEY"
+      ],
+      "verified": true
+    },
+    {
+      "id": "D2",
+      "name": "Credential Assignment Detector",
+      "scope": [
+        "password",
+        "passwd",
+        "masterPassword",
+        "master_password",
+        "secret_key",
+        "api_secret",
+        "client_secret",
+        "auth_secret"
+      ],
+      "safePlaceholdersExempted": true,
+      "verified": true
+    },
+    {
+      "id": "D3",
+      "name": "Prefilled Password Input Detector",
+      "target": "<input type='password' value='...'>",
+      "emptyValueExempted": true,
+      "verified": true
+    },
+    {
+      "id": "D4",
+      "name": "Literal Propagation Cross-Check",
+      "crossFileScan": true,
+      "verified": true
+    },
+    {
+      "id": "UI_LEAK",
+      "name": "Public UI Technical Plumbing Leak Guard",
+      "patterns": [
+        "EOS SPEC-xxx",
+        "ENGRAM #xxx",
+        "SPEC-xxx"
+      ],
+      "markupOnly": true,
+      "verified": true
+    }
+  ],
+  "engineFeatures": {
+    "maskingEngine": "ab***cd (12 chars, sha256:7f8a...)",
+    "allowlist": ".eos/secret-allowlist.json",
+    "allowlistMaxExpiryDays": 90,
+    "failClosedOnZeroFiles": true,
+    "exitCodes": {
+      "clean": 0,
+      "findingsDetected": 1,
+      "scanExecutionError": 2
+    },
+    "fleetReadOnlyAudit": "--fleet"
+  },
+  "testExecution": {
+    "testFile": "test/eos-secret-scan.test.mjs",
+    "totalTests": 13,
+    "passed": 13,
+    "failed": 0,
+    "durationMs": 100.8
+  },
+  "fileHashes": {
+    "scanner": "b3bec59c2520d2194a9a22a839f92e952fbbe7db09f573153372aad159b53be6",
+    "tests": "7f093158c3a115858cfdbcf16be9f89efda22722b5133614a4282570e309cb4e"
+  },
+  "sha256EvidenceSeal": "8b9a117ce42ea351b6a3fc5fbf76e330df30a6e7090b8fdfd537f717cf7b1928"
+}

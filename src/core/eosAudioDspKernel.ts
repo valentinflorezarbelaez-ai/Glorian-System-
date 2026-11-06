@@ -1,12 +1,12 @@
 /**
- * EOS SYSTEM — ULTIMATE AUDIO DSP KERNEL & ITU-R BS.1770 LIMITER (Layer 0)
+ * EOS SYSTEM — LOCAL AUDIO DSP EXAMPLE (Layer 0)
  * Governed by ADR-025, FR-040 & BDD-043
  *
- * Implements high-precision, zero-allocation audio DSP algorithms:
+ * Implements local audio-processing examples over synthetic buffers:
  * 1. Biquad IIR Filter Engine: Low-Pass, High-Pass, Peaking EQ (Direct Form II Transposed).
- * 2. ITU-R BS.1770 / EBU R128 Lookahead True-Peak Limiter: -1.0 dBTP ceiling, smooth attack/release.
+ * 2. In-place sample-peak clamp. This is not a true-peak oversampling limiter or loudness standard implementation.
  * 3. Stereo Planar / Interleaved SIMD Float32 buffer conversions.
- * 4. Microsecond benchmarking: > 50,000,000 samples/sec (> 1,000x real-time 44.1/48kHz audio).
+ * 4. Local throughput measurement of a synthetic Float32Array buffer.
  *
  * Zero external runtime dependencies.
  */
@@ -29,7 +29,7 @@ export interface DspBenchmarkResult {
   readonly totalSamplesProcessed: number;
   readonly throughputSamplesSec: number;
   readonly realTimeSpeedFactor: number; // e.g. 1500x real-time
-  readonly truePeakOutputDb: number;
+  readonly samplePeakOutputDbfs: number;
   readonly limiterClamped: boolean;
   readonly durationUs: number;
   readonly sha256Proof: string;
@@ -38,7 +38,7 @@ export interface DspBenchmarkResult {
 export class EosAudioDspKernel {
   public static readonly SAMPLE_RATE_44K = 44100;
   public static readonly SAMPLE_RATE_48K = 48000;
-  public static readonly TRUE_PEAK_CEILING_LINEAR = Math.pow(10, -1.0 / 20.0); // ~0.89125 (-1.0 dBTP)
+  public static readonly SAMPLE_PEAK_CEILING_LINEAR = Math.pow(10, -1.0 / 20.0); // sample-peak ceiling in linear amplitude (~ -1 dBFS)
 
   /**
    * 1. Computes Biquad IIR Filter Coefficients (Direct Form II Transposed).
@@ -124,11 +124,11 @@ export class EosAudioDspKernel {
   }
 
   /**
-   * 3. Lookahead True-Peak Limiter (-1.0 dBTP ceiling).
+   * Sample-peak clamp. This function does not oversample to estimate inter-sample peaks.
    */
-  public applyTruePeakLimiterInPlace(
+  public applySamplePeakLimiterInPlace(
     buffer: Float32Array,
-    ceilingLinear: number = EosAudioDspKernel.TRUE_PEAK_CEILING_LINEAR
+    ceilingLinear: number = EosAudioDspKernel.SAMPLE_PEAK_CEILING_LINEAR
   ): { clamped: boolean; maxPeakDb: number } {
     let clamped = false;
     let maxAbs = 0.0;
@@ -150,9 +150,15 @@ export class EosAudioDspKernel {
   }
 
   /**
-   * 4. Benchmarks raw DSP throughput (Biquad Filter + True Peak Limiter).
+   * 4. Measures local DSP throughput (Biquad Filter + Sample-Peak Clamp).
    */
   public benchmarkDsp(frames: number = 65536, iterations: number = 20): DspBenchmarkResult {
+    if (!Number.isInteger(frames) || frames < 1 || frames > 262144) {
+      throw new RangeError("frames must be an integer from 1 to 262144.");
+    }
+    if (!Number.isInteger(iterations) || iterations < 1 || iterations > 100) {
+      throw new RangeError("iterations must be an integer from 1 to 100.");
+    }
     const start = process.hrtime.bigint();
     const buffer = new Float32Array(frames);
 
@@ -166,7 +172,7 @@ export class EosAudioDspKernel {
 
     for (let it = 0; it < iterations; it++) {
       this.processBiquadInPlace(buffer, coeffs);
-      const limiterRes = this.applyTruePeakLimiterInPlace(buffer);
+      const limiterRes = this.applySamplePeakLimiterInPlace(buffer);
       if (limiterRes.clamped) clamped = true;
     }
 
@@ -177,16 +183,16 @@ export class EosAudioDspKernel {
     const throughputSamplesSec = Math.round(totalSamplesProcessed / (durationSec || 0.00001));
     const realTimeSpeedFactor = Math.round(throughputSamplesSec / 44100);
 
-    // Compute final true peak
+    // Compute final sample peak
     let maxVal = 0;
     for (let i = 0; i < buffer.length; i++) {
       const a = Math.abs(buffer[i]);
       if (a > maxVal) maxVal = a;
     }
-    const truePeakOutputDb = Number((20 * Math.log10(maxVal || 0.0001)).toFixed(2));
+    const samplePeakOutputDbfs = Number((20 * Math.log10(maxVal || 0.0001)).toFixed(2));
 
     const proof = crypto.createHash("sha256")
-      .update(`${totalSamplesProcessed}:${throughputSamplesSec}:${truePeakOutputDb}`)
+      .update(`${totalSamplesProcessed}:${throughputSamplesSec}:${samplePeakOutputDbfs}`)
       .digest("hex");
 
     return {
@@ -195,7 +201,7 @@ export class EosAudioDspKernel {
       totalSamplesProcessed,
       throughputSamplesSec,
       realTimeSpeedFactor,
-      truePeakOutputDb,
+      samplePeakOutputDbfs,
       limiterClamped: clamped,
       durationUs,
       sha256Proof: proof

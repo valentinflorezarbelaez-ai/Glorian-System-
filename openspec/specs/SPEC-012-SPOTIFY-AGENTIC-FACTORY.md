@@ -1,12 +1,17 @@
-# OPENSPEC BASE SPECIFICATION: SPOTIFY AGENTIC SDLC FACTORY (SPEC-012)
+# BASE SPECIFICATION: LOCAL SDLC PLANNING TOOLS (SPEC-012)
 
-## 1. Scope
-Governs the autonomous "Zero-Touch Development" agentic software lifecycle modeled after Spotify's engineering factory: Honk (background headless coding & healing loop), Xirp (architecture context anchoring protocol via Backstage & ADRs), Fleetshift (mass multi-repo migration engine), and Progressive Canary Confidence rollouts.
+## 1. Scope and capability status
+The Spotify names are design references, not vendor integrations. This specification describes the current local planning and template features. EOS does not implement a model-driven coding agent, background healing loop, fleet-wide codemod runner, or production canary controller.
 
 ## 2. Requirements (EARS)
-- **UBIQUITOUS**: THE SYSTEM SHALL maintain Layer-0 architectural purity with zero runtime dependencies (`dependencies: {}`), delivering high-speed deterministic execution across Rust, Go, Java, and TypeScript stacks.
-- **EVENT-DRIVEN**: WHEN an autonomous coding directive or issue trigger is dispatched, THE HONK ENGINE SHALL initialize an ephemeral worktree branch, generate code against formal specifications, execute the compile/test verification loop (`cargo test`, `go test`, or `npm test`), and open an autonomous Pull Request with structured evidence.
-- **STATE-DRIVEN**: WHILE contextualizing agent prompts and IDE sidecars, THE XIRP ENGINE SHALL programmatically compile unified `AGENTS.md` / `CLAUDE.md` context packets derived from Backstage `catalog-info.yaml`, OpenAPI/gRPC schemas, and ADR records to eliminate hallucinations.
-- **EVENT-DRIVEN**: WHEN a fleet-wide migration command is invoked, THE FLEETSHIFT ENGINE SHALL execute atomic codemod upgrades across all registered fleet repositories concurrently, validating syntax and committing signed change receipts.
-- **UBIQUITOUS**: THE CONFIDENCE CANARY ENGINE SHALL generate declarative Flagger and Argo Rollouts canary manifests with automated fail-closed Prometheus metric guardrails ($P_{99} < 100\text{ ms}$, error rate $< 0.1\%$).
-- **ERROR/UNWANTED**: IF any test fails during the Honk execution loop, THEN THE HONK ENGINE SHALL isolate the failing assertion, execute autonomous AST remediation, and re-verify up to a bounded iteration limit ($N=3$) before failing closed.
+- **UBIQUITOUS**: THE SYSTEM SHALL run its local planning tools without external runtime package dependencies.
+- **EVENT-DRIVEN**: WHEN Honk receives a task description, THE SYSTEM SHALL validate bounded input, inspect local metadata and candidate paths, and return a plan-only report; it SHALL NOT edit source code, create a branch, execute project tests, or open a pull request.
+- **EVENT-DRIVEN**: WHEN Xirp context synchronization is explicitly requested, THE SYSTEM SHALL derive local context from repository metadata, label that metadata as untrusted, and report the files written.
+- **EVENT-DRIVEN**: WHEN Fleetshift receives a migration request, THE SYSTEM SHALL produce a local plan by default. Its only current disk action is creation of a missing catalog file for one selected registered Git checkout whose `origin` matches the local registry, after explicit opt-in.
+- **EVENT-DRIVEN**: WHEN a canary manifest is requested, THE SYSTEM SHALL generate a local data artifact; it SHALL NOT deploy a release, query production telemetry, or claim rollout verification.
+- **UBIQUITOUS**: THE SYSTEM SHALL describe command and MCP results according to their actual local scope and SHALL distinguish planning from execution.
+
+## 3. Invariants
+- A generated task plan is not autonomous code generation or verification evidence.
+- Static file inventories do not establish a dependency audit, fleet migration, or production health.
+- Local manifest generation does not configure or control Flagger, Argo Rollouts, or a production cluster.

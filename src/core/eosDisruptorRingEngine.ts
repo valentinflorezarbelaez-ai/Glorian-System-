@@ -1,13 +1,13 @@
 /**
- * EOS SYSTEM — LMAX DISRUPTOR LOCK-FREE RING BUFFER & SPEED ENGINE (Layer 0)
+ * EOS SYSTEM — Disruptor-style typed-array ring and local benchmark (Layer 0)
  * Governed by ADR-029, SPEC-022, FR-052 & BDD-052
  *
- * Implements extreme performance and nanosecond latency:
- * 1. LMAX Disruptor Circular Ring Buffer with Power-of-2 capacity and bitwise masking.
- * 2. 64-Byte Cache Line Padded Sequencers preventing multi-core false sharing.
- * 3. Zero-Allocation in-memory event publishing & consuming (> 10,000,000 events/sec, 0 B/op).
- * 4. SIMD-Style 64-Byte Chunk Structural Delimiter Byte Scanner (> 1,500 MB/sec).
- * 5. Cryptographic SHA-256 Merkle attestation of nanosecond telemetry.
+ * This is a single-threaded JavaScript demonstration, not a concurrent Disruptor:
+ * 1. A typed-array event ring with power-of-two capacity and bitwise masking.
+ * 2. A sequencer cursor placed after a 64-byte prefix in its backing buffer.
+ * 3. Elapsed-time measurements for a JavaScript loop; heap and cache behavior are not measured.
+ * 4. An eight-way-unrolled JavaScript delimiter scan; no SIMD instructions are invoked.
+ * 5. SHA-256 result fingerprints; these are not signatures, proofs, or attestations.
  *
  * Zero external runtime dependencies.
  */
@@ -29,22 +29,22 @@ export interface DisruptorBenchmarkReport {
   readonly nanosecondsPerEvent: number;
   readonly eventsPerSecond: number;
   readonly megaEventsPerSecond: number;
-  readonly zeroAllocationVerified: boolean;
-  readonly falseSharingPadded: boolean;
-  readonly sha256Proof: string;
+  readonly heapAllocationMeasurement: "NOT_MEASURED";
+  readonly cursorPaddingConfigured: true;
+  readonly resultFingerprintSha256: string;
 }
 
 export interface ByteScanBenchmarkReport {
   readonly totalBytesScanned: number;
   readonly structuralDelimitersFound: number;
   readonly durationUs: number;
-  readonly throughputMbSec: number;
-  readonly chunkSizeBytes: 64;
-  readonly sha256Proof: string;
+  readonly throughputMiBPerSecond: number;
+  readonly unrolledWidthBytes: 8;
+  readonly resultFingerprintSha256: string;
 }
 
 /**
- * LMAX Disruptor-style Ring Buffer with power-of-2 capacity and direct ArrayBuffer storage.
+ * Single-threaded Disruptor-style ring with power-of-two capacity and ArrayBuffer storage.
  */
 export class LmaxDisruptorRingBuffer {
   public readonly capacity: number;
@@ -54,13 +54,16 @@ export class LmaxDisruptorRingBuffer {
   private readonly rawBuffer: ArrayBuffer;
   private readonly slotView: Float64Array;
 
-  // 64-byte Cache-Line Padded Sequencer Cursor to eliminate false-sharing
-  // Index 8 of Float64Array is byte offset 64, isolated from adjacent lines
+  // Place the cursor at byte offset 64 in a 128-byte backing buffer.
+  // This layout alone does not establish cross-thread isolation.
   private readonly sequencerBuffer: ArrayBuffer;
   private readonly cursorView: BigInt64Array;
   private static readonly CURSOR_PADDED_INDEX = 8;
 
   constructor(powerOfTwoExponent = 12) {
+    if (!Number.isInteger(powerOfTwoExponent) || powerOfTwoExponent < 1 || powerOfTwoExponent > 20) {
+      throw new RangeError("Ring capacity exponent must be an integer between 1 and 20.");
+    }
     this.capacity = 1 << powerOfTwoExponent; // Default 4096 slots
     this.mask = this.capacity - 1;
 
@@ -75,14 +78,12 @@ export class LmaxDisruptorRingBuffer {
     this.cursorView[LmaxDisruptorRingBuffer.CURSOR_PADDED_INDEX] = 0n;
   }
 
-  /**
-   * Hot-path lock-free event publish: advances sequencer and writes contiguous slot in < 50 ns.
-   */
+  /** Publishes one event in this instance's single-threaded ring. */
   public publish(eventCode: number, payloadA: number, payloadB: number, timestamp = 0): bigint {
     const nextSeq = this.cursorView[LmaxDisruptorRingBuffer.CURSOR_PADDED_INDEX]++;
     const slotIndex = (Number(nextSeq) & this.mask) * 4;
 
-    this.slotView[slotIndex] = timestamp || 1792967000;
+    this.slotView[slotIndex] = timestamp;
     this.slotView[slotIndex + 1] = eventCode;
     this.slotView[slotIndex + 2] = payloadA;
     this.slotView[slotIndex + 3] = payloadB;
@@ -109,14 +110,17 @@ export class LmaxDisruptorRingBuffer {
   }
 
   /**
-   * High-precision benchmark executing N publish and consume operations with zero heap allocation.
+   * Measures elapsed time for N publish/read iterations; heap allocations are not measured.
    */
   public benchmarkThroughput(eventCount = 1_000_000): DisruptorBenchmarkReport {
+    if (!Number.isSafeInteger(eventCount) || eventCount < 1 || eventCount > 10_000_000) {
+      throw new RangeError("Event count must be an integer between 1 and 10,000,000.");
+    }
     const startNs = process.hrtime.bigint();
 
     for (let i = 0; i < eventCount; i++) {
       const seq = this.publish(i & 255, (i & 15) * 1.5, i * 0.01);
-      // Inline fast read (no allocation)
+      // Read the value directly without creating a RingSlotData object.
       const slotIndex = (Number(seq) & this.mask) * 4;
       const _readCode = this.slotView[slotIndex + 1];
     }
@@ -124,10 +128,10 @@ export class LmaxDisruptorRingBuffer {
     const elapsedNs = Number(process.hrtime.bigint() - startNs);
     const durationUs = elapsedNs / 1000;
     const nsPerEvent = Number((elapsedNs / eventCount).toFixed(2));
-    const eventsPerSec = Number(((eventCount / Math.max(1, elapsedNs)) * 1_000_000_000).toFixed(0));
+    const eventsPerSec = elapsedNs > 0 ? Number(((eventCount / elapsedNs) * 1_000_000_000).toFixed(0)) : 0;
     const megaEventsPerSec = Number((eventsPerSec / 1_000_000).toFixed(2));
 
-    const sha256Proof = crypto
+    const resultFingerprintSha256 = crypto
       .createHash("sha256")
       .update(`DISRUPTOR_BENCH:${eventCount}:${elapsedNs}:${megaEventsPerSec}`)
       .digest("hex");
@@ -139,16 +143,15 @@ export class LmaxDisruptorRingBuffer {
       nanosecondsPerEvent: nsPerEvent,
       eventsPerSecond: eventsPerSec,
       megaEventsPerSecond: megaEventsPerSec,
-      zeroAllocationVerified: true,
-      falseSharingPadded: true,
-      sha256Proof
+      heapAllocationMeasurement: "NOT_MEASURED",
+      cursorPaddingConfigured: true,
+      resultFingerprintSha256
     };
   }
 }
 
 /**
- * Zero-copy 64-byte cache line block scanner for fast JSON and structural telemetry delimiters.
- * Uses a branchless 256-byte Lookup Table (LUT) to eliminate branch mispredictions.
+ * Scans bytes in JavaScript using an eight-way-unrolled loop and a delimiter lookup table.
  */
 export class FastStructuralByteScanner {
   private static readonly DELIMITER_LUT = new Uint8Array(256);
@@ -164,7 +167,7 @@ export class FastStructuralByteScanner {
   }
 
   /**
-   * Scans a byte array in 64-byte chunks, extracting count of delimiters ({, }, [, ], ,, :) at > 1,500 MB/s.
+   * Counts JSON-like delimiters in the supplied byte array and returns observed elapsed time.
    */
   public scanDelimiters(bytes: Uint8Array): ByteScanBenchmarkReport {
     const startNs = process.hrtime.bigint();
@@ -197,27 +200,28 @@ export class FastStructuralByteScanner {
     const elapsedNs = Number(process.hrtime.bigint() - startNs);
     const durationUs = elapsedNs / 1000;
     const mbScanned = len / (1024 * 1024);
-    const seconds = Math.max(0.000001, elapsedNs / 1_000_000_000);
-    const throughputMbSec = Number((mbScanned / seconds).toFixed(2));
+    const throughputMiBPerSecond = elapsedNs > 0
+      ? Number((mbScanned / (elapsedNs / 1_000_000_000)).toFixed(2))
+      : 0;
 
-    const sha256Proof = crypto
+    const resultFingerprintSha256 = crypto
       .createHash("sha256")
-      .update(`SCAN_BENCH:${len}:${delimiterCount}:${throughputMbSec}`)
+      .update(`SCAN_BENCH:${len}:${delimiterCount}:${throughputMiBPerSecond}`)
       .digest("hex");
 
     return {
       totalBytesScanned: len,
       structuralDelimitersFound: delimiterCount,
       durationUs,
-      throughputMbSec,
-      chunkSizeBytes: 64,
-      sha256Proof
+      throughputMiBPerSecond,
+      unrolledWidthBytes: 8,
+      resultFingerprintSha256
     };
   }
 }
 
 /**
- * Master Disruptor & Speed Engine combining lock-free ring buffer and structural byte scanning.
+ * Combines the local ring loop and a scan of a synthetic byte buffer.
  */
 export class EosDisruptorRingEngine {
   private readonly ringBuffer: LmaxDisruptorRingBuffer;
@@ -231,9 +235,12 @@ export class EosDisruptorRingEngine {
   public runMasterSpeedBenchmark(events = 1_000_000, payloadBytes = 1_048_576): {
     disruptorReport: DisruptorBenchmarkReport;
     byteScanReport: ByteScanBenchmarkReport;
-    unifiedSpeedProof: string;
-    status: "APEX_SPEED_VERIFIED";
+    combinedFingerprintSha256: string;
+    status: "BENCHMARK_COMPLETED";
   } {
+    if (!Number.isSafeInteger(payloadBytes) || payloadBytes < 1 || payloadBytes > 256 * 1024 * 1024) {
+      throw new RangeError("Payload size must be an integer between 1 byte and 256 MiB.");
+    }
     const disruptorReport = this.ringBuffer.benchmarkThroughput(events);
 
     // Synthetic structured JSON payload buffer (1 MB)
@@ -245,16 +252,16 @@ export class EosDisruptorRingEngine {
 
     const byteScanReport = this.scanner.scanDelimiters(testBuffer);
 
-    const unifiedSpeedProof = crypto
+    const combinedFingerprintSha256 = crypto
       .createHash("sha256")
-      .update(`SPEED_SYNTHESIS:${disruptorReport.sha256Proof}:${byteScanReport.sha256Proof}`)
+      .update(`BENCHMARK_RESULTS:${disruptorReport.resultFingerprintSha256}:${byteScanReport.resultFingerprintSha256}`)
       .digest("hex");
 
     return {
       disruptorReport,
       byteScanReport,
-      unifiedSpeedProof,
-      status: "APEX_SPEED_VERIFIED"
+      combinedFingerprintSha256,
+      status: "BENCHMARK_COMPLETED"
     };
   }
 

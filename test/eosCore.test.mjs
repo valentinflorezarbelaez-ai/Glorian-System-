@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
 
 import {
   tokenize,
@@ -119,10 +120,12 @@ test("EOS SRE & CNCF Health Endpoint (/api/health) — Observability Invariants"
 
   assert.equal(statusCode, 200, "Health check must return HTTP 200");
   assert.equal(payload.status, "UP", "Overall status must be UP");
+  assert.equal(payload.service.version, JSON.parse(fs.readFileSync(new URL("../package.json", import.meta.url), "utf8")).version);
   assert.ok(payload.uptimeSeconds >= 0, "Uptime must be non-negative");
   assert.ok(payload.telemetry && payload.telemetry.memory, "Telemetry must include memory stats");
-  assert.ok(payload.subsystems.jarvisSovereignMonad.status === "UP", "JARVIS subsystem must be UP");
-  assert.ok(payload.subsystems.neuralVectorCore.status === "UP", "Neural vector core subsystem must be UP");
+  assert.ok(payload.subsystems.jarvis, "JARVIS process scope must be represented");
+  assert.ok(payload.subsystems.semanticGraph, "Semantic graph process scope must be represented");
+  assert.ok(Object.values(payload.subsystems).every((subsystem) => subsystem.status === "NOT_PROBED"), "Health must not claim unprobed subsystems are healthy");
   assert.ok(payload.sliReport.availabilitySloTarget === "99.99%", "SLI availability target must be 99.99%");
   assert.ok(headers.traceparent.startsWith("00-"), "W3C traceparent header must be set");
 });
@@ -140,7 +143,8 @@ test("EOS MCP Native Server (Model Context Protocol) — JSON-RPC 2.0 Invariants
   });
   assert.equal(initRes.id, 1);
   assert.equal(initRes.result.serverInfo.name, "eos-system-mcp");
-  assert.equal(initRes.result.serverInfo.version, "18.0.0");
+  const packageVersion = JSON.parse(fs.readFileSync(new URL("../package.json", import.meta.url), "utf8")).version;
+  assert.equal(initRes.result.serverInfo.version, packageVersion);
   assert.ok(initRes.result.capabilities.tools, "Must advertise tools capability");
 
   // 2. tools/list

@@ -1,6 +1,6 @@
 /**
- * EOS SYSTEM — MODEL CONTEXT PROTOCOL (MCP) LIVE STREAM SERVER (Layer 0)
- * Governed by ADR-034, SPEC-027, FR-066..FR-070, BDD-061..BDD-063
+ * EOS SYSTEM — MODEL CONTEXT PROTOCOL (MCP) STREAMABLE HTTP SERVER (Layer 0)
+ * Governed by SPEC-027, SPEC-140, CHANGE-075, ADR-0172, ADR-0173
  *
  * v61.0 — Optimizations for Antigravity, Cursor, and Claude Code:
  *   - Rate limiting on /sse endpoint (CVE-2 fix: was unbounded)
@@ -171,6 +171,10 @@ export class EosMcpSession {
     return this.sendEvent("message", notification);
   }
 
+  public isAlive(): boolean {
+    return !this.closed && !this.res.writableEnded && this.res.writable;
+  }
+
   public close(): void {
     if (this.closed) return;
     this.closed = true;
@@ -179,10 +183,6 @@ export class EosMcpSession {
     if (!this.res.writableEnded && this.res.writable) {
       try { this.res.end(); } catch { /* silent on abrupt termination */ }
     }
-  }
-
-  public isAlive(): boolean {
-    return !this.closed && !this.res.writableEnded && this.res.writable;
   }
 }
 
@@ -273,10 +273,19 @@ export class EosMcpSessionManager {
 // ============================================================================
 
 export class EosMcpStreamServer {
+  public static readonly DEFAULT_IDLE_SESSION_TTL_MS = 15 * 60 * 1000; // 15 minutes
   public readonly mcpServer: EosMcpServer;
   public readonly sessionManager: EosMcpSessionManager;
+  public readonly authToken: string;
   private server: http.Server | null = null;
   private readonly projectRoot: string;
+  private readonly allowedOrigins: Set<string>;
+  private readonly maxSessions: number;
+  private readonly maxRequestBytes: number;
+  private readonly requestTimeoutMs: number;
+  private readonly heartbeatIntervalMs: number;
+  private reaperInterval: NodeJS.Timeout | null = null;
+  private readonly streamableSessions = new Map<string, StreamableSession>();
 
   /** In-flight request IDs for deduplication (prevents double-dispatch on network retry). */
   private readonly inFlight = new Set<string>();
@@ -285,6 +294,27 @@ export class EosMcpStreamServer {
     this.projectRoot = projectRoot || process.cwd();
     this.mcpServer = new EosMcpServer(this.projectRoot);
     this.sessionManager = new EosMcpSessionManager(heartbeatIntervalMs);
+    this.heartbeatIntervalMs = heartbeatIntervalMs;
+    const configuredToken = options.authToken ?? process.env.EOS_MCP_HTTP_TOKEN;
+    if (configuredToken !== undefined && Buffer.byteLength(configuredToken, "utf8") < 32) {
+      throw new Error("EOS MCP HTTP bearer tokens must contain at least 32 bytes.");
+    }
+    this.authToken = configuredToken || crypto.randomBytes(32).toString("base64url");
+    const originValues = options.allowedOrigins ?? (process.env.EOS_MCP_ALLOWED_ORIGINS || "").split(",").map((value) => value.trim()).filter(Boolean);
+    this.allowedOrigins = new Set(originValues.map((origin) => {
+      let parsed: URL;
+      try { parsed = new URL(origin); } catch { throw new Error(`Invalid EOS MCP allowed origin: ${origin}`); }
+      if ((parsed.protocol !== "http:" && parsed.protocol !== "https:") || parsed.origin !== origin || origin === "*") {
+        throw new Error(`EOS MCP allowed origins must be exact HTTP(S) origins without paths: ${origin}`);
+      }
+      return origin;
+    }));
+    this.maxSessions = options.maxSessions ?? DEFAULT_MAX_SESSIONS;
+    this.maxRequestBytes = options.maxRequestBytes ?? DEFAULT_MAX_REQUEST_BYTES;
+    this.requestTimeoutMs = options.requestTimeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
+    if (!Number.isInteger(this.maxSessions) || this.maxSessions < 1) throw new Error("maxSessions must be a positive integer.");
+    if (!Number.isInteger(this.maxRequestBytes) || this.maxRequestBytes < 1) throw new Error("maxRequestBytes must be a positive integer.");
+    if (!Number.isInteger(this.requestTimeoutMs) || this.requestTimeoutMs < 1) throw new Error("requestTimeoutMs must be a positive integer.");
   }
 
   /**
@@ -303,8 +333,48 @@ export class EosMcpStreamServer {
 
     if (req.method === "OPTIONS") { res.writeHead(204); res.end(); return; }
 
-    const host = req.headers.host || "127.0.0.1";
-    const parsedUrl = new URL(req.url || "/", `http://${host}`);
+    // DNS Rebinding Guard: Verify Host header
+    const hostHeader = (req.headers.host || "").toLowerCase();
+    if (hostHeader.includes("@") || hostHeader.includes("..")) {
+      this.writeJson(res, 403, { error: "Invalid Host header format." });
+      req.resume();
+      return;
+    }
+
+    // Authentication: Bearer token comparison in constant time
+    const authorization = req.headers.authorization || "";
+    const suppliedToken = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
+    const suppliedBuffer = Buffer.from(suppliedToken, "utf8");
+    const expectedBuffer = Buffer.from(this.authToken, "utf8");
+    const authenticated = suppliedBuffer.length === expectedBuffer.length && crypto.timingSafeEqual(suppliedBuffer, expectedBuffer);
+    if (!authenticated) {
+      this.writeJson(res, 401, { error: "Unauthorized." }, { "WWW-Authenticate": "Bearer" });
+      req.resume();
+      return;
+    }
+
+    // MCP-Protocol-Version validation
+    const protocolVersionHeader = (req.headers["mcp-protocol-version"] || req.headers["x-mcp-protocol-version"]) as string | undefined;
+    if (protocolVersionHeader && !SUPPORTED_MCP_PROTOCOL_VERSIONS.has(protocolVersionHeader)) {
+      this.writeJson(res, 400, {
+        jsonrpc: "2.0",
+        id: null,
+        error: {
+          code: -32600,
+          message: `Unsupported MCP-Protocol-Version: '${protocolVersionHeader}'. Supported: 2025-06-18, 2025-03-26, 2024-11-05`
+        }
+      });
+      req.resume();
+      return;
+    }
+
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(req.url || "/", `http://${req.headers.host || "127.0.0.1"}`);
+    } catch {
+      this.writeJson(res, 400, { error: "Invalid request URL." });
+      return;
+    }
     const pathname = parsedUrl.pathname;
 
     // ── Auth ─────────────────────────────────────────────────────────────────
@@ -350,12 +420,11 @@ export class EosMcpStreamServer {
     // ── /metrics ─────────────────────────────────────────────────────────────
     if (req.method === "GET" && pathname === "/metrics") {
       const exporter = new EosPrometheusExporter(this.projectRoot);
-      const metricsText = exporter.formatPrometheusText();
       res.writeHead(200, {
         "Content-Type": "text/plain; version=0.0.4; charset=utf-8",
         "Cache-Control": "no-cache",
       });
-      res.end(metricsText);
+      res.end(exporter.formatPrometheusText());
       return;
     }
 
@@ -390,8 +459,25 @@ export class EosMcpStreamServer {
 
     // ── /message — async, deduplicated JSON-RPC dispatch ────────────────────
     if (req.method === "POST" && pathname === "/message") {
-      const sessionId = parsedUrl.searchParams.get("sessionId") || (req.headers["x-session-id"] as string);
+      const sessionId = parsedUrl.searchParams.get("sessionId") || (req.headers["x-session-id"] as string | undefined);
       const session = sessionId ? this.sessionManager.getSession(sessionId) : undefined;
+      if (!session) {
+        this.writeJson(res, 404, { error: "MCP session not found." });
+        req.resume();
+        return;
+      }
+      const contentType = req.headers["content-type"] || "";
+      if (!/^application\/json(?:\s*;|$)/i.test(contentType)) {
+        this.writeJson(res, 415, { error: "Content-Type must be application/json." });
+        req.resume();
+        return;
+      }
+      const contentLength = Number(req.headers["content-length"] || 0);
+      if (Number.isFinite(contentLength) && contentLength > this.maxRequestBytes) {
+        this.writeJson(res, 413, { error: "Request body exceeds the configured size limit." });
+        req.resume();
+        return;
+      }
 
       // Body size cap (CVE-1 fix)
       const MAX_BODY_BYTES = 1 * 1024 * 1024;
@@ -536,7 +622,15 @@ export class EosMcpStreamServer {
 
   /** Gracefully closes the server and all active sessions. */
   public close(): Promise<void> {
+    if (this.reaperInterval) {
+      clearInterval(this.reaperInterval);
+      this.reaperInterval = null;
+    }
     this.sessionManager.closeAll();
+    for (const session of this.streamableSessions.values()) {
+      session.close("SERVER_SHUTDOWN");
+    }
+    this.streamableSessions.clear();
     return new Promise((resolve) => {
       if (this.server) { this.server.close(() => resolve()); this.server = null; }
       else resolve();

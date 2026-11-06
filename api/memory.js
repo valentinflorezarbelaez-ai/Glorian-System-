@@ -2,13 +2,10 @@ import { createHash } from "node:crypto";
 
 /**
  * ============================================================================
- * EOS AKASHIC MEMORY & GENTLEMAN-SAMAELIAN SERVERLESS API (/api/memory)
+ * EOS AKASHIC MEMORY DEMONSTRATION API (/api/memory)
  * ============================================================================
- * Zero-dependency Layer-0 Serverless Endpoint providing:
- *   - mem_context, mem_search (FTS5 all/any), mem_save (topic_key upsert),
- *   - mem_judge & mem_compare (Anubic Tribunal of 42 Judges),
- *   - mem_session_summary, mem_doctor, mem_suggest_topic_key,
- *   - odd_route & rdd_review (Gentle-AI ODD + 4R RDD parity & elevation).
+ * Serves static seed records and previews actions. This stateless endpoint
+ * does not persist data, run FTS5, or execute a tribunal.
  * ============================================================================
  */
 
@@ -37,16 +34,16 @@ const GENESIS_AKASHIC_OBSERVATIONS = [
     project: "eos-system",
     scope: "global",
     type: "architecture",
-    title: "Bóveda de Memoria Akáshica Soberana L0 (Superación de Engram & Gentle-AI)",
+    title: "Ejemplo: propuesta de almacenamiento de observaciones",
     topic_key: "architecture/eos-akashic-memory-l0",
     samaelianFactor: "NACER",
     sephirah: "Daath (Gnosis / Conocimiento Akáshico)",
     pinned: true,
     version_count: 1,
-    what: "Integración nativa de las 27 herramientas MCP de Engram + ODD/RDD 4R de Gentle-AI en el núcleo L0 de EOS con firma Merkle SHA-256.",
-    why: "Para que EOS posea su propio Átomo Nous y Registro Akáshico inmutable sin depender de binarios externos sin firma criptográfica.",
-    where: "src/core/eosAkashicMemory.ts, api/memory.js, index.html (#memoria-akashica), js/eos.js",
-    learned: "Cada recuerdo se clasifica en los Tres Factores (MORIR, NACER, SACRIFICIO) y los conflictos se juzgan en el Tribunal de Anubis (mem_judge).",
+    what: "Idea de guardar observaciones con un identificador estable y campos de contexto.",
+    why: "Explorar cómo conservar decisiones útiles entre sesiones.",
+    where: "Fixture de demostración en /api/memory.",
+    learned: "Este registro es un ejemplo estático; la API no implementa persistencia ni revisión de conflictos.",
     created_at: "2026-10-25T02:35:00Z"
   },
   {
@@ -54,16 +51,16 @@ const GENESIS_AKASHIC_OBSERVATIONS = [
     project: "eos-system",
     scope: "project",
     type: "pattern",
-    title: "Los 5 Secretos de los Softwares Más Rápidos del Mundo (Nanosegundos & Caché L1 SoA)",
+    title: "Ejemplo: propuesta de medición de estructuras de datos",
     topic_key: "pattern/five-nanosecond-secrets-soa",
     samaelianFactor: "NACER",
     sephirah: "Netzach (Mente Solar · Arquitectura)",
     pinned: true,
     version_count: 2,
-    what: "Implementación de Kernel Bypass, Struct of Arrays (SoA) en 64KB de Caché L1 (0.5ns), Zero-Allocation Arena (0 GC), Lock-Free CAS y SIMD/GPU 120 FPS.",
-    why: "Alcanzar la velocidad extrema de Citadel HFT (<100ns), kdb+, Zed GPUI (120 FPS), TigerBeetle y Bun.",
-    where: "src/core/eosNanosecondEngine.ts, api/compile.js, index.html (#nanosecond-engine)",
-    learned: "Un ArrayBuffer contiguo de 64 KB alineado a 64 bytes elimina el pointer-chasing de OOP y corre a >1,500 millones de ops/s sin pausas de GC.",
+    what: "Idea de comparar arreglos de estructuras y estructuras de arreglos con una carga de trabajo declarada.",
+    why: "Separar hipótesis de optimización de resultados medidos.",
+    where: "Fixture de demostración en /api/memory.",
+    learned: "No se adjuntan mediciones, hardware ni una reproducción del benchmark.",
     created_at: "2026-10-25T02:15:00Z"
   },
   {
@@ -71,16 +68,16 @@ const GENESIS_AKASHIC_OBSERVATIONS = [
     project: "aberamentho-pleroma",
     scope: "project",
     type: "bugfix",
-    title: "Sello Definitivo v8.0: Reproductor In-App de Canciones Completas & Perfect Music",
+    title: "Ejemplo: observación de una corrección de interfaz",
     topic_key: "bugfix/aberamentho-v8-inapp-full-track-player",
     samaelianFactor: "MORIR",
     sephirah: "Geburah (Rigor de la Ley · Tribunal de Anubis)",
     pinned: true,
     version_count: 3,
-    what: "Construcción de #inapp-full-player + /api/playlist-tracks + /api/resolve-full-track y bloqueo en <head> de Perfect Music (5IiquGZEbovPj9B8IdG0bi).",
-    why: "El iframe móvil de Spotify restringía a 30s por DRM Widevine y localStorage guardaba un ID antiguo en PC.",
-    where: "Aberamentho/index.html, Aberamentho/api/index.ts, Aberamentho/src/audio/playlist-vault.js",
-    learned: "Purgar caches antiguos en <head> antes de hidratar módulos ES y resolver el audio completo desde el backend elimina el límite de 30s sin salir de la app.",
+    what: "Ejemplo de registro de un cambio de interfaz y una observación asociada.",
+    why: "Ilustrar la forma de un registro local.",
+    where: "Fixture de demostración en /api/memory.",
+    learned: "No se verificó un producto externo ni se realizó una reproducción de audio.",
     created_at: "2026-10-25T02:05:00Z"
   },
   {
@@ -88,111 +85,130 @@ const GENESIS_AKASHIC_OBSERVATIONS = [
     project: "eos-system",
     scope: "global",
     type: "decision",
-    title: "Enrutamiento Proporcional ODD Solar y Revisión Congelada RDD de las 4R Crísticas",
+    title: "Ejemplo: propuesta de revisión de cambios",
     topic_key: "decision/odd-proportional-and-rdd-4r-review",
     samaelianFactor: "SACRIFICIO",
     sephirah: "Tiphereth (Alma Humana · Voluntad Thelema)",
     pinned: false,
     version_count: 1,
-    what: "Adopción superada de Organic Driven Development (ODD) y Receipt-Driven Development (RDD 4R: Risk, Resilience, Readability, Reliability).",
-    why: "Mantener el trabajo pequeño ágil (inline) y congelar criptográficamente el candidato antes de auditar tareas de alto riesgo.",
-    where: "src/core/eosAkashicMemory.ts, docs/specs/spec.md (FR-013)",
-    learned: "Delegar subagentes solo por 4 razones verificables (Exploration, Parallel Writers, Context Backstop, Independent Verifier) reduce tiempos y preserva el contexto.",
+    what: "Idea de revisar un cambio desde riesgo, resiliencia, legibilidad y confiabilidad.",
+    why: "Hacer visibles varios criterios antes de una revisión técnica.",
+    where: "Fixture de demostración en /api/memory.",
+    learned: "El registro no demuestra que se ejecutó una revisión ni que se delegó trabajo.",
     created_at: "2026-10-25T02:36:00Z"
   }
-].map((obs, idx, arr) => {
-  const prev = idx === 0 ? "0".repeat(64) : computeSha256(JSON.stringify(arr[idx - 1]));
-  const merkleHash = computeSha256(`${prev}:${obs.topic_key}:${obs.what}:${obs.why}`);
-  return { ...obs, prevMerkleHash: prev, merkleHash };
-});
+].map((observation) => ({
+  ...observation,
+  sha256Fingerprint: `sha256:${computeSha256(JSON.stringify(observation))}`
+}));
 
 export default function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader("Cache-Control", "public, max-age=0, s-maxage=30, stale-while-revalidate=120");
+  res.setHeader("Cache-Control", "no-store");
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  let body = {};
-  if (req.method === "POST" && req.body) {
-    body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body;
+  if (req.method !== "GET" && req.method !== "POST") {
+    res.setHeader("Allow", "GET, POST, OPTIONS");
+    return res.status(405).json({ status: "METHOD_NOT_ALLOWED" });
   }
 
-  const action = String(
-    body.action || (req.query && req.query.action) || "mem_context"
-  ).trim();
-  const query = String(
-    body.query || (req.query && req.query.q) || ""
-  ).trim().toLowerCase();
+  let body = {};
+  if (req.method === "POST" && req.body) {
+    try {
+      body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body;
+    } catch {
+      return res.status(400).json({ status: "INVALID_JSON" });
+    }
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return res.status(400).json({ status: "INVALID_BODY" });
+    }
+    if (Buffer.byteLength(JSON.stringify(body), "utf8") > 16 * 1024) {
+      return res.status(413).json({ status: "BODY_TOO_LARGE", maxBytes: 16 * 1024 });
+    }
+  }
+
+  const actionValue = body.action || (req.query && req.query.action) || "mem_context";
+  const queryValue = body.query || (req.query && req.query.q) || "";
+  if (typeof actionValue !== "string" || actionValue.length > 40) {
+    return res.status(400).json({ status: "INVALID_ACTION" });
+  }
+  if (typeof queryValue !== "string" || queryValue.length > 256) {
+    return res.status(400).json({ status: "QUERY_TOO_LONG", maxLength: 256 });
+  }
+  const action = actionValue.trim();
+  const query = queryValue.trim().toLowerCase();
 
   if (action === "mem_doctor") {
-    const seal = computeSha256(`EOS_AKASHIC_DOCTOR:${Date.now()}`);
+    const snapshotSha256 = computeSha256(JSON.stringify({ fixtureCount: GENESIS_AKASHIC_OBSERVATIONS.length }));
     return res.status(200).json({
-      status: "HEALTHY_AKASHIC_STORE",
-      engine: "EOS Akashic Memory Engine v5.0 (Layer-0 Zero-Deps + Merkle SHA-256)",
-      engramParity: "27/27 MCP Tools Active + Gentle-AI ODD/RDD 4R Integrated",
+      status: "CAPABILITY_SNAPSHOT",
+      persistenceAvailable: false,
+      checksRun: false,
       capabilities: {
-        runtime_session_resolution: true,
-        startup_verified_store_v1: true,
-        fts5_inverted_index: true,
-        anubic_conflict_tribunal: true,
-        merkle_sha256_chain: true
+        staticSeedData: true,
+        serverSidePersistence: false,
+        sqliteFts5: false,
+        tribunalExecution: false
       },
-      orphanLinksDetected: 0,
-      sha256Seal: seal
+      snapshotSha256: `sha256:${snapshotSha256}`
     });
   }
 
   if (action === "mem_save") {
-    const title = String(body.title || "Observación Akáshica Soberana").trim();
-    const type = String(body.type || "architecture").trim();
-    const topic_key = String(body.topic_key || suggestTopicKey(type, title)).trim();
-    const what = String(body.what || body.content || "Decisión arquitectónica registrada en el Átomo Nous.").trim();
-    const why = String(body.why || "Preservar continuidad de conciencia entre sesiones sin deriva.").trim();
-    const where = String(body.where || "src/core/eosAkashicMemory.ts").trim();
-    const learned = String(body.learned || "Cero Vibe Coding: toda verdad queda sellada con SHA-256.").trim();
-    const merkleHash = computeSha256(`${topic_key}:${title}:${what}:${why}:${where}:${learned}`);
+    const fields = ["title", "type", "topic_key", "what", "content", "why", "where", "learned"];
+    if (fields.some((field) => body[field] !== undefined && (typeof body[field] !== "string" || body[field].length > 4096))) {
+      return res.status(400).json({ status: "INVALID_OBSERVATION", error: "Observation fields must be strings up to 4096 characters." });
+    }
+    const title = (body.title || "").trim();
+    const type = (body.type || "architecture").trim();
+    const topic_key = (body.topic_key || suggestTopicKey(type, title || "preview")).trim();
+    const what = (body.what || body.content || "").trim();
+    const why = (body.why || "").trim();
+    const where = (body.where || "").trim();
+    const learned = (body.learned || "").trim();
+    const previewSha256 = computeSha256(JSON.stringify({ type, topic_key, title, what, why, where, learned }));
 
-    return res.status(201).json({
-      status: "SAVED_AND_MERKLE_SEALED",
+    return res.status(200).json({
+      status: "PREVIEW_ONLY",
+      persisted: false,
       action: "mem_save",
       observation: {
-        id: Date.now() % 100000,
-        project: body.project || "eos-system",
-        scope: body.scope || "project",
         type,
         title,
         topic_key,
         what,
         why,
         where,
-        learned,
-        samaelianFactor: type === "bugfix" ? "MORIR" : type === "session_summary" ? "SACRIFICIO" : "NACER",
-        merkleHash
+        learned
       },
-      judgment_required: false,
-      candidates: []
+      previewSha256: `sha256:${previewSha256}`,
+      note: "Nothing was saved here. Browser-local records are stored only in this user's localStorage."
     });
   }
 
   if (action === "mem_judge" || action === "mem_compare") {
-    const relation = String(body.relation || "supersedes");
-    const reasoning = String(
-      body.reasoning || body.reason || "La nueva observación expande el estándar con mayor rigor formal EARS y pruebas."
-    );
-    const sync_id = "rel-" + computeSha256(`${relation}:${reasoning}:${Date.now()}`).slice(0, 16);
+    const relation = typeof body.relation === "string" ? body.relation.slice(0, 100) : "supersedes";
+    const reasoningValue = body.reasoning || body.reason || "";
+    if (typeof reasoningValue !== "string" || reasoningValue.length > 4096) {
+      return res.status(400).json({ status: "INVALID_REASONING" });
+    }
     return res.status(200).json({
-      status: "JUDGED_BY_ANUBIC_TRIBUNAL",
-      sync_id,
+      status: "SIMULATION_ONLY",
+      judgmentExecuted: false,
       relation,
-      judgment_status: "judged",
-      confidence: Number(body.confidence || 0.99),
-      anubicTribunalSeal: "VERIFIED_BY_ANUBIS_AND_42_JUDGES",
-      reasoning
+      confidence: null,
+      reasoningPreview: reasoningValue,
+      note: "No tribunal or judge executed a review."
     });
+  }
+
+  if (!["mem_context", "mem_search", "mem_list", "mem_timeline", "mem_stats"].includes(action)) {
+    return res.status(400).json({ status: "UNSUPPORTED_ACTION" });
   }
 
   const results = query
@@ -203,15 +219,15 @@ export default function handler(req, res) {
       )
     : GENESIS_AKASHIC_OBSERVATIONS;
 
-  const rootMerkle = computeSha256(JSON.stringify(results.map((r) => r.merkleHash)));
+  const fixtureFingerprint = computeSha256(JSON.stringify(results.map((record) => record.sha256Fingerprint)));
 
   return res.status(200).json({
-    status: "OK",
-    engine: "EOS Sovereign Akashic Memory & ODD/RDD Engine v5.0",
+    status: "DEMO_FIXTURE",
+    persistenceAvailable: false,
     action,
     totalObservations: results.length,
-    engramToolsCount: 27,
-    rootMerkleSha256: rootMerkle,
+    fixtureSha256: `sha256:${fixtureFingerprint}`,
+    note: "Static sample records only. Fingerprints cover fixture content and do not prove origin, history, or a Merkle chain. No persistence, FTS5, or Engram tools are provided.",
     observations: results
   });
 }

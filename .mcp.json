@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/mcp.json",
+  "mcpServers": {
+    "glorian-system": {
+      "command": "node",
+      "args": [
+        "c:\\Users\\valen\\Eos-System\\src\\mcp\\eosMcpServer.ts"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "engram": {
+      "command": "C:\\Users\\valen\\AppData\\Local\\engram\\bin\\engram.exe",
+      "args": ["mcp"]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    }
+  }
+}

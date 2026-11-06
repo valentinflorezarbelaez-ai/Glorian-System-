@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { EosAudioDspKernel } from "../src/core/eosAudioDspKernel.ts";
 
-describe("EOS Sovereign Audio DSP Kernel & ITU-R BS.1770 Limiter Suite", () => {
+describe("Local Audio DSP Example", () => {
   const dsp = new EosAudioDspKernel();
 
   describe("Suite 1: Biquad IIR Filter Coefficients & Processing (BDD-043)", () => {
@@ -31,11 +31,11 @@ describe("EOS Sovereign Audio DSP Kernel & ITU-R BS.1770 Limiter Suite", () => {
     });
   });
 
-  describe("Suite 2: ITU-R BS.1770 Lookahead True Peak Limiter", () => {
-    it("clamps peaks that exceed -1.0 dBTP ceiling gracefully", () => {
+  describe("Suite 2: Sample-Peak Clamp", () => {
+    it("clamps samples that exceed the configured amplitude ceiling", () => {
       // Create a buffer with extreme overshoot (+3.0 dB, linear ~1.41)
       const buffer = new Float32Array([1.5, -1.8, 0.5, -0.2, 2.0]);
-      const result = dsp.applyTruePeakLimiterInPlace(buffer);
+      const result = dsp.applySamplePeakLimiterInPlace(buffer);
       assert.equal(result.clamped, true);
       assert.ok(result.maxPeakDb > 0.0);
 
@@ -52,7 +52,7 @@ describe("EOS Sovereign Audio DSP Kernel & ITU-R BS.1770 Limiter Suite", () => {
       assert.equal(bench.sampleRateHz, 44100);
       assert.ok(bench.throughputSamplesSec > 500000, `Expected > 500k samples/sec, got ${bench.throughputSamplesSec}`);
       assert.ok(bench.realTimeSpeedFactor > 10, `Expected > 10x real-time, got ${bench.realTimeSpeedFactor}x`);
-      assert.ok(bench.truePeakOutputDb <= 0.0);
+      assert.ok(bench.samplePeakOutputDbfs <= 0.0);
       assert.ok(bench.sha256Proof.length === 64);
     });
   });

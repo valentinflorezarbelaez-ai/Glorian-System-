@@ -11,6 +11,9 @@ To operate with institutional perfection at the level of Spotify R&D as document
 3. Automated progressive canary rollout gating with Prometheus fail-closed thresholds.
 4. Fleetshift mass-migration planning for multi-repository fleets.
 5. ITU-R BS.1770 audio loudness verification and True Peak ceiling limiting.
+6. **Authorization Platform product lens** (`docs/governance/SPOTIFY_AUTHORIZATION_PLATFORM_LENS.md`): creator/team/partner permissions as foundational Platform work (Artists → Music/Podcasts/Audiobooks) — reliability, security, RDBMS scale, and pragmatic backend trade-offs co-equal with Soundcheck theater.
+7. **Music Expression full-stack product lens** (`docs/governance/SPOTIFY_MUSIC_EXPRESSION_FULLSTACK_LENS.md`): artist→fan creative tools (Canvas, video, countdown, listening parties) on **Java + React/TypeScript + APIs** — dual-track index `docs/governance/SPOTIFY_CAREERS_DUAL_TRACK.md`.
+8. **Spotify-only Glorian North Star** (`docs/governance/GLORIAN_SPOTIFY_ONLY_NORTH_STAR.md`): Glorian’s optimization target is elevating Spotify-grade streaming for **user · artist · music** under Samaelian rigor; entire fleet held to Spotify-quality bars.
 
 ### Alternatives Considered & Rejected
 1. **Relying Only on Ad-hoc Audio Scripts**:

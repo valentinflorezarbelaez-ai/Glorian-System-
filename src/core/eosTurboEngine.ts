@@ -1,12 +1,11 @@
 /**
- * EOS SYSTEM — TURBO VERIFICATION ENGINE & NANOSECOND TELEMETRY (Layer 0)
+ * EOS SYSTEM — LOCAL REPOSITORY CHECKS (Layer 0)
  * Governed by ADR-020, FR-028, FR-029 & BDD-022, BDD-023
  *
- * Implements high-speed parallel verification, content-addressed in-memory caching,
- * and microsecond-level telemetry (process.hrtime.bigint()).
+ * Implements selected credential-pattern scanning, architecture checks, dependency
+ * inventory, and critical-file presence checks. Durations are local process timings.
  *
- * Delivers sub-350ms whole-project validation while maintaining 100% mathematical
- * precision and zero quality compromise.
+ * These checks do not certify production readiness, SAST coverage, an SBOM, or SLSA.
  *
  * Zero external runtime dependencies.
  */
@@ -15,14 +14,20 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-import { scanArchitecture } from "./eosArchitectureGuard.ts";
+import { clearArchitectureCache, scanArchitecture } from "./eosArchitectureGuard.ts";
 
 export interface CacheEntry {
-  readonly size: number;
-  readonly mtimeMs: number;
   readonly sha256: string;
+  readonly mtimeNs?: bigint;
+  readonly size?: number;
   readonly isClean: boolean;
   readonly findings: readonly string[];
+}
+
+interface InventoryHashCacheEntry {
+  readonly mtimeNs: bigint;
+  readonly size: number;
+  readonly sha256: string;
 }
 
 export interface StageTelemetry {
@@ -43,12 +48,13 @@ export interface TurboPipelineResult {
   readonly freshScans: number;
   readonly stages: readonly StageTelemetry[];
   readonly violations: readonly string[];
-  readonly epistemicState: "VERIFIED" | "FINDINGS_IDENTIFIED";
-  readonly sbomMerkleRoot: string;
+  readonly epistemicState: "LOCAL_CHECKS_PASSED" | "FINDINGS_IDENTIFIED";
+  readonly sourceInventoryDigest: string;
 }
 
-// In-Memory Content Addressed Cache (Process-Lifetime)
+// In-memory cache keyed by path and validated against nanosecond stat + content hash.
 const VERIFICATION_CACHE = new Map<string, CacheEntry>();
+const INVENTORY_HASH_CACHE = new Map<string, InventoryHashCacheEntry>();
 
 const SECRET_PATTERNS = [
   { name: "Live Stripe/OpenAI Key", regex: new RegExp("sk-" + "live-[0-9a-zA-Z]{16,}") },
@@ -63,47 +69,71 @@ const SECRET_PATTERNS = [
  */
 export function checkFileSecretsCached(filePath: string): { isClean: boolean; findings: string[]; fromCache: boolean } {
   try {
-    const stat = fs.statSync(filePath);
+    const stat = fs.statSync(filePath, { bigint: true });
     const cached = VERIFICATION_CACHE.get(filePath);
-
-    if (cached && cached.size === stat.size && cached.mtimeMs === stat.mtimeMs) {
+    if (cached && cached.mtimeNs === stat.mtimeNs && cached.size === Number(stat.size)) {
       return { isClean: cached.isClean, findings: [...cached.findings], fromCache: true };
     }
 
     const content = fs.readFileSync(filePath, "utf8");
     const sha256 = crypto.createHash("sha256").update(content, "utf8").digest("hex");
 
+    if (cached && cached.sha256 === sha256) {
+      VERIFICATION_CACHE.set(filePath, {
+        ...cached,
+        mtimeNs: stat.mtimeNs,
+        size: Number(stat.size)
+      });
+      return { isClean: cached.isClean, findings: [...cached.findings], fromCache: true };
+    }
+
     const findings: string[] = [];
     for (const pat of SECRET_PATTERNS) {
       if (pat.regex.test(content)) {
-        findings.push(`Plaintext secret detected in ${path.basename(filePath)} (${pat.name})`);
+        findings.push(`Configured credential pattern detected in ${path.basename(filePath)} (${pat.name})`);
       }
     }
 
     const isClean = findings.length === 0;
     VERIFICATION_CACHE.set(filePath, {
-      size: stat.size,
-      mtimeMs: stat.mtimeMs,
       sha256,
+      mtimeNs: stat.mtimeNs,
+      size: Number(stat.size),
       isClean,
       findings
     });
 
     return { isClean, findings, fromCache: false };
   } catch {
-    return { isClean: true, findings: [], fromCache: false };
+    return { isClean: false, findings: [`Could not read ${path.basename(filePath)} for the configured pattern scan`], fromCache: false };
   }
 }
 
 /**
- * Collects all project source files recursively, ignoring node_modules, .git, and transient build dirs.
+ * Collects all project source files recursively, ignoring node_modules, .git, .eos, and transient build dirs.
  */
 export function collectSourceFiles(dir: string, projectRoot: string = dir): string[] {
   const results: string[] = [];
   if (!fs.existsSync(dir)) return results;
 
-  const ignoredDirs = new Set(["node_modules", ".git", "dist", ".next", "_sandbox", ".turbo", "target"]);
-  const binaryExtensions = new Set([".exe", ".bin", ".dll", ".so", ".dylib", ".wasm", ".png", ".jpg", ".jpeg", ".ico", ".webp", ".pdf"]);
+  const ignoredDirs = new Set(["node_modules", ".git", ".eos", ".worktrees", "dist", ".next", "_sandbox", ".turbo", "target"]);
+  const binaryExtensions = new Set([
+    ".exe",
+    ".bin",
+    ".dll",
+    ".so",
+    ".dylib",
+    ".wasm",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".ico",
+    ".webp",
+    ".pdf",
+    ".sqlite",
+    ".sqlite-wal",
+    ".sqlite-shm"
+  ]);
 
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const entry of entries) {
@@ -123,7 +153,8 @@ export function collectSourceFiles(dir: string, projectRoot: string = dir): stri
 }
 
 /**
- * Executes a fast, parallel verification of all core architectural invariants.
+ * Runs four bounded local repository checks. Durations are observations from
+ * this process and do not represent complete security or release verification.
  */
 export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipelineResult {
   const startGlobal = process.hrtime.bigint();
@@ -133,7 +164,7 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
   const files = collectSourceFiles(projectRoot, projectRoot);
   const textFiles = files.filter((f) => /\.(ts|tsx|js|mjs|json|html|css|md)$/.test(f));
 
-  // --- Task A: Parallel SAST & Secret Scanner with Content Cache ---
+  // --- Task A: Configured credential-pattern scan with content cache ---
   const startStage1 = process.hrtime.bigint();
   let cacheHits = 0;
   let freshScans = 0;
@@ -156,16 +187,16 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
   const endStage1 = process.hrtime.bigint();
   const durStage1Us = Number((endStage1 - startStage1) / 1000n);
   stages.push({
-    stageId: "STAGE_1_SAST",
-    name: "SAST & Zero-Plaintext-Secrets (Content-Addressed)",
+    stageId: "STAGE_1_CREDENTIAL_PATTERNS",
+    name: "Configured credential-pattern scan (content-hash cache)",
     durationUs: durStage1Us,
     durationMs: Number((durStage1Us / 1000).toFixed(3)),
     status: stage1Violations.length === 0 ? "PASS" : "FAIL",
-    details: `${textFiles.length} files (${cacheHits} cached, ${freshScans} fresh). 0 secrets.`
+    details: `${cacheHits + freshScans} files scanned (${cacheHits} content-hash cache hits, ${freshScans} pattern scans). Configured patterns only.`
   });
   allViolations.push(...stage1Violations);
 
-  // --- Task B: Clean Hexagonal Boundary & Circular Invariant Guard ---
+  // --- Task B: Static architecture and cycle scan ---
   const startStage2 = process.hrtime.bigint();
   const archReport = scanArchitecture(path.join(projectRoot, "src"), projectRoot);
   const endStage2 = process.hrtime.bigint();
@@ -173,17 +204,17 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
 
   stages.push({
     stageId: "STAGE_2_ARCH",
-    name: "Clean/Hexagonal Layer & Circular Dependency Guard",
+    name: "Static architecture and circular-import scan",
     durationUs: durStage2Us,
     durationMs: Number((durStage2Us / 1000).toFixed(3)),
     status: archReport.isClean ? "PASS" : "FAIL",
-    details: `Scanned ${archReport.scannedFilesCount} files. Purity: ${archReport.architecturePurityScore}%. Cycles: ${archReport.circularDependencies.length}.`
+    details: `Scanned ${archReport.scannedFilesCount} files. Architecture score: ${archReport.architecturePurityScore}%. Cycles found: ${archReport.circularDependencies.length}. Static source analysis only.`
   });
   if (!archReport.isClean) {
     archReport.violations.forEach((v) => allViolations.push(`[${v.rule}] ${v.file}: ${v.details}`));
   }
 
-  // --- Task C: Layer-0 Zero-Dependencies & SLSA Merkle Hash ---
+  // --- Task C: runtime dependency check and source-file inventory digest ---
   const startStage3 = process.hrtime.bigint();
   let pkgClean = true;
   const pkgPath = path.join(projectRoot, "package.json");
@@ -196,25 +227,53 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
     }
   }
 
-  // Compute Fast Merkle Root
-  const merkleHasher = crypto.createHash("sha256");
+  // Hash sorted file paths, sizes, and content hashes. This is not a Merkle tree.
+  const inventoryHasher = crypto.createHash("sha256");
   for (const f of files.sort()) {
     const rel = path.relative(projectRoot, f).replace(/\\/g, "/");
-    if (rel.includes("node_modules") || rel.includes(".git")) continue;
-    const stat = fs.statSync(f);
-    merkleHasher.update(`${rel}:${stat.size}:${stat.mtimeMs}\n`);
+    if (rel.includes("node_modules") || rel.includes(".git") || rel.startsWith(".eos/")) continue;
+    // Skip ephemeral SQLite sidecars that can appear/disappear between readdir and stat.
+    if (rel.endsWith("-wal") || rel.endsWith("-shm") || rel.endsWith("-journal")) continue;
+    let stat: fs.Stats | fs.BigIntStats;
+    try {
+      stat = fs.statSync(f, { bigint: true });
+    } catch (err: any) {
+      if (err && (err.code === "ENOENT" || err.code === "UNKNOWN")) continue;
+      throw err;
+    }
+    const size = Number(stat.size);
+    const cachedInv = INVENTORY_HASH_CACHE.get(f);
+    const cachedVer = VERIFICATION_CACHE.get(f);
+    let fileSha256: string;
+    if (cachedInv && cachedInv.mtimeNs === stat.mtimeNs && cachedInv.size === size) {
+      fileSha256 = cachedInv.sha256;
+    } else if (cachedVer && cachedVer.mtimeNs === stat.mtimeNs && cachedVer.size === size) {
+      fileSha256 = cachedVer.sha256;
+      INVENTORY_HASH_CACHE.set(f, { mtimeNs: stat.mtimeNs, size, sha256: fileSha256 });
+    } else {
+      let bytes: Buffer;
+      try {
+        bytes = fs.readFileSync(f);
+      } catch (err: any) {
+        if (err && (err.code === "ENOENT" || err.code === "UNKNOWN")) continue;
+        throw err;
+      }
+      fileSha256 = crypto.createHash("sha256").update(bytes).digest("hex");
+      INVENTORY_HASH_CACHE.set(f, { mtimeNs: stat.mtimeNs, size: bytes.length, sha256: fileSha256 });
+    }
+    inventoryHasher.update(`${rel}:${size}:${fileSha256}\n`);
   }
-  const merkleRoot = `sha256:${merkleHasher.digest("hex")}`;
+  const sourceInventoryDigest = `sha256:${inventoryHasher.digest("hex")}`;
   const endStage3 = process.hrtime.bigint();
   const durStage3Us = Number((endStage3 - startStage3) / 1000n);
 
   stages.push({
-    stageId: "STAGE_3_SLSA_L0",
-    name: "Layer-0 Purity (0-Deps) & SLSA Merkle Root",
+    stageId: "STAGE_3_INVENTORY",
+    name: "Runtime dependency check & source-file inventory digest",
     durationUs: durStage3Us,
     durationMs: Number((durStage3Us / 1000).toFixed(3)),
     status: pkgClean ? "PASS" : "FAIL",
-    details: `0 runtime deps. Merkle Root: ${merkleRoot.slice(0, 24)}...`
+    details: `Declared runtime dependencies checked. Digest: ${sourceInventoryDigest.slice(0, 24)}... (not an SBOM or Merkle root).`
   });
 
   // --- Task D: Critical Assets & Semantic Structure ---
@@ -232,7 +291,7 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
   for (const rel of criticalFiles) {
     if (!fs.existsSync(path.join(projectRoot, rel))) {
       assetsClean = false;
-      allViolations.push(`Missing critical production asset: ${rel}`);
+      allViolations.push(`Required repository file is missing: ${rel}`);
     }
   }
   const endStage4 = process.hrtime.bigint();
@@ -240,11 +299,11 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
 
   stages.push({
     stageId: "STAGE_4_ASSETS",
-    name: "Critical Assets & PWA Invariant Integrity",
+    name: "Required file presence checks",
     durationUs: durStage4Us,
     durationMs: Number((durStage4Us / 1000).toFixed(3)),
     status: assetsClean ? "PASS" : "FAIL",
-    details: `${criticalFiles.length}/${criticalFiles.length} critical production assets verified.`
+    details: `${criticalFiles.filter((rel) => fs.existsSync(path.join(projectRoot, rel))).length}/${criticalFiles.length} required paths exist; file contents and runtime behavior were not verified.`
   });
 
   const endGlobal = process.hrtime.bigint();
@@ -261,8 +320,8 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
     freshScans,
     stages,
     violations: allViolations,
-    epistemicState: success ? "VERIFIED" : "FINDINGS_IDENTIFIED",
-    sbomMerkleRoot: merkleRoot
+    epistemicState: success ? "LOCAL_CHECKS_PASSED" : "FINDINGS_IDENTIFIED",
+    sourceInventoryDigest
   };
 }
 
@@ -271,4 +330,6 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
  */
 export function clearVerificationCache(): void {
   VERIFICATION_CACHE.clear();
+  INVENTORY_HASH_CACHE.clear();
+  clearArchitectureCache();
 }

@@ -1,7 +1,7 @@
 {
-  "name": "EOS System",
-  "short_name": "EOS System",
-  "description": "Engineering Operating System (EOS): Plano de Control Determinista, Arquitectura Hexagonal L0 (0-Deps), Orquestación Multi-Agente Xirp, Grafo MCP, Concurrencia en Go y Auditoría Criptográfica SHA-256.",
+  "name": "Glorian System",
+  "short_name": "Glorian",
+  "description": "Glorian System (formerly EOS System): Plano de Control Determinista, Arquitectura Hexagonal L0 (0-Deps), Orquestación Multi-Agente Xirp, Grafo MCP, Concurrencia en Go y Auditoría Criptográfica SHA-256.",
   "start_url": "/",
   "scope": "/",
   "id": "/",

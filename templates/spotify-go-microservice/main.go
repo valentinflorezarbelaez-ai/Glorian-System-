@@ -25,10 +25,10 @@ type RecommendResponse struct {
 
 // MetricsCollector stores lockless atomic counters for Prometheus scrape targets.
 type MetricsCollector struct {
-	TotalRequests     uint64
-	ActiveSessions    int64
-	LatencySumMicro   uint64
-	IdempotentHits    uint64
+	TotalRequests   uint64
+	ActiveSessions  int64
+	LatencySumMicro uint64
+	IdempotentHits  uint64
 }
 
 // IdempotencyStore manages banking-grade deduplication (Nubank / Spotify royalty accounting).

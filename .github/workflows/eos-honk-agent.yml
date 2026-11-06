@@ -1,77 +1,36 @@
-name: EOS Spotify Honk Autonomous Background Agent
+name: EOS Honk Local Plan
 
 on:
-  issue_comment:
-    types: [created]
   workflow_dispatch:
     inputs:
       task_directive:
-        description: 'Directive for Honk Autonomous Agent'
+        description: 'Task description for the local planner'
+        type: string
         required: true
-        default: 'Refactor audio ring buffer to zero-allocation SIMD kernel'
-      target_stack:
-        description: 'Target stack (rust | go | node | java)'
-        required: false
-        default: 'go'
+        default: 'Review the audio ring buffer design'
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
 
 jobs:
-  honk-agentic-loop:
-    name: "Spotify Honk Autonomous Coding & Self-Healing Loop"
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.comment.body, '@honk')
+  honk-plan:
+    name: "Generate a bounded local task plan"
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Checkout Repository with Full History
-        uses: actions/checkout@v4
+      - name: Checkout Repository without persisted credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          fetch-depth: 0
+          fetch-depth: 1
+          persist-credentials: false
 
       - name: Setup Node.js 22 LTS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "22"
 
-      - name: Setup Go 1.24
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.24"
-          check-latest: true
-
-      - name: Setup Rust Stable
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Synchronize Xirp Context & Backstage Catalogs
-        run: node bin/eos.mjs xirp sync
-
-      - name: Verify Go Microservice Concurrency & Memory Benchmarks (FinOps Shift-Left)
-        run: |
-          cd templates/spotify-go-microservice
-          go test -v -race -bench=. -benchmem .
-
-      - name: Execute Honk Autonomous Coding & Test Loop
-        id: honk_run
-        run: |
-          DIRECTIVE="${{ github.event.inputs.task_directive || github.event.comment.body }}"
-          node bin/eos.mjs honk dispatch --directive "$DIRECTIVE"
-
-      - name: Execute Sovereign Strict CI/CD SecDevOps Gate
-        run: npm run verify:strict
-
-      - name: Create or Update Autonomous Pull Request
+      - name: Generate a redacted local planning report
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          BRANCH_NAME="honk/autonomous-$(date +%s)"
-          git config --global user.name "spotify-honk-agent[bot]"
-          git config --global user.email "honk-agent@spotify.com"
-          git checkout -b "$BRANCH_NAME"
-          git add -A
-          git commit -m "feat(honk): autonomous zero-touch implementation [skip ci]" || echo "No changes to commit"
-          git push origin "$BRANCH_NAME"
-          gh pr create --title "feat(honk): Autonomous Zero-Touch Implementation" \
-                       --body "$(cat docs/evidence/HONK-PR-BODY.md || echo 'Autonomous Spotify Honk PR')" \
-                       --base main --head "$BRANCH_NAME" || echo "PR creation handled"
+          TASK_DIRECTIVE: ${{ inputs.task_directive }}
+        run: node bin/eos.mjs honk --redact-directive --quiet "$TASK_DIRECTIVE"

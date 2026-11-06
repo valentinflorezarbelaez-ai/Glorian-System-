@@ -133,14 +133,15 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
   });
 
   describe("Suite 4: Universal Project Auditor & Backstage RFC-42 (BDD-036)", () => {
-    it("audits active EOS System repository and certifies Backstage Golden Path", () => {
+    it("reports local catalog markers and inventory without standards certification", () => {
       const report = codex.auditUniversalProject(process.cwd());
-      assert.equal(report.isBackstageCompliant, true);
-      assert.ok(report.goldenPathScore >= 80, `Expected score >= 80, got ${report.goldenPathScore}`);
+      assert.equal(report.catalogInfoMarkersPresent, true);
+      assert.ok(report.localInventoryScore >= 50, `Expected local inventory score >= 50, got ${report.localInventoryScore}`);
       assert.equal(report.catalogInfoExists, true);
       assert.ok(report.catalogInfoDetails);
       assert.equal(report.catalogInfoDetails.kind, "Component");
-      assert.ok(typeof report.sha256Proof === "string" && report.sha256Proof.length === 64);
+      assert.equal(report.audioInventory.standardsChecked, false);
+      assert.ok(typeof report.resultFingerprintSha256 === "string" && report.resultFingerprintSha256.length === 64);
     });
   });
 
@@ -157,14 +158,15 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
   });
 
   describe("Suite 6: Chunked Audio Streaming & Lockless Ring Buffer Pipeline", () => {
-    it("streams 512KB audio chunks with 0% buffer underrun risk", () => {
+    it("copies synthetic 512KB blocks without claiming streaming reliability", () => {
       const report = codex.simulateAudioStreamingPipeline(8);
       assert.equal(report.chunkSizeKb, 512);
       assert.equal(report.totalChunksProcessed, 8);
       assert.equal(report.totalBytesStreamed, 8 * 512 * 1024);
-      assert.equal(report.bufferUnderrunRisk, 0.0);
-      assert.equal(report.prefetchHorizonChunks, 3);
-      assert.equal(report.locklessRingBufferVerified, true);
+      assert.equal(report.bufferUnderrunRiskPercent, null);
+      assert.equal(report.ringBufferCapacityChunks, 4);
+      assert.equal(report.locklessConcurrencyTested, false);
+      assert.equal(report.simulationOnly, true);
       assert.ok(report.throughputMbSec > 10, `Expected > 10 MB/s, got ${report.throughputMbSec}`);
     });
   });
@@ -189,9 +191,10 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
       assert.equal(manifest.squadName, "Search & Audio Intelligence Squad");
       assert.equal(manifest.tribe, "Search & Discovery Tribe");
       assert.equal(manifest.chapter, "Backend (Java/Python/Go)");
-      assert.ok(manifest.guilds.includes("AI Guild"));
-      assert.ok(manifest.timezoneOverlap.localTimezone.includes("Bogota"));
-      assert.ok(manifest.timezoneOverlap.targetHubs.some(h => h.includes("Stockholm")));
+      assert.equal(manifest.scope, "TEMPLATE_ONLY");
+      assert.deepEqual(manifest.guilds, []);
+      assert.equal(manifest.timezoneOverlap.localTimezone, "Not provided");
+      assert.deepEqual(manifest.timezoneOverlap.targetHubs, []);
     });
 
     it("synthesizes an asynchronous standup formatted for global Spotify squads", () => {
@@ -207,8 +210,9 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
       assert.equal(standup.yesterday.length, 2);
       assert.equal(standup.today.length, 2);
       assert.equal(standup.blockers[0], "None");
-      assert.ok(standup.markdown.includes("Spotify Async Daily Standup"));
-      assert.ok(standup.markdown.includes("Asynchronous Timezone Handoff"));
+      assert.equal(standup.scope, "DRAFT_ONLY");
+      assert.ok(standup.markdown.includes("Async Standup Draft"));
+      assert.ok(standup.markdown.includes("Handoff notes"));
     });
   });
 
@@ -223,11 +227,11 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
       assert.equal(postMortem.incidentId, "INC-SPOTIFY-902");
       assert.equal(postMortem.severity, "SEV-2 (Degraded Experience)");
       assert.equal(postMortem.durationMinutes, 18);
-      assert.equal(postMortem.fiveWhys.length, 5);
-      assert.ok(postMortem.actionItems.length >= 3);
-      assert.ok(postMortem.actionItems.every(a => ["P0", "P1", "P2"].includes(a.priority)));
-      assert.ok(postMortem.markdown.includes("Zero Blame"));
-      assert.equal(postMortem.sha256Proof.length, 64);
+      assert.equal(postMortem.templateOnly, true);
+      assert.equal(postMortem.fiveWhys.length, 0);
+      assert.equal(postMortem.actionItems.length, 0);
+      assert.ok(postMortem.markdown.includes("TEMPLATE ONLY"));
+      assert.equal(postMortem.resultFingerprintSha256.length, 64);
     });
   });
 
@@ -241,7 +245,9 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
       assert.equal(spec.experimentKey, "exp_gapless_crossfade_v1");
       assert.equal(spec.rolloutStages.length, 5);
       assert.equal(spec.rolloutStages[1].trafficPercentage, 1.0); // 1% Canary stage
-      assert.ok(spec.guardrails.some(g => g.autoRevert === true)); // Automated fail-closed
+      assert.equal(spec.scope, "TEMPLATE_ONLY");
+      assert.ok(spec.guardrails.length > 0);
+      assert.ok(spec.markdown.includes("not connected to monitoring"));
       assert.ok(spec.killSwitchFlag.includes("kill_switch_active"));
       assert.ok(spec.markdown.includes("Emergency Kill-Switch"));
     });
@@ -255,6 +261,7 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
         ownerSquad: "squad:playback-core"
       });
       assert.equal(pkg.serviceName, "audio-stream-normalizer");
+      assert.equal(pkg.templateOnly, true);
       assert.ok(pkg.files["catalog-info.yaml"]);
       assert.ok(pkg.files["catalog-info.yaml"].includes("apiVersion: backstage.io/v1alpha1"));
       assert.ok(pkg.files["catalog-info.yaml"].includes("kind: Component"));

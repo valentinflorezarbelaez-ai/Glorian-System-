@@ -46,23 +46,21 @@ export class EosApexProfiler {
     const coldMeanNs = coldSum / coldIters;
 
     // 2. Warmup & Hot Phase (Triggering TurboFan optimization)
-    const memBefore = process.memoryUsage().heapUsed;
-    const hotSamples = new Float64Array(hotIters);
-
-    for (let i = 0; i < hotIters; i++) {
-      const t0 = process.hrtime.bigint();
+    const warmupIters = Math.min(500, hotIters);
+    for (let i = 0; i < warmupIters; i++) {
       fn();
-      const t1 = process.hrtime.bigint();
-      hotSamples[i] = Number(t1 - t0);
     }
 
+    const memBefore = process.memoryUsage().heapUsed;
+    const t0Hot = process.hrtime.bigint();
+    for (let i = 0; i < hotIters; i++) {
+      fn();
+    }
+    const t1Hot = process.hrtime.bigint();
     const memAfter = process.memoryUsage().heapUsed;
     const heapDelta = Math.max(0, memAfter - memBefore);
     const allocPerOp = Number((heapDelta / hotIters).toFixed(3));
-
-    let hotSum = 0;
-    for (let i = 0; i < hotIters; i++) hotSum += hotSamples[i];
-    const hotMeanNs = hotSum / hotIters;
+    const hotMeanNs = Math.max(0.01, Number(t1Hot - t0Hot) / hotIters);
 
     // 3. JIT Speedup multiplier
     const speedup = hotMeanNs > 0 ? Number((coldMeanNs / hotMeanNs).toFixed(2)) : 1.0;

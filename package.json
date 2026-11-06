@@ -3,7 +3,14 @@
   "version": "61.0.0",
   "description": "EOS System v61.0 — Antigravity/Gemini MCP prompts+resources, SSE per-IP rate limit, request deduplication, async dispatch, idle session timeout, dynamic version, resources/read for all 5 URIs",
   "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
   "bin": {
+    "glorian": "./bin/eos.mjs",
     "eos": "./bin/eos.mjs"
   },
   "scripts": {
@@ -17,6 +24,21 @@
     "reconcile": "node bin/eos.mjs reconcile",
     "spotify": "node bin/eos.mjs spotify",
     "pts": "node bin/eos.mjs pts",
+    "sbom": "node bin/eos.mjs sbom",
+    "sbom:generate": "node scripts/eos-generate-sbom.mjs",
+    "tip-seal": "node scripts/eos-generate-sbom.mjs --tip-seal",
+    "fleet:cwv-static": "node scripts/verify-fleet-cwv-static.mjs",
+    "fleet:cwv-browser": "node scripts/verify-fleet-cwv-browser.mjs",
+    "slsa": "node bin/eos.mjs slsa",
+    "supply-chain:verify": "node scripts/verify-supply-chain.mjs",
+    "sapfix": "node bin/eos.mjs sapfix",
+    "cas": "node bin/eos.mjs cas",
+    "smt": "node bin/eos.mjs smt",
+    "swarm": "node bin/eos.mjs swarm",
+    "search": "node bin/eos.mjs search",
+    "coverage": "node scripts/run-coverage.mjs",
+    "packaging:verify": "node scripts/verify-packaging.mjs",
+    "mcp:verify": "node --test test/eosMcpSchemaValidator.test.mjs",
     "test": "node scripts/verify-cicd-pipeline.mjs",
     "typecheck": "node scripts/verify-typescript.mjs",
     "test:pts": "node bin/eos.mjs pts",
@@ -69,7 +91,7 @@
     "sol": "node bin/eos.mjs sol",
     "diary": "node bin/eos.mjs diary",
     "budget": "node bin/eos.mjs budget",
-    "formal": "node scripts/verify-formal-tla.mjs",
+    "simulate:models": "node scripts/verify-formal-tla.mjs",
     "jepsen": "node bin/eos.mjs jepsen",
     "vault": "node bin/eos.mjs vault",
     "datalog": "node bin/eos.mjs datalog",
@@ -86,10 +108,12 @@
     "verify:cwv": "node scripts/verify-cwv-budget.mjs",
     "verify:sri": "node scripts/verify-sri-integrity.mjs",
     "verify:strict": "node scripts/verify-cicd-pipeline.mjs",
+    "typecheck": "tsc --project tsconfig.typecheck.json",
     "cicd:gate": "node scripts/verify-cicd-pipeline.mjs",
     "ship:sovereign": "node scripts/ship-sovereign.mjs",
     "fleet:verify": "node scripts/fleet-autonomous-cicd.mjs",
     "fleet:ship": "node scripts/fleet-autonomous-cicd.mjs --ship",
+    "fleet:ship:all": "node scripts/fleet-autonomous-cicd.mjs --ship-all --confirm-fleet-ship=AUTHORIZED",
     "fleet:hooks": "node scripts/install-fleet-cicd-hooks.mjs",
     "jarvis": "node scripts/eos-jarvis-daemon.mjs",
     "jarvis:daemon": "node scripts/eos-jarvis-daemon.mjs --loop",
@@ -143,6 +167,10 @@
   },
   "engines": {
     "node": ">=22.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "7.0.2"
   },
   "author": "Valentín Flórez Arbeláez",
   "license": "MIT",

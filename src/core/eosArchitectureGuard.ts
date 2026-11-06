@@ -352,6 +352,18 @@ export function detectCircularDependencies(analyses: Map<string, FileAnalysis>):
   return cycles;
 }
 
+interface CachedFileAnalysis {
+  mtimeNs: bigint;
+  size: number;
+  analysis: FileAnalysis;
+}
+
+const ARCH_FILE_CACHE = new Map<string, CachedFileAnalysis>();
+
+export function clearArchitectureCache(): void {
+  ARCH_FILE_CACHE.clear();
+}
+
 /**
  * Recursively scans a target directory and validates architectural invariants.
  */
@@ -386,15 +398,30 @@ export function scanArchitecture(targetDir: string, projectRoot: string = proces
         const content = fs.readFileSync(fullPath, "utf8");
         const imports = extractImports(content, fullPath, projectRoot, aliasMap);
 
-        const analysis: FileAnalysis = {
-          filePath: fullPath,
-          relativeFilePath: relPath,
-          layer,
-          imports,
-          violations: []
-        };
+        const cached = stat ? ARCH_FILE_CACHE.get(fullPath) : undefined;
+        if (cached && stat && cached.mtimeNs === stat.mtimeNs && cached.size === Number(stat.size)) {
+          analysis = cached.analysis;
+        } else {
+          const content = fs.readFileSync(fullPath, "utf8");
+          const imports = extractImports(content, fullPath, projectRoot);
 
-        analysis.violations = validateLayerInvariants(analysis);
+          analysis = {
+            filePath: fullPath,
+            relativeFilePath: relPath,
+            layer,
+            imports,
+            violations: []
+          };
+
+          analysis.violations = validateLayerInvariants(analysis);
+          if (stat) {
+            ARCH_FILE_CACHE.set(fullPath, {
+              mtimeNs: stat.mtimeNs,
+              size: Number(stat.size),
+              analysis
+            });
+          }
+        }
         analyses.set(fullPath, analysis);
       }
     }

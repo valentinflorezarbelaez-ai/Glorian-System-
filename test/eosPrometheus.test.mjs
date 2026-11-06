@@ -62,7 +62,7 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
       assert.ok(types.includes("UBIQUITOUS"));
 
       const unwanted = ears.find((e) => e.type === "UNWANTED_CONDITION");
-      assert.ok(unwanted?.syntax.includes("fail-closed"));
+      assert.match(unwanted?.syntax || "", /^IF .* is invalid, THEN THE SYSTEM SHALL reject it according to the reviewed error contract\.$/);
     });
 
     it("synthesizes BDD GIVEN-WHEN-THEN scenarios", () => {

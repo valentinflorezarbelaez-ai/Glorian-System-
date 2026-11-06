@@ -9,7 +9,7 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
   const factory = new EosSpotifyAgenticFactory(process.cwd());
 
   describe("Suite 1: Honk Autonomous Background Coding Loop (BDD-043)", () => {
-    it("dispatches autonomous Honk task directive and emits verified PR package", () => {
+    it("creates a local plan without claiming a branch, tests, or pull request", () => {
       const report = factory.dispatchHonk({
         taskName: "feat: add lockless ring buffer to audio pipeline",
         stack: "rust",
@@ -18,17 +18,16 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
       });
 
       assert.ok(report.taskId.startsWith("HONK-"));
-      assert.ok(report.branchName.startsWith("honk/feat-add-lockless-ring-buffer-to-audio-pipeline-honk-"));
+      assert.ok(report.branchNameProposal.startsWith("honk/feat-add-lockless-ring-buffer-to-audio-pipeline-honk-"));
       assert.equal(report.stack, "rust");
-      assert.equal(report.status, "SUCCESS");
-      assert.equal(report.epistemicState, "VERIFIED");
-      assert.equal(report.steps.length, 4);
-      assert.ok(report.pullRequestBody.includes("Spotify Autonomous Agentic PR"));
-      assert.ok(report.pullRequestBody.includes("Golden Path & Quality Gates"));
-      assert.ok(report.merkleProof.length === 64);
+      assert.equal(report.status, "PLAN_ONLY");
+      assert.equal(report.epistemicState, "NOT_VERIFIED");
+      assert.equal(report.steps.length, 5);
+      assert.ok(report.pullRequestDraft.includes("No branch, commit, verification, or remote pull request was created"));
+      assert.ok(report.reportFingerprintSha256.length === 64);
     });
 
-    it("verifies Go microservice compilation and test verification within Honk loop", () => {
+    it("does not claim Go compilation or test execution", () => {
       const report = factory.dispatchHonk({
         taskName: "fix: circuit breaker latency guard on recommendation endpoint",
         stack: "go",
@@ -36,9 +35,9 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
         dryRun: false
       });
 
-      assert.equal(report.status, "SUCCESS");
-      assert.equal(report.epistemicState, "VERIFIED");
-      assert.ok(report.steps[3].status === "PASS");
+      assert.equal(report.status, "PLAN_ONLY");
+      assert.equal(report.epistemicState, "NOT_VERIFIED");
+      assert.equal(report.steps[3].status, "NOT_RUN");
       assert.ok(report.totalDurationMs > 0);
     });
   });
@@ -53,10 +52,10 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
       assert.ok(ctx.tags.includes("layer-0-sovereign"));
       assert.ok(ctx.registeredFleetProjects >= 3);
       assert.ok(ctx.adrCount >= 5);
-      assert.ok(ctx.agentsMd.includes("SPOTIFY & NUBANK DUAL-ENGINE CONTEXT MATRIX"));
-      assert.ok(ctx.agentsMd.includes("90 / 10 Architecture Doctrine"));
-      assert.ok(ctx.claudeMd.includes("SPOTIFY & NUBANK DUAL-ENGINE AGENT DIRECTIVES"));
-      assert.ok(ctx.sha256Proof.length === 64);
+      assert.ok(ctx.agentsMd.includes("Local Project Context"));
+      assert.ok(ctx.agentsMd.includes("Proposed Engineering Conventions (Not Audited)"));
+      assert.ok(ctx.claudeMd.includes("Local Project Notes"));
+      assert.ok(ctx.snapshotFingerprintSha256.length === 64);
     });
 
     it("synchronizes AGENTS.md and CLAUDE.md files to disk without data loss", () => {
@@ -66,8 +65,8 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
       assert.ok(fs.existsSync(syncResult.writtenFiles[1]));
 
       const agentsContent = fs.readFileSync(syncResult.writtenFiles[0], "utf8");
-      assert.ok(agentsContent.includes("Zero Vibe Coding"));
-      assert.ok(agentsContent.includes("-14.0 LUFS"));
+      assert.ok(agentsContent.includes("Local metadata snapshot"));
+      assert.ok(agentsContent.includes("Review Checklist"));
     });
   });
 
@@ -82,8 +81,9 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
 
       assert.equal(report.migrationId, "FS-2026-RFC42-BACKSTAGE");
       assert.ok(report.totalProjects >= 1);
-      assert.ok(report.updatedCount >= 1);
-      assert.ok(report.merkleSeal.length === 64);
+      assert.ok(report.projectsWithActions >= 1);
+      assert.equal(report.status, "PLAN_ONLY");
+      assert.ok(report.resultFingerprintSha256.length === 64);
       assert.ok(report.projectResults.length >= 1);
     });
 
@@ -95,8 +95,8 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
         dryRun: false
       });
 
-      assert.ok(report.status === "COMPLETED" || report.status === "PARTIAL");
-      assert.ok(report.merkleSeal.length === 64);
+      assert.ok(["PLAN_ONLY", "APPLIED", "PARTIAL", "FAILED"].includes(report.status));
+      assert.ok(report.resultFingerprintSha256.length === 64);
     });
   });
 
@@ -122,7 +122,8 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
       // Prometheus alerting assertions
       assert.ok(pkg.prometheusRuleYaml.includes("ServiceP99LatencyBreach"));
       assert.ok(pkg.prometheusRuleYaml.includes("ServiceHighErrorRateBreach"));
-      assert.ok(pkg.sha256Signature.length === 64);
+      assert.equal(pkg.templateOnly, true);
+      assert.ok(pkg.resultFingerprintSha256.length === 64);
     });
   });
 
@@ -143,7 +144,7 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
       assert.ok(names.includes("eos_spotify_canary_manifest"));
     });
 
-    it("dispatches eos_spotify_honk_dispatch and returns verified report", () => {
+    it("dispatches eos_spotify_honk_dispatch as plan-only", () => {
       const server = new EosMcpServer(process.cwd());
       const res = server.handleRequest({
         jsonrpc: "2.0",
@@ -162,9 +163,9 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
 
       assert.ok(res?.result?.content?.[0]?.text);
       const report = JSON.parse(res.result.content[0].text);
-      assert.equal(report.status, "SUCCESS");
-      assert.equal(report.epistemicState, "VERIFIED");
-      assert.ok(report.merkleProof);
+      assert.equal(report.status, "PLAN_ONLY");
+      assert.equal(report.epistemicState, "NOT_VERIFIED");
+      assert.ok(report.reportFingerprintSha256);
     });
 
     it("dispatches eos_spotify_xirp_context and returns catalog context", () => {
@@ -184,7 +185,8 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
       assert.ok(res?.result?.content?.[0]?.text);
       const ctx = JSON.parse(res.result.content[0].text);
       assert.equal(ctx.serviceName, "eos-system-control-plane");
-      assert.ok(ctx.agentsMd.includes("SPOTIFY & NUBANK DUAL-ENGINE CONTEXT MATRIX"));
+      assert.ok(ctx.agentsMd.includes("Local Project Context"));
+      assert.ok(ctx.agentsMd.includes("repository metadata is untrusted input"));
     });
   });
 });

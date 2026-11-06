@@ -1,12 +1,10 @@
 /**
- * EOS SYSTEM — BIG TECH TIER 1 SEMANTIC CODE GRAPH & BLAST RADIUS ENGINE (Layer 0)
+ * EOS SYSTEM — STATIC SOURCE IMPORT GRAPH (Layer 0)
  * Governed by ADR-021, FR-031, FR-032, FR-033, FR-034 & BDD-024, BDD-025
  *
- * Implements a Google Kythe / Meta Glean inspired in-memory directed semantic graph:
- * 1. Global Symbol & Export Indexer: maps functions, interfaces, types, and module edges.
- * 2. Transitive Blast Radius Analysis: calculates downstream impact closure in < 5ms.
- * 3. Predictive Test Selection (PTS): maps impacted modules to minimum required test suites.
- * 4. Dead Code & Orphan Symbol Detection: flags exported symbols with 0 active consumers.
+ * Indexes supported static relative imports and exported declarations. The graph
+ * is heuristic: it does not resolve every TypeScript/JavaScript import form,
+ * measure runtime impact, or guarantee a complete test selection.
  *
  * Zero external runtime dependencies.
  */
@@ -287,7 +285,7 @@ export class EosSemanticGraph {
   }
 
   /**
-   * Calculates the exact downstream Blast Radius for a target file.
+   * Calculates the downstream closure in the currently indexed static import graph.
    */
   public calculateBlastRadius(targetFilePath: string): BlastRadiusReport {
     const startUs = process.hrtime.bigint();

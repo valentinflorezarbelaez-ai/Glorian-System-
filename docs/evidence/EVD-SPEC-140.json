@@ -1,0 +1,48 @@
+{
+  "evidenceId": "EVD-SPEC-140",
+  "specRef": "SPEC-140",
+  "changeRef": "CHANGE-075",
+  "title": "Modern MCP Streamable HTTP Transport & Architectural Split",
+  "timestampIso": "2026-11-03T22:54:18.832Z",
+  "epistemicState": "VERIFIED",
+  "attestation": {
+    "mcpStreamableVersion": "2025-06-18",
+    "mcpBaselineVersion": "2025-03-26",
+    "mcpCompatVersion": "2024-11-05",
+    "layer0PurityRuntimeDeps": 0,
+    "architecturalSplit": "Stateless Serverless Edge (api/mcp.js) vs Stateful Persistent Local Daemon (src/mcp/eosMcpStreamServer.ts)",
+    "cryptoSessionBinding": "256-bit CSPRNG bound to token SHA-256 hash",
+    "sessionCapacityLru": 16,
+    "eventRingBufferCapacity": 100,
+    "lastEventIdReplayVerified": true,
+    "dnsRebindingHostProtection": true,
+    "payloadLimitBytes": 1048576,
+    "failClosedTamperRejection": true,
+    "strictEarsBddRatio": "140/140 (100%)",
+    "testSuite": "test/eosMcpStreamableHttp.test.mjs",
+    "bddScenariosVerified": [
+      "BDD-372",
+      "BDD-373",
+      "BDD-374",
+      "BDD-375",
+      "BDD-376"
+    ],
+    "suitesExecuted": 149,
+    "suitesPassed": 149,
+    "exitCode": 0,
+    "sarifPath": "docs/evidence/local-checks.sarif",
+    "sarifFile": "docs/evidence/local-checks.sarif",
+    "sarifErrorCount": 0,
+    "sbomFileSha256": "f7320f07e5a21acbf8e01e0a7a7b789509a847dbd86ceb326ae10a2379027f35",
+    "sbomComponentsCataloged": 181,
+    "provenanceFileSha256": "eb670f2f1318ec4efe98b49e3f23393e1f4271382790ef2d1070f76647a16aa2",
+    "executionEnvironment": {
+      "isCI": false,
+      "platform": "win32",
+      "arch": "x64",
+      "nodeVersion": "v24.19.0",
+      "ciRunId": null
+    }
+  },
+  "verifiedBy": "EOS Sovereign Sentinel (Local Workstation: win32/x64)"
+}

@@ -7,114 +7,50 @@
  * - eos_semantic_search: High-dimensional vector space queries.
  * - eos_tmr_consensus: Triple-Modular Redundancy Byzantine evaluation of directives.
  * - eos_audit_fleet: Cross-repository health and git status checks.
- * - eos_verify_gates: 7-stage fail-closed SecDevOps security gates.
+ * - eos_simulate_bounded_models: bounded JavaScript simulations associated with TLA+ text files.
  * - eos_health_check: CNCF / Google SRE observability telemetry.
  *
  * Zero external runtime dependencies.
  */
 
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import readline from "node:readline";
 import { fileURLToPath } from "node:url";
 
-import {
-  createDefaultEosKnowledgeStore,
-  tokenize,
-  computeTermFrequency,
-  cosineSimilarity
-} from "../core/eosNeuralVectorCore.ts";
+import { createDefaultEosKnowledgeStore } from "../core/eosNeuralVectorCore.ts";
 
 import {
-  evaluateDirectiveWithTMR,
-  interpretJarvisDirective,
-  JARVIS_INTENT_REGISTRY
-} from "../core/eosJarvisMonad.ts";
+  EosHybridKnowledgeEngine,
+  getDefaultHybridKnowledgeEngine
+} from "../core/eosHybridKnowledgeEngine.ts";
 
 import {
-  validatePatch
-} from "../core/eosPatchValidator.ts";
+  EosKnowledgeGraphEngine,
+  getDefaultKnowledgeGraphEngine
+} from "../core/eosKnowledgeGraphEngine.ts";
 
-import {
-  compressSourceContext
-} from "../core/eosContextOptimizer.ts";
-
-import {
-  amplifyPrompt
-} from "../core/eosPromptAmplifier.ts";
-
-import type {
-  ModelFamily,
-  StrictnessLevel
-} from "../core/eosPromptAmplifier.ts";
-
-import {
-  scanArchitecture
-} from "../core/eosArchitectureGuard.ts";
-
-import {
-  evaluateDecision
-} from "../core/eosCognitiveJudge.ts";
-
-import {
-  runTurboPipeline
-} from "../core/eosTurboEngine.ts";
-
-import {
-  EosSemanticGraph
-} from "../core/eosSemanticGraph.ts";
-
-import {
-  EosAutonomousHealer
-} from "../core/eosAutonomousHealer.ts";
-
-import {
-  EosWorktreeOrchestrator
-} from "../core/eosWorktreeOrchestrator.ts";
+import { EosWasmSandboxEngine, getDefaultWasmSandboxEngine } from "../core/eosWasmSandboxEngine.ts";
 
 import {
   EosCognitiveEval
 } from "../core/eosCognitiveEval.ts";
 
 import {
-  EosOpenSpecSync
-} from "../core/eosOpenSpecSync.ts";
-
-import {
   EosTitansMatrix
 } from "../core/eosTitansMatrix.ts";
-
-import {
-  EosSpotifyCodex
-} from "../core/eosSpotifyCodex.ts";
 
 import {
   EosGoAccelerator
 } from "../core/eosGoAccelerator.ts";
 
 import {
-  EosSpotifyAgenticFactory
-} from "../core/eosSpotifyAgenticFactory.ts";
-
-import {
   EosAudioDspKernel
 } from "../core/eosAudioDspKernel.ts";
 
 import {
-  EosFleetElevator
-} from "../core/eosFleetElevator.ts";
-
-import {
   EosApolloHermesMesh
 } from "../core/eosApolloHermesMesh.ts";
-
-import {
-  EosGaplessMixEngine
-} from "../core/eosGaplessMixEngine.ts";
-
-import {
-  EosAcousticFeatureStore
-} from "../core/eosAcousticFeatureStore.ts";
 
 import {
   EosUniversalProjectAdapter
@@ -124,12 +60,7 @@ import {
   detectPolyglotPlan
 } from "../core/eosPolyglotAdapter.ts";
 
-import {
-  executeSpotifySmartShuffle,
-  EosBitemporalLedger,
-  verifyBackwardCompatibility,
-  type TrackNode
-} from "../core/eosSpotifyNubankEngine.ts";
+import { EosBitemporalLedger } from "../core/eosSpotifyNubankEngine.ts";
 
 import {
   EosGlobalEdgeArbiter
@@ -142,21 +73,6 @@ import {
 import {
   EosDisruptorRingEngine
 } from "../core/eosDisruptorRingEngine.ts";
-
-import {
-  evaluateNubankArchitectureHealth,
-  verifySachemContract,
-  synthesizeNubankBlamelessPostmortem,
-  transactDatomic,
-  createEmptyDatomicDb
-} from "../core/eosNubankCodex.ts";
-
-import {
-  evaluateSpotifyArchitectureHealth,
-  verifyBackstageGoldenPath,
-  evaluateCanaryStage,
-  planFleetshiftMigration
-} from "../core/eosSpotifyInstitutionalCodex.ts";
 
 import {
   EosApexModelRouter
@@ -173,11 +89,7 @@ import {
   compressContext as compressWasmContext
 } from "../core/eosWasmEngine.ts";
 
-import {
-  evaluateAlignment as evaluateSoulAlignment,
-  getArchitectIdentity,
-  getMasterKanbanState
-} from "../core/eosJarvisSoul.ts";
+import { evaluateAlignment } from "../core/eosJarvisSoul.ts";
 
 import {
   EosIntrospectionEngine
@@ -192,17 +104,10 @@ import {
 } from "../core/eosDatalogVerifier.ts";
 
 import {
-  EosMutationTester
-} from "../core/eosMutationTester.ts";
-
-import {
   EosTimeTravelSim
 } from "../core/eosTimeTravelSim.ts";
 
-import {
-  EosDurableWal,
-  computeCrc32
-} from "../core/eosDurableWal.ts";
+import { computeCrc32 } from "../core/eosDurableWal.ts";
 
 import {
   EosPrometheusExporter
@@ -237,20 +142,12 @@ import {
 } from "../core/eosGnosticTemple.ts";
 
 import {
-  EosFinOpsBudget
-} from "../core/eosFinOpsBudget.ts";
-
-import {
   EosBitwiseAccelerator
 } from "../core/eosBitwiseAccelerator.ts";
 
 import {
   EosBufferPool
 } from "../core/eosBufferPool.ts";
-
-import {
-  EosApexProfiler
-} from "../core/eosApexProfiler.ts";
 
 import {
   EosMindLevelsIntrospector
@@ -271,10 +168,6 @@ import {
 import {
   EosNsaZeroTrustCompartment
 } from "../core/eosNsaZeroTrustCompartment.ts";
-
-import {
-  EosNsaAnomalyDetector
-} from "../core/eosNsaAnomalyDetector.ts";
 
 import {
   EosTrueTimeBoundedClock
@@ -305,25 +198,24 @@ import {
 } from "../core/eosGoDaemonIpc.ts";
 
 import {
-  EosZeroCopyScanner
-} from "../core/eosZeroCopyScanner.ts";
-
-import {
   EosAutonomousChaosRunner
 } from "../core/eosAutonomousChaosRunner.ts";
 
 import {
-  EosUniversalProductFoundry,
-  type ProductManifest
-} from "../core/eosUniversalProductFoundry.ts";
+  EosUniversalAgentSessionContract,
+  getDefaultAgentSessionContract
+} from "../core/eosUniversalAgentSessionContract.ts";
+
+import { EosOtelTraceEngine, type SpanStatusCode } from "../core/eosOtelDistributedTracing.ts";
+
+import {
+  EosAutonomousSelfHealingEngine,
+  type HealingArchetype
+} from "../core/eosAutonomousSelfHealingEngine.ts";
 
 import {
   EosHnswVectorEngine
 } from "../core/eosHnswVectorEngine.ts";
-
-import {
-  EosMonteCarloEngine
-} from "../core/eosMonteCarloEngine.ts";
 
 import {
   EosMonotonicHashChain
@@ -343,10 +235,6 @@ import {
 } from "../core/eosQuantumLatticeShield.ts";
 
 import {
-  EosMetaCognitiveSynapse
-} from "../core/eosMetaCognitiveSynapse.ts";
-
-import {
   EosContinuousRefactorEngine
 } from "../core/eosContinuousRefactorEngine.ts";
 
@@ -354,12 +242,113 @@ import {
   EosDeterministicSimulator
 } from "../core/eosDeterministicSimulator.ts";
 
+import { assertPrecondition, assertPostcondition, deepFreeze } from "../core/eosKernelPrimitives.ts";
+
 import {
-  assertPrecondition,
-  assertPostcondition,
-  assertInvariant,
-  deepFreeze
-} from "../core/eosKernelPrimitives.ts";
+  EosProgressiveCanaryMesh
+} from "../core/eosProgressiveCanaryMesh.ts";
+
+import {
+  EosAntigravityDirector
+} from "../core/eosAntigravityDirector.ts";
+
+import { EosDurableSqliteLedger } from "../core/eosDurableSqliteLedger.ts";
+
+import { EosAgentTopologyMesh } from "../core/eosAgentTopologyMesh.ts";
+
+import { EosTlcFormalChecker } from "../core/eosTlcFormalChecker.ts";
+
+import { EosTelemetryDashboard } from "../core/eosTelemetryDashboard.ts";
+
+import {
+  EosConsciousWitness
+} from "../core/eosConsciousWitness.ts";
+
+import {
+  EosSapFixAutoshipper
+} from "../core/eosSapFixAutoshipper.ts";
+
+import {
+  EosProductionChaosMonkey
+} from "../core/eosProductionChaosMonkey.ts";
+
+import { EosLsmTreeStorageEngine } from "../core/eosLsmTreeStorageEngine.ts";
+import {
+  EosVercelCanaryObservability,
+  type CanaryTelemetryInput
+} from "../core/eosVercelCanaryObservability.ts";
+import {
+  EosCellBasedBulkheadGovernor,
+  type CellHealthStatus
+} from "../core/eosCellBasedBulkheadGovernor.ts";
+import { EosMultiWindowSloGovernor, type SloTelemetryEvent } from "../core/eosMultiWindowSloGovernor.ts";
+import { EosAdaptiveHedgedDeadlineMesh } from "../core/eosAdaptiveHedgedDeadlineMesh.ts";
+import { EosAdaptiveConcurrencyGovernor, type PriorityTier } from "../core/eosAdaptiveConcurrencyGovernor.ts";
+import { EosPredictiveRemediationEngine, type TelemetryHealthVector } from "../core/eosPredictiveRemediationEngine.ts";
+import { EosUnifiedKernelOrchestrator, type KernelSystemTelemetry } from "../core/eosUnifiedKernelOrchestrator.ts";
+import { EosBigTechTranscendenceNexus, type TranscendencePillarId } from "../core/eosBigTechTranscendenceNexus.ts";
+import { EosEliteDesignStudioEngine, type DesignArchetype, type DesignComponentType } from "../core/eosEliteDesignStudioEngine.ts";
+import { EosAgenticFinOpsGovernor } from "../core/eosAgenticFinOpsGovernor.ts";
+import { EosPlanetaryMonorepoGovernor } from "../core/eosPlanetaryMonorepoGovernor.ts";
+import { EosCrossFleetNeuralSynapse } from "../core/eosCrossFleetNeuralSynapse.ts";
+import { EosPlanetaryMultiCloudEvacuationMesh } from "../core/eosPlanetaryMultiCloudEvacuationMesh.ts";
+
+import {
+  annotateAndFilterTools,
+  normalizeToolProfile,
+  type McpToolProfile
+} from "./eosMcpToolCatalog.ts";
+
+import {
+  EosMcpDispatchRegistry
+} from "./eosMcpDispatchRegistry.ts";
+
+import {
+  PHASE1_CORE_UTILITARIAN_HANDLERS
+} from "./tools/eosMcpCoreUtilitarianHandlers.ts";
+
+import {
+  PHASE2_CORE_UTILITARIAN_HANDLERS
+} from "./tools/eosMcpPhase2UtilitarianHandlers.ts";
+
+import {
+  createPhase3CoreHandlers
+} from "./tools/eosMcpPhase3CoreHandlers.ts";
+
+import {
+  createPhase4InstitutionalHandlers
+} from "./tools/eosMcpPhase4InstitutionalHandlers.ts";
+
+import {
+  createPhase5DomainHandlers
+} from "./tools/eosMcpPhase5DomainHandlers.ts";
+
+import {
+  createPhase6DomainHandlers
+} from "./tools/eosMcpPhase6DomainHandlers.ts";
+
+import {
+  createPhase7DomainHandlers
+} from "./tools/eosMcpPhase7DomainHandlers.ts";
+
+import {
+  globalTraceSampler
+} from "./eosMcpSharedRuntime.ts";
+
+import { EosS0DesignSystemGovernor } from "../core/eosS0DesignSystemGovernor.ts";
+
+const globalBulkheadGovernor = new EosCellBasedBulkheadGovernor({ cellCount: 8, cellCapacity: 100 });
+const globalSloGovernor = new EosMultiWindowSloGovernor();
+const globalHedgedMesh = new EosAdaptiveHedgedDeadlineMesh();
+const globalConcurrencyGovernor = new EosAdaptiveConcurrencyGovernor();
+const globalRemediationEngine = new EosPredictiveRemediationEngine();
+const globalKernelOrchestrator = EosUnifiedKernelOrchestrator.getInstance();
+const globalTranscendenceNexus = EosBigTechTranscendenceNexus.getInstance();
+const globalDesignStudio = EosEliteDesignStudioEngine.getInstance();
+const globalFinOpsGovernor = EosAgenticFinOpsGovernor.getInstance();
+const globalPlanetaryGovernor = EosPlanetaryMonorepoGovernor.getInstance();
+const globalCrossFleetSynapse = EosCrossFleetNeuralSynapse.getInstance();
+const globalMultiCloudEvacuationMesh = EosPlanetaryMultiCloudEvacuationMesh.getInstance();
 
 import { EosToolRegistry } from "./eosToolRegistry.ts";
 import { CORE_TOOL_HANDLERS } from "./handlers/eosCoreToolHandlers.ts";
@@ -389,20 +378,89 @@ export class EosMcpServer {
   private readonly projectRoot: string;
   private readonly registry: EosToolRegistry;
 
-  constructor(projectRoot?: string) {
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return false;
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+}
+
+function validateBoundedJson(value: unknown): void {
+  const pending: Array<{ value: unknown; depth: number }> = [{ value, depth: 0 }];
+  let visited = 0;
+
+  while (pending.length > 0) {
+    const current = pending.pop()!;
+    visited += 1;
+    if (visited > MAX_MCP_VALUE_COUNT) throw new RangeError("MCP arguments exceed the item-count limit.");
+    if (current.depth > MAX_MCP_NESTING_DEPTH) throw new RangeError("MCP arguments exceed the nesting-depth limit.");
+
+    if (typeof current.value === "string") {
+      if (Buffer.byteLength(current.value, "utf8") > MAX_MCP_STRING_BYTES) {
+        throw new RangeError("An MCP string argument exceeds the 256 KiB limit.");
+      }
+      continue;
+    }
+    if (current.value === null || typeof current.value === "boolean") continue;
+    if (typeof current.value === "number") {
+      if (!Number.isFinite(current.value)) throw new TypeError("MCP numeric arguments must be finite.");
+      continue;
+    }
+    if (Array.isArray(current.value)) {
+      if (current.value.length > MAX_MCP_VALUE_COUNT) throw new RangeError("An MCP array exceeds the item-count limit.");
+      for (const item of current.value) pending.push({ value: item, depth: current.depth + 1 });
+      continue;
+    }
+    if (isPlainRecord(current.value)) {
+      const entries = Object.entries(current.value);
+      for (const [key, child] of entries) {
+        if (Buffer.byteLength(key, "utf8") > 1024) throw new RangeError("An MCP object key exceeds the 1 KiB limit.");
+        if (key === "__proto__" || key === "prototype" || key === "constructor") {
+          throw new TypeError("MCP arguments cannot contain prototype-control keys.");
+        }
+        pending.push({ value: child, depth: current.depth + 1 });
+      }
+      continue;
+    }
+    throw new TypeError("MCP arguments must contain JSON values only.");
+  }
+}
+
+function isPathWithin(rootPath: string, candidatePath: string): boolean {
+  const relative = path.relative(rootPath, candidatePath);
+  return relative === "" || (relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative));
+}
+
+export class EosMcpServer {
+  /** Shared HNSW index for MCP vector tools (Phase-3 handlers bind the same instance). */
+  public static readonly globalHnsw = new EosHnswVectorEngine({ dimensions: 128, m: 16 });
+  private static globalHashChain = new EosMonotonicHashChain();
+  private static globalMeshRing = EosAgentTopologyMesh.createRingBufferMesh(256);
+  private static globalLsmEngine = new EosLsmTreeStorageEngine(10);
+  private readonly knowledgeStore = createDefaultEosKnowledgeStore();
+  private readonly hybridKnowledge: EosHybridKnowledgeEngine;
+  private readonly wasmSandbox: EosWasmSandboxEngine;
+  private readonly knowledgeGraph: EosKnowledgeGraphEngine;
+  private readonly agentSessionContract: EosUniversalAgentSessionContract;
+  private readonly projectRoot: string;
+  private readonly serverVersion: string;
+  private toolProfile: McpToolProfile;
+  private readonly dispatchRegistry = new EosMcpDispatchRegistry();
+
+  constructor(projectRoot?: string, profile?: McpToolProfile) {
+    this.toolProfile = normalizeToolProfile(profile ?? process.env.EOS_MCP_PROFILE);
     const currentDir = typeof __dirname !== "undefined"
       ? __dirname
       : path.dirname(fileURLToPath(import.meta.url));
     const repoCandidate = path.resolve(currentDir, "../../");
 
     if (projectRoot && fs.existsSync(path.join(projectRoot, "package.json"))) {
-      this.projectRoot = projectRoot;
+      this.projectRoot = fs.realpathSync(projectRoot);
     } else if (process.env.EOS_PROJECT_ROOT && fs.existsSync(path.join(process.env.EOS_PROJECT_ROOT, "package.json"))) {
-      this.projectRoot = process.env.EOS_PROJECT_ROOT;
+      this.projectRoot = fs.realpathSync(process.env.EOS_PROJECT_ROOT);
     } else if (fs.existsSync(path.join(repoCandidate, "package.json"))) {
-      this.projectRoot = repoCandidate;
+      this.projectRoot = fs.realpathSync(repoCandidate);
     } else if (fs.existsSync(path.join(process.cwd(), "package.json"))) {
-      this.projectRoot = process.cwd();
+      this.projectRoot = fs.realpathSync(process.cwd());
     } else {
       this.projectRoot = repoCandidate;
     }
@@ -418,6 +476,47 @@ export class EosMcpServer {
     req: JsonRpcRequest,
     onProgress?: (progress: number, total?: number, message?: string) => void
   ): JsonRpcResponse | null {
+    const fallbackId = isPlainRecord(req) && (
+      (typeof req.id === "string" && Buffer.byteLength(req.id, "utf8") <= 128) ||
+      (typeof req.id === "number" && Number.isFinite(req.id)) || req.id === null
+    )
+      ? req.id as string | number | null
+      : null;
+    if (!isPlainRecord(req)) {
+      return { jsonrpc: "2.0", id: null, error: { code: -32600, message: "Invalid JSON-RPC request." } };
+    }
+    let serializedRequest: string;
+    try {
+      const serialized = JSON.stringify(req);
+      if (typeof serialized !== "string") throw new TypeError("Request did not serialize to JSON.");
+      serializedRequest = serialized;
+    } catch {
+      return { jsonrpc: "2.0", id: fallbackId, error: { code: -32600, message: "Invalid JSON-RPC request." } };
+    }
+    if (Buffer.byteLength(serializedRequest, "utf8") > MAX_MCP_REQUEST_BYTES) {
+      return { jsonrpc: "2.0", id: fallbackId, error: { code: -32600, message: "MCP request exceeds the 1 MiB limit." } };
+    }
+    if (req.jsonrpc !== "2.0" || typeof req.method !== "string" || req.method.length > 128) {
+      return { jsonrpc: "2.0", id: fallbackId, error: { code: -32600, message: "Invalid JSON-RPC request." } };
+    }
+    if (req.id !== undefined && req.id !== null &&
+      ((typeof req.id !== "string" || Buffer.byteLength(req.id, "utf8") > 128) &&
+        (typeof req.id !== "number" || !Number.isFinite(req.id)))) {
+      return { jsonrpc: "2.0", id: null, error: { code: -32600, message: "Invalid JSON-RPC request ID." } };
+    }
+    if (req.params !== undefined && !isPlainRecord(req.params)) {
+      return { jsonrpc: "2.0", id: fallbackId, error: { code: -32602, message: "MCP params must be a JSON object." } };
+    }
+    try {
+      validateBoundedJson(req.params ?? {});
+    } catch (error) {
+      return {
+        jsonrpc: "2.0",
+        id: fallbackId,
+        error: { code: -32602, message: error instanceof Error ? error.message : "MCP params are invalid." }
+      };
+    }
+
     const { id, method, params } = req;
 
     // Notifications (no id)
@@ -429,12 +528,13 @@ export class EosMcpServer {
 
     try {
       switch (method) {
-        case "initialize":
+        case "initialize": {
+          const negotiatedProtocol = params?.protocolVersion === "2025-03-26" ? "2025-03-26" : "2024-11-05";
           return {
             jsonrpc: "2.0",
             id,
             result: {
-              protocolVersion: "2024-11-05",
+              protocolVersion: negotiatedProtocol,
               capabilities: {
                 tools: {},
                 resources: { subscribe: false, listChanged: false },
@@ -447,6 +547,14 @@ export class EosMcpServer {
                 description: "EOS Sovereign Engineering Operating System — AGI Harness, Consulting Engine, Dynamic Tool Forge",
               },
             },
+          };
+        }
+
+        case "ping":
+          return {
+            jsonrpc: "2.0",
+            id,
+            result: {}
           };
 
         // ── Antigravity / Gemini: prompts/list ────────────────────────────
@@ -545,18 +653,47 @@ export class EosMcpServer {
             jsonrpc: "2.0",
             id,
             result: {
-              tools: [
+              tools: annotateAndFilterTools([
                 {
                   name: "eos_semantic_search",
-                  description: "Search EOS sovereign architecture and knowledge base using deterministic Layer-0 hybrid vector and BM25 RRF fusion.",
+                  description: "Search EOS sovereign architecture and knowledge base using deterministic Layer-0 hybrid lexical-vector search (FTS5 BM25 + 64-dim token hash projection with RRF k=60; zero neural weights).",
                   inputSchema: {
                     type: "object",
                     properties: {
                       query: { type: "string", description: "Natural language query to search" },
-                      topK: { type: "number", description: "Maximum number of results to return (default: 3)" },
-                      mode: { type: "string", enum: ["hybrid", "vector"], description: "Search mode: hybrid (RRF) or pure vector" }
+                      topK: { type: "number", description: "Maximum number of results to return (default: 5)" },
+                      mode: { type: "string", enum: ["hybrid", "vector", "lexical"], description: "Search mode: hybrid (RRF), pure vector, or lexical (FTS5)" },
+                      category: { type: "string", enum: ["SPEC", "CHANGE", "ADR", "CODE", "PLAN", "DOC", "ALL"], description: "Optional category filter" }
                     },
                     required: ["query"]
+                  }
+                },
+                {
+                  name: "eos_query_knowledge_graph",
+                  description: "Query and traverse the persistent SQLite WAL knowledge graph of repository architectural entities (SPECs, CHANGEs, ADRs, BDDs, MODULEs), transitive blast radius, neighbors, and orphan drift detection.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      action: {
+                        type: "string",
+                        enum: ["stats", "neighbors", "blast_radius", "find_orphans", "subgraph", "sync", "memory_closure"],
+                        description: "Graph operation to execute"
+                      },
+                      target: {
+                        type: "string",
+                        description: "Target node ID (e.g., 'SPEC-145', 'src/mcp/eosMcpServer.ts') for neighbors, blast_radius, subgraph, or memory_closure"
+                      },
+                      maxDepth: {
+                        type: "number",
+                        description: "Maximum search depth for blast_radius and subgraph traversal (default: 4, min: 1, max: 10)"
+                      },
+                      direction: {
+                        type: "string",
+                        enum: ["BOTH", "OUT", "IN"],
+                        description: "Edge direction for traversal (default: 'BOTH')"
+                      }
+                    },
+                    required: ["action"]
                   }
                 },
                 {
@@ -581,8 +718,30 @@ export class EosMcpServer {
                   }
                 },
                 {
+                  name: "eos_fleet_registry_sync",
+                  description: "Autonomously scans local workspace roots to discover active Git repositories, reconciling them into docs/projects/registry.json with cryptographic SHA-256 seal.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      dryRun: { type: "boolean", description: "Simulate discovery and reconciliation without writing to disk (default: true)" },
+                      audit: { type: "boolean", description: "Run read-only secret and health audits on all discovered fleet repos (default: false)" },
+                      workspaceRoot: { type: "string", description: "Root directory to scan for Git repositories (optional)" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_fleet_mission_control",
+                  description: "Generates an executive Mission Control report and optional synthetic latency/SSL probes across all 9 registered fleet projects.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      probe: { type: "boolean", description: "Execute live synthetic latency/SSL probes (default: false)" }
+                    }
+                  }
+                },
+                {
                   name: "eos_health_check",
-                  description: "Retrieves CNCF / Google SRE observability telemetry, process memory RSS, and subsystem health.",
+                  description: "Runs local control-plane health probes (Layer-0 deps, SBOM, provenance, fleet registry, tip-seal pin). No network or multi-region SRE.",
                   inputSchema: {
                     type: "object",
                     properties: {}
@@ -590,7 +749,7 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_validate_patch",
-                  description: "Pre-validates proposed code modifications in an in-memory AST sandbox to detect syntax errors, plaintext secrets, and destructive commands before touching disk.",
+                  description: "Locally checks a proposed file's content for syntax issues, likely secrets, and destructive-command patterns. It does not write the file; the target must stay inside the configured project root.",
                   inputSchema: {
                     type: "object",
                     properties: {
@@ -602,7 +761,7 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_optimize_context",
-                  description: "Compresses source code into a high-density structural outline (extracting interfaces, types, and function signatures), saving 70-85% of tokens while retaining full architectural contracts.",
+                  description: "Extracts a local structural outline from source text or a project file. Compression savings vary by input and do not guarantee preservation of every architectural detail.",
                   inputSchema: {
                     type: "object",
                     properties: {
@@ -613,8 +772,28 @@ export class EosMcpServer {
                   }
                 },
                 {
+                  name: "eos_mission_run",
+                  description: "SPEC-156 Mission Golden Path: fail-closed NL→SDLC composing amplify, Law IV direction, architecture, tribunal, Spotify institutional gate, Nubank domain gate (hard for fintech), turbo verify, and ledger seal. Returns SUCCESS only when all mandatory stages exit 0. Epistemic: MISSION_GOLDEN_PATH_WITHIN_TESTED_SCOPE (not Level 5).",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      directive: { type: "string", description: "Natural-language engineering mission directive" },
+                      target: { type: "string", description: "Registered project id or path (default: eos-system)" },
+                      domainHint: {
+                        type: "string",
+                        enum: ["general", "audio", "fintech", "nubank", "spotify", "platform"],
+                        description: "Domain hint; fintech/nubank enables hard Nubank gate"
+                      },
+                      architectureTargetDir: { type: "string", description: "Architecture scan dir (default: src/core)" },
+                      persistLedger: { type: "boolean", description: "When true, seal to durable project ledger; default in-memory" },
+                      sealLedger: { type: "boolean", description: "When false, skip ledger stage (tests only)" }
+                    },
+                    required: ["directive"]
+                  }
+                },
+                {
                   name: "eos_amplify_prompt",
-                  description: "Amplifies an informal prompt into a zero-vibe ISO 29148 EARS specification, BDD acceptance scenarios, boundary invariants, and model-specific cognitive scaffolding.",
+                  description: "Creates a local EARS/BDD prompt draft. The model name selects formatting metadata only; no remote model is called and the draft is not verified.",
                   inputSchema: {
                     type: "object",
                     properties: {
@@ -637,7 +816,7 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_evaluate_decision",
-                  description: "Evaluates an architectural or implementation choice against the 7 Inviolable Commandments using a multi-dimensional Bayesian matrix.",
+                  description: "Applies deterministic keyword heuristics to an architectural proposal. The score is a local screening signal, not Bayesian inference, verification, or approval authority.",
                   inputSchema: {
                     type: "object",
                     properties: {
@@ -652,7 +831,7 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_turbo_verify",
-                  description: "Executes ultra-fast sub-350ms verification of SAST, clean hexagonal boundaries, 0-runtime dependencies, and critical assets with microsecond telemetry.",
+                  description: "Runs bounded local checks: five configured credential patterns, static architecture, declared runtime dependencies, required paths, and local timings. This is not general SAST, an SBOM, or a release certification.",
                   inputSchema: {
                     type: "object",
                     properties: {}
@@ -679,24 +858,25 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_autonomous_heal",
-                  description: "Executes closed-loop FDIR autonomous healing (Meta SapFix / NASA FDIR), synthesizing and validating AST patches for detected code and invariant anomalies.",
+                  description: "Produces local formatting-remediation suggestions. File writes require apply=true; checks are local heuristics and do not certify production readiness.",
                   inputSchema: {
                     type: "object",
                     properties: {
                       targetFile: { type: "string", description: "Optional specific file to diagnose and heal" },
-                      dryRun: { type: "boolean", description: "If true, simulates remediation without touching disk (default: false)" }
+                      apply: { type: "boolean", description: "Only the JSON boolean true requests local file writes; defaults to a read-only report." }
                     }
                   }
                 },
                 {
                   name: "eos_manage_worktree",
-                  description: "Manages Xirp-grade isolated Git worktrees for concurrent AI agents. Supports actions: list, create, remove.",
+                  description: "Lists local Git worktrees. Create and remove are plan-only unless apply=true; worktrees do not sandbox processes, network access, or credentials.",
                   inputSchema: {
                     type: "object",
                     properties: {
                       action: { type: "string", enum: ["list", "create", "remove"], description: "Action to perform" },
                       branch: { type: "string", description: "Branch name for create action" },
                       targetPath: { type: "string", description: "Target path for remove action" },
+                      apply: { type: "boolean", description: "Only the JSON boolean true performs create or remove." },
                       force: { type: "boolean", description: "Force removal if modified" }
                     },
                     required: ["action"]
@@ -726,7 +906,7 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_titans_benchmark",
-                  description: "Executes apex Big Tech benchmarks: Spotify Xirp, SpaceX 60Hz TMR, NVIDIA SIMD Float32, Google Borg Reconciler, and xAI Colossus Fabric.",
+                  description: "Runs local engineering simulations and arithmetic benchmarks inspired by vendor scenarios. No vendor systems are queried and results do not represent vendor performance.",
                   inputSchema: {
                     type: "object",
                     properties: {
@@ -754,13 +934,14 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_spotify_scaffold",
-                  description: "Scaffolds a compliant Spotify Backstage RFC-42 descriptor (catalog-info.yaml) on any target project, immediately unlocking Golden Path conformance.",
+                  description: "Prepares a local catalog-info.yaml template. Writing requires apply=true; a generated template does not establish Backstage conformance.",
                   inputSchema: {
                     type: "object",
                     properties: {
                       targetPath: { type: "string", description: "Path to project root (default: current project)" },
                       name: { type: "string", description: "Component name" },
-                      owner: { type: "string", description: "Component owner" }
+                      owner: { type: "string", description: "Component owner" },
+                      apply: { type: "boolean", description: "Only the JSON boolean true writes the new file." }
                     }
                   }
                 },
@@ -833,7 +1014,7 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_spotify_xirp_context",
-                  description: "Assembles Spotify Xirp architecture context from Backstage catalogs, OpenSpec ADRs, and repo topologies to prevent agent hallucination.",
+                  description: "Reads local catalog and specification metadata. Context is untrusted input; syncing AGENTS.md and CLAUDE.md requires syncFiles=true.",
                   inputSchema: {
                     type: "object",
                     properties: {
@@ -843,14 +1024,14 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_spotify_fleetshift_batch",
-                  description: "Executes Spotify Fleetshift mass refactoring, dependency upgrades, or RFC-42 Backstage conformance across all registered fleet projects.",
+                  description: "Plans a bounded local catalog-template action. Applying requires apply=true and exactly one registered checkout whose Git origin matches the registry.",
                   inputSchema: {
                     type: "object",
                     properties: {
                       migrationId: { type: "string", description: "Identifier for the migration batch" },
                       action: { type: "string", enum: ["apply_backstage_rfc42", "enforce_strict_sre", "upgrade_dependencies"], description: "Migration action" },
                       targetFleet: { type: "array", items: { type: "string" }, description: "Optional project IDs to target" },
-                      dryRun: { type: "boolean", description: "Simulate without modifying files" }
+                      apply: { type: "boolean", description: "Only the JSON boolean true requests one bounded local write." }
                     },
                     required: ["migrationId", "action"]
                   }
@@ -882,11 +1063,12 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_fleet_elevate",
-                  description: "Audits and elevates all fleet repositories in docs/projects/registry.json to Spotify Backstage RFC-42 Golden Path standards.",
+                  description: "Inventories registered local checkouts. Applying a missing catalog template requires apply=true and one targetProjectId.",
                   inputSchema: {
                     type: "object",
                     properties: {
-                      dryRun: { type: "boolean", description: "Simulate elevation without modifying disk files" }
+                      apply: { type: "boolean", description: "Only the JSON boolean true requests a write." },
+                      targetProjectId: { type: "string", description: "Single registered project ID to update when apply=true." }
                     }
                   }
                 },
@@ -931,12 +1113,12 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_universal_adapt",
-                  description: "Audits architectural health (0-100), layer purity, test coverage, and security posture of ANY software project.",
+                  description: "Runs local inventory heuristics inside the configured project root. Optional scaffolding is a template draft; writing requires apply=true.",
                   inputSchema: {
                     type: "object",
                     properties: {
-                      targetPath: { type: "string", description: "Path to project root (default: current project)" },
-                      scaffold: { type: "boolean", description: "Apply Golden Path manifests to disk (default: false)" }
+                      targetPath: { type: "string", description: "Project-relative path inside the configured project root" },
+                      apply: { type: "boolean", description: "Only the JSON boolean true writes scaffold files." }
                     }
                   }
                 },
@@ -952,7 +1134,7 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_universal_scaffold",
-                  description: "Synthesizes stack-tailored Backstage RFC-42 catalog, CI/CD workflow, git hooks, and AGENTS.md codex for ANY project.",
+                  description: "Prepares local scaffold templates inside the configured project root. Writing requires applyToDisk=true; templates are not validated or installed.",
                   inputSchema: {
                     type: "object",
                     properties: {
@@ -989,7 +1171,7 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_spotify_shuffle",
-                  description: "Executes Spotify deterministic Smart Shuffle with jittered proportional spacing and Camelot harmonic routing in < 100 µs.",
+                  description: "Runs a deterministic local track-ordering algorithm. It does not call Spotify; runtime depends on input size and hardware.",
                   inputSchema: {
                     type: "object",
                     properties: {
@@ -1046,7 +1228,7 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_disruptor_benchmark",
-                  description: "Executes the LMAX Disruptor lock-free circular ring buffer throughput benchmark (> 10M events/sec, 0 B/op) and zero-copy 64-byte structural byte scanner.",
+                  description: "Runs a single-threaded typed-array ring loop and JavaScript delimiter scan. Returns observed elapsed time; heap allocations, cache behavior, and cross-thread performance are not measured.",
                   inputSchema: {
                     type: "object",
                     properties: {
@@ -1218,12 +1400,12 @@ export class EosMcpServer {
                 },
                 {
                   name: "eos_apex_autonomous_heal",
-                  description: "Closed-loop NASA FDIR / Meta SapFix autonomous self-healing: diagnoses trailing whitespace, CRLF or broken invariants, applies surgical fixes and verifies conformance.",
+                  description: "Checks one local file for trailing whitespace and CRLF. It returns a local heuristic report; writing requires apply=true and is limited to files inside the configured project root.",
                   inputSchema: {
                     type: "object",
                     properties: {
-                      filePath: { type: "string", description: "Relative or absolute path to target file" },
-                      dryRun: { type: "boolean", description: "If true, simulates healing without modifying disk" }
+                      filePath: { type: "string", description: "Project-relative path to a regular file" },
+                      apply: { type: "boolean", description: "Only the JSON boolean true writes local formatting fixes." }
                     },
                     required: ["filePath"]
                   }
@@ -1380,8 +1562,8 @@ export class EosMcpServer {
                   }
                 },
                 {
-                  name: "eos_verify_formal_models",
-                  description: "Formally checks TLA+ mathematical models (LMAX Disruptor, Datomic bitemporal ledger, Hermes consensus) verifying state invariants, lock-freedom, and safety.",
+                  name: "eos_simulate_bounded_models",
+                  description: "Runs bounded JavaScript simulations and extracts candidate names from TLA+ text files. It does not parse TLA+ syntax or run TLC model checking.",
                   inputSchema: {
                     type: "object",
                     properties: {}
@@ -1791,6 +1973,143 @@ export class EosMcpServer {
                   }
                 },
                 {
+                  name: "eos_agent_session_contract",
+                  description: "SPEC-152 Universal Agent Session Contract: open a multi-IDE session (cursor, antigravity, claude-code, vscode), record mandatory MCP DAG progress, and authorize writes fail-closed until the DAG completes.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      action: {
+                        type: "string",
+                        enum: ["open", "ensure", "record_tool", "authorize_write", "status", "evaluate_write", "align_gentleman"],
+                        description: "Session contract ops; align_gentleman binds Gentleman Programming Gentle-AI Stack (SPEC-154)"
+                      },
+                      ideFamily: {
+                        type: "string",
+                        enum: ["cursor", "antigravity", "claude-code", "vscode"],
+                        description: "IDE family for open/ensure/evaluate_write"
+                      },
+                      directive: { type: "string", description: "Mission directive for action open" },
+                      target: { type: "string", description: "Target project id or path (default eos-system)" },
+                      sessionId: { type: "string", description: "Session id for record_tool, authorize_write, status" },
+                      sessionReceipt: { type: "string", description: "Optional receipt check for authorize_write" },
+                      toolName: { type: "string", description: "MCP tool name for record_tool" },
+                      paths: { type: "array", items: { type: "string" }, description: "Optional write paths for authorize_write" }
+                    },
+                    required: ["action"]
+                  }
+                },
+                {
+                  name: "eos_product_deliver_run",
+                  description: "LADDER-15 Golden Path: Foundry blueprint → SDD package → Sovereign Loop → verification gates → Product Quality Scorecard. Defaults to dry-run; set write=true to materialize under docs/products/<id>/ on the control plane only. write=true uses real package.json purity gates (SPEC-152); scorecard < 80 returns BLOCKED.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      name: { type: "string", description: "Product name" },
+                      domain: { type: "string", description: "Domain (e.g. fintech-ledger)" },
+                      tier: { type: "string", enum: ["MVP", "ENTERPRISE", "MISSION_CRITICAL", "PLANETARY"], description: "Complexity tier (default MVP)" },
+                      write: { type: "boolean", description: "When true, materialize SDD under docs/products/<id>/ (control plane only)" },
+                      entities: { type: "array", items: { type: "string" }, description: "Domain entities" },
+                      commands: { type: "array", items: { type: "string" }, description: "Application commands" }
+                    },
+                    required: ["name", "domain"]
+                  }
+                },
+                {
+                  name: "eos_product_deliver_status",
+                  description: "Returns LADDER-15 Product Delivery Orchestrator status, epistemic target, and tool surface.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {}
+                  }
+                },
+                {
+                  name: "eos_platform_ops_ceiling",
+                  description: "LADDER-16 Platform Ops Ceiling: evaluate IDP SLOs, dogfood scorecard, progressive canary (1→5→25→100), and IV&V readiness. Returns SOVEREIGN_CEILING_10_OF_10_WITHIN_TESTED_SCOPE — never NSA_GRADE.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      runCanary: { type: "boolean", description: "Run progressive canary mesh (default true)" },
+                      controlPlanePristine: { type: "boolean", description: "Working tree porcelain signal (default true)" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_otel_query_traces",
+                  description: "Query recorded OpenTelemetry distributed traces from SQLite WAL. Filter by name, minimum duration, status code, or limit.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      name: { type: "string", description: "Filter by span or trace name" },
+                      minDurationMs: { type: "number", description: "Filter traces exceeding this duration in milliseconds" },
+                      statusCode: { type: "string", enum: ["UNSET", "OK", "ERROR"], description: "Filter by status code" },
+                      limit: { type: "number", description: "Maximum traces to return (default 20, max 100)" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_otel_trace_waterfall",
+                  description: "Compute hierarchical trace waterfall with parent-child offsets, duration percentages, and automated bottleneck isolation.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      traceId: { type: "string", description: "Trace ID (32-character hex)" }
+                    },
+                    required: ["traceId"]
+                  }
+                },
+                {
+                  name: "eos_otel_export_otlp",
+                  description: "Export trace data into canonical OpenTelemetry OTLP/JSON schema v1.3.0 for Jaeger, Honeycomb, or Grafana Tempo ingestion.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      traceId: { type: "string", description: "Optional specific trace ID to export" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_autonomous_heal_loop",
+                  description: "Meta SapFix / Google Auto-Remediation autonomous closed-loop self-healing: isolates fault, synthesizes AST candidate patches, evaluates in sandbox, and promotes verified zero-regression fix.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      diagnosticReport: { type: "string", description: "Error diagnostic message or test failure log" },
+                      targetFile: { type: "string", description: "Optional target source file path to repair" },
+                      archetype: {
+                        type: "string",
+                        enum: ["NULL_POINTER_GUARD", "TIMEOUT_BACKOFF_RETRY", "GRID_SPACING_CONFORMANCE", "IMPORT_CYCLE_BREAK", "FALLBACK_VALUE_INJECT"],
+                        description: "Specific self-healing archetype to execute"
+                      },
+                      dryRun: { type: "boolean", description: "Evaluate in sandbox without modifying disk (default true)" }
+                    }
+                  }
+                },
+                {
+                  name: "eos_ast_mutation_synthesize",
+                  description: "Synthesizes surgical AST candidate mutation patches matching a target healing archetype (SapFix standard).",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      targetFile: { type: "string", description: "Target source file path" },
+                      archetype: {
+                        type: "string",
+                        enum: ["NULL_POINTER_GUARD", "TIMEOUT_BACKOFF_RETRY", "GRID_SPACING_CONFORMANCE", "IMPORT_CYCLE_BREAK", "FALLBACK_VALUE_INJECT"],
+                        description: "Target healing archetype"
+                      },
+                      symbol: { type: "string", description: "Target symbol name or property" }
+                    },
+                    required: ["targetFile", "archetype"]
+                  }
+                },
+                {
+                  name: "eos_self_healing_status",
+                  description: "Returns the real-time operational status and historical audit ledger of the Autonomous Closed-Loop Self-Healing Engine.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {}
+                  }
+                },
+                {
                   name: "eos_ontology_query",
                   description: "Palantir Bi-Temporal Ontology Cyclotron: sub-microsecond graph reachability, node status, and historical asOf(t) state.",
                   inputSchema: {
@@ -1966,14 +2285,74 @@ export class EosMcpServer {
                     }
                   }
                 }
-              ]
+              ], this.toolProfile)
             }
           };
 
         case "tools/call": {
           const toolName = params?.name;
-          const args = params?.arguments || {};
-          const result = this.dispatchTool(toolName, args, onProgress);
+          const args = params?.arguments === undefined ? {} : params.arguments;
+          if (typeof toolName !== "string" || toolName.length < 1 || toolName.length > 128) {
+            throw new TypeError("Tool name must contain 1 to 128 characters.");
+          }
+          if (!isPlainRecord(args)) throw new TypeError("Tool arguments must be a JSON object.");
+
+          const traceEngine = EosOtelTraceEngine.getInstance({ projectRoot: this.projectRoot });
+          const traceparent = (params?._meta as any)?.traceparent || (params as any)?.traceparent;
+          const span = traceEngine.startSpan(`mcp.tool.${toolName}`, {
+            parentContext: traceparent,
+            kind: "SERVER",
+            attributes: {
+              "mcp.tool_name": toolName,
+              "mcp.request_id": String(id)
+            }
+          });
+
+          let rawResult: any;
+          try {
+            rawResult = this.dispatchTool(toolName, args, onProgress);
+          } catch (dispatchErr: any) {
+            span.recordException(dispatchErr);
+            span.end();
+            throw dispatchErr;
+          }
+
+          if (rawResult instanceof Promise) {
+            return rawResult.then(
+              (result) => {
+                span.setAttribute("mcp.success", true);
+                span.end();
+                const resultText = typeof result === "string" ? result : JSON.stringify(result, null, 2) ?? "null";
+                if (Buffer.byteLength(resultText, "utf8") > MAX_MCP_REQUEST_BYTES - 4096) {
+                  throw new RangeError("MCP tool output exceeds the 1 MiB response limit.");
+                }
+                return {
+                  jsonrpc: "2.0",
+                  id,
+                  result: {
+                    content: [
+                      {
+                        type: "text",
+                        text: resultText
+                      }
+                    ]
+                  }
+                };
+              },
+              (promiseErr) => {
+                span.recordException(promiseErr);
+                span.end();
+                throw promiseErr;
+              }
+            ) as any;
+          }
+          span.setAttribute("mcp.success", true);
+          span.end();
+          const result = rawResult;
+          const resultText = typeof result === "string" ? result : JSON.stringify(result, null, 2) ?? "null";
+          if (Buffer.byteLength(resultText, "utf8") > MAX_MCP_REQUEST_BYTES - 4096) {
+            throw new RangeError("MCP tool output exceeds the 1 MiB response limit.");
+          }
           return {
             jsonrpc: "2.0",
             id,
@@ -1981,7 +2360,7 @@ export class EosMcpServer {
               content: [
                 {
                   type: "text",
-                  text: typeof result === "string" ? result : JSON.stringify(result, null, 2)
+                  text: resultText
                 }
               ]
             }
@@ -2001,22 +2380,125 @@ export class EosMcpServer {
                 },
                 {
                   uri: "eos://evidence/receipt",
-                  name: "Cryptographic SBOM & CI/CD Receipt",
+                  name: "Local Repository Checks Receipt",
                   mimeType: "application/json"
                 },
                 {
                   uri: "eos://projects/registry",
                   name: "Sovereign Fleet Project Registry",
                   mimeType: "application/json"
+                },
+                {
+                  uri: "eos://antigravity/director-playbook",
+                  name: "EOS Sovereign Antigravity MCP Director Playbook",
+                  mimeType: "text/markdown"
                 }
               ]
             }
           };
 
+        case "prompts/list":
+          return {
+            jsonrpc: "2.0",
+            id,
+            result: {
+              prompts: [
+                {
+                  name: "eos-direct-mission",
+                  description: "Classify and orchestrate an engineering mission in Antigravity under EOS Seven Inviolable Commandments.",
+                  arguments: [
+                    { name: "directive", description: "Mission goal or user prompt", required: true },
+                    { name: "target", description: "Registered project ID or workspace path", required: false }
+                  ]
+                },
+                {
+                  name: "eos-sdd-gate",
+                  description: "Generate formal IEEE 830 EARS requirements, BDD acceptance criteria, and ADR plan prior to implementation.",
+                  arguments: [
+                    { name: "feature", description: "Feature or specification title", required: true }
+                  ]
+                },
+                {
+                  name: "eos-fleet-audit",
+                  description: "Run Spotify Soundcheck, MCTS parameter tuning, and canary readiness audit across the sovereign fleet.",
+                  arguments: []
+                }
+              ]
+            }
+          };
+
+        case "prompts/get": {
+          const promptName = params?.name;
+          const promptArgs = isPlainRecord(params?.arguments) ? params!.arguments : {};
+          if (typeof promptName !== "string" || promptName.length < 1 || promptName.length > 128) {
+            throw new TypeError("Prompt name must be a non-empty string.");
+          }
+          if (promptName === "eos-direct-mission") {
+            const directive = String(promptArgs.directive || "Audit and verify current workspace invariants");
+            const target = String(promptArgs.target || "eos-system");
+            const plan = EosAntigravityDirector.directMission(directive, target, this.projectRoot);
+            return {
+              jsonrpc: "2.0",
+              id,
+              result: {
+                description: `EOS Sovereign Mission Plan (${plan.profile})`,
+                messages: [
+                  {
+                    role: "user",
+                    content: {
+                      type: "text",
+                      text: `Execute mission under EOS Control Plane:\n${JSON.stringify(plan, null, 2)}`
+                    }
+                  }
+                ]
+              }
+            };
+          }
+          if (promptName === "eos-sdd-gate") {
+            const feature = String(promptArgs.feature || "New Feature");
+            return {
+              jsonrpc: "2.0",
+              id,
+              result: {
+                description: `EOS Strict SDD Gate for ${feature}`,
+                messages: [
+                  {
+                    role: "user",
+                    content: {
+                      type: "text",
+                      text: `Call eos_amplify_prompt for "${feature}", formalize INTAKE, SPEC (EARS + BDD), PLAN (ADRs), TASKS (DAG), and verify LEVEL 2+ authorization before writing implementation code.`
+                    }
+                  }
+                ]
+              }
+            };
+          }
+          if (promptName === "eos-fleet-audit") {
+            return {
+              jsonrpc: "2.0",
+              id,
+              result: {
+                description: "EOS Sovereign Fleet Soundcheck & Canary Readiness",
+                messages: [
+                  {
+                    role: "user",
+                    content: {
+                      type: "text",
+                      text: "Execute eos_fleet_soundcheck, eos_turbo_verify, and eos_antigravity_doctor, then report scores with SHA-256 receipts."
+                    }
+                  }
+                ]
+              }
+            };
+          }
+          throw new Error(`Unknown prompt: ${promptName}`);
+        }
+
         case "resources/read": {
           const uri = params?.uri;
+          if (typeof uri !== "string") throw new TypeError("Resource URI must be a string.");
           const content = this.readResource(uri);
-          return {
+          const response: JsonRpcResponse = {
             jsonrpc: "2.0",
             id,
             result: {
@@ -2029,6 +2511,10 @@ export class EosMcpServer {
               ]
             }
           };
+          if (Buffer.byteLength(JSON.stringify(response), "utf8") > MAX_MCP_REQUEST_BYTES) {
+            throw new RangeError("MCP resource output exceeds the 1 MiB response limit.");
+          }
+          return response;
         }
 
         default:
@@ -2047,8 +2533,8 @@ export class EosMcpServer {
         id,
         error: {
           code: -32603,
-          message: err.message || "Internal error",
-          data: String(err.stack || err)
+          message: err instanceof Error ? err.message.slice(0, 512) : "MCP operation failed.",
+          data: "Stack traces are not exposed by the MCP server."
         }
       };
     }
@@ -2066,164 +2552,91 @@ export class EosMcpServer {
     }
 
     switch (toolName) {
-      case "eos_semantic_search": {
-        const query = String(args.query || "");
-        const topK = Number(args.topK) || 3;
-        const mode = args.mode === "vector" ? "vector" : "hybrid";
-        const matches = mode === "vector"
-          ? this.knowledgeStore.search(query, topK)
-          : this.knowledgeStore.searchHybrid(query, topK);
-        return {
-          query,
-          mode,
-          matchCount: matches.length,
-          matches: matches.map((m) => ({
-            id: m.id,
-            score: Number(m.score.toFixed(4)),
-            text: m.text,
-            domain: (m.metadata as any)?.domain || "General"
-          }))
-        };
-      }
+      case "eos_query_knowledge_graph": {
+        const action = String(args.action || "stats").toLowerCase();
+        const target = args.target ? String(args.target) : "";
+        const maxDepth = typeof args.maxDepth === "number" ? Math.max(1, Math.min(10, args.maxDepth)) : 4;
+        const direction = (args.direction === "OUT" || args.direction === "IN") ? args.direction : "BOTH";
 
-      case "eos_tmr_consensus": {
-        const directive = String(args.directive || "");
-        const tmr = evaluateDirectiveWithTMR(directive);
-        const thought = interpretJarvisDirective(directive);
-        return {
-          directive,
-          consensusAchieved: tmr.consensusAchieved,
-          agreementRatio: tmr.agreementRatio,
-          selectedAction: tmr.selectedAction,
-          consensusHash: tmr.consensusHash,
-          sandboxes: tmr.sandboxes,
-          voiceScript: thought.voiceTranscript
-        };
-      }
-
-      case "eos_audit_fleet": {
-        const registryPath = path.join(this.projectRoot, "docs/projects/registry.json");
-        let registry = { projects: [] };
-        if (fs.existsSync(registryPath)) {
-          registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
-        }
-        return {
-          fleetStatus: "ONLINE",
-          totalRegisteredProjects: registry.projects.length,
-          projects: registry.projects,
-          enforcedStandards: ["SLSA Level 4", "Pre-Commit Secret Scanner", "Pre-Push CI/CD Gate"]
-        };
-      }
-
-      case "eos_health_check": {
-        const mem = process.memoryUsage();
-        return {
-          status: "UP",
-          tier: "BIG_TECH_TIER_1",
-          uptimeSeconds: Math.floor(process.uptime()),
-          memoryRssMb: (mem.rss / (1024 * 1024)).toFixed(2),
-          heapUsedMb: (mem.heapUsed / (1024 * 1024)).toFixed(2),
-          subsystems: [
-            "JarvisSovereignMonad",
-            "NeuralVectorCore",
-            "LinuxKernelCore",
-            "NanosecondEngine",
-            "AkashicMemory",
-            "SecDevOpsSevenGates"
-          ]
-        };
-      }
-
-      case "eos_validate_patch": {
-        const filePath = String(args.filePath || "");
-        const content = String(args.content || "");
-        return validatePatch(filePath, content, this.projectRoot);
-      }
-
-      case "eos_optimize_context": {
-        const filePath = String(args.filePath || "");
-        let content = typeof args.content === "string" ? args.content : "";
-        if (!content && filePath) {
-          const full = path.resolve(this.projectRoot, filePath);
-          if (fs.existsSync(full)) {
-            content = fs.readFileSync(full, "utf8");
+        switch (action) {
+          case "sync": {
+            const syncResult = this.knowledgeGraph.syncGraph();
+            return {
+              action: "sync",
+              status: "COMPLETED",
+              ...syncResult
+            };
           }
+          case "stats": {
+            const stats = this.knowledgeGraph.getGraphStats();
+            return {
+              action: "stats",
+              ...stats
+            };
+          }
+          case "neighbors": {
+            if (!target) {
+              throw new Error("Action 'neighbors' requires a 'target' node identifier");
+            }
+            const res = this.knowledgeGraph.getNeighbors(target, direction);
+            return {
+              action: "neighbors",
+              target,
+              direction,
+              node: res.node,
+              outgoingCount: res.outgoing.length,
+              incomingCount: res.incoming.length,
+              outgoing: res.outgoing,
+              incoming: res.incoming
+            };
+          }
+          case "blast_radius":
+          case "subgraph": {
+            if (!target) {
+              throw new Error(`Action '${action}' requires a 'target' node identifier`);
+            }
+            const blast = this.knowledgeGraph.computeBlastRadius(target, { maxDepth, direction });
+            return {
+              action,
+              ...blast
+            };
+          }
+          case "find_orphans": {
+            const orphans = this.knowledgeGraph.findOrphans();
+            return {
+              action: "find_orphans",
+              ...orphans
+            };
+          }
+          case "memory_closure": {
+            if (!target) {
+              throw new Error("Action 'memory_closure' requires a 'target' node identifier");
+            }
+            const closure = this.knowledgeGraph.computeMemoryClosure(target, { maxDepth });
+            return {
+              action: "memory_closure",
+              ...closure
+            };
+          }
+          default:
+            throw new Error(`Unsupported knowledge graph action: '${action}'. Expected: stats, neighbors, blast_radius, find_orphans, subgraph, sync, memory_closure`);
         }
-        return compressSourceContext(content, filePath);
       }
 
-      case "eos_amplify_prompt": {
-        const rawPrompt = String(args.rawPrompt || "");
-        const targetModel = (args.targetModel || "universal") as ModelFamily;
-        const strictLevel = (args.strictLevel || "hardened") as StrictnessLevel;
-        return amplifyPrompt({
-          rawPrompt,
-          targetModel,
-          strictLevel
-        });
-      }
+            // SPEC-155 Phase-6: eos_fleet_registry_sync → registry
 
-      case "eos_check_architecture": {
-        const targetDir = args.targetDir ? path.resolve(this.projectRoot, String(args.targetDir)) : path.resolve(this.projectRoot, "src");
-        return scanArchitecture(targetDir, this.projectRoot);
-      }
-
-      case "eos_evaluate_decision": {
-        return evaluateDecision({
-          title: String(args.title || "Architectural Evaluation"),
-          description: String(args.description || ""),
-          proposedAction: String(args.proposedAction || ""),
-          codeSnippet: args.codeSnippet ? String(args.codeSnippet) : undefined,
-          targetDomain: args.targetDomain ? String(args.targetDomain) : undefined
-        });
-      }
-
-      case "eos_turbo_verify": {
-        return runTurboPipeline(this.projectRoot);
-      }
-
-      case "eos_get_blast_radius": {
-        const filePath = String(args.filePath || "");
-        const graph = new EosSemanticGraph(this.projectRoot);
-        return graph.calculateBlastRadius(filePath);
-      }
-
-      case "eos_query_code_graph": {
-        const graph = new EosSemanticGraph(this.projectRoot);
-        return graph.getSummary();
-      }
-
-      case "eos_autonomous_heal": {
-        const healer = new EosAutonomousHealer(this.projectRoot);
-        return healer.executeHealing({
-          targetFile: args.targetFile ? String(args.targetFile) : undefined,
-          dryRun: Boolean(args.dryRun)
-        });
-      }
-
-      case "eos_manage_worktree": {
-        const orchestrator = new EosWorktreeOrchestrator(this.projectRoot);
-        const action = String(args.action || "list");
-        if (action === "create") {
-          return orchestrator.createWorktree(String(args.branch || `agent-${Date.now()}`));
-        } else if (action === "remove") {
-          return orchestrator.removeWorktree(String(args.targetPath || ""), { force: Boolean(args.force) });
-        }
-        return orchestrator.listWorktrees();
-      }
+            // SPEC-155 Phase-6: eos_fleet_mission_control → registry
 
       case "eos_run_eval": {
         const evaluator = new EosCognitiveEval();
-        const target = String(args.target || "");
-        return evaluator.evaluate(target, { isText: Boolean(args.isText) });
-      }
-
-      case "eos_check_openspec": {
-        const synchronizer = new EosOpenSpecSync(this.projectRoot);
-        const action = String(args.action || "audit");
-        if (action === "list_specs") return synchronizer.listSpecs();
-        if (action === "list_changes") return synchronizer.listChanges();
-        return synchronizer.audit();
+        if (args.isText === true) {
+          if (typeof args.target !== "string" || Buffer.byteLength(args.target, "utf8") > 100 * 1024) {
+            throw new RangeError("Text evaluation input must be a string no larger than 100 KiB.");
+          }
+          return { scope: "LOCAL_HEURISTIC", certificationIssued: false, result: evaluator.evaluate(args.target, { isText: true }) };
+        }
+        const target = this.resolveProjectPath(args.target, "file");
+        return { scope: "LOCAL_HEURISTIC", certificationIssued: false, result: evaluator.evaluate(target) };
       }
 
       case "eos_titans_benchmark": {
@@ -2242,36 +2655,7 @@ export class EosMcpServer {
         return matrix.reconcileGoogleBorg();
       }
 
-      case "eos_spotify_audit": {
-        const codex = new EosSpotifyCodex(this.projectRoot);
-        const targetPath = args.targetPath ? String(args.targetPath) : undefined;
-        return codex.auditUniversalProject(targetPath);
-      }
-
-      case "eos_spotify_scaffold": {
-        const codex = new EosSpotifyCodex(this.projectRoot);
-        const targetPath = args.targetPath ? String(args.targetPath) : undefined;
-        return codex.scaffoldBackstageCatalog(targetPath, {
-          name: args.name ? String(args.name) : undefined,
-          owner: args.owner ? String(args.owner) : undefined
-        });
-      }
-
-      case "eos_spotify_standup": {
-        const codex = new EosSpotifyCodex(this.projectRoot);
-        return codex.generateAsyncStandup(args);
-      }
-
-      case "eos_spotify_postmortem": {
-        const codex = new EosSpotifyCodex(this.projectRoot);
-        return codex.synthesizeBlamelessPostMortem(args);
-      }
-
-      case "eos_spotify_experiment": {
-        const codex = new EosSpotifyCodex(this.projectRoot);
-        return codex.designCanaryExperiment(args);
-      }
-
+      // SPEC-155 Phase-5: eos_spotify_audit/scaffold/standup/postmortem/experiment → registry
       case "eos_go_accelerator": {
         const accelerator = new EosGoAccelerator(this.projectRoot);
         const mode = String(args.mode || "benchmark").toLowerCase();
@@ -2281,54 +2665,13 @@ export class EosMcpServer {
         return accelerator.runBenchmark(Number(args.concurrency) || 2000);
       }
 
-      case "eos_spotify_honk_dispatch": {
-        const factory = new EosSpotifyAgenticFactory(this.projectRoot);
-        return factory.dispatchHonk({
-          taskName: String(args.taskName || "Autonomous task"),
-          stack: args.stack,
-          specDescription: String(args.specDescription || ""),
-          dryRun: Boolean(args.dryRun)
-        });
-      }
-
-      case "eos_spotify_xirp_context": {
-        const factory = new EosSpotifyAgenticFactory(this.projectRoot);
-        if (args.syncFiles) {
-          return factory.syncXirpContextFiles();
-        }
-        return factory.compileXirpContext();
-      }
-
-      case "eos_spotify_fleetshift_batch": {
-        const factory = new EosSpotifyAgenticFactory(this.projectRoot);
-        return factory.executeFleetshift({
-          migrationId: String(args.migrationId || `FS-${Date.now()}`),
-          description: `Fleetshift migration batch`,
-          action: args.action || "apply_backstage_rfc42",
-          targetFleet: Array.isArray(args.targetFleet) ? args.targetFleet : undefined,
-          dryRun: Boolean(args.dryRun)
-        });
-      }
-
-      case "eos_spotify_canary_manifest": {
-        const factory = new EosSpotifyAgenticFactory(this.projectRoot);
-        return factory.generateProgressiveCanary(
-          String(args.serviceName || "spotify-service"),
-          String(args.squad || "Audio-Platform"),
-          Number(args.p99LatencyMs) || 100,
-          Number(args.maxErrorRatePercent) || 0.1
-        );
-      }
-
+      // SPEC-155 Phase-5: eos_spotify_honk/xirp/fleetshift_batch/canary_manifest → registry
       case "eos_audio_dsp_benchmark": {
         const kernel = new EosAudioDspKernel();
         return kernel.benchmarkDsp(Number(args.frames) || 65536, Number(args.iterations) || 20);
       }
 
-      case "eos_fleet_elevate": {
-        const elevator = new EosFleetElevator(this.projectRoot);
-        return elevator.elevateFleet({ dryRun: Boolean(args.dryRun) });
-      }
+            // SPEC-155 Phase-6: eos_fleet_elevate → registry
 
       case "eos_apollo_rpc": {
         const mesh = new EosApolloHermesMesh();
@@ -2347,48 +2690,29 @@ export class EosMcpServer {
         };
       }
 
-      case "eos_spotify_mix_plan": {
-        const engine = new EosGaplessMixEngine();
-        const keyA = String(args.keyA || "8A");
-        const keyB = String(args.keyB || "9A");
-        return engine.planTransition(
-          { trackId: "track-A", title: `Track A (${keyA})`, bpm: Number(args.bpmA) || 126, camelotKey: keyA, sampleRateHz: 44100 },
-          { trackId: "track-B", title: `Track B (${keyB})`, bpm: Number(args.bpmB) || 128, camelotKey: keyB, sampleRateHz: 44100 },
-          Number(args.duration) || 5.0
-        );
-      }
-
-      case "eos_spotify_taste_profile": {
-        const store = new EosAcousticFeatureStore();
-        const userId = String(args.userId || "user-listener");
-        store.recordListen(userId, "track-sample", { tempo: 0.7, energy: 0.85, danceability: 0.8, valence: 0.7, acousticness: 0.1, instrumentalness: 0.2, liveness: 0.15, speechiness: 0.08 }, 200, 200);
-        return store.computeTasteCentroid(userId);
-      }
-
+      // SPEC-155 Phase-5: eos_spotify_mix_plan + taste_profile → registry
       case "eos_universal_adapt": {
-        const target = path.resolve(String(args.targetPath || this.projectRoot));
+        const target = this.resolveProjectPath(args.targetPath, "directory", ".");
         const adapter = new EosUniversalProjectAdapter(target);
         const report = adapter.audit(target);
-        if (args.scaffold) {
-          adapter.elevate(target, { dryRun: false });
-        }
-        return report;
+        if (args.apply !== true) return { status: "LOCAL_INVENTORY_ONLY", report, writeApplied: false };
+        return { status: "LOCAL_SCAFFOLD_REQUESTED", report, scaffold: adapter.elevate(target, { dryRun: false }) };
       }
 
       case "eos_universal_fingerprint": {
-        const target = path.resolve(String(args.targetPath || this.projectRoot));
+        const target = this.resolveProjectPath(args.targetPath, "directory", ".");
         const adapter = new EosUniversalProjectAdapter(target);
-        return adapter.audit(target).fingerprint;
+        return { scope: "LOCAL_INVENTORY", fingerprint: adapter.audit(target).fingerprint };
       }
 
       case "eos_universal_scaffold": {
-        const target = path.resolve(String(args.targetPath || this.projectRoot));
+        const target = this.resolveProjectPath(args.targetPath, "directory", ".");
         const adapter = new EosUniversalProjectAdapter(target);
-        return adapter.elevate(target, { dryRun: !Boolean(args.applyToDisk) });
+        return adapter.elevate(target, { dryRun: args.applyToDisk !== true });
       }
 
       case "eos_polyglot_bridge": {
-        const target = path.resolve(String(args.targetPath || this.projectRoot));
+        const target = this.resolveProjectPath(args.targetPath, "directory", ".");
         return detectPolyglotPlan(target);
       }
 
@@ -2453,96 +2777,14 @@ export class EosMcpServer {
         return engine.runMasterSpeedBenchmark(events, bytes);
       }
 
-      case "eos_nubank_audit": {
-        return evaluateNubankArchitectureHealth({
-          hasMutableStateInDomain: Boolean(args.hasMutableStateInDomain),
-          usesHexagonalLayerIsolation: args.usesHexagonalLayerIsolation !== false,
-          usesContractTestingInsteadOfE2E: args.usesContractTestingInsteadOfE2E !== false,
-          enforcesKafkaIdempotencyTokens: args.enforcesKafkaIdempotencyTokens !== false,
-          usesImmutableBitemporalLedgers: args.usesImmutableBitemporalLedgers !== false,
-          hasBlamelessPostmortemProcess: args.hasBlamelessPostmortemProcess !== false,
-          unitTestCoveragePercent: Number(args.unitTestCoveragePercent) || 90
-        });
-      }
+      // SPEC-155 Phase-4: nubank_*, spotify institutional/canary/golden_path/fleetshift → registry
+            // SPEC-155 Phase-6: eos_apex_route_model → registry
 
-      case "eos_nubank_sachem_verify": {
-        if (!args.previousSchema || !args.proposedSchema) {
-          throw new Error("Missing previousSchema or proposedSchema argument");
-        }
-        return verifySachemContract(args.previousSchema, args.proposedSchema);
-      }
+            // SPEC-155 Phase-6: eos_apex_compress_context → registry
 
-      case "eos_nubank_postmortem": {
-        return synthesizeNubankBlamelessPostmortem(args as any);
-      }
+            // SPEC-155 Phase-6: eos_apex_autonomous_heal → registry
 
-      case "eos_nubank_datomic_transact": {
-        const txData = Array.isArray(args.txData) ? args.txData : [];
-        const db = createEmptyDatomicDb();
-        return transactDatomic(db, txData);
-      }
-
-      case "eos_spotify_audit_institutional": {
-        return evaluateSpotifyArchitectureHealth({
-          usesGoldenPath: args.usesGoldenPath !== false,
-          hasCatalogInfoYaml: args.hasCatalogInfoYaml !== false,
-          hasTechDocsAndRunbook: args.hasTechDocsAndRunbook !== false,
-          compliesWithBS1770Loudness: args.compliesWithBS1770Loudness !== false,
-          hasProgressiveCanaryPipeline: args.hasProgressiveCanaryPipeline !== false,
-          hasAutomatedKillSwitch: args.hasAutomatedKillSwitch !== false,
-          hasBlamelessPostmortemProcess: args.hasBlamelessPostmortemProcess !== false,
-          unitTestCoveragePercent: Number(args.unitTestCoveragePercent) || 90
-        });
-      }
-
-      case "eos_spotify_golden_path_verify": {
-        return verifyBackstageGoldenPath({
-          serviceName: String(args.serviceName || "service"),
-          filesPresent: Array.isArray(args.filesPresent) ? args.filesPresent : [],
-          catalogInfoContent: args.catalogInfoContent ? String(args.catalogInfoContent) : undefined
-        });
-      }
-
-      case "eos_spotify_canary_gate": {
-        return evaluateCanaryStage({
-          stage: args.stage || "5%",
-          trafficPercentage: Number(args.trafficPercentage) || 5,
-          totalRequests: Number(args.totalRequests) || 10000,
-          errorCount: Number(args.errorCount) || 0,
-          p99LatencyMs: Number(args.p99LatencyMs) || 30,
-          maxAllowedP99Ms: Number(args.maxAllowedP99Ms) || 50,
-          observationWindowMinutes: Number(args.observationWindowMinutes) || 15
-        });
-      }
-
-      case "eos_spotify_fleetshift_plan": {
-        return planFleetshiftMigration({
-          migrationId: String(args.migrationId || "MIG-AUTO"),
-          description: String(args.description || "Automated Fleet Migration"),
-          targetRepos: Array.isArray(args.targetRepos) ? args.targetRepos : [],
-          action: String(args.action || "apply_golden_path")
-        });
-      }
-
-      case "eos_apex_route_model": {
-        const router = new EosApexModelRouter(this.projectRoot);
-        return router.routeTask(String(args.directivePrompt || ""), String(args.sourceContext || ""));
-      }
-
-      case "eos_apex_compress_context": {
-        const router = new EosApexModelRouter(this.projectRoot);
-        return router.compressContext(String(args.sourceContent || ""), String(args.fileName || "source.ts"));
-      }
-
-      case "eos_apex_autonomous_heal": {
-        const router = new EosApexModelRouter(this.projectRoot);
-        return router.healFile(String(args.filePath || ""), args.dryRun !== false);
-      }
-
-      case "eos_apex_go_benchmark": {
-        const router = new EosApexModelRouter(this.projectRoot);
-        return router.runGoThroughputBenchmark();
-      }
+            // SPEC-155 Phase-6: eos_apex_go_benchmark → registry
 
       case "eos_wasm_benchmark": {
         return runBenchmark(Number(args.iterations || 100000));
@@ -2557,7 +2799,7 @@ export class EosMcpServer {
       }
 
       case "eos_soul_alignment": {
-        return evaluateSoulAlignment(String(args.directive || ""));
+        return evaluateAlignment(String(args.directive || ""));
       }
 
       case "eos_autonomous_introspect": {
@@ -2602,23 +2844,7 @@ export class EosMcpServer {
         return blast;
       }
 
-      case "eos_mutation_test": {
-        onProgress?.(30, 100, "Analyzing AST and injecting synthetic bug mutants");
-        const target = String(args.targetSnippet || "");
-        let code = target;
-        if (fs.existsSync(path.resolve(this.projectRoot, target))) {
-          code = fs.readFileSync(path.resolve(this.projectRoot, target), "utf8");
-        }
-        const tester = new EosMutationTester();
-        const mutants = tester.generateMutants(code);
-        onProgress?.(100, 100, "Mutant variants generated");
-        return {
-          target: target.length > 80 ? target.slice(0, 80) + "..." : target,
-          totalMutants: mutants.length,
-          sampleMutants: mutants.slice(0, 10),
-          guarantee: "AST Bug Sabotaging Active"
-        };
-      }
+            // SPEC-155 Phase-7: eos_mutation_test → registry
 
       case "eos_time_travel_simulate": {
         onProgress?.(30, 100, "Initializing deterministic discrete clock hypervisor");
@@ -2634,21 +2860,7 @@ export class EosMcpServer {
         return receipt;
       }
 
-      case "eos_wal_status": {
-        onProgress?.(30, 100, "Reading binary WAL header and frames");
-        const defaultPath = path.join(this.projectRoot, "data/eos_bitemporal.wal");
-        const walPath = args.walPath ? path.resolve(this.projectRoot, String(args.walPath)) : defaultPath;
-        const exists = fs.existsSync(walPath);
-        onProgress?.(100, 100, "WAL statistics gathered");
-        return {
-          walPath,
-          exists,
-          fileSizeBytes: exists ? fs.statSync(walPath).size : 0,
-          format: "EOSW_BINARY_V1",
-          crc32Verified: true,
-          durability: "HARDWARE_FSYNC"
-        };
-      }
+            // SPEC-155 Phase-7: eos_wal_status → registry
 
       case "eos_prometheus_metrics": {
         onProgress?.(50, 100, "Collecting system gauges and counters");
@@ -2671,15 +2883,17 @@ export class EosMcpServer {
         return report;
       }
 
-      case "eos_verify_formal_models": {
-        onProgress?.(30, 100, "Parsing TLA+ specifications and building state models");
+      case "eos_simulate_bounded_models": {
+        onProgress?.(30, 100, "Reading TLA+ text and running bounded JavaScript simulations");
         const results = runAllFormalVerifications();
-        onProgress?.(100, 100, "All formal models verified (0 violations)");
+        onProgress?.(100, 100, "Bounded simulations completed; no formal model checking was run");
         return {
           totalModels: results.length,
           models: results,
-          epistemicState: "VERIFIED",
-          guarantee: "seL4 / ASML MATHEMATICALLY BOUNDED"
+          simulationOnly: true,
+          executionMode: "bounded-javascript-simulation",
+          formalModelCheckingRun: false,
+          epistemicState: "LOCAL_SIMULATIONS_COMPLETED"
         };
       }
 
@@ -2723,20 +2937,15 @@ export class EosMcpServer {
         };
       }
 
-      case "eos_finops_budget_check": {
-        onProgress?.(50, 100, "Auditing token spend ledger and Cajitas status");
-        const budget = new EosFinOpsBudget(15.00);
-        onProgress?.(100, 100, "FinOps report compiled");
-        return budget.getReport();
-      }
+            // SPEC-155 Phase-6: eos_finops_budget_check → registry
 
       case "eos_clave_de_sol_evaluate": {
         onProgress?.(50, 100, "Evaluating Subject-Object-Place consciousness metrics");
         const temple = new EosGnosticTemple();
         const result = temple.evaluateClaveDeSol({
-          subjectAware: Boolean(args.subjectAware),
-          objectFocused: Boolean(args.objectFocused),
-          placePresent: Boolean(args.placePresent)
+          subjectAware: args.subjectAware === true,
+          objectFocused: args.objectFocused === true,
+          placePresent: args.placePresent === true
         });
         onProgress?.(100, 100, "Consciousness evaluation sealed");
         return result;
@@ -2851,32 +3060,7 @@ export class EosMcpServer {
         };
       }
 
-      case "eos_nsa_zero_trust_check": {
-        onProgress?.(30, 100, "Evaluating Bell-LaPadula Simple Security and *-Property");
-        const compartment = new EosNsaZeroTrustCompartment();
-        const subject: any = {
-          subjectId: "SUBJECT_INSPECTOR",
-          clearance: (args.subjectClearance || "SECRET").toUpperCase(),
-          compartments: Array.isArray(args.subjectCompartments) ? args.subjectCompartments : []
-        };
-        const targetClass = (args.objectClassification || "SECRET").toUpperCase();
-        const targetComps = Array.isArray(args.objectCompartments) ? args.objectCompartments : [];
-        const action = String(args.action || "READ").toUpperCase();
-
-        const permitted = action === "READ"
-          ? compartment.canRead(subject, { classification: targetClass, compartments: targetComps })
-          : compartment.canWrite(subject, targetClass, targetComps);
-
-        onProgress?.(100, 100, "Zero-Trust authorization evaluated");
-        return {
-          subject,
-          targetClassification: targetClass,
-          targetCompartments: targetComps,
-          action,
-          permitted,
-          ruleEnforced: action === "READ" ? "Bell-LaPadula Simple Security (No Read-Up)" : "Bell-LaPadula *-Property (No Write-Down)"
-        };
-      }
+            // SPEC-155 Phase-7: eos_nsa_zero_trust_check → registry
 
       case "eos_nsa_audit_logs": {
         onProgress?.(50, 100, "Reading Red/Black cryptographically sealed audit trail");
@@ -2990,25 +3174,7 @@ export class EosMcpServer {
         };
       }
 
-      case "eos_zero_copy_scan": {
-        onProgress?.(30, 100, "Executing SpaceX/ASML Zero-Copy scan");
-        let buf: Buffer;
-        if (args.filePath && typeof args.filePath === "string" && fs.existsSync(args.filePath)) {
-          buf = fs.readFileSync(args.filePath);
-        } else {
-          buf = Buffer.from(String(args.code || "export const x = 42;"));
-        }
-        const result = EosZeroCopyScanner.scan(buf);
-        onProgress?.(100, 100, "Zero-copy scan completed (0 B/op)");
-        return {
-          totalTokens: result.totalTokens,
-          byteLength: result.byteLength,
-          durationUs: result.durationUs,
-          throughputMbSec: result.throughputMbSec,
-          tokenTypesCount: result.tokenTypesCount,
-          zeroAllocation: true
-        };
-      }
+            // SPEC-155 Phase-7: eos_zero_copy_scan → registry
 
       case "eos_chaos_inject_eval": {
         onProgress?.(30, 100, "Executing Netflix Chaos Battery");
@@ -3051,27 +3217,6 @@ export class EosMcpServer {
         };
       }
 
-      case "eos_hnsw_knn_search": {
-        onProgress?.(20, 100, "Navigating HNSW small-world graph");
-        const k = typeof args.k === "number" ? args.k : 5;
-        const ef = typeof args.efSearch === "number" ? args.efSearch : 32;
-        let results;
-        if (args.query) {
-          results = EosMcpServer.globalHnsw.searchByText(String(args.query), k, ef);
-        } else if (Array.isArray(args.vector)) {
-          results = EosMcpServer.globalHnsw.searchKnn(new Float32Array(args.vector), k, ef);
-        } else {
-          throw new Error("Must provide either 'query' string or 'vector' array.");
-        }
-        onProgress?.(100, 100, "k-NN search complete");
-        return {
-          query: args.query ?? "custom_vector",
-          k,
-          count: results.length,
-          results
-        };
-      }
-
       case "eos_vector_similarity": {
         const textA = String(args.textA || "");
         const textB = String(args.textB || "");
@@ -3103,97 +3248,7 @@ export class EosMcpServer {
         const seed = typeof args.seed === "number" ? args.seed : 42;
         const deadlineHours = typeof args.deadlineHours === "number" ? args.deadlineHours : 20;
 
-        const result = EosMonteCarloEngine.simulate(tasks, {
-          iterations,
-          seed,
-          deadlineHours
-        });
-        onProgress?.(100, 100, "Monte Carlo simulation complete");
-        return {
-          status: "SIMULATION_SUCCESSFUL",
-          engine: "BlackRock Aladdin Quantitative PERT",
-          summary: result.summary,
-          percentiles: result.percentiles,
-          preview: result.sampledRunsPreview
-        };
-      }
-
-      case "eos_hash_chain_verify": {
-        const action = args.action || "verify";
-        if (action === "append") {
-          const recId = String(args.recordId || ("REC-" + Date.now()));
-          const recType = String(args.type || "AUDIT");
-          const summary = String(args.summary || "Cryptographic evidence seal");
-          const block = EosMcpServer.globalHashChain.append(recId, recType, summary, args.metadata as Record<string, unknown>);
-          return {
-            action: "APPEND",
-            block: block.toJSON(),
-            chainStatus: EosMcpServer.globalHashChain.verify()
-          };
-        } else if (action === "status") {
-          return {
-            totalBlocks: EosMcpServer.globalHashChain.getBlocks().length,
-            latestBlock: EosMcpServer.globalHashChain.getLatestBlock()?.toJSON() ?? null,
-            verification: EosMcpServer.globalHashChain.verify()
-          };
-        } else {
-          const verification = EosMcpServer.globalHashChain.verify();
-          return {
-            action: "VERIFY",
-            verification,
-            totalBlocks: EosMcpServer.globalHashChain.getBlocks().length
-          };
-        }
-      }
-
-      case "eos_product_foundry_create": {
-        onProgress?.(30, 100, "Synthesizing hexagonal product blueprint");
-        const name = String(args.name || "Apex Product Core");
-        const domain = String(args.domain || "general");
-        const tier = (args.tier as any) || "ENTERPRISE";
-        const entities = Array.isArray(args.entities) && args.entities.length > 0 ? args.entities : ["PrimaryRecord", "AuditTrail"];
-        const commands = Array.isArray(args.commands) && args.commands.length > 0 ? args.commands : ["CreateRecord", "VerifyRecord"];
-        const platforms = Array.isArray(args.platforms) && args.platforms.length > 0 ? args.platforms : ["web", "distributed-backend"];
-        const manifest: ProductManifest = {
-          id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-          name,
-          domain,
-          description: `Autonomous product blueprint for ${name}`,
-          tier,
-          platforms,
-          entities,
-          commands,
-        };
-        const blueprint = EosUniversalProductFoundry.createProductBlueprint(manifest);
-        const report = EosUniversalProductFoundry.validateProductTopology(blueprint);
-        onProgress?.(100, 100, "Product blueprint created and verified");
-        return {
-          status: "BLUEPRINT_CREATED",
-          blueprint,
-          validation: report,
-          totalFilesGenerated: blueprint.domainEntities.length + blueprint.useCases.length + 2
-        };
-      }
-
-      case "eos_product_foundry_validate": {
-        onProgress?.(30, 100, "Validating product topology and boundary rules");
-        const domain = String(args.domain || "fintech");
-        const tier = (args.tier as any) || "MISSION_CRITICAL";
-        const manifest: ProductManifest = {
-          id: `${domain}-validation-probe`,
-          name: `${domain} Validation Probe`,
-          domain,
-          description: "Topological verification probe",
-          tier,
-          platforms: ["distributed-backend"],
-          entities: ["SampleEntity"],
-          commands: ["ExecuteSample"],
-        };
-        const blueprint = EosUniversalProductFoundry.createProductBlueprint(manifest);
-        const report = EosUniversalProductFoundry.validateProductTopology(blueprint);
-        onProgress?.(100, 100, "Topology validation complete");
-        return report;
-      }
+            // SPEC-155 Phase-7: eos_hash_chain_verify → registry
 
       case "eos_sovereign_loop_run": {
         onProgress?.(10, 100, "Initializing 21-Step Sovereign Engineering Loop");
@@ -3217,6 +3272,97 @@ export class EosMcpServer {
         return {
           totalStages: SOVEREIGN_21_STAGES.length,
           stages: SOVEREIGN_21_STAGES
+        };
+      }
+
+            // SPEC-155 Phase-6: eos_product_deliver_run → registry
+
+            // SPEC-155 Phase-6: eos_product_deliver_status → registry
+
+            // SPEC-155 Phase-7: eos_platform_ops_ceiling → registry
+
+      case "eos_otel_query_traces": {
+        onProgress?.(10, 100, "Querying OpenTelemetry distributed traces from SQLite WAL");
+        const traceEngine = EosOtelTraceEngine.getInstance({ projectRoot: this.projectRoot });
+        const validStatuses: SpanStatusCode[] = ["UNSET", "OK", "ERROR"];
+        const status = typeof args.statusCode === "string" && (validStatuses as string[]).includes(args.statusCode)
+          ? (args.statusCode as SpanStatusCode)
+          : undefined;
+        const result = traceEngine.queryTraces({
+          name: args.name ? String(args.name) : undefined,
+          minDurationMs: typeof args.minDurationMs === "number" ? args.minDurationMs : undefined,
+          statusCode: status,
+          limit: typeof args.limit === "number" ? args.limit : 20
+        });
+        onProgress?.(100, 100, `Found ${result.traceCount} matching traces`);
+        return {
+          total: result.traceCount,
+          traces: result.traces,
+          sha256Receipt: crypto.createHash("sha256").update(JSON.stringify(result)).digest("hex")
+        };
+      }
+
+      case "eos_otel_trace_waterfall": {
+        const traceId = String(args.traceId || "").trim();
+        if (!traceId) throw new Error("traceId is required for eos_otel_trace_waterfall");
+        onProgress?.(20, 100, `Computing trace waterfall for trace ${traceId}`);
+        const traceEngine = EosOtelTraceEngine.getInstance({ projectRoot: this.projectRoot });
+        const waterfall = traceEngine.computeTraceWaterfall(traceId);
+        if (!waterfall) {
+          throw new Error(`Trace not found: ${traceId}`);
+        }
+        onProgress?.(100, 100, `Trace waterfall computed: ${waterfall.spanCount} spans, bottleneck: ${waterfall.bottleneckSpanId || "none"}`);
+        return waterfall;
+      }
+
+      case "eos_otel_export_otlp": {
+        const traceId = args.traceId ? String(args.traceId).trim() : undefined;
+        onProgress?.(20, 100, traceId ? `Exporting trace ${traceId} to OTLP JSON` : "Exporting all traces to OTLP JSON");
+        const traceEngine = EosOtelTraceEngine.getInstance({ projectRoot: this.projectRoot });
+        const otlp = traceEngine.exportOtlpJson(traceId);
+        onProgress?.(100, 100, `OTLP payload generated with ${otlp.resourceSpans?.[0]?.scopeSpans?.[0]?.spans?.length || 0} spans`);
+        return otlp;
+      }
+
+      case "eos_autonomous_heal_loop": {
+        onProgress?.(15, 100, "Initiating autonomous closed-loop self-healing cycle");
+        const healingEngine = EosAutonomousSelfHealingEngine.getInstance({ projectRoot: this.projectRoot });
+        const report = healingEngine.runAutonomousHealingLoop({
+          diagnosticReport: args.diagnosticReport ? String(args.diagnosticReport) : undefined,
+          targetFile: args.targetFile ? String(args.targetFile) : undefined,
+          archetype: args.archetype as HealingArchetype | undefined,
+          dryRun: args.dryRun !== false
+        });
+        onProgress?.(100, 100, `Autonomous healing finished with status ${report.status}`);
+        return report;
+      }
+
+      case "eos_ast_mutation_synthesize": {
+        const targetFile = String(args.targetFile || "").trim();
+        if (!targetFile) throw new Error("targetFile is required for eos_ast_mutation_synthesize");
+        const archetype = (args.archetype || "NULL_POINTER_GUARD") as HealingArchetype;
+        onProgress?.(30, 100, `Synthesizing AST mutations for archetype ${archetype}`);
+        const healingEngine = EosAutonomousSelfHealingEngine.getInstance({ projectRoot: this.projectRoot });
+        const candidates = healingEngine.synthesizeCandidateMutations(targetFile, archetype, {
+          symbol: args.symbol ? String(args.symbol) : undefined
+        });
+        onProgress?.(100, 100, `Synthesized ${candidates.length} candidate mutations`);
+        return {
+          total: candidates.length,
+          candidates,
+          sha256Receipt: crypto.createHash("sha256").update(JSON.stringify(candidates)).digest("hex")
+        };
+      }
+
+      case "eos_self_healing_status": {
+        onProgress?.(50, 100, "Querying autonomous self-healing operational status");
+        const healingEngine = EosAutonomousSelfHealingEngine.getInstance({ projectRoot: this.projectRoot });
+        const history = healingEngine.getHealingHistory();
+        return {
+          status: "AUTONOMOUS_HEALING_ACTIVE",
+          totalCycles: history.length,
+          recentHeals: history.slice(0, 10),
+          sha256Receipt: crypto.createHash("sha256").update(JSON.stringify(history)).digest("hex")
         };
       }
 
@@ -3246,14 +3392,9 @@ export class EosMcpServer {
         return EosQuantumLatticeShield.generateLatticeSeal(payload);
       }
 
-      case "eos_refactor_audit": {
-        const target = typeof args?.dirPath === "string" ? args.dirPath : (typeof args?.targetDir === "string" ? args.targetDir : "src/core");
-        return EosContinuousRefactorEngine.auditDirectory(target);
-      }
-
       case "eos_refactor_execute": {
-        const root = typeof args?.projectRoot === "string" ? args.projectRoot : ".";
-        return EosContinuousRefactorEngine.executeRefactorAudit(root);
+        const safeRoot = this.resolveProjectPath(args?.projectRoot, "directory", ".");
+        return EosContinuousRefactorEngine.executeRefactorAudit(safeRoot);
       }
 
       case "eos_dst_simulate": {
@@ -3277,9 +3418,21 @@ export class EosMcpServer {
         return res;
       }
 
-      case "eos_synapse_arbitrate": {
-        const candidates = Array.isArray(args.candidates) ? args.candidates : [];
-        return EosMetaCognitiveSynapse.arbitrateIntents(candidates);
+            // SPEC-155 Phase-6: eos_synapse_arbitrate → registry
+
+      case "eos_canary_rollout": {
+        const versionTarget = String(args.versionTarget || "v50.0.0");
+        const previousVersion = String(args.previousVersion || "v49.0.0");
+        const mesh = new EosProgressiveCanaryMesh(versionTarget, previousVersion);
+        const telemetry = Array.isArray(args.telemetry)
+          ? args.telemetry
+          : [
+              { stage: "CANARY_1_PCT", sampleRequests: 10000, failedRequests: 0, p99LatencyMs: 45, baselineP99LatencyMs: 44 },
+              { stage: "CANARY_5_PCT", sampleRequests: 50000, failedRequests: 1, p99LatencyMs: 46, baselineP99LatencyMs: 44 },
+              { stage: "CANARY_25_PCT", sampleRequests: 250000, failedRequests: 2, p99LatencyMs: 47, baselineP99LatencyMs: 44 },
+              { stage: "FULL_PRODUCTION_100_PCT", sampleRequests: 1000000, failedRequests: 5, p99LatencyMs: 48, baselineP99LatencyMs: 44 }
+            ];
+        return mesh.executeRollout(telemetry as any);
       }
 
       case "eos_consult": {
@@ -3397,20 +3550,28 @@ export class EosMcpServer {
   }
 
   private readResource(uri: string): string {
+    if (typeof uri !== "string" || Buffer.byteLength(uri, "utf8") > 256) {
+      throw new TypeError("Resource URI must be a string no longer than 256 UTF-8 bytes.");
+    }
     switch (uri) {
+      case "eos://antigravity/director-playbook":
+        return EosAntigravityDirector.DIRECTOR_INSTRUCTIONS_PLAYBOOK;
       case "eos://specs/constitution": {
-        const specPath = path.join(this.projectRoot, "docs/specs/spec.md");
-        if (fs.existsSync(specPath)) return fs.readFileSync(specPath, "utf8");
+        const specCandidate = path.join(this.projectRoot, "docs/specs/spec.md");
+        const specPath = fs.existsSync(specCandidate) ? this.resolveProjectPath("docs/specs/spec.md", "file") : null;
+        if (specPath) return fs.readFileSync(specPath, "utf8");
         return "# EOS Constitution\nZero Vibe Coding & 7 Inviolable Laws active.";
       }
       case "eos://evidence/receipt": {
-        const receiptPath = path.join(this.projectRoot, "docs/evidence/SBOM-CICD-RECEIPT.json");
-        if (fs.existsSync(receiptPath)) return fs.readFileSync(receiptPath, "utf8");
+        const receiptCandidate = path.join(this.projectRoot, "docs/evidence/LOCAL-CHECKS-RECEIPT.json");
+        const receiptPath = fs.existsSync(receiptCandidate) ? this.resolveProjectPath("docs/evidence/LOCAL-CHECKS-RECEIPT.json", "file") : null;
+        if (receiptPath) return fs.readFileSync(receiptPath, "utf8");
         return JSON.stringify({ status: "NO_RECEIPT" });
       }
       case "eos://projects/registry": {
-        const regPath = path.join(this.projectRoot, "docs/projects/registry.json");
-        if (fs.existsSync(regPath)) return fs.readFileSync(regPath, "utf8");
+        const regCandidate = path.join(this.projectRoot, "docs/projects/registry.json");
+        const regPath = fs.existsSync(regCandidate) ? this.resolveProjectPath("docs/projects/registry.json", "file") : null;
+        if (regPath) return fs.readFileSync(regPath, "utf8");
         return JSON.stringify({ projects: [] });
       }
       case "eos://memory/axioms": {
@@ -3429,13 +3590,7 @@ export class EosMcpServer {
   }
 
   public startStdioLoop(): void {
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-      terminal: false
-    });
-
-    rl.on("line", (line: string) => {
+    const processLine = (line: string): void => {
       const trimmed = line.trim();
       if (!trimmed) return;
       try {
@@ -3453,18 +3608,48 @@ export class EosMcpServer {
         if (res) {
           process.stdout.write(JSON.stringify(res) + "\n");
         }
-      } catch (err: any) {
+      } catch {
         const errorRes: JsonRpcResponse = {
           jsonrpc: "2.0",
           id: null,
           error: {
             code: -32700,
-            message: "Parse error: Invalid JSON",
-            data: String(err)
+            message: "Parse error: Invalid JSON"
           }
         };
         process.stdout.write(JSON.stringify(errorRes) + "\n");
       }
+    };
+
+    let pending = "";
+    let discardingOversizedLine = false;
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (chunk: string) => {
+      let start = 0;
+      while (start <= chunk.length) {
+        const newline = chunk.indexOf("\n", start);
+        const end = newline < 0 ? chunk.length : newline;
+        if (!discardingOversizedLine) {
+          pending += chunk.slice(start, end);
+          if (Buffer.byteLength(pending, "utf8") > MAX_MCP_REQUEST_BYTES) {
+            process.stdout.write(JSON.stringify({
+              jsonrpc: "2.0",
+              id: null,
+              error: { code: -32700, message: "MCP request exceeds the 1 MiB limit." }
+            }) + "\n");
+            pending = "";
+            discardingOversizedLine = true;
+          }
+        }
+        if (newline < 0) break;
+        if (!discardingOversizedLine) processLine(pending);
+        pending = "";
+        discardingOversizedLine = false;
+        start = newline + 1;
+      }
+    });
+    process.stdin.on("end", () => {
+      if (!discardingOversizedLine && pending) processLine(pending);
     });
   }
 }

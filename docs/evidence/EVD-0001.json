@@ -1,64 +1,8 @@
 {
   "evidenceId": "EVD-0001",
-  "project": "EOS System (Engineering Operating System) — SOLE_SUPREME_EVOLUTION_CORE v11.0 (JARVIS Sovereign Monad + Autonomous Cognitive Nexus + Voice Telemetry + Arc-Reactor HUD + Federated Fleet CI/CD SecDevOps + Omega Singularity + Linux Ring-0)",
-  "timestamp": "2026-10-25T09:57:00-05:00",
-  "epistemicState": "PRODUCTION_READY",
-  "command": "npm run verify:strict && npx vercel --prod --yes",
-  "exitCode": 0,
-  "invariantsPassed": "7/7_CICD_GATES_AND_6/6_LANDING_INVARIANTS",
-  "deployment": {
-    "productionAlias": "https://eos-system-ten.vercel.app",
-    "oracleEndpoint": "https://eos-system-ten.vercel.app/api/teurgia",
-    "compilerEndpoint": "https://eos-system-ten.vercel.app/api/compile",
-    "akashicMemoryEndpoint": "https://eos-system-ten.vercel.app/api/memory",
-    "bigTechTlaEndpoint": "https://eos-system-ten.vercel.app/api/bigtech",
-    "linuxKernelEndpoint": "https://eos-system-ten.vercel.app/api/kernel",
-    "omegaSingularityEndpoint": "https://eos-system-ten.vercel.app/api/omega",
-    "cicdSecDevOpsEndpoint": "https://eos-system-ten.vercel.app/api/cicd",
-    "fleetDispatcherEndpoint": "https://eos-system-ten.vercel.app/api/fleet",
-    "jarvisCognitionEndpoint": "https://eos-system-ten.vercel.app/api/jarvis",
-    "httpSmokeTest": 200
-  },
-  "jarvisMonadVerified": {
-    "version": "11.0.0-jarvis-sovereign-monad",
-    "module": "src/core/eosJarvisMonad.ts",
-    "serverlessJarvisApi": "api/jarvis.js",
-    "autonomousDaemon": "scripts/eos-jarvis-daemon.mjs",
-    "liveHudSection": "#eos-jarvis-nexus",
-    "arcReactorPulse": "528 Hz Harmonic Resonance",
-    "voiceEngine": "Web Speech API (Neural Speech Synthesis & Recognition)",
-    "goalDAGDecomposition": "Natural Language -> Intent -> Atomic DAG -> SecDevOps Gate -> Deploy"
-  },
-  "fleetDispatcherVerified": {
-    "version": "10.0.0-sovereign-fleet-dispatcher",
-    "module": "src/core/eosFleetDispatcher.ts",
-    "serverlessFleetApi": "api/fleet.js",
-    "canonicalRegistry": "docs/projects/registry.json",
-    "hookInjector": "scripts/install-fleet-cicd-hooks.mjs",
-    "autonomousFleetShip": "scripts/fleet-autonomous-cicd.mjs",
-    "liveHudSection": "#fleet-cicd-orchestrator"
-  },
-  "cicdSecDevOpsVerified": {
-    "module": "src/core/eosCicdPipeline.ts",
-    "serverlessCicdApi": "api/cicd.js",
-    "gateScript": "scripts/verify-cicd-pipeline.mjs",
-    "autoShipScript": "scripts/ship-sovereign.mjs",
-    "gitHooksActive": [".githooks/pre-commit", ".githooks/pre-push"],
-    "githubActionsWorkflow": ".github/workflows/eos-sovereign-cicd.yml",
-    "sbomReceipt": "docs/evidence/SBOM-CICD-RECEIPT.json",
-    "sevenFailClosedGates": [
-      "Stage 1: SAST, OWASP Top 10 & Zero Plaintext Secrets Scanner (Law VI)",
-      "Stage 2: Constitutional SDD Gate (EARS + BDD + ADRs + DAG + Level 3 Authorization)",
-      "Stage 3: Hexagonal L0 (0-Deps) & SLSA Level 4 SHA-256 SBOM Merkle Tree",
-      "Stage 4: Static AST & Bytecode Verification (node --check on 17 JS/MJS + 9 L0 TS Modules)",
-      "Stage 5: WCAG 2.1 AA Accessibility, SEO & Modern Web Performance Budget Gate",
-      "Stage 6: In-Process Smoke Execution of All 9 Serverless API Endpoints (/api/* -> 200 OK)",
-      "Stage 7: Automated Zero-Downtime Deployment (GitHub Actions + Vercel Prod) & Live HTTP 200 Probe"
-    ]
-  },
-  "layer0Purity": {
-    "externalRuntimeDependencies": 0,
-    "nativePrimitives": ["node:assert/strict", "node:fs", "node:path", "node:crypto"],
-    "enginesVerified": ["EosCore", "EosAin", "EosAstral", "EosElohim", "Velo de Isis", "EosL1SoAArena", "EosLinuxKernelCore", "EosOmegaSingularity", "EosCicdPipeline", "EosFleetDispatcher", "EosJarvisMonad"]
-  }
+  "evidenceStatus": "HISTORICAL_UNVERIFIED",
+  "recordedAt": "2026-10-25T09:57:00-05:00",
+  "legacyCommandClaim": "npm run verify:strict && npx vercel --prod --yes",
+  "legacyExitCodeClaim": 0,
+  "note": "This legacy record claimed production readiness and a Vercel deployment. No current deployment, test run, or provider record was checked for this repository change. Do not treat the former claims as verified evidence."
 }

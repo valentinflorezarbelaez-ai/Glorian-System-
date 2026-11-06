@@ -1,15 +1,14 @@
 /**
- * EOS SYSTEM — AUTONOMOUS HEALER & FDIR TEST SUITE (Layer 0)
- * Governed by ADR-022, BDD-026 & BDD-027
+ * EOS SYSTEM — Local remediation suggestions test suite
  *
  * Verifies:
  * 1. Root-cause localization and surgical AST remediation diff synthesis.
- * 2. Closed-loop FDIR healing with sandbox pre-validation.
- * 3. Cryptographic healing receipt generation (HEAL-0001.json).
+ * 2. Read-only-by-default behavior and opt-in file writes.
+ * 3. Local check status without production verification claims.
  * 4. Model Context Protocol (MCP) tool dispatch.
  */
 
-import { describe, it, before, after } from "node:test";
+import { describe, it, before, after, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
@@ -26,20 +25,41 @@ import {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, "..");
-const testDir = path.join(root, "test/_sandbox");
+const testDir = path.join(root, "test/_sandbox", `healer-${process.pid}`);
 const testFile = path.join(testDir, "anomalousFile.ts");
+const generatedReceipts = [];
+
+function resetTestFile() {
+  if (!fs.existsSync(testDir)) fs.mkdirSync(testDir, { recursive: true });
+  const badContent = "export function sampleMath(): number {\r\n  return 42;   \r\n}\r\n";
+  fs.writeFileSync(testFile, badContent, "utf8");
+}
 
 describe("EOS Sovereign Autonomous Healer & FDIR Suite", () => {
   before(() => {
-    if (!fs.existsSync(testDir)) fs.mkdirSync(testDir, { recursive: true });
-    // Write an anomalous file with CRLF line endings and trailing whitespace
-    const badContent = "export function sampleMath(): number {\r\n  return 42;   \r\n}\r\n";
-    fs.writeFileSync(testFile, badContent, "utf8");
+    resetTestFile();
+  });
+
+  beforeEach(() => {
+    resetTestFile();
   });
 
   after(() => {
-    if (fs.existsSync(testFile)) fs.unlinkSync(testFile);
-    if (fs.existsSync(testDir)) fs.rmdirSync(testDir);
+    try {
+      if (fs.existsSync(testFile)) fs.unlinkSync(testFile);
+      if (fs.existsSync(testDir)) fs.rmSync(testDir, { recursive: true, force: true });
+    } catch {
+      // Ignore teardown races under parallel suite batches.
+    }
+    for (const receiptPath of generatedReceipts) {
+      if (fs.existsSync(receiptPath)) {
+        try {
+          fs.unlinkSync(receiptPath);
+        } catch {
+          /* ignore */
+        }
+      }
+    }
   });
 
   describe("Suite 1: Diagnostic & Remediation Synthesis (BDD-026)", () => {
@@ -65,29 +85,33 @@ describe("EOS Sovereign Autonomous Healer & FDIR Suite", () => {
   });
 
   describe("Suite 2: Closed-Loop FDIR Healing & Cryptographic Ledger (BDD-027)", () => {
-    it("simulates healing in dryRun mode without modifying disk", () => {
+    it("defaults to a read-only proposal without modifying disk", () => {
       const healer = new EosAutonomousHealer(root);
       const relPath = path.relative(root, testFile).replace(/\\/g, "/");
       const beforeContent = fs.readFileSync(testFile, "utf8");
 
-      const report = healer.executeHealing({ targetFile: relPath, dryRun: true });
+      const report = healer.executeHealing({ targetFile: relPath });
       assert.equal(report.success, true);
-      assert.equal(report.remediatedCount, 1);
+      assert.equal(report.remediatedCount, 0);
+      assert.equal(report.candidateCount, 1);
+      assert.equal(report.changesApplied, false);
 
       const afterContent = fs.readFileSync(testFile, "utf8");
       assert.equal(afterContent, beforeContent, "Dry run must not touch disk");
     });
 
-    it("applies healing to disk, re-verifies via turbo pipeline, and emits receipt", () => {
+    it("writes changes and emits a local result record only after explicit opt-in", () => {
       const healer = new EosAutonomousHealer(root);
       const relPath = path.relative(root, testFile).replace(/\\/g, "/");
 
-      const report = healer.executeHealing({ targetFile: relPath, dryRun: false });
+      const report = healer.executeHealing({ targetFile: relPath, autoApply: true });
       assert.equal(report.success, true);
-      assert.equal(report.epistemicState, "VERIFIED");
+      assert.equal(report.epistemicState, "LOCAL_CHECKS_PASSED");
+      assert.equal(report.changesApplied, true);
       assert.ok(report.receiptPath !== null);
       assert.ok(report.receiptSha256 !== null);
       assert.ok(fs.existsSync(report.receiptPath));
+      generatedReceipts.push(report.receiptPath);
 
       const healedContent = fs.readFileSync(testFile, "utf8");
       assert.ok(!healedContent.includes("\r\n"), "File on disk must now have LF line endings");
@@ -126,7 +150,7 @@ describe("EOS Sovereign Autonomous Healer & FDIR Suite", () => {
       assert.ok(res?.result?.content?.[0]?.text);
       const report = JSON.parse(res.result.content[0].text);
       assert.equal(report.success, true);
-      assert.equal(report.epistemicState, "VERIFIED");
+      assert.equal(report.epistemicState, "LOCAL_CHECKS_PASSED");
     });
   });
 });

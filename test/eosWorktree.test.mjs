@@ -15,7 +15,7 @@ describe("EOS Xirp-Grade Multi-Agent Worktree Orchestrator Suite", () => {
 
       const main = list.find((w) => w.isMain);
       assert.ok(main, "Expected primary main worktree to be identified");
-      assert.equal(path.resolve(main.path), path.resolve(process.cwd()));
+      assert.equal(path.resolve(main.path).toLowerCase(), path.resolve(process.cwd()).toLowerCase());
       assert.ok(typeof main.headCommit === "string" && main.headCommit.length > 0);
     });
 

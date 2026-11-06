@@ -55,6 +55,15 @@ export interface WorktreeStatus {
   readonly currentBranch: string;
 }
 
+function getCleanGitEnv(): NodeJS.ProcessEnv {
+  const env = { ...process.env };
+  delete env.GIT_DIR;
+  delete env.GIT_INDEX_FILE;
+  delete env.GIT_WORK_TREE;
+  delete env.GIT_PREFIX;
+  return env;
+}
+
 export class EosWorktreeOrchestrator {
   private readonly rootDir: string;
 
@@ -70,7 +79,8 @@ export class EosWorktreeOrchestrator {
       const output = execFileSync("git", ["worktree", "list", "--porcelain"], {
         cwd: this.rootDir,
         encoding: "utf8",
-        stdio: ["ignore", "pipe", "ignore"]
+        stdio: ["ignore", "pipe", "ignore"],
+        env: getCleanGitEnv()
       });
 
       return this.parsePorcelainList(output);
@@ -98,6 +108,9 @@ export class EosWorktreeOrchestrator {
     options: CreateWorktreeOptions = {}
   ): WorktreeInfo {
     const sanitizedBranch = branchName.replace(/[^a-zA-Z0-9_\-./]/g, "-");
+    if (!sanitizedBranch || sanitizedBranch.startsWith("-") || sanitizedBranch.startsWith("/") || sanitizedBranch.endsWith("/")) {
+      throw new Error("Branch name must be a non-empty relative Git branch name.");
+    }
     const targetPath = customPath
       ? path.resolve(this.rootDir, customPath)
       : path.join(this.rootDir, ".worktrees", sanitizedBranch.replace(/\//g, "-"));
@@ -117,7 +130,8 @@ export class EosWorktreeOrchestrator {
     try {
       execFileSync("git", ["rev-parse", "--verify", sanitizedBranch], {
         cwd: this.rootDir,
-        stdio: ["ignore", "pipe", "ignore"]
+        stdio: ["ignore", "pipe", "ignore"],
+        env: getCleanGitEnv()
       });
       branchExists = true;
     } catch {
@@ -137,14 +151,15 @@ export class EosWorktreeOrchestrator {
       execFileSync("git", args, {
         cwd: this.rootDir,
         encoding: "utf8",
-        stdio: ["ignore", "pipe", "pipe"]
+        stdio: ["ignore", "pipe", "pipe"],
+        env: getCleanGitEnv()
       });
     } catch (err: any) {
       throw new Error(`Failed to create worktree: ${err.message || String(err)}`);
     }
 
-    // Mirror essential configuration if requested
-    if (options.copyEnv !== false) {
+    // Environment files can contain secrets; never copy them unless requested.
+    if (options.copyEnv === true) {
       const envSource = path.join(this.rootDir, ".env");
       const envExample = path.join(this.rootDir, ".env.example");
       const envTarget = path.join(targetPath, ".env");
@@ -160,7 +175,8 @@ export class EosWorktreeOrchestrator {
       try {
         execFileSync("git", ["config", "core.hooksPath", ".githooks"], {
           cwd: targetPath,
-          stdio: ["ignore", "ignore", "ignore"]
+          stdio: ["ignore", "ignore", "ignore"],
+          env: getCleanGitEnv()
         });
       } catch {
         // Non-blocking
@@ -197,6 +213,16 @@ export class EosWorktreeOrchestrator {
       };
     }
 
+    const registered = this.listWorktrees().some((worktree) => path.resolve(worktree.path) === resolved);
+    if (!registered) {
+      return {
+        success: false,
+        removedPath: resolved,
+        pruned: false,
+        error: "Target is not a registered worktree of this repository."
+      };
+    }
+
     const args = ["worktree", "remove"];
     if (options.force) {
       args.push("--force");
@@ -207,7 +233,8 @@ export class EosWorktreeOrchestrator {
       execFileSync("git", args, {
         cwd: this.rootDir,
         encoding: "utf8",
-        stdio: ["ignore", "pipe", "pipe"]
+        stdio: ["ignore", "pipe", "pipe"],
+        env: getCleanGitEnv()
       });
 
       this.pruneWorktrees();
@@ -235,7 +262,8 @@ export class EosWorktreeOrchestrator {
       const output = execFileSync("git", ["worktree", "prune", "-v"], {
         cwd: this.rootDir,
         encoding: "utf8",
-        stdio: ["ignore", "pipe", "pipe"]
+        stdio: ["ignore", "pipe", "pipe"],
+        env: getCleanGitEnv()
       });
       return { success: true, output: output.trim() };
     } catch (err: any) {
@@ -252,13 +280,15 @@ export class EosWorktreeOrchestrator {
       const statusOutput = execFileSync("git", ["status", "--porcelain"], {
         cwd: resolved,
         encoding: "utf8",
-        stdio: ["ignore", "pipe", "ignore"]
+        stdio: ["ignore", "pipe", "ignore"],
+        env: getCleanGitEnv()
       });
 
       const branchOutput = execFileSync("git", ["branch", "--show-current"], {
         cwd: resolved,
         encoding: "utf8",
-        stdio: ["ignore", "pipe", "ignore"]
+        stdio: ["ignore", "pipe", "ignore"],
+        env: getCleanGitEnv()
       });
 
       const lines = statusOutput.split(/\r?\n/).filter((l) => l.trim().length > 0);

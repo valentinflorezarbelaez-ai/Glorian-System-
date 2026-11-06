@@ -5,17 +5,18 @@ import fs from "node:fs";
 import os from "node:os";
 import { EosUniversalProjectAdapter } from "../src/core/eosUniversalProjectAdapter.ts";
 
-describe("EOS Universal Polyglot Repository Adapter Suite (SPEC-019, BDD-049)", () => {
+describe("EOS Universal Polyglot Repository Inventory Suite (SPEC-019, BDD-049)", () => {
   const adapter = new EosUniversalProjectAdapter(process.cwd());
 
-  describe("Suite 1: Polyglot Stack Fingerprinting & Live Repository Audit", () => {
+  describe("Suite 1: Polyglot Stack Fingerprinting & Local Signal Inventory", () => {
     it("fingerprints current EOS repository with high architectural fidelity", () => {
       const report = adapter.audit();
 
       assert.ok(report, "Expected valid audit report");
+      const name = report.projectName.toLowerCase();
       assert.ok(
-        report.projectName.toLowerCase().includes("eos") || report.projectName === "Eos-System",
-        `Expected project name to match EOS, got ${report.projectName}`
+        name.includes("eos") || name.includes("glorian") || report.projectName === "Eos-System",
+        `Expected project name to match EOS or Glorian, got ${report.projectName}`
       );
       assert.ok(["typescript", "javascript"].includes(report.fingerprint.primaryLanguage));
       assert.ok(report.fingerprint.totalSourceFiles > 20);
@@ -25,7 +26,7 @@ describe("EOS Universal Polyglot Repository Adapter Suite (SPEC-019, BDD-049)", 
       assert.equal(report.fingerprint.ciCd, "github_actions");
     });
 
-    it("evaluates all 5 Core Architectural Pillars with deterministic bounds", () => {
+    it("reports bounded signal groups and states that production readiness is not assessed", () => {
       const report = adapter.audit();
       const { pillars } = report;
 
@@ -35,14 +36,15 @@ describe("EOS Universal Polyglot Repository Adapter Suite (SPEC-019, BDD-049)", 
         assert.ok(pillar, `Missing pillar: ${pillarKey}`);
         assert.ok(pillar.score >= 0 && pillar.score <= 20, `Score out of bounds for ${pillarKey}: ${pillar.score}`);
         assert.equal(pillar.maxScore, 20);
-        assert.ok(["EXCELLENT", "SATISFACTORY", "NEEDS_IMPROVEMENT", "CRITICAL"].includes(pillar.status));
+        assert.ok(["MANY_SIGNALS", "SOME_SIGNALS", "FEW_SIGNALS"].includes(pillar.signalBand));
         assert.ok(Array.isArray(pillar.findings));
       }
 
-      // EOS System should achieve TIER_1_SOVEREIGN or TIER_2_PRODUCTION
-      assert.ok(report.healthIndex >= 80, `Expected high health index for EOS, got ${report.healthIndex}`);
-      assert.ok(["TIER_1_SOVEREIGN", "TIER_2_PRODUCTION"].includes(report.tier));
-      assert.ok(typeof report.sha256MerkleReceipt === "string" && report.sha256MerkleReceipt.length === 64);
+      assert.ok(report.localSignalScore >= 0 && report.localSignalScore <= 100);
+      assert.ok(["MANY_SIGNALS", "SOME_SIGNALS", "FEW_SIGNALS"].includes(report.localSignalBand));
+      assert.equal(report.productionReadiness, "NOT_ASSESSED");
+      assert.ok(report.assessmentLimitations.some((item) => item.includes("does not execute")));
+      assert.ok(typeof report.sha256ReportDigest === "string" && report.sha256ReportDigest.length === 64);
     });
   });
 
@@ -141,7 +143,7 @@ describe("EOS Universal Polyglot Repository Adapter Suite (SPEC-019, BDD-049)", 
 
         assert.equal(result.dryRun, true);
         assert.ok(result.filesScaffolded.length >= 3, "Expected at least 3 files to be proposed");
-        assert.ok(result.message.includes("[DRY-RUN]"));
+        assert.ok(result.message.includes("[PLAN ONLY]"));
 
         // Verify NO files were actually written to disk
         assert.equal(fs.existsSync(path.join(tmpDir, "catalog-info.yaml")), false);
@@ -161,7 +163,7 @@ describe("EOS Universal Polyglot Repository Adapter Suite (SPEC-019, BDD-049)", 
         const result = mockAdapter.elevate(tmpDir, { dryRun: false });
 
         assert.equal(result.dryRun, false);
-        assert.ok(result.message.includes("[APPLIED]"));
+        assert.ok(result.message.includes("[WRITE COMPLETED]"));
 
         // Verify files were written
         assert.ok(fs.existsSync(path.join(tmpDir, "catalog-info.yaml")), "Missing catalog-info.yaml");

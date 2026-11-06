@@ -1,0 +1,21 @@
+{
+  "evidenceId": "EVD-SPEC-146-WAVE-B",
+  "specRef": "SPEC-146",
+  "changeRef": "CHANGE-081",
+  "wave": "B_NIST_ZERO_TRUST_PACK",
+  "timestampIso": "2026-11-04T02:50:00.000Z",
+  "epistemicState": "NIST_BINDER_READY",
+  "artifacts": [
+    "docs/assurance/NIST_800_53_CONTROL_MAP.md",
+    "docs/assurance/IVV_PLAYBOOK.md",
+    "docs/evidence/assurance-binder/INDEX.md"
+  ],
+  "attestation": {
+    "controlsListed": 18,
+    "covered": 15,
+    "partial": 3,
+    "gapOnAcIaScTcb": 0,
+    "coverageRatio": 0.833
+  },
+  "verifiedBy": "EOS Peak Assurance Wave B (local workstation)"
+}

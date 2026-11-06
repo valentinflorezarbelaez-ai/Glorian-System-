@@ -1,8 +1,8 @@
 //! Spotify-Grade High-Performance Lockless Audio Core Engine
 //! Governed by ADR-028 and OpenSpec SPEC-012
 
-use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 pub const TARGET_LUFS: f32 = -14.0;
 pub const BUFFER_CAPACITY: usize = 65536; // 64K sample frames (~1.48 seconds @ 44.1kHz)
@@ -91,7 +91,9 @@ pub fn is_camelot_compatible(key_a: &str, key_b: &str) -> bool {
     // Parse numbers (1-12) and modes (A/B)
     let parse = |k: &str| -> Option<(u8, char)> {
         let len = k.len();
-        if len < 2 { return None; }
+        if len < 2 {
+            return None;
+        }
         let (num_str, mode_char) = k.split_at(len - 1);
         let num: u8 = num_str.parse().ok()?;
         let mode: char = mode_char.chars().next()?;

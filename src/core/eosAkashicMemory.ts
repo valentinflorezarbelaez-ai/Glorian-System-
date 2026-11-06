@@ -1,17 +1,10 @@
 /**
  * ============================================================================
- * EOS AKASHIC MEMORY & GENTLEMAN-SAMAELIAN ENGINE (LAYER-0 · ZERO-DEPS)
+ * EOS MEMORY TYPES, REFERENCE CATALOG, AND LOCAL HEURISTICS
  * ============================================================================
- * Absorbs 100% of Gentleman-Programming/engram (27 MCP tools, FTS5 search,
- * topic_key upserts, conflict surfacing mem_judge/mem_compare, session handoffs,
- * decay review, Obsidian export) and Gentleman-Programming/gentle-ai (ODD
- * proportional routing, RDD 4R frozen review, CodeGraph, GGA deny-list),
- * elevated with Samaelian Esoteric Gnostic Christic rigor:
- *   - El Átomo Maestro Nous (Ventrículo Izquierdo del Corazón)
- *   - Los Archivos Akáshicos de la Naturaleza (Daath / Binah / Chesed)
- *   - Clasificación en Los Tres Factores (MORIR, NACER, SACRIFICIO)
- *   - El Tribunal de Anubis y los 42 Jueces del Karma (Conflict Surfacing)
- *   - Cadena Criptográfica de Merkle SHA-256 en cada Observación
+ * This module does not implement a memory store, MCP server, FTS5 index,
+ * conflict tribunal, version history, or cryptographic hash chain. It exports
+ * data types, a capability reference catalog, and small deterministic helpers.
  * ============================================================================
  */
 
@@ -52,31 +45,20 @@ export type EngramRelationVerb =
   | "supersedes"
   | "not_conflict";
 
-export interface AkashicStructuredContent {
-  readonly what: string;
-  readonly why: string;
-  readonly where: string;
-  readonly learned: string;
-}
-
 export interface AkashicObservation {
   readonly id: number;
   readonly project: string;
-  readonly scope: "project" | "personal" | "global";
   readonly type: EngramObservationType;
   readonly title: string;
   readonly topic_key: string;
-  readonly structured: AkashicStructuredContent;
-  readonly content: string;
+  readonly what: string;
+  readonly where: string;
+  readonly learned: string;
   readonly samaelianFactor: SamaelianMemoryFactor;
   readonly sephirah: AkashicSephirah;
   readonly pinned: boolean;
   readonly version_count: number;
-  readonly review_after: string;
-  readonly created_at: string;
   readonly updated_at: string;
-  readonly prevMerkleHash: string;
-  readonly merkleHash: string;
 }
 
 export interface AkashicConflictJudgment {
@@ -106,112 +88,45 @@ export interface OddProportionalRoute {
 }
 
 export interface RddFourRReview {
-  readonly candidateLineageHash: string;
-  readonly riskTier: "PASSIVE" | "MEDIUM" | "HIGH_4R";
+  /** Caller-supplied value retained for display; it is not verified here. */
+  readonly suppliedCandidateFingerprint: string;
+  readonly riskTier: "NOT_ASSESSED";
   readonly lenses: {
     readonly risk: string;
     readonly resilience: string;
     readonly readability: string;
     readonly reliability: string;
   };
-  readonly epistemicVerdict: "VERIFIED_FROZEN_CANDIDATE";
+  readonly epistemicVerdict: "NOT_EXECUTED_TEMPLATE";
 }
 
-export const ENGRAM_27_TOOLS_CATALOG: readonly {
-  readonly tool: string;
-  readonly category: "Core Proactive" | "Conflict & Anubic Tribunal" | "Session & Lifecycle" | "Admin & Graph";
-  readonly engramFunction: string;
-  readonly eosAkashicUpgrade: string;
+export const MEMORY_CAPABILITY_REFERENCE_CATALOG: readonly {
+  readonly capability: string;
+  readonly eosCurrentBehavior: string;
 }[] = [
   {
-    tool: "mem_save",
-    category: "Core Proactive",
-    engramFunction: "Proactively saves decisions, bugfixes, discoveries (What/Why/Where/Learned) + topic_key upsert.",
-    eosAkashicUpgrade: "Adds Samaelian 3-Factors classification (MORIR/NACER/SACRIFICIO), Sephirah mapping & SHA-256 Merkle signature."
+    capability: "Browser-local notes",
+    eosCurrentBehavior: "The browser UI stores bounded note records in localStorage; this does not sync between devices or persist on the server."
   },
   {
-    tool: "mem_search",
-    category: "Core Proactive",
-    engramFunction: "Full-Text Search (FTS5) with match_mode ('all' | 'any') and compact progressive disclosure.",
-    eosAkashicUpgrade: "Sub-millisecond In-Memory Inverted Index + L1 Cache SoA vector scoring (< 0.5 ms)."
+    capability: "Text search and filters",
+    eosCurrentBehavior: "The browser performs case-insensitive substring matching and local category/pinned filters; there is no FTS5 or semantic index."
   },
   {
-    tool: "mem_context",
-    category: "Core Proactive",
-    engramFunction: "Recovers recent session history and pinned observations at session start or after compaction.",
-    eosAkashicUpgrade: "Restores Continuous Awakened Consciousness (Recuerdo de Sí / Átomo Nous) with 0 context drift."
+    capability: "topic_key updates",
+    eosCurrentBehavior: "Saving an existing key replaces that local record and increments an edit counter; previous versions are not retained."
   },
   {
-    tool: "mem_session_summary",
-    category: "Core Proactive",
-    engramFunction: "Saves structured 6-part end-of-session handoff (Goal, Instructions, Discoveries, Accomplished, Next Steps, Files).",
-    eosAkashicUpgrade: "Seals the Cosmic Dharma Ledger and generates a cryptographic session handoff receipt."
+    capability: "API memory actions",
+    eosCurrentBehavior: "The stateless API serves fixtures and previews. Its diagnostics and judge responses explicitly report that checks or judgments did not execute."
   },
   {
-    tool: "mem_get_observation",
-    category: "Core Proactive",
-    engramFunction: "Retrieves full untruncated observation by ID + bounded 50-snapshot version history.",
-    eosAkashicUpgrade: "Includes full Akashic lineage history and cryptographic Merkle chain verification."
+    capability: "This TypeScript module",
+    eosCurrentBehavior: "Exports types, a reference catalog, deterministic topic-key and factor helpers, a keyword router, and a review template."
   },
   {
-    tool: "mem_save_prompt",
-    category: "Core Proactive",
-    engramFunction: "Records the user's verbatim prompt intent and goals across sessions.",
-    eosAkashicUpgrade: "Binds the Sovereign Architect's directive to the 7-Layer Bidirectional RTM Matrix."
-  },
-  {
-    tool: "mem_current_project",
-    category: "Core Proactive",
-    engramFunction: "Detects current project from explicit override, ENGRAM_PROJECT, or git/cwd.",
-    eosAkashicUpgrade: "Enforces Law IV External Write Barrier & Project Transition Conflict Protection."
-  },
-  {
-    tool: "mem_judge",
-    category: "Conflict & Anubic Tribunal",
-    engramFunction: "Resolves pending memory conflicts (related, compatible, scoped, conflicts_with, supersedes, not_conflict).",
-    eosAkashicUpgrade: "Governed by the Anubic Tribunal (Jerarca Anubis & 42 Judges) weighing epistemic evidence."
-  },
-  {
-    tool: "mem_compare",
-    category: "Conflict & Anubic Tribunal",
-    engramFunction: "Persists external semantic verdicts between two observations (memory_id_a, memory_id_b) idempotently.",
-    eosAkashicUpgrade: "Synthesizes Hegelian/Samaelian dialectic resolution with provenance attestation."
-  },
-  {
-    tool: "mem_suggest_topic_key",
-    category: "Session & Lifecycle",
-    engramFunction: "Deterministic heuristic suggesting stable topic_key (e.g., architecture/akashic-core) for upserts.",
-    eosAkashicUpgrade: "Normalizes semantic ontology keys to prevent orphan links (EOSFDIROntology)."
-  },
-  {
-    tool: "mem_update & mem_delete",
-    category: "Session & Lifecycle",
-    engramFunction: "Atomic mutation or deletion verifying caller-supplied expected_project ownership.",
-    eosAkashicUpgrade: "Requires Level 2+ Constitutional Gate & preserves immutable audit trail."
-  },
-  {
-    tool: "mem_review & mem_pin / mem_unpin",
-    category: "Session & Lifecycle",
-    engramFunction: "Manages observation decay lifecycle (review_after) and device-local pinning.",
-    eosAkashicUpgrade: "Applies Conscious Shock against the Law of Entropy (EosAin) to keep core truths immortal."
-  },
-  {
-    tool: "mem_session_start & mem_session_end",
-    category: "Session & Lifecycle",
-    engramFunction: "Registers authoritative session IDs with lease precedence and clean session closure.",
-    eosAkashicUpgrade: "Synchronizes with Xirp Git Worktrees + WSL2 tmux panes."
-  },
-  {
-    tool: "mem_doctor & mem_capture_passive",
-    category: "Admin & Graph",
-    engramFunction: "Read-only store diagnostics and automatic extraction of '## Aprendizajes Clave:' bullets.",
-    eosAkashicUpgrade: "24/7 EOSSentinelDaemon pulse + automatic passive learning ingestion."
-  },
-  {
-    tool: "mem_list_projects, mem_timeline, mem_stats, mem_export, mem_import",
-    category: "Admin & Graph",
-    engramFunction: "Cross-project discovery, chronological timeline, store metrics, and Obsidian Brain / Git chunk sync.",
-    eosAkashicUpgrade: "Exports both Obsidian Knowledge Graph (.md) and Signed Merkle Akashic Bundles (.json)."
+    capability: "Export",
+    eosCurrentBehavior: "The browser can download local notes as Markdown; there is no Obsidian integration or signed provenance."
   }
 ] as const;
 
@@ -282,16 +197,19 @@ export function evaluateOddProportionalRouting(taskDescription: string): OddProp
   };
 }
 
-export function executeRddFourRLensesReview(candidateTitle: string, lineageHash: string): RddFourRReview {
+export function createRddFourRLensesReviewTemplate(
+  candidateTitle: string,
+  suppliedCandidateFingerprint: string
+): RddFourRReview {
   return {
-    candidateLineageHash: lineageHash,
-    riskTier: "HIGH_4R",
+    suppliedCandidateFingerprint,
+    riskTier: "NOT_ASSESSED",
     lenses: {
-      risk: `[PASS] 0 plain secrets, strict input bounds, and Law IV External Write Barrier verified for "${candidateTitle}".`,
-      resilience: "[PASS] FDIR bounded self-healing (maxRetries=3) + offline deterministic fallback active.",
-      readability: "[PASS] Pure Hexagonal L0 separation (Domain/App/Infra/UI) with 100% strict TypeScript contracts.",
-      reliability: "[PASS] Frozen candidate verified against 6/6 strict invariants with Exit Code 0."
+      risk: "[NOT RUN] No secrets scan or risk assessment was performed.",
+      resilience: "[NOT RUN] No resilience or recovery checks were performed.",
+      readability: "[NOT RUN] No readability or architecture review was performed.",
+      reliability: `[NOT RUN] The review template for "${candidateTitle}" does not validate the supplied fingerprint or execute checks.`
     },
-    epistemicVerdict: "VERIFIED_FROZEN_CANDIDATE"
+    epistemicVerdict: "NOT_EXECUTED_TEMPLATE"
   };
 }

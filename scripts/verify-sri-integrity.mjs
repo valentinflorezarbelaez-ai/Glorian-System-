@@ -36,11 +36,11 @@ const shouldFix = process.argv.includes("--fix");
 if (shouldFix) {
   html = html.replace(
     /<link rel="stylesheet" href="\/css\/eos\.css[^"]*"( integrity="[^"]*")?( crossorigin="[^"]*")? \/>/,
-    `<link rel="stylesheet" href="/css/eos.css?v=12.0" integrity="${cssSri}" crossorigin="anonymous" />`
+    `<link rel="stylesheet" href="/css/eos.css?v=15.0" integrity="${cssSri}" crossorigin="anonymous" />`
   );
   html = html.replace(
-    /<script src="\/js\/eos\.js[^"]*"( integrity="[^"]*")?( crossorigin="[^"]*")? defer><\/script>/,
-    `<script src="/js/eos.js?v=12.0" integrity="${jsSri}" crossorigin="anonymous" defer></script>`
+    /<script src="(\/js\/eos\.js(?:\?[^\"]*)?)"(?: integrity="[^\"]*")?(?: crossorigin="[^\"]*")? defer><\/script>/,
+    (_match, scriptUrl) => '<script src="' + scriptUrl + '" integrity="' + jsSri + '" crossorigin="anonymous" defer></script>'
   );
   fs.writeFileSync(path.join(root, "index.html"), html, "utf8");
   console.log(`[SRI FIX] Injected CSS SRI: ${cssSri.slice(0, 24)}...`);

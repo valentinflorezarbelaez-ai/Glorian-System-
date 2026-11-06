@@ -1,325 +1,363 @@
-// api/mcp.js
-// EOS System — MCP over Streamable HTTP & SSE (Vercel Serverless)
-// Implements Model Context Protocol JSON-RPC 2.0 (spec 2024-11-05)
-// Zero external dependencies.
+const MAX_REQUEST_BYTES = 1024 * 1024;
+const MAX_TEXT_BYTES = 16 * 1024;
+const MAX_CONTEXT_BYTES = 256 * 1024;
+const EXPOSED_TOOLS = new Set([
+  "eos_health_check",
+  "eos_amplify_prompt",
+  "eos_check_architecture",
+  "eos_evaluate_decision",
+  "eos_spotify_shuffle",
+  "eos_optimize_context",
+  "eos_slsa_provenance_sbom",
+  "eos_semantic_search"
+]);
+const ALLOWED_MODELS = new Set(["grok", "claude", "openai", "gemini", "deepseek", "llama", "universal"]);
+const ALLOWED_STRICTNESS = new Set(["standard", "hardened", "sovereign"]);
 
-import crypto from "node:crypto";
+let serverPromise;
 
-const SERVER_INFO = {
-  name: "eos-system",
-  version: "19.0.0"
-};
+function isPlainRecord(value) {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return false;
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+}
 
-const TOOLS = [
-  {
-    name: "eos_health_check",
-    description: "Returns system health status, uptime, and memory telemetry.",
-    inputSchema: { type: "object", properties: {} }
-  },
-  {
-    name: "eos_turbo_verify",
-    description: "Runs fast content-addressed verification of the project in ~27ms.",
-    inputSchema: { type: "object", properties: {} }
-  },
-  {
-    name: "eos_amplify_prompt",
-    description: "Transforms an informal prompt into formal EARS requirements and BDD acceptance scenarios.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        rawPrompt: { type: "string", description: "Natural language instruction or feature request" },
-        targetModel: { type: "string", enum: ["grok", "claude", "openai", "gemini", "deepseek", "universal"], description: "Target model (default: universal)" }
-      },
-      required: ["rawPrompt"]
-    }
-  },
-  {
-    name: "eos_check_architecture",
-    description: "Validates hexagonal domain purity and checks for circular dependency cycles.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        targetDir: { type: "string", description: "Directory to scan (default: src)" }
-      }
-    }
-  },
-  {
-    name: "eos_evaluate_decision",
-    description: "Evaluates a proposed architectural decision against quality standards.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        proposal: { type: "string", description: "Description of the architectural proposal to evaluate" }
-      },
-      required: ["proposal"]
-    }
-  },
-  {
-    name: "eos_titans_benchmark",
-    description: "Benchmarks system performance across multiple engineering archetypes (Spotify, SpaceX, NVIDIA, Google, xAI, Nubank, IBM).",
-    inputSchema: {
-      type: "object",
-      properties: {
-        titan: { type: "string", description: "Specific titan to benchmark, or 'all' for the full matrix" }
-      }
-    }
-  },
-  {
-    name: "eos_spotify_shuffle",
-    description: "Executes a deterministic Smart Shuffle with jittered proportional spacing and Camelot harmonic routing.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        trackCount: { type: "number", description: "Number of tracks to shuffle (default: 60)" },
-        seed: { type: "number", description: "PRNG seed for deterministic output" }
-      }
-    }
-  },
-  {
-    name: "eos_optimize_context",
-    description: "Compresses source code into structural outlines, saving 70-85% of tokens.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        filePath: { type: "string", description: "File path relative to project root" }
-      },
-      required: ["filePath"]
-    }
+function requestId(value) {
+  if (!isPlainRecord(value)) return null;
+  if (typeof value.id === "string" && Buffer.byteLength(value.id, "utf8") <= 128) return value.id;
+  if (typeof value.id === "number" && Number.isFinite(value.id)) return value.id;
+  return null;
+}
+
+function rpcError(id, code, message) {
+  return { jsonrpc: "2.0", id, error: { code, message } };
+}
+
+function boundedString(value, maximumBytes, allowEmpty = false) {
+  return typeof value === "string" && Buffer.byteLength(value, "utf8") <= maximumBytes && (allowEmpty || value.length > 0);
+}
+
+function validatePublicTool(toolName, rawArguments) {
+  if (!EXPOSED_TOOLS.has(toolName)) {
+    return { error: rpcError(null, -32601, "Tool is not exposed by the read-only HTTP MCP endpoint.") };
   }
-];
-
-function handleInitialize(id) {
-  return {
-    jsonrpc: "2.0",
-    id,
-    result: {
-      protocolVersion: "2024-11-05",
-      capabilities: {
-        tools: { listChanged: false }
-      },
-      serverInfo: SERVER_INFO
-    }
-  };
-}
-
-function handleToolsList(id) {
-  return {
-    jsonrpc: "2.0",
-    id,
-    result: { tools: TOOLS }
-  };
-}
-
-function handleToolCall(id, params) {
-  const toolName = params?.name || "";
-  const args = params?.arguments || {};
-
-  let content;
+  if (!isPlainRecord(rawArguments)) {
+    return { error: rpcError(null, -32602, "Tool arguments must be a JSON object.") };
+  }
+  const args = { ...rawArguments };
 
   switch (toolName) {
-    case "eos_health_check":
-      content = JSON.stringify({
-        status: "HEALTHY",
-        version: SERVER_INFO.version,
-        uptime: "continuous",
-        memoryMB: 64,
-        subsystems: { core: "UP", mcp: "UP", cicd: "UP", fleet: "UP" },
-        sli: "99.995%"
-      });
+    case "eos_amplify_prompt":
+      if (!boundedString(args.rawPrompt, 8192)) return { error: rpcError(null, -32602, "rawPrompt must be a non-empty string no larger than 8 KiB.") };
+      if (args.targetModel !== undefined && (typeof args.targetModel !== "string" || !ALLOWED_MODELS.has(args.targetModel))) {
+        return { error: rpcError(null, -32602, "targetModel is not supported.") };
+      }
+      if (args.strictLevel !== undefined && (typeof args.strictLevel !== "string" || !ALLOWED_STRICTNESS.has(args.strictLevel))) {
+        return { error: rpcError(null, -32602, "strictLevel is not supported.") };
+      }
       break;
-
-    case "eos_turbo_verify":
-      content = JSON.stringify({
-        status: "VERIFIED",
-        latencyMs: 27.7,
-        stages: { sast: "PASS", architecture: "PASS", l0Purity: "PASS", assets: "PASS" },
-        merkleRoot: crypto.createHash("sha256").update(`turbo:${Date.now()}`).digest("hex").slice(0, 24)
-      });
-      break;
-
-    case "eos_amplify_prompt": {
-      const raw = args.rawPrompt || "No prompt provided";
-      content = JSON.stringify({
-        earsRequirement: `WHEN the user triggers "${raw.slice(0, 80)}", THE SYSTEM SHALL process the request and return a verified result.`,
-        bddScenario: `GIVEN the system is operational\nWHEN "${raw.slice(0, 60)}" is requested\nTHEN the system responds with a verified output\nAND no invariants are violated.`,
-        targetModel: args.targetModel || "universal"
-      });
-      break;
-    }
-
     case "eos_check_architecture":
-      content = JSON.stringify({
-        purity: "100%",
-        cycles: 0,
-        targetDir: args.targetDir || "src",
-        layersPure: true,
-        runtimeDependencies: 0
-      });
+      if (args.targetDir !== undefined && args.targetDir !== "src") {
+        return { error: rpcError(null, -32602, "The public endpoint only scans the repository src directory.") };
+      }
       break;
-
-    case "eos_evaluate_decision": {
-      const proposal = args.proposal || "";
-      const hasSecrets = /password|secret|key\s*=\s*['"]/.test(proposal);
-      content = JSON.stringify({
-        verdict: hasSecrets ? "REJECT" : "APPROVE",
-        score: hasSecrets ? 15 : 88,
-        reason: hasSecrets ? "Plaintext secret detected in proposal" : "Proposal aligns with architectural standards"
-      });
+    case "eos_evaluate_decision":
+      for (const field of ["title", "description", "proposedAction"]) {
+        if (!boundedString(args[field], MAX_TEXT_BYTES)) {
+          return { error: rpcError(null, -32602, `${field} must be a non-empty string no larger than 16 KiB.`) };
+        }
+      }
+      if (args.codeSnippet !== undefined && !boundedString(args.codeSnippet, MAX_TEXT_BYTES, true)) {
+        return { error: rpcError(null, -32602, "codeSnippet must be a string no larger than 16 KiB.") };
+      }
+      if (args.targetDomain !== undefined && !boundedString(args.targetDomain, 128, true)) {
+        return { error: rpcError(null, -32602, "targetDomain must be a string no larger than 128 bytes.") };
+      }
       break;
-    }
-
-    case "eos_titans_benchmark":
-      content = JSON.stringify({
-        overallStatus: "PASS",
-        titans: [
-          { name: "SPOTIFY_XIRP", status: "PASS" },
-          { name: "SPACEX_TMR", status: "PASS" },
-          { name: "NVIDIA_SIMD", status: "PASS" },
-          { name: "GOOGLE_BORG", status: "PASS" },
-          { name: "XAI_COLOSSUS", status: "PASS" },
-          { name: "NUBANK_DATOMIC", status: "PASS" },
-          { name: "IBM_SYSPLEX", status: "PASS" }
-        ]
-      });
+    case "eos_spotify_shuffle":
+      if (args.tracks !== undefined) {
+        if (!Array.isArray(args.tracks) || args.tracks.length < 1 || args.tracks.length > 128) {
+          return { error: rpcError(null, -32602, "tracks must contain between 1 and 128 local track records.") };
+        }
+        for (const track of args.tracks) {
+          if (!isPlainRecord(track) || !boundedString(track.id, 128) || !boundedString(track.artistId, 128) ||
+            typeof track.bpm !== "number" || !Number.isFinite(track.bpm) || track.bpm <= 0 || track.bpm > 400 ||
+            typeof track.camelotKey !== "string" || !/^(?:[1-9]|1[0-2])[AB]$/.test(track.camelotKey)) {
+            return { error: rpcError(null, -32602, "Each track requires bounded id/artistId text, BPM in (0, 400], and a valid Camelot key.") };
+          }
+        }
+      }
+      if (args.seed !== undefined && (typeof args.seed !== "number" || !Number.isSafeInteger(args.seed))) {
+        return { error: rpcError(null, -32602, "seed must be a safe integer.") };
+      }
       break;
-
-    case "eos_spotify_shuffle": {
-      const count = args.trackCount || 60;
-      const seed = args.seed || 42108;
-      content = JSON.stringify({
-        tracksShuffled: count,
-        seed,
-        artistCollisions: 0,
-        harmonicScore: 95,
-        engine: "Jittered Proportional Spacing + Camelot Harmonic Routing"
-      });
-      break;
-    }
-
     case "eos_optimize_context":
-      content = JSON.stringify({
-        filePath: args.filePath || "unknown",
-        compressionRatio: "78%",
-        tokensSaved: "estimated 70-85%",
-        method: "Structural outline extraction (interfaces, types, function signatures)"
-      });
+      if (Object.prototype.hasOwnProperty.call(args, "filePath")) {
+        return { error: rpcError(null, -32602, "The public endpoint accepts submitted text only; repository file reads are disabled.") };
+      }
+      if (!boundedString(args.content, MAX_CONTEXT_BYTES)) {
+        return { error: rpcError(null, -32602, "content must be non-empty text no larger than 256 KiB.") };
+      }
+      args.filePath = "submitted-context.txt";
       break;
-
-    default:
-      return {
-        jsonrpc: "2.0",
-        id,
-        error: { code: -32601, message: `Unknown tool: ${toolName}` }
-      };
+    case "eos_health_check":
+      break;
+    case "eos_slsa_provenance_sbom":
+      if (args.mode !== undefined && (typeof args.mode !== "string" || !["verify", "sbom", "slsa", "both"].includes(args.mode))) {
+        return { error: rpcError(null, -32602, "mode must be one of: verify, sbom, slsa, both.") };
+      }
+      if (args.commitSha !== undefined && typeof args.commitSha !== "string") {
+        return { error: rpcError(null, -32602, "commitSha must be a string.") };
+      }
+      break;
+    case "eos_semantic_search":
+      if (!boundedString(args.query, MAX_TEXT_BYTES)) {
+        return { error: rpcError(null, -32602, "query must be a non-empty string no larger than 16 KiB.") };
+      }
+      if (args.topK !== undefined && (typeof args.topK !== "number" || !Number.isSafeInteger(args.topK) || args.topK < 1 || args.topK > 50)) {
+        return { error: rpcError(null, -32602, "topK must be a safe integer between 1 and 50.") };
+      }
+      if (args.mode !== undefined && (typeof args.mode !== "string" || !["hybrid", "vector", "lexical"].includes(args.mode))) {
+        return { error: rpcError(null, -32602, "mode must be one of: hybrid, vector, lexical.") };
+      }
+      if (args.category !== undefined && (typeof args.category !== "string" || !["SPEC", "CHANGE", "ADR", "CODE", "PLAN", "DOC", "ALL"].includes(args.category))) {
+        return { error: rpcError(null, -32602, "category is not supported.") };
+      }
+      break;
   }
 
-  return {
-    jsonrpc: "2.0",
-    id,
-    result: {
-      content: [{ type: "text", text: content }],
-      isError: false
-    }
+  return { args };
+}
+
+async function getServer() {
+  if (!serverPromise) {
+    serverPromise = import("../src/mcp/eosMcpServer.ts")
+      .then(({ EosMcpServer }) => new EosMcpServer(process.cwd()))
+      .catch((error) => {
+        serverPromise = undefined;
+        throw error;
+      });
+  }
+  return serverPromise;
+}
+
+function limitPublicTools(response) {
+  if (!response?.result || !Array.isArray(response.result.tools)) return response;
+  const descriptions = {
+    eos_health_check: "Runs local control-plane health probes (Layer-0 deps, SBOM, provenance, fleet registry, tip-seal pin). No network or multi-region SRE.",
+    eos_amplify_prompt: "Creates a local EARS/BDD draft. No remote model is called and the output is not verified.",
+    eos_check_architecture: "Runs a bounded static analysis on the repository src directory; it does not execute tests or establish production readiness.",
+    eos_evaluate_decision: "Applies deterministic local keyword heuristics. Its score is a screening signal, not a verified decision.",
+    eos_spotify_shuffle: "Runs a local deterministic track-ordering algorithm on at most 128 supplied tracks. It does not call Spotify.",
+    eos_optimize_context: "Compresses caller-supplied text only. It does not read repository files; savings vary by input.",
+    eos_slsa_provenance_sbom: "Verifies or generates pure Layer-0 CycloneDX v1.5 SBOM and SLSA Provenance attestations.",
+    eos_semantic_search: "Search EOS sovereign architecture and knowledge base using deterministic Layer-0 hybrid lexical-vector search (FTS5 BM25 + 64-dim token hash projection with RRF k=60; zero neural weights)."
   };
+
+  response.result.tools = response.result.tools
+    .filter((tool) => EXPOSED_TOOLS.has(tool.name))
+    .map((tool) => {
+      if (tool.name === "eos_optimize_context") {
+        return {
+          ...tool,
+          description: descriptions[tool.name],
+          inputSchema: {
+            type: "object",
+            properties: { content: { type: "string", description: "Text submitted for local compression; maximum 256 KiB." } },
+            required: ["content"]
+          }
+        };
+      }
+      if (tool.name === "eos_check_architecture") {
+        return {
+          ...tool,
+          description: descriptions[tool.name],
+          inputSchema: {
+            type: "object",
+            properties: { targetDir: { type: "string", enum: ["src"], description: "Only the repository src directory can be scanned." }
+            }
+          }
+        };
+      }
+      if (tool.name === "eos_spotify_shuffle") {
+        const schema = { ...tool.inputSchema, properties: { ...tool.inputSchema.properties } };
+        if (schema.properties.tracks) schema.properties.tracks = { ...schema.properties.tracks, minItems: 1, maxItems: 128 };
+        return { ...tool, description: descriptions[tool.name], inputSchema: schema };
+      }
+      if (tool.name === "eos_slsa_provenance_sbom") {
+        return {
+          ...tool,
+          description: descriptions[tool.name],
+          inputSchema: {
+            type: "object",
+            properties: {
+              mode: { type: "string", enum: ["verify", "sbom", "slsa", "both"], description: "Execution mode (verify, sbom, slsa, both)." },
+              commitSha: { type: "string", description: "Optional commit SHA for SLSA statement." }
+            }
+          }
+        };
+      }
+      return { ...tool, description: descriptions[tool.name] };
+    });
+  return response;
+}
+
+function addLocalScope(response, toolName) {
+  const text = response?.result?.content?.[0]?.text;
+  if (typeof text !== "string") return response;
+  let result = text;
+  try { result = JSON.parse(text); } catch {}
+  response.result.content[0].text = JSON.stringify({
+    scope: "LOCAL_ONLY",
+    tool: toolName,
+    externalSystemsQueried: false,
+    deploymentPerformed: false,
+    certificationIssued: false,
+    result
+  });
+  return response;
+}
+
+const STATIC_ALLOWED_ORIGINS = new Set([
+  "https://glorian-system.vercel.app",
+  "https://eos-system.vercel.app",
+  "https://portafolio-valentin.vercel.app",
+  "https://avo-pack.vercel.app",
+  "https://crud-slack.vercel.app",
+  "https://atp-strength.vercel.app",
+  "https://biblioteca-gnostica.vercel.app",
+  "https://donaciones-drab.vercel.app",
+  "https://aberamentosprelomamusic.vercel.app",
+  "https://ptg-performance-talent-group.vercel.app",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000"
+]);
+
+function isAllowedOrigin(origin) {
+  if (typeof origin !== "string" || !origin || /[\r\n]/.test(origin)) return false;
+  if (STATIC_ALLOWED_ORIGINS.has(origin)) return true;
+  if (/^https:\/\/(?:[a-zA-Z0-9-]+\.)*vercel\.app$/i.test(origin)) return true;
+  if (process.env.EOS_ALLOWED_ORIGINS) {
+    const custom = process.env.EOS_ALLOWED_ORIGINS.split(",").map((s) => s.trim());
+    if (custom.includes(origin)) return true;
+  }
+  return false;
 }
 
 export default async function handler(req, res) {
-  // Universal CORS headers
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, mcp-session-id");
-  res.setHeader("Access-Control-Expose-Headers", "*");
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.setHeader("Cache-Control", "no-store");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  const origin = req.headers?.origin;
+  const isAllowed = isAllowedOrigin(origin);
+  if (isAllowed) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+  }
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Authorization, Mcp-Session-Id, MCP-Protocol-Version");
+  res.setHeader("Vary", "Origin");
 
   if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  // GET: Support SSE handshake or JSON status
-  if (req.method === "GET") {
-    const accept = (req.headers && req.headers.accept) || "";
-    if (accept.includes("text/event-stream")) {
-      res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
-      res.setHeader("Cache-Control", "no-cache, no-transform");
-      res.setHeader("Connection", "keep-alive");
-      res.write("event: endpoint\ndata: /api/mcp\n\n");
-      return res.end();
+    if (origin && !isAllowed) {
+      return res.status(403).json({ error: "Origin is not allowed." });
     }
-
-    return res.status(200).json({
-      name: SERVER_INFO.name,
-      version: SERVER_INFO.version,
-      protocol: "mcp",
-      protocolVersion: "2024-11-05",
-      status: "ready",
-      toolsCount: TOOLS.length
+    return res.status(204).end();
+  }
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST, OPTIONS");
+    return res.status(405).json({
+      status: "METHOD_NOT_ALLOWED",
+      transport: "stateless JSON-RPC POST; server-sent events are not supported in serverless mode (ADR-0172)"
     });
   }
 
-  // POST: JSON-RPC 2.0
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" });
+  const contentTypeValue = req.headers?.["content-type"];
+  const contentType = Array.isArray(contentTypeValue) ? contentTypeValue[0] : contentTypeValue;
+  if (typeof contentType !== "string" || !/^application\/json(?:\s*;|$)/i.test(contentType)) {
+    return res.status(415).json({ status: "UNSUPPORTED_MEDIA_TYPE", expected: "application/json" });
   }
-
-  let body = req.body;
-  if (typeof body === "string") {
-    try {
-      body = JSON.parse(body);
-    } catch {
-      return res.status(400).json({
-        jsonrpc: "2.0",
-        id: null,
-        error: { code: -32700, message: "Parse error: Invalid JSON" }
+  const acceptValue = req.headers?.accept;
+  const accept = Array.isArray(acceptValue) ? acceptValue.join(",") : acceptValue;
+  if (typeof accept === "string" && accept && !accept.includes("application/json") && !accept.includes("*/*")) {
+    if (accept.includes("text/event-stream")) {
+      return res.status(406).json({
+        status: "NOT_ACCEPTABLE",
+        message: "Serverless MCP transport operates in stateless JSON-RPC mode only (ADR-0172). For persistent streaming sessions (text/event-stream), connect to the local persistent daemon (src/mcp/eosMcpStreamServer.ts).",
+        supported: "application/json"
       });
     }
+    return res.status(406).json({ status: "NOT_ACCEPTABLE", supported: "application/json" });
   }
 
-  if (!body || typeof body !== "object") {
-    return res.status(400).json({
-      jsonrpc: "2.0",
-      id: null,
-      error: { code: -32600, message: "Invalid Request: body must be a JSON object" }
-    });
-  }
-
-  const { id, method, params } = body;
-
-  // Handle JSON-RPC notifications (no id)
-  if (typeof id === "undefined" || id === null) {
-    if (method === "notifications/initialized") {
-      return res.status(200).json({});
+  let rawBody = req.body;
+  let bodyText;
+  if (Buffer.isBuffer(rawBody)) {
+    if (rawBody.byteLength > MAX_REQUEST_BYTES) return res.status(413).json(rpcError(null, -32600, "Request exceeds the 1 MiB limit."));
+    bodyText = rawBody.toString("utf8");
+  } else if (typeof rawBody === "string") {
+    if (Buffer.byteLength(rawBody, "utf8") > MAX_REQUEST_BYTES) return res.status(413).json(rpcError(null, -32600, "Request exceeds the 1 MiB limit."));
+    bodyText = rawBody;
+  } else if (isPlainRecord(rawBody)) {
+    try { bodyText = JSON.stringify(rawBody); } catch {
+      return res.status(400).json(rpcError(null, -32600, "Invalid JSON-RPC request."));
     }
-    return res.status(200).json({});
+    if (typeof bodyText !== "string" || Buffer.byteLength(bodyText, "utf8") > MAX_REQUEST_BYTES) {
+      return res.status(413).json(rpcError(null, -32600, "Request exceeds the 1 MiB limit."));
+    }
+  } else {
+    return res.status(400).json(rpcError(null, -32600, "Request body must be a JSON object."));
   }
 
-  let response;
-
-  switch (method) {
-    case "initialize":
-      response = handleInitialize(id);
-      break;
-    case "ping":
-      response = { jsonrpc: "2.0", id, result: {} };
-      break;
-    case "tools/list":
-      response = handleToolsList(id);
-      break;
-    case "tools/call":
-      response = handleToolCall(id, params);
-      break;
-    case "prompts/list":
-      response = { jsonrpc: "2.0", id, result: { prompts: [] } };
-      break;
-    case "resources/list":
-      response = { jsonrpc: "2.0", id, result: { resources: [] } };
-      break;
-    default:
-      response = {
-        jsonrpc: "2.0",
-        id,
-        error: { code: -32601, message: `Method not found: ${method}` }
-      };
+  let message;
+  try { message = JSON.parse(bodyText); } catch {
+    return res.status(400).json(rpcError(null, -32700, "Parse error: Invalid JSON."));
+  }
+  if (!isPlainRecord(message) || message.jsonrpc !== "2.0" || typeof message.method !== "string" || message.method.length > 128) {
+    return res.status(400).json(rpcError(requestId(message), -32600, "Invalid JSON-RPC request."));
+  }
+  if (message.params !== undefined && !isPlainRecord(message.params)) {
+    return res.status(400).json(rpcError(requestId(message), -32602, "MCP params must be a JSON object."));
+  }
+  const hasId = Object.prototype.hasOwnProperty.call(message, "id");
+  if (!hasId && message.method.startsWith("notifications/")) return res.status(202).end();
+  if (!hasId || message.id === null ||
+    (typeof message.id !== "string" && (typeof message.id !== "number" || !Number.isFinite(message.id))) ||
+    (typeof message.id === "string" && Buffer.byteLength(message.id, "utf8") > 128)) {
+    return res.status(400).json(rpcError(requestId(message), -32600, "A bounded JSON-RPC request ID is required."));
   }
 
-  res.setHeader("Content-Type", "application/json");
-  return res.status(200).json(response);
+  if (!["initialize", "ping", "tools/list", "tools/call"].includes(message.method)) {
+    return res.status(200).json(rpcError(message.id, -32601, "Method is not exposed by the stateless HTTP transport."));
+  }
+
+  if (message.method === "tools/call") {
+    const suppliedArgs = message.params?.arguments === undefined ? {} : message.params.arguments;
+    const validated = validatePublicTool(message.params?.name, suppliedArgs);
+    if (validated.error) {
+      validated.error.id = message.id;
+      return res.status(200).json(validated.error);
+    }
+    message.params.arguments = validated.args;
+  }
+
+  try {
+    const server = await getServer();
+    let response = server.handleRequest(message);
+    if (!response) return res.status(202).end();
+    if (message.method === "tools/list") response = limitPublicTools(response);
+    if (message.method === "initialize" && response.result) {
+      response.result.capabilities = { tools: { listChanged: false } };
+    }
+    if (message.method === "tools/call" && !response.error) {
+      response = addLocalScope(response, message.params.name);
+    }
+    const serialized = JSON.stringify(response);
+    if (Buffer.byteLength(serialized, "utf8") > MAX_REQUEST_BYTES) {
+      return res.status(500).json(rpcError(message.id, -32603, "MCP response exceeds the 1 MiB limit."));
+    }
+    return res.status(200).json(response);
+  } catch {
+    return res.status(503).json({ status: "MCP_ENGINE_UNAVAILABLE", externalSystemsQueried: false });
+  }
 }

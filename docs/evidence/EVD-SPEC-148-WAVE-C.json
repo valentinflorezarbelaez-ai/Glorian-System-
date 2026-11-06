@@ -1,0 +1,14 @@
+{
+  "evidenceId": "EVD-SPEC-148-WAVE-C",
+  "specId": "SPEC-148",
+  "ladder": "LADDER-16",
+  "wave": "C_CEILING_TIP_SEAL",
+  "epistemicState": "SOVEREIGN_CEILING_10_OF_10_WITHIN_TESTED_SCOPE",
+  "forbiddenClaims": ["NSA_GRADE", "AEROSPACE_CERTIFIED", "FEDERAL_ATO", "ABSOLUTE_UNIVERSAL_PERFECTION"],
+  "claims": [
+    "IV&V checklist present at docs/assurance/PLATFORM_IVV_CEILING_CHECKLIST.md",
+    "Ceiling attestation ceilingMet=true with canary verifiedSafe",
+    "LADDER-16 tip-sealed; LADDER-01..15 remain sealed"
+  ],
+  "disclaimer": "10/10 within EOS tested sovereign scope only — external human IV&V still required for accreditation narratives"
+}

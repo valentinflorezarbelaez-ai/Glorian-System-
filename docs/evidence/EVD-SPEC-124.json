@@ -1,0 +1,94 @@
+{
+  "spec": "SPEC-124",
+  "title": "Autonomous Dynamic Fleet Registry & Law IV Multi-Tenant Sentinel",
+  "version": "1.0.0",
+  "status": "VERIFIED",
+  "epistemicState": "PRODUCTION_READY_WITHIN_TESTED_SCOPE",
+  "timestamp": "2026-11-02T12:46:00Z",
+  "project": "EOS System (Control Plane Core)",
+  "compliance": {
+    "constitution": "EOS_CONSTITUTION_LAWS_I_II_III_IV_V_VI_VII",
+    "zeroVibeCoding": true,
+    "lawIVWriteBarrier": true,
+    "pureStandardLibrary": true,
+    "nonDestructiveMerge": true,
+    "zeroPlainSecrets": true
+  },
+  "capabilities": {
+    "gitDiscovery": "Scans workspace root for active .git directories, ignoring auxiliary/backup clones and non-git dirs",
+    "gitPorcelain": "Extracts origin remote URL, current branch, and HEAD commit hash",
+    "metadataInference": "Infers project archetype, display name, and live production URLs from package.json and HTML landmarks",
+    "twoWayReconciliation": "Asymmetric merge: updates filesystem/git attributes while strictly preserving Law IV authorization levels and audits",
+    "registrySignature": "Deterministic SHA-256 seal computed over canonical project entries",
+    "mcpTool": "eos_fleet_registry_sync",
+    "cliCommand": "node scripts/eos-fleet-registry-sync.mjs [--dry-run] [--audit] [--json]"
+  },
+  "discoveredFleetInventory": [
+    {
+      "id": "aberamentho",
+      "resolvedLocalDir": "Aberamentho-s-Pleroma-music",
+      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
+      "productionUrl": "https://aberamentosprelomamusic.vercel.app"
+    },
+    {
+      "id": "atp-strength",
+      "resolvedLocalDir": "ATP-STRENGTH-1",
+      "authorization": "LEVEL_1_READ_ONLY",
+      "productionUrl": "https://atp-strength.vercel.app"
+    },
+    {
+      "id": "biblioteca-gnostica-1",
+      "resolvedLocalDir": "Biblioteca-gnostica-1",
+      "authorization": "LEVEL_1_READ_ONLY"
+    },
+    {
+      "id": "control-de-asistencia-abopack",
+      "resolvedLocalDir": "Control-De-Asistencia-Abopack",
+      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
+      "productionUrl": "https://avo-pack.vercel.app"
+    },
+    {
+      "id": "crud-slack",
+      "resolvedLocalDir": "Crud-slack",
+      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
+      "productionUrl": "https://crud-slack.vercel.app"
+    },
+    {
+      "id": "donaciones",
+      "resolvedLocalDir": "Donaciones",
+      "authorization": "LEVEL_1_READ_ONLY",
+      "productionUrl": "https://donaciones-drab.vercel.app"
+    },
+    {
+      "id": "eos-system",
+      "resolvedLocalDir": "Eos-System",
+      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
+      "productionUrl": "https://eos-system-ten.vercel.app"
+    },
+    {
+      "id": "performance-talent-group",
+      "resolvedLocalDir": "Performance-Talent-Group-1",
+      "authorization": "LEVEL_2_AUTHORIZED",
+      "productionUrl": "https://ptg-performance-talent-group.vercel.app"
+    },
+    {
+      "id": "portafolio",
+      "resolvedLocalDir": "portafolio",
+      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
+      "productionUrl": "https://portafolio-valentin.vercel.app"
+    }
+  ],
+  "testExecution": {
+    "testFile": "test/eos-fleet-registry-sync.test.mjs",
+    "totalTests": 6,
+    "passed": 6,
+    "failed": 0
+  },
+  "fileHashes": {
+    "syncScript": "cd45c8c549684df45c2e9520128b5a3c97ce8d8ef540ddd8570180e13839b97c",
+    "testSuite": "7925ba7567b5e7426c5cef5b7a73c408d021f9997d9028099c780675a5848ad9",
+    "registryJson": "b22ed9530914b31c283f42fa48804800b426edec210ecbfd1b68a98e58a8a75e"
+  },
+  "registrySha256": "984c0ef249475f1d1b76b54a6db9359c6ed683d72f8d18ec3fad921241ffcbc9",
+  "sha256EvidenceSeal": "4d9a2072cf93ebecbdcbeaf6bb2013f9f4a13292ca97fc4ee133e9b626490e87"
+}

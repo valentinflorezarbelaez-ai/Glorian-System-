@@ -2,10 +2,8 @@
  * EOS SYSTEM — PROMETHEUS PROMPT AMPLIFICATION ENGINE (Layer 0)
  * Governed by ADR-019, FR-024 & BDD-019
  *
- * Translates raw, informal, or vibe-coded prompts into mathematically sound,
- * zero-hallucination specifications structured in formal IEEE 830 / ISO 29148 EARS syntax,
- * BDD GIVEN-WHEN-THEN acceptance criteria, architectural boundary invariants,
- * and model-specific cognitive reasoning scaffolding (Claude, OpenAI, Gemini, DeepSeek, Llama).
+ * Converts a prompt into an editable EARS/BDD-style draft and model-labelled
+ * instructions. This deterministic helper does not verify requirements or call a model.
  *
  * Zero external runtime dependencies.
  */
@@ -156,7 +154,7 @@ export function detectDomain(prompt: string): string {
 }
 
 /**
- * Generates ISO 29148 / IEEE 830 EARS requirements from natural language.
+ * Generates proposed EARS-style requirement text. A reviewer must check its assumptions.
  */
 export function synthesizeEarsRequirements(prompt: string, domain: string): EarsRequirement[] {
   const reqs: EarsRequirement[] = [];
@@ -166,7 +164,7 @@ export function synthesizeEarsRequirements(prompt: string, domain: string): Ears
   reqs.push({
     id: "EARS-001",
     type: "EVENT_DRIVEN",
-    syntax: `WHEN an execution trigger or operational command matching "${cleanPrompt}" is dispatched, THE SYSTEM SHALL execute the transition deterministically within the ${domain} boundary.`,
+    syntax: `WHEN the approved trigger for "${cleanPrompt}" occurs, THE SYSTEM SHALL perform the behavior defined by the reviewed ${domain} contract.`,
     description: "Governs positive action on user or system invocation."
   });
 
@@ -174,7 +172,7 @@ export function synthesizeEarsRequirements(prompt: string, domain: string): Ears
   reqs.push({
     id: "EARS-002",
     type: "UNWANTED_CONDITION",
-    syntax: `IF any precondition, input parameter, or environmental invariant fails validation, THEN THE SYSTEM SHALL abort mutation, emit structured diagnostic telemetry, and preserve the previous stable state (fail-closed).`,
+    syntax: `IF an input or precondition for "${cleanPrompt}" is invalid, THEN THE SYSTEM SHALL reject it according to the reviewed error contract.`,
     description: "Governs error mitigation, boundary protection, and zero-panic recovery."
   });
 
@@ -182,7 +180,7 @@ export function synthesizeEarsRequirements(prompt: string, domain: string): Ears
   reqs.push({
     id: "EARS-003",
     type: "STATE_DRIVEN",
-    syntax: `WHILE operating under ${domain} execution context, THE SYSTEM SHALL maintain full Layer-0 isolation, zero memory leaks, and strict compliance with the project Constitution.`,
+    syntax: `WHILE handling "${cleanPrompt}" in the ${domain} context, THE SYSTEM SHALL preserve the state and boundaries defined by the approved design.`,
     description: "Governs steady-state invariant preservation during active processing."
   });
 
@@ -190,7 +188,7 @@ export function synthesizeEarsRequirements(prompt: string, domain: string): Ears
   reqs.push({
     id: "EARS-004",
     type: "UBIQUITOUS",
-    syntax: `THE SYSTEM SHALL continuously enforce zero plaintext secrets, type-safe data contracts, and deterministic exit-code evidence for all completed operations.`,
+    syntax: `THE SYSTEM SHALL apply the project's reviewed security and data-handling requirements to "${cleanPrompt}".`,
     description: "Permanent non-negotiable architectural invariant."
   });
 
@@ -207,22 +205,22 @@ export function synthesizeBddScenarios(prompt: string, domain: string): BddScena
       id: "BDD-001",
       title: `Nominal Execution of "${clean}"`,
       given: `the system is initialized in a clean epistemic state with all preconditions satisfied`,
-      when: `the directive "${clean}" is invoked with verified inputs`,
-      then: `the operation executes to completion emitting valid, typed results`,
+      when: `the directive "${clean}" is invoked with inputs accepted by the reviewed contract`,
+      then: `the operation returns the behavior and result defined by the approved requirements`,
       and: [
         `no architectural boundaries are breached`,
-        `terminal logs record verification with exit code 0`
+        `verification is reported only after the relevant checks have actually run`
       ]
     },
     {
       id: "BDD-002",
       title: `Fault Tolerance and Invalid Input Rejection in ${domain}`,
-      given: `the execution environment receives malformed, malicious, or out-of-boundary parameters`,
-      when: `the validation gate intercepts the request`,
-      then: `the transaction is safely rejected without side effects or unhandled exceptions`,
+      given: `the execution environment receives an invalid or out-of-boundary parameter`,
+      when: `the implementation validates the request`,
+      then: `the response matches the reviewed error contract`,
       and: [
-        `state remains fully consistent with previous known-good baseline`,
-        `error telemetry is logged in standard diagnostic format`
+        `tests cover the expected state after rejection`,
+        `diagnostics follow the format selected by the project`
       ]
     }
   ];
@@ -396,7 +394,7 @@ export function amplifyPrompt(req: AmplifiedPromptRequest): AmplifiedPromptResul
     `## MANDATORY EXECUTION DAG:`,
     ...executionSteps.map((step) => step),
     ``,
-    `Proceed with implementation. Deliver complete, production-ready code fulfilling every EARS and BDD scenario.`
+    `Treat this package as an unverified draft. Review its assumptions, adapt the requirements to the repository, implement the change, and report only checks that were actually run. Do not claim production readiness from this draft.`
   ].join("\n");
 
   return {

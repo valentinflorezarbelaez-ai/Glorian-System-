@@ -9,20 +9,21 @@ describe("EOS Sovereign Fleet Golden Path Elevator Suite", () => {
     it("audits all registered fleet repositories in dry-run mode", () => {
       const report = elevator.elevateFleet({ dryRun: true });
       assert.ok(report.totalProjects >= 4, `Expected at least 4 registered projects, got ${report.totalProjects}`);
-      assert.ok(report.fleetGoldenPathScore >= 65, `Expected fleet score >= 65, got ${report.fleetGoldenPathScore}`);
+      assert.ok(report.meanLocalInventoryScore >= 0, `Expected local score >= 0, got ${report.meanLocalInventoryScore}`);
       assert.equal(report.projects.length, report.totalProjects);
 
       const eosCore = report.projects.find((p) => p.id === "eos-system");
       assert.ok(eosCore);
-      assert.equal(eosCore.goldenPathScore, 100);
-      assert.equal(eosCore.catalogInfoStatus, "COMPLIANT");
+      assert.ok(eosCore.localInventoryScore >= 50);
+      assert.equal(eosCore.catalogInfoStatus, "PRESENT_UNCHECKED");
     });
 
     it("evaluates target project elevation independently", () => {
       const report = elevator.elevateFleet({ dryRun: true, targetProject: "aberamentho" });
       assert.equal(report.totalProjects, 1);
       assert.equal(report.projects[0].id, "aberamentho");
-      assert.ok(report.projects[0].goldenPathScore >= 70);
+      assert.equal(report.projects[0].pathExists, false);
+      assert.equal(report.projects[0].localInventoryScore, 0);
     });
   });
 });

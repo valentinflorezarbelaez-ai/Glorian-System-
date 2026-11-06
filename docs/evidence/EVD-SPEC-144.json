@@ -1,0 +1,26 @@
+{
+  "evidenceId": "EVD-SPEC-144",
+  "specRef": "SPEC-144",
+  "changeRef": "CHANGE-079",
+  "title": "MCP Streamable HTTP Lifecycle & Preemptive Wasm Worker Hardening",
+  "timestampIso": "2026-11-04T01:25:00.000Z",
+  "epistemicState": "VERIFIED",
+  "attestation": {
+    "sarifFile": "docs/evidence/local-checks.sarif",
+    "sarifErrorCount": 0,
+    "sbomFileSha256": "873c16f5a4a9a36dac56c16d17aa2ada6de0f07705cf4fec95f7b65872df3965",
+    "sbomComponentsCataloged": 183,
+    "provenanceFileSha256": "26e3eed9dfe76c090ca633ef27415e91bd63fa7d0f0f51686f7e6d0cdf47b33d",
+    "layer0PurityRuntimeDeps": 0,
+    "testSuitesPassed": 153,
+    "exitCode": 0,
+    "executionEnvironment": {
+      "isCI": false,
+      "platform": "win32",
+      "arch": "x64",
+      "nodeVersion": "v24.19.0",
+      "ciRunId": null
+    }
+  },
+  "verifiedBy": "EOS Sovereign Sentinel (Local Workstation: win32/x64)"
+}

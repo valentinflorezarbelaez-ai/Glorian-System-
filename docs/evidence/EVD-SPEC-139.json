@@ -1,0 +1,25 @@
+{
+  "evidenceId": "EVD-SPEC-139",
+  "specRef": "SPEC-139",
+  "changeRef": "CHANGE-074",
+  "title": "Supply Chain SLSA Level 3 & CycloneDX SBOM Verification",
+  "timestampIso": "2026-11-03T20:40:00.000Z",
+  "epistemicState": "VERIFIED",
+  "attestation": {
+    "cycloneDxVersion": "1.5",
+    "slsaProvenanceVersion": "1.0",
+    "layer0PurityRuntimeDeps": 0,
+    "componentsCataloged": 181,
+    "subjectsAttested": 4,
+    "failClosedTamperRejection": true,
+    "oidcForkIsolation": true,
+    "strictEarsBddRatio": "139/139 (100%)",
+    "suitesExecuted": 148,
+    "suitesPassed": 148,
+    "exitCode": 0,
+    "sbomPath": "docs/evidence/sbom.cdx.json",
+    "provenancePath": "docs/evidence/provenance.intoto.jsonl",
+    "verificationScript": "scripts/verify-supply-chain.mjs"
+  },
+  "verifiedBy": "Valentín Flórez Arbeláez (Principal Architect & System Owner)"
+}

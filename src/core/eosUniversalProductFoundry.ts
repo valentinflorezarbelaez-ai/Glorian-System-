@@ -2,14 +2,13 @@
  * EOS SYSTEM — UNIVERSAL PRODUCT FOUNDRY ENGINE (Layer 0)
  * Governed by SPEC-039, FR-111..114, BDD-104..108 & ADR-044
  *
- * Industrial-grade autonomous engine for synthesizing complete, zero-defect
- * software product architectures of arbitrary complexity.
+ * Local template generator for draft product architecture blueprints.
  *
  * Key Pillars:
  * 1. Cognitive Domain Decomposition (DDD Bounded Contexts & Pure Core Domain).
  * 2. Strict Hexagonal Isolation (0 runtime dependencies on Core L0).
  * 3. Formal EARS / BDD Living Specification Generation.
- * 4. Automated 7-Stage SecDevOps Gate & SLSA Level 4 Provenance.
+ * 4. Suggested validation stages; this module does not execute CI or issue provenance.
  * 5. Multi-Channel MCP & CLI exposure with SHA-256 Merkle sealing.
  *
  * Zero external runtime dependencies.
@@ -159,17 +158,17 @@ export class EosUniversalProductFoundry {
 
     // 6. Tier-Specific SecDevOps Gates
     const gates = [
-      "Stage 1: SAST, Zero-Plaintext-Secrets & OWASP Top 10",
-      "Stage 2: Constitutional SDD Invariant Check",
-      "Stage 3: Pure Hexagonal L0 & SLSA Level 4 SBOM",
-      "Stage 4: Static AST, Unit & Chaos Resiliency Suite",
-      "Stage 5: WCAG 2.1 AA & Core Web Vitals Budget",
-      "Stage 6: In-Process Serverless API Smoke Test",
-      "Stage 7: Autonomous Sovereign CD & Live Probe 200",
+      "Suggested (not run): scan the project's configured credential patterns; not general SAST or OWASP coverage",
+      "Suggested (not run): review the project's specification and implementation authorization",
+      "Suggested (not run): check runtime dependencies and inventory; not an SBOM or SLSA provenance",
+      "Suggested (not run): run the project's syntax checks, type-check, and tests",
+      "Suggested (not run): perform static markup checks; browser WCAG and Core Web Vitals require separate tooling",
+      "Suggested (not run): smoke-test handlers with real contracts and representative integration setup",
+      "Not run: deployment, production probe, or rollback",
     ];
 
     if (manifest.tier === "PLANETARY" || manifest.tier === "MISSION_CRITICAL") {
-      gates.splice(3, 0, "Stage 3.5: Mathematical TLA+ State-Space Verification");
+      gates.splice(3, 0, "Optional external step (not run): TLC model checking of an explicitly configured TLA+ model");
     }
 
     // 7. Merkle Tree calculation

@@ -72,23 +72,56 @@ export default function handler(req, res) {
   if (method !== "GET" && method !== "POST") {
     res.statusCode = 405;
     res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.setHeader("Allow", "GET, POST");
     return res.end(JSON.stringify({ error: "Method Not Allowed" }));
   }
 
   let body = {};
-  if (method === "POST" && req.body) {
-    body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body;
+  if (method === "POST" && req.body !== undefined) {
+    try {
+      body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body;
+    } catch {
+      res.statusCode = 400;
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      return res.end(JSON.stringify({ status: "INVALID_JSON" }));
+    }
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      res.statusCode = 400;
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      return res.end(JSON.stringify({ status: "INVALID_BODY" }));
+    }
+    if (Buffer.byteLength(JSON.stringify(body), "utf8") > 8192) {
+      res.statusCode = 413;
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      return res.end(JSON.stringify({ status: "REQUEST_TOO_LARGE", maxBytes: 8192 }));
+    }
   } else if (req.url && req.url.includes("?")) {
     const params = new URL(req.url, "https://eos-system.vercel.app").searchParams;
     body = Object.fromEntries(params.entries());
   }
 
-  const consulta = String(body.consulta || "Síntesis de los Tres Factores y Gobernanza del Gran Arquitecto").slice(0, 500);
-  const esfera = String(body.esfera || "tribunal").toLowerCase();
-  const dharma = Number(body.dharma ?? 75);
-  const enJuicio = Number(body.enJuicio ?? 0);
+  const consulta = body.consulta ?? "Síntesis de los Tres Factores y Gobernanza del Gran Arquitecto";
+  const esfera = body.esfera ?? "tribunal";
+  const dharma = body.dharma === undefined ? 75 : Number(body.dharma);
+  const enJuicio = body.enJuicio === undefined ? 0 : Number(body.enJuicio);
+  const allowedSpheres = new Set(Object.keys(SEPHIROTIC_DIRECTIONS));
+  if (typeof consulta !== "string" || Buffer.byteLength(consulta, "utf8") > 2000) {
+    res.statusCode = 400;
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    return res.end(JSON.stringify({ status: "INVALID_CONSULTATION", maxBytes: 2000 }));
+  }
+  if (typeof esfera !== "string" || !allowedSpheres.has(esfera.toLowerCase())) {
+    res.statusCode = 400;
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    return res.end(JSON.stringify({ status: "INVALID_SPHERE", allowed: [...allowedSpheres] }));
+  }
+  if (!Number.isFinite(dharma) || dharma < 0 || dharma > 100000 || !Number.isFinite(enJuicio) || enJuicio < 0 || enJuicio > 100000) {
+    res.statusCode = 400;
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    return res.end(JSON.stringify({ status: "INVALID_BALANCE_INPUT" }));
+  }
 
-  const regla = SEPHIROTIC_DIRECTIONS[esfera] || SEPHIROTIC_DIRECTIONS.tribunal;
+  const regla = SEPHIROTIC_DIRECTIONS[esfera.toLowerCase()];
   const indiceBalanza = Math.max(1, dharma - enJuicio * 15);
   const estadoBalanza =
     indiceBalanza >= 50
@@ -96,7 +129,9 @@ export default function handler(req, res) {
       : "REQUIERE INCREMENTO INMEDIATO DE DHARMA Y MUERTE EN MARCHA";
 
   const payload = {
-    status: "VERIFIED_BY_ANUBIC_TRIBUNAL",
+    status: "LOCAL_TEXT_GENERATED",
+    verificationPerformed: false,
+    scope: "deterministic text template; no tribunal, external review, or spiritual assessment was performed",
     divisa: "THELEMA (Voluntad Consciente)",
     consultaRecibida: consulta,
     sephirahActiva: regla.sephirah,
@@ -110,10 +145,10 @@ export default function handler(req, res) {
       veredictoTribunal: estadoBalanza
     },
     dictamenTeurgico: regla.dictamen,
-    selloSha256: crypto
+    sha256Fingerprint: `sha256:${crypto
       .createHash("sha256")
       .update(`${consulta}:${esfera}:${dharma}:${enJuicio}:PAZ_INVERENCIAL`)
-      .digest("hex"),
+      .digest("hex")}`,
     saludoFinal: "AMÉN... AMÉN... AMÉN... PAZ INVERENCIAL."
   };
 

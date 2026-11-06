@@ -1,0 +1,21 @@
+{
+  "evidenceId": "EVD-SPEC-138",
+  "specRef": "SPEC-138",
+  "changeRef": "CHANGE-073",
+  "title": "Gate Sanity, SARIF Diagnostic Truth & Strict CI Unification",
+  "timestampIso": "2026-11-03T20:12:00.000Z",
+  "epistemicState": "VERIFIED",
+  "attestation": {
+    "sarifWriterCanonical": true,
+    "failSafeTryFinally": true,
+    "realFindingsAccumulation": true,
+    "universalSecretScanWholeTree": true,
+    "strictEarsBddRatio": "138/138 (100%)",
+    "workflowConsolidated": true,
+    "shaPinnedActions": true,
+    "testsExecuted": 147,
+    "suitesPassed": 147,
+    "exitCode": 0
+  },
+  "verifiedBy": "Valentín Flórez Arbeláez (Principal Architect & System Owner)"
+}

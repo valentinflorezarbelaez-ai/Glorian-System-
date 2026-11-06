@@ -1,0 +1,20 @@
+{
+  "evidenceId": "EVD-SPEC-146-WAVE-A",
+  "specRef": "SPEC-146",
+  "changeRef": "CHANGE-081",
+  "wave": "A_FORMAL_TCB",
+  "timestampIso": "2026-11-04T02:45:00.000Z",
+  "epistemicState": "FORMAL_TCB_VERIFIED_WITHIN_SCOPE",
+  "artifacts": [
+    "src/core/eosPeakAssuranceTcb.ts",
+    "docs/formal/McpStreamableSecurity.tla",
+    "test/eosPeakAssuranceTcb.test.mjs"
+  ],
+  "attestation": {
+    "bdd": ["BDD-410", "BDD-411", "BDD-412", "BDD-413", "BDD-414", "BDD-415"],
+    "mutationScoreFloor": 80,
+    "tlaModule": "McpStreamableSecurity",
+    "payloadBoundBytes": 1048576
+  },
+  "verifiedBy": "EOS Peak Assurance Wave A (local workstation)"
+}

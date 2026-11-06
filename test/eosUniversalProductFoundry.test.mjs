@@ -107,13 +107,13 @@ describe("SPEC-039: Universal Product Foundry Engine Verification", () => {
   });
 
   describe("BDD-107: Multi-Complexity Support (MVP to PLANETARY)", () => {
-    it("includes TLA+ verification gate for MISSION_CRITICAL and PLANETARY tiers", () => {
+    it("suggests external TLC model checking for MISSION_CRITICAL and PLANETARY tiers", () => {
       const planetaryManifest = { ...sampleManifest, tier: "PLANETARY" };
       const planetaryBlueprint = EosUniversalProductFoundry.createProductBlueprint(planetaryManifest);
 
       assert.ok(
-        planetaryBlueprint.secDevOpsGates.some((g) => g.includes("TLA+ State-Space Verification")),
-        "PLANETARY tier must include TLA+ formal gate"
+        planetaryBlueprint.secDevOpsGates.some((g) => g.includes("Optional external step") && g.includes("TLC")),
+        "PLANETARY tier should document an external, not-yet-run TLC step"
       );
 
       const mvpManifest = { ...sampleManifest, tier: "MVP" };

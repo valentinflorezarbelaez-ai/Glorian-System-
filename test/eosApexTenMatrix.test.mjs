@@ -5,22 +5,22 @@ import { EosTimeTravelSim } from "../src/core/eosTimeTravelSim.ts";
 import { EosSecureMemoryVault } from "../src/core/eosSecureMemoryVault.ts";
 import { EosDatalogVerifier } from "../src/core/eosDatalogVerifier.ts";
 
-test("SPEC-030 / BDD-067: Formal TLA+ Model Checking & Mathematical Invariants", async (t) => {
-  await t.test("Subsuite 1: Parses TLA+ Modules & Identifies Invariants", () => {
+test("SPEC-030 / BDD-067: TLA+ Text Extraction & Bounded JavaScript Simulations", async (t) => {
+  await t.test("Subsuite 1: Extracts module, variables, and candidate invariant names", () => {
     const parsed = parseTlaModule("docs/formal/LmaxDisruptor.tla");
     assert.equal(parsed.moduleName, "LmaxDisruptor");
     assert.ok(parsed.variables.length >= 3);
     assert.ok(parsed.invariants.includes("NoOverrun") || parsed.invariants.includes("SafetyInvariant"));
   });
 
-  await t.test("Subsuite 2: Executes Formal Model Checker with Zero Invariant Violations", () => {
+  await t.test("Subsuite 2: Runs deterministic bounded simulations", () => {
     const results = runAllFormalVerifications();
     assert.ok(results.length >= 3);
     for (const r of results) {
-      assert.equal(r.syntaxValid, true);
-      assert.equal(r.invariantsSatisfied, true);
-      assert.equal(r.modelCheckPassed, true);
-      assert.ok(r.statesExplored >= 100);
+      assert.equal(r.sourceFileRead, true);
+      assert.equal(r.simulationAssertionsPassed, true);
+      assert.equal(r.executionMode, "bounded-javascript-simulation");
+      assert.ok(r.stepsExecuted >= 100);
     }
   });
 });
