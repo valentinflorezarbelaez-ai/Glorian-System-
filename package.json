@@ -71,6 +71,7 @@
     "test": "node scripts/verify-cicd-pipeline.mjs",
     "test:workflow": "node --test test/eosEngineeringWorkflow.test.mjs test/eosFlowCliSmoke.test.mjs",
     "test:pts": "node bin/eos.mjs pts",
+    "test:ledger:stress": "node scripts/stress-session-ledger.mjs",
     "test:unit": "node --test test/eosCore.test.mjs",
     "test:chaos": "node --test test/chaosResilience.test.mjs",
     "test:prometheus": "node --test test/eosPrometheus.test.mjs",

@@ -40,6 +40,11 @@ jobs:
       - name: Verify flow lifecycle and CLI behavior
         run: npm run test:workflow
 
+      # Windows fails rename() while another process holds the file open; this
+      # keeps that class of defect visible on every supported platform.
+      - name: Cross-process session ledger stress
+        run: node scripts/stress-session-ledger.mjs --processes 4 --sessions 3
+
   repository-checks:
     name: "Full Node repository checks"
     runs-on: ubuntu-latest

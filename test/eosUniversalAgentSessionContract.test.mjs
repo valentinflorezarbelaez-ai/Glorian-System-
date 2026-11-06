@@ -1,6 +1,6 @@
 /**
  * SPEC-152 / CHANGE-087 — Universal Agent Session Contract + Golden Path enforcement
- * BDD-461 .. BDD-467
+ * BDD-461 .. BDD-469
  */
 
 import test from "node:test";
@@ -277,6 +277,53 @@ test("BDD-467: Concurrent ledger writers preserve each other's live sessions", (
     const observer = new EosUniversalAgentSessionContract(fixture.root);
     assert.equal(observer.getSessionStatus(opened.sessionId).found, true);
     assert.equal(observer.getSessionStatus(foreignId).found, true);
+  } finally {
+    fixture.cleanup();
+  }
+});
+
+test("BDD-468: Corrupt ledger is ignored and rewritten by the next write", () => {
+  const fixture = createFleetFixture();
+  try {
+    const ledgerPath = path.join(fixture.root, EosUniversalAgentSessionContract.LEDGER_REL_PATH);
+    fs.mkdirSync(path.dirname(ledgerPath), { recursive: true });
+    fs.writeFileSync(ledgerPath, "{ this is not valid json", "utf8");
+
+    const contract = new EosUniversalAgentSessionContract(fixture.root);
+    const opened = contract.openSession({
+      ideFamily: "cursor",
+      directive: "Recover the session ledger after a truncated concurrent write",
+      target: "eos-system"
+    });
+
+    const rewritten = JSON.parse(fs.readFileSync(ledgerPath, "utf8"));
+    assert.equal(rewritten.version, 1);
+    assert.ok(rewritten.sessions[opened.sessionId]);
+    assert.equal(contract.getSessionStatus(opened.sessionId).found, true);
+  } finally {
+    fixture.cleanup();
+  }
+});
+
+test("BDD-469: A stale writer lock does not block session persistence", () => {
+  const fixture = createFleetFixture();
+  try {
+    const ledgerPath = path.join(fixture.root, EosUniversalAgentSessionContract.LEDGER_REL_PATH);
+    fs.mkdirSync(path.dirname(ledgerPath), { recursive: true });
+    const lockPath = `${ledgerPath}.lock`;
+    fs.writeFileSync(lockPath, "999999\n", "utf8");
+    const staleAt = new Date(Date.now() - 60_000);
+    fs.utimesSync(lockPath, staleAt, staleAt);
+
+    const contract = new EosUniversalAgentSessionContract(fixture.root);
+    const opened = contract.openSession({
+      ideFamily: "cursor",
+      directive: "Open a session while a crashed process left a stale ledger lock",
+      target: "eos-system"
+    });
+
+    assert.equal(fs.existsSync(lockPath), false, "stale lock must be reclaimed");
+    assert.equal(contract.getSessionStatus(opened.sessionId).found, true);
   } finally {
     fixture.cleanup();
   }

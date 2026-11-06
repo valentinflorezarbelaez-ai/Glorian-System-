@@ -159,34 +159,54 @@ test("BDD-442: Durable SQLite WAL trace storage and querying", () => {
   }
 });
 
+async function runWaterfallScenario(engine) {
+  const root = engine.startSpan("pipeline.master");
+
+  const quickStep = engine.startSpan("quick.lint", { parentContext: root.context });
+  await new Promise((r) => setTimeout(r, 10));
+  const quickData = quickStep.end();
+
+  const slowStep = engine.startSpan("heavy.compilation", { parentContext: root.context });
+  await new Promise((r) => setTimeout(r, 80));
+  const slowData = slowStep.end();
+
+  root.end();
+
+  return {
+    root,
+    quickStep,
+    slowStep,
+    quickData,
+    slowData,
+    waterfall: engine.computeTraceWaterfall(root.context.traceId)
+  };
+}
+
 test("BDD-443: Hierarchical trace waterfall and critical path bottleneck", async () => {
   const engine = new EosOtelTraceEngine({ dbPath: ":memory:" });
 
   try {
-    // Create a trace with known relative latencies
-    const root = engine.startSpan("pipeline.master");
+    // Windows timer granularity (~15.6 ms) and CPU contention can invert close
+    // synthetic delays; retry until the scheduler reports the intended ordering.
+    let scenario = null;
+    for (let attempt = 0; attempt < 3 && !scenario; attempt++) {
+      const candidate = await runWaterfallScenario(engine);
+      if (candidate.quickData.durationMs < candidate.slowData.durationMs) {
+        scenario = candidate;
+      }
+    }
+    assert.ok(scenario, "OS scheduler inverted synthetic span latencies in every attempt");
 
-    const quickStep = engine.startSpan("quick.lint", { parentContext: root.context });
-    await new Promise((r) => setTimeout(r, 5));
-    quickStep.end();
-
-    const slowStep = engine.startSpan("heavy.compilation", { parentContext: root.context });
-    await new Promise((r) => setTimeout(r, 20));
-    slowStep.end();
-
-    root.end();
-
-    // Waterfall evaluation
-    const waterfall = engine.computeTraceWaterfall(root.context.traceId);
+    const { root, slowStep, waterfall } = scenario;
     assert.ok(waterfall);
     assert.equal(waterfall.traceId, root.context.traceId);
     assert.equal(waterfall.spanCount, 3);
     assert.equal(waterfall.rootSpanName, "pipeline.master");
-    assert.ok(waterfall.totalDurationMs >= 20);
+    assert.ok(waterfall.totalDurationMs >= 50);
 
     // Bottleneck detection
     assert.equal(waterfall.bottleneckSpanId, slowStep.context.spanId);
-    assert.ok(waterfall.bottleneckDurationMs >= 15);
+    assert.ok(waterfall.bottleneckDurationMs >= 50);
 
     // Spans waterfall items
     const rootItem = waterfall.spans.find((s) => s.spanId === root.context.spanId);

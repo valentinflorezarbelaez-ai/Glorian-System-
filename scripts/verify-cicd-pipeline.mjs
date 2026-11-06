@@ -317,6 +317,13 @@ try {
       });
     }
 
+    console.log("[STAGE 4 LEDGER] Cross-process session ledger stress (3 processes × 2 sessions)...");
+    execFileSync(
+      process.execPath,
+      [path.join(root, "scripts", "stress-session-ledger.mjs"), "--processes", "3", "--sessions", "2"],
+      { cwd: root, stdio: "inherit" }
+    );
+
     // Regenerable evidence (SBOM, provenance, receipts) is expected to be rewritten
     // by attestation suites; any other tracked mutation means a test leaked state.
     const leakedMutations = diffTrackedTree(trackedBeforeTests, snapshotTrackedTree())
@@ -330,7 +337,7 @@ try {
     }
 
     stagesPassedCount++;
-    console.log(`[PASS] Stage 4/7 — JavaScript syntax, TypeScript type-check, and all discovered Node test suites (${jsFilesToCheck.length} JS/MJS modules; ${tsCoreFiles.length} core TS modules; ${testFiles.length} suites).`);
+    console.log(`[PASS] Stage 4/7 — JavaScript syntax, TypeScript type-check, all discovered Node test suites (${jsFilesToCheck.length} JS/MJS modules; ${tsCoreFiles.length} core TS modules; ${testFiles.length} suites) and cross-process session-ledger stress.`);
   } catch (err) {
     recordFinding("EOS-TEST-004", `Stage 4 AST/Type/Test execution failure: ${err.message}`, "test/");
     throw err;
