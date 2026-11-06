@@ -105,8 +105,14 @@ test("REL-PIN-05: tracked-file changes alter the inventory digest, volatile evid
     const baseline = computeInventoryDigest(root);
     const pin = sealFixture(root);
 
-    const volatileFile = path.join(root, "docs", "evidence", "LOCAL-CHECKS-RECEIPT.json");
-    fs.writeFileSync(volatileFile, '{"run":1}\n');
+    const volatileFiles = [
+      path.join(root, "docs", "evidence", "LOCAL-CHECKS-RECEIPT.json"),
+      path.join(root, "docs", "evidence", "sbom.cdx.json"),
+      path.join(root, "docs", "evidence", "provenance.intoto.jsonl")
+    ];
+    for (const volatileFile of volatileFiles) {
+      fs.writeFileSync(volatileFile, `{"regenerated":"${path.basename(volatileFile)}"}\n`);
+    }
     execFileSync("git", ["add", "."], { cwd: root });
     assert.equal(computeInventoryDigest(root).inventoryDigest, baseline.inventoryDigest);
 

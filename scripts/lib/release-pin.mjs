@@ -11,6 +11,8 @@ export const RELEASE_PIN_SCHEMA_VERSION = 1;
 const VOLATILE_EVIDENCE = new Set([
   "docs/evidence/LOCAL-CHECKS-RECEIPT.json",
   "docs/evidence/local-checks.sarif",
+  "docs/evidence/sbom.cdx.json",
+  "docs/evidence/provenance.intoto.jsonl",
   RELEASE_PIN_RELATIVE_PATH
 ]);
 
