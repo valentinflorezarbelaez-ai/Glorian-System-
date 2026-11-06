@@ -5,26 +5,27 @@ import { fileURLToPath } from "node:url";
 
 import { EosFleetPulseEngine } from "../src/core/eosFleetPulseEngine.ts";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
+import { createFleetFixture } from "./support/fleetFixture.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, "..");
 
 test("BDD-340: EosFleetPulseEngine audits all 10 fleet repositories and verifies health quorum", () => {
-  const engine = new EosFleetPulseEngine(root);
-  const report = engine.auditFleetPulse();
+  const fixture = createFleetFixture();
+  try {
+    const engine = new EosFleetPulseEngine(fixture.root);
+    const report = engine.auditFleetPulse();
 
-  assert.equal(report.totalProjects, 10, "Expected exactly 10 projects in registry");
-  assert.ok(report.localProjectsFound >= 1, `Expected at least 1 local project (self), got ${report.localProjectsFound}`);
-  if (!process.env.CI && !process.env.GITHUB_ACTIONS) {
-    assert.ok(report.localProjectsFound >= 8, `Expected at least 8 local projects on workstation, got ${report.localProjectsFound}`);
+    assert.equal(report.totalProjects, 10, "Expected exactly 10 projects in registry");
+    assert.ok(report.localProjectsFound >= 8, `Expected at least 8 local projects, got ${report.localProjectsFound}`);
     assert.ok(report.fleetHealthQuorumPercentage >= 85, `Expected quorum >=85%, got ${report.fleetHealthQuorumPercentage}%`);
-  } else {
-    assert.ok(report.fleetHealthQuorumPercentage >= 10, `Expected quorum >=10% in isolated CI runner, got ${report.fleetHealthQuorumPercentage}%`);
+    assert.ok(report.sha256Receipt.length === 64, "Expected valid 64-character SHA-256 seal");
+    assert.ok(report.durationMs >= 0);
+    assert.equal(report.projects.length, 10);
+  } finally {
+    fixture.cleanup();
   }
-  assert.ok(report.sha256Receipt.length === 64, "Expected valid 64-character SHA-256 seal");
-  assert.ok(report.durationMs >= 0);
-  assert.equal(report.projects.length, 10);
 });
 
 test("BDD-341: EosFleetPulseEngine maps esoteric-gnostic archetypes to every sovereign project", () => {
@@ -63,45 +64,46 @@ test("BDD-342: formatPulseTable generates high-density ANSI terminal output", ()
 });
 
 test("BDD-343: EosMcpServer dispatches eos_fleet_pulse for both json and table formats", () => {
-  const server = new EosMcpServer(root);
+  const fixture = createFleetFixture();
+  try {
+    const server = new EosMcpServer(fixture.root);
 
-  // 1. JSON format
-  const jsonRes = server.handleRequest({
-    jsonrpc: "2.0",
-    id: 991,
-    method: "tools/call",
-    params: {
-      name: "eos_fleet_pulse",
-      arguments: {
-        format: "json"
+    // 1. JSON format
+    const jsonRes = server.handleRequest({
+      jsonrpc: "2.0",
+      id: 991,
+      method: "tools/call",
+      params: {
+        name: "eos_fleet_pulse",
+        arguments: {
+          format: "json"
+        }
       }
-    }
-  });
+    });
 
-  assert.ok(jsonRes?.result?.content?.[0]?.text);
-  const jsonParsed = JSON.parse(jsonRes.result.content[0].text);
-  assert.equal(jsonParsed.totalProjects, 10);
-  if (!process.env.CI && !process.env.GITHUB_ACTIONS) {
+    assert.ok(jsonRes?.result?.content?.[0]?.text);
+    const jsonParsed = JSON.parse(jsonRes.result.content[0].text);
+    assert.equal(jsonParsed.totalProjects, 10);
     assert.ok(jsonParsed.fleetHealthQuorumPercentage >= 85);
-  } else {
-    assert.ok(jsonParsed.fleetHealthQuorumPercentage >= 10);
-  }
 
-  // 2. Table format
-  const tableRes = server.handleRequest({
-    jsonrpc: "2.0",
-    id: 992,
-    method: "tools/call",
-    params: {
-      name: "eos_fleet_pulse",
-      arguments: {
-        format: "table"
+    // 2. Table format
+    const tableRes = server.handleRequest({
+      jsonrpc: "2.0",
+      id: 992,
+      method: "tools/call",
+      params: {
+        name: "eos_fleet_pulse",
+        arguments: {
+          format: "table"
+        }
       }
-    }
-  });
+    });
 
-  assert.ok(tableRes?.result?.content?.[0]?.text);
-  const tableParsed = JSON.parse(tableRes.result.content[0].text);
-  assert.equal(tableParsed.totalProjects, 10);
-  assert.ok(tableParsed.table.includes("GLORIAN FLEET TACTICAL SOVEREIGNTY RADAR"));
+    assert.ok(tableRes?.result?.content?.[0]?.text);
+    const tableParsed = JSON.parse(tableRes.result.content[0].text);
+    assert.equal(tableParsed.totalProjects, 10);
+    assert.ok(tableParsed.table.includes("GLORIAN FLEET TACTICAL SOVEREIGNTY RADAR"));
+  } finally {
+    fixture.cleanup();
+  }
 });
