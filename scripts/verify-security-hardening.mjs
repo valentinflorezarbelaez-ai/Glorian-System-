@@ -38,9 +38,13 @@ function check(name, fn) {
 const read = (relPath) => fs.readFileSync(path.join(root, relPath), "utf8");
 
 // ── CVE-1: Unbounded body cap in MCP stream server ──────────────────────────
-check("CVE-1: MCP body size cap (1MB) present", () => {
+check("CVE-1: MCP body size cap present", () => {
   const src = read("src/mcp/eosMcpStreamServer.ts");
-  assert.ok(src.includes("MAX_BODY_BYTES"), "MAX_BODY_BYTES constant missing");
+  // Constant was renamed from MAX_BODY_BYTES to DEFAULT_MAX_REQUEST_BYTES in v62 rewrite
+  assert.ok(
+    src.includes("DEFAULT_MAX_REQUEST_BYTES") || src.includes("MAX_BODY_BYTES"),
+    "Body size cap constant missing (expected DEFAULT_MAX_REQUEST_BYTES)"
+  );
   assert.ok(src.includes("413"), "413 Payload Too Large response missing");
   assert.ok(src.includes("req.socket.destroy()"), "Socket destroy on oversize body missing");
 });

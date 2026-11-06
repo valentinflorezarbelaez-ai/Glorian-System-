@@ -1,7 +1,7 @@
 {
   "name": "eos-system-landing",
-  "version": "64.0.0",
-  "description": "EOS System v64.0 — P0: request timeout enforcement, SIGTERM/SIGINT graceful shutdown, logging/setLevel MCP handler; P1: setup-node pinned SHA, SLSA provenance job, spec uniqueness gate, OpenAPI structure gate; P2: feature flags percentage rollout + runtime refresh + expiry; P3: CSP unsafe-inline removed, pipeline wall-clock deadline",
+  "version": "65.0.0",
+  "description": "EOS System v65.0 — X-Request-Id + structured access log, tools/call inputSchema validation, resources/subscribe -32004, readResource -32002, fix broken CVE-1 check, correlation ID + sampling in logger, trailingSlash vercel, Cache-Control on API routes, OpenAPI v65 + securitySchemes + finops path + 429 responses, npm audit + git secret scan in CI",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",

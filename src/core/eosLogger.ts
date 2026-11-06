@@ -9,6 +9,8 @@
  *  - Nanosecond-precision timing helpers (.time / .timeEnd)
  *  - Namespace/child loggers for per-module context
  *  - Level controlled by EOS_LOG_LEVEL env var
+ *  - v65: Optional correlation ID (requestId/traceId) on every log line
+ *  - v65: Log sampling — skip DEBUG/TRACE at configurable sample rate in production
  *
  * Zero external runtime dependencies.
  */
@@ -17,11 +19,11 @@ export type LogLevel = "SILENT" | "ERROR" | "WARN" | "INFO" | "DEBUG" | "TRACE";
 
 const LEVEL_NUM: Record<LogLevel, number> = {
   SILENT: 0,
-  ERROR:  1,
-  WARN:   2,
-  INFO:   3,
-  DEBUG:  4,
-  TRACE:  5,
+  ERROR: 1,
+  WARN: 2,
+  INFO: 3,
+  DEBUG: 4,
+  TRACE: 5,
 };
 
 /** Fields that will be replaced with "[REDACTED]" in log output. */
@@ -77,9 +79,23 @@ export class EosLogger {
   private readonly minLevel: number;
   private readonly timers = new Map<string, bigint>();
 
-  constructor(namespace: string, level?: LogLevel) {
+  /**
+   * Optional correlation ID — included on every log line when set.
+   * Enables tracing all log entries for a single request (Stripe/Google standard).
+   */
+  private readonly correlationId: string | null;
+
+  /**
+   * Log sampling rate for DEBUG/TRACE (0.0–1.0). Default: 1.0 (emit all).
+   * Netflix standard: suppress verbose logs in high-throughput hot paths.
+   */
+  private readonly sampleRate: number;
+
+  constructor(namespace: string, level?: LogLevel, correlationId?: string, sampleRate?: number) {
     this.namespace = namespace;
     this.minLevel = LEVEL_NUM[level ?? resolveDefaultLevel()];
+    this.correlationId = correlationId ?? null;
+    this.sampleRate = sampleRate ?? 1.0;
   }
 
   /** Factory — creates a named logger. */
@@ -90,12 +106,24 @@ export class EosLogger {
   private _emit(level: LogLevel, msg: string, data?: Record<string, unknown>): void {
     if (LEVEL_NUM[level] > this.minLevel) return;
 
+    // Log sampling for DEBUG/TRACE — never sample ERROR or WARN
+    if (
+      (level === "DEBUG" || level === "TRACE") &&
+      this.sampleRate < 1.0 &&
+      Math.random() > this.sampleRate
+    ) return;
+
     const entry: Record<string, unknown> = {
-      ts:    new Date().toISOString(),
+      ts: new Date().toISOString(),
       level,
-      ns:    this.namespace,
+      ns: this.namespace,
       msg,
     };
+
+    // Correlation ID — Stripe/Google: every log line traceable to a request
+    if (this.correlationId !== null) {
+      entry["requestId"] = this.correlationId;
+    }
 
     if (data && Object.keys(data).length > 0) {
       entry["data"] = redactSensitive(data);
@@ -147,16 +175,39 @@ export class EosLogger {
     if (!start) return 0;
     this.timers.delete(label);
     const elapsedMs = Number((process.hrtime.bigint() - start) / 1_000_000n);
-    this._emit("DEBUG", msg ?? label, { elapsedMs, timerLabel: label });
+    this._emit("INFO", msg ?? label, { elapsedMs, timerLabel: label });
     return elapsedMs;
   }
 
   /**
-   * Creates a child logger with a sub-namespace.
+   * Creates a child logger with a sub-namespace, inheriting correlation ID.
    * @example `log.child("tribunal")` → namespace becomes `eosAgiCore:tribunal`
    */
   child(subNamespace: string, level?: LogLevel): EosLogger {
-    return new EosLogger(`${this.namespace}:${subNamespace}`, level);
+    return new EosLogger(`${this.namespace}:${subNamespace}`, level, this.correlationId ?? undefined, this.sampleRate);
+  }
+
+  /**
+   * Returns a new logger with the given correlation ID attached to every log line.
+   * Stripe/Google standard: every request handler creates a child logger with requestId.
+   *
+   * @example
+   * ```ts
+   * const reqLog = log.withRequestId(requestId);
+   * reqLog.info("Tool dispatched", { toolName }); // includes "requestId" field
+   * ```
+   */
+  withRequestId(requestId: string): EosLogger {
+    return new EosLogger(this.namespace, undefined, requestId, this.sampleRate);
+  }
+
+  /**
+   * Returns a new logger with debug/trace sampling enabled.
+   * Netflix standard: suppress 90% of verbose logs on hot paths.
+   * @param rate 0.0–1.0 (fraction of DEBUG/TRACE logs to emit)
+   */
+  withSampling(rate: number): EosLogger {
+    return new EosLogger(this.namespace, undefined, this.correlationId ?? undefined, Math.max(0, Math.min(1, rate)));
   }
 }
 

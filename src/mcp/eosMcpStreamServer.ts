@@ -442,6 +442,31 @@ export class EosMcpStreamServer {
     res.end(payload);
   }
 
+  /** Emits a structured JSON access log line to stderr (Stripe/Netflix standard). */
+  private _accessLog(
+    requestId: string,
+    method: string,
+    pathname: string,
+    status: number,
+    latencyMs: number,
+    clientIp: string,
+    extras?: Record<string, unknown>
+  ): void {
+    process.stderr.write(JSON.stringify({
+      ts: new Date().toISOString(),
+      level: "INFO",
+      ns: "eosMcpStream",
+      event: "http_request",
+      requestId,
+      method,
+      path: pathname,
+      status,
+      latencyMs,
+      clientIp,
+      ...extras,
+    }) + "\n");
+  }
+
   private _authenticate(req: http.IncomingMessage): boolean {
     // Constant-time Bearer token comparison (prevents timing attacks)
     const authorization = req.headers["authorization"] ?? "";
@@ -479,6 +504,24 @@ export class EosMcpStreamServer {
     req: http.IncomingMessage,
     res: http.ServerResponse
   ): Promise<void> {
+    // ── Request ID + latency tracking (Stripe/Google: every response gets a correlation ID) ──
+    const requestId = crypto.randomUUID();
+    const reqStart = Date.now();
+    const clientIp =
+      (req.headers["x-forwarded-for"] as string | undefined)?.split(",")[0]?.trim() ??
+      req.socket.remoteAddress ??
+      "unknown";
+    const method = req.method ?? "UNKNOWN";
+
+    // Emit X-Request-Id on every response (Stripe/Anthropic: correlates client errors with server logs)
+    res.setHeader("X-Request-Id", requestId);
+
+    // Wrap res.end to capture final status and emit access log
+    const origEnd = res.end.bind(res);
+    (res as NodeJS.EventEmitter).once("finish", () => {
+      this._accessLog(requestId, method, req.url ?? "/", res.statusCode, Date.now() - reqStart, clientIp);
+    });
+
     // ── CORS (enforces this.allowedOrigins allowlist when configured) ────────
     const allowedOrigin = this._getCorsOrigin(req);
     res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
@@ -561,11 +604,6 @@ export class EosMcpStreamServer {
 
     // ── /sse — rate-limited SSE endpoint ─────────────────────────────────────
     if (req.method === "GET" && (pathname === "/sse" || pathname === "/events")) {
-      const clientIp =
-        (req.headers["x-forwarded-for"] as string | undefined)?.split(",")[0]?.trim() ??
-        req.socket.remoteAddress ??
-        "unknown";
-
       const session = this.sessionManager.createSession(res, clientIp);
       if (!session) {
         // Per-IP cap exceeded — must write SSE headers first, then signal error
@@ -597,16 +635,17 @@ export class EosMcpStreamServer {
     // ── /message — async, deduplicated, rate-limited JSON-RPC dispatch ──────
     if (req.method === "POST" && pathname === "/message") {
       // Per-IP rate limit (Stripe/Anthropic: all mutation endpoints rate-limited)
-      const msgClientIp =
-        (req.headers["x-forwarded-for"] as string | undefined)?.split(",")[0]?.trim() ??
-        req.socket.remoteAddress ??
-        "unknown";
-      if (!this._consumeMessageToken(msgClientIp)) {
+      if (!this._consumeMessageToken(clientIp)) {
+        const resetAt = Math.ceil((Date.now() + 1000) / 1000);
         this.writeJson(res, 429, {
           jsonrpc: "2.0",
           id: null,
           error: { code: -32000, message: "Rate limit exceeded. Retry after 1 second." },
-        }, { "Retry-After": "1", "X-RateLimit-Limit": String(EosMcpStreamServer._MSG_CAPACITY) });
+        }, {
+          "Retry-After": "1",
+          "X-RateLimit-Limit": String(EosMcpStreamServer._MSG_CAPACITY),
+          "X-RateLimit-Reset": String(resetAt),   // RFC 6585: when the bucket refills
+        });
         req.resume();
         return;
       }

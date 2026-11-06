@@ -1,15 +1,69 @@
 openapi: 3.1.0
 info:
   title: EOS System Sovereign API
-  version: 48.0.0
-  description: EOS Engineering Operating System — 14 Serverless Edge API Endpoints
+  version: 65.0.0
+  description: EOS Engineering Operating System — 15 Serverless Edge API Endpoints
 servers:
   - url: https://eos-system-ten.vercel.app
     description: Production (Vercel Edge)
   - url: http://localhost:3000
     description: Local development
 
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token for protected endpoints (EOS_MCP_HTTP_TOKEN)
+  responses:
+    RateLimited:
+      description: Rate limit exceeded — back off and retry
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Seconds to wait before retrying
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+          description: Unix timestamp when the rate limit window resets
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: { type: string }
+              code: { type: string, example: EOS_RATE_LIMITED }
+              retryAfterSeconds: { type: number }
+              limit: { type: number }
+              remaining: { type: number }
+
 paths:
+
+  /api/finops:
+    get:
+      summary: FinOps cloud cost estimation and governance
+      description: >
+        Analyzes cloud resource usage patterns and returns cost optimization
+        recommendations. Zero external dependencies.
+      security:
+        - {}
+      responses:
+        "200":
+          description: FinOps report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string }
+                  costEstimate: { type: object }
+        "429":
+          $ref: "#/components/responses/RateLimited"
 
   /api/health:
     get:
@@ -47,6 +101,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthResponse"
+        "429":
+          $ref: "#/components/responses/RateLimited"
         "500":
           $ref: "#/components/responses/InternalError"
 

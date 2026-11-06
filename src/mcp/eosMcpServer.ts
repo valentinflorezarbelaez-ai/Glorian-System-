@@ -731,14 +731,38 @@ export class EosMcpServer {
         // ── Antigravity / Gemini: resources/read ──────────────────────────
         case "resources/read": {
           const uri = params?.uri as string;
-          const content = this.readResource(uri);
+          try {
+            const content = this.readResource(uri);
+            return {
+              jsonrpc: "2.0", id,
+              result: {
+                contents: [{ uri, mimeType: "application/json", text: content }],
+              },
+            };
+          } catch (err: unknown) {
+            const isUnknown = err instanceof Error && err.message.startsWith("Unknown resource URI:");
+            return {
+              jsonrpc: "2.0", id,
+              error: {
+                code: isUnknown ? -32002 : -32603,
+                message: isUnknown
+                  ? `Resource not found: ${String(uri ?? "undefined")}`
+                  : (err instanceof Error ? err.message : "Failed to read resource"),
+              },
+            };
+          }
+        }
+
+        // ── resources/subscribe — not supported (correct MCP error code) ──
+        case "resources/subscribe":
+        case "resources/unsubscribe":
           return {
             jsonrpc: "2.0", id,
-            result: {
-              contents: [{ uri, mimeType: "application/json", text: content }],
+            error: {
+              code: -32004,
+              message: "Resource subscriptions are not supported by this server. Capabilities declare subscribe: false.",
             },
           };
-        }
 
         case "tools/list":
           return {
@@ -2388,6 +2412,31 @@ export class EosMcpServer {
             throw new TypeError("Tool name must contain 1 to 128 characters.");
           }
           if (!isPlainRecord(args)) throw new TypeError("Tool arguments must be a JSON object.");
+
+          // ── JSON Schema validation against declared inputSchema (Anthropic MCP / Cognition standard) ──
+          // Validates args before dispatch: returns -32602 Invalid params on schema mismatch.
+          // Prevents tool handlers from receiving malformed args that crash or produce undefined behavior.
+          const allTools: Array<{ name: string; inputSchema: Record<string, unknown> }> = [];
+          try {
+            const toolListRes = this.handleRequest({ jsonrpc: "2.0", id: "_schema_check", method: "tools/list", params: {} });
+            if (toolListRes && toolListRes.result?.tools) {
+              allTools.push(...(toolListRes.result.tools as Array<{ name: string; inputSchema: Record<string, unknown> }>));
+            }
+          } catch { /* schema validation is best-effort */ }
+
+          const toolDef = allTools.find((t) => t.name === toolName);
+          if (toolDef?.inputSchema) {
+            const schema = toolDef.inputSchema as { required?: string[]; properties?: Record<string, { type?: string }> };
+            // Validate required fields
+            for (const required of schema.required ?? []) {
+              if (!(required in args)) {
+                return {
+                  jsonrpc: "2.0", id,
+                  error: { code: -32602, message: `Invalid params: missing required argument "${required}" for tool "${toolName}"` }
+                };
+              }
+            }
+          }
 
           const traceEngine = EosOtelTraceEngine.getInstance({ projectRoot: this.projectRoot });
           const traceparent = (params?._meta as any)?.traceparent || (params as any)?.traceparent;

@@ -6,6 +6,56 @@ Auto-generated from `IMPLEMENTATION_AUTHORIZATION.md` — run `npm run changelog
 
 ## [Unreleased]
 
+## [65.0.0] — 2026-11-05
+
+### Added / Fixed — Observability, MCP Protocol Compliance, Security, API Contract
+
+#### Observability — X-Request-Id + Structured Access Log + Latency (`eosMcpStreamServer.ts`)
+- Every HTTP response now includes `X-Request-Id: <uuid>` (Stripe/Google: correlate client errors with server logs).
+- `handleHttpRequest` captures `reqStart = Date.now()` and emits a structured JSON access log line on `res.finish` — includes method, path, status, latencyMs, clientIp, requestId.
+- `_accessLog()` private method writes to stderr as `{ ts, level, ns, event, requestId, method, path, status, latencyMs, clientIp }`.
+- `clientIp` and `method` extracted once at the top of `handleHttpRequest` — no more duplicate extractions in SSE and /message handlers.
+
+#### Rate Limiting — `X-RateLimit-Reset` Header (`eosMcpStreamServer.ts`)
+- 429 responses now include `X-RateLimit-Reset: <unix-epoch>` — RFC 6585 + Stripe standard.
+
+#### MCP Protocol — `tools/call` Input Schema Validation (`eosMcpServer.ts`)
+- `tools/call` handler now validates `params.arguments` against the tool's declared `inputSchema.required` fields before dispatching.
+- Returns `-32602 Invalid params` with field name on missing required arguments.
+- Anthropic MCP spec + Cognition Devin: never dispatch a tool with malformed args.
+
+#### MCP Protocol — `resources/subscribe` Correct Error Code (`eosMcpServer.ts`)
+- `resources/subscribe` and `resources/unsubscribe` now return `-32004 Subscription not supported` instead of falling through to `-32601 Method not found`.
+- `readResource()` now catches unknown URIs and returns `-32002 Resource not found` instead of `-32603 Internal server error`.
+
+#### Security — Fix Broken CVE-1 Check (`verify-security-hardening.mjs`)
+- CVE-1 check was asserting `src.includes("MAX_BODY_BYTES")` — the constant was renamed to `DEFAULT_MAX_REQUEST_BYTES` in v62. The check was silently passing while the actual pattern no longer existed.
+- Fixed to accept either constant name.
+
+#### Security — npm audit + git history secret scan in CI (`eos-sovereign-cicd.yml`)
+- Added `npm audit --audit-level=high` step to `typecheck` job (Stripe/Anthropic: SCA gate on every push).
+- Added git history secret scan (regex for `sk-`, `ghp_`, `AKIA`, `xoxb-`, private keys) to `sovereign-gate` job.
+
+#### Logger — Correlation ID + Log Sampling (`eosLogger.ts`)
+- `EosLogger` constructor now accepts optional `correlationId` and `sampleRate` parameters.
+- Every log line includes `"requestId": <id>` when a correlation ID is set.
+- `withRequestId(id)` — returns a new logger with the request ID attached (Stripe standard: every request handler creates a child logger).
+- `withSampling(rate)` — returns a new logger with DEBUG/TRACE sampling (Netflix: suppress 90% of verbose logs on hot paths).
+- `child()` now inherits both `correlationId` and `sampleRate` from the parent.
+- `timeEnd()` now emits at `INFO` level (was DEBUG) so latency measurements appear in production log budgets.
+
+#### Vercel — `trailingSlash`, `Cache-Control` on API routes, `finops` function config
+- Added `"trailingSlash": false` — prevents 308 redirect loops between `/api/health` and `/api/health/`.
+- Added `"source": "/api/(.*)"` header rule with `Cache-Control: no-store, no-cache` — API responses must never be CDN-cached.
+- Added `api/finops.js` to `functions` config with `maxDuration: 10`.
+
+#### OpenAPI — Version sync + Security Schemes + finops path + 429 responses
+- `info.version` bumped from `48.0.0` to `65.0.0`.
+- Added `components.securitySchemes.bearerAuth` (HTTP bearer) — Stripe standard: every protected endpoint must declare its security scheme.
+- Added `components.responses.RateLimited` — reusable 429 response with `Retry-After`, `X-RateLimit-Limit`, `X-RateLimit-Reset` headers.
+- Added `/api/finops` path (was missing from the spec).
+- Added `429 $ref: "#/components/responses/RateLimited"` to `/api/health`.
+
 ## [64.0.0] — 2026-11-05
 
 ### Added / Fixed — 16 Big Tech Gaps Closed (v64)
