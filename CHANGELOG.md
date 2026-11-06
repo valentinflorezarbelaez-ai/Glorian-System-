@@ -6,6 +6,29 @@ Auto-generated from `IMPLEMENTATION_AUTHORIZATION.md` — run `npm run changelog
 
 ## [Unreleased]
 
+## [62.0.0] — 2026-11-05
+
+### Fixed — Critical Merge Artifact in eosMcpStreamServer.ts (v62 Clean Rewrite)
+- **Removed phantom `options` parameter** — constructor now has explicit `options: EosMcpStreamServerOptions` parameter; no more reference to an undeclared variable at runtime.
+- **Removed undefined `DEFAULT_MAX_SESSIONS`, `DEFAULT_MAX_REQUEST_BYTES`, `DEFAULT_REQUEST_TIMEOUT_MS`** — all constants now defined as module-level `const` before class declaration.
+- **Removed undefined `SUPPORTED_MCP_PROTOCOL_VERSIONS`** — defined as `Object.freeze(new Set([...]))` with the 3 supported versions.
+- **Removed undefined `StreamableSession` type** — phantom type and `this.streamableSessions` map eliminated; `close()` takes no arguments.
+- **Removed duplicate `const contentLength`** — single unified body-size cap using `this.maxRequestBytes`; no redeclaration in the same block.
+- **Removed double auth check** — single `_authenticate()` private method with constant-time `timingSafeEqual`; second `EOS_MCP_TOKEN` check was a merge artifact from two versions mixed together.
+- **Added `writeJson()` private method** — all JSON responses go through it; no more undefined reference.
+- **Added `EosMcpStreamServerOptions` interface** — typed constructor options replacing the phantom `options` object.
+- **Fixed per-IP counter leak** — `sessionsPerIp` counter now decrements via `res.once("close"/"finish")` listeners instead of leaking indefinitely.
+- **Wrapped `handleRequest` in `Promise.resolve()`** — `dispatchJsonRpc` returns `Promise<JsonRpcResponse | null>` without `await`ing a sync method.
+- **tsconfig.json** — added `"types": ["node"]` to compilerOptions to eliminate IDE LSP noise from `@types/node` resolution.
+
+### Preserved from v61
+- SSE per-IP rate limiting (max 10 concurrent connections per IP)
+- Request ID deduplication (prevents double-dispatch on Antigravity retries)
+- Fully async `handleHttpRequest` — long tools never block other requests
+- MCP prompts/list + resources/list endpoints for Antigravity discovery
+- Idle session auto-close at 60 min
+- Dynamic version read from package.json
+
 ## [58.0.0] — 2026-10-26
 
 ### Added — 8 Operational Gaps Closed (Stripe/Netflix/Google/Meta Standard)

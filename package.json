@@ -1,7 +1,7 @@
 {
   "name": "eos-system-landing",
-  "version": "61.0.0",
-  "description": "EOS System v61.0 — Antigravity/Gemini MCP prompts+resources, SSE per-IP rate limit, request deduplication, async dispatch, idle session timeout, dynamic version, resources/read for all 5 URIs",
+  "version": "62.0.0",
+  "description": "EOS System v62.0 — Clean eosMcpStreamServer rewrite: all merge artifacts removed, options param typed, writeJson private method, single auth check, single body-size cap, all constants defined, per-IP counter decrement on session close",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
