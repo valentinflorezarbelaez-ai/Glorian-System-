@@ -4,6 +4,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { isVolatileEvidence } from "./lib/release-pin.mjs";
 
 const root = process.cwd();
 const startTime = Date.now();
@@ -316,7 +317,10 @@ try {
       });
     }
 
-    const leakedMutations = diffTrackedTree(trackedBeforeTests, snapshotTrackedTree());
+    // Regenerable evidence (SBOM, provenance, receipts) is expected to be rewritten
+    // by attestation suites; any other tracked mutation means a test leaked state.
+    const leakedMutations = diffTrackedTree(trackedBeforeTests, snapshotTrackedTree())
+      .filter((relativePath) => !isVolatileEvidence(relativePath));
     if (leakedMutations.length > 0) {
       const sample = leakedMutations.slice(0, 10).join(", ");
       const suffix = leakedMutations.length > 10 ? ` (+${leakedMutations.length - 10} more)` : "";

@@ -16,7 +16,7 @@ const VOLATILE_EVIDENCE = new Set([
   RELEASE_PIN_RELATIVE_PATH
 ]);
 
-function isVolatileEvidence(relativePath) {
+export function isVolatileEvidence(relativePath) {
   return (
     VOLATILE_EVIDENCE.has(relativePath) || /^docs\/evidence\/HEAL-.*\.json$/.test(relativePath)
   );
