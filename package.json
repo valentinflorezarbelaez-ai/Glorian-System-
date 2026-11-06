@@ -137,6 +137,8 @@
     "arch:verify": "node scripts/verify-architecture-boundaries.mjs",
     "test:coverage": "node scripts/verify-coverage.mjs",
     "verify:sri": "node scripts/verify-sri-integrity.mjs",
+    "release:pin": "node scripts/release-pin.mjs",
+    "release:pin:verify": "node scripts/verify-release-pin.mjs",
     "verify:strict": "node scripts/verify-cicd-pipeline.mjs",
     "typecheck": "tsc --project tsconfig.typecheck.json",
     "cicd:gate": "node scripts/verify-cicd-pipeline.mjs",

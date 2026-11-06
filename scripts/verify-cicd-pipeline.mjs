@@ -116,8 +116,12 @@ try {
       cwd: root,
       stdio: "inherit"
     });
+    execFileSync(process.execPath, [path.join(root, "scripts/verify-release-pin.mjs")], {
+      cwd: root,
+      stdio: "inherit"
+    });
     stagesPassedCount++;
-    console.log(`[PASS] Stage 1/7 — SPEC-123 Canonical Zero-Plain-Secrets & SPEC-124 Fleet Registry Sentinel (exit code 0).`);
+    console.log(`[PASS] Stage 1/7 — SPEC-123 Canonical Zero-Plain-Secrets, SPEC-124 Fleet Registry Sentinel and release pin integrity (exit code 0).`);
   } catch (err) {
     recordFinding("EOS-SEC-001", `Stage 1 execution error: ${err.message}`, "scripts/eos-secret-scan.mjs");
     throw err;
