@@ -65,6 +65,14 @@ jobs:
       - name: Run all repository checks and discovered Node test suites before build
         run: node scripts/verify-cicd-pipeline.mjs
 
+      - name: Enforce module size budget (anti-sprawl ratchet)
+        if: matrix.node-version == '24'
+        run: node scripts/size-budget.mjs
+
+      - name: Run ESLint (type-checked, Node.js rules)
+        if: matrix.node-version == '24'
+        run: npm run lint
+
   go-template-checks:
     name: Go example module tests and build
     runs-on: ubuntu-latest

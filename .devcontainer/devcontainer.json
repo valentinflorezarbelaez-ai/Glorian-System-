@@ -1,0 +1,94 @@
+{
+  // ── Glorian System Dev Container ──────────────────────────────────────────
+  // Opens a fully pre-configured development environment in GitHub Codespaces
+  // or VS Code Remote Containers. Every contributor gets the same locked
+  // toolchain: Node 24, Go 1.24, Rust 1.99, Java 21 (for TLC), and the
+  // entire EOS toolchain — zero local setup required.
+  //
+  // Launch: click "Code → Codespaces → Create codespace on main" on GitHub.
+  "name": "Glorian System — Sovereign Engineering Environment",
+
+  // Use the official Microsoft universal image (Node + Go + Rust + Java).
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+
+  "features": {
+    // ── Node.js (primary runtime) ──────────────────────────────────────────
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "24",
+      "nvmVersion": "latest"
+    },
+    // ── Go (fleet gateway, native binaries) ───────────────────────────────
+    "ghcr.io/devcontainers/features/go:1": {
+      "version": "1.24"
+    },
+    // ── Rust (audio core template) ────────────────────────────────────────
+    "ghcr.io/devcontainers/features/rust:1": {
+      "version": "1.79"
+    },
+    // ── Java 21 (Leslie Lamport TLC model checker) ────────────────────────
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21",
+      "jdkDistro": "ms"
+    },
+    // ── Docker-in-Docker (for `docker build` CI gate verification) ────────
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // TypeScript & Node
+        "ms-vscode.vscode-typescript-next",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        // Go
+        "golang.go",
+        // Rust
+        "rust-lang.rust-analyzer",
+        // Git & GitHub
+        "github.vscode-github-actions",
+        "eamodio.gitlens",
+        // TLA+
+        "alygin.vscode-tlaplus",
+        // Kiro
+        "kirolabs.kiro",
+        // Markdown
+        "yzhang.markdown-all-in-one",
+        // YAML
+        "redhat.vscode-yaml",
+        // Docker
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "typescript.preferences.importModuleSpecifierEnding": "js",
+        "eslint.validate": ["typescript", "javascript"],
+        "go.toolsManagement.autoUpdate": true,
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "files.eol": "\n"
+      }
+    }
+  },
+
+  // ── Post-create: install toolchain + configure git hooks ─────────────────
+  "postCreateCommand": "npm ci && node bin/eos.mjs tlc install",
+
+  // ── Post-start: surface the EOS health check on every session start ───────
+  "postStartCommand": "node bin/eos.mjs health 2>/dev/null || true",
+
+  // ── Forward the MCP HTTP/SSE port ─────────────────────────────────────────
+  "forwardPorts": [3333],
+  "portsAttributes": {
+    "3333": {
+      "label": "EOS MCP Server (SSE)",
+      "onAutoForward": "notify"
+    }
+  },
+
+  // ── Run as non-root (principle of least privilege) ─────────────────────────
+  "remoteUser": "codespace"
+}
