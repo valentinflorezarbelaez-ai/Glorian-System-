@@ -654,7 +654,7 @@ export class EosMcpServer {
                     content: {
                       type: "text",
                       text: [
-                        `Run the eos_agi_pipeline tool with:`,
+                        `Run the eos_pipeline tool with:`,
                         `  problem: "${promptArgs.problem ?? "describe the problem"}"`,
                         `  targetFile: "${promptArgs.targetFile ?? "src/path/to/file.ts"}"`,
                         `  testCommand: "${promptArgs.testCommand ?? "node --test test/*.test.mjs"}"`,

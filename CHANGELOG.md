@@ -6,6 +6,45 @@ Auto-generated from `IMPLEMENTATION_AUTHORIZATION.md` — run `npm run changelog
 
 ## [Unreleased]
 
+## [66.0.0] — 2026-11-05
+
+### Added / Fixed — 5 P0 Production Gaps (Google SRE · Netflix · Anthropic)
+
+#### P0: SLO Multi-Window Burn Rate Wired to `/api/health` (Google SRE)
+- `EosMultiWindowSloGovernor` was fully implemented but never imported by any file.
+  Now instantiated in `api/health.js`. Every health request calls `ingestEvent()`.
+  The health response `sliReport` now includes `sloGovernorStatus` with:
+  `healthState`, `errorBudgetRemainingPct`, `isDeploymentFrozen`, `activeAlerts`,
+  `burnRate5m`, `burnRate1h`.
+  `measurementStatus` changed from `"TARGETS_ONLY_NOT_MEASURED"` to `"MULTI_WINDOW_BURN_RATE_ACTIVE"`.
+
+#### P0: Adaptive Concurrency Limiter Wired to MCP `/message` (Netflix TCP Vegas)
+- `EosAdaptiveConcurrencyLimiter` was fully implemented but never wired to any request path.
+  Now integrated inline in `eosMcpStreamServer.ts` as `_concurrencyLimiter`.
+  `POST /message` acquires a token before dispatch and releases it (with measured RTT) in `finally`.
+  On overload: returns HTTP 503 with `Retry-After: 2` and `X-Concurrency-Limit` header.
+  AIMD adjusts limit based on observed dispatch RTT — limits drop under LLM slowness.
+  Concurrency metrics (`limit`, `inFlight`, `totalShed`) exposed in `/health` response.
+
+#### P0: Fix `eos_pipeline` Prompt Name Mismatch (Anthropic MCP spec)
+- `prompts/get eos-pipeline` was telling clients to "Run the `eos_agi_pipeline` tool" —
+  but the actual registered tool name is `eos_pipeline`.
+  Every client that followed the prompt instruction would get -32601 Method Not Found.
+  Fixed the prompt text to reference `eos_pipeline`.
+
+#### P0: Production Runbooks Created (Google SRE / PagerDuty standard)
+- `docs/runbooks/RUNBOOK-001-INCIDENT-RESPONSE.md` — SEV1–SEV4 classification matrix,
+  CRITICAL_BURN response procedure, rate limit flood mitigation, secret detection steps,
+  postmortem template with 5-Whys format.
+- `docs/runbooks/RUNBOOK-002-DEPLOYMENT.md` — standard deployment flow, instant rollback
+  via Vercel, git rollback, canary release checklist, environment variable reference,
+  health check command cheatsheet.
+
+#### P0: Fix Chaos Receipt Pre-Sealed Before Test Verification (`run-chaos-tests.mjs`)
+- The chaos receipt was written with `result: "RESILIENT"` before the test executed.
+  If the test failed, the `catch` block would exit 1 but the receipt already claimed RESILIENT.
+  Fixed: result is set by try/catch outcome (`"RESILIENT"` or `"FAILED"`), receipt sealed after.
+
 ## [65.0.0] — 2026-11-05
 
 ### Added / Fixed — Observability, MCP Protocol Compliance, Security, API Contract

@@ -1,7 +1,7 @@
 {
   "name": "eos-system-landing",
-  "version": "65.0.0",
-  "description": "EOS System v65.0 — X-Request-Id + structured access log, tools/call inputSchema validation, resources/subscribe -32004, readResource -32002, fix broken CVE-1 check, correlation ID + sampling in logger, trailingSlash vercel, Cache-Control on API routes, OpenAPI v65 + securitySchemes + finops path + 429 responses, npm audit + git secret scan in CI",
+  "version": "66.0.0",
+  "description": "EOS System v66.0 — Wire SLO governor to health endpoint, adaptive concurrency limiter on MCP /message, fix eos_pipeline prompt name mismatch, production runbooks, fix chaos receipt ordering",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",

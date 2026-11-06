@@ -369,6 +369,41 @@ export class EosMcpStreamServer {
   /** In-flight request IDs for deduplication (prevents double-dispatch on network retry). */
   private readonly inFlight = new Set<string>();
 
+  /**
+   * Netflix TCP Vegas adaptive concurrency limiter on the /message dispatch path.
+   * Dynamically adjusts the concurrency limit based on RTT and queue inflation.
+   * Prevents event-loop starvation when tools are slow (e.g., LLM calls).
+   */
+  private readonly _concurrencyLimiter = new (class InlineConcurrencyLimiter {
+    private limit = 20;
+    private readonly minLimit = 5;
+    private readonly maxLimit = 200;
+    private inFlight = 0;
+    private rttMin = Infinity;
+    private rttSmoothed = 0;
+    private totalShed = 0;
+
+    acquire(): { granted: boolean } {
+      if (this.inFlight >= this.limit) { this.totalShed++; return { granted: false }; }
+      this.inFlight++;
+      return { granted: true };
+    }
+
+    release(rttMs: number): void {
+      if (this.inFlight > 0) this.inFlight--;
+      if (rttMs <= 0) return;
+      if (rttMs < this.rttMin) this.rttMin = rttMs;
+      this.rttSmoothed = this.rttSmoothed === 0 ? rttMs : 0.2 * rttMs + 0.8 * this.rttSmoothed;
+      if (this.rttMin > 0 && this.rttSmoothed > 0) {
+        const q = this.limit * (1 - this.rttMin / this.rttSmoothed);
+        if (q < 3) this.limit = Math.min(this.maxLimit, this.limit + 1);
+        else if (q > 6) this.limit = Math.max(this.minLimit, this.limit - Math.max(1, Math.floor(q - 6)));
+      }
+    }
+
+    metrics() { return { limit: this.limit, inFlight: this.inFlight, totalShed: this.totalShed }; }
+  })();
+
   constructor(projectRoot?: string, options: EosMcpStreamServerOptions = {}) {
     this.projectRoot = projectRoot ?? process.cwd();
     this.mcpServer = new EosMcpServer(this.projectRoot);
@@ -555,6 +590,7 @@ export class EosMcpStreamServer {
         activeSessions: this.sessionManager.getActiveSessions().length,
         uptimeSeconds: Math.floor(process.uptime()),
         transports: ["stdio", "sse", "http-jsonrpc"],
+        concurrency: this._concurrencyLimiter.metrics(),
       });
       return;
     }
@@ -653,13 +689,29 @@ export class EosMcpStreamServer {
       const sessionId =
         parsedUrl.searchParams.get("sessionId") ??
         (req.headers["x-session-id"] as string | undefined);
+
+      // ── Adaptive concurrency limiting (Netflix TCP Vegas — AIMD) ────────────
+      // Prevents event-loop starvation when LLM tools are slow.
+      // Dynamically adjusts limit based on observed RTT; 503 on overload.
+      const concurrency = this._concurrencyLimiter.acquire();
+      if (!concurrency.granted) {
+        this.writeJson(res, 503, {
+          jsonrpc: "2.0",
+          id: null,
+          error: { code: -32000, message: "Server overloaded — concurrency limit reached. Retry after backoff." },
+        }, { "Retry-After": "2", "X-Concurrency-Limit": String(this._concurrencyLimiter.metrics().limit) });
+        req.resume();
+        return;
+      }
+      const _dispatchStart = Date.now();
+
       const session = sessionId ? this.sessionManager.getSession(sessionId) : undefined;
       if (!session) {
+        this._concurrencyLimiter.release(Date.now() - _dispatchStart);
         this.writeJson(res, 404, { error: "MCP session not found." });
         req.resume();
         return;
       }
-
       const contentType = req.headers["content-type"] ?? "";
       if (!/^application\/json(?:\s*;|$)/i.test(contentType)) {
         this.writeJson(res, 415, { error: "Content-Type must be application/json." });
@@ -787,6 +839,9 @@ export class EosMcpStreamServer {
           if (!res.writableEnded) {
             this.writeJson(res, 500, errorRes);
           }
+        } finally {
+          // Always release adaptive concurrency token (measures actual dispatch RTT)
+          this._concurrencyLimiter.release(Date.now() - _dispatchStart);
         }
       });
       return;
