@@ -1,0 +1,47 @@
+# EditorConfig v1.0 — Universal formatting governance
+# https://editorconfig.org
+# All Big Tech engineering organizations mandate a shared formatting contract
+# so generated diffs, AIs, and developers produce consistent bytes regardless
+# of editor, IDE, or OS. This file is read natively by VS Code, Cursor,
+# JetBrains, Neovim, Emacs, Sublime Text, and 80+ other editors.
+
+root = true
+
+# ── Default ────────────────────────────────────────────────────────────────────
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# ── Markdown ───────────────────────────────────────────────────────────────────
+[*.md]
+trim_trailing_whitespace = false
+indent_size = 4
+
+# ── Go (native modules) ───────────────────────────────────────────────────────
+[*.go]
+indent_style = tab
+indent_size = 4
+
+# ── YAML / GitHub Actions ─────────────────────────────────────────────────────
+[*.{yml,yaml}]
+indent_size = 2
+
+# ── PowerShell ─────────────────────────────────────────────────────────────────
+[*.ps1]
+end_of_line = crlf
+
+# ── Windows batch ──────────────────────────────────────────────────────────────
+[*.cmd]
+end_of_line = crlf
+
+# ── Shell scripts ──────────────────────────────────────────────────────────────
+[*.sh]
+end_of_line = lf
+
+# ── Makefiles ──────────────────────────────────────────────────────────────────
+[Makefile]
+indent_style = tab

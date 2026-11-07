@@ -3,11 +3,11 @@
  * TrueTime Uncertainty & Commit-Wait Linearizability Engine
  */
 
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import { EosTrueTimeEngine } from '../src/core/eosTrueTimeEngine.ts';
+import test from "node:test";
+import assert from "node:assert/strict";
+import { EosTrueTimeEngine } from "../src/core/eosTrueTimeEngine.ts";
 
-test('BDD-231: Bounded Time Interval and Invariant Monotonicity', () => {
+test("BDD-231: Bounded Time Interval and Invariant Monotonicity", () => {
   const epsilon = 5.0; // 5ms uncertainty
   const tt = new EosTrueTimeEngine(epsilon);
 
@@ -18,7 +18,7 @@ test('BDD-231: Bounded Time Interval and Invariant Monotonicity', () => {
   assert.equal(t1.uncertaintyEpsilonMs, epsilon);
 });
 
-test('BDD-232: Commit-Wait Strict Linearizability Guarantee', async () => {
+test("BDD-232: Commit-Wait Strict Linearizability Guarantee", async () => {
   const epsilon = 3.0;
   const tt = new EosTrueTimeEngine(epsilon);
 

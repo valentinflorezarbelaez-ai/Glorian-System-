@@ -1,8 +1,11 @@
 # OPENSPEC BASE SPECIFICATION: SPOTIFY INSTITUTIONAL ENGINEERING CODEX (SPEC-024)
+
 <!-- Standard: ISO 29148 / IEEE 830 EARS Syntax -->
 
 ## 1. Scope
+
 Governs the institutional assimilation of Spotify's engineering doctrine (`https://engineering.atspotify.com/`) into EOS System:
+
 - Golden Paths & Backstage Sovereignty (RFC-42 and Soundcheck).
 - Aligned Autonomy & The Spotify Model (Squads, Tribes, Chapters, Guilds, RFCs).
 - Event Delivery Infrastructure (EDI) and Stream Processing at Trillion-Scale.

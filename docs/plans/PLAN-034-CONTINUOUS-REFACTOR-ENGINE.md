@@ -1,6 +1,7 @@
 # PLAN-034: AUTONOMOUS CONTINUOUS REFACTORING ENGINE, DBC & DETERMINISTIC SIMULATION TESTING (DST)
 
 ## 1. Architectural Strategy
+
 - **Layer**: Core Domain & Autonomous Refactoring Orchestrator (Layer 0).
 - **Modules**:
   - `src/core/eosKernelPrimitives.ts`: Common Layer-0 primitives (pure SHA-256, PRNG Mulberry32, MonotonicClock, DbC assertions `assertPrecondition`, `assertPostcondition`, `assertInvariant`, `deepFreeze`, `Result<T, E>`).

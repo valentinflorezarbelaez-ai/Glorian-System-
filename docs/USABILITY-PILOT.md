@@ -25,13 +25,13 @@ Do not help during the first attempt. If the participant asks for help or makes 
 
 For each task, record only:
 
-| Measure | Record |
-|---|---|
-| Completion | Completed independently / completed with help / not completed |
-| Time to first useful result | Minutes from opening the page to a successful local `flow inspect` |
-| Errors and recovery | The error, whether the UI/documentation explained it, and whether the participant recovered |
-| Confidence | “How sure are you about what this command changed?” from 1 to 5 |
-| Clarity | “How clear was the next step?” from 1 to 5 |
+| Measure                     | Record                                                                                      |
+| --------------------------- | ------------------------------------------------------------------------------------------- |
+| Completion                  | Completed independently / completed with help / not completed                               |
+| Time to first useful result | Minutes from opening the page to a successful local `flow inspect`                          |
+| Errors and recovery         | The error, whether the UI/documentation explained it, and whether the participant recovered |
+| Confidence                  | “How sure are you about what this command changed?” from 1 to 5                             |
+| Clarity                     | “How clear was the next step?” from 1 to 5                                                  |
 
 Capture observations without names or repository content. Do not combine these responses into a product rating or claim broad usability from five sessions.
 

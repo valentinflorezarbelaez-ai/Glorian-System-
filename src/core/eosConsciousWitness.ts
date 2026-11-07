@@ -59,7 +59,7 @@ export class EosConsciousWitness {
       const specDir = path.join(this.projectRoot, "openspec", "specs");
       if (fs.existsSync(specDir)) {
         const specFiles = fs.readdirSync(specDir);
-        specVerified = specFiles.some(f => f.includes(params.declaredSpecId!.trim()));
+        specVerified = specFiles.some((f) => f.includes(params.declaredSpecId!.trim()));
       }
     }
 
@@ -77,7 +77,7 @@ export class EosConsciousWitness {
       const coreDir = path.join(this.projectRoot, "src", "core");
       let allSources = "";
       if (fs.existsSync(coreDir)) {
-        const files = fs.readdirSync(coreDir).filter(f => f.endsWith(".ts"));
+        const files = fs.readdirSync(coreDir).filter((f) => f.endsWith(".ts"));
         for (const f of files) {
           try {
             allSources += fs.readFileSync(path.join(coreDir, f), "utf8") + "\n";
@@ -96,7 +96,9 @@ export class EosConsciousWitness {
 
     const groundingsVerified = ungroundedFiles.length === 0 && ungroundedSymbols.length === 0;
     const isAligned = specVerified && groundingsVerified;
-    const alignmentScore = isAligned ? 100 : Math.max(0, 100 - (ungroundedFiles.length * 25 + ungroundedSymbols.length * 20 + (specVerified ? 0 : 50)));
+    const alignmentScore = isAligned
+      ? 100
+      : Math.max(0, 100 - (ungroundedFiles.length * 25 + ungroundedSymbols.length * 20 + (specVerified ? 0 : 50)));
 
     const verdict = isAligned ? "CONSCIOUS_ALIGNMENT_PASS" : "FASCINATION_DETECTED";
     const message = isAligned
@@ -117,7 +119,7 @@ export class EosConsciousWitness {
       ungroundedFiles: Object.freeze(ungroundedFiles),
       message: message.trim(),
       sha384WitnessSeal,
-      timestamp
+      timestamp,
     });
   }
 }

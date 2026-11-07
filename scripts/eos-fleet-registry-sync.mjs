@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * SPEC-124: EOS Autonomous Dynamic Fleet Registry & Law IV Multi-Tenant Sentinel
- * 
+ *
  * Auto-discovers local Git checkouts across the developer workspace, extracts
  * Git porcelain and deployment endpoints, verifies secret hygiene, and safely
  * synchronizes docs/projects/registry.json without violating Law IV write barriers.
@@ -33,7 +33,7 @@ const EXCLUDED_DIRS = new Set([
   "Links",
   "Searches",
   "Contacts",
-  "OneDrive"
+  "OneDrive",
 ]);
 
 export function discoverGitRepositories(workspaceRoot = DEFAULT_WORKSPACE_ROOT) {
@@ -53,7 +53,7 @@ export function discoverGitRepositories(workspaceRoot = DEFAULT_WORKSPACE_ROOT) 
     if (fs.existsSync(gitDir)) {
       discovered.push({
         name: entry.name,
-        fullPath
+        fullPath,
       });
     }
   }
@@ -66,19 +66,19 @@ export function extractGitMetadata(repoPath) {
     const remoteUrl = execFileSync("git", ["config", "--get", "remote.origin.url"], {
       cwd: repoPath,
       encoding: "utf8",
-      stdio: ["pipe", "pipe", "ignore"]
+      stdio: ["pipe", "pipe", "ignore"],
     }).trim();
 
     const currentBranch = execFileSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], {
       cwd: repoPath,
       encoding: "utf8",
-      stdio: ["pipe", "pipe", "ignore"]
+      stdio: ["pipe", "pipe", "ignore"],
     }).trim();
 
     const headCommitSha = execFileSync("git", ["rev-parse", "HEAD"], {
       cwd: repoPath,
       encoding: "utf8",
-      stdio: ["pipe", "pipe", "ignore"]
+      stdio: ["pipe", "pipe", "ignore"],
     }).trim();
 
     return { remoteUrl, currentBranch, headCommitSha };
@@ -252,14 +252,18 @@ export function reconcileFleetRegistry(existingRegistry, discoveredList) {
       type: prev?.type || disc.type || "application",
       status: prev?.status || "REGISTERED",
       intake: prev?.intake || (id === "control-de-asistencia-abopack" ? "INTAKE_COMPLETE" : "PENDING_INTAKE"),
-      specification: prev?.specification || (id === "control-de-asistencia-abopack" ? "SPECIFICATION_APPROVED" : "PENDING_SPECIFICATION"),
+      specification:
+        prev?.specification ||
+        (id === "control-de-asistencia-abopack" ? "SPECIFICATION_APPROVED" : "PENDING_SPECIFICATION"),
       audit: prev?.audit || (id === "control-de-asistencia-abopack" ? "AUDIT_COMPLETE" : "PENDING_AUDIT"),
-      authorization: prev?.authorization || (id === "control-de-asistencia-abopack" ? "LEVEL_3_PRODUCTION_AUTHORIZED" : "LEVEL_1_READ_ONLY"),
+      authorization:
+        prev?.authorization ||
+        (id === "control-de-asistencia-abopack" ? "LEVEL_3_PRODUCTION_AUTHORIZED" : "LEVEL_1_READ_ONLY"),
       ownerApproval: prev?.ownerApproval || (id === "control-de-asistencia-abopack" ? "OWNER_APPROVAL" : undefined),
       cicdGateScript: prev?.cicdGateScript || disc.cicdGateScript || "npm test",
       autoShipScript: prev?.autoShipScript || "git push origin main",
       currentBranch: disc.currentBranch || "main",
-      headCommitSha: disc.headCommitSha || ""
+      headCommitSha: disc.headCommitSha || "",
     };
 
     // Clean undefined fields
@@ -283,7 +287,7 @@ export function reconcileFleetRegistry(existingRegistry, discoveredList) {
     masterOrchestrator: "EOS System control plane (SPEC-124)",
     complianceStandard: "EOS_CONSTITUTION_LAW_IV_EXTERNAL_WRITE_BARRIER",
     totalFleetProjects: updatedProjects.length,
-    projects: updatedProjects
+    projects: updatedProjects,
   };
 
   newRegistry.registrySha256 = computeRegistrySignature(newRegistry);
@@ -318,7 +322,7 @@ export async function runFleetRegistrySync(options = {}) {
       dirName: r.name,
       fullPath: r.fullPath,
       ...gitMeta,
-      ...projMeta
+      ...projMeta,
     });
   }
 
@@ -335,7 +339,7 @@ export async function runFleetRegistrySync(options = {}) {
         auditResults.push({
           id: proj.id,
           exitCode: scan.exitCode,
-          findingsCount: scan.findingsCount || 0
+          findingsCount: scan.findingsCount || 0,
         });
       }
     }
@@ -353,7 +357,7 @@ export async function runFleetRegistrySync(options = {}) {
     totalRegistered: reconciled.projects.length,
     registrySha256: reconciled.registrySha256,
     projects: reconciled.projects,
-    auditResults
+    auditResults,
   };
 }
 

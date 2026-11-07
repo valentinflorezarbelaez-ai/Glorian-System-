@@ -89,7 +89,9 @@ export class EosNsaAnomalyDetector {
     const stdDev = Math.sqrt(variance);
 
     if (stdDev > anomalousVarianceThresholdMs) {
-      this.triggerEmergencyLockdown(`High timing variance detected (${stdDev.toFixed(2)}ms > threshold ${anomalousVarianceThresholdMs}ms)`);
+      this.triggerEmergencyLockdown(
+        `High timing variance detected (${stdDev.toFixed(2)}ms > threshold ${anomalousVarianceThresholdMs}ms)`,
+      );
       return true;
     }
 
@@ -124,7 +126,7 @@ export class EosNsaAnomalyDetector {
       consecutiveFailures: this.consecutiveFailures,
       timingVarianceMs: this.timingHistory.length > 0 ? this.timingHistory[this.timingHistory.length - 1] : 0,
       timestamp,
-      sha384Attestation
+      sha384Attestation,
     };
 
     this.incidentReports.push(report);

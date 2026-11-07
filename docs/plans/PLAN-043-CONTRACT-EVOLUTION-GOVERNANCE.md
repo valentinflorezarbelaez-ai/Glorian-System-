@@ -1,16 +1,19 @@
 # PLAN-043 & ADR-056 — CONTRACT EVOLUTION GOVERNANCE ARCHITECTURE
+
 **Status**: ACCEPTED  
 **Date**: 2026-10-30  
-**Context**: SPEC-050, CHANGE-043, EOS v56.0.0  
+**Context**: SPEC-050, CHANGE-043, EOS v56.0.0
 
 ---
 
 ## Architecture Decision Record (ADR-056)
 
 ### Context
+
 When microservices, clients, and database schemas evolve asynchronously, subtle backward-incompatible changes (e.g. deleting a field, renaming a column, or narrowing an enum) cause runtime exceptions. Nubank Sachem and Buf CLI proved that automated semantic diffing at CI/CD time prevents breaking contract mutations.
 
 ### Decision
+
 1. **Schema AST Representation**: Parse schema contracts into an abstract dictionary of typed fields:
    - `fieldName`: string
    - `fieldType`: string
@@ -32,6 +35,7 @@ When microservices, clients, and database schemas evolve asynchronously, subtle 
    - Persist evolution audit receipt in `EosDurableSqliteLedger`.
 
 ### Consequences
+
 - Zero breaking changes can be merged unnoticed.
 - Database migrations are pre-screened for table locking hazards.
 - Zero external runtime npm dependencies.

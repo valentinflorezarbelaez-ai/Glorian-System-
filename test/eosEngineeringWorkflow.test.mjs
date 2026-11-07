@@ -22,7 +22,7 @@ function git(directory, args) {
     cwd: directory,
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
-    env
+    env,
   }).trim();
 }
 
@@ -34,7 +34,11 @@ function createFixtureRepository(t) {
   git(repoRoot, ["config", "user.name", "EOS Workflow Test"]);
   git(repoRoot, ["config", "user.email", "eos-workflow-test@example.invalid"]);
   fs.writeFileSync(path.join(repoRoot, "README.md"), "# Fixture project\n", "utf8");
-  fs.writeFileSync(path.join(repoRoot, "package.json"), JSON.stringify({ name: "fixture", version: "1.0.0", scripts: { test: "node --test" } }) + "\n", "utf8");
+  fs.writeFileSync(
+    path.join(repoRoot, "package.json"),
+    JSON.stringify({ name: "fixture", version: "1.0.0", scripts: { test: "node --test" } }) + "\n",
+    "utf8",
+  );
   git(repoRoot, ["add", "README.md", "package.json"]);
   git(repoRoot, ["commit", "-m", "Initialize fixture"]);
 
@@ -76,7 +80,10 @@ test("flow gives actionable guidance for invalid repository paths", (t) => {
   fs.writeFileSync(filePath, "not a repository folder\n", "utf8");
   const workflow = new EosEngineeringWorkflow();
 
-  assert.throws(() => workflow.inspect(path.join(temporaryRoot, "missing")), /Repository path not found.*Check the path/);
+  assert.throws(
+    () => workflow.inspect(path.join(temporaryRoot, "missing")),
+    /Repository path not found.*Check the path/,
+  );
   assert.throws(() => workflow.inspect(filePath), /is a file, not a folder.*repository folder/);
   assert.throws(() => workflow.inspect(temporaryRoot), /Could not find a Git repository.*initialized Git working tree/);
 });
@@ -128,9 +135,9 @@ test("flow only fast-forwards the exact validated and hash-approved diff", async
         changedFiles: [],
         conflicts: [],
         excludedPaths: [],
-        receiptPath: null
+        receiptPath: null,
       };
-    }
+    },
   }));
   const originalHead = git(repoRoot, ["rev-parse", "HEAD"]);
   const started = workflow.start(repoRoot, "add a bounded endpoint");

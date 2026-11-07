@@ -13,12 +13,7 @@
 
 import net from "node:net";
 import crypto from "node:crypto";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
 export interface SpiffeIdentity {
   readonly nodeId: string;
@@ -64,7 +59,7 @@ export class EosTlsPeerTransport {
     this.keyPair = crypto.generateKeyPairSync("rsa", {
       modulusLength: 2048,
       publicKeyEncoding: { type: "spki", format: "pem" },
-      privateKeyEncoding: { type: "pkcs8", format: "pem" }
+      privateKeyEncoding: { type: "pkcs8", format: "pem" },
     });
   }
 
@@ -186,11 +181,11 @@ export class EosTlsPeerTransport {
             identity: {
               nodeId: this.nodeId,
               spiffeUri: this.spiffeUri,
-              publicKeyPem: this.keyPair.publicKey
+              publicKeyPem: this.keyPair.publicKey,
             },
             ecdhPublicKeyHex: serverPubHex,
             timestampIso: serverTimestamp,
-            signatureHex
+            signatureHex,
           };
 
           socket.write(JSON.stringify(responseHandshake) + "\n");
@@ -229,11 +224,11 @@ export class EosTlsPeerTransport {
       identity: {
         nodeId: this.nodeId,
         spiffeUri: this.spiffeUri,
-        publicKeyPem: this.keyPair.publicKey
+        publicKeyPem: this.keyPair.publicKey,
       },
       ecdhPublicKeyHex: clientPubHex,
       timestampIso: clientTimestamp,
-      signatureHex
+      signatureHex,
     };
 
     socket.write(JSON.stringify(clientHandshake) + "\n");
@@ -330,13 +325,17 @@ export class EosTlsPeerTransport {
           let decrypted = decipher.update(packet.ciphertextHex, "hex", "utf8");
           decrypted += decipher.final("utf8");
 
-          const parsed = JSON.parse(decrypted) as { type: string; payload: Record<string, unknown>; timestampIso: string };
+          const parsed = JSON.parse(decrypted) as {
+            type: string;
+            payload: Record<string, unknown>;
+            timestampIso: string;
+          };
           const msg: SecurePeerMessage = deepFreeze({
             fromNodeId: peer.nodeId,
             spiffeUri: peer.spiffeUri,
             type: parsed.type,
             payload: parsed.payload,
-            timestampIso: parsed.timestampIso
+            timestampIso: parsed.timestampIso,
           });
 
           for (const listener of this.messageListeners) {
@@ -368,11 +367,12 @@ export class EosTlsPeerTransport {
         ciphertext += cipher.final("hex");
         const authTag = cipher.getAuthTag();
 
-        const packet = JSON.stringify({
-          ivHex: iv.toString("hex"),
-          authTagHex: authTag.toString("hex"),
-          ciphertextHex: ciphertext
-        }) + "\n";
+        const packet =
+          JSON.stringify({
+            ivHex: iv.toString("hex"),
+            authTagHex: authTag.toString("hex"),
+            ciphertextHex: ciphertext,
+          }) + "\n";
 
         socket.write(packet);
       } catch {

@@ -14,7 +14,7 @@ test("BDD-204: EosBenchmarkTracker records nanosecond benchmarks and detects his
       p50Ns: 120,
       p95Ns: 150,
       p99Ns: 180,
-      opsPerSec: 5000000
+      opsPerSec: 5000000,
     });
 
     assert.equal(run1.verdict, "NOMINAL");
@@ -29,7 +29,7 @@ test("BDD-204: EosBenchmarkTracker records nanosecond benchmarks and detects his
       p50Ns: 125,
       p95Ns: 157.5,
       p99Ns: 185,
-      opsPerSec: 4900000
+      opsPerSec: 4900000,
     });
 
     assert.equal(run2.verdict, "NOMINAL");
@@ -44,7 +44,7 @@ test("BDD-204: EosBenchmarkTracker records nanosecond benchmarks and detects his
       p50Ns: 160,
       p95Ns: 204.75, // +30% over 157.5
       p99Ns: 250,
-      opsPerSec: 3500000
+      opsPerSec: 3500000,
     });
 
     assert.equal(run3.verdict, "REGRESSION_DETECTED");
@@ -58,7 +58,7 @@ test("BDD-204: EosBenchmarkTracker records nanosecond benchmarks and detects his
       p50Ns: 90,
       p95Ns: 110,
       p99Ns: 130,
-      opsPerSec: 7000000
+      opsPerSec: 7000000,
     });
 
     assert.equal(run4.verdict, "OPTIMIZED");

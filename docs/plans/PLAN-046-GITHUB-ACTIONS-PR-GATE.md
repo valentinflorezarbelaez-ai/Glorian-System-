@@ -1,6 +1,7 @@
 # PLAN-046: Native GitHub Actions PR Gate & Check-Runs Attestation Bot
 
 ## Architecture Decision Record: ADR-059
+
 - **Title**: Native GitHub Actions Check-Runs Client & Fail-Closed Pre-Merge Barrier
 - **Status**: ACCEPTED
 - **Context**: EOS requires automated enforcement in GitHub Pull Requests without relying on third-party marketplace actions that might leak repository source or tokens.

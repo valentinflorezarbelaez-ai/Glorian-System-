@@ -3,28 +3,34 @@
 **Version**: 62.0.0  
 **Status**: APPROVED  
 **Author**: Antigravity Principal Architect / EOS System Core  
-**Governing Standard**: IEEE 830 / ISO 29148 / RFC 9110 / WCAG 2.1 AA  
+**Governing Standard**: IEEE 830 / ISO 29148 / RFC 9110 / WCAG 2.1 AA
 
 ---
 
 ## 1. Functional Requirements (EARS Syntax)
 
 ### FR-201 (SSRF-Guarded Target Normalization)
+
 **CUANDO** el operador o la compuerta de verificación suministra una URL de objetivo para auditoría en vivo, **EL SISTEMA** normalizará la URL, validará el protocolo estricto `https:`, y rechazará de forma fail-closed (`SSRF_ATTEMPT_BLOCKED`) cualquier intento de apuntar a rangos privados, bucles locales o metadatos de nube.
 
 ### FR-202 (Hermetic Production HTTPS Probe Execution)
+
 **MIENTRAS** el motor de verificación ejecuta una sonda sintética en vivo contra un objetivo de producción, **EL SISTEMA** medirá la latencia de respuesta, capturará el código de estado HTTP y limitará la lectura del cuerpo a 1 MB con un temporizador estricto de 10 segundos.
 
 ### FR-203 (TLS Security Headers Audit)
+
 **CUANDO** se recibe la respuesta HTTP de un objetivo de flota, **EL SISTEMA** evaluará la presencia de cabeceras de endurecimiento de transporte y seguridad (`Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `X-Frame-Options` o CSP `frame-ancestors`, y `Referrer-Policy`).
 
 ### FR-204 (Semantic HTML & Accessibility Landmark Verification)
+
 **CUANDO** se analiza el marcado HTML devuelto por el objetivo, **EL SISTEMA** verificará la presencia de hitos semánticos requeridos por WCAG 2.1 AA (`<header>`, `<main>`, `<footer>` o `role="contentinfo"`, y estructura jerárquica `<h1>`).
 
 ### FR-205 (Synthetic Core Web Vitals & SEO Health Scoring)
+
 **CUANDO** se completa la inspección de red y marcado, **EL SISTEMA** computará una puntuación compuesta de salud operativa (0-100) ponderando TTFB (<800ms), tamaño de transferencia de payload (<500KB), presencia de meta tags OpenGraph y viewport responsivo.
 
 ### FR-206 (Cryptographic Attestation & SQLite WAL Ledger Recording)
+
 **SI** la sonda de verificación en producción concluye satisfactoriamente, **ENTONCES EL SISTEMA** generará un recibo criptográfico SHA-256 inmutable y lo persistirá en el ledger SQLite WAL bajo la categoría `VERIFICATION_RECEIPT`.
 
 ---

@@ -1,11 +1,12 @@
 # TASKS-111: Distributed Adaptive Hedged Requests & Deadline Propagation Mesh
 
 ## Metadata
-* **Task DAG ID**: `TASKS-111`
-* **Governing Specification**: `SPEC-111`
-* **Plan Reference**: `PLAN-111`
-* **Status**: `COMPLETE`
-* **Total Atomic Tasks**: 9
+
+- **Task DAG ID**: `TASKS-111`
+- **Governing Specification**: `SPEC-111`
+- **Plan Reference**: `PLAN-111`
+- **Status**: `COMPLETE`
+- **Total Atomic Tasks**: 9
 
 ---
 

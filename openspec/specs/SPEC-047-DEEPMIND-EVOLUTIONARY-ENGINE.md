@@ -1,30 +1,30 @@
 # SPEC-047: DEEPMIND SOVEREIGN EVOLUTIONARY CODE SEARCH & VERIFIER-GUIDED ORCHESTRATION ENGINE (v53.0.0)
 
-* **Status**: `SPECIFICATION_APPROVED`
-* **Change Reference**: `CHANGE-040`
-* **Architecture Plan**: `PLAN-040` (`ADR-053`)
-* **Formal Model**: `docs/formal/EvolutionaryHarness.tla`
+- **Status**: `SPECIFICATION_APPROVED`
+- **Change Reference**: `CHANGE-040`
+- **Architecture Plan**: `PLAN-040` (`ADR-053`)
+- **Formal Model**: `docs/formal/EvolutionaryHarness.tla`
 
 ---
 
 ## 1. Formal Functional Requirements (IEEE 830 / EARS)
 
-* **FR-147 (Multivariate Continuous Fitness Evaluation & AlphaEvolve Loop)**:
+- **FR-147 (Multivariate Continuous Fitness Evaluation & AlphaEvolve Loop)**:
   `CUANDO se invoque la evolución o búsqueda estocástica sobre un módulo objetivo, EL SISTEMA evaluará cada candidato propuesto mediante una función de aptitud continua multivariada que cuantifique latencia de ejecución (ns), delta de memoria heap (bytes), pureza AST (0..100), complejidad ciclomática relativa y cumplimiento de contratos EARS/BDD, registrando en SQLite WAL el linaje genético de mutaciones (parentSha256, mutantSha256, fitnessVector).`
 
-* **FR-148 (AlphaCode 2 Semantic Clustering & AST Deduplication)**:
+- **FR-148 (AlphaCode 2 Semantic Clustering & AST Deduplication)**:
   `CUANDO múltiples variantes o subagentes generen mutaciones candidatas en paralelo, EL SISTEMA agrupará los candidatos por firma estructural de AST y vector de salida sobre entradas sintéticas, descartando variantes redundantes o subóptimas y reteniendo únicamente los representantes del frente de Pareto.`
 
-* **FR-149 (AlphaCodium Adversarial Double-Blind Flow Engineering)**:
+- **FR-149 (AlphaCodium Adversarial Double-Blind Flow Engineering)**:
   `MIENTRAS se ejecute la fase de pruebas y construcción bajo la Ley II, EL SISTEMA impondrá una separación estricta de doble ciego entre el rol Inquisidor (confinado a generar tests maliciosos y casos borde a partir exclusivamente de OpenSpec y modelos TLA+ sin acceso a código fuente) y el rol Constructor (restringido a escribir código para satisfacer los tests sin permisos de modificación sobre la suite de pruebas).`
 
-* **FR-150 (Flash-to-Pro Model Cascading & Token Circuit Breaker)**:
+- **FR-150 (Flash-to-Pro Model Cascading & Token Circuit Breaker)**:
   `SI una búsqueda evolutiva o ciclo de corrección agéntico no produce una mejora de aptitud superior al umbral mínimo tras 2 generaciones consecutivas, ENTONCES EL SISTEMA disparará un circuit breaker de contención de tokens deteniendo el bucle rápido y emitiendo un diagnóstico estructurado AST para escalamiento quirúrgico a modelos de razonamiento profundo.`
 
-* **FR-151 (Cryptographic Interface Lock & Symbol Sandboxing)**:
+- **FR-151 (Cryptographic Interface Lock & Symbol Sandboxing)**:
   `CUANDO se orqueste la ejecución paralela de subagentes sobre un DAG de tareas, EL SISTEMA compilará y sellará con pureSha256 las firmas de interfaz compartidas (.d.ts o tipos de frontera), otorgando a cada subagente permisos de escritura exclusivos sobre un único módulo hoja y acceso inmutable de solo lectura sobre las interfaces selladas.`
 
-* **FR-152 (Unified Core MCP Tool & CLI Surface)**:
+- **FR-152 (Unified Core MCP Tool & CLI Surface)**:
   `EL SISTEMA expondrá la búsqueda evolutiva y gobernanza estocástica en una única herramienta MCP soberana en el perfil core (eos_evolve_module con anotaciones MCP 2025-03-26) y en la CLI universal (eos evolve [run|cluster|verify|lock]).`
 
 ---

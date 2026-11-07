@@ -16,17 +16,32 @@ const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "..");
 
 test("BDD-124: EosAntigravityDirector classifies all 6 mission profiles and enforces Law IV write barrier", () => {
-  assert.equal(EosAntigravityDirector.classifyProfile("Implement new SDD specification and feature module"), "SDD_FULL_21_STEP");
-  assert.equal(EosAntigravityDirector.classifyProfile("Audit OWASP security boundaries and secret rotation"), "SECURITY_HARDENING");
-  assert.equal(EosAntigravityDirector.classifyProfile("Run multi-repo fleet soundcheck and progressive canary rollout"), "FLEET_ORCHESTRATION");
-  assert.equal(EosAntigravityDirector.classifyProfile("Optimize p99 latency benchmark with MCTS tuning"), "PERFORMANCE_TUNING");
-  assert.equal(EosAntigravityDirector.classifyProfile("Audit hexagonal architecture and dead code refactor"), "ARCHITECTURE_AUDIT");
+  assert.equal(
+    EosAntigravityDirector.classifyProfile("Implement new SDD specification and feature module"),
+    "SDD_FULL_21_STEP",
+  );
+  assert.equal(
+    EosAntigravityDirector.classifyProfile("Audit OWASP security boundaries and secret rotation"),
+    "SECURITY_HARDENING",
+  );
+  assert.equal(
+    EosAntigravityDirector.classifyProfile("Run multi-repo fleet soundcheck and progressive canary rollout"),
+    "FLEET_ORCHESTRATION",
+  );
+  assert.equal(
+    EosAntigravityDirector.classifyProfile("Optimize p99 latency benchmark with MCTS tuning"),
+    "PERFORMANCE_TUNING",
+  );
+  assert.equal(
+    EosAntigravityDirector.classifyProfile("Audit hexagonal architecture and dead code refactor"),
+    "ARCHITECTURE_AUDIT",
+  );
   assert.equal(EosAntigravityDirector.classifyProfile("Fix broken regression error in worktree test"), "BUGFIX_FDIR");
 
   const authorizedPlan = EosAntigravityDirector.directMission(
     "Build new sovereign governance capability with formal EARS and BDD",
     "eos-system",
-    projectRoot
+    projectRoot,
   );
   assert.equal(Object.isFrozen(authorizedPlan), true);
   assert.equal(authorizedPlan.profile, "SDD_FULL_21_STEP");
@@ -41,7 +56,7 @@ test("BDD-124: EosAntigravityDirector classifies all 6 mission profiles and enfo
   const crudSlackPlan = EosAntigravityDirector.directMission(
     "Execute fleet soundcheck and canary rollout across repositories",
     "crud-slack",
-    projectRoot
+    projectRoot,
   );
   assert.equal(crudSlackPlan.profile, "FLEET_ORCHESTRATION");
   assert.equal(crudSlackPlan.matchedProjectId, "crud-slack");
@@ -51,7 +66,7 @@ test("BDD-124: EosAntigravityDirector classifies all 6 mission profiles and enfo
   const blockedPlan = EosAntigravityDirector.directMission(
     "Modify unregistered external directory directly",
     "C:/Unregistered/External/Project",
-    projectRoot
+    projectRoot,
   );
   assert.equal(blockedPlan.writeBarrierStatus, "BLOCKED_BY_LAW_IV");
   assert.equal(blockedPlan.matchedProjectId, null);
@@ -66,7 +81,7 @@ test("BDD-125: EosMcpServer negotiates 2024-11-05 & 2025-03-26, serves instructi
     jsonrpc: "2.0",
     id: 1,
     method: "initialize",
-    params: { protocolVersion: "2024-11-05", capabilities: {}, clientInfo: { name: "antigravity", version: "1.0" } }
+    params: { protocolVersion: "2024-11-05", capabilities: {}, clientInfo: { name: "antigravity", version: "1.0" } },
   });
   const pkg = JSON.parse(fs.readFileSync(path.join(projectRoot, "package.json"), "utf8"));
   assert.equal(init2024?.result?.protocolVersion, "2024-11-05");
@@ -74,14 +89,14 @@ test("BDD-125: EosMcpServer negotiates 2024-11-05 & 2025-03-26, serves instructi
   assert.ok(init2024?.result?.capabilities?.prompts);
   assert.ok(
     typeof init2024?.result?.instructions === "string" &&
-      init2024.result.instructions.includes("Sovereign Antigravity MCP Director Playbook")
+      init2024.result.instructions.includes("Sovereign Antigravity MCP Director Playbook"),
   );
 
   const init2025 = server.handleRequest({
     jsonrpc: "2.0",
     id: 2,
     method: "initialize",
-    params: { protocolVersion: "2025-03-26", capabilities: {}, clientInfo: { name: "antigravity", version: "2.0" } }
+    params: { protocolVersion: "2025-03-26", capabilities: {}, clientInfo: { name: "antigravity", version: "2.0" } },
   });
   assert.equal(init2025?.result?.protocolVersion, "2025-03-26");
 
@@ -96,7 +111,7 @@ test("BDD-125: EosMcpServer negotiates 2024-11-05 & 2025-03-26, serves instructi
     jsonrpc: "2.0",
     id: 5,
     method: "prompts/get",
-    params: { name: "eos-direct-mission", arguments: { directive: "Audit security boundaries", target: "eos-system" } }
+    params: { name: "eos-direct-mission", arguments: { directive: "Audit security boundaries", target: "eos-system" } },
   });
   assert.equal(promptGet?.result?.messages?.length, 1);
   assert.ok(promptGet?.result?.messages[0]?.content?.text.includes("SECURITY_HARDENING"));
@@ -105,7 +120,7 @@ test("BDD-125: EosMcpServer negotiates 2024-11-05 & 2025-03-26, serves instructi
     jsonrpc: "2.0",
     id: 6,
     method: "prompts/get",
-    params: { name: "non-existent-prompt" }
+    params: { name: "non-existent-prompt" },
   });
   assert.equal(unknownPrompt?.error?.code, -32603);
 
@@ -113,7 +128,7 @@ test("BDD-125: EosMcpServer negotiates 2024-11-05 & 2025-03-26, serves instructi
     jsonrpc: "2.0",
     id: 7,
     method: "resources/read",
-    params: { uri: "eos://antigravity/director-playbook" }
+    params: { uri: "eos://antigravity/director-playbook" },
   });
   assert.ok(playbookResource?.result?.contents?.[0]?.text.includes("eos_antigravity_direct"));
 
@@ -123,34 +138,41 @@ test("BDD-125: EosMcpServer negotiates 2024-11-05 & 2025-03-26, serves instructi
     method: "tools/call",
     params: {
       name: "eos_antigravity_direct",
-      arguments: { directive: "Optimize latency benchmark with MCTS", target: "eos-system" }
-    }
+      arguments: { directive: "Optimize latency benchmark with MCTS", target: "eos-system" },
+    },
   });
   const parsedDirect = JSON.parse(directCall?.result?.content?.[0]?.text || "{}");
   assert.equal(parsedDirect.profile, "PERFORMANCE_TUNING");
   assert.equal(parsedDirect.writeBarrierStatus, "AUTHORIZED");
 
   // Subprocess stdio JSON-RPC end-to-end verification
-  const stdioRequests = [
-    JSON.stringify({ jsonrpc: "2.0", id: 101, method: "initialize", params: { protocolVersion: "2025-03-26" } }),
-    JSON.stringify({ jsonrpc: "2.0", method: "notifications/initialized" }),
-    JSON.stringify({ jsonrpc: "2.0", id: 102, method: "ping" }),
-    JSON.stringify({
-      jsonrpc: "2.0",
-      id: 103,
-      method: "tools/call",
-      params: { name: "eos_antigravity_direct", arguments: { directive: "Audit hexagonal architecture", target: "eos-system" } }
-    })
-  ].join("\n") + "\n";
+  const stdioRequests =
+    [
+      JSON.stringify({ jsonrpc: "2.0", id: 101, method: "initialize", params: { protocolVersion: "2025-03-26" } }),
+      JSON.stringify({ jsonrpc: "2.0", method: "notifications/initialized" }),
+      JSON.stringify({ jsonrpc: "2.0", id: 102, method: "ping" }),
+      JSON.stringify({
+        jsonrpc: "2.0",
+        id: 103,
+        method: "tools/call",
+        params: {
+          name: "eos_antigravity_direct",
+          arguments: { directive: "Audit hexagonal architecture", target: "eos-system" },
+        },
+      }),
+    ].join("\n") + "\n";
 
   const proc = spawnSync(process.execPath, [path.join(projectRoot, "src", "mcp", "eosMcpServer.ts")], {
     cwd: projectRoot,
     input: stdioRequests,
     encoding: "utf8",
-    timeout: 15000
+    timeout: 15000,
   });
   assert.equal(proc.status, 0);
-  const lines = proc.stdout.trim().split("\n").map((l) => JSON.parse(l));
+  const lines = proc.stdout
+    .trim()
+    .split("\n")
+    .map((l) => JSON.parse(l));
   assert.equal(lines.length, 3);
   assert.equal(lines[0].id, 101);
   assert.equal(lines[0].result.protocolVersion, "2025-03-26");
@@ -168,7 +190,7 @@ test("BDD-126: Antigravity eos-hook.mjs injects SessionStart context and enforce
 
   const allowRes = evaluateHookEvent(
     "PreToolUse",
-    JSON.stringify({ toolCall: { name: "run_command", args: { CommandLine: "npm run test" } } })
+    JSON.stringify({ toolCall: { name: "run_command", args: { CommandLine: "npm run test" } } }),
   );
   assert.deepEqual(allowRes, { decision: "allow" });
 
@@ -177,12 +199,12 @@ test("BDD-126: Antigravity eos-hook.mjs injects SessionStart context and enforce
     "git push --force origin main",
     "psql -c 'DROP DATABASE production;'",
     "Format-Volume -DriveLetter C",
-    "rd /s /q C:\\"
+    "rd /s /q C:\\",
   ];
   for (const cmd of destructiveCommands) {
     const denyRes = evaluateHookEvent(
       "PreToolUse",
-      JSON.stringify({ toolCall: { name: "run_command", args: { CommandLine: cmd } } })
+      JSON.stringify({ toolCall: { name: "run_command", args: { CommandLine: cmd } } }),
     );
     assert.equal(denyRes.decision, "deny", `Expected Gamma barrier to deny: ${cmd}`);
     assert.ok(denyRes.reason.includes("EOS Gamma Security Barrier"));
@@ -194,7 +216,7 @@ test("BDD-126: Antigravity eos-hook.mjs injects SessionStart context and enforce
     cwd: pluginDir,
     input: JSON.stringify({ toolCall: { name: "run_command", args: { CommandLine: "git push -f origin main" } } }),
     encoding: "utf8",
-    timeout: 5000
+    timeout: 15000, // generous for parallel CI subprocess spawn
   });
   assert.equal(hookProc.status, 0);
   const hookJson = JSON.parse(hookProc.stdout.trim());
@@ -219,14 +241,14 @@ test("BDD-127: Hermetic Antigravity installer heals dangling junctions, preserve
             "third-party-mock": {
               command: "npx",
               args: ["-y", "mock-mcp"],
-              env: { MOCK_SETTING: "preserve-intact" }
-            }
-          }
+              env: { MOCK_SETTING: "preserve-intact" },
+            },
+          },
         },
         null,
-        2
+        2,
       ),
-      "utf8"
+      "utf8",
     );
 
     // Seed dangling junctions pointing to a non-existent legacy path
@@ -246,7 +268,7 @@ test("BDD-127: Hermetic Antigravity installer heals dangling junctions, preserve
     const firstInstall = installAntigravityIntegration({
       projectRoot,
       geminiConfigDir: tempGeminiConfig,
-      appDataMcpDir: tempAppDataMcp
+      appDataMcpDir: tempAppDataMcp,
     });
     assert.equal(firstInstall.installed, true);
     assert.equal(firstInstall.doctorReport.readinessScore, 100);
@@ -256,7 +278,7 @@ test("BDD-127: Hermetic Antigravity installer heals dangling junctions, preserve
     const secondInstall = installAntigravityIntegration({
       projectRoot,
       geminiConfigDir: tempGeminiConfig,
-      appDataMcpDir: tempAppDataMcp
+      appDataMcpDir: tempAppDataMcp,
     });
     assert.equal(secondInstall.installed, true);
     assert.equal(secondInstall.doctorReport.readinessScore, 100);
@@ -266,7 +288,7 @@ test("BDD-127: Hermetic Antigravity installer heals dangling junctions, preserve
     assert.deepEqual(finalMcpDoc.mcpServers["third-party-mock"], {
       command: "npx",
       args: ["-y", "mock-mcp"],
-      env: { MOCK_SETTING: "preserve-intact" }
+      env: { MOCK_SETTING: "preserve-intact" },
     });
     assert.equal(finalMcpDoc.mcpServers["eos-system"].env.EOS_PROJECT_ROOT, projectRoot);
 
@@ -281,7 +303,7 @@ test("BDD-127: Hermetic Antigravity installer heals dangling junctions, preserve
       jsonrpc: "2.0",
       id: 99,
       method: "tools/call",
-      params: { name: "eos_antigravity_doctor", arguments: { geminiConfigDir: tempGeminiConfig } }
+      params: { name: "eos_antigravity_doctor", arguments: { geminiConfigDir: tempGeminiConfig } },
     });
     const parsedDoctor = JSON.parse(mcpDoctorCall?.result?.content?.[0]?.text || "{}");
     assert.equal(parsedDoctor.readinessScore, 100);

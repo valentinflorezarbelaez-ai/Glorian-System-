@@ -9,11 +9,7 @@
  * Zero external runtime npm dependencies (Law V). Node 24 strip-only compliant.
  */
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface FuzzCrashArtifact {
@@ -45,7 +41,7 @@ const BOUNDARY_NUMBERS = [
   Number.MIN_VALUE,
   NaN,
   Infinity,
-  -Infinity
+  -Infinity,
 ];
 
 export class EosGeneticCoverageFuzzer {
@@ -123,10 +119,7 @@ export class EosGeneticCoverageFuzzer {
   /**
    * Executes fuzz testing against target function for a fixed number of cycles.
    */
-  public fuzzTarget<TInput, TOutput>(
-    targetFn: (input: TInput) => TOutput,
-    cycles = 100
-  ): FuzzReport {
+  public fuzzTarget<TInput, TOutput>(targetFn: (input: TInput) => TOutput, cycles = 100): FuzzReport {
     assertPrecondition(cycles >= 1, "Fuzz cycles must be >= 1");
     const startTime = performance.now();
     const initialCorpusSize = this.corpus.length;
@@ -158,15 +151,15 @@ export class EosGeneticCoverageFuzzer {
             payload: mutatedInput,
             errorMessage: msg,
             stackTrace: error.stack,
-            crashReceiptSha256
-          })
+            crashReceiptSha256,
+          }),
         );
       }
     }
 
     const durationMs = Number((performance.now() - startTime).toFixed(2));
     const sha256Receipt = pureSha256(
-      `FUZZ:${cycles}:${this.corpus.length}:${this.observedStateHashes.size}:${this.crashes.length}:${durationMs}`
+      `FUZZ:${cycles}:${this.corpus.length}:${this.observedStateHashes.size}:${this.crashes.length}:${durationMs}`,
     );
 
     return deepFreeze({
@@ -177,7 +170,7 @@ export class EosGeneticCoverageFuzzer {
       crashesCount: this.crashes.length,
       crashes: [...this.crashes],
       durationMs,
-      sha256Receipt
+      sha256Receipt,
     });
   }
 
@@ -186,7 +179,7 @@ export class EosGeneticCoverageFuzzer {
    */
   public recordCampaignInLedger(
     report: FuzzReport,
-    ledgerPath?: string
+    ledgerPath?: string,
   ): { readonly recorded: boolean; readonly receiptHash: string } {
     const ledger = new EosDurableSqliteLedger(ledgerPath || ":memory:");
     try {
@@ -200,8 +193,8 @@ export class EosGeneticCoverageFuzzer {
           uniqueStates: report.uniqueStatesDiscovered,
           crashesCount: report.crashesCount,
           durationMs: report.durationMs,
-          sha256Receipt: report.sha256Receipt
-        }
+          sha256Receipt: report.sha256Receipt,
+        },
       });
       return { recorded: true, receiptHash: entry.entryHash };
     } finally {

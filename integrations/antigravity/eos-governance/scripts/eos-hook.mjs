@@ -22,7 +22,10 @@ const GAMMA_DESTRUCTIVE_PATTERNS = [
   { id: "GAMMA-002-FORCE-PUSH-MAIN", regex: /\bgit\s+push\s+(?:--force|-f)\s+\S+\s+(?:main|master)\b/i },
   { id: "GAMMA-003-SQL-DROP", regex: /\bDROP\s+(?:DATABASE|SCHEMA|TABLE)\b/i },
   { id: "GAMMA-004-DISK-FORMAT", regex: /\b(?:Format-Volume|mkfs\.[a-z0-9]+|diskpart)\b/i },
-  { id: "GAMMA-005-WIN-SYSTEM-DEL", regex: /\b(?:del|erase|rd|rmdir)\s+\/[a-z\s/]*[sq][a-z\s/]*\s+[a-z]:\\(?:\s|$|\*)/i }
+  {
+    id: "GAMMA-005-WIN-SYSTEM-DEL",
+    regex: /\b(?:del|erase|rd|rmdir)\s+\/[a-z\s/]*[sq][a-z\s/]*\s+[a-z]:\\(?:\s|$|\*)/i,
+  },
 ];
 
 const DEFAULT_TTL_MS = 6 * 60 * 60 * 1000;
@@ -62,16 +65,12 @@ export function maybeTriggerOpportunisticGentlemanUpdate(projectRoot, options = 
     }
 
     if (!dryRun) {
-      const child = spawn(
-        process.execPath,
-        [eosBin, "gentleman", "update", "--apply", "--quiet"],
-        {
-          cwd: projectRoot,
-          detached: true,
-          stdio: "ignore",
-          windowsHide: true
-        }
-      );
+      const child = spawn(process.execPath, [eosBin, "gentleman", "update", "--apply", "--quiet"], {
+        cwd: projectRoot,
+        detached: true,
+        stdio: "ignore",
+        windowsHide: true,
+      });
       child.unref();
     }
 
@@ -99,10 +98,10 @@ export function evaluateHookEvent(eventName, rawStdin) {
             systemMessage:
               "EOS Sovereign Control Plane (MCP server `eos-system`) is ACTIVE with Evergreen Gentleman AI Stack Co-Governance. " +
               "For non-trivial engineering, architecture, security, or fleet tasks, invoke `eos_antigravity_direct` via `call_mcp_tool` " +
-              "(ServerName: \"eos-system\") to classify the mission profile, verify Law IV write barriers, and follow the prescribed EOS MCP tool DAG."
-          }
-        }
-      ]
+              '(ServerName: "eos-system") to classify the mission profile, verify Law IV write barriers, and follow the prescribed EOS MCP tool DAG.',
+          },
+        },
+      ],
     };
   }
 
@@ -113,7 +112,7 @@ export function evaluateHookEvent(eventName, rawStdin) {
       if (rule.regex.test(commandLine)) {
         return {
           decision: "deny",
-          reason: `Blocked by EOS Gamma Security Barrier (Law VI) [${rule.id}]: Destructive command pattern prohibited.`
+          reason: `Blocked by EOS Gamma Security Barrier (Law VI) [${rule.id}]: Destructive command pattern prohibited.`,
         };
       }
     }

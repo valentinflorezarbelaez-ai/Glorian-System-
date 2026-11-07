@@ -1,0 +1,77 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "EOS: Typecheck",
+      "type": "shell",
+      "command": "npm run typecheck",
+      "group": "build",
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "EOS: Lint",
+      "type": "shell",
+      "command": "npm run lint",
+      "group": "build",
+      "problemMatcher": ["$eslint-stylish"]
+    },
+    {
+      "label": "EOS: Format Check",
+      "type": "shell",
+      "command": "npm run format:check",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "EOS: Test (full suite)",
+      "type": "shell",
+      "command": "npm test",
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "EOS: Test (fast lane)",
+      "type": "shell",
+      "command": "npm run verify:fast",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "EOS: Coverage Gate",
+      "type": "shell",
+      "command": "npm run test:coverage",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "EOS: Size Budget",
+      "type": "shell",
+      "command": "npm run size:budget",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "EOS: Bundle Budget",
+      "type": "shell",
+      "command": "npm run bundle:budget",
+      "group": "build",
+      "problemMatcher": []
+    },
+    { "label": "EOS: A11y Check", "type": "shell", "command": "npm run a11y", "group": "test", "problemMatcher": [] },
+    {
+      "label": "EOS: License Audit",
+      "type": "shell",
+      "command": "npm run license:audit",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "EOS: Full Check (typecheck + lint + format + test)",
+      "type": "shell",
+      "command": "npm run check",
+      "group": "build",
+      "dependsOn": ["EOS: Typecheck", "EOS: Lint", "EOS: Format Check", "EOS: Test (full suite)"],
+      "problemMatcher": []
+    }
+  ]
+}

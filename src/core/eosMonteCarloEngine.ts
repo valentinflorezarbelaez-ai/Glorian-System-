@@ -14,7 +14,7 @@ export interface SimulationTask {
   readonly id: string;
   readonly name: string;
   readonly optimistic: number; // O (best case)
-  readonly nominal: number;    // M (most likely)
+  readonly nominal: number; // M (most likely)
   readonly pessimistic: number; // P (worst case)
 }
 
@@ -101,12 +101,9 @@ export class EosMonteCarloEngine {
   /**
    * Executes N stochastic Monte Carlo iterations across the task network.
    */
-  static simulate(
-    tasks: readonly SimulationTask[],
-    options: SimulationOptions = {}
-  ): SimulationResult {
+  static simulate(tasks: readonly SimulationTask[], options: SimulationOptions = {}): SimulationResult {
     if (!tasks || tasks.length === 0) {
-      throw new Error('Simulation requires at least one task.');
+      throw new Error("Simulation requires at least one task.");
     }
 
     for (const t of tasks) {
@@ -115,7 +112,7 @@ export class EosMonteCarloEngine {
       }
       if (t.optimistic > t.nominal || t.nominal > t.pessimistic) {
         throw new Error(
-          `Task "${t.id}" invalid bounds: optimistic (${t.optimistic}) <= nominal (${t.nominal}) <= pessimistic (${t.pessimistic}) required.`
+          `Task "${t.id}" invalid bounds: optimistic (${t.optimistic}) <= nominal (${t.nominal}) <= pessimistic (${t.pessimistic}) required.`,
         );
       }
     }
@@ -129,7 +126,7 @@ export class EosMonteCarloEngine {
     let minVal = Infinity;
     let maxVal = -Infinity;
     let withinDeadlineCount = 0;
-    const hasDeadline = typeof options.deadlineHours === 'number';
+    const hasDeadline = typeof options.deadlineHours === "number";
     const targetDeadline = options.deadlineHours ?? 0;
 
     for (let i = 0; i < iterations; i++) {
@@ -171,9 +168,7 @@ export class EosMonteCarloEngine {
       p99: getPercentile(99),
     });
 
-    const deadlineProbability = hasDeadline
-      ? Math.round((withinDeadlineCount / iterations) * 1000) / 10
-      : undefined;
+    const deadlineProbability = hasDeadline ? Math.round((withinDeadlineCount / iterations) * 1000) / 10 : undefined;
 
     const preview: number[] = [];
     const previewCount = Math.min(10, iterations);

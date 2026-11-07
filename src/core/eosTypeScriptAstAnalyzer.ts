@@ -15,12 +15,7 @@
 import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
 export type AstEngineMode = "TYPESCRIPT_COMPILER_AST" | "NATIVE_TS_TOKEN_AST";
 
@@ -88,11 +83,7 @@ function loadTypeScriptCompilerOptional(): any | null {
 }
 
 function isAllowedLayer0Specifier(specifier: string): boolean {
-  return (
-    specifier.startsWith("./") ||
-    specifier.startsWith("../") ||
-    specifier.startsWith("node:")
-  );
+  return specifier.startsWith("./") || specifier.startsWith("../") || specifier.startsWith("node:");
 }
 
 const REGEX_PRECEDING_KEYWORDS: ReadonlySet<string> = new Set([
@@ -107,7 +98,7 @@ const REGEX_PRECEDING_KEYWORDS: ReadonlySet<string> = new Set([
   "instanceof",
   "new",
   "yield",
-  "await"
+  "await",
 ]);
 
 const REGEX_PRECEDING_PUNCTS: ReadonlySet<string> = new Set([
@@ -133,7 +124,7 @@ const REGEX_PRECEDING_PUNCTS: ReadonlySet<string> = new Set([
   "%",
   "=>",
   "<",
-  ">"
+  ">",
 ]);
 
 function canStartRegexLiteral(prevToken: TsToken | undefined): boolean {
@@ -364,7 +355,7 @@ export class EosTypeScriptAstAnalyzer {
   public static analyzeSource(
     sourceText: string,
     virtualFilePath: string = "src/core/sample.ts",
-    enforceLayer0Purity: boolean = true
+    enforceLayer0Purity: boolean = true,
   ): FileAstMetrics {
     assertPrecondition(typeof sourceText === "string", "sourceText must be a string");
     const ts = loadTypeScriptCompilerOptional();
@@ -377,7 +368,7 @@ export class EosTypeScriptAstAnalyzer {
   private static analyzeWithNativeTokenAst(
     sourceText: string,
     virtualFilePath: string,
-    enforceLayer0Purity: boolean
+    enforceLayer0Purity: boolean,
   ): FileAstMetrics {
     const tokens = tokenizeTypeScriptAstStream(sourceText);
     const imports: string[] = [];
@@ -393,7 +384,7 @@ export class EosTypeScriptAstAnalyzer {
           line: specTok.line,
           column: specTok.column,
           code: "EXTERNAL_IMPORT_IN_LAYER0",
-          message: `External module '${specTok.value}' prohibited in Layer-0 (use 'node:*' built-ins or relative imports).`
+          message: `External module '${specTok.value}' prohibited in Layer-0 (use 'node:*' built-ins or relative imports).`,
         });
       }
     };
@@ -404,11 +395,7 @@ export class EosTypeScriptAstAnalyzer {
       const next = tokens[idx + 1];
 
       // 1. Static import / re-export declarations
-      if (
-        tok.kind === "IDENT" &&
-        tok.value === "import" &&
-        !(prev?.kind === "PUNCT" && prev.value === ".")
-      ) {
+      if (tok.kind === "IDENT" && tok.value === "import" && !(prev?.kind === "PUNCT" && prev.value === ".")) {
         // Side-effect import: import "specifier"
         if (next?.kind === "STRING") {
           recordSpecifier(next);
@@ -473,7 +460,7 @@ export class EosTypeScriptAstAnalyzer {
           line: tok.line,
           column: tok.column,
           code: "TS_ENUM_PROHIBITED",
-          message: `TypeScript 'enum ${next.value}' breaks Node 24 strip-only execution; use string literal unions.`
+          message: `TypeScript 'enum ${next.value}' breaks Node 24 strip-only execution; use string literal unions.`,
         });
       }
 
@@ -491,7 +478,7 @@ export class EosTypeScriptAstAnalyzer {
           line: tok.line,
           column: tok.column,
           code: "TS_NAMESPACE_PROHIBITED",
-          message: `TypeScript 'namespace ${next.value}' breaks Node 24 strip-only execution.`
+          message: `TypeScript 'namespace ${next.value}' breaks Node 24 strip-only execution.`,
         });
       }
 
@@ -526,7 +513,7 @@ export class EosTypeScriptAstAnalyzer {
                 line: pTok.line,
                 column: pTok.column,
                 code: "TS_PARAMETER_PROPERTY_PROHIBITED",
-                message: `Constructor parameter property '${pTok.value}' breaks Node 24 strip-only TypeScript; declare explicit class fields.`
+                message: `Constructor parameter property '${pTok.value}' breaks Node 24 strip-only TypeScript; declare explicit class fields.`,
               });
               atParamStart = false;
             } else {
@@ -543,19 +530,11 @@ export class EosTypeScriptAstAnalyzer {
         !(prev?.kind === "PUNCT" && prev.value === ".")
       ) {
         cyclomaticComplexity++;
-      } else if (
-        tok.kind === "PUNCT" &&
-        (tok.value === "&&" || tok.value === "||" || tok.value === "??")
-      ) {
+      } else if (tok.kind === "PUNCT" && (tok.value === "&&" || tok.value === "||" || tok.value === "??")) {
         cyclomaticComplexity++;
-      } else if (
-        tok.kind === "PUNCT" &&
-        tok.value === "?" &&
-        !(next?.kind === "PUNCT" && next.value === ":")
-      ) {
+      } else if (tok.kind === "PUNCT" && tok.value === "?" && !(next?.kind === "PUNCT" && next.value === ":")) {
         // Distinguish ternary `cond ? a : b` from TypeScript optional parameter/property `name?: Type`
-        const isOptionalTypeAnnotation =
-          prev?.kind === "IDENT" && next?.kind === "PUNCT" && next.value === ":";
+        const isOptionalTypeAnnotation = prev?.kind === "IDENT" && next?.kind === "PUNCT" && next.value === ":";
         if (!isOptionalTypeAnnotation) {
           cyclomaticComplexity++;
         }
@@ -568,7 +547,7 @@ export class EosTypeScriptAstAnalyzer {
       imports,
       exportedSymbols,
       cyclomaticComplexity,
-      violations
+      violations,
     });
   }
 
@@ -576,15 +555,9 @@ export class EosTypeScriptAstAnalyzer {
     ts: any,
     sourceText: string,
     virtualFilePath: string,
-    enforceLayer0Purity: boolean
+    enforceLayer0Purity: boolean,
   ): FileAstMetrics {
-    const sf = ts.createSourceFile(
-      virtualFilePath,
-      sourceText,
-      ts.ScriptTarget.Latest,
-      true,
-      ts.ScriptKind.TS
-    );
+    const sf = ts.createSourceFile(virtualFilePath, sourceText, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
 
     const imports: string[] = [];
     const exportedSymbols: string[] = [];
@@ -598,7 +571,7 @@ export class EosTypeScriptAstAnalyzer {
         line: pos.line + 1,
         column: pos.character + 1,
         code,
-        message
+        message,
       });
     };
 
@@ -618,7 +591,7 @@ export class EosTypeScriptAstAnalyzer {
               recordViolation(
                 node.moduleSpecifier,
                 "EXTERNAL_IMPORT_IN_LAYER0",
-                `External module '${spec}' prohibited in Layer-0 (use 'node:*' built-ins or relative imports).`
+                `External module '${spec}' prohibited in Layer-0 (use 'node:*' built-ins or relative imports).`,
               );
             }
           }
@@ -628,7 +601,7 @@ export class EosTypeScriptAstAnalyzer {
           recordViolation(
             node,
             "TS_ENUM_PROHIBITED",
-            `TypeScript 'enum ${node.name?.text || ""}' breaks Node 24 strip-only execution; use string literal unions.`
+            `TypeScript 'enum ${node.name?.text || ""}' breaks Node 24 strip-only execution; use string literal unions.`,
           );
           break;
         }
@@ -638,7 +611,7 @@ export class EosTypeScriptAstAnalyzer {
             recordViolation(
               node,
               "TS_NAMESPACE_PROHIBITED",
-              `TypeScript 'namespace ${node.name.text}' breaks Node 24 strip-only execution.`
+              `TypeScript 'namespace ${node.name.text}' breaks Node 24 strip-only execution.`,
             );
           }
           break;
@@ -653,15 +626,15 @@ export class EosTypeScriptAstAnalyzer {
                     ts.SyntaxKind.PublicKeyword,
                     ts.SyntaxKind.PrivateKeyword,
                     ts.SyntaxKind.ProtectedKeyword,
-                    ts.SyntaxKind.ReadonlyKeyword
-                  ].includes(m.kind)
-                )
+                    ts.SyntaxKind.ReadonlyKeyword,
+                  ].includes(m.kind),
+                ),
             );
             if (hasParamProp) {
               recordViolation(
                 param,
                 "TS_PARAMETER_PROPERTY_PROHIBITED",
-                "Constructor parameter properties break Node 24 strip-only TypeScript; declare explicit class fields."
+                "Constructor parameter properties break Node 24 strip-only TypeScript; declare explicit class fields.",
               );
             }
           }
@@ -721,17 +694,14 @@ export class EosTypeScriptAstAnalyzer {
       imports,
       exportedSymbols,
       cyclomaticComplexity,
-      violations
+      violations,
     });
   }
 
   /**
    * Audits all `.ts` files inside a target directory recursively.
    */
-  public static analyzeDirectory(
-    targetDir: string,
-    projectRoot: string = process.cwd()
-  ): DirectoryAstAuditReport {
+  public static analyzeDirectory(targetDir: string, projectRoot: string = process.cwd()): DirectoryAstAuditReport {
     const resolvedDir = path.resolve(targetDir);
     const resolvedRoot = path.resolve(projectRoot);
     assertPrecondition(fs.existsSync(resolvedDir), `Target directory does not exist: ${resolvedDir}`);
@@ -742,8 +712,9 @@ export class EosTypeScriptAstAnalyzer {
     let totalComplexity = 0;
     let maxComplexity = 0;
     let maxFile: string | null = null;
-    let engineMode: AstEngineMode =
-      loadTypeScriptCompilerOptional() ? "TYPESCRIPT_COMPILER_AST" : "NATIVE_TS_TOKEN_AST";
+    let engineMode: AstEngineMode = loadTypeScriptCompilerOptional()
+      ? "TYPESCRIPT_COMPILER_AST"
+      : "NATIVE_TS_TOKEN_AST";
 
     for (const fullPath of tsFiles) {
       const rel = path.relative(resolvedRoot, fullPath).replace(/\\/g, "/");
@@ -774,8 +745,8 @@ export class EosTypeScriptAstAnalyzer {
         totalExports,
         violationCount: allViolations.length,
         layer0Pure,
-        stripOnlyCompatible
-      })
+        stripOnlyCompatible,
+      }),
     );
     assertPostcondition(sha256Receipt.length === 64, "AST audit receipt must be 64-char SHA-256");
 
@@ -790,7 +761,7 @@ export class EosTypeScriptAstAnalyzer {
       layer0Pure,
       stripOnlyCompatible,
       violations: allViolations,
-      sha256Receipt
+      sha256Receipt,
     });
   }
 

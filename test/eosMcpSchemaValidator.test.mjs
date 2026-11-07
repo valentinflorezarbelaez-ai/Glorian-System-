@@ -16,7 +16,7 @@ test("BDD-205: EosMcpSchemaValidator validates 100% of MCP tool definitions and 
   const listRes = server.handleRequest({
     jsonrpc: "2.0",
     id: 1,
-    method: "tools/list"
+    method: "tools/list",
   });
 
   const tools = listRes?.result?.tools || [];

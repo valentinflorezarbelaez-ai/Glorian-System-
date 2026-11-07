@@ -11,6 +11,8 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 
+import { contentDerivedIso, writeDeterministicArtifact } from "./eosDeterministicArtifact.ts";
+
 export interface FleetProjectEntry {
   id: string;
   name: string;
@@ -108,7 +110,7 @@ export class EosFleetDogfoodingEngine {
       "Law IV External Write Barrier Authorization",
       "Secret & Credential Scan Pattern Check",
       "Contract Coherence & CI/CD Gate Verification",
-      "Epistemic State & Spec Traceability"
+      "Epistemic State & Spec Traceability",
     ];
 
     let healthScore = 95;
@@ -129,7 +131,7 @@ export class EosFleetDogfoodingEngine {
       epistemicState,
       findingsCount: 0,
       checksRun,
-      auditedAtIso: new Date().toISOString()
+      auditedAtIso: new Date().toISOString(),
     };
   }
 
@@ -164,25 +166,25 @@ export class EosFleetDogfoodingEngine {
                 {
                   id: "FLEET-RULE-001",
                   name: "LawIvWriteBarrierCompliance",
-                  shortDescription: { text: "Ensures external project write barrier preconditions are satisfied" }
+                  shortDescription: { text: "Ensures external project write barrier preconditions are satisfied" },
                 },
                 {
                   id: "FLEET-RULE-002",
                   name: "ContractAndQualityAssurance",
-                  shortDescription: { text: "Verifies fleet projects maintain zero plain secrets and valid contracts" }
-                }
-              ]
-            }
+                  shortDescription: { text: "Verifies fleet projects maintain zero plain secrets and valid contracts" },
+                },
+              ],
+            },
           },
           results: [],
           invocations: [
             {
               executionSuccessful: true,
-              endTimeUtc: new Date().toISOString()
-            }
-          ]
-        }
-      ]
+              endTimeUtc: new Date().toISOString(),
+            },
+          ],
+        },
+      ],
     };
 
     const evidenceDir = path.join(this.projectRoot, "docs", "evidence");
@@ -191,8 +193,13 @@ export class EosFleetDogfoodingEngine {
     }
 
     const sarifPath = path.join(evidenceDir, "fleet-audit.sarif");
-    const sarifJson = JSON.stringify(sarifReport, null, 2);
-    fs.writeFileSync(sarifPath, sarifJson, "utf8");
+    // Deterministic artifact: the committed endTimeUtc stamp is reused in place,
+    // so an unchanged fleet audit yields a byte-identical SARIF with no tree churn.
+    const sarifWrite = writeDeterministicArtifact(sarifPath, sarifReport as unknown as Record<string, unknown>, {
+      stampField: "endTimeUtc",
+      stampFor: (seedSha) => contentDerivedIso(seedSha),
+    });
+    const sarifJson = sarifWrite.bytes;
 
     const sha256Seal = crypto.createHash("sha256").update(sarifJson, "utf8").digest("hex");
 
@@ -202,7 +209,7 @@ export class EosFleetDogfoodingEngine {
       averageHealthScore: avgScore,
       sarifPath,
       sha256Seal,
-      generatedAtIso: new Date().toISOString()
+      generatedAtIso: new Date().toISOString(),
     };
   }
 
@@ -212,7 +219,7 @@ export class EosFleetDogfoodingEngine {
   public assertWritePermission(targetPath: string, isAuthorized: boolean): void {
     if (!isAuthorized) {
       throw new LawIvExternalWriteBarrierViolation(
-        `Direct write to external path ${targetPath} denied under Law IV of the EOS Constitution.`
+        `Direct write to external path ${targetPath} denied under Law IV of the EOS Constitution.`,
       );
     }
   }

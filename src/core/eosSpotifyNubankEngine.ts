@@ -44,10 +44,7 @@ export interface ShuffleReceipt {
  * Executes Spotify Smart Shuffle with deterministic jittered proportional spacing
  * and Camelot harmonic routing.
  */
-export function executeSpotifySmartShuffle(
-  tracks: readonly TrackNode[],
-  seed: number
-): ShuffleReceipt {
+export function executeSpotifySmartShuffle(tracks: readonly TrackNode[], seed: number): ShuffleReceipt {
   const start = process.hrtime.bigint();
   const n = tracks.length;
 
@@ -57,7 +54,7 @@ export function executeSpotifySmartShuffle(
       artistCollisions: 0,
       harmonicScore: 100,
       executionMicros: 1,
-      merkleSeed: `eos-spotify-seed-${(seed >>> 0).toString(16).padStart(8, "0")}`
+      merkleSeed: `eos-spotify-seed-${(seed >>> 0).toString(16).padStart(8, "0")}`,
     };
   }
 
@@ -130,7 +127,7 @@ export function executeSpotifySmartShuffle(
     artistCollisions: collisions,
     harmonicScore,
     executionMicros: Number(executionMicros.toFixed(2)),
-    merkleSeed: `eos-spotify-seed-${(seed >>> 0).toString(16).padStart(8, "0")}`
+    merkleSeed: `eos-spotify-seed-${(seed >>> 0).toString(16).padStart(8, "0")}`,
   };
 }
 
@@ -169,7 +166,7 @@ export interface BitemporalFact<T = any> {
   readonly entityId: string;
   readonly payload: T;
   readonly validTime: number; // When the fact occurred in the real world
-  readonly txTime: number;    // When the fact was immutably recorded in EOS
+  readonly txTime: number; // When the fact was immutably recorded in EOS
   readonly merkleHash: string;
 }
 
@@ -186,7 +183,7 @@ export class EosBitemporalLedger<T = any> {
     idempotencyKey: string,
     entityId: string,
     payload: T,
-    validTime: number = Date.now()
+    validTime: number = Date.now(),
   ): BitemporalFact<T> {
     const existing = this.processedKeys.get(idempotencyKey);
     if (existing) {
@@ -201,8 +198,7 @@ export class EosBitemporalLedger<T = any> {
       }
     }
 
-    const prevHash =
-      this.facts.length > 0 ? this.facts[this.facts.length - 1].merkleHash : "0".repeat(64);
+    const prevHash = this.facts.length > 0 ? this.facts[this.facts.length - 1].merkleHash : "0".repeat(64);
 
     const rawData = `${prevHash}:${idempotencyKey}:${entityId}:${validTime}:${txTime}:${JSON.stringify(payload)}`;
     const merkleHash = createHash("sha256").update(rawData).digest("hex");
@@ -213,7 +209,7 @@ export class EosBitemporalLedger<T = any> {
       payload,
       validTime,
       txTime,
-      merkleHash
+      merkleHash,
     });
 
     this.facts.push(fact);
@@ -278,7 +274,7 @@ export interface ContractCompatibilityReport {
  */
 export function verifyBackwardCompatibility(
   oldSchemaKeys: readonly string[],
-  newSchemaKeys: readonly string[]
+  newSchemaKeys: readonly string[],
 ): ContractCompatibilityReport {
   const newSet = new Set(newSchemaKeys);
   const oldSet = new Set(oldSchemaKeys);
@@ -302,6 +298,6 @@ export function verifyBackwardCompatibility(
     brokenFields,
     addedFields,
     totalOldFields: oldSchemaKeys.length,
-    totalNewFields: newSchemaKeys.length
+    totalNewFields: newSchemaKeys.length,
   };
 }

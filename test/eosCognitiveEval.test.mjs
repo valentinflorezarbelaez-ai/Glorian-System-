@@ -38,7 +38,7 @@ describe("EOS Sovereign Cognitive Evaluation & Benchmark Suite", () => {
         import express from "express";
         export class DomainService {}
       `;
-      const res = evaluator.evaluate(frameworkCode, { isText: true });
+      evaluator.evaluate(frameworkCode, { isText: true });
       // In a core/domain file, this should trigger purity violation
       const purity = evaluator.evaluate(frameworkCode, { isText: true });
       assert.ok(typeof purity.compositeScore === "number");

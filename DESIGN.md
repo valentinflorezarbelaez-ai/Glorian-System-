@@ -1,9 +1,11 @@
 # DESIGN: SOVEREIGN DESIGN SYSTEM & VISUAL ENGINEERING SPECIFICATION
+
 ## Machine-Readable Design Contract for EOS System & Sovereign Fleet
 
 ---
 
 ## 1. DESIGN PHILOSOPHY
+
 Every user interface within the EOS System and its governed fleet must look and feel like an instrument of high technology forged by Palantir, Anduril, Linear, and Vercel. We do not use arbitrary colors, generic drop shadows, or sluggish transitions. We operate on mathematical grids, 1px hairline precision, and hardware-accelerated feedback.
 
 ---
@@ -11,6 +13,7 @@ Every user interface within the EOS System and its governed fleet must look and 
 ## 2. 3-TIER TOKEN SPECIFICATION
 
 ### Tier 1: Core Primitives (The Absolute Palette)
+
 ```css
 :root {
   /* Obsidian Dark Foundation */
@@ -39,6 +42,7 @@ Every user interface within the EOS System and its governed fleet must look and 
 ```
 
 ### Tier 2: Semantic Tokens (Design Intent)
+
 ```css
 :root {
   /* Surface Layers */
@@ -50,8 +54,8 @@ Every user interface within the EOS System and its governed fleet must look and 
   /* Borders & Hairlines */
   --border-hairline: rgba(255, 255, 255, 0.08);
   --border-subtle: rgba(255, 255, 255, 0.14);
-  --border-accent: rgba(37, 99, 235, 0.50);
-  --border-emerald: rgba(16, 185, 129, 0.50);
+  --border-accent: rgba(37, 99, 235, 0.5);
+  --border-emerald: rgba(16, 185, 129, 0.5);
 
   /* Typography */
   --text-primary: var(--color-zinc-100);
@@ -60,8 +64,8 @@ Every user interface within the EOS System and its governed fleet must look and 
   --text-accent: var(--color-sovereign-blue);
 
   /* Typography Fonts */
-  --font-sans: 'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'Geist Mono', 'JetBrains Mono', 'IBM Plex Mono', monospace;
+  --font-sans: "Geist Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Geist Mono", "JetBrains Mono", "IBM Plex Mono", monospace;
 
   /* Spacing Scale (4px Geometric Base) */
   --space-1: 4px;
@@ -85,6 +89,7 @@ Every user interface within the EOS System and its governed fleet must look and 
 ```
 
 ### Tier 3: Component-Level Tokens
+
 ```css
 :root {
   /* Bento & Spotlight Cards */
@@ -98,7 +103,7 @@ Every user interface within the EOS System and its governed fleet must look and 
   --card-top-light: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.05) 0%,
-    rgba(255, 255, 255, 0.00) 100%
+    rgba(255, 255, 255, 0) 100%
   );
 
   /* Telemetry Tables */
@@ -121,18 +126,20 @@ Every user interface within the EOS System and its governed fleet must look and 
 ---
 
 ## 4. STRICT ANTI-PATTERN BLACKLIST
+
 Any code submitted containing the following elements will fail visual regression gates immediately:
 
-* ❌ **BANNED**: `box-shadow: 0 10px 15px -3px ...` (generic blurry drop shadows).
-* ❌ **BANNED**: Arbitrary hex values in markup (e.g. `style="background: #123456;"`). Always reference semantic CSS variables or tokens.
-* ❌ **BANNED**: Multiple competing accent colors in one component (e.g., mixing neon purple, pink, and bright cyan).
-* ❌ **BANNED**: Layout shifts on initial load (`Cumulative Layout Shift > 0.000`). All images, graphs, and canvas elements must declare explicit aspect ratios.
-* ❌ **BANNED**: Linear transition curves (`transition: all 0.3s linear`). Always use spring timing functions or `cubic-bezier(0.16, 1, 0.3, 1)`.
-* ❌ **BANNED**: Low contrast ratios violating WCAG 2.1 AA (text contrast ratio must be $\ge 4.5:1$ against surface background).
+- ❌ **BANNED**: `box-shadow: 0 10px 15px -3px ...` (generic blurry drop shadows).
+- ❌ **BANNED**: Arbitrary hex values in markup (e.g. `style="background: #123456;"`). Always reference semantic CSS variables or tokens.
+- ❌ **BANNED**: Multiple competing accent colors in one component (e.g., mixing neon purple, pink, and bright cyan).
+- ❌ **BANNED**: Layout shifts on initial load (`Cumulative Layout Shift > 0.000`). All images, graphs, and canvas elements must declare explicit aspect ratios.
+- ❌ **BANNED**: Linear transition curves (`transition: all 0.3s linear`). Always use spring timing functions or `cubic-bezier(0.16, 1, 0.3, 1)`.
+- ❌ **BANNED**: Low contrast ratios violating WCAG 2.1 AA (text contrast ratio must be $\ge 4.5:1$ against surface background).
 
 ---
 
 ## 5. MASTER COMPONENT CATALOG (12 LUXURY BLOCKS)
+
 1. **Translucent Hairline Navbar**: 48px height, 1px bottom border, brand logo + status beacon + ⌘K trigger.
 2. **Tactical Hero with Live Canvas/WebGL Telemetry**: High-contrast headline, tabular stats badge, instant CTA.
 3. **Bento Grid with Cursor Spotlight**: Asymmetric modular grid with radial light following cursor.

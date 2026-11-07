@@ -13,13 +13,10 @@ import { EosProductionChaosMonkey } from "../src/core/eosProductionChaosMonkey.t
 import { EosDurableSqliteLedger } from "../src/core/eosDurableSqliteLedger.ts";
 
 test("BDD-194: Live Fleet Chaos Attack Vector Execution", async () => {
-  const report = await EosProductionChaosMonkey.executeExperiment(
-    "https://portafolio-valentin.vercel.app",
-    {
-      burstCount: 5,
-      mockTransport: async (i) => ({ status: 200, latencyMs: 120 + i * 10 })
-    }
-  );
+  const report = await EosProductionChaosMonkey.executeExperiment("https://portafolio-valentin.vercel.app", {
+    burstCount: 5,
+    mockTransport: async (i) => ({ status: 200, latencyMs: 120 + i * 10 }),
+  });
 
   assert.equal(report.epistemicVerdict, "RESILIENT_CHAOS_SURVIVED");
   assert.equal(report.probesSent, 5);
@@ -35,17 +32,14 @@ test("BDD-195: Error Budget Circuit Breaker Safety Trip", async () => {
   const ledgerPath = path.join(tmpDir, "ledger.sqlite");
 
   try {
-    const report = await EosProductionChaosMonkey.executeExperiment(
-      "https://test-flaky-endpoint.internal",
-      {
-        burstCount: 10,
-        maxErrorBudgetPercent: 5.0,
-        mockTransport: async (i) => {
-          // Probe 0: OK, Probe 1: 503 error (rate = 50% > 5%) -> should abort!
-          return i === 0 ? { status: 200, latencyMs: 50 } : { status: 503, latencyMs: 20 };
-        }
-      }
-    );
+    const report = await EosProductionChaosMonkey.executeExperiment("https://test-flaky-endpoint.internal", {
+      burstCount: 10,
+      maxErrorBudgetPercent: 5.0,
+      mockTransport: async (i) => {
+        // Probe 0: OK, Probe 1: 503 error (rate = 50% > 5%) -> should abort!
+        return i === 0 ? { status: 200, latencyMs: 50 } : { status: 503, latencyMs: 20 };
+      },
+    });
 
     assert.equal(report.epistemicVerdict, "CIRCUIT_BREAKER_ABORTED");
     assert.equal(report.emergencyAbortTriggered, true);

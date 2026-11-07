@@ -1,0 +1,35 @@
+# Composite Action: Setup Node.js CI Environment
+# Big Tech standard (Kubernetes, Angular): extract common CI setup steps
+# (checkout + node + npm ci) into a reusable composite action to eliminate
+# duplication across 15+ workflows. Pin the same SHAs everywhere.
+name: Setup Node.js CI
+description: Checkout, setup Node.js, and install locked dev toolchain
+
+inputs:
+  node-version:
+    description: "Node.js version"
+    required: false
+    default: "24"
+  fetch-depth:
+    description: "Git fetch depth (0 = full history)"
+    required: false
+    default: "1"
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        fetch-depth: ${{ inputs.fetch-depth }}
+        persist-credentials: false
+
+    - name: Setup Node.js ${{ inputs.node-version }}
+      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+
+    - name: Install locked development toolchain
+      shell: bash
+      run: npm ci

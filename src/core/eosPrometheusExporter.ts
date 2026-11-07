@@ -31,9 +31,7 @@ export class EosPrometheusExporter {
   private readonly projectRoot: string;
 
   constructor(projectRoot?: string) {
-    const currentDir = typeof __dirname !== "undefined"
-      ? __dirname
-      : path.dirname(fileURLToPath(import.meta.url));
+    const currentDir = typeof __dirname !== "undefined" ? __dirname : path.dirname(fileURLToPath(import.meta.url));
     this.projectRoot = projectRoot || path.resolve(currentDir, "../../");
   }
 
@@ -73,7 +71,7 @@ export class EosPrometheusExporter {
       mcpToolsCount: overrides?.mcpToolsCount ?? 65,
       walCommittedTx: overrides?.walCommittedTx ?? 128,
       walBytesWritten: overrides?.walBytesWritten ?? 32768,
-      ...overrides
+      ...overrides,
     };
   }
 

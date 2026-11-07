@@ -1,11 +1,12 @@
 # TASKS-112: Distributed Adaptive Concurrency Control & Priority-Tier Load Shedding
 
 ## Metadata
-* **Task DAG ID**: `TASKS-112`
-* **Governing Specification**: `SPEC-112`
-* **Plan Reference**: `PLAN-112`
-* **Status**: `COMPLETE`
-* **Total Atomic Tasks**: 9
+
+- **Task DAG ID**: `TASKS-112`
+- **Governing Specification**: `SPEC-112`
+- **Plan Reference**: `PLAN-112`
+- **Status**: `COMPLETE`
+- **Total Atomic Tasks**: 9
 
 ---
 

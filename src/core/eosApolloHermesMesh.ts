@@ -62,7 +62,7 @@ export class EosCircuitBreaker {
       failureThresholdPercentage: config.failureThresholdPercentage ?? 50,
       slidingWindowSize: config.slidingWindowSize ?? 10,
       resetTimeoutMs: config.resetTimeoutMs ?? 500,
-      halfOpenTrialSuccesses: config.halfOpenTrialSuccesses ?? 3
+      halfOpenTrialSuccesses: config.halfOpenTrialSuccesses ?? 3,
     };
   }
 
@@ -220,7 +220,7 @@ export class EosApolloHermesMesh {
       parentId,
       spanId,
       traceFlags: "01",
-      headerString
+      headerString,
     };
   }
 
@@ -236,7 +236,7 @@ export class EosApolloHermesMesh {
       parentId: "0000000000000000",
       spanId: parts[2],
       traceFlags: parts[3],
-      headerString: header
+      headerString: header,
     };
   }
 
@@ -259,7 +259,7 @@ export class EosApolloHermesMesh {
     endpoint: string,
     payload: T,
     handler: (data: T, trace: W3CTraceContext) => Promise<R> | R,
-    parentTrace?: W3CTraceContext | string
+    parentTrace?: W3CTraceContext | string,
   ): Promise<RpcCallTelemetry<R>> {
     const start = process.hrtime.bigint();
     this.totalRpcInvocations++;
@@ -278,7 +278,7 @@ export class EosApolloHermesMesh {
         circuitState: cb.getState(),
         traceContext,
         error: "HTTP 429 Too Many Requests (Rate limit bucket exhausted)",
-        partitionId
+        partitionId,
       };
     }
 
@@ -293,7 +293,7 @@ export class EosApolloHermesMesh {
         circuitState: "OPEN",
         traceContext,
         error: `Circuit breaker for '${serviceName}' is OPEN`,
-        partitionId
+        partitionId,
       };
     }
 
@@ -309,7 +309,7 @@ export class EosApolloHermesMesh {
         circuitState: cb.getState(),
         traceContext,
         data: result,
-        partitionId
+        partitionId,
       };
     } catch (err: unknown) {
       cb.recordFailure();
@@ -323,7 +323,7 @@ export class EosApolloHermesMesh {
         circuitState: cb.getState(),
         traceContext,
         error: errorMessage,
-        partitionId
+        partitionId,
       };
     }
   }
@@ -341,7 +341,7 @@ export class EosApolloHermesMesh {
       partitionId,
       traceparent: traceContext.headerString,
       timestampMs: Date.now(),
-      payload
+      payload,
     };
 
     const subscribers = this.eventSubscribers.get(topic) || [];
@@ -398,7 +398,7 @@ export class EosApolloHermesMesh {
       totalEventsPublished: this.totalEventsPublished,
       activeCircuitBreakers,
       rateLimiterAvailableTokens: Math.round(this.rateLimiter.getAvailableTokens()),
-      activeSubscribers
+      activeSubscribers,
     };
   }
 }

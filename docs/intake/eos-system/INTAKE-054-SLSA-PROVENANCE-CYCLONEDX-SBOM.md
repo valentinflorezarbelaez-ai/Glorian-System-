@@ -9,7 +9,9 @@
 ---
 
 ## 1. Business Context & Engineering Rationale
+
 Software supply-chain integrity demands verifiable, tamper-evident attestation of every build artifact.
+
 - CycloneDX v1.5 JSON SBOM catalogs all 122+ pure Layer-0 modules, scripts, and runtime contracts.
 - In-Toto SLSA v1.0 Level 4 Provenance captures immutable build definition, repository URI, Git commit SHA, builder identity, and cryptographic subject digests.
 - Zero runtime NPM dependencies (`dependencies: {}`).

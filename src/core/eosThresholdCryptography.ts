@@ -13,12 +13,7 @@
  */
 
 import crypto from "node:crypto";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface ShamirShare {
@@ -68,7 +63,7 @@ export class EosThresholdCryptography {
     let t = 0n;
     let newt = 1n;
     let r = p;
-    let newr = (a % p + p) % p;
+    let newr = ((a % p) + p) % p;
 
     while (newr !== 0n) {
       const quotient = r / newr;
@@ -93,7 +88,11 @@ export class EosThresholdCryptography {
   /**
    * Evaluates polynomial f(x) = a0 + a1*x + ... + a_{t-1}*x^{t-1} mod p at point x.
    */
-  public static evaluatePolynomial(coefficients: readonly bigint[], x: bigint, p: bigint = EosThresholdCryptography.PRIME_P): bigint {
+  public static evaluatePolynomial(
+    coefficients: readonly bigint[],
+    x: bigint,
+    p: bigint = EosThresholdCryptography.PRIME_P,
+  ): bigint {
     let result = 0n;
     let currentX = 1n;
     for (const coef of coefficients) {
@@ -129,7 +128,10 @@ export class EosThresholdCryptography {
   public splitSecret(secretValue: bigint, t: number, n: number): readonly ShamirShare[] {
     assertPrecondition(t >= 2, "Threshold t must be at least 2");
     assertPrecondition(n >= t, "Total shares n must be >= threshold t");
-    assertPrecondition(secretValue >= 0n && secretValue < EosThresholdCryptography.PRIME_P, "Secret must be within field F_p");
+    assertPrecondition(
+      secretValue >= 0n && secretValue < EosThresholdCryptography.PRIME_P,
+      "Secret must be within field F_p",
+    );
 
     const coefficients: bigint[] = [secretValue];
     // The t - 1 non-constant coefficients MUST come from a CSPRNG. Deriving
@@ -147,7 +149,7 @@ export class EosThresholdCryptography {
       const y = EosThresholdCryptography.evaluatePolynomial(coefficients, x);
       shares.push({
         x: i,
-        yHex: y.toString(16)
+        yHex: y.toString(16),
       });
     }
 
@@ -181,7 +183,7 @@ export class EosThresholdCryptography {
       const lagrangeBasis = EosThresholdCryptography.modMul(
         numerator,
         EosThresholdCryptography.modInverse(denominator, p),
-        p
+        p,
       );
 
       const term = EosThresholdCryptography.modMul(yi, lagrangeBasis, p);
@@ -195,7 +197,7 @@ export class EosThresholdCryptography {
           category: "SECURITY_AUDIT",
           projectId: "eos-system",
           title: `Threshold Quorum Reconstructed [t=${t}, shares=${shares.length}]`,
-          payload: { thresholdT: t, sharesUsed: subset.length, digest }
+          payload: { thresholdT: t, sharesUsed: subset.length, digest },
         });
       } catch {
         // Fallback

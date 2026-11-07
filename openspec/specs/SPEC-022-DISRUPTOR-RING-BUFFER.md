@@ -1,9 +1,11 @@
 # OPENSPEC BASE SPECIFICATION: LMAX DISRUPTOR LOCK-FREE RING BUFFER & SPEED ENGINE (SPEC-022)
 
 ## 1. Scope
+
 Governs high-throughput, zero-allocation in-memory event streaming, lock-free circular ring buffer sequencing, 64-byte cache line padding to prevent false sharing, and nanosecond structural byte scanning across the EOS control plane and sovereign fleet.
 
 ## 2. Requirements (EARS)
+
 - **UBIQUITOUS**: THE SYSTEM SHALL operate an in-memory LMAX Disruptor circular ring buffer with power-of-two capacity ($2^N$) and bitwise index masking (`seq & (capacity - 1)`) using zero external dependencies (`dependencies: {}`).
 - **UBIQUITOUS**: THE SYSTEM SHALL pre-allocate contiguous TypedArray memory (Float64Array / BigInt64Array / Uint8Array) ensuring strictly zero heap object allocation ($0 \text{ B/op}$) during event publishing and consuming loops.
 - **STATE-DRIVEN**: WHILE multiple producers and consumers publish telemetry to the ring buffer, THE SYSTEM SHALL advance cursors monotonically without mutual exclusion locks (Mutexes), achieving throughput exceeding 10,000,000 events/second.

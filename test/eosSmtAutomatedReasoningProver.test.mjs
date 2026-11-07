@@ -16,7 +16,7 @@ test("BDD-192: ABAC Security Policy Mathematical Proof (UNSAT is Secure)", () =>
   const rules = [
     { role: "guest", action: "ledger_read", allow: true },
     { role: "guest", action: "ledger_write", allow: false },
-    { role: "admin", action: "ledger_write", allow: true }
+    { role: "admin", action: "ledger_write", allow: true },
   ];
 
   // Prove that guest cannot perform ledger_write
@@ -37,7 +37,7 @@ test("BDD-193: Topological Dependency Satisfiability Proof", () => {
     const edges = [
       { from: "planner", to: "spec" },
       { from: "spec", to: "code" },
-      { from: "code", to: "eval" }
+      { from: "code", to: "eval" },
     ];
 
     const proof = EosSmtAutomatedReasoningProver.proveAcyclicTopology(nodes, edges);

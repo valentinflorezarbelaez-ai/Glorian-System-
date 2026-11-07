@@ -50,7 +50,7 @@ export class EosElohim {
     if (params.tokensConsumed > maxTokens) {
       const seal = EosElohim.generateRunaNotSeal(
         "TOKEN_LIMIT_EXCEEDED",
-        `Consumo ${params.tokensConsumed} > límite ${maxTokens}`
+        `Consumo ${params.tokensConsumed} > límite ${maxTokens}`,
       );
       return {
         status: "RUNA_NOT_SEVERED",
@@ -58,7 +58,7 @@ export class EosElohim {
         violationType: "TOKEN_LIMIT_EXCEEDED",
         message: `Runa NOT Disparada: Consumo excesivo de tokens (${params.tokensConsumed} > ${maxTokens}). Bucle kármico cortado quirúrgicamente.`,
         sha384Seal: seal,
-        timestamp
+        timestamp,
       };
     }
 
@@ -66,7 +66,7 @@ export class EosElohim {
     if (params.elapsedMs > maxElapsedMs) {
       const seal = EosElohim.generateRunaNotSeal(
         "MECHANICAL_DEADLOCK",
-        `Latencia ${params.elapsedMs}ms > umbral ${maxElapsedMs}ms`
+        `Latencia ${params.elapsedMs}ms > umbral ${maxElapsedMs}ms`,
       );
       return {
         status: "RUNA_NOT_SEVERED",
@@ -74,7 +74,7 @@ export class EosElohim {
         violationType: "MECHANICAL_DEADLOCK",
         message: `Runa NOT Disparada: Deadlock mecánico detectado (${params.elapsedMs}ms > ${maxElapsedMs}ms). Hilo congelado y purgado.`,
         sha384Seal: seal,
-        timestamp
+        timestamp,
       };
     }
 
@@ -95,7 +95,7 @@ export class EosElohim {
       if (identicalStreak >= maxLoops) {
         const seal = EosElohim.generateRunaNotSeal(
           "AGENT_CIRCULAR_LOOP",
-          `Repetición exacta de pensamiento durante ${identicalStreak} ciclos consecutivos`
+          `Repetición exacta de pensamiento durante ${identicalStreak} ciclos consecutivos`,
         );
         return {
           status: "RUNA_NOT_SEVERED",
@@ -103,7 +103,7 @@ export class EosElohim {
           violationType: "AGENT_CIRCULAR_LOOP",
           message: `Runa NOT Disparada: Bucle circular de subagente detectado (${identicalStreak} iteraciones idénticas). Alucinación abortada.`,
           sha384Seal: seal,
-          timestamp
+          timestamp,
         };
       }
     }
@@ -111,7 +111,7 @@ export class EosElohim {
     return {
       status: "PASS_HARMONY",
       tripped: false,
-      timestamp
+      timestamp,
     };
   }
 

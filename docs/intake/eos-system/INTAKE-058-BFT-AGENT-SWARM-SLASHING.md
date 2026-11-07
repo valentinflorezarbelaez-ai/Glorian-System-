@@ -9,7 +9,9 @@
 ---
 
 ## 1. Business Context & Engineering Rationale
+
 Multi-agent autonomous swarms face rogue, hallucinating, or compromised agent behaviors (Byzantine faults):
+
 - Google DeepMind multi-agent consensus & Ethereum Casper PoS slashing mechanisms.
 - Quorum-based voting ($2f + 1$ threshold, requiring $\ge 3/4$ consensus).
 - Security veto: specialized security agents possess absolute veto rights over unauthorized actions.

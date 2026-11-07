@@ -1,11 +1,12 @@
 # INTAKE & CONTEXT RECORD: SPOTIFY INSTITUTIONAL ENGINEERING CODEX (INTAKE-017)
+
 <!-- Standard: IEEE 830 / ISO 29148 — EOS 21-Step Master Pipeline -->
 
-* **Project**: EOS System Control Plane (`eos-system-control-plane`)
-* **Date**: 2026-10-25
-* **Author**: Valentín Flórez Arbeláez (Principal Architect) & Antigravity (Pair Programmer)
-* **Institutional Benchmark**: Spotify Engineering R&D Standards — `https://engineering.atspotify.com/`
-* **Goal**: Institutionalize within EOS System the official engineering culture, architectural tenets, developer experience standards, and sound engineering invariants of Spotify, creating a unified codex that ensures EOS operates with apex institutional perfection under Spotify's R&D model.
+- **Project**: EOS System Control Plane (`eos-system-control-plane`)
+- **Date**: 2026-10-25
+- **Author**: Valentín Flórez Arbeláez (Principal Architect) & Antigravity (Pair Programmer)
+- **Institutional Benchmark**: Spotify Engineering R&D Standards — `https://engineering.atspotify.com/`
+- **Goal**: Institutionalize within EOS System the official engineering culture, architectural tenets, developer experience standards, and sound engineering invariants of Spotify, creating a unified codex that ensures EOS operates with apex institutional perfection under Spotify's R&D model.
 
 ---
 
@@ -14,6 +15,7 @@
 Spotify serves hundreds of millions of active listeners across 180+ global markets, maintaining over 1 trillion daily telemetry events and thousands of autonomous microservices.
 
 ### 1.1 The Six Pillars of Spotify Engineering Excellence
+
 1. **Golden Paths & Backstage (Anti-"Rumour-Driven Development")**:
    - Golden Paths are opinionated, supported, opt-in "happy paths" for creating, testing, and deploying backend microservices, web apps, data pipelines, and ML models.
    - Eliminates tribal knowledge and developer toil by baking in security, CI/CD, and monitoring out-of-the-box.
@@ -40,6 +42,7 @@ Spotify serves hundreds of millions of active listeners across 180+ global marke
 ---
 
 ## 2. Inviolable Invariants
+
 1. **Layer-0 Purity**: Zero external runtime dependencies (`dependencies: {}`).
 2. **Audio Standards**: Strict adherence to -14.0 LUFS and -1.0 dBTP ceiling.
 3. **Zero Plaintext Secrets**: No hardcoded API keys, tokens, or credentials.

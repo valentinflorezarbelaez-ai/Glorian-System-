@@ -60,4 +60,5 @@ ESCENARIO: [BDD-073] Aislamiento Hermético en Sandbox Copy-on-Write
 ```
 
 ---
-*Signed by Principal Architect: Valentín Flórez Arbeláez*
+
+_Signed by Principal Architect: Valentín Flórez Arbeláez_

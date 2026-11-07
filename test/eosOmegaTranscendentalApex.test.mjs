@@ -14,11 +14,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
 import { EosOntologyCyclotron } from "../src/core/eosOntologyCyclotron.ts";
-import {
-  EosQuantumLatticeShield,
-  KYBER_Q,
-  HALF_Q,
-} from "../src/core/eosQuantumLatticeShield.ts";
+import { EosQuantumLatticeShield, HALF_Q } from "../src/core/eosQuantumLatticeShield.ts";
 import { EosMetaCognitiveSynapse } from "../src/core/eosMetaCognitiveSynapse.ts";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
@@ -90,9 +86,27 @@ describe("SPEC-040: Omega Transcendental Apex Kernel Verification", () => {
   describe("BDD-111: Bayesian Multi-Agent Intent Arbitration", () => {
     it("normalizes posterior probabilities so sum(P(H|E)) equals 1.0", () => {
       const candidates = [
-        { agentId: "agent-security", role: "SecDevOps", action: "block-deployment", priorBelief: 0.3, evidenceLikelihood: 0.9 },
-        { agentId: "agent-feature", role: "Developer", action: "ship-feature", priorBelief: 0.5, evidenceLikelihood: 0.4 },
-        { agentId: "agent-optimizer", role: "FinOps", action: "shrink-cluster", priorBelief: 0.2, evidenceLikelihood: 0.3 }
+        {
+          agentId: "agent-security",
+          role: "SecDevOps",
+          action: "block-deployment",
+          priorBelief: 0.3,
+          evidenceLikelihood: 0.9,
+        },
+        {
+          agentId: "agent-feature",
+          role: "Developer",
+          action: "ship-feature",
+          priorBelief: 0.5,
+          evidenceLikelihood: 0.4,
+        },
+        {
+          agentId: "agent-optimizer",
+          role: "FinOps",
+          action: "shrink-cluster",
+          priorBelief: 0.2,
+          evidenceLikelihood: 0.3,
+        },
       ];
 
       const report = EosMetaCognitiveSynapse.arbitrateIntents(candidates);
@@ -126,8 +140,8 @@ describe("SPEC-040: Omega Transcendental Apex Kernel Verification", () => {
         method: "tools/call",
         params: {
           name: "eos_ontology_query",
-          arguments: { action: "status" }
-        }
+          arguments: { action: "status" },
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");
@@ -143,8 +157,8 @@ describe("SPEC-040: Omega Transcendental Apex Kernel Verification", () => {
         method: "tools/call",
         params: {
           name: "eos_quantum_lattice_seal",
-          arguments: { payload: "ci-cd-receipt-proof" }
-        }
+          arguments: { payload: "ci-cd-receipt-proof" },
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");
@@ -164,10 +178,10 @@ describe("SPEC-040: Omega Transcendental Apex Kernel Verification", () => {
           arguments: {
             candidates: [
               { agentId: "agent-a", role: "Lead", action: "merge", priorBelief: 0.6, evidenceLikelihood: 0.8 },
-              { agentId: "agent-b", role: "QA", action: "retest", priorBelief: 0.4, evidenceLikelihood: 0.7 }
-            ]
-          }
-        }
+              { agentId: "agent-b", role: "QA", action: "retest", priorBelief: 0.4, evidenceLikelihood: 0.7 },
+            ],
+          },
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");

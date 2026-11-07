@@ -5,27 +5,27 @@ import { EosUnboundedFormalProver } from "../src/core/eosUnboundedFormalProver.t
 
 test("BDD-261: Demostración inductiva de invariantes de seguridad para consenso Spanner (SPEC-093)", () => {
   const prover = new EosUnboundedFormalProver("SpannerLinearizabilityModel", [
-    { clockTime: 100, commitTimestamp: 0, lockHeld: false }
+    { clockTime: 100, commitTimestamp: 0, lockHeld: false },
   ]);
 
   // Transition 1: Advance clock monotonically
   prover.addTransition({
     actionName: "AdvanceClock",
     guard: (s) => s.clockTime < 105,
-    apply: (s) => ({ ...s, clockTime: s.clockTime + 1 })
+    apply: (s) => ({ ...s, clockTime: s.clockTime + 1 }),
   });
 
   // Transition 2: Commit-Wait transaction
   prover.addTransition({
     actionName: "CommitWaitTransaction",
     guard: (s) => !s.lockHeld && s.clockTime >= 102,
-    apply: (s) => ({ ...s, commitTimestamp: s.clockTime, lockHeld: true })
+    apply: (s) => ({ ...s, commitTimestamp: s.clockTime, lockHeld: true }),
   });
 
   // Safety Invariant: Commit timestamp must be <= current clock (monotonic linearizability)
   prover.addInvariant({
     name: "LinearizabilityGuarantee",
-    check: (s) => s.commitTimestamp <= s.clockTime
+    check: (s) => s.commitTimestamp <= s.clockTime,
   });
 
   const cert = prover.verifyInductiveModel(20);
@@ -39,28 +39,26 @@ test("BDD-261: Demostración inductiva de invariantes de seguridad para consenso
 });
 
 test("BDD-262: Detección y reducción de contraejemplos mínimos ante violaciones forzadas (SPEC-093)", () => {
-  const prover = new EosUnboundedFormalProver("FlawedTransitionModel", [
-    { counter: 0 }
-  ]);
+  const prover = new EosUnboundedFormalProver("FlawedTransitionModel", [{ counter: 0 }]);
 
   // Transition increments counter
   prover.addTransition({
     actionName: "Increment",
     guard: (s) => s.counter < 5,
-    apply: (s) => ({ counter: s.counter + 1 })
+    apply: (s) => ({ counter: s.counter + 1 }),
   });
 
   // Flawed transition that jumps to an illegal state
   prover.addTransition({
     actionName: "FaultyJump",
     guard: (s) => s.counter === 2,
-    apply: (_s) => ({ counter: -99 })
+    apply: (_s) => ({ counter: -99 }),
   });
 
   // Invariant: counter must always be non-negative
   prover.addInvariant({
     name: "NonNegativeCounter",
-    check: (s) => s.counter >= 0
+    check: (s) => s.counter >= 0,
   });
 
   const cert = prover.verifyInductiveModel(10);

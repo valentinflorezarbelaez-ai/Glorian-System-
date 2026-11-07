@@ -1,8 +1,8 @@
 # CHANGE-041: AGENT TOPOLOGY COMPILER & ZERO-COPY COMMUNICATION MESH (v54.0.0)
 
-* **Specification**: `SPEC-048`
-* **ADR**: `ADR-054` (`PLAN-041`)
-* **Type**: `CAPABILITY_ELEVATION` (Agent Topology Compiler + LMAX Zero-Copy Event Mesh)
+- **Specification**: `SPEC-048`
+- **ADR**: `ADR-054` (`PLAN-041`)
+- **Type**: `CAPABILITY_ELEVATION` (Agent Topology Compiler + LMAX Zero-Copy Event Mesh)
 
 ## Summary of Delta Changes
 

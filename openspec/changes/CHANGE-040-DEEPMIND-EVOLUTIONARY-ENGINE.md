@@ -1,8 +1,8 @@
 # CHANGE-040: DEEPMIND SOVEREIGN EVOLUTIONARY ENGINE (v53.0.0)
 
-* **Specification**: `SPEC-047`
-* **ADR**: `ADR-053` (`PLAN-040`)
-* **Type**: `CAPABILITY_ELEVATION` (Evolutionary Harness + Adversarial SDD + Token Circuit Breaker)
+- **Specification**: `SPEC-047`
+- **ADR**: `ADR-053` (`PLAN-040`)
+- **Type**: `CAPABILITY_ELEVATION` (Evolutionary Harness + Adversarial SDD + Token Circuit Breaker)
 
 ## Summary of Delta Changes
 

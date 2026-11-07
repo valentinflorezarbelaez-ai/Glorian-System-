@@ -14,13 +14,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import {
-  EosAutonomousHealer
-} from "../src/core/eosAutonomousHealer.ts";
+import { EosAutonomousHealer } from "../src/core/eosAutonomousHealer.ts";
 
-import {
-  EosMcpServer
-} from "../src/mcp/eosMcpServer.ts";
+import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -108,7 +104,7 @@ describe("EOS Sovereign Autonomous Healer & FDIR Suite", () => {
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 401,
-        method: "tools/list"
+        method: "tools/list",
       });
 
       assert.ok(res?.result?.tools);
@@ -125,9 +121,9 @@ describe("EOS Sovereign Autonomous Healer & FDIR Suite", () => {
         params: {
           name: "eos_autonomous_heal",
           arguments: {
-            dryRun: true
-          }
-        }
+            dryRun: true,
+          },
+        },
       });
 
       assert.ok(res?.result?.content?.[0]?.text);

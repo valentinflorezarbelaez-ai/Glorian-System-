@@ -4,8 +4,19 @@ import path from "node:path";
 const MAX_EVALUATION_INPUT_BYTES = 100 * 1024;
 const MAX_TARGET_PATH_BYTES = 1024;
 const TITAN_ACTIONS = new Set([
-  "all", "xirp", "spacex", "nvidia", "google", "reconcile", "xai",
-  "nubank", "datomic", "shuffle", "smart_shuffle", "ibm", "sysplex"
+  "all",
+  "xirp",
+  "spacex",
+  "nvidia",
+  "google",
+  "reconcile",
+  "xai",
+  "nubank",
+  "datomic",
+  "shuffle",
+  "smart_shuffle",
+  "ibm",
+  "sysplex",
 ]);
 
 function isPathWithin(root, candidate) {
@@ -34,20 +45,20 @@ async function handleTitans(action, res) {
       smart_shuffle: () => matrix.benchmarkSpotifySmartShuffle(60),
       ibm: () => matrix.benchmarkIbmSysplex(),
       sysplex: () => matrix.benchmarkIbmSysplex(),
-      all: () => matrix.runAllTitans()
+      all: () => matrix.runAllTitans(),
     };
     return res.status(200).json({
       status: "LOCAL_SIMULATION_EXECUTED",
       action,
       externalSystemsQueried: false,
       certificationIssued: false,
-      data: results[action]()
+      data: results[action](),
     });
   } catch {
     return res.status(503).json({
       status: "LOCAL_ENGINE_UNAVAILABLE",
       action,
-      externalSystemsQueried: false
+      externalSystemsQueried: false,
     });
   }
 }
@@ -70,7 +81,10 @@ export default async function handler(req, res) {
 
   const code = query.code;
   const target = query.target === undefined ? "src/core/eosPromptAmplifier.ts" : query.target;
-  if (code !== undefined && (typeof code !== "string" || Buffer.byteLength(code, "utf8") > MAX_EVALUATION_INPUT_BYTES)) {
+  if (
+    code !== undefined &&
+    (typeof code !== "string" || Buffer.byteLength(code, "utf8") > MAX_EVALUATION_INPUT_BYTES)
+  ) {
     return res.status(413).json({ status: "INPUT_TOO_LARGE", maximumBytes: MAX_EVALUATION_INPUT_BYTES });
   }
   if (typeof target !== "string" || Buffer.byteLength(target, "utf8") > MAX_TARGET_PATH_BYTES) {
@@ -101,12 +115,12 @@ export default async function handler(req, res) {
     return res.status(200).json({
       status: "LOCAL_HEURISTIC_EVALUATION",
       scope: "Static local analysis; no external model, production system, or certification is involved.",
-      evaluation
+      evaluation,
     });
   } catch {
     return res.status(503).json({
       status: "LOCAL_EVALUATOR_UNAVAILABLE",
-      externalSystemsQueried: false
+      externalSystemsQueried: false,
     });
   }
 }

@@ -61,8 +61,7 @@ body {
   background:
     radial-gradient(circle at 15% 8%, rgba(56, 189, 248, 0.11) 0%, transparent 38%),
     radial-gradient(circle at 85% 14%, rgba(245, 158, 11, 0.08) 0%, transparent 36%),
-    radial-gradient(circle at 50% 55%, rgba(129, 140, 248, 0.06) 0%, transparent 45%),
-    var(--bg-void);
+    radial-gradient(circle at 50% 55%, rgba(129, 140, 248, 0.06) 0%, transparent 45%), var(--bg-void);
   color: var(--text-white);
   overflow-x: hidden;
 }
@@ -108,7 +107,11 @@ body {
   touch-action: manipulation;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.12s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.12s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.12s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
   will-change: transform;
 }
 
@@ -174,8 +177,15 @@ body {
 }
 
 @keyframes eosPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.45; transform: scale(0.88); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.88);
+  }
 }
 
 .site-header {
@@ -346,7 +356,13 @@ body {
   transform: translateX(-50%);
   width: min(100%, 1100px);
   height: 520px;
-  background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.16) 0%, rgba(129, 140, 248, 0.12) 35%, rgba(245, 158, 11, 0.05) 65%, transparent 75%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(56, 189, 248, 0.16) 0%,
+    rgba(129, 140, 248, 0.12) 35%,
+    rgba(245, 158, 11, 0.05) 65%,
+    transparent 75%
+  );
   filter: blur(80px);
   pointer-events: none;
   z-index: 0;
@@ -377,7 +393,9 @@ body {
   border-radius: 9999px;
   background: rgba(15, 23, 42, 0.88);
   border: 1px solid rgba(56, 189, 248, 0.35);
-  box-shadow: 0 0 20px -3px rgba(56, 189, 248, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 0 20px -3px rgba(56, 189, 248, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
   font-size: 0.78rem;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -386,7 +404,9 @@ body {
 
 .announcement-chip:hover {
   border-color: rgba(56, 189, 248, 0.65);
-  box-shadow: 0 0 25px -2px rgba(56, 189, 248, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 0 25px -2px rgba(56, 189, 248, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
   transform: translateY(-1px);
 }
 
@@ -397,9 +417,15 @@ body {
 }
 
 @keyframes eosSparkle {
-  0% { transform: scale(1) rotate(0deg); }
-  50% { transform: scale(1.2) rotate(180deg); }
-  100% { transform: scale(1) rotate(360deg); }
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+  }
 }
 
 .announcement-chip__text {
@@ -415,7 +441,9 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.2rem;
-  transition: color 0.15s ease, transform 0.15s ease;
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
 }
 
 .announcement-chip__link:hover {
@@ -502,7 +530,9 @@ body {
 .kpi-card:hover {
   transform: translateY(-2px);
   border-color: rgba(56, 189, 248, 0.4);
-  box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.7), 0 0 20px -5px rgba(56, 189, 248, 0.15);
+  box-shadow:
+    0 12px 30px -8px rgba(0, 0, 0, 0.7),
+    0 0 20px -5px rgba(56, 189, 248, 0.15);
 }
 
 .kpi-card:hover::after {
@@ -537,7 +567,9 @@ body {
   overflow: hidden;
   border: 1px solid var(--line-cyan);
   background: var(--bg-terminal);
-  box-shadow: var(--shadow-card), 0 0 40px rgba(56, 189, 248, 0.16);
+  box-shadow:
+    var(--shadow-card),
+    0 0 40px rgba(56, 189, 248, 0.16);
 }
 
 .hero__visual img {
@@ -617,9 +649,15 @@ body {
   border-radius: 50%;
 }
 
-.terminal-dot--red { background: #ef4444; }
-.terminal-dot--amber { background: #f59e0b; }
-.terminal-dot--green { background: #10b981; }
+.terminal-dot--red {
+  background: #ef4444;
+}
+.terminal-dot--amber {
+  background: #f59e0b;
+}
+.terminal-dot--green {
+  background: #10b981;
+}
 
 .terminal-title {
   font-family: var(--font-mono);
@@ -702,7 +740,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .arch-card:hover {
@@ -1167,7 +1207,6 @@ body {
   }
 }
 
-
 /* ==========================================================================
    EOS UNIVERSAL DEVELOPMENT ENGINE — LIVE PROMPT LAB & ARTIFACT TABS (v2.7.0)
    ========================================================================== */
@@ -1197,7 +1236,9 @@ body {
 
 .prompt-input-group:focus-within {
   border-color: var(--cyan);
-  box-shadow: 0 0 14px var(--cyan-glow), inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 0 14px var(--cyan-glow),
+    inset 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .prompt-prefix,
@@ -1333,7 +1374,9 @@ body {
   border-radius: var(--radius-lg);
   background: rgba(4, 9, 22, 0.98);
   color: var(--text-white);
-  box-shadow: 0 25px 70px -10px rgba(0, 0, 0, 0.85), 0 0 35px rgba(56, 189, 248, 0.25);
+  box-shadow:
+    0 25px 70px -10px rgba(0, 0, 0, 0.85),
+    0 0 35px rgba(56, 189, 248, 0.25);
 }
 
 .cmdk-dialog::backdrop {
@@ -1387,7 +1430,10 @@ body {
   font-size: 0.84rem;
   cursor: pointer;
   touch-action: manipulation;
-  transition: transform 0.14s ease, border-color 0.14s ease, background-color 0.14s ease;
+  transition:
+    transform 0.14s ease,
+    border-color 0.14s ease,
+    background-color 0.14s ease;
 }
 
 .cmdk-item:hover,
@@ -1418,7 +1464,9 @@ body {
   background: var(--bg-card);
   border: 1px solid rgba(56, 189, 248, 0.45);
   border-radius: var(--radius-lg);
-  box-shadow: 0 0 35px rgba(56, 189, 248, 0.12), var(--shadow-card);
+  box-shadow:
+    0 0 35px rgba(56, 189, 248, 0.12),
+    var(--shadow-card);
   overflow: hidden;
   margin-top: 1.5rem;
 }
@@ -1430,7 +1478,12 @@ body {
   flex-wrap: wrap;
   gap: 0.75rem;
   padding: 1rem 1.25rem;
-  background: linear-gradient(90deg, rgba(56, 189, 248, 0.15) 0%, rgba(245, 158, 11, 0.15) 50%, rgba(16, 185, 129, 0.15) 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(56, 189, 248, 0.15) 0%,
+    rgba(245, 158, 11, 0.15) 50%,
+    rgba(16, 185, 129, 0.15) 100%
+  );
   border-bottom: 1px solid var(--line-cyan);
 }
 
@@ -1550,7 +1603,9 @@ body {
   border: 1px solid rgba(56, 189, 248, 0.25);
   border-radius: var(--radius-lg);
   padding: 1.5rem;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   position: relative;
   overflow: hidden;
 }
@@ -1913,7 +1968,9 @@ body {
   flex-direction: column;
   gap: 1rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .zenith-card:hover {
@@ -2043,7 +2100,9 @@ body {
   border-radius: var(--radius-sm);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  transition: border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .bento-hud-card:hover {
@@ -2089,7 +2148,9 @@ body {
   background: rgba(9, 9, 11, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md);
-  transition: border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .fleet-radar-card:hover {
@@ -2278,8 +2339,3 @@ body {
   height: 6px;
   border-radius: 50%;
 }
-
-
-
-
-

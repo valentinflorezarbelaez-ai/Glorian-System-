@@ -1,8 +1,11 @@
 # INTAKE-027: NSA DEFENSE-IN-DEPTH & CNSA 2.0 POST-QUANTUM ZERO-TRUST ENGINE
+
 <!-- Formal SDD Intake Package — ISO/IEC/IEEE 29148 Standard -->
 
 ## 1. Context & Business Intent
+
 The Principal Architect requested advancing EOS System to the operational and cybersecurity standards of the **NSA (National Security Agency)**, specifically incorporating:
+
 1. **CNSA 2.0 (Commercial National Security Algorithm Suite 2.0)** symmetric and post-quantum migration benchmarks:
    - Military-grade AES-256-GCM authenticated encryption with strict synthetic/deterministic IV generation and Associated Authenticated Data (AAD) binding security compartment metadata.
    - SHA-384 / SHA-512 cryptographic digests for all ledger and security event attestation.
@@ -20,11 +23,13 @@ The Principal Architect requested advancing EOS System to the operational and cy
    - Landing page files (`index.html`, `css/eos.css`) strictly sealed and untouched.
 
 ## 2. Stakeholders & Roles
+
 - **Principal Architect**: Valentín Flórez Arbeláez (System Owner).
 - **Security & Cryptography Co-Pilot**: EOS JARVIS Sovereign Monad.
 - **Compliance Standard**: NSA CNSA 2.0, DoD 5220.22-M, NIST SP 800-207 (Zero Trust).
 
 ## 3. High-Level Requirements Overview
+
 - **REQ-001**: CNSA 2.0 Cryptographic Suite & Memory Zeroizer (`src/core/eosNsaCryptoSuite.ts`).
 - **REQ-002**: Red/Black Compartment & Bell-LaPadula Zero-Trust Arbiter (`src/core/eosNsaZeroTrustCompartment.ts`).
 - **REQ-003**: Real-time Side-Channel & Timing Anomaly Detector (`src/core/eosNsaAnomalyDetector.ts`).

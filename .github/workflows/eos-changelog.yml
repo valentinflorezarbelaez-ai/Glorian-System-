@@ -1,0 +1,72 @@
+name: EOS Changelog Generator
+
+# Big Tech standard (Linear, Vercel, Stripe): generate and commit a
+# CHANGELOG.md from Conventional Commits on every push to main. The
+# project already ships scripts/changelog.mjs (zero deps) — this workflow
+# runs it and commits the result so the changelog is always current.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: eos-changelog
+  cancel-in-progress: false
+
+jobs:
+  changelog:
+    name: Generate and commit CHANGELOG.md
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # full history for git log parsing
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Generate changelog
+        run: node scripts/changelog.mjs --dry-run > /tmp/changelog-section.md
+
+      - name: Prepend to CHANGELOG.md
+        run: |
+          if [ ! -f CHANGELOG.md ]; then
+            echo "# Changelog" > CHANGELOG.md
+          fi
+          # Remove the first "# Changelog" header if present, then re-add
+          tail -n +2 CHANGELOG.md > /tmp/old-changelog.md 2>/dev/null || true
+          {
+            echo "# Changelog"
+            echo ""
+            cat /tmp/changelog-section.md
+            echo ""
+            cat /tmp/old-changelog.md 2>/dev/null || true
+          } > CHANGELOG.md
+
+      - name: Detect changes
+        id: changes
+        run: |
+          if git diff --quiet -- CHANGELOG.md; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit CHANGELOG.md
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "docs(changelog): auto-generate from conventional commits"
+          git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git"
+          git push origin main

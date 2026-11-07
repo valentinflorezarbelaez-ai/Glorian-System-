@@ -9,14 +9,17 @@
 ---
 
 ## 1. Business Context & Objective
+
 EOS System has reached industrial maturity through formal mathematical specification, TLC model checking, GitHub Actions PR gating, microVM hypervisor isolation, and real-time visual telemetry. To achieve Universal Sovereign status (Nivel 5), EOS must demonstrate its capability to govern real-world production web platforms in the wild — the "Bautismo de Fuego" (Baptism of Fire).
 
 The primary live production targets are:
+
 1. `https://portafolio-valentin.vercel.app/`: Personal engineering showcase requiring strict WCAG 2.1 AA accessibility landmarks, subresource integrity, TLS security headers, and Core Web Vitals optimization.
 2. `https://ptg-performance-talent-group.vercel.app/`: Enterprise talent consulting portal requiring SEO metadata integrity, OpenGraph contracts, rapid TTFB, and responsive reliability.
 3. Future enterprise targets: Architecture compatibility and audit harnesses prepared for La Pera, Mariano, Spotify Soundcheck, and Nubank bitemporal ledgers.
 
 ## 2. Invariants & Scope Boundaries
+
 1. **Zero External Runtime Dependencies**: Pure `node:https`, `node:url`, `node:crypto`. Zero npm packages (`axios`, `playwright`, `puppeteer` forbidden in Layer-0 runtime).
 2. **Strict SSRF Prevention**: Target URLs must strictly use `https:` protocol, cannot resolve to `localhost`, `127.0.0.1`, `::1`, private IPv4 subnets (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`), or cloud metadata endpoints (`169.254.169.254`).
 3. **Multi-Dimensional Living Verification**:

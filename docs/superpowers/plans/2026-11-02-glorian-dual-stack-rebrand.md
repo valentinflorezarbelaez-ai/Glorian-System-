@@ -11,12 +11,14 @@
 **Spec:** `docs/superpowers/specs/2026-11-02-glorian-system-rebrand-design.md`
 
 ## Global Constraints
+
 - Layer-0 Purity: Zero new npm runtime dependencies.
 - Zero Breaking Changes: Existing CLI scripts or external integrations invoking `eos` must continue to function without modification.
 - Cryptographic Integrity: SRI SHA-384 hashes on `<link>` and `<script>` tags in `index.html` must match exact file content digests.
 - Professional Technical English: All commit messages, task outputs, and source code comments must use standard technical English.
 
 ## Review Focus
+
 1. `package.json` binary alias: Running `npx .` or executing via `bin/eos.mjs` directly must recognize `glorian` alongside `eos`.
 2. `index.html` title & meta parity: Verify all `<title>`, `<meta name="application-name">`, and Schema.org JSON-LD tags correctly display "Glorian System" without leftover broken strings.
 3. SRI Integrity check: Verify `node scripts/verify-sri-integrity.mjs` passes with exit code 0.
@@ -28,10 +30,12 @@
 ### Task 1: Add `glorian` CLI Binary Entry to `package.json`
 
 **Files:**
+
 - Modify: `package.json:12-15`
 - Test: `test/glorianCliBinary.test.mjs`
 
 **Interfaces:**
+
 - Consumes: `bin/eos.mjs`
 - Produces: Dual-stack CLI binary mapping: `"bin": { "glorian": "./bin/eos.mjs", "eos": "./bin/eos.mjs" }`
 
@@ -46,10 +50,12 @@
 ### Task 2: Elevate Public Web Presentation (`index.html`) to Glorian System
 
 **Files:**
+
 - Modify: `index.html:6-60, 110-150`
 - Test: `test/glorianPresentation.test.mjs`
 
 **Interfaces:**
+
 - Consumes: `index.html`
 - Produces: Updated DOM metadata, title, OpenGraph tags, JSON-LD, and Hero Bento HUD headers referencing "Glorian System"
 
@@ -64,10 +70,12 @@
 ### Task 3: Elevate Studio Console (`src/ui/eosStudioConsole.html`)
 
 **Files:**
+
 - Modify: `src/ui/eosStudioConsole.html:6, 110`
 - Test: `test/glorianStudioConsole.test.mjs`
 
 **Interfaces:**
+
 - Consumes: `src/ui/eosStudioConsole.html`
 - Produces: Header and title branded as "GLORIAN SYSTEM"
 
@@ -82,12 +90,14 @@
 ### Task 4: Update Documentation and Fleet Registry
 
 **Files:**
+
 - Modify: `README.md:1-10`
 - Modify: `AGENTS.md:8-12`
 - Modify: `docs/projects/registry.json:120-137`
 - Test: `test/glorianRegistryDocs.test.mjs`
 
 **Interfaces:**
+
 - Consumes: Master catalog and docs
 - Produces: Synchronized documentation referencing Glorian System
 
@@ -102,10 +112,12 @@
 ### Task 5: Recalculate SRI Integrity and Execute Full Verification Gate
 
 **Files:**
+
 - Modify: `index.html` (if SRI script updates integrity strings)
 - Test: `scripts/verify-sri-integrity.mjs`, `scripts/verify-cicd-pipeline.mjs`
 
 **Interfaces:**
+
 - Consumes: All updated files
 - Produces: Cryptographic proof of zero broken invariants across landing page and CI/CD
 

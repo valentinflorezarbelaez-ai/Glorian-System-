@@ -70,7 +70,7 @@ export default async function handler(req, res) {
         ...metrics,
         resultFingerprintSha256: `sha256:${sha256Proof}`,
         fingerprintIsSignature: false,
-        benchmarkScope: "local synthetic Float32Array buffer; not a Spotify or standards certification"
+        benchmarkScope: "local synthetic Float32Array buffer; not a Spotify or standards certification",
       };
     } else if (action === "camelot") {
       const { EosSpotifyCodex } = await import("../src/core/eosSpotifyCodex.ts");
@@ -89,22 +89,40 @@ export default async function handler(req, res) {
       result = engine.planTransition(
         { trackId: "sampleA", title: `Sample A (${keyA})`, bpm: bpmA, camelotKey: keyA, sampleRateHz: 44100 },
         { trackId: "sampleB", title: `Sample B (${keyB})`, bpm: bpmB, camelotKey: keyB, sampleRateHz: 44100 },
-        duration
+        duration,
       );
       result = { ...result, scope: "transition plan for synthetic sample metadata; no audio is played or mixed" };
     } else if (action === "features") {
       const { EosAcousticFeatureStore } = await import("../src/core/eosAcousticFeatureStore.ts");
       const store = new EosAcousticFeatureStore();
       const userId = query.userId || "user-default";
-      store.recordListen(userId, "sample-track", { tempo: 0.7, energy: 0.85, danceability: 0.8, valence: 0.7, acousticness: 0.1, instrumentalness: 0.2, liveness: 0.15, speechiness: 0.08 }, 200, 200);
-      result = { ...store.computeTasteCentroid(userId), scope: "one synthetic in-memory sample; no Spotify account or catalog access" };
+      store.recordListen(
+        userId,
+        "sample-track",
+        {
+          tempo: 0.7,
+          energy: 0.85,
+          danceability: 0.8,
+          valence: 0.7,
+          acousticness: 0.1,
+          instrumentalness: 0.2,
+          liveness: 0.15,
+          speechiness: 0.08,
+        },
+        200,
+        200,
+      );
+      result = {
+        ...store.computeTasteCentroid(userId),
+        scope: "one synthetic in-memory sample; no Spotify account or catalog access",
+      };
     }
   } catch (error) {
     return res.status(503).json({
       status: "LOCAL_ENGINE_UNAVAILABLE",
       action,
       error: error instanceof Error ? error.message : "A local module could not be loaded.",
-      externalServicesCalled: false
+      externalServicesCalled: false,
     });
   }
 
@@ -116,6 +134,6 @@ export default async function handler(req, res) {
     action,
     durationUs: Number(durationUs.toFixed(2)),
     externalServicesCalled: false,
-    data: result
+    data: result,
   });
 }

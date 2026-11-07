@@ -20,11 +20,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 import { EosEnterpriseWorkspaceGovernor } from "./eosEnterpriseWorkspaceGovernor.ts";
 
@@ -67,7 +63,10 @@ export class EosSamaelUnitotalNexus {
   /**
    * Computes the 10-dimensional Sephiroth Architectural Integrity Vector.
    */
-  public static evaluateSephirothVector(activeSpecs: number = 65, tlaModels: number = 25): readonly SephirahDimension[] {
+  public static evaluateSephirothVector(
+    activeSpecs: number = 65,
+    tlaModels: number = 25,
+  ): readonly SephirahDimension[] {
     const vector: SephirahDimension[] = [
       {
         sephirah: "Kether",
@@ -75,7 +74,7 @@ export class EosSamaelUnitotalNexus {
         bigTechEquivalent: "Especificación Formal Inmutable (EARS / BDD / OpenSpec)",
         score: activeSpecs >= 60 ? 99 : 88,
         status: "PERFECT",
-        verificationEvidence: `${activeSpecs} especificaciones formales activas aprobadas sin vibe coding.`
+        verificationEvidence: `${activeSpecs} especificaciones formales activas aprobadas sin vibe coding.`,
       },
       {
         sephirah: "Chokmah",
@@ -83,7 +82,7 @@ export class EosSamaelUnitotalNexus {
         bigTechEquivalent: "Motor Evolutivo AST & Pureza Layer-0 (DeepMind AlphaEvolve)",
         score: 98,
         status: "PERFECT",
-        verificationEvidence: "100% módulos de dominio puros sin violaciones strip-only de Node 24."
+        verificationEvidence: "100% módulos de dominio puros sin violaciones strip-only de Node 24.",
       },
       {
         sephirah: "Binah",
@@ -91,7 +90,7 @@ export class EosSamaelUnitotalNexus {
         bigTechEquivalent: "Verificación Matemática TLC & Guardas CI/CD (Leslie Lamport / AWS TLA+)",
         score: tlaModels >= 20 ? 100 : 85,
         status: "PERFECT",
-        verificationEvidence: `${tlaModels} modelos formales TLA+ verificados exhaustivamente sin deadlocks.`
+        verificationEvidence: `${tlaModels} modelos formales TLA+ verificados exhaustivamente sin deadlocks.`,
       },
       {
         sephirah: "Chesed",
@@ -99,7 +98,7 @@ export class EosSamaelUnitotalNexus {
         bigTechEquivalent: "Gobernanza Arquitectónica y Post-Mortems sin Culpa (Spotify / Backstage)",
         score: 96,
         status: "PERFECT",
-        verificationEvidence: `${activeSpecs} ADRs formales con alternativas descartadas y consenso TMR documentado.`
+        verificationEvidence: `${activeSpecs} ADRs formales con alternativas descartadas y consenso TMR documentado.`,
       },
       {
         sephirah: "Geburah",
@@ -107,7 +106,7 @@ export class EosSamaelUnitotalNexus {
         bigTechEquivalent: "Auto-Sanación Quirúrgica FDIR & Aislamiento Hipervisor (Meta SapFix / gVisor)",
         score: 99,
         status: "PERFECT",
-        verificationEvidence: "MicroVM sandbox con 512MB RAM ceiling, SSRF shield y 0 secretos planos."
+        verificationEvidence: "MicroVM sandbox con 512MB RAM ceiling, SSRF shield y 0 secretos planos.",
       },
       {
         sephirah: "Tiphereth",
@@ -115,7 +114,7 @@ export class EosSamaelUnitotalNexus {
         bigTechEquivalent: "Topología Acíclica de Subagentes & Malla Zero-Copy (Google Borg / DeepMind)",
         score: 97,
         status: "PERFECT",
-        verificationEvidence: "Grafo acíclico DAG linealizado por algoritmo Kahn y ring buffer zero-copy."
+        verificationEvidence: "Grafo acíclico DAG linealizado por algoritmo Kahn y ring buffer zero-copy.",
       },
       {
         sephirah: "Netzach",
@@ -123,7 +122,7 @@ export class EosSamaelUnitotalNexus {
         bigTechEquivalent: "Ruteo en Cascada Flash-to-Pro & Ahorro de Tokens (AlphaCode 2 / Antigravity)",
         score: 95,
         status: "PERFECT",
-        verificationEvidence: "Optimización continua con >90% de reducción de tokens de coordinación."
+        verificationEvidence: "Optimización continua con >90% de reducción de tokens de coordinación.",
       },
       {
         sephirah: "Hod",
@@ -131,7 +130,7 @@ export class EosSamaelUnitotalNexus {
         bigTechEquivalent: "Ledger Durable SQLite WAL + FTS5 Criptográfico Monotónico (Spacex / Nubank)",
         score: 100,
         status: "PERFECT",
-        verificationEvidence: "Encadenamiento SHA-256 estricto, recuperación a prueba de manipulación y búsqueda FTS5."
+        verificationEvidence: "Encadenamiento SHA-256 estricto, recuperación a prueba de manipulación y búsqueda FTS5.",
       },
       {
         sephirah: "Yesod",
@@ -139,7 +138,7 @@ export class EosSamaelUnitotalNexus {
         bigTechEquivalent: "Rendimiento Nanosegundo, LMAX Disruptor & V8 TurboFan (Citadel HFT)",
         score: 96,
         status: "PERFECT",
-        verificationEvidence: "Estructuras Int32Array con 0 B/op heap allocation en rutas críticas de datos."
+        verificationEvidence: "Estructuras Int32Array con 0 B/op heap allocation en rutas críticas de datos.",
       },
       {
         sephirah: "Malkuth",
@@ -147,8 +146,8 @@ export class EosSamaelUnitotalNexus {
         bigTechEquivalent: "Entrega en Producción Real y Sondas Vivas (PTG / Portafolio / Crud-Slack)",
         score: 95,
         status: "PERFECT",
-        verificationEvidence: "Sondas sintéticas vivas con 200 OK y 6/6 hitos semánticos WCAG 2.1 AA verificados."
-      }
+        verificationEvidence: "Sondas sintéticas vivas con 200 OK y 6/6 hitos semánticos WCAG 2.1 AA verificados.",
+      },
     ];
 
     return deepFreeze(vector);
@@ -190,8 +189,8 @@ export class EosSamaelUnitotalNexus {
           lawIvAuthorization: ws.authorization,
           hasMcpConfig,
           hasOpenSpec,
-          status
-        })
+          status,
+        }),
       );
     }
 
@@ -201,7 +200,11 @@ export class EosSamaelUnitotalNexus {
   /**
    * Automatically heals configuration drift in a fleet repository.
    */
-  public static remediateFleetDrift(repoId: string, projectRoot: string = process.cwd(), dryRun: boolean = false): {
+  public static remediateFleetDrift(
+    repoId: string,
+    projectRoot: string = process.cwd(),
+    dryRun: boolean = false,
+  ): {
     readonly success: boolean;
     readonly actionsTaken: readonly string[];
   } {
@@ -225,13 +228,13 @@ export class EosSamaelUnitotalNexus {
         mcpServers: {
           "eos-system": {
             command: "node",
-            args: [path.join(projectRoot, "src", "mcp", "eosMcpServer.ts")]
+            args: [path.join(projectRoot, "src", "mcp", "eosMcpServer.ts")],
           },
-          "engram": {
+          engram: {
             command: EosSamaelUnitotalNexus.CANONICAL_ENGRAM_PATH,
-            args: ["mcp"]
-          }
-        }
+            args: ["mcp"],
+          },
+        },
       };
       fs.writeFileSync(mcpFile, JSON.stringify(canonicalMcpConfig, null, 2), "utf8");
       actions.push(`Materialized canonical .cursor/mcp.json with absolute paths to EOS Control Plane & Engram.`);
@@ -241,7 +244,7 @@ export class EosSamaelUnitotalNexus {
 
     return {
       success: true,
-      actionsTaken: actions
+      actionsTaken: actions,
     };
   }
 
@@ -270,11 +273,11 @@ export class EosSamaelUnitotalNexus {
     const fleetRatio = fleetRepos.length > 0 ? healthyRepos / fleetRepos.length : 1;
 
     // Harmonic composite score
-    const unitotalScore = Math.round(averageSephiroth * 0.85 + (fleetRatio * 100) * 0.15);
+    const unitotalScore = Math.round(averageSephiroth * 0.85 + fleetRatio * 100 * 0.15);
 
     const timestampIso = new Date().toISOString();
     const sha256Receipt = pureSha256(
-      `UNITOTAL_PERFECTION:v65.0.0:${unitotalScore}:${healthyRepos}/${fleetRepos.length}:${timestampIso}`
+      `UNITOTAL_PERFECTION:v65.0.0:${unitotalScore}:${healthyRepos}/${fleetRepos.length}:${timestampIso}`,
     );
 
     return deepFreeze({
@@ -287,7 +290,7 @@ export class EosSamaelUnitotalNexus {
       activeSpecsCount,
       formalTlaModelsCount,
       timestampIso,
-      sha256Receipt
+      sha256Receipt,
     });
   }
 
@@ -310,9 +313,9 @@ export class EosSamaelUnitotalNexus {
           formalTlaModelsCount: report.formalTlaModelsCount,
           healthyFleetRepos: report.healthyFleetRepos,
           totalFleetRepos: report.totalFleetRepos,
-          sha256Receipt: report.sha256Receipt
+          sha256Receipt: report.sha256Receipt,
         },
-        engramTopicKey: `eos/samael/unitotal-nexus`
+        engramTopicKey: `eos/samael/unitotal-nexus`,
       });
       return true;
     } catch {

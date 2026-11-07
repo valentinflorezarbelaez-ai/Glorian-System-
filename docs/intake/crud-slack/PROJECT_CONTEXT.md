@@ -1,6 +1,7 @@
 # PROJECT CONTEXT & INTAKE — CRUD-SLACK (TASKFLOW AI WORKSPACE)
 
 ## 1. Executive Metadata
+
 - **Project ID**: `crud-slack`
 - **Repository URL**: `https://github.com/valentinflorezarbelaez-ai/Crud-slack.git`
 - **Local Target Workspace**: `c:\Users\valen\Crud-slack`
@@ -13,17 +14,21 @@
 ---
 
 ## 2. Business Problem & Challenge Context
+
 Teams receive operational requests across fragmented communication channels (Slack, Microsoft Teams, corporate Email/Outlook, and instant messaging). In daily execution:
+
 1. Actionable tasks buried inside unstructured prose are overlooked or forgotten.
 2. Implicit dependencies and execution priorities remain unclear.
-3. Temporal constraints are partially stated (e.g., *"for Friday"*, *"before the meeting"*), tempting naive AI wrappers to hallucinate exact dates instead of flagging missing information.
+3. Temporal constraints are partially stated (e.g., _"for Friday"_, _"before the meeting"_), tempting naive AI wrappers to hallucinate exact dates instead of flagging missing information.
 
 ### Canonical Benchmark Input
-> *"Hola, necesitamos preparar la reunión del equipo para el viernes. Hay que revisar los resultados del mes, actualizar la presentación y enviar la agenda a los participantes antes de la reunión."*
+
+> _"Hola, necesitamos preparar la reunión del equipo para el viernes. Hay que revisar los resultados del mes, actualizar la presentación y enviar la agenda a los participantes antes de la reunión."_
 
 ---
 
 ## 3. Core Functional Mission
+
 1. **Activity Extraction**: Parse unstructured email or chat messages and extract atomic, actionable tasks.
 2. **Structured Organization & Full CRUD**: Organize extracted tasks into an interactive workspace supporting Create, Read (Table, Kanban, Dependency Matrix), Update (inline status, priority, assignee, and missing-deadline resolution), and Delete operations.
 3. **Priority Suggestion**: Compute and justify priority tiers (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`) considering temporal urgency and prerequisite dependencies.
@@ -34,6 +39,7 @@ Teams receive operational requests across fragmented communication channels (Sla
 ---
 
 ## 4. Constraints & Architectural Directives
+
 - **Layer-0 Dependency Purity**: `dependencies: {}` (zero external runtime npm packages; zero supply-chain CVE surface).
 - **Dual-Engine Neuro-Symbolic Resilience**:
   - **Primary Cloud AI Adapter**: Server-side Vercel Node.js 24 Function (`/api/analyze`) invoking Google Gemini (`gemini-3.8-flash`) via `/v1beta/interactions` Structured Outputs (`response_format` JSON Schema).

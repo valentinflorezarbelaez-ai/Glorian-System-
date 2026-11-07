@@ -1,0 +1,48 @@
+#!/bin/sh
+set -eu
+# Conventional Commits enforcement (Angular/Google/Meta standard).
+# Format: <type>(<scope>): <subject>
+# Valid types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
+# This gate ensures machine-parsable history for changelog automation,
+# semantic versioning, and PR attestation.
+REPO_ROOT=$(git rev-parse --show-toplevel)
+MSG_FILE="$1"
+
+# Skip validation for merge commits, fixup!, and squash! (Git internal workflow)
+FIRST_LINE=$(head -n 1 "$MSG_FILE")
+case "$FIRST_LINE" in
+  Merge*|fixup!*|squash!*|Revert*|\#*)
+    exit 0
+    ;;
+esac
+
+# Validate conventional-commit format
+PATTERN='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z0-9 _/.-]+\))?(!)?: .{1,120}$'
+
+if ! echo "$FIRST_LINE" | grep -qE "$PATTERN"; then
+  echo "══════════════════════════════════════════════════════════════"
+  echo " ✖ COMMIT REJECTED — Conventional Commits format required"
+  echo "══════════════════════════════════════════════════════════════"
+  echo ""
+  echo "  Expected: <type>(<scope>): <subject>"
+  echo "  Example:  feat(auth): add JWT refresh token rotation"
+  echo ""
+  echo "  Valid types:"
+  echo "    feat     — new feature"
+  echo "    fix      — bug fix"
+  echo "    docs     — documentation only"
+  echo "    style    — formatting (no logic change)"
+  echo "    refactor — code restructuring (no feature/fix)"
+  echo "    perf     — performance improvement"
+  echo "    test     — adding or fixing tests"
+  echo "    build    — build system or dependencies"
+  echo "    ci       — CI/CD configuration"
+  echo "    chore    — maintenance (no src/test change)"
+  echo "    revert   — revert previous commit"
+  echo ""
+  echo "  Your message: \"$FIRST_LINE\""
+  echo ""
+  echo "  Use GIT_SKIP_HOOKS=1 to bypass (NOT recommended)."
+  echo "══════════════════════════════════════════════════════════════"
+  exit 1
+fi

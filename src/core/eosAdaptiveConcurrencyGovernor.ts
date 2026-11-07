@@ -13,13 +13,13 @@ import crypto from "node:crypto";
 export type PriorityTier = "CRITICAL" | "HIGH" | "NORMAL" | "BEST_EFFORT";
 
 export interface ConcurrencyGovernorConfig {
-  readonly minLimit?: number;           // default: 10
-  readonly maxLimit?: number;           // default: 200
-  readonly initialLimit?: number;       // default: 50
-  readonly queueHeadroom?: number;      // beta additive headroom, default: 3
-  readonly maxQueueDelayMs?: number;    // CoDel bufferbloat threshold, default: 15ms
-  readonly emergencyHeadroom?: number;  // Reserved capacity for CRITICAL, default: 10
-  readonly smoothingAlpha?: number;     // EMA alpha, default: 0.2
+  readonly minLimit?: number; // default: 10
+  readonly maxLimit?: number; // default: 200
+  readonly initialLimit?: number; // default: 50
+  readonly queueHeadroom?: number; // beta additive headroom, default: 3
+  readonly maxQueueDelayMs?: number; // CoDel bufferbloat threshold, default: 15ms
+  readonly emergencyHeadroom?: number; // Reserved capacity for CRITICAL, default: 10
+  readonly smoothingAlpha?: number; // EMA alpha, default: 0.2
 }
 
 export interface AdmissionDecision {
@@ -62,7 +62,7 @@ export class EosAdaptiveConcurrencyGovernor {
     CRITICAL: 0,
     HIGH: 0,
     NORMAL: 0,
-    BEST_EFFORT: 0
+    BEST_EFFORT: 0,
   };
 
   constructor(config?: ConcurrencyGovernorConfig) {
@@ -83,7 +83,11 @@ export class EosAdaptiveConcurrencyGovernor {
     if (queueWaitMs > this.maxQueueDelayMs) {
       this.totalShed++;
       this.shedByTier[priority]++;
-      return this.buildDecision(false, priority, `QUEUE_DELAY_EXCEEDED: Wait time ${queueWaitMs}ms exceeded threshold ${this.maxQueueDelayMs}ms`);
+      return this.buildDecision(
+        false,
+        priority,
+        `QUEUE_DELAY_EXCEEDED: Wait time ${queueWaitMs}ms exceeded threshold ${this.maxQueueDelayMs}ms`,
+      );
     }
 
     // 2. Priority-Tier Headroom Gate
@@ -93,7 +97,7 @@ export class EosAdaptiveConcurrencyGovernor {
     switch (priority) {
       case "BEST_EFFORT": {
         // Shed early when load reaches 80% of current limit
-        const threshold = Math.floor(this.currentLimit * 0.80);
+        const threshold = Math.floor(this.currentLimit * 0.8);
         if (this.inFlight < threshold) {
           admitted = true;
         } else {
@@ -173,16 +177,16 @@ export class EosAdaptiveConcurrencyGovernor {
       this.currentRttMs = rtt;
     } else {
       // Exponential moving average for current RTT
-      this.currentRttMs = Number(((this.smoothingAlpha * rtt) + ((1.0 - this.smoothingAlpha) * this.currentRttMs)).toFixed(2));
+      this.currentRttMs = Number(
+        (this.smoothingAlpha * rtt + (1.0 - this.smoothingAlpha) * this.currentRttMs).toFixed(2),
+      );
     }
 
     // Calculate Vegas Gradient: baseline / current
-    const gradient = this.currentRttMs > 0
-      ? Math.max(0.1, Math.min(1.0, this.baselineRttMs / this.currentRttMs))
-      : 1.0;
+    const gradient = this.currentRttMs > 0 ? Math.max(0.1, Math.min(1.0, this.baselineRttMs / this.currentRttMs)) : 1.0;
 
     // Vegas limit adjustment: Limit_{t+1} = Limit_t * Gradient + Headroom
-    const newLimit = Math.round((this.currentLimit * gradient) + this.queueHeadroom);
+    const newLimit = Math.round(this.currentLimit * gradient + this.queueHeadroom);
     this.currentLimit = Math.max(this.minLimit, Math.min(this.maxLimit, newLimit));
   }
 
@@ -190,9 +194,10 @@ export class EosAdaptiveConcurrencyGovernor {
    * Retrieves comprehensive metrics, gradient state, and cryptographic receipt.
    */
   public getStatus(): ConcurrencyGovernorStatus {
-    const gradient = this.currentRttMs > 0
-      ? Number((Math.max(0.1, Math.min(1.0, this.baselineRttMs / this.currentRttMs))).toFixed(4))
-      : 1.0;
+    const gradient =
+      this.currentRttMs > 0
+        ? Number(Math.max(0.1, Math.min(1.0, this.baselineRttMs / this.currentRttMs)).toFixed(4))
+        : 1.0;
 
     const payload = {
       currentLimit: this.currentLimit,
@@ -202,13 +207,10 @@ export class EosAdaptiveConcurrencyGovernor {
       gradient,
       totalAdmitted: this.totalAdmitted,
       totalShed: this.totalShed,
-      shedByTier: this.shedByTier
+      shedByTier: this.shedByTier,
     };
 
-    const sha256Receipt = crypto
-      .createHash("sha256")
-      .update(JSON.stringify(payload))
-      .digest("hex");
+    const sha256Receipt = crypto.createHash("sha256").update(JSON.stringify(payload)).digest("hex");
 
     return {
       currentLimit: this.currentLimit,
@@ -219,7 +221,7 @@ export class EosAdaptiveConcurrencyGovernor {
       totalAdmitted: this.totalAdmitted,
       totalShed: this.totalShed,
       shedByTier: { ...this.shedByTier },
-      sha256Receipt
+      sha256Receipt,
     };
   }
 
@@ -246,13 +248,10 @@ export class EosAdaptiveConcurrencyGovernor {
       inFlight: this.inFlight,
       priority,
       reason: reason || "NOMINAL_ADMISSION",
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
-    const sha256Receipt = crypto
-      .createHash("sha256")
-      .update(JSON.stringify(payload))
-      .digest("hex");
+    const sha256Receipt = crypto.createHash("sha256").update(JSON.stringify(payload)).digest("hex");
 
     return {
       admitted,
@@ -260,7 +259,7 @@ export class EosAdaptiveConcurrencyGovernor {
       inFlight: this.inFlight,
       priority,
       reason,
-      sha256Receipt
+      sha256Receipt,
     };
   }
 }

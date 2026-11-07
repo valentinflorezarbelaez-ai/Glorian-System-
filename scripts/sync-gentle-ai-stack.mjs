@@ -29,9 +29,10 @@ export function syncGentleAiStack(options = {}) {
   const components = [];
 
   // 1. Engram DAG & Binary Verification
-  const engramPath = process.platform === "win32"
-    ? path.join(os.homedir(), "AppData", "Local", "engram", "bin", "engram.exe")
-    : "/usr/local/bin/engram";
+  const engramPath =
+    process.platform === "win32"
+      ? path.join(os.homedir(), "AppData", "Local", "engram", "bin", "engram.exe")
+      : "/usr/local/bin/engram";
 
   const engramExists = fs.existsSync(engramPath);
   const engramHash = engramExists
@@ -45,7 +46,7 @@ export function syncGentleAiStack(options = {}) {
     sha256: engramHash,
     details: engramExists
       ? `Canonical binary found at ${engramPath} (${(fs.statSync(engramPath).size / 1024 / 1024).toFixed(1)} MB)`
-      : `Engram binary not found at ${engramPath}`
+      : `Engram binary not found at ${engramPath}`,
   });
 
   // 2. GGA Pre-commit Hooks Verification (.githooks or .git/hooks)
@@ -58,9 +59,7 @@ export function syncGentleAiStack(options = {}) {
       : null;
 
   const hookExists = Boolean(hookPath && fs.existsSync(hookPath));
-  const hookHash = hookExists
-    ? crypto.createHash("sha256").update(fs.readFileSync(hookPath)).digest("hex")
-    : "NO_HOOK";
+  const hookHash = hookExists ? crypto.createHash("sha256").update(fs.readFileSync(hookPath)).digest("hex") : "NO_HOOK";
 
   components.push({
     name: "GGA Git Governance Agent Hook",
@@ -69,7 +68,7 @@ export function syncGentleAiStack(options = {}) {
     sha256: hookHash,
     details: hookExists
       ? `Active pre-commit verification gate present in ${path.relative(root, hookPath)}`
-      : `Pre-commit hook missing in .githooks/ and .git/hooks/`
+      : `Pre-commit hook missing in .githooks/ and .git/hooks/`,
   });
 
   // 3. SpecBoot Skills Verification
@@ -93,7 +92,7 @@ export function syncGentleAiStack(options = {}) {
     category: "SPECBOOT_SKILLS",
     verified: skillsExists && skillCount >= 10,
     sha256: skillsExists ? skillsCombinedHash.digest("hex") : "NOT_FOUND",
-    details: `${skillCount} sovereign SDD and fleet operational skills active in .agents/skills/`
+    details: `${skillCount} sovereign SDD and fleet operational skills active in .agents/skills/`,
   });
 
   // 4. Canonical MCP Tools Catalog Verification
@@ -122,15 +121,15 @@ export function syncGentleAiStack(options = {}) {
     category: "MCP_CATALOG",
     verified: fullToolCount >= 70,
     sha256: mcpCatalogHash,
-    details: `Registered ${fullToolCount} tools in full profile and ${coreToolCount} tools in curated Tier-0 core profile.`
+    details: `Registered ${fullToolCount} tools in full profile and ${coreToolCount} tools in curated Tier-0 core profile.`,
   });
 
   const total = components.length;
-  const synchronized = components.filter(c => c.verified).length;
+  const synchronized = components.filter((c) => c.verified).length;
   const status = synchronized === total ? "SYNCHRONIZED_HERMETIC" : "DEGRADED";
   const timestamp = new Date().toISOString();
 
-  const sealInput = `${status}:${timestamp}:${synchronized}/${total}:${components.map(c => c.sha256).join(":")}`;
+  const sealInput = `${status}:${timestamp}:${synchronized}/${total}:${components.map((c) => c.sha256).join(":")}`;
   const sha256EvidenceSeal = crypto.createHash("sha256").update(sealInput).digest("hex");
 
   const receipt = {
@@ -142,19 +141,15 @@ export function syncGentleAiStack(options = {}) {
     components,
     mcpToolCount: {
       coreProfile: coreToolCount,
-      fullProfile: fullToolCount
+      fullProfile: fullToolCount,
     },
-    sha256EvidenceSeal
+    sha256EvidenceSeal,
   };
 
   // Write sealed evidence receipt to docs/evidence/EVD-GENTLE-STACK-SYNC.json
   const evidenceDir = path.join(root, "docs", "evidence");
   fs.mkdirSync(evidenceDir, { recursive: true });
-  fs.writeFileSync(
-    path.join(evidenceDir, "EVD-GENTLE-STACK-SYNC.json"),
-    JSON.stringify(receipt, null, 2),
-    "utf8"
-  );
+  fs.writeFileSync(path.join(evidenceDir, "EVD-GENTLE-STACK-SYNC.json"), JSON.stringify(receipt, null, 2), "utf8");
 
   return receipt;
 }
@@ -167,7 +162,9 @@ if (process.argv[1] && process.argv[1].replace(/\\/g, "/").endsWith("sync-gentle
   const receipt = syncGentleAiStack();
   console.log(`Estado Global  : ${receipt.status}`);
   console.log(`Componentes    : ${receipt.synchronizedComponents}/${receipt.totalComponents} sincronizados`);
-  console.log(`Catálogo MCP   : ${receipt.mcpToolCount.fullProfile} herramientas (Full) / ${receipt.mcpToolCount.coreProfile} (Core)`);
+  console.log(
+    `Catálogo MCP   : ${receipt.mcpToolCount.fullProfile} herramientas (Full) / ${receipt.mcpToolCount.coreProfile} (Core)`,
+  );
   console.log(`Sello EVD      : sha256:${receipt.sha256EvidenceSeal}\n`);
 
   for (const c of receipt.components) {

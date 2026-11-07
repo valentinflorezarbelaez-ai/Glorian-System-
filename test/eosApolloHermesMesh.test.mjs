@@ -1,10 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import {
-  EosApolloHermesMesh,
-  EosCircuitBreaker,
-  EosTokenBucketRateLimiter
-} from "../src/core/eosApolloHermesMesh.ts";
+import { EosApolloHermesMesh, EosCircuitBreaker, EosTokenBucketRateLimiter } from "../src/core/eosApolloHermesMesh.ts";
 
 describe("EOS Sovereign Spotify Apollo / Hermes RPC & Event Mesh Suite (SPEC-015, BDD-046)", () => {
   describe("Suite 1: FNV-1a 32-bit Deterministic Partition Hashing", () => {
@@ -67,7 +63,7 @@ describe("EOS Sovereign Spotify Apollo / Hermes RPC & Event Mesh Suite (SPEC-015
       const cb = new EosCircuitBreaker({
         slidingWindowSize: 4,
         failureThresholdPercentage: 50,
-        resetTimeoutMs: 100
+        resetTimeoutMs: 100,
       });
 
       assert.equal(cb.getState(), "CLOSED");
@@ -88,7 +84,7 @@ describe("EOS Sovereign Spotify Apollo / Hermes RPC & Event Mesh Suite (SPEC-015
         slidingWindowSize: 2,
         failureThresholdPercentage: 50,
         resetTimeoutMs: 50,
-        halfOpenTrialSuccesses: 2
+        halfOpenTrialSuccesses: 2,
       });
 
       cb.recordFailure();
@@ -144,7 +140,7 @@ describe("EOS Sovereign Spotify Apollo / Hermes RPC & Event Mesh Suite (SPEC-015
 
       const event = mesh.publishEvent("spotify.track.played", "user-123", {
         trackId: "spotify:track:alpha",
-        durationMs: 210000
+        durationMs: 210000,
       });
 
       assert.equal(received.length, 1);
@@ -175,7 +171,7 @@ describe("EOS Sovereign Spotify Apollo / Hermes RPC & Event Mesh Suite (SPEC-015
         jsonrpc: "2.0",
         id: "mcp-test-list",
         method: "tools/list",
-        params: {}
+        params: {},
       });
 
       const toolNames = res.result.tools.map((t) => t.name);
@@ -196,9 +192,9 @@ describe("EOS Sovereign Spotify Apollo / Hermes RPC & Event Mesh Suite (SPEC-015
           arguments: {
             serviceName: "audio-stream-service",
             endpoint: "get-track-stream",
-            payload: { trackId: "spotify:track:xyz" }
-          }
-        }
+            payload: { trackId: "spotify:track:xyz" },
+          },
+        },
       });
 
       assert.equal(res.id, "mcp-test-call-rpc");
@@ -217,8 +213,8 @@ describe("EOS Sovereign Spotify Apollo / Hermes RPC & Event Mesh Suite (SPEC-015
         method: "tools/call",
         params: {
           name: "eos_audio_dsp_benchmark",
-          arguments: { frames: 4096, iterations: 5 }
-        }
+          arguments: { frames: 4096, iterations: 5 },
+        },
       });
 
       const content = JSON.parse(res.result.content[0].text);

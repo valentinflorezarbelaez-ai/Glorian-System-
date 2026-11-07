@@ -15,8 +15,8 @@ import { performance } from "node:perf_hooks";
 
 export interface TrueTimeInterval {
   readonly earliest: number; // Unix timestamp in ms
-  readonly latest: number;   // Unix timestamp in ms
-  readonly epsilon: number;  // Uncertainty bound in ms
+  readonly latest: number; // Unix timestamp in ms
+  readonly epsilon: number; // Uncertainty bound in ms
 }
 
 export class EosTrueTimeBoundedClock {
@@ -42,7 +42,7 @@ export class EosTrueTimeBoundedClock {
     return {
       earliest,
       latest,
-      epsilon: this.epsilonMs
+      epsilon: this.epsilonMs,
     };
   }
 
@@ -66,7 +66,9 @@ export class EosTrueTimeBoundedClock {
   /**
    * Executes a transaction block with commit-wait guarantee.
    */
-  public async executeWithCommitWait<T>(fn: () => Promise<T> | T): Promise<{ result: T; commitTimestamp: number; waitDurationMs: number }> {
+  public async executeWithCommitWait<T>(
+    fn: () => Promise<T> | T,
+  ): Promise<{ result: T; commitTimestamp: number; waitDurationMs: number }> {
     const interval = this.now();
     const commitTimestamp = interval.latest; // Assign s = now().latest
 
@@ -77,7 +79,7 @@ export class EosTrueTimeBoundedClock {
     return {
       result,
       commitTimestamp,
-      waitDurationMs
+      waitDurationMs,
     };
   }
 

@@ -89,7 +89,7 @@ test("BDD-293: Nominal Baseline Sampling and Sub-Linear Memory Footprint with Ev
   const sampler = new EosTailBasedTraceSampler({
     latencyThresholdMs: 500,
     nominalSampleRate: 0.0, // 0 nominal sample rate ensures all nominals drop
-    retentionWindowMs: 50,  // Fast TTL for test
+    retentionWindowMs: 50, // Fast TTL for test
   });
 
   // Test nominal drop
@@ -103,7 +103,7 @@ test("BDD-293: Nominal Baseline Sampling and Sub-Linear Memory Footprint with Ev
       durationMs: 5,
       statusCode: 200,
     },
-    true // isEndSpan
+    true, // isEndSpan
   );
 
   assert.ok(decision);

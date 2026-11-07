@@ -21,7 +21,7 @@ test("BDD-247: Configuración declarativa e inicialización de microVM vía Sock
   // 2. Set Boot Source
   const bootRes = await supervisor.setBootSource(
     "/vmlinux-6.6-eos.bin",
-    "console=ttyS0 reboot=k panic=1 pci=off init=/init"
+    "console=ttyS0 reboot=k panic=1 pci=off init=/init",
   );
   assert.equal(bootRes.statusCode, 204);
   assert.equal(bootRes.body.boot_source_set, true);

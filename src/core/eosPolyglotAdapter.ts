@@ -52,7 +52,7 @@ export function detectPolyglotPlan(projectRoot: string): PolyglotExecutionPlan {
       raceCheckCommand: "go test -v -race ./...",
       benchmarkCommand: "go test -bench=. -benchmem ./...",
       targetCompanyStandard: "Spotify / Cloud Native",
-      detectedIndicators: indicators
+      detectedIndicators: indicators,
     };
   }
 
@@ -65,15 +65,12 @@ export function detectPolyglotPlan(projectRoot: string): PolyglotExecutionPlan {
       raceCheckCommand: "cargo test -- --nocapture",
       benchmarkCommand: "cargo bench",
       targetCompanyStandard: "Spotify / Cloud Native",
-      detectedIndicators: indicators
+      detectedIndicators: indicators,
     };
   }
 
   // 3. Clojure / Datomic (Nubank Core Banking)
-  if (
-    existsSync(join(projectRoot, "deps.edn")) ||
-    existsSync(join(projectRoot, "project.clj"))
-  ) {
+  if (existsSync(join(projectRoot, "deps.edn")) || existsSync(join(projectRoot, "project.clj"))) {
     if (existsSync(join(projectRoot, "deps.edn"))) indicators.push("deps.edn");
     if (existsSync(join(projectRoot, "project.clj"))) indicators.push("project.clj");
     return {
@@ -82,7 +79,7 @@ export function detectPolyglotPlan(projectRoot: string): PolyglotExecutionPlan {
       raceCheckCommand: "lein test",
       benchmarkCommand: "clojure -M:bench",
       targetCompanyStandard: "Nubank / Functional",
-      detectedIndicators: indicators
+      detectedIndicators: indicators,
     };
   }
 
@@ -95,15 +92,12 @@ export function detectPolyglotPlan(projectRoot: string): PolyglotExecutionPlan {
       raceCheckCommand: "flutter test --coverage",
       benchmarkCommand: "dart run benchmark/run.dart",
       targetCompanyStandard: "Universal Mobile",
-      detectedIndicators: indicators
+      detectedIndicators: indicators,
     };
   }
 
   // 5. Python Data & ML Pipeline (Spotify Scio/Klio & RecSys)
-  if (
-    existsSync(join(projectRoot, "pyproject.toml")) ||
-    existsSync(join(projectRoot, "requirements.txt"))
-  ) {
+  if (existsSync(join(projectRoot, "pyproject.toml")) || existsSync(join(projectRoot, "requirements.txt"))) {
     if (existsSync(join(projectRoot, "pyproject.toml"))) indicators.push("pyproject.toml");
     if (existsSync(join(projectRoot, "requirements.txt"))) indicators.push("requirements.txt");
     return {
@@ -112,7 +106,7 @@ export function detectPolyglotPlan(projectRoot: string): PolyglotExecutionPlan {
       raceCheckCommand: "pytest -v",
       benchmarkCommand: "pytest --benchmark-only",
       targetCompanyStandard: "Spotify / Cloud Native",
-      detectedIndicators: indicators
+      detectedIndicators: indicators,
     };
   }
 
@@ -125,7 +119,7 @@ export function detectPolyglotPlan(projectRoot: string): PolyglotExecutionPlan {
       raceCheckCommand: "node --test test/*.test.mjs",
       benchmarkCommand: "node bin/eos.mjs turbo",
       targetCompanyStandard: "EOS Sovereign",
-      detectedIndicators: indicators
+      detectedIndicators: indicators,
     };
   }
 
@@ -135,6 +129,6 @@ export function detectPolyglotPlan(projectRoot: string): PolyglotExecutionPlan {
     raceCheckCommand: "node bin/eos.mjs turbo",
     benchmarkCommand: "node bin/eos.mjs eval",
     targetCompanyStandard: "EOS Sovereign",
-    detectedIndicators: indicators
+    detectedIndicators: indicators,
   };
 }

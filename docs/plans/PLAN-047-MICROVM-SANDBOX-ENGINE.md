@@ -1,6 +1,7 @@
 # PLAN-047: Hermetic MicroVM & Isolated Hypervisor Sandbox Engine
 
 ## Architecture Decision Record: ADR-060
+
 - **Title**: Multi-Tiered MicroVM, gVisor & Ephemeral Sandbox Confinement
 - **Status**: ACCEPTED
 - **Context**: Autonomous agents require isolated execution capabilities to evaluate untested code, run stress benchmarks, or execute compiler tasks without risking the developer's workstation or leaking host credentials.

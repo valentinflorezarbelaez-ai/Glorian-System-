@@ -30,7 +30,7 @@ if (!fs.existsSync(packageJsonPath)) {
     ruleId: "EOS-RULE-002",
     level: "error",
     message: { text: "CRITICAL: package.json not found" },
-    locations: [{ physicalLocation: { artifactLocation: { uri: "package.json" } } }]
+    locations: [{ physicalLocation: { artifactLocation: { uri: "package.json" } } }],
   });
 } else {
   const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
@@ -41,7 +41,7 @@ if (!fs.existsSync(packageJsonPath)) {
       ruleId: "EOS-RULE-002",
       level: "error",
       message: { text: `VIOLATION: Layer-0 Purity broken. Found ${depCount} runtime dependencies.` },
-      locations: [{ physicalLocation: { artifactLocation: { uri: "package.json" } } }]
+      locations: [{ physicalLocation: { artifactLocation: { uri: "package.json" } } }],
     });
   } else {
     console.log("✔ [PASS] Law V: Layer-0 Dependency Purity verified (dependencies: {})");
@@ -52,15 +52,10 @@ if (!fs.existsSync(packageJsonPath)) {
 const secretPatterns = [
   /AKIA[0-9A-Z]{16}/,
   /-----BEGIN\s+(?:RSA|EC|DSA|OPENSSH)\s+PRIVATE\s+KEY-----/,
-  /ghp_[0-9a-zA-Z]{36}/
+  /ghp_[0-9a-zA-Z]{36}/,
 ];
 
-const candidateFiles = [
-  "package.json",
-  "index.html",
-  "js/eos.js",
-  "css/eos.css"
-];
+const candidateFiles = ["package.json", "index.html", "js/eos.js", "css/eos.css"];
 
 for (const relPath of candidateFiles) {
   const fullPath = path.join(projectRoot, relPath);
@@ -72,7 +67,7 @@ for (const relPath of candidateFiles) {
           ruleId: "EOS-RULE-001",
           level: "error",
           message: { text: `VIOLATION: Potential plain secret matched pattern in ${relPath}` },
-          locations: [{ physicalLocation: { artifactLocation: { uri: relPath } } }]
+          locations: [{ physicalLocation: { artifactLocation: { uri: relPath } } }],
         });
       }
     }
@@ -95,7 +90,9 @@ if (fs.existsSync(specsDir)) {
       compliantSpecs++;
     }
   }
-  console.log(`✔ [PASS] Laws I & II: ${compliantSpecs}/${specFiles.length} specifications conform to EARS/BDD standards`);
+  console.log(
+    `✔ [PASS] Laws I & II: ${compliantSpecs}/${specFiles.length} specifications conform to EARS/BDD standards`,
+  );
 }
 
 // 4. Construct OASIS SARIF v2.1.0 Document
@@ -113,30 +110,30 @@ const sarifReport = {
             {
               id: "EOS-RULE-001",
               name: "ZeroPlainSecretsLawVI",
-              shortDescription: { text: "Absolute security: zero hardcoded plain secrets in repository" }
+              shortDescription: { text: "Absolute security: zero hardcoded plain secrets in repository" },
             },
             {
               id: "EOS-RULE-002",
               name: "Layer0DependencyPurityLawV",
-              shortDescription: { text: "Clean architecture: zero external runtime npm dependencies" }
+              shortDescription: { text: "Clean architecture: zero external runtime npm dependencies" },
             },
             {
               id: "EOS-RULE-003",
               name: "FormalEarsBddSpecificationLawI",
-              shortDescription: { text: "Specification as Supreme Truth: 100% formal EARS and BDD requirements" }
-            }
-          ]
-        }
+              shortDescription: { text: "Specification as Supreme Truth: 100% formal EARS and BDD requirements" },
+            },
+          ],
+        },
       },
       results: findings,
       invocations: [
         {
           executionSuccessful: findings.length === 0,
-          endTimeUtc: new Date().toISOString()
-        }
-      ]
-    }
-  ]
+          endTimeUtc: new Date().toISOString(),
+        },
+      ],
+    },
+  ],
 };
 
 const sarifDir = path.join(projectRoot, "docs", "evidence");

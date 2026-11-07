@@ -49,17 +49,11 @@ describe("SPEC-034: NSA Defense-in-Depth & CNSA 2.0 Verification", () => {
       const tamperedCiphertext = (envelope.ciphertext[0] === "0" ? "1" : "0") + envelope.ciphertext.slice(1);
       const tamperedEnvelope = { ...envelope, ciphertext: tamperedCiphertext };
 
-      assert.throws(
-        () => EosNsaCryptoSuite.decryptAesGcm256(tamperedEnvelope, key),
-        /NSA Integrity Failure/
-      );
+      assert.throws(() => EosNsaCryptoSuite.decryptAesGcm256(tamperedEnvelope, key), /NSA Integrity Failure/);
 
       // Tampered AAD
       const tamperedAadEnvelope = { ...envelope, aad: "CLASS=UNCLASSIFIED;COMP=PUBLIC" };
-      assert.throws(
-        () => EosNsaCryptoSuite.decryptAesGcm256(tamperedAadEnvelope, key),
-        /NSA Integrity Failure/
-      );
+      assert.throws(() => EosNsaCryptoSuite.decryptAesGcm256(tamperedAadEnvelope, key), /NSA Integrity Failure/);
     });
 
     test("constant-time comparison verifies exact matches and resists timing leaks", () => {
@@ -99,26 +93,20 @@ describe("SPEC-034: NSA Defense-in-Depth & CNSA 2.0 Verification", () => {
     const topSecretSubject = {
       subjectId: "AGENT_VALENTIN",
       clearance: "TOP_SECRET",
-      compartments: ["EOS-NOUS", "TITAN-CORE"]
+      compartments: ["EOS-NOUS", "TITAN-CORE"],
     };
 
     const secretSubject = {
       subjectId: "AGENT_FIELD_OPERATIVE",
       clearance: "SECRET",
-      compartments: ["TITAN-CORE"]
-    };
-
-    const unclassifiedSubject = {
-      subjectId: "PUBLIC_OBSERVER",
-      clearance: "UNCLASSIFIED",
-      compartments: []
+      compartments: ["TITAN-CORE"],
     };
 
     const topSecretObject = {
       objectId: "NOUS_KUNDALINI_DIRECTIVE",
       classification: "TOP_SECRET",
       compartments: ["EOS-NOUS"],
-      redPayload: "SACRED_FORMULA_OF_TRANSMUTATION"
+      redPayload: "SACRED_FORMULA_OF_TRANSMUTATION",
     };
 
     test("enforces Simple Security (No Read-Up): lower clearance cannot read higher object", () => {
@@ -160,7 +148,7 @@ describe("SPEC-034: NSA Defense-in-Depth & CNSA 2.0 Verification", () => {
       // Verify audit log has recorded the transactions
       const auditTrail = compartment.getAuditTrail();
       assert.ok(auditTrail.length >= 3);
-      assert.ok(auditTrail.some(r => r.action === "TRANSIT_BLACK" && r.outcome === "GRANTED"));
+      assert.ok(auditTrail.some((r) => r.action === "TRANSIT_BLACK" && r.outcome === "GRANTED"));
     });
   });
 
@@ -236,9 +224,9 @@ describe("SPEC-034: NSA Defense-in-Depth & CNSA 2.0 Verification", () => {
           arguments: {
             plaintext: "TOP_SECRET_MCP_PAYLOAD",
             classification: "TOP_SECRET",
-            compartment: "EOS-NOUS"
-          }
-        }
+            compartment: "EOS-NOUS",
+          },
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");
@@ -262,9 +250,9 @@ describe("SPEC-034: NSA Defense-in-Depth & CNSA 2.0 Verification", () => {
             subjectCompartments: ["TITAN-CORE"],
             objectClassification: "TOP_SECRET",
             objectCompartments: ["EOS-NOUS"],
-            action: "READ"
-          }
-        }
+            action: "READ",
+          },
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");
@@ -280,8 +268,8 @@ describe("SPEC-034: NSA Defense-in-Depth & CNSA 2.0 Verification", () => {
         method: "tools/call",
         params: {
           name: "eos_nsa_audit_logs",
-          arguments: {}
-        }
+          arguments: {},
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");

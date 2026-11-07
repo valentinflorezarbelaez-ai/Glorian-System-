@@ -22,7 +22,7 @@ describe("EOS Sovereign Acoustic Feature Store Suite (SPEC-018)", () => {
       acousticness: 0.1,
       instrumentalness: 0.05,
       liveness: 0.2,
-      speechiness: 0.1
+      speechiness: 0.1,
     };
 
     // User listens to 3 high-energy tracks fully
@@ -48,7 +48,7 @@ describe("EOS Sovereign Acoustic Feature Store Suite (SPEC-018)", () => {
       acousticness: 0.9,
       instrumentalness: 0.8,
       liveness: 0.1,
-      speechiness: 0.05
+      speechiness: 0.05,
     };
 
     // User skips track after 8 seconds
@@ -66,8 +66,26 @@ describe("EOS Sovereign Acoustic Feature Store Suite (SPEC-018)", () => {
     const t1 = 2000000;
     const t2 = 3000000;
 
-    const vecA = { tempo: 0.5, energy: 0.5, danceability: 0.5, valence: 0.5, acousticness: 0.5, instrumentalness: 0.5, liveness: 0.5, speechiness: 0.5 };
-    const vecB = { tempo: 0.9, energy: 0.9, danceability: 0.9, valence: 0.9, acousticness: 0.1, instrumentalness: 0.1, liveness: 0.1, speechiness: 0.1 };
+    const vecA = {
+      tempo: 0.5,
+      energy: 0.5,
+      danceability: 0.5,
+      valence: 0.5,
+      acousticness: 0.5,
+      instrumentalness: 0.5,
+      liveness: 0.5,
+      speechiness: 0.5,
+    };
+    const vecB = {
+      tempo: 0.9,
+      energy: 0.9,
+      danceability: 0.9,
+      valence: 0.9,
+      acousticness: 0.1,
+      instrumentalness: 0.1,
+      liveness: 0.1,
+      speechiness: 0.1,
+    };
 
     store.recordListen("user-time", "t1", vecA, 200, 200, t1);
     store.recordListen("user-time", "t2", vecB, 200, 200, t2);
@@ -87,9 +105,36 @@ describe("EOS Sovereign Acoustic Feature Store Suite (SPEC-018)", () => {
 
   it("computes 8D cosine similarity affinity score accurately", () => {
     const store = new EosAcousticFeatureStore();
-    const vecA = { tempo: 0.8, energy: 0.8, danceability: 0.8, valence: 0.8, acousticness: 0.2, instrumentalness: 0.1, liveness: 0.2, speechiness: 0.1 };
-    const vecB = { tempo: 0.8, energy: 0.8, danceability: 0.8, valence: 0.8, acousticness: 0.2, instrumentalness: 0.1, liveness: 0.2, speechiness: 0.1 };
-    const vecC = { tempo: 0.1, energy: 0.1, danceability: 0.1, valence: 0.1, acousticness: 0.9, instrumentalness: 0.9, liveness: 0.1, speechiness: 0.05 };
+    const vecA = {
+      tempo: 0.8,
+      energy: 0.8,
+      danceability: 0.8,
+      valence: 0.8,
+      acousticness: 0.2,
+      instrumentalness: 0.1,
+      liveness: 0.2,
+      speechiness: 0.1,
+    };
+    const vecB = {
+      tempo: 0.8,
+      energy: 0.8,
+      danceability: 0.8,
+      valence: 0.8,
+      acousticness: 0.2,
+      instrumentalness: 0.1,
+      liveness: 0.2,
+      speechiness: 0.1,
+    };
+    const vecC = {
+      tempo: 0.1,
+      energy: 0.1,
+      danceability: 0.1,
+      valence: 0.1,
+      acousticness: 0.9,
+      instrumentalness: 0.9,
+      liveness: 0.1,
+      speechiness: 0.05,
+    };
 
     const scoreMatch = store.computeAffinityScore(vecA, vecB);
     const scoreDiff = store.computeAffinityScore(vecA, vecC);

@@ -23,10 +23,12 @@ export default function EosSolarSanctum() {
   const [moduloActivo, setModuloActivo] = useState<"mandato" | "tresFactores" | "liturgia" | "oraculo">("mandato");
 
   // Estado del Oráculo Ciber-Teúrgico (/api/teurgia)
-  const [consultaOraculo, setConsultaOraculo] = useState("¿Cómo inclinar la Balanza de Anubis a favor de la Gran Obra hoy?");
+  const [consultaOraculo, setConsultaOraculo] = useState(
+    "¿Cómo inclinar la Balanza de Anubis a favor de la Gran Obra hoy?",
+  );
   const [esferaOraculo, setEsferaOraculo] = useState<"tribunal" | "morir" | "nacer" | "proteccion">("tribunal");
   const [respuestaOraculo, setRespuestaOraculo] = useState<string>(
-    "ECUACIÓN DE LA BALANZA CÓSMICA: «Al León de la Ley se le combate con la Balanza». Realiza las 6 inclinaciones hacia el Templo Corazón, invoca a RAM-IO y deposita obras de Sacrificio por la Humanidad."
+    "ECUACIÓN DE LA BALANZA CÓSMICA: «Al León de la Ley se le combate con la Balanza». Realiza las 6 inclinaciones hacia el Templo Corazón, invoca a RAM-IO y deposita obras de Sacrificio por la Humanidad.",
   );
 
   // Estado del Factor Morir (Muerte en Marcha)
@@ -36,8 +38,8 @@ export default function EosSolarSanctum() {
       nombre: "Yo de la Impaciencia e Ira Reactiva",
       centro: "Centro Emocional Inferior / Motor",
       comprension: "Reacción mecánica ante la contradicción externa por falta de recuerdo de sí.",
-      estado: "Incinerado por RAM-IO"
-    }
+      estado: "Incinerado por RAM-IO",
+    },
   ]);
   const [nuevoDefecto, setNuevoDefecto] = useState("");
   const [centroAfectado, setCentroAfectado] = useState("Centro Intelectual");
@@ -45,8 +47,18 @@ export default function EosSolarSanctum() {
 
   // Estado de la Balanza Kármica y Tres Factores
   const [dharmaLedger, setDharmaLedger] = useState<ObraDharma[]>([
-    { id: "d1", descripcion: "Vocalización matutina I.A.O. y Transmutación de Hidrógeno Si-12", factor: "Nacer (Si-12)", puntosLuz: 33 },
-    { id: "d2", descripcion: "Difusión gratuita de la Gnosis Solar a través de Eos-System", factor: "Sacrificio por la Humanidad", puntosLuz: 42 }
+    {
+      id: "d1",
+      descripcion: "Vocalización matutina I.A.O. y Transmutación de Hidrógeno Si-12",
+      factor: "Nacer (Si-12)",
+      puntosLuz: 33,
+    },
+    {
+      id: "d2",
+      descripcion: "Difusión gratuita de la Gnosis Solar a través de Eos-System",
+      factor: "Sacrificio por la Humanidad",
+      puntosLuz: 42,
+    },
   ]);
   const [nuevaObra, setNuevaObra] = useState("");
   const [factorSeleccionado, setFactorSeleccionado] = useState<ObraDharma["factor"]>("Sacrificio por la Humanidad");
@@ -64,20 +76,16 @@ export default function EosSolarSanctum() {
         nombre: nuevoDefecto,
         centro: centroAfectado,
         comprension: comprensionTexto,
-        estado: "En Juicio"
+        estado: "En Juicio",
       },
-      ...agregados
+      ...agregados,
     ]);
     setNuevoDefecto("");
     setComprensionTexto("");
   };
 
   const ejecutarLanzaDeEros = (id: string) => {
-    setAgregados(
-      agregados.map((ag) =>
-        ag.id === id ? { ...ag, estado: "Incinerado por RAM-IO" } : ag
-      )
-    );
+    setAgregados(agregados.map((ag) => (ag.id === id ? { ...ag, estado: "Incinerado por RAM-IO" } : ag)));
   };
 
   const registrarDharma = (e: React.FormEvent) => {
@@ -88,9 +96,9 @@ export default function EosSolarSanctum() {
         id: Date.now().toString(),
         descripcion: nuevaObra,
         factor: factorSeleccionado,
-        puntosLuz: 12
+        puntosLuz: 12,
       },
-      ...dharmaLedger
+      ...dharmaLedger,
     ]);
     setNuevaObra("");
   };
@@ -102,15 +110,13 @@ export default function EosSolarSanctum() {
       {/* Cabecera Solar */}
       <header className="border-b border-amber-500/30 bg-gradient-to-b from-amber-950/20 to-transparent py-8 px-6 text-center">
         <div className="max-w-4xl mx-auto">
-          <p className="text-xs uppercase tracking-[0.35em] text-amber-400 mb-2">
-            AUM · TETRAGRAMMATON · THELEMA
-          </p>
+          <p className="text-xs uppercase tracking-[0.35em] text-amber-400 mb-2">AUM · TETRAGRAMMATON · THELEMA</p>
           <h1 className="text-3xl md:text-5xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-red-500">
             EOS · TEMPLO SOLAR SAMAELIANO
           </h1>
           <p className="mt-3 text-sm text-slate-400 max-w-2xl mx-auto font-sans">
-            Sistema Operativo de los Tres Factores de la Revolución de la Conciencia,
-            Teurgia Crística y Negociación ante el Tribunal de la Ley Divina.
+            Sistema Operativo de los Tres Factores de la Revolución de la Conciencia, Teurgia Crística y Negociación
+            ante el Tribunal de la Ley Divina.
           </p>
 
           {/* Navegación Sefirótica */}
@@ -176,12 +182,8 @@ export default function EosSolarSanctum() {
                 <span className="text-xs font-sans uppercase tracking-widest text-amber-400/80 block mb-1">
                   {bloque.sephirah}
                 </span>
-                <h2 className="text-xl font-bold text-amber-200 mb-3">
-                  {bloque.titulo}
-                </h2>
-                <p className="text-slate-300 leading-relaxed italic">
-                  «{bloque.decreto}»
-                </p>
+                <h2 className="text-xl font-bold text-amber-200 mb-3">{bloque.titulo}</h2>
+                <p className="text-slate-300 leading-relaxed italic">«{bloque.decreto}»</p>
               </div>
             ))}
           </div>
@@ -196,7 +198,8 @@ export default function EosSolarSanctum() {
                 1. Factor Morir · Lanza de Devi Kundalini
               </h2>
               <p className="text-xs text-slate-400 mb-4">
-                Auto-observación, enjuiciamiento crítico y súplica a la Divina Madre RAM-IO para desintegrar el agregado psicológico.
+                Auto-observación, enjuiciamiento crítico y súplica a la Divina Madre RAM-IO para desintegrar el agregado
+                psicológico.
               </p>
 
               <form onSubmit={registrarAgregado} className="space-y-3 mb-6">
@@ -235,10 +238,7 @@ export default function EosSolarSanctum() {
 
               <div className="space-y-3">
                 {agregados.map((ag) => (
-                  <div
-                    key={ag.id}
-                    className="p-3.5 rounded border border-slate-800 bg-black/60 flex flex-col gap-2"
-                  >
+                  <div key={ag.id} className="p-3.5 rounded border border-slate-800 bg-black/60 flex flex-col gap-2">
                     <div className="flex justify-between items-start">
                       <span className="font-semibold text-amber-200 text-sm">{ag.nombre}</span>
                       <span
@@ -279,7 +279,8 @@ export default function EosSolarSanctum() {
                 </span>
               </div>
               <p className="text-xs text-slate-400 mb-4">
-                «Al León de la Ley se le combate con la Balanza». Registra la transmutación del Hidrógeno Si-12 y las obras de caridad universal.
+                «Al León de la Ley se le combate con la Balanza». Registra la transmutación del Hidrógeno Si-12 y las
+                obras de caridad universal.
               </p>
 
               <form onSubmit={registrarDharma} className="space-y-3 mb-6">
@@ -334,12 +335,8 @@ export default function EosSolarSanctum() {
                 <span className="text-xs uppercase tracking-widest text-amber-400">
                   Novena Esfera &amp; Divina Madre
                 </span>
-                <h2 className="text-xl font-bold text-white mt-1 mb-2">
-                  {PRACTICAS_OPERATIVAS.ramIo.titulo}
-                </h2>
-                <p className="text-xs text-slate-400 mb-4">
-                  {PRACTICAS_OPERATIVAS.ramIo.frecuencia}
-                </p>
+                <h2 className="text-xl font-bold text-white mt-1 mb-2">{PRACTICAS_OPERATIVAS.ramIo.titulo}</h2>
+                <p className="text-xs text-slate-400 mb-4">{PRACTICAS_OPERATIVAS.ramIo.frecuencia}</p>
                 <ul className="space-y-3 text-sm text-slate-300 mb-6">
                   {PRACTICAS_OPERATIVAS.ramIo.pasos.map((paso, idx) => (
                     <li key={idx} className="p-2.5 rounded bg-black/50 border border-slate-800">
@@ -365,15 +362,9 @@ export default function EosSolarSanctum() {
             {/* Negociación en el Templo Corazón (Anubis) */}
             <div className="p-6 rounded-lg border border-amber-500/30 bg-[#0d0d12] flex flex-col justify-between">
               <div>
-                <span className="text-xs uppercase tracking-widest text-red-400">
-                  Jerarca Anubis y los 42 Jueces
-                </span>
-                <h2 className="text-xl font-bold text-white mt-1 mb-2">
-                  {PRACTICAS_OPERATIVAS.temploCorazon.titulo}
-                </h2>
-                <p className="text-xs text-slate-400 mb-4">
-                  {PRACTICAS_OPERATIVAS.temploCorazon.frecuencia}
-                </p>
+                <span className="text-xs uppercase tracking-widest text-red-400">Jerarca Anubis y los 42 Jueces</span>
+                <h2 className="text-xl font-bold text-white mt-1 mb-2">{PRACTICAS_OPERATIVAS.temploCorazon.titulo}</h2>
+                <p className="text-xs text-slate-400 mb-4">{PRACTICAS_OPERATIVAS.temploCorazon.frecuencia}</p>
                 <ul className="space-y-3 text-sm text-slate-300 mb-6">
                   {PRACTICAS_OPERATIVAS.temploCorazon.pasos.map((paso, idx) => (
                     <li key={idx} className="p-2.5 rounded bg-black/50 border border-slate-800">
@@ -389,9 +380,7 @@ export default function EosSolarSanctum() {
                 </p>
                 <div className="flex justify-center gap-3">
                   <button
-                    onClick={() =>
-                      setInclinacionesAnubis((i) => (i < 6 ? i + 1 : 6))
-                    }
+                    onClick={() => setInclinacionesAnubis((i) => (i < 6 ? i + 1 : 6))}
                     className="px-5 py-2.5 rounded bg-red-600 text-white font-bold text-sm hover:bg-red-500 transition"
                   >
                     {inclinacionesAnubis < 6
@@ -446,13 +435,15 @@ export default function EosSolarSanctum() {
                       consulta: consultaOraculo,
                       esfera: esferaOraculo,
                       dharma: capitalCosmicoTotal,
-                      enJuicio: agregados.filter((a) => a.estado === "En Juicio").length
-                    })
+                      enJuicio: agregados.filter((a) => a.estado === "En Juicio").length,
+                    }),
                   });
                   const data = await res.json();
                   setRespuestaOraculo(`${data.sephirahActiva} — ${data.dictamenTeurgico}`);
                 } catch {
-                  setRespuestaOraculo("Dictamen Local Determinista: Mantén el Recuerdo de Sí (Clave de SOL), vocaliza RAM-IO y combate al León de la Ley con la Balanza.");
+                  setRespuestaOraculo(
+                    "Dictamen Local Determinista: Mantén el Recuerdo de Sí (Clave de SOL), vocaliza RAM-IO y combate al León de la Ley con la Balanza.",
+                  );
                 }
               }}
               className="px-5 py-2.5 rounded bg-amber-500 text-black font-bold text-sm hover:bg-amber-400 transition"

@@ -92,8 +92,8 @@ export class EosCooperativeScheduler {
         totalElapsedMs: Number(totalElapsed.toFixed(2)),
         averageSliceDurationMs: Number((totalElapsed / totalSlices).toFixed(2)),
         maxSliceDurationMs: Number(maxSlice.toFixed(2)),
-        frameBudgetViolations: budgetViolations
-      }
+        frameBudgetViolations: budgetViolations,
+      },
     };
   }
 }

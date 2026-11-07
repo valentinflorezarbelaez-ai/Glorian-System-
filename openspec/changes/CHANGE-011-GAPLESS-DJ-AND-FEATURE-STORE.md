@@ -1,6 +1,7 @@
 # OPENSPEC CHANGE PROPOSAL: GAPLESS DJ AUTOMIX & REAL-TIME FEATURE STORE (CHANGE-011)
 
 ## 1. Metadata
+
 - **Status**: `PROPOSED_AND_AUTHORIZED`
 - **Authorization**: `LEVEL_3_PRODUCTION_AUTHORIZED`
 - **Impacted Specs**: `SPEC-001`, `SPEC-004`, `SPEC-013`, `SPEC-017`, `SPEC-018`
@@ -14,4 +15,5 @@
   - `api/spotify.js`
 
 ## 2. Description
+
 Implements carrier-grade 3-band Linkwitz-Riley crossover DJ crossfading with bass clash prevention and real-time exponential-decay acoustic feature store for Spotify recommendations.

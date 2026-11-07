@@ -42,7 +42,7 @@ export const CANONICAL_FLEET_PROJECTS: readonly FleetProjectManifest[] = [
     productionUrl: "https://eos-system-ten.vercel.app",
     type: "control-plane-monolith",
     status: "REGISTERED",
-    authorization: "LEVEL_3_PRODUCTION_AUTHORIZED"
+    authorization: "LEVEL_3_PRODUCTION_AUTHORIZED",
   },
   {
     id: "aberamentho",
@@ -52,7 +52,7 @@ export const CANONICAL_FLEET_PROJECTS: readonly FleetProjectManifest[] = [
     productionUrl: "https://aberamentosprelomamusic.vercel.app",
     type: "sacred-acoustic-app",
     status: "REGISTERED",
-    authorization: "LEVEL_3_PRODUCTION_AUTHORIZED"
+    authorization: "LEVEL_3_PRODUCTION_AUTHORIZED",
   },
   {
     id: "portafolio",
@@ -62,7 +62,7 @@ export const CANONICAL_FLEET_PROJECTS: readonly FleetProjectManifest[] = [
     productionUrl: "https://portafolio-valentin.vercel.app",
     type: "executive-showcase",
     status: "REGISTERED",
-    authorization: "LEVEL_3_PRODUCTION_AUTHORIZED"
+    authorization: "LEVEL_3_PRODUCTION_AUTHORIZED",
   },
   {
     id: "performance-talent-group",
@@ -72,8 +72,8 @@ export const CANONICAL_FLEET_PROJECTS: readonly FleetProjectManifest[] = [
     productionUrl: "https://ptg-performance-talent-group.vercel.app",
     type: "enterprise-operations",
     status: "REGISTERED",
-    authorization: "LEVEL_2_AUTHORIZED"
-  }
+    authorization: "LEVEL_2_AUTHORIZED",
+  },
 ] as const;
 
 export function evaluateFleetStatusSnapshot(): FleetDispatchResult {
@@ -84,7 +84,7 @@ export function evaluateFleetStatusSnapshot(): FleetDispatchResult {
     repositoryStatus: "NOT_PROBED",
     hooksStatus: "NOT_PROBED",
     productionHealth: "NOT_PROBED",
-    epistemicState: "NEEDS_AUDIT"
+    epistemicState: "NEEDS_AUDIT",
   }));
 
   return {
@@ -93,6 +93,6 @@ export function evaluateFleetStatusSnapshot(): FleetDispatchResult {
     timestamp: new Date().toISOString(),
     projectsRegistered: CANONICAL_FLEET_PROJECTS.length,
     checksRun: false,
-    reports
+    reports,
   };
 }

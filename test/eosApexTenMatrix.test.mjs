@@ -78,11 +78,11 @@ test("SPEC-030 / BDD-069: Hardened Pinned Memory Vault & Zero-Entropy Purge", as
   const vault = new EosSecureMemoryVault();
 
   await t.test("Subsuite 1: Stores Raw Buffers and Performs Constant-Time Match", () => {
-    const secretKey = new Uint8Array([0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF]);
+    const secretKey = new Uint8Array([0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]);
     vault.storeSecret("master-api-key", secretKey);
 
-    const validCandidate = new Uint8Array([0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF]);
-    const invalidCandidate = new Uint8Array([0xAA, 0xBB, 0x00, 0xDD, 0xEE, 0xFF]);
+    const validCandidate = new Uint8Array([0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]);
+    const invalidCandidate = new Uint8Array([0xaa, 0xbb, 0x00, 0xdd, 0xee, 0xff]);
 
     assert.equal(vault.compareSecret("master-api-key", validCandidate), true);
     assert.equal(vault.compareSecret("master-api-key", invalidCandidate), false);

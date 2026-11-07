@@ -30,7 +30,7 @@ test("BDD-260: Búsqueda convergente de los k nodos más cercanos a un identific
       nodeId: `wan-node-${i}`,
       ip: `10.0.0.${i}`,
       port: 9000 + i,
-      lastSeenMs: Date.now()
+      lastSeenMs: Date.now(),
     });
   }
 

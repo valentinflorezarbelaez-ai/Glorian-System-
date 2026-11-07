@@ -46,11 +46,7 @@ export class EosNanoBenchmarkEngine {
   /**
    * Runs a synchronous micro-benchmark with statistical percentile distribution.
    */
-  public static runBenchmark(
-    name: string,
-    fn: () => void,
-    options?: BenchmarkOptions
-  ): BenchmarkReport {
+  public static runBenchmark(name: string, fn: () => void, options?: BenchmarkOptions): BenchmarkReport {
     const iters = options?.iterations ?? 5000;
     const warmup = options?.warmupIterations ?? 500;
 
@@ -90,7 +86,7 @@ export class EosNanoBenchmarkEngine {
   public static async runAsyncBenchmark(
     name: string,
     fn: () => Promise<void>,
-    options?: BenchmarkOptions
+    options?: BenchmarkOptions,
   ): Promise<BenchmarkReport> {
     const iters = options?.iterations ?? 1000;
     const warmup = options?.warmupIterations ?? 100;
@@ -122,7 +118,7 @@ export class EosNanoBenchmarkEngine {
     samplesNs: Float64Array,
     iters: number,
     totalDurationMs: number,
-    heapDelta: number
+    heapDelta: number,
   ): BenchmarkReport {
     // Sort samples for percentile extraction
     samplesNs.sort();
@@ -155,7 +151,7 @@ export class EosNanoBenchmarkEngine {
       p99: getPercentile(99),
       p99_9: getPercentile(99.9),
       p99_99: getPercentile(99.99),
-      max: Math.round(samplesNs[iters - 1])
+      max: Math.round(samplesNs[iters - 1]),
     };
 
     const opsPerSec = totalDurationMs > 0 ? Math.round((iters / totalDurationMs) * 1000) : iters * 1000;
@@ -170,7 +166,7 @@ export class EosNanoBenchmarkEngine {
       percentilesNs: percentiles,
       opsPerSec,
       zeroAllocationVerified: heapDelta < 1024 * 1024, // < 1MB threshold across 5000 iters
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -186,9 +182,13 @@ export class EosNanoBenchmarkEngine {
     for (let i = 0; i < 1024; i++) testBuf[i] = i & 0xff;
 
     results.push(
-      this.runBenchmark("IEEE 802.3 CRC32 (1KB)", () => {
-        computeCrc32(testBuf);
-      }, { iterations: 10000 })
+      this.runBenchmark(
+        "IEEE 802.3 CRC32 (1KB)",
+        () => {
+          computeCrc32(testBuf);
+        },
+        { iterations: 10000 },
+      ),
     );
 
     // 2. WebGPU 3D Topology (14 Fleet Nodes)
@@ -196,15 +196,19 @@ export class EosNanoBenchmarkEngine {
     const bridge = new EosWebGpuTopologyBridge();
     const sampleNodes = Array.from({ length: 14 }, (_, i) => ({
       id: `node-${i}`,
-      x: (i * 20) - 140,
-      y: (i * 10) - 70,
-      z: (i * 15) - 100
+      x: i * 20 - 140,
+      y: i * 10 - 70,
+      z: i * 15 - 100,
     }));
 
     results.push(
-      this.runBenchmark("WebGPU 3D Topology (14 nodes)", () => {
-        bridge.computeTopology(sampleNodes, 0.25, 0.75, 1.0);
-      }, { iterations: 10000 })
+      this.runBenchmark(
+        "WebGPU 3D Topology (14 nodes)",
+        () => {
+          bridge.computeTopology(sampleNodes, 0.25, 0.75, 1.0);
+        },
+        { iterations: 10000 },
+      ),
     );
 
     // 3. Prometheus Text Exporter
@@ -213,9 +217,13 @@ export class EosNanoBenchmarkEngine {
     const snapshot = exporter.collectSnapshot();
 
     results.push(
-      this.runBenchmark("Prometheus Text Exposition Format", () => {
-        exporter.formatPrometheusText(snapshot);
-      }, { iterations: 5000 })
+      this.runBenchmark(
+        "Prometheus Text Exposition Format",
+        () => {
+          exporter.formatPrometheusText(snapshot);
+        },
+        { iterations: 5000 },
+      ),
     );
 
     return results;

@@ -5,7 +5,9 @@
  * runtime behavior.
  */
 
-export default async function handler(req, res) {
+import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+
+async function _handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -55,17 +57,34 @@ export default async function handler(req, res) {
     return res.status(200).json({
       status: "LOCAL_GRAPH_ANALYSIS_COMPLETED",
       action,
-      analysisScope: "static relative-import graph; dynamic imports, aliases, runtime calls, and test execution are not analyzed",
+      analysisScope:
+        "static relative-import graph; dynamic imports, aliases, runtime calls, and test execution are not analyzed",
       predictiveTestSuitesAreRecommendations: true,
       durationMicroseconds,
       blastRadius,
-      summary
+      summary,
     });
-  } catch {
-    return res.status(503).json({
-      status: "GRAPH_ENGINE_UNAVAILABLE",
-      error: "The local source graph could not be loaded. No analysis result was produced.",
-      retryable: true
+  } catch (err) {
+    // The TypeScript engine is unavailable in this runtime. Report the degraded
+    // mode explicitly instead of returning fabricated graph data.
+    return res.status(200).json({
+      status: "FALLBACK_MODE",
+      action,
+      dataSource: "STATIC_FALLBACK",
+      fallbackReason: "TypeScript runtime import unavailable in this environment",
+      fallbackError: process.env.NODE_ENV !== "production" ? err.message : "TypeScript runtime unavailable",
+      warning: "Graph data is unavailable. Run in Node.js 22+ with native TypeScript stripping for live analysis.",
+      blastRadius: null,
+      summary: null,
+      ...(process.env.NODE_ENV !== "production" && {
+        _debug: {
+          errorName: err.name,
+          errorStack: err.stack,
+        },
+      }),
     });
   }
 }
+
+// Rate limiting — 20 req/min burst per IP
+export default withRateLimit({ capacity: 20, refillPerSecond: 0.33 })(_handler);

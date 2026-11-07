@@ -51,10 +51,7 @@ describe("SPEC-035: Planetary Consensus & Adaptive Concurrency Verification", ()
       assert.equal(tx1.result, "TX1_PAYLOAD");
       assert.equal(tx2.result, "TX2_PAYLOAD");
       // Strict linearizability: TX1's commit timestamp is strictly before TX2's earliest start timestamp
-      assert.ok(
-        tx1.commitTimestamp < clock.now().latest,
-        "Transaction ordering must be strictly linearizable"
-      );
+      assert.ok(tx1.commitTimestamp < clock.now().latest, "Transaction ordering must be strictly linearizable");
     });
   });
 
@@ -168,8 +165,8 @@ describe("SPEC-035: Planetary Consensus & Adaptive Concurrency Verification", ()
         method: "tools/call",
         params: {
           name: "eos_consensus_status",
-          arguments: {}
-        }
+          arguments: {},
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");
@@ -188,9 +185,9 @@ describe("SPEC-035: Planetary Consensus & Adaptive Concurrency Verification", ()
         params: {
           name: "eos_truetime_now",
           arguments: {
-            epsilonMs: 1.5
-          }
-        }
+            epsilonMs: 1.5,
+          },
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");
@@ -206,8 +203,8 @@ describe("SPEC-035: Planetary Consensus & Adaptive Concurrency Verification", ()
         method: "tools/call",
         params: {
           name: "eos_adaptive_concurrency_stats",
-          arguments: {}
-        }
+          arguments: {},
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");

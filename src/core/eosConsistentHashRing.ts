@@ -57,7 +57,7 @@ export class EosConsistentHashRing {
       this.ring.push({
         token,
         nodeId,
-        vnodeIndex: i
+        vnodeIndex: i,
       });
     }
 

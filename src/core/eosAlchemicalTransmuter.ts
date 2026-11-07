@@ -159,7 +159,7 @@ export class EosAlchemicalTransmuter {
       agregadosDetectedCount: agregados.length,
       agregadosDetails: agregados,
       transmutationAdvice: advice,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 

@@ -1,9 +1,11 @@
 # OPENPEC BASE SPECIFICATION: CONSTITUTIONAL GOVERNANCE (SPEC-001)
 
 ## 1. Scope & Authority
+
 Governs all engineering agents, automated pipelines, and human developers operating within the EOS System ecosystem.
 
 ## 2. Inviolable Laws
+
 - **Law I (Specification as Supreme Truth)**: Zero Vibe Coding. Code is derived exclusively from formal specifications.
 - **Law II (Strict Gate)**: No implementation code before full specification package approval (Level 2+ Gate).
 - **Law III (Evidence Over Claims)**: Verifiable cryptographic evidence required for all claims (`VERIFIED`, `PRODUCTION_READY`).
@@ -13,6 +15,7 @@ Governs all engineering agents, automated pipelines, and human developers operat
 - **Law VII (Technical Artifact Discipline)**: Standard professional English in all codebase artifacts.
 
 ## 3. Epistemic Taxonomy
+
 - `AUDIT_EXECUTED`
 - `FINDINGS_IDENTIFIED`
 - `REMEDIATION_REQUIRED`

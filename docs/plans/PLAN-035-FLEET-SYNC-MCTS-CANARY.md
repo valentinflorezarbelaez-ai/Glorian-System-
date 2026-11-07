@@ -1,6 +1,7 @@
 # PLAN-035 / ADR-048: SOVEREIGN FLEET SOUNDCHECK MESH, MCTS HYPER-TUNING & CANARY MESH
 
 ## 1. Architectural Strategy
+
 - **Layer**: Core Domain Orchestration (Layer 0 Pure).
 - **Modules**:
   1. `src/core/eosFleetSoundcheckMesh.ts`: Spotify Backstage Soundcheck Scoring (0-100), automated fleet health auditing across the 4 sovereign repositories, clean tree verification, and remediation advice.
@@ -14,6 +15,7 @@
   - BDD Unit Test Suite: `test/eosFleetSyncMctsCanary.test.mjs`.
 
 ## 2. Decision Record (ADR-048)
+
 - **Status**: `APPROVED`
 - **Context**: EOS requires autonomous cross-repository governance, mathematical parameter self-tuning, and fail-closed release safety across all environments.
 - **Decision**: Implement all three engines with zero external runtime dependencies (`dependencies: {}`), pure TypeScript in `src/core/`, and 100% test coverage.

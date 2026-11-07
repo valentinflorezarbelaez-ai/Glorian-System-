@@ -45,7 +45,7 @@ export class EosMutationTester {
       { regex: /</g, replacement: ">=" },
       { regex: /\btrue\b/g, replacement: "false" },
       { regex: /\bfalse\b/g, replacement: "true" },
-      { regex: /\+\s*1\b/g, replacement: "- 1" }
+      { regex: /\+\s*1\b/g, replacement: "- 1" },
     ];
 
     for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
@@ -66,7 +66,7 @@ export class EosMutationTester {
             mutatedOp: rule.replacement,
             line: lineIdx + 1,
             mutatedCode: mutatedLines.join("\n"),
-            status: "UNTESTED"
+            status: "UNTESTED",
           });
         }
       }
@@ -80,10 +80,7 @@ export class EosMutationTester {
    * If the test throws or returns false, the mutant is KILLED.
    * If the test passes quietly, the mutant SURVIVED (proving weak test assertion).
    */
-  public evaluateTestSuite(
-    originalCode: string,
-    testRunner: (code: string) => void | boolean
-  ): MutationReport {
+  public evaluateTestSuite(originalCode: string, testRunner: (code: string) => void | boolean): MutationReport {
     const mutants = this.generateMutants(originalCode);
     let killed = 0;
     let survived = 0;
@@ -117,7 +114,7 @@ export class EosMutationTester {
       mutationScore: score,
       grade,
       mutants,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }

@@ -60,7 +60,7 @@ export class EosAcousticFeatureStore {
     vector: AcousticVector8D,
     durationListenedSec: number,
     trackLengthSec = 210,
-    timestampMs = Date.now()
+    timestampMs = Date.now(),
   ): ListenEvent {
     const skipped = durationListenedSec < 30;
     const event: ListenEvent = {
@@ -71,7 +71,7 @@ export class EosAcousticFeatureStore {
       timestampMs,
       durationListenedSec,
       trackLengthSec,
-      skipped
+      skipped,
     };
 
     if (!this.userEvents.has(userId)) {
@@ -99,7 +99,7 @@ export class EosAcousticFeatureStore {
         acousticness: 0.5,
         instrumentalness: 0.5,
         liveness: 0.5,
-        speechiness: 0.5
+        speechiness: 0.5,
       };
       return {
         userId,
@@ -108,7 +108,7 @@ export class EosAcousticFeatureStore {
         totalSkips: 0,
         skipRate: 0.0,
         lastUpdatedMs: asOfTimestampMs,
-        sha256Proof: crypto.createHash("sha256").update(`${userId}:empty`).digest("hex")
+        sha256Proof: crypto.createHash("sha256").update(`${userId}:empty`).digest("hex"),
       };
     }
 
@@ -144,11 +144,12 @@ export class EosAcousticFeatureStore {
       acousticness: this.clamp(centroidSums[4] / effectiveWeight),
       instrumentalness: this.clamp(centroidSums[5] / effectiveWeight),
       liveness: this.clamp(centroidSums[6] / effectiveWeight),
-      speechiness: this.clamp(centroidSums[7] / effectiveWeight)
+      speechiness: this.clamp(centroidSums[7] / effectiveWeight),
     };
 
     const skipRate = Number((totalSkips / events.length).toFixed(4));
-    const proof = crypto.createHash("sha256")
+    const proof = crypto
+      .createHash("sha256")
       .update(`${userId}:${events.length}:${skipRate}:${centroid.energy.toFixed(3)}`)
       .digest("hex");
 
@@ -159,7 +160,7 @@ export class EosAcousticFeatureStore {
       totalSkips,
       skipRate,
       lastUpdatedMs: asOfTimestampMs,
-      sha256Proof: proof
+      sha256Proof: proof,
     };
   }
 
@@ -167,8 +168,26 @@ export class EosAcousticFeatureStore {
    * 3. Calculates 8D Cosine Similarity between user centroid and candidate track.
    */
   public computeAffinityScore(centroid: AcousticVector8D, track: AcousticVector8D): number {
-    const a = [centroid.tempo, centroid.energy, centroid.danceability, centroid.valence, centroid.acousticness, centroid.instrumentalness, centroid.liveness, centroid.speechiness];
-    const b = [track.tempo, track.energy, track.danceability, track.valence, track.acousticness, track.instrumentalness, track.liveness, track.speechiness];
+    const a = [
+      centroid.tempo,
+      centroid.energy,
+      centroid.danceability,
+      centroid.valence,
+      centroid.acousticness,
+      centroid.instrumentalness,
+      centroid.liveness,
+      centroid.speechiness,
+    ];
+    const b = [
+      track.tempo,
+      track.energy,
+      track.danceability,
+      track.valence,
+      track.acousticness,
+      track.instrumentalness,
+      track.liveness,
+      track.speechiness,
+    ];
 
     let dot = 0.0;
     let magA = 0.0;

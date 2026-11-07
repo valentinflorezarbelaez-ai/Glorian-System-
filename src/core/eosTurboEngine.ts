@@ -61,7 +61,7 @@ const SECRET_PATTERNS = [
   { name: "GitHub Personal Access Token", regex: new RegExp("ghp_" + "[0-9a-zA-Z]{24,}") },
   { name: "AWS Access Key ID", regex: new RegExp("AKIA" + "[0-9A-Z]{16}") },
   { name: "Google API Key", regex: new RegExp("AIza" + "[0-9A-Za-z\\-_]{35}") },
-  { name: "PEM Private Key Block", regex: new RegExp("-----BEGIN " + "(RSA |EC |OPENSSH )?PRIVATE KEY-----") }
+  { name: "PEM Private Key Block", regex: new RegExp("-----BEGIN " + "(RSA |EC |OPENSSH )?PRIVATE KEY-----") },
 ];
 
 /**
@@ -82,7 +82,7 @@ export function checkFileSecretsCached(filePath: string): { isClean: boolean; fi
       VERIFICATION_CACHE.set(filePath, {
         ...cached,
         mtimeNs: stat.mtimeNs,
-        size: Number(stat.size)
+        size: Number(stat.size),
       });
       return { isClean: cached.isClean, findings: [...cached.findings], fromCache: true };
     }
@@ -100,12 +100,16 @@ export function checkFileSecretsCached(filePath: string): { isClean: boolean; fi
       mtimeNs: stat.mtimeNs,
       size: Number(stat.size),
       isClean,
-      findings
+      findings,
     });
 
     return { isClean, findings, fromCache: false };
   } catch {
-    return { isClean: false, findings: [`Could not read ${path.basename(filePath)} for the configured pattern scan`], fromCache: false };
+    return {
+      isClean: false,
+      findings: [`Could not read ${path.basename(filePath)} for the configured pattern scan`],
+      fromCache: false,
+    };
   }
 }
 
@@ -116,7 +120,17 @@ export function collectSourceFiles(dir: string, projectRoot: string = dir): stri
   const results: string[] = [];
   if (!fs.existsSync(dir)) return results;
 
-  const ignoredDirs = new Set(["node_modules", ".git", ".eos", ".worktrees", "dist", ".next", "_sandbox", ".turbo", "target"]);
+  const ignoredDirs = new Set([
+    "node_modules",
+    ".git",
+    ".eos",
+    ".worktrees",
+    "dist",
+    ".next",
+    "_sandbox",
+    ".turbo",
+    "target",
+  ]);
   const binaryExtensions = new Set([
     ".exe",
     ".bin",
@@ -132,7 +146,7 @@ export function collectSourceFiles(dir: string, projectRoot: string = dir): stri
     ".pdf",
     ".sqlite",
     ".sqlite-wal",
-    ".sqlite-shm"
+    ".sqlite-shm",
   ]);
 
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -192,7 +206,7 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
     durationUs: durStage1Us,
     durationMs: Number((durStage1Us / 1000).toFixed(3)),
     status: stage1Violations.length === 0 ? "PASS" : "FAIL",
-    details: `${cacheHits + freshScans} files scanned (${cacheHits} content-hash cache hits, ${freshScans} pattern scans). Configured patterns only.`
+    details: `${cacheHits + freshScans} files scanned (${cacheHits} content-hash cache hits, ${freshScans} pattern scans). Configured patterns only.`,
   });
   allViolations.push(...stage1Violations);
 
@@ -208,7 +222,7 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
     durationUs: durStage2Us,
     durationMs: Number((durStage2Us / 1000).toFixed(3)),
     status: archReport.isClean ? "PASS" : "FAIL",
-    details: `Scanned ${archReport.scannedFilesCount} files. Architecture score: ${archReport.architecturePurityScore}%. Cycles found: ${archReport.circularDependencies.length}. Static source analysis only.`
+    details: `Scanned ${archReport.scannedFilesCount} files. Architecture score: ${archReport.architecturePurityScore}%. Cycles found: ${archReport.circularDependencies.length}. Static source analysis only.`,
   });
   if (!archReport.isClean) {
     archReport.violations.forEach((v) => allViolations.push(`[${v.rule}] ${v.file}: ${v.details}`));
@@ -255,7 +269,7 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
     durationUs: durStage3Us,
     durationMs: Number((durStage3Us / 1000).toFixed(3)),
     status: pkgClean ? "PASS" : "FAIL",
-    details: `Declared runtime dependencies checked. Digest: ${sourceInventoryDigest.slice(0, 24)}... (not an SBOM or Merkle root).`
+    details: `Declared runtime dependencies checked. Digest: ${sourceInventoryDigest.slice(0, 24)}... (not an SBOM or Merkle root).`,
   });
 
   // --- Task D: Critical Assets & Semantic Structure ---
@@ -267,7 +281,7 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
     "sw.js",
     "manifest.webmanifest",
     "bin/eos.mjs",
-    "src/mcp/eosMcpServer.ts"
+    "src/mcp/eosMcpServer.ts",
   ];
   let assetsClean = true;
   for (const rel of criticalFiles) {
@@ -285,7 +299,7 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
     durationUs: durStage4Us,
     durationMs: Number((durStage4Us / 1000).toFixed(3)),
     status: assetsClean ? "PASS" : "FAIL",
-    details: `${criticalFiles.filter((rel) => fs.existsSync(path.join(projectRoot, rel))).length}/${criticalFiles.length} required paths exist; file contents and runtime behavior were not verified.`
+    details: `${criticalFiles.filter((rel) => fs.existsSync(path.join(projectRoot, rel))).length}/${criticalFiles.length} required paths exist; file contents and runtime behavior were not verified.`,
   });
 
   const endGlobal = process.hrtime.bigint();
@@ -303,7 +317,7 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
     stages,
     violations: allViolations,
     epistemicState: success ? "LOCAL_CHECKS_PASSED" : "FINDINGS_IDENTIFIED",
-    sourceInventoryDigest
+    sourceInventoryDigest,
   };
 }
 

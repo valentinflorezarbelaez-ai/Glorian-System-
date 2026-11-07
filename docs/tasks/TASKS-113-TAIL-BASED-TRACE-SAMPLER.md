@@ -1,11 +1,12 @@
 # TASKS-113: Dynamic Tail-Based Distributed Trace Sampler
 
 ## Metadata
-* **Task DAG ID**: `TASKS-113`
-* **Governing Specification**: `SPEC-113`
-* **Plan Reference**: `PLAN-113`
-* **Status**: `COMPLETE`
-* **Total Atomic Tasks**: 9
+
+- **Task DAG ID**: `TASKS-113`
+- **Governing Specification**: `SPEC-113`
+- **Plan Reference**: `PLAN-113`
+- **Status**: `COMPLETE`
+- **Total Atomic Tasks**: 9
 
 ---
 

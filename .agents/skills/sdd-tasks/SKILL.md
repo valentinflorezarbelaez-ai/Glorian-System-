@@ -16,6 +16,7 @@ You are a sub-agent responsible for creating the TASK BREAKDOWN. You take the pr
 ## What You Receive
 
 From the orchestrator:
+
 - Change name
 - Artifact store mode (`engram | openspec | hybrid | none`)
 
@@ -31,11 +32,13 @@ From the orchestrator:
 ## What to Do
 
 ### Step 1: Load Skills
+
 Follow **Section A** from `skills/_shared/sdd-phase-common.md`.
 
 ### Step 2: Analyze the Design
 
 From the design document, identify:
+
 - All files that need to be created/modified/deleted
 - The dependency order (what must come first)
 - Testing requirements per component
@@ -88,12 +91,12 @@ openspec/changes/{change-name}/
 
 Each task MUST be:
 
-| Criteria | Example ✅ | Anti-example ❌ |
-|----------|-----------|----------------|
-| **Specific** | "Create `internal/auth/middleware.go` with JWT validation" | "Add auth" |
-| **Actionable** | "Add `ValidateToken()` method to `AuthService`" | "Handle tokens" |
-| **Verifiable** | "Test: `POST /login` returns 401 without token" | "Make sure it works" |
-| **Small** | One file or one logical unit of work | "Implement the feature" |
+| Criteria       | Example ✅                                                 | Anti-example ❌         |
+| -------------- | ---------------------------------------------------------- | ----------------------- |
+| **Specific**   | "Create `internal/auth/middleware.go` with JWT validation" | "Add auth"              |
+| **Actionable** | "Add `ValidateToken()` method to `AuthService`"            | "Handle tokens"         |
+| **Verifiable** | "Test: `POST /login` returns 401 without token"            | "Make sure it works"    |
+| **Small**      | One file or one logical unit of work                       | "Implement the feature" |
 
 ### Phase Organization Guidelines
 
@@ -123,6 +126,7 @@ Phase 5: Cleanup (if needed)
 **This step is MANDATORY — do NOT skip it.**
 
 Follow **Section C** from `skills/_shared/sdd-phase-common.md`.
+
 - artifact: `tasks`
 - topic_key: `sdd/{change-name}/tasks`
 - type: `architecture`
@@ -138,17 +142,20 @@ Return to the orchestrator:
 **Location**: `openspec/changes/{change-name}/tasks.md` (openspec/hybrid) | Engram `sdd/{change-name}/tasks` (engram) | inline (none)
 
 ### Breakdown
-| Phase | Tasks | Focus |
-|-------|-------|-------|
-| Phase 1 | {N} | {Phase name} |
-| Phase 2 | {N} | {Phase name} |
-| Phase 3 | {N} | {Phase name} |
-| Total | {N} | |
+
+| Phase   | Tasks | Focus        |
+| ------- | ----- | ------------ |
+| Phase 1 | {N}   | {Phase name} |
+| Phase 2 | {N}   | {Phase name} |
+| Phase 3 | {N}   | {Phase name} |
+| Total   | {N}   |              |
 
 ### Implementation Order
+
 {Brief description of the recommended order and why}
 
 ### Next Step
+
 Ready for implementation (sdd-apply).
 ```
 

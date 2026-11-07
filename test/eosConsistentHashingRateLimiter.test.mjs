@@ -12,7 +12,6 @@ import { EosTokenBucketRateLimiter } from "../src/core/eosTokenBucketRateLimiter
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
 describe("SPEC-036: Amazon Dynamo Consistent Hashing & Cloudflare Rate Limiting", () => {
-
   describe("BDD-094: Uniform Consistent Hash Ring with Virtual Nodes", () => {
     it("distributes 1,000 keys balanced across 3 physical nodes (64 vnodes each)", () => {
       const ring = new EosConsistentHashRing(["node-us", "node-eu", "node-ap"], 64);
@@ -26,7 +25,7 @@ describe("SPEC-036: Amazon Dynamo Consistent Hashing & Cloudflare Rate Limiting"
       for (const count of counts) {
         const ratio = count / 1000;
         // Each node gets between 20% and 45% (ideal is 33.3%)
-        assert.ok(ratio >= 0.20 && ratio <= 0.45, `Expected balanced ratio between 0.20 and 0.45, got ${ratio}`);
+        assert.ok(ratio >= 0.2 && ratio <= 0.45, `Expected balanced ratio between 0.20 and 0.45, got ${ratio}`);
       }
     });
 
@@ -51,7 +50,7 @@ describe("SPEC-036: Amazon Dynamo Consistent Hashing & Cloudflare Rate Limiting"
 
       // Expected migration is around 1/4 (25%) of keys (+/- 10%)
       const migrationRatio = migratedCount / keys.length;
-      assert.ok(migrationRatio > 0.10 && migrationRatio < 0.40, `Migration ratio was ${migrationRatio}`);
+      assert.ok(migrationRatio > 0.1 && migrationRatio < 0.4, `Migration ratio was ${migrationRatio}`);
     });
   });
 
@@ -123,7 +122,7 @@ describe("SPEC-036: Amazon Dynamo Consistent Hashing & Cloudflare Rate Limiting"
     it("allows burst up to capacity and rejects subsequent calls", () => {
       const limiter = new EosTokenBucketRateLimiter({
         capacity: 10,
-        refillPerSecond: 20
+        refillPerSecond: 20,
       });
 
       // Consume 10 burst tokens
@@ -141,7 +140,7 @@ describe("SPEC-036: Amazon Dynamo Consistent Hashing & Cloudflare Rate Limiting"
     it("handles multiple client keys independently", () => {
       const limiter = new EosTokenBucketRateLimiter({
         capacity: 5,
-        refillPerSecond: 10
+        refillPerSecond: 10,
       });
 
       // Exhaust client A
@@ -168,9 +167,9 @@ describe("SPEC-036: Amazon Dynamo Consistent Hashing & Cloudflare Rate Limiting"
           arguments: {
             key: "account-user-123",
             nodes: ["node-us", "node-eu", "node-sa"],
-            replicas: 2
-          }
-        }
+            replicas: 2,
+          },
+        },
       });
       assert.equal(res.jsonrpc, "2.0");
       const parsed = JSON.parse(res.result.content[0].text);
@@ -185,8 +184,8 @@ describe("SPEC-036: Amazon Dynamo Consistent Hashing & Cloudflare Rate Limiting"
         method: "tools/call",
         params: {
           name: "eos_merkle_sync_diff",
-          arguments: {}
-        }
+          arguments: {},
+        },
       });
       assert.equal(res.jsonrpc, "2.0");
       const parsed = JSON.parse(res.result.content[0].text);
@@ -204,9 +203,9 @@ describe("SPEC-036: Amazon Dynamo Consistent Hashing & Cloudflare Rate Limiting"
           arguments: {
             clientId: "test-client",
             capacity: 5,
-            refillPerSecond: 10
-          }
-        }
+            refillPerSecond: 10,
+          },
+        },
       });
       assert.equal(res.jsonrpc, "2.0");
       const parsed = JSON.parse(res.result.content[0].text);

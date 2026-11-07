@@ -1,11 +1,12 @@
 # TASKS-110: Multi-Window Multi-Burn-Rate SLO & Error Budget Governor
 
 ## Metadata
-* **Task DAG ID**: `TASKS-110`
-* **Governing Specification**: `SPEC-110`
-* **Plan Reference**: `PLAN-110`
-* **Status**: `COMPLETE`
-* **Total Atomic Tasks**: 9
+
+- **Task DAG ID**: `TASKS-110`
+- **Governing Specification**: `SPEC-110`
+- **Plan Reference**: `PLAN-110`
+- **Status**: `COMPLETE`
+- **Total Atomic Tasks**: 9
 
 ---
 

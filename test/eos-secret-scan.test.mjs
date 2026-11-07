@@ -12,18 +12,18 @@ import {
   maskSecret,
   isAllowlisted,
   scanFileContent,
-  scanDirectory
+  scanDirectory,
 } from "../scripts/eos-secret-scan.mjs";
 
 describe("SPEC-123: Fleet Secret-Scan Gate & UI Leak Detector", () => {
   describe("FR-367 / BDD-353: D1 Vendor Token Detector", () => {
     it("flags OpenAI, GitHub, AWS, Google API keys, and PEM blocks", () => {
       const sample = [
-        'const openai = "' + 'sk-' + 'proj-abc123456789012345678901234567890";',
-        'const ghToken = "' + 'ghp_' + '1234567890abcdefghijklmnopqrstuvwxyz";',
-        'const awsKey = "' + 'AKIA' + 'IOSFODNN7EXAMPLE";',
-        'const gKey = "' + 'AIzaSy' + 'D-1234567890abcdefghijklmnopqr123";',
-        'const pem = "-----BEGIN ' + 'RSA PRIVATE KEY-----";'
+        'const openai = "' + "sk-" + 'proj-abc123456789012345678901234567890";',
+        'const ghToken = "' + "ghp_" + '1234567890abcdefghijklmnopqrstuvwxyz";',
+        'const awsKey = "' + "AKIA" + 'IOSFODNN7EXAMPLE";',
+        'const gKey = "' + "AIzaSy" + 'D-1234567890abcdefghijklmnopqr123";',
+        'const pem = "-----BEGIN ' + 'RSA PRIVATE KEY-----";',
       ].join("\n");
       const findings = detectVendorTokens(sample, "src/config.js");
       assert.equal(findings.length, 5);
@@ -130,8 +130,8 @@ describe("SPEC-123: Fleet Secret-Scan Gate & UI Leak Detector", () => {
           fingerprintSha256: hash,
           path: "test/fixtures/mock.json",
           reason: "Synthetic test fixture for unit tests",
-          expiresAt: futureDate
-        }
+          expiresAt: futureDate,
+        },
       ];
 
       const allowed = isAllowlisted(secret, "test/fixtures/mock.json", allowlist);
@@ -147,8 +147,8 @@ describe("SPEC-123: Fleet Secret-Scan Gate & UI Leak Detector", () => {
           fingerprintSha256: hash,
           path: "src/old.js",
           reason: "Legacy exception",
-          expiresAt: pastDate
-        }
+          expiresAt: pastDate,
+        },
       ];
 
       const allowed = isAllowlisted(secret, "src/old.js", allowlist);
@@ -166,11 +166,13 @@ describe("SPEC-123: Fleet Secret-Scan Gate & UI Leak Detector", () => {
         ["Avopak2026*.@", "test/eos-secret-scan.test.mjs"],
         ["UltraSecret99!", "test/eos-secret-scan.test.mjs"],
         ["super_classified_token_xyz", "test/eos-secret-scan.test.mjs"],
-        ["SOVEREIGN_AUTHORIZATION_RESET_TOKEN_NSA_41", "test/eosNsaZeroTrustDefense.test.mjs"]
+        ["SOVEREIGN_AUTHORIZATION_RESET_TOKEN_NSA_41", "test/eosNsaZeroTrustDefense.test.mjs"],
       ];
       for (const [literal, fixturePath] of fixtures) {
         const fingerprintSha256 = crypto.createHash("sha256").update(literal).digest("hex");
-        const entry = allowlist.find((item) => item.fingerprintSha256 === fingerprintSha256 && item.path === fixturePath);
+        const entry = allowlist.find(
+          (item) => item.fingerprintSha256 === fingerprintSha256 && item.path === fixturePath,
+        );
         assert.ok(entry, `missing allowlist entry for ${fixturePath}`);
         assert.ok(entry.reason && entry.reason.length > 0);
         assert.ok(entry.expiresAt > new Date().toISOString().slice(0, 10));

@@ -12,20 +12,12 @@
  * Zero external runtime dependencies. Node 24 strip-only compliant.
  */
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export type SwarmRole = "ARCHITECT" | "SECURITY" | "QUALITY" | "VERIFIER" | "ARBITER";
 
-export type SwarmVerdict =
-  | "CONSENSUS_REACHED"
-  | "QUORUM_NOT_MET"
-  | "VETOED_BY_SECURITY"
-  | "BYZANTINE_SLASHING_TRIPPED";
+export type SwarmVerdict = "CONSENSUS_REACHED" | "QUORUM_NOT_MET" | "VETOED_BY_SECURITY" | "BYZANTINE_SLASHING_TRIPPED";
 
 export interface SwarmAgent {
   readonly id: string;
@@ -72,17 +64,14 @@ export class EosBftAgentSwarmSlashing {
       { id: "agent_architect", role: "ARCHITECT", stake: this.INITIAL_STAKE, isSlashed: false, slashesCount: 0 },
       { id: "agent_security", role: "SECURITY", stake: this.INITIAL_STAKE, isSlashed: false, slashesCount: 0 },
       { id: "agent_quality", role: "QUALITY", stake: this.INITIAL_STAKE, isSlashed: false, slashesCount: 0 },
-      { id: "agent_verifier", role: "VERIFIER", stake: this.INITIAL_STAKE, isSlashed: false, slashesCount: 0 }
+      { id: "agent_verifier", role: "VERIFIER", stake: this.INITIAL_STAKE, isSlashed: false, slashesCount: 0 },
     ];
   }
 
   /**
    * Evaluates a proposal through the BFT Agent Swarm, enforcing quorum, veto, and slashing.
    */
-  public static evaluateConsensus(
-    swarm: SwarmAgent[],
-    proposal: ProposalInput
-  ): SwarmConsensusReport {
+  public static evaluateConsensus(swarm: SwarmAgent[], proposal: ProposalInput): SwarmConsensusReport {
     assertPrecondition(Array.isArray(swarm) && swarm.length >= 4, "Swarm requires at least 4 agents for 3f+1 BFT");
     assertPrecondition(Boolean(proposal && proposal.proposalId), "proposalId is required");
 
@@ -147,7 +136,7 @@ export class EosBftAgentSwarmSlashing {
 
     const timestampIso = new Date().toISOString();
     const sha256Receipt = pureSha256(
-      `BFT_SWARM:${proposal.proposalId}:${verdict}:${votesFor}/${totalAgents}:${slashedList.length}:${timestampIso}`
+      `BFT_SWARM:${proposal.proposalId}:${verdict}:${votesFor}/${totalAgents}:${slashedList.length}:${timestampIso}`,
     );
 
     return deepFreeze({
@@ -162,17 +151,14 @@ export class EosBftAgentSwarmSlashing {
       verdict,
       agentStakes: stakesMap,
       sha256Receipt,
-      timestampIso
+      timestampIso,
     });
   }
 
   /**
    * Persists SwarmConsensusReport in durable SQLite WAL ledger.
    */
-  public static recordReceiptInLedger(
-    report: SwarmConsensusReport,
-    dbPathOrRootDir?: string
-  ): boolean {
+  public static recordReceiptInLedger(report: SwarmConsensusReport, dbPathOrRootDir?: string): boolean {
     const dbPath = dbPathOrRootDir
       ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
         ? dbPathOrRootDir
@@ -192,9 +178,9 @@ export class EosBftAgentSwarmSlashing {
           votesAgainst: report.votesAgainst,
           activeVoters: report.activeVotersCount,
           slashedAgents: report.slashedAgents,
-          sha256Receipt: report.sha256Receipt
+          sha256Receipt: report.sha256Receipt,
         },
-        engramTopicKey: `eos/consensus/${report.proposalId}`
+        engramTopicKey: `eos/consensus/${report.proposalId}`,
       });
       return true;
     } catch {

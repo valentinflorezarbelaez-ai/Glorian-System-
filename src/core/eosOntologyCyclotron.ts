@@ -51,7 +51,7 @@ export class EosOntologyCyclotron {
     type: string,
     properties: Record<string, unknown> = {},
     validFrom: number = Date.now(),
-    validTo: number = Infinity
+    validTo: number = Infinity,
   ): OntologyNode {
     const txTimestamp = Date.now();
     const node: OntologyNode = {
@@ -79,7 +79,7 @@ export class EosOntologyCyclotron {
     predicate: string,
     weight: number = 1.0,
     validFrom: number = Date.now(),
-    validTo: number = Infinity
+    validTo: number = Infinity,
   ): OntologyEdge {
     const txTimestamp = Date.now();
     const id = `edge:${from}->${predicate}->${to}:${txTimestamp}`;
@@ -118,17 +118,10 @@ export class EosOntologyCyclotron {
     return null;
   }
 
-  public getOutgoing(
-    fromId: string,
-    predicate?: string,
-    asOfTime: number = Date.now()
-  ): readonly OntologyEdge[] {
+  public getOutgoing(fromId: string, predicate?: string, asOfTime: number = Date.now()): readonly OntologyEdge[] {
     const edges = this.outgoingEdges.get(fromId) || [];
     return edges.filter(
-      (e) =>
-        asOfTime >= e.validFrom &&
-        asOfTime <= e.validTo &&
-        (!predicate || e.predicate === predicate)
+      (e) => asOfTime >= e.validFrom && asOfTime <= e.validTo && (!predicate || e.predicate === predicate),
     );
   }
 
@@ -139,7 +132,7 @@ export class EosOntologyCyclotron {
     startId: string,
     predicate?: string,
     maxDepth: number = 16,
-    asOfTime: number = Date.now()
+    asOfTime: number = Date.now(),
   ): TransitiveClosureResult {
     const startNs = process.hrtime.bigint();
     const visited = new Set<string>();
@@ -191,9 +184,7 @@ export class EosOntologyCyclotron {
 
     let activeEdges = 0;
     for (const [, edges] of this.outgoingEdges) {
-      activeEdges += edges.filter(
-        (e) => timestamp >= e.validFrom && timestamp <= e.validTo
-      ).length;
+      activeEdges += edges.filter((e) => timestamp >= e.validFrom && timestamp <= e.validTo).length;
     }
 
     const proofData = `asOf:${timestamp}:${activeNodes}:${activeEdges}`;

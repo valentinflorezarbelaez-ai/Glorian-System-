@@ -33,7 +33,7 @@ describe("SPEC-033: 49 Levels of Mind, Three Mountains & Adaptive L0 Autotuner",
         category: "IMPATIENCE",
         observedCenter: "INTELLECTUAL",
         consciousSelfObservation: true,
-        deepMeditationPenetrationLevel: 49
+        deepMeditationPenetrationLevel: 49,
       });
 
       assert.equal(result.totalLevelsAnalyzed, 49);
@@ -51,7 +51,7 @@ describe("SPEC-033: 49 Levels of Mind, Three Mountains & Adaptive L0 Autotuner",
         category: "ANGER",
         observedCenter: "EMOTIONAL",
         consciousSelfObservation: false,
-        deepMeditationPenetrationLevel: 5
+        deepMeditationPenetrationLevel: 5,
       });
 
       assert.equal(result.depthReached, 5);
@@ -73,7 +73,7 @@ describe("SPEC-033: 49 Levels of Mind, Three Mountains & Adaptive L0 Autotuner",
         cajitasBudgetRespected: true,
         claveDeSolPracticed: true,
         circadianScreenVetoRespected: true,
-        selflessServiceOrDonation: true
+        selflessServiceOrDonation: true,
       });
 
       assert.equal(audit.architect, "Valentin Florez Arbelaez");
@@ -81,8 +81,8 @@ describe("SPEC-033: 49 Levels of Mind, Three Mountains & Adaptive L0 Autotuner",
       assert.equal(audit.overallAlignmentIndex, 1.0);
       assert.equal(audit.sacredCovenantPreserved, true);
       assert.equal(audit.mountains.length, 3);
-      assert.ok(audit.mountains.every(m => m.status === "ELEVATED_VIBRATION"));
-      assert.ok(audit.tacticalDirectives.some(d => d.includes("Alineación sublime")));
+      assert.ok(audit.mountains.every((m) => m.status === "ELEVATED_VIBRATION"));
+      assert.ok(audit.tacticalDirectives.some((d) => d.includes("Alineación sublime")));
     });
 
     it("detects gaps when screen veto or budget or Layer 0 focus is violated", () => {
@@ -94,12 +94,12 @@ describe("SPEC-033: 49 Levels of Mind, Three Mountains & Adaptive L0 Autotuner",
         cajitasBudgetRespected: false,
         claveDeSolPracticed: true,
         circadianScreenVetoRespected: false, // Screen after 22:30
-        selflessServiceOrDonation: false
+        selflessServiceOrDonation: false,
       });
 
       assert.ok(audit.overallAlignmentIndex < 0.5);
       assert.equal(audit.sacredCovenantPreserved, false);
-      assert.ok(audit.tacticalDirectives.some(d => d.includes("Desconectar a las 22:30")));
+      assert.ok(audit.tacticalDirectives.some((d) => d.includes("Desconectar a las 22:30")));
     });
 
     it("verifies the 5 codified pillars of the Architect Codex", () => {

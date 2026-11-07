@@ -1,6 +1,7 @@
 # SPEC-036: AMAZON DYNAMO CONSISTENT HASHING, ANTI-ENTROPY MERKLE SYNC & CLOUDFLARE MICROSECOND TOKEN-BUCKET
 
 ## 1. Specification Metadata
+
 - **Spec ID**: `SPEC-036`
 - **Title**: Amazon Dynamo Consistent Hashing, Anti-Entropy Merkle Sync & Cloudflare Token-Bucket
 - **Status**: `APPROVED`
@@ -13,16 +14,20 @@
 ## 2. Functional Requirements (EARS Patterns)
 
 ### FR-103: Consistent Hash Ring with Virtual Nodes (Amazon Dynamo Pattern)
+
 - **EARS Pattern (Event-Driven)**: CUANDO un cliente consulta o muta una clave en el cluster, EL SISTEMA mapeará la clave a un punto en el anillo de hash $0 \dots 2^{32}-1$ y devolverá el nodo físico responsable mediante búsqueda binaria $O(\log(N \times V))$ sobre los $V$ nodos virtuales por nodo físico.
 - **Invariante**: La adición o remoción de un nodo físico causará la migración de únicamente $1/N$ de las claves totales en promedio, garantizando inmunidad a tormentas de rehasheo.
 
 ### FR-104: Preference List & Multi-Replica Routing
+
 - **EARS Pattern (State-Driven)**: MIENTRAS se soliciten múltiples réplicas para una clave ($R > 1$), EL SISTEMA recorrerá el anillo en sentido horario hasta acumular $R$ nodos físicos distintos, omitiendo colisiones de vnodes pertenecientes al mismo nodo físico.
 
 ### FR-105: Anti-Entropy Merkle Tree Background Synchronization
+
 - **EARS Pattern (Event-Driven)**: CUANDO dos réplicas ejecutan una sesión de sincronización anti-entropía, EL SISTEMA comparará las raíces Merkle jerárquicas; SI las raíces coinciden, ENTONCES EL SISTEMA terminará en $O(1)$; SI difieren, descenderá por los subárboles para identificar los rangos de claves divergentes en $O(\log K)$ sin transmitir datos intactos.
 
 ### FR-106: Cloudflare-Grade Microsecond Token-Bucket Edge Rate Limiting
+
 - **EARS Pattern (State-Driven)**: MIENTRAS ingresen peticiones en el borde del sistema, EL SISTEMA calculará la reposición de tokens basada en el delta de nanosegundos monotónicos (`process.hrtime.bigint()`), permitiendo ráfagas hasta la capacidad del bucket ($B$) y limitando la tasa sostenida a $R$ peticiones por segundo con descarte inmediato (`429 Too Many Requests`).
 
 ---

@@ -47,10 +47,10 @@ export interface TraceSamplingDecision {
 }
 
 export interface TailSamplerConfig {
-  readonly latencyThresholdMs?: number;   // default: 500ms
-  readonly nominalSampleRate?: number;    // default: 0.001 (0.1%)
-  readonly maxActiveTraces?: number;      // default: 10,000
-  readonly retentionWindowMs?: number;    // default: 60,000ms
+  readonly latencyThresholdMs?: number; // default: 500ms
+  readonly nominalSampleRate?: number; // default: 0.001 (0.1%)
+  readonly maxActiveTraces?: number; // default: 10,000
+  readonly retentionWindowMs?: number; // default: 60,000ms
 }
 
 export interface TailSamplerStatus {
@@ -133,17 +133,12 @@ export class EosTailBasedTraceSampler {
    * Evaluates the completed trace and makes a definitive sampling decision.
    * Flushes the trace buffer upon decision.
    */
-  public evaluateTrace(
-    traceId: string,
-    options: { forceSample?: boolean } = {}
-  ): TraceSamplingDecision {
+  public evaluateTrace(traceId: string, options: { forceSample?: boolean } = {}): TraceSamplingDecision {
     const buffer = this.buffers.get(traceId);
     const now = Date.now();
 
     if (!buffer || buffer.spans.length === 0) {
-      const receipt = createHash("sha256")
-        .update(`TRACE_EMPTY:${traceId}:${now}`)
-        .digest("hex");
+      const receipt = createHash("sha256").update(`TRACE_EMPTY:${traceId}:${now}`).digest("hex");
       return {
         traceId,
         sampled: false,
@@ -173,9 +168,7 @@ export class EosTailBasedTraceSampler {
     const totalDurationMs = Math.max(0, maxEnd - minStart);
 
     // Rule 1: Check for explicit errors (HTTP 5xx, hasError flag)
-    const hasError = spans.some(
-      (s) => s.hasError === true || (s.statusCode !== undefined && s.statusCode >= 500)
-    );
+    const hasError = spans.some((s) => s.hasError === true || (s.statusCode !== undefined && s.statusCode >= 500));
 
     // Rule 2: Check for tail latency SLA breach
     const hasHighLatency = totalDurationMs > this.latencyThresholdMs;
@@ -232,7 +225,7 @@ export class EosTailBasedTraceSampler {
    */
   public recordAndEvaluate(
     span: TraceSpan,
-    isEndSpan: boolean = false
+    isEndSpan: boolean = false,
   ): { spanRecorded: boolean; decision?: TraceSamplingDecision } {
     this.recordSpan(span);
     if (isEndSpan) {
@@ -268,7 +261,7 @@ export class EosTailBasedTraceSampler {
   public getStatus(): TailSamplerStatus {
     const receipt = createHash("sha256")
       .update(
-        `STATUS:${this.buffers.size}:${this.totalSpansRecorded}:${this.tracesEvaluated}:${this.tracesSampled}:${this.tracesDropped}:${this.tracesEvicted}`
+        `STATUS:${this.buffers.size}:${this.totalSpansRecorded}:${this.tracesEvaluated}:${this.tracesSampled}:${this.tracesDropped}:${this.tracesEvicted}`,
       )
       .digest("hex");
 

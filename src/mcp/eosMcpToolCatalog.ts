@@ -24,58 +24,8 @@ export interface AnnotatedMcpToolDefinition {
   readonly annotations: McpToolAnnotations;
 }
 
-/**
- * Curated Tier-0 Core Engineering Profile (25 real, high-signal control-plane tools).
- * Keeps LLM tool-selection precision maximized when `EOS_MCP_PROFILE=core`.
- */
-export const CORE_TIER0_TOOL_NAMES: ReadonlySet<string> = new Set([
-  "eos_antigravity_direct",
-  "eos_antigravity_doctor",
-  "eos_gentleman_audit",
-  "eos_gentleman_update",
-  "eos_enterprise_workspace",
-  "eos_evolve_module",
-  "eos_sqlite_ledger",
-  "eos_ast_analyze",
-  "eos_amplify_prompt",
-  "eos_semantic_search",
-  "eos_hnsw_knn_search",
-  "eos_check_architecture",
-  "eos_check_openspec",
-  "eos_get_blast_radius",
-  "eos_query_code_graph",
-  "eos_evaluate_decision",
-  "eos_tmr_consensus",
-  "eos_validate_patch",
-  "eos_optimize_context",
-  "eos_turbo_verify",
-  "eos_refactor_audit",
-  "eos_autonomous_heal",
-  "eos_manage_worktree",
-  "eos_fleet_soundcheck",
-  "eos_audit_fleet",
-  "eos_mcts_tune",
-  "eos_canary_rollout",
-  "eos_agent_topology_mesh",
-  "eos_invariant_engine",
-  "eos_contract_governor",
-  "eos_surgical_healing",
-  "eos_tlc_checker",
-  "eos_github_gate",
-  "eos_microvm_sandbox",
-  "eos_dashboard_status",
-  "eos_fleet_verify",
-  "eos_unitotal_evaluate",
-  "eos_fuzz_hypervisor",
-  "eos_conscious_witness",
-  "eos_sapfix_autoshipper",
-  "eos_slsa_provenance_sbom",
-  "eos_content_addressable_cache",
-  "eos_smt_reasoning_prover",
-  "eos_chaos_monkey_live",
-  "eos_bft_swarm_consensus",
-  "eos_health_check"
-]);
+import { CORE_TIER0_TOOL_NAMES } from "../core/eosMcpSchemaValidator.ts";
+export { CORE_TIER0_TOOL_NAMES };
 
 /**
  * Tools capable of mutating local workspace files, Git worktrees, or durable ledger state
@@ -101,20 +51,20 @@ const MUTATION_CAPABLE_TOOLS: ReadonlySet<string> = new Set([
   "eos_sapfix_autoshipper",
   "eos_content_addressable_cache",
   "eos_chaos_monkey_live",
-  "eos_fleet_registry_sync"
+  "eos_fleet_registry_sync",
 ]);
 
-const DESTRUCTIVE_CAPABLE_TOOLS: ReadonlySet<string> = new Set([
-  "eos_manage_worktree"
-]);
+const DESTRUCTIVE_CAPABLE_TOOLS: ReadonlySet<string> = new Set(["eos_manage_worktree"]);
 
 function humanizeToolTitle(toolName: string): string {
   return toolName
     .replace(/^eos_/, "EOS ")
     .split("_")
-    .map((part) => (part.length <= 3 && /^(mcp|sdd|ast|hft|dsp|nsa|tmr|wal|dst|dbc|cas|smt|bft)$/i.test(part)
-      ? part.toUpperCase()
-      : part.charAt(0).toUpperCase() + part.slice(1)))
+    .map((part) =>
+      part.length <= 3 && /^(mcp|sdd|ast|hft|dsp|nsa|tmr|wal|dst|dbc|cas|smt|bft)$/i.test(part)
+        ? part.toUpperCase()
+        : part.charAt(0).toUpperCase() + part.slice(1),
+    )
     .join(" ");
 }
 
@@ -127,12 +77,16 @@ export function computeToolAnnotations(toolName: string): McpToolAnnotations {
     readOnlyHint: !isMutating,
     destructiveHint: isDestructive,
     idempotentHint: !isMutating || toolName === "eos_reconcile_state",
-    openWorldHint: false
+    openWorldHint: false,
   };
 }
 
 export function normalizeToolProfile(rawProfile?: string): McpToolProfile {
-  return String(rawProfile || "").trim().toLowerCase() === "core" ? "core" : "full";
+  return String(rawProfile || "")
+    .trim()
+    .toLowerCase() === "core"
+    ? "core"
+    : "full";
 }
 
 export function annotateAndFilterTools(
@@ -141,15 +95,12 @@ export function annotateAndFilterTools(
     readonly description: string;
     readonly inputSchema: Record<string, unknown>;
   }>,
-  profile: McpToolProfile = "full"
+  profile: McpToolProfile = "full",
 ): AnnotatedMcpToolDefinition[] {
-  const filtered =
-    profile === "core"
-      ? rawTools.filter((tool) => CORE_TIER0_TOOL_NAMES.has(tool.name))
-      : rawTools;
+  const filtered = profile === "core" ? rawTools.filter((tool) => CORE_TIER0_TOOL_NAMES.has(tool.name)) : rawTools;
 
   return filtered.map((tool) => ({
     ...tool,
-    annotations: computeToolAnnotations(tool.name)
+    annotations: computeToolAnnotations(tool.name),
   }));
 }

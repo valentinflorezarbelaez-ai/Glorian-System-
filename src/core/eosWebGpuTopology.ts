@@ -37,9 +37,7 @@ export class EosWebGpuTopologyBridge {
   private isGpuAvailable = false;
 
   constructor(projectRoot?: string) {
-    const currentDir = typeof __dirname !== "undefined"
-      ? __dirname
-      : path.dirname(fileURLToPath(import.meta.url));
+    const currentDir = typeof __dirname !== "undefined" ? __dirname : path.dirname(fileURLToPath(import.meta.url));
     const root = projectRoot || path.resolve(currentDir, "../../");
     const shaderPath = path.join(root, "src/native/eos_topology_shader.wgsl");
 
@@ -76,7 +74,7 @@ export class EosWebGpuTopologyBridge {
       executionMode: this.isGpuAvailable ? "WEBGPU_HARDWARE_ACCELERATED" : "ZERO_ALLOCATION_CPU_SIMD_FALLBACK",
       shaderValid: this.wgslCode.includes("@compute"),
       wgslWorkgroupSize: 64,
-      zeroAllocationGuaranteed: true
+      zeroAllocationGuaranteed: true,
     };
   }
 
@@ -84,7 +82,7 @@ export class EosWebGpuTopologyBridge {
     nodes: Array<{ id: string; x: number; y: number; z: number; vx?: number; vy?: number; vz?: number }>,
     pitchX = 0.25,
     angleY = 0.0,
-    zoom = 1.0
+    zoom = 1.0,
   ): Array<{ id: string; screenX: number; screenY: number; depth: number }> {
     const cosY = Math.cos(angleY);
     const sinY = Math.sin(angleY);
@@ -102,7 +100,7 @@ export class EosWebGpuTopologyBridge {
         id: n.id,
         screenX: Number((x1 * scale).toFixed(3)),
         screenY: Number((y2 * scale).toFixed(3)),
-        depth: Number(z2.toFixed(3))
+        depth: Number(z2.toFixed(3)),
       };
     });
   }
@@ -113,7 +111,7 @@ export class EosWebGpuTopologyBridge {
   public projectTopology(
     angleY = 0.0,
     pitchX = 0.25,
-    zoom = 1.0
+    zoom = 1.0,
   ): { nodes: ProjectedNode3D[]; report: WebGpuComputeReport } {
     const startNs = process.hrtime.bigint();
     const rawNodes = getFleetNodes();
@@ -166,7 +164,7 @@ export class EosWebGpuTopologyBridge {
         projX: Number((x1 * scaleFactor).toFixed(3)),
         projY: Number((y2 * scaleFactor).toFixed(3)),
         depth: Number(z2.toFixed(3)),
-        scale: Number(scaleFactor.toFixed(3))
+        scale: Number(scaleFactor.toFixed(3)),
       });
     }
 
@@ -180,8 +178,8 @@ export class EosWebGpuTopologyBridge {
         nodesProjected: projected.length,
         durationUs,
         wgslShaderSize: Buffer.byteLength(this.wgslCode),
-        status: "APEX_COMPUTE_SUCCESS"
-      }
+        status: "APEX_COMPUTE_SUCCESS",
+      },
     };
   }
 }

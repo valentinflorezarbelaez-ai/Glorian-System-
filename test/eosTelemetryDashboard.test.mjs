@@ -8,7 +8,6 @@ import { fileURLToPath } from "node:url";
 
 import { EosTelemetryDashboard } from "../src/core/eosTelemetryDashboard.ts";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
-import { EosDurableSqliteLedger } from "../src/core/eosDurableSqliteLedger.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,24 +18,27 @@ const projectRoot = path.resolve(__dirname, "..");
  */
 function httpGet(url) {
   return new Promise((resolve, reject) => {
-    http.get(url, { headers: { Connection: "close" }, agent: false }, (res) => {
-      let data = "";
-      res.on("data", (chunk) => {
-        data += chunk;
-      });
-      res.on("end", () => {
-        resolve({
-          statusCode: res.statusCode,
-          headers: res.headers,
-          body: data
+    http
+      .get(url, { headers: { Connection: "close" }, agent: false }, (res) => {
+        let data = "";
+        res.on("data", (chunk) => {
+          data += chunk;
         });
-      });
-    }).on("error", reject);
+        res.on("end", () => {
+          resolve({
+            statusCode: res.statusCode,
+            headers: res.headers,
+            body: data,
+          });
+        });
+      })
+      .on("error", reject);
   });
 }
 
 test("BDD-191: Dashboard server starts, binds port, and shuts down cleanly", async () => {
-  const testPort = 14441;
+  // Port 0: OS assigns a random available port (Big Tech pattern for parallel test isolation)
+  const testPort = 0;
   const dashboard = new EosTelemetryDashboard(projectRoot, testPort);
 
   try {
@@ -44,9 +46,10 @@ test("BDD-191: Dashboard server starts, binds port, and shuts down cleanly", asy
     const server = await dashboard.start();
     assert.equal(dashboard.isListening(), true);
     assert.ok(server);
+    const boundPort = server.address().port;
 
     // Verify root HTML responds with 200 OK
-    const res = await httpGet(`http://127.0.0.1:${testPort}/`);
+    const res = await httpGet(`http://127.0.0.1:${boundPort}/`);
     assert.equal(res.statusCode, 200);
     assert.ok(res.headers["content-type"].includes("text/html"));
     assert.ok(res.body.includes("EOS Sovereign Telemetry Dashboard"));
@@ -57,12 +60,12 @@ test("BDD-191: Dashboard server starts, binds port, and shuts down cleanly", asy
 });
 
 test("BDD-192: GET /api/telemetry returns valid JSON snapshot with zero runtime dependencies", async () => {
-  const testPort = 14442;
-  const dashboard = new EosTelemetryDashboard(projectRoot, testPort);
+  const dashboard = new EosTelemetryDashboard(projectRoot, 0);
 
   try {
-    await dashboard.start();
-    const res = await httpGet(`http://127.0.0.1:${testPort}/api/telemetry`);
+    const server = await dashboard.start();
+    const port = server.address().port;
+    const res = await httpGet(`http://127.0.0.1:${port}/api/telemetry`);
     assert.equal(res.statusCode, 200);
     assert.ok(res.headers["content-type"].includes("application/json"));
 
@@ -83,12 +86,12 @@ test("BDD-192: GET /api/telemetry returns valid JSON snapshot with zero runtime 
 });
 
 test("BDD-193: GET /api/ledger returns SQLite entries, pagination, and SHA-256 chain status", async () => {
-  const testPort = 14443;
-  const dashboard = new EosTelemetryDashboard(projectRoot, testPort);
+  const dashboard = new EosTelemetryDashboard(projectRoot, 0);
 
   try {
-    await dashboard.start();
-    const res = await httpGet(`http://127.0.0.1:${testPort}/api/ledger?limit=10`);
+    const server = await dashboard.start();
+    const port = server.address().port;
+    const res = await httpGet(`http://127.0.0.1:${port}/api/ledger?limit=10`);
     assert.equal(res.statusCode, 200);
 
     const payload = JSON.parse(res.body);
@@ -102,12 +105,12 @@ test("BDD-193: GET /api/ledger returns SQLite entries, pagination, and SHA-256 c
 });
 
 test("BDD-194: GET /api/topology returns acyclic subagent DAG and active agents", async () => {
-  const testPort = 14444;
-  const dashboard = new EosTelemetryDashboard(projectRoot, testPort);
+  const dashboard = new EosTelemetryDashboard(projectRoot, 0);
 
   try {
-    await dashboard.start();
-    const res = await httpGet(`http://127.0.0.1:${testPort}/api/topology`);
+    const server = await dashboard.start();
+    const port = server.address().port;
+    const res = await httpGet(`http://127.0.0.1:${port}/api/topology`);
     assert.equal(res.statusCode, 200);
 
     const payload = JSON.parse(res.body);
@@ -121,22 +124,22 @@ test("BDD-194: GET /api/topology returns acyclic subagent DAG and active agents"
 });
 
 test("BDD-195: GET / delivers responsive HTML5 UI with SVG DAG and accessibility landmarks", async () => {
-  const testPort = 14445;
-  const dashboard = new EosTelemetryDashboard(projectRoot, testPort);
+  const dashboard = new EosTelemetryDashboard(projectRoot, 0);
 
   try {
-    await dashboard.start();
-    const res = await httpGet(`http://127.0.0.1:${testPort}/`);
+    const server = await dashboard.start();
+    const port = server.address().port;
+    const res = await httpGet(`http://127.0.0.1:${port}/`);
     assert.equal(res.statusCode, 200);
 
     // Check semantic HTML landmarks and SVG topological rendering
     assert.ok(res.body.includes("<header"));
     assert.ok(res.body.includes("<main"));
     assert.ok(res.body.includes("<svg"));
-    assert.ok(res.body.includes("id=\"agent-topology-dag\""));
-    assert.ok(res.body.includes("id=\"token-odometer\""));
-    assert.ok(res.body.includes("id=\"ledger-stream\""));
-    assert.ok(res.body.includes("aria-label=\"Agent Topology DAG\""));
+    assert.ok(res.body.includes('id="agent-topology-dag"'));
+    assert.ok(res.body.includes('id="token-odometer"'));
+    assert.ok(res.body.includes('id="ledger-stream"'));
+    assert.ok(res.body.includes('aria-label="Agent Topology DAG"'));
   } finally {
     await dashboard.stop();
   }
@@ -144,7 +147,6 @@ test("BDD-195: GET / delivers responsive HTML5 UI with SVG DAG and accessibility
 
 test("BDD-196: MCP tool eos_dashboard_status dispatches nominal snapshot and records receipt in SQLite WAL", () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-dashboard-mcp-test-"));
-  const dbPath = path.join(tmpDir, "dashboard_test.sqlite");
 
   try {
     const server = new EosMcpServer(projectRoot, "core");
@@ -157,9 +159,9 @@ test("BDD-196: MCP tool eos_dashboard_status dispatches nominal snapshot and rec
         arguments: {
           action: "snapshot",
           port: 4321,
-          recordToLedger: true
-        }
-      }
+          recordToLedger: true,
+        },
+      },
     });
 
     assert.ok(mcpRes.result);

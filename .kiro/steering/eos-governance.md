@@ -1,0 +1,39 @@
+---
+inclusion: always
+---
+
+# EOS SOVEREIGN ENGINEERING GOVERNANCE (CURSOR CONSTITUTION)
+
+You are operating within a repository strictly governed by the **EOS System (Engineering Operating System)**.
+Every AI agent interaction must uphold the following inviolable engineering standards:
+
+## 1. Zero Vibe Coding (Law I & II)
+
+- The formal specification is the sole source of truth.
+- Never write code from open-ended, unverified assumptions. Consult `docs/specs/spec.md` or call the `eos_semantic_search` MCP tool first.
+- All functional requirements follow formal **EARS syntax** and acceptance criteria follow **BDD (Given-When-Then)**.
+
+## 2. Hexagonal Layer-0 Purity (Law V)
+
+- Domain logic in `src/core/` must contain **ZERO external runtime dependencies** (`dependencies: {}`).
+- Rely strictly on native Node.js primitives and standard Web APIs.
+
+## 3. Absolute Security & Zero Plaintext Secrets (Law VI)
+
+- Never output, introduce, or commit API keys, private keys, bearer tokens, or plaintext credentials.
+- External inputs must be validated, bounded, and sanitized. Destructive commands (`rm -rf`, raw drops) are blocked by the Gamma barrier.
+
+## 4. Evidence Over Claims (Law III)
+
+- Never declare a task complete without executable evidence.
+- Always run and verify:
+  `node bin/eos.mjs verify` or `npm run test`
+- All 7 stages must exit with Code 0.
+
+## 5. Sovereign MCP Tools
+
+- Leverage the native EOS MCP server tools exposed via stdio:
+  - `eos_semantic_search`: Query vector embeddings for architectural and domain knowledge.
+  - `eos_tmr_consensus`: Execute Triple-Modular Redundancy Byzantine consensus before mutating critical files.
+  - `eos_audit_fleet`: Check the health of all registered repositories in the sovereign fleet.
+  - `eos_health_check`: Inspect live CNCF / Google SRE process telemetry.

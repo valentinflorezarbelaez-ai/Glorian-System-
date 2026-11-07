@@ -13,12 +13,7 @@
  */
 
 import crypto from "node:crypto";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface ZkProofParameters {
@@ -47,17 +42,17 @@ export class EosZeroKnowledgeProofVerifier {
   public static readonly DEFAULT_PARAMS: ZkProofParameters = (() => {
     const p = BigInt(
       "0xFFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD1" +
-      "29024E088A67CC74020BBEA63B139B22514A08798E3404DD" +
-      "EF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245" +
-      "E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7ED" +
-      "EE386BFB5A899FA5AE9F24117C4B1FE649286651ECE65381" +
-      "FFFFFFFFFFFFFFFF"
+        "29024E088A67CC74020BBEA63B139B22514A08798E3404DD" +
+        "EF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245" +
+        "E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7ED" +
+        "EE386BFB5A899FA5AE9F24117C4B1FE649286651ECE65381" +
+        "FFFFFFFFFFFFFFFF",
     );
     const q = (p - 1n) / 2n;
     return deepFreeze({
       p,
       q,
-      g: 2n
+      g: 2n,
     });
   })();
 
@@ -121,11 +116,7 @@ export class EosZeroKnowledgeProofVerifier {
   /**
    * Prover creates a non-interactive Schnorr zero-knowledge proof without disclosing secret x.
    */
-  public createProof(
-    secretX: bigint,
-    contextMessage: string,
-    ephemeralNonceV?: bigint
-  ): ZkSchnorrProof {
+  public createProof(secretX: bigint, contextMessage: string, ephemeralNonceV?: bigint): ZkSchnorrProof {
     const { p, q, g } = this.params;
     const y = this.deriveStatement(secretX);
 
@@ -133,17 +124,17 @@ export class EosZeroKnowledgeProofVerifier {
     // one derived from Date.now()) can be reused across proofs, and two proofs
     // sharing a nonce leak the secret witness: x = (s1 - s2) / (c2 - c1) mod q.
     // `ephemeralNonceV` remains a deterministic injection seam for testing.
-    const v = ephemeralNonceV ?? (EosZeroKnowledgeProofVerifier.secureRandomBelow(q - 1n) + 1n);
+    const v = ephemeralNonceV ?? EosZeroKnowledgeProofVerifier.secureRandomBelow(q - 1n) + 1n;
     const R = EosZeroKnowledgeProofVerifier.modPow(g, v, p);
 
     // Fiat-Shamir challenge: c = H(g || y || R || contextMessage) mod q
     const challengeHex = pureSha256(
-      `eos:zk:challenge:${g.toString(16)}:${y.toString(16)}:${R.toString(16)}:${contextMessage}`
+      `eos:zk:challenge:${g.toString(16)}:${y.toString(16)}:${R.toString(16)}:${contextMessage}`,
     );
     const c = BigInt(`0x${challengeHex}`) % q;
 
     // Response: s = (v - c * x) mod q
-    let s = (v - (c * secretX)) % q;
+    let s = (v - c * secretX) % q;
     if (s < 0n) {
       s += q;
     }
@@ -152,7 +143,7 @@ export class EosZeroKnowledgeProofVerifier {
       statementY: y.toString(16),
       commitmentR: R.toString(16),
       responseS: s.toString(16),
-      contextMessage
+      contextMessage,
     });
 
     return proof;
@@ -174,7 +165,7 @@ export class EosZeroKnowledgeProofVerifier {
 
     // Recompute challenge c
     const challengeHex = pureSha256(
-      `eos:zk:challenge:${g.toString(16)}:${y.toString(16)}:${R.toString(16)}:${proof.contextMessage}`
+      `eos:zk:challenge:${g.toString(16)}:${y.toString(16)}:${R.toString(16)}:${proof.contextMessage}`,
     );
     const c = BigInt(`0x${challengeHex}`) % q;
 
@@ -192,7 +183,7 @@ export class EosZeroKnowledgeProofVerifier {
     // receipt is a pure function of the proof tuple and the verdict, so it is
     // reproducible and carries no wall-clock entropy.
     const attestationSha256 = pureSha256(
-      `zk-receipt:${proof.statementY}:${proof.commitmentR}:${proof.responseS}:${proof.contextMessage}:${valid}`
+      `zk-receipt:${proof.statementY}:${proof.commitmentR}:${proof.responseS}:${proof.contextMessage}:${valid}`,
     );
 
     const result: ZkVerificationResult = deepFreeze({
@@ -200,7 +191,7 @@ export class EosZeroKnowledgeProofVerifier {
       statementY: proof.statementY,
       contextMessage: proof.contextMessage,
       attestationSha256,
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     });
 
     if (this.ledger) {
@@ -212,8 +203,8 @@ export class EosZeroKnowledgeProofVerifier {
           payload: {
             valid,
             statementY: proof.statementY,
-            attestationSha256
-          }
+            attestationSha256,
+          },
         });
       } catch {
         // Fallback

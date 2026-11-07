@@ -1,6 +1,7 @@
 # PLAN-048: Real-Time Visual Telemetry & Topological Control Dashboard
 
 ## Architecture Decision Record: ADR-061
+
 - **Title**: Layer-0 Native HTTP Telemetry Dashboard & REST Observability
 - **Status**: ACCEPTED
 - **Context**: EOS requires real-time stakeholder visibility into subagent topologies, token savings, ledger blocks, and health telemetry without external frameworks (Express/Fastify) or heavy node_modules.

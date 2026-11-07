@@ -56,7 +56,13 @@ export function classifyLayer(relativePath: string): ArchitecturalLayer {
   if (norm.includes("src/mcp/") || norm.includes("api/") || norm.includes("infra/") || norm.includes("adapters/")) {
     return "INFRASTRUCTURE";
   }
-  if (norm.includes("src/components/") || norm.includes("src/ui/") || norm.includes("js/") || norm.includes("css/") || norm.includes("pages/")) {
+  if (
+    norm.includes("src/components/") ||
+    norm.includes("src/ui/") ||
+    norm.includes("js/") ||
+    norm.includes("css/") ||
+    norm.includes("pages/")
+  ) {
     return "PRESENTATION";
   }
   return "UNKNOWN";
@@ -106,7 +112,7 @@ export function extractImports(sourceCode: string, sourceFilePath: string, proje
           rawSpecifier: specifier,
           resolvedPath: resolved,
           isExternal,
-          lineNumber: idx + 1
+          lineNumber: idx + 1,
         });
       }
     };
@@ -120,20 +126,11 @@ export function extractImports(sourceCode: string, sourceFilePath: string, proje
 }
 
 /**
- * Disallowed imports for Domain Layer (Layer 0 Core).
+ * Disallowed external frameworks and browser globals for Domain Layer (Layer 0 Core).
  */
-const FORBIDDEN_DOMAIN_PATTERNS = [
-  "react",
-  "vue",
-  "angular",
-  "express",
-  "next",
-  "koa",
-  "fastify",
-  "components",
-  "window",
-  "document"
-];
+const FORBIDDEN_DOMAIN_FRAMEWORKS = ["react", "vue", "angular", "express", "next", "koa", "fastify"];
+
+const FORBIDDEN_DOMAIN_GLOBALS = ["window", "document"];
 
 /**
  * Inspects imports of a file against Hexagonal Layer invariants.
@@ -143,14 +140,22 @@ export function validateLayerInvariants(analysis: FileAnalysis): string[] {
 
   if (analysis.layer === "DOMAIN") {
     for (const imp of analysis.imports) {
-      // 1. Domain must not import UI / framework libraries
+      // 1. Domain must not import UI / framework libraries or browser globals
       const lowerSpec = imp.rawSpecifier.toLowerCase();
-      for (const forbidden of FORBIDDEN_DOMAIN_PATTERNS) {
-        if (lowerSpec.includes(forbidden)) {
-          violations.push(
-            `Domain Purity Violation at line ${imp.lineNumber}: Domain module cannot import '${imp.rawSpecifier}' (Law V).`
-          );
-        }
+      const isForbiddenFramework = FORBIDDEN_DOMAIN_FRAMEWORKS.some(
+        (f) => lowerSpec === f || lowerSpec.startsWith(`${f}/`) || lowerSpec.startsWith(`@${f}/`),
+      );
+      const isForbiddenGlobal = FORBIDDEN_DOMAIN_GLOBALS.includes(lowerSpec);
+      const isForbiddenInternal =
+        !imp.isExternal &&
+        (lowerSpec.includes("/components/") ||
+          lowerSpec.includes("\\components\\") ||
+          lowerSpec.startsWith("components/"));
+
+      if (isForbiddenFramework || isForbiddenGlobal || isForbiddenInternal) {
+        violations.push(
+          `Domain Purity Violation at line ${imp.lineNumber}: Domain module cannot import '${imp.rawSpecifier}' (Law V).`,
+        );
       }
 
       // 2. Domain must not import Presentation components
@@ -158,7 +163,7 @@ export function validateLayerInvariants(analysis: FileAnalysis): string[] {
         const rel = imp.resolvedPath.replace(/\\/g, "/").toLowerCase();
         if (rel.includes("src/components") || rel.includes("src/ui") || rel.includes("/js/")) {
           violations.push(
-            `Inward Dependency Violation at line ${imp.lineNumber}: Domain module cannot import Presentation module '${imp.rawSpecifier}'.`
+            `Inward Dependency Violation at line ${imp.lineNumber}: Domain module cannot import Presentation module '${imp.rawSpecifier}'.`,
           );
         }
       }
@@ -171,7 +176,7 @@ export function validateLayerInvariants(analysis: FileAnalysis): string[] {
         const rel = imp.resolvedPath.replace(/\\/g, "/").toLowerCase();
         if (rel.includes("src/components") || rel.includes("src/ui")) {
           violations.push(
-            `Inward Dependency Violation at line ${imp.lineNumber}: Application module cannot import Presentation module '${imp.rawSpecifier}'.`
+            `Inward Dependency Violation at line ${imp.lineNumber}: Application module cannot import Presentation module '${imp.rawSpecifier}'.`,
           );
         }
       }
@@ -245,7 +250,7 @@ export function scanArchitecture(targetDir: string, projectRoot: string = proces
     APPLICATION: 0,
     INFRASTRUCTURE: 0,
     PRESENTATION: 0,
-    UNKNOWN: 0
+    UNKNOWN: 0,
   };
 
   function walk(dir: string) {
@@ -271,7 +276,7 @@ export function scanArchitecture(targetDir: string, projectRoot: string = proces
           relativeFilePath: relPath,
           layer,
           imports,
-          violations: []
+          violations: [],
         };
 
         analysis.violations = validateLayerInvariants(analysis);
@@ -290,7 +295,7 @@ export function scanArchitecture(targetDir: string, projectRoot: string = proces
       flatViolations.push({
         file: analysis.relativeFilePath,
         rule: "Hexagonal Layer Invariant",
-        details: v
+        details: v,
       });
     }
   }
@@ -300,7 +305,7 @@ export function scanArchitecture(targetDir: string, projectRoot: string = proces
     flatViolations.push({
       file: path.relative(projectRoot, cycle[0]),
       rule: "Circular Dependency Detected",
-      details: `Circular import cycle: ${readable}`
+      details: `Circular import cycle: ${readable}`,
     });
   }
 
@@ -315,6 +320,6 @@ export function scanArchitecture(targetDir: string, projectRoot: string = proces
     violations: flatViolations,
     circularDependencies: cycles.map((c) => c.map((p) => path.relative(projectRoot, p))),
     architecturePurityScore: purityScore,
-    isClean: flatViolations.length === 0
+    isClean: flatViolations.length === 0,
   };
 }

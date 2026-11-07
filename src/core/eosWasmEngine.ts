@@ -47,7 +47,10 @@ export function compressContextL0(code: string, targetTokens: number = 200): Was
   // Remove multi-line comments
   cleaned = cleaned.replace(/\/\*[\s\S]*?\*\//g, "");
   // Compact blank lines
-  const lines = cleaned.split("\n").map((l) => l.trim()).filter((l) => l.length > 0);
+  const lines = cleaned
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0);
   const compressed = lines.join("\n");
 
   const compTokens = estimateTokensL0(compressed);
@@ -59,7 +62,7 @@ export function compressContextL0(code: string, targetTokens: number = 200): Was
     tokens: compTokens,
     savingsPct,
     executionNs: elapsedNs,
-    engine: "typescript-l0"
+    engine: "typescript-l0",
   };
 }
 
@@ -76,8 +79,8 @@ export function runBenchmark(iterations: number = 100000): WasmBenchmarkResult {
         tokensAcc: res.tokensAcc,
         elapsedMs: res.elapsedMs,
         tokensPerSec: res.tokensPerSec,
-        allocations: res.allocations || "0 B/op (WASM linear memory)",
-        engine: "Go 1.27 WebAssembly (Native)"
+        allocations: res.allocations || "not reported by WASM engine",
+        engine: "Go 1.27 WebAssembly (Native)",
       };
     } catch {
       // Fall through to L0 fallback
@@ -85,23 +88,26 @@ export function runBenchmark(iterations: number = 100000): WasmBenchmarkResult {
   }
 
   // TypeScript L0 fallback benchmark
+  const sample = "func SovereignNode() error { return nil }";
+  const heapBefore = process.memoryUsage().heapUsed;
   const start = performance.now();
   let tokensAcc = 0;
-  const sample = "func SovereignNode() error { return nil }";
   for (let i = 0; i < iterations; i++) {
     tokensAcc += estimateTokensL0(sample);
   }
   const elapsedMs = performance.now() - start;
+  const heapDeltaBytes = process.memoryUsage().heapUsed - heapBefore;
   const elapsedSec = elapsedMs / 1000;
   const tokensPerSec = elapsedSec > 0 ? Math.round(tokensAcc / elapsedSec) : 0;
+  const bytesPerOp = Math.round(Math.max(0, heapDeltaBytes) / Math.max(1, iterations));
 
   return {
     iterations,
     tokensAcc,
     elapsedMs: Number(elapsedMs.toFixed(3)),
     tokensPerSec,
-    allocations: "0 B/op (In-Memory Register Loop)",
-    engine: "TypeScript Layer-0 (Native Engine)"
+    allocations: `${bytesPerOp} B/op (measured heap delta, TypeScript L0 fallback)`,
+    engine: "TypeScript Layer-0 (Native Engine)",
   };
 }
 
@@ -131,7 +137,7 @@ export function compressContext(code: string, targetTokens: number = 200): WasmC
         tokens: res.tokens,
         savingsPct: res.savingsPct,
         executionNs: res.executionNs,
-        engine: "go-wasm"
+        engine: "go-wasm",
       };
     } catch {
       // Fall through
@@ -156,8 +162,8 @@ export function analyzeTopology(nodeId: string): BlastRadiusResult {
           transitiveBlastRadius: parsed.blastRadius || [],
           blastRadiusCount: parsed.blastRadiusCount || 0,
           totalSystemNodes: 14,
-          blastRadiusRatio: Number((((parsed.blastRadiusCount || 0) / 14)).toFixed(4)),
-          estimatedLatencyUs: parsed.latencyUs || 0
+          blastRadiusRatio: Number(((parsed.blastRadiusCount || 0) / 14).toFixed(4)),
+          estimatedLatencyUs: parsed.latencyUs || 0,
         };
       }
     } catch {

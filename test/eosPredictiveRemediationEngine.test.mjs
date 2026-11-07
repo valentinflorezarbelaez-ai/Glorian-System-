@@ -8,14 +8,14 @@ test("BDD-295: Automated Remediation of Cascading Downstream Timeout (Throttle &
 
   // Simulate severe downstream latency degradation
   const vector = {
-    burnRate5m: 16.0,             // Critical burn rate > 14.4
+    burnRate5m: 16.0, // Critical burn rate > 14.4
     burnRate1h: 6.0,
-    concurrencyGradient: 0.25,     // Vegas gradient depressed (< 0.40)
-    concurrencyInFlightRatio: 0.90,
+    concurrencyGradient: 0.25, // Vegas gradient depressed (< 0.40)
+    concurrencyInFlightRatio: 0.9,
     traceErrorRate: 0.05,
-    traceP99LatencyMs: 1400,       // Severe tail latency (> 800ms)
+    traceP99LatencyMs: 1400, // Severe tail latency (> 800ms)
     hedgeRequestRatio: 0.02,
-    queueDelayMs: 25,              // Queue delay > 15ms
+    queueDelayMs: 25, // Queue delay > 15ms
   };
 
   const result = engine.evaluateAndRemediate(vector);
@@ -40,10 +40,10 @@ test("BDD-296: Automated Mitigation of Thundering Herd Retry Storm (Suppress Spe
     burnRate5m: 8.0,
     burnRate1h: 2.0,
     concurrencyGradient: 0.85,
-    concurrencyInFlightRatio: 0.70,
-    traceErrorRate: 0.18,          // Error rate > 10%
+    concurrencyInFlightRatio: 0.7,
+    traceErrorRate: 0.18, // Error rate > 10%
     traceP99LatencyMs: 120,
-    hedgeRequestRatio: 0.12,       // Excessive hedged request ratio > 5%
+    hedgeRequestRatio: 0.12, // Excessive hedged request ratio > 5%
     queueDelayMs: 4,
   };
 
@@ -65,7 +65,7 @@ test("BDD-297: Anti-Flapping Cooldown Enforcement & Safe Health Recovery", () =>
   const degradedVector = {
     burnRate5m: 18.0,
     burnRate1h: 5.0,
-    concurrencyGradient: 0.20,
+    concurrencyGradient: 0.2,
     concurrencyInFlightRatio: 0.95,
     traceErrorRate: 0.08,
     traceP99LatencyMs: 1200,
@@ -88,7 +88,7 @@ test("BDD-297: Anti-Flapping Cooldown Enforcement & Safe Health Recovery", () =>
     burnRate5m: 0.2,
     burnRate1h: 0.1,
     concurrencyGradient: 1.0,
-    concurrencyInFlightRatio: 0.20,
+    concurrencyInFlightRatio: 0.2,
     traceErrorRate: 0.0,
     traceP99LatencyMs: 15,
     hedgeRequestRatio: 0.01,

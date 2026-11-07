@@ -1,15 +1,16 @@
 # SPEC-107: Sovereign Cross-Fleet Telemetry, Real-Time Soundcheck & Canary Observability Engine
 
 ## Metadata
-* **Specification ID**: `SPEC-107`
-* **Title**: Sovereign Cross-Fleet Telemetry, Real-Time Soundcheck & Canary Observability Engine
-* **Status**: `APPROVED`
-* **Lifecycle Phase**: `Core Infrastructure / Fleet Governance (Layer 0)`
-* **Governing Laws**: `Law I (Spec Truth)`, `Law III (Epistemic Evidence)`, `Law IV (Write Barrier)`, `Law V (Hexagonal Isolation)`
-* **Functional Requirements**: `FR-281`, `FR-282`, `FR-283`, `FR-284`
-* **BDD Scenarios**: `BDD-273`, `BDD-274`, `BDD-275`
-* **Architecture Decision Record**: `ADR-107`
-* **Mathematical Invariants**: `CanaryErrorBudgetBoundInvariant`, `FleetSoundcheckDynamicScoreInvariant`, `RollbackDeterministicTriggerInvariant`
+
+- **Specification ID**: `SPEC-107`
+- **Title**: Sovereign Cross-Fleet Telemetry, Real-Time Soundcheck & Canary Observability Engine
+- **Status**: `APPROVED`
+- **Lifecycle Phase**: `Core Infrastructure / Fleet Governance (Layer 0)`
+- **Governing Laws**: `Law I (Spec Truth)`, `Law III (Epistemic Evidence)`, `Law IV (Write Barrier)`, `Law V (Hexagonal Isolation)`
+- **Functional Requirements**: `FR-281`, `FR-282`, `FR-283`, `FR-284`
+- **BDD Scenarios**: `BDD-273`, `BDD-274`, `BDD-275`
+- **Architecture Decision Record**: `ADR-107`
+- **Mathematical Invariants**: `CanaryErrorBudgetBoundInvariant`, `FleetSoundcheckDynamicScoreInvariant`, `RollbackDeterministicTriggerInvariant`
 
 ---
 
@@ -19,6 +20,7 @@ EOS System governs 5 registered production repositories across multi-cloud envir
 Prior to SPEC-107, `EosFleetSoundcheckMesh` relied on static heuristics for external repositories, and `EosProgressiveCanaryMesh` evaluated progressive rollout stages without real-time telemetry from production deployment providers (such as Vercel).
 
 Under Big Tech platform standards (Spotify Soundcheck, Netflix Kayenta, Google TrueTime SRE), fleet evaluation must be:
+
 1. **Dynamic & Deterministic**: Measured from real repository status and production endpoints.
 2. **Automated Canary Analysis (ACA)**: Comparing metric distributions between baseline and canary deployments.
 3. **Zero-Overhead & Hexagonally Pure**: Running within Layer 0 without non-native npm dependencies.
@@ -28,16 +30,20 @@ Under Big Tech platform standards (Spotify Soundcheck, Netflix Kayenta, Google T
 ## 2. Requirements Engineering (IEEE 830 / ISO 29148 Standard in EARS Syntax)
 
 ### FR-281: Dynamic Fleet Soundcheck Evaluation (Ubiquitous Pattern)
-* **EARS**: `EL SISTEMA evaluará dinámicamente el estado del árbol de trabajo (git status) y la disponibilidad de endpoints de producción para cada repositorio registrado en la flota soberana, garantizando que los puntajes reflejen el estado objetivo en tiempo real.`
+
+- **EARS**: `EL SISTEMA evaluará dinámicamente el estado del árbol de trabajo (git status) y la disponibilidad de endpoints de producción para cada repositorio registrado en la flota soberana, garantizando que los puntajes reflejen el estado objetivo en tiempo real.`
 
 ### FR-282: Automated Canary Metric Ingestion & Telemetry Processing (Event-Driven Pattern)
-* **EARS**: `CUANDO se ingieran métricas de despliegue canario (latencia P99, tasa de error 5xx, concurrencia efectiva), EL SISTEMA calculará el índice de salud del canario (Canary Health Index, CHI) acotado en el intervalo [0, 100].`
+
+- **EARS**: `CUANDO se ingieran métricas de despliegue canario (latencia P99, tasa de error 5xx, concurrencia efectiva), EL SISTEMA calculará el índice de salud del canario (Canary Health Index, CHI) acotado en el intervalo [0, 100].`
 
 ### FR-283: Automated Circuit-Breaker Rollback Enforcement (Error / Unwanted Condition Pattern)
-* **EARS**: `SI la tasa de error 5xx del despliegue canario excede el umbral crítico configurado (default: 1.0%) O el índice CHI cae por debajo de 70, ENTONCES EL SISTEMA disparará una orden determinista de rollback inmediato (ROLLBACK_TRIGGERED) y congelará la promoción de la etapa.`
+
+- **EARS**: `SI la tasa de error 5xx del despliegue canario excede el umbral crítico configurado (default: 1.0%) O el índice CHI cae por debajo de 70, ENTONCES EL SISTEMA disparará una orden determinista de rollback inmediato (ROLLBACK_TRIGGERED) y congelará la promoción de la etapa.`
 
 ### FR-284: Multi-Channel MCP & CLI Observability Dispatch (State-Driven Pattern)
-* **EARS**: `MIENTRAS el servidor MCP de EOS o la CLI estén activos, EL SISTEMA expondrá la herramienta eos_canary_telemetry_evaluate y el comando eos canary:telemetry para auditoría e integración continua.`
+
+- **EARS**: `MIENTRAS el servidor MCP de EOS o la CLI estén activos, EL SISTEMA expondrá la herramienta eos_canary_telemetry_evaluate y el comando eos canary:telemetry para auditoría e integración continua.`
 
 ---
 

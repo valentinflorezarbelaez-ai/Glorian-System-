@@ -3,28 +3,34 @@
 **Version**: 64.0.0  
 **Status**: APPROVED  
 **Author**: Antigravity Principal Architect / EOS System Core  
-**Governing Standard**: IEEE 830 / ISO 29148 / RFC 9110 / Clean Hexagonal Architecture  
+**Governing Standard**: IEEE 830 / ISO 29148 / RFC 9110 / Clean Hexagonal Architecture
 
 ---
 
 ## 1. Functional Requirements (EARS Syntax)
 
 ### FR-213 (Deterministic Pseudo-Random Fuzzing Seed Generator)
+
 **CUANDO** el operador o subagente inicia una campaña de fuzzing con una semilla numérica entera (`seed`), **EL SISTEMA** generará una secuencia determinista idéntica de mutaciones y valores de borde (boundary values), permitiendo la reproducción exacta del 100% de los estados explorados.
 
 ### FR-214 (Property-Based Invariant Assertion Engine)
+
 **MIENTRAS** el arnés de fuzzing inyecta entradas anómalas (números extremos, strings Unicode con caracteres de control, payloads JSON-RPC malformados y sondas de polución de prototipos), **EL SISTEMA** verificará invariantes de robustez matemática, garantizando que el núcleo Layer-0 nunca produzca `unhandledRejection`, caídas fatales del proceso o fugas de memoria.
 
 ### FR-215 (Delta Debugging & Counterexample Shrinkage)
+
 **SI** una propiedad o invariante falla durante la exploración estocástica, **ENTONCES EL SISTEMA** ejecutará un algoritmo de reducción de contraejemplos (shrinkage), minimizando el tamaño del payload de entrada hasta aislar la mínima mutación que reproduce el fallo.
 
 ### FR-216 (Time-Travel Ledger State Replay)
+
 **CUANDO** se solicita la reconstrucción histórica del estado del sistema a una altura de transacción $N$ o hash de bloque específico, **EL SISTEMA** reproducirá secuencialmente los eventos registrados en el ledger SQLite WAL, reconstruyendo el estado del grafo en memoria y detectando cualquier divergencia no determinista.
 
 ### FR-217 (49-Level Subconscious Introspection Scoring)
+
 **CUANDO** el motor de introspección analiza el repositorio y sus dependencias, **EL SISTEMA** evaluará las 7 octavas arquitectónicas compuestas por 7 sub-niveles cada una (49 niveles totales), calculando un Coeficiente de Introspección Soberana (0-100) y señalando cualquier entropía latente.
 
 ### FR-218 (Tier-0 MCP Dispatch & Tamper-Evident Ledger Attestation)
+
 **SI** la campaña de fuzzing o la sesión de replay concluye exitosamente, **ENTONCES EL SISTEMA** persistirá un bloque inmutable en el ledger SQLite WAL con firma criptográfica SHA-256 bajo la categoría `VERIFICATION_RECEIPT` y expondrá los resultados mediante la herramienta MCP `eos_fuzz_hypervisor`.
 
 ---

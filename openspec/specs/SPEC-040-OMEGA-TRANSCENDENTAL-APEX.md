@@ -1,6 +1,7 @@
 # SPEC-040: THE OMEGA TRANSCENDENTAL APEX KERNEL (ONTOLOGY CYCLOTRON & POST-QUANTUM SHIELD)
 
 ## 1. Specification Metadata
+
 - **Spec ID**: `SPEC-040`
 - **Title**: The Omega Transcendental Apex Kernel (Palantir Ontology Cyclotron, NIST Post-Quantum Lattice Shield & Autonomous Meta-Cognitive Synapse)
 - **Status**: `APPROVED`
@@ -13,17 +14,21 @@
 ## 2. Functional Requirements (EARS Patterns)
 
 ### FR-115: Palantir Hyper-Ontology Cyclotron & Bi-Temporal Knowledge Mesh
+
 - **EARS Pattern (Event-Driven)**: CUANDO un agente o subsistema registra entidades, relaciones o hechos en el grafo ontológico, EL SISTEMA almacenará los bordes dirigidos con intervalo bi-temporal `[validFrom, validTo]` y `[txTimestamp]`, permitiendo consultas de cierre transitivo y resolución de entidades en sub-microsegundos ($O(V + E)$) sin dependencias externas.
 - **Invariante**: Las consultas temporales mediante `asOf(t)` deben ser deterministas y reproducibles sin mutación destructiva del grafo.
 
 ### FR-116: NIST Post-Quantum Cryptography & Lattice-Based Seals
+
 - **EARS Pattern (State-Driven)**: MIENTRAS el sistema genera sellos criptográficos y atestaciones de CI/CD, EL SISTEMA ejecutará reducción modular de polinomios reticulares en $\mathbb{Z}_q[X]/(X^{256} + 1)$ con $q = 3329$ mediante aritmética en tiempo constante (`timingSafeEqual`), produciendo firmas inmunes a algoritmos cuánticos de Shor y Grover.
 - **Invariante**: Las operaciones aritméticas del retículo deben ejecutarse sin ramificaciones condicionales basadas en datos secretos, garantizando resistencia absoluta a ataques de canal lateral.
 
 ### FR-117: Autonomous Meta-Cognitive Synapse & Bayesian Multi-Agent Arbitration
+
 - **EARS Pattern (Event-Driven)**: CUANDO surgen directivas o intenciones concurrentes entre agentes autónomos, EL SISTEMA actualizará las probabilidades a posteriori mediante la regla de Bayes $P(H|E) = \frac{P(E|H)P(H)}{P(E)}$, asignando la prioridad óptima y resolviendo colisiones con tiempo de respuesta sub-milisegundo.
 
 ### FR-118: Multi-Channel Transcendental MCP & CLI Dispatch
+
 - **EARS Pattern (Ubiquitous)**: EL SISTEMA expondrá las herramientas `eos_ontology_query`, `eos_quantum_lattice_seal` y `eos_synapse_arbitrate` tanto en el servidor MCP como en la interfaz de línea de comandos CLI (`eos ontology`, `eos quantum:seal`, `eos synapse`).
 
 ---

@@ -9,15 +9,15 @@ This skill defines how **EOS System** (Supreme Constitutional Control Plane) and
 
 ## 1. Division of Responsibilities (Zero Overlap, Maximum Synergy)
 
-| Layer | Governing Component | Authoritative Role in Antigravity |
-|---|---|---|
-| **Constitutional Gate & Law IV Barrier** | `eos-system` MCP (`eos_antigravity_direct`) | Classifies mission profile, enforces External Write Barrier (`docs/projects/registry.json`), and prescribes MCP tool DAG. |
-| **Pre-Execution Shell Guardrail** | `eos-governance` Plugin (`PreToolUse` Hook) | Blocks catastrophic commands (`rm -rf /`, `git push --force main`, `DROP DATABASE`) in `<20ms`. |
-| **Episodic Cross-Session Memory** | `engram` MCP (`mem_context`, `mem_search`, `mem_save`) | Recalls decisions/bugfixes across sessions and persists structured `What / Why / Where / Learned` observations. |
-| **Immutable Cryptographic Audit Ledger** | `eos-system` MCP (`eos_sqlite_ledger`) | Appends tamper-evident SHA-256 hash-chained receipts into native `node:sqlite` (`WAL` + `FTS5`). |
-| **Live Framework & SDK Docs** | `context7` MCP (`resolve-library-id`, `query-docs`) | Eliminates API hallucinations when working with external libraries or frameworks. |
-| **Lean Sub-Agent SDD Execution** | `agent-teams-lite` (`sdd-init` .. `sdd-archive`) + `eos-sdd-pipeline` | Delegates exploration, EARS/BDD specs, design, tasks, implementation, and verification to keep primary context lean. |
-| **Compiler AST & Adversarial Review** | `eos_ast_analyze` + `judgment-day` + `gga` | Combines real TypeScript Compiler AST verification, two blind adversarial judge sub-agents, and Gentleman Guardian Angel review against `AGENTS.md`. |
+| Layer                                    | Governing Component                                                   | Authoritative Role in Antigravity                                                                                                                    |
+| ---------------------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Constitutional Gate & Law IV Barrier** | `eos-system` MCP (`eos_antigravity_direct`)                           | Classifies mission profile, enforces External Write Barrier (`docs/projects/registry.json`), and prescribes MCP tool DAG.                            |
+| **Pre-Execution Shell Guardrail**        | `eos-governance` Plugin (`PreToolUse` Hook)                           | Blocks catastrophic commands (`rm -rf /`, `git push --force main`, `DROP DATABASE`) in `<20ms`.                                                      |
+| **Episodic Cross-Session Memory**        | `engram` MCP (`mem_context`, `mem_search`, `mem_save`)                | Recalls decisions/bugfixes across sessions and persists structured `What / Why / Where / Learned` observations.                                      |
+| **Immutable Cryptographic Audit Ledger** | `eos-system` MCP (`eos_sqlite_ledger`)                                | Appends tamper-evident SHA-256 hash-chained receipts into native `node:sqlite` (`WAL` + `FTS5`).                                                     |
+| **Live Framework & SDK Docs**            | `context7` MCP (`resolve-library-id`, `query-docs`)                   | Eliminates API hallucinations when working with external libraries or frameworks.                                                                    |
+| **Lean Sub-Agent SDD Execution**         | `agent-teams-lite` (`sdd-init` .. `sdd-archive`) + `eos-sdd-pipeline` | Delegates exploration, EARS/BDD specs, design, tasks, implementation, and verification to keep primary context lean.                                 |
+| **Compiler AST & Adversarial Review**    | `eos_ast_analyze` + `judgment-day` + `gga`                            | Combines real TypeScript Compiler AST verification, two blind adversarial judge sub-agents, and Gentleman Guardian Angel review against `AGENTS.md`. |
 
 ## 2. End-to-End 6-Phase Co-Governance Workflow
 

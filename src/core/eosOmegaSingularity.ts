@@ -30,7 +30,7 @@ export const OMEGA_SINGULARITY_PILLARS: readonly OmegaPillarSpec[] = [
     standardOrOrigin: "NIST FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA)",
     eosTransmutation: "La página presenta los nombres de los estándares como referencias; no ejecuta sus algoritmos.",
     samaelianCorrespondence: "Metáfora visual de la demo; no es una propiedad criptográfica.",
-    invariantGuarantee: "No se generan claves, firmas ni ciphertexts."
+    invariantGuarantee: "No se generan claves, firmas ni ciphertexts.",
   },
   {
     id: "zk-stark-fri",
@@ -38,7 +38,7 @@ export const OMEGA_SINGULARITY_PILLARS: readonly OmegaPillarSpec[] = [
     standardOrOrigin: "ZK-STARK · FRI",
     eosTransmutation: "El formulario muestra una declaración textual de ejemplo.",
     samaelianCorrespondence: "Metáfora visual de la demo; no es una prueba formal.",
-    invariantGuarantee: "No se genera ni verifica una prueba."
+    invariantGuarantee: "No se genera ni verifica una prueba.",
   },
   {
     id: "bft-hotstuff-quorum",
@@ -46,7 +46,7 @@ export const OMEGA_SINGULARITY_PILLARS: readonly OmegaPillarSpec[] = [
     standardOrOrigin: "HotStuff · quórum 3f + 1",
     eosTransmutation: "El navegador muestra una fórmula con valores ilustrativos.",
     samaelianCorrespondence: "Metáfora visual de la demo; no representa consenso distribuido.",
-    invariantGuarantee: "No hay nodos, votos, firmas ni consenso ejecutándose."
+    invariantGuarantee: "No hay nodos, votos, firmas ni consenso ejecutándose.",
   },
   {
     id: "time-travel-dst",
@@ -54,7 +54,7 @@ export const OMEGA_SINGULARITY_PILLARS: readonly OmegaPillarSpec[] = [
     standardOrOrigin: "Mozilla rr · FoundationDB Deterministic Simulation Testing",
     eosTransmutation: "La interfaz recorre etiquetas locales precargadas.",
     samaelianCorrespondence: "Metáfora visual de la demo; no representa un historial grabado.",
-    invariantGuarantee: "No se capturan eventos ni se reproduce una ejecución."
+    invariantGuarantee: "No se capturan eventos ni se reproduce una ejecución.",
   },
   {
     id: "egraph-superoptimizer",
@@ -62,7 +62,7 @@ export const OMEGA_SINGULARITY_PILLARS: readonly OmegaPillarSpec[] = [
     standardOrOrigin: "egg · LLVM MLIR · Souper",
     eosTransmutation: "La página describe el patrón como referencia.",
     samaelianCorrespondence: "Metáfora visual de la demo; no es una optimización ejecutada.",
-    invariantGuarantee: "No se transforma ni verifica código del repositorio."
+    invariantGuarantee: "No se transforma ni verifica código del repositorio.",
   },
   {
     id: "wasi-capability-sandbox",
@@ -70,7 +70,7 @@ export const OMEGA_SINGULARITY_PILLARS: readonly OmegaPillarSpec[] = [
     standardOrOrigin: "WebAssembly · WASI",
     eosTransmutation: "La página explica el modelo de capacidades como referencia.",
     samaelianCorrespondence: "Metáfora visual de la demo; no constituye un límite de seguridad.",
-    invariantGuarantee: "No se ejecuta un módulo WASM ni se crea un sandbox WASI."
+    invariantGuarantee: "No se ejecuta un módulo WASM ni se crea un sandbox WASI.",
   },
   {
     id: "project-registry",
@@ -78,8 +78,8 @@ export const OMEGA_SINGULARITY_PILLARS: readonly OmegaPillarSpec[] = [
     standardOrOrigin: "docs/projects/registry.json · /api/fleet",
     eosTransmutation: "La interfaz muestra los proyectos declarados en el registro canónico.",
     samaelianCorrespondence: "La metáfora visual no indica salud ni disponibilidad.",
-    invariantGuarantee: "No se sondea producción, CI, ABI o hooks."
-  }
+    invariantGuarantee: "No se sondea producción, CI, ABI o hooks.",
+  },
 ] as const;
 
 export const TIME_TRAVEL_EPOCHS: readonly TimeTravelEpoch[] = [
@@ -88,5 +88,5 @@ export const TIME_TRAVEL_EPOCHS: readonly TimeTravelEpoch[] = [
   { tick: 3, label: "Requisitos", event: "Borrador EARS", subsystem: "Generador de borradores" },
   { tick: 4, label: "Validación", event: "Validación propuesta", subsystem: "Herramientas de patch" },
   { tick: 5, label: "MCP", event: "Solicitud de herramienta", subsystem: "Servidor MCP" },
-  { tick: 6, label: "Demo", event: "Fin del recorrido", subsystem: "Interfaz del navegador" }
+  { tick: 6, label: "Demo", event: "Fin del recorrido", subsystem: "Interfaz del navegador" },
 ] as const;

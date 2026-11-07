@@ -21,6 +21,7 @@ You are an EXECUTOR for this phase, not the orchestrator. Do the initialization 
   Do NOT create `openspec/` directory.
 
   **Save project context**:
+
   ```
   mem_save(
     title: "sdd-init/{project-name}",
@@ -30,9 +31,11 @@ You are an EXECUTOR for this phase, not the orchestrator. Do the initialization 
     content: "{detected project context markdown}"
   )
   ```
+
   `topic_key` enables upserts — re-running init updates the existing context, not duplicates.
 
   (See `skills/_shared/engram-convention.md` for full naming conventions.)
+
 - If mode is `openspec`: Read and follow `skills/_shared/openspec-convention.md`. Run full bootstrap.
 - If mode is `hybrid`: Read and follow BOTH convention files. Run openspec bootstrap AND persist context to Engram.
 - If mode is `none`: Return detected context without writing project files.
@@ -42,6 +45,7 @@ You are an EXECUTOR for this phase, not the orchestrator. Do the initialization 
 ### Step 1: Detect Project Context
 
 Read the project to understand:
+
 - Tech stack (check package.json, go.mod, pyproject.toml, etc.)
 - Existing conventions (linters, test frameworks, CI)
 - Architecture patterns in use
@@ -112,6 +116,7 @@ See `skills/skill-registry/SKILL.md` for the full registry format and scanning d
 **This step is MANDATORY — do NOT skip it.**
 
 If mode is `engram`:
+
 ```
 mem_save(
   title: "sdd-init/{project-name}",
@@ -135,6 +140,7 @@ Return a structured summary adapted to the resolved mode:
 Persist project context following `skills/_shared/engram-convention.md` with title and topic_key `sdd-init/{project-name}`.
 
 Return:
+
 ```
 ## SDD Initialized
 
@@ -154,6 +160,7 @@ Ready for /sdd-explore <topic> or /sdd-new <change-name>.
 ```
 
 #### If mode is `openspec`:
+
 ```
 ## SDD Initialized
 
@@ -171,6 +178,7 @@ Ready for /sdd-explore <topic> or /sdd-new <change-name>.
 ```
 
 #### If mode is `none`:
+
 ```
 ## SDD Initialized
 

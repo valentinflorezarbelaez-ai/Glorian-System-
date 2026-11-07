@@ -84,7 +84,7 @@ export class EosAntiEntropyMerkleSync {
         hash: leafHash,
         rangeStart: i,
         rangeEnd: i,
-        keysCount: bucket.size
+        keysCount: bucket.size,
       });
     }
 
@@ -107,17 +107,14 @@ export class EosAntiEntropyMerkleSync {
         continue;
       }
 
-      const combinedHash = crypto
-        .createHash("sha256")
-        .update(`${left.hash}:${right.hash}`)
-        .digest("hex");
+      const combinedHash = crypto.createHash("sha256").update(`${left.hash}:${right.hash}`).digest("hex");
 
       parents.push({
         hash: combinedHash,
         rangeStart: left.rangeStart,
         rangeEnd: right.rangeEnd,
         children: [left, right],
-        keysCount: left.keysCount + right.keysCount
+        keysCount: left.keysCount + right.keysCount,
       });
     }
 
@@ -134,11 +131,12 @@ export class EosAntiEntropyMerkleSync {
       return {
         inSync: true,
         divergentRanges: [],
-        comparisonsCount: comparisons
+        comparisonsCount: comparisons,
       };
     }
 
-    const divergentRanges: Array<{ rangeStart: number; rangeEnd: number; expectedHash: string; actualHash: string }> = [];
+    const divergentRanges: Array<{ rangeStart: number; rangeEnd: number; expectedHash: string; actualHash: string }> =
+      [];
 
     function traverse(nodeA: MerkleNode, nodeB: MerkleNode): void {
       comparisons++;
@@ -152,7 +150,7 @@ export class EosAntiEntropyMerkleSync {
           rangeStart: nodeA.rangeStart,
           rangeEnd: nodeA.rangeEnd,
           expectedHash: nodeA.hash,
-          actualHash: nodeB.hash
+          actualHash: nodeB.hash,
         });
         return;
       }
@@ -169,7 +167,7 @@ export class EosAntiEntropyMerkleSync {
     return {
       inSync: false,
       divergentRanges,
-      comparisonsCount: comparisons
+      comparisonsCount: comparisons,
     };
   }
 }

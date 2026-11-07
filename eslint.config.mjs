@@ -5,13 +5,45 @@
 //
 // TypeScript safety is handled by `tsc --project tsconfig.typecheck.json`
 // (strict mode, noEmit). ESLint focuses on code patterns and JS/MJS files
-// that the TS compiler doesn't lint (scripts/, bin/, api/, test/).
+// that the TS compiler doesn't lint (scripts/, bin/, api/, test/) — the
+// `src/**/*.ts` tree is deliberately NOT parsed here (espree cannot parse TS).
 //
-// Law V: zero external runtime dependencies. ESLint is a devDependency only.
+// Law V: zero external runtime dependencies. ESLint is a devDependency only,
+// and the Node globals below are declared inline to avoid pulling `globals`.
 
 // @ts-check
 import js from "@eslint/js";
 import nodePlugin from "eslint-plugin-n";
+
+// Node.js runtime + Web platform globals exposed by Node 22+.
+const nodeGlobals = {
+  // Core runtime
+  process: "readonly",
+  console: "readonly",
+  Buffer: "readonly",
+  global: "readonly",
+  globalThis: "readonly",
+  // Timers & scheduling
+  setTimeout: "readonly",
+  clearTimeout: "readonly",
+  setInterval: "readonly",
+  clearInterval: "readonly",
+  setImmediate: "readonly",
+  clearImmediate: "readonly",
+  queueMicrotask: "readonly",
+  structuredClone: "readonly",
+  // Web platform APIs available in Node 22+
+  fetch: "readonly",
+  URL: "readonly",
+  URLSearchParams: "readonly",
+  TextEncoder: "readonly",
+  TextDecoder: "readonly",
+  AbortController: "readonly",
+  AbortSignal: "readonly",
+  performance: "readonly",
+  crypto: "readonly",
+  WebAssembly: "readonly",
+};
 
 export default [
   // ── Global ignores ────────────────────────────────────────────────────────
@@ -23,28 +55,37 @@ export default [
       ".coverage/**",
       // Generated / vendored JS that we don't own
       "js/eos.js",
+      "js/wasm_exec.js", // Vendored Go wasm runtime shim
       // Templates are self-contained sub-projects with their own tooling
       "templates/**",
     ],
   },
 
-  // ── Base rules for all JS / MJS / TS files ─────────────────────────────────
+  // ── Base rules for every linted JS / MJS file ───────────────────────────────
   js.configs.recommended,
 
-  // ── TypeScript files: apply JS rules + custom overrides ─────────────────────
+  // ── Node.js globals for CLI, scripts, api and test suites ──────────────────
   {
-    files: ["src/**/*.ts"],
-    rules: {
-      // TS compiler handles type safety; ESLint handles code patterns
-      "no-undef": "off", // TS types are not global vars
-      "no-unused-vars": "off", // TS compiler catches this with noUnusedLocals
-      "no-console": "off", // CLI tool — console output is intentional
-      "no-constant-condition": ["error", { checkLoops: false }],
-      "no-async-promise-executor": "error",
-      "no-empty": ["error", { allowEmptyCatch: true }],
-      "prefer-const": "error",
-      "no-var": "error",
-      "eqeqeq": ["error", "always"],
+    files: ["**/*.{js,mjs,cjs}"],
+    languageOptions: {
+      globals: nodeGlobals,
+    },
+  },
+
+  // ── Service Worker (browser) context — its own global surface ──────────────
+  {
+    files: ["sw.js"],
+    languageOptions: {
+      globals: {
+        self: "readonly",
+        caches: "readonly",
+        clients: "readonly",
+        fetch: "readonly",
+        Response: "readonly",
+        Request: "readonly",
+        URL: "readonly",
+        console: "readonly",
+      },
     },
   },
 
@@ -55,10 +96,7 @@ export default [
     rules: {
       "n/no-process-exit": "off", // scripts legitimately exit with a code
       "n/prefer-node-protocol": "error", // enforce `node:fs` over `fs`
-      "n/no-unsupported-features/node-builtins": [
-        "error",
-        { version: ">=22.0.0" },
-      ],
+      "n/no-unsupported-features/node-builtins": ["error", { version: ">=22.0.0", allowExperimental: true }],
       "no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
     },
   },

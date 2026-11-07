@@ -3,6 +3,7 @@
 ## 1. Architectural Design & ADR-044
 
 ### ADR-044: Autonomous Hexagonal Product Scaffolding & Mathematical Verification Foundry
+
 - **Status**: ACCEPTED
 - **Context**: EOS requires an industrial-grade engine capable of synthesizing complete software product architectures of any complexity level (from simple utilities to planetary financial/streaming engines), ensuring 0 defects, complete traceability, and hermetic Layer-0 purity.
 - **Decision**:

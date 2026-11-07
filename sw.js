@@ -6,7 +6,7 @@
  * Zero external runtime dependencies.
  */
 
-const CACHE_VERSION = 'v40-actionable-paths';
+const CACHE_VERSION = "v41-ignore-search";
 const STATIC_CACHE = `eos-static-${CACHE_VERSION}`;
 const API_CACHE = `eos-api-${CACHE_VERSION}`;
 
@@ -16,11 +16,9 @@ const PRECACHE_ASSETS = [
   "/css/eos.css",
   "/js/eos.js",
   "/js/wasm_exec.js",
-  "/css/eos.css?v=15.0",
-  "/js/eos.js?v=18.0",
   "/favicon.svg",
   "/manifest.webmanifest",
-  "/assets/eos-system.webp"
+  "/assets/eos-system.webp",
 ];
 
 // Precache critical shell assets
@@ -29,7 +27,7 @@ self.addEventListener("install", (event) => {
     caches
       .open(STATIC_CACHE)
       .then((cache) => cache.addAll(PRECACHE_ASSETS))
-      .then(() => self.skipWaiting())
+      .then(() => self.skipWaiting()),
   );
 });
 
@@ -39,13 +37,9 @@ self.addEventListener("activate", (event) => {
     caches
       .keys()
       .then((keys) =>
-        Promise.all(
-          keys
-            .filter((k) => k !== STATIC_CACHE && k !== API_CACHE)
-            .map((k) => caches.delete(k))
-        )
+        Promise.all(keys.filter((k) => k !== STATIC_CACHE && k !== API_CACHE).map((k) => caches.delete(k))),
       )
-      .then(() => self.clients.claim())
+      .then(() => self.clients.claim()),
   );
 });
 
@@ -75,15 +69,15 @@ self.addEventListener("fetch", (event) => {
                 status: "OFFLINE_STANDALONE_MODE",
                 offline: true,
                 message: "EOS System offline-first fallback active. Local L0 Monad operating from cache.",
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
               }),
               {
                 status: 200,
-                headers: { "Content-Type": "application/json; charset=utf-8" }
-              }
+                headers: { "Content-Type": "application/json; charset=utf-8" },
+              },
             );
-          })
-        )
+          }),
+        ),
     );
     return;
   }
@@ -99,7 +93,7 @@ self.addEventListener("fetch", (event) => {
 
   if (isStatic) {
     event.respondWith(
-      caches.match(req).then((cached) => {
+      caches.match(req, { ignoreSearch: true }).then((cached) => {
         const fetchPromise = fetch(req)
           .then((networkRes) => {
             if (networkRes && networkRes.status === 200) {
@@ -111,7 +105,7 @@ self.addEventListener("fetch", (event) => {
           .catch(() => cached);
 
         return cached || fetchPromise;
-      })
+      }),
     );
     return;
   }
@@ -126,8 +120,6 @@ self.addEventListener("fetch", (event) => {
         }
         return networkRes;
       })
-      .catch(() =>
-        caches.match(req).then((cached) => cached || caches.match("/index.html"))
-      )
+      .catch(() => caches.match(req).then((cached) => cached || caches.match("/index.html"))),
   );
 });

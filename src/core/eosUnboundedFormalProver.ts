@@ -11,12 +11,7 @@
  * Zero external runtime npm dependencies (Law V).
  */
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
 export type StateRecord = Readonly<Record<string, unknown>>;
 
@@ -142,7 +137,7 @@ export class EosUnboundedFormalProver<S extends StateRecord = StateRecord> {
   private reconstructTrace(
     infringingState: S,
     parentHash: string,
-    stateParentMap: Map<string, { parentHash: string | null; state: S }>
+    stateParentMap: Map<string, { parentHash: string | null; state: S }>,
   ): StateRecord[] {
     const trace: StateRecord[] = [infringingState];
     let currHash: string | null = parentHash;
@@ -162,7 +157,7 @@ export class EosUnboundedFormalProver<S extends StateRecord = StateRecord> {
     baseHolds: boolean,
     stepHolds: boolean,
     totalStates: number,
-    trace: StateRecord[] | null
+    trace: StateRecord[] | null,
   ): MathematicalProofCertificate {
     const certifiedAtIso = new Date().toISOString();
     const payload = `${this.modelName}#${verified}#${baseHolds}#${stepHolds}#${totalStates}#${certifiedAtIso}`;
@@ -176,7 +171,7 @@ export class EosUnboundedFormalProver<S extends StateRecord = StateRecord> {
       totalStatesExplored: totalStates,
       counterexampleTrace: trace,
       proofSha256,
-      certifiedAtIso
+      certifiedAtIso,
     });
   }
 }

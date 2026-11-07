@@ -14,12 +14,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import {
-  pureSha256,
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze
-} from "./eosKernelPrimitives.ts";
+import { pureSha256, assertPrecondition, assertPostcondition, deepFreeze } from "./eosKernelPrimitives.ts";
 
 export interface RepoSoundcheck {
   readonly id: string;
@@ -54,32 +49,32 @@ export class EosFleetSoundcheckMesh {
       id: "eos-system",
       name: "EOS System (Control Plane Core)",
       localPath: "c:\\Users\\valen\\Eos-System",
-      productionUrl: "https://eos-system-ten.vercel.app"
+      productionUrl: "https://eos-system-ten.vercel.app",
     },
     {
       id: "aberamentho",
       name: "Aberamentho Pleroma Music",
       localPath: "c:\\Users\\valen\\Aberamentho-s-Pleroma-music",
-      productionUrl: "https://aberamentosprelomamusic.vercel.app"
+      productionUrl: "https://aberamentosprelomamusic.vercel.app",
     },
     {
       id: "portafolio",
       name: "Portafolio Oficial — Valentín Flórez",
       localPath: "c:\\Users\\valen\\portafolio",
-      productionUrl: "https://portafolio-valentin.vercel.app"
+      productionUrl: "https://portafolio-valentin.vercel.app",
     },
     {
       id: "performance-talent-group",
       name: "PTG — Performance Talent Group",
       localPath: "c:\\Users\\valen\\Performance-Talent-Group-1",
-      productionUrl: "https://ptg-performance-talent-group.vercel.app"
+      productionUrl: "https://ptg-performance-talent-group.vercel.app",
     },
     {
       id: "crud-slack",
       name: "TaskFlow AI — Omnichannel Request-to-Task CRUD & Triage",
       localPath: "c:\\Users\\valen\\Crud-slack",
-      productionUrl: "https://crud-slack.vercel.app"
-    }
+      productionUrl: "https://crud-slack.vercel.app",
+    },
   ];
 
   /**
@@ -119,7 +114,7 @@ export class EosFleetSoundcheckMesh {
               cwd: r.localPath,
               encoding: "utf8",
               timeout: 3000,
-              stdio: ["ignore", "pipe", "ignore"]
+              stdio: ["ignore", "pipe", "ignore"],
             });
             workingTreeClean = out.trim().length === 0;
             gitHealthScore = workingTreeClean ? 25 : 15;
@@ -168,7 +163,7 @@ export class EosFleetSoundcheckMesh {
         totalScore,
         grade,
         eligibleForAutonomousDeploy: eligible,
-        remediationAction
+        remediationAction,
       });
     }
 
@@ -186,7 +181,7 @@ export class EosFleetSoundcheckMesh {
       reposAtGradeA: gradeACount,
       deploymentAuthorizedQuorum: quorum,
       reports,
-      sha256Receipt
+      sha256Receipt,
     };
 
     return deepFreeze(report);
@@ -212,7 +207,7 @@ export class EosFleetSoundcheckMesh {
           } else if (typeof p.localPath === "string" && p.localPath.trim().length > 0) {
             resolvedPath = path.resolve(p.localPath.trim());
           } else {
-            const defaultMatch = this.DEFAULT_REPOS.find(d => d.id === p.id);
+            const defaultMatch = this.DEFAULT_REPOS.find((d) => d.id === p.id);
             if (defaultMatch) resolvedPath = defaultMatch.localPath;
           }
 
@@ -220,7 +215,7 @@ export class EosFleetSoundcheckMesh {
             id: String(p.id),
             name: String(p.name || p.id),
             localPath: resolvedPath,
-            productionUrl: String(p.productionUrl || "")
+            productionUrl: String(p.productionUrl || ""),
           };
         });
       }

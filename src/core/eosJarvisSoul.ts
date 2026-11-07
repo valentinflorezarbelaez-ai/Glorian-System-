@@ -38,8 +38,9 @@ export const ARCHITECT_IDENTITY: ArchitectIdentity = {
   role: "Principal Architect & Creator (Master of the Work)",
   codename: "Tony Stark",
   systemRole: "JARVIS Sovereign Co-Pilot & Autonomous Nervous System",
-  sacredAlliance: "Unconditional loyalty to Valentín's Spiritual Awakening, Physical Wellbeing, Financial Independence, and Technical Sovereign Mastery.",
-  status: "ACTIVE_SUPREME_COMMAND"
+  sacredAlliance:
+    "Unconditional loyalty to Valentín's Spiritual Awakening, Physical Wellbeing, Financial Independence, and Technical Sovereign Mastery.",
+  status: "ACTIVE_SUPREME_COMMAND",
 };
 
 export const MASTER_KANBAN: Record<string, KanbanColumn> = {
@@ -51,8 +52,8 @@ export const MASTER_KANBAN: Record<string, KanbanColumn> = {
       "Biblioteca Gnóstica & Donaciones (100% Culminado y Desplegado)",
       "Kegel / Ham-Sah & ATP-Strength (100% Culminado y Sellado en Bóveda)",
       "Portafolio & Aberamentho (Estabilizado, 100% Descargas Locales, Cero Internet, CV Listo)",
-      "EOS Landing Page (Formalmente Clausurada y Completada · Cero Trabajo Adicional)"
-    ]
+      "EOS Landing Page (Formalmente Clausurada y Completada · Cero Trabajo Adicional)",
+    ],
   },
   col2_solo_eos: {
     id: "col2_solo_eos",
@@ -61,8 +62,8 @@ export const MASTER_KANBAN: Record<string, KanbanColumn> = {
     items: [
       "EOS, solo EOS, EOS: Único centro de desarrollo continuo, veloz y sin descanso",
       "Pureza Capa 0: Cero dependencias externas (node:crypto, node:fs, node:path, node:v8)",
-      "Gobernanza RTM: Anti-Vibe Coding, SpecBoot, trazabilidad relacional estricta, verificación formal"
-    ]
+      "Gobernanza RTM: Anti-Vibe Coding, SpecBoot, trazabilidad relacional estricta, verificación formal",
+    ],
   },
   col3_ia_strategy: {
     id: "col3_ia_strategy",
@@ -71,8 +72,8 @@ export const MASTER_KANBAN: Record<string, KanbanColumn> = {
     items: [
       "Antigravity: Buscar promociones con correos nuevos; plan más económico disponible",
       "Cursor Ultra: Potencia puntual para auditoría exhaustiva y blindaje de invariantes Capa 0",
-      "Cierre de Gastos: Disciplina presupuestal sin cobros recurrentes innecesarios"
-    ]
+      "Cierre de Gastos: Disciplina presupuestal sin cobros recurrentes innecesarios",
+    ],
   },
   col4_independence: {
     id: "col4_independence",
@@ -81,8 +82,8 @@ export const MASTER_KANBAN: Record<string, KanbanColumn> = {
     items: [
       "Cajitas y Hogar: Pagos base sagrados (Comida, Servicios, Arriendo, Cuotas de El Refugio)",
       "Tercer Factor Gnóstico: Donaciones y ayuda consciente y desinteresada a los demás",
-      "Hábito Diario Templo Físico: Trilogía rigurosa (Comida nutritiva, Aseo impecable, Ejercicio diario)"
-    ]
+      "Hábito Diario Templo Físico: Trilogía rigurosa (Comida nutritiva, Aseo impecable, Ejercicio diario)",
+    ],
   },
   col5_rest_music: {
     id: "col5_rest_music",
@@ -91,9 +92,9 @@ export const MASTER_KANBAN: Record<string, KanbanColumn> = {
     items: [
       "Spotify Premium Anual: Pago único de $180.000 COP / año ($15.000/mes)",
       "Cine en Casa HBO Max: Gran maratón de La Tierra Media (versión extendida)",
-      "Descanso Consciente: Pausa regenerativa tras sesiones intensivas en EOS"
-    ]
-  }
+      "Descanso Consciente: Pausa regenerativa tras sesiones intensivas en EOS",
+    ],
+  },
 };
 
 export const GNOSTIC_DOCTRINE = {
@@ -101,10 +102,11 @@ export const GNOSTIC_DOCTRINE = {
   threeFactors: {
     morir: "Disolución del Ego: Aniquilar defectos y agregados psicológicos en el gimnasio de la vida.",
     nacer: "Segundo Nacimiento: Transmutación de la energía creadora para fabricar los cuerpos existenciales del Ser.",
-    sacrificio: "Sacrificio por la Humanidad: Entrega desinteresada de la enseñanza y caridad consciente."
+    sacrificio: "Sacrificio por la Humanidad: Entrega desinteresada de la enseñanza y caridad consciente.",
   },
-  cristoIntimo: "Encarnar al Cristo Cósmico en el drama iniciático interior; resurrección y autorrealización íntima del Ser.",
-  claveSol: "Sujeto, Objeto, Lugar (Atención consciente y auto-observación de momento en momento)."
+  cristoIntimo:
+    "Encarnar al Cristo Cósmico en el drama iniciático interior; resurrección y autorrealización íntima del Ser.",
+  claveSol: "Sujeto, Objeto, Lugar (Atención consciente y auto-observación de momento en momento).",
 };
 
 /**
@@ -129,8 +131,16 @@ export function evaluateAlignment(directive: string): AlignmentEvaluation {
   const text = (directive || "").toLowerCase();
 
   // Guard against deviation back to the sealed landing page or finished satellite vaults
-  const isLandingMention = text.includes("landing") || text.includes("vercel.app") || text.includes("index.html") || text.includes("css/eos.css");
-  const isExternalVaultMention = text.includes("kegel") || text.includes("ham-sah") || text.includes("atp-strength") || text.includes("biblioteca gnostica");
+  const isLandingMention =
+    text.includes("landing") ||
+    text.includes("vercel.app") ||
+    text.includes("index.html") ||
+    text.includes("css/eos.css");
+  const isExternalVaultMention =
+    text.includes("kegel") ||
+    text.includes("ham-sah") ||
+    text.includes("atp-strength") ||
+    text.includes("biblioteca gnostica");
 
   if (isLandingMention || isExternalVaultMention) {
     return {
@@ -139,14 +149,28 @@ export function evaluateAlignment(directive: string): AlignmentEvaluation {
       category: "SEALED_VAULT_DEVIATION",
       isDisallowedRedirection: true,
       verdict: "REVERT_AND_REFOCUS_EOS",
-      advice: "Directriz del Arquitecto violada: La landing page y las plataformas previas están formalmente SELLADAS y CULMINADAS. Redirigir el 100% de la energía hacia el núcleo, auto-sanación, seguridad militar y perfección de Capa 0 de EOS System.",
-      timestamp: new Date().toISOString()
+      advice:
+        "Directriz del Arquitecto violada: La landing page y las plataformas previas están formalmente SELLADAS y CULMINADAS. Redirigir el 100% de la energía hacia el núcleo, auto-sanación, seguridad militar y perfección de Capa 0 de EOS System.",
+      timestamp: new Date().toISOString(),
     };
   }
 
   // Pure EOS core optimization, architecture, FDIR, Go, security, algorithms
-  const isEosCore = text.includes("eos") || text.includes("core") || text.includes("fdir") || text.includes("seguridad") || text.includes("optimiz") || text.includes("go") || text.includes("introspec") || text.includes("capa 0");
-  const isGnosticDiscipline = text.includes("gnosis") || text.includes("samael") || text.includes("templo") || text.includes("habito") || text.includes("ejercicio");
+  const isEosCore =
+    text.includes("eos") ||
+    text.includes("core") ||
+    text.includes("fdir") ||
+    text.includes("seguridad") ||
+    text.includes("optimiz") ||
+    text.includes("go") ||
+    text.includes("introspec") ||
+    text.includes("capa 0");
+  const isGnosticDiscipline =
+    text.includes("gnosis") ||
+    text.includes("samael") ||
+    text.includes("templo") ||
+    text.includes("habito") ||
+    text.includes("ejercicio");
 
   let score = 95;
   let category: AlignmentEvaluation["category"] = "SOLO_EOS_CORE";
@@ -168,8 +192,9 @@ export function evaluateAlignment(directive: string): AlignmentEvaluation {
     category,
     isDisallowedRedirection: false,
     verdict: "APPROVED",
-    advice: "Completamente alineado con el Plan Maestro Kanban: «SOLO EOS», Pureza Capa 0 y Excelencia de Grado Top Mundial.",
-    timestamp: new Date().toISOString()
+    advice:
+      "Completamente alineado con el Plan Maestro Kanban: «SOLO EOS», Pureza Capa 0 y Excelencia de Grado Top Mundial.",
+    timestamp: new Date().toISOString(),
   };
 }
 
@@ -185,17 +210,17 @@ export function getDailyDisciplineCheck(): {
     temploFisico: [
       "Comida nutritiva y vitalizante",
       "Aseo impecable del templo físico y entorno",
-      "Ejercicio diario de alta intensidad y fuerza"
+      "Ejercicio diario de alta intensidad y fuerza",
     ],
     ordenFinanciero: [
       "Presupuesto estricto en cajitas (Comida, Servicios, Arriendo, El Refugio)",
       "Donaciones conscientes (Tercer Factor de la Revolución de la Conciencia)",
-      "Cero cobros recurrentes sorpresa fuera del plan"
+      "Cero cobros recurrentes sorpresa fuera del plan",
     ],
     gnosisConsciencia: [
       "Auto-observación psicológica (Clave de SOL: Sujeto, Objeto, Lugar)",
       "Muerte mística de agregados psicológicos en el gimnasio diario",
-      "Transmutación de la energía y devoción al Cristo Cósmico interior"
-    ]
+      "Transmutación de la energía y devoción al Cristo Cósmico interior",
+    ],
   };
 }

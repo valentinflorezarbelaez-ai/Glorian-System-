@@ -1,7 +1,7 @@
 # TASKS-041: AGENT TOPOLOGY COMPILER & ZERO-COPY COMMUNICATION MESH (v54.0.0)
 
-* **Specification**: `SPEC-048`
-* **Plan**: `PLAN-041` (`ADR-054`)
+- **Specification**: `SPEC-048`
+- **Plan**: `PLAN-041` (`ADR-054`)
 
 ## Atomic Task DAG
 

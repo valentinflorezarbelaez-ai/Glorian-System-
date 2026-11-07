@@ -5,12 +5,8 @@ import fs from "node:fs";
 import os from "node:os";
 import { fileURLToPath } from "node:url";
 
-import {
-  EosFleetProductionVerifier,
-  REGISTERED_FLEET_TARGETS
-} from "../src/core/eosFleetProductionVerifier.ts";
+import { EosFleetProductionVerifier } from "../src/core/eosFleetProductionVerifier.ts";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
-import { EosDurableSqliteLedger } from "../src/core/eosDurableSqliteLedger.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,35 +21,35 @@ test("BDD-197: Target URL validation and SSRF blocking (private IPs, loopbacks, 
   // HTTP protocol disallowed
   assert.throws(
     () => EosFleetProductionVerifier.normalizeTargetUrl("http://portafolio-valentin.vercel.app/"),
-    /SSRF_TARGET_PROHIBITED: Only HTTPS targets are allowed/
+    /SSRF_TARGET_PROHIBITED: Only HTTPS targets are allowed/,
   );
 
   // Localhost blocked
   assert.throws(
     () => EosFleetProductionVerifier.normalizeTargetUrl("https://localhost:3000/"),
-    /SSRF_TARGET_PROHIBITED: Target hostname 'localhost' references local loopback/
+    /SSRF_TARGET_PROHIBITED: Target hostname 'localhost' references local loopback/,
   );
 
   // Loopback 127.0.0.1 blocked
   assert.throws(
     () => EosFleetProductionVerifier.normalizeTargetUrl("https://127.0.0.1:8080/"),
-    /SSRF_TARGET_PROHIBITED/
+    /SSRF_TARGET_PROHIBITED/,
   );
 
   // Cloud metadata 169.254.169.254 blocked
   assert.throws(
     () => EosFleetProductionVerifier.normalizeTargetUrl("https://169.254.169.254/latest/meta-data"),
-    /SSRF_TARGET_PROHIBITED: Target hostname '169.254.169.254' is a link-local cloud metadata service/
+    /SSRF_TARGET_PROHIBITED: Target hostname '169.254.169.254' is a link-local cloud metadata service/,
   );
 
   // Private IPv4 10.0.0.1 and 192.168.1.1 blocked
   assert.throws(
     () => EosFleetProductionVerifier.normalizeTargetUrl("https://10.0.0.5/api"),
-    /SSRF_TARGET_PROHIBITED: Target hostname '10.0.0.5' is a private IPv4 address/
+    /SSRF_TARGET_PROHIBITED: Target hostname '10.0.0.5' is a private IPv4 address/,
   );
   assert.throws(
     () => EosFleetProductionVerifier.normalizeTargetUrl("https://192.168.1.100/admin"),
-    /SSRF_TARGET_PROHIBITED: Target hostname '192.168.1.100' is a private IPv4 address/
+    /SSRF_TARGET_PROHIBITED: Target hostname '192.168.1.100' is a private IPv4 address/,
   );
 });
 
@@ -82,12 +78,12 @@ test("BDD-198: Probe execution captures HTTP status, TTFB, and payload metrics",
         "x-content-type-options": "nosniff",
         "x-frame-options": "DENY",
         "referrer-policy": "strict-origin-when-cross-origin",
-        "content-security-policy": "default-src 'self'"
+        "content-security-policy": "default-src 'self'",
       },
       body: mockHtml,
       durationMs: 120,
-      ttfbMs: 65
-    })
+      ttfbMs: 65,
+    }),
   });
 
   assert.equal(probe.httpStatus, 200);
@@ -104,7 +100,7 @@ test("BDD-199: Security header audit verifies HSTS, nosniff, and framing guards"
     "x-content-type-options": "nosniff",
     "x-frame-options": "DENY",
     "referrer-policy": "no-referrer",
-    "content-security-policy": "frame-ancestors 'none'"
+    "content-security-policy": "frame-ancestors 'none'",
   };
 
   const audit = EosFleetProductionVerifier.auditSecurityHeaders(completeHeaders);
@@ -116,7 +112,7 @@ test("BDD-199: Security header audit verifies HSTS, nosniff, and framing guards"
   assert.equal(audit.passedCount, 5);
 
   const missingHeaders = {
-    "server": "Vercel"
+    server: "Vercel",
   };
   const poorAudit = EosFleetProductionVerifier.auditSecurityHeaders(missingHeaders);
   assert.equal(poorAudit.strictTransportSecurity, false);
@@ -175,15 +171,31 @@ test("BDD-201: Synthetic Core Web Vitals and SEO metadata evaluation", () => {
     150,
     70,
     50000,
-    { passedCount: 5, totalCount: 5, strictTransportSecurity: true, xContentTypeOptions: true, xFrameOptions: true, referrerPolicy: true, contentSecurityPolicy: true },
-    { passedCount: 6, totalCount: 6, hasMain: true, hasHeader: true, hasFooter: true, hasNav: true, hasH1: true, hasResponsiveViewport: true }
+    {
+      passedCount: 5,
+      totalCount: 5,
+      strictTransportSecurity: true,
+      xContentTypeOptions: true,
+      xFrameOptions: true,
+      referrerPolicy: true,
+      contentSecurityPolicy: true,
+    },
+    {
+      passedCount: 6,
+      totalCount: 6,
+      hasMain: true,
+      hasHeader: true,
+      hasFooter: true,
+      hasNav: true,
+      hasH1: true,
+      hasResponsiveViewport: true,
+    },
   );
   assert.ok(score >= 95, `Expected score >= 95, got ${score}`);
 });
 
 test("BDD-202: MCP tool eos_fleet_verify dispatches audit and records receipt in SQLite WAL", () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-fleet-verify-test-"));
-  const dbPath = path.join(tmpDir, "fleet_test.sqlite");
 
   try {
     const server = new EosMcpServer(projectRoot, "core");
@@ -195,9 +207,9 @@ test("BDD-202: MCP tool eos_fleet_verify dispatches audit and records receipt in
         name: "eos_fleet_verify",
         arguments: {
           target: "https://portafolio-valentin.vercel.app/",
-          recordToLedger: true
-        }
-      }
+          recordToLedger: true,
+        },
+      },
     });
 
     assert.ok(mcpRes.result);

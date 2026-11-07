@@ -15,9 +15,9 @@
  */
 
 export interface TokenBucketOptions {
-  capacity: number;       // Max burst tokens
+  capacity: number; // Max burst tokens
   refillPerSecond: number; // Tokens added per second
-  maxKeys?: number;       // Max tracked keys (LRU protection)
+  maxKeys?: number; // Max tracked keys (LRU protection)
 }
 
 export interface RateLimitDecision {
@@ -59,7 +59,7 @@ export class EosTokenBucketRateLimiter {
       }
       state = {
         tokens: this.capacity,
-        lastRefillNs: nowNs
+        lastRefillNs: nowNs,
       };
       this.buckets.set(key, state);
     }
@@ -78,7 +78,7 @@ export class EosTokenBucketRateLimiter {
       return {
         granted: true,
         remainingTokens: Math.floor(state.tokens),
-        retryAfterSeconds: 0
+        retryAfterSeconds: 0,
       };
     } else {
       const deficit = tokensRequested - state.tokens;
@@ -86,7 +86,7 @@ export class EosTokenBucketRateLimiter {
       return {
         granted: false,
         remainingTokens: Math.floor(state.tokens),
-        retryAfterSeconds: Number(retryAfter.toFixed(4))
+        retryAfterSeconds: Number(retryAfter.toFixed(4)),
       };
     }
   }

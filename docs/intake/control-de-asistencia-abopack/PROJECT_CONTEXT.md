@@ -1,6 +1,7 @@
 # PROJECT CONTEXT & INTAKE: CONTROL DE ASISTENCIA AVO-PAK S.A.S.
 
 ## 1. Project Identification
+
 - **Project ID**: `control-de-asistencia-abopack`
 - **Company**: **Avo Pak S.A.S.** (NIT `901.557.939-1`, Planta La Ceja — Km 5 vía La Ceja – Abejorral, Antioquia, Colombia)
 - **Application Name**: **CONTROL DE ASISTENCIA AVO-PAK**
@@ -13,6 +14,7 @@
 ---
 
 ## 2. Business Domain & Colombian Labor Legislation Requirements
+
 1. **Jornada Laboral Semanal Colombiana (42 Horas — Ley 2101 de 2021)**:
    - La jornada laboral ordinaria máxima semanal es de **42 horas**.
    - La semana laboral inicia el **día lunes** (Lunes a Sábado/Domingo).

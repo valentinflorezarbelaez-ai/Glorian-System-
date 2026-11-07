@@ -10,6 +10,7 @@ flowchart TD
 ```
 
 ## Task Checklist
+
 - [x] Task 1: Record Intake, Specifications, Change Proposal, and ADR.
 - [ ] Task 2: Implement `EosGlobalEdgeArbiter` with 8 POPs, Haversine RTT, Hedged Requests, HLC, and Edge Cache.
 - [ ] Task 3: Author comprehensive test suite `test/eosGlobalEdgeArbiter.test.mjs` verifying BDD-050.

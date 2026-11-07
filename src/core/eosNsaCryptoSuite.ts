@@ -15,11 +15,11 @@
 import crypto from "node:crypto";
 
 export interface NsaEncryptedEnvelope {
-  readonly iv: string;          // Hex-encoded 96-bit (12-byte) IV
-  readonly ciphertext: string;  // Hex-encoded ciphertext
-  readonly authTag: string;     // Hex-encoded 128-bit (16-byte) auth tag
-  readonly aad?: string;        // Associated Authenticated Data (classification, compartment)
-  readonly sha384Digest: string;// Cryptographic fingerprint of the ciphertext
+  readonly iv: string; // Hex-encoded 96-bit (12-byte) IV
+  readonly ciphertext: string; // Hex-encoded ciphertext
+  readonly authTag: string; // Hex-encoded 128-bit (16-byte) auth tag
+  readonly aad?: string; // Associated Authenticated Data (classification, compartment)
+  readonly sha384Digest: string; // Cryptographic fingerprint of the ciphertext
   readonly algorithm: "AES-256-GCM";
 }
 
@@ -40,11 +40,7 @@ export class EosNsaCryptoSuite {
    * Encrypts plaintext using AES-256-GCM with a synthetic/random 96-bit IV
    * and binds Associated Authenticated Data (AAD) such as classification tags.
    */
-  public static encryptAesGcm256(
-    plaintext: Buffer | string,
-    key: Buffer,
-    aad?: string | Buffer
-  ): NsaEncryptedEnvelope {
+  public static encryptAesGcm256(plaintext: Buffer | string, key: Buffer, aad?: string | Buffer): NsaEncryptedEnvelope {
     if (!Buffer.isBuffer(key) || key.length !== this.KEY_LENGTH_BYTES) {
       throw new Error(`NSA Cryptographic Failure: Key must be exactly ${this.KEY_LENGTH_BYTES} bytes`);
     }
@@ -72,7 +68,7 @@ export class EosNsaCryptoSuite {
       authTag: authTag.toString("hex"),
       aad: aadString,
       sha384Digest,
-      algorithm: "AES-256-GCM"
+      algorithm: "AES-256-GCM",
     };
   }
 
@@ -83,7 +79,7 @@ export class EosNsaCryptoSuite {
    */
   public static decryptAesGcm256(
     envelope: { iv: string; ciphertext: string; authTag: string; aad?: string },
-    key: Buffer
+    key: Buffer,
   ): Buffer {
     if (!Buffer.isBuffer(key) || key.length !== this.KEY_LENGTH_BYTES) {
       throw new Error(`NSA Cryptographic Failure: Key must be exactly ${this.KEY_LENGTH_BYTES} bytes`);
@@ -111,7 +107,9 @@ export class EosNsaCryptoSuite {
       const plaintext = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
       return plaintext;
     } catch {
-      throw new Error("NSA Integrity Failure: AES-GCM AuthTag validation failed. Potential ciphertext tampering or AAD mismatch.");
+      throw new Error(
+        "NSA Integrity Failure: AES-GCM AuthTag validation failed. Potential ciphertext tampering or AAD mismatch.",
+      );
     }
   }
 

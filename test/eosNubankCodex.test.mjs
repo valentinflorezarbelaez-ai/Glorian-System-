@@ -16,7 +16,7 @@ import {
   verifySachemContract,
   synthesizeNubankBlamelessPostmortem,
   evaluateNubankArchitectureHealth,
-  synthesizeNubankSquadCharter
+  synthesizeNubankSquadCharter,
 } from "../src/core/eosNubankCodex.ts";
 
 describe("EOS Nubank Institutional Engineering Codex Suite (SPEC-023, BDD-053)", () => {
@@ -29,7 +29,7 @@ describe("EOS Nubank Institutional Engineering Codex Suite (SPEC-023, BDD-053)",
         enforcesKafkaIdempotencyTokens: true,
         usesImmutableBitemporalLedgers: true,
         hasBlamelessPostmortemProcess: true,
-        unitTestCoveragePercent: 95
+        unitTestCoveragePercent: 95,
       });
 
       assert.equal(evaluation.institutionalScore, 100);
@@ -51,7 +51,7 @@ describe("EOS Nubank Institutional Engineering Codex Suite (SPEC-023, BDD-053)",
         enforcesKafkaIdempotencyTokens: false,
         usesImmutableBitemporalLedgers: false,
         hasBlamelessPostmortemProcess: false,
-        unitTestCoveragePercent: 60
+        unitTestCoveragePercent: 60,
       });
 
       assert.ok(evaluation.institutionalScore < 40);
@@ -72,8 +72,8 @@ describe("EOS Nubank Institutional Engineering Codex Suite (SPEC-023, BDD-053)",
         { name: "amountCents", type: "number", required: true },
         { name: "sourceAccountId", type: "uuid", required: true },
         { name: "destinationAccountId", type: "uuid", required: true },
-        { name: "memo", type: "string", required: false }
-      ]
+        { name: "memo", type: "string", required: false },
+      ],
     };
 
     it("approves additive backward-compatible schema changes (adding optional fields)", () => {
@@ -83,8 +83,8 @@ describe("EOS Nubank Institutional Engineering Codex Suite (SPEC-023, BDD-053)",
         fields: [
           ...v1Schema.fields,
           { name: "idempotencyToken", type: "string", required: false, doc: "Deduplication token" },
-          { name: "clientDeviceFingerprint", type: "string", required: false }
-        ]
+          { name: "clientDeviceFingerprint", type: "string", required: false },
+        ],
       };
 
       const result = verifySachemContract(v1Schema, v2CompatibleSchema);
@@ -97,7 +97,7 @@ describe("EOS Nubank Institutional Engineering Codex Suite (SPEC-023, BDD-053)",
       const brokenSchema = {
         namespace: "nu.financial.transfer",
         version: "2.0.0-broken",
-        fields: v1Schema.fields.filter((f) => f.name !== "amountCents")
+        fields: v1Schema.fields.filter((f) => f.name !== "amountCents"),
       };
 
       const result = verifySachemContract(v1Schema, brokenSchema);
@@ -113,7 +113,7 @@ describe("EOS Nubank Institutional Engineering Codex Suite (SPEC-023, BDD-053)",
           if (f.name === "amountCents") return { ...f, type: "string" };
           if (f.name === "memo") return { ...f, required: true };
           return f;
-        })
+        }),
       };
 
       const result = verifySachemContract(v1Schema, mutatedSchema);
@@ -132,7 +132,7 @@ describe("EOS Nubank Institutional Engineering Codex Suite (SPEC-023, BDD-053)",
       const tx1 = transactDatomic(db0, [
         { entityId: "cust-001", attribute: "customer/name", value: "Valentín Flórez" },
         { entityId: "cust-001", attribute: "account/credit-limit-cents", value: 500000 },
-        { entityId: "cust-001", attribute: "account/status", value: "active" }
+        { entityId: "cust-001", attribute: "account/status", value: "active" },
       ]);
 
       assert.equal(tx1.committedDatoms.length, 3);
@@ -142,7 +142,7 @@ describe("EOS Nubank Institutional Engineering Codex Suite (SPEC-023, BDD-053)",
       // Tx 2: Later, update credit limit (retract old value, assert new value)
       const tx2 = transactDatomic(tx1.dbAfter, [
         { entityId: "cust-001", attribute: "account/credit-limit-cents", value: 500000, op: "retract" },
-        { entityId: "cust-001", attribute: "account/credit-limit-cents", value: 1200000, op: "assert" }
+        { entityId: "cust-001", attribute: "account/credit-limit-cents", value: 1200000, op: "assert" },
       ]);
 
       assert.equal(tx2.dbAfter.facts.length, 5);
@@ -176,25 +176,45 @@ describe("EOS Nubank Institutional Engineering Codex Suite (SPEC-023, BDD-053)",
         resolutionTime: "2026-10-25T14:32:00Z",
         durationMinutes: 32,
         timeline: [
-          { timestamp: "14:00:00Z", description: "Prometheus alert triggered on consumer lag > 5000", detectedBy: "alert" },
-          { timestamp: "14:08:00Z", description: "On-call engineer acknowledged and scaled consumer pods from 6 to 18", detectedBy: "engineer" },
-          { timestamp: "14:32:00Z", description: "Lag dropped to 0; all messages processed idempotently", detectedBy: "sentinel" }
+          {
+            timestamp: "14:00:00Z",
+            description: "Prometheus alert triggered on consumer lag > 5000",
+            detectedBy: "alert",
+          },
+          {
+            timestamp: "14:08:00Z",
+            description: "On-call engineer acknowledged and scaled consumer pods from 6 to 18",
+            detectedBy: "engineer",
+          },
+          {
+            timestamp: "14:32:00Z",
+            description: "Lag dropped to 0; all messages processed idempotently",
+            detectedBy: "sentinel",
+          },
         ],
         fiveWhys: [
           "Consumer lag spiked because partition distribution was imbalanced.",
           "Partition distribution was imbalanced because keying was on bank routing number instead of account ID.",
           "Routing number was used due to an outdated API payload contract.",
           "Contract testing did not validate partition distribution entropy.",
-          "The squad lacked an automated partition entropy lint in CI."
+          "The squad lacked an automated partition entropy lint in CI.",
         ],
         cognitiveFactors: [
           "Alert runbook had an ambiguous partition rebalance procedure.",
-          "Dashboard showed global throughput but hid per-partition skew."
+          "Dashboard showed global throughput but hid per-partition skew.",
         ],
         systemicRemediations: [
-          { action: "Migrate Kafka keying strictly to account_id for uniform hashing", owner: "valentin", deadline: "2026-10-28" },
-          { action: "Add automated partition entropy verification to Sachem schema checks", owner: "squad-platform", deadline: "2026-11-02" }
-        ]
+          {
+            action: "Migrate Kafka keying strictly to account_id for uniform hashing",
+            owner: "valentin",
+            deadline: "2026-10-28",
+          },
+          {
+            action: "Add automated partition entropy verification to Sachem schema checks",
+            owner: "squad-platform",
+            deadline: "2026-11-02",
+          },
+        ],
       });
 
       assert.ok(report.markdown.includes("NUBANK BLAMELESS POSTMORTEM — INC-2026-NU-042"));
@@ -214,8 +234,8 @@ describe("EOS Nubank Institutional Engineering Codex Suite (SPEC-023, BDD-053)",
         servicesOwned: ["card-authorizer", "credit-limit-ledger", "fraud-sentinel"],
         slos: [
           { metric: "Authorization Latency p99", target: "< 45ms" },
-          { metric: "Service Availability", target: "99.99%" }
-        ]
+          { metric: "Service Availability", target: "99.99%" },
+        ],
       });
 
       assert.equal(charter.squadName, "squad-credit-cards-bogota");

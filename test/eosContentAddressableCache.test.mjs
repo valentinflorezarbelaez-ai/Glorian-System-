@@ -47,7 +47,7 @@ test("BDD-191: Action Cache Hit and Redundant Execution Avoidance", () => {
     const actionKey = cas.computeActionKey(
       ["a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90"],
       "node --test test/sample.test.mjs",
-      { NODE_ENV: "test" }
+      { NODE_ENV: "test" },
     );
 
     assert.equal(actionKey.length, 64);
@@ -61,7 +61,7 @@ test("BDD-191: Action Cache Hit and Redundant Execution Avoidance", () => {
       exitCode: 0,
       stdout: "✔ All tests pass (0 regressions)\n",
       stderr: "",
-      originalDurationMs: 450
+      originalDurationMs: 450,
     });
 
     assert.equal(stored.exitCode, 0);

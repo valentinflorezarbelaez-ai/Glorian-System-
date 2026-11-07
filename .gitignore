@@ -5,6 +5,8 @@ node_modules/
 .eos/**
 !.eos/secret-allowlist.json
 .worktrees/
+# Scratch fixtures created and torn down by sandbox test suites.
+test/_sandbox/
 docs/evidence/LOCAL-CHECKS-RECEIPT.json
 docs/evidence/local-checks.sarif
 docs/evidence/HEAL-*.json
@@ -14,3 +16,10 @@ tools/
 *.jar
 .coverage/
 dist/
+test-run.log
+pipeline-run.log
+.eos-vfast.log
+.eos-graph-cache.json
+data/
+*.db
+

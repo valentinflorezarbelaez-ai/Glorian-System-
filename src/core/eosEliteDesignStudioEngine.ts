@@ -95,7 +95,7 @@ export class EosEliteDesignStudioEngine {
           fontFamilyHeading: "'Inter', -apple-system, sans-serif",
           fontFamilyMono: "'JetBrains Mono', monospace",
           borderRadius: "12px",
-          spatialGridBasePx: 8
+          spatialGridBasePx: 8,
         };
 
       case "PALANTIR_FOUNDRY":
@@ -112,7 +112,7 @@ export class EosEliteDesignStudioEngine {
           fontFamilyHeading: "'Space Grotesk', sans-serif",
           fontFamilyMono: "'JetBrains Mono', monospace",
           borderRadius: "6px",
-          spatialGridBasePx: 8
+          spatialGridBasePx: 8,
         };
 
       case "ANDURIL_LATTICE":
@@ -129,7 +129,7 @@ export class EosEliteDesignStudioEngine {
           fontFamilyHeading: "'JetBrains Mono', monospace",
           fontFamilyMono: "'JetBrains Mono', monospace",
           borderRadius: "2px",
-          spatialGridBasePx: 8
+          spatialGridBasePx: 8,
         };
 
       case "GLORIAN_SOLAR":
@@ -146,7 +146,7 @@ export class EosEliteDesignStudioEngine {
           fontFamilyHeading: "'Space Grotesk', sans-serif",
           fontFamilyMono: "'JetBrains Mono', monospace",
           borderRadius: "8px",
-          spatialGridBasePx: 8
+          spatialGridBasePx: 8,
         };
     }
   }
@@ -154,7 +154,7 @@ export class EosEliteDesignStudioEngine {
   public scaffoldComponent(
     archetype: DesignArchetype,
     componentType: DesignComponentType,
-    options?: { title?: string; subtitle?: string; metrics?: Record<string, any> }
+    options?: { title?: string; subtitle?: string; metrics?: Record<string, any> },
   ): DesignGenerationResult {
     const tokens = this.getArchetypeTokens(archetype);
     const title = options?.title ?? `${archetype.replace("_", " ")} — ${componentType.replace("_", " ")}`;
@@ -372,7 +372,7 @@ export class EosEliteDesignStudioEngine {
       scopedCss,
       tokens,
       wcagContrastRatio,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -402,7 +402,7 @@ export class EosEliteDesignStudioEngine {
       semanticAriaValid: hasAria,
       motionReducedCompliant: hasReducedMotion,
       findings,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -412,7 +412,7 @@ export class EosEliteDesignStudioEngine {
       totalAudits: this.totalAudits,
       lastArchetypeGenerated: this.lastArchetypeGenerated,
       state: "CONFORMANT",
-      activeArchetypesCount: 4
+      activeArchetypesCount: 4,
     };
   }
 

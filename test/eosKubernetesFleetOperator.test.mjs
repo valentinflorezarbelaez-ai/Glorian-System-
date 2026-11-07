@@ -25,29 +25,29 @@ test("BDD-264: Evaluación determinista de políticas de autorización ABAC con 
       principalRole: "admin",
       actionPattern: "*",
       targetNamespace: "*",
-      effect: "ALLOW"
+      effect: "ALLOW",
     },
     {
       id: "dev-read-only",
       principalRole: "developer",
       actionPattern: "cluster:get",
       targetNamespace: "staging",
-      effect: "ALLOW"
+      effect: "ALLOW",
     },
     {
       id: "deny-prod-mutation",
       principalRole: "developer",
       actionPattern: "cluster:*",
       targetNamespace: "production",
-      effect: "DENY"
-    }
+      effect: "DENY",
+    },
   ]);
 
   // 1. Admin executing cluster deletion in production -> ALLOW (200)
   const adminReq = {
     principal: { username: "valentin", role: "admin" },
     action: "cluster:delete",
-    resource: { kind: "EosCluster", namespace: "production", name: "prod-omega-1" }
+    resource: { kind: "EosCluster", namespace: "production", name: "prod-omega-1" },
   };
   const adminDecision = operator.evaluateAccess(adminReq);
   assert.equal(adminDecision.allowed, true);
@@ -58,7 +58,7 @@ test("BDD-264: Evaluación determinista de políticas de autorización ABAC con 
   const devDeleteReq = {
     principal: { username: "junior-dev", role: "developer" },
     action: "cluster:delete",
-    resource: { kind: "EosCluster", namespace: "production", name: "prod-omega-1" }
+    resource: { kind: "EosCluster", namespace: "production", name: "prod-omega-1" },
   };
   const devDeleteDecision = operator.evaluateAccess(devDeleteReq);
   assert.equal(devDeleteDecision.allowed, false);
@@ -69,7 +69,7 @@ test("BDD-264: Evaluación determinista de políticas de autorización ABAC con 
   const devReadReq = {
     principal: { username: "junior-dev", role: "developer" },
     action: "cluster:get",
-    resource: { kind: "EosCluster", namespace: "staging", name: "stage-beta" }
+    resource: { kind: "EosCluster", namespace: "staging", name: "stage-beta" },
   };
   const devReadDecision = operator.evaluateAccess(devReadReq);
   assert.equal(devReadDecision.allowed, true);
@@ -79,7 +79,7 @@ test("BDD-264: Evaluación determinista de políticas de autorización ABAC con 
   const unknownReq = {
     principal: { username: "guest", role: "guest" },
     action: "cluster:inspect",
-    resource: { kind: "EosCluster", namespace: "staging", name: "stage-beta" }
+    resource: { kind: "EosCluster", namespace: "staging", name: "stage-beta" },
   };
   const unknownDecision = operator.evaluateAccess(unknownReq);
   assert.equal(unknownDecision.allowed, false);

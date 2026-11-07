@@ -12,13 +12,15 @@ test("CI/CD demo identifies every result as simulated and never authorizes deplo
   assert.equal(receipt.sbomGenerated, false);
   assert.equal(receipt.allStagesSimulatedPass, true);
   assert.equal(receipt.stages.length, 7);
-  assert.ok(receipt.stages.every((stage) => stage.status === "SIMULATED_PASS" && stage.summary.includes("simulated only")));
+  assert.ok(
+    receipt.stages.every((stage) => stage.status === "SIMULATED_PASS" && stage.summary.includes("simulated only")),
+  );
   assert.match(receipt.simulationFingerprintSha256, /^sha256:[a-f0-9]{64}$/);
 });
 
 test("CI/CD demo fingerprint is deterministic for the illustrative stage catalog", () => {
   assert.equal(
     simulateCicdGateExecution().simulationFingerprintSha256,
-    simulateCicdGateExecution().simulationFingerprintSha256
+    simulateCicdGateExecution().simulationFingerprintSha256,
   );
 });

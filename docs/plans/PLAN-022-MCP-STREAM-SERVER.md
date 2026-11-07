@@ -64,10 +64,12 @@
 ## 2. ADR-036: Bi-Directional Model Context Protocol (MCP) Stream Server over SSE & Stdio
 
 ### Context
+
 AI development tools (specifically Cursor and Google Antigravity) use the Model Context Protocol (MCP v2024-11-05). Connecting via stdio works well for single local subprocesses, but multi-agent pipelines, IDE web extensions, and live streaming environments require Server-Sent Events (SSE) with an HTTP POST `/message` back-channel.
 Furthermore, operations like long-running fleet audits or benchmarks require the server to push real-time notifications (`notifications/progress`) down the open connection so clients display live progress indicators without timing out.
 
 ### Decision
+
 1. **Zero External Dependency Implementation**:
    - Build `EosMcpStreamServer` using only Node.js standard library modules (`node:http`, `node:events`, `node:crypto`, `node:readline`).
    - Do not pull in heavy third-party MCP SDKs that introduce hundreds of transitive dependencies, preserving Layer-0 Hexagonal Purity (`dependencies: {}`).
@@ -95,12 +97,15 @@ Furthermore, operations like long-running fleet audits or benchmarks require the
    - `eos mcp status`: Prints supported capabilities, tool count, and active protocol version.
 
 ### Rejected Alternatives
-- *Using `@modelcontextprotocol/sdk`*: Rejected because it introduces dozens of external npm packages (zod, express, cors, etc.), violating Inviolable Commandment V (Layer-0 Purity) and Nubank/Spotify zero-allocation constraints.
-- *WebSockets (ws)*: Rejected because the official MCP specification mandates SSE + HTTP POST as the standard streaming transport, not raw WebSockets.
+
+- _Using `@modelcontextprotocol/sdk`_: Rejected because it introduces dozens of external npm packages (zod, express, cors, etc.), violating Inviolable Commandment V (Layer-0 Purity) and Nubank/Spotify zero-allocation constraints.
+- _WebSockets (ws)_: Rejected because the official MCP specification mandates SSE + HTTP POST as the standard streaming transport, not raw WebSockets.
 
 ### Consequences
+
 - **Positive**: 100% compliant with MCP v2024-11-05 specification; works out of the box with Cursor and Google Antigravity; 0 external runtime dependencies; zero memory leaks.
 - **Negative / Trade-off**: Requires custom session management and SSE frame formatting in pure TypeScript, which requires strict unit test coverage for edge cases (premature socket closure, malformed JSON).
 
 ---
-*Approved by Principal Architect: Valentín Flórez Arbeláez*
+
+_Approved by Principal Architect: Valentín Flórez Arbeláez_

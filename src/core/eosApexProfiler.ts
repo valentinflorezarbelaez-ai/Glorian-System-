@@ -30,7 +30,7 @@ export class EosApexProfiler {
     name: string,
     fn: () => void,
     coldIters = 20,
-    hotIters = 50000
+    hotIters = 50000,
   ): ProfileBenchmarkResult {
     // 1. Cold Phase (Measuring first unoptimized executions)
     const coldSamples = new Float64Array(coldIters);
@@ -75,14 +75,16 @@ export class EosApexProfiler {
       monomorphicVerified: true,
       allocationsPerOpBytes: allocPerOp,
       status: speedup >= 1.0 ? "OPTIMIZED_TURBOFAN" : "DEOPTIMIZATION_DETECTED",
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
   /**
    * Verifies hidden class monomorphism of an object instance.
    */
-  public static verifyMonomorphicShape<T extends object>(sample: T): {
+  public static verifyMonomorphicShape<T extends object>(
+    sample: T,
+  ): {
     isSealed: boolean;
     isFrozen: boolean;
     propertyCount: number;
@@ -96,7 +98,7 @@ export class EosApexProfiler {
       isSealed,
       isFrozen,
       propertyCount: keys.length,
-      shapeStatus: (isSealed || isFrozen) ? "MONOMORPHIC_SEALED" : "POLYMORPHIC_MUTABLE"
+      shapeStatus: isSealed || isFrozen ? "MONOMORPHIC_SEALED" : "POLYMORPHIC_MUTABLE",
     };
   }
 }

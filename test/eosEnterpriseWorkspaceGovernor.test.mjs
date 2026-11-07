@@ -22,21 +22,13 @@ function buildSyntheticEnterpriseMonorepo(baseDir) {
   fs.mkdirSync(path.join(baseDir, "prisma"), { recursive: true });
   fs.mkdirSync(path.join(baseDir, ".github", "workflows"), { recursive: true });
 
-  fs.writeFileSync(
-    path.join(baseDir, "pnpm-workspace.yaml"),
-    "packages:\n  - 'apps/*'\n  - 'packages/*'\n",
-    "utf8"
-  );
+  fs.writeFileSync(path.join(baseDir, "pnpm-workspace.yaml"), "packages:\n  - 'apps/*'\n  - 'packages/*'\n", "utf8");
   fs.writeFileSync(
     path.join(baseDir, "turbo.json"),
     JSON.stringify({ $schema: "https://turbo.build/schema.json", tasks: { build: {}, test: {} } }, null, 2),
-    "utf8"
+    "utf8",
   );
-  fs.writeFileSync(
-    path.join(baseDir, "pnpm-lock.yaml"),
-    "lockfileVersion: '9.0'\nimporters:\n  .: {}\n",
-    "utf8"
-  );
+  fs.writeFileSync(path.join(baseDir, "pnpm-lock.yaml"), "lockfileVersion: '9.0'\nimporters:\n  .: {}\n", "utf8");
   fs.writeFileSync(
     path.join(baseDir, "package.json"),
     JSON.stringify(
@@ -45,12 +37,12 @@ function buildSyntheticEnterpriseMonorepo(baseDir) {
         private: true,
         workspaces: ["apps/*", "packages/*"],
         scripts: { "verify:strict": "turbo run test", test: "node --test" },
-        devDependencies: { typescript: "5.8.0" }
+        devDependencies: { typescript: "5.8.0" },
       },
       null,
-      2
+      2,
     ),
-    "utf8"
+    "utf8",
   );
   fs.writeFileSync(path.join(baseDir, "tsconfig.json"), JSON.stringify({ compilerOptions: { strict: true } }), "utf8");
 
@@ -58,7 +50,7 @@ function buildSyntheticEnterpriseMonorepo(baseDir) {
   fs.writeFileSync(
     path.join(baseDir, "apps", "web", "package.json"),
     JSON.stringify({ name: "@acme/web", dependencies: { next: "15.2.0", react: "19.0.0" } }, null, 2),
-    "utf8"
+    "utf8",
   );
   fs.writeFileSync(path.join(baseDir, "apps", "web", "index.tsx"), "export const App = () => null;\n", "utf8");
 
@@ -66,59 +58,55 @@ function buildSyntheticEnterpriseMonorepo(baseDir) {
   fs.writeFileSync(
     path.join(baseDir, "packages", "core-domain", "package.json"),
     JSON.stringify({ name: "@acme/core-domain", devDependencies: { typescript: "5.8.0" } }, null, 2),
-    "utf8"
+    "utf8",
   );
   fs.writeFileSync(
     path.join(baseDir, "packages", "core-domain", "ledger.ts"),
     "export interface Money { readonly cents: number; readonly currency: string; }\n",
-    "utf8"
+    "utf8",
   );
 
   // Go Payment Microservice
   fs.writeFileSync(
     path.join(baseDir, "services", "payments-go", "go.mod"),
     "module github.com/acme/payments-go\n\ngo 1.24\n",
-    "utf8"
+    "utf8",
   );
-  fs.writeFileSync(
-    path.join(baseDir, "services", "payments-go", "main.go"),
-    "package main\nfunc main() {}\n",
-    "utf8"
-  );
+  fs.writeFileSync(path.join(baseDir, "services", "payments-go", "main.go"), "package main\nfunc main() {}\n", "utf8");
 
   // Rust Crypto Engine Crate
   fs.writeFileSync(
     path.join(baseDir, "crates", "crypto-engine", "Cargo.toml"),
     '[package]\nname = "acme-crypto-engine"\nversion = "0.1.0"\nedition = "2021"\n',
-    "utf8"
+    "utf8",
   );
   fs.writeFileSync(path.join(baseDir, "crates", "crypto-engine", "Cargo.lock"), "version = 3\n", "utf8");
   fs.writeFileSync(
     path.join(baseDir, "crates", "crypto-engine", "lib.rs"),
     "pub fn seal(input: &[u8]) -> usize { input.len() }\n",
-    "utf8"
+    "utf8",
   );
 
   // Formal API & Schema Contracts
   fs.writeFileSync(
     path.join(baseDir, "contracts", "openapi.json"),
     JSON.stringify({ openapi: "3.1.0", info: { title: "Acme Payments API", version: "1.0.0" }, paths: {} }, null, 2),
-    "utf8"
+    "utf8",
   );
   fs.writeFileSync(
     path.join(baseDir, "contracts", "settlement.proto"),
     'syntax = "proto3";\npackage acme.settlement;\nmessage SettlementEvent { string tx_id = 1; }\n',
-    "utf8"
+    "utf8",
   );
   fs.writeFileSync(
     path.join(baseDir, "prisma", "schema.prisma"),
     'datasource db {\n  provider = "postgresql"\n}\nmodel Account {\n  id String @id\n}\n',
-    "utf8"
+    "utf8",
   );
   fs.writeFileSync(
     path.join(baseDir, ".github", "workflows", "ci.yml"),
     "name: CI\non: [push]\njobs:\n  verify:\n    runs-on: ubuntu-latest\n",
-    "utf8"
+    "utf8",
   );
 }
 
@@ -177,7 +165,7 @@ test("BDD-139: Constitutional Law IV Safe Enterprise Project Onboarding writes 0
       projectName: "Acme Planetary Platform",
       remoteUrl: "https://github.com/acme/planetary.git",
       controlPlaneRoot: isolatedControlPlane,
-      dryRun: false
+      dryRun: false,
     });
 
     assert.equal(onboardRes.projectId, "acme-planetary");
@@ -197,13 +185,11 @@ test("BDD-139: Constitutional Law IV Safe Enterprise Project Onboarding writes 0
       assert.equal(
         fs.existsSync(path.join(isolatedControlPlane, artifact.relativeControlPlanePath)),
         true,
-        `Missing control-plane artifact: ${artifact.relativeControlPlanePath}`
+        `Missing control-plane artifact: ${artifact.relativeControlPlanePath}`,
       );
     }
 
-    const ledger = new EosDurableSqliteLedger(
-      EosDurableSqliteLedger.defaultLedgerPath(isolatedControlPlane)
-    );
+    const ledger = new EosDurableSqliteLedger(EosDurableSqliteLedger.defaultLedgerPath(isolatedControlPlane));
     try {
       const chain = ledger.verifyChainIntegrity();
       assert.equal(chain.intact, true);
@@ -232,7 +218,7 @@ test("BDD-140: Multi-tenant registered fleet boundary allows READ_ONLY and block
       targetPath: readOnlyRepo,
       projectId: "readonly-svc",
       controlPlaneRoot: controlPlane,
-      dryRun: false
+      dryRun: false,
     });
 
     // Manually add a fully LEVEL_3_PRODUCTION_AUTHORIZED entry for authorizedRepo
@@ -249,7 +235,7 @@ test("BDD-140: Multi-tenant registered fleet boundary allows READ_ONLY and block
       specification: "SPECIFICATION_APPROVED",
       audit: "AUDIT_COMPLETE",
       ownerApproval: "OWNER_APPROVAL",
-      authorization: "LEVEL_3_PRODUCTION_AUTHORIZED"
+      authorization: "LEVEL_3_PRODUCTION_AUTHORIZED",
     });
     fs.writeFileSync(regPath, JSON.stringify(regDoc, null, 2), "utf8");
 
@@ -258,7 +244,7 @@ test("BDD-140: Multi-tenant registered fleet boundary allows READ_ONLY and block
       "readonly-svc",
       "contracts",
       "READ_ONLY",
-      controlPlane
+      controlPlane,
     );
     assert.equal(roRes.writeBarrierStatus, "READ_ONLY_CONFINED");
     assert.ok(roRes.resolvedTargetPath.endsWith("contracts"));
@@ -270,21 +256,15 @@ test("BDD-140: Multi-tenant registered fleet boundary allows READ_ONLY and block
           "readonly-svc",
           "../../outside",
           "READ_ONLY",
-          controlPlane
+          controlPlane,
         ),
-      /BOUNDARY_ESCAPE_BLOCKED/
+      /BOUNDARY_ESCAPE_BLOCKED/,
     );
 
     // 3. WRITE_GATED on LEVEL_1_READ_ONLY_AUDIT is blocked by Law IV
     assert.throws(
-      () =>
-        EosEnterpriseWorkspaceGovernor.resolveAuthorizedWorkspace(
-          "readonly-svc",
-          ".",
-          "WRITE_GATED",
-          controlPlane
-        ),
-      /LAW_IV_WRITE_BARRIER_BLOCKED/
+      () => EosEnterpriseWorkspaceGovernor.resolveAuthorizedWorkspace("readonly-svc", ".", "WRITE_GATED", controlPlane),
+      /LAW_IV_WRITE_BARRIER_BLOCKED/,
     );
 
     // 4. WRITE_GATED on LEVEL_3_PRODUCTION_AUTHORIZED with all 6 preconditions succeeds
@@ -292,7 +272,7 @@ test("BDD-140: Multi-tenant registered fleet boundary allows READ_ONLY and block
       "authorized-svc",
       ".",
       "WRITE_GATED",
-      controlPlane
+      controlPlane,
     );
     assert.equal(wrRes.writeBarrierStatus, "AUTHORIZED");
   } finally {
@@ -310,7 +290,7 @@ test("BDD-141: Bounded structural verification gates pass clean enterprise works
     buildSyntheticEnterpriseMonorepo(cleanDir);
     const cleanReport = EosEnterpriseWorkspaceGovernor.verifyWorkspace(cleanDir, {
       ledgerDbPath: ledgerPath,
-      projectId: "clean-enterprise"
+      projectId: "clean-enterprise",
     });
     assert.equal(cleanReport.overallPassed, true);
     assert.equal(cleanReport.epistemicState, "VERIFIED");
@@ -322,11 +302,15 @@ test("BDD-141: Bounded structural verification gates pass clean enterprise works
     buildSyntheticEnterpriseMonorepo(faultyDir);
     fs.writeFileSync(path.join(faultyDir, "contracts", "openapi.json"), "{ broken_json: true ", "utf8");
     const syntheticToken = "ghp_" + "Z".repeat(30);
-    fs.writeFileSync(path.join(faultyDir, "apps", "web", "leaked.ts"), `export const tok = "${syntheticToken}";\n`, "utf8");
+    fs.writeFileSync(
+      path.join(faultyDir, "apps", "web", "leaked.ts"),
+      `export const tok = "${syntheticToken}";\n`,
+      "utf8",
+    );
 
     const faultyReport = EosEnterpriseWorkspaceGovernor.verifyWorkspace(faultyDir, {
       ledgerDbPath: ledgerPath,
-      projectId: "faulty-enterprise"
+      projectId: "faulty-enterprise",
     });
     assert.equal(faultyReport.overallPassed, false);
     assert.equal(faultyReport.epistemicState, "FINDINGS_IDENTIFIED");
@@ -353,7 +337,7 @@ test("BDD-142: Unified MCP eos_enterprise_workspace dispatch in 'core' profile w
     jsonrpc: "2.0",
     id: 2,
     method: "tools/call",
-    params: { name: "eos_enterprise_workspace", arguments: { action: "list" } }
+    params: { name: "eos_enterprise_workspace", arguments: { action: "list" } },
   });
   assert.ok(!listCall.error);
   const listPayload = JSON.parse(listCall.result.content[0].text);
@@ -364,7 +348,7 @@ test("BDD-142: Unified MCP eos_enterprise_workspace dispatch in 'core' profile w
     jsonrpc: "2.0",
     id: 3,
     method: "tools/call",
-    params: { name: "eos_enterprise_workspace", arguments: { action: "inspect", projectId: "eos-system" } }
+    params: { name: "eos_enterprise_workspace", arguments: { action: "inspect", projectId: "eos-system" } },
   });
   assert.ok(!inspectCall.error);
   const inspectPayload = JSON.parse(inspectCall.result.content[0].text);

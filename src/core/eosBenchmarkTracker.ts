@@ -11,11 +11,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export type BenchmarkVerdict = "NOMINAL" | "OPTIMIZED" | "REGRESSION_DETECTED";
@@ -94,13 +90,17 @@ export class EosBenchmarkTracker {
     const timestampIso = new Date().toISOString();
 
     // Query previous baseline for this benchmark
-    const baselineRow = this.db.prepare(`
+    const baselineRow = this.db
+      .prepare(
+        `
       SELECT p95_ns, ops_per_sec 
       FROM eos_benchmark_metrics 
       WHERE benchmark_name = ? 
       ORDER BY id DESC 
       LIMIT 1
-    `).get(input.benchmarkName) as { p95_ns: number; ops_per_sec: number } | undefined;
+    `,
+      )
+      .get(input.benchmarkName) as { p95_ns: number; ops_per_sec: number } | undefined;
 
     const baselineP95Ns = baselineRow ? baselineRow.p95_ns : input.p95Ns;
     let percentChange = 0;
@@ -120,23 +120,27 @@ export class EosBenchmarkTracker {
     }
 
     const sha256Receipt = pureSha256(
-      `BENCH:${input.benchmarkName}:${commitSha}:${input.p95Ns}:${baselineP95Ns}:${percentChange}:${verdict}:${timestampIso}`
+      `BENCH:${input.benchmarkName}:${commitSha}:${input.p95Ns}:${baselineP95Ns}:${percentChange}:${verdict}:${timestampIso}`,
     );
 
-    this.db.prepare(`
+    this.db
+      .prepare(
+        `
       INSERT INTO eos_benchmark_metrics (
         benchmark_name, commit_sha, p50_ns, p95_ns, p99_ns, ops_per_sec, verdict, recorded_at_iso
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(
-      input.benchmarkName,
-      commitSha,
-      input.p50Ns,
-      input.p95Ns,
-      input.p99Ns,
-      input.opsPerSec,
-      verdict,
-      timestampIso
-    );
+    `,
+      )
+      .run(
+        input.benchmarkName,
+        commitSha,
+        input.p50Ns,
+        input.p95Ns,
+        input.p99Ns,
+        input.opsPerSec,
+        verdict,
+        timestampIso,
+      );
 
     return deepFreeze({
       benchmarkName: input.benchmarkName,
@@ -148,7 +152,7 @@ export class EosBenchmarkTracker {
       verdict,
       isRegression,
       sha256Receipt,
-      timestampIso
+      timestampIso,
     });
   }
 
@@ -156,22 +160,23 @@ export class EosBenchmarkTracker {
    * Retrieves the latest historical metrics for a given benchmark.
    */
   public getHistory(benchmarkName: string, limit: number = 10): readonly any[] {
-    const rows = this.db.prepare(`
+    const rows = this.db
+      .prepare(
+        `
       SELECT * FROM eos_benchmark_metrics 
       WHERE benchmark_name = ? 
       ORDER BY id DESC 
       LIMIT ?
-    `).all(benchmarkName, limit);
+    `,
+      )
+      .all(benchmarkName, limit);
     return deepFreeze(rows);
   }
 
   /**
    * Persists benchmark attestation into durable SQLite WAL ledger.
    */
-  public recordReceiptInLedger(
-    report: BenchmarkComparisonReport,
-    dbPathOrRootDir?: string
-  ): boolean {
+  public recordReceiptInLedger(report: BenchmarkComparisonReport, dbPathOrRootDir?: string): boolean {
     const dbPath = dbPathOrRootDir
       ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
         ? dbPathOrRootDir
@@ -192,9 +197,9 @@ export class EosBenchmarkTracker {
           percentChange: report.percentChange,
           opsPerSec: report.opsPerSec,
           verdict: report.verdict,
-          sha256Receipt: report.sha256Receipt
+          sha256Receipt: report.sha256Receipt,
         },
-        engramTopicKey: "eos/telemetry/benchmarks"
+        engramTopicKey: "eos/telemetry/benchmarks",
       });
       return true;
     } catch {

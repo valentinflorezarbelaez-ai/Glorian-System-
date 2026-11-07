@@ -24,10 +24,50 @@ export interface VectorSearchResult<T = Record<string, unknown>> {
 }
 
 const STOPWORDS = new Set([
-  "a", "el", "la", "los", "las", "un", "una", "unos", "unas", "de", "del",
-  "en", "para", "por", "con", "sin", "sobre", "y", "o", "u", "e", "que",
-  "es", "son", "fue", "era", "se", "su", "sus", "al", "lo", "como", "the",
-  "in", "on", "at", "to", "for", "with", "and", "or", "an", "is", "of"
+  "a",
+  "el",
+  "la",
+  "los",
+  "las",
+  "un",
+  "una",
+  "unos",
+  "unas",
+  "de",
+  "del",
+  "en",
+  "para",
+  "por",
+  "con",
+  "sin",
+  "sobre",
+  "y",
+  "o",
+  "u",
+  "e",
+  "que",
+  "es",
+  "son",
+  "fue",
+  "era",
+  "se",
+  "su",
+  "sus",
+  "al",
+  "lo",
+  "como",
+  "the",
+  "in",
+  "on",
+  "at",
+  "to",
+  "for",
+  "with",
+  "and",
+  "or",
+  "an",
+  "is",
+  "of",
 ]);
 
 /**
@@ -73,10 +113,7 @@ export function computeTermFrequency(tokens: string[]): Map<string, number> {
  * Calculates deterministic cosine similarity between two normalized vectors.
  * Returns a value in [0.0, 1.0].
  */
-export function cosineSimilarity(
-  v1: Map<string, number>,
-  v2: Map<string, number>
-): number {
+export function cosineSimilarity(v1: Map<string, number>, v2: Map<string, number>): number {
   if (v1.size === 0 || v2.size === 0) return 0;
 
   // Iterate over smaller vector for sub-microsecond O(min(|v1|, |v2|)) performance
@@ -125,7 +162,7 @@ export class EosNeuralVectorStore<T = Record<string, unknown>> {
           id: doc.id,
           score,
           text: doc.text,
-          metadata: doc.metadata
+          metadata: doc.metadata,
         });
       }
     }
@@ -138,11 +175,7 @@ export class EosNeuralVectorStore<T = Record<string, unknown>> {
    * Hybrid RAG Retrieval using Reciprocal Rank Fusion (RRF).
    * Combines dense vector cosine similarity with sparse lexical exact-match ranking.
    */
-  public searchHybrid(
-    query: string,
-    topK: number = 3,
-    kRrf: number = 60
-  ): Array<VectorSearchResult<T>> {
+  public searchHybrid(query: string, topK: number = 3, kRrf: number = 60): Array<VectorSearchResult<T>> {
     const queryTokens = tokenize(query);
     if (queryTokens.length === 0) return [];
     const queryVector = computeTermFrequency(queryTokens);
@@ -194,7 +227,7 @@ export class EosNeuralVectorStore<T = Record<string, unknown>> {
           id: doc.id,
           score: Number(rrfScore.toFixed(6)),
           text: doc.text,
-          metadata: doc.metadata
+          metadata: doc.metadata,
         });
       }
     }
@@ -225,37 +258,37 @@ export function createDefaultEosKnowledgeStore(): EosNeuralVectorStore<{ domain:
   store.addDocument(
     "DOC-FLEET-AUDIT",
     "Auditoría integral de la flota soberana, verificación de repositorios git, escáner de secretos y validación de producción",
-    { domain: "Operations & Fleet" }
+    { domain: "Operations & Fleet" },
   );
 
   store.addDocument(
     "DOC-FLEET-DEPLOY",
     "Despliegue y publicación continua de la flota a producción en Vercel y GitHub con verificación previa",
-    { domain: "CI/CD & Release" }
+    { domain: "CI/CD & Release" },
   );
 
   store.addDocument(
     "DOC-SECURITY-SAST",
     "Aduanas de seguridad SAST, OWASP Top 10, prevención de fuga de credenciales y firmas criptográficas Merkle SHA-256",
-    { domain: "SecDevOps" }
+    { domain: "SecDevOps" },
   );
 
   store.addDocument(
     "DOC-LINUX-KERNEL",
     "Núcleo monolítico modular de Linux Ring-0, sistema virtual de archivos VFS, llamadas al sistema y Read-Copy-Update RCU",
-    { domain: "Operating System" }
+    { domain: "Operating System" },
   );
 
   store.addDocument(
     "DOC-NANOSECOND-ENGINE",
     "Motor de computación de alta frecuencia en nanosegundos L1 Cache Struct-of-Arrays y traducción universal",
-    { domain: "High Performance Computing" }
+    { domain: "High Performance Computing" },
   );
 
   store.addDocument(
     "DOC-AKASHIC-MEMORY",
     "Memoria Akáshica permanente, grafo de conocimiento determinista y persistencia ontológica soberana",
-    { domain: "Knowledge Management" }
+    { domain: "Knowledge Management" },
   );
 
   return store;

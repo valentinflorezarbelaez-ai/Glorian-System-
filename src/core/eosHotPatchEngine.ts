@@ -40,7 +40,8 @@ export interface HotPatchRollbackResult {
 
 export class EosHotPatchEngine {
   private readonly targetRegistry: Map<string, Record<string, any>> = new Map();
-  private readonly patchBackups: Map<string, { targetName: string; backupMethods: Record<string, MethodFunction> }> = new Map();
+  private readonly patchBackups: Map<string, { targetName: string; backupMethods: Record<string, MethodFunction> }> =
+    new Map();
 
   /**
    * Registers a long-lived service instance as a hot-patchable target.
@@ -88,7 +89,7 @@ export class EosHotPatchEngine {
 
     this.patchBackups.set(patch.patchId, {
       targetName: patch.targetName,
-      backupMethods
+      backupMethods,
     });
 
     const timestamp = new Date().toISOString();
@@ -103,7 +104,7 @@ export class EosHotPatchEngine {
       applied: true,
       methodsPatched: Object.freeze(methodsPatched),
       sha384Receipt,
-      timestamp
+      timestamp,
     });
   }
 
@@ -133,7 +134,7 @@ export class EosHotPatchEngine {
       patchId,
       rolledBack: true,
       methodsRestored: Object.freeze(restored),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 }

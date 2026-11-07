@@ -1,11 +1,12 @@
 # INTAKE & CONTEXT RECORD: NUBANK INSTITUTIONAL ENGINEERING CODEX (INTAKE-016)
+
 <!-- Standard: IEEE 830 / ISO 29148 — EOS 21-Step Master Pipeline -->
 
-* **Project**: EOS System Control Plane (`eos-system-control-plane`)
-* **Date**: 2026-10-25
-* **Author**: Valentín Flórez Arbeláez (Principal Architect) & Antigravity (Pair Programmer)
-* **Institutional Benchmark**: Nu (Nubank) Engineering Standards — `https://building.nu.com/` (Building Nu)
-* **Goal**: Institutionalize within EOS System the exact, end-to-end engineering practices, architectural paradigms, operational culture, and design tenets of Nubank, creating an autonomous codex that enables EOS to operate with perfection under Nu's standards.
+- **Project**: EOS System Control Plane (`eos-system-control-plane`)
+- **Date**: 2026-10-25
+- **Author**: Valentín Flórez Arbeláez (Principal Architect) & Antigravity (Pair Programmer)
+- **Institutional Benchmark**: Nu (Nubank) Engineering Standards — `https://building.nu.com/` (Building Nu)
+- **Goal**: Institutionalize within EOS System the exact, end-to-end engineering practices, architectural paradigms, operational culture, and design tenets of Nubank, creating an autonomous codex that enables EOS to operate with perfection under Nu's standards.
 
 ---
 
@@ -14,6 +15,7 @@
 Nubank serves over 140 million customers across Latin America (Brazil, Mexico, Colombia) with a platform built to fight complexity through functional programming, immutability, and pragmatic simplicity.
 
 ### 1.1 The Six Pillars of Nu Engineering Excellence
+
 1. **Fighting Complexity as a Discipline (Rich Hickey & Out of the Tar Pit)**:
    - Complexity is the primary impediment to scaling and maintainability.
    - Separation of "Simple" (unbraided, decoupled, single-responsibility) from "Easy" (familiar, convenient in the short term, disastrous at scale).
@@ -41,6 +43,7 @@ Nubank serves over 140 million customers across Latin America (Brazil, Mexico, C
 ---
 
 ## 2. Inviolable Invariants
+
 1. **Layer-0 Purity**: Zero external runtime dependencies (`dependencies: {}`).
 2. **Zero Plaintext Secrets**: No hardcoded API keys, tokens, or credentials.
 3. **Deterministic Verification**: Exit code 0 across all unit, lint, and CI/CD stages.

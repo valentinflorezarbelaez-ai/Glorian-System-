@@ -19,34 +19,33 @@ const SCENARIOS = {
     scenarioId: "secret-leak-attempt",
     scenarioTitle: "Intento de Inyección de Secreto en Claro (Violación Ley VI)",
     example: "Un actor intenta guardar una credencial en un archivo.",
-    formulaReference: "□ (∀ commit ∈ Repo : PlainSecrets(commit) = ∅) ∧ ◇ QuarantineActive"
+    formulaReference: "□ (∀ commit ∈ Repo : PlainSecrets(commit) = ∅) ∧ ◇ QuarantineActive",
   },
   "orphan-ontology-link": {
     scenarioId: "orphan-ontology-link",
     scenarioTitle: "Enlace Huérfano en el Grafo de Especificaciones (ORPHAN_LINK_DETECTED)",
     example: "Una tarea referencia un requisito que no existe en la especificación.",
-    formulaReference: "□ (∀ t ∈ Tasks : ∃ s ∈ Specs : Linked(t, s)) ∧ ◇ GraphHarmonized"
+    formulaReference: "□ (∀ t ∈ Tasks : ∃ s ∈ Specs : Linked(t, s)) ∧ ◇ GraphHarmonized",
   },
   "spec-drift-mutation": {
     scenarioId: "spec-drift-mutation",
     scenarioTitle: "Mutación Ilegal sin Especificación EARS (Vibe Coding Drift)",
     example: "Un cambio de código no cuenta con un requisito aprobado asociado.",
-    formulaReference: "□ (CodeChange ⇒ (SpecApproved ∧ AuthLevel ≥ 2)) ∧ ◇ DriftZero"
+    formulaReference: "□ (CodeChange ⇒ (SpecApproved ∧ AuthLevel ≥ 2)) ∧ ◇ DriftZero",
   },
   "heap-entropy-spike": {
     scenarioId: "heap-entropy-spike",
     scenarioTitle: "Pico de Entropía y Objetos Efímeros en RAM (GC Pressure)",
     example: "Una carga sintética puede aumentar las asignaciones de memoria.",
-    formulaReference: "□ (HeapAllocInHotLoop = 0 ∧ L1ArenaBytes ≤ 65536) ∧ ◇ FrameTimeSub8ms"
+    formulaReference: "□ (HeapAllocInHotLoop = 0 ∧ L1ArenaBytes ≤ 65536) ∧ ◇ FrameTimeSub8ms",
   },
   "race-condition-concurrent": {
     scenarioId: "race-condition-concurrent",
     scenarioTitle: "Condición de Carrera Multi-Agente sobre el Mismo Archivo",
     example: "Dos trabajadores intentan modificar el mismo archivo al mismo tiempo.",
-    formulaReference: "□ (∀ a1, a2 ∈ Agents : a1 ≠ a2 ⇒ Worktree(a1) ∩ Worktree(a2) = ∅) ∧ ◇ LockFreeCAS"
-  }
+    formulaReference: "□ (∀ a1, a2 ∈ Agents : a1 ≠ a2 ⇒ Worktree(a1) ∩ Worktree(a2) = ∅) ∧ ◇ LockFreeCAS",
+  },
 };
-
 
 // ============================================================================
 // SPEC-038: PALANTIR HNSW, ALADDIN RISK LEDGER & SPACEX MONOTONIC MERKLE ENGINE
@@ -121,8 +120,8 @@ function runMonteCarloJs(tasks, iterations = 5000, deadlineHours = 18.0) {
       p80: getP(80),
       p90: getP(90),
       p95: getP(95),
-      p99: getP(99)
-    }
+      p99: getP(99),
+    },
   };
 }
 
@@ -155,31 +154,32 @@ export default function handler(req, res) {
       { id: "doc-aladdin", text: "BlackRock Aladdin institutional risk simulation with Monte Carlo Beta-PERT" },
       { id: "doc-spacex", text: "SpaceX Starship telemetry streaming with nanosecond monotonic cryptographic ledgers" },
       { id: "doc-nsa", text: "NSA CNSA 2.0 post-quantum encryption and zero-trust compartmentalization" },
-      { id: "doc-netflix", text: "Netflix Chaos Monkey automated failure injection and resilience engineering" }
+      { id: "doc-netflix", text: "Netflix Chaos Monkey automated failure injection and resilience engineering" },
     ];
 
     const qVec = projectTextToVectorJs(query, 64);
-    const scored = docs.map(d => {
+    const scored = docs.map((d) => {
       const dVec = projectTextToVectorJs(d.text, 64);
       const dist = cosineDistJs(qVec, dVec);
       return {
         id: d.id,
         distance: Math.round(dist * 10000) / 10000,
         similarity: Math.round(Math.max(0, 1.0 - dist) * 10000) / 10000,
-        text: d.text
+        text: d.text,
       };
     });
     scored.sort((a, b) => a.distance - b.distance);
 
     return res.status(200).json({
       status: "LOCAL_VECTOR_DEMO",
-      scope: "Toy in-memory vector projection over five embedded sample texts; no HNSW index or external data source is used.",
+      scope:
+        "Toy in-memory vector projection over five embedded sample texts; no HNSW index or external data source is used.",
       engine: "Local cosine-distance demonstration",
       externalSystemsQueried: false,
       query,
       dimensions: 64,
       metric: "cosine",
-      results: scored
+      results: scored,
     });
   }
 
@@ -201,7 +201,7 @@ export default function handler(req, res) {
       { id: "T1", name: "HNSW Vector Engine Implementation", optimistic: 3, nominal: 6, pessimistic: 12 },
       { id: "T2", name: "Monte Carlo Stochastic Risk Port", optimistic: 2, nominal: 4, pessimistic: 8 },
       { id: "T3", name: "Monotonic Hash Chain Ledger Port", optimistic: 2, nominal: 3, pessimistic: 6 },
-      { id: "T4", name: "CI/CD Gate & Edge Verification", optimistic: 1, nominal: 2, pessimistic: 4 }
+      { id: "T4", name: "CI/CD Gate & Edge Verification", optimistic: 1, nominal: 2, pessimistic: 4 },
     ];
     const riskReport = runMonteCarloJs(tasks, iters, deadline);
     return res.status(200).json({
@@ -210,7 +210,7 @@ export default function handler(req, res) {
       engine: "Local PERT-style demonstration",
       iterations: iters,
       externalSystemsQueried: false,
-      summary: riskReport
+      summary: riskReport,
     });
   }
 
@@ -222,7 +222,8 @@ export default function handler(req, res) {
 
     return res.status(200).json({
       status: "LOCAL_HASH_CHAIN_DEMO",
-      scope: "Three locally constructed example records; not a deployment record, trusted timestamp, or external attestation.",
+      scope:
+        "Three locally constructed example records; not a deployment record, trusted timestamp, or external attestation.",
       engine: "Local SHA-256 hash-chain example",
       valid: true,
       externalSystemsQueried: false,
@@ -232,13 +233,10 @@ export default function handler(req, res) {
       blocks: [
         { index: 0, type: "SPEC_APPROVAL", hash: b0Hash, prevHash: genesisPrev, monotonicNs: "1793022000000000000" },
         { index: 1, type: "VERIFY_GATE", hash: b1Hash, prevHash: b0Hash, monotonicNs: "1793022100000000000" },
-        { index: 2, type: "DEPLOY_PROD", hash: b2Hash, prevHash: b1Hash, monotonicNs: "1793022200000000000" }
-      ]
+        { index: 2, type: "DEPLOY_PROD", hash: b2Hash, prevHash: b1Hash, monotonicNs: "1793022200000000000" },
+      ],
     });
   }
-
-
-
 
   const scenarioKey = queryParams.scenario === undefined ? "secret-leak-attempt" : queryParams.scenario;
   if (typeof scenarioKey !== "string" || scenarioKey.length > 64 || !Object.hasOwn(SCENARIOS, scenarioKey)) {
@@ -250,12 +248,13 @@ export default function handler(req, res) {
 
   return res.status(200).json({
     status: "LOCAL_SCENARIO_DESCRIPTION",
-    scope: "Static scenario description only; no TLA+ model checker, fault injection, remediation, or external service was run.",
+    scope:
+      "Static scenario description only; no TLA+ model checker, fault injection, remediation, or external service was run.",
     engine: "Local scenario catalog",
     formalModelChecked: false,
     chaosRun: false,
     resultFingerprintSha256: `sha256:${sha256Seal}`,
     fingerprintIsSignature: false,
-    drill
+    drill,
   });
 }

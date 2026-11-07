@@ -18,12 +18,7 @@ import crypto from "node:crypto";
 
 export type ProductComplexityTier = "MVP" | "ENTERPRISE" | "MISSION_CRITICAL" | "PLANETARY";
 
-export type ProductPlatform =
-  | "web"
-  | "mobile-flutter"
-  | "distributed-backend"
-  | "hft-native-go"
-  | "acoustic-dsp-rust";
+export type ProductPlatform = "web" | "mobile-flutter" | "distributed-backend" | "hft-native-go" | "acoustic-dsp-rust";
 
 export interface ProductManifest {
   readonly id: string;
@@ -259,8 +254,8 @@ export class EosUniversalProductFoundry {
           },
         },
         null,
-        2
-      )
+        2,
+      ),
     );
 
     // 2. Core Domain entity

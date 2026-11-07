@@ -27,19 +27,27 @@ npm test          # == npm run verify:strict == npm run cicd:gate (tests only)
 
 The fast lane (`pre-commit`) runs `npm run verify:fast` (credential scan, type-check, impacted suites). The full gate runs on `pre-push` and in CI.
 
-## Linting
+## Linting & Formatting
 
-ESLint (flat config, `@typescript-eslint`) is enforced in CI and via the pre-commit hook:
+ESLint (flat config, `@eslint/js`) is enforced in CI and via the pre-commit hook:
 
 ```sh
 npm run lint          # check
 npm run lint:fix      # auto-fix safe violations
 ```
 
+Prettier (3.x) enforces consistent formatting. The `.prettierrc.json` matches the `.editorconfig`:
+
+```sh
+npm run format         # auto-format all files
+npm run format:check   # verify formatting (CI gate)
+```
+
 Key rules enforced:
-- `@typescript-eslint/no-floating-promises` — every `Promise` must be awaited or explicitly handled.
-- `@typescript-eslint/no-explicit-any` — zero `any` types.
+
 - `n/prefer-node-protocol` — `node:fs` over `fs` in all scripts.
+- 2-space indent, LF line endings, trailing commas, 120-char print width.
+- Templates (`templates/`) are self-contained sub-projects with their own tooling and are excluded from lint/format.
 
 ## Inviolable laws
 

@@ -11,11 +11,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
 export interface DocSearchResult {
   readonly path: string;
@@ -39,7 +35,9 @@ export class EosDocumentationSearch {
   constructor(projectRoot: string = process.cwd(), dbPath?: string) {
     this.projectRoot = path.resolve(projectRoot);
     this.dbPath = dbPath
-      ? (dbPath === ":memory:" ? ":memory:" : path.resolve(dbPath))
+      ? dbPath === ":memory:"
+        ? ":memory:"
+        : path.resolve(dbPath)
       : path.join(this.projectRoot, ".eos", "state", "eos_docs_fts.sqlite");
 
     if (this.dbPath !== ":memory:") {
@@ -101,7 +99,7 @@ export class EosDocumentationSearch {
       path.join(this.projectRoot, "docs", "plans"),
       path.join(this.projectRoot, "docs", "tasks"),
       path.join(this.projectRoot, "docs", "intake"),
-      path.join(this.projectRoot, "docs", "releases")
+      path.join(this.projectRoot, "docs", "releases"),
     ];
 
     let indexedCount = 0;
@@ -125,33 +123,41 @@ export class EosDocumentationSearch {
       SELECT content_hash FROM eos_docs_metadata WHERE doc_path = ?
     `);
 
-    for (const dir of targetDirs) {
-      if (!fs.existsSync(dir)) continue;
+    // One transaction amortizes the FTS5 write cost across all documents.
+    this.db.exec("BEGIN");
+    try {
+      for (const dir of targetDirs) {
+        if (!fs.existsSync(dir)) continue;
 
-      const entries = fs.readdirSync(dir, { recursive: true });
-      for (const entry of entries) {
-        const fullPath = path.join(dir, String(entry));
-        if (!fs.statSync(fullPath).isFile() || !fullPath.endsWith(".md")) continue;
+        const entries = fs.readdirSync(dir, { recursive: true });
+        for (const entry of entries) {
+          const fullPath = path.join(dir, String(entry));
+          if (!fs.statSync(fullPath).isFile() || !fullPath.endsWith(".md")) continue;
 
-        const relPath = path.relative(this.projectRoot, fullPath).replace(/\\/g, "/");
-        const content = fs.readFileSync(fullPath, "utf8");
-        const contentHash = pureSha256(content);
+          const relPath = path.relative(this.projectRoot, fullPath).replace(/\\/g, "/");
+          const content = fs.readFileSync(fullPath, "utf8");
+          const contentHash = pureSha256(content);
 
-        const existing = selectHash.get(relPath) as { content_hash: string } | undefined;
-        if (existing && existing.content_hash === contentHash) {
-          continue; // Unmodified, skip indexing
+          const existing = selectHash.get(relPath) as { content_hash: string } | undefined;
+          if (existing && existing.content_hash === contentHash) {
+            continue; // Unmodified, skip indexing
+          }
+
+          const docType = this.detectDocType(relPath);
+          const title = this.extractTitle(content, path.basename(relPath, ".md"));
+
+          // Update FTS index
+          deleteFts.run(relPath);
+          insertFts.run(relPath, docType, title, content);
+          insertMeta.run(relPath, docType, title, contentHash, nowIso);
+
+          indexedCount++;
         }
-
-        const docType = this.detectDocType(relPath);
-        const title = this.extractTitle(content, path.basename(relPath, ".md"));
-
-        // Update FTS index
-        deleteFts.run(relPath);
-        insertFts.run(relPath, docType, title, content);
-        insertMeta.run(relPath, docType, title, contentHash, nowIso);
-
-        indexedCount++;
       }
+      this.db.exec("COMMIT");
+    } catch (error) {
+      this.db.exec("ROLLBACK");
+      throw error;
     }
 
     return indexedCount;
@@ -168,7 +174,10 @@ export class EosDocumentationSearch {
     if (!sanitized) return deepFreeze([]);
 
     // Format FTS5 query terms with prefix matching
-    const terms = sanitized.split(/\s+/).map((t) => `"${t}"*`).join(" AND ");
+    const terms = sanitized
+      .split(/\s+/)
+      .map((t) => `"${t}"*`)
+      .join(" AND ");
 
     try {
       const stmt = this.db.prepare(`
@@ -197,7 +206,7 @@ export class EosDocumentationSearch {
         docType: r.doc_type,
         title: r.title,
         snippet: r.snippet.replace(/\n+/g, " "),
-        rank: Number(r.rank)
+        rank: Number(r.rank),
       }));
 
       return deepFreeze(results);
@@ -212,7 +221,7 @@ export class EosDocumentationSearch {
     return deepFreeze({
       totalIndexed: row?.count || 0,
       databasePath: this.dbPath,
-      lastIndexedIso: new Date().toISOString()
+      lastIndexedIso: new Date().toISOString(),
     });
   }
 

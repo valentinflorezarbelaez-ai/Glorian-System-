@@ -174,7 +174,9 @@ if (VERIFY_ONLY) {
 fs.writeFileSync(OUT_PATH, finalJson, "utf8");
 
 console.log(`[PASS] SBOM generated → ${path.relative(root, OUT_PATH)}`);
-console.log(`       Components : ${cdxComponents.length} (${components.filter((c) => !c.dev).length} runtime, ${components.filter((c) => c.dev).length} dev)`);
+console.log(
+  `       Components : ${cdxComponents.length} (${components.filter((c) => !c.dev).length} runtime, ${components.filter((c) => c.dev).length} dev)`,
+);
 console.log(`       Spec       : CycloneDX 1.6`);
 console.log(`       Receipt    : sha256:${receiptHash.slice(0, 24)}...`);
 console.log(`       Serial     : ${serialNumber}`);

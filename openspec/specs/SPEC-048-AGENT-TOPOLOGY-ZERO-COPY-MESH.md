@@ -1,30 +1,30 @@
 # SPEC-048: AGENT TOPOLOGY COMPILER & ZERO-COPY COMMUNICATION MESH (v54.0.0)
 
-* **Status**: `SPECIFICATION_APPROVED`
-* **Change Reference**: `CHANGE-041`
-* **Architecture Plan**: `PLAN-041` (`ADR-054`)
-* **Formal Model**: `docs/formal/AgentTopologyMesh.tla`
+- **Status**: `SPECIFICATION_APPROVED`
+- **Change Reference**: `CHANGE-041`
+- **Architecture Plan**: `PLAN-041` (`ADR-054`)
+- **Formal Model**: `docs/formal/AgentTopologyMesh.tla`
 
 ---
 
 ## 1. Formal Functional Requirements (IEEE 830 / EARS)
 
-* **FR-153 (Acyclic Agent Topology DAG Compilation & Symbol Sandboxing)**:
+- **FR-153 (Acyclic Agent Topology DAG Compilation & Symbol Sandboxing)**:
   `CUANDO se registre un grafo de tareas para ejecución paralela de subagentes, EL SISTEMA compilará la topología asegurando que sea un Grafo Acíclico Dirigido (DAG) sin ciclos de dependencia, asignará propiedad exclusiva de archivos a cada subagente y sellará un plan de ejecución determinista con digest SHA-256.`
 
-* **FR-154 (Zero-Copy Compact Event Ring Buffer Mesh)**:
+- **FR-154 (Zero-Copy Compact Event Ring Buffer Mesh)**:
   `CUANDO un subagente emita una actualización de progreso o mutación de estado, EL SISTEMA transmitirá la notificación a través de una malla de búfer circular en memoria (LMAX Disruptor pattern) conteniendo únicamente el delta quirúrgico de AST, el identificador de nodo y el recibo de hash, prohibiendo la retransmisión de archivos completos redundantes.`
 
-* **FR-155 (Deadlock-Free Topological Execution Scheduling)**:
+- **FR-155 (Deadlock-Free Topological Execution Scheduling)**:
   `MIENTRAS se orquesten múltiples subagentes concurrentes, EL SISTEMA liberará la ejecución de cada agente únicamente cuando todos sus predecesores topológicos hayan alcanzado el estado VERIFIED, garantizando inmunidad matemática contra interbloqueos (deadlock-freedom).`
 
-* **FR-156 (Token Coordination Overhead Reduction Threshold)**:
+- **FR-156 (Token Coordination Overhead Reduction Threshold)**:
   `EL SISTEMA medirá el costo de tokens de coordinación entre agentes comparando el tamaño de los eventos compactos contra el payload de archivos completos, garantizando una reducción de sobrecosto superior al 70% en comparación con la transmisión de contexto completo.`
 
-* **FR-157 (Durable Ring Buffer Attestation & SQLite WAL Recording)**:
+- **FR-157 (Durable Ring Buffer Attestation & SQLite WAL Recording)**:
   `CUANDO se complete un ciclo de eventos en la malla de topología, EL SISTEMA consolidará el recibo Merkle de la secuencia de eventos y lo persistirá de forma atómica en EosDurableSqliteLedger.`
 
-* **FR-158 (Unified Core MCP Tool & CLI Surface)**:
+- **FR-158 (Unified Core MCP Tool & CLI Surface)**:
   `EL SISTEMA expondrá el compilador de topología y la malla de eventos en una única herramienta MCP soberana en el perfil core (eos_agent_topology_mesh con anotaciones MCP 2025-03-26) y en la CLI universal (eos topology [compile|publish|verify]).`
 
 ---

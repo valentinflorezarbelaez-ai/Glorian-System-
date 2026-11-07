@@ -9,8 +9,10 @@
 ---
 
 ## 1. Business Context & Engineering Rationale
+
 Meta's SapFix revolutionized continuous repair by automatically synthesizing, testing, and shipping fixes for production and CI regressions without human intervention.
 In EOS System:
+
 - Any test failure, invariant violation, or runtime error can trigger an autonomous repair cycle.
 - The repair engine operates inside an ephemeral, isolated Git worktree (`fix/sapfix-<faultId>-<timestamp>`).
 - Surgical AST mutations are synthesized via `EosSurgicalSelfHealingKernel`.
@@ -21,6 +23,7 @@ In EOS System:
 ---
 
 ## 2. Technical Scope & Deliverables
+
 - **Module**: `src/core/eosSapFixAutoshipper.ts` (Pure Layer-0 TypeScript, 0 external npm dependencies).
 - **Specification**: `openspec/specs/SPEC-060-AUTONOMOUS-SAPFIX-PR-ENGINE.md`.
 - **Testing**: `test/eosSapFixAutoshipper.test.mjs` (BDD-185 to BDD-187).

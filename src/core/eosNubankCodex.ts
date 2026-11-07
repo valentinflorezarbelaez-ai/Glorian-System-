@@ -152,7 +152,7 @@ export interface SquadCharter {
 export function createEmptyDatomicDb(): DatomicDatabase {
   return {
     facts: Object.freeze([]),
-    lastTxTime: 0
+    lastTxTime: 0,
   };
 }
 
@@ -162,7 +162,7 @@ export function createEmptyDatomicDb(): DatomicDatabase {
  */
 export function transactDatomic(
   db: DatomicDatabase,
-  txData: readonly { entityId: string; attribute: string; value: any; op?: DatomOp }[]
+  txData: readonly { entityId: string; attribute: string; value: any; op?: DatomOp }[],
 ): DatomicTxResult {
   let txTime = Date.now();
   if (txTime <= db.lastTxTime) {
@@ -186,14 +186,14 @@ export function transactDatomic(
         value: item.value,
         txTime,
         op,
-        merkleHash
-      })
+        merkleHash,
+      }),
     );
   }
 
   const dbAfter: DatomicDatabase = {
     facts: Object.freeze([...db.facts, ...committedDatoms]),
-    lastTxTime: txTime
+    lastTxTime: txTime,
   };
 
   return {
@@ -201,7 +201,7 @@ export function transactDatomic(
     dbAfter,
     txTime,
     committedDatoms: Object.freeze(committedDatoms),
-    txHash: currentHash
+    txHash: currentHash,
   };
 }
 
@@ -209,11 +209,7 @@ export function transactDatomic(
  * Time-Travel Query (as-of):
  * Reconstructs the exact state of an entity as it existed at any historical txTime.
  */
-export function queryDatomicAsOf(
-  db: DatomicDatabase,
-  entityId: string,
-  asOfTxTime: number
-): Record<string, any> {
+export function queryDatomicAsOf(db: DatomicDatabase, entityId: string, asOfTxTime: number): Record<string, any> {
   const entityState: Record<string, any> = {};
 
   for (const datom of db.facts) {
@@ -233,10 +229,7 @@ export function queryDatomicAsOf(
 /**
  * Returns full audit history of an entity across all transactions.
  */
-export function queryDatomicHistory(
-  db: DatomicDatabase,
-  entityId: string
-): readonly Datom[] {
+export function queryDatomicHistory(db: DatomicDatabase, entityId: string): readonly Datom[] {
   return db.facts.filter((d) => d.entityId === entityId);
 }
 
@@ -251,7 +244,7 @@ export function queryDatomicHistory(
  */
 export function verifySachemContract(
   previousSchema: SachemSchema,
-  proposedSchema: SachemSchema
+  proposedSchema: SachemSchema,
 ): SachemCompatibilityResult {
   const violations: string[] = [];
   const additiveChanges: string[] = [];
@@ -274,14 +267,12 @@ export function verifySachemContract(
       const propField = propFieldMap.get(name)!;
       // Check 2: Did the type change?
       if (propField.type !== prevField.type) {
-        violations.push(
-          `TYPE_MISMATCH: Field '${name}' changed type from '${prevField.type}' to '${propField.type}'`
-        );
+        violations.push(`TYPE_MISMATCH: Field '${name}' changed type from '${prevField.type}' to '${propField.type}'`);
       }
       // Check 3: Did an optional field become required?
       if (!prevField.required && propField.required) {
         violations.push(
-          `CONSTRAINT_TIGHTENED: Optional field '${name}' was made required in schema ${proposedSchema.version}`
+          `CONSTRAINT_TIGHTENED: Optional field '${name}' was made required in schema ${proposedSchema.version}`,
         );
       }
     }
@@ -292,7 +283,7 @@ export function verifySachemContract(
     if (!prevFieldMap.has(name)) {
       if (propField.required) {
         violations.push(
-          `NEW_REQUIRED_FIELD: Field '${name}' was added as required, which breaks existing message consumers.`
+          `NEW_REQUIRED_FIELD: Field '${name}' was added as required, which breaks existing message consumers.`,
         );
       } else {
         additiveChanges.push(`ADDITIVE_FIELD: Optional field '${name}' (${propField.type}) added safely.`);
@@ -305,7 +296,7 @@ export function verifySachemContract(
     violations: Object.freeze(violations),
     additiveChanges: Object.freeze(additiveChanges),
     producerVersion: proposedSchema.version,
-    consumerVersion: previousSchema.version
+    consumerVersion: previousSchema.version,
   };
 }
 
@@ -313,9 +304,10 @@ export function verifySachemContract(
  * 3. BLAMELESS INCIDENT MANAGEMENT & POSTMORTEM SYNTHESIZER
  * Synthesizes an institutional, blameless postmortem adhering to Nu SRE guidelines.
  */
-export function synthesizeNubankBlamelessPostmortem(
-  incident: NubankIncidentReport
-): { readonly markdown: string; readonly sha256Receipt: string } {
+export function synthesizeNubankBlamelessPostmortem(incident: NubankIncidentReport): {
+  readonly markdown: string;
+  readonly sha256Receipt: string;
+} {
   const md = `# NUBANK BLAMELESS POSTMORTEM — ${incident.incidentId}: ${incident.title}
 <!-- Standard: Building Nu Incident Management (building.nu.com) -->
 
@@ -358,9 +350,7 @@ ${incident.systemicRemediations.map((r) => `| ${r.action} | \`${r.owner}\` | ${r
  * 4. NUBANK ARCHITECTURE HEALTH EVALUATOR
  * Scores a project (0-100) against the 6 pillars of Building Nu.
  */
-export function evaluateNubankArchitectureHealth(
-  metrics: NubankArchitectureMetrics
-): NubankHealthEvaluation {
+export function evaluateNubankArchitectureHealth(metrics: NubankArchitectureMetrics): NubankHealthEvaluation {
   const findings: string[] = [];
   const recommendations: string[] = [];
 
@@ -419,12 +409,7 @@ export function evaluateNubankArchitectureHealth(
   }
 
   const institutionalScore =
-    fightingComplexity +
-    hexagonalIsolation +
-    datomicBitemporality +
-    sachemContracts +
-    kafkaIdempotency +
-    blamelessSre;
+    fightingComplexity + hexagonalIsolation + datomicBitemporality + sachemContracts + kafkaIdempotency + blamelessSre;
 
   let tier: NubankHealthEvaluation["tier"] = "BUILDING_NU_APEX";
   if (institutionalScore < 60) tier = "HIGH_COMPLEXITY_RISK";
@@ -440,10 +425,10 @@ export function evaluateNubankArchitectureHealth(
       datomicBitemporality,
       sachemContracts,
       kafkaIdempotency,
-      blamelessSre
+      blamelessSre,
     },
     findings: Object.freeze(findings),
-    recommendations: Object.freeze(recommendations)
+    recommendations: Object.freeze(recommendations),
   };
 }
 
@@ -465,6 +450,6 @@ export function synthesizeNubankSquadCharter(config: {
     servicesOwned: Object.freeze([...config.servicesOwned]),
     slos: Object.freeze([...config.slos]),
     rfcStandard: "RFC-NU-ARCHITECTURE: All cross-squad changes require written RFC with consensus window.",
-    onCallRotationUrl: `https://pagerduty.internal.nu/${config.squadName}-oncall`
+    onCallRotationUrl: `https://pagerduty.internal.nu/${config.squadName}-oncall`,
   };
 }

@@ -16,9 +16,24 @@ const projectRoot = path.resolve(__dirname, "..");
 test("BDD-149: Compilar DAG Acíclico de Subagentes sin Bloqueos (Topological Scheduling)", () => {
   const nodes = [
     { id: "NODE-1-IFACE", name: "Interface Spec", assignedModulePath: "src/core/interface.ts", dependencies: [] },
-    { id: "NODE-2-DOMAIN", name: "Domain Logic", assignedModulePath: "src/core/domain.ts", dependencies: ["NODE-1-IFACE"] },
-    { id: "NODE-3-APP", name: "Application Handler", assignedModulePath: "src/core/app.ts", dependencies: ["NODE-2-DOMAIN"] },
-    { id: "NODE-4-TESTS", name: "Property Tests", assignedModulePath: "test/domain.test.ts", dependencies: ["NODE-3-APP"] }
+    {
+      id: "NODE-2-DOMAIN",
+      name: "Domain Logic",
+      assignedModulePath: "src/core/domain.ts",
+      dependencies: ["NODE-1-IFACE"],
+    },
+    {
+      id: "NODE-3-APP",
+      name: "Application Handler",
+      assignedModulePath: "src/core/app.ts",
+      dependencies: ["NODE-2-DOMAIN"],
+    },
+    {
+      id: "NODE-4-TESTS",
+      name: "Property Tests",
+      assignedModulePath: "test/domain.test.ts",
+      dependencies: ["NODE-3-APP"],
+    },
   ];
 
   const topology = EosAgentTopologyMesh.compileTopology("DAG-TEST-001", nodes);
@@ -34,15 +49,12 @@ test("BDD-150: Detección Inmediata y Rechazo de Dependencias Cíclicas", () => 
   const cyclicNodes = [
     { id: "NODE-A", name: "Module A", assignedModulePath: "src/a.ts", dependencies: ["NODE-B"] },
     { id: "NODE-B", name: "Module B", assignedModulePath: "src/b.ts", dependencies: ["NODE-C"] },
-    { id: "NODE-C", name: "Module C", assignedModulePath: "src/c.ts", dependencies: ["NODE-A"] }
+    { id: "NODE-C", name: "Module C", assignedModulePath: "src/c.ts", dependencies: ["NODE-A"] },
   ];
 
-  assert.throws(
-    () => {
-      EosAgentTopologyMesh.compileTopology("DAG-CYCLIC-FAIL", cyclicNodes);
-    },
-    /CYCLIC_DEPENDENCY_DETECTED/
-  );
+  assert.throws(() => {
+    EosAgentTopologyMesh.compileTopology("DAG-CYCLIC-FAIL", cyclicNodes);
+  }, /CYCLIC_DEPENDENCY_DETECTED/);
 });
 
 test("BDD-151: Transmisión Zero-Copy en Malla de Ring Buffer Circular", () => {
@@ -51,12 +63,12 @@ test("BDD-151: Transmisión Zero-Copy en Malla de Ring Buffer Circular", () => {
 
   const ev1 = mesh.publish("AGENT-BLUE-01", "NODE-2-DOMAIN", "AST_MUTATION_DELTA", {
     diffLines: 12,
-    astNodeCount: 45
+    astNodeCount: 45,
   });
 
   const ev2 = mesh.publish("AGENT-RED-02", "NODE-3-APP", "VERIFICATION_SIGNAL", {
     passedInvariants: 8,
-    status: "PASS"
+    status: "PASS",
   });
 
   assert.equal(ev1.sequence, 0);
@@ -92,18 +104,18 @@ test("BDD-153: Atestación Criptográfica y Registro en Ledger SQLite WAL", () =
   try {
     const nodes = [
       { id: "NODE-CORE", name: "Core", assignedModulePath: "src/core.ts", dependencies: [] },
-      { id: "NODE-ADAPTER", name: "Adapter", assignedModulePath: "src/adapter.ts", dependencies: ["NODE-CORE"] }
+      { id: "NODE-ADAPTER", name: "Adapter", assignedModulePath: "src/adapter.ts", dependencies: ["NODE-CORE"] },
     ];
     const topology = EosAgentTopologyMesh.compileTopology("DAG-LEAD-001", nodes);
     const mesh = new AgentRingBufferMesh(32);
     const ev = mesh.publish("AGENT-DISPATCHER", "NODE-CORE", "CONTRACT_ATTESTATION", {
       contractId: "CTR-001",
-      status: "SEALED"
+      status: "SEALED",
     });
 
     const entryId = EosAgentTopologyMesh.recordMeshAttestation(topology, [ev], {
       ledgerDbPath,
-      projectId: "eos-system"
+      projectId: "eos-system",
     });
 
     assert.ok(entryId.startsWith("EOS-LEDGER-") || entryId.startsWith("MREC-"));
@@ -143,10 +155,10 @@ test("BDD-154: Invocación MCP Integrada de eos_agent_topology_mesh", () => {
         dagId: "DAG-MCP-001",
         nodes: [
           { id: "M1", assignedModulePath: "src/m1.ts", dependencies: [] },
-          { id: "M2", assignedModulePath: "src/m2.ts", dependencies: ["M1"] }
-        ]
-      }
-    }
+          { id: "M2", assignedModulePath: "src/m2.ts", dependencies: ["M1"] },
+        ],
+      },
+    },
   });
   assert.ok(!compileRes.error);
   const compiledData = JSON.parse(compileRes.result.content[0].text);
@@ -166,9 +178,9 @@ test("BDD-154: Invocación MCP Integrada de eos_agent_topology_mesh", () => {
         emitterAgentId: "SUBAGENT-ALPHA",
         targetNodeId: "M2",
         eventType: "AST_MUTATION_DELTA",
-        compactPayload: { astDelta: "+fn", tokens: 42 }
-      }
-    }
+        compactPayload: { astDelta: "+fn", tokens: 42 },
+      },
+    },
   });
   assert.ok(!pubRes.error);
   const pubData = JSON.parse(pubRes.result.content[0].text);
@@ -183,9 +195,9 @@ test("BDD-154: Invocación MCP Integrada de eos_agent_topology_mesh", () => {
       name: "eos_agent_topology_mesh",
       arguments: {
         action: "read",
-        sinceSequence: 0
-      }
-    }
+        sinceSequence: 0,
+      },
+    },
   });
   assert.ok(!readRes.error);
   const readData = JSON.parse(readRes.result.content[0].text);
@@ -201,9 +213,9 @@ test("BDD-154: Invocación MCP Integrada de eos_agent_topology_mesh", () => {
       arguments: {
         action: "efficiency",
         compactBytes: 256,
-        fullFileContextBytes: 4096
-      }
-    }
+        fullFileContextBytes: 4096,
+      },
+    },
   });
   assert.ok(!effRes.error);
   const effData = JSON.parse(effRes.result.content[0].text);

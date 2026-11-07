@@ -1,13 +1,14 @@
 # PLAN-109: Distributed Cell-Based Bulkhead Governor & Fault Domain Isolation Engine
 
 ## Metadata
-* **Plan ID**: `PLAN-109`
-* **Architecture Decision Record**: `ADR-109`
-* **Governing Specification**: `SPEC-109`
-* **Author / Architect**: `Valentín Flórez Arbeláez`
-* **Date**: `2026-10-31`
-* **Status**: `APPROVED`
-* **Target Layer**: `Layer 0 (Core Infrastructure)`
+
+- **Plan ID**: `PLAN-109`
+- **Architecture Decision Record**: `ADR-109`
+- **Governing Specification**: `SPEC-109`
+- **Author / Architect**: `Valentín Flórez Arbeláez`
+- **Date**: `2026-10-31`
+- **Status**: `APPROVED`
+- **Target Layer**: `Layer 0 (Core Infrastructure)`
 
 ---
 
@@ -52,15 +53,17 @@ To eliminate systemic cascading failures and achieve Big Tech grade resilience (
 ## 2. ADR-109: Architectural Decision Record
 
 ### Context & Problem Statement
+
 When dozens of agent workflows, compiler passes, and verification tests execute concurrently across registered fleet repositories, a single pathological AST mutation or runaway recursion could exhaust CPU, memory, or thread pools for all other workloads.
 
 ### Considered Alternatives
+
 1. **Flat Monolithic Worker Pool with Single Global Queue**:
-   * *Rejected*: Any slow or crashing job blocks the entire queue. Blast radius is 100%. Noisy neighbors starve critical control plane tasks.
+   - _Rejected_: Any slow or crashing job blocks the entire queue. Blast radius is 100%. Noisy neighbors starve critical control plane tasks.
 2. **Active-Passive Master-Slave Dedicated Clusters**:
-   * *Rejected*: Doubles hardware cost and introduces split-brain risk, complex election timeouts, and high cold-start latencies.
+   - _Rejected_: Doubles hardware cost and introduces split-brain risk, complex election timeouts, and high cold-start latencies.
 3. **Pure Layer 0 Cell-Based Bulkhead Governor with Immune Quarantine (SELECTED)**:
-   * *Rationale*: Divides the fleet into $N$ autonomous failure domains in-process or distributed. Guarantees blast radius $\le 1/N$, detects poison pills automatically via SHA-256 signatures, and routes around degraded cells safely with zero external npm dependencies.
+   - _Rationale_: Divides the fleet into $N$ autonomous failure domains in-process or distributed. Guarantees blast radius $\le 1/N$, detects poison pills automatically via SHA-256 signatures, and routes around degraded cells safely with zero external npm dependencies.
 
 ---
 
@@ -92,16 +95,17 @@ export interface RouteDecision {
 }
 
 export interface GovernorConfig {
-  readonly cellCount?: number;       // Default: 8 cells
-  readonly cellCapacity?: number;    // Default: 100 concurrent requests per cell
+  readonly cellCount?: number; // Default: 8 cells
+  readonly cellCapacity?: number; // Default: 100 concurrent requests per cell
   readonly maxConsecutiveFails?: number; // Default: 3 before quarantine
-  readonly drainHeadroomRatio?: number;  // Default: 0.8 (target cell must be <= 80% full)
+  readonly drainHeadroomRatio?: number; // Default: 0.8 (target cell must be <= 80% full)
 }
 ```
 
 ---
 
 ## 4. Operational Invariants
-* **In-Flight Boundedness**: In-flight requests per cell never exceed `cellCapacity`.
-* **Zero Cross-Cell Pollution**: A failure or crash in Cell $A$ never mutates or corrupts Cell $B$.
-* **Idempotent Poison Pill Filtering**: Quarantined signatures are checked in $O(1)$ time prior to dispatch.
+
+- **In-Flight Boundedness**: In-flight requests per cell never exceed `cellCapacity`.
+- **Zero Cross-Cell Pollution**: A failure or crash in Cell $A$ never mutates or corrupts Cell $B$.
+- **Idempotent Poison Pill Filtering**: Quarantined signatures are checked in $O(1)$ time prior to dispatch.

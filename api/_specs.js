@@ -28,9 +28,7 @@ export default async function handler(req, res) {
     filtered = filtered.filter((s) => s.status.toUpperCase() === status);
   }
   if (query) {
-    filtered = filtered.filter(
-      (s) => s.id.toLowerCase().includes(query) || s.title.toLowerCase().includes(query)
-    );
+    filtered = filtered.filter((s) => s.id.toLowerCase().includes(query) || s.title.toLowerCase().includes(query));
   }
 
   return res.status(200).json({
@@ -38,6 +36,6 @@ export default async function handler(req, res) {
     totalSpecs: catalog.totalSpecs,
     matchedSpecs: filtered.length,
     catalogSha256: catalog.catalogSha256,
-    specs: filtered
+    specs: filtered,
   });
 }

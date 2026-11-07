@@ -18,5 +18,5 @@ export {
   normalizeToolProfile,
   type McpToolProfile,
   type McpToolAnnotations,
-  type AnnotatedMcpToolDefinition
+  type AnnotatedMcpToolDefinition,
 } from "./mcp/eosMcpToolCatalog.ts";

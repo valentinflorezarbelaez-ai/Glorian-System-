@@ -40,13 +40,16 @@
 ## 2. ADR-037: Physical Binary WAL, WebGPU Compute Shaders, Prometheus Exporter & Hermetic Sandbox
 
 ### Context
+
 Following a rigorous Big Tech audit against Google, Nubank, Spotify, NVIDIA, and Anthropic engineering standards, EOS System scored 8.7/10. To achieve 10/10 perfection across all engineering dimensions, four physical production capabilities are required:
+
 1. Physical durability with binary WAL, `fsync()`, and CRC32 crash recovery.
 2. Direct GPU execution of 3D topology calculations via WebGPU WGSL compute shaders.
 3. Industry-standard observability via Prometheus text format (`/metrics`).
 4. Hermetic sandbox isolation preventing prospective code refactoring from touching physical disk before passing all test suites.
 
 ### Decision
+
 1. **Binary Write-Ahead Log (`EosDurableWal`)**:
    - Store records in an append-only binary file with a 4-byte magic signature (`0x45 0x4F 0x53 0x57` - "EOSW").
    - Frame layout: 4 bytes length, 8 bytes txId, 8 bytes timestampNs, 4 bytes CRC32, followed by raw payload bytes.
@@ -72,12 +75,15 @@ Following a rigorous Big Tech audit against Google, Nubank, Spotify, NVIDIA, and
    - Only commit to disk if all invariant checks pass with exit code 0.
 
 ### Rejected Alternatives
-- *External Database (PostgreSQL / Redis / SQLite)*: Rejected to maintain Inviolable Law V (Layer-0 Purity and `dependencies: {}`). Native binary WAL provides equal durability with zero external processes or npm packages.
-- *Third-party Prometheus client (`prom-client`)*: Rejected because formatting Prometheus text output (v0.0.4) in pure Layer-0 TypeScript takes < 100 lines and avoids 10+ transitive dependencies.
+
+- _External Database (PostgreSQL / Redis / SQLite)_: Rejected to maintain Inviolable Law V (Layer-0 Purity and `dependencies: {}`). Native binary WAL provides equal durability with zero external processes or npm packages.
+- _Third-party Prometheus client (`prom-client`)_: Rejected because formatting Prometheus text output (v0.0.4) in pure Layer-0 TypeScript takes < 100 lines and avoids 10+ transitive dependencies.
 
 ### Consequences
+
 - **Positive**: 10/10 Big Tech audit readiness; zero data loss across power failures; native Grafana/Prometheus scraping; zero external dependencies.
 - **Negative / Trade-off**: Binary WAL file grows monotonically until a checkpoint/compaction routine is invoked.
 
 ---
-*Approved by Principal Architect: Valentín Flórez Arbeláez*
+
+_Approved by Principal Architect: Valentín Flórez Arbeláez_

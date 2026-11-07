@@ -1,6 +1,7 @@
 # TASKS-035: SOVEREIGN FLEET SOUNDCHECK, MCTS & CANARY MESH — ATOMIC DAG
 
 ## Task DAG
+
 ```mermaid
 graph TD
     T1["TASK-035-01: Documentation Package & Level 3 Authorization"] --> T2
@@ -14,6 +15,7 @@ graph TD
 ```
 
 ## Tasks
+
 - **TASK-035-01**: Generate `INTAKE-035`, `SPEC-042`, `PLAN-035`, `TASKS-035`, `CHANGE-035`, and authorization in `IMPLEMENTATION_AUTHORIZATION.md`.
 - **TASK-035-02**: Implement `src/core/eosFleetSoundcheckMesh.ts` (Soundcheck 0-100, health audit, remediation advice).
 - **TASK-035-03**: Implement `src/core/eosMctsHyperTuner.ts` (MCTS with UCT, parameter search).

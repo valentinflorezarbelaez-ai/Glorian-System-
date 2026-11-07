@@ -1,6 +1,7 @@
 # SPEC-122: CONTROL DE ASISTENCIA AVO-PAK — MOTOR DE JORNADA LABORAL COLOMBIANA (42H), LECTOR QR, PERMISOS Y NÓMINA EXCEL
 
 ## 1. Metadata
+
 - **Specification ID**: `SPEC-122`
 - **Project ID**: `control-de-asistencia-abopack`
 - **Standard**: IEEE 830 / ISO 29148 / Ley 2101 de 2021 & CST Colombia

@@ -17,12 +17,11 @@ import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 
-import { EosDurableWal, computeCrc32 } from "../src/core/eosDurableWal.ts";
+import { EosDurableWal } from "../src/core/eosDurableWal.ts";
 import { EosWebGpuTopologyBridge } from "../src/core/eosWebGpuTopology.ts";
 import { EosPrometheusExporter } from "../src/core/eosPrometheusExporter.ts";
 import { EosHermeticSandbox } from "../src/core/eosHermeticSandbox.ts";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
-import { EosMcpStreamServer } from "../src/mcp/eosMcpStreamServer.ts";
 
 describe("SPEC-030: Big Tech Tier-1 Apex Engineering Verification", () => {
   let tempDir;
@@ -53,7 +52,7 @@ describe("SPEC-030: Big Tech Tier-1 Apex Engineering Verification", () => {
         account: `nu:account:9481-${i}`,
         amountCents: i * 250,
         currency: "USD",
-        idempotencyToken: `idemp-token-${i}`
+        idempotencyToken: `idemp-token-${i}`,
       });
       assert.equal(rec.txId, BigInt(i));
     }
@@ -120,7 +119,7 @@ describe("SPEC-030: Big Tech Tier-1 Apex Engineering Verification", () => {
     const sampleNodes = [
       { id: "node-1", x: 10, y: 20, z: 30, vx: 0.1, vy: 0.2, vz: -0.1 },
       { id: "node-2", x: -15, y: 5, z: 40, vx: -0.2, vy: 0.1, vz: 0.3 },
-      { id: "node-3", x: 0, y: -25, z: 10, vx: 0.05, vy: -0.1, vz: 0.1 }
+      { id: "node-3", x: 0, y: -25, z: 10, vx: 0.05, vy: -0.1, vz: 0.1 },
     ];
 
     const projected = bridge.computeTopology(sampleNodes, 0.45, 0.78, 1.0);
@@ -145,15 +144,27 @@ describe("SPEC-030: Big Tech Tier-1 Apex Engineering Verification", () => {
     const metricsText = exporter.formatPrometheusText();
 
     // Check Prometheus 0.0.4 text standard compliance
-    assert.ok(metricsText.includes("# HELP eos_uptime_seconds"), "Prometheus text must include HELP comment for uptime");
-    assert.ok(metricsText.includes("# TYPE eos_uptime_seconds gauge"), "Prometheus text must declare gauge type for uptime");
+    assert.ok(
+      metricsText.includes("# HELP eos_uptime_seconds"),
+      "Prometheus text must include HELP comment for uptime",
+    );
+    assert.ok(
+      metricsText.includes("# TYPE eos_uptime_seconds gauge"),
+      "Prometheus text must declare gauge type for uptime",
+    );
     assert.ok(/eos_uptime_seconds \d+/.test(metricsText), "eos_uptime_seconds metric must have a numeric value");
 
     assert.ok(metricsText.includes("# HELP eos_active_formal_specs"), "Must expose active specs");
     assert.ok(/eos_active_formal_specs \d+/.test(metricsText), "Must report active architectural specs count");
 
-    assert.ok(metricsText.includes("# HELP eos_wal_committed_transactions_total"), "Must expose WAL transactions counter");
-    assert.ok(metricsText.includes("# TYPE eos_wal_committed_transactions_total counter"), "WAL transactions must be a counter");
+    assert.ok(
+      metricsText.includes("# HELP eos_wal_committed_transactions_total"),
+      "Must expose WAL transactions counter",
+    );
+    assert.ok(
+      metricsText.includes("# TYPE eos_wal_committed_transactions_total counter"),
+      "WAL transactions must be a counter",
+    );
 
     // Test MCP tool integration for prometheus metrics
     const mcp = new EosMcpServer(process.cwd());
@@ -161,7 +172,7 @@ describe("SPEC-030: Big Tech Tier-1 Apex Engineering Verification", () => {
       jsonrpc: "2.0",
       id: 99,
       method: "tools/call",
-      params: { name: "eos_prometheus_metrics", arguments: {} }
+      params: { name: "eos_prometheus_metrics", arguments: {} },
     });
 
     assert.equal(mcpRes.result.content[0].type, "text");
@@ -203,13 +214,13 @@ describe("SPEC-030: Big Tech Tier-1 Apex Engineering Verification", () => {
     sandbox.stageFile("src/secret.ts", `export const apiKey = "sk-abcdef123456789012345678";`);
     const secretValidation = sandbox.validateOverlay();
     assert.equal(secretValidation.status, "SANDBOX_REJECTED");
-    assert.ok(secretValidation.errors.some(e => e.message.includes("Security invariant violation")));
+    assert.ok(secretValidation.errors.some((e) => e.message.includes("Security invariant violation")));
 
     // 3. Stage valid clean TypeScript module
     sandbox.discard();
     sandbox.stageFile(
       "src/cleanModule.ts",
-      `export interface SovereignNode {\n  id: string;\n  status: "ONLINE" | "OFFLINE";\n}\n\nexport const NODE_A: SovereignNode = { id: "node-1", status: "ONLINE" };\n`
+      `export interface SovereignNode {\n  id: string;\n  status: "ONLINE" | "OFFLINE";\n}\n\nexport const NODE_A: SovereignNode = { id: "node-1", status: "ONLINE" };\n`,
     );
 
     const cleanValidation = sandbox.validateOverlay();

@@ -124,6 +124,9 @@ jobs:
       - name: Refresh the size budget (grandfathered ceilings may only shrink)
         run: node scripts/size-budget.mjs --update
 
+      - name: Refresh the bundle size budget (frontend gzip ratchet)
+        run: node scripts/bundle-budget.mjs --update
+
       - name: Detect ratchet drift
         id: drift
         run: |

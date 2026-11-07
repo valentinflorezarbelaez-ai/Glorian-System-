@@ -15,11 +15,11 @@ test("BDD-303: Google Vizier Bayesian Parameter Auto-Tuning", () => {
   const vizier = nexus.executeGoogleVizier({
     disruptorBufferSize: 1024,
     cooldownPeriodSec: 30,
-    traceSamplingRatePct: 0.1
+    traceSamplingRatePct: 0.1,
   });
 
   assert.equal(vizier.appliedLive, true);
-  assert.ok(vizier.acquisitionScore > 0.90);
+  assert.ok(vizier.acquisitionScore > 0.9);
   assert.equal(vizier.optimizedParameters.disruptorBufferSize, 2048);
   assert.ok(vizier.optimizedParameters.cooldownPeriodSec <= 30);
   assert.equal(vizier.sha256Attestation.length, 64);
@@ -52,9 +52,9 @@ test("BDD-305: AWS SMT Automated Contract & Policy Reasoning", () => {
 test("BDD-306: Meta Profile-Guided Hot-Path Layout (PGO)", () => {
   const nexus = EosBigTechTranscendenceNexus.getInstance();
   const pgo = nexus.executeMetaPgoLayout({
-    "eos_trace_span_record": 25000,
-    "eos_kernel_orchestrator_reconcile": 12000,
-    "eos_remediation_correlate_execute": 8000
+    eos_trace_span_record: 25000,
+    eos_kernel_orchestrator_reconcile: 12000,
+    eos_remediation_correlate_execute: 8000,
   });
 
   assert.equal(pgo.topHotFunction, "eos_trace_span_record");
@@ -111,8 +111,8 @@ test("BDD-309: Consolidated Master Transcendence Nexus Execution & MCP Exposure"
     method: "tools/call",
     params: {
       name: "eos_transcendence_execute",
-      arguments: {}
-    }
+      arguments: {},
+    },
   };
 
   const execRes = await server.handleRequest(execReq);
@@ -128,8 +128,8 @@ test("BDD-309: Consolidated Master Transcendence Nexus Execution & MCP Exposure"
     method: "tools/call",
     params: {
       name: "eos_transcendence_status",
-      arguments: {}
-    }
+      arguments: {},
+    },
   };
 
   const statusRes = await server.handleRequest(statusReq);

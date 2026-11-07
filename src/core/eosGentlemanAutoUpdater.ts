@@ -22,12 +22,7 @@ import path from "node:path";
 
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 import { EosGentlemanStackBridge } from "./eosGentlemanStackBridge.ts";
-import {
-  assertPostcondition,
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPostcondition, assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
 export interface ParsedSemVer {
   readonly major: number;
@@ -110,7 +105,7 @@ const GENTLEMAN_REPOS = {
   "gentle-ai": "https://github.com/Gentleman-Programming/gentle-ai.git",
   engram: "https://github.com/Gentleman-Programming/engram.git",
   gga: "https://github.com/Gentleman-Programming/gentleman-guardian-angel.git",
-  "agent-teams-lite": "https://github.com/Gentleman-Programming/agent-teams-lite.git"
+  "agent-teams-lite": "https://github.com/Gentleman-Programming/agent-teams-lite.git",
 } as const;
 
 const SKILL_SECRET_PATTERNS: ReadonlyArray<{ readonly name: string; readonly regex: RegExp }> = [
@@ -118,7 +113,7 @@ const SKILL_SECRET_PATTERNS: ReadonlyArray<{ readonly name: string; readonly reg
   { name: "GitHub Personal Access Token", regex: new RegExp("ghp_" + "[0-9a-zA-Z]{24,}") },
   { name: "AWS Access Key ID", regex: new RegExp("AKIA" + "[0-9A-Z]{16}") },
   { name: "Google API Key", regex: new RegExp("AIza" + "[0-9A-Za-z\\-_]{35}") },
-  { name: "PEM Private Key Block", regex: new RegExp("-----BEGIN " + "(RSA |EC |OPENSSH )?PRIVATE KEY-----") }
+  { name: "PEM Private Key Block", regex: new RegExp("-----BEGIN " + "(RSA |EC |OPENSSH )?PRIVATE KEY-----") },
 ];
 
 /**
@@ -139,7 +134,7 @@ export function parseSemVer(raw: string): ParsedSemVer | null {
     major,
     minor,
     patch,
-    clean: `${major}.${minor}.${patch}`
+    clean: `${major}.${minor}.${patch}`,
   };
 }
 
@@ -205,7 +200,7 @@ export function parseChecksumsManifest(manifestText: string): ReadonlyMap<string
 export function verifyArchiveChecksum(
   archiveBytes: Uint8Array,
   assetFileName: string,
-  manifestText: string
+  manifestText: string,
 ): { readonly verified: boolean; readonly expectedSha256: string; readonly actualSha256: string } {
   const manifest = parseChecksumsManifest(manifestText);
   const expectedSha256 = manifest.get(path.basename(assetFileName)) || "";
@@ -266,22 +261,22 @@ export function hotSwapExecutableWithRollback(options: {
           encoding: "utf8",
           timeout: 6000,
           stdio: ["ignore", "pipe", "pipe"],
-          windowsHide: true
+          windowsHide: true,
         })
       : execFileSync(targetPath, [...options.smokeArgs], {
           encoding: "utf8",
           timeout: 6000,
           stdio: ["ignore", "pipe", "pipe"],
-          windowsHide: true
+          windowsHide: true,
         });
 
-    const verifiedOutput = String(rawOut || "").trim().split(/\r?\n/)[0] || "ok";
-    if (
-      options.expectedVersionSubstring &&
-      !String(rawOut || "").includes(options.expectedVersionSubstring)
-    ) {
+    const verifiedOutput =
+      String(rawOut || "")
+        .trim()
+        .split(/\r?\n/)[0] || "ok";
+    if (options.expectedVersionSubstring && !String(rawOut || "").includes(options.expectedVersionSubstring)) {
       throw new Error(
-        `Post-install version mismatch: expected '${options.expectedVersionSubstring}' in '${verifiedOutput}'`
+        `Post-install version mismatch: expected '${options.expectedVersionSubstring}' in '${verifiedOutput}'`,
       );
     }
 
@@ -301,7 +296,7 @@ export function hotSwapExecutableWithRollback(options: {
       targetPath,
       backupPath,
       verifiedOutput,
-      binarySha256
+      binarySha256,
     });
   } catch (err: any) {
     let rolledBack = false;
@@ -317,10 +312,9 @@ export function hotSwapExecutableWithRollback(options: {
       rolledBack = false;
     }
 
-    const restoredSha =
-      fs.existsSync(targetPath)
-        ? crypto.createHash("sha256").update(fs.readFileSync(targetPath)).digest("hex")
-        : "";
+    const restoredSha = fs.existsSync(targetPath)
+      ? crypto.createHash("sha256").update(fs.readFileSync(targetPath)).digest("hex")
+      : "";
 
     return deepFreeze({
       swapped: false,
@@ -329,12 +323,17 @@ export function hotSwapExecutableWithRollback(options: {
       backupPath,
       verifiedOutput: "",
       binarySha256: restoredSha,
-      error: String(err?.message || err)
+      error: String(err?.message || err),
     });
   }
 }
 
-function validateStagingTreeSecurity(dirPath: string, filesCounter = { count: 0 }, hashParts: string[] = [], rootDir = dirPath): { filesVerified: number; treeSha256: string } {
+function validateStagingTreeSecurity(
+  dirPath: string,
+  filesCounter = { count: 0 },
+  hashParts: string[] = [],
+  rootDir = dirPath,
+): { filesVerified: number; treeSha256: string } {
   const entries = fs.readdirSync(dirPath, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name));
   for (const entry of entries) {
     const full = path.join(dirPath, entry.name);
@@ -348,7 +347,9 @@ function validateStagingTreeSecurity(dirPath: string, filesCounter = { count: 0 
       const content = fs.readFileSync(full, "utf8");
       for (const pat of SKILL_SECRET_PATTERNS) {
         if (pat.regex.test(content)) {
-          throw new Error(`Security gate blocked credential pattern (${pat.name}) in upstream skill file: ${entry.name}`);
+          throw new Error(
+            `Security gate blocked credential pattern (${pat.name}) in upstream skill file: ${entry.name}`,
+          );
         }
       }
       filesCounter.count++;
@@ -358,7 +359,7 @@ function validateStagingTreeSecurity(dirPath: string, filesCounter = { count: 0 
   }
   return {
     filesVerified: filesCounter.count,
-    treeSha256: pureSha256(hashParts.join("\n"))
+    treeSha256: pureSha256(hashParts.join("\n")),
   };
 }
 
@@ -433,7 +434,7 @@ export function syncSkillsTreeSafely(upstreamSkillsDir: string, localSkillsDir: 
     syncedSkillFolders,
     preservedEosSkills,
     filesVerified: securityScan.filesVerified,
-    treeSha256: securityScan.treeSha256
+    treeSha256: securityScan.treeSha256,
   });
 }
 
@@ -463,15 +464,14 @@ export class EosGentlemanAutoUpdater {
   public static isAutoUpdateDue(
     projectRoot: string = process.cwd(),
     intervalHours: number = DEFAULT_AUTO_UPDATE_INTERVAL_HOURS,
-    nowMs: number = Date.now()
+    nowMs: number = Date.now(),
   ): boolean {
     const lockPath = this.defaultLockPath(projectRoot);
     if (fs.existsSync(lockPath)) {
       try {
         const rawLock = JSON.parse(fs.readFileSync(lockPath, "utf8"));
-        const acquiredAt = typeof rawLock?.acquiredAtMs === "number"
-          ? rawLock.acquiredAtMs
-          : fs.statSync(lockPath).mtimeMs;
+        const acquiredAt =
+          typeof rawLock?.acquiredAtMs === "number" ? rawLock.acquiredAtMs : fs.statSync(lockPath).mtimeMs;
         if (nowMs - acquiredAt < LOCK_STALE_TIMEOUT_MS) {
           return false; // Another update worker is already active
         }
@@ -493,9 +493,8 @@ export class EosGentlemanAutoUpdater {
     if (fs.existsSync(lockPath)) {
       try {
         const rawLock = JSON.parse(fs.readFileSync(lockPath, "utf8"));
-        const acquiredAt = typeof rawLock?.acquiredAtMs === "number"
-          ? rawLock.acquiredAtMs
-          : fs.statSync(lockPath).mtimeMs;
+        const acquiredAt =
+          typeof rawLock?.acquiredAtMs === "number" ? rawLock.acquiredAtMs : fs.statSync(lockPath).mtimeMs;
         if (nowMs - acquiredAt >= LOCK_STALE_TIMEOUT_MS) {
           fs.rmSync(lockPath, { force: true });
         } else {
@@ -529,7 +528,7 @@ export class EosGentlemanAutoUpdater {
 
   public static computeConstitutionDigest(
     projectRoot: string = process.cwd(),
-    geminiConfigDir: string = path.join(os.homedir(), ".gemini", "config")
+    geminiConfigDir: string = path.join(os.homedir(), ".gemini", "config"),
   ): string {
     const parts: string[] = [];
     const globalConstitution = path.join(path.resolve(geminiConfigDir), "AGENTS.md");
@@ -539,7 +538,7 @@ export class EosGentlemanAutoUpdater {
       "antigravity",
       "eos-governance",
       "rules",
-      "AGENTS.md"
+      "AGENTS.md",
     );
     if (fs.existsSync(globalConstitution)) {
       parts.push(`global:${pureSha256(fs.readFileSync(globalConstitution, "utf8"))}`);
@@ -555,17 +554,12 @@ export class EosGentlemanAutoUpdater {
       encoding: "utf8",
       timeout: 15000,
       stdio: ["ignore", "pipe", "pipe"],
-      windowsHide: true
+      windowsHide: true,
     });
   }
 
   private static resolvePlatformTargets(): { osName: string; archName: string; archiveExt: string } {
-    const osName =
-      process.platform === "win32"
-        ? "windows"
-        : process.platform === "darwin"
-          ? "darwin"
-          : "linux";
+    const osName = process.platform === "win32" ? "windows" : process.platform === "darwin" ? "darwin" : "linux";
     const archName = process.arch === "arm64" ? "arm64" : "amd64";
     const archiveExt = osName === "windows" ? "zip" : "tar.gz";
     return { osName, archName, archiveExt };
@@ -577,7 +571,7 @@ export class EosGentlemanAutoUpdater {
       execFileSync("tar", ["-xf", archivePath, "-C", extractDir], {
         timeout: 20000,
         stdio: ["ignore", "pipe", "pipe"],
-        windowsHide: true
+        windowsHide: true,
       });
     } catch {
       if (process.platform === "win32" && archivePath.endsWith(".zip")) {
@@ -587,9 +581,9 @@ export class EosGentlemanAutoUpdater {
             "-NoProfile",
             "-NonInteractive",
             "-Command",
-            `Expand-Archive -LiteralPath '${archivePath.replace(/'/g, "''")}' -DestinationPath '${extractDir.replace(/'/g, "''")}' -Force`
+            `Expand-Archive -LiteralPath '${archivePath.replace(/'/g, "''")}' -DestinationPath '${extractDir.replace(/'/g, "''")}' -Force`,
           ],
-          { timeout: 30000, stdio: ["ignore", "pipe", "pipe"], windowsHide: true }
+          { timeout: 30000, stdio: ["ignore", "pipe", "pipe"], windowsHide: true },
         );
       } else {
         throw new Error(`Failed to extract archive: ${archivePath}`);
@@ -599,7 +593,7 @@ export class EosGentlemanAutoUpdater {
 
   private static async upgradeEngramRelease(
     latestVersion: string,
-    targetExecutablePath: string
+    targetExecutablePath: string,
   ): Promise<HotSwapResult> {
     const { osName, archName, archiveExt } = this.resolvePlatformTargets();
     const assetName = `engram_${latestVersion}_${osName}_${archName}.${archiveExt}`;
@@ -607,7 +601,7 @@ export class EosGentlemanAutoUpdater {
 
     const [checksumsRes, archiveRes] = await Promise.all([
       fetch(`${baseUrl}/checksums.txt`, { signal: AbortSignal.timeout(25000) }),
-      fetch(`${baseUrl}/${assetName}`, { signal: AbortSignal.timeout(45000) })
+      fetch(`${baseUrl}/${assetName}`, { signal: AbortSignal.timeout(45000) }),
     ]);
 
     if (!checksumsRes.ok) {
@@ -622,7 +616,7 @@ export class EosGentlemanAutoUpdater {
     const verification = verifyArchiveChecksum(archiveBytes, assetName, checksumsText);
     if (!verification.verified) {
       throw new Error(
-        `SHA-256 supply-chain verification failed for ${assetName}: expected ${verification.expectedSha256}, got ${verification.actualSha256}`
+        `SHA-256 supply-chain verification failed for ${assetName}: expected ${verification.expectedSha256}, got ${verification.actualSha256}`,
       );
     }
 
@@ -643,7 +637,7 @@ export class EosGentlemanAutoUpdater {
         targetPath: targetExecutablePath,
         candidatePath,
         smokeArgs: ["version"],
-        expectedVersionSubstring: latestVersion
+        expectedVersionSubstring: latestVersion,
       });
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -653,7 +647,7 @@ export class EosGentlemanAutoUpdater {
   private static async upgradeGentleAiRelease(
     latestVersion: string,
     latestTag: string,
-    targetExecutablePath: string
+    targetExecutablePath: string,
   ): Promise<HotSwapResult> {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-gentleai-upgrade-"));
     try {
@@ -663,7 +657,7 @@ export class EosGentlemanAutoUpdater {
         const baseUrl = `https://github.com/Gentleman-Programming/gentle-ai/releases/download/v${latestVersion}`;
         const [checksumsRes, archiveRes] = await Promise.all([
           fetch(`${baseUrl}/checksums.txt`, { signal: AbortSignal.timeout(25000) }),
-          fetch(`${baseUrl}/${assetName}`, { signal: AbortSignal.timeout(45000) })
+          fetch(`${baseUrl}/${assetName}`, { signal: AbortSignal.timeout(45000) }),
         ]);
         if (checksumsRes.ok && archiveRes.ok) {
           const checksumsText = await checksumsRes.text();
@@ -681,42 +675,39 @@ export class EosGentlemanAutoUpdater {
             targetPath: targetExecutablePath,
             candidatePath,
             smokeArgs: ["--version"],
-            expectedVersionSubstring: latestVersion
+            expectedVersionSubstring: latestVersion,
           });
         }
       }
 
       // Windows & source-verified Go toolchain path (builds against official upstream go.sum)
       const cloneDir = path.join(tmpDir, "src");
-      execFileSync(
-        "git",
-        ["clone", "--depth", "1", "--branch", latestTag, GENTLEMAN_REPOS["gentle-ai"], cloneDir],
-        { timeout: 60000, stdio: ["ignore", "pipe", "pipe"], windowsHide: true }
-      );
+      execFileSync("git", ["clone", "--depth", "1", "--branch", latestTag, GENTLEMAN_REPOS["gentle-ai"], cloneDir], {
+        timeout: 60000,
+        stdio: ["ignore", "pipe", "pipe"],
+        windowsHide: true,
+      });
       const exeName = process.platform === "win32" ? "gentle-ai.exe" : "gentle-ai";
       const candidatePath = path.join(tmpDir, exeName);
-      execFileSync(
-        "go",
-        ["build", "-ldflags=-s -w", "-o", candidatePath, "./cmd/gentle-ai"],
-        { cwd: cloneDir, timeout: 120000, stdio: ["ignore", "pipe", "pipe"], windowsHide: true }
-      );
+      execFileSync("go", ["build", "-ldflags=-s -w", "-o", candidatePath, "./cmd/gentle-ai"], {
+        cwd: cloneDir,
+        timeout: 120000,
+        stdio: ["ignore", "pipe", "pipe"],
+        windowsHide: true,
+      });
 
       return hotSwapExecutableWithRollback({
         targetPath: targetExecutablePath,
         candidatePath,
         smokeArgs: ["--version"],
-        expectedVersionSubstring: latestVersion
+        expectedVersionSubstring: latestVersion,
       });
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
   }
 
-  private static upgradeGgaFromTag(
-    latestVersion: string,
-    latestTag: string,
-    homeDir: string
-  ): HotSwapResult {
+  private static upgradeGgaFromTag(latestVersion: string, latestTag: string, homeDir: string): HotSwapResult {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-gga-upgrade-"));
     const binDir = path.join(homeDir, "bin");
     const libTargetDir = path.join(binDir, "lib", "gga");
@@ -724,11 +715,11 @@ export class EosGentlemanAutoUpdater {
 
     try {
       const cloneDir = path.join(tmpDir, "gga-src");
-      execFileSync(
-        "git",
-        ["clone", "--depth", "1", "--branch", latestTag, GENTLEMAN_REPOS.gga, cloneDir],
-        { timeout: 45000, stdio: ["ignore", "pipe", "pipe"], windowsHide: true }
-      );
+      execFileSync("git", ["clone", "--depth", "1", "--branch", latestTag, GENTLEMAN_REPOS.gga, cloneDir], {
+        timeout: 45000,
+        stdio: ["ignore", "pipe", "pipe"],
+        windowsHide: true,
+      });
 
       fs.mkdirSync(path.join(binDir, "lib"), { recursive: true });
       if (fs.existsSync(libBackupDir)) {
@@ -749,11 +740,7 @@ export class EosGentlemanAutoUpdater {
         if (process.platform === "win32") {
           const batPath = path.join(binDir, "gga.bat");
           if (!fs.existsSync(batPath)) {
-            fs.writeFileSync(
-              batPath,
-              '@echo off\r\n"C:\\Program Files\\Git\\bin\\bash.exe" "%~dp0gga" %*\r\n',
-              "utf8"
-            );
+            fs.writeFileSync(batPath, '@echo off\r\n"C:\\Program Files\\Git\\bin\\bash.exe" "%~dp0gga" %*\r\n', "utf8");
           }
         }
 
@@ -763,22 +750,24 @@ export class EosGentlemanAutoUpdater {
           fs.chmodSync(swapTarget, 0o755);
         }
 
-        const probeTarget = process.platform === "win32" && fs.existsSync(path.join(binDir, "gga.bat"))
-          ? path.join(binDir, "gga.bat")
-          : swapTarget;
-        const out = process.platform === "win32" && probeTarget.endsWith(".bat")
-          ? execFileSync("cmd.exe", ["/d", "/s", "/c", probeTarget, "--version"], {
-              encoding: "utf8",
-              timeout: 6000,
-              stdio: ["ignore", "pipe", "pipe"],
-              windowsHide: true
-            })
-          : execFileSync(probeTarget, ["--version"], {
-              encoding: "utf8",
-              timeout: 6000,
-              stdio: ["ignore", "pipe", "pipe"],
-              windowsHide: true
-            });
+        const probeTarget =
+          process.platform === "win32" && fs.existsSync(path.join(binDir, "gga.bat"))
+            ? path.join(binDir, "gga.bat")
+            : swapTarget;
+        const out =
+          process.platform === "win32" && probeTarget.endsWith(".bat")
+            ? execFileSync("cmd.exe", ["/d", "/s", "/c", probeTarget, "--version"], {
+                encoding: "utf8",
+                timeout: 6000,
+                stdio: ["ignore", "pipe", "pipe"],
+                windowsHide: true,
+              })
+            : execFileSync(probeTarget, ["--version"], {
+                encoding: "utf8",
+                timeout: 6000,
+                stdio: ["ignore", "pipe", "pipe"],
+                windowsHide: true,
+              });
 
         if (!String(out || "").includes(latestVersion)) {
           throw new Error(`gga version check did not contain ${latestVersion}`);
@@ -792,8 +781,11 @@ export class EosGentlemanAutoUpdater {
           rolledBack: false,
           targetPath: probeTarget,
           backupPath: null,
-          verifiedOutput: String(out || "").trim().split(/\r?\n/)[0] || `gga v${latestVersion}`,
-          binarySha256: pureSha256(ggaScriptSource)
+          verifiedOutput:
+            String(out || "")
+              .trim()
+              .split(/\r?\n/)[0] || `gga v${latestVersion}`,
+          binarySha256: pureSha256(ggaScriptSource),
         });
       } catch (err: any) {
         if (fs.existsSync(libTargetDir)) {
@@ -809,7 +801,7 @@ export class EosGentlemanAutoUpdater {
           backupPath: libBackupDir,
           verifiedOutput: "",
           binarySha256: "",
-          error: String(err?.message || err)
+          error: String(err?.message || err),
         });
       }
     } finally {
@@ -817,22 +809,16 @@ export class EosGentlemanAutoUpdater {
     }
   }
 
-  private static upgradeAgentTeamsLiteSkills(
-    projectRoot: string,
-    gentleAiPath?: string
-  ): SkillSyncReport {
+  private static upgradeAgentTeamsLiteSkills(projectRoot: string, gentleAiPath?: string): SkillSyncReport {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-atl-upgrade-"));
     try {
       const cloneDir = path.join(tmpDir, "atl");
-      execFileSync(
-        "git",
-        ["clone", "--depth", "1", GENTLEMAN_REPOS["agent-teams-lite"], cloneDir],
-        { timeout: 45000, stdio: ["ignore", "pipe", "pipe"], windowsHide: true }
-      );
-      const report = syncSkillsTreeSafely(
-        path.join(cloneDir, "skills"),
-        path.join(projectRoot, ".agents", "skills")
-      );
+      execFileSync("git", ["clone", "--depth", "1", GENTLEMAN_REPOS["agent-teams-lite"], cloneDir], {
+        timeout: 45000,
+        stdio: ["ignore", "pipe", "pipe"],
+        windowsHide: true,
+      });
+      const report = syncSkillsTreeSafely(path.join(cloneDir, "skills"), path.join(projectRoot, ".agents", "skills"));
 
       // Refresh .atl/skill-registry.md when gentle-ai is present
       if (gentleAiPath && fs.existsSync(gentleAiPath)) {
@@ -841,7 +827,7 @@ export class EosGentlemanAutoUpdater {
             cwd: projectRoot,
             timeout: 10000,
             stdio: ["ignore", "pipe", "pipe"],
-            windowsHide: true
+            windowsHide: true,
           });
         } catch {
           // Non-fatal if gentle-ai skill-registry uses cached registry
@@ -857,19 +843,19 @@ export class EosGentlemanAutoUpdater {
   /**
    * Executes a full Evergreen Update Check or Apply cycle across all 4 Gentleman repositories.
    */
-  public static async runUpdateCycle(options: {
-    readonly projectRoot?: string;
-    readonly geminiConfigDir?: string;
-    readonly homeDir?: string;
-    readonly apply?: boolean;
-    readonly force?: boolean;
-    readonly intervalHours?: number;
-  } = {}): Promise<GentlemanUpdateCycleReport> {
+  public static async runUpdateCycle(
+    options: {
+      readonly projectRoot?: string;
+      readonly geminiConfigDir?: string;
+      readonly homeDir?: string;
+      readonly apply?: boolean;
+      readonly force?: boolean;
+      readonly intervalHours?: number;
+    } = {},
+  ): Promise<GentlemanUpdateCycleReport> {
     const projectRoot = path.resolve(options.projectRoot || process.cwd());
     const homeDir = path.resolve(options.homeDir || os.homedir());
-    const geminiConfigDir = path.resolve(
-      options.geminiConfigDir || path.join(homeDir, ".gemini", "config")
-    );
+    const geminiConfigDir = path.resolve(options.geminiConfigDir || path.join(homeDir, ".gemini", "config"));
     const apply = Boolean(options.apply);
     const force = Boolean(options.force);
     const intervalHours = options.intervalHours ?? DEFAULT_AUTO_UPDATE_INTERVAL_HOURS;
@@ -892,7 +878,7 @@ export class EosGentlemanAutoUpdater {
         components: [],
         stateFilePath: this.defaultStatePath(projectRoot),
         ledgerEntryId: null,
-        sha256Receipt: skippedReceipt
+        sha256Receipt: skippedReceipt,
       });
     }
 
@@ -909,27 +895,24 @@ export class EosGentlemanAutoUpdater {
         ["--version"],
         [
           path.join(homeDir, "go", "bin", process.platform === "win32" ? "gentle-ai.exe" : "gentle-ai"),
-          path.join(homeDir, "AppData", "Local", "gentle-ai", "bin", "gentle-ai.exe")
+          path.join(homeDir, "AppData", "Local", "gentle-ai", "bin", "gentle-ai.exe"),
         ],
-        homeDir
+        homeDir,
       );
       const engramProbe = EosGentlemanStackBridge.probeBinary(
         "engram",
         ["version"],
         [
           path.join(homeDir, "AppData", "Local", "engram", "bin", "engram.exe"),
-          path.join(homeDir, "go", "bin", process.platform === "win32" ? "engram.exe" : "engram")
+          path.join(homeDir, "go", "bin", process.platform === "win32" ? "engram.exe" : "engram"),
         ],
-        homeDir
+        homeDir,
       );
       const ggaProbe = EosGentlemanStackBridge.probeBinary(
         "gga",
         ["--version"],
-        [
-          path.join(homeDir, "bin", process.platform === "win32" ? "gga.bat" : "gga"),
-          path.join(homeDir, "bin", "gga")
-        ],
-        homeDir
+        [path.join(homeDir, "bin", process.platform === "win32" ? "gga.bat" : "gga"), path.join(homeDir, "bin", "gga")],
+        homeDir,
       );
 
       // 1. Check & optionally upgrade `gentle-ai`
@@ -956,7 +939,7 @@ export class EosGentlemanAutoUpdater {
               latestCommitSha: latest.commitSha,
               updateAvailable: false,
               status: "UPDATED",
-              detail: `Upgraded gentle-ai ${gentleInstalled} -> ${latest.version} (sha256:${swap.binarySha256.slice(0, 12)})`
+              detail: `Upgraded gentle-ai ${gentleInstalled} -> ${latest.version} (sha256:${swap.binarySha256.slice(0, 12)})`,
             });
           } else {
             if (swap.rolledBack) rollbacksTriggered++;
@@ -968,7 +951,7 @@ export class EosGentlemanAutoUpdater {
               latestCommitSha: latest.commitSha,
               updateAvailable: true,
               status: swap.rolledBack ? "ROLLED_BACK" : "ERROR",
-              detail: `Upgrade failed (${swap.error || "unknown"}); rollback=${swap.rolledBack}`
+              detail: `Upgrade failed (${swap.error || "unknown"}); rollback=${swap.rolledBack}`,
             });
           }
         } else {
@@ -982,7 +965,7 @@ export class EosGentlemanAutoUpdater {
             status: needsUpdate ? "UPDATE_AVAILABLE" : "UP_TO_DATE",
             detail: needsUpdate
               ? `Update available: ${gentleInstalled} -> ${latest.version}`
-              : `Latest stable ${latest.version} active`
+              : `Latest stable ${latest.version} active`,
           });
         }
       } catch (err: any) {
@@ -994,7 +977,7 @@ export class EosGentlemanAutoUpdater {
           latestCommitSha: "",
           updateAvailable: false,
           status: "SKIPPED_OFFLINE",
-          detail: `Upstream probe skipped: ${String(err?.message || err).slice(0, 120)}`
+          detail: `Upstream probe skipped: ${String(err?.message || err).slice(0, 120)}`,
         });
       }
 
@@ -1012,7 +995,9 @@ export class EosGentlemanAutoUpdater {
             engramProbe.executablePath ||
             path.join(
               homeDir,
-              process.platform === "win32" ? path.join("AppData", "Local", "engram", "bin", "engram.exe") : path.join("go", "bin", "engram")
+              process.platform === "win32"
+                ? path.join("AppData", "Local", "engram", "bin", "engram.exe")
+                : path.join("go", "bin", "engram"),
             );
           const swap = await this.upgradeEngramRelease(latest.version, targetExe);
           if (swap.swapped) {
@@ -1025,7 +1010,7 @@ export class EosGentlemanAutoUpdater {
               latestCommitSha: latest.commitSha,
               updateAvailable: false,
               status: "UPDATED",
-              detail: `Hot-swapped engram ${engramInstalled} -> ${latest.version} with verified checksums.txt (sha256:${swap.binarySha256.slice(0, 12)})`
+              detail: `Hot-swapped engram ${engramInstalled} -> ${latest.version} with verified checksums.txt (sha256:${swap.binarySha256.slice(0, 12)})`,
             });
           } else {
             if (swap.rolledBack) rollbacksTriggered++;
@@ -1037,7 +1022,7 @@ export class EosGentlemanAutoUpdater {
               latestCommitSha: latest.commitSha,
               updateAvailable: true,
               status: swap.rolledBack ? "ROLLED_BACK" : "ERROR",
-              detail: `Upgrade failed (${swap.error || "unknown"}); rollback=${swap.rolledBack}`
+              detail: `Upgrade failed (${swap.error || "unknown"}); rollback=${swap.rolledBack}`,
             });
           }
         } else {
@@ -1051,7 +1036,7 @@ export class EosGentlemanAutoUpdater {
             status: needsUpdate ? "UPDATE_AVAILABLE" : "UP_TO_DATE",
             detail: needsUpdate
               ? `Update available: ${engramInstalled} -> ${latest.version}`
-              : `Latest stable ${latest.version} active`
+              : `Latest stable ${latest.version} active`,
           });
         }
       } catch (err: any) {
@@ -1063,7 +1048,7 @@ export class EosGentlemanAutoUpdater {
           latestCommitSha: "",
           updateAvailable: false,
           status: "SKIPPED_OFFLINE",
-          detail: `Upstream probe skipped: ${String(err?.message || err).slice(0, 120)}`
+          detail: `Upstream probe skipped: ${String(err?.message || err).slice(0, 120)}`,
         });
       }
 
@@ -1088,7 +1073,7 @@ export class EosGentlemanAutoUpdater {
               latestCommitSha: latest.commitSha,
               updateAvailable: false,
               status: "UPDATED",
-              detail: `Upgraded gga ${ggaInstalled} -> ${latest.version}`
+              detail: `Upgraded gga ${ggaInstalled} -> ${latest.version}`,
             });
           } else {
             if (swap.rolledBack) rollbacksTriggered++;
@@ -1100,7 +1085,7 @@ export class EosGentlemanAutoUpdater {
               latestCommitSha: latest.commitSha,
               updateAvailable: true,
               status: swap.rolledBack ? "ROLLED_BACK" : "ERROR",
-              detail: `Upgrade failed (${swap.error || "unknown"}); rollback=${swap.rolledBack}`
+              detail: `Upgrade failed (${swap.error || "unknown"}); rollback=${swap.rolledBack}`,
             });
           }
         } else {
@@ -1114,7 +1099,7 @@ export class EosGentlemanAutoUpdater {
             status: needsUpdate ? "UPDATE_AVAILABLE" : "UP_TO_DATE",
             detail: needsUpdate
               ? `Update available: ${ggaInstalled} -> ${latest.version}`
-              : `Latest stable ${latest.version} active`
+              : `Latest stable ${latest.version} active`,
           });
         }
       } catch (err: any) {
@@ -1126,7 +1111,7 @@ export class EosGentlemanAutoUpdater {
           latestCommitSha: "",
           updateAvailable: false,
           status: "SKIPPED_OFFLINE",
-          detail: `Upstream probe skipped: ${String(err?.message || err).slice(0, 120)}`
+          detail: `Upstream probe skipped: ${String(err?.message || err).slice(0, 120)}`,
         });
       }
 
@@ -1160,7 +1145,7 @@ export class EosGentlemanAutoUpdater {
             latestCommitSha: latestHeadSha,
             updateAvailable: false,
             status: "UPDATED",
-            detail: `Synced ${syncReport.syncedSkillFolders.length} Gentleman skill dirs (${syncReport.filesVerified} files SAST-verified; preserved ${syncReport.preservedEosSkills.length} eos-* skills)`
+            detail: `Synced ${syncReport.syncedSkillFolders.length} Gentleman skill dirs (${syncReport.filesVerified} files SAST-verified; preserved ${syncReport.preservedEosSkills.length} eos-* skills)`,
           });
         } else {
           // Record baseline commit SHA when local skills are already present during check
@@ -1171,14 +1156,17 @@ export class EosGentlemanAutoUpdater {
           components.push({
             componentId: "agent-teams-lite",
             repositoryUrl: GENTLEMAN_REPOS["agent-teams-lite"],
-            installedVersion: effectiveInstalledSha === "vendored-initial" ? latestHeadSha.slice(0, 12) : effectiveInstalledSha.slice(0, 12),
+            installedVersion:
+              effectiveInstalledSha === "vendored-initial"
+                ? latestHeadSha.slice(0, 12)
+                : effectiveInstalledSha.slice(0, 12),
             latestVersion: latestHeadSha.slice(0, 12),
             latestCommitSha: latestHeadSha,
             updateAvailable: drift,
             status: drift ? "UPDATE_AVAILABLE" : "UP_TO_DATE",
             detail: drift
               ? `New upstream skills commit available: ${latestHeadSha.slice(0, 12)}`
-              : `Skills aligned at commit ${latestHeadSha.slice(0, 12)}`
+              : `Skills aligned at commit ${latestHeadSha.slice(0, 12)}`,
           });
         }
       } catch (err: any) {
@@ -1190,7 +1178,7 @@ export class EosGentlemanAutoUpdater {
           latestCommitSha: syncedAtlCommit || "",
           updateAvailable: false,
           status: "SKIPPED_OFFLINE",
-          detail: `Upstream probe skipped: ${String(err?.message || err).slice(0, 120)}`
+          detail: `Upstream probe skipped: ${String(err?.message || err).slice(0, 120)}`,
         });
       }
 
@@ -1198,7 +1186,7 @@ export class EosGentlemanAutoUpdater {
       const constitutionPreserved = constitutionBefore === constitutionAfter;
       assertPostcondition(
         constitutionPreserved,
-        "ConstitutionPreservationInvariant violated during Gentleman auto-update cycle"
+        "ConstitutionPreservationInvariant violated during Gentleman auto-update cycle",
       );
 
       const sha256Receipt = pureSha256(
@@ -1213,9 +1201,9 @@ export class EosGentlemanAutoUpdater {
             id: c.componentId,
             installed: c.installedVersion,
             latest: c.latestVersion,
-            status: c.status
-          }))
-        })
+            status: c.status,
+          })),
+        }),
       );
 
       // Persist state file for TTL & SessionStart coordination
@@ -1225,7 +1213,7 @@ export class EosGentlemanAutoUpdater {
       for (const comp of components) {
         componentMap[comp.componentId] = {
           version: comp.installedVersion,
-          updatedAtIso: nowIso
+          updatedAtIso: nowIso,
         };
       }
       const nextState: PersistedAutoUpdateState = {
@@ -1235,7 +1223,7 @@ export class EosGentlemanAutoUpdater {
         checkIntervalHours: intervalHours,
         agentTeamsLiteCommitSha: syncedAtlCommit,
         components: componentMap,
-        lastReceiptSha256: sha256Receipt
+        lastReceiptSha256: sha256Receipt,
       };
       fs.writeFileSync(stateFilePath, JSON.stringify(nextState, null, 2) + "\n", "utf8");
 
@@ -1257,10 +1245,10 @@ export class EosGentlemanAutoUpdater {
               components: components.map((c) => ({
                 id: c.componentId,
                 version: c.installedVersion,
-                status: c.status
-              }))
+                status: c.status,
+              })),
             },
-            engramTopicKey: "config/gentleman-evergreen-autoupdate"
+            engramTopicKey: "config/gentleman-evergreen-autoupdate",
           });
           ledgerEntryId = rec.entryId;
         } finally {
@@ -1280,7 +1268,7 @@ export class EosGentlemanAutoUpdater {
         components,
         stateFilePath,
         ledgerEntryId,
-        sha256Receipt
+        sha256Receipt,
       });
     } finally {
       this.releaseLock(projectRoot);

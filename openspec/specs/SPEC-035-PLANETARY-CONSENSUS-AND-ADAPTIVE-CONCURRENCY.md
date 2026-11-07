@@ -1,7 +1,9 @@
 # SPEC-035: PLANETARY DISTRIBUTED CONSENSUS, TRUETIME UNCERTAINTY BOUNDS & ADAPTIVE CONCURRENCY LIMITS
+
 <!-- Formal OpenSpec Specification — EARS Syntax & BDD Acceptance Criteria -->
 
 ## 1. Specification Metadata
+
 - **Specification ID**: `SPEC-035`
 - **Feature Title**: Planetary Distributed Consensus, TrueTime Uncertainty Bounds & Adaptive Concurrency Limits
 - **Version**: `42.0.0`
@@ -14,16 +16,20 @@
 ## 2. Formal Functional Requirements (EARS Syntax)
 
 ### FR-099: Google Spanner TrueTime Bounded Clock & Commit-Wait (Ubiquitous)
-* `EL SISTEMA` proporcionará lecturas de tiempo con incertidumbre delimitada $[t_{earliest}, t_{latest}]$ calculando la dispersión del oscilador $\epsilon$, e impondrá una espera de confirmación (*commit-wait*) en las transacciones para garantizar que $t_{earliest} > t_{commit}$, logrando consistencia externa (linealizabilidad) sin comunicación entre nodos transcontinentales.
+
+- `EL SISTEMA` proporcionará lecturas de tiempo con incertidumbre delimitada $[t_{earliest}, t_{latest}]$ calculando la dispersión del oscilador $\epsilon$, e impondrá una espera de confirmación (_commit-wait_) en las transacciones para garantizar que $t_{earliest} > t_{commit}$, logrando consistencia externa (linealizabilidad) sin comunicación entre nodos transcontinentales.
 
 ### FR-100: Planetary Raft/Paxos Quorum Consensus & Log Replication (State-Driven)
-* `MIENTRAS` un cluster distribuido de $N$ nodos opera en la red, `EL SISTEMA` garantizará que solo un nodo con la mayoría absoluta de votos ($Q = \lfloor N/2 \rfloor + 1$) pueda actuar como Líder, replicando entradas de log de forma monotónica e impidiendo la bifurcación del estado (*split-brain*) ante particiones de red.
+
+- `MIENTRAS` un cluster distribuido de $N$ nodos opera en la red, `EL SISTEMA` garantizará que solo un nodo con la mayoría absoluta de votos ($Q = \lfloor N/2 \rfloor + 1$) pueda actuar como Líder, replicando entradas de log de forma monotónica e impidiendo la bifurcación del estado (_split-brain_) ante particiones de red.
 
 ### FR-101: Netflix Vegas Adaptive Concurrency Limiter & Load-Shedding (Event-Driven)
-* `CUANDO` se produce un pico abrupto de tráfico, `EL SISTEMA` recalculará dinámicamente el límite de concurrencia basándose en el algoritmo TCP Vegas ($queue = limit \times (1 - RTT_{min} / RTT)$), expandiendo el límite cuando no hay congestión y descartando tráfico excesivo proactivamente (*load-shedding*) antes de que el event loop o la latencia $p99$ se degraden.
+
+- `CUANDO` se produce un pico abrupto de tráfico, `EL SISTEMA` recalculará dinámicamente el límite de concurrencia basándose en el algoritmo TCP Vegas ($queue = limit \times (1 - RTT_{min} / RTT)$), expandiendo el límite cuando no hay congestión y descartando tráfico excesivo proactivamente (_load-shedding_) antes de que el event loop o la latencia $p99$ se degraden.
 
 ### FR-102: Multi-Channel CLI & MCP Tool Dispatching (Event-Driven)
-* `CUANDO` el usuario o un agente invoque los comandos `eos consensus`, `eos truetime`, `eos concurrency` o las herramientas MCP `eos_consensus_status`, `eos_truetime_now`, `eos_adaptive_concurrency_stats`, `EL SISTEMA` retornará diagnósticos estructurados en JSON y texto con sellos criptográficos SHA-256.
+
+- `CUANDO` el usuario o un agente invoque los comandos `eos consensus`, `eos truetime`, `eos concurrency` o las herramientas MCP `eos_consensus_status`, `eos_truetime_now`, `eos_adaptive_concurrency_stats`, `EL SISTEMA` retornará diagnósticos estructurados en JSON y texto con sellos criptográficos SHA-256.
 
 ---
 

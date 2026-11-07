@@ -7,6 +7,46 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 
+export type {
+  AcousticVector,
+  TrackCandidate,
+  LoudnessProfile,
+  EqualPowerCrossfadeStep,
+  AudioStreamingReport,
+  ScaffoldResult,
+  CamelotTransition,
+  SpotifyProjectAuditReport,
+  SquadManifest,
+  AsyncStandupOptions,
+  AsyncStandupReport,
+  BlamelessPostMortemOptions,
+  BlamelessPostMortem,
+  CanaryExperimentOptions,
+  CanaryExperimentSpec,
+  GoldenPathScaffoldOptions,
+  GoldenPathPackage,
+} from "./eosSpotifyCodex.types.ts";
+
+import type {
+  AcousticVector,
+  TrackCandidate,
+  LoudnessProfile,
+  EqualPowerCrossfadeStep,
+  AudioStreamingReport,
+  ScaffoldResult,
+  CamelotTransition,
+  SpotifyProjectAuditReport,
+  SquadManifest,
+  AsyncStandupOptions,
+  AsyncStandupReport,
+  BlamelessPostMortemOptions,
+  BlamelessPostMortem,
+  CanaryExperimentOptions,
+  CanaryExperimentSpec,
+  GoldenPathScaffoldOptions,
+  GoldenPathPackage,
+} from "./eosSpotifyCodex.types.ts";
+
 function isPathWithin(root: string, candidate: string): boolean {
   const relative = path.relative(root, candidate);
   return relative === "" || (relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative));
@@ -16,230 +56,9 @@ function readRegularFileWithin(rootPath: string, filePath: string): string {
   const root = fs.realpathSync(rootPath);
   const realFile = fs.realpathSync(filePath);
   if (!isPathWithin(root, realFile)) throw new Error("File must resolve inside the selected project directory.");
-  if (!fs.statSync(realFile).isFile()) throw new Error("Expected a regular file inside the selected project directory.");
+  if (!fs.statSync(realFile).isFile())
+    throw new Error("Expected a regular file inside the selected project directory.");
   return fs.readFileSync(realFile, "utf8");
-}
-
-export interface AcousticVector {
-  readonly tempo: number;          // BPM normalized or raw (e.g. 120)
-  readonly energy: number;         // 0.0 - 1.0
-  readonly danceability: number;   // 0.0 - 1.0
-  readonly valence: number;        // 0.0 - 1.0 (musical happiness)
-  readonly acousticness: number;   // 0.0 - 1.0
-  readonly instrumentalness: number; // 0.0 - 1.0
-  readonly liveness: number;       // 0.0 - 1.0
-  readonly speechiness: number;    // 0.0 - 1.0
-}
-
-export interface TrackCandidate {
-  readonly id: string;
-  readonly title: string;
-  readonly artist: string;
-  readonly key: number;            // 0 = C, 1 = C#, 2 = D ... 11 = B
-  readonly mode: number;           // 0 = minor, 1 = major
-  readonly features: AcousticVector;
-}
-
-export interface LoudnessProfile {
-  readonly targetLufs: number;     // -14.0 LUFS standard
-  readonly truePeakCeilingDb: number; // -1.0 dBTP standard
-  readonly measuredLufs: number;
-  readonly measuredTruePeakDb: number;
-  readonly gainAdjustmentDb: number;
-  readonly limiterRequired: boolean;
-  readonly recommendedCodec: "OGG_VORBIS_320" | "AAC_256" | "FLAC_LOSSLESS";
-}
-
-export interface EqualPowerCrossfadeStep {
-  readonly t: number;
-  readonly gainA: number;
-  readonly gainB: number;
-  readonly totalPower: number;
-}
-
-export interface AudioStreamingReport {
-  readonly chunkSizeKb: number;
-  readonly totalChunksProcessed: number;
-  readonly totalBytesStreamed: number;
-  readonly throughputMbSec: number;
-  readonly bufferUnderrunRiskPercent: null;
-  readonly ringBufferCapacityChunks: number;
-  readonly locklessConcurrencyTested: false;
-  readonly simulationOnly: true;
-  readonly durationUs: number;
-}
-
-export interface ScaffoldResult {
-  readonly templateOnly: true;
-  readonly created: boolean;
-  readonly writeApplied: boolean;
-  readonly filePath: string;
-  readonly catalogYaml: string;
-  readonly message: string;
-}
-
-export interface CamelotTransition {
-  readonly compatible: boolean;
-  readonly camelotA: string;
-  readonly camelotB: string;
-  readonly harmonicRelationship: "PERFECT_MATCH" | "ENERGY_BOOST" | "ENERGY_DROP" | "MODE_SHIFT" | "DISSONANT";
-}
-
-export interface SpotifyProjectAuditReport {
-  readonly projectPath: string;
-  readonly catalogInfoMarkersPresent: boolean;
-  readonly localInventoryScore: number;
-  readonly catalogInfoExists: boolean;
-  readonly catalogInfoDetails?: {
-    readonly apiVersion: string;
-    readonly kind: string;
-    readonly name: string;
-    readonly owner: string;
-    readonly lifecycle: string;
-  };
-  readonly audioInventory: {
-    readonly audioAssetsDetected: number;
-    readonly standardsChecked: false;
-  };
-  readonly recommendations: readonly string[];
-  readonly resultFingerprintSha256: string;
-  readonly timestamp: string;
-}
-
-export interface SquadManifest {
-  readonly scope: "TEMPLATE_ONLY";
-  readonly squadName: string;
-  readonly tribe: string;
-  readonly chapter: "Backend (Java/Python/Go)" | "Web (TypeScript/React)" | "Mobile (Kotlin/Swift)" | "Data & Machine Learning";
-  readonly mission: string;
-  readonly productManager: string;
-  readonly techLead: string;
-  readonly guilds: readonly string[];
-  readonly kpis: readonly string[];
-  readonly timezoneOverlap: {
-    readonly localTimezone: string;
-    readonly targetHubs: readonly string[];
-    readonly synchronousWindow: string;
-  };
-}
-
-export interface AsyncStandupOptions {
-  readonly author?: string;
-  readonly squadName?: string;
-  readonly yesterdayTasks?: readonly string[];
-  readonly todayTasks?: readonly string[];
-  readonly blockers?: readonly string[];
-  readonly prLinks?: readonly string[];
-  readonly handoffNotes?: string;
-}
-
-export interface AsyncStandupReport {
-  readonly scope: "DRAFT_ONLY";
-  readonly timestamp: string;
-  readonly author: string;
-  readonly squad: string;
-  readonly timezone: string;
-  readonly yesterday: readonly string[];
-  readonly today: readonly string[];
-  readonly blockers: readonly string[];
-  readonly prLinks: readonly string[];
-  readonly handoffToEurope: string;
-  readonly markdown: string;
-}
-
-export interface BlamelessPostMortemOptions {
-  readonly incidentId?: string;
-  readonly title?: string;
-  readonly severity?: string;
-  readonly durationMinutes?: number;
-  readonly userImpactSummary?: string;
-  readonly trigger?: string;
-  readonly rootCause?: string;
-  readonly fiveWhys?: readonly string[];
-  readonly whatWentWell?: readonly string[];
-  readonly whereWeGotLucky?: readonly string[];
-  readonly actionItems?: ReadonlyArray<{
-    readonly action: string;
-    readonly owner: string;
-    readonly priority: "P0" | "P1" | "P2";
-    readonly jiraTicket: string;
-  }>;
-  readonly timeline?: ReadonlyArray<{ readonly time: string; readonly event: string }>;
-}
-
-export interface BlamelessPostMortem {
-  readonly templateOnly: true;
-  readonly incidentId: string;
-  readonly title: string;
-  readonly severity: string;
-  readonly durationMinutes: number | null;
-  readonly userImpact: string;
-  readonly trigger: string;
-  readonly timeline: ReadonlyArray<{ time: string; event: string }>;
-  readonly fiveWhys: readonly string[];
-  readonly rootCauseSummary: string;
-  readonly systemicWeakness: string;
-  readonly whatWentWell: readonly string[];
-  readonly whereWeGotLucky: readonly string[];
-  readonly actionItems: ReadonlyArray<{
-    readonly action: string;
-    readonly owner: string;
-    readonly priority: "P0" | "P1" | "P2";
-    readonly jiraTicket: string;
-  }>;
-  readonly markdown: string;
-  readonly resultFingerprintSha256: string;
-}
-
-export interface CanaryExperimentOptions {
-  readonly experimentKey?: string;
-  readonly featureName?: string;
-  readonly hypothesis?: string;
-  readonly squad?: string;
-  readonly primaryMetric?: string;
-  readonly guardrails?: ReadonlyArray<{
-    readonly metric: string;
-    readonly maxThreshold: string;
-    readonly autoRevert: boolean;
-  }>;
-}
-
-export interface CanaryExperimentSpec {
-  readonly scope: "TEMPLATE_ONLY";
-  readonly experimentKey: string;
-  readonly featureName: string;
-  readonly hypothesis: string;
-  readonly ownerSquad: string;
-  readonly rolloutStages: ReadonlyArray<{
-    readonly stage: string;
-    readonly trafficPercentage: number;
-    readonly minimumObservationHours: number;
-    readonly passCriteria: string;
-  }>;
-  readonly primaryMetric: string;
-  readonly guardrails: ReadonlyArray<{
-    readonly metric: string;
-    readonly maxThreshold: string;
-    readonly autoRevert: boolean;
-  }>;
-  readonly killSwitchFlag: string;
-  readonly featureFlagConfigJson: string;
-  readonly markdown: string;
-}
-
-export interface GoldenPathScaffoldOptions {
-  readonly serviceName?: string;
-  readonly description?: string;
-  readonly serviceType?: "backend-microservice" | "frontend-web" | "mobile-sdk" | "data-pipeline";
-  readonly ownerSquad?: string;
-  readonly systemName?: string;
-}
-
-export interface GoldenPathPackage {
-  readonly templateOnly: true;
-  readonly serviceName: string;
-  readonly serviceType: string;
-  readonly files: Record<string, string>;
 }
 
 export class EosSpotifyCodex {
@@ -282,7 +101,7 @@ export class EosSpotifyCodex {
       measuredTruePeakDb,
       gainAdjustmentDb,
       limiterRequired,
-      recommendedCodec
+      recommendedCodec,
     };
   }
 
@@ -294,8 +113,26 @@ export class EosSpotifyCodex {
     const normTempoA = Math.max(0, Math.min(1, (a.tempo - 50) / 150));
     const normTempoB = Math.max(0, Math.min(1, (b.tempo - 50) / 150));
 
-    const vecA = [normTempoA, a.energy, a.danceability, a.valence, a.acousticness, a.instrumentalness, a.liveness, a.speechiness];
-    const vecB = [normTempoB, b.energy, b.danceability, b.valence, b.acousticness, b.instrumentalness, b.liveness, b.speechiness];
+    const vecA = [
+      normTempoA,
+      a.energy,
+      a.danceability,
+      a.valence,
+      a.acousticness,
+      a.instrumentalness,
+      a.liveness,
+      a.speechiness,
+    ];
+    const vecB = [
+      normTempoB,
+      b.energy,
+      b.danceability,
+      b.valence,
+      b.acousticness,
+      b.instrumentalness,
+      b.liveness,
+      b.speechiness,
+    ];
 
     let dotProduct = 0;
     let normA = 0;
@@ -317,8 +154,34 @@ export class EosSpotifyCodex {
   public evaluateHarmonicTransition(keyA: number, modeA: number, keyB: number, modeB: number): CamelotTransition {
     // Standard Camelot Map: [key, mode (0=min, 1=maj)] -> "Number + Letter"
     // Modes: 0 = Minor (A), 1 = Major (B)
-    const majorMap: Record<number, number> = { 0: 8, 1: 3, 2: 10, 3: 5, 4: 12, 5: 7, 6: 2, 7: 9, 8: 4, 9: 11, 10: 6, 11: 1 };
-    const minorMap: Record<number, number> = { 0: 5, 1: 12, 2: 7, 3: 2, 4: 9, 5: 4, 6: 11, 7: 6, 8: 1, 9: 8, 10: 3, 11: 10 };
+    const majorMap: Record<number, number> = {
+      0: 8,
+      1: 3,
+      2: 10,
+      3: 5,
+      4: 12,
+      5: 7,
+      6: 2,
+      7: 9,
+      8: 4,
+      9: 11,
+      10: 6,
+      11: 1,
+    };
+    const minorMap: Record<number, number> = {
+      0: 5,
+      1: 12,
+      2: 7,
+      3: 2,
+      4: 9,
+      5: 4,
+      6: 11,
+      7: 6,
+      8: 1,
+      9: 8,
+      10: 3,
+      11: 10,
+    };
 
     const numA = modeA === 1 ? majorMap[keyA] || 8 : minorMap[keyA] || 5;
     const letterA = modeA === 1 ? "B" : "A";
@@ -335,12 +198,12 @@ export class EosSpotifyCodex {
     if (letterA === letterB) {
       const diff = Math.abs(numA - numB);
       if (diff === 1 || diff === 11) {
-        const isBoost = (numB === (numA % 12) + 1);
+        const isBoost = numB === (numA % 12) + 1;
         return {
           compatible: true,
           camelotA,
           camelotB,
-          harmonicRelationship: isBoost ? "ENERGY_BOOST" : "ENERGY_DROP"
+          harmonicRelationship: isBoost ? "ENERGY_BOOST" : "ENERGY_DROP",
         };
       }
     } else if (numA === numB) {
@@ -353,7 +216,11 @@ export class EosSpotifyCodex {
   /**
    * 4. Multi-Track Recommendation Ranker: Balances Acoustic Similarity & Harmonic Flow.
    */
-  public rankRecommendations(seed: TrackCandidate, pool: readonly TrackCandidate[], limit: number = 5): Array<TrackCandidate & { matchScore: number; harmonic: CamelotTransition }> {
+  public rankRecommendations(
+    seed: TrackCandidate,
+    pool: readonly TrackCandidate[],
+    limit: number = 5,
+  ): Array<TrackCandidate & { matchScore: number; harmonic: CamelotTransition }> {
     const scored = pool
       .filter((candidate) => candidate.id !== seed.id)
       .map((candidate) => {
@@ -364,7 +231,7 @@ export class EosSpotifyCodex {
         return {
           ...candidate,
           matchScore,
-          harmonic
+          harmonic,
         };
       });
 
@@ -374,7 +241,12 @@ export class EosSpotifyCodex {
   /**
    * 5. Spotify Web API Rate-Limit Resilience: Exponential backoff with full jitter.
    */
-  public calculateBackoffMs(attempt: number, baseMs: number = 200, capMs: number = 8000, retryAfterHeaderSec?: number): number {
+  public calculateBackoffMs(
+    attempt: number,
+    baseMs: number = 200,
+    capMs: number = 8000,
+    retryAfterHeaderSec?: number,
+  ): number {
     if (typeof retryAfterHeaderSec === "number" && retryAfterHeaderSec > 0) {
       return retryAfterHeaderSec * 1000;
     }
@@ -414,16 +286,20 @@ export class EosSpotifyCodex {
             kind: "Component",
             name: nameMatch ? nameMatch[1] : "unknown",
             owner: ownerMatch ? ownerMatch[1] : "not-declared",
-            lifecycle: lifecycleMatch ? lifecycleMatch[1] : "not-declared"
+            lifecycle: lifecycleMatch ? lifecycleMatch[1] : "not-declared",
           };
         } else {
-          recommendations.push("Ensure catalog-info.yaml declares 'apiVersion: backstage.io/v1alpha1' and 'kind: Component'.");
+          recommendations.push(
+            "Ensure catalog-info.yaml declares 'apiVersion: backstage.io/v1alpha1' and 'kind: Component'.",
+          );
         }
       } catch (err) {
         recommendations.push(`Error reading catalog-info.yaml: ${(err as Error).message}`);
       }
     } else {
-      recommendations.push("Missing Backstage descriptor: create 'catalog-info.yaml' conforming to Backstage RFC-42 standard.");
+      recommendations.push(
+        "Missing Backstage descriptor: create 'catalog-info.yaml' conforming to Backstage RFC-42 standard.",
+      );
     }
 
     // Check Package.json and Architecture Purity
@@ -463,7 +339,7 @@ export class EosSpotifyCodex {
       localInventoryScore,
       catalogInfoMarkersPresent,
       catalogInfoExists,
-      audioFilesCount
+      audioFilesCount,
     });
     const resultFingerprintSha256 = crypto.createHash("sha256").update(payload).digest("hex");
 
@@ -475,11 +351,11 @@ export class EosSpotifyCodex {
       catalogInfoDetails,
       audioInventory: {
         audioAssetsDetected: audioFilesCount,
-        standardsChecked: false
+        standardsChecked: false,
       },
       recommendations,
       resultFingerprintSha256,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -488,7 +364,7 @@ export class EosSpotifyCodex {
    */
   public scaffoldBackstageCatalog(
     targetDir?: string,
-    options: { name?: string; owner?: string; type?: string; description?: string; write?: boolean } = {}
+    options: { name?: string; owner?: string; type?: string; description?: string; write?: boolean } = {},
   ): ScaffoldResult {
     const resolvedPath = path.resolve(targetDir || this.projectRoot);
     const catalogPath = path.join(resolvedPath, "catalog-info.yaml");
@@ -504,7 +380,11 @@ export class EosSpotifyCodex {
           // ignore
         }
       }
-      if (!componentName) componentName = path.basename(resolvedPath).toLowerCase().replace(/[^a-z0-9_-]/g, "-");
+      if (!componentName)
+        componentName = path
+          .basename(resolvedPath)
+          .toLowerCase()
+          .replace(/[^a-z0-9_-]/g, "-");
     }
 
     const owner = options.owner || "user:unassigned";
@@ -521,7 +401,7 @@ export class EosSpotifyCodex {
         writeApplied: false,
         filePath: catalogPath,
         catalogYaml: readRegularFileWithin(resolvedPath, catalogPath),
-        message: "catalog-info.yaml already exists; it was left unchanged."
+        message: "catalog-info.yaml already exists; it was left unchanged.",
       };
     }
 
@@ -559,7 +439,7 @@ spec:
       catalogYaml,
       message: writeApplied
         ? `Created a local catalog descriptor template at ${catalogPath}; conformance was not checked.`
-        : `Prepared a local catalog descriptor template for ${catalogPath}; no file was written.`
+        : `Prepared a local catalog descriptor template for ${catalogPath}; no file was written.`,
     };
   }
 
@@ -591,7 +471,7 @@ spec:
     const end = process.hrtime.bigint();
     const durationUs = Number(end - start) / 1000;
     const durationSec = durationUs / 1000000;
-    const throughputMbSec = Number(((totalBytesStreamed / (1024 * 1024)) / (durationSec || 0.0001)).toFixed(2));
+    const throughputMbSec = Number((totalBytesStreamed / (1024 * 1024) / (durationSec || 0.0001)).toFixed(2));
 
     return {
       chunkSizeKb,
@@ -602,7 +482,7 @@ spec:
       ringBufferCapacityChunks: 4,
       locklessConcurrencyTested: false,
       simulationOnly: true,
-      durationUs
+      durationUs,
     };
   }
 
@@ -641,8 +521,8 @@ spec:
       timezoneOverlap: {
         localTimezone: opts.timezoneOverlap?.localTimezone || "Not provided",
         targetHubs: opts.timezoneOverlap?.targetHubs || [],
-        synchronousWindow: opts.timezoneOverlap?.synchronousWindow || "Not provided"
-      }
+        synchronousWindow: opts.timezoneOverlap?.synchronousWindow || "Not provided",
+      },
     };
   }
 
@@ -655,24 +535,16 @@ spec:
     const timezone = "Not provided";
     const timestamp = new Date().toISOString();
 
-    const yesterday = opts.yesterdayTasks && opts.yesterdayTasks.length > 0
-      ? opts.yesterdayTasks
-      : ["No completed tasks supplied."];
+    const yesterday =
+      opts.yesterdayTasks && opts.yesterdayTasks.length > 0 ? opts.yesterdayTasks : ["No completed tasks supplied."];
 
-    const today = opts.todayTasks && opts.todayTasks.length > 0
-      ? opts.todayTasks
-      : ["No planned tasks supplied."];
+    const today = opts.todayTasks && opts.todayTasks.length > 0 ? opts.todayTasks : ["No planned tasks supplied."];
 
-    const blockers = opts.blockers && opts.blockers.length > 0
-      ? opts.blockers
-      : ["Blocker status not supplied."];
+    const blockers = opts.blockers && opts.blockers.length > 0 ? opts.blockers : ["Blocker status not supplied."];
 
-    const prLinks = opts.prLinks && opts.prLinks.length > 0
-      ? opts.prLinks
-      : [];
+    const prLinks = opts.prLinks && opts.prLinks.length > 0 ? opts.prLinks : [];
 
-    const handoffToEurope = opts.handoffNotes ||
-      "No handoff notes supplied.";
+    const handoffToEurope = opts.handoffNotes || "No handoff notes supplied.";
 
     const markdown = [
       `### Async Standup Draft — ${squad}`,
@@ -693,7 +565,7 @@ spec:
       ...prLinks.map((p) => `- ${p}`),
       "",
       `#### Handoff notes`,
-      `> ${handoffToEurope}`
+      `> ${handoffToEurope}`,
     ].join("\n");
 
     return {
@@ -707,7 +579,7 @@ spec:
       blockers,
       prLinks,
       handoffToEurope,
-      markdown
+      markdown,
     };
   }
 
@@ -723,23 +595,15 @@ spec:
     const trigger = opts.trigger || "Not provided";
     const rootCauseSummary = opts.rootCause || "Not provided";
 
-    const fiveWhys = opts.fiveWhys && opts.fiveWhys.length > 0
-      ? opts.fiveWhys
-      : [];
+    const fiveWhys = opts.fiveWhys && opts.fiveWhys.length > 0 ? opts.fiveWhys : [];
 
     const timeline = opts.timeline || [];
 
-    const whatWentWell = opts.whatWentWell && opts.whatWentWell.length > 0
-      ? opts.whatWentWell
-      : [];
+    const whatWentWell = opts.whatWentWell && opts.whatWentWell.length > 0 ? opts.whatWentWell : [];
 
-    const whereWeGotLucky = opts.whereWeGotLucky && opts.whereWeGotLucky.length > 0
-      ? opts.whereWeGotLucky
-      : [];
+    const whereWeGotLucky = opts.whereWeGotLucky && opts.whereWeGotLucky.length > 0 ? opts.whereWeGotLucky : [];
 
-    const actionItems = opts.actionItems && opts.actionItems.length > 0
-      ? opts.actionItems
-      : [];
+    const actionItems = opts.actionItems && opts.actionItems.length > 0 ? opts.actionItems : [];
 
     const rawMarkdown = [
       `# Incident Review Draft: ${incidentId}`,
@@ -767,9 +631,12 @@ spec:
       `## 6. Preventative Action Items (Systemic Fixes)`,
       `| Priority | Action Item | Owner | Jira Ticket |`,
       `|:---:|---|---|:---:|`,
-      ...actionItems.map((a) => `| **${a.priority}** | ${a.action} | ${a.owner} | ${a.jiraTicket ? `\`${a.jiraTicket}\`` : "Not provided"} |`),
+      ...actionItems.map(
+        (a) =>
+          `| **${a.priority}** | ${a.action} | ${a.owner} | ${a.jiraTicket ? `\`${a.jiraTicket}\`` : "Not provided"} |`,
+      ),
       "",
-      `*Draft only; no approval, signature, or incident verification was recorded.*`
+      `*Draft only; no approval, signature, or incident verification was recorded.*`,
     ].join("\n");
 
     const resultFingerprintSha256 = crypto.createHash("sha256").update(rawMarkdown).digest("hex");
@@ -790,7 +657,7 @@ spec:
       whereWeGotLucky,
       actionItems,
       markdown: rawMarkdown,
-      resultFingerprintSha256
+      resultFingerprintSha256,
     };
   }
 
@@ -805,18 +672,42 @@ spec:
     const primaryMetric = opts.primaryMetric || "Define a primary metric";
 
     const rolloutStages = [
-      { stage: "Stage 1: Internal cohort", trafficPercentage: 0.1, minimumObservationHours: 24, passCriteria: "Define acceptance criteria" },
-      { stage: "Stage 2: Small canary", trafficPercentage: 1.0, minimumObservationHours: 48, passCriteria: "Define acceptance criteria" },
-      { stage: "Stage 3: Expanded cohort", trafficPercentage: 10.0, minimumObservationHours: 72, passCriteria: "Define acceptance criteria" },
-      { stage: "Stage 4: Broad cohort", trafficPercentage: 50.0, minimumObservationHours: 96, passCriteria: "Define acceptance criteria" },
-      { stage: "Stage 5: General availability decision", trafficPercentage: 100.0, minimumObservationHours: 0, passCriteria: "Requires explicit release approval" }
+      {
+        stage: "Stage 1: Internal cohort",
+        trafficPercentage: 0.1,
+        minimumObservationHours: 24,
+        passCriteria: "Define acceptance criteria",
+      },
+      {
+        stage: "Stage 2: Small canary",
+        trafficPercentage: 1.0,
+        minimumObservationHours: 48,
+        passCriteria: "Define acceptance criteria",
+      },
+      {
+        stage: "Stage 3: Expanded cohort",
+        trafficPercentage: 10.0,
+        minimumObservationHours: 72,
+        passCriteria: "Define acceptance criteria",
+      },
+      {
+        stage: "Stage 4: Broad cohort",
+        trafficPercentage: 50.0,
+        minimumObservationHours: 96,
+        passCriteria: "Define acceptance criteria",
+      },
+      {
+        stage: "Stage 5: General availability decision",
+        trafficPercentage: 100.0,
+        minimumObservationHours: 0,
+        passCriteria: "Requires explicit release approval",
+      },
     ];
 
-    const guardrails = opts.guardrails && opts.guardrails.length > 0
-      ? opts.guardrails
-      : [
-          { metric: "Define a guardrail metric", maxThreshold: "Not set", autoRevert: false }
-        ];
+    const guardrails =
+      opts.guardrails && opts.guardrails.length > 0
+        ? opts.guardrails
+        : [{ metric: "Define a guardrail metric", maxThreshold: "Not set", autoRevert: false }];
 
     const killSwitchFlag = `${experimentKey}_kill_switch_active`;
 
@@ -827,9 +718,9 @@ spec:
       rolloutPercentage: 0,
       targeting: {
         regions: [],
-        minAppVersion: "Not set"
+        minAppVersion: "Not set",
       },
-      guardrails: guardrails.map((g) => ({ metric: g.metric, limit: g.maxThreshold, failClosed: g.autoRevert }))
+      guardrails: guardrails.map((g) => ({ metric: g.metric, limit: g.maxThreshold, failClosed: g.autoRevert })),
     };
 
     const markdown = [
@@ -842,15 +733,20 @@ spec:
       `- **${primaryMetric}** (Target: Statistical Significance p < 0.01)`,
       "",
       `### 2. Guardrail suggestions (not connected to monitoring)`,
-      ...guardrails.map((g) => `- **${g.metric}**: proposed threshold **${g.maxThreshold}** ${g.autoRevert ? "(rollback behavior must be implemented and verified)" : ""}`),
+      ...guardrails.map(
+        (g) =>
+          `- **${g.metric}**: proposed threshold **${g.maxThreshold}** ${g.autoRevert ? "(rollback behavior must be implemented and verified)" : ""}`,
+      ),
       "",
       `### 3. Progressive Rollout Schedule`,
       `| Stage | Traffic % | Min Duration | Exit Pass Criteria |`,
       `|---|:---:|:---:|---|`,
-      ...rolloutStages.map((s) => `| **${s.stage}** | ${s.trafficPercentage}% | ${s.minimumObservationHours}h | ${s.passCriteria} |`),
+      ...rolloutStages.map(
+        (s) => `| **${s.stage}** | ${s.trafficPercentage}% | ${s.minimumObservationHours}h | ${s.passCriteria} |`,
+      ),
       "",
       `### 4. Emergency Kill-Switch`,
-      `Configure and test a rollback mechanism in the target deployment platform before relying on a kill switch. This document does not change traffic or trigger a rollback.`
+      `Configure and test a rollback mechanism in the target deployment platform before relying on a kill switch. This document does not change traffic or trigger a rollback.`,
     ].join("\n");
 
     return {
@@ -864,7 +760,7 @@ spec:
       guardrails,
       killSwitchFlag,
       featureFlagConfigJson: JSON.stringify(featureFlagConfig, null, 2),
-      markdown
+      markdown,
     };
   }
 
@@ -895,7 +791,7 @@ spec:
       `  owner: ${JSON.stringify(ownerSquad)}`,
       `  system: ${JSON.stringify(systemName)}`,
       `  providesApis:`,
-      `    - ${JSON.stringify(`${serviceName}-api`)}`
+      `    - ${JSON.stringify(`${serviceName}-api`)}`,
     ].join("\n");
 
     const mkdocsYaml = [
@@ -907,7 +803,7 @@ spec:
       `  - Overview: index.md`,
       `  - Architecture: architecture.md`,
       `  - Runbook: runbook.md`,
-      `  - API Contract: api.md`
+      `  - API Contract: api.md`,
     ].join("\n");
 
     const techdocsIndexMd = [
@@ -934,7 +830,7 @@ spec:
       `2. Document actual diagnostic and mitigation steps.`,
       "",
       `### Placeholder: process restart or crash`,
-      `1. Add platform-specific log and recovery steps after review.`
+      `1. Add platform-specific log and recovery steps after review.`,
     ].join("\n");
 
     return {
@@ -945,8 +841,8 @@ spec:
         "catalog-info.yaml": catalogInfoYaml,
         "mkdocs.yml": mkdocsYaml,
         "docs/index.md": techdocsIndexMd,
-        "RUNBOOK.md": runbookMd
-      }
+        "RUNBOOK.md": runbookMd,
+      },
     };
   }
 }

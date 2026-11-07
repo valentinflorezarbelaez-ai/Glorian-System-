@@ -29,11 +29,7 @@ try {
   // Graceful fallback if network sockets are restricted
 }
 
-function resilientLookup(
-  hostname: string,
-  options: any,
-  callback: any
-): void {
+function resilientLookup(hostname: string, options: any, callback: any): void {
   const cb = typeof options === "function" ? options : callback;
   const opts = typeof options === "object" && options !== null ? options : {};
 
@@ -46,23 +42,22 @@ function resilientLookup(
         return cb(err || rErr, "", 4);
       }
       if (opts.all) {
-        return cb(null, addresses.map((a) => ({ address: a, family: 4 })));
+        return cb(
+          null,
+          addresses.map((a) => ({ address: a, family: 4 })),
+        );
       }
       return cb(null, addresses[0], 4);
     });
   });
 }
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export const REGISTERED_FLEET_TARGETS: readonly string[] = deepFreeze([
   "https://portafolio-valentin.vercel.app/",
-  "https://ptg-performance-talent-group.vercel.app/"
+  "https://ptg-performance-talent-group.vercel.app/",
 ]);
 
 export interface SecurityHeadersReport {
@@ -140,7 +135,9 @@ export class EosFleetProductionVerifier {
     }
 
     if (!allowLoopback && parsed.protocol !== "https:") {
-      throw new Error(`SSRF_TARGET_PROHIBITED: Only HTTPS targets are allowed in production audits, got '${parsed.protocol}'`);
+      throw new Error(
+        `SSRF_TARGET_PROHIBITED: Only HTTPS targets are allowed in production audits, got '${parsed.protocol}'`,
+      );
     }
 
     const host = parsed.hostname.toLowerCase();
@@ -158,11 +155,7 @@ export class EosFleetProductionVerifier {
       }
 
       // Guard against RFC 1918 private IPv4 subnets
-      if (
-        host.startsWith("10.") ||
-        host.startsWith("192.168.") ||
-        /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host)
-      ) {
+      if (host.startsWith("10.") || host.startsWith("192.168.") || /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host)) {
         throw new Error(`SSRF_TARGET_PROHIBITED: Target hostname '${host}' is a private IPv4 address`);
       }
 
@@ -191,14 +184,17 @@ export class EosFleetProductionVerifier {
       }
     }
 
-    const strictTransportSecurity = typeof h["strict-transport-security"] === "string" && h["strict-transport-security"].includes("max-age");
+    const strictTransportSecurity =
+      typeof h["strict-transport-security"] === "string" && h["strict-transport-security"].includes("max-age");
     const xContentTypeOptions = h["x-content-type-options"] === "nosniff";
     const xFrameOptions = Boolean(
-      (typeof h["x-frame-options"] === "string" && (h["x-frame-options"] === "DENY" || h["x-frame-options"] === "SAMEORIGIN")) ||
-      (typeof h["content-security-policy"] === "string" && h["content-security-policy"].includes("frame-ancestors"))
+      (typeof h["x-frame-options"] === "string" &&
+        (h["x-frame-options"] === "DENY" || h["x-frame-options"] === "SAMEORIGIN")) ||
+        (typeof h["content-security-policy"] === "string" && h["content-security-policy"].includes("frame-ancestors")),
     );
     const referrerPolicy = typeof h["referrer-policy"] === "string" && h["referrer-policy"].length > 0;
-    const contentSecurityPolicy = typeof h["content-security-policy"] === "string" || typeof h["content-security-policy-report-only"] === "string";
+    const contentSecurityPolicy =
+      typeof h["content-security-policy"] === "string" || typeof h["content-security-policy-report-only"] === "string";
 
     let passedCount = 0;
     if (strictTransportSecurity) passedCount++;
@@ -214,7 +210,7 @@ export class EosFleetProductionVerifier {
       referrerPolicy,
       contentSecurityPolicy,
       passedCount,
-      totalCount: 5
+      totalCount: 5,
     });
   }
 
@@ -227,7 +223,8 @@ export class EosFleetProductionVerifier {
     const hasFooter = /<footer\b|role=["']contentinfo["']/i.test(html);
     const hasNav = /<nav\b|role=["']navigation["']/i.test(html);
     const hasH1 = /<h1\b/i.test(html);
-    const hasResponsiveViewport = /<meta\s+[^>]*name=["']viewport["'][^>]*content=["'][^"']*width=device-width[^"']*["']/i.test(html);
+    const hasResponsiveViewport =
+      /<meta\s+[^>]*name=["']viewport["'][^>]*content=["'][^"']*width=device-width[^"']*["']/i.test(html);
 
     let passedCount = 0;
     if (hasMain) passedCount++;
@@ -245,7 +242,7 @@ export class EosFleetProductionVerifier {
       hasH1,
       hasResponsiveViewport,
       passedCount,
-      totalCount: 6
+      totalCount: 6,
     });
   }
 
@@ -264,7 +261,7 @@ export class EosFleetProductionVerifier {
       title,
       hasOgTitle,
       hasOgDescription,
-      hasFavicon
+      hasFavicon,
     });
   }
 
@@ -277,7 +274,7 @@ export class EosFleetProductionVerifier {
     ttfbMs: number,
     payloadBytes: number,
     security: SecurityHeadersReport,
-    semantics: SemanticLandmarksReport
+    semantics: SemanticLandmarksReport,
   ): number {
     if (httpStatus !== 200) {
       return Math.max(0, 40 - Math.abs(httpStatus - 200));
@@ -314,7 +311,7 @@ export class EosFleetProductionVerifier {
   public static async probeTarget(targetUrl: string, options: ProbeOptions = {}): Promise<ProbeResult> {
     const normalizedUrl = EosFleetProductionVerifier.normalizeTargetUrl(
       targetUrl,
-      options.allowLoopbackForTesting === true
+      options.allowLoopbackForTesting === true,
     );
 
     const timeoutMs = options.timeoutMs ?? EosFleetProductionVerifier.DEFAULT_TIMEOUT_MS;
@@ -332,12 +329,12 @@ export class EosFleetProductionVerifier {
         mock.ttfbMs,
         Buffer.byteLength(mock.body, "utf8"),
         securityHeaders,
-        semanticLandmarks
+        semanticLandmarks,
       );
 
       const timestampIso = new Date().toISOString();
       const sha256Attestation = pureSha256(
-        `${normalizedUrl.toString()}:${mock.statusCode}:${performanceScore}:${timestampIso}`
+        `${normalizedUrl.toString()}:${mock.statusCode}:${performanceScore}:${timestampIso}`,
       );
 
       return deepFreeze({
@@ -353,7 +350,7 @@ export class EosFleetProductionVerifier {
         performanceScore,
         epistemicStatus: performanceScore >= 80 ? "PRODUCTION_READY_WITHIN_TESTED_SCOPE" : "DEGRADED",
         timestampIso,
-        sha256Attestation
+        sha256Attestation,
       });
     }
 
@@ -372,10 +369,10 @@ export class EosFleetProductionVerifier {
           lookup: resilientLookup,
           headers: {
             "User-Agent": "EOS-System-Control-Plane/v62.0.0 (Living Verification Probe; WCAG/CWV Audit)",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Connection": "close"
+            Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            Connection: "close",
           },
-          timeout: timeoutMs
+          timeout: timeoutMs,
         },
         (res) => {
           ttfbMs = Math.round(performance.now() - startTime);
@@ -401,12 +398,12 @@ export class EosFleetProductionVerifier {
               ttfbMs,
               bytesCount,
               securityHeaders,
-              semanticLandmarks
+              semanticLandmarks,
             );
 
             const timestampIso = new Date().toISOString();
             const sha256Attestation = pureSha256(
-              `${normalizedUrl.toString()}:${httpStatus}:${performanceScore}:${timestampIso}`
+              `${normalizedUrl.toString()}:${httpStatus}:${performanceScore}:${timestampIso}`,
             );
 
             resolve(
@@ -423,11 +420,11 @@ export class EosFleetProductionVerifier {
                 performanceScore,
                 epistemicStatus: performanceScore >= 80 ? "PRODUCTION_READY_WITHIN_TESTED_SCOPE" : "DEGRADED",
                 timestampIso,
-                sha256Attestation
-              })
+                sha256Attestation,
+              }),
             );
           });
-        }
+        },
       );
 
       req.on("timeout", () => {
@@ -451,7 +448,7 @@ export class EosFleetProductionVerifier {
               referrerPolicy: false,
               contentSecurityPolicy: false,
               passedCount: 0,
-              totalCount: 5
+              totalCount: 5,
             },
             semanticLandmarks: {
               hasMain: false,
@@ -461,19 +458,19 @@ export class EosFleetProductionVerifier {
               hasH1: false,
               hasResponsiveViewport: false,
               passedCount: 0,
-              totalCount: 6
+              totalCount: 6,
             },
             seoMetadata: {
               title: "",
               hasOgTitle: false,
               hasOgDescription: false,
-              hasFavicon: false
+              hasFavicon: false,
             },
             performanceScore: 0,
             epistemicStatus: "NETWORK_OFFLINE_FALLBACK",
             timestampIso,
-            sha256Attestation
-          })
+            sha256Attestation,
+          }),
         );
       });
 
@@ -497,7 +494,7 @@ export class EosFleetProductionVerifier {
               referrerPolicy: false,
               contentSecurityPolicy: false,
               passedCount: 0,
-              totalCount: 5
+              totalCount: 5,
             },
             semanticLandmarks: {
               hasMain: false,
@@ -507,19 +504,19 @@ export class EosFleetProductionVerifier {
               hasH1: false,
               hasResponsiveViewport: false,
               passedCount: 0,
-              totalCount: 6
+              totalCount: 6,
             },
             seoMetadata: {
               title: "",
               hasOgTitle: false,
               hasOgDescription: false,
-              hasFavicon: false
+              hasFavicon: false,
             },
             performanceScore: 0,
             epistemicStatus: "NETWORK_OFFLINE_FALLBACK",
             timestampIso,
-            sha256Attestation
-          })
+            sha256Attestation,
+          }),
         );
       });
     });
@@ -549,9 +546,9 @@ export class EosFleetProductionVerifier {
           seoMetadata: result.seoMetadata,
           performanceScore: result.performanceScore,
           epistemicStatus: result.epistemicStatus,
-          sha256Attestation: result.sha256Attestation
+          sha256Attestation: result.sha256Attestation,
         },
-        engramTopicKey: `eos/fleet/production-verification`
+        engramTopicKey: `eos/fleet/production-verification`,
       });
       return true;
     } catch {
@@ -566,7 +563,7 @@ export class EosFleetProductionVerifier {
    */
   public static async verifyAllRegisteredTargets(
     projectRoot: string = process.cwd(),
-    recordToLedger: boolean = true
+    recordToLedger: boolean = true,
   ): Promise<readonly ProbeResult[]> {
     const results: ProbeResult[] = [];
 
@@ -584,12 +581,14 @@ export class EosFleetProductionVerifier {
   /**
    * Synchronous fleet evaluation for MCP and local pre-commit gates.
    */
-  public static evaluateFleetSync(options: {
-    target?: string;
-    projectRoot?: string;
-    recordToLedger?: boolean;
-    simulateDegraded?: boolean;
-  } = {}): {
+  public static evaluateFleetSync(
+    options: {
+      target?: string;
+      projectRoot?: string;
+      recordToLedger?: boolean;
+      simulateDegraded?: boolean;
+    } = {},
+  ): {
     readonly status: string;
     readonly registeredTargets: readonly string[];
     readonly auditedTarget: string;
@@ -599,9 +598,7 @@ export class EosFleetProductionVerifier {
     readonly cwvHeuristicsPass: boolean;
     readonly sha256Receipt: string;
   } {
-    const target = options.target && options.target !== "all"
-      ? options.target
-      : REGISTERED_FLEET_TARGETS[0];
+    const target = options.target && options.target !== "all" ? options.target : REGISTERED_FLEET_TARGETS[0];
 
     const normalized = EosFleetProductionVerifier.normalizeTargetUrl(target);
     const score = options.simulateDegraded ? 65 : 95;
@@ -616,7 +613,7 @@ export class EosFleetProductionVerifier {
       securityHeadersVerified: !options.simulateDegraded,
       semanticLandmarksVerified: !options.simulateDegraded,
       cwvHeuristicsPass: !options.simulateDegraded,
-      sha256Receipt
+      sha256Receipt,
     });
 
     if (options.recordToLedger === true && options.projectRoot) {
@@ -628,7 +625,7 @@ export class EosFleetProductionVerifier {
           projectId: "eos-system",
           title: `Fleet Production Living Verification: ${report.auditedTarget} [Score: ${report.score}/100]`,
           payload: report,
-          engramTopicKey: `eos/fleet/production-verification`
+          engramTopicKey: `eos/fleet/production-verification`,
         });
       } catch {
         // Safe fail-closed

@@ -1,6 +1,7 @@
 # PLAN-CRUD-SLACK-001: HEXAGONAL ARCHITECTURE PLAN & DECISION RECORDS
 
 ## 1. Governance & Owner Approval
+
 - **Plan ID**: `PLAN-CRUD-SLACK-001`
 - **Spec Reference**: `SPEC-CRUD-SLACK-001`
 - **Owner Approval Status**: `OWNER_APPROVAL` GRANTED (Explicit owner mandate by Valentín Flórez Arbeláez on `2026-10-30` to execute end-to-end EOS Big Tech Tier-1 engineering and Vercel production deployment for `Crud-slack`).
@@ -44,17 +45,19 @@ c:\Users\valen\Crud-slack\
 ## 3. Architecture Decision Records (ADRs)
 
 ### ADR-CS-001: Neuro-Symbolic Dual-Engine Extraction (Gemini 3.8 Flash + Layer-0 Grounding Verifier)
+
 - **Status**: `ACCEPTED`
-- **Context**: Pure LLM wrappers suffer from two critical production flaws in task extraction: (1) temporal hallucination (fabricating exact calendar dates when messages only say *"pronto"* or *"antes de la reunión"*), and (2) brittle availability if API keys are missing, rate-limited, or unreachable during live evaluation.
+- **Context**: Pure LLM wrappers suffer from two critical production flaws in task extraction: (1) temporal hallucination (fabricating exact calendar dates when messages only say _"pronto"_ or _"antes de la reunión"_), and (2) brittle availability if API keys are missing, rate-limited, or unreachable during live evaluation.
 - **Decision**: Pair `gemini-3.8-flash` (`/v1beta/interactions` with strict JSON Schema `response_format`) behind a server-side adapter with a pure Layer-0 `groundingVerifier.mjs` and `deterministicNlp.mjs` fallback engine. Every task emitted by the LLM is audited against the raw input text: any ungrounded date is automatically converted into an explicit `MISSING_INFO` flag, and any upstream API failure triggers sub-2ms deterministic extraction.
 - **Rejected Alternatives**:
-  1. *Client-side direct LLM call with exposed API key*: Rejected — catastrophic violation of EOS Law VI (Zero Plaintext Secrets).
-  2. *Unverified LLM output rendered directly to UI*: Rejected — fails anti-hallucination requirement ("señalando la información faltante en lugar de inventarla") and provides no answer to *"¿Cómo comprobarías que las tareas identificadas por la IA son correctas?"*.
-  3. *Heavy third-party NLP/UI frameworks (`langchain`, `moment`, `lodash`, full SPA bundler bloat)*: Rejected — introduces transitive dependency bloat and supply-chain CVE exposure when Node.js 24 + modern ES Modules solve the problem with `0` runtime dependencies.
+  1. _Client-side direct LLM call with exposed API key_: Rejected — catastrophic violation of EOS Law VI (Zero Plaintext Secrets).
+  2. _Unverified LLM output rendered directly to UI_: Rejected — fails anti-hallucination requirement ("señalando la información faltante en lugar de inventarla") and provides no answer to _"¿Cómo comprobarías que las tareas identificadas por la IA son correctas?"_.
+  3. _Heavy third-party NLP/UI frameworks (`langchain`, `moment`, `lodash`, full SPA bundler bloat)_: Rejected — introduces transitive dependency bloat and supply-chain CVE exposure when Node.js 24 + modern ES Modules solve the problem with `0` runtime dependencies.
 
 ### ADR-CS-002: SharePoint Lists & Omnichannel Interoperability with Formula-Injection Defense
+
 - **Status**: `ACCEPTED`
 - **Context**: Extracted tasks only deliver real workplace value if teams can edit them (full CRUD) and move them directly into operational tools (Microsoft SharePoint Lists, Planner, Excel, Slack, Teams). However, exporting untrusted chat text to CSV introduces OWASP CSV Formula Injection risks (`=CMD|...`).
 - **Decision**: Implement full client-side CRUD state management plus RFC 4180 UTF-8 BOM CSV export tailored to SharePoint Lists / Microsoft Planner columns, neutralizing dangerous leading formula characters (`=`, `+`, `-`, `@`, `\t`, `\r`).
 - **Rejected Alternatives**:
-  - *Read-only static AI text output*: Rejected — prevents users from resolving the very missing deadlines that the AI flagged.
+  - _Read-only static AI text output_: Rejected — prevents users from resolving the very missing deadlines that the AI flagged.

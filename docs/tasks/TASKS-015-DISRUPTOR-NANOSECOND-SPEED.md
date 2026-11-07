@@ -9,6 +9,7 @@ flowchart TD
 ```
 
 ## Task Checklist
+
 - [x] Task 1: Record Intake, Specification, Change Proposal, and ADR.
 - [ ] Task 2: Implement `EosDisruptorRingEngine` with power-of-2 ring buffer, 64-byte padding, and byte scanner.
 - [ ] Task 3: Author test suite `test/eosDisruptorRingEngine.test.mjs` verifying BDD-052.

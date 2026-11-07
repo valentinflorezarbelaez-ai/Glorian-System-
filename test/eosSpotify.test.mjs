@@ -36,7 +36,7 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
       acousticness: 0.05,
       instrumentalness: 0.2,
       liveness: 0.15,
-      speechiness: 0.08
+      speechiness: 0.08,
     };
 
     it("calculates exact cosine similarity = 1.0 for identical acoustic vectors", () => {
@@ -82,8 +82,8 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
         acousticness: 0.1,
         instrumentalness: 0.5,
         liveness: 0.1,
-        speechiness: 0.05
-      }
+        speechiness: 0.05,
+      },
     };
 
     const candidates = [
@@ -101,8 +101,8 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
           acousticness: 0.12,
           instrumentalness: 0.48,
           liveness: 0.1,
-          speechiness: 0.05
-        }
+          speechiness: 0.05,
+        },
       },
       {
         id: "track-2",
@@ -118,9 +118,9 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
           acousticness: 0.95,
           instrumentalness: 0.9,
           liveness: 0.05,
-          speechiness: 0.02
-        }
-      }
+          speechiness: 0.02,
+        },
+      },
     ];
 
     it("ranks harmonic energy-boost track higher than dissonant track", () => {
@@ -136,7 +136,10 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
     it("reports local catalog markers and inventory without standards certification", () => {
       const report = codex.auditUniversalProject(process.cwd());
       assert.equal(report.catalogInfoMarkersPresent, true);
-      assert.ok(report.localInventoryScore >= 50, `Expected local inventory score >= 50, got ${report.localInventoryScore}`);
+      assert.ok(
+        report.localInventoryScore >= 50,
+        `Expected local inventory score >= 50, got ${report.localInventoryScore}`,
+      );
       assert.equal(report.catalogInfoExists, true);
       assert.ok(report.catalogInfoDetails);
       assert.equal(report.catalogInfoDetails.kind, "Component");
@@ -186,7 +189,7 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
       const manifest = codex.generateSquadManifest({
         squadName: "Search & Audio Intelligence Squad",
         tribe: "Search & Discovery Tribe",
-        chapter: "Backend (Java/Python/Go)"
+        chapter: "Backend (Java/Python/Go)",
       });
       assert.equal(manifest.squadName, "Search & Audio Intelligence Squad");
       assert.equal(manifest.tribe, "Search & Discovery Tribe");
@@ -203,7 +206,7 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
         squadName: "Audio Playback Squad",
         yesterdayTasks: ["Implemented zero-copy ring buffer", "Verified 7/7 SecDevOps gates"],
         todayTasks: ["Deploy Canary rollout for 1% listeners", "Review PR #42 in GitHub"],
-        blockers: ["None"]
+        blockers: ["None"],
       });
       assert.equal(standup.author, "Valentín Flórez Arbeláez");
       assert.equal(standup.squad, "Audio Playback Squad");
@@ -222,7 +225,7 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
         incidentId: "INC-SPOTIFY-902",
         title: "Latency Degradation in Playback Token Validator",
         severity: "SEV-2 (Degraded Experience)",
-        durationMinutes: 18
+        durationMinutes: 18,
       });
       assert.equal(postMortem.incidentId, "INC-SPOTIFY-902");
       assert.equal(postMortem.severity, "SEV-2 (Degraded Experience)");
@@ -240,7 +243,7 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
       const spec = codex.designCanaryExperiment({
         experimentKey: "exp_gapless_crossfade_v1",
         featureName: "Equal-Power Gapless Transition",
-        hypothesis: "Equal-power crossfading reduces user track skip rates by 6.8% on mobile."
+        hypothesis: "Equal-power crossfading reduces user track skip rates by 6.8% on mobile.",
       });
       assert.equal(spec.experimentKey, "exp_gapless_crossfade_v1");
       assert.equal(spec.rolloutStages.length, 5);
@@ -258,7 +261,7 @@ describe("EOS Sovereign Spotify Codex & Universal Project Engine Suite", () => {
       const pkg = codex.scaffoldGoldenPath({
         serviceName: "audio-stream-normalizer",
         serviceType: "backend-microservice",
-        ownerSquad: "squad:playback-core"
+        ownerSquad: "squad:playback-core",
       });
       assert.equal(pkg.serviceName, "audio-stream-normalizer");
       assert.equal(pkg.templateOnly, true);

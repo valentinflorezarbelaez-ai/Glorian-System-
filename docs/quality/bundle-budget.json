@@ -1,0 +1,9 @@
+{
+  "assets": {
+    "js/eos.js": 60,
+    "css/eos.css": 10,
+    "index.html": 51,
+    "js/speculation-rules.json": 1,
+    "js/structured-data.jsonld": 1
+  }
+}

@@ -50,7 +50,7 @@ test("BDD-168: Minimal Guard Patch Synthesis", () => {
   assert.equal(patch.strategy, "NULL_CHECK_GUARD");
   assert.equal(patch.targetLineNumber, 2);
   assert.ok(patch.linesChanged <= 3);
-  assert.ok(patch.patchedSource.includes("if (!user || !user.name) return \"\";"));
+  assert.ok(patch.patchedSource.includes('if (!user || !user.name) return "";'));
   assert.ok(patch.astMutationDiff.includes("NULL_CHECK_GUARD"));
   assert.ok(patch.patchId.startsWith("patch_"));
 });
@@ -72,7 +72,7 @@ test("BDD-169: Closed-Loop In-Memory Sandbox Verification (HEALED_VERIFIED)", ()
     regressionTestCode: `
       assert.strictEqual(typeof formatUser, 'function');
       assert.strictEqual(formatUser({ name: 'alice' }), 'ALICE');
-    `
+    `,
   });
 
   assert.equal(verification.status, "PASS");
@@ -105,19 +105,19 @@ test("BDD-170: Zero-Regression Rejection Barrier (Fail-Closed)", () => {
   const verification = EosSurgicalSelfHealingKernel.verifyInSandbox({
     originalSource: sampleSource,
     patch,
-    regressionTestCode: breakingRegressionTest
+    regressionTestCode: breakingRegressionTest,
   });
 
   assert.equal(verification.status, "FAIL");
   assert.equal(verification.zeroRegressionPreserved, false);
-  assert.ok(verification.errors.some(e => e.includes("CONTRACT_INVARIANT_VIOLATION")));
+  assert.ok(verification.errors.some((e) => e.includes("CONTRACT_INVARIANT_VIOLATION")));
 
   // Run full healing cycle and assert REGRESSION_REJECTED verdict
   const cycleResult = EosSurgicalSelfHealingKernel.executeHealingCycle({
     stackTrace,
     sourceCode: sampleSource,
     regressionTestCode: breakingRegressionTest,
-    reason: "Zero regression check"
+    reason: "Zero regression check",
   });
 
   assert.equal(cycleResult.verdict, "REGRESSION_REJECTED");
@@ -142,7 +142,7 @@ test("BDD-171: Cryptographic Self-Healing Receipt and Durable SQLite Ledger Entr
         assert.strictEqual(typeof formatUser, 'function');
         assert.strictEqual(formatUser({ name: 'bob' }), 'BOB');
       `,
-      reason: "Automated FDIR healing for null user reference"
+      reason: "Automated FDIR healing for null user reference",
     });
 
     assert.equal(cycleResult.verdict, "HEALED_VERIFIED");
@@ -156,7 +156,7 @@ test("BDD-171: Cryptographic Self-Healing Receipt and Durable SQLite Ledger Entr
     const ledger = new EosDurableSqliteLedger(EosDurableSqliteLedger.defaultLedgerPath(tempDir));
     try {
       const recent = ledger.listRecent(5);
-      const found = recent.find(e => e.payload && e.payload.sha256Receipt === cycleResult.sha256Receipt);
+      const found = recent.find((e) => e.payload && e.payload.sha256Receipt === cycleResult.sha256Receipt);
 
       assert.ok(found, "Receipt must be recorded and retrievable from SQLite WAL ledger");
       assert.equal(found.category, "SECURITY_AUDIT");
@@ -178,11 +178,11 @@ test("BDD-172: MCP Dispatch of eos_surgical_healing via EosMcpServer", () => {
     jsonrpc: "2.0",
     id: 1,
     method: "tools/list",
-    params: {}
+    params: {},
   });
 
   assert.ok(!toolsRes.error);
-  const toolNames = toolsRes.result.tools.map(t => t.name);
+  const toolNames = toolsRes.result.tools.map((t) => t.name);
   assert.ok(toolNames.includes("eos_surgical_healing"));
 
   const sampleSource = `export function greet(person) {\n  return person.name.toLowerCase();\n}\n`;
@@ -198,9 +198,9 @@ test("BDD-172: MCP Dispatch of eos_surgical_healing via EosMcpServer", () => {
       arguments: {
         action: "diagnose",
         stackTrace: sampleTrace,
-        sourceCode: sampleSource
-      }
-    }
+        sourceCode: sampleSource,
+      },
+    },
   });
 
   assert.ok(!diagRes.error);
@@ -219,15 +219,15 @@ test("BDD-172: MCP Dispatch of eos_surgical_healing via EosMcpServer", () => {
       arguments: {
         action: "patch",
         stackTrace: sampleTrace,
-        sourceCode: sampleSource
-      }
-    }
+        sourceCode: sampleSource,
+      },
+    },
   });
 
   assert.ok(!patchRes.error);
   const patchData = JSON.parse(patchRes.result.content[0].text);
   assert.equal(patchData.strategy, "NULL_CHECK_GUARD");
-  assert.ok(patchData.patchedSource.includes("if (!person || !person.name) return \"\";"));
+  assert.ok(patchData.patchedSource.includes('if (!person || !person.name) return "";'));
 
   // 4. Invoke heal_cycle action
   const cycleRes = server.handleRequest({
@@ -241,9 +241,9 @@ test("BDD-172: MCP Dispatch of eos_surgical_healing via EosMcpServer", () => {
         stackTrace: sampleTrace,
         sourceCode: sampleSource,
         regressionTestCode: `assert.strictEqual(typeof greet, 'function');`,
-        reason: "MCP integration test of NASA FDIR + Meta SapFix"
-      }
-    }
+        reason: "MCP integration test of NASA FDIR + Meta SapFix",
+      },
+    },
   });
 
   assert.ok(!cycleRes.error);

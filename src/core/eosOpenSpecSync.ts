@@ -71,7 +71,7 @@ export class EosOpenSpecSync {
         path: path.relative(this.rootDir, fullPath).replace(/\\/g, "/"),
         title,
         content,
-        sha256
+        sha256,
       };
     });
   }
@@ -118,7 +118,10 @@ export class EosOpenSpecSync {
         }
         if (inModules) {
           if (line.startsWith("  - ") || line.startsWith("- ")) {
-            const m = line.replace(/^\s*-\s*`?/, "").replace(/`?(\s*\(.*\))?$/, "").trim();
+            const m = line
+              .replace(/^\s*-\s*`?/, "")
+              .replace(/`?(\s*\(.*\))?$/, "")
+              .trim();
             if (m) modulesAdded.push(m);
           } else if (line.startsWith("#") || line.startsWith("**")) {
             inModules = false;
@@ -133,7 +136,7 @@ export class EosOpenSpecSync {
         status,
         authorizationLevel,
         impactedSpecs,
-        modulesAdded
+        modulesAdded,
       };
     });
   }
@@ -160,7 +163,7 @@ export class EosOpenSpecSync {
 
       if (!isAuthorized && change.status === "APPLIED_AND_VERIFIED") {
         missingAuthorizations.push(
-          `Change ${change.id} marked as APPLIED but lacks Level 2+ Authorization (${change.authorizationLevel})`
+          `Change ${change.id} marked as APPLIED but lacks Level 2+ Authorization (${change.authorizationLevel})`,
         );
       }
 
@@ -193,7 +196,7 @@ export class EosOpenSpecSync {
       missingAuthorizations,
       findings,
       sha256Proof,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }

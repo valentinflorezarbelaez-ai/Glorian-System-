@@ -1,6 +1,7 @@
 # SPEC-118: Autonomous Agentic FinOps Governor & Cognitive Stagnation Breaker
 
 ## 1. Metadata
+
 - **Specification ID**: `SPEC-118`
 - **Standard**: IEEE 830 / ISO 29148 / Big Tech FinOps & Tokenmaxxing Defense Standard
 - **Status**: `PROPOSED`

@@ -1,0 +1,9 @@
+{
+  "scripts/eos-fleet-registry-sync.mjs": 60,
+  "scripts/eos-secret-scan.mjs": 25,
+  "scripts/fleet-autonomous-cicd.mjs": 25,
+  "scripts/install-antigravity-mcp.mjs": 25,
+  "scripts/quickstart.mjs": 25,
+  "scripts/sync-gentle-ai-stack.mjs": 25,
+  "scripts/verify-formal-tla.mjs": 25
+}

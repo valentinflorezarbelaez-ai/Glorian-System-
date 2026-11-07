@@ -17,7 +17,7 @@ import {
   createMulberry32,
   assertPrecondition,
   assertPostcondition,
-  deepFreeze
+  deepFreeze,
 } from "./eosKernelPrimitives.ts";
 
 export interface ParameterSpace {
@@ -59,7 +59,7 @@ export class EosMctsHyperTuner {
     ringBufferSize: [1024, 2048, 4096, 8192, 16384],
     maxConcurrency: [50, 100, 200, 500, 1000],
     gcThresholdMb: [64, 128, 256, 512],
-    faultRate: [0.01, 0.02, 0.05, 0.10]
+    faultRate: [0.01, 0.02, 0.05, 0.1],
   };
 
   private readonly prng: () => number;
@@ -77,12 +77,12 @@ export class EosMctsHyperTuner {
     // Model throughput scaling with buffer and concurrency
     const throughput = Math.log2(cfg.ringBufferSize) * 1500 + Math.sqrt(cfg.maxConcurrency) * 200;
     // Model latency penalty with large concurrency and buffers
-    const latencyUs = 50 + (cfg.maxConcurrency / 50) + (cfg.ringBufferSize / 2048);
+    const latencyUs = 50 + cfg.maxConcurrency / 50 + cfg.ringBufferSize / 2048;
     // Penalty factor for memory and fault rates
     const memPenalty = cfg.gcThresholdMb * 0.05;
     const faultPenalty = cfg.faultRate * 500;
 
-    const rawFitness = (throughput / latencyUs) - memPenalty - faultPenalty;
+    const rawFitness = throughput / latencyUs - memPenalty - faultPenalty;
     return Math.max(0.1, Math.round(rawFitness * 100) / 100);
   }
 
@@ -91,7 +91,7 @@ export class EosMctsHyperTuner {
    */
   public tuneParameters(
     iterations: number = 150,
-    space: ParameterSpace = EosMctsHyperTuner.DEFAULT_SPACE
+    space: ParameterSpace = EosMctsHyperTuner.DEFAULT_SPACE,
   ): MctsTuningReport {
     assertPrecondition(iterations > 0, "MCTS iterations must be > 0");
     const t0 = performance.now();
@@ -100,7 +100,7 @@ export class EosMctsHyperTuner {
       ringBufferSize: space.ringBufferSize[0] ?? 1024,
       maxConcurrency: space.maxConcurrency[0] ?? 50,
       gcThresholdMb: space.gcThresholdMb[0] ?? 64,
-      faultRate: space.faultRate[0] ?? 0.01
+      faultRate: space.faultRate[0] ?? 0.01,
     };
     const baselineFitness = this.evaluateFitness(baselineConfig);
 
@@ -109,7 +109,7 @@ export class EosMctsHyperTuner {
       config: baselineConfig,
       visits: 0,
       totalReward: 0,
-      children: []
+      children: [],
     };
 
     // Pre-populate root children from parameter space
@@ -121,11 +121,11 @@ export class EosMctsHyperTuner {
             ringBufferSize: rb,
             maxConcurrency: mc,
             gcThresholdMb: space.gcThresholdMb[1] ?? 128,
-            faultRate: space.faultRate[0] ?? 0.01
+            faultRate: space.faultRate[0] ?? 0.01,
           },
           visits: 0,
           totalReward: 0,
-          children: []
+          children: [],
         });
       }
     }
@@ -148,7 +148,7 @@ export class EosMctsHyperTuner {
           config: mutatedConfig,
           visits: 0,
           totalReward: 0,
-          children: []
+          children: [],
         };
         selected.children.push(childNode);
         selected = childNode;
@@ -195,7 +195,7 @@ export class EosMctsHyperTuner {
       optimalFitness,
       improvementPercent,
       convergenceDurationMs: elapsed,
-      sha256Receipt
+      sha256Receipt,
     };
 
     return deepFreeze(report);
@@ -227,7 +227,7 @@ export class EosMctsHyperTuner {
       ringBufferSize: this.prng() > 0.5 ? randomChoice(space.ringBufferSize) : base.ringBufferSize,
       maxConcurrency: this.prng() > 0.5 ? randomChoice(space.maxConcurrency) : base.maxConcurrency,
       gcThresholdMb: this.prng() > 0.5 ? randomChoice(space.gcThresholdMb) : base.gcThresholdMb,
-      faultRate: this.prng() > 0.5 ? randomChoice(space.faultRate) : base.faultRate
+      faultRate: this.prng() > 0.5 ? randomChoice(space.faultRate) : base.faultRate,
     };
   }
 }

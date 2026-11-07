@@ -57,4 +57,5 @@ ESCENARIO: [BDD-077] Invocación Multi-Canal mediante CLI y Servidor MCP
 ```
 
 ---
-*Signed by Principal Architect: Valentín Flórez Arbeláez*
+
+_Signed by Principal Architect: Valentín Flórez Arbeláez_

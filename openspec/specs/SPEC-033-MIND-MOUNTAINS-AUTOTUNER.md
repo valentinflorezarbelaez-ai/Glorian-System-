@@ -1,7 +1,9 @@
 # SPEC-033: THE OMEGA-APEX SOVEREIGN ENGINE: 49 LEVELS OF MIND INTROSPECTION, THREE MOUNTAINS LIFE COMPASS & ADAPTIVE L0 AUTOTUNER
+
 <!-- Formal OpenSpec Specification — EARS Syntax & BDD Acceptance Criteria -->
 
 ## 1. Specification Metadata
+
 - **Specification ID**: `SPEC-033`
 - **Feature Title**: 49 Levels of Mind Introspection, Three Mountains Life Compass & Adaptive L0 Autotuner
 - **Version**: `40.0.0`
@@ -14,16 +16,20 @@
 ## 2. Formal Functional Requirements (EARS Syntax)
 
 ### FR-001: 49 Levels of Mind & Subconscious Introspection (Event-Driven)
-* `CUANDO` el sistema recibe una impresión psicológica, pensamiento, reacción emocional o impulso instintivo, `EL SISTEMA` analizará y clasificará la impresión a través de los 49 niveles del subconsciente definidos por V.M. Samael Aun Weor, calculando la profundidad de la comprensión y aplicando la fórmula de disolución con Devi Kundalini.
+
+- `CUANDO` el sistema recibe una impresión psicológica, pensamiento, reacción emocional o impulso instintivo, `EL SISTEMA` analizará y clasificará la impresión a través de los 49 niveles del subconsciente definidos por V.M. Samael Aun Weor, calculando la profundidad de la comprensión y aplicando la fórmula de disolución con Devi Kundalini.
 
 ### FR-002: Three Mountains Life Compass & Purpose Guard (State-Driven)
-* `MIENTRAS` el sistema interactúa con el Arquitecto (Valentín Flórez Arbeláez), `EL SISTEMA` evaluará de forma continua el índice de alineación con las Tres Montañas (Iniciación, Resurrección, Ascensión), protegiendo sus pilares de vida (comida nutritiva, aseo, ejercicio, cuotas de *El Refugio*, donaciones y descanso circadiano 22:30).
+
+- `MIENTRAS` el sistema interactúa con el Arquitecto (Valentín Flórez Arbeláez), `EL SISTEMA` evaluará de forma continua el índice de alineación con las Tres Montañas (Iniciación, Resurrección, Ascensión), protegiendo sus pilares de vida (comida nutritiva, aseo, ejercicio, cuotas de _El Refugio_, donaciones y descanso circadiano 22:30).
 
 ### FR-003: Adaptive L0 Autotuner & Runtime Self-Optimization (Ubiquitous)
-* `EL SISTEMA` medirá continuamente el lag del event loop (`node:perf_hooks`), el heap layout de V8 (`v8.getHeapStatistics()`) y la carga del ring buffer, ajustando automáticamente la capacidad de los buffers y ejecutando compactación de memoria para mantener latencia sub-milisegundo y $0\text{ B/op}$ en estado estacionario.
+
+- `EL SISTEMA` medirá continuamente el lag del event loop (`node:perf_hooks`), el heap layout de V8 (`v8.getHeapStatistics()`) y la carga del ring buffer, ajustando automáticamente la capacidad de los buffers y ejecutando compactación de memoria para mantener latencia sub-milisegundo y $0\text{ B/op}$ en estado estacionario.
 
 ### FR-004: MCP & Autonomous CLI Exposure (Event-Driven)
-* `CUANDO` un agente o el usuario invoque los comandos `eos mind`, `eos mountains`, o `eos autotune` (o sus respectivas herramientas MCP), `EL SISTEMA` retornará diagnósticos estructurados en JSON y texto formateado con validez criptográfica SHA-256.
+
+- `CUANDO` un agente o el usuario invoque los comandos `eos mind`, `eos mountains`, o `eos autotune` (o sus respectivas herramientas MCP), `EL SISTEMA` retornará diagnósticos estructurados en JSON y texto formateado con validez criptográfica SHA-256.
 
 ---
 

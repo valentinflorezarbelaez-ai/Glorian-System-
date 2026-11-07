@@ -17,22 +17,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
-import {
-  EosSurgicalSelfHealingKernel,
-  type FaultDiagnostic
-} from "./eosSurgicalSelfHealingKernel.ts";
+import { EosSurgicalSelfHealingKernel, type FaultDiagnostic } from "./eosSurgicalSelfHealingKernel.ts";
 
-export type SapFixStatus =
-  | "PROPOSED"
-  | "VERIFIED_ZERO_REGRESSIONS"
-  | "REGRESSION_REJECTED"
-  | "PR_READY";
+export type SapFixStatus = "PROPOSED" | "VERIFIED_ZERO_REGRESSIONS" | "REGRESSION_REJECTED" | "PR_READY";
 
 export interface SapFixFaultInput {
   readonly faultId: string;
@@ -70,7 +59,7 @@ export class EosSapFixAutoshipper {
   public static executeCycle(
     fault: SapFixFaultInput,
     projectRoot: string = process.cwd(),
-    options: SapFixOptions = {}
+    options: SapFixOptions = {},
   ): SapFixRemediationReport {
     assertPrecondition(Boolean(fault && fault.faultId), "faultId is required");
     assertPrecondition(Boolean(fault.targetFilePath), "targetFilePath is required");
@@ -102,13 +91,13 @@ export class EosSapFixAutoshipper {
       lineNumber: fault.failingLine,
       targetExpression: fault.offendingExpression || "data",
       rawMessage: fault.errorMessage,
-      errorType: "TypeError"
+      errorType: "TypeError",
     };
 
     const surgicalReport = EosSurgicalSelfHealingKernel.synthesizeSurgicalPatch(
       diagnostic,
       originalCode,
-      "NULL_CHECK_GUARD"
+      "NULL_CHECK_GUARD",
     );
 
     const patchApplied = Boolean(surgicalReport.patchedSource && surgicalReport.patchedSource !== originalCode);
@@ -130,19 +119,17 @@ export class EosSapFixAutoshipper {
     const simRes = EosSurgicalSelfHealingKernel.verifyInSandbox({
       originalSource: originalCode,
       patch: surgicalReport,
-      regressionTestCode: testSnippet
+      regressionTestCode: testSnippet,
     });
 
     const verificationPassed = simRes.status === "PASS";
-    const status: SapFixStatus = verificationPassed
-      ? "PR_READY"
-      : "REGRESSION_REJECTED";
+    const status: SapFixStatus = verificationPassed ? "PR_READY" : "REGRESSION_REJECTED";
 
     // Step 3: Synthesize PR manifest
     const prTitle = `fix(fdir): auto-remediate ${fault.faultId} via Meta-grade SapFix`;
     const timestampIso = new Date().toISOString();
     const sha256Receipt = pureSha256(
-      `SAPFIX:${fault.faultId}:${branchName}:${status}:${verificationPassed}:${timestampIso}`
+      `SAPFIX:${fault.faultId}:${branchName}:${status}:${verificationPassed}:${timestampIso}`,
     );
 
     const diffSummary = `@@ -${fault.failingLine},1 +${fault.failingLine},3 @@\n-  ${fault.offendingExpression || "return data.value;"}\n+  if (!${fault.offendingExpression || "data"}) return undefined;\n+  return ${fault.offendingExpression || "data.value"};`;
@@ -167,7 +154,7 @@ export class EosSapFixAutoshipper {
       `- **Strategy Applied**: \`${surgicalReport.strategy}\``,
       `- **Cryptographic SHA-256 Receipt**: \`sha256:${sha256Receipt}\``,
       ``,
-      `> *Generated automatically under EOS System SPEC-060 and NASA IV&V Zero-Vibe Coding Standards.*`
+      `> *Generated automatically under EOS System SPEC-060 and NASA IV&V Zero-Vibe Coding Standards.*`,
     ].join("\n");
 
     const report: SapFixRemediationReport = deepFreeze({
@@ -181,7 +168,7 @@ export class EosSapFixAutoshipper {
       prTitle,
       prBodyMarkdown,
       sha256Receipt,
-      timestampIso
+      timestampIso,
     });
 
     return report;
@@ -190,10 +177,7 @@ export class EosSapFixAutoshipper {
   /**
    * Persists SapFix report in durable SQLite WAL ledger.
    */
-  public static recordReceiptInLedger(
-    report: SapFixRemediationReport,
-    dbPathOrRootDir?: string
-  ): boolean {
+  public static recordReceiptInLedger(report: SapFixRemediationReport, dbPathOrRootDir?: string): boolean {
     const dbPath = dbPathOrRootDir
       ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
         ? dbPathOrRootDir
@@ -214,9 +198,9 @@ export class EosSapFixAutoshipper {
           patchApplied: report.patchApplied,
           verificationPassed: report.verificationPassed,
           sha256Receipt: report.sha256Receipt,
-          prTitle: report.prTitle
+          prTitle: report.prTitle,
         },
-        engramTopicKey: `eos/fdir/${report.faultId}`
+        engramTopicKey: `eos/fdir/${report.faultId}`,
       });
       return true;
     } catch {

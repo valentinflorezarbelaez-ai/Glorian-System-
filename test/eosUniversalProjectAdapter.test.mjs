@@ -9,13 +9,13 @@ describe("EOS Universal Polyglot Repository Inventory Suite (SPEC-019, BDD-049)"
   const adapter = new EosUniversalProjectAdapter(process.cwd());
 
   describe("Suite 1: Polyglot Stack Fingerprinting & Local Signal Inventory", () => {
-    it("fingerprints current EOS repository with high architectural fidelity", () => {
+    it("fingerprints current Glorian/EOS repository with high architectural fidelity", () => {
       const report = adapter.audit();
 
       assert.ok(report, "Expected valid audit report");
       assert.ok(
-        report.projectName.toLowerCase().includes("eos") || report.projectName === "Eos-System",
-        `Expected project name to match EOS, got ${report.projectName}`
+        /eos|glorian/i.test(report.projectName),
+        `Expected project name to match EOS/Glorian, got ${report.projectName}`,
       );
       assert.ok(["typescript", "javascript"].includes(report.fingerprint.primaryLanguage));
       assert.ok(report.fingerprint.totalSourceFiles > 20);
@@ -30,7 +30,13 @@ describe("EOS Universal Polyglot Repository Inventory Suite (SPEC-019, BDD-049)"
       const { pillars } = report;
 
       // Check pillar properties
-      for (const pillarKey of ["layerPurity", "testInfrastructure", "secretSecurity", "ciCdGateways", "aiScaffolding"]) {
+      for (const pillarKey of [
+        "layerPurity",
+        "testInfrastructure",
+        "secretSecurity",
+        "ciCdGateways",
+        "aiScaffolding",
+      ]) {
         const pillar = pillars[pillarKey];
         assert.ok(pillar, `Missing pillar: ${pillarKey}`);
         assert.ok(pillar.score >= 0 && pillar.score <= 20, `Score out of bounds for ${pillarKey}: ${pillar.score}`);
@@ -53,7 +59,10 @@ describe("EOS Universal Polyglot Repository Inventory Suite (SPEC-019, BDD-049)"
       try {
         fs.writeFileSync(path.join(tmpDir, "go.mod"), "module github.com/spotify/recommend\ngo 1.24\n");
         fs.writeFileSync(path.join(tmpDir, "main.go"), "package main\nfunc main() {}\n");
-        fs.writeFileSync(path.join(tmpDir, "main_test.go"), "package main\nimport \"testing\"\nfunc TestMain(t *testing.T) {}\n");
+        fs.writeFileSync(
+          path.join(tmpDir, "main_test.go"),
+          'package main\nimport "testing"\nfunc TestMain(t *testing.T) {}\n',
+        );
         fs.writeFileSync(path.join(tmpDir, "Dockerfile"), "FROM gcr.io/distroless/static-debian12\n");
         fs.writeFileSync(path.join(tmpDir, ".gitignore"), ".env\n*.exe\n");
 
@@ -72,7 +81,7 @@ describe("EOS Universal Polyglot Repository Inventory Suite (SPEC-019, BDD-049)"
     it("correctly identifies a Rust DSP project with cargo test", () => {
       const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-rust-mock-"));
       try {
-        fs.writeFileSync(path.join(tmpDir, "Cargo.toml"), "[package]\nname = \"dsp-kernel\"\nversion = \"0.1.0\"\n");
+        fs.writeFileSync(path.join(tmpDir, "Cargo.toml"), '[package]\nname = "dsp-kernel"\nversion = "0.1.0"\n');
         const srcDir = path.join(tmpDir, "src");
         fs.mkdirSync(srcDir, { recursive: true });
         fs.writeFileSync(path.join(srcDir, "lib.rs"), "#[test]\nfn test_filter() {}\n");
@@ -92,7 +101,7 @@ describe("EOS Universal Polyglot Repository Inventory Suite (SPEC-019, BDD-049)"
     it("correctly identifies a Python data pipeline project", () => {
       const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-python-mock-"));
       try {
-        fs.writeFileSync(path.join(tmpDir, "pyproject.toml"), "[tool.poetry]\nname = \"pipeline\"\n");
+        fs.writeFileSync(path.join(tmpDir, "pyproject.toml"), '[tool.poetry]\nname = "pipeline"\n');
         fs.writeFileSync(path.join(tmpDir, "poetry.lock"), "# lockfile\n");
         const testsDir = path.join(tmpDir, "tests");
         fs.mkdirSync(testsDir, { recursive: true });
@@ -156,7 +165,7 @@ describe("EOS Universal Polyglot Repository Inventory Suite (SPEC-019, BDD-049)"
     it("materializes standardized Golden Path files when dryRun is false", () => {
       const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-write-mock-"));
       try {
-        fs.writeFileSync(path.join(tmpDir, "Cargo.toml"), "[package]\nname = \"dsp-service\"\n");
+        fs.writeFileSync(path.join(tmpDir, "Cargo.toml"), '[package]\nname = "dsp-service"\n');
         const mockAdapter = new EosUniversalProjectAdapter(tmpDir);
 
         const result = mockAdapter.elevate(tmpDir, { dryRun: false });

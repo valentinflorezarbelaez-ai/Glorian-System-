@@ -1,0 +1,105 @@
+name: EOS Kubernetes Manifest Validation
+
+# Big Tech standard (Google, Nubank, Spotify): validate K8s manifests
+# against the Kubernetes API schema before they can be merged. Uses
+# kubeconform — a fast, offline K8s manifest validator (Go binary, no deps).
+# Also enforces production best practices: non-root, resource limits,
+# liveness/readiness probes, and PodDisruptionBudget.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "deploy/k8s/**"
+  push:
+    branches: [main]
+    paths:
+      - "deploy/k8s/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate:
+    name: K8s manifest schema validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install kubeconform
+        run: |
+          curl -sLo kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz
+          tar xf kubeconform.tar.gz
+          sudo mv kubeconform /usr/local/bin/
+
+      - name: Validate K8s manifests
+        run: |
+          kubeconform \
+            -strict \
+            -schema-location "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/master-standalone/{{.ResourceKind}}.json" \
+            -summary \
+            deploy/k8s/
+
+      - name: Production best-practice checks
+        run: |
+          set -eu
+          MANIFEST="deploy/k8s/eos-apex-deployment.yaml"
+          echo "Checking production best practices in $MANIFEST..."
+
+          # Non-root security context
+          if ! grep -q "runAsNonRoot: true" "$MANIFEST"; then
+            echo "::error::Missing runAsNonRoot: true"
+            exit 1
+          fi
+          echo "  [PASS] Non-root security context"
+
+          # Resource limits
+          if ! grep -q "resources:" "$MANIFEST"; then
+            echo "::error::Missing resource limits"
+            exit 1
+          fi
+          echo "  [PASS] Resource limits defined"
+
+          # Liveness probe
+          if ! grep -q "livenessProbe:" "$MANIFEST"; then
+            echo "::error::Missing livenessProbe"
+            exit 1
+          fi
+          echo "  [PASS] Liveness probe present"
+
+          # Readiness probe
+          if ! grep -q "readinessProbe:" "$MANIFEST"; then
+            echo "::error::Missing readinessProbe"
+            exit 1
+          fi
+          echo "  [PASS] Readiness probe present"
+
+          # PodDisruptionBudget
+          if ! grep -q "PodDisruptionBudget" "$MANIFEST"; then
+            echo "::error::Missing PodDisruptionBudget"
+            exit 1
+          fi
+          echo "  [PASS] PodDisruptionBudget present"
+
+          # Drop ALL capabilities
+          if ! grep -q "drop:" "$MANIFEST"; then
+            echo "::error::Missing capabilities drop: ALL"
+            exit 1
+          fi
+          echo "  [PASS] All Linux capabilities dropped"
+
+          # ReadOnlyRootFilesystem
+          if ! grep -q "readOnlyRootFilesystem: true" "$MANIFEST"; then
+            echo "::error::Missing readOnlyRootFilesystem: true"
+            exit 1
+          fi
+          echo "  [PASS] Read-only root filesystem"
+
+          echo ""
+          echo "All production best-practice checks passed."

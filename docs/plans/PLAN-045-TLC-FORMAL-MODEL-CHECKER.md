@@ -1,6 +1,7 @@
 # PLAN-045: Leslie Lamport TLC Formal Model Checker & Exhaustive State Space Verification
 
 ## Architecture Decision Record: ADR-058
+
 - **Title**: Dual-Mode TLC Formal Verification Engine with Hermetic Bounded JS Fallback
 - **Status**: ACCEPTED
 - **Context**: EOS maintains 17 formal `.tla` specifications. Full exhaustive state space exploration requires Leslie Lamport's official TLC Model Checker (`tla2tools.jar`), but developer workstations and lightweight edge environments may not have Java installed.

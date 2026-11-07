@@ -3,11 +3,7 @@ import assert from "node:assert/strict";
 import { EosDatalogVerifier } from "../src/core/eosDatalogVerifier.ts";
 import { EosMutationTester } from "../src/core/eosMutationTester.ts";
 import { EosTimeTravelSim } from "../src/core/eosTimeTravelSim.ts";
-import {
-  constantTimeSelect,
-  constantTimeEquals,
-  EosCooperativeScheduler
-} from "../src/core/eosMicroScheduler.ts";
+import { constantTimeSelect, constantTimeEquals, EosCooperativeScheduler } from "../src/core/eosMicroScheduler.ts";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
 test("SPEC-028 / BDD-064: Datalog Deductive Blast Radius Engine", async (t) => {
@@ -108,7 +104,11 @@ test("SPEC-028 / BDD-066: Deterministic Time-Travel Simulation Hypervisor", asyn
     simB.scheduleEvent("replica-3", "HEARTBEAT", 20);
     const receiptB = simB.runSimulation(30);
 
-    assert.equal(receiptA.finalStateHash, receiptB.finalStateHash, "Identical seeds must produce identical state hashes");
+    assert.equal(
+      receiptA.finalStateHash,
+      receiptB.finalStateHash,
+      "Identical seeds must produce identical state hashes",
+    );
     assert.equal(receiptA.totalEventsProcessed, receiptB.totalEventsProcessed);
     assert.equal(receiptA.simulatedTimeMs, receiptB.simulatedTimeMs);
     assert.equal(receiptA.deterministicTrajectory.length, receiptB.deterministicTrajectory.length);
@@ -139,8 +139,8 @@ test("SPEC-028: 120Hz VSync Cooperative Scheduler & Constant-Time Security", asy
     const scheduler = new EosCooperativeScheduler(8.33);
     const tasks = Array.from({ length: 100 }, (_, i) => () => {
       // Simulate micro task
-      let acc = 0;
-      for (let j = 0; j < 1000; j++) acc += j;
+      let _acc = 0;
+      for (let j = 0; j < 1000; j++) _acc += j;
       return i * 2;
     });
 
@@ -172,8 +172,8 @@ test("SPEC-028: MCP Sovereign SDLC Tools Integration", async (t) => {
       method: "tools/call",
       params: {
         name: "eos_datalog_query",
-        arguments: { targetModule: "src/core/eosJarvisSoul.ts" }
-      }
+        arguments: { targetModule: "src/core/eosJarvisSoul.ts" },
+      },
     });
     assert.ok(res?.result?.content?.[0]?.text);
     const data = JSON.parse(res.result.content[0].text);
@@ -188,8 +188,8 @@ test("SPEC-028: MCP Sovereign SDLC Tools Integration", async (t) => {
       method: "tools/call",
       params: {
         name: "eos_mutation_test",
-        arguments: { targetSnippet: "function test(a) { if (a >= 10) return true; return false; }" }
-      }
+        arguments: { targetSnippet: "function test(a) { if (a >= 10) return true; return false; }" },
+      },
     });
     assert.ok(res?.result?.content?.[0]?.text);
     const data = JSON.parse(res.result.content[0].text);
@@ -204,8 +204,8 @@ test("SPEC-028: MCP Sovereign SDLC Tools Integration", async (t) => {
       method: "tools/call",
       params: {
         name: "eos_time_travel_simulate",
-        arguments: { seed: 948102, maxEvents: 20 }
-      }
+        arguments: { seed: 948102, maxEvents: 20 },
+      },
     });
     assert.ok(res?.result?.content?.[0]?.text);
     const data = JSON.parse(res.result.content[0].text);

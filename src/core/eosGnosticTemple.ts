@@ -27,7 +27,7 @@ export interface ThreeBrainsReport {
 export interface ClaveDeSolInput {
   subjectAware: boolean; // Conscious of oneself as the observer
   objectFocused: boolean; // Immersed in work without mental daydreaming
-  placePresent: boolean;  // Grounded in physical body and surrounding room
+  placePresent: boolean; // Grounded in physical body and surrounding room
   customObservation?: string;
 }
 
@@ -81,7 +81,7 @@ export class EosGnosticTemple {
     const prescriptions: string[] = [];
     let status: "HARMONIC_EQUILIBRIUM" | "INTELLECTUAL_HYPERTROPHY" | "DISPERSED" = "HARMONIC_EQUILIBRIUM";
 
-    if (intRatio > 0.70) {
+    if (intRatio > 0.7) {
       status = "INTELLECTUAL_HYPERTROPHY";
       prescriptions.push("ALERTA: Hipertrofia del Cerebro Intelectual (> 70%). Riesgo de fatiga nerviosa.");
       prescriptions.push("Compensación Inmediata: Calistenia o levantamiento de fuerza (Cerebro Motor).");
@@ -101,7 +101,7 @@ export class EosGnosticTemple {
       emotionalRatio: emoRatio,
       motorRatio: motRatio,
       status,
-      prescriptions
+      prescriptions,
     };
   }
 
@@ -125,16 +125,19 @@ export class EosGnosticTemple {
       theurgicAdvice = "Auto-observación activa. Afianza el Sujeto para no caer en la hipnosis del objeto.";
     } else {
       state = "FASCINADO_SUEÑO_CONCIENCIA";
-      theurgicAdvice = "¡Alto! Estás fascinado por la forma externa. Haz un alto, siente tu respiración y pregúntate: ¿Quién soy yo? ¿Qué estoy haciendo? ¿En qué lugar me encuentro?";
+      theurgicAdvice =
+        "¡Alto! Estás fascinado por la forma externa. Haz un alto, siente tu respiración y pregúntate: ¿Quién soy yo? ¿Qué estoy haciendo? ¿En qué lugar me encuentro?";
     }
 
     return {
       consciousnessAwakeScore: score,
       state,
-      subjectState: input.subjectAware ? "Auto-recuerdo presente (Sujeto activo)" : "Sujeto olvidado (Identificación con el ego)",
+      subjectState: input.subjectAware
+        ? "Auto-recuerdo presente (Sujeto activo)"
+        : "Sujeto olvidado (Identificación con el ego)",
       objectState: input.objectFocused ? "Acción sin dispersión (Objeto enfocado)" : "Mente mecánica dispersa",
       placeState: input.placePresent ? "Enraizamiento físico total (Lugar consciente)" : "Cuerpo ausente en el espacio",
-      theurgicAdvice
+      theurgicAdvice,
     };
   }
 
@@ -144,7 +147,7 @@ export class EosGnosticTemple {
   public recordImpression(
     triggerEvent: string,
     identifiedEgo: "ORGULLO" | "IRA" | "PEREZA" | "FASCINACION" | "IMPACIENCIA" | "LUJURIA" | "CODICIA",
-    intensity: number
+    intensity: number,
   ): PsychologicalImpression {
     const formulas: Record<string, string> = {
       ORGULLO: "Madre Divina Kundalini, desintegra en mí este yo del orgullo y la vanidad intelectual.",
@@ -153,7 +156,7 @@ export class EosGnosticTemple {
       FASCINACION: "Madre Mía, despiértame de esta hipnosis, hazme recordar a mi Cristo Íntimo.",
       IMPACIENCIA: "Madre Divina, dame la paciencia y el ritmo del infinito cosmos.",
       LUJURIA: "Madre Divina, transmuta la energía creadora hacia el corazón y el cerebro.",
-      CODICIA: "Madre Mía, arranca la avaricia y hazme generoso con el Tercer Factor."
+      CODICIA: "Madre Mía, arranca la avaricia y hazme generoso con el Tercer Factor.",
     };
 
     const entry: PsychologicalImpression = {
@@ -162,7 +165,7 @@ export class EosGnosticTemple {
       triggerEvent,
       identifiedEgo,
       intensity: Math.min(10, Math.max(1, intensity)),
-      dissolutionFormula: formulas[identifiedEgo] || "Madre Divina Kundalini, disuelve este agregado."
+      dissolutionFormula: formulas[identifiedEgo] || "Madre Divina Kundalini, disuelve este agregado.",
     };
 
     this.impressionLog.push(entry);
@@ -188,7 +191,8 @@ export class EosGnosticTemple {
         vetoActive: true,
         status: "CIRCADIAN_REST_VETO_ACTIVE",
         message: "HORA SAGRADA DE REPOSO: El Templo Físico debe descansar para regenerar el Cuerpo Astral.",
-        suggestedAction: "Cerrar pantallas, vocalizar Ham-Sah con respiración profunda y permitir la restauración del templo."
+        suggestedAction:
+          "Cerrar pantallas, vocalizar Ham-Sah con respiración profunda y permitir la restauración del templo.",
       };
     }
 
@@ -197,7 +201,7 @@ export class EosGnosticTemple {
       vetoActive: false,
       status: "SOLAR_ACTIVITY_AUTHORIZED",
       message: "Ciclo Solar Activo: Trabajo consciente y creación rigurosa autorizados.",
-      suggestedAction: "Mantener la Clave de SOL mientras ejecutas arquitectura de software."
+      suggestedAction: "Mantener la Clave de SOL mientras ejecutas arquitectura de software.",
     };
   }
 
@@ -211,7 +215,8 @@ export class EosGnosticTemple {
         isSemiToneInterval: true,
         needsConsciousShock: true,
         shockType: "PHYSICAL_POWER",
-        prescription: "Intervalo Semitonal MI-FA: Desaceleración mecánica inminente. Aplicar Shock Consciente mediante esfuerzo físico voluntario o cambio total de polaridad."
+        prescription:
+          "Intervalo Semitonal MI-FA: Desaceleración mecánica inminente. Aplicar Shock Consciente mediante esfuerzo físico voluntario o cambio total de polaridad.",
       };
     }
 
@@ -221,7 +226,8 @@ export class EosGnosticTemple {
         isSemiToneInterval: true,
         needsConsciousShock: true,
         shockType: "THIRD_FACTOR_SERVICE",
-        prescription: "Intervalo Semitonal SI-DO: Cierre de la octava. Aplicar Tercer Factor (Sacrificio y servicio desinteresado por la humanidad) para iniciar una octava superior."
+        prescription:
+          "Intervalo Semitonal SI-DO: Cierre de la octava. Aplicar Tercer Factor (Sacrificio y servicio desinteresado por la humanidad) para iniciar una octava superior.",
       };
     }
 
@@ -229,7 +235,7 @@ export class EosGnosticTemple {
       note,
       isSemiToneInterval: false,
       needsConsciousShock: false,
-      prescription: `Nota ${note} en progresión armónica continua. Mantener el ritmo sin deriva.`
+      prescription: `Nota ${note} en progresión armónica continua. Mantener el ritmo sin deriva.`,
     };
   }
 }

@@ -9,11 +9,13 @@
 ---
 
 ## 1. Business Context & Dual Doctrine Synthesis
+
 Following the supreme directive for absolute perfection uniting the highest standards of Global Big Tech (Google DeepMind, AWS Automated Reasoning, Oracle Ksplice, Erlang BEAM) with the esoteric doctrine of the White Lodge (V.M. Samael Aun Weor, El Cristo Cósmico):
 
 1. **The Sovereign Conscious Witness (`EosConsciousWitness`)**:
+
    - The fundamental vulnerability of autonomous multi-agent systems is "mental fascination" (hallucination, recursive ego loops, and unverified improvisation).
-   - In Gnostic doctrine, the inner witness (El Testigo de la Conciencia / El Íntimo) maintains permanent awareness, interrogating every action: *¿Quién soy? ¿Qué estoy ejecutando? ¿Es esto verdad objetiva o es fascinación de la mente?*
+   - In Gnostic doctrine, the inner witness (El Testigo de la Conciencia / El Íntimo) maintains permanent awareness, interrogating every action: _¿Quién soy? ¿Qué estoy ejecutando? ¿Es esto verdad objetiva o es fascinación de la mente?_
    - In software architecture, this translates to a zero-overhead metacognitive gatekeeper that validates agent thought chains, dispatches anti-hallucination probes against formal specs, and halts mechanical drift before any unverified write barrier can be breached.
 
 2. **Layer-0 Hot-Patching Engine (`EosHotPatchEngine`)**:
@@ -23,6 +25,7 @@ Following the supreme directive for absolute perfection uniting the highest stan
 ---
 
 ## 2. Technical Scope & Deliverables
+
 - **Layer-0 Purity**: Zero external dependencies (`dependencies: {}`).
 - **Conscious Witness**: Metacognitive intention interrogator, anti-hallucination validator, and prompt witness monitor.
 - **Hot-Patching**: In-memory module reloader, signature diff verifier, and zero-downtime hot-patch receipt issuer.

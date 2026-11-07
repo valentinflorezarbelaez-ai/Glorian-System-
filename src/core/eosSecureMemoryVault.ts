@@ -45,7 +45,7 @@ export class EosSecureMemoryVault {
       buffer,
       size: buffer.byteLength,
       createdAt: Date.now(),
-      accessCount: 0
+      accessCount: 0,
     });
   }
 
@@ -117,7 +117,7 @@ export class EosSecureMemoryVault {
       totalAllocatedBytes: totalBytes,
       wipedHandlesCount: this.wipedCount,
       epistemicState: this.vaultMap.size === 0 ? "ZERO_ENTROPY_PURGED" : "VAULT_ACTIVE",
-      zeroPlaintextGuarantee: "100% NON-SERIALIZABLE RAW BUFFERS"
+      zeroPlaintextGuarantee: "100% NON-SERIALIZABLE RAW BUFFERS",
     };
   }
 }

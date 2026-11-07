@@ -44,14 +44,14 @@ test("BDD-316: Scaffolding Components with GLORIAN_SOLAR Archetype", () => {
   // Test INCIDENT_TIMELINE
   const timeline = studio.scaffoldComponent("GLORIAN_SOLAR", "INCIDENT_TIMELINE", {
     title: "Glorian Solar Defense Radar",
-    subtitle: "Pleromic Autonomous Core Matrix"
+    subtitle: "Pleromic Autonomous Core Matrix",
   });
 
   assert.equal(timeline.archetype, "GLORIAN_SOLAR");
   assert.equal(timeline.componentType, "INCIDENT_TIMELINE");
   assert.equal(timeline.title, "Glorian Solar Defense Radar");
-  assert.ok(timeline.htmlMarkup.includes("role=\"region\""));
-  assert.ok(timeline.htmlMarkup.includes("aria-label=\"Glorian Solar Defense Radar\""));
+  assert.ok(timeline.htmlMarkup.includes('role="region"'));
+  assert.ok(timeline.htmlMarkup.includes('aria-label="Glorian Solar Defense Radar"'));
   assert.ok(timeline.scopedCss.includes("#050508"));
   assert.ok(timeline.scopedCss.includes("#F59E0B"));
   assert.ok(timeline.wcagContrastRatio >= 7.0, "Contrast ratio must exceed WCAG AAA (7:1)");
@@ -59,12 +59,12 @@ test("BDD-316: Scaffolding Components with GLORIAN_SOLAR Archetype", () => {
 
   // Test TELEMETRY_GRID
   const grid = studio.scaffoldComponent("GLORIAN_SOLAR", "TELEMETRY_GRID", {
-    title: "Glorian Fleet Telemetry Matrix"
+    title: "Glorian Fleet Telemetry Matrix",
   });
 
   assert.equal(grid.archetype, "GLORIAN_SOLAR");
   assert.equal(grid.componentType, "TELEMETRY_GRID");
-  assert.ok(grid.htmlMarkup.includes("role=\"grid\""));
+  assert.ok(grid.htmlMarkup.includes('role="grid"'));
   assert.ok(grid.scopedCss.includes("#0D0E15"));
   assert.equal(grid.sha256Attestation.length, 64);
 });
@@ -72,31 +72,28 @@ test("BDD-316: Scaffolding Components with GLORIAN_SOLAR Archetype", () => {
 test("BDD-317: CLI Banner Displays Glorian System Sovereign Control Plane", () => {
   const cliOutput = execFileSync(process.execPath, [path.join(root, "bin/eos.mjs"), "help"], {
     cwd: root,
-    encoding: "utf8"
+    encoding: "utf8",
   });
 
-  assert.ok(
-    cliOutput.includes("GLORIAN SYSTEM v"),
-    "CLI output banner must state GLORIAN SYSTEM v..."
-  );
+  assert.ok(cliOutput.includes("GLORIAN SYSTEM v"), "CLI output banner must state GLORIAN SYSTEM v...");
   assert.ok(
     cliOutput.includes("SOVEREIGN CONTROL PLANE & ENGINEERING ENGINE"),
-    "CLI output banner subtitle must be updated to sovereign control plane"
+    "CLI output banner subtitle must be updated to sovereign control plane",
   );
 });
 
-test("BDD-318: OpenSpec Catalog Index Synchronized to 130 Specifications", () => {
+test("BDD-318: OpenSpec Catalog Index Synchronized to 172 Specifications", () => {
   const tacticalEngine = new EosTacticalCommandEngine(root);
   const indexPath = tacticalEngine.exportOpenSpecsJson();
 
   assert.ok(fs.existsSync(indexPath), "OpenSpec catalog index must exist");
   const catalog = JSON.parse(fs.readFileSync(indexPath, "utf8"));
 
-  assert.equal(catalog.totalSpecs, 130, "Total OpenSpecs must equal 130");
+  assert.equal(catalog.totalSpecs, 172, "Total OpenSpecs must equal 172");
   const spec130 = catalog.specs.find((s) => s.id === "SPEC-130");
   assert.ok(spec130, "SPEC-130 must be cataloged in openspec-catalog-index.json");
   assert.ok(
     spec130.title.toLowerCase().includes("glorian sovereign identity"),
-    "SPEC-130 title must declare Glorian sovereign identity"
+    "SPEC-130 title must declare Glorian sovereign identity",
   );
 });

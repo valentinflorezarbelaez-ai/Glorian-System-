@@ -3,11 +3,11 @@
  * Multi-Party Threshold Cryptography Engine (Shamir / FROST)
  */
 
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import { EosThresholdCryptography } from '../src/core/eosThresholdCryptography.ts';
+import test from "node:test";
+import assert from "node:assert/strict";
+import { EosThresholdCryptography } from "../src/core/eosThresholdCryptography.ts";
 
-test('BDD-235: Exact Secret Reconstruction with Threshold Shares', () => {
+test("BDD-235: Exact Secret Reconstruction with Threshold Shares", () => {
   const tss = new EosThresholdCryptography();
   const originalSecret = 98765432101234567890987654321n;
 
@@ -26,7 +26,7 @@ test('BDD-235: Exact Secret Reconstruction with Threshold Shares', () => {
   assert.equal(reconstructedB, originalSecret);
 });
 
-test('BDD-236: Mathematical Impossibility of Reconstruction with Insufficient Shares', () => {
+test("BDD-236: Mathematical Impossibility of Reconstruction with Insufficient Shares", () => {
   const tss = new EosThresholdCryptography();
   const originalSecret = 112233445566778899n;
 
@@ -39,7 +39,7 @@ test('BDD-236: Mathematical Impossibility of Reconstruction with Insufficient Sh
   }, /Insufficient shares/);
 });
 
-test('BDD-336: CSPRNG Polynomial Coefficients Never Repeat Across Splits', () => {
+test("BDD-336: CSPRNG Polynomial Coefficients Never Repeat Across Splits", () => {
   const tss = new EosThresholdCryptography();
   const secret = 424242424242424242n;
 
@@ -52,7 +52,7 @@ test('BDD-336: CSPRNG Polynomial Coefficients Never Repeat Across Splits', () =>
   try {
     const first = tss.splitSecret(secret, 3, 5).map((share) => share.yHex);
     const second = tss.splitSecret(secret, 3, 5).map((share) => share.yHex);
-    assert.notDeepEqual(first, second, 'polynomial coefficients were reused (predictable entropy)');
+    assert.notDeepEqual(first, second, "polynomial coefficients were reused (predictable entropy)");
   } finally {
     Date.now = originalNow;
   }

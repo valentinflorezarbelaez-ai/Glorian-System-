@@ -79,7 +79,7 @@ export class EosAgenticFinOpsGovernor {
   private tierDistribution: Record<FinOpsCostTier, number> = {
     TIER_1_LOCAL_SLM: 0,
     TIER_2_BALANCED: 0,
-    TIER_3_FRONTIER_REASONING: 0
+    TIER_3_FRONTIER_REASONING: 0,
   };
 
   private wallets = new Map<string, EphemeralTaskWallet>();
@@ -147,7 +147,7 @@ export class EosAgenticFinOpsGovernor {
       ratePerMillionUsd: rates,
       estimatedCostUsd: Number(estimatedCostUsd.toFixed(6)),
       rationale,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -164,7 +164,7 @@ export class EosAgenticFinOpsGovernor {
         circuitBreakerState: "CLOSED",
         action: "PROCEED_NOMINAL",
         diagnostics: "Insufficient diff history to evaluate stagnation.",
-        sha256Attestation: createHash("sha256").update(digestPayload).digest("hex")
+        sha256Attestation: createHash("sha256").update(digestPayload).digest("hex"),
       };
     }
 
@@ -203,7 +203,7 @@ export class EosAgenticFinOpsGovernor {
       circuitBreakerState,
       action,
       diagnostics,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -219,7 +219,7 @@ export class EosAgenticFinOpsGovernor {
       status: "ACTIVE",
       fallbackToLocal: false,
       totalTokensIn: 0,
-      totalTokensOut: 0
+      totalTokensOut: 0,
     };
     this.wallets.set(missionId, wallet);
     this.totalWalletsAllocated++;
@@ -233,7 +233,7 @@ export class EosAgenticFinOpsGovernor {
     missionId: string,
     tokensIn: number,
     tokensOut: number,
-    tier: FinOpsCostTier
+    tier: FinOpsCostTier,
   ): EphemeralTaskWallet {
     let wallet = this.wallets.get(missionId);
     if (!wallet) {
@@ -269,7 +269,7 @@ export class EosAgenticFinOpsGovernor {
    */
   public evaluateCodeSurvival(
     components: TrackedCodeComponent[],
-    hourlyEngineerRateUsd = 120
+    hourlyEngineerRateUsd = 120,
   ): CodeSurvivalEvaluationResult {
     if (components.length === 0) {
       const digestPayload = "SURVIVAL:EMPTY:0";
@@ -281,7 +281,7 @@ export class EosAgenticFinOpsGovernor {
         estimatedHumanEquivalentCostUsd: 0,
         netSavingsUsd: 0,
         roiMultiple: 1.0,
-        sha256Attestation: createHash("sha256").update(digestPayload).digest("hex")
+        sha256Attestation: createHash("sha256").update(digestPayload).digest("hex"),
       };
     }
 
@@ -303,7 +303,8 @@ export class EosAgenticFinOpsGovernor {
     const estimatedHumanHours = totalRetained / 15.0;
     const estimatedHumanEquivalentCostUsd = Number((estimatedHumanHours * hourlyEngineerRateUsd).toFixed(2));
     const netSavingsUsd = Number((estimatedHumanEquivalentCostUsd - totalInferenceCost).toFixed(2));
-    const roiMultiple = totalInferenceCost > 0 ? Number((estimatedHumanEquivalentCostUsd / totalInferenceCost).toFixed(2)) : 100.0;
+    const roiMultiple =
+      totalInferenceCost > 0 ? Number((estimatedHumanEquivalentCostUsd / totalInferenceCost).toFixed(2)) : 100.0;
 
     const digestPayload = `SURVIVAL:${survivalRate.toFixed(2)}:${netNegativeAiDebt}:${netSavingsUsd}`;
     const sha256Attestation = createHash("sha256").update(digestPayload).digest("hex");
@@ -316,7 +317,7 @@ export class EosAgenticFinOpsGovernor {
       estimatedHumanEquivalentCostUsd,
       netSavingsUsd,
       roiMultiple,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -327,7 +328,7 @@ export class EosAgenticFinOpsGovernor {
       stagnationEventsDetected: this.stagnationEventsDetected,
       totalSpendUsd: Number(this.totalSpendUsd.toFixed(6)),
       tierDistribution: { ...this.tierDistribution },
-      state: this.stagnationEventsDetected > 0 ? "CIRCUIT_ACTIVE" : "NOMINAL"
+      state: this.stagnationEventsDetected > 0 ? "CIRCUIT_ACTIVE" : "NOMINAL",
     };
   }
 
@@ -339,7 +340,7 @@ export class EosAgenticFinOpsGovernor {
     this.tierDistribution = {
       TIER_1_LOCAL_SLM: 0,
       TIER_2_BALANCED: 0,
-      TIER_3_FRONTIER_REASONING: 0
+      TIER_3_FRONTIER_REASONING: 0,
     };
     this.wallets.clear();
   }

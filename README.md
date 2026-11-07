@@ -1,26 +1,46 @@
 # Glorian System (formerly EOS System)
 
-EOS System is a repository of browser UI, Node.js command-line utilities, local analysis modules, and Vercel serverless routes for software-engineering workflows.
+[![Quality Gate](https://github.com/valentin-florez-arbelaez/Glorian-System/actions/workflows/eos-gate.yml/badge.svg)](https://github.com/valentin-florez-arbelaez/Glorian-System/actions/workflows/eos-gate.yml)
+[![CodeQL](https://github.com/valentin-florez-arbelaez/Glorian-System/actions/workflows/eos-codeql.yml/badge.svg)](https://github.com/valentin-florez-arbelaez/Glorian-System/actions/workflows/eos-codeql.yml)
+[![Node.js 24](https://img.shields.io/badge/node-%3E%3D24-green)](https://nodejs.org)
+[![TypeScript 7](https://img.shields.io/badge/TypeScript-7.0.2-blue)](tsconfig.typecheck.json)
+[![Zero Dependencies](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](package.json)
+[![Coverage ≥80%](https://img.shields.io/badge/coverage-%E2%89%A580%25-brightgreen)](scripts/coverage-gate.mjs)
+[![Conventional Commits](https://img.shields.io/badge/commits-conventional-fe519e)](.githooks/commit-msg)
+[![License MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+Glorian System is a sovereign software engineering control plane: a repository of browser UI, Node.js CLI utilities, Layer-0 analysis modules, formal TLA+ specifications, and Vercel serverless routes for engineering governance workflows.
 
 Some pages and endpoints are demonstrations. Static fixtures, generated drafts, local benchmarks, and project registry entries are not evidence of production health, external vendor integrations, formal verification, or deployment. The site does not connect AI agents or probe production systems by default.
 
-## Requirements
-
-- Node.js 22 or newer.
-- No third-party runtime dependencies are listed in `package.json`.
-- Run `npm ci` to install the pinned TypeScript compiler and Node.js type definitions used by checks.
-
-## Start here
+## Quickstart
 
 ```sh
+# 1. Prerequisites: Node.js >= 24 (strip-only TypeScript)
 node --version
-git clone https://github.com/valentinflorezarbelaez-ai/Eos-System.git
-cd Eos-System
+
+# 2. Clone and install
+ git clone https://github.com/valentin-florez-arbelaez-ai/Eos-System.git
+cd Glorian-System
 npm ci
-node bin/eos.mjs help
-node bin/eos.mjs flow inspect "<ruta-a-tu-repositorio-git>"
-node bin/eos.mjs flow plan "<ruta-a-tu-repositorio-git>" "Describe the cambio"
+
+# 3. Verify the toolchain
+npm run check           # typecheck + full test suite (~3 min)
+
+# 4. Explore the CLI
+npx eos help             # show all available commands
+npx eos flow inspect .   # analyze current repository (read-only)
+
+# 5. Run the full 7-stage SecDevOps gate
+npm run test:ci
 ```
+
+## Requirements
+
+- Node.js 24+ (strip-only TypeScript runtime standard).
+- Zero third-party runtime dependencies (enforced by Law V in CI).
+- Git 2.30+ for hooks (`git config core.hooksPath .githooks`).
+- Run `npm ci` to install the pinned dev toolchain (TypeScript 7, @types/node 24).
 
 The root `index.html` is the browser guide and demo catalog; it cannot run commands on your computer. The read-only `flow inspect` and `flow plan` commands do not change the target repository. Git and Node.js 22 or later must be installed. The routes under `api/` use Vercel's serverless-function conventions. Static file opening can show the page, but API-backed demos need a compatible function host.
 
@@ -28,25 +48,26 @@ For a first-time-user evaluation, task script, and qualitative launch gate, see 
 
 ## Useful commands
 
-| Command | Behavior |
-|---|---|
-| `node bin/eos.mjs help` | Show the CLI help. |
-| `node bin/eos.mjs guard [directory]` | Inspect local source dependencies and report architecture findings. |
-| `node bin/eos.mjs amplify "prompt"` | Generate a local EARS/BDD prompt scaffold. Review it before use. |
-| `node bin/eos.mjs eval <file>` | Run the repository's local cognitive-evaluation heuristics on a file. This is not an external model evaluation. |
-| `node bin/eos.mjs graph` / `blast <file>` | Build a local source graph and report dependencies. |
-| `node bin/eos.mjs heal src/core/eosAutonomousHealer.ts --dry-run` | Ask the local healer for a dry-run report. Inspect the implementation and report before relying on it. |
-| `node bin/eos.mjs worktree list` | List Git worktrees for this repository. |
-| `node bin/eos.mjs sandbox doctor` | Check for a local Linux Docker Engine, seccomp, cgroup v2, and the configured pinned image. |
-| `node bin/eos.mjs sandbox run .worktrees/task -- node --version` | Run a command offline in a filtered temporary worktree copy; discard its edits. Add `--apply` to request conflict-checked writeback after exit code 0. |
-| `node bin/eos.mjs honk "<task>"` | Produce a bounded local task draft; it does not edit code, create a branch, run tests, or open a PR. |
-| `node bin/eos.mjs flow <action> ...` | Run the inspect → plan → worktree → isolated validation → diff review → approval-hash flow described below. |
-| `npm run mcp` | Start the local MCP stdio server; each request is limited to 1 MiB. |
-| `npm run mcp:stream` | Start authenticated local MCP HTTP/SSE on `127.0.0.1:3333`; exposes a read-only HTTP tool allowlist. |
-| `npm run typecheck` | Strictly type-check `src/**/*.ts` with the locked TypeScript compiler. |
-| `npm run test:workflow` | Test the core approval-gated workflow and CLI entry point; CI runs this subset on Windows, macOS, and Linux. |
-| `npm run verify:strict` | Run the configured credential-pattern scan, static checks, bounded simulations, TypeScript check, all discovered Node suites, and mocked handler smoke checks. It writes a local-check receipt and configured-checks SARIF; it does not deploy, perform general SAST, produce an SBOM, run TLC, or sign an attestation. |
-| `npm run test:unit` | Run the Node test file named in `package.json`. |
+| Command                                                           | Behavior                                                                                                                                                                                                                                                                                                                |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `node bin/eos.mjs help`                                           | Show the CLI help.                                                                                                                                                                                                                                                                                                      |
+| `node bin/eos.mjs guard [directory]`                              | Inspect local source dependencies and report architecture findings.                                                                                                                                                                                                                                                     |
+| `node bin/eos.mjs amplify "prompt"`                               | Generate a local EARS/BDD prompt scaffold. Review it before use.                                                                                                                                                                                                                                                        |
+| `node bin/eos.mjs eval <file>`                                    | Run the repository's local cognitive-evaluation heuristics on a file. This is not an external model evaluation.                                                                                                                                                                                                         |
+| `node bin/eos.mjs graph` / `blast <file>`                         | Build a local source graph and report dependencies.                                                                                                                                                                                                                                                                     |
+| `node bin/eos.mjs heal src/core/eosAutonomousHealer.ts --dry-run` | Ask the local healer for a dry-run report. Inspect the implementation and report before relying on it.                                                                                                                                                                                                                  |
+| `node bin/eos.mjs worktree list`                                  | List Git worktrees for this repository.                                                                                                                                                                                                                                                                                 |
+| `node bin/eos.mjs sandbox doctor`                                 | Check for a local Linux Docker Engine, seccomp, cgroup v2, and the configured pinned image.                                                                                                                                                                                                                             |
+| `node bin/eos.mjs sandbox run .worktrees/task -- node --version`  | Run a command offline in a filtered temporary worktree copy; discard its edits. Add `--apply` to request conflict-checked writeback after exit code 0.                                                                                                                                                                  |
+| `node bin/eos.mjs honk "<task>"`                                  | Produce a bounded local task draft; it does not edit code, create a branch, run tests, or open a PR.                                                                                                                                                                                                                    |
+| `node bin/eos.mjs flow <action> ...`                              | Run the inspect → plan → worktree → isolated validation → diff review → approval-hash flow described below.                                                                                                                                                                                                             |
+| `npm run mcp`                                                     | Start the local MCP stdio server; each request is limited to 1 MiB.                                                                                                                                                                                                                                                     |
+| `npm run mcp:stream`                                              | Start authenticated local MCP HTTP/SSE on `127.0.0.1:3333`; exposes a read-only HTTP tool allowlist.                                                                                                                                                                                                                    |
+| `npm run typecheck`                                               | Strictly type-check `src/**/*.ts` with the locked TypeScript compiler.                                                                                                                                                                                                                                                  |
+| `npm run test:workflow`                                           | Test the core approval-gated workflow and CLI entry point; CI runs this subset on Windows, macOS, and Linux.                                                                                                                                                                                                            |
+| `npm run verify:fast`                                             | Pre-commit lane: credential-pattern scan, TypeScript check, and only the suites impacted by the working tree. The full gate still runs on pre-push and CI.                                                                                                                                                              |
+| `npm run verify:strict`                                           | Run the configured credential-pattern scan, static checks, bounded simulations, TypeScript check, all discovered Node suites, and mocked handler smoke checks. It writes a local-check receipt and configured-checks SARIF; it does not deploy, perform general SAST, produce an SBOM, run TLC, or sign an attestation. |
+| `npm run test:unit`                                               | Run the Node test file named in `package.json`.                                                                                                                                                                                                                                                                         |
 
 Commands that write files, change Git configuration, commit, or push should be reviewed before use. In particular, fleet ship mode can stage, commit, and push to `origin` for one explicitly selected project.
 
@@ -105,21 +126,21 @@ The token is a local capability: do not copy it into source control, screenshots
 
 ## API routes
 
-| Route | Scope |
-|---|---|
-| `/api/health` | Handler liveness and process data. Subsystems are marked not probed. |
-| `/api/mcp` | Stateless JSON-RPC over POST with a bounded read-only tool allowlist. File reads, mutations, sessions, and SSE are not exposed over HTTP. |
-| `/api/fleet` | Static project registry; no health, CI, hook, or deployment probes. |
-| `/api/cicd` | Bounded CI/CD simulation; no checks, SBOM generation, or deployment. |
-| `/api/bigtech` | Static scenario fixtures; no model checking or fault injection. |
-| `/api/kernel` | Read-only Linux concept fixtures; no kernel telemetry. `/api/omega` serves a text fingerprint and concept metadata through this handler; no cryptographic proof or consensus runs. |
-| `/api/memory` | Static sample records and action previews; no server persistence or FTS5. |
-| `/api/eval` | Local evaluator with project-root confinement and a 100 KiB source limit. Evaluator load errors return a non-success status. |
-| `/api/titans` | Local benchmark code through the evaluator route; results do not describe Spotify, SpaceX, NVIDIA, Google, or xAI services. |
-| `/api/graph` | Local source graph when the engine loads; otherwise returns an explicit unavailable error. |
-| `/api/amplify` | Prompt-scaffolding route backed by `api/compile.js`; it does not call a remote language model. |
-| `/api/compile` | Local JavaScript benchmark and text transformation; no hardware or vendor benchmark. |
-| `/api/jarvis`, `/api/spotify`, `/api/teurgia` | Deterministic application responses. No external AI, Spotify, or production control-plane connection is implied. |
+| Route                                         | Scope                                                                                                                                                                              |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/health`                                 | Handler liveness and process data. Subsystems are marked not probed.                                                                                                               |
+| `/api/mcp`                                    | Stateless JSON-RPC over POST with a bounded read-only tool allowlist. File reads, mutations, sessions, and SSE are not exposed over HTTP.                                          |
+| `/api/fleet`                                  | Static project registry; no health, CI, hook, or deployment probes.                                                                                                                |
+| `/api/cicd`                                   | Bounded CI/CD simulation; no checks, SBOM generation, or deployment.                                                                                                               |
+| `/api/bigtech`                                | Static scenario fixtures; no model checking or fault injection.                                                                                                                    |
+| `/api/kernel`                                 | Read-only Linux concept fixtures; no kernel telemetry. `/api/omega` serves a text fingerprint and concept metadata through this handler; no cryptographic proof or consensus runs. |
+| `/api/memory`                                 | Static sample records and action previews; no server persistence or FTS5.                                                                                                          |
+| `/api/eval`                                   | Local evaluator with project-root confinement and a 100 KiB source limit. Evaluator load errors return a non-success status.                                                       |
+| `/api/titans`                                 | Local benchmark code through the evaluator route; results do not describe Spotify, SpaceX, NVIDIA, Google, or xAI services.                                                        |
+| `/api/graph`                                  | Local source graph when the engine loads; otherwise returns an explicit unavailable error.                                                                                         |
+| `/api/amplify`                                | Prompt-scaffolding route backed by `api/compile.js`; it does not call a remote language model.                                                                                     |
+| `/api/compile`                                | Local JavaScript benchmark and text transformation; no hardware or vendor benchmark.                                                                                               |
+| `/api/jarvis`, `/api/spotify`, `/api/teurgia` | Deterministic application responses. No external AI, Spotify, or production control-plane connection is implied.                                                                   |
 
 All API responses should be interpreted according to their `status`, `note`, and execution flags. A successful HTTP response alone does not mean a subsystem or deployment was verified.
 
@@ -127,12 +148,12 @@ All API responses should be interpreted according to their `status`, `note`, and
 
 The registry stores environment-variable names instead of workstation-specific paths. Set a variable only when you want a local fleet command to inspect that checkout:
 
-| Project | Variable |
-|---|---|
-| EOS System | `EOS_FLEET_EOS_SYSTEM_PATH` |
+| Project     | Variable                     |
+| ----------- | ---------------------------- |
+| EOS System  | `EOS_FLEET_EOS_SYSTEM_PATH`  |
 | Aberamentho | `EOS_FLEET_ABERAMENTHO_PATH` |
-| Portafolio | `EOS_FLEET_PORTAFOLIO_PATH` |
-| PTG | `EOS_FLEET_PTG_PATH` |
+| Portafolio  | `EOS_FLEET_PORTAFOLIO_PATH`  |
+| PTG         | `EOS_FLEET_PTG_PATH`         |
 
 Fleet audit mode checks configured local Git roots and probes each configured HTTPS production URL. Hook installation changes Git hooks and `core.hooksPath`; it requires one project ID plus a matching confirmation. Installed `pre-commit` and `pre-push` hooks run that project's configured `cicdGateScript`.
 

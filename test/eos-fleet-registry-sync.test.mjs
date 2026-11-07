@@ -2,13 +2,12 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import crypto from "node:crypto";
 import {
   discoverGitRepositories,
   extractGitMetadata,
   inferProjectMetadata,
   reconcileFleetRegistry,
-  computeRegistrySignature
+  computeRegistrySignature,
 } from "../scripts/eos-fleet-registry-sync.mjs";
 
 describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => {
@@ -22,12 +21,12 @@ describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => 
       const repos = discoverGitRepositories(rootDir);
       assert.ok(Array.isArray(repos));
       assert.ok(repos.length >= 5, "Expected at least 5 git repositories in workspace");
-      
+
       const repoNames = repos.map((r) => r.name);
       assert.ok(repoNames.includes("Eos-System"), "Must discover Eos-System");
       assert.ok(repoNames.includes("Control-De-Asistencia-Abopack"), "Must discover Control-De-Asistencia-Abopack");
       assert.ok(repoNames.includes("portafolio"), "Must discover portafolio");
-      
+
       // Must not include non-git or hidden tooling directories
       assert.ok(!repoNames.includes(".gemini"));
       assert.ok(!repoNames.includes(".cache"));
@@ -77,7 +76,7 @@ describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => 
             specification: "SPECIFICATION_APPROVED",
             audit: "AUDIT_COMPLETE",
             authorization: "LEVEL_3_PRODUCTION_AUTHORIZED",
-            cicdGateScript: "scripts/verify-cicd-pipeline.mjs"
+            cicdGateScript: "scripts/verify-cicd-pipeline.mjs",
           },
           {
             id: "performance-talent-group",
@@ -91,9 +90,9 @@ describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => 
             specification: "SPECIFICATION_APPROVED",
             audit: "AUDIT_COMPLETE",
             authorization: "LEVEL_2_AUTHORIZED",
-            cicdGateScript: "scripts/smoke-test.ps1"
-          }
-        ]
+            cicdGateScript: "scripts/smoke-test.ps1",
+          },
+        ],
       };
 
       const discovered = [
@@ -107,7 +106,7 @@ describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => 
           headCommitSha: "ab5000201234567890abcdef1234567890abcdef",
           productionUrl: "https://glorian-system.vercel.app",
           type: "control-plane-monolith",
-          cicdGateScript: "scripts/verify-cicd-pipeline.mjs"
+          cicdGateScript: "scripts/verify-cicd-pipeline.mjs",
         },
         {
           id: "performance-talent-group",
@@ -119,7 +118,7 @@ describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => 
           headCommitSha: "11223344556677889900aabbccddeeff00112233",
           productionUrl: "https://ptg-performance-talent-group.vercel.app",
           type: "enterprise-operations",
-          cicdGateScript: "scripts/smoke-test.ps1"
+          cicdGateScript: "scripts/smoke-test.ps1",
         },
         {
           id: "control-de-asistencia-abopack",
@@ -131,14 +130,14 @@ describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => 
           headCommitSha: "5ba39af01234567890abcdef1234567890abcdef",
           productionUrl: "https://avo-pack.vercel.app",
           type: "industrial-operations-suite",
-          cicdGateScript: "npm test"
-        }
+          cicdGateScript: "npm test",
+        },
       ];
 
       const reconciled = reconcileFleetRegistry(existingRegistry, discovered);
 
       assert.equal(reconciled.projects.length, 3);
-      
+
       const eos = reconciled.projects.find((p) => p.id === "eos-system");
       assert.equal(eos.authorization, "LEVEL_3_PRODUCTION_AUTHORIZED");
       assert.equal(eos.headCommitSha, "ab5000201234567890abcdef1234567890abcdef");
@@ -174,9 +173,9 @@ describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => 
         params: {
           name: "eos_fleet_registry_sync",
           arguments: {
-            dryRun: true
-          }
-        }
+            dryRun: true,
+          },
+        },
       });
 
       assert.ok(response, "Must receive a JSON-RPC response");

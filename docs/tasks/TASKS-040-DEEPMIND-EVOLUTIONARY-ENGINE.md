@@ -1,7 +1,7 @@
 # TASKS-040: DEEPMIND SOVEREIGN EVOLUTIONARY ENGINE (v53.0.0)
 
-* **Specification**: `SPEC-047`
-* **Plan**: `PLAN-040` (`ADR-053`)
+- **Specification**: `SPEC-047`
+- **Plan**: `PLAN-040` (`ADR-053`)
 
 ## Atomic Task DAG
 

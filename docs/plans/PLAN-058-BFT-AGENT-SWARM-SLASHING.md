@@ -2,11 +2,12 @@
 
 **Specification**: SPEC-065  
 **Status**: APPROVED  
-**Architecture Decision Record**: ADR-070  
+**Architecture Decision Record**: ADR-070
 
 ---
 
 ## 1. Architectural Approach
+
 - **Quorum Consensus Engine**: Validates weighted votes against a 75% ($3/4$) supermajority threshold.
 - **Security Veto Gate**: An explicit veto from any designated security agent instantly rejects the proposal.
 - **Quadratic Slashing Penalty**: Formula $\Delta S = \min(S_i, k \cdot m^2)$ penalizes repeat Byzantine offenses quadratically.

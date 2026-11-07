@@ -46,9 +46,9 @@ switch (command) {
     try {
       execFileSync(process.execPath, [path.join(root, "scripts/verify-cicd-pipeline.mjs")], {
         cwd: root,
-        stdio: "inherit"
+        stdio: "inherit",
       });
-    } catch (err) {
+    } catch {
       process.exit(1);
     }
     break;
@@ -63,7 +63,9 @@ switch (command) {
 
     console.log(`Estado Epistémico    : ${result.epistemicState}`);
     console.log(`Tiempo Total         : ${result.totalDurationMs} ms (${result.totalDurationUs} µs)`);
-    console.log(`Archivos Analizados  : ${result.totalFilesChecked} (${result.cacheHits} en caché, ${result.freshScans} frescos)`);
+    console.log(
+      `Archivos Analizados  : ${result.totalFilesChecked} (${result.cacheHits} en caché, ${result.freshScans} frescos)`,
+    );
     console.log(`Source Inventory SHA-256: ${result.sourceInventoryDigest}\n`);
     console.log("=== TELEMETRÍA DE ALTA PRECISIÓN POR ADUANA ===");
     result.stages.forEach((s) => {
@@ -88,9 +90,9 @@ switch (command) {
     try {
       execFileSync(process.execPath, [path.join(root, "scripts/fleet-autonomous-cicd.mjs")], {
         cwd: root,
-        stdio: "inherit"
+        stdio: "inherit",
       });
-    } catch (err) {
+    } catch {
       process.exit(1);
     }
     break;
@@ -102,46 +104,48 @@ switch (command) {
     try {
       execFileSync(process.execPath, ["--test", path.join(root, "test/eosCore.test.mjs")], {
         cwd: root,
-        stdio: "inherit"
+        stdio: "inherit",
       });
       execFileSync(process.execPath, ["--test", path.join(root, "test/chaosResilience.test.mjs")], {
         cwd: root,
-        stdio: "inherit"
+        stdio: "inherit",
       });
       execFileSync(process.execPath, ["--test", path.join(root, "test/eosPrometheus.test.mjs")], {
         cwd: root,
-        stdio: "inherit"
+        stdio: "inherit",
       });
       execFileSync(process.execPath, ["--test", path.join(root, "test/eosTurbo.test.mjs")], {
         cwd: root,
-        stdio: "inherit"
+        stdio: "inherit",
       });
       execFileSync(process.execPath, ["--test", path.join(root, "test/eosSemanticGraph.test.mjs")], {
         cwd: root,
-        stdio: "inherit"
+        stdio: "inherit",
       });
       execFileSync(process.execPath, ["--test", path.join(root, "test/eosAutonomousHealer.test.mjs")], {
         cwd: root,
-        stdio: "inherit"
+        stdio: "inherit",
       });
       execFileSync(process.execPath, ["--test", path.join(root, "test/eosWorktree.test.mjs")], {
         cwd: root,
-        stdio: "inherit"
+        stdio: "inherit",
       });
       execFileSync(process.execPath, ["--test", path.join(root, "test/eosCognitiveEval.test.mjs")], {
         cwd: root,
-        stdio: "inherit"
+        stdio: "inherit",
       });
       execFileSync(process.execPath, ["--test", path.join(root, "test/eosOpenSpec.test.mjs")], {
         cwd: root,
-        stdio: "inherit"
+        stdio: "inherit",
       });
       execFileSync(process.execPath, ["--test", path.join(root, "test/eosTitans.test.mjs")], {
         cwd: root,
-        stdio: "inherit"
+        stdio: "inherit",
       });
-      console.log("\n[PASS] All Unit, Chaos, Worktree, Eval, OpenSpec & Titans suites completed successfully (Exit 0).");
-    } catch (err) {
+      console.log(
+        "\n[PASS] All Unit, Chaos, Worktree, Eval, OpenSpec & Titans suites completed successfully (Exit 0).",
+      );
+    } catch {
       process.exit(1);
     }
     break;
@@ -151,7 +155,7 @@ switch (command) {
     const subCommand = (args[1] || "--stdio").toLowerCase();
     if (subCommand === "--sse" || subCommand === "sse" || subCommand === "stream" || subCommand === "--stream") {
       printBanner();
-      const port = args[2] ? parseInt(args[2], 10) : (process.env.PORT ? parseInt(process.env.PORT, 10) : 3333);
+      const port = args[2] ? parseInt(args[2], 10) : process.env.PORT ? parseInt(process.env.PORT, 10) : 3333;
       const host = process.env.HOST || "127.0.0.1";
       const { EosMcpStreamServer } = await import("../src/mcp/eosMcpStreamServer.ts");
       const streamServer = new EosMcpStreamServer(root);
@@ -160,8 +164,12 @@ switch (command) {
       console.log(`[EOS MCP]   ↳ SSE Stream Endpoint : http://${host}:${port}/sse`);
       console.log(`[EOS MCP]   ↳ Message Backchannel : http://${host}:${port}/message?sessionId=<id>`);
       console.log(`[EOS MCP]   ↳ Health & Status     : http://${host}:${port}/health`);
-      console.error(`[EOS MCP] Bearer token (local only; configure your MCP client with Authorization: Bearer <token>): ${streamServer.authToken}`);
-      console.error(`[EOS MCP] Browser clients require exact origins in EOS_MCP_ALLOWED_ORIGINS; requests without Origin still require the bearer token.`);
+      console.error(
+        `[EOS MCP] Bearer token (local only; configure your MCP client with Authorization: Bearer <token>): ${streamServer.authToken}`,
+      );
+      console.error(
+        `[EOS MCP] Browser clients require exact origins in EOS_MCP_ALLOWED_ORIGINS; requests without Origin still require the bearer token.`,
+      );
       console.log(`[EOS MCP] Press Ctrl+C to terminate server.`);
     } else if (subCommand === "status" || subCommand === "--status") {
       printBanner();
@@ -249,7 +257,9 @@ switch (command) {
       console.log(`  p50 / p90    : ${r.percentilesNs.p50} ns / ${r.percentilesNs.p90} ns`);
       console.log(`  p99 / p99.99 : ${r.percentilesNs.p99} ns / ${r.percentilesNs.p99_99} ns`);
       console.log(`  Throughput   : ${r.opsPerSec.toLocaleString()} ops/sec`);
-      console.log(`  Desviación   : ±${r.stdDevNs} ns | 0-Alloc: ${r.zeroAllocationVerified ? "VERIFIED" : "UNVERIFIED"}`);
+      console.log(
+        `  Desviación   : ±${r.stdDevNs} ns | 0-Alloc: ${r.zeroAllocationVerified ? "VERIFIED" : "UNVERIFIED"}`,
+      );
     }
     break;
   }
@@ -263,8 +273,12 @@ switch (command) {
     console.log(`  Estado           : ${report.status}`);
     console.log(`  Merkle Root      : ${report.merkleRootHash.slice(0, 32)}...`);
     console.log(`  Archivos Guía    : ${report.filesMonitoredCount} archivos críticos verificados`);
-    console.log(`  Memoria V8 Heap  : ${(report.memoryHealth.heapUsedBytes / (1024 * 1024)).toFixed(2)} MB (${(report.memoryHealth.utilizationRatio * 100).toFixed(1)}% uso)`);
-    console.log(`  Nodos de Flota   : ${report.fleetHealth.totalNodes} nodos activos en anillos [${report.fleetHealth.ringsActive.join(", ")}]`);
+    console.log(
+      `  Memoria V8 Heap  : ${(report.memoryHealth.heapUsedBytes / (1024 * 1024)).toFixed(2)} MB (${(report.memoryHealth.utilizationRatio * 100).toFixed(1)}% uso)`,
+    );
+    console.log(
+      `  Nodos de Flota   : ${report.fleetHealth.totalNodes} nodos activos en anillos [${report.fleetHealth.ringsActive.join(", ")}]`,
+    );
     console.log(`  Enlaces Huérfanos: ${report.fleetHealth.orphanLinksDetected}`);
     break;
   }
@@ -308,14 +322,21 @@ switch (command) {
     }
     const poolStats = pool.getStats();
     console.log(`\n--- Slab Buffer Pool (Zero-GC Allocator) ---`);
-    console.log(`  Capacidad Total : ${poolStats.totalCapacity} slabs (${(poolStats.totalCapacity * poolStats.slabSizeBytes) / 1024} KB)`);
+    console.log(
+      `  Capacidad Total : ${poolStats.totalCapacity} slabs (${(poolStats.totalCapacity * poolStats.slabSizeBytes) / 1024} KB)`,
+    );
     console.log(`  Adquisiciones   : ${poolStats.totalAcquires} | Liberaciones: ${poolStats.totalReleases}`);
     console.log(`  Tasa de Acierto : ${poolStats.poolHitRatePercent}% (0 Derrames de Memoria)`);
 
     // 3. JIT TurboFan Profiler
-    const prof = EosApexProfiler.profileFunction("Bitwise FNV-1a 64-bit", () => {
-      EosBitwiseAccelerator.fnv1a64("eos-system-sovereign-control-plane-v40.0.0");
-    }, 20, 20000);
+    const prof = EosApexProfiler.profileFunction(
+      "Bitwise FNV-1a 64-bit",
+      () => {
+        EosBitwiseAccelerator.fnv1a64("eos-system-sovereign-control-plane-v40.0.0");
+      },
+      20,
+      20000,
+    );
     console.log(`\n--- V8 TurboFan Profile-Guided Optimization ---`);
     console.log(`  Función         : ${prof.functionName}`);
     console.log(`  Ejecución Fría  : ${prof.coldMeanNs} ns`);
@@ -387,7 +408,9 @@ switch (command) {
     const report = scanArchitecture(targetDir, root);
 
     console.log(`Archivos Analizados  : ${report.scannedFilesCount}`);
-    console.log(`Distribución Capas   : DOMAIN=${report.layersDistribution.DOMAIN}, APP=${report.layersDistribution.APPLICATION}, INFRA=${report.layersDistribution.INFRASTRUCTURE}, UI=${report.layersDistribution.PRESENTATION}`);
+    console.log(
+      `Distribución Capas   : DOMAIN=${report.layersDistribution.DOMAIN}, APP=${report.layersDistribution.APPLICATION}, INFRA=${report.layersDistribution.INFRASTRUCTURE}, UI=${report.layersDistribution.PRESENTATION}`,
+    );
     console.log(`Pureza Arquitectónica: ${report.architecturePurityScore}%`);
     console.log(`Ciclos Circulares    : ${report.circularDependencies.length}`);
     console.log(`Total Violaciones    : ${report.totalViolations}`);
@@ -412,7 +435,7 @@ switch (command) {
       title: "Evaluación Soberana de Propuesta",
       description: scenarioDesc,
       proposedAction: scenarioDesc,
-      targetDomain: "CORE"
+      targetDomain: "CORE",
     });
 
     console.log(`\nEscenario            : ${verdict.scenarioTitle}`);
@@ -448,7 +471,9 @@ switch (command) {
     console.log(`\nArchivo Objetivo      : ${report.targetFile}`);
     console.log(`Nivel de Riesgo       : [${report.riskLevel}]`);
     console.log(`Consumidores Directos : ${report.directConsumers.length}`);
-    console.log(`Impacto Transitivo    : ${report.totalImpactedFiles} archivos (${report.impactPercentage}% del proyecto)`);
+    console.log(
+      `Impacto Transitivo    : ${report.totalImpactedFiles} archivos (${report.impactPercentage}% del proyecto)`,
+    );
     console.log(`Tiempo de Cálculo     : ${report.durationUs} µs\n`);
 
     if (report.directConsumers.length > 0) {
@@ -506,7 +531,9 @@ switch (command) {
     if (report.candidates.length > 0) {
       console.log("Remediaciones Sintetizadas y Validadas:");
       report.candidates.forEach((c) => {
-        console.log(`  ✔ [${c.action}] en ${c.targetPath} (Riesgo: ${c.blastRadiusRisk}, Sandbox: ${c.sandboxValid ? "PASS" : "FAIL"})`);
+        console.log(
+          `  ✔ [${c.action}] en ${c.targetPath} (Riesgo: ${c.blastRadiusRisk}, Sandbox: ${c.sandboxValid ? "PASS" : "FAIL"})`,
+        );
       });
     } else {
       console.log("[INFO] No se detectaron anomalías requeridas de reparación. Código 100% puro.");
@@ -578,11 +605,21 @@ switch (command) {
     console.log(`Tiempo de Evaluación    : ${result.durationUs.toFixed(2)} µs\n`);
     console.log("=== DESGLOSE DE LAS 5 DIMENSIONES SOBERANAS ===");
     const dims = result.dimensions;
-    console.log(`  1. Seguridad & Cero Secretos (30%) : ${dims.securityOwasp.score}/100 [${dims.securityOwasp.passed ? "PASS" : "FAIL"}]`);
-    console.log(`  2. Pureza Hexagonal Capa 0 (25%)   : ${dims.hexagonalPurity.score}/100 [${dims.hexagonalPurity.passed ? "PASS" : "FAIL"}]`);
-    console.log(`  3. Sintaxis AST & Tipado (20%)     : ${dims.astSyntax.score}/100 [${dims.astSyntax.passed ? "PASS" : "FAIL"}]`);
-    console.log(`  4. Conformidad EARS & BDD (15%)    : ${dims.earsBddConformance.score}/100 [${dims.earsBddConformance.passed ? "PASS" : "FAIL"}]`);
-    console.log(`  5. Índice Anti-Alucinación (10%)   : ${dims.hallucinationRisk.score}/100 [${dims.hallucinationRisk.passed ? "PASS" : "FAIL"}]`);
+    console.log(
+      `  1. Seguridad & Cero Secretos (30%) : ${dims.securityOwasp.score}/100 [${dims.securityOwasp.passed ? "PASS" : "FAIL"}]`,
+    );
+    console.log(
+      `  2. Pureza Hexagonal Capa 0 (25%)   : ${dims.hexagonalPurity.score}/100 [${dims.hexagonalPurity.passed ? "PASS" : "FAIL"}]`,
+    );
+    console.log(
+      `  3. Sintaxis AST & Tipado (20%)     : ${dims.astSyntax.score}/100 [${dims.astSyntax.passed ? "PASS" : "FAIL"}]`,
+    );
+    console.log(
+      `  4. Conformidad EARS & BDD (15%)    : ${dims.earsBddConformance.score}/100 [${dims.earsBddConformance.passed ? "PASS" : "FAIL"}]`,
+    );
+    console.log(
+      `  5. Índice Anti-Alucinación (10%)   : ${dims.hallucinationRisk.score}/100 [${dims.hallucinationRisk.passed ? "PASS" : "FAIL"}]`,
+    );
     const proof = result.resultFingerprintSha256 || result.sha256Proof || "e3b0c44298fc1c149afbf4c8996fb924";
     console.log(`\nSello Criptográfico Merkle : ${proof.slice(0, 32)}... (Exit Code 0)`);
     break;
@@ -666,7 +703,9 @@ switch (command) {
       console.log(`Tiempo Total 5 Titanes: ${report.totalDurationUs.toFixed(2)} µs\n`);
       console.log("=== RESULTADOS DE LA MATRIZ DE TITANES ===");
       report.results.forEach((r) => {
-        console.log(`  ✔ [${r.titan}] ${r.status} en ${r.latencyUs.toFixed(2)} µs (${r.throughputOpsSec.toLocaleString()} ops/s)`);
+        console.log(
+          `  ✔ [${r.titan}] ${r.status} en ${r.latencyUs.toFixed(2)} µs (${r.throughputOpsSec.toLocaleString()} ops/s)`,
+        );
       });
       console.log(`\nSello Criptográfico   : ${report.sha256Proof.slice(0, 32)}... (Exit Code 0)`);
     }
@@ -713,7 +752,9 @@ switch (command) {
       console.log(`[EOS SPOTIFY] Simulando Tubería de Streaming de Audio Xirp y Anillo de Memoria Lockless...\n`);
       const report = codex.simulateAudioStreamingPipeline(16);
       console.log(`Tamaño de Segmento    : ${report.chunkSizeKb} KB (~10s a 320 kbps)`);
-      console.log(`Segmentos Procesados  : ${report.totalChunksProcessed} (${(report.totalBytesStreamed / 1024 / 1024).toFixed(2)} MB)`);
+      console.log(
+        `Segmentos Procesados  : ${report.totalChunksProcessed} (${(report.totalBytesStreamed / 1024 / 1024).toFixed(2)} MB)`,
+      );
       console.log(`Rendimiento Memoria   : ${report.throughputMbSec.toLocaleString()} MB/s`);
       console.log(`Riesgo de Underrun    : ${report.bufferUnderrunRisk}% (0.00% Jitter)`);
       console.log(`Horizonte Prefetch    : ${report.prefetchHorizonChunks} segmentos en ring buffer lockless`);
@@ -735,7 +776,9 @@ switch (command) {
       console.log(`[EOS SPOTIFY] Sintetizando Blameless Post-Mortem SRE (${incidentTitle})...\n`);
       const pm = codex.synthesizeBlamelessPostMortem({ title: incidentTitle });
       console.log(pm.markdown);
-      console.log(`\n[PASS] Blameless Post-Mortem certificado con sello sha256:${pm.sha256Proof.slice(0, 32)}... (Exit Code 0).`);
+      console.log(
+        `\n[PASS] Blameless Post-Mortem certificado con sello sha256:${pm.sha256Proof.slice(0, 32)}... (Exit Code 0).`,
+      );
       break;
     }
 
@@ -776,13 +819,15 @@ switch (command) {
         errorCount,
         p99LatencyMs: 29,
         maxAllowedP99Ms: 50,
-        observationWindowMinutes: 15
+        observationWindowMinutes: 15,
       });
       console.log(`[EOS SPOTIFY CANARY] Compuerta de Despliegue Progresivo & Kill-Switch:\n`);
       console.log(`Fase Evaluada         : ${stage}`);
       console.log(`Tasa de Error         : ${decision.errorRatePercent}%`);
       console.log(`Decisión de Compuerta : [${decision.decision}]`);
-      console.log(`Kill-Switch Activado  : ${decision.killSwitchEngaged ? "ACTIVADO (Rollback)" : "DESACTIVADO (Nominal)"}`);
+      console.log(
+        `Kill-Switch Activado  : ${decision.killSwitchEngaged ? "ACTIVADO (Rollback)" : "DESACTIVADO (Nominal)"}`,
+      );
       console.log(`Siguiente Fase        : ${decision.nextStage || "N/A"}`);
       console.log(`Motivo                : ${decision.reason}\n`);
       console.log(`[PASS] Evaluación de compuerta canaria completada.`);
@@ -794,7 +839,9 @@ switch (command) {
     const report = codex.auditUniversalProject(target);
 
     console.log(`Proyecto Auditado     : ${report.projectPath}`);
-    console.log(`Cumplimiento Backstage: ${report.isBackstageCompliant ? "RFC-42 COMPLIANT (✔)" : "NO COMPATIBLE (✖)"}`);
+    console.log(
+      `Cumplimiento Backstage: ${report.isBackstageCompliant ? "RFC-42 COMPLIANT (✔)" : "NO COMPATIBLE (✖)"}`,
+    );
     console.log(`Puntaje Golden Path   : ${report.goldenPathScore}/100`);
     console.log(`Descriptor Catálogo   : ${report.catalogInfoExists ? "catalog-info.yaml detectado" : "Faltante"}`);
     if (report.catalogInfoDetails) {
@@ -802,7 +849,9 @@ switch (command) {
       console.log(`  ↳ Propietario       : ${report.catalogInfoDetails.owner}`);
     }
     console.log(`Archivos de Audio     : ${report.audioCompliance.audioAssetsDetected}`);
-    console.log(`Norma ITU-R BS.1770   : ${report.audioCompliance.loudnessStandardCompliant ? "Verificado (-14 LUFS)" : "Pendiente"}`);
+    console.log(
+      `Norma ITU-R BS.1770   : ${report.audioCompliance.loudnessStandardCompliant ? "Verificado (-14 LUFS)" : "Pendiente"}`,
+    );
     console.log(`Sello Criptográfico   : ${report.sha256Proof.slice(0, 32)}...\n`);
 
     if (report.recommendations.length > 0) {
@@ -853,7 +902,9 @@ switch (command) {
       console.log(`Aceleración Nativa Go : ${res.nativeGo ? "ACTIVA (✔)" : "FALLBACK TS"}\n`);
       console.log("=== BRAZOS DEL BANDIDO MULTI-BRAZO SPOTIFY BaRT ===");
       res.arms.forEach((a) => {
-        console.log(`  ↳ [${a.trackId}] "${a.title}": Expectativa=${a.expectedMu} (Pulls=${a.pulls}, Alpha=${a.alpha.toFixed(1)}, Beta=${a.beta.toFixed(1)})`);
+        console.log(
+          `  ↳ [${a.trackId}] "${a.title}": Expectativa=${a.expectedMu} (Pulls=${a.pulls}, Alpha=${a.alpha.toFixed(1)}, Beta=${a.beta.toFixed(1)})`,
+        );
       });
       console.log(`\n[PASS] Optimización BaRT completada exitosamente (Exit Code 0).`);
       break;
@@ -902,7 +953,7 @@ switch (command) {
     const report = factory.dispatchHonk({
       taskName: directiveText,
       specDescription: directiveText,
-      dryRun: true
+      dryRun: true,
     });
 
     console.log(`Task ID               : ${report.taskId}`);
@@ -910,7 +961,9 @@ switch (command) {
     console.log(`Stack Tecnológico     : ${report.stack.toUpperCase()}`);
     console.log(`Resultado             : ${report.status} (${report.epistemicState})`);
     console.log(`Duración local        : ${report.totalDurationMs} ms`);
-    console.log(`Huella SHA-256        : ${redactDirective ? "[omitida para proteger la directiva]" : `${report.reportFingerprintSha256.slice(0, 32)}... (no es firma)`}\n`);
+    console.log(
+      `Huella SHA-256        : ${redactDirective ? "[omitida para proteger la directiva]" : `${report.reportFingerprintSha256.slice(0, 32)}... (no es firma)`}\n`,
+    );
 
     if (!quietOutput) {
       console.log("=== PASOS DEL BORRADOR LOCAL ===");
@@ -925,19 +978,24 @@ switch (command) {
     printBanner();
     const action = (args[1] || "help").toLowerCase();
     if (action === "help") {
-      console.log(["", "Uso del flujo de ingeniería con revisión humana:",
-        "  eos flow inspect <repo>",
-        "  eos flow plan <repo> <tarea>",
-        "  eos flow start <repo> <tarea>",
-        "  eos flow validate <repo> <workflow-id> -- <comando> [argumentos...]",
-        "  eos flow status <repo> <workflow-id>",
-        "  eos flow review <repo> <workflow-id>",
-        "  eos flow apply <repo> <workflow-id> --confirm-diff=<sha256>",
-        "  eos flow close <repo> <workflow-id> [--force]",
-        "",
-        "Inspect y plan son de solo lectura. Start crea un worktree local. Validate ejecuta",
-        "en el sandbox Docker y descarta sus escrituras. Review presenta el diff comprometido.",
-        "Apply exige el hash revisado y hace fast-forward local; nunca publica ni despliega."].join("\n"));
+      console.log(
+        [
+          "",
+          "Uso del flujo de ingeniería con revisión humana:",
+          "  eos flow inspect <repo>",
+          "  eos flow plan <repo> <tarea>",
+          "  eos flow start <repo> <tarea>",
+          "  eos flow validate <repo> <workflow-id> -- <comando> [argumentos...]",
+          "  eos flow status <repo> <workflow-id>",
+          "  eos flow review <repo> <workflow-id>",
+          "  eos flow apply <repo> <workflow-id> --confirm-diff=<sha256>",
+          "  eos flow close <repo> <workflow-id> [--force]",
+          "",
+          "Inspect y plan son de solo lectura. Start crea un worktree local. Validate ejecuta",
+          "en el sandbox Docker y descarta sus escrituras. Review presenta el diff comprometido.",
+          "Apply exige el hash revisado y hace fast-forward local; nunca publica ni despliega.",
+        ].join("\n"),
+      );
       break;
     }
 
@@ -981,11 +1039,18 @@ switch (command) {
         } else {
           const result = workflow.start(repoPath, task);
           console.log(`Workflow ID : ${result.workflowId}`);
-          console.log(`Rama        : ${result.branchName} (base ${result.baseBranch}@${result.baseCommit.slice(0, 12)})`);
+          console.log(
+            `Rama        : ${result.branchName} (base ${result.baseBranch}@${result.baseCommit.slice(0, 12)})`,
+          );
           console.log(`Worktree    : ${result.worktreePath}`);
-          if (result.localExcludeUpdated) console.log("Exclusión local: añadí .worktrees/ y .eos/ a .git/info/exclude; no edité archivos versionados.");
+          if (result.localExcludeUpdated)
+            console.log(
+              "Exclusión local: añadí .worktrees/ y .eos/ a .git/info/exclude; no edité archivos versionados.",
+            );
           console.log("Siguiente: trabaja en ese worktree y crea un commit local con los cambios revisados.");
-          console.log(`Después valida con: node bin/eos.mjs flow validate "${repoPath}" ${result.workflowId} -- <comando> [argumentos...]`);
+          console.log(
+            `Después valida con: node bin/eos.mjs flow validate "${repoPath}" ${result.workflowId} -- <comando> [argumentos...]`,
+          );
         }
       } else if (action === "validate") {
         const workflowId = args[3];
@@ -994,11 +1059,13 @@ switch (command) {
           throw new Error("Uso: eos flow validate <repo> <workflow-id> -- <comando> [argumentos...]");
         }
         const report = await workflow.validate(repoPath, workflowId, args[separator + 1], args.slice(separator + 2));
-        console.log(`Validación: ${report.status}; exit=${report.exitCode ?? "N/D"}; cambios descartados en sandbox=${report.changedFiles.length}`);
+        console.log(
+          `Validación: ${report.status}; exit=${report.exitCode ?? "N/D"}; cambios descartados en sandbox=${report.changedFiles.length}`,
+        );
         if (report.receiptPath) console.log(`Recibo local: ${report.receiptPath}`);
         if (!report.success) {
           if (report.error) console.error(report.error);
-          process.exitCode = report.status === "COMMAND_FAILED" ? (report.exitCode || 1) : 1;
+          process.exitCode = report.status === "COMMAND_FAILED" ? report.exitCode || 1 : 1;
         }
       } else if (action === "review") {
         const workflowId = args[3];
@@ -1020,7 +1087,9 @@ switch (command) {
         console.log(`Base       : ${status.baseBranch} @ ${status.baseCommit.slice(0, 12)}`);
         console.log(`Worktree   : ${status.worktreeAvailable ? status.worktreePath : "CERRADO / AUSENTE"}`);
         console.log(`Cambios sin commit: ${status.worktreeDirtyFiles.length}`);
-        console.log(`Validación : ${status.validationStatus}${status.validationHead ? ` @ ${status.validationHead.slice(0, 12)}` : ""}`);
+        console.log(
+          `Validación : ${status.validationStatus}${status.validationHead ? ` @ ${status.validationHead.slice(0, 12)}` : ""}`,
+        );
         console.log(`Diff visto : ${status.reviewedDiffSha256 || "NO"}`);
         console.log(`Aplicado   : ${status.appliedHead || "NO"}`);
         if (status.closedAt) console.log(`Cerrado    : ${status.closedAt}`);
@@ -1063,7 +1132,9 @@ switch (command) {
     }
 
     if (subcommand !== "run") {
-      console.log("Uso: eos sandbox doctor | eos sandbox run <worktree> [--apply] [--timeout SEGUNDOS] -- <comando> [argumentos...]");
+      console.log(
+        "Uso: eos sandbox doctor | eos sandbox run <worktree> [--apply] [--timeout SEGUNDOS] -- <comando> [argumentos...]",
+      );
       break;
     }
 
@@ -1088,8 +1159,9 @@ switch (command) {
       }
       timeoutMs = seconds * 1000;
     }
-    const unknownOptions = runOptions.filter((option, index) =>
-      option !== "--apply" && option !== "--timeout" && (index === 0 || runOptions[index - 1] !== "--timeout")
+    const unknownOptions = runOptions.filter(
+      (option, index) =>
+        option !== "--apply" && option !== "--timeout" && (index === 0 || runOptions[index - 1] !== "--timeout"),
     );
     if (unknownOptions.length > 0) {
       console.error(`Opción no reconocida: ${unknownOptions.join(" ")}`);
@@ -1099,24 +1171,38 @@ switch (command) {
 
     try {
       console.log("[EOS SANDBOX] Ejecución local sin red en una copia filtrada del worktree.");
-      console.log(`Salida a Git: ${applyChanges ? "solicitada; requiere salida 0 y revisión de conflictos" : "desactivada; se descartarán los cambios"}`);
+      console.log(
+        `Salida a Git: ${applyChanges ? "solicitada; requiere salida 0 y revisión de conflictos" : "desactivada; se descartarán los cambios"}`,
+      );
       const report = await sandbox.run({
         worktreePath,
         command: commandArgs[0],
         commandArgs: commandArgs.slice(1),
         applyChanges,
-        ...(timeoutMs === undefined ? {} : { timeoutMs })
+        ...(timeoutMs === undefined ? {} : { timeoutMs }),
       });
-      console.log(`Estado: ${report.status}; código: ${report.exitCode ?? "N/D"}; archivos cambiados en copia: ${report.changedFiles.length}`);
-      if (report.appliedChanges) console.log(`Archivos escritos en el worktree: ${report.changedFiles.filter((file) => !report.conflicts.includes(file)).length}`);
-      report.changedFiles.slice(0, 100).forEach((file) => console.log(`  ${report.appliedChanges && !report.conflicts.includes(file) ? "ESCRITO" : "CAMBIO EN COPIA"} ${file}`));
+      console.log(
+        `Estado: ${report.status}; código: ${report.exitCode ?? "N/D"}; archivos cambiados en copia: ${report.changedFiles.length}`,
+      );
+      if (report.appliedChanges)
+        console.log(
+          `Archivos escritos en el worktree: ${report.changedFiles.filter((file) => !report.conflicts.includes(file)).length}`,
+        );
+      report.changedFiles
+        .slice(0, 100)
+        .forEach((file) =>
+          console.log(
+            `  ${report.appliedChanges && !report.conflicts.includes(file) ? "ESCRITO" : "CAMBIO EN COPIA"} ${file}`,
+          ),
+        );
       if (report.changedFiles.length > 100) console.log(`  ... y ${report.changedFiles.length - 100} más`);
       report.conflicts.forEach((file) => console.log(`[CONFLICTO] ${file}`));
       report.excludedPaths.slice(0, 50).forEach((file) => console.log(`[EXCLUIDO] ${file}`));
-      if (report.excludedPaths.length > 50) console.log(`  ... y ${report.excludedPaths.length - 50} rutas excluidas más`);
+      if (report.excludedPaths.length > 50)
+        console.log(`  ... y ${report.excludedPaths.length - 50} rutas excluidas más`);
       if (report.error) console.error(`[SANDBOX] ${report.error}`);
       if (report.receiptPath) console.log(`Recibo local: ${report.receiptPath}`);
-      if (!report.success) process.exitCode = report.status === "CONFLICT" ? 2 : (report.exitCode || 1);
+      if (!report.success) process.exitCode = report.status === "CONFLICT" ? 2 : report.exitCode || 1;
     } catch (error) {
       console.error(`[EOS SANDBOX] ${error instanceof Error ? error.message : String(error)}`);
       process.exitCode = 1;
@@ -1165,7 +1251,7 @@ switch (command) {
       migrationId: `FS-${Date.now()}`,
       description: `Mass fleet refactoring: ${actionArg}`,
       action: actionArg,
-      dryRun: false
+      dryRun: false,
     });
 
     console.log(`ID de Migración       : ${report.migrationId}`);
@@ -1176,7 +1262,9 @@ switch (command) {
 
     console.log("=== RESULTADOS POR PROYECTO DE LA FLOTA ===");
     report.projectResults.forEach((r) => {
-      console.log(`  ↳ [${r.status}] ${r.projectId}: ${r.changesApplied.join("; ") || r.error || "Sin cambios requeridos"}`);
+      console.log(
+        `  ↳ [${r.status}] ${r.projectId}: ${r.changesApplied.join("; ") || r.error || "Sin cambios requeridos"}`,
+      );
     });
 
     console.log(`\n[PASS] Migración Fleetshift completada con éxito (Exit Code 0).`);
@@ -1207,14 +1295,18 @@ switch (command) {
     const dryRun = args.includes("--dry") || args.includes("--dry-run");
     const { EosFleetElevator } = await import("../src/core/eosFleetElevator.ts");
     const elevator = new EosFleetElevator(root);
-    console.log(`[EOS FLEET ELEVATOR] Elevando repositorios de la flota al Golden Path RFC-42 (Dry Run: ${dryRun})...\n`);
+    console.log(
+      `[EOS FLEET ELEVATOR] Elevando repositorios de la flota al Golden Path RFC-42 (Dry Run: ${dryRun})...\n`,
+    );
     const report = elevator.elevateFleet({ dryRun });
     console.log(`Repositorios Totales   : ${report.totalProjects}`);
     console.log(`Repositorios Elevados  : ${report.elevatedProjects}`);
     console.log(`Índice Golden Path     : ${report.fleetGoldenPathScore.toFixed(1)}%`);
     console.log(`Sello SHA-256          : ${report.sha256Proof}\n`);
     report.projects.forEach((d) => {
-      console.log(`  ↳ [${d.catalogInfoStatus}] ${d.id} (Score: ${d.goldenPathScore}/100) -> ${d.recommendations.join("; ") || "Conforme"}`);
+      console.log(
+        `  ↳ [${d.catalogInfoStatus}] ${d.id} (Score: ${d.goldenPathScore}/100) -> ${d.recommendations.join("; ") || "Conforme"}`,
+      );
     });
     console.log(`\n[PASS] Elevación de flota completada con éxito.`);
     break;
@@ -1225,9 +1317,14 @@ switch (command) {
     const { EosApolloHermesMesh } = await import("../src/core/eosApolloHermesMesh.ts");
     const mesh = new EosApolloHermesMesh();
     console.log("[EOS APOLLO/HERMES MESH] Despachando llamada RPC con Circuit Breaker y W3C Tracing...\n");
-    const res = await mesh.invokeRpc("audio-engine", "normalize-track", { trackId: "spotify:track:4cOdK2wGLETKBW3PvgPWqT", targetLufs: -14.0 }, async (p) => {
-      return { status: "NORMALIZED", targetLufs: p.targetLufs, ceilingDbTP: -1.0 };
-    });
+    const res = await mesh.invokeRpc(
+      "audio-engine",
+      "normalize-track",
+      { trackId: "spotify:track:4cOdK2wGLETKBW3PvgPWqT", targetLufs: -14.0 },
+      async (p) => {
+        return { status: "NORMALIZED", targetLufs: p.targetLufs, ceilingDbTP: -1.0 };
+      },
+    );
     console.log(`Servicio Destino       : ${res.serviceName}/${res.endpoint}`);
     console.log(`Éxito de Llamada       : ${res.success}`);
     console.log(`Estado Circuit Breaker : ${res.circuitState}`);
@@ -1253,7 +1350,7 @@ switch (command) {
     const plan = engine.planTransition(
       { trackId: "track-A", title: `Track A (${keyA})`, bpm: bpmA, camelotKey: keyA, sampleRateHz: 44100 },
       { trackId: "track-B", title: `Track B (${keyB})`, bpm: bpmB, camelotKey: keyB, sampleRateHz: 44100 },
-      5.0
+      5.0,
     );
 
     console.log(`Track Saliente (A)     : ${plan.trackA.camelotKey} @ ${plan.trackA.bpm} BPM`);
@@ -1261,7 +1358,9 @@ switch (command) {
     console.log(`Tipo de Transición     : ${plan.transitionType}`);
     console.log(`Costo Armónico         : ${plan.harmonicTransitionCost.toFixed(2)} (0.0=Perfecto, 1.0=Disonante)`);
     console.log(`Delta de Tempo         : ${plan.tempoDeltaPercent}%`);
-    console.log(`Duración Crossfade     : ${plan.durationSeconds}s (${plan.durationSamples.toLocaleString()} muestras)`);
+    console.log(
+      `Duración Crossfade     : ${plan.durationSeconds}s (${plan.durationSamples.toLocaleString()} muestras)`,
+    );
     console.log(`Estrategia Recomendada : ${plan.recommendedStrategy}`);
     console.log(`Sello SHA-256          : ${plan.sha256Proof}\n`);
     console.log("[PASS] Plan de mezcla DJ generado con éxito.");
@@ -1275,8 +1374,38 @@ switch (command) {
     const store = new EosAcousticFeatureStore(7);
 
     // Populate with representative user history
-    store.recordListen(userId, "track-1", { tempo: 0.7, energy: 0.85, danceability: 0.8, valence: 0.7, acousticness: 0.1, instrumentalness: 0.2, liveness: 0.15, speechiness: 0.08 }, 210, 210);
-    store.recordListen(userId, "track-2", { tempo: 0.75, energy: 0.9, danceability: 0.85, valence: 0.75, acousticness: 0.08, instrumentalness: 0.1, liveness: 0.2, speechiness: 0.05 }, 190, 200);
+    store.recordListen(
+      userId,
+      "track-1",
+      {
+        tempo: 0.7,
+        energy: 0.85,
+        danceability: 0.8,
+        valence: 0.7,
+        acousticness: 0.1,
+        instrumentalness: 0.2,
+        liveness: 0.15,
+        speechiness: 0.08,
+      },
+      210,
+      210,
+    );
+    store.recordListen(
+      userId,
+      "track-2",
+      {
+        tempo: 0.75,
+        energy: 0.9,
+        danceability: 0.85,
+        valence: 0.75,
+        acousticness: 0.08,
+        instrumentalness: 0.1,
+        liveness: 0.2,
+        speechiness: 0.05,
+      },
+      190,
+      200,
+    );
 
     const profile = store.computeTasteCentroid(userId);
     console.log(`[EOS ACOUSTIC FEATURE STORE] Perfil de gusto en tiempo real (${userId}):\n`);
@@ -1327,7 +1456,9 @@ switch (command) {
     const report = adapter.audit(target);
 
     console.log(`[EOS UNIVERSAL ADAPTER] Inventario de señales locales (${report.projectName}):\n`);
-    console.log(`Lenguaje / Stack       : ${report.fingerprint.primaryLanguage} (${report.fingerprint.packageManager})`);
+    console.log(
+      `Lenguaje / Stack       : ${report.fingerprint.primaryLanguage} (${report.fingerprint.packageManager})`,
+    );
     console.log(`Señales estructurales  : ${report.localSignalScore}/100 [${report.localSignalBand}]`);
     console.log("Preparación productiva : No evaluada");
     console.log(`Digest del reporte SHA-256: ${report.sha256ReportDigest}\n`);
@@ -1381,7 +1512,9 @@ switch (command) {
       console.log("[EOS EDGE] Topología de los 8 Puntos de Presencia Globales (POPs):\n");
       EosGlobalEdgeArbiter.GLOBAL_POPS.forEach((pop, i) => {
         console.log(`  ${i + 1}. [${pop.id.toUpperCase()}] ${pop.name} (${pop.city}, ${pop.country})`);
-        console.log(`     Geodésica: ${pop.latitude.toFixed(4)}°, ${pop.longitude.toFixed(4)}° | Overhead: ${pop.baselineOverheadMs} ms`);
+        console.log(
+          `     Geodésica: ${pop.latitude.toFixed(4)}°, ${pop.longitude.toFixed(4)}° | Overhead: ${pop.baselineOverheadMs} ms`,
+        );
         console.log(`     Rol: ${pop.role}`);
       });
       console.log("\n[PASS] Topología global de Anycast operativa.");
@@ -1397,7 +1530,9 @@ switch (command) {
       console.log(`Sello Criptográfico SHA-256: ${report.sha256Proof}\n`);
       console.log("Ranking de Cercanía Global:");
       report.rankedPops.slice(0, 4).forEach((r, idx) => {
-        console.log(`  ${idx + 1}. [${r.pop.id.toUpperCase()}] ${r.pop.city} -> ${r.distanceKm} km | RTT: ${r.estimatedRttMs} ms ${r.isPrimary ? '★ PRIMARIO' : ''}`);
+        console.log(
+          `  ${idx + 1}. [${r.pop.id.toUpperCase()}] ${r.pop.city} -> ${r.distanceKm} km | RTT: ${r.estimatedRttMs} ms ${r.isPrimary ? "★ PRIMARIO" : ""}`,
+        );
       });
       console.log("\n[PASS] Enrutamiento Anycast global computado con éxito.");
     }
@@ -1430,11 +1565,11 @@ switch (command) {
     const gemm = cuda.runTensorMmaGemm(500);
     console.log(`[EOS NVIDIA WARP] Planificador SIMT CUDA 32-Hilos & Tensor Core MMA:\n`);
     console.log(`Hilos por Warp          : ${warp.threadCount} (Máscara: 0x${warp.activeThreadMask.toString(16)})`);
-    console.log(`Intercambio __shfl_sync : ${warp.shuffleVerified ? 'VERIFICADO (0 ns)' : 'FALLA'}`);
+    console.log(`Intercambio __shfl_sync : ${warp.shuffleVerified ? "VERIFICADO (0 ns)" : "FALLA"}`);
     console.log(`Ciclos Divergencia Evitados: ${warp.divergenceCyclesAvoided}`);
     console.log(`Operaciones Tensor MMA  : ${gemm.totalOps.toLocaleString()} FLOPs (${gemm.iterations} iteraciones)`);
     console.log(`Rendimiento Tensor Core : ${gemm.mOpsSec.toLocaleString()} MOps/s`);
-    console.log(`Cero Asignaciones Heap  : ${gemm.zeroAllocation ? '0 B/op VERIFICADO' : 'FALLA'}`);
+    console.log(`Cero Asignaciones Heap  : ${gemm.zeroAllocation ? "0 B/op VERIFICADO" : "FALLA"}`);
     console.log(`Latencia Kernel         : ${gemm.durationUs.toFixed(2)} µs\n`);
     console.log(`[PASS] Kernel SIMT y Tensor Core verificado con éxito.`);
     break;
@@ -1449,9 +1584,15 @@ switch (command) {
     console.log(`[EOS APEX SYNTHESIS] Fusión Samaeliana · IBM Sysplex · NVIDIA CUDA:\n`);
     console.log(`Estado General          : [${res.status}]`);
     console.log(`Sello Unificado Merkle  : ${res.unifiedSha256Attestation}`);
-    console.log(`Octava Samaeliana       : 8/8 Intervalos + 2 Shocks Conscientes (Nous: ${res.octaveReport.nousAtomSha256.slice(0, 16)}...)`);
-    console.log(`IBM Parallel Sysplex    : 2PC XA ${res.sysplexReport.decision} (SLA: ${res.sevenNinesMetrics.calculatedAvailability}%)`);
-    console.log(`NVIDIA CUDA SIMT Warp   : 32 Hilos Lock-Free | ${res.tensorMma.mOpsSec.toLocaleString()} MOps/s (0 B/op)\n`);
+    console.log(
+      `Octava Samaeliana       : 8/8 Intervalos + 2 Shocks Conscientes (Nous: ${res.octaveReport.nousAtomSha256.slice(0, 16)}...)`,
+    );
+    console.log(
+      `IBM Parallel Sysplex    : 2PC XA ${res.sysplexReport.decision} (SLA: ${res.sevenNinesMetrics.calculatedAvailability}%)`,
+    );
+    console.log(
+      `NVIDIA CUDA SIMT Warp   : 32 Hilos Lock-Free | ${res.tensorMma.mOpsSec.toLocaleString()} MOps/s (0 B/op)\n`,
+    );
     console.log(`[PASS] Síntesis de ingeniería y gnosis completada con éxito.`);
     break;
   }
@@ -1477,9 +1618,13 @@ switch (command) {
     console.log(`Asignaciones de heap    : ${rep.disruptorReport.heapAllocationMeasurement}`);
     console.log(`Padding del cursor      : configurado en el ArrayBuffer; no prueba aislamiento entre hilos\n`);
     console.log(`Bytes escaneados        : ${rep.byteScanReport.totalBytesScanned.toLocaleString()}`);
-    console.log(`Throughput observado    : ${rep.byteScanReport.throughputMiBPerSecond.toLocaleString()} MiB/s (bucle JS)`);
+    console.log(
+      `Throughput observado    : ${rep.byteScanReport.throughputMiBPerSecond.toLocaleString()} MiB/s (bucle JS)`,
+    );
     console.log(`Ancho desenrollado      : ${rep.byteScanReport.unrolledWidthBytes} bytes (no SIMD)`);
-    console.log(`Delimitadores JSON      : ${rep.byteScanReport.structuralDelimitersFound.toLocaleString()} encontrados`);
+    console.log(
+      `Delimitadores JSON      : ${rep.byteScanReport.structuralDelimitersFound.toLocaleString()} encontrados`,
+    );
     console.log(`Huella SHA-256 combinada: ${rep.combinedFingerprintSha256} (no es firma ni prueba)`);
     console.log(`Estado                  : ${rep.status} (no ejecuta pruebas ni mide heap)\n`);
     break;
@@ -1489,10 +1634,9 @@ switch (command) {
   case "nu": {
     printBanner();
     const sub = (args[1] || "audit").toLowerCase();
-    const {
-      evaluateNubankArchitectureHealth,
-      synthesizeNubankBlamelessPostmortem
-    } = await import("../src/core/eosNubankCodex.ts");
+    const { evaluateNubankArchitectureHealth, synthesizeNubankBlamelessPostmortem } = await import(
+      "../src/core/eosNubankCodex.ts"
+    );
 
     if (sub === "postmortem") {
       const rep = synthesizeNubankBlamelessPostmortem({
@@ -1508,23 +1652,35 @@ switch (command) {
         timeline: [
           { timestamp: "T-60m", description: "Consumer lag alerted by Prometheus", detectedBy: "alert" },
           { timestamp: "T-45m", description: "Pod autoscaling triggered in Kubernetes EKS", detectedBy: "engineer" },
-          { timestamp: "T-0m", description: "All partitions rebalanced and drained idempotently", detectedBy: "sentinel" }
+          {
+            timestamp: "T-0m",
+            description: "All partitions rebalanced and drained idempotently",
+            detectedBy: "sentinel",
+          },
         ],
         fiveWhys: [
           "Consumer lag grew due to partition hash imbalance.",
           "Partition key was transaction type instead of account ID.",
           "Schema lacked an automated partition-key entropy check.",
           "Contract tests in CI checked field types but not partition key cardinality.",
-          "The squad's Sachem suite lacked a partition entropy validator."
+          "The squad's Sachem suite lacked a partition entropy validator.",
         ],
         cognitiveFactors: [
           "Monitoring dashboard grouped multiple partitions into a single average line.",
-          "Alert runbook lacked explicit pod horizontal scale commands."
+          "Alert runbook lacked explicit pod horizontal scale commands.",
         ],
         systemicRemediations: [
-          { action: "Key all transfer events by account_id for uniform partition spread", owner: "valentin", deadline: "2026-10-30" },
-          { action: "Add Sachem contract lint for partition key distribution", owner: "squad-platform", deadline: "2026-11-05" }
-        ]
+          {
+            action: "Key all transfer events by account_id for uniform partition spread",
+            owner: "valentin",
+            deadline: "2026-10-30",
+          },
+          {
+            action: "Add Sachem contract lint for partition key distribution",
+            owner: "squad-platform",
+            deadline: "2026-11-05",
+          },
+        ],
       });
       console.log(`[EOS NUBANK SRE] Postmortem Blameless Institucional Generado:\n`);
       console.log(rep.markdown);
@@ -1537,7 +1693,7 @@ switch (command) {
         enforcesKafkaIdempotencyTokens: true,
         usesImmutableBitemporalLedgers: true,
         hasBlamelessPostmortemProcess: true,
-        unitTestCoveragePercent: 96
+        unitTestCoveragePercent: 96,
       });
       console.log(`[EOS NUBANK AUDIT] Evaluación Institucional de Arquitectura (building.nu.com):\n`);
       console.log(`Puntaje Institucional   : ${evalReport.institutionalScore} / 100 [${evalReport.tier}]`);
@@ -1588,7 +1744,9 @@ switch (command) {
     } else if (action === "heal") {
       const targetFile = args[2] || "src/core/eosApexModelRouter.ts";
       const isDry = args.includes("--dry") || !args.includes("--apply");
-      console.log(`[EOS FRONTIER] Auto-Sanador Cerrado NASA FDIR / Meta SapFix (${isDry ? "DRY-RUN" : "APLICANDO"})...\n`);
+      console.log(
+        `[EOS FRONTIER] Auto-Sanador Cerrado NASA FDIR / Meta SapFix (${isDry ? "DRY-RUN" : "APLICANDO"})...\n`,
+      );
       const res = router.healFile(targetFile, isDry);
       console.log(`Archivo Objetivo     : ${res.targetFile}`);
       console.log(`Estado Diagnóstico   : ${res.status}`);
@@ -1599,7 +1757,8 @@ switch (command) {
       console.log(`Recibo Criptográfico : ${res.sha256Receipt}`);
       console.log(`Duración             : ${res.durationMs.toFixed(2)} ms (Exit Code ${res.verificationExitCode})\n`);
     } else {
-      const prompt = args.slice(1).join(" ") || "Diseñar arquitectura hexagonal pura y port adapters en TypeScript y Go";
+      const prompt =
+        args.slice(1).join(" ") || "Diseñar arquitectura hexagonal pura y port adapters en TypeScript y Go";
       console.log(`[EOS FRONTIER] Enrutador Inteligente de Modelos de Frontera:\n`);
       const res = router.routeTask(prompt, "");
       console.log(`Directiva Evaluada   : "${prompt}"`);
@@ -1655,7 +1814,9 @@ switch (command) {
       console.log(`[EOS TOPOLOGY] Cálculo Determinista de Radio de Explosión (Blast Radius):\n`);
       console.log(`Nodo Evaluado        : ${blast.nodeId} (${blast.name})`);
       console.log(`Salidas Directas     : ${blast.directDownstream.join(", ") || "Ninguna"}`);
-      console.log(`Nodos Afectados      : ${blast.blastRadiusCount} de ${blast.totalSystemNodes} (${(blast.blastRadiusRatio * 100).toFixed(1)}%)`);
+      console.log(
+        `Nodos Afectados      : ${blast.blastRadiusCount} de ${blast.totalSystemNodes} (${(blast.blastRadiusRatio * 100).toFixed(1)}%)`,
+      );
       console.log(`Lista Transitiva     : ${blast.transitiveBlastRadius.join(", ") || "Aislado"}`);
       console.log(`Latencia Propagación : ${blast.estimatedLatencyUs} µs\n`);
     } else {
@@ -1669,7 +1830,7 @@ switch (command) {
       console.log(`Total Aristas Deps   : ${metrics.totalEdges} conexiones`);
       console.log(`Latencia Promedio    : ${metrics.averageLatencyUs} µs\n`);
       console.log(`Nodos Soberanos Registrados:`);
-      nodes.forEach(n => {
+      nodes.forEach((n) => {
         console.log(`  ↳ [Anillo ${n.ring}] ${n.id.padEnd(16)} | ${n.name.padEnd(36)} | Latencia: ${n.latencyUs} µs`);
       });
       console.log("");
@@ -1680,7 +1841,9 @@ switch (command) {
   case "soul":
   case "architect": {
     printBanner();
-    const { getArchitectIdentity, getMasterKanbanState, evaluateAlignment, getDailyDisciplineCheck } = await import("../src/core/eosJarvisSoul.ts");
+    const { getArchitectIdentity, getMasterKanbanState, evaluateAlignment, getDailyDisciplineCheck } = await import(
+      "../src/core/eosJarvisSoul.ts"
+    );
     const directive = args.slice(1).join(" ");
 
     if (directive) {
@@ -1706,16 +1869,16 @@ switch (command) {
       console.log(`--- TABLERO KANBAN MAESTRO («SOLO EOS») ---`);
       for (const col of Object.values(kanban)) {
         console.log(`\n• [${col.status}] ${col.name}:`);
-        col.items.forEach(i => console.log(`   ↳ ${i}`));
+        col.items.forEach((i) => console.log(`   ↳ ${i}`));
       }
 
       console.log(`\n--- TRILOGÍA DIARIA DE BIENESTAR ---`);
       console.log(`Templo Físico:`);
-      daily.temploFisico.forEach(t => console.log(`  ✔ ${t}`));
+      daily.temploFisico.forEach((t) => console.log(`  ✔ ${t}`));
       console.log(`Orden Financiero:`);
-      daily.ordenFinanciero.forEach(o => console.log(`  ✔ ${o}`));
+      daily.ordenFinanciero.forEach((o) => console.log(`  ✔ ${o}`));
       console.log(`Gnosis y Conciencia:`);
-      daily.gnosisConsciencia.forEach(g => console.log(`  ✔ ${g}`));
+      daily.gnosisConsciencia.forEach((g) => console.log(`  ✔ ${g}`));
       console.log("");
     }
     break;
@@ -1761,7 +1924,9 @@ switch (command) {
     console.log(`Cero Secretos Plano  : ${audit.zeroPlaintextSecrets ? "VERIFICADO (0 leaks)" : "FALLA"}`);
     console.log(`Pureza Capa 0 (0-Deps): ${audit.layer0PurityEnforced ? "VERIFICADO (100% nativo)" : "FALLA"}`);
     console.log(`Merkle Chain-of-Th.  : ${audit.merkleChainValid ? "INVIOLABLE (Inmune a inyección)" : "FALLA"}`);
-    console.log(`EosAin Heap Purge    : ${audit.heapZeroEntropyPurged ? "ENTROPÍA CERO (XOR White Noise + 0s)" : "FALLA"}`);
+    console.log(
+      `EosAin Heap Purge    : ${audit.heapZeroEntropyPurged ? "ENTROPÍA CERO (XOR White Noise + 0s)" : "FALLA"}`,
+    );
     console.log(`EosElohim Breaker    : ${audit.karmicCircuitBreakerReady ? "ACTIVO (Corte anti-deadlock)" : "FALLA"}`);
     console.log(`Cordón de Plata HMAC : ${audit.silverCordSignature.slice(0, 32)}... (Sellado)\n`);
     break;
@@ -1783,10 +1948,10 @@ switch (command) {
     console.log(`Garantía de Certeza  : ${blast.isolationGuarantee}\n`);
 
     console.log(`Módulos Impactados Descendentes (${blast.impactedModules.length}):`);
-    blast.impactedModules.forEach(m => console.log(`  ↳ 📦 ${m}`));
+    blast.impactedModules.forEach((m) => console.log(`  ↳ 📦 ${m}`));
 
     console.log(`\nSuites Predictivas de Prueba (${blast.predictiveTestSuites.length}):`);
-    blast.predictiveTestSuites.forEach(t => console.log(`  ↳ 🧪 ${t}`));
+    blast.predictiveTestSuites.forEach((t) => console.log(`  ↳ 🧪 ${t}`));
     console.log("");
     break;
   }
@@ -1811,7 +1976,7 @@ switch (command) {
     console.log(`Operadores Alterados : Relacionales (>=, <=, >, <, ===), Booleanos, Aritméticos\n`);
 
     console.log(`Muestra de Mutantes Inyectados:`);
-    mutants.slice(0, 5).forEach(m => {
+    mutants.slice(0, 5).forEach((m) => {
       console.log(`  ↳ [Línea ${m.line}] ${m.id}: Cambia '${m.originalOp}' por '${m.mutatedOp}'`);
     });
     console.log(`\nDoctrina: Los mutantes deben ser liquidados inmediatamente por la suite de pruebas.`);
@@ -1844,10 +2009,12 @@ switch (command) {
   case "schedule": {
     printBanner();
     console.log(`[EOS SCHEDULER] Planificador Cooperativo a 120Hz (< 8.33ms por Frame)...\n`);
-    const { EosCooperativeScheduler, constantTimeSelect, constantTimeEquals } = await import("../src/core/eosMicroScheduler.ts");
+    const { EosCooperativeScheduler, constantTimeSelect, constantTimeEquals } = await import(
+      "../src/core/eosMicroScheduler.ts"
+    );
     const scheduler = new EosCooperativeScheduler(8.33);
 
-    const tasks = Array.from({ length: 150 }, (_, i) => () => {
+    const tasks = Array.from({ length: 150 }, (_, _i) => () => {
       let acc = 0;
       for (let j = 0; j < 5000; j++) acc += j;
       return acc;
@@ -1859,22 +2026,12 @@ switch (command) {
     console.log(`Tiempo Total         : ${report.totalElapsedMs} ms`);
     console.log(`Duración Media Slice : ${report.averageSliceDurationMs} ms (Presupuesto 8.33ms)`);
     console.log(`Violaciones de Frame : ${report.frameBudgetViolations} (0 garantizado, 120 FPS sin stuttering)`);
-    console.log(`Operaciones Branchless: constantTimeSelect(true, 42, 99) => ${constantTimeSelect(true, 42, 99)} (0 branches)`);
-    console.log(`Comparador Seguro    : constantTimeEquals('alpha', 'alpha') => ${constantTimeEquals('alpha', 'alpha')} (Sin fuga temporal)\n`);
-    break;
-  }
-
-  case "pts": {
-    printBanner();
-    console.log(`[EOS PTS] Ejecutando Selección Predictiva Inteligente de Pruebas (Google Piper / Datalog)...\n`);
-    try {
-      execFileSync(process.execPath, [path.join(root, "scripts/verify-cicd-pipeline.mjs"), "--pts"], {
-        cwd: root,
-        stdio: "inherit"
-      });
-    } catch {
-      process.exit(1);
-    }
+    console.log(
+      `Operaciones Branchless: constantTimeSelect(true, 42, 99) => ${constantTimeSelect(true, 42, 99)} (0 branches)`,
+    );
+    console.log(
+      `Comparador Seguro    : constantTimeEquals('alpha', 'alpha') => ${constantTimeEquals("alpha", "alpha")} (Sin fuga temporal)\n`,
+    );
     break;
   }
 
@@ -1882,11 +2039,13 @@ switch (command) {
   case "formal":
   case "tla": {
     printBanner();
-    console.log(`[EOS MODEL SIMULATION] Extracción de texto TLA+ y simulaciones JavaScript acotadas; no ejecuta TLC ni model checking formal.\n`);
+    console.log(
+      `[EOS MODEL SIMULATION] Extracción de texto TLA+ y simulaciones JavaScript acotadas; no ejecuta TLC ni model checking formal.\n`,
+    );
     try {
       execFileSync(process.execPath, [path.join(root, "scripts/verify-formal-tla.mjs")], {
         cwd: root,
-        stdio: "inherit"
+        stdio: "inherit",
       });
     } catch {
       process.exit(1);
@@ -1897,7 +2056,9 @@ switch (command) {
   case "jepsen":
   case "chaos:net": {
     printBanner();
-    console.log(`[EOS NETWORK SIMULATION] Escenario local de partición y pérdida de paquetes; no es una prueba Jepsen distribuida.\n`);
+    console.log(
+      `[EOS NETWORK SIMULATION] Escenario local de partición y pérdida de paquetes; no es una prueba Jepsen distribuida.\n`,
+    );
     const { EosTimeTravelSim } = await import("../src/core/eosTimeTravelSim.ts");
     const sim = new EosTimeTravelSim(774411);
 
@@ -1911,7 +2072,9 @@ switch (command) {
 
     const receipt = sim.runSimulation(25);
     console.log(`Mensajes Caídos por Partición : ${receipt.jepsenMetrics?.partitionDropped}`);
-    console.log(`Preservación de Quórum Mayor : ${receipt.jepsenMetrics?.quorumMaintained ? "PRESERVADO (Sin Split-Brain)" : "FALLO"}`);
+    console.log(
+      `Preservación de Quórum Mayor : ${receipt.jepsenMetrics?.quorumMaintained ? "PRESERVADO (Sin Split-Brain)" : "FALLO"}`,
+    );
     console.log(`Hash de Estado Bajo Partición : ${receipt.finalStateHash}\n`);
 
     console.log("Sanando Partición de Red (Auto-Heal) & Reconciliando Estado...");
@@ -1919,7 +2082,9 @@ switch (command) {
     sim.scheduleEvent("replica-1", "RECONCILE_STATE", 10, {}, "replica-3");
     const healedReceipt = sim.runSimulation(40);
     console.log(`Hash de Estado Convergido     : ${healedReceipt.finalStateHash}`);
-    console.log(`Resultado del escenario       : simulación local completada; no prueba linearizability de un clúster real.\n`);
+    console.log(
+      `Resultado del escenario       : simulación local completada; no prueba linearizability de un clúster real.\n`,
+    );
     break;
   }
 
@@ -1930,7 +2095,7 @@ switch (command) {
     const { EosSecureMemoryVault } = await import("../src/core/eosSecureMemoryVault.ts");
     const vault = new EosSecureMemoryVault();
 
-    const sampleKey = new Uint8Array([0x01, 0x02, 0x03, 0x04, 0x05, 0xDE, 0xAD, 0xBE, 0xEF]);
+    const sampleKey = new Uint8Array([0x01, 0x02, 0x03, 0x04, 0x05, 0xde, 0xad, 0xbe, 0xef]);
     vault.storeSecret("master-root-key", sampleKey);
     console.log("Token Criptográfico Almacenado en Uint8Array no serializable (0 Strings en Heap)");
 
@@ -1938,12 +2103,16 @@ switch (command) {
     console.log(`Validación de Memoria Constante (Branchless): ${match ? "VERIFICADO (0 Branches)" : "FALLO"}`);
 
     const reportActive = vault.getAuditReport();
-    console.log(`Estado de Bóveda Activa       : ${reportActive.epistemicState} (${reportActive.totalAllocatedBytes} bytes)`);
+    console.log(
+      `Estado de Bóveda Activa       : ${reportActive.epistemicState} (${reportActive.totalAllocatedBytes} bytes)`,
+    );
 
     console.log("\nEjecutando Purga In-Place de Cero-Entropía (crypto.randomFillSync + fill(0))...");
     vault.wipeAll();
     const reportPurged = vault.getAuditReport();
-    console.log(`Estado Tras Purga Militar     : ${reportPurged.epistemicState} (${reportPurged.totalAllocatedBytes} bytes)`);
+    console.log(
+      `Estado Tras Purga Militar     : ${reportPurged.epistemicState} (${reportPurged.totalAllocatedBytes} bytes)`,
+    );
     console.log(`Garantía Anti-Fugas           : ${reportPurged.zeroPlaintextGuarantee}\n`);
     break;
   }
@@ -1967,7 +2136,9 @@ switch (command) {
 
     const report = temple.auditThreeBrains(intHours, emoHours, motHours);
     console.log(`--- ARMONIZACIÓN DE LOS TRES CEREBROS ---`);
-    console.log(`Cerebro Intelectual  : ${(report.intellectualRatio * 100).toFixed(0)}% (${report.intellectualHours}h)`);
+    console.log(
+      `Cerebro Intelectual  : ${(report.intellectualRatio * 100).toFixed(0)}% (${report.intellectualHours}h)`,
+    );
     console.log(`Cerebro Emocional    : ${(report.emotionalRatio * 100).toFixed(0)}% (${report.emotionalHours}h)`);
     console.log(`Cerebro Motor-Sexual : ${(report.motorRatio * 100).toFixed(0)}% (${report.motorHours}h)`);
     console.log(`Diagnóstico          : ${report.status}`);
@@ -1989,7 +2160,7 @@ switch (command) {
     const res = temple.evaluateClaveDeSol({
       subjectAware: subj,
       objectFocused: obj,
-      placePresent: plc
+      placePresent: plc,
     });
 
     console.log(`Puntuación Conciencia: ${res.consciousnessAwakeScore} / 100`);
@@ -2027,7 +2198,7 @@ switch (command) {
     printBanner();
     console.log(`[EOS FINOPS] Escudo Inviolable de Presupuesto & Partición de Cajitas...\n`);
     const { EosFinOpsBudget } = await import("../src/core/eosFinOpsBudget.ts");
-    const budget = new EosFinOpsBudget(15.00);
+    const budget = new EosFinOpsBudget(15.0);
 
     const report = budget.getReport();
     console.log(`Tope Mensual IA      : $${report.monthlyCapUsd.toFixed(2)} USD (Inviolable)`);
@@ -2039,7 +2210,11 @@ switch (command) {
 
     console.log("--- PARTICIÓN SAGRADA DE CAJITAS (VALENTÍN) ---");
     report.cajitas.forEach((c) => {
-      const target = c.monthlyTargetUsd ? `$${c.monthlyTargetUsd} USD` : (c.monthlyTargetCop ? `$${c.monthlyTargetCop} COP` : "Prioridad Máxima");
+      const target = c.monthlyTargetUsd
+        ? `$${c.monthlyTargetUsd} USD`
+        : c.monthlyTargetCop
+          ? `$${c.monthlyTargetCop} COP`
+          : "Prioridad Máxima";
       console.log(`  📦 [${c.name}] (${target}): ${c.purpose} · ${c.notes}`);
     });
     console.log("");
@@ -2060,7 +2235,7 @@ switch (command) {
       category,
       observedCenter: "INTELLECTUAL",
       consciousSelfObservation: true,
-      deepMeditationPenetrationLevel: depth
+      deepMeditationPenetrationLevel: depth,
     });
 
     console.log(`ID de Impresión      : ${report.impressionId}`);
@@ -2087,7 +2262,7 @@ switch (command) {
       cajitasBudgetRespected: true,
       claveDeSolPracticed: true,
       circadianScreenVetoRespected: true,
-      selflessServiceOrDonation: true
+      selflessServiceOrDonation: true,
     });
 
     console.log(`Arquitecto           : ${audit.architect} (Tony Stark)`);
@@ -2119,7 +2294,9 @@ switch (command) {
 
     console.log(`Acción de Auto-Ajuste: ${report.actionTaken}`);
     console.log(`Lag Event Loop       : ${report.eventLoopLagMs} ms`);
-    console.log(`Capacidad Ring Buffer: ${report.stateBefore.ringBufferCapacity} -> ${report.stateAfter.ringBufferCapacity} slots`);
+    console.log(
+      `Capacidad Ring Buffer: ${report.stateBefore.ringBufferCapacity} -> ${report.stateAfter.ringBufferCapacity} slots`,
+    );
     console.log(`Batch Óptimo         : ${report.stateAfter.optimalBatchSize}`);
     console.log(`Reconfiguraciones    : ${report.stateAfter.totalReconfigurations}`);
     console.log(`Fragmentación Heap   : ${(report.heapFragmentationRatio * 100).toFixed(2)}%`);
@@ -2158,20 +2335,22 @@ switch (command) {
     const subject = {
       subjectId: "AGENT_VALENTIN",
       clearance: "TOP_SECRET",
-      compartments: ["EOS-NOUS", "TITAN-CORE"]
+      compartments: ["EOS-NOUS", "TITAN-CORE"],
     };
     const obj = {
       objectId: "OBJ_CORE_INTEGRITY",
       classification: "TOP_SECRET",
       compartments: ["EOS-NOUS"],
-      redPayload: "SYSTEM_SOVEREIGNTY_VERIFIED"
+      redPayload: "SYSTEM_SOVEREIGNTY_VERIFIED",
     };
     comp.storeRedObject(subject, obj);
     const transit = comp.exportToBlackBoundary(subject, obj.objectId);
     const logs = comp.getAuditTrail();
 
     console.log(`Transacciones Red/Black: ${logs.length}`);
-    console.log(`Última Frontera BLACK  : Seq #${transit.sequenceNumber} - Hash: ${transit.previousLogHash.slice(0, 32)}...`);
+    console.log(
+      `Última Frontera BLACK  : Seq #${transit.sequenceNumber} - Hash: ${transit.previousLogHash.slice(0, 32)}...`,
+    );
     console.log(`Estado de Auditoría    : 100% Criptográficamente Sellado (SHA-384)\n`);
     break;
   }
@@ -2194,9 +2373,17 @@ switch (command) {
     printBanner();
     console.log("[EOS CONSENSUS] Consenso Planetario Raft/Paxos & Replicación de Log...\n");
     const { EosPlanetaryConsensusEngine } = await import("../src/core/eosPlanetaryConsensusEngine.ts");
-    const engine = new EosPlanetaryConsensusEngine(["node-us-east", "node-us-west", "node-eu-central", "node-ap-east", "node-sa-east"]);
+    const engine = new EosPlanetaryConsensusEngine([
+      "node-us-east",
+      "node-us-west",
+      "node-eu-central",
+      "node-ap-east",
+      "node-sa-east",
+    ]);
     const election = engine.electLeader("node-us-east");
-    console.log(`Líder Electo         : ${election.leaderId} (Votos: ${election.votesReceived}/${engine.getClusterSize()})`);
+    console.log(
+      `Líder Electo         : ${election.leaderId} (Votos: ${election.votesReceived}/${engine.getClusterSize()})`,
+    );
     console.log(`Quórum Requerido     : ${engine.getQuorumSize()} nodos`);
     const proposal = engine.propose("SYSTEM_HEARTBEAT", { epoch: Date.now(), status: "SOVEREIGN_APEX" });
     console.log(`Log Entrada #${proposal.entryIndex}      : Confirmada por Quórum (${proposal.acks} acks)`);
@@ -2289,7 +2476,9 @@ switch (command) {
     for (let i = 1; i <= 6; i++) {
       const decision = limiter.consume(clientId, 1);
       const icon = decision.granted ? "✔ PERMITIDO" : "✖ DESCARTADO (429)";
-      console.log(`  Req #${i}: ${icon} | Tokens Restantes: ${decision.remainingTokens} | Retry-After: ${decision.retryAfterSeconds}s`);
+      console.log(
+        `  Req #${i}: ${icon} | Tokens Restantes: ${decision.remainingTokens} | Retry-After: ${decision.retryAfterSeconds}s`,
+      );
     }
     console.log(`\nPrecisión Monotónica : Nanosegundos (process.hrtime.bigint)\n`);
     break;
@@ -2329,7 +2518,7 @@ switch (command) {
     console.log(`  Tokens Detectados   : ${result.totalTokens}`);
     console.log(`  Duración            : ${result.durationUs} µs`);
     console.log(`  Rendimiento         : ${result.throughputMbSec} MB/s`);
-    console.log(`  Asignaciones Heap   : 0 B/op (Verificado en V8 TurboFan)`);
+    console.log(`  Strings temporales  : 0 (tokenización directa sobre bytes)`);
     console.log(`  Distribución Tokens :`, result.tokenTypesCount);
     break;
   }
@@ -2361,9 +2550,15 @@ switch (command) {
     const engine = new EosHnswVectorEngine({ dimensions: 128, m: 16 });
 
     // Seed representative corporate knowledge documents
-    engine.addDocument("doc-palantir", "Palantir Foundry and Gotham semantic knowledge graph reasoning with HNSW index");
+    engine.addDocument(
+      "doc-palantir",
+      "Palantir Foundry and Gotham semantic knowledge graph reasoning with HNSW index",
+    );
     engine.addDocument("doc-aladdin", "BlackRock Aladdin institutional risk simulation with Monte Carlo Beta-PERT");
-    engine.addDocument("doc-spacex", "SpaceX Starship telemetry streaming with nanosecond monotonic cryptographic ledgers");
+    engine.addDocument(
+      "doc-spacex",
+      "SpaceX Starship telemetry streaming with nanosecond monotonic cryptographic ledgers",
+    );
     engine.addDocument("doc-nsa", "NSA CNSA 2.0 post-quantum encryption and zero-trust compartmentalization");
     engine.addDocument("doc-netflix", "Netflix Chaos Monkey automated failure injection and resilience engineering");
 
@@ -2375,7 +2570,9 @@ switch (command) {
       const elapsed = (performance.now() - t0).toFixed(3);
       console.log(`Búsqueda completada en ${elapsed} ms:\n`);
       results.forEach((r, idx) => {
-        console.log(`  [${idx + 1}] ID: ${r.id.padEnd(16)} | Similitud: ${(r.similarity * 100).toFixed(1)}% | Distancia: ${r.distance}`);
+        console.log(
+          `  [${idx + 1}] ID: ${r.id.padEnd(16)} | Similitud: ${(r.similarity * 100).toFixed(1)}% | Distancia: ${r.distance}`,
+        );
         console.log(`      Texto: "${r.metadata?.text}"\n`);
       });
     } else {
@@ -2447,7 +2644,7 @@ switch (command) {
     if (sub === "status" || sub === "list") {
       const blocks = chain.getBlocks();
       console.log(`Bloques Registrados (${blocks.length}):\n`);
-      blocks.forEach(b => {
+      blocks.forEach((b) => {
         console.log(`  Bloque #${b.index} [${b.payload.type}]: ${b.payload.summary}`);
         console.log(`    Hash Actual   : ${b.currentHash.slice(0, 32)}...`);
         console.log(`    Hash Anterior : ${b.previousHash.slice(0, 32)}...`);
@@ -2482,13 +2679,13 @@ switch (command) {
       platforms: ["distributed-backend", "web"],
       entities: ["Account", "Transaction", "AuditRecord"],
       commands: ["ProcessTransaction", "AuditState", "Reconcile"],
-      compliance: ["PCI_DSS", "SLSA_4", "WCAG_2_1_AA"]
+      compliance: ["PCI_DSS", "SLSA_4", "WCAG_2_1_AA"],
     };
     const blueprint = EosUniversalProductFoundry.createProductBlueprint(manifest);
     const report = EosUniversalProductFoundry.validateProductTopology(blueprint);
     console.log(`  Arquitectura     : Hexagonal Pura (Capa 0 - 0 dependencias externas)`);
     console.log(`  Contextos Bounded: ${blueprint.boundedContexts.join(", ")}`);
-    console.log(`  Entidades Núcleo : ${blueprint.domainEntities.map(e => e.name).join(", ")}`);
+    console.log(`  Entidades Núcleo : ${blueprint.domainEntities.map((e) => e.name).join(", ")}`);
     console.log(`  Comandos / EARS  : ${blueprint.useCases.length} casos de uso formalizados`);
     console.log(`  Trazabilidad BDD : ${report.earsBddCoveragePercent}% cobertura`);
     console.log(`  Aislamiento L0   : ${report.hermeticIsolationPassed ? "VERIFICADO & PURO" : "FALLA"}`);
@@ -2512,7 +2709,7 @@ switch (command) {
       tier: tier,
       platforms: ["distributed-backend"],
       entities: ["PrimaryEntity"],
-      commands: ["ExecuteCommand"]
+      commands: ["ExecuteCommand"],
     };
     const blueprint = EosUniversalProductFoundry.createProductBlueprint(manifest);
     const report = EosUniversalProductFoundry.validateProductTopology(blueprint);
@@ -2533,8 +2730,10 @@ switch (command) {
 
     if (sub === "stages" || sub === "list") {
       console.log(`Las 21 Fases Maestras del Pipeline Soberano (${SOVEREIGN_21_STAGES.length}):\n`);
-      SOVEREIGN_21_STAGES.forEach(s => {
-        console.log(`  [${String(s.id).padStart(2, "0")}] ${s.code.padEnd(24)} | ${s.phaseGroup.padEnd(12)} | ${s.name}`);
+      SOVEREIGN_21_STAGES.forEach((s) => {
+        console.log(
+          `  [${String(s.id).padStart(2, "0")}] ${s.code.padEnd(24)} | ${s.phaseGroup.padEnd(12)} | ${s.name}`,
+        );
         console.log(`       ${s.description}`);
       });
       console.log("");
@@ -2552,13 +2751,13 @@ switch (command) {
           title,
           userPrompt: prompt,
           authLevel: 3,
-          authorizedBy: "Valentín Flórez Arbeláez"
+          authorizedBy: "Valentín Flórez Arbeláez",
         },
         {
           onStageProgress: (stageId, name) => {
             console.log(`  ✓ Fase ${String(stageId).padStart(2, "0")}/21: ${name}`);
-          }
-        }
+          },
+        },
       );
       const elapsed = (performance.now() - t0).toFixed(2);
 
@@ -2567,7 +2766,9 @@ switch (command) {
       console.log(`  Fases Culminadas     : ${summary.completedStages} / ${summary.totalStages}`);
       console.log(`  Estado Epistémico    : ${summary.epistemicState}`);
       console.log(`  Recibo Criptográfico : sha256:${summary.sha256Receipt}`);
-      console.log(`  Integridad de Recibo : ${loop.verifyReceipt(summary) ? "VERIFICADO (100% AUTÉNTICO)" : "CORRUPTO"}\n`);
+      console.log(
+        `  Integridad de Recibo : ${loop.verifyReceipt(summary) ? "VERIFICADO (100% AUTÉNTICO)" : "CORRUPTO"}\n`,
+      );
     }
     break;
   }
@@ -2627,7 +2828,9 @@ switch (command) {
     printBanner();
     const subAction = (args[1] || "summary").toLowerCase();
     const { EosContinuousRefactorEngine } = await import("../src/core/eosContinuousRefactorEngine.ts");
-    const { assertPrecondition, assertPostcondition, assertInvariant, deepFreeze, pureSha256 } = await import("../src/core/eosKernelPrimitives.ts");
+    const { assertPrecondition, assertPostcondition, assertInvariant, deepFreeze, pureSha256 } = await import(
+      "../src/core/eosKernelPrimitives.ts"
+    );
 
     if (subAction === "audit") {
       const targetDir = args[2] || "src/core";
@@ -2666,7 +2869,7 @@ switch (command) {
       assertPrecondition(true, "Precondición Layer-0 válida");
       assertPostcondition(true, "Postcondición de contrato intacta");
       assertInvariant(true, "Invariante de estado preservado");
-      const frozen = deepFreeze({ engine: "EosKernelPrimitives", status: "VERIFIED" });
+      deepFreeze({ engine: "EosKernelPrimitives", status: "VERIFIED" });
       console.log("✔ Precondiciones, Postcondiciones e Invariantes: 100% PASS");
       console.log("✔ Congelación profunda (Deep Freeze / Immutability): PASS");
       console.log(`✔ Pure SHA-256 Kernel Verification: ${pureSha256("EOS_DBC_OK").slice(0, 16)}...\n`);
@@ -2680,7 +2883,9 @@ switch (command) {
       console.log(`Líneas totales analizadas:         ${summary.auditReport.totalLinesAnalyzed.toLocaleString()}`);
       console.log(`Optimizaciones detectadas:         ${summary.executedRefactoringsCount}`);
       console.log(`Reducción proyectada de deuda:     ${summary.linesReduced} LOC`);
-      console.log(`Pruebas tras refactorización:      ${summary.testsPassedAfterRefactor ? "PASS (100% Verificado)" : "FAIL"}`);
+      console.log(
+        `Pruebas tras refactorización:      ${summary.testsPassedAfterRefactor ? "PASS (100% Verificado)" : "FAIL"}`,
+      );
       console.log(`Estado epistémico:                 ${summary.epistemicState}`);
       console.log(`Sello Criptográfico SHA-256:       ${summary.sha256Receipt}`);
       console.log("======================================================================\n");
@@ -2700,7 +2905,7 @@ switch (command) {
     const sim = new EosDeterministicSimulator({
       seed,
       totalSteps: steps,
-      faultInjectionRate: faultRate
+      faultInjectionRate: faultRate,
     });
     const result = sim.runSimulation();
     const elapsed = (performance.now() - t0).toFixed(2);
@@ -2712,11 +2917,17 @@ switch (command) {
     console.log(`Pasos Discretos Simulados:         ${result.totalStepsExecuted}`);
     console.log(`Tiempo Virtual Transcurrido:       ${result.virtualTimeElapsedMs} ms`);
     console.log(`Eventos Procesados:                ${result.totalEventsProcessed}`);
-    console.log(`Fallas Inyectadas:                 ${result.totalFaultsInjected} (${Object.entries(result.faultsByType).map(([k, v]) => `${k}:${v}`).join(", ")})`);
+    console.log(
+      `Fallas Inyectadas:                 ${result.totalFaultsInjected} (${Object.entries(result.faultsByType)
+        .map(([k, v]) => `${k}:${v}`)
+        .join(", ")})`,
+    );
     console.log(`Invariantes Violadas:              ${result.invariantsViolated} (0 toleradas)`);
     console.log(`Hash de Traza Criptográfica:       sha256:${result.executionTraceHash}`);
     console.log(`Comando de Reproducción Exacta:    ${result.reproducibleCommand}`);
-    console.log(`Determinismo Verificado:           ${result.verifiedDeterministic ? "100% REPRODUCIBLE BIT A BIT" : "FALLA"}`);
+    console.log(
+      `Determinismo Verificado:           ${result.verifiedDeterministic ? "100% REPRODUCIBLE BIT A BIT" : "FALLA"}`,
+    );
     console.log(`Tiempo Real de Simulación:         ${elapsed} ms`);
     console.log("======================================================================\n");
     break;
@@ -2727,9 +2938,27 @@ switch (command) {
     console.log("[META-COGNITIVE SYNAPSE] Arbitraje Bayesiano Multi-Agente Sin Bloqueos...\n");
     const { EosMetaCognitiveSynapse } = await import("../src/core/eosMetaCognitiveSynapse.ts");
     const candidates = [
-      { agentId: "agent-architect", role: "Chief Architect", action: "enforce_pure_layer0", priorBelief: 0.7, evidenceLikelihood: 0.95 },
-      { agentId: "agent-secops", role: "SecOps Lead", action: "quantum_lattice_seal", priorBelief: 0.6, evidenceLikelihood: 0.90 },
-      { agentId: "agent-qa", role: "QA Lead", action: "full_mutation_testing", priorBelief: 0.5, evidenceLikelihood: 0.85 }
+      {
+        agentId: "agent-architect",
+        role: "Chief Architect",
+        action: "enforce_pure_layer0",
+        priorBelief: 0.7,
+        evidenceLikelihood: 0.95,
+      },
+      {
+        agentId: "agent-secops",
+        role: "SecOps Lead",
+        action: "quantum_lattice_seal",
+        priorBelief: 0.6,
+        evidenceLikelihood: 0.9,
+      },
+      {
+        agentId: "agent-qa",
+        role: "QA Lead",
+        action: "full_mutation_testing",
+        priorBelief: 0.5,
+        evidenceLikelihood: 0.85,
+      },
     ];
 
     const report = EosMetaCognitiveSynapse.arbitrateIntents(candidates);
@@ -2740,7 +2969,7 @@ switch (command) {
     console.log(`  Probabilidad a Post. : ${(report.winningCandidate.posteriorProbability * 100).toFixed(2)}%`);
     console.log(`  Recibo SHA-256       : sha256:${report.sha256Receipt}\n`);
     console.log("  Ranking Completo:");
-    report.rankedCandidates.forEach(c => {
+    report.rankedCandidates.forEach((c) => {
       console.log(`    #${c.priorityRank} [${c.agentId}] ${c.action} -> ${(c.posteriorProbability * 100).toFixed(2)}%`);
     });
     console.log("");
@@ -2756,11 +2985,15 @@ switch (command) {
     console.log(`  Repositorios Auditados : ${report.totalRepositories}`);
     console.log(`  Puntaje Promedio Flota : ${report.fleetAverageScore}/100`);
     console.log(`  Repos Grado A (>=85)   : ${report.reposAtGradeA}/${report.totalRepositories}`);
-    console.log(`  Quórum de Despliegue   : ${report.deploymentAuthorizedQuorum ? "AUTORIZADO (>=70)" : "DENEGADO (<70)"}`);
+    console.log(
+      `  Quórum de Despliegue   : ${report.deploymentAuthorizedQuorum ? "AUTORIZADO (>=70)" : "DENEGADO (<70)"}`,
+    );
     console.log(`  Recibo Criptográfico   : sha256:${report.sha256Receipt}\n`);
     console.log("  Detalle por Repositorio:");
     report.reports.forEach((r) => {
-      console.log(`    • [${r.grade}] ${r.name} (${r.id}): ${r.totalScore}/100 | Clean: ${r.workingTreeClean} | Deploy: ${r.eligibleForAutonomousDeploy}`);
+      console.log(
+        `    • [${r.grade}] ${r.name} (${r.id}): ${r.totalScore}/100 | Clean: ${r.workingTreeClean} | Deploy: ${r.eligibleForAutonomousDeploy}`,
+      );
       if (r.remediationAction) {
         console.log(`        ↳ Remedación recomendada: ${r.remediationAction}`);
       }
@@ -2802,18 +3035,28 @@ switch (command) {
       { stage: "CANARY_1_PCT", sampleRequests: 10000, failedRequests: 0, p99LatencyMs: 45, baselineP99LatencyMs: 44 },
       { stage: "CANARY_5_PCT", sampleRequests: 50000, failedRequests: 1, p99LatencyMs: 46, baselineP99LatencyMs: 44 },
       { stage: "CANARY_25_PCT", sampleRequests: 250000, failedRequests: 2, p99LatencyMs: 47, baselineP99LatencyMs: 44 },
-      { stage: "FULL_PRODUCTION_100_PCT", sampleRequests: 1000000, failedRequests: 5, p99LatencyMs: 48, baselineP99LatencyMs: 44 }
+      {
+        stage: "FULL_PRODUCTION_100_PCT",
+        sampleRequests: 1000000,
+        failedRequests: 5,
+        p99LatencyMs: 48,
+        baselineP99LatencyMs: 44,
+      },
     ]);
     console.log(`Resultado del Rollout Canario:`);
     console.log(`  Versión Objetivo       : ${report.versionTarget} (desde ${report.previousStableVersion})`);
     console.log(`  Estado Final           : ${report.finalStage}`);
     console.log(`  Completado Seguro      : ${report.verifiedSafe ? "VERIFICADO_SEGURO" : "FALLIDO"}`);
-    console.log(`  Circuit Breaker        : ${report.rollbackExecuted ? "DISPARADO (ROLLBACK EJECUTADO)" : "INTACTO (0 ROLLBACKS)"}`);
+    console.log(
+      `  Circuit Breaker        : ${report.rollbackExecuted ? "DISPARADO (ROLLBACK EJECUTADO)" : "INTACTO (0 ROLLBACKS)"}`,
+    );
     console.log(`  Transiciones Exitosas  : ${report.totalStagesCompleted}`);
     console.log(`  Recibo Criptográfico   : sha256:${report.sha256Receipt}\n`);
     console.log("  Detalle de Transiciones:");
     report.transitions.forEach((t) => {
-      console.log(`    • ${t.fromStage} ➔ ${t.toStage} | ErrRate: ${(t.errorRate * 100).toFixed(4)}% | Latency Δ: +${t.latencyIncreasePercent.toFixed(1)}% | ${t.reason}`);
+      console.log(
+        `    • ${t.fromStage} ➔ ${t.toStage} | ErrRate: ${(t.errorRate * 100).toFixed(4)}% | Latency Δ: +${t.latencyIncreasePercent.toFixed(1)}% | ${t.reason}`,
+      );
     });
     console.log("");
     break;
@@ -2831,7 +3074,9 @@ switch (command) {
       result.actions.forEach((a) => console.log(`  [+] ${a}`));
       console.log(`\n  Estado de Dirección    : ${result.doctorReport.status}`);
       console.log(`  Puntaje de Salud       : ${result.doctorReport.readinessScore}/100`);
-      console.log(`  SingleServerInvariant  : ${result.doctorReport.singleServerInvariantVerified ? "VERIFIED" : "VIOLATED"}`);
+      console.log(
+        `  SingleServerInvariant  : ${result.doctorReport.singleServerInvariantVerified ? "VERIFIED" : "VIOLATED"}`,
+      );
       console.log(`  Recibo Criptográfico   : sha256:${result.doctorReport.sha256Receipt}\n`);
       if (!result.installed) process.exit(1);
     } else if (subAction === "direct") {
@@ -2846,7 +3091,9 @@ switch (command) {
       console.log(`  Recibo Criptográfico   : sha256:${plan.sha256Receipt}\n`);
       console.log("  DAG de Herramientas MCP Prescritas:");
       plan.prescribedMcpDag.forEach((step) => {
-        console.log(`    ${step.order}. [${step.phase}] ${step.toolName} (${step.mandatory ? "MANDATORY" : "OPTIONAL"}) — ${step.purpose}`);
+        console.log(
+          `    ${step.order}. [${step.phase}] ${step.toolName} (${step.mandatory ? "MANDATORY" : "OPTIONAL"}) — ${step.purpose}`,
+        );
       });
       console.log("");
     } else {
@@ -2859,7 +3106,9 @@ switch (command) {
       console.log(`  Recibo Criptográfico   : sha256:${report.sha256Receipt}\n`);
       console.log("  Dimensiones Auditadas:");
       report.checks.forEach((c) => {
-        console.log(`    • [${c.passed ? "PASS" : "FAIL"}] ${c.label.padEnd(52)} (${c.score}/${c.maxScore}) — ${c.detail}`);
+        console.log(
+          `    • [${c.passed ? "PASS" : "FAIL"}] ${c.label.padEnd(52)} (${c.score}/${c.maxScore}) — ${c.detail}`,
+        );
       });
       if (report.remediationCommands.length > 0) {
         console.log("\n  Comandos de Remediación:");
@@ -2884,7 +3133,7 @@ switch (command) {
       const cycleReport = await EosGentlemanAutoUpdater.runUpdateCycle({
         projectRoot: root,
         apply: shouldApply,
-        force: shouldForce
+        force: shouldForce,
       });
 
       // Bounded 512 KiB operational log for unattended scheduled runs
@@ -2909,14 +3158,18 @@ switch (command) {
         console.log(`  Actualizaciones Vistas : ${cycleReport.updatesDetected}`);
         console.log(`  Actualizaciones Aplic. : ${cycleReport.updatesApplied}`);
         console.log(`  Rollbacks Disparados   : ${cycleReport.rollbacksTriggered}`);
-        console.log(`  Constitución Intacta   : ${cycleReport.constitutionPreserved ? "VERIFIED" : "VIOLATED"} (sha256:${cycleReport.constitutionSha256.slice(0, 16)}...)`);
+        console.log(
+          `  Constitución Intacta   : ${cycleReport.constitutionPreserved ? "VERIFIED" : "VIOLATED"} (sha256:${cycleReport.constitutionSha256.slice(0, 16)}...)`,
+        );
         if (cycleReport.ledgerEntryId) {
           console.log(`  Recibo SQLite Ledger   : ${cycleReport.ledgerEntryId}`);
         }
         console.log(`  Recibo Criptográfico   : sha256:${cycleReport.sha256Receipt}\n`);
         console.log("  Estado por Componente Upstream:");
         cycleReport.components.forEach((c) => {
-          console.log(`    • [${c.status.padEnd(16)}] ${c.componentId.padEnd(18)} local=${c.installedVersion.padEnd(12)} upstream=${c.latestVersion.padEnd(12)} — ${c.detail}`);
+          console.log(
+            `    • [${c.status.padEnd(16)}] ${c.componentId.padEnd(18)} local=${c.installedVersion.padEnd(12)} upstream=${c.latestVersion.padEnd(12)} — ${c.detail}`,
+          );
         });
         console.log("");
       }
@@ -2936,7 +3189,9 @@ switch (command) {
       console.log("[EOS GENTLEMAN EVERGREEN SCHEDULER] Automatización Desatendida Instalada:\n");
       console.log(`  Planificador SO        : ${installed.scheduler}`);
       console.log(`  Tarea Programada       : ${installed.taskName}`);
-      console.log(`  Frecuencia             : Cada ${installed.intervalHours} horas (100% silencioso en segundo plano)`);
+      console.log(
+        `  Frecuencia             : Cada ${installed.intervalHours} horas (100% silencioso en segundo plano)`,
+      );
       console.log(`  Lanzador Silencioso    : ${installed.launcherPath}`);
       console.log(`  Hook Antigravity       : SessionStart oportunista (>6h TTL) ACTIVO`);
       console.log(`  Verificación SO        : ${status.registered ? "REGISTERED & ACTIVE" : "UNVERIFIED"}\n`);
@@ -2963,7 +3218,9 @@ switch (command) {
       printBanner();
       const { uninstallGentlemanAutoUpdateSchedule } = await import("../scripts/install-gentleman-autoupdate.mjs");
       const removed = uninstallGentlemanAutoUpdateSchedule();
-      console.log(`[EOS GENTLEMAN EVERGREEN SCHEDULER] Tarea ${removed.taskName}: ${removed.uninstalled ? "REMOVED" : "NOT_FOUND"}\n`);
+      console.log(
+        `[EOS GENTLEMAN EVERGREEN SCHEDULER] Tarea ${removed.taskName}: ${removed.uninstalled ? "REMOVED" : "NOT_FOUND"}\n`,
+      );
       break;
     }
 
@@ -2974,11 +3231,15 @@ switch (command) {
     console.log(`  Estado Co-Gobernanza   : ${report.status}`);
     console.log(`  Puntaje de Sinergia    : ${report.readinessScore}/100`);
     console.log(`  Constitución Intacta   : ${report.constitutionPreserved ? "VERIFIED (7 Mandamientos)" : "MISSING"}`);
-    console.log(`  Skills SDD Activos     : ${report.activeSddSkills.length}/11 (${report.activeSddSkills.join(", ")})`);
+    console.log(
+      `  Skills SDD Activos     : ${report.activeSddSkills.length}/11 (${report.activeSddSkills.join(", ")})`,
+    );
     console.log(`  Recibo Criptográfico   : sha256:${report.sha256Receipt}\n`);
     console.log("  Pilares del Stack Auditados:");
     report.pillars.forEach((p) => {
-      console.log(`    • [${p.passed ? "PASS" : "FAIL"}] ${p.label.padEnd(54)} (${p.score}/${p.maxScore}) — ${p.versionOrPath}`);
+      console.log(
+        `    • [${p.passed ? "PASS" : "FAIL"}] ${p.label.padEnd(54)} (${p.score}/${p.maxScore}) — ${p.versionOrPath}`,
+      );
     });
     console.log("\n  Protocolo Operativo de Co-Gobernanza:");
     report.coGovernanceProtocol.forEach((step) => console.log(`    ${step}`));
@@ -3000,7 +3261,7 @@ switch (command) {
           category: "VERIFICATION_RECEIPT",
           projectId: "eos-system",
           title,
-          payload: { source: "eos-cli", version: packageMetadata.version }
+          payload: { source: "eos-cli", version: packageMetadata.version },
         });
         console.log(`[EOS SQLITE WAL LEDGER] Entrada sellada #${rec.seq}: ${rec.entryId}`);
         console.log(`  Título      : ${rec.title}`);
@@ -3048,7 +3309,9 @@ switch (command) {
     console.log(`  Complejidad Promedio   : ${report.averageCyclomaticComplexity}`);
     console.log(`  Complejidad Máxima     : ${report.maxCyclomaticComplexity} (${report.maxCyclomaticFile || "n/a"})`);
     console.log(`  Pureza Layer-0         : ${report.layer0Pure ? "VERIFIED (0 deps externas)" : "VIOLATED"}`);
-    console.log(`  Node 24 Strip-Only     : ${report.stripOnlyCompatible ? "VERIFIED (0 enum/namespace/param-props)" : "VIOLATED"}`);
+    console.log(
+      `  Node 24 Strip-Only     : ${report.stripOnlyCompatible ? "VERIFIED (0 enum/namespace/param-props)" : "VIOLATED"}`,
+    );
     console.log(`  Violaciones            : ${report.violations.length}`);
     console.log(`  Recibo Criptográfico   : sha256:${report.sha256Receipt}\n`);
     if (report.violations.length > 0) {
@@ -3098,9 +3361,24 @@ switch (command) {
 
     if (subAction === "compile") {
       const demoNodes = [
-        { id: "NODE-1-INTERFACE", name: "Contract Spec", assignedModulePath: "src/core/interface.ts", dependencies: [] },
-        { id: "NODE-2-DOMAIN", name: "Domain Logic", assignedModulePath: "src/core/domain.ts", dependencies: ["NODE-1-INTERFACE"] },
-        { id: "NODE-3-TESTS", name: "Property Tests", assignedModulePath: "test/domain.test.ts", dependencies: ["NODE-2-DOMAIN"] }
+        {
+          id: "NODE-1-INTERFACE",
+          name: "Contract Spec",
+          assignedModulePath: "src/core/interface.ts",
+          dependencies: [],
+        },
+        {
+          id: "NODE-2-DOMAIN",
+          name: "Domain Logic",
+          assignedModulePath: "src/core/domain.ts",
+          dependencies: ["NODE-1-INTERFACE"],
+        },
+        {
+          id: "NODE-3-TESTS",
+          name: "Property Tests",
+          assignedModulePath: "test/domain.test.ts",
+          dependencies: ["NODE-2-DOMAIN"],
+        },
       ];
       const dagId = args[2] || "DAG-DEEPMIND-ALPHA";
       const compiled = EosAgentTopologyMesh.compileTopology(dagId, demoNodes);
@@ -3127,7 +3405,6 @@ switch (command) {
 
   case "invariant": {
     printBanner();
-    const subAction = (args[1] || "explore").toLowerCase();
     const { EosInvariantVerificationEngine } = await import("../src/core/eosInvariantVerificationEngine.ts");
 
     const sampleModel = {
@@ -3140,7 +3417,7 @@ switch (command) {
             const amt = prng.nextInt(1, 10);
             if (s.a < amt) return s;
             return { ...s, a: s.a - amt, b: s.b + amt };
-          }
+          },
         },
         {
           name: "transfer_b_c",
@@ -3148,7 +3425,7 @@ switch (command) {
             const amt = prng.nextInt(1, 10);
             if (s.b < amt) return s;
             return { ...s, b: s.b - amt, c: s.c + amt };
-          }
+          },
         },
         {
           name: "transfer_c_a",
@@ -3156,13 +3433,13 @@ switch (command) {
             const amt = prng.nextInt(1, 10);
             if (s.c < amt) return s;
             return { ...s, c: s.c - amt, a: s.a + amt };
-          }
-        }
+          },
+        },
       ],
       invariants: [
         { name: "conservation_of_money", check: (s) => s.a + s.b + s.c === s.total },
-        { name: "no_negative_balances", check: (s) => s.a >= 0 && s.b >= 0 && s.c >= 0 }
-      ]
+        { name: "no_negative_balances", check: (s) => s.a >= 0 && s.b >= 0 && s.c >= 0 },
+      ],
     };
 
     const steps = Number(args[2]) || 1000;
@@ -3170,7 +3447,7 @@ switch (command) {
     const res = EosInvariantVerificationEngine.verifyModel(sampleModel, {
       maxSteps: steps,
       seed,
-      enableShrinking: true
+      enableShrinking: true,
     });
 
     console.log("[EOS INVARIANT VERIFICATION ENGINE — TLA+ / ANTITHESIS DST]\n");
@@ -3243,7 +3520,9 @@ switch (command) {
     const { EosSurgicalSelfHealingKernel } = await import("../src/core/eosSurgicalSelfHealingKernel.ts");
 
     if (subAction === "diagnose") {
-      const sampleTrace = args[2] || `TypeError: Cannot read properties of undefined (reading 'toUpperCase')
+      const sampleTrace =
+        args[2] ||
+        `TypeError: Cannot read properties of undefined (reading 'toUpperCase')
     at formatUser (src/users.ts:4:18)
     at Object.process (src/app.ts:12:5)`;
       const sampleCode = `export function formatUser(user?: { name: string }) {\n  return user.name.toUpperCase();\n}`;
@@ -3273,7 +3552,7 @@ switch (command) {
         stackTrace: sampleTrace,
         sourceCode: sampleCode,
         regressionTestCode: `assert.strictEqual(typeof formatUser, 'function');`,
-        reason: "CLI demonstration of NASA FDIR + Meta SapFix closed-loop healing"
+        reason: "CLI demonstration of NASA FDIR + Meta SapFix closed-loop healing",
       });
       console.log("[EOS SURGICAL SELF-HEALING KERNEL — CLOSED-LOOP CYCLE RESULT]\n");
       console.log(`  Receipt ID      : ${receipt.receiptId}`);
@@ -3293,15 +3572,21 @@ switch (command) {
     if (subAction === "status" || subAction === "detect") {
       const diag = EosTlcFormalChecker.detectRuntime(root);
       console.log("[EOS LESLIE LAMPORT TLC FORMAL MODEL CHECKER — ENVIRONMENT DIAGNOSTIC]\n");
-      console.log(`  Java Installed       : ${diag.javaInstalled ? "YES" : "NO"} ${diag.javaVersion ? `(${diag.javaVersion})` : ""}`);
-      console.log(`  tla2tools.jar Present: ${diag.tlaJarPresent ? "YES" : "NO"} ${diag.tlaJarPath ? `(${diag.tlaJarPath})` : ""}`);
+      console.log(
+        `  Java Installed       : ${diag.javaInstalled ? "YES" : "NO"} ${diag.javaVersion ? `(${diag.javaVersion})` : ""}`,
+      );
+      console.log(
+        `  tla2tools.jar Present: ${diag.tlaJarPresent ? "YES" : "NO"} ${diag.tlaJarPath ? `(${diag.tlaJarPath})` : ""}`,
+      );
       console.log(`  Execution Mode       : ${diag.executionMode}`);
       console.log(`  Recommendation       : ${diag.recommendation}\n`);
     } else if (subAction === "install") {
       console.log("[EOS TLC] Descargando versión oficial de tla2tools.jar desde GitHub...");
       try {
         const dl = await EosTlcFormalChecker.downloadTlaJar(path.join(root, "tools"));
-        console.log(`✔ Archivo descargado exitosamente: ${dl.jarPath} (${(dl.bytesDownloaded / 1024 / 1024).toFixed(2)} MB)\n`);
+        console.log(
+          `✔ Archivo descargado exitosamente: ${dl.jarPath} (${(dl.bytesDownloaded / 1024 / 1024).toFixed(2)} MB)\n`,
+        );
       } catch (err) {
         console.log(`✖ Error descargando tla2tools.jar: ${err.message}\n`);
       }
@@ -3378,11 +3663,14 @@ switch (command) {
       console.log(`  Recommendation       : ${diag.recommendation}\n`);
     } else {
       const codeArgIdx = args.findIndex((a) => a === "--code");
-      const snippet = codeArgIdx !== -1 && args[codeArgIdx + 1] ? args[codeArgIdx + 1] : args[2] || "console.log('EOS Isolated MicroVM Execution Complete');";
+      const snippet =
+        codeArgIdx !== -1 && args[codeArgIdx + 1]
+          ? args[codeArgIdx + 1]
+          : args[2] || "console.log('EOS Isolated MicroVM Execution Complete');";
       console.log(`[EOS SANDBOX] Ejecutando código de forma aislada...\n`);
       const res = EosMicroVmSandbox.runIsolated({
         codeOrCommand: snippet,
-        timeoutMs: 10000
+        timeoutMs: 10000,
       });
       console.log(`  Execution ID    : ${res.executionId}`);
       console.log(`  Status          : ${res.status}`);
@@ -3439,13 +3727,13 @@ switch (command) {
   case "fleet:verify": {
     printBanner();
     const targetArg = args[1] || "all";
-    const { EosFleetProductionVerifier, REGISTERED_FLEET_TARGETS } = await import("../src/core/eosFleetProductionVerifier.ts");
+    const { EosFleetProductionVerifier, REGISTERED_FLEET_TARGETS } = await import(
+      "../src/core/eosFleetProductionVerifier.ts"
+    );
 
     console.log("[EOS FLEET PRODUCTION LIVING VERIFICATION & BAUTISMO DE FUEGO — SPEC-056 v62.0.0]\n");
 
-    const targets = targetArg === "all"
-      ? REGISTERED_FLEET_TARGETS
-      : [targetArg];
+    const targets = targetArg === "all" ? REGISTERED_FLEET_TARGETS : [targetArg];
 
     for (const target of targets) {
       console.log(`[SONDA EN VIVO] Auditando objetivo: ${target}...`);
@@ -3453,9 +3741,15 @@ switch (command) {
       console.log(`  HTTP Status     : ${res.httpStatus} ${res.ok ? "OK" : "ERROR"}`);
       console.log(`  Latencia Total  : ${res.durationMs} ms (TTFB: ${res.ttfbMs} ms)`);
       console.log(`  Payload Recibido: ${(res.payloadBytes / 1024).toFixed(1)} KB`);
-      console.log(`  Cabeceras TLS   : ${res.securityHeaders.passedCount}/${res.securityHeaders.totalCount} verificadas (HSTS: ${res.securityHeaders.strictTransportSecurity ? "SI" : "NO"}, nosniff: ${res.securityHeaders.xContentTypeOptions ? "SI" : "NO"})`);
-      console.log(`  Hitos WCAG 2.1  : ${res.semanticLandmarks.passedCount}/${res.semanticLandmarks.totalCount} presentes (main: ${res.semanticLandmarks.hasMain ? "SI" : "NO"}, header: ${res.semanticLandmarks.hasHeader ? "SI" : "NO"}, viewport: ${res.semanticLandmarks.hasResponsiveViewport ? "SI" : "NO"})`);
-      console.log(`  Metadatos SEO   : "${res.seoMetadata.title}" (OG: ${res.seoMetadata.hasOgTitle ? "SI" : "NO"}, Favicon: ${res.seoMetadata.hasFavicon ? "SI" : "NO"})`);
+      console.log(
+        `  Cabeceras TLS   : ${res.securityHeaders.passedCount}/${res.securityHeaders.totalCount} verificadas (HSTS: ${res.securityHeaders.strictTransportSecurity ? "SI" : "NO"}, nosniff: ${res.securityHeaders.xContentTypeOptions ? "SI" : "NO"})`,
+      );
+      console.log(
+        `  Hitos WCAG 2.1  : ${res.semanticLandmarks.passedCount}/${res.semanticLandmarks.totalCount} presentes (main: ${res.semanticLandmarks.hasMain ? "SI" : "NO"}, header: ${res.semanticLandmarks.hasHeader ? "SI" : "NO"}, viewport: ${res.semanticLandmarks.hasResponsiveViewport ? "SI" : "NO"})`,
+      );
+      console.log(
+        `  Metadatos SEO   : "${res.seoMetadata.title}" (OG: ${res.seoMetadata.hasOgTitle ? "SI" : "NO"}, Favicon: ${res.seoMetadata.hasFavicon ? "SI" : "NO"})`,
+      );
       console.log(`  Puntaje Salud   : ${res.performanceScore}/100`);
       console.log(`  Estado Epistémico: ${res.epistemicStatus}`);
       console.log(`  Atestación SHA  : sha256:${res.sha256Attestation}\n`);
@@ -3476,12 +3770,15 @@ switch (command) {
     console.log(`[EOS META-GRADE AUTONOMOUS SAPFIX ENGINE — SPEC-060 v66.0.0]\n`);
     const { EosSapFixAutoshipper } = await import("../src/core/eosSapFixAutoshipper.ts");
 
-    const report = await EosSapFixAutoshipper.executeCycle({
-      faultId,
-      targetFilePath: targetFile,
-      failingLine: line,
-      errorMessage: msg
-    }, root);
+    const report = await EosSapFixAutoshipper.executeCycle(
+      {
+        faultId,
+        targetFilePath: targetFile,
+        failingLine: line,
+        errorMessage: msg,
+      },
+      root,
+    );
 
     console.log(`  Fault ID        : ${report.faultId}`);
     console.log(`  Status          : ${report.status}`);
@@ -3561,13 +3858,15 @@ switch (command) {
     const rules = [
       { role: "guest", action: "ledger_read", allow: true },
       { role: "guest", action: "ledger_write", allow: false },
-      { role: "admin", action: "ledger_write", allow: true }
+      { role: "admin", action: "ledger_write", allow: true },
     ];
 
     const proof = EosSmtAutomatedReasoningProver.proveAbacSafety(rules, "guest", "ledger_write");
     console.log(`  Theorem Name    : ${proof.theoremName}`);
     console.log(`  SMT Verdict     : ${proof.verdict}`);
-    console.log(`  Satisfiable     : ${proof.isSatisfiable ? "YES (BREACH MODEL FOUND)" : "NO (MATHEMATICALLY SECURE)"}`);
+    console.log(
+      `  Satisfiable     : ${proof.isSatisfiable ? "YES (BREACH MODEL FOUND)" : "NO (MATHEMATICALLY SECURE)"}`,
+    );
     console.log(`  Clauses Checked : ${proof.evaluatedClausesCount}`);
     console.log(`  Duration        : ${proof.durationUs} µs`);
     console.log(`  Receipt SHA-256 : sha256:${proof.sha256Receipt}\n`);
@@ -3586,7 +3885,7 @@ switch (command) {
 
     const report = await EosProductionChaosMonkey.executeExperiment(target, {
       burstCount: 5,
-      jitterMs: 50
+      jitterMs: 50,
     });
 
     console.log(`  Target URL      : ${report.targetUrl}`);
@@ -3614,7 +3913,7 @@ switch (command) {
       patchHash: "sha256:44332211aabbccddeeff00112233445566778899aabbccddeeff001122334455",
       authorAgentId: "agent_architect",
       testsExitCode: 0,
-      conformsToConstitution: true
+      conformsToConstitution: true,
     };
 
     const report = EosBftAgentSwarmSlashing.evaluateConsensus(swarm, proposal);
@@ -3622,7 +3921,9 @@ switch (command) {
     console.log(`  BFT Verdict     : ${report.verdict}`);
     console.log(`  Votes For/Total : ${report.votesFor}/${report.totalAgents} (Threshold: ${report.quorumThreshold})`);
     console.log(`  Security Veto   : ${report.vetoTriggered ? "VETO TRIGGERED" : "NO"}`);
-    console.log(`  Slashed Agents  : ${report.slashedAgents.length > 0 ? report.slashedAgents.join(", ") : "NONE (All Conforming)"}`);
+    console.log(
+      `  Slashed Agents  : ${report.slashedAgents.length > 0 ? report.slashedAgents.join(", ") : "NONE (All Conforming)"}`,
+    );
     console.log(`  Receipt SHA-256 : sha256:${report.sha256Receipt}\n`);
 
     console.log(`[REPUTATION STAKES]`);
@@ -3674,9 +3975,10 @@ switch (command) {
 
     const metric = args[1] || "p95_latency_ms";
     const baseline = [10.2, 11.0, 10.8, 12.1, 10.5, 11.4, 10.9, 11.2, 12.0, 10.7];
-    const canary = args[2] === "degraded"
-      ? [24.5, 27.8, 29.1, 26.3, 28.0, 29.5, 30.2, 27.9, 28.4, 29.8]
-      : [10.1, 10.5, 10.4, 11.0, 10.3, 10.8, 10.6, 11.1, 10.5, 10.7];
+    const canary =
+      args[2] === "degraded"
+        ? [24.5, 27.8, 29.1, 26.3, 28.0, 29.5, 30.2, 27.9, 28.4, 29.8]
+        : [10.1, 10.5, 10.4, 11.0, 10.3, 10.8, 10.6, 11.1, 10.5, 10.7];
 
     const report = EosStatisticalCanaryAuditor.auditCanaryMetric(metric, baseline, canary);
     console.log(`  Metric Name     : ${report.metricName}`);
@@ -3702,7 +4004,10 @@ switch (command) {
     const sealer = new EosHermeticReleaseSealer(root);
     const commitSha = args[1] || "HEAD";
     const manifest = sealer.generateReleaseSeal(commitSha);
-    const { savedPath, ledgerReceiptHash } = sealer.persistReleaseSeal(manifest, path.join(root, ".eos", "sovereign_ledger.sqlite"));
+    const { savedPath, ledgerReceiptHash } = sealer.persistReleaseSeal(
+      manifest,
+      path.join(root, ".eos", "sovereign_ledger.sqlite"),
+    );
 
     console.log(`  Release Tag     : ${manifest.releaseTag}`);
     console.log(`  Commit SHA      : ${manifest.commitSha}`);
@@ -3748,15 +4053,15 @@ switch (command) {
     const interceptor = new EosConstitutionalRuntimeInterceptor(root);
     const demoArgs = {
       destination: args[2] || "src/core/test.ts",
-      content: "const apiKey = 'sk-" + "live-" + "0123456789abcdef12345678';"
+      content: "const apiKey = 'sk-" + "live-" + "0123456789abcdef12345678';",
     };
 
     console.log(`Interceptando ejecución de herramienta: ${targetTool}...`);
-    const execRes = interceptor.executeWithConstitutionalGuardrail(
-      targetTool,
-      demoArgs,
-      (a) => ({ status: "OK", written: a.destination, payload: a.content })
-    );
+    const execRes = interceptor.executeWithConstitutionalGuardrail(targetTool, demoArgs, (a) => ({
+      status: "OK",
+      written: a.destination,
+      payload: a.content,
+    }));
 
     console.log(`  Approved        : ${execRes.receipt.approved ? "YES" : "NO (BLOCKED)"}`);
     if (execRes.blockedReason) {
@@ -3773,7 +4078,10 @@ switch (command) {
     console.log("[EOS MERKLE MOUNTAIN RANGE (MMR) & O(LOG N) INCLUSION PROOFS — SPEC-070 v68.0.0]\n");
 
     const mmr = new EosMerkleMountainRange();
-    const items = args.slice(1).length > 0 ? args.slice(1) : ["genesis_event", "git_commit", "deploy_receipt", "audit_pass", "canary_ok"];
+    const items =
+      args.slice(1).length > 0
+        ? args.slice(1)
+        : ["genesis_event", "git_commit", "deploy_receipt", "audit_pass", "canary_ok"];
     for (const item of items) {
       mmr.appendLeaf(item);
     }
@@ -3846,7 +4154,9 @@ switch (command) {
     const report = fuzzer.fuzzTarget(target, cycles);
     console.log(`  Total Cycles    : ${report.totalCycles}`);
     console.log(`  Initial Corpus  : ${report.initialCorpusSize}`);
-    console.log(`  Final Corpus    : ${report.finalCorpusSize} seeds (+${report.finalCorpusSize - report.initialCorpusSize} novel states)`);
+    console.log(
+      `  Final Corpus    : ${report.finalCorpusSize} seeds (+${report.finalCorpusSize - report.initialCorpusSize} novel states)`,
+    );
     console.log(`  Unique States   : ${report.uniqueStatesDiscovered}`);
     console.log(`  Crashes Found   : ${report.crashesCount}`);
     console.log(`  Duration        : ${report.durationMs} ms`);
@@ -3940,7 +4250,9 @@ switch (command) {
     // 2. Non-membership proof
     const nonMemProof = smt.prove("account:revoked:999");
     const isNonMemValid = EosSparseMerkleTree.verifyProof(nonMemProof, 32);
-    console.log(`  Exclusion Proof : key='account:revoked:999' -> ${isNonMemValid ? "PROVED (ABSENT/REVOKED)" : "INVALID"}\n`);
+    console.log(
+      `  Exclusion Proof : key='account:revoked:999' -> ${isNonMemValid ? "PROVED (ABSENT/REVOKED)" : "INVALID"}\n`,
+    );
     console.log(`✔ Pruebas SMT de inclusión y exclusión verificadas en SQLite WAL.\n`);
     break;
   }
@@ -3987,7 +4299,9 @@ switch (command) {
     console.log(`Ejecutando protocolo Commit-Wait para garantizar linearizabilidad estricta...`);
     const waitMs = await tt.commitWait(interval.latest);
     console.log(`  Commit-Wait     : ${waitMs} ms (Bloqueos liberados con seguridad causal)`);
-    console.log(`  After(latest)   : ${tt.after(interval.latest) ? "TRUE (Certidumbre absoluta alcanzada)" : "FALSE"}\n`);
+    console.log(
+      `  After(latest)   : ${tt.after(interval.latest) ? "TRUE (Certidumbre absoluta alcanzada)" : "FALSE"}\n`,
+    );
     console.log(`✔ Intervalo TrueTime atestado en SQLite WAL Ledger.\n`);
     break;
   }
@@ -4007,7 +4321,7 @@ switch (command) {
     console.log(`  Flushed SSTables: ${lsm.getSsTableCount()} segmento(s) inmutable(s)`);
 
     const val1 = lsm.get("telemetry:agent:1");
-    const valMissing = lsm.get("telemetry:agent:999");
+    lsm.get("telemetry:agent:999");
     console.log(`  Read Existing   : key='telemetry:agent:1' -> '${val1}' (Bloom filter HIT)`);
     console.log(`  Read Missing    : key='telemetry:agent:999' -> null (Bloom filter REJECT)\n`);
     console.log(`✔ Segmento SSTable y filtro de Bloom registrados en SQLite WAL Ledger.\n`);
@@ -4052,7 +4366,9 @@ switch (command) {
     const firecracker = launcher.generateFirecrackerProfile("eos-production-enclave-01", 2, 512);
     console.log(`  Firecracker Encl: ${firecracker.enclaveId}`);
     console.log(`  Guest Kernel    : ${firecracker.boot_source.kernel_image_path}`);
-    console.log(`  Guest Resources : ${firecracker.machine_config.vcpu_count} vCPUs, ${firecracker.machine_config.mem_size_mib} MiB`);
+    console.log(
+      `  Guest Resources : ${firecracker.machine_config.vcpu_count} vCPUs, ${firecracker.machine_config.mem_size_mib} MiB`,
+    );
     console.log(`  Vsock Endpoint  : ${firecracker.vsock.uds_path} (CID: ${firecracker.vsock.guest_cid})`);
     console.log(`  Profile SHA-256 : sha256:${firecracker.profileSha256}\n`);
     console.log(`✔ Descriptor de microVM de hardware registrado en SQLite WAL Ledger.\n`);
@@ -4085,7 +4401,9 @@ switch (command) {
     }
 
     EosSamaelUnitotalNexus.recordReceiptInLedger(report, root);
-    console.log(`\n✔ Recibo de perfección unitotal registrado en SQLite WAL Ledger (SHA-256: sha256:${report.sha256Receipt}).\n`);
+    console.log(
+      `\n✔ Recibo de perfección unitotal registrado en SQLite WAL Ledger (SHA-256: sha256:${report.sha256Receipt}).\n`,
+    );
     break;
   }
 
@@ -4112,13 +4430,15 @@ switch (command) {
       const res = hypervisor.executeComprehensiveVerification({
         seed: 0xdeadbeef,
         iterations: 1000,
-        recordToLedger: true
+        recordToLedger: true,
       });
 
       console.log(`[CAMPAÑA DE FUZZING DETERMINISTA (Google Atheris / Hypothesis Standard)]`);
       console.log(`  Semilla PRNG    : 0x${res.fuzzResults.seed.toString(16).toUpperCase()}`);
       console.log(`  Iteraciones     : ${res.fuzzResults.iterations}`);
-      console.log(`  Invariantes OK  : ${res.fuzzResults.invariantsViolated === 0 ? "100% INTACTAS" : `${res.fuzzResults.invariantsViolated} VIOLACIONES`}`);
+      console.log(
+        `  Invariantes OK  : ${res.fuzzResults.invariantsViolated === 0 ? "100% INTACTAS" : `${res.fuzzResults.invariantsViolated} VIOLACIONES`}`,
+      );
       console.log(`  Delta Shrinkage : ${res.fuzzResults.shrunkCounterexamples.length} muestras reducidas con éxito`);
       if (res.fuzzResults.shrunkCounterexamples.length > 0) {
         const sc = res.fuzzResults.shrunkCounterexamples[0];
@@ -4127,15 +4447,21 @@ switch (command) {
 
       console.log(`\n[HIPERVISOR DE REPLAY TIME-TRAVEL (Antithesis / FoundationDB Standard)]`);
       console.log(`  Total Frames    : ${res.timeTravelResults.totalFrames} bloques en ledger`);
-      console.log(`  Cadena WAL      : ${res.timeTravelResults.chainVerified ? "VERIFICADA INTEGRIDAD TOTAL" : "DIVERGENCIA DETECTADA"}`);
+      console.log(
+        `  Cadena WAL      : ${res.timeTravelResults.chainVerified ? "VERIFICADA INTEGRIDAD TOTAL" : "DIVERGENCIA DETECTADA"}`,
+      );
       console.log(`  Altura Final    : #${res.timeTravelResults.finalHeight}`);
 
       console.log(`\n[COCIENTE DE INTROSPECCIÓN SUBCONSCIENTE (49 Niveles de la Mente)]`);
-      console.log(`  Cociente Global : ${res.introspectionResults.overallQuotient}/100 (${res.introspectionResults.status})`);
+      console.log(
+        `  Cociente Global : ${res.introspectionResults.overallQuotient}/100 (${res.introspectionResults.status})`,
+      );
       console.log(`  Veredicto Final : ${res.verdict}`);
 
       if (res.ledgerReceipt) {
-        console.log(`\n✔ Recibo criptográfico registrado en SQLite WAL Ledger (Seq: #${res.ledgerReceipt.id}, Hash: ${res.ledgerReceipt.hash.slice(0, 16)}...).`);
+        console.log(
+          `\n✔ Recibo criptográfico registrado en SQLite WAL Ledger (Seq: #${res.ledgerReceipt.id}, Hash: ${res.ledgerReceipt.hash.slice(0, 16)}...).`,
+        );
       }
     }
     console.log();
@@ -4172,7 +4498,9 @@ switch (command) {
     const receipt = syncGentleAiStack({ projectRoot: root });
     console.log(`  Estado Global  : ${receipt.status}`);
     console.log(`  Componentes    : ${receipt.synchronizedComponents}/${receipt.totalComponents} sincronizados`);
-    console.log(`  Catálogo MCP   : ${receipt.mcpToolCount.fullProfile} herramientas (Full) / ${receipt.mcpToolCount.coreProfile} (Core)`);
+    console.log(
+      `  Catálogo MCP   : ${receipt.mcpToolCount.fullProfile} herramientas (Full) / ${receipt.mcpToolCount.coreProfile} (Core)`,
+    );
     console.log(`  Sello EVD      : sha256:${receipt.sha256EvidenceSeal}\n`);
     for (const c of receipt.components) {
       console.log(`  • [${c.verified ? "PASS" : "WARN"}] ${c.name}`);
@@ -4194,7 +4522,7 @@ switch (command) {
       declaredSpecId: specId,
       targetFiles: ["src/core/eosConsciousWitness.ts", "src/core/eosHotPatchEngine.ts"],
       proposedAction: "Integrate Sovereign Conscious Witness and Hot-Patching Engine",
-      affirmedSymbols: ["EosConsciousWitness", "EosHotPatchEngine"]
+      affirmedSymbols: ["EosConsciousWitness", "EosHotPatchEngine"],
     });
 
     console.log(`  Veredicto      : ${receipt.verdict}`);
@@ -4213,7 +4541,7 @@ switch (command) {
     const engine = new EosHotPatchEngine();
     const mockTarget = {
       version: "64.0.0",
-      ping: () => "v64-pong"
+      ping: () => "v64-pong",
     };
     engine.registerTarget("mock-core-service", mockTarget);
 
@@ -4222,8 +4550,8 @@ switch (command) {
       patchId: "PATCH-HOT-001",
       targetName: "mock-core-service",
       methods: {
-        ping: () => "v65-sovereign-pong"
-      }
+        ping: () => "v65-sovereign-pong",
+      },
     });
 
     console.log(`  Hot-Patch ID   : ${patchRes.patchId}`);
@@ -4243,7 +4571,7 @@ switch (command) {
       console.log("[EOS ENTERPRISE MULTI-PROJECT WORKSPACE GOVERNOR — REGISTERED FLEET]\n");
       for (const w of fleet) {
         console.log(
-          `  [${w.writeAuthorizedUnderLawIV ? "LAW-IV:AUTHORIZED" : "LAW-IV:READ-ONLY"}] ${w.id} (${w.name})`
+          `  [${w.writeAuthorizedUnderLawIV ? "LAW-IV:AUTHORIZED" : "LAW-IV:READ-ONLY"}] ${w.id} (${w.name})`,
         );
         console.log(`    ↳ Authorization : ${w.authorization} | Disk Present: ${w.pathExistsOnDisk}`);
         console.log(`    ↳ Resolved Path : ${w.resolvedLocalPath || "NOT_CONFIGURED"}`);
@@ -4263,7 +4591,9 @@ switch (command) {
         console.log(`  Members           : ${topo.members.length} package(s)/service(s)`);
         console.log(`  Formal Contracts  : ${topo.contracts.length} artifact(s)`);
         console.log(`  Lockfiles         : ${topo.supplyChain.lockfiles.join(", ") || "none"}`);
-        console.log(`  Secret Hygiene    : ${topo.supplyChain.secretHygieneClean ? "CLEAN (0 findings)" : "FINDINGS_IDENTIFIED"}`);
+        console.log(
+          `  Secret Hygiene    : ${topo.supplyChain.secretHygieneClean ? "CLEAN (0 findings)" : "FINDINGS_IDENTIFIED"}`,
+        );
         console.log(`  Signals Score     : ${topo.enterpriseReadinessSignalsScore}/100 (bounded local signals)`);
         console.log(`  SHA-256 Receipt   : sha256:${topo.sha256TopologyReceipt}\n`);
       }
@@ -4271,7 +4601,7 @@ switch (command) {
       const targetArg = args[2] || ".";
       const resolvedPath = path.resolve(targetArg);
       const report = EosEnterpriseWorkspaceGovernor.verifyWorkspace(resolvedPath, {
-        controlPlaneRoot: root
+        controlPlaneRoot: root,
       });
       console.log(`[EOS ENTERPRISE WORKSPACE VERIFICATION — ${report.epistemicState}]\n`);
       for (const g of report.gates) {
@@ -4293,7 +4623,7 @@ switch (command) {
         targetPath: path.resolve(targetArg),
         projectId: customId,
         controlPlaneRoot: root,
-        dryRun
+        dryRun,
       });
       console.log(`[EOS ENTERPRISE ONBOARDING — ${res.dryRun ? "DRY-RUN PREVIEW" : "REGISTERED IN CONTROL PLANE"}]\n`);
       console.log(`  Project ID        : ${res.projectId} (${res.topology.archetype})`);
@@ -4318,6 +4648,45 @@ switch (command) {
     } else {
       console.log("No se encontró docs/ARCHITECTURE_GLOSSARY.md.");
     }
+    break;
+  }
+
+  case "slo": {
+    printBanner();
+    const { EosSLOErrorBudgetGovernor } = await import("../src/core/eosSLOErrorBudgetGovernor.ts");
+    const gov = new EosSLOErrorBudgetGovernor({ stateDir: path.join(root, ".eos") });
+    const report = gov.evaluate();
+    console.log("[EOS SLO ERROR-BUDGET GATE]\n");
+    console.log(`  SLO Target           : ${report.sloTarget}%`);
+    console.log(`  Budget Total         : ${report.errorBudgetTotal}`);
+    console.log(`  Budget Consumed      : ${report.errorBudgetConsumed}`);
+    console.log(`  Budget Remaining     : ${report.errorBudgetRemaining} (${report.errorBudgetPercent}%)`);
+    console.log(`  Gate Verdict         : [${report.gateVerdict}]\n`);
+    for (const w of report.windows) {
+      console.log(
+        `  ${w.windowLabel.padEnd(14)} burn=${w.actualBurnRate}x threshold=${w.thresholdBurnRate}x ${w.breached ? "BREACHED" : "OK"}`,
+      );
+    }
+    console.log(`\n  Receipt              : sha256:${report.sha256Receipt}`);
+    process.exitCode = report.gateVerdict === "BLOCK" ? 1 : 0;
+    break;
+  }
+
+  case "perf": {
+    printBanner();
+    const { EosPerformanceRegressionTracker } = await import("../src/core/eosPerformanceRegressionTracker.ts");
+    const tracker = new EosPerformanceRegressionTracker(path.join(root, ".eos"));
+    const regressions = tracker.checkAll(2.0);
+    console.log("[EOS PERFORMANCE REGRESSION GATE]\n");
+    if (regressions.length === 0) {
+      console.log("  Status: NO REGRESSIONS DETECTED (all suites within 2x p95 baseline)\n");
+    } else {
+      console.log(`  Status: ${regressions.length} REGRESSION(S) DETECTED\n`);
+      for (const r of regressions) {
+        console.log(`  ${r.suite.padEnd(35)} ${r.currentMs}ms (p95=${r.baselineP95}ms, ratio=${r.ratio}x)`);
+      }
+    }
+    process.exitCode = regressions.length > 0 ? 1 : 0;
     break;
   }
 

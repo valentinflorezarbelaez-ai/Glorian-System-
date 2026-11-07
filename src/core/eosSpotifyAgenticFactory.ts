@@ -143,9 +143,11 @@ export class EosSpotifyAgenticFactory {
     const root = fs.realpathSync(this.projectRoot);
     const requested = typeof targetPath === "string" && targetPath.trim() ? targetPath : ".";
     const candidate = path.resolve(root, requested);
-    if (!isPathWithin(root, candidate)) throw new Error("Target directory must stay inside the configured project root.");
+    if (!isPathWithin(root, candidate))
+      throw new Error("Target directory must stay inside the configured project root.");
     const realPath = fs.realpathSync(candidate);
-    if (!isPathWithin(root, realPath)) throw new Error("Target directory must resolve inside the configured project root.");
+    if (!isPathWithin(root, realPath))
+      throw new Error("Target directory must resolve inside the configured project root.");
     if (!fs.statSync(realPath).isDirectory()) throw new Error("Target path must be a directory.");
     return realPath;
   }
@@ -170,7 +172,7 @@ export class EosSpotifyAgenticFactory {
     const gitRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], {
       cwd: checkoutPath,
       encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"]
+      stdio: ["ignore", "pipe", "pipe"],
     }).trim();
     const realGitRoot = fs.realpathSync(gitRoot);
     if (realGitRoot !== checkoutPath) throw new Error("Selected path is not the Git repository root.");
@@ -178,7 +180,7 @@ export class EosSpotifyAgenticFactory {
     const actualRemote = execFileSync("git", ["remote", "get-url", "origin"], {
       cwd: checkoutPath,
       encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"]
+      stdio: ["ignore", "pipe", "pipe"],
     }).trim();
     const expected = normalizeGitRemote(project.remoteUrl);
     if (!expected || normalizeGitRemote(actualRemote) !== expected) {
@@ -206,9 +208,13 @@ export class EosSpotifyAgenticFactory {
       fs.renameSync(temporaryPath, targetPath);
     } catch (error) {
       if (descriptorOpen) {
-        try { fs.closeSync(descriptor); } catch {}
+        try {
+          fs.closeSync(descriptor);
+        } catch {}
       }
-      try { fs.unlinkSync(temporaryPath); } catch {}
+      try {
+        fs.unlinkSync(temporaryPath);
+      } catch {}
       throw error;
     }
     return targetPath;
@@ -237,10 +243,11 @@ export class EosSpotifyAgenticFactory {
 
     const startTime = process.hrtime.bigint();
     const taskId = `HONK-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
-    const slug = taskName
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "") || "task";
+    const slug =
+      taskName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "") || "task";
     const branchNameProposal = `honk/${slug}-${taskId.toLowerCase()}`;
     const targetDir = this.resolveProjectDirectory(directive.repoPath);
     const stack: SupportedStack = directive.stack || this.detectStack(targetDir);
@@ -253,14 +260,14 @@ export class EosSpotifyAgenticFactory {
       name: "1. Local metadata inventory",
       durationMs: Number(d0.toFixed(2)),
       status: "LOCAL_ONLY",
-      details: `Read local catalog metadata when present; service=${xirpContext.serviceName}, owner=${xirpContext.squad}`
+      details: `Read local catalog metadata when present; service=${xirpContext.serviceName}, owner=${xirpContext.squad}`,
     });
 
     steps.push({
       name: "2. Git branch or worktree",
       durationMs: 0,
       status: "NOT_RUN",
-      details: `Not created. Proposed name: '${branchNameProposal}'.`
+      details: `Not created. Proposed name: '${branchNameProposal}'.`,
     });
 
     const t2 = process.hrtime.bigint();
@@ -270,21 +277,21 @@ export class EosSpotifyAgenticFactory {
       name: "3. Template-path inventory",
       durationMs: Number(d2.toFixed(2)),
       status: "LOCAL_ONLY",
-      details: `Listed ${suggestedFiles.length} candidate template/source path(s); no files were created or edited.`
+      details: `Listed ${suggestedFiles.length} candidate template/source path(s); no files were created or edited.`,
     });
 
     steps.push({
       name: "4. Build and tests",
       durationMs: 0,
       status: "NOT_RUN",
-      details: "Not run; this planner does not execute project commands."
+      details: "Not run; this planner does not execute project commands.",
     });
 
     steps.push({
       name: "5. Pull request draft",
       durationMs: 0,
       status: "LOCAL_ONLY",
-      details: "Draft text prepared locally; no remote pull request was opened."
+      details: "Draft text prepared locally; no remote pull request was opened.",
     });
     const pullRequestDraft = this.synthesizePullRequestBody({
       taskId,
@@ -294,7 +301,7 @@ export class EosSpotifyAgenticFactory {
       specDescription,
       serviceName: xirpContext.serviceName,
       squad: xirpContext.squad,
-      steps
+      steps,
     });
     const fileInventorySummary = `${suggestedFiles.length} candidate path(s) listed; 0 files modified.`;
     const totalDurationMs = Number(process.hrtime.bigint() - startTime) / 1e6;
@@ -316,7 +323,7 @@ export class EosSpotifyAgenticFactory {
       pullRequestDraft,
       fileInventorySummary,
       reportFingerprintSha256,
-      totalDurationMs: Number(totalDurationMs.toFixed(2))
+      totalDurationMs: Number(totalDurationMs.toFixed(2)),
     };
   }
 
@@ -436,7 +443,7 @@ These are repository notes, not verified vendor standards. Review requirements a
       adrCount,
       agentsMd,
       claudeMd,
-      snapshotFingerprintSha256
+      snapshotFingerprintSha256,
     };
   }
 
@@ -448,7 +455,7 @@ These are repository notes, not verified vendor standards. Review requirements a
 
     return {
       writtenFiles: [agentsPath, claudePath],
-      sha256: report.snapshotFingerprintSha256
+      sha256: report.snapshotFingerprintSha256,
     };
   }
 
@@ -475,14 +482,18 @@ These are repository notes, not verified vendor standards. Review requirements a
     if (applyChanges && (!directive.targetFleet || directive.targetFleet.length !== 1)) {
       throw new Error("Applying a Fleetshift change requires exactly one targetFleet project; dry-run is the default.");
     }
-    if (directive.targetFleet && (!Array.isArray(directive.targetFleet) || directive.targetFleet.some((id) => typeof id !== "string"))) {
+    if (
+      directive.targetFleet &&
+      (!Array.isArray(directive.targetFleet) || directive.targetFleet.some((id) => typeof id !== "string"))
+    ) {
       throw new TypeError("targetFleet must be an array of project ID strings.");
     }
-    if (directive.targetFleet && (
-      directive.targetFleet.length > 32 ||
-      directive.targetFleet.some((id) => !id.trim() || Buffer.byteLength(id, "utf8") > 128) ||
-      new Set(directive.targetFleet).size !== directive.targetFleet.length
-    )) {
+    if (
+      directive.targetFleet &&
+      (directive.targetFleet.length > 32 ||
+        directive.targetFleet.some((id) => !id.trim() || Buffer.byteLength(id, "utf8") > 128) ||
+        new Set(directive.targetFleet).size !== directive.targetFleet.length)
+    ) {
       throw new RangeError("targetFleet must contain at most 32 unique non-empty IDs of at most 128 UTF-8 bytes each.");
     }
 
@@ -492,25 +503,28 @@ These are repository notes, not verified vendor standards. Review requirements a
     if (!reg || !Array.isArray(reg.projects) || reg.projects.length === 0) {
       throw new Error("Fleet registry must contain a non-empty projects array.");
     }
-    let fleetProjects: Array<{ id: string; name: string; localPath: string | null; remoteUrl: string }> = reg.projects.map((p: any) => {
-      if (typeof p?.id !== "string" || !p.id || typeof p?.name !== "string" || typeof p?.remoteUrl !== "string") {
-        throw new Error("Fleet registry entries require string id, name, and remoteUrl fields.");
-      }
-      const envName = typeof p.localPathEnv === "string" && /^EOS_FLEET_[A-Z0-9_]+_PATH$/.test(p.localPathEnv)
-        ? p.localPathEnv
-        : "";
-      const configuredPath = envName ? process.env[envName] : undefined;
-      return {
-        id: p.id,
-        name: p.name,
-        remoteUrl: p.remoteUrl,
-        localPath: p.id === "eos-system"
-          ? this.projectRoot
-          : typeof configuredPath === "string" && configuredPath.trim()
-            ? path.resolve(this.projectRoot, configuredPath.trim())
-            : null
-      };
-    });
+    let fleetProjects: Array<{ id: string; name: string; localPath: string | null; remoteUrl: string }> =
+      reg.projects.map((p: any) => {
+        if (typeof p?.id !== "string" || !p.id || typeof p?.name !== "string" || typeof p?.remoteUrl !== "string") {
+          throw new Error("Fleet registry entries require string id, name, and remoteUrl fields.");
+        }
+        const envName =
+          typeof p.localPathEnv === "string" && /^EOS_FLEET_[A-Z0-9_]+_PATH$/.test(p.localPathEnv)
+            ? p.localPathEnv
+            : "";
+        const configuredPath = envName ? process.env[envName] : undefined;
+        return {
+          id: p.id,
+          name: p.name,
+          remoteUrl: p.remoteUrl,
+          localPath:
+            p.id === "eos-system"
+              ? this.projectRoot
+              : typeof configuredPath === "string" && configuredPath.trim()
+                ? path.resolve(this.projectRoot, configuredPath.trim())
+                : null,
+        };
+      });
     if (new Set(fleetProjects.map((project) => project.id)).size !== fleetProjects.length) {
       throw new Error("Fleet registry project IDs must be unique.");
     }
@@ -545,7 +559,7 @@ These are repository notes, not verified vendor standards. Review requirements a
             projectId: proj.id,
             status: "SKIPPED",
             actions: [],
-            error: "Local checkout is not configured or does not exist."
+            error: "Local checkout is not configured or does not exist.",
           });
           continue;
         }
@@ -555,7 +569,9 @@ These are repository notes, not verified vendor standards. Review requirements a
             const catPath = path.join(effectivePath, "catalog-info.yaml");
             const catalogExists = fs.existsSync(catPath);
             if (catalogExists && !fs.lstatSync(catPath).isFile()) {
-              throw new Error("catalog-info.yaml must be a regular file; symbolic links and special files are not accepted.");
+              throw new Error(
+                "catalog-info.yaml must be a regular file; symbolic links and special files are not accepted.",
+              );
             }
             if (!catalogExists && !dryRun) {
               const defaultCatalog = `apiVersion: backstage.io/v1alpha1\nkind: Component\nmetadata:\n  name: ${JSON.stringify(proj.id)}\n  title: ${JSON.stringify(proj.name)}\nspec:\n  type: service\n  lifecycle: experimental\n  owner: user:unassigned\n`;
@@ -611,7 +627,7 @@ These are repository notes, not verified vendor standards. Review requirements a
         projectId: proj.id,
         status,
         actions: changes,
-        error
+        error,
       });
     }
 
@@ -621,9 +637,8 @@ These are repository notes, not verified vendor standards. Review requirements a
       .digest("hex");
 
     const failedCount = projectResults.filter((result) => result.status === "FAILED").length;
-    const status: FleetshiftReport["status"] = failedCount > 0
-      ? (updatedCount > 0 ? "PARTIAL" : "FAILED")
-      : dryRun ? "PLAN_ONLY" : "APPLY_REQUESTED";
+    const status: FleetshiftReport["status"] =
+      failedCount > 0 ? (updatedCount > 0 ? "PARTIAL" : "FAILED") : dryRun ? "PLAN_ONLY" : "APPLY_REQUESTED";
 
     return {
       migrationId,
@@ -634,7 +649,7 @@ These are repository notes, not verified vendor standards. Review requirements a
       executionMode: dryRun ? "PLAN_ONLY" : "APPLY_REQUESTED",
       status,
       projectResults,
-      resultFingerprintSha256
+      resultFingerprintSha256,
     };
   }
 
@@ -646,7 +661,7 @@ These are repository notes, not verified vendor standards. Review requirements a
     serviceName: string,
     squad: string,
     p99LatencyMs: number = 100,
-    maxErrorRatePercent: number = 0.1
+    maxErrorRatePercent: number = 0.1,
   ): CanaryManifestPackage {
     if (!/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(serviceName)) {
       throw new Error("serviceName must be a DNS-compatible lowercase identifier of at most 63 characters.");
@@ -660,7 +675,11 @@ These are repository notes, not verified vendor standards. Review requirements a
     if (!Number.isFinite(maxErrorRatePercent) || maxErrorRatePercent < 0 || maxErrorRatePercent > 100) {
       throw new RangeError("maxErrorRatePercent must be between 0 and 100.");
     }
-    const squadSlug = squad.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "unassigned";
+    const squadSlug =
+      squad
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "") || "unassigned";
     const flaggerYaml = `apiVersion: flagger.app/v1beta1
 kind: Canary
 metadata:
@@ -764,7 +783,7 @@ spec:
       flaggerCanaryYaml: flaggerYaml,
       argoRolloutYaml,
       prometheusRuleYaml,
-      resultFingerprintSha256
+      resultFingerprintSha256,
     };
   }
 

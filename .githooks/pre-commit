@@ -2,4 +2,7 @@
 set -eu
 REPO_ROOT=$(git rev-parse --show-toplevel)
 unset GIT_DIR GIT_INDEX_FILE GIT_WORK_TREE GIT_PREFIX
-exec node "$REPO_ROOT/scripts/verify-cicd-pipeline.mjs"
+# Lint only staged files (fast, < 1s)
+node "$REPO_ROOT/scripts/lint-staged.mjs"
+# Fast lane: secrets, typecheck and impacted suites. Full gate runs on pre-push.
+exec node "$REPO_ROOT/scripts/verify-fast.mjs"

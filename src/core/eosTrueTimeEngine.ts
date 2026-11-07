@@ -12,12 +12,7 @@
  * Zero external runtime dependencies. Node 24 strip-only compliant.
  */
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface TrueTimeInterval {
@@ -37,7 +32,10 @@ export class EosTrueTimeEngine {
 
   constructor(epsilonMs: number = EosTrueTimeEngine.DEFAULT_EPSILON_MS, ledger?: EosDurableSqliteLedger | null) {
     assertPrecondition(epsilonMs > 0, "Uncertainty epsilon must be positive");
-    assertPrecondition(epsilonMs <= EosTrueTimeEngine.MAX_TOLERATED_EPSILON_MS, "Epsilon exceeds safe clock drift bounds");
+    assertPrecondition(
+      epsilonMs <= EosTrueTimeEngine.MAX_TOLERATED_EPSILON_MS,
+      "Epsilon exceeds safe clock drift bounds",
+    );
     this.epsilonMs = epsilonMs;
     this.ledger = ledger ?? null;
   }
@@ -56,10 +54,13 @@ export class EosTrueTimeEngine {
       latest,
       mean,
       uncertaintyEpsilonMs: this.epsilonMs,
-      timestampIso: new Date(mean).toISOString()
+      timestampIso: new Date(mean).toISOString(),
     });
 
-    assertPostcondition(interval.earliest <= interval.mean && interval.mean <= interval.latest, "Invalid TrueTime interval bounds");
+    assertPostcondition(
+      interval.earliest <= interval.mean && interval.mean <= interval.latest,
+      "Invalid TrueTime interval bounds",
+    );
     return interval;
   }
 
@@ -98,8 +99,8 @@ export class EosTrueTimeEngine {
           payload: {
             commitTimestampLatest,
             waitDurationMs,
-            epsilonMs: this.epsilonMs
-          }
+            epsilonMs: this.epsilonMs,
+          },
         });
       } catch {
         // Fallback

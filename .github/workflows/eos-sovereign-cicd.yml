@@ -74,21 +74,25 @@ jobs:
         run: npm run lint
 
   go-template-checks:
-    name: Go example module tests and build
+    name: "Go template (${{ matrix.go-version }})"
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
       contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ["1.23", "1.24"]
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Setup Go from module contract
+      - name: Setup Go ${{ matrix.go-version }}
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version-file: templates/spotify-go-microservice/go.mod
+          go-version: ${{ matrix.go-version }}
           cache-dependency-path: templates/spotify-go-microservice/go.mod
 
       - name: Check formatting, tests, and build
@@ -97,6 +101,12 @@ jobs:
           test -z "$(gofmt -l .)"
           go test -race ./...
           go build ./...
+
+      - name: Run govulncheck (Go vulnerability scanner)
+        working-directory: templates/spotify-go-microservice
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck ./...
 
   rust-template-checks:
     name: Rust example crate tests and build
@@ -121,3 +131,9 @@ jobs:
           cargo fmt --check
           cargo test --locked
           cargo build --locked --release
+
+      - name: Run cargo audit (Rust vulnerability scanner)
+        working-directory: templates/spotify-rust-audio-core
+        run: |
+          cargo install cargo-audit --locked
+          cargo audit --deny warnings

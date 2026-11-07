@@ -1,0 +1,183 @@
+# OpenAPI 3.1 Specification — Glorian System Vercel Serverless API
+# Big Tech standard (Stripe, Vercel, Linear): machine-readable API contract
+# that consumers and tools can use without reading the source. All endpoints
+# are zero-dependency Vercel serverless functions.
+openapi: 3.1.0
+info:
+  title: Glorian System API
+  version: 75.0.0
+  description: Sovereign engineering control plane serverless endpoints. Zero runtime dependencies. All metrics are local examples, not production data.
+  license:
+    name: MIT
+    url: https://github.com/valentininflorezarbelaez-ai/Eos-System/blob/main/LICENSE
+  contact:
+    name: Valentín Flórez Arbeláez
+    url: https://github.com/valentininflorezarbelaez-ai/Eos-System
+
+servers:
+  - url: https://eos-system.vercel.app
+    description: Production (Vercel)
+  - url: http://localhost:3000
+    description: Local development
+
+paths:
+  /api/health:
+    get:
+      summary: Process liveness and observability snapshot
+      description: Reports process data and W3C trace context. Does not probe subsystems or calculate availability SLI/SLO.
+      tags: [Observability]
+      responses:
+        "200":
+          description: Healthy process snapshot
+          headers:
+            traceparent:
+              schema: { type: string, pattern: "^00-[0-9a-f]{32}-[0-9a-f]{16}-01$" }
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "OK" }
+                  version: { type: string, example: "75.0.0" }
+                  nodeVersion: { type: string, example: "v24.21.0" }
+                  uptime: { type: number, description: "Process uptime in seconds" }
+
+  /api/fleet:
+    get:
+      summary: Fleet registry inventory and mission control
+      description: Lists all registered fleet projects from docs/projects/registry.json. Optional probe queries live endpoints (hermetic by default).
+      tags: [Fleet]
+      parameters:
+        - name: probe
+          in: query
+          schema: { type: string, enum: ["true", "1"] }
+          description: Probe live endpoints (network access required)
+      responses:
+        "200":
+          description: Fleet inventory
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: string }
+                        name: { type: string }
+                        level:
+                          {
+                            type: string,
+                            enum: ["LEVEL_1_READ_ONLY", "LEVEL_2_AUTHORIZED", "LEVEL_3_PRODUCTION_AUTHORIZED"],
+                          }
+
+  /api/cicd:
+    get:
+      summary: CI/CD pipeline status and 7-stage gate results
+      tags: [DevOps]
+      responses:
+        "200":
+          description: Pipeline status snapshot
+
+  /api/compile:
+    post:
+      summary: Compile / amplify a directive
+      tags: [Cognitive]
+      parameters:
+        - name: mode
+          in: query
+          schema: { type: string, enum: ["amplify", "compile"] }
+      responses:
+        "200":
+          description: Compiled output
+
+  /api/eval:
+    get:
+      summary: Cognitive evaluation and benchmark results
+      tags: [Evaluation]
+      parameters:
+        - name: mode
+          in: query
+          schema: { type: string, enum: ["titans", "eval", "cognitive"] }
+      responses:
+        "200":
+          description: Evaluation results
+
+  /api/graph:
+    get:
+      summary: Semantic code graph and blast radius query
+      tags: [Architecture]
+      parameters:
+        - name: file
+          in: query
+          schema: { type: string }
+          description: Target module file path (e.g. src/core/eosPromptAmplifier.ts)
+      responses:
+        "200":
+          description: Import graph and blast radius
+
+  /api/jarvis:
+    get:
+      summary: Jarvis soul introspection and TMR consensus
+      tags: [Agentic]
+      responses:
+        "200":
+          description: Jarvis introspection report
+
+  /api/kernel:
+    get:
+      summary: Unified kernel orchestrator status and OSEI score
+      tags: [Kernel]
+      parameters:
+        - name: module
+          in: query
+          schema: { type: string, enum: ["bigtech", "omega", "specs"] }
+      responses:
+        "200":
+          description: Kernel status
+
+  /api/mcp:
+    post:
+      summary: MCP HTTP/SSE transport endpoint
+      description: Model Context Protocol JSON-RPC 2.0 over HTTP with SSE. Requires bearer auth.
+      tags: [MCP]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: MCP JSON-RPC response
+        "401":
+          description: Unauthorized (missing or invalid bearer token)
+
+  /api/memory:
+    get:
+      summary: Durable SQLite ledger state and hash chain integrity
+      tags: [Storage]
+      responses:
+        "200":
+          description: Ledger status
+
+  /api/spotify:
+    get:
+      summary: Spotify codex — loudness, Camelot, shuffle, and institutional patterns
+      tags: [Spotify]
+      responses:
+        "200":
+          description: Spotify codex data
+
+  /api/teurgia:
+    get:
+      summary: Cyber-theurgic synthesis (Samael, IBM, NVIDIA archetypes)
+      tags: [Transcendental]
+      responses:
+        "200":
+          description: Synthesis output
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer token for MCP HTTP transport

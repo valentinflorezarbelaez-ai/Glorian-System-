@@ -13,9 +13,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-import {
-  EosUniversalProductFoundry,
-} from "../src/core/eosUniversalProductFoundry.ts";
+import { EosUniversalProductFoundry } from "../src/core/eosUniversalProductFoundry.ts";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
 describe("SPEC-039: Universal Product Foundry Engine Verification", () => {
@@ -78,7 +76,7 @@ describe("SPEC-039: Universal Product Foundry Engine Verification", () => {
       const blueprint = EosUniversalProductFoundry.createProductBlueprint(sampleManifest);
       // Mutate layers artificially to simulate architectural drift
       const corruptedLayers = blueprint.layers.map((l) =>
-        l.layer === "domain" ? { ...l, allowedImports: ["infrastructure"] } : l
+        l.layer === "domain" ? { ...l, allowedImports: ["infrastructure"] } : l,
       );
       const corruptedBlueprint = { ...blueprint, layers: corruptedLayers };
       const report = EosUniversalProductFoundry.validateProductTopology(corruptedBlueprint);
@@ -113,7 +111,7 @@ describe("SPEC-039: Universal Product Foundry Engine Verification", () => {
 
       assert.ok(
         planetaryBlueprint.secDevOpsGates.some((g) => g.includes("Optional external step") && g.includes("TLC")),
-        "PLANETARY tier should document an external, not-yet-run TLC step"
+        "PLANETARY tier should document an external, not-yet-run TLC step",
       );
 
       const mvpManifest = { ...sampleManifest, tier: "MVP" };
@@ -136,9 +134,9 @@ describe("SPEC-039: Universal Product Foundry Engine Verification", () => {
             domain: "audio",
             tier: "ENTERPRISE",
             entities: ["Track", "MixSession"],
-            commands: ["MixTracks", "AnalyzeHarmonics"]
-          }
-        }
+            commands: ["MixTracks", "AnalyzeHarmonics"],
+          },
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");
@@ -157,9 +155,9 @@ describe("SPEC-039: Universal Product Foundry Engine Verification", () => {
           name: "eos_product_foundry_validate",
           arguments: {
             domain: "fintech",
-            tier: "MISSION_CRITICAL"
-          }
-        }
+            tier: "MISSION_CRITICAL",
+          },
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");

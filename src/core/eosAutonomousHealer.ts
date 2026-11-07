@@ -113,7 +113,9 @@ export class EosAutonomousHealer {
     const cleanup = () => {
       for (const entry of staged) {
         if (entry.temporaryPath && fs.existsSync(entry.temporaryPath)) {
-          try { fs.unlinkSync(entry.temporaryPath); } catch {}
+          try {
+            fs.unlinkSync(entry.temporaryPath);
+          } catch {}
         }
       }
     };
@@ -140,17 +142,19 @@ export class EosAutonomousHealer {
         const fileStat = fs.statSync(targetPath);
         const temporaryPath = path.join(
           path.dirname(targetPath),
-          `.${path.basename(targetPath)}.eos-${crypto.randomUUID()}.tmp`
+          `.${path.basename(targetPath)}.eos-${crypto.randomUUID()}.tmp`,
         );
         try {
           fs.writeFileSync(temporaryPath, candidate.proposedContent, {
             encoding: "utf8",
             flag: "wx",
-            mode: fileStat.mode & 0o777
+            mode: fileStat.mode & 0o777,
           });
           staged.push({ candidate, targetPath, temporaryPath });
         } catch (error) {
-          try { fs.unlinkSync(temporaryPath); } catch {}
+          try {
+            fs.unlinkSync(temporaryPath);
+          } catch {}
           errors.push(`${candidate.targetPath}: ${error instanceof Error ? error.message : String(error)}`);
           break;
         }
@@ -210,7 +214,8 @@ export class EosAutonomousHealer {
       const walk = (dir: string) => {
         if (!fs.existsSync(dir)) return;
         const realDir = fs.realpathSync(dir);
-        if (!isPathWithin(realRoot, realDir)) throw new Error("Source scan directory resolves outside the project root.");
+        if (!isPathWithin(realRoot, realDir))
+          throw new Error("Source scan directory resolves outside the project root.");
         const entries = fs.readdirSync(dir, { withFileTypes: true });
         for (const entry of entries) {
           const full = path.join(realDir, entry.name);
@@ -233,7 +238,8 @@ export class EosAutonomousHealer {
         throw new RangeError(`Healing target exceeds the 1 MiB file limit: ${path.relative(realRoot, fullPath)}`);
       }
       totalBytes += fileStat.size;
-      if (totalBytes > MAX_HEAL_SCAN_BYTES) throw new RangeError("Healing scan exceeds the 50 MiB aggregate file limit.");
+      if (totalBytes > MAX_HEAL_SCAN_BYTES)
+        throw new RangeError("Healing scan exceeds the 50 MiB aggregate file limit.");
       const relPath = path.relative(realRoot, fullPath).replace(/\\/g, "/");
       const origContent = fs.readFileSync(fullPath, "utf8");
       let proposed = origContent;
@@ -278,7 +284,7 @@ export class EosAutonomousHealer {
           proposedContent: proposed,
           patchDiff: createSimpleDiff(origContent, proposed),
           sandboxValid: valRes.valid,
-          blastRadiusRisk: blast.riskLevel
+          blastRadiusRisk: blast.riskLevel,
         });
       }
     }
@@ -333,7 +339,7 @@ export class EosAutonomousHealer {
         stages: [],
         violations: [`Local verification could not complete: ${message}`],
         epistemicState: "FINDINGS_IDENTIFIED",
-        sourceInventoryDigest: "unavailable"
+        sourceInventoryDigest: "unavailable",
       };
     }
 
@@ -353,9 +359,9 @@ export class EosAutonomousHealer {
           file: c.targetPath,
           action: c.action,
           blastRadiusRisk: c.blastRadiusRisk,
-          sandboxValid: c.sandboxValid
+          sandboxValid: c.sandboxValid,
         })),
-        sourceInventoryDigest: turboRes.sourceInventoryDigest
+        sourceInventoryDigest: turboRes.sourceInventoryDigest,
       };
 
       const receiptContent = JSON.stringify(receiptData, null, 2);
@@ -369,7 +375,8 @@ export class EosAutonomousHealer {
         const receiptDir = path.join(realDocsPath, "evidence");
         if (!fs.existsSync(receiptDir)) fs.mkdirSync(receiptDir);
         const realReceiptDir = fs.realpathSync(receiptDir);
-        if (!isPathWithin(root, realReceiptDir)) throw new Error("Evidence directory resolves outside the project root.");
+        if (!isPathWithin(root, realReceiptDir))
+          throw new Error("Evidence directory resolves outside the project root.");
         const safeTimestamp = timestamp.replace(/[:.]/g, "-");
         receiptPath = path.join(realReceiptDir, `HEAL-${safeTimestamp}-${crypto.randomBytes(4).toString("hex")}.json`);
         const descriptor = fs.openSync(receiptPath, "wx", 0o644);
@@ -381,7 +388,9 @@ export class EosAutonomousHealer {
         }
       } catch (error) {
         if (receiptCreated && receiptPath) {
-          try { fs.unlinkSync(receiptPath); } catch {}
+          try {
+            fs.unlinkSync(receiptPath);
+          } catch {}
         }
         receiptPath = null;
         receiptSha256 = null;
@@ -391,9 +400,7 @@ export class EosAutonomousHealer {
     }
 
     const appliedCount = appliedCandidates.length;
-    const success = turboRes.success && (
-      !applyChanges || writeStatus === "APPLIED" || writeStatus === "NO_CHANGES"
-    );
+    const success = turboRes.success && (!applyChanges || writeStatus === "APPLIED" || writeStatus === "NO_CHANGES");
 
     return {
       success,
@@ -408,7 +415,7 @@ export class EosAutonomousHealer {
       epistemicState: success ? "LOCAL_CHECKS_PASSED" : "FINDINGS_IDENTIFIED",
       receiptPath,
       receiptSha256: receiptSha256 ? `sha256:${receiptSha256}` : null,
-      durationMs: Date.now() - startMs
+      durationMs: Date.now() - startMs,
     };
   }
 }

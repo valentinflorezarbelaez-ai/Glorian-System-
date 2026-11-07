@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
-  "totalSpecs": 130,
-  "catalogSha256": "f134e6ca940f4b85e67d20198910b8c528ec0fa8752d1d4666fb04cc7934944e",
+  "totalSpecs": 172,
+  "catalogSha256": "fb932135f8eb82cd5e99597fd7c0791b90c9c7654059d31d7e2637bb4b7162f3",
   "specs": [
     {
       "id": "SPEC-001",
@@ -10,7 +10,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-001-CONSTITUTION.md",
-      "sha256": "2dc48c9fb89847ae2cd53331208b3340452fd717a07a58652621ccea01c5e4e2"
+      "sha256": "90c4d2c76cb144327b3047ae37c27ca9fec3c53d21013bacde1bf26654621763"
     },
     {
       "id": "SPEC-002",
@@ -19,7 +19,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-002-HEXAGONAL-L0.md",
-      "sha256": "7003b81f6a6112f256a40d4a57f70ffcfe0e9ea5c0532c231a87f86d2aed0c07"
+      "sha256": "69b707cdb43ab8fb483be3a26c581e0498cf53e1048d84e9fa8c9a1592afeeb9"
     },
     {
       "id": "SPEC-003",
@@ -28,7 +28,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-003-XIRP-WORKTREE.md",
-      "sha256": "72a6630f1eff33f34827e47dcf165fafdeb729543a9dda6c3d41fbba82be8dad"
+      "sha256": "723e8f5755b3846f5a1f69ff84676b4aa9f096aad6cb691e6a8e3b22f7c01cf1"
     },
     {
       "id": "SPEC-004",
@@ -37,7 +37,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-004-SPOTIFY-XIRP-ENGINE.md",
-      "sha256": "6fcbc13ec05c816568029fa76935922eb3bb35436b501d12b7c0f01a0fc7b37d"
+      "sha256": "7d26f20862580060bef90c8520f94a7581f227878e31bd952350a22e03a9aadc"
     },
     {
       "id": "SPEC-005",
@@ -46,7 +46,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-005-AUTONOMOUS-HEALER.md",
-      "sha256": "5e0f8986754faf9b65c01841cd1343ea4c6a731b177d55225696ac55b6f14267"
+      "sha256": "b00e82b71e18c84218ccba4351d78c69e819087ee70c70025a362a94735bd14a"
     },
     {
       "id": "SPEC-006",
@@ -55,7 +55,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-006-TITANS-MATRIX.md",
-      "sha256": "8c0d4081a0d353081c0b1d035b4c5cbddd877e57391ee7d54ec74bdfff439b41"
+      "sha256": "705ddee69c5db593bd275e30ab9d13c77cfa0d2e0c951586304000cda180975e"
     },
     {
       "id": "SPEC-007",
@@ -64,7 +64,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-007-TURBO-SEMANTIC-GRAPH.md",
-      "sha256": "6d6b50f2b70a6d98f7cef5df27d8bb0cf26b354faa474f21cfa5d2ec6e358a6b"
+      "sha256": "63480e98654b0a158fbf38672c9a3bad5c642ee4272d9cb51ffe9c354708b9af"
     },
     {
       "id": "SPEC-008",
@@ -73,7 +73,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-008-COGNITIVE-EVAL.md",
-      "sha256": "e886129413d8d9326e2b578b0d289217e9c2600f2f94e2d906c5363edd13c593"
+      "sha256": "7ca3738ed15b77be0b6bcb1b30d77bb2ae22428dbd002ab701ef3c1153f5e255"
     },
     {
       "id": "SPEC-009",
@@ -82,7 +82,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-009-JARVIS-SOVEREIGN-MONAD.md",
-      "sha256": "b38b38551ac5819ef65905b47073cdbbbcb5fe8a0d017b4e5910dbd2a98bcde7"
+      "sha256": "d55089186e9817c27651710ed207afecea3f263ecdbe99daca33ee0a4842d7b1"
     },
     {
       "id": "SPEC-010",
@@ -91,7 +91,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-010-AKASHIC-MEMORY.md",
-      "sha256": "c11ae2603b932ef4c6d1eace545fba8a2225850046b6ca320fd63377f345cbb2"
+      "sha256": "5cf8e6f6a4e298f62079ff31bf08703dfdc7cba33d273f3a7139fcceab81fa4b"
     },
     {
       "id": "SPEC-011",
@@ -100,7 +100,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-011-GO-NATIVE-ACCELERATOR.md",
-      "sha256": "976864ff5ec1adec9fecc619ea87e4ada1094251c0a5eac18d3098ef08180a9d"
+      "sha256": "85bc496c364f49a5c0242ecc6527742138cc52f58e05474d1ec4afe2224a1788"
     },
     {
       "id": "SPEC-012",
@@ -109,7 +109,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-012-SPOTIFY-AGENTIC-FACTORY.md",
-      "sha256": "1f0ac93fcd8175762886a93f5fab999595baae555c3fd916fc06396f0c7a42ba"
+      "sha256": "6fcc9cc22a838b6333287321769be0f58b991d45344d376e212f58f32e201572"
     },
     {
       "id": "SPEC-013",
@@ -118,7 +118,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-013-AUDIO-DSP-KERNEL.md",
-      "sha256": "ccc13d6e753dea00dc1127cd4147d6d1b35a001f0de368a85c730d628db669ac"
+      "sha256": "4fe39cb894bfc584511daa2ef987fc7ba3456ad7ad370295c5a350f290194572"
     },
     {
       "id": "SPEC-014",
@@ -127,7 +127,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-014-FLEET-GOLDEN-PATH-ELEVATOR.md",
-      "sha256": "9e418f953900e21fc97cd46ae0f55dc41041f5d4f1c4535de809eec0f9160799"
+      "sha256": "d6a0a4f362457dc55aa6ee572ac31218d580d8a15e64d71f4170689028ab8b25"
     },
     {
       "id": "SPEC-015",
@@ -136,7 +136,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-015-APOLLO-HERMES-MESH.md",
-      "sha256": "ba347a5b909bca235b7107b6e38768acf4e9e48778b1cdbd643ba60e490f0ebf"
+      "sha256": "dc693bf5dca1941d7d6bc4c00beef546761d8400fbb397067c177ec099a8707e"
     },
     {
       "id": "SPEC-016",
@@ -145,7 +145,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-016-FINOPS-GO-NUBANK-SPOTIFY.md",
-      "sha256": "ea8159708881a9c359cb9f01b13f3b05f3962a01780867d820551e962cfb6439"
+      "sha256": "9d630f238b31369d47af8c634fd60cadb0c23902204a4e96596dd35c080b4f82"
     },
     {
       "id": "SPEC-017",
@@ -154,7 +154,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-017-GAPLESS-DJ-CROSSFADER.md",
-      "sha256": "b73e87ebaf1ce9d50b1d7e8c841801a125d591bca9a97e7b67800eb1a563bd10"
+      "sha256": "42e42a945da8a4c6df6a15a6367ae65df158479326b0c053715524d6cdcfb0ff"
     },
     {
       "id": "SPEC-018",
@@ -163,7 +163,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-018-ACOUSTIC-FEATURE-STORE.md",
-      "sha256": "52dcfcdf427fccc93a994f95aa78e85e07ce00347a7322960d779dd308ddd7c4"
+      "sha256": "52a16cce22034e036cf10aab0ebc66d1a010fa4b181941970f480b146246a2cf"
     },
     {
       "id": "SPEC-019",
@@ -172,7 +172,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-019-UNIVERSAL-POLYGLOT-ADAPTER.md",
-      "sha256": "53be7992bdf4f41fc719ed5905db0d5c26154f80f5a3f2bdaa072c1076baff37"
+      "sha256": "7c05d62b22d9ec612727202e180d5abb31063ade0a57b00191202e2ac6cf8d8e"
     },
     {
       "id": "SPEC-020",
@@ -181,7 +181,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-020-GLOBAL-EDGE-ARBITER.md",
-      "sha256": "ca8755334b47730e7bd37f1994cb4b45e98aa7e667abd969f05c4f49c705186f"
+      "sha256": "fdb2e0eaa215d59aabd5abad353c7a208b45d8c98262565acde0ce196906ad7c"
     },
     {
       "id": "SPEC-020",
@@ -190,7 +190,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-020-UNTRUSTED-BROWSER-DATA.md",
-      "sha256": "499e9cda261382572dfbca4a6ae69123662dffcaddd704c10a188faedf719240"
+      "sha256": "13a2143903bb5d9dd89014469801bc1abf418d60805e165efdd505d4397d0837"
     },
     {
       "id": "SPEC-021",
@@ -199,7 +199,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-021-SAMAEL-IBM-NVIDIA.md",
-      "sha256": "9021b002d3fcc3dbddbe54f9a836086b3eb73e35fe44c8c6c175a3fab73e334c"
+      "sha256": "58b0557a7cc608b5e7ccc9c8c5df813dfa85a346f790471c8d0945340b109e66"
     },
     {
       "id": "SPEC-021",
@@ -208,7 +208,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-021-VERIFIABLE-API-RESULTS.md",
-      "sha256": "d4edc9626015d42341fd95a71ccd330c91106d94fcb0b3a49a003daef1c3c5e0"
+      "sha256": "68bb0e33d3a5abb92267bf18b6e8f1c70c170407e453cd14f51101b4158ab2fb"
     },
     {
       "id": "SPEC-022",
@@ -217,7 +217,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-022-DISRUPTOR-RING-BUFFER.md",
-      "sha256": "3ad2a728b89919cc2ff5ff8349c5394e7e657ec104bbc0a90331dc049e51c890"
+      "sha256": "63003721c45518d78d095602b165cb090cb63ff4a84d3b6022c5a3db912a49c9"
     },
     {
       "id": "SPEC-022",
@@ -226,7 +226,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-022-SAFE-AGENT-HARNESS.md",
-      "sha256": "caa5ae6c0535be19caf0f57cd815e11d6c4f3ecf2814521980957c2b10afd77a"
+      "sha256": "a6ecb776f82cde0281f1def93b40f2b238f3ab8cccb24e1cefeeac526b403839"
     },
     {
       "id": "SPEC-023",
@@ -235,7 +235,7 @@
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-023-NUBANK-INSTITUTIONAL-CODEX.md",
-      "sha256": "aea29d2aeceb8d77ebce46f29b5956a125ffed190abcd8703cbdcfe04d83978e"
+      "sha256": "852dae01ea986ba18631ac9e68b83ce9cd3b6a2f64dcd793ee0683b897b69630"
     },
     {
       "id": "SPEC-024",
@@ -244,7 +244,7 @@
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-024-SPOTIFY-INSTITUTIONAL-CODEX.md",
-      "sha256": "83e7d662e23aa1d3b34feee5db16d5c091e4eae274554fd1c4515a260fbf3a12"
+      "sha256": "1c3d52634a047919476f7fd6f3f218f7a3ab5b3e8ab7a62a3932ea796600ab7c"
     },
     {
       "id": "SPEC-025",
@@ -253,7 +253,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-025-APEX-MODEL-ROUTER-GO-HEALER.md",
-      "sha256": "eba333bb837964291453b515962c1674b117776ff58226ee841841362b0d997c"
+      "sha256": "d1ad8fb79e1ee7d16937dd9ea23ca707d3b03e75161a02ae2e10e489d6185de8"
     },
     {
       "id": "SPEC-026",
@@ -262,7 +262,7 @@
       "frCount": 5,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-026-WASM-TOPOLOGY-GRAPH.md",
-      "sha256": "b82895f03cbc404b36efa7b9d20caf6842dcb308d5db2172bf846182fc820101"
+      "sha256": "f8b031e1bc7a092741e1600fd473a9491d72cf41557b70e986d706d0d47ed5f3"
     },
     {
       "id": "SPEC-027",
@@ -271,7 +271,7 @@
       "frCount": 5,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-027-JARVIS-SOUL-AND-AUTONOMOUS-INTROSPECTION.md",
-      "sha256": "eef75c69755bc630ddf13f65ca43e628ab14bb5f2b7129603f1c07806d7a6d77"
+      "sha256": "d12b1e5a4b16f306bd84380614a4d21a9423820ad51e8cb87336f1441eaf3338"
     },
     {
       "id": "SPEC-028",
@@ -280,7 +280,7 @@
       "frCount": 5,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-028-TIER-S1-OMEGA-SDLC.md",
-      "sha256": "8b1640abaecebe0e88e8d6a7d926359224c4a4a88009654dbd65e58cba81b0b5"
+      "sha256": "daa661ad6a7f4049062d10669757e36b75cb3a58bfd366b21febb738e1d790e9"
     },
     {
       "id": "SPEC-029",
@@ -289,7 +289,7 @@
       "frCount": 5,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-029-MCP-STREAM-SERVER.md",
-      "sha256": "061a4796071254ee913d109d4b77afe8f1ae5ece9582219c756d9152c5a93d29"
+      "sha256": "15770f66f65d3ea73b787e3ad094f2da666c3411ca9eee4fe4b0bcfd1c0ee9ee"
     },
     {
       "id": "SPEC-030",
@@ -298,7 +298,7 @@
       "frCount": 5,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-030-APEX-TEN-OUT-OF-TEN-MATRIX.md",
-      "sha256": "d11a3be68a2bc4e26419b83acba0642b49b05259f33ecf42967a2409ba94a95e"
+      "sha256": "f55e22c7dfaad91f0a0f6f179dc58a3d6ae7f925c5f56bbb30b2cdbdc677b352"
     },
     {
       "id": "SPEC-030",
@@ -307,7 +307,7 @@
       "frCount": 5,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-030-BIG-TECH-TIER-1-PERFECTION.md",
-      "sha256": "d1c9faf86a1924c66db71550e59291ef75352d7f68aed6a3595e2c2dd6828a86"
+      "sha256": "e7de4e62b54198f0e2307a4ee7756e169977786aa5fa87c9a06a14f233d6891d"
     },
     {
       "id": "SPEC-031",
@@ -316,7 +316,7 @@
       "frCount": 5,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-031-GNOSTIC-TEMPLE-FINOPS-SHIELD.md",
-      "sha256": "07c5713801792442fe0539e2ecd65ef7552aa66f7669cfc7a3ba4603d362d98b"
+      "sha256": "82c226c17bf37274f55e3a3d00dbbf5ae7aef155f0f2835268d97c0aca7e1a0d"
     },
     {
       "id": "SPEC-031",
@@ -325,7 +325,7 @@
       "frCount": 4,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-031-TIER-ZERO-APEX-PERFECTION.md",
-      "sha256": "c07606628b30e48f3c8caf0920b331ff82dcfc404811e0d3ae82d4d31cd971db"
+      "sha256": "bddad4da30c443a6134781e9871b6f8ce2e955d088c5f4c94fd2dd3e480a9a80"
     },
     {
       "id": "SPEC-032",
@@ -334,7 +334,7 @@
       "frCount": 4,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-032-BIG-TECH-HYPER-OPTIMIZATION.md",
-      "sha256": "da998fa63f460396d3c74ba8fe52d7e5ae28582f488afbd57f9c71ec72ac089f"
+      "sha256": "ff907299a3715d187e825e2532391ce3eb416dff42fb239aed059c06a67b7bce"
     },
     {
       "id": "SPEC-033",
@@ -343,7 +343,7 @@
       "frCount": 4,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-033-MIND-MOUNTAINS-AUTOTUNER.md",
-      "sha256": "d73b45208c1b57f786be9b58bd3bb5e83245306d819f24eedd43733df0a01258"
+      "sha256": "78922677e853b67bf1fa6e06c4549b8fe7207a743c0cb6d438180ccb7ab41eec"
     },
     {
       "id": "SPEC-034",
@@ -352,7 +352,7 @@
       "frCount": 5,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-034-NSA-ZERO-TRUST-DEFENSE.md",
-      "sha256": "399f409e0f36f3d67c2f942e2347bda5cfe36d60b0b895ce5d58f60856580186"
+      "sha256": "0642d55030afc6ef20e39dc4d3dc9b4f991a026d404747eebf77eb1996e3c21b"
     },
     {
       "id": "SPEC-035",
@@ -361,7 +361,7 @@
       "frCount": 4,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-035-PLANETARY-CONSENSUS-AND-ADAPTIVE-CONCURRENCY.md",
-      "sha256": "9f9fca448892ad3eb1529c38c05c05b63c31055cf3457925994cdf0ad68b35c0"
+      "sha256": "6e6a0055b539804e56f2889abc8564affd5babdd420bd075f25158bb4bf6a241"
     },
     {
       "id": "SPEC-036",
@@ -370,7 +370,7 @@
       "frCount": 4,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-036-CONSISTENT-HASHING-AND-EDGE-RATE-LIMITING.md",
-      "sha256": "edb45f40a201b8bb97292d24b1a81e26e0c74ee67aaed726748df26b6aee6739"
+      "sha256": "c7a60515e02f64329a82e60843a2e21c2aa503e36a76683c51217e7f8dd6611d"
     },
     {
       "id": "SPEC-037",
@@ -379,7 +379,7 @@
       "frCount": 4,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-037-BIG-TECH-TIER-0-HYPER-PERFECTION.md",
-      "sha256": "f843a279f8e6f3f37043a3c4fbf22529834bce3e9d56c52822ab86d63f819791"
+      "sha256": "ecec46cf737df6e86101d096547f0903bbf01fe1354abf9614d279444a2fc06a"
     },
     {
       "id": "SPEC-038",
@@ -388,7 +388,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-038-PALANTIR-HNSW-VECTOR-REASONING.md",
-      "sha256": "89b312076f243838b50f15316c6a7b1ac87194c7039ff9e1e112a2a9581b8e41"
+      "sha256": "8688216bd534ddc52ad6aec3c22dbc00e55ae207c5028990b09af12a673c5014"
     },
     {
       "id": "SPEC-039",
@@ -397,7 +397,7 @@
       "frCount": 4,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-039-UNIVERSAL-PRODUCT-FOUNDRY.md",
-      "sha256": "c10aaeb2e1f64d622ab13ed50868a96e665ef65e3ef5702bfe76fbe154e62469"
+      "sha256": "07fe48956389b6fa78ae93922a1c8437505f4ac90578ada2938af86f2d5f7ee0"
     },
     {
       "id": "SPEC-040",
@@ -406,7 +406,7 @@
       "frCount": 4,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-040-OMEGA-TRANSCENDENTAL-APEX.md",
-      "sha256": "f97a4089240ca426e7fa772f2775fc0ffea2448028779dbf52acefd50264fe2f"
+      "sha256": "3965109edd3b05b7055718f88479e1604822466dbde9dfcbea90c985cf0a0d2d"
     },
     {
       "id": "SPEC-040",
@@ -415,7 +415,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-040-SOVEREIGN-21STEP-LOOP.md",
-      "sha256": "5ccdfb2759f595ba653dac23037b131bcf4a6b56c8267944bba61803d9388f0f"
+      "sha256": "1780b9b801aa869ba170981df97833bf2de53b22e02647f578f33342cc749bd7"
     },
     {
       "id": "SPEC-041",
@@ -424,7 +424,7 @@
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-041-CONTINUOUS-REFACTOR-ENGINE.md",
-      "sha256": "29013d5a877fc9cd2e1a910c794b6c25a899275fe0435b9675a39b202a55a28d"
+      "sha256": "6ad9e5016704335fa4c1f355be3405968208a052b87567925f22fea718377d02"
     },
     {
       "id": "SPEC-042",
@@ -433,7 +433,7 @@
       "frCount": 4,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-042-FLEET-SYNC-MCTS-CANARY.md",
-      "sha256": "e3870a4ecb7a3e5597b51ff4e868c79a0de1e04babc1ededdf08416ae6f28ad0"
+      "sha256": "f2cd0d1985ba7b409b72720512c24427bcf2113a076765c4d25082c67a150480"
     },
     {
       "id": "SPEC-043",
@@ -442,7 +442,7 @@
       "frCount": 4,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-043-ANTIGRAVITY-MCP-DIRECTOR.md",
-      "sha256": "de6c4867d32ea9a0b97599759c292e2c25f875522280eb3b0d400cfaeffead3a"
+      "sha256": "05e5e29e65123349346181c3b0793f0e47ad5d20d081ce0ed36b4ac79e46e56e"
     },
     {
       "id": "SPEC-044",
@@ -451,7 +451,7 @@
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-044-TIER0-APEX-GENTLEMAN-SYNERGY.md",
-      "sha256": "a8473c5275486dd9bb52ee2dc0ae08ac40eec26fe7ddc678dd10d98b6914ebfb"
+      "sha256": "2dcc7d7ec679056b1f62e7042eb290bfea3557f5a39811c9926ef2df3234d091"
     },
     {
       "id": "SPEC-045",
@@ -460,7 +460,7 @@
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-045-GENTLEMAN-EVERGREEN-AUTOUPDATE.md",
-      "sha256": "ce3d35c8897b098e9b485ea684a694f9a2d74661e3566812c5b76257e52be943"
+      "sha256": "1c5ccfbb3aff6b3373ca9002c669bf5dc7a824143e7a1f5a3c9a8703fe2043cd"
     },
     {
       "id": "SPEC-046",
@@ -469,7 +469,7 @@
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-046-ENTERPRISE-WORKSPACE-GOVERNOR.md",
-      "sha256": "392e5f60c91f280f15d14c2d83991affe7e205859089036eaba38983053e1c6d"
+      "sha256": "d5b4bdb860e8760ceb604fc7818129ca1ad5a1e3ca3030c39b0e508ab7055119"
     },
     {
       "id": "SPEC-047",
@@ -478,7 +478,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-047-DEEPMIND-EVOLUTIONARY-ENGINE.md",
-      "sha256": "d07f3c407612e1b44067a5b4adeed49b0f2ded28e1d654205bed72c570955145"
+      "sha256": "cd223ebd4f8998d0fef1300ebffa1bf711162ed861e92cdbf268dd997f68d518"
     },
     {
       "id": "SPEC-048",
@@ -487,7 +487,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-048-AGENT-TOPOLOGY-ZERO-COPY-MESH.md",
-      "sha256": "5c5bce280f305c59e13e9678d7b691f705da58a8df18dbcde2bd54ef5a72c9a3"
+      "sha256": "95a762fd7b7ed2e912a8de590b92f43208a4168db7263de617a5561ec1894d3e"
     },
     {
       "id": "SPEC-049",
@@ -496,7 +496,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-049-INVARIANT-VERIFICATION-ENGINE.md",
-      "sha256": "47618b1fa7311631b75a33d26ccb6ed2e2a5615dd99747c7203132a0e2cb8747"
+      "sha256": "f554d4dec37edc822c1834fe1b217151d8b77513b8e59e98097d9ef1152b445f"
     },
     {
       "id": "SPEC-050",
@@ -505,7 +505,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-050-CONTRACT-EVOLUTION-GOVERNANCE.md",
-      "sha256": "308641683e0ba0e3cc8c5a4a4342e1a548290bae05863c4dd2a6087b58a57b0a"
+      "sha256": "de3299d35899762d0e2c12986ca84462fec29ae7f26d1cc99739b3d627ab2d71"
     },
     {
       "id": "SPEC-051",
@@ -514,7 +514,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-051-AUTONOMOUS-CLOSED-LOOP-HEALING.md",
-      "sha256": "69a9b293a82ac82f63df7b680e20935856b519107a3a3747d01a6ca1199e8f53"
+      "sha256": "fba2021064bcd6a451eb4484780fbe6621dd2f43f1f658d7f58dcb5252368e17"
     },
     {
       "id": "SPEC-052",
@@ -523,7 +523,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-052-TLC-FORMAL-MODEL-CHECKER.md",
-      "sha256": "ec4e04bcb7063adf2a6b03d72c1903ee28d5234ade797b0d1ff7d3ebaff1d985"
+      "sha256": "029c40581a5893648d1a5c09cc0f0fc6da29879b3b54fc2a32e73ca92a1392ef"
     },
     {
       "id": "SPEC-053",
@@ -532,7 +532,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-053-GITHUB-ACTIONS-PR-GATE.md",
-      "sha256": "51ec29dad91dd19a71027c9ba9fe1853e1711079b88a4c265beec4c2921cac5a"
+      "sha256": "34232c2cc70a46e980c68b7a4603b264417c55ed9d2a7170a4d2153bc8c97f4d"
     },
     {
       "id": "SPEC-054",
@@ -541,7 +541,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-054-MICROVM-SANDBOX-ENGINE.md",
-      "sha256": "fa302e374cf22e7e4b99aa4fed33192dea6ac128850b67191930182735ad1145"
+      "sha256": "5a949ba04c6a3e221b61073a32d91efc449b1b3c340a3555db93fdfdc7f22949"
     },
     {
       "id": "SPEC-055",
@@ -550,7 +550,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-055-TELEMETRY-DASHBOARD.md",
-      "sha256": "3d6d6e5f1782b406f3f4984b8fec7f9f21c6aa84ebc7ad220e5d93e2872ad4d0"
+      "sha256": "7f4e7c9f372a4a181a274d0db3f431c0d8cda4c4544e80afcfce35844bb4552f"
     },
     {
       "id": "SPEC-056",
@@ -559,7 +559,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-056-FLEET-PRODUCTION-VERIFICATION.md",
-      "sha256": "0e7d1e0488427ce56623fe57cef7d43dfc96247fd5237cd70e231fe3064f2d0b"
+      "sha256": "e80d0052ae58db59c95cd82769c3a4f99a13cf219c0dc77a953b16912d026e93"
     },
     {
       "id": "SPEC-057",
@@ -568,7 +568,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-057-UNITOTAL-NEXUS.md",
-      "sha256": "1bcfc21b17ef7409bbabb8c9d5b9d5d51fbb2d3ba15626f55da121a46b74c002"
+      "sha256": "ccf16d65f47ff7a3664edd3d3207679f0cef62c72722dd3b9a982b0c0264048b"
     },
     {
       "id": "SPEC-058",
@@ -577,7 +577,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-058-PROPERTY-FUZZING-TIME-TRAVEL-HYPERVISOR.md",
-      "sha256": "96d63730b3d1e6517daea2bcaf31c54c0d377226656d8a1bfdbfb0751068ab61"
+      "sha256": "3c047d869054aa84f767c4332ccacc5fa57fd4c7c6f7ff3aad3de7141d51138a"
     },
     {
       "id": "SPEC-059",
@@ -586,7 +586,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-059-CONSCIOUS-WITNESS-HOTPATCHING.md",
-      "sha256": "2040619f2f2291ddf1b150f3303aa39cb3f2e7819bc8059524ff9b4f28adc8d6"
+      "sha256": "cf1b88edc6b21e1e18238713ee0b7d53cf304002feb8b4d058b7693ac340004b"
     },
     {
       "id": "SPEC-060",
@@ -595,7 +595,7 @@
       "frCount": 6,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-060-AUTONOMOUS-SAPFIX-PR-ENGINE.md",
-      "sha256": "6a9b295294ce14e5a8408cf439c5b5b1d648bf5c8287abcb6b789e42aff4d457"
+      "sha256": "e695a77614a05ead3490a114640c434df0f0912a70b744ef52392c56a8fc3358"
     },
     {
       "id": "SPEC-061",
@@ -604,7 +604,7 @@
       "frCount": 5,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-061-SLSA-PROVENANCE-CYCLONEDX-SBOM.md",
-      "sha256": "53c6f40972c25b4572d52657eb5374d36955a6051e66e0bcf3eb4a22adcd61c6"
+      "sha256": "04ffa21754863486b2fdf894ab67559acf341a339099b8cca3d45c5530718e9b"
     },
     {
       "id": "SPEC-062",
@@ -613,7 +613,7 @@
       "frCount": 5,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-062-CONTENT-ADDRESSABLE-STORAGE-CACHE.md",
-      "sha256": "21bf6d867635caf50a1aef1ef1853b48e0f05d06dacca34d5fd0d96247546249"
+      "sha256": "6e62a4163622cad4b0adede12815b55bc04909fe2ff19f965b9a06fa3181aed5"
     },
     {
       "id": "SPEC-063",
@@ -622,7 +622,7 @@
       "frCount": 5,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-063-SMT-AUTOMATED-REASONING-PROVER.md",
-      "sha256": "6f0228d725d88de71fa74083e799ee421734f8599571d1e6019d2e87e38cdac9"
+      "sha256": "f71d9d3a67db306ac98f1993e5824005c1feee84aaf7d2943fc1e081bf808e96"
     },
     {
       "id": "SPEC-064",
@@ -631,7 +631,7 @@
       "frCount": 5,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-064-PRODUCTION-CHAOS-MONKEY.md",
-      "sha256": "a43b935327cdd7e0a69c4cd0d19692a0a72e60c27b7fd914a6423e0c82c2ab3f"
+      "sha256": "c5444cc010081a2c793a3bd397bf8775bb92e647b034b4da2eaf597cf91ef922"
     },
     {
       "id": "SPEC-065",
@@ -640,7 +640,7 @@
       "frCount": 5,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-065-BFT-AGENT-SWARM-SLASHING.md",
-      "sha256": "13f299e4057ded564873460dc5cfe1b7138b29391897d858789cc4b5671a74cf"
+      "sha256": "7c23806f4defd99edf437a3393bcd9df773ba3ab9615ca0568547fd41cc41cd1"
     },
     {
       "id": "SPEC-066",
@@ -649,7 +649,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-066-STATISTICAL-CANARY-ANALYSIS.md",
-      "sha256": "a14d5a1f03cc12f53720f1a5cafa1aa0c0854d8d5ac5ae481a2559d9f2cab237"
+      "sha256": "921083735d04366e81c1d1f5379b87e963bdf3d14abcdde2cd45afa3dc642514"
     },
     {
       "id": "SPEC-067",
@@ -658,7 +658,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-067-HERMETIC-RELEASE-SEALER.md",
-      "sha256": "3c63eb1f9b4dc22e4169316ac35b2261c3bb351b8ad0e2d9c3f0b35cb9b59127"
+      "sha256": "e2b8f21406800e36f3128a8f139bc760a6f609e431292ea8d3d37783d4afbfe8"
     },
     {
       "id": "SPEC-068",
@@ -667,7 +667,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-068-BITEMPORAL-TIME-TRAVEL-ENGINE.md",
-      "sha256": "ca5407c4e2d78786f7232ae3bd762247f13da8565bff77d392cf0db79a2dd8ea"
+      "sha256": "9af7d9e955d19122b53cfb257c8f1b00c212ee1d107fbbb1d282a902cc51fc46"
     },
     {
       "id": "SPEC-069",
@@ -676,7 +676,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-069-CONSTITUTIONAL-RUNTIME-INTERCEPTOR.md",
-      "sha256": "89fcb8502e3ed04622d50637a1247487aba8bcd3638ce21a7a0540b758adba74"
+      "sha256": "de4c3f62d8653c4a80d421594a46780a8ea8729c8db40e6a96fc821bc0b5d3f9"
     },
     {
       "id": "SPEC-070",
@@ -685,7 +685,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-070-MERKLE-MOUNTAIN-RANGE.md",
-      "sha256": "2b8c85b5d9bbc0f133b6be3dfef0c823331c99a63adf76282a89c89857722331"
+      "sha256": "e2e7352b1817dab2ddae11138bd02fef1fafb65ea83375f2aa54a78fa86c4289"
     },
     {
       "id": "SPEC-071",
@@ -694,7 +694,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-071-DISTRIBUTED-RAFT-REPLICATION.md",
-      "sha256": "6682cbbc7da7ef0c41c61f257d4d41e8c0b203eb97ffec3911325d01d7e8f024"
+      "sha256": "592f6413f9a32999b1c2e8f60e0d83216fc9c90aa25650092331aacfb76e21bc"
     },
     {
       "id": "SPEC-072",
@@ -703,7 +703,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-072-CONTINUOUS-GENETIC-COVERAGE-FUZZER.md",
-      "sha256": "468a231eed75da26fd9e23b8fd56c5654bc8b7bf6df7ed6e90a3e85e5f67b2f4"
+      "sha256": "c4f9d79d98f0b39cbe2bf7ff2af68391016aa025198474636cfec1995bdab4c4"
     },
     {
       "id": "SPEC-073",
@@ -712,7 +712,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-073-KERNEL-SYSCALL-SANDBOX-PROFILES.md",
-      "sha256": "f669865be73d42fb096d98b116de5ab55be49f856d3e5c072bc35553e617e3e0"
+      "sha256": "4d9927cbe0c78c8e9692529b8c73d3734f519b84643dc649849139543f06c990"
     },
     {
       "id": "SPEC-074",
@@ -721,7 +721,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-074-SIMD-VECTOR-ACCELERATOR.md",
-      "sha256": "09088ea8d45b71a85dacb0bed084ef1f5a3a9b94c0aac049b2b155105629ac71"
+      "sha256": "77adde634201bc87fd120ce98e7ead48d22ca1286b09498411f7a63187d00ce6"
     },
     {
       "id": "SPEC-075",
@@ -730,7 +730,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-075-ACTIVE-KERNEL-PROCESS-ENFORCER.md",
-      "sha256": "391e639ead0f83c91a218329fe1a41249da030be742275c33585252c5209af0d"
+      "sha256": "acb5ae800ae7b8f710045402919f8ae166680e3e5a934981db4f2b93cdee4d83"
     },
     {
       "id": "SPEC-076",
@@ -739,7 +739,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-076-SPARSE-MERKLE-TREE.md",
-      "sha256": "f60e7c720d61a3d2557de1528f80a207a623c572821a1c19dcbca30e444ebccd"
+      "sha256": "2a14dc7f0418466070a3ddabf63529555dcaca0af497e4043231fe89ee4ebfcf"
     },
     {
       "id": "SPEC-077",
@@ -748,7 +748,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-077-ZERO-KNOWLEDGE-PROOF-VERIFIER.md",
-      "sha256": "763dfcc2b9d046b8a62e752d48e5fa6508def7935c39120d371a5ae42c491fd0"
+      "sha256": "470b9ff5c92b820ac5f443344d644e2e4938f44703c3bb215f33bfc465d0ecdc"
     },
     {
       "id": "SPEC-078",
@@ -757,7 +757,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-078-TRUETIME-UNCERTAINTY-ENGINE.md",
-      "sha256": "6ff092d023c231599d9534aaef6c7945789e74a41541e908630ea0dc4e90ca97"
+      "sha256": "0ed7f51c0fd17b117cd876ce99c6635b77745e83b2701e21a581fae9092ecaec"
     },
     {
       "id": "SPEC-079",
@@ -766,7 +766,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-079-LSM-TREE-STORAGE-ENGINE.md",
-      "sha256": "72af45619b1ebfa1a9f6eaf85b5cc730ed5c3cd7a0ca62fdf7a116d7d8ae2080"
+      "sha256": "8d6bfc680c4857ab2c06a14336665e55610456df1e0ac591f201165d912aae3d"
     },
     {
       "id": "SPEC-080",
@@ -775,7 +775,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-080-THRESHOLD-CRYPTOGRAPHY.md",
-      "sha256": "ab198464cbb972f3a4caf9d8a77d8b7c00f138280f96b34161eac67512b5f335"
+      "sha256": "382d0b34f3edd595fbbc9e36ea7c03be02da3c9bbc52a813589fab4b565eabe8"
     },
     {
       "id": "SPEC-081",
@@ -784,7 +784,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-081-MICROVM-ENCLAVE-LAUNCHER.md",
-      "sha256": "a08466d193b667f7d2efba8c2656b7dc1ce5cf58d687a90c0ace21aee5d48e74"
+      "sha256": "49e39b0a88b930c65fe49052448c9998b48457e3911b5df97693395c40ff463a"
     },
     {
       "id": "SPEC-082",
@@ -793,7 +793,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-082-MCP-ZENITH-CONTROL-PLANE.md",
-      "sha256": "57f398e234367ef6de1b8e4dfe969fb37d6fc70dbf9a76c6c485cbbb179a8332"
+      "sha256": "ac24b9a687bf267c1ffda6510abe4d65c85f96be8e335440f081efa0f5f02b2b"
     },
     {
       "id": "SPEC-083",
@@ -802,7 +802,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-083-MISSION-CONTROL-HYPERSCALER-VISUALIZERS.md",
-      "sha256": "5bb0e1821a11ec652694f735bce69f17c71729c31e2224fe49ac005da91b6a9d"
+      "sha256": "e490bd55672cc52f51b95e52d2d20baff39419a915ed3aed6f78fe3cc9c71e12"
     },
     {
       "id": "SPEC-084",
@@ -811,7 +811,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-084-PEER-NETWORK-TRANSPORT-MESH.md",
-      "sha256": "900a43502b5c4ccac7826ca272a3eddcd7827dc0ed9597e04a6a73f7863a2dfa"
+      "sha256": "a3dd7433a01ec86fcb865c4f51636c2229c64eddac954919f7be6a01b6556b72"
     },
     {
       "id": "SPEC-085",
@@ -820,7 +820,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-085-DISTRIBUTION-PACKAGING-OCI-STANDARD.md",
-      "sha256": "f4601a1ecfb9c692c975625d7fffa28f6b61d8cd9f94e3c82fe32b108e5cfa6c"
+      "sha256": "6445daa7ecf23e95a33c2693827de480fa3d12e8c6aeeca2a69d838d0d666b0c"
     },
     {
       "id": "SPEC-086",
@@ -829,7 +829,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-086-FIRECRACKER-DAEMON-SUPERVISOR.md",
-      "sha256": "25af00c392e68eb6505053cc5878b4acd169c94f09dd66ca9241b9fc45b42b8a"
+      "sha256": "a6e7a3cc5ef18ea2755a31de94caa7bd6a056a48096ba45136618db705eba9e9"
     },
     {
       "id": "SPEC-087",
@@ -838,7 +838,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-087-EVENT-LOOP-SATURATION-GOVERNOR.md",
-      "sha256": "cc3d3070ea41e2847b3b070ae7f42826197ef06b085121954cc9354e51615597"
+      "sha256": "9455074b046618a0d89c82481bf710d3513e7c82583716f56097845d03152a99"
     },
     {
       "id": "SPEC-088",
@@ -847,7 +847,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-088-MUTUAL-TLS-PEER-ATTESTATION.md",
-      "sha256": "8930cb068feac0321aae112d866112e213bc447cf544904e6c5e3060afea148e"
+      "sha256": "de59b9b2881f3dfcb4e8f1fcac19750b1f5328bc285b6339fa7d1ed452f4989f"
     },
     {
       "id": "SPEC-089",
@@ -856,7 +856,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-089-CRYPTOGRAPHIC-MEMORY-ZEROIZATION.md",
-      "sha256": "940f6c56ad9488cd34f013e7cbd70ecf9026a2010a6bbad478069a9f4e7f53bc"
+      "sha256": "c8c8140d9b00726bf9a541d49c4fafe6cfb7d31cf494dd510a349d6f6ec09a8a"
     },
     {
       "id": "SPEC-090",
@@ -865,7 +865,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-090-WEBGPU-HARDWARE-TENSOR-ENGINE.md",
-      "sha256": "97357af44b8f8b85949af5b1cc90a9dd7b4fc190e35a134bbbcbe6d859f88695"
+      "sha256": "d2825d7a983c0024a003fc88e17596f01687a24f9bb17a4701d613c9305a9429"
     },
     {
       "id": "SPEC-091",
@@ -874,7 +874,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-091-EBPF-KERNEL-PROBE-OBSERVABILITY.md",
-      "sha256": "6ae4639447b6301719332ba6246397a3db8df1185ad2c8238bd635d76fc9175d"
+      "sha256": "bfb0de68b90971c0ae4d619a138ef5a4b555fd06de3e0e6ba021562ee5bbf1e2"
     },
     {
       "id": "SPEC-092",
@@ -883,7 +883,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-092-WAN-KADEMLIA-PEER-DISCOVERY.md",
-      "sha256": "a44328ec85cee51c889b19a65df465fe531e7c11ff028be41167c9c84046dce1"
+      "sha256": "76752390d9394183be34d4dfbcd917b88c906e8548ebefa4a32dd102b0895066"
     },
     {
       "id": "SPEC-093",
@@ -892,7 +892,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-093-UNBOUNDED-FORMAL-SMT-PROVER.md",
-      "sha256": "468b365aacb3d03174a6bbf662a2297a904e57a6d9a57daf34b2bab4cd0b1393"
+      "sha256": "0296cc0c31c3efcdd6bf7fdd65c14ee53621028f5d511311fe2a20d2b1be1fb4"
     },
     {
       "id": "SPEC-094",
@@ -901,7 +901,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-094-KUBERNETES-CRD-FLEET-OPERATOR.md",
-      "sha256": "b1de23351d13b40b5e3ad4e9ee1ebc1747d44388c8d81041a040a1d5fd83e2e6"
+      "sha256": "95aff599bc8a978c3047b12211238d166fd932381ab85080f3fd2c8d84e480cc"
     },
     {
       "id": "SPEC-095",
@@ -910,7 +910,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-095-MISSION-CONTROL-INTERACTIVE-TERMINAL.md",
-      "sha256": "377350597167fb38c2470a2337553a0512c3385e3bfa52e9ce9677ac9d872cce"
+      "sha256": "eb4ca044110c6f88e178afec70d460200eea87c3aafb726c71648b97be52a8e0"
     },
     {
       "id": "SPEC-096",
@@ -919,7 +919,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-096-GITHUB-ACTIONS-REUSABLE-GATE.md",
-      "sha256": "ff7c225151721549631b00f1fb7aebcb9620966d2dbdfa7d7a89ed285c570c17"
+      "sha256": "9f853e845deefcef5d568cba702d52f7f76d965ee95bcacf1323d6c3d16595f1"
     },
     {
       "id": "SPEC-097",
@@ -928,7 +928,7 @@
       "frCount": 3,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-097-IEEE-ACM-ARCHITECTURAL-WHITEPAPER.md",
-      "sha256": "6258dfa6c10a0f9218ff8ba5ed360b6642f5a1a783053e227a5bed48c64f2769"
+      "sha256": "652c277e77a31956b2a18c163f4ff47bd874e0c338e7e65f5aa0f34f24ff4af0"
     },
     {
       "id": "SPEC-098",
@@ -937,7 +937,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-098-NODE-SEA-STANDALONE-BINARY-PACKAGER.md",
-      "sha256": "f75e01543f8a77075c74fef59e6fa282a2814b8d9167e2ded7a6af2c2b53c406"
+      "sha256": "08df3f0bde8cfcdd0a1ec1ff7c903d9d7188b3797f894ba1a8472d9942250653"
     },
     {
       "id": "SPEC-099",
@@ -946,7 +946,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-099-OPENTELEMETRY-OTLP-WIRE-PROTOCOL.md",
-      "sha256": "2af8941c3dbc18b33881c67e40a51cd274ac75d2007c2559aa11fe137a7d22e5"
+      "sha256": "15cf69634d1359e9cc996a113230c1205e2f60c9a524454b84fe97463661651c"
     },
     {
       "id": "SPEC-100",
@@ -955,7 +955,7 @@
       "frCount": 4,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-100-AUTONOMOUS-FLEET-DOGFOODING-ATTESTATION.md",
-      "sha256": "478198713221c95bb5dda6d2db631626b33df43eecb23ad95d77c362fe072e8d"
+      "sha256": "25bfb5b4257fb0b1281e4f00fe89c675467e06414f9c95ea501062ca5e3bbebf"
     },
     {
       "id": "SPEC-107",
@@ -964,7 +964,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-107-VERCEL-CANARY-OBSERVABILITY.md",
-      "sha256": "2a4357b68a2d69392de70812c9253bb235ceebed11951bcc73aa77dc59a53da5"
+      "sha256": "6edf88928b317c66cbb51d95bc9d3b61679af0604c58f0c85a104e87664449a5"
     },
     {
       "id": "SPEC-108",
@@ -973,7 +973,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-108-COLUMNAR-TELEMETRY-ENGINE.md",
-      "sha256": "200882bbaa478dd80222f7f44d49a45064011baa50d38c60d70fcdff2450637f"
+      "sha256": "e6ff7567e2e54644da217a4344ba6948ccdd63cf1ca5daaadf1b5dcf164c3919"
     },
     {
       "id": "SPEC-109",
@@ -982,7 +982,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-109-CELL-BASED-BULKHEAD.md",
-      "sha256": "acb9efa82bf492b001ea179c5a8c4611bf6c7073f62f883a7f06b1bdb435715a"
+      "sha256": "79f1e85cfa088e32fb4d9c33b73542bff2a2afb9d7a2fef481f57342e9a0c711"
     },
     {
       "id": "SPEC-110",
@@ -991,7 +991,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-110-MULTI-WINDOW-SLO-GOVERNOR.md",
-      "sha256": "48c14309bb8559a2ded117b954a16060e7135232e156dd489b1d2d78d15f3cf7"
+      "sha256": "c18c22e495e2c9cd376140742fe2e8d4a291f0372f3631fd174c2eaa7c3483a4"
     },
     {
       "id": "SPEC-111",
@@ -1000,7 +1000,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-111-HEDGED-REQUESTS-DEADLINE-MESH.md",
-      "sha256": "3c18834733e173fb07c355f63c1c8eac7f5402a2c2c8e71787c0bbf24c4f0c87"
+      "sha256": "5bdbe213da1394847fe56ca0dae0e7a23a4c15b3fd9299ace6abc3974899fec6"
     },
     {
       "id": "SPEC-112",
@@ -1009,7 +1009,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-112-ADAPTIVE-CONCURRENCY-GOVERNOR.md",
-      "sha256": "252103883789ba12de8d12f195cd643ee791357050bfc646283c846f8e07418d"
+      "sha256": "f84175ef918b1228a2f3c10ae3485ace286e99411c42e279601752fd1606718b"
     },
     {
       "id": "SPEC-113",
@@ -1018,7 +1018,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-113-TAIL-BASED-TRACE-SAMPLER.md",
-      "sha256": "5eaabd4d047a3e619ee7d5b4cccd5d9b3774a6ad7e72d031b27564fd6ba24718"
+      "sha256": "b384ea234c0dd0c98853c83338c8fe8f69eaf9f888b9e1e1e5ee9648dfae072e"
     },
     {
       "id": "SPEC-114",
@@ -1027,7 +1027,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-114-PREDICTIVE-REMEDIATION-ENGINE.md",
-      "sha256": "b4f4f130cc4391b284f0db26c4ff65856795d4d6a7fa5f372cc58a362b2d38c3"
+      "sha256": "0f5440ad33c3e5c393357ffc5f598b97513515f9206f90af10c4285c66de38eb"
     },
     {
       "id": "SPEC-115",
@@ -1036,7 +1036,7 @@
       "frCount": 5,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-115-UNIFIED-KERNEL-ORCHESTRATOR.md",
-      "sha256": "cbd4af87c368c88a644963254ebb698cf895b908b8d655efacd86b635ba74312"
+      "sha256": "f331c27da28a601724f202298f5ed5bc3bf9320361ebdb6a96202b6035b8e25a"
     },
     {
       "id": "SPEC-116",
@@ -1045,7 +1045,7 @@
       "frCount": 7,
       "bddCount": 7,
       "file": "openspec/specs/SPEC-116-BIG-TECH-TRANSCENDENCE-NEXUS.md",
-      "sha256": "cfedbdc91461178ce0d09b79c6675fa2b161441360aa874b3b48a47bd3ce57ca"
+      "sha256": "0f1f293521054250d31826abcdbaa15058ffcf24aafa8d9858d63b44e18d91a4"
     },
     {
       "id": "SPEC-117",
@@ -1054,7 +1054,7 @@
       "frCount": 6,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-117-ELITE-DESIGN-STUDIO-ENGINE.md",
-      "sha256": "d149f6686a874e2d03645835ae2f48459269b1f5baa35646120035a8cf6a669a"
+      "sha256": "12e87f8f5961c8e7ac76ffcc014790a225fae00a9e5b0c24ba64e641c28bd6da"
     },
     {
       "id": "SPEC-118",
@@ -1063,7 +1063,7 @@
       "frCount": 6,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-118-AGENTIC-FINOPS-GOVERNOR.md",
-      "sha256": "f635b6f1a7b8e1414a42a7d68651de3bc8360fed04633b7440d9c7cacf3c6fbc"
+      "sha256": "54a501776ba7395918478e058ea644ac69519eadf6db8384e2a965f7d96c8b14"
     },
     {
       "id": "SPEC-119",
@@ -1072,7 +1072,7 @@
       "frCount": 6,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-119-PLANETARY-MONOREPO-GOVERNOR.md",
-      "sha256": "4e54f0d4b6ed276a4b25aa13513f12b4c712d99aa75726995db86133d6a3120a"
+      "sha256": "4037e3d4730fcdc18407faaf88a87b92ada4659b1c38914a1d0c38836605a111"
     },
     {
       "id": "SPEC-120",
@@ -1081,7 +1081,7 @@
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-120-CROSS-FLEET-NEURAL-SYNAPSE.md",
-      "sha256": "776c8c928cebc312f109c4594269d70f2dd827010688b6188a509b7f811970b0"
+      "sha256": "73afff071e0c036f602700255f233cf93257399641bcd1697e18e135de870fc4"
     },
     {
       "id": "SPEC-121",
@@ -1090,7 +1090,7 @@
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-121-PLANETARY-MULTI-CLOUD-EVACUATION.md",
-      "sha256": "54cf3119b290d367d0335b0d678666651ae09ff861efcb922b8d393021f9a632"
+      "sha256": "1feafc2710ad65f797ed7e2facb2e7a2b614d891e571478b8f95bd2d3db7b5a2"
     },
     {
       "id": "SPEC-122",
@@ -1099,7 +1099,7 @@
       "frCount": 8,
       "bddCount": 7,
       "file": "openspec/specs/SPEC-122-AVOPAK-ATTENDANCE-CONTROL.md",
-      "sha256": "848e17cd912588912a24982fca01159653291f1dbf4a69c0e7c2d8b072485ca6"
+      "sha256": "be5b500cd23359ff7159f387b152e42f38b5d67624b0dc5600403b72e1a230f1"
     },
     {
       "id": "SPEC-123",
@@ -1108,7 +1108,7 @@
       "frCount": 11,
       "bddCount": 10,
       "file": "openspec/specs/SPEC-123-FLEET-SECRET-SCAN-GATE.md",
-      "sha256": "0326ab6c6770c4b45cb3824660534af6f2d900c61c4e74b3fdd7c30072a8f089"
+      "sha256": "10ea2111186bc15e036faf9bc7e7206ed2673c9458c41790da8efa6a3fb9e4e5"
     },
     {
       "id": "SPEC-124",
@@ -1117,7 +1117,7 @@
       "frCount": 8,
       "bddCount": 7,
       "file": "openspec/specs/SPEC-124-AUTONOMOUS-FLEET-REGISTRY-SYNC.md",
-      "sha256": "e8b47ecc5019cc74b2b6fc8e01272ae797ec70cca55b40a849776496d4a3ff39"
+      "sha256": "971f9425b8ddf8ff99b3dd26f65527bc19ed1315be17c5931049412945a1736c"
     },
     {
       "id": "SPEC-125",
@@ -1126,7 +1126,7 @@
       "frCount": 8,
       "bddCount": 7,
       "file": "openspec/specs/SPEC-125-FLEET-MISSION-CONTROL-SENTINEL.md",
-      "sha256": "e9fec39b6593183b7655975ba02e6c4364bb479053fcd2cab153fe83c8e79a73"
+      "sha256": "56a05153644f78b272a4abd53a22687d2e540981b64f4cc4aabe77fe7b247a2b"
     },
     {
       "id": "SPEC-126",
@@ -1135,7 +1135,7 @@
       "frCount": 4,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-126-ATP-STRENGTH-GOVERNANCE-ELEVATION.md",
-      "sha256": "0c426dd36074c8f6a4203beab1781b22f1524fa569ceacd8158534e8f67c0342"
+      "sha256": "8f2b5b3883b0dd47d1a37479cf10b1dc46885ea687877068c8f4057d880734c1"
     },
     {
       "id": "SPEC-127",
@@ -1144,7 +1144,7 @@
       "frCount": 4,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-127-BIBLIOTECA-GNOSTICA-ELEVATION.md",
-      "sha256": "0149721576fcd9e4adca27014175721372fe52e8b69912d7cd237640c83c3114"
+      "sha256": "50667680f4649415e97b41bcf0e00f42668f7e9cc50c47acf35e93e00bfa5985"
     },
     {
       "id": "SPEC-128",
@@ -1153,7 +1153,7 @@
       "frCount": 8,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-128-TIER-S0-DESIGN-ENGINEERING-MATRIX.md",
-      "sha256": "33da87e62fbf04248819449ab9e847ff66f91b725ae00227bd7f3749d39506ca"
+      "sha256": "bc14d240c0964e04a8e09a249dd86834457726f2f4d49719cab7481c607d8d2d"
     },
     {
       "id": "SPEC-129",
@@ -1162,7 +1162,7 @@
       "frCount": 6,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-129-TIER-S0-TACTICAL-APEX-COMMAND-SUITE.md",
-      "sha256": "77cf6500191e360e3940efba15680bfb4924517b2839af78fd1d07783f611c30"
+      "sha256": "bd852773dfad5ad552437657d06af173bd0a8ce5985c88199473d3ad492815d1"
     },
     {
       "id": "SPEC-130",
@@ -1171,7 +1171,385 @@
       "frCount": 1,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-130-GLORIAN-SOVEREIGN-IDENTITY-ELEVATION.md",
-      "sha256": "209d6556711a7a51f1a941ab4e751e4dfa8f79a54ee86ecd840e0d8a26172d9b"
+      "sha256": "2fbfb970bc8b75b7730c0ac84c2e519f99a180c43bdaa44b741a42d312330f3a"
+    },
+    {
+      "id": "SPEC-131",
+      "title": "Deterministic Flaky-Test Quarantine Gate",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-131-FLAKY-TEST-QUARANTINE.md",
+      "sha256": "fdbb345b30959f046145d92c63ee9f73e79b93188985f973fba577f5e0a9483a"
+    },
+    {
+      "id": "SPEC-141",
+      "title": "HRANA Native Stream Client for Distributed libSQL/Turso Replicas",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-141-HRANA-STREAM-CLIENT.md",
+      "sha256": "80c68ad6b806bd18a91b3d32a218dd36375753182f1c7694425a918ea7485354"
+    },
+    {
+      "id": "SPEC-143",
+      "title": "Layer-0 Mutation-Testing Engine and Score Ratchet Gate",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-143-MUTATION-TESTING-GATE.md",
+      "sha256": "5e1bebdc478e9dcbc8bcc3ca7d8198d0f4bf4fe29b67625c37b495dd1497009c"
+    },
+    {
+      "id": "SPEC-144",
+      "title": "Native Protobuf Wire-Format Agent Contract Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-144-PROTOBUF-CONTRACT-ENGINE.md",
+      "sha256": "b89d201b09a8ffdd6e2af16048af811c1c774874aa659cc1761859426f17cf8d"
+    },
+    {
+      "id": "SPEC-145",
+      "title": "Multi-Window SLO Error-Budget Governor Gate",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-145-SLO-ERROR-BUDGET-GOVERNOR.md",
+      "sha256": "7deee612d0b8407a29a7a2cf9f559ddd14de812d2a5dfa4b103ef2b200e07b48"
+    },
+    {
+      "id": "SPEC-146",
+      "title": "Statistical Performance Regression Detection Gate",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-146-PERFORMANCE-REGRESSION-TRACKER.md",
+      "sha256": "70e3374726f69e7d59f07e1018bfd00399a2636b75d91c861eff5e0f8b9c9857"
+    },
+    {
+      "id": "SPEC-147",
+      "title": "Structured Logger with W3C Trace-Context Propagation",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-147-STRUCTURED-LOGGER-W3C-TRACE-CONTEXT.md",
+      "sha256": "aefb6d25f0b3d8d2f21d283206a208028f6a858c2905add5c97a136eb85edc42"
+    },
+    {
+      "id": "SPEC-148",
+      "title": "Feature Flag Progressive Delivery Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-148-FEATURE-FLAG-PROGRESSIVE-DELIVERY.md",
+      "sha256": "e84feb296062baf937c5aaeea4ba3300c187671b6bf5e94a432c1ff88611c182"
+    },
+    {
+      "id": "SPEC-149",
+      "title": "Synthetic Load Test Engine with SLA Assertions",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-149-LOAD-TEST-ENGINE-SLA.md",
+      "sha256": "54a39ed6660f5ed0152d67f4462cf4f361eae2d1652219d7d17a06171aa69be2"
+    },
+    {
+      "id": "SPEC-150",
+      "title": "Incident Severity Classifier",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-150-INCIDENT-SEVERITY-CLASSIFIER.md",
+      "sha256": "fc57d3de8a33da227269896126ce1ef0f373f6436fba10e3108691d939c65a6a"
+    },
+    {
+      "id": "SPEC-151",
+      "title": "CycloneDX SBOM Generator",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-151-CYCLONEDX-SBOM-GENERATOR.md",
+      "sha256": "c20ff05d1aa25e4e78ee4fdc211e0e2d7f34409bdd30448212cb458edc16b9a4"
+    },
+    {
+      "id": "SPEC-152",
+      "title": "Secrets Auto-Rotation Protocol",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-152-SECRETS-ROTATION-PROTOCOL.md",
+      "sha256": "73d24812c86d1494e012818c81ca66e0b8149774a0e8b3274f3ffc2d0b79a10d"
+    },
+    {
+      "id": "SPEC-153",
+      "title": "Adaptive Rate Limiter with Dual-Strategy Bucket and Sliding Window Control",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-153-ADAPTIVE-RATE-LIMITER.md",
+      "sha256": "da2e6b38653e0c2a517ef1c7d1464374b5147581058e1bc7dad474cde7f3a3b2"
+    },
+    {
+      "id": "SPEC-154",
+      "title": "Blue-Green Deployment Orchestrator with Validated Traffic Shifting and Rollback",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-154-BLUE-GREEN-DEPLOYMENT-ORCHESTRATOR.md",
+      "sha256": "e388d14ea1e63dfcd843d6c2a9db9d32c3d95bf422e37fbae0934d1d5edc5459"
+    },
+    {
+      "id": "SPEC-155",
+      "title": "Connection Pool Manager with Adaptive Sizing, Leak Detection and FIFO Fairness",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-155-CONNECTION-POOL-MANAGER.md",
+      "sha256": "c0c91c74ff7dd484a5ee329d0043db0cc0bb7c46a42a29319e4047a2e9650a43"
+    },
+    {
+      "id": "SPEC-156",
+      "title": "Canary Analysis Engine with Non-Parametric Mann-Whitney Verdicts",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-156-CANARY-ANALYSIS-ENGINE.md",
+      "sha256": "f010dc7856783d297feb401769343490c92a7894231286ed78cc5c99e62d1591"
+    },
+    {
+      "id": "SPEC-157",
+      "title": "Backpressure Flow Controller with Demand Signaling and TCP-Style Congestion Window",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-157-BACKPRESSURE-FLOW-CONTROLLER.md",
+      "sha256": "414e57bcac616830e0a2124dab61981b906bef754e32a304cc2f325cb5333566"
+    },
+    {
+      "id": "SPEC-158",
+      "title": "Unified Resilience Mesh Composing Circuit Breaker, Bulkhead, Timeout and Retry",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-158-UNIFIED-RESILIENCE-MESH.md",
+      "sha256": "400e8988364dd6e7d134ef176155cd97d6b86def19d9d61356f43bf9156961a2"
+    },
+    {
+      "id": "SPEC-159",
+      "title": "Distributed Lock Manager with Lease TTL and Fencing Tokens",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-159-DISTRIBUTED-LOCK-MANAGER.md",
+      "sha256": "f4c8cb7ac530e69d3357f399753a9c0ad5304a21b1d3f1eae11a298c0a5c6f8c"
+    },
+    {
+      "id": "SPEC-160",
+      "title": "Event Sourcing Engine with Append-Only Log, Snapshots and Optimistic Concurrency",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-160-EVENT-SOURCING-ENGINE.md",
+      "sha256": "9f005472a65e7a9908b1f9d0d156f3a37791a7d6036428c1e16c7756eb6717f5"
+    },
+    {
+      "id": "SPEC-161",
+      "title": "Webhook Fan-Out Dispatcher with HMAC Signing, Bounded Retries and Dead-Letter Queue",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-161-WEBHOOK-FANOUT-DEAD-LETTER-QUEUE.md",
+      "sha256": "854b483b5a6687bf31c96928133921e7339e501693e2eeb49f1acf43a8c9262e"
+    },
+    {
+      "id": "SPEC-162",
+      "title": "Horizontal Auto-Scaler with Stabilization Windows and Rate-of-Change Limiting",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-162-HORIZONTAL-AUTO-SCALER.md",
+      "sha256": "678782b49212eab7dfe0ba6ebd5a051b89fb1ca54b4041342dcc3f25688f78a0"
+    },
+    {
+      "id": "SPEC-163",
+      "title": "Consumer-Driven Contract Test Engine with Backward-Compatibility Gating",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-163-CONSUMER-DRIVEN-CONTRACT-TESTING.md",
+      "sha256": "d8fcdf5dd787e3b40cb628e2e2a7a3155a27e91982c13507d92455ad7cc2954e"
+    },
+    {
+      "id": "SPEC-164",
+      "title": "API Middleware Chain with Ordered Composition, Short-Circuiting and Error Handling",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-164-API-MIDDLEWARE-CHAIN.md",
+      "sha256": "0ec7822d691fb250cc84776a11dd069399396ce32b0f9ddf6739c86e157d7812"
+    },
+    {
+      "id": "SPEC-165",
+      "title": "Saga Orchestrator with Reverse-Order Compensation",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-165-SAGA-ORCHESTRATOR.md",
+      "sha256": "e538453e39e08bf309ae63b6514583756186e335fb12712babdbafecd8f01092"
+    },
+    {
+      "id": "SPEC-166",
+      "title": "Idempotency Key Store with Replay Detection",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-166-IDEMPOTENCY-KEY-STORE.md",
+      "sha256": "07dd928ba04a9560b452d62c2818da7a37bcd53c3cd16cc471a71c77d868410d"
+    },
+    {
+      "id": "SPEC-167",
+      "title": "Config Hot-Reload Engine with Atomic Swap and Rollback",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-167-CONFIG-HOT-RELOAD-ENGINE.md",
+      "sha256": "391326cf4930a822577336c95e6189031443f9d5cef8e24f8c7f6d8b54e91b51"
+    },
+    {
+      "id": "SPEC-168",
+      "title": "Multi-Tenant Fair-Share Scheduler with Deficit Round Robin",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-168-FAIR-SHARE-SCHEDULER.md",
+      "sha256": "0f9481fcf12addc10819a9f6cf21237d460ff9ec49c895a5d5fa568d4b619d96"
+    },
+    {
+      "id": "SPEC-169",
+      "title": "Service Mesh Traffic Policy Engine with Deterministic Weighted Routing",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-169-MESH-TRAFFIC-POLICY-ENGINE.md",
+      "sha256": "93297015c83736e9e84e5ec0ebe1f5baad4ec1b734549ce291742049b53b11dc"
+    },
+    {
+      "id": "SPEC-170",
+      "title": "Leader Election Cluster with Quorum, Terms, and Lease Expiry",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-170-LEADER-ELECTION-CLUSTER.md",
+      "sha256": "28200e056d6202550a8e3de852d0d3c82ee96d989f246bd23353efdd23a5f387"
+    },
+    {
+      "id": "SPEC-171",
+      "title": "Distributed Cache Engine — LRU Eviction, TTL Expiry, and Singleflight Stampede Protection",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-171-CACHE-ENGINE-LRU-TTL-SINGLEFLIGHT.md",
+      "sha256": "c6159365539ddae5b688ce6f118f4c6510d1beae0d0f594e71c40fec3b4877a9"
+    },
+    {
+      "id": "SPEC-172",
+      "title": "Dependency Injection Container — Lifetimes, Constructor Injection, and Circular Dependency Detection",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-172-DEPENDENCY-INJECTION-CONTAINER.md",
+      "sha256": "4cd54ecff201b4133604fba86361d1c50d330aacc46f2b2fc7c601b85fe5d0d5"
+    },
+    {
+      "id": "SPEC-173",
+      "title": "Reactive Stream Operator Engine — Push-Based Observables, Single-Terminal Semantics, and Backpressure Queue",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-173-REACTIVE-STREAM-ENGINE.md",
+      "sha256": "68d6046e16307a87f4704480993982fbe2f0a59d88971b756700475a4f059254"
+    },
+    {
+      "id": "SPEC-174",
+      "title": "Batch Aggregator — Size and Time Triggers, Keyed Partitioning, and Zero-Loss Flush",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-174-BATCH-AGGREGATOR.md",
+      "sha256": "0f609a59be90c050d948bc127406de70ec79493fb0cbf8e75dd51e1e342d0818"
+    },
+    {
+      "id": "SPEC-175",
+      "title": "TLS Certificate Lifecycle Manager — Issuance, Renewal Window, Revocation and Chain Verification",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-175-CERTIFICATE-LIFECYCLE-MANAGER.md",
+      "sha256": "49b2fed3ebe689646916c782e777242d1190bcadedcc0ab1787c24aa5fcdca0c"
+    },
+    {
+      "id": "SPEC-176",
+      "title": "Probabilistic Data Structures — Bloom Filter and Count-Min Sketch with Deterministic Hashing",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-176-PROBABILISTIC-DATA-STRUCTURES.md",
+      "sha256": "1ca8199c32c7a11bfd16fe9d8e2891c9886de944a1ec86a1027c7af2eb4f09e9"
+    },
+    {
+      "id": "SPEC-177",
+      "title": "Hashed Timing Wheel Scheduler",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-177-HASHED-TIMING-WHEEL.md",
+      "sha256": "9e0e001ceb12f724c1d0dedf3092565fa861f17e20e3e6dccaab47647c42fd7b"
+    },
+    {
+      "id": "SPEC-178",
+      "title": "SWIM Gossip Membership Protocol",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-178-SWIM-GOSSIP-MEMBERSHIP.md",
+      "sha256": "3e86f7a4d2da1dfc8be44865a3f6a4eae1c71d9a9ea45132c4177af937a2dfcc"
+    },
+    {
+      "id": "SPEC-179",
+      "title": "Vector Clock Causal Ordering Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-179-VECTOR-CLOCK-CAUSAL-ORDERING.md",
+      "sha256": "3280a927907e4e8e6442803beaf7d4e780495432aafa75d42a40456863696366"
+    },
+    {
+      "id": "SPEC-180",
+      "title": "DAG Job Scheduler",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-180-DAG-JOB-SCHEDULER.md",
+      "sha256": "85ea27e0416b7689fb8274aa2ebab321d42d11da6cb40473dc101f1d24562564"
+    },
+    {
+      "id": "SPEC-181",
+      "title": "Scatter-Gather With Hedged Requests",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-181-SCATTER-GATHER-HEDGED-REQUESTS.md",
+      "sha256": "7992d592c068989eda03d63b59aaff703adbda95a2029ca29e1b56ef9db6e1a7"
+    },
+    {
+      "id": "SPEC-182",
+      "title": "Schema Registry With Compatibility Modes",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-182-SCHEMA-REGISTRY-COMPATIBILITY.md",
+      "sha256": "51c7b590032393bc8444307174d2c079d2404ee065815e4ae6903b6f3053f9e7"
     }
   ]
 }

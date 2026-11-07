@@ -1,8 +1,11 @@
 # OPENSPEC BASE SPECIFICATION: NUBANK INSTITUTIONAL ENGINEERING CODEX (SPEC-023)
+
 <!-- Standard: ISO 29148 / IEEE 830 EARS Syntax -->
 
 ## 1. Scope
+
 Governs the institutional assimilation of Nubank's engineering doctrine (`https://building.nu.com/`) into EOS System:
+
 - Fighting Complexity and Functional Programming Purity.
 - Datomic Bitemporal Immutable Ledgers (`[entity, attribute, value, tx, added?]`).
 - Consumer-Driven Contract Verification (Sachem pattern for schemas).

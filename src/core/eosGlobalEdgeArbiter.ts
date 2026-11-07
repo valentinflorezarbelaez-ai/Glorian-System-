@@ -170,17 +170,17 @@ export class EosGlobalEdgeArbiter {
       latitude: 59.3293,
       longitude: 18.0686,
       role: "Spotify Core Audio & Nordic Mesh",
-      baselineOverheadMs: 1.8
+      baselineOverheadMs: 1.8,
     },
     {
       id: "bog-01",
       name: "Bogotá Sovereign Command",
       city: "Bogotá",
       country: "Colombia",
-      latitude: 4.7110,
+      latitude: 4.711,
       longitude: -74.0721,
       role: "Andes Sovereign Gateway & Master Control",
-      baselineOverheadMs: 2.1
+      baselineOverheadMs: 2.1,
     },
     {
       id: "gru-01",
@@ -190,7 +190,7 @@ export class EosGlobalEdgeArbiter {
       latitude: -23.5505,
       longitude: -46.6333,
       role: "Nubank Core & LATAM High-Volume FinOps",
-      baselineOverheadMs: 2.0
+      baselineOverheadMs: 2.0,
     },
     {
       id: "iad-01",
@@ -200,7 +200,7 @@ export class EosGlobalEdgeArbiter {
       latitude: 39.0438,
       longitude: -77.4874,
       role: "US East Big Tech Primary Interconnect",
-      baselineOverheadMs: 1.5
+      baselineOverheadMs: 1.5,
     },
     {
       id: "sfo-01",
@@ -210,7 +210,7 @@ export class EosGlobalEdgeArbiter {
       latitude: 37.7749,
       longitude: -122.4194,
       role: "US West AI Accelerators & Silicon Spine",
-      baselineOverheadMs: 1.6
+      baselineOverheadMs: 1.6,
     },
     {
       id: "lhr-01",
@@ -220,7 +220,7 @@ export class EosGlobalEdgeArbiter {
       latitude: 51.5074,
       longitude: -0.1278,
       role: "Atlantic Financial Routing Gateway",
-      baselineOverheadMs: 1.7
+      baselineOverheadMs: 1.7,
     },
     {
       id: "fra-01",
@@ -230,7 +230,7 @@ export class EosGlobalEdgeArbiter {
       latitude: 50.1109,
       longitude: 8.6821,
       role: "EU GDPR Sovereign Data Enclave",
-      baselineOverheadMs: 1.6
+      baselineOverheadMs: 1.6,
     },
     {
       id: "tyo-01",
@@ -240,8 +240,8 @@ export class EosGlobalEdgeArbiter {
       latitude: 35.6762,
       longitude: 139.6503,
       role: "APAC Ultra-High-Speed Fiber Terminal",
-      baselineOverheadMs: 1.9
-    }
+      baselineOverheadMs: 1.9,
+    },
   ];
 
   private readonly hlc: HybridLogicalClock;
@@ -255,12 +255,7 @@ export class EosGlobalEdgeArbiter {
   /**
    * Computes great-circle distance between two geographic coordinates using the Haversine formula.
    */
-  public computeHaversineDistanceKm(
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number
-  ): number {
+  public computeHaversineDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
     const toRad = (deg: number) => (deg * Math.PI) / 180.0;
 
     const dLat = toRad(lat2 - lat1);
@@ -294,12 +289,7 @@ export class EosGlobalEdgeArbiter {
     if (cached) return cached;
 
     const rankings: PopRouteRanking[] = EosGlobalEdgeArbiter.GLOBAL_POPS.map((pop) => {
-      const distanceKm = this.computeHaversineDistanceKm(
-        latitude,
-        longitude,
-        pop.latitude,
-        pop.longitude
-      );
+      const distanceKm = this.computeHaversineDistanceKm(latitude, longitude, pop.latitude, pop.longitude);
       const estimatedRttMs = this.estimateFiberRttMs(distanceKm, pop.baselineOverheadMs);
       return { pop, distanceKm, estimatedRttMs, isPrimary: false };
     });
@@ -308,7 +298,7 @@ export class EosGlobalEdgeArbiter {
 
     const rankedWithPrimary: PopRouteRanking[] = rankings.map((r, idx) => ({
       ...r,
-      isPrimary: idx === 0
+      isPrimary: idx === 0,
     }));
 
     const primary = rankedWithPrimary[0];
@@ -317,9 +307,7 @@ export class EosGlobalEdgeArbiter {
     const hlcStamp = this.hlc.format(this.hlc.now());
     const sha256Proof = crypto
       .createHash("sha256")
-      .update(
-        `EOS_EDGE_ROUTE:${latitude}:${longitude}:${primary.pop.id}:${backup.pop.id}:${hlcStamp}`
-      )
+      .update(`EOS_EDGE_ROUTE:${latitude}:${longitude}:${primary.pop.id}:${backup.pop.id}:${hlcStamp}`)
       .digest("hex");
 
     const report: GlobalRoutingReport = {
@@ -330,7 +318,7 @@ export class EosGlobalEdgeArbiter {
       primaryEstimatedRttMs: primary.estimatedRttMs,
       rankedPops: rankedWithPrimary,
       hybridLogicalClock: hlcStamp,
-      sha256Proof
+      sha256Proof,
     };
 
     this.edgeCache.set(cacheKey, report, 300000); // 5 min TTL
@@ -343,7 +331,7 @@ export class EosGlobalEdgeArbiter {
   public resolveByCity(name: string): GlobalRoutingReport {
     const normalized = name.toLowerCase().trim();
     const cityMap: Record<string, [number, number]> = {
-      bogota: [4.7110, -74.0721],
+      bogota: [4.711, -74.0721],
       stockholm: [59.3293, 18.0686],
       saopaulo: [-23.5505, -46.6333],
       virginia: [39.0438, -77.4874],
@@ -353,25 +341,22 @@ export class EosGlobalEdgeArbiter {
       london: [51.5074, -0.1278],
       frankfurt: [50.1109, 8.6821],
       tokyo: [35.6762, 139.6503],
-      newyork: [40.7128, -74.0060],
+      newyork: [40.7128, -74.006],
       paris: [48.8566, 2.3522],
-      berlin: [52.5200, 13.4050],
+      berlin: [52.52, 13.405],
       medellin: [6.2442, -75.5812],
       madrid: [40.4168, -3.7038],
-      singapore: [1.3521, 103.8198]
+      singapore: [1.3521, 103.8198],
     };
 
-    const coords = cityMap[normalized] || [4.7110, -74.0721];
+    const coords = cityMap[normalized] || [4.711, -74.0721];
     return this.findOptimalRoute(coords[0], coords[1]);
   }
 
   /**
    * Simulates Jeff Dean's "The Tail at Scale" Hedged Requests across a realistic log-normal network distribution.
    */
-  public simulateHedgedRequests(
-    sampleCount = 1000,
-    p95ThresholdMs = 28.0
-  ): HedgedRequestBenchmark {
+  public simulateHedgedRequests(sampleCount = 1000, p95ThresholdMs = 28.0): HedgedRequestBenchmark {
     const startTime = process.hrtime.bigint();
 
     // Deterministic pseudo-random seed generator for repeatable benchmarks
@@ -448,7 +433,7 @@ export class EosGlobalEdgeArbiter {
       hedgedP99Ms: hP99,
       tailReductionP99Percentage: tailReduction,
       durationUs,
-      sha256Proof
+      sha256Proof,
     };
   }
 

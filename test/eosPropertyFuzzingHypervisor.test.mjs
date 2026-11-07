@@ -24,8 +24,7 @@ import {
   EosFuzzValueGenerator,
   DeltaShrinker,
   EosTimeTravelHypervisor,
-  Eos49LevelsIntrospector,
-  EosPropertyFuzzingHypervisor
+  EosPropertyFuzzingHypervisor,
 } from "../src/core/eosPropertyFuzzingHypervisor.ts";
 
 import { EosDurableSqliteLedger } from "../src/core/eosDurableSqliteLedger.ts";
@@ -71,7 +70,7 @@ test("BDD-210: Preservación de Invariantes ante Cargas Adversarias Malformadas"
     seed: 0xfeedface,
     iterations: 500,
     testJsonRpc: true,
-    testDeltaShrinkage: false
+    testDeltaShrinkage: false,
   });
 
   assert.equal(campaign.invariantsViolated, 0, "No invariants must be breached by fuzzing inputs");
@@ -80,8 +79,8 @@ test("BDD-210: Preservación de Invariantes ante Cargas Adversarias Malformadas"
 
   // Verify Object prototype was not contaminated
   const testObj = {};
-  assert.equal((testObj).polluted, undefined, "Object.prototype must not be polluted");
-  assert.equal((testObj).admin, undefined, "Object.prototype must not be polluted with admin");
+  assert.equal(testObj.polluted, undefined, "Object.prototype must not be polluted");
+  assert.equal(testObj.admin, undefined, "Object.prototype must not be polluted with admin");
 });
 
 test("BDD-211: Reducción de Contraejemplos (Delta Shrinkage) ante Fallas de Invariantes", () => {
@@ -95,7 +94,7 @@ test("BDD-211: Reducción de Contraejemplos (Delta Shrinkage) ante Fallas de Inv
   assert.ok(shrinkage.shrinkSteps > 0, "Shrinkage must take >= 1 reduction step");
   assert.ok(
     shrinkage.minimalCounterexample.length < longPayload.length,
-    `Counterexample length (${shrinkage.minimalCounterexample.length}) must be smaller than original (${longPayload.length})`
+    `Counterexample length (${shrinkage.minimalCounterexample.length}) must be smaller than original (${longPayload.length})`,
   );
   assert.ok(failurePredicate(shrinkage.minimalCounterexample), "Shrunk counterexample must still violate predicate");
   assert.equal(shrinkage.minimalCounterexample, "FATAL_ANOMALY");
@@ -114,7 +113,7 @@ test("BDD-212: Replay Determinista de Estados del Ledger SQLite WAL (Time-Travel
         category: "ARCHITECTURE_DECISION",
         projectId: "eos-system",
         title: `Decision Step ${i}`,
-        payload: { step: i, flag: `val_${i * 10}` }
+        payload: { step: i, flag: `val_${i * 10}` },
       });
     }
 
@@ -174,7 +173,6 @@ test("BDD-213: Evaluación Exhaustiva de los 49 Niveles de Introspección Subcon
 
 test("BDD-214: Despacho MCP de eos_fuzz_hypervisor y Atestación Criptográfica", () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-mcp-fuzz-test-"));
-  const dbPath = path.join(tmpDir, "fuzz_mcp_ledger.sqlite");
 
   try {
     const server = new EosMcpServer(projectRoot, "core");
@@ -183,7 +181,7 @@ test("BDD-214: Despacho MCP de eos_fuzz_hypervisor y Atestación Criptográfica"
     const listRes = server.handleRequest({
       jsonrpc: "2.0",
       id: 1,
-      method: "tools/list"
+      method: "tools/list",
     });
     const tools = listRes?.result?.tools || [];
     const fuzzTool = tools.find((t) => t.name === "eos_fuzz_hypervisor");
@@ -200,9 +198,9 @@ test("BDD-214: Despacho MCP de eos_fuzz_hypervisor y Atestación Criptográfica"
         arguments: {
           action: "fuzz",
           seed: 0x9999,
-          iterations: 200
-        }
-      }
+          iterations: 200,
+        },
+      },
     });
 
     assert.ok(callRes?.result?.content?.[0]?.text, "Tool result content must be defined");

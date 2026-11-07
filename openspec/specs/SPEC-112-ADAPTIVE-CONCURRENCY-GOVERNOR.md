@@ -1,6 +1,7 @@
 # SPEC-112: Distributed Adaptive Concurrency Control & Priority-Tier Load Shedding
 
 ## 1. Overview & Objective
+
 This specification establishes the architectural standard for autonomous self-tuning concurrency control and priority-tier load shedding across the EOS fleet. Implementing the Netflix Vegas / Little's Law congestion gradient and CoDel queue delay management doctrines, this governor eliminates manual thread pool tuning, prevents bufferbloat collapses, and preserves critical business operations during severe system degradation.
 
 ---
@@ -8,24 +9,28 @@ This specification establishes the architectural standard for autonomous self-tu
 ## 2. Functional Requirements (IEEE 830 / Formal EARS)
 
 ### FR-301: Baseline Minimum RTT Tracking & Gradient Calculation
-* **Ubiquitous**: EL SISTEMA medirá de forma continua la latencia de ida y vuelta ($RTT$) de cada solicitud completada, manteniendo una ventana deslizante del tiempo mínimo observado ($RTT_{\text{baseline}}$) y un promedio móvil ponderado exponencialmente ($RTT_{\text{current}}$).
-* **State-Driven**: MIENTRAS el sistema reciba telemetría de ejecución, EL SISTEMA calculará el gradiente de congestión:
+
+- **Ubiquitous**: EL SISTEMA medirá de forma continua la latencia de ida y vuelta ($RTT$) de cada solicitud completada, manteniendo una ventana deslizante del tiempo mínimo observado ($RTT_{\text{baseline}}$) y un promedio móvil ponderado exponencialmente ($RTT_{\text{current}}$).
+- **State-Driven**: MIENTRAS el sistema reciba telemetría de ejecución, EL SISTEMA calculará el gradiente de congestión:
   $$\text{Gradient} = \frac{RTT_{\text{baseline}}}{RTT_{\text{current}}}$$
 
 ### FR-302: Dynamic Concurrency Limit Adjustment (Vegas Gradient)
-* **Ubiquitous**: EL SISTEMA recalculará periódicamente el límite máximo de solicitudes en vuelo concurrentes ($\text{Limit}$) aplicando el gradiente de congestión con una holgura aditiva de cola ($\beta$):
+
+- **Ubiquitous**: EL SISTEMA recalculará periódicamente el límite máximo de solicitudes en vuelo concurrentes ($\text{Limit}$) aplicando el gradiente de congestión con una holgura aditiva de cola ($\beta$):
   $$\text{Limit}_{t+1} = \text{clamp}(\text{MinLimit}, \text{MaxLimit}, \text{round}(\text{Limit}_t \times \text{Gradient} + \beta))$$
-* **State-Driven**: MIENTRAS la latencia aumente ($RTT_{\text{current}} > RTT_{\text{baseline}}$), el gradiente se reducirá por debajo de $1.0$, provocando la contracción inmediata y preventiva del límite de concurrencia antes de la aparición de errores 5xx.
+- **State-Driven**: MIENTRAS la latencia aumente ($RTT_{\text{current}} > RTT_{\text{baseline}}$), el gradiente se reducirá por debajo de $1.0$, provocando la contracción inmediata y preventiva del límite de concurrencia antes de la aparición de errores 5xx.
 
 ### FR-303: Multi-Tier Priority Admission & Load Shedding
-* **Event-Driven**: CUANDO una solicitud arribe y el número de operaciones en vuelo alcance el límite de concurrencia actual ($\text{InFlight} \ge \text{Limit}$), EL SISTEMA evaluará el nivel de prioridad de la solicitud (`CRITICAL`, `HIGH`, `NORMAL`, `BEST_EFFORT`):
-  * Solicitudes `BEST_EFFORT` serán descartadas de forma inmediata (`DROPPED_CONCURRENCY_SHED`).
-  * Solicitudes `NORMAL` serán descartadas si $\text{InFlight} \ge \text{Limit} \times 0.90$.
-  * Solicitudes `HIGH` serán descartadas únicamente si $\text{InFlight} \ge \text{Limit}$.
-  * Solicitudes `CRITICAL` contarán con una reserva dedicada de capacidad de emergencia ($+\text{EmergencyHeadroom}$), garantizando su admisión ininterrumpida.
+
+- **Event-Driven**: CUANDO una solicitud arribe y el número de operaciones en vuelo alcance el límite de concurrencia actual ($\text{InFlight} \ge \text{Limit}$), EL SISTEMA evaluará el nivel de prioridad de la solicitud (`CRITICAL`, `HIGH`, `NORMAL`, `BEST_EFFORT`):
+  - Solicitudes `BEST_EFFORT` serán descartadas de forma inmediata (`DROPPED_CONCURRENCY_SHED`).
+  - Solicitudes `NORMAL` serán descartadas si $\text{InFlight} \ge \text{Limit} \times 0.90$.
+  - Solicitudes `HIGH` serán descartadas únicamente si $\text{InFlight} \ge \text{Limit}$.
+  - Solicitudes `CRITICAL` contarán con una reserva dedicada de capacidad de emergencia ($+\text{EmergencyHeadroom}$), garantizando su admisión ininterrumpida.
 
 ### FR-304: Queue Delay Bounding & Bufferbloat Prevention (CoDel)
-* **Error / Unwanted Condition**: SI una solicitud encolada en espera de ejecución permanece en la cola por un tiempo superior al umbral máximo de permanencia ($\Delta t_{\text{queue}} > \text{MaxQueueDelayMs}$, por defecto 15ms), ENTONCES EL SISTEMA descartará la solicitud de inmediato con un error `QUEUE_TIMEOUT_EXCEEDED` sin ejecutar su lógica, evitando la saturación por solicitudes cuyo plazo útil ha expirado.
+
+- **Error / Unwanted Condition**: SI una solicitud encolada en espera de ejecución permanece en la cola por un tiempo superior al umbral máximo de permanencia ($\Delta t_{\text{queue}} > \text{MaxQueueDelayMs}$, por defecto 15ms), ENTONCES EL SISTEMA descartará la solicitud de inmediato con un error `QUEUE_TIMEOUT_EXCEEDED` sin ejecutar su lógica, evitando la saturación por solicitudes cuyo plazo útil ha expirado.
 
 ---
 

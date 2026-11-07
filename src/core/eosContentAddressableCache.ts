@@ -15,11 +15,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface ActionResult {
@@ -67,13 +63,16 @@ export class EosContentAddressableCache {
   public computeActionKey(
     sourceAstHashes: readonly string[],
     command: string,
-    envContext: Record<string, any> = {}
+    envContext: Record<string, any> = {},
   ): string {
     assertPrecondition(Array.isArray(sourceAstHashes), "sourceAstHashes must be an array");
     assertPrecondition(typeof command === "string" && command.length > 0, "command is required");
 
     const sortedHashes = [...sourceAstHashes].sort();
-    const sortedEnv = Object.keys(envContext).sort().map((k) => `${k}=${envContext[k]}`).join(";");
+    const sortedEnv = Object.keys(envContext)
+      .sort()
+      .map((k) => `${k}=${envContext[k]}`)
+      .join(";");
     const payload = `ACTION:${sortedHashes.join(",")}:${command}:${sortedEnv}`;
 
     return pureSha256(payload);
@@ -109,7 +108,10 @@ export class EosContentAddressableCache {
   /**
    * Records an action result into Action Cache.
    */
-  public putAction(actionKey: string, result: Omit<ActionResult, "stdoutDigest" | "stderrDigest" | "timestampIso">): ActionResult {
+  public putAction(
+    actionKey: string,
+    result: Omit<ActionResult, "stdoutDigest" | "stderrDigest" | "timestampIso">,
+  ): ActionResult {
     assertPrecondition(typeof actionKey === "string" && actionKey.length === 64, "valid actionKey required");
 
     const stdoutDigest = this.putBlob(result.stdout || "");
@@ -123,7 +125,7 @@ export class EosContentAddressableCache {
       stdoutDigest,
       stderrDigest,
       originalDurationMs: result.originalDurationMs,
-      timestampIso
+      timestampIso,
     });
 
     const actionPath = path.join(this.actionsDir, actionKey);
@@ -167,7 +169,7 @@ export class EosContentAddressableCache {
     const timestampIso = new Date().toISOString();
 
     const sha256Receipt = pureSha256(
-      `CAS_STATS:${totalBlobs}:${totalActions}:${this.hits}:${this.misses}:${this.savedTimeMs}:${timestampIso}`
+      `CAS_STATS:${totalBlobs}:${totalActions}:${this.hits}:${this.misses}:${this.savedTimeMs}:${timestampIso}`,
     );
 
     return deepFreeze({
@@ -177,7 +179,7 @@ export class EosContentAddressableCache {
       cacheMisses: this.misses,
       hitRatio,
       estimatedSavedMs: this.savedTimeMs,
-      sha256Receipt
+      sha256Receipt,
     });
   }
 
@@ -205,9 +207,9 @@ export class EosContentAddressableCache {
           cacheMisses: stats.cacheMisses,
           hitRatio: stats.hitRatio,
           estimatedSavedMs: stats.estimatedSavedMs,
-          sha256Receipt: stats.sha256Receipt
+          sha256Receipt: stats.sha256Receipt,
         },
-        engramTopicKey: "eos/optimization/cas"
+        engramTopicKey: "eos/optimization/cas",
       });
       return true;
     } catch {

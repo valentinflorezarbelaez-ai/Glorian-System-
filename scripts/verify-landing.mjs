@@ -28,8 +28,14 @@ check("Repository documentation and package metadata exist", () => {
 
 check("PWA manifest references existing local assets", () => {
   const manifest = JSON.parse(read("manifest.webmanifest"));
-  assert.ok(manifest.name === "Glorian System" || manifest.name === "EOS System", "Manifest name must be Glorian System or EOS System");
-  assert.ok(manifest.short_name === "Glorian" || manifest.short_name === "EOS System", "Manifest short_name must be Glorian or EOS System");
+  assert.ok(
+    manifest.name === "Glorian System" || manifest.name === "EOS System",
+    "Manifest name must be Glorian System or EOS System",
+  );
+  assert.ok(
+    manifest.short_name === "Glorian" || manifest.short_name === "EOS System",
+    "Manifest short_name must be Glorian or EOS System",
+  );
   assert.equal(manifest.start_url, "/");
   assert.equal(manifest.scope, "/");
   assert.ok(Array.isArray(manifest.icons) && manifest.icons.length > 0);
@@ -61,9 +67,7 @@ check("HTML landmarks, metadata, and in-page links are coherent", () => {
 });
 
 check("Visible command controls map to registered local actions", () => {
-  const commandKeys = new Set(
-    [...js.matchAll(/^\s*"([^"\n]+)"\s*:/gm)].map((match) => match[1])
-  );
+  const commandKeys = new Set([...js.matchAll(/^\s*"([^"\n]+)"\s*:/gm)].map((match) => match[1]));
   assert.ok(commandKeys.size > 0, "No command registry entries found in js/eos.js");
   const pageCommands = [...html.matchAll(/\bdata-cmd="([^"]+)"/g)].map((match) => match[1]);
   assert.ok(pageCommands.length > 0, "Landing page does not expose any command controls");
@@ -90,7 +94,7 @@ check("Offline shell and deployment security configuration are present", () => {
   assert.match(sw, /OFFLINE_STANDALONE_MODE/);
   const precache = sw.match(/const PRECACHE_ASSETS\s*=\s*\[([\s\S]*?)\];/);
   assert.ok(precache, "Service worker precache list is missing");
-  for (const [, asset] of precache[1].matchAll(/"(\/[^"?]+)(?:\?[^\"]*)?"/g)) {
+  for (const [, asset] of precache[1].matchAll(/"(\/[^"?]+)(?:\?[^"]*)?"/g)) {
     const localPath = asset === "/" ? "index.html" : asset.slice(1);
     assert.ok(exists(localPath), `Precached asset does not exist: ${asset}`);
   }

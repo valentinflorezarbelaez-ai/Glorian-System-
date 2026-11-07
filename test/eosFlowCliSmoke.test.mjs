@@ -23,7 +23,7 @@ function git(directory, args) {
     cwd: directory,
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
-    env
+    env,
   }).trim();
 }
 
@@ -43,7 +43,7 @@ test("flow inspect CLI handles a repository path with spaces without writing to 
   const output = execFileSync(process.execPath, [cliPath, "flow", "inspect", repoRoot], {
     cwd: temporaryRoot,
     encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"]
+    stdio: ["ignore", "pipe", "pipe"],
   });
 
   assert.match(output, /Repositorio\s+:.*sample repository with spaces/);

@@ -15,15 +15,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import {
-  executeSpotifySmartShuffle,
-  EosBitemporalLedger,
-  type TrackNode
-} from "./eosSpotifyNubankEngine.ts";
-import {
-  IbmParallelSysplexEngine,
-  type XaParticipant
-} from "./eosSamaelIbmNvidiaCore.ts";
+import { executeSpotifySmartShuffle, EosBitemporalLedger, type TrackNode } from "./eosSpotifyNubankEngine.ts";
+import { IbmParallelSysplexEngine, type XaParticipant } from "./eosSamaelIbmNvidiaCore.ts";
 
 export interface TitanBenchmarkResult {
   readonly titan:
@@ -104,7 +97,7 @@ export class EosTitansMatrix {
 
     const end = process.hrtime.bigint();
     const durationUs = Number(end - start) / 1000;
-    const throughput = Math.round((iterations / (durationUs / 1000000)));
+    const throughput = Math.round(iterations / (durationUs / 1000000));
 
     return {
       titan: "SPOTIFY_XIRP",
@@ -116,8 +109,8 @@ export class EosTitansMatrix {
         backstageRfc42Valid: catalogValid,
         ringBufferSize: bufferSize,
         eventsProcessed: iterations,
-        eventRingLatencyNs: (durationUs * 1000) / iterations
-      }
+        eventRingLatencyNs: (durationUs * 1000) / iterations,
+      },
     };
   }
 
@@ -155,8 +148,8 @@ export class EosTitansMatrix {
       channelVotes: lastVote,
       consensusReached: byzantineFaults === 0 && successfulVotes === iterations,
       byzantineFaultsDetected: byzantineFaults,
-      cycleHz: Math.round((iterations / (durationUs / 1000000))),
-      latencyUs: durationUs
+      cycleHz: Math.round(iterations / (durationUs / 1000000)),
+      latencyUs: durationUs,
     };
   }
 
@@ -180,11 +173,7 @@ export class EosTitansMatrix {
     const unrollLimit = vectorLength - (vectorLength % 4);
 
     for (let i = 0; i < unrollLimit; i += 4) {
-      dot +=
-        vecA[i] * vecB[i] +
-        vecA[i + 1] * vecB[i + 1] +
-        vecA[i + 2] * vecB[i + 2] +
-        vecA[i + 3] * vecB[i + 3];
+      dot += vecA[i] * vecB[i] + vecA[i + 1] * vecB[i + 1] + vecA[i + 2] * vecB[i + 2] + vecA[i + 3] * vecB[i + 3];
     }
     for (let i = unrollLimit; i < vectorLength; i++) {
       dot += vecA[i] * vecB[i];
@@ -205,8 +194,8 @@ export class EosTitansMatrix {
         dotProductResult: Number(dot.toFixed(4)),
         zeroAllocationVerified: true,
         memoryFootprintBytes: vecA.byteLength * 2,
-        timePerElementNs: (durationUs * 1000) / vectorLength
-      }
+        timePerElementNs: (durationUs * 1000) / vectorLength,
+      },
     };
   }
 
@@ -227,7 +216,7 @@ export class EosTitansMatrix {
       "src/core/eosWorktreeOrchestrator.ts",
       "src/core/eosCognitiveEval.ts",
       "src/core/eosOpenSpecSync.ts",
-      "src/core/eosSpotifyCodex.ts"
+      "src/core/eosSpotifyCodex.ts",
     ];
 
     let actualCount = 0;
@@ -237,9 +226,10 @@ export class EosTitansMatrix {
       }
     }
 
-    const driftPercentage = desiredCoreModules.length === 0
-      ? 0
-      : Number((((desiredCoreModules.length - actualCount) / desiredCoreModules.length) * 100).toFixed(2));
+    const driftPercentage =
+      desiredCoreModules.length === 0
+        ? 0
+        : Number((((desiredCoreModules.length - actualCount) / desiredCoreModules.length) * 100).toFixed(2));
 
     const end = process.hrtime.bigint();
     const durationUs = Number(end - start) / 1000;
@@ -250,7 +240,7 @@ export class EosTitansMatrix {
       driftPercentage,
       synchronized: driftPercentage === 0,
       convergenceTimeUs: durationUs,
-      reconciliationsApplied: 0
+      reconciliationsApplied: 0,
     };
   }
 
@@ -276,7 +266,7 @@ export class EosTitansMatrix {
 
     const end = process.hrtime.bigint();
     const durationUs = Number(end - start) / 1000;
-    const throughput = Math.round((packetCount / (durationUs / 1000000)));
+    const throughput = Math.round(packetCount / (durationUs / 1000000));
 
     return {
       titan: "XAI_COLOSSUS_FABRIC",
@@ -287,8 +277,8 @@ export class EosTitansMatrix {
         packetsDelivered,
         packetLossRate: 0.0,
         averageLatencyPerPacketNs: (durationUs * 1000) / packetCount,
-        interAgentTopology: "Fully Connected Sovereign Mesh"
-      }
+        interAgentTopology: "Fully Connected Sovereign Mesh",
+      },
     };
   }
 
@@ -319,7 +309,7 @@ export class EosTitansMatrix {
 
     const end = process.hrtime.bigint();
     const durationUs = Math.max(1, Number(end - start) / 1000);
-    const throughput = Math.round((operationsCount / (durationUs / 1000000)));
+    const throughput = Math.round(operationsCount / (durationUs / 1000000));
 
     return {
       titan: "NUBANK_DATOMIC_LEDGER",
@@ -332,8 +322,8 @@ export class EosTitansMatrix {
         duplicateRetriesPrevented: half,
         zeroDuplicatesVerified,
         merkleRoot: ledger.getMerkleRoot(),
-        bitemporalHistoricalReplayValid: historicalFacts.length > 0
-      }
+        bitemporalHistoricalReplayValid: historicalFacts.length > 0,
+      },
     };
   }
 
@@ -350,7 +340,7 @@ export class EosTitansMatrix {
         id: `spotify:track:eos${i.toString(16).padStart(4, "0")}`,
         artistId: artists[i % artists.length],
         bpm: 128 + (i % 8) * 2,
-        camelotKey: keys[i % keys.length]
+        camelotKey: keys[i % keys.length],
       });
     }
 
@@ -366,7 +356,7 @@ export class EosTitansMatrix {
     const end = process.hrtime.bigint();
     const durationUs = Math.max(1, Number(end - start) / 1000);
     const totalTracks = trackCount * iterations;
-    const throughput = Math.round((totalTracks / (durationUs / 1000000)));
+    const throughput = Math.round(totalTracks / (durationUs / 1000000));
 
     return {
       titan: "SPOTIFY_SMART_SHUFFLE",
@@ -380,8 +370,8 @@ export class EosTitansMatrix {
         artistCollisions: receipt.artistCollisions,
         harmonicScore: receipt.harmonicScore,
         executionMicros: receipt.executionMicros,
-        merkleSeed: receipt.merkleSeed
-      }
+        merkleSeed: receipt.merkleSeed,
+      },
     };
   }
 
@@ -393,7 +383,7 @@ export class EosTitansMatrix {
     const sysplex = new IbmParallelSysplexEngine();
     const shards: XaParticipant[] = [
       { shardId: "s1", prepare: () => "VOTE_COMMIT", commit: () => true, abort: () => true },
-      { shardId: "s2", prepare: () => "VOTE_COMMIT", commit: () => true, abort: () => true }
+      { shardId: "s2", prepare: () => "VOTE_COMMIT", commit: () => true, abort: () => true },
     ];
     const tx = sysplex.executeTwoPhaseCommit("tx-sysplex-bench", shards);
     const metrics = sysplex.getSevenNinesMetrics();
@@ -408,8 +398,8 @@ export class EosTitansMatrix {
         availabilityPercentage: metrics.calculatedAvailability,
         maxAnnualDowntimeSec: metrics.maxAnnualDowntimeSeconds,
         twoPhaseCommitStatus: tx.decision,
-        microcodeVersion: metrics.liveMicrocodeVersion
-      }
+        microcodeVersion: metrics.liveMicrocodeVersion,
+      },
     };
   }
 
@@ -436,8 +426,8 @@ export class EosTitansMatrix {
       metrics: {
         cycleHz: tmrFlight.cycleHz,
         byzantineFaults: tmrFlight.byzantineFaultsDetected,
-        consensusRate: "100.0%"
-      }
+        consensusRate: "100.0%",
+      },
     };
 
     const googleTitanResult: TitanBenchmarkResult = {
@@ -448,8 +438,8 @@ export class EosTitansMatrix {
       metrics: {
         driftPercentage: borgReconciliation.driftPercentage,
         synchronized: borgReconciliation.synchronized,
-        desiredNodes: borgReconciliation.desiredStateCount
-      }
+        desiredNodes: borgReconciliation.desiredStateCount,
+      },
     };
 
     const results = [
@@ -460,7 +450,7 @@ export class EosTitansMatrix {
       xaiResult,
       nubankResult,
       shuffleResult,
-      ibmResult
+      ibmResult,
     ];
 
     const globalEnd = process.hrtime.bigint();
@@ -479,7 +469,7 @@ export class EosTitansMatrix {
       overallStatus: allPassed ? "APEX_PERFECTION" : "DEGRADED",
       totalDurationUs,
       results,
-      sha256Proof
+      sha256Proof,
     };
   }
 }

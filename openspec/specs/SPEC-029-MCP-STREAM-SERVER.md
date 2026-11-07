@@ -52,4 +52,5 @@ ESCENARIO: [BDD-069] Manejo de Desconexión de Cliente y Liberación de Memoria
 ```
 
 ---
-*Signed by Principal Architect: Valentín Flórez Arbeláez*
+
+_Signed by Principal Architect: Valentín Flórez Arbeláez_

@@ -84,10 +84,7 @@ export class EosQuantumLatticeShield {
 
     const polynomialHash = crypto.createHash("sha256").update(coeffBuffer).digest("hex");
     const symmetricCoeffsDigest = crypto.createHash("sha384").update(coeffBuffer).digest("hex");
-    const quantumProof = crypto
-      .createHash("sha512")
-      .update(`${polynomialHash}:${symmetricCoeffsDigest}`)
-      .digest("hex");
+    const quantumProof = crypto.createHash("sha512").update(`${polynomialHash}:${symmetricCoeffsDigest}`).digest("hex");
 
     return {
       algorithm: "NIST-FIPS-203-ML-KEM-768",

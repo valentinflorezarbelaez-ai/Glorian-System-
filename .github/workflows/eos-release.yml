@@ -1,0 +1,75 @@
+name: EOS Release Automation
+
+# Big Tech standard (Vercel, Stripe, Linear, Semantic Release):
+# create a GitHub Release automatically when a version tag is pushed.
+# The release notes are generated from Conventional Commits using the
+# existing changelog.mjs script (zero deps). A release artifact (SBOM)
+# is attached for SLSA compliance.
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag (e.g. v75.1.0)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Install locked development toolchain
+        run: npm ci
+
+      - name: Determine tag
+        id: tag
+        run: |
+          if [ -n "${{ inputs.tag }}" ]; then
+            echo "name=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate release notes from conventional commits
+        run: |
+          node scripts/changelog.mjs --from ${{ steps.tag.outputs.name }} --dry-run > release-notes.md
+          # Fallback: use the last tag to current tag range
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          if [ -n "$PREV_TAG" ]; then
+            git log ${PREV_TAG}..HEAD --pretty=format:"- %s" --no-merges > release-notes.md
+          else
+            git log --pretty=format:"- %s" --no-merges -20 > release-notes.md
+          fi
+
+      - name: Generate SBOM for release
+        run: node scripts/sbom-gate.mjs
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@da05d55257321bf581d62f0f8b21d3e414679e0b # v2.4.0
+        with:
+          tag_name: ${{ steps.tag.outputs.name }}
+          name: ${{ steps.tag.outputs.name }}
+          body_path: release-notes.md
+          files: docs/evidence/sbom.cdx.json
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

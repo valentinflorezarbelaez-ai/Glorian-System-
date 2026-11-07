@@ -84,7 +84,7 @@ function retargetStamps(parsed: unknown, stampField: string, stamp: string): voi
 export function writeDeterministicArtifact(
   filePath: string,
   payload: Record<string, unknown>,
-  options: DeterministicArtifactOptions = {}
+  options: DeterministicArtifactOptions = {},
 ): DeterministicArtifactResult {
   const { stampField, stampFor } = options;
 

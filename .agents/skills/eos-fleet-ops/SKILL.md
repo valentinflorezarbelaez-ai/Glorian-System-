@@ -10,6 +10,7 @@ Use this skill when coordinating health checks, cross-repository standards, work
 ## 1. Registered Fleet & Law IV External Write Barrier
 
 All fleet repositories are declared in `docs/projects/registry.json` using portable environment variables injected into Antigravity's `eos-system` MCP server:
+
 - `EOS_FLEET_EOS_SYSTEM_PATH` (`eos-system`)
 - `EOS_FLEET_ABERAMENTHO_PATH` (`aberamentho-pleroma`)
 - `EOS_FLEET_PORTAFOLIO_PATH` (`valentin-portfolio`)
@@ -24,6 +25,7 @@ Execute the following tools via `call_mcp_tool` (`ServerName: "eos-system"`):
 
 1. **Spotify Soundcheck & Quorum Verification (`eos_fleet_soundcheck`)**
    Audits all registered fleet repositories across 5 weighted dimensions (Git Cleanliness, Security Gates, Test Infrastructure, SDD Governance, Zero-Secret Hygiene) and verifies `deploymentAuthorizedQuorum` (average score `>= 70`):
+
    ```json
    {
      "ServerName": "eos-system",
@@ -57,8 +59,10 @@ Execute the following tools via `call_mcp_tool` (`ServerName: "eos-system"`):
 ## 3. Antigravity Control Plane Self-Healing
 
 If any fleet environment variable or NTFS junction drifts on a developer workstation, run:
+
 ```powershell
 node bin/eos.mjs antigravity install
 node bin/eos.mjs antigravity doctor
 ```
+
 Confirm `readinessScore: 100` (`SOVEREIGN_DIRECTING`) and `singleServerInvariantVerified: true`.

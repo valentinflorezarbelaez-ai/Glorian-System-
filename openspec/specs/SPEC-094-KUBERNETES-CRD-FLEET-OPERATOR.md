@@ -1,6 +1,7 @@
 # SPEC-094: CLOUD-NATIVE KUBERNETES CRD FLEET OPERATOR & ENTERPRISE ABAC ENGINE
 
 ## 1. Specification Metadata
+
 - **Spec ID**: `SPEC-094`
 - **Change**: `CHANGE-065`
 - **Status**: `APPROVED`
@@ -13,15 +14,19 @@
 ## 2. Functional Requirements (Formal EARS Syntax)
 
 ### FR-338: Kubernetes Custom Resource Definition (CRD) Manifest Synthesis
+
 - **Pattern (Ubiquitous / Permanent)**: EL SISTEMA generará especificaciones declarativas de Custom Resource Definitions conformes con la API `apiextensions.k8s.io/v1` para los recursos `EosCluster` y `EosEnclave` con validación estricta de esquemas OpenAPI v3.
 
 ### FR-339: Reconciler Control Loop State Machine
+
 - **Pattern (Event-Driven)**: CUANDO se reciba un evento de reconciliación de un recurso personalizado, EL SISTEMA comparará el estado deseado (`spec`) con el estado observado (`status`), planificará las mutaciones mínimas necesarias y actualizará las condiciones del recurso (`Ready`, `Reconciling`, `Degraded`).
 
 ### FR-340: Attribute-Based Access Control (ABAC) Engine
+
 - **Pattern (State-Driven)**: MIENTRAS se evalúe una petición de ejecución de herramienta o mutación de estado, EL SISTEMA procesará un conjunto de políticas declarativas basadas en atributos (principal, acción, recurso, contexto) con evaluación estricta en tiempo constante y semántica de denegación predeterminada (default-deny).
 
 ### FR-341: Multi-Tenant Namespace Isolation & Resource Quotas
+
 - **Pattern (Error / Unwanted Condition)**: SI una carga de trabajo intenta acceder a recursos fuera de su namespace asignado o exceder las cuotas configuradas de memoria o CPU, ENTONCES EL SISTEMA bloqueará la operación fail-closed y emitirá un registro de auditoría de seguridad.
 
 ---

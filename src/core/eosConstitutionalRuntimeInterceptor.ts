@@ -10,11 +10,7 @@
  */
 
 import path from "node:path";
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosSmtAutomatedReasoningProver } from "./eosSmtAutomatedReasoningProver.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
@@ -41,7 +37,10 @@ const CRITICAL_SECRET_PATTERNS = [
   { name: "GitHub Personal Access Token", regex: /ghp_[0-9a-zA-Z]{24,}/g },
   { name: "AWS Access Key ID", regex: /AKIA[0-9A-Z]{16}/g },
   { name: "Google API Key", regex: /AIza[0-9A-Za-z\-_]{35}/g },
-  { name: "PEM Private Key Block", regex: /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----[\s\S]*?-----END (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g }
+  {
+    name: "PEM Private Key Block",
+    regex: /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----[\s\S]*?-----END (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g,
+  },
 ];
 
 export class EosConstitutionalRuntimeInterceptor {
@@ -58,7 +57,7 @@ export class EosConstitutionalRuntimeInterceptor {
   public evaluatePreExecutionGuardrails(
     toolName: string,
     args: Record<string, unknown>,
-    options?: InterceptorOptions
+    options?: InterceptorOptions,
   ): { readonly approved: boolean; readonly reason?: string } {
     assertPrecondition(Boolean(args && typeof args === "object"), "Tool arguments must be a valid object");
 
@@ -102,18 +101,17 @@ export class EosConstitutionalRuntimeInterceptor {
         { role: "guest", action: "read_only", allow: true },
         { role: "guest", action: "destructive_mutate", allow: false },
         { role: "architect", action: "destructive_mutate", allow: true },
-        { role: "architect", action: "read_only", allow: true }
+        { role: "architect", action: "read_only", allow: true },
       ];
 
-      const action = toolName.includes("manage_worktree") || toolName.includes("delete")
-        ? "destructive_mutate"
-        : "read_only";
+      const action =
+        toolName.includes("manage_worktree") || toolName.includes("delete") ? "destructive_mutate" : "read_only";
 
       const proof = EosSmtAutomatedReasoningProver.proveAbacSafety(rules, role, action);
       if (proof.verdict !== "PROVED_UNSAT_SECURE" && !proof.isSatisfiable) {
         return {
           approved: false,
-          reason: `CONSTITUTIONAL_GUARDRAIL_BLOCKED: SMT ABAC security theorem failed for role=${role}, action=${action}`
+          reason: `CONSTITUTIONAL_GUARDRAIL_BLOCKED: SMT ABAC security theorem failed for role=${role}, action=${action}`,
         };
       }
     }
@@ -165,7 +163,7 @@ export class EosConstitutionalRuntimeInterceptor {
     toolName: string,
     args: TInput,
     executor: (validatedArgs: TInput) => TOutput,
-    options?: InterceptorOptions
+    options?: InterceptorOptions,
   ): {
     readonly success: boolean;
     readonly result?: TOutput;
@@ -183,13 +181,13 @@ export class EosConstitutionalRuntimeInterceptor {
         blockedReason: preCheck.reason,
         secretsRedactedCount: 0,
         evaluatedAtIso,
-        sha256Receipt: pureSha256(`${toolName}:BLOCKED:${preCheck.reason}:${evaluatedAtIso}`)
+        sha256Receipt: pureSha256(`${toolName}:BLOCKED:${preCheck.reason}:${evaluatedAtIso}`),
       });
 
       return {
         success: false,
         blockedReason: preCheck.reason,
-        receipt
+        receipt,
       };
     }
 
@@ -206,7 +204,7 @@ export class EosConstitutionalRuntimeInterceptor {
       approved: true,
       secretsRedactedCount: redactedCount,
       evaluatedAtIso,
-      sha256Receipt: pureSha256(`${toolName}:APPROVED:${redactedCount}:${evaluatedAtIso}`)
+      sha256Receipt: pureSha256(`${toolName}:APPROVED:${redactedCount}:${evaluatedAtIso}`),
     });
 
     if (options?.ledgerPath) {
@@ -220,8 +218,8 @@ export class EosConstitutionalRuntimeInterceptor {
             toolName,
             approved: true,
             redactedCount,
-            receiptHash: receipt.sha256Receipt
-          }
+            receiptHash: receipt.sha256Receipt,
+          },
         });
         ledger.close();
       } catch {
@@ -232,7 +230,7 @@ export class EosConstitutionalRuntimeInterceptor {
     return {
       success: true,
       result: sanitizedOutput as TOutput,
-      receipt
+      receipt,
     };
   }
 }

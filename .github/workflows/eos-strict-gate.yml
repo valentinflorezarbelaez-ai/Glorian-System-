@@ -4,12 +4,12 @@ on:
   workflow_call:
     inputs:
       fail-fast:
-        description: 'Terminate immediately on first gate finding'
+        description: "Terminate immediately on first gate finding"
         required: false
         type: boolean
         default: true
       export-sarif:
-        description: 'Export and upload OASIS SARIF v2.1.0 security receipt'
+        description: "Export and upload OASIS SARIF v2.1.0 security receipt"
         required: false
         type: boolean
         default: true
@@ -20,6 +20,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   security-events: write
@@ -28,14 +32,17 @@ jobs:
   eos-strict-attestation:
     name: EOS 7-Stage Strict Gate Attestation
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout Codebase
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js Layer-0 Runtime
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Run EOS Criterial Gate Attestation
         run: |
@@ -43,6 +50,6 @@ jobs:
 
       - name: Upload OASIS SARIF v2.1.0 Security Receipt
         if: ${{ inputs.export-sarif != false && !cancelled() }}
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@9418214df1f2c4b8128c770156c409013b07d6b9 # v3.39.3
         with:
           sarif_file: docs/evidence/local-checks.sarif

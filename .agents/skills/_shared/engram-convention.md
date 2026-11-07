@@ -16,17 +16,17 @@ scope:     project
 
 ### Artifact Types
 
-| Artifact Type | Produced By | Description |
-|---------------|-------------|-------------|
-| `explore` | sdd-explore | Exploration analysis |
-| `proposal` | sdd-propose | Change proposal |
-| `spec` | sdd-spec | Delta specifications (all domains concatenated) |
-| `design` | sdd-design | Technical design |
-| `tasks` | sdd-tasks | Task breakdown |
-| `apply-progress` | sdd-apply | Implementation progress (one per batch) |
-| `verify-report` | sdd-verify | Verification report |
-| `archive-report` | sdd-archive | Archive closure with lineage |
-| `state` | orchestrator | DAG state for recovery after compaction |
+| Artifact Type    | Produced By  | Description                                     |
+| ---------------- | ------------ | ----------------------------------------------- |
+| `explore`        | sdd-explore  | Exploration analysis                            |
+| `proposal`       | sdd-propose  | Change proposal                                 |
+| `spec`           | sdd-spec     | Delta specifications (all domains concatenated) |
+| `design`         | sdd-design   | Technical design                                |
+| `tasks`          | sdd-tasks    | Task breakdown                                  |
+| `apply-progress` | sdd-apply    | Implementation progress (one per batch)         |
+| `verify-report`  | sdd-verify   | Verification report                             |
+| `archive-report` | sdd-archive  | Archive closure with lineage                    |
+| `state`          | orchestrator | DAG state for recovery after compaction         |
 
 Exception: `sdd-init` uses `sdd-init/{project-name}` as both title and topic_key.
 
@@ -66,6 +66,7 @@ STEP B — RETRIEVE FULL CONTENT (mandatory):
 ```
 
 Loading project context:
+
 ```
 mem_search(query: "sdd-init/{project}", project: "{project}") → get ID
 mem_get_observation(id) → full project context
@@ -74,6 +75,7 @@ mem_get_observation(id) → full project context
 ## Writing Artifacts
 
 Standard write:
+
 ```
 mem_save(
   title: "sdd/{change-name}/{artifact-type}",
@@ -85,6 +87,7 @@ mem_save(
 ```
 
 Concrete example — saving a proposal for `add-dark-mode`:
+
 ```
 mem_save(
   title: "sdd/add-dark-mode/proposal",
@@ -96,6 +99,7 @@ mem_save(
 ```
 
 Update existing artifact (when you have the observation ID):
+
 ```
 mem_update(id: {observation-id}, content: "{updated full content}")
 ```

@@ -3,11 +3,12 @@
 **Specification**: SPEC-057  
 **Change Reference**: CHANGE-050  
 **Target Version**: 63.0.0  
-**Architectural Decision Record**: ADR-063  
+**Architectural Decision Record**: ADR-063
 
 ---
 
 ## Architecture Decision Record: ADR-063
+
 **Title**: Synthesis of Gnostic 10-Sephiroth Integrity Vector and Universal Multi-Fleet Orchestration  
 **Status**: APPROVED  
 **Context**:  
@@ -15,6 +16,7 @@ As EOS reaches maturity across 62 specifications, managing multiple independent 
 
 **Decision**:  
 Implement `EosSamaelUnitotalNexus` as a Layer-0 TypeScript engine that:
+
 1. Codifies the 10 Sephiroth as an objective 10-dimensional architectural health vector:
    - `KETHER`: Specification as Supreme Truth (EARS/BDD coverage).
    - `CHOKMAH`: Evolutionary optimization and mutation search (AST purity).
@@ -31,5 +33,6 @@ Implement `EosSamaelUnitotalNexus` as a Layer-0 TypeScript engine that:
 4. Persists cryptographic receipts in the durable SQLite WAL ledger.
 
 **Rejected Alternatives**:
-1. *Pure Esoteric Allegory Without Executable Tests*: Rejected per Law I and Law III.
-2. *Fragmented Per-Repo Manual Maintenance*: Rejected per Law IV and Law V.
+
+1. _Pure Esoteric Allegory Without Executable Tests_: Rejected per Law I and Law III.
+2. _Fragmented Per-Repo Manual Maintenance_: Rejected per Law IV and Law V.

@@ -101,7 +101,7 @@ export class LmaxDisruptorRingBuffer {
       timestampUs: this.slotView[slotIndex],
       eventCode: this.slotView[slotIndex + 1],
       payloadA: this.slotView[slotIndex + 2],
-      payloadB: this.slotView[slotIndex + 3]
+      payloadB: this.slotView[slotIndex + 3],
     };
   }
 
@@ -145,7 +145,7 @@ export class LmaxDisruptorRingBuffer {
       megaEventsPerSecond: megaEventsPerSec,
       heapAllocationMeasurement: "NOT_MEASURED",
       cursorPaddingConfigured: true,
-      resultFingerprintSha256
+      resultFingerprintSha256,
     };
   }
 }
@@ -200,9 +200,7 @@ export class FastStructuralByteScanner {
     const elapsedNs = Number(process.hrtime.bigint() - startNs);
     const durationUs = elapsedNs / 1000;
     const mbScanned = len / (1024 * 1024);
-    const throughputMiBPerSecond = elapsedNs > 0
-      ? Number((mbScanned / (elapsedNs / 1_000_000_000)).toFixed(2))
-      : 0;
+    const throughputMiBPerSecond = elapsedNs > 0 ? Number((mbScanned / (elapsedNs / 1_000_000_000)).toFixed(2)) : 0;
 
     const resultFingerprintSha256 = crypto
       .createHash("sha256")
@@ -215,7 +213,7 @@ export class FastStructuralByteScanner {
       durationUs,
       throughputMiBPerSecond,
       unrolledWidthBytes: 8,
-      resultFingerprintSha256
+      resultFingerprintSha256,
     };
   }
 }
@@ -232,7 +230,10 @@ export class EosDisruptorRingEngine {
     this.scanner = new FastStructuralByteScanner();
   }
 
-  public runMasterSpeedBenchmark(events = 1_000_000, payloadBytes = 1_048_576): {
+  public runMasterSpeedBenchmark(
+    events = 1_000_000,
+    payloadBytes = 1_048_576,
+  ): {
     disruptorReport: DisruptorBenchmarkReport;
     byteScanReport: ByteScanBenchmarkReport;
     combinedFingerprintSha256: string;
@@ -261,7 +262,7 @@ export class EosDisruptorRingEngine {
       disruptorReport,
       byteScanReport,
       combinedFingerprintSha256,
-      status: "BENCHMARK_COMPLETED"
+      status: "BENCHMARK_COMPLETED",
     };
   }
 

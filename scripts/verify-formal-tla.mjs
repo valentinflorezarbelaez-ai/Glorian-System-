@@ -30,10 +30,10 @@ export function parseTlaModule(filePath) {
   const variables = varMatch
     ? varMatch[1]
         .split("\n")
-        .map(line => line.replace(/\\\*.*$/, "").trim())
+        .map((line) => line.replace(/\\\*.*$/, "").trim())
         .filter(Boolean)
-        .flatMap(line => line.split(","))
-        .map(v => v.trim())
+        .flatMap((line) => line.split(","))
+        .map((v) => v.trim())
         .filter(Boolean)
     : [];
 
@@ -42,7 +42,14 @@ export function parseTlaModule(filePath) {
   let match;
   while ((match = invRegex.exec(raw)) !== null) {
     const name = match[1];
-    if (name.includes("Invariant") || name.includes("Overrun") || name.includes("Bounds") || name.includes("Monotonic") || name.includes("NoDeadlock") || name.includes("Isolation")) {
+    if (
+      name.includes("Invariant") ||
+      name.includes("Overrun") ||
+      name.includes("Bounds") ||
+      name.includes("Monotonic") ||
+      name.includes("NoDeadlock") ||
+      name.includes("Isolation")
+    ) {
       invariants.push(name);
     }
   }
@@ -66,7 +73,7 @@ export function verifyLmaxDisruptorModel(capacity = 8, totalEvents = 500) {
     assert.ok(consumerSeq <= producerSeq, "VIOLATION: Consumer read ahead of producer!");
 
     // Deterministic bounded schedule: Publish vs Consume
-    const canPublish = (producerSeq - consumerSeq) < capacity;
+    const canPublish = producerSeq - consumerSeq < capacity;
     const canConsume = consumerSeq < producerSeq;
 
     if (canPublish && ((step * 7 + 3) % 10 > 4 || !canConsume)) {
@@ -88,7 +95,7 @@ export function verifyLmaxDisruptorModel(capacity = 8, totalEvents = 500) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -127,7 +134,7 @@ export function verifyDatomicLedgerModel(maxTx = 100) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -185,7 +192,7 @@ export function verifyHermesConsensusModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -234,7 +241,7 @@ export function verifyChaosDisruptorModel(maxTokens = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -274,7 +281,7 @@ export function verifyProductFoundryModel(maxModules = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -285,7 +292,6 @@ export function verifyOmegaTranscendentalModel(steps = 200) {
   let nodesIndexed = 0;
   let edgesIndexed = 0;
   let latticeSealsComputed = 0;
-  let synapseBeliefUpdates = 0;
   let deadlocksDetected = 0;
   let stepsExecuted = 0;
 
@@ -300,8 +306,6 @@ export function verifyOmegaTranscendentalModel(steps = 200) {
       if (nodesIndexed > 1) edgesIndexed++;
     } else if (i % 4 === 2) {
       latticeSealsComputed++;
-    } else {
-      synapseBeliefUpdates++;
     }
 
     assert.ok(latticeSealsComputed <= steps, "VIOLATION: Lattice bounds breached");
@@ -315,7 +319,7 @@ export function verifyOmegaTranscendentalModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -361,7 +365,7 @@ export function verifyContinuousRefactorModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -411,7 +415,7 @@ export function verifyFleetSyncMctsCanaryModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -432,7 +436,7 @@ export function verifyAntigravityControlPlaneModel(steps = 200) {
     assert.equal(unsafeMutationsAllowed, 0, "VIOLATION: Unsafe mutation bypassed Law IV or Gamma Barrier");
     assert.ok(
       protocolInitialized || (missionsDirected === 0 && hookChecksExecuted === 0),
-      "VIOLATION: Mission or hook evaluated before MCP handshake"
+      "VIOLATION: Mission or hook evaluated before MCP handshake",
     );
 
     if (!protocolInitialized) {
@@ -453,7 +457,7 @@ export function verifyAntigravityControlPlaneModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -463,8 +467,6 @@ export function verifyGentlemanEosSynergyMeshModel(steps = 200) {
 
   let constitutionIntact = true;
   let gentlemanComponentsUp = 0;
-  let ledgerChainLength = 0;
-  let confinedMcpCalls = 0;
   let pathEscapesAllowed = 0;
   let tamperedBlocks = 0;
   let stepsExecuted = 0;
@@ -472,16 +474,15 @@ export function verifyGentlemanEosSynergyMeshModel(steps = 200) {
   for (let i = 0; i < steps; i++) {
     stepsExecuted++;
     assert.equal(constitutionIntact, true, "VIOLATION: EOS Constitution clobbered");
-    assert.ok(gentlemanComponentsUp >= 0 && gentlemanComponentsUp <= 6, "VIOLATION: Gentleman component count out of bounds");
+    assert.ok(
+      gentlemanComponentsUp >= 0 && gentlemanComponentsUp <= 6,
+      "VIOLATION: Gentleman component count out of bounds",
+    );
     assert.equal(pathEscapesAllowed, 0, "VIOLATION: MCP path escape outside projectRoot");
     assert.equal(tamperedBlocks, 0, "VIOLATION: Durable SQLite WAL hash chain tampered");
 
     if (gentlemanComponentsUp < 6) {
       gentlemanComponentsUp++;
-    } else if (i % 2 === 0) {
-      confinedMcpCalls++;
-    } else {
-      ledgerChainLength++;
     }
   }
 
@@ -493,7 +494,7 @@ export function verifyGentlemanEosSynergyMeshModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -534,7 +535,7 @@ export function verifyGentlemanAutoUpdateModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -555,7 +556,10 @@ export function verifyEnterpriseWorkspaceGovernorModel(steps = 200) {
     assert.strictEqual(externalBytesWrittenOnOnboard, 0, "VIOLATION: ZeroExternalWriteOnOnboardInvariant breached");
     assert.strictEqual(unauthorizedExternalWrites, 0, "VIOLATION: LawIVWriteBarrierInvariant breached");
     assert.strictEqual(pathEscapesAllowed, 0, "VIOLATION: BoundaryConfinementInvariant breached");
-    assert.ok(onboardedProjects >= 0 && readOnlyInspections >= 0 && authorizedExternalWrites >= 0, "VIOLATION: Negative counters");
+    assert.ok(
+      onboardedProjects >= 0 && readOnlyInspections >= 0 && authorizedExternalWrites >= 0,
+      "VIOLATION: Negative counters",
+    );
 
     if (i % 5 === 0) {
       onboardedProjects++;
@@ -574,7 +578,7 @@ export function verifyEnterpriseWorkspaceGovernorModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -582,9 +586,7 @@ export function verifyEvolutionaryHarnessModel(steps = 200) {
   const filePath = path.join(formalDir, "EvolutionaryHarness.tla");
   const parsed = parseTlaModule(filePath);
 
-  let generationsCompleted = 0;
   let bestFitnessScore = 50;
-  let clusteredPopulations = 0;
   let doubleBlindViolations = 0;
   let circuitBreakerTripped = 0;
   let interfaceTampered = 0;
@@ -599,10 +601,7 @@ export function verifyEvolutionaryHarnessModel(steps = 200) {
 
     if (i % 7 === 0) {
       circuitBreakerTripped = 1;
-    } else if (i % 3 === 0) {
-      clusteredPopulations++;
     } else {
-      generationsCompleted++;
       if (bestFitnessScore < 100) bestFitnessScore += 1;
     }
   }
@@ -615,7 +614,7 @@ export function verifyEvolutionaryHarnessModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -627,7 +626,6 @@ export function verifyAgentTopologyMeshModel(steps = 200) {
   let cyclicDagsRejected = 0;
   let publishedEvents = 0;
   let consumedEvents = 0;
-  let ringBufferSequence = 0;
   let deadlocksDetected = 0;
   let stepsExecuted = 0;
 
@@ -643,7 +641,6 @@ export function verifyAgentTopologyMeshModel(steps = 200) {
       cyclicDagsRejected++;
     } else if (i % 2 === 0) {
       publishedEvents++;
-      ringBufferSequence++;
     } else if (consumedEvents < publishedEvents) {
       consumedEvents++;
     }
@@ -657,7 +654,7 @@ export function verifyAgentTopologyMeshModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -703,7 +700,7 @@ export function runAllFormalVerifications() {
     verifyAgenticFinOpsGovernorModel(),
     verifyPlanetaryMonorepoGovernorModel(),
     verifyCrossFleetNeuralSynapseModel(),
-    verifyPlanetaryMultiCloudEvacuationModel()
+    verifyPlanetaryMultiCloudEvacuationModel(),
   ];
 }
 
@@ -715,7 +712,6 @@ export function verifyColumnarTelemetryEngineModel(steps = 200) {
   const maxDimensions = 256;
   const zScoreThreshold = 30; // 3.0 scaled by 10
 
-  let eventsIngested = 0;
   let currentCount = 0;
   let dictEntries = 0;
   let anomaliesDetected = 0;
@@ -730,7 +726,6 @@ export function verifyColumnarTelemetryEngineModel(steps = 200) {
       assert.ok(anomaliesDetected > 0, "VIOLATION: Anomaly not recorded when Z > threshold");
     }
 
-    eventsIngested++;
     currentCount = Math.min(maxCapacity, currentCount + 1);
 
     if (i % 20 === 19) {
@@ -739,7 +734,7 @@ export function verifyColumnarTelemetryEngineModel(steps = 200) {
       anomaliesDetected++;
     } else {
       // Nominal event
-      latestZScore = 8;  // Z = 0.8
+      latestZScore = 8; // Z = 0.8
       if (dictEntries < maxDimensions) dictEntries++;
     }
   }
@@ -752,7 +747,7 @@ export function verifyColumnarTelemetryEngineModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -764,7 +759,6 @@ export function verifyCellBasedBulkheadGovernorModel(steps = 200) {
   const cellCapacity = 100;
 
   let totalRequests = 0;
-  let quarantinedSignatures = 0;
   let activeCells = cellCount;
   let reroutedRequests = 0;
   let shedRequests = 0;
@@ -780,10 +774,7 @@ export function verifyCellBasedBulkheadGovernorModel(steps = 200) {
 
     totalRequests++;
 
-    if (i % 25 === 0) {
-      // Poison pill quarantine
-      quarantinedSignatures++;
-    } else if (i % 10 === 0) {
+    if (i % 10 === 0) {
       // Degraded rerouting
       reroutedRequests++;
     } else if (i % 30 === 0) {
@@ -809,7 +800,7 @@ export function verifyCellBasedBulkheadGovernorModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -873,7 +864,7 @@ export function verifyMultiWindowSloGovernorModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -894,11 +885,15 @@ export function verifyAdaptiveHedgedDeadlineMeshModel(steps = 200) {
 
     // Invariants
     assert.ok(
-      requestsDispatched < 20 || (hedgesDispatched * 100) <= (requestsDispatched * maxHedgeCapPercent) + 5,
-      "VIOLATION: HedgingRateBoundedInvariant"
+      requestsDispatched < 20 || hedgesDispatched * 100 <= requestsDispatched * maxHedgeCapPercent + 5,
+      "VIOLATION: HedgingRateBoundedInvariant",
     );
     assert.ok(shedRequests <= requestsDispatched, "VIOLATION: DeadlineMonotonicInvariant");
-    assert.strictEqual(completedRequests + shedRequests, requestsDispatched, "VIOLATION: CompletionConservationInvariant");
+    assert.strictEqual(
+      completedRequests + shedRequests,
+      requestsDispatched,
+      "VIOLATION: CompletionConservationInvariant",
+    );
 
     const action = i % 4;
     if (action === 0) {
@@ -907,9 +902,7 @@ export function verifyAdaptiveHedgedDeadlineMeshModel(steps = 200) {
       completedRequests++;
     } else if (action === 1) {
       // Lagging primary with hedge (if budget allows)
-      const allowedHedges = requestsDispatched < 20
-        ? 1
-        : Math.floor((requestsDispatched * maxHedgeCapPercent) / 100);
+      const allowedHedges = requestsDispatched < 20 ? 1 : Math.floor((requestsDispatched * maxHedgeCapPercent) / 100);
       if (hedgesDispatched < allowedHedges) {
         requestsDispatched++;
         hedgesDispatched++;
@@ -938,7 +931,7 @@ export function verifyAdaptiveHedgedDeadlineMeshModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -955,9 +948,7 @@ export function verifyAdaptiveConcurrencyGovernorModel(steps = 200) {
   let baselineRttMs = 20;
   let currentRttMs = 20;
   let admittedCritical = 0;
-  let admittedNormal = 0;
   let shedBestEffort = 0;
-  let shedQueueExpired = 0;
   let stepsExecuted = 0;
 
   for (let i = 0; i < steps; i++) {
@@ -973,7 +964,6 @@ export function verifyAdaptiveConcurrencyGovernorModel(steps = 200) {
       // Admit normal below limit
       if (inFlight < concurrencyLimit) {
         inFlight++;
-        admittedNormal++;
       }
     } else if (action === 1) {
       // Admit critical with headroom
@@ -986,9 +976,6 @@ export function verifyAdaptiveConcurrencyGovernorModel(steps = 200) {
       if (inFlight >= concurrencyLimit) {
         shedBestEffort++;
       }
-    } else if (action === 3) {
-      // Shed queue expired CoDel
-      shedQueueExpired++;
     } else if (action === 4) {
       // Contract on latency spike
       if (currentRttMs < 1000) {
@@ -1016,7 +1003,7 @@ export function verifyAdaptiveConcurrencyGovernorModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1025,7 +1012,6 @@ export function verifyTailBasedTraceSamplerModel(steps = 200) {
   const parsed = parseTlaModule(filePath);
 
   const maxActiveTraces = 1000;
-  const latencyThresholdMs = 500;
 
   let activeTraces = 0;
   let totalSpansReceived = 0;
@@ -1035,7 +1021,6 @@ export function verifyTailBasedTraceSamplerModel(steps = 200) {
   let tracesSampledResilience = 0;
   let tracesSampledNominal = 0;
   let tracesDroppedNominal = 0;
-  let tracesEvicted = 0;
   let stepsExecuted = 0;
 
   for (let i = 0; i < steps; i++) {
@@ -1045,8 +1030,12 @@ export function verifyTailBasedTraceSamplerModel(steps = 200) {
     assert.ok(activeTraces <= maxActiveTraces, "VIOLATION: BufferCapacityInvariant");
     assert.strictEqual(
       tracesCompleted,
-      tracesSampledErrors + tracesSampledLatency + tracesSampledResilience + tracesSampledNominal + tracesDroppedNominal,
-      "VIOLATION: ConservationInvariant"
+      tracesSampledErrors +
+        tracesSampledLatency +
+        tracesSampledResilience +
+        tracesSampledNominal +
+        tracesDroppedNominal,
+      "VIOLATION: ConservationInvariant",
     );
     assert.ok(totalSpansReceived >= 0, "VIOLATION: NonNegativeCountsInvariant");
 
@@ -1101,7 +1090,6 @@ export function verifyTailBasedTraceSamplerModel(steps = 200) {
       // EvictStaleTrace
       if (activeTraces > 0) {
         activeTraces--;
-        tracesEvicted++;
       }
     }
   }
@@ -1114,7 +1102,7 @@ export function verifyTailBasedTraceSamplerModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1129,7 +1117,6 @@ export function verifyPredictiveRemediationEngineModel(steps = 200) {
   let remediationsSuppressedCooldown = 0;
   let nominalEvaluations = 0;
   let cooldownTicksRemaining = 0;
-  let activeArchetype = "NOMINAL";
   let healthScore = 100;
   let stepsExecuted = 0;
 
@@ -1140,7 +1127,7 @@ export function verifyPredictiveRemediationEngineModel(steps = 200) {
     assert.strictEqual(
       totalEvaluations,
       remediationsExecuted + remediationsSuppressedCooldown + nominalEvaluations,
-      "VIOLATION: ConservationInvariant"
+      "VIOLATION: ConservationInvariant",
     );
     if (engineState === "COOLDOWN") {
       assert.ok(cooldownTicksRemaining >= 0, "VIOLATION: CooldownSafetyInvariant");
@@ -1153,7 +1140,6 @@ export function verifyPredictiveRemediationEngineModel(steps = 200) {
       if (engineState === "IDLE" || engineState === "RECOVERED") {
         totalEvaluations++;
         nominalEvaluations++;
-        activeArchetype = "NOMINAL";
         healthScore = 95;
         engineState = "IDLE";
       }
@@ -1162,7 +1148,6 @@ export function verifyPredictiveRemediationEngineModel(steps = 200) {
       if ((engineState === "IDLE" || engineState === "RECOVERED") && cooldownTicksRemaining === 0) {
         totalEvaluations++;
         remediationsExecuted++;
-        activeArchetype = "CASCADE_TIMEOUT";
         healthScore = 45;
         engineState = "COOLDOWN";
         cooldownTicksRemaining = cooldownTicks;
@@ -1185,7 +1170,6 @@ export function verifyPredictiveRemediationEngineModel(steps = 200) {
     } else {
       // RestoreNominalState
       if (engineState === "RECOVERED" && cooldownTicksRemaining === 0) {
-        activeArchetype = "NOMINAL";
         healthScore = 100;
         engineState = "IDLE";
       }
@@ -1200,7 +1184,7 @@ export function verifyPredictiveRemediationEngineModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1208,10 +1192,8 @@ export function verifyUnifiedKernelOrchestratorModel(steps = 200) {
   const filePath = path.join(formalDir, "UnifiedKernelOrchestrator.tla");
   const parsed = parseTlaModule(filePath);
 
-  const nominalThreshold = 85;
   const emergencyThreshold = 50;
 
-  let kernelState = "BALANCED";
   let totalCycles = 0;
   let nominalCycles = 0;
   let mitigationCycles = 0;
@@ -1223,11 +1205,7 @@ export function verifyUnifiedKernelOrchestratorModel(steps = 200) {
     stepsExecuted++;
 
     // Invariants
-    assert.strictEqual(
-      totalCycles,
-      nominalCycles + mitigationCycles,
-      "VIOLATION: ConservationInvariant"
-    );
+    assert.strictEqual(totalCycles, nominalCycles + mitigationCycles, "VIOLATION: ConservationInvariant");
     assert.ok(oseiScore >= 0 && oseiScore <= 100, "VIOLATION: OseiBoundsInvariant");
     if (emergencySheddingActive) {
       assert.ok(oseiScore < emergencyThreshold, "VIOLATION: EmergencySafetyInvariant");
@@ -1239,21 +1217,18 @@ export function verifyUnifiedKernelOrchestratorModel(steps = 200) {
       totalCycles++;
       nominalCycles++;
       oseiScore = 95;
-      kernelState = "BALANCED";
       emergencySheddingActive = false;
     } else if (action === 1) {
       // ReconcileDegraded
       totalCycles++;
       mitigationCycles++;
       oseiScore = 65;
-      kernelState = "DEGRADED";
       emergencySheddingActive = false;
     } else {
       // ReconcileCritical
       totalCycles++;
       mitigationCycles++;
       oseiScore = 40;
-      kernelState = "CRITICAL";
       emergencySheddingActive = true;
     }
   }
@@ -1266,7 +1241,7 @@ export function verifyUnifiedKernelOrchestratorModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1290,8 +1265,13 @@ export function verifyBigTechTranscendenceNexusModel(steps = 200) {
     // Invariants
     assert.strictEqual(
       totalExecutions,
-      vizierTunedCount + kongEvacuationsCount + smtProofsCount + pgoOptimizationsCount + enclaveSealsCount + bftConsensusCount,
-      "VIOLATION: ConservationInvariant"
+      vizierTunedCount +
+        kongEvacuationsCount +
+        smtProofsCount +
+        pgoOptimizationsCount +
+        enclaveSealsCount +
+        bftConsensusCount,
+      "VIOLATION: ConservationInvariant",
     );
     assert.strictEqual(typeof allPillarsSucceeded, "boolean", "VIOLATION: SafetyInvariant");
     assert.ok(vizierTunedCount >= 0 && bftConsensusCount >= 0, "VIOLATION: PillarProgressInvariant");
@@ -1326,7 +1306,7 @@ export function verifyBigTechTranscendenceNexusModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1349,7 +1329,7 @@ export function verifyEliteDesignStudioModel(steps = 200) {
     assert.strictEqual(
       totalGenerations,
       spotifyXirpCount + palantirFoundryCount + andurilLatticeCount,
-      "VIOLATION: ConservationInvariant"
+      "VIOLATION: ConservationInvariant",
     );
     assert.strictEqual(contrastViolationsFound, 0, "VIOLATION: ContrastSafetyInvariant");
     assert.ok(totalAuditsExecuted >= 0 && totalGenerations >= 0, "VIOLATION: AuditProgressInvariant");
@@ -1380,7 +1360,7 @@ export function verifyEliteDesignStudioModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1437,7 +1417,7 @@ export function verifyAgenticFinOpsGovernorModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1445,7 +1425,6 @@ export function verifyPlanetaryMonorepoGovernorModel(steps = 200) {
   const filePath = path.join(formalDir, "PlanetaryMonorepoGovernor.tla");
   const parsed = parseTlaModule(filePath);
 
-  let totalProjectionsExecuted = 0;
   let totalNodesIngested = 0;
   let totalNodesProjected = 0;
   let jplAuditsExecuted = 0;
@@ -1458,12 +1437,15 @@ export function verifyPlanetaryMonorepoGovernorModel(steps = 200) {
   for (let i = 0; i < steps; i++) {
     stepsExecuted++;
     assert.ok(totalNodesProjected <= totalNodesIngested, "VIOLATION: SafetyInvariant");
-    assert.strictEqual(tmrConsensusAttempts, tmrQuorumApprovals + tmrByzantineRejections, "VIOLATION: TmrConservationInvariant");
+    assert.strictEqual(
+      tmrConsensusAttempts,
+      tmrQuorumApprovals + tmrByzantineRejections,
+      "VIOLATION: TmrConservationInvariant",
+    );
     assert.ok(jplViolationsDetected <= jplAuditsExecuted, "VIOLATION: JplBoundednessInvariant");
 
     const action = i % 5;
     if (action === 0) {
-      totalProjectionsExecuted++;
       totalNodesIngested += 1000;
       totalNodesProjected += 45;
     } else if (action === 1) {
@@ -1488,7 +1470,7 @@ export function verifyPlanetaryMonorepoGovernorModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1505,7 +1487,7 @@ export function verifyCrossFleetNeuralSynapseModel(steps = 200) {
 
   for (let i = 0; i < steps; i++) {
     stepsExecuted++;
-    assert.ok(fleetReposSynchronized <= (totalPropagationsExecuted * 5), "VIOLATION: SafetyInvariant");
+    assert.ok(fleetReposSynchronized <= totalPropagationsExecuted * 5, "VIOLATION: SafetyInvariant");
     assert.ok(incompatibleNodesIsolated >= 0, "VIOLATION: IsolationSafetyInvariant");
     assert.ok(totalPatternsIndexed >= 0 && merkleSyncEvents >= 0, "VIOLATION: SynapticProgressInvariant");
 
@@ -1533,7 +1515,7 @@ export function verifyCrossFleetNeuralSynapseModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1581,7 +1563,7 @@ export function verifyPlanetaryMultiCloudEvacuationModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1589,7 +1571,6 @@ export function verifyVercelCanaryObservabilityModel(steps = 200) {
   const filePath = path.join(formalDir, "VercelCanaryObservability.tla");
   const parsed = parseTlaModule(filePath);
 
-  let telemetryIngested = 0;
   let canaryHealthIndex = 100;
   let errorRateObserved = 0;
   let rollbackTriggered = false;
@@ -1608,12 +1589,10 @@ export function verifyVercelCanaryObservabilityModel(steps = 200) {
     }
 
     if (i < 150) {
-      telemetryIngested++;
       errorRateObserved = 5;
       canaryHealthIndex = 95;
       promotionApproved = true;
     } else {
-      telemetryIngested++;
       errorRateObserved = 25;
       canaryHealthIndex = 60;
       rollbackTriggered = true;
@@ -1629,7 +1608,7 @@ export function verifyVercelCanaryObservabilityModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1640,7 +1619,6 @@ export function verifyBftAgentSwarmSlashingModel(steps = 200) {
   let activeVoters = 4;
   let slashedVoters = 0;
   let consensusReached = false;
-  let byzantineAttempts = 0;
   let stepsExecuted = 0;
 
   for (let i = 0; i < steps; i++) {
@@ -1649,7 +1627,6 @@ export function verifyBftAgentSwarmSlashingModel(steps = 200) {
     assert.ok(!consensusReached || activeVoters >= 3, "QuorumThresholdInvariant");
 
     if (i % 7 === 0 && activeVoters > 1) {
-      byzantineAttempts++;
       activeVoters--;
       slashedVoters++;
       if (activeVoters < 3) {
@@ -1670,7 +1647,7 @@ export function verifyBftAgentSwarmSlashingModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1679,11 +1656,8 @@ export function verifyConsciousWitnessHotPatchingModel(steps = 200) {
   const parsed = parseTlaModule(filePath);
 
   let witnessInterrogations = 0;
-  let fascinationsBlocked = 0;
   let groundingPassed = 0;
   let witnessSealsIssued = 0;
-  let activeHotPatches = 0;
-  let swapsCompleted = 0;
   let rollbacksTriggered = 0;
   let sessionsPreserved = 1;
   let stepsExecuted = 0;
@@ -1692,7 +1666,10 @@ export function verifyConsciousWitnessHotPatchingModel(steps = 200) {
     stepsExecuted++;
     assert.ok(witnessSealsIssued <= groundingPassed, "VIOLATION: witnessSealsIssued <= groundingPassed");
     assert.ok(sessionsPreserved >= 1, "VIOLATION: sessionsPreserved >= 1");
-    assert.ok(rollbacksTriggered <= witnessInterrogations + 10, "VIOLATION: rollbacksTriggered <= witnessInterrogations + 10");
+    assert.ok(
+      rollbacksTriggered <= witnessInterrogations + 10,
+      "VIOLATION: rollbacksTriggered <= witnessInterrogations + 10",
+    );
 
     if (i % 3 === 0) {
       witnessInterrogations++;
@@ -1700,10 +1677,7 @@ export function verifyConsciousWitnessHotPatchingModel(steps = 200) {
       witnessSealsIssued++;
     } else if (i % 5 === 0) {
       witnessInterrogations++;
-      fascinationsBlocked++;
     } else if (i % 7 === 0) {
-      activeHotPatches++;
-      swapsCompleted++;
       sessionsPreserved++;
     } else if (i % 11 === 0) {
       rollbacksTriggered++;
@@ -1722,7 +1696,7 @@ export function verifyConsciousWitnessHotPatchingModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1776,7 +1750,7 @@ export function verifyPropertyFuzzingTimeTravelHypervisorModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1786,9 +1760,6 @@ export function verifySamaelUnitotalNexusModel(steps = 200) {
 
   let sephirothAudited = 0;
   let fleetReposAudited = 0;
-  let driftRemediations = 0;
-  let unitotalScore = 0;
-  let ledgerAttestations = 0;
   let stepsExecuted = 0;
 
   for (let i = 0; i < steps; i++) {
@@ -1800,10 +1771,6 @@ export function verifySamaelUnitotalNexusModel(steps = 200) {
       sephirothAudited++;
     } else if (fleetReposAudited < 5) {
       fleetReposAudited++;
-    } else {
-      driftRemediations++;
-      unitotalScore = 98;
-      ledgerAttestations++;
     }
   }
 
@@ -1815,7 +1782,7 @@ export function verifySamaelUnitotalNexusModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1823,11 +1790,9 @@ export function verifyFleetProductionVerificationModel(steps = 200) {
   const filePath = path.join(formalDir, "FleetProductionVerification.tla");
   const parsed = parseTlaModule(filePath);
 
-  let registeredTargets = 2;
   let activeProbes = 0;
   let completedProbes = 0;
   let ssrfAttemptsBlocked = 0;
-  let securityScoreSum = 0;
   let ledgerAttestations = 0;
   let stepsExecuted = 0;
 
@@ -1844,7 +1809,6 @@ export function verifyFleetProductionVerificationModel(steps = 200) {
     } else {
       activeProbes--;
       completedProbes++;
-      securityScoreSum += 95;
       ledgerAttestations++;
     }
   }
@@ -1857,7 +1821,7 @@ export function verifyFleetProductionVerificationModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1909,7 +1873,7 @@ export function verifyTelemetryDashboardModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1919,7 +1883,6 @@ export function verifyMicroVmSandboxModel(steps = 200) {
 
   let sandboxState = "IDLE";
   let networkIsolated = true;
-  let memoryCapMb = 512;
   let executionsCompleted = 0;
   let timeoutsCaught = 0;
   let receiptsIssued = 0;
@@ -1928,7 +1891,7 @@ export function verifyMicroVmSandboxModel(steps = 200) {
   for (let i = 0; i < steps; i++) {
     stepsExecuted++;
     assert.strictEqual(networkIsolated, true, "VIOLATION: networkIsolated must be true");
-    assert.ok(receiptsIssued >= (executionsCompleted + timeoutsCaught), "VIOLATION: receiptsIssued invariant breached");
+    assert.ok(receiptsIssued >= executionsCompleted + timeoutsCaught, "VIOLATION: receiptsIssued invariant breached");
 
     if (sandboxState === "IDLE") {
       sandboxState = "ISOLATING";
@@ -1957,7 +1920,7 @@ export function verifyMicroVmSandboxModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -1969,7 +1932,6 @@ export function verifyGithubActionsPrGateModel(steps = 200) {
   let stagesPassed = 0;
   let breakingContractions = 0;
   let checkRunConclusion = "NONE";
-  let receiptsIssued = 0;
   let stepsExecuted = 0;
 
   for (let i = 0; i < steps; i++) {
@@ -1992,7 +1954,6 @@ export function verifyGithubActionsPrGateModel(steps = 200) {
         stagesPassed = 5;
         prState = "GATE_BLOCKED";
         checkRunConclusion = "FAILURE";
-        receiptsIssued++;
       } else {
         stagesPassed = 7;
         prState = "CHECKING_CONTRACTS";
@@ -2002,12 +1963,10 @@ export function verifyGithubActionsPrGateModel(steps = 200) {
         breakingContractions = 1;
         prState = "GATE_BLOCKED";
         checkRunConclusion = "FAILURE";
-        receiptsIssued++;
       } else {
         breakingContractions = 0;
         prState = "GATE_PASSED";
         checkRunConclusion = "SUCCESS";
-        receiptsIssued++;
       }
     } else {
       prState = "IDLE";
@@ -2022,7 +1981,7 @@ export function verifyGithubActionsPrGateModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -2040,7 +1999,10 @@ export function verifyTlcFormalModelCheckerModel(steps = 200) {
 
   for (let i = 0; i < steps; i++) {
     stepsExecuted++;
-    assert.ok(receiptsIssued >= (modelsChecked + violationsFound), "VIOLATION: receiptsIssued >= (modelsChecked + violationsFound)");
+    assert.ok(
+      receiptsIssued >= modelsChecked + violationsFound,
+      "VIOLATION: receiptsIssued >= (modelsChecked + violationsFound)",
+    );
     if (runtimeState === "TLC_RUNNING") {
       assert.ok(javaAvailable && jarAvailable, "VIOLATION: TLC_RUNNING requires java and jar");
     }
@@ -2078,7 +2040,7 @@ export function verifyTlcFormalModelCheckerModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -2099,7 +2061,10 @@ export function verifyAutonomousClosedLoopHealingModel(steps = 200) {
     assert.ok(rootCausesIsolated <= faultsDetected, "VIOLATION: rootCausesIsolated <= faultsDetected");
     assert.ok(patchesSynthesized <= rootCausesIsolated, "VIOLATION: patchesSynthesized <= rootCausesIsolated");
     assert.ok(healedIncidents <= patchesVerified, "VIOLATION: healedIncidents <= patchesVerified");
-    assert.ok(patchesVerified + regressionsPrevented <= patchesSynthesized, "VIOLATION: patchesVerified + regressionsPrevented <= patchesSynthesized");
+    assert.ok(
+      patchesVerified + regressionsPrevented <= patchesSynthesized,
+      "VIOLATION: patchesVerified + regressionsPrevented <= patchesSynthesized",
+    );
 
     if (i % 5 === 0) {
       faultsDetected++;
@@ -2126,7 +2091,7 @@ export function verifyAutonomousClosedLoopHealingModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -2135,7 +2100,6 @@ export function verifyContractEvolutionGovernanceModel(steps = 200) {
   const parsed = parseTlaModule(filePath);
 
   let contractsAudited = 0;
-  let compatibleExpansions = 0;
   let breakingContractions = 0;
   let dangerousMutations = 0;
   let rejectedMerges = 0;
@@ -2144,12 +2108,18 @@ export function verifyContractEvolutionGovernanceModel(steps = 200) {
 
   for (let i = 0; i < steps; i++) {
     stepsExecuted++;
-    assert.strictEqual(contractsAudited, approvedMerges + rejectedMerges, "VIOLATION: contractsAudited = approvedMerges + rejectedMerges");
-    assert.ok(rejectedMerges <= breakingContractions + dangerousMutations, "VIOLATION: rejectedMerges <= breakingContractions + dangerousMutations");
+    assert.strictEqual(
+      contractsAudited,
+      approvedMerges + rejectedMerges,
+      "VIOLATION: contractsAudited = approvedMerges + rejectedMerges",
+    );
+    assert.ok(
+      rejectedMerges <= breakingContractions + dangerousMutations,
+      "VIOLATION: rejectedMerges <= breakingContractions + dangerousMutations",
+    );
 
     if (i % 3 === 0) {
       contractsAudited++;
-      compatibleExpansions++;
       approvedMerges++;
     } else if (i % 5 === 0) {
       contractsAudited++;
@@ -2170,7 +2140,7 @@ export function verifyContractEvolutionGovernanceModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -2179,10 +2149,8 @@ export function verifyInvariantVerificationEngineModel(steps = 200) {
   const parsed = parseTlaModule(filePath);
 
   let exploredStates = 0;
-  let invariantsChecked = 0;
   let violationsDetected = 0;
   let shrunkTraces = 0;
-  let faultsInjected = 0;
   let stateHashChainLength = 0;
   let stepsExecuted = 0;
 
@@ -2194,18 +2162,14 @@ export function verifyInvariantVerificationEngineModel(steps = 200) {
 
     if (i % 7 === 0) {
       exploredStates++;
-      invariantsChecked++;
-      faultsInjected++;
       stateHashChainLength++;
     } else if (i % 11 === 0) {
       exploredStates++;
-      invariantsChecked++;
       violationsDetected++;
       shrunkTraces++;
       stateHashChainLength++;
     } else {
       exploredStates++;
-      invariantsChecked++;
       stateHashChainLength++;
     }
   }
@@ -2218,7 +2182,7 @@ export function verifyInvariantVerificationEngineModel(steps = 200) {
     extractedInvariantNames: parsed.invariants,
     stepsExecuted,
     executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true
+    simulationAssertionsPassed: true,
   };
 }
 
@@ -2231,7 +2195,7 @@ if (process.argv[1] && process.argv[1].replace(/\\/g, "/").endsWith("verify-form
   const results = runAllFormalVerifications();
   let totalSteps = 0;
 
-  results.forEach(res => {
+  results.forEach((res) => {
     totalSteps += res.stepsExecuted;
     console.log(`[SOURCE + SIMULATION] ${res.specification} (module label: ${res.moduleName})`);
     console.log(`  ↳ Variable names extracted : ${res.extractedVariables.join(", ") || "none"}`);
@@ -2241,6 +2205,8 @@ if (process.argv[1] && process.argv[1].replace(/\\/g, "/").endsWith("verify-form
   });
 
   console.log(`----------------------------------------------------------------------`);
-  console.log(`RESULT: ${results.length} bounded JS simulations passed (${totalSteps} steps); no formal model checking was run.`);
+  console.log(
+    `RESULT: ${results.length} bounded JS simulations passed (${totalSteps} steps); no formal model checking was run.`,
+  );
   console.log(`======================================================================`);
 }

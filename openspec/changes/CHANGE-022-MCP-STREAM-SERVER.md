@@ -10,6 +10,7 @@
 ---
 
 ## 1. Summary of Changes
+
 1. **Core TypeScript MCP Stream Server (`src/mcp/eosMcpStreamServer.ts`)**:
    - Implement `EosMcpStreamServer` providing native HTTP and SSE transports with zero external dependencies.
    - Implement `EosMcpSessionManager` tracking active client sessions, keep-alive timers, and bi-directional message routing.
@@ -33,4 +34,5 @@
    - Execute and verify all 7 stages pass with exit code 0.
 
 ---
-*Signed by Principal Architect: Valentín Flórez Arbeláez*
+
+_Signed by Principal Architect: Valentín Flórez Arbeláez_

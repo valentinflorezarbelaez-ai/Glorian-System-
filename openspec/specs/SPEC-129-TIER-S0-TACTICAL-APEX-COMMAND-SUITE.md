@@ -1,6 +1,7 @@
 # SPEC-129: Tier S-0 Tactical Apex — Palantir/Anduril Bento HUD, Raycast Command Palette (Ctrl+K), Fleet Synapse Radar & 129 OpenSpec Explorer
 
 ## Status
+
 - **Status**: APPROVED
 - **Date**: 2026-11-02
 - **Author**: Valentín Flórez Arbeláez (Architect & Owner)
@@ -16,6 +17,7 @@ To elevate EOS System to the pinnacle of defense-grade and hyperscale platforms 
 Currently, EOS provides rich capabilities distributed across 2,600+ lines of HTML and 132 test suites. However, accessing tools, inspecting the 9 fleet repositories, exploring formal specifications, and auditing compliance required manual scrolling or CLI invocations.
 
 SPEC-129 unifies the user experience into four tightly integrated pillars:
+
 1. **Tier S-0 Hero Bento HUD**: High-density tactical grid (Geist Sans, JetBrains Mono, Obsidian Deep Dark `#050505` to `#09090b`, 1px borders `rgba(255,255,255,0.08)`, micro-dot matrix).
 2. **Global Command Palette (`Ctrl+K` / `Cmd+K`)**: Keyboard-driven modal providing sub-millisecond fuzzy search and direct execution across all 9 fleet projects, 46 MCP tools, CLI shortcuts, and 129 formal OpenSpecs.
 3. **Real-Time Fleet Synapse Radar**: Interactive visual telemetry showing live HTTP response codes, latency in milliseconds, SLO error budget consumption, and direct one-click navigation to the 9 fleet deployments.
@@ -25,22 +27,22 @@ SPEC-129 unifies the user experience into four tightly integrated pillars:
 
 ## 2. Functional Requirements (EARS Syntax)
 
-* **FR-409 (Ubiquitous - Hero Bento HUD)**:
+- **FR-409 (Ubiquitous - Hero Bento HUD)**:
   `THE SYSTEM SHALL render a Tier S-0 Hero Bento Grid on the primary viewport conforming to the 4px rigid grid, using Obsidian Deep Dark tokens (--surface-base: #050505, --border-hairline: rgba(255,255,255,0.08)), displaying live telemetry counters (Registered Fleet Repos: 9, Test Suites: 132, OpenSpecs: 129, TLA+ Models: 41, Perfection Index: 100%).`
 
-* **FR-410 (Event-Driven - Global Command Palette Hotkey)**:
+- **FR-410 (Event-Driven - Global Command Palette Hotkey)**:
   `WHEN the user presses Ctrl+K, Cmd+K, or clicks the floating tactical command button, THE SYSTEM SHALL open the Tier S-0 Command Palette dialog, trap focus within the input search box, and provide instantaneous fuzzy matching across actions, fleet repositories, and OpenSpecs.`
 
-* **FR-411 (State-Driven - Fleet Synapse Radar Telemetry)**:
+- **FR-411 (State-Driven - Fleet Synapse Radar Telemetry)**:
   `WHILE viewing the Fleet Synapse Radar, THE SYSTEM SHALL display real-time status indicators (HTTP 200, Latency in ms, Authorization Tier LEVEL_3, Verified Clean Secrets) for all 9 registered fleet targets (Avo Pack, ATP Strength, Biblioteca Gnóstica, Crud Slack, Aberamentho, PTG, Portafolio, Donaciones, EOS System).`
 
-* **FR-412 (Ubiquitous - 129 OpenSpecs Interactive Explorer)**:
+- **FR-412 (Ubiquitous - 129 OpenSpecs Interactive Explorer)**:
   `THE SYSTEM SHALL provide an interactive, filterable catalog of all 129 formal architectural specifications, allowing filtering by epistemic state (PRODUCTION_READY, VERIFIED, LEVEL_3_AUTHORIZED) and instant search by spec ID or keyword.`
 
-* **FR-413 (Ubiquitous - Zero-Dependency Hexagonal Purity)**:
+- **FR-413 (Ubiquitous - Zero-Dependency Hexagonal Purity)**:
   `THE SYSTEM SHALL implement all command indexing, fuzzy searching, and UI interactions with zero external runtime dependencies, preserving 100% compliance with EOS Constitutional Law V.`
 
-* **FR-414 (Ubiquitous - Subresource Integrity & Visual Governor Conformance)**:
+- **FR-414 (Ubiquitous - Subresource Integrity & Visual Governor Conformance)**:
   `THE SYSTEM SHALL ensure all CSS and JS modifications maintain valid SHA-384 Subresource Integrity hashes in index.html and pass the Tier S-0 Design System Governor (scripts/eos-design-system-govern.mjs) with a 100% Perfection Index.`
 
 ---
@@ -82,15 +84,16 @@ SCENARIO: BDD-392 Tier S-0 Visual Governor 100% Compliance
 
 ## 4. Architecture Decision Records (ADRs)
 
-* **ADR-129-1: Native Zero-Dependency Command Palette Engine vs Third-Party Component**
-  * *Context*: Command palettes typically rely on libraries like `cmdk` or `ninja-keys`, which would introduce external runtime dependencies violating Law V.
-  * *Decision*: Implement a pure standard-library TypeScript/JavaScript command indexer with an in-memory Trie/Levenshtein fuzzy scorer and a native HTML5 `<dialog>` component with keyboard trap and ARIA combobox accessibility.
-  * *Consequence*: 0 bytes of vendor overhead, sub-millisecond execution, complete architectural independence.
+- **ADR-129-1: Native Zero-Dependency Command Palette Engine vs Third-Party Component**
 
-* **ADR-129-2: Build-Time OpenSpec Index Generation for Zero-Latency Client Browsing**
-  * *Context*: Parsing 129 markdown specifications synchronously on every client page load would incur redundant CPU cycles and potential CLS.
-  * *Decision*: Extract the lightweight metadata index (ID, title, status, FR count, BDD count) into a structured JSON dataset `docs/specs/openspec-catalog-index.json`, embedded into the client bundle and auditable by the CI/CD pipeline.
-  * *Consequence*: Instantaneous search without network requests or layout shifts.
+  - _Context_: Command palettes typically rely on libraries like `cmdk` or `ninja-keys`, which would introduce external runtime dependencies violating Law V.
+  - _Decision_: Implement a pure standard-library TypeScript/JavaScript command indexer with an in-memory Trie/Levenshtein fuzzy scorer and a native HTML5 `<dialog>` component with keyboard trap and ARIA combobox accessibility.
+  - _Consequence_: 0 bytes of vendor overhead, sub-millisecond execution, complete architectural independence.
+
+- **ADR-129-2: Build-Time OpenSpec Index Generation for Zero-Latency Client Browsing**
+  - _Context_: Parsing 129 markdown specifications synchronously on every client page load would incur redundant CPU cycles and potential CLS.
+  - _Decision_: Extract the lightweight metadata index (ID, title, status, FR count, BDD count) into a structured JSON dataset `docs/specs/openspec-catalog-index.json`, embedded into the client bundle and auditable by the CI/CD pipeline.
+  - _Consequence_: Instantaneous search without network requests or layout shifts.
 
 ---
 

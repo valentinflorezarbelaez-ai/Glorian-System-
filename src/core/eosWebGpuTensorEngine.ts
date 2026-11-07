@@ -11,11 +11,7 @@
  * Zero external runtime npm dependencies (Law V).
  */
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze } from "./eosKernelPrimitives.ts";
 
 export interface MatrixDimensions {
   readonly rows: number;
@@ -94,8 +90,8 @@ fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
         { binding: 0, visibility: 4, bufferType: "read-only-storage" },
         { binding: 1, visibility: 4, bufferType: "read-only-storage" },
         { binding: 2, visibility: 4, bufferType: "read-only-storage" },
-        { binding: 3, visibility: 4, bufferType: "storage" }
-      ]
+        { binding: 3, visibility: 4, bufferType: "storage" },
+      ],
     });
   }
 
@@ -107,7 +103,7 @@ fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
     A: Float32Array,
     dimA: MatrixDimensions,
     B: Float32Array,
-    dimB: MatrixDimensions
+    dimB: MatrixDimensions,
   ): TensorComputeResult {
     assertPrecondition(dimA.cols === dimB.rows, `Inner matrix dimensions must match: ${dimA.cols} != ${dimB.rows}`);
     assertPrecondition(A.length === dimA.rows * dimA.cols, "Matrix A buffer size does not match dimensions");
@@ -139,7 +135,7 @@ fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
       cols: N,
       data: C,
       executionTarget: "CPU_DETERMINISTIC_FALLBACK",
-      elapsedMs: Math.round(elapsedMs * 1000) / 1000
+      elapsedMs: Math.round(elapsedMs * 1000) / 1000,
     });
   }
 

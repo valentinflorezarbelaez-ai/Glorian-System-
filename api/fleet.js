@@ -37,7 +37,7 @@ export default async function handler(req, res) {
       registryStatus: project.status || "UNKNOWN",
       productionProbe: "NOT_PROBED",
       cicdGateStatus: project.cicdGateScript || "NOT_PROBED",
-      localHooksStatus: "INSTALLED"
+      localHooksStatus: "INSTALLED",
     };
 
     if (shouldProbe && project.productionUrl) {
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
         const start = Date.now();
         const probeRes = await fetch(project.productionUrl, {
           method: "HEAD",
-          signal: AbortSignal.timeout(3000)
+          signal: AbortSignal.timeout(3000),
         });
         item.productionProbe = probeRes.status >= 200 && probeRes.status < 400 ? "HEALTHY" : `HTTP_${probeRes.status}`;
         item.latencyMs = Date.now() - start;
@@ -57,10 +57,7 @@ export default async function handler(req, res) {
     projects.push(item);
   }
 
-  const digest = crypto
-    .createHash("sha256")
-    .update(JSON.stringify(projects))
-    .digest("hex");
+  const digest = crypto.createHash("sha256").update(JSON.stringify(projects)).digest("hex");
 
   return res.status(200).json({
     status: "FLEET_REGISTRY_AVAILABLE",
@@ -74,9 +71,9 @@ export default async function handler(req, res) {
     commands: {
       fleetShip: "npm run fleet:ship",
       fleetVerify: "npm run fleet:verify",
-      fleetInjectHooks: "npm run fleet:hooks"
+      fleetInjectHooks: "npm run fleet:hooks",
     },
     projects,
-    registryFingerprintSha256: `sha256:${digest}`
+    registryFingerprintSha256: `sha256:${digest}`,
   });
 }

@@ -47,11 +47,11 @@ export class EosFinOpsBudget {
   private ratesPerMillion: Record<string, { prompt: number; completion: number }> = {
     "deepseek-reasoner": { prompt: 0.14, completion: 0.28 },
     "deepseek-chat": { prompt: 0.14, completion: 0.28 },
-    "gemini-2.0-flash": { prompt: 0.075, completion: 0.30 },
-    "gemini-2.5-pro": { prompt: 1.25, completion: 5.00 },
-    "claude-3-7-sonnet": { prompt: 3.00, completion: 15.00 },
-    "gpt-4o": { prompt: 2.50, completion: 10.00 },
-    "grok-2": { prompt: 2.00, completion: 10.00 }
+    "gemini-2.0-flash": { prompt: 0.075, completion: 0.3 },
+    "gemini-2.5-pro": { prompt: 1.25, completion: 5.0 },
+    "claude-3-7-sonnet": { prompt: 3.0, completion: 15.0 },
+    "gpt-4o": { prompt: 2.5, completion: 10.0 },
+    "grok-2": { prompt: 2.0, completion: 10.0 },
   };
 
   private sacredCajitas: CajitaPartition[] = [
@@ -59,43 +59,43 @@ export class EosFinOpsBudget {
       name: "El Refugio",
       purpose: "Cuotas sagradas de la finca de descanso y templo natural",
       isStrict: true,
-      notes: "Prioridad número 1 en ahorro e inversión patrimonial"
+      notes: "Prioridad número 1 en ahorro e inversión patrimonial",
     },
     {
       name: "Comida Nutritiva",
       purpose: "Alimentación vitalizante, limpia y balanceada del templo biológico",
       isStrict: true,
-      notes: "Cero chatarra, máximo vigor para el gimnasio y la transmutación"
+      notes: "Cero chatarra, máximo vigor para el gimnasio y la transmutación",
     },
     {
       name: "Hogar y Servicios",
       purpose: "Arriendo, servicios públicos y base material",
       isStrict: true,
-      notes: "Aseo impecable y orden financiero absoluto"
+      notes: "Aseo impecable y orden financiero absoluto",
     },
     {
       name: "Tercer Factor / Donaciones",
       purpose: "Ayuda desinteresada y consciente a los demás",
       isStrict: true,
-      notes: "Ley cósmica de causa y efecto: quien da luz, recibe luz"
+      notes: "Ley cósmica de causa y efecto: quien da luz, recibe luz",
     },
     {
       name: "IA & Herramientas de Cúspide",
       purpose: "Tope mensual estricto de tokens de IA",
-      monthlyTargetUsd: 15.00,
+      monthlyTargetUsd: 15.0,
       isStrict: true,
-      notes: "Máximo $15 USD/mes. Fallback local Go WASM ante límite alcanzado"
+      notes: "Máximo $15 USD/mes. Fallback local Go WASM ante límite alcanzado",
     },
     {
       name: "Spotify Premium & Cultura",
       purpose: "Música en afinación áurea y descanso consciente",
       monthlyTargetCop: 15000,
       isStrict: true,
-      notes: "Pago anual preferencial de $180.000 COP / año ($15.000 COP / mes)"
-    }
+      notes: "Pago anual preferencial de $180.000 COP / año ($15.000 COP / mes)",
+    },
   ];
 
-  constructor(monthlyCapUsd = 15.00) {
+  constructor(monthlyCapUsd = 15.0) {
     this.monthlyCapUsd = monthlyCapUsd;
   }
 
@@ -103,7 +103,7 @@ export class EosFinOpsBudget {
    * Calculates the exact micro-cost of a token interaction.
    */
   public calculateCost(model: string, promptTokens: number, completionTokens: number): number {
-    const rate = this.ratesPerMillion[model.toLowerCase()] || { prompt: 1.00, completion: 3.00 };
+    const rate = this.ratesPerMillion[model.toLowerCase()] || { prompt: 1.0, completion: 3.0 };
     const promptCost = (promptTokens / 1_000_000) * rate.prompt;
     const completionCost = (completionTokens / 1_000_000) * rate.completion;
     return Number((promptCost + completionCost).toFixed(6));
@@ -113,7 +113,7 @@ export class EosFinOpsBudget {
    * Checks if an estimated expense is allowed before executing an API call (fail-closed).
    */
   public isBudgetAvailable(estimatedCostUsd = 0.001): boolean {
-    return (this.accumulatedSpendUsd + estimatedCostUsd) <= this.monthlyCapUsd;
+    return this.accumulatedSpendUsd + estimatedCostUsd <= this.monthlyCapUsd;
   }
 
   /**
@@ -123,7 +123,7 @@ export class EosFinOpsBudget {
     provider: string,
     model: string,
     promptTokens: number,
-    completionTokens: number
+    completionTokens: number,
   ): { costUsd: number; allowed: boolean; breakerTripped: boolean } {
     const cost = this.calculateCost(model, promptTokens, completionTokens);
 
@@ -132,7 +132,7 @@ export class EosFinOpsBudget {
       return {
         costUsd: cost,
         allowed: false,
-        breakerTripped: true
+        breakerTripped: true,
       };
     }
 
@@ -144,13 +144,13 @@ export class EosFinOpsBudget {
       model,
       promptTokens,
       completionTokens,
-      costUsd: cost
+      costUsd: cost,
     });
 
     return {
       costUsd: cost,
       allowed: true,
-      breakerTripped: false
+      breakerTripped: false,
     };
   }
 
@@ -181,7 +181,7 @@ export class EosFinOpsBudget {
       fallbackToLocalEngine: isExhausted,
       totalUsageEvents: this.usageHistory.length,
       cajitas: this.sacredCajitas,
-      guarantee: "INVIOLABLE_ZERO_SURPRISE_FINOPS_DEFENSE"
+      guarantee: "INVIOLABLE_ZERO_SURPRISE_FINOPS_DEFENSE",
     };
   }
 }

@@ -1,7 +1,8 @@
 # TASKS-042 — INVARIANT VERIFICATION ENGINE IMPLEMENTATION DAG
+
 **Spec**: SPEC-049  
 **Version**: 55.0.0  
-**Status**: IN_PROGRESS  
+**Status**: IN_PROGRESS
 
 ---
 

@@ -3,11 +3,11 @@
  * Merkle Mountain Range (MMR) & O(log N) Inclusion Proofs
  */
 
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import { EosMerkleMountainRange } from '../src/core/eosMerkleMountainRange.ts';
+import test from "node:test";
+import assert from "node:assert/strict";
+import { EosMerkleMountainRange } from "../src/core/eosMerkleMountainRange.ts";
 
-test('BDD-215: Merkle Mountain Range Peak Bagging and Monotonic Root Invariant', () => {
+test("BDD-215: Merkle Mountain Range Peak Bagging and Monotonic Root Invariant", () => {
   const mmr = new EosMerkleMountainRange();
 
   // Insert 7 leaves
@@ -28,12 +28,12 @@ test('BDD-215: Merkle Mountain Range Peak Bagging and Monotonic Root Invariant',
   assert.equal(baggedRoot.length, 64);
 
   // Append 8th leaf -> merges all into 1 single peak of height 3
-  mmr.appendLeaf({ eventId: 'event-8', value: 80 });
+  mmr.appendLeaf({ eventId: "event-8", value: 80 });
   assert.equal(mmr.getPeaks().length, 1);
   assert.equal(mmr.getPeaks()[0].height, 3);
 });
 
-test('BDD-216: O(log N) Inclusion Proof Generation and Independent Verification', () => {
+test("BDD-216: O(log N) Inclusion Proof Generation and Independent Verification", () => {
   const mmr = new EosMerkleMountainRange();
   const sampleEvents = [];
 
@@ -56,14 +56,14 @@ test('BDD-216: O(log N) Inclusion Proof Generation and Independent Verification'
 
   // Adulterated payload verification failure
   const isAdulteratedValid = EosMerkleMountainRange.verifyInclusionProof(
-    { txId: 'tx-3', amount: 999999 },
+    { txId: "tx-3", amount: 999999 },
     proof,
-    baggedRoot
+    baggedRoot,
   );
   assert.equal(isAdulteratedValid, false);
 
   // Verify persistence in SQLite WAL ledger
-  const recordResult = mmr.recordRootInLedger(':memory:');
+  const recordResult = mmr.recordRootInLedger(":memory:");
   assert.equal(recordResult.recorded, true);
   assert.equal(recordResult.receiptHash.length, 64);
 });

@@ -1,7 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import path from "node:path";
-import fs from "node:fs";
 import { EosWorktreeOrchestrator } from "../src/core/eosWorktreeOrchestrator.ts";
 
 describe("EOS Xirp-Grade Multi-Agent Worktree Orchestrator Suite", () => {

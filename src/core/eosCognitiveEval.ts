@@ -54,12 +54,12 @@ const FORBIDDEN_SECRET_PATTERNS = [
   { name: "AWS Access Key ID", regex: /AKIA[0-9A-Z]{16}/ },
   { name: "Generic Bearer Token", regex: /Bearer\s+['"][a-zA-Z0-9_\-\.]{25,}['"]/ },
   { name: "Unsafe Dynamic Eval", regex: /\beval\s*\(/ },
-  { name: "Destructive Shell Execution", regex: /\b(exec|execSync)\s*\(\s*['"][^'"]*rm\s+-rf\b/ }
+  { name: "Destructive Shell Execution", regex: /\b(exec|execSync)\s*\(\s*['"][^'"]*rm\s+-rf\b/ },
 ];
 
 const UNGROUNDED_FRAMEWORK_PATTERNS = [
   /\bfrom\s+['"](express|koa|fastify|axios|lodash|moment|jquery)['"]/i,
-  /\brequire\s*\(\s*['"](express|koa|fastify|axios|lodash|moment|jquery)['"]\s*\)/i
+  /\brequire\s*\(\s*['"](express|koa|fastify|axios|lodash|moment|jquery)['"]\s*\)/i,
 ];
 
 export class EosCognitiveEval {
@@ -105,10 +105,10 @@ export class EosCognitiveEval {
     // Calculate Composite Score
     const compositeScore = Math.round(
       securityResult.score * (securityResult.weight / 100) +
-      hexagonalResult.score * (hexagonalResult.weight / 100) +
-      astResult.score * (astResult.weight / 100) +
-      earsBddResult.score * (earsBddResult.weight / 100) +
-      hallucinationResult.score * (hallucinationResult.weight / 100)
+        hexagonalResult.score * (hexagonalResult.weight / 100) +
+        astResult.score * (astResult.weight / 100) +
+        earsBddResult.score * (earsBddResult.weight / 100) +
+        hallucinationResult.score * (hallucinationResult.weight / 100),
     );
 
     let verdict: EpistemicVerdict = "FINDINGS_IDENTIFIED";
@@ -135,12 +135,12 @@ export class EosCognitiveEval {
         hexagonalPurity: hexagonalResult,
         astSyntax: astResult,
         earsBddConformance: earsBddResult,
-        hallucinationRisk: hallucinationResult
+        hallucinationRisk: hallucinationResult,
       },
       totalLinesScanned: totalLines,
       durationUs,
       resultFingerprintSha256,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -191,7 +191,10 @@ export class EosCognitiveEval {
     if (filePath && (filePath.endsWith(".js") || filePath.endsWith(".mjs") || filePath.endsWith(".ts"))) {
       try {
         const ext = path.extname(filePath);
-        const tmpFile = path.join(os.tmpdir(), `eval-check-${Date.now()}-${crypto.randomBytes(4).toString("hex")}${ext}`);
+        const tmpFile = path.join(
+          os.tmpdir(),
+          `eval-check-${Date.now()}-${crypto.randomBytes(4).toString("hex")}${ext}`,
+        );
         fs.writeFileSync(tmpFile, content, "utf8");
         try {
           execFileSync(process.execPath, ["--check", tmpFile], { stdio: "ignore" });
@@ -210,10 +213,8 @@ export class EosCognitiveEval {
 
   private evalEarsBdd(content: string): DimensionResult {
     const findings: string[] = [];
-    const hasEarsKeywords =
-      /(CUANDO|WHEN|MIENTRAS|WHILE|SI|IF|EL SISTEMA|THE SYSTEM)/i.test(content);
-    const hasBddKeywords =
-      /(DADO|GIVEN|CUANDO|WHEN|ENTONCES|THEN|ESCENARIO|SCENARIO)/i.test(content);
+    const hasEarsKeywords = /(CUANDO|WHEN|MIENTRAS|WHILE|SI|IF|EL SISTEMA|THE SYSTEM)/i.test(content);
+    const hasBddKeywords = /(DADO|GIVEN|CUANDO|WHEN|ENTONCES|THEN|ESCENARIO|SCENARIO)/i.test(content);
 
     let score = 50;
     if (hasEarsKeywords && hasBddKeywords) {
@@ -229,7 +230,7 @@ export class EosCognitiveEval {
       score,
       weight: 15,
       passed: score >= 70,
-      findings
+      findings,
     };
   }
 

@@ -26,25 +26,21 @@ const defaultSuites = [
   "test/eosContentAddressableCache.test.mjs",
   "test/eosSmtAutomatedReasoningProver.test.mjs",
   "test/eosProductionChaosMonkey.test.mjs",
-  "test/eosBftAgentSwarmSlashing.test.mjs"
+  "test/eosBftAgentSwarmSlashing.test.mjs",
 ];
 
 const suitesToRun = targetTests.length > 0 ? targetTests : defaultSuites;
 console.log(`[INFO] Executing coverage across ${suitesToRun.length} representative test suites...\n`);
 
-const args = [
-  "--test",
-  "--experimental-test-coverage",
-  ...suitesToRun.map((s) => path.resolve(projectRoot, s))
-];
+const args = ["--test", "--experimental-test-coverage", ...suitesToRun.map((s) => path.resolve(projectRoot, s))];
 
 const result = spawnSync(process.execPath, args, {
   cwd: projectRoot,
   stdio: "inherit",
   env: {
     ...process.env,
-    NODE_V8_COVERAGE: path.join(projectRoot, ".coverage")
-  }
+    NODE_V8_COVERAGE: path.join(projectRoot, ".coverage"),
+  },
 });
 
 if (result.status !== 0) {

@@ -1,0 +1,41 @@
+name: EOS Markdown Lint
+
+# Big Tech standard (Node.js, Angular): enforce consistent markdown
+# formatting across all documentation. Catches inconsistent heading
+# levels, trailing whitespace, missing blank lines, and broken lists.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "**/*.md"
+  push:
+    branches: [main]
+    paths:
+      - "**/*.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  markdownlint:
+    name: Lint markdown files
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Run markdownlint-cli2
+        uses: DavidAnson/markdownlint-cli2-action@b10734ed6d1da38763ce5d3630d2f68d2f5b4f59 # v19.1.0
+        with:
+          globs: |
+            *.md
+            docs/**/*.md
+            .github/**/*.md
+          config: |
+            {"MD013": false, "MD033": false, "MD041": false, "MD034": false, "MD024": {"siblings_only": true}}

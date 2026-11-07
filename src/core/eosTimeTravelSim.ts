@@ -84,7 +84,7 @@ export class EosTimeTravelSim {
   public isolatePartition(groupA: string[], groupB: string[]): void {
     this.partitions.push({
       groupA: new Set(groupA),
-      groupB: new Set(groupB)
+      groupB: new Set(groupB),
     });
   }
 
@@ -122,7 +122,7 @@ export class EosTimeTravelSim {
       nodeId,
       targetNodeId,
       action,
-      payload
+      payload,
     });
 
     // Keep event queue sorted by virtualTimeUs deterministically
@@ -167,7 +167,7 @@ export class EosTimeTravelSim {
         targetNode: evt.targetNodeId,
         eventAction: evt.action,
         stateHash: runningStateHash,
-        status: eventStatus
+        status: eventStatus,
       });
 
       // Deterministically simulate network reactions only if message was successfully delivered
@@ -188,8 +188,8 @@ export class EosTimeTravelSim {
       jepsenMetrics: {
         partitionDropped: this.partitionDroppedCount,
         packetLossDropped: this.packetLossCount,
-        quorumMaintained: true
-      }
+        quorumMaintained: true,
+      },
     };
   }
 }

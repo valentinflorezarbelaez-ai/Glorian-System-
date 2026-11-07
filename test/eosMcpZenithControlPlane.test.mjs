@@ -19,8 +19,8 @@ test("BDD-239: Despacho de herramientas MCP TrueTime y LSM-Tree (SPEC-082)", () 
     method: "tools/call",
     params: {
       name: "eos_truetime_commit_wait",
-      arguments: { epsilonMs: 3.5, recordToLedger: false }
-    }
+      arguments: { epsilonMs: 3.5, recordToLedger: false },
+    },
   });
 
   assert.equal(ttRes?.error, undefined);
@@ -37,8 +37,8 @@ test("BDD-239: Despacho de herramientas MCP TrueTime y LSM-Tree (SPEC-082)", () 
     method: "tools/call",
     params: {
       name: "eos_lsm_storage_put_get",
-      arguments: { action: "put", key: "session:user:42", value: "active_token_payload", recordToLedger: false }
-    }
+      arguments: { action: "put", key: "session:user:42", value: "active_token_payload", recordToLedger: false },
+    },
   });
 
   assert.equal(putRes?.error, undefined);
@@ -52,8 +52,8 @@ test("BDD-239: Despacho de herramientas MCP TrueTime y LSM-Tree (SPEC-082)", () 
     method: "tools/call",
     params: {
       name: "eos_lsm_storage_put_get",
-      arguments: { action: "get", key: "session:user:42", recordToLedger: false }
-    }
+      arguments: { action: "get", key: "session:user:42", recordToLedger: false },
+    },
   });
 
   const getData = JSON.parse(getRes?.result?.content?.[0]?.text || "{}");
@@ -76,9 +76,9 @@ test("BDD-240: Despacho de herramientas MCP Threshold Crypto y MicroVM (SPEC-082
         secret: "0x123456789abcdef0123456789abcdef0",
         threshold: 3,
         totalShares: 5,
-        recordToLedger: false
-      }
-    }
+        recordToLedger: false,
+      },
+    },
   });
 
   assert.equal(splitRes?.error, undefined);
@@ -97,9 +97,9 @@ test("BDD-240: Despacho de herramientas MCP Threshold Crypto y MicroVM (SPEC-082
         action: "combine",
         shares: splitData.shares.slice(0, 3),
         threshold: 3,
-        recordToLedger: false
-      }
-    }
+        recordToLedger: false,
+      },
+    },
   });
 
   const combineData = JSON.parse(combineRes?.result?.content?.[0]?.text || "{}");
@@ -117,9 +117,9 @@ test("BDD-240: Despacho de herramientas MCP Threshold Crypto y MicroVM (SPEC-082
         enclaveId: "test-enclave-mcp",
         vcpuCount: 4,
         memSizeMib: 1024,
-        recordToLedger: false
-      }
-    }
+        recordToLedger: false,
+      },
+    },
   });
 
   assert.equal(microVmRes?.error, undefined);

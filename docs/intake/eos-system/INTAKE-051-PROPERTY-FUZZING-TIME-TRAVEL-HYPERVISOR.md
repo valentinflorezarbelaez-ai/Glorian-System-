@@ -9,9 +9,11 @@
 ---
 
 ## 1. Business Context & Big Tech Precedents
+
 Following the supreme user directive (`/goal ahora solo eos solo eos perfeccion samaeliana absoluta que mas podemos mejorar que harian las grandes big tech en que estado esta eos`), EOS System must bridge the gap between static verification and continuous dynamic resilience.
 
 World-leading Big Tech research laboratories and mission-critical systems operate with specific automated capabilities:
+
 1. **Google Atheris & Hypothesis / QuickCheck (Property-Based Fuzzing)**:
    - Rather than relying on static test inputs, the engine dynamically generates thousands of pseudo-random, edge-case, and malformed inputs to probe for unhandled exceptions, memory allocation anomalies, recursion traps, and prototype pollution.
    - Deterministic seed generation ensures that every discovered flaw can be reproduced bit-for-bit, shrunk to a minimal counterexample (Delta Debugging), and sealed with a regression test.
@@ -24,6 +26,7 @@ World-leading Big Tech research laboratories and mission-critical systems operat
 ---
 
 ## 2. Technical Scope & Requirements
+
 - **Layer-0 Pure Node.js 24 Execution**: Zero external npm dependencies in runtime.
 - **Deterministic Seeded PRNG**: Mulberry32 / SplitMix64 pseudo-random generator with 64-bit integer seed for 100% reproducible fuzzing runs.
 - **Property Invariant Testing**: Test JSON-RPC handlers, AST analyzers, string parsers, and ledger mutations against numeric boundaries (`NaN`, `Infinity`, safe limits), unicode anomalies (surrogates, RTL, control characters), and prototype pollution vectors.

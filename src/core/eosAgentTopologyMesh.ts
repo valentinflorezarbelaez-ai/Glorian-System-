@@ -12,12 +12,7 @@
  * Zero external runtime dependencies. Node 24 strip-only compliant.
  */
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export type AgentNodeStatus = "PENDING" | "RUNNING" | "VERIFIED" | "FAILED";
@@ -39,11 +34,7 @@ export interface CompiledAgentTopology {
   readonly sha256PlanReceipt: string;
 }
 
-export type MeshEventType =
-  | "AST_MUTATION_DELTA"
-  | "CONTRACT_ATTESTATION"
-  | "VERIFICATION_SIGNAL"
-  | "HANDOFF_PROBE";
+export type MeshEventType = "AST_MUTATION_DELTA" | "CONTRACT_ATTESTATION" | "VERIFICATION_SIGNAL" | "HANDOFF_PROBE";
 
 export interface MeshEvent {
   readonly sequence: number;
@@ -83,7 +74,7 @@ export class AgentRingBufferMesh {
     emitterAgentId: string,
     targetNodeId: string,
     eventType: MeshEventType,
-    compactPayload: Record<string, unknown>
+    compactPayload: Record<string, unknown>,
   ): MeshEvent {
     assertPrecondition(typeof emitterAgentId === "string" && emitterAgentId.length > 0, "Emitter ID required");
     assertPrecondition(typeof targetNodeId === "string" && targetNodeId.length > 0, "Target node required");
@@ -100,7 +91,7 @@ export class AgentRingBufferMesh {
       eventType,
       compactPayload: deepFreeze({ ...compactPayload }),
       sha256PayloadReceipt,
-      timestampNs: Date.now() * 1_000_000
+      timestampNs: Date.now() * 1_000_000,
     });
 
     this.buffer[slot] = event;
@@ -136,10 +127,7 @@ export class EosAgentTopologyMesh {
    * Compiles an agent task graph into an acyclic topological execution plan.
    * Detects cycles and throws CYCLIC_DEPENDENCY_DETECTED fail-closed.
    */
-  public static compileTopology(
-    dagId: string,
-    nodes: readonly AgentNode[]
-  ): CompiledAgentTopology {
+  public static compileTopology(dagId: string, nodes: readonly AgentNode[]): CompiledAgentTopology {
     assertPrecondition(typeof dagId === "string" && dagId.trim().length > 0, "dagId required");
     assertPrecondition(Array.isArray(nodes) && nodes.length > 0, "nodes must be a non-empty array");
 
@@ -189,7 +177,7 @@ export class EosAgentTopologyMesh {
     }
 
     const sha256PlanReceipt = pureSha256(
-      dagId + ":" + topologicalOrder.join(",") + ":" + nodes.map((n) => n.assignedModulePath).join(";")
+      dagId + ":" + topologicalOrder.join(",") + ":" + nodes.map((n) => n.assignedModulePath).join(";"),
     );
     assertPostcondition(sha256PlanReceipt.length === 64, "Plan receipt must be 64-char SHA-256");
 
@@ -199,7 +187,7 @@ export class EosAgentTopologyMesh {
       topologicalOrder: deepFreeze(topologicalOrder),
       isAcyclic: true,
       totalNodes: nodes.length,
-      sha256PlanReceipt
+      sha256PlanReceipt,
     });
   }
 
@@ -213,10 +201,7 @@ export class EosAgentTopologyMesh {
   /**
    * Calculates token and byte coordination efficiency between compact event envelopes vs full-file context passing.
    */
-  public static calculateTokenEfficiency(
-    compactBytes: number,
-    fullFileContextBytes: number
-  ): TokenEfficiencyResult {
+  public static calculateTokenEfficiency(compactBytes: number, fullFileContextBytes: number): TokenEfficiencyResult {
     assertPrecondition(compactBytes >= 0, "compactBytes must be >= 0");
     assertPrecondition(fullFileContextBytes > 0, "fullFileContextBytes must be > 0");
 
@@ -229,7 +214,7 @@ export class EosAgentTopologyMesh {
       compactBytes,
       fullFileContextBytes,
       reductionRatioPct,
-      coordinationTokensSaved
+      coordinationTokensSaved,
     });
   }
 
@@ -239,10 +224,10 @@ export class EosAgentTopologyMesh {
   public static recordMeshAttestation(
     topology: CompiledAgentTopology,
     events: readonly MeshEvent[],
-    options?: { ledgerDbPath?: string; projectId?: string }
+    options?: { ledgerDbPath?: string; projectId?: string },
   ): string {
     const batchReceipt = pureSha256(
-      topology.sha256PlanReceipt + ":" + events.map((e) => e.sha256PayloadReceipt).join(";")
+      topology.sha256PlanReceipt + ":" + events.map((e) => e.sha256PayloadReceipt).join(";"),
     );
 
     if (options?.ledgerDbPath) {
@@ -257,9 +242,9 @@ export class EosAgentTopologyMesh {
             totalNodes: topology.totalNodes,
             topologicalOrder: topology.topologicalOrder,
             eventsCount: events.length,
-            batchReceipt
+            batchReceipt,
           },
-          engramTopicKey: `eos/mesh/${topology.dagId}`
+          engramTopicKey: `eos/mesh/${topology.dagId}`,
         });
         return rec.entryId;
       } finally {

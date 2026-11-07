@@ -12,6 +12,7 @@
  * 100% Layer-0 Purity with zero runtime npm dependencies.
  */
 
+import crypto from "node:crypto";
 import { performance } from "node:perf_hooks";
 
 export interface ConcurrencyLimiterOptions {
@@ -19,7 +20,7 @@ export interface ConcurrencyLimiterOptions {
   readonly minLimit?: number;
   readonly maxLimit?: number;
   readonly alpha?: number; // Queue size threshold for expansion (default 3)
-  readonly beta?: number;  // Queue size threshold for contraction (default 6)
+  readonly beta?: number; // Queue size threshold for contraction (default 6)
   readonly smoothingFactor?: number; // EWMA alpha (default 0.2)
 }
 
@@ -65,16 +66,16 @@ export class EosAdaptiveConcurrencyLimiter {
       this.totalShed++;
       return {
         granted: false,
-        reason: "SHED_LOAD_CONCURRENCY_EXCEEDED"
+        reason: "SHED_LOAD_CONCURRENCY_EXCEEDED",
       };
     }
 
     this.inFlight++;
     this.totalAdmitted++;
-    const token = `TKN-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+    const token = `TKN-${Date.now()}-${crypto.randomBytes(6).toString("hex")}`;
     return {
       granted: true,
-      token
+      token,
     };
   }
 
@@ -118,7 +119,9 @@ export class EosAdaptiveConcurrencyLimiter {
   /**
    * Convenience wrapper to execute a function under adaptive concurrency control.
    */
-  public async execute<T>(fn: () => Promise<T> | T): Promise<{ success: boolean; result?: T; reason?: string; rttMs?: number }> {
+  public async execute<T>(
+    fn: () => Promise<T> | T,
+  ): Promise<{ success: boolean; result?: T; reason?: string; rttMs?: number }> {
     const acquireResult = this.acquire();
     if (!acquireResult.granted) {
       return { success: false, reason: acquireResult.reason };
@@ -138,9 +141,10 @@ export class EosAdaptiveConcurrencyLimiter {
   }
 
   public getMetrics(): ConcurrencyMetrics {
-    const estimatedQueueSize = (this.rttMinMs !== Infinity && this.rttSmoothedMs > 0)
-      ? Math.max(0, this.limit * (1 - this.rttMinMs / this.rttSmoothedMs))
-      : 0;
+    const estimatedQueueSize =
+      this.rttMinMs !== Infinity && this.rttSmoothedMs > 0
+        ? Math.max(0, this.limit * (1 - this.rttMinMs / this.rttSmoothedMs))
+        : 0;
 
     return {
       currentLimit: this.limit,
@@ -149,7 +153,7 @@ export class EosAdaptiveConcurrencyLimiter {
       rttSmoothedMs: Number(this.rttSmoothedMs.toFixed(3)),
       estimatedQueueSize: Number(estimatedQueueSize.toFixed(2)),
       totalAdmitted: this.totalAdmitted,
-      totalShed: this.totalShed
+      totalShed: this.totalShed,
     };
   }
 
@@ -170,7 +174,7 @@ export class EosAdaptiveConcurrencyLimiter {
       `eos_concurrency_rtt_smoothed ${m.rttSmoothedMs}`,
       `# HELP eos_concurrency_shed_total Total requests rejected due to load-shedding`,
       `# TYPE eos_concurrency_shed_total counter`,
-      `eos_concurrency_shed_total ${m.totalShed}`
+      `eos_concurrency_shed_total ${m.totalShed}`,
     ].join("\n");
   }
 }

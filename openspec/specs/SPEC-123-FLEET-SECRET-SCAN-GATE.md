@@ -1,6 +1,7 @@
 # SPEC-123: FLEET SECRET-SCAN GATE — REAL HARDCODED-CREDENTIAL DETECTION FOR EVERY EOS-GOVERNED REPOSITORY
 
 ## 1. Metadata
+
 - **Specification ID**: `SPEC-123`
 - **Project ID**: `eos-system` (canonical tool) + fleet repositories listed in `docs/projects/registry.json` (read-only audit)
 - **Standard**: IEEE 830 / ISO 29148 · EOS Constitution Law III (Evidence over Claims) & Law VI (Zero Plain Secrets)
@@ -12,12 +13,12 @@
 
 ## 2. Intake & Evidence (Why this spec exists)
 
-| # | Finding | Evidence |
-|---|---|---|
-| 1 | Avo Pack `scripts/verify-strict.mjs` Stage 3 prints `Zero-Plain-Secrets Verified` but performs **no secret scan** (it only checks `vercel.json` headers and CSS selectors). The gate reported 7/7 PASS while a master password was hardcoded. | `Control-De-Asistencia-Abopack/scripts/verify-strict.mjs` L63-L70 |
-| 2 | The master password remains hardcoded in publicly served ES modules after the UI-only fix of 2026-11-02. | `src/domain/avopakDataset.mjs` L228-L271, `src/domain/avopakProcessAppsEngine.mjs` L176/591/598/640 |
-| 3 | EOS's existing `SECRET_PATTERNS` only match vendor token formats (`sk-live`, `ghp_`, `AKIA`, `AIza`, PEM). A human-chosen password assigned to a variable is **not detectable** by the current EOS barrier. | `src/core/eosPatchValidator.ts` L29-L35 |
-| 4 | EOS's own `SPEC-122` embeds the same password in plain text (BDD-340). | `openspec/specs/SPEC-122-AVOPAK-ATTENDANCE-CONTROL.md` |
+| #   | Finding                                                                                                                                                                                                                                       | Evidence                                                                                            |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| 1   | Avo Pack `scripts/verify-strict.mjs` Stage 3 prints `Zero-Plain-Secrets Verified` but performs **no secret scan** (it only checks `vercel.json` headers and CSS selectors). The gate reported 7/7 PASS while a master password was hardcoded. | `Control-De-Asistencia-Abopack/scripts/verify-strict.mjs` L63-L70                                   |
+| 2   | The master password remains hardcoded in publicly served ES modules after the UI-only fix of 2026-11-02.                                                                                                                                      | `src/domain/avopakDataset.mjs` L228-L271, `src/domain/avopakProcessAppsEngine.mjs` L176/591/598/640 |
+| 3   | EOS's existing `SECRET_PATTERNS` only match vendor token formats (`sk-live`, `ghp_`, `AKIA`, `AIza`, PEM). A human-chosen password assigned to a variable is **not detectable** by the current EOS barrier.                                   | `src/core/eosPatchValidator.ts` L29-L35                                                             |
+| 4   | EOS's own `SPEC-122` embeds the same password in plain text (BDD-340).                                                                                                                                                                        | `openspec/specs/SPEC-122-AVOPAK-ATTENDANCE-CONTROL.md`                                              |
 
 Engram reference: observation #1149.
 
@@ -59,6 +60,7 @@ Engram reference: observation #1149.
   `CUANDO el modo --fleet encuentre una copia del escáner en scripts/eos-secret-scan.mjs de un proyecto, EL SISTEMA comparará su huella sha256 con la versión canónica de EOS y reportará VENDOR_DRIFT si difieren o VENDOR_MISSING si el proyecto no la incluye.`
 
 ### Non-Functional Requirements
+
 - **NFR-123-1**: Zero runtime dependencies; single ESM file; no network access.
 - **NFR-123-2**: Scans a 500-file repository in under 2 seconds on a standard laptop.
 - **NFR-123-3**: Deterministic output (files and findings sorted by path, then line).
@@ -130,31 +132,37 @@ ESCENARIO: BDD-360 Detección de copia desactualizada del escáner
 ## 5. Architecture Plan & ADRs
 
 ### Module layout (EOS)
+
 ```text
 tools/fleet/eos-secret-scan.mjs      # Single-file canonical scanner (pure detectors + CLI adapter)
 test/eos-secret-scan.test.mjs        # BDD-352..360 (node:test, synthetic fixtures only)
 .eos/secret-allowlist.json           # Fingerprint-based exceptions (no secret values stored)
 docs/audits/FLEET-SECRET-SCAN-<date>.json  # Read-only fleet audit output
 ```
+
 Inside the single file, detectors (`detectVendorTokens`, `detectCredentialAssignments`, `detectPrefilledPasswordInputs`, `propagateLiterals`) are pure functions; file I/O and `process.exit` live only in the CLI section.
 
 ### ADR-123-1: Distribution model — vendored single file with hash drift check
+
 - **Decision**: Canonical file lives in EOS. Each fleet repository will carry an identical copy at `scripts/eos-secret-scan.mjs`, invoked from its own `verify:strict`. EOS `--fleet` mode detects drift by sha256.
 - **Rejected — npm package**: Adds a runtime/dev dependency and breaks the Layer-0 `dependencies: {}` rule used across the fleet; requires a publish pipeline.
 - **Rejected — fleet repos call EOS by local path**: Fails in GitHub Actions and Vercel builds, where the EOS checkout does not exist.
 - **Rejected (for now) — gitleaks / trufflehog binaries**: Mature and stronger at entropy detection, but require an external binary unavailable in Vercel builds. Recommended as a future optional complement, not a replacement.
 
 ### ADR-123-2: Fingerprint allowlist instead of path-based ignores
+
 - **Decision**: Exceptions match on file + sha256 fingerprint of the literal, require a reason, and expire within 90 days.
 - **Rejected — ignoring `test/` folders**: The Avo Pack test suite contains the production password; a folder exemption would have hidden the real leak.
 - **Rejected — storing the literal in the allowlist**: Would itself be a plaintext secret.
 
 ### ADR-123-3: Rollout respects Law IV (External Write Barrier)
+
 - **Phase 1** (this spec): Scanner + tests + integration into the EOS pipeline; remediate EOS's own findings (redact the password in SPEC-122).
 - **Phase 2** (this spec): Read-only `--fleet` audit report across registered repositories.
 - **Phase 3** (out of scope, separate authorization per repository): Vendor the scanner into each fleet repository's `verify:strict`. Avo Pack **will fail** this gate until its authentication is redesigned server-side or an explicit, expiring exception is approved by the owner.
 
 ### Out of scope
+
 - Rotating the Avo Pack password and moving its authentication server-side (separate spec; owner decision).
 - Rewriting git history to purge leaked values.
 - Replacing `eosPatchValidator.ts` `SECRET_PATTERNS` (follow-up: align it with the canonical detector list once Phase 1 is verified).
@@ -173,17 +181,18 @@ flowchart LR
   T5 --> T6
 ```
 
-| Task | Done criteria (verifiable) |
-|---|---|
-| **T1** | Tests for BDD-352..355 and BDD-358 written first and failing; then passing. Detectors are pure (no `fs`, no `process`). |
-| **T2** | CLI scans a real directory; exit codes 0/1/2 proven by tests; no full secret appears in stdout (asserted). BDD-356 passes. |
-| **T3** | BDD-357 passes for valid, expired, reason-less, and >90-day entries. |
-| **T4** | BDD-359 passes with a before/after sha256 tree checksum of the scanned repository; BDD-360 passes. |
-| **T5** | `scripts/verify-cicd-pipeline.mjs` invokes the scanner and fails on exit code 1; EOS scan of itself returns exit 0 after SPEC-122 redaction. |
+| Task   | Done criteria (verifiable)                                                                                                                        |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **T1** | Tests for BDD-352..355 and BDD-358 written first and failing; then passing. Detectors are pure (no `fs`, no `process`).                           |
+| **T2** | CLI scans a real directory; exit codes 0/1/2 proven by tests; no full secret appears in stdout (asserted). BDD-356 passes.                        |
+| **T3** | BDD-357 passes for valid, expired, reason-less, and >90-day entries.                                                                              |
+| **T4** | BDD-359 passes with a before/after sha256 tree checksum of the scanned repository; BDD-360 passes.                                                |
+| **T5** | `scripts/verify-cicd-pipeline.mjs` invokes the scanner and fails on exit code 1; EOS scan of itself returns exit 0 after SPEC-122 redaction.      |
 | **T6** | `docs/evidence/EVD-SPEC-123.json` with raw command output and exit codes; `docs/audits/FLEET-SECRET-SCAN-2026-11-02.json` generated by `--fleet`. |
 
 ---
 
 ## 7. Authorization
+
 - **Current state**: `PROPOSED`. No implementation code may be written (Law II).
 - **Required to proceed**: Owner approval of this specification, then a `LEVEL 2` entry in `IMPLEMENTATION_AUTHORIZATION.md` scoped to EOS-System Phases 1–2.

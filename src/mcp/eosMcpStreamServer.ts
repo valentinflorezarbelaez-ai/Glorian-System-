@@ -31,14 +31,18 @@ const MCP_HTTP_READ_ONLY_TOOLS = new Set([
   "eos_check_architecture",
   "eos_evaluate_decision",
   "eos_spotify_shuffle",
-  "eos_optimize_context"
+  "eos_optimize_context",
 ]);
 const DEFAULT_MAX_REQUEST_BYTES = 1024 * 1024;
-const DEFAULT_MAX_SESSIONS = 16;
+export const MAX_SESSIONS = 16;
+const DEFAULT_MAX_SESSIONS = MAX_SESSIONS;
 const DEFAULT_REQUEST_TIMEOUT_MS = 10_000;
 const PACKAGE_VERSION = (() => {
   try {
-    return (JSON.parse(fs.readFileSync(new URL("../../package.json", import.meta.url), "utf8")) as { version?: string }).version || "unknown";
+    return (
+      (JSON.parse(fs.readFileSync(new URL("../../package.json", import.meta.url), "utf8")) as { version?: string })
+        .version || "unknown"
+    );
   } catch {
     return "unknown";
   }
@@ -116,8 +120,8 @@ export class EosMcpSession {
         progressToken: token,
         progress,
         total,
-        message
-      }
+        message,
+      },
     };
     return this.sendEvent("message", notification);
   }
@@ -177,6 +181,16 @@ export class EosMcpSessionManager {
     return false;
   }
 
+  public _gc(): void {
+    const now = Date.now();
+    for (const [id, session] of this.sessions) {
+      if (!session.isAlive() || now - session.lastActivity > 60_000) {
+        session.close();
+        this.sessions.delete(id);
+      }
+    }
+  }
+
   public getActiveSessions(): Array<{ id: string; createdAt: number; ageMs: number }> {
     const now = Date.now();
     const list: Array<{ id: string; createdAt: number; ageMs: number }> = [];
@@ -218,21 +232,39 @@ export class EosMcpStreamServer {
       throw new Error("EOS MCP HTTP bearer tokens must contain at least 32 bytes.");
     }
     this.authToken = configuredToken || crypto.randomBytes(32).toString("base64url");
-    const originValues = options.allowedOrigins ?? (process.env.EOS_MCP_ALLOWED_ORIGINS || "").split(",").map((value) => value.trim()).filter(Boolean);
-    this.allowedOrigins = new Set(originValues.map((origin) => {
-      let parsed: URL;
-      try { parsed = new URL(origin); } catch { throw new Error(`Invalid EOS MCP allowed origin: ${origin}`); }
-      if ((parsed.protocol !== "http:" && parsed.protocol !== "https:") || parsed.origin !== origin || origin === "*") {
-        throw new Error(`EOS MCP allowed origins must be exact HTTP(S) origins without paths: ${origin}`);
-      }
-      return origin;
-    }));
+    const originValues =
+      options.allowedOrigins ??
+      (process.env.EOS_MCP_ALLOWED_ORIGINS || "")
+        .split(",")
+        .map((value) => value.trim())
+        .filter(Boolean);
+    this.allowedOrigins = new Set(
+      originValues.map((origin) => {
+        let parsed: URL;
+        try {
+          parsed = new URL(origin);
+        } catch {
+          throw new Error(`Invalid EOS MCP allowed origin: ${origin}`);
+        }
+        if (
+          (parsed.protocol !== "http:" && parsed.protocol !== "https:") ||
+          parsed.origin !== origin ||
+          origin === "*"
+        ) {
+          throw new Error(`EOS MCP allowed origins must be exact HTTP(S) origins without paths: ${origin}`);
+        }
+        return origin;
+      }),
+    );
     this.maxSessions = options.maxSessions ?? DEFAULT_MAX_SESSIONS;
     this.maxRequestBytes = options.maxRequestBytes ?? DEFAULT_MAX_REQUEST_BYTES;
     this.requestTimeoutMs = options.requestTimeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
-    if (!Number.isInteger(this.maxSessions) || this.maxSessions < 1) throw new Error("maxSessions must be a positive integer.");
-    if (!Number.isInteger(this.maxRequestBytes) || this.maxRequestBytes < 1) throw new Error("maxRequestBytes must be a positive integer.");
-    if (!Number.isInteger(this.requestTimeoutMs) || this.requestTimeoutMs < 1) throw new Error("requestTimeoutMs must be a positive integer.");
+    if (!Number.isInteger(this.maxSessions) || this.maxSessions < 1)
+      throw new Error("maxSessions must be a positive integer.");
+    if (!Number.isInteger(this.maxRequestBytes) || this.maxRequestBytes < 1)
+      throw new Error("maxRequestBytes must be a positive integer.");
+    if (!Number.isInteger(this.requestTimeoutMs) || this.requestTimeoutMs < 1)
+      throw new Error("requestTimeoutMs must be a positive integer.");
   }
 
   /**
@@ -266,7 +298,8 @@ export class EosMcpStreamServer {
     const suppliedToken = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
     const suppliedBuffer = Buffer.from(suppliedToken, "utf8");
     const expectedBuffer = Buffer.from(this.authToken, "utf8");
-    const authenticated = suppliedBuffer.length === expectedBuffer.length && crypto.timingSafeEqual(suppliedBuffer, expectedBuffer);
+    const authenticated =
+      suppliedBuffer.length === expectedBuffer.length && crypto.timingSafeEqual(suppliedBuffer, expectedBuffer);
     if (!authenticated) {
       this.writeJson(res, 401, { error: "Unauthorized." }, { "WWW-Authenticate": "Bearer" });
       req.resume();
@@ -282,7 +315,7 @@ export class EosMcpStreamServer {
     }
     const pathname = parsedUrl.pathname;
 
-    if ((pathname === "/health" || pathname === "/status") && req.method === "GET") {
+    if (pathname === "/health" || pathname === "/status") {
       this.writeJson(res, 200, {
         status: "UP",
         server: "eos-system-mcp-stream",
@@ -290,8 +323,13 @@ export class EosMcpStreamServer {
         protocolVersion: "2024-11-05",
         activeSessions: this.sessionManager.getActiveSessions().length,
         uptimeSeconds: Math.floor(process.uptime()),
-        transports: ["stdio", "sse"]
+        transports: ["stdio", "sse"],
       });
+      return;
+    }
+
+    if (!this._authenticate(req)) {
+      this.writeJson(res, 401, { error: "Unauthorized" });
       return;
     }
 
@@ -299,7 +337,7 @@ export class EosMcpStreamServer {
       const exporter = new EosPrometheusExporter(this.projectRoot);
       res.writeHead(200, {
         "Content-Type": "text/plain; version=0.0.4; charset=utf-8",
-        "Cache-Control": "no-cache, no-store"
+        "Cache-Control": "no-cache, no-store",
       });
       res.end(exporter.formatPrometheusText());
       return;
@@ -313,9 +351,9 @@ export class EosMcpStreamServer {
       res.writeHead(200, {
         "Content-Type": "text/event-stream; charset=utf-8",
         "Cache-Control": "no-cache, no-transform",
-        "Connection": "keep-alive",
+        Connection: "keep-alive",
         "X-Accel-Buffering": "no",
-        "X-Content-Type-Options": "nosniff"
+        "X-Content-Type-Options": "nosniff",
       });
       res.flushHeaders?.();
       const session = this.sessionManager.createSession(res);
@@ -349,7 +387,8 @@ export class EosMcpStreamServer {
       try {
         rawBody = await this.readRequestBody(req);
       } catch (error) {
-        const inputError = error instanceof HttpInputError ? error : new HttpInputError(400, "Request body could not be read.");
+        const inputError =
+          error instanceof HttpInputError ? error : new HttpInputError(400, "Request body could not be read.");
         this.writeJson(res, inputError.statusCode, { error: inputError.message });
         return;
       }
@@ -358,32 +397,50 @@ export class EosMcpStreamServer {
         const parsed: unknown = JSON.parse(rawBody.toString("utf8"));
         if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("invalid object");
         jsonRpcReq = parsed as JsonRpcRequest;
-        if (jsonRpcReq.jsonrpc !== "2.0" || typeof jsonRpcReq.method !== "string") throw new Error("invalid JSON-RPC envelope");
+        if (jsonRpcReq.jsonrpc !== "2.0" || typeof jsonRpcReq.method !== "string")
+          throw new Error("invalid JSON-RPC envelope");
       } catch {
-        this.writeJson(res, 400, { jsonrpc: "2.0", id: null, error: { code: -32700, message: "Invalid JSON-RPC request." } });
+        this.writeJson(res, 400, {
+          jsonrpc: "2.0",
+          id: null,
+          error: { code: -32700, message: "Invalid JSON-RPC request." },
+        });
         return;
       }
 
       if (jsonRpcReq.method === "tools/call") {
         const name = (jsonRpcReq.params as { name?: unknown } | undefined)?.name;
         if (typeof name !== "string" || !MCP_HTTP_READ_ONLY_TOOLS.has(name)) {
-          this.writeJson(res, 200, { jsonrpc: "2.0", id: jsonRpcReq.id ?? null, error: { code: -32601, message: "Tool is not exposed by the read-only MCP HTTP endpoint." } });
+          this.writeJson(res, 200, {
+            jsonrpc: "2.0",
+            id: jsonRpcReq.id ?? null,
+            error: { code: -32601, message: "Tool is not exposed by the read-only MCP HTTP endpoint." },
+          });
           return;
         }
         const args = (jsonRpcReq.params as { arguments?: unknown }).arguments;
         const argumentError = this.validateReadOnlyToolArguments(name, args);
         if (argumentError) {
-          this.writeJson(res, 200, { jsonrpc: "2.0", id: jsonRpcReq.id ?? null, error: { code: -32602, message: argumentError } });
+          this.writeJson(res, 200, {
+            jsonrpc: "2.0",
+            id: jsonRpcReq.id ?? null,
+            error: { code: -32602, message: argumentError },
+          });
           return;
         }
       } else if (!["initialize", "ping", "tools/list", "notifications/initialized"].includes(jsonRpcReq.method)) {
-        this.writeJson(res, 200, { jsonrpc: "2.0", id: jsonRpcReq.id ?? null, error: { code: -32601, message: "Method is not exposed by the MCP HTTP endpoint." } });
+        this.writeJson(res, 200, {
+          jsonrpc: "2.0",
+          id: jsonRpcReq.id ?? null,
+          error: { code: -32601, message: "Method is not exposed by the MCP HTTP endpoint." },
+        });
         return;
       }
 
       try {
         const progressCallback = (progress: number, total?: number, message?: string) => {
-          if (jsonRpcReq.id !== undefined && jsonRpcReq.id !== null) session.sendProgress(jsonRpcReq.id, progress, total, message);
+          if (jsonRpcReq.id !== undefined && jsonRpcReq.id !== null)
+            session.sendProgress(jsonRpcReq.id, progress, total, message);
         };
         let response = await this.dispatchJsonRpc(jsonRpcReq, progressCallback);
         if (jsonRpcReq.method === "tools/list" && response?.result?.tools) {
@@ -393,24 +450,28 @@ export class EosMcpStreamServer {
               if (tool.name === "eos_optimize_context") {
                 return {
                   ...tool,
-                  description: "Compresses caller-submitted text only; repository file reads are disabled on this HTTP transport.",
+                  description:
+                    "Compresses caller-submitted text only; repository file reads are disabled on this HTTP transport.",
                   inputSchema: {
                     type: "object",
-                    properties: { content: { type: "string", description: "Text to compress; maximum 256 KiB in UTF-8." } },
+                    properties: {
+                      content: { type: "string", description: "Text to compress; maximum 256 KiB in UTF-8." },
+                    },
                     required: ["content"],
-                    additionalProperties: false
-                  }
+                    additionalProperties: false,
+                  },
                 };
               }
               if (tool.name === "eos_check_architecture") {
                 return {
                   ...tool,
-                  description: "Runs bounded static checks against the repository src directory only; it does not execute tests.",
+                  description:
+                    "Runs bounded static checks against the repository src directory only; it does not execute tests.",
                   inputSchema: {
                     type: "object",
                     properties: { targetDir: { type: "string", enum: ["src"] } },
-                    additionalProperties: false
-                  }
+                    additionalProperties: false,
+                  },
                 };
               }
               if (tool.name === "eos_spotify_shuffle" && tool.inputSchema?.properties?.tracks) {
@@ -420,9 +481,9 @@ export class EosMcpStreamServer {
                     ...tool.inputSchema,
                     properties: {
                       ...tool.inputSchema.properties,
-                      tracks: { ...tool.inputSchema.properties.tracks, maxItems: 128 }
-                    }
-                  }
+                      tracks: { ...tool.inputSchema.properties.tracks, maxItems: 128 },
+                    },
+                  },
                 };
               }
               return tool;
@@ -434,10 +495,18 @@ export class EosMcpStreamServer {
           return;
         }
         if (response) session.sendEvent("message", response);
-        res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" });
+        res.writeHead(200, {
+          "Content-Type": "application/json; charset=utf-8",
+          "Cache-Control": "no-store",
+          "X-Content-Type-Options": "nosniff",
+        });
         res.end(serialized);
       } catch {
-        this.writeJson(res, 500, { jsonrpc: "2.0", id: jsonRpcReq.id ?? null, error: { code: -32603, message: "Internal server error." } });
+        this.writeJson(res, 500, {
+          jsonrpc: "2.0",
+          id: jsonRpcReq.id ?? null,
+          error: { code: -32603, message: "Internal server error." },
+        });
       }
       return;
     }
@@ -446,9 +515,19 @@ export class EosMcpStreamServer {
     req.resume();
   }
 
-  private writeJson(res: http.ServerResponse, statusCode: number, payload: unknown, headers: Record<string, string> = {}): void {
+  private writeJson(
+    res: http.ServerResponse,
+    statusCode: number,
+    payload: unknown,
+    headers: Record<string, string> = {},
+  ): void {
     if (res.writableEnded) return;
-    res.writeHead(statusCode, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff", ...headers });
+    res.writeHead(statusCode, {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Content-Type-Options": "nosniff",
+      ...headers,
+    });
     res.end(JSON.stringify(payload));
   }
 
@@ -476,6 +555,7 @@ export class EosMcpStreamServer {
         const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
         totalBytes += buffer.byteLength;
         if (totalBytes > this.maxRequestBytes) {
+          req.socket.destroy();
           finish(new HttpInputError(413, "Request body exceeds the configured size limit."));
           return;
         }
@@ -496,7 +576,9 @@ export class EosMcpStreamServer {
     if (!value || typeof value !== "object" || Array.isArray(value)) return "Tool arguments must be a JSON object.";
     const args = value as Record<string, unknown>;
     const boundedText = (field: string, maxBytes: number, allowEmpty = false) =>
-      typeof args[field] === "string" && Buffer.byteLength(args[field] as string, "utf8") <= maxBytes && (allowEmpty || (args[field] as string).length > 0);
+      typeof args[field] === "string" &&
+      Buffer.byteLength(args[field] as string, "utf8") <= maxBytes &&
+      (allowEmpty || (args[field] as string).length > 0);
     if (toolName === "eos_optimize_context") {
       if (Object.hasOwn(args, "filePath")) return "Repository file access is disabled by the read-only HTTP policy.";
       if (!boundedText("content", 256 * 1024)) return "content must be non-empty text no larger than 256 KiB.";
@@ -504,13 +586,18 @@ export class EosMcpStreamServer {
     if (toolName === "eos_check_architecture" && args.targetDir !== undefined && args.targetDir !== "src") {
       return "The HTTP endpoint only scans the repository src directory.";
     }
-    if (toolName === "eos_amplify_prompt" && !boundedText("rawPrompt", 8192)) return "rawPrompt must be non-empty text no larger than 8 KiB.";
+    if (toolName === "eos_amplify_prompt" && !boundedText("rawPrompt", 8192))
+      return "rawPrompt must be non-empty text no larger than 8 KiB.";
     if (toolName === "eos_evaluate_decision") {
       for (const field of ["title", "description", "proposedAction"]) {
         if (!boundedText(field, 16 * 1024)) return `${field} must be non-empty text no larger than 16 KiB.`;
       }
     }
-    if (toolName === "eos_spotify_shuffle" && args.tracks !== undefined && (!Array.isArray(args.tracks) || args.tracks.length > 128)) {
+    if (
+      toolName === "eos_spotify_shuffle" &&
+      args.tracks !== undefined &&
+      (!Array.isArray(args.tracks) || args.tracks.length > 128)
+    ) {
       return "tracks must be an array containing no more than 128 items.";
     }
     return null;
@@ -521,7 +608,7 @@ export class EosMcpStreamServer {
    */
   public async dispatchJsonRpc(
     req: JsonRpcRequest,
-    onProgress?: (progress: number, total?: number, message?: string) => void
+    onProgress?: (progress: number, total?: number, message?: string) => void,
   ): Promise<JsonRpcResponse | null> {
     return this.mcpServer.handleRequest(req, onProgress);
   }
@@ -550,6 +637,13 @@ export class EosMcpStreamServer {
         resolve(this.server!);
       });
     });
+  }
+
+  private _authenticate(req: http.IncomingMessage): boolean {
+    if (!this.authToken) return true;
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return false;
+    return authHeader === `Bearer ${this.authToken}`;
   }
 
   /**

@@ -29,7 +29,7 @@ test("BDD-243: Comunicación bidireccional entre nodos pares locales (SPEC-084)"
   const sentFrame = nodeA.broadcastFrame("TRUETIME_SYNC", {
     earliest: 1730380000000,
     latest: 1730380000007,
-    uncertaintyEpsilonMs: 3.5
+    uncertaintyEpsilonMs: 3.5,
   });
 
   // Wait for frame to be delivered over TCP
@@ -67,7 +67,7 @@ test("BDD-244: Rechazo fail-closed de frames manipulados o repetidos (SPEC-084)"
     type: "CONSENSUS_VOTE",
     payload: { vote: "INVALID_STATE" },
     timestampIso: new Date().toISOString(),
-    frameSha256: "0000000000000000000000000000000000000000000000000000000000000000"
+    frameSha256: "0000000000000000000000000000000000000000000000000000000000000000",
   };
   client.write(JSON.stringify(tamperedFrame) + "\n");
   await new Promise((resolve) => setTimeout(resolve, 50));
@@ -78,13 +78,7 @@ test("BDD-244: Rechazo fail-closed de frames manipulados o repetidos (SPEC-084)"
   // 2. Send valid frame seq 1
   const validTimestamp = new Date().toISOString();
   const validPayload = { term: 42, candidate: "node-leader" };
-  const validHash = computeFrameSha256(
-    "legit-peer",
-    1,
-    "CONSENSUS_VOTE",
-    validPayload,
-    validTimestamp
-  );
+  const validHash = computeFrameSha256("legit-peer", 1, "CONSENSUS_VOTE", validPayload, validTimestamp);
 
   const validFrame = {
     senderNodeId: "legit-peer",
@@ -92,7 +86,7 @@ test("BDD-244: Rechazo fail-closed de frames manipulados o repetidos (SPEC-084)"
     type: "CONSENSUS_VOTE",
     payload: validPayload,
     timestampIso: validTimestamp,
-    frameSha256: validHash
+    frameSha256: validHash,
   };
 
   client.write(JSON.stringify(validFrame) + "\n");
@@ -118,7 +112,7 @@ test("BDD-244: Rechazo fail-closed de frames manipulados o repetidos (SPEC-084)"
     type: "HEARTBEAT",
     payload: {},
     timestampIso: staleTimestamp,
-    frameSha256: staleHash
+    frameSha256: staleHash,
   };
   client.write(JSON.stringify(staleFrame) + "\n");
   await new Promise((resolve) => setTimeout(resolve, 50));

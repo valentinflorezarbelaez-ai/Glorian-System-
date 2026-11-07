@@ -18,7 +18,7 @@ import {
   assertPrecondition,
   assertPostcondition,
   assertInvariant,
-  deepFreeze
+  deepFreeze,
 } from "./eosKernelPrimitives.ts";
 
 export type FaultType = "PACKET_DROP" | "DISK_CORRUPT" | "NODE_CRASH" | "LATENCY_JITTER";
@@ -67,7 +67,7 @@ export class EosDeterministicSimulator {
     PACKET_DROP: 0,
     DISK_CORRUPT: 0,
     NODE_CRASH: 0,
-    LATENCY_JITTER: 0
+    LATENCY_JITTER: 0,
   };
 
   constructor(config: SimulationConfig) {
@@ -101,7 +101,7 @@ export class EosDeterministicSimulator {
 
       this.virtualTimeMs = current.tick;
       this.eventHistory.push(
-        `T=${current.tick}|${current.sender}->${current.receiver}|${current.payload}|fault=${current.isFault ? current.faultType : "none"}`
+        `T=${current.tick}|${current.sender}->${current.receiver}|${current.payload}|fault=${current.isFault ? current.faultType : "none"}`,
       );
 
       // Fault handling & state transition
@@ -138,7 +138,7 @@ export class EosDeterministicSimulator {
       invariantsViolated,
       executionTraceHash,
       reproducibleCommand: `eos dst ${this.seed} ${this.totalSteps} ${this.faultRate}`,
-      verifiedDeterministic: true
+      verifiedDeterministic: true,
     };
 
     return deepFreeze(result);
@@ -166,7 +166,7 @@ export class EosDeterministicSimulator {
       receiver: receiverId,
       payload: `data:${Math.floor(this.prng() * 0xffff).toString(16)}`,
       isFault,
-      faultType
+      faultType,
     });
   }
 

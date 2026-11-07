@@ -17,22 +17,12 @@ import fs from "node:fs";
 import https from "node:https";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export type TlcExecutionMode = "TLC_NATIVE" | "FALLBACK_BOUNDED_JS";
 
-export type TlcVerificationStatus =
-  | "PASS"
-  | "FAIL"
-  | "INVARIANT_VIOLATED"
-  | "DEADLOCK_DETECTED"
-  | "TIMEOUT";
+export type TlcVerificationStatus = "PASS" | "FAIL" | "INVARIANT_VIOLATED" | "DEADLOCK_DETECTED" | "TIMEOUT";
 
 export interface TlcRuntimeDiagnostic {
   readonly javaInstalled: boolean;
@@ -72,7 +62,7 @@ export class EosTlcFormalChecker {
       const output = execFileSync("java", ["-version"], {
         encoding: "utf-8",
         stdio: ["ignore", "pipe", "pipe"],
-        timeout: 4000
+        timeout: 4000,
       });
       javaInstalled = true;
       const vMatch = String(output).match(/version\s+"([^"]+)"/);
@@ -92,7 +82,7 @@ export class EosTlcFormalChecker {
       process.env.TLA2TOOLS_JAR_PATH,
       path.join(projectRoot, "tools", "tla2tools.jar"),
       path.join(projectRoot, "bin", "tla2tools.jar"),
-      path.join(projectRoot, ".eos", "tools", "tla2tools.jar")
+      path.join(projectRoot, ".eos", "tools", "tla2tools.jar"),
     ].filter((p): p is string => Boolean(p && typeof p === "string"));
 
     let tlaJarPath: string | undefined;
@@ -106,8 +96,7 @@ export class EosTlcFormalChecker {
       }
     }
 
-    const executionMode: TlcExecutionMode =
-      javaInstalled && tlaJarPresent ? "TLC_NATIVE" : "FALLBACK_BOUNDED_JS";
+    const executionMode: TlcExecutionMode = javaInstalled && tlaJarPresent ? "TLC_NATIVE" : "FALLBACK_BOUNDED_JS";
 
     let recommendation = "Dual-Mode TLC Engine Ready.";
     if (!javaInstalled && !tlaJarPresent) {
@@ -127,7 +116,7 @@ export class EosTlcFormalChecker {
       tlaJarPresent,
       tlaJarPath,
       executionMode,
-      recommendation
+      recommendation,
     });
   }
 
@@ -136,7 +125,7 @@ export class EosTlcFormalChecker {
    */
   public static async downloadTlaJar(
     targetDir?: string,
-    downloadUrl: string = EosTlcFormalChecker.OFFICIAL_TLA2TOOLS_URL
+    downloadUrl: string = EosTlcFormalChecker.OFFICIAL_TLA2TOOLS_URL,
   ): Promise<{ success: boolean; jarPath: string; bytesDownloaded: number }> {
     const root = targetDir ? path.resolve(targetDir) : path.join(process.cwd(), "tools");
     fs.mkdirSync(root, { recursive: true });
@@ -171,7 +160,7 @@ export class EosTlcFormalChecker {
               resolve({
                 success: true,
                 jarPath,
-                bytesDownloaded
+                bytesDownloaded,
               });
             });
 
@@ -199,11 +188,11 @@ export class EosTlcFormalChecker {
       steps?: number;
       workers?: number | "auto";
       forceFallback?: boolean;
-    }
+    },
   ): TlcVerificationResult {
     assertPrecondition(
       typeof specNameOrPath === "string" && specNameOrPath.trim().length > 0,
-      "specNameOrPath must be a non-empty string"
+      "specNameOrPath must be a non-empty string",
     );
 
     const projectRoot = options?.projectRoot || process.cwd();
@@ -216,9 +205,7 @@ export class EosTlcFormalChecker {
       : path.join(projectRoot, "docs", "formal", `${specBase}.tla`);
 
     const executionMode: TlcExecutionMode =
-      !options?.forceFallback && runtime.executionMode === "TLC_NATIVE"
-        ? "TLC_NATIVE"
-        : "FALLBACK_BOUNDED_JS";
+      !options?.forceFallback && runtime.executionMode === "TLC_NATIVE" ? "TLC_NATIVE" : "FALLBACK_BOUNDED_JS";
 
     let status: TlcVerificationStatus = "PASS";
     let exploredStates = 0;
@@ -229,19 +216,11 @@ export class EosTlcFormalChecker {
     if (executionMode === "TLC_NATIVE" && runtime.tlaJarPath) {
       try {
         const workers = options?.workers || "auto";
-        const args = [
-          "-jar",
-          runtime.tlaJarPath,
-          "-modelcheck",
-          "-deadlock",
-          "-workers",
-          String(workers),
-          tlaPath
-        ];
+        const args = ["-jar", runtime.tlaJarPath, "-modelcheck", "-deadlock", "-workers", String(workers), tlaPath];
         const output = execFileSync("java", args, {
           encoding: "utf-8",
           timeout: 60000,
-          stdio: ["ignore", "pipe", "pipe"]
+          stdio: ["ignore", "pipe", "pipe"],
         });
 
         rawOutputSummary = output.slice(0, 1000);
@@ -287,7 +266,7 @@ export class EosTlcFormalChecker {
     const durationMs = Math.max(0, Date.now() - startTime);
     const timestampIso = new Date().toISOString();
     const sha256Receipt = pureSha256(
-      `${specBase}:${status}:${executionMode}:${exploredStates}:${distinctStates}:${timestampIso}`
+      `${specBase}:${status}:${executionMode}:${exploredStates}:${distinctStates}:${timestampIso}`,
     );
     const receiptId = `tlc_rec_${pureSha256(sha256Receipt).slice(0, 16)}`;
 
@@ -302,17 +281,14 @@ export class EosTlcFormalChecker {
       durationMs,
       sha256Receipt,
       timestampIso,
-      rawOutputSummary
+      rawOutputSummary,
     });
   }
 
   /**
    * Persists TLC verification result in durable SQLite WAL ledger.
    */
-  public static recordReceiptInLedger(
-    result: TlcVerificationResult,
-    dbPathOrRootDir?: string
-  ): boolean {
+  public static recordReceiptInLedger(result: TlcVerificationResult, dbPathOrRootDir?: string): boolean {
     const dbPath = dbPathOrRootDir
       ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
         ? dbPathOrRootDir
@@ -334,9 +310,9 @@ export class EosTlcFormalChecker {
           distinctStates: result.distinctStates,
           transitionsCalculated: result.transitionsCalculated,
           sha256Receipt: result.sha256Receipt,
-          durationMs: result.durationMs
+          durationMs: result.durationMs,
         },
-        engramTopicKey: `eos/formal/${result.specification}`
+        engramTopicKey: `eos/formal/${result.specification}`,
       });
       return true;
     } catch {

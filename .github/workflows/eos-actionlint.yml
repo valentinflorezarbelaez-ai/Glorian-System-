@@ -1,0 +1,52 @@
+name: EOS GitHub Actions Lint
+
+# Big Tech standard (nektos/actionlint, rhysd/actionlint): lint all GitHub
+# Actions workflow YAML files for syntax errors, deprecated syntax, invalid
+# action references, and shell script injection risks. Catches workflow bugs
+# that YAML validation alone misses.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/**"
+      - ".github/actions/**"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/**"
+      - ".github/actions/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  actionlint:
+    name: Lint GitHub Actions workflows
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Run actionlint
+        run: |
+          curl -sLo actionlint.tar.gz https://github.com/rhysd/actionlint/releases/download/v1.7.7/actionlint_1.7.7_linux_amd64.tar.gz
+          tar xf actionlint.tar.gz
+          ./actionlint -color -ignore "SC2002:" .github/workflows/
+
+      - name: Post lint results to PR
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@e7a3f2dd4c4b42f567571d8c4b863d323567614f # v7.0.0
+        with:
+          script: |
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '### ⚠️ actionlint found issues in GitHub Actions workflows\n\nSee the [workflow logs](' + context.run_url + ') for details.'
+            });

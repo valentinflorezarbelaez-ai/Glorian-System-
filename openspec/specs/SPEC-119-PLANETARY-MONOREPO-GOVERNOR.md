@@ -1,6 +1,7 @@
 # SPEC-119: Planetary Monorepo Engine & Aerospace Mission-Critical Governor
 
 ## 1. Metadata
+
 - **Specification ID**: `SPEC-119`
 - **Standard**: IEEE 830 / ISO 29148 / NASA JPL Power of Ten / Google Rosie Standard
 - **Status**: `PROPOSED`

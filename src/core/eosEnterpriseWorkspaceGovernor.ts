@@ -14,202 +14,54 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 import { EosAntigravityDirector } from "./eosAntigravityDirector.ts";
 
-export type WorkspaceOrchestrator =
-  | "turborepo"
-  | "nx"
-  | "pnpm_workspaces"
-  | "npm_workspaces"
-  | "cargo_workspace"
-  | "go_workspace"
-  | "python_uv_poetry"
-  | "bazel"
-  | "gradle_multi"
-  | "melos_flutter"
-  | "single_package";
+// Re-export all public types for backward-compatible external imports.
+export type {
+  WorkspaceOrchestrator,
+  EnterpriseLanguage,
+  WorkspaceArchitecturalRole,
+  ContractStandard,
+  WorkspaceAccessMode,
+  WorkspaceMember,
+  ContractArtifact,
+  SecretFinding,
+  SupplyChainPosture,
+  EnterpriseVerificationCommand,
+  EnterpriseWorkspaceTopology,
+  InspectWorkspaceOptions,
+  RegisteredFleetWorkspace,
+  OnboardWorkspaceInput,
+  OnboardGeneratedArtifact,
+  OnboardWorkspaceResult,
+  AuthorizedWorkspaceResolution,
+  StructuralGateResult,
+  EnterpriseWorkspaceVerificationReport,
+} from "./eosEnterpriseWorkspaceGovernor.types.ts";
 
-export type EnterpriseLanguage =
-  | "typescript"
-  | "javascript"
-  | "go"
-  | "rust"
-  | "python"
-  | "flutter_dart"
-  | "java_kotlin"
-  | "cpp_c"
-  | "csharp"
-  | "sql"
-  | "tla_plus";
-
-export type WorkspaceArchitecturalRole =
-  | "CONTROL_PLANE_OR_CORE"
-  | "BACKEND_OR_SERVICE"
-  | "FRONTEND_OR_CLIENT"
-  | "SHARED_LIBRARY"
-  | "INFRASTRUCTURE_OR_TOOLING";
-
-export type ContractStandard =
-  | "openapi"
-  | "protobuf"
-  | "graphql"
-  | "asyncapi"
-  | "json_schema"
-  | "prisma"
-  | "sql_migration"
-  | "tla_plus";
-
-export type WorkspaceAccessMode = "READ_ONLY" | "WRITE_GATED";
-
-export interface WorkspaceMember {
-  readonly name: string;
-  readonly relativeDir: string;
-  readonly manifestPath: string;
-  readonly language: EnterpriseLanguage;
-  readonly architecturalRole: WorkspaceArchitecturalRole;
-}
-
-export interface ContractArtifact {
-  readonly standard: ContractStandard;
-  readonly relativePath: string;
-  readonly byteSize: number;
-  readonly validSyntax: boolean;
-  readonly detail: string;
-}
-
-export interface SecretFinding {
-  readonly patternName: string;
-  readonly relativePath: string;
-}
-
-export interface SupplyChainPosture {
-  readonly lockfiles: readonly string[];
-  readonly hasDeterministicLockfile: boolean;
-  readonly containerManifests: readonly string[];
-  readonly iacManifests: readonly string[];
-  readonly ciWorkflows: readonly string[];
-  readonly secretHygieneClean: boolean;
-  readonly secretFindings: readonly SecretFinding[];
-}
-
-export interface EnterpriseVerificationCommand {
-  readonly id: string;
-  readonly stack: string;
-  readonly command: string;
-  readonly rationale: string;
-}
-
-export interface EnterpriseWorkspaceTopology {
-  readonly workspaceName: string;
-  readonly workspaceRoot: string;
-  readonly archetype: "POLYGLOT_MONOREPO" | "SINGLE_LANGUAGE_MONOREPO" | "ENTERPRISE_SERVICE" | "MINIMAL_REPOSITORY";
-  readonly orchestrators: readonly WorkspaceOrchestrator[];
-  readonly languages: readonly EnterpriseLanguage[];
-  readonly members: readonly WorkspaceMember[];
-  readonly contracts: readonly ContractArtifact[];
-  readonly supplyChain: SupplyChainPosture;
-  readonly recommendedVerificationCommands: readonly EnterpriseVerificationCommand[];
-  readonly scannedFileCount: number;
-  readonly skippedSymlinkCount: number;
-  readonly enterpriseReadinessSignalsScore: number;
-  readonly scoreDisclaimer: string;
-  readonly sha256TopologyReceipt: string;
-  readonly timestamp: string;
-}
-
-export interface InspectWorkspaceOptions {
-  readonly maxDepth?: number;
-  readonly maxFiles?: number;
-}
-
-export interface RegisteredFleetWorkspace {
-  readonly id: string;
-  readonly name: string;
-  readonly localPathEnv?: string;
-  readonly localPath?: string;
-  readonly resolvedLocalPath: string | null;
-  readonly pathExistsOnDisk: boolean;
-  readonly remoteUrl: string;
-  readonly productionUrl?: string;
-  readonly type: string;
-  readonly status: string;
-  readonly intake: string;
-  readonly specification: string;
-  readonly audit: string;
-  readonly ownerApproval?: string;
-  readonly authorization: string;
-  readonly writeAuthorizedUnderLawIV: boolean;
-  readonly missingLawIVPreconditions: readonly string[];
-}
-
-export interface OnboardWorkspaceInput {
-  readonly targetPath: string;
-  readonly projectId?: string;
-  readonly projectName?: string;
-  readonly localPathEnv?: string;
-  readonly remoteUrl?: string;
-  readonly productionUrl?: string;
-  readonly projectType?: string;
-  readonly controlPlaneRoot?: string;
-  readonly dryRun?: boolean;
-  readonly ledgerDbPath?: string;
-}
-
-export interface OnboardGeneratedArtifact {
-  readonly relativeControlPlanePath: string;
-  readonly byteLength: number;
-  readonly sha256Digest: string;
-}
-
-export interface OnboardWorkspaceResult {
-  readonly projectId: string;
-  readonly projectName: string;
-  readonly externalTargetPath: string;
-  readonly controlPlaneRoot: string;
-  readonly dryRun: boolean;
-  readonly initialAuthorization: "LEVEL_1_READ_ONLY_AUDIT";
-  readonly externalBytesWritten: 0;
-  readonly topology: EnterpriseWorkspaceTopology;
-  readonly generatedArtifacts: readonly OnboardGeneratedArtifact[];
-  readonly registryUpdated: boolean;
-  readonly ledgerEntryId: string | null;
-  readonly sha256OnboardReceipt: string;
-}
-
-export interface AuthorizedWorkspaceResolution {
-  readonly projectId: string;
-  readonly accessMode: WorkspaceAccessMode;
-  readonly workspaceRoot: string;
-  readonly resolvedTargetPath: string;
-  readonly authorizationLevel: string;
-  readonly writeBarrierStatus: "AUTHORIZED" | "READ_ONLY_CONFINED";
-}
-
-export interface StructuralGateResult {
-  readonly gateId: string;
-  readonly label: string;
-  readonly passed: boolean;
-  readonly detail: string;
-}
-
-export interface EnterpriseWorkspaceVerificationReport {
-  readonly workspaceName: string;
-  readonly workspaceRoot: string;
-  readonly epistemicState: "VERIFIED" | "FINDINGS_IDENTIFIED";
-  readonly overallPassed: boolean;
-  readonly gates: readonly StructuralGateResult[];
-  readonly recommendedCommands: readonly EnterpriseVerificationCommand[];
-  readonly ledgerEntryId: string | null;
-  readonly sha256VerificationReceipt: string;
-  readonly timestamp: string;
-}
+import type {
+  WorkspaceOrchestrator,
+  EnterpriseLanguage,
+  WorkspaceArchitecturalRole,
+  ContractStandard,
+  WorkspaceMember,
+  ContractArtifact,
+  SecretFinding,
+  SupplyChainPosture,
+  EnterpriseVerificationCommand,
+  EnterpriseWorkspaceTopology,
+  InspectWorkspaceOptions,
+  RegisteredFleetWorkspace,
+  OnboardWorkspaceInput,
+  OnboardGeneratedArtifact,
+  OnboardWorkspaceResult,
+  AuthorizedWorkspaceResolution,
+  StructuralGateResult,
+  EnterpriseWorkspaceVerificationReport,
+  WorkspaceAccessMode,
+} from "./eosEnterpriseWorkspaceGovernor.types.ts";
 
 const IGNORED_SCAN_DIRS: ReadonlySet<string> = new Set([
   ".git",
@@ -228,7 +80,7 @@ const IGNORED_SCAN_DIRS: ReadonlySet<string> = new Set([
   ".turbo",
   ".nx",
   "coverage",
-  "_sandbox"
+  "_sandbox",
 ]);
 
 const BINARY_EXTENSIONS: ReadonlySet<string> = new Set([
@@ -255,7 +107,7 @@ const BINARY_EXTENSIONS: ReadonlySet<string> = new Set([
   ".sqlite-wal",
   ".sqlite-shm",
   ".db",
-  ".lockb"
+  ".lockb",
 ]);
 
 const CREDENTIAL_PATTERNS: ReadonlyArray<{ readonly name: string; readonly regex: RegExp }> = [
@@ -263,7 +115,7 @@ const CREDENTIAL_PATTERNS: ReadonlyArray<{ readonly name: string; readonly regex
   { name: "GitHub Personal Access Token", regex: new RegExp("ghp_" + "[0-9a-zA-Z]{24,}") },
   { name: "AWS Access Key ID", regex: new RegExp("AKIA" + "[0-9A-Z]{16}") },
   { name: "Google API Key", regex: new RegExp("AIza" + "[0-9A-Za-z\\-_]{35}") },
-  { name: "PEM Private Key Block", regex: new RegExp("-----BEGIN " + "(RSA |EC |OPENSSH )?PRIVATE KEY-----") }
+  { name: "PEM Private Key Block", regex: new RegExp("-----BEGIN " + "(RSA |EC |OPENSSH )?PRIVATE KEY-----") },
 ];
 
 const DETERMINISTIC_LOCKFILE_NAMES: ReadonlySet<string> = new Set([
@@ -278,7 +130,7 @@ const DETERMINISTIC_LOCKFILE_NAMES: ReadonlySet<string> = new Set([
   "poetry.lock",
   "pubspec.lock",
   "gradle.lockfile",
-  "Pipfile.lock"
+  "Pipfile.lock",
 ]);
 
 function toPosixRelative(rootDir: string, targetPath: string): string {
@@ -288,10 +140,7 @@ function toPosixRelative(rootDir: string, targetPath: string): string {
 
 function isPathWithin(rootPath: string, candidatePath: string): boolean {
   const relative = path.relative(rootPath, candidatePath);
-  return (
-    relative === "" ||
-    (relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative))
-  );
+  return relative === "" || (relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative));
 }
 
 function sanitizeProjectId(rawId: string): string {
@@ -302,7 +151,7 @@ function sanitizeProjectId(rawId: string): string {
     .replace(/^-+|-+$/g, "");
   assertPrecondition(
     normalized.length >= 2 && normalized.length <= 64,
-    "projectId must contain 2..64 alphanumeric/hyphen characters"
+    "projectId must contain 2..64 alphanumeric/hyphen characters",
   );
   return normalized;
 }
@@ -329,11 +178,7 @@ interface ScannedWorkspaceFiles {
   readonly skippedSymlinkCount: number;
 }
 
-function scanWorkspaceTree(
-  rootDir: string,
-  maxDepth: number,
-  maxFiles: number
-): ScannedWorkspaceFiles {
+function scanWorkspaceTree(rootDir: string, maxDepth: number, maxFiles: number): ScannedWorkspaceFiles {
   const collected: string[] = [];
   let skippedSymlinkCount = 0;
 
@@ -378,7 +223,7 @@ function scanWorkspaceTree(
 function inferArchitecturalRole(
   relativeDir: string,
   language: EnterpriseLanguage,
-  manifestContent: string
+  manifestContent: string,
 ): WorkspaceArchitecturalRole {
   const lowerDir = relativeDir.toLowerCase();
   const lowerContent = manifestContent.toLowerCase();
@@ -390,9 +235,7 @@ function inferArchitecturalRole(
   ) {
     return "CONTROL_PLANE_OR_CORE";
   }
-  if (
-    /(?:^|\/)(?:infra|terraform|deploy|k8s|helm|scripts|tools)(?:\/|$)/.test(lowerDir)
-  ) {
+  if (/(?:^|\/)(?:infra|terraform|deploy|k8s|helm|scripts|tools)(?:\/|$)/.test(lowerDir)) {
     return "INFRASTRUCTURE_OR_TOOLING";
   }
   if (
@@ -402,9 +245,7 @@ function inferArchitecturalRole(
   ) {
     return "FRONTEND_OR_CLIENT";
   }
-  if (
-    /(?:^|\/)(?:packages|libs|shared|common|sdk)(?:\/|$)/.test(lowerDir)
-  ) {
+  if (/(?:^|\/)(?:packages|libs|shared|common|sdk)(?:\/|$)/.test(lowerDir)) {
     return "SHARED_LIBRARY";
   }
   return "BACKEND_OR_SERVICE";
@@ -415,13 +256,10 @@ export class EosEnterpriseWorkspaceGovernor {
    * Performs a bounded, symlink-safe deep polyglot architectural, contract,
    * and supply-chain topology inspection of any target workspace directory.
    */
-  public static inspectWorkspace(
-    targetPath: string,
-    options?: InspectWorkspaceOptions
-  ): EnterpriseWorkspaceTopology {
+  public static inspectWorkspace(targetPath: string, options?: InspectWorkspaceOptions): EnterpriseWorkspaceTopology {
     assertPrecondition(
       typeof targetPath === "string" && targetPath.trim().length > 0,
-      "targetPath must be a non-empty string"
+      "targetPath must be a non-empty string",
     );
 
     const candidateRoot = path.resolve(targetPath.trim());
@@ -505,7 +343,8 @@ export class EosEnterpriseWorkspaceGovernor {
       else if (ext === ".py") languageSet.add("python");
       else if (ext === ".dart") languageSet.add("flutter_dart");
       else if (ext === ".java" || ext === ".kt") languageSet.add("java_kotlin");
-      else if (ext === ".c" || ext === ".cc" || ext === ".cpp" || ext === ".h" || ext === ".hpp") languageSet.add("cpp_c");
+      else if (ext === ".c" || ext === ".cc" || ext === ".cpp" || ext === ".h" || ext === ".hpp")
+        languageSet.add("cpp_c");
       else if (ext === ".cs") languageSet.add("csharp");
       else if (ext === ".sql") languageSet.add("sql");
       else if (ext === ".tla") languageSet.add("tla_plus");
@@ -577,7 +416,7 @@ export class EosEnterpriseWorkspaceGovernor {
           relativeDir: relDir,
           manifestPath: relPath,
           language: lang,
-          architecturalRole: inferArchitecturalRole(relDir, lang, text)
+          architecturalRole: inferArchitecturalRole(relDir, lang, text),
         });
       } else if (baseName === "go.mod") {
         const text = safeReadUtf8(fullFile) || "";
@@ -585,14 +424,14 @@ export class EosEnterpriseWorkspaceGovernor {
           hasExternalPackageDependencies = true;
         }
         const modMatch = text.match(/^\s*module\s+(\S+)/m);
-        const modName = modMatch ? modMatch[1] : (relDir === "." ? path.basename(realRoot) : relDir);
+        const modName = modMatch ? modMatch[1] : relDir === "." ? path.basename(realRoot) : relDir;
         languageSet.add("go");
         members.push({
           name: modName,
           relativeDir: relDir,
           manifestPath: relPath,
           language: "go",
-          architecturalRole: inferArchitecturalRole(relDir, "go", text)
+          architecturalRole: inferArchitecturalRole(relDir, "go", text),
         });
       } else if (baseName === "Cargo.toml") {
         const text = safeReadUtf8(fullFile) || "";
@@ -607,7 +446,7 @@ export class EosEnterpriseWorkspaceGovernor {
             relativeDir: relDir,
             manifestPath: relPath,
             language: "rust",
-            architecturalRole: inferArchitecturalRole(relDir, "rust", text)
+            architecturalRole: inferArchitecturalRole(relDir, "rust", text),
           });
         }
       } else if (baseName === "pyproject.toml") {
@@ -615,22 +454,22 @@ export class EosEnterpriseWorkspaceGovernor {
         const nameMatch = text.match(/^\s*name\s*=\s*"([^"]+)"/m);
         languageSet.add("python");
         members.push({
-          name: nameMatch ? nameMatch[1] : (relDir === "." ? path.basename(realRoot) : relDir),
+          name: nameMatch ? nameMatch[1] : relDir === "." ? path.basename(realRoot) : relDir,
           relativeDir: relDir,
           manifestPath: relPath,
           language: "python",
-          architecturalRole: inferArchitecturalRole(relDir, "python", text)
+          architecturalRole: inferArchitecturalRole(relDir, "python", text),
         });
       } else if (baseName === "pubspec.yaml") {
         const text = safeReadUtf8(fullFile) || "";
         const nameMatch = text.match(/^\s*name:\s*([A-Za-z0-9_-]+)/m);
         languageSet.add("flutter_dart");
         members.push({
-          name: nameMatch ? nameMatch[1] : (relDir === "." ? path.basename(realRoot) : relDir),
+          name: nameMatch ? nameMatch[1] : relDir === "." ? path.basename(realRoot) : relDir,
           relativeDir: relDir,
           manifestPath: relPath,
           language: "flutter_dart",
-          architecturalRole: "FRONTEND_OR_CLIENT"
+          architecturalRole: "FRONTEND_OR_CLIENT",
         });
       } else if (baseName === "pom.xml" || baseName === "build.gradle" || baseName === "build.gradle.kts") {
         const text = safeReadUtf8(fullFile) || "";
@@ -640,7 +479,7 @@ export class EosEnterpriseWorkspaceGovernor {
           relativeDir: relDir,
           manifestPath: relPath,
           language: "java_kotlin",
-          architecturalRole: inferArchitecturalRole(relDir, "java_kotlin", text)
+          architecturalRole: inferArchitecturalRole(relDir, "java_kotlin", text),
         });
       }
 
@@ -674,7 +513,9 @@ export class EosEnterpriseWorkspaceGovernor {
           relativePath: relPath,
           byteSize: statSize,
           validSyntax,
-          detail: validSyntax ? "Valid OpenAPI/Swagger specification header" : "Malformed OpenAPI/Swagger specification"
+          detail: validSyntax
+            ? "Valid OpenAPI/Swagger specification header"
+            : "Malformed OpenAPI/Swagger specification",
         });
       } else if (/^asyncapi\.(?:json|ya?ml)$/.test(lowerBase)) {
         const content = safeReadUtf8(fullFile) || "";
@@ -684,7 +525,7 @@ export class EosEnterpriseWorkspaceGovernor {
           relativePath: relPath,
           byteSize: statSize,
           validSyntax,
-          detail: validSyntax ? "AsyncAPI event contract" : "Missing asyncapi root field"
+          detail: validSyntax ? "AsyncAPI event contract" : "Missing asyncapi root field",
         });
       } else if (ext === ".proto") {
         const content = safeReadUtf8(fullFile) || "";
@@ -694,7 +535,7 @@ export class EosEnterpriseWorkspaceGovernor {
           relativePath: relPath,
           byteSize: statSize,
           validSyntax,
-          detail: validSyntax ? "Protocol Buffers IDL contract" : "Incomplete .proto definition"
+          detail: validSyntax ? "Protocol Buffers IDL contract" : "Incomplete .proto definition",
         });
       } else if (ext === ".graphql" || ext === ".gql") {
         const content = safeReadUtf8(fullFile) || "";
@@ -704,7 +545,7 @@ export class EosEnterpriseWorkspaceGovernor {
           relativePath: relPath,
           byteSize: statSize,
           validSyntax,
-          detail: validSyntax ? "GraphQL schema definition" : "Empty or invalid GraphQL schema"
+          detail: validSyntax ? "GraphQL schema definition" : "Empty or invalid GraphQL schema",
         });
       } else if (lowerBase.endsWith(".schema.json")) {
         const content = safeReadUtf8(fullFile) || "";
@@ -720,7 +561,7 @@ export class EosEnterpriseWorkspaceGovernor {
           relativePath: relPath,
           byteSize: statSize,
           validSyntax,
-          detail: validSyntax ? "Valid JSON Schema contract" : "Invalid JSON in schema file"
+          detail: validSyntax ? "Valid JSON Schema contract" : "Invalid JSON in schema file",
         });
       } else if (ext === ".prisma") {
         const content = safeReadUtf8(fullFile) || "";
@@ -730,7 +571,7 @@ export class EosEnterpriseWorkspaceGovernor {
           relativePath: relPath,
           byteSize: statSize,
           validSyntax,
-          detail: validSyntax ? "Prisma relational data schema" : "Incomplete Prisma schema"
+          detail: validSyntax ? "Prisma relational data schema" : "Incomplete Prisma schema",
         });
       } else if (ext === ".sql" && /(?:^|\/)(?:migrations|db|sql|schema)(?:\/|$)/i.test(relPath)) {
         contracts.push({
@@ -738,7 +579,7 @@ export class EosEnterpriseWorkspaceGovernor {
           relativePath: relPath,
           byteSize: statSize,
           validSyntax: statSize > 0,
-          detail: "SQL database migration / schema script"
+          detail: "SQL database migration / schema script",
         });
       } else if (ext === ".tla") {
         const content = safeReadUtf8(fullFile) || "";
@@ -748,7 +589,7 @@ export class EosEnterpriseWorkspaceGovernor {
           relativePath: relPath,
           byteSize: statSize,
           validSyntax,
-          detail: validSyntax ? "TLA+ formal state-machine specification" : "Malformed TLA+ module header"
+          detail: validSyntax ? "TLA+ formal state-machine specification" : "Malformed TLA+ module header",
         });
       }
 
@@ -760,7 +601,7 @@ export class EosEnterpriseWorkspaceGovernor {
             if (pat.regex.test(text)) {
               secretFindings.push({
                 patternName: pat.name,
-                relativePath: relPath
+                relativePath: relPath,
               });
             }
           }
@@ -788,14 +629,14 @@ export class EosEnterpriseWorkspaceGovernor {
       iacManifests,
       ciWorkflows,
       secretHygieneClean: secretFindings.length === 0,
-      secretFindings
+      secretFindings,
     };
 
     const recommendedVerificationCommands = this.synthesizeVerificationCommands(
       realRoot,
       relSet,
       languages,
-      orchestrators
+      orchestrators,
     );
 
     // Weighted bounded structural signals (0..100) — explicitly labeled as structural signal count
@@ -805,7 +646,11 @@ export class EosEnterpriseWorkspaceGovernor {
     else if (contracts.length > 0) signalPoints += 8;
     if (supplyChain.hasDeterministicLockfile) signalPoints += 20;
     if (supplyChain.secretHygieneClean) signalPoints += 25;
-    if (supplyChain.ciWorkflows.length > 0 || supplyChain.containerManifests.length > 0 || supplyChain.iacManifests.length > 0) {
+    if (
+      supplyChain.ciWorkflows.length > 0 ||
+      supplyChain.containerManifests.length > 0 ||
+      supplyChain.iacManifests.length > 0
+    ) {
       signalPoints += 15;
     }
 
@@ -819,7 +664,7 @@ export class EosEnterpriseWorkspaceGovernor {
       contracts: contracts.map((c) => `${c.standard}:${c.relativePath}:${c.validSyntax}`),
       lockfiles,
       secretHygieneClean: supplyChain.secretHygieneClean,
-      scannedFileCount: files.length
+      scannedFileCount: files.length,
     });
     const sha256TopologyReceipt = pureSha256(canonicalSummary);
     assertPostcondition(sha256TopologyReceipt.length === 64, "Topology receipt must be 64-char SHA-256 hex");
@@ -840,7 +685,7 @@ export class EosEnterpriseWorkspaceGovernor {
       scoreDisclaimer:
         "Bounded local structural signal count (0..100); does not certify runtime reliability, full SAST, or production readiness.",
       sha256TopologyReceipt,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -848,7 +693,7 @@ export class EosEnterpriseWorkspaceGovernor {
     realRoot: string,
     relSet: ReadonlySet<string>,
     languages: readonly EnterpriseLanguage[],
-    orchestrators: readonly WorkspaceOrchestrator[]
+    orchestrators: readonly WorkspaceOrchestrator[],
   ): EnterpriseVerificationCommand[] {
     const commands: EnterpriseVerificationCommand[] = [];
     const usesPnpm = orchestrators.includes("pnpm_workspaces") || relSet.has("pnpm-lock.yaml");
@@ -858,14 +703,14 @@ export class EosEnterpriseWorkspaceGovernor {
         id: "ts-typecheck-strict",
         stack: "typescript",
         command: "npx tsc --project tsconfig.typecheck.json --noEmit",
-        rationale: "Strict TypeScript compiler verification across configured project graph"
+        rationale: "Strict TypeScript compiler verification across configured project graph",
       });
     } else if (relSet.has("tsconfig.json") || languages.includes("typescript")) {
       commands.push({
         id: "ts-typecheck",
         stack: "typescript",
         command: "npx tsc --noEmit",
-        rationale: "Static TypeScript type-safety verification without emitting build artifacts"
+        rationale: "Static TypeScript type-safety verification without emitting build artifacts",
       });
     }
 
@@ -878,14 +723,14 @@ export class EosEnterpriseWorkspaceGovernor {
             id: "node-verify-strict",
             stack: "nodejs",
             command: usesPnpm ? "pnpm run verify:strict" : "npm run verify:strict",
-            rationale: "Execute repository-declared strict verification pipeline"
+            rationale: "Execute repository-declared strict verification pipeline",
           });
         } else if (pkg?.scripts?.test) {
           commands.push({
             id: "node-test-suite",
             stack: "nodejs",
             command: usesPnpm ? "pnpm test" : "npm test",
-            rationale: "Execute declared package test suite"
+            rationale: "Execute declared package test suite",
           });
         }
       } catch {
@@ -898,7 +743,7 @@ export class EosEnterpriseWorkspaceGovernor {
         id: "go-vet-race",
         stack: "go",
         command: "go vet ./... && go test -race ./...",
-        rationale: "Static Go analyzer and data-race detector test execution"
+        rationale: "Static Go analyzer and data-race detector test execution",
       });
     }
     if (languages.includes("rust")) {
@@ -906,7 +751,7 @@ export class EosEnterpriseWorkspaceGovernor {
         id: "cargo-check-test",
         stack: "rust",
         command: "cargo check --workspace && cargo test --workspace",
-        rationale: "Borrow-checker verification and workspace crate test suite"
+        rationale: "Borrow-checker verification and workspace crate test suite",
       });
     }
     if (languages.includes("python")) {
@@ -914,7 +759,7 @@ export class EosEnterpriseWorkspaceGovernor {
         id: "python-pytest",
         stack: "python",
         command: "pytest --maxfail=1",
-        rationale: "Python automated test suite verification"
+        rationale: "Python automated test suite verification",
       });
     }
     if (languages.includes("flutter_dart")) {
@@ -922,7 +767,7 @@ export class EosEnterpriseWorkspaceGovernor {
         id: "dart-analyze",
         stack: "flutter_dart",
         command: "dart analyze --fatal-infos",
-        rationale: "Static Dart/Flutter analyzer with zero-warning tolerance"
+        rationale: "Static Dart/Flutter analyzer with zero-warning tolerance",
       });
     }
 
@@ -934,7 +779,7 @@ export class EosEnterpriseWorkspaceGovernor {
    * evaluating their local filesystem presence and Law IV 6-precondition write status.
    */
   public static listRegisteredWorkspaces(
-    controlPlaneRoot: string = process.cwd()
+    controlPlaneRoot: string = process.cwd(),
   ): readonly RegisteredFleetWorkspace[] {
     const resolvedControlPlane = fs.realpathSync(path.resolve(controlPlaneRoot));
     const registryPath = path.join(resolvedControlPlane, "docs", "projects", "registry.json");
@@ -950,7 +795,7 @@ export class EosEnterpriseWorkspaceGovernor {
     for (const p of entries) {
       const id = String(p.id || "");
       const envName = typeof p.localPathEnv === "string" ? p.localPathEnv : undefined;
-      const envVal = envName ? (process.env[envName] || synthesizedFleetEnv[envName]) : undefined;
+      const envVal = envName ? process.env[envName] || synthesizedFleetEnv[envName] : undefined;
       const candidatePath =
         id === "eos-system"
           ? resolvedControlPlane
@@ -1005,7 +850,7 @@ export class EosEnterpriseWorkspaceGovernor {
         ownerApproval: typeof p.ownerApproval === "string" ? p.ownerApproval : undefined,
         authorization: auth,
         writeAuthorizedUnderLawIV: missing.length === 0,
-        missingLawIVPreconditions: missing
+        missingLawIVPreconditions: missing,
       });
     }
 
@@ -1021,7 +866,7 @@ export class EosEnterpriseWorkspaceGovernor {
     projectId: string,
     relativeSubPath: string = ".",
     accessMode: WorkspaceAccessMode = "READ_ONLY",
-    controlPlaneRoot: string = process.cwd()
+    controlPlaneRoot: string = process.cwd(),
   ): AuthorizedWorkspaceResolution {
     const cleanId = sanitizeProjectId(projectId);
     const fleet = this.listRegisteredWorkspaces(controlPlaneRoot);
@@ -1029,18 +874,18 @@ export class EosEnterpriseWorkspaceGovernor {
 
     if (!matched) {
       throw new Error(
-        `[UNREGISTERED_WORKSPACE] Project '${cleanId}' is not registered in docs/projects/registry.json.`
+        `[UNREGISTERED_WORKSPACE] Project '${cleanId}' is not registered in docs/projects/registry.json.`,
       );
     }
     if (!matched.resolvedLocalPath || !matched.pathExistsOnDisk) {
       throw new Error(
-        `[WORKSPACE_PATH_UNAVAILABLE] Registered project '${cleanId}' local path is not present on disk (check ${matched.localPathEnv || "localPath"}).`
+        `[WORKSPACE_PATH_UNAVAILABLE] Registered project '${cleanId}' local path is not present on disk (check ${matched.localPathEnv || "localPath"}).`,
       );
     }
 
     if (accessMode === "WRITE_GATED" && !matched.writeAuthorizedUnderLawIV) {
       throw new Error(
-        `[LAW_IV_WRITE_BARRIER_BLOCKED] External writes to '${cleanId}' are prohibited; missing preconditions: ${matched.missingLawIVPreconditions.join(", ")}.`
+        `[LAW_IV_WRITE_BARRIER_BLOCKED] External writes to '${cleanId}' are prohibited; missing preconditions: ${matched.missingLawIVPreconditions.join(", ")}.`,
       );
     }
 
@@ -1049,7 +894,7 @@ export class EosEnterpriseWorkspaceGovernor {
     const candidate = path.resolve(workspaceRoot, sub);
     if (!isPathWithin(workspaceRoot, candidate)) {
       throw new Error(
-        `[BOUNDARY_ESCAPE_BLOCKED] Requested subpath '${sub}' escapes registered workspace '${cleanId}'.`
+        `[BOUNDARY_ESCAPE_BLOCKED] Requested subpath '${sub}' escapes registered workspace '${cleanId}'.`,
       );
     }
     if (fs.existsSync(candidate)) {
@@ -1059,9 +904,7 @@ export class EosEnterpriseWorkspaceGovernor {
       }
       const realCandidate = fs.realpathSync(candidate);
       if (!isPathWithin(workspaceRoot, realCandidate)) {
-        throw new Error(
-          `[BOUNDARY_ESCAPE_BLOCKED] Resolved realpath escapes registered workspace '${cleanId}'.`
-        );
+        throw new Error(`[BOUNDARY_ESCAPE_BLOCKED] Resolved realpath escapes registered workspace '${cleanId}'.`);
       }
     }
 
@@ -1071,7 +914,7 @@ export class EosEnterpriseWorkspaceGovernor {
       workspaceRoot,
       resolvedTargetPath: candidate,
       authorizationLevel: matched.authorization,
-      writeBarrierStatus: accessMode === "WRITE_GATED" ? "AUTHORIZED" : "READ_ONLY_CONFINED"
+      writeBarrierStatus: accessMode === "WRITE_GATED" ? "AUTHORIZED" : "READ_ONLY_CONFINED",
     });
   }
 
@@ -1113,17 +956,19 @@ export class EosEnterpriseWorkspaceGovernor {
       "## Discovered Workspace Members",
       ...(topology.members.length > 0
         ? topology.members.map(
-            (m) => `- **\`${m.name}\`** (\`${m.manifestPath}\`) — Language: \`${m.language}\`, Role: \`${m.architecturalRole}\``
+            (m) =>
+              `- **\`${m.name}\`** (\`${m.manifestPath}\`) — Language: \`${m.language}\`, Role: \`${m.architecturalRole}\``,
           )
         : ["- No package manifests discovered at current scan depth."]),
       "",
       "## Discovered Formal Interface & Data Contracts",
       ...(topology.contracts.length > 0
         ? topology.contracts.map(
-            (c) => `- **\`${c.standard}\`**: \`${c.relativePath}\` (${c.byteSize} bytes, validSyntax: \`${c.validSyntax}\`)`
+            (c) =>
+              `- **\`${c.standard}\`**: \`${c.relativePath}\` (${c.byteSize} bytes, validSyntax: \`${c.validSyntax}\`)`,
           )
         : ["- No formal OpenAPI/Protobuf/GraphQL/Schema contracts detected yet."]),
-      ""
+      "",
     ].join("\n");
 
     const inventoryJson = JSON.stringify(topology, null, 2) + "\n";
@@ -1155,7 +1000,7 @@ export class EosEnterpriseWorkspaceGovernor {
       "  ENTONCES todos los contratos declarados son sintácticamente válidos y el escaneo de secretos reporta 0 hallazgos",
       "  Y se registra un recibo criptográfico SHA-256 en EosDurableSqliteLedger",
       "```",
-      ""
+      "",
     ].join("\n");
 
     const auditJson =
@@ -1165,8 +1010,7 @@ export class EosEnterpriseWorkspaceGovernor {
           projectName,
           auditedAt: new Date().toISOString(),
           epistemicState:
-            topology.supplyChain.secretHygieneClean &&
-            topology.contracts.every((c) => c.validSyntax)
+            topology.supplyChain.secretHygieneClean && topology.contracts.every((c) => c.validSyntax)
               ? "AUDIT_EXECUTED"
               : "FINDINGS_IDENTIFIED",
           secretHygieneClean: topology.supplyChain.secretHygieneClean,
@@ -1174,23 +1018,23 @@ export class EosEnterpriseWorkspaceGovernor {
           contractsCount: topology.contracts.length,
           invalidContractsCount: topology.contracts.filter((c) => !c.validSyntax).length,
           enterpriseReadinessSignalsScore: topology.enterpriseReadinessSignalsScore,
-          sha256TopologyReceipt: topology.sha256TopologyReceipt
+          sha256TopologyReceipt: topology.sha256TopologyReceipt,
         },
         null,
-        2
+        2,
       ) + "\n";
 
     const fileEntries: ReadonlyArray<{ readonly rel: string; readonly content: string }> = [
       { rel: intakeRel, content: intakeMd },
       { rel: inventoryRel, content: inventoryJson },
       { rel: specRel, content: specMd },
-      { rel: auditRel, content: auditJson }
+      { rel: auditRel, content: auditJson },
     ];
 
     const generatedArtifacts: OnboardGeneratedArtifact[] = fileEntries.map((entry) => ({
       relativeControlPlanePath: entry.rel,
       byteLength: Buffer.byteLength(entry.content, "utf8"),
-      sha256Digest: pureSha256(entry.content)
+      sha256Digest: pureSha256(entry.content),
     }));
 
     let registryUpdated = false;
@@ -1201,13 +1045,13 @@ export class EosEnterpriseWorkspaceGovernor {
         const dest = path.resolve(controlPlaneRoot, entry.rel);
         assertPrecondition(
           isPathWithin(controlPlaneRoot, dest),
-          "Onboarding artifact destination escaped controlPlaneRoot"
+          "Onboarding artifact destination escaped controlPlaneRoot",
         );
         // Double-check we NEVER write inside externalTargetPath unless externalTargetPath IS controlPlaneRoot itself
         if (!isPathWithin(controlPlaneRoot, topology.workspaceRoot)) {
           assertPrecondition(
             !isPathWithin(topology.workspaceRoot, dest),
-            "Law IV Violation: Onboarding attempted to write inside external target repository"
+            "Law IV Violation: Onboarding attempted to write inside external target repository",
           );
         }
         fs.mkdirSync(path.dirname(dest), { recursive: true });
@@ -1215,10 +1059,7 @@ export class EosEnterpriseWorkspaceGovernor {
       }
 
       const registryPath = path.join(controlPlaneRoot, "docs", "projects", "registry.json");
-      assertPrecondition(
-        isPathWithin(controlPlaneRoot, registryPath),
-        "Registry path escaped controlPlaneRoot"
-      );
+      assertPrecondition(isPathWithin(controlPlaneRoot, registryPath), "Registry path escaped controlPlaneRoot");
       fs.mkdirSync(path.dirname(registryPath), { recursive: true });
 
       const registryDoc = fs.existsSync(registryPath)
@@ -1228,7 +1069,7 @@ export class EosEnterpriseWorkspaceGovernor {
             updatedAt: new Date().toISOString(),
             masterOrchestrator: "EOS System control plane",
             complianceStandard: "EOS_CONSTITUTION_LAW_IV_EXTERNAL_WRITE_BARRIER",
-            projects: []
+            projects: [],
           };
 
       if (!Array.isArray(registryDoc.projects)) {
@@ -1236,7 +1077,7 @@ export class EosEnterpriseWorkspaceGovernor {
       }
 
       const existingIdx = registryDoc.projects.findIndex(
-        (p: Record<string, unknown>) => String(p.id || "").toLowerCase() === projectId
+        (p: Record<string, unknown>) => String(p.id || "").toLowerCase() === projectId,
       );
 
       const newEntry: Record<string, unknown> = {
@@ -1252,8 +1093,7 @@ export class EosEnterpriseWorkspaceGovernor {
         specification: "SPECIFICATION_APPROVED",
         audit: "AUDIT_COMPLETE",
         authorization: "LEVEL_1_READ_ONLY_AUDIT",
-        cicdGateScript:
-          topology.recommendedVerificationCommands[0]?.command || "eos project verify"
+        cicdGateScript: topology.recommendedVerificationCommands[0]?.command || "eos project verify",
       };
 
       if (existingIdx >= 0) {
@@ -1274,8 +1114,7 @@ export class EosEnterpriseWorkspaceGovernor {
       fs.writeFileSync(registryPath, JSON.stringify(registryDoc, null, 2) + "\n", "utf8");
       registryUpdated = true;
 
-      const ledgerPath =
-        input.ledgerDbPath || EosDurableSqliteLedger.defaultLedgerPath(controlPlaneRoot);
+      const ledgerPath = input.ledgerDbPath || EosDurableSqliteLedger.defaultLedgerPath(controlPlaneRoot);
       const ledger = new EosDurableSqliteLedger(ledgerPath);
       try {
         const rec = ledger.appendEntry({
@@ -1291,9 +1130,9 @@ export class EosEnterpriseWorkspaceGovernor {
             membersCount: topology.members.length,
             contractsCount: topology.contracts.length,
             externalBytesWritten: 0,
-            sha256TopologyReceipt: topology.sha256TopologyReceipt
+            sha256TopologyReceipt: topology.sha256TopologyReceipt,
           },
-          engramTopicKey: `eos/enterprise-onboard/${projectId}`
+          engramTopicKey: `eos/enterprise-onboard/${projectId}`,
         });
         ledgerEntryId = rec.entryId;
       } finally {
@@ -1307,8 +1146,8 @@ export class EosEnterpriseWorkspaceGovernor {
         dryRun,
         externalBytesWritten: 0,
         topologyReceipt: topology.sha256TopologyReceipt,
-        artifacts: generatedArtifacts.map((a) => `${a.relativeControlPlanePath}:${a.sha256Digest}`)
-      })
+        artifacts: generatedArtifacts.map((a) => `${a.relativeControlPlanePath}:${a.sha256Digest}`),
+      }),
     );
     assertPostcondition(sha256OnboardReceipt.length === 64, "Onboard receipt must be 64-char SHA-256");
 
@@ -1324,7 +1163,7 @@ export class EosEnterpriseWorkspaceGovernor {
       generatedArtifacts,
       registryUpdated,
       ledgerEntryId,
-      sha256OnboardReceipt
+      sha256OnboardReceipt,
     });
   }
 
@@ -1341,7 +1180,7 @@ export class EosEnterpriseWorkspaceGovernor {
       readonly projectId?: string;
       readonly recordLedger?: boolean;
       readonly ledgerDbPath?: string;
-    }
+    },
   ): EnterpriseWorkspaceVerificationReport {
     const topology = this.inspectWorkspace(targetPath);
     const { files } = scanWorkspaceTree(topology.workspaceRoot, 5, 2500);
@@ -1380,7 +1219,7 @@ export class EosEnterpriseWorkspaceGovernor {
         detail:
           malformedJsonFiles.length === 0
             ? `All inspected JSON manifests parsed cleanly (${topology.members.length} workspace member(s)).`
-            : `Malformed JSON manifests detected: ${malformedJsonFiles.join(", ")}`
+            : `Malformed JSON manifests detected: ${malformedJsonFiles.join(", ")}`,
       },
       {
         gateId: "GATE-02-FORMAL-CONTRACTS",
@@ -1389,7 +1228,7 @@ export class EosEnterpriseWorkspaceGovernor {
         detail:
           invalidContracts.length === 0
             ? `${topology.contracts.length} formal contract(s) verified with valid syntax.`
-            : `Invalid contract syntax in: ${invalidContracts.map((c) => c.relativePath).join(", ")}`
+            : `Invalid contract syntax in: ${invalidContracts.map((c) => c.relativePath).join(", ")}`,
       },
       {
         gateId: "GATE-03-SUPPLY-CHAIN-LOCKFILE",
@@ -1397,7 +1236,7 @@ export class EosEnterpriseWorkspaceGovernor {
         passed: topology.supplyChain.hasDeterministicLockfile,
         detail: topology.supplyChain.hasDeterministicLockfile
           ? `Deterministic lockfile posture satisfied (${topology.supplyChain.lockfiles.join(", ") || "no external package lock required"}).`
-          : "Missing deterministic lockfile (e.g. package-lock.json, pnpm-lock.yaml, Cargo.lock, go.sum, uv.lock)."
+          : "Missing deterministic lockfile (e.g. package-lock.json, pnpm-lock.yaml, Cargo.lock, go.sum, uv.lock).",
       },
       {
         gateId: "GATE-04-ZERO-PLAIN-SECRETS",
@@ -1407,8 +1246,8 @@ export class EosEnterpriseWorkspaceGovernor {
           ? `0 credential patterns matched across ${topology.scannedFileCount} workspace file(s).`
           : `Credential leak(s) detected: ${topology.supplyChain.secretFindings
               .map((s) => `${s.patternName} in ${s.relativePath}`)
-              .join("; ")}`
-      }
+              .join("; ")}`,
+      },
     ];
 
     const overallPassed = gates.every((g) => g.passed);
@@ -1417,15 +1256,14 @@ export class EosEnterpriseWorkspaceGovernor {
       JSON.stringify({
         workspaceRoot: topology.workspaceRoot,
         topologyReceipt: topology.sha256TopologyReceipt,
-        gates
-      })
+        gates,
+      }),
     );
 
     let ledgerEntryId: string | null = null;
     if (options?.recordLedger !== false && (options?.controlPlaneRoot || options?.ledgerDbPath)) {
       const ledgerPath =
-        options.ledgerDbPath ||
-        EosDurableSqliteLedger.defaultLedgerPath(path.resolve(options.controlPlaneRoot!));
+        options.ledgerDbPath || EosDurableSqliteLedger.defaultLedgerPath(path.resolve(options.controlPlaneRoot!));
       const ledger = new EosDurableSqliteLedger(ledgerPath);
       try {
         const rec = ledger.appendEntry({
@@ -1437,8 +1275,8 @@ export class EosEnterpriseWorkspaceGovernor {
             epistemicState,
             overallPassed,
             gates,
-            sha256VerificationReceipt
-          }
+            sha256VerificationReceipt,
+          },
         });
         ledgerEntryId = rec.entryId;
       } finally {
@@ -1455,7 +1293,7 @@ export class EosEnterpriseWorkspaceGovernor {
       recommendedCommands: topology.recommendedVerificationCommands,
       ledgerEntryId,
       sha256VerificationReceipt,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 }

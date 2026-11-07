@@ -12,10 +12,10 @@ import crypto from "node:crypto";
 export const OtlpStatusCode = {
   STATUS_CODE_UNSET: 0,
   STATUS_CODE_OK: 1,
-  STATUS_CODE_ERROR: 2
+  STATUS_CODE_ERROR: 2,
 } as const;
 
-export type OtlpStatusCode = typeof OtlpStatusCode[keyof typeof OtlpStatusCode];
+export type OtlpStatusCode = (typeof OtlpStatusCode)[keyof typeof OtlpStatusCode];
 
 export type AttributeValue = string | number | boolean;
 
@@ -70,11 +70,7 @@ export class EosOtlpTelemetryEngine {
   private readonly serviceName: string;
   private readonly serviceVersion: string;
 
-  constructor(options?: {
-    maxBufferedSpans?: number;
-    serviceName?: string;
-    serviceVersion?: string;
-  }) {
+  constructor(options?: { maxBufferedSpans?: number; serviceName?: string; serviceVersion?: string }) {
     this.maxBufferedSpans = options?.maxBufferedSpans ?? 1024;
     this.serviceName = options?.serviceName ?? "eos-system";
     this.serviceVersion = options?.serviceVersion ?? "75.0.0";
@@ -111,7 +107,7 @@ export class EosOtlpTelemetryEngine {
     return {
       traceId: parts[1],
       spanId: parts[2],
-      sampled: parts[3] === "01"
+      sampled: parts[3] === "01",
     };
   }
 
@@ -125,7 +121,7 @@ export class EosOtlpTelemetryEngine {
       parentSpanId?: string;
       attributes?: Record<string, AttributeValue>;
       kind?: number;
-    }
+    },
   ): OtlpSpan {
     const traceId = options?.parentTraceId || this.generateTraceId();
     const spanId = this.generateSpanId();
@@ -147,8 +143,8 @@ export class EosOtlpTelemetryEngine {
       startTimeUnixNano: nowNano,
       attributes: formattedAttrs,
       status: {
-        code: OtlpStatusCode.STATUS_CODE_UNSET
-      }
+        code: OtlpStatusCode.STATUS_CODE_UNSET,
+      },
     };
 
     this.activeSpans.set(spanId, span);
@@ -162,7 +158,7 @@ export class EosOtlpTelemetryEngine {
     spanId: string,
     status: OtlpStatusCode = OtlpStatusCode.STATUS_CODE_OK,
     errorMessage?: string,
-    extraAttributes?: Record<string, AttributeValue>
+    extraAttributes?: Record<string, AttributeValue>,
   ): OtlpSpan | null {
     const span = this.activeSpans.get(spanId);
     if (!span) return null;
@@ -170,7 +166,7 @@ export class EosOtlpTelemetryEngine {
     span.endTimeUnixNano = (BigInt(Date.now()) * 1000000n).toString();
     span.status = {
       code: status,
-      message: errorMessage
+      message: errorMessage,
     };
 
     if (extraAttributes) {
@@ -206,20 +202,20 @@ export class EosOtlpTelemetryEngine {
               { key: "service.name", value: { stringValue: this.serviceName } },
               { key: "service.version", value: { stringValue: this.serviceVersion } },
               { key: "telemetry.sdk.name", value: { stringValue: "eos-otlp-tracer" } },
-              { key: "telemetry.sdk.language", value: { stringValue: "typescript-l0" } }
-            ]
+              { key: "telemetry.sdk.language", value: { stringValue: "typescript-l0" } },
+            ],
           },
           scopeSpans: [
             {
               scope: {
                 name: "eos-system-tracer",
-                version: this.serviceVersion
+                version: this.serviceVersion,
               },
-              spans: spansToExport
-            }
-          ]
-        }
-      ]
+              spans: spansToExport,
+            },
+          ],
+        },
+      ],
     };
 
     return payload;

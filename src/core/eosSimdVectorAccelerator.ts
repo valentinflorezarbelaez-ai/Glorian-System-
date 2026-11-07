@@ -12,12 +12,7 @@
  * Zero external runtime dependencies. Node 24 strip-only compliant.
  */
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface VectorSearchResult {
@@ -70,7 +65,7 @@ export class EosSimdVectorAccelerator {
       sum7 += a[i + 7] * b[i + 7];
     }
 
-    let total = (sum0 + sum1) + (sum2 + sum3) + (sum4 + sum5) + (sum6 + sum7);
+    let total = sum0 + sum1 + (sum2 + sum3) + (sum4 + sum5) + (sum6 + sum7);
 
     // Tail elements
     for (; i < len; i++) {
@@ -149,7 +144,7 @@ export class EosSimdVectorAccelerator {
   public static topK(
     query: Float32Array,
     candidates: readonly Float32Array[],
-    k: number
+    k: number,
   ): readonly VectorSearchResult[] {
     assertPrecondition(candidates.length > 0, "Candidates cannot be empty");
     assertPrecondition(k > 0, "K must be positive");
@@ -187,7 +182,7 @@ export class EosSimdVectorAccelerator {
     const opsPerSec = durationMs > 0 ? (iterations / durationMs) * 1000.0 : 1_000_000;
 
     const receiptSha256 = pureSha256(
-      `simd-bench:${dimensions}:${iterations}:${durationUs.toFixed(2)}:${lastSim.toFixed(6)}`
+      `simd-bench:${dimensions}:${iterations}:${durationUs.toFixed(2)}:${lastSim.toFixed(6)}`,
     );
 
     const receipt: SimdBenchmarkReceipt = deepFreeze({
@@ -197,7 +192,7 @@ export class EosSimdVectorAccelerator {
       opsPerSecond: Math.round(opsPerSec),
       sampleSimilarity: Number(lastSim.toFixed(6)),
       receiptSha256,
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     });
 
     if (this.ledger) {
@@ -210,8 +205,8 @@ export class EosSimdVectorAccelerator {
             receiptSha256,
             dimensions,
             iterations,
-            opsPerSec: receipt.opsPerSecond
-          }
+            opsPerSec: receipt.opsPerSecond,
+          },
         });
       } catch {
         // Fallback if ledger unavailable

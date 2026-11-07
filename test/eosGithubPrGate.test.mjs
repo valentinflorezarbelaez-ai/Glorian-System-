@@ -1,12 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { EosGithubPrGate } from "../src/core/eosGithubPrGate.ts";
-import { EosDurableSqliteLedger } from "../src/core/eosDurableSqliteLedger.ts";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -21,7 +18,7 @@ test("BDD-179: GitHub Actions Environment Context Parsing", () => {
     GITHUB_BASE_REF: "main",
     GITHUB_HEAD_REF: "feat/instant-settlement",
     GITHUB_ACTOR: "alice-architect",
-    GITHUB_EVENT_NAME: "pull_request"
+    GITHUB_EVENT_NAME: "pull_request",
   };
 
   const context = EosGithubPrGate.extractContext(mockEnv);
@@ -74,7 +71,7 @@ test("BDD-182: Markdown PR Summary Report Generation", () => {
 test("BDD-183: Fail-Closed Merge Barrier Enactment (Breaking Contract Detected)", () => {
   const breachResult = EosGithubPrGate.evaluatePr({
     projectRoot,
-    simulateContractBreach: true
+    simulateContractBreach: true,
   });
 
   assert.equal(breachResult.conclusion, "failure");
@@ -88,7 +85,7 @@ test("BDD-183: Fail-Closed Merge Barrier Enactment (Breaking Contract Detected)"
   // Also test failure in a quality stage (e.g. stage 4 tests failure)
   const stageFailResult = EosGithubPrGate.evaluatePr({
     projectRoot,
-    simulateFailureStage: 4
+    simulateFailureStage: 4,
   });
 
   assert.equal(stageFailResult.conclusion, "failure");
@@ -104,7 +101,7 @@ test("BDD-184: MCP Dispatch of eos_github_gate via EosMcpServer", () => {
     jsonrpc: "2.0",
     id: 1,
     method: "tools/list",
-    params: {}
+    params: {},
   });
 
   assert.ok(!listRes.error);
@@ -119,9 +116,9 @@ test("BDD-184: MCP Dispatch of eos_github_gate via EosMcpServer", () => {
     params: {
       name: "eos_github_gate",
       arguments: {
-        action: "context"
-      }
-    }
+        action: "context",
+      },
+    },
   });
 
   assert.ok(!ctxRes.error);
@@ -137,9 +134,9 @@ test("BDD-184: MCP Dispatch of eos_github_gate via EosMcpServer", () => {
     params: {
       name: "eos_github_gate",
       arguments: {
-        action: "evaluate"
-      }
-    }
+        action: "evaluate",
+      },
+    },
   });
 
   assert.ok(!evalRes.error);

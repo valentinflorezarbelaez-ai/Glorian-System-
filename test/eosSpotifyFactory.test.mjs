@@ -1,7 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import path from "node:path";
 import { EosSpotifyAgenticFactory } from "../src/core/eosSpotifyAgenticFactory.ts";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
@@ -14,7 +13,7 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
         taskName: "feat: add lockless ring buffer to audio pipeline",
         stack: "rust",
         specDescription: "Implement zero-allocation SPSC ring buffer with AtomicUsize memory ordering",
-        dryRun: true
+        dryRun: true,
       });
 
       assert.ok(report.taskId.startsWith("HONK-"));
@@ -23,7 +22,9 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
       assert.equal(report.status, "PLAN_ONLY");
       assert.equal(report.epistemicState, "NOT_VERIFIED");
       assert.equal(report.steps.length, 5);
-      assert.ok(report.pullRequestDraft.includes("No branch, commit, verification, or remote pull request was created"));
+      assert.ok(
+        report.pullRequestDraft.includes("No branch, commit, verification, or remote pull request was created"),
+      );
       assert.ok(report.reportFingerprintSha256.length === 64);
     });
 
@@ -32,7 +33,7 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
         taskName: "fix: circuit breaker latency guard on recommendation endpoint",
         stack: "go",
         specDescription: "Add exponential backoff with full jitter to recommendation handler",
-        dryRun: false
+        dryRun: false,
       });
 
       assert.equal(report.status, "PLAN_ONLY");
@@ -76,7 +77,7 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
         migrationId: "FS-2026-RFC42-BACKSTAGE",
         description: "Verify RFC-42 catalog-info.yaml and TechDocs across sovereign fleet",
         action: "apply_backstage_rfc42",
-        dryRun: true
+        dryRun: true,
       });
 
       assert.equal(report.migrationId, "FS-2026-RFC42-BACKSTAGE");
@@ -92,7 +93,7 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
         migrationId: "FS-2026-STRICT-SRE",
         description: "Audit robots.txt, sitemap.xml, and HTML5 semantic tags",
         action: "enforce_strict_sre",
-        dryRun: false
+        dryRun: false,
       });
 
       assert.ok(["PLAN_ONLY", "APPLIED", "PARTIAL", "FAILED"].includes(report.status));
@@ -133,7 +134,7 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 701,
-        method: "tools/list"
+        method: "tools/list",
       });
 
       assert.ok(res?.result?.tools);
@@ -156,9 +157,9 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
             taskName: "feat: add lockless ring buffer to audio pipeline",
             stack: "rust",
             specDescription: "Lockless SPSC audio ring buffer",
-            dryRun: true
-          }
-        }
+            dryRun: true,
+          },
+        },
       });
 
       assert.ok(res?.result?.content?.[0]?.text);
@@ -177,9 +178,9 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
         params: {
           name: "eos_spotify_xirp_context",
           arguments: {
-            syncFiles: false
-          }
-        }
+            syncFiles: false,
+          },
+        },
       });
 
       assert.ok(res?.result?.content?.[0]?.text);

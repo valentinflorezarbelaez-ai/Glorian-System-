@@ -7,7 +7,9 @@ const EXPOSED_TOOLS = new Set([
   "eos_check_architecture",
   "eos_evaluate_decision",
   "eos_spotify_shuffle",
-  "eos_optimize_context"
+  "eos_optimize_context",
+  "eos_slsa_provenance_sbom",
+  "eos_semantic_search",
 ]);
 const ALLOWED_MODELS = new Set(["grok", "claude", "openai", "gemini", "deepseek", "llama", "universal"]);
 const ALLOWED_STRICTNESS = new Set(["standard", "hardened", "sovereign"]);
@@ -32,7 +34,9 @@ function rpcError(id, code, message) {
 }
 
 function boundedString(value, maximumBytes, allowEmpty = false) {
-  return typeof value === "string" && Buffer.byteLength(value, "utf8") <= maximumBytes && (allowEmpty || value.length > 0);
+  return (
+    typeof value === "string" && Buffer.byteLength(value, "utf8") <= maximumBytes && (allowEmpty || value.length > 0)
+  );
 }
 
 function validatePublicTool(toolName, rawArguments) {
@@ -46,11 +50,18 @@ function validatePublicTool(toolName, rawArguments) {
 
   switch (toolName) {
     case "eos_amplify_prompt":
-      if (!boundedString(args.rawPrompt, 8192)) return { error: rpcError(null, -32602, "rawPrompt must be a non-empty string no larger than 8 KiB.") };
-      if (args.targetModel !== undefined && (typeof args.targetModel !== "string" || !ALLOWED_MODELS.has(args.targetModel))) {
+      if (!boundedString(args.rawPrompt, 8192))
+        return { error: rpcError(null, -32602, "rawPrompt must be a non-empty string no larger than 8 KiB.") };
+      if (
+        args.targetModel !== undefined &&
+        (typeof args.targetModel !== "string" || !ALLOWED_MODELS.has(args.targetModel))
+      ) {
         return { error: rpcError(null, -32602, "targetModel is not supported.") };
       }
-      if (args.strictLevel !== undefined && (typeof args.strictLevel !== "string" || !ALLOWED_STRICTNESS.has(args.strictLevel))) {
+      if (
+        args.strictLevel !== undefined &&
+        (typeof args.strictLevel !== "string" || !ALLOWED_STRICTNESS.has(args.strictLevel))
+      ) {
         return { error: rpcError(null, -32602, "strictLevel is not supported.") };
       }
       break;
@@ -78,10 +89,24 @@ function validatePublicTool(toolName, rawArguments) {
           return { error: rpcError(null, -32602, "tracks must contain between 1 and 128 local track records.") };
         }
         for (const track of args.tracks) {
-          if (!isPlainRecord(track) || !boundedString(track.id, 128) || !boundedString(track.artistId, 128) ||
-            typeof track.bpm !== "number" || !Number.isFinite(track.bpm) || track.bpm <= 0 || track.bpm > 400 ||
-            typeof track.camelotKey !== "string" || !/^(?:[1-9]|1[0-2])[AB]$/.test(track.camelotKey)) {
-            return { error: rpcError(null, -32602, "Each track requires bounded id/artistId text, BPM in (0, 400], and a valid Camelot key.") };
+          if (
+            !isPlainRecord(track) ||
+            !boundedString(track.id, 128) ||
+            !boundedString(track.artistId, 128) ||
+            typeof track.bpm !== "number" ||
+            !Number.isFinite(track.bpm) ||
+            track.bpm <= 0 ||
+            track.bpm > 400 ||
+            typeof track.camelotKey !== "string" ||
+            !/^(?:[1-9]|1[0-2])[AB]$/.test(track.camelotKey)
+          ) {
+            return {
+              error: rpcError(
+                null,
+                -32602,
+                "Each track requires bounded id/artistId text, BPM in (0, 400], and a valid Camelot key.",
+              ),
+            };
           }
         }
       }
@@ -91,7 +116,13 @@ function validatePublicTool(toolName, rawArguments) {
       break;
     case "eos_optimize_context":
       if (Object.prototype.hasOwnProperty.call(args, "filePath")) {
-        return { error: rpcError(null, -32602, "The public endpoint accepts submitted text only; repository file reads are disabled.") };
+        return {
+          error: rpcError(
+            null,
+            -32602,
+            "The public endpoint accepts submitted text only; repository file reads are disabled.",
+          ),
+        };
       }
       if (!boundedString(args.content, MAX_CONTEXT_BYTES)) {
         return { error: rpcError(null, -32602, "content must be non-empty text no larger than 256 KiB.") };
@@ -99,6 +130,41 @@ function validatePublicTool(toolName, rawArguments) {
       args.filePath = "submitted-context.txt";
       break;
     case "eos_health_check":
+      break;
+    case "eos_slsa_provenance_sbom":
+      if (
+        args.mode !== undefined &&
+        (typeof args.mode !== "string" || !["verify", "sbom", "slsa", "both"].includes(args.mode))
+      ) {
+        return { error: rpcError(null, -32602, "mode must be one of: verify, sbom, slsa, both.") };
+      }
+      if (args.commitSha !== undefined && typeof args.commitSha !== "string") {
+        return { error: rpcError(null, -32602, "commitSha must be a string.") };
+      }
+      break;
+    case "eos_semantic_search":
+      if (!boundedString(args.query, MAX_TEXT_BYTES)) {
+        return { error: rpcError(null, -32602, "query must be a non-empty string no larger than 16 KiB.") };
+      }
+      if (
+        args.topK !== undefined &&
+        (typeof args.topK !== "number" || !Number.isSafeInteger(args.topK) || args.topK < 1 || args.topK > 50)
+      ) {
+        return { error: rpcError(null, -32602, "topK must be a safe integer between 1 and 50.") };
+      }
+      if (
+        args.mode !== undefined &&
+        (typeof args.mode !== "string" || !["hybrid", "vector", "lexical"].includes(args.mode))
+      ) {
+        return { error: rpcError(null, -32602, "mode must be one of: hybrid, vector, lexical.") };
+      }
+      if (
+        args.category !== undefined &&
+        (typeof args.category !== "string" ||
+          !["SPEC", "CHANGE", "ADR", "CODE", "PLAN", "DOC", "ALL"].includes(args.category))
+      ) {
+        return { error: rpcError(null, -32602, "category is not supported.") };
+      }
       break;
   }
 
@@ -120,12 +186,21 @@ async function getServer() {
 function limitPublicTools(response) {
   if (!response?.result || !Array.isArray(response.result.tools)) return response;
   const descriptions = {
-    eos_health_check: "Reports this handler's liveness and process memory. Subsystems and external services are not probed.",
+    eos_health_check:
+      "Runs local control-plane health probes (Layer-0 deps, SBOM, provenance, fleet registry, tip-seal pin). No network or multi-region SRE.",
     eos_amplify_prompt: "Creates a local EARS/BDD draft. No remote model is called and the output is not verified.",
-    eos_check_architecture: "Runs a bounded static analysis on the repository src directory; it does not execute tests or establish production readiness.",
-    eos_evaluate_decision: "Applies deterministic local keyword heuristics. Its score is a screening signal, not a verified decision.",
-    eos_spotify_shuffle: "Runs a local deterministic track-ordering algorithm on at most 128 supplied tracks. It does not call Spotify.",
-    eos_optimize_context: "Compresses caller-supplied text only. It does not read repository files; savings vary by input."
+    eos_check_architecture:
+      "Runs a bounded static analysis on the repository src directory; it does not execute tests or establish production readiness.",
+    eos_evaluate_decision:
+      "Applies deterministic local keyword heuristics. Its score is a screening signal, not a verified decision.",
+    eos_spotify_shuffle:
+      "Runs a local deterministic track-ordering algorithm on at most 128 supplied tracks. It does not call Spotify.",
+    eos_optimize_context:
+      "Compresses caller-supplied text only. It does not read repository files; savings vary by input.",
+    eos_slsa_provenance_sbom:
+      "Verifies or generates pure Layer-0 CycloneDX v1.5 SBOM and SLSA Provenance attestations.",
+    eos_semantic_search:
+      "Search EOS sovereign architecture and knowledge base using deterministic Layer-0 hybrid lexical-vector search (FTS5 BM25 + 64-dim token hash projection with RRF k=60; zero neural weights).",
   };
 
   response.result.tools = response.result.tools
@@ -137,9 +212,11 @@ function limitPublicTools(response) {
           description: descriptions[tool.name],
           inputSchema: {
             type: "object",
-            properties: { content: { type: "string", description: "Text submitted for local compression; maximum 256 KiB." } },
-            required: ["content"]
-          }
+            properties: {
+              content: { type: "string", description: "Text submitted for local compression; maximum 256 KiB." },
+            },
+            required: ["content"],
+          },
         };
       }
       if (tool.name === "eos_check_architecture") {
@@ -148,15 +225,38 @@ function limitPublicTools(response) {
           description: descriptions[tool.name],
           inputSchema: {
             type: "object",
-            properties: { targetDir: { type: "string", enum: ["src"], description: "Only the repository src directory can be scanned." }
-            }
-          }
+            properties: {
+              targetDir: {
+                type: "string",
+                enum: ["src"],
+                description: "Only the repository src directory can be scanned.",
+              },
+            },
+          },
         };
       }
       if (tool.name === "eos_spotify_shuffle") {
         const schema = { ...tool.inputSchema, properties: { ...tool.inputSchema.properties } };
-        if (schema.properties.tracks) schema.properties.tracks = { ...schema.properties.tracks, minItems: 1, maxItems: 128 };
+        if (schema.properties.tracks)
+          schema.properties.tracks = { ...schema.properties.tracks, minItems: 1, maxItems: 128 };
         return { ...tool, description: descriptions[tool.name], inputSchema: schema };
+      }
+      if (tool.name === "eos_slsa_provenance_sbom") {
+        return {
+          ...tool,
+          description: descriptions[tool.name],
+          inputSchema: {
+            type: "object",
+            properties: {
+              mode: {
+                type: "string",
+                enum: ["verify", "sbom", "slsa", "both"],
+                description: "Execution mode (verify, sbom, slsa, both).",
+              },
+              commitSha: { type: "string", description: "Optional commit SHA for SLSA statement." },
+            },
+          },
+        };
       }
       return { ...tool, description: descriptions[tool.name] };
     });
@@ -167,31 +267,77 @@ function addLocalScope(response, toolName) {
   const text = response?.result?.content?.[0]?.text;
   if (typeof text !== "string") return response;
   let result = text;
-  try { result = JSON.parse(text); } catch {}
+  try {
+    result = JSON.parse(text);
+  } catch {
+    /* ignore non-json */
+  }
   response.result.content[0].text = JSON.stringify({
     scope: "LOCAL_ONLY",
     tool: toolName,
     externalSystemsQueried: false,
     deploymentPerformed: false,
     certificationIssued: false,
-    result
+    result,
   });
   return response;
 }
 
-export default async function handler(req, res) {
+const STATIC_ALLOWED_ORIGINS = new Set([
+  "https://glorian-system.vercel.app",
+  "https://eos-system.vercel.app",
+  "https://portafolio-valentin.vercel.app",
+  "https://avo-pack.vercel.app",
+  "https://crud-slack.vercel.app",
+  "https://atp-strength.vercel.app",
+  "https://biblioteca-gnostica.vercel.app",
+  "https://donaciones-drab.vercel.app",
+  "https://aberamentosprelomamusic.vercel.app",
+  "https://ptg-performance-talent-group.vercel.app",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+]);
+
+function isAllowedOrigin(origin) {
+  if (typeof origin !== "string" || !origin || /[\r\n]/.test(origin)) return false;
+  if (STATIC_ALLOWED_ORIGINS.has(origin)) return true;
+  if (/^https:\/\/(?:[a-zA-Z0-9-]+\.)*vercel\.app$/i.test(origin)) return true;
+  if (process.env.EOS_ALLOWED_ORIGINS) {
+    const custom = process.env.EOS_ALLOWED_ORIGINS.split(",").map((s) => s.trim());
+    if (custom.includes(origin)) return true;
+  }
+  return false;
+}
+
+async function _handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
   res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  const origin = req.headers?.origin;
+  const isAllowed = isAllowedOrigin(origin);
+  if (isAllowed) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+  }
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Accept, Authorization, Mcp-Session-Id, MCP-Protocol-Version",
+  );
   res.setHeader("Vary", "Origin");
 
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (req.method === "OPTIONS") {
+    if (origin && !isAllowed) {
+      return res.status(403).json({ error: "Origin is not allowed." });
+    }
+    return res.status(204).end();
+  }
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST, OPTIONS");
-    return res.status(405).json({ status: "METHOD_NOT_ALLOWED", transport: "stateless JSON-RPC POST; server-sent events are not supported" });
+    return res.status(405).json({
+      status: "METHOD_NOT_ALLOWED",
+      transport: "stateless JSON-RPC POST; server-sent events are not supported in serverless mode (ADR-0172)",
+    });
   }
 
   const contentTypeValue = req.headers?.["content-type"];
@@ -202,19 +348,31 @@ export default async function handler(req, res) {
   const acceptValue = req.headers?.accept;
   const accept = Array.isArray(acceptValue) ? acceptValue.join(",") : acceptValue;
   if (typeof accept === "string" && accept && !accept.includes("application/json") && !accept.includes("*/*")) {
+    if (accept.includes("text/event-stream")) {
+      return res.status(406).json({
+        status: "NOT_ACCEPTABLE",
+        message:
+          "Serverless MCP transport operates in stateless JSON-RPC mode only (ADR-0172). For persistent streaming sessions (text/event-stream), connect to the local persistent daemon (src/mcp/eosMcpStreamServer.ts).",
+        supported: "application/json",
+      });
+    }
     return res.status(406).json({ status: "NOT_ACCEPTABLE", supported: "application/json" });
   }
 
   let rawBody = req.body;
   let bodyText;
   if (Buffer.isBuffer(rawBody)) {
-    if (rawBody.byteLength > MAX_REQUEST_BYTES) return res.status(413).json(rpcError(null, -32600, "Request exceeds the 1 MiB limit."));
+    if (rawBody.byteLength > MAX_REQUEST_BYTES)
+      return res.status(413).json(rpcError(null, -32600, "Request exceeds the 1 MiB limit."));
     bodyText = rawBody.toString("utf8");
   } else if (typeof rawBody === "string") {
-    if (Buffer.byteLength(rawBody, "utf8") > MAX_REQUEST_BYTES) return res.status(413).json(rpcError(null, -32600, "Request exceeds the 1 MiB limit."));
+    if (Buffer.byteLength(rawBody, "utf8") > MAX_REQUEST_BYTES)
+      return res.status(413).json(rpcError(null, -32600, "Request exceeds the 1 MiB limit."));
     bodyText = rawBody;
   } else if (isPlainRecord(rawBody)) {
-    try { bodyText = JSON.stringify(rawBody); } catch {
+    try {
+      bodyText = JSON.stringify(rawBody);
+    } catch {
       return res.status(400).json(rpcError(null, -32600, "Invalid JSON-RPC request."));
     }
     if (typeof bodyText !== "string" || Buffer.byteLength(bodyText, "utf8") > MAX_REQUEST_BYTES) {
@@ -225,10 +383,17 @@ export default async function handler(req, res) {
   }
 
   let message;
-  try { message = JSON.parse(bodyText); } catch {
+  try {
+    message = JSON.parse(bodyText);
+  } catch {
     return res.status(400).json(rpcError(null, -32700, "Parse error: Invalid JSON."));
   }
-  if (!isPlainRecord(message) || message.jsonrpc !== "2.0" || typeof message.method !== "string" || message.method.length > 128) {
+  if (
+    !isPlainRecord(message) ||
+    message.jsonrpc !== "2.0" ||
+    typeof message.method !== "string" ||
+    message.method.length > 128
+  ) {
     return res.status(400).json(rpcError(requestId(message), -32600, "Invalid JSON-RPC request."));
   }
   if (message.params !== undefined && !isPlainRecord(message.params)) {
@@ -236,9 +401,12 @@ export default async function handler(req, res) {
   }
   const hasId = Object.prototype.hasOwnProperty.call(message, "id");
   if (!hasId && message.method.startsWith("notifications/")) return res.status(202).end();
-  if (!hasId || message.id === null ||
+  if (
+    !hasId ||
+    message.id === null ||
     (typeof message.id !== "string" && (typeof message.id !== "number" || !Number.isFinite(message.id))) ||
-    (typeof message.id === "string" && Buffer.byteLength(message.id, "utf8") > 128)) {
+    (typeof message.id === "string" && Buffer.byteLength(message.id, "utf8") > 128)
+  ) {
     return res.status(400).json(rpcError(requestId(message), -32600, "A bounded JSON-RPC request ID is required."));
   }
 
@@ -276,3 +444,7 @@ export default async function handler(req, res) {
     return res.status(503).json({ status: "MCP_ENGINE_UNAVAILABLE", externalSystemsQueried: false });
   }
 }
+
+// Rate limiting — 30 req/min burst per IP (MCP requests can be high-frequency from agents)
+import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+export default withRateLimit({ capacity: 30, refillPerSecond: 0.5 })(_handler);

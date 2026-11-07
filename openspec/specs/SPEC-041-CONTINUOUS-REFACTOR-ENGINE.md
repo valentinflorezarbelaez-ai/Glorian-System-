@@ -1,6 +1,7 @@
 # SPEC-041: AUTONOMOUS CONTINUOUS REFACTORING ENGINE & DETERMINISTIC SIMULATION TESTING (v47.0.0)
 
 ## 1. Specification Metadata
+
 - **Spec ID**: `SPEC-041`
 - **Title**: Autonomous Continuous Refactoring Engine, Design by Contract & Deterministic Simulation Testing (DST)
 - **Status**: `APPROVED`
@@ -13,20 +14,25 @@
 ## 2. Functional Requirements (EARS Patterns)
 
 ### FR-119: Autonomous Codebase Duplication & Dead Code Detection (DRY & Diet)
+
 - **EARS Pattern (Event-Driven)**: CUANDO el motor de refactorización analiza los archivos fuente de Capa 0, EL SISTEMA detectará bloques duplicados (>10 tokens idénticos), exportaciones huérfanas y código muerto; SI la similitud estructural entre dos módulos excede el umbral, ENTONCES EL SISTEMA reportará la oportunidad de abstracción DRY y generará una propuesta de consolidación canónica reutilizable sin romper contratos.
 - **Invariante**: Ninguna sugerencia de refactorización alterará la firma pública de módulos en producción sin una propuesta delta formal.
 
 ### FR-120: Design by Contract (DbC) Invariant Enforcement & Deep Immutability
+
 - **EARS Pattern (State-Driven)**: MIENTRAS cualquier módulo crítico ejecuta lógica de dominio, EL SISTEMA validará explícitamente precondiciones antes de computar (`assertPrecondition`), postcondiciones antes de retornar (`assertPostcondition`), e invariantes estructurales en cada mutación de estado (`assertInvariant`); SI una precondición falla, ENTONCES abortará inmediatamente con `PRECONDITION_FAILED` sin corromper el estado en memoria, garantizando inmutabilidad mediante congelación profunda (`deepFreeze`).
 
 ### FR-121: Deterministic Simulation Testing (DST) Engine (FoundationDB / Antithesis Standard)
+
 - **EARS Pattern (Ubiquitous)**: EL SISTEMA mantendrá un simulador determinista de tiempo discreto gobernado por una semilla numérica pseudo-aleatoria (PRNG Mulberry32) que emula reloj virtual, caídas de nodo, retrasos de red y fallos de disco con 100% de reproducibilidad bit a bit ante cualquier semilla idéntica.
 - **Invariante**: Cualquier violación de invariante detectada durante la simulación DST debe ser reproducible de forma determinista introduciendo exactamente la misma semilla.
 
 ### FR-122: Continuous Autonomous Refactoring Loop & Code Diet Optimization
+
 - **EARS Pattern (Ubiquitous)**: EL SISTEMA mantendrá un planificador de auto-inspección periódica (Daemon Mode) que audita la deuda técnica, calcula la razón de compresión de líneas de código (LOC Diet Ratio), evalúa la profundidad de bucles anidados para aplanar algoritmos hacia $O(n)$, y ejecuta verificaciones de no-regresión antes y después de cada refactorización.
 
 ### FR-123: Multi-Channel Transcendental Refactoring Dispatch (MCP & CLI)
+
 - **EARS Pattern (Ubiquitous)**: EL SISTEMA expondrá las herramientas `eos_refactor_audit`, `eos_refactor_execute`, `eos_dst_simulate` y `eos_dbc_verify` en el servidor MCP y los comandos `eos refactor`, `eos dst` y `eos dbc` en la interfaz de línea de comandos CLI.
 
 ---

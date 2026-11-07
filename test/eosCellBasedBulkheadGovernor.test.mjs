@@ -21,10 +21,14 @@ describe("EOS SPEC-109: Distributed Cell-Based Bulkhead Governor Suite", () => {
     const key1 = "repo:eos-system:task-42";
     const key2 = "repo:portafolio:task-99";
     const hash1 = EosCellBasedBulkheadGovernor.computeFnv1a32(key1);
-    const hash2 = EosCellBasedBulkheadGovernor.computeFnv1a32(key2);
+    EosCellBasedBulkheadGovernor.computeFnv1a32(key2);
 
     assert.strictEqual(typeof hash1, "number");
-    assert.strictEqual(hash1, EosCellBasedBulkheadGovernor.computeFnv1a32(key1), "FNV-1a must be strictly deterministic");
+    assert.strictEqual(
+      hash1,
+      EosCellBasedBulkheadGovernor.computeFnv1a32(key1),
+      "FNV-1a must be strictly deterministic",
+    );
 
     const decision1 = governor.route(key1);
     const decision2 = governor.route(key1); // Same key must route to same cell
@@ -128,9 +132,9 @@ describe("EOS SPEC-109: Distributed Cell-Based Bulkhead Governor Suite", () => {
         name: "eos_cell_bulkhead_route",
         arguments: {
           partitionKey: "fleet:repo-aberamentho",
-          payload: { action: "sync_playlists" }
-        }
-      }
+          payload: { action: "sync_playlists" },
+        },
+      },
     });
 
     assert.strictEqual(routeRes.jsonrpc, "2.0");
@@ -148,9 +152,9 @@ describe("EOS SPEC-109: Distributed Cell-Based Bulkhead Governor Suite", () => {
       params: {
         name: "eos_cell_bulkhead_status",
         arguments: {
-          cellId: routeData.cellId
-        }
-      }
+          cellId: routeData.cellId,
+        },
+      },
     });
 
     assert.strictEqual(statusRes.jsonrpc, "2.0");

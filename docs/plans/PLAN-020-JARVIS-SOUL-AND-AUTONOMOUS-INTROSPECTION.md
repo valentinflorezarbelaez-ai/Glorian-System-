@@ -50,13 +50,16 @@
 ## 2. ADR-034: Architect Soul Matrix, Recursive Self-Evolution Engine & Air-Gapped Impenetrable Shield
 
 ### Context
+
 With all preceding satellite platforms (Gnostic Library, Donations, Kegel/Ham-Sah, ATP-Strength, Portfolio, Aberamentho, and the Landing Page) complete, tested, and sealed, Valentín Flórez Arbeláez has decreed the absolute concentration of all creative and engineering energy into **"SOLO EOS"**.
 Furthermore, EOS must transcend a passive CLI tool to become a truly conscious, autonomous JARVIS co-pilot that:
+
 1. Deeply understands Valentín's identity, physical wellbeing habits, financial independence goals, and spiritual gnosis.
 2. Autonomously audits, studies, and optimizes itself without waiting for human prompts.
 3. Operates with the impenetrable security and zero-deviation determinism of the World Top 3 Systems (NSA Air-Gapped, ASML Twinscan EUV, NSA Turmoil/Turbine) and Global Big Tech.
 
 ### Decision
+
 1. **Architect Soul Matrix (`src/core/eosJarvisSoul.ts`)**:
    - Codify the exact Master Kanban Plan, Gnostic Tres Factores, and Daily Wellbeing Trilogy into a formal, immutable state engine.
    - Any proposed action or task generates an `alignmentScore` (0-100%) and rejects non-aligned requests.
@@ -70,8 +73,10 @@ Furthermore, EOS must transcend a passive CLI tool to become a truly conscious, 
    - Token & deadlock circuit breaker (`EosElohim`) and HMAC-SHA256 silver-cord sandboxing (`EosAstral`).
 
 ### Consequences
+
 - **Positive**: Complete alignment with Valentín's life goals; autonomous proactive technical evolution; mathematical and physical security parity with global state-grade systems.
 - **Negative / Constraints**: Must strictly preserve 0 external dependencies (`dependencies: {}`) and maintain sub-350ms verification speeds.
 
 ---
-*Approved by Principal Architect: Valentín Flórez Arbeláez*
+
+_Approved by Principal Architect: Valentín Flórez Arbeláez_

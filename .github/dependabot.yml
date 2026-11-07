@@ -8,3 +8,45 @@ updates:
       time: "09:00"
       timezone: America/Bogota
     open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: America/Bogota
+    open-pull-requests-limit: 5
+    groups:
+      development-dependencies:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+  - package-ecosystem: gomod
+    directory: /templates/spotify-go-microservice
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: America/Bogota
+    open-pull-requests-limit: 3
+    groups:
+      go-modules:
+        patterns:
+          - "*"
+  - package-ecosystem: cargo
+    directory: /templates/spotify-rust-audio-core
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: America/Bogota
+    open-pull-requests-limit: 3
+    groups:
+      rust-crates:
+        patterns:
+          - "*"

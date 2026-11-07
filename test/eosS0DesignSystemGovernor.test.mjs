@@ -76,7 +76,7 @@ describe("SPEC-128: Tier S-0 Design Engineering Matrix & Machine-Readable Visual
         jsonrpc: "2.0",
         id: 1,
         method: "tools/list",
-        params: {}
+        params: {},
       });
       assert.ok(toolsRes && toolsRes.result);
       const hasTool = toolsRes.result.tools.some((t) => t.name === "eos_design_system_govern");
@@ -88,8 +88,8 @@ describe("SPEC-128: Tier S-0 Design Engineering Matrix & Machine-Readable Visual
         method: "tools/call",
         params: {
           name: "eos_design_system_govern",
-          arguments: {}
-        }
+          arguments: {},
+        },
       });
       assert.ok(callRes && callRes.result);
       const parsed = JSON.parse(callRes.result.content[0].text);

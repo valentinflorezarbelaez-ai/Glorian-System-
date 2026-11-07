@@ -1,11 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import {
-  secureZeroizeBuffer,
-  EosZeroizableSecret,
-  EosSealedMemoryVault
-} from "../src/core/eosMemoryZeroizer.ts";
+import { secureZeroizeBuffer, EosZeroizableSecret, EosSealedMemoryVault } from "../src/core/eosMemoryZeroizer.ts";
 
 test("BDD-253: Sobreescritura criptográfica determinista de buffers de memoria en RAM (SPEC-089)", () => {
   const secretContent = "TOP_SECRET_TREASURY_QUANTUM_KEY_2026";
@@ -19,7 +15,10 @@ test("BDD-253: Sobreescritura criptográfica determinista de buffers de memoria 
 
   // Assert memory is 100% zeroed out
   assert.notEqual(buffer.toString("utf8"), secretContent);
-  assert.equal(buffer.every((byte) => byte === 0x00), true);
+  assert.equal(
+    buffer.every((byte) => byte === 0x00),
+    true,
+  );
 
   // Check no residue of original bytes
   let matchCount = 0;
@@ -49,10 +48,7 @@ test("BDD-254: Garantía de ceroización automática en contenedores de secreto 
   assert.equal(secret.isDisposed(), true);
 
   // Post-disposal access must throw fail-closed
-  assert.throws(
-    () => secret.use((buf) => buf.toString("utf8")),
-    /SECRET_ALREADY_ZEROIZED/
-  );
+  assert.throws(() => secret.use((buf) => buf.toString("utf8")), /SECRET_ALREADY_ZEROIZED/);
 
   // Test Vault container
   const vault = new EosSealedMemoryVault();
@@ -65,8 +61,5 @@ test("BDD-254: Garantía de ceroización automática en contenedores de secreto 
   const purged = vault.purgeSecret("master-db-salt");
   assert.equal(purged, true);
 
-  assert.throws(
-    () => vault.accessSecret("master-db-salt", (buf) => buf.toString("utf8")),
-    /VAULT_KEY_NOT_FOUND/
-  );
+  assert.throws(() => vault.accessSecret("master-db-salt", (buf) => buf.toString("utf8")), /VAULT_KEY_NOT_FOUND/);
 });

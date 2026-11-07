@@ -32,7 +32,7 @@ function runLocalChecks() {
     console.log("\n[1/3] Running bounded local repository checks (no test suite)...");
     execFileSync(process.execPath, [path.join(root, "bin/eos.mjs"), "turbo"], {
       cwd: root,
-      stdio: "inherit"
+      stdio: "inherit",
     });
     console.log("[LOCAL CHECKS] PASSED");
     return true;
@@ -47,7 +47,7 @@ function runFleetChecks() {
     console.log("\n[2/3] Running fleet registry, local Git, and configured HTTP checks...");
     execFileSync(process.execPath, [path.join(root, "scripts/fleet-autonomous-cicd.mjs")], {
       cwd: root,
-      stdio: "inherit"
+      stdio: "inherit",
     });
     console.log("[FLEET CHECKS] PASSED");
     return true;
@@ -62,7 +62,7 @@ async function probeProcessLiveness() {
     console.log("\n[3/3] Probing the configured EOS process-liveness endpoint...");
     const response = await fetch(configuredHealthUrl(), {
       cache: "no-store",
-      signal: AbortSignal.timeout(requestTimeoutMs)
+      signal: AbortSignal.timeout(requestTimeoutMs),
     });
     if (response.status !== 200) {
       console.error(`[PRODUCTION PROCESS] FAILED (HTTP ${response.status})`);
@@ -89,7 +89,9 @@ async function runAutonomousJarvisCycle() {
   const processLivenessPassed = await probeProcessLiveness();
   const allChecksPassed = localChecksPassed && fleetChecksPassed && processLivenessPassed;
 
-  console.log(`\n[JARVIS REPORT] Local checks: ${localChecksPassed ? "PASS" : "FAIL"}; fleet checks: ${fleetChecksPassed ? "PASS" : "FAIL"}; production process liveness: ${processLivenessPassed ? "PASS" : "FAIL"}.`);
+  console.log(
+    `\n[JARVIS REPORT] Local checks: ${localChecksPassed ? "PASS" : "FAIL"}; fleet checks: ${fleetChecksPassed ? "PASS" : "FAIL"}; production process liveness: ${processLivenessPassed ? "PASS" : "FAIL"}.`,
+  );
   return allChecksPassed;
 }
 

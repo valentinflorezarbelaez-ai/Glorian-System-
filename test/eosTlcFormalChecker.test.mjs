@@ -18,10 +18,7 @@ test("BDD-173: Dual-Mode TLC Runtime Detection & Status Reporting", () => {
 
   assert.equal(typeof diagnostic.javaInstalled, "boolean");
   assert.equal(typeof diagnostic.tlaJarPresent, "boolean");
-  assert.ok(
-    diagnostic.executionMode === "TLC_NATIVE" ||
-    diagnostic.executionMode === "FALLBACK_BOUNDED_JS"
-  );
+  assert.ok(diagnostic.executionMode === "TLC_NATIVE" || diagnostic.executionMode === "FALLBACK_BOUNDED_JS");
   assert.ok(typeof diagnostic.recommendation === "string");
   assert.ok(diagnostic.recommendation.length > 10);
 });
@@ -29,15 +26,12 @@ test("BDD-173: Dual-Mode TLC Runtime Detection & Status Reporting", () => {
 test("BDD-174: Formal Model Checking Execution (Nominal)", () => {
   const result = EosTlcFormalChecker.verifyModel("TlcFormalModelChecker.tla", {
     projectRoot,
-    steps: 250
+    steps: 250,
   });
 
   assert.equal(result.specification, "TlcFormalModelChecker.tla");
   assert.equal(result.status, "PASS");
-  assert.ok(
-    result.executionMode === "TLC_NATIVE" ||
-    result.executionMode === "FALLBACK_BOUNDED_JS"
-  );
+  assert.ok(result.executionMode === "TLC_NATIVE" || result.executionMode === "FALLBACK_BOUNDED_JS");
   assert.ok(result.exploredStates >= 100);
   assert.ok(result.distinctStates >= 1);
   assert.equal(result.sha256Receipt.length, 64);
@@ -49,7 +43,7 @@ test("BDD-175: Transparent Bounded JS Simulation Fallback (Fail-Safe)", () => {
   const fallbackResult = EosTlcFormalChecker.verifyModel("AgentTopologyMesh.tla", {
     projectRoot,
     steps: 300,
-    forceFallback: true
+    forceFallback: true,
   });
 
   assert.equal(fallbackResult.executionMode, "FALLBACK_BOUNDED_JS");
@@ -72,7 +66,7 @@ test("BDD-177: Cryptographic Verification Receipt & Ledger Monotonic Chain", () 
     const res = EosTlcFormalChecker.verifyModel("AutonomousClosedLoopHealing.tla", {
       projectRoot,
       steps: 150,
-      forceFallback: true
+      forceFallback: true,
     });
 
     assert.equal(res.status, "PASS");
@@ -84,9 +78,7 @@ test("BDD-177: Cryptographic Verification Receipt & Ledger Monotonic Chain", () 
     const ledger = new EosDurableSqliteLedger(EosDurableSqliteLedger.defaultLedgerPath(tempDir));
     try {
       const recent = ledger.listRecent(5);
-      const found = recent.find(
-        (e) => e.payload && e.payload.sha256Receipt === res.sha256Receipt
-      );
+      const found = recent.find((e) => e.payload && e.payload.sha256Receipt === res.sha256Receipt);
 
       assert.ok(found, "TLC verification receipt must be recorded in SQLite WAL ledger");
       assert.equal(found.category, "VERIFICATION_RECEIPT");
@@ -108,7 +100,7 @@ test("BDD-178: MCP Dispatch of eos_tlc_checker via EosMcpServer", () => {
     jsonrpc: "2.0",
     id: 1,
     method: "tools/list",
-    params: {}
+    params: {},
   });
 
   assert.ok(!listRes.error);
@@ -123,18 +115,15 @@ test("BDD-178: MCP Dispatch of eos_tlc_checker via EosMcpServer", () => {
     params: {
       name: "eos_tlc_checker",
       arguments: {
-        action: "status"
-      }
-    }
+        action: "status",
+      },
+    },
   });
 
   assert.ok(!statusRes.error);
   const statusData = JSON.parse(statusRes.result.content[0].text);
   assert.equal(typeof statusData.javaInstalled, "boolean");
-  assert.ok(
-    statusData.executionMode === "TLC_NATIVE" ||
-    statusData.executionMode === "FALLBACK_BOUNDED_JS"
-  );
+  assert.ok(statusData.executionMode === "TLC_NATIVE" || statusData.executionMode === "FALLBACK_BOUNDED_JS");
 
   // 3. Call check action
   const checkRes = server.handleRequest({
@@ -146,9 +135,9 @@ test("BDD-178: MCP Dispatch of eos_tlc_checker via EosMcpServer", () => {
       arguments: {
         action: "check",
         specification: "TlcFormalModelChecker.tla",
-        steps: 100
-      }
-    }
+        steps: 100,
+      },
+    },
   });
 
   assert.ok(!checkRes.error);

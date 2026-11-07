@@ -54,7 +54,7 @@ test("Trilogy Suite 2: EosElohim Runa NOT & Karmic Circuit Breaker", () => {
   const passRes = EosElohim.evaluateKarmicDisruptor({
     tokensConsumed: 1200,
     elapsedMs: 250,
-    thoughtHistory: ["Analyze spec", "Draft plan", "Write tests"]
+    thoughtHistory: ["Analyze spec", "Draft plan", "Write tests"],
   });
   assert.equal(passRes.status, "PASS_HARMONY");
   assert.equal(passRes.tripped, false);
@@ -63,7 +63,7 @@ test("Trilogy Suite 2: EosElohim Runa NOT & Karmic Circuit Breaker", () => {
   const tokenRes = EosElohim.evaluateKarmicDisruptor({
     tokensConsumed: 60000,
     elapsedMs: 1500,
-    maxTokens: 50000
+    maxTokens: 50000,
   });
   assert.equal(tokenRes.status, "RUNA_NOT_SEVERED");
   assert.equal(tokenRes.tripped, true);
@@ -74,7 +74,7 @@ test("Trilogy Suite 2: EosElohim Runa NOT & Karmic Circuit Breaker", () => {
   const deadlockRes = EosElohim.evaluateKarmicDisruptor({
     tokensConsumed: 500,
     elapsedMs: 6500,
-    maxElapsedMs: 5000
+    maxElapsedMs: 5000,
   });
   assert.equal(deadlockRes.status, "RUNA_NOT_SEVERED");
   assert.equal(deadlockRes.tripped, true);
@@ -84,7 +84,7 @@ test("Trilogy Suite 2: EosElohim Runa NOT & Karmic Circuit Breaker", () => {
   const loopRes = EosElohim.evaluateKarmicDisruptor({
     tokensConsumed: 500,
     elapsedMs: 500,
-    thoughtHistory: ["Thinking about file X", "Thinking about file X", "Thinking about file X"]
+    thoughtHistory: ["Thinking about file X", "Thinking about file X", "Thinking about file X"],
   });
   assert.equal(loopRes.status, "RUNA_NOT_SEVERED");
   assert.equal(loopRes.tripped, true);
@@ -95,13 +95,13 @@ test("Trilogy Suite 3: EosAin The Two Octavic Shocks & Radical Void Zero Entropy
   // Shock 1: MI -> FA
   const shock1Fail = EosAin.executeOctavicShock("MI_TO_FA", {
     hasFormalSpec: true,
-    hasBddScenarios: false // Missing BDD
+    hasBddScenarios: false, // Missing BDD
   });
   assert.equal(shock1Fail.valid, false, "Must block without BDD");
 
   const shock1Pass = EosAin.executeOctavicShock("MI_TO_FA", {
     hasFormalSpec: true,
-    hasBddScenarios: true
+    hasBddScenarios: true,
   });
   assert.equal(shock1Pass.valid, true, "Must pass with spec + BDD");
   assert.ok(shock1Pass.sha256Receipt);
@@ -109,13 +109,13 @@ test("Trilogy Suite 3: EosAin The Two Octavic Shocks & Radical Void Zero Entropy
   // Shock 2: SI -> DO
   const shock2Fail = EosAin.executeOctavicShock("SI_TO_DO", {
     allTestsPassed: true,
-    exitCodeZero: false
+    exitCodeZero: false,
   });
   assert.equal(shock2Fail.valid, false);
 
   const shock2Pass = EosAbsoluto.executeOctavicShock("SI_TO_DO", {
     allTestsPassed: true,
-    exitCodeZero: true
+    exitCodeZero: true,
   });
   assert.equal(shock2Pass.valid, true, "Must pass with tests + exit code 0");
 

@@ -5,6 +5,8 @@
  * Provides physical hardware-grade durability for bitemporal transactions:
  * - Binary frame format: [Len: uint32][txId: uint64][tsNs: uint64][crc32: uint32][payloadBytes]
  * - Magic header: "EOSW" (0x454F5357) with version uint16
+ * - v2 frames checksum the full frame (len + txId + tsNs + payload); v1 files
+ *   (payload-only CRC) remain readable and keep their original format on append
  * - Hardware flush via fs.fsyncSync(fd) to prevent torn writes upon crash
  * - Crash recovery: linear forward replay with torn-tail detection and auto-truncation
  * - IEEE 802.3 CRC32 checksum verification with 0 external dependencies
@@ -25,11 +27,25 @@ for (let i = 0; i < 256; i++) {
   CRC32_TABLE[i] = c >>> 0;
 }
 
-export function computeCrc32(buffer: Uint8Array): number {
-  let crc = 0xffffffff;
-  for (let i = 0; i < buffer.length; i++) {
-    crc = CRC32_TABLE[(crc ^ buffer[i]) & 0xff] ^ (crc >>> 8);
+function crc32Update(crc: number, bytes: Uint8Array): number {
+  for (let i = 0; i < bytes.length; i++) {
+    crc = CRC32_TABLE[(crc ^ bytes[i]) & 0xff] ^ (crc >>> 8);
   }
+  return crc;
+}
+
+export function computeCrc32(buffer: Uint8Array): number {
+  return (crc32Update(0xffffffff, buffer) ^ 0xffffffff) >>> 0;
+}
+
+// v1 checksums only the payload; v2 also covers len, txId and tsNs so header
+// bit-rot cannot replay a valid payload under a corrupted transaction identity.
+function computeFrameCrc(buf: Uint8Array, offset: number, frameLen: number, version: number): number {
+  if (version === 1) {
+    return computeCrc32(buf.subarray(offset + FRAME_HEADER_SIZE, offset + frameLen));
+  }
+  let crc = crc32Update(0xffffffff, buf.subarray(offset, offset + 20));
+  crc = crc32Update(crc, buf.subarray(offset + FRAME_HEADER_SIZE, offset + frameLen));
   return (crc ^ 0xffffffff) >>> 0;
 }
 
@@ -49,13 +65,14 @@ export interface WalRecoveryReport {
 }
 
 const WAL_MAGIC = Buffer.from([0x45, 0x4f, 0x53, 0x57]); // "EOSW"
-const WAL_VERSION = 1;
+const WAL_VERSION = 2;
 const HEADER_SIZE = 6; // 4 bytes magic + 2 bytes version
 const FRAME_HEADER_SIZE = 24; // 4 len + 8 txId + 8 tsNs + 4 crc32
 
 export class EosDurableWal<T = any> {
   public readonly filePath: string;
   private fd: number = -1;
+  private walVersion: number = WAL_VERSION;
   private currentTxId: bigint = 0n;
   private recordsCount: number = 0;
   private totalBytesWritten: number = 0;
@@ -80,6 +97,7 @@ export class EosDurableWal<T = any> {
 
     if (!fileExists) {
       this.fd = fs.openSync(this.filePath, "w+");
+      this.walVersion = WAL_VERSION;
       const header = Buffer.alloc(HEADER_SIZE);
       WAL_MAGIC.copy(header, 0);
       header.writeUInt16BE(WAL_VERSION, 4);
@@ -91,7 +109,7 @@ export class EosDurableWal<T = any> {
         lastTxId: 0n,
         tornTailBytesTruncated: 0,
         totalFileBytes: HEADER_SIZE,
-        status: "INITIALIZED_NEW"
+        status: "INITIALIZED_NEW",
       };
       return this.lastRecoveryReport;
     }
@@ -123,10 +141,10 @@ export class EosDurableWal<T = any> {
     frame.writeUInt32BE(totalFrameLen, 0);
     frame.writeBigUInt64BE(txId, 4);
     frame.writeBigUInt64BE(timestampNs, 12);
-
-    const crc = computeCrc32(payloadJson);
-    frame.writeUInt32BE(crc, 20);
     payloadJson.copy(frame, FRAME_HEADER_SIZE);
+
+    const crc = computeFrameCrc(frame, 0, totalFrameLen, this.walVersion);
+    frame.writeUInt32BE(crc, 20);
 
     fs.writeSync(this.fd, frame, 0, totalFrameLen, this.totalBytesWritten);
     if (sync) {
@@ -140,7 +158,7 @@ export class EosDurableWal<T = any> {
       txId,
       timestampNs,
       payload,
-      rawBytesLength: totalFrameLen
+      rawBytesLength: totalFrameLen,
     };
   }
 
@@ -171,7 +189,7 @@ export class EosDurableWal<T = any> {
       const storedCrc = buf.readUInt32BE(offset + 20);
 
       const payloadSlice = buf.subarray(offset + FRAME_HEADER_SIZE, offset + frameLen);
-      const computedCrc = computeCrc32(payloadSlice);
+      const computedCrc = computeFrameCrc(buf, offset, frameLen, this.walVersion);
 
       if (storedCrc === computedCrc) {
         try {
@@ -196,6 +214,7 @@ export class EosDurableWal<T = any> {
   private recoverAndReplay(fileSize: number): WalRecoveryReport {
     if (fileSize < HEADER_SIZE) {
       fs.ftruncateSync(this.fd, 0);
+      this.walVersion = WAL_VERSION;
       const header = Buffer.alloc(HEADER_SIZE);
       WAL_MAGIC.copy(header, 0);
       header.writeUInt16BE(WAL_VERSION, 4);
@@ -206,7 +225,7 @@ export class EosDurableWal<T = any> {
         lastTxId: 0n,
         tornTailBytesTruncated: fileSize,
         totalFileBytes: HEADER_SIZE,
-        status: "TORN_WRITE_RECOVERED"
+        status: "TORN_WRITE_RECOVERED",
       };
     }
 
@@ -217,6 +236,12 @@ export class EosDurableWal<T = any> {
     if (!fullBuffer.subarray(0, 4).equals(WAL_MAGIC)) {
       throw new Error(`Invalid WAL header magic. File is corrupted or not an EOS WAL.`);
     }
+
+    const version = fullBuffer.readUInt16BE(4);
+    if (version !== 1 && version !== 2) {
+      throw new Error(`Unsupported WAL version ${version}. Refusing fail-open recovery.`);
+    }
+    this.walVersion = version;
 
     let offset = HEADER_SIZE;
     let lastValidOffset = HEADER_SIZE;
@@ -231,9 +256,8 @@ export class EosDurableWal<T = any> {
 
       const txId = fullBuffer.readBigUInt64BE(offset + 4);
       const storedCrc = fullBuffer.readUInt32BE(offset + 20);
-      const payloadSlice = fullBuffer.subarray(offset + FRAME_HEADER_SIZE, offset + frameLen);
 
-      if (computeCrc32(payloadSlice) === storedCrc) {
+      if (computeFrameCrc(fullBuffer, offset, frameLen, version) === storedCrc) {
         recovered++;
         lastTx = txId;
         offset += frameLen;
@@ -259,7 +283,7 @@ export class EosDurableWal<T = any> {
       lastTxId: lastTx,
       tornTailBytesTruncated: tornBytes,
       totalFileBytes: lastValidOffset,
-      status: tornBytes > 0 ? "TORN_WRITE_RECOVERED" : "CLEAN_RECOVERY"
+      status: tornBytes > 0 ? "TORN_WRITE_RECOVERED" : "CLEAN_RECOVERY",
     };
   }
 
@@ -273,7 +297,7 @@ export class EosDurableWal<T = any> {
       currentTxId: this.currentTxId.toString(),
       recordsCount: this.recordsCount,
       totalBytesWritten: this.totalBytesWritten,
-      filePath: this.filePath
+      filePath: this.filePath,
     };
   }
 
@@ -287,7 +311,7 @@ export class EosDurableWal<T = any> {
       currentTxId: this.currentTxId,
       recordsCount: this.recordsCount,
       totalBytesWritten: this.totalBytesWritten,
-      filePath: this.filePath
+      filePath: this.filePath,
     };
   }
 

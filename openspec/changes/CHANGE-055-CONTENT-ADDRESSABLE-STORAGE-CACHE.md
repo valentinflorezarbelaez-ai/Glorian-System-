@@ -3,11 +3,12 @@
 **Specification**: SPEC-062  
 **Target Version**: 66.0.0  
 **Status**: APPROVED  
-**Author**: Antigravity Principal Architect / EOS System Core  
+**Author**: Antigravity Principal Architect / EOS System Core
 
 ---
 
 ## Proposed Changes
+
 1. **Core Engines**:
    - `src/core/eosContentAddressableCache.ts`: Bazel-grade CAS blob deduplication and Action Cache executor.
 2. **Testing**:

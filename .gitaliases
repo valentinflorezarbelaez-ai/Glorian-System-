@@ -1,0 +1,46 @@
+# Git Aliases — Big Tech developer experience standard
+# Copy to ~/.gitconfig or run: git config --global include.path "path/to/.gitaliases"
+#
+# These aliases encode the most common Glorian System workflows as
+# one-word git commands so developers don't type long pipelines.
+
+# ── Quality ───────────────────────────────────────────────────────────────
+[alias]
+  gate = !npm run check
+  fast = !npm run verify:fast
+  typecheck = !npm run typecheck
+  lint = !npm run lint
+  lintfix = !npm run lint:fix
+  format = !npm run format
+  test = !npm test
+  test-shard = "!node scripts/test-shard.mjs --index=0 --total=4"
+  coverage = !npm run test:coverage
+  size = !npm run size:budget
+  bundle = !npm run bundle:budget
+  a11y = !npm run a11y
+  license = !npm run license:audit
+  boundary = !npm run boundary:check
+  complexity = !npm run complexity:check
+  sbom = !npm run sbom:gate
+
+  # ── Fleet ───────────────────────────────────────────────────────────────
+  fleet-audit = !npm run fleet:audit
+  fleet-sync = !npm run fleet:sync
+  fleet-mission = !npm run fleet:mission
+
+  # ── Commit helpers ──────────────────────────────────────────────────────
+  feat = "!f() { git commit -m \"feat(${1:-core}): ${2}\"; }; f"
+  fix = "!f() { git commit -m \"fix(${1:-core}): ${2}\"; }; f"
+  docs = "!f() { git commit -m \"docs: ${1}\"; }; f"
+  chore = "!f() { git commit -m \"chore: ${1}\"; }; f"
+  ci = "!f() { git commit -m \"ci: ${1}\"; }; f"
+
+  # ── Branch helpers ──────────────────────────────────────────────────────
+  bc = checkout -b
+  bd = branch -d
+  publish = push -u origin HEAD
+
+  # ── Inspection ──────────────────────────────────────────────────────────
+  who = shortlog -sne
+  fresh = clean -xfd
+  unstage = reset HEAD --

@@ -1,0 +1,52 @@
+name: EOS Container Vulnerability Scan
+
+# Big Tech standard (Docker Scout, Google Binary Authorization, Meta
+# container scanning): scan the built Docker image for known CVEs before
+# it can be deployed. Uses Trivy (Aqua Security) — the industry standard
+# open-source scanner used by GitHub, GitLab, and Docker.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "Dockerfile"
+      - "templates/glorian-fleet-gateway/**"
+  push:
+    branches: [main]
+    paths:
+      - "Dockerfile"
+      - "templates/glorian-fleet-gateway/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  trivy-scan:
+    name: Trivy vulnerability scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build Docker image
+        run: docker build -t glorian-gateway:scan templates/glorian-fleet-gateway/
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@b3035f98f851f5a1c6f641f3cb3b9aa2dab23b7e # 0.28.0
+        with:
+          image-ref: glorian-gateway:scan
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+
+      - name: Upload Trivy results to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@9418214df1f2c4b8128c770156c409013b07d6b9 # v3.39.3
+        with:
+          sarif_file: trivy-results.sarif

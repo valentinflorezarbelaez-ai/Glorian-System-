@@ -1,6 +1,7 @@
 # SPEC-044: EOS TIER-0 PRINCIPAL HARDENING & GENTLEMAN AI STACK CO-GOVERNANCE (v50.0.0)
 
 ## 1. Specification Metadata
+
 - **Spec ID**: `SPEC-044`
 - **Title**: EOS Tier-0 Principal Engineering Hardening (MCP Confinement, ToolAnnotations, Native SQLite WAL+FTS5, TypeScript AST) & Unified Gentleman AI Stack Co-Governance in Antigravity
 - **Status**: `APPROVED`
@@ -13,18 +14,23 @@
 ## 2. Functional Requirements (EARS Patterns)
 
 ### FR-132: Total MCP Path Confinement & Host CWD Independence
+
 - **EARS Pattern (Error / Unwanted Condition)**: SI cualquier herramienta del servidor MCP `eos-system` recibe un argumento de ruta de archivo o directorio (`filePath`, `dirPath`, `targetDir`, `projectRoot`), ENTONCES EL SISTEMA resolverá y confinará la ruta exclusivamente a través de `resolveProjectPath()` respecto a `this.projectRoot` (nunca `process.cwd()`), rechazando de forma fail-closed enlaces simbólicos externos o intentos de escape fuera de la raíz autorizada.
 
 ### FR-133: Modular MCP 2025-03-26 ToolAnnotations & Anti-Bloat Tool Profiles
+
 - **EARS Pattern (Event-Driven)**: CUANDO un cliente MCP solicita `tools/list` a `EosMcpServer`, EL SISTEMA enriquecerá cada herramienta con `annotations` estándar MCP `2025-03-26` (`title`, `readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint`) y filtrará el catálogo según el perfil configurado (`core` para el conjunto enfocado de herramientas reales de ingeniería o `full` para retrocompatibilidad completa).
 
 ### FR-134: Zero-Dependency Durable Bitemporal Ledger via Native `node:sqlite` (WAL + FTS5)
+
 - **EARS Pattern (Ubiquitous)**: EL SISTEMA proveerá un motor de persistencia durable `EosDurableSqliteLedger` construido exclusivamente sobre `node:sqlite` nativo (`0` dependencias npm externas) con modo `WAL`, índice de búsqueda textual `FTS5` y encadenamiento criptográfico monotónico SHA-256 (`prevHash` -> `entryHash`) accesible vía MCP (`eos_sqlite_ledger`) y CLI (`eos ledger`).
 
 ### FR-135: Compiler-Grade TypeScript AST Architecture & Strip-Only Verifier
+
 - **EARS Pattern (Event-Driven)**: CUANDO se invoca `EosTypeScriptAstAnalyzer` (`eos_ast_analyze` / `eos ast`), EL SISTEMA analizará los módulos `.ts` mediante nodos reales del AST del compilador TypeScript (`ts.createSourceFile`) para medir complejidad ciclomática exacta, importaciones externas prohibidas en Layer-0 y construcciones incompatibles con strip-only TypeScript (`enum`, `namespace`, propiedades de parámetro en constructor) sin falsos positivos por expresiones regulares.
 
 ### FR-136: Unified EOS + Gentleman AI Stack Co-Governance in Antigravity
+
 - **EARS Pattern (Ubiquitous)**: EL SISTEMA integrará y auditará mediante `EosGentlemanStackBridge` (`eos_gentleman_audit` / `eos gentleman doctor`) la coexistencia armónica entre el Plano de Control EOS (`eos-system` MCP, `eos-governance` hooks) y el stack completo de Gentleman Programming (`gentle-ai` CLI, `engram` MCP + CLI, `gga` CLI + `.gga`, `context7` MCP y los skills `sdd-*` + `judgment-day` de `agent-teams-lite`) dentro de Google Antigravity, preservando intacta la Constitución de EOS.
 
 ---

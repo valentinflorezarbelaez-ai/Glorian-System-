@@ -1,9 +1,11 @@
 # BASE SPECIFICATION: VERIFIABLE API RESULTS (SPEC-021)
 
 ## 1. Scope
+
 Governs client-controlled input and reported evaluation, simulation, registry, and health state at the public serverless API boundary and in browser panels.
 
 ## 2. Requirements (EARS)
+
 - **UBIQUITOUS**: THE SYSTEM SHALL confine file evaluation to regular files whose resolved real paths remain inside the project root, including after symbolic-link resolution.
 - **ERROR-DRIVEN**: IF submitted source code exceeds 100 KiB, THEN THE SYSTEM SHALL reject it before evaluation with HTTP 413.
 - **ERROR-DRIVEN**: IF the cognitive evaluator cannot be loaded or run, THEN THE SYSTEM SHALL return a non-success response without synthesizing a passing score or readiness verdict.
@@ -23,6 +25,7 @@ Governs client-controlled input and reported evaluation, simulation, registry, a
 - **EVENT-DRIVEN**: WHEN a client requests an unsupported server-sent event stream, THE HTTP MCP adapter SHALL return HTTP 405 and document stateless JSON-RPC POST as its supported transport.
 
 ## 3. Invariants
+
 - API input is untrusted, including file paths and code payloads.
 - A failure to evaluate is not evidence of readiness.
 - Demonstration telemetry is distinct from execution receipts and deployment state.

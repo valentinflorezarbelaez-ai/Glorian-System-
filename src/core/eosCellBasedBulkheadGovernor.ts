@@ -37,16 +37,16 @@ export interface RouteDecision {
 }
 
 export interface GovernorConfig {
-  readonly cellCount?: number;           // Default: 8 cells
-  readonly cellCapacity?: number;        // Default: 100 concurrent requests per cell
+  readonly cellCount?: number; // Default: 8 cells
+  readonly cellCapacity?: number; // Default: 100 concurrent requests per cell
   readonly maxConsecutiveFails?: number; // Default: 3 failures before poison pill quarantine
-  readonly drainHeadroomRatio?: number;  // Default: 0.8 (target must be <= 80% full to absorb reroute)
+  readonly drainHeadroomRatio?: number; // Default: 0.8 (target must be <= 80% full to absorb reroute)
 }
 
 export interface BulkheadFleetStatus {
   readonly totalCells: number;
   readonly healthyCells: number;
-  readonly maxBlastRadiusPct: number;    // 100 / totalCells
+  readonly maxBlastRadiusPct: number; // 100 / totalCells
   readonly totalAdmitted: number;
   readonly totalRejected: number;
   readonly totalQuarantinedSignatures: number;
@@ -95,7 +95,7 @@ export class EosCellBasedBulkheadGovernor {
         totalRejected: 0,
         totalFailures: 0,
         consecutiveFailures: 0,
-        status: "HEALTHY"
+        status: "HEALTHY",
       });
     }
   }
@@ -138,7 +138,7 @@ export class EosCellBasedBulkheadGovernor {
         admitted: false,
         isRerouted: false,
         reason: "REJECTED_POISON_PILL: Payload matches quarantined toxic signature",
-        quarantineSignature: signature
+        quarantineSignature: signature,
       };
     }
 
@@ -157,7 +157,7 @@ export class EosCellBasedBulkheadGovernor {
         cellId: primaryCellId,
         admitted: true,
         isRerouted: false,
-        executionToken
+        executionToken,
       };
     }
 
@@ -179,7 +179,7 @@ export class EosCellBasedBulkheadGovernor {
           isRerouted: true,
           originalCellId: primaryCellId,
           reason: `REROUTED_FAILOVER: Primary cell-${primaryCellId.toString().padStart(2, "0")} is ${primaryCell.status} or saturated`,
-          executionToken
+          executionToken,
         };
       }
     }
@@ -191,7 +191,7 @@ export class EosCellBasedBulkheadGovernor {
       cellId: primaryCellId,
       admitted: false,
       isRerouted: false,
-      reason: "SHED_LOAD_OVERLOAD: All target and failover cells have reached capacity limits"
+      reason: "SHED_LOAD_OVERLOAD: All target and failover cells have reached capacity limits",
     };
   }
 
@@ -295,18 +295,15 @@ export class EosCellBasedBulkheadGovernor {
         totalRejected: c.totalRejected,
         totalFailures: c.totalFailures,
         consecutiveFailures: c.consecutiveFailures,
-        status: c.status
-      }))
+        status: c.status,
+      })),
     };
 
-    const receipt = crypto
-      .createHash("sha256")
-      .update(JSON.stringify(snapshot))
-      .digest("hex");
+    const receipt = crypto.createHash("sha256").update(JSON.stringify(snapshot)).digest("hex");
 
     return Object.freeze({
       ...snapshot,
-      sha256Receipt: receipt
+      sha256Receipt: receipt,
     });
   }
 }

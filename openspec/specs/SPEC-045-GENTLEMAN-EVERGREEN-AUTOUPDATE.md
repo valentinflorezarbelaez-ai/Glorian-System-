@@ -1,27 +1,27 @@
 # SPEC-045: AUTONOMOUS EVERGREEN AUTO-UPDATER FOR GENTLE-AI & GENTLEMAN STACK (v51.0.0)
 
-* **Status**: `SPECIFICATION_APPROVED`
-* **Change Reference**: `CHANGE-038`
-* **Architecture Plan**: `PLAN-038` (`ADR-051`)
-* **Formal Model**: `docs/formal/GentlemanAutoUpdateEngine.tla`
+- **Status**: `SPECIFICATION_APPROVED`
+- **Change Reference**: `CHANGE-038`
+- **Architecture Plan**: `PLAN-038` (`ADR-051`)
+- **Formal Model**: `docs/formal/GentlemanAutoUpdateEngine.tla`
 
 ---
 
 ## 1. Formal Functional Requirements (IEEE 830 / EARS)
 
-* **FR-137 (Rate-Limit-Free Upstream SemVer & Commit Discovery)**:
+- **FR-137 (Rate-Limit-Free Upstream SemVer & Commit Discovery)**:
   `CUANDO se invoque una verificación de actualizaciones del stack Gentleman (por tarea programada, SessionStart hook, CLI o herramienta MCP), EL SISTEMA consultará las etiquetas SemVer estables y hashes de commit remotos mediante git ls-remote sin límites de cuota API para gentle-ai, engram, gentleman-guardian-angel (gga) y agent-teams-lite, comparando determinísticamente la versión instalada contra la última versión estable upstream.`
 
-* **FR-138 (Cryptographic Supply-Chain Verification & Windows NTFS Hot-Swap)**:
+- **FR-138 (Cryptographic Supply-Chain Verification & Windows NTFS Hot-Swap)**:
   `CUANDO exista una versión más reciente de un binario del stack (engram, gentle-ai o gga), EL SISTEMA verificará su integridad criptográfica (SHA-256 oficial en checksums.txt o compilación Go desde tag oficial con go.sum) y ejecutará un reemplazo atómico en caliente compatible con Windows NTFS (renombrando el binario en uso a .bak antes de instalar el nuevo ejecutable).`
 
-* **FR-139 (Automatic Atomic Rollback on Health Failure)**:
+- **FR-139 (Automatic Atomic Rollback on Health Failure)**:
   `SI la descarga, verificación SHA-256, compilación o prueba de humo post-instalación (--version / version) de cualquier componente falla, ENTONCES EL SISTEMA restaurará automáticamente el respaldo previo (.bak), abortará la mutación parcial y registrará el diagnóstico exacto en el ledger SQLite WAL.`
 
-* **FR-140 (Secure Agent-Teams-Lite Skill Sync & EOS Constitution Preservation)**:
+- **FR-140 (Secure Agent-Teams-Lite Skill Sync & EOS Constitution Preservation)**:
   `MIENTRAS se sincronicen los skills upstream de agent-teams-lite hacia .agents/skills/, EL SISTEMA escaneará todos los archivos entrantes rechazando enlaces simbólicos y patrones de secretos en texto plano, preservará intactos todos los skills soberanos con prefijo eos-* y garantizará que el hash SHA-256 de la Constitución EOS (AGENTS.md) permanezca inalterado.`
 
-* **FR-141 (Triple-Trigger Unattended Evergreen Automation)**:
+- **FR-141 (Triple-Trigger Unattended Evergreen Automation)**:
   `EL SISTEMA mantendrá actualizado el stack Gentleman de forma desatendida mediante tres disparadores coordinados con control de concurrencia (lockfile con expiración) e intervalo configurable (TTL 6 horas): (1) Tarea Programada silenciosa del sistema operativo (Windows Task Scheduler sin ventana emergente), (2) disparo oportunista desacoplado en segundo plano durante el evento SessionStart de Google Antigravity cuando el TTL haya expirado, y (3) ejecución directa vía CLI (eos gentleman update) y MCP (eos_gentleman_update).`
 
 ---

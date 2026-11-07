@@ -32,7 +32,7 @@ export function synthesizeSilentVbsLauncher(nodeExePath, eosBinPath) {
     'Set shell = CreateObject("WScript.Shell")',
     `cmd = """${escapedNode}"" ""${escapedBin}"" gentleman update --apply --quiet"`,
     "shell.Run cmd, 0, True",
-    ""
+    "",
   ].join("\r\n");
 }
 
@@ -61,24 +61,13 @@ export function installGentlemanAutoUpdateSchedule(options = {}) {
     if (!dryRun) {
       execFileSync(
         "schtasks.exe",
-        [
-          "/Create",
-          "/SC",
-          "HOURLY",
-          "/MO",
-          String(intervalHours),
-          "/TN",
-          taskName,
-          "/TR",
-          taskRunCommand,
-          "/F"
-        ],
+        ["/Create", "/SC", "HOURLY", "/MO", String(intervalHours), "/TN", taskName, "/TR", taskRunCommand, "/F"],
         {
           encoding: "utf8",
           timeout: 15000,
           stdio: ["ignore", "pipe", "pipe"],
-          windowsHide: true
-        }
+          windowsHide: true,
+        },
       );
     }
 
@@ -90,17 +79,15 @@ export function installGentlemanAutoUpdateSchedule(options = {}) {
       taskName,
       intervalHours,
       launcherPath: vbsPath,
-      taskCommand: taskRunCommand
+      taskCommand: taskRunCommand,
     };
   }
 
   // POSIX (Linux / macOS) user crontab registration
   const shPath = path.join(stateDir, "run-gentleman-autoupdate-silent.sh");
-  const shContent = [
-    "#!/usr/bin/env sh",
-    `"${nodeExePath}" "${eosBinPath}" gentleman update --apply --quiet`,
-    ""
-  ].join("\n");
+  const shContent = ["#!/usr/bin/env sh", `"${nodeExePath}" "${eosBinPath}" gentleman update --apply --quiet`, ""].join(
+    "\n",
+  );
   fs.writeFileSync(shPath, shContent, { encoding: "utf8", mode: 0o755 });
   const cronLine = synthesizePosixCronLine(nodeExePath, eosBinPath, intervalHours);
 
@@ -109,14 +96,12 @@ export function installGentlemanAutoUpdateSchedule(options = {}) {
     try {
       existingCron = execFileSync("crontab", ["-l"], {
         encoding: "utf8",
-        stdio: ["ignore", "pipe", "pipe"]
+        stdio: ["ignore", "pipe", "pipe"],
       });
     } catch {
       existingCron = "";
     }
-    const filtered = existingCron
-      .split(/\r?\n/)
-      .filter((line) => line.trim().length > 0 && !line.includes(taskName));
+    const filtered = existingCron.split(/\r?\n/).filter((line) => line.trim().length > 0 && !line.includes(taskName));
     filtered.push(cronLine);
     const tmpCron = path.join(stateDir, "gentleman.crontab.tmp");
     fs.writeFileSync(tmpCron, filtered.join("\n") + "\n", "utf8");
@@ -135,7 +120,7 @@ export function installGentlemanAutoUpdateSchedule(options = {}) {
     taskName,
     intervalHours,
     launcherPath: shPath,
-    taskCommand: cronLine
+    taskCommand: cronLine,
   };
 }
 
@@ -143,28 +128,24 @@ export function queryGentlemanAutoUpdateSchedule(options = {}) {
   const taskName = options.taskName || GENTLEMAN_TASK_NAME;
   if (process.platform === "win32") {
     try {
-      const out = execFileSync(
-        "schtasks.exe",
-        ["/Query", "/TN", taskName, "/FO", "LIST", "/V"],
-        {
-          encoding: "utf8",
-          timeout: 10000,
-          stdio: ["ignore", "pipe", "pipe"],
-          windowsHide: true
-        }
-      );
+      const out = execFileSync("schtasks.exe", ["/Query", "/TN", taskName, "/FO", "LIST", "/V"], {
+        encoding: "utf8",
+        timeout: 10000,
+        stdio: ["ignore", "pipe", "pipe"],
+        windowsHide: true,
+      });
       return {
         registered: true,
         platform: "win32",
         taskName,
-        rawDetails: out.trim()
+        rawDetails: out.trim(),
       };
     } catch {
       return {
         registered: false,
         platform: "win32",
         taskName,
-        rawDetails: ""
+        rawDetails: "",
       };
     }
   }
@@ -172,23 +153,21 @@ export function queryGentlemanAutoUpdateSchedule(options = {}) {
   try {
     const out = execFileSync("crontab", ["-l"], {
       encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"]
+      stdio: ["ignore", "pipe", "pipe"],
     });
-    const matched = out
-      .split(/\r?\n/)
-      .find((line) => line.includes(taskName));
+    const matched = out.split(/\r?\n/).find((line) => line.includes(taskName));
     return {
       registered: Boolean(matched),
       platform: process.platform,
       taskName,
-      rawDetails: matched || ""
+      rawDetails: matched || "",
     };
   } catch {
     return {
       registered: false,
       platform: process.platform,
       taskName,
-      rawDetails: ""
+      rawDetails: "",
     };
   }
 }
@@ -201,7 +180,7 @@ export function uninstallGentlemanAutoUpdateSchedule(options = {}) {
         encoding: "utf8",
         timeout: 10000,
         stdio: ["ignore", "pipe", "pipe"],
-        windowsHide: true
+        windowsHide: true,
       });
       return { uninstalled: true, taskName };
     } catch {
@@ -212,11 +191,9 @@ export function uninstallGentlemanAutoUpdateSchedule(options = {}) {
   try {
     const existingCron = execFileSync("crontab", ["-l"], {
       encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"]
+      stdio: ["ignore", "pipe", "pipe"],
     });
-    const filtered = existingCron
-      .split(/\r?\n/)
-      .filter((line) => line.trim().length > 0 && !line.includes(taskName));
+    const filtered = existingCron.split(/\r?\n/).filter((line) => line.trim().length > 0 && !line.includes(taskName));
     const tmpCron = path.join(DEFAULT_PROJECT_ROOT, ".eos", "state", "gentleman.crontab.rm.tmp");
     fs.mkdirSync(path.dirname(tmpCron), { recursive: true });
     fs.writeFileSync(tmpCron, filtered.join("\n") + (filtered.length ? "\n" : ""), "utf8");
