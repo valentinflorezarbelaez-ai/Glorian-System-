@@ -61,7 +61,7 @@ export class EosSingleExecutablePackager {
       useCodeCache: true,
     };
 
-    fs.writeFileSync(configPath, JSON.stringify(config, null, 2), "utf8");
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n", "utf8");
     return config;
   }
 

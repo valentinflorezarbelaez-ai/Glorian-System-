@@ -4690,6 +4690,69 @@ switch (command) {
     break;
   }
 
+  case "drift": {
+    printBanner();
+    const { EosSpecDriftDetector } = await import("../src/core/eosSpecDriftDetector.ts");
+    const detector = new EosSpecDriftDetector(root);
+    const report = detector.detect({ driftThresholdDays: 7 });
+    console.log("[EOS SPEC-DRIFT GATE — LAW I SPECIFICATION AS SUPREME TRUTH]\n");
+    console.log(`  Modules Scanned      : ${report.totalModulesScanned}`);
+    console.log(`  Specs Scanned        : ${report.totalSpecsScanned}`);
+    console.log(`  Drift Score          : ${report.driftScore} / 100`);
+    console.log(`  Violations Detected  : ${report.violations.length}`);
+    console.log(`  Critical Count       : ${report.criticalCount}`);
+    console.log(`  High Count           : ${report.highCount}`);
+    console.log(`  Status               : ${report.isClean ? "CLEAN (Zero Drift)" : "DRIFT DETECTED"}\n`);
+    console.log(
+      `  Receipt SHA-256      : ${report.sha256.startsWith("sha256:") ? report.sha256 : `sha256:${report.sha256}`}`,
+    );
+    break;
+  }
+
+  case "flags": {
+    printBanner();
+    const { EosFeatureFlags } = await import("../src/core/eosFeatureFlags.ts");
+    const flags = new EosFeatureFlags(root);
+    const all = flags.getAllFlags();
+    console.log("[EOS FEATURE FLAGS GOVERNOR — STRIPE/NETFLIX PROGRESSIVE DELIVERY]\n");
+    console.log(`  Active Flags: ${all.length}\n`);
+    for (const f of all) {
+      const state = f.enabled ? "ENABLED " : "DISABLED";
+      console.log(`  [${state}] ${f.key.padEnd(25)} source=${f.source.padEnd(8)} ${f.description}`);
+    }
+    console.log("");
+    break;
+  }
+
+  case "loadtest": {
+    printBanner();
+    const { EosLoadTestEngine } = await import("../src/core/eosLoadTestEngine.ts");
+    const { runTurboPipeline } = await import("../src/core/eosTurboEngine.ts");
+    const engine = new EosLoadTestEngine();
+    const concurrency = parseInt(args[1] || "4", 10);
+    const totalRequests = parseInt(args[2] || "20", 10);
+    console.log(`[EOS SYNTHETIC LOAD TEST ENGINE — GOOGLE PERFKIT / K6 PATTERN]`);
+    console.log(`  Concurrency: ${concurrency} parallel workers | Total Requests: ${totalRequests}\n`);
+    const report = await engine.run(
+      () => {
+        runTurboPipeline(root);
+      },
+      { concurrency, totalRequests, rampUpMs: 20, timeoutMs: 10000 },
+      { p50: 3000, p95: 8000, p99: 10000, errorRate: 0.05 },
+    );
+    console.log(`  Throughput           : ${report.throughputRps.toFixed(2)} req/sec`);
+    console.log(
+      `  Success / Errors     : ${report.successCount} / ${report.errorCount} (${(report.errorRate * 100).toFixed(1)}%)`,
+    );
+    console.log(`  Latency p50          : ${report.latency.p50Ms.toFixed(2)} ms`);
+    console.log(`  Latency p95          : ${report.latency.p95Ms.toFixed(2)} ms`);
+    console.log(`  Latency p99          : ${report.latency.p99Ms.toFixed(2)} ms`);
+    console.log(`  All SLAs Passed      : ${report.allSLAPassed ? "YES (Pass)" : "NO (Breach)"}`);
+    console.log(`  Receipt              : sha256:${report.sha256Receipt}\n`);
+    process.exitCode = report.allSLAPassed ? 0 : 1;
+    break;
+  }
+
   case "help":
   case "--help":
   case "-h":
