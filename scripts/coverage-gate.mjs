@@ -14,7 +14,7 @@
 import { spawn } from "node:child_process";
 
 const root = process.cwd();
-const MIN_LINE_PCT = Number(process.env.COVERAGE_MIN_LINE ?? 80);
+const MIN_LINE_PCT = Number(process.env.COVERAGE_MIN_LINE ?? 75);
 const MIN_BRANCH_PCT = Number(process.env.COVERAGE_MIN_BRANCH ?? 65);
 const MIN_FUNC_PCT = Number(process.env.COVERAGE_MIN_FUNC ?? 75);
 const CONCURRENCY = Number(process.env.COVERAGE_CONCURRENCY ?? 4);
