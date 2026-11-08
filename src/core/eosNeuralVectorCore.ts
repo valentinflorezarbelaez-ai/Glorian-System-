@@ -1,6 +1,6 @@
 /**
  * EOS SYSTEM — NEURAL VECTOR CORE (Layer 0)
- * Governed by ADR-014, FR-021 & BDD-016
+ * Governed by ADR-014, SPEC-010, FR-021 & BDD-016
  *
  * Implements deterministic high-dimensional semantic tokenization,
  * term-frequency sparse embeddings, and sub-millisecond cosine similarity
@@ -128,6 +128,27 @@ export function cosineSimilarity(v1: Map<string, number>, v2: Map<string, number
   }
 
   return Math.max(0, Math.min(1, dotProduct));
+}
+
+/**
+ * Zero-allocation dense vector dot product using Float64Array.
+ * Optimized for mechanical sympathy and SIMD auto-vectorization in V8.
+ */
+export function denseCosineSimilarity(a: Float64Array, b: Float64Array): number {
+  if (a.length !== b.length || a.length === 0) return 0;
+  let dot = 0;
+  let normA = 0;
+  let normB = 0;
+  const len = a.length;
+  for (let i = 0; i < len; i++) {
+    const ai = a[i];
+    const bi = b[i];
+    dot += ai * bi;
+    normA += ai * ai;
+    normB += bi * bi;
+  }
+  const denom = Math.sqrt(normA) * Math.sqrt(normB);
+  return denom === 0 ? 0 : Math.max(0, Math.min(1, dot / denom));
 }
 
 /**

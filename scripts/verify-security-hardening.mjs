@@ -13,6 +13,8 @@ import path from "node:path";
 import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
 
+const { EosSmtAutomatedReasoningProver } = await import("../src/core/eosSmtAutomatedReasoningProver.ts");
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 
@@ -171,6 +173,20 @@ check("CVE-15: traceparent header validated against W3C format before reflection
   assert.ok(src.includes("TRACEPARENT_RE.test"), "TRACEPARENT_RE.test() call missing");
 });
 
+// ── PROOF-16: Mathematical SMT Proof of ABAC Boundary Safety (SPEC-063) ────────
+check("PROOF-16: Mathematical SMT Proof of ABAC Boundary Safety (SPEC-063)", () => {
+  const report = EosSmtAutomatedReasoningProver.proveAbacSafety(
+    [
+      { role: "admin", action: "write_immutable_ledger", allow: true },
+      { role: "guest", action: "write_immutable_ledger", allow: false },
+    ],
+    "guest",
+    "write_immutable_ledger",
+  );
+  assert.equal(report.verdict, "PROVED_UNSAT_SECURE", "ABAC security proof must be UNSAT");
+  assert.equal(report.isSatisfiable, false);
+});
+
 // ── Summary ──────────────────────────────────────────────────────────────────
 console.log(`\n======================================================================`);
 console.log(` Security Hardening: ${passed} passed, ${failed} failed`);
@@ -182,5 +198,5 @@ if (failed > 0) {
   process.exit(1);
 }
 
-console.log(`\n[PASS] All 15 CVE-class security fixes verified. ✔\n`);
+console.log(`\n[PASS] All 15 CVE-class security fixes and formal SMT theorem verified. ✔\n`);
 process.exit(0);

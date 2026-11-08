@@ -6,6 +6,7 @@ import {
   tokenize,
   computeTermFrequency,
   cosineSimilarity,
+  denseCosineSimilarity,
   createDefaultEosKnowledgeStore,
 } from "../src/core/eosNeuralVectorCore.ts";
 
@@ -50,6 +51,14 @@ test("EOS Neural Vector Core — Term Frequency & Cosine Similarity Invariants",
   const sim13 = cosineSimilarity(v1, v3);
   const sim31 = cosineSimilarity(v3, v1);
   assert.equal(sim13, sim31, "Cosine similarity must be symmetric");
+
+  // Zero-allocation Float64Array SIMD dot product
+  const f1 = new Float64Array([1, 0, 0, 1]);
+  const f2 = new Float64Array([1, 0, 0, 1]);
+  const f3 = new Float64Array([0, 1, 1, 0]);
+  assert.ok(Math.abs(denseCosineSimilarity(f1, f2) - 1.0) < 1e-6);
+  assert.equal(denseCosineSimilarity(f1, f3), 0.0);
+  assert.equal(denseCosineSimilarity(new Float64Array(0), new Float64Array(0)), 0.0);
 });
 
 test("EOS Neural Vector Store — Semantic Top-K Retrieval", () => {
