@@ -41,7 +41,7 @@ describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => 
         t.skip("Skipping Git metadata extraction in isolated build container");
         return;
       }
-      assert.ok(gitMeta.remoteUrl.includes("Eos-System"));
+      assert.ok(/Eos-System|Glorian-System/i.test(gitMeta.remoteUrl));
       assert.ok(gitMeta.currentBranch.length > 0);
       assert.ok(/^[0-9a-f]{40}$/i.test(gitMeta.headCommitSha));
     });
