@@ -58,7 +58,7 @@ export class EosSingleExecutablePackager {
       output: "dist/eos.blob",
       disableExperimentalSEAWarning: true,
       useSnapshot: false,
-      useCodeCache: true,
+      useCodeCache: false,
     };
 
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n", "utf8");
