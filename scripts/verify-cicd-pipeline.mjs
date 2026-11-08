@@ -38,6 +38,7 @@ function listRepoFiles(dir, acc = []) {
       entry.name === "node_modules" ||
       entry.name === "dist" ||
       entry.name === "_sandbox" ||
+      entry.name === "dynamic_tools" ||
       entry.name.startsWith(".worktree")
     ) {
       continue;
@@ -172,6 +173,7 @@ const syntaxErrors = [];
   async function syntaxWorker() {
     while (idx < jsFilesToCheck.length) {
       const file = jsFilesToCheck[idx++];
+      if (!fs.existsSync(file)) continue;
       try {
         await execFileAsync(process.execPath, ["--check", file], { cwd: root, maxBuffer: 4 * 1024 * 1024 });
       } catch (err) {
