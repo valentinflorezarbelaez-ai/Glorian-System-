@@ -92,6 +92,8 @@
     "drift": "node bin/eos.mjs drift",
     "flags": "node bin/eos.mjs flags",
     "loadtest": "node bin/eos.mjs loadtest",
+    "nocturnal": "node bin/eos.mjs nocturnal",
+    "mutate": "node bin/eos.mjs mutate --run",
     "eos": "node bin/eos.mjs",
     "packaging:verify": "node scripts/verify-packaging.mjs",
     "mcp:verify": "node --test test/eosMcpSchemaValidator.test.mjs",
