@@ -206,6 +206,11 @@ export class EosFleetSoundcheckMesh {
             resolvedPath = path.resolve(resolvedRoot, envPath.trim());
           } else if (typeof p.localPath === "string" && p.localPath.trim().length > 0) {
             resolvedPath = path.resolve(p.localPath.trim());
+          } else if (typeof p.resolvedLocalDir === "string" && p.resolvedLocalDir.trim().length > 0) {
+            const workspaceRoot = process.env.EOS_WORKSPACE_ROOT || "c:\\Users\\valen";
+            const candidate1 = path.join(workspaceRoot, p.resolvedLocalDir.trim());
+            const candidate2 = path.resolve(resolvedRoot, "..", p.resolvedLocalDir.trim());
+            resolvedPath = fs.existsSync(candidate1) ? candidate1 : candidate2;
           } else {
             const defaultMatch = this.DEFAULT_REPOS.find((d) => d.id === p.id);
             if (defaultMatch) resolvedPath = defaultMatch.localPath;

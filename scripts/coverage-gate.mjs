@@ -12,6 +12,8 @@
  */
 
 import { spawn } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
 
 const root = process.cwd();
 const MIN_LINE_PCT = Number(process.env.COVERAGE_MIN_LINE ?? 80);
@@ -24,9 +26,23 @@ console.log(" EOS SYSTEM — COVERAGE GATE (native V8, zero external deps)");
 console.log(` Thresholds: Line>=${MIN_LINE_PCT}% | Branch>=${MIN_BRANCH_PCT}% | Func>=${MIN_FUNC_PCT}%`);
 console.log("======================================================================");
 
+const testDir = path.join(root, "test");
+const testFiles = fs.existsSync(testDir)
+  ? fs
+      .readdirSync(testDir)
+      .filter((file) => file.endsWith(".test.mjs"))
+      .map((file) => `test/${file}`)
+      .sort()
+  : [];
+
+if (testFiles.length === 0) {
+  console.error("[FAIL] No test files found in test/ directory.");
+  process.exit(1);
+}
+
 const child = spawn(
   process.execPath,
-  ["--test", "--experimental-test-coverage", `--test-concurrency=${CONCURRENCY}`, "test/*.test.mjs"],
+  ["--test", "--experimental-test-coverage", `--test-concurrency=${CONCURRENCY}`, ...testFiles],
   {
     cwd: root,
     stdio: ["ignore", "pipe", "pipe"],
