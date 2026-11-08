@@ -516,16 +516,20 @@ switch (command) {
   case "fix": {
     printBanner();
     console.log("[EOS HEAL] Disparando Bucle FDIR de Auto-Sanación Autónoma (Meta SapFix)...\n");
-    const targetFile = args[1];
+    const positionalArgs = args.slice(1).filter((a) => !a.startsWith("-"));
+    const targetFile = positionalArgs[0];
     const dryRun = args.includes("--dry-run");
+    const autoApply = args.includes("--apply") || args.includes("-a") || (!dryRun && args.includes("--write"));
 
     const { EosAutonomousHealer } = await import("../src/core/eosAutonomousHealer.ts");
     const healer = new EosAutonomousHealer(root);
-    const report = healer.executeHealing({ targetFile, dryRun });
+    const report = healer.executeHealing({ targetFile, dryRun, autoApply });
 
     console.log(`Estado Epistémico    : ${report.epistemicState}`);
     console.log(`Archivos Remediados  : ${report.remediatedCount}`);
-    console.log(`Modo de Ejecución    : ${dryRun ? "SIMULACIÓN (DRY-RUN)" : "APLICACIÓN EN VIVO"}`);
+    console.log(
+      `Modo de Ejecución    : ${dryRun ? "SIMULACIÓN (DRY-RUN)" : autoApply ? "APLICACIÓN EN VIVO" : "PLANIFICACIÓN (SOLO LECTURA)"}`,
+    );
     console.log(`Tiempo de Ejecución  : ${report.durationMs} ms\n`);
 
     if (report.candidates.length > 0) {

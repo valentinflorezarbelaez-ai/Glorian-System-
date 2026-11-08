@@ -93,10 +93,10 @@ export class EosBenchmarkTracker {
     const baselineRow = this.db
       .prepare(
         `
-      SELECT p95_ns, ops_per_sec 
-      FROM eos_benchmark_metrics 
-      WHERE benchmark_name = ? 
-      ORDER BY id DESC 
+      SELECT p95_ns, ops_per_sec
+      FROM eos_benchmark_metrics
+      WHERE benchmark_name = ?
+      ORDER BY id DESC
       LIMIT 1
     `,
       )
@@ -163,9 +163,9 @@ export class EosBenchmarkTracker {
     const rows = this.db
       .prepare(
         `
-      SELECT * FROM eos_benchmark_metrics 
-      WHERE benchmark_name = ? 
-      ORDER BY id DESC 
+      SELECT * FROM eos_benchmark_metrics
+      WHERE benchmark_name = ?
+      ORDER BY id DESC
       LIMIT ?
     `,
       )

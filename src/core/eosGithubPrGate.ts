@@ -220,7 +220,7 @@ export class EosGithubPrGate {
       .join("\n");
 
     return `## 🏛️ EOS Sovereign Pull Request Gate Report
-> **Epistemic State**: \`${result.conclusion === "success" ? "PRODUCTION_READY_WITHIN_TESTED_SCOPE" : "REMEDIATION_REQUIRED"}\`  
+> **Epistemic State**: \`${result.conclusion === "success" ? "PRODUCTION_READY_WITHIN_TESTED_SCOPE" : "REMEDIATION_REQUIRED"}\`
 > **Receipt ID**: \`${result.receiptId}\` | **Timestamp**: \`${result.timestampIso}\`
 
 ### 1. SecDevOps 7-Stage Quality Matrix

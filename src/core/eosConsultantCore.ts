@@ -993,7 +993,7 @@ async def solve(input_data: dict[str, Any]) -> dict[str, Any]:
     """
     TODO: Implement the solution following the approved ADR.
     Write tests in test_solution.py first (TDD Red Phase).
-    
+
     Args:
         input_data: Validated input dict matching the agreed contract.
     Returns:
@@ -1003,7 +1003,7 @@ async def solve(input_data: dict[str, Any]) -> dict[str, Any]:
     """
     if not input_data:
         raise SolutionError("input_data must not be empty", code="INVALID_INPUT")
-    
+
     # TODO: implement after writing tests
     raise NotImplementedError("Write tests first — TDD Red Phase")
 

@@ -181,15 +181,15 @@ export class EosDocumentationSearch {
 
     try {
       const stmt = this.db.prepare(`
-        SELECT 
-          doc_path, 
-          doc_type, 
-          title, 
+        SELECT
+          doc_path,
+          doc_type,
+          title,
           snippet(eos_docs_fts, 3, '>>', '<<', '...', 15) as snippet,
           rank
-        FROM eos_docs_fts 
-        WHERE eos_docs_fts MATCH ? 
-        ORDER BY rank 
+        FROM eos_docs_fts
+        WHERE eos_docs_fts MATCH ?
+        ORDER BY rank
         LIMIT ?
       `);
 

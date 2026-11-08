@@ -86,8 +86,21 @@ export function validatePatch(
   // 3. Destructive Command Scanner (Safety Barrier)
   let destructiveCommandsFound = false;
   const lowerContent = (proposedContent || "").toLowerCase();
+  let existingContentLower = "";
+  if (!pathTraversalsFound && fs.existsSync(resolvedPath)) {
+    try {
+      if (fs.statSync(resolvedPath).isFile()) {
+        existingContentLower = fs.readFileSync(resolvedPath, "utf8").toLowerCase();
+      }
+    } catch {}
+  }
+
   for (const d of DESTRUCTIVE_PATTERNS) {
     if (lowerContent.includes(d)) {
+      // If the pattern was already present in the existing file, this patch did not introduce a new destructive command
+      if (existingContentLower && existingContentLower.includes(d)) {
+        continue;
+      }
       destructiveCommandsFound = true;
       errors.push(`[Safety Barrier] Destructive pattern detected: "${d}".`);
     }

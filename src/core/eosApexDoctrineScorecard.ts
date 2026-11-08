@@ -151,8 +151,8 @@ export function formatApexDoctrineSummary(card: ApexDoctrineScorecard): string {
 export function sealApexDoctrineMarkdown(card: ApexDoctrineScorecard): string {
   return `# ${card.title}
 
-**Epistemic**: \`${card.epistemicState}\`  
-**Grade**: **${card.grade}** · ${card.percent}% (${card.totalScore}/${card.totalMax})  
+**Epistemic**: \`${card.epistemicState}\`
+**Grade**: **${card.grade}** · ${card.percent}% (${card.totalScore}/${card.totalMax})
 **SHA-256**: \`${card.sha256Receipt}\`
 
 ## What this is
