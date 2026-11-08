@@ -7,9 +7,6 @@
   "functions": {
     "api/mcp.js": {
       "includeFiles": "docs/evidence/**"
-    },
-    "api/finops.js": {
-      "maxDuration": 10
     }
   },
   "rewrites": [
@@ -18,6 +15,7 @@
     { "source": "/api/bigtech", "destination": "/api/kernel?module=bigtech" },
     { "source": "/api/omega", "destination": "/api/kernel?module=omega" },
     { "source": "/api/specs", "destination": "/api/kernel?module=specs" },
+    { "source": "/api/finops", "destination": "/api/kernel?module=finops" },
     { "source": "/mcp", "destination": "/api/mcp" }
   ],
   "headers": [

@@ -621,6 +621,7 @@ const consolidatedModes = [
   { file: "api/eval.js", query: { mode: "titans", titan: "all" }, desc: "eval?mode=titans" },
   { file: "api/kernel.js", query: { mode: "omega" }, desc: "kernel?mode=omega" },
   { file: "api/kernel.js", query: { module: "bigtech" }, desc: "kernel?module=bigtech" },
+  { file: "api/kernel.js", query: { module: "finops" }, desc: "kernel?module=finops" },
 ];
 
 for (const cm of consolidatedModes) {

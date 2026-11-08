@@ -1,5 +1,6 @@
 import handleBigTech from "./_bigtech.js";
 import handleSpecs from "./_specs.js";
+import handleFinops from "./_finops.js";
 import { createHash } from "node:crypto";
 
 const LINUX_CONCEPT_FIXTURES = Object.freeze({
@@ -49,13 +50,18 @@ export default function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
 
   if (req.method === "OPTIONS") return res.status(200).end();
+
+  const query = req.query || {};
+  const url = req.url || "";
+
+  if (url.includes("/api/finops") || query.module === "finops" || query.mode === "finops") {
+    return handleFinops(req, res);
+  }
+
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET, OPTIONS");
     return res.status(405).json({ status: "METHOD_NOT_ALLOWED" });
   }
-
-  const query = req.query || {};
-  const url = req.url || "";
 
   if (url.includes("/api/bigtech") || query.module === "bigtech" || query.mode === "bigtech") {
     return handleBigTech(req, res);
