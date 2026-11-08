@@ -103,6 +103,27 @@ test("BDD-281: EosMcpServer executes Phase 2 and Phase 3 core utilitarian tool h
   const tmrData = JSON.parse(tmrRes.result.content[0].text);
   assert.equal(tmrData.consensusAchieved, true);
 
+  // 7b. eos_audit_fleet
+  const fleetAuditRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 71,
+    method: "tools/call",
+    params: { name: "eos_audit_fleet", arguments: {} },
+  });
+  assert.ok(fleetAuditRes.result?.content?.[0]?.text);
+
+  // 7c. eos_validate_patch
+  const patchRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 72,
+    method: "tools/call",
+    params: {
+      name: "eos_validate_patch",
+      arguments: { filePath: "package.json", content: '{\n  "name": "valid-patch"\n}' },
+    },
+  });
+  assert.ok(patchRes.result?.content?.[0]?.text);
+
   // 8. eos_optimize_context
   const optRes = await server.handleRequest({
     jsonrpc: "2.0",
@@ -188,6 +209,125 @@ test("BDD-281: EosMcpServer executes Phase 2 and Phase 3 core utilitarian tool h
   assert.ok(tribunalRes.result?.content?.[0]?.text);
   const tribunalData = JSON.parse(tribunalRes.result.content[0].text);
   assert.equal(tribunalData.overallVerdict, "SOVEREIGN_TRIBUNAL_APPROVED");
+
+  // 17. eos_manage_worktree
+  const wtListRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 17,
+    method: "tools/call",
+    params: { name: "eos_manage_worktree", arguments: { action: "list" } },
+  });
+  assert.ok(wtListRes.result?.content?.[0]?.text);
+
+  const wtCreateRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 18,
+    method: "tools/call",
+    params: { name: "eos_manage_worktree", arguments: { action: "create", branch: "test-plan", apply: false } },
+  });
+  assert.ok(wtCreateRes.result?.content?.[0]?.text);
+
+  // 18. eos_agent_session_contract (lifecycle: open -> record_tool -> status)
+  const sessionOpenRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 19,
+    method: "tools/call",
+    params: {
+      name: "eos_agent_session_contract",
+      arguments: { action: "open", ideFamily: "antigravity", directive: "Verify architecture" },
+    },
+  });
+  assert.ok(sessionOpenRes.result?.content?.[0]?.text);
+  const sessionOpenData = JSON.parse(sessionOpenRes.result.content[0].text);
+  assert.ok(sessionOpenData.sessionId);
+
+  const sessionRecordRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 20,
+    method: "tools/call",
+    params: {
+      name: "eos_agent_session_contract",
+      arguments: { action: "record_tool", sessionId: sessionOpenData.sessionId, toolName: "eos_check_architecture" },
+    },
+  });
+  assert.ok(sessionRecordRes.result?.content?.[0]?.text);
+
+  const sessionStatusRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 21,
+    method: "tools/call",
+    params: { name: "eos_agent_session_contract", arguments: { action: "status" } },
+  });
+  assert.ok(sessionStatusRes.result?.content?.[0]?.text);
+
+  // 19. eos_sqlite_ledger (stats, status, compact)
+  const ledgerStatsRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 22,
+    method: "tools/call",
+    params: { name: "eos_sqlite_ledger", arguments: { action: "stats" } },
+  });
+  assert.ok(ledgerStatsRes.result?.content?.[0]?.text);
+
+  const ledgerStatusRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 23,
+    method: "tools/call",
+    params: { name: "eos_sqlite_ledger", arguments: { action: "status" } },
+  });
+  assert.ok(ledgerStatusRes.result?.content?.[0]?.text);
+
+  const ledgerCompactRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 24,
+    method: "tools/call",
+    params: { name: "eos_sqlite_ledger", arguments: { action: "compact", apply: false } },
+  });
+  assert.ok(ledgerCompactRes.result?.content?.[0]?.text);
+
+  // 20. eos_hnsw_knn_search
+  const hnswRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 25,
+    method: "tools/call",
+    params: { name: "eos_hnsw_knn_search", arguments: { query: "cryptographic consensus", k: 3 } },
+  });
+  assert.ok(hnswRes.result?.content?.[0]?.text);
+
+  // 21. eos_mcts_tune
+  const mctsRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 26,
+    method: "tools/call",
+    params: { name: "eos_mcts_tune", arguments: { iterations: 10 } },
+  });
+  assert.ok(mctsRes.result?.content?.[0]?.text);
+
+  // 22. eos_antigravity_direct & doctor
+  const agDirectRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 27,
+    method: "tools/call",
+    params: { name: "eos_antigravity_direct", arguments: { directive: "Audit system invariants" } },
+  });
+  assert.ok(agDirectRes.result?.content?.[0]?.text);
+
+  const agDoctorRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 28,
+    method: "tools/call",
+    params: { name: "eos_antigravity_doctor", arguments: {} },
+  });
+  assert.ok(agDoctorRes.result?.content?.[0]?.text);
+
+  // 23. eos_gentleman_update
+  const gentUpdateRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 29,
+    method: "tools/call",
+    params: { name: "eos_gentleman_update", arguments: { dryRun: true } },
+  });
+  assert.ok(gentUpdateRes.result?.content?.[0]?.text);
 });
 
 test("BDD-282: EosMcpServer executes Phase 7 and Phase 8 domain and AGI handlers via tools/call", async () => {
@@ -240,6 +380,93 @@ test("BDD-282: EosMcpServer executes Phase 7 and Phase 8 domain and AGI handlers
     const res = await server.handleRequest({
       jsonrpc: "2.0",
       id: 100,
+      method: "tools/call",
+      params: { name: t.name, arguments: t.args },
+    });
+    assert.equal(res.jsonrpc, "2.0", `Tool ${t.name} must return JSON-RPC 2.0 envelope`);
+    assert.ok(res.result?.content?.[0]?.text, `Tool ${t.name} must return text content`);
+  }
+});
+
+test("BDD-283: EosMcpServer executes Phase 4, Phase 5, and Phase 6 domain and institutional handlers via tools/call", async () => {
+  const server = new EosMcpServer(projectRoot, "full");
+
+  const phase456Tools = [
+    // Phase 4 Institutional Tools
+    { name: "eos_nubank_audit", args: {} },
+    {
+      name: "eos_nubank_sachem_verify",
+      args: {
+        previousSchema: { type: "record", name: "User", fields: [] },
+        proposedSchema: { type: "record", name: "User", fields: [] },
+      },
+    },
+    { name: "eos_nubank_postmortem", args: { incidentId: "INC-01", description: "Audit verification" } },
+    { name: "eos_nubank_datomic_transact", args: { txData: [["db/add", 1, "test/ident", "audit"]] } },
+    { name: "eos_spotify_audit_institutional", args: {} },
+    {
+      name: "eos_spotify_golden_path_verify",
+      args: { serviceName: "audit-svc", filesPresent: ["catalog-info.yaml"] },
+    },
+    {
+      name: "eos_spotify_canary_gate",
+      args: { stage: "5%", trafficPercentage: 5, totalRequests: 10000, errorCount: 0 },
+    },
+    {
+      name: "eos_spotify_fleetshift_plan",
+      args: { migrationId: "MIG-AUDIT", targetRepos: ["eos-system"] },
+    },
+    { name: "eos_slsa_provenance_sbom", args: { mode: "verify" } },
+    { name: "eos_planetary_doctrine_audit", args: { format: "summary" } },
+    { name: "eos_black_projects_triad_audit", args: { format: "summary" } },
+
+    // Phase 5 Domain Tools
+    { name: "eos_spotify_audit", args: { targetPath: "." } },
+    { name: "eos_spotify_scaffold", args: { targetPath: ".", name: "test-comp", apply: false } },
+    { name: "eos_spotify_standup", args: { yesterday: ["Audited"], today: ["Verify"], blockers: [] } },
+    { name: "eos_spotify_postmortem", args: { incidentId: "INC-02", timeline: ["T0: pass"] } },
+    { name: "eos_spotify_experiment", args: { experimentId: "EXP-01", hypothesis: "Strict gates" } },
+    { name: "eos_spotify_honk_dispatch", args: { taskName: "Audit test", specDescription: "Check Law V" } },
+    { name: "eos_spotify_xirp_context", args: { syncFiles: false } },
+    { name: "eos_spotify_fleetshift_batch", args: { apply: false } },
+    { name: "eos_spotify_canary_manifest", args: { serviceName: "spotify-service" } },
+    { name: "eos_spotify_mix_plan", args: { keyA: "8A", keyB: "9A", duration: 5.0 } },
+    { name: "eos_spotify_taste_profile", args: { userId: "user-deep-test" } },
+    { name: "eos_spotify_shuffle", args: { seed: 42108 } },
+
+    // Phase 6 Domain & Fleet Tools
+    { name: "eos_fleet_registry_sync", args: { dryRun: true } },
+    { name: "eos_apex_route_model", args: { directive: "Evaluate security policy" } },
+    { name: "eos_finops_budget_check", args: {} },
+    { name: "eos_finops_wallet_status", args: {} },
+    { name: "eos_fleet_elevate", args: { targetProject: "eos-system" } },
+    { name: "eos_fleet_mission_control", args: {} },
+    { name: "eos_fleet_pulse", args: {} },
+    { name: "eos_fleet_verify", args: { targetProject: "eos-system" } },
+    { name: "eos_planetary_mesh_status", args: {} },
+    { name: "eos_product_deliver_status", args: {} },
+    { name: "eos_product_foundry_create", args: { name: "test-product", archetype: "api" } },
+    {
+      name: "eos_product_foundry_validate",
+      args: {
+        manifest: {
+          id: "p-1",
+          name: "P1",
+          archetype: "api",
+          capabilities: [],
+          tier: "EXPERIMENTAL",
+          complianceSeal: "sha256:0",
+        },
+      },
+    },
+    { name: "eos_synapse_mesh_status", args: {} },
+    { name: "eos_synapse_fleet_knowledge_query", args: { query: "arch" } },
+  ];
+
+  for (const t of phase456Tools) {
+    const res = await server.handleRequest({
+      jsonrpc: "2.0",
+      id: 200,
       method: "tools/call",
       params: { name: t.name, arguments: t.args },
     });
