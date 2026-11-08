@@ -73,17 +73,21 @@ if (!isMainThread && parentPort) {
 
     // Build mutations list
     const mutations: Array<{ fullPath: string; content: string }> = [];
+    const within = (p: string): boolean => {
+      const rel = path.relative(root, p);
+      return rel !== "" && rel !== ".." && !rel.startsWith(".." + path.sep) && !path.isAbsolute(rel);
+    };
 
     if (branch.targets && branch.targets.length > 0) {
       for (const t of branch.targets) {
         const fullPath = path.resolve(root, t.relPath);
-        assertInvariant(fullPath.startsWith(root), `Worker security: target "${t.relPath}" escapes projectRoot.`);
+        assertInvariant(within(fullPath), `Worker security: target "${t.relPath}" escapes projectRoot.`);
         mutations.push({ fullPath, content: t.content });
       }
     } else if (branch.targetRelPath && branch.proposedContent !== undefined) {
       const fullPath = path.resolve(root, branch.targetRelPath);
       assertInvariant(
-        fullPath.startsWith(root),
+        within(fullPath),
         `Worker security: target "${branch.targetRelPath}" escapes projectRoot.`,
       );
       mutations.push({ fullPath, content: branch.proposedContent });
