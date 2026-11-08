@@ -12,3 +12,19 @@ Governs the deep integration of the Samaelian Gnostic Alchemical Doctrine (Law o
 - **UBIQUITOUS**: THE SYSTEM SHALL operate a 32-thread CUDA-style SIMT Warp Scheduler with lock-free register shuffling (`warpShuffle`) and branchless divergence minimization over a contiguous 64KB ArrayBuffer.
 - **UBIQUITOUS**: THE SYSTEM SHALL execute mixed-precision Tensor Matrix-Multiply-Accumulate (MMA) operations targeting zero heap memory allocation (`0 B/op`) with throughput exceeding 20,000,000 ops/second.
 - **UBIQUITOUS**: THE SYSTEM SHALL seal every execution with a cryptographic SHA-256 Merkle attestation combining the Nous Atom signature with Sysplex and CUDA telemetry.
+
+## 3. Acceptance Criteria (BDD)
+
+```gherkin
+SCENARIO: Two-Phase Commit Distributed Coordination (BDD-051)
+  GIVEN multiple heterogeneous state stores participating in a transactional mutation
+  WHEN the 2PC state machine executes PREPARE and COMMIT phases
+  THEN in-memory lock coordination guarantees zero state divergence
+  AND any participant abort rolls back all tentative mutations cleanly.
+
+SCENARIO: CUDA 32-Thread SIMT Warp Scheduler & MMA Execution (BDD-051)
+  GIVEN an array buffer of numerical vectors
+  WHEN scheduled across the 32-thread virtual warp
+  THEN register shuffling is performed lock-free without branch divergence
+  AND matrix multiply-accumulate operations achieve zero heap allocation.
+```

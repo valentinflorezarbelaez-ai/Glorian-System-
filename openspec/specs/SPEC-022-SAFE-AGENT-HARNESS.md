@@ -31,3 +31,19 @@ Defines local MCP and agent-factory boundaries for untrusted tool arguments, rep
 - Plan generation does not create branches, run tests, or open pull requests.
 - An MCP error does not disclose a JavaScript stack trace.
 - The sandbox is not a microVM and does not isolate against Docker daemon or host-kernel vulnerabilities; workspace size is enforced by a polling watchdog and may briefly overshoot.
+
+## 4. Acceptance Criteria (BDD)
+
+```gherkin
+SCENARIO: Strict MCP Argument Type & Boundary Validation (BDD-053)
+  GIVEN incoming MCP tool arguments from untrusted clients
+  WHEN parsed and validated by the agent harness
+  THEN payloads exceeding 1 MiB are rejected before JSON deserialization
+  AND path arguments resolving outside the allowed workspace boundary are blocked.
+
+SCENARIO: Explicit Opt-in Requirement for Mutation Operations (BDD-053)
+  GIVEN an agent requesting destructive or state-modifying actions
+  WHEN the mutation parameter is not explicitly the boolean true
+  THEN the harness fails closed and rejects the request
+  AND string values like "true" or "false" are strictly forbidden from authorizing writes.
+```

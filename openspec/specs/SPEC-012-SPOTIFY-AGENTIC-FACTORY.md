@@ -18,3 +18,19 @@ The Spotify names are design references, not vendor integrations. This specifica
 - A generated task plan is not autonomous code generation or verification evidence.
 - Static file inventories do not establish a dependency audit, fleet migration, or production health.
 - Local manifest generation does not configure or control Flagger, Argo Rollouts, or a production cluster.
+
+## 4. Acceptance Criteria (BDD)
+
+```gherkin
+SCENARIO: Plan-Only Generation for SDLC Directives (BDD-043)
+  GIVEN a bounded task description and registered repository context
+  WHEN the Honk planning tool generates an execution roadmap
+  THEN a structured plan report is produced without mutating source code on disk
+  AND all repository metadata is clearly marked as untrusted data.
+
+SCENARIO: Local Context Synchronization & Metadata Extraction (BDD-044)
+  GIVEN an explicit request to synchronize local Xirp context
+  WHEN the context extractor runs against registered project definitions
+  THEN local AGENTS.md and catalog metadata are updated predictably
+  AND written file paths are reported with zero external network requests.
+```

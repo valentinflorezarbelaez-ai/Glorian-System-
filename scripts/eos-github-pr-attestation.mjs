@@ -84,8 +84,8 @@ if (fs.existsSync(specsDir)) {
   let compliantSpecs = 0;
   for (const sf of specFiles) {
     const text = fs.readFileSync(path.join(specsDir, sf), "utf8");
-    const hasEars = /CUANDO|MIENTRAS|SI|EL SISTEMA/i.test(text);
-    const hasBdd = /ESCENARIO|DADO|CUANDO|ENTONCES/i.test(text);
+    const hasEars = /CUANDO|MIENTRAS|SI|EL SISTEMA|WHEN|WHILE|WHERE|IF|THE SYSTEM/i.test(text);
+    const hasBdd = /ESCENARIO|DADO|CUANDO|ENTONCES|SCENARIO|GIVEN|THEN/i.test(text);
     if (hasEars && hasBdd) {
       compliantSpecs++;
     }
