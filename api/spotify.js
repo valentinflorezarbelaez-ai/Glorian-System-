@@ -59,7 +59,6 @@ export default async function handler(req, res) {
   let result = null;
 
   try {
-    const root = process.cwd();
     if (action === "status") {
       result = { availableLocalActions: [...allowedActions].filter((item) => item !== "status") };
     } else if (action === "dsp") {
@@ -73,10 +72,22 @@ export default async function handler(req, res) {
         benchmarkScope: "local synthetic Float32Array buffer; not a Spotify or standards certification",
       };
     } else if (action === "camelot") {
-      const { EosSpotifyCodex } = await import("../src/core/eosSpotifyCodex.ts");
-      const codex = new EosSpotifyCodex(root);
       const key = query.key || "8A";
-      result = codex.getCamelotTransitions(key);
+      const match = key.match(/^(1[0-2]|[1-9])([AB])$/);
+      const num = match ? parseInt(match[1], 10) : 8;
+      const letter = match ? match[2] : "A";
+      const oppLetter = letter === "A" ? "B" : "A";
+      const boost = `${num === 12 ? 1 : num + 1}${letter}`;
+      const drop = `${num === 1 ? 12 : num - 1}${letter}`;
+      const modeShift = `${num}${oppLetter}`;
+      result = {
+        currentKey: key,
+        perfectMatch: key,
+        energyBoost: boost,
+        energyDrop: drop,
+        modeShift,
+        compatibleKeys: [key, boost, drop, modeShift],
+      };
     } else if (action === "mesh") {
       const { EosApolloHermesMesh } = await import("../src/core/eosApolloHermesMesh.ts");
       const mesh = new EosApolloHermesMesh();

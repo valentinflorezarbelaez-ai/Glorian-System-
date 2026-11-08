@@ -63,7 +63,8 @@ child.on("close", (exitCode) => {
   if (exitCode !== 0) {
     // Test failures are reported in the test run, not the coverage gate.
     console.error(`[FAIL] Test suite exited with code ${exitCode}. Coverage cannot be assessed.`);
-    if (stderr.trim()) console.error(stderr.slice(-2000));
+    if (stderr.trim()) console.error("STDERR:", stderr.slice(-2000));
+    if (stdout.trim()) console.error("STDOUT:", stdout.slice(-3000));
     process.exit(exitCode ?? 1);
   }
 
