@@ -122,15 +122,22 @@ function normalizeGitRemote(value) {
 // SECURITY: validate every registry entry before any path is used. A tampered
 // registry could otherwise inject arbitrary local paths or gate scripts.
 function validateRegistryEntry(proj) {
-  if (typeof proj.localPath !== "string" || proj.localPath.includes("..")) {
+  if (proj.localPath !== undefined && (typeof proj.localPath !== "string" || proj.localPath.includes(".."))) {
     throw new Error(`invalid localPath in registry for "${proj.id}"`);
   }
+  if (
+    proj.resolvedLocalDir !== undefined &&
+    (typeof proj.resolvedLocalDir !== "string" || proj.resolvedLocalDir.includes(".."))
+  ) {
+    throw new Error(`invalid resolvedLocalDir in registry for "${proj.id}"`);
+  }
   if (proj.cicdGateScript) {
+    const isNpmCommand = /^npm(\.cmd)?\s+[a-zA-Z0-9_\-:]+$/i.test(proj.cicdGateScript);
+    const isFilePath = /^[a-zA-Z0-9_\-./]+$/.test(proj.cicdGateScript) && !path.isAbsolute(proj.cicdGateScript);
     if (
       typeof proj.cicdGateScript !== "string" ||
-      path.isAbsolute(proj.cicdGateScript) ||
       proj.cicdGateScript.includes("..") ||
-      !proj.cicdGateScript.match(/^[a-zA-Z0-9_\-./]+$/)
+      (!isNpmCommand && !isFilePath)
     ) {
       throw new Error(`invalid cicdGateScript in registry for "${proj.id}"`);
     }
