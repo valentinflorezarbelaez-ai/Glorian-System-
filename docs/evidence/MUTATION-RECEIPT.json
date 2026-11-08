@@ -1,10 +1,10 @@
 {
-  "runId": "MUTATION-1794071377268",
-  "timestamp": "2026-11-07T17:09:37.268Z",
+  "runId": "MUTATION-1794148943310",
+  "timestamp": "2026-11-08T14:42:23.310Z",
   "threshold": 60,
-  "globalScore": 93,
-  "totalMutants": 43,
-  "totalKilled": 40,
+  "globalScore": 68,
+  "totalMutants": 44,
+  "totalKilled": 30,
   "passed": true,
   "results": [
     {
@@ -16,21 +16,21 @@
     {
       "name": "SemanticGraph",
       "total": 15,
-      "killed": 15,
-      "score": 100
+      "killed": 10,
+      "score": 67
     },
     {
       "name": "TurboEngine",
       "total": 8,
-      "killed": 8,
-      "score": 100
+      "killed": 5,
+      "score": 63
     },
     {
       "name": "ArchitectureGuard",
-      "total": 8,
-      "killed": 8,
-      "score": 100
+      "total": 9,
+      "killed": 6,
+      "score": 67
     }
   ],
-  "sha256": "756565e422781fa786eceefb753040782df6b477dc5740d591657686a16e3bcf"
+  "sha256": "aca52699ff45cc3b5dbe8a7eaa3fdbc90f5ac44f510faef7df7c5b04805be745"
 }

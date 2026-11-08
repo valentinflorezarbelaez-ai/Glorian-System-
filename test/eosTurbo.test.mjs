@@ -77,6 +77,26 @@ describe("EOS Turbo Engine & Nanosecond Precision Suite", () => {
       assert.ok(result.sourceInventoryDigest.startsWith("sha256:"));
     });
 
+    it("fails closed when external runtime dependencies are introduced into package.json (Law V)", async () => {
+      const fs = await import("node:fs");
+      const os = await import("node:os");
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-turbo-deps-"));
+      try {
+        fs.writeFileSync(
+          path.join(tempDir, "package.json"),
+          JSON.stringify({ name: "temp-violator", dependencies: { express: "^4.18.0" } }),
+        );
+        const result = runTurboPipeline(tempDir);
+        assert.equal(result.success, false, "Pipeline must fail when external dependencies are present");
+        assert.ok(
+          result.violations.some((v) => v.includes("External runtime dependencies detected")),
+          "Expected violation message for external dependencies",
+        );
+      } finally {
+        fs.rmSync(tempDir, { recursive: true, force: true });
+      }
+    });
+
     it("provides microsecond-level telemetry for each verification stage", () => {
       const result = runTurboPipeline(root);
 

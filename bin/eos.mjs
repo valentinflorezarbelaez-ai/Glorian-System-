@@ -1963,6 +1963,13 @@ switch (command) {
   case "mutate":
   case "sabotage": {
     printBanner();
+    if (args.includes("--run") || args.includes("--all") || args.includes("--gate")) {
+      execFileSync(process.execPath, [path.join(root, "scripts/run-mutation-testing.mjs")], {
+        cwd: root,
+        stdio: "inherit",
+      });
+      break;
+    }
     console.log(`[EOS MUTATION] Sabotaje de Código Automatizado (Testing the Tests)...\n`);
     const targetFile = args[1] || "src/core/eosMicroScheduler.ts";
     const full = path.resolve(root, targetFile);
@@ -3327,12 +3334,19 @@ switch (command) {
     break;
   }
 
+  case "nocturnal":
   case "evolve": {
     printBanner();
-    const subAction = (args[1] || "evaluate").toLowerCase();
-    const { EosEvolutionaryHarness } = await import("../src/core/eosEvolutionaryHarness.ts");
+    const subAction = (args[1] || "sweep").toLowerCase();
 
-    if (subAction === "evaluate") {
+    if (subAction === "sweep" || subAction === "nocturnal") {
+      const { EosNocturnalEvolutionEngine } = await import("../src/core/eosNocturnalEvolutionEngine.ts");
+      const engine = new EosNocturnalEvolutionEngine(root);
+      const targetDir = args[2] || "src/core";
+      const report = engine.runEvolutionSweep({ targetDir });
+      console.log(EosNocturnalEvolutionEngine.formatNocturnalSummary(report));
+    } else if (subAction === "evaluate") {
+      const { EosEvolutionaryHarness } = await import("../src/core/eosEvolutionaryHarness.ts");
       const res = EosEvolutionaryHarness.computeFitnessVector(113000, 0, 100, 4, 100);
       console.log("[EOS DEEPMIND SOVEREIGN EVOLUTIONARY HARNESS — ALPHAEVOLVE]\n");
       console.log(`  Composite Fitness      : ${res.compositeFitness}/100`);
@@ -3342,6 +3356,7 @@ switch (command) {
       console.log(`  Cyclomatic Complexity  : ${res.cyclomaticComplexity}`);
       console.log(`  Contract Score         : ${res.contractComplianceScore}/100\n`);
     } else if (subAction === "lock") {
+      const { EosEvolutionaryHarness } = await import("../src/core/eosEvolutionaryHarness.ts");
       const targetArg = args[2] || "src/core/eosKernelPrimitives.ts";
       const fullPath = path.resolve(root, targetArg);
       const content = fs.readFileSync(fullPath, "utf8");
@@ -3352,7 +3367,7 @@ switch (command) {
       console.log(`  Exported Signatures    : ${locked.exportedSignatures.length}`);
       console.log(`  Interface SHA-256 Lock : sha256:${locked.lockedSha256}\n`);
     } else {
-      console.log(`[EOS EVOLVE] Modo: evaluate | lock`);
+      console.log(`[EOS EVOLVE] Modo: sweep | evaluate | lock`);
     }
     break;
   }
