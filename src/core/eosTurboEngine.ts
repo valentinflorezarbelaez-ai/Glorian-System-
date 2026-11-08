@@ -161,6 +161,9 @@ export function collectSourceFiles(dir: string, projectRoot: string = dir): stri
         results.push(...collectSourceFiles(full, projectRoot));
       }
     } else if (entry.isFile()) {
+      if (entry.name.startsWith(".git")) {
+        continue;
+      }
       const ext = path.extname(entry.name).toLowerCase();
       if (!binaryExtensions.has(ext)) {
         results.push(full);

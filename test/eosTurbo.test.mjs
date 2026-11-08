@@ -57,7 +57,14 @@ describe("EOS Turbo Engine & Nanosecond Precision Suite", () => {
     it("recursively collects project source files excluding node_modules and .git", () => {
       const files = collectSourceFiles(path.join(root, "src"), root);
       assert.ok(files.length >= 10);
-      assert.ok(files.every((f) => !f.includes("node_modules") && !f.includes(".git")));
+      assert.ok(
+        files.every(
+          (f) =>
+            !f.split(/[\\/]/).includes("node_modules") &&
+            !f.split(/[\\/]/).includes(".git") &&
+            !path.basename(f).startsWith(".git"),
+        ),
+      );
     });
   });
 
