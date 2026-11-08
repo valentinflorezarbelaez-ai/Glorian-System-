@@ -1,9 +1,9 @@
 {
-  "measuredAt": "2026-11-07T18:38:02.121Z",
+  "measuredAt": "2026-11-08T02:21:11.443Z",
   "windowDays": 30,
   "deploymentFrequency": {
-    "commitsInWindow": 193,
-    "perDay": "6.43",
+    "commitsInWindow": 196,
+    "perDay": "6.53",
     "rating": "ELITE",
     "eliteThreshold": "1+ deploys/day"
   },
@@ -15,8 +15,8 @@
   },
   "changeFailureRate": {
     "incidents": 1,
-    "deploysInWindow": 193,
-    "percent": "0.52%",
+    "deploysInWindow": 196,
+    "percent": "0.51%",
     "rating": "ELITE",
     "eliteThreshold": "≤ 5%"
   },
@@ -27,5 +27,5 @@
     "eliteThreshold": "< 1 hour"
   },
   "overallRating": "HIGH",
-  "sha256": "dbadacb403b2d743f51708d75e9bc87278268aa13fb1c55d1adccc4d1f6f36c2"
+  "sha256": "18502728869188c4ef5536ffb6ec4e8891c34f7cfa53ee65adbdaea1413339be"
 }
