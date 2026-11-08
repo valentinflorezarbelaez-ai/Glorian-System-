@@ -140,6 +140,7 @@ export function parseDiff(diffText: string): ParsedDiff {
 /**
  * Applies a unified diff to a file on disk.
  * Creates a backup before applying. On any error, restores the backup.
+ * Targets outside projectRoot are rejected before any read, backup, or write.
  *
  * @param diff     The parsed diff to apply
  * @param projectRoot  Root directory for resolving relative paths
@@ -148,6 +149,24 @@ export function parseDiff(diffText: string): ParsedDiff {
 export function applyDiff(diff: ParsedDiff, projectRoot: string): PatchResult {
   const t0 = Date.now();
   const targetPath = path.resolve(projectRoot, diff.newPath || diff.oldPath);
+
+  const relTarget = path.relative(path.resolve(projectRoot), targetPath);
+  if (
+    relTarget === "" ||
+    relTarget === ".." ||
+    relTarget.startsWith(".." + path.sep) ||
+    path.isAbsolute(relTarget)
+  ) {
+    return {
+      success: false,
+      targetPath: diff.newPath || diff.oldPath,
+      linesAdded: 0,
+      linesRemoved: 0,
+      linesContext: 0,
+      durationMs: Date.now() - t0,
+      error: `Patch target escapes project root: ${diff.newPath || diff.oldPath}`,
+    };
+  }
 
   if (!fs.existsSync(targetPath)) {
     return {
@@ -191,10 +210,10 @@ export function applyDiff(diff: ParsedDiff, projectRoot: string): PatchResult {
           lineIdx++;
         } else if (dl.type === "remove") {
           linesRemoved++;
-          // Verify the line we're removing matches
+          // Verify the line we're removing matches; a stale or malformed patch must not apply
           const actual = resultLines[lineIdx];
-          if (actual !== undefined && actual.trim() !== dl.content.trim()) {
-            // Context mismatch — but we apply anyway (the tribunal will catch errors)
+          if (actual === undefined || actual.trim() !== dl.content.trim()) {
+            throw new Error(`Patch mismatch at line ${lineIdx + 1}: removal line does not match target file`);
           }
           resultLines.splice(lineIdx, 1);
         }
