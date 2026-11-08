@@ -1,6 +1,6 @@
 /**
  * EOS SYSTEM — SLSA LEVEL 3/4 PROVENANCE & CYCLONEDX v1.5 SBOM ENGINE (Layer 0)
- * Governed by SPEC-061, SPEC-139, CHANGE-074, ADR-0170
+ * Governed by SPEC-061, SPEC-067, CHANGE-074, ADR-0170
  *
  * Implements OpenSSF, Google SLSA v1.0, and CISA Supply-Chain Security Standards:
  * 1. Pure Layer-0 CycloneDX v1.5 JSON SBOM Synthesis (0 external npm dependencies).

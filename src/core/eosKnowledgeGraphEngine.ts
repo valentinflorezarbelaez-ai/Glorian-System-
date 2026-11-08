@@ -705,7 +705,7 @@ export class EosKnowledgeGraphEngine {
             sha256: fileSha256,
           });
 
-          // Check spec references inside comments (e.g. SPEC-140, SPEC-144)
+          // Check spec references inside comments (e.g. SPEC-145, SPEC-144)
           const specMatches = content.match(/SPEC-\d+/g) || [];
           for (const specId of new Set(specMatches)) {
             this.upsertEdge({
