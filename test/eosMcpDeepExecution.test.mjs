@@ -189,3 +189,61 @@ test("BDD-281: EosMcpServer executes Phase 2 and Phase 3 core utilitarian tool h
   const tribunalData = JSON.parse(tribunalRes.result.content[0].text);
   assert.equal(tribunalData.overallVerdict, "SOVEREIGN_TRIBUNAL_APPROVED");
 });
+
+test("BDD-282: EosMcpServer executes Phase 7 and Phase 8 domain and AGI handlers via tools/call", async () => {
+  const server = new EosMcpServer(projectRoot, "full");
+
+  const phase7And8Tools = [
+    { name: "eos_invariant_engine", args: {} },
+    { name: "eos_contract_governor", args: { contractType: "API" } },
+    { name: "eos_wasm_sandbox", args: { action: "diagnose" } },
+    { name: "eos_enterprise_workspace", args: { action: "list" } },
+    {
+      name: "eos_agent_topology_mesh",
+      args: {
+        action: "compile",
+        nodes: [
+          {
+            id: "node_1",
+            name: "Kernel Node",
+            assignedModulePath: "src/core/eosKernelPrimitives.ts",
+            dependencies: [],
+          },
+        ],
+      },
+    },
+    { name: "eos_content_addressable_cache", args: { action: "stats" } },
+    { name: "eos_threshold_secret_split_combine", args: { action: "demo" } },
+    { name: "eos_smt_reasoning_prover", args: { action: "abac_demo" } },
+    { name: "eos_hash_chain_verify", args: { maxBlocks: 5 } },
+    { name: "eos_platform_ops_ceiling", args: {} },
+    { name: "eos_truetime_commit_wait", args: { action: "now" } },
+    { name: "eos_lsm_storage_put_get", args: { action: "stats" } },
+    { name: "eos_monte_carlo_sim", args: { trials: 10 } },
+    { name: "eos_nsa_zero_trust_check", args: {} },
+    { name: "eos_bft_swarm_consensus", args: { proposalId: "TEST-01" } },
+    { name: "eos_trace_span_record", args: { operation: "test" } },
+    { name: "eos_unitotal_evaluate", args: { scope: "system" } },
+    { name: "eos_wal_status", args: {} },
+    { name: "eos_github_gate", args: {} },
+    { name: "eos_microvm_sandbox", args: { action: "diagnose" } },
+    { name: "eos_mutation_test", args: { maxMutants: 2 } },
+    { name: "eos_zero_copy_scan", args: { targetDir: "src/core" } },
+    { name: "eos_microvm_enclave_generate", args: { enclaveId: "test-enc" } },
+    { name: "eos_agi_axioms", args: {} },
+    { name: "eos_context_window", args: { targetFile: "package.json", objective: "Audit dependencies" } },
+    { name: "eos_forge_list", args: {} },
+    { name: "eos_spec_drift", args: {} },
+  ];
+
+  for (const t of phase7And8Tools) {
+    const res = await server.handleRequest({
+      jsonrpc: "2.0",
+      id: 100,
+      method: "tools/call",
+      params: { name: t.name, arguments: t.args },
+    });
+    assert.equal(res.jsonrpc, "2.0", `Tool ${t.name} must return JSON-RPC 2.0 envelope`);
+    assert.ok(res.result?.content?.[0]?.text, `Tool ${t.name} must return text content`);
+  }
+});
