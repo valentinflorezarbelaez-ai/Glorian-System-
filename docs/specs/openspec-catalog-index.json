@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
   "totalSpecs": 177,
-  "catalogSha256": "26a4d3ea910ab04836f25514172cb2dc65c91e26f3414e7c3e31204b730ad713",
+  "catalogSha256": "c69238cf1fc3851d36599a8d3a8a6f605dba0e9e8c4e75faf8213b54a0eeae68",
   "specs": [
     {
       "id": "SPEC-001",
@@ -10,7 +10,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-001-CONSTITUTION.md",
-      "sha256": "90c4d2c76cb144327b3047ae37c27ca9fec3c53d21013bacde1bf26654621763"
+      "sha256": "5c8df1a1ffc5f30af49d1ae4c26add4f57c023b8aa740c74a606e2aa24dd5edb"
     },
     {
       "id": "SPEC-002",
@@ -26,9 +26,9 @@
       "title": "OPENSPEC BASE SPECIFICATION: XIRP-GRADE WORKTREE ISOLATION (SPEC-003)",
       "status": "UNKNOWN",
       "frCount": 0,
-      "bddCount": 0,
+      "bddCount": 2,
       "file": "openspec/specs/SPEC-003-XIRP-WORKTREE.md",
-      "sha256": "723e8f5755b3846f5a1f69ff84676b4aa9f096aad6cb691e6a8e3b22f7c01cf1"
+      "sha256": "9811f70ec4bbaa63974a38882ab4fc3b045808c3dee97837697f9e6a3a0584d5"
     },
     {
       "id": "SPEC-004",
@@ -44,27 +44,27 @@
       "title": "OPENSPEC BASE SPECIFICATION: LOCAL HEALER BOUNDARIES (SPEC-005)",
       "status": "UNKNOWN",
       "frCount": 0,
-      "bddCount": 0,
+      "bddCount": 2,
       "file": "openspec/specs/SPEC-005-AUTONOMOUS-HEALER.md",
-      "sha256": "b00e82b71e18c84218ccba4351d78c69e819087ee70c70025a362a94735bd14a"
+      "sha256": "7b453ac43f7ed7ae63e442cedca18510d4453873debc8081a95a38f5d991e7b6"
     },
     {
       "id": "SPEC-006",
       "title": "OPENSPEC BASE SPECIFICATION: SOVEREIGN TITANS MATRIX (SPEC-006)",
       "status": "UNKNOWN",
       "frCount": 0,
-      "bddCount": 0,
+      "bddCount": 1,
       "file": "openspec/specs/SPEC-006-TITANS-MATRIX.md",
-      "sha256": "705ddee69c5db593bd275e30ab9d13c77cfa0d2e0c951586304000cda180975e"
+      "sha256": "c35a8efe31d18b258e0c3eace3bdd21999cdcc87548242544e33e8e1c5b5116e"
     },
     {
       "id": "SPEC-007",
       "title": "OPENSPEC BASE SPECIFICATION: TURBO ENGINE & SEMANTIC CODE GRAPH (SPEC-007)",
       "status": "UNKNOWN",
       "frCount": 0,
-      "bddCount": 0,
+      "bddCount": 2,
       "file": "openspec/specs/SPEC-007-TURBO-SEMANTIC-GRAPH.md",
-      "sha256": "63480e98654b0a158fbf38672c9a3bad5c642ee4272d9cb51ffe9c354708b9af"
+      "sha256": "e0be5dd855313583fe688399579f48299123e97d9413acb6595a0355ab9710db"
     },
     {
       "id": "SPEC-008",
@@ -80,18 +80,18 @@
       "title": "OPENSPEC BASE SPECIFICATION: JARVIS SOVEREIGN MONAD (SPEC-009)",
       "status": "UNKNOWN",
       "frCount": 0,
-      "bddCount": 0,
+      "bddCount": 2,
       "file": "openspec/specs/SPEC-009-JARVIS-SOVEREIGN-MONAD.md",
-      "sha256": "d55089186e9817c27651710ed207afecea3f263ecdbe99daca33ee0a4842d7b1"
+      "sha256": "e511f4ec05bc2c1d8568052df02c442e1be9b0dfabc0f93ee420dc12daa6c712"
     },
     {
       "id": "SPEC-010",
       "title": "OPENSPEC BASE SPECIFICATION: SOVEREIGN AKASHIC MEMORY & ENGRAM SYNTHESIS (SPEC-010)",
       "status": "UNKNOWN",
       "frCount": 0,
-      "bddCount": 0,
+      "bddCount": 2,
       "file": "openspec/specs/SPEC-010-AKASHIC-MEMORY.md",
-      "sha256": "5cf8e6f6a4e298f62079ff31bf08703dfdc7cba33d273f3a7139fcceab81fa4b"
+      "sha256": "0708917f1507c46d7561f7dda6c4b7605c240c2113d825b942491b8a6a5e89c7"
     },
     {
       "id": "SPEC-011",
@@ -107,18 +107,18 @@
       "title": "BASE SPECIFICATION: LOCAL SDLC PLANNING TOOLS (SPEC-012)",
       "status": "UNKNOWN",
       "frCount": 0,
-      "bddCount": 0,
+      "bddCount": 2,
       "file": "openspec/specs/SPEC-012-SPOTIFY-AGENTIC-FACTORY.md",
-      "sha256": "6fcc9cc22a838b6333287321769be0f58b991d45344d376e212f58f32e201572"
+      "sha256": "79e07a371c0f5f73b2308f652609e39ae7a9770d93c103b36079506a09d26bcf"
     },
     {
       "id": "SPEC-013",
       "title": "OPENSPEC BASE SPECIFICATION: AUDIO DSP KERNEL & TRUE PEAK LIMITER (SPEC-013)",
       "status": "UNKNOWN",
       "frCount": 0,
-      "bddCount": 0,
+      "bddCount": 1,
       "file": "openspec/specs/SPEC-013-AUDIO-DSP-KERNEL.md",
-      "sha256": "4fe39cb894bfc584511daa2ef987fc7ba3456ad7ad370295c5a350f290194572"
+      "sha256": "60518ea45636c3e6514a6f16bbca0e7114da091d7f883c44c9195601d25d79e8"
     },
     {
       "id": "SPEC-014",
@@ -134,9 +134,9 @@
       "title": "OPENSPEC BASE SPECIFICATION: SPOTIFY APOLLO / HERMES RPC & EVENT MESH (SPEC-015)",
       "status": "UNKNOWN",
       "frCount": 0,
-      "bddCount": 0,
+      "bddCount": 1,
       "file": "openspec/specs/SPEC-015-APOLLO-HERMES-MESH.md",
-      "sha256": "dc693bf5dca1941d7d6bc4c00beef546761d8400fbb397067c177ec099a8707e"
+      "sha256": "0435b78bc1e9cd1ed4a27172198da1b01cea80b746cf2ab573664024f5b95dd1"
     },
     {
       "id": "SPEC-016",
@@ -152,18 +152,18 @@
       "title": "OPENSPEC BASE SPECIFICATION: GAPLESS DJ AUTOMIX & 3-BAND CROSSFADER (SPEC-017)",
       "status": "UNKNOWN",
       "frCount": 0,
-      "bddCount": 0,
+      "bddCount": 1,
       "file": "openspec/specs/SPEC-017-GAPLESS-DJ-CROSSFADER.md",
-      "sha256": "42e42a945da8a4c6df6a15a6367ae65df158479326b0c053715524d6cdcfb0ff"
+      "sha256": "4ea7023c620fa3063880e6fb9deee9ea97c86ac5547b05b008428615c96b4e40"
     },
     {
       "id": "SPEC-018",
       "title": "OPENSPEC BASE SPECIFICATION: REAL-TIME ACOUSTIC FEATURE STORE (SPEC-018)",
       "status": "UNKNOWN",
       "frCount": 0,
-      "bddCount": 0,
+      "bddCount": 1,
       "file": "openspec/specs/SPEC-018-ACOUSTIC-FEATURE-STORE.md",
-      "sha256": "52a16cce22034e036cf10aab0ebc66d1a010fa4b181941970f480b146246a2cf"
+      "sha256": "d48fa26df80af7828dcc5c378cec8eda3100ebf8e72e1c5633bb996b69c6e443"
     },
     {
       "id": "SPEC-019",
@@ -179,9 +179,9 @@
       "title": "OPENSPEC BASE SPECIFICATION: GLOBAL EDGE ANYCAST ARBITER & DISTRIBUTED MESH (SPEC-020)",
       "status": "UNKNOWN",
       "frCount": 0,
-      "bddCount": 0,
+      "bddCount": 1,
       "file": "openspec/specs/SPEC-020-GLOBAL-EDGE-ARBITER.md",
-      "sha256": "fdb2e0eaa215d59aabd5abad353c7a208b45d8c98262565acde0ce196906ad7c"
+      "sha256": "8bc279f2506377d71f30ef7487f644144651d45bbf1d5dc7fb8193be647ed811"
     },
     {
       "id": "SPEC-020",
@@ -197,9 +197,9 @@
       "title": "OPENSPEC BASE SPECIFICATION: SAMAELIAN CYBER-THEURGIC SYNTHESIS — IBM SYSPLEX & NVIDIA WARP (SPEC-021)",
       "status": "UNKNOWN",
       "frCount": 0,
-      "bddCount": 0,
+      "bddCount": 1,
       "file": "openspec/specs/SPEC-021-SAMAEL-IBM-NVIDIA.md",
-      "sha256": "58b0557a7cc608b5e7ccc9c8c5df813dfa85a346f790471c8d0945340b109e66"
+      "sha256": "12645744de390405471f634a94a65402c8b2991d7fe5c573b932f7485c424b5b"
     },
     {
       "id": "SPEC-021",
@@ -215,18 +215,18 @@
       "title": "OPENSPEC BASE SPECIFICATION: LMAX DISRUPTOR LOCK-FREE RING BUFFER & SPEED ENGINE (SPEC-022)",
       "status": "UNKNOWN",
       "frCount": 0,
-      "bddCount": 0,
+      "bddCount": 1,
       "file": "openspec/specs/SPEC-022-DISRUPTOR-RING-BUFFER.md",
-      "sha256": "63003721c45518d78d095602b165cb090cb63ff4a84d3b6022c5a3db912a49c9"
+      "sha256": "3bfe9a48cf3d09e0bf6e0485ea6fe161c3aac153676201caa26564bf8bf0e299"
     },
     {
       "id": "SPEC-022",
       "title": "BASE SPECIFICATION: SAFE AGENT HARNESS BOUNDARIES (SPEC-022)",
       "status": "UNKNOWN",
       "frCount": 0,
-      "bddCount": 0,
+      "bddCount": 1,
       "file": "openspec/specs/SPEC-022-SAFE-AGENT-HARNESS.md",
-      "sha256": "a6ecb776f82cde0281f1def93b40f2b238f3ab8cccb24e1cefeeac526b403839"
+      "sha256": "709d3a4ba2a871d11c0a3c6c48ebda856eb6b7f08e449c6529fbfe3ae3a5e926"
     },
     {
       "id": "SPEC-023",
