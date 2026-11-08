@@ -141,6 +141,30 @@ describe("EosDiffPatcher — Diff-Based Patch Application (Cursor/Devin Standard
     assert.ok(result.error?.includes("not exist"));
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
+
+  it("applyDiff returns error for path traversal targets outside projectRoot", () => {
+    const tmpDir = path.join(os.tmpdir(), `eos-diff-traversal-${Date.now()}`);
+    fs.mkdirSync(tmpDir, { recursive: true });
+    const diff = parseDiff("--- a/../../secret.txt\n+++ b/../../secret.txt\n@@ -1 +1 @@\n-old\n+new\n");
+    const result = applyDiff(diff, tmpDir);
+    assert.equal(result.success, false);
+    assert.ok(result.error?.includes("escapes project root"));
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it("applyDiff rejects patch when removal line mismatches target content", () => {
+    const tmpDir = path.join(os.tmpdir(), `eos-diff-mismatch-${Date.now()}`);
+    fs.mkdirSync(tmpDir, { recursive: true });
+    const targetFile = path.join(tmpDir, "target.ts");
+    fs.writeFileSync(targetFile, "const actual = 42;\n", "utf8");
+    const diff = parseDiff(
+      "--- a/target.ts\n+++ b/target.ts\n@@ -1 +1 @@\n-const expected = 99;\n+const newval = 100;\n",
+    );
+    const result = applyDiff(diff, tmpDir);
+    assert.equal(result.success, false);
+    assert.ok(result.error?.includes("Patch mismatch"));
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
 });
 
 // ── Suite 3: Rate Limiting ────────────────────────────────────────────────────
