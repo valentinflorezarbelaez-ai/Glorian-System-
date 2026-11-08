@@ -86,10 +86,7 @@ if (!isMainThread && parentPort) {
       }
     } else if (branch.targetRelPath && branch.proposedContent !== undefined) {
       const fullPath = path.resolve(root, branch.targetRelPath);
-      assertInvariant(
-        within(fullPath),
-        `Worker security: target "${branch.targetRelPath}" escapes projectRoot.`,
-      );
+      assertInvariant(within(fullPath), `Worker security: target "${branch.targetRelPath}" escapes projectRoot.`);
       mutations.push({ fullPath, content: branch.proposedContent });
     }
 

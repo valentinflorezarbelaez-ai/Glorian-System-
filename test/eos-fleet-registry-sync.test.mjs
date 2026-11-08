@@ -1,6 +1,8 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import {
   discoverGitRepositories,
@@ -10,50 +12,165 @@ import {
   computeRegistrySignature,
 } from "../scripts/eos-fleet-registry-sync.mjs";
 
+delete process.env.GIT_DIR;
+delete process.env.GIT_INDEX_FILE;
+delete process.env.GIT_WORK_TREE;
+delete process.env.GIT_PREFIX;
+
+function git(directory, args) {
+  const env = { ...process.env };
+  delete env.GIT_DIR;
+  delete env.GIT_INDEX_FILE;
+  delete env.GIT_WORK_TREE;
+  delete env.GIT_PREFIX;
+  return execFileSync("git", args, {
+    cwd: directory,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+    env,
+  }).trim();
+}
+
+function makeWorkspace(t) {
+  const workspace = fs.mkdtempSync(path.join(os.tmpdir(), "eos-fleet-registry-"));
+  t.after(() => fs.rmSync(workspace, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 }));
+  return workspace;
+}
+
+function createFixtureRepository(workspace, name, { remoteUrl } = {}) {
+  const repoRoot = path.join(workspace, name);
+  fs.mkdirSync(repoRoot);
+  git(repoRoot, ["init", "--initial-branch=main"]);
+  git(repoRoot, ["config", "user.name", "EOS Fleet Registry Test"]);
+  git(repoRoot, ["config", "user.email", "eos-fleet-registry-test@example.invalid"]);
+  git(repoRoot, ["config", "commit.gpgsign", "false"]);
+  fs.writeFileSync(path.join(repoRoot, "README.md"), `# ${name}\n`, "utf8");
+  git(repoRoot, ["add", "README.md"]);
+  git(repoRoot, ["commit", "-m", "Initialize fixture"]);
+  if (remoteUrl) git(repoRoot, ["remote", "add", "origin", remoteUrl]);
+  return repoRoot;
+}
+
 describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => {
   describe("BDD-361: Autonomous Git Repository Discovery", () => {
-    it("discovers all git repositories in workspace root and ignores non-git folders", (t) => {
-      const rootDir = "c:\\Users\\valen";
-      if (!fs.existsSync(rootDir) || process.env.VERCEL) {
-        t.skip("Skipping workspace discovery in sandboxed CI/Vercel environment");
-        return;
+    it("discovers git repositories in the workspace root and ignores non-git, hidden and excluded folders", (t) => {
+      const workspace = makeWorkspace(t);
+      for (const name of ["alpha-repo", "beta-repo"]) {
+        fs.mkdirSync(path.join(workspace, name, ".git"), { recursive: true });
       }
-      const repos = discoverGitRepositories(rootDir);
-      assert.ok(Array.isArray(repos));
-      assert.ok(repos.length >= 5, "Expected at least 5 git repositories in workspace");
+      // A `.git` file (worktree/submodule checkout) is also a valid repository marker.
+      fs.mkdirSync(path.join(workspace, "gamma-worktree"));
+      fs.writeFileSync(
+        path.join(workspace, "gamma-worktree", ".git"),
+        "gitdir: ../alpha-repo/.git/worktrees/gamma\n",
+        "utf8",
+      );
+      fs.mkdirSync(path.join(workspace, "plain-folder"));
+      fs.mkdirSync(path.join(workspace, ".hidden-repo", ".git"), { recursive: true });
+      fs.mkdirSync(path.join(workspace, "node_modules", ".git"), { recursive: true });
+      fs.mkdirSync(path.join(workspace, ".cache", ".git"), { recursive: true });
+      fs.writeFileSync(path.join(workspace, "not-a-directory.txt"), "file\n", "utf8");
 
-      const repoNames = repos.map((r) => r.name);
-      assert.ok(repoNames.includes("Eos-System"), "Must discover Eos-System");
-      assert.ok(repoNames.includes("Control-De-Asistencia-Abopack"), "Must discover Control-De-Asistencia-Abopack");
-      assert.ok(repoNames.includes("portafolio"), "Must discover portafolio");
+      const repos = discoverGitRepositories(workspace);
+      assert.deepEqual(repos.map((r) => r.name).sort(), ["alpha-repo", "beta-repo", "gamma-worktree"]);
+      for (const repo of repos) {
+        assert.equal(repo.fullPath, path.join(workspace, repo.name));
+      }
+    });
 
-      // Must not include non-git or hidden tooling directories
-      assert.ok(!repoNames.includes(".gemini"));
-      assert.ok(!repoNames.includes(".cache"));
+    it("returns an empty list for a non-existent workspace root", (t) => {
+      const workspace = makeWorkspace(t);
+      assert.deepEqual(discoverGitRepositories(path.join(workspace, "missing-root")), []);
     });
   });
 
   describe("BDD-362: Git Porcelain & Production Endpoint Inference", () => {
-    it("extracts git remote, branch, and commit hash for Eos-System", (t) => {
-      const eosPath = path.resolve(".");
-      const gitMeta = extractGitMetadata(eosPath);
-      if (!gitMeta.remoteUrl || process.env.VERCEL) {
-        t.skip("Skipping Git metadata extraction in isolated build container");
-        return;
-      }
-      assert.ok(/Eos-System|Glorian-System/i.test(gitMeta.remoteUrl));
-      assert.ok(gitMeta.currentBranch.length > 0);
-      assert.ok(/^[0-9a-f]{40}$/i.test(gitMeta.headCommitSha));
+    it("extracts git remote, branch, and commit hash from a hermetic fixture repository", (t) => {
+      const workspace = makeWorkspace(t);
+      const remoteUrl = "https://github.com/eos-fixture/glorian-fixture.git";
+      const repoRoot = createFixtureRepository(workspace, "glorian-fixture", { remoteUrl });
+
+      const gitMeta = extractGitMetadata(repoRoot);
+      assert.equal(gitMeta.remoteUrl, remoteUrl);
+      assert.equal(gitMeta.currentBranch, "main");
+      assert.match(gitMeta.headCommitSha, /^[0-9a-f]{40}$/);
+      assert.equal(gitMeta.headCommitSha, git(repoRoot, ["rev-parse", "HEAD"]));
     });
 
-    it("infers project name, archetype, and production URL for Avo Pack", () => {
-      const avopakPath = "c:\\Users\\valen\\Control-De-Asistencia-Abopack";
-      if (fs.existsSync(avopakPath)) {
-        const meta = inferProjectMetadata(avopakPath);
-        assert.ok(meta.name.includes("Avo Pack") || meta.name.includes("Control de Asistencia"));
-        assert.ok(meta.productionUrl.includes("avo-pack.vercel.app") || meta.productionUrl.includes("vercel.app"));
-        assert.ok(meta.cicdGateScript.includes("test") || meta.cicdGateScript.includes("verify"));
-      }
+    it("returns empty porcelain metadata for a directory that is not a git repository", (t) => {
+      const workspace = makeWorkspace(t);
+      const plainDir = path.join(workspace, "plain");
+      fs.mkdirSync(plainDir);
+      assert.deepEqual(extractGitMetadata(plainDir), {
+        remoteUrl: "",
+        currentBranch: "main",
+        headCommitSha: "",
+      });
+    });
+
+    it("infers canonical name, archetype, and production URL for Avo Pack", (t) => {
+      const workspace = makeWorkspace(t);
+      const repoRoot = path.join(workspace, "Control-De-Asistencia-Abopack");
+      fs.mkdirSync(repoRoot);
+      const meta = inferProjectMetadata(repoRoot);
+      assert.equal(meta.name, "Avo Pack S.A.S. — Central de Asistencia y Liquidación Laboral");
+      assert.equal(meta.productionUrl, "https://avo-pack.vercel.app");
+      assert.equal(meta.type, "industrial-operations-suite");
+      assert.equal(meta.cicdGateScript, "npm test");
+    });
+
+    it("infers generic metadata from package.json, vercel.json and index.html", (t) => {
+      const workspace = makeWorkspace(t);
+      const repoRoot = path.join(workspace, "my-service");
+      fs.mkdirSync(repoRoot);
+      fs.writeFileSync(
+        path.join(repoRoot, "package.json"),
+        JSON.stringify({ name: "my-service", description: "Fixture service", scripts: { test: "node --test" } }),
+        "utf8",
+      );
+      fs.writeFileSync(
+        path.join(repoRoot, "vercel.json"),
+        JSON.stringify({ alias: ["my-service.vercel.app"] }),
+        "utf8",
+      );
+      fs.writeFileSync(
+        path.join(repoRoot, "index.html"),
+        '<title>My Service Portal</title><a href="https://other.vercel.app">link</a>',
+        "utf8",
+      );
+      const meta = inferProjectMetadata(repoRoot);
+      assert.equal(meta.name, "My Service Portal");
+      assert.equal(meta.productionUrl, "https://my-service.vercel.app");
+      assert.equal(meta.type, "general-application");
+      assert.equal(meta.cicdGateScript, "npm test");
+    });
+
+    it("prefers the verify:strict gate script when the package declares it", (t) => {
+      const workspace = makeWorkspace(t);
+      const repoRoot = path.join(workspace, "strict-app");
+      fs.mkdirSync(repoRoot);
+      fs.writeFileSync(
+        path.join(repoRoot, "package.json"),
+        JSON.stringify({
+          name: "strict-app",
+          scripts: { "verify:strict": "node scripts/verify-strict.mjs", test: "node --test" },
+        }),
+        "utf8",
+      );
+      const meta = inferProjectMetadata(repoRoot);
+      assert.equal(meta.cicdGateScript, "scripts/verify-strict.mjs");
+    });
+
+    it("degrades gracefully to directory defaults when package.json is malformed", (t) => {
+      const workspace = makeWorkspace(t);
+      const repoRoot = path.join(workspace, "broken-pkg");
+      fs.mkdirSync(repoRoot);
+      fs.writeFileSync(path.join(repoRoot, "package.json"), "{ not valid json", "utf8");
+      const meta = inferProjectMetadata(repoRoot);
+      assert.equal(meta.name, "broken-pkg");
+      assert.equal(meta.productionUrl, "");
+      assert.equal(meta.type, "general-application");
+      assert.equal(meta.cicdGateScript, "npm test");
     });
   });
 
@@ -163,7 +280,19 @@ describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => 
   });
 
   describe("BDD-367: MCP Tool Execution (eos_fleet_registry_sync)", async () => {
-    it("dispatches eos_fleet_registry_sync tool via EosMcpServer in dryRun mode", async () => {
+    it("dispatches eos_fleet_registry_sync tool via EosMcpServer in dryRun mode", async (t) => {
+      const workspace = makeWorkspace(t);
+      const remoteUrl = "https://github.com/eos-fixture/fixture-fleet-repo.git";
+      const repoRoot = createFixtureRepository(workspace, "fixture-fleet-repo", { remoteUrl });
+      const fixtureSha = git(repoRoot, ["rev-parse", "HEAD"]);
+
+      const previousWorkspaceRoot = process.env.EOS_WORKSPACE_ROOT;
+      process.env.EOS_WORKSPACE_ROOT = workspace;
+      t.after(() => {
+        if (previousWorkspaceRoot === undefined) delete process.env.EOS_WORKSPACE_ROOT;
+        else process.env.EOS_WORKSPACE_ROOT = previousWorkspaceRoot;
+      });
+
       const { EosMcpServer } = await import("../src/mcp/eosMcpServer.ts");
       const server = new EosMcpServer(path.resolve("."), "full");
       const response = server.handleRequest({
@@ -186,6 +315,11 @@ describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => 
       assert.equal(body.dryRun, true);
       assert.ok(body.totalRegistered >= 5);
       assert.ok(/^[0-9a-f]{64}$/.test(body.registrySha256));
+      const fixture = body.projects.find((p) => p.id === "fixture-fleet-repo");
+      assert.ok(fixture, "Hermetic fixture repository must be discovered through the MCP tool");
+      assert.equal(fixture.remoteUrl, remoteUrl);
+      assert.equal(fixture.currentBranch, "main");
+      assert.equal(fixture.headCommitSha, fixtureSha);
     });
   });
 });

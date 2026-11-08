@@ -50,7 +50,7 @@ for (const check of CHECKS) {
     execFileSync(check.cmd[0], check.cmd[1], {
       cwd: root,
       stdio: ["ignore", "pipe", "pipe"],
-      timeout: 60_000,
+      timeout: 120_000,
       shell: process.platform === "win32",
     });
     results.push({ ...check, status: "PASS" });

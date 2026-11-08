@@ -151,12 +151,7 @@ export function applyDiff(diff: ParsedDiff, projectRoot: string): PatchResult {
   const targetPath = path.resolve(projectRoot, diff.newPath || diff.oldPath);
 
   const relTarget = path.relative(path.resolve(projectRoot), targetPath);
-  if (
-    relTarget === "" ||
-    relTarget === ".." ||
-    relTarget.startsWith(".." + path.sep) ||
-    path.isAbsolute(relTarget)
-  ) {
+  if (relTarget === "" || relTarget === ".." || relTarget.startsWith(".." + path.sep) || path.isAbsolute(relTarget)) {
     return {
       success: false,
       targetPath: diff.newPath || diff.oldPath,
