@@ -12,7 +12,7 @@ docs/evidence/local-checks.sarif
 docs/evidence/HEAL-*.json
 bin/*.exe
 *.exe
-tools/
+/tools/
 *.jar
 .coverage/
 dist/

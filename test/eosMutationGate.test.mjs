@@ -132,3 +132,46 @@ describe("SPEC-143: Mutation score ratchet", () => {
     assert.equal(loadMutationBudget(root).minScore, 0.8);
   });
 });
+
+describe("SPEC-143: Mutation gate fail-closed on unmeasured targets", () => {
+  it("surfaces a configured target whose source file is missing instead of skipping silently", async () => {
+    const root = buildFixture(FULL_TEST);
+    const { reports, missingTargets } = await runMutationGate({
+      root,
+      targets: ["src/core/eosDoesNotExist.ts"],
+      maxMutantsPerFile: 5,
+    });
+    assert.equal(reports.length, 0);
+    assert.equal(missingTargets.length, 1);
+    assert.equal(missingTargets[0].targetFile, "src/core/eosDoesNotExist.ts");
+    assert.equal(missingTargets[0].reason, "source file not found");
+  });
+
+  it("surfaces a target whose test file is missing instead of skipping silently", async () => {
+    const root = buildFixture(FULL_TEST);
+    fs.rmSync(path.join(root, "test", "eosFixtureGate.test.mjs"));
+    const { reports, missingTargets } = await runMutationGate({ root, targets: [TARGET], maxMutantsPerFile: 5 });
+    assert.equal(reports.length, 0);
+    assert.equal(missingTargets.length, 1);
+    assert.equal(missingTargets[0].targetFile, TARGET);
+    assert.match(missingTargets[0].reason, /test file not found/);
+  });
+
+  it("flags a ratcheted target that produced no report as a violation", () => {
+    const root = buildBudgetRoot({ minScore: 0.8, floors: { "src/core/eosGone.ts": 0.89 } });
+    const { violations } = evaluateMutationBudget({ root, reports: [] });
+    assert.equal(violations.length, 1);
+    assert.equal(violations[0].kind, "MISSING_TARGET_REPORT");
+    assert.equal(violations[0].target, "src/core/eosGone.ts");
+    assert.equal(violations[0].floor, 0.89);
+  });
+
+  it("does not flag a ratcheted target whose report meets the floor", () => {
+    const root = buildBudgetRoot({ minScore: 0.8, floors: { "src/core/eosGone.ts": 0.89 } });
+    const { violations } = evaluateMutationBudget({
+      root,
+      reports: [{ targetFile: "src/core/eosGone.ts", score: 0.9 }],
+    });
+    assert.equal(violations.length, 0);
+  });
+});

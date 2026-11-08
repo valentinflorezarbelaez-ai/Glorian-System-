@@ -393,40 +393,41 @@ if (process.env.EOS_MUTATION === "1") {
   try {
     const { runMutationGate, evaluateMutationBudget } = await import("./mutation-gate.mjs");
     console.log("[STAGE 4.6] Mutation gate: analyzing bounded targets in an isolated sandbox...");
-    const { reports, sandboxDir } = await runMutationGate({ root });
-    if (reports.length === 0) {
-      console.warn("[STAGE 4.6 WARN] No analyzable targets found; skipping mutation gate.");
-    } else {
-      const { violations, minScore, floors } = evaluateMutationBudget({ root, reports });
-      for (const r of reports) {
-        const floor = Object.hasOwn(floors, r.targetFile) ? floors[r.targetFile] : minScore;
-        console.log(
-          `[STAGE 4.6]   ${r.targetFile}: mutants=${r.totalMutants} killed=${r.killed} survived=${r.survived} score=${r.scorePercent} floor=${(floor * 100).toFixed(1)}% (receipt sha256:${r.sha256Receipt.slice(0, 24)}...)`,
-        );
-        for (const m of r.survivedMutants) {
-          console.warn(`[STAGE 4.6]     SURVIVED ${m.operatorId} @ line ${m.line}: ${m.original} -> ${m.mutated}`);
-        }
+    const { reports, missingTargets, sandboxDir } = await runMutationGate({ root });
+    const { violations, minScore, floors } = evaluateMutationBudget({ root, reports });
+    for (const r of reports) {
+      const floor = Object.hasOwn(floors, r.targetFile) ? floors[r.targetFile] : minScore;
+      console.log(
+        `[STAGE 4.6]   ${r.targetFile}: mutants=${r.totalMutants} killed=${r.killed} survived=${r.survived} score=${r.scorePercent} floor=${(floor * 100).toFixed(1)}% (receipt sha256:${r.sha256Receipt.slice(0, 24)}...)`,
+      );
+      for (const m of r.survivedMutants) {
+        console.warn(`[STAGE 4.6]     SURVIVED ${m.operatorId} @ line ${m.line}: ${m.original} -> ${m.mutated}`);
       }
-      if (violations.length > 0) {
-        if (process.env.EOS_MUTATION_ENFORCE === "1") {
-          mutationFailed = true;
-        } else {
-          console.warn(
-            `[STAGE 4.6 ADVISORY] ${violations.length} target(s) below the mutation ratchet floor; enforcement disabled — set EOS_MUTATION_ENFORCE=1 to fail-closed.`,
-          );
-        }
-      }
-      if (!mutationFailed) {
-        console.log(
-          `[PASS] Stage 4.6/7 — Mutation gate engaged (${reports.length} target(s), sandbox=${path.basename(sandboxDir)}, ${Date.now() - mutateStart} ms).`,
+    }
+    for (const m of missingTargets) {
+      console.warn(`[STAGE 4.6]   MISSING ${m.targetFile}: ${m.reason}`);
+    }
+    if (violations.length > 0 || missingTargets.length > 0) {
+      if (process.env.EOS_MUTATION_ENFORCE === "1") {
+        mutationFailed = true;
+      } else {
+        console.warn(
+          `[STAGE 4.6 ADVISORY] ${violations.length} ratchet violation(s), ${missingTargets.length} unmeasured target(s); enforcement disabled — set EOS_MUTATION_ENFORCE=1 to fail-closed.`,
         );
       }
     }
+    if (!mutationFailed) {
+      console.log(
+        `[PASS] Stage 4.6/7 — Mutation gate engaged (${reports.length} target(s), sandbox=${path.basename(sandboxDir)}, ${Date.now() - mutateStart} ms).`,
+      );
+    }
   } catch (err) {
-    console.error(`[STAGE 4.6 WARN] Mutation gate unavailable: ${err.message}`);
+    // An enabled gate that crashes produced no verdict — fail closed, never WARN+pass.
+    console.error(`[STAGE 4.6 FAIL] Mutation gate crashed: ${err.message}`);
+    mutationFailed = true;
   }
   if (mutationFailed) {
-    console.error("[STAGE 4.6 FAIL] Mutation score below the ratchet floor (EOS_MUTATION_ENFORCE=1).");
+    console.error("[STAGE 4.6 FAIL] Mutation gate failed (ratchet floor, unmeasured target, or engine crash).");
     process.exit(1);
   }
 } else {
@@ -482,10 +483,12 @@ if (process.env.EOS_FLAKY === "1") {
       );
     }
   } catch (err) {
-    console.error(`[STAGE 4.7 WARN] Flaky gate unavailable: ${err.message}`);
+    // An enabled gate that crashes produced no verdict — fail closed, never WARN+pass.
+    console.error(`[STAGE 4.7 FAIL] Flaky gate crashed: ${err.message}`);
+    flakyFailed = true;
   }
   if (flakyFailed) {
-    console.error("[STAGE 4.7 FAIL] Flaky test budget violated (EOS_FLAKY_ENFORCE=1).");
+    console.error("[STAGE 4.7 FAIL] Flaky test gate failed (budget violation or engine crash).");
     process.exit(1);
   }
 } else {

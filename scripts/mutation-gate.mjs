@@ -47,7 +47,7 @@ const DEFAULT_TARGETS = ["src/core/eosSLOErrorBudgetGovernor.ts"];
  * @param {string[]} [options.targets] source files (repo-relative) to mutate
  * @param {number} [options.maxMutantsPerFile] cap on mutants per file
  * @param {number} [options.timeoutMs] per-mutant test timeout
- * @returns {Promise<{ reports: object[], sandboxDir: string }>}
+ * @returns {Promise<{ reports: object[], missingTargets: Array<{targetFile: string, reason: string}>, sandboxDir: string }>}
  */
 export async function runMutationGate({
   root = repoRoot,
@@ -66,12 +66,22 @@ export async function runMutationGate({
   }
 
   const reports = [];
+  const missingTargets = [];
   for (const target of targets) {
     const relTarget = target.replace(/\\/g, "/");
     const testRel = relTarget.replace(/^src\/core\//, "test/").replace(/\.ts$/, ".test.mjs");
     const boxTarget = path.join(sandboxDir, relTarget);
     const boxTest = path.join(sandboxDir, testRel);
-    if (!fs.existsSync(boxTarget) || !fs.existsSync(boxTest)) continue;
+    // Fail-closed: a configured target that cannot be analyzed is surfaced, never
+    // silently dropped — a gate that measures nothing must not report green.
+    if (!fs.existsSync(boxTarget)) {
+      missingTargets.push({ targetFile: relTarget, reason: "source file not found" });
+      continue;
+    }
+    if (!fs.existsSync(boxTest)) {
+      missingTargets.push({ targetFile: relTarget, reason: `test file not found (${testRel})` });
+      continue;
+    }
 
     const original = fs.readFileSync(boxTarget, "utf8");
     // `node --test` propagates NODE_TEST_CONTEXT to its children, which would
@@ -98,7 +108,7 @@ export async function runMutationGate({
     reports.push({ ...report, targetFile: relTarget });
   }
 
-  return { reports, sandboxDir };
+  return { reports, missingTargets, sandboxDir };
 }
 
 // ---------------------------------------------------------------------------
@@ -129,9 +139,17 @@ export function loadMutationBudget(root) {
 export function evaluateMutationBudget({ root, reports }) {
   const { minScore, floors } = loadMutationBudget(root);
   const violations = [];
+  const reported = new Set(reports.map((r) => r.targetFile));
   for (const r of reports) {
     const floor = Object.hasOwn(floors, r.targetFile) ? floors[r.targetFile] : minScore;
-    if (r.score < floor) violations.push({ target: r.targetFile, score: r.score, floor });
+    if (r.score < floor) violations.push({ kind: "BELOW_FLOOR", target: r.targetFile, score: r.score, floor });
+  }
+  // A ratcheted target with no report is an unverified claim, not a pass: its
+  // source or test may have been renamed/deleted, silently disabling the gate.
+  for (const [targetFile, floor] of Object.entries(floors)) {
+    if (!reported.has(targetFile)) {
+      violations.push({ kind: "MISSING_TARGET_REPORT", target: targetFile, score: 0, floor });
+    }
   }
   return { violations, minScore, floors };
 }
@@ -158,7 +176,7 @@ export function updateMutationBudget({ root, reports }) {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url))) {
   const update = process.argv.includes("--update");
-  const { reports, sandboxDir } = await runMutationGate();
+  const { reports, missingTargets, sandboxDir } = await runMutationGate();
 
   console.log("======================================================================");
   console.log(" EOS MUTATION GATE — Testing the Tests (isolated sandbox)  ");
@@ -167,6 +185,9 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToP
     console.log(`  ${r.targetFile}`);
     console.log(`    mutants=${r.totalMutants} killed=${r.killed} survived=${r.survived} score=${r.scorePercent}`);
     console.log(`    receipt sha256:${r.sha256Receipt.slice(0, 24)}...`);
+  }
+  for (const m of missingTargets) {
+    console.error(`  MISSING ${m.targetFile}: ${m.reason}`);
   }
   console.log(`  sandbox: ${sandboxDir}`);
 
@@ -177,13 +198,17 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToP
   }
 
   const { violations, minScore } = evaluateMutationBudget({ root: repoRoot, reports });
-  if (violations.length === 0) {
+  if (violations.length === 0 && missingTargets.length === 0) {
     console.log(`✅ Mutation ratchet OK (default floor ${Math.round(minScore * 100)}%).`);
     process.exit(0);
   }
-  console.error("❌ Mutation score below the ratchet floor:");
+  console.error("❌ Mutation gate failed (ratchet floor violated or target unmeasured):");
   for (const v of violations) {
-    console.error(`  ${v.target}: ${(v.score * 100).toFixed(1)}% < floor ${(v.floor * 100).toFixed(1)}%`);
+    if (v.kind === "MISSING_TARGET_REPORT") {
+      console.error(`  ${v.target}: no report produced — ratchet floor ${(v.floor * 100).toFixed(1)}% unverified.`);
+    } else {
+      console.error(`  ${v.target}: ${(v.score * 100).toFixed(1)}% < floor ${(v.floor * 100).toFixed(1)}%`);
+    }
   }
   console.error("\nStrengthen the tests, or run `npm run mutation:gate -- --update` to raise the baseline.");
   process.exit(1);
