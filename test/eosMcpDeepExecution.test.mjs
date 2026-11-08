@@ -8,8 +8,9 @@
  * Asserts handler correctness, response envelope structure, and zero unhandled exceptions.
  */
 
-import test from "node:test";
+import test, { after } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -33,6 +34,15 @@ test("BDD-280: EosMcpServer executes Phase 1 utilitarian tool handlers via tools
   assert.ok(healthRes.result?.content?.[0]?.text);
   const healthData = JSON.parse(healthRes.result.content[0].text);
   assert.equal(healthData.status, "HANDLER_ALIVE");
+
+  // 1b. eos_mission_run
+  const missionRes = await server.handleRequest({
+    jsonrpc: "2.0",
+    id: 11,
+    method: "tools/call",
+    params: { name: "eos_mission_run", arguments: { directive: "Audit code" } },
+  });
+  assert.ok(missionRes.result?.content?.[0]?.text);
 
   // 2. eos_amplify_prompt
   const ampRes = await server.handleRequest({
@@ -334,10 +344,27 @@ test("BDD-282: EosMcpServer executes Phase 7 and Phase 8 domain and AGI handlers
   const server = new EosMcpServer(projectRoot, "full");
 
   const phase7And8Tools = [
-    { name: "eos_invariant_engine", args: {} },
-    { name: "eos_contract_governor", args: { contractType: "API" } },
-    { name: "eos_wasm_sandbox", args: { action: "diagnose" } },
-    { name: "eos_enterprise_workspace", args: { action: "list" } },
+    { name: "eos_invariant_engine", args: { action: "verify", modelType: "counter" } },
+    { name: "eos_contract_governor", args: { action: "sql_lint", ddlSql: "ALTER TABLE users ADD COLUMN age INT;" } },
+    { name: "eos_surgical_healing", args: { action: "diagnose" } },
+    { name: "eos_wasm_sandbox", args: { action: "diagnose", tier: "WASM" } },
+    { name: "eos_enterprise_workspace", args: { action: "inspect", projectId: "eos-system" } },
+    {
+      name: "eos_neurosymbolic_fleet_healing",
+      args: {
+        action: "heal_fault",
+        faultId: "FAULT_01",
+        targetFilePath: "src/core/sample.ts",
+        failingLine: 1,
+        errorMessage: "TypeError",
+        mockOriginalContent: "const x = 1;",
+      },
+    },
+    {
+      name: "eos_evolve_module",
+      args: { action: "evaluate", candidatePatch: "+ // opt", targetModulePath: "src/core/sample.ts" },
+    },
+    { name: "eos_autonomous_synthesize", args: { directive: "Build payment gateway adapter", write: false } },
     {
       name: "eos_agent_topology_mesh",
       args: {
@@ -373,6 +400,17 @@ test("BDD-282: EosMcpServer executes Phase 7 and Phase 8 domain and AGI handlers
     { name: "eos_agi_axioms", args: {} },
     { name: "eos_context_window", args: { targetFile: "package.json", objective: "Audit dependencies" } },
     { name: "eos_forge_list", args: {} },
+    {
+      name: "eos_forge_tool",
+      args: {
+        toolName: "dynamic_audit_test",
+        description: "Audit test tool",
+        inputSchema: { type: "object" },
+        moduleSource:
+          'export const name = "dynamic_audit_test"; export const description = "Audit test tool"; export const inputSchema = { type: "object" }; export function execute() { return true; }',
+      },
+    },
+    { name: "eos_consult", args: { problem: "Architecture audit" } },
     { name: "eos_spec_drift", args: {} },
   ];
 
@@ -473,4 +511,13 @@ test("BDD-283: EosMcpServer executes Phase 4, Phase 5, and Phase 6 domain and in
     assert.equal(res.jsonrpc, "2.0", `Tool ${t.name} must return JSON-RPC 2.0 envelope`);
     assert.ok(res.result?.content?.[0]?.text, `Tool ${t.name} must return text content`);
   }
+});
+
+after(() => {
+  const forged = path.join(projectRoot, "src/dynamic_tools/eos_dynamic_audit_test.tool.mjs");
+  if (fs.existsSync(forged)) fs.unlinkSync(forged);
+  const manifest = path.join(projectRoot, "src/dynamic_tools/forge_manifest.json");
+  if (fs.existsSync(manifest)) fs.unlinkSync(manifest);
+  const consultDir = path.join(projectRoot, "docs/consulting");
+  if (fs.existsSync(consultDir)) fs.rmSync(consultDir, { recursive: true, force: true });
 });
