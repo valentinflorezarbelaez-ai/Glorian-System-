@@ -147,6 +147,10 @@ export function collectSourceFiles(dir: string, projectRoot: string = dir): stri
     ".sqlite",
     ".sqlite-wal",
     ".sqlite-shm",
+    ".db",
+    ".db-wal",
+    ".db-shm",
+    ".db-journal",
   ]);
 
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -245,15 +249,36 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
   const inventoryHasher = crypto.createHash("sha256");
   for (const f of files.sort()) {
     const rel = path.relative(projectRoot, f).replace(/\\/g, "/");
-    if (rel.includes("node_modules") || rel.includes(".git") || rel.startsWith(".eos/")) continue;
-    const stat = fs.statSync(f, { bigint: true });
+    if (
+      rel.includes("node_modules") ||
+      rel.includes(".git") ||
+      rel.startsWith(".eos/") ||
+      rel.startsWith("data/") ||
+      rel.endsWith("-wal") ||
+      rel.endsWith("-shm") ||
+      rel.endsWith("-journal")
+    )
+      continue;
+    let stat;
+    try {
+      stat = fs.statSync(f, { bigint: true });
+    } catch (err: any) {
+      if (err?.code === "ENOENT") continue;
+      throw err;
+    }
     const size = Number(stat.size);
     const cachedInv = INVENTORY_HASH_CACHE.get(f);
     let fileSha256: string;
     if (cachedInv && cachedInv.mtimeNs === stat.mtimeNs && cachedInv.size === size) {
       fileSha256 = cachedInv.sha256;
     } else {
-      const bytes = fs.readFileSync(f);
+      let bytes;
+      try {
+        bytes = fs.readFileSync(f);
+      } catch (err: any) {
+        if (err?.code === "ENOENT") continue;
+        throw err;
+      }
       fileSha256 = crypto.createHash("sha256").update(bytes).digest("hex");
       INVENTORY_HASH_CACHE.set(f, { mtimeNs: stat.mtimeNs, size: bytes.length, sha256: fileSha256 });
     }

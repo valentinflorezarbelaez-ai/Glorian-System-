@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
-  "totalSpecs": 172,
-  "catalogSha256": "fb932135f8eb82cd5e99597fd7c0791b90c9c7654059d31d7e2637bb4b7162f3",
+  "totalSpecs": 177,
+  "catalogSha256": "26a4d3ea910ab04836f25514172cb2dc65c91e26f3414e7c3e31204b730ad713",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1183,6 +1183,42 @@
       "sha256": "fdbb345b30959f046145d92c63ee9f73e79b93188985f973fba577f5e0a9483a"
     },
     {
+      "id": "SPEC-132",
+      "title": "Glorian Fleet Pulse & Tactical Sovereignty Radar",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 3,
+      "file": "openspec/specs/SPEC-132-FLEET-PULSE-ENGINE.md",
+      "sha256": "071c3813c71c019faf92e0a5214c778ded3e76f44192a34f69b05b5054deb464"
+    },
+    {
+      "id": "SPEC-133",
+      "title": "Glorian Nocturnal Darwinian Evolution & Dead-Code Eradication Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 3,
+      "file": "openspec/specs/SPEC-133-NOCTURNAL-DARWINIAN-EVOLUTION.md",
+      "sha256": "6751a914c8f3bdb7192238dff5e531de5bf58edd709258ee441101bdaef2f9f7"
+    },
+    {
+      "id": "SPEC-134",
+      "title": "Glorian Sovereign Fleet Health Watchdog & Synthetic Security Sentinel",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 3,
+      "file": "openspec/specs/SPEC-134-GLORIAN-FLEET-HEALTH-WATCHDOG.md",
+      "sha256": "b73a8ecccc0f7946b0bc4c648520dfddb605538fa184f0341fea763a6eeb7c82"
+    },
+    {
+      "id": "SPEC-135",
+      "title": "Glorian Multi-Model Consensus Engine & Constitutional Tribunal",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 3,
+      "file": "openspec/specs/SPEC-135-GLORIAN-CONSTITUTIONAL-TRIBUNAL.md",
+      "sha256": "bd723225eaca2171e9d90027f8a34693dbdcd4a383330d03c6000a90931ddb6f"
+    },
+    {
       "id": "SPEC-141",
       "title": "HRANA Native Stream Client for Distributed libSQL/Turso Replicas",
       "status": "APPROVED",
@@ -1190,6 +1226,15 @@
       "bddCount": 4,
       "file": "openspec/specs/SPEC-141-HRANA-STREAM-CLIENT.md",
       "sha256": "80c68ad6b806bd18a91b3d32a218dd36375753182f1c7694425a918ea7485354"
+    },
+    {
+      "id": "SPEC-142",
+      "title": "Capability-Based Wasm & MicroVM Agent Sandboxing Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 3,
+      "file": "openspec/specs/SPEC-142-WASM-SANDBOX-ENGINE.md",
+      "sha256": "0f906cd972d3a254559306ebcde001ae27c3b19409254f63885d6745ab13b1d5"
     },
     {
       "id": "SPEC-143",
