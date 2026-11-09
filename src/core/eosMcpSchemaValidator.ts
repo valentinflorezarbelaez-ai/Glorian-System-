@@ -99,6 +99,23 @@ export interface McpValidationReport {
   readonly timestampIso: string;
 }
 
+export type McpArgValidationCode =
+  | "OK"
+  | "UNKNOWN_TOOL"
+  | "ARGUMENTS_NOT_OBJECT"
+  | "MISSING_REQUIRED"
+  | "WRONG_TYPE"
+  | "ENUM_VIOLATION"
+  | "UNEXPECTED_PROPERTY";
+
+export interface McpArgValidationResult {
+  readonly ok: boolean;
+  readonly code: McpArgValidationCode;
+  readonly toolName: string;
+  readonly field?: string;
+  readonly reason: string;
+}
+
 export class EosMcpSchemaValidator {
   private readonly projectRoot: string;
 
@@ -187,6 +204,106 @@ export class EosMcpSchemaValidator {
   }
 
   /**
+   * Fail-closed runtime argument check against a tools/list catalog entry.
+   * Rejects unknown tools, non-object args, missing required fields, wrong JSON
+   * types, enum violations, and unexpected properties (strict object schemas).
+   */
+  public validateToolCallArguments(
+    tools: readonly McpToolSchemaDef[],
+    toolName: string,
+    args: unknown,
+    options: { readonly allowAdditionalProperties?: boolean } = {},
+  ): McpArgValidationResult {
+    assertPrecondition(typeof toolName === "string" && toolName.length > 0, "toolName must be a non-empty string");
+    assertPrecondition(Array.isArray(tools), "tools catalog must be an array");
+
+    // Runtime default: allow undeclared keys for forward-compat; fuzz suites may set false.
+    const allowAdditionalProperties = options.allowAdditionalProperties !== false;
+
+    const tool = tools.find((entry) => entry.name === toolName);
+    if (!tool) {
+      return deepFreeze({
+        ok: false,
+        code: "UNKNOWN_TOOL",
+        toolName,
+        reason: `Unknown MCP tool '${toolName}' — fail-closed (wrong-tool).`,
+      });
+    }
+
+    if (args === null || typeof args !== "object" || Array.isArray(args)) {
+      return deepFreeze({
+        ok: false,
+        code: "ARGUMENTS_NOT_OBJECT",
+        toolName,
+        field: "arguments",
+        reason: "Tool arguments must be a plain JSON object.",
+      });
+    }
+
+    const record = args as Record<string, unknown>;
+    const properties = tool.inputSchema.properties ?? {};
+    const required = tool.inputSchema.required ?? [];
+
+    for (const key of required) {
+      if (!(key in record) || record[key] === undefined) {
+        return deepFreeze({
+          ok: false,
+          code: "MISSING_REQUIRED",
+          toolName,
+          field: key,
+          reason: `Missing required argument '${key}'.`,
+        });
+      }
+    }
+
+    if (!allowAdditionalProperties) {
+      for (const key of Object.keys(record)) {
+        if (!(key in properties)) {
+          return deepFreeze({
+            ok: false,
+            code: "UNEXPECTED_PROPERTY",
+            toolName,
+            field: key,
+            reason: `Unexpected argument '${key}' is not declared in inputSchema.`,
+          });
+        }
+      }
+    }
+
+    for (const [key, value] of Object.entries(record)) {
+      const prop = properties[key];
+      if (!prop) continue;
+      const expected = prop.type;
+      const actual = jsonTypeOf(value);
+      if (actual !== expected && !(expected === "integer" && actual === "number" && Number.isInteger(value))) {
+        return deepFreeze({
+          ok: false,
+          code: "WRONG_TYPE",
+          toolName,
+          field: key,
+          reason: `Argument '${key}' expected type '${expected}' but received '${actual}'.`,
+        });
+      }
+      if (prop.enum && prop.enum.length > 0 && !prop.enum.includes(value as string)) {
+        return deepFreeze({
+          ok: false,
+          code: "ENUM_VIOLATION",
+          toolName,
+          field: key,
+          reason: `Argument '${key}' value is outside the allowed enum.`,
+        });
+      }
+    }
+
+    return deepFreeze({
+      ok: true,
+      code: "OK",
+      toolName,
+      reason: "Arguments conform to inputSchema.",
+    });
+  }
+
+  /**
    * Exports the validated tool catalog to docs/contracts/mcp-tool-catalog.json
    */
   public exportCatalogContract(tools: readonly McpToolSchemaDef[]): string {
@@ -217,4 +334,10 @@ export class EosMcpSchemaValidator {
     });
     return exportPath;
   }
+}
+
+function jsonTypeOf(value: unknown): string {
+  if (value === null) return "null";
+  if (Array.isArray(value)) return "array";
+  return typeof value;
 }

@@ -62,7 +62,11 @@ test("BDD-280: EosMcpServer executes Phase 1 utilitarian tool handlers via tools
     method: "tools/call",
     params: {
       name: "eos_evaluate_decision",
-      arguments: { optionA: "Strict gate", optionB: "Lax gate", criteria: ["Security", "Quality"] },
+      arguments: {
+        title: "Gate strictness",
+        description: "Choose between strict and lax verification gates",
+        proposedAction: "Keep the strict fail-closed gate",
+      },
     },
   });
   assert.ok(judgeRes.result?.content?.[0]?.text);
@@ -72,7 +76,7 @@ test("BDD-280: EosMcpServer executes Phase 1 utilitarian tool handlers via tools
     jsonrpc: "2.0",
     id: 4,
     method: "tools/call",
-    params: { name: "eos_check_architecture", arguments: { directory: "src/core" } },
+    params: { name: "eos_check_architecture", arguments: { targetDir: "src/core" } },
   });
   assert.ok(archRes.result?.content?.[0]?.text);
   const archData = JSON.parse(archRes.result.content[0].text);
@@ -83,7 +87,7 @@ test("BDD-280: EosMcpServer executes Phase 1 utilitarian tool handlers via tools
     jsonrpc: "2.0",
     id: 5,
     method: "tools/call",
-    params: { name: "eos_nocturnal_evolution", arguments: { dryRun: true } },
+    params: { name: "eos_nocturnal_evolution", arguments: { targetDir: "src/core", format: "json" } },
   });
   assert.ok(noctRes.result?.content?.[0]?.text);
   const noctData = JSON.parse(noctRes.result.content[0].text);
@@ -94,7 +98,7 @@ test("BDD-280: EosMcpServer executes Phase 1 utilitarian tool handlers via tools
     jsonrpc: "2.0",
     id: 6,
     method: "tools/call",
-    params: { name: "eos_ast_analyze", arguments: { targetPath: "src/core/eosKernelPrimitives.ts" } },
+    params: { name: "eos_ast_analyze", arguments: { targetDir: "src/core" } },
   });
   assert.ok(astRes.result?.content?.[0]?.text);
 });
@@ -139,7 +143,10 @@ test("BDD-281: EosMcpServer executes Phase 2 and Phase 3 core utilitarian tool h
     jsonrpc: "2.0",
     id: 8,
     method: "tools/call",
-    params: { name: "eos_optimize_context", arguments: { source: "export function hello() { return 42; }" } },
+    params: {
+      name: "eos_optimize_context",
+      arguments: { filePath: "package.json", content: "export function hello() { return 42; }" },
+    },
   });
   assert.ok(optRes.result?.content?.[0]?.text);
 
@@ -166,7 +173,7 @@ test("BDD-281: EosMcpServer executes Phase 2 and Phase 3 core utilitarian tool h
     jsonrpc: "2.0",
     id: 11,
     method: "tools/call",
-    params: { name: "eos_get_blast_radius", arguments: { file: "src/core/eosKernelPrimitives.ts" } },
+    params: { name: "eos_get_blast_radius", arguments: { filePath: "src/core/eosKernelPrimitives.ts" } },
   });
   assert.ok(blastRes.result?.content?.[0]?.text);
 
@@ -270,12 +277,12 @@ test("BDD-281: EosMcpServer executes Phase 2 and Phase 3 core utilitarian tool h
   });
   assert.ok(sessionStatusRes.result?.content?.[0]?.text);
 
-  // 19. eos_sqlite_ledger (stats, status, compact)
+  // 19. eos_sqlite_ledger (verify, recent, search)
   const ledgerStatsRes = await server.handleRequest({
     jsonrpc: "2.0",
     id: 22,
     method: "tools/call",
-    params: { name: "eos_sqlite_ledger", arguments: { action: "stats" } },
+    params: { name: "eos_sqlite_ledger", arguments: { action: "verify" } },
   });
   assert.ok(ledgerStatsRes.result?.content?.[0]?.text);
 
@@ -283,7 +290,7 @@ test("BDD-281: EosMcpServer executes Phase 2 and Phase 3 core utilitarian tool h
     jsonrpc: "2.0",
     id: 23,
     method: "tools/call",
-    params: { name: "eos_sqlite_ledger", arguments: { action: "status" } },
+    params: { name: "eos_sqlite_ledger", arguments: { action: "recent", limit: 5 } },
   });
   assert.ok(ledgerStatusRes.result?.content?.[0]?.text);
 
@@ -291,7 +298,7 @@ test("BDD-281: EosMcpServer executes Phase 2 and Phase 3 core utilitarian tool h
     jsonrpc: "2.0",
     id: 24,
     method: "tools/call",
-    params: { name: "eos_sqlite_ledger", arguments: { action: "compact", apply: false } },
+    params: { name: "eos_sqlite_ledger", arguments: { action: "search", query: "eos", limit: 5 } },
   });
   assert.ok(ledgerCompactRes.result?.content?.[0]?.text);
 
@@ -380,21 +387,34 @@ test("BDD-282: EosMcpServer executes Phase 7 and Phase 8 domain and AGI handlers
       },
     },
     { name: "eos_content_addressable_cache", args: { action: "stats" } },
-    { name: "eos_threshold_secret_split_combine", args: { action: "demo" } },
+    {
+      name: "eos_threshold_secret_split_combine",
+      args: { action: "split", secret: "hermetic-demo-secret", threshold: 2, totalShares: 3 },
+    },
     { name: "eos_smt_reasoning_prover", args: { action: "abac_demo" } },
     { name: "eos_hash_chain_verify", args: { maxBlocks: 5 } },
     { name: "eos_platform_ops_ceiling", args: {} },
     { name: "eos_truetime_commit_wait", args: { action: "now" } },
     { name: "eos_lsm_storage_put_get", args: { action: "stats" } },
     { name: "eos_monte_carlo_sim", args: { trials: 10 } },
-    { name: "eos_nsa_zero_trust_check", args: {} },
+    {
+      name: "eos_nsa_zero_trust_check",
+      args: {
+        subjectClearance: "SECRET",
+        objectClassification: "CONFIDENTIAL",
+        action: "READ",
+      },
+    },
     { name: "eos_bft_swarm_consensus", args: { proposalId: "TEST-01" } },
-    { name: "eos_trace_span_record", args: { operation: "test" } },
-    { name: "eos_unitotal_evaluate", args: { scope: "system" } },
+    {
+      name: "eos_trace_span_record",
+      args: { traceId: "tr-test", spanId: "sp-test", name: "hermetic.operation", durationMs: 12 },
+    },
+    { name: "eos_unitotal_evaluate", args: { action: "evaluate" } },
     { name: "eos_wal_status", args: {} },
     { name: "eos_github_gate", args: {} },
-    { name: "eos_microvm_sandbox", args: { action: "diagnose" } },
-    { name: "eos_mutation_test", args: { maxMutants: 2 } },
+    { name: "eos_microvm_sandbox", args: { action: "doctor" } },
+    { name: "eos_mutation_test", args: { targetSnippet: "function add(a,b){return a+b}" } },
     { name: "eos_zero_copy_scan", args: { targetDir: "src/core" } },
     { name: "eos_microvm_enclave_generate", args: { enclaveId: "test-enc" } },
     { name: "eos_agi_axioms", args: {} },
@@ -439,7 +459,24 @@ test("BDD-283: EosMcpServer executes Phase 4, Phase 5, and Phase 6 domain and in
         proposedSchema: { type: "record", name: "User", fields: [] },
       },
     },
-    { name: "eos_nubank_postmortem", args: { incidentId: "INC-01", description: "Audit verification" } },
+    {
+      name: "eos_nubank_postmortem",
+      args: {
+        incidentId: "INC-01",
+        title: "Audit verification",
+        severity: "SEV3",
+        owningSquad: "platform",
+        affectedServices: ["eos-mcp"],
+        customerImpact: "none",
+        startTime: "2026-11-09T00:00:00Z",
+        resolutionTime: "2026-11-09T00:05:00Z",
+        durationMinutes: 5,
+        timeline: [{ t: "T0", note: "detected" }],
+        fiveWhys: ["why1", "why2", "why3", "why4", "why5"],
+        cognitiveFactors: ["alert fatigue"],
+        systemicRemediations: [{ action: "add arg gate", owner: "eos" }],
+      },
+    },
     { name: "eos_nubank_datomic_transact", args: { txData: [["db/add", 1, "test/ident", "audit"]] } },
     { name: "eos_spotify_audit_institutional", args: {} },
     {
@@ -448,13 +485,26 @@ test("BDD-283: EosMcpServer executes Phase 4, Phase 5, and Phase 6 domain and in
     },
     {
       name: "eos_spotify_canary_gate",
-      args: { stage: "5%", trafficPercentage: 5, totalRequests: 10000, errorCount: 0 },
+      args: {
+        stage: "5%",
+        trafficPercentage: 5,
+        totalRequests: 10000,
+        errorCount: 0,
+        p99LatencyMs: 120,
+        maxAllowedP99Ms: 500,
+        observationWindowMinutes: 10,
+      },
     },
     {
       name: "eos_spotify_fleetshift_plan",
-      args: { migrationId: "MIG-AUDIT", targetRepos: ["eos-system"] },
+      args: {
+        migrationId: "MIG-AUDIT",
+        description: "Hermetic fleetshift audit plan",
+        targetRepos: [{ id: "eos-system", name: "Glorian" }],
+        action: "codemod-verify",
+      },
     },
-    { name: "eos_slsa_provenance_sbom", args: { mode: "verify" } },
+    { name: "eos_slsa_provenance_sbom", args: { mode: "both" } },
     { name: "eos_planetary_doctrine_audit", args: { format: "summary" } },
     { name: "eos_black_projects_triad_audit", args: { format: "summary" } },
 
@@ -466,15 +516,18 @@ test("BDD-283: EosMcpServer executes Phase 4, Phase 5, and Phase 6 domain and in
     { name: "eos_spotify_experiment", args: { experimentId: "EXP-01", hypothesis: "Strict gates" } },
     { name: "eos_spotify_honk_dispatch", args: { taskName: "Audit test", specDescription: "Check Law V" } },
     { name: "eos_spotify_xirp_context", args: { syncFiles: false } },
-    { name: "eos_spotify_fleetshift_batch", args: { apply: false } },
-    { name: "eos_spotify_canary_manifest", args: { serviceName: "spotify-service" } },
+    {
+      name: "eos_spotify_fleetshift_batch",
+      args: { migrationId: "MIG-BATCH-01", action: "enforce_strict_sre" },
+    },
+    { name: "eos_spotify_canary_manifest", args: { serviceName: "spotify-service", squad: "platform" } },
     { name: "eos_spotify_mix_plan", args: { keyA: "8A", keyB: "9A", duration: 5.0 } },
     { name: "eos_spotify_taste_profile", args: { userId: "user-deep-test" } },
     { name: "eos_spotify_shuffle", args: { seed: 42108 } },
 
     // Phase 6 Domain & Fleet Tools
     { name: "eos_fleet_registry_sync", args: { dryRun: true } },
-    { name: "eos_apex_route_model", args: { directive: "Evaluate security policy" } },
+    { name: "eos_apex_route_model", args: { directivePrompt: "Evaluate security policy" } },
     { name: "eos_finops_budget_check", args: {} },
     { name: "eos_finops_wallet_status", args: {} },
     { name: "eos_fleet_elevate", args: { targetProject: "eos-system" } },
@@ -483,7 +536,7 @@ test("BDD-283: EosMcpServer executes Phase 4, Phase 5, and Phase 6 domain and in
     { name: "eos_fleet_verify", args: { targetProject: "eos-system" } },
     { name: "eos_planetary_mesh_status", args: {} },
     { name: "eos_product_deliver_status", args: {} },
-    { name: "eos_product_foundry_create", args: { name: "test-product", archetype: "api" } },
+    { name: "eos_product_foundry_create", args: { name: "test-product", domain: "ai", tier: "MVP" } },
     {
       name: "eos_product_foundry_validate",
       args: {

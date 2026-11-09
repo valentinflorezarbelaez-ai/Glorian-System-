@@ -43,6 +43,7 @@ import { createPhase6DomainHandlers } from "./tools/eosMcpPhase6DomainHandlers.t
 import { createPhase7DomainHandlers } from "./tools/eosMcpPhase7DomainHandlers.ts";
 import { createPhase8AgiHandlers } from "./tools/eosMcpPhase8AgiHandlers.ts";
 import { resolveConfinedLedgerPath, resolveProjectPath } from "./eosMcpPathResolver.ts";
+import { EosMcpSchemaValidator, type McpToolSchemaDef } from "../core/eosMcpSchemaValidator.ts";
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -349,6 +350,27 @@ export class EosMcpServer {
             throw new TypeError("Tool name must contain 1 to 128 characters.");
           }
           if (!isPlainRecord(args)) throw new TypeError("Tool arguments must be a JSON object.");
+
+          const catalog = annotateAndFilterTools(
+            EOS_MCP_TOOL_DEFINITIONS,
+            this.toolProfile,
+          ) as unknown as McpToolSchemaDef[];
+          const argGate = new EosMcpSchemaValidator(this.projectRoot).validateToolCallArguments(
+            catalog,
+            toolName,
+            args,
+          );
+          if (!argGate.ok) {
+            return {
+              jsonrpc: "2.0",
+              id,
+              error: {
+                code: -32602,
+                message: `Invalid params: ${argGate.reason}`,
+                data: { code: argGate.code, field: argGate.field, toolName: argGate.toolName },
+              },
+            };
+          }
 
           const traceEngine = EosOtelTraceEngine.getInstance({ projectRoot: this.projectRoot });
           const traceparent = (params?._meta as any)?.traceparent || (params as any)?.traceparent;
