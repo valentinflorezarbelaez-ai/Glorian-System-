@@ -41,7 +41,7 @@ jobs:
           node-version: 24
 
       - name: Install locked development toolchain
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Run mutation gate against the frozen ratchet
         run: |
@@ -75,7 +75,7 @@ jobs:
           node-version: 24
 
       - name: Install locked development toolchain
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Re-run the suite N times against the frozen quarantine
         run: |
@@ -109,7 +109,7 @@ jobs:
           node-version: 24
 
       - name: Install locked development toolchain
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Run Darwinian nocturnal evolution sweep
         run: |
@@ -147,7 +147,7 @@ jobs:
           node-version: 24
 
       - name: Install locked development toolchain
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Prune the flaky quarantine (the ratchet may only shrink)
         run: node scripts/flaky-gate.mjs --update

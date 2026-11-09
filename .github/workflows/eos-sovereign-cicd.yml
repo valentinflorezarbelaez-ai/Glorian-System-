@@ -36,7 +36,7 @@ jobs:
           cache: "npm"
 
       - name: Install locked development toolchain
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Run TypeScript Strict Type Check
         run: npm run typecheck
@@ -64,7 +64,7 @@ jobs:
           cache: "npm"
 
       - name: Install locked development toolchain
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Run Property-Based Test Suite
         run: node --test test/eosPropertyBased.test.mjs
@@ -83,8 +83,6 @@ jobs:
     env:
       # Netflix chaos standard: chaos tests run in CI on non-prod environments
       EOS_FLAG_CHAOS_IN_CI: "1"
-      # Security: production builds must not leak internals via error messages
-      NODE_ENV: "production"
     steps:
       - name: Checkout Repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pinned SHA — SLSA L3
@@ -98,7 +96,7 @@ jobs:
           cache: "npm"
 
       - name: Install locked development toolchain
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Execute Stage 1–7 Strict SecDevOps & Constitutional Pipeline
         run: node scripts/verify-cicd-pipeline.mjs
@@ -145,7 +143,7 @@ jobs:
           cache: "npm"
 
       - name: Install locked development toolchain
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Run Mutation Testing Runner
         run: node scripts/run-mutation-testing.mjs
@@ -178,7 +176,7 @@ jobs:
           node-version: "22"
 
       - name: Install locked development toolchain
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Generate CHANGELOG
         run: node scripts/generate-changelog.mjs
@@ -217,7 +215,7 @@ jobs:
           node-version: "22"
 
       - name: Install locked development toolchain
-        run: npm ci
+        run: npm ci --include=dev
 
       - name: Generate SBOM & In-Toto Provenance Document
         run: node scripts/eos-generate-sbom.mjs
