@@ -28,10 +28,13 @@ const liveManifest = nameArg
   : base;
 
 const projectRoot = process.cwd();
+// Shipped example grants are used only on explicit dogfood opt-in; otherwise the
+// local .eos/iam-policies.json is authoritative (missing/empty/invalid => deny).
+const dogfoodPolicy = args.includes("--dogfood-iam-policy") || process.env.EOS_PRODUCT_DOGFOOD_IAM === "1";
 const result = runBigTechProductFactory(liveManifest, {
   projectRoot,
   dryRun: !write,
-  policies: loadDefaultIamPolicyPack(projectRoot),
+  ...(dogfoodPolicy ? { policies: loadDefaultIamPolicyPack(projectRoot) } : {}),
 });
 const receiptPath = writeBigTechFactoryReceipt(projectRoot, result);
 

@@ -103,11 +103,14 @@ export function defaultFactoryPrincipal(): IamPrincipal {
   });
 }
 
+/**
+ * Fail closed: the local `.eos/iam-policies.json` is authoritative. A missing, empty, or invalid
+ * file yields no grants (deny). The shipped example pack is only used when a caller passes it
+ * explicitly (opt-in dogfood).
+ */
 function resolvePolicies(projectRoot: string, override?: readonly IamPolicyRule[]): readonly IamPolicyRule[] {
   if (override) return override;
-  const local = loadMcpIamPoliciesFromProject(projectRoot);
-  if (local.length > 0) return local;
-  return loadDefaultIamPolicyPack(projectRoot);
+  return loadMcpIamPoliciesFromProject(projectRoot);
 }
 
 /**
