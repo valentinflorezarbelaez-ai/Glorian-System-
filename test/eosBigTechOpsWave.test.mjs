@@ -46,6 +46,8 @@ test("BDD-ACA-002: ACA hard fail requires incident loop", () => {
   });
   assert.ok(result.verdict === "FAIL" || result.incidentRequired === true);
   assert.equal(result.incidentRequired, true);
+  assert.notEqual(result.mesh.finalStage, "FULL_PRODUCTION_100_PCT");
+  assert.equal(result.mesh.verifiedSafe, false);
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "eos-aca-"));
   try {
     const written = writeAcaCanaryEvidence(tmp, result);
@@ -66,6 +68,41 @@ test("BDD-IAM-BG-001: break-glass TTL expires fail-closed", () => {
   });
   assert.equal(evaluateBreakGlassGrant(grant, now).active, true);
   assert.equal(evaluateBreakGlassGrant(grant, now + 11 * 60_000).code, "BREAK_GLASS_EXPIRED");
+});
+
+test("BDD-IAM-BG-002: break-glass issuance requires tenant, roles, and break-glass role", () => {
+  const base = { reason: "sev1-customer-outage", nowMs: 1_700_000_000_000 };
+  assert.throws(
+    () => issueBreakGlassGrant({ ...base, principal: { subjectId: "sre-1", tenantId: "", roles: ["break-glass"] } }),
+    /BREAK_GLASS_PRINCIPAL_INVALID/,
+  );
+  assert.throws(
+    () => issueBreakGlassGrant({ ...base, principal: { subjectId: "sre-1", tenantId: "t1", roles: [] } }),
+    /BREAK_GLASS_PRINCIPAL_INVALID/,
+  );
+  assert.throws(
+    () => issueBreakGlassGrant({ ...base, principal: { subjectId: "sre-1", tenantId: "t1", roles: ["engineer"] } }),
+    /BREAK_GLASS_ROLE_REQUIRED/,
+  );
+});
+
+test("BDD-IAM-BG-003: evaluation rejects tampered or structurally invalid grants", () => {
+  const now = 1_700_000_000_000;
+  const grant = issueBreakGlassGrant({
+    principal: { subjectId: "sre-1", tenantId: "t1", roles: ["break-glass"] },
+    reason: "sev1-customer-outage",
+    nowMs: now,
+    ttlMs: 10 * 60_000,
+  });
+  // Caller-edited role removal.
+  const noRole = { ...grant, principal: { ...grant.principal, roles: ["engineer"] } };
+  assert.equal(evaluateBreakGlassGrant(noRole, now).code, "BREAK_GLASS_INVALID");
+  // Caller-edited expiry breaks the receipt.
+  const extended = { ...grant, expiresAtMs: grant.expiresAtMs + 60 * 60_000 };
+  assert.equal(evaluateBreakGlassGrant(extended, now).code, "BREAK_GLASS_INVALID");
+  // Issued in the future.
+  const future = { ...grant, issuedAtMs: now + 60_000 };
+  assert.equal(evaluateBreakGlassGrant(future, now).code, "BREAK_GLASS_INVALID");
 });
 
 test("BDD-IAM-SIEM-001: verified ledger exports SIEM NDJSON", () => {

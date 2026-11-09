@@ -42,13 +42,15 @@ const DEFAULT_METRICS: readonly CanaryMetricConfig[] = deepFreeze([
 
 /** Run progressive mesh then fail-closed if ACA reports HARD FAIL. */
 export function runBigTechAcaCanaryGate(input: AcaCanaryGateInput): AcaCanaryGateResult {
-  const mesh = new EosProgressiveCanaryMesh(input.versionTarget, input.previousStableVersion);
-  const meshReport = mesh.executeRollout([...input.telemetrySequence]);
   const aca = new EosCanaryAnalysisEngine().analyze(
     input.baselineSamples,
     input.canarySamples,
     input.metricConfigs ?? DEFAULT_METRICS,
   );
+  // ACA hard breach gates promotion: no stage advances, so the mesh cannot reach FULL_PRODUCTION_100_PCT.
+  const acaHardFail = aca.verdict === "FAIL" || aca.hardFailCount > 0;
+  const mesh = new EosProgressiveCanaryMesh(input.versionTarget, input.previousStableVersion);
+  const meshReport = mesh.executeRollout(acaHardFail ? [] : [...input.telemetrySequence]);
 
   let verdict: AcaCanaryGateResult["verdict"] = "PASS";
   let incidentRequired = false;
@@ -56,7 +58,7 @@ export function runBigTechAcaCanaryGate(input: AcaCanaryGateInput): AcaCanaryGat
   if (meshReport.rollbackExecuted) {
     verdict = "ROLLED_BACK_SAFE";
     incidentRequired = true;
-  } else if (aca.verdict === "FAIL" || aca.hardFailCount > 0) {
+  } else if (acaHardFail) {
     verdict = "FAIL";
     incidentRequired = true;
   } else if (aca.verdict === "MARGINAL" || !meshReport.verifiedSafe) {
