@@ -2611,7 +2611,6 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
         synthesizePosixCronLine,
         installGentlemanAutoUpdateSchedule,
         queryGentlemanAutoUpdateSchedule,
-        uninstallGentlemanAutoUpdateSchedule,
       } = await import(pathToFileURL(path.join(root, "scripts/install-gentleman-autoupdate.mjs")).href);
 
       const vbs = synthesizeSilentVbsLauncher("node.exe", "eos.mjs");
@@ -4062,6 +4061,11 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       const leafB = { hash: "b", rangeStart: 0, rangeEnd: 1, keysCount: 1 };
       const diffLeaves = EosAntiEntropyMerkleSync.compareTrees(leafA, leafB);
       assert.equal(diffLeaves.inSync, false);
+      assert.equal(diffLeaves.divergentRanges.length, 1);
+    });
+  });
+});
+al(diffLeaves.inSync, false);
       assert.equal(diffLeaves.divergentRanges.length, 1);
     });
   });
