@@ -23,10 +23,12 @@ export const MCP_IAM_DENIED_RPC_CODE = -32030;
 export const MCP_IAM_ACTION = "mcp.tools.call";
 
 /**
- * Tools that can mutate workspace state when an explicit write flag is set.
+ * Tools that can mutate workspace or ledger state. Every writing tool must be listed here.
  * Kept in sync with `MUTATION_CAPABLE_TOOLS` in eosMcpToolCatalog.ts.
  */
 export const MCP_MUTATION_CAPABLE_TOOLS: ReadonlySet<string> = new Set([
+  "eos_forge_tool",
+  "eos_truetime_commit_wait",
   "eos_autonomous_heal",
   "eos_manage_worktree",
   "eos_reconcile_state",
@@ -50,7 +52,32 @@ export const MCP_MUTATION_CAPABLE_TOOLS: ReadonlySet<string> = new Set([
   "eos_fleet_registry_sync",
 ]);
 
-const WRITE_TRUE_KEYS = ["apply", "write", "applyToDisk", "applyChanges", "autoApply"] as const;
+/**
+ * Per-tool write predicates. Each mirrors the handler's real branching, including
+ * defaults (e.g. ledger receipts written unless `recordToLedger` is explicitly false).
+ * Tools in MCP_MUTATION_CAPABLE_TOOLS without a predicate fail closed (always IAM-gated).
+ */
+const MCP_TOOL_WRITE_PREDICATES: Readonly<Record<string, (args: Record<string, unknown>) => boolean>> = {
+  eos_forge_tool: () => true,
+  eos_hnsw_index_add: () => true,
+  eos_sapfix_autoshipper: () => true,
+  eos_truetime_commit_wait: (args) => args.recordToLedger !== false,
+  eos_chaos_monkey_live: (args) => args.recordToLedger !== false,
+  eos_sqlite_ledger: (args) => String(args.action || "verify").trim().toLowerCase() === "record",
+  eos_gentleman_update: (args) => String(args.action || "status").trim().toLowerCase() === "apply",
+  eos_content_addressable_cache: (args) => {
+    const action = String(args.action || "stats").toLowerCase();
+    if (action === "put_blob" || action === "put_action") return true;
+    if (action === "get_blob" || action === "has_blob" || action === "get_action") return false;
+    return args.recordToLedger !== false;
+  },
+  eos_evolve_module: (args) => String(args.action || "evaluate").trim().toLowerCase() === "evaluate",
+  eos_agent_topology_mesh: (args) => {
+    const action = String(args.action || "compile").trim().toLowerCase();
+    return action === "publish" || (action === "compile" && args.recordToLedger === true);
+  },
+  eos_surgical_healing: (args) => args.recordToLedger === true,
+};
 
 export interface McpIamGateInput {
   readonly toolName: string;
@@ -74,13 +101,13 @@ function isPlainRecord(value: unknown): value is Record<string, unknown> {
   return prototype === Object.prototype || prototype === null;
 }
 
-/** True when the call is mutation-capable and an explicit write flag is set. */
+/** True when the call writes state (workspace or ledger), based on per-tool write semantics. */
 export function mcpToolRequestsMutation(toolName: string, args: Record<string, unknown>): boolean {
   if (!MCP_MUTATION_CAPABLE_TOOLS.has(toolName)) return false;
-  for (const key of WRITE_TRUE_KEYS) {
-    if (args[key] === true) return true;
-  }
-  return args.dryRun === false;
+  const predicate = MCP_TOOL_WRITE_PREDICATES[toolName];
+  // Fail closed: mutation-capable tools without an explicit predicate always require IAM.
+  if (!predicate) return true;
+  return predicate(args);
 }
 
 function parsePrincipal(value: unknown): IamPrincipal | null {

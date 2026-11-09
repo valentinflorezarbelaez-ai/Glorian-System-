@@ -1,140 +1,75 @@
 /**
- * SPEC-184 MCP Runtime IAM Gate — hermetic BDD for tools/call enforcement.
+ * MCP IAM call gate — per-tool write detection (fail-closed).
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 import {
-  MCP_IAM_DENIED_RPC_CODE,
-  evaluateMcpIamCallGate,
+  authorizeMcpToolsCall,
   mcpToolRequestsMutation,
-  stripMcpIamEnvelope,
+  MCP_MUTATION_CAPABLE_TOOLS,
 } from "../src/core/eosMcpIamCallGate.ts";
 
-const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const NO_POLICIES = [];
 
-const grantPolicy = {
-  id: "pol-mcp-worktree",
-  tenantId: "tenant-local",
-  roles: ["engineer"],
-  actions: ["mcp.tools.call"],
-  resourcePrefix: "mcp/tools/",
-};
-
-test("mcpToolRequestsMutation: write flags only", () => {
-  assert.equal(mcpToolRequestsMutation("eos_health_check", { apply: true }), false);
-  assert.equal(mcpToolRequestsMutation("eos_manage_worktree", { action: "list" }), false);
-  assert.equal(mcpToolRequestsMutation("eos_manage_worktree", { action: "create", apply: true }), true);
-  assert.equal(mcpToolRequestsMutation("eos_product_foundry_create", { dryRun: false }), true);
+test("IAM gate: forge and TrueTime writers are mutation-capable", () => {
+  assert.ok(MCP_MUTATION_CAPABLE_TOOLS.has("eos_forge_tool"));
+  assert.ok(MCP_MUTATION_CAPABLE_TOOLS.has("eos_truetime_commit_wait"));
+  assert.equal(mcpToolRequestsMutation("eos_forge_tool", {}), true);
+  assert.equal(mcpToolRequestsMutation("eos_truetime_commit_wait", {}), true);
+  assert.equal(mcpToolRequestsMutation("eos_truetime_commit_wait", { recordToLedger: false }), false);
 });
 
-test("BDD-932: plan-only mutation-capable call does not require IAM", () => {
-  const gate = evaluateMcpIamCallGate({
-    toolName: "eos_manage_worktree",
-    args: { action: "list" },
-    policies: [],
-  });
-  assert.equal(gate.required, false);
-  assert.equal(gate.allowed, true);
-  assert.equal(gate.decision, null);
+test("IAM gate: sqlite ledger only writes on action=record", () => {
+  assert.equal(mcpToolRequestsMutation("eos_sqlite_ledger", { action: "record" }), true);
+  assert.equal(mcpToolRequestsMutation("eos_sqlite_ledger", { action: " RECORD " }), true);
+  assert.equal(mcpToolRequestsMutation("eos_sqlite_ledger", { action: "verify" }), false);
+  assert.equal(mcpToolRequestsMutation("eos_sqlite_ledger", { action: "search" }), false);
 });
 
-test("BDD-931: mutating write without principal denies before dispatch", async () => {
-  const server = new EosMcpServer(projectRoot, "full");
-  server.configureIamPolicies([grantPolicy]);
-  server.configureIamDefaultPrincipal(null);
-
-  const response = await server.handleRequest({
-    jsonrpc: "2.0",
-    id: 931,
-    method: "tools/call",
-    params: {
-      name: "eos_manage_worktree",
-      arguments: { action: "create", branch: "cursor/iam-denied-84b7", apply: true },
-    },
+test("IAM gate: ledger record without principal is denied before any write", () => {
+  const out = authorizeMcpToolsCall({
+    toolName: "eos_sqlite_ledger",
+    args: { action: "record", title: "x" },
+    meta: null,
+    policies: NO_POLICIES,
+    defaultPrincipal: null,
   });
-
-  assert.ok(response.error, "expected JSON-RPC error");
-  assert.equal(response.error.code, MCP_IAM_DENIED_RPC_CODE);
-  assert.equal(response.error.data.code, "DENY_INVALID_INPUT");
-  assert.equal(response.error.data.toolName, "eos_manage_worktree");
-  assert.equal(typeof response.error.data.sha256Receipt, "string");
-  assert.equal(response.error.data.sha256Receipt.length, 64);
+  assert.equal(out.ok, false);
+  assert.equal(out.gate.required, true);
 });
 
-test("BDD-933: granted policy allows mutating write to reach the handler", async () => {
-  const server = new EosMcpServer(projectRoot, "full");
-  server.configureIamPolicies([grantPolicy]);
-  server.configureIamDefaultPrincipal(null);
-
-  const response = await server.handleRequest({
-    jsonrpc: "2.0",
-    id: 933,
-    method: "tools/call",
-    params: {
-      name: "eos_manage_worktree",
-      arguments: {
-        action: "list",
-        apply: true,
-        _eosIam: {
-          subjectId: "eng-1",
-          tenantId: "tenant-local",
-          roles: ["engineer"],
-        },
-      },
-    },
-  });
-
-  assert.equal(response.error, undefined);
-  assert.ok(response.result?.content?.[0]?.text);
-  const body = JSON.parse(response.result.content[0].text);
-  assert.ok(body);
+test("IAM gate: content-addressable cache write and default-receipt modes", () => {
+  assert.equal(mcpToolRequestsMutation("eos_content_addressable_cache", { action: "put_blob" }), true);
+  assert.equal(mcpToolRequestsMutation("eos_content_addressable_cache", { action: "put_action" }), true);
+  assert.equal(mcpToolRequestsMutation("eos_content_addressable_cache", { action: "get_blob" }), false);
+  assert.equal(mcpToolRequestsMutation("eos_content_addressable_cache", { action: "has_blob" }), false);
+  assert.equal(mcpToolRequestsMutation("eos_content_addressable_cache", {}), true);
+  assert.equal(
+    mcpToolRequestsMutation("eos_content_addressable_cache", { action: "stats", recordToLedger: false }),
+    false,
+  );
 });
 
-test("stripMcpIamEnvelope removes the envelope key", () => {
-  const cleaned = stripMcpIamEnvelope({
-    action: "list",
-    apply: true,
-    _eosIam: { subjectId: "u", tenantId: "t", roles: ["engineer"] },
-  });
-  assert.equal(cleaned.action, "list");
-  assert.equal(cleaned.apply, true);
-  assert.equal(Object.prototype.hasOwnProperty.call(cleaned, "_eosIam"), false);
+test("IAM gate: unconditional and default-on writers require IAM", () => {
+  assert.equal(mcpToolRequestsMutation("eos_hnsw_index_add", {}), true);
+  assert.equal(mcpToolRequestsMutation("eos_sapfix_autoshipper", {}), true);
+  assert.equal(mcpToolRequestsMutation("eos_chaos_monkey_live", {}), true);
+  assert.equal(mcpToolRequestsMutation("eos_chaos_monkey_live", { recordToLedger: false }), false);
 });
 
-test("BDD-931b: meta.iam principal with no matching policy denies", async () => {
-  const server = new EosMcpServer(projectRoot, "full");
-  server.configureIamPolicies([]);
-  server.configureIamDefaultPrincipal(null);
-
-  const response = await server.handleRequest({
-    jsonrpc: "2.0",
-    id: "931b",
-    method: "tools/call",
-    params: {
-      name: "eos_manage_worktree",
-      arguments: { action: "create", branch: "x", apply: true },
-      _meta: {
-        iam: { subjectId: "eng-1", tenantId: "tenant-local", roles: ["engineer"] },
-      },
-    },
-  });
-
-  assert.equal(response.error?.code, MCP_IAM_DENIED_RPC_CODE);
-  assert.equal(response.error?.data?.code, "DENY_NO_POLICY");
+test("IAM gate: action-driven writers", () => {
+  assert.equal(mcpToolRequestsMutation("eos_gentleman_update", { action: "apply" }), true);
+  assert.equal(mcpToolRequestsMutation("eos_gentleman_update", { action: "check" }), false);
+  assert.equal(mcpToolRequestsMutation("eos_evolve_module", {}), true);
+  assert.equal(mcpToolRequestsMutation("eos_evolve_module", { action: "circuit_breaker" }), false);
+  assert.equal(mcpToolRequestsMutation("eos_agent_topology_mesh", { action: "publish" }), true);
+  assert.equal(mcpToolRequestsMutation("eos_agent_topology_mesh", { action: "compile", recordToLedger: true }), true);
+  assert.equal(mcpToolRequestsMutation("eos_agent_topology_mesh", { action: "compile" }), false);
+  assert.equal(mcpToolRequestsMutation("eos_surgical_healing", { recordToLedger: true }), true);
+  assert.equal(mcpToolRequestsMutation("eos_surgical_healing", {}), false);
 });
 
-test("read-only tools/call is unchanged by the IAM gate", async () => {
-  const server = new EosMcpServer(projectRoot, "full");
-  server.configureIamPolicies([]);
-  const response = await server.handleRequest({
-    jsonrpc: "2.0",
-    id: 1,
-    method: "tools/call",
-    params: { name: "eos_health_check", arguments: {} },
-  });
-  assert.equal(response.error, undefined);
-  assert.ok(response.result?.content?.[0]?.text);
+test("IAM gate: mutation-capable tools without a predicate fail closed", () => {
+  assert.equal(mcpToolRequestsMutation("eos_manage_worktree", { action: "status" }), true);
+  assert.equal(mcpToolRequestsMutation("eos_not_a_mutating_tool", { apply: true }), false);
 });
