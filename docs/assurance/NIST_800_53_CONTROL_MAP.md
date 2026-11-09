@@ -6,7 +6,7 @@
 
 | Control | Title                           | Status                        | Evidence Anchor                                                                                                                            |
 | ------- | ------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| AC-2    | Account Management              | COVERED                       | MCP bearer session binding (`eosPeakAssuranceTcb`, SPEC-140/146)                                                                           |
+| AC-2    | Account Management              | COVERED                       | MCP bearer session binding (`eosPeakAssuranceTcb`, SPEC-029/146)                                                                           |
 | AC-3    | Access Enforcement              | COVERED                       | Origin allowlist + token bind fail-closed                                                                                                  |
 | AC-6    | Least Privilege                 | COVERED                       | Law IV six-precondition external write barrier                                                                                             |
 | AU-2    | Event Logging                   | COVERED                       | SQLite WAL ledger SECURITY_AUDIT / VERIFICATION_RECEIPT                                                                                    |

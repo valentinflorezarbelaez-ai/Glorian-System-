@@ -27,7 +27,7 @@ Canonical rotation procedure (fail-closed `SESSION_SECRET`, `GOOGLE_CLIENT_ID`, 
 
 | Surface             | Mechanism                                     | Rotation                                             |
 | ------------------- | --------------------------------------------- | ---------------------------------------------------- |
-| MCP Streamable HTTP | Ephemeral bearer + session binding (SPEC-140) | Restart / new token; no long-lived plaintext in repo |
+| MCP Streamable HTTP | Ephemeral bearer + session binding (SPEC-029) | Restart / new token; no long-lived plaintext in repo |
 | Law VI secret scan  | `scripts/eos-secret-scan.mjs`                 | Fail-closed on D1–D4 hits                            |
 | Supply chain        | SBOM + tip-seal provenance                    | `npm run tip-seal` after release commits             |
 
