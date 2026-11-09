@@ -1,0 +1,51 @@
+# INTAKE-001: Donaciones — Control-Plane Fleet Onboarding (Law IV)
+
+- **Project**: `donaciones` (Portal de Donaciones — Sede AGEAC & Tercer Factor)
+- **Date**: 2026-11-09
+- **Owner**: Valentín Flórez Arbeláez
+- **Status**: `INTAKE_DRAFT` (not yet `INTAKE_COMPLETE` in `docs/projects/registry.json`)
+- **Epistemic state**: `FINDINGS_IDENTIFIED` · `WITHIN_TESTED_SCOPE`
+- **Catalog rule**: Prefer composing existing SPECs (100/124/042). No new OpenSpec id required for registry hygiene.
+
+---
+
+## 1. Gap (why scorecard grade is F)
+
+Registry posture is intentionally fail-closed:
+
+| Field | Current | Blocks scorecard |
+| --- | --- | --- |
+| `intake` | `PENDING_INTAKE` | yes (`specCoverage`) |
+| `specification` | `PENDING_SPECIFICATION` | yes (`specCoverage`) |
+| `audit` | `PENDING_AUDIT` | yes (`gatePassRate`) |
+| `authorization` | `LEVEL_1_READ_ONLY` | yes (`mutationFloor`) |
+
+Sibling repo already has local `IMPLEMENTATION_AUTHORIZATION.md` (`LEVEL 2`) and production URL `https://donaciones-drab.vercel.app`. Control-plane registry must not copy that status until Law IV preconditions are sealed here.
+
+## 2. Observed facts (evidence, not claims)
+
+1. Vercel project `donaciones` latest production URL: `https://donaciones-drab.vercel.app` (reachable `200` when DNS resolves).
+2. Local checkout under workspace `Donaciones` is a **static** site (`index.html` + `vercel.json`, **no** `package.json`).
+3. Fleet path resolver previously required `package.json`, so dogfood recorded `SKIPPED_SIBLING` even with a real checkout. Remediation: treat `.git` + (`package.json` **or** `index.html`+`vercel.json`) as usable; empty `.git` residue stays skipped.
+4. Scorecard must stay **F** until intake + specification + audit + `LEVEL_2+` are completed — no grade inflation.
+
+## 3. Law IV ladder (ordered)
+
+1. **Intake** — this document → owner marks `INTAKE_COMPLETE` only after review.
+2. **Specification** — bilingual EARS/BDD under `docs/specs/donaciones/` composing fleet SPECs (no new catalog id unless unlock + need proven).
+3. **Audit** — secret scan, SSRF allowlist URL, static deploy markers, HEAD SHA pin.
+4. **Owner approval** — decision log entry.
+5. **Authorization** — promote registry to `LEVEL_2_AUTHORIZED` only after 1–4; never from sibling markdown alone.
+
+## 4. Non-goals
+
+- Do not mutate the `Donaciones` repository from the control plane (`Δ = 0` until Level 2+ write barrier clears).
+- Do not invent OpenSpec ids past the freeze policy without dogfood evidence.
+- Do not raise scorecard grades by editing JSON scores.
+
+## 5. Next executable steps
+
+1. Merge static-checkout path resolver + tip evidence refresh.
+2. Re-run `npm run fleet:dogfood` with `EOS_WORKSPACE_ROOT` (or sibling layout) and confirm `FLOW_INSPECT:donaciones` is `SUCCESS` when checkout is present.
+3. Owner review of this intake → flip registry `intake` to `INTAKE_COMPLETE` only.
+4. Spec + audit packages before any authorization bump.
