@@ -58,6 +58,47 @@ function isNonEmpty(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
 
+function normalizeTokenList(value: unknown): readonly string[] | null {
+  if (!Array.isArray(value) || value.length === 0) return null;
+  const out: string[] = [];
+  for (const item of value) {
+    if (typeof item !== "string") return null;
+    const token = item.trim().toLowerCase();
+    if (token.length === 0) return null;
+    out.push(token);
+  }
+  return out;
+}
+
+function isSafeResourceToken(value: string): boolean {
+  if (value.length === 0 || value.includes("\\") || value.includes("//")) return false;
+  const segments = value.split("/");
+  return segments.every((segment) => segment.length > 0 && segment !== "." && segment !== "..");
+}
+
+function isSafePrefix(prefix: string): boolean {
+  if (prefix.length === 0) return true;
+  const trimmed = prefix.endsWith("/") ? prefix.slice(0, -1) : prefix;
+  return isSafeResourceToken(trimmed);
+}
+
+function resourceMatchesPrefix(resourceId: string, prefix: string): boolean {
+  if (prefix.length === 0) return true;
+  if (resourceId === prefix) return true;
+  const boundary = prefix.endsWith("/") ? prefix : `${prefix}/`;
+  return resourceId.startsWith(boundary);
+}
+
+function deny(code: IamDecisionCode, reason: string, receiptParts: readonly string[]): IamDecision {
+  return deepFreeze({
+    ok: false,
+    code,
+    reason,
+    matchedPolicyId: null,
+    sha256Receipt: attest(receiptParts),
+  });
+}
+
 /**
  * Evaluate a single ABAC request against registered tenant-scoped policies.
  * Cross-tenant access is always DENY_TENANT_MISMATCH (fail-closed).
@@ -68,6 +109,7 @@ export function evaluateIamAccess(request: IamAccessRequest, policies: readonly 
   const action = String(request?.action || "")
     .trim()
     .toLowerCase();
+  const roles = normalizeTokenList(principal?.roles);
 
   if (
     !principal ||
@@ -76,45 +118,84 @@ export function evaluateIamAccess(request: IamAccessRequest, policies: readonly 
     !isNonEmpty(principal.tenantId) ||
     !isNonEmpty(resource.resourceId) ||
     !isNonEmpty(resource.tenantId) ||
-    !action
+    !action ||
+    !roles ||
+    !Array.isArray(policies)
   ) {
-    return deepFreeze({
-      ok: false,
-      code: "DENY_INVALID_INPUT",
-      reason: "IAM request missing required principal, action, or resource fields.",
-      matchedPolicyId: null,
-      sha256Receipt: attest(["INVALID", action || "none"]),
-    });
+    return deny(
+      "DENY_INVALID_INPUT",
+      "IAM request missing required principal, roles, action, resource, or policy list.",
+      ["INVALID", action || "none"],
+    );
+  }
+
+  if (!isSafeResourceToken(resource.resourceId)) {
+    return deny("DENY_INVALID_INPUT", "Resource identifier is not a safe path token.", [
+      "INVALID_RESOURCE",
+      principal.tenantId,
+      action,
+    ]);
   }
 
   if (principal.tenantId !== resource.tenantId) {
-    return deepFreeze({
-      ok: false,
-      code: "DENY_TENANT_MISMATCH",
-      reason: `Principal tenant '${principal.tenantId}' cannot access resource tenant '${resource.tenantId}'.`,
-      matchedPolicyId: null,
-      sha256Receipt: attest(["TENANT", principal.tenantId, resource.tenantId, action]),
+    return deny(
+      "DENY_TENANT_MISMATCH",
+      `Principal tenant '${principal.tenantId}' cannot access resource tenant '${resource.tenantId}'.`,
+      ["TENANT", principal.tenantId, resource.tenantId, action],
+    );
+  }
+
+  const parsedPolicies: Array<{
+    id: string;
+    tenantId: string;
+    roles: readonly string[];
+    actions: readonly string[];
+    resourcePrefix: string;
+  }> = [];
+
+  for (const policy of policies) {
+    const policyRoles = normalizeTokenList(policy?.roles);
+    const policyActions = normalizeTokenList(policy?.actions);
+    const prefix = policy?.resourcePrefix ?? "";
+    if (
+      !policy ||
+      !isNonEmpty(policy.id) ||
+      !isNonEmpty(policy.tenantId) ||
+      !policyRoles ||
+      !policyActions ||
+      typeof prefix !== "string" ||
+      !isSafePrefix(prefix)
+    ) {
+      return deny("DENY_INVALID_INPUT", "IAM policy list contains a malformed or unsafe rule.", [
+        "INVALID_POLICY",
+        principal.tenantId,
+        action,
+      ]);
+    }
+    parsedPolicies.push({
+      id: policy.id,
+      tenantId: policy.tenantId,
+      roles: policyRoles,
+      actions: policyActions,
+      resourcePrefix: prefix,
     });
   }
 
-  const roleSet = new Set(principal.roles.map((r) => String(r).toLowerCase()));
-  const tenantPolicies = policies.filter((p) => p.tenantId === principal.tenantId);
+  const roleSet = new Set(roles);
+  const tenantPolicies = parsedPolicies.filter((p) => p.tenantId === principal.tenantId);
 
   if (tenantPolicies.length === 0) {
-    return deepFreeze({
-      ok: false,
-      code: "DENY_NO_POLICY",
-      reason: `No IAM policies registered for tenant '${principal.tenantId}'.`,
-      matchedPolicyId: null,
-      sha256Receipt: attest(["NO_POLICY", principal.tenantId, action]),
-    });
+    return deny("DENY_NO_POLICY", `No IAM policies registered for tenant '${principal.tenantId}'.`, [
+      "NO_POLICY",
+      principal.tenantId,
+      action,
+    ]);
   }
 
   for (const policy of tenantPolicies) {
-    const roleOk = policy.roles.some((r) => roleSet.has(String(r).toLowerCase()));
-    const actionOk = policy.actions.map((a) => a.toLowerCase()).includes(action);
-    const prefix = policy.resourcePrefix || "";
-    const resourceOk = prefix.length === 0 || resource.resourceId.startsWith(prefix);
+    const roleOk = policy.roles.some((role) => roleSet.has(role));
+    const actionOk = policy.actions.includes(action);
+    const resourceOk = resourceMatchesPrefix(resource.resourceId, policy.resourcePrefix);
     if (roleOk && actionOk && resourceOk) {
       return deepFreeze({
         ok: true,
@@ -126,13 +207,11 @@ export function evaluateIamAccess(request: IamAccessRequest, policies: readonly 
     }
   }
 
-  return deepFreeze({
-    ok: false,
-    code: "DENY_ACTION_NOT_PERMITTED",
-    reason: `No matching policy grants '${action}' for subject '${principal.subjectId}'.`,
-    matchedPolicyId: null,
-    sha256Receipt: attest(["DENY_ACTION", principal.tenantId, principal.subjectId, action]),
-  });
+  return deny(
+    "DENY_ACTION_NOT_PERMITTED",
+    `No matching policy grants '${action}' for subject '${principal.subjectId}'.`,
+    ["DENY_ACTION", principal.tenantId, principal.subjectId, action],
+  );
 }
 
 export class EosMultiTenantIamFoundation {
@@ -141,9 +220,14 @@ export class EosMultiTenantIamFoundation {
   public registerPolicy(rule: IamPolicyRule): void {
     assertPrecondition(isNonEmpty(rule.id), "policy id required");
     assertPrecondition(isNonEmpty(rule.tenantId), "policy tenantId required");
-    assertPrecondition(rule.roles.length > 0, "policy roles required");
-    assertPrecondition(rule.actions.length > 0, "policy actions required");
-    this.policies.push(deepFreeze({ ...rule }));
+    assertPrecondition(normalizeTokenList(rule.roles) !== null, "policy roles required");
+    assertPrecondition(normalizeTokenList(rule.actions) !== null, "policy actions required");
+    const prefix = rule.resourcePrefix ?? "";
+    assertPrecondition(
+      typeof prefix === "string" && isSafePrefix(prefix),
+      "policy resourcePrefix is not a safe path prefix",
+    );
+    this.policies.push(deepFreeze({ ...rule, resourcePrefix: prefix.length > 0 ? prefix : undefined }));
   }
 
   public evaluate(request: IamAccessRequest): IamDecision {

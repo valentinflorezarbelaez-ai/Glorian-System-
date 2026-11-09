@@ -106,6 +106,14 @@ describe("SPEC-123: Fleet Secret-Scan Gate & UI Leak Detector", () => {
       const findings = detectUiPlumbingLeaks(specDoc, "openspec/specs/SPEC-122.md");
       assert.equal(findings.length, 0);
     });
+
+    it("does not flag the checkout landing page when the workspace folder is not named Glorian-System", () => {
+      const landing = `<span class="badge">SPEC-117</span>`;
+      const absoluteLanding = path.resolve(process.cwd(), "index.html");
+      assert.equal(detectUiPlumbingLeaks(landing, absoluteLanding).length, 0);
+      assert.equal(detectUiPlumbingLeaks(landing, "index.html").length, 0);
+      assert.ok(detectUiPlumbingLeaks(landing, "public/index.html").length > 0);
+    });
   });
 
   describe("FR-371 / BDD-356: Secret Masking Engine", () => {

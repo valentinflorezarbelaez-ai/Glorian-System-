@@ -27,6 +27,10 @@ wired. This is software ABAC only — not SSO and not Level-5.
 
 - **FR-927 (Unwanted Condition - Invalid Input)**: `IF required IAM fields are missing, THEN THE SYSTEM SHALL deny with DENY_INVALID_INPUT.`
 
+- **FR-928 (Unwanted Condition - Malformed Principal or Policy)**: `IF principal.roles is missing or is not a non-empty list of non-empty strings, OR the policy list is not an array, OR any supplied policy is missing id, tenantId, roles, or actions, THEN THE SYSTEM SHALL deny with DENY_INVALID_INPUT and SHALL NOT throw.`
+
+- **FR-929 (Unwanted Condition - Resource Boundary)**: `IF resource.resourceId or a policy resourcePrefix contains an empty segment, a parent segment '..', a backslash, or a double slash, THEN THE SYSTEM SHALL deny with DENY_INVALID_INPUT. WHEN a resourcePrefix is present and safe, THE SYSTEM SHALL allow only an exact resourceId match or a continuation on a path-segment boundary.`
+
 ## 3. Acceptance Criteria (BDD Gherkin)
 
 ```gherkin
@@ -39,6 +43,22 @@ SCENARIO: BDD-IAM-002 matching policy allows action
   GIVEN tenant T with role engineer and action read on resource prefix ledger/
   WHEN principal engineer requests read on ledger/demo
   THEN ok is true AND code is ALLOW
+
+SCENARIO: BDD-928 malformed roles fail-closed
+  GIVEN a principal whose roles field is missing
+  WHEN evaluateIamAccess is called
+  THEN ok is false AND code is DENY_INVALID_INPUT
+  AND the call does not throw
+
+SCENARIO: BDD-929 prefix does not grant a sibling identifier
+  GIVEN a policy whose resourcePrefix is ledger
+  WHEN the principal requests read on ledger-secret
+  THEN ok is false AND code is DENY_ACTION_NOT_PERMITTED
+
+SCENARIO: BDD-930 parent-segment resource identifier is rejected
+  GIVEN a policy whose resourcePrefix is ledger/
+  WHEN the principal requests read on ledger/../secrets
+  THEN ok is false AND code is DENY_INVALID_INPUT
 ```
 
 ## 4. Non-Claims
