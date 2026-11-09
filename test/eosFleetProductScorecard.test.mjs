@@ -58,26 +58,7 @@ test("BDD-FLEET-SC-003: live probe boosts reachability when HTTPS is healthy", (
 });
 
 test("BDD-FLEET-SC-004: policy-rejected host scores below neutral unprobed", () => {
-  const rejected = buildFleetProductScorecard(
-    {
-      id: "portafolio",
-      name: "Portafolio",
-      status: "REGISTERED",
-      intake: "INTAKE_COMPLETE",
-      specification: "SPECIFICATION_APPROVED",
-      audit: "AUDIT_COMPLETE",
-      authorization: "LEVEL_3_PRODUCTION_AUTHORIZED",
-      productionUrl: "https://evil.example.com",
-    },
-    {
-      reachable: false,
-      httpStatus: 0,
-      latencyMs: 0,
-      probedAt: "2026-11-09T22:00:00.000Z",
-      policy: "REJECTED_HOST",
-    },
-  );
-  const unprobed = buildFleetProductScorecard({
+  const base = {
     id: "portafolio",
     name: "Portafolio",
     status: "REGISTERED",
@@ -86,8 +67,72 @@ test("BDD-FLEET-SC-004: policy-rejected host scores below neutral unprobed", () 
     audit: "AUDIT_COMPLETE",
     authorization: "LEVEL_3_PRODUCTION_AUTHORIZED",
     productionUrl: "https://evil.example.com",
+  };
+  const rejected = buildFleetProductScorecard(base, {
+    reachable: false,
+    httpStatus: 0,
+    latencyMs: 0,
+    probedAt: "2026-11-09T22:00:00.000Z",
+    policy: "REJECTED_HOST",
   });
+  const missing = buildFleetProductScorecard(base, {
+    reachable: false,
+    httpStatus: 0,
+    latencyMs: 0,
+    probedAt: "2026-11-09T22:00:00.000Z",
+    policy: "MISSING_URL",
+  });
+  const badScheme = buildFleetProductScorecard(base, {
+    reachable: false,
+    httpStatus: 0,
+    latencyMs: 0,
+    probedAt: "2026-11-09T22:00:00.000Z",
+    policy: "REJECTED_SCHEME",
+  });
+  const unreachable = buildFleetProductScorecard(base, {
+    reachable: false,
+    httpStatus: 0,
+    latencyMs: 40,
+    probedAt: "2026-11-09T22:00:00.000Z",
+    policy: "ALLOWED",
+  });
+  const http5xx = buildFleetProductScorecard(base, {
+    reachable: true,
+    httpStatus: 503,
+    latencyMs: 100,
+    probedAt: "2026-11-09T22:00:00.000Z",
+    policy: "ALLOWED",
+  });
+  const http4xx = buildFleetProductScorecard(base, {
+    reachable: true,
+    httpStatus: 404,
+    latencyMs: 100,
+    probedAt: "2026-11-09T22:00:00.000Z",
+    policy: "ALLOWED",
+  });
+  const slow = buildFleetProductScorecard(base, {
+    reachable: true,
+    httpStatus: 200,
+    latencyMs: 2500,
+    probedAt: "2026-11-09T22:00:00.000Z",
+    policy: "ALLOWED",
+  });
+  const mid = buildFleetProductScorecard(base, {
+    reachable: true,
+    httpStatus: 200,
+    latencyMs: 900,
+    probedAt: "2026-11-09T22:00:00.000Z",
+    policy: "ALLOWED",
+  });
+  const unprobed = buildFleetProductScorecard(base);
   assert.equal(rejected.liveReachability, 20);
+  assert.equal(missing.liveReachability, 20);
+  assert.equal(badScheme.liveReachability, 20);
+  assert.equal(unreachable.liveReachability, 30);
+  assert.equal(http5xx.liveReachability, 40);
+  assert.equal(http4xx.liveReachability, 55);
+  assert.equal(slow.liveReachability, 75);
+  assert.equal(mid.liveReachability, 85);
   assert.equal(unprobed.liveReachability, 70);
   assert.ok(rejected.score < unprobed.score);
 });

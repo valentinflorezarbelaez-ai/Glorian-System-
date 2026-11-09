@@ -39,3 +39,15 @@ test("BDD-SAFE-QUERY-004: repeated params fail closed (no last-wins)", () => {
   assert.equal(getQueryParam(req, "action"), null);
   assert.deepEqual(getQueryObject(req).action, ["invalid", "summary"]);
 });
+
+test("BDD-SAFE-QUERY-005: url params win over injected plain query; nullish injected skipped", () => {
+  const req = {
+    url: "/api/fleet?probe=1",
+    query: { probe: "0", unused: null, flag: true, n: 2 },
+  };
+  assert.equal(getQueryParam(req, "probe"), "1");
+  assert.equal(getQueryParam(req, "flag"), "true");
+  assert.equal(getQueryParam(req, "n"), "2");
+  assert.equal(getQueryParam(req, "unused"), null);
+  assert.deepEqual(getQueryObject({ url: "::::" }), {});
+});
