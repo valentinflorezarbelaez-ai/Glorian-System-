@@ -12,6 +12,15 @@ import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
+/** Windows runners briefly lock freshly written JSONL under %TEMP%; never fail assertions on cleanup. */
+function removeTempDir(dir) {
+  try {
+    fs.rmSync(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+  } catch {
+    // Best-effort: leftover temp dirs must not fail hermetic gates on Windows EPERM.
+  }
+}
+
 test("BDD-935: hash-chained audit entries verify", () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "eos-iam-audit-"));
   try {
@@ -49,7 +58,7 @@ test("BDD-935: hash-chained audit entries verify", () => {
     assert.equal(verified.ok, true);
     assert.equal(verified.entries, 2);
   } finally {
-    fs.rmSync(tmp, { recursive: true, force: true });
+    removeTempDir(tmp);
   }
 });
 
@@ -80,7 +89,7 @@ test("BDD-935b: MCP mutating deny appends an audit row", async () => {
     assert.equal(entry.entryHash.length, 64);
     assert.equal(verifyIamAuditLedger(tmp).ok, true);
   } finally {
-    fs.rmSync(tmp, { recursive: true, force: true });
+    removeTempDir(tmp);
   }
 });
 
