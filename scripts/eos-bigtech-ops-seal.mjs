@@ -26,10 +26,12 @@ import { evaluateBreakGlassGrant, issueBreakGlassGrant } from "../src/core/eosIa
 import { authorizeMcpToolsCall } from "../src/core/eosMcpIamCallGate.ts";
 import {
   buildDemoLedgerManifest,
+  buildOpsControlPlaneManifest,
   loadDefaultIamPolicyPack,
   runBigTechProductFactory,
   writeBigTechFactoryReceipt,
 } from "../src/core/eosBigTechProductFactory.ts";
+import { loadVercelRuntimeSignalFixture } from "../src/core/eosVercelRuntimeSignalAdapter.ts";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -185,24 +187,50 @@ const steps = [];
     policies: loadDefaultIamPolicyPack(projectRoot),
   });
   writeBigTechFactoryReceipt(projectRoot, factory);
+  const opsFactory = runBigTechProductFactory(buildOpsControlPlaneManifest(), {
+    projectRoot,
+    dryRun: true,
+    policies: loadDefaultIamPolicyPack(projectRoot),
+  });
   const scorecardPath = path.join(projectRoot, "docs", "evidence", "BIGTECH_POST_DEPLOY_SCORECARD.json");
   const scorecard = {
     epistemicState: "POST_DEPLOY_SCORECARD_WITHIN_TESTED_SCOPE",
     generatedAt: new Date().toISOString(),
     productId: factory.productId,
+    secondProductId: opsFactory.productId,
     factoryStatus: factory.status,
+    opsFactoryStatus: opsFactory.status,
     score: factory.delivery?.scorecard?.score ?? null,
     grade: factory.delivery?.scorecard?.grade ?? null,
+    opsScore: opsFactory.delivery?.scorecard?.score ?? null,
+    opsGrade: opsFactory.delivery?.scorecard?.grade ?? null,
     deliveryReceipt: factory.delivery?.sha256Receipt ?? null,
-    sha256Receipt: sha256(`POST_DEPLOY:${factory.sha256Receipt}:${factory.status}`),
+    sha256Receipt: sha256(`POST_DEPLOY:${factory.sha256Receipt}:${opsFactory.sha256Receipt}`),
   };
   fs.writeFileSync(scorecardPath, `${JSON.stringify(scorecard, null, 2)}\n`, "utf8");
+  const fixture = loadVercelRuntimeSignalFixture(projectRoot);
+  const fixtureAca = runAcaGateFromVercelSignals({
+    versionTarget: "v75.2.0",
+    previousStableVersion: "v75.1.0",
+    signals: fixture.signals,
+  });
   steps.push({
     id: "POST_DEPLOY_SCORECARD",
-    ok: factory.status === "SUCCESS" || factory.reason === "SCORECARD_FLOOR",
+    ok:
+      (factory.status === "SUCCESS" || factory.reason === "SCORECARD_FLOOR") &&
+      (opsFactory.status === "SUCCESS" || opsFactory.reason === "SCORECARD_FLOOR"),
     score: scorecard.score,
     grade: scorecard.grade,
+    opsScore: scorecard.opsScore,
+    opsGrade: scorecard.opsGrade,
     sha256Receipt: scorecard.sha256Receipt,
+  });
+  steps.push({
+    id: "VERCEL_RUNTIME_FIXTURE_ACA",
+    ok: fixtureAca.verdict === "PASS" && !fixtureAca.incidentRequired,
+    mode: fixture.source,
+    signalCount: fixture.signals.length,
+    sha256Receipt: fixtureAca.sha256Receipt,
   });
 }
 

@@ -19,6 +19,11 @@ import { resolveFleetProjectPath, resolveFleetRegistryPaths } from "../src/core/
 import { appendIamAuditEntry, exportIamAuditLedgerForSiem } from "../src/core/eosIamAuditLedger.ts";
 import { evaluateBreakGlassGrant, issueBreakGlassGrant } from "../src/core/eosIamBreakGlass.ts";
 import { authorizeMcpToolsCall } from "../src/core/eosMcpIamCallGate.ts";
+import {
+  loadVercelRuntimeSignalFixture,
+  mapVercelRuntimeSnapshotToSignals,
+} from "../src/core/eosVercelRuntimeSignalAdapter.ts";
+import { buildOpsControlPlaneManifest } from "../src/core/eosBigTechProductFactory.ts";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -273,6 +278,35 @@ test("BDD-ACA-005: incident without remediation fails closed", () => {
   } finally {
     removeTempDir(tmp);
   }
+});
+
+test("BDD-VERCEL-SIG-001: runtime aggregates map into ACA signals", () => {
+  const mapped = mapVercelRuntimeSnapshotToSignals({
+    deploymentId: "dpl_map",
+    requestCount: 1000,
+    latencyP99Ms: 50,
+    errorClusters: [{ name: "Error", occurrenceCount: 5 }],
+  });
+  assert.equal(mapped.signals.length, 1);
+  assert.equal(mapped.totalErrorEvents, 5);
+  assert.equal(mapped.signals[0].errorRate5xx, 0.005);
+
+  const fixture = loadVercelRuntimeSignalFixture(projectRoot);
+  assert.equal(fixture.source, "FIXTURE");
+  assert.ok(fixture.signals.length >= 4);
+  const aca = runAcaGateFromVercelSignals({
+    versionTarget: "v75.2.0",
+    previousStableVersion: "v75.1.0",
+    signals: fixture.signals,
+  });
+  assert.equal(aca.incidentRequired, false);
+});
+
+test("BDD-PRODUCT-002: ops-control-plane manifest is distinct from demo-ledger", () => {
+  const ops = buildOpsControlPlaneManifest();
+  assert.equal(ops.id, "ops-control-plane");
+  assert.notEqual(ops.id, "demo-ledger-mvp");
+  assert.ok(fs.existsSync(path.join(projectRoot, "docs", "products", "ops-control-plane", "scorecard.json")));
 });
 
 test("BDD-IAM-BG-003: MCP gate elevates only with active break-glass", () => {

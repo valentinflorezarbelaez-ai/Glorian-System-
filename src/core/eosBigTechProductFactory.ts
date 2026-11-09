@@ -244,3 +244,18 @@ export function buildDemoLedgerManifest(): ProductManifest {
     compliance: ["SLSA_4"],
   });
 }
+
+/** Second dogfood product — EngProd control-plane scorecard path (beyond demo-ledger). */
+export function buildOpsControlPlaneManifest(): ProductManifest {
+  return deepFreeze({
+    id: "ops-control-plane",
+    name: "Glorian Ops Control Plane",
+    domain: "engprod-control-plane",
+    description: "Big Tech EngProd ops seal product (ACA, IAM, fleet dogfood)",
+    tier: "MVP",
+    platforms: ["distributed-backend", "cli"],
+    entities: ["OpsReceipt", "CanarySignal"],
+    commands: ["SealOpsWave", "EvaluateCanary"],
+    compliance: ["SLSA_4"],
+  });
+}

@@ -1,10 +1,14 @@
 {
   "epistemicState": "POST_DEPLOY_SCORECARD_WITHIN_TESTED_SCOPE",
-  "generatedAt": "2026-11-09T21:13:37.937Z",
+  "generatedAt": "2026-11-09T21:28:51.760Z",
   "productId": "demo-ledger-mvp",
+  "secondProductId": "ops-control-plane",
   "factoryStatus": "SUCCESS",
+  "opsFactoryStatus": "SUCCESS",
   "score": 100,
   "grade": "A+",
-  "deliveryReceipt": "9fba3163c000b2c090852f4f8541923755440d9c6f49858590efc8f281ae7a7b",
-  "sha256Receipt": "0ed4e6f2ed7aa1519a1cb9363f05f45d98e2a44df0427500c3c5b2bc5ba50f51"
+  "opsScore": 100,
+  "opsGrade": "A+",
+  "deliveryReceipt": "c86ee83c5d70bcd9a36b9685157ec820a132a7183ab256393c534f50096a1cca",
+  "sha256Receipt": "d1a66a978948683aa9fcadff00a348aec58e199a50d67d38ff12e58ab1bcfbe6"
 }
