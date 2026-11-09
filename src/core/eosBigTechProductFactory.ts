@@ -253,7 +253,7 @@ export function buildOpsControlPlaneManifest(): ProductManifest {
     domain: "engprod-control-plane",
     description: "Big Tech EngProd ops seal product (ACA, IAM, fleet dogfood)",
     tier: "MVP",
-    platforms: ["distributed-backend", "cli"],
+    platforms: ["distributed-backend", "web"],
     entities: ["OpsReceipt", "CanarySignal"],
     commands: ["SealOpsWave", "EvaluateCanary"],
     compliance: ["SLSA_4"],
