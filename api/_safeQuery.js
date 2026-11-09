@@ -2,6 +2,7 @@
  * WHATWG URL query parser for Vercel serverless handlers.
  * Avoids Node DEP0169 from legacy url.parse used by lazy req.query getters.
  * Plain own-property `query` objects (test mocks) are honored without getters.
+ * Repeated keys are preserved as arrays so handlers keep fail-closed validation.
  */
 
 /**
@@ -46,23 +47,30 @@ export function getSearchParams(req) {
 }
 
 /**
+ * First unique value only. Duplicate keys fail closed as null (never pick last).
  * @param {import('http').IncomingMessage & { url?: string }} req
  * @param {string} key
  * @returns {string | null}
  */
 export function getQueryParam(req, key) {
-  const value = getSearchParams(req).get(key);
-  return value === null ? null : value;
+  const all = getSearchParams(req).getAll(key);
+  if (all.length !== 1) return null;
+  return all[0];
 }
 
 /**
+ * Flatten unique keys to strings; preserve duplicates as string[] so
+ * `typeof value !== "string"` rejection paths stay fail-closed.
  * @param {import('http').IncomingMessage & { url?: string }} req
- * @returns {Record<string, string>}
+ * @returns {Record<string, string | string[]>}
  */
 export function getQueryObject(req) {
+  const params = getSearchParams(req);
+  /** @type {Record<string, string | string[]>} */
   const out = {};
-  for (const [key, value] of getSearchParams(req).entries()) {
-    out[key] = value;
+  for (const key of new Set(params.keys())) {
+    const all = params.getAll(key);
+    out[key] = all.length === 1 ? all[0] : all;
   }
   return out;
 }

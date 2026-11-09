@@ -2,6 +2,7 @@
 /**
  * Generate fleet product scorecards from registry governance (Big Tech EngProd).
  * Optional live probes: set EOS_FLEET_SCORECARD_PROBE=1 to HEAD productionUrl.
+ * SSRF-hardened: HTTPS allowlisted hosts only, redirects rejected (manual).
  */
 
 import crypto from "node:crypto";
@@ -17,6 +18,36 @@ const registry = JSON.parse(
 const projects = registry.projects || [];
 const probeEnabled = process.env.EOS_FLEET_SCORECARD_PROBE === "1" || process.env.EOS_FLEET_SCORECARD_PROBE === "true";
 
+const ALLOWED_HOST_SUFFIXES = Object.freeze([".vercel.app"]);
+
+/**
+ * @param {string} urlString
+ * @returns {boolean}
+ */
+function isAllowedProductionUrl(urlString) {
+  try {
+    const parsed = new URL(urlString);
+    if (parsed.protocol !== "https:") return false;
+    if (parsed.username || parsed.password) return false;
+    const host = parsed.hostname.toLowerCase();
+    if (
+      host === "localhost" ||
+      host.endsWith(".localhost") ||
+      host.endsWith(".local") ||
+      host === "metadata.google.internal"
+    ) {
+      return false;
+    }
+    if (/^(127\.|10\.|192\.168\.|169\.254\.|0\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.)/.test(host)) {
+      return false;
+    }
+    if (host.includes(":")) return false; // reject IPv6 literals
+    return ALLOWED_HOST_SUFFIXES.some((suffix) => host === suffix.slice(1) || host.endsWith(suffix));
+  } catch {
+    return false;
+  }
+}
+
 /**
  * @param {string} url
  * @returns {Promise<{ reachable: boolean, httpStatus: number, latencyMs: number, probedAt: string }>}
@@ -24,16 +55,28 @@ const probeEnabled = process.env.EOS_FLEET_SCORECARD_PROBE === "1" || process.en
 async function probeUrl(url) {
   const probedAt = new Date().toISOString();
   const started = Date.now();
+  if (!isAllowedProductionUrl(url)) {
+    return { reachable: false, httpStatus: 0, latencyMs: 0, probedAt };
+  }
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 8_000);
     const response = await fetch(url, {
       method: "HEAD",
-      redirect: "follow",
+      redirect: "manual",
       signal: controller.signal,
       headers: { "user-agent": "eos-fleet-scorecard-probe/1.0" },
     });
     clearTimeout(timer);
+    // Reject redirects — never follow to runner-local / private targets.
+    if (response.status >= 300 && response.status < 400) {
+      return {
+        reachable: false,
+        httpStatus: response.status,
+        latencyMs: Date.now() - started,
+        probedAt,
+      };
+    }
     return {
       reachable: response.status > 0 && response.status < 500,
       httpStatus: response.status,
@@ -56,7 +99,7 @@ if (probeEnabled) {
   for (const project of projects) {
     if (!project?.id || project.id === "eos-system" || project.status !== "REGISTERED") continue;
     const url = typeof project.productionUrl === "string" ? project.productionUrl : "";
-    if (!url.startsWith("https://")) continue;
+    if (!isAllowedProductionUrl(url)) continue;
     liveProbes[project.id] = await probeUrl(url);
   }
 }
@@ -68,6 +111,7 @@ const receipt = {
   generatedAt: new Date().toISOString(),
   probeEnabled,
   probedCount: Object.keys(liveProbes).length,
+  ssrfPolicy: "https-vercel-app-allowlist-no-redirect",
   written: result.written,
   count: result.scorecards.length,
   grades: Object.fromEntries(

@@ -33,3 +33,9 @@ test("BDD-SAFE-QUERY-003: plain injected query object works; getters are ignored
   assert.equal(getQueryParam(withGetter, "action"), null);
   assert.deepEqual(getQueryObject(withGetter), {});
 });
+
+test("BDD-SAFE-QUERY-004: repeated params fail closed (no last-wins)", () => {
+  const req = { url: "/api/graph?action=invalid&action=summary" };
+  assert.equal(getQueryParam(req, "action"), null);
+  assert.deepEqual(getQueryObject(req).action, ["invalid", "summary"]);
+});

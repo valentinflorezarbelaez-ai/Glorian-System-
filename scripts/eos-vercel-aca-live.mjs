@@ -110,21 +110,45 @@ if (liveRaw) {
   mapped = { source: "LIVE_SNAPSHOT", signals, totalErrorEvents };
   mode = "LIVE_SNAPSHOT";
 } else {
-  const liveSnaps = tryLoadCommittedLiveSnapshots();
+  // Prefer authenticated live probe so a healthy committed history cannot mask
+  // an unhealthy current deployment (fail-closed EngProd precedence).
   const liveProbe = tryFetchLiveVercelSnapshot();
-  if (liveSnaps?.length) {
+  const liveSnaps = tryLoadCommittedLiveSnapshots();
+  /**
+   * Mesh protocol needs progressive stages; expand ONE tip observation into the
+   * ladder so health is rooted in the tip (never trust a pre-baked healthy history).
+   * @param {Record<string, unknown>} tip
+   */
+  function expandTipToMeshStages(tip) {
+    const stages = ["CANARY_1_PCT", "CANARY_5_PCT", "CANARY_25_PCT", "FULL_PRODUCTION_100_PCT"];
+    return stages.map((stage, index) => ({
+      ...tip,
+      stage,
+      requestCount: Number(tip.requestCount) > 0 ? Number(tip.requestCount) + index * 1000 : 10_000 + index * 2000,
+    }));
+  }
+  if (liveProbe) {
     const signals = [];
     let totalErrorEvents = 0;
-    for (const item of liveSnaps) {
+    for (const item of expandTipToMeshStages(liveProbe)) {
+      const one = mapVercelRuntimeSnapshotToSignals(item, "LIVE_SNAPSHOT");
+      signals.push(...one.signals);
+      totalErrorEvents += one.totalErrorEvents;
+    }
+    mapped = { source: "LIVE_SNAPSHOT", signals, totalErrorEvents };
+    mode = "LIVE_DEPLOYMENT_PROBE";
+  } else if (liveSnaps?.length) {
+    const productionTip =
+      liveSnaps.find((s) => s?.stage === "FULL_PRODUCTION_100_PCT") || liveSnaps[liveSnaps.length - 1];
+    const signals = [];
+    let totalErrorEvents = 0;
+    for (const item of expandTipToMeshStages(productionTip)) {
       const one = mapVercelRuntimeSnapshotToSignals(item, "LIVE_SNAPSHOT");
       signals.push(...one.signals);
       totalErrorEvents += one.totalErrorEvents;
     }
     mapped = { source: "LIVE_SNAPSHOT", signals, totalErrorEvents };
     mode = "LIVE_CAPTURED_SNAPSHOT";
-  } else if (liveProbe) {
-    mapped = mapVercelRuntimeSnapshotToSignals(liveProbe, "LIVE_SNAPSHOT");
-    mode = "LIVE_DEPLOYMENT_PROBE";
   } else {
     mapped = loadVercelRuntimeSignalFixture(projectRoot);
   }
