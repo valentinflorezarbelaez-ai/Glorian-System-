@@ -44,13 +44,10 @@ import { createPhase7DomainHandlers } from "./tools/eosMcpPhase7DomainHandlers.t
 import { createPhase8AgiHandlers } from "./tools/eosMcpPhase8AgiHandlers.ts";
 import { resolveConfinedLedgerPath, resolveProjectPath } from "./eosMcpPathResolver.ts";
 import { EosMcpSchemaValidator, type McpToolSchemaDef } from "../core/eosMcpSchemaValidator.ts";
-import {
-  authorizeMcpToolsCall,
-  loadMcpIamPoliciesFromProject,
-  loadMcpIamPrincipalFromEnv,
-} from "../core/eosMcpIamCallGate.ts";
 import { appendIamAuditEntry } from "../core/eosIamAuditLedger.ts";
+import type { BreakGlassGrant } from "../core/eosIamBreakGlass.ts";
 import type { IamPolicyRule, IamPrincipal } from "../core/eosMultiTenantIamFoundation.ts";
+import { EosMcpIamRuntime } from "./eosMcpIamRuntime.ts";
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -138,8 +135,7 @@ export class EosMcpServer {
   private readonly serverVersion: string;
   private toolProfile: McpToolProfile;
   private readonly dispatchRegistry = new EosMcpDispatchRegistry();
-  private iamPolicies: readonly IamPolicyRule[] = [];
-  private iamDefaultPrincipal: IamPrincipal | null = null;
+  private iam: EosMcpIamRuntime;
 
   constructor(projectRoot?: string, profile?: McpToolProfile) {
     this.toolProfile = normalizeToolProfile(profile ?? process.env.EOS_MCP_PROFILE);
@@ -230,8 +226,7 @@ export class EosMcpServer {
         projectRoot: this.projectRoot,
       }),
     );
-    this.iamPolicies = loadMcpIamPoliciesFromProject(this.projectRoot);
-    this.iamDefaultPrincipal = loadMcpIamPrincipalFromEnv();
+    this.iam = new EosMcpIamRuntime(this.projectRoot);
   }
 
   public setToolProfile(profile: McpToolProfile): void {
@@ -240,12 +235,17 @@ export class EosMcpServer {
 
   /** Test/dogfood hook: replace in-memory IAM policies (SPEC-184 MCP gate). */
   public configureIamPolicies(policies: readonly IamPolicyRule[]): void {
-    this.iamPolicies = policies.slice();
+    this.iam.configurePolicies(policies);
   }
 
   /** Test/dogfood hook: set a default principal when _meta.iam is absent. */
   public configureIamDefaultPrincipal(principal: IamPrincipal | null): void {
-    this.iamDefaultPrincipal = principal;
+    this.iam.configureDefaultPrincipal(principal);
+  }
+
+  /** Test/dogfood hook: install or clear a break-glass grant for mutating tools/call. */
+  public configureBreakGlassGrant(grant: BreakGlassGrant | null): void {
+    this.iam.configureBreakGlassGrant(grant);
   }
 
   /** Tool names with a modular handler registered in the dispatch registry. */
@@ -393,12 +393,10 @@ export class EosMcpServer {
             };
           }
 
-          const authz = authorizeMcpToolsCall({
+          const authz = this.iam.authorizeToolsCall({
             toolName,
             args,
             meta: isPlainRecord(params?._meta) ? params._meta : null,
-            policies: this.iamPolicies,
-            defaultPrincipal: this.iamDefaultPrincipal,
           });
           if (authz.gate.required && authz.gate.decision) {
             try {

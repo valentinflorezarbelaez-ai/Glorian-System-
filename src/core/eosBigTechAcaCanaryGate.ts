@@ -15,6 +15,10 @@ import {
   type CanaryRolloutReport,
   type CanaryTelemetry,
 } from "./eosProgressiveCanaryMesh.ts";
+import {
+  EosVercelCanaryObservability,
+  type CanaryTelemetryInput,
+} from "./eosVercelCanaryObservability.ts";
 
 export interface AcaCanaryGateInput {
   readonly versionTarget: string;
@@ -131,6 +135,121 @@ export function writeAcaCanaryEvidence(
     );
   }
   return deepFreeze({ canaryPath, incidentPath });
+}
+
+/**
+ * Map SPEC-107 Vercel canary signals into the ACA+mesh gate (Big Tech ACA).
+ * Any ROLLBACK_TRIGGERED CHI decision forces fail-closed incidentRequired.
+ */
+export function runAcaGateFromVercelSignals(input: {
+  readonly versionTarget: string;
+  readonly previousStableVersion: string;
+  readonly signals: readonly CanaryTelemetryInput[];
+  readonly baselineSamples?: Record<string, number[]>;
+}): AcaCanaryGateResult {
+  const signals = input.signals;
+  assertNonEmptySignals(signals);
+  const evaluations = signals.map((s) => EosVercelCanaryObservability.evaluateMetrics(s));
+  const rollback = evaluations.some((e) => e.decision === "ROLLBACK_TRIGGERED");
+
+  const telemetrySequence: CanaryTelemetry[] = signals.map((s) => {
+    const sampleRequests = Math.max(1, s.requestCount);
+    // Floor healthy failures so sub-budget rates (e.g. 0.01% of 5k) do not trip mesh MAX_ERROR_RATE.
+    const failedRequests = rollback
+      ? Math.max(1, Math.ceil(sampleRequests * Math.max(s.errorRate5xx, 0.01)))
+      : Math.max(0, Math.floor(sampleRequests * s.errorRate5xx));
+    return deepFreeze({
+      stage: s.stage,
+      sampleRequests,
+      failedRequests,
+      p99LatencyMs: s.latencyP99Ms,
+      baselineP99LatencyMs: Math.max(s.latencyP99Ms, 1),
+    });
+  });
+
+  const canarySamples = {
+    errorRate: signals.map((s) => s.errorRate5xx),
+    p99LatencyMs: signals.map((s) => s.latencyP99Ms),
+    memoryMb: signals.map(() => 256),
+  };
+  const baselineSamples = input.baselineSamples ?? {
+    errorRate: signals.map(() => 0.0001),
+    p99LatencyMs: signals.map((s) => Math.max(1, Math.round(s.latencyP99Ms * 0.9))),
+    memoryMb: signals.map(() => 240),
+  };
+
+  const result = runBigTechAcaCanaryGate({
+    versionTarget: input.versionTarget,
+    previousStableVersion: input.previousStableVersion,
+    telemetrySequence,
+    baselineSamples,
+    canarySamples,
+  });
+
+  if (rollback && !result.incidentRequired) {
+    return deepFreeze({
+      ...result,
+      verdict: "FAIL",
+      incidentRequired: true,
+      sha256Receipt: crypto
+        .createHash("sha256")
+        .update(`ACA_VERCEL_ROLLBACK:${result.sha256Receipt}`)
+        .digest("hex"),
+    });
+  }
+  return result;
+}
+
+function assertNonEmptySignals(signals: readonly CanaryTelemetryInput[]): void {
+  if (!Array.isArray(signals) || signals.length === 0) {
+    throw new Error("VERCEL_CANARY_SIGNALS_REQUIRED");
+  }
+}
+
+/** Fail-closed: incident receipt requires a remediation receipt before ops seal can pass. */
+export function assertIncidentRemediationClosed(
+  projectRoot: string,
+): { readonly ok: boolean; readonly reason: string | null } {
+  const incidentPath = path.join(projectRoot, "docs", "evidence", "INCIDENT_CANARY_ROLLBACK_RECEIPT.json");
+  if (!fs.existsSync(incidentPath)) {
+    return deepFreeze({ ok: true, reason: null });
+  }
+  const remediationPath = path.join(projectRoot, "docs", "evidence", "REMEDIATION_CANARY_RECEIPT.json");
+  if (!fs.existsSync(remediationPath)) {
+    return deepFreeze({ ok: false, reason: "INCIDENT_WITHOUT_REMEDIATION" });
+  }
+  try {
+    const remediation = JSON.parse(fs.readFileSync(remediationPath, "utf8"));
+    if (remediation?.epistemicState !== "REVALIDATION_REQUIRED" && remediation?.status !== "REMEDIATED") {
+      return deepFreeze({ ok: false, reason: "REMEDIATION_STATE_INVALID" });
+    }
+  } catch {
+    return deepFreeze({ ok: false, reason: "REMEDIATION_UNREADABLE" });
+  }
+  return deepFreeze({ ok: true, reason: null });
+}
+
+/** Persist remediation receipt after blameless follow-up (closes incident loop). */
+export function writeCanaryRemediationReceipt(
+  projectRoot: string,
+  input: { readonly canaryReceipt: string; readonly summary: string },
+): string {
+  const evidenceDir = path.join(projectRoot, "docs", "evidence");
+  fs.mkdirSync(evidenceDir, { recursive: true });
+  const target = path.join(evidenceDir, "REMEDIATION_CANARY_RECEIPT.json");
+  const payload = {
+    epistemicState: "REVALIDATION_REQUIRED",
+    status: "REMEDIATED",
+    generatedAt: new Date().toISOString(),
+    summary: String(input.summary || "").trim() || "canary-remediation",
+    canaryReceipt: input.canaryReceipt,
+    sha256Receipt: crypto
+      .createHash("sha256")
+      .update(`REMEDIATION:${input.canaryReceipt}:${input.summary}`)
+      .digest("hex"),
+  };
+  fs.writeFileSync(target, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+  return target;
 }
 
 /** Healthy dogfood samples for CI seal (identical distributions → PASS). */

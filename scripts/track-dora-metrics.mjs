@@ -70,6 +70,45 @@ function getIncidentReports() {
   return fs.readdirSync(dir).filter((f) => f.endsWith(".md"));
 }
 
+/**
+ * Live PR lead-time from GitHub when a token is present (Big Tech EngProd).
+ * Falls back silently when offline / unauthenticated.
+ */
+function getGithubPrLeadTimeHours() {
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
+  if (!token) return null;
+  try {
+    const remote = execFileSync("git", ["remote", "get-url", "origin"], {
+      cwd: root,
+      encoding: "utf8",
+      stdio: ["pipe", "pipe", "pipe"],
+      timeout: 5_000,
+    }).trim();
+    const match = remote.match(/github\.com[:/](.+?)\/(.+?)(?:\.git)?$/i);
+    if (!match) return null;
+    const owner = match[1];
+    const repo = match[2];
+    const since = new Date(Date.now() - WINDOW_DAYS * 86_400_000).toISOString();
+    const url = `https://api.github.com/repos/${owner}/${repo}/pulls?state=closed&sort=updated&direction=desc&per_page=30`;
+    const raw = execFileSync(
+      "curl",
+      ["-fsS", "-H", `Authorization: Bearer ${token}`, "-H", "Accept: application/vnd.github+json", url],
+      { encoding: "utf8", timeout: 15_000, stdio: ["pipe", "pipe", "pipe"] },
+    );
+    const pulls = JSON.parse(raw);
+    const merged = (Array.isArray(pulls) ? pulls : [])
+      .filter((p) => p.merged_at && p.created_at && new Date(p.merged_at) >= new Date(since))
+      .slice(0, 20);
+    if (merged.length === 0) return null;
+    const hours =
+      merged.reduce((acc, p) => acc + (new Date(p.merged_at) - new Date(p.created_at)) / 3_600_000, 0) /
+      merged.length;
+    return { averageHours: Number(hours.toFixed(2)), sampleSize: merged.length, source: "github_pulls_api" };
+  } catch {
+    return null;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // DORA computation
 // ---------------------------------------------------------------------------
@@ -77,13 +116,23 @@ function getIncidentReports() {
 const commits = getGitLog();
 const receipts = getDeploymentReceipts();
 const incidents = getIncidentReports();
+const githubLead = getGithubPrLeadTimeHours();
 
 const deployCount = commits.length;
 const deploysPerDay = (deployCount / WINDOW_DAYS).toFixed(2);
 const deployFreqRating = deployCount >= 30 ? "ELITE" : deployCount >= 7 ? "HIGH" : deployCount >= 1 ? "MEDIUM" : "LOW";
 
-// Lead time: estimate from first commit to receipts (if same day → Elite)
-const leadTimeRating = receipts.length > 0 ? "HIGH" : "MEDIUM";
+// Lead time: prefer live GitHub PR merge latency; else receipts heuristic.
+let leadTimeRating = receipts.length > 0 ? "HIGH" : "MEDIUM";
+let leadTimeNote =
+  receipts.length > 0
+    ? `${receipts.length} CI/CD receipts in docs/evidence/`
+    : "No receipts — run npm test to generate";
+if (githubLead) {
+  leadTimeRating =
+    githubLead.averageHours < 24 ? "ELITE" : githubLead.averageHours < 168 ? "HIGH" : "MEDIUM";
+  leadTimeNote = `GitHub PR lead time avg ${githubLead.averageHours}h (n=${githubLead.sampleSize})`;
+}
 
 // Change Failure Rate: incidents / total deploys
 const cfr = deployCount > 0 ? ((incidents.length / deployCount) * 100).toFixed(2) : "0.00";
@@ -103,10 +152,8 @@ const metrics = {
   },
   leadTimeForChanges: {
     verifiedReceipts: receipts.length,
-    note:
-      receipts.length > 0
-        ? `${receipts.length} CI/CD receipts in docs/evidence/`
-        : "No receipts — run npm test to generate",
+    github: githubLead,
+    note: leadTimeNote,
     rating: leadTimeRating,
     eliteThreshold: "< 1 day",
   },
