@@ -135,7 +135,16 @@ class ForgeManifestManager {
     };
     const tmp = `${this.manifestPath}.tmp`;
     fs.writeFileSync(tmp, JSON.stringify(updated, null, 2), "utf8");
-    fs.renameSync(tmp, this.manifestPath);
+    try {
+      fs.renameSync(tmp, this.manifestPath);
+    } catch {
+      try {
+        fs.copyFileSync(tmp, this.manifestPath);
+        fs.unlinkSync(tmp);
+      } catch {
+        fs.writeFileSync(this.manifestPath, JSON.stringify(updated, null, 2), "utf8");
+      }
+    }
     this.manifest = updated;
   }
 
