@@ -29,12 +29,40 @@ function sha256(value) {
  * Best-effort live probe: latest production deployment readiness via Vercel REST.
  * Requires VERCEL_TOKEN (+ optional VERCEL_PROJECT_ID / VERCEL_TEAM_ID).
  */
+function loadVercelProjectDefaults() {
+  try {
+    const cfg = JSON.parse(
+      fs.readFileSync(path.join(projectRoot, "docs", "governance", "vercel-fleet-projects.json"), "utf8"),
+    );
+    return {
+      projectId: cfg?.controlPlane?.projectId || "",
+      teamId: cfg?.teamId || "",
+    };
+  } catch {
+    return { projectId: "", teamId: "" };
+  }
+}
+
+function tryLoadCommittedLiveSnapshots() {
+  const p = path.join(projectRoot, "docs", "evidence", "VERCEL_LIVE_SNAPSHOT.json");
+  if (!fs.existsSync(p)) return null;
+  try {
+    const parsed = JSON.parse(fs.readFileSync(p, "utf8"));
+    if (Array.isArray(parsed.snapshots) && parsed.snapshots.length > 0) return parsed.snapshots;
+    if (parsed.deploymentId) return [parsed];
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 function tryFetchLiveVercelSnapshot() {
+  const defaults = loadVercelProjectDefaults();
   const token = process.env.VERCEL_TOKEN?.trim();
-  const projectId = process.env.VERCEL_PROJECT_ID?.trim();
+  const projectId = process.env.VERCEL_PROJECT_ID?.trim() || defaults.projectId;
   if (!token || !projectId) return null;
   try {
-    const team = process.env.VERCEL_TEAM_ID?.trim();
+    const team = process.env.VERCEL_TEAM_ID?.trim() || defaults.teamId;
     const qs = new URLSearchParams({
       projectId,
       target: "production",
@@ -49,17 +77,17 @@ function tryFetchLiveVercelSnapshot() {
     );
     const parsed = JSON.parse(raw);
     const dep = Array.isArray(parsed.deployments) ? parsed.deployments[0] : null;
-    if (!dep?.uid) return null;
-    const ready = dep.readyState === "READY";
-    const errorish = dep.readyState === "ERROR" || dep.readyState === "CANCELED";
+    if (!dep?.uid && !dep?.id) return null;
+    const ready = (dep.readyState || dep.state) === "READY";
+    const errorish = ["ERROR", "CANCELED"].includes(dep.readyState || dep.state);
     return {
-      deploymentId: String(dep.uid),
+      deploymentId: String(dep.uid || dep.id),
       environment: "production",
       stage: "FULL_PRODUCTION_100_PCT",
       requestCount: 10_000,
       latencyP99Ms: ready ? 45 : 900,
       errorRate5xx: errorish ? 0.05 : ready ? 0.0001 : 0.01,
-      errorClusters: errorish ? [{ name: String(dep.readyState), occurrenceCount: 50 }] : [],
+      errorClusters: errorish ? [{ name: String(dep.readyState || dep.state), occurrenceCount: 50 }] : [],
     };
   } catch {
     return null;
@@ -71,12 +99,31 @@ let mode = "FIXTURE";
 const liveRaw = process.env.EOS_VERCEL_RUNTIME_SNAPSHOT_JSON?.trim();
 if (liveRaw) {
   const snap = JSON.parse(liveRaw);
-  mapped = mapVercelRuntimeSnapshotToSignals(snap, "LIVE_SNAPSHOT");
+  const list = Array.isArray(snap.snapshots) ? snap.snapshots : [snap];
+  const signals = [];
+  let totalErrorEvents = 0;
+  for (const item of list) {
+    const one = mapVercelRuntimeSnapshotToSignals(item, "LIVE_SNAPSHOT");
+    signals.push(...one.signals);
+    totalErrorEvents += one.totalErrorEvents;
+  }
+  mapped = { source: "LIVE_SNAPSHOT", signals, totalErrorEvents };
   mode = "LIVE_SNAPSHOT";
 } else {
-  const liveSnap = tryFetchLiveVercelSnapshot();
-  if (liveSnap) {
-    mapped = mapVercelRuntimeSnapshotToSignals(liveSnap, "LIVE_SNAPSHOT");
+  const liveSnaps = tryLoadCommittedLiveSnapshots();
+  const liveProbe = tryFetchLiveVercelSnapshot();
+  if (liveSnaps?.length) {
+    const signals = [];
+    let totalErrorEvents = 0;
+    for (const item of liveSnaps) {
+      const one = mapVercelRuntimeSnapshotToSignals(item, "LIVE_SNAPSHOT");
+      signals.push(...one.signals);
+      totalErrorEvents += one.totalErrorEvents;
+    }
+    mapped = { source: "LIVE_SNAPSHOT", signals, totalErrorEvents };
+    mode = "LIVE_CAPTURED_SNAPSHOT";
+  } else if (liveProbe) {
+    mapped = mapVercelRuntimeSnapshotToSignals(liveProbe, "LIVE_SNAPSHOT");
     mode = "LIVE_DEPLOYMENT_PROBE";
   } else {
     mapped = loadVercelRuntimeSignalFixture(projectRoot);

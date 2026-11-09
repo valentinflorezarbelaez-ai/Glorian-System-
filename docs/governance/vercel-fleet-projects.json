@@ -1,0 +1,18 @@
+{
+  "note": "Public Vercel project/team identifiers for EngProd ACA probes. Tokens stay in env/secrets only.",
+  "teamId": "team_XOJCh7trOzpU0Hkmx7xvIiO0",
+  "controlPlane": {
+    "name": "glorian-system",
+    "projectId": "prj_IjguBkd5pOgEAaJc39zHLnjFmjqJ"
+  },
+  "fleet": [
+    { "id": "aberamentho", "projectId": "prj_sRTXkgQsymE7caj6fHl6J5yDNsVJ", "name": "aberamentosprelomamusic" },
+    { "id": "atp-strength", "projectId": "prj_AX7GdiOJLpHrSYBcL5lIYGMJTpEw", "name": "atp-strength" },
+    { "id": "biblioteca-gnostica-1", "projectId": "prj_uBkIAM3FspkrsUggbyiqRO9qkrBl", "name": "biblioteca-gnostica" },
+    { "id": "control-de-asistencia-abopack", "projectId": "prj_gciHo2FJWSOldFLjncPR5kT5E103", "name": "abopack" },
+    { "id": "crud-slack", "projectId": "prj_L1xFqDXSUQpZSg3dn2ARAJkfehdr", "name": "crud-slack" },
+    { "id": "donaciones", "projectId": "prj_07fSR6FbfvmbbHCSxUGAxK70Gwn4", "name": "donaciones" },
+    { "id": "performance-talent-group", "projectId": "prj_ZDRe9yWKWnhlegUsTHQiSiJtuNYI", "name": "ptg" },
+    { "id": "portafolio", "projectId": "prj_IULpWKzCnt2jUHHdWTuVRShixUoq", "name": "portafolio" }
+  ]
+}
