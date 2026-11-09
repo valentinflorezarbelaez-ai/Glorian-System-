@@ -35,8 +35,11 @@ jobs:
           node-version: "22"
           cache: "npm"
 
+      - name: Install locked development toolchain
+        run: npm ci
+
       - name: Run TypeScript Strict Type Check
-        run: node scripts/verify-typescript.mjs
+        run: npm run typecheck
 
       - name: npm audit — Dependency Vulnerability Scan (Stripe/Anthropic standard)
         # Blocks on HIGH or CRITICAL severity vulnerabilities in the dependency tree
@@ -59,6 +62,9 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
+
+      - name: Install locked development toolchain
+        run: npm ci
 
       - name: Run Property-Based Test Suite
         run: node --test test/eosPropertyBased.test.mjs
@@ -90,6 +96,9 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: "npm"
+
+      - name: Install locked development toolchain
+        run: npm ci
 
       - name: Execute Stage 1–7 Strict SecDevOps & Constitutional Pipeline
         run: node scripts/verify-cicd-pipeline.mjs
@@ -135,6 +144,9 @@ jobs:
           node-version: "22"
           cache: "npm"
 
+      - name: Install locked development toolchain
+        run: npm ci
+
       - name: Run Mutation Testing Runner
         run: node scripts/run-mutation-testing.mjs
         env:
@@ -164,6 +176,9 @@ jobs:
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # pinned SHA — SLSA L3
         with:
           node-version: "22"
+
+      - name: Install locked development toolchain
+        run: npm ci
 
       - name: Generate CHANGELOG
         run: node scripts/generate-changelog.mjs
@@ -200,6 +215,9 @@ jobs:
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # pinned SHA — SLSA L3
         with:
           node-version: "22"
+
+      - name: Install locked development toolchain
+        run: npm ci
 
       - name: Generate SBOM & In-Toto Provenance Document
         run: node scripts/eos-generate-sbom.mjs
