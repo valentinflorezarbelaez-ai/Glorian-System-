@@ -212,6 +212,11 @@ test("BDD-224: Non-FTS Search Fallback and Error Recovery", () => {
   assert.equal(results.length, 1);
   assert.equal(results[0].title, "Quantum Ledger Architecture");
 
+  // Fallback search with punctuation delimiters
+  const punctResults = ledger.searchEntries("Quantum - Architecture:");
+  assert.equal(punctResults.length, 1);
+  assert.equal(punctResults[0].title, "Quantum Ledger Architecture");
+
   // Tokens that sanitize to empty should fall back to listRecent
   const emptyTokenResults = ledger.searchEntries("~~~***???");
   assert.equal(emptyTokenResults.length, 1);
