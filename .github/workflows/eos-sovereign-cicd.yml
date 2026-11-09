@@ -193,11 +193,16 @@ jobs:
           # Private sibling needs a PAT with repo scope; default GITHUB_TOKEN cannot read it.
           token: ${{ secrets.EOS_FLEET_CHECKOUT_TOKEN || github.token }}
 
+      - name: Discard failed sibling checkout residue
+        if: steps.fleet_sibling_checkout.outcome != 'success'
+        run: rm -rf .fleet-siblings/portafolio
+
       - name: Fleet Dogfood TTV (sibling-aware)
         run: npm run fleet:dogfood
         env:
           EOS_WORKSPACE_ROOT: ${{ github.workspace }}/.fleet-siblings
-          EOS_FLEET_PORTAFOLIO_PATH: ${{ github.workspace }}/.fleet-siblings/portafolio
+          # Only advertise the sibling path when checkout actually succeeded.
+          EOS_FLEET_PORTAFOLIO_PATH: ${{ steps.fleet_sibling_checkout.outcome == 'success' && format('{0}/.fleet-siblings/portafolio', github.workspace) || '' }}
           EOS_FLEET_SIBLING_CHECKOUT: ${{ steps.fleet_sibling_checkout.outcome }}
 
       - name: Vercel ACA live-or-fixture seal

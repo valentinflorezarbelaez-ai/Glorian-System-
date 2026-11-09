@@ -30,6 +30,11 @@ function isGitCheckout(candidate: string): boolean {
   return fs.existsSync(candidate) && fs.existsSync(path.join(candidate, ".git"));
 }
 
+/** Require a usable project root — empty `git init` residue from failed CI checkouts must not count. */
+function isUsableFleetCheckout(candidate: string): boolean {
+  return isGitCheckout(candidate) && fs.existsSync(path.join(candidate, "package.json"));
+}
+
 function workspaceCandidates(projectRoot: string, resolvedLocalDir: string): string[] {
   const dir = resolvedLocalDir.trim();
   const out: string[] = [];
@@ -63,7 +68,7 @@ export function resolveFleetProjectPath(
     const fromEnv = process.env[envName]?.trim();
     if (fromEnv) {
       const candidate = path.isAbsolute(fromEnv) ? fromEnv : path.resolve(projectRoot, fromEnv);
-      if (isGitCheckout(candidate)) {
+      if (isUsableFleetCheckout(candidate)) {
         return deepFreeze({
           id,
           name,
@@ -78,7 +83,7 @@ export function resolveFleetProjectPath(
 
   if (typeof project.localPath === "string" && project.localPath.trim()) {
     const candidate = path.resolve(project.localPath.trim());
-    if (isGitCheckout(candidate)) {
+    if (isUsableFleetCheckout(candidate)) {
       return deepFreeze({
         id,
         name,
@@ -92,7 +97,7 @@ export function resolveFleetProjectPath(
 
   if (typeof project.resolvedLocalDir === "string" && project.resolvedLocalDir.trim()) {
     for (const candidate of workspaceCandidates(projectRoot, project.resolvedLocalDir)) {
-      if (isGitCheckout(candidate)) {
+      if (isUsableFleetCheckout(candidate)) {
         return deepFreeze({
           id,
           name,
