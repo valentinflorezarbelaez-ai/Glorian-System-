@@ -14,34 +14,44 @@ import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitive
 import { contentDerivedIso, writeDeterministicArtifact } from "./eosDeterministicArtifact.ts";
 
 /**
- * Curated Tier-0 Core Engineering Profile (real, high-signal control-plane tools).
- * Keeps LLM tool-selection precision maximized when `EOS_MCP_PROFILE=core`.
+ * Essential LLM surface — high-signal director / verify / tribunal tools only.
+ * Use `EOS_MCP_PROFILE=essential` to maximize tool-selection precision.
  */
-export const CORE_TIER0_TOOL_NAMES: ReadonlySet<string> = new Set([
+export const ESSENTIAL_TIER0_TOOL_NAMES: ReadonlySet<string> = new Set([
   "eos_antigravity_direct",
   "eos_antigravity_doctor",
   "eos_gentleman_audit",
-  "eos_gentleman_update",
-  "eos_enterprise_workspace",
-  "eos_evolve_module",
-  "eos_sqlite_ledger",
-  "eos_ast_analyze",
   "eos_amplify_prompt",
   "eos_semantic_search",
   "eos_hnsw_knn_search",
   "eos_check_architecture",
   "eos_check_openspec",
   "eos_get_blast_radius",
-  "eos_query_code_graph",
   "eos_evaluate_decision",
   "eos_tmr_consensus",
   "eos_validate_patch",
   "eos_optimize_context",
   "eos_turbo_verify",
+  "eos_sqlite_ledger",
+  "eos_ast_analyze",
+  "eos_fleet_soundcheck",
+  "eos_health_check",
+]);
+
+/**
+ * Curated Tier-0 Core Engineering Profile (real, high-signal control-plane tools).
+ * Keeps LLM tool-selection precision maximized when `EOS_MCP_PROFILE=core`.
+ * Prefer `essential` for agent loops; `core` retains enterprise/frontier surface.
+ */
+export const CORE_TIER0_TOOL_NAMES: ReadonlySet<string> = new Set([
+  ...ESSENTIAL_TIER0_TOOL_NAMES,
+  "eos_gentleman_update",
+  "eos_enterprise_workspace",
+  "eos_evolve_module",
+  "eos_query_code_graph",
   "eos_refactor_audit",
   "eos_autonomous_heal",
   "eos_manage_worktree",
-  "eos_fleet_soundcheck",
   "eos_audit_fleet",
   "eos_mcts_tune",
   "eos_canary_rollout",
@@ -63,7 +73,6 @@ export const CORE_TIER0_TOOL_NAMES: ReadonlySet<string> = new Set([
   "eos_smt_reasoning_prover",
   "eos_chaos_monkey_live",
   "eos_bft_swarm_consensus",
-  "eos_health_check",
 ]);
 
 export interface McpToolPropertyDef {

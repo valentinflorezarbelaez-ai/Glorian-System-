@@ -127,6 +127,43 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
+  llmops-privacy-lane-gate:
+    name: LLMOps privacy lane continuous gate (SPEC-183)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Install locked development toolchain
+        run: npm ci --include=dev
+
+      - name: Run privacy lane hermetic suite (local + open_weight modes)
+        env:
+          EOS_LLM_PRIVACY_LANE: local
+        run: |
+          set -o pipefail
+          node --test test/eosLlmOpsPrivacyLane.test.mjs 2>&1 | tee llmops-privacy-report.txt
+          EOS_LLM_PRIVACY_LANE=open_weight node --test test/eosLlmOpsPrivacyLane.test.mjs 2>&1 | tee -a llmops-privacy-report.txt
+
+      - name: Publish LLMOps privacy report to the job summary
+        if: ${{ !cancelled() }}
+        run: |
+          {
+            echo "### LLMOps privacy lane (SPEC-183)"
+            echo ""
+            echo '```'
+            cat llmops-privacy-report.txt 2>/dev/null || echo "(no report captured)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
   ratchet-refresh:
     name: Refresh ratchets and open a pull request
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.update-ratchets }}

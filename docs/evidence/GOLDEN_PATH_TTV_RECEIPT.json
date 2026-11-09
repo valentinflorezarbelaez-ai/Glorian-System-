@@ -1,0 +1,39 @@
+{
+  "epistemicState": "GOLDEN_PATH_TTV_WITHIN_TESTED_SCOPE",
+  "generatedAt": "2026-11-09T18:37:54.994Z",
+  "paths": [
+    {
+      "id": "MISSION_GOLDEN_PATH",
+      "ok": true,
+      "durationMs": 796,
+      "status": "SUCCESS",
+      "epistemicState": "MISSION_GOLDEN_PATH_WITHIN_TESTED_SCOPE",
+      "sha256Receipt": "f35959e71e47ae3dc167ae25424d1b08e945ec530aa4e0af22ff6b110c908d70"
+    },
+    {
+      "id": "PLATFORM_OPS_CEILING",
+      "ok": true,
+      "durationMs": 2.986,
+      "status": "SUCCESS",
+      "epistemicState": "SOVEREIGN_CEILING_10_OF_10_WITHIN_TESTED_SCOPE",
+      "sha256Receipt": "f2ab1a6ba7c7457541cee9f821e3d8ddd5e3744417576899ec0916f38493e6b9"
+    },
+    {
+      "id": "TURBO_VERIFY",
+      "ok": true,
+      "durationMs": 171,
+      "status": "SUCCESS",
+      "epistemicState": "TURBO_PASS_WITHIN_TESTED_SCOPE",
+      "sha256Receipt": "21e7a8c14c022a66da3389e2634049ca61a67b890b344abae7aad865ec7b528e"
+    }
+  ],
+  "metrics": {
+    "pathCount": 3,
+    "allOk": true,
+    "totalDurationMs": 969.986,
+    "maxPathDurationMs": 796,
+    "p99BudgetMs": 120000,
+    "withinBudget": true
+  },
+  "sha256Receipt": "0110413305183cf724cf4fee00b565ce84fda3190ffe26b53212d1a17b50fe42"
+}

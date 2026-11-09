@@ -127,10 +127,23 @@ export function extractImports(sourceCode: string, sourceFilePath: string, proje
 
 /**
  * Disallowed external frameworks and browser globals for Domain Layer (Layer 0 Core).
+ * Globals MUST be exact-specifier matches only — never substring `.includes("window")`,
+ * which false-positives on `./eosContextWindowManager.ts` / `./eosMultiWindowSloGovernor.ts`.
  */
 const FORBIDDEN_DOMAIN_FRAMEWORKS = ["react", "vue", "angular", "express", "next", "koa", "fastify"];
 
-const FORBIDDEN_DOMAIN_GLOBALS = ["window", "document"];
+const FORBIDDEN_DOMAIN_GLOBALS = ["window", "document"] as const;
+
+/**
+ * Exact bare-global match for Domain purity (Law V).
+ * Rejects substring traps such as `eosContextWindowManager` containing `window`.
+ */
+export function isForbiddenDomainGlobalSpecifier(rawSpecifier: string): boolean {
+  const lowerSpec = String(rawSpecifier || "")
+    .trim()
+    .toLowerCase();
+  return (FORBIDDEN_DOMAIN_GLOBALS as readonly string[]).includes(lowerSpec);
+}
 
 /**
  * Inspects imports of a file against Hexagonal Layer invariants.
@@ -145,7 +158,7 @@ export function validateLayerInvariants(analysis: FileAnalysis): string[] {
       const isForbiddenFramework = FORBIDDEN_DOMAIN_FRAMEWORKS.some(
         (f) => lowerSpec === f || lowerSpec.startsWith(`${f}/`) || lowerSpec.startsWith(`@${f}/`),
       );
-      const isForbiddenGlobal = FORBIDDEN_DOMAIN_GLOBALS.includes(lowerSpec);
+      const isForbiddenGlobal = isForbiddenDomainGlobalSpecifier(imp.rawSpecifier);
       const isForbiddenInternal =
         !imp.isExternal &&
         (lowerSpec.includes("/components/") ||

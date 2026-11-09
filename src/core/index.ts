@@ -86,6 +86,7 @@ export * from "./eosDocumentationSearch.ts";
 export * from "./eosBenchmarkTracker.ts";
 export * from "./eosMcpSchemaValidator.ts";
 export * from "./eosLlmOpsPrivacyLane.ts";
+export * from "./eosMultiTenantIamFoundation.ts";
 
 // Zenith Hyperscaler Core Modules (v71.0.0)
 export * from "./eosTrueTimeEngine.ts";

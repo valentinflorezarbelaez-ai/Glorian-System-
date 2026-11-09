@@ -7,7 +7,7 @@
  * and supports focused tool catalog profiles (`core` vs `full`) to prevent LLM tool-bloat.
  */
 
-export type McpToolProfile = "core" | "full";
+export type McpToolProfile = "essential" | "core" | "full";
 
 export interface McpToolAnnotations {
   readonly title: string;
@@ -24,8 +24,8 @@ export interface AnnotatedMcpToolDefinition {
   readonly annotations: McpToolAnnotations;
 }
 
-import { CORE_TIER0_TOOL_NAMES } from "../core/eosMcpSchemaValidator.ts";
-export { CORE_TIER0_TOOL_NAMES };
+import { CORE_TIER0_TOOL_NAMES, ESSENTIAL_TIER0_TOOL_NAMES } from "../core/eosMcpSchemaValidator.ts";
+export { CORE_TIER0_TOOL_NAMES, ESSENTIAL_TIER0_TOOL_NAMES };
 
 /**
  * Tools capable of mutating local workspace files, Git worktrees, or durable ledger state
@@ -82,11 +82,12 @@ export function computeToolAnnotations(toolName: string): McpToolAnnotations {
 }
 
 export function normalizeToolProfile(rawProfile?: string): McpToolProfile {
-  return String(rawProfile || "")
+  const normalized = String(rawProfile || "")
     .trim()
-    .toLowerCase() === "core"
-    ? "core"
-    : "full";
+    .toLowerCase();
+  if (normalized === "essential" || normalized === "essentials") return "essential";
+  if (normalized === "core") return "core";
+  return "full";
 }
 
 export function annotateAndFilterTools(
@@ -97,7 +98,12 @@ export function annotateAndFilterTools(
   }>,
   profile: McpToolProfile = "full",
 ): AnnotatedMcpToolDefinition[] {
-  const filtered = profile === "core" ? rawTools.filter((tool) => CORE_TIER0_TOOL_NAMES.has(tool.name)) : rawTools;
+  const filtered =
+    profile === "essential"
+      ? rawTools.filter((tool) => ESSENTIAL_TIER0_TOOL_NAMES.has(tool.name))
+      : profile === "core"
+        ? rawTools.filter((tool) => CORE_TIER0_TOOL_NAMES.has(tool.name))
+        : rawTools;
 
   return filtered.map((tool) => ({
     ...tool,

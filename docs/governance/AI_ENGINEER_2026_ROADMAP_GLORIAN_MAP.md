@@ -11,8 +11,19 @@ Ordered by product value:
 2. **RAG golden path demo** — **DONE** within prior hermetic scope (retrieval-only).
 3. **Tool-calling evals** — **DONE**: `test/eosMcpArgFuzzEval.test.mjs` (wrong-tool / wrong-args / enum / unexpected props) + runtime gate in `eosMcpServer` `tools/call`.
 4. **Model routing policy card** — **DONE** (FinOps routing policy card polish tip-sealed earlier).
-5. **LLMOps privacy lane** — **DONE**: `src/core/eosLlmOpsPrivacyLane.ts` + `docs/runbooks/LLMOPS_PRIVACY_LANE.md` (`EOS_LLM_PRIVACY_LANE=local|open_weight`).
+5. **LLMOps privacy lane** — **DONE**: `src/core/eosLlmOpsPrivacyLane.ts` + nightly gate in `eos-nightly-deep-gates.yml` (`EOS_LLM_PRIVACY_LANE=local|open_weight`).
 6. **Portfolio evidence** — regenerate via career evidence scripts when needed.
+
+## Big Tech improvement wave (2026-11-09)
+
+1. Hexagonal Law V false-positive hardening (`window` ⊆ ContextWindow) + turbo 100% on disk.
+2. Golden-path TTV dogfood: `npm run ttv:golden` → `docs/evidence/GOLDEN_PATH_TTV_RECEIPT.json`.
+3. MCP profile curation: `EOS_MCP_PROFILE=essential` (18 tools) subset of `core` (46).
+4. LLMOps privacy continuous gate in nightly CI.
+5. Incident one-pager: `docs/runbooks/INCIDENT_ONE_PAGER.md`.
+6. IV&V auditor packet restored + refreshed under `docs/assurance/`.
+7. Bounded scale proof: `npm run scale:proof` → p99/budget/rollback receipt.
+8. Multi-tenant IAM foundation: SPEC-184 + `eosMultiTenantIamFoundation.ts`.
 
 ## Mobile / touch hygiene (2026-11-09)
 
