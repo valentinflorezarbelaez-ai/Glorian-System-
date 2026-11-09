@@ -48,3 +48,41 @@ test("BDD-226: Fail-Closed Subprocess Termination on Timeout Violation", () => {
   assert.equal(sanitized.AWS_SECRET_ACCESS_KEY, undefined);
   assert.equal(sanitized.OPENAI_API_KEY, undefined);
 });
+
+test("BDD-227: Non-Zero Exit, Spawn Error, and Ledger Invariants", () => {
+  // 1. Non-zero exit
+  const enforcer = new EosActiveKernelProcessEnforcer();
+  const nonZeroReceipt = enforcer.executeConfined(process.execPath, ["-e", "process.exit(42)"]);
+  assert.equal(nonZeroReceipt.status, "NON_ZERO_EXIT");
+  assert.equal(nonZeroReceipt.exitCode, 42);
+
+  // 2. Spawn error on non-existent command
+  const spawnErrReceipt = enforcer.executeConfined("non_existent_binary_xyz_123_456");
+  assert.equal(spawnErrReceipt.status, "SPAWN_ERROR");
+  assert.equal(spawnErrReceipt.exitCode, -2);
+  assert.ok(spawnErrReceipt.stderr.length > 0);
+
+  // 3. Ledger audit integration
+  let recorded = false;
+  const mockLedger = {
+    appendEntry(entry) {
+      recorded = true;
+      assert.equal(entry.category, "SECURITY_AUDIT");
+      assert.equal(entry.projectId, "eos-system");
+    },
+  };
+  const ledgerEnforcer = new EosActiveKernelProcessEnforcer(mockLedger);
+  const ledgerReceipt = ledgerEnforcer.executeConfined(process.execPath, ["-e", 'console.log("LEDGER_OK")']);
+  assert.equal(ledgerReceipt.status, "SUCCESS");
+  assert.equal(recorded, true);
+
+  // 4. Faulty ledger fallback
+  const faultyLedger = {
+    appendEntry() {
+      throw new Error("Ledger disk failure");
+    },
+  };
+  const faultyEnforcer = new EosActiveKernelProcessEnforcer(faultyLedger);
+  const safeReceipt = faultyEnforcer.executeConfined(process.execPath, ["-e", 'console.log("SAFE")']);
+  assert.equal(safeReceipt.status, "SUCCESS");
+});

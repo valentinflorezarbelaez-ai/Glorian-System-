@@ -230,6 +230,19 @@ describe("SPEC-167: Config Hot-Reload Engine", () => {
     un();
     engine.push({ timeoutMs: 2 });
     assert.equal(count, 1);
+    un(); // duplicate unsubscribe safe check
+  });
+
+  it("BDD-726: rollback to missing version fails and historyVersions lists all versions", () => {
+    const engine = new EosConfigHotReloadEngine(validator);
+    engine.push({ timeoutMs: 10 });
+    engine.push({ timeoutMs: 20 });
+    const missingRollback = engine.rollback(999);
+    assert.equal(missingRollback.accepted, false);
+    assert.ok(missingRollback.rejectedReason?.includes("not in history"));
+
+    const versions = engine.historyVersions();
+    assert.deepEqual([...versions], [1, 2]);
   });
 });
 

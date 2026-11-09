@@ -18,6 +18,10 @@ describe("Local Audio DSP Example", () => {
 
       const peak = dsp.computeBiquadCoefficients("peaking", 2500, 44100, 1.0, 3.0);
       assert.ok(peak.b0 !== 0);
+
+      const notch = dsp.computeBiquadCoefficients("notch", 60, 44100, 10.0);
+      assert.ok(notch.b0 > 0);
+      assert.ok(notch.a1 !== 0);
     });
 
     it("processes audio buffer in-place with Direct Form II Transposed", () => {
@@ -60,6 +64,13 @@ describe("Local Audio DSP Example", () => {
       assert.ok(bench.realTimeSpeedFactor >= 1, `Expected at least 1x real-time, got ${bench.realTimeSpeedFactor}x`);
       assert.ok(bench.samplePeakOutputDbfs <= 0.0);
       assert.ok(bench.sha256Proof.length === 64);
+    });
+
+    it("enforces parameter bounds on frames and iterations", () => {
+      assert.throws(() => dsp.benchmarkDsp(0, 10), RangeError);
+      assert.throws(() => dsp.benchmarkDsp(300000, 10), RangeError);
+      assert.throws(() => dsp.benchmarkDsp(1024, 0), RangeError);
+      assert.throws(() => dsp.benchmarkDsp(1024, 101), RangeError);
     });
   });
 });

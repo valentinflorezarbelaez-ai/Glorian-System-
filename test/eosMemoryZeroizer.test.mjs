@@ -62,4 +62,28 @@ test("BDD-254: Garantía de ceroización automática en contenedores de secreto 
   assert.equal(purged, true);
 
   assert.throws(() => vault.accessSecret("master-db-salt", (buf) => buf.toString("utf8")), /VAULT_KEY_NOT_FOUND/);
+
+  // Purge non-existent key returns false
+  assert.equal(vault.purgeSecret("ghost-key"), false);
+
+  // Buffer constructor & useTemporary
+  const bufSecret = new EosZeroizableSecret(Buffer.from("buffer-secret-data"));
+  assert.equal(bufSecret.getByteLength(), 18);
+  bufSecret.dispose();
+
+  const tempVal = EosZeroizableSecret.useTemporary("ephemeral-pass", (b) => b.toString("utf8"));
+  assert.equal(tempVal, "ephemeral-pass");
+
+  // Overwriting secret key and purgeAll
+  vault.storeSecret("k1", "first-val");
+  vault.storeSecret("k1", "second-val"); // disposes first-val
+  vault.storeSecret("k2", "other-val");
+  assert.equal(
+    vault.accessSecret("k1", (b) => b.toString("utf8")),
+    "second-val",
+  );
+
+  const purgedCount = vault.purgeAll();
+  assert.equal(purgedCount, 2);
+  assert.throws(() => vault.accessSecret("k1", (b) => b.toString("utf8")), /VAULT_KEY_NOT_FOUND/);
 });

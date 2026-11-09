@@ -159,6 +159,44 @@ test("SPEC-107: Contract invariants and precondition assertions reject invalid i
       requestCount: 100,
     });
   }, /latencyP99Ms must be non-negative/);
+
+  // Negative requestCount
+  assert.throws(() => {
+    EosVercelCanaryObservability.evaluateMetrics({
+      deploymentId: "dpl_test",
+      environment: "production",
+      stage: "CANARY_1_PCT",
+      errorRate5xx: 0.01,
+      latencyP99Ms: 100,
+      requestCount: -1,
+    });
+  }, /requestCount must be non-negative/);
+
+  // Custom criticalErrorThreshold and latency penalty cap (P99 = 3000ms)
+  const extremeLagResult = EosVercelCanaryObservability.evaluateMetrics({
+    deploymentId: "dpl_extreme_lag",
+    environment: "production",
+    stage: "CANARY_5_PCT",
+    errorRate5xx: 0.001,
+    latencyP99Ms: 3000, // (3000-800)/40 = 55 -> capped at 30
+    requestCount: 1000,
+    criticalErrorThreshold: 0.05, // Custom 5% threshold
+  });
+  assert.equal(extremeLagResult.canaryHealthIndex, 68); // 100 - 2 (error) - 30 (latency cap) = 68
+  // Since chi < 70, it triggers rollback!
+  assert.equal(extremeLagResult.decision, "ROLLBACK_TRIGGERED");
+
+  // Pure HOLD_AND_OBSERVE scenario (CHI between 70 and 84)
+  const holdResult = EosVercelCanaryObservability.evaluateMetrics({
+    deploymentId: "dpl_hold_obs",
+    environment: "production",
+    stage: "CANARY_5_PCT",
+    errorRate5xx: 0.008, // 16 pts penalty
+    latencyP99Ms: 1000, // (1000-800)/40 = 5 pts penalty
+    requestCount: 500,
+  });
+  assert.equal(holdResult.canaryHealthIndex, 79); // 100 - 16 - 5 = 79 (within [70, 84])
+  assert.equal(holdResult.decision, "HOLD_AND_OBSERVE");
 });
 
 test("SPEC-107: MCP Server successfully handles eos_canary_telemetry_evaluate tool calls", () => {

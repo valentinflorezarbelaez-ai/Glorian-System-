@@ -158,3 +158,44 @@ test("BDD-190: MCP Dispatch of eos_microvm_sandbox via EosMcpServer", () => {
   assert.ok(runData.stdout.includes("MCP Sandbox Dispatch"));
   assert.equal(runData.sha256Attestation.length, 64);
 });
+
+test("BDD-191: In-Memory VM Sandbox console and assertion primitives", () => {
+  const code = `
+    console.warn('warning test');
+    console.error('error log test');
+    assert.strictEqual(1, 1);
+    assert.ok(true);
+  `;
+  const res = EosMicroVmSandbox.runIsolated({ codeOrCommand: code });
+  assert.equal(res.status, "COMPLETED");
+  assert.ok(res.stdout.includes("[WARN] warning test"));
+  assert.ok(res.stderr.includes("error log test"));
+
+  // Failing assertion in sandbox
+  const failCode = `assert.ok(false);`;
+  const failRes = EosMicroVmSandbox.runIsolated({ codeOrCommand: failCode });
+  assert.equal(failRes.exitCode, 1);
+  assert.ok(failRes.stderr.includes("AssertionError"));
+
+  // Failing strictEqual assertion in sandbox
+  const failStrict = `assert.strictEqual(1, 2);`;
+  const failStrictRes = EosMicroVmSandbox.runIsolated({ codeOrCommand: failStrict });
+  assert.equal(failStrictRes.exitCode, 1);
+  assert.ok(failStrictRes.stderr.includes("AssertionError"));
+});
+
+test("BDD-192: Sandbox ledger recording error handling", () => {
+  const circularPayload = { a: 1 };
+  circularPayload.self = circularPayload;
+  const badRes = {
+    status: "COMPLETED",
+    tierUsed: "EPHEMERAL_NODE_VM",
+    exitCode: 0,
+    executionId: circularPayload,
+    durationMs: 10,
+    memoryPeakBytes: 1000,
+    sha256Attestation: "0".repeat(64),
+  };
+  const recorded = EosMicroVmSandbox.recordReceiptInLedger(badRes, ":memory:");
+  assert.equal(recorded, false);
+});

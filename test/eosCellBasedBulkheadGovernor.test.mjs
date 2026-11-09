@@ -165,4 +165,70 @@ describe("EOS SPEC-109: Distributed Cell-Based Bulkhead Governor Suite", () => {
     assert.ok(statusData.sha256Receipt);
     assert.strictEqual(statusData.targetCell?.cellId, routeData.cellId);
   });
+
+  it("covers cell self-healing on recordSuccess, quarantine clearing, and out-of-bound cell resilience", () => {
+    const gov = new EosCellBasedBulkheadGovernor({ cellCount: 4, cellCapacity: 10, maxConsecutiveFails: 2 });
+
+    // Out-of-bounds cellId safe check
+    gov.recordSuccess(999);
+    gov.recordFailure(999);
+
+    // Route request to acquire in-flight
+    const route = gov.route("cell-0-route");
+    assert.equal(route.admitted, true);
+    const cellId = route.cellId;
+
+    // Fail twice to degrade the cell
+    gov.recordFailure(cellId, { error: "temporary glitch" });
+    gov.recordFailure(cellId, { error: "temporary glitch" });
+
+    // Cell should be degraded or quarantined
+    assert.ok(gov.isQuarantined({ error: "temporary glitch" }));
+
+    // Clear quarantine
+    gov.clearQuarantine();
+    assert.equal(gov.isQuarantined({ error: "temporary glitch" }), false);
+
+    // Record success to self-heal cell
+    gov.recordSuccess(cellId);
+    const metrics = gov.getMetrics();
+    assert.ok(metrics.healthyCells > 0);
+  });
+
+  it("BDD-282: Exhaustive branch coverage for string payload, setCellStatus, inFlight decrements and boundary clamps", () => {
+    // Test boundary clamps in constructor
+    const clampedGov = new EosCellBasedBulkheadGovernor({
+      cellCount: 1, // clamped to Math.max(2, ...) -> 2
+      cellCapacity: 0, // clamped to Math.max(1, ...) -> 1
+      maxConsecutiveFails: 1, // clamped to Math.max(2, ...) -> 2
+      drainHeadroomRatio: 1.5, // clamped to Math.min(0.95, ...) -> 0.95
+    });
+    const metrics = clampedGov.getMetrics();
+    assert.strictEqual(metrics.totalCells, 2);
+
+    const lowDrainGov = new EosCellBasedBulkheadGovernor({
+      drainHeadroomRatio: 0.01, // clamped to Math.max(0.1, ...) -> 0.1
+    });
+    assert.ok(lowDrainGov.getMetrics().totalCells >= 2);
+
+    // Test computePayloadSignature with string and null
+    const strSig = EosCellBasedBulkheadGovernor.computePayloadSignature("simple-string-payload");
+    assert.strictEqual(strSig.length, 64);
+    const nullSig = EosCellBasedBulkheadGovernor.computePayloadSignature(null);
+    assert.strictEqual(nullSig, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+
+    // Test setCellStatus valid & invalid
+    assert.strictEqual(clampedGov.setCellStatus(999, "DRAINING"), false);
+    assert.strictEqual(clampedGov.setCellStatus(0, "DRAINING"), true);
+
+    // Test route with string payload and recordSuccess with inFlight > 0
+    const routeRes = clampedGov.route("test-string-key", "string-body");
+    assert.strictEqual(routeRes.admitted, true);
+    const activeCellId = routeRes.cellId;
+    // Record success when inFlight > 0
+    clampedGov.recordSuccess(activeCellId);
+
+    // Record failure without payload (undefined)
+    clampedGov.recordFailure(activeCellId);
+  });
 });
