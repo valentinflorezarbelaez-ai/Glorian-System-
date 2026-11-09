@@ -1,0 +1,16 @@
+{
+  "productId": "donaciones",
+  "name": "Portal de Donaciones — Sede AGEAC & Tercer Factor",
+  "specCoverage": 60,
+  "gatePassRate": 60,
+  "mutationFloor": 50,
+  "layer0Purity": 100,
+  "timeToGreenMs": 12000,
+  "blastRadiusKnown": 95,
+  "liveReachability": 70,
+  "score": 69,
+  "grade": "F",
+  "liveProbe": null,
+  "epistemicState": "FLEET_PRODUCT_SCORECARD_WITHIN_TESTED_SCOPE",
+  "sha256Receipt": "3883e86b20393af839ece1c6e44bf42e4d74051749fb1db4e32218fb282c3af5"
+}

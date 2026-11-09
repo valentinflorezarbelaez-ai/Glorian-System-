@@ -1,0 +1,13 @@
+{
+  "productId": "ops-control-plane",
+  "specCoverage": 96,
+  "gatePassRate": 100,
+  "mutationFloor": 90,
+  "layer0Purity": 100,
+  "timeToGreenMs": 4200,
+  "blastRadiusKnown": 95,
+  "score": 96,
+  "grade": "A",
+  "note": "Second Big Tech product scorecard beyond demo-ledger-mvp (EngProd control plane).",
+  "sha256Receipt": "a75afd5551ee41101a5c5e22b0ca7f8410fc548e858bcb3bd9efc89caac0554d"
+}

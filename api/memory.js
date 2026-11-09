@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { getQueryParam } from "./_safeQuery.js";
 
 /**
  * ============================================================================
@@ -134,8 +135,8 @@ export default function handler(req, res) {
     }
   }
 
-  const actionValue = body.action || (req.query && req.query.action) || "mem_context";
-  const queryValue = body.query || (req.query && req.query.q) || "";
+  const actionValue = body.action || getQueryParam(req, "action") || "mem_context";
+  const queryValue = body.query || getQueryParam(req, "q") || "";
   if (typeof actionValue !== "string" || actionValue.length > 40) {
     return res.status(400).json({ status: "INVALID_ACTION" });
   }

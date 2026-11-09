@@ -1,6 +1,6 @@
 {
   "epistemicState": "BIGTECH_OPS_WAVE_WITHIN_TESTED_SCOPE",
-  "generatedAt": "2026-11-09T21:13:37.938Z",
+  "generatedAt": "2026-11-09T21:28:51.762Z",
   "composes": [
     "SPEC-042",
     "SPEC-066",
@@ -31,8 +31,8 @@
     {
       "id": "IAM_BREAK_GLASS",
       "ok": true,
-      "grantId": "2325488f08e2e761",
-      "sha256Receipt": "7ab6d52be1ed8841c84b240fd6ff049a2e22b117f40b673fe7d8a4d409ad0132"
+      "grantId": "96aa0c2ec7add4fd",
+      "sha256Receipt": "c642c425a5a48b799b567e01f54f9205e9eda0b59f98e42517f4eb06c4a60cfb"
     },
     {
       "id": "IAM_SIEM_EXPORT",
@@ -45,12 +45,21 @@
       "ok": true,
       "score": 100,
       "grade": "A+",
-      "sha256Receipt": "0ed4e6f2ed7aa1519a1cb9363f05f45d98e2a44df0427500c3c5b2bc5ba50f51"
+      "opsScore": 100,
+      "opsGrade": "A+",
+      "sha256Receipt": "d1a66a978948683aa9fcadff00a348aec58e199a50d67d38ff12e58ab1bcfbe6"
+    },
+    {
+      "id": "VERCEL_RUNTIME_FIXTURE_ACA",
+      "ok": true,
+      "mode": "FIXTURE",
+      "signalCount": 4,
+      "sha256Receipt": "5316c5b81f06129e9ab7a0f81f20ffd8ee001bdff55ff27b1cf11eb1965b465c"
     }
   ],
   "metrics": {
     "allOk": true,
-    "stepCount": 6
+    "stepCount": 7
   },
-  "sha256Receipt": "28c46c83435a916ebcdf14333a95b6f747820036032fe14b546b471ae79f4a6b"
+  "sha256Receipt": "43dabef732642343b4b43c816fcd89d2b22a6b55aa21662a80cb734d0664727e"
 }

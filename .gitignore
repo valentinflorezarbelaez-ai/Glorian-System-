@@ -5,6 +5,7 @@ node_modules/
 .eos/**
 !.eos/secret-allowlist.json
 .worktrees/
+.fleet-siblings/
 # Scratch fixtures created and torn down by sandbox test suites.
 test/_sandbox/
 docs/evidence/LOCAL-CHECKS-RECEIPT.json

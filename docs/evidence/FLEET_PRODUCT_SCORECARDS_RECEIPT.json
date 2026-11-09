@@ -1,0 +1,69 @@
+{
+  "epistemicState": "FLEET_PRODUCT_SCORECARDS_WITHIN_TESTED_SCOPE",
+  "generatedAt": "2026-11-09T22:10:14.800Z",
+  "probeEnabled": false,
+  "probedCount": 0,
+  "ssrfPolicy": "https-vercel-app-allowlist-no-redirect",
+  "written": [
+    "docs/products/aberamentho/scorecard.json",
+    "docs/products/atp-strength/scorecard.json",
+    "docs/products/biblioteca-gnostica-1/scorecard.json",
+    "docs/products/control-de-asistencia-abopack/scorecard.json",
+    "docs/products/crud-slack/scorecard.json",
+    "docs/products/donaciones/scorecard.json",
+    "docs/products/performance-talent-group/scorecard.json",
+    "docs/products/portafolio/scorecard.json"
+  ],
+  "count": 8,
+  "grades": {
+    "aberamentho": {
+      "score": 94,
+      "grade": "A",
+      "liveReachability": 70,
+      "liveProbe": null
+    },
+    "atp-strength": {
+      "score": 94,
+      "grade": "A",
+      "liveReachability": 70,
+      "liveProbe": null
+    },
+    "biblioteca-gnostica-1": {
+      "score": 94,
+      "grade": "A",
+      "liveReachability": 70,
+      "liveProbe": null
+    },
+    "control-de-asistencia-abopack": {
+      "score": 94,
+      "grade": "A",
+      "liveReachability": 70,
+      "liveProbe": null
+    },
+    "crud-slack": {
+      "score": 94,
+      "grade": "A",
+      "liveReachability": 70,
+      "liveProbe": null
+    },
+    "donaciones": {
+      "score": 69,
+      "grade": "F",
+      "liveReachability": 70,
+      "liveProbe": null
+    },
+    "performance-talent-group": {
+      "score": 94,
+      "grade": "A",
+      "liveReachability": 70,
+      "liveProbe": null
+    },
+    "portafolio": {
+      "score": 94,
+      "grade": "A",
+      "liveReachability": 70,
+      "liveProbe": null
+    }
+  },
+  "sha256Receipt": "3de4bfd78689c156693c697a8f413da1b2b651c727fc88db329cbe593d3b24fd"
+}

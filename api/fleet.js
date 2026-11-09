@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import registry from "../docs/projects/registry.json" with { type: "json" };
+import { getQueryParam } from "./_safeQuery.js";
 
 /**
  * EOS SYSTEM — FLEET REGISTRY & MISSION CONTROL SERVERLESS ENDPOINT (/api/fleet)
@@ -22,7 +23,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ status: "METHOD_NOT_ALLOWED" });
   }
 
-  const shouldProbe = Boolean(req.query && (req.query.probe === "true" || req.query.probe === "1"));
+  // WHATWG searchParams only — never touch req.query (DEP0169 / url.parse).
+  const probe = getQueryParam(req, "probe");
+  const shouldProbe = probe === "true" || probe === "1";
   const projects = [];
 
   for (const project of registry.projects) {

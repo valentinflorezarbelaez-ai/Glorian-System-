@@ -1,0 +1,16 @@
+{
+  "productId": "portafolio",
+  "name": "Portafolio Oficial — Valentín Flórez",
+  "specCoverage": 100,
+  "gatePassRate": 100,
+  "mutationFloor": 90,
+  "layer0Purity": 100,
+  "timeToGreenMs": 3500,
+  "blastRadiusKnown": 95,
+  "liveReachability": 70,
+  "score": 94,
+  "grade": "A",
+  "liveProbe": null,
+  "epistemicState": "FLEET_PRODUCT_SCORECARD_WITHIN_TESTED_SCOPE",
+  "sha256Receipt": "7821111cef91425103d9618aab3e04777e117c185a00f367458b620f32284ec3"
+}

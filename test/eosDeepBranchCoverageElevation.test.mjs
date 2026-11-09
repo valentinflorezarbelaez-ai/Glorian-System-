@@ -4175,12 +4175,16 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       });
       assert.equal(missingLocalRes.status, "SKIPPED_SIBLING");
 
-      // Test with EOS_WORKSPACE_ROOT
+      // Test with EOS_WORKSPACE_ROOT — usable checkout needs .git + package.json
       const prevWsRoot = process.env.EOS_WORKSPACE_ROOT;
       const tmpWsRoot = fs.mkdtempSync(path.join(os.tmpdir(), "ws-root-"));
       try {
-        const dummyGitDir = path.join(tmpWsRoot, "sibling-repo", ".git");
-        fs.mkdirSync(dummyGitDir, { recursive: true });
+        const siblingRoot = path.join(tmpWsRoot, "sibling-repo");
+        fs.mkdirSync(path.join(siblingRoot, ".git"), { recursive: true });
+        fs.writeFileSync(path.join(siblingRoot, "package.json"), "{}\n", "utf8");
+        // Empty git residue (no package.json) must stay SKIPPED — CI checkout failure residue.
+        const residueRoot = path.join(tmpWsRoot, "git-residue-only");
+        fs.mkdirSync(path.join(residueRoot, ".git"), { recursive: true });
         process.env.EOS_WORKSPACE_ROOT = tmpWsRoot;
 
         const resolvedWs = resolveFleetProjectPath(root, {
@@ -4189,6 +4193,13 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
         });
         assert.equal(resolvedWs.status, "AVAILABLE");
         assert.equal(resolvedWs.resolution, "RESOLVED_LOCAL_DIR");
+
+        const residue = resolveFleetProjectPath(root, {
+          id: "git-residue-only",
+          resolvedLocalDir: "git-residue-only",
+        });
+        assert.equal(residue.status, "SKIPPED_SIBLING");
+        assert.equal(residue.resolution, "NONE");
       } finally {
         if (prevWsRoot === undefined) delete process.env.EOS_WORKSPACE_ROOT;
         else process.env.EOS_WORKSPACE_ROOT = prevWsRoot;

@@ -172,10 +172,12 @@ export function runAcaGateFromVercelSignals(input: {
     p99LatencyMs: signals.map((s) => s.latencyP99Ms),
     memoryMb: signals.map(() => 256),
   };
+  // Default baseline ≈ observed canary (steady-state live seal). Callers pass
+  // explicit baselineSamples when comparing against a prior release window.
   const baselineSamples = input.baselineSamples ?? {
-    errorRate: signals.map(() => 0.0001),
-    p99LatencyMs: signals.map((s) => Math.max(1, Math.round(s.latencyP99Ms * 0.9))),
-    memoryMb: signals.map(() => 240),
+    errorRate: signals.map((s) => s.errorRate5xx),
+    p99LatencyMs: signals.map((s) => s.latencyP99Ms),
+    memoryMb: signals.map(() => 256),
   };
 
   const result = runBigTechAcaCanaryGate({

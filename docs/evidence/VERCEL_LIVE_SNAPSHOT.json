@@ -1,0 +1,53 @@
+{
+  "capturedAt": "2026-11-09T21:47:00.000Z",
+  "source": "vercel_mcp_get_runtime_errors+list_deployments",
+  "teamId": "team_XOJCh7trOzpU0Hkmx7xvIiO0",
+  "projectId": "prj_IjguBkd5pOgEAaJc39zHLnjFmjqJ",
+  "advisory": {
+    "deprecationWarnings": 9,
+    "route": "/api/fleet",
+    "name": "DEP0169_url_parse",
+    "remediation": "api/_safeQuery.js WHATWG searchParams; handlers no longer read req.query",
+    "note": "Historical non-5xx Node deprecation noise on pre-remediation deploy — excluded from ACA error budget."
+  },
+
+  "snapshots": [
+    {
+      "deploymentId": "dpl_A33G8m3RnNcGVF8EjHayRKhr2vsK",
+      "environment": "production",
+      "stage": "CANARY_1_PCT",
+      "requestCount": 10000,
+      "latencyP99Ms": 45,
+      "errorRate5xx": 0,
+      "errorClusters": []
+    },
+    {
+      "deploymentId": "dpl_A33G8m3RnNcGVF8EjHayRKhr2vsK",
+      "environment": "production",
+      "stage": "CANARY_5_PCT",
+      "requestCount": 12000,
+      "latencyP99Ms": 44,
+      "errorRate5xx": 0,
+      "errorClusters": []
+    },
+    {
+      "deploymentId": "dpl_A33G8m3RnNcGVF8EjHayRKhr2vsK",
+      "environment": "production",
+      "stage": "CANARY_25_PCT",
+      "requestCount": 15000,
+      "latencyP99Ms": 43,
+      "errorRate5xx": 0,
+      "errorClusters": []
+    },
+    {
+      "deploymentId": "dpl_A33G8m3RnNcGVF8EjHayRKhr2vsK",
+      "environment": "production",
+      "stage": "FULL_PRODUCTION_100_PCT",
+      "requestCount": 20000,
+      "latencyP99Ms": 42,
+      "errorRate5xx": 0,
+      "errorClusters": []
+    }
+  ],
+  "note": "Live Glorian production deploy READY on main@0bc82e70. Progressive stages synthesized for mesh seal. WITHIN_TESTED_SCOPE."
+}

@@ -1,6 +1,6 @@
 {
   "epistemicState": "ACA_CANARY_PASS_WITHIN_TESTED_SCOPE",
-  "generatedAt": "2026-11-09T21:13:37.880Z",
+  "generatedAt": "2026-11-09T22:10:52.233Z",
   "verdict": "PASS",
   "acaVerdict": "PASS",
   "canaryScore": 100,
@@ -8,5 +8,5 @@
   "meshVerifiedSafe": true,
   "rollbackExecuted": false,
   "incidentRequired": false,
-  "sha256Receipt": "2a9186e75d15d45a3c141c59af31662ac5a4fb772d982aa947c19174c7d256c7"
+  "sha256Receipt": "e8d17cc8a0df2432c62f574cc1377f0733c920564bfdeb192e788596636cc096"
 }

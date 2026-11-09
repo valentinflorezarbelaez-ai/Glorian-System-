@@ -2,6 +2,7 @@ import handleBigTech from "./_bigtech.js";
 import handleSpecs from "./_specs.js";
 import handleFinops from "./_finops.js";
 import { createHash } from "node:crypto";
+import { getQueryObject, getQueryParam } from "./_safeQuery.js";
 
 const LINUX_CONCEPT_FIXTURES = Object.freeze({
   "/proc/eos/version":
@@ -17,8 +18,8 @@ const LINUX_CONCEPT_FIXTURES = Object.freeze({
 });
 
 function respondWithOmegaDemo(req, res) {
-  const input = req.query && req.query.statement;
-  if (input !== undefined && (typeof input !== "string" || Buffer.byteLength(input, "utf8") > 4096)) {
+  const input = getQueryParam(req, "statement");
+  if (input !== null && (typeof input !== "string" || Buffer.byteLength(input, "utf8") > 4096)) {
     return res.status(400).json({ status: "INVALID_STATEMENT", maximumBytes: 4096 });
   }
 
@@ -51,7 +52,7 @@ export default function handler(req, res) {
 
   if (req.method === "OPTIONS") return res.status(200).end();
 
-  const query = req.query || {};
+  const query = getQueryObject(req);
   const url = req.url || "";
 
   if (url.includes("/api/finops") || query.module === "finops" || query.mode === "finops") {

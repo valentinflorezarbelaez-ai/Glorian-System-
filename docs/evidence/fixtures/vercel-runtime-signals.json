@@ -1,0 +1,37 @@
+{
+  "note": "Hermetic SPEC-107 fixture — replaces live Vercel MCP when team auth is unavailable. WITHIN_TESTED_SCOPE.",
+  "snapshots": [
+    {
+      "deploymentId": "dpl_fixture_canary_1",
+      "environment": "production",
+      "stage": "CANARY_1_PCT",
+      "requestCount": 10000,
+      "latencyP99Ms": 42,
+      "errorClusters": [{ "name": "TypeError", "occurrenceCount": 1 }]
+    },
+    {
+      "deploymentId": "dpl_fixture_canary_5",
+      "environment": "production",
+      "stage": "CANARY_5_PCT",
+      "requestCount": 12000,
+      "latencyP99Ms": 40,
+      "errorClusters": []
+    },
+    {
+      "deploymentId": "dpl_fixture_canary_25",
+      "environment": "production",
+      "stage": "CANARY_25_PCT",
+      "requestCount": 15000,
+      "latencyP99Ms": 41,
+      "errorClusters": [{ "name": "TimeoutError", "occurrenceCount": 1 }]
+    },
+    {
+      "deploymentId": "dpl_fixture_full",
+      "environment": "production",
+      "stage": "FULL_PRODUCTION_100_PCT",
+      "requestCount": 20000,
+      "latencyP99Ms": 39,
+      "errorClusters": []
+    }
+  ]
+}

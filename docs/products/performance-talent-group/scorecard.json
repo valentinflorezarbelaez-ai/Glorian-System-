@@ -1,0 +1,16 @@
+{
+  "productId": "performance-talent-group",
+  "name": "PTG — Performance Talent Group",
+  "specCoverage": 100,
+  "gatePassRate": 100,
+  "mutationFloor": 90,
+  "layer0Purity": 100,
+  "timeToGreenMs": 3500,
+  "blastRadiusKnown": 95,
+  "liveReachability": 70,
+  "score": 94,
+  "grade": "A",
+  "liveProbe": null,
+  "epistemicState": "FLEET_PRODUCT_SCORECARD_WITHIN_TESTED_SCOPE",
+  "sha256Receipt": "eea932a9ff31768b90fe5a5d12031fa826807085aefe94c512fa113e9d9fa3c4"
+}
