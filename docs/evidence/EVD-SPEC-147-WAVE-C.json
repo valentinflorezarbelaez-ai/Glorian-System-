@@ -1,0 +1,15 @@
+{
+  "evidenceId": "EVD-SPEC-147-WAVE-C",
+  "specId": "SPEC-147",
+  "ladder": "LADDER-15",
+  "wave": "C_MEASURE_DOGFOOD",
+  "epistemicState": "PRODUCT_DELIVERY_ORCHESTRATOR_VERIFIED_WITHIN_SCOPE",
+  "dogfoodProduct": "docs/products/demo-ledger-mvp",
+  "scorecardThreshold": 80,
+  "claims": [
+    "ProductQualityScorecard computed with SpecCoverage/GatePassRate/MutationFloor/Layer0Purity/TimeToGreen/BlastRadiusKnown",
+    "Hermetic dogfood materializes INTAKE/SPEC/PLAN/TASKS/blueprint/scorecard under docs/products/demo-ledger-mvp",
+    "LADDER-15 tip-sealed; LADDER-01..14 remain sealed"
+  ],
+  "disclaimer": "Control-plane Golden Path only; satellite writes still require full Law IV Level 3"
+}
