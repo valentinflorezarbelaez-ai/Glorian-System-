@@ -36,19 +36,29 @@ test("BDD-942/936: default policy pack is fine-grained least privilege", () => {
   }
 });
 
-test("BDD-940: authorized dry-run factory succeeds", () => {
+test("BDD-940: authorized dry-run factory succeeds and writes no product files", () => {
   const policies = loadDefaultIamPolicyPack(projectRoot);
-  const result = runBigTechProductFactory(buildDemoLedgerManifest(), {
-    projectRoot,
-    dryRun: true,
-    policies,
-  });
-  assert.ok(result.status === "SUCCESS" || result.reason === "SCORECARD_FLOOR");
-  assert.equal(result.dryRun, true);
-  assert.equal(result.sha256Receipt.length, 64);
-  assert.ok(result.iam.allowed);
-  assert.ok(result.delivery);
-  assert.equal(result.delivery.dryRun, true);
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "eos-factory-dryrun-"));
+  const productId = `bdd-940-dryrun-${process.pid}-${Date.now()}`;
+  try {
+    const result = runBigTechProductFactory(
+      { ...buildDemoLedgerManifest(), id: productId },
+      {
+        projectRoot: tmp,
+        dryRun: true,
+        policies,
+      },
+    );
+    assert.ok(result.status === "SUCCESS" || result.reason === "SCORECARD_FLOOR");
+    assert.equal(result.dryRun, true);
+    assert.equal(result.sha256Receipt.length, 64);
+    assert.ok(result.iam.allowed);
+    assert.ok(result.delivery);
+    assert.equal(result.delivery.dryRun, true);
+    assert.equal(fs.existsSync(path.join(tmp, "docs", "products", productId)), false);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
 });
 
 test("BDD-941: IAM denial blocks materialization", () => {
