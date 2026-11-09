@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { getQueryObject } from "./_safeQuery.js";
 
 /**
  * ============================================================================
@@ -137,7 +138,7 @@ export default function handler(req, res) {
     return res.status(405).json({ status: "METHOD_NOT_ALLOWED" });
   }
 
-  const queryParams = req.query && typeof req.query === "object" ? req.query : {};
+  const queryParams = getQueryObject(req);
   const action = typeof queryParams.action === "string" ? queryParams.action.trim().toLowerCase() : "";
   const allowedActions = new Set(["vector", "hnsw", "risk", "aladdin", "chain", "ledger", "scenario", ""]);
   if (action.length > 32 || !allowedActions.has(action)) {

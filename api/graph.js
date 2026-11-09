@@ -6,6 +6,7 @@
  */
 
 import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+import { getQueryObject } from "./_safeQuery.js";
 
 async function _handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -19,7 +20,7 @@ async function _handler(req, res) {
     return res.status(405).json({ status: "METHOD_NOT_ALLOWED" });
   }
 
-  const query = req.query && typeof req.query === "object" ? req.query : {};
+  const query = getQueryObject(req);
   const action = query.action === undefined ? "blast" : query.action;
   if (typeof action !== "string" || !["blast", "summary"].includes(action)) {
     return res.status(400).json({ status: "INVALID_ACTION", allowedActions: ["blast", "summary"] });

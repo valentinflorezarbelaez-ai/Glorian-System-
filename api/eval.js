@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { getQueryObject } from "./_safeQuery.js";
 
 const MAX_EVALUATION_INPUT_BYTES = 100 * 1024;
 const MAX_TARGET_PATH_BYTES = 1024;
@@ -75,7 +76,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ status: "METHOD_NOT_ALLOWED" });
   }
 
-  const query = req.query && typeof req.query === "object" ? req.query : {};
+  const query = getQueryObject(req);
   const action = query.titan ?? query.action ?? (query.mode === "titans" ? "all" : null);
   if (action !== null) return handleTitans(action, res);
 

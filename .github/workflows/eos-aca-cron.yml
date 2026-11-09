@@ -1,0 +1,59 @@
+name: EOS ACA Canary Cron (Vercel live-or-fixture)
+
+# Periodic mesh/ACA seal + fleet scorecard probes so canary hygiene does not
+# depend solely on PR traffic. Fail-closed when the seal rejects; secrets are
+# optional (fixture path remains valid without VERCEL_TOKEN).
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: eos-aca-cron-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  aca-live-or-fixture:
+    name: ACA seal + fleet scorecard probes
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pinned SHA — SLSA L3
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # pinned SHA
+        with:
+          node-version: 22
+
+      - name: Install locked development toolchain
+        run: npm ci --include=dev
+
+      - name: Vercel ACA live-or-fixture seal
+        run: npm run aca:vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+
+      - name: Fleet product scorecards with live URL probes
+        run: npm run fleet:scorecards
+        env:
+          EOS_FLEET_SCORECARD_PROBE: "1"
+
+      - name: Upload ACA / scorecard evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: eos-aca-cron-evidence
+          path: |
+            docs/evidence/*ACA*
+            docs/evidence/FLEET_PRODUCT_SCORECARDS_RECEIPT.json
+            docs/products/*/scorecard.json
+          if-no-files-found: warn
+          retention-days: 14

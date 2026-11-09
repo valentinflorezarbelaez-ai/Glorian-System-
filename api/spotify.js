@@ -9,6 +9,8 @@
  * ============================================================================
  */
 
+import { getQueryObject } from "./_safeQuery.js";
+
 export default async function handler(req, res) {
   const startTime = process.hrtime.bigint();
 
@@ -26,7 +28,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ status: "METHOD_NOT_ALLOWED" });
   }
 
-  const query = req.query || {};
+  const query = getQueryObject(req);
   const action = query.action === undefined ? "status" : query.action;
   const allowedActions = new Set(["status", "dsp", "camelot", "mesh", "mix", "features"]);
   if (typeof action !== "string" || action.length > 32 || !allowedActions.has(action)) {

@@ -185,14 +185,15 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pinned SHA — SLSA L3
         with:
           repository: valentinflorezarbelaez-ai/portafolio
-          path: ../portafolio
+          # Must stay under github.workspace (Actions rejects ../ sibling paths).
+          path: .fleet-siblings/portafolio
           persist-credentials: false
 
       - name: Fleet Dogfood TTV (sibling-aware)
         run: npm run fleet:dogfood
         env:
-          EOS_WORKSPACE_ROOT: ${{ github.workspace }}/..
-          EOS_FLEET_PORTAFOLIO_PATH: ${{ github.workspace }}/../portafolio
+          EOS_WORKSPACE_ROOT: ${{ github.workspace }}/.fleet-siblings
+          EOS_FLEET_PORTAFOLIO_PATH: ${{ github.workspace }}/.fleet-siblings/portafolio
 
       - name: Vercel ACA live-or-fixture seal
         run: npm run aca:vercel
@@ -203,6 +204,8 @@ jobs:
 
       - name: Fleet product scorecards
         run: npm run fleet:scorecards
+        env:
+          EOS_FLEET_SCORECARD_PROBE: "1"
 
       - name: Print Final Integration Summary
         run: |

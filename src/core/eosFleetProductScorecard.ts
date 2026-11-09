@@ -1,6 +1,7 @@
 /**
  * Fleet product scorecards (Layer-0) — EngProd adoption beyond demo-ledger.
  * Deterministic grades from registry governance fields (SPEC-100 / SPEC-124).
+ * Optional live probe signals are pure inputs (I/O stays in scripts).
  * WITHIN_TESTED_SCOPE — not live production UX metrics.
  */
 
@@ -21,6 +22,14 @@ export interface FleetRegistryProject {
   readonly productionUrl?: string;
 }
 
+/** Optional HTTP probe result supplied by the scorecard script (never fetched in Layer-0). */
+export interface FleetLiveProbeSignal {
+  readonly reachable: boolean;
+  readonly httpStatus: number;
+  readonly latencyMs: number;
+  readonly probedAt: string;
+}
+
 export interface FleetProductScorecard {
   readonly productId: string;
   readonly name: string;
@@ -30,8 +39,10 @@ export interface FleetProductScorecard {
   readonly layer0Purity: number;
   readonly timeToGreenMs: number;
   readonly blastRadiusKnown: number;
+  readonly liveReachability: number;
   readonly score: number;
   readonly grade: "A+" | "A" | "B" | "C" | "F";
+  readonly liveProbe: FleetLiveProbeSignal | null;
   readonly epistemicState: "FLEET_PRODUCT_SCORECARD_WITHIN_TESTED_SCOPE";
   readonly sha256Receipt: string;
 }
@@ -48,8 +59,21 @@ function pct(ok: boolean, weight = 100): number {
   return ok ? weight : Math.max(0, weight - 40);
 }
 
-/** Build one deterministic scorecard from registry governance posture. */
-export function buildFleetProductScorecard(project: FleetRegistryProject): FleetProductScorecard {
+function liveReachabilityPct(liveProbe: FleetLiveProbeSignal | null | undefined): number {
+  if (!liveProbe) return 70;
+  if (!liveProbe.reachable) return 30;
+  if (liveProbe.httpStatus >= 500) return 40;
+  if (liveProbe.httpStatus >= 400) return 55;
+  if (liveProbe.latencyMs > 2000) return 75;
+  if (liveProbe.latencyMs > 800) return 85;
+  return 100;
+}
+
+/** Build one deterministic scorecard from registry governance posture (+ optional probe). */
+export function buildFleetProductScorecard(
+  project: FleetRegistryProject,
+  liveProbe?: FleetLiveProbeSignal | null,
+): FleetProductScorecard {
   const productId = String(project.id || "").trim();
   const intakeOk = project.intake === "INTAKE_COMPLETE";
   const specOk = project.specification === "SPECIFICATION_APPROVED";
@@ -59,20 +83,23 @@ export function buildFleetProductScorecard(project: FleetRegistryProject): Fleet
     project.authorization === "LEVEL_2_AUTHORIZED";
   const registered = project.status === "REGISTERED";
   const hasUrl = typeof project.productionUrl === "string" && project.productionUrl.startsWith("https://");
+  const probe = liveProbe && typeof liveProbe === "object" ? liveProbe : null;
 
   const specCoverage = pct(intakeOk && specOk);
   const gatePassRate = pct(auditOk && registered);
   const mutationFloor = pct(authOk, 90);
   const layer0Purity = 100;
   const blastRadiusKnown = pct(hasUrl, 95);
-  const timeToGreenMs = authOk && auditOk ? 3500 : 12000;
+  const liveReachability = liveReachabilityPct(probe);
+  const timeToGreenMs = authOk && auditOk ? (probe?.reachable ? 2800 : 3500) : 12000;
 
   const score = Math.round(
-    specCoverage * 0.25 +
-      gatePassRate * 0.25 +
-      mutationFloor * 0.2 +
-      layer0Purity * 0.15 +
-      blastRadiusKnown * 0.15,
+    specCoverage * 0.22 +
+      gatePassRate * 0.22 +
+      mutationFloor * 0.18 +
+      layer0Purity * 0.13 +
+      blastRadiusKnown * 0.12 +
+      liveReachability * 0.13,
   );
 
   const base = {
@@ -84,8 +111,10 @@ export function buildFleetProductScorecard(project: FleetRegistryProject): Fleet
     layer0Purity,
     timeToGreenMs,
     blastRadiusKnown,
+    liveReachability,
     score,
     grade: gradeFor(score),
+    liveProbe: probe,
     epistemicState: "FLEET_PRODUCT_SCORECARD_WITHIN_TESTED_SCOPE" as const,
   };
 
@@ -95,10 +124,13 @@ export function buildFleetProductScorecard(project: FleetRegistryProject): Fleet
   });
 }
 
+export type FleetLiveProbeMap = Readonly<Record<string, FleetLiveProbeSignal>>;
+
 /** Persist scorecards under docs/products/<id>/scorecard.json (control-plane only). */
 export function writeFleetProductScorecards(
   projectRoot: string,
   projects: readonly FleetRegistryProject[],
+  liveProbes: FleetLiveProbeMap = {},
 ): {
   readonly written: readonly string[];
   readonly scorecards: readonly FleetProductScorecard[];
@@ -108,7 +140,7 @@ export function writeFleetProductScorecards(
   for (const project of projects) {
     if (!project?.id || project.id === "eos-system") continue;
     if (project.status !== "REGISTERED") continue;
-    const scorecard = buildFleetProductScorecard(project);
+    const scorecard = buildFleetProductScorecard(project, liveProbes[project.id] ?? null);
     scorecards.push(scorecard);
     const dir = path.join(projectRoot, "docs", "products", scorecard.productId);
     fs.mkdirSync(dir, { recursive: true });

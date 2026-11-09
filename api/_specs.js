@@ -1,4 +1,5 @@
 import catalog from "../docs/specs/openspec-catalog-index.json" with { type: "json" };
+import { getQueryParam } from "./_safeQuery.js";
 
 /**
  * EOS SYSTEM — OPENSPECS CATALOG SERVERLESS ENDPOINT (/api/specs)
@@ -20,8 +21,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ status: "METHOD_NOT_ALLOWED" });
   }
 
-  const query = typeof req.query?.q === "string" ? req.query.q.toLowerCase() : "";
-  const status = typeof req.query?.status === "string" ? req.query.status.toUpperCase() : "";
+  const qRaw = getQueryParam(req, "q");
+  const statusRaw = getQueryParam(req, "status");
+  const query = typeof qRaw === "string" ? qRaw.toLowerCase() : "";
+  const status = typeof statusRaw === "string" ? statusRaw.toUpperCase() : "";
 
   let filtered = catalog.specs;
   if (status && status !== "ALL") {

@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { getQueryParam } from "./_safeQuery.js";
 
 /**
  * EOS SYSTEM — BOUNDED CI/CD STATE-MACHINE DEMONSTRATION (/api/cicd)
@@ -73,8 +74,8 @@ export default function handler(req, res) {
     return res.status(405).json({ status: "METHOD_NOT_ALLOWED" });
   }
 
-  const modeValue = req.query && req.query.mode;
-  const payloadSample = req.query && req.query.payload;
+  const modeValue = getQueryParam(req, "mode") ?? undefined;
+  const payloadSample = getQueryParam(req, "payload") ?? undefined;
   if (modeValue !== undefined && (typeof modeValue !== "string" || modeValue.length > 64)) {
     return res.status(400).json({ status: "INVALID_MODE" });
   }

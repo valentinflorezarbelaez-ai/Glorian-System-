@@ -1,6 +1,8 @@
 {
   "epistemicState": "FLEET_PRODUCT_SCORECARDS_WITHIN_TESTED_SCOPE",
-  "generatedAt": "2026-11-09T21:45:10.557Z",
+  "generatedAt": "2026-11-09T21:52:48.639Z",
+  "probeEnabled": false,
+  "probedCount": 0,
   "written": [
     "docs/products/aberamentho/scorecard.json",
     "docs/products/atp-strength/scorecard.json",
@@ -14,37 +16,53 @@
   "count": 8,
   "grades": {
     "aberamentho": {
-      "score": 97,
-      "grade": "A+"
+      "score": 94,
+      "grade": "A",
+      "liveReachability": 70,
+      "liveProbe": null
     },
     "atp-strength": {
-      "score": 97,
-      "grade": "A+"
+      "score": 94,
+      "grade": "A",
+      "liveReachability": 70,
+      "liveProbe": null
     },
     "biblioteca-gnostica-1": {
-      "score": 97,
-      "grade": "A+"
+      "score": 94,
+      "grade": "A",
+      "liveReachability": 70,
+      "liveProbe": null
     },
     "control-de-asistencia-abopack": {
-      "score": 97,
-      "grade": "A+"
+      "score": 94,
+      "grade": "A",
+      "liveReachability": 70,
+      "liveProbe": null
     },
     "crud-slack": {
-      "score": 97,
-      "grade": "A+"
+      "score": 94,
+      "grade": "A",
+      "liveReachability": 70,
+      "liveProbe": null
     },
     "donaciones": {
       "score": 69,
-      "grade": "F"
+      "grade": "F",
+      "liveReachability": 70,
+      "liveProbe": null
     },
     "performance-talent-group": {
-      "score": 97,
-      "grade": "A+"
+      "score": 94,
+      "grade": "A",
+      "liveReachability": 70,
+      "liveProbe": null
     },
     "portafolio": {
-      "score": 97,
-      "grade": "A+"
+      "score": 94,
+      "grade": "A",
+      "liveReachability": 70,
+      "liveProbe": null
     }
   },
-  "sha256Receipt": "5e6b2620cff6fe05025975e3975f6496bfc4b777eff4bafbc3fc786370a1f052"
+  "sha256Receipt": "3de4bfd78689c156693c697a8f413da1b2b651c727fc88db329cbe593d3b24fd"
 }

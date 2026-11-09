@@ -7,8 +7,10 @@
   "layer0Purity": 100,
   "timeToGreenMs": 3500,
   "blastRadiusKnown": 95,
-  "score": 97,
-  "grade": "A+",
+  "liveReachability": 70,
+  "score": 94,
+  "grade": "A",
+  "liveProbe": null,
   "epistemicState": "FLEET_PRODUCT_SCORECARD_WITHIN_TESTED_SCOPE",
-  "sha256Receipt": "74e9785337c919a89e57f816ae4a99192c236fb9548a2e5413926e97b032a2da"
+  "sha256Receipt": "eea932a9ff31768b90fe5a5d12031fa826807085aefe94c512fa113e9d9fa3c4"
 }

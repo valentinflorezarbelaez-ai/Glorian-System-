@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { getQueryObject } from "./_safeQuery.js";
 
 /**
  * ============================================================================
@@ -59,7 +60,7 @@ function runTypedArrayBenchmark(iterations = 500) {
 
 async function handleAmplify(req, res, body = {}) {
   const startTime = process.hrtime.bigint();
-  const query = req.query || {};
+  const query = getQueryObject(req);
   const rawPrompt = query.prompt ?? body.prompt ?? "Diseñar módulo de autenticación biométrica y rate-limiting";
   const targetModel = query.model ?? body.model ?? "claude";
   const strictLevel = query.strict ?? body.strict ?? "sovereign";
@@ -120,7 +121,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ status: "METHOD_NOT_ALLOWED" });
   }
 
-  const query = req.query || {};
+  const query = getQueryObject(req);
   let body = {};
   if (req.method === "POST" && req.body !== undefined) {
     try {
