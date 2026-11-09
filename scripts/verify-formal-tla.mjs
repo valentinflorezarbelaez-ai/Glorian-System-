@@ -701,6 +701,7 @@ export function runAllFormalVerifications() {
     verifyPlanetaryMonorepoGovernorModel(),
     verifyCrossFleetNeuralSynapseModel(),
     verifyPlanetaryMultiCloudEvacuationModel(),
+    verifyIamMcpDispatchGateModel(),
   ];
 }
 
@@ -2176,6 +2177,64 @@ export function verifyInvariantVerificationEngineModel(steps = 200) {
 
   return {
     specification: "InvariantVerificationEngine.tla",
+    moduleName: parsed.moduleName,
+    sourceFileRead: true,
+    extractedVariables: parsed.variables,
+    extractedInvariantNames: parsed.invariants,
+    stepsExecuted,
+    executionMode: "bounded-javascript-simulation",
+    simulationAssertionsPassed: true,
+  };
+}
+
+export function verifyIamMcpDispatchGateModel(steps = 200) {
+  const filePath = path.join(formalDir, "IamMcpDispatchGate.tla");
+  const parsed = parseTlaModule(filePath);
+
+  const requests = 8;
+  const phase = new Array(requests).fill("received");
+  const decision = new Array(requests).fill("none");
+  const audited = new Array(requests).fill(false);
+  const executed = new Array(requests).fill(false);
+  let stepsExecuted = 0;
+  let auditFailures = 0;
+
+  for (let step = 0; step < steps; step++) {
+    stepsExecuted++;
+    for (let r = 0; r < requests; r++) {
+      assert.ok(!executed[r] || audited[r], "VIOLATION: dispatch without audit");
+      assert.ok(!executed[r] || decision[r] === "allow", "VIOLATION: dispatch without allow decision");
+      assert.ok(decision[r] !== "deny" || !executed[r], "VIOLATION: denied request executed");
+      assert.ok(phase[r] !== "failed" || !executed[r], "VIOLATION: audit failure executed");
+    }
+
+    const r = step % requests;
+    if (phase[r] === "received") {
+      // No principal / policy miss modeled as deny for every third request.
+      decision[r] = r % 3 === 0 ? "deny" : "allow";
+      phase[r] = "decided";
+    } else if (phase[r] === "decided") {
+      if ((step + r) % 7 === 0) {
+        phase[r] = "failed";
+        auditFailures++;
+      } else {
+        audited[r] = true;
+        phase[r] = "audited";
+      }
+    } else if (phase[r] === "audited") {
+      if (decision[r] === "allow") {
+        executed[r] = true;
+        phase[r] = "dispatched";
+      } else {
+        phase[r] = "denied";
+      }
+    }
+  }
+
+  assert.ok(auditFailures > 0, "bounded schedule must exercise audit-append failure");
+
+  return {
+    specification: "IamMcpDispatchGate.tla",
     moduleName: parsed.moduleName,
     sourceFileRead: true,
     extractedVariables: parsed.variables,
