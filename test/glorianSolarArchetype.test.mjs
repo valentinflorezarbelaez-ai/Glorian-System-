@@ -89,7 +89,7 @@ test("BDD-318: OpenSpec Catalog Index Synchronized to 172 Specifications", () =>
   assert.ok(fs.existsSync(indexPath), "OpenSpec catalog index must exist");
   const catalog = JSON.parse(fs.readFileSync(indexPath, "utf8"));
 
-  assert.equal(catalog.totalSpecs, 177, "Total OpenSpecs must equal 177");
+  assert.equal(catalog.totalSpecs, 178, "Total OpenSpecs must equal 178");
   const spec130 = catalog.specs.find((s) => s.id === "SPEC-130");
   assert.ok(spec130, "SPEC-130 must be cataloged in openspec-catalog-index.json");
   assert.ok(

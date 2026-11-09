@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
-  "totalSpecs": 177,
-  "catalogSha256": "c69238cf1fc3851d36599a8d3a8a6f605dba0e9e8c4e75faf8213b54a0eeae68",
+  "totalSpecs": 178,
+  "catalogSha256": "c64c4308a67cde9e5d6dd1dc2c4155222a2f21af53b7356d6e7087af178e81a8",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1595,6 +1595,15 @@
       "bddCount": 4,
       "file": "openspec/specs/SPEC-182-SCHEMA-REGISTRY-COMPATIBILITY.md",
       "sha256": "51c7b590032393bc8444307174d2c079d2404ee065815e4ae6903b6f3053f9e7"
+    },
+    {
+      "id": "SPEC-183",
+      "title": "LLMOps Privacy Lane (Local / Open-Weight)",
+      "status": "APPROVED",
+      "frCount": 4,
+      "bddCount": 0,
+      "file": "openspec/specs/SPEC-183-LLMOPS-PRIVACY-LANE.md",
+      "sha256": "2118da9a32c8c7890dcc685a4f59eee4974ae09f5dc47d76ce762fee24c2c65d"
     }
   ]
 }
