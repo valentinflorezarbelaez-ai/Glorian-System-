@@ -51,117 +51,15 @@ export interface SearchOptions {
 }
 
 const STOPWORDS = new Set([
-  "a",
-  "an",
-  "the",
-  "and",
-  "or",
-  "in",
-  "on",
-  "at",
-  "to",
-  "for",
-  "with",
-  "of",
-  "is",
-  "are",
-  "was",
-  "were",
-  "be",
-  "been",
-  "being",
-  "have",
-  "has",
-  "had",
-  "do",
-  "does",
-  "did",
-  "but",
-  "by",
-  "from",
-  "into",
-  "through",
-  "during",
-  "before",
-  "after",
-  "above",
-  "below",
-  "up",
-  "down",
-  "in",
-  "out",
-  "off",
-  "over",
-  "under",
-  "again",
-  "further",
-  "then",
-  "once",
-  "here",
-  "there",
-  "when",
-  "where",
-  "why",
-  "how",
-  "all",
-  "any",
-  "both",
-  "each",
-  "few",
-  "more",
-  "most",
-  "other",
-  "some",
-  "such",
-  "no",
-  "nor",
-  "not",
-  "only",
-  "own",
-  "same",
-  "so",
-  "than",
-  "too",
-  "very",
-  "s",
-  "t",
-  "can",
-  "will",
-  "just",
-  "don",
-  "should",
-  "now",
-  "de",
-  "la",
-  "el",
-  "los",
-  "las",
-  "un",
-  "una",
-  "unos",
-  "unas",
-  "en",
-  "para",
-  "por",
-  "con",
-  "sin",
-  "sobre",
-  "y",
-  "o",
-  "u",
-  "e",
-  "que",
-  "es",
-  "son",
-  "fue",
-  "era",
-  "se",
-  "su",
-  "sus",
-  "al",
-  "del",
-  "lo",
-  "como",
+  "a", "an", "the", "and", "or", "in", "on", "at", "to", "for", "with", "of", "is", "are",
+  "was", "were", "be", "been", "being", "have", "has", "had", "do", "does", "did", "but", "by",
+  "from", "into", "through", "during", "before", "after", "above", "below", "up", "down", "out",
+  "off", "over", "under", "again", "further", "then", "once", "here", "there", "when", "where",
+  "why", "how", "all", "any", "both", "each", "few", "more", "most", "other", "some", "such",
+  "no", "nor", "not", "only", "own", "same", "so", "than", "too", "very", "s", "t", "can",
+  "will", "just", "don", "should", "now", "de", "la", "el", "los", "las", "un", "una", "unos",
+  "unas", "en", "para", "por", "con", "sin", "sobre", "y", "o", "u", "e", "que", "es", "son",
+  "fue", "era", "se", "su", "sus", "al", "del", "lo", "como",
 ]);
 
 export class EosHybridKnowledgeEngine {
@@ -200,49 +98,52 @@ export class EosHybridKnowledgeEngine {
       try {
         fs.mkdirSync(path.dirname(this.dbPath), { recursive: true });
         this.db = new DatabaseSync(this.dbPath);
+        this.db.exec("PRAGMA busy_timeout = 10000;");
         this.db.exec("PRAGMA journal_mode = WAL;");
       } catch {
-        // Fallback to volatile memory if directory creation fails or filesystem is read-only
         this.db = new DatabaseSync(":memory:");
       }
     } else {
       this.db = new DatabaseSync(":memory:");
     }
+    this.setupSchema();
+  }
 
-    this.db.exec("PRAGMA synchronous = NORMAL;");
-
-    // 1. Metadata catalog
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS eos_docs_metadata (
-        doc_id TEXT PRIMARY KEY,
-        file_path TEXT NOT NULL,
-        category TEXT NOT NULL,
-        title TEXT NOT NULL,
-        content_hash TEXT NOT NULL,
-        indexed_at_iso TEXT NOT NULL
-      );
-    `);
-
-    // 2. FTS5 Virtual Table for BM25 lexical ranking
-    this.db.exec(`
-      CREATE VIRTUAL TABLE IF NOT EXISTS eos_docs_fts USING fts5(
-        doc_id UNINDEXED,
-        title,
-        content,
-        category,
-        tokenize = 'unicode61'
-      );
-    `);
-
-    // 3. Dense vector embeddings stored as raw binary BLOBs
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS eos_vector_nodes (
-        doc_id TEXT PRIMARY KEY,
-        dimensions INTEGER NOT NULL,
-        vector_blob BLOB NOT NULL,
-        FOREIGN KEY (doc_id) REFERENCES eos_docs_metadata(doc_id) ON DELETE CASCADE
-      );
-    `);
+  private setupSchema(): void {
+    try {
+      this.db.exec("PRAGMA busy_timeout = 10000;");
+      this.db.exec("PRAGMA synchronous = NORMAL;");
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS eos_docs_metadata (
+          doc_id TEXT PRIMARY KEY,
+          file_path TEXT NOT NULL,
+          category TEXT NOT NULL,
+          title TEXT NOT NULL,
+          content_hash TEXT NOT NULL,
+          indexed_at_iso TEXT NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS eos_vector_nodes (
+          doc_id TEXT PRIMARY KEY,
+          dimensions INTEGER NOT NULL,
+          vector_blob BLOB NOT NULL,
+          FOREIGN KEY (doc_id) REFERENCES eos_docs_metadata(doc_id) ON DELETE CASCADE
+        );
+      `);
+      try {
+        this.db.exec(`
+          CREATE VIRTUAL TABLE IF NOT EXISTS eos_docs_fts USING fts5(
+            doc_id UNINDEXED, title, content, category, tokenize = 'unicode61'
+          );
+        `);
+      } catch {
+        this.db.exec(`CREATE TABLE IF NOT EXISTS eos_docs_fts (doc_id TEXT, title TEXT, content TEXT, category TEXT);`);
+      }
+    } catch {
+      if (!this.isMemory) {
+        this.db = new DatabaseSync(":memory:");
+        this.setupSchema();
+      }
+    }
   }
 
   private loadVectorCache(): void {
@@ -790,7 +691,11 @@ let defaultKnowledgeEngine: EosHybridKnowledgeEngine | null = null;
 
 export function getDefaultHybridKnowledgeEngine(projectRoot: string = process.cwd()): EosHybridKnowledgeEngine {
   if (!defaultKnowledgeEngine) {
-    defaultKnowledgeEngine = new EosHybridKnowledgeEngine(projectRoot);
+    try {
+      defaultKnowledgeEngine = new EosHybridKnowledgeEngine(projectRoot);
+    } catch {
+      defaultKnowledgeEngine = new EosHybridKnowledgeEngine(projectRoot, ":memory:");
+    }
   }
   return defaultKnowledgeEngine;
 }

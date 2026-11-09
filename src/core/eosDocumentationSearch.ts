@@ -30,7 +30,7 @@ export interface DocIndexStats {
 export class EosDocumentationSearch {
   private readonly dbPath: string;
   private readonly projectRoot: string;
-  private readonly db: DatabaseSync;
+  private db: DatabaseSync;
 
   constructor(projectRoot: string = process.cwd(), dbPath?: string) {
     this.projectRoot = path.resolve(projectRoot);
@@ -49,24 +49,62 @@ export class EosDocumentationSearch {
   }
 
   private initializeSchema(): void {
-    this.db.exec("PRAGMA synchronous = NORMAL;");
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS eos_docs_metadata (
-        doc_path TEXT PRIMARY KEY,
-        doc_type TEXT NOT NULL,
-        title TEXT NOT NULL,
-        content_hash TEXT NOT NULL,
-        updated_at_iso TEXT NOT NULL
-      );
+    try {
+      this.db.exec("PRAGMA busy_timeout = 10000;");
+      this.db.exec("PRAGMA synchronous = NORMAL;");
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS eos_docs_metadata (
+          doc_path TEXT PRIMARY KEY,
+          doc_type TEXT NOT NULL,
+          title TEXT NOT NULL,
+          content_hash TEXT NOT NULL,
+          updated_at_iso TEXT NOT NULL
+        );
+      `);
 
-      CREATE VIRTUAL TABLE IF NOT EXISTS eos_docs_fts USING fts5(
-        doc_path UNINDEXED,
-        doc_type,
-        title,
-        content,
-        tokenize = 'unicode61'
-      );
-    `);
+      try {
+        this.db.exec(`
+          CREATE VIRTUAL TABLE IF NOT EXISTS eos_docs_fts USING fts5(
+            doc_path UNINDEXED,
+            doc_type,
+            title,
+            content,
+            tokenize = 'unicode61'
+          );
+        `);
+      } catch {
+        this.db.exec(`
+          CREATE TABLE IF NOT EXISTS eos_docs_fts (
+            doc_path TEXT,
+            doc_type TEXT,
+            title TEXT,
+            content TEXT
+          );
+        `);
+      }
+    } catch {
+      try {
+        this.db = new DatabaseSync(":memory:");
+        this.db.exec("PRAGMA synchronous = NORMAL;");
+        this.db.exec(`
+          CREATE TABLE IF NOT EXISTS eos_docs_metadata (
+            doc_path TEXT PRIMARY KEY,
+            doc_type TEXT NOT NULL,
+            title TEXT NOT NULL,
+            content_hash TEXT NOT NULL,
+            updated_at_iso TEXT NOT NULL
+          );
+          CREATE TABLE IF NOT EXISTS eos_docs_fts (
+            doc_path TEXT,
+            doc_type TEXT,
+            title TEXT,
+            content TEXT
+          );
+        `);
+      } catch {
+        // Safe degrade
+      }
+    }
   }
 
   private detectDocType(relPath: string): string {

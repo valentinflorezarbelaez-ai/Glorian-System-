@@ -40,7 +40,7 @@ export interface BenchmarkComparisonReport {
 
 export class EosBenchmarkTracker {
   private readonly dbPath: string;
-  private readonly db: DatabaseSync;
+  private db: DatabaseSync;
 
   constructor(dbPathOrProjectRoot: string = process.cwd()) {
     if (dbPathOrProjectRoot === ":memory:") {
@@ -60,23 +60,32 @@ export class EosBenchmarkTracker {
   }
 
   private initializeSchema(): void {
-    this.db.exec("PRAGMA synchronous = NORMAL;");
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS eos_benchmark_metrics (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        benchmark_name TEXT NOT NULL,
-        commit_sha TEXT NOT NULL,
-        p50_ns REAL NOT NULL,
-        p95_ns REAL NOT NULL,
-        p99_ns REAL NOT NULL,
-        ops_per_sec REAL NOT NULL,
-        verdict TEXT NOT NULL,
-        recorded_at_iso TEXT NOT NULL
-      );
+    try {
+      this.db.exec("PRAGMA busy_timeout = 10000;");
+      this.db.exec("PRAGMA synchronous = NORMAL;");
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS eos_benchmark_metrics (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          benchmark_name TEXT NOT NULL,
+          commit_sha TEXT NOT NULL,
+          p50_ns REAL NOT NULL,
+          p95_ns REAL NOT NULL,
+          p99_ns REAL NOT NULL,
+          ops_per_sec REAL NOT NULL,
+          verdict TEXT NOT NULL,
+          recorded_at_iso TEXT NOT NULL
+        );
 
-      CREATE INDEX IF NOT EXISTS idx_bench_lookup
-        ON eos_benchmark_metrics(benchmark_name, id DESC);
-    `);
+        CREATE INDEX IF NOT EXISTS idx_bench_lookup
+          ON eos_benchmark_metrics(benchmark_name, id DESC);
+      `);
+    } catch {
+      try {
+        this.db = new DatabaseSync(":memory:");
+      } catch {
+        // Safe degrade
+      }
+    }
   }
 
   /**
