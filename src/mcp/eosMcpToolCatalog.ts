@@ -25,34 +25,15 @@ export interface AnnotatedMcpToolDefinition {
 }
 
 import { CORE_TIER0_TOOL_NAMES, ESSENTIAL_TIER0_TOOL_NAMES } from "../core/eosMcpSchemaValidator.ts";
+import { MCP_MUTATION_CAPABLE_TOOLS } from "../core/eosMcpIamCallGate.ts";
 export { CORE_TIER0_TOOL_NAMES, ESSENTIAL_TIER0_TOOL_NAMES };
 
 /**
  * Tools capable of mutating local workspace files, Git worktrees, or durable ledger state
  * when explicit mutation flags (`apply: true`, `dryRun: false`, `action: "record"`) are supplied.
+ * Single source of truth: SPEC-184 MCP IAM gate (`MCP_MUTATION_CAPABLE_TOOLS`).
  */
-const MUTATION_CAPABLE_TOOLS: ReadonlySet<string> = new Set([
-  "eos_autonomous_heal",
-  "eos_manage_worktree",
-  "eos_reconcile_state",
-  "eos_spotify_scaffold",
-  "eos_spotify_fleetshift_batch",
-  "eos_fleet_elevate",
-  "eos_universal_scaffold",
-  "eos_apex_autonomous_heal",
-  "eos_hnsw_index_add",
-  "eos_product_foundry_create",
-  "eos_sqlite_ledger",
-  "eos_gentleman_update",
-  "eos_enterprise_workspace",
-  "eos_evolve_module",
-  "eos_agent_topology_mesh",
-  "eos_surgical_healing",
-  "eos_sapfix_autoshipper",
-  "eos_content_addressable_cache",
-  "eos_chaos_monkey_live",
-  "eos_fleet_registry_sync",
-]);
+const MUTATION_CAPABLE_TOOLS: ReadonlySet<string> = MCP_MUTATION_CAPABLE_TOOLS;
 
 const DESTRUCTIVE_CAPABLE_TOOLS: ReadonlySet<string> = new Set(["eos_manage_worktree"]);
 

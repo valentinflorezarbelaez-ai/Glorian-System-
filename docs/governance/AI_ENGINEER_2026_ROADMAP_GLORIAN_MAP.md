@@ -24,6 +24,7 @@ Ordered by product value:
 6. IV&V auditor packet restored + refreshed under `docs/assurance/`.
 7. Bounded scale proof: `npm run scale:proof` → p99/budget/rollback receipt.
 8. Multi-tenant IAM foundation: SPEC-184 + `eosMultiTenantIamFoundation.ts`.
+9. **MCP runtime IAM gate** — SPEC-184 FR-931..934 + `eosMcpIamCallGate.ts` on stdio `tools/call` mutating writes (fail-closed).
 
 ## Mobile / touch hygiene (2026-11-09)
 

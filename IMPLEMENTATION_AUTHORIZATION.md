@@ -912,3 +912,16 @@
   - `src/core/eosTacticalCommandEngine.ts`
   - `test/eosTacticalCommandEngine.test.mjs`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-09-MCP-IAM-RUNTIME-GATE-184
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 2`)
+- **Milestone**: SPEC-184 MCP runtime enforcement (CHANGE-069)
+- **Owner Approval**: Explicit owner directive 2026-11-09 — harden Glorian like advanced Big Tech
+- **Scope**: Fail-closed IAM evaluation on stdio MCP mutating `tools/call` before handler dispatch; Layer-0 gate module; hermetic BDD.
+- **Artifacts Approved**:
+  - `openspec/specs/SPEC-184-MULTI-TENANT-IAM-FOUNDATION.md`
+  - `openspec/changes/CHANGE-069-MCP-IAM-RUNTIME-GATE.md`
+  - `src/core/eosMcpIamCallGate.ts`
+  - `test/eosMcpIamCallGate.test.mjs`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
