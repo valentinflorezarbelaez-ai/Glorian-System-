@@ -1,0 +1,36 @@
+{
+  "runId": "MUTATION-1794150084140",
+  "timestamp": "2026-11-08T15:01:24.140Z",
+  "threshold": 60,
+  "globalScore": 72,
+  "totalMutants": 47,
+  "totalKilled": 34,
+  "passed": true,
+  "results": [
+    {
+      "name": "NeuralVectorCore",
+      "total": 15,
+      "killed": 12,
+      "score": 80
+    },
+    {
+      "name": "SemanticGraph",
+      "total": 15,
+      "killed": 10,
+      "score": 67
+    },
+    {
+      "name": "TurboEngine",
+      "total": 8,
+      "killed": 6,
+      "score": 75
+    },
+    {
+      "name": "ArchitectureGuard",
+      "total": 9,
+      "killed": 6,
+      "score": 67
+    }
+  ],
+  "sha256": "a310610e505316784179860d05abf5aa1f450fe91d9759fbb74280d71b763934"
+}

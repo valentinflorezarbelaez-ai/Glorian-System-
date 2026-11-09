@@ -5,10 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import {
-  EosInvariantVerificationEngine,
-  Xorshift32Prng
-} from "../src/core/eosInvariantVerificationEngine.ts";
+import { EosInvariantVerificationEngine } from "../src/core/eosInvariantVerificationEngine.ts";
 import { EosDurableSqliteLedger } from "../src/core/eosDurableSqliteLedger.ts";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
@@ -22,11 +19,9 @@ test("BDD-155: Deterministic Exploration Reproducibility with Xorshift32 Seed", 
     initialState: { counter: 0 },
     actions: [
       { name: "step_add", apply: (s, prng) => ({ counter: s.counter + prng.nextInt(1, 5) }) },
-      { name: "step_sub", apply: (s, prng) => ({ counter: s.counter - prng.nextInt(0, 2) }) }
+      { name: "step_sub", apply: (s, prng) => ({ counter: s.counter - prng.nextInt(0, 2) }) },
     ],
-    invariants: [
-      { name: "always_numeric", check: (s) => typeof s.counter === "number" && !isNaN(s.counter) }
-    ]
+    invariants: [{ name: "always_numeric", check: (s) => typeof s.counter === "number" && !isNaN(s.counter) }],
   };
 
   const run1 = EosInvariantVerificationEngine.verifyModel(model, { seed: 1337, maxSteps: 1000 });
@@ -45,11 +40,9 @@ test("BDD-156: Invariant Violation Detection with Immediate Abort", () => {
     initialState: { balance: 50 },
     actions: [
       { name: "deposit", apply: (s) => ({ balance: s.balance + 10 }) },
-      { name: "unbounded_withdraw", apply: (s) => ({ balance: s.balance - 25 }) }
+      { name: "unbounded_withdraw", apply: (s) => ({ balance: s.balance - 25 }) },
     ],
-    invariants: [
-      { name: "non_negative_balance", check: (s) => s.balance >= 0 }
-    ]
+    invariants: [{ name: "non_negative_balance", check: (s) => s.balance >= 0 }],
   };
 
   const result = EosInvariantVerificationEngine.verifyModel(buggyModel, { seed: 42, maxSteps: 100 });
@@ -64,18 +57,14 @@ test("BDD-157: Fault Injection Hypervisor & Chaos Tolerance", () => {
   const model = {
     name: "ResilientHeartbeat",
     initialState: { state: "HEALTHY" },
-    actions: [
-      { name: "pulse", apply: (s) => ({ state: "HEALTHY" }) }
-    ],
-    invariants: [
-      { name: "is_valid", check: (s) => s.state === "HEALTHY" }
-    ]
+    actions: [{ name: "pulse", apply: (_s) => ({ state: "HEALTHY" }) }],
+    invariants: [{ name: "is_valid", check: (s) => s.state === "HEALTHY" }],
   };
 
   const result = EosInvariantVerificationEngine.verifyModel(model, {
     seed: 9999,
     maxSteps: 500,
-    faultInjectionRate: 0.15
+    faultInjectionRate: 0.15,
   });
 
   assert.equal(result.status, "FAULT_TOLERANT_PASS");
@@ -90,17 +79,15 @@ test("BDD-158: Minimal Reproducible Trace Shrinking", () => {
     actions: [
       { name: "noop_audit", apply: (s) => ({ ...s, transactions: s.transactions + 1 }) },
       { name: "small_deposit", apply: (s) => ({ balance: s.balance + 1, transactions: s.transactions + 1 }) },
-      { name: "large_withdraw", apply: (s) => ({ balance: s.balance - 70, transactions: s.transactions + 1 }) }
+      { name: "large_withdraw", apply: (s) => ({ balance: s.balance - 70, transactions: s.transactions + 1 }) },
     ],
-    invariants: [
-      { name: "no_overdraft", check: (s) => s.balance >= 0 }
-    ]
+    invariants: [{ name: "no_overdraft", check: (s) => s.balance >= 0 }],
   };
 
   const result = EosInvariantVerificationEngine.verifyModel(model, {
     seed: 7,
     maxSteps: 100,
-    enableShrinking: true
+    enableShrinking: true,
   });
 
   assert.equal(result.status, "INVARIANT_VIOLATION_DETECTED");
@@ -108,16 +95,11 @@ test("BDD-158: Minimal Reproducible Trace Shrinking", () => {
   assert.ok(result.shrunkTrace);
   assert.ok(
     result.shrunkTrace.length < result.originalTraceLength,
-    `Shrunk trace (${result.shrunkTrace.length}) must be shorter than original (${result.originalTraceLength})`
+    `Shrunk trace (${result.shrunkTrace.length}) must be shorter than original (${result.originalTraceLength})`,
   );
 
   // Verify that replaying the shrunk trace independently reproduces the violation
-  const reproduces = EosInvariantVerificationEngine.replayActionTrace(
-    model,
-    result.shrunkTrace,
-    "no_overdraft",
-    7
-  );
+  const reproduces = EosInvariantVerificationEngine.replayActionTrace(model, result.shrunkTrace, "no_overdraft", 7);
   assert.equal(reproduces, true, "Shrunk trace must reproduce the violation deterministically");
 });
 
@@ -129,19 +111,15 @@ test("BDD-159: Cryptographic State Hash Chain & SQLite WAL Attestation", () => {
     const model = {
       name: "AttestedSequence",
       initialState: { val: 1 },
-      actions: [
-        { name: "multiply", apply: (s) => ({ val: (s.val * 2) % 1000 }) }
-      ],
-      invariants: [
-        { name: "positive", check: (s) => s.val >= 0 }
-      ]
+      actions: [{ name: "multiply", apply: (s) => ({ val: (s.val * 2) % 1000 }) }],
+      invariants: [{ name: "positive", check: (s) => s.val >= 0 }],
     };
 
     const res = EosInvariantVerificationEngine.verifyModel(model, {
       seed: 888,
       maxSteps: 50,
       ledgerDbPath,
-      projectId: "eos-system"
+      projectId: "eos-system",
     });
 
     assert.equal(res.status, "VERIFIED");
@@ -161,13 +139,13 @@ test("BDD-159: Cryptographic State Hash Chain & SQLite WAL Attestation", () => {
 });
 
 test("BDD-160: MCP Dispatch of eos_invariant_engine", () => {
-  const server = new EosMcpServer(projectRoot, "full");
+  const server = new EosMcpServer(projectRoot, "core");
 
   // 1. Verify existence in tools/list
   const listRes = server.handleRequest({ jsonrpc: "2.0", id: 1, method: "tools/list" });
   const tools = listRes?.result?.tools || [];
   const invTool = tools.find((t) => t.name === "eos_invariant_engine");
-  assert.ok(invTool, "eos_invariant_engine must be present in full profile");
+  assert.ok(invTool, "eos_invariant_engine must be present in core profile");
 
   // 2. Explore transfer model via MCP
   const exploreRes = server.handleRequest({
@@ -180,9 +158,9 @@ test("BDD-160: MCP Dispatch of eos_invariant_engine", () => {
         action: "explore",
         model: "transfer",
         seed: 42,
-        maxSteps: 200
-      }
-    }
+        maxSteps: 200,
+      },
+    },
   });
 
   assert.ok(!exploreRes.error);

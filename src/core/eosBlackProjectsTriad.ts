@@ -11,12 +11,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-import {
-  assertPostcondition,
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPostcondition, assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosMutationTester } from "./eosMutationTester.ts";
 
 export type TriadPillarId = "SKUNK_KELLY_JOHNSON" | "DARPA_OODA" | "NRO_SAR";
@@ -89,7 +84,7 @@ const CLAIMS_DENIED = [
   "Black-budget / Waived SAP parity",
   "Area 51 / Plant 42 physical programs",
   "DARPA classified neuro/bio weapons",
-  "NRO orbital reconnaissance hardware"
+  "NRO orbital reconnaissance hardware",
 ] as const;
 
 /** Needles assembled so this module's source does not contain live secret prefixes verbatim. */
@@ -112,7 +107,7 @@ export class EosBlackProjectsTriad {
   constructor(projectRoot: string = process.cwd()) {
     assertPrecondition(
       typeof projectRoot === "string" && projectRoot.length > 0,
-      "projectRoot must be a non-empty string"
+      "projectRoot must be a non-empty string",
     );
     this.projectRoot = path.resolve(projectRoot);
   }
@@ -147,86 +142,86 @@ export class EosBlackProjectsTriad {
         ruleId: 1,
         title: "Strong single authority path",
         passed: fs.existsSync(path.join(this.projectRoot, "src/mcp/eosMcpToolCatalog.ts")),
-        evidence: "MCP tool catalog present (single dispatch authority)"
+        evidence: "MCP tool catalog present (single dispatch authority)",
       },
       {
         ruleId: 2,
         title: "Small project offices",
         passed: coreModules >= 20 && coreModules < 500,
-        evidence: `${coreModules} Layer-0 core modules`
+        evidence: `${coreModules} Layer-0 core modules`,
       },
       {
         ruleId: 3,
         title: "Restrict people / deps",
         passed: runtimeDeps === 0,
-        evidence: `runtimeDependencies=${runtimeDeps}`
+        evidence: `runtimeDependencies=${runtimeDeps}`,
       },
       {
         ruleId: 4,
         title: "Simple drawing release (specs)",
         passed: fs.existsSync(openspecDir) && fs.readdirSync(openspecDir).length > 0,
-        evidence: "openspec/specs catalog present"
+        evidence: "openspec/specs catalog present",
       },
       {
         ruleId: 5,
         title: "Few but important reports",
         passed: fs.existsSync(sbomPath),
-        evidence: "SBOM evidence artifact present"
+        evidence: "SBOM evidence artifact present",
       },
       {
         ruleId: 6,
         title: "Monthly cost / health review",
         passed: fs.existsSync(registryPath),
-        evidence: "Fleet registry present for Soundcheck pulse"
+        evidence: "Fleet registry present for Soundcheck pulse",
       },
       {
         ruleId: 7,
         title: "Contractor push / owner authorization",
         passed: fs.existsSync(authPath),
-        evidence: "IMPLEMENTATION_AUTHORIZATION.md present"
+        evidence: "IMPLEMENTATION_AUTHORIZATION.md present",
       },
       {
         ruleId: 8,
         title: "Inspection system that works",
         passed: fs.existsSync(secretScan) && fs.existsSync(verifyScript),
-        evidence: "Secret scan + 7-stage verify pipeline present"
+        evidence: "Secret scan + 7-stage verify pipeline present",
       },
       {
         ruleId: 9,
         title: "Delegate funding responsibility",
         passed: fs.existsSync(path.join(this.projectRoot, "bin/eos.mjs")),
-        evidence: "Sovereign CLI entrypoint present"
+        evidence: "Sovereign CLI entrypoint present",
       },
       {
         ruleId: 10,
         title: "Good customer / Law IV relations",
         passed: fs.existsSync(registryPath),
-        evidence: "Law IV fleet registry boundary present"
+        evidence: "Law IV fleet registry boundary present",
       },
       {
         ruleId: 11,
         title: "Competition for ideas (TMR)",
         passed: fs.existsSync(path.join(this.projectRoot, "src/core/eosPlanetaryApexDoctrine.ts")),
-        evidence: "TMR / planetary apex doctrine present"
+        evidence: "TMR / planetary apex doctrine present",
       },
       {
         ruleId: 12,
         title: "Rapid access without bureaucracy",
         passed: fs.existsSync(path.join(this.projectRoot, "scripts/eos-generate-sbom.mjs")),
-        evidence: "SBOM generate script present"
+        evidence: "SBOM generate script present",
       },
       {
         ruleId: 13,
         title: "Reward good performance",
         passed: fs.existsSync(path.join(this.projectRoot, "src/core/eosFleetSoundcheckMesh.ts")),
-        evidence: "Fleet Soundcheck mesh present"
+        evidence: "Fleet Soundcheck mesh present",
       },
       {
         ruleId: 14,
         title: "Absolute control of funding (fail-closed)",
         passed: godLines < 20_000,
-        evidence: `eosMcpServer.ts lines=${godLines} (bounded god-file pressure)`
-      }
+        evidence: `eosMcpServer.ts lines=${godLines} (bounded god-file pressure)`,
+      },
     ];
 
     const passed = rules.filter((r) => r.passed).length;
@@ -234,7 +229,7 @@ export class EosBlackProjectsTriad {
     return deepFreeze({
       compliancePercent,
       rules: Object.freeze(rules),
-      sha256Receipt: pureSha256(`KELLY:${compliancePercent}:${passed}:${runtimeDeps}`)
+      sha256Receipt: pureSha256(`KELLY:${compliancePercent}:${passed}:${runtimeDeps}`),
     });
   }
 
@@ -243,7 +238,7 @@ export class EosBlackProjectsTriad {
     assertPrecondition(Boolean(input), "DarpaOodaInput required");
     assertPrecondition(
       Number.isFinite(input.anomalyScore) && input.anomalyScore >= 0 && input.anomalyScore <= 1,
-      "anomalyScore must be in [0,1]"
+      "anomalyScore must be in [0,1]",
     );
 
     // Impossible-horizon gate (untimed): mutation kill floor must hold before OODA acts.
@@ -252,7 +247,7 @@ export class EosBlackProjectsTriad {
       "  if (broken === true) return false;",
       "  if (score >= 0.85) return false;",
       "  return score < 0.4;",
-      "}"
+      "}",
     ].join("\n");
     const tester = new EosMutationTester();
     const mutation = tester.evaluateTestSuite(snippet, (code) => {
@@ -296,7 +291,7 @@ export class EosBlackProjectsTriad {
       actReceipt,
       compensationSnapshot,
       durationUs: Number(bestUs.toFixed(2)),
-      sha256Receipt: pureSha256(`OODA:${actReceipt}:${bestUs}:${mutation.grade}`)
+      sha256Receipt: pureSha256(`OODA:${actReceipt}:${bestUs}:${mutation.grade}`),
     });
   }
 
@@ -316,7 +311,7 @@ export class EosBlackProjectsTriad {
       const declared = Number(reg.totalFleetProjects || 0);
       const incomplete = projects.filter(
         (p: { status?: string; productionUrl?: string; remoteUrl?: string }) =>
-          p.status !== "REGISTERED" || !p.productionUrl || !p.remoteUrl
+          p.status !== "REGISTERED" || !p.productionUrl || !p.remoteUrl,
       ).length;
       surfaceFindings = incomplete + (declared === projects.length ? 0 : 1);
       surfaceDetails = `fleet=${projects.length};declared=${declared};incomplete=${incomplete}`;
@@ -345,7 +340,7 @@ export class EosBlackProjectsTriad {
       path.join(root, "package.json"),
       path.join(root, "src/core/eosPlanetaryApexDoctrine.ts"),
       path.join(root, "src/core/eosApexDoctrineScorecard.ts"),
-      path.join(root, "docs/projects/registry.json")
+      path.join(root, "docs/projects/registry.json"),
     ].filter((p) => fs.existsSync(p));
     let secretHits = 0;
     for (const file of scanTargets) {
@@ -359,18 +354,18 @@ export class EosBlackProjectsTriad {
       {
         layer: "SURFACE",
         findings: surfaceFindings,
-        details: `${surfaceDetails} (software optics; not Keyhole satellites)`
+        details: `${surfaceDetails} (software optics; not Keyhole satellites)`,
       },
       {
         layer: "ATMOSPHERIC",
         findings: atmosphericFindings,
-        details: `${atmosphericDetails} (AST sample; not ionosphere SAR)`
+        details: `${atmosphericDetails} (AST sample; not ionosphere SAR)`,
       },
       {
         layer: "SUBTERRANEAN",
         findings: secretHits,
-        details: `secretOrPlumbingHits=${secretHits} on ${scanTargets.length} files (software radar; not ground-penetrating SAR)`
-      }
+        details: `secretOrPlumbingHits=${secretHits} on ${scanTargets.length} files (software radar; not ground-penetrating SAR)`,
+      },
     ];
 
     const durationUs = Number(process.hrtime.bigint() - t0) / 1000;
@@ -378,9 +373,9 @@ export class EosBlackProjectsTriad {
       layers: Object.freeze(layers),
       zeroPlainSecrets,
       sha256Receipt: pureSha256(
-        `NRO_SAR:${layers.map((l) => `${l.layer}:${l.findings}`).join("|")}:${zeroPlainSecrets}`
+        `NRO_SAR:${layers.map((l) => `${l.layer}:${l.findings}`).join("|")}:${zeroPlainSecrets}`,
       ),
-      durationUs: Number(durationUs.toFixed(2))
+      durationUs: Number(durationUs.toFixed(2)),
     });
   }
 
@@ -399,14 +394,14 @@ export class EosBlackProjectsTriad {
       score: Math.min(100, Math.round(kelly.compliancePercent)),
       latencyUs: Number(kUs.toFixed(2)),
       details: `${kelly.compliancePercent}% of 14 rules passed (software discipline; not Area 51)`,
-      sha256Receipt: kelly.sha256Receipt
+      sha256Receipt: kelly.sha256Receipt,
     });
 
     const dStart = process.hrtime.bigint();
     const ooda = this.executeDarpaOodaCycle({
       anomalyScore: 0.55,
       errorBudgetBurned: true,
-      invariantBroken: false
+      invariantBroken: false,
     });
     const dUs = Number(process.hrtime.bigint() - dStart) / 1000;
     pillars.push({
@@ -416,16 +411,13 @@ export class EosBlackProjectsTriad {
       score: ooda.durationUs < 5000 && ooda.actReceipt.length === 64 ? 100 : 40,
       latencyUs: Number(dUs.toFixed(2)),
       details: `orient=${ooda.orient}; decide=${ooda.decide}; oodaUs=${ooda.durationUs} (software OODA; not neuro-weapons)`,
-      sha256Receipt: ooda.sha256Receipt
+      sha256Receipt: ooda.sha256Receipt,
     });
 
     const nStart = process.hrtime.bigint();
     const sar = this.runNroSarDeepScan();
     const nUs = Number(process.hrtime.bigint() - nStart) / 1000;
-    const sarOk =
-      sar.zeroPlainSecrets &&
-      sar.layers.every((l) => l.findings === 0) &&
-      sar.layers.length === 3;
+    const sarOk = sar.zeroPlainSecrets && sar.layers.every((l) => l.findings === 0) && sar.layers.length === 3;
     pillars.push({
       pillarId: "NRO_SAR",
       name: "NRO Multi-Layer Software SAR Drill",
@@ -433,7 +425,7 @@ export class EosBlackProjectsTriad {
       score: sarOk ? 100 : sar.zeroPlainSecrets ? 70 : 30,
       latencyUs: Number(nUs.toFixed(2)),
       details: sar.layers.map((l) => `${l.layer}:${l.findings}`).join(" · "),
-      sha256Receipt: sar.sha256Receipt
+      sha256Receipt: sar.sha256Receipt,
     });
 
     const totalDurationUs = Number(process.hrtime.bigint() - t0) / 1000;
@@ -451,7 +443,7 @@ export class EosBlackProjectsTriad {
       totalDurationUs: Number(totalDurationUs.toFixed(2)),
       pillars: Object.freeze(pillars),
       sha256Receipt: cumulative.digest("hex"),
-      auditedAtIso: new Date().toISOString()
+      auditedAtIso: new Date().toISOString(),
     };
 
     assertPostcondition(report.pillars.length === 3, "Triad must evaluate exactly 3 pillars");

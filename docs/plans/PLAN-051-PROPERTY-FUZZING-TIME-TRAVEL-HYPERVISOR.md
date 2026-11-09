@@ -3,11 +3,12 @@
 **Specification**: SPEC-058  
 **Change Reference**: CHANGE-051  
 **Target Version**: 64.0.0  
-**Architectural Decision Record**: ADR-064  
+**Architectural Decision Record**: ADR-064
 
 ---
 
 ## Architecture Decision Record: ADR-064
+
 **Title**: Implementation of Property-Based Invariant Fuzzing, Time-Travel Ledger Replay, and 49-Level Architectural Introspection  
 **Status**: APPROVED  
 **Context**:  
@@ -15,6 +16,7 @@ Static analysis and unit testing verify known execution paths. To achieve true G
 
 **Decision**:  
 Implement `EosPropertyFuzzingHypervisor` in `src/core/eosPropertyFuzzingHypervisor.ts`:
+
 1. **Deterministic PRNG**:
    - Implements Mulberry32 algorithm with 32/64-bit state initialization.
    - Guaranteed identical pseudo-random stream given the same seed.
@@ -34,5 +36,6 @@ Implement `EosPropertyFuzzingHypervisor` in `src/core/eosPropertyFuzzingHypervis
    - `eos_fuzz_hypervisor` registered in `CORE_TIER0_TOOL_NAMES`, keeping total core tools at 39 (within the <= 40 ceiling).
 
 **Rejected Alternatives**:
-1. *External npm fuzzers (e.g., `fast-check` or `atheris`)*: Rejected per Law V (zero external dependencies in Layer-0 runtime).
-2. *Non-deterministic random fuzzing without seed tracking*: Rejected per Law I and Law III (unreproducible test failures violate epistemic integrity).
+
+1. _External npm fuzzers (e.g., `fast-check` or `atheris`)_: Rejected per Law V (zero external dependencies in Layer-0 runtime).
+2. _Non-deterministic random fuzzing without seed tracking_: Rejected per Law I and Law III (unreproducible test failures violate epistemic integrity).

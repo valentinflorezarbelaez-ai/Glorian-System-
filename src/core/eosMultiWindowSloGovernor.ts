@@ -13,9 +13,9 @@ import crypto from "node:crypto";
 
 export interface SloTargetConfig {
   readonly serviceId: string;
-  readonly availabilitySlo?: number;     // e.g. 0.999 (99.9%)
+  readonly availabilitySlo?: number; // e.g. 0.999 (99.9%)
   readonly latencyThresholdMs?: number; // e.g. 400ms
-  readonly latencySlo?: number;         // e.g. 0.99 (99%)
+  readonly latencySlo?: number; // e.g. 0.99 (99%)
   readonly periodTotalEventsBudget?: number; // e.g. 100,000 (30-day request budget envelope)
 }
 
@@ -33,8 +33,8 @@ export interface BurnRateSnapshot {
 export interface ServiceSloStatus {
   readonly serviceId: string;
   readonly availabilitySlo: number;
-  readonly errorBudgetFraction: number;      // 1.0 - availabilitySlo
-  readonly errorBudgetRemainingPct: number;  // Bounded remaining percentage
+  readonly errorBudgetFraction: number; // 1.0 - availabilitySlo
+  readonly errorBudgetRemainingPct: number; // Bounded remaining percentage
   readonly isDeploymentFrozen: boolean;
   readonly healthState: SloHealthState;
   readonly windows: {
@@ -148,7 +148,7 @@ export class EosMultiWindowSloGovernor {
     windowMs: number,
     label: string,
     errorBudgetFraction: number,
-    now: number
+    now: number,
   ): BurnRateSnapshot {
     const cutoff = now - windowMs;
     let eventsCount = 0;
@@ -172,7 +172,7 @@ export class EosMultiWindowSloGovernor {
       totalEvents: eventsCount,
       totalErrors: errorsCount,
       errorRate: Number(errorRate.toFixed(6)),
-      burnRate
+      burnRate,
     };
   }
 
@@ -196,9 +196,10 @@ export class EosMultiWindowSloGovernor {
     const window30d = this.computeWindowSnapshot(buffer, COMPLIANCE_30D_MS, "30d", errorBudgetFraction, now);
     const periodBudgetEnvelope = target?.periodTotalEventsBudget ?? Math.max(window30d.totalEvents, 100_000);
     const allowedPeriodErrors = periodBudgetEnvelope * errorBudgetFraction;
-    const budgetRemainingPct = allowedPeriodErrors > 0 && window30d.totalEvents > 0
-      ? Number(Math.max(-100, Math.min(100, (1.0 - (window30d.totalErrors / allowedPeriodErrors)) * 100)).toFixed(2))
-      : 100;
+    const budgetRemainingPct =
+      allowedPeriodErrors > 0 && window30d.totalEvents > 0
+        ? Number(Math.max(-100, Math.min(100, (1.0 - window30d.totalErrors / allowedPeriodErrors) * 100)).toFixed(2))
+        : 100;
 
     const activeAlerts: string[] = [];
     let isDeploymentFrozen = false;
@@ -206,14 +207,18 @@ export class EosMultiWindowSloGovernor {
 
     // Google SRE Rule 1: Tier 1 Critical (14.4x burn rate in 1h AND 5m) -> Consumes 2% in 1h
     if (window1h.burnRate >= 14.4 && window5m.burnRate >= 14.4) {
-      activeAlerts.push("ALERT_TIER_1_CRITICAL: 1h burn rate >= 14.4x correlated with 5m window. Emergency rollback recommended.");
+      activeAlerts.push(
+        "ALERT_TIER_1_CRITICAL: 1h burn rate >= 14.4x correlated with 5m window. Emergency rollback recommended.",
+      );
       isDeploymentFrozen = true;
       healthState = "CRITICAL_BURN";
     }
 
     // Google SRE Rule 2: Tier 2 Warning (6.0x burn rate in 6h AND 30m) -> Consumes 5% in 6h
     if (window6h.burnRate >= 6.0 && window30m.burnRate >= 6.0) {
-      activeAlerts.push("ALERT_TIER_2_WARNING: 6h burn rate >= 6.0x correlated with 30m window. Canary promotions held.");
+      activeAlerts.push(
+        "ALERT_TIER_2_WARNING: 6h burn rate >= 6.0x correlated with 30m window. Canary promotions held.",
+      );
       if (healthState !== "CRITICAL_BURN") {
         healthState = "ELEVATED_BURN";
       }
@@ -233,13 +238,10 @@ export class EosMultiWindowSloGovernor {
       isDeploymentFrozen,
       healthState,
       alertsCount: activeAlerts.length,
-      timestamp: now
+      timestamp: now,
     };
 
-    const sha256Receipt = crypto
-      .createHash("sha256")
-      .update(JSON.stringify(payloadToSign))
-      .digest("hex");
+    const sha256Receipt = crypto.createHash("sha256").update(JSON.stringify(payloadToSign)).digest("hex");
 
     return Object.freeze({
       serviceId,
@@ -252,10 +254,10 @@ export class EosMultiWindowSloGovernor {
         window5m,
         window30m,
         window1h,
-        window6h
+        window6h,
       },
       activeAlerts,
-      sha256Receipt
+      sha256Receipt,
     });
   }
 
@@ -267,7 +269,7 @@ export class EosMultiWindowSloGovernor {
     if (status.isDeploymentFrozen) {
       return {
         allowed: false,
-        reason: `DEPLOYMENT_FROZEN: Service ${serviceId} has active burn alerts or exhausted error budget (${status.errorBudgetRemainingPct}% remaining)`
+        reason: `DEPLOYMENT_FROZEN: Service ${serviceId} has active burn alerts or exhausted error budget (${status.errorBudgetRemainingPct}% remaining)`,
       };
     }
     return { allowed: true };

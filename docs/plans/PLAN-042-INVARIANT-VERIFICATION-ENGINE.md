@@ -1,16 +1,19 @@
 # PLAN-042 & ADR-055 — INVARIANT VERIFICATION ENGINE ARCHITECTURE
+
 **Status**: ACCEPTED  
 **Date**: 2026-10-30  
-**Context**: SPEC-049, CHANGE-042, EOS v55.0.0  
+**Context**: SPEC-049, CHANGE-042, EOS v55.0.0
 
 ---
 
 ## Architecture Decision Record (ADR-055)
 
 ### Context
+
 Distributed state systems require mathematical invariant guarantees. External dependencies like `fast-check` or heavy model checkers like Java TLC cannot run under Layer-0 constraints (0 external npm runtime dependencies, pure Node 24 strip-only TS execution). We require an in-process, high-speed invariant verification engine.
 
 ### Decision
+
 1. **Xorshift32 PRNG**: Implement a fast, deterministic pseudo-random number generator that produces reproducible sequences from an unsigned 32-bit integer seed.
 2. **State Model Contract**: Define pure functional state models:
    - `initialState`: initial immutable state $S_0$.
@@ -21,6 +24,7 @@ Distributed state systems require mathematical invariant guarantees. External de
 5. **Durable Ledger Integration**: Record cryptographic attestations in `EosDurableSqliteLedger`.
 
 ### Consequences
+
 - Mathematical proof of correctness across millions of explored states in milliseconds.
 - Deterministic reproduction of race conditions and edge cases.
 - Zero external runtime npm dependencies.

@@ -58,10 +58,10 @@ export class EosSingleExecutablePackager {
       output: "dist/eos.blob",
       disableExperimentalSEAWarning: true,
       useSnapshot: false,
-      useCodeCache: true
+      useCodeCache: false,
     };
 
-    fs.writeFileSync(configPath, JSON.stringify(config, null, 2), "utf8");
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n", "utf8");
     return config;
   }
 
@@ -85,15 +85,12 @@ export class EosSingleExecutablePackager {
       execSync(`"${process.execPath}" --experimental-sea-config "${configPath}"`, {
         cwd: this.projectRoot,
         stdio: "pipe",
-        encoding: "utf8"
+        encoding: "utf8",
       });
     } catch {
       // Deterministic Layer-0 fallback: generate self-contained valid SEA buffer envelope
       const entryContent = fs.readFileSync(path.join(this.projectRoot, "bin", "eos.mjs"), "utf8");
-      const envelope = Buffer.concat([
-        Buffer.from("NODE_SEA_BLOB_V1\0", "utf8"),
-        Buffer.from(entryContent, "utf8")
-      ]);
+      const envelope = Buffer.concat([Buffer.from("NODE_SEA_BLOB_V1\0", "utf8"), Buffer.from(entryContent, "utf8")]);
       fs.writeFileSync(blobPath, envelope);
     }
 
@@ -106,7 +103,7 @@ export class EosSingleExecutablePackager {
       blobBytes: blobBuffer.length,
       sha256,
       mainEntry: "bin/eos.mjs",
-      generatedAtIso: new Date().toISOString()
+      generatedAtIso: new Date().toISOString(),
     };
   }
 
@@ -119,10 +116,10 @@ export class EosSingleExecutablePackager {
         return {
           platform,
           binaryName: "eos.exe",
-          copyCommand: 'node -e "require(\'fs\').copyFileSync(process.execPath, \'dist/eos.exe\')"',
+          copyCommand: "node -e \"require('fs').copyFileSync(process.execPath, 'dist/eos.exe')\"",
           injectionCommand: `npx --yes postject dist/eos.exe NODE_SEA_BLOB dist/eos.blob --sentinel-fuse ${this.sentinelFuse}`,
-          signatureCommand: 'signtool sign /fd SHA256 dist/eos.exe',
-          sentinelFuse: this.sentinelFuse
+          signatureCommand: "signtool sign /fd SHA256 dist/eos.exe",
+          sentinelFuse: this.sentinelFuse,
         };
       case "linux-x64":
         return {
@@ -130,7 +127,7 @@ export class EosSingleExecutablePackager {
           binaryName: "eos",
           copyCommand: "cp $(command -v node) dist/eos",
           injectionCommand: `npx --yes postject dist/eos NODE_SEA_BLOB dist/eos.blob --sentinel-fuse ${this.sentinelFuse}`,
-          sentinelFuse: this.sentinelFuse
+          sentinelFuse: this.sentinelFuse,
         };
       case "darwin-arm64":
         return {
@@ -139,7 +136,7 @@ export class EosSingleExecutablePackager {
           copyCommand: "cp $(command -v node) dist/eos-darwin",
           injectionCommand: `npx --yes postject dist/eos-darwin NODE_SEA_BLOB dist/eos.blob --sentinel-fuse ${this.sentinelFuse} --macho-segment-name NODE_SEA`,
           signatureCommand: "codesign --sign - dist/eos-darwin",
-          sentinelFuse: this.sentinelFuse
+          sentinelFuse: this.sentinelFuse,
         };
     }
   }

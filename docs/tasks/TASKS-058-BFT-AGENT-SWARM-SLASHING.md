@@ -2,11 +2,12 @@
 
 **Specification**: SPEC-065  
 **Change Reference**: CHANGE-058  
-**Status**: DONE  
+**Status**: DONE
 
 ---
 
 ## 1. Task Breakdown
+
 - [x] **TASK-058-1**: Formalize SPEC-065 with EARS requirements (FR-225 to FR-230) and BDD scenarios (BDD-196 to BDD-198).
 - [x] **TASK-058-2**: Specify formal TLA+ mathematical model `docs/formal/BftAgentSwarmSlashing.tla` and verify with bounded simulation.
 - [x] **TASK-058-3**: Implement `EosBftAgentSwarmSlashing` in `src/core/eosBftAgentSwarmSlashing.ts`.

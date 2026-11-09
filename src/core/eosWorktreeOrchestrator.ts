@@ -80,7 +80,7 @@ export class EosWorktreeOrchestrator {
         cwd: this.rootDir,
         encoding: "utf8",
         stdio: ["ignore", "pipe", "ignore"],
-        env: getCleanGitEnv()
+        env: getCleanGitEnv(),
       });
 
       return this.parsePorcelainList(output);
@@ -93,8 +93,8 @@ export class EosWorktreeOrchestrator {
           branch: "main",
           isBare: false,
           isMain: true,
-          isLocked: false
-        }
+          isLocked: false,
+        },
       ];
     }
   }
@@ -102,13 +102,14 @@ export class EosWorktreeOrchestrator {
   /**
    * Creates an isolated worktree for an autonomous agent or subtask.
    */
-  public createWorktree(
-    branchName: string,
-    customPath?: string,
-    options: CreateWorktreeOptions = {}
-  ): WorktreeInfo {
+  public createWorktree(branchName: string, customPath?: string, options: CreateWorktreeOptions = {}): WorktreeInfo {
     const sanitizedBranch = branchName.replace(/[^a-zA-Z0-9_\-./]/g, "-");
-    if (!sanitizedBranch || sanitizedBranch.startsWith("-") || sanitizedBranch.startsWith("/") || sanitizedBranch.endsWith("/")) {
+    if (
+      !sanitizedBranch ||
+      sanitizedBranch.startsWith("-") ||
+      sanitizedBranch.startsWith("/") ||
+      sanitizedBranch.endsWith("/")
+    ) {
       throw new Error("Branch name must be a non-empty relative Git branch name.");
     }
     const targetPath = customPath
@@ -131,7 +132,7 @@ export class EosWorktreeOrchestrator {
       execFileSync("git", ["rev-parse", "--verify", sanitizedBranch], {
         cwd: this.rootDir,
         stdio: ["ignore", "pipe", "ignore"],
-        env: getCleanGitEnv()
+        env: getCleanGitEnv(),
       });
       branchExists = true;
     } catch {
@@ -152,7 +153,7 @@ export class EosWorktreeOrchestrator {
         cwd: this.rootDir,
         encoding: "utf8",
         stdio: ["ignore", "pipe", "pipe"],
-        env: getCleanGitEnv()
+        env: getCleanGitEnv(),
       });
     } catch (err: any) {
       throw new Error(`Failed to create worktree: ${err.message || String(err)}`);
@@ -176,7 +177,7 @@ export class EosWorktreeOrchestrator {
         execFileSync("git", ["config", "core.hooksPath", ".githooks"], {
           cwd: targetPath,
           stdio: ["ignore", "ignore", "ignore"],
-          env: getCleanGitEnv()
+          env: getCleanGitEnv(),
         });
       } catch {
         // Non-blocking
@@ -193,7 +194,7 @@ export class EosWorktreeOrchestrator {
       branch: sanitizedBranch,
       isBare: false,
       isMain: false,
-      isLocked: false
+      isLocked: false,
     };
   }
 
@@ -209,7 +210,7 @@ export class EosWorktreeOrchestrator {
         success: false,
         removedPath: resolved,
         pruned: false,
-        error: "Cannot remove primary repository root worktree"
+        error: "Cannot remove primary repository root worktree",
       };
     }
 
@@ -219,7 +220,7 @@ export class EosWorktreeOrchestrator {
         success: false,
         removedPath: resolved,
         pruned: false,
-        error: "Target is not a registered worktree of this repository."
+        error: "Target is not a registered worktree of this repository.",
       };
     }
 
@@ -234,7 +235,7 @@ export class EosWorktreeOrchestrator {
         cwd: this.rootDir,
         encoding: "utf8",
         stdio: ["ignore", "pipe", "pipe"],
-        env: getCleanGitEnv()
+        env: getCleanGitEnv(),
       });
 
       this.pruneWorktrees();
@@ -242,14 +243,14 @@ export class EosWorktreeOrchestrator {
       return {
         success: true,
         removedPath: resolved,
-        pruned: true
+        pruned: true,
       };
     } catch (err: any) {
       return {
         success: false,
         removedPath: resolved,
         pruned: false,
-        error: err.message || String(err)
+        error: err.message || String(err),
       };
     }
   }
@@ -263,7 +264,7 @@ export class EosWorktreeOrchestrator {
         cwd: this.rootDir,
         encoding: "utf8",
         stdio: ["ignore", "pipe", "pipe"],
-        env: getCleanGitEnv()
+        env: getCleanGitEnv(),
       });
       return { success: true, output: output.trim() };
     } catch (err: any) {
@@ -281,14 +282,14 @@ export class EosWorktreeOrchestrator {
         cwd: resolved,
         encoding: "utf8",
         stdio: ["ignore", "pipe", "ignore"],
-        env: getCleanGitEnv()
+        env: getCleanGitEnv(),
       });
 
       const branchOutput = execFileSync("git", ["branch", "--show-current"], {
         cwd: resolved,
         encoding: "utf8",
         stdio: ["ignore", "pipe", "ignore"],
-        env: getCleanGitEnv()
+        env: getCleanGitEnv(),
       });
 
       const lines = statusOutput.split(/\r?\n/).filter((l) => l.trim().length > 0);
@@ -309,14 +310,14 @@ export class EosWorktreeOrchestrator {
         clean: modifiedFiles.length === 0,
         modifiedFiles,
         untrackedFiles,
-        currentBranch: branchOutput.trim()
+        currentBranch: branchOutput.trim() || process.env.GITHUB_REF_NAME || "HEAD",
       };
     } catch {
       return {
         clean: false,
         modifiedFiles: [],
         untrackedFiles: [],
-        currentBranch: "unknown"
+        currentBranch: "unknown",
       };
     }
   }
@@ -358,7 +359,7 @@ export class EosWorktreeOrchestrator {
           isBare,
           isMain: i === 0,
           isLocked,
-          lockReason: isLocked ? lockReason : undefined
+          lockReason: isLocked ? lockReason : undefined,
         });
       }
     }

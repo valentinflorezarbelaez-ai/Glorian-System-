@@ -1,18 +1,12 @@
 /**
- * EOS SYSTEM — MODEL CONTEXT PROTOCOL (MCP) STREAMABLE HTTP SERVER (Layer 0)
- * Governed by SPEC-027, SPEC-140, CHANGE-075, ADR-0172, ADR-0173
+ * EOS SYSTEM — MODEL CONTEXT PROTOCOL (MCP) LIVE STREAM SERVER (Layer 0)
+ * Governed by ADR-034, SPEC-027, FR-066..FR-070, BDD-061..BDD-063
  *
- * v62.0 — Clean rewrite removing merge artifact:
- *   - Single, unified constructor (no phantom `options` parameter)
- *   - Single, unified auth check (no duplicate Bearer comparison)
- *   - Single body-size cap (no duplicate `contentLength` declaration)
- *   - All constants defined inline (no undefined DEFAULT_* references)
- *   - `writeJson` helper defined as a private method
- *   - `StreamableSession` phantom type removed; `close()` takes no arguments
- *   - SUPPORTED_MCP_PROTOCOL_VERSIONS defined as a frozen Set
- *   - All v61 improvements preserved: SSE per-IP rate limit, request dedup,
- *     async dispatch, prompts/list, resources/list, idle session 60 min,
- *     dynamic version from package.json
+ * Implements bi-directional streaming for Cursor, Antigravity, and Claude Code:
+ * - Persistent Server-Sent Events (SSE) on GET /sse with endpoint negotiation.
+ * - JSON-RPC 2.0 message dispatching via POST /message?sessionId=<sessionId>.
+ * - Real-time notifications (notifications/progress) down active SSE streams.
+ * - Keep-alive heartbeats (: keep-alive) and automatic session garbage collection.
  *
  * Invariant: 100% Layer-0 purity with zero external npm runtime dependencies.
  */
@@ -20,109 +14,9 @@
 import http from "node:http";
 import crypto from "node:crypto";
 import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { URL } from "node:url";
 import { EosMcpServer, type JsonRpcRequest, type JsonRpcResponse } from "./eosMcpServer.ts";
 import { EosPrometheusExporter } from "../core/eosPrometheusExporter.ts";
-
-// ── Constants ──────────────────────────────────────────────────────────────
-const DEFAULT_MAX_SESSIONS = 500;
-const DEFAULT_MAX_REQUEST_BYTES = 1 * 1024 * 1024; // 1 MB
-const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;          // 30 s
-const DEFAULT_HEARTBEAT_INTERVAL_MS = 15_000;       // 15 s
-const IDLE_TIMEOUT_MS = 60 * 60 * 1000;             // 60 min
-
-/** MCP spec versions this server supports. */
-const SUPPORTED_MCP_PROTOCOL_VERSIONS = Object.freeze(
-  new Set(["2025-06-18", "2025-03-26", "2024-11-05"])
-);
-
-// ── Dynamic version from package.json (not hardcoded) ─────────────────────
-let _serverVersion = "62.0.0";
-try {
-  const _dir = path.dirname(fileURLToPath(import.meta.url));
-  const pkg = JSON.parse(
-    fs.readFileSync(path.resolve(_dir, "../../package.json"), "utf8")
-  );
-  _serverVersion = (pkg as { version?: string }).version ?? _serverVersion;
-} catch { /* keep default */ }
-
-// ── Built-in prompts for Antigravity/Gemini discovery ─────────────────────
-const EOS_PROMPTS = Object.freeze([
-  {
-    name: "eos-consult",
-    description:
-      "Get a world-class engineering consulting deliverable (5-Whys, ADR, code, risk matrix, FinOps estimate) for any problem — offline, no API key needed.",
-    arguments: [
-      { name: "problem", description: "Describe the engineering problem, bug, or architecture question", required: true },
-    ],
-  },
-  {
-    name: "eos-pipeline",
-    description:
-      "Run the AGI end-to-end pipeline: context assembly → model router → Tree of Thoughts → deterministic tribunal. Returns verified code or crystallized axioms.",
-    arguments: [
-      { name: "problem", description: "Natural language problem description", required: true },
-      { name: "targetFile", description: "Relative path to the primary file to fix", required: true },
-      { name: "testCommand", description: "Test command used as tribunal (exit 0 = law)", required: true },
-    ],
-  },
-  {
-    name: "eos-drift",
-    description:
-      "Detect spec drift — find modules that were modified without updating their formal specification.",
-    arguments: [
-      { name: "daysThreshold", description: "Days of drift before flagging (default: 7)", required: false },
-    ],
-  },
-  {
-    name: "eos-context",
-    description:
-      "Assemble a token-budget-aware context block for a target file using semantic blast radius analysis.",
-    arguments: [
-      { name: "objective", description: "What do you need to do with the file", required: true },
-      { name: "targetFile", description: "Relative path to the file", required: true },
-      { name: "tokenBudget", description: "Max tokens (default: 32000)", required: false },
-    ],
-  },
-]);
-
-// ── Built-in resources for Antigravity/Gemini discovery ───────────────────
-const EOS_RESOURCES = Object.freeze([
-  {
-    uri: "eos://specs/constitution",
-    name: "EOS Constitution",
-    description: "The 7 Inviolable Laws and EARS/BDD specification standards governing EOS System",
-    mimeType: "text/markdown",
-  },
-  {
-    uri: "eos://evidence/receipt",
-    name: "Last CI/CD Receipt",
-    description: "Cryptographically sealed SBOM receipt from the last successful CI/CD run",
-    mimeType: "application/json",
-  },
-  {
-    uri: "eos://projects/registry",
-    name: "Fleet Registry",
-    description: "Registered fleet projects with local paths, remote URLs, and production endpoints",
-    mimeType: "application/json",
-  },
-  {
-    uri: "eos://memory/axioms",
-    name: "AGI Axiom Memory",
-    description: "Crystallized rules learned from past failed AGI branches — inject into prompts to prevent repeat errors",
-    mimeType: "application/json",
-  },
-  {
-    uri: "eos://openapi",
-    name: "EOS OpenAPI Spec",
-    description: "OpenAPI 3.1 specification for all 14 serverless API endpoints",
-    mimeType: "application/yaml",
-  },
-]);
-
-// ── Types ──────────────────────────────────────────────────────────────────
 
 export interface ProgressNotificationParams {
   progressToken: string | number;
@@ -131,18 +25,46 @@ export interface ProgressNotificationParams {
   message?: string;
 }
 
+const MCP_HTTP_READ_ONLY_TOOLS = new Set([
+  "eos_health_check",
+  "eos_amplify_prompt",
+  "eos_check_architecture",
+  "eos_evaluate_decision",
+  "eos_spotify_shuffle",
+  "eos_optimize_context",
+]);
+const DEFAULT_MAX_REQUEST_BYTES = 1024 * 1024;
+export const MAX_SESSIONS = 16;
+const DEFAULT_MAX_SESSIONS = MAX_SESSIONS;
+const DEFAULT_REQUEST_TIMEOUT_MS = 10_000;
+const PACKAGE_VERSION = (() => {
+  try {
+    return (
+      (JSON.parse(fs.readFileSync(new URL("../../package.json", import.meta.url), "utf8")) as { version?: string })
+        .version || "unknown"
+    );
+  } catch {
+    return "unknown";
+  }
+})();
+
 export interface EosMcpStreamServerOptions {
   authToken?: string;
   allowedOrigins?: string[];
   maxSessions?: number;
   maxRequestBytes?: number;
   requestTimeoutMs?: number;
-  heartbeatIntervalMs?: number;
 }
 
-// ============================================================================
-// EosMcpSession
-// ============================================================================
+class HttpInputError extends Error {
+  public readonly statusCode: number;
+
+  constructor(statusCode: number, message: string) {
+    super(message);
+    this.name = "HttpInputError";
+    this.statusCode = statusCode;
+  }
+}
 
 export class EosMcpSession {
   public readonly id: string;
@@ -150,32 +72,26 @@ export class EosMcpSession {
   public lastActivity: number;
   private readonly res: http.ServerResponse;
   private keepAliveTimer: NodeJS.Timeout | null = null;
-  private idleTimer: NodeJS.Timeout | null = null;
   private closed = false;
 
-  constructor(id: string, res: http.ServerResponse, heartbeatIntervalMs = DEFAULT_HEARTBEAT_INTERVAL_MS) {
+  constructor(id: string, res: http.ServerResponse, heartbeatIntervalMs = 15000) {
     this.id = id;
     this.res = res;
     this.createdAt = Date.now();
     this.lastActivity = Date.now();
 
     if (heartbeatIntervalMs > 0) {
-      this.keepAliveTimer = setInterval(() => this.sendHeartbeat(), heartbeatIntervalMs);
-      (this.keepAliveTimer as NodeJS.Timeout).unref();
+      this.keepAliveTimer = setInterval(() => {
+        this.sendHeartbeat();
+      }, heartbeatIntervalMs);
     }
-    this._resetIdleTimer();
   }
 
-  private _resetIdleTimer(): void {
-    if (this.idleTimer) clearTimeout(this.idleTimer);
-    this.idleTimer = setTimeout(() => this.close(), IDLE_TIMEOUT_MS);
-    this.idleTimer.unref();
-  }
-
-  public sendEvent(event: string, data: unknown): boolean {
-    if (this.closed || this.res.writableEnded || !this.res.writable) return false;
+  public sendEvent(event: string, data: any): boolean {
+    if (this.closed || this.res.writableEnded || !this.res.writable) {
+      return false;
+    }
     this.lastActivity = Date.now();
-    this._resetIdleTimer();
     const payload = typeof data === "string" ? data : JSON.stringify(data);
     const frame = `event: ${event}\ndata: ${payload}\n\n`;
     try {
@@ -189,97 +105,60 @@ export class EosMcpSession {
 
   public sendHeartbeat(): void {
     if (this.closed || this.res.writableEnded || !this.res.writable) return;
-    try { this.res.write(": keep-alive\n\n"); } catch { this.close(); }
+    try {
+      this.res.write(": keep-alive\n\n");
+    } catch {
+      this.close();
+    }
   }
 
   public sendProgress(token: string | number, progress: number, total?: number, message?: string): boolean {
     const notification: JsonRpcRequest = {
       jsonrpc: "2.0",
       method: "notifications/progress",
-      params: { progressToken: token, progress, total, message },
+      params: {
+        progressToken: token,
+        progress,
+        total,
+        message,
+      },
     };
     return this.sendEvent("message", notification);
-  }
-
-  public isAlive(): boolean {
-    return !this.closed && !this.res.writableEnded && this.res.writable;
   }
 
   public close(): void {
     if (this.closed) return;
     this.closed = true;
-    if (this.keepAliveTimer) { clearInterval(this.keepAliveTimer); this.keepAliveTimer = null; }
-    if (this.idleTimer) { clearTimeout(this.idleTimer); this.idleTimer = null; }
+    if (this.keepAliveTimer) {
+      clearInterval(this.keepAliveTimer);
+      this.keepAliveTimer = null;
+    }
     if (!this.res.writableEnded && this.res.writable) {
-      try { this.res.end(); } catch { /* silent on abrupt termination */ }
+      try {
+        this.res.end();
+      } catch {
+        // Safe ignored on client abrupt termination
+      }
     }
   }
-}
 
-// ============================================================================
-// EosMcpSessionManager
-// ============================================================================
+  public isAlive(): boolean {
+    return !this.closed && !this.res.writableEnded && this.res.writable;
+  }
+}
 
 export class EosMcpSessionManager {
   private readonly sessions = new Map<string, EosMcpSession>();
   private readonly heartbeatIntervalMs: number;
-  private readonly maxSessions: number;
-  private readonly gcTimer: NodeJS.Timeout;
 
-  /** Per-IP SSE rate limiting — max 10 concurrent sessions per IP. */
-  private readonly sessionsPerIp = new Map<string, number>();
-  private static readonly MAX_SESSIONS_PER_IP = 10;
-
-  constructor(heartbeatIntervalMs = DEFAULT_HEARTBEAT_INTERVAL_MS, maxSessions = DEFAULT_MAX_SESSIONS) {
+  constructor(heartbeatIntervalMs = 15000) {
     this.heartbeatIntervalMs = heartbeatIntervalMs;
-    this.maxSessions = maxSessions;
-    this.gcTimer = setInterval(() => this._gc(), 5 * 60 * 1000).unref();
   }
 
-  private _gc(): void {
-    for (const [id, session] of this.sessions.entries()) {
-      if (!session.isAlive()) {
-        this.sessions.delete(id);
-      }
-    }
-  }
-
-  /**
-   * Creates a new session. Returns null if the per-IP or global cap is exceeded.
-   */
-  public createSession(res: http.ServerResponse, clientIp = "unknown"): EosMcpSession | null {
-    // Global cap — evict oldest if full
-    if (this.sessions.size >= this.maxSessions) {
-      const oldest = [...this.sessions.entries()].sort(
-        (a, b) => a[1].createdAt - b[1].createdAt
-      )[0];
-      if (oldest) {
-        oldest[1].close();
-        this.sessions.delete(oldest[0]);
-      }
-    }
-
-    // Per-IP cap — prevents a single client from exhausting all sessions
-    const ipCount = this.sessionsPerIp.get(clientIp) ?? 0;
-    if (ipCount >= EosMcpSessionManager.MAX_SESSIONS_PER_IP) {
-      return null; // caller should respond 429
-    }
-
+  public createSession(res: http.ServerResponse): EosMcpSession {
     const sessionId = crypto.randomUUID();
     const session = new EosMcpSession(sessionId, res, this.heartbeatIntervalMs);
     this.sessions.set(sessionId, session);
-    this.sessionsPerIp.set(clientIp, ipCount + 1);
-
-    // Track removal so per-IP counter decrements when the connection closes
-    const onClose = (): void => {
-      this.sessions.delete(sessionId);
-      const current = this.sessionsPerIp.get(clientIp) ?? 1;
-      if (current <= 1) this.sessionsPerIp.delete(clientIp);
-      else this.sessionsPerIp.set(clientIp, current - 1);
-    };
-    (res as NodeJS.EventEmitter).once("close", onClose);
-    (res as NodeJS.EventEmitter).once("finish", onClose);
-
     return session;
   }
 
@@ -302,6 +181,16 @@ export class EosMcpSessionManager {
     return false;
   }
 
+  public _gc(): void {
+    const now = Date.now();
+    for (const [id, session] of this.sessions) {
+      if (!session.isAlive() || now - session.lastActivity > 60_000) {
+        session.close();
+        this.sessions.delete(id);
+      }
+    }
+  }
+
   public getActiveSessions(): Array<{ id: string; createdAt: number; ageMs: number }> {
     const now = Date.now();
     const list: Array<{ id: string; createdAt: number; ageMs: number }> = [];
@@ -316,134 +205,45 @@ export class EosMcpSessionManager {
   }
 
   public closeAll(): void {
-    for (const session of this.sessions.values()) session.close();
+    for (const session of this.sessions.values()) {
+      session.close();
+    }
     this.sessions.clear();
-    this.sessionsPerIp.clear();
-    clearInterval(this.gcTimer);
   }
 }
-
-// ============================================================================
-// EosMcpStreamServer
-// ============================================================================
 
 export class EosMcpStreamServer {
   public readonly mcpServer: EosMcpServer;
   public readonly sessionManager: EosMcpSessionManager;
   public readonly authToken: string;
-
   private server: http.Server | null = null;
   private readonly projectRoot: string;
   private readonly allowedOrigins: Set<string>;
+  private readonly maxSessions: number;
   private readonly maxRequestBytes: number;
   private readonly requestTimeoutMs: number;
 
-  /**
-   * Per-IP token-bucket rate limiter for POST /message (Stripe/Anthropic standard).
-   * 60 requests/min burst per IP — prevents a single client from flooding the dispatch queue.
-   * Each bucket refills at 1 token/sec (60/min steady state).
-   */
-  private readonly _messageBuckets = new Map<string, { tokens: number; lastRefill: number }>();
-  private static readonly _MSG_CAPACITY = 60;
-  private static readonly _MSG_REFILL_PER_SEC = 1;
-
-  private _consumeMessageToken(clientIp: string): boolean {
-    const now = Date.now();
-    let bucket = this._messageBuckets.get(clientIp);
-    if (!bucket) {
-      bucket = { tokens: EosMcpStreamServer._MSG_CAPACITY, lastRefill: now };
-      this._messageBuckets.set(clientIp, bucket);
-    }
-    // Refill based on elapsed time
-    const elapsed = (now - bucket.lastRefill) / 1000;
-    bucket.tokens = Math.min(
-      EosMcpStreamServer._MSG_CAPACITY,
-      bucket.tokens + elapsed * EosMcpStreamServer._MSG_REFILL_PER_SEC
-    );
-    bucket.lastRefill = now;
-    if (bucket.tokens < 1) return false;
-    bucket.tokens -= 1;
-    return true;
-  }
-
-  /** In-flight request IDs for deduplication (prevents double-dispatch on network retry). */
-  private readonly inFlight = new Set<string>();
-
-  /**
-   * Netflix TCP Vegas adaptive concurrency limiter on the /message dispatch path.
-   * Dynamically adjusts the concurrency limit based on RTT and queue inflation.
-   * Prevents event-loop starvation when tools are slow (e.g., LLM calls).
-   */
-  private readonly _concurrencyLimiter = new (class InlineConcurrencyLimiter {
-    private limit = 20;
-    private readonly minLimit = 5;
-    private readonly maxLimit = 200;
-    private inFlight = 0;
-    private rttMin = Infinity;
-    private rttSmoothed = 0;
-    private totalShed = 0;
-
-    acquire(): { granted: boolean } {
-      if (this.inFlight >= this.limit) { this.totalShed++; return { granted: false }; }
-      this.inFlight++;
-      return { granted: true };
-    }
-
-    release(rttMs: number): void {
-      if (this.inFlight > 0) this.inFlight--;
-      if (rttMs <= 0) return;
-      if (rttMs < this.rttMin) this.rttMin = rttMs;
-      this.rttSmoothed = this.rttSmoothed === 0 ? rttMs : 0.2 * rttMs + 0.8 * this.rttSmoothed;
-      if (this.rttMin > 0 && this.rttSmoothed > 0) {
-        const q = this.limit * (1 - this.rttMin / this.rttSmoothed);
-        if (q < 3) this.limit = Math.min(this.maxLimit, this.limit + 1);
-        else if (q > 6) this.limit = Math.max(this.minLimit, this.limit - Math.max(1, Math.floor(q - 6)));
-      }
-    }
-
-    metrics() { return { limit: this.limit, inFlight: this.inFlight, totalShed: this.totalShed }; }
-  })();
-
-  constructor(projectRoot?: string, options: EosMcpStreamServerOptions = {}) {
-    this.projectRoot = projectRoot ?? process.cwd();
+  constructor(projectRoot?: string, heartbeatIntervalMs = 15000, options: EosMcpStreamServerOptions = {}) {
+    this.projectRoot = projectRoot || process.cwd();
     this.mcpServer = new EosMcpServer(this.projectRoot);
-
-    const heartbeatIntervalMs = options.heartbeatIntervalMs ?? DEFAULT_HEARTBEAT_INTERVAL_MS;
-    const maxSessions = options.maxSessions ?? DEFAULT_MAX_SESSIONS;
-    this.maxRequestBytes = options.maxRequestBytes ?? DEFAULT_MAX_REQUEST_BYTES;
-    this.requestTimeoutMs = options.requestTimeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
-
-    if (!Number.isInteger(maxSessions) || maxSessions < 1) {
-      throw new Error("maxSessions must be a positive integer.");
-    }
-    if (!Number.isInteger(this.maxRequestBytes) || this.maxRequestBytes < 1) {
-      throw new Error("maxRequestBytes must be a positive integer.");
-    }
-    if (!Number.isInteger(this.requestTimeoutMs) || this.requestTimeoutMs < 1) {
-      throw new Error("requestTimeoutMs must be a positive integer.");
-    }
-
-    this.sessionManager = new EosMcpSessionManager(heartbeatIntervalMs, maxSessions);
-
-    // ── Auth token setup ─────────────────────────────────────────────────
-    const configuredToken = options.authToken ?? process.env["EOS_MCP_HTTP_TOKEN"];
+    this.sessionManager = new EosMcpSessionManager(heartbeatIntervalMs);
+    const configuredToken = options.authToken ?? process.env.EOS_MCP_HTTP_TOKEN;
     if (configuredToken !== undefined && Buffer.byteLength(configuredToken, "utf8") < 32) {
       throw new Error("EOS MCP HTTP bearer tokens must contain at least 32 bytes.");
     }
-    this.authToken = configuredToken ?? crypto.randomBytes(32).toString("base64url");
-
-    // ── Allowed origins validation ───────────────────────────────────────
+    this.authToken = configuredToken || crypto.randomBytes(32).toString("base64url");
     const originValues =
       options.allowedOrigins ??
-      (process.env["EOS_MCP_ALLOWED_ORIGINS"] ?? "")
+      (process.env.EOS_MCP_ALLOWED_ORIGINS || "")
         .split(",")
-        .map((v) => v.trim())
+        .map((value) => value.trim())
         .filter(Boolean);
-
     this.allowedOrigins = new Set(
       originValues.map((origin) => {
         let parsed: URL;
-        try { parsed = new URL(origin); } catch {
+        try {
+          parsed = new URL(origin);
+        } catch {
           throw new Error(`Invalid EOS MCP allowed origin: ${origin}`);
         }
         if (
@@ -451,460 +251,404 @@ export class EosMcpStreamServer {
           parsed.origin !== origin ||
           origin === "*"
         ) {
-          throw new Error(
-            `EOS MCP allowed origins must be exact HTTP(S) origins without paths: ${origin}`
-          );
+          throw new Error(`EOS MCP allowed origins must be exact HTTP(S) origins without paths: ${origin}`);
         }
         return origin;
-      })
+      }),
     );
+    this.maxSessions = options.maxSessions ?? DEFAULT_MAX_SESSIONS;
+    this.maxRequestBytes = options.maxRequestBytes ?? DEFAULT_MAX_REQUEST_BYTES;
+    this.requestTimeoutMs = options.requestTimeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
+    if (!Number.isInteger(this.maxSessions) || this.maxSessions < 1)
+      throw new Error("maxSessions must be a positive integer.");
+    if (!Number.isInteger(this.maxRequestBytes) || this.maxRequestBytes < 1)
+      throw new Error("maxRequestBytes must be a positive integer.");
+    if (!Number.isInteger(this.requestTimeoutMs) || this.requestTimeoutMs < 1)
+      throw new Error("requestTimeoutMs must be a positive integer.");
   }
-
-  // ── Private helpers ───────────────────────────────────────────────────────
-
-  private writeJson(
-    res: http.ServerResponse,
-    status: number,
-    body: unknown,
-    extraHeaders: Record<string, string> = {}
-  ): void {
-    const payload = JSON.stringify(body);
-    res.writeHead(status, {
-      "Content-Type": "application/json",
-      "Content-Length": Buffer.byteLength(payload),
-      ...extraHeaders,
-    });
-    res.end(payload);
-  }
-
-  /** Emits a structured JSON access log line to stderr (Stripe/Netflix standard). */
-  private _accessLog(
-    requestId: string,
-    method: string,
-    pathname: string,
-    status: number,
-    latencyMs: number,
-    clientIp: string,
-    extras?: Record<string, unknown>
-  ): void {
-    process.stderr.write(JSON.stringify({
-      ts: new Date().toISOString(),
-      level: "INFO",
-      ns: "eosMcpStream",
-      event: "http_request",
-      requestId,
-      method,
-      path: pathname,
-      status,
-      latencyMs,
-      clientIp,
-      ...extras,
-    }) + "\n");
-  }
-
-  private _authenticate(req: http.IncomingMessage): boolean {
-    // Constant-time Bearer token comparison (prevents timing attacks)
-    const authorization = req.headers["authorization"] ?? "";
-    const suppliedToken = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
-    const suppliedBuf = Buffer.from(suppliedToken, "utf8");
-    const expectedBuf = Buffer.from(this.authToken, "utf8");
-    return (
-      suppliedBuf.length === expectedBuf.length &&
-      crypto.timingSafeEqual(suppliedBuf, expectedBuf)
-    );
-  }
-
-  // ── Main request handler ──────────────────────────────────────────────────
 
   /**
-   * Main HTTP request router implementing the MCP 2024-11-05 spec.
-   * Optimized for Antigravity (prompts/resources), Cursor, and Claude Code.
+   * Main HTTP request router implementing the MCP 2024-11-05 spec
    */
-  /**
-   * Resolves the correct `Access-Control-Allow-Origin` value for a given request:
-   * - If `this.allowedOrigins` has entries, only exact-match origins are reflected.
-   * - If empty (no allowlist configured), dev defaults to `*`; production to `"null"`.
-   */
-  private _getCorsOrigin(req: http.IncomingMessage): string {
-    const requestOrigin = (req.headers["origin"] ?? "") as string;
-    if (this.allowedOrigins.size > 0) {
-      // Strict allowlist — only reflect known origins (Google/Stripe standard)
-      return this.allowedOrigins.has(requestOrigin) ? requestOrigin : "null";
+  public async handleHttpRequest(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+    const origin = req.headers.origin;
+    if (origin) {
+      if (!this.allowedOrigins.has(origin)) {
+        this.writeJson(res, 403, { error: "Origin is not allowed." });
+        req.resume();
+        return;
+      }
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-session-id");
+      res.setHeader("Vary", "Origin");
     }
-    // No allowlist — permissive in dev, locked down in production
-    return process.env["NODE_ENV"] === "production" ? "null" : "*";
-  }
-
-  public async handleHttpRequest(
-    req: http.IncomingMessage,
-    res: http.ServerResponse
-  ): Promise<void> {
-    // ── Request ID + latency tracking (Stripe/Google: every response gets a correlation ID) ──
-    const requestId = crypto.randomUUID();
-    const reqStart = Date.now();
-    const clientIp =
-      (req.headers["x-forwarded-for"] as string | undefined)?.split(",")[0]?.trim() ??
-      req.socket.remoteAddress ??
-      "unknown";
-    const method = req.method ?? "UNKNOWN";
-
-    // Emit X-Request-Id on every response (Stripe/Anthropic: correlates client errors with server logs)
-    res.setHeader("X-Request-Id", requestId);
-
-    // Wrap res.end to capture final status and emit access log
-    const origEnd = res.end.bind(res);
-    (res as NodeJS.EventEmitter).once("finish", () => {
-      this._accessLog(requestId, method, req.url ?? "/", res.statusCode, Date.now() - reqStart, clientIp);
-    });
-
-    // ── CORS (enforces this.allowedOrigins allowlist when configured) ────────
-    const allowedOrigin = this._getCorsOrigin(req);
-    res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
-    res.setHeader("Vary", "Origin");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-session-id, mcp-protocol-version");
 
     if (req.method === "OPTIONS") {
+      if (!origin) {
+        this.writeJson(res, 403, { error: "CORS preflight requires an explicitly allowed Origin." });
+        return;
+      }
       res.writeHead(204);
       res.end();
       return;
     }
 
-    // ── Parse URL ───────────────────────────────────────────────────────────
+    const authorization = req.headers.authorization || "";
+    const suppliedToken = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
+    const suppliedBuffer = Buffer.from(suppliedToken, "utf8");
+    const expectedBuffer = Buffer.from(this.authToken, "utf8");
+    const authenticated =
+      suppliedBuffer.length === expectedBuffer.length && crypto.timingSafeEqual(suppliedBuffer, expectedBuffer);
+    if (!authenticated) {
+      this.writeJson(res, 401, { error: "Unauthorized." }, { "WWW-Authenticate": "Bearer" });
+      req.resume();
+      return;
+    }
+
     let parsedUrl: URL;
     try {
-      parsedUrl = new URL(req.url ?? "/", `http://${req.headers.host ?? "127.0.0.1"}`);
+      parsedUrl = new URL(req.url || "/", `http://${req.headers.host || "127.0.0.1"}`);
     } catch {
       this.writeJson(res, 400, { error: "Invalid request URL." });
       return;
     }
     const pathname = parsedUrl.pathname;
 
-    // ── Health / status (no auth required) ─────────────────────────────────
     if (pathname === "/health" || pathname === "/status") {
       this.writeJson(res, 200, {
         status: "UP",
         server: "eos-system-mcp-stream",
-        version: _serverVersion,
+        version: PACKAGE_VERSION,
         protocolVersion: "2024-11-05",
         activeSessions: this.sessionManager.getActiveSessions().length,
         uptimeSeconds: Math.floor(process.uptime()),
-        transports: ["stdio", "sse", "http-jsonrpc"],
-        concurrency: this._concurrencyLimiter.metrics(),
+        transports: ["stdio", "sse"],
       });
       return;
     }
 
-    // ── DNS Rebinding guard ─────────────────────────────────────────────────
-    const hostHeader = (req.headers["host"] ?? "").toLowerCase();
-    if (hostHeader.includes("@") || hostHeader.includes("..")) {
-      this.writeJson(res, 403, { error: "Invalid Host header format." });
-      req.resume();
-      return;
-    }
-
-    // ── Single auth check (constant-time) ───────────────────────────────────
     if (!this._authenticate(req)) {
-      this.writeJson(res, 401, { error: "Unauthorized." }, { "WWW-Authenticate": "Bearer" });
-      req.resume();
+      this.writeJson(res, 401, { error: "Unauthorized" });
       return;
     }
 
-    // ── MCP-Protocol-Version validation ─────────────────────────────────────
-    const protocolVersionHeader = (
-      req.headers["mcp-protocol-version"] ?? req.headers["x-mcp-protocol-version"]
-    ) as string | undefined;
-    if (protocolVersionHeader && !SUPPORTED_MCP_PROTOCOL_VERSIONS.has(protocolVersionHeader)) {
-      this.writeJson(res, 400, {
-        jsonrpc: "2.0",
-        id: null,
-        error: {
-          code: -32600,
-          message: `Unsupported MCP-Protocol-Version: '${protocolVersionHeader}'. Supported: ${[...SUPPORTED_MCP_PROTOCOL_VERSIONS].join(", ")}`,
-        },
-      });
-      req.resume();
-      return;
-    }
-
-    // ── /metrics ─────────────────────────────────────────────────────────────
     if (req.method === "GET" && pathname === "/metrics") {
       const exporter = new EosPrometheusExporter(this.projectRoot);
       res.writeHead(200, {
         "Content-Type": "text/plain; version=0.0.4; charset=utf-8",
-        "Cache-Control": "no-cache",
+        "Cache-Control": "no-cache, no-store",
       });
       res.end(exporter.formatPrometheusText());
       return;
     }
 
-    // ── /sse — rate-limited SSE endpoint ─────────────────────────────────────
     if (req.method === "GET" && (pathname === "/sse" || pathname === "/events")) {
-      const session = this.sessionManager.createSession(res, clientIp);
-      if (!session) {
-        // Per-IP cap exceeded — must write SSE headers first, then signal error
-        res.writeHead(200, {
-          "Content-Type": "text/event-stream; charset=utf-8",
-          "Cache-Control": "no-cache, no-transform",
-          "Connection": "keep-alive",
-        });
-        res.write(
-          `event: error\ndata: ${JSON.stringify({ code: 429, message: "Too many SSE connections from this IP" })}\n\n`
-        );
-        res.end();
+      if (this.sessionManager.getActiveSessions().length >= this.maxSessions) {
+        this.writeJson(res, 503, { error: "MCP session capacity reached." });
         return;
       }
-
       res.writeHead(200, {
         "Content-Type": "text/event-stream; charset=utf-8",
         "Cache-Control": "no-cache, no-transform",
-        "Connection": "keep-alive",
+        Connection: "keep-alive",
         "X-Accel-Buffering": "no",
+        "X-Content-Type-Options": "nosniff",
       });
       res.flushHeaders?.();
-
+      const session = this.sessionManager.createSession(res);
       session.sendEvent("endpoint", `/message?sessionId=${session.id}`);
       req.on("close", () => this.sessionManager.removeSession(session.id));
       return;
     }
 
-    // ── /message — async, deduplicated, rate-limited JSON-RPC dispatch ──────
     if (req.method === "POST" && pathname === "/message") {
-      // Per-IP rate limit (Stripe/Anthropic: all mutation endpoints rate-limited)
-      if (!this._consumeMessageToken(clientIp)) {
-        const resetAt = Math.ceil((Date.now() + 1000) / 1000);
-        this.writeJson(res, 429, {
-          jsonrpc: "2.0",
-          id: null,
-          error: { code: -32000, message: "Rate limit exceeded. Retry after 1 second." },
-        }, {
-          "Retry-After": "1",
-          "X-RateLimit-Limit": String(EosMcpStreamServer._MSG_CAPACITY),
-          "X-RateLimit-Reset": String(resetAt),   // RFC 6585: when the bucket refills
-        });
-        req.resume();
-        return;
-      }
-
-      const sessionId =
-        parsedUrl.searchParams.get("sessionId") ??
-        (req.headers["x-session-id"] as string | undefined);
-
-      // ── Adaptive concurrency limiting (Netflix TCP Vegas — AIMD) ────────────
-      // Prevents event-loop starvation when LLM tools are slow.
-      // Dynamically adjusts limit based on observed RTT; 503 on overload.
-      const concurrency = this._concurrencyLimiter.acquire();
-      if (!concurrency.granted) {
-        this.writeJson(res, 503, {
-          jsonrpc: "2.0",
-          id: null,
-          error: { code: -32000, message: "Server overloaded — concurrency limit reached. Retry after backoff." },
-        }, { "Retry-After": "2", "X-Concurrency-Limit": String(this._concurrencyLimiter.metrics().limit) });
-        req.resume();
-        return;
-      }
-      const _dispatchStart = Date.now();
-
+      const sessionId = parsedUrl.searchParams.get("sessionId") || (req.headers["x-session-id"] as string | undefined);
       const session = sessionId ? this.sessionManager.getSession(sessionId) : undefined;
       if (!session) {
-        this._concurrencyLimiter.release(Date.now() - _dispatchStart);
         this.writeJson(res, 404, { error: "MCP session not found." });
         req.resume();
         return;
       }
-      const contentType = req.headers["content-type"] ?? "";
+      const contentType = req.headers["content-type"] || "";
       if (!/^application\/json(?:\s*;|$)/i.test(contentType)) {
         this.writeJson(res, 415, { error: "Content-Type must be application/json." });
         req.resume();
         return;
       }
-
-      // Single body-size cap (CVE-1: DoS via unbounded body)
-      const declaredLength = Number(req.headers["content-length"] ?? 0);
-      if (Number.isFinite(declaredLength) && declaredLength > this.maxRequestBytes) {
+      const contentLength = Number(req.headers["content-length"] || 0);
+      if (Number.isFinite(contentLength) && contentLength > this.maxRequestBytes) {
         this.writeJson(res, 413, { error: "Request body exceeds the configured size limit." });
         req.resume();
         return;
       }
 
-      let body = "";
-      let bytesReceived = 0;
+      let rawBody: Buffer;
+      try {
+        rawBody = await this.readRequestBody(req);
+      } catch (error) {
+        const inputError =
+          error instanceof HttpInputError ? error : new HttpInputError(400, "Request body could not be read.");
+        this.writeJson(res, inputError.statusCode, { error: inputError.message });
+        return;
+      }
+      let jsonRpcReq: JsonRpcRequest;
+      try {
+        const parsed: unknown = JSON.parse(rawBody.toString("utf8"));
+        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("invalid object");
+        jsonRpcReq = parsed as JsonRpcRequest;
+        if (jsonRpcReq.jsonrpc !== "2.0" || typeof jsonRpcReq.method !== "string")
+          throw new Error("invalid JSON-RPC envelope");
+      } catch {
+        this.writeJson(res, 400, {
+          jsonrpc: "2.0",
+          id: null,
+          error: { code: -32700, message: "Invalid JSON-RPC request." },
+        });
+        return;
+      }
 
-      req.on("data", (chunk: Buffer) => {
-        bytesReceived += chunk.length;
-        if (bytesReceived > this.maxRequestBytes) {
-          req.socket.destroy();
-          if (!res.writableEnded) {
-            this.writeJson(res, 413, {
-              error: "Payload Too Large",
-              code: "EOS_BODY_TOO_LARGE",
-              maxBytes: this.maxRequestBytes,
-            });
-          }
+      if (jsonRpcReq.method === "tools/call") {
+        const name = (jsonRpcReq.params as { name?: unknown } | undefined)?.name;
+        if (typeof name !== "string" || !MCP_HTTP_READ_ONLY_TOOLS.has(name)) {
+          this.writeJson(res, 200, {
+            jsonrpc: "2.0",
+            id: jsonRpcReq.id ?? null,
+            error: { code: -32601, message: "Tool is not exposed by the read-only MCP HTTP endpoint." },
+          });
           return;
         }
-        body += chunk.toString("utf8");
-      });
-
-      req.on("end", async () => {
-        try {
-          if (!body.trim()) {
-            this.writeJson(res, 400, {
-              jsonrpc: "2.0",
-              id: null,
-              error: { code: -32600, message: "Empty request body" },
-            });
-            return;
-          }
-
-          let jsonRpcReq: JsonRpcRequest;
-          try {
-            jsonRpcReq = JSON.parse(body) as JsonRpcRequest;
-          } catch (parseErr) {
-            this.writeJson(res, 400, {
-              jsonrpc: "2.0",
-              id: null,
-              error: { code: -32700, message: "Parse error: Invalid JSON", data: String(parseErr) },
-            });
-            return;
-          }
-
-          // ── Request deduplication ───────────────────────────────────────
-          // Antigravity and some clients retry on network timeout — same request
-          // ID arriving twice would dispatch the same tool twice (dangerous for
-          // mutations).
-          if (jsonRpcReq.id !== undefined && jsonRpcReq.id !== null) {
-            const dedupKey = `${sessionId ?? "global"}:${jsonRpcReq.id}`;
-            if (this.inFlight.has(dedupKey)) {
-              this.writeJson(res, 202, {
-                jsonrpc: "2.0",
-                id: jsonRpcReq.id,
-                result: { status: "DUPLICATE_IN_FLIGHT" },
-              });
-              return;
-            }
-            this.inFlight.add(dedupKey);
-            // Auto-clean after 30s regardless of completion
-            setTimeout(() => this.inFlight.delete(dedupKey), 30_000).unref();
-          }
-
-          const progressCallback = (progress: number, total?: number, msg?: string): void => {
-            if (session && jsonRpcReq.id !== undefined && jsonRpcReq.id !== null) {
-              session.sendProgress(jsonRpcReq.id!, progress, total, msg);
-            }
-          };
-
-          // ── Fully async dispatch with timeout (requestTimeoutMs enforcement) ──
-          // Without this, a slow tool blocks the connection indefinitely.
-          // Stripe/Anthropic: every RPC dispatch must have a deadline.
-          const timeoutMs = this.requestTimeoutMs;
-          let dispatchTimer: ReturnType<typeof setTimeout> | null = null;
-
-          const dispatchWithTimeout = new Promise<JsonRpcResponse | null>((resolve, reject) => {
-            dispatchTimer = setTimeout(() => {
-              reject(new Error(`EOS_DISPATCH_TIMEOUT: request exceeded ${timeoutMs}ms`));
-            }, timeoutMs);
-            dispatchTimer.unref();
-            this.dispatchJsonRpc(jsonRpcReq, progressCallback).then(resolve).catch(reject);
-          });
-
-          let response: JsonRpcResponse | null;
-          try {
-            response = await dispatchWithTimeout;
-          } finally {
-            if (dispatchTimer !== null) clearTimeout(dispatchTimer);
-          }
-
-          // Clean up dedup key on completion
-          if (jsonRpcReq.id !== undefined && jsonRpcReq.id !== null) {
-            this.inFlight.delete(`${sessionId ?? "global"}:${jsonRpcReq.id}`);
-          }
-
-          if (session && response) session.sendEvent("message", response);
-          if (!res.writableEnded) {
-            this.writeJson(res, 200, response ?? {});
-          }
-        } catch (err: unknown) {
-          const errorRes: JsonRpcResponse = {
+        const args = (jsonRpcReq.params as { arguments?: unknown }).arguments;
+        const argumentError = this.validateReadOnlyToolArguments(name, args);
+        if (argumentError) {
+          this.writeJson(res, 200, {
             jsonrpc: "2.0",
-            id: null,
-            error: {
-              code: -32603,
-              message: "Internal server error",
-              ...(process.env["NODE_ENV"] !== "production" && {
-                data: String((err as Error)?.message ?? err),
-              }),
-            },
-          };
-          if (!res.writableEnded) {
-            this.writeJson(res, 500, errorRes);
-          }
-        } finally {
-          // Always release adaptive concurrency token (measures actual dispatch RTT)
-          this._concurrencyLimiter.release(Date.now() - _dispatchStart);
+            id: jsonRpcReq.id ?? null,
+            error: { code: -32602, message: argumentError },
+          });
+          return;
         }
-      });
+      } else if (!["initialize", "ping", "tools/list", "notifications/initialized"].includes(jsonRpcReq.method)) {
+        this.writeJson(res, 200, {
+          jsonrpc: "2.0",
+          id: jsonRpcReq.id ?? null,
+          error: { code: -32601, message: "Method is not exposed by the MCP HTTP endpoint." },
+        });
+        return;
+      }
+
+      try {
+        const progressCallback = (progress: number, total?: number, message?: string) => {
+          if (jsonRpcReq.id !== undefined && jsonRpcReq.id !== null)
+            session.sendProgress(jsonRpcReq.id, progress, total, message);
+        };
+        let response = await this.dispatchJsonRpc(jsonRpcReq, progressCallback);
+        if (jsonRpcReq.method === "tools/list" && response?.result?.tools) {
+          response.result.tools = response.result.tools
+            .filter((tool: { name: string }) => MCP_HTTP_READ_ONLY_TOOLS.has(tool.name))
+            .map((tool: { name: string; description?: string; inputSchema?: Record<string, any> }) => {
+              if (tool.name === "eos_optimize_context") {
+                return {
+                  ...tool,
+                  description:
+                    "Compresses caller-submitted text only; repository file reads are disabled on this HTTP transport.",
+                  inputSchema: {
+                    type: "object",
+                    properties: {
+                      content: { type: "string", description: "Text to compress; maximum 256 KiB in UTF-8." },
+                    },
+                    required: ["content"],
+                    additionalProperties: false,
+                  },
+                };
+              }
+              if (tool.name === "eos_check_architecture") {
+                return {
+                  ...tool,
+                  description:
+                    "Runs bounded static checks against the repository src directory only; it does not execute tests.",
+                  inputSchema: {
+                    type: "object",
+                    properties: { targetDir: { type: "string", enum: ["src"] } },
+                    additionalProperties: false,
+                  },
+                };
+              }
+              if (tool.name === "eos_spotify_shuffle" && tool.inputSchema?.properties?.tracks) {
+                return {
+                  ...tool,
+                  inputSchema: {
+                    ...tool.inputSchema,
+                    properties: {
+                      ...tool.inputSchema.properties,
+                      tracks: { ...tool.inputSchema.properties.tracks, maxItems: 128 },
+                    },
+                  },
+                };
+              }
+              return tool;
+            });
+        }
+        const serialized = response ? JSON.stringify(response) : "";
+        if (Buffer.byteLength(serialized, "utf8") > this.maxRequestBytes) {
+          this.writeJson(res, 502, { error: "MCP response exceeds the configured size limit." });
+          return;
+        }
+        if (response) session.sendEvent("message", response);
+        res.writeHead(200, {
+          "Content-Type": "application/json; charset=utf-8",
+          "Cache-Control": "no-store",
+          "X-Content-Type-Options": "nosniff",
+        });
+        res.end(serialized);
+      } catch {
+        this.writeJson(res, 500, {
+          jsonrpc: "2.0",
+          id: jsonRpcReq.id ?? null,
+          error: { code: -32603, message: "Internal server error." },
+        });
+      }
       return;
     }
 
-    // ── /prompts — Antigravity prompt discovery ───────────────────────────────
-    if (req.method === "GET" && pathname === "/prompts") {
-      this.writeJson(res, 200, { prompts: EOS_PROMPTS });
-      return;
-    }
-
-    // ── /resources — Antigravity resource discovery ───────────────────────────
-    if (req.method === "GET" && pathname === "/resources") {
-      this.writeJson(res, 200, { resources: EOS_RESOURCES });
-      return;
-    }
-
-    // ── 404 ──────────────────────────────────────────────────────────────────
-    this.writeJson(res, 404, { error: `Not found: ${pathname}` });
+    this.writeJson(res, 404, { error: "Not found." });
+    req.resume();
   }
 
-  /** Dispatches JSON-RPC request to EosMcpServer. Wrapped in Promise for future async tool support. */
-  public dispatchJsonRpc(
+  private writeJson(
+    res: http.ServerResponse,
+    statusCode: number,
+    payload: unknown,
+    headers: Record<string, string> = {},
+  ): void {
+    if (res.writableEnded) return;
+    res.writeHead(statusCode, {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Content-Type-Options": "nosniff",
+      ...headers,
+    });
+    res.end(JSON.stringify(payload));
+  }
+
+  private readRequestBody(req: http.IncomingMessage): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const chunks: Buffer[] = [];
+      let totalBytes = 0;
+      let settled = false;
+      const finish = (error?: Error, body?: Buffer) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        req.off("data", onData);
+        req.off("end", onEnd);
+        req.off("error", onError);
+        req.off("aborted", onAborted);
+        if (error) {
+          req.resume();
+          reject(error);
+        } else {
+          resolve(body || Buffer.alloc(0));
+        }
+      };
+      const onData = (chunk: Buffer | string) => {
+        const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+        totalBytes += buffer.byteLength;
+        if (totalBytes > this.maxRequestBytes) {
+          req.socket.destroy();
+          finish(new HttpInputError(413, "Request body exceeds the configured size limit."));
+          return;
+        }
+        chunks.push(buffer);
+      };
+      const onEnd = () => finish(undefined, Buffer.concat(chunks, totalBytes));
+      const onError = () => finish(new HttpInputError(400, "Request body could not be read."));
+      const onAborted = () => finish(new HttpInputError(400, "Request body was interrupted."));
+      const timer = setTimeout(() => finish(new HttpInputError(408, "Request body timed out.")), this.requestTimeoutMs);
+      req.on("data", onData);
+      req.once("end", onEnd);
+      req.once("error", onError);
+      req.once("aborted", onAborted);
+    });
+  }
+
+  private validateReadOnlyToolArguments(toolName: string, value: unknown): string | null {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return "Tool arguments must be a JSON object.";
+    const args = value as Record<string, unknown>;
+    const boundedText = (field: string, maxBytes: number, allowEmpty = false) =>
+      typeof args[field] === "string" &&
+      Buffer.byteLength(args[field] as string, "utf8") <= maxBytes &&
+      (allowEmpty || (args[field] as string).length > 0);
+    if (toolName === "eos_optimize_context") {
+      if (Object.hasOwn(args, "filePath")) return "Repository file access is disabled by the read-only HTTP policy.";
+      if (!boundedText("content", 256 * 1024)) return "content must be non-empty text no larger than 256 KiB.";
+    }
+    if (toolName === "eos_check_architecture" && args.targetDir !== undefined && args.targetDir !== "src") {
+      return "The HTTP endpoint only scans the repository src directory.";
+    }
+    if (toolName === "eos_amplify_prompt" && !boundedText("rawPrompt", 8192))
+      return "rawPrompt must be non-empty text no larger than 8 KiB.";
+    if (toolName === "eos_evaluate_decision") {
+      for (const field of ["title", "description", "proposedAction"]) {
+        if (!boundedText(field, 16 * 1024)) return `${field} must be non-empty text no larger than 16 KiB.`;
+      }
+    }
+    if (
+      toolName === "eos_spotify_shuffle" &&
+      args.tracks !== undefined &&
+      (!Array.isArray(args.tracks) || args.tracks.length > 128)
+    ) {
+      return "tracks must be an array containing no more than 128 items.";
+    }
+    return null;
+  }
+
+  /**
+   * Dispatches JSON-RPC request to EosMcpServer with optional progress callback
+   */
+  public async dispatchJsonRpc(
     req: JsonRpcRequest,
-    onProgress?: (progress: number, total?: number, message?: string) => void
+    onProgress?: (progress: number, total?: number, message?: string) => void,
   ): Promise<JsonRpcResponse | null> {
-    return Promise.resolve(this.mcpServer.handleRequest(req, onProgress));
+    return this.mcpServer.handleRequest(req, onProgress);
   }
 
-  /** Starts the HTTP server and registers SIGTERM/SIGINT graceful shutdown (Kubernetes standard). */
+  /**
+   * Starts local HTTP listening daemon
+   */
   public listen(port = 3333, host = "127.0.0.1"): Promise<http.Server> {
     return new Promise((resolve, reject) => {
       this.server = http.createServer((req, res) => {
-        this.handleHttpRequest(req, res).catch((err: unknown) => {
+        this.handleHttpRequest(req, res).catch((err) => {
           if (!res.writableEnded) {
-            this.writeJson(res, 500, { error: (err as Error).message });
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: "Internal server error." }));
           }
         });
       });
-      this.server.on("error", reject);
-      this.server.listen(port, host, () => {
-        // ── Graceful shutdown on SIGTERM / SIGINT (Kubernetes terminationGracePeriodSeconds) ──
-        // Without this, in-flight SSE sessions are abruptly cut when the process receives SIGTERM.
-        // Netflix/Google: all servers must drain connections before exiting.
-        const shutdown = (signal: string): void => {
-          process.stderr.write(`[EOS MCP] Received ${signal} — graceful shutdown started\n`);
-          this.close().then(() => {
-            process.stderr.write("[EOS MCP] Graceful shutdown complete\n");
-            process.exit(0);
-          }).catch((err: unknown) => {
-            process.stderr.write(`[EOS MCP] Shutdown error: ${String(err)}\n`);
-            process.exit(1);
-          });
-        };
-        process.once("SIGTERM", () => shutdown("SIGTERM"));
-        process.once("SIGINT", () => shutdown("SIGINT"));
+      this.server.requestTimeout = this.requestTimeoutMs;
+      this.server.headersTimeout = Math.max(this.requestTimeoutMs + 1000, 11_000);
 
+      this.server.on("error", (err) => {
+        reject(err);
+      });
+
+      this.server.listen(port, host, () => {
         resolve(this.server!);
       });
     });
   }
 
-  /** Gracefully closes the server and all active sessions. */
+  private _authenticate(req: http.IncomingMessage): boolean {
+    if (!this.authToken) return true;
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return false;
+    return authHeader === `Bearer ${this.authToken}`;
+  }
+
+  /**
+   * Closes active server and all SSE sessions
+   */
   public close(): Promise<void> {
     this.sessionManager.closeAll();
     return new Promise((resolve) => {

@@ -1,19 +1,22 @@
 {
-  "eos.diagnostics.enable": true,
-  "eos.diagnostics.blastRadiusThreshold": 5,
-  "eos.projectRoot": "${workspaceFolder}",
-
-  "[typescript]": {
-    "editor.formatOnSave": true
-  },
-  "[javascript]": {
-    "editor.formatOnSave": true
-  },
-
-  "files.watcherExclude": {
-    "**/.eos-graph-cache.json": true,
-    "**/docs/memory/**": true,
-    "**/docs/consulting/**": true,
-    "**/src/dynamic_tools/*.tool.mjs": true
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[markdown]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[yaml]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "eslint.validate": ["typescript", "javascript"],
+  "eslint.useFlatConfig": true,
+  "typescript.preferences.importModuleSpecifierEnding": "js",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.eol": "\n",
+  "search.exclude": { "node_modules": true, "dist": true, ".eos": true, ".coverage": true, "package-lock.json": true },
+  "go.toolsManagement.autoUpdate": true,
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow": ".github/workflows/*.yml",
+    "https://json.schemastore.org/github-funding": ".github/FUNDING.yml",
+    "https://json.schemastore.org/dependabot-2.0": ".github/dependabot.yml",
+    "https://json.schemastore.org/catalog-info": "catalog-info.yaml"
   }
 }

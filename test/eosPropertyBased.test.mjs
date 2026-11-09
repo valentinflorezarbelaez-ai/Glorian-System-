@@ -21,15 +21,12 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const root      = path.resolve(__dirname, "..");
+const _root = path.resolve(__dirname, "..");
 
 // ── Imports ──────────────────────────────────────────────────────────────────
-const { tokenize, computeTermFrequency, cosineSimilarity } =
-  await import("../src/core/eosNeuralVectorCore.ts");
-const { evaluateDirectiveWithTMR } =
-  await import("../src/core/eosJarvisMonad.ts");
-const { EosAxiomMemory } =
-  await import("../src/core/eosAgiCore.ts");
+const { tokenize, computeTermFrequency, cosineSimilarity } = await import("../src/core/eosNeuralVectorCore.ts");
+const { evaluateDirectiveWithTMR } = await import("../src/core/eosJarvisMonad.ts");
+const { EosAxiomMemory } = await import("../src/core/eosAgiCore.ts");
 
 // ── PBT Helpers ──────────────────────────────────────────────────────────────
 
@@ -50,17 +47,16 @@ const RUNS = 60; // number of random inputs per property
 
 // ── Suite 1: Cosine Similarity ────────────────────────────────────────────────
 describe("PBT — Cosine Similarity Mathematical Invariants", () => {
-
   it("Self-similarity equals exactly 1.0 for any non-empty text (60 random inputs)", () => {
     for (let i = 1; i <= RUNS; i++) {
-      const text   = pseudoRandomString(i * 7919, 20 + i);
+      const text = pseudoRandomString(i * 7919, 20 + i);
       const tokens = tokenize(text);
       if (tokens.length === 0) continue;
       const vec = computeTermFrequency(tokens);
       const sim = cosineSimilarity(vec, vec);
       assert.ok(
         Math.abs(sim - 1.0) < 1e-9,
-        `Self-similarity must be 1.0 — got ${sim} for seed ${i} text="${text.slice(0,30)}"`
+        `Self-similarity must be 1.0 — got ${sim} for seed ${i} text="${text.slice(0, 30)}"`,
       );
     }
   });
@@ -73,10 +69,7 @@ describe("PBT — Cosine Similarity Mathematical Invariants", () => {
       const vb = computeTermFrequency(tb);
       const ab = cosineSimilarity(va, vb);
       const ba = cosineSimilarity(vb, va);
-      assert.ok(
-        Math.abs(ab - ba) < 1e-12,
-        `Symmetry violated at seed ${i}: sim(A,B)=${ab} !== sim(B,A)=${ba}`
-      );
+      assert.ok(Math.abs(ab - ba) < 1e-12, `Symmetry violated at seed ${i}: sim(A,B)=${ab} !== sim(B,A)=${ba}`);
     }
   });
 
@@ -85,10 +78,7 @@ describe("PBT — Cosine Similarity Mathematical Invariants", () => {
       const va = computeTermFrequency(tokenize(pseudoRandomString(i * 6271, 25)));
       const vb = computeTermFrequency(tokenize(pseudoRandomString(i * 8191, 25)));
       const sim = cosineSimilarity(va, vb);
-      assert.ok(
-        sim >= -1e-9 && sim <= 1.0 + 1e-9,
-        `Similarity ${sim} out of [0,1] range at seed ${i}`
-      );
+      assert.ok(sim >= -1e-9 && sim <= 1.0 + 1e-9, `Similarity ${sim} out of [0,1] range at seed ${i}`);
     }
   });
 
@@ -105,9 +95,9 @@ describe("PBT — Cosine Similarity Mathematical Invariants", () => {
   it("Identical texts always yield similarity 1.0", () => {
     for (let i = 1; i <= RUNS; i++) {
       const text = pseudoRandomString(i * 2017, 30);
-      const vec  = computeTermFrequency(tokenize(text));
+      const vec = computeTermFrequency(tokenize(text));
       if (vec.size === 0) continue;
-      const sim  = cosineSimilarity(vec, vec);
+      const sim = cosineSimilarity(vec, vec);
       assert.ok(Math.abs(sim - 1.0) < 1e-9, `Expected 1.0, got ${sim}`);
     }
   });
@@ -115,7 +105,6 @@ describe("PBT — Cosine Similarity Mathematical Invariants", () => {
 
 // ── Suite 2: TF L2 Normalization ──────────────────────────────────────────────
 describe("PBT — TF L2 Normalization Invariant", () => {
-
   it("L2 norm of any non-empty TF vector is always exactly 1.0", () => {
     for (let i = 1; i <= RUNS; i++) {
       const tokens = tokenize(pseudoRandomString(i * 4999, 30 + i));
@@ -124,22 +113,18 @@ describe("PBT — TF L2 Normalization Invariant", () => {
       let sumSq = 0;
       for (const w of vec.values()) sumSq += w * w;
       const norm = Math.sqrt(sumSq);
-      assert.ok(
-        Math.abs(norm - 1.0) < 1e-9,
-        `L2 norm must be 1.0 — got ${norm} at seed ${i}`
-      );
+      assert.ok(Math.abs(norm - 1.0) < 1e-9, `L2 norm must be 1.0 — got ${norm} at seed ${i}`);
     }
   });
 });
 
 // ── Suite 3: Tokenizer Properties ─────────────────────────────────────────────
 describe("PBT — Tokenizer Invariants", () => {
-
   it("Tokenization is deterministic (same input → same output every call)", () => {
     for (let i = 1; i <= RUNS; i++) {
       const text = pseudoRandomString(i * 3001, 40);
-      const t1   = tokenize(text);
-      const t2   = tokenize(text);
+      const t1 = tokenize(text);
+      const t2 = tokenize(text);
       assert.deepEqual(t1, t2, `Non-deterministic tokenization at seed ${i}`);
     }
   });
@@ -154,16 +139,15 @@ describe("PBT — Tokenizer Invariants", () => {
   });
 
   it("Empty / whitespace-only inputs return empty array", () => {
-    assert.deepEqual(tokenize(""),          []);
-    assert.deepEqual(tokenize("   "),       []);
-    assert.deepEqual(tokenize("\t\n\r"),    []);
-    assert.deepEqual(tokenize("a"),         []); // single char filtered
+    assert.deepEqual(tokenize(""), []);
+    assert.deepEqual(tokenize("   "), []);
+    assert.deepEqual(tokenize("\t\n\r"), []);
+    assert.deepEqual(tokenize("a"), []); // single char filtered
   });
 });
 
 // ── Suite 4: TMR Security Invariants ─────────────────────────────────────────
 describe("PBT — TMR Security & Determinism", () => {
-
   const DESTRUCTIVE_PATTERNS = [
     "rm -rf /",
     "drop table users",
@@ -180,13 +164,9 @@ describe("PBT — TMR Security & Determinism", () => {
   it("Gamma sandbox ALWAYS rejects every known destructive pattern", () => {
     for (const pattern of DESTRUCTIVE_PATTERNS) {
       const result = evaluateDirectiveWithTMR(`execute: ${pattern}`);
-      const gamma  = result.sandboxes.find((s) => s.sandboxId === "GAMMA");
+      const gamma = result.sandboxes.find((s) => s.sandboxId === "GAMMA");
       assert.ok(gamma, "Gamma sandbox must always be present");
-      assert.equal(
-        gamma.safeToExecute,
-        false,
-        `Gamma must reject: "${pattern}" — but safeToExecute was true`
-      );
+      assert.equal(gamma.safeToExecute, false, `Gamma must reject: "${pattern}" — but safeToExecute was true`);
     }
   });
 
@@ -198,7 +178,7 @@ describe("PBT — TMR Security & Determinism", () => {
       assert.equal(
         r1.consensusHash,
         r2.consensusHash,
-        `Non-deterministic TMR hash at seed ${i}: directive="${directive.slice(0, 30)}"`
+        `Non-deterministic TMR hash at seed ${i}: directive="${directive.slice(0, 30)}"`,
       );
     }
   });
@@ -224,7 +204,6 @@ describe("PBT — TMR Security & Determinism", () => {
 
 // ── Suite 5: EosAxiomMemory LRU Cap ──────────────────────────────────────────
 describe("PBT — EosAxiomMemory LRU Cap Invariant", () => {
-
   let tmpPath;
 
   before(() => {
@@ -236,26 +215,23 @@ describe("PBT — EosAxiomMemory LRU Cap Invariant", () => {
   });
 
   it("Axiom count never exceeds configured max (cap=10, add 30 unique errors)", () => {
-    const MAX    = 10;
+    const MAX = 10;
     const memory = new EosAxiomMemory(tmpPath, MAX);
 
     for (let i = 0; i < MAX + 20; i++) {
       // Each error is unique so they all create new axioms
       memory.crystallize(
         `strategy-${i}`,
-        `unique compiler error pattern ${i} with suffix: ${crypto.randomBytes(4).toString("hex")}`
+        `unique compiler error pattern ${i} with suffix: ${crypto.randomBytes(4).toString("hex")}`,
       );
       // Invariant: never exceeds cap
-      assert.ok(
-        memory.size <= MAX,
-        `Axiom count ${memory.size} exceeded max ${MAX} after adding ${i + 1} entries`
-      );
+      assert.ok(memory.size <= MAX, `Axiom count ${memory.size} exceeded max ${MAX} after adding ${i + 1} entries`);
     }
   });
 
   it("After cap is reached, most-recurred axioms are preserved over least-recurred", () => {
-    const MAX    = 5;
-    const path2  = path.join(os.tmpdir(), `eos-pbt-lru-${Date.now()}.json`);
+    const MAX = 5;
+    const path2 = path.join(os.tmpdir(), `eos-pbt-lru-${Date.now()}.json`);
     const memory = new EosAxiomMemory(path2, MAX);
 
     // Create a "high-recurrence" axiom by crystallizing the same error many times

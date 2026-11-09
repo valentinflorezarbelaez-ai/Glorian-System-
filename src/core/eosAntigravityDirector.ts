@@ -12,12 +12,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
 export type AntigravityMissionProfile =
   | "SDD_FULL_21_STEP"
@@ -27,9 +22,7 @@ export type AntigravityMissionProfile =
   | "PERFORMANCE_TUNING"
   | "BUGFIX_FDIR";
 
-export type WriteBarrierStatus =
-  | "AUTHORIZED"
-  | "BLOCKED_BY_LAW_IV";
+export type WriteBarrierStatus = "AUTHORIZED" | "BLOCKED_BY_LAW_IV";
 
 export interface PrescribedMcpStep {
   readonly order: number;
@@ -90,7 +83,10 @@ const GAMMA_DESTRUCTIVE_PATTERNS: ReadonlyArray<{ readonly id: string; readonly 
   { id: "GAMMA-002-FORCE-PUSH-MAIN", regex: /\bgit\s+push\s+(?:--force|-f)\s+\S+\s+(?:main|master)\b/i },
   { id: "GAMMA-003-SQL-DROP", regex: /\bDROP\s+(?:DATABASE|SCHEMA|TABLE)\b/i },
   { id: "GAMMA-004-DISK-FORMAT", regex: /\b(?:Format-Volume|mkfs\.[a-z0-9]+|diskpart)\b/i },
-  { id: "GAMMA-005-WIN-SYSTEM-DEL", regex: /\b(?:del|erase|rd|rmdir)\s+\/[a-z\s/]*[sq][a-z\s/]*\s+[a-z]:\\(?:\s|$|\*)/i }
+  {
+    id: "GAMMA-005-WIN-SYSTEM-DEL",
+    regex: /\b(?:del|erase|rd|rmdir)\s+\/[a-z\s/]*[sq][a-z\s/]*\s+[a-z]:\\(?:\s|$|\*)/i,
+  },
 ];
 
 export class EosAntigravityDirector {
@@ -123,29 +119,52 @@ export class EosAntigravityDirector {
     "- `eos_sqlite_ledger`: Record, search (FTS5), and verify SHA-256 hash-chained receipts in the zero-dependency `node:sqlite` WAL ledger (pair with Engram `mem_save`).",
     "- `eos_turbo_verify`: Execute sub-200ms in-memory 4-stage credential, architecture, and inventory verification.",
     "- `eos_fleet_soundcheck` & `eos_audit_fleet`: Verify Spotify Soundcheck scores and deployment quorum (>= 70) across all registered repositories.",
-    "- `eos_mcts_tune` & `eos_canary_rollout`: Run UCT parameter hyper-tuning and fail-closed progressive canary delivery (1% -> 5% -> 25% -> 100%)."
+    "- `eos_mcts_tune` & `eos_canary_rollout`: Run UCT parameter hyper-tuning and fail-closed progressive canary delivery (1% -> 5% -> 25% -> 100%).",
   ].join("\n");
 
   /**
    * Classifies a user directive into a deterministic EOS execution profile.
    */
   public static classifyProfile(directive: string): AntigravityMissionProfile {
-    assertPrecondition(typeof directive === "string" && directive.trim().length > 0, "Directive must be a non-empty string");
+    assertPrecondition(
+      typeof directive === "string" && directive.trim().length > 0,
+      "Directive must be a non-empty string",
+    );
     const lower = directive.toLowerCase();
 
-    if (/(?:\bsecurity\b|\bseguridad\b|\bsecret|\bauth\b|\bowasp\b|\bvulnerab|\bsandbox\b|\bbarrier\b|\bcve\b|\bencrypt)/.test(lower)) {
+    if (
+      /(?:\bsecurity\b|\bseguridad\b|\bsecret|\bauth\b|\bowasp\b|\bvulnerab|\bsandbox\b|\bbarrier\b|\bcve\b|\bencrypt)/.test(
+        lower,
+      )
+    ) {
       return "SECURITY_HARDENING";
     }
-    if (/(?:\bfix\b|\bbug\b|\berror\b|\bfail|\bbroken\b|\bheal\b|\bcrash\b|\bregress|\bcorregir\b|\breparar\b)/.test(lower)) {
+    if (
+      /(?:\bfix\b|\bbug\b|\berror\b|\bfail|\bbroken\b|\bheal\b|\bcrash\b|\bregress|\bcorregir\b|\breparar\b)/.test(
+        lower,
+      )
+    ) {
       return "BUGFIX_FDIR";
     }
-    if (/(?:\bfleet\b|\bflota\b|\bcanary\b|\bcanario\b|\brollout\b|\bsoundcheck\b|\bmulti-repo\b|\bworktree\b|\bdeploy\b|\bdespleg)/.test(lower)) {
+    if (
+      /(?:\bfleet\b|\bflota\b|\bcanary\b|\bcanario\b|\brollout\b|\bsoundcheck\b|\bmulti-repo\b|\bworktree\b|\bdeploy\b|\bdespleg)/.test(
+        lower,
+      )
+    ) {
       return "FLEET_ORCHESTRATION";
     }
-    if (/(?:\bperformance\b|\brendimiento\b|\blatenc|\bbenchmark\b|\bmcts\b|\bcwv\b|\blcp\b|\bthroughput\b|\bzero-copy\b|\boptimiz)/.test(lower)) {
+    if (
+      /(?:\bperformance\b|\brendimiento\b|\blatenc|\bbenchmark\b|\bmcts\b|\bcwv\b|\blcp\b|\bthroughput\b|\bzero-copy\b|\boptimiz)/.test(
+        lower,
+      )
+    ) {
       return "PERFORMANCE_TUNING";
     }
-    if (/(?:\barchitect|\barquitect|\bhexagonal\b|\bblast\b|\btopolog|\brefactor|\bdead\s*code\b|\baudit\b|\bauditar\b)/.test(lower)) {
+    if (
+      /(?:\barchitect|\barquitect|\bhexagonal\b|\bblast\b|\btopolog|\brefactor|\bdead\s*code\b|\baudit\b|\bauditar\b)/.test(
+        lower,
+      )
+    ) {
       return "ARCHITECTURE_AUDIT";
     }
     return "SDD_FULL_21_STEP";
@@ -158,7 +177,7 @@ export class EosAntigravityDirector {
   public static directMission(
     directive: string,
     targetProjectOrPath: string = "eos-system",
-    projectRoot: string = process.cwd()
+    projectRoot: string = process.cwd(),
   ): MissionDirectionPlan {
     assertPrecondition(typeof directive === "string" && directive.trim().length > 0, "Directive must be non-empty");
     assertPrecondition(Buffer.byteLength(directive, "utf8") <= 32768, "Directive exceeds 32 KiB bound");
@@ -174,7 +193,7 @@ export class EosAntigravityDirector {
     const verificationGates = [
       "mcp:eos-system/eos_turbo_verify",
       "cli:npm run verify:strict",
-      "mcp:eos-system/eos_fleet_soundcheck"
+      "mcp:eos-system/eos_fleet_soundcheck",
     ];
 
     const canonicalPayload = JSON.stringify({
@@ -183,7 +202,7 @@ export class EosAntigravityDirector {
       target: cleanTarget,
       matchedProjectId: barrier.matchedProjectId,
       writeBarrierStatus: barrier.status,
-      dagTools: prescribedMcpDag.map((s) => s.toolName)
+      dagTools: prescribedMcpDag.map((s) => s.toolName),
     });
     const sha256Receipt = pureSha256(canonicalPayload);
     assertPostcondition(sha256Receipt.length === 64, "Mission receipt must be a 64-char SHA-256 hex digest");
@@ -198,7 +217,7 @@ export class EosAntigravityDirector {
       requiredSkills,
       prescribedMcpDag,
       verificationGates,
-      sha256Receipt
+      sha256Receipt,
     });
   }
 
@@ -214,7 +233,7 @@ export class EosAntigravityDirector {
         return deepFreeze({
           decision: "deny",
           matchedRule: rule.id,
-          reason: `Blocked by EOS Gamma Security Barrier (Law VI) [${rule.id}]: Destructive command pattern prohibited.`
+          reason: `Blocked by EOS Gamma Security Barrier (Law VI) [${rule.id}]: Destructive command pattern prohibited.`,
         });
       }
     }
@@ -226,7 +245,7 @@ export class EosAntigravityDirector {
    */
   public static synthesizeAntigravityMcpEntry(
     projectRoot: string = process.cwd(),
-    fleetOverrides: Readonly<Record<string, string>> = {}
+    fleetOverrides: Readonly<Record<string, string>> = {},
   ): SynthesizedMcpServerConfig {
     const resolvedRoot = path.resolve(projectRoot);
     const parentDir = path.dirname(resolvedRoot);
@@ -237,11 +256,11 @@ export class EosAntigravityDirector {
       EOS_FLEET_ABERAMENTHO_PATH: path.join(parentDir, "Aberamentho-s-Pleroma-music"),
       EOS_FLEET_PORTAFOLIO_PATH: path.join(parentDir, "portafolio"),
       EOS_FLEET_PTG_PATH: path.join(parentDir, "Performance-Talent-Group-1"),
-      EOS_FLEET_CRUD_SLACK_PATH: path.join(parentDir, "Crud-slack")
+      EOS_FLEET_CRUD_SLACK_PATH: path.join(parentDir, "Crud-slack"),
     };
 
     const env: Record<string, string> = {
-      EOS_PROJECT_ROOT: resolvedRoot
+      EOS_PROJECT_ROOT: resolvedRoot,
     };
 
     for (const [envKey, candidatePath] of Object.entries(defaultFleetCandidates)) {
@@ -256,7 +275,7 @@ export class EosAntigravityDirector {
     return deepFreeze({
       command: "node",
       args: [serverScript],
-      env
+      env,
     });
   }
 
@@ -265,7 +284,7 @@ export class EosAntigravityDirector {
    */
   public static auditAntigravityIntegration(
     projectRoot: string = process.cwd(),
-    geminiConfigDir: string = path.join(os.homedir(), ".gemini", "config")
+    geminiConfigDir: string = path.join(os.homedir(), ".gemini", "config"),
   ): AntigravityDoctorReport {
     const resolvedRoot = path.resolve(projectRoot);
     const resolvedGeminiDir = path.resolve(geminiConfigDir);
@@ -278,7 +297,7 @@ export class EosAntigravityDirector {
       "plugin.json",
       "hooks.json",
       path.join("scripts", "eos-hook.mjs"),
-      path.join("rules", "AGENTS.md")
+      path.join("rules", "AGENTS.md"),
     ];
     const missingPluginFiles = requiredPluginFiles.filter((rel) => !fs.existsSync(path.join(pluginSourceDir, rel)));
     const duplicatePluginMcp = fs.existsSync(path.join(pluginSourceDir, "mcp_config.json"));
@@ -293,7 +312,7 @@ export class EosAntigravityDirector {
         ? "plugin.json, hooks.json, scripts/eos-hook.mjs, and rules/AGENTS.md verified with SingleServerInvariant."
         : duplicatePluginMcp
           ? "Duplicate mcp_config.json detected inside plugin bundle (violates SingleServerInvariant)."
-          : `Missing plugin files: ${missingPluginFiles.join(", ")}`
+          : `Missing plugin files: ${missingPluginFiles.join(", ")}`,
     });
 
     // 2. Repository Skills Bundle (20 pts)
@@ -309,7 +328,7 @@ export class EosAntigravityDirector {
       maxScore: 20,
       detail: skillsBundleOk
         ? "All 3 orchestration skills (eos-director, eos-sdd-pipeline, eos-fleet-ops) present."
-        : `Missing SKILL.md files for: ${missingSkills.join(", ")}`
+        : `Missing SKILL.md files for: ${missingSkills.join(", ")}`,
     });
 
     // 3. Global mcp_config.json Registration & Fleet Env Bindings (20 pts)
@@ -332,7 +351,8 @@ export class EosAntigravityDirector {
           const hasProjectRootEnv = Boolean(eosEntry.env && eosEntry.env.EOS_PROJECT_ROOT);
           if (scriptExists && hasProjectRootEnv && singleServerOk) {
             mcpScore = 20;
-            mcpDetail = "eos-system stdio server registered with verified entrypoint and EOS_PROJECT_ROOT + fleet env bindings.";
+            mcpDetail =
+              "eos-system stdio server registered with verified entrypoint and EOS_PROJECT_ROOT + fleet env bindings.";
           } else if (scriptExists) {
             mcpScore = 10;
             mcpDetail = "eos-system registered, but EOS_PROJECT_ROOT / EOS_FLEET_*_PATH env bindings are incomplete.";
@@ -353,7 +373,7 @@ export class EosAntigravityDirector {
       passed: mcpScore === 20,
       score: mcpScore,
       maxScore: 20,
-      detail: mcpDetail
+      detail: mcpDetail,
     });
 
     // 4. Global Plugin Link / Directory Health (20 pts)
@@ -371,7 +391,7 @@ export class EosAntigravityDirector {
       maxScore: 20,
       detail: globalPluginOk
         ? "plugins/eos-governance resolves cleanly to active plugin manifest."
-        : "plugins/eos-governance is missing or is a dangling NTFS junction."
+        : "plugins/eos-governance is missing or is a dangling NTFS junction.",
     });
 
     // 5. Global Skills Link / Directory Health (20 pts)
@@ -389,17 +409,14 @@ export class EosAntigravityDirector {
       maxScore: 20,
       detail: globalSkillsOk
         ? "Global skills directory resolves cleanly with eos-director skill active."
-        : "Global skills directory is missing, lacks eos-director, or is a dangling NTFS junction."
+        : "Global skills directory is missing, lacks eos-director, or is a dangling NTFS junction.",
     });
 
     const readinessScore = checks.reduce((sum, c) => sum + c.score, 0);
     assertPostcondition(readinessScore >= 0 && readinessScore <= 100, "Readiness score must be within [0, 100]");
 
-    const status: AntigravityDoctorReport["status"] = readinessScore >= 95
-      ? "SOVEREIGN_DIRECTING"
-      : readinessScore >= 60
-        ? "DEGRADED"
-        : "DISCONNECTED";
+    const status: AntigravityDoctorReport["status"] =
+      readinessScore >= 95 ? "SOVEREIGN_DIRECTING" : readinessScore >= 60 ? "DEGRADED" : "DISCONNECTED";
 
     const sha256Receipt = pureSha256(
       JSON.stringify({
@@ -407,8 +424,8 @@ export class EosAntigravityDirector {
         readinessScore,
         status,
         singleServerOk,
-        checks: checks.map((c) => ({ id: c.id, passed: c.passed, score: c.score }))
-      })
+        checks: checks.map((c) => ({ id: c.id, passed: c.passed, score: c.score })),
+      }),
     );
 
     return deepFreeze({
@@ -419,20 +436,20 @@ export class EosAntigravityDirector {
       singleServerInvariantVerified: singleServerOk,
       checks,
       remediationCommands,
-      sha256Receipt
+      sha256Receipt,
     });
   }
 
   private static evaluateWriteBarrier(
     target: string,
-    projectRoot: string
+    projectRoot: string,
   ): { status: WriteBarrierStatus; matchedProjectId: string | null; missingPreconditions: string[] } {
     const regPath = path.join(projectRoot, "docs", "projects", "registry.json");
     if (!fs.existsSync(regPath)) {
       return {
         status: "BLOCKED_BY_LAW_IV",
         matchedProjectId: null,
-        missingPreconditions: ["REGISTRY_NOT_FOUND"]
+        missingPreconditions: ["REGISTRY_NOT_FOUND"],
       };
     }
 
@@ -448,9 +465,13 @@ export class EosAntigravityDirector {
           return true;
         }
         const envKey = typeof p.localPathEnv === "string" ? p.localPathEnv : "";
-        const envVal = envKey && process.env[envKey] ? path.resolve(process.env[envKey]!).toLowerCase().replace(/\\/g, "/") : "";
+        const envVal =
+          envKey && process.env[envKey] ? path.resolve(process.env[envKey]!).toLowerCase().replace(/\\/g, "/") : "";
         if (envVal && envVal === normalizedTarget) return true;
-        if (typeof p.localPath === "string" && path.resolve(p.localPath).toLowerCase().replace(/\\/g, "/") === normalizedTarget) {
+        if (
+          typeof p.localPath === "string" &&
+          path.resolve(p.localPath).toLowerCase().replace(/\\/g, "/") === normalizedTarget
+        ) {
           return true;
         }
         return false;
@@ -465,8 +486,8 @@ export class EosAntigravityDirector {
             "INTAKE_COMPLETE",
             "SPECIFICATION_APPROVED",
             "AUDIT_COMPLETE",
-            "LEVEL_2+ IMPLEMENTATION_AUTHORIZED"
-          ]
+            "LEVEL_2+ IMPLEMENTATION_AUTHORIZED",
+          ],
         };
       }
 
@@ -483,13 +504,13 @@ export class EosAntigravityDirector {
       return {
         status: missing.length === 0 ? "AUTHORIZED" : "BLOCKED_BY_LAW_IV",
         matchedProjectId: String(matched.id),
-        missingPreconditions: missing
+        missingPreconditions: missing,
       };
     } catch {
       return {
         status: "BLOCKED_BY_LAW_IV",
         matchedProjectId: null,
-        missingPreconditions: ["REGISTRY_PARSE_ERROR"]
+        missingPreconditions: ["REGISTRY_PARSE_ERROR"],
       };
     }
   }
@@ -508,7 +529,7 @@ export class EosAntigravityDirector {
   private static buildMcpDag(
     profile: AntigravityMissionProfile,
     directive: string,
-    targetId: string
+    targetId: string,
   ): PrescribedMcpStep[] {
     switch (profile) {
       case "SECURITY_HARDENING":
@@ -519,7 +540,7 @@ export class EosAntigravityDirector {
             phase: "RECONNAISSANCE",
             purpose: "Retrieve security invariants, Law VI secret rules, and boundary contracts.",
             mandatory: true,
-            suggestedArguments: { query: directive.slice(0, 120), topK: 3 }
+            suggestedArguments: { query: directive.slice(0, 120), topK: 3 },
           },
           {
             order: 2,
@@ -527,7 +548,7 @@ export class EosAntigravityDirector {
             phase: "SECURITY_AUDIT",
             purpose: "Audit zero-trust compartment boundaries and credential isolation.",
             mandatory: true,
-            suggestedArguments: {}
+            suggestedArguments: {},
           },
           {
             order: 3,
@@ -535,7 +556,7 @@ export class EosAntigravityDirector {
             phase: "PATCH_VALIDATION",
             purpose: "Verify candidate changes contain zero secrets or destructive patterns.",
             mandatory: true,
-            suggestedArguments: { filePath: "src/target.ts", content: "<candidate>" }
+            suggestedArguments: { filePath: "src/target.ts", content: "<candidate>" },
           },
           {
             order: 4,
@@ -543,8 +564,8 @@ export class EosAntigravityDirector {
             phase: "VERIFICATION",
             purpose: "Execute fast in-memory credential and architecture verification gate.",
             mandatory: true,
-            suggestedArguments: {}
-          }
+            suggestedArguments: {},
+          },
         ];
 
       case "FLEET_ORCHESTRATION":
@@ -555,7 +576,7 @@ export class EosAntigravityDirector {
             phase: "FLEET_AUDIT",
             purpose: "Evaluate Spotify Soundcheck scores (0..100) and deployment quorum across registered repos.",
             mandatory: true,
-            suggestedArguments: {}
+            suggestedArguments: {},
           },
           {
             order: 2,
@@ -563,7 +584,7 @@ export class EosAntigravityDirector {
             phase: "HYPER_TUNING",
             purpose: "Converge runtime parameters via Monte Carlo Tree Search (UCT).",
             mandatory: false,
-            suggestedArguments: { iterations: 120, seed: 42 }
+            suggestedArguments: { iterations: 120, seed: 42 },
           },
           {
             order: 3,
@@ -571,8 +592,8 @@ export class EosAntigravityDirector {
             phase: "PROGRESSIVE_DELIVERY",
             purpose: "Execute progressive canary stages (1% -> 5% -> 25% -> 100%) with fail-closed rollback.",
             mandatory: true,
-            suggestedArguments: { versionTarget: "v49.0.0", previousVersion: "v48.0.0" }
-          }
+            suggestedArguments: { versionTarget: "v49.0.0", previousVersion: "v48.0.0" },
+          },
         ];
 
       case "PERFORMANCE_TUNING":
@@ -583,7 +604,7 @@ export class EosAntigravityDirector {
             phase: "BASELINE_BENCHMARK",
             purpose: "Capture nanosecond percentile baseline (p50, p99, ops/sec) before optimization.",
             mandatory: true,
-            suggestedArguments: {}
+            suggestedArguments: {},
           },
           {
             order: 2,
@@ -591,7 +612,7 @@ export class EosAntigravityDirector {
             phase: "PARAMETER_CONVERGENCE",
             purpose: "Explore optimal concurrency, ring buffer, and GC thresholds via UCT MCTS.",
             mandatory: true,
-            suggestedArguments: { iterations: 120, seed: 42 }
+            suggestedArguments: { iterations: 120, seed: 42 },
           },
           {
             order: 3,
@@ -599,8 +620,8 @@ export class EosAntigravityDirector {
             phase: "VERIFICATION",
             purpose: "Confirm zero architectural regressions after optimization.",
             mandatory: true,
-            suggestedArguments: {}
-          }
+            suggestedArguments: {},
+          },
         ];
 
       case "ARCHITECTURE_AUDIT":
@@ -611,7 +632,7 @@ export class EosAntigravityDirector {
             phase: "HEXAGONAL_GUARD",
             purpose: "Verify Layer-0 hexagonal purity (0 runtime dependencies) and 0 circular imports.",
             mandatory: true,
-            suggestedArguments: { targetDir: "src" }
+            suggestedArguments: { targetDir: "src" },
           },
           {
             order: 2,
@@ -619,7 +640,7 @@ export class EosAntigravityDirector {
             phase: "DEBT_ANALYSIS",
             purpose: "Scan for dead code, duplication, and complexity hotspots with SHA-256 receipt.",
             mandatory: true,
-            suggestedArguments: { targetDir: "src/core" }
+            suggestedArguments: { targetDir: "src/core" },
           },
           {
             order: 3,
@@ -627,8 +648,8 @@ export class EosAntigravityDirector {
             phase: "SPEC_ALIGNMENT",
             purpose: "Ensure codebase remains 100% aligned with approved OpenSpec artifacts.",
             mandatory: true,
-            suggestedArguments: {}
-          }
+            suggestedArguments: {},
+          },
         ];
 
       case "BUGFIX_FDIR":
@@ -639,7 +660,7 @@ export class EosAntigravityDirector {
             phase: "ROOT_CAUSE_SEARCH",
             purpose: "Locate governing specifications and invariants for the failing component.",
             mandatory: true,
-            suggestedArguments: { query: directive.slice(0, 120), topK: 3 }
+            suggestedArguments: { query: directive.slice(0, 120), topK: 3 },
           },
           {
             order: 2,
@@ -647,7 +668,7 @@ export class EosAntigravityDirector {
             phase: "IMPACT_ISOLATION",
             purpose: "Compute transitive dependents and predictive test suites affected by the fix.",
             mandatory: true,
-            suggestedArguments: { changedFiles: ["src/core/eosKernelPrimitives.ts"] }
+            suggestedArguments: { changedFiles: ["src/core/eosKernelPrimitives.ts"] },
           },
           {
             order: 3,
@@ -655,7 +676,7 @@ export class EosAntigravityDirector {
             phase: "PATCH_VALIDATION",
             purpose: "Validate candidate fix for syntax and security compliance before commit.",
             mandatory: true,
-            suggestedArguments: { filePath: "src/fix.ts", content: "<candidate>" }
+            suggestedArguments: { filePath: "src/fix.ts", content: "<candidate>" },
           },
           {
             order: 4,
@@ -663,8 +684,8 @@ export class EosAntigravityDirector {
             phase: "REGRESSION_GATE",
             purpose: "Confirm clean verification state across repository invariants.",
             mandatory: true,
-            suggestedArguments: {}
-          }
+            suggestedArguments: {},
+          },
         ];
 
       case "SDD_FULL_21_STEP":
@@ -676,7 +697,7 @@ export class EosAntigravityDirector {
             phase: "REQUIREMENTS_EARS_BDD",
             purpose: "Amplify raw directive into formal IEEE 830 EARS requirements and BDD acceptance criteria.",
             mandatory: true,
-            suggestedArguments: { rawPrompt: directive.slice(0, 500), targetModel: "gemini", strictLevel: "sovereign" }
+            suggestedArguments: { rawPrompt: directive.slice(0, 500), targetModel: "gemini", strictLevel: "sovereign" },
           },
           {
             order: 2,
@@ -684,7 +705,7 @@ export class EosAntigravityDirector {
             phase: "ARCHITECTURE_GATE",
             purpose: "Verify clean/hexagonal boundaries and zero circular dependencies before implementation.",
             mandatory: true,
-            suggestedArguments: { targetDir: "src" }
+            suggestedArguments: { targetDir: "src" },
           },
           {
             order: 3,
@@ -695,8 +716,8 @@ export class EosAntigravityDirector {
             suggestedArguments: {
               title: `SDD Mission (${targetId})`,
               description: directive.slice(0, 300),
-              proposedAction: "Implement strictly against approved SPEC, PLAN, TASKS, and LEVEL 2+ authorization."
-            }
+              proposedAction: "Implement strictly against approved SPEC, PLAN, TASKS, and LEVEL 2+ authorization.",
+            },
           },
           {
             order: 4,
@@ -704,7 +725,7 @@ export class EosAntigravityDirector {
             phase: "STRICT_VERIFICATION",
             purpose: "Run fast 4-stage in-memory verification prior to full 7-stage CI/CD pipeline.",
             mandatory: true,
-            suggestedArguments: {}
+            suggestedArguments: {},
           },
           {
             order: 5,
@@ -712,8 +733,8 @@ export class EosAntigravityDirector {
             phase: "FLEET_CERTIFICATION",
             purpose: "Confirm sovereign fleet health and deployment quorum.",
             mandatory: true,
-            suggestedArguments: {}
-          }
+            suggestedArguments: {},
+          },
         ];
     }
   }

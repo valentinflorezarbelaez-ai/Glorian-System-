@@ -11,11 +11,7 @@
  * Zero external runtime dependencies. Node 24 strip-only compliant.
  */
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export type SmtVerdict =
@@ -66,10 +62,7 @@ export class EosSmtAutomatedReasoningProver {
     const variables = Array.from(varsSet);
 
     // Inner DPLL recursive solver
-    function dpll(
-      remainingClauses: (string[])[],
-      currentModel: Record<string, boolean>
-    ): Record<string, boolean> | null {
+    function dpll(remainingClauses: string[][], currentModel: Record<string, boolean>): Record<string, boolean> | null {
       // Step 1: Unit propagation
       let changed = true;
       while (changed) {
@@ -151,7 +144,7 @@ export class EosSmtAutomatedReasoningProver {
   public static proveAbacSafety(
     rules: readonly { readonly role: string; readonly action: string; readonly allow: boolean }[],
     attackerRole: string,
-    sensitiveAction: string
+    sensitiveAction: string,
   ): SmtProofReport {
     const startTime = performance.now();
 
@@ -187,7 +180,7 @@ export class EosSmtAutomatedReasoningProver {
     const verdict: SmtVerdict = !isSatisfiable ? "PROVED_UNSAT_SECURE" : "VIOLATION_SAT_MODEL_FOUND";
 
     const sha256Receipt = pureSha256(
-      `ABAC_SMT:${attackerRole}:${sensitiveAction}:${verdict}:${durationUs}:${timestampIso}`
+      `ABAC_SMT:${attackerRole}:${sensitiveAction}:${verdict}:${durationUs}:${timestampIso}`,
     );
 
     return deepFreeze({
@@ -200,7 +193,7 @@ export class EosSmtAutomatedReasoningProver {
       unsatCoreExplanation: result.unsatCore,
       durationUs,
       sha256Receipt,
-      timestampIso
+      timestampIso,
     });
   }
 
@@ -209,7 +202,7 @@ export class EosSmtAutomatedReasoningProver {
    */
   public static proveAcyclicTopology(
     nodes: readonly string[],
-    edges: readonly { readonly from: string; readonly to: string }[]
+    edges: readonly { readonly from: string; readonly to: string }[],
   ): SmtProofReport {
     const startTime = performance.now();
     const clauses: string[][] = [];
@@ -240,7 +233,7 @@ export class EosSmtAutomatedReasoningProver {
     const verdict: SmtVerdict = isSatisfiable ? "SAT_ACYCLIC_ORDER_VALID" : "UNSAT_CYCLE_DEADLOCK";
 
     const sha256Receipt = pureSha256(
-      `TOPOLOGY_SMT:${nodes.length}:${edges.length}:${verdict}:${durationUs}:${timestampIso}`
+      `TOPOLOGY_SMT:${nodes.length}:${edges.length}:${verdict}:${durationUs}:${timestampIso}`,
     );
 
     return deepFreeze({
@@ -253,17 +246,14 @@ export class EosSmtAutomatedReasoningProver {
       unsatCoreExplanation: result.unsatCore,
       durationUs,
       sha256Receipt,
-      timestampIso
+      timestampIso,
     });
   }
 
   /**
    * Persists SmtProofReport in durable SQLite WAL ledger.
    */
-  public static recordReceiptInLedger(
-    report: SmtProofReport,
-    dbPathOrRootDir?: string
-  ): boolean {
+  public static recordReceiptInLedger(report: SmtProofReport, dbPathOrRootDir?: string): boolean {
     const dbPath = dbPathOrRootDir
       ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
         ? dbPathOrRootDir
@@ -282,9 +272,9 @@ export class EosSmtAutomatedReasoningProver {
           isSatisfiable: report.isSatisfiable,
           evaluatedClausesCount: report.evaluatedClausesCount,
           durationUs: report.durationUs,
-          sha256Receipt: report.sha256Receipt
+          sha256Receipt: report.sha256Receipt,
         },
-        engramTopicKey: `eos/formal/smt/${report.theoremName}`
+        engramTopicKey: `eos/formal/smt/${report.theoremName}`,
       });
       return true;
     } catch {

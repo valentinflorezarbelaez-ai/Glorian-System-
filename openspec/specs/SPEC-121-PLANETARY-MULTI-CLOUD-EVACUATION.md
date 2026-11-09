@@ -1,6 +1,7 @@
 # SPEC-121: Planetary Multi-Cloud Disaster Resilience & Auto-Evacuation Mesh
 
 ## 1. Metadata
+
 - **Specification ID**: `SPEC-121`
 - **Standard**: IEEE 830 / ISO 29148 / AWS-GCP-Vercel Planetary Disaster Evacuation Model
 - **Status**: `PROPOSED`

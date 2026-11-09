@@ -17,6 +17,7 @@ Before EVERY sub-agent launch that involves **reading, writing, or reviewing cod
 The registry contains a **Compact Rules** section with pre-digested rules per skill (5-15 lines each). This is what you inject — NOT full SKILL.md paths.
 
 Resolution order:
+
 1. Already cached from earlier in this session? → use cache
 2. `mem_search(query: "skill-registry", project: "{project}")` → `mem_get_observation(id)` for full content
 3. Fallback: read `.atl/skill-registry.md` from the project root if it exists
@@ -29,6 +30,7 @@ Match skills on TWO dimensions:
 **A. Code Context** — what files will the sub-agent touch or review?
 
 Map file patterns to skills from the registry (common examples — always defer to the registry's Trigger field as the source of truth):
+
 - `.tsx`, `.jsx` → react skills
 - `.ts` → typescript skills
 - `app/**`, `pages/**` → nextjs/angular/framework skills
@@ -41,14 +43,14 @@ Use the `Trigger` field in the registry's User Skills table to match. Skills who
 
 **B. Task Context** — what ACTIONS will the sub-agent perform?
 
-| Sub-agent action | Match skills with triggers mentioning... |
-|-----------------|------------------------------------------|
-| Create a PR | "PR", "pull request" |
-| Write/review code | The specific framework/language |
-| Create Jira tickets | "Jira", "epic", "task" |
-| Write Notion docs | "Notion", "RFC", "PRD" |
-| Write comments | "comment" |
-| Run tests | "test", "vitest", "pytest", "playwright" |
+| Sub-agent action    | Match skills with triggers mentioning... |
+| ------------------- | ---------------------------------------- |
+| Create a PR         | "PR", "pull request"                     |
+| Write/review code   | The specific framework/language          |
+| Create Jira tickets | "Jira", "epic", "task"                   |
+| Write Notion docs   | "Notion", "RFC", "PRD"                   |
+| Write comments      | "comment"                                |
+| Run tests           | "test", "vitest", "pytest", "playwright" |
 
 ### Step 3: Inject into Sub-Agent Prompt
 
@@ -86,6 +88,7 @@ If more than **5 skill blocks** match, keep only the 5 most relevant (prioritize
 ## Compaction Safety
 
 This protocol is compaction-safe because:
+
 - The registry lives in engram/filesystem, not in the orchestrator's memory
 - Each delegation re-reads the registry if needed (Step 1 handles cache miss)
 - Compact rules are copied into each sub-agent's prompt at launch time — even if the orchestrator forgets, the sub-agents already have the rules
@@ -100,6 +103,7 @@ Sub-agents MUST report their skill resolution status in their return envelope:
 - `none` — no skills loaded at all
 
 **Orchestrator self-correction rule**: if a sub-agent reports anything other than `injected`, the orchestrator MUST:
+
 1. Re-read the skill registry immediately (it may have been lost to compaction)
 2. Ensure ALL subsequent delegations include `## Project Standards (auto-resolved)`
 3. Log a warning to the user: "Skill cache miss detected — reloaded registry for future delegations."

@@ -57,4 +57,5 @@ ESCENARIO: [BDD-081] Despacho Multi-Canal mediante CLI y Servidor MCP
 ```
 
 ---
-*Signed by Principal Architect: Valentín Flórez Arbeláez*
+
+_Signed by Principal Architect: Valentín Flórez Arbeláez_

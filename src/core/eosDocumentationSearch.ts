@@ -11,11 +11,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
 export interface DocSearchResult {
   readonly path: string;
@@ -34,12 +30,14 @@ export interface DocIndexStats {
 export class EosDocumentationSearch {
   private readonly dbPath: string;
   private readonly projectRoot: string;
-  private readonly db: DatabaseSync;
+  private db: DatabaseSync;
 
   constructor(projectRoot: string = process.cwd(), dbPath?: string) {
     this.projectRoot = path.resolve(projectRoot);
     this.dbPath = dbPath
-      ? (dbPath === ":memory:" ? ":memory:" : path.resolve(dbPath))
+      ? dbPath === ":memory:"
+        ? ":memory:"
+        : path.resolve(dbPath)
       : path.join(this.projectRoot, ".eos", "state", "eos_docs_fts.sqlite");
 
     if (this.dbPath !== ":memory:") {
@@ -51,24 +49,62 @@ export class EosDocumentationSearch {
   }
 
   private initializeSchema(): void {
-    this.db.exec("PRAGMA synchronous = NORMAL;");
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS eos_docs_metadata (
-        doc_path TEXT PRIMARY KEY,
-        doc_type TEXT NOT NULL,
-        title TEXT NOT NULL,
-        content_hash TEXT NOT NULL,
-        updated_at_iso TEXT NOT NULL
-      );
+    try {
+      this.db.exec("PRAGMA busy_timeout = 10000;");
+      this.db.exec("PRAGMA synchronous = NORMAL;");
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS eos_docs_metadata (
+          doc_path TEXT PRIMARY KEY,
+          doc_type TEXT NOT NULL,
+          title TEXT NOT NULL,
+          content_hash TEXT NOT NULL,
+          updated_at_iso TEXT NOT NULL
+        );
+      `);
 
-      CREATE VIRTUAL TABLE IF NOT EXISTS eos_docs_fts USING fts5(
-        doc_path UNINDEXED,
-        doc_type,
-        title,
-        content,
-        tokenize = 'unicode61'
-      );
-    `);
+      try {
+        this.db.exec(`
+          CREATE VIRTUAL TABLE IF NOT EXISTS eos_docs_fts USING fts5(
+            doc_path UNINDEXED,
+            doc_type,
+            title,
+            content,
+            tokenize = 'unicode61'
+          );
+        `);
+      } catch {
+        this.db.exec(`
+          CREATE TABLE IF NOT EXISTS eos_docs_fts (
+            doc_path TEXT,
+            doc_type TEXT,
+            title TEXT,
+            content TEXT
+          );
+        `);
+      }
+    } catch {
+      try {
+        this.db = new DatabaseSync(":memory:");
+        this.db.exec("PRAGMA synchronous = NORMAL;");
+        this.db.exec(`
+          CREATE TABLE IF NOT EXISTS eos_docs_metadata (
+            doc_path TEXT PRIMARY KEY,
+            doc_type TEXT NOT NULL,
+            title TEXT NOT NULL,
+            content_hash TEXT NOT NULL,
+            updated_at_iso TEXT NOT NULL
+          );
+          CREATE TABLE IF NOT EXISTS eos_docs_fts (
+            doc_path TEXT,
+            doc_type TEXT,
+            title TEXT,
+            content TEXT
+          );
+        `);
+      } catch {
+        // Safe degrade
+      }
+    }
   }
 
   private detectDocType(relPath: string): string {
@@ -101,7 +137,7 @@ export class EosDocumentationSearch {
       path.join(this.projectRoot, "docs", "plans"),
       path.join(this.projectRoot, "docs", "tasks"),
       path.join(this.projectRoot, "docs", "intake"),
-      path.join(this.projectRoot, "docs", "releases")
+      path.join(this.projectRoot, "docs", "releases"),
     ];
 
     let indexedCount = 0;
@@ -125,33 +161,41 @@ export class EosDocumentationSearch {
       SELECT content_hash FROM eos_docs_metadata WHERE doc_path = ?
     `);
 
-    for (const dir of targetDirs) {
-      if (!fs.existsSync(dir)) continue;
+    // One transaction amortizes the FTS5 write cost across all documents.
+    this.db.exec("BEGIN");
+    try {
+      for (const dir of targetDirs) {
+        if (!fs.existsSync(dir)) continue;
 
-      const entries = fs.readdirSync(dir, { recursive: true });
-      for (const entry of entries) {
-        const fullPath = path.join(dir, String(entry));
-        if (!fs.statSync(fullPath).isFile() || !fullPath.endsWith(".md")) continue;
+        const entries = fs.readdirSync(dir, { recursive: true });
+        for (const entry of entries) {
+          const fullPath = path.join(dir, String(entry));
+          if (!fs.statSync(fullPath).isFile() || !fullPath.endsWith(".md")) continue;
 
-        const relPath = path.relative(this.projectRoot, fullPath).replace(/\\/g, "/");
-        const content = fs.readFileSync(fullPath, "utf8");
-        const contentHash = pureSha256(content);
+          const relPath = path.relative(this.projectRoot, fullPath).replace(/\\/g, "/");
+          const content = fs.readFileSync(fullPath, "utf8");
+          const contentHash = pureSha256(content);
 
-        const existing = selectHash.get(relPath) as { content_hash: string } | undefined;
-        if (existing && existing.content_hash === contentHash) {
-          continue; // Unmodified, skip indexing
+          const existing = selectHash.get(relPath) as { content_hash: string } | undefined;
+          if (existing && existing.content_hash === contentHash) {
+            continue; // Unmodified, skip indexing
+          }
+
+          const docType = this.detectDocType(relPath);
+          const title = this.extractTitle(content, path.basename(relPath, ".md"));
+
+          // Update FTS index
+          deleteFts.run(relPath);
+          insertFts.run(relPath, docType, title, content);
+          insertMeta.run(relPath, docType, title, contentHash, nowIso);
+
+          indexedCount++;
         }
-
-        const docType = this.detectDocType(relPath);
-        const title = this.extractTitle(content, path.basename(relPath, ".md"));
-
-        // Update FTS index
-        deleteFts.run(relPath);
-        insertFts.run(relPath, docType, title, content);
-        insertMeta.run(relPath, docType, title, contentHash, nowIso);
-
-        indexedCount++;
       }
+      this.db.exec("COMMIT");
+    } catch (error) {
+      this.db.exec("ROLLBACK");
+      throw error;
     }
 
     return indexedCount;
@@ -168,19 +212,22 @@ export class EosDocumentationSearch {
     if (!sanitized) return deepFreeze([]);
 
     // Format FTS5 query terms with prefix matching
-    const terms = sanitized.split(/\s+/).map((t) => `"${t}"*`).join(" AND ");
+    const terms = sanitized
+      .split(/\s+/)
+      .map((t) => `"${t}"*`)
+      .join(" AND ");
 
     try {
       const stmt = this.db.prepare(`
-        SELECT 
-          doc_path, 
-          doc_type, 
-          title, 
+        SELECT
+          doc_path,
+          doc_type,
+          title,
           snippet(eos_docs_fts, 3, '>>', '<<', '...', 15) as snippet,
           rank
-        FROM eos_docs_fts 
-        WHERE eos_docs_fts MATCH ? 
-        ORDER BY rank 
+        FROM eos_docs_fts
+        WHERE eos_docs_fts MATCH ?
+        ORDER BY rank
         LIMIT ?
       `);
 
@@ -197,13 +244,50 @@ export class EosDocumentationSearch {
         docType: r.doc_type,
         title: r.title,
         snippet: r.snippet.replace(/\n+/g, " "),
-        rank: Number(r.rank)
+        rank: Number(r.rank),
       }));
 
       return deepFreeze(results);
     } catch {
-      // Fallback simple search if FTS syntax error
-      return deepFreeze([]);
+      try {
+        const queryTerms = sanitized.split(/\s+/).filter(Boolean);
+        if (queryTerms.length === 0) return deepFreeze([]);
+
+        const clauses: string[] = [];
+        const params: string[] = [];
+        for (const term of queryTerms) {
+          clauses.push("(title LIKE ? OR content LIKE ? OR doc_path LIKE ?)");
+          const pat = `%${term}%`;
+          params.push(pat, pat, pat);
+        }
+
+        const stmt = this.db.prepare(`
+          SELECT doc_path, doc_type, title, substr(content, 1, 120) as snippet, 0 as rank
+          FROM eos_docs_fts
+          WHERE ${clauses.join(" AND ")}
+          LIMIT ?
+        `);
+
+        const rows = stmt.all(...params, Math.min(limit, 50)) as Array<{
+          doc_path: string;
+          doc_type: string;
+          title: string;
+          snippet: string;
+          rank: number;
+        }>;
+
+        const results: DocSearchResult[] = rows.map((r) => ({
+          path: r.doc_path,
+          docType: r.doc_type,
+          title: r.title,
+          snippet: (r.snippet || "").replace(/\n+/g, " "),
+          rank: Number(r.rank || 0),
+        }));
+
+        return deepFreeze(results);
+      } catch {
+        return deepFreeze([]);
+      }
     }
   }
 
@@ -212,7 +296,7 @@ export class EosDocumentationSearch {
     return deepFreeze({
       totalIndexed: row?.count || 0,
       databasePath: this.dbPath,
-      lastIndexedIso: new Date().toISOString()
+      lastIndexedIso: new Date().toISOString(),
     });
   }
 

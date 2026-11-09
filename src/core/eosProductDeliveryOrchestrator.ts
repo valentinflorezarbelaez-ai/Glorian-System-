@@ -15,22 +15,14 @@ import {
   EosUniversalProductFoundry,
   type ProductBlueprint,
   type ProductManifest,
-  type TopologyValidationReport
+  type TopologyValidationReport,
 } from "./eosUniversalProductFoundry.ts";
-import {
-  EosSovereignLoop,
-  type EpistemicState,
-  type PipelineExecutionSummary
-} from "./eosSovereignLoop.ts";
+import { EosSovereignLoop, type EpistemicState, type PipelineExecutionSummary } from "./eosSovereignLoop.ts";
 import { EosMutationTester } from "./eosMutationTester.ts";
 
 export type DeliveryTrack = "FastTrack" | "HeavySddTrack";
 
-export type DeliveryStatus =
-  | "SUCCESS"
-  | "BLOCKED"
-  | "FAILED"
-  | "PARTIAL";
+export type DeliveryStatus = "SUCCESS" | "BLOCKED" | "FAILED" | "PARTIAL";
 
 export interface LawIvPreconditions {
   readonly registered: boolean;
@@ -148,7 +140,7 @@ export function evaluateLawIvComplete(lawIv: LawIvPreconditions): boolean {
  * Used by dry-run defaults and injected unit-test stubs.
  */
 export function createHermeticVerificationGatePort(
-  overrides?: Partial<{ turboExit: number; secretExit: number; mutationExit: number }>
+  overrides?: Partial<{ turboExit: number; secretExit: number; mutationExit: number }>,
 ): VerificationGatePort {
   const turboExit = overrides?.turboExit ?? 0;
   const secretExit = overrides?.secretExit ?? 0;
@@ -161,7 +153,7 @@ export function createHermeticVerificationGatePort(
         name: "turbo_purity",
         exitCode: turboExit,
         evidence: turboExit === 0 ? "LAYER0_DEPENDENCIES_EMPTY" : "TURBO_GATE_FAILED",
-        durationMs: Number((performance.now() - t0).toFixed(3))
+        durationMs: Number((performance.now() - t0).toFixed(3)),
       };
     },
     runSecretScan(payload: string): GateResult {
@@ -172,7 +164,7 @@ export function createHermeticVerificationGatePort(
         name: "secret_scan",
         exitCode: exit,
         evidence: exit === 0 ? "NO_PLAIN_SECRET_PATTERNS" : "SECRET_PATTERN_DETECTED",
-        durationMs: Number((performance.now() - t0).toFixed(3))
+        durationMs: Number((performance.now() - t0).toFixed(3)),
       };
     },
     runMutationFloor(): GateResult {
@@ -182,7 +174,7 @@ export function createHermeticVerificationGatePort(
           name: "mutation_floor",
           exitCode: mutationExit,
           evidence: "MUTATION_FLOOR_FORCED_FAIL",
-          durationMs: Number((performance.now() - t0).toFixed(3))
+          durationMs: Number((performance.now() - t0).toFixed(3)),
         };
       }
       const tester = new EosMutationTester();
@@ -192,9 +184,9 @@ export function createHermeticVerificationGatePort(
         name: "mutation_floor",
         exitCode: exit,
         evidence: `mutationScore=${report.mutationScore};grade=${report.grade}`,
-        durationMs: Number((performance.now() - t0).toFixed(3))
+        durationMs: Number((performance.now() - t0).toFixed(3)),
       };
-    }
+    },
   };
 }
 
@@ -216,18 +208,15 @@ export function createRealVerificationGatePort(projectRoot: string): Verificatio
         return {
           name: "turbo_purity",
           exitCode: count === 0 ? 0 : 1,
-          evidence:
-            count === 0
-              ? "RUNTIME_DEPENDENCIES_EMPTY"
-              : `RUNTIME_DEPENDENCIES_COUNT=${count}`,
-          durationMs: Number((performance.now() - t0).toFixed(3))
+          evidence: count === 0 ? "RUNTIME_DEPENDENCIES_EMPTY" : `RUNTIME_DEPENDENCIES_COUNT=${count}`,
+          durationMs: Number((performance.now() - t0).toFixed(3)),
         };
       } catch (err) {
         return {
           name: "turbo_purity",
           exitCode: 1,
           evidence: `RUNTIME_DEPENDENCIES_READ_FAILED:${err instanceof Error ? err.message : "unknown"}`,
-          durationMs: Number((performance.now() - t0).toFixed(3))
+          durationMs: Number((performance.now() - t0).toFixed(3)),
         };
       }
     },
@@ -238,7 +227,7 @@ export function createRealVerificationGatePort(projectRoot: string): Verificatio
         name: "secret_scan",
         exitCode: hit ? 1 : 0,
         evidence: hit ? "SECRET_PATTERN_DETECTED" : "NO_PLAIN_SECRET_PATTERNS",
-        durationMs: Number((performance.now() - t0).toFixed(3))
+        durationMs: Number((performance.now() - t0).toFixed(3)),
       };
     },
     runMutationFloor(): GateResult {
@@ -250,9 +239,9 @@ export function createRealVerificationGatePort(projectRoot: string): Verificatio
         name: "mutation_floor",
         exitCode: exit,
         evidence: `mutationScore=${report.mutationScore};grade=${report.grade}`,
-        durationMs: Number((performance.now() - t0).toFixed(3))
+        durationMs: Number((performance.now() - t0).toFixed(3)),
       };
-    }
+    },
   };
 }
 
@@ -265,8 +254,7 @@ export function computeProductQualityScorecard(input: {
 }): ProductQualityScorecard {
   const specCoverage = input.topology.earsBddCoveragePercent;
   const passed = input.gateResults.filter((g) => g.exitCode === 0).length;
-  const gatePassRate =
-    input.gateResults.length === 0 ? 0 : (passed / input.gateResults.length) * 100;
+  const gatePassRate = input.gateResults.length === 0 ? 0 : (passed / input.gateResults.length) * 100;
   const mutationFloor = Math.min(100, Math.max(0, input.mutationScore));
   const layer0Purity = input.topology.hermeticIsolationPassed && input.topology.acyclic ? 100 : 40;
   const timeToGreen = input.timeToGreenMs <= 5_000 ? 100 : input.timeToGreenMs <= 30_000 ? 80 : 50;
@@ -278,14 +266,12 @@ export function computeProductQualityScorecard(input: {
       mutationFloor * 0.2 +
       layer0Purity * 0.15 +
       timeToGreen * 0.1 +
-      blastRadiusKnown * 0.1
+      blastRadiusKnown * 0.1,
   );
   const grade: ProductQualityScorecard["grade"] = score >= 90 ? "A+" : score >= 80 ? "B" : "C";
   const sha256Receipt = crypto
     .createHash("sha256")
-    .update(
-      `SCORECARD:${score}:${grade}:${specCoverage}:${gatePassRate}:${mutationFloor}:${layer0Purity}`
-    )
+    .update(`SCORECARD:${score}:${grade}:${specCoverage}:${gatePassRate}:${mutationFloor}:${layer0Purity}`)
     .digest("hex");
 
   return {
@@ -297,7 +283,7 @@ export function computeProductQualityScorecard(input: {
     blastRadiusKnown,
     score,
     grade,
-    sha256Receipt
+    sha256Receipt,
   };
 }
 
@@ -319,7 +305,7 @@ function materializeSddPackage(
   projectRoot: string,
   manifest: ProductManifest,
   blueprint: ProductBlueprint,
-  dryRun: boolean
+  dryRun: boolean,
 ): string {
   const rel = path.join("docs", "products", manifest.id);
   const abs = path.join(projectRoot, rel);
@@ -328,31 +314,31 @@ function materializeSddPackage(
     {
       type: "event",
       trigger: `se solicita la entrega del producto ${manifest.id}`,
-      systemResponse: "orquesta Foundry, SDD y gates fail-closed"
+      systemResponse: "orquesta Foundry, SDD y gates fail-closed",
     },
     {
       type: "error",
       condition: "Law IV está incompleto para un satélite externo",
-      systemResponse: "rechaza la escritura con LAW_IV_INCOMPLETE"
+      systemResponse: "rechaza la escritura con LAW_IV_INCOMPLETE",
     },
     {
       type: "ubiquitous",
-      systemResponse: "mantiene dominio hexagonal con 0 dependencias runtime"
-    }
+      systemResponse: "mantiene dominio hexagonal con 0 dependencias runtime",
+    },
   ]);
   const plan = EosSovereignLoop.generateAdrPlan(
     `ADR Product Delivery ${manifest.id}`,
     manifest.description,
     "Deliver via EosProductDeliveryOrchestrator Golden Path.",
-    [{ name: "Ad-hoc vibe scaffolding", rationale: "Violates Law I Zero Vibe Coding" }]
+    [{ name: "Ad-hoc vibe scaffolding", rationale: "Violates Law I Zero Vibe Coding" }],
   );
   const tasks = EosSovereignLoop.generateAtomicTasksDag(
     blueprint.useCases.map((uc, i) => ({
       id: `T-${String(i + 1).padStart(3, "0")}`,
       name: uc.command,
       dependencies: i === 0 ? [] : [`T-${String(i).padStart(3, "0")}`],
-      doneCriteria: "BDD scenario green + gate exit 0"
-    }))
+      doneCriteria: "BDD scenario green + gate exit 0",
+    })),
   );
   const blueprintJson = JSON.stringify(blueprint, null, 2) + "\n";
 
@@ -372,10 +358,7 @@ export class EosProductDeliveryOrchestrator {
   /**
    * Golden Path: Foundry → topology → SDD package → Sovereign Loop → gates → scorecard.
    */
-  public static deliverProduct(
-    manifest: ProductManifest,
-    options: DeliveryOptions = {}
-  ): DeliveryResult {
+  public static deliverProduct(manifest: ProductManifest, options: DeliveryOptions = {}): DeliveryResult {
     const t0 = performance.now();
     const dryRun = options.dryRun !== false; // default dry-run for safety
     const track = resolveDeliveryTrack(manifest.tier);
@@ -386,21 +369,15 @@ export class EosProductDeliveryOrchestrator {
       specificationApproved: true,
       auditComplete: true,
       ownerApproval: true,
-      implementationAuthorized: true
+      implementationAuthorized: true,
     };
     const gates =
-      options.gates ??
-      (dryRun
-        ? createHermeticVerificationGatePort()
-        : createRealVerificationGatePort(projectRoot));
+      options.gates ?? (dryRun ? createHermeticVerificationGatePort() : createRealVerificationGatePort(projectRoot));
     const enforceGates = options.enforceGates !== false;
     const authLevel = options.authLevel ?? 3;
 
     if (options.externalSatellite && !dryRun && !evaluateLawIvComplete(lawIv)) {
-      const receipt = crypto
-        .createHash("sha256")
-        .update(`BLOCKED:LAW_IV:${manifest.id}`)
-        .digest("hex");
+      const receipt = crypto.createHash("sha256").update(`BLOCKED:LAW_IV:${manifest.id}`).digest("hex");
       return {
         status: "BLOCKED",
         reason: "LAW_IV_INCOMPLETE",
@@ -416,7 +393,7 @@ export class EosProductDeliveryOrchestrator {
         deploymentAttempted: false,
         epistemicState: "BLOCKED",
         sha256Receipt: receipt,
-        durationMs: Number((performance.now() - t0).toFixed(3))
+        durationMs: Number((performance.now() - t0).toFixed(3)),
       };
     }
 
@@ -442,7 +419,7 @@ export class EosProductDeliveryOrchestrator {
         deploymentAttempted: false,
         epistemicState: "REMEDIATION_REQUIRED",
         sha256Receipt: receipt,
-        durationMs: Number((performance.now() - t0).toFixed(3))
+        durationMs: Number((performance.now() - t0).toFixed(3)),
       };
     }
 
@@ -457,9 +434,9 @@ export class EosProductDeliveryOrchestrator {
         title: `Deliver ${manifest.name}`,
         userPrompt: `Golden Path delivery for ${manifest.description}`,
         authLevel,
-        authorizedBy: "EosProductDeliveryOrchestrator"
+        authorizedBy: "EosProductDeliveryOrchestrator",
       },
-      { stopAtStage: maxStage }
+      { stopAtStage: maxStage },
     );
 
     // Count INTEL (1-5) + GOVERNANCE (6-9)
@@ -476,9 +453,7 @@ export class EosProductDeliveryOrchestrator {
 
     if (enforceGates) {
       gateResults.push(gates.runTurboPurity());
-      gateResults.push(
-        gates.runSecretScan(JSON.stringify(manifest) + JSON.stringify(blueprint.useCases))
-      );
+      gateResults.push(gates.runSecretScan(JSON.stringify(manifest) + JSON.stringify(blueprint.useCases)));
       gateResults.push(gates.runMutationFloor());
 
       const anyFail = gateResults.some((g) => g.exitCode !== 0);
@@ -503,7 +478,7 @@ export class EosProductDeliveryOrchestrator {
           deploymentAttempted: false,
           epistemicState,
           sha256Receipt: receipt,
-          durationMs: Number((performance.now() - t0).toFixed(3))
+          durationMs: Number((performance.now() - t0).toFixed(3)),
         };
       }
       // Gates green: deployment only when not dry-run and heavy track past integrity
@@ -520,13 +495,13 @@ export class EosProductDeliveryOrchestrator {
       gateResults,
       mutationScore,
       timeToGreenMs: durationMs,
-      blastRadiusKnown: options.blastRadiusKnown !== false
+      blastRadiusKnown: options.blastRadiusKnown !== false,
     });
 
     const sha256Receipt = crypto
       .createHash("sha256")
       .update(
-        `DELIVER:${manifest.id}:${blueprint.sha256MerkleRoot}:${loopSummary.sha256Receipt}:${scorecard.sha256Receipt}:${dryRun}`
+        `DELIVER:${manifest.id}:${blueprint.sha256MerkleRoot}:${loopSummary.sha256Receipt}:${scorecard.sha256Receipt}:${dryRun}`,
       )
       .digest("hex");
 
@@ -556,7 +531,7 @@ export class EosProductDeliveryOrchestrator {
         deploymentAttempted: false,
         epistemicState: "BLOCKED",
         sha256Receipt: blockedReceipt,
-        durationMs
+        durationMs,
       };
     }
 
@@ -574,7 +549,7 @@ export class EosProductDeliveryOrchestrator {
       deploymentAttempted,
       epistemicState,
       sha256Receipt,
-      durationMs
+      durationMs,
     };
   }
 
@@ -588,7 +563,7 @@ export class EosProductDeliveryOrchestrator {
       ladder: "LADDER-15",
       specId: "SPEC-147",
       epistemicTarget: "PRODUCT_DELIVERY_ORCHESTRATOR_VERIFIED_WITHIN_SCOPE",
-      tools: ["eos_product_deliver_run", "eos_product_deliver_status", "product:deliver"]
+      tools: ["eos_product_deliver_run", "eos_product_deliver_status", "product:deliver"],
     };
   }
 }

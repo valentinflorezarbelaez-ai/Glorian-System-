@@ -1,42 +1,8 @@
 #!/bin/sh
-# EOS Sovereign Fleet Gate — pre-commit
-# 1. Secret scan
-# 2. TypeScript strict check
-
-# ── 1. Secret scan ────────────────────────────────────────────────────────────
-echo "🔒 [EOS pre-commit] Scanning for secrets..."
-node -e '
-const fs = require("fs");
-const path = require("path");
-const secretRegex = /(sk-live-[0-9a-zA-Z]{16,}|ghp_[0-9a-zA-Z]{24,}|AKIA[0-9A-Z]{16}|-----BEGIN (RSA )?PRIVATE KEY-----)/;
-function scan(dir) {
-  for (const f of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (f.name === ".git" || f.name === "node_modules" || f.name === ".vercel") continue;
-    const p = path.join(dir, f.name);
-    if (f.isDirectory()) scan(p);
-    else if (/\.(js|ts|jsx|tsx|json|html|css|md|env)$/.test(f.name)) {
-      const content = fs.readFileSync(p, "utf8");
-      if (secretRegex.test(content)) {
-        console.error("❌ CRITICAL: Secret detected in " + p);
-        process.exit(1);
-      }
-    }
-  }
-}
-scan(process.cwd());
-console.log("✅ [PASSED] 0 secrets detected. Gate clear.");
-'
-if [ $? -ne 0 ]; then
-  exit 1
-fi
-
-# ── 2. TypeScript strict check ────────────────────────────────────────────────
-echo "🔍 [EOS pre-commit] Running TypeScript strict check..."
-node scripts/verify-typescript.mjs
-if [ $? -ne 0 ]; then
-  echo "❌ TypeScript type errors found. Fix before committing."
-  exit 1
-fi
-
-echo "✅ Pre-commit gate passed."
-exit 0
+set -eu
+REPO_ROOT=$(git rev-parse --show-toplevel)
+unset GIT_DIR GIT_INDEX_FILE GIT_WORK_TREE GIT_PREFIX
+# Lint only staged files (fast, < 1s)
+node "$REPO_ROOT/scripts/lint-staged.mjs"
+# Fast lane: secrets, typecheck and impacted suites. Full gate runs on pre-push.
+exec node "$REPO_ROOT/scripts/verify-fast.mjs"

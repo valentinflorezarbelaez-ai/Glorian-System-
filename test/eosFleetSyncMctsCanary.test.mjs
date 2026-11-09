@@ -13,21 +13,13 @@ import assert from "node:assert/strict";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import {
-  EosFleetSoundcheckMesh
-} from "../src/core/eosFleetSoundcheckMesh.ts";
+import { EosFleetSoundcheckMesh } from "../src/core/eosFleetSoundcheckMesh.ts";
 
-import {
-  EosMctsHyperTuner
-} from "../src/core/eosMctsHyperTuner.ts";
+import { EosMctsHyperTuner } from "../src/core/eosMctsHyperTuner.ts";
 
-import {
-  EosProgressiveCanaryMesh
-} from "../src/core/eosProgressiveCanaryMesh.ts";
+import { EosProgressiveCanaryMesh } from "../src/core/eosProgressiveCanaryMesh.ts";
 
-import {
-  EosMcpServer
-} from "../src/mcp/eosMcpServer.ts";
+import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -73,8 +65,20 @@ describe("SPEC-042: Sovereign Fleet Soundcheck, MCTS & Progressive Canary Verifi
       const telemetry = [
         { stage: "CANARY_1_PCT", sampleRequests: 10000, failedRequests: 0, p99LatencyMs: 45, baselineP99LatencyMs: 44 },
         { stage: "CANARY_5_PCT", sampleRequests: 50000, failedRequests: 1, p99LatencyMs: 46, baselineP99LatencyMs: 44 },
-        { stage: "CANARY_25_PCT", sampleRequests: 250000, failedRequests: 2, p99LatencyMs: 47, baselineP99LatencyMs: 44 },
-        { stage: "FULL_PRODUCTION_100_PCT", sampleRequests: 1000000, failedRequests: 5, p99LatencyMs: 48, baselineP99LatencyMs: 44 }
+        {
+          stage: "CANARY_25_PCT",
+          sampleRequests: 250000,
+          failedRequests: 2,
+          p99LatencyMs: 47,
+          baselineP99LatencyMs: 44,
+        },
+        {
+          stage: "FULL_PRODUCTION_100_PCT",
+          sampleRequests: 1000000,
+          failedRequests: 5,
+          p99LatencyMs: 48,
+          baselineP99LatencyMs: 44,
+        },
       ];
 
       const report = mesh.executeRollout(telemetry);
@@ -92,7 +96,7 @@ describe("SPEC-042: Sovereign Fleet Soundcheck, MCTS & Progressive Canary Verifi
       const telemetry = [
         { stage: "CANARY_1_PCT", sampleRequests: 10000, failedRequests: 0, p99LatencyMs: 45, baselineP99LatencyMs: 44 },
         // Error rate: 5 / 1000 = 0.5% (exceeds 0.01% limit)
-        { stage: "CANARY_5_PCT", sampleRequests: 1000, failedRequests: 5, p99LatencyMs: 46, baselineP99LatencyMs: 44 }
+        { stage: "CANARY_5_PCT", sampleRequests: 1000, failedRequests: 5, p99LatencyMs: 46, baselineP99LatencyMs: 44 },
       ];
 
       const report = mesh.executeRollout(telemetry);
@@ -113,8 +117,8 @@ describe("SPEC-042: Sovereign Fleet Soundcheck, MCTS & Progressive Canary Verifi
         method: "tools/call",
         params: {
           name: "eos_fleet_soundcheck",
-          arguments: {}
-        }
+          arguments: {},
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");
@@ -131,8 +135,8 @@ describe("SPEC-042: Sovereign Fleet Soundcheck, MCTS & Progressive Canary Verifi
         method: "tools/call",
         params: {
           name: "eos_mcts_tune",
-          arguments: { iterations: 50, seed: 1337 }
-        }
+          arguments: { iterations: 50, seed: 1337 },
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");
@@ -149,8 +153,8 @@ describe("SPEC-042: Sovereign Fleet Soundcheck, MCTS & Progressive Canary Verifi
         method: "tools/call",
         params: {
           name: "eos_canary_rollout",
-          arguments: { versionTarget: "v48.0.0", previousVersion: "v47.0.0" }
-        }
+          arguments: { versionTarget: "v48.0.0", previousVersion: "v47.0.0" },
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");

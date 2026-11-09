@@ -3,10 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  EosFleetDogfoodingEngine,
-  LawIvExternalWriteBarrierViolation
-} from "../src/core/eosFleetDogfoodingEngine.ts";
+import { EosFleetDogfoodingEngine, LawIvExternalWriteBarrierViolation } from "../src/core/eosFleetDogfoodingEngine.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,7 +35,7 @@ test("BDD-275: Descubrimiento y auditoría no invasiva de proyectos en la flota 
       engine.assertWritePermission("C:/Users/valen/Documents/Fundacion", false);
     },
     LawIvExternalWriteBarrierViolation,
-    "Must throw LawIvExternalWriteBarrierViolation on unauthorized write"
+    "Must throw LawIvExternalWriteBarrierViolation on unauthorized write",
   );
 });
 

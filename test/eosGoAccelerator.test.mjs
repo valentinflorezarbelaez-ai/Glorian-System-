@@ -39,7 +39,10 @@ describe("EOS Sovereign Go Native Titan Accelerator Suite", () => {
       assert.ok(res.arms.length >= 4);
       assert.ok(res.arms.some((arm) => arm.trackId === res.optimalArm));
       assert.equal(res.scope, "SYNTHETIC_LOCAL_SIMULATION");
-      assert.equal(res.arms.reduce((sum, arm) => sum + arm.pulls, 0), res.episodes);
+      assert.equal(
+        res.arms.reduce((sum, arm) => sum + arm.pulls, 0),
+        res.episodes,
+      );
     });
   });
 });

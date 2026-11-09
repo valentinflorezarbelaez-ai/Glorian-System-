@@ -16,11 +16,7 @@ const projectRoot = path.resolve(__dirname, "..");
 test("BDD-185: Runtime Virtualization Engine Detection", () => {
   const diag = EosMicroVmSandbox.diagnoseHost();
 
-  assert.ok(
-    diag.tier === "FIRECRACKER" ||
-    diag.tier === "DOCKER_GVISOR" ||
-    diag.tier === "EPHEMERAL_NODE_VM"
-  );
+  assert.ok(diag.tier === "FIRECRACKER" || diag.tier === "DOCKER_GVISOR" || diag.tier === "EPHEMERAL_NODE_VM");
   assert.equal(typeof diag.dockerAvailable, "boolean");
   assert.equal(typeof diag.gVisorAvailable, "boolean");
   assert.equal(typeof diag.firecrackerAvailable, "boolean");
@@ -33,7 +29,7 @@ test("BDD-185: Runtime Virtualization Engine Detection", () => {
 test("BDD-186: Hermetic Isolated Execution (Nominal)", () => {
   const result = EosMicroVmSandbox.runIsolated({
     codeOrCommand: "console.log('Nominal Execution Passed'); const x = 40 + 2; assert.strictEqual(x, 42);",
-    timeoutMs: 3000
+    timeoutMs: 3000,
   });
 
   assert.equal(result.status, "COMPLETED");
@@ -52,7 +48,7 @@ test("BDD-187: Zero-Network Barrier Enforcement (Outbound Blocked)", () => {
 
   const result = EosMicroVmSandbox.runIsolated({
     codeOrCommand: networkAttempt,
-    timeoutMs: 3000
+    timeoutMs: 3000,
   });
 
   assert.equal(result.status, "NETWORK_VIOLATION_BLOCKED");
@@ -67,7 +63,7 @@ test("BDD-188: Timeout & Resource Overrun Containment (Process Kill)", () => {
 
   const result = EosMicroVmSandbox.runIsolated({
     codeOrCommand: infiniteLoop,
-    timeoutMs: 50
+    timeoutMs: 50,
   });
 
   assert.equal(result.status, "TIMEOUT_KILLED");
@@ -81,7 +77,7 @@ test("BDD-189: Cryptographic Attestation & Ledger Chain Recording", () => {
   try {
     const res = EosMicroVmSandbox.runIsolated({
       codeOrCommand: "console.log('Ledger Persistence Test');",
-      timeoutMs: 2000
+      timeoutMs: 2000,
     });
 
     assert.equal(res.status, "COMPLETED");
@@ -93,9 +89,7 @@ test("BDD-189: Cryptographic Attestation & Ledger Chain Recording", () => {
     const ledger = new EosDurableSqliteLedger(EosDurableSqliteLedger.defaultLedgerPath(tempDir));
     try {
       const recent = ledger.listRecent(5);
-      const found = recent.find(
-        (e) => e.payload && e.payload.sha256Attestation === res.sha256Attestation
-      );
+      const found = recent.find((e) => e.payload && e.payload.sha256Attestation === res.sha256Attestation);
 
       assert.ok(found, "Sandbox execution receipt must be recorded in SQLite WAL ledger");
       assert.equal(found.category, "MISSION_DIRECTION");
@@ -117,7 +111,7 @@ test("BDD-190: MCP Dispatch of eos_microvm_sandbox via EosMcpServer", () => {
     jsonrpc: "2.0",
     id: 1,
     method: "tools/list",
-    params: {}
+    params: {},
   });
 
   assert.ok(!listRes.error);
@@ -132,9 +126,9 @@ test("BDD-190: MCP Dispatch of eos_microvm_sandbox via EosMcpServer", () => {
     params: {
       name: "eos_microvm_sandbox",
       arguments: {
-        action: "doctor"
-      }
-    }
+        action: "doctor",
+      },
+    },
   });
 
   assert.ok(!docRes.error);
@@ -152,9 +146,9 @@ test("BDD-190: MCP Dispatch of eos_microvm_sandbox via EosMcpServer", () => {
       arguments: {
         action: "run",
         codeOrCommand: "console.log('MCP Sandbox Dispatch');",
-        timeoutMs: 3000
-      }
-    }
+        timeoutMs: 3000,
+      },
+    },
   });
 
   assert.ok(!runRes.error);

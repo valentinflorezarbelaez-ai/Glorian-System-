@@ -23,10 +23,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import {
-  evaluateDirectiveWithTMR,
-  interpretJarvisDirective,
-} from "../../core/eosJarvisMonad.ts";
+import { evaluateDirectiveWithTMR, interpretJarvisDirective } from "../../core/eosJarvisMonad.ts";
 
 import { validatePatch } from "../../core/eosPatchValidator.ts";
 
@@ -53,28 +50,21 @@ export const eosSemanticSearch: ToolHandler = {
     "Search EOS sovereign architecture and knowledge base using deterministic Layer-0 hybrid vector and BM25 RRF fusion.",
 
   handle(args, ctx) {
-    const query  = String(args.query  ?? "");
-    const topK   = Number(args.topK)  || 3;
-    const mode   = args.mode === "vector" ? "vector" : "hybrid";
+    const query = String(args.query ?? "");
+    const topK = Number(args.topK) || 3;
+    const mode = args.mode === "vector" ? "vector" : "hybrid";
 
     const matches =
-      mode === "vector"
-        ? ctx.knowledgeStore.search(query, topK)
-        : ctx.knowledgeStore.searchHybrid(query, topK);
+      mode === "vector" ? ctx.knowledgeStore.search(query, topK) : ctx.knowledgeStore.searchHybrid(query, topK);
 
     return {
       query,
       mode,
       matchCount: matches.length,
-      matches: matches.map((m: {
-        id: string;
-        score: number;
-        text: string;
-        metadata?: Record<string, unknown>;
-      }) => ({
-        id:     m.id,
-        score:  Number(m.score.toFixed(4)),
-        text:   m.text,
+      matches: matches.map((m: { id: string; score: number; text: string; metadata?: Record<string, unknown> }) => ({
+        id: m.id,
+        score: Number(m.score.toFixed(4)),
+        text: m.text,
         domain: (m.metadata as { domain?: string } | undefined)?.domain ?? "General",
       })),
     };
@@ -97,17 +87,17 @@ export const eosTmrConsensus: ToolHandler = {
 
   handle(args, _ctx) {
     const directive = String(args.directive ?? "");
-    const tmr       = evaluateDirectiveWithTMR(directive);
-    const thought   = interpretJarvisDirective(directive);
+    const tmr = evaluateDirectiveWithTMR(directive);
+    const thought = interpretJarvisDirective(directive);
 
     return {
       directive,
       consensusAchieved: tmr.consensusAchieved,
-      agreementRatio:    tmr.agreementRatio,
-      selectedAction:    tmr.selectedAction,
-      consensusHash:     tmr.consensusHash,
-      sandboxes:         tmr.sandboxes,
-      voiceScript:       thought.voiceTranscript,
+      agreementRatio: tmr.agreementRatio,
+      selectedAction: tmr.selectedAction,
+      consensusHash: tmr.consensusHash,
+      sandboxes: tmr.sandboxes,
+      voiceScript: thought.voiceTranscript,
     };
   },
 };
@@ -126,8 +116,7 @@ export const eosTmrConsensus: ToolHandler = {
  */
 export const eosAuditFleet: ToolHandler = {
   name: "eos_audit_fleet",
-  description:
-    "Audits the health, git status, and endpoints of all repositories in the sovereign fleet.",
+  description: "Audits the health, git status, and endpoints of all repositories in the sovereign fleet.",
 
   handle(args, ctx) {
     const registryPath = path.join(ctx.projectRoot, "docs/projects/registry.json");
@@ -140,14 +129,10 @@ export const eosAuditFleet: ToolHandler = {
     }
 
     return {
-      fleetStatus:              "ONLINE",
-      totalRegisteredProjects:  registry.projects.length,
-      projects:                 registry.projects,
-      enforcedStandards: [
-        "SLSA Level 4",
-        "Pre-Commit Secret Scanner",
-        "Pre-Push CI/CD Gate",
-      ],
+      fleetStatus: "ONLINE",
+      totalRegisteredProjects: registry.projects.length,
+      projects: registry.projects,
+      enforcedStandards: ["SLSA Level 4", "Pre-Commit Secret Scanner", "Pre-Push CI/CD Gate"],
     };
   },
 };
@@ -163,26 +148,18 @@ export const eosAuditFleet: ToolHandler = {
  */
 export const eosHealthCheck: ToolHandler = {
   name: "eos_health_check",
-  description:
-    "Retrieves CNCF / Google SRE observability telemetry, process memory RSS, and subsystem health.",
+  description: "Retrieves CNCF / Google SRE observability telemetry, process memory RSS, and subsystem health.",
 
   handle(_args, _ctx) {
     const mem = process.memoryUsage();
 
     return {
-      status:          "UP",
-      tier:            "BIG_TECH_TIER_1",
-      uptimeSeconds:   Math.floor(process.uptime()),
-      memoryRssMb:     (mem.rss        / (1024 * 1024)).toFixed(2),
-      heapUsedMb:      (mem.heapUsed   / (1024 * 1024)).toFixed(2),
-      subsystems: [
-        "JarvisSovereignMonad",
-        "NeuralVectorCore",
-        "LinuxKernelCore",
-        "NanosecondEngine",
-        "AkashicMemory",
-        "SecDevOpsSevenGates",
-      ],
+      status: "HANDLER_ALIVE",
+      scope: "Process liveness only; no subsystem checks or external probes ran.",
+      uptimeSeconds: Math.floor(process.uptime()),
+      memoryRssMb: (mem.rss / (1024 * 1024)).toFixed(2),
+      heapUsedMb: (mem.heapUsed / (1024 * 1024)).toFixed(2),
+      subsystemProbes: "NOT_RUN",
     };
   },
 };
@@ -204,7 +181,7 @@ export const eosValidatePatch: ToolHandler = {
 
   handle(args, ctx) {
     const filePath = String(args.filePath ?? "");
-    const content  = String(args.content  ?? "");
+    const content = String(args.content ?? "");
 
     return validatePatch(filePath, content, ctx.projectRoot);
   },
@@ -227,7 +204,7 @@ export const eosOptimizeContext: ToolHandler = {
 
   handle(args, ctx) {
     const filePath = String(args.filePath ?? "");
-    let content    = typeof args.content === "string" ? args.content : "";
+    let content = typeof args.content === "string" ? args.content : "";
 
     if (!content && filePath) {
       const full = path.resolve(ctx.projectRoot, filePath);
@@ -256,7 +233,7 @@ export const eosAmplifyPrompt: ToolHandler = {
     "Amplifies an informal prompt into a zero-vibe ISO 29148 EARS specification, BDD acceptance scenarios, boundary invariants, and model-specific cognitive scaffolding.",
 
   handle(args, _ctx) {
-    const rawPrompt   = String(args.rawPrompt   ?? "");
+    const rawPrompt = String(args.rawPrompt ?? "");
     const targetModel = (args.targetModel ?? "universal") as ModelFamily;
     const strictLevel = (args.strictLevel ?? "hardened") as StrictnessLevel;
 

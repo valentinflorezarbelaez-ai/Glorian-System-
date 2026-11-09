@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * SPEC-124: EOS Autonomous Dynamic Fleet Registry & Law IV Multi-Tenant Sentinel
- * 
+ *
  * Auto-discovers local Git checkouts across the developer workspace, extracts
  * Git porcelain and deployment endpoints, verifies secret hygiene, and safely
  * synchronizes docs/projects/registry.json without violating Law IV write barriers.
@@ -33,7 +33,7 @@ const EXCLUDED_DIRS = new Set([
   "Links",
   "Searches",
   "Contacts",
-  "OneDrive"
+  "OneDrive",
 ]);
 
 export function discoverGitRepositories(workspaceRoot = DEFAULT_WORKSPACE_ROOT) {
@@ -53,7 +53,7 @@ export function discoverGitRepositories(workspaceRoot = DEFAULT_WORKSPACE_ROOT) 
     if (fs.existsSync(gitDir)) {
       discovered.push({
         name: entry.name,
-        fullPath
+        fullPath,
       });
     }
   }
@@ -66,19 +66,19 @@ export function extractGitMetadata(repoPath) {
     const remoteUrl = execFileSync("git", ["config", "--get", "remote.origin.url"], {
       cwd: repoPath,
       encoding: "utf8",
-      stdio: ["pipe", "pipe", "ignore"]
+      stdio: ["pipe", "pipe", "ignore"],
     }).trim();
 
     const currentBranch = execFileSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], {
       cwd: repoPath,
       encoding: "utf8",
-      stdio: ["pipe", "pipe", "ignore"]
+      stdio: ["pipe", "pipe", "ignore"],
     }).trim();
 
     const headCommitSha = execFileSync("git", ["rev-parse", "HEAD"], {
       cwd: repoPath,
       encoding: "utf8",
-      stdio: ["pipe", "pipe", "ignore"]
+      stdio: ["pipe", "pipe", "ignore"],
     }).trim();
 
     return { remoteUrl, currentBranch, headCommitSha };
@@ -174,16 +174,11 @@ export function inferProjectMetadata(repoPath) {
     productionUrl = "https://ptg-performance-talent-group.vercel.app";
     type = "enterprise-operations";
     cicdGateScript = "scripts/smoke-test.ps1";
-  } else if (lower === "eos-system" || /^glorian-system-?$/.test(lower)) {
-    name = "Glorian (Control Plane Core)";
+  } else if (lower === "eos-system") {
+    name = "EOS System (Control Plane Core)";
     productionUrl = "https://eos-system-ten.vercel.app";
     type = "control-plane-monolith";
     cicdGateScript = "scripts/verify-cicd-pipeline.mjs";
-  } else if (lower.includes("kegel") || lower.includes("ham-sah")) {
-    name = "HAM-SAH + Kegel — Transmutación Solar y Fortalecimiento Pélvico";
-    productionUrl = "https://kegel-ham-sah-trasnmutacion-y-forta.vercel.app";
-    type = "sacred-embodiment-protocol";
-    cicdGateScript = "scripts/verify-landing.mjs";
   } else if (lower.includes("biblioteca-gnostica")) {
     name = "Biblioteca Gnóstica — Preservación Digital de Textos Sagrados";
     productionUrl = "https://biblioteca-gnostica.vercel.app";
@@ -215,66 +210,37 @@ export function computeRegistrySignature(registry) {
   return crypto.createHash("sha256").update(normalized).digest("hex");
 }
 
-function resolveDiscoveredProjectId(disc) {
-  const dirLower = String(disc.dirName || "").toLowerCase();
-  let id = disc.id;
-  if (!id) {
-    if (dirLower.includes("abopack") || dirLower.includes("avopak")) {
-      id = "control-de-asistencia-abopack";
-    } else if (dirLower.includes("atp-strength")) {
-      id = "atp-strength";
-    } else if (dirLower.includes("aberamentho")) {
-      id = "aberamentho";
-    } else if (dirLower.includes("performance-talent")) {
-      id = "performance-talent-group";
-    } else if (dirLower.includes("crud-slack")) {
-      id = "crud-slack";
-    } else if (dirLower.includes("kegel") || dirLower.includes("ham-sah")) {
-      id = "kegel-ham-sah";
-    } else if (dirLower === "eos-system" || /^glorian-system-?$/.test(dirLower)) {
-      id = "eos-system";
-    } else {
-      id = disc.dirName.toLowerCase();
-    }
-  } else if (id === "glorian-system-" || /^glorian-system-?$/.test(String(id).toLowerCase())) {
-    id = "eos-system";
-  }
-  return id;
-}
-
-function preferControlPlaneCheckout(existingMerged, candidateMerged) {
-  if (!existingMerged) return candidateMerged;
-  const existingIsEos = existingMerged.resolvedLocalDir === "Eos-System";
-  const candidateIsEos = candidateMerged.resolvedLocalDir === "Eos-System";
-  const preferred = candidateIsEos && !existingIsEos ? candidateMerged : existingMerged;
-  const discarded = preferred === candidateMerged ? existingMerged : candidateMerged;
-  // Preserve the strongest prior governance fields across twin checkouts.
-  return {
-    ...preferred,
-    name: preferred.name || discarded.name,
-    authorization: preferred.authorization || discarded.authorization,
-    intake: preferred.intake || discarded.intake,
-    specification: preferred.specification || discarded.specification,
-    audit: preferred.audit || discarded.audit,
-    status: preferred.status || discarded.status,
-    productionUrl: preferred.productionUrl || discarded.productionUrl,
-    cicdGateScript: preferred.cicdGateScript || discarded.cicdGateScript,
-    localPathEnv: preferred.localPathEnv || discarded.localPathEnv,
-    ownerApproval: preferred.ownerApproval || discarded.ownerApproval
-  };
-}
-
 export function reconcileFleetRegistry(existingRegistry, discoveredList) {
   const existingProjects = new Map();
   for (const p of existingRegistry.projects || []) {
     existingProjects.set(p.id, p);
   }
 
-  const mergedById = new Map();
+  const updatedProjects = [];
 
   for (const disc of discoveredList) {
-    const id = resolveDiscoveredProjectId(disc);
-    const prev = mergedById.get(id) || existingProjects.get(id);
+    // Generate canonical ID
+    const dirLower = disc.dirName.toLowerCase();
+    let id = disc.id;
+    if (!id) {
+      if (dirLower.includes("abopack") || dirLower.includes("avopak")) {
+        id = "control-de-asistencia-abopack";
+      } else if (dirLower.includes("atp-strength")) {
+        id = "atp-strength";
+      } else if (dirLower.includes("aberamentho")) {
+        id = "aberamentho";
+      } else if (dirLower.includes("performance-talent")) {
+        id = "performance-talent-group";
+      } else if (dirLower.includes("crud-slack")) {
+        id = "crud-slack";
+      } else if (dirLower === "eos-system") {
+        id = "eos-system";
+      } else {
+        id = disc.dirName.toLowerCase();
+      }
+    }
+
+    const prev = existingProjects.get(id);
 
     const merged = {
       id,
@@ -286,24 +252,26 @@ export function reconcileFleetRegistry(existingRegistry, discoveredList) {
       type: prev?.type || disc.type || "application",
       status: prev?.status || "REGISTERED",
       intake: prev?.intake || (id === "control-de-asistencia-abopack" ? "INTAKE_COMPLETE" : "PENDING_INTAKE"),
-      specification: prev?.specification || (id === "control-de-asistencia-abopack" ? "SPECIFICATION_APPROVED" : "PENDING_SPECIFICATION"),
+      specification:
+        prev?.specification ||
+        (id === "control-de-asistencia-abopack" ? "SPECIFICATION_APPROVED" : "PENDING_SPECIFICATION"),
       audit: prev?.audit || (id === "control-de-asistencia-abopack" ? "AUDIT_COMPLETE" : "PENDING_AUDIT"),
-      authorization: prev?.authorization || (id === "control-de-asistencia-abopack" ? "LEVEL_3_PRODUCTION_AUTHORIZED" : "LEVEL_1_READ_ONLY"),
+      authorization:
+        prev?.authorization ||
+        (id === "control-de-asistencia-abopack" ? "LEVEL_3_PRODUCTION_AUTHORIZED" : "LEVEL_1_READ_ONLY"),
       ownerApproval: prev?.ownerApproval || (id === "control-de-asistencia-abopack" ? "OWNER_APPROVAL" : undefined),
       cicdGateScript: prev?.cicdGateScript || disc.cicdGateScript || "npm test",
       autoShipScript: prev?.autoShipScript || "git push origin main",
       currentBranch: disc.currentBranch || "main",
-      headCommitSha: disc.headCommitSha || ""
+      headCommitSha: disc.headCommitSha || "",
     };
 
     // Clean undefined fields
     if (!merged.ownerApproval) delete merged.ownerApproval;
 
-    mergedById.set(id, preferControlPlaneCheckout(mergedById.get(id), merged));
+    updatedProjects.push(merged);
     existingProjects.delete(id);
   }
-
-  const updatedProjects = [...mergedById.values()];
 
   // Retain any projects from existing registry that were not discovered locally
   for (const [, remaining] of existingProjects) {
@@ -319,7 +287,7 @@ export function reconcileFleetRegistry(existingRegistry, discoveredList) {
     masterOrchestrator: "EOS System control plane (SPEC-124)",
     complianceStandard: "EOS_CONSTITUTION_LAW_IV_EXTERNAL_WRITE_BARRIER",
     totalFleetProjects: updatedProjects.length,
-    projects: updatedProjects
+    projects: updatedProjects,
   };
 
   newRegistry.registrySha256 = computeRegistrySignature(newRegistry);
@@ -346,11 +314,6 @@ export async function runFleetRegistrySync(options = {}) {
   for (const r of rawRepos) {
     // Skip backup or auxiliary copies like Eos-System-1, Eos-System-2 etc.
     if (/^Eos-System-\d+$/i.test(r.name)) continue;
-    // Skip Glorian-System- twin when Eos-System control-plane checkout exists (SSOT).
-    if (/^Glorian-System-?$/i.test(r.name)) {
-      const eosSibling = path.join(workspaceRoot, "Eos-System");
-      if (fs.existsSync(path.join(eosSibling, ".git"))) continue;
-    }
 
     const gitMeta = extractGitMetadata(r.fullPath);
     const projMeta = inferProjectMetadata(r.fullPath);
@@ -359,7 +322,7 @@ export async function runFleetRegistrySync(options = {}) {
       dirName: r.name,
       fullPath: r.fullPath,
       ...gitMeta,
-      ...projMeta
+      ...projMeta,
     });
   }
 
@@ -376,7 +339,7 @@ export async function runFleetRegistrySync(options = {}) {
         auditResults.push({
           id: proj.id,
           exitCode: scan.exitCode,
-          findingsCount: scan.findingsCount || 0
+          findingsCount: scan.findingsCount || 0,
         });
       }
     }
@@ -394,7 +357,7 @@ export async function runFleetRegistrySync(options = {}) {
     totalRegistered: reconciled.projects.length,
     registrySha256: reconciled.registrySha256,
     projects: reconciled.projects,
-    auditResults
+    auditResults,
   };
 }
 

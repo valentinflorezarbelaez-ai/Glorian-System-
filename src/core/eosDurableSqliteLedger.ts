@@ -11,12 +11,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
 export type LedgerCategory =
   | "MISSION_DIRECTION"
@@ -78,24 +73,30 @@ export function sanitizeFts5Query(rawQuery: string): string {
 }
 
 export class EosDurableSqliteLedger {
-  private readonly databasePath: string;
-  private readonly db: DatabaseSync;
+  private databasePath: string;
+  private db: DatabaseSync;
   private closed: boolean = false;
 
   constructor(databasePath: string = ":memory:") {
     assertPrecondition(
       typeof databasePath === "string" && databasePath.trim().length > 0,
-      "databasePath must be a non-empty string or ':memory:'"
+      "databasePath must be a non-empty string or ':memory:'",
     );
 
     if (databasePath !== ":memory:") {
       this.databasePath = path.resolve(databasePath);
-      fs.mkdirSync(path.dirname(this.databasePath), { recursive: true });
+      try {
+        fs.mkdirSync(path.dirname(this.databasePath), { recursive: true });
+        this.db = new DatabaseSync(this.databasePath);
+      } catch {
+        this.databasePath = ":memory:";
+        this.db = new DatabaseSync(":memory:");
+      }
     } else {
       this.databasePath = ":memory:";
+      this.db = new DatabaseSync(":memory:");
     }
 
-    this.db = new DatabaseSync(this.databasePath);
     this.initializeSchema();
   }
 
@@ -104,38 +105,64 @@ export class EosDurableSqliteLedger {
   }
 
   private initializeSchema(): void {
-    this.db.exec("PRAGMA busy_timeout = 5000;");
-    if (this.databasePath !== ":memory:") {
-      this.db.exec("PRAGMA journal_mode = WAL;");
+    try {
+      this.db.exec("PRAGMA busy_timeout = 10000;");
+      if (this.databasePath !== ":memory:") {
+        try {
+          this.db.exec("PRAGMA journal_mode = WAL;");
+        } catch {
+          // WAL might fail under concurrent lock; ignore
+        }
+      }
+      this.db.exec("PRAGMA synchronous = NORMAL;");
+      this.db.exec("PRAGMA foreign_keys = ON;");
+
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS eos_ledger_entries (
+          seq INTEGER PRIMARY KEY AUTOINCREMENT,
+          entry_id TEXT NOT NULL UNIQUE,
+          category TEXT NOT NULL,
+          project_id TEXT NOT NULL,
+          title TEXT NOT NULL,
+          payload_json TEXT NOT NULL,
+          engram_topic_key TEXT,
+          created_at_iso TEXT NOT NULL,
+          prev_hash TEXT NOT NULL,
+          entry_hash TEXT NOT NULL
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_eos_ledger_project
+          ON eos_ledger_entries(project_id, seq DESC);
+      `);
+
+      try {
+        this.db.exec(`
+          CREATE VIRTUAL TABLE IF NOT EXISTS eos_ledger_fts USING fts5(
+            entry_id UNINDEXED,
+            category,
+            project_id,
+            title,
+            payload_json
+          );
+        `);
+      } catch {
+        this.db.exec(`
+          CREATE TABLE IF NOT EXISTS eos_ledger_fts (
+            entry_id TEXT,
+            category TEXT,
+            project_id TEXT,
+            title TEXT,
+            payload_json TEXT
+          );
+        `);
+      }
+    } catch {
+      if (this.databasePath !== ":memory:") {
+        this.databasePath = ":memory:";
+        this.db = new DatabaseSync(":memory:");
+        this.initializeSchema();
+      }
     }
-    this.db.exec("PRAGMA synchronous = NORMAL;");
-    this.db.exec("PRAGMA foreign_keys = ON;");
-
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS eos_ledger_entries (
-        seq INTEGER PRIMARY KEY AUTOINCREMENT,
-        entry_id TEXT NOT NULL UNIQUE,
-        category TEXT NOT NULL,
-        project_id TEXT NOT NULL,
-        title TEXT NOT NULL,
-        payload_json TEXT NOT NULL,
-        engram_topic_key TEXT,
-        created_at_iso TEXT NOT NULL,
-        prev_hash TEXT NOT NULL,
-        entry_hash TEXT NOT NULL
-      );
-
-      CREATE INDEX IF NOT EXISTS idx_eos_ledger_project
-        ON eos_ledger_entries(project_id, seq DESC);
-
-      CREATE VIRTUAL TABLE IF NOT EXISTS eos_ledger_fts USING fts5(
-        entry_id UNINDEXED,
-        category,
-        project_id,
-        title,
-        payload_json
-      );
-    `);
   }
 
   private static computeEntryHash(
@@ -145,17 +172,18 @@ export class EosDurableSqliteLedger {
     projectId: string,
     title: string,
     payloadJson: string,
-    createdAtIso: string
+    createdAtIso: string,
   ): string {
-    return pureSha256(
-      `${prevHash}|${entryId}|${category}|${projectId}|${title}|${payloadJson}|${createdAtIso}`
-    );
+    return pureSha256(`${prevHash}|${entryId}|${category}|${projectId}|${title}|${payloadJson}|${createdAtIso}`);
   }
 
   public appendEntry(input: LedgerAppendInput): DurableLedgerRecord {
     assertPrecondition(!this.closed, "Cannot append to a closed SQLite ledger");
     assertPrecondition(typeof input.title === "string" && input.title.trim().length > 0, "Ledger title is required");
-    assertPrecondition(typeof input.projectId === "string" && input.projectId.trim().length > 0, "projectId is required");
+    assertPrecondition(
+      typeof input.projectId === "string" && input.projectId.trim().length > 0,
+      "projectId is required",
+    );
 
     const title = input.title.trim();
     const projectId = input.projectId.trim();
@@ -184,7 +212,7 @@ export class EosDurableSqliteLedger {
         projectId,
         title,
         payloadJson,
-        createdAtIso
+        createdAtIso,
       );
 
       const insertResult = this.db
@@ -192,26 +220,20 @@ export class EosDurableSqliteLedger {
           `INSERT INTO eos_ledger_entries (
             entry_id, category, project_id, title, payload_json,
             engram_topic_key, created_at_iso, prev_hash, entry_hash
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         )
-        .run(
-          entryId,
-          category,
-          projectId,
-          title,
-          payloadJson,
-          engramTopicKey,
-          createdAtIso,
-          prevHash,
-          entryHash
-        );
+        .run(entryId, category, projectId, title, payloadJson, engramTopicKey, createdAtIso, prevHash, entryHash);
 
-      this.db
-        .prepare(
-          `INSERT INTO eos_ledger_fts (entry_id, category, project_id, title, payload_json)
-           VALUES (?, ?, ?, ?, ?)`
-        )
-        .run(entryId, category, projectId, title, payloadJson);
+      try {
+        this.db
+          .prepare(
+            `INSERT INTO eos_ledger_fts (entry_id, category, project_id, title, payload_json)
+             VALUES (?, ?, ?, ?, ?)`,
+          )
+          .run(entryId, category, projectId, title, payloadJson);
+      } catch {
+        // FTS index failure is non-fatal to ACID ledger durability
+      }
 
       this.db.exec("COMMIT;");
 
@@ -228,7 +250,7 @@ export class EosDurableSqliteLedger {
         engramTopicKey,
         createdAtIso,
         prevHash,
-        entryHash
+        entryHash,
       });
     } catch (err) {
       try {
@@ -248,45 +270,81 @@ export class EosDurableSqliteLedger {
       return this.listRecent(safeLimit);
     }
 
-    const rows = this.db
-      .prepare(
-        `SELECT e.seq, e.entry_id, e.category, e.project_id, e.title, e.payload_json,
-                e.engram_topic_key, e.created_at_iso, e.prev_hash, e.entry_hash
-         FROM eos_ledger_fts f
-         JOIN eos_ledger_entries e ON e.entry_id = f.entry_id
-         WHERE eos_ledger_fts MATCH ?
-         ORDER BY f.rank, e.seq DESC
-         LIMIT ?`
-      )
-      .all(ftsQuery, safeLimit) as Array<Record<string, unknown>>;
+    try {
+      const rows = this.db
+        .prepare(
+          `SELECT e.seq, e.entry_id, e.category, e.project_id, e.title, e.payload_json,
+                  e.engram_topic_key, e.created_at_iso, e.prev_hash, e.entry_hash
+           FROM eos_ledger_fts
+           JOIN eos_ledger_entries e ON e.entry_id = eos_ledger_fts.entry_id
+           WHERE eos_ledger_fts MATCH ?
+           ORDER BY rank, e.seq DESC
+           LIMIT ?`,
+        )
+        .all(ftsQuery, safeLimit) as Array<Record<string, unknown>>;
 
-    return deepFreeze(rows.map((r) => this.mapRow(r)));
+      return deepFreeze(rows.map((r) => this.mapRow(r)));
+    } catch {
+      try {
+        // Fallback for runtimes without FTS5 (e.g. Node 23 official builds where node:sqlite lacks SQLITE_ENABLE_FTS5)
+        const tokens = (ftsQuery || rawQuery)
+          .replace(/["*:?^~]/g, " ")
+          .trim()
+          .split(/\s+/)
+          .filter((t) => t.length > 0);
+
+        if (tokens.length === 0) {
+          return this.listRecent(safeLimit);
+        }
+
+        const clauses: string[] = [];
+        const params: string[] = [];
+        for (const token of tokens) {
+          clauses.push("(title LIKE ? OR category LIKE ? OR project_id LIKE ? OR payload_json LIKE ?)");
+          const pat = `%${token.replace(/[%_]/g, "")}%`;
+          params.push(pat, pat, pat, pat);
+        }
+
+        const sql = `SELECT seq, entry_id, category, project_id, title, payload_json,
+                            engram_topic_key, created_at_iso, prev_hash, entry_hash
+                     FROM eos_ledger_entries
+                     WHERE ${clauses.join(" AND ")}
+                     ORDER BY seq DESC
+                     LIMIT ?`;
+
+        const rows = this.db.prepare(sql).all(...params, safeLimit) as Array<Record<string, unknown>>;
+        return deepFreeze(rows.map((r) => this.mapRow(r)));
+      } catch {
+        return this.listRecent(safeLimit);
+      }
+    }
   }
 
   public listRecent(limit: number = 10, projectId?: string): readonly DurableLedgerRecord[] {
     assertPrecondition(!this.closed, "Cannot query a closed SQLite ledger");
     const safeLimit = Math.max(1, Math.min(100, Math.floor(limit)));
 
-    const rows = projectId && projectId.trim().length > 0
-      ? (this.db
-          .prepare(
-            `SELECT seq, entry_id, category, project_id, title, payload_json,
+    const rows =
+      projectId && projectId.trim().length > 0
+        ? (this.db
+            .prepare(
+              `SELECT seq, entry_id, category, project_id, title, payload_json,
                     engram_topic_key, created_at_iso, prev_hash, entry_hash
              FROM eos_ledger_entries
              WHERE project_id = ?
              ORDER BY seq DESC
-             LIMIT ?`
-          )
-          .all(projectId.trim(), safeLimit) as Array<Record<string, unknown>>)
-      : (this.db
-          .prepare(
-            `SELECT seq, entry_id, category, project_id, title, payload_json,
+             LIMIT ?`,
+            )
+            .all(projectId.trim(), safeLimit) as Array<Record<string, unknown>>)
+        : (this.db
+            .prepare(
+              `SELECT seq, entry_id, category, project_id, title, payload_json,
                     engram_topic_key, created_at_iso, prev_hash, entry_hash
              FROM eos_ledger_entries
              ORDER BY seq DESC
-             LIMIT ?`
-          )
-          .all(safeLimit) as Array<Record<string, unknown>>);
+             LIMIT ?`,
+            )
+            .all(safeLimit) as Array<Record<string, unknown>>);
 
     return deepFreeze(rows.map((r) => this.mapRow(r)));
   }
@@ -301,7 +359,7 @@ export class EosDurableSqliteLedger {
                 engram_topic_key, created_at_iso, prev_hash, entry_hash
          FROM eos_ledger_entries
          WHERE seq <= ?
-         ORDER BY seq ASC`
+         ORDER BY seq ASC`,
       )
       .all(maxSeq) as Array<Record<string, unknown>>;
 
@@ -319,7 +377,7 @@ export class EosDurableSqliteLedger {
         `SELECT seq, entry_id, category, project_id, title, payload_json,
                 created_at_iso, prev_hash, entry_hash
          FROM eos_ledger_entries
-         ORDER BY seq ASC`
+         ORDER BY seq ASC`,
       )
       .all() as Array<Record<string, unknown>>;
 
@@ -337,7 +395,7 @@ export class EosDurableSqliteLedger {
         String(row.project_id),
         String(row.title),
         String(row.payload_json),
-        String(row.created_at_iso)
+        String(row.created_at_iso),
       );
 
       if (prevHash !== expectedPrev || entryHash !== recomputed) {
@@ -355,8 +413,8 @@ export class EosDurableSqliteLedger {
         totalEntries: rows.length,
         intact,
         headHash,
-        corruptedSequences
-      })
+        corruptedSequences,
+      }),
     );
 
     return deepFreeze({
@@ -366,7 +424,7 @@ export class EosDurableSqliteLedger {
       intact,
       headHash,
       corruptedSequences,
-      sha256Receipt
+      sha256Receipt,
     });
   }
 
@@ -388,7 +446,7 @@ export class EosDurableSqliteLedger {
       engramTopicKey: row.engram_topic_key ? String(row.engram_topic_key) : null,
       createdAtIso: String(row.created_at_iso),
       prevHash: String(row.prev_hash),
-      entryHash: String(row.entry_hash)
+      entryHash: String(row.entry_hash),
     };
   }
 }

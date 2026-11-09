@@ -56,7 +56,7 @@ export class EosDatalogVerifier {
     // Rule 1: Direct impact: impacts(Changed, Target) :- depends_on(Target, Changed)
     this.rules.push({
       head: { predicate: "impacts", args: ["X", "Y"] },
-      body: [{ predicate: "depends_on", args: ["Y", "X"] }]
+      body: [{ predicate: "depends_on", args: ["Y", "X"] }],
     });
 
     // Rule 2: Transitive impact: impacts(Changed, Target) :- impacts(Changed, Intermediate), depends_on(Target, Intermediate)
@@ -64,17 +64,25 @@ export class EosDatalogVerifier {
       head: { predicate: "impacts", args: ["X", "Z"] },
       body: [
         { predicate: "impacts", args: ["X", "Y"] },
-        { predicate: "depends_on", args: ["Z", "Y"] }
-      ]
+        { predicate: "depends_on", args: ["Z", "Y"] },
+      ],
     });
 
-    // Rule 3: Test trigger: triggers_test(Changed, TestFile) :- impacts(Changed, Target), tests_module(TestFile, Target)
+    // Rule 3: Transitive test trigger: triggers_test(Changed, TestFile) :- impacts(Changed, Target), tests_module(TestFile, Target)
     this.rules.push({
       head: { predicate: "triggers_test", args: ["X", "T"] },
       body: [
         { predicate: "impacts", args: ["X", "M"] },
-        { predicate: "tests_module", args: ["T", "M"] }
-      ]
+        { predicate: "tests_module", args: ["T", "M"] },
+      ],
+    });
+
+    // Rule 4: Direct test trigger: triggers_test(Changed, TestFile) :- tests_module(TestFile, Changed)
+    // Without this, changing a leaf module selects no suites because impacts() only
+    // contains dependents, never the changed module itself.
+    this.rules.push({
+      head: { predicate: "triggers_test", args: ["X", "T"] },
+      body: [{ predicate: "tests_module", args: ["T", "X"] }],
     });
   }
 
@@ -172,6 +180,16 @@ export class EosDatalogVerifier {
           }
         }
 
+        // Direct test trigger: tests_module(T, X) => triggers_test(X, T)
+        if (pred === "tests_module" && args.length === 2) {
+          const [testFile, module] = args;
+          const directTrigger = this.factKey("triggers_test", [module, testFile]);
+          if (!this.facts.has(directTrigger)) {
+            this.facts.add(directTrigger);
+            factsChanged = true;
+          }
+        }
+
         // Test trigger rule: impacts(X, M) + tests_module(T, M) => triggers_test(X, T)
         if (pred === "impacts" && args.length === 2) {
           const [source, targetMod] = args;
@@ -239,7 +257,7 @@ export class EosDatalogVerifier {
       totalFactsEvaluated: this.facts.size,
       fixpointIterations: it,
       durationUs,
-      isolationGuarantee: "Google Piper / Mangle-grade deductive certainty"
+      isolationGuarantee: "Google Piper / Mangle-grade deductive certainty",
     };
   }
 }

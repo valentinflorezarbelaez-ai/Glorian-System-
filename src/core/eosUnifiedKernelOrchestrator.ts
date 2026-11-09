@@ -109,7 +109,7 @@ export class EosUnifiedKernelOrchestrator {
       virtualPagePressurePct,
       syntheticSocketBacklog,
       contextSwitchJitterMs,
-      sha256ProbeDigest
+      sha256ProbeDigest,
     };
   }
 
@@ -121,8 +121,14 @@ export class EosUnifiedKernelOrchestrator {
       sloErrorBudgetConsumptionPct: Math.min(100, Math.max(0, inputTelemetry?.sloErrorBudgetConsumptionPct ?? 0)),
       predictiveHazardSeverityPct: Math.min(100, Math.max(0, inputTelemetry?.predictiveHazardSeverityPct ?? 0)),
       concurrencyHeadroomPct: Math.min(100, Math.max(0, inputTelemetry?.concurrencyHeadroomPct ?? 100)),
-      syntheticSocketBacklog: Math.min(1000, Math.max(0, inputTelemetry?.syntheticSocketBacklog ?? ebpf.syntheticSocketBacklog)),
-      virtualPagePressurePct: Math.min(100, Math.max(0, inputTelemetry?.virtualPagePressurePct ?? ebpf.virtualPagePressurePct))
+      syntheticSocketBacklog: Math.min(
+        1000,
+        Math.max(0, inputTelemetry?.syntheticSocketBacklog ?? ebpf.syntheticSocketBacklog),
+      ),
+      virtualPagePressurePct: Math.min(
+        100,
+        Math.max(0, inputTelemetry?.virtualPagePressurePct ?? ebpf.virtualPagePressurePct),
+      ),
     };
 
     // Calculate baseline OSEI
@@ -186,7 +192,7 @@ export class EosUnifiedKernelOrchestrator {
       state,
       mitigationAction,
       canaryFreezeActive,
-      telemetry
+      telemetry,
     });
 
     const sha256Attestation = createHash("sha256").update(attestationPayload).digest("hex");
@@ -199,7 +205,7 @@ export class EosUnifiedKernelOrchestrator {
       mitigationAction,
       canaryFreezeActive,
       telemetrySnapshot: telemetry,
-      sha256Attestation
+      sha256Attestation,
     };
 
     this.history.push(receipt);
@@ -228,7 +234,7 @@ export class EosUnifiedKernelOrchestrator {
       currentOseiScore,
       averageOseiScore,
       latestReceipt,
-      historyLength: this.history.length
+      historyLength: this.history.length,
     };
   }
 

@@ -1,0 +1,19 @@
+{
+  "projectName": "Glorian System",
+  "projectOwner": "valentin-florez-arbelaez",
+  "repoType": "github",
+  "repoHost": "github.com",
+  "files": ["README.md"],
+  "imageSize": 100,
+  "commit": true,
+  "contributors": [
+    {
+      "login": "valentin-florez-arbelaez",
+      "name": "Valentín Flórez Arbeláez",
+      "avatar_url": "https://avatars.githubusercontent.com/u/valentin-florez-arbelaez?v=4",
+      "profile": "https://portafolio-valentin.vercel.app",
+      "contributions": ["code", "doc", "test", "review", "ideas", "design", "tool", "maintenance"]
+    }
+  ],
+  "contributorsPerLine": 7
+}

@@ -3,11 +3,12 @@
 **Specification**: SPEC-060  
 **Target Version**: 66.0.0  
 **Status**: APPROVED  
-**Author**: Antigravity Principal Architect / EOS System Core  
+**Author**: Antigravity Principal Architect / EOS System Core
 
 ---
 
 ## Proposed Changes
+
 1. **Core Engines**:
    - `src/core/eosSapFixAutoshipper.ts`: Autonomous program repair cycle, ephemeral worktree isolation, zero-regression gate, and PR manifest synthesis.
 2. **Specification & Documentation**:

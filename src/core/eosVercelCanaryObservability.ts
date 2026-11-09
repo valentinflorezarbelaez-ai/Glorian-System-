@@ -11,12 +11,7 @@
  * 3. Zero external runtime dependencies — strictly pure Layer 0.
  */
 
-import {
-  pureSha256,
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze
-} from "./eosKernelPrimitives.ts";
+import { pureSha256, assertPrecondition, assertPostcondition, deepFreeze } from "./eosKernelPrimitives.ts";
 
 export type CanaryStage = "CANARY_1_PCT" | "CANARY_5_PCT" | "CANARY_25_PCT" | "FULL_PRODUCTION_100_PCT";
 
@@ -115,7 +110,7 @@ export class EosVercelCanaryObservability {
       requestCount: input.requestCount,
       errorBudgetRemainingPercent: budgetRemaining,
       rationale,
-      sha256Receipt
+      sha256Receipt,
     };
 
     return deepFreeze(result);

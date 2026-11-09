@@ -1,0 +1,18 @@
+#!/bin/sh
+# Post-merge hook — runs after `git pull` or `git merge`.
+# Big Tech standard (Google, Meta): keep the local environment in sync
+# after pulling changes so the developer never has stale dependencies,
+# stale git hooks, or stale lockfile state.
+set -eu
+REPO_ROOT=$(git rev-parse --show-toplevel)
+
+# Reinstall locked dev toolchain if package-lock.json changed
+if git diff --name-only HEAD@{1} HEAD 2>/dev/null | grep -q "package-lock.json"; then
+  echo "[post-merge] package-lock.json changed — running npm ci..."
+  npm ci --prefix "$REPO_ROOT" 2>&1 | tail -1
+fi
+
+# Re-run the prepare script to ensure git hooks are configured
+node -e "try{require('child_process').execSync('git config core.hooksPath .githooks',{cwd:process.cwd(),stdio:'pipe'})}catch{}" 2>/dev/null || true
+
+echo "[post-merge] Environment synced."

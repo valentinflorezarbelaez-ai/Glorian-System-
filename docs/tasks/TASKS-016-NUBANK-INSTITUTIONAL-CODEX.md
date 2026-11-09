@@ -10,6 +10,7 @@ flowchart TD
 ```
 
 ## Task Checklist
+
 - [x] Task 1: Record Intake, Specification, Change Proposal, and ADR.
 - [x] Task 2: Implement `src/core/eosNubankCodex.ts` with 6 Building Nu pillars.
 - [x] Task 3: Author test suite `test/eosNubankCodex.test.mjs` verifying BDD-053.

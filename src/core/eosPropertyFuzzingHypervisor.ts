@@ -78,7 +78,7 @@ export class EosFuzzValueGenerator {
     NaN,
     Infinity,
     -Infinity,
-    5e-324 // Subnormal float
+    5e-324, // Subnormal float
   ]);
 
   public static readonly BOUNDARY_STRINGS: readonly string[] = Object.freeze([
@@ -97,7 +97,7 @@ export class EosFuzzValueGenerator {
     "..\\..\\windows\\system32",
     "%s%s%s%s%s%n%d%x",
     "<script>alert(1)</script>",
-    "'; DROP TABLE ledger; --"
+    "'; DROP TABLE ledger; --",
   ]);
 
   constructor(prng: Mulberry32Prng) {
@@ -132,7 +132,7 @@ export class EosFuzzValueGenerator {
         jsonrpc: "2.0",
         id: this.prng.randomInteger(1, 1000),
         method: "eos_health_check",
-        params: {}
+        params: {},
       };
     } else if (roll < 0.5) {
       // Prototype pollution attempt
@@ -142,15 +142,15 @@ export class EosFuzzValueGenerator {
         method: this.generateString(12),
         params: {
           __proto__: { polluted: true },
-          constructor: { prototype: { admin: true } }
-        }
+          constructor: { prototype: { admin: true } },
+        },
       };
     } else if (roll < 0.75) {
       // Malformed headers/types
       return {
         jsonrpc: this.prng.choice(["1.0", "3.0", null, 2.0]),
         id: this.prng.choice([null, [], {}, false]),
-        method: this.prng.choice([null, 12345, false, ""])
+        method: this.prng.choice([null, 12345, false, ""]),
       };
     } else {
       // Adversarial boundary injection
@@ -160,8 +160,8 @@ export class EosFuzzValueGenerator {
         method: "eos_fuzz_hypervisor",
         params: {
           boundaryNumber: this.generateNumber(),
-          boundaryString: this.generateString(128)
-        }
+          boundaryString: this.generateString(128),
+        },
       };
     }
   }
@@ -177,7 +177,7 @@ export class DeltaShrinker {
   public static shrinkString(
     initialFailingInput: string,
     predicateFails: (candidate: string) => boolean,
-    maxSteps: number = 64
+    maxSteps: number = 64,
   ): { minimalCounterexample: string; shrinkSteps: number } {
     let current = initialFailingInput;
     let steps = 0;
@@ -257,14 +257,14 @@ export class EosTimeTravelHypervisor {
         projectId: entry.projectId,
         timestamp: entry.createdAtIso,
         entryHash: entry.entryHash,
-        stateDigest: cumulativeHash
+        stateDigest: cumulativeHash,
       };
     });
 
     this.currentCursor = this.frames.length;
     return {
       totalFrames: this.frames.length,
-      chainVerified: verified.intact
+      chainVerified: verified.intact,
     };
   }
 
@@ -291,7 +291,7 @@ export class EosTimeTravelHypervisor {
     this.currentCursor = clamped;
     return {
       currentHeight: this.currentCursor,
-      frame: this.getCurrentFrame()
+      frame: this.getCurrentFrame(),
     };
   }
 
@@ -315,7 +315,7 @@ export class EosTimeTravelHypervisor {
     return {
       diverged: current !== expectedStateDigest,
       currentDigest: current,
-      expected: expectedStateDigest
+      expected: expectedStateDigest,
     };
   }
 }
@@ -358,7 +358,7 @@ export class Eos49LevelsIntrospector {
     { index: 4, name: "Octave 4: Concurrency, Ring Buffers & Zero-Copy Streams (Levels 22-28)" },
     { index: 5, name: "Octave 5: Cryptographic Ledger & WAL Durability (Levels 29-35)" },
     { index: 6, name: "Octave 6: Formal Mathematical Proofs (TLA+ & BDD) (Levels 36-42)" },
-    { index: 7, name: "Octave 7: Sovereign Unitotal Purpose & Cosmic Self-Realization (Levels 43-49)" }
+    { index: 7, name: "Octave 7: Sovereign Unitotal Purpose & Cosmic Self-Realization (Levels 43-49)" },
   ];
 
   public static evaluate(workspaceRoot: string): IntrospectionReport {
@@ -422,7 +422,7 @@ export class Eos49LevelsIntrospector {
         name,
         description: desc,
         score,
-        passed: score >= 90
+        passed: score >= 90,
       });
     }
 
@@ -437,7 +437,7 @@ export class Eos49LevelsIntrospector {
         octaveIndex: oct.index,
         octaveName: oct.name,
         averageScore: avg,
-        levels: octLevels
+        levels: octLevels,
       };
     });
 
@@ -447,7 +447,7 @@ export class Eos49LevelsIntrospector {
       totalLevels: 49,
       passedLevels,
       octaves,
-      status: overallQuotient >= 90 ? "PERFECT_SYNCHRONY" : "REMEDIATION_REQUIRED"
+      status: overallQuotient >= 90 ? "PERFECT_SYNCHRONY" : "REMEDIATION_REQUIRED",
     };
   }
 }
@@ -465,12 +465,14 @@ export class EosPropertyFuzzingHypervisor {
   /**
    * Runs an adversarial property fuzzing campaign with a deterministic seed.
    */
-  public runFuzzCampaign(options: {
-    seed?: number;
-    iterations?: number;
-    testJsonRpc?: boolean;
-    testDeltaShrinkage?: boolean;
-  } = {}): {
+  public runFuzzCampaign(
+    options: {
+      seed?: number;
+      iterations?: number;
+      testJsonRpc?: boolean;
+      testDeltaShrinkage?: boolean;
+    } = {},
+  ): {
     seed: number;
     iterations: number;
     invariantsViolated: number;
@@ -524,7 +526,7 @@ export class EosPropertyFuzzingHypervisor {
       shrunkList.push({
         initialLength: artificialFailure.length,
         minimalLength: shrunk.minimalCounterexample.length,
-        sample: shrunk.minimalCounterexample
+        sample: shrunk.minimalCounterexample,
       });
     }
 
@@ -535,14 +537,17 @@ export class EosPropertyFuzzingHypervisor {
       reproducedCount,
       shrunkCounterexamples: shrunkList,
       sanitizationSuccessRate: 1.0,
-      passed: invariantsViolated === 0
+      passed: invariantsViolated === 0,
     };
   }
 
   /**
    * Runs a deterministic time-travel replay session over a specified SQLite WAL ledger.
    */
-  public runTimeTravelSession(ledgerPath?: string, targetHeight?: number): {
+  public runTimeTravelSession(
+    ledgerPath?: string,
+    targetHeight?: number,
+  ): {
     ledgerPath: string;
     totalFrames: number;
     chainVerified: boolean;
@@ -562,7 +567,7 @@ export class EosPropertyFuzzingHypervisor {
       totalFrames: history.totalFrames,
       chainVerified: history.chainVerified,
       finalHeight: hypervisor.getCursorHeight(),
-      currentFrame: hypervisor.getCurrentFrame()
+      currentFrame: hypervisor.getCurrentFrame(),
     };
   }
 
@@ -576,12 +581,14 @@ export class EosPropertyFuzzingHypervisor {
   /**
    * Executes comprehensive campaign and optionally persists receipt to ledger.
    */
-  public executeComprehensiveVerification(options: {
-    seed?: number;
-    iterations?: number;
-    recordToLedger?: boolean;
-    ledgerPath?: string;
-  } = {}): {
+  public executeComprehensiveVerification(
+    options: {
+      seed?: number;
+      iterations?: number;
+      recordToLedger?: boolean;
+      ledgerPath?: string;
+    } = {},
+  ): {
     timestamp: string;
     fuzzResults: ReturnType<EosPropertyFuzzingHypervisor["runFuzzCampaign"]>;
     timeTravelResults: ReturnType<EosPropertyFuzzingHypervisor["runTimeTravelSession"]>;
@@ -593,7 +600,7 @@ export class EosPropertyFuzzingHypervisor {
       seed: options.seed,
       iterations: options.iterations,
       testJsonRpc: true,
-      testDeltaShrinkage: true
+      testDeltaShrinkage: true,
     });
 
     const timeTravelResults = this.runTimeTravelSession(options.ledgerPath);
@@ -613,8 +620,8 @@ export class EosPropertyFuzzingHypervisor {
           version: "64.0.0",
           fuzzIterations: fuzzResults.iterations,
           overallQuotient: introspectionResults.overallQuotient,
-          totalFrames: timeTravelResults.totalFrames
-        }
+          totalFrames: timeTravelResults.totalFrames,
+        },
       });
       ledgerReceipt = { id: res.seq, hash: res.entryHash };
     }
@@ -628,7 +635,7 @@ export class EosPropertyFuzzingHypervisor {
       timeTravelResults,
       introspectionResults,
       ledgerReceipt,
-      verdict
+      verdict,
     };
   }
 }

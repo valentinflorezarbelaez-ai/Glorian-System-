@@ -80,7 +80,7 @@ export class SamaelianOctaveEngine {
     SOL: 1.5,
     LA: 1.666,
     SI: 1.875,
-    DO_SUPERIOR: 2.0
+    DO_SUPERIOR: 2.0,
   };
 
   /**
@@ -94,21 +94,21 @@ export class SamaelianOctaveEngine {
     intervals.push({
       note: "DO",
       vibrationRatio: SamaelianOctaveEngine.VIBRATION_MAP.DO,
-      description: "Impulso inicial y toma de directiva del usuario sin divagación"
+      description: "Impulso inicial y toma de directiva del usuario sin divagación",
     });
 
     // RE: Analysis & Intake
     intervals.push({
       note: "RE",
       vibrationRatio: SamaelianOctaveEngine.VIBRATION_MAP.RE,
-      description: "Reconocimiento y formalización de contexto de dominio"
+      description: "Reconocimiento y formalización de contexto de dominio",
     });
 
     // MI: EARS Requirements
     intervals.push({
       note: "MI",
       vibrationRatio: SamaelianOctaveEngine.VIBRATION_MAP.MI,
-      description: "Contratos formales EARS y criterios de aceptación BDD"
+      description: "Contratos formales EARS y criterios de aceptación BDD",
     });
 
     // --- CONSCIOUS SHOCK 1 (MI-FA) ---
@@ -119,28 +119,28 @@ export class SamaelianOctaveEngine {
       description: "Arquitectura hexagonal pura Capa 0 y plan con alternativas rechazadas",
       shockApplied: "SHOCK_1_MI_FA",
       shockDetails:
-        "Primer Shock Consciente: Auto-observación psicológica rigurosa, auditoría de AST y eliminación de secretos."
+        "Primer Shock Consciente: Auto-observación psicológica rigurosa, auditoría de AST y eliminación de secretos.",
     });
 
     // SOL: Implementation DAG
     intervals.push({
       note: "SOL",
       vibrationRatio: SamaelianOctaveEngine.VIBRATION_MAP.SOL,
-      description: "Ejecución de tareas atómicas secuenciales (Dominio -> App -> Infra -> UI)"
+      description: "Ejecución de tareas atómicas secuenciales (Dominio -> App -> Infra -> UI)",
     });
 
     // LA: Unit & Chaos Tests
     intervals.push({
       note: "LA",
       vibrationRatio: SamaelianOctaveEngine.VIBRATION_MAP.LA,
-      description: "100% pruebas de lógica, resiliencia y verificación estática"
+      description: "100% pruebas de lógica, resiliencia y verificación estática",
     });
 
     // SI: Epistemic Readiness
     intervals.push({
       note: "SI",
       vibrationRatio: SamaelianOctaveEngine.VIBRATION_MAP.SI,
-      description: "Compuertas SecDevOps completas y auditoría de invariantes"
+      description: "Compuertas SecDevOps completas y auditoría de invariantes",
     });
 
     // --- CONSCIOUS SHOCK 2 (SI-DO) ---
@@ -151,7 +151,7 @@ export class SamaelianOctaveEngine {
       description: "Ascenso a la octava superior: Despliegue en producción e inmortalidad del software",
       shockApplied: "SHOCK_2_SI_DO",
       shockDetails:
-        "Segundo Shock Consciente: Transmutación alquímica de la energía creadora Si-12 y sellado con el Átomo Nous."
+        "Segundo Shock Consciente: Transmutación alquímica de la energía creadora Si-12 y sellado con el Átomo Nous.",
     });
 
     const nousAtomSha256 = crypto
@@ -165,7 +165,7 @@ export class SamaelianOctaveEngine {
       intervals,
       completed: true,
       entropyPrevented: true,
-      nousAtomSha256
+      nousAtomSha256,
     };
   }
 }
@@ -179,10 +179,7 @@ export class IbmParallelSysplexEngine {
   /**
    * Executes a distributed atomic transaction using the IBM Two-Phase Commit (2PC / XA) standard.
    */
-  public executeTwoPhaseCommit(
-    txId: string,
-    participants: readonly XaParticipant[]
-  ): TwoPhaseCommitReport {
+  public executeTwoPhaseCommit(txId: string, participants: readonly XaParticipant[]): TwoPhaseCommitReport {
     const startTime = process.hrtime.bigint();
     const votes: Record<string, XaVote> = {};
 
@@ -220,7 +217,7 @@ export class IbmParallelSysplexEngine {
       decision,
       votes,
       durationUs,
-      sysplexCouplingLockId: lockKey
+      sysplexCouplingLockId: lockKey,
     };
   }
 
@@ -233,7 +230,7 @@ export class IbmParallelSysplexEngine {
     return {
       oldVersion,
       newVersion: this.microcodeVersion,
-      success: true
+      success: true,
     };
   }
 
@@ -250,7 +247,7 @@ export class IbmParallelSysplexEngine {
       uptimeSecondsSampled: this.totalSampledUptimeSec,
       calculatedAvailability: Number(availability.toFixed(7)),
       compliantSevenNines: this.simulatedDowntimeSec <= 3.15576,
-      liveMicrocodeVersion: this.microcodeVersion
+      liveMicrocodeVersion: this.microcodeVersion,
     };
   }
 }
@@ -304,7 +301,7 @@ export class NvidiaCudaWarpEngine {
       divergenceCyclesAvoided: 128,
       totalOperations: NvidiaCudaWarpEngine.WARP_SIZE * 5,
       gflopsEstimated: 45.2,
-      durationUs
+      durationUs,
     };
   }
 
@@ -344,7 +341,7 @@ export class NvidiaCudaWarpEngine {
       totalOps,
       durationUs,
       mOpsSec,
-      zeroAllocation: true
+      zeroAllocation: true,
     };
   }
 }
@@ -380,20 +377,20 @@ export class EosSamaelIbmNvidiaCore {
         shardId: "shard-bogota-01",
         prepare: () => "VOTE_COMMIT",
         commit: () => true,
-        abort: () => true
+        abort: () => true,
       },
       {
         shardId: "shard-stockholm-01",
         prepare: () => "VOTE_COMMIT",
         commit: () => true,
-        abort: () => true
+        abort: () => true,
       },
       {
         shardId: "shard-saopaulo-01",
         prepare: () => "VOTE_COMMIT",
         commit: () => true,
-        abort: () => true
-      }
+        abort: () => true,
+      },
     ];
 
     const sysplexReport = this.sysplexEngine.executeTwoPhaseCommit("tx-apex-001", shards);
@@ -404,7 +401,7 @@ export class EosSamaelIbmNvidiaCore {
     const unifiedSha256Attestation = crypto
       .createHash("sha256")
       .update(
-        `APEX_SYNTHESIS:${octaveReport.nousAtomSha256}:${sysplexReport.txId}:${sevenNinesMetrics.calculatedAvailability}:${cudaWarp.totalOperations}:${tensorMma.totalOps}`
+        `APEX_SYNTHESIS:${octaveReport.nousAtomSha256}:${sysplexReport.txId}:${sevenNinesMetrics.calculatedAvailability}:${cudaWarp.totalOperations}:${tensorMma.totalOps}`,
       )
       .digest("hex");
 
@@ -415,7 +412,7 @@ export class EosSamaelIbmNvidiaCore {
       cudaWarp,
       tensorMma,
       unifiedSha256Attestation,
-      status: "APEX_PERFECTION"
+      status: "APEX_PERFECTION",
     };
   }
 

@@ -98,9 +98,13 @@ if (!fs.existsSync(registryFile)) {
 
   if (registry && typeof registry === "object" && Array.isArray(registry.projects)) {
     const selectedProjectId = process.argv.find((arg) => arg.startsWith("--project="))?.slice("--project=".length);
-    const confirmation = process.argv.find((arg) => arg.startsWith("--confirm-project="))?.slice("--confirm-project=".length);
+    const confirmation = process.argv
+      .find((arg) => arg.startsWith("--confirm-project="))
+      ?.slice("--confirm-project=".length);
     if (!selectedProjectId || confirmation !== selectedProjectId) {
-      fail("Hook installation requires one --project=<id> and a matching --confirm-project=<id>. No repository was changed.");
+      fail(
+        "Hook installation requires one --project=<id> and a matching --confirm-project=<id>. No repository was changed.",
+      );
     } else {
       const projects = Array.isArray(registry.projects) ? registry.projects : [];
       const selectedProjects = projects.filter((project) => project.id === selectedProjectId);
@@ -116,10 +120,11 @@ if (!fs.existsSync(registryFile)) {
             const gitRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], {
               cwd: projectPath,
               encoding: "utf8",
-              stdio: ["ignore", "pipe", "pipe"]
+              stdio: ["ignore", "pipe", "pipe"],
             }).trim();
             const checkoutRoot = fs.realpathSync(gitRoot);
-            if (checkoutRoot !== fs.realpathSync(projectPath)) throw new Error("Configured path is not the repository root.");
+            if (checkoutRoot !== fs.realpathSync(projectPath))
+              throw new Error("Configured path is not the repository root.");
 
             const gateRelativePath = resolveGate(project, checkoutRoot);
             const hooksDir = path.join(checkoutRoot, ".githooks");

@@ -13,19 +13,11 @@
  */
 
 import { spawnSync } from "node:child_process";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import crypto from "node:crypto";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
-export type EnforcedExecutionStatus =
-  | "SUCCESS"
-  | "NON_ZERO_EXIT"
-  | "TIMEOUT_VIOLATION"
-  | "SPAWN_ERROR";
+export type EnforcedExecutionStatus = "SUCCESS" | "NON_ZERO_EXIT" | "TIMEOUT_VIOLATION" | "SPAWN_ERROR";
 
 export interface EnforcedExecutionOptions {
   readonly timeoutMs?: number;
@@ -57,17 +49,9 @@ export class EosActiveKernelProcessEnforcer {
   /**
    * Sanitizes environment variables to prevent secret leakage into child processes.
    */
-  public static sanitizeEnvironment(
-    baseEnv: Record<string, string | undefined> = process.env
-  ): Record<string, string> {
+  public static sanitizeEnvironment(baseEnv: Record<string, string | undefined> = process.env): Record<string, string> {
     const safe: Record<string, string> = {};
-    const prohibitedPrefixes = [
-      "AWS_SECRET",
-      "OPENAI_",
-      "STRIPE_",
-      "GITHUB_TOKEN",
-      "ANTHROPIC_"
-    ];
+    const prohibitedPrefixes = ["AWS_SECRET", "OPENAI_", "STRIPE_", "GITHUB_TOKEN", "ANTHROPIC_"];
 
     for (const [key, value] of Object.entries(baseEnv)) {
       if (!value) continue;
@@ -86,7 +70,7 @@ export class EosActiveKernelProcessEnforcer {
   public executeConfined(
     command: string,
     args: readonly string[] = [],
-    options: EnforcedExecutionOptions = {}
+    options: EnforcedExecutionOptions = {},
   ): EnforcedExecutionReceipt {
     assertPrecondition(Boolean(command && command.trim()), "Command cannot be empty");
     const timeoutMs = options.timeoutMs ?? 5000;
@@ -107,7 +91,7 @@ export class EosActiveKernelProcessEnforcer {
         env,
         encoding: "utf-8",
         shell: false,
-        killSignal: "SIGKILL"
+        killSignal: "SIGKILL",
       });
 
       if (result.error) {
@@ -135,7 +119,7 @@ export class EosActiveKernelProcessEnforcer {
     }
 
     const durationMs = Number((performance.now() - start).toFixed(2));
-    const executionId = `enf-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    const executionId = `enf-${Date.now().toString(36)}-${crypto.randomBytes(6).toString("hex")}`;
 
     const digestPayload = `${executionId}:${command}:${args.join(" ")}:${status}:${exitCode}:${durationMs}`;
     const receiptSha256 = pureSha256(digestPayload);
@@ -150,7 +134,7 @@ export class EosActiveKernelProcessEnforcer {
       stdout: stdout.trim(),
       stderr: stderr.trim(),
       receiptSha256,
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     });
 
     if (this.ledger) {
@@ -165,8 +149,8 @@ export class EosActiveKernelProcessEnforcer {
             status,
             exitCode,
             durationMs,
-            receiptSha256
-          }
+            receiptSha256,
+          },
         });
       } catch {
         // Fallback if ledger write fails

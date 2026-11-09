@@ -6,15 +6,11 @@ import {
   tokenize,
   computeTermFrequency,
   cosineSimilarity,
-  EosNeuralVectorStore,
-  createDefaultEosKnowledgeStore
+  denseCosineSimilarity,
+  createDefaultEosKnowledgeStore,
 } from "../src/core/eosNeuralVectorCore.ts";
 
-import {
-  interpretJarvisDirective,
-  evaluateDirectiveWithTMR,
-  JARVIS_INTENT_REGISTRY
-} from "../src/core/eosJarvisMonad.ts";
+import { interpretJarvisDirective, evaluateDirectiveWithTMR } from "../src/core/eosJarvisMonad.ts";
 
 test("EOS Neural Vector Core — Tokenizer and Stopwords Filter", () => {
   const text = "El sistema autónomo de la flota soberana y la memoria akáshica.";
@@ -55,6 +51,14 @@ test("EOS Neural Vector Core — Term Frequency & Cosine Similarity Invariants",
   const sim13 = cosineSimilarity(v1, v3);
   const sim31 = cosineSimilarity(v3, v1);
   assert.equal(sim13, sim31, "Cosine similarity must be symmetric");
+
+  // Zero-allocation Float64Array SIMD dot product
+  const f1 = new Float64Array([1, 0, 0, 1]);
+  const f2 = new Float64Array([1, 0, 0, 1]);
+  const f3 = new Float64Array([0, 1, 1, 0]);
+  assert.ok(Math.abs(denseCosineSimilarity(f1, f2) - 1.0) < 1e-6);
+  assert.equal(denseCosineSimilarity(f1, f3), 0.0);
+  assert.equal(denseCosineSimilarity(new Float64Array(0), new Float64Array(0)), 0.0);
 });
 
 test("EOS Neural Vector Store — Semantic Top-K Retrieval", () => {
@@ -65,7 +69,7 @@ test("EOS Neural Vector Store — Semantic Top-K Retrieval", () => {
   assert.ok(results.length > 0, "Should return at least one match");
   assert.ok(
     results[0].id === "DOC-FLEET-AUDIT" || results[0].id === "DOC-SECURITY-SAST",
-    `Top result should match security or fleet audit, got: ${results[0].id}`
+    `Top result should match security or fleet audit, got: ${results[0].id}`,
   );
   assert.ok(results[0].score > 0, "Score must be positive");
 });
@@ -108,24 +112,38 @@ test("EOS SRE & CNCF Health Endpoint (/api/health) — Observability Invariants"
 
   const req = {
     method: "GET",
-    headers: { traceparent: "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01" }
+    headers: { traceparent: "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01" },
   };
   const res = {
-    setHeader(k, v) { headers[k] = v; },
-    status(c) { statusCode = c; return this; },
-    json(data) { payload = data; return this; }
+    setHeader(k, v) {
+      headers[k] = v;
+    },
+    status(c) {
+      statusCode = c;
+      return this;
+    },
+    json(data) {
+      payload = data;
+      return this;
+    },
   };
 
   healthMod.default(req, res);
 
   assert.equal(statusCode, 200, "Health check must return HTTP 200");
   assert.equal(payload.status, "UP", "Overall status must be UP");
-  assert.equal(payload.service.version, JSON.parse(fs.readFileSync(new URL("../package.json", import.meta.url), "utf8")).version);
+  assert.equal(
+    payload.service.version,
+    JSON.parse(fs.readFileSync(new URL("../package.json", import.meta.url), "utf8")).version,
+  );
   assert.ok(payload.uptimeSeconds >= 0, "Uptime must be non-negative");
   assert.ok(payload.telemetry && payload.telemetry.memory, "Telemetry must include memory stats");
   assert.ok(payload.subsystems.jarvis, "JARVIS process scope must be represented");
   assert.ok(payload.subsystems.semanticGraph, "Semantic graph process scope must be represented");
-  assert.ok(Object.values(payload.subsystems).every((subsystem) => subsystem.status === "NOT_PROBED"), "Health must not claim unprobed subsystems are healthy");
+  assert.ok(
+    Object.values(payload.subsystems).every((subsystem) => subsystem.status === "NOT_PROBED"),
+    "Health must not claim unprobed subsystems are healthy",
+  );
   assert.ok(payload.sliReport.availabilitySloTarget === "99.99%", "SLI availability target must be 99.99%");
   assert.ok(headers.traceparent.startsWith("00-"), "W3C traceparent header must be set");
 });
@@ -139,7 +157,7 @@ test("EOS MCP Native Server (Model Context Protocol) — JSON-RPC 2.0 Invariants
     jsonrpc: "2.0",
     id: 1,
     method: "initialize",
-    params: {}
+    params: {},
   });
   assert.equal(initRes.id, 1);
   assert.equal(initRes.result.serverInfo.name, "eos-system-mcp");
@@ -152,7 +170,7 @@ test("EOS MCP Native Server (Model Context Protocol) — JSON-RPC 2.0 Invariants
     jsonrpc: "2.0",
     id: 2,
     method: "tools/list",
-    params: {}
+    params: {},
   });
   assert.equal(listRes.id, 2);
   const toolNames = listRes.result.tools.map((t) => t.name);
@@ -170,8 +188,8 @@ test("EOS MCP Native Server (Model Context Protocol) — JSON-RPC 2.0 Invariants
     method: "tools/call",
     params: {
       name: "eos_semantic_search",
-      arguments: { query: "seguridad y secretos", topK: 2 }
-    }
+      arguments: { query: "seguridad y secretos", topK: 2 },
+    },
   });
   assert.equal(callSearchRes.id, 3);
   const searchParsed = JSON.parse(callSearchRes.result.content[0].text);
@@ -184,8 +202,8 @@ test("EOS MCP Native Server (Model Context Protocol) — JSON-RPC 2.0 Invariants
     method: "tools/call",
     params: {
       name: "eos_tmr_consensus",
-      arguments: { directive: "audita la flota" }
-    }
+      arguments: { directive: "audita la flota" },
+    },
   });
   assert.equal(callTmrRes.id, 4);
   const tmrParsed = JSON.parse(callTmrRes.result.content[0].text);
@@ -197,7 +215,7 @@ test("EOS MCP Native Server (Model Context Protocol) — JSON-RPC 2.0 Invariants
     jsonrpc: "2.0",
     id: 5,
     method: "resources/list",
-    params: {}
+    params: {},
   });
   assert.ok(resList.result.resources.length >= 2, "Must list sovereign resources");
 
@@ -206,7 +224,7 @@ test("EOS MCP Native Server (Model Context Protocol) — JSON-RPC 2.0 Invariants
     jsonrpc: "2.0",
     id: 6,
     method: "nonexistent_method",
-    params: {}
+    params: {},
   });
   assert.equal(errRes.error.code, -32601, "Must return standard JSON-RPC Method not found code");
 });
@@ -215,7 +233,7 @@ test("EOS Sovereign Patch Validator — Pre-Write AST, Secret & Boundary Verific
   const { validatePatch } = await import("../src/core/eosPatchValidator.ts");
 
   // 1. Clean valid patch
-  const cleanCode = 'export function sum(a, b) { return a + b; }\n';
+  const cleanCode = "export function sum(a, b) { return a + b; }\n";
   const cleanRes = validatePatch("src/utils.js", cleanCode);
   assert.equal(cleanRes.valid, true, "Clean code must be valid");
   assert.equal(cleanRes.syntaxValid, true);
@@ -223,7 +241,7 @@ test("EOS Sovereign Patch Validator — Pre-Write AST, Secret & Boundary Verific
   assert.equal(cleanRes.destructiveCommandsFound, false);
 
   // 2. Syntax error in JS
-  const brokenCode = 'function broken() { const x = ; }';
+  const brokenCode = "function broken() { const x = ; }";
   const brokenRes = validatePatch("src/broken.js", brokenCode);
   assert.equal(brokenRes.valid, false, "Broken code must be flagged as invalid");
   assert.equal(brokenRes.syntaxValid, false);
@@ -292,6 +310,6 @@ test("EOS Hybrid RAG Search (Vector Cosine + Lexical BM25 RRF Fusion)", async ()
   assert.ok(hybridMatches[0].score > 0, "RRF score must be positive");
   assert.ok(
     hybridMatches[0].id === "DOC-FLEET-AUDIT" || hybridMatches[0].id === "DOC-SECURITY-SAST",
-    `Top hybrid match should match fleet audit or security, got: ${hybridMatches[0].id}`
+    `Top hybrid match should match fleet audit or security, got: ${hybridMatches[0].id}`,
   );
 });

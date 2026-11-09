@@ -46,24 +46,33 @@ const _log = createLogger("eosLspDiagnostics");
 
 export type DiagnosticSeverity = 1 | 2 | 3 | 4; // Error=1, Warning=2, Info=3, Hint=4
 
-export interface Position  { readonly line: number; readonly character: number; }
-export interface Range     { readonly start: Position; readonly end: Position; }
-export interface Location  { readonly uri: string; readonly range: Range; }
+export interface Position {
+  readonly line: number;
+  readonly character: number;
+}
+export interface Range {
+  readonly start: Position;
+  readonly end: Position;
+}
+export interface Location {
+  readonly uri: string;
+  readonly range: Range;
+}
 
 export interface Diagnostic {
-  readonly range:    Range;
+  readonly range: Range;
   readonly severity: DiagnosticSeverity;
-  readonly code?:    string | number;
-  readonly source:   string;
-  readonly message:  string;
+  readonly code?: string | number;
+  readonly source: string;
+  readonly message: string;
   readonly relatedInformation?: Array<{ location: Location; message: string }>;
   readonly tags?: number[]; // 1=Unnecessary, 2=Deprecated
 }
 
 export interface PublishDiagnosticsParams {
-  readonly uri:         string;
+  readonly uri: string;
   readonly diagnostics: Diagnostic[];
-  readonly version?:    number;
+  readonly version?: number;
 }
 
 // ============================================================================
@@ -80,29 +89,23 @@ function pathToUri(absolutePath: string): string {
  * Computes LSP diagnostics for a file from blast radius analysis.
  * High blast radius = Warning, Critical blast radius = Error.
  */
-function blastRadiusDiagnostics(
-  graph: EosSemanticGraph,
-  fileAbsPath: string,
-  projectRoot: string
-): Diagnostic[] {
+function blastRadiusDiagnostics(graph: EosSemanticGraph, fileAbsPath: string, projectRoot: string): Diagnostic[] {
   const relPath = path.relative(projectRoot, fileAbsPath).replace(/\\/g, "/");
-  const report  = graph.calculateBlastRadius(relPath);
+  const report = graph.calculateBlastRadius(relPath);
 
   if (report.totalImpactedFiles === 0) return [];
 
   const diagnostics: Diagnostic[] = [];
   const severity: DiagnosticSeverity =
-    report.riskLevel === "CRITICAL" ? 1 :
-    report.riskLevel === "HIGH"     ? 2 :
-    report.riskLevel === "MEDIUM"   ? 3 : 4;
+    report.riskLevel === "CRITICAL" ? 1 : report.riskLevel === "HIGH" ? 2 : report.riskLevel === "MEDIUM" ? 3 : 4;
 
   diagnostics.push({
-    range:    ZERO_RANGE,
+    range: ZERO_RANGE,
     severity,
-    code:     `EOS_BLAST_${report.riskLevel}`,
-    source:   "eos-semantic-graph",
-    message:  `Blast radius: ${report.totalImpactedFiles} files affected (${report.impactPercentage}% of codebase). Risk: ${report.riskLevel}. Modifying this file triggers tests: ${report.predictiveTestSuites.slice(0, 3).join(", ")}${report.predictiveTestSuites.length > 3 ? "..." : ""}.`,
-    tags:     severity === 4 ? [1] : undefined, // Hint = Unnecessary tag
+    code: `EOS_BLAST_${report.riskLevel}`,
+    source: "eos-semantic-graph",
+    message: `Blast radius: ${report.totalImpactedFiles} files affected (${report.impactPercentage}% of codebase). Risk: ${report.riskLevel}. Modifying this file triggers tests: ${report.predictiveTestSuites.slice(0, 3).join(", ")}${report.predictiveTestSuites.length > 3 ? "..." : ""}.`,
+    tags: severity === 4 ? [1] : undefined, // Hint = Unnecessary tag
   });
 
   return diagnostics;
@@ -111,51 +114,49 @@ function blastRadiusDiagnostics(
 /**
  * Computes LSP diagnostics from spec drift violations.
  */
-function driftDiagnostics(
-  projectRoot: string,
-  fileAbsPath: string
-): Diagnostic[] {
+function driftDiagnostics(projectRoot: string, fileAbsPath: string): Diagnostic[] {
   const detector = new EosSpecDriftDetector(projectRoot);
-  const report   = detector.detect({ driftThresholdDays: 7, checkOrphanSpecs: false });
+  const report = detector.detect({ driftThresholdDays: 7, checkOrphanSpecs: false });
 
   const relPath = path.relative(projectRoot, fileAbsPath).replace(/\\/g, "/");
-  const myViolations = report.violations.filter(v => v.modulePath.replace(/\\/g, "/").endsWith(relPath));
+  const myViolations = report.violations.filter((v) => v.modulePath.replace(/\\/g, "/").endsWith(relPath));
 
-  return myViolations.map(v => ({
-    range:    ZERO_RANGE,
+  return myViolations.map((v) => ({
+    range: ZERO_RANGE,
     severity: (v.severity === "CRITICAL" ? 1 : v.severity === "HIGH" ? 2 : 3) as DiagnosticSeverity,
-    code:     `EOS_DRIFT_${v.type}`,
-    source:   "eos-spec-drift",
-    message:  v.message,
-    relatedInformation: v.specPath ? [{
-      location: {
-        uri:   pathToUri(path.resolve(projectRoot, v.specPath)),
-        range: ZERO_RANGE,
-      },
-      message: v.remediation,
-    }] : undefined,
+    code: `EOS_DRIFT_${v.type}`,
+    source: "eos-spec-drift",
+    message: v.message,
+    relatedInformation: v.specPath
+      ? [
+          {
+            location: {
+              uri: pathToUri(path.resolve(projectRoot, v.specPath)),
+              range: ZERO_RANGE,
+            },
+            message: v.remediation,
+          },
+        ]
+      : undefined,
   }));
 }
 
 /**
  * Computes LSP diagnostics from architecture violations.
  */
-function architectureDiagnostics(
-  projectRoot: string,
-  fileAbsPath: string
-): Diagnostic[] {
+function architectureDiagnostics(projectRoot: string, fileAbsPath: string): Diagnostic[] {
   try {
     const srcDir = path.join(projectRoot, "src");
     const report = scanArchitecture(srcDir, projectRoot);
     const relPath = path.relative(projectRoot, fileAbsPath).replace(/\\/g, "/");
-    const myViolations = report.violations.filter(v => v.file.replace(/\\/g, "/") === relPath);
+    const myViolations = report.violations.filter((v) => v.file.replace(/\\/g, "/") === relPath);
 
-    return myViolations.map(v => ({
-      range:    ZERO_RANGE,
+    return myViolations.map((v) => ({
+      range: ZERO_RANGE,
       severity: 1 as DiagnosticSeverity, // Architecture violations = Error
-      code:     "EOS_ARCH_VIOLATION",
-      source:   "eos-architecture-guard",
-      message:  `${v.rule}: ${v.details}`,
+      code: "EOS_ARCH_VIOLATION",
+      source: "eos-architecture-guard",
+      message: `${v.rule}: ${v.details}`,
     }));
   } catch {
     return [];
@@ -167,10 +168,10 @@ function architectureDiagnostics(
 // ============================================================================
 
 export interface EosDiagnosticsResult {
-  readonly fileUri:    string;
+  readonly fileUri: string;
   readonly diagnostics: Diagnostic[];
   readonly computedAt: string;
-  readonly sha256:     string;
+  readonly sha256: string;
 }
 
 /**
@@ -179,7 +180,7 @@ export interface EosDiagnosticsResult {
 export async function computeDiagnosticsForFile(
   fileAbsPath: string,
   projectRoot: string,
-  graph?: EosSemanticGraph
+  graph?: EosSemanticGraph,
 ): Promise<EosDiagnosticsResult> {
   const g = graph ?? new EosSemanticGraph(projectRoot);
   const allDiagnostics: Diagnostic[] = [
@@ -189,15 +190,13 @@ export async function computeDiagnosticsForFile(
   ];
 
   const uri = pathToUri(fileAbsPath);
-  const sha256 = crypto.createHash("sha256")
-    .update(`${uri}:${allDiagnostics.length}:${Date.now()}`)
-    .digest("hex");
+  const sha256 = crypto.createHash("sha256").update(`${uri}:${allDiagnostics.length}:${Date.now()}`).digest("hex");
 
   return {
-    fileUri:    uri,
+    fileUri: uri,
     diagnostics: allDiagnostics,
-    computedAt:  new Date().toISOString(),
-    sha256:     `sha256:${sha256}`,
+    computedAt: new Date().toISOString(),
+    sha256: `sha256:${sha256}`,
   };
 }
 
@@ -205,22 +204,19 @@ export async function computeDiagnosticsForFile(
  * Writes diagnostics for all files in src/core to a JSON file.
  * Compatible with any editor that watches for diagnostics.json changes.
  */
-export async function writeDiagnosticsFile(
-  projectRoot: string,
-  outputPath?: string
-): Promise<string> {
+export async function writeDiagnosticsFile(projectRoot: string, outputPath?: string): Promise<string> {
   const outPath = outputPath ?? path.join(projectRoot, ".eos-diagnostics.json");
-  const graph   = new EosSemanticGraph(projectRoot);
+  const graph = new EosSemanticGraph(projectRoot);
   const coreDir = path.join(projectRoot, "src", "core");
 
   if (!fs.existsSync(coreDir)) return outPath;
 
   const results: EosDiagnosticsResult[] = [];
-  const files = fs.readdirSync(coreDir).filter(f => f.endsWith(".ts"));
+  const files = fs.readdirSync(coreDir).filter((f) => f.endsWith(".ts"));
 
   for (const file of files) {
     const absPath = path.join(coreDir, file);
-    const result  = await computeDiagnosticsForFile(absPath, projectRoot, graph);
+    const result = await computeDiagnosticsForFile(absPath, projectRoot, graph);
     if (result.diagnostics.length > 0) {
       results.push(result);
     }
@@ -274,20 +270,23 @@ export function startLspServer(projectRoot: string): void {
 
     if (!readingHeaders && pendingContent.length >= contentLength) {
       const body = pendingContent.slice(0, contentLength);
-      pendingContent  = pendingContent.slice(contentLength);
-      contentLength   = 0;
-      readingHeaders  = true;
+      pendingContent = pendingContent.slice(contentLength);
+      contentLength = 0;
+      readingHeaders = true;
       handleMessage(body);
     }
   });
 
   async function handleMessage(body: string): Promise<void> {
     let msg: Record<string, unknown>;
-    try { msg = JSON.parse(body); }
-    catch { return; }
+    try {
+      msg = JSON.parse(body);
+    } catch {
+      return;
+    }
 
     const method = msg.method as string;
-    const id     = msg.id;
+    const id = msg.id;
 
     if (method === "initialize") {
       initialized = true;
@@ -300,7 +299,7 @@ export function startLspServer(projectRoot: string): void {
       });
     } else if (method === "textDocument/diagnostic") {
       const params = msg.params as { textDocument?: { uri?: string } };
-      const uri    = params?.textDocument?.uri ?? "";
+      const uri = params?.textDocument?.uri ?? "";
       const absPath = uri.replace(/^file:\/\//, "").replace(/\//g, path.sep);
 
       try {
@@ -311,7 +310,7 @@ export function startLspServer(projectRoot: string): void {
       }
     } else if (method === "textDocument/didSave") {
       const params = msg.params as { textDocument?: { uri?: string } };
-      const uri    = params?.textDocument?.uri ?? "";
+      const uri = params?.textDocument?.uri ?? "";
       const absPath = uri.replace(/^file:\/\//, "").replace(/\//g, path.sep);
 
       // Push diagnostics on save
@@ -348,13 +347,13 @@ export function startLspServer(projectRoot: string): void {
 
 if (process.argv[1] && process.argv[1].replace(/\\/g, "/").endsWith("eosLspDiagnostics.ts")) {
   const projectRoot = process.env["EOS_PROJECT_ROOT"] ?? process.cwd();
-  const mode        = process.argv[2] ?? "--stdio";
+  const mode = process.argv[2] ?? "--stdio";
 
   if (mode === "--stdio") {
     startLspServer(projectRoot);
   } else if (mode === "--write-diagnostics") {
-    writeDiagnosticsFile(projectRoot).then(outPath => {
-      console.log(`[EOS LSP] Diagnostics written: ${outPath}`);
+    writeDiagnosticsFile(projectRoot).then((outPath) => {
+      process.stdout.write(`[EOS LSP] Diagnostics written: ${outPath}\n`);
     });
   } else {
     console.error("Usage: node eosLspDiagnostics.ts [--stdio | --write-diagnostics]");

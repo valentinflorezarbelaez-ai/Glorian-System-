@@ -8,10 +8,7 @@
  * Zero external runtime npm dependencies (Law V). Node 24 strip-only compliant.
  */
 
-import {
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface OciSeccompProfile {
@@ -65,7 +62,7 @@ export const SAFE_WHITELISTED_SYSCALLS: readonly string[] = Object.freeze([
   "epoll_wait",
   "getpid",
   "getuid",
-  "getgid"
+  "getgid",
 ]);
 
 export const DANGEROUS_FORBIDDEN_SYSCALLS: readonly string[] = Object.freeze([
@@ -79,7 +76,7 @@ export const DANGEROUS_FORBIDDEN_SYSCALLS: readonly string[] = Object.freeze([
   "sys_rawio",
   "kexec_load",
   "iopl",
-  "ioperm"
+  "ioperm",
 ]);
 
 export class EosKernelSyscallSandbox {
@@ -94,9 +91,9 @@ export class EosKernelSyscallSandbox {
       syscalls: [
         {
           names: SAFE_WHITELISTED_SYSCALLS,
-          action: "SCMP_ACT_ALLOW"
-        }
-      ]
+          action: "SCMP_ACT_ALLOW",
+        },
+      ],
     };
 
     const windowsJobObject: WindowsJobObjectProfile = {
@@ -104,14 +101,14 @@ export class EosKernelSyscallSandbox {
       activeProcessLimit: 8,
       cpuRateLimitPercentage: 50,
       uiRestrictions: true,
-      dieOnUnhandledException: true
+      dieOnUnhandledException: true,
     };
 
     const generatedAtIso = new Date().toISOString();
     const serializedForDigest = JSON.stringify({
       profileName,
       linuxSeccomp,
-      windowsJobObject
+      windowsJobObject,
     });
     const profileSha256 = pureSha256(serializedForDigest);
 
@@ -121,7 +118,7 @@ export class EosKernelSyscallSandbox {
       linuxSeccomp,
       windowsJobObject,
       generatedAtIso,
-      profileSha256
+      profileSha256,
     });
   }
 
@@ -150,7 +147,7 @@ export class EosKernelSyscallSandbox {
    */
   public static recordProfileInLedger(
     profile: KernelSandboxDescriptor,
-    ledgerPath?: string
+    ledgerPath?: string,
   ): { readonly recorded: boolean; readonly receiptHash: string } {
     const ledger = new EosDurableSqliteLedger(ledgerPath || ":memory:");
     try {
@@ -162,8 +159,8 @@ export class EosKernelSyscallSandbox {
           profileName: profile.profileName,
           targetPlatform: profile.targetPlatform,
           whitelistedSyscallsCount: profile.linuxSeccomp.syscalls[0]?.names.length || 0,
-          profileSha256: profile.profileSha256
-        }
+          profileSha256: profile.profileSha256,
+        },
       });
       return { recorded: true, receiptHash: entry.entryHash };
     } finally {

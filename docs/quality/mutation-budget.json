@@ -1,0 +1,6 @@
+{
+  "minScore": 0.8,
+  "floors": {
+    "src/core/eosSLOErrorBudgetGovernor.ts": 0.89
+  }
+}

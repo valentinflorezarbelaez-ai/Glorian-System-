@@ -11,17 +11,14 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { evaluateApexDoctrineScorecard } from "./eosApexDoctrineScorecard.ts";
-import { CORE_TIER0_TOOL_NAMES } from "../mcp/eosMcpToolCatalog.ts";
-import { PHASE1_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpCoreUtilitarianHandlers.ts";
-import { PHASE2_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase2UtilitarianHandlers.ts";
-import { PHASE3_MIGRATED_TOOL_NAMES } from "../mcp/tools/eosMcpPhase3CoreHandlers.ts";
+import {
+  CORE_TIER0_TOOL_NAMES,
+  PHASE1_MIGRATED_TOOL_NAMES,
+  PHASE2_MIGRATED_TOOL_NAMES,
+  PHASE3_MIGRATED_TOOL_NAMES,
+} from "./eosMcpToolTaxonomy.ts";
 
 export type ApexPillarId =
   | "ASML_TSMC_PRECISION"
@@ -70,7 +67,7 @@ const CLAIMS_DENIED = [
   "ASML/TSMC physical monopoly parity",
   "SpaceX orbital / Starship capability",
   "DARPA/NSA/NRO black-budget program parity",
-  "Neuralink/CRISPR biological capability"
+  "Neuralink/CRISPR biological capability",
 ] as const;
 
 export class EosPlanetaryApexDoctrine {
@@ -79,7 +76,7 @@ export class EosPlanetaryApexDoctrine {
   constructor(projectRoot: string = process.cwd()) {
     assertPrecondition(
       typeof projectRoot === "string" && projectRoot.length > 0,
-      "projectRoot must be a non-empty string"
+      "projectRoot must be a non-empty string",
     );
     this.projectRoot = path.resolve(projectRoot);
   }
@@ -119,7 +116,7 @@ export class EosPlanetaryApexDoctrine {
       quorumReached,
       unanimous,
       dissentingNode,
-      sha256Receipt: pureSha256(`TMR:${hashA}:${hashB}:${hashC}:${quorumReached}:${dissentingNode}`)
+      sha256Receipt: pureSha256(`TMR:${hashA}:${hashB}:${hashC}:${quorumReached}:${dissentingNode}`),
     });
   }
 
@@ -156,7 +153,7 @@ export class EosPlanetaryApexDoctrine {
       score: p1DurationUs < 500 ? 100 : p1DurationUs < 1000 ? 90 : 40,
       latencyUs: Number(p1DurationUs.toFixed(2)),
       details: `best-of-5 × 1,000 bitwise transitions in ${p1DurationUs.toFixed(2)}µs (software drill; not EUV lithography)`,
-      sha256Receipt: pureSha256(`ASML_DRILL:${p1DurationUs}:${bestSum}`)
+      sha256Receipt: pureSha256(`ASML_DRILL:${p1DurationUs}:${bestSum}`),
     });
 
     // 2. SpaceX analog: real TMR 2-of-3
@@ -164,7 +161,7 @@ export class EosPlanetaryApexDoctrine {
     const tmrTest = EosPlanetaryApexDoctrine.executeTmrVoting({
       vectorA: { telemetryActive: true, velocityMps: 7800 },
       vectorB: { telemetryActive: true, velocityMps: 7800 },
-      vectorC: { telemetryActive: false, velocityMps: 0 }
+      vectorC: { telemetryActive: false, velocityMps: 0 },
     });
     const p2DurationUs = Number(process.hrtime.bigint() - p2Start) / 1000;
     pillars.push({
@@ -174,7 +171,7 @@ export class EosPlanetaryApexDoctrine {
       score: tmrTest.quorumReached ? 100 : 0,
       latencyUs: Number(p2DurationUs.toFixed(2)),
       details: `Quorum=${tmrTest.quorumReached}; dissent=${tmrTest.dissentingNode} (software vote; not flight computers)`,
-      sha256Receipt: tmrTest.sha256Receipt
+      sha256Receipt: tmrTest.sha256Receipt,
     });
 
     // 3. DeepMind analog: apex doctrine scorecard + frozen evidence object
@@ -190,7 +187,7 @@ export class EosPlanetaryApexDoctrine {
       score: p3Ok ? 100 : 50,
       latencyUs: Number(p3DurationUs.toFixed(2)),
       details: `ApexDoctrine ${card.grade} ${card.percent}% · epistemic ${card.epistemicState}`,
-      sha256Receipt: card.sha256Receipt
+      sha256Receipt: card.sha256Receipt,
     });
 
     // 4. DARPA analog: Layer-0 purity + core MCP single-path migration
@@ -205,7 +202,7 @@ export class EosPlanetaryApexDoctrine {
     const migrated = new Set([
       ...PHASE1_MIGRATED_TOOL_NAMES,
       ...PHASE2_MIGRATED_TOOL_NAMES,
-      ...PHASE3_MIGRATED_TOOL_NAMES
+      ...PHASE3_MIGRATED_TOOL_NAMES,
     ]);
     const coreMigrated = [...CORE_TIER0_TOOL_NAMES].every((t) => migrated.has(t));
     const p4Ok = runtimeDeps === 0 && coreMigrated;
@@ -217,7 +214,7 @@ export class EosPlanetaryApexDoctrine {
       score: p4Ok ? 100 : 40,
       latencyUs: Number(p4DurationUs.toFixed(2)),
       details: `runtimeDeps=${runtimeDeps}; CORE_TIER0 migrated=${coreMigrated} (${migrated.size} handlers)`,
-      sha256Receipt: pureSha256(`DARPA_DRILL:${runtimeDeps}:${coreMigrated}:${migrated.size}`)
+      sha256Receipt: pureSha256(`DARPA_DRILL:${runtimeDeps}:${coreMigrated}:${migrated.size}`),
     });
 
     // 5. NSA analog: provenance + SBOM presence (not SIGINT)
@@ -235,7 +232,7 @@ export class EosPlanetaryApexDoctrine {
       details: p5Ok
         ? "provenance.intoto.jsonl + sbom.cdx.json present (software SLSA drill; not SIGINT)"
         : "Missing SLSA/SBOM evidence artifacts",
-      sha256Receipt: pureSha256(`NSA_DRILL:${p5Ok}:${p5DurationUs}`)
+      sha256Receipt: pureSha256(`NSA_DRILL:${p5Ok}:${p5DurationUs}`),
     });
 
     const totalDurationUs = Number(process.hrtime.bigint() - t0) / 1000;
@@ -254,7 +251,7 @@ export class EosPlanetaryApexDoctrine {
       totalDurationUs: Number(totalDurationUs.toFixed(2)),
       pillars: Object.freeze(pillars),
       sha256Receipt,
-      auditedAtIso: new Date().toISOString()
+      auditedAtIso: new Date().toISOString(),
     };
 
     assertPostcondition(report.pillars.length === 5, "Report must evaluate exactly 5 apex pillars");

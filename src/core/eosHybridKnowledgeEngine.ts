@@ -50,19 +50,11 @@ export interface SearchOptions {
   readonly category?: DocCategory | "ALL";
 }
 
-const STOPWORDS = new Set([
-  "a", "an", "the", "and", "or", "in", "on", "at", "to", "for", "with", "of",
-  "is", "are", "was", "were", "be", "been", "being", "have", "has", "had",
-  "do", "does", "did", "but", "by", "from", "into", "through", "during",
-  "before", "after", "above", "below", "up", "down", "in", "out", "off",
-  "over", "under", "again", "further", "then", "once", "here", "there",
-  "when", "where", "why", "how", "all", "any", "both", "each", "few", "more",
-  "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same",
-  "so", "than", "too", "very", "s", "t", "can", "will", "just", "don", "should",
-  "now", "de", "la", "el", "los", "las", "un", "una", "unos", "unas", "en",
-  "para", "por", "con", "sin", "sobre", "y", "o", "u", "e", "que", "es", "son",
-  "fue", "era", "se", "su", "sus", "al", "del", "lo", "como"
-]);
+const STOPWORDS = new Set(
+  "a an the and or in on at to for with of is are was were be been being have has had do does did but by from into through during before after above below up down out off over under again further then once here there when where why how all any both each few more most other some such no nor not only own same so than too very s t can will just don should now de la el los las un una unos unas en para por con sin sobre y o u e que es son fue era se su sus al del lo como".split(
+    " ",
+  ),
+);
 
 export class EosHybridKnowledgeEngine {
   public static readonly VECTOR_DIMENSIONS = 64;
@@ -100,58 +92,65 @@ export class EosHybridKnowledgeEngine {
       try {
         fs.mkdirSync(path.dirname(this.dbPath), { recursive: true });
         this.db = new DatabaseSync(this.dbPath);
+        this.db.exec("PRAGMA busy_timeout = 10000;");
         this.db.exec("PRAGMA journal_mode = WAL;");
       } catch {
-        // Fallback to volatile memory if directory creation fails or filesystem is read-only
         this.db = new DatabaseSync(":memory:");
       }
     } else {
       this.db = new DatabaseSync(":memory:");
     }
+    this.setupSchema();
+  }
 
-    this.db.exec("PRAGMA synchronous = NORMAL;");
-
-    // 1. Metadata catalog
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS eos_docs_metadata (
-        doc_id TEXT PRIMARY KEY,
-        file_path TEXT NOT NULL,
-        category TEXT NOT NULL,
-        title TEXT NOT NULL,
-        content_hash TEXT NOT NULL,
-        indexed_at_iso TEXT NOT NULL
-      );
-    `);
-
-    // 2. FTS5 Virtual Table for BM25 lexical ranking
-    this.db.exec(`
-      CREATE VIRTUAL TABLE IF NOT EXISTS eos_docs_fts USING fts5(
-        doc_id UNINDEXED,
-        title,
-        content,
-        category,
-        tokenize = 'unicode61'
-      );
-    `);
-
-    // 3. Dense vector embeddings stored as raw binary BLOBs
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS eos_vector_nodes (
-        doc_id TEXT PRIMARY KEY,
-        dimensions INTEGER NOT NULL,
-        vector_blob BLOB NOT NULL,
-        FOREIGN KEY (doc_id) REFERENCES eos_docs_metadata(doc_id) ON DELETE CASCADE
-      );
-    `);
+  private setupSchema(): void {
+    try {
+      this.db.exec("PRAGMA busy_timeout = 10000;");
+      this.db.exec("PRAGMA synchronous = NORMAL;");
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS eos_docs_metadata (
+          doc_id TEXT PRIMARY KEY,
+          file_path TEXT NOT NULL,
+          category TEXT NOT NULL,
+          title TEXT NOT NULL,
+          content_hash TEXT NOT NULL,
+          indexed_at_iso TEXT NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS eos_vector_nodes (
+          doc_id TEXT PRIMARY KEY,
+          dimensions INTEGER NOT NULL,
+          vector_blob BLOB NOT NULL,
+          FOREIGN KEY (doc_id) REFERENCES eos_docs_metadata(doc_id) ON DELETE CASCADE
+        );
+      `);
+      try {
+        this.db.exec(`
+          CREATE VIRTUAL TABLE IF NOT EXISTS eos_docs_fts USING fts5(
+            doc_id UNINDEXED, title, content, category, tokenize = 'unicode61'
+          );
+        `);
+      } catch {
+        this.db.exec(`CREATE TABLE IF NOT EXISTS eos_docs_fts (doc_id TEXT, title TEXT, content TEXT, category TEXT);`);
+      }
+    } catch {
+      if (!this.isMemory) {
+        this.db = new DatabaseSync(":memory:");
+        this.setupSchema();
+      }
+    }
   }
 
   private loadVectorCache(): void {
     try {
-      const rows = this.db.prepare(`
+      const rows = this.db
+        .prepare(
+          `
         SELECT m.doc_id, m.category, v.dimensions, v.vector_blob
         FROM eos_docs_metadata m
         JOIN eos_vector_nodes v ON m.doc_id = v.doc_id
-      `).all() as Array<{
+      `,
+        )
+        .all() as Array<{
         doc_id: string;
         category: string;
         dimensions: number;
@@ -164,11 +163,11 @@ export class EosHybridKnowledgeEngine {
           const floatArr = new Float32Array(
             buf.buffer,
             buf.byteOffset,
-            buf.byteLength / Float32Array.BYTES_PER_ELEMENT
+            buf.byteLength / Float32Array.BYTES_PER_ELEMENT,
           );
           this.vectorCache.set(row.doc_id, {
             vector: floatArr,
-            category: row.category as DocCategory
+            category: row.category as DocCategory,
           });
         }
       }
@@ -201,9 +200,7 @@ export class EosHybridKnowledgeEngine {
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9_\-\s]/g, " ");
 
-    const tokens = clean
-      .split(/\s+/)
-      .filter((t) => t.length > 1 && !STOPWORDS.has(t));
+    const tokens = clean.split(/\s+/).filter((t) => t.length > 1 && !STOPWORDS.has(t));
 
     if (tokens.length === 0) {
       return vector;
@@ -220,7 +217,7 @@ export class EosHybridKnowledgeEngine {
         wordHash = Math.imul(wordHash, 0x01000193);
       }
       const wordBucket = (wordHash >>> 0) % dim;
-      const wordSign = (wordHash & 0x80000000) ? 1.0 : -1.0;
+      const wordSign = wordHash & 0x80000000 ? 1.0 : -1.0;
       vector[wordBucket] += wordSign * posWeight * 2.0;
 
       // Subword character 3-grams
@@ -233,7 +230,7 @@ export class EosHybridKnowledgeEngine {
             gramHash = Math.imul(gramHash, 0x01000193);
           }
           const gramBucket = (gramHash >>> 0) % dim;
-          const gramSign = (gramHash & 0x80000000) ? 1.0 : -1.0;
+          const gramSign = gramHash & 0x80000000 ? 1.0 : -1.0;
           vector[gramBucket] += gramSign * posWeight * 0.75;
         }
       }
@@ -280,9 +277,13 @@ export class EosHybridKnowledgeEngine {
     const nowIso = new Date().toISOString();
 
     // Check if content already up to date
-    const existing = this.db.prepare(`
+    const existing = this.db
+      .prepare(
+        `
       SELECT content_hash FROM eos_docs_metadata WHERE doc_id = ?
-    `).get(doc.docId) as { content_hash: string } | undefined;
+    `,
+      )
+      .get(doc.docId) as { content_hash: string } | undefined;
 
     if (existing && existing.content_hash === contentHash) {
       return false; // Skipped
@@ -291,23 +292,35 @@ export class EosHybridKnowledgeEngine {
     const vector = this.generateDenseEmbedding(`${doc.title}\n${doc.content}`);
     const vectorBuf = Buffer.from(vector.buffer, vector.byteOffset, vector.byteLength);
 
-    this.db.prepare(`
+    this.db
+      .prepare(
+        `
       INSERT OR REPLACE INTO eos_docs_metadata (doc_id, file_path, category, title, content_hash, indexed_at_iso)
       VALUES (?, ?, ?, ?, ?, ?)
-    `).run(doc.docId, doc.filePath, doc.category, doc.title, contentHash, nowIso);
+    `,
+      )
+      .run(doc.docId, doc.filePath, doc.category, doc.title, contentHash, nowIso);
 
     // Update FTS5
     this.db.prepare(`DELETE FROM eos_docs_fts WHERE doc_id = ?`).run(doc.docId);
-    this.db.prepare(`
+    this.db
+      .prepare(
+        `
       INSERT INTO eos_docs_fts (doc_id, title, content, category)
       VALUES (?, ?, ?, ?)
-    `).run(doc.docId, doc.title, doc.content, doc.category);
+    `,
+      )
+      .run(doc.docId, doc.title, doc.content, doc.category);
 
     // Update Vector BLOB
-    this.db.prepare(`
+    this.db
+      .prepare(
+        `
       INSERT OR REPLACE INTO eos_vector_nodes (doc_id, dimensions, vector_blob)
       VALUES (?, ?, ?)
-    `).run(doc.docId, EosHybridKnowledgeEngine.VECTOR_DIMENSIONS, vectorBuf);
+    `,
+      )
+      .run(doc.docId, EosHybridKnowledgeEngine.VECTOR_DIMENSIONS, vectorBuf);
 
     // Update in-memory vector cache
     this.vectorCache.set(doc.docId, { vector, category: doc.category });
@@ -317,10 +330,7 @@ export class EosHybridKnowledgeEngine {
   /**
    * Scans filesystem directories incrementally and indexes OpenSpecs, Changes, Plans, and Code.
    */
-  public indexCorpus(options?: {
-    directories?: string[];
-    forceReindex?: boolean;
-  }): CorpusIndexReport {
+  public indexCorpus(options?: { directories?: string[]; forceReindex?: boolean }): CorpusIndexReport {
     const startTime = performance.now();
     let indexedCount = 0;
     let skippedCount = 0;
@@ -329,7 +339,7 @@ export class EosHybridKnowledgeEngine {
       path.join(this.projectRoot, "openspec", "specs"),
       path.join(this.projectRoot, "openspec", "changes"),
       path.join(this.projectRoot, "docs", "plans"),
-      path.join(this.projectRoot, "src", "core")
+      path.join(this.projectRoot, "src", "core"),
     ];
 
     for (const dir of targetDirs) {
@@ -364,7 +374,7 @@ export class EosHybridKnowledgeEngine {
           filePath: relPath,
           category,
           title,
-          content
+          content,
         });
 
         if (updated) {
@@ -382,7 +392,7 @@ export class EosHybridKnowledgeEngine {
       indexedCount,
       skippedCount,
       totalDocuments: totalRow ? Number(totalRow.count) : 0,
-      durationMs
+      durationMs,
     };
   }
 
@@ -392,7 +402,9 @@ export class EosHybridKnowledgeEngine {
   public ensureCorpusIndexed(force = false): boolean {
     if (this.corpusIndexed && !force) return false;
     try {
-      const row = this.db.prepare("SELECT count(*) as count FROM eos_docs_metadata").get() as { count: number } | undefined;
+      const row = this.db.prepare("SELECT count(*) as count FROM eos_docs_metadata").get() as
+        | { count: number }
+        | undefined;
       if (!row || Number(row.count) === 0 || force) {
         this.indexCorpus();
         this.corpusIndexed = true;
@@ -473,10 +485,63 @@ export class EosHybridKnowledgeEngine {
         snippet: r.snippet || "",
         filePath: r.file_path,
         category: r.category as DocCategory,
-        lexicalRank: idx + 1
+        lexicalRank: idx + 1,
       }));
     } catch {
-      return [];
+      try {
+        const rawTerms = query
+          .replace(/[^\w\s-]/g, " ")
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean);
+        if (rawTerms.length === 0) return [];
+
+        const clauses: string[] = [];
+        const params: (string | number)[] = [];
+        for (const term of rawTerms) {
+          clauses.push("(f.title LIKE ? OR f.content LIKE ?)");
+          const pat = `%${term}%`;
+          params.push(pat, pat);
+        }
+
+        let sql = `
+          SELECT m.doc_id, m.title, m.file_path, m.category,
+                 substr(f.content, 1, 120) AS snippet,
+                 0 AS rank
+          FROM eos_docs_fts f
+          JOIN eos_docs_metadata m ON f.doc_id = m.doc_id
+          WHERE ${clauses.join(" AND ")}
+        `;
+
+        if (categoryFilter) {
+          sql += " AND m.category = ?";
+          params.push(categoryFilter);
+        }
+
+        sql += " LIMIT ?";
+        params.push(topK);
+
+        const rows = this.db.prepare(sql).all(...params) as Array<{
+          doc_id: string;
+          title: string;
+          file_path: string;
+          category: string;
+          snippet: string;
+          rank: number;
+        }>;
+
+        return rows.map((r, idx) => ({
+          id: r.doc_id,
+          score: Number((1 / (1 + idx)).toFixed(4)),
+          title: r.title,
+          snippet: r.snippet || "",
+          filePath: r.file_path,
+          category: r.category as DocCategory,
+          lexicalRank: idx + 1,
+        }));
+      } catch {
+        return [];
+      }
     }
   }
 
@@ -504,7 +569,7 @@ export class EosHybridKnowledgeEngine {
         snippet: `[Vector Match] Score: ${item.score.toFixed(4)}`,
         filePath: meta?.filePath || "",
         category: (meta?.category || "DOC") as DocCategory,
-        vectorRank: idx + 1
+        vectorRank: idx + 1,
       };
     });
   }
@@ -529,19 +594,22 @@ export class EosHybridKnowledgeEngine {
 
     // Reciprocal Rank Fusion (RRF)
     const k = EosHybridKnowledgeEngine.RRF_K;
-    const rrfMap = new Map<string, {
-      score: number;
-      lexicalRank?: number;
-      vectorRank?: number;
-      snippet?: string;
-    }>();
+    const rrfMap = new Map<
+      string,
+      {
+        score: number;
+        lexicalRank?: number;
+        vectorRank?: number;
+        snippet?: string;
+      }
+    >();
 
     lexicalResults.forEach((res, rank) => {
       const rrf = 1 / (k + rank + 1);
       rrfMap.set(res.id, {
         score: rrf,
         lexicalRank: rank + 1,
-        snippet: res.snippet
+        snippet: res.snippet,
       });
     });
 
@@ -555,7 +623,7 @@ export class EosHybridKnowledgeEngine {
         rrfMap.set(res.docId, {
           score: rrf,
           vectorRank: rank + 1,
-          snippet: `[Vector Match] Similarity: ${res.score.toFixed(4)}`
+          snippet: `[Vector Match] Similarity: ${res.score.toFixed(4)}`,
         });
       }
     });
@@ -575,23 +643,29 @@ export class EosHybridKnowledgeEngine {
         filePath: meta?.filePath || "",
         category: (meta?.category || "DOC") as DocCategory,
         lexicalRank: item.lexicalRank,
-        vectorRank: item.vectorRank
+        vectorRank: item.vectorRank,
       };
     });
   }
 
   public getDocument(docId: string): KnowledgeDocMeta | undefined {
-    const row = this.db.prepare(`
+    const row = this.db
+      .prepare(
+        `
       SELECT doc_id, file_path, category, title, content_hash, indexed_at_iso
       FROM eos_docs_metadata WHERE doc_id = ?
-    `).get(docId) as {
-      doc_id: string;
-      file_path: string;
-      category: string;
-      title: string;
-      content_hash: string;
-      indexed_at_iso: string;
-    } | undefined;
+    `,
+      )
+      .get(docId) as
+      | {
+          doc_id: string;
+          file_path: string;
+          category: string;
+          title: string;
+          content_hash: string;
+          indexed_at_iso: string;
+        }
+      | undefined;
 
     if (!row) return undefined;
     return {
@@ -600,7 +674,7 @@ export class EosHybridKnowledgeEngine {
       category: row.category as DocCategory,
       title: row.title,
       contentHash: row.content_hash,
-      indexedAtIso: row.indexed_at_iso
+      indexedAtIso: row.indexed_at_iso,
     };
   }
 
@@ -610,7 +684,7 @@ export class EosHybridKnowledgeEngine {
       totalDocuments: row ? Number(row.count) : 0,
       vectorCount: this.vectorCache.size,
       isMemory: this.isMemory,
-      dbPath: this.dbPath
+      dbPath: this.dbPath,
     };
   }
 
@@ -664,7 +738,11 @@ let defaultKnowledgeEngine: EosHybridKnowledgeEngine | null = null;
 
 export function getDefaultHybridKnowledgeEngine(projectRoot: string = process.cwd()): EosHybridKnowledgeEngine {
   if (!defaultKnowledgeEngine) {
-    defaultKnowledgeEngine = new EosHybridKnowledgeEngine(projectRoot);
+    try {
+      defaultKnowledgeEngine = new EosHybridKnowledgeEngine(projectRoot);
+    } catch {
+      defaultKnowledgeEngine = new EosHybridKnowledgeEngine(projectRoot, ":memory:");
+    }
   }
   return defaultKnowledgeEngine;
 }

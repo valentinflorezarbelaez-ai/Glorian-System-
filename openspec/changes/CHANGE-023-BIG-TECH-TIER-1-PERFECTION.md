@@ -10,6 +10,7 @@
 ---
 
 ## 1. Summary of Changes
+
 1. **Durable Binary Write-Ahead Log (WAL) (`src/core/eosDurableWal.ts`)**:
    - Implement `EosDurableWal` using native Node.js binary buffers and filesystem operations.
    - Enforce frame serialization: `[recordLen (uint32)][txId (uint64)][timestampNs (uint64)][crc32 (uint32)][payload]`.
@@ -32,4 +33,5 @@
    - Run 7/7 CI/CD strict stages with exit code 0.
 
 ---
-*Signed by Principal Architect: Valentín Flórez Arbeláez*
+
+_Signed by Principal Architect: Valentín Flórez Arbeláez_

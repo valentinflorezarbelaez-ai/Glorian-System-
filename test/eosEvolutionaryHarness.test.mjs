@@ -23,7 +23,7 @@ test("BDD-143: Multivariate Continuous Fitness Evaluation & AlphaEvolve Loop", (
       parentSha256: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
       patchContent: "export const fastAdd = (a: number, b: number): number => a + b;",
       targetFilePath: "src/core/fastAdd.ts",
-      mutationSignature: "SIG-FAST-ADD"
+      mutationSignature: "SIG-FAST-ADD",
     };
 
     const evaluated = EosEvolutionaryHarness.evaluateCandidate(
@@ -33,12 +33,12 @@ test("BDD-143: Multivariate Continuous Fitness Evaluation & AlphaEvolve Loop", (
         heapDeltaBytes: 0,
         astPurityScore: 100,
         cyclomaticComplexity: 1,
-        contractComplianceScore: 100
+        contractComplianceScore: 100,
       },
       {
         ledgerDbPath,
-        projectId: "eos-system"
-      }
+        projectId: "eos-system",
+      },
     );
 
     assert.equal(evaluated.passesContracts, true);
@@ -61,25 +61,43 @@ test("BDD-143: Multivariate Continuous Fitness Evaluation & AlphaEvolve Loop", (
 
 test("BDD-144: Semantic Clustering & Deduplication (AlphaCode 2)", () => {
   const c1 = {
-    mutation: { candidateId: "C-1", parentSha256: "p", patchContent: "code1", targetFilePath: "f", mutationSignature: "SIG-A" },
+    mutation: {
+      candidateId: "C-1",
+      parentSha256: "p",
+      patchContent: "code1",
+      targetFilePath: "f",
+      mutationSignature: "SIG-A",
+    },
     fitness: EosEvolutionaryHarness.computeFitnessVector(50000, 0, 100, 2, 100),
     passesContracts: true,
     mutantSha256: "m1",
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
   const c2 = {
-    mutation: { candidateId: "C-2", parentSha256: "p", patchContent: "code2", targetFilePath: "f", mutationSignature: "SIG-A" },
+    mutation: {
+      candidateId: "C-2",
+      parentSha256: "p",
+      patchContent: "code2",
+      targetFilePath: "f",
+      mutationSignature: "SIG-A",
+    },
     fitness: EosEvolutionaryHarness.computeFitnessVector(40000, 0, 100, 2, 100),
     passesContracts: true,
     mutantSha256: "m2",
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
   const c3 = {
-    mutation: { candidateId: "C-3", parentSha256: "p", patchContent: "code3", targetFilePath: "f", mutationSignature: "SIG-B" },
+    mutation: {
+      candidateId: "C-3",
+      parentSha256: "p",
+      patchContent: "code3",
+      targetFilePath: "f",
+      mutationSignature: "SIG-B",
+    },
     fitness: EosEvolutionaryHarness.computeFitnessVector(90000, 100, 80, 5, 60),
     passesContracts: false,
     mutantSha256: "m3",
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   const clusters = EosEvolutionaryHarness.clusterCandidates([c1, c2, c3]);
@@ -99,22 +117,42 @@ test("BDD-145: Double-Blind Adversarial Flow Action Validation (AlphaCodium)", (
     blueTeamAgentId: "CONSTRUCTOR-BLUE",
     redTeamViolations: 0,
     blueTeamViolations: 0,
-    status: "ACTIVE"
+    status: "ACTIVE",
   };
 
   // Red Team (Inquisitor) can write to test/ but CANNOT write to src/
-  const redTestWrite = EosEvolutionaryHarness.validateAdversarialAction(session, "INQUISITOR_RED", "test/unit.test.ts", "WRITE");
+  const redTestWrite = EosEvolutionaryHarness.validateAdversarialAction(
+    session,
+    "INQUISITOR_RED",
+    "test/unit.test.ts",
+    "WRITE",
+  );
   assert.equal(redTestWrite.allowed, true);
 
-  const redSrcWrite = EosEvolutionaryHarness.validateAdversarialAction(session, "INQUISITOR_RED", "src/core/math.ts", "WRITE");
+  const redSrcWrite = EosEvolutionaryHarness.validateAdversarialAction(
+    session,
+    "INQUISITOR_RED",
+    "src/core/math.ts",
+    "WRITE",
+  );
   assert.equal(redSrcWrite.allowed, false);
   assert.match(redSrcWrite.violationReason, /DOUBLE_BLIND_BREACH/);
 
   // Blue Team (Constructor) can write to src/ but CANNOT touch test/
-  const blueSrcWrite = EosEvolutionaryHarness.validateAdversarialAction(session, "CONSTRUCTOR_BLUE", "src/core/math.ts", "WRITE");
+  const blueSrcWrite = EosEvolutionaryHarness.validateAdversarialAction(
+    session,
+    "CONSTRUCTOR_BLUE",
+    "src/core/math.ts",
+    "WRITE",
+  );
   assert.equal(blueSrcWrite.allowed, true);
 
-  const blueTestWrite = EosEvolutionaryHarness.validateAdversarialAction(session, "CONSTRUCTOR_BLUE", "test/unit.test.ts", "WRITE");
+  const blueTestWrite = EosEvolutionaryHarness.validateAdversarialAction(
+    session,
+    "CONSTRUCTOR_BLUE",
+    "test/unit.test.ts",
+    "WRITE",
+  );
   assert.equal(blueTestWrite.allowed, false);
   assert.match(blueTestWrite.violationReason, /DOUBLE_BLIND_BREACH/);
 });
@@ -122,10 +160,17 @@ test("BDD-145: Double-Blind Adversarial Flow Action Validation (AlphaCodium)", (
 test("BDD-146: Flash-to-Pro Cascading & Token Circuit Breaker", () => {
   const cand = (fitnessVal) => ({
     mutation: { candidateId: "C", parentSha256: "p", patchContent: "x", targetFilePath: "f", mutationSignature: "s" },
-    fitness: { executionLatencyNs: 100, heapDeltaBytes: 0, astPurityScore: 100, cyclomaticComplexity: 1, contractComplianceScore: fitnessVal, compositeFitness: fitnessVal },
+    fitness: {
+      executionLatencyNs: 100,
+      heapDeltaBytes: 0,
+      astPurityScore: 100,
+      cyclomaticComplexity: 1,
+      contractComplianceScore: fitnessVal,
+      compositeFitness: fitnessVal,
+    },
     passesContracts: fitnessVal === 100,
     mutantSha256: "m",
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 
   // Stagnation over 2 generations trips circuit breaker
@@ -161,13 +206,13 @@ test("BDD-147: Cryptographic Interface Lock (InterfaceLock)", () => {
   assert.match(verification.driftDetails, /initializeKernel/);
 });
 
-test("BDD-148: MCP eos_evolve_module dispatch in 'full' profile", () => {
-  const coreServer = new EosMcpServer(projectRoot, "full");
+test("BDD-148: MCP eos_evolve_module dispatch in 'core' profile", () => {
+  const coreServer = new EosMcpServer(projectRoot, "core");
   const listToolsRes = coreServer.handleRequest({ jsonrpc: "2.0", id: 1, method: "tools/list" });
   const tools = listToolsRes?.result?.tools || [];
   const evolveTool = tools.find((t) => t.name === "eos_evolve_module");
 
-  assert.ok(evolveTool, "eos_evolve_module must exist in 'full' profile");
+  assert.ok(evolveTool, "eos_evolve_module must exist in 'core' profile");
   assert.equal(evolveTool.annotations.readOnlyHint, false);
 
   const evalCall = coreServer.handleRequest({
@@ -180,9 +225,15 @@ test("BDD-148: MCP eos_evolve_module dispatch in 'full' profile", () => {
         action: "evaluate",
         targetModulePath: "src/core/math.ts",
         candidatePatch: "export const x = 1;",
-        metrics: { latencyNs: 40000, heapDeltaBytes: 0, astPurityScore: 100, cyclomaticComplexity: 1, contractComplianceScore: 100 }
-      }
-    }
+        metrics: {
+          latencyNs: 40000,
+          heapDeltaBytes: 0,
+          astPurityScore: 100,
+          cyclomaticComplexity: 1,
+          contractComplianceScore: 100,
+        },
+      },
+    },
   });
 
   assert.ok(!evalCall.error);

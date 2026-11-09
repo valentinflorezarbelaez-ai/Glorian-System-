@@ -13,14 +13,14 @@ import {
   parseSemVer,
   selectLatestStableTag,
   syncSkillsTreeSafely,
-  verifyArchiveChecksum
+  verifyArchiveChecksum,
 } from "../src/core/eosGentlemanAutoUpdater.ts";
 import { maybeTriggerOpportunisticGentlemanUpdate } from "../integrations/antigravity/eos-governance/scripts/eos-hook.mjs";
 import {
   GENTLEMAN_TASK_NAME,
   installGentlemanAutoUpdateSchedule,
   synthesizePosixCronLine,
-  synthesizeSilentVbsLauncher
+  synthesizeSilentVbsLauncher,
 } from "../scripts/install-gentleman-autoupdate.mjs";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
@@ -44,7 +44,7 @@ test("BDD-133: SemVer parser and git ls-remote tag selector choose highest stabl
     "1111111111111111111111111111111111111111\trefs/tags/v2.10.1",
     "2222222222222222222222222222222222222222\trefs/tags/v2.11.0-rc1",
     "3333333333333333333333333333333333333333\trefs/tags/v3.0.0-beta.2",
-    "4444444444444444444444444444444444444444\trefs/tags/release-provenance-v1"
+    "4444444444444444444444444444444444444444\trefs/tags/release-provenance-v1",
   ].join("\n");
 
   const resolved = selectLatestStableTag(sampleLsRemote);
@@ -59,10 +59,9 @@ test("BDD-134: verifyArchiveChecksum enforces SHA-256 fail-closed and hotSwapExe
   const validSha = crypto.createHash("sha256").update(payload).digest("hex");
   const wrongSha = "f".repeat(64);
 
-  const manifest = [
-    `${validSha}  engram_3.6.0_windows_amd64.zip`,
-    `${wrongSha}  engram_3.6.0_linux_amd64.tar.gz`
-  ].join("\n");
+  const manifest = [`${validSha}  engram_3.6.0_windows_amd64.zip`, `${wrongSha}  engram_3.6.0_linux_amd64.tar.gz`].join(
+    "\n",
+  );
 
   const okCheck = verifyArchiveChecksum(payload, "engram_3.6.0_windows_amd64.zip", manifest);
   assert.equal(okCheck.verified, true);
@@ -89,9 +88,7 @@ test("BDD-134: verifyArchiveChecksum enforces SHA-256 fail-closed and hotSwapExe
         : `#!/usr/bin/env sh\necho "mock-tool ${ver}"\n`;
 
     const makeBrokenScript = () =>
-      process.platform === "win32"
-        ? `@echo off\r\nexit /b 1\r\n`
-        : `#!/usr/bin/env sh\nexit 1\n`;
+      process.platform === "win32" ? `@echo off\r\nexit /b 1\r\n` : `#!/usr/bin/env sh\nexit 1\n`;
 
     fs.writeFileSync(targetBin, makeWorkingScript("1.0.0"), { mode: 0o755 });
     fs.writeFileSync(candidateV2, makeWorkingScript("2.0.0"), { mode: 0o755 });
@@ -102,7 +99,7 @@ test("BDD-134: verifyArchiveChecksum enforces SHA-256 fail-closed and hotSwapExe
       targetPath: targetBin,
       candidatePath: candidateV2,
       smokeArgs: ["--version"],
-      expectedVersionSubstring: "2.0.0"
+      expectedVersionSubstring: "2.0.0",
     });
     assert.equal(swapOk.swapped, true);
     assert.equal(swapOk.rolledBack, false);
@@ -114,7 +111,7 @@ test("BDD-134: verifyArchiveChecksum enforces SHA-256 fail-closed and hotSwapExe
       targetPath: targetBin,
       candidatePath: brokenCandidateV3,
       smokeArgs: ["--version"],
-      expectedVersionSubstring: "3.0.0"
+      expectedVersionSubstring: "3.0.0",
     });
     assert.equal(swapFail.swapped, false);
     assert.equal(swapFail.rolledBack, true);
@@ -148,7 +145,10 @@ test("BDD-135: syncSkillsTreeSafely updates Gentleman skills, preserves eos-* sk
     assert.deepEqual(syncReport.preservedEosSkills, ["eos-director"]);
     assert.equal(fs.readFileSync(path.join(localSkills, "sdd-apply", "SKILL.md"), "utf8"), "SDD_APPLY_V2_UPDATED");
     assert.equal(fs.readFileSync(path.join(localSkills, "judgment-day", "SKILL.md"), "utf8"), "JUDGMENT_DAY_NEW");
-    assert.equal(fs.readFileSync(path.join(localSkills, "eos-director", "SKILL.md"), "utf8"), "EOS_SOVEREIGN_IMMUTABLE");
+    assert.equal(
+      fs.readFileSync(path.join(localSkills, "eos-director", "SKILL.md"), "utf8"),
+      "EOS_SOVEREIGN_IMMUTABLE",
+    );
 
     // Upstream skill containing a plaintext token must fail closed before mutating localSkills
     fs.mkdirSync(path.join(upstreamMalicious, "sdd-apply"), { recursive: true });
@@ -157,7 +157,7 @@ test("BDD-135: syncSkillsTreeSafely updates Gentleman skills, preserves eos-* sk
 
     assert.throws(
       () => syncSkillsTreeSafely(upstreamMalicious, localSkills),
-      /Security gate blocked credential pattern/
+      /Security gate blocked credential pattern/,
     );
     assert.equal(fs.readFileSync(path.join(localSkills, "sdd-apply", "SKILL.md"), "utf8"), "SDD_APPLY_V2_UPDATED");
   } finally {
@@ -191,7 +191,7 @@ test("BDD-136: Lockfile mutual exclusion, 6-hour TTL staleness, and Antigravity 
     fs.writeFileSync(
       statePath,
       JSON.stringify({ lastCheckedAtMs: baseNow - 60 * 60 * 1000, lastCheckedAtIso: new Date(baseNow).toISOString() }),
-      "utf8"
+      "utf8",
     );
     assert.equal(EosGentlemanAutoUpdater.isAutoUpdateDue(tmpWorkspace, 6, baseNow), false);
     const freshHook = maybeTriggerOpportunisticGentlemanUpdate(tmpWorkspace, { nowMs: baseNow, dryRun: true });
@@ -200,8 +200,11 @@ test("BDD-136: Lockfile mutual exclusion, 6-hour TTL staleness, and Antigravity 
     // 4. Stale state (7 hours old > 6h TTL) -> spawns detached background update
     fs.writeFileSync(
       statePath,
-      JSON.stringify({ lastCheckedAtMs: baseNow - 7 * 60 * 60 * 1000, lastCheckedAtIso: new Date(baseNow).toISOString() }),
-      "utf8"
+      JSON.stringify({
+        lastCheckedAtMs: baseNow - 7 * 60 * 60 * 1000,
+        lastCheckedAtIso: new Date(baseNow).toISOString(),
+      }),
+      "utf8",
     );
     assert.equal(EosGentlemanAutoUpdater.isAutoUpdateDue(tmpWorkspace, 6, baseNow), true);
     const staleHook = maybeTriggerOpportunisticGentlemanUpdate(tmpWorkspace, { nowMs: baseNow, dryRun: true });
@@ -212,7 +215,10 @@ test("BDD-136: Lockfile mutual exclusion, 6-hour TTL staleness, and Antigravity 
 });
 
 test("BDD-137: Silent OS scheduler installer synthesizes zero-window launchers and MCP eos_gentleman_update serves status", () => {
-  const vbs = synthesizeSilentVbsLauncher("C:\\Program Files\\nodejs\\node.exe", "C:\\Users\\valen\\Eos-System\\bin\\eos.mjs");
+  const vbs = synthesizeSilentVbsLauncher(
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\Users\\valen\\Eos-System\\bin\\eos.mjs",
+  );
   assert.ok(vbs.includes("shell.Run cmd, 0, True"), "VBScript launcher must use window style 0 (SW_HIDE)");
   assert.ok(vbs.includes("gentleman update --apply --quiet"));
 
@@ -225,7 +231,7 @@ test("BDD-137: Silent OS scheduler installer synthesizes zero-window launchers a
     const dryInstall = installGentlemanAutoUpdateSchedule({
       projectRoot: tmpDir,
       intervalHours: 6,
-      dryRun: true
+      dryRun: true,
     });
     assert.equal(dryInstall.installed, true);
     assert.equal(dryInstall.dryRun, true);
@@ -244,7 +250,7 @@ test("BDD-137: Silent OS scheduler installer synthesizes zero-window launchers a
     jsonrpc: "2.0",
     id: 2,
     method: "tools/call",
-    params: { name: "eos_gentleman_update", arguments: { action: "status" } }
+    params: { name: "eos_gentleman_update", arguments: { action: "status" } },
   });
   assert.ok(!statusRes?.error);
   const parsedStatus = JSON.parse(statusRes?.result?.content?.[0]?.text || "{}");

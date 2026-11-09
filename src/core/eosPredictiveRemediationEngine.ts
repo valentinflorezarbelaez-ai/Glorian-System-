@@ -50,9 +50,9 @@ export interface RemediationExecutionResult {
 }
 
 export interface RemediationEngineConfig {
-  readonly cooldownMs?: number;               // default: 30,000ms
-  readonly minHealthScoreThreshold?: number;  // default: 70
-  readonly maxRecoveryWindowMs?: number;      // default: 60,000ms
+  readonly cooldownMs?: number; // default: 30,000ms
+  readonly minHealthScoreThreshold?: number; // default: 70
+  readonly maxRecoveryWindowMs?: number; // default: 60,000ms
 }
 
 export interface RemediationEngineStatus {
@@ -155,9 +155,7 @@ export class EosPredictiveRemediationEngine {
     }
 
     const receipt = createHash("sha256")
-      .update(
-        `REMEDIATE:${archetype}:${targetAction}:${executed}:${healthScore}:${now}:${this.totalEvaluations}`
-      )
+      .update(`REMEDIATE:${archetype}:${targetAction}:${executed}:${healthScore}:${now}:${this.totalEvaluations}`)
       .digest("hex");
 
     return {
@@ -176,7 +174,7 @@ export class EosPredictiveRemediationEngine {
    */
   public forceRemediate(
     action: RemediationActionType,
-    archetype: FailureArchetype = "ARCHETYPE_CASCADE_TIMEOUT"
+    archetype: FailureArchetype = "ARCHETYPE_CASCADE_TIMEOUT",
   ): RemediationExecutionResult {
     const now = Date.now();
     this.totalEvaluations++;
@@ -185,9 +183,7 @@ export class EosPredictiveRemediationEngine {
     this.activeArchetype = archetype;
     this.lastMitigationTimestampMs = now;
 
-    const receipt = createHash("sha256")
-      .update(`FORCE_REMEDIATE:${archetype}:${action}:${now}`)
-      .digest("hex");
+    const receipt = createHash("sha256").update(`FORCE_REMEDIATE:${archetype}:${action}:${now}`).digest("hex");
 
     return {
       archetype,
@@ -205,7 +201,7 @@ export class EosPredictiveRemediationEngine {
   public getStatus(): RemediationEngineStatus {
     const receipt = createHash("sha256")
       .update(
-        `STATUS:${this.activeArchetype}:${this.activeAction}:${this.currentHealthScore}:${this.totalEvaluations}:${this.totalRemediationsExecuted}:${this.totalSuppressedCooldown}`
+        `STATUS:${this.activeArchetype}:${this.activeAction}:${this.currentHealthScore}:${this.totalEvaluations}:${this.totalRemediationsExecuted}:${this.totalSuppressedCooldown}`,
       )
       .digest("hex");
 
@@ -257,7 +253,7 @@ export class EosPredictiveRemediationEngine {
     }
 
     // Penalty for Trace Error Rate
-    if (v.traceErrorRate > 0.10) {
+    if (v.traceErrorRate > 0.1) {
       score -= 25;
     } else if (v.traceErrorRate > 0.02) {
       score -= 10;
@@ -288,12 +284,12 @@ export class EosPredictiveRemediationEngine {
     }
 
     // 2. Cascade Timeout Archetype (downstream dependency collapse)
-    if (v.traceP99LatencyMs > 800 && v.concurrencyGradient < 0.40 && v.burnRate5m > 3.0) {
+    if (v.traceP99LatencyMs > 800 && v.concurrencyGradient < 0.4 && v.burnRate5m > 3.0) {
       return "ARCHETYPE_CASCADE_TIMEOUT";
     }
 
     // 3. Retry Storm Archetype (thundering herd speculative amplification)
-    if (v.hedgeRequestRatio > 0.05 && v.traceErrorRate > 0.10) {
+    if (v.hedgeRequestRatio > 0.05 && v.traceErrorRate > 0.1) {
       return "ARCHETYPE_RETRY_STORM";
     }
 

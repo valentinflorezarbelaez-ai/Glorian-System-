@@ -25,7 +25,8 @@ function writeNewProjectFile(rootPath: string, relativePath: string, content: st
     existingAncestor = parent;
   }
   const realAncestor = fs.realpathSync(existingAncestor);
-  if (!isPathWithin(root, realAncestor)) throw new Error("Generated file parent resolves outside the selected project.");
+  if (!isPathWithin(root, realAncestor))
+    throw new Error("Generated file parent resolves outside the selected project.");
 
   const parentPath = path.dirname(fullPath);
   fs.mkdirSync(parentPath, { recursive: true });
@@ -91,20 +92,9 @@ export type TestFramework =
   | "rspec"
   | "none";
 
-export type ContainerPlatform =
-  | "dockerfile"
-  | "compose"
-  | "distroless"
-  | "devcontainer"
-  | "none";
+export type ContainerPlatform = "dockerfile" | "compose" | "distroless" | "devcontainer" | "none";
 
-export type CiCdPlatform =
-  | "github_actions"
-  | "gitlab_ci"
-  | "circle_ci"
-  | "jenkins"
-  | "bitbucket"
-  | "none";
+export type CiCdPlatform = "github_actions" | "gitlab_ci" | "circle_ci" | "jenkins" | "bitbucket" | "none";
 
 export interface PillarEvaluation {
   readonly name: string;
@@ -226,18 +216,14 @@ export class EosUniversalProjectAdapter {
 
     const localSignalScore = Math.min(
       100,
-      layerPurity.score +
-        testInfrastructure.score +
-        secretSecurity.score +
-        ciCdGateways.score +
-        aiScaffolding.score
+      layerPurity.score + testInfrastructure.score + secretSecurity.score + ciCdGateways.score + aiScaffolding.score,
     );
     const localSignalBand = classifySignalBand(localSignalScore, 100);
     const assessmentLimitations = [
       "Production readiness is not assessed; this report cannot certify security, reliability, or deployment suitability.",
       "Tests and CI workflows are detected from local files only; EOS does not execute them or verify their latest results here.",
       "The credential check scans at most 50 discovered paths for three token patterns; it is not a secrets scanner, SAST, or dependency audit.",
-      "Inventory is bounded to directory depth 3; it skips symlinks and excludes .git, node_modules, .vercel, target, vendor, and worktree directories."
+      "Inventory is bounded to directory depth 3; it skips symlinks and excludes .git, node_modules, .vercel, target, vendor, and worktree directories.",
     ] as const;
 
     const recommendations: string[] = [];
@@ -261,8 +247,8 @@ export class EosUniversalProjectAdapter {
         testInfrastructure.score,
         secretSecurity.score,
         ciCdGateways.score,
-        aiScaffolding.score
-      ]
+        aiScaffolding.score,
+      ],
     });
     const sha256ReportDigest = crypto.createHash("sha256").update(payload).digest("hex");
 
@@ -275,7 +261,7 @@ export class EosUniversalProjectAdapter {
         testInfrastructure,
         secretSecurity,
         ciCdGateways,
-        aiScaffolding
+        aiScaffolding,
       },
       localSignalScore,
       localSignalBand,
@@ -284,7 +270,7 @@ export class EosUniversalProjectAdapter {
       assessmentLimitations,
       recommendations,
       sha256ReportDigest,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -328,7 +314,7 @@ export class EosUniversalProjectAdapter {
       filesToScaffold.push({
         path: "catalog-info.yaml",
         description: "Spotify Backstage RFC-42 Software Catalog Descriptor",
-        content: this.synthesizeCatalogInfo(audit.projectName, audit.fingerprint, options)
+        content: this.synthesizeCatalogInfo(audit.projectName, audit.fingerprint, options),
       });
     }
 
@@ -338,7 +324,7 @@ export class EosUniversalProjectAdapter {
       filesToScaffold.push({
         path: ".github/workflows/ci.yml",
         description: `GitHub Actions CI Gate tailored for ${audit.fingerprint.primaryLanguage}`,
-        content: this.synthesizeCiWorkflow(audit.projectName, audit.fingerprint)
+        content: this.synthesizeCiWorkflow(audit.projectName, audit.fingerprint),
       });
     }
 
@@ -348,7 +334,7 @@ export class EosUniversalProjectAdapter {
       filesToScaffold.push({
         path: "AGENTS.md",
         description: "AI Agent Context Matrix with the 4 Fundamental Laws of Engineering",
-        content: this.synthesizeAgentsContext(audit.projectName, audit.fingerprint)
+        content: this.synthesizeAgentsContext(audit.projectName, audit.fingerprint),
       });
     }
 
@@ -358,7 +344,7 @@ export class EosUniversalProjectAdapter {
       filesToScaffold.push({
         path: ".githooks/pre-commit",
         description: "Pre-commit Zero Plaintext Secrets Enforcement Hook",
-        content: this.synthesizePreCommitHook()
+        content: this.synthesizePreCommitHook(),
       });
     }
 
@@ -387,7 +373,7 @@ export class EosUniversalProjectAdapter {
         : writtenPaths.length > 0
           ? `[WRITE COMPLETED] Wrote ${writtenPaths.length} local template files in ${resolvedPath}; contents were not validated.`
           : `[NO CHANGES] No missing template files were found in ${resolvedPath}.`,
-      sha256Proof: proof
+      sha256Proof: proof,
     };
   }
 
@@ -395,12 +381,7 @@ export class EosUniversalProjectAdapter {
   // PRIVATE HELPER ENGINES
   // ---------------------------------------------------------------------------
 
-  private scanDir(
-    baseDir: string,
-    maxDepth: number,
-    currentDepth: number = 0,
-    scanRoot: string = baseDir
-  ): string[] {
+  private scanDir(baseDir: string, maxDepth: number, currentDepth: number = 0, scanRoot: string = baseDir): string[] {
     if (currentDepth > maxDepth || !fs.existsSync(baseDir)) return [];
     const results: string[] = [];
     try {
@@ -443,7 +424,8 @@ export class EosUniversalProjectAdapter {
     const hasTsConfig = fs.existsSync(path.join(baseDir, "tsconfig.json"));
     const hasGoMod = fs.existsSync(path.join(baseDir, "go.mod"));
     const hasCargo = fs.existsSync(path.join(baseDir, "Cargo.toml"));
-    const hasPyProject = fs.existsSync(path.join(baseDir, "pyproject.toml")) || fs.existsSync(path.join(baseDir, "requirements.txt"));
+    const hasPyProject =
+      fs.existsSync(path.join(baseDir, "pyproject.toml")) || fs.existsSync(path.join(baseDir, "requirements.txt"));
     const hasPubspec = fs.existsSync(path.join(baseDir, "pubspec.yaml"));
     const hasPom = fs.existsSync(path.join(baseDir, "pom.xml")) || fs.existsSync(path.join(baseDir, "build.gradle"));
     const hasCMake = fs.existsSync(path.join(baseDir, "CMakeLists.txt"));
@@ -471,7 +453,8 @@ export class EosUniversalProjectAdapter {
     // Package Managers
     if (fs.existsSync(path.join(baseDir, "pnpm-lock.yaml"))) pkgMgr = "pnpm";
     else if (fs.existsSync(path.join(baseDir, "yarn.lock"))) pkgMgr = "yarn";
-    else if (fs.existsSync(path.join(baseDir, "bun.lockb")) || fs.existsSync(path.join(baseDir, "bun.lock"))) pkgMgr = "bun";
+    else if (fs.existsSync(path.join(baseDir, "bun.lockb")) || fs.existsSync(path.join(baseDir, "bun.lock")))
+      pkgMgr = "bun";
     else if (hasPkgJson) pkgMgr = "npm";
     else if (hasGoMod) pkgMgr = "go_mod";
     else if (hasCargo) pkgMgr = "cargo";
@@ -509,13 +492,16 @@ export class EosUniversalProjectAdapter {
     const dockerfilePath = fs.existsSync(path.join(baseDir, "Dockerfile"))
       ? path.join(baseDir, "Dockerfile")
       : files.find((f) => f.endsWith("Dockerfile") || f.endsWith("/Dockerfile"))
-      ? path.join(baseDir, files.find((f) => f.endsWith("Dockerfile") || f.endsWith("/Dockerfile"))!)
-      : null;
+        ? path.join(baseDir, files.find((f) => f.endsWith("Dockerfile") || f.endsWith("/Dockerfile"))!)
+        : null;
 
     if (dockerfilePath && fs.existsSync(dockerfilePath)) {
       const dfile = fs.readFileSync(dockerfilePath, "utf8");
       container = dfile.includes("distroless") ? "distroless" : "dockerfile";
-    } else if (fs.existsSync(path.join(baseDir, "docker-compose.yml")) || files.some((f) => f.endsWith("docker-compose.yml"))) {
+    } else if (
+      fs.existsSync(path.join(baseDir, "docker-compose.yml")) ||
+      files.some((f) => f.endsWith("docker-compose.yml"))
+    ) {
       container = "compose";
     }
 
@@ -534,7 +520,8 @@ export class EosUniversalProjectAdapter {
     let structureArchetype: PolyglotFingerprint["structureArchetype"] = "STANDARD_SERVICE";
     if (files.some((f) => f.startsWith("packages/") || f.startsWith("apps/"))) structureArchetype = "MONOREPO";
     else if (files.length < 15) structureArchetype = "EMBEDDED_MINIMAL";
-    else if (files.some((f) => f.startsWith("src/core/") || f.startsWith("lib/"))) structureArchetype = "MODULAR_LIBRARY";
+    else if (files.some((f) => f.startsWith("src/core/") || f.startsWith("lib/")))
+      structureArchetype = "MODULAR_LIBRARY";
 
     return {
       primaryLanguage,
@@ -546,7 +533,7 @@ export class EosUniversalProjectAdapter {
       hasAgentScaffolding,
       hasBackstageDescriptor,
       totalSourceFiles: files.length,
-      structureArchetype
+      structureArchetype,
     };
   }
 
@@ -555,7 +542,7 @@ export class EosUniversalProjectAdapter {
     const findings: string[] = [];
 
     const hasModularDir = files.some(
-      (f) => f.startsWith("src/") || f.startsWith("lib/") || f.startsWith("pkg/") || f.startsWith("cmd/")
+      (f) => f.startsWith("src/") || f.startsWith("lib/") || f.startsWith("pkg/") || f.startsWith("cmd/"),
     );
     if (hasModularDir) {
       score += 10;
@@ -590,7 +577,7 @@ export class EosUniversalProjectAdapter {
       score,
       maxScore: 20,
       signalBand: classifySignalBand(score, 20),
-      findings
+      findings,
     };
   }
 
@@ -604,7 +591,7 @@ export class EosUniversalProjectAdapter {
         f.startsWith("tests/") ||
         f.includes(".test.") ||
         f.includes(".spec.") ||
-        f.endsWith("_test.go")
+        f.endsWith("_test.go"),
     );
 
     if (hasTestDir) {
@@ -620,7 +607,7 @@ export class EosUniversalProjectAdapter {
     }
 
     const testFileCount = files.filter(
-      (f) => f.includes("test") || f.includes("spec") || f.endsWith("_test.go")
+      (f) => f.includes("test") || f.includes("spec") || f.endsWith("_test.go"),
     ).length;
     if (testFileCount >= 5) {
       score += 5;
@@ -635,7 +622,7 @@ export class EosUniversalProjectAdapter {
       score,
       maxScore: 20,
       signalBand: classifySignalBand(score, 20),
-      findings
+      findings,
     };
   }
 
@@ -679,7 +666,7 @@ export class EosUniversalProjectAdapter {
       score,
       maxScore: 20,
       signalBand: classifySignalBand(score, 20),
-      findings
+      findings,
     };
   }
 
@@ -701,7 +688,8 @@ export class EosUniversalProjectAdapter {
       findings.push("Configure pre-commit hooks (.githooks/) for fast local verification.");
     }
 
-    const hasContainer = fs.existsSync(path.join(baseDir, "Dockerfile")) || fs.existsSync(path.join(baseDir, "docker-compose.yml"));
+    const hasContainer =
+      fs.existsSync(path.join(baseDir, "Dockerfile")) || fs.existsSync(path.join(baseDir, "docker-compose.yml"));
     if (hasContainer) {
       score += 5;
     } else {
@@ -713,7 +701,7 @@ export class EosUniversalProjectAdapter {
       score,
       maxScore: 20,
       signalBand: classifySignalBand(score, 20),
-      findings
+      findings,
     };
   }
 
@@ -747,7 +735,7 @@ export class EosUniversalProjectAdapter {
       score,
       maxScore: 20,
       signalBand: classifySignalBand(score, 20),
-      findings
+      findings,
     };
   }
 
@@ -777,7 +765,7 @@ export class EosUniversalProjectAdapter {
       `  type: service`,
       `  lifecycle: production`,
       `  owner: ${owner}`,
-      `  system: ${system}`
+      `  system: ${system}`,
     ].join("\n");
   }
 
@@ -802,7 +790,7 @@ export class EosUniversalProjectAdapter {
       `    steps:`,
       `      - uses: actions/checkout@v4`,
       `      - name: Run Test Suite`,
-      `        run: ${testCommand}`
+      `        run: ${testCommand}`,
     ].join("\n");
   }
 
@@ -826,7 +814,7 @@ export class EosUniversalProjectAdapter {
       `## 3. Inviolable Directives for AI Agents`,
       `- Never commit plaintext API keys or credentials.`,
       `- Always run tests before declaring tasks complete.`,
-      `- Preserve architectural boundaries and modular clean design.`
+      `- Preserve architectural boundaries and modular clean design.`,
     ].join("\n");
   }
 
@@ -840,7 +828,7 @@ export class EosUniversalProjectAdapter {
       `  exit 1`,
       `fi`,
       `echo "✔ [PASS] Zero plaintext secrets detected. Proceeding."`,
-      `exit 0`
+      `exit 0`,
     ].join("\n");
   }
 }

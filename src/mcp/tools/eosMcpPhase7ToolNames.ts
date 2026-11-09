@@ -31,5 +31,5 @@ export const PHASE7_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
   "eos_microvm_sandbox",
   "eos_mutation_test",
   "eos_zero_copy_scan",
-  "eos_microvm_enclave_generate"
+  "eos_microvm_enclave_generate",
 ]);

@@ -27,9 +27,15 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import { createLogger } from "./eosLogger.ts";
 
 const _log = createLogger("eosPluginLoader");
+
+/** Minimal registry surface a plugin may touch; keeps Layer 0 free of MCP types. */
+export interface PluginRegistryLike {
+  listTools(): readonly unknown[];
+}
 
 export interface LoadedPlugin {
   readonly name: string;
@@ -66,7 +72,12 @@ export class EosPluginLoader {
     // 1. From EOS_PLUGINS env var
     const envPlugins = process.env["EOS_PLUGINS"];
     if (envPlugins) {
-      plugins.push(...envPlugins.split(",").map(p => p.trim()).filter(Boolean));
+      plugins.push(
+        ...envPlugins
+          .split(",")
+          .map((p) => p.trim())
+          .filter(Boolean),
+      );
     }
 
     // 2. From plugins.json file
@@ -77,7 +88,9 @@ export class EosPluginLoader {
         if (Array.isArray(config.plugins)) {
           plugins.push(...config.plugins.map((p: string) => p.trim()).filter(Boolean));
         }
-      } catch { /* corrupt — skip */ }
+      } catch {
+        /* corrupt — skip */
+      }
     }
 
     return [...new Set(plugins)]; // deduplicate
@@ -90,7 +103,7 @@ export class EosPluginLoader {
    * @param ctx       The ToolContext to pass to plugin handlers.
    * @returns PluginLoadResult with success/failure per plugin.
    */
-  public async loadAll(registry: any, ctx?: any): Promise<PluginLoadResult> {
+  public async loadAll(registry: PluginRegistryLike, ctx?: unknown): Promise<PluginLoadResult> {
     const pluginNames = this._discoverPlugins();
     _log.info("Loading plugins", { count: pluginNames.length, names: pluginNames });
 
@@ -110,7 +123,7 @@ export class EosPluginLoader {
         }
 
         const beforeCount = registry.listTools().length;
-        const mod = await import(modulePath);
+        const mod = await import(pathToFileURL(modulePath).href);
 
         // Call the default export function
         if (typeof mod.default === "function") {
@@ -147,8 +160,8 @@ export class EosPluginLoader {
 
     return {
       totalPlugins: pluginNames.length,
-      successful: this.loaded.filter(p => !p.error).length,
-      failed: this.loaded.filter(p => p.error).length,
+      successful: this.loaded.filter((p) => !p.error).length,
+      failed: this.loaded.filter((p) => p.error).length,
       plugins: Object.freeze(this.loaded),
     };
   }
@@ -173,7 +186,9 @@ export class EosPluginLoader {
         const pkg = JSON.parse(fs.readFileSync(path.join(nodeModulesPath, "package.json"), "utf8"));
         const main = pkg.module ?? pkg.main ?? "index.js";
         return path.join(nodeModulesPath, main);
-      } catch { /* skip */ }
+      } catch {
+        /* skip */
+      }
     }
 
     // 3. Absolute path

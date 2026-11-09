@@ -21,13 +21,7 @@
 import https from "node:https";
 import crypto from "node:crypto";
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  Ok,
-  Err,
-  type Result,
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, Ok, Err, type Result } from "./eosKernelPrimitives.ts";
 
 import type { ThoughtBranch } from "./eosAgiCore.ts";
 
@@ -38,11 +32,11 @@ import type { ThoughtBranch } from "./eosAgiCore.ts";
 export type ModelFamily = "anthropic" | "google" | "openai" | "groq" | "deepseek";
 
 export type TaskType =
-  | "ARCHITECT"   // Design, SDD, ADR, spec writing — use heavy model
-  | "CODE"        // Code generation, refactoring — use fast model
-  | "REVIEW"      // Code review, security audit — use balanced model
-  | "SECURITY"    // Vulnerability analysis, zero-trust — use paranoid model
-  | "COMPRESS";   // Context compression, summarization — use cheapest model
+  | "ARCHITECT" // Design, SDD, ADR, spec writing — use heavy model
+  | "CODE" // Code generation, refactoring — use fast model
+  | "REVIEW" // Code review, security audit — use balanced model
+  | "SECURITY" // Vulnerability analysis, zero-trust — use paranoid model
+  | "COMPRESS"; // Context compression, summarization — use cheapest model
 
 export interface ModelConfig {
   readonly family: ModelFamily;
@@ -196,7 +190,7 @@ function httpsPost(
   url: string,
   headers: Record<string, string>,
   body: string,
-  timeoutMs: number = 60_000
+  timeoutMs: number = 60_000,
 ): Promise<{ status: number; body: string }> {
   return new Promise((resolve, reject) => {
     const parsed = new URL(url);
@@ -210,7 +204,9 @@ function httpsPost(
 
     const req = https.request(options, (res) => {
       let data = "";
-      res.on("data", (chunk: Buffer) => { data += chunk.toString(); });
+      res.on("data", (chunk: Buffer) => {
+        data += chunk.toString();
+      });
       res.on("end", () => resolve({ status: res.statusCode ?? 0, body: data }));
     });
 
@@ -232,15 +228,9 @@ function sleep(ms: number): Promise<void> {
 // 4. ADAPTER: Anthropic Messages API
 // ============================================================================
 
-async function callAnthropic(
-  config: ModelConfig,
-  messages: ModelMessage[],
-  apiKey: string
-): Promise<string> {
+async function callAnthropic(config: ModelConfig, messages: ModelMessage[], apiKey: string): Promise<string> {
   const system = messages.find((m) => m.role === "system")?.content ?? "";
-  const userMessages = messages
-    .filter((m) => m.role !== "system")
-    .map((m) => ({ role: m.role, content: m.content }));
+  const userMessages = messages.filter((m) => m.role !== "system").map((m) => ({ role: m.role, content: m.content }));
 
   const body = JSON.stringify({
     model: config.model,
@@ -257,7 +247,7 @@ async function callAnthropic(
       "x-api-key": apiKey,
       "anthropic-version": "2023-06-01",
     },
-    body
+    body,
   );
 
   if (response.status !== 200) {
@@ -274,11 +264,7 @@ async function callAnthropic(
 // 5. ADAPTER: Google Generative Language API
 // ============================================================================
 
-async function callGoogle(
-  config: ModelConfig,
-  messages: ModelMessage[],
-  apiKey: string
-): Promise<string> {
+async function callGoogle(config: ModelConfig, messages: ModelMessage[], apiKey: string): Promise<string> {
   const system = messages.find((m) => m.role === "system")?.content ?? "";
   const contents = messages
     .filter((m) => m.role !== "system")
@@ -299,7 +285,7 @@ async function callGoogle(
   const response = await httpsPost(
     `${config.apiBaseUrl}/v1beta/models/${config.model}:generateContent?key=${apiKey}`,
     { "Content-Type": "application/json" },
-    body
+    body,
   );
 
   if (response.status !== 200) {
@@ -318,11 +304,7 @@ async function callGoogle(
 // 6. ADAPTER: OpenAI-compatible API (OpenAI, Groq, DeepSeek all use same schema)
 // ============================================================================
 
-async function callOpenAICompat(
-  config: ModelConfig,
-  messages: ModelMessage[],
-  apiKey: string
-): Promise<string> {
+async function callOpenAICompat(config: ModelConfig, messages: ModelMessage[], apiKey: string): Promise<string> {
   const body = JSON.stringify({
     model: config.model,
     max_tokens: config.maxTokens,
@@ -334,9 +316,9 @@ async function callOpenAICompat(
     `${config.apiBaseUrl}/v1/chat/completions`,
     {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${apiKey}`,
+      Authorization: `Bearer ${apiKey}`,
     },
-    body
+    body,
   );
 
   if (response.status !== 200) {
@@ -370,7 +352,11 @@ export class EosMultiModelRouter {
   private _totalCalls = 0;
   private _totalCostUsd = 0;
   private readonly _callsByTaskType: Record<TaskType, number> = {
-    ARCHITECT: 0, CODE: 0, REVIEW: 0, SECURITY: 0, COMPRESS: 0,
+    ARCHITECT: 0,
+    CODE: 0,
+    REVIEW: 0,
+    SECURITY: 0,
+    COMPRESS: 0,
   };
   private readonly _callsByModel: Record<string, number> = {};
   private readonly _responseCache = new Map<string, { content: string; cachedAt: number }>();
@@ -386,28 +372,33 @@ export class EosMultiModelRouter {
 
   private _selectModel(taskType: TaskType): ModelConfig {
     switch (taskType) {
-      case "ARCHITECT": return this.config.architectModel;
-      case "CODE":      return this.config.codeModel;
-      case "REVIEW":    return this.config.reviewModel;
-      case "SECURITY":  return this.config.securityModel;
-      case "COMPRESS":  return this.config.compressModel;
+      case "ARCHITECT":
+        return this.config.architectModel;
+      case "CODE":
+        return this.config.codeModel;
+      case "REVIEW":
+        return this.config.reviewModel;
+      case "SECURITY":
+        return this.config.securityModel;
+      case "COMPRESS":
+        return this.config.compressModel;
     }
   }
 
   private _getApiKey(family: ModelFamily): string {
     const envMap: Record<ModelFamily, string> = {
       anthropic: "ANTHROPIC_API_KEY",
-      google:    "GOOGLE_API_KEY",
-      openai:    "OPENAI_API_KEY",
-      groq:      "GROQ_API_KEY",
-      deepseek:  "DEEPSEEK_API_KEY",
+      google: "GOOGLE_API_KEY",
+      openai: "OPENAI_API_KEY",
+      groq: "GROQ_API_KEY",
+      deepseek: "DEEPSEEK_API_KEY",
     };
     // Try direct env var first (fast path), then SecretsManager async fallback
     const key = process.env[envMap[family]];
     if (!key) {
       throw new Error(
         `Missing API key: set environment variable ${envMap[family]} ` +
-        `(or configure EOS_SECRETS_PROVIDER=aws|vault|doppler for production secrets management)`
+          `(or configure EOS_SECRETS_PROVIDER=aws|vault|doppler for production secrets management)`,
       );
     }
     return key;
@@ -420,10 +411,10 @@ export class EosMultiModelRouter {
   private async _getApiKeyAsync(family: ModelFamily): Promise<string> {
     const envMap: Record<ModelFamily, string> = {
       anthropic: "ANTHROPIC_API_KEY",
-      google:    "GOOGLE_API_KEY",
-      openai:    "OPENAI_API_KEY",
-      groq:      "GROQ_API_KEY",
-      deepseek:  "DEEPSEEK_API_KEY",
+      google: "GOOGLE_API_KEY",
+      openai: "OPENAI_API_KEY",
+      groq: "GROQ_API_KEY",
+      deepseek: "DEEPSEEK_API_KEY",
     };
     const secretKey = envMap[family];
     // Dynamic import to keep this zero-dep when secrets manager isn't used
@@ -431,7 +422,9 @@ export class EosMultiModelRouter {
       const { secrets } = await import("./eosSecretsManager.ts");
       const value = await secrets.get(secretKey);
       if (value) return value;
-    } catch { /* fall through */ }
+    } catch {
+      /* fall through */
+    }
     const fallback = process.env[secretKey];
     if (!fallback) {
       throw new Error(`Missing API key: ${secretKey} — set env var or configure EOS_SECRETS_PROVIDER`);
@@ -441,15 +434,16 @@ export class EosMultiModelRouter {
 
   private async _callWithRetry(
     config: ModelConfig,
-    messages: ModelMessage[]
+    messages: ModelMessage[],
   ): Promise<{ content: string; retryCount: number }> {
     const maxRetries = this.config.maxRetries ?? 3;
-    const baseDelay  = this.config.retryBaseDelayMs ?? 1000;
+    const baseDelay = this.config.retryBaseDelayMs ?? 1000;
     // Use async key fetch — reads from SecretsManager if configured
     const apiKey = await this._getApiKeyAsync(config.family);
 
     // Content-addressed cache check
-    const cacheKey = crypto.createHash("sha256")
+    const cacheKey = crypto
+      .createHash("sha256")
       .update(config.model + JSON.stringify(messages))
       .digest("hex")
       .slice(0, 32);
@@ -462,10 +456,12 @@ export class EosMultiModelRouter {
     const now = Date.now();
     const windowMs = 60_000;
     const calls = this._callsPerMinute.get(config.family) ?? [];
-    const recentCalls = calls.filter(t => now - t < windowMs);
+    const recentCalls = calls.filter((t) => now - t < windowMs);
     this._callsPerMinute.set(config.family, recentCalls);
     if (recentCalls.length >= this._maxCallsPerMinute) {
-      throw new Error(`Rate limit exceeded for ${config.family}: ${recentCalls.length} calls in last 60s (max ${this._maxCallsPerMinute})`);
+      throw new Error(
+        `Rate limit exceeded for ${config.family}: ${recentCalls.length} calls in last 60s (max ${this._maxCallsPerMinute})`,
+      );
     }
     recentCalls.push(now);
 
@@ -508,7 +504,7 @@ export class EosMultiModelRouter {
   public async call(
     taskType: TaskType,
     messages: ModelMessage[],
-    rulesBlock?: string
+    rulesBlock?: string,
   ): Promise<Result<ModelCallResult, Error>> {
     const model = this._selectModel(taskType);
     const t0 = Date.now();
@@ -536,17 +532,12 @@ RESPONSE FORMAT INVARIANT (Zero Vibe Coding):
     const hasSystem = messagesWithRules.some((m) => m.role === "system");
     const finalMessages: ModelMessage[] = hasSystem
       ? messagesWithRules
-      : [
-          { role: "system", content: rulesInjection + jsonInstruction },
-          ...messagesWithRules,
-        ];
+      : [{ role: "system", content: rulesInjection + jsonInstruction }, ...messagesWithRules];
 
     try {
       const { content, retryCount } = await this._callWithRetry(model, finalMessages);
 
-      const inputTokensEstimate = Math.ceil(
-        finalMessages.reduce((sum, m) => sum + m.content.length, 0) / 4
-      );
+      const inputTokensEstimate = Math.ceil(finalMessages.reduce((sum, m) => sum + m.content.length, 0) / 4);
       const outputTokensEstimate = Math.ceil(content.length / 4);
       const estimatedCostUsd =
         (inputTokensEstimate / 1_000_000) * model.costPer1MInputTokens +
@@ -564,17 +555,19 @@ RESPONSE FORMAT INVARIANT (Zero Vibe Coding):
         .digest("hex")
         .slice(0, 16);
 
-      return Ok(deepFreeze({
-        model: model.model,
-        taskType,
-        rawContent: content,
-        inputTokensEstimate,
-        outputTokensEstimate,
-        estimatedCostUsd,
-        latencyMs: Date.now() - t0,
-        retryCount,
-        callHash,
-      }));
+      return Ok(
+        deepFreeze({
+          model: model.model,
+          taskType,
+          rawContent: content,
+          inputTokensEstimate,
+          outputTokensEstimate,
+          estimatedCostUsd,
+          latencyMs: Date.now() - t0,
+          retryCount,
+          callHash,
+        }),
+      );
     } catch (err) {
       return Err(err instanceof Error ? err : new Error(String(err)));
     }
@@ -590,9 +583,7 @@ RESPONSE FORMAT INVARIANT (Zero Vibe Coding):
    *
    * Returns an empty array on failure (caller should handle gracefully).
    */
-  public async generateBranches(
-    req: BranchGenerationRequest
-  ): Promise<ThoughtBranch[]> {
+  public async generateBranches(req: BranchGenerationRequest): Promise<ThoughtBranch[]> {
     const branchCount = req.branchCount ?? 3;
 
     const systemPrompt = `You are the EOS Sovereign Code Architect. Your task is to generate ${branchCount} orthogonal solution strategies for the given objective. Each strategy must take a fundamentally different approach.`;
@@ -627,7 +618,7 @@ Respond with ONLY this JSON structure (no markdown, no prose):
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
-      req.rulesBlock
+      req.rulesBlock,
     );
 
     if (!result.ok) {

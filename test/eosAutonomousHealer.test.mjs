@@ -8,57 +8,36 @@
  * 4. Model Context Protocol (MCP) tool dispatch.
  */
 
-import { describe, it, before, after, beforeEach } from "node:test";
+import { describe, it, before, after } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import {
-  EosAutonomousHealer
-} from "../src/core/eosAutonomousHealer.ts";
+import { EosAutonomousHealer } from "../src/core/eosAutonomousHealer.ts";
 
-import {
-  EosMcpServer
-} from "../src/mcp/eosMcpServer.ts";
+import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, "..");
-const testDir = path.join(root, "test/_sandbox", `healer-${process.pid}`);
+const testDir = path.join(root, "test/_sandbox");
 const testFile = path.join(testDir, "anomalousFile.ts");
 const generatedReceipts = [];
 
-function resetTestFile() {
-  if (!fs.existsSync(testDir)) fs.mkdirSync(testDir, { recursive: true });
-  const badContent = "export function sampleMath(): number {\r\n  return 42;   \r\n}\r\n";
-  fs.writeFileSync(testFile, badContent, "utf8");
-}
-
 describe("EOS Sovereign Autonomous Healer & FDIR Suite", () => {
   before(() => {
-    resetTestFile();
-  });
-
-  beforeEach(() => {
-    resetTestFile();
+    if (!fs.existsSync(testDir)) fs.mkdirSync(testDir, { recursive: true });
+    // Write an anomalous file with CRLF line endings and trailing whitespace
+    const badContent = "export function sampleMath(): number {\r\n  return 42;   \r\n}\r\n";
+    fs.writeFileSync(testFile, badContent, "utf8");
   });
 
   after(() => {
-    try {
-      if (fs.existsSync(testFile)) fs.unlinkSync(testFile);
-      if (fs.existsSync(testDir)) fs.rmSync(testDir, { recursive: true, force: true });
-    } catch {
-      // Ignore teardown races under parallel suite batches.
-    }
+    if (fs.existsSync(testFile)) fs.unlinkSync(testFile);
+    if (fs.existsSync(testDir)) fs.rmdirSync(testDir);
     for (const receiptPath of generatedReceipts) {
-      if (fs.existsSync(receiptPath)) {
-        try {
-          fs.unlinkSync(receiptPath);
-        } catch {
-          /* ignore */
-        }
-      }
+      if (fs.existsSync(receiptPath)) fs.unlinkSync(receiptPath);
     }
   });
 
@@ -125,7 +104,7 @@ describe("EOS Sovereign Autonomous Healer & FDIR Suite", () => {
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 401,
-        method: "tools/list"
+        method: "tools/list",
       });
 
       assert.ok(res?.result?.tools);
@@ -142,9 +121,9 @@ describe("EOS Sovereign Autonomous Healer & FDIR Suite", () => {
         params: {
           name: "eos_autonomous_heal",
           arguments: {
-            dryRun: true
-          }
-        }
+            dryRun: true,
+          },
+        },
       });
 
       assert.ok(res?.result?.content?.[0]?.text);

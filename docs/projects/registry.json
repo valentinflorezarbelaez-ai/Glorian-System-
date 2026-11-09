@@ -1,25 +1,10 @@
 {
-  "version": "11.0.0-sovereign-fleet-registry",
-  "updatedAt": "2026-10-26T12:00:00-05:00",
-  "masterOrchestrator": "EOS System (c:\\Users\\valen\\Eos-System-2)",
+  "version": "11.0.0-autonomous-fleet-registry",
+  "updatedAt": "2026-11-02T13:25:29.554Z",
+  "masterOrchestrator": "EOS System control plane (SPEC-124)",
   "complianceStandard": "EOS_CONSTITUTION_LAW_IV_EXTERNAL_WRITE_BARRIER",
-  "totalFleetProjects": 10,
+  "totalFleetProjects": 9,
   "projects": [
-    {
-      "id": "eos-system",
-      "name": "EOS System (Control Plane Core)",
-      "localPath": "c:\\Users\\valen\\Eos-System-2",
-      "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Eos-System.git",
-      "productionUrl": "https://eos-system-ten.vercel.app",
-      "type": "control-plane-monolith",
-      "status": "REGISTERED",
-      "intake": "INTAKE_COMPLETE",
-      "specification": "SPECIFICATION_APPROVED",
-      "audit": "AUDIT_COMPLETE",
-      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
-      "cicdGateScript": "scripts/verify-cicd-pipeline.mjs",
-      "autoShipScript": "scripts/ship-sovereign.mjs"
-    },
     {
       "id": "aberamentho",
       "name": "Aberamentho Pleroma Music",
@@ -33,11 +18,10 @@
       "specification": "SPECIFICATION_APPROVED",
       "audit": "AUDIT_COMPLETE",
       "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
-      "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "scripts/verify-landing.mjs",
       "autoShipScript": "npm run ship:sovereign",
       "currentBranch": "main",
-      "headCommitSha": "6b39e4d8e3642afbfc7f0a2f7a8713061a693590"
+      "headCommitSha": "77b9733c029d1a6e916c877410e5f0869100edec"
     },
     {
       "id": "atp-strength",
@@ -53,10 +37,10 @@
       "audit": "AUDIT_COMPLETE",
       "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
       "ownerApproval": "OWNER_APPROVAL",
-      "cicdGateScript": "scripts/verify-landing.mjs",
+      "cicdGateScript": "npm test",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "39a24d2fdd757edd589251aab2ca905039109500"
+      "headCommitSha": "2ea9054f110009e16d60abe14025d5b0b999429c"
     },
     {
       "id": "biblioteca-gnostica-1",
@@ -75,7 +59,7 @@
       "cicdGateScript": "scripts/verify-strict.mjs",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "4030be0c41d6f66ef87909e4a4c1ba5d97f29595"
+      "headCommitSha": "ac436e0a758f6bd4461bb319397d4dfe7c73a0a1"
     },
     {
       "id": "control-de-asistencia-abopack",
@@ -94,7 +78,7 @@
       "cicdGateScript": "npm test",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "9f5f1d39ebfa6b1177b4556d51f8fd9b8939e077"
+      "headCommitSha": "5ba39af35e4229cac499579a8e76e36692431fc5"
     },
     {
       "id": "crud-slack",
@@ -113,7 +97,7 @@
       "cicdGateScript": "scripts/verify-strict.mjs",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "0f16176e18c6bdf573c498809535f53f23d6a78a"
+      "headCommitSha": "d8a8be196bdc1b1ae130983e8f3caadafab2b5c5"
     },
     {
       "id": "donaciones",
@@ -122,55 +106,34 @@
       "localPathEnv": "EOS_FLEET_DONACIONES_PATH",
       "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Donaciones.git",
       "productionUrl": "https://donaciones-drab.vercel.app",
-      "type": "sacred-altruism-platform",
+      "type": "general-application",
       "status": "REGISTERED",
-      "intake": "INTAKE_COMPLETE",
-      "specification": "SPECIFICATION_APPROVED",
-      "audit": "AUDIT_COMPLETE",
-      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
-      "ownerApproval": "OWNER_APPROVAL",
-      "cicdGateScript": "scripts/verify-landing.mjs",
+      "intake": "PENDING_INTAKE",
+      "specification": "PENDING_SPECIFICATION",
+      "audit": "PENDING_AUDIT",
+      "authorization": "LEVEL_1_READ_ONLY",
+      "cicdGateScript": "npm test",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "2f45b0ab86c70e00066d6d442690c446942d3cf4"
+      "headCommitSha": "99dfa2efc71cb818d5e1e95b8241c0c2f6a95bf2"
     },
     {
       "id": "eos-system",
       "name": "Glorian (Control Plane Core)",
       "resolvedLocalDir": "Eos-System",
       "localPathEnv": "EOS_FLEET_EOS_SYSTEM_PATH",
-      "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Glorian-System-.git",
-      "productionUrl": "https://eos-system-ten.vercel.app",
+      "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Eos-System.git",
+      "productionUrl": "https://glorian-system.vercel.app",
       "type": "control-plane-monolith",
       "status": "REGISTERED",
       "intake": "INTAKE_COMPLETE",
       "specification": "SPECIFICATION_APPROVED",
       "audit": "AUDIT_COMPLETE",
       "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
-      "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "scripts/verify-cicd-pipeline.mjs",
       "autoShipScript": "scripts/ship-sovereign.mjs",
       "currentBranch": "main",
-      "headCommitSha": "5d1ea182edbd9abe0b7eb69dbb4a005da899b2d6"
-    },
-    {
-      "id": "kegel-ham-sah",
-      "name": "HAM-SAH + Kegel — Transmutación Solar y Fortalecimiento Pélvico",
-      "resolvedLocalDir": "Kegel-Ham-Sah-trasnmutacion-y-fortalecimiento-pelvico",
-      "localPathEnv": "EOS_FLEET_KEGEL_HAM_SAH_PATH",
-      "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Kegel-Ham-Sah-trasnmutacion-y-fortalecimiento-pelvico.git",
-      "productionUrl": "https://kegel-ham-sah-trasnmutacion-y-forta.vercel.app",
-      "type": "sacred-embodiment-protocol",
-      "status": "REGISTERED",
-      "intake": "INTAKE_COMPLETE",
-      "specification": "SPECIFICATION_APPROVED",
-      "audit": "AUDIT_COMPLETE",
-      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
-      "ownerApproval": "OWNER_APPROVAL",
-      "cicdGateScript": "scripts/verify-landing.mjs",
-      "autoShipScript": "git push origin main",
-      "currentBranch": "main",
-      "headCommitSha": "772c6c220a32da64591502c81041f1600e78ff98"
+      "headCommitSha": "d87230132aeb00bfdbcbb2aebb68b6ce290e6ef1"
     },
     {
       "id": "performance-talent-group",
@@ -184,12 +147,11 @@
       "intake": "INTAKE_COMPLETE",
       "specification": "SPECIFICATION_APPROVED",
       "audit": "AUDIT_COMPLETE",
-      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
-      "ownerApproval": "OWNER_APPROVAL",
+      "authorization": "LEVEL_2_AUTHORIZED",
       "cicdGateScript": "scripts/smoke-test.ps1",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "f0882a07c0acc2a449ad34bfec6cd754f9efe3b8"
+      "headCommitSha": "581de7a5e7fc2624c851551a82ba142ae1c8b9c8"
     },
     {
       "id": "portafolio",
@@ -204,12 +166,11 @@
       "specification": "SPECIFICATION_APPROVED",
       "audit": "AUDIT_COMPLETE",
       "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
-      "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "scripts/verify-landing.mjs",
       "autoShipScript": "npm run ship:sovereign",
       "currentBranch": "main",
-      "headCommitSha": "e89aaa934469d81f9d7407e8c4895adc0f86a60e"
+      "headCommitSha": "36ba9c3b11406979f07a29fe8a544b14f8ec3c7a"
     }
   ],
-  "registrySha256": "81c6817917e54ff45cc81453779a3b2c0c934c82c2da1b0023dbf9a844a62554"
+  "registrySha256": "2f105adc69600b5de1c1c269db5e8ae68432125b399e4d7839722cfca76d9f1e"
 }

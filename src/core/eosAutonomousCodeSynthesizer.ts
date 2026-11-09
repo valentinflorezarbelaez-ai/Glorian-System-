@@ -16,19 +16,9 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
-export type SynthesizerDomain =
-  | "fintech"
-  | "audio"
-  | "platform"
-  | "govtech"
-  | "general";
+export type SynthesizerDomain = "fintech" | "audio" | "platform" | "govtech" | "general";
 
 export interface SynthesizedFile {
   readonly relativePath: string;
@@ -75,7 +65,7 @@ export class EosAutonomousCodeSynthesizer {
   constructor(projectRoot: string = process.cwd()) {
     assertPrecondition(
       typeof projectRoot === "string" && projectRoot.length > 0,
-      "projectRoot must be a non-empty string"
+      "projectRoot must be a non-empty string",
     );
     this.projectRoot = path.resolve(projectRoot);
   }
@@ -108,22 +98,25 @@ export class EosAutonomousCodeSynthesizer {
     const words = directive
       .replace(/[^a-zA-Z0-9\s]/g, " ")
       .split(/\s+/)
-      .filter((w) => w.length > 0 && !["a", "an", "the", "with", "and", "or", "to", "for", "in", "of"].includes(w.toLowerCase()));
+      .filter(
+        (w) =>
+          w.length > 0 && !["a", "an", "the", "with", "and", "or", "to", "for", "in", "of"].includes(w.toLowerCase()),
+      );
     if (words.length === 0) return "CoreEntity";
-    const pascal = words.slice(0, 3).map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join("");
+    const pascal = words
+      .slice(0, 3)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join("");
     return pascal.length > 0 ? pascal : "CoreEntity";
   }
 
   /**
    * Synthesizes a complete 4-tier hexagonal software bundle.
    */
-  public synthesizeBundle(
-    directive: string,
-    domainHint?: SynthesizerDomain
-  ): CodeBundle {
+  public synthesizeBundle(directive: string, domainHint?: SynthesizerDomain): CodeBundle {
     assertPrecondition(
       typeof directive === "string" && directive.trim().length > 0,
-      "directive must be a non-empty string"
+      "directive must be a non-empty string",
     );
 
     const domain = EosAutonomousCodeSynthesizer.inferDomain(directive, domainHint);
@@ -155,7 +148,7 @@ export class EosAutonomousCodeSynthesizer {
       rule7CheckReturnValues: true,
       rule8LimitedPreprocessor: true,
       rule9RestrictedPointers: true,
-      rule10CompilerZeroWarnings: true
+      rule10CompilerZeroWarnings: true,
     };
 
     const bundle: CodeBundle = {
@@ -166,7 +159,7 @@ export class EosAutonomousCodeSynthesizer {
       files: Object.freeze(files),
       jplConformance: Object.freeze(jplConformance),
       sha256Receipt,
-      synthesizedAtIso: new Date().toISOString()
+      synthesizedAtIso: new Date().toISOString(),
     };
 
     assertPostcondition(bundle.files.length === 4, "Synthesized bundle must contain exactly 4 hexagonal files");
@@ -178,11 +171,7 @@ export class EosAutonomousCodeSynthesizer {
   /**
    * Generates Domain Layer: Pure Entities, Value Objects, and Business Invariants.
    */
-  private generateDomainModule(
-    entityName: string,
-    domain: SynthesizerDomain,
-    directive: string
-  ): SynthesizedFile {
+  private generateDomainModule(entityName: string, domain: SynthesizerDomain, directive: string): SynthesizedFile {
     let domainSpecificFields = "";
     let domainSpecificInvariants = "";
 
@@ -266,20 +255,36 @@ export class ${entityName} {
 
     this.id = props.id;
     this.createdAtIso = props.createdAtIso;
-${domain === "fintech" ? `    this.balanceCents = props.balanceCents;
+${
+  domain === "fintech"
+    ? `    this.balanceCents = props.balanceCents;
     this.currency = props.currency;
     this.isFrozen = props.isFrozen;
-    this.lastTransactionTimeIso = props.lastTransactionTimeIso;` : ""}
-${domain === "audio" ? `    this.sampleRateHz = props.sampleRateHz;
+    this.lastTransactionTimeIso = props.lastTransactionTimeIso;`
+    : ""
+}
+${
+  domain === "audio"
+    ? `    this.sampleRateHz = props.sampleRateHz;
     this.integratedLufs = props.integratedLufs;
     this.maxPeakDb = props.maxPeakDb;
-    this.channels = props.channels;` : ""}
-${domain === "platform" ? `    this.maxConcurrency = props.maxConcurrency;
+    this.channels = props.channels;`
+    : ""
+}
+${
+  domain === "platform"
+    ? `    this.maxConcurrency = props.maxConcurrency;
     this.circuitState = props.circuitState;
     this.failureThreshold = props.failureThreshold;
-    this.activeTokens = props.activeTokens;` : ""}
-${domain === "general" || domain === "govtech" ? `    this.status = props.status;
-    this.version = props.version;` : ""}
+    this.activeTokens = props.activeTokens;`
+    : ""
+}
+${
+  domain === "general" || domain === "govtech"
+    ? `    this.status = props.status;
+    this.version = props.version;`
+    : ""
+}
 
     // Enforce Domain Invariants
 ${domainSpecificInvariants}
@@ -299,18 +304,14 @@ ${domainSpecificInvariants}
       relativePath: `domain/${entityName}.ts`,
       content,
       layer: "domain",
-      sha256
+      sha256,
     };
   }
 
   /**
    * Generates Application Layer: Use Case Command Handler with Idempotency.
    */
-  private generateApplicationModule(
-    entityName: string,
-    domain: SynthesizerDomain,
-    directive: string
-  ): SynthesizedFile {
+  private generateApplicationModule(entityName: string, domain: SynthesizerDomain, directive: string): SynthesizedFile {
     const content = `/**
  * Layer 0 Application Use Case: Execute${entityName}Command
  * Implements strict idempotency checking and DTO validation.
@@ -373,20 +374,36 @@ export class Execute${entityName}UseCase {
         createdAtIso: new Date().toISOString(),
         ...input.payload
       };
-      ${domain === "fintech" ? `initialProps.balanceCents = initialProps.balanceCents ?? 0n;
+      ${
+        domain === "fintech"
+          ? `initialProps.balanceCents = initialProps.balanceCents ?? 0n;
       initialProps.currency = initialProps.currency ?? "USD";
       initialProps.isFrozen = initialProps.isFrozen ?? false;
-      initialProps.lastTransactionTimeIso = initialProps.lastTransactionTimeIso ?? new Date().toISOString();` : ""}
-      ${domain === "audio" ? `initialProps.sampleRateHz = initialProps.sampleRateHz ?? 48000;
+      initialProps.lastTransactionTimeIso = initialProps.lastTransactionTimeIso ?? new Date().toISOString();`
+          : ""
+      }
+      ${
+        domain === "audio"
+          ? `initialProps.sampleRateHz = initialProps.sampleRateHz ?? 48000;
       initialProps.integratedLufs = initialProps.integratedLufs ?? -14.0;
       initialProps.maxPeakDb = initialProps.maxPeakDb ?? -1.0;
-      initialProps.channels = initialProps.channels ?? 2;` : ""}
-      ${domain === "platform" ? `initialProps.maxConcurrency = initialProps.maxConcurrency ?? 100;
+      initialProps.channels = initialProps.channels ?? 2;`
+          : ""
+      }
+      ${
+        domain === "platform"
+          ? `initialProps.maxConcurrency = initialProps.maxConcurrency ?? 100;
       initialProps.circuitState = initialProps.circuitState ?? "CLOSED";
       initialProps.failureThreshold = initialProps.failureThreshold ?? 5;
-      initialProps.activeTokens = initialProps.activeTokens ?? 0;` : ""}
-      ${domain === "general" || domain === "govtech" ? `initialProps.status = initialProps.status ?? "ACTIVE";
-      initialProps.version = initialProps.version ?? 1;` : ""}
+      initialProps.activeTokens = initialProps.activeTokens ?? 0;`
+          : ""
+      }
+      ${
+        domain === "general" || domain === "govtech"
+          ? `initialProps.status = initialProps.status ?? "ACTIVE";
+      initialProps.version = initialProps.version ?? 1;`
+          : ""
+      }
 
       entity = new ${entityName}(initialProps);
     }
@@ -410,7 +427,7 @@ export class Execute${entityName}UseCase {
       relativePath: `application/Execute${entityName}UseCase.ts`,
       content,
       layer: "application",
-      sha256
+      sha256,
     };
   }
 
@@ -420,7 +437,7 @@ export class Execute${entityName}UseCase {
   private generateInfrastructureModule(
     entityName: string,
     domain: SynthesizerDomain,
-    directive: string
+    directive: string,
   ): SynthesizedFile {
     const content = `/**
  * Layer 0 Infrastructure Adapter: InMemory${entityName}Repository
@@ -472,18 +489,14 @@ export class InMemory${entityName}Repository implements ${entityName}RepositoryP
       relativePath: `infrastructure/InMemory${entityName}Repository.ts`,
       content,
       layer: "infrastructure",
-      sha256
+      sha256,
     };
   }
 
   /**
    * Generates Executable BDD Test Suite in native node:test.
    */
-  private generateTestModule(
-    entityName: string,
-    domain: SynthesizerDomain,
-    directive: string
-  ): SynthesizedFile {
+  private generateTestModule(entityName: string, domain: SynthesizerDomain, directive: string): SynthesizedFile {
     const content = `/**
  * Executable BDD Verification Suite for ${entityName}
  * Native node:test runner — Zero external dependencies.
@@ -500,20 +513,36 @@ test("BDD: ${entityName} Nominal Creation and Immutability", () => {
   const props = {
     id: "test-001",
     createdAtIso: new Date().toISOString(),
-    ${domain === "fintech" ? `balanceCents: 10000n,
+    ${
+      domain === "fintech"
+        ? `balanceCents: 10000n,
     currency: "USD",
     isFrozen: false,
-    lastTransactionTimeIso: new Date().toISOString(),` : ""}
-    ${domain === "audio" ? `sampleRateHz: 48000,
+    lastTransactionTimeIso: new Date().toISOString(),`
+        : ""
+    }
+    ${
+      domain === "audio"
+        ? `sampleRateHz: 48000,
     integratedLufs: -14.0,
     maxPeakDb: -1.0,
-    channels: 2,` : ""}
-    ${domain === "platform" ? `maxConcurrency: 100,
+    channels: 2,`
+        : ""
+    }
+    ${
+      domain === "platform"
+        ? `maxConcurrency: 100,
     circuitState: "CLOSED" as const,
     failureThreshold: 5,
-    activeTokens: 0,` : ""}
-    ${domain === "general" || domain === "govtech" ? `status: "ACTIVE" as const,
-    version: 1,` : ""}
+    activeTokens: 0,`
+        : ""
+    }
+    ${
+      domain === "general" || domain === "govtech"
+        ? `status: "ACTIVE" as const,
+    version: 1,`
+        : ""
+    }
   };
 
   const entity = new ${entityName}(props);
@@ -569,7 +598,7 @@ test("BDD: Execute${entityName}UseCase Enforces Strict Idempotency", async () =>
       relativePath: `test/${entityName}.test.mjs`,
       content,
       layer: "test",
-      sha256
+      sha256,
     };
   }
 
@@ -579,10 +608,13 @@ test("BDD: Execute${entityName}UseCase Enforces Strict Idempotency", async () =>
   public materializeBundle(
     bundle: CodeBundle,
     targetDirectory: string,
-    overwrite: boolean = false
+    overwrite: boolean = false,
   ): MaterializationResult {
     assertPrecondition(Boolean(bundle), "bundle must be provided");
-    assertPrecondition(typeof targetDirectory === "string" && targetDirectory.length > 0, "targetDirectory must be valid");
+    assertPrecondition(
+      typeof targetDirectory === "string" && targetDirectory.length > 0,
+      "targetDirectory must be valid",
+    );
 
     const t0 = Date.now();
     const resolvedTarget = path.resolve(this.projectRoot, targetDirectory);
@@ -618,12 +650,12 @@ test("BDD: Execute${entityName}UseCase Enforces Strict Idempotency", async () =>
           domain: bundle.domain,
           sha256Receipt: bundle.sha256Receipt,
           files: bundle.files.map((bf) => ({ path: bf.relativePath, sha256: bf.sha256 })),
-          materializedAtIso: new Date().toISOString()
+          materializedAtIso: new Date().toISOString(),
         },
         null,
-        2
+        2,
       ) + "\n",
-      "utf8"
+      "utf8",
     );
     writtenFiles.push("bundle-manifest.json");
 
@@ -632,7 +664,7 @@ test("BDD: Execute${entityName}UseCase Enforces Strict Idempotency", async () =>
       targetDirectory: resolvedTarget,
       writtenFiles: Object.freeze(writtenFiles),
       sha256Receipt: bundle.sha256Receipt,
-      durationMs: Math.max(1, Date.now() - t0)
+      durationMs: Math.max(1, Date.now() - t0),
     });
   }
 }

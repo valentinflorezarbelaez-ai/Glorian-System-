@@ -26,9 +26,7 @@ console.log("===================================================================
 let chaosResult = "RESILIENT";
 try {
   console.log("[CHAOS] Running fault injection battery (1000 executions)...");
-  execFileSync(process.execPath, [
-    "--test", path.join(root, "test", "chaosResilience.test.mjs"),
-  ], {
+  execFileSync(process.execPath, ["--test", path.join(root, "test", "chaosResilience.test.mjs")], {
     cwd: root,
     encoding: "utf8",
     timeout: 60_000,

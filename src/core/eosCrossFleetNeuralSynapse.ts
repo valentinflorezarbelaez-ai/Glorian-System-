@@ -71,13 +71,7 @@ export class EosCrossFleetNeuralSynapse {
   private totalPropagationsExecuted = 0;
   private totalFleetSyncEvents = 0;
   private patterns = new Map<string, SynapticPattern>();
-  private registeredFleet = [
-    "eos-system",
-    "aberamentho",
-    "portafolio",
-    "performance-talent-group",
-    "crud-slack"
-  ];
+  private registeredFleet = ["eos-system", "aberamentho", "portafolio", "performance-talent-group", "crud-slack"];
 
   public static getInstance(): EosCrossFleetNeuralSynapse {
     if (!EosCrossFleetNeuralSynapse.instance) {
@@ -89,9 +83,7 @@ export class EosCrossFleetNeuralSynapse {
   /**
    * Indexes a newly discovered architectural pattern into the fleet synaptic graph.
    */
-  public indexPattern(
-    data: Omit<SynapticPattern, "signatureHash" | "discoveredAt">
-  ): SynapticPattern {
+  public indexPattern(data: Omit<SynapticPattern, "signatureHash" | "discoveredAt">): SynapticPattern {
     const discoveredAt = new Date().toISOString();
     const digestPayload = `${data.id}:${data.originRepoId}:${data.category}:${data.title}`;
     const signatureHash = createHash("sha256").update(digestPayload).digest("hex");
@@ -99,7 +91,7 @@ export class EosCrossFleetNeuralSynapse {
     const pattern: SynapticPattern = {
       ...data,
       signatureHash,
-      discoveredAt
+      discoveredAt,
     };
 
     this.patterns.set(pattern.id, pattern);
@@ -111,10 +103,7 @@ export class EosCrossFleetNeuralSynapse {
   /**
    * Propagates a Golden Path or architectural pattern across the registered fleet.
    */
-  public propagateGoldenPath(
-    patternId: string,
-    targetRepos?: string[]
-  ): PropagationPlanResult {
+  public propagateGoldenPath(patternId: string, targetRepos?: string[]): PropagationPlanResult {
     const pattern = this.patterns.get(patternId) || {
       id: patternId,
       originRepoId: "eos-system",
@@ -122,12 +111,13 @@ export class EosCrossFleetNeuralSynapse {
       title: "Synthesized Fleet Golden Path",
       description: "Default sovereign propagation pattern",
       signatureHash: createHash("sha256").update(patternId).digest("hex"),
-      discoveredAt: new Date().toISOString()
+      discoveredAt: new Date().toISOString(),
     };
 
-    const targets = targetRepos && targetRepos.length > 0
-      ? targetRepos
-      : this.registeredFleet.filter((r) => r !== pattern.originRepoId);
+    const targets =
+      targetRepos && targetRepos.length > 0
+        ? targetRepos
+        : this.registeredFleet.filter((r) => r !== pattern.originRepoId);
 
     const directives: PropagationDirective[] = [];
     let isolatedCount = 0;
@@ -135,7 +125,9 @@ export class EosCrossFleetNeuralSynapse {
 
     targets.forEach((repoId, idx) => {
       // Evaluate compatibility (fail-closed if mock incompatible marker)
-      const isIncompatible = repoId.includes("incompatible") || (pattern.prerequisites && pattern.prerequisites.includes(`require-not-${repoId}`));
+      const isIncompatible =
+        repoId.includes("incompatible") ||
+        (pattern.prerequisites && pattern.prerequisites.includes(`require-not-${repoId}`));
 
       if (isIncompatible) {
         directives.push({
@@ -143,7 +135,7 @@ export class EosCrossFleetNeuralSynapse {
           targetRepoId: repoId,
           status: "ISOLATED_INCOMPATIBLE",
           topologicalOrder: idx + 1,
-          rationale: `Repository ${repoId} isolated fail-closed: prerequisite contract mismatch.`
+          rationale: `Repository ${repoId} isolated fail-closed: prerequisite contract mismatch.`,
         });
         isolatedCount++;
       } else {
@@ -152,7 +144,7 @@ export class EosCrossFleetNeuralSynapse {
           targetRepoId: repoId,
           status: "SYNCHRONIZED",
           topologicalOrder: idx + 1,
-          rationale: `Pattern ${pattern.title} propagated successfully in topological order.`
+          rationale: `Pattern ${pattern.title} propagated successfully in topological order.`,
         });
         synchronizedCount++;
       }
@@ -175,7 +167,7 @@ export class EosCrossFleetNeuralSynapse {
       isolatedCount,
       synchronizedCount,
       merkleFleetRootSha256,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -184,16 +176,14 @@ export class EosCrossFleetNeuralSynapse {
    */
   public queryFleetKnowledge(categoryFilter?: SynapticPatternCategory): FleetKnowledgeQueryResult {
     const allPatterns = Array.from(this.patterns.values());
-    const filtered = categoryFilter
-      ? allPatterns.filter((p) => p.category === categoryFilter)
-      : allPatterns;
+    const filtered = categoryFilter ? allPatterns.filter((p) => p.category === categoryFilter) : allPatterns;
 
     const counts: Record<SynapticPatternCategory, number> = {
       PERFORMANCE_OPT: 0,
       SECURITY_HARDENING: 0,
       FINOPS_GOVERNANCE: 0,
       AEROSPACE_SAFETY: 0,
-      GOLDEN_PATH: 0
+      GOLDEN_PATH: 0,
     };
 
     for (const p of allPatterns) {
@@ -213,7 +203,7 @@ export class EosCrossFleetNeuralSynapse {
       fleetHealthScoreAverage: 100.0,
       merkleFleetRootSha256,
       patterns: filtered,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -223,7 +213,7 @@ export class EosCrossFleetNeuralSynapse {
       totalPropagationsExecuted: this.totalPropagationsExecuted,
       totalFleetSyncEvents: this.totalFleetSyncEvents,
       merkleFleetRootSha256: this.computeMerkleFleetRoot(),
-      state: "NOMINAL"
+      state: "NOMINAL",
     };
   }
 

@@ -33,24 +33,23 @@ const {
 
 // ── Suite 1: Command Suggestion Engine ──────────────────────────────────────────
 describe("CLI UX — Command Suggestion Engine (Levenshtein)", () => {
-
   it("suggests 'consult' when user types 'consutl' (typo)", () => {
     const suggestions = suggestCommands("consutl");
     assert.ok(suggestions.length > 0, "Should suggest something for 'consutl'");
     assert.ok(
-      suggestions.some(s => s.name === "consult"),
-      `Expected 'consult' in suggestions, got: ${suggestions.map(s => s.name).join(", ")}`
+      suggestions.some((s) => s.name === "consult"),
+      `Expected 'consult' in suggestions, got: ${suggestions.map((s) => s.name).join(", ")}`,
     );
   });
 
   it("suggests 'turbo' when user types 'turb'", () => {
     const suggestions = suggestCommands("turb");
-    assert.ok(suggestions.some(s => s.name === "turbo"));
+    assert.ok(suggestions.some((s) => s.name === "turbo"));
   });
 
   it("suggests 'amplify' when user types 'amplif'", () => {
     const suggestions = suggestCommands("amplif");
-    assert.ok(suggestions.some(s => s.name === "amplify"));
+    assert.ok(suggestions.some((s) => s.name === "amplify"));
   });
 
   it("returns empty array for completely unrelated input", () => {
@@ -67,7 +66,7 @@ describe("CLI UX — Command Suggestion Engine (Levenshtein)", () => {
 
   it("matches aliases too (solve → consult)", () => {
     const suggestions = suggestCommands("solv");
-    assert.ok(suggestions.some(s => s.name === "consult" || s.aliases.includes("solve")));
+    assert.ok(suggestions.some((s) => s.name === "consult" || s.aliases.includes("solve")));
   });
 
   it("always returns at most 3 suggestions", () => {
@@ -78,7 +77,6 @@ describe("CLI UX — Command Suggestion Engine (Levenshtein)", () => {
 
 // ── Suite 2: Input Validation ─────────────────────────────────────────────────
 describe("CLI UX — Input Validation (Error Prevention)", () => {
-
   it("returns null when all required args are present", () => {
     const err = validateArgs("consult", ["fix the bug"], ["problem"]);
     assert.equal(err, null, "Should return null when args are valid");
@@ -105,7 +103,6 @@ describe("CLI UX — Input Validation (Error Prevention)", () => {
 
 // ── Suite 3: Status Dashboard ──────────────────────────────────────────────────
 describe("CLI UX — Status Dashboard (Visibility of System State)", () => {
-
   it("collects status from the project root", async () => {
     const status = await collectStatus(root);
     assert.ok(status.version.length > 0, "Version should be non-empty");
@@ -136,7 +133,6 @@ describe("CLI UX — Status Dashboard (Visibility of System State)", () => {
 
 // ── Suite 4: First-Run Detection ──────────────────────────────────────────────
 describe("CLI UX — First-Run Onboarding (Learnability)", () => {
-
   let tmpProject;
 
   before(() => {
@@ -167,7 +163,6 @@ describe("CLI UX — First-Run Onboarding (Learnability)", () => {
 
 // ── Suite 5: Dynamic Version ──────────────────────────────────────────────────
 describe("CLI UX — Dynamic Version (Consistency)", () => {
-
   it("returns version from package.json", () => {
     const version = getEosVersion();
     assert.match(version, /^\d+\.\d+\.\d+$/, `Version should match semver, got: ${version}`);
@@ -182,9 +177,8 @@ describe("CLI UX — Dynamic Version (Consistency)", () => {
 
 // ── Suite 6: Command Registry ──────────────────────────────────────────────────
 describe("CLI UX — Command Registry (Recognition over Recall)", () => {
-
   it("contains all expected categories", () => {
-    const categories = new Set(EOS_COMMANDS.map(c => c.category));
+    const categories = new Set(EOS_COMMANDS.map((c) => c.category));
     assert.ok(categories.has("CORE"), "Should have CORE category");
     assert.ok(categories.has("AGI"), "Should have AGI category");
     assert.ok(categories.has("PLATFORM"), "Should have PLATFORM category");
@@ -199,7 +193,7 @@ describe("CLI UX — Command Registry (Recognition over Recall)", () => {
   });
 
   it("no duplicate command names", () => {
-    const names = EOS_COMMANDS.map(c => c.name);
+    const names = EOS_COMMANDS.map((c) => c.name);
     const unique = new Set(names);
     assert.equal(names.length, unique.size, "Command names should be unique");
   });
@@ -215,7 +209,6 @@ describe("CLI UX — Command Registry (Recognition over Recall)", () => {
 
 // ── Suite 7: Color Output ─────────────────────────────────────────────────────
 describe("CLI UX — Color Output (Aesthetic)", () => {
-
   it("supportsColor respects NO_COLOR env var", () => {
     const original = process.env["NO_COLOR"];
     process.env["NO_COLOR"] = "1";

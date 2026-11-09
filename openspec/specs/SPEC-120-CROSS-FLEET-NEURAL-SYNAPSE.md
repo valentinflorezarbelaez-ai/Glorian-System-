@@ -1,6 +1,7 @@
 # SPEC-120: Autonomous Cross-Fleet Neural Synapse & Dynamic Knowledge Synthesis
 
 ## 1. Metadata
+
 - **Specification ID**: `SPEC-120`
 - **Standard**: IEEE 830 / ISO 29148 / Spotify Fleetshift & Backstage Synapse Model
 - **Status**: `PROPOSED`

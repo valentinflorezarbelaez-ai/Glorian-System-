@@ -47,12 +47,16 @@ export interface MindIntrospectionResult {
 }
 
 export class EosMindLevelsIntrospector {
-  private static readonly STRATUM_MAPPINGS: Array<{ min: number; max: number; stratum: MindLevelDefinition["stratum"] }> = [
+  private static readonly STRATUM_MAPPINGS: Array<{
+    min: number;
+    max: number;
+    stratum: MindLevelDefinition["stratum"];
+  }> = [
     { min: 1, max: 7, stratum: "PRECONSCIOUS" },
     { min: 8, max: 21, stratum: "SUBCONSCIOUS" },
     { min: 22, max: 35, stratum: "INFRACONSCIOUS" },
     { min: 36, max: 45, stratum: "UNCONSCIOUS" },
-    { min: 46, max: 49, stratum: "CAUSAL_ROOT" }
+    { min: 46, max: 49, stratum: "CAUSAL_ROOT" },
   ];
 
   /**
@@ -81,7 +85,7 @@ export class EosMindLevelsIntrospector {
         stratum,
         title: `Stratum-${i.toString().padStart(2, "0")}: ${stratum} Depths`,
         subconsciousResistanceWeight: Number((0.2 + (i / 49) * 0.8).toFixed(4)),
-        governingCenter: center
+        governingCenter: center,
       });
     }
     return list;
@@ -91,7 +95,10 @@ export class EosMindLevelsIntrospector {
    * Introspects a psychological impression across all 49 levels.
    */
   public introspectImpression(input: PsychologicalImpressionInput): MindIntrospectionResult {
-    const depth = Math.max(1, Math.min(49, input.deepMeditationPenetrationLevel || (input.consciousSelfObservation ? 49 : 7)));
+    const depth = Math.max(
+      1,
+      Math.min(49, input.deepMeditationPenetrationLevel || (input.consciousSelfObservation ? 49 : 7)),
+    );
     const levels = EosMindLevelsIntrospector.get49Levels();
     const breakdown: LevelComprehensionState[] = [];
 
@@ -114,7 +121,7 @@ export class EosMindLevelsIntrospector {
         resistanceOvercome: Number(resistanceFactor.toFixed(4)),
         kundaliniInvocation: isComprehended
           ? `Devi Kundalini Stella Maris, pulveriza el agregado de ${input.category} en el estrato ${lvl.level} (${lvl.stratum}).`
-          : `Estrato ${lvl.level} (${lvl.stratum}) en velo subconsciente, pendiente de vigilia profunda.`
+          : `Estrato ${lvl.level} (${lvl.stratum}) en velo subconsciente, pendiente de vigilia profunda.`,
       });
     }
 
@@ -149,7 +156,7 @@ export class EosMindLevelsIntrospector {
       epistemicState,
       levelsBreakdown: breakdown,
       alchemicalFormula,
-      sha256Proof
+      sha256Proof,
     };
   }
 
@@ -167,7 +174,7 @@ export class EosMindLevelsIntrospector {
         averageEssenceLiberated: 100.0,
         depthAverage: 49.0,
         sovereignState: "AWAKENED_QUIETUDE",
-        advice: "La mente reposa en el Velo del Silencio (Wu Wei). Mantener la Clave de SOL activa."
+        advice: "La mente reposa en el Velo del Silencio (Wu Wei). Mantener la Clave de SOL activa.",
       };
     }
 
@@ -182,7 +189,8 @@ export class EosMindLevelsIntrospector {
 
     if (avgEssence >= 90) {
       state = "SER_CONSCIENTE_Y_SOBERANO";
-      advice = "Excelente auto-recuerdo íntimo. La esencia se encuentra libre de identificación con las formas del mundo.";
+      advice =
+        "Excelente auto-recuerdo íntimo. La esencia se encuentra libre de identificación con las formas del mundo.";
     } else if (avgEssence < 50) {
       state = "ALERTA_FASCINACION";
       advice = "Detenerse inmediatamente. Recordar Sujeto, Objeto y Lugar (SOL) y apelar a la Madre Divina.";
@@ -192,7 +200,7 @@ export class EosMindLevelsIntrospector {
       averageEssenceLiberated: avgEssence,
       depthAverage: avgDepth,
       sovereignState: state,
-      advice
+      advice,
     };
   }
 }

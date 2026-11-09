@@ -32,37 +32,15 @@ import {
 
 import { createLogger } from "./eosLogger.ts";
 import type { EosWorkerTribunal, TribunalResult } from "./eosWorkerTribunal.ts";
+import type { ThoughtBranch, BranchVerdict } from "./eosAgiTypes.ts";
+
+export type { ThoughtBranch, BranchVerdict } from "./eosAgiTypes.ts";
 
 const _log = createLogger("eosAgiCore");
 
 // ============================================================================
 // 1. DATA CONTRACTS
 // ============================================================================
-
-/** A single hypothesis branch in the Tree of Thoughts. */
-export interface ThoughtBranch {
-  /** Unique branch identifier (e.g. "BRANCH-001"). */
-  readonly id: string;
-  /** One-sentence strategy description for logging and memory. */
-  readonly strategy: string;
-  /** Single target file (for backwards compatibility). Takes precedence if set. */
-  readonly targetRelPath?: string;
-  /** Single file content (backwards compat with single-file branches). */
-  readonly proposedContent?: string;
-  /** Multi-file targets — all files are written/rolled-back atomically. */
-  readonly targets?: ReadonlyArray<{
-    readonly relPath: string;
-    readonly content: string;
-  }>;
-  /**
-   * Complexity score 1–10 (lower = simpler = preferred).
-   * The core sorts branches ascending so the cleanest solution
-   * is attempted first — Occam's Razor enforcement.
-   */
-  readonly estimatedComplexity: number;
-  /** Optional test command override for this branch (falls back to default). */
-  readonly testCommandOverride?: string;
-}
 
 /** A crystallized lesson distilled from a failed evaluation. */
 export interface AxiomMemory {
@@ -76,18 +54,6 @@ export interface AxiomMemory {
   readonly crystallizedAt: string;
   /** How many times this pattern recurred (incremented on repeat failures). */
   recurrenceCount: number;
-}
-
-/** Verdict for a single branch evaluation. */
-export interface BranchVerdict {
-  readonly branchId: string;
-  readonly strategy: string;
-  readonly passed: boolean;
-  readonly durationMs: number;
-  readonly exitCode: number;
-  readonly stdout: string;
-  readonly stderr: string;
-  readonly rollbackApplied: boolean;
 }
 
 /** Final result of a full AGI core solve cycle. */
@@ -196,7 +162,25 @@ export class EosAxiomMemory {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     const tmp = `${this.storePath}.tmp`;
     fs.writeFileSync(tmp, JSON.stringify([...this.axioms.values()], null, 2), "utf8");
-    fs.renameSync(tmp, this.storePath);
+    try {
+      fs.renameSync(tmp, this.storePath);
+    } catch (err: any) {
+      if (err.code === "EPERM" || err.code === "EBUSY") {
+        try {
+          fs.unlinkSync(this.storePath);
+        } catch {}
+        try {
+          fs.renameSync(tmp, this.storePath);
+        } catch {
+          fs.copyFileSync(tmp, this.storePath);
+          try {
+            fs.unlinkSync(tmp);
+          } catch {}
+        }
+      } else {
+        throw err;
+      }
+    }
   }
 
   /**
@@ -206,11 +190,7 @@ export class EosAxiomMemory {
    */
   public crystallize(failedStrategy: string, compilerOutput: string): AxiomMemory {
     const errorPattern = compilerOutput.slice(0, 200).trim();
-    const errorHash = crypto
-      .createHash("sha256")
-      .update(errorPattern)
-      .digest("hex")
-      .slice(0, 16);
+    const errorHash = crypto.createHash("sha256").update(errorPattern).digest("hex").slice(0, 16);
 
     const existing = this.axioms.get(errorHash);
     if (existing) {
@@ -278,12 +258,27 @@ export class EosAxiomMemory {
  *   4. Reads the verdict (exit code).
  *   5. On failure: atomically restores ALL files to their pre-branch state.
  */
+/**
+ * Resolves a branch target and enforces containment with a relative-path check.
+ * `String.startsWith` alone accepts sibling prefixes ("/tmp/root" vs
+ * "/tmp/root-evil"), which a crafted target could exploit.
+ */
+function resolveInsideProject(projectRoot: string, targetRelPath: string): string {
+  const fullPath = path.resolve(projectRoot, targetRelPath);
+  const relative = path.relative(projectRoot, fullPath);
+  assertInvariant(
+    relative !== "" && !relative.startsWith("..") && !path.isAbsolute(relative),
+    `Branch target "${targetRelPath}" would escape projectRoot — security violation.`,
+  );
+  return fullPath;
+}
+
 function evaluateBranch(
   branch: ThoughtBranch,
   projectRoot: string,
   defaultTestCommand: string,
   defaultTestCwd: string,
-  timeoutMs: number
+  timeoutMs: number,
 ): BranchVerdict {
   const t0 = Date.now();
 
@@ -292,20 +287,18 @@ function evaluateBranch(
 
   if (branch.targets && branch.targets.length > 0) {
     for (const t of branch.targets) {
-      const fullPath = path.resolve(projectRoot, t.relPath);
-      assertInvariant(
-        fullPath.startsWith(projectRoot),
-        `Branch target "${t.relPath}" would escape projectRoot — security violation.`
-      );
-      mutations.push({ fullPath, relPath: t.relPath, content: t.content });
+      mutations.push({
+        fullPath: resolveInsideProject(projectRoot, t.relPath),
+        relPath: t.relPath,
+        content: t.content,
+      });
     }
   } else if (branch.targetRelPath && branch.proposedContent !== undefined) {
-    const fullPath = path.resolve(projectRoot, branch.targetRelPath);
-    assertInvariant(
-      fullPath.startsWith(projectRoot),
-      `Branch target "${branch.targetRelPath}" would escape projectRoot — security violation.`
-    );
-    mutations.push({ fullPath, relPath: branch.targetRelPath, content: branch.proposedContent });
+    mutations.push({
+      fullPath: resolveInsideProject(projectRoot, branch.targetRelPath),
+      relPath: branch.targetRelPath,
+      content: branch.proposedContent,
+    });
   }
 
   if (mutations.length === 0) {
@@ -431,7 +424,7 @@ export class EosAgiCore {
   public async solve(
     objective: string,
     branches: readonly ThoughtBranch[],
-    options: AgiSolveOptions
+    options: AgiSolveOptions,
   ): Promise<AgiSolveResult> {
     assertPrecondition(branches.length > 0, "At least one ThoughtBranch is required.");
     assertPrecondition(options.testCommand.trim().length > 0, "testCommand must not be empty.");
@@ -474,8 +467,12 @@ export class EosAgiCore {
       _log.info("Using worker_threads tribunal (concurrent, VM-isolated)");
 
       const tribunalResult = await EosWorkerTribunal.evaluate(
-        sorted, options.testCommand, this.projectRoot, testCwd, timeoutMs,
-        { concurrent: true, maxConcurrency: options.maxConcurrency ?? 4 }
+        sorted,
+        options.testCommand,
+        this.projectRoot,
+        testCwd,
+        timeoutMs,
+        { concurrent: true, maxConcurrency: options.maxConcurrency ?? 4 },
       );
 
       // Emit progress for each verdict
@@ -508,7 +505,11 @@ export class EosAgiCore {
     } else {
       // Sequential CoW mode (original behavior — unchanged)
       for (const branch of sorted) {
-        _log.debug("Evaluating branch", { id: branch.id, strategy: branch.strategy.slice(0, 60), complexity: branch.estimatedComplexity });
+        _log.debug("Evaluating branch", {
+          id: branch.id,
+          strategy: branch.strategy.slice(0, 60),
+          complexity: branch.estimatedComplexity,
+        });
 
         options.onProgress?.({
           type: "BRANCH_STARTED",
@@ -521,13 +522,7 @@ export class EosAgiCore {
           timestampMs: Date.now(),
         });
 
-        const verdict = evaluateBranch(
-          branch,
-          this.projectRoot,
-          options.testCommand,
-          testCwd,
-          timeoutMs
-        );
+        const verdict = evaluateBranch(branch, this.projectRoot, options.testCommand, testCwd, timeoutMs);
         verdicts.push(verdict);
 
         if (verdict.passed) {
@@ -543,7 +538,10 @@ export class EosAgiCore {
           winningStrategy = branch.strategy;
           break;
         } else {
-          _log.warn("Branch FAILED tribunal — rollback applied", { branchId: branch.id, stderr: verdict.stderr.slice(0, 120) });
+          _log.warn("Branch FAILED tribunal — rollback applied", {
+            branchId: branch.id,
+            stderr: verdict.stderr.slice(0, 120),
+          });
           options.onProgress?.({
             type: "BRANCH_FAILED",
             branchId: branch.id,
@@ -569,10 +567,7 @@ export class EosAgiCore {
     const newAxiomsLearned = this.memory.size - axiomsBefore;
 
     const receiptData = `${objective}:${winningBranchId}:${verdicts.length}:${totalDurationMs}`;
-    const executionHash = `sha256:${crypto
-      .createHash("sha256")
-      .update(receiptData)
-      .digest("hex")}`;
+    const executionHash = `sha256:${crypto.createHash("sha256").update(receiptData).digest("hex")}`;
 
     const result: AgiSolveResult = deepFreeze({
       objective,
@@ -618,11 +613,7 @@ export class EosAgiCore {
       const evidenceDir = path.join(this.projectRoot, "docs", "evidence");
       if (!fs.existsSync(evidenceDir)) fs.mkdirSync(evidenceDir, { recursive: true });
       const filename = `AGI-RECEIPT-${Date.now()}.json`;
-      fs.writeFileSync(
-        path.join(evidenceDir, filename),
-        JSON.stringify(result, null, 2),
-        "utf8"
-      );
+      fs.writeFileSync(path.join(evidenceDir, filename), JSON.stringify(result, null, 2), "utf8");
     } catch {
       // Evidence sealing is best-effort — never block the solve result
     }

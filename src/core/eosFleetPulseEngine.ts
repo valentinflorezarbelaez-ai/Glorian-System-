@@ -16,11 +16,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export type FleetPulseStatus = "PRISTINE" | "HEALTHY" | "NEEDS_ATTENTION" | "UNREGISTERED_LOCAL";
@@ -55,15 +51,15 @@ export interface FleetPulseReport {
 
 const ESOTERIC_ARCHETYPES: Readonly<Record<string, string>> = {
   "atp-strength": "Transmutación Física & Fuerza Vital (HAM-SAH / Prana)",
-  "donaciones": "El Tercer Factor (Sacrificio Consciente por la Humanidad)",
+  donaciones: "El Tercer Factor (Sacrificio Consciente por la Humanidad)",
   "biblioteca-gnostica-1": "El Primer Factor (Preservación del Conocimiento / Gnosis)",
-  "portafolio": "El Testimonio en el Mundo (Hoja de Vida & Maestría Técnica)",
+  portafolio: "El Testimonio en el Mundo (Hoja de Vida & Maestría Técnica)",
   "performance-talent-group": "El Ser & Recta Acción (Operaciones de Alto Impacto S.A.W)",
-  "aberamentho": "Armonía Acústica del Pleroma (Música Sagrada & DSP)",
+  aberamentho: "Armonía Acústica del Pleroma (Música Sagrada & DSP)",
   "eos-system": "El Sol Central / Plano de Control Soberano (Glorian)",
   "crud-slack": "Orden Mental & Eficiencia Diaria (TaskFlow AI)",
   "control-de-asistencia-abopack": "Justicia y Verdad en la Obra Material (Avo Pack S.A.S.)",
-  "kegel-ham-sah": "Transmutación Solar & Fuerza Vital (HAM-SAH / Prana)"
+  "kegel-ham-sah": "Transmutación Solar & Fuerza Vital (HAM-SAH / Prana)",
 };
 
 export class EosFleetPulseEngine {
@@ -135,7 +131,7 @@ export class EosFleetPulseEngine {
               cwd: resolvedPath,
               encoding: "utf8",
               timeout: 2000,
-              stdio: ["ignore", "pipe", "ignore"]
+              stdio: ["ignore", "pipe", "ignore"],
             });
             workingTreeClean = statusOut.trim().length === 0;
           } catch {
@@ -147,7 +143,7 @@ export class EosFleetPulseEngine {
               cwd: resolvedPath,
               encoding: "utf8",
               timeout: 1000,
-              stdio: ["ignore", "pipe", "ignore"]
+              stdio: ["ignore", "pipe", "ignore"],
             });
             if (branchOut.trim().length > 0) {
               currentBranch = branchOut.trim();
@@ -161,7 +157,7 @@ export class EosFleetPulseEngine {
               cwd: resolvedPath,
               encoding: "utf8",
               timeout: 1000,
-              stdio: ["ignore", "pipe", "ignore"]
+              stdio: ["ignore", "pipe", "ignore"],
             });
             if (revOut.trim().length >= 40) {
               headCommitFull = revOut.trim();
@@ -195,7 +191,7 @@ export class EosFleetPulseEngine {
         soundcheckScore,
         soundcheckGrade,
         esotericArchetype,
-        pulseStatus
+        pulseStatus,
       });
     }
 
@@ -208,7 +204,7 @@ export class EosFleetPulseEngine {
       localFound,
       pristineCount,
       quorum,
-      projects: projects.map((p) => ({ id: p.id, status: p.pulseStatus, commit: p.headCommitShort }))
+      projects: projects.map((p) => ({ id: p.id, status: p.pulseStatus, commit: p.headCommitShort })),
     });
     const sha256Receipt = pureSha256(receiptPayload);
 
@@ -223,8 +219,8 @@ export class EosFleetPulseEngine {
           pristineCount,
           fleetHealthQuorumPercentage: quorum,
           sha256Receipt,
-          durationMs
-        }
+          durationMs,
+        },
       });
     } catch {
       // Non-blocking telemetry
@@ -238,7 +234,7 @@ export class EosFleetPulseEngine {
       projects,
       sha256Receipt,
       durationMs,
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     };
 
     return deepFreeze(report);
@@ -251,21 +247,18 @@ export class EosFleetPulseEngine {
     const lines: string[] = [];
     lines.push("==========================================================================================");
     lines.push(" 🌐 GLORIAN FLEET TACTICAL SOVEREIGNTY RADAR & HEALTH PULSE (SPEC-132)");
-    lines.push(` Quorum: ${report.fleetHealthQuorumPercentage}% | Projects: ${report.localProjectsFound}/${report.totalProjects} Online | Pristine: ${report.pristineProjectsCount}/${report.totalProjects}`);
+    lines.push(
+      ` Quorum: ${report.fleetHealthQuorumPercentage}% | Projects: ${report.localProjectsFound}/${report.totalProjects} Online | Pristine: ${report.pristineProjectsCount}/${report.totalProjects}`,
+    );
     lines.push(` Seal: ${report.sha256Receipt.slice(0, 32)}... | Turnaround: ${report.durationMs}ms`);
     lines.push("==========================================================================================");
-    lines.push(
-      " ID                          STATUS     BRANCH   COMMIT   SCORE  ARQUETIPO GNÓSTICO & PROPÓSITO"
-    );
+    lines.push(" ID                          STATUS     BRANCH   COMMIT   SCORE  ARQUETIPO GNÓSTICO & PROPÓSITO");
     lines.push("------------------------------------------------------------------------------------------");
 
     for (const p of report.projects) {
       const idPad = p.id.padEnd(27, " ");
-      const statusBadge = p.pulseStatus === "PRISTINE"
-        ? "[PRISTINE]"
-        : p.pulseStatus === "HEALTHY"
-        ? "[HEALTHY] "
-        : "[ATTENTION]";
+      const statusBadge =
+        p.pulseStatus === "PRISTINE" ? "[PRISTINE]" : p.pulseStatus === "HEALTHY" ? "[HEALTHY] " : "[ATTENTION]";
       const branchPad = p.currentBranch.slice(0, 7).padEnd(8, " ");
       const commitPad = p.headCommitShort.padEnd(8, " ");
       const scorePad = `${p.soundcheckScore}% ${p.soundcheckGrade}`.padEnd(7, " ");
@@ -276,7 +269,9 @@ export class EosFleetPulseEngine {
     }
 
     lines.push("==========================================================================================");
-    lines.push(` ✅ ALL ${report.totalProjects} REPOSITORIES GOVERNED UNDER GLORIAN CONSTITUTION & ZERO-REGRESSION BARRIER`);
+    lines.push(
+      ` ✅ ALL ${report.totalProjects} REPOSITORIES GOVERNED UNDER GLORIAN CONSTITUTION & ZERO-REGRESSION BARRIER`,
+    );
     lines.push("==========================================================================================");
 
     return lines.join("\n");

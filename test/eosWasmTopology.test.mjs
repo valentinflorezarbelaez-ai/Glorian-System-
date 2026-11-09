@@ -1,19 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {
-  FLEET_TOPOLOGY,
-  getFleetNodes,
-  getNodeById,
-  calculateBlastRadius,
-  getTopologyMetrics
-} from "../src/core/eosFleetTopology.ts";
+import { getFleetNodes, getNodeById, calculateBlastRadius, getTopologyMetrics } from "../src/core/eosFleetTopology.ts";
 import {
   estimateTokens,
   estimateTokensL0,
   compressContext,
-  compressContextL0,
   runBenchmark,
-  analyzeTopology
+  analyzeTopology,
 } from "../src/core/eosWasmEngine.ts";
 
 test("SPEC-026 / BDD-058: Fleet Topology Graph Structure & Rings", () => {

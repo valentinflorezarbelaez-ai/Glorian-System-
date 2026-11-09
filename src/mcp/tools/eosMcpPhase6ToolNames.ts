@@ -27,5 +27,5 @@ export const PHASE6_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
   "eos_synapse_arbitrate",
   "eos_synapse_fleet_knowledge_query",
   "eos_synapse_mesh_status",
-  "eos_synapse_propagate_golden_path"
+  "eos_synapse_propagate_golden_path",
 ]);

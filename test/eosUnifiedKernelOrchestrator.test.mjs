@@ -20,7 +20,7 @@ test("BDD-299: Nominal Reconciliation & High Omni-System Equilibrium Index (OSEI
     predictiveHazardSeverityPct: 0,
     concurrencyHeadroomPct: 100,
     syntheticSocketBacklog: 50,
-    virtualPagePressurePct: 40
+    virtualPagePressurePct: 40,
   });
 
   assert.equal(receipt.oseiScore, 100);
@@ -45,7 +45,7 @@ test("BDD-300: Critical Compound Fault Reconciliation & Emergency Load Shedding 
     fleetSoundcheckScore: 40,
     sloErrorBudgetConsumptionPct: 90,
     predictiveHazardSeverityPct: 80,
-    concurrencyHeadroomPct: 20
+    concurrencyHeadroomPct: 20,
   });
 
   // OSEI calculation:
@@ -75,7 +75,7 @@ test("BDD-301: Intermediate Degradation Triggering Adaptive Throttling & Canary 
     fleetSoundcheckScore: 80,
     sloErrorBudgetConsumptionPct: 40,
     predictiveHazardSeverityPct: 55,
-    concurrencyHeadroomPct: 60
+    concurrencyHeadroomPct: 60,
   });
 
   // OSEI calculation:
@@ -104,9 +104,9 @@ test("BDD-302: EosMcpServer Kernel Orchestrator Tool Dispatch", async () => {
         fleetSoundcheckScore: 100,
         sloErrorBudgetConsumptionPct: 0,
         predictiveHazardSeverityPct: 0,
-        concurrencyHeadroomPct: 100
-      }
-    }
+        concurrencyHeadroomPct: 100,
+      },
+    },
   };
 
   const reconcileResponse = await server.handleRequest(reconcileReq);
@@ -125,8 +125,8 @@ test("BDD-302: EosMcpServer Kernel Orchestrator Tool Dispatch", async () => {
     method: "tools/call",
     params: {
       name: "eos_kernel_orchestrator_status",
-      arguments: {}
-    }
+      arguments: {},
+    },
   };
 
   const statusResponse = await server.handleRequest(statusReq);

@@ -1,6 +1,7 @@
 # SPEC-124: AUTONOMOUS DYNAMIC FLEET REGISTRY & LAW IV MULTI-TENANT SENTINEL
 
 ## 1. Metadata
+
 - **Specification ID**: `SPEC-124`
 - **Project ID**: `eos-system` (Control Plane Core) + Fleet Repositories in `c:\Users\valen\`
 - **Standard**: IEEE 830 / ISO 29148 · EOS Constitution Law I (Spec as Supreme Truth), Law II (Strict Gate), Law III (Evidence over Claims), Law IV (External Write Barrier), Law V (Hexagonal Purity), Law VI (Zero Plain Secrets)
@@ -12,12 +13,12 @@
 
 ## 2. Intake & Evidence (Why this spec exists)
 
-| # | Finding | Evidence |
-|---|---|---|
-| 1 | **Registry Drift**: `docs/projects/registry.json` declares 5 projects, but 8+ active git repositories exist under `c:\Users\valen\`. Active production systems like Avo Pack (`Control-De-Asistencia-Abopack`) and ATP Strength (`ATP-STRENGTH-1`) are unregistered. | Local scan of `c:\Users\valen\` vs `docs/projects/registry.json` |
-| 2 | **Stale Local Path Mismatches**: `performance-talent-group` references `EOS_FLEET_PTG_PATH` falling back to `../performance-talent-group`, but the actual directory on disk is `Performance-Talent-Group-1`, causing `--fleet` scans to fail with 0 files. | `scripts/eos-secret-scan.mjs --fleet` output (2026-11-02) |
-| 3 | **Law IV Compliance Risk**: Precondition 1 of the Law IV External Write Barrier requires `REGISTERED` status in `docs/projects/registry.json`. Without automated discovery, writing or auditing fleet projects requires manual JSON editing that is prone to human error and drift. | EOS Constitution Law IV |
-| 4 | **Absence of Unified Fleet Sync Command**: No single command currently discovers local repositories, parses their Git porcelain, detects their Vercel endpoints and CI/CD gates, verifies their secret hygiene, and synchronizes the canonical registry. | Terminal logs (2026-11-02) |
+| #   | Finding                                                                                                                                                                                                                                                                             | Evidence                                                         |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| 1   | **Registry Drift**: `docs/projects/registry.json` declares 5 projects, but 8+ active git repositories exist under `c:\Users\valen\`. Active production systems like Avo Pack (`Control-De-Asistencia-Abopack`) and ATP Strength (`ATP-STRENGTH-1`) are unregistered.                | Local scan of `c:\Users\valen\` vs `docs/projects/registry.json` |
+| 2   | **Stale Local Path Mismatches**: `performance-talent-group` references `EOS_FLEET_PTG_PATH` falling back to `../performance-talent-group`, but the actual directory on disk is `Performance-Talent-Group-1`, causing `--fleet` scans to fail with 0 files.                          | `scripts/eos-secret-scan.mjs --fleet` output (2026-11-02)        |
+| 3   | **Law IV Compliance Risk**: Precondition 1 of the Law IV External Write Barrier requires `REGISTERED` status in `docs/projects/registry.json`. Without automated discovery, writing or auditing fleet projects requires manual JSON editing that is prone to human error and drift. | EOS Constitution Law IV                                          |
+| 4   | **Absence of Unified Fleet Sync Command**: No single command currently discovers local repositories, parses their Git porcelain, detects their Vercel endpoints and CI/CD gates, verifies their secret hygiene, and synchronizes the canonical registry.                            | Terminal logs (2026-11-02)                                       |
 
 ---
 
@@ -98,16 +99,19 @@ ESCENARIO: BDD-367 Despacho de Herramienta MCP eos_fleet_registry_sync
 ## 5. Architectural Decision Records (ADRs)
 
 ### ADR-124-1: Pure Standard Library Discovery (Zero Runtime Dependencies)
+
 - **Context**: EOS Constitution Law V dictates that domain logic and CLI infrastructure must remain pure and free from third-party npm dependencies.
 - **Decision**: Implement directory walking, git metadata queries, and JSON parsing strictly using Node.js built-ins (`node:fs`, `node:path`, `node:crypto`, `node:child_process`).
 - **Consequences**: Fast startup (< 50ms), zero dependency vulnerabilities, fully hermetic execution.
 
 ### ADR-124-2: Non-Destructive Two-Way Merge for Governance States
+
 - **Context**: An automatic sync script could accidentally overwrite manual approvals, audit receipts, or Law IV authorization levels with defaults.
 - **Decision**: The reconciliation algorithm performs an asymmetric merge: physical attributes (paths, branches, git remotes, package versions) are updated from disk, while governance attributes (`status`, `intake`, `specification`, `audit`, `authorization`, `ownerApproval`) are strictly preserved from the existing registry.
 - **Consequences**: Guaranteed safety against accidental downgrades of production authorizations.
 
 ### ADR-124-3: Fail-Closed Registry Seal (SHA-256 Receipt)
+
 - **Context**: Law III requires verifiable evidence for all states.
 - **Decision**: Every generated registry includes a `registrySha256` digest calculated over the normalized canonical JSON of all project entries.
 - **Consequences**: Any manual tampering or accidental corruption outside of the governor will be detected immediately during CI/CD checks.

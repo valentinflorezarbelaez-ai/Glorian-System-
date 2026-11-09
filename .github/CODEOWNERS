@@ -1,0 +1,38 @@
+# CODEOWNERS — Mandatory review routing (GitHub standard, used by Google, Meta,
+# Stripe, Vercel). GitHub automatically requests reviews from these owners when
+# a pull request modifies files matching the pattern.
+#
+# Syntax: <glob-pattern> <@user-or-team> [<@additional-owner>...]
+# Last matching rule wins.
+
+# ── Default: all files require the project lead ───────────────────────────────
+*                                           @valentin-florez-arbelaez
+
+# ── Security-sensitive paths — always require the lead ────────────────────────
+.github/workflows/**                        @valentin-florez-arbelaez
+.githooks/**                                @valentin-florez-arbelaez
+scripts/eos-secret-scan.mjs                 @valentin-florez-arbelaez
+SECURITY.md                                 @valentin-florez-arbelaez
+vercel.json                                 @valentin-florez-arbelaez
+Dockerfile                                  @valentin-florez-arbelaez
+deploy/**                                   @valentin-florez-arbelaez
+
+# ── Governance & architectural decisions ──────────────────────────────────────
+ARCHITECTURE-S0.md                          @valentin-florez-arbelaez
+DESIGN.md                                   @valentin-florez-arbelaez
+openspec/**                                 @valentin-florez-arbelaez
+docs/formal/**                              @valentin-florez-arbelaez
+
+# ── Quality ratchets — prevent silent regressions ─────────────────────────────
+docs/quality/**                             @valentin-florez-arbelaez
+
+# ── Core Layer-0 engines ──────────────────────────────────────────────────────
+src/core/**                                 @valentin-florez-arbelaez
+
+# ── MCP server (agent interface) ──────────────────────────────────────────────
+src/mcp/**                                  @valentin-florez-arbelaez
+
+# ── Package manifest & lockfile ───────────────────────────────────────────────
+package.json                                @valentin-florez-arbelaez
+package-lock.json                           @valentin-florez-arbelaez
+.npmrc                                      @valentin-florez-arbelaez

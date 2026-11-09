@@ -12,12 +12,8 @@
  * Zero external runtime dependencies. Node 24 strip-only compliant.
  */
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import crypto from "node:crypto";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface LsmRecord {
@@ -55,7 +51,10 @@ export class EosLsmTreeStorageEngine {
   private ssTables: SsTableSegment[];
   private currentSeq: number;
 
-  constructor(memTableCapacity: number = EosLsmTreeStorageEngine.DEFAULT_MEMTABLE_CAPACITY, ledger?: EosDurableSqliteLedger | null) {
+  constructor(
+    memTableCapacity: number = EosLsmTreeStorageEngine.DEFAULT_MEMTABLE_CAPACITY,
+    ledger?: EosDurableSqliteLedger | null,
+  ) {
     assertPrecondition(memTableCapacity > 0, "MemTable capacity must be positive");
     this.memTableCapacity = memTableCapacity;
     this.ledger = ledger ?? null;
@@ -79,7 +78,7 @@ export class EosLsmTreeStorageEngine {
       for (const h of [h1, h2, h3]) {
         const byteIdx = Math.floor(h / 8);
         const bitIdx = h % 8;
-        bytes[byteIdx] |= (1 << bitIdx);
+        bytes[byteIdx] |= 1 << bitIdx;
       }
     }
 
@@ -90,7 +89,7 @@ export class EosLsmTreeStorageEngine {
     return deepFreeze({
       bitSize,
       hashCount: EosLsmTreeStorageEngine.BLOOM_HASHES,
-      bitArrayHex
+      bitArrayHex,
     });
   }
 
@@ -99,9 +98,7 @@ export class EosLsmTreeStorageEngine {
    */
   public static testBloomFilter(filter: BloomFilterDescriptor, key: string): boolean {
     const bitSize = filter.bitSize;
-    const bytes = new Uint8Array(
-      filter.bitArrayHex.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) ?? []
-    );
+    const bytes = new Uint8Array(filter.bitArrayHex.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) ?? []);
 
     const h1 = parseInt(pureSha256(`b1:${key}`).slice(0, 8), 16) % bitSize;
     const h2 = parseInt(pureSha256(`b2:${key}`).slice(0, 8), 16) % bitSize;
@@ -155,7 +152,7 @@ export class EosLsmTreeStorageEngine {
     const maxKey = keys[keys.length - 1];
 
     const bloom = EosLsmTreeStorageEngine.createBloomFilter(keys);
-    const tableId = `sst-L0-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+    const tableId = `sst-L0-${Date.now().toString(36)}-${crypto.randomBytes(6).toString("hex")}`;
     const sha256Digest = pureSha256(`sstable:${tableId}:${keys.join(",")}`);
 
     const segment: SsTableSegment = deepFreeze({
@@ -166,7 +163,7 @@ export class EosLsmTreeStorageEngine {
       maxKey,
       bloomFilter: bloom,
       entries: sortedEntries,
-      sha256Digest
+      sha256Digest,
     });
 
     this.ssTables.unshift(segment); // Newest SSTables at the front
@@ -178,7 +175,7 @@ export class EosLsmTreeStorageEngine {
           category: "VERIFICATION_RECEIPT",
           projectId: "eos-system",
           title: `LSM SSTable Flushed: ${tableId} (${segment.entryCount} entries)`,
-          payload: { tableId, entryCount: segment.entryCount, sha256Digest }
+          payload: { tableId, entryCount: segment.entryCount, sha256Digest },
         });
       } catch {
         // Fallback
@@ -257,7 +254,7 @@ export class EosLsmTreeStorageEngine {
       maxKey: keys[keys.length - 1],
       bloomFilter: bloom,
       entries: aliveEntries,
-      sha256Digest
+      sha256Digest,
     });
 
     const eliminated = this.ssTables.reduce((acc, t) => acc + t.entryCount, 0) - aliveEntries.length;

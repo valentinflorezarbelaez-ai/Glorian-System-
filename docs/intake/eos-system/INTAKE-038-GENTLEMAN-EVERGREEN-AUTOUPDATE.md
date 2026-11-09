@@ -1,12 +1,14 @@
 # INTAKE-038: AUTONOMOUS EVERGREEN AUTO-UPDATER FOR GENTLE-AI & COMPLETE GENTLEMAN STACK (v51.0.0)
 
 ## 1. Stakeholder Request & Strategic Intent
-* **Owner**: Valentín Flórez Arbeláez
-* **Date**: 2026-10-30
-* **Directive**: *"necesito que gentle ai y todo su stack se actualize automaticamente a la version mas reciente siempre se mantenga actualizado"*
-* **Objective**: Engineer a zero-toil, defense-in-depth **Evergreen Self-Updating Lifecycle Architecture** for `gentle-ai` and every component of the Gentleman Programming AI Stack (`gentle-ai`, `engram`, `gga`, `agent-teams-lite` skills, and `context7` MCP health) so that the entire ecosystem stays continuously updated to the latest upstream release without manual intervention and without ever clobbering the EOS Constitution or interrupting running MCP processes on Windows.
+
+- **Owner**: Valentín Flórez Arbeláez
+- **Date**: 2026-10-30
+- **Directive**: _"necesito que gentle ai y todo su stack se actualize automaticamente a la version mas reciente siempre se mantenga actualizado"_
+- **Objective**: Engineer a zero-toil, defense-in-depth **Evergreen Self-Updating Lifecycle Architecture** for `gentle-ai` and every component of the Gentleman Programming AI Stack (`gentle-ai`, `engram`, `gga`, `agent-teams-lite` skills, and `context7` MCP health) so that the entire ecosystem stays continuously updated to the latest upstream release without manual intervention and without ever clobbering the EOS Constitution or interrupting running MCP processes on Windows.
 
 ## 2. Live Reconnaissance Findings
+
 1. **Upstream Drift Already Present**: Running `gentle-ai update` and `git ls-remote` revealed `engram` installed at `v3.2.1` while upstream `Gentleman-Programming/engram` has already released **`v3.6.0`** (`checksums.txt` SHA-256 `22650375af19d1e46ffe1f376314c12c20370dfd19045fbc649a95991706a102` for `engram_3.6.0_windows_amd64.zip`).
 2. **Platform Packaging Asymmetry**:
    - `engram` publishes pre-built `windows_amd64.zip` + `checksums.txt` on GitHub Releases.

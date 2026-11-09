@@ -23,6 +23,7 @@ Before mutating files on any non-trivial feature, refactor, security fix, or mul
 ```
 
 Inspect the returned `MissionDirectionPlan`:
+
 - **`profile`**: `SDD_FULL_21_STEP`, `SECURITY_HARDENING`, `FLEET_ORCHESTRATION`, `PERFORMANCE_TUNING`, `ARCHITECTURE_AUDIT`, or `BUGFIX_FDIR`.
 - **`writeBarrierStatus`**:
   - `AUTHORIZED`: Target repository satisfies all 6 Law IV preconditions in `docs/projects/registry.json`. Proceed with the prescribed DAG.
@@ -35,11 +36,13 @@ Inspect the returned `MissionDirectionPlan`:
 Because `eos-system` tools are lazily loaded by Antigravity to preserve context budget, inspect `<appDataDir>/mcp/eos-system/<toolName>.json` when unsure of arguments, then invoke via `call_mcp_tool`:
 
 1. **Architectural & Spec Discovery**
+
    - `eos_semantic_search`: Hybrid BM25 + vector retrieval over EOS specifications, ADRs, and laws (`{ "query": "...", "topK": 3 }`).
    - `eos_check_architecture`: Audits Layer-0 hexagonal purity (0 runtime npm dependencies) and circular import freedom (`{ "targetDir": "src" }`).
    - `eos_get_blast_radius`: Computes transitive dependents and predictive test suites (`{ "changedFiles": ["src/core/..."] }`).
 
 2. **Constitutional Tribunal & Pre-Mutation Safety**
+
    - `eos_evaluate_decision`: Runs Bayesian 7-Law tribunal evaluation (`{ "title": "...", "description": "...", "proposedAction": "..." }`).
    - `eos_tmr_consensus`: Executes Triple Modular Redundancy (3-sandbox Byzantine quorum) on critical directives (`{ "directive": "..." }`).
    - `eos_validate_patch`: Validates candidate code for syntax, secret-free compliance (Law VI), and non-destructive safety (`{ "filePath": "src/...", "content": "..." }`).
@@ -51,6 +54,7 @@ Because `eos-system` tools are lazily loaded by Antigravity to preserve context 
 ## 3. Mandatory Completion & Epistemic Evidence Gate (Law III)
 
 Never claim `VERIFIED` or `PRODUCTION_READY` without running and confirming exit code `0` on:
+
 1. `eos_turbo_verify` (via `call_mcp_tool` on `eos-system`).
 2. `npm run test` / `npm run verify:strict` (7-stage SecDevOps repository pipeline + formal TLA+ bounded JS simulations).
 3. `eos_fleet_soundcheck` when changes affect registered fleet repositories or shared contracts.

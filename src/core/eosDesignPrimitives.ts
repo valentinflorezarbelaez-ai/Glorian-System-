@@ -63,8 +63,8 @@ export function gridCell(content: string, span = 1): string {
 // ============================================================================
 
 export interface TelemetryHeaderOptions {
-  readonly index: string;       // e.g. "01", "02", "SYS_MODULE"
-  readonly title: string;       // Section title
+  readonly index: string; // e.g. "01", "02", "SYS_MODULE"
+  readonly title: string; // Section title
   readonly status?: "ONLINE" | "ACTIVE" | "IDLE" | "ALERT" | "VERIFIED";
   readonly statusColor?: string; // override status dot color
 }
@@ -105,10 +105,10 @@ export function telemetryHeader(opts: TelemetryHeaderOptions): string {
 
 export interface SpotlightPanelOptions {
   readonly content: string;
-  readonly index?: string;      // Optional telemetry index for the card
-  readonly title?: string;      // Optional card title
-  readonly status?: string;     // Optional status indicator
-  readonly wide?: boolean;      // Span 2 columns
+  readonly index?: string; // Optional telemetry index for the card
+  readonly title?: string; // Optional card title
+  readonly status?: string; // Optional status indicator
+  readonly wide?: boolean; // Span 2 columns
 }
 
 /**
@@ -130,15 +130,9 @@ export interface SpotlightPanelOptions {
  */
 export function spotlightPanel(opts: SpotlightPanelOptions): string {
   const spanAttr = opts.wide ? ' style="grid-column:span 2"' : "";
-  const indexHtml = opts.index
-    ? `<div class="spotlight-card__index">${opts.index}</div>`
-    : "";
-  const titleHtml = opts.title
-    ? `<h3 class="spotlight-card__title">${opts.title}</h3>`
-    : "";
-  const statusHtml = opts.status
-    ? `<span class="spotlight-card__status">${opts.status}</span>`
-    : "";
+  const indexHtml = opts.index ? `<div class="spotlight-card__index">${opts.index}</div>` : "";
+  const titleHtml = opts.title ? `<h3 class="spotlight-card__title">${opts.title}</h3>` : "";
+  const statusHtml = opts.status ? `<span class="spotlight-card__status">${opts.status}</span>` : "";
 
   return `<div class="spotlight-card"${spanAttr}>
   <div class="spotlight-card__header">
@@ -191,15 +185,17 @@ export interface TraceRow {
  * Each role gets a color: SYSTEM=cyan, USER=blue, TOOL=amber, ASSISTANT=green.
  */
 export function consoleTrace(rows: readonly TraceRow[]): string {
-  const body = rows.map(r => {
-    const roleClass = `trace__turn-${r.role.toLowerCase()}`;
-    return `<tr>
+  const body = rows
+    .map((r) => {
+      const roleClass = `trace__turn-${r.role.toLowerCase()}`;
+      return `<tr>
   <td>${r.turn}</td>
   <td class="${roleClass}">${r.role}</td>
   <td>${r.content}</td>
   <td>${r.duration}</td>
 </tr>`;
-  }).join("\n");
+    })
+    .join("\n");
 
   return `<div class="trace__window">
   <div class="trace__header">eos pipeline — trace · Turn ${rows.length} · ${rows.length} steps</div>

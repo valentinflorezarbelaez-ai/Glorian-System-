@@ -31,19 +31,10 @@ test("BDD-273: Dynamic Fleet Soundcheck calculates real-time scores via git porc
   assert.ok(Array.isArray(audit.reports));
   assert.ok(audit.reports.length >= 5);
 
-  const ptgRepo = audit.reports.find(r => r.id === "performance-talent-group");
+  const ptgRepo = audit.reports.find((r) => r.id === "performance-talent-group");
   assert.ok(ptgRepo, "Performance Talent Group must be registered in fleet");
-  if (ptgRepo.existsLocally) {
-    // Dirty porcelain is a Soundcheck signal (gitHealth < max), not a hard test failure:
-    // industrialization / mid-mission trees must remain measurable without false reds.
-    assert.ok(ptgRepo.totalScore >= 70, `PTG score should remain quorum-eligible, received ${ptgRepo.totalScore}`);
-    if (ptgRepo.workingTreeClean) {
-      assert.ok(ptgRepo.totalScore >= 90, `Clean PTG should score high, received ${ptgRepo.totalScore}`);
-    }
-  } else {
-    assert.equal(ptgRepo.existsLocally, false);
-    assert.equal(ptgRepo.workingTreeClean, false);
-  }
+  assert.equal(ptgRepo.workingTreeClean, true, "PTG repository should have clean porcelain working tree");
+  assert.ok(ptgRepo.totalScore >= 90, `PTG score should be high, received ${ptgRepo.totalScore}`);
 });
 
 test("BDD-274: EosVercelCanaryObservability calculates CHI and promotes healthy canaries", () => {
@@ -52,8 +43,8 @@ test("BDD-274: EosVercelCanaryObservability calculates CHI and promotes healthy 
     environment: "production",
     stage: "CANARY_5_PCT",
     errorRate5xx: 0.002, // 0.2% error rate (well below 1.0%)
-    latencyP99Ms: 240,   // 240ms (well below 800ms ceiling)
-    requestCount: 1500
+    latencyP99Ms: 240, // 240ms (well below 800ms ceiling)
+    requestCount: 1500,
   });
 
   assert.ok(result.canaryHealthIndex >= 85, `Expected CHI >= 85, got ${result.canaryHealthIndex}`);
@@ -72,7 +63,7 @@ test("BDD-275: EosVercelCanaryObservability triggers immediate rollback upon err
     stage: "CANARY_25_PCT",
     errorRate5xx: 0.025, // 2.5% error rate (exceeds 1.0% critical threshold)
     latencyP99Ms: 310,
-    requestCount: 2000
+    requestCount: 2000,
   });
 
   assert.equal(result.decision, "ROLLBACK_TRIGGERED");
@@ -88,8 +79,8 @@ test("SPEC-107: Latency P99 penalty reduces CHI and holds deployment when latenc
     environment: "production",
     stage: "CANARY_5_PCT",
     errorRate5xx: 0.008, // 0.8% error rate (close to threshold)
-    latencyP99Ms: 1400,  // High latency: 1400ms > 800ms
-    requestCount: 500
+    latencyP99Ms: 1400, // High latency: 1400ms > 800ms
+    requestCount: 500,
   });
 
   assert.ok(result.latencyP99Ms > 800);
@@ -104,7 +95,7 @@ test("SPEC-107: Small sample batches incur penalty to prevent premature promotio
     stage: "CANARY_1_PCT",
     errorRate5xx: 0.0,
     latencyP99Ms: 120,
-    requestCount: 20 // < 50 requests
+    requestCount: 20, // < 50 requests
   });
 
   const highSampleResult = EosVercelCanaryObservability.evaluateMetrics({
@@ -113,7 +104,7 @@ test("SPEC-107: Small sample batches incur penalty to prevent premature promotio
     stage: "CANARY_1_PCT",
     errorRate5xx: 0.0,
     latencyP99Ms: 120,
-    requestCount: 200 // >= 50 requests
+    requestCount: 200, // >= 50 requests
   });
 
   assert.equal(highSampleResult.canaryHealthIndex, 100);
@@ -129,7 +120,7 @@ test("SPEC-107: Contract invariants and precondition assertions reject invalid i
       stage: "CANARY_1_PCT",
       errorRate5xx: 0.01,
       latencyP99Ms: 200,
-      requestCount: 100
+      requestCount: 100,
     });
   }, /deploymentId must not be empty/);
 
@@ -141,7 +132,7 @@ test("SPEC-107: Contract invariants and precondition assertions reject invalid i
       stage: "CANARY_1_PCT",
       errorRate5xx: -0.1,
       latencyP99Ms: 200,
-      requestCount: 100
+      requestCount: 100,
     });
   }, /errorRate5xx must be bounded in \[0, 1\]/);
 
@@ -153,7 +144,7 @@ test("SPEC-107: Contract invariants and precondition assertions reject invalid i
       stage: "CANARY_1_PCT",
       errorRate5xx: 1.5,
       latencyP99Ms: 200,
-      requestCount: 100
+      requestCount: 100,
     });
   }, /errorRate5xx must be bounded in \[0, 1\]/);
 
@@ -165,7 +156,7 @@ test("SPEC-107: Contract invariants and precondition assertions reject invalid i
       stage: "CANARY_1_PCT",
       errorRate5xx: 0.01,
       latencyP99Ms: -50,
-      requestCount: 100
+      requestCount: 100,
     });
   }, /latencyP99Ms must be non-negative/);
 });
@@ -185,9 +176,9 @@ test("SPEC-107: MCP Server successfully handles eos_canary_telemetry_evaluate to
         stage: "CANARY_1_PCT",
         errorRate5xx: 0.001,
         latencyP99Ms: 180,
-        requestCount: 1000
-      }
-    }
+        requestCount: 1000,
+      },
+    },
   });
 
   assert.equal(response.jsonrpc, "2.0");

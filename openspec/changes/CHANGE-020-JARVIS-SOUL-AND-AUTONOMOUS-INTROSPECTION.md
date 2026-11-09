@@ -10,6 +10,7 @@
 ---
 
 ## 1. Summary of Changes
+
 1. **Soul & Purpose Core (`src/core/eosJarvisSoul.ts`)**:
    - Encodes the complete identity of Valentín Flórez Arbeláez (The Architect / Tony Stark).
    - Codifies the Master Kanban Plan ("Solo EOS", El Refugio, Trilogía Diaria Comida-Aseo-Ejercicio, Independencia Financiera, Gnosis de Samael Aun Weor).
@@ -26,4 +27,5 @@
    - Native MCP tools in `src/mcp/eosMcpServer.ts`.
 
 ---
-*Signed by Principal Architect: Valentín Flórez Arbeláez*
+
+_Signed by Principal Architect: Valentín Flórez Arbeláez_

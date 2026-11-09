@@ -21,7 +21,7 @@ export const NSA_CLASSIFICATION_LEVELS: Record<NsaClassification, number> = {
   UNCLASSIFIED: 0,
   CONFIDENTIAL: 1,
   SECRET: 2,
-  TOP_SECRET: 3
+  TOP_SECRET: 3,
 };
 
 export interface NsaSubject {
@@ -62,7 +62,8 @@ export class EosNsaZeroTrustCompartment {
   private readonly redVault = new Map<string, NsaClassifiedObject>();
   private readonly auditLog: NsaAuditRecord[] = [];
   private sequenceCounter = 0;
-  private lastAuditHash = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+  private lastAuditHash =
+    "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 
   constructor(masterKey?: Buffer) {
     this.masterKey = masterKey || EosNsaCryptoSuite.generateKey256();
@@ -71,7 +72,10 @@ export class EosNsaZeroTrustCompartment {
   /**
    * Evaluates if a subject is permitted to read an object (Bell-LaPadula Simple Security: No Read-Up).
    */
-  public canRead(subject: NsaSubject, object: { classification: NsaClassification; compartments: readonly string[] }): boolean {
+  public canRead(
+    subject: NsaSubject,
+    object: { classification: NsaClassification; compartments: readonly string[] },
+  ): boolean {
     const subjectLevel = NSA_CLASSIFICATION_LEVELS[subject.clearance];
     const objectLevel = NSA_CLASSIFICATION_LEVELS[object.classification];
 
@@ -93,7 +97,11 @@ export class EosNsaZeroTrustCompartment {
   /**
    * Evaluates if a subject is permitted to write to an object (Bell-LaPadula *-Property: No Write-Down).
    */
-  public canWrite(subject: NsaSubject, targetClassification: NsaClassification, targetCompartments: readonly string[]): boolean {
+  public canWrite(
+    subject: NsaSubject,
+    targetClassification: NsaClassification,
+    targetCompartments: readonly string[],
+  ): boolean {
     const subjectLevel = NSA_CLASSIFICATION_LEVELS[subject.clearance];
     const targetLevel = NSA_CLASSIFICATION_LEVELS[targetClassification];
 
@@ -157,7 +165,9 @@ export class EosNsaZeroTrustCompartment {
 
     if (!this.canRead(subject, obj)) {
       this.recordAudit("TRANSIT_BLACK", subject.subjectId, objectId, obj.classification, "DENIED_READ_UP");
-      throw new Error(`NSA Access Violation: Subject ${subject.subjectId} denied export of ${obj.classification} object`);
+      throw new Error(
+        `NSA Access Violation: Subject ${subject.subjectId} denied export of ${obj.classification} object`,
+      );
     }
 
     const aad = `CLASS=${obj.classification};COMPS=${obj.compartments.join(",")};OBJ=${obj.objectId}`;
@@ -170,7 +180,7 @@ export class EosNsaZeroTrustCompartment {
       envelope,
       sequenceNumber: this.sequenceCounter,
       previousLogHash: this.lastAuditHash,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     this.recordAudit("TRANSIT_BLACK", subject.subjectId, objectId, obj.classification, "GRANTED");
@@ -197,7 +207,7 @@ export class EosNsaZeroTrustCompartment {
     subjectId: string,
     objectId: string,
     classification: NsaClassification,
-    outcome: "GRANTED" | "DENIED_READ_UP" | "DENIED_WRITE_DOWN" | "DENIED_COMPARTMENT_MISMATCH"
+    outcome: "GRANTED" | "DENIED_READ_UP" | "DENIED_WRITE_DOWN" | "DENIED_COMPARTMENT_MISMATCH",
   ): void {
     this.sequenceCounter++;
     const timestamp = new Date().toISOString();
@@ -213,7 +223,7 @@ export class EosNsaZeroTrustCompartment {
       classification,
       outcome,
       timestamp,
-      entryHash
+      entryHash,
     });
   }
 }

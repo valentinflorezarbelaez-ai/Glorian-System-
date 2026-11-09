@@ -1,6 +1,7 @@
 # AUDIT-AVOPAK-001: INITIAL RECONNAISSANCE, LEGAL & SECURITY BASELINE AUDIT
 
 ## 1. Audit Metadata
+
 - **Audit ID**: `AUDIT-AVOPAK-001`
 - **Project ID**: `control-de-asistencia-abopack`
 - **Status**: `AUDIT_COMPLETE`
@@ -10,6 +11,7 @@
 ---
 
 ## 2. Technical & Legal Reconnaissance Findings
+
 1. **Remote Git Repository (`https://github.com/valentinflorezarbelaez-ai/Control-De-Asistencia-Abopack.git`)**:
    - Verified via `git ls-remote`: repository is reachable over HTTPS and ready for greenfield sovereign initialization (`0` prior commits).
 2. **Production Deployment Target (`https://control-de-asistencia-abopack.vercel.app/`)**:
@@ -21,6 +23,6 @@
    - Meal break deduction: **40 minutes** per shift (non-computable as worked time under Art. 167 CST).
    - Nighttime overtime differential cutoff requested by plant management: **8:00 PM (`20:00`)** separating **Horas Extras Diurnas (HED)** and **Horas Extras Nocturnas (HEN)**.
 5. **Security & Threat Model (STRIDE)**:
-   - **Privilege Escalation (RBAC)**: Area administrators must not modify or view personnel outside their assigned work areas. *Mitigation*: Enforce strict RBAC scoping in `attendanceStore.mjs` so only `SUPER_ADMIN` (`Federico` / `8160032`) can view all areas or modify administrator group assignments.
-   - **Spreadsheet Formula Injection (CSV/Excel)**: Exporting employee notes or permit reasons starting with `=`, `+`, `-`, `@`. *Mitigation*: Sanitize all exported string cells in `excelReportBuilder.mjs`.
-   - **XSS & Photo Evidence Storage**: Untrusted filenames or base64 image payloads. *Mitigation*: Validate `data:image/(jpeg|png|webp);base64,` prefix, compress via `<canvas>` to bounded dimensions (`<= 800px`), and escape all HTML text output via `escapeHtml`.
+   - **Privilege Escalation (RBAC)**: Area administrators must not modify or view personnel outside their assigned work areas. _Mitigation_: Enforce strict RBAC scoping in `attendanceStore.mjs` so only `SUPER_ADMIN` (`Federico` / `8160032`) can view all areas or modify administrator group assignments.
+   - **Spreadsheet Formula Injection (CSV/Excel)**: Exporting employee notes or permit reasons starting with `=`, `+`, `-`, `@`. _Mitigation_: Sanitize all exported string cells in `excelReportBuilder.mjs`.
+   - **XSS & Photo Evidence Storage**: Untrusted filenames or base64 image payloads. _Mitigation_: Validate `data:image/(jpeg|png|webp);base64,` prefix, compress via `<canvas>` to bounded dimensions (`<= 800px`), and escape all HTML text output via `escapeHtml`.

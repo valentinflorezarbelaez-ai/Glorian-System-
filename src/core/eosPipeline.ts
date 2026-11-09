@@ -99,7 +99,10 @@ export class EosPipeline {
 
     // Wall-clock deadline (Netflix/Google: every pipeline must have an end-to-end deadline)
     const deadlineTimer = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error(`EOS_PIPELINE_TIMEOUT: pipeline exceeded ${pipelineDeadlineMs}ms wall-clock deadline`)), pipelineDeadlineMs).unref()
+      setTimeout(
+        () => reject(new Error(`EOS_PIPELINE_TIMEOUT: pipeline exceeded ${pipelineDeadlineMs}ms wall-clock deadline`)),
+        pipelineDeadlineMs,
+      ).unref(),
     );
 
     return Promise.race([this._solveInternal(req, t0), deadlineTimer]);
@@ -117,11 +120,9 @@ export class EosPipeline {
       // ── Phase 1: Context Assembly ──────────────────────────────────────
       _log.info("Phase 1: Assembling context window");
       const ctxSpan = _tracer.startSpan("eos.pipeline.context_assembly", {}, "INTERNAL");
-      const context = this.contextManager.assemble(
-        req.problem,
-        req.targetFile,
-        { tokenBudget: req.tokenBudget ?? 32_000 }
-      );
+      const context = this.contextManager.assemble(req.problem, req.targetFile, {
+        tokenBudget: req.tokenBudget ?? 32_000,
+      });
       ctxSpan.setAttribute("files.included", context.filesIncluded);
       ctxSpan.setAttribute("tokens.used", context.totalTokensUsed);
       ctxSpan.setStatus("OK");
@@ -138,9 +139,7 @@ export class EosPipeline {
 
       // Read current file content for context
       const targetFullPath = path.resolve(this.projectRoot, req.targetFile);
-      const currentContent = fs.existsSync(targetFullPath)
-        ? fs.readFileSync(targetFullPath, "utf8")
-        : "";
+      const currentContent = fs.existsSync(targetFullPath) ? fs.readFileSync(targetFullPath, "utf8") : "";
 
       const branches = await this.router.generateBranches({
         objective: req.problem,
@@ -188,15 +187,11 @@ export class EosPipeline {
         "test.command": req.testCommand,
       });
 
-      const agiResult = await this.agiCore.solve(
-        req.problem,
-        branches,
-        {
-          testCommand: req.testCommand,
-          testCwd: req.testCwd ?? this.projectRoot,
-          timeoutMs: req.timeoutMs ?? 30_000,
-        }
-      );
+      const agiResult = await this.agiCore.solve(req.problem, branches, {
+        testCommand: req.testCommand,
+        testCwd: req.testCwd ?? this.projectRoot,
+        timeoutMs: req.timeoutMs ?? 30_000,
+      });
 
       tribunalSpan.setAttribute("solved", agiResult.solved);
       tribunalSpan.setAttribute("new.axioms", agiResult.newAxiomsLearned);

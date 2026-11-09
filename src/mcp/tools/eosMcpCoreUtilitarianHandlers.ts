@@ -12,10 +12,7 @@ import { EosGentlemanStackBridge } from "../../core/eosGentlemanStackBridge.ts";
 import { EosFleetSoundcheckMesh } from "../../core/eosFleetSoundcheckMesh.ts";
 import { EosTypeScriptAstAnalyzer } from "../../core/eosTypeScriptAstAnalyzer.ts";
 import { EosEnterpriseWorkspaceGovernor } from "../../core/eosEnterpriseWorkspaceGovernor.ts";
-import {
-  runMissionGoldenPath,
-  type MissionDomainHint
-} from "../../core/eosMissionGoldenPathOrchestrator.ts";
+import { runMissionGoldenPath, type MissionDomainHint } from "../../core/eosMissionGoldenPathOrchestrator.ts";
 import { EosDurableSqliteLedger } from "../../core/eosDurableSqliteLedger.ts";
 import { runControlPlaneHealthProbes } from "../../core/eosControlPlaneHealthProbes.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
@@ -23,22 +20,15 @@ import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 export const PHASE1_CORE_UTILITARIAN_HANDLERS: Readonly<Record<string, McpToolHandler>> = {
   eos_mission_run: (args, ctx) => {
     const directive = String(args.directive || args.rawPrompt || "");
-    const domainHint = args.domainHint
-      ? (String(args.domainHint) as MissionDomainHint)
-      : undefined;
+    const domainHint = args.domainHint ? (String(args.domainHint) as MissionDomainHint) : undefined;
     ctx.onProgress?.(10, 100, "Mission Golden Path: amplify → gates → turbo");
     const result = runMissionGoldenPath(directive, {
       projectRoot: ctx.projectRoot,
       target: args.target ? String(args.target) : "eos-system",
       domainHint,
-      architectureTargetDir: args.architectureTargetDir
-        ? String(args.architectureTargetDir)
-        : "src/core",
+      architectureTargetDir: args.architectureTargetDir ? String(args.architectureTargetDir) : "src/core",
       sealLedger: args.sealLedger !== false,
-      ledgerPath:
-        args.persistLedger === true
-          ? EosDurableSqliteLedger.defaultLedgerPath(ctx.projectRoot)
-          : ":memory:"
+      ledgerPath: args.persistLedger === true ? EosDurableSqliteLedger.defaultLedgerPath(ctx.projectRoot) : ":memory:",
     });
     ctx.onProgress?.(100, 100, `Mission ${result.status}`);
     return result;
@@ -48,9 +38,11 @@ export const PHASE1_CORE_UTILITARIAN_HANDLERS: Readonly<Record<string, McpToolHa
     const report = runControlPlaneHealthProbes(ctx.projectRoot);
     return {
       ...report,
+      status: "HANDLER_ALIVE",
+      healthReportStatus: report.status,
       scope:
         "Local control-plane probes only (SBOM, provenance, Layer-0 deps, registry, tip-seal pin). No network / multi-region SRE.",
-      subsystemProbes: "RUN"
+      subsystemProbes: "RUN",
     };
   },
 
@@ -72,7 +64,7 @@ export const PHASE1_CORE_UTILITARIAN_HANDLERS: Readonly<Record<string, McpToolHa
       description: String(args.description || ""),
       proposedAction: String(args.proposedAction || ""),
       codeSnippet: args.codeSnippet ? String(args.codeSnippet) : undefined,
-      targetDomain: args.targetDomain ? String(args.targetDomain) : undefined
+      targetDomain: args.targetDomain ? String(args.targetDomain) : undefined,
     }),
 
   eos_turbo_verify: (_args, ctx) => runTurboPipeline(ctx.projectRoot),
@@ -87,7 +79,7 @@ export const PHASE1_CORE_UTILITARIAN_HANDLERS: Readonly<Record<string, McpToolHa
         summary: EosNocturnalEvolutionEngine.formatNocturnalSummary(report),
         compositeFitnessScore: report.compositeFitnessScore,
         sha256Receipt: report.sha256Receipt,
-        timestampIso: report.timestampIso
+        timestampIso: report.timestampIso,
       };
     }
     return report;
@@ -114,22 +106,17 @@ export const PHASE1_CORE_UTILITARIAN_HANDLERS: Readonly<Record<string, McpToolHa
     ) {
       const resolved = EosEnterpriseWorkspaceGovernor.resolveAuthorizedWorkspace(
         args.projectId.trim(),
-        typeof args?.targetDir === "string" && args.targetDir.trim().length > 0
-          ? args.targetDir.trim()
-          : ".",
+        typeof args?.targetDir === "string" && args.targetDir.trim().length > 0 ? args.targetDir.trim() : ".",
         "READ_ONLY",
-        ctx.projectRoot
+        ctx.projectRoot,
       );
-      return EosTypeScriptAstAnalyzer.analyzeDirectory(
-        resolved.resolvedTargetPath,
-        resolved.workspaceRoot
-      );
+      return EosTypeScriptAstAnalyzer.analyzeDirectory(resolved.resolvedTargetPath, resolved.workspaceRoot);
     }
     const safeDir = ctx.resolveProjectPath(args?.targetDir, "directory", "src/core");
     return EosTypeScriptAstAnalyzer.analyzeDirectory(safeDir, ctx.projectRoot);
-  }
+  },
 };
 
 export const PHASE1_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze(
-  Object.keys(PHASE1_CORE_UTILITARIAN_HANDLERS).sort()
+  Object.keys(PHASE1_CORE_UTILITARIAN_HANDLERS).sort(),
 );

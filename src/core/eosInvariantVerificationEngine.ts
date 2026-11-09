@@ -12,19 +12,14 @@
  * Zero external runtime dependencies. Node 24 strip-only compliant.
  */
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export class Xorshift32Prng {
   private state: number;
 
   constructor(seed: number = 1337) {
-    let s = (seed >>> 0) || 1;
+    let s = seed >>> 0 || 1;
     if (s === 0) s = 1;
     this.state = s;
   }
@@ -83,10 +78,7 @@ export interface VerificationOptions {
   readonly projectId?: string;
 }
 
-export type InvariantEngineStatus =
-  | "VERIFIED"
-  | "INVARIANT_VIOLATION_DETECTED"
-  | "FAULT_TOLERANT_PASS";
+export type InvariantEngineStatus = "VERIFIED" | "INVARIANT_VIOLATION_DETECTED" | "FAULT_TOLERANT_PASS";
 
 export interface VerificationResult<T = unknown> {
   readonly status: InvariantEngineStatus;
@@ -109,13 +101,13 @@ export class EosInvariantVerificationEngine {
   /**
    * Executes exhaustive property-based state space exploration on a state machine model.
    */
-  public static verifyModel<T>(
-    model: StateMachineModel<T>,
-    options: VerificationOptions = {}
-  ): VerificationResult<T> {
+  public static verifyModel<T>(model: StateMachineModel<T>, options: VerificationOptions = {}): VerificationResult<T> {
     assertPrecondition(Boolean(model && model.name), "Valid StateMachineModel required");
     assertPrecondition(Array.isArray(model.actions) && model.actions.length > 0, "Model must have >= 1 action");
-    assertPrecondition(Array.isArray(model.invariants) && model.invariants.length > 0, "Model must have >= 1 invariant");
+    assertPrecondition(
+      Array.isArray(model.invariants) && model.invariants.length > 0,
+      "Model must have >= 1 invariant",
+    );
 
     const seed = (options.seed !== undefined ? options.seed : 42) >>> 0 || 42;
     const maxSteps = Math.min(Math.max(options.maxSteps ?? 500, 1), 50_000);
@@ -148,7 +140,7 @@ export class EosInvariantVerificationEngine {
           stepOfViolation: 0,
           originalTraceLength: 0,
           shrunkTrace: [],
-          options
+          options,
         });
       }
     }
@@ -199,7 +191,7 @@ export class EosInvariantVerificationEngine {
           model,
           executedActions,
           failingInvariantName,
-          seed
+          seed,
         );
       }
 
@@ -217,12 +209,11 @@ export class EosInvariantVerificationEngine {
         stepOfViolation,
         originalTraceLength: executedActions.length,
         shrunkTrace,
-        options
+        options,
       });
     }
 
-    const finalStatus: InvariantEngineStatus =
-      faultsInjected > 0 ? "FAULT_TOLERANT_PASS" : "VERIFIED";
+    const finalStatus: InvariantEngineStatus = faultsInjected > 0 ? "FAULT_TOLERANT_PASS" : "VERIFIED";
 
     return EosInvariantVerificationEngine.formatResult({
       status: finalStatus,
@@ -233,7 +224,7 @@ export class EosInvariantVerificationEngine {
       faultsInjected,
       stateHashChain,
       finalState: currentState,
-      options
+      options,
     });
   }
 
@@ -244,7 +235,7 @@ export class EosInvariantVerificationEngine {
     model: StateMachineModel<T>,
     actionNames: readonly string[],
     invariantName: string,
-    seed: number
+    seed: number,
   ): boolean {
     const prng = new Xorshift32Prng(seed);
     const actionMap = new Map<string, StateMachineAction<T>>();
@@ -276,7 +267,7 @@ export class EosInvariantVerificationEngine {
     model: StateMachineModel<T>,
     actions: readonly string[],
     invariantName: string,
-    seed: number
+    seed: number,
   ): string[] {
     let currentTrace = [...actions];
     let improved = true;
@@ -287,10 +278,7 @@ export class EosInvariantVerificationEngine {
       // 1. Try removing contiguous chunks (binary partitioning)
       const chunkSize = Math.max(1, Math.floor(currentTrace.length / 2));
       for (let i = 0; i < currentTrace.length; i += chunkSize) {
-        const candidate = [
-          ...currentTrace.slice(0, i),
-          ...currentTrace.slice(i + chunkSize)
-        ];
+        const candidate = [...currentTrace.slice(0, i), ...currentTrace.slice(i + chunkSize)];
         if (candidate.length > 0 && candidate.length < currentTrace.length) {
           if (EosInvariantVerificationEngine.replayActionTrace(model, candidate, invariantName, seed)) {
             currentTrace = candidate;
@@ -304,10 +292,7 @@ export class EosInvariantVerificationEngine {
 
       // 2. Try removing 1 action at a time from the head
       for (let i = 0; i < currentTrace.length; i++) {
-        const candidate = [
-          ...currentTrace.slice(0, i),
-          ...currentTrace.slice(i + 1)
-        ];
+        const candidate = [...currentTrace.slice(0, i), ...currentTrace.slice(i + 1)];
         if (candidate.length > 0) {
           if (EosInvariantVerificationEngine.replayActionTrace(model, candidate, invariantName, seed)) {
             currentTrace = candidate;
@@ -358,9 +343,9 @@ export class EosInvariantVerificationEngine {
             failingInvariant: params.failingInvariant,
             stepOfViolation: params.stepOfViolation,
             originalTraceLength: params.originalTraceLength,
-            shrunkTraceLength: params.shrunkTrace?.length
+            shrunkTraceLength: params.shrunkTrace?.length,
           },
-          engramTopicKey: `eos/invariant/${params.modelName}`
+          engramTopicKey: `eos/invariant/${params.modelName}`,
         });
         ledgerEntryId = entry.entryId;
       } finally {
@@ -382,7 +367,7 @@ export class EosInvariantVerificationEngine {
       stepOfViolation: params.stepOfViolation,
       originalTraceLength: params.originalTraceLength,
       shrunkTrace: params.shrunkTrace ? deepFreeze([...params.shrunkTrace]) : undefined,
-      ledgerEntryId
+      ledgerEntryId,
     });
   }
 }

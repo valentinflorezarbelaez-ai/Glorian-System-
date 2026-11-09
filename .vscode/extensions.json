@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-typescript-next",
+    "golang.go",
+    "rust-lang.rust-analyzer",
+    "github.vscode-github-actions",
+    "eamodio.gitlens",
+    "yzhang.markdown-all-in-one",
+    "redhat.vscode-yaml",
+    "ms-azuretools.vscode-docker",
+    "alygin.vscode-tlaplus"
+  ],
+  "unwantedRecommendations": ["ms-vscode.vscode-eslint-deprecated"]
+}

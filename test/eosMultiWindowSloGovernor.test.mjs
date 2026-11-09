@@ -21,14 +21,14 @@ describe("EOS SPEC-110: Multi-Window Multi-Burn-Rate SLO & Error Budget Governor
     governor.registerService({
       serviceId,
       availabilitySlo: 0.999,
-      latencyThresholdMs: 400
+      latencyThresholdMs: 400,
     });
 
     const baseNow = 1700000000000;
 
     // Ingest 1000 events: 999 good, 1 bad -> error rate = 0.001 (burn rate = 1.0x)
     for (let i = 0; i < 999; i++) {
-      governor.ingestEvent(serviceId, { timestamp: baseNow - (i * 100), statusCode: 200, latencyMs: 50 });
+      governor.ingestEvent(serviceId, { timestamp: baseNow - i * 100, statusCode: 200, latencyMs: 50 });
     }
     governor.ingestEvent(serviceId, { timestamp: baseNow - 50, statusCode: 500, latencyMs: 120 });
 
@@ -54,20 +54,20 @@ describe("EOS SPEC-110: Multi-Window Multi-Burn-Rate SLO & Error Budget Governor
     governor.registerService({
       serviceId,
       availabilitySlo: 0.999,
-      periodTotalEventsBudget: 100000
+      periodTotalEventsBudget: 100000,
     });
 
     const baseNow = 1700005000000;
 
     // Transient spike: 5 errors in 30s, but 0 errors in preceding 55 minutes
     for (let i = 0; i < 9900; i++) {
-      governor.ingestEvent(serviceId, { timestamp: baseNow - (10 * 60 * 1000) - (i * 200), statusCode: 200 });
+      governor.ingestEvent(serviceId, { timestamp: baseNow - 10 * 60 * 1000 - i * 200, statusCode: 200 });
     }
     for (let i = 0; i < 95; i++) {
-      governor.ingestEvent(serviceId, { timestamp: baseNow - 60000 + (i * 500), statusCode: 200 });
+      governor.ingestEvent(serviceId, { timestamp: baseNow - 60000 + i * 500, statusCode: 200 });
     }
     for (let i = 0; i < 5; i++) {
-      governor.ingestEvent(serviceId, { timestamp: baseNow - 30000 + (i * 500), statusCode: 500 });
+      governor.ingestEvent(serviceId, { timestamp: baseNow - 30000 + i * 500, statusCode: 500 });
     }
 
     const spikeStatus = governor.evaluateService(serviceId, baseNow);
@@ -82,17 +82,17 @@ describe("EOS SPEC-110: Multi-Window Multi-Burn-Rate SLO & Error Budget Governor
     governor.resetService(serviceId);
     for (let i = 0; i < 1000; i++) {
       // 5% error rate sustained across the full hour (0.05 / 0.001 = 50.0x burn rate)
-      const isErr = (i % 20 === 0);
+      const isErr = i % 20 === 0;
       governor.ingestEvent(serviceId, {
-        timestamp: baseNow - (i * 3000), // spans 3000s = 50 min
-        statusCode: isErr ? 500 : 200
+        timestamp: baseNow - i * 3000, // spans 3000s = 50 min
+        statusCode: isErr ? 500 : 200,
       });
     }
 
     const sustainedStatus = governor.evaluateService(serviceId, baseNow);
     assert.strictEqual(sustainedStatus.healthState, "CRITICAL_BURN");
     assert.strictEqual(sustainedStatus.isDeploymentFrozen, true);
-    assert.ok(sustainedStatus.activeAlerts.some(a => a.includes("ALERT_TIER_1_CRITICAL")));
+    assert.ok(sustainedStatus.activeAlerts.some((a) => a.includes("ALERT_TIER_1_CRITICAL")));
   });
 
   it("BDD-284: Autonomous sovereign deployment freeze on error budget exhaustion", () => {
@@ -102,17 +102,17 @@ describe("EOS SPEC-110: Multi-Window Multi-Burn-Rate SLO & Error Budget Governor
     governor.registerService({
       serviceId,
       availabilitySlo: 0.999,
-      periodTotalEventsBudget: 10000 // 10,000 * 0.001 = 10 allowed errors
+      periodTotalEventsBudget: 10000, // 10,000 * 0.001 = 10 allowed errors
     });
 
     const baseNow = 1700010000000;
 
     // Simulate 30-day budget depletion: 20 errors > 10 allowed errors
     for (let i = 0; i < 500; i++) {
-      const isErr = (i % 25 === 0); // 20 errors out of 500
+      const isErr = i % 25 === 0; // 20 errors out of 500
       governor.ingestEvent(serviceId, {
-        timestamp: baseNow - (i * 60000),
-        statusCode: isErr ? 503 : 200
+        timestamp: baseNow - i * 60000,
+        statusCode: isErr ? 503 : 200,
       });
     }
 
@@ -141,10 +141,10 @@ describe("EOS SPEC-110: Multi-Window Multi-Burn-Rate SLO & Error Budget Governor
           serviceId,
           events: [
             { timestamp: Date.now() - 1000, statusCode: 200, latencyMs: 40 },
-            { timestamp: Date.now() - 500, statusCode: 200, latencyMs: 60 }
-          ]
-        }
-      }
+            { timestamp: Date.now() - 500, statusCode: 200, latencyMs: 60 },
+          ],
+        },
+      },
     });
 
     assert.ok(evalRes.result);
@@ -163,9 +163,9 @@ describe("EOS SPEC-110: Multi-Window Multi-Burn-Rate SLO & Error Budget Governor
         name: "eos_slo_budget_status",
         arguments: {
           serviceId,
-          checkDeploymentAllowed: true
-        }
-      }
+          checkDeploymentAllowed: true,
+        },
+      },
     });
 
     assert.ok(budgetRes.result);

@@ -13,6 +13,8 @@ import path from "node:path";
 import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
 
+const { EosSmtAutomatedReasoningProver } = await import("../src/core/eosSmtAutomatedReasoningProver.ts");
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 
@@ -43,7 +45,7 @@ check("CVE-1: MCP body size cap present", () => {
   // Constant was renamed from MAX_BODY_BYTES to DEFAULT_MAX_REQUEST_BYTES in v62 rewrite
   assert.ok(
     src.includes("DEFAULT_MAX_REQUEST_BYTES") || src.includes("MAX_BODY_BYTES"),
-    "Body size cap constant missing (expected DEFAULT_MAX_REQUEST_BYTES)"
+    "Body size cap constant missing (expected DEFAULT_MAX_REQUEST_BYTES)",
   );
   assert.ok(src.includes("413"), "413 Payload Too Large response missing");
   assert.ok(src.includes("req.socket.destroy()"), "Socket destroy on oversize body missing");
@@ -59,16 +61,20 @@ check("CVE-2: Session accumulation cap (MAX_SESSIONS) present", () => {
 // ── CVE-3: Auth bypass on /metrics ──────────────────────────────────────────
 check("CVE-3: Auth bypass fix — /metrics behind skipAuth", () => {
   const src = read("src/mcp/eosMcpStreamServer.ts");
-  // skipAuth should ONLY cover /health and /status — NOT /metrics
-  const skipAuthMatch = src.match(/const skipAuth = ([^\n]+)/);
-  assert.ok(skipAuthMatch, "skipAuth variable not found");
-  assert.ok(!skipAuthMatch[1].includes("metrics"), "/metrics should not be in skipAuth (requires auth)");
+  // v62 rewrite replaced the skipAuth flag with an early-return branch: only
+  // /health and /status may resolve before the single authentication gate.
+  const authIndex = src.indexOf("_authenticate(req)");
+  assert.ok(authIndex > 0, "single authentication gate (_authenticate) not found");
+  const healthIndex = src.indexOf('pathname === "/health"');
+  assert.ok(healthIndex > 0 && healthIndex < authIndex, "/health must be served before auth");
+  const metricsIndex = src.indexOf('pathname === "/metrics"');
+  assert.ok(metricsIndex > authIndex, "/metrics must be gated behind authentication");
 });
 
 // ── CVE-4: Path traversal fix in HermeticSandbox ────────────────────────────
 check("CVE-4: Path traversal blocked in eosHermeticSandbox", () => {
   const src = read("src/core/eosHermeticSandbox.ts");
-  assert.ok(src.includes("clean.startsWith(\"..\")"), "Leading .. check missing in normalizeRel");
+  assert.ok(src.includes('clean.startsWith("..")'), "Leading .. check missing in normalizeRel");
   assert.ok(src.includes("_assertContained"), "_assertContained method missing");
   assert.ok(src.includes("startsWith(normalizedRoot"), "containment check missing in commitToDisk");
 });
@@ -122,7 +128,7 @@ check("CVE-9: TMR Gamma expanded destructive pattern list (40+ patterns)", () =>
 // ── CVE-10: simpleHash replaced with SHA-256 ─────────────────────────────────
 check("CVE-10: 32-bit simpleHash replaced with SHA-256", () => {
   const src = read("src/core/eosJarvisMonad.ts");
-  assert.ok(src.includes("createHash(\"sha256\")"), "SHA-256 hash missing in simpleHash");
+  assert.ok(src.includes('createHash("sha256")'), "SHA-256 hash missing in simpleHash");
   assert.ok(!src.includes("h = ((h << 5) - h"), "Old 32-bit DJB2 hash still present");
 });
 
@@ -144,7 +150,10 @@ check("CVE-12: Fleet CI registry entries validated before execFileSync", () => {
 check("CVE-13: Cross-Origin-Resource-Policy changed to same-origin", () => {
   const src = read("vercel.json");
   assert.ok(src.includes('"Cross-Origin-Resource-Policy", "value": "same-origin"'), "CORP must be same-origin");
-  assert.ok(!src.includes('"Cross-Origin-Resource-Policy", "value": "cross-origin"'), "cross-origin CORP still present");
+  assert.ok(
+    !src.includes('"Cross-Origin-Resource-Policy", "value": "cross-origin"'),
+    "cross-origin CORP still present",
+  );
   assert.ok(src.includes("X-Permitted-Cross-Domain-Policies"), "X-Permitted-Cross-Domain-Policies header missing");
 });
 
@@ -152,8 +161,8 @@ check("CVE-13: Cross-Origin-Resource-Policy changed to same-origin", () => {
 check("CVE-14: Filesystem path not leaked in api/graph.js fallback", () => {
   const src = read("api/graph.js");
   assert.ok(
-    src.includes("process.env.NODE_ENV !== \"production\" ? err.message"),
-    "err.message must be gated by NODE_ENV"
+    src.includes('process.env.NODE_ENV !== "production" ? err.message'),
+    "err.message must be gated by NODE_ENV",
   );
 });
 
@@ -162,6 +171,20 @@ check("CVE-15: traceparent header validated against W3C format before reflection
   const src = read("api/health.js");
   assert.ok(src.includes("TRACEPARENT_RE"), "TRACEPARENT_RE validation regex missing");
   assert.ok(src.includes("TRACEPARENT_RE.test"), "TRACEPARENT_RE.test() call missing");
+});
+
+// ── PROOF-16: Mathematical SMT Proof of ABAC Boundary Safety (SPEC-063) ────────
+check("PROOF-16: Mathematical SMT Proof of ABAC Boundary Safety (SPEC-063)", () => {
+  const report = EosSmtAutomatedReasoningProver.proveAbacSafety(
+    [
+      { role: "admin", action: "write_immutable_ledger", allow: true },
+      { role: "guest", action: "write_immutable_ledger", allow: false },
+    ],
+    "guest",
+    "write_immutable_ledger",
+  );
+  assert.equal(report.verdict, "PROVED_UNSAT_SECURE", "ABAC security proof must be UNSAT");
+  assert.equal(report.isSatisfiable, false);
 });
 
 // ── Summary ──────────────────────────────────────────────────────────────────
@@ -175,5 +198,5 @@ if (failed > 0) {
   process.exit(1);
 }
 
-console.log(`\n[PASS] All 15 CVE-class security fixes verified. ✔\n`);
+console.log(`\n[PASS] All 15 CVE-class security fixes and formal SMT theorem verified. ✔\n`);
 process.exit(0);

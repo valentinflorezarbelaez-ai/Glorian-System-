@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       task_directive:
-        description: 'Task description for the local planner'
+        description: "Task description for the local planner"
         type: string
         required: true
-        default: 'Review the audio ring buffer design'
+        default: "Review the audio ring buffer design"
 
 permissions:
   contents: read

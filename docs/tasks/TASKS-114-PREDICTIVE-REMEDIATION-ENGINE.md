@@ -1,11 +1,12 @@
 # TASKS-114: Predictive Failure Correlator & Closed-Loop Auto-Remediation Engine
 
 ## Metadata
-* **Task DAG ID**: `TASKS-114`
-* **Governing Specification**: `SPEC-114`
-* **Plan Reference**: `PLAN-114`
-* **Status**: `COMPLETE`
-* **Total Atomic Tasks**: 9
+
+- **Task DAG ID**: `TASKS-114`
+- **Governing Specification**: `SPEC-114`
+- **Plan Reference**: `PLAN-114`
+- **Status**: `COMPLETE`
+- **Total Atomic Tasks**: 9
 
 ---
 

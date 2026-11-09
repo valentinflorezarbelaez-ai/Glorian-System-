@@ -7,7 +7,7 @@ test("BDD-273: Propagación y formato estricto de W3C TraceContext en spans OTLP
 
   // 1. Root span creation
   const rootSpan = engine.startSpan("root-operation", {
-    attributes: { "http.method": "GET", "http.status_code": 200 }
+    attributes: { "http.method": "GET", "http.status_code": 200 },
   });
 
   assert.equal(rootSpan.traceId.length, 32, "TraceId must be 32 hexadecimal characters");
@@ -28,7 +28,7 @@ test("BDD-273: Propagación y formato estricto de W3C TraceContext en spans OTLP
   const childSpan = engine.startSpan("child-operation", {
     parentTraceId: rootSpan.traceId,
     parentSpanId: rootSpan.spanId,
-    attributes: { "db.system": "spanner", "db.statement": "SELECT 1" }
+    attributes: { "db.system": "spanner", "db.statement": "SELECT 1" },
   });
 
   assert.equal(childSpan.traceId, rootSpan.traceId, "Child must inherit parent's traceId");
@@ -48,8 +48,8 @@ test("BDD-274: Serialización conforme al protocolo OpenTelemetry OTLP v1 HTTP/J
       "pipeline.stage": "Stage 4",
       "test.suites": 113,
       "test.passed": true,
-      "latency.ms": 14.85
-    }
+      "latency.ms": 14.85,
+    },
   });
 
   const endedSpan = engine.endSpan(span.spanId, OtlpStatusCode.STATUS_CODE_OK);

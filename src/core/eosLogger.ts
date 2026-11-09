@@ -28,9 +28,18 @@ const LEVEL_NUM: Record<LogLevel, number> = {
 
 /** Fields that will be replaced with "[REDACTED]" in log output. */
 const SENSITIVE_KEYS = new Set([
-  "apiKey", "api_key", "password", "passwd", "secret",
-  "token", "authorization", "auth", "credential",
-  "private_key", "privateKey", "bearerToken",
+  "apiKey",
+  "api_key",
+  "password",
+  "passwd",
+  "secret",
+  "token",
+  "authorization",
+  "auth",
+  "credential",
+  "private_key",
+  "privateKey",
+  "bearerToken",
 ]);
 
 // ---------------------------------------------------------------------------
@@ -107,11 +116,7 @@ export class EosLogger {
     if (LEVEL_NUM[level] > this.minLevel) return;
 
     // Log sampling for DEBUG/TRACE — never sample ERROR or WARN
-    if (
-      (level === "DEBUG" || level === "TRACE") &&
-      this.sampleRate < 1.0 &&
-      Math.random() > this.sampleRate
-    ) return;
+    if ((level === "DEBUG" || level === "TRACE") && this.sampleRate < 1.0 && Math.random() > this.sampleRate) return;
 
     const entry: Record<string, unknown> = {
       ts: new Date().toISOString(),

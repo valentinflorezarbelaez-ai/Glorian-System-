@@ -23,25 +23,22 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  deepFreeze,
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze } from "./eosKernelPrimitives.ts";
 
 // ============================================================================
 // 1. CONSULTING ENGAGEMENT DATA CONTRACTS
 // ============================================================================
 
 export type EngagementType =
-  | "ARCHITECTURE_REVIEW"    // Review and improve existing system design
-  | "NEW_FEATURE"            // Design and implement a new feature from scratch
-  | "BUG_INVESTIGATION"      // Root cause analysis + fix for a production bug
-  | "PERFORMANCE_AUDIT"      // Find and fix performance bottlenecks
-  | "SECURITY_AUDIT"         // Find and fix security vulnerabilities
-  | "TECH_DEBT_REDUCTION"    // Refactor/simplify existing complex code
-  | "MIGRATION"              // Migrate from one tech/pattern to another
-  | "INCIDENT_POSTMORTEM"    // Blameless postmortem + prevention plan
-  | "GENERAL";               // Open-ended consulting question
+  | "ARCHITECTURE_REVIEW" // Review and improve existing system design
+  | "NEW_FEATURE" // Design and implement a new feature from scratch
+  | "BUG_INVESTIGATION" // Root cause analysis + fix for a production bug
+  | "PERFORMANCE_AUDIT" // Find and fix performance bottlenecks
+  | "SECURITY_AUDIT" // Find and fix security vulnerabilities
+  | "TECH_DEBT_REDUCTION" // Refactor/simplify existing complex code
+  | "MIGRATION" // Migrate from one tech/pattern to another
+  | "INCIDENT_POSTMORTEM" // Blameless postmortem + prevention plan
+  | "GENERAL"; // Open-ended consulting question
 
 export type SeverityLevel = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "INFORMATIONAL";
 
@@ -167,18 +164,23 @@ export interface ConsultingDeliverable {
 // ============================================================================
 
 const ARCHITECTURE_PATTERNS: Record<string, string> = {
-  "god class":        "Split into Single-Responsibility cohesive modules. Apply Hexagonal Architecture: domain core + ports + adapters.",
-  "n+1 query":        "Batch with DataLoader pattern. Add query-level caching with TTL. Use JOIN instead of per-row SELECT.",
-  "tight coupling":   "Introduce interface/port abstraction. Inject dependencies. Apply Dependency Inversion Principle.",
-  "circular dep":     "Extract shared types into a separate module. Use event bus for cross-cutting concerns.",
-  "race condition":   "Serialize access with mutex/lock or CAS (compare-and-swap). Use atomic operations or database-level locking.",
-  "memory leak":      "Audit event listeners (removeEventListener), clear intervals/timeouts, use WeakMap/WeakRef for caches.",
-  "slow api":         "Profile with hrtime. Add response caching (stale-while-revalidate). Consider CDN push for static responses.",
-  "auth bug":         "Zero-trust: validate JWT signature AND expiry AND issuer. Use timing-safe comparison for secrets.",
-  "sql injection":    "Use parameterized queries exclusively. Never interpolate user input into SQL strings.",
-  "xss":              "Sanitize all user output with context-aware escaping. Apply strict CSP with nonce. Never use innerHTML.",
-  "no tests":         "Start with the happy path unit test. Then add boundary conditions. Then add unhappy paths and error cases.",
-  "tech debt":        "Apply Strangler Fig pattern: new code wraps old. Deprecate incrementally. Never big-bang rewrite.",
+  "god class":
+    "Split into Single-Responsibility cohesive modules. Apply Hexagonal Architecture: domain core + ports + adapters.",
+  "n+1 query": "Batch with DataLoader pattern. Add query-level caching with TTL. Use JOIN instead of per-row SELECT.",
+  "tight coupling": "Introduce interface/port abstraction. Inject dependencies. Apply Dependency Inversion Principle.",
+  "circular dep": "Extract shared types into a separate module. Use event bus for cross-cutting concerns.",
+  "race condition":
+    "Serialize access with mutex/lock or CAS (compare-and-swap). Use atomic operations or database-level locking.",
+  "memory leak":
+    "Audit event listeners (removeEventListener), clear intervals/timeouts, use WeakMap/WeakRef for caches.",
+  "slow api":
+    "Profile with hrtime. Add response caching (stale-while-revalidate). Consider CDN push for static responses.",
+  "auth bug": "Zero-trust: validate JWT signature AND expiry AND issuer. Use timing-safe comparison for secrets.",
+  "sql injection": "Use parameterized queries exclusively. Never interpolate user input into SQL strings.",
+  xss: "Sanitize all user output with context-aware escaping. Apply strict CSP with nonce. Never use innerHTML.",
+  "no tests":
+    "Start with the happy path unit test. Then add boundary conditions. Then add unhappy paths and error cases.",
+  "tech debt": "Apply Strangler Fig pattern: new code wraps old. Deprecate incrementally. Never big-bang rewrite.",
 };
 
 const TECH_HOURLY_RATES: Record<TechStack, number> = {
@@ -232,7 +234,7 @@ function detectTechStack(problem: string, context?: string): TechStack {
 function generateRootCauseAnalysis(
   problem: string,
   engagementType: EngagementType,
-  context?: string
+  context?: string,
 ): ConsultingDeliverable["rootCauseAnalysis"] {
   // Pattern-match the problem to known root cause chains
   const lower = problem.toLowerCase();
@@ -245,7 +247,8 @@ function generateRootCauseAnalysis(
       why3: "Critical code paths lack caching, indexing, or batch optimization",
       why4: "No performance profiling was integrated into the development or CI pipeline",
       why5: "No explicit performance budget was defined or enforced at architecture time",
-      rootCause: "Missing performance contracts (SLOs) enforced at design time — optimizations are reactive, not preventive",
+      rootCause:
+        "Missing performance contracts (SLOs) enforced at design time — optimizations are reactive, not preventive",
     },
     bug: {
       symptom: `Defect: ${problem.slice(0, 100)}`,
@@ -282,10 +285,7 @@ function generateRootCauseAnalysis(
   };
 }
 
-function generateRiskMatrix(
-  engagementType: EngagementType,
-  techStack: TechStack
-): RiskEntry[] {
+function generateRiskMatrix(engagementType: EngagementType, techStack: TechStack): RiskEntry[] {
   const baseRisks: RiskEntry[] = [
     {
       risk: "Regression: existing functionality breaks during implementation",
@@ -305,45 +305,50 @@ function generateRiskMatrix(
       risk: "Integration failure: new code incompatible with existing interfaces",
       probability: "LOW",
       impact: "HIGH",
-      mitigation: "Write consumer-driven contract tests. Use TypeScript strict mode to catch interface mismatches at compile time.",
+      mitigation:
+        "Write consumer-driven contract tests. Use TypeScript strict mode to catch interface mismatches at compile time.",
       riskScore: 4,
     },
   ];
 
   const typeSpecific: Partial<Record<EngagementType, RiskEntry[]>> = {
-    SECURITY_AUDIT: [{
-      risk: "Fix introduces new vulnerability while patching existing one",
-      probability: "MEDIUM",
-      impact: "CRITICAL",
-      mitigation: "Peer review by second engineer. Run SAST scanner on the patch diff before merging.",
-      riskScore: 9,
-    }],
-    MIGRATION: [{
-      risk: "Data loss or corruption during migration",
-      probability: "LOW",
-      impact: "CRITICAL",
-      mitigation: "Full database backup before migration. Test on production replica first. Blue-green deployment strategy.",
-      riskScore: 6,
-    }],
-    PERFORMANCE_AUDIT: [{
-      risk: "Optimization changes behavior under edge-case inputs",
-      probability: "MEDIUM",
-      impact: "HIGH",
-      mitigation: "Benchmark before and after with identical test data. Property-based tests with random inputs.",
-      riskScore: 6,
-    }],
+    SECURITY_AUDIT: [
+      {
+        risk: "Fix introduces new vulnerability while patching existing one",
+        probability: "MEDIUM",
+        impact: "CRITICAL",
+        mitigation: "Peer review by second engineer. Run SAST scanner on the patch diff before merging.",
+        riskScore: 9,
+      },
+    ],
+    MIGRATION: [
+      {
+        risk: "Data loss or corruption during migration",
+        probability: "LOW",
+        impact: "CRITICAL",
+        mitigation:
+          "Full database backup before migration. Test on production replica first. Blue-green deployment strategy.",
+        riskScore: 6,
+      },
+    ],
+    PERFORMANCE_AUDIT: [
+      {
+        risk: "Optimization changes behavior under edge-case inputs",
+        probability: "MEDIUM",
+        impact: "HIGH",
+        mitigation: "Benchmark before and after with identical test data. Property-based tests with random inputs.",
+        riskScore: 6,
+      },
+    ],
   };
 
-  return [
-    ...baseRisks,
-    ...(typeSpecific[engagementType] ?? []),
-  ].sort((a, b) => b.riskScore - a.riskScore);
+  return [...baseRisks, ...(typeSpecific[engagementType] ?? [])].sort((a, b) => b.riskScore - a.riskScore);
 }
 
 function generateImplementationPlan(
   problem: string,
   engagementType: EngagementType,
-  techStack: TechStack
+  techStack: TechStack,
 ): ImplementationTask[] {
   const tasks: ImplementationTask[] = [
     {
@@ -385,7 +390,8 @@ function generateImplementationPlan(
     {
       id: "TASK-005",
       title: "Security & Performance Verification",
-      description: "Run SAST scanner, check for timing attacks, validate input sanitization, run performance benchmark.",
+      description:
+        "Run SAST scanner, check for timing attacks, validate input sanitization, run performance benchmark.",
       estimatedHours: 1,
       doneCriteria: "SAST scan returns 0 findings. Performance within defined SLO budget. No plaintext secrets.",
       dependencies: ["TASK-004"],
@@ -404,10 +410,7 @@ function generateImplementationPlan(
   return tasks;
 }
 
-function estimateCost(
-  tasks: ImplementationTask[],
-  techStack: TechStack
-): ConsultingDeliverable["finOpsEstimate"] {
+function estimateCost(tasks: ImplementationTask[], techStack: TechStack): ConsultingDeliverable["finOpsEstimate"] {
   const totalHours = tasks.reduce((sum, t) => sum + t.estimatedHours, 0);
   const rate = TECH_HOURLY_RATES[techStack];
   const complexity = Math.min(10, Math.ceil(totalHours / 2));
@@ -462,10 +465,7 @@ export class EosConsultantCore {
    * Runs fully offline — no AI model call needed for the structural deliverable.
    */
   public engage(req: ConsultingRequest): ConsultingDeliverable {
-    assertPrecondition(
-      req.problem.trim().length > 0,
-      "Problem description must not be empty."
-    );
+    assertPrecondition(req.problem.trim().length > 0, "Problem description must not be empty.");
 
     const engagementType = req.engagementType ?? classifyEngagement(req.problem);
     const techStack = req.techStack ?? detectTechStack(req.problem, req.context);
@@ -479,9 +479,10 @@ export class EosConsultantCore {
 
     // Build architecture recommendation
     const archTitle = `${engagementType.replace(/_/g, " ")}: ${req.problem.slice(0, 60)}`;
-    const archDecision = matchedPatterns.length > 0
-      ? matchedPatterns.join(" Additionally: ")
-      : "Apply EARS/BDD spec-driven development: define acceptance criteria before writing implementation code. Use TDD (Red-Green-Refactor) cycle. Enforce architectural boundaries via automated CI gate.";
+    const archDecision =
+      matchedPatterns.length > 0
+        ? matchedPatterns.join(" Additionally: ")
+        : "Apply EARS/BDD spec-driven development: define acceptance criteria before writing implementation code. Use TDD (Red-Green-Refactor) cycle. Enforce architectural boundaries via automated CI gate.";
 
     const rootCause = generateRootCauseAnalysis(req.problem, engagementType, req.context);
     const riskMatrix = generateRiskMatrix(engagementType, techStack);
@@ -506,10 +507,9 @@ export class EosConsultantCore {
       architectureRecommendation: {
         title: archTitle,
         status: "Proposed",
-        context:
-          req.currentArchitecture
-            ? `Current state: ${req.currentArchitecture.slice(0, 500)}`
-            : `Context: ${req.context?.slice(0, 500) ?? req.problem.slice(0, 300)}`,
+        context: req.currentArchitecture
+          ? `Current state: ${req.currentArchitecture.slice(0, 500)}`
+          : `Context: ${req.context?.slice(0, 500) ?? req.problem.slice(0, 300)}`,
         decision: archDecision,
         consequences: [
           "Tests are written before implementation code — no vibe coding.",
@@ -566,19 +566,20 @@ export class EosConsultantCore {
   private _generateCode(
     req: ConsultingRequest,
     engagementType: EngagementType,
-    techStack: TechStack
+    techStack: TechStack,
   ): ConsultingDeliverable["implementationCode"] {
     const lower = req.problem.toLowerCase();
 
     if (engagementType === "INCIDENT_POSTMORTEM") {
-      return [{
-        filename: `docs/postmortems/INC-${Date.now()}-postmortem.md`,
-        language: "markdown",
-        description: "Blameless postmortem template following Spotify/Google SRE standard",
-        content: `# Blameless Postmortem — INC-${Date.now()}
+      return [
+        {
+          filename: `docs/postmortems/INC-${Date.now()}-postmortem.md`,
+          language: "markdown",
+          description: "Blameless postmortem template following Spotify/Google SRE standard",
+          content: `# Blameless Postmortem — INC-${Date.now()}
 
 ## Summary
-**Severity**: P1 | **Duration**: TBD | **Date**: ${new Date().toISOString().slice(0,10)}
+**Severity**: P1 | **Duration**: TBD | **Date**: ${new Date().toISOString().slice(0, 10)}
 
 > One paragraph: what happened, what was the user impact, and how was it resolved.
 
@@ -620,17 +621,19 @@ ${req.problem.slice(0, 300)}
 
 ---
 *This document is blameless. Systems and processes are improved, not people blamed.*`,
-      }];
+        },
+      ];
     }
 
     // Pattern-matched code templates
     if (techStack === "typescript" || techStack === "javascript") {
       if (/n\+1|query|orm|database|slow/.test(lower)) {
-        return [{
-          filename: "src/core/queryOptimizer.ts",
-          language: "typescript",
-          description: "Batched query pattern with DataLoader-style caching to eliminate N+1",
-          content: `/**
+        return [
+          {
+            filename: "src/core/queryOptimizer.ts",
+            language: "typescript",
+            description: "Batched query pattern with DataLoader-style caching to eliminate N+1",
+            content: `/**
  * Batch query loader — eliminates N+1 by grouping individual lookups
  * into a single batch request within the same event-loop tick.
  */
@@ -674,15 +677,17 @@ export class BatchQueryLoader<K, V> {
     }
   }
 }`,
-        }];
+          },
+        ];
       }
 
       if (/auth|jwt|token|session/.test(lower)) {
-        return [{
-          filename: "src/core/authGuard.ts",
-          language: "typescript",
-          description: "Zero-trust JWT validator with timing-safe comparison",
-          content: `import crypto from "node:crypto";
+        return [
+          {
+            filename: "src/core/authGuard.ts",
+            language: "typescript",
+            description: "Zero-trust JWT validator with timing-safe comparison",
+            content: `import crypto from "node:crypto";
 
 export interface JwtClaims {
   sub: string;
@@ -751,16 +756,18 @@ export function validateJwt(
     return { valid: false, error: \`Parse error: \${String(err)}\` };
   }
 }`,
-        }];
+          },
+        ];
       }
     }
 
     if (techStack === "sql") {
-      return [{
-        filename: "migrations/optimize_indexes.sql",
-        language: "sql",
-        description: "Index and query optimization for the identified bottleneck",
-        content: `-- Performance optimization migration
+      return [
+        {
+          filename: "migrations/optimize_indexes.sql",
+          language: "sql",
+          description: "Index and query optimization for the identified bottleneck",
+          content: `-- Performance optimization migration
 -- Problem: ${req.problem.slice(0, 100)}
 
 -- STEP 1: Add missing index on high-cardinality lookup columns
@@ -778,16 +785,18 @@ ANALYZE users;
 
 -- ROLLBACK PLAN:
 -- DROP INDEX CONCURRENTLY IF EXISTS idx_users_email;`,
-      }];
+        },
+      ];
     }
 
     if (techStack === "go") {
       if (/n\+1|query|database|sql|orm/.test(lower)) {
-        return [{
-          filename: "internal/repository/batch_loader.go",
-          language: "go",
-          description: "Batch DataLoader pattern in Go to eliminate N+1 database queries",
-          content: `package repository
+        return [
+          {
+            filename: "internal/repository/batch_loader.go",
+            language: "go",
+            description: "Batch DataLoader pattern in Go to eliminate N+1 database queries",
+            content: `package repository
 
 import (
 	"context"
@@ -841,14 +850,16 @@ func BatchLoadUsers(ctx context.Context, db *sql.DB, ids []int64) (map[int64]Use
 	}
 	return result, rows.Err()
 }`,
-        }];
+          },
+        ];
       }
       if (/slow|performance|latency|goroutine|concurrent/.test(lower)) {
-        return [{
-          filename: "internal/worker/pool.go",
-          language: "go",
-          description: "Worker pool with bounded concurrency to prevent goroutine explosion",
-          content: `package worker
+        return [
+          {
+            filename: "internal/worker/pool.go",
+            language: "go",
+            description: "Worker pool with bounded concurrency to prevent goroutine explosion",
+            content: `package worker
 
 import (
 	"context"
@@ -886,13 +897,15 @@ func (p *Pool) Submit(ctx context.Context, task func()) error {
 
 // Wait blocks until all submitted tasks complete.
 func (p *Pool) Wait() { p.wg.Wait() }`,
-        }];
+          },
+        ];
       }
-      return [{
-        filename: "internal/solution.go",
-        language: "go",
-        description: `Solution template for: ${req.problem.slice(0, 80)}`,
-        content: `package internal
+      return [
+        {
+          filename: "internal/solution.go",
+          language: "go",
+          description: `Solution template for: ${req.problem.slice(0, 80)}`,
+          content: `package internal
 
 import "context"
 
@@ -901,15 +914,17 @@ import "context"
 func Solve(ctx context.Context) error {
 	panic("not implemented — write tests first (TDD Red Phase)")
 }`,
-      }];
+        },
+      ];
     }
 
     if (techStack === "rust") {
-      return [{
-        filename: "src/solution.rs",
-        language: "rust",
-        description: `Rust solution template with proper error handling for: ${req.problem.slice(0, 80)}`,
-        content: `use std::fmt;
+      return [
+        {
+          filename: "src/solution.rs",
+          language: "rust",
+          description: `Rust solution template with proper error handling for: ${req.problem.slice(0, 80)}`,
+          content: `use std::fmt;
 
 /// Domain error type — never use Box<dyn Error> in library code.
 #[derive(Debug)]
@@ -948,15 +963,17 @@ mod tests {
         assert!(result.is_ok());
     }
 }`,
-      }];
+        },
+      ];
     }
 
     if (techStack === "python") {
-      return [{
-        filename: "solution.py",
-        language: "python",
-        description: `Python solution with async/await and proper typing for: ${req.problem.slice(0, 80)}`,
-        content: `from __future__ import annotations
+      return [
+        {
+          filename: "solution.py",
+          language: "python",
+          description: `Python solution with async/await and proper typing for: ${req.problem.slice(0, 80)}`,
+          content: `from __future__ import annotations
 from typing import Any
 import asyncio
 import logging
@@ -976,7 +993,7 @@ async def solve(input_data: dict[str, Any]) -> dict[str, Any]:
     """
     TODO: Implement the solution following the approved ADR.
     Write tests in test_solution.py first (TDD Red Phase).
-    
+
     Args:
         input_data: Validated input dict matching the agreed contract.
     Returns:
@@ -986,7 +1003,7 @@ async def solve(input_data: dict[str, Any]) -> dict[str, Any]:
     """
     if not input_data:
         raise SolutionError("input_data must not be empty", code="INVALID_INPUT")
-    
+
     # TODO: implement after writing tests
     raise NotImplementedError("Write tests first — TDD Red Phase")
 
@@ -997,15 +1014,17 @@ async def solve(input_data: dict[str, Any]) -> dict[str, Any]:
 # async def test_solve_basic():
 #     result = await solve({"key": "value"})
 #     assert result["status"] == "ok"`,
-      }];
+        },
+      ];
     }
 
     if (techStack === "terraform") {
-      return [{
-        filename: "modules/solution/main.tf",
-        language: "hcl",
-        description: `Terraform module template for: ${req.problem.slice(0, 80)}`,
-        content: `terraform {
+      return [
+        {
+          filename: "modules/solution/main.tf",
+          language: "hcl",
+          description: `Terraform module template for: ${req.problem.slice(0, 80)}`,
+          content: `terraform {
   required_version = ">= 1.6.0"
   required_providers {
     aws = {
@@ -1046,17 +1065,19 @@ output "module_status" {
   description = "Status of the deployed module"
   value       = "DEPLOYED: \${var.name_prefix}-\${var.environment}"
 }`,
-      }];
+        },
+      ];
     }
 
     // Generic TypeScript template for any engagement
-    return [{
-      filename: `src/core/eos${engagementType.replace(/_/g, "")}Solution.ts`,
-      language: "typescript",
-      description: `Solution template for: ${req.problem.slice(0, 80)}`,
-      content: `/**
+    return [
+      {
+        filename: `src/core/eos${engagementType.replace(/_/g, "")}Solution.ts`,
+        language: "typescript",
+        description: `Solution template for: ${req.problem.slice(0, 80)}`,
+        content: `/**
  * Solution: ${req.problem.slice(0, 80)}
- * Engagement: ${engagementId ?? engagementType}
+ * Engagement: ${engagementType}
  * Generated by EOS Consultant Core
  *
  * IMPORTANT: This is a template — implement the TODO sections
@@ -1080,7 +1101,8 @@ export function solve(input: SolutionInput): SolutionOutput {
   // TODO: Implement — start with the simplest code that makes tests pass
   throw new Error("Not implemented — write tests in TASK-002 first (TDD Red Phase)");
 }`,
-    }];
+      },
+    ];
   }
 
   /**
@@ -1100,11 +1122,17 @@ export function solve(input: SolutionInput): SolutionOutput {
 
   private _formatMarkdown(d: ConsultingDeliverable): string {
     const tasks = d.implementationPlan
-      .map((t) => `### ${t.id}: ${t.title}\n- **Hours**: ${t.estimatedHours}\n- **Priority**: ${t.priority}\n- **Done criteria**: ${t.doneCriteria}\n- **Depends on**: ${t.dependencies.join(", ") || "none"}`)
+      .map(
+        (t) =>
+          `### ${t.id}: ${t.title}\n- **Hours**: ${t.estimatedHours}\n- **Priority**: ${t.priority}\n- **Done criteria**: ${t.doneCriteria}\n- **Depends on**: ${t.dependencies.join(", ") || "none"}`,
+      )
       .join("\n\n");
 
     const risks = d.riskMatrix
-      .map((r) => `| ${r.risk.slice(0, 60)} | ${r.probability} | ${r.impact} | ${r.riskScore} | ${r.mitigation.slice(0, 80)} |`)
+      .map(
+        (r) =>
+          `| ${r.risk.slice(0, 60)} | ${r.probability} | ${r.impact} | ${r.riskScore} | ${r.mitigation.slice(0, 80)} |`,
+      )
       .join("\n");
 
     const code = d.implementationCode

@@ -94,7 +94,7 @@ class LatencyReservoir {
         sampleCount: 0,
         p50Ms: Math.round(defaultP95 * 0.5),
         p95Ms: defaultP95,
-        p99Ms: Math.round(defaultP95 * 1.5)
+        p99Ms: Math.round(defaultP95 * 1.5),
       };
     }
 
@@ -109,7 +109,7 @@ class LatencyReservoir {
       sampleCount: count,
       p50Ms: sorted[p50Idx],
       p95Ms: sorted[p95Idx],
-      p99Ms: sorted[p99Idx]
+      p99Ms: sorted[p99Idx],
     };
   }
 }
@@ -149,13 +149,17 @@ export class EosAdaptiveHedgedDeadlineMesh {
    */
   public async executeHedged<T>(options: HedgedExecutionOptions<T>): Promise<HedgedExecutionResult<T>> {
     const startTime = Date.now();
-    const deadline = options.deadlineContext || (options.deadlineMs ? EosDeadlineContext.fromTimeout(options.deadlineMs, undefined, startTime) : null);
+    const deadline =
+      options.deadlineContext ||
+      (options.deadlineMs ? EosDeadlineContext.fromTimeout(options.deadlineMs, undefined, startTime) : null);
 
     // 1. Strict Deadline Budget Check (Early Shedding)
     if (deadline && deadline.isExpired(startTime)) {
       this.shedRequests++;
       this.totalRequests++;
-      throw new Error(`DEADLINE_EXCEEDED: Remaining budget expired (${deadline.getRemainingMs(startTime)}ms) prior to dispatching endpoint ${options.endpointId}`);
+      throw new Error(
+        `DEADLINE_EXCEEDED: Remaining budget expired (${deadline.getRemainingMs(startTime)}ms) prior to dispatching endpoint ${options.endpointId}`,
+      );
     }
 
     this.totalRequests++;
@@ -165,9 +169,8 @@ export class EosAdaptiveHedgedDeadlineMesh {
     const delayMs = options.hedgingDelayMs ?? stats.p95Ms;
 
     // 2. Anti-Storm Hedging Token Bucket Check
-    const allowedHedges = this.totalRequests < 20
-      ? 1
-      : Math.floor((this.totalRequests * this.maxHedgeRatePercent) / 100);
+    const allowedHedges =
+      this.totalRequests < 20 ? 1 : Math.floor((this.totalRequests * this.maxHedgeRatePercent) / 100);
     const canHedge = this.hedgedRequests < allowedHedges;
 
     const primaryAbort = new AbortController();
@@ -177,9 +180,9 @@ export class EosAdaptiveHedgedDeadlineMesh {
     let hedgeTimer: NodeJS.Timeout | null = null;
 
     try {
-      const primaryPromise = options.primaryFn(primaryAbort.signal).then(res => ({
+      const primaryPromise = options.primaryFn(primaryAbort.signal).then((res) => ({
         result: res,
-        executedBy: "PRIMARY" as const
+        executedBy: "PRIMARY" as const,
       }));
 
       let hedgedPromise: Promise<{ result: T; executedBy: "HEDGED" }> | null = null;
@@ -189,16 +192,15 @@ export class EosAdaptiveHedgedDeadlineMesh {
           hedgeTimer = setTimeout(() => {
             hedgeDispatched = true;
             this.hedgedRequests++;
-            options.hedgedFn(hedgedAbort.signal)
-              .then(res => resolve({ result: res, executedBy: "HEDGED" }))
-              .catch(err => reject(err));
+            options
+              .hedgedFn(hedgedAbort.signal)
+              .then((res) => resolve({ result: res, executedBy: "HEDGED" }))
+              .catch((err) => reject(err));
           }, delayMs);
         });
       }
 
-      const winner = hedgedPromise
-        ? await Promise.race([primaryPromise, hedgedPromise])
-        : await primaryPromise;
+      const winner = hedgedPromise ? await Promise.race([primaryPromise, hedgedPromise]) : await primaryPromise;
 
       if (hedgeTimer) {
         clearTimeout(hedgeTimer);
@@ -220,20 +222,17 @@ export class EosAdaptiveHedgedDeadlineMesh {
         latencyMs,
         hedgeDispatched,
         totalRequests: this.totalRequests,
-        hedgedRequests: this.hedgedRequests
+        hedgedRequests: this.hedgedRequests,
       };
 
-      const sha256Receipt = crypto
-        .createHash("sha256")
-        .update(JSON.stringify(payloadToSign))
-        .digest("hex");
+      const sha256Receipt = crypto.createHash("sha256").update(JSON.stringify(payloadToSign)).digest("hex");
 
       return {
         result: winner.result,
         executedBy: winner.executedBy,
         latencyMs,
         hedgeDispatched,
-        sha256Receipt
+        sha256Receipt,
       };
     } catch (err) {
       if (hedgeTimer) {
@@ -262,7 +261,9 @@ export class EosAdaptiveHedgedDeadlineMesh {
     if (options.deadlineMs !== undefined && options.deadlineMs <= 0) {
       this.shedRequests++;
       this.totalRequests++;
-      throw new Error(`DEADLINE_EXCEEDED: Remaining budget expired (${options.deadlineMs}ms) prior to dispatching endpoint ${options.endpointId}`);
+      throw new Error(
+        `DEADLINE_EXCEEDED: Remaining budget expired (${options.deadlineMs}ms) prior to dispatching endpoint ${options.endpointId}`,
+      );
     }
 
     this.totalRequests++;
@@ -272,9 +273,8 @@ export class EosAdaptiveHedgedDeadlineMesh {
     const delayMs = options.hedgingDelayMs ?? stats.p95Ms;
 
     // 2. Anti-Storm Hedging Token Bucket Check
-    const allowedHedges = this.totalRequests < 20
-      ? 1
-      : Math.floor((this.totalRequests * this.maxHedgeRatePercent) / 100);
+    const allowedHedges =
+      this.totalRequests < 20 ? 1 : Math.floor((this.totalRequests * this.maxHedgeRatePercent) / 100);
     const canHedge = this.hedgedRequests < allowedHedges;
 
     const primaryLatency = Math.max(0, options.simulatedPrimaryDelayMs ?? 20);
@@ -305,20 +305,17 @@ export class EosAdaptiveHedgedDeadlineMesh {
       latencyMs,
       hedgeDispatched,
       totalRequests: this.totalRequests,
-      hedgedRequests: this.hedgedRequests
+      hedgedRequests: this.hedgedRequests,
     };
 
-    const sha256Receipt = crypto
-      .createHash("sha256")
-      .update(JSON.stringify(payloadToSign))
-      .digest("hex");
+    const sha256Receipt = crypto.createHash("sha256").update(JSON.stringify(payloadToSign)).digest("hex");
 
     return {
       result: { status: 200, replica: executedBy },
       executedBy,
       latencyMs,
       hedgeDispatched,
-      sha256Receipt
+      sha256Receipt,
     };
   }
 
@@ -331,22 +328,18 @@ export class EosAdaptiveHedgedDeadlineMesh {
       endpointsRecord[id] = reservoir.getStats(this.defaultP95Ms);
     }
 
-    const hedgedRatePct = this.totalRequests > 0
-      ? Number(((this.hedgedRequests / this.totalRequests) * 100).toFixed(2))
-      : 0;
+    const hedgedRatePct =
+      this.totalRequests > 0 ? Number(((this.hedgedRequests / this.totalRequests) * 100).toFixed(2)) : 0;
 
     const payload = {
       totalRequests: this.totalRequests,
       hedgedRequests: this.hedgedRequests,
       hedgedRatePct,
       shedRequests: this.shedRequests,
-      endpointCount: this.endpoints.size
+      endpointCount: this.endpoints.size,
     };
 
-    const sha256Receipt = crypto
-      .createHash("sha256")
-      .update(JSON.stringify(payload))
-      .digest("hex");
+    const sha256Receipt = crypto.createHash("sha256").update(JSON.stringify(payload)).digest("hex");
 
     return {
       totalRequests: this.totalRequests,
@@ -354,7 +347,7 @@ export class EosAdaptiveHedgedDeadlineMesh {
       hedgedRatePct,
       shedRequests: this.shedRequests,
       endpoints: endpointsRecord,
-      sha256Receipt
+      sha256Receipt,
     };
   }
 

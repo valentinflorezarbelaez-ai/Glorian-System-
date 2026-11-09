@@ -1,13 +1,14 @@
 # SPEC-115: Unified Autonomous Operating System Kernel & Omni-Control Orchestrator
 
 ## 1. Metadata
-* **Specification ID**: `SPEC-115`
-* **Title**: Unified Autonomous Operating System Kernel & Omni-Control Orchestrator
-* **Component ID**: `eos-unified-kernel-orchestrator`
-* **Status**: `PROPOSED`
-* **Target Version**: `67.0.0`
-* **Author Squad**: `squad:eos-core-architecture`
-* **Related Specs**: `SPEC-050` (Fleet Soundcheck), `SPEC-107` (Canary Telemetry), `SPEC-110` (Multi-Window SLO), `SPEC-111` (Hedged Requests), `SPEC-112` (Adaptive Concurrency), `SPEC-113` (Tail Trace Sampler), `SPEC-114` (Predictive Remediation)
+
+- **Specification ID**: `SPEC-115`
+- **Title**: Unified Autonomous Operating System Kernel & Omni-Control Orchestrator
+- **Component ID**: `eos-unified-kernel-orchestrator`
+- **Status**: `PROPOSED`
+- **Target Version**: `67.0.0`
+- **Author Squad**: `squad:eos-core-architecture`
+- **Related Specs**: `SPEC-050` (Fleet Soundcheck), `SPEC-107` (Canary Telemetry), `SPEC-110` (Multi-Window SLO), `SPEC-111` (Hedged Requests), `SPEC-112` (Adaptive Concurrency), `SPEC-113` (Tail Trace Sampler), `SPEC-114` (Predictive Remediation)
 
 ---
 
@@ -17,18 +18,20 @@ Let $\mathcal{K}$ represent the Unified Kernel Orchestrator state tuple at discr
 $$\mathcal{K}_t = \langle S_t, \text{OSEI}_t, \mathcal{M}_t, \mathcal{A}_t \rangle$$
 
 Where:
-* $S_t \in \{\text{INITIALIZING}, \text{BALANCED}, \text{DEGRADED}, \text{CRITICAL}\}$ denotes the global operational state.
-* $\text{OSEI}_t \in [0, 100]$ is the **Omni-System Equilibrium Index** defined as a normalized weighted composite:
-$$\text{OSEI}_t = 0.25 \cdot H_{\text{fleet}} + 0.25 \cdot (100 - C_{\text{slo}}) + 0.25 \cdot (100 - A_{\text{hazard}}) + 0.25 \cdot M_{\text{concurrency}}$$
-where:
+
+- $S_t \in \{\text{INITIALIZING}, \text{BALANCED}, \text{DEGRADED}, \text{CRITICAL}\}$ denotes the global operational state.
+- $\text{OSEI}_t \in [0, 100]$ is the **Omni-System Equilibrium Index** defined as a normalized weighted composite:
+  $$\text{OSEI}_t = 0.25 \cdot H_{\text{fleet}} + 0.25 \cdot (100 - C_{\text{slo}}) + 0.25 \cdot (100 - A_{\text{hazard}}) + 0.25 \cdot M_{\text{concurrency}}$$
+  where:
   - $H_{\text{fleet}} \in [0, 100]$: Fleet average Soundcheck score.
   - $C_{\text{slo}} \in [0, 100]$: Normalized SLO error budget consumption percentage.
   - $A_{\text{hazard}} \in [0, 100]$: Predictive anomaly hazard severity percentage.
   - $M_{\text{concurrency}} \in [0, 100]$: Adaptive concurrency headroom factor.
-* $\mathcal{M}_t \in \{\text{STABILIZE\_NOMINAL}, \text{THROTTLE\_ADAPTIVE}, \text{FREEZE\_CANARIES}, \text{DRAIN\_SATURATED\_SHARDS}, \text{EMERGENCY\_SHED}\}$ denotes the executed mitigation action.
-* $\mathcal{A}_t \in \{0, 1\}^{256}$ is the SHA-256 cryptographic state receipt.
+- $\mathcal{M}_t \in \{\text{STABILIZE\_NOMINAL}, \text{THROTTLE\_ADAPTIVE}, \text{FREEZE\_CANARIES}, \text{DRAIN\_SATURATED\_SHARDS}, \text{EMERGENCY\_SHED}\}$ denotes the executed mitigation action.
+- $\mathcal{A}_t \in \{0, 1\}^{256}$ is the SHA-256 cryptographic state receipt.
 
 ### Fundamental Invariants
+
 1. **Conservation Invariant**: $\forall t, \text{TotalReconciliations}_t = \text{NominalCycles}_t + \text{MitigationCycles}_t$.
 2. **Equilibrium Bounds Invariant**: $\forall t, 0 \le \text{OSEI}_t \le 100$.
 3. **Emergency Safety Invariant**: $\mathcal{M}_t = \text{EMERGENCY\_SHED} \implies \text{OSEI}_t < 50$.
@@ -37,19 +40,19 @@ where:
 
 ## 3. Functional Requirements (EARS Syntax)
 
-* **FR-313 (Ubiquitous / Permanent)**:
+- **FR-313 (Ubiquitous / Permanent)**:
   EL SISTEMA mantendrá un bucle de conciliación de control omni-unificado que sintetiza la telemetría distribuida, SLOs, predicción de fallos y salud de la flota en un índice de equilibrio continuo (OSEI).
 
-* **FR-314 (Event-Driven)**:
+- **FR-314 (Event-Driven)**:
   CUANDO se invoque un ciclo de conciliación de kernel, EL SISTEMA calculará el Omni-System Equilibrium Index (OSEI) ponderando la salud de flota (25%), consumo de presupuesto de error SLO (25%), severidad predictiva de anomalías (25%) y margen de concurrencia adaptativa (25%).
 
-* **FR-315 (State-Driven)**:
+- **FR-315 (State-Driven)**:
   MIENTRAS el índice OSEI permanezca por encima o igual a 85 puntos, EL SISTEMA mantendrá el estado de reconciliación en `STABILIZE_NOMINAL` sin activar mitigaciones restrictivas.
 
-* **FR-316 (Error / Unwanted Condition)**:
+- **FR-316 (Error / Unwanted Condition)**:
   SI el índice OSEI desciende por debajo de 50 puntos o se detecta una degradación crítica simultánea en SLOs y fallo predictivo, ENTONCES EL SISTEMA activará de forma proporcional `EMERGENCY_SHED` y congelará los canarios de despliegue activo.
 
-* **FR-317 (Ubiquitous / Permanent)**:
+- **FR-317 (Ubiquitous / Permanent)**:
   EL SISTEMA generará un recibo criptográfico SHA-256 inmutable por cada ciclo de conciliación ejecutado, registrando los factores evaluados y la decisión de mitigación adoptada.
 
 ---

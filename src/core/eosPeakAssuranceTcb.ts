@@ -61,10 +61,7 @@ export function hashToken(token: string): string {
   return crypto.createHash("sha256").update(token, "utf8").digest("hex");
 }
 
-export function verifySessionTokenBinding(
-  sessionTokenHash: string,
-  presentedToken: string
-): boolean {
+export function verifySessionTokenBinding(sessionTokenHash: string, presentedToken: string): boolean {
   assertPrecondition(/^[a-f0-9]{64}$/i.test(sessionTokenHash), "sessionTokenHash must be sha256 hex");
   const presented = Buffer.from(hashToken(presentedToken), "utf8");
   const expected = Buffer.from(sessionTokenHash.toLowerCase(), "utf8");

@@ -19,8 +19,8 @@ test("BDD-161: Backward-Compatible Expansion Acceptance", () => {
     version: "1.0.0",
     fields: [
       { name: "id", type: "string", optional: false },
-      { name: "name", type: "string", optional: false }
-    ]
+      { name: "name", type: "string", optional: false },
+    ],
   };
 
   const candidate = {
@@ -29,8 +29,8 @@ test("BDD-161: Backward-Compatible Expansion Acceptance", () => {
     fields: [
       { name: "id", type: "string", optional: false },
       { name: "name", type: "string", optional: false },
-      { name: "email", type: "string", optional: true }
-    ]
+      { name: "email", type: "string", optional: true },
+    ],
   };
 
   const report = EosContractEvolutionGovernor.compareContracts(base, candidate);
@@ -51,8 +51,8 @@ test("BDD-162: Breaking Field Deletion Rejection (Fail-Closed)", () => {
     fields: [
       { name: "paymentId", type: "string", optional: false },
       { name: "amount", type: "number", optional: false },
-      { name: "currency", type: "string", optional: false }
-    ]
+      { name: "currency", type: "string", optional: false },
+    ],
   };
 
   const candidate = {
@@ -60,9 +60,9 @@ test("BDD-162: Breaking Field Deletion Rejection (Fail-Closed)", () => {
     version: "2.0.0-unauthorized",
     fields: [
       { name: "paymentId", type: "string", optional: false },
-      { name: "amount", type: "number", optional: false }
+      { name: "amount", type: "number", optional: false },
       // currency removed
-    ]
+    ],
   };
 
   const report = EosContractEvolutionGovernor.compareContracts(base, candidate);
@@ -74,7 +74,7 @@ test("BDD-162: Breaking Field Deletion Rejection (Fail-Closed)", () => {
 
   // Verify explicit override approves
   const overrideReport = EosContractEvolutionGovernor.compareContracts(base, candidate, {
-    allowBreakingChanges: true
+    allowBreakingChanges: true,
   });
   assert.equal(overrideReport.gateVerdict, "APPROVED");
 });
@@ -83,17 +83,15 @@ test("BDD-163: Type Mutation and Nullability Tightening", () => {
   const base = {
     contractId: "AccountSettings",
     version: "1.0.0",
-    fields: [
-      { name: "age", type: "number", optional: true }
-    ]
+    fields: [{ name: "age", type: "number", optional: true }],
   };
 
   const candidate = {
     contractId: "AccountSettings",
     version: "1.0.1",
     fields: [
-      { name: "age", type: "string", optional: false } // type changed + optional -> required
-    ]
+      { name: "age", type: "string", optional: false }, // type changed + optional -> required
+    ],
   };
 
   const report = EosContractEvolutionGovernor.compareContracts(base, candidate);
@@ -134,21 +132,21 @@ test("BDD-165: Cryptographic Contract Attestation & SQLite WAL Attestation", () 
     const base = {
       contractId: "CatalogItem",
       version: "1.0.0",
-      fields: [{ name: "sku", type: "string", optional: false }]
+      fields: [{ name: "sku", type: "string", optional: false }],
     };
     const cand = {
       contractId: "CatalogItem",
       version: "1.1.0",
       fields: [
         { name: "sku", type: "string", optional: false },
-        { name: "barcode", type: "string", optional: true }
-      ]
+        { name: "barcode", type: "string", optional: true },
+      ],
     };
 
     const report = EosContractEvolutionGovernor.compareContracts(base, cand);
     const entryId = EosContractEvolutionGovernor.recordEvolutionAttestation(report, {
       ledgerDbPath,
-      projectId: "eos-system"
+      projectId: "eos-system",
     });
 
     assert.ok(entryId.startsWith("EOS-LEDGER-"));
@@ -167,13 +165,13 @@ test("BDD-165: Cryptographic Contract Attestation & SQLite WAL Attestation", () 
 });
 
 test("BDD-166: MCP Dispatch of eos_contract_governor", () => {
-  const server = new EosMcpServer(projectRoot, "full");
+  const server = new EosMcpServer(projectRoot, "core");
 
   // 1. Verify existence in tools/list
   const listRes = server.handleRequest({ jsonrpc: "2.0", id: 1, method: "tools/list" });
   const tools = listRes?.result?.tools || [];
   const govTool = tools.find((t) => t.name === "eos_contract_governor");
-  assert.ok(govTool, "eos_contract_governor must be present in full profile");
+  assert.ok(govTool, "eos_contract_governor must be present in core profile");
 
   // 2. Invoke diff via snippets
   const baseSnippet = `
@@ -199,9 +197,9 @@ test("BDD-166: MCP Dispatch of eos_contract_governor", () => {
       arguments: {
         action: "diff",
         baseInterfaceSnippet: baseSnippet,
-        candidateInterfaceSnippet: candSnippet
-      }
-    }
+        candidateInterfaceSnippet: candSnippet,
+      },
+    },
   });
 
   assert.ok(!diffRes.error);
@@ -219,9 +217,9 @@ test("BDD-166: MCP Dispatch of eos_contract_governor", () => {
       name: "eos_contract_governor",
       arguments: {
         action: "sql_lint",
-        ddlSql: "ALTER TABLE users DROP COLUMN phone;"
-      }
-    }
+        ddlSql: "ALTER TABLE users DROP COLUMN phone;",
+      },
+    },
   });
 
   assert.ok(!sqlRes.error);

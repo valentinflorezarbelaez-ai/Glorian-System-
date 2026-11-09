@@ -24,8 +24,8 @@ export interface ChaosConfig {
 
 export interface CircuitBreakerConfig {
   readonly failureThreshold: number; // e.g., 3 failures to trip OPEN
-  readonly cooldownMs: number;       // time in OPEN before attempting HALF_OPEN
-  readonly recoveryProbes: number;    // successful probes needed to reclose
+  readonly cooldownMs: number; // time in OPEN before attempting HALF_OPEN
+  readonly recoveryProbes: number; // successful probes needed to reclose
 }
 
 export interface ChaosExecutionReport {
@@ -141,7 +141,7 @@ export class EosAutonomousChaosRunner {
   public async executeProtected<T>(
     operation: () => Promise<T>,
     fallback: () => Promise<T>,
-    chaosConfig?: ChaosConfig
+    chaosConfig?: ChaosConfig,
   ): Promise<{ result: T; fallbackUsed: boolean; faultInjected: boolean }> {
     this.checkCooldownTransition();
 
@@ -217,18 +217,14 @@ export class EosAutonomousChaosRunner {
   /**
    * Executes a battery of chaos tests and returns a deterministic resilience report.
    */
-  public async runChaosBattery(
-    experimentName: string,
-    iterations: number = 30
-  ): Promise<ChaosExecutionReport> {
+  public async runChaosBattery(experimentName: string, iterations: number = 30): Promise<ChaosExecutionReport> {
     this.resetCircuit();
     let faultsInjected = 0;
     let fallbackCount = 0;
     let unhandledPanics = 0;
 
     for (let i = 0; i < iterations; i++) {
-      const faultType: ChaosFaultType =
-        i % 3 === 0 ? "PARTITION" : i % 3 === 1 ? "BYZANTINE" : "LATENCY";
+      const faultType: ChaosFaultType = i % 3 === 0 ? "PARTITION" : i % 3 === 1 ? "BYZANTINE" : "LATENCY";
 
       try {
         const { fallbackUsed, faultInjected: injected } = await this.executeProtected(
@@ -245,7 +241,7 @@ export class EosAutonomousChaosRunner {
             faultType,
             injectionRate: 0.8,
             latencyMs: 5,
-          }
+          },
         );
 
         if (injected) faultsInjected++;

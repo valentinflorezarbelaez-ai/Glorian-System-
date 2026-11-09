@@ -4,14 +4,10 @@ import {
   getArchitectIdentity,
   getMasterKanbanState,
   evaluateAlignment,
-  getDailyDisciplineCheck
+  getDailyDisciplineCheck,
 } from "../src/core/eosJarvisSoul.ts";
-import {
-  EosIntrospectionEngine
-} from "../src/core/eosIntrospectionEngine.ts";
-import {
-  EosImpenetrableShield
-} from "../src/core/eosImpenetrableShield.ts";
+import { EosIntrospectionEngine } from "../src/core/eosIntrospectionEngine.ts";
+import { EosImpenetrableShield } from "../src/core/eosImpenetrableShield.ts";
 
 test("SPEC-027 / BDD-061: Architect Soul Matrix & Master Kanban Alignment", async (t) => {
   await t.test("Subsuite 1: Verifies the Supreme Identity of Valentín Flórez Arbeláez", () => {
@@ -99,7 +95,7 @@ test("SPEC-027 / BDD-063: Impenetrable Military Shield & Quantum Heap Purge", as
       "Phase 1: Parse AST requirements",
       "Phase 2: Formal invariant mathematical check",
       "Phase 3: Verify zero side-effects",
-      "Phase 4: Sealed execution"
+      "Phase 4: Sealed execution",
     ];
 
     const chainResult = shield.buildMerkleChain(thoughts);

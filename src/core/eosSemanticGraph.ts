@@ -29,7 +29,7 @@ export interface FileNode {
   readonly fullPath: string;
   readonly exports: readonly ExportedSymbol[];
   readonly imports: readonly string[]; // Relative file paths imported by this file
-  readonly importedBy: string[];       // Reverse index: files that import this file
+  readonly importedBy: string[]; // Reverse index: files that import this file
 }
 
 export interface BlastRadiusReport {
@@ -79,8 +79,13 @@ const PTS_TEST_MAP: Record<string, string[]> = {
   "src/core/eosOpenSpecSync": ["test/eosOpenSpec.test.mjs"],
   "src/core/eosTitansMatrix": ["test/eosTitans.test.mjs"],
   "src/core/eosSpotifyCodex": ["test/eosSpotify.test.mjs", "test/eosTitans.test.mjs"],
-  "src/mcp/eosMcpServer": ["test/eosCore.test.mjs", "test/eosPrometheus.test.mjs", "test/eosTurbo.test.mjs", "test/eosSpotify.test.mjs"],
-  "bin/eos": ["test/eosCore.test.mjs", "test/eosTurbo.test.mjs"]
+  "src/mcp/eosMcpServer": [
+    "test/eosCore.test.mjs",
+    "test/eosPrometheus.test.mjs",
+    "test/eosTurbo.test.mjs",
+    "test/eosSpotify.test.mjs",
+  ],
+  "bin/eos": ["test/eosCore.test.mjs", "test/eosTurbo.test.mjs"],
 };
 
 /**
@@ -95,7 +100,7 @@ export function extractExports(sourceCode: string, relativePath: string): Export
     { kind: "class" as SymbolKind, regex: /export\s+class\s+([A-Za-z0-9_$]+)/ },
     { kind: "interface" as SymbolKind, regex: /export\s+interface\s+([A-Za-z0-9_$]+)/ },
     { kind: "type" as SymbolKind, regex: /export\s+type\s+([A-Za-z0-9_$]+)/ },
-    { kind: "const" as SymbolKind, regex: /export\s+const\s+([A-Za-z0-9_$]+)/ }
+    { kind: "const" as SymbolKind, regex: /export\s+const\s+([A-Za-z0-9_$]+)/ },
   ];
 
   lines.forEach((line, idx) => {
@@ -111,7 +116,7 @@ export function extractExports(sourceCode: string, relativePath: string): Export
           name: symbolName,
           kind: pat.kind,
           filePath: relativePath,
-          lineNumber: idx + 1
+          lineNumber: idx + 1,
         });
         break;
       }
@@ -166,9 +171,17 @@ export class EosSemanticGraph {
       try {
         const cache = JSON.parse(fs.readFileSync(this._cacheFile, "utf8"));
         if (cache.version === EosSemanticGraph._CACHE_VERSION && cache.fingerprint === fingerprint) {
-          // Restore nodes from cache
+          // Restore nodes and symbols from cache
           for (const [k, v] of Object.entries(cache.nodes as Record<string, unknown>)) {
-            this.nodes.set(k, v as FileNode);
+            const node = v as FileNode;
+            this.nodes.set(k, node);
+            if (Array.isArray(node.exports)) {
+              for (const sym of node.exports) {
+                const list = this.symbolIndex.get(sym.name) || [];
+                list.push(sym);
+                this.symbolIndex.set(sym.name, list);
+              }
+            }
           }
           return; // cache hit
         }
@@ -194,7 +207,11 @@ export class EosSemanticGraph {
           const full = path.join(p, e.name);
           if (e.isDirectory() && e.name !== "node_modules" && !e.name.startsWith(".")) walk(full);
           else if (e.isFile() && /\.(ts|tsx|js|mjs)$/.test(e.name)) {
-            try { fsum += BigInt(Math.floor(fs.statSync(full).mtimeMs)); } catch { /* skip */ }
+            try {
+              fsum += BigInt(Math.floor(fs.statSync(full).mtimeMs));
+            } catch {
+              /* skip */
+            }
           }
         }
       };
@@ -212,7 +229,9 @@ export class EosSemanticGraph {
         nodes: Object.fromEntries(this.nodes),
       };
       fs.writeFileSync(this._cacheFile, JSON.stringify(cache), "utf8");
-    } catch { /* best-effort */ }
+    } catch {
+      /* best-effort */
+    }
   }
 
   private buildGraph(): void {
@@ -224,7 +243,12 @@ export class EosSemanticGraph {
       for (const entry of entries) {
         const full = path.join(dir, entry.name);
         if (entry.isDirectory()) {
-          if (entry.name !== "node_modules" && entry.name !== ".git" && entry.name !== "dist" && entry.name !== ".next") {
+          if (
+            entry.name !== "node_modules" &&
+            entry.name !== ".git" &&
+            entry.name !== "dist" &&
+            entry.name !== ".next"
+          ) {
             walk(full);
           }
         } else if (entry.isFile() && /\.(ts|tsx|js|mjs)$/.test(entry.name)) {
@@ -262,7 +286,7 @@ export class EosSemanticGraph {
         fullPath,
         exports,
         imports,
-        importedBy: []
+        importedBy: [],
       });
 
       // Index symbols
@@ -311,7 +335,7 @@ export class EosSemanticGraph {
         riskLevel: "LOW",
         affectedLayers: [],
         predictiveTestSuites: [],
-        durationUs: Number((endUs - startUs) / 1000n)
+        durationUs: Number((endUs - startUs) / 1000n),
       };
     }
 
@@ -379,7 +403,7 @@ export class EosSemanticGraph {
       riskLevel,
       affectedLayers: Array.from(layers),
       predictiveTestSuites: Array.from(ptsSuites),
-      durationUs
+      durationUs,
     };
   }
 
@@ -401,7 +425,7 @@ export class EosSemanticGraph {
             name: sym.name,
             kind: sym.kind,
             filePath: sym.filePath,
-            lineNumber: sym.lineNumber
+            lineNumber: sym.lineNumber,
           });
         }
       }
@@ -432,7 +456,7 @@ export class EosSemanticGraph {
       totalEdges,
       deadCodeCount: deadSymbols.length,
       deadSymbols,
-      durationMs
+      durationMs,
     };
   }
 
@@ -466,7 +490,7 @@ export class EosSemanticGraph {
         try {
           execFileSync(process.execPath, ["--test", fullPath], {
             cwd: this.projectRoot,
-            stdio: "pipe"
+            stdio: "pipe",
           });
         } catch {
           allPassed = false;
@@ -478,7 +502,7 @@ export class EosSemanticGraph {
       executedSuites: suitesToRun,
       totalSuites: suitesToRun.length,
       pass: allPassed,
-      durationMs: Date.now() - startMs
+      durationMs: Date.now() - startMs,
     };
   }
 }

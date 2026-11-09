@@ -1,0 +1,191 @@
+name: EOS Nightly Deep Quality Gates
+
+# The expensive gates (mutation ×N, flaky ×N) are opt-in inside the per-commit
+# pipeline so the developer loop stays fast. That opt-in is also their weakness:
+# if nobody sets the env flag, the gate never runs and protects nothing. This
+# workflow closes that gap with a fixed weekly schedule that exercises the deep
+# gates against the versioned ratchets (`docs/quality/*.json`) and publishes a
+# per-run report to the job summary. Fail-closed: ratchet drift fails the job.
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      update-ratchets:
+        description: "Recompute the ratchets and open a refresh pull request"
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  mutation-deep-gate:
+    name: Mutation deep gate (SPEC-143)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Install locked development toolchain
+        run: npm ci --include=dev
+
+      - name: Run mutation gate against the frozen ratchet
+        run: |
+          set -o pipefail
+          node scripts/mutation-gate.mjs 2>&1 | tee mutation-report.txt
+
+      - name: Publish mutation report to the job summary
+        if: ${{ !cancelled() }}
+        run: |
+          {
+            echo "### Mutation deep gate"
+            echo ""
+            echo '```'
+            cat mutation-report.txt 2>/dev/null || echo "(no report captured)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  flaky-deep-gate:
+    name: Flaky deep gate (SPEC-131)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Install locked development toolchain
+        run: npm ci --include=dev
+
+      - name: Re-run the suite N times against the frozen quarantine
+        run: |
+          set -o pipefail
+          node scripts/flaky-gate.mjs --repeat="${EOS_FLAKY_REPEATS:-3}" 2>&1 | tee flaky-report.txt
+
+      - name: Publish flaky report to the job summary
+        if: ${{ !cancelled() }}
+        run: |
+          {
+            echo "### Flaky deep gate"
+            echo ""
+            echo '```'
+            cat flaky-report.txt 2>/dev/null || echo "(no report captured)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  nocturnal-evolution-gate:
+    name: Darwinian nocturnal evolution sweep (SPEC-133)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Install locked development toolchain
+        run: npm ci --include=dev
+
+      - name: Run Darwinian nocturnal evolution sweep
+        run: |
+          set -o pipefail
+          npm run nocturnal 2>&1 | tee nocturnal-report.txt
+
+      - name: Publish nocturnal report to the job summary
+        if: ${{ !cancelled() }}
+        run: |
+          {
+            echo "### Darwinian Nocturnal Evolution Gate (SPEC-133)"
+            echo ""
+            echo '```'
+            cat nocturnal-report.txt 2>/dev/null || echo "(no report captured)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  ratchet-refresh:
+    name: Refresh ratchets and open a pull request
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.update-ratchets }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Install locked development toolchain
+        run: npm ci --include=dev
+
+      - name: Prune the flaky quarantine (the ratchet may only shrink)
+        run: node scripts/flaky-gate.mjs --update
+
+      - name: Raise the mutation floors (the ratchet may only grow)
+        run: node scripts/mutation-gate.mjs --update
+
+      - name: Refresh the size budget (grandfathered ceilings may only shrink)
+        run: node scripts/size-budget.mjs --update
+
+      - name: Refresh the bundle size budget (frontend gzip ratchet)
+        run: node scripts/bundle-budget.mjs --update
+
+      - name: Detect ratchet drift
+        id: drift
+        run: |
+          if git diff --quiet -- docs/quality; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open the ratchet-refresh pull request
+        if: ${{ steps.drift.outputs.changed == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          branch="chore/ratchet-refresh-${{ github.run_id }}"
+          git checkout -b "$branch"
+          git add docs/quality
+          git commit -m "chore(quality): refresh mutation/flaky/size ratchets"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push origin "$branch"
+          gh pr create \
+            --title "chore(quality): refresh mutation/flaky ratchets" \
+            --body "Automated ratchet refresh from the nightly deep-gates workflow. The mutation floors may only rise, the flaky quarantine may only shrink, and grandfathered size ceilings may only fall; review the deltas before merging." \
+            --base main \
+            --head "$branch"

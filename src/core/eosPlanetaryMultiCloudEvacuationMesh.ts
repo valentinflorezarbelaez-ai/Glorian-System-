@@ -89,7 +89,7 @@ export class EosPlanetaryMultiCloudEvacuationMesh {
       trafficWeight: 35,
       consecutiveSuccessfulProbes: 100,
       lastEvacuatedAt: null,
-      flappingCounter: 0
+      flappingCounter: 0,
     });
     this.nodes.set("gcp", {
       providerId: "gcp",
@@ -100,7 +100,7 @@ export class EosPlanetaryMultiCloudEvacuationMesh {
       trafficWeight: 35,
       consecutiveSuccessfulProbes: 100,
       lastEvacuatedAt: null,
-      flappingCounter: 0
+      flappingCounter: 0,
     });
     this.nodes.set("vercel", {
       providerId: "vercel",
@@ -111,7 +111,7 @@ export class EosPlanetaryMultiCloudEvacuationMesh {
       trafficWeight: 30,
       consecutiveSuccessfulProbes: 100,
       lastEvacuatedAt: null,
-      flappingCounter: 0
+      flappingCounter: 0,
     });
   }
 
@@ -120,7 +120,7 @@ export class EosPlanetaryMultiCloudEvacuationMesh {
    */
   public evacuateCloudProvider(
     providerId: CloudProviderId,
-    reason: string = "Catastrophic degradation detected"
+    reason: string = "Catastrophic degradation detected",
   ): EvacuationDirective {
     const startTime = Date.now();
     const targetNode = this.nodes.get(providerId);
@@ -130,14 +130,14 @@ export class EosPlanetaryMultiCloudEvacuationMesh {
     }
 
     const eligibleHealthyNodes = Array.from(this.nodes.values()).filter(
-      (n) => n.providerId !== providerId && (n.status === "HEALTHY" || n.status === "COOLDOWN")
+      (n) => n.providerId !== providerId && (n.status === "HEALTHY" || n.status === "COOLDOWN"),
     );
 
     // Byzantine Quorum consensus (requires at least 2 remaining healthy clouds in standard 3-cloud mesh)
     const quorumAchieved = eligibleHealthyNodes.length >= 2;
     if (!quorumAchieved && this.nodes.size >= 3) {
       throw new Error(
-        `QUORUM_LOST: Cannot evacuate '${providerId}'. Insufficient surviving healthy clouds to form quorum (requires >= 2). Fail-closed split-brain guard active.`
+        `QUORUM_LOST: Cannot evacuate '${providerId}'. Insufficient surviving healthy clouds to form quorum (requires >= 2). Fail-closed split-brain guard active.`,
       );
     }
 
@@ -171,7 +171,7 @@ export class EosPlanetaryMultiCloudEvacuationMesh {
         reweightedTopology.push({
           providerId: node.providerId,
           previousWeight: prevW,
-          newWeight: node.trafficWeight
+          newWeight: node.trafficWeight,
         });
       });
     }
@@ -179,7 +179,7 @@ export class EosPlanetaryMultiCloudEvacuationMesh {
     reweightedTopology.unshift({
       providerId: targetNode.providerId,
       previousWeight,
-      newWeight: 0
+      newWeight: 0,
     });
 
     this.totalEvacuationsExecuted++;
@@ -199,14 +199,17 @@ export class EosPlanetaryMultiCloudEvacuationMesh {
       quorumVoters: eligibleHealthyNodes.map((n) => n.providerId),
       reweightedTopology,
       merkleStateRootSha256,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
   /**
    * Reintegrates an evacuated provider after passing synthetic stability probes and cooldown.
    */
-  public reintegrateProvider(providerId: CloudProviderId, syntheticProbeResults: boolean[]): {
+  public reintegrateProvider(
+    providerId: CloudProviderId,
+    syntheticProbeResults: boolean[],
+  ): {
     success: boolean;
     reason: string;
     status: CloudNodeStatus;
@@ -225,7 +228,7 @@ export class EosPlanetaryMultiCloudEvacuationMesh {
       return {
         success: false,
         reason: `FLAPPING_SUPPRESSED: Provider ${providerId} failed 10-probe synthetic stability test (${consecutivePasses}/10 passed). Cooldown enforced.`,
-        status: "COOLDOWN"
+        status: "COOLDOWN",
       };
     }
 
@@ -237,7 +240,7 @@ export class EosPlanetaryMultiCloudEvacuationMesh {
     // Restore nominal traffic weight
     const allHealthy = Array.from(this.nodes.values()).filter((n) => n.status === "HEALTHY");
     const evenWeight = Math.floor(100 / allHealthy.length);
-    let remainder = 100 - (evenWeight * allHealthy.length);
+    let remainder = 100 - evenWeight * allHealthy.length;
 
     allHealthy.forEach((n) => {
       n.trafficWeight = evenWeight + (remainder > 0 ? 1 : 0);
@@ -247,18 +250,14 @@ export class EosPlanetaryMultiCloudEvacuationMesh {
     return {
       success: true,
       reason: `Provider ${providerId} passed 10/10 synthetic probes. Reintegrated to active rotation with ${node.trafficWeight}% weight.`,
-      status: "HEALTHY"
+      status: "HEALTHY",
     };
   }
 
   /**
    * Injects telemetry reading for a cloud provider.
    */
-  public updateTelemetry(
-    providerId: CloudProviderId,
-    latencyP99Ms: number,
-    errorRatePercent: number
-  ): void {
+  public updateTelemetry(providerId: CloudProviderId, latencyP99Ms: number, errorRatePercent: number): void {
     let node = this.nodes.get(providerId);
     if (!node) {
       node = {
@@ -270,7 +269,7 @@ export class EosPlanetaryMultiCloudEvacuationMesh {
         trafficWeight: 0,
         consecutiveSuccessfulProbes: 0,
         lastEvacuatedAt: null,
-        flappingCounter: 0
+        flappingCounter: 0,
       };
       this.nodes.set(providerId, node);
     } else {
@@ -303,7 +302,7 @@ export class EosPlanetaryMultiCloudEvacuationMesh {
       totalTrafficAllocatedPercent,
       quorumState: quorumEstablished ? "QUORUM_ESTABLISHED" : "QUORUM_LOST_SPLIT_BRAIN_PREVENTED",
       merkleStateRootSha256,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -315,7 +314,7 @@ export class EosPlanetaryMultiCloudEvacuationMesh {
       degradedCloudsIsolated: matrix.evacuatedCloudsCount,
       flappingSuppressedCount: this.flappingSuppressedCount,
       state: matrix.evacuatedCloudsCount > 0 ? "EVACUATED_FAILOVER_ACTIVE" : "NOMINAL",
-      merkleStateRootSha256: matrix.merkleStateRootSha256
+      merkleStateRootSha256: matrix.merkleStateRootSha256,
     };
   }
 

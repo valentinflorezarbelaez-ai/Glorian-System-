@@ -26,7 +26,12 @@ export interface TransitionPlan {
   durationSamples: number;
   tempoDeltaPercent: number;
   harmonicTransitionCost: number; // 0.0 (perfect) to 1.0 (clash)
-  transitionType: "HARMONIC_ENERGY_UP" | "HARMONIC_ENERGY_DOWN" | "RELATIVE_MODE_SHIFT" | "IDENTICAL_TONALITY" | "DISSONANT_BREAKDOWN";
+  transitionType:
+    | "HARMONIC_ENERGY_UP"
+    | "HARMONIC_ENERGY_DOWN"
+    | "RELATIVE_MODE_SHIFT"
+    | "IDENTICAL_TONALITY"
+    | "DISSONANT_BREAKDOWN";
   recommendedStrategy: string;
   sha256Proof: string;
 }
@@ -61,7 +66,12 @@ export class EosGaplessMixEngine {
     const a = parse(keyA);
     const b = parse(keyB);
 
-    if (isNaN(a.num) || isNaN(b.num) || (a.letter !== "A" && a.letter !== "B") || (b.letter !== "A" && b.letter !== "B")) {
+    if (
+      isNaN(a.num) ||
+      isNaN(b.num) ||
+      (a.letter !== "A" && a.letter !== "B") ||
+      (b.letter !== "A" && b.letter !== "B")
+    ) {
       return { cost: 1.0, type: "DISSONANT_BREAKDOWN" };
     }
 
@@ -97,10 +107,10 @@ export class EosGaplessMixEngine {
   public planTransition(
     trackA: AudioTrackDescriptor,
     trackB: AudioTrackDescriptor,
-    durationSeconds = 6.0
+    durationSeconds = 6.0,
   ): TransitionPlan {
     const durationSamples = Math.round(durationSeconds * trackA.sampleRateHz);
-    const tempoDeltaPercent = Number((Math.abs(trackB.bpm - trackA.bpm) / trackA.bpm * 100).toFixed(2));
+    const tempoDeltaPercent = Number(((Math.abs(trackB.bpm - trackA.bpm) / trackA.bpm) * 100).toFixed(2));
     const { cost, type } = this.computeHarmonicCost(trackA.camelotKey, trackB.camelotKey);
 
     let recommendedStrategy: string;
@@ -112,7 +122,8 @@ export class EosGaplessMixEngine {
       recommendedStrategy = "Reverb/delay tail freeze on Track A breakdown followed by hard cut on beat 1";
     }
 
-    const proof = crypto.createHash("sha256")
+    const proof = crypto
+      .createHash("sha256")
       .update(`${trackA.trackId}:${trackB.trackId}:${cost}:${tempoDeltaPercent}`)
       .digest("hex");
 
@@ -125,18 +136,14 @@ export class EosGaplessMixEngine {
       harmonicTransitionCost: cost,
       transitionType: type,
       recommendedStrategy,
-      sha256Proof: proof
+      sha256Proof: proof,
     };
   }
 
   /**
    * 3. Executes high-performance 3-band staggered crossfade between two audio buffers.
    */
-  public executeCrossfade(
-    bufferA: Float32Array,
-    bufferB: Float32Array,
-    sampleRateHz = 44100
-  ): CrossfadeResult {
+  public executeCrossfade(bufferA: Float32Array, bufferB: Float32Array, sampleRateHz = 44100): CrossfadeResult {
     const N = Math.min(bufferA.length, bufferB.length);
     const outputBuffer = new Float32Array(N);
 
@@ -187,7 +194,8 @@ export class EosGaplessMixEngine {
     this.dspKernel.applySamplePeakLimiterInPlace(outputBuffer);
 
     const maxTruePeakDb = maxAbs > 0 ? Number((20 * Math.log10(maxAbs)).toFixed(2)) : -100.0;
-    const proof = crypto.createHash("sha256")
+    const proof = crypto
+      .createHash("sha256")
       .update(`${N}:${maxTruePeakDb}:${outputBuffer[Math.floor(N / 2)]}`)
       .digest("hex");
 
@@ -198,7 +206,7 @@ export class EosGaplessMixEngine {
       bassOverlapDurationMs: 0, // Staggering guarantees 0ms bass clash
       maxTruePeakDb,
       energyPreserved: true,
-      sha256Proof: proof
+      sha256Proof: proof,
     };
   }
 }

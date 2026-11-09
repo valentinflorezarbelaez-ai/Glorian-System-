@@ -10,6 +10,7 @@ flowchart TD
 ```
 
 ## Task Checklist
+
 - [x] Task 1: Record Intake, Specification, Change Proposal, and ADR.
 - [x] Task 2: Implement `src/core/eosSpotifyInstitutionalCodex.ts` with 6 Spotify Engineering pillars.
 - [x] Task 3: Author test suite `test/eosSpotifyInstitutionalCodex.test.mjs` verifying BDD-054.

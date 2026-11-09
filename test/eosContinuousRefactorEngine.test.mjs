@@ -19,20 +19,13 @@ import {
   assertInvariant,
   deepFreeze,
   ContractError,
-  pureSha256
 } from "../src/core/eosKernelPrimitives.ts";
 
-import {
-  EosContinuousRefactorEngine
-} from "../src/core/eosContinuousRefactorEngine.ts";
+import { EosContinuousRefactorEngine } from "../src/core/eosContinuousRefactorEngine.ts";
 
-import {
-  EosDeterministicSimulator
-} from "../src/core/eosDeterministicSimulator.ts";
+import { EosDeterministicSimulator } from "../src/core/eosDeterministicSimulator.ts";
 
-import {
-  EosMcpServer
-} from "../src/mcp/eosMcpServer.ts";
+import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -66,7 +59,7 @@ describe("SPEC-041: Autonomous Continuous Refactoring & DST Verification", () =>
     it("enforces assertPrecondition with ContractError on failure", () => {
       assert.throws(
         () => assertPrecondition(false, "Precondition must hold"),
-        (err) => err instanceof ContractError && err.contractType === "PRECONDITION"
+        (err) => err instanceof ContractError && err.contractType === "PRECONDITION",
       );
       assert.doesNotThrow(() => assertPrecondition(true, "Valid precondition"));
     });
@@ -74,7 +67,7 @@ describe("SPEC-041: Autonomous Continuous Refactoring & DST Verification", () =>
     it("enforces assertPostcondition with ContractError on failure", () => {
       assert.throws(
         () => assertPostcondition(false, "Postcondition must hold"),
-        (err) => err instanceof ContractError && err.contractType === "POSTCONDITION"
+        (err) => err instanceof ContractError && err.contractType === "POSTCONDITION",
       );
       assert.doesNotThrow(() => assertPostcondition(true, "Valid postcondition"));
     });
@@ -82,7 +75,7 @@ describe("SPEC-041: Autonomous Continuous Refactoring & DST Verification", () =>
     it("enforces assertInvariant with ContractError on failure", () => {
       assert.throws(
         () => assertInvariant(false, "Invariant must hold"),
-        (err) => err instanceof ContractError && err.contractType === "INVARIANT"
+        (err) => err instanceof ContractError && err.contractType === "INVARIANT",
       );
       assert.doesNotThrow(() => assertInvariant(true, "Valid invariant"));
     });
@@ -90,7 +83,7 @@ describe("SPEC-041: Autonomous Continuous Refactoring & DST Verification", () =>
     it("guarantees deepFreeze recursively prevents mutation", () => {
       const state = deepFreeze({
         tier: 0,
-        subsystem: { name: "kernel", metrics: [1, 2, 3] }
+        subsystem: { name: "kernel", metrics: [1, 2, 3] },
       });
 
       assert.ok(Object.isFrozen(state));
@@ -108,14 +101,14 @@ describe("SPEC-041: Autonomous Continuous Refactoring & DST Verification", () =>
       const simA = new EosDeterministicSimulator({
         seed: 42,
         totalSteps: 200,
-        faultInjectionRate: 0.1
+        faultInjectionRate: 0.1,
       });
       const resA = simA.runSimulation();
 
       const simB = new EosDeterministicSimulator({
         seed: 42,
         totalSteps: 200,
-        faultInjectionRate: 0.1
+        faultInjectionRate: 0.1,
       });
       const resB = simB.runSimulation();
 
@@ -130,14 +123,14 @@ describe("SPEC-041: Autonomous Continuous Refactoring & DST Verification", () =>
       const simA = new EosDeterministicSimulator({
         seed: 1337,
         totalSteps: 100,
-        faultInjectionRate: 0.05
+        faultInjectionRate: 0.05,
       });
       const resA = simA.runSimulation();
 
       const simB = new EosDeterministicSimulator({
         seed: 9999,
         totalSteps: 100,
-        faultInjectionRate: 0.05
+        faultInjectionRate: 0.05,
       });
       const resB = simB.runSimulation();
 
@@ -166,8 +159,8 @@ describe("SPEC-041: Autonomous Continuous Refactoring & DST Verification", () =>
         method: "tools/call",
         params: {
           name: "eos_refactor_audit",
-          arguments: { dirPath: "src/core" }
-        }
+          arguments: { dirPath: "src/core" },
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");
@@ -184,8 +177,8 @@ describe("SPEC-041: Autonomous Continuous Refactoring & DST Verification", () =>
         method: "tools/call",
         params: {
           name: "eos_dst_simulate",
-          arguments: { seed: 101, steps: 50, faultRate: 0.05 }
-        }
+          arguments: { seed: 101, steps: 50, faultRate: 0.05 },
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");
@@ -202,8 +195,8 @@ describe("SPEC-041: Autonomous Continuous Refactoring & DST Verification", () =>
         method: "tools/call",
         params: {
           name: "eos_dbc_verify",
-          arguments: { sampleValue: 42 }
-        }
+          arguments: { sampleValue: 42 },
+        },
       });
 
       assert.equal(res.jsonrpc, "2.0");

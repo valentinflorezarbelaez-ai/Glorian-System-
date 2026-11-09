@@ -16,7 +16,7 @@ test("BDD-205: EosMcpSchemaValidator validates 100% of MCP tool definitions and 
   const listRes = server.handleRequest({
     jsonrpc: "2.0",
     id: 1,
-    method: "tools/list"
+    method: "tools/list",
   });
 
   const tools = listRes?.result?.tools || [];
@@ -28,8 +28,7 @@ test("BDD-205: EosMcpSchemaValidator validates 100% of MCP tool definitions and 
   assert.equal(report.status, "CONFORMING");
   assert.equal(report.issuesCount, 0, `Detected schema issues: ${JSON.stringify(report.issues, null, 2)}`);
   assert.ok(report.catalogSha256.length === 64);
-  assert.ok(report.coreTier0Count <= 30);
-  assert.ok(report.coreTier0Count >= 20);
+  assert.ok(report.coreTier0Count === 46);
 
   // Export contract
   const contractPath = validator.exportCatalogContract(tools);

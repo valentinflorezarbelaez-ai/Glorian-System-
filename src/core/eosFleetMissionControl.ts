@@ -81,17 +81,14 @@ export class EosFleetMissionControl {
       authorization: String(p.authorization || "LEVEL_1_READ_ONLY"),
       status: String(p.status || "REGISTERED"),
       currentBranch: p.currentBranch ? String(p.currentBranch) : undefined,
-      headCommitSha: p.headCommitSha ? String(p.headCommitSha) : undefined
+      headCommitSha: p.headCommitSha ? String(p.headCommitSha) : undefined,
     }));
   }
 
   /**
    * Pings a single HTTP/HTTPS endpoint with timeout and latency measurement.
    */
-  public static async probeEndpoint(
-    url: string,
-    timeoutMs: number = 4000
-  ): Promise<SyntheticProbeResult> {
+  public static async probeEndpoint(url: string, timeoutMs: number = 4000): Promise<SyntheticProbeResult> {
     const probedAt = new Date().toISOString();
     const isSsl = url.startsWith("https://");
 
@@ -102,7 +99,7 @@ export class EosFleetMissionControl {
         latencyMs: 0,
         ssl: isSsl,
         error: "INVALID_URL",
-        probedAt
+        probedAt,
       };
     }
 
@@ -115,8 +112,8 @@ export class EosFleetMissionControl {
         method: "HEAD",
         signal: controller.signal,
         headers: {
-          "User-Agent": "EOS-Fleet-MissionControl/1.0 (Synthetic Sentinel)"
-        }
+          "User-Agent": "EOS-Fleet-MissionControl/1.0 (Synthetic Sentinel)",
+        },
       });
       clearTimeout(timer);
 
@@ -129,7 +126,7 @@ export class EosFleetMissionControl {
         statusCode: res.status,
         latencyMs,
         ssl: isSsl,
-        probedAt
+        probedAt,
       };
     } catch (err: any) {
       const latencyMs = Date.now() - start;
@@ -138,8 +135,8 @@ export class EosFleetMissionControl {
         reachable: false,
         latencyMs,
         ssl: isSsl,
-        error: err.name === "AbortError" ? "TIMEOUT" : (err.message || "NETWORK_ERROR"),
-        probedAt
+        error: err.name === "AbortError" ? "TIMEOUT" : err.message || "NETWORK_ERROR",
+        probedAt,
       };
     }
   }
@@ -174,9 +171,7 @@ export class EosFleetMissionControl {
     }
 
     const prodCount = overview.filter((p) => Boolean(p.productionUrl)).length;
-    const quorumPct = shouldProbe && prodCount > 0
-      ? Number(((healthyCount / prodCount) * 100).toFixed(1))
-      : 100.0;
+    const quorumPct = shouldProbe && prodCount > 0 ? Number(((healthyCount / prodCount) * 100).toFixed(1)) : 100.0;
 
     const avgLatency = latencySamples > 0 ? Math.round(totalLatency / latencySamples) : 0;
 
@@ -188,7 +183,27 @@ export class EosFleetMissionControl {
       fleetQuorumPercentage: quorumPct,
       averageLatencyMs: avgLatency,
       registrySha256: reg.registrySha256 || "",
-      projects: enrichedProjects
+      projects: enrichedProjects,
+    };
+  }
+
+  /**
+   * Synchronous fleet overview report without network probing.
+   */
+  public generateReportSync(): FleetMissionReport {
+    const reg = this.getRawRegistry();
+    const overview = this.getFleetOverview();
+    const prodCount = overview.filter((p) => Boolean(p.productionUrl)).length;
+
+    return {
+      timestamp: new Date().toISOString(),
+      totalProjects: overview.length,
+      productionEndpointsCount: prodCount,
+      healthyEndpointsCount: prodCount,
+      fleetQuorumPercentage: 100.0,
+      averageLatencyMs: 0,
+      registrySha256: reg.registrySha256 || "",
+      projects: overview,
     };
   }
 }

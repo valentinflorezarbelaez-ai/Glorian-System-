@@ -13,12 +13,7 @@
  */
 
 import vm from "node:vm";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export type RepairStrategy =
@@ -105,10 +100,7 @@ export class EosSurgicalSelfHealingKernel {
   /**
    * NASA FDIR Fault Detection & Isolation: parses raw stack traces and error messages into structured diagnostics.
    */
-  public static isolateFault(
-    rawError: string | Error,
-    fallbackOrSourceCode?: string
-  ): FaultDiagnostic {
+  public static isolateFault(rawError: string | Error, fallbackOrSourceCode?: string): FaultDiagnostic {
     const message = rawError instanceof Error ? rawError.message : String(rawError);
     const stack = rawError instanceof Error && rawError.stack ? rawError.stack : message;
 
@@ -144,7 +136,9 @@ export class EosSurgicalSelfHealingKernel {
     }
 
     // Detect target property / expression
-    const undefinedPropMatch = message.match(/Cannot read properties of (?:undefined|null) \(reading '([a-zA-Z0-9_$]+)'\)/);
+    const undefinedPropMatch = message.match(
+      /Cannot read properties of (?:undefined|null) \(reading '([a-zA-Z0-9_$]+)'\)/,
+    );
     if (undefinedPropMatch) {
       targetExpression = undefinedPropMatch[1];
     } else {
@@ -177,17 +171,14 @@ export class EosSurgicalSelfHealingKernel {
       targetExpression,
       rawMessage: message,
       codeContextSnippet,
-      stackSnippet: stack.slice(0, 500)
+      stackSnippet: stack.slice(0, 500),
     });
   }
 
   /**
    * Alias for isolateFault adhering to BDD-167 terminology.
    */
-  public static diagnoseFault(
-    stackTrace: string | Error,
-    sourceCode?: string
-  ): FaultDiagnostic {
+  public static diagnoseFault(stackTrace: string | Error, sourceCode?: string): FaultDiagnostic {
     return this.isolateFault(stackTrace, sourceCode);
   }
 
@@ -197,7 +188,7 @@ export class EosSurgicalSelfHealingKernel {
   public static synthesizeSurgicalPatch(
     diagnosticOrFault: FaultDiagnostic | any,
     sourceContent: string,
-    preferredStrategy?: RepairStrategy
+    preferredStrategy?: RepairStrategy,
   ): SurgicalPatch {
     assertPrecondition(typeof sourceContent === "string", "sourceContent required");
     const diag: FaultDiagnostic = diagnosticOrFault.faultId
@@ -267,7 +258,7 @@ export class EosSurgicalSelfHealingKernel {
       rationale,
       linesChanged,
       astMutationDiff,
-      patchedSource
+      patchedSource,
     });
   }
 
@@ -314,9 +305,9 @@ export class EosSurgicalSelfHealingKernel {
           },
           ok: (val: any) => {
             if (!val) throw new Error(`AssertionError: value is falsy`);
-          }
+          },
         },
-        console: { log: () => {}, error: () => {}, warn: () => {} }
+        console: { log: () => {}, error: () => {}, warn: () => {} },
       };
 
       vm.createContext(sandboxContext);
@@ -344,7 +335,7 @@ export class EosSurgicalSelfHealingKernel {
       targetFunctionPass,
       zeroRegressionPreserved,
       executionTimeMs: duration,
-      errors: deepFreeze([...errors])
+      errors: deepFreeze([...errors]),
     });
   }
 
@@ -370,7 +361,7 @@ export class EosSurgicalSelfHealingKernel {
     const verification = this.verifyInSandbox({
       originalSource: params.sourceCode,
       patch,
-      regressionTestCode: params.regressionTestCode
+      regressionTestCode: params.regressionTestCode,
     });
 
     let verdict: SelfHealingStatus = "HEALED_VERIFIED";
@@ -382,7 +373,7 @@ export class EosSurgicalSelfHealingKernel {
 
     const timestampIso = new Date().toISOString();
     const sha256Receipt = pureSha256(
-      `${fault.faultId}:${patch.patchId}:${verdict}:${verification.status}:${timestampIso}`
+      `${fault.faultId}:${patch.patchId}:${verdict}:${verification.status}:${timestampIso}`,
     );
 
     const receiptId = `rec_${pureSha256(sha256Receipt).slice(0, 16)}`;
@@ -395,21 +386,18 @@ export class EosSurgicalSelfHealingKernel {
       verification,
       sha256Receipt,
       timestampIso,
-      reason: params.reason || "Autonomous FDIR closed-loop surgical self-healing"
+      reason: params.reason || "Autonomous FDIR closed-loop surgical self-healing",
     });
   }
 
   /**
    * Records a surgical healing receipt in the durable SQLite WAL ledger.
    */
-  public static recordReceiptInLedger(
-    receipt: SurgicalHealingReceipt,
-    dbPathOrRootDir?: string
-  ): boolean {
+  public static recordReceiptInLedger(receipt: SurgicalHealingReceipt, dbPathOrRootDir?: string): boolean {
     const dbPath = dbPathOrRootDir
-      ? (dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
-          ? dbPathOrRootDir
-          : EosDurableSqliteLedger.defaultLedgerPath(dbPathOrRootDir))
+      ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
+        ? dbPathOrRootDir
+        : EosDurableSqliteLedger.defaultLedgerPath(dbPathOrRootDir)
       : EosDurableSqliteLedger.defaultLedgerPath();
     const ledger = new EosDurableSqliteLedger(dbPath);
     try {
@@ -425,9 +413,9 @@ export class EosSurgicalSelfHealingKernel {
           patchId: receipt.patch.patchId,
           strategy: receipt.patch.strategy,
           sha256Receipt: receipt.sha256Receipt,
-          zeroRegressionPreserved: receipt.verification.zeroRegressionPreserved
+          zeroRegressionPreserved: receipt.verification.zeroRegressionPreserved,
         },
-        engramTopicKey: `eos/fdir/${receipt.fault.faultId}`
+        engramTopicKey: `eos/fdir/${receipt.fault.faultId}`,
       });
       return true;
     } catch {
@@ -444,14 +432,14 @@ export class EosSurgicalSelfHealingKernel {
     diagnostic: FaultDiagnostic,
     sourceContent: string,
     sandboxEvaluator: (patchedSource: string) => SandboxEvaluationResult,
-    options?: { ledgerDbPath?: string; projectId?: string; preferredStrategy?: RepairStrategy }
+    options?: { ledgerDbPath?: string; projectId?: string; preferredStrategy?: RepairStrategy },
   ): SelfHealingIncidentReport {
     assertPrecondition(Boolean(diagnostic && diagnostic.faultId), "Valid fault diagnostic required");
 
     const patch = EosSurgicalSelfHealingKernel.synthesizeSurgicalPatch(
       diagnostic,
       sourceContent,
-      options?.preferredStrategy
+      options?.preferredStrategy,
     );
 
     const patchedSource = patch.patchedSource;
@@ -467,9 +455,7 @@ export class EosSurgicalSelfHealingKernel {
       status = "PATCH_FAILED_TO_RESOLVE";
     }
 
-    const sha256Receipt = pureSha256(
-      `${diagnostic.faultId}:${patch.patchId}:${status}:${patchedContentSha256}`
-    );
+    const sha256Receipt = pureSha256(`${diagnostic.faultId}:${patch.patchId}:${status}:${patchedContentSha256}`);
 
     let ledgerEntryId: string | undefined;
     if (options?.ledgerDbPath) {
@@ -487,9 +473,9 @@ export class EosSurgicalSelfHealingKernel {
             strategy: patch.strategy,
             passesFailingTest: evalResult.passesFailingTest,
             regressionsDetected: evalResult.regressionsDetected,
-            sha256Receipt
+            sha256Receipt,
           },
-          engramTopicKey: `eos/fdir/${diagnostic.faultId}`
+          engramTopicKey: `eos/fdir/${diagnostic.faultId}`,
         });
         ledgerEntryId = rec.entryId;
       } finally {
@@ -505,7 +491,7 @@ export class EosSurgicalSelfHealingKernel {
       evaluation: deepFreeze({ ...evalResult }),
       patchedContentSha256,
       sha256Receipt,
-      ledgerEntryId
+      ledgerEntryId,
     });
   }
 }

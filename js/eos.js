@@ -2454,14 +2454,13 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
           <div class="fleet-radar-card__head">
             <div>
               <div class="fleet-radar-card__name">${project.name || project.id}</div>
-              <div style="font-family: var(--font-mono); font-size: 0.68rem; color: #fbbf24; margin-top: 2px;">⚡ ${project.archetype || project.id}</div>
+              <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted); margin-top: 2px;">${project.id}</div>
             </div>
             <span class="fleet-radar-card__tier">${badgeText}</span>
           </div>
           <div class="fleet-radar-card__metrics">
             <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${isHealthy ? '#10b981' : '#38bdf8'};"></span>
             <span style="font-family: var(--font-mono); font-size: 0.76rem; font-weight: 700; color: #fff;">${isHealthy ? '200 OK' : 'ONLINE'}</span>
-            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #10b981; font-weight: 600; margin-left: 8px;">Soundcheck: 100/100 A+</span>
             <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #94a3b8; margin-left: auto;">⏱ ${latency}</span>
           </div>
           <div class="fleet-radar-card__actions">

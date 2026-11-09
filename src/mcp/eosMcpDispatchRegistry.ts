@@ -5,18 +5,11 @@
 
 export interface McpHandlerContext {
   readonly projectRoot: string;
-  readonly resolveProjectPath: (
-    value: unknown,
-    kind: "file" | "directory",
-    fallback?: string
-  ) => string;
+  readonly resolveProjectPath: (value: unknown, kind: "file" | "directory", fallback?: string) => string;
   readonly onProgress?: (progress: number, total?: number, message?: string) => void;
 }
 
-export type McpToolHandler = (
-  args: Record<string, any>,
-  ctx: McpHandlerContext
-) => unknown;
+export type McpToolHandler = (args: Record<string, any>, ctx: McpHandlerContext) => unknown;
 
 export class EosMcpDispatchRegistry {
   private readonly handlers = new Map<string, McpToolHandler>();
@@ -48,7 +41,7 @@ export class EosMcpDispatchRegistry {
   public tryDispatch(
     toolName: string,
     args: Record<string, any>,
-    ctx: McpHandlerContext
+    ctx: McpHandlerContext,
   ): { readonly handled: true; readonly result: unknown } | { readonly handled: false } {
     const handler = this.handlers.get(String(toolName || "").trim());
     if (!handler) return { handled: false };

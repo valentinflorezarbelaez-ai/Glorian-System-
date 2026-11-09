@@ -95,12 +95,13 @@ function ensureJunctionOrCopy(sourceDir, targetLink, mergeSubdirsOnly = false) {
 
 export function installAntigravityIntegration(options = {}) {
   const projectRoot = path.resolve(options.projectRoot || DEFAULT_PROJECT_ROOT);
-  const geminiConfigDir = path.resolve(
-    options.geminiConfigDir || path.join(os.homedir(), ".gemini", "config")
-  );
-  const appDataMcpDir = options.appDataMcpDir !== undefined
-    ? (options.appDataMcpDir ? path.resolve(options.appDataMcpDir) : null)
-    : path.join(os.homedir(), ".gemini", "antigravity", "mcp", "eos-system");
+  const geminiConfigDir = path.resolve(options.geminiConfigDir || path.join(os.homedir(), ".gemini", "config"));
+  const appDataMcpDir =
+    options.appDataMcpDir !== undefined
+      ? options.appDataMcpDir
+        ? path.resolve(options.appDataMcpDir)
+        : null
+      : path.join(os.homedir(), ".gemini", "antigravity", "mcp", "eos-system");
   const fleetOverrides = options.fleetOverrides || {};
 
   const actions = [];
@@ -124,10 +125,12 @@ export function installAntigravityIntegration(options = {}) {
   mcpDoc.mcpServers["eos-system"] = {
     command: synthesizedEntry.command,
     args: [...synthesizedEntry.args],
-    env: { ...synthesizedEntry.env }
+    env: { ...synthesizedEntry.env },
   };
   fs.writeFileSync(mcpConfigPath, JSON.stringify(mcpDoc, null, 2) + "\n", "utf8");
-  actions.push(`Updated eos-system entry in ${mcpConfigPath} (${Object.keys(synthesizedEntry.env).length} env bindings)`);
+  actions.push(
+    `Updated eos-system entry in ${mcpConfigPath} (${Object.keys(synthesizedEntry.env).length} env bindings)`,
+  );
 
   // 2. Link ~/.gemini/config/plugins/eos-governance -> integrations/antigravity/eos-governance
   const pluginSourceDir = path.join(projectRoot, "integrations", "antigravity", "eos-governance");
@@ -166,7 +169,7 @@ export function installAntigravityIntegration(options = {}) {
     fs.writeFileSync(
       path.join(appDataMcpDir, "instructions.md"),
       EosAntigravityDirector.DIRECTOR_INSTRUCTIONS_PLAYBOOK + "\n",
-      "utf8"
+      "utf8",
     );
     const toolSchemas = [
       {
@@ -177,16 +180,16 @@ export function installAntigravityIntegration(options = {}) {
           properties: {
             directive: {
               description: "User request or engineering mission directive to direct",
-              type: "string"
+              type: "string",
             },
             target: {
               description: "Target registered project ID or workspace path (default: 'eos-system')",
-              type: "string"
-            }
+              type: "string",
+            },
           },
           required: ["directive"],
-          type: "object"
-        }
+          type: "object",
+        },
       },
       {
         name: "eos_antigravity_doctor",
@@ -196,11 +199,11 @@ export function installAntigravityIntegration(options = {}) {
           properties: {
             geminiConfigDir: {
               description: "Optional path to ~/.gemini/config directory",
-              type: "string"
-            }
+              type: "string",
+            },
           },
-          type: "object"
-        }
+          type: "object",
+        },
       },
       {
         name: "eos_sqlite_ledger",
@@ -211,44 +214,50 @@ export function installAntigravityIntegration(options = {}) {
             action: {
               description: "Ledger operation to execute (default: 'verify')",
               enum: ["record", "search", "recent", "verify"],
-              type: "string"
+              type: "string",
             },
             category: {
               description: "Entry category (for 'record')",
-              enum: ["MISSION_DIRECTION", "ARCHITECTURE_DECISION", "SECURITY_AUDIT", "VERIFICATION_RECEIPT", "GENTLEMAN_ENGRAM_SYNC"],
-              type: "string"
+              enum: [
+                "MISSION_DIRECTION",
+                "ARCHITECTURE_DECISION",
+                "SECURITY_AUDIT",
+                "VERIFICATION_RECEIPT",
+                "GENTLEMAN_ENGRAM_SYNC",
+              ],
+              type: "string",
             },
             projectId: {
               description: "Target project ID (default: 'eos-system')",
-              type: "string"
+              type: "string",
             },
             title: {
               description: "Entry title (required for 'record')",
-              type: "string"
+              type: "string",
             },
             payload: {
               description: "Structured JSON metadata payload (for 'record')",
-              type: "object"
+              type: "object",
             },
             engramTopicKey: {
               description: "Optional Engram topic_key cross-reference",
-              type: "string"
+              type: "string",
             },
             query: {
               description: "FTS5 full-text search query (for 'search')",
-              type: "string"
+              type: "string",
             },
             limit: {
               description: "Maximum records to return (1-100, default: 10)",
-              type: "number"
+              type: "number",
             },
             databasePath: {
               description: "Optional confined ledger database path within projectRoot or ':memory:'",
-              type: "string"
-            }
+              type: "string",
+            },
           },
-          type: "object"
-        }
+          type: "object",
+        },
       },
       {
         name: "eos_ast_analyze",
@@ -258,11 +267,11 @@ export function installAntigravityIntegration(options = {}) {
           properties: {
             targetDir: {
               description: "Target directory relative to project root (default: 'src/core')",
-              type: "string"
-            }
+              type: "string",
+            },
           },
-          type: "object"
-        }
+          type: "object",
+        },
       },
       {
         name: "eos_gentleman_audit",
@@ -272,11 +281,11 @@ export function installAntigravityIntegration(options = {}) {
           properties: {
             geminiConfigDir: {
               description: "Optional path to ~/.gemini/config directory",
-              type: "string"
-            }
+              type: "string",
+            },
           },
-          type: "object"
-        }
+          type: "object",
+        },
       },
       {
         name: "eos_gentleman_update",
@@ -285,25 +294,22 @@ export function installAntigravityIntegration(options = {}) {
         parameters: {
           properties: {
             action: {
-              description: "Operation mode: 'status' (fast state read), 'check' (upstream SemVer check), or 'apply' (download, verify SHA-256 & hot-swap upgrades)",
+              description:
+                "Operation mode: 'status' (fast state read), 'check' (upstream SemVer check), or 'apply' (download, verify SHA-256 & hot-swap upgrades)",
               enum: ["status", "check", "apply"],
-              type: "string"
+              type: "string",
             },
             force: {
               description: "Force re-verification/re-sync even when versions match",
-              type: "boolean"
-            }
+              type: "boolean",
+            },
           },
-          type: "object"
-        }
-      }
+          type: "object",
+        },
+      },
     ];
     for (const schema of toolSchemas) {
-      fs.writeFileSync(
-        path.join(appDataMcpDir, `${schema.name}.json`),
-        JSON.stringify(schema),
-        "utf8"
-      );
+      fs.writeFileSync(path.join(appDataMcpDir, `${schema.name}.json`), JSON.stringify(schema), "utf8");
     }
     actions.push(`Synchronized instructions.md and tool schemas in ${appDataMcpDir}`);
   }
@@ -312,7 +318,7 @@ export function installAntigravityIntegration(options = {}) {
   return {
     installed: doctorReport.readinessScore >= 95,
     actions,
-    doctorReport
+    doctorReport,
   };
 }
 
@@ -327,10 +333,14 @@ if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
   console.log("\n--- ANTIGRAVITY CONTROL PLANE DOCTOR ---");
   console.log(`  Status                 : ${result.doctorReport.status}`);
   console.log(`  Readiness Score        : ${result.doctorReport.readinessScore}/100`);
-  console.log(`  SingleServerInvariant  : ${result.doctorReport.singleServerInvariantVerified ? "VERIFIED" : "VIOLATED"}`);
+  console.log(
+    `  SingleServerInvariant  : ${result.doctorReport.singleServerInvariantVerified ? "VERIFIED" : "VIOLATED"}`,
+  );
   console.log(`  SHA-256 Receipt        : sha256:${result.doctorReport.sha256Receipt}`);
   for (const check of result.doctorReport.checks) {
-    console.log(`    • [${check.passed ? "PASS" : "FAIL"}] ${check.label} (${check.score}/${check.maxScore}) — ${check.detail}`);
+    console.log(
+      `    • [${check.passed ? "PASS" : "FAIL"}] ${check.label} (${check.score}/${check.maxScore}) — ${check.detail}`,
+    );
   }
   if (!result.installed) {
     process.exit(1);

@@ -10,12 +10,61 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
-import { CORE_TIER0_TOOL_NAMES } from "../mcp/eosMcpToolCatalog.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
+import { contentDerivedIso, writeDeterministicArtifact } from "./eosDeterministicArtifact.ts";
+
+/**
+ * Curated Tier-0 Core Engineering Profile (real, high-signal control-plane tools).
+ * Keeps LLM tool-selection precision maximized when `EOS_MCP_PROFILE=core`.
+ */
+export const CORE_TIER0_TOOL_NAMES: ReadonlySet<string> = new Set([
+  "eos_antigravity_direct",
+  "eos_antigravity_doctor",
+  "eos_gentleman_audit",
+  "eos_gentleman_update",
+  "eos_enterprise_workspace",
+  "eos_evolve_module",
+  "eos_sqlite_ledger",
+  "eos_ast_analyze",
+  "eos_amplify_prompt",
+  "eos_semantic_search",
+  "eos_hnsw_knn_search",
+  "eos_check_architecture",
+  "eos_check_openspec",
+  "eos_get_blast_radius",
+  "eos_query_code_graph",
+  "eos_evaluate_decision",
+  "eos_tmr_consensus",
+  "eos_validate_patch",
+  "eos_optimize_context",
+  "eos_turbo_verify",
+  "eos_refactor_audit",
+  "eos_autonomous_heal",
+  "eos_manage_worktree",
+  "eos_fleet_soundcheck",
+  "eos_audit_fleet",
+  "eos_mcts_tune",
+  "eos_canary_rollout",
+  "eos_agent_topology_mesh",
+  "eos_invariant_engine",
+  "eos_contract_governor",
+  "eos_surgical_healing",
+  "eos_tlc_checker",
+  "eos_github_gate",
+  "eos_microvm_sandbox",
+  "eos_dashboard_status",
+  "eos_fleet_verify",
+  "eos_unitotal_evaluate",
+  "eos_fuzz_hypervisor",
+  "eos_conscious_witness",
+  "eos_sapfix_autoshipper",
+  "eos_slsa_provenance_sbom",
+  "eos_content_addressable_cache",
+  "eos_smt_reasoning_prover",
+  "eos_chaos_monkey_live",
+  "eos_bft_swarm_consensus",
+  "eos_health_check",
+]);
 
 export interface McpToolPropertyDef {
   readonly type: string;
@@ -67,11 +116,15 @@ export class EosMcpSchemaValidator {
     const validJsonTypes = new Set(["string", "number", "integer", "boolean", "object", "array"]);
 
     for (const tool of tools) {
-      if (!tool.name || typeof tool.name !== "string" || (!tool.name.startsWith("eos_") && !tool.name.startsWith("glorian_"))) {
+      if (
+        !tool.name ||
+        typeof tool.name !== "string" ||
+        (!tool.name.startsWith("eos_") && !tool.name.startsWith("glorian_"))
+      ) {
         issues.push({
           toolName: tool.name || "UNKNOWN",
           field: "name",
-          reason: "Tool name must be a non-empty string prefixed with 'eos_' or 'glorian_'"
+          reason: "Tool name must be a non-empty string prefixed with 'eos_' or 'glorian_'",
         });
       }
 
@@ -79,7 +132,7 @@ export class EosMcpSchemaValidator {
         issues.push({
           toolName: tool.name,
           field: "description",
-          reason: "Tool description must be descriptive and at least 15 characters"
+          reason: "Tool description must be descriptive and at least 15 characters",
         });
       }
 
@@ -87,7 +140,7 @@ export class EosMcpSchemaValidator {
         issues.push({
           toolName: tool.name,
           field: "inputSchema.type",
-          reason: "Input schema must be an object with type: 'object'"
+          reason: "Input schema must be an object with type: 'object'",
         });
         continue;
       }
@@ -98,7 +151,7 @@ export class EosMcpSchemaValidator {
             issues.push({
               toolName: tool.name,
               field: `properties.${propName}`,
-              reason: "Property definition must be a valid object"
+              reason: "Property definition must be a valid object",
             });
             continue;
           }
@@ -108,7 +161,7 @@ export class EosMcpSchemaValidator {
             issues.push({
               toolName: tool.name,
               field: `properties.${propName}.type`,
-              reason: `Property type '${def.type}' is not a valid JSON Schema type`
+              reason: `Property type '${def.type}' is not a valid JSON Schema type`,
             });
           }
         }
@@ -117,11 +170,9 @@ export class EosMcpSchemaValidator {
 
     const issuesCount = issues.length;
     const status = issuesCount === 0 ? "CONFORMING" : "VIOLATIONS_DETECTED";
+    const timestampIso = new Date().toISOString();
     const catalogJson = JSON.stringify(tools, null, 2);
     const catalogSha256 = pureSha256(catalogJson);
-    // Content-addressed timestamp keeps tip-seal catalog porcelain across verify re-runs.
-    const seconds = 1_577_836_800 + (parseInt(catalogSha256.slice(0, 8), 16) % 315_619_200);
-    const timestampIso = new Date(seconds * 1000).toISOString();
 
     return deepFreeze({
       totalTools: tools.length,
@@ -131,7 +182,7 @@ export class EosMcpSchemaValidator {
       issues,
       status,
       catalogSha256,
-      timestampIso
+      timestampIso,
     });
   }
 
@@ -155,24 +206,15 @@ export class EosMcpSchemaValidator {
       catalogSha256: report.catalogSha256,
       totalTools: report.totalTools,
       coreTier0Count: report.coreTier0Count,
-      tools
+      tools,
     };
 
-    safeWriteFileSync(exportPath, JSON.stringify(payload, null, 2) + "\n");
+    // Deterministic artifact: the committed generatedAt stamp is reused in place,
+    // so an unchanged tool catalog yields a byte-identical file with no tree churn.
+    writeDeterministicArtifact(exportPath, payload, {
+      stampField: "generatedAt",
+      stampFor: (seedSha) => contentDerivedIso(seedSha),
+    });
     return exportPath;
-  }
-}
-
-function safeWriteFileSync(filePath: string, content: string): void {
-  const maxAttempts = 10;
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      fs.writeFileSync(filePath, content, "utf8");
-      return;
-    } catch (err: any) {
-      if (attempt === maxAttempts) throw err;
-      const end = Date.now() + 25 * attempt;
-      while (Date.now() < end) {}
-    }
   }
 }

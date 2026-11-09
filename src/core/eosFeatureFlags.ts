@@ -97,7 +97,9 @@ export class EosFeatureFlags {
     const now = new Date().toISOString();
     for (const flag of this.flags.values()) {
       if (flag.expiresAt && flag.expiresAt < now) {
-        process.stderr.write(`[EOS FLAGS] WARN: Flag "${flag.key}" expired at ${flag.expiresAt} — consider removing it\n`);
+        process.stderr.write(
+          `[EOS FLAGS] WARN: Flag "${flag.key}" expired at ${flag.expiresAt} — consider removing it\n`,
+        );
       }
     }
   }
@@ -138,7 +140,9 @@ export class EosFeatureFlags {
             expiresAt: config.expiresAt,
           };
         }
-      } catch { /* corrupt file — use default */ }
+      } catch {
+        /* corrupt file — use default */
+      }
     }
 
     return {
@@ -189,8 +193,8 @@ export class EosFeatureFlags {
   public getSummary(): { enabled: number; disabled: number; total: number; flags: readonly FeatureFlag[] } {
     const all = this.getAllFlags();
     return {
-      enabled: all.filter(f => f.enabled).length,
-      disabled: all.filter(f => !f.enabled).length,
+      enabled: all.filter((f) => f.enabled).length,
+      disabled: all.filter((f) => !f.enabled).length,
       total: all.length,
       flags: all,
     };

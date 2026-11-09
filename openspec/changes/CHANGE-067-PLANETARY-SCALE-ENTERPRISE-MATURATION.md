@@ -1,6 +1,7 @@
 # CHANGE-067: PLANETARY SCALE & ENTERPRISE STANDARD MATURATION (v75.0.0)
 
 ## 1. Intent & Architectural Rationale
+
 Following the attainment of Version `74.0.0` with 103 OpenSpecs and the IEEE/ACM formal specification whitepaper, this change executes the 3 High-Impact Moves that address Big Tech Tier-1 enterprise requirements, elevating EOS System to Version `75.0.0`:
 
 1. **Move 1 — Node.js SEA (Single Executable Application) Standalone Distribution (`SPEC-098`)**:
@@ -13,11 +14,13 @@ Following the attainment of Version `74.0.0` with 103 OpenSpecs and the IEEE/ACM
    Transforms EOS from a self-verifying architecture into a real-world fleet governor. Connects to external fleet projects registered in `docs/projects/registry.json` (such as `crud-slack` and `portafolio`), executes non-invasive accessibility and contract audits, and emits unified cryptographic SARIF receipts without violating Law IV (External Write Barrier).
 
 ## 2. Governed Specifications
+
 - `SPEC-098`: Node.js SEA Standalone Binary Packager & Blob Synthesizer
 - `SPEC-099`: Pure Layer-0 OpenTelemetry (OTLP v1) Distributed Tracing Engine
 - `SPEC-100`: Autonomous Fleet Dogfooding & Cross-Repository SARIF Attestation
 
 ## 3. Scope Boundaries & Invariants
+
 - Strict Layer-0: Zero external runtime npm dependencies (`dependencies: {}`).
 - Strict TypeScript compilation with `tsconfig.typecheck.json`.
 - Deterministic SRI SHA-384 integrity in `index.html`.

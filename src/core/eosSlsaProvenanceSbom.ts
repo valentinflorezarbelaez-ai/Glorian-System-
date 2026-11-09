@@ -1,6 +1,6 @@
 /**
  * EOS SYSTEM — SLSA LEVEL 3/4 PROVENANCE & CYCLONEDX v1.5 SBOM ENGINE (Layer 0)
- * Governed by SPEC-061, SPEC-139, CHANGE-074, ADR-0170
+ * Governed by SPEC-061, SPEC-067, CHANGE-074, ADR-0170
  *
  * Implements OpenSSF, Google SLSA v1.0, and CISA Supply-Chain Security Standards:
  * 1. Pure Layer-0 CycloneDX v1.5 JSON SBOM Synthesis (0 external npm dependencies).
@@ -15,10 +15,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-import {
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface SbomComponent {
@@ -128,12 +125,15 @@ const MATERIAL_SUBJECT_NAMES = ["bin/eos.mjs", "src/index.ts", "package.json"] a
  */
 function readPinnedCommitIfMaterialUnchanged(
   projectRoot: string,
-  materialDigests: Readonly<Record<(typeof MATERIAL_SUBJECT_NAMES)[number], string>>
+  materialDigests: Readonly<Record<(typeof MATERIAL_SUBJECT_NAMES)[number], string>>,
 ): string | null {
   try {
     const provenancePath = path.join(projectRoot, "docs", "evidence", "provenance.intoto.jsonl");
     if (!fs.existsSync(provenancePath)) return null;
-    const line = fs.readFileSync(provenancePath, "utf8").split(/\r?\n/).find((l) => l.trim());
+    const line = fs
+      .readFileSync(provenancePath, "utf8")
+      .split(/\r?\n/)
+      .find((l) => l.trim());
     if (!line) return null;
     const statement = JSON.parse(line) as {
       subject?: Array<{ name?: string; digest?: { sha256?: string } }>;
@@ -191,7 +191,10 @@ export class EosSlsaProvenanceSbom {
 
     // 1. Catalog pure Layer-0 core modules
     if (fs.existsSync(coreDir)) {
-      const files = fs.readdirSync(coreDir).filter((f) => f.endsWith(".ts")).sort();
+      const files = fs
+        .readdirSync(coreDir)
+        .filter((f) => f.endsWith(".ts"))
+        .sort();
       for (const file of files) {
         const fullPath = path.join(coreDir, file);
         const hash = computeFileSha256(fullPath);
@@ -203,7 +206,7 @@ export class EosSlsaProvenanceSbom {
           version: pkgVersion,
           purl: `pkg:eos/${rel}@${pkgVersion}`,
           hashes: [{ alg: "SHA-256", content: hash }],
-          description: `Glorian System pure Layer-0 kernel module: ${file}`
+          description: `Glorian System pure Layer-0 kernel module: ${file}`,
         });
       }
     }
@@ -220,7 +223,7 @@ export class EosSlsaProvenanceSbom {
           version: pkgVersion,
           purl: `pkg:eos/${rel.replace(/\\/g, "/")}@${pkgVersion}`,
           hashes: [{ alg: "SHA-256", content: hash }],
-          description: `Glorian System root entrypoint: ${rel}`
+          description: `Glorian System root entrypoint: ${rel}`,
         });
       }
     }
@@ -236,7 +239,7 @@ export class EosSlsaProvenanceSbom {
       version: pkgVersion,
       purl: `pkg:eos/glorian-system@${pkgVersion}`,
       hashes: [{ alg: "SHA-256", content: pureSha256(`GLORIAN_SYSTEM_ROOT:v${pkgVersion}:${components.length}`) }],
-      description: "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
+      description: "Glorian System (formerly EOS System) Layer-0 Control Plane Core",
     };
 
     const receiptPayload = `CYCLONEDX:v1.5:${pkgVersion}:${components.length}:${timestamp}`;
@@ -252,12 +255,12 @@ export class EosSlsaProvenanceSbom {
         component: mainComponent,
         tools: [
           { name: "EOS-SecDevOps-Sbom-Engine", version: pkgVersion },
-          { name: "Node.js", version: process.version }
+          { name: "Node.js", version: process.version },
         ],
-        runtimeDependenciesCount: 0 // Certifies 0 NPM runtime dependencies
+        runtimeDependenciesCount: 0, // Certifies 0 NPM runtime dependencies
       },
       components,
-      sha256Receipt
+      sha256Receipt,
     });
   }
 
@@ -272,7 +275,7 @@ export class EosSlsaProvenanceSbom {
    */
   public static generateSlsaProvenance(
     projectRoot: string = process.cwd(),
-    commitSha: string = "HEAD"
+    commitSha: string = "HEAD",
   ): SlsaProvenanceReport {
     const root = path.resolve(projectRoot);
     const pkgVersion = getPackageVersion(root);
@@ -284,12 +287,12 @@ export class EosSlsaProvenanceSbom {
     const materialDigests = {
       "bin/eos.mjs": fs.existsSync(binPath) ? computeFileSha256(binPath) : fallbackMaterial,
       "src/index.ts": fs.existsSync(indexPath) ? computeFileSha256(indexPath) : fallbackMaterial,
-      "package.json": fs.existsSync(pkgPath) ? computeFileSha256(pkgPath) : fallbackMaterial
+      "package.json": fs.existsSync(pkgPath) ? computeFileSha256(pkgPath) : fallbackMaterial,
     };
     const materialFingerprint = [
       materialDigests["bin/eos.mjs"],
       materialDigests["src/index.ts"],
-      materialDigests["package.json"]
+      materialDigests["package.json"],
     ].join(":");
     // Virtual subject is content-addressed from material digests only (never HEAD/time).
     const virtualCoreDigest = pureSha256(`VIRTUAL_DIST_CORE:${materialFingerprint}`);
@@ -309,20 +312,20 @@ export class EosSlsaProvenanceSbom {
     const subject = [
       {
         name: "bin/eos.mjs",
-        digest: { sha256: materialDigests["bin/eos.mjs"] }
+        digest: { sha256: materialDigests["bin/eos.mjs"] },
       },
       {
         name: "src/index.ts",
-        digest: { sha256: materialDigests["src/index.ts"] }
+        digest: { sha256: materialDigests["src/index.ts"] },
       },
       {
         name: "package.json",
-        digest: { sha256: materialDigests["package.json"] }
+        digest: { sha256: materialDigests["package.json"] },
       },
       {
         name: "dist/glorian-system-core",
-        digest: { sha256: virtualCoreDigest }
-      }
+        digest: { sha256: virtualCoreDigest },
+      },
     ];
 
     const predicate = {
@@ -331,30 +334,30 @@ export class EosSlsaProvenanceSbom {
         externalParameters: {
           sourceRepo: "https://github.com/valentinflorezarbelaez-ai/Glorian-System-.git",
           commitSha: resolvedSha,
-          runtimePurity: "LAYER_0_ZERO_NPM_DEPS"
+          runtimePurity: "LAYER_0_ZERO_NPM_DEPS",
         },
         internalParameters: {
           nodeVersion: process.version,
           platform: process.platform,
-          architecture: process.arch
+          architecture: process.arch,
         },
-        resolvedDependencies: []
+        resolvedDependencies: [],
       },
       runDetails: {
         builder: {
           id: "https://github.com/valentinflorezarbelaez-ai/Glorian-System-/.github/workflows/eos-sovereign-cicd.yml",
-          version: pkgVersion
+          version: pkgVersion,
         },
         metadata: {
           invocationId,
           startedOn: timestamp,
-          finishedOn: timestamp
-        }
-      }
+          finishedOn: timestamp,
+        },
+      },
     };
 
     const sha256Receipt = pureSha256(
-      `SLSA_V1.0:${resolvedSha}:${invocationId}:${subject[0].digest.sha256}:${timestamp}`
+      `SLSA_V1.0:${resolvedSha}:${invocationId}:${subject[0].digest.sha256}:${timestamp}`,
     );
 
     return deepFreeze({
@@ -362,7 +365,7 @@ export class EosSlsaProvenanceSbom {
       subject,
       predicateType: "https://slsa.dev/provenance/v1",
       predicate,
-      sha256Receipt
+      sha256Receipt,
     });
   }
 
@@ -373,7 +376,7 @@ export class EosSlsaProvenanceSbom {
   public static verifySupplyChain(
     projectRoot: string = process.cwd(),
     sbomPath?: string,
-    provenancePath?: string
+    provenancePath?: string,
   ): SupplyChainVerificationResult {
     const root = path.resolve(projectRoot);
     const targetSbom = sbomPath || path.join(root, "docs", "evidence", "sbom.cdx.json");
@@ -394,7 +397,7 @@ export class EosSlsaProvenanceSbom {
         valid: false,
         errors,
         componentsChecked: 0,
-        subjectsChecked: 0
+        subjectsChecked: 0,
       });
     }
 
@@ -413,7 +416,9 @@ export class EosSlsaProvenanceSbom {
         errors.push(`Invalid specVersion in SBOM: expected '1.5', got '${sbom.specVersion}'`);
       }
       if (sbom.metadata?.runtimeDependenciesCount !== 0) {
-        errors.push(`Layer-0 purity violation: runtimeDependenciesCount must be 0, got ${sbom.metadata?.runtimeDependenciesCount}`);
+        errors.push(
+          `Layer-0 purity violation: runtimeDependenciesCount must be 0, got ${sbom.metadata?.runtimeDependenciesCount}`,
+        );
       }
 
       if (Array.isArray(sbom.components)) {
@@ -433,7 +438,7 @@ export class EosSlsaProvenanceSbom {
             errors.push(`Missing SHA-256 hash entry in SBOM component: ${component.name}`);
           } else if (declaredHashObj.content.toLowerCase() !== actualHash.toLowerCase()) {
             errors.push(
-              `SHA-256 digest mismatch on component ${component.name}: declared ${declaredHashObj.content}, actual ${actualHash}`
+              `SHA-256 digest mismatch on component ${component.name}: declared ${declaredHashObj.content}, actual ${actualHash}`,
             );
           } else {
             componentsChecked++;
@@ -457,10 +462,14 @@ export class EosSlsaProvenanceSbom {
       const statement = JSON.parse(firstLine);
 
       if (statement._type !== "https://in-toto.io/Statement/v1") {
-        errors.push(`Invalid in-toto Statement _type: expected 'https://in-toto.io/Statement/v1', got '${statement._type}'`);
+        errors.push(
+          `Invalid in-toto Statement _type: expected 'https://in-toto.io/Statement/v1', got '${statement._type}'`,
+        );
       }
       if (statement.predicateType !== "https://slsa.dev/provenance/v1") {
-        errors.push(`Invalid predicateType: expected 'https://slsa.dev/provenance/v1', got '${statement.predicateType}'`);
+        errors.push(
+          `Invalid predicateType: expected 'https://slsa.dev/provenance/v1', got '${statement.predicateType}'`,
+        );
       }
 
       if (Array.isArray(statement.subject)) {
@@ -474,7 +483,7 @@ export class EosSlsaProvenanceSbom {
               errors.push(`Missing sha256 digest for subject: ${subj.name}`);
             } else if (declaredHash.toLowerCase() !== actualHash.toLowerCase()) {
               errors.push(
-                `SLSA Subject digest mismatch on ${subj.name}: declared ${declaredHash}, actual ${actualHash}`
+                `SLSA Subject digest mismatch on ${subj.name}: declared ${declaredHash}, actual ${actualHash}`,
               );
             } else {
               subjectsChecked++;
@@ -501,7 +510,7 @@ export class EosSlsaProvenanceSbom {
       componentsChecked,
       subjectsChecked,
       sbomDigest,
-      provenanceDigest
+      provenanceDigest,
     });
   }
 
@@ -510,7 +519,7 @@ export class EosSlsaProvenanceSbom {
    */
   public static recordReceiptInLedger(
     report: CycloneDxSbomReport | SlsaProvenanceReport,
-    dbPathOrRootDir?: string
+    dbPathOrRootDir?: string,
   ): boolean {
     const dbPath = dbPathOrRootDir
       ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
@@ -532,9 +541,9 @@ export class EosSlsaProvenanceSbom {
         payload: {
           type: isSbom ? "CYCLONEDX_SBOM" : "SLSA_PROVENANCE",
           sha256Receipt: report.sha256Receipt,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         },
-        engramTopicKey: `eos/supply-chain/${isSbom ? "sbom" : "slsa"}`
+        engramTopicKey: `eos/supply-chain/${isSbom ? "sbom" : "slsa"}`,
       });
       return true;
     } catch {

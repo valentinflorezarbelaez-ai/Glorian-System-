@@ -57,13 +57,13 @@ export class EosS0DesignSystemGovernor {
       "Tier 3: Component-Level Tokens",
       "4px Rigid Grid",
       "ANTI-PATTERN BLACKLIST",
-      "MASTER COMPONENT CATALOG"
+      "MASTER COMPONENT CATALOG",
     ];
 
     const missingSections = requiredSections.filter((sec) => !content.includes(sec));
     return {
       valid: missingSections.length === 0,
-      missingSections
+      missingSections,
     };
   }
 
@@ -83,10 +83,11 @@ export class EosS0DesignSystemGovernor {
         findings.push({
           severity: "BLOCKING",
           rule: "ANTI_PATTERN_FUZZY_SHADOW",
-          description: "Generic fuzzy drop shadows are prohibited by DESIGN.md. Use 1px hairline borders + radial top lighting.",
+          description:
+            "Generic fuzzy drop shadows are prohibited by DESIGN.md. Use 1px hairline borders + radial top lighting.",
           file: filePath,
           line: lineNum,
-          matchedSnippet: lineText.trim()
+          matchedSnippet: lineText.trim(),
         });
       }
 
@@ -95,19 +96,21 @@ export class EosS0DesignSystemGovernor {
         findings.push({
           severity: "BLOCKING",
           rule: "ANTI_PATTERN_LINEAR_TRANSITION",
-          description: "Linear transition curves are prohibited for state changes. All motion must use spring physics or cubic-bezier(0.16, 1, 0.3, 1).",
+          description:
+            "Linear transition curves are prohibited for state changes. All motion must use spring physics or cubic-bezier(0.16, 1, 0.3, 1).",
           file: filePath,
           line: lineNum,
-          matchedSnippet: lineText.trim()
+          matchedSnippet: lineText.trim(),
         });
       } else if (/animation:\s*[^;]*\blinear\b/i.test(lineText) && !/(?:rotate|spin)/i.test(lineText)) {
         findings.push({
           severity: "BLOCKING",
           rule: "ANTI_PATTERN_LINEAR_TRANSITION",
-          description: "Linear animation curves are prohibited for non-rotational animations. Use spring or cubic-bezier.",
+          description:
+            "Linear animation curves are prohibited for non-rotational animations. Use spring or cubic-bezier.",
           file: filePath,
           line: lineNum,
-          matchedSnippet: lineText.trim()
+          matchedSnippet: lineText.trim(),
         });
       }
 
@@ -122,7 +125,7 @@ export class EosS0DesignSystemGovernor {
             description: `Spacing value ${val}px violates the 4px rigid grid rule from DESIGN.md.`,
             file: filePath,
             line: lineNum,
-            matchedSnippet: lineText.trim()
+            matchedSnippet: lineText.trim(),
           });
         }
       }
@@ -145,7 +148,7 @@ export class EosS0DesignSystemGovernor {
           severity: "BLOCKING",
           rule: "DESIGN_CONTRACT_INCOMPLETE",
           description: `Contract section missing: ${m}`,
-          file: "DESIGN.md"
+          file: "DESIGN.md",
         });
       }
     }
@@ -202,7 +205,7 @@ export class EosS0DesignSystemGovernor {
       perfectionIndex,
       status,
       findings,
-      evidenceDigestSha256: digest
+      evidenceDigestSha256: digest,
     };
   }
 
@@ -227,14 +230,12 @@ export class EosS0DesignSystemGovernor {
           severity: "BLOCKING",
           rule: "DESIGN_CONTRACT_INCOMPLETE",
           description: `Contract section missing: ${m}`,
-          file: "DESIGN.md"
+          file: "DESIGN.md",
         });
       }
     }
 
-    const filesToAudit = targetPaths && targetPaths.length > 0
-      ? targetPaths
-      : ["index.html", "css/eos.css"];
+    const filesToAudit = targetPaths && targetPaths.length > 0 ? targetPaths : ["index.html", "css/eos.css"];
 
     let inspectedFiles = 0;
     for (const relPath of filesToAudit) {
@@ -250,7 +251,7 @@ export class EosS0DesignSystemGovernor {
       }
     }
 
-    let score = 100 - (violations.length * 20) - (warnings.length * 2);
+    let score = 100 - violations.length * 20 - warnings.length * 2;
     if (score < 0) score = 0;
 
     const contractHash = crypto
@@ -264,7 +265,7 @@ export class EosS0DesignSystemGovernor {
       violations,
       warnings,
       score,
-      contractHash
+      contractHash,
     };
   }
 }

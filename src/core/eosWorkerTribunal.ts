@@ -31,7 +31,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import type { ThoughtBranch, BranchVerdict } from "./eosAgiCore.ts";
+import type { ThoughtBranch, BranchVerdict } from "./eosAgiTypes.ts";
 import { assertInvariant } from "./eosKernelPrimitives.ts";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -41,22 +41,22 @@ const __filename = fileURLToPath(import.meta.url);
 // ============================================================================
 
 export interface TribunalWorkerInput {
-  readonly branch:       ThoughtBranch;
-  readonly projectRoot:  string;
-  readonly testCommand:  string;
-  readonly testCwd:      string;
-  readonly timeoutMs:    number;
+  readonly branch: ThoughtBranch;
+  readonly projectRoot: string;
+  readonly testCommand: string;
+  readonly testCwd: string;
+  readonly timeoutMs: number;
 }
 
 export interface TribunalWorkerOutput {
-  readonly branchId:    string;
-  readonly passed:      boolean;
-  readonly exitCode:    number;
-  readonly stdout:      string;
-  readonly stderr:      string;
-  readonly durationMs:  number;
+  readonly branchId: string;
+  readonly passed: boolean;
+  readonly exitCode: number;
+  readonly stdout: string;
+  readonly stderr: string;
+  readonly durationMs: number;
   readonly rollbackApplied: boolean;
-  readonly error?:      string;
+  readonly error?: string;
 }
 
 // ============================================================================
@@ -67,36 +67,38 @@ if (!isMainThread && parentPort) {
   const input: TribunalWorkerInput = workerData;
 
   async function runInWorker(): Promise<TribunalWorkerOutput> {
-    const t0       = Date.now();
-    const branch   = input.branch;
-    const root     = input.projectRoot;
+    const t0 = Date.now();
+    const branch = input.branch;
+    const root = input.projectRoot;
 
     // Build mutations list
     const mutations: Array<{ fullPath: string; content: string }> = [];
+    const within = (p: string): boolean => {
+      const rel = path.relative(root, p);
+      return rel !== "" && rel !== ".." && !rel.startsWith(".." + path.sep) && !path.isAbsolute(rel);
+    };
 
     if (branch.targets && branch.targets.length > 0) {
       for (const t of branch.targets) {
         const fullPath = path.resolve(root, t.relPath);
-        assertInvariant(
-          fullPath.startsWith(root),
-          `Worker security: target "${t.relPath}" escapes projectRoot.`
-        );
+        assertInvariant(within(fullPath), `Worker security: target "${t.relPath}" escapes projectRoot.`);
         mutations.push({ fullPath, content: t.content });
       }
     } else if (branch.targetRelPath && branch.proposedContent !== undefined) {
       const fullPath = path.resolve(root, branch.targetRelPath);
-      assertInvariant(
-        fullPath.startsWith(root),
-        `Worker security: target "${branch.targetRelPath}" escapes projectRoot.`
-      );
+      assertInvariant(within(fullPath), `Worker security: target "${branch.targetRelPath}" escapes projectRoot.`);
       mutations.push({ fullPath, content: branch.proposedContent });
     }
 
     if (mutations.length === 0) {
       return {
-        branchId: branch.id, passed: false, exitCode: 1,
-        stdout: "", stderr: "No file targets in branch",
-        durationMs: Date.now() - t0, rollbackApplied: false,
+        branchId: branch.id,
+        passed: false,
+        exitCode: 1,
+        stdout: "",
+        stderr: "No file targets in branch",
+        durationMs: Date.now() - t0,
+        rollbackApplied: false,
       };
     }
 
@@ -125,9 +127,13 @@ if (!isMainThread && parentPort) {
       });
 
       return {
-        branchId: branch.id, passed: true, exitCode: 0,
-        stdout: stdout.slice(0, 2000), stderr: "",
-        durationMs: Date.now() - t0, rollbackApplied: false,
+        branchId: branch.id,
+        passed: true,
+        exitCode: 0,
+        stdout: stdout.slice(0, 2000),
+        stderr: "",
+        durationMs: Date.now() - t0,
+        rollbackApplied: false,
       };
     } catch (err: unknown) {
       // Rollback all files
@@ -138,26 +144,33 @@ if (!isMainThread && parentPort) {
 
       const e = err as { stdout?: string; stderr?: string; status?: number; message?: string };
       return {
-        branchId: branch.id, passed: false,
+        branchId: branch.id,
+        passed: false,
         exitCode: e.status ?? 1,
-        stdout:   (e.stdout ?? "").slice(0, 1000),
-        stderr:   (e.stderr ?? e.message ?? "").slice(0, 1000),
-        durationMs: Date.now() - t0, rollbackApplied: true,
+        stdout: (e.stdout ?? "").slice(0, 1000),
+        stderr: (e.stderr ?? e.message ?? "").slice(0, 1000),
+        durationMs: Date.now() - t0,
+        rollbackApplied: true,
       };
     }
   }
 
-  runInWorker().then(output => {
-    parentPort!.postMessage(output);
-  }).catch(err => {
-    parentPort!.postMessage({
-      branchId: workerData?.branch?.id ?? "unknown",
-      passed: false, exitCode: 1,
-      stdout: "", stderr: String(err?.message ?? err).slice(0, 500),
-      durationMs: 0, rollbackApplied: false,
-      error: String(err?.message ?? err),
-    } as TribunalWorkerOutput);
-  });
+  runInWorker()
+    .then((output) => {
+      parentPort!.postMessage(output);
+    })
+    .catch((err) => {
+      parentPort!.postMessage({
+        branchId: workerData?.branch?.id ?? "unknown",
+        passed: false,
+        exitCode: 1,
+        stdout: "",
+        stderr: String(err?.message ?? err).slice(0, 500),
+        durationMs: 0,
+        rollbackApplied: false,
+        error: String(err?.message ?? err),
+      } as TribunalWorkerOutput);
+    });
 }
 
 // ============================================================================
@@ -189,7 +202,6 @@ export interface TribunalResult {
  * affect the harness or other branches.
  */
 export class EosWorkerTribunal {
-
   /**
    * Evaluates all branches, optionally in parallel.
    * Respects Occam's Razor: sorts by complexity, tries simplest first.
@@ -201,57 +213,70 @@ export class EosWorkerTribunal {
     projectRoot: string,
     testCwd: string,
     timeoutMs: number,
-    options: WorkerTribunalOptions = {}
+    options: WorkerTribunalOptions = {},
   ): Promise<TribunalResult> {
     const t0 = Date.now();
     const sorted = [...branches].sort((a, b) => a.estimatedComplexity - b.estimatedComplexity);
-    const concurrent    = options.concurrent ?? true;
+    const concurrent = options.concurrent ?? true;
     const maxConcurrency = options.maxConcurrency ?? Math.min(sorted.length, 4);
 
     let verdicts: BranchVerdict[];
 
     if (concurrent) {
       verdicts = await EosWorkerTribunal._evaluateConcurrent(
-        sorted, testCommand, projectRoot, testCwd, timeoutMs, maxConcurrency, options.workerModulePath
+        sorted,
+        testCommand,
+        projectRoot,
+        testCwd,
+        timeoutMs,
+        maxConcurrency,
+        options.workerModulePath,
       );
     } else {
       verdicts = await EosWorkerTribunal._evaluateSequential(
-        sorted, testCommand, projectRoot, testCwd, timeoutMs, options.workerModulePath
+        sorted,
+        testCommand,
+        projectRoot,
+        testCwd,
+        timeoutMs,
+        options.workerModulePath,
       );
     }
 
     // Pick winning branch: simplest (first in sorted order) that passed
-    const winningVerdict = verdicts.find(v => v.passed);
-    const winningBranch  = sorted.find(b => b.id === winningVerdict?.branchId);
+    const winningVerdict = verdicts.find((v) => v.passed);
+    const winningBranch = sorted.find((b) => b.id === winningVerdict?.branchId);
 
     const receiptData = `${winningVerdict?.branchId ?? "none"}:${verdicts.length}:${Date.now() - t0}`;
     const executionHash = `sha256:${crypto.createHash("sha256").update(receiptData).digest("hex")}`;
 
     return {
-      verdicts:         Object.freeze(verdicts),
-      winningBranchId:  winningBranch?.id ?? null,
-      winningStrategy:  winningBranch?.strategy ?? null,
-      totalDurationMs:  Date.now() - t0,
+      verdicts: Object.freeze(verdicts),
+      winningBranchId: winningBranch?.id ?? null,
+      winningStrategy: winningBranch?.strategy ?? null,
+      totalDurationMs: Date.now() - t0,
       executionHash,
     };
   }
 
   /** Runs all branches concurrently. Max `maxConcurrency` workers at once. */
   private static async _evaluateConcurrent(
-    branches:    readonly ThoughtBranch[],
+    branches: readonly ThoughtBranch[],
     testCommand: string,
     projectRoot: string,
-    testCwd:     string,
-    timeoutMs:   number,
+    testCwd: string,
+    timeoutMs: number,
     maxConcurrency: number,
-    workerPath?: string
+    workerPath?: string,
   ): Promise<BranchVerdict[]> {
     const verdicts: BranchVerdict[] = [];
     // Process in batches of maxConcurrency
     for (let i = 0; i < branches.length; i += maxConcurrency) {
       const batch = branches.slice(i, i + maxConcurrency);
       const results = await Promise.all(
-        batch.map(branch => EosWorkerTribunal._runInWorker(branch, testCommand, projectRoot, testCwd, timeoutMs, workerPath))
+        batch.map((branch) =>
+          EosWorkerTribunal._runInWorker(branch, testCommand, projectRoot, testCwd, timeoutMs, workerPath),
+        ),
       );
       verdicts.push(...results);
     }
@@ -260,16 +285,23 @@ export class EosWorkerTribunal {
 
   /** Runs branches sequentially (stops at first pass). */
   private static async _evaluateSequential(
-    branches:    readonly ThoughtBranch[],
+    branches: readonly ThoughtBranch[],
     testCommand: string,
     projectRoot: string,
-    testCwd:     string,
-    timeoutMs:   number,
-    workerPath?: string
+    testCwd: string,
+    timeoutMs: number,
+    workerPath?: string,
   ): Promise<BranchVerdict[]> {
     const verdicts: BranchVerdict[] = [];
     for (const branch of branches) {
-      const verdict = await EosWorkerTribunal._runInWorker(branch, testCommand, projectRoot, testCwd, timeoutMs, workerPath);
+      const verdict = await EosWorkerTribunal._runInWorker(
+        branch,
+        testCommand,
+        projectRoot,
+        testCwd,
+        timeoutMs,
+        workerPath,
+      );
       verdicts.push(verdict);
       if (verdict.passed) break; // stop at first pass (sequential Occam's Razor)
     }
@@ -278,12 +310,12 @@ export class EosWorkerTribunal {
 
   /** Spawns a single Worker for one branch. Returns BranchVerdict regardless of crash. */
   private static _runInWorker(
-    branch:      ThoughtBranch,
+    branch: ThoughtBranch,
     testCommand: string,
     projectRoot: string,
-    testCwd:     string,
-    timeoutMs:   number,
-    workerPath?: string
+    testCwd: string,
+    timeoutMs: number,
+    workerPath?: string,
   ): Promise<BranchVerdict> {
     return new Promise((resolve) => {
       const input: TribunalWorkerInput = { branch, projectRoot, testCommand, testCwd, timeoutMs };
@@ -323,13 +355,13 @@ export class EosWorkerTribunal {
         worker.on("message", (output: TribunalWorkerOutput) => {
           clearTimeout(timer);
           resolve({
-            branchId:     output.branchId,
-            strategy:     branch.strategy,
-            passed:       output.passed,
-            exitCode:     output.exitCode,
-            stdout:       output.stdout,
-            stderr:       output.stderr,
-            durationMs:   output.durationMs,
+            branchId: output.branchId,
+            strategy: branch.strategy,
+            passed: output.passed,
+            exitCode: output.exitCode,
+            stdout: output.stdout,
+            stderr: output.stderr,
+            durationMs: output.durationMs,
             rollbackApplied: output.rollbackApplied,
           });
         });

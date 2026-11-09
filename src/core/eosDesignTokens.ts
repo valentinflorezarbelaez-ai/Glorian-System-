@@ -19,39 +19,39 @@
 // 1. CLOSED COLOR PALETTE (the ONLY colors allowed)
 // ============================================================================
 
-export const ALLOWED_COLORS: readonly Record<string, string> = Object.freeze({
+export const ALLOWED_COLORS: Record<string, string> = Object.freeze({
   // ── Backgrounds ──────────────────────────────────────────────────────
-  "void":      "#050505",   // Fondo base absoluto (Palantir / Anduril)
-  "surface":   "#0A0C12",   // Capa elevada 1
-  "panel":     "#11141D",   // Capa elevada 2
-  "glass":     "rgba(255,255,255,0.03)",
+  void: "#050505", // Fondo base absoluto (Palantir / Anduril)
+  surface: "#0A0C12", // Capa elevada 1
+  panel: "#11141D", // Capa elevada 2
+  glass: "rgba(255,255,255,0.03)",
 
   // ── Borders ───────────────────────────────────────────────────────────
   "border-hairline": "rgba(255,255,255,0.09)",
-  "border-focus":    "rgba(59,130,246,0.50)",
+  "border-focus": "rgba(59,130,246,0.50)",
 
   // ── Text (Ink) ────────────────────────────────────────────────────────
-  "ink-primary":   "#F4F4F5",  // Blanco óptico — NUNCA #FFFFFF puro
-  "ink-secondary": "#94A3B8",  // Lectura técnica descansada
-  "ink-muted":     "#475569",  // Coordenadas y telemetría
-  "ink-inverted":  "#050505",  // Texto sobre fondos claros
+  "ink-primary": "#F4F4F5", // Blanco óptico — NUNCA #FFFFFF puro
+  "ink-secondary": "#94A3B8", // Lectura técnica descansada
+  "ink-muted": "#475569", // Coordenadas y telemetría
+  "ink-inverted": "#050505", // Texto sobre fondos claros
 
   // ── Accent ────────────────────────────────────────────────────────────
-  "accent-blue":   "#2563EB",  // Azul majestuoso / técnico
-  "accent-glow":   "#3B82F6",  // Luz direccional
-  "accent-status": "#10B981",  // Indicador operacional (verde)
-  "accent-warn":   "#F59E0B",  // Advertencia (ámbar)
-  "accent-error":  "#EF4444",  // Error (rojo)
-  "accent-cyan":   "#06B6D4",  // Información técnica
+  "accent-blue": "#2563EB", // Azul majestuoso / técnico
+  "accent-glow": "#3B82F6", // Luz direccional
+  "accent-status": "#10B981", // Indicador operacional (verde)
+  "accent-warn": "#F59E0B", // Advertencia (ámbar)
+  "accent-error": "#EF4444", // Error (rojo)
+  "accent-cyan": "#06B6D4", // Información técnica
 
   // ── Semantic CSS variable names (for the CSS file) ─────────────────────
-  "--bg-base":    "#090A0F",
+  "--bg-base": "#090A0F",
   "--bg-surface": "#11131A",
-  "--bg-elevated":"#0D0E14",
+  "--bg-elevated": "#0D0E14",
   "--text-white": "#F8FAFC",
-  "--text-zinc":  "#E4E4E7",
+  "--text-zinc": "#E4E4E7",
   "--text-muted": "#A1A1AA",
-  "--text-dim":   "#71717A",
+  "--text-dim": "#71717A",
 });
 
 // ============================================================================
@@ -66,42 +66,42 @@ export const FORBIDDEN_COLOR_PATTERNS: readonly RegExp[] = Object.freeze([
   /#[0-9a-f]{6}/gi, // Any hex color not in ALLOWED_COLORS
 ]);
 
-export const FORBIDDEN_BORDER_RADIUS: readonly Record<string, string> = Object.freeze({
-  "rounded-2xl":  "Use rounded-sm (4px max) — no large radii allowed",
-  "rounded-3xl":  "Use rounded-sm (4px max) — no large radii allowed",
-  "rounded-xl":   "Use rounded-sm (4px max) — no large radii allowed",
+export const FORBIDDEN_BORDER_RADIUS: Record<string, string> = Object.freeze({
+  "rounded-2xl": "Use rounded-sm (4px max) — no large radii allowed",
+  "rounded-3xl": "Use rounded-sm (4px max) — no large radii allowed",
+  "rounded-xl": "Use rounded-sm (4px max) — no large radii allowed",
   "rounded-full": "Only allowed for status dots (max 9999px)",
-  "border-radius: 1rem":   "Use 4px max — no 16px radii",
-  "border-radius: 2rem":   "Use 4px max — no 32px radii",
+  "border-radius: 1rem": "Use 4px max — no 16px radii",
+  "border-radius: 2rem": "Use 4px max — no 32px radii",
   "border-radius: 9999px": "Only for status dots",
 });
 
-export const FORBIDDEN_SHADOWS: readonly Record<string, string> = Object.freeze({
-  "shadow-lg":    "Only box-shadow: glow (blue) or inner (1px cenital) allowed",
-  "shadow-xl":    "Only box-shadow: glow (blue) or inner (1px cenital) allowed",
-  "shadow-2xl":   "Only box-shadow: glow (blue) or inner (1px cenital) allowed",
-  "shadow-md":    "Only box-shadow: glow (blue) or inner (1px cenital) allowed",
-  "shadow-sm":    "Only box-shadow: glow (blue) or inner (1px cenital) allowed",
+export const FORBIDDEN_SHADOWS: Record<string, string> = Object.freeze({
+  "shadow-lg": "Only box-shadow: glow (blue) or inner (1px cenital) allowed",
+  "shadow-xl": "Only box-shadow: glow (blue) or inner (1px cenital) allowed",
+  "shadow-2xl": "Only box-shadow: glow (blue) or inner (1px cenital) allowed",
+  "shadow-md": "Only box-shadow: glow (blue) or inner (1px cenital) allowed",
+  "shadow-sm": "Only box-shadow: glow (blue) or inner (1px cenital) allowed",
   "box-shadow: 0 4px 6px": "Generic shadow — use glow or inner only",
   "box-shadow: 0 10px 15px": "Generic shadow — use glow or inner only",
   "box-shadow: 0 20px 25px": "Generic shadow — use glow or inner only",
 });
 
 export const ALLOWED_BORDER_RADIUS = Object.freeze({
-  "0px":   "none",
-  "2px":   "xs (micro-redondeo técnico)",
-  "4px":   "sm (máximo para paneles)",
-  "0.5rem":"md (máximo para tarjetas)",
-  "0.75rem":"lg (máximo para ventanas)",
-  "1rem":  "xl (solo mockup windows)",
-  "9999px":"full (solo status dots)",
+  "0px": "none",
+  "2px": "xs (micro-redondeo técnico)",
+  "4px": "sm (máximo para paneles)",
+  "0.5rem": "md (máximo para tarjetas)",
+  "0.75rem": "lg (máximo para ventanas)",
+  "1rem": "xl (solo mockup windows)",
+  "9999px": "full (solo status dots)",
 });
 
 export const ALLOWED_SHADOWS = Object.freeze({
-  "none":    "none",
-  "glow":    "0 0 24px -4px rgba(59,130,246,0.25)",
-  "inner":   "inset 0 1px 0 0 rgba(255,255,255,0.08)",
-  "window":  "0 25px 50px -12px rgba(0,0,0,0.50)",
+  none: "none",
+  glow: "0 0 24px -4px rgba(59,130,246,0.25)",
+  inner: "inset 0 1px 0 0 rgba(255,255,255,0.08)",
+  window: "0 25px 50px -12px rgba(0,0,0,0.50)",
 });
 
 // ============================================================================
@@ -119,9 +119,9 @@ export const ALLOWED_FONTS = Object.freeze({
 // ============================================================================
 
 export const ALLOWED_TIMING_FUNCTIONS = Object.freeze({
-  spring:  "cubic-bezier(0.16, 1, 0.3, 1)",  // Física exponencial obligatoria
-  ease:    "ease-out",
-  fade:    "ease-out 0.4s",
+  spring: "cubic-bezier(0.16, 1, 0.3, 1)", // Física exponencial obligatoria
+  ease: "ease-out",
+  fade: "ease-out 0.4s",
 });
 
 // ============================================================================
@@ -129,9 +129,9 @@ export const ALLOWED_TIMING_FUNCTIONS = Object.freeze({
 // ============================================================================
 
 export const ALLOWED_SPACING = Object.freeze({
-  "1px":  "hairline border gap",
-  "4px":  "xs",
-  "8px":  "sm",
+  "1px": "hairline border gap",
+  "4px": "xs",
+  "8px": "sm",
   "12px": "base",
   "16px": "md",
   "24px": "lg",
@@ -158,16 +158,13 @@ export interface DesignViolation {
  * Validates a CSS file against the closed token system.
  * Returns an array of violations (empty = clean).
  */
-export function validateCssAgainstTokens(
-  content: string,
-  filePath: string
-): DesignViolation[] {
+export function validateCssAgainstTokens(content: string, filePath: string): DesignViolation[] {
   const violations: DesignViolation[] = [];
   const lines = content.split("\n");
   const allowedHexValues = new Set(
     Object.values(ALLOWED_COLORS)
-      .filter(v => v.startsWith("#"))
-      .map(v => v.toLowerCase())
+      .filter((v) => v.startsWith("#"))
+      .map((v) => v.toLowerCase()),
   );
 
   for (let i = 0; i < lines.length; i++) {
@@ -242,10 +239,7 @@ export function validateCssAgainstTokens(
 /**
  * Validates an HTML file against the closed token system.
  */
-export function validateHtmlAgainstTokens(
-  content: string,
-  filePath: string
-): DesignViolation[] {
+export function validateHtmlAgainstTokens(content: string, filePath: string): DesignViolation[] {
   const violations: DesignViolation[] = [];
   const lines = content.split("\n");
 
@@ -254,7 +248,7 @@ export function validateHtmlAgainstTokens(
     const lineNum = i + 1;
 
     // Check for inline styles (except CSS variables)
-    if (line.includes('style="') && !line.includes('var(--')) {
+    if (line.includes('style="') && !line.includes("var(--")) {
       violations.push({
         file: filePath,
         line: lineNum,

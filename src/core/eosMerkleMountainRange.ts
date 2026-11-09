@@ -9,11 +9,7 @@
  * Zero external runtime npm dependencies (Law V). Node 24 strip-only compliant.
  */
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface MmrNode {
@@ -30,7 +26,7 @@ export interface MmrInclusionProof {
   readonly peakHeight: number;
   readonly peakHash: string;
   readonly siblingHashes: readonly string[]; // Sibling hashes from bottom to peak
-  readonly peakHashes: readonly string[];   // All peak hashes in order
+  readonly peakHashes: readonly string[]; // All peak hashes in order
   readonly baggedRoot: string;
 }
 
@@ -68,7 +64,7 @@ export class EosMerkleMountainRange {
     let newNode: MmrNode = {
       hash: leafHash,
       height: 0,
-      leafCount: 1
+      leafCount: 1,
     };
 
     // Push new peak and merge equal heights
@@ -85,7 +81,7 @@ export class EosMerkleMountainRange {
           height: left.height + 1,
           leafCount: left.leafCount + right.leafCount,
           left,
-          right
+          right,
         };
         this.peaks.push(parentNode);
       } else {
@@ -97,7 +93,7 @@ export class EosMerkleMountainRange {
     return {
       leafIndex,
       leafHash,
-      newBaggedRoot
+      newBaggedRoot,
     };
   }
 
@@ -135,7 +131,7 @@ export class EosMerkleMountainRange {
   public generateInclusionProof(leafIndex: number): MmrInclusionProof {
     assertPrecondition(
       leafIndex >= 0 && leafIndex < this.leaves.length,
-      `Leaf index ${leafIndex} out of bounds (0..${this.leaves.length - 1})`
+      `Leaf index ${leafIndex} out of bounds (0..${this.leaves.length - 1})`,
     );
 
     const targetLeafHash = this.leaves[leafIndex];
@@ -188,7 +184,7 @@ export class EosMerkleMountainRange {
       peakHash: targetPeak.hash,
       siblingHashes,
       peakHashes,
-      baggedRoot
+      baggedRoot,
     });
   }
 
@@ -198,7 +194,7 @@ export class EosMerkleMountainRange {
   public static verifyInclusionProof(
     leafData: string | Record<string, unknown>,
     proof: MmrInclusionProof,
-    expectedRoot: string
+    expectedRoot: string,
   ): boolean {
     const computedLeafHash = this.hashLeaf(leafData);
     if (computedLeafHash !== proof.leafHash) {
@@ -243,9 +239,11 @@ export class EosMerkleMountainRange {
   /**
    * Persists MMR global root into SQLite WAL ledger.
    */
-  public recordRootInLedger(
-    ledgerPath?: string
-  ): { readonly recorded: boolean; readonly receiptHash: string; readonly baggedRoot: string } {
+  public recordRootInLedger(ledgerPath?: string): {
+    readonly recorded: boolean;
+    readonly receiptHash: string;
+    readonly baggedRoot: string;
+  } {
     const baggedRoot = this.getBaggedRoot();
     const ledger = new EosDurableSqliteLedger(ledgerPath || ":memory:");
     try {
@@ -256,8 +254,8 @@ export class EosMerkleMountainRange {
         payload: {
           baggedRoot,
           totalLeaves: this.leaves.length,
-          peakCount: this.peaks.length
-        }
+          peakCount: this.peaks.length,
+        },
       });
       return { recorded: true, receiptHash: entry.entryHash, baggedRoot };
     } finally {

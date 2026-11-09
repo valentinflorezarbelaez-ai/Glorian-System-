@@ -15,12 +15,9 @@ import path from "node:path";
 import {
   EosProgressiveCanaryMesh,
   type CanaryRolloutReport,
-  type CanaryTelemetry
+  type CanaryTelemetry,
 } from "./eosProgressiveCanaryMesh.ts";
-import {
-  EosMultiWindowSloGovernor,
-  type ServiceSloStatus
-} from "./eosMultiWindowSloGovernor.ts";
+import { EosMultiWindowSloGovernor, type ServiceSloStatus } from "./eosMultiWindowSloGovernor.ts";
 import type { DeliveryResult, ProductQualityScorecard } from "./eosProductDeliveryOrchestrator.ts";
 
 export const CEILING_EPISTEMIC = "SOVEREIGN_CEILING_10_OF_10_WITHIN_TESTED_SCOPE" as const;
@@ -29,7 +26,7 @@ export const FORBIDDEN_CEILING_CLAIMS = [
   "NSA_GRADE",
   "AEROSPACE_CERTIFIED",
   "ABSOLUTE_UNIVERSAL_PERFECTION",
-  "FEDERAL_ATO"
+  "FEDERAL_ATO",
 ] as const;
 
 export interface PlatformIdpSloInput {
@@ -82,18 +79,13 @@ export interface CeilingAttestation {
 
 /** Clean canary telemetry sequence: 1% → 5% → 25% → 100%. */
 export function buildCleanCanaryTelemetry(): CanaryTelemetry[] {
-  const stages = [
-    "INITIALIZED",
-    "CANARY_1_PCT",
-    "CANARY_5_PCT",
-    "CANARY_25_PCT"
-  ] as const;
+  const stages = ["INITIALIZED", "CANARY_1_PCT", "CANARY_5_PCT", "CANARY_25_PCT"] as const;
   return stages.map((stage) => ({
     stage,
     sampleRequests: 100_000,
     failedRequests: 0,
     p99LatencyMs: 40,
-    baselineP99LatencyMs: 40
+    baselineP99LatencyMs: 40,
   }));
 }
 
@@ -104,8 +96,8 @@ export function buildBreachingCanaryTelemetry(): CanaryTelemetry[] {
       sampleRequests: 10_000,
       failedRequests: 500,
       p99LatencyMs: 40,
-      baselineP99LatencyMs: 40
-    }
+      baselineP99LatencyMs: 40,
+    },
   ];
 }
 
@@ -114,7 +106,7 @@ export function evaluatePlatformSlos(input: PlatformIdpSloInput): PlatformIdpSlo
     maxTimeToGreenMs: 5_000,
     minGatePassRate: 99,
     minScorecardScore: 80,
-    requirePristine: true
+    requirePristine: true,
   };
   const breaches: string[] = [];
   if (input.timeToGreenMs > budgets.maxTimeToGreenMs) {
@@ -160,7 +152,7 @@ export function assertDogfoodCeiling(projectRoot: string = process.cwd()): Dogfo
       score: raw.score,
       grade: raw.grade,
       path: rel.replace(/\\/g, "/"),
-      reason: ok ? undefined : "SCORECARD_BELOW_CEILING"
+      reason: ok ? undefined : "SCORECARD_BELOW_CEILING",
     };
   } catch {
     return { ok: false, score: 0, grade: "C", path: rel.replace(/\\/g, "/"), reason: "SCORECARD_UNREADABLE" };
@@ -177,12 +169,12 @@ export function buildIvvReadinessChecklist(projectRoot: string = process.cwd()):
     "docs/evidence/EVD-SPEC-147-WAVE-C.json",
     "docs/evidence/EVD-SPEC-148-WAVE-C.json",
     "docs/products/demo-ledger-mvp/scorecard.json",
-    "docs/releases/EOS_FREEZE_GATE_STATUS.md"
+    "docs/releases/EOS_FREEZE_GATE_STATUS.md",
   ];
   const items = required.map((p) => ({
     id: p,
     path: p,
-    present: fs.existsSync(path.join(projectRoot, p))
+    present: fs.existsSync(path.join(projectRoot, p)),
   }));
   const missing = items.filter((i) => !i.present).map((i) => i.path);
   const ready = missing.length === 0;
@@ -199,7 +191,7 @@ export function getCeilingEpistemicState(): {
 } {
   return {
     state: CEILING_EPISTEMIC,
-    forbiddenClaims: [...FORBIDDEN_CEILING_CLAIMS]
+    forbiddenClaims: [...FORBIDDEN_CEILING_CLAIMS],
   };
 }
 
@@ -235,7 +227,7 @@ export class EosPlatformOpsCeiling {
       timeToGreenMs,
       gatePassRate,
       scorecardScore,
-      controlPlanePristine
+      controlPlanePristine,
     });
 
     const dogfood = assertDogfoodCeiling(projectRoot);
@@ -244,7 +236,7 @@ export class EosPlatformOpsCeiling {
     if (options.runCanary) {
       const mesh = new EosProgressiveCanaryMesh(
         options.versionTarget ?? "v75.0.0-ladder16",
-        options.previousStableVersion ?? "v75.0.0-ladder15"
+        options.previousStableVersion ?? "v75.0.0-ladder15",
       );
       const seq =
         options.canaryTelemetry ??
@@ -258,13 +250,13 @@ export class EosPlatformOpsCeiling {
       serviceId: "eos-product-delivery-idp",
       availabilitySlo: 0.999,
       latencyThresholdMs: 5000,
-      periodTotalEventsBudget: 100_000
+      periodTotalEventsBudget: 100_000,
     });
     for (let i = 0; i < 200; i++) {
       governor.ingestEvent("eos-product-delivery-idp", {
         timestamp: Date.now() - i * 1000,
         isError: false,
-        latencyMs: 50
+        latencyMs: 50,
       });
     }
     const governorSnapshot = governor.evaluateService("eos-product-delivery-idp");
@@ -283,7 +275,7 @@ export class EosPlatformOpsCeiling {
     const sha256Receipt = crypto
       .createHash("sha256")
       .update(
-        `CEILING:${CEILING_EPISTEMIC}:${slo.sha256Receipt}:${dogfood.score}:${canary?.sha256Receipt ?? "none"}:${ivv.sha256Receipt}:${ceilingMet}`
+        `CEILING:${CEILING_EPISTEMIC}:${slo.sha256Receipt}:${dogfood.score}:${canary?.sha256Receipt ?? "none"}:${ivv.sha256Receipt}:${ceilingMet}`,
       )
       .digest("hex");
 
@@ -297,7 +289,7 @@ export class EosPlatformOpsCeiling {
       governorSnapshot,
       ceilingMet,
       sha256Receipt,
-      durationMs
+      durationMs,
     };
   }
 
@@ -306,21 +298,21 @@ export class EosPlatformOpsCeiling {
    */
   public static promoteDeliveryWithCanary(
     delivery: DeliveryResult,
-    options: Omit<CeilingRunOptions, "delivery" | "runCanary"> = {}
+    options: Omit<CeilingRunOptions, "delivery" | "runCanary"> = {},
   ): CeilingAttestation {
     if (delivery.status !== "SUCCESS") {
       const blocked = this.runCeilingAttestation({
         ...options,
         delivery,
         runCanary: false,
-        controlPlanePristine: options.controlPlanePristine ?? true
+        controlPlanePristine: options.controlPlanePristine ?? true,
       });
       return { ...blocked, ceilingMet: false };
     }
     return this.runCeilingAttestation({
       ...options,
       delivery,
-      runCanary: true
+      runCanary: true,
     });
   }
 }

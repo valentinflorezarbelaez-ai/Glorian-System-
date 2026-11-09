@@ -87,7 +87,7 @@ export class EosGoAccelerator {
       execFileSync("go", ["build", "-o", this.binaryPath, this.goSourcePath], {
         cwd: this.projectRoot,
         stdio: "ignore",
-        timeout: 30_000
+        timeout: 30_000,
       });
       return fs.existsSync(this.binaryPath);
     } catch {
@@ -110,14 +110,14 @@ export class EosGoAccelerator {
             cwd: this.projectRoot,
             encoding: "utf8",
             stdio: ["ignore", "pipe", "ignore"],
-            timeout: 30_000
+            timeout: 30_000,
           });
         } else {
           stdout = execFileSync("go", ["run", this.goSourcePath, "--mode=benchmark", `--concurrency=${concurrency}`], {
             cwd: this.projectRoot,
             encoding: "utf8",
             stdio: ["ignore", "pipe", "ignore"],
-            timeout: 30_000
+            timeout: 30_000,
           });
         }
 
@@ -135,8 +135,9 @@ export class EosGoAccelerator {
           timestamp: String(parsed.timestamp || new Date().toISOString()),
           status: "NATIVE_BENCHMARK_COMPLETED",
           executionMode: "NATIVE_GO",
-          benchmarkScope: "synthetic typed-array work in a local Go process; no Spotify, audio stream, or SIMD certification",
-          nativeGo: true
+          benchmarkScope:
+            "synthetic typed-array work in a local Go process; no Spotify, audio stream, or SIMD certification",
+          nativeGo: true,
         };
       } catch {
         // Fallback to TS simulation below
@@ -169,7 +170,7 @@ export class EosGoAccelerator {
       executionMode: "SINGLE_PROCESS_JS",
       benchmarkScope: `${bytesCopied} synthetic bytes copied and ${cosineIterations} scalar multiply-add iterations in this process; not a network, SIMD, or production benchmark`,
       concurrencyGoroutines: 0,
-      memoryCopyThroughputMbSec: (bytesCopied / (1024 * 1024)) / elapsedSeconds,
+      memoryCopyThroughputMbSec: bytesCopied / (1024 * 1024) / elapsedSeconds,
       cosineSimilaritiesPerSecond: null,
       scalarMultiplyAddIterationsPerSecond: cosineIterations / elapsedSeconds,
       banditIterations: bandit.episodes,
@@ -177,7 +178,7 @@ export class EosGoAccelerator {
       totalDurationUs: Number((process.hrtime.bigint() - start) / 1000n),
       sha256Proof: crypto.createHash("sha256").update(fingerprintPayload).digest("hex"),
       timestamp: new Date().toISOString(),
-      nativeGo: false
+      nativeGo: false,
     };
   }
 
@@ -196,14 +197,14 @@ export class EosGoAccelerator {
             cwd: this.projectRoot,
             encoding: "utf8",
             stdio: ["ignore", "pipe", "ignore"],
-            timeout: 30_000
+            timeout: 30_000,
           });
         } else {
           stdout = execFileSync("go", ["run", this.goSourcePath, "--mode=bandit", `--episodes=${episodes}`], {
             cwd: this.projectRoot,
             encoding: "utf8",
             stdio: ["ignore", "pipe", "ignore"],
-            timeout: 30_000
+            timeout: 30_000,
           });
         }
 
@@ -215,7 +216,7 @@ export class EosGoAccelerator {
           optimalArm: String(parsed.optimalArm || "not reported"),
           scope: "SYNTHETIC_LOCAL_SIMULATION",
           status: "NATIVE_SIMULATION_COMPLETED",
-          nativeGo: true
+          nativeGo: true,
         };
       } catch {
         // Fallback
@@ -246,10 +247,46 @@ export class EosGoAccelerator {
       }
     };
     const arms = [
-      { trackId: "sample-1", title: "Synthetic option A", alpha: 1, beta: 1, expectedMu: 0, pulls: 0, rewards: 0, trueProbability: 0.80 },
-      { trackId: "sample-2", title: "Synthetic option B", alpha: 1, beta: 1, expectedMu: 0, pulls: 0, rewards: 0, trueProbability: 0.65 },
-      { trackId: "sample-3", title: "Synthetic option C", alpha: 1, beta: 1, expectedMu: 0, pulls: 0, rewards: 0, trueProbability: 0.92 },
-      { trackId: "sample-4", title: "Synthetic option D", alpha: 1, beta: 1, expectedMu: 0, pulls: 0, rewards: 0, trueProbability: 0.40 }
+      {
+        trackId: "sample-1",
+        title: "Synthetic option A",
+        alpha: 1,
+        beta: 1,
+        expectedMu: 0,
+        pulls: 0,
+        rewards: 0,
+        trueProbability: 0.8,
+      },
+      {
+        trackId: "sample-2",
+        title: "Synthetic option B",
+        alpha: 1,
+        beta: 1,
+        expectedMu: 0,
+        pulls: 0,
+        rewards: 0,
+        trueProbability: 0.65,
+      },
+      {
+        trackId: "sample-3",
+        title: "Synthetic option C",
+        alpha: 1,
+        beta: 1,
+        expectedMu: 0,
+        pulls: 0,
+        rewards: 0,
+        trueProbability: 0.92,
+      },
+      {
+        trackId: "sample-4",
+        title: "Synthetic option D",
+        alpha: 1,
+        beta: 1,
+        expectedMu: 0,
+        pulls: 0,
+        rewards: 0,
+        trueProbability: 0.4,
+      },
     ];
     for (let episode = 0; episode < episodes; episode++) {
       let chosen = arms[0];
@@ -283,7 +320,7 @@ export class EosGoAccelerator {
       optimalArm: optimalArm.trackId,
       status: "LOCAL_SIMULATION_EXECUTED",
       scope: "SYNTHETIC_LOCAL_SIMULATION",
-      nativeGo: false
+      nativeGo: false,
     };
   }
 

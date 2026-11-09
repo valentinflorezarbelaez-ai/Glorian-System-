@@ -12,7 +12,7 @@ import {
   evaluateSpotifyArchitectureHealth,
   verifyBackstageGoldenPath,
   evaluateCanaryStage,
-  planFleetshiftMigration
+  planFleetshiftMigration,
 } from "../src/core/eosSpotifyInstitutionalCodex.ts";
 
 describe("EOS Spotify Institutional Engineering Codex Suite (SPEC-024, BDD-054)", () => {
@@ -26,7 +26,7 @@ describe("EOS Spotify Institutional Engineering Codex Suite (SPEC-024, BDD-054)"
         hasProgressiveCanaryPipeline: true,
         hasAutomatedKillSwitch: true,
         hasBlamelessPostmortemProcess: true,
-        unitTestCoveragePercent: 95
+        unitTestCoveragePercent: 95,
       });
 
       assert.equal(evaluation.institutionalScore, 100);
@@ -49,7 +49,7 @@ describe("EOS Spotify Institutional Engineering Codex Suite (SPEC-024, BDD-054)"
         hasProgressiveCanaryPipeline: false,
         hasAutomatedKillSwitch: false,
         hasBlamelessPostmortemProcess: false,
-        unitTestCoveragePercent: 50
+        unitTestCoveragePercent: 50,
       });
 
       assert.ok(evaluation.institutionalScore < 40);
@@ -74,7 +74,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: squad-playback-experience`
+  owner: squad-playback-experience`,
       });
 
       assert.equal(report.isCompliant, true);
@@ -88,7 +88,7 @@ spec:
     it("flags missing catalog-info.yaml and lowers soundcheck score", () => {
       const report = verifyBackstageGoldenPath({
         serviceName: "unregistered-tool",
-        filesPresent: ["README.md"]
+        filesPresent: ["README.md"],
       });
 
       assert.equal(report.isCompliant, false);
@@ -106,7 +106,7 @@ spec:
         errorCount: 8, // 0.016% error rate (< 0.10%)
         p99LatencyMs: 32,
         maxAllowedP99Ms: 50,
-        observationWindowMinutes: 30
+        observationWindowMinutes: 30,
       });
 
       assert.equal(decision.decision, "ADVANCE_STAGE");
@@ -124,7 +124,7 @@ spec:
         errorCount: 45, // 0.225% error rate (> 0.10%)
         p99LatencyMs: 28,
         maxAllowedP99Ms: 50,
-        observationWindowMinutes: 15
+        observationWindowMinutes: 15,
       });
 
       assert.equal(decision.decision, "TRIGGER_ROLLBACK");
@@ -141,7 +141,7 @@ spec:
         errorCount: 10, // 0.01% error rate
         p99LatencyMs: 78, // > 50ms budget
         maxAllowedP99Ms: 50,
-        observationWindowMinutes: 60
+        observationWindowMinutes: 60,
       });
 
       assert.equal(decision.decision, "TRIGGER_ROLLBACK");
@@ -159,9 +159,9 @@ spec:
         targetRepos: [
           { id: "repo-01", name: "eos-system" },
           { id: "repo-02", name: "aberamentho" },
-          { id: "repo-03", name: "portafolio" }
+          { id: "repo-03", name: "portafolio" },
         ],
-        action: "apply_distroless_container"
+        action: "apply_distroless_container",
       });
 
       assert.equal(plan.migrationId, "MIG-2026-GO-DISTROLESS");

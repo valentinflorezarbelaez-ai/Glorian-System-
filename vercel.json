@@ -7,9 +7,6 @@
   "functions": {
     "api/mcp.js": {
       "includeFiles": "docs/evidence/**"
-    },
-    "api/finops.js": {
-      "maxDuration": 10
     }
   },
   "rewrites": [
@@ -18,6 +15,7 @@
     { "source": "/api/bigtech", "destination": "/api/kernel?module=bigtech" },
     { "source": "/api/omega", "destination": "/api/kernel?module=omega" },
     { "source": "/api/specs", "destination": "/api/kernel?module=specs" },
+    { "source": "/api/finops", "destination": "/api/kernel?module=finops" },
     { "source": "/mcp", "destination": "/api/mcp" }
   ],
   "headers": [
@@ -30,15 +28,11 @@
     },
     {
       "source": "/(assets/.*|favicon.*|icon.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
     },
     {
       "source": "/(css/.*|js/.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, stale-while-revalidate=86400" }
-      ]
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600, stale-while-revalidate=86400" }]
     },
     {
       "source": "/(.*)",
@@ -59,56 +53,7 @@
     },
     {
       "source": "/manifest.webmanifest",
-      "headers": [
-        { "key": "Content-Type", "value": "application/manifest+json; charset=utf-8" }
-      ]
-    }
-  ]
-}
-
-  "rewrites": [
-    { "source": "/api/amplify", "destination": "/api/compile?mode=amplify" },
-    { "source": "/api/titans", "destination": "/api/eval?mode=titans" },
-    { "source": "/api/bigtech", "destination": "/api/kernel?module=bigtech" },
-    { "source": "/api/omega", "destination": "/api/kernel?module=omega" },
-    { "source": "/api/specs", "destination": "/api/kernel?module=specs" },
-    { "source": "/mcp", "destination": "/api/mcp" }
-  ],
-  "headers": [
-    {
-      "source": "/(assets/.*|favicon.*|icon.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
-    },
-    {
-      "source": "/(css/.*|js/.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, stale-while-revalidate=86400" }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
-        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin-allow-popups" },
-        { "key": "Cross-Origin-Resource-Policy", "value": "same-origin" },
-        { "key": "X-Permitted-Cross-Domain-Policies", "value": "none" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://eos-system-ten.vercel.app; connect-src 'self' https://eos-system-ten.vercel.app; media-src 'self'; object-src 'none'; worker-src 'none'; manifest-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;"
-        }
-      ]
-    },
-    {
-      "source": "/manifest.webmanifest",
-      "headers": [
-        { "key": "Content-Type", "value": "application/manifest+json; charset=utf-8" }
-      ]
+      "headers": [{ "key": "Content-Type", "value": "application/manifest+json; charset=utf-8" }]
     }
   ]
 }

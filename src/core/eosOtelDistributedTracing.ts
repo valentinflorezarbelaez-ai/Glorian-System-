@@ -24,13 +24,7 @@ import { DatabaseSync } from "node:sqlite";
 export type SpanKind = "INTERNAL" | "SERVER" | "CLIENT" | "PRODUCER" | "CONSUMER";
 export type SpanStatusCode = "UNSET" | "OK" | "ERROR";
 
-export type SpanAttributeValue =
-  | string
-  | number
-  | boolean
-  | readonly string[]
-  | readonly number[]
-  | readonly boolean[];
+export type SpanAttributeValue = string | number | boolean | readonly string[] | readonly number[] | readonly boolean[];
 
 export type SpanAttributes = Record<string, SpanAttributeValue>;
 
@@ -179,29 +173,39 @@ export function parseW3cTraceparent(header?: string | null): SpanContext | null 
   return {
     traceId: traceId.toLowerCase(),
     spanId: spanId.toLowerCase(),
-    traceFlags: Number.isFinite(traceFlags) ? traceFlags : 1
+    traceFlags: Number.isFinite(traceFlags) ? traceFlags : 1,
   };
 }
 
 // Helper to convert SpanKind to OTLP int
 function spanKindToOtlpCode(kind: SpanKind): number {
   switch (kind) {
-    case "INTERNAL": return 1;
-    case "SERVER": return 2;
-    case "CLIENT": return 3;
-    case "PRODUCER": return 4;
-    case "CONSUMER": return 5;
-    default: return 0;
+    case "INTERNAL":
+      return 1;
+    case "SERVER":
+      return 2;
+    case "CLIENT":
+      return 3;
+    case "PRODUCER":
+      return 4;
+    case "CONSUMER":
+      return 5;
+    default:
+      return 0;
   }
 }
 
 // Helper to convert SpanStatusCode to OTLP int
 function statusCodeToOtlpCode(code: SpanStatusCode): number {
   switch (code) {
-    case "UNSET": return 0;
-    case "OK": return 1;
-    case "ERROR": return 2;
-    default: return 0;
+    case "UNSET":
+      return 0;
+    case "OK":
+      return 1;
+    case "ERROR":
+      return 2;
+    default:
+      return 0;
   }
 }
 
@@ -277,7 +281,7 @@ export class EosOtelSpan {
     this.setStatus("ERROR", message);
     this.addEvent("exception", {
       "exception.message": message,
-      ...(stack ? { "exception.stacktrace": stack } : {})
+      ...(stack ? { "exception.stacktrace": stack } : {}),
     });
     return this;
   }
@@ -321,7 +325,7 @@ export class EosOtelSpan {
       status: { ...this.status },
       attributes: { ...this.attributes },
       events: [...this.events],
-      links: this.links.length > 0 ? [...this.links] : undefined
+      links: this.links.length > 0 ? [...this.links] : undefined,
     };
   }
 }
@@ -437,7 +441,7 @@ export class EosOtelTraceEngine {
       kind?: SpanKind;
       attributes?: SpanAttributes;
       startTimeUnixNano?: bigint;
-    } = {}
+    } = {},
   ): EosOtelSpan {
     let traceId: string;
     let parentSpanId: string | undefined;
@@ -470,7 +474,7 @@ export class EosOtelTraceEngine {
       kind: options.kind,
       startTimeUnixNano: options.startTimeUnixNano,
       attributes: options.attributes,
-      onEnd: (spanData) => this.persistSpan(spanData)
+      onEnd: (spanData) => this.persistSpan(spanData),
     });
 
     this.activeSpans.set(spanId, span);
@@ -504,7 +508,7 @@ export class EosOtelTraceEngine {
         span.status.message || null,
         JSON.stringify(span.attributes),
         JSON.stringify(span.events),
-        new Date().toISOString()
+        new Date().toISOString(),
       );
     } catch {
       // Resilience guarantee: tracing must never crash application code
@@ -537,10 +541,10 @@ export class EosOtelTraceEngine {
         durationMs: Number(r.duration_ms),
         status: {
           code: r.status_code as SpanStatusCode,
-          message: r.status_message || undefined
+          message: r.status_message || undefined,
         },
         attributes: JSON.parse(r.attributes_json || "{}"),
-        events: JSON.parse(r.events_json || "[]")
+        events: JSON.parse(r.events_json || "[]"),
       }));
     } catch {
       return [];
@@ -550,12 +554,17 @@ export class EosOtelTraceEngine {
   /**
    * Queries traces matching criteria.
    */
-  public queryTraces(options: {
-    name?: string;
-    minDurationMs?: number;
-    statusCode?: SpanStatusCode;
-    limit?: number;
-  } = {}): { traceCount: number; traces: Array<{ traceId: string; rootSpanName: string; durationMs: number; spanCount: number }> } {
+  public queryTraces(
+    options: {
+      name?: string;
+      minDurationMs?: number;
+      statusCode?: SpanStatusCode;
+      limit?: number;
+    } = {},
+  ): {
+    traceCount: number;
+    traces: Array<{ traceId: string; rootSpanName: string; durationMs: number; spanCount: number }>;
+  } {
     try {
       const limit = Math.min(100, Math.max(1, options.limit || 20));
       let sql = `
@@ -591,8 +600,8 @@ export class EosOtelTraceEngine {
           traceId: r.trace_id,
           rootSpanName: r.root_name,
           durationMs: Number(r.max_duration),
-          spanCount: Number(r.span_count)
-        }))
+          spanCount: Number(r.span_count),
+        })),
       };
     } catch {
       return { traceCount: 0, traces: [] };
@@ -656,8 +665,12 @@ export class EosOtelTraceEngine {
       const offsetNs = spanStartNano - rootStartNano > 0n ? spanStartNano - rootStartNano : 0n;
       const spanDurationNs = spanEndNano - spanStartNano > 0n ? spanEndNano - spanStartNano : 0n;
 
-      const offsetPercent = totalDurationNs > 0n ? Number((Number(offsetNs) / Number(totalDurationNs)) * 100).toFixed(2) : "0.00";
-      const widthPercent = totalDurationNs > 0n ? Math.max(1, Number((Number(spanDurationNs) / Number(totalDurationNs)) * 100)).toFixed(2) : "100.00";
+      const offsetPercent =
+        totalDurationNs > 0n ? Number((Number(offsetNs) / Number(totalDurationNs)) * 100).toFixed(2) : "0.00";
+      const widthPercent =
+        totalDurationNs > 0n
+          ? Math.max(1, Number((Number(spanDurationNs) / Number(totalDurationNs)) * 100)).toFixed(2)
+          : "100.00";
 
       return {
         spanId: s.spanId,
@@ -670,7 +683,7 @@ export class EosOtelTraceEngine {
         widthPercent: Number(widthPercent),
         depth: depthMap.get(s.spanId) ?? 0,
         status: s.status.code,
-        isBottleneck: s.spanId === bottleneckSpanId
+        isBottleneck: s.spanId === bottleneckSpanId,
       };
     });
 
@@ -681,7 +694,7 @@ export class EosOtelTraceEngine {
       spanCount: spans.length,
       bottleneckSpanId,
       bottleneckDurationMs: Number(bottleneckDurationMs.toFixed(3)),
-      spans: waterfallItems
+      spans: waterfallItems,
     };
   }
 
@@ -696,7 +709,9 @@ export class EosOtelTraceEngine {
       spans = traceIdOrSpans;
     } else {
       // Export all recent spans (limit 100)
-      const rows = this.db.prepare("SELECT trace_id FROM eos_otel_spans ORDER BY start_time_nano DESC LIMIT 100").all() as any[];
+      const rows = this.db
+        .prepare("SELECT trace_id FROM eos_otel_spans ORDER BY start_time_nano DESC LIMIT 100")
+        .all() as any[];
       const uniqueTraceIds = [...new Set(rows.map((r) => r.trace_id))];
       spans = uniqueTraceIds.flatMap((tid) => this.getTrace(tid));
     }
@@ -721,14 +736,14 @@ export class EosOtelTraceEngine {
         attributes: e.attributes
           ? Object.entries(e.attributes).map(([k, v]) => ({
               key: k,
-              value: typeof v === "string" ? { stringValue: v } : { stringValue: String(v) }
+              value: typeof v === "string" ? { stringValue: v } : { stringValue: String(v) },
             }))
-          : undefined
+          : undefined,
       })),
       status: {
         code: statusCodeToOtlpCode(s.status.code),
-        message: s.status.message
-      }
+        message: s.status.message,
+      },
     }));
 
     return {
@@ -739,35 +754,43 @@ export class EosOtelTraceEngine {
               { key: "service.name", value: { stringValue: "glorian-system-control-plane" } },
               { key: "service.version", value: { stringValue: "75.0.0" } },
               { key: "telemetry.sdk.name", value: { stringValue: "glorian-otel-layer0" } },
-              { key: "telemetry.sdk.language", value: { stringValue: "nodejs" } }
-            ]
+              { key: "telemetry.sdk.language", value: { stringValue: "nodejs" } },
+            ],
           },
           scopeSpans: [
             {
               scope: {
                 name: "glorian.system.core",
-                version: "75.0.0"
+                version: "75.0.0",
               },
-              spans: otlpSpans
-            }
-          ]
-        }
-      ]
+              spans: otlpSpans,
+            },
+          ],
+        },
+      ],
     };
   }
 
-  public getStats(): { totalSpans: number; uniqueTraces: number; errorSpans: number; dbPath: string; isInMemory: boolean } {
+  public getStats(): {
+    totalSpans: number;
+    uniqueTraces: number;
+    errorSpans: number;
+    dbPath: string;
+    isInMemory: boolean;
+  } {
     try {
       const totalRow = this.db.prepare("SELECT COUNT(*) as count FROM eos_otel_spans").get() as any;
       const traceRow = this.db.prepare("SELECT COUNT(DISTINCT trace_id) as count FROM eos_otel_spans").get() as any;
-      const errorRow = this.db.prepare("SELECT COUNT(*) as count FROM eos_otel_spans WHERE status_code = 'ERROR'").get() as any;
+      const errorRow = this.db
+        .prepare("SELECT COUNT(*) as count FROM eos_otel_spans WHERE status_code = 'ERROR'")
+        .get() as any;
 
       return {
         totalSpans: Number(totalRow?.count || 0),
         uniqueTraces: Number(traceRow?.count || 0),
         errorSpans: Number(errorRow?.count || 0),
         dbPath: this.dbPath,
-        isInMemory: this.isInMemory
+        isInMemory: this.isInMemory,
       };
     } catch {
       return { totalSpans: 0, uniqueTraces: 0, errorSpans: 0, dbPath: this.dbPath, isInMemory: this.isInMemory };

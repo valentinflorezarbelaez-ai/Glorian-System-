@@ -69,7 +69,10 @@ class DotenvProvider implements SecretProvider {
       const eqIdx = trimmed.indexOf("=");
       if (eqIdx < 1) continue;
       const key = trimmed.slice(0, eqIdx).trim();
-      const value = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, "");
+      const value = trimmed
+        .slice(eqIdx + 1)
+        .trim()
+        .replace(/^["']|["']$/g, "");
       this.values.set(key, value);
     }
     _log.info("DotenvProvider loaded", { keys: this.values.size });
@@ -110,9 +113,12 @@ class AwsSecretsManagerProvider implements SecretProvider {
 
     // AWS SigV4 signing (minimal implementation)
     const canonicalRequest = [
-      "POST", "/", "",
+      "POST",
+      "/",
+      "",
       `content-type:application/x-amz-json-1.1\nhost:secretsmanager.${this.region}.amazonaws.com\nx-amz-date:${amzDate}\nx-amz-target:secretsmanager.GetSecretValue`,
-      "", "content-type;host;x-amz-date;x-amz-target",
+      "",
+      "content-type;host;x-amz-date;x-amz-target",
       crypto.createHash("sha256").update(body).digest("hex"),
     ].join("\n");
 
@@ -120,7 +126,10 @@ class AwsSecretsManagerProvider implements SecretProvider {
     const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${credScope}\n${crypto.createHash("sha256").update(canonicalRequest).digest("hex")}`;
 
     const hmac = (key: Buffer, data: string) => crypto.createHmac("sha256", key).update(data).digest();
-    const signingKey = hmac(hmac(hmac(hmac(Buffer.from("AWS4" + secretKey, "utf8"), dateOnly), this.region), "secretsmanager"), "aws4_request");
+    const signingKey = hmac(
+      hmac(hmac(hmac(Buffer.from("AWS4" + secretKey, "utf8"), dateOnly), this.region), "secretsmanager"),
+      "aws4_request",
+    );
     const signature = crypto.createHmac("sha256", signingKey).update(stringToSign).digest("hex");
 
     const authorization = `AWS4-HMAC-SHA256 Credential=${accessKey}/${credScope}, SignedHeaders=content-type;host;x-amz-date;x-amz-target, Signature=${signature}`;
@@ -130,7 +139,7 @@ class AwsSecretsManagerProvider implements SecretProvider {
         "Content-Type": "application/x-amz-json-1.1",
         "X-Amz-Date": amzDate,
         "X-Amz-Target": "secretsmanager.GetSecretValue",
-        "Authorization": authorization,
+        Authorization: authorization,
         ...(token ? { "X-Amz-Security-Token": token } : {}),
       });
 
@@ -156,19 +165,27 @@ class AwsSecretsManagerProvider implements SecretProvider {
   private _post(url: string, body: string, headers: Record<string, string>): Promise<string> {
     return new Promise((resolve, reject) => {
       const parsed = new URL(url);
-      const req = https.request({
-        hostname: parsed.hostname,
-        path: parsed.pathname,
-        method: "POST",
-        headers: { ...headers, "Content-Length": Buffer.byteLength(body) },
-        timeout: 5000,
-      }, (res) => {
-        let data = "";
-        res.on("data", (c: Buffer) => { data += c.toString(); });
-        res.on("end", () => resolve(data));
-      });
+      const req = https.request(
+        {
+          hostname: parsed.hostname,
+          path: parsed.pathname,
+          method: "POST",
+          headers: { ...headers, "Content-Length": Buffer.byteLength(body) },
+          timeout: 5000,
+        },
+        (res) => {
+          let data = "";
+          res.on("data", (c: Buffer) => {
+            data += c.toString();
+          });
+          res.on("end", () => resolve(data));
+        },
+      );
       req.on("error", reject);
-      req.on("timeout", () => { req.destroy(); reject(new Error("AWS SM timeout")); });
+      req.on("timeout", () => {
+        req.destroy();
+        reject(new Error("AWS SM timeout"));
+      });
       req.write(body);
       req.end();
     });
@@ -204,7 +221,7 @@ class VaultProvider implements SecretProvider {
       const result = await this._get(url, { "X-Vault-Token": this.token });
       const parsed = JSON.parse(result);
       const value = parsed?.data?.data?.[key] ?? parsed?.data?.[key] ?? null;
-      return value ? String(value) : process.env[key] ?? null;
+      return value ? String(value) : (process.env[key] ?? null);
     } catch {
       _log.error("Vault fetch failed", { key: key.slice(0, 20) });
       return process.env[key] ?? null;
@@ -215,13 +232,21 @@ class VaultProvider implements SecretProvider {
     return new Promise((resolve, reject) => {
       const parsed = new URL(url);
       const lib = parsed.protocol === "https:" ? https : require("node:http");
-      const req = lib.get({ hostname: parsed.hostname, port: parsed.port, path: parsed.pathname + parsed.search, headers, timeout: 5000 }, (res: import("node:http").IncomingMessage) => {
-        let data = "";
-        res.on("data", (c: Buffer) => { data += c.toString(); });
-        res.on("end", () => resolve(data));
-      });
+      const req = lib.get(
+        { hostname: parsed.hostname, port: parsed.port, path: parsed.pathname + parsed.search, headers, timeout: 5000 },
+        (res: import("node:http").IncomingMessage) => {
+          let data = "";
+          res.on("data", (c: Buffer) => {
+            data += c.toString();
+          });
+          res.on("end", () => resolve(data));
+        },
+      );
       req.on("error", reject);
-      req.on("timeout", () => { req.destroy(); reject(new Error("Vault timeout")); });
+      req.on("timeout", () => {
+        req.destroy();
+        reject(new Error("Vault timeout"));
+      });
       req.end();
     });
   }
@@ -245,7 +270,7 @@ class DopplerProvider implements SecretProvider {
     try {
       const result = await this._get(
         `https://api.doppler.com/v3/configs/config/secrets/download?format=json&naming=snake`,
-        { Authorization: `Bearer ${this.serviceToken}` }
+        { Authorization: `Bearer ${this.serviceToken}` },
       );
       const secrets = JSON.parse(result);
       return secrets[key] ?? process.env[key] ?? null;
@@ -258,11 +283,16 @@ class DopplerProvider implements SecretProvider {
     return new Promise((resolve, reject) => {
       const req = https.get(url, { headers, timeout: 5000 }, (res) => {
         let data = "";
-        res.on("data", (c: Buffer) => { data += c.toString(); });
+        res.on("data", (c: Buffer) => {
+          data += c.toString();
+        });
         res.on("end", () => resolve(data));
       });
       req.on("error", reject);
-      req.on("timeout", () => { req.destroy(); reject(new Error("Doppler timeout")); });
+      req.on("timeout", () => {
+        req.destroy();
+        reject(new Error("Doppler timeout"));
+      });
     });
   }
 }
@@ -271,7 +301,10 @@ class DopplerProvider implements SecretProvider {
 // 7. SECRETS MANAGER FACADE
 // ============================================================================
 
-interface CacheEntry { value: string | null; fetchedAt: number; }
+interface CacheEntry {
+  value: string | null;
+  fetchedAt: number;
+}
 
 /**
  * Central secrets manager with caching and provider fallback chain.
@@ -308,14 +341,18 @@ export class EosSecretsManager {
   private static _create(): EosSecretsManager {
     const type = (process.env["EOS_SECRETS_PROVIDER"] ?? "env").toLowerCase() as SecretProviderType;
     switch (type) {
-      case "aws": return new EosSecretsManager(new AwsSecretsManagerProvider());
-      case "vault": return new EosSecretsManager(new VaultProvider());
-      case "doppler": return new EosSecretsManager(new DopplerProvider());
+      case "aws":
+        return new EosSecretsManager(new AwsSecretsManagerProvider());
+      case "vault":
+        return new EosSecretsManager(new VaultProvider());
+      case "doppler":
+        return new EosSecretsManager(new DopplerProvider());
       case "dotenv": {
         const envFile = process.env["EOS_DOTENV_FILE"] ?? path.join(process.cwd(), ".env");
         return new EosSecretsManager(new DotenvProvider(envFile));
       }
-      default: return new EosSecretsManager(new EnvProvider());
+      default:
+        return new EosSecretsManager(new EnvProvider());
     }
   }
 
@@ -343,7 +380,7 @@ export class EosSecretsManager {
    */
   async get(key: string): Promise<string | null> {
     const cached = this.cache.get(key);
-    const isFresh = cached !== undefined && (Date.now() - cached.fetchedAt) < this.cacheTtlMs;
+    const isFresh = cached !== undefined && Date.now() - cached.fetchedAt < this.cacheTtlMs;
 
     // Fresh cache hit — no network call needed
     if (isFresh) return cached!.value;
@@ -367,7 +404,7 @@ export class EosSecretsManager {
         return value;
       } catch (err) {
         lastError = err;
-        if (attempt === 0) await new Promise(r => setTimeout(r, 200 * (attempt + 1)));
+        if (attempt === 0) await new Promise((r) => setTimeout(r, 200 * (attempt + 1)));
       }
     }
 
@@ -409,7 +446,9 @@ export class EosSecretsManager {
   }
 
   /** Returns provider type for diagnostics (never exposes values). */
-  get providerType(): SecretProviderType { return this.provider.type; }
+  get providerType(): SecretProviderType {
+    return this.provider.type;
+  }
 }
 
 /** Convenience singleton accessor. */

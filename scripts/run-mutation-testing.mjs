@@ -24,8 +24,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 
 const MUTATION_SCORE_THRESHOLD = parseInt(process.env["EOS_MUTATION_THRESHOLD"] ?? "60", 10);
-const MAX_MUTANTS_PER_FILE     = parseInt(process.env["EOS_MAX_MUTANTS"] ?? "15", 10);
-const MUTANT_TIMEOUT_MS        = 12_000;
+const MAX_MUTANTS_PER_FILE = parseInt(process.env["EOS_MAX_MUTANTS"] ?? "15", 10);
+const MUTANT_TIMEOUT_MS = 12_000;
 
 // ---------------------------------------------------------------------------
 // PTS matrix: source file → test file
@@ -33,23 +33,23 @@ const MUTANT_TIMEOUT_MS        = 12_000;
 const MUTATION_TARGETS = [
   {
     sourceFile: "src/core/eosNeuralVectorCore.ts",
-    testFile:   "test/eosCore.test.mjs",
-    name:       "NeuralVectorCore",
+    testFile: "test/eosCore.test.mjs",
+    name: "NeuralVectorCore",
   },
   {
     sourceFile: "src/core/eosSemanticGraph.ts",
-    testFile:   "test/eosSemanticGraph.test.mjs",
-    name:       "SemanticGraph",
+    testFile: "test/eosSemanticGraph.test.mjs",
+    name: "SemanticGraph",
   },
   {
     sourceFile: "src/core/eosTurboEngine.ts",
-    testFile:   "test/eosTurbo.test.mjs",
-    name:       "TurboEngine",
+    testFile: "test/eosTurbo.test.mjs",
+    name: "TurboEngine",
   },
   {
     sourceFile: "src/core/eosArchitectureGuard.ts",
-    testFile:   "test/eosPrometheus.test.mjs",
-    name:       "ArchitectureGuard",
+    testFile: "test/eosPrometheus.test.mjs",
+    name: "ArchitectureGuard",
   },
 ];
 
@@ -57,14 +57,14 @@ const MUTATION_TARGETS = [
 // Mutation rules — operator-level transformations
 // ---------------------------------------------------------------------------
 const MUTATION_RULES = [
-  { label: "=== → !==",     pattern: /(?<![!<>=])===(?!=)/g, replacement: "!==" },
-  { label: "!== → ===",     pattern: /!==(?!=)/g,             replacement: "===" },
-  { label: "> 0 → < 0",     pattern: />\s*0\b/g,              replacement: "< 0" },
-  { label: "return true",   pattern: /\breturn\s+true\b/g,    replacement: "return false" },
-  { label: "return false",  pattern: /\breturn\s+false\b/g,   replacement: "return true" },
-  { label: "length > 0",    pattern: /\.length\s*>\s*0/g,     replacement: ".length < 0" },
-  { label: "+ 1 → - 1",     pattern: /\+\s*1\b/g,             replacement: "- 1" },
-  { label: ".size > 0",     pattern: /\.size\s*>\s*0/g,       replacement: ".size < 0" },
+  { label: "=== → !==", pattern: /(?<![!<>=])===(?!=)/g, replacement: "!==" },
+  { label: "!== → ===", pattern: /!==(?!=)/g, replacement: "===" },
+  { label: "> 0 → < 0", pattern: />\s*0\b/g, replacement: "< 0" },
+  { label: "return true", pattern: /\breturn\s+true\b/g, replacement: "return false" },
+  { label: "return false", pattern: /\breturn\s+false\b/g, replacement: "return true" },
+  { label: "length > 0", pattern: /\.length\s*>\s*0/g, replacement: ".length < 0" },
+  { label: "+ 1 → - 1", pattern: /\+\s*1\b/g, replacement: "- 1" },
+  { label: ".size > 0", pattern: /\.size\s*>\s*0/g, replacement: ".size < 0" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -95,13 +95,13 @@ function generateMutants(source) {
 
       id++;
       mutants.push({
-        id:       `MUT-${String(id).padStart(3, "0")}`,
-        line:     lineIdx + 1,
-        label:    rule.label,
+        id: `MUT-${String(id).padStart(3, "0")}`,
+        line: lineIdx + 1,
+        label: rule.label,
         original: trimmed.slice(0, 60),
-        mutated:  mutatedLine.trim().slice(0, 60),
-        source:   mutatedLines.join("\n"),
-        status:   "UNTESTED",
+        mutated: mutatedLine.trim().slice(0, 60),
+        source: mutatedLines.join("\n"),
+        status: "UNTESTED",
       });
 
       if (mutants.length >= MAX_MUTANTS_PER_FILE) break;
@@ -125,7 +125,7 @@ function runMutant(mutant, sourcePath) {
       });
       mutant.status = "SURVIVED"; // tests passed with broken code — BAD
     } catch {
-      mutant.status = "KILLED";   // tests detected the mutation — GOOD
+      mutant.status = "KILLED"; // tests detected the mutation — GOOD
     }
   } finally {
     fs.writeFileSync(sourcePath, origSource, "utf8"); // always restore
@@ -142,12 +142,12 @@ console.log(` Threshold: ${MUTATION_SCORE_THRESHOLD}% | Max mutants/file: ${MAX_
 console.log("======================================================================\n");
 
 let totalMutants = 0;
-let totalKilled  = 0;
+let totalKilled = 0;
 const allResults = [];
 
 for (const target of MUTATION_TARGETS) {
   const sourcePath = path.join(root, target.sourceFile);
-  const testPath   = path.join(root, target.testFile);
+  const testPath = path.join(root, target.testFile);
 
   if (!fs.existsSync(sourcePath)) {
     console.log(`[SKIP] ${target.name}: ${target.sourceFile} not found`);
@@ -158,8 +158,8 @@ for (const target of MUTATION_TARGETS) {
     continue;
   }
 
-  const source  = fs.readFileSync(sourcePath, "utf8");
-  const mutants = generateMutants(source).map(m => ({ ...m, _testPath: testPath }));
+  const source = fs.readFileSync(sourcePath, "utf8");
+  const mutants = generateMutants(source).map((m) => ({ ...m, _testPath: testPath }));
 
   console.log(`[${target.name}] ${mutants.length} mutants generated from ${target.sourceFile}`);
 
@@ -181,23 +181,23 @@ for (const target of MUTATION_TARGETS) {
 
   allResults.push({ name: target.name, total: mutants.length, killed, score });
   totalMutants += mutants.length;
-  totalKilled  += killed;
+  totalKilled += killed;
 }
 
 const globalScore = totalMutants > 0 ? Math.round((totalKilled / totalMutants) * 100) : 100;
-const passed      = globalScore >= MUTATION_SCORE_THRESHOLD;
+const passed = globalScore >= MUTATION_SCORE_THRESHOLD;
 
 // Seal evidence receipt
 const receipt = {
-  runId:           `MUTATION-${Date.now()}`,
-  timestamp:       new Date().toISOString(),
-  threshold:       MUTATION_SCORE_THRESHOLD,
+  runId: `MUTATION-${Date.now()}`,
+  timestamp: new Date().toISOString(),
+  threshold: MUTATION_SCORE_THRESHOLD,
   globalScore,
   totalMutants,
   totalKilled,
   passed,
-  results:         allResults,
-  sha256:          crypto.createHash("sha256").update(JSON.stringify(allResults)).digest("hex"),
+  results: allResults,
+  sha256: crypto.createHash("sha256").update(JSON.stringify(allResults)).digest("hex"),
 };
 
 const evidenceDir = path.join(root, "docs/evidence");

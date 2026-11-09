@@ -81,13 +81,13 @@ export class EosBitwiseAccelerator {
   public static createMonomorphicRecord<T>(
     id: string,
     tag: number,
-    payload: T
+    payload: T,
   ): { readonly id: string; readonly tag: number; readonly payload: T; readonly hash: string } {
     const rec = {
       id,
       tag,
       payload,
-      hash: this.fnv1a64(id).toString(16)
+      hash: this.fnv1a64(id).toString(16),
     };
     Object.seal(rec);
     return rec;
@@ -96,7 +96,10 @@ export class EosBitwiseAccelerator {
   /**
    * Compares 4x unrolled versus scalar standard loop throughput.
    */
-  public static benchmarkSpeedup(bufferSize = 65536, iterations = 1000): {
+  public static benchmarkSpeedup(
+    bufferSize = 65536,
+    iterations = 1000,
+  ): {
     bufferSizeBytes: number;
     iterations: number;
     unrolledDurationMs: number;
@@ -125,14 +128,14 @@ export class EosBitwiseAccelerator {
     const durationMs = Number(t1 - t0) / 1_000_000;
 
     const totalProcessedMb = (bufferSize * iterations) / (1024 * 1024);
-    const throughputMbSec = durationMs > 0 ? (totalProcessedMb / (durationMs / 1000)) : 0;
+    const throughputMbSec = durationMs > 0 ? totalProcessedMb / (durationMs / 1000) : 0;
 
     return {
       bufferSizeBytes: bufferSize,
       iterations,
       unrolledDurationMs: Number(durationMs.toFixed(3)),
       unrolledThroughputMbSec: Number(throughputMbSec.toFixed(2)),
-      checksumsMatch
+      checksumsMatch,
     };
   }
 }

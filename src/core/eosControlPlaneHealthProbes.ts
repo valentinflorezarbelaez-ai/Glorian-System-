@@ -45,7 +45,7 @@ const CLAIMS_DENIED = [
   "Level 5",
   "Multi-region SRE certification",
   "Live production traffic probes",
-  "External dependency uptime SLA"
+  "External dependency uptime SLA",
 ] as const;
 
 function timedProbe(id: HealthProbeId, fn: () => { ok: boolean; detail: string }): HealthProbeResult {
@@ -56,7 +56,7 @@ function timedProbe(id: HealthProbeId, fn: () => { ok: boolean; detail: string }
     id,
     ok,
     detail,
-    latencyUs: Number(latencyUs.toFixed(2))
+    latencyUs: Number(latencyUs.toFixed(2)),
   });
 }
 
@@ -64,7 +64,10 @@ function readTipSealCommit(projectRoot: string): string | null {
   try {
     const provenancePath = path.join(projectRoot, "docs/evidence/provenance.intoto.jsonl");
     if (!fs.existsSync(provenancePath)) return null;
-    const line = fs.readFileSync(provenancePath, "utf8").split(/\r?\n/).find((l) => l.trim());
+    const line = fs
+      .readFileSync(provenancePath, "utf8")
+      .split(/\r?\n/)
+      .find((l) => l.trim());
     if (!line) return null;
     const statement = JSON.parse(line) as {
       predicate?: { buildDefinition?: { externalParameters?: { commitSha?: string } } };
@@ -79,12 +82,10 @@ function readTipSealCommit(projectRoot: string): string | null {
 /**
  * Runs bounded local control-plane health probes (no network).
  */
-export function runControlPlaneHealthProbes(
-  projectRoot: string = process.cwd()
-): ControlPlaneHealthReport {
+export function runControlPlaneHealthProbes(projectRoot: string = process.cwd()): ControlPlaneHealthReport {
   assertPrecondition(
     typeof projectRoot === "string" && projectRoot.length > 0,
-    "projectRoot must be a non-empty string"
+    "projectRoot must be a non-empty string",
   );
   const root = path.resolve(projectRoot);
   const mem = process.memoryUsage();
@@ -93,7 +94,7 @@ export function runControlPlaneHealthProbes(
   const probes: HealthProbeResult[] = [
     timedProbe("PROCESS_LIVENESS", () => ({
       ok: true,
-      detail: `uptime=${Math.floor(process.uptime())}s rssMb=${(mem.rss / (1024 * 1024)).toFixed(2)}`
+      detail: `uptime=${Math.floor(process.uptime())}s rssMb=${(mem.rss / (1024 * 1024)).toFixed(2)}`,
     })),
     timedProbe("LAYER0_RUNTIME_DEPS", () => {
       try {
@@ -101,7 +102,7 @@ export function runControlPlaneHealthProbes(
         const count = Object.keys(pkg.dependencies || {}).length;
         return {
           ok: count === 0,
-          detail: `runtimeDependenciesCount=${count}`
+          detail: `runtimeDependenciesCount=${count}`,
         };
       } catch (err) {
         return { ok: false, detail: `package.json unreadable: ${String(err)}` };
@@ -134,11 +135,9 @@ export function runControlPlaneHealthProbes(
       const ok = typeof tipSealCommitSha === "string" && tipSealCommitSha.length >= 7;
       return {
         ok,
-        detail: ok
-          ? `commitSha=${tipSealCommitSha!.slice(0, 12)}…`
-          : "tip-seal commitSha missing in provenance"
+        detail: ok ? `commitSha=${tipSealCommitSha!.slice(0, 12)}…` : "tip-seal commitSha missing in provenance",
       };
-    })
+    }),
   ];
 
   const probesPassing = probes.filter((p) => p.ok).length;
@@ -148,7 +147,7 @@ export function runControlPlaneHealthProbes(
   if (probesPassing < Math.ceil(probesTotal * 0.5)) status = "CRITICAL";
 
   const receipt = pureSha256(
-    `HEALTH:${status}:${probesPassing}/${probesTotal}:${tipSealCommitSha || "none"}:${probes.map((p) => `${p.id}:${p.ok}`).join("|")}`
+    `HEALTH:${status}:${probesPassing}/${probesTotal}:${tipSealCommitSha || "none"}:${probes.map((p) => `${p.id}:${p.ok}`).join("|")}`,
   );
 
   return deepFreeze({
@@ -163,6 +162,6 @@ export function runControlPlaneHealthProbes(
     probesTotal,
     tipSealCommitSha,
     sha256Receipt: receipt,
-    auditedAtIso: new Date().toISOString()
+    auditedAtIso: new Date().toISOString(),
   });
 }

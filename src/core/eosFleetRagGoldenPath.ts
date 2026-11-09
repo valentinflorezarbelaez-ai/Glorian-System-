@@ -5,12 +5,7 @@
  * Epistemic: FLEET_RAG_GOLDEN_PATH_WITHIN_TESTED_SCOPE — not Level-5 · not live LLM generation.
  */
 
-import {
-  assertPostcondition,
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPostcondition, assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosNeuralVectorStore } from "./eosNeuralVectorCore.ts";
 
 export interface FleetRagCorpusDoc {
@@ -46,38 +41,38 @@ export const DEFAULT_FLEET_RAG_CORPUS: readonly FleetRagCorpusDoc[] = deepFreeze
     id: "bib-pistis-sophia",
     title: "Pistis Sophia — light and repentance",
     text: "Pistis Sophia cries to the Light of lights. Sacred texts in Biblioteca Gnóstica preserve repentance, aeons, and the path of the soul without fabricating verses.",
-    source: "fixture:biblioteca-gnostica"
+    source: "fixture:biblioteca-gnostica",
   },
   {
     id: "bib-three-factors",
     title: "Three Factors of the Revolution of Consciousness",
     text: "Death of the ego, birth of the Being, and sacrifice for humanity. Donaciones embodies the Third Factor as conscious giving.",
-    source: "fixture:biblioteca-gnostica"
+    source: "fixture:biblioteca-gnostica",
   },
   {
     id: "spotify-authz",
     title: "Spotify Authorization Platform lens",
     text: "Authorization is a platform capability for creators, teams, agents, partners, and licensees. Least privilege, fail-closed denial, relational data at scale.",
-    source: "fixture:spotify-authz-lens"
+    source: "fixture:spotify-authz-lens",
   },
   {
     id: "spotify-golden-paths",
     title: "Spotify Golden Paths and Backstage",
     text: "Golden Paths standardize microservices via Backstage Software Templates, TechDocs, fleet upgrades, and Soundcheck scorecards so autonomy does not become chaos.",
-    source: "fixture:spotify-golden-paths"
+    source: "fixture:spotify-golden-paths",
   },
   {
     id: "spotify-music-expression",
     title: "Music Expression full-stack bar",
     text: "Music Expression engineers ship React TypeScript experiences with Java-shaped services so artists reach fans through Canvas, countdown, and listening parties with acoustic ethics.",
-    source: "fixture:spotify-music-expression"
+    source: "fixture:spotify-music-expression",
   },
   {
     id: "finops-mission",
     title: "Mission FinOps cost receipt",
     text: "eos_mission_run emits FINOPS_COST_RECEIPT with tier routing and estimated USD attestation. Subscription chat is not a production API invoice.",
-    source: "fixture:glorian-finops"
-  }
+    source: "fixture:glorian-finops",
+  },
 ]);
 
 function snippetOf(text: string, max = 180): string {
@@ -93,7 +88,7 @@ export function runFleetRagGoldenPath(
   options: {
     readonly corpus?: readonly FleetRagCorpusDoc[];
     readonly topK?: number;
-  } = {}
+  } = {},
 ): FleetRagGoldenPathResult {
   const started = process.hrtime.bigint();
   const topK = typeof options.topK === "number" && options.topK > 0 ? Math.min(20, Math.floor(options.topK)) : 3;
@@ -102,7 +97,7 @@ export function runFleetRagGoldenPath(
   const fail = (reason: string): FleetRagGoldenPathResult => {
     const durationMs = Number((process.hrtime.bigint() - started) / 1_000_000n);
     const sha256Receipt = pureSha256(
-      JSON.stringify({ status: "FAILED", reason, query: typeof query === "string" ? query : "" })
+      JSON.stringify({ status: "FAILED", reason, query: typeof query === "string" ? query : "" }),
     );
     return deepFreeze({
       status: "FAILED",
@@ -113,7 +108,7 @@ export function runFleetRagGoldenPath(
       epistemicState: "BLOCKED",
       sha256Receipt,
       durationMs,
-      failingReason: reason
+      failingReason: reason,
     });
   };
 
@@ -135,7 +130,7 @@ export function runFleetRagGoldenPath(
     title: r.metadata?.title || r.id,
     score: r.score,
     snippet: snippetOf(r.text),
-    source: r.metadata?.source || "unknown"
+    source: r.metadata?.source || "unknown",
   }));
 
   if (hits.length === 0) {
@@ -149,8 +144,8 @@ export function runFleetRagGoldenPath(
       query: cleanQuery,
       hitIds: hits.map((h) => h.id),
       scores: hits.map((h) => Number(h.score.toFixed(6))),
-      corpusSize: corpus.length
-    })
+      corpusSize: corpus.length,
+    }),
   );
   assertPostcondition(sha256Receipt.length === 64, "RAG receipt must be 64-char SHA-256");
 
@@ -163,14 +158,14 @@ export function runFleetRagGoldenPath(
     epistemicState: "FLEET_RAG_GOLDEN_PATH_WITHIN_TESTED_SCOPE",
     sha256Receipt,
     durationMs,
-    failingReason: null
+    failingReason: null,
   });
 }
 
 export class EosFleetRagGoldenPath {
   public static run(
     query: string,
-    options?: { readonly corpus?: readonly FleetRagCorpusDoc[]; readonly topK?: number }
+    options?: { readonly corpus?: readonly FleetRagCorpusDoc[]; readonly topK?: number },
   ): FleetRagGoldenPathResult {
     return runFleetRagGoldenPath(query, options);
   }

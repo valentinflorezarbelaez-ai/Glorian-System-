@@ -1,0 +1,19 @@
+{
+  "defaultMaxLines": 800,
+  "ceilings": {
+    "bin/eos.mjs": 4889,
+    "js/eos.js": 4296,
+    "scripts/verify-formal-tla.mjs": 2213,
+    "src/core/eosConsultantCore.ts": 1222,
+    "src/core/eosContainerSandbox.ts": 838,
+    "src/core/eosEnterpriseWorkspaceGovernor.ts": 1300,
+    "src/core/eosGentlemanAutoUpdater.ts": 1278,
+    "src/core/eosKnowledgeGraphEngine.ts": 1048,
+    "src/core/eosOtelDistributedTracing.ts": 808,
+    "src/core/eosSpotifyAgenticFactory.ts": 863,
+    "src/core/eosSpotifyCodex.ts": 849,
+    "src/core/eosUniversalProjectAdapter.ts": 835,
+    "src/mcp/eosMcpToolDefinitions.ts": 3243,
+    "src/mcp/tools/eosMcpPhase7DomainHandlers.ts": 1620
+  }
+}

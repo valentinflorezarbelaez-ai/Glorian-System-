@@ -15,26 +15,16 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
-import {
-  EosSmtAutomatedReasoningProver,
-  type SmtModel
-} from "./eosSmtAutomatedReasoningProver.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
+import { EosSmtAutomatedReasoningProver, type SmtModel } from "./eosSmtAutomatedReasoningProver.ts";
 import {
   EosSurgicalSelfHealingKernel,
   type FaultDiagnostic,
-  type SurgicalPatch
+  type SurgicalPatch,
 } from "./eosSurgicalSelfHealingKernel.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
-export type InvariantVerdict =
-  | "PROVED_UNSAT_SECURE"
-  | "VIOLATION_SAT_MODEL_FOUND"
-  | "INVALID_THEOREMS_REJECTED";
+export type InvariantVerdict = "PROVED_UNSAT_SECURE" | "VIOLATION_SAT_MODEL_FOUND" | "INVALID_THEOREMS_REJECTED";
 
 export interface InvariantProofRequest {
   readonly theoremName: string;
@@ -131,9 +121,7 @@ export class EosNeuroSymbolicFleetHealingEngine {
     const endUs = process.hrtime.bigint();
     const durationUs = Number((endUs - startUs) / 1000n);
 
-    const verdict: InvariantVerdict = solution.sat
-      ? "VIOLATION_SAT_MODEL_FOUND"
-      : "PROVED_UNSAT_SECURE";
+    const verdict: InvariantVerdict = solution.sat ? "VIOLATION_SAT_MODEL_FOUND" : "PROVED_UNSAT_SECURE";
 
     const isProvablySecure = verdict === "PROVED_UNSAT_SECURE";
 
@@ -141,7 +129,7 @@ export class EosNeuroSymbolicFleetHealingEngine {
       theorem: request.theoremName,
       verdict,
       sat: solution.sat,
-      clausesCount: clausesToSolve.length
+      clausesCount: clausesToSolve.length,
     });
     const sha256Receipt = pureSha256(payload);
 
@@ -159,8 +147,8 @@ export class EosNeuroSymbolicFleetHealingEngine {
           satisfyingModel: solution.model,
           unsatCoreExplanation: solution.unsatCore,
           durationUs,
-          sha256Receipt
-        }
+          sha256Receipt,
+        },
       });
     } catch {
       // Non-blocking telemetry fallback
@@ -175,7 +163,7 @@ export class EosNeuroSymbolicFleetHealingEngine {
       unsatCoreExplanation: solution.unsatCore,
       durationUs,
       sha256Receipt,
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     };
 
     return deepFreeze(report);
@@ -207,25 +195,18 @@ export class EosNeuroSymbolicFleetHealingEngine {
       lineNumber: request.failingLine,
       rawMessage: request.errorMessage,
       errorType: "RUNTIME_EXCEPTION",
-      targetExpression: request.offendingExpression
+      targetExpression: request.offendingExpression,
     };
 
-    const patch: SurgicalPatch = EosSurgicalSelfHealingKernel.synthesizeSurgicalPatch(
-      diagnostic,
-      originalContent
-    );
+    const patch: SurgicalPatch = EosSurgicalSelfHealingKernel.synthesizeSurgicalPatch(diagnostic, originalContent);
 
     const patchedContent = patch.patchedSource;
-    const status = (patchedContent && patchedContent.length > 0)
-      ? "VERIFIED_ZERO_REGRESSIONS"
-      : "PATCH_FAILED";
-    const remediatedSha256 = patchedContent
-      ? pureSha256(patchedContent)
-      : undefined;
+    const status = patchedContent && patchedContent.length > 0 ? "VERIFIED_ZERO_REGRESSIONS" : "PATCH_FAILED";
+    const remediatedSha256 = patchedContent ? pureSha256(patchedContent) : undefined;
 
     const durationMs = Date.now() - startMs;
     const sha256Receipt = pureSha256(
-      JSON.stringify({ faultId: request.faultId, status, originalSha256, remediatedSha256 })
+      JSON.stringify({ faultId: request.faultId, status, originalSha256, remediatedSha256 }),
     );
 
     const report: ClosedLoopHealingReport = {
@@ -237,7 +218,7 @@ export class EosNeuroSymbolicFleetHealingEngine {
       remediatedSha256,
       durationMs,
       sha256Receipt,
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     };
 
     return deepFreeze(report);
@@ -257,7 +238,7 @@ export class EosNeuroSymbolicFleetHealingEngine {
     // Step 1: Pre-execution SMT Invariant Verification Gate
     const invariantReport = this.verifyInvariantProof({
       theoremName: `LSC_SAFETY_${request.campaignId}`,
-      clauses: request.invariantClauses || []
+      clauses: request.invariantClauses || [],
     });
 
     if (!invariantReport.isProvablySecure) {
@@ -270,7 +251,7 @@ export class EosNeuroSymbolicFleetHealingEngine {
         shards: [],
         masterReceiptSha256: pureSha256(`ABORTED_${request.campaignId}`),
         durationMs: Date.now() - startMs,
-        timestampIso: new Date().toISOString()
+        timestampIso: new Date().toISOString(),
       };
       return deepFreeze(abortedReport);
     }
@@ -289,7 +270,7 @@ export class EosNeuroSymbolicFleetHealingEngine {
         modulePath,
         status: "SHARD_ATTESTED",
         rulesAppliedCount: 1,
-        sha256Receipt: shardReceipt
+        sha256Receipt: shardReceipt,
       });
       successfulShards++;
     }
@@ -298,8 +279,8 @@ export class EosNeuroSymbolicFleetHealingEngine {
       JSON.stringify({
         campaignId: request.campaignId,
         successfulShards,
-        shardsReceipts: shards.map((s) => s.sha256Receipt)
-      })
+        shardsReceipts: shards.map((s) => s.sha256Receipt),
+      }),
     );
 
     const report: LscCampaignReport = {
@@ -311,7 +292,7 @@ export class EosNeuroSymbolicFleetHealingEngine {
       shards,
       masterReceiptSha256,
       durationMs: Date.now() - startMs,
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     };
 
     return deepFreeze(report);

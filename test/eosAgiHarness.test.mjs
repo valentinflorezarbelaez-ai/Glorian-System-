@@ -18,7 +18,7 @@ const root = path.resolve(__dirname, "..");
 // ─── Imports ────────────────────────────────────────────────────────────────
 
 const { EosAgiCore, EosAxiomMemory } = await import("../src/core/eosAgiCore.ts");
-const { EosMultiModelRouter, DEFAULT_ROUTER_CONFIG } = await import("../src/core/eosMultiModelRouter.ts");
+const { EosMultiModelRouter } = await import("../src/core/eosMultiModelRouter.ts");
 const { EosDynamicToolForge } = await import("../src/core/eosDynamicToolForge.ts");
 const { EosConsultantCore } = await import("../src/core/eosConsultantCore.ts");
 
@@ -60,7 +60,7 @@ describe("EosAxiomMemory — Episodic Learning Engine", () => {
   it("crystallizes a new axiom from a failed branch", () => {
     const axiom = memory.crystallize(
       "Use eval() to execute dynamic code",
-      "SyntaxError: Unexpected token 'export' at line 12"
+      "SyntaxError: Unexpected token 'export' at line 12",
     );
     assert.equal(memory.size, 1);
     assert.ok(axiom.immutableRule.includes("eval"));
@@ -69,20 +69,14 @@ describe("EosAxiomMemory — Episodic Learning Engine", () => {
   });
 
   it("increments recurrenceCount on the same error pattern", () => {
-    memory.crystallize(
-      "Different strategy name",
-      "SyntaxError: Unexpected token 'export' at line 12"
-    );
+    memory.crystallize("Different strategy name", "SyntaxError: Unexpected token 'export' at line 12");
     const axioms = memory.getAll();
     assert.equal(axioms.length, 1, "Same error hash should not create duplicate");
     assert.equal(axioms[0].recurrenceCount, 2);
   });
 
   it("creates a second axiom for a different error pattern", () => {
-    memory.crystallize(
-      "Import from absolute path",
-      "Error: Cannot find module '/abs/path/module.ts'"
-    );
+    memory.crystallize("Import from absolute path", "Error: Cannot find module '/abs/path/module.ts'");
     assert.equal(memory.size, 2);
   });
 
@@ -121,21 +115,25 @@ describe("EosAgiCore — Tree of Thoughts + Tribunal", () => {
     assert.equal(core.getRulesBlock(), "");
   });
 
-  it("solves with a passing branch that writes a valid file", () => {
+  it("solves with a passing branch that writes a valid file", async () => {
     const targetFile = path.join(tmpDir, "solution.txt");
     const testScript = path.join(tmpDir, "verify.mjs");
 
     // The test script just checks the file exists and has content
-    fs.writeFileSync(testScript, `
+    fs.writeFileSync(
+      testScript,
+      `
 import fs from "node:fs";
 const f = ${JSON.stringify(targetFile)};
 if (!fs.existsSync(f)) process.exit(1);
 const content = fs.readFileSync(f, "utf8");
 if (!content.includes("SOLUTION")) process.exit(1);
 process.exit(0);
-`, "utf8");
+`,
+      "utf8",
+    );
 
-    const result = core.solve(
+    const result = await core.solve(
       "Write a solution file",
       [
         {
@@ -157,7 +155,7 @@ process.exit(0);
         testCommand: `node ${testScript}`,
         testCwd: tmpDir,
         timeoutMs: 5_000,
-      }
+      },
     );
 
     assert.equal(result.solved, true);
@@ -167,18 +165,36 @@ process.exit(0);
     assert.ok(result.executionHash.startsWith("sha256:"));
   });
 
-  it("sorts branches by complexity and tries simplest first", () => {
+  it("sorts branches by complexity and tries simplest first", async () => {
     const testScript = path.join(tmpDir, "always_fail.mjs");
     fs.writeFileSync(testScript, "process.exit(1);", "utf8");
 
-    const result = core.solve(
+    const result = await core.solve(
       "All branches fail",
       [
-        { id: "BRANCH-COMPLEX", strategy: "Complex approach", targetRelPath: "x.txt", proposedContent: "x", estimatedComplexity: 9 },
-        { id: "BRANCH-SIMPLE",  strategy: "Simple approach",  targetRelPath: "x.txt", proposedContent: "x", estimatedComplexity: 1 },
-        { id: "BRANCH-MID",     strategy: "Medium approach",  targetRelPath: "x.txt", proposedContent: "x", estimatedComplexity: 5 },
+        {
+          id: "BRANCH-COMPLEX",
+          strategy: "Complex approach",
+          targetRelPath: "x.txt",
+          proposedContent: "x",
+          estimatedComplexity: 9,
+        },
+        {
+          id: "BRANCH-SIMPLE",
+          strategy: "Simple approach",
+          targetRelPath: "x.txt",
+          proposedContent: "x",
+          estimatedComplexity: 1,
+        },
+        {
+          id: "BRANCH-MID",
+          strategy: "Medium approach",
+          targetRelPath: "x.txt",
+          proposedContent: "x",
+          estimatedComplexity: 5,
+        },
       ],
-      { testCommand: `node ${testScript}`, testCwd: tmpDir, timeoutMs: 3_000 }
+      { testCommand: `node ${testScript}`, testCwd: tmpDir, timeoutMs: 3_000 },
     );
 
     assert.equal(result.solved, false);
@@ -195,7 +211,7 @@ process.exit(0);
     assert.ok(axioms.length >= 1, "Expected at least 1 axiom from failed branches");
   });
 
-  it("applies rollback after a failed branch — original file preserved", () => {
+  it("applies rollback after a failed branch — original file preserved", async () => {
     const targetFile = path.join(tmpDir, "rollback_test.txt");
     const originalContent = "ORIGINAL_CONTENT_PRESERVED";
     fs.writeFileSync(targetFile, originalContent, "utf8");
@@ -203,36 +219,41 @@ process.exit(0);
     const testScript = path.join(tmpDir, "fail_always2.mjs");
     fs.writeFileSync(testScript, "process.exit(1);", "utf8");
 
-    core.solve(
+    await core.solve(
       "Rollback test",
-      [{
-        id: "BRANCH-001",
-        strategy: "Will fail and must rollback",
-        targetRelPath: "rollback_test.txt",
-        proposedContent: "MUTATED_CONTENT",
-        estimatedComplexity: 1,
-      }],
-      { testCommand: `node ${testScript}`, testCwd: tmpDir, timeoutMs: 3_000 }
+      [
+        {
+          id: "BRANCH-001",
+          strategy: "Will fail and must rollback",
+          targetRelPath: "rollback_test.txt",
+          proposedContent: "MUTATED_CONTENT",
+          estimatedComplexity: 1,
+        },
+      ],
+      { testCommand: `node ${testScript}`, testCwd: tmpDir, timeoutMs: 3_000 },
     );
 
     const afterContent = fs.readFileSync(targetFile, "utf8");
     assert.equal(afterContent, originalContent, "File must be restored after failed branch");
   });
 
-  it("rejects branches that would escape projectRoot", () => {
-    assert.throws(
-      () => core.solve(
-        "Security test",
-        [{
-          id: "BRANCH-001",
-          strategy: "Escape attempt",
-          targetRelPath: "../../etc/passwd",
-          proposedContent: "evil",
-          estimatedComplexity: 1,
-        }],
-        { testCommand: "node --version", testCwd: tmpDir, timeoutMs: 3_000 }
-      ),
-      /security violation/i
+  it("rejects branches that would escape projectRoot", async () => {
+    await assert.rejects(
+      () =>
+        core.solve(
+          "Security test",
+          [
+            {
+              id: "BRANCH-001",
+              strategy: "Escape attempt",
+              targetRelPath: "../../etc/passwd",
+              proposedContent: "evil",
+              estimatedComplexity: 1,
+            },
+          ],
+          { testCommand: "node --version", testCwd: tmpDir, timeoutMs: 3_000 },
+        ),
+      /security violation/i,
     );
   });
 });
@@ -256,21 +277,21 @@ describe("EosMultiModelRouter — Routing Configuration", () => {
     assert.equal(stats.callsByTaskType.CODE, 0);
   });
 
-  it("selects different models for ARCHITECT vs CODE tasks", () => {
+  it("selects different models for ARCHITECT vs CODE tasks", async () => {
     // Access internal config via default export
     const { CLAUDE_OPUS, CLAUDE_HAIKU } = await import("../src/core/eosMultiModelRouter.ts");
     assert.notEqual(CLAUDE_OPUS.model, CLAUDE_HAIKU.model);
-    assert.ok(CLAUDE_OPUS.costPer1MInputTokens > CLAUDE_HAIKU.costPer1MInputTokens,
-      "Architect model should be more expensive than code model");
+    assert.ok(
+      CLAUDE_OPUS.costPer1MInputTokens > CLAUDE_HAIKU.costPer1MInputTokens,
+      "Architect model should be more expensive than code model",
+    );
   });
 
   it("fails gracefully when API key is missing", async () => {
     const originalKey = process.env.ANTHROPIC_API_KEY;
     delete process.env.ANTHROPIC_API_KEY;
 
-    const result = await router.call("CODE", [
-      { role: "user", content: "test" },
-    ]);
+    const result = await router.call("CODE", [{ role: "user", content: "test" }]);
 
     assert.equal(result.ok, false);
     assert.ok(result.error.message.includes("ANTHROPIC_API_KEY"));
@@ -449,7 +470,7 @@ describe("EosConsultantCore — World-Class Consulting Mode", () => {
     for (let i = 0; i < result.riskMatrix.length - 1; i++) {
       assert.ok(
         result.riskMatrix[i].riskScore >= result.riskMatrix[i + 1].riskScore,
-        "Risk matrix must be sorted by score descending"
+        "Risk matrix must be sorted by score descending",
       );
     }
   });
@@ -460,7 +481,7 @@ describe("EosConsultantCore — World-Class Consulting Mode", () => {
       techStack: "typescript",
     });
     const hasCode = result.implementationCode.some(
-      (c) => c.content.includes("BatchQueryLoader") || c.content.includes("batch")
+      (c) => c.content.includes("BatchQueryLoader") || c.content.includes("batch"),
     );
     assert.ok(hasCode, "Expected batch query optimization code");
   });
@@ -470,9 +491,7 @@ describe("EosConsultantCore — World-Class Consulting Mode", () => {
       problem: "JWT token validation is vulnerable to timing attacks",
       techStack: "typescript",
     });
-    const hasCode = result.implementationCode.some(
-      (c) => c.content.includes("timingSafeEqual")
-    );
+    const hasCode = result.implementationCode.some((c) => c.content.includes("timingSafeEqual"));
     assert.ok(hasCode, "Expected timing-safe JWT validation code");
   });
 
@@ -493,9 +512,8 @@ describe("EosConsultantCore — World-Class Consulting Mode", () => {
 
   it("produces immutable (frozen) deliverable", () => {
     const result = consultant.engage({ problem: "Immutability test" });
-    assert.throws(
-      () => { (result).executiveSummary = "tampered"; },
-      /Cannot assign/i
-    );
+    assert.throws(() => {
+      result.executiveSummary = "tampered";
+    }, /Cannot assign/i);
   });
 });

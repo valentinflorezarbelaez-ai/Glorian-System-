@@ -1,6 +1,7 @@
 # SPEC-043: SOVEREIGN ANTIGRAVITY MCP CONTROL PLANE & DIRECTOR MESH (v49.0.0)
 
 ## 1. Specification Metadata
+
 - **Spec ID**: `SPEC-043`
 - **Title**: Sovereign Antigravity MCP Control Plane, Active Mission Director & Lifecycle Governance Plugin
 - **Status**: `APPROVED`
@@ -13,15 +14,19 @@
 ## 2. Functional Requirements (EARS Patterns)
 
 ### FR-128: Active Antigravity Mission Classification & Tool DAG Direction
+
 - **EARS Pattern (Event-Driven)**: CUANDO Antigravity recibe una directiva de ingeniería y consulta `eos_antigravity_direct`, EL SISTEMA clasificará determinísticamente la misión en un perfil operativo (`SDD_FULL_21_STEP`, `ARCHITECTURE_AUDIT`, `SECURITY_HARDENING`, `FLEET_ORCHESTRATION`, `PERFORMANCE_TUNING`, `BUGFIX_FDIR`), verificará las precondiciones de la Barrera de Escritura Externa (Ley IV) frente a `docs/projects/registry.json`, prescribirá el DAG ordenado de herramientas MCP de EOS a ejecutar y emitirá un recibo criptográfico SHA-256 inmutable.
 
 ### FR-129: Full Antigravity MCP Protocol Handshake, Instructions & Prompts
+
 - **EARS Pattern (Event-Driven)**: CUANDO el Language Server de Antigravity envía `initialize`, `ping`, `prompts/list` o `prompts/get` al servidor `eos-system`, EL SISTEMA negociará la versión del protocolo (`2024-11-05` o `2025-03-26`), inyectará el manual operativo soberano en el campo `instructions` (para materializar `instructions.md`), responderá a `ping` con latencia sub-milisegundo y servirá plantillas de prompts gobernadas por EARS/BDD.
 
 ### FR-130: Gamma Security Barrier Lifecycle Hook for Antigravity
+
 - **EARS Pattern (Error / Unwanted Condition)**: SI una invocación `PreToolUse` sobre `run_command` en Antigravity contiene patrones destructivos prohibidos (`rm -rf /`, `git push --force origin main`, `DROP DATABASE`, `Format-Volume`), ENTONCES EL SISTEMA devolverá `{"decision": "deny"}` con diagnóstico explícito de la Barrera Gamma (Ley VI); en caso contrario devolverá `{"decision": "allow"}` sin bloquear el flujo de desarrollo.
 
 ### FR-131: Antigravity Control Plane Doctor & Junction Self-Healing
+
 - **EARS Pattern (Ubiquitous)**: EL SISTEMA expondrá la herramienta MCP `eos_antigravity_doctor` y los comandos CLI `eos antigravity [direct|doctor|install]` para auditar y reparar enlaces NTFS (`plugins/eos-governance`, `skills`), validar esquemas de `plugin.json`, `hooks.json` y `SKILL.md`, verificar variables `EOS_FLEET_*_PATH` en `mcp_config.json` sin exponer ni alterar secretos de terceros y garantizar cero servidores MCP duplicados.
 
 ---

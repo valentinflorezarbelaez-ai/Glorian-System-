@@ -1,4 +1,4 @@
-import { describe, it, before, after } from "node:test";
+import { describe, it, before } from "node:test";
 import assert from "node:assert/strict";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -16,24 +16,24 @@ describe("EosContextWindowManager — Token-Budget Context Assembly", () => {
   });
 
   it("assembles context for a known file with non-empty contextBlock", () => {
-    const result = mgr.assemble(
-      "Analyze the turbo engine for optimization",
-      "src/core/eosTurboEngine.ts",
-      { tokenBudget: 8000 }
-    );
+    const result = mgr.assemble("Analyze the turbo engine for optimization", "src/core/eosTurboEngine.ts", {
+      tokenBudget: 8000,
+    });
     assert.ok(result.contextBlock.length > 0, "contextBlock must not be empty");
     assert.ok(result.filesIncluded >= 1, "at least the target file must be included");
   });
 
   it("totalTokensUsed never exceeds tokenBudget", () => {
     const result = mgr.assemble("test", "src/core/eosTurboEngine.ts", { tokenBudget: 2000 });
-    assert.ok(result.totalTokensUsed <= result.tokenBudget,
-      `tokensUsed ${result.totalTokensUsed} exceeded budget ${result.tokenBudget}`);
+    assert.ok(
+      result.totalTokensUsed <= result.tokenBudget,
+      `tokensUsed ${result.totalTokensUsed} exceeded budget ${result.tokenBudget}`,
+    );
   });
 
   it("target file is always included with role TARGET", () => {
     const result = mgr.assemble("test", "src/core/eosTurboEngine.ts", { tokenBudget: 8000 });
-    const target = result.includedFiles.find(f => f.role === "TARGET");
+    const target = result.includedFiles.find((f) => f.role === "TARGET");
     assert.ok(target, "Target file must be included with role TARGET");
     assert.ok(target.relPath.includes("eosTurboEngine"), "Target must be the turbo engine file");
   });
@@ -55,15 +55,22 @@ describe("EosContextWindowManager — Token-Budget Context Assembly", () => {
 
   it("includeTests=false excludes test files", () => {
     const withTests = mgr.assemble("test", "src/core/eosTurboEngine.ts", { tokenBudget: 16000, includeTests: true });
-    const withoutTests = mgr.assemble("test", "src/core/eosTurboEngine.ts", { tokenBudget: 16000, includeTests: false });
+    const withoutTests = mgr.assemble("test", "src/core/eosTurboEngine.ts", {
+      tokenBudget: 16000,
+      includeTests: false,
+    });
     // With tests there should be >= files than without
-    assert.ok(withTests.filesIncluded >= withoutTests.filesIncluded,
-      `includeTests=true should include >= files than false`);
+    assert.ok(
+      withTests.filesIncluded >= withoutTests.filesIncluded,
+      `includeTests=true should include >= files than false`,
+    );
   });
 
   it("result is frozen (immutable)", () => {
     const result = mgr.assemble("test", "src/core/eosTurboEngine.ts", { tokenBudget: 4000 });
-    assert.throws(() => { result.contextBlock = "tampered"; }, /Cannot assign/i);
+    assert.throws(() => {
+      result.contextBlock = "tampered";
+    }, /Cannot assign/i);
   });
 
   it("sha256 starts with sha256:", () => {

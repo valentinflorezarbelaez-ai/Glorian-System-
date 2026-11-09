@@ -1,6 +1,7 @@
 # PLAN-033: 21-STEP AUTONOMOUS SOVEREIGN ENGINEERING LOOP ENGINE
 
 ## 1. Architectural Strategy
+
 - **Layer**: Core Domain & Autonomous Orchestration (Layer 0).
 - **Module**: `src/core/eosSovereignLoop.ts`.
 - **Integration**:
@@ -10,6 +11,7 @@
   - CI/CD 7-stage master gate.
 
 ## 2. Invariants & Security
+
 - Zero external runtime npm dependencies (`dependencies: {}` in `package.json`).
 - Pure Layer-0 deterministic execution.
 - Strict gate compliance: No implementation before intake, specs, plan, tasks, and auth.

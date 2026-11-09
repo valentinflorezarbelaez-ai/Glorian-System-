@@ -14,35 +14,18 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import {
-  assertPostcondition,
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPostcondition, assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { amplifyPrompt } from "./eosPromptAmplifier.ts";
 import { EosAntigravityDirector } from "./eosAntigravityDirector.ts";
 import { scanArchitecture } from "./eosArchitectureGuard.ts";
 import { evaluateDecision } from "./eosCognitiveJudge.ts";
-import {
-  evaluateSpotifyArchitectureHealth,
-  type SpotifyArchitectureMetrics
-} from "./eosSpotifyInstitutionalCodex.ts";
-import {
-  evaluateNubankArchitectureHealth,
-  type NubankArchitectureMetrics
-} from "./eosNubankCodex.ts";
+import { evaluateSpotifyArchitectureHealth, type SpotifyArchitectureMetrics } from "./eosSpotifyInstitutionalCodex.ts";
+import { evaluateNubankArchitectureHealth, type NubankArchitectureMetrics } from "./eosNubankCodex.ts";
 import { runTurboPipeline } from "./eosTurboEngine.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 import { EosAgenticFinOpsGovernor } from "./eosAgenticFinOpsGovernor.ts";
 
-export type MissionDomainHint =
-  | "general"
-  | "audio"
-  | "fintech"
-  | "nubank"
-  | "spotify"
-  | "platform";
+export type MissionDomainHint = "general" | "audio" | "fintech" | "nubank" | "spotify" | "platform";
 
 export type MissionStatus = "SUCCESS" | "BLOCKED" | "FAILED";
 
@@ -105,7 +88,7 @@ function inferDomainHint(directive: string, explicit?: MissionDomainHint): Missi
   if (/\bnubank\b|\bfintech\b|\bbanking\b|\bdatomic\b|\bsachem\b/.test(d)) return "fintech";
   if (
     /\bspotify\b|\bsoundcheck\b|\bbs\.?1770\b|\bloudness\b|\baudio\b|\bcamelot\b|\bplaylist\b|\bartist\b|\bmusic expression\b|\boctav/.test(
-      d
+      d,
     )
   ) {
     return /\baudio\b|\bbs\.?1770\b|\bloudness\b|\bcamelot\b/.test(d) ? "audio" : "spotify";
@@ -126,7 +109,7 @@ function probeSpotifyOnlyNorthStar(projectRoot: string): {
     { rel: "docs/governance/GLORIAN_SPOTIFY_ONLY_NORTH_STAR.md", id: "spotify_only_north_star" },
     { rel: "docs/governance/HOW_WE_IMPROVE_SPOTIFY_WITH_OCTAVES.md", id: "octaves_method" },
     { rel: "docs/career/SPOTIFY_WORK_COMPANION_OS.md", id: "work_companion_os" },
-    { rel: "docs/governance/SPOTIFY_UNITOTAL_EXCELLENCE_COMMITMENT.md", id: "unitotal_vow" }
+    { rel: "docs/governance/SPOTIFY_UNITOTAL_EXCELLENCE_COMMITMENT.md", id: "unitotal_vow" },
   ];
   const missing: string[] = [];
   for (const item of required) {
@@ -137,7 +120,7 @@ function probeSpotifyOnlyNorthStar(projectRoot: string): {
     octavesMethodPresent: !missing.includes("octaves_method"),
     workCompanionPresent: !missing.includes("work_companion_os"),
     unitotalVowPresent: !missing.includes("unitotal_vow"),
-    missing
+    missing,
   };
 }
 
@@ -184,7 +167,7 @@ function probeSpotifyMetrics(projectRoot: string, domain: MissionDomainHint): Sp
     hasProgressiveCanaryPipeline: hasCanary,
     hasAutomatedKillSwitch: hasCanary,
     hasBlamelessPostmortemProcess: hasPostmortem,
-    unitTestCoveragePercent: estimateCoveragePercent(projectRoot)
+    unitTestCoveragePercent: estimateCoveragePercent(projectRoot),
   };
 }
 
@@ -199,7 +182,7 @@ function probeNubankMetrics(projectRoot: string, archClean: boolean): NubankArch
     enforcesKafkaIdempotencyTokens: hasLedger,
     usesImmutableBitemporalLedgers: hasLedger,
     hasBlamelessPostmortemProcess: existsRel(projectRoot, "docs/governance"),
-    unitTestCoveragePercent: estimateCoveragePercent(projectRoot)
+    unitTestCoveragePercent: estimateCoveragePercent(projectRoot),
   };
 }
 
@@ -209,7 +192,7 @@ function stage(
   exitCode: number,
   durationMs: number,
   summary: string,
-  evidence: Readonly<Record<string, unknown>>
+  evidence: Readonly<Record<string, unknown>>,
 ): MissionStageResult {
   return deepFreeze({ stageId, mandatory, exitCode, durationMs, summary, evidence });
 }
@@ -219,7 +202,7 @@ function stage(
  */
 export function runMissionGoldenPath(
   directive: string,
-  options: MissionGoldenPathOptions = {}
+  options: MissionGoldenPathOptions = {},
 ): MissionGoldenPathResult {
   const started = process.hrtime.bigint();
   const stages: MissionStageResult[] = [];
@@ -233,7 +216,7 @@ export function runMissionGoldenPath(
     status: MissionStatus,
     failingStage: MissionStageId,
     epistemic: MissionGoldenPathResult["epistemicState"],
-    ledgerEntryId: string | null = null
+    ledgerEntryId: string | null = null,
   ): MissionGoldenPathResult => {
     const durationMs = Number((process.hrtime.bigint() - started) / 1_000_000n);
     const receiptPayload = JSON.stringify({
@@ -242,7 +225,7 @@ export function runMissionGoldenPath(
       directive: typeof directive === "string" ? directive.trim() : "",
       target,
       stageIds: stages.map((s) => s.stageId),
-      exitCodes: stages.map((s) => s.exitCode)
+      exitCodes: stages.map((s) => s.exitCode),
     });
     const sha256Receipt = pureSha256(receiptPayload);
     assertPostcondition(sha256Receipt.length === 64, "Mission receipt must be 64-char SHA-256");
@@ -256,15 +239,15 @@ export function runMissionGoldenPath(
       epistemicState: epistemic,
       sha256Receipt,
       durationMs,
-      ledgerEntryId
+      ledgerEntryId,
     });
   };
 
   if (typeof directive !== "string" || directive.trim().length === 0) {
     stages.push(
       stage("INPUT_VALIDATION", true, 1, 0, "Directive must be a non-empty string", {
-        boundBytes: 0
-      })
+        boundBytes: 0,
+      }),
     );
     return fail("FAILED", "INPUT_VALIDATION", "BLOCKED");
   }
@@ -275,8 +258,8 @@ export function runMissionGoldenPath(
   stages.push(
     stage("INPUT_VALIDATION", true, 0, 0, "Directive admitted", {
       byteLength: Buffer.byteLength(cleanDirective, "utf8"),
-      domainHint
-    })
+      domainHint,
+    }),
   );
 
   // 0b. FinOps cost receipt (API cost truth — subscription ≠ production spend)
@@ -285,7 +268,7 @@ export function runMissionGoldenPath(
     const finops = EosAgenticFinOpsGovernor.getInstance();
     const estimatedTokens = Math.min(
       32_000,
-      Math.max(1_000, Math.ceil(Buffer.byteLength(cleanDirective, "utf8") / 4) * 8)
+      Math.max(1_000, Math.ceil(Buffer.byteLength(cleanDirective, "utf8") / 4) * 8),
     );
     const routing = finops.classifyTaskCostTier(cleanDirective, estimatedTokens);
     const ms = Number((process.hrtime.bigint() - t0) / 1_000_000n);
@@ -310,9 +293,9 @@ export function runMissionGoldenPath(
           ratePerMillionUsd: routing.ratePerMillionUsd,
           rationale: routing.rationale,
           sha256Attestation: routing.sha256Attestation,
-          epistemicNote: "Estimate only — not a live provider invoice; WITHIN_TESTED_SCOPE"
-        }
-      )
+          epistemicNote: "Estimate only — not a live provider invoice; WITHIN_TESTED_SCOPE",
+        },
+      ),
     );
     if (!ok) return fail("FAILED", "FINOPS_COST_RECEIPT", "REMEDIATION_REQUIRED");
   }
@@ -324,17 +307,10 @@ export function runMissionGoldenPath(
     const ms = Number((process.hrtime.bigint() - t0) / 1_000_000n);
     const ok = Boolean(amplified && amplified.synthesizedSystemPrompt);
     stages.push(
-      stage(
-        "AMPLIFY",
-        true,
-        ok ? 0 : 1,
-        ms,
-        ok ? "EARS/BDD draft synthesized" : "Amplify failed",
-        {
-          earsCount: Array.isArray(amplified?.earsRequirements) ? amplified.earsRequirements.length : 0,
-          bddCount: Array.isArray(amplified?.bddScenarios) ? amplified.bddScenarios.length : 0
-        }
-      )
+      stage("AMPLIFY", true, ok ? 0 : 1, ms, ok ? "EARS/BDD draft synthesized" : "Amplify failed", {
+        earsCount: Array.isArray(amplified?.earsRequirements) ? amplified.earsRequirements.length : 0,
+        bddCount: Array.isArray(amplified?.bddScenarios) ? amplified.bddScenarios.length : 0,
+      }),
     );
     if (!ok) return fail("FAILED", "AMPLIFY", "REMEDIATION_REQUIRED");
   }
@@ -356,9 +332,9 @@ export function runMissionGoldenPath(
           profile: plan.profile,
           writeBarrierStatus: plan.writeBarrierStatus,
           dagToolCount: plan.prescribedMcpDag.length,
-          sha256Receipt: plan.sha256Receipt
-        }
-      )
+          sha256Receipt: plan.sha256Receipt,
+        },
+      ),
     );
     if (blocked) return fail("BLOCKED", "MISSION_DIRECTION", "BLOCKED");
   }
@@ -384,9 +360,9 @@ export function runMissionGoldenPath(
           architecturePurityScore: report.architecturePurityScore,
           totalViolations: report.totalViolations,
           circularDependencies: report.circularDependencies.length,
-          isClean: report.isClean
-        }
-      )
+          isClean: report.isClean,
+        },
+      ),
     );
     if (!archClean) return fail("FAILED", "ARCHITECTURE", "REMEDIATION_REQUIRED");
   }
@@ -399,7 +375,7 @@ export function runMissionGoldenPath(
       description: cleanDirective,
       proposedAction:
         "Execute fail-closed NL→SDLC Mission Golden Path with Spotify-only North Star, Spotify institutional gates, Nubank advisory (hard if fintech), turbo evidence, and ledger seal. Derived from SPEC-156 EARS/BDD. No vibe coding.",
-      targetDomain: "CORE"
+      targetDomain: "CORE",
     });
     const ms = Number((process.hrtime.bigint() - t0) / 1_000_000n);
     const ok = verdict.approved === true && verdict.overallScore >= 70;
@@ -414,9 +390,9 @@ export function runMissionGoldenPath(
           approved: verdict.approved,
           overallScore: verdict.overallScore,
           epistemicState: verdict.epistemicState,
-          remediations: verdict.requiredRemediations.slice(0, 5)
-        }
-      )
+          remediations: verdict.requiredRemediations.slice(0, 5),
+        },
+      ),
     );
     if (!ok) return fail("BLOCKED", "CONSTITUTIONAL_TRIBUNAL", "BLOCKED");
   }
@@ -427,8 +403,7 @@ export function runMissionGoldenPath(
     const probe = probeSpotifyOnlyNorthStar(projectRoot);
     const ms = Number((process.hrtime.bigint() - t0) / 1_000_000n);
     const isControlPlane =
-      existsRel(projectRoot, "src/mcp/eosMcpServer.ts") &&
-      existsRel(projectRoot, "docs/projects/registry.json");
+      existsRel(projectRoot, "src/mcp/eosMcpServer.ts") && existsRel(projectRoot, "docs/projects/registry.json");
     const ok = !isControlPlane || probe.missing.length === 0;
     stages.push(
       stage(
@@ -443,9 +418,9 @@ export function runMissionGoldenPath(
           : `Missing Spotify-only doctrine: ${probe.missing.join(", ")}`,
         {
           isControlPlane,
-          ...probe
-        }
-      )
+          ...probe,
+        },
+      ),
     );
     if (!ok) return fail("FAILED", "SPOTIFY_ONLY_NORTH_STAR", "REMEDIATION_REQUIRED");
   }
@@ -470,9 +445,9 @@ export function runMissionGoldenPath(
           institutionalScore: evaluation.institutionalScore,
           soundcheckTier: evaluation.soundcheckTier,
           floor: spotifyFloor,
-          findings: evaluation.findings.slice(0, 6)
-        }
-      )
+          findings: evaluation.findings.slice(0, 6),
+        },
+      ),
     );
     if (!ok) return fail("FAILED", "SPOTIFY_INSTITUTIONAL", "REMEDIATION_REQUIRED");
   }
@@ -500,9 +475,9 @@ export function runMissionGoldenPath(
           institutionalScore: evaluation.institutionalScore,
           tier: evaluation.tier,
           hard,
-          floor: nubankFloor
-        }
-      )
+          floor: nubankFloor,
+        },
+      ),
     );
     if (!ok) return fail("FAILED", "NUBANK_INSTITUTIONAL", "REMEDIATION_REQUIRED");
   }
@@ -525,9 +500,9 @@ export function runMissionGoldenPath(
           totalFilesChecked: turbo.totalFilesChecked,
           totalDurationMs: turbo.totalDurationMs,
           epistemicState: turbo.epistemicState,
-          violationSample: turbo.violations.slice(0, 5)
-        }
-      )
+          violationSample: turbo.violations.slice(0, 5),
+        },
+      ),
     );
     if (!ok) return fail("FAILED", "TURBO_VERIFY", "REMEDIATION_REQUIRED");
   }
@@ -549,8 +524,8 @@ export function runMissionGoldenPath(
             spec: "SPEC-156",
             domainHint,
             stageIds: stages.map((s) => s.stageId),
-            exitCodes: stages.map((s) => s.exitCode)
-          }
+            exitCodes: stages.map((s) => s.exitCode),
+          },
         });
         ledgerEntryId = record.entryId;
         const ms = Number((process.hrtime.bigint() - t0) / 1_000_000n);
@@ -558,17 +533,15 @@ export function runMissionGoldenPath(
           stage("LEDGER_SEAL", true, 0, ms, `Ledger sealed ${record.entryId}`, {
             entryId: record.entryId,
             entryHash: record.entryHash,
-            seq: record.seq
-          })
+            seq: record.seq,
+          }),
         );
       } finally {
         ledger.close();
       }
     } else {
       const ms = Number((process.hrtime.bigint() - t0) / 1_000_000n);
-      stages.push(
-        stage("LEDGER_SEAL", true, 0, ms, "Ledger seal skipped by option", { skipped: true })
-      );
+      stages.push(stage("LEDGER_SEAL", true, 0, ms, "Ledger seal skipped by option", { skipped: true }));
     }
   }
 
@@ -581,13 +554,13 @@ export function runMissionGoldenPath(
     domainHint,
     stageIds: stages.map((s) => s.stageId),
     exitCodes: stages.map((s) => s.exitCode),
-    ledgerEntryId
+    ledgerEntryId,
   });
   const sha256Receipt = pureSha256(receiptPayload);
   assertPostcondition(sha256Receipt.length === 64, "Mission receipt must be 64-char SHA-256");
   assertPostcondition(
     stages.every((s) => !s.mandatory || s.exitCode === 0),
-    "SUCCESS requires all mandatory stages exitCode 0"
+    "SUCCESS requires all mandatory stages exitCode 0",
   );
 
   return deepFreeze({
@@ -600,7 +573,7 @@ export function runMissionGoldenPath(
     epistemicState: "MISSION_GOLDEN_PATH_WITHIN_TESTED_SCOPE",
     sha256Receipt,
     durationMs,
-    ledgerEntryId
+    ledgerEntryId,
   });
 }
 

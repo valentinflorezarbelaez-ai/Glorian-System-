@@ -16,21 +16,12 @@ import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export type SandboxTier = "FIRECRACKER" | "DOCKER_GVISOR" | "EPHEMERAL_NODE_VM";
 
-export type SandboxExecutionStatus =
-  | "COMPLETED"
-  | "TIMEOUT_KILLED"
-  | "MEMORY_EXCEEDED"
-  | "NETWORK_VIOLATION_BLOCKED";
+export type SandboxExecutionStatus = "COMPLETED" | "TIMEOUT_KILLED" | "MEMORY_EXCEEDED" | "NETWORK_VIOLATION_BLOCKED";
 
 export interface SandboxDoctorReport {
   readonly tier: SandboxTier;
@@ -82,7 +73,7 @@ export class EosMicroVmSandbox {
       const dockerInfo = execFileSync("docker", ["info", "--format", "{{.Runtimes}}"], {
         encoding: "utf-8",
         stdio: ["ignore", "pipe", "ignore"],
-        timeout: 3000
+        timeout: 3000,
       });
       dockerAvailable = true;
       if (dockerInfo.includes("runsc") || dockerInfo.includes("gvisor")) {
@@ -97,7 +88,7 @@ export class EosMicroVmSandbox {
       execFileSync("firecracker", ["--version"], {
         encoding: "utf-8",
         stdio: ["ignore", "pipe", "ignore"],
-        timeout: 2000
+        timeout: 2000,
       });
       firecrackerAvailable = true;
     } catch {
@@ -126,7 +117,7 @@ export class EosMicroVmSandbox {
       memoryLimitMb: this.DEFAULT_MEMORY_LIMIT_MB,
       timeoutLimitMs: this.DEFAULT_TIMEOUT_MS,
       networkIsolated: true,
-      recommendation
+      recommendation,
     });
   }
 
@@ -136,7 +127,7 @@ export class EosMicroVmSandbox {
   public static runIsolated(options: SandboxRunOptions): SandboxRunResult {
     assertPrecondition(
       Boolean(options && typeof options.codeOrCommand === "string" && options.codeOrCommand.length > 0),
-      "codeOrCommand is required"
+      "codeOrCommand is required",
     );
 
     const startTime = Date.now();
@@ -154,7 +145,7 @@ export class EosMicroVmSandbox {
     // Detect intentional network escape attempts
     const isNetworkCall =
       /require\(["'](node:)?(https?|net|dgram|tls)["']\)|import\s+.*from\s+["'](node:)?(https?|net|dgram|tls)["']|fetch\(|socket/i.test(
-        options.codeOrCommand
+        options.codeOrCommand,
       );
 
     if (isNetworkCall) {
@@ -177,12 +168,12 @@ export class EosMicroVmSandbox {
           "node:24-alpine",
           "sh",
           "-c",
-          options.codeOrCommand
+          options.codeOrCommand,
         ];
         stdout = execFileSync("docker", dockerArgs, {
           encoding: "utf-8",
           timeout: timeoutMs,
-          stdio: ["ignore", "pipe", "pipe"]
+          stdio: ["ignore", "pipe", "pipe"],
         });
       } catch (err: any) {
         exitCode = err.status || 1;
@@ -204,7 +195,7 @@ export class EosMicroVmSandbox {
           },
           warn: (...args: any[]) => {
             stdout += "[WARN] " + args.join(" ") + "\n";
-          }
+          },
         },
         assert: {
           strictEqual: (a: any, b: any) => {
@@ -212,21 +203,21 @@ export class EosMicroVmSandbox {
           },
           ok: (val: any) => {
             if (!val) throw new Error("AssertionError: value is falsy");
-          }
+          },
         },
         Math,
         JSON,
         Buffer: {
           from: Buffer.from,
-          byteLength: Buffer.byteLength
-        }
+          byteLength: Buffer.byteLength,
+        },
       };
 
       try {
         vm.createContext(sandboxCtx);
         // Enforce hard execution timeout on VM script
         vm.runInContext(options.codeOrCommand, sandboxCtx, {
-          timeout: timeoutMs
+          timeout: timeoutMs,
         });
         exitCode = 0;
         status = "COMPLETED";
@@ -243,7 +234,7 @@ export class EosMicroVmSandbox {
     const durationMs = Math.max(0, Date.now() - startTime);
     const timestampIso = new Date().toISOString();
     const sha256Attestation = pureSha256(
-      `${tierUsed}:${status}:${exitCode}:${options.codeOrCommand}:${stdout}:${stderr}:${timestampIso}`
+      `${tierUsed}:${status}:${exitCode}:${options.codeOrCommand}:${stdout}:${stderr}:${timestampIso}`,
     );
     const executionId = `sbx_exec_${pureSha256(sha256Attestation).slice(0, 16)}`;
 
@@ -257,17 +248,14 @@ export class EosMicroVmSandbox {
       durationMs,
       memoryPeakBytes,
       sha256Attestation,
-      timestampIso
+      timestampIso,
     });
   }
 
   /**
    * Persists sandbox execution receipt into durable SQLite WAL ledger.
    */
-  public static recordReceiptInLedger(
-    result: SandboxRunResult,
-    dbPathOrRootDir?: string
-  ): boolean {
+  public static recordReceiptInLedger(result: SandboxRunResult, dbPathOrRootDir?: string): boolean {
     const dbPath = dbPathOrRootDir
       ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
         ? dbPathOrRootDir
@@ -276,8 +264,7 @@ export class EosMicroVmSandbox {
 
     const ledger = new EosDurableSqliteLedger(dbPath);
     try {
-      const category =
-        result.status === "COMPLETED" ? "MISSION_DIRECTION" : "SECURITY_AUDIT";
+      const category = result.status === "COMPLETED" ? "MISSION_DIRECTION" : "SECURITY_AUDIT";
       ledger.appendEntry({
         category,
         projectId: "eos-system",
@@ -289,9 +276,9 @@ export class EosMicroVmSandbox {
           exitCode: result.exitCode,
           durationMs: result.durationMs,
           memoryPeakBytes: result.memoryPeakBytes,
-          sha256Attestation: result.sha256Attestation
+          sha256Attestation: result.sha256Attestation,
         },
-        engramTopicKey: `eos/sandbox/${result.executionId}`
+        engramTopicKey: `eos/sandbox/${result.executionId}`,
       });
       return true;
     } catch {

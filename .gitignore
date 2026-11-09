@@ -1,28 +1,25 @@
 .vercel
 node_modules/
-.engram/
 # Local control-plane state stays untracked. The fingerprint allowlist is the
 # SPEC-123 exception ledger and must be present in CI; it stores hashes, not secrets.
 .eos/**
 !.eos/secret-allowlist.json
 .worktrees/
+# Scratch fixtures created and torn down by sandbox test suites.
+test/_sandbox/
 docs/evidence/LOCAL-CHECKS-RECEIPT.json
 docs/evidence/local-checks.sarif
 docs/evidence/HEAL-*.json
 bin/*.exe
 *.exe
-
-# Dynamic AGI-forged tool modules (auto-created at runtime, not for git)
-src/dynamic_tools/*.tool.mjs
-src/dynamic_tools/forge_manifest.json
-
-# AGI runtime artifacts
-docs/memory/
-docs/consulting/
-docs/evidence/AGI-RECEIPT-*.json
-
-# CLI UX first-run marker
-.eos-initialized
-
-# Semantic graph build cache
+/tools/
+*.jar
+.coverage/
+dist/
+test-run.log
+pipeline-run.log
+.eos-vfast.log
 .eos-graph-cache.json
+data/
+*.db
+

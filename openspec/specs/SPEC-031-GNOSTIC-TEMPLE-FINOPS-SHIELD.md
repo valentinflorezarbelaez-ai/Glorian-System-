@@ -1,4 +1,5 @@
 # SPEC-031: THE SOVEREIGN GNOSTIC TEMPLE SENTINEL & INVIOLABLE FINOPS BUDGET SHIELD
+
 <!-- Governed by EOS Supreme Constitution, IEEE 830 / ISO 29148 Standard -->
 <!-- Zero Vibe Coding · Layer-0 Hexagonal · Big Tech Tier 1 · Samaelian Codex -->
 
@@ -14,11 +15,13 @@
 ---
 
 ## 1. Executive Summary
+
 `SPEC-031` bridges frontier software engineering with sacred Gnostic discipline (V.M. Samael Aun Weor) and absolute financial sovereignty:
+
 1. **Three-Brain Energy Balancer**: Prevents intellectual hypertrophy by tracking energy distribution across Intellectual, Emotional, and Motor-Instinctive-Sexual centers.
 2. **Clave de SOL & Psychological Gym**: Verifies Subject-Object-Place self-remembering and provides an impression ledger for daily ego dissolution.
 3. **Circadian Temple Sentinel**: Protects sleep hygiene, physical recovery, and vital energy past nightly threshold.
-4. **Law of Octaves Shock Injector**: Injects conscious shocks at *Mi-Fa* deceleration intervals.
+4. **Law of Octaves Shock Injector**: Injects conscious shocks at _Mi-Fa_ deceleration intervals.
 5. **Inviolable FinOps Micro-Cent Token Shield**: Tracks LLM costs in real time, enforcing a strict $15.00 USD/month hard-stop fail-closed ceiling with fallback to local zero-cost engines.
 
 ---
@@ -26,21 +29,26 @@
 ## 2. Functional Requirements (EARS Standard)
 
 ### FR-074: Three-Brain Energy Balancing
+
 - **Ubiquitous**: THE SYSTEM SHALL calculate daily balance across the three brains: Intellectual (code/specs), Emotional (harmony/music), and Motor-Instinctive-Sexual (gym/temple hygiene/sleep/transmutation).
 - **IF** Intellectual activity exceeds 70% of total daily focus, **THEN THE SYSTEM SHALL** trigger an `INTELLECTUAL_HYPERTROPHY_WARNING` prescribing physical strength exertion or classical music contemplation.
 
 ### FR-075: Clave de SOL Self-Observation & Psychological Gym
+
 - **Event-Driven**: WHEN `eos sol` is evaluated, THE SYSTEM SHALL verify whether the architect was operating in Self-Remembering (Subject), Active Focus without fascination (Object), and Physical Spatial Presence (Place).
 - **Event-Driven**: WHEN a psychological impression is recorded via `eos diary`, THE SYSTEM SHALL log the identified ego aggregate (pride, anger, impatience, distraction) and provide the formal contemplation formula for mystical death.
 
 ### FR-076: Circadian Temple Sentinel & Nightly Screen Veto
+
 - **State-Driven**: WHILE the local time is between 22:30 and 05:00, THE SYSTEM SHALL issue a solemn `CIRCADIAN_REST_VETO` urging the architect to close IDE screens, preserve vital energy, and enter conscious sleep.
 
 ### FR-077: Inviolable FinOps Micro-Cent Token Shield
+
 - **Ubiquitous**: THE SYSTEM SHALL track consumed prompt and completion tokens across all frontier AI models (Gemini, Claude, GPT, DeepSeek, Grok) with micro-cent precision ($0.000001 USD).
 - **IF** the monthly accumulated spend exceeds the configured budget limit ($15.00 USD), **THEN THE SYSTEM SHALL** activate a fail-closed circuit breaker blocking external paid API calls and routing all directives to local zero-cost engines (Go WASM / SLMs / offline caches).
 
 ### FR-078: Sacred Cajitas Budget Partitioning
+
 - **Ubiquitous**: THE SYSTEM SHALL track the four sacred material pillars (El Refugio, Comida Nutritiva, Arriendo, Tercer Factor/Donaciones), verifying zero recurring subscription leakages.
 
 ---
@@ -78,9 +86,11 @@ SCENARIO: Circadian Screen Veto
 ---
 
 ## 4. Architectural Boundaries & Layer-0 Purity
+
 - Zero external runtime npm dependencies (`dependencies: {}`).
 - The landing page presentation (`index.html`, `css/eos.css`) remains 100% untouched and sealed.
 - All code modules reside in `src/core/eosGnosticTemple.ts` and `src/core/eosFinOpsBudget.ts`.
 
 ---
-*Signed by Principal Architect: Valentín Flórez Arbeláez*
+
+_Signed by Principal Architect: Valentín Flórez Arbeláez_

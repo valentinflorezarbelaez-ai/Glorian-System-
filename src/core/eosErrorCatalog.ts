@@ -19,12 +19,6 @@
 
 export { ContractError } from "./eosKernelPrimitives.ts";
 
-/**
- * MCP tool errors — re-exported from the tool registry so consumers only
- * need to import from this single catalog file.
- */
-export { ToolNotFoundError, ToolExecutionError } from "../mcp/eosToolRegistry.ts";
-
 // ============================================================================
 // Infrastructure errors — Fleet
 // ============================================================================
@@ -39,14 +33,13 @@ export { ToolNotFoundError, ToolExecutionError } from "../mcp/eosToolRegistry.ts
  */
 export class EosFleetError extends Error {
   /** Stable machine-readable error code. */
-  readonly code = "EOS_FLEET_001" as const;
+  readonly code: string = "EOS_FLEET_001";
+  /** The fleet project identifier that triggered the error, if known. */
+  readonly projectId?: string;
 
-  constructor(
-    message: string,
-    /** The fleet project identifier that triggered the error, if known. */
-    public readonly projectId?: string,
-  ) {
+  constructor(message: string, projectId?: string) {
     super(message);
+    this.projectId = projectId;
     this.name = "EosFleetError";
     Object.setPrototypeOf(this, new.target.prototype);
   }
@@ -64,16 +57,12 @@ export class EosFleetError extends Error {
 export class EosFleetPathNotFoundError extends EosFleetError {
   /** Stable machine-readable error code. */
   readonly code = "EOS_FLEET_002" as const;
+  /** The absolute local path that could not be found. */
+  readonly localPath: string;
 
-  constructor(
-    projectId: string,
-    /** The absolute local path that could not be found. */
-    public readonly localPath: string,
-  ) {
-    super(
-      `Fleet project "${projectId}" local path not found: ${localPath}`,
-      projectId,
-    );
+  constructor(projectId: string, localPath: string) {
+    super(`Fleet project "${projectId}" local path not found: ${localPath}`, projectId);
+    this.localPath = localPath;
     this.name = "EosFleetPathNotFoundError";
     Object.setPrototypeOf(this, new.target.prototype);
   }
@@ -90,16 +79,12 @@ export class EosFleetPathNotFoundError extends EosFleetError {
 export class EosFleetGitError extends EosFleetError {
   /** Stable machine-readable error code. */
   readonly code = "EOS_FLEET_003" as const;
+  /** The raw error message from the git subprocess. */
+  readonly gitError: string;
 
-  constructor(
-    projectId: string,
-    /** The raw error message from the git subprocess. */
-    public readonly gitError: string,
-  ) {
-    super(
-      `Fleet project "${projectId}" git status check failed: ${gitError}`,
-      projectId,
-    );
+  constructor(projectId: string, gitError: string) {
+    super(`Fleet project "${projectId}" git status check failed: ${gitError}`, projectId);
+    this.gitError = gitError;
     this.name = "EosFleetGitError";
     Object.setPrototypeOf(this, new.target.prototype);
   }
@@ -119,14 +104,13 @@ export class EosFleetGitError extends EosFleetError {
  */
 export class EosPipelineError extends Error {
   /** Stable machine-readable error code. */
-  readonly code = "EOS_PIPELINE_001" as const;
+  readonly code: string = "EOS_PIPELINE_001";
+  /** The pipeline stage name (e.g. "lint", "test", "build") if known. */
+  readonly stage?: string;
 
-  constructor(
-    message: string,
-    /** The pipeline stage name (e.g. "lint", "test", "build") if known. */
-    public readonly stage?: string,
-  ) {
+  constructor(message: string, stage?: string) {
     super(message);
+    this.stage = stage;
     this.name = "EosPipelineError";
     Object.setPrototypeOf(this, new.target.prototype);
   }
@@ -144,17 +128,15 @@ export class EosPipelineError extends Error {
 export class EosSecretLeakError extends EosPipelineError {
   /** Stable machine-readable error code. */
   readonly code = "EOS_PIPELINE_002" as const;
+  /** Path of the file containing the secret. */
+  readonly filePath: string;
+  /** The type or name of the secret pattern that was matched. */
+  readonly secretType: string;
 
-  constructor(
-    /** Path of the file containing the secret. */
-    public readonly filePath: string,
-    /** The type or name of the secret pattern that was matched. */
-    public readonly secretType: string,
-  ) {
-    super(
-      `Plaintext secret detected — Law VI violation: ${secretType} in ${filePath}`,
-      "secret-scan",
-    );
+  constructor(filePath: string, secretType: string) {
+    super(`Plaintext secret detected — Law VI violation: ${secretType} in ${filePath}`, "secret-scan");
+    this.filePath = filePath;
+    this.secretType = secretType;
     this.name = "EosSecretLeakError";
     Object.setPrototypeOf(this, new.target.prototype);
   }
@@ -179,16 +161,16 @@ export class EosSecretLeakError extends EosPipelineError {
  */
 export class EosArchitectureViolationError extends Error {
   /** Stable machine-readable error code. */
-  readonly code = "EOS_ARCH_001" as const;
+  readonly code: string = "EOS_ARCH_001";
+  /** The source file that violated the architecture rule, if known. */
+  readonly file?: string;
+  /** The rule identifier that was violated, if known. */
+  readonly rule?: string;
 
-  constructor(
-    message: string,
-    /** The source file that violated the architecture rule, if known. */
-    public readonly file?: string,
-    /** The rule identifier that was violated, if known. */
-    public readonly rule?: string,
-  ) {
+  constructor(message: string, file?: string, rule?: string) {
     super(message);
+    this.file = file;
+    this.rule = rule;
     this.name = "EosArchitectureViolationError";
     Object.setPrototypeOf(this, new.target.prototype);
   }
@@ -211,16 +193,12 @@ export class EosArchitectureViolationError extends Error {
 export class EosCircularDependencyError extends EosArchitectureViolationError {
   /** Stable machine-readable error code. */
   readonly code = "EOS_ARCH_002" as const;
+  /** Ordered list of module paths forming the cycle (first === last). */
+  readonly cycle: readonly string[];
 
-  constructor(
-    /** Ordered list of module paths forming the cycle (first === last). */
-    public readonly cycle: readonly string[],
-  ) {
-    super(
-      `Circular import dependency cycle detected: ${cycle.join(" → ")}`,
-      cycle[0],
-      "no-circular-imports",
-    );
+  constructor(cycle: readonly string[]) {
+    super(`Circular import dependency cycle detected: ${cycle.join(" → ")}`, cycle[0], "no-circular-imports");
+    this.cycle = cycle;
     this.name = "EosCircularDependencyError";
     Object.setPrototypeOf(this, new.target.prototype);
   }
@@ -242,13 +220,12 @@ export class EosCircularDependencyError extends EosArchitectureViolationError {
 export class EosHealingError extends Error {
   /** Stable machine-readable error code. */
   readonly code = "EOS_HEAL_001" as const;
+  /** The file being repaired when the error occurred, if known. */
+  readonly targetFile?: string;
 
-  constructor(
-    message: string,
-    /** The file being repaired when the error occurred, if known. */
-    public readonly targetFile?: string,
-  ) {
+  constructor(message: string, targetFile?: string) {
     super(message);
+    this.targetFile = targetFile;
     this.name = "EosHealingError";
     Object.setPrototypeOf(this, new.target.prototype);
   }

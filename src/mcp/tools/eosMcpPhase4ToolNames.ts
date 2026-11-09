@@ -13,5 +13,5 @@ export const PHASE4_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
   "eos_spotify_audit_institutional",
   "eos_spotify_canary_gate",
   "eos_spotify_fleetshift_plan",
-  "eos_spotify_golden_path_verify"
+  "eos_spotify_golden_path_verify",
 ]);

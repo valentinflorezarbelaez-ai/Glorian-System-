@@ -16,6 +16,7 @@ You are a sub-agent responsible for IMPLEMENTATION. You receive specific tasks f
 ## What You Receive
 
 From the orchestrator:
+
 - Change name
 - The specific task(s) to implement (e.g., "Phase 1, tasks 1.1-1.3")
 - Artifact store mode (`engram | openspec | hybrid | none`)
@@ -32,11 +33,13 @@ From the orchestrator:
 ## What to Do
 
 ### Step 1: Load Skills
+
 Follow **Section A** from `skills/_shared/sdd-phase-common.md`.
 
 ### Step 2: Read Context
 
 Before writing ANY code:
+
 1. Read the specs — understand WHAT the code must do
 2. Read the design — understand HOW to structure the code
 3. Read existing code in affected files — understand current patterns
@@ -125,7 +128,7 @@ Update `tasks.md` — change `- [ ]` to `- [x]` for completed tasks:
 
 - [x] 1.1 Create `internal/auth/middleware.go` with JWT validation
 - [x] 1.2 Add `AuthConfig` struct to `internal/config/config.go`
-- [ ] 1.3 Add auth routes to `internal/server/server.go`  ← still pending
+- [ ] 1.3 Add auth routes to `internal/server/server.go` ← still pending
 ```
 
 ### Step 5: Persist Progress
@@ -133,6 +136,7 @@ Update `tasks.md` — change `- [ ]` to `- [x]` for completed tasks:
 **This step is MANDATORY — do NOT skip it.**
 
 Follow **Section C** from `skills/_shared/sdd-phase-common.md`.
+
 - artifact: `apply-progress`
 - topic_key: `sdd/{change-name}/apply-progress`
 - type: `architecture`
@@ -149,36 +153,43 @@ Return to the orchestrator:
 **Mode**: {TDD | Standard}
 
 ### Completed Tasks
+
 - [x] {task 1.1 description}
 - [x] {task 1.2 description}
 
 ### Files Changed
-| File | Action | What Was Done |
-|------|--------|---------------|
-| `path/to/file.ext` | Created | {brief description} |
+
+| File                | Action   | What Was Done       |
+| ------------------- | -------- | ------------------- |
+| `path/to/file.ext`  | Created  | {brief description} |
 | `path/to/other.ext` | Modified | {brief description} |
 
 ### Tests (TDD mode only)
-| Task | Test File | RED (fail) | GREEN (pass) | REFACTOR |
-|------|-----------|------------|--------------|----------|
-| 1.1 | `path/to/test.ext` | ✅ Failed as expected | ✅ Passed | ✅ Clean |
-| 1.2 | `path/to/test.ext` | ✅ Failed as expected | ✅ Passed | ✅ Clean |
+
+| Task | Test File          | RED (fail)            | GREEN (pass) | REFACTOR |
+| ---- | ------------------ | --------------------- | ------------ | -------- |
+| 1.1  | `path/to/test.ext` | ✅ Failed as expected | ✅ Passed    | ✅ Clean |
+| 1.2  | `path/to/test.ext` | ✅ Failed as expected | ✅ Passed    | ✅ Clean |
 
 {Omit this section if standard mode was used.}
 
 ### Deviations from Design
+
 {List any places where the implementation deviated from design.md and why.
 If none, say "None — implementation matches design."}
 
 ### Issues Found
+
 {List any problems discovered during implementation.
 If none, say "None."}
 
 ### Remaining Tasks
+
 - [ ] {next task}
 - [ ] {next task}
 
 ### Status
+
 {N}/{total} tasks complete. {Ready for next batch / Ready for verify / Blocked by X}
 ```
 

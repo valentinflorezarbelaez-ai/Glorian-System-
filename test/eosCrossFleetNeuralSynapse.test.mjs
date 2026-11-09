@@ -18,7 +18,7 @@ test("BDD-325: Dynamic Knowledge Ingestion & Pattern Synthesis", () => {
     originRepoId: "eos-system",
     category: "PERFORMANCE_OPT",
     title: "Zero-allocation ArrayBuffer memory pool pattern",
-    description: "Reuses typed buffers in hot loops to eliminate GC pressure"
+    description: "Reuses typed buffers in hot loops to eliminate GC pressure",
   });
 
   assert.equal(pattern.id, "ZERO_ALLOC_ARRAY_BUFFER");
@@ -41,7 +41,7 @@ test("BDD-326: Automated Golden Path Propagation Across Registered Fleet", () =>
     originRepoId: "eos-system",
     category: "GOLDEN_PATH",
     title: "Universal OpenTelemetry Tail-Based Sampling Contract",
-    description: "Configures 100% trace capture on anomalies with zero overhead"
+    description: "Configures 100% trace capture on anomalies with zero overhead",
   });
 
   const plan = synapse.propagateGoldenPath("GOLDEN_PATH_OBSERVABILITY_V2");
@@ -71,7 +71,7 @@ test("BDD-327: Contract Incompatibility Isolation & Fail-Closed Protection", () 
     category: "PERFORMANCE_OPT",
     title: "AVX-512 DSP Acceleration Kernel",
     description: "Hardware-accelerated audio filtering",
-    prerequisites: ["require-not-crud-slack"]
+    prerequisites: ["require-not-crud-slack"],
   });
 
   const plan = synapse.propagateGoldenPath("SPECIALIZED_NATIVE_DSP");
@@ -87,7 +87,7 @@ test("BDD-327: Contract Incompatibility Isolation & Fail-Closed Protection", () 
   // Check custom incompatible target name
   const customPlan = synapse.propagateGoldenPath("SPECIALIZED_NATIVE_DSP", [
     "aberamentho",
-    "legacy-incompatible-service"
+    "legacy-incompatible-service",
   ]);
   assert.equal(customPlan.isolatedCount, 1);
   assert.equal(customPlan.synchronizedCount, 1);
@@ -103,7 +103,7 @@ test("BDD-328: Cross-Fleet Merkle Digest & Soundcheck Elevation", () => {
     originRepoId: "eos-system",
     category: "AEROSPACE_SAFETY",
     title: "NASA JPL Rule 5 Assertion Bound",
-    description: "Ensures minimum density of two assertions per function"
+    description: "Ensures minimum density of two assertions per function",
   });
 
   synapse.indexPattern({
@@ -111,7 +111,7 @@ test("BDD-328: Cross-Fleet Merkle Digest & Soundcheck Elevation", () => {
     originRepoId: "eos-system",
     category: "FINOPS_GOVERNANCE",
     title: "Cognitive Token Routing Gate",
-    description: "Prevents tokenmaxxing loops"
+    description: "Prevents tokenmaxxing loops",
   });
 
   const query = synapse.queryFleetKnowledge();
@@ -142,9 +142,9 @@ test("BDD-329: MCP Tool Dispatch for Cross-Fleet Neural Synapse", async () => {
       name: "eos_synapse_propagate_golden_path",
       arguments: {
         patternId: "GLOBAL_SOUNDCHECK_GOLDEN_PATH",
-        targetRepos: ["portafolio", "crud-slack"]
-      }
-    }
+        targetRepos: ["portafolio", "crud-slack"],
+      },
+    },
   });
   assert.equal(propagateRes.error, undefined);
   assert.ok(propagateRes.result);
@@ -160,8 +160,8 @@ test("BDD-329: MCP Tool Dispatch for Cross-Fleet Neural Synapse", async () => {
     method: "tools/call",
     params: {
       name: "eos_synapse_fleet_knowledge_query",
-      arguments: {}
-    }
+      arguments: {},
+    },
   });
   assert.equal(queryRes.error, undefined);
   assert.ok(queryRes.result);
@@ -176,8 +176,8 @@ test("BDD-329: MCP Tool Dispatch for Cross-Fleet Neural Synapse", async () => {
     method: "tools/call",
     params: {
       name: "eos_synapse_mesh_status",
-      arguments: {}
-    }
+      arguments: {},
+    },
   });
   assert.equal(statusRes.error, undefined);
   assert.ok(statusRes.result);

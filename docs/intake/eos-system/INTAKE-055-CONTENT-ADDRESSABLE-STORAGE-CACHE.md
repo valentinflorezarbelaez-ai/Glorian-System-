@@ -9,8 +9,10 @@
 ---
 
 ## 1. Business Context & Engineering Rationale
+
 In large monorepos and multi-agent loops, re-executing unchanged builds, lint checks, or unit tests wastes immense compute and creates latency bottlenecks.
 Google Bazel solved this via Remote Execution API (REAPI) Content-Addressable Storage (CAS) and Action Cache (AC):
+
 - Any input file or output artifact is stored under its cryptographic SHA-256 digest (`cas/ab/cd/abcd...`).
 - An Action Key is derived strictly from inputs, command flags, tool versions, and environment hashes.
 - If an Action Key hits the Action Cache, the previous output and exit status are replayed in sub-millisecond time.

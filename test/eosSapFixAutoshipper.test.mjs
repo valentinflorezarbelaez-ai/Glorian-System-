@@ -19,7 +19,7 @@ test("BDD-185: Autonomous Worktree Creation and Fault Isolation", async () => {
     failingLine: 4,
     errorMessage: "Cannot read properties of undefined (reading 'length')",
     offendingExpression: "data",
-    mockOriginalContent: "function execute(data) {\n  const x = 1;\n  const y = 2;\n  return data.length;\n}\n"
+    mockOriginalContent: "function execute(data) {\n  const x = 1;\n  const y = 2;\n  return data.length;\n}\n",
   };
 
   const report = await EosSapFixAutoshipper.executeCycle(fault);
@@ -37,7 +37,7 @@ test("BDD-186: Surgical Patch Application and Hermetic Verification", async () =
     failingLine: 3,
     errorMessage: "Cannot read properties of null (reading 'value')",
     offendingExpression: "data",
-    mockOriginalContent: "function execute(data) {\n  const a = 10;\n  return data.value;\n}\n"
+    mockOriginalContent: "function execute(data) {\n  const a = 10;\n  return data.value;\n}\n",
   };
 
   const report = await EosSapFixAutoshipper.executeCycle(fault);
@@ -59,7 +59,7 @@ test("BDD-187: Autonomous PR Manifest Generation and Ledger Attestation", async 
       failingLine: 2,
       errorMessage: "Cannot read properties of undefined",
       offendingExpression: "req",
-      mockOriginalContent: "function execute(req) {\n  return req.headers;\n}\n"
+      mockOriginalContent: "function execute(req) {\n  return req.headers;\n}\n",
     };
 
     const report = await EosSapFixAutoshipper.executeCycle(fault);

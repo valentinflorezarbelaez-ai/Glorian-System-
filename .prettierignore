@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.eos/
+.coverage/
+templates/
+docs/evidence/
+docs/contracts/
+package-lock.json
+.vercel/
+js/eos.js
+.eos-graph-cache.json
+.eos-vfast.log
+data/
+*.db
+
+# Generated per-checkout by `eos xirp sync` (syncXirpContextFiles); the
+# generator owns their byte layout, so the formatter must not fight it.
+AGENTS.md
+CLAUDE.md

@@ -2,11 +2,12 @@
 
 **Specification**: SPEC-061  
 **Change Reference**: CHANGE-054  
-**Status**: DONE  
+**Status**: DONE
 
 ---
 
 ## 1. Task Breakdown
+
 - [x] **TASK-054-1**: Formalize SPEC-061 with EARS requirements (FR-201 to FR-206) and BDD scenarios (BDD-188 to BDD-189).
 - [x] **TASK-054-2**: Implement `EosSlsaProvenanceSbom` in `src/core/eosSlsaProvenanceSbom.ts`.
 - [x] **TASK-054-3**: Create test suite `test/eosSlsaProvenanceSbom.test.mjs` verifying CycloneDX v1.5 SBOM compliance and SLSA v1.0 Level 4 provenance statements.

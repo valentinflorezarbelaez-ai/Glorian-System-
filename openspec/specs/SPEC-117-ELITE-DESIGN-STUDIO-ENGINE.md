@@ -1,13 +1,14 @@
 # SPEC-117: Elite Autonomous Design Engineering System & Multi-Archetype Studio
 
 ## 1. Metadata
-* **Specification ID**: `SPEC-117`
-* **Title**: Elite Autonomous Design Engineering System & Multi-Archetype Studio
-* **Component ID**: `eos-elite-design-studio`
-* **Status**: `PROPOSED`
-* **Target Version**: `69.0.0`
-* **Author Squad**: `squad:eos-design-engineering`
-* **Related Specs**: `SPEC-050` (Fleet Soundcheck), `SPEC-095` (Interactive Terminal), `SPEC-115` (Unified Kernel), `SPEC-116` (Transcendence Nexus)
+
+- **Specification ID**: `SPEC-117`
+- **Title**: Elite Autonomous Design Engineering System & Multi-Archetype Studio
+- **Component ID**: `eos-elite-design-studio`
+- **Status**: `PROPOSED`
+- **Target Version**: `69.0.0`
+- **Author Squad**: `squad:eos-design-engineering`
+- **Related Specs**: `SPEC-050` (Fleet Soundcheck), `SPEC-095` (Interactive Terminal), `SPEC-115` (Unified Kernel), `SPEC-116` (Transcendence Nexus)
 
 ---
 
@@ -17,14 +18,16 @@ Let $\mathcal{D}$ represent the Design System Token state tuple for an archetype
 $$\mathcal{D}_A = \langle \mathcal{C}_A, \mathcal{T}_A, \mathcal{S}_A, \mathcal{M}_A, \mathcal{R}_A \rangle$$
 
 Where:
-* $\mathcal{C}_A$: Color palette tokens with deterministic relative luminance $L_1, L_2$ satisfying WCAG AA:
-$$\text{ContrastRatio}(c_1, c_2) = \frac{L_1 + 0.05}{L_2 + 0.05} \ge 4.5$$
-* $\mathcal{T}_A$: Modular typography scale based on ratio $r \in \{1.25, 1.333\}$ with base size $b = 16\text{px}$.
-* $\mathcal{S}_A$: 8px harmonic spatial grid: $\forall s \in \mathcal{S}_A, s \pmod 8 = 0 \lor s = 4$.
-* $\mathcal{M}_A$: Motion tokens enforcing `@media (prefers-reduced-motion: reduce)` zero-duration fallback.
-* $\mathcal{R}_A \in \{0, 1\}^{256}$: SHA-256 design attestation receipt.
+
+- $\mathcal{C}_A$: Color palette tokens with deterministic relative luminance $L_1, L_2$ satisfying WCAG AA:
+  $$\text{ContrastRatio}(c_1, c_2) = \frac{L_1 + 0.05}{L_2 + 0.05} \ge 4.5$$
+- $\mathcal{T}_A$: Modular typography scale based on ratio $r \in \{1.25, 1.333\}$ with base size $b = 16\text{px}$.
+- $\mathcal{S}_A$: 8px harmonic spatial grid: $\forall s \in \mathcal{S}_A, s \pmod 8 = 0 \lor s = 4$.
+- $\mathcal{M}_A$: Motion tokens enforcing `@media (prefers-reduced-motion: reduce)` zero-duration fallback.
+- $\mathcal{R}_A \in \{0, 1\}^{256}$: SHA-256 design attestation receipt.
 
 ### Fundamental Invariants
+
 1. **Contrast Safety Invariant**: All foreground text on background satisfies $\text{ContrastRatio} \ge 4.5:1$.
 2. **Spatial Grid Invariant**: Padding, margins, and component dimensions adhere to the 4px/8px harmonic grid.
 3. **Semantic Integrity Invariant**: All generated components include valid ARIA landmarks, roles, and focus outlines.
@@ -33,22 +36,22 @@ $$\text{ContrastRatio}(c_1, c_2) = \frac{L_1 + 0.05}{L_2 + 0.05} \ge 4.5$$
 
 ## 3. Functional Requirements (EARS Syntax)
 
-* **FR-325 (Ubiquitous / Permanent)**:
+- **FR-325 (Ubiquitous / Permanent)**:
   EL SISTEMA mantendrá el Elite Design Studio Engine como el generador y auditor oficial de diseño e interfaces de usuario para EOS y toda su flota de proyectos.
 
-* **FR-326 (Event-Driven / Spotify XIRP)**:
+- **FR-326 (Event-Driven / Spotify XIRP)**:
   CUANDO se solicite un componente bajo el arquetipo `SPOTIFY_XIRP`, EL SISTEMA generará marcado y estilos basados en el lenguaje visual de Spotify XIRP con lienzo oscuro (#121212), acentos verde Spotify (#1DB954), visualizador de onda y línea de tiempo de incidentes.
 
-* **FR-327 (Event-Driven / Palantir Foundry)**:
+- **FR-327 (Event-Driven / Palantir Foundry)**:
   CUANDO se solicite un componente bajo el arquetipo `PALANTIR_FOUNDRY`, EL SISTEMA generará marcado y estilos basados en Palantir Foundry con paleta de pizarra (#0F172A), cian cibernético (#06B6D4) y cuadrículas de telemetría de alta densidad.
 
-* **FR-328 (Event-Driven / Anduril Lattice)**:
+- **FR-328 (Event-Driven / Anduril Lattice)**:
   CUANDO se solicite un componente bajo el arquetipo `ANDURIL_LATTICE`, EL SISTEMA generará marcado y estilos de grado defensa con HUD táctico, retículas de radar (#10B981) y cintas de telemetría militar.
 
-* **FR-329 (Event-Driven / Design Audit)**:
+- **FR-329 (Event-Driven / Design Audit)**:
   CUANDO se audite un marcado HTML/CSS, EL SISTEMA evaluará matemáticamente el ratio de contraste (>= 4.5:1), el ritmo espacial de 8px y el soporte a accesibilidad WCAG 2.1 AA.
 
-* **FR-330 (Ubiquitous / Permanent)**:
+- **FR-330 (Ubiquitous / Permanent)**:
   EL SISTEMA emitirá un recibo criptográfico SHA-256 por cada diseño generado o auditado.
 
 ---

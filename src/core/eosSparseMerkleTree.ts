@@ -12,12 +12,7 @@
  * Zero external runtime dependencies. Node 24 strip-only compliant.
  */
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface SmtProof {
@@ -115,8 +110,8 @@ export class EosSparseMerkleTree {
           payload: {
             key,
             valueDigest: pureSha256(value),
-            newRoot: this.rootHash
-          }
+            newRoot: this.rootHash,
+          },
         });
       } catch {
         // Fallback
@@ -156,7 +151,7 @@ export class EosSparseMerkleTree {
       keyHash: pureSha256(key),
       root: this.rootHash,
       siblings,
-      isNonMembership
+      isNonMembership,
     });
 
     assertPostcondition(proof.siblings.length === this.depth, "Proof must contain all sibling levels");

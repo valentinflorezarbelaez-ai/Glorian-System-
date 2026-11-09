@@ -32,7 +32,7 @@ test("BDD-251: Negociación exitosa de canal mTLS bidireccional con identidad SP
   nodeA.broadcastEncrypted("TRUETIME_CONSENSUS_VOTE", {
     term: 101,
     commitTimestamp: 1730381000000,
-    attestedLinearizable: true
+    attestedLinearizable: true,
   });
 
   await new Promise((resolve) => setTimeout(resolve, 100));
@@ -61,11 +61,12 @@ test("BDD-252: Rechazo fail-closed de pares con certificados manipulados o no co
     identity: {
       nodeId: "impostor-node",
       spiffeUri: "spiffe://rogue-domain.org/node/impostor",
-      publicKeyPem: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0...\n-----END PUBLIC KEY-----"
+      publicKeyPem:
+        "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0...\n-----END PUBLIC KEY-----",
     },
     ecdhPublicKeyHex: "04deadbeef",
     timestampIso: new Date().toISOString(),
-    signatureHex: "0000000000000000"
+    signatureHex: "0000000000000000",
   };
 
   rogueSocket.write(JSON.stringify(forgedPayload) + "\n");

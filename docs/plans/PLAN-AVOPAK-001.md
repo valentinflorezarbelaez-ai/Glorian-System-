@@ -1,6 +1,7 @@
 # PLAN-AVOPAK-001: HEXAGONAL ARCHITECTURE PLAN & DECISION RECORDS
 
 ## 1. Governance & Owner Approval
+
 - **Plan ID**: `PLAN-AVOPAK-001`
 - **Spec Reference**: `SPEC-122`
 - **Project ID**: `control-de-asistencia-abopack`
@@ -48,8 +49,9 @@ C:\Users\valen\Control-De-Asistencia-Abopack\
 ## 3. Architecture Decision Records (ADRs)
 
 ### ADR-AVP-001: Chronological Minute-by-Minute Splicer for 42-Hour Weekly Limit & 8:00 PM Night Differential
+
 - **Status**: `ACCEPTED`
 - **Context**: In a food processing plant with rotating day and night shifts (`07:00-14:40` up to `20:00-03:40`), simply summing weekly hours and subtracting 42 fails to determine whether the overtime hours occurred before 8:00 PM (`Horas Extras Diurnas`) or after 8:00 PM (`Horas Extras Nocturnas`).
 - **Decision**: Implement a chronological minute-by-minute work interval evaluator in `colombianLaborEngine.mjs`. As each day's net worked intervals (with the 40-minute meal break carved out) are accumulated from Monday through Sunday, the exact minute where the worker crosses `2,520 minutes` (`42.0 hours`) transitions subsequent minutes into Overtime, classifying each minute against the `20:00` (8:00 PM) to `06:00` (6:00 AM) night boundary.
 - **Rejected Alternatives**:
-  - *Aggregate weekly subtraction without timestamp awareness*: Rejected — cannot distinguish daytime vs. post-8:00 PM nighttime overtime.
+  - _Aggregate weekly subtraction without timestamp awareness_: Rejected — cannot distinguish daytime vs. post-8:00 PM nighttime overtime.

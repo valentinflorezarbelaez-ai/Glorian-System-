@@ -43,7 +43,7 @@ if (indexExists) {
   reportCheck(
     "Unified Root Entry Point",
     exportsCore && exportsMcp,
-    "src/index.ts exists and re-exports core engines & MCP server"
+    "src/index.ts exists and re-exports core engines & MCP server",
   );
 } else {
   reportCheck("Unified Root Entry Point", false, "src/index.ts not found");
@@ -53,36 +53,24 @@ if (indexExists) {
 const pkgPath = path.join(projectRoot, "package.json");
 const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
 
-reportCheck(
-  "Package Version",
-  pkg.version === "75.0.0",
-  `Expected v75.0.0, found v${pkg.version}`
-);
+reportCheck("Package Version", pkg.version === "75.0.0", `Expected v75.0.0, found v${pkg.version}`);
 
-reportCheck(
-  "ESM Module Format",
-  pkg.type === "module",
-  `Expected type: "module", found ${pkg.type}`
-);
+reportCheck("ESM Module Format", pkg.type === "module", `Expected type: "module", found ${pkg.type}`);
 
 reportCheck(
   "Main & Types Entry Points",
   pkg.main === "./src/index.ts" && pkg.types === "./src/index.ts",
-  `main: ${pkg.main}, types: ${pkg.types}`
+  `main: ${pkg.main}, types: ${pkg.types}`,
 );
 
 const depsCount = Object.keys(pkg.dependencies || {}).length;
 reportCheck(
   "Layer-0 Zero Runtime Dependencies",
   depsCount === 0,
-  `Expected 0 external runtime dependencies, found ${depsCount}`
+  `Expected 0 external runtime dependencies, found ${depsCount}`,
 );
 
-reportCheck(
-  "Open Source License",
-  pkg.license === "MIT",
-  `License: ${pkg.license}`
-);
+reportCheck("Open Source License", pkg.license === "MIT", `License: ${pkg.license}`);
 
 // 3. Audit Dockerfile OCI Distroless
 const dockerfilePath = path.join(projectRoot, "Dockerfile");
@@ -95,7 +83,7 @@ if (fs.existsSync(dockerfilePath)) {
   reportCheck(
     "Distroless OCI Compliance",
     hasDistrolessStatic && hasDistrolessNode && hasNonRootUser,
-    "Multi-stage build targets distroless static & nodejs24 under nonroot user"
+    "Multi-stage build targets distroless static & nodejs24 under nonroot user",
   );
 } else {
   reportCheck("Distroless OCI Compliance", false, "Dockerfile not found");

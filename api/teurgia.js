@@ -15,7 +15,7 @@ const SEPHIROTIC_DIRECTIONS = {
     frecuenciaHz: 349.23,
     notaCosmica: "FA (Gran Tono Kung de la Naturaleza · Templo-Corazón)",
     dictamen:
-      "ECUACIÓN DE MUERTE MÍSTICA: Has detectado actividad reactiva en los cilindros de la máquina orgánica. Entra en estado de Recuerdo de Sí (Clave de SOL), reconstruye la escena en meditación retroactiva sin justificarte ni condenarte, y clama con desgarramiento del alma a tu Divina Madre Kundalini (RAM-IO) para que decapite e incinere la raíz del agregado con la Lanza de Eros."
+      "ECUACIÓN DE MUERTE MÍSTICA: Has detectado actividad reactiva en los cilindros de la máquina orgánica. Entra en estado de Recuerdo de Sí (Clave de SOL), reconstruye la escena en meditación retroactiva sin justificarte ni condenarte, y clama con desgarramiento del alma a tu Divina Madre Kundalini (RAM-IO) para que decapite e incinere la raíz del agregado con la Lanza de Eros.",
   },
   nacer: {
     sephirah: "Yesod · Tiphereth (To Soma Heliakon)",
@@ -23,7 +23,7 @@ const SEPHIROTIC_DIRECTIONS = {
     frecuenciaHz: 493.88,
     notaCosmica: "SI-LA-FA (Elevación Octávica del Hidrógeno Sexual Si-12)",
     dictamen:
-      "ECUACIÓN ALQUÍMICA DEL SEGUNDO NACIMIENTO: Transmuta el Hidrógeno Sexual Si-12 mediante el Pranayama Crístico Egipcio (HAM-SAH) y la vocalización científica de I.A.O. Aplica los Dos Shocks Conscientes de la Ley de las Octavas (MI-FA y SI-DO) para impedir la entropía y cristalizar los Cuerpos Existenciales Superiores del Ser."
+      "ECUACIÓN ALQUÍMICA DEL SEGUNDO NACIMIENTO: Transmuta el Hidrógeno Sexual Si-12 mediante el Pranayama Crístico Egipcio (HAM-SAH) y la vocalización científica de I.A.O. Aplica los Dos Shocks Conscientes de la Ley de las Octavas (MI-FA y SI-DO) para impedir la entropía y cristalizar los Cuerpos Existenciales Superiores del Ser.",
   },
   tribunal: {
     sephirah: "Geburah · Chesed (Templo Corazón de la Justicia Divina)",
@@ -31,7 +31,7 @@ const SEPHIROTIC_DIRECTIONS = {
     frecuenciaHz: 440.0,
     notaCosmica: "LA (Mundo Causal · Templo de la Música de las Esferas)",
     dictamen:
-      "ECUACIÓN DE LA BALANZA CÓSMICA: «Al León de la Ley se le combate con la Balanza». Realiza las seis (6) inclinaciones rituales orientadas hacia el Templo Corazón, suplica a tu Padre que está en Secreto (Atman-Chesed) que negocie ante el Jerarca Anubis y los 42 Jueces del Karma, y deposita de inmediato obras conscientes de Sacrificio por la Humanidad en el platillo del Dharma."
+      "ECUACIÓN DE LA BALANZA CÓSMICA: «Al León de la Ley se le combate con la Balanza». Realiza las seis (6) inclinaciones rituales orientadas hacia el Templo Corazón, suplica a tu Padre que está en Secreto (Atman-Chesed) que negocie ante el Jerarca Anubis y los 42 Jueces del Karma, y deposita de inmediato obras conscientes de Sacrificio por la Humanidad en el platillo del Dharma.",
   },
   proteccion: {
     sephirah: "Kether · Chokmah · Gran Logia Blanca (Sanat Kumara)",
@@ -39,7 +39,7 @@ const SEPHIROTIC_DIRECTIONS = {
     frecuenciaHz: 523.25,
     notaCosmica: "DO Superior (Octava Solar del Pleroma)",
     dictamen:
-      "ECUACIÓN DE CIERRE E INVISIBILIDAD TEÚRGICA: Canta el mantram Belilin tres veces, ordena a tu Intercesor Elemental trazar el Círculo Mágico de Protección alrededor de tu hogar y cabina, y permanece firme en el Tercer Estado de Conciencia bajo el escudo de Sanat Kumara y del V.M. Samael Aun Weor."
+      "ECUACIÓN DE CIERRE E INVISIBILIDAD TEÚRGICA: Canta el mantram Belilin tres veces, ordena a tu Intercesor Elemental trazar el Círculo Mágico de Protección alrededor de tu hogar y cabina, y permanece firme en el Tercer Estado de Conciencia bajo el escudo de Sanat Kumara y del V.M. Samael Aun Weor.",
   },
   lifaros: {
     sephirah: "Hod · Netzach · Tiphereth (Exploración Astral del Árbol Sephirótico)",
@@ -47,7 +47,7 @@ const SEPHIROTIC_DIRECTIONS = {
     frecuenciaHz: 432.0,
     notaCosmica: "SOL (Armonía Universal de las Esferas)",
     dictamen:
-      "CLAVE TEÚRGICA DEL MANTRAM LIFAROS: Adormécete vocalizando el sagrado mantram. Al sentir el silbido agudo de Isis en la glándula pineal o la vibración de las cuerdas astrales en Hod, levántate con decisión y da un salto con fe consciente. Flotando en el astral, suplica al Padre que te conduzca al Sephirot deseado para la investigación directa de los misterios."
+      "CLAVE TEÚRGICA DEL MANTRAM LIFAROS: Adormécete vocalizando el sagrado mantram. Al sentir el silbido agudo de Isis en la glándula pineal o la vibración de las cuerdas astrales en Hod, levántate con decisión y da un salto con fe consciente. Flotando en el astral, suplica al Padre que te conduzca al Sephirot deseado para la investigación directa de los misterios.",
   },
   daath: {
     sephirah: "Daath (El Sephirot Secreto / Conjunción de Abba y Ama en Yesod)",
@@ -55,7 +55,7 @@ const SEPHIROTIC_DIRECTIONS = {
     frecuenciaHz: 587.33,
     notaCosmica: "RE Superior (Vórtice Ígneo del Kundalini)",
     dictamen:
-      "EL ARCANO DAATH Y LA NOVENA ESFERA: En el tálamo nupcial de la Castidad Científica (Sahaja Maithuna / Arcano A.Z.F.), conecta el Lingam-Yoni sin derrame seminal. Transmuta el Hidrógeno Sexual Si-12 para despertar el Fuego Serpentino de Devi Kundalini, ascendiendo por Chitra para abrir los Siete Sellos y forjar los Cuerpos Solares (To Soma Heliakon)."
+      "EL ARCANO DAATH Y LA NOVENA ESFERA: En el tálamo nupcial de la Castidad Científica (Sahaja Maithuna / Arcano A.Z.F.), conecta el Lingam-Yoni sin derrame seminal. Transmuta el Hidrógeno Sexual Si-12 para despertar el Fuego Serpentino de Devi Kundalini, ascendiendo por Chitra para abrir los Siete Sellos y forjar los Cuerpos Solares (To Soma Heliakon).",
   },
   absoluto: {
     sephirah: "Ain / Sat · Ain Soph · Ain Soph Aur (Las Tres Profundidades)",
@@ -63,11 +63,11 @@ const SEPHIROTIC_DIRECTIONS = {
     frecuenciaHz: 741.0,
     notaCosmica: "SI Superior (Luz Increada del Protocosmos)",
     dictamen:
-      "RETORNO AL AIN SOPH PARANISHPANA: La meta suprema de la Creación no es retornar como un átomo inconsciente al Absoluto, sino haber vencido la materia, disuelto el Ego, cristalizado el Alma de Diamante y penetrado en el Seno del Inmanifestado como un Maestro Auto-Realizado con Conciencia Continua y Luz Increada."
-  }
+      "RETORNO AL AIN SOPH PARANISHPANA: La meta suprema de la Creación no es retornar como un átomo inconsciente al Absoluto, sino haber vencido la materia, disuelto el Ego, cristalizado el Alma de Diamante y penetrado en el Seno del Inmanifestado como un Maestro Auto-Realizado con Conciencia Continua y Luz Increada.",
+  },
 };
 
-function _handler(req, res) {
+export default function handler(req, res) {
   const method = req.method || "GET";
   if (method !== "GET" && method !== "POST") {
     res.statusCode = 405;
@@ -115,7 +115,14 @@ function _handler(req, res) {
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     return res.end(JSON.stringify({ status: "INVALID_SPHERE", allowed: [...allowedSpheres] }));
   }
-  if (!Number.isFinite(dharma) || dharma < 0 || dharma > 100000 || !Number.isFinite(enJuicio) || enJuicio < 0 || enJuicio > 100000) {
+  if (
+    !Number.isFinite(dharma) ||
+    dharma < 0 ||
+    dharma > 100000 ||
+    !Number.isFinite(enJuicio) ||
+    enJuicio < 0 ||
+    enJuicio > 100000
+  ) {
     res.statusCode = 400;
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     return res.end(JSON.stringify({ status: "INVALID_BALANCE_INPUT" }));
@@ -142,14 +149,14 @@ function _handler(req, res) {
       capitalDharma: dharma,
       agregadosEnJuicio: enJuicio,
       indiceNetoLuz: indiceBalanza,
-      veredictoTribunal: estadoBalanza
+      veredictoTribunal: estadoBalanza,
     },
     dictamenTeurgico: regla.dictamen,
     sha256Fingerprint: `sha256:${crypto
       .createHash("sha256")
       .update(`${consulta}:${esfera}:${dharma}:${enJuicio}:PAZ_INVERENCIAL`)
       .digest("hex")}`,
-    saludoFinal: "AMÉN... AMÉN... AMÉN... PAZ INVERENCIAL."
+    saludoFinal: "AMÉN... AMÉN... AMÉN... PAZ INVERENCIAL.",
   };
 
   res.statusCode = 200;
@@ -157,7 +164,3 @@ function _handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   return res.end(JSON.stringify(payload, null, 2));
 }
-
-// Rate limiting — 20 req/min burst per IP
-import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
-export default withRateLimit({ capacity: 20, refillPerSecond: 0.33 })(_handler);

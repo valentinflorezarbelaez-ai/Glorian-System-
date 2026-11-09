@@ -24,6 +24,20 @@
  * This replaces the need for handlers to capture `this.*` from the server
  * class and makes each handler unit-testable in isolation.
  */
+/** A single retrieval hit. */
+export interface KnowledgeMatch {
+  readonly id: string;
+  readonly score: number;
+  readonly text: string;
+  readonly metadata?: Record<string, unknown>;
+}
+
+/** Retrieval surface used by MCP tool handlers. */
+export interface KnowledgeStoreLike {
+  search(query: string, topK?: number): readonly KnowledgeMatch[];
+  searchHybrid(query: string, topK?: number): readonly KnowledgeMatch[];
+}
+
 export interface ToolContext {
   /**
    * Absolute path to the project root directory.
@@ -32,12 +46,11 @@ export interface ToolContext {
   projectRoot: string;
 
   /**
-   * The EOS sovereign knowledge store instance.
-   * Typed `any` here to avoid a hard compile-time dependency on
-   * `eosNeuralVectorCore` inside this Layer-0 module.
+   * The EOS sovereign knowledge store instance. Only the retrieval surface is
+   * declared so this Layer-0 module keeps no compile-time dependency on the
+   * concrete neural vector core.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  knowledgeStore: any;
+  knowledgeStore: KnowledgeStoreLike;
 }
 
 // ---------------------------------------------------------------------------
@@ -75,10 +88,7 @@ export interface ToolHandler {
    * @param ctx    - Shared server context (projectRoot, knowledgeStore, …).
    * @returns      - Arbitrary JSON-serialisable result, or a Promise thereof.
    */
-  handle(
-    args: Record<string, unknown>,
-    ctx: ToolContext,
-  ): unknown;
+  handle(args: Record<string, unknown>, ctx: ToolContext): unknown;
 }
 
 // ---------------------------------------------------------------------------
@@ -146,11 +156,8 @@ export class ToolExecutionError extends Error {
   public readonly cause: unknown;
 
   constructor(toolName: string, cause: unknown) {
-    const causeMessage =
-      cause instanceof Error ? cause.message : String(cause);
-    super(
-      `EOS MCP tool "${toolName}" threw during execution: ${causeMessage}`,
-    );
+    const causeMessage = cause instanceof Error ? cause.message : String(cause);
+    super(`EOS MCP tool "${toolName}" threw during execution: ${causeMessage}`);
     this.name = "ToolExecutionError";
     this.toolName = toolName;
     this.cause = cause;
@@ -203,11 +210,7 @@ export class EosToolRegistry {
    * @throws {ToolNotFoundError}    When `toolName` has no registered handler.
    * @throws {ToolExecutionError}   When the handler itself throws.
    */
-  public dispatch(
-    toolName: string,
-    args: Record<string, unknown>,
-    ctx: ToolContext,
-  ): unknown {
+  public dispatch(toolName: string, args: Record<string, unknown>, ctx: ToolContext): unknown {
     const handler = this._handlers.get(toolName);
     if (!handler) {
       throw new ToolNotFoundError(toolName);

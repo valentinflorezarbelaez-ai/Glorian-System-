@@ -12,26 +12,17 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
-import {
-  EosGlobalEdgeArbiter,
-  HybridLogicalClock,
-  ZeroAllocEdgeCache
-} from "../src/core/eosGlobalEdgeArbiter.ts";
+import { EosGlobalEdgeArbiter, HybridLogicalClock, ZeroAllocEdgeCache } from "../src/core/eosGlobalEdgeArbiter.ts";
 
 test("EOS Global Edge Anycast Arbiter & Speed Mesh Suite (SPEC-020, BDD-050)", async (t) => {
   const arbiter = new EosGlobalEdgeArbiter("test-arbiter-node");
 
   await t.test("Suite 1: Haversine Distance & Fiber RTT Physics Model", () => {
     // Distance between Stockholm (59.3293, 18.0686) and London (51.5074, -0.1278) ≈ 1435 km
-    const distStockholmLondon = arbiter.computeHaversineDistanceKm(
-      59.3293,
-      18.0686,
-      51.5074,
-      -0.1278
-    );
+    const distStockholmLondon = arbiter.computeHaversineDistanceKm(59.3293, 18.0686, 51.5074, -0.1278);
     assert.ok(
       distStockholmLondon >= 1400 && distStockholmLondon <= 1500,
-      `Expected ~1435 km, got ${distStockholmLondon}`
+      `Expected ~1435 km, got ${distStockholmLondon}`,
     );
 
     // Estimated fiber RTT: 2 * (1435 / 200) + 1.8 ≈ 16.15 ms
@@ -40,10 +31,7 @@ test("EOS Global Edge Anycast Arbiter & Speed Mesh Suite (SPEC-020, BDD-050)", a
 
     // Distance between Bogotá and Medellín ≈ 240 km
     const distBogMedellin = arbiter.computeHaversineDistanceKm(4.711, -74.0721, 6.2442, -75.5812);
-    assert.ok(
-      distBogMedellin >= 200 && distBogMedellin <= 260,
-      `Expected ~240 km, got ${distBogMedellin}`
-    );
+    assert.ok(distBogMedellin >= 200 && distBogMedellin <= 260, `Expected ~240 km, got ${distBogMedellin}`);
   });
 
   await t.test("Suite 2: Global Anycast POP Geo-Routing Resolution", () => {
@@ -80,17 +68,11 @@ test("EOS Global Edge Anycast Arbiter & Speed Mesh Suite (SPEC-020, BDD-050)", a
     const t2 = clockA.now();
 
     // Monotonic guarantee on single node
-    assert.ok(
-      t2.l > t1.l || (t2.l === t1.l && t2.c > t1.c),
-      "HLC must be strictly monotonic"
-    );
+    assert.ok(t2.l > t1.l || (t2.l === t1.l && t2.c > t1.c), "HLC must be strictly monotonic");
 
     // Message passing: Node B receives t2 from Node A
     const t3 = clockB.update(t2);
-    assert.ok(
-      t3.l >= t2.l,
-      "Updated HLC physical time must be >= received physical time"
-    );
+    assert.ok(t3.l >= t2.l, "Updated HLC physical time must be >= received physical time");
     if (t3.l === t2.l) {
       assert.ok(t3.c > t2.c, "Logical counter must advance when physical clocks are tied");
     }
@@ -105,17 +87,17 @@ test("EOS Global Edge Anycast Arbiter & Speed Mesh Suite (SPEC-020, BDD-050)", a
     assert.equal(benchmark.totalRequests, 1500);
     assert.ok(
       benchmark.hedgedTriggerPercentage > 0 && benchmark.hedgedTriggerPercentage < 15,
-      `Hedged requests triggered should be bounded, got ${benchmark.hedgedTriggerPercentage}%`
+      `Hedged requests triggered should be bounded, got ${benchmark.hedgedTriggerPercentage}%`,
     );
 
     // P99 tail latency MUST be reduced by > 50%
     assert.ok(
       benchmark.tailReductionP99Percentage > 50.0,
-      `Expected > 50% p99 reduction, got ${benchmark.tailReductionP99Percentage}%`
+      `Expected > 50% p99 reduction, got ${benchmark.tailReductionP99Percentage}%`,
     );
     assert.ok(
       benchmark.hedgedP99Ms < benchmark.baselineP99Ms,
-      `Hedged P99 (${benchmark.hedgedP99Ms}ms) must be lower than baseline P99 (${benchmark.baselineP99Ms}ms)`
+      `Hedged P99 (${benchmark.hedgedP99Ms}ms) must be lower than baseline P99 (${benchmark.baselineP99Ms}ms)`,
     );
 
     assert.ok(benchmark.sha256Proof.length === 64);
@@ -124,22 +106,19 @@ test("EOS Global Edge Anycast Arbiter & Speed Mesh Suite (SPEC-020, BDD-050)", a
   await t.test("Suite 5: In-Memory Zero-Allocation Edge Cache", () => {
     const cache = new ZeroAllocEdgeCache(10);
 
-    // Warm-up + best-of-3 under verify:strict parallel-batch contention on Windows.
-    let bestUsPerOp = Number.POSITIVE_INFINITY;
-    for (let attempt = 0; attempt < 3; attempt++) {
-      const startNs = process.hrtime.bigint();
-      for (let i = 0; i < 100; i++) {
-        cache.set(`key-${i % 8}`, { data: i }, 60000);
-        const val = cache.get(`key-${i % 8}`);
-        assert.ok(val !== null);
-      }
-      const elapsedUs = Number(process.hrtime.bigint() - startNs) / 1000;
-      const usPerOp = elapsedUs / 200; // 100 sets + 100 gets
-      if (usPerOp < bestUsPerOp) bestUsPerOp = usPerOp;
+    const startNs = process.hrtime.bigint();
+    for (let i = 0; i < 100; i++) {
+      cache.set(`key-${i % 8}`, { data: i }, 60000);
+      const val = cache.get(`key-${i % 8}`);
+      assert.ok(val !== null);
     }
+    const elapsedUs = Number(process.hrtime.bigint() - startNs) / 1000;
+    const usPerOp = elapsedUs / 200; // 100 sets + 100 gets
 
-    // Isolated runs are typically << 50 µs; parallel CI batches may spike — keep functional gates hard.
-    assert.ok(bestUsPerOp < 500.0, `Cache operation took ${bestUsPerOp.toFixed(3)} µs, expected < 500 µs`);
+    // Must remain a fast in-memory cache. The exact per-op budget is host-load
+    // sensitive (parallel suites / CI workers scheduling the loop), so this is a
+    // generous sanity ceiling; the functional assertions above carry the real signal.
+    assert.ok(usPerOp < 100.0, `Cache operation took ${usPerOp.toFixed(3)} µs, expected < 100 µs`);
 
     // Invalidation
     cache.set("route:stockholm", { dest: "sto-01" });

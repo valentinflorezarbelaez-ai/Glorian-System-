@@ -19,7 +19,7 @@ test("BDD-320: Virtual Sparse Projection of Transitive Monorepo Closure", () => 
     nodes.push({
       id: `node-${i}`,
       path: `packages/pkg-${i}/index.ts`,
-      dependencies: []
+      dependencies: [],
     });
   }
 
@@ -71,7 +71,7 @@ export function runWorker() {
   const failResult = governor.auditJplPowerOfTen(unboundedLoopCode);
   assert.equal(failResult.certifiedFlightReady, false);
   assert.equal(failResult.verdict, "FAIL_UNBOUNDED_LOOP_DETECTED");
-  assert.ok(failResult.findings.some(f => f.rule === 2));
+  assert.ok(failResult.findings.some((f) => f.rule === 2));
 });
 
 test("BDD-322: Large-Scale Codemod Sharding and Topological Blast Radius Ordering", () => {
@@ -81,7 +81,7 @@ test("BDD-322: Large-Scale Codemod Sharding and Topological Blast Radius Orderin
   const packages = [
     { id: "pkg-core", dependencies: [] },
     { id: "pkg-mid", dependencies: ["pkg-core"] },
-    { id: "pkg-leaf", dependencies: ["pkg-mid"] }
+    { id: "pkg-leaf", dependencies: ["pkg-mid"] },
   ];
 
   const plan = governor.generateRosieCodemodPlan(packages);
@@ -104,7 +104,7 @@ test("BDD-323: Triple Modular Redundancy (TMR) 2-of-3 Byzantine Consensus Adjudi
   const approvedVotes = [
     { modelId: "claude-3-7-sonnet", approved: true, assertionHash: "hash-alpha", rationale: "Proof sound." },
     { modelId: "gemini-2.5-pro", approved: true, assertionHash: "hash-alpha", rationale: "Invariant verified." },
-    { modelId: "gpt-4o", approved: false, assertionHash: "hash-beta", rationale: "Divergence." }
+    { modelId: "gpt-4o", approved: false, assertionHash: "hash-beta", rationale: "Divergence." },
   ];
   const quorumResult = governor.adjudicateTmrConsensus(approvedVotes);
   assert.equal(quorumResult.quorumApproved, true);
@@ -117,7 +117,7 @@ test("BDD-323: Triple Modular Redundancy (TMR) 2-of-3 Byzantine Consensus Adjudi
   const splitVotes = [
     { modelId: "claude-3-7-sonnet", approved: true, assertionHash: "hash-1", rationale: "R1" },
     { modelId: "gemini-2.5-pro", approved: true, assertionHash: "hash-2", rationale: "R2" },
-    { modelId: "gpt-4o", approved: false, assertionHash: "hash-3", rationale: "R3" }
+    { modelId: "gpt-4o", approved: false, assertionHash: "hash-3", rationale: "R3" },
   ];
   const splitResult = governor.adjudicateTmrConsensus(splitVotes);
   assert.equal(splitResult.quorumApproved, false);
@@ -138,10 +138,10 @@ test("BDD-324: EosMcpServer Integration for Planetary Monorepo and Aerospace Too
         targetFile: "src/core/index.ts",
         monorepoNodes: [
           { id: "1", path: "src/core/index.ts", dependencies: ["src/core/eosFinOpsBudget.ts"] },
-          { id: "2", path: "src/core/eosFinOpsBudget.ts", dependencies: [] }
-        ]
-      }
-    }
+          { id: "2", path: "src/core/eosFinOpsBudget.ts", dependencies: [] },
+        ],
+      },
+    },
   };
   const sparseRes = await server.handleRequest(sparseReq);
   assert.equal(sparseRes.error, undefined);
@@ -158,9 +158,10 @@ test("BDD-324: EosMcpServer Integration for Planetary Monorepo and Aerospace Too
     params: {
       name: "eos_jpl_power_of_ten_audit",
       arguments: {
-        sourceCode: "function test() { for(let i=0;i<10;i++){} if(x) throw new Error(); if(y) throw new Error(); return 1; }"
-      }
-    }
+        sourceCode:
+          "function test() { for(let i=0;i<10;i++){} if(x) throw new Error(); if(y) throw new Error(); return 1; }",
+      },
+    },
   };
   const jplRes = await server.handleRequest(jplReq);
   assert.equal(jplRes.error, undefined);
@@ -180,10 +181,10 @@ test("BDD-324: EosMcpServer Integration for Planetary Monorepo and Aerospace Too
         votes: [
           { modelId: "modelA", approved: true, assertionHash: "H1", rationale: "OK" },
           { modelId: "modelB", approved: true, assertionHash: "H1", rationale: "OK" },
-          { modelId: "modelC", approved: false, assertionHash: "H2", rationale: "NO" }
-        ]
-      }
-    }
+          { modelId: "modelC", approved: false, assertionHash: "H2", rationale: "NO" },
+        ],
+      },
+    },
   };
   const tmrRes = await server.handleRequest(tmrReq);
   assert.equal(tmrRes.error, undefined);

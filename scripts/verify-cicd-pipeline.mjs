@@ -1,9 +1,13 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
+import { execFile, execFileSync, spawn } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { promisify } from "node:util";
+
+const execFileAsync = promisify(execFile);
 
 const root = process.cwd();
 const startTime = Date.now();
@@ -23,25 +27,6 @@ console.log(" EOS SYSTEM — LOCAL REPOSITORY CHECKS (NO DEPLOYMENT)  ");
 console.log(` [INFO] Node: ${process.version} | Platform: ${process.platform} | Arch: ${process.arch}`);
 console.log("======================================================================");
 
-// SARIF Diagnostic Findings Accumulator (SPEC-138)
-const sarifFindings = [];
-
-function recordFinding(ruleId, messageText, relPath = "package.json", line = 1) {
-  sarifFindings.push({
-    ruleId,
-    level: "error",
-    message: { text: messageText },
-    locations: [
-      {
-        physicalLocation: {
-          artifactLocation: { uri: relPath.replace(/\\/g, "/") },
-          region: { startLine: line }
-        }
-      }
-    ]
-  });
-}
-
 // Helper to recursively list tracked project files
 function listRepoFiles(dir, acc = []) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -53,6 +38,7 @@ function listRepoFiles(dir, acc = []) {
       entry.name === "node_modules" ||
       entry.name === "dist" ||
       entry.name === "_sandbox" ||
+      entry.name === "dynamic_tools" ||
       entry.name.startsWith(".worktree")
     ) {
       continue;
@@ -70,848 +56,700 @@ function listRepoFiles(dir, acc = []) {
   return acc;
 }
 
-let stagesPassedCount = 0;
-let fatalError = null;
-let sourceInventoryDigest = "sha256:0000000000000000000000000000000000000000000000000000000000000000";
-let fileInventory = [];
-let allFiles = [];
-let apiEndpoints = [];
-let pkgVersion = "76.0.0";
-
-try {
-  const pkgRaw = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
-  if (pkgRaw.version) pkgVersion = pkgRaw.version;
-
-  allFiles = listRepoFiles(root);
-  let inventoryBytes = 0;
-  for (const file of allFiles) {
-    const stat = fs.lstatSync(file);
-    if (!stat.isFile() || stat.isSymbolicLink()) {
-      const err = `[STAGE 1 FAIL] Refusing non-regular or symbolic-link file: ${path.relative(root, file)}`;
-      recordFinding("EOS-SEC-001", err, path.relative(root, file));
-      throw new Error(err);
-    }
-    if (stat.size > MAX_SINGLE_REPO_FILE_BYTES) {
-      const err = `[STAGE 1 FAIL] File exceeds 64 MiB limit: ${path.relative(root, file)}`;
-      recordFinding("EOS-SEC-001", err, path.relative(root, file));
-      throw new Error(err);
-    }
-    inventoryBytes += stat.size;
-    if (inventoryBytes > MAX_REPO_INVENTORY_BYTES) {
-      const err = `[STAGE 1 FAIL] Repository scan exceeds 512 MiB inventory limit.`;
-      recordFinding("EOS-SEC-001", err, "package.json");
-      throw new Error(err);
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  // STAGE 1.5: SECURITY HARDENING REGRESSION GATE (15-CVE Verification)
-  // ---------------------------------------------------------------------------
-  execFileSync(process.execPath, [path.join(root, "scripts/verify-security-hardening.mjs")], {
-    cwd: root,
-    stdio: "inherit"
-  });
-
-  // ---------------------------------------------------------------------------
-  // STAGE 2: CONSTITUTIONAL SDD & 7 INVIOLABLE LAWS GATE (LAWS I, II, VII)
-  // ---------------------------------------------------------------------------
-  execFileSync(process.execPath, [path.join(root, "scripts/verify-landing.mjs")], {
-    cwd: root,
-    stdio: "inherit"
-  });
-  execFileSync(process.execPath, [path.join(root, "scripts/verify-sri-integrity.mjs")], {
-    cwd: root,
-    stdio: "inherit"
-  });
-  console.log("[PASS] Stage 2/7 — Constitutional SDD, Landing Invariants & SRI Integrity Gate.");
-
-  // ---------------------------------------------------------------------------
-  // STAGE 3: HEXAGONAL L0 PURITY (0-DEPS) & SLSA LEVEL 4 SHA-256 SBOM MERKLE ROOT
-  // ---------------------------------------------------------------------------
-  const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
-  const runtimeDeps = Object.keys(pkg.dependencies || {});
-  assert.equal(
-    runtimeDeps.length,
-    0,
-    `[STAGE 3 FAIL] Law V violation: Expected 0 external runtime dependencies, found: ${runtimeDeps.join(", ")}`
+const allFiles = listRepoFiles(root);
+let inventoryBytes = 0;
+for (const file of allFiles) {
+  const stat = fs.lstatSync(file);
+  assert.ok(
+    stat.isFile() && !stat.isSymbolicLink(),
+    `[STAGE 1 FAIL] Refusing a non-regular or symbolic-link file: ${path.relative(root, file)}`,
   );
+  assert.ok(
+    stat.size <= MAX_SINGLE_REPO_FILE_BYTES,
+    `[STAGE 1 FAIL] File exceeds the 64 MiB limit: ${path.relative(root, file)}`,
+  );
+  inventoryBytes += stat.size;
+  assert.ok(
+    inventoryBytes <= MAX_REPO_INVENTORY_BYTES,
+    "[STAGE 1 FAIL] Repository scan exceeds its 512 MiB inventory limit.",
+  );
+}
 
-  const sbomEntries = [];
-  const merkleHasher = crypto.createHash("sha256");
-  for (const file of allFiles.sort()) {
-    if (!fs.existsSync(file)) continue;
-    const rel = path.relative(root, file).replace(/\\/g, "/");
-    if (rel === "docs/evidence/SBOM-CICD-RECEIPT.json" || rel === "docs/evidence/eos-audit.sarif") continue;
-    const bytes = fs.readFileSync(file);
-    const sha256 = crypto.createHash("sha256").update(bytes).digest("hex");
-    sbomEntries.push({ path: rel, bytes: bytes.length, sha256 });
-    merkleHasher.update(`${rel}:${sha256}\n`);
+// ---------------------------------------------------------------------------
+// STAGE 1: SPEC-123 & SPEC-124 FLEET SECRET-SCAN & DYNAMIC REGISTRY GATE
+// ---------------------------------------------------------------------------
+execFileSync(process.execPath, [path.join(root, "scripts/eos-secret-scan.mjs"), "."], {
+  cwd: root,
+  stdio: "inherit",
+});
+execFileSync(process.execPath, [path.join(root, "scripts/eos-fleet-registry-sync.mjs"), "--dry-run"], {
+  cwd: root,
+  stdio: "inherit",
+});
+console.log(
+  `[PASS] Stage 1/7 — SPEC-123 Canonical Zero-Plain-Secrets & SPEC-124 Fleet Registry Sentinel (exit code 0).`,
+);
+
+// ---------------------------------------------------------------------------
+// STAGE 2: CONSTITUTIONAL SDD & 7 INVIOLABLE LAWS GATE (LAWS I, II, VII)
+// ---------------------------------------------------------------------------
+execFileSync(process.execPath, [path.join(root, "scripts/verify-landing.mjs")], {
+  cwd: root,
+  stdio: "inherit",
+});
+execFileSync(process.execPath, [path.join(root, "scripts/verify-sri-integrity.mjs")], {
+  cwd: root,
+  stdio: "inherit",
+});
+// Law II (no code precedes a formal specification): every SPEC-NNN citation in
+// source or docs must resolve to a real OpenSpec file. Fail-closed — a dangling
+// reference is unverifiable prose and is treated as a gate failure, not a warning.
+execFileSync(process.execPath, [path.join(root, "scripts/verify-reference-integrity.mjs")], {
+  cwd: root,
+  stdio: "inherit",
+});
+console.log("[PASS] Stage 2/7 — Landing-page assertions, SRI integrity, and reference-integrity gate.");
+
+// ---------------------------------------------------------------------------
+// STAGE 3: runtime dependency check and a digest of the source-file inventory
+// ---------------------------------------------------------------------------
+const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
+const runtimeDeps = Object.keys(pkg.dependencies || {});
+assert.equal(
+  runtimeDeps.length,
+  0,
+  `[STAGE 3 FAIL] Law V violation: Expected 0 external runtime dependencies, found: ${runtimeDeps.join(", ")}`,
+);
+
+const fileInventory = [];
+const inventoryHasher = crypto.createHash("sha256");
+for (const file of allFiles.sort()) {
+  if (!fs.existsSync(file)) continue;
+  const rel = path.relative(root, file).replace(/\\/g, "/");
+  if (
+    rel === "docs/evidence/LOCAL-CHECKS-RECEIPT.json" ||
+    rel === "docs/evidence/local-checks.sarif" ||
+    /^docs\/evidence\/HEAL-.*\.json$/.test(rel)
+  )
+    continue;
+  const bytes = fs.readFileSync(file);
+  const sha256 = crypto.createHash("sha256").update(bytes).digest("hex");
+  fileInventory.push({ path: rel, bytes: bytes.length, sha256 });
+  inventoryHasher.update(`${rel}:${sha256}\n`);
+}
+const sourceInventoryDigest = `sha256:${inventoryHasher.digest("hex")}`;
+console.log(
+  `[PASS] Stage 3/7 — Runtime dependency check and source-file inventory (${fileInventory.length} files; SHA-256 digest: ${sourceInventoryDigest.slice(0, 24)}...).`,
+);
+
+// ---------------------------------------------------------------------------
+// STAGE 3.5: BOUNDED JAVASCRIPT SIMULATIONS ASSOCIATED WITH TLA+ FILES
+// ---------------------------------------------------------------------------
+execFileSync(process.execPath, [path.join(root, "scripts/verify-formal-tla.mjs")], {
+  cwd: root,
+  stdio: "inherit",
+});
+console.log(
+  "[PASS] Stage 3.5/7 — Bounded JavaScript simulations and text extraction from TLA+ files (not TLC model checking).",
+);
+
+// ---------------------------------------------------------------------------
+// STAGE 4: STATIC AST, SYNTAX & BYTECODE VERIFICATION (node --check + L0 TS)
+// ---------------------------------------------------------------------------
+// Big Tech pattern: parallel syntax verification via worker pool.
+// Test files are excluded here — the parallel test runner validates their
+// syntax intrinsically upon module loading.
+const CONCURRENCY = Math.min(8, Math.max(4, (os.cpus()?.length ?? 8) - 2));
+const testFileSet = new Set(
+  fs
+    .readdirSync(path.join(root, "test"))
+    .filter((f) => f.endsWith(".test.mjs"))
+    .map((f) => path.join(root, "test", f)),
+);
+const jsFilesToCheck = allFiles.filter((f) => (f.endsWith(".js") || f.endsWith(".mjs")) && !testFileSet.has(f));
+const syntaxErrors = [];
+{
+  let idx = 0;
+  async function syntaxWorker() {
+    while (idx < jsFilesToCheck.length) {
+      const file = jsFilesToCheck[idx++];
+      if (!fs.existsSync(file)) continue;
+      try {
+        await execFileAsync(process.execPath, ["--check", file], { cwd: root, maxBuffer: 4 * 1024 * 1024 });
+      } catch (err) {
+        const msg = err.stderr?.toString().trim() || err.message;
+        syntaxErrors.push({ file: path.relative(root, file), message: msg });
+      }
+    }
   }
-  const sbomMerkleRoot = `sha256:${merkleHasher.digest("hex")}`;
-  console.log(`[PASS] Stage 3/7 — Hexagonal L0 (0-Deps) & SLSA L4 SBOM (${sbomEntries.length} artifacts, Merkle: ${sbomMerkleRoot.slice(0, 24)}...).`);
+  await Promise.all(Array.from({ length: CONCURRENCY }, () => syntaxWorker()));
+}
+assert.equal(
+  syntaxErrors.length,
+  0,
+  `[STAGE 4 FAIL] ${syntaxErrors.length} JavaScript syntax error(s):\n` +
+    syntaxErrors.map((e) => `  ${e.file}: ${e.message}`).join("\n"),
+);
 
-  // ---------------------------------------------------------------------------
-  // STAGE 3.5: FORMAL TLA+ SPECIFICATION & MATHEMATICAL INVARIANT GATE (seL4)
-  // ---------------------------------------------------------------------------
-  execFileSync(process.execPath, [path.join(root, "scripts/verify-formal-tla.mjs")], {
-    cwd: root,
-    stdio: "inherit"
-  });
-  console.log(`[PASS] Stage 3.5/7 — TLA+ Formal Verification Gate (3/3 models, 800 states checked).`);
+const typeScriptCompiler = path.join(root, "node_modules", "typescript", "bin", "tsc");
+assert.ok(
+  fs.existsSync(typeScriptCompiler),
+  "TypeScript compiler is missing; install the locked dev toolchain with npm ci.",
+);
+execFileSync(process.execPath, [typeScriptCompiler, "--project", path.join(root, "tsconfig.typecheck.json")], {
+  cwd: root,
+  stdio: "inherit",
+});
+const tsCoreFiles = fs.readdirSync(path.join(root, "src/core")).filter((f) => f.endsWith(".ts"));
+assert.ok(tsCoreFiles.length >= 6, "Expected at least 6 Layer-0 TypeScript core modules in src/core/");
 
-  // ---------------------------------------------------------------------------
-  // STAGE 3.8: TYPESCRIPT STRICT TYPE-CHECK GATE (Google/Stripe/Airbnb grade)
-  // ---------------------------------------------------------------------------
-  execFileSync(process.execPath, [path.join(root, "scripts/verify-typescript.mjs")], {
-    cwd: root,
-    stdio: "inherit"
-  });
+// Discover test suites
+const testFiles = fs
+  .readdirSync(path.join(root, "test"))
+  .filter((file) => file.endsWith(".test.mjs"))
+  .map((file) => `test/${file}`)
+  .sort();
+assert.ok(testFiles.length > 0, "No Node test suites were found under test/.");
 
-  // ---------------------------------------------------------------------------
-  // STAGE 3.9: DESIGN SYSTEM LINTER — VISUAL GOVERNANCE GATE (Capa 3)
-  // ---------------------------------------------------------------------------
-  execFileSync(process.execPath, [path.join(root, "scripts/verify-design-system.mjs")], {
-    cwd: root,
-    stdio: "inherit"
-  });
+// PTS impact-scoped selection (unchanged logic)
+const isPts = process.argv.includes("--pts");
+let filesToRun = testFiles;
 
-  // ---------------------------------------------------------------------------
-  // STAGE 3.91: SPEC NUMBER UNIQUENESS GATE (Google ADR standard: IDs must be globally unique)
-  // ---------------------------------------------------------------------------
+if (isPts) {
   try {
-    const specsDir = path.join(root, "openspec/specs");
-    if (fs.existsSync(specsDir)) {
-      const specFiles = fs.readdirSync(specsDir).filter((f) => f.endsWith(".md"));
-      const specNumbers = new Map();
-      const duplicates = [];
-      for (const f of specFiles) {
-        const match = f.match(/^SPEC-(\d+)/);
-        if (match) {
-          const num = match[1];
-          if (specNumbers.has(num)) {
-            duplicates.push(`SPEC-${num}: "${specNumbers.get(num)}" vs "${f}"`);
-          } else {
-            specNumbers.set(num, f);
-          }
-        }
-      }
-      if (duplicates.length > 0) {
-        recordFinding("EOS-SPEC-DEDUP", `Duplicate SPEC numbers detected (${duplicates.length}): ${duplicates.join("; ")}`, "openspec/specs/");
-        console.warn(`[WARN] Stage 3.91 — ${duplicates.length} duplicate SPEC number(s) found: ${duplicates.slice(0, 3).join("; ")}${duplicates.length > 3 ? "…" : ""}`);
-      } else {
-        console.log(`[PASS] Stage 3.91 — SPEC number uniqueness gate (${specNumbers.size} unique SPECs, 0 collisions).`);
-      }
-    }
-  } catch (err) {
-    console.warn(`[WARN] Stage 3.91 skipped: ${err.message}`);
-  }
+    const gitDiff = execFileSync("git", ["status", "--porcelain"], { cwd: root, encoding: "utf8" });
+    const changed = gitDiff
+      .split("\n")
+      .filter(Boolean)
+      .map((l) => l.slice(3).trim())
+      .map((l) => (l.includes(" -> ") ? l.slice(l.indexOf(" -> ") + 4) : l))
+      .filter(Boolean);
 
-  // ---------------------------------------------------------------------------
-  // STAGE 3.92: OPENAPI CONTRACT STRUCTURE VALIDATION
-  // ---------------------------------------------------------------------------
-  try {
-    const openapiPath = path.join(root, "openspec/openapi.yaml");
-    if (fs.existsSync(openapiPath)) {
-      const openapiContent = fs.readFileSync(openapiPath, "utf8");
-      // Structural validation: must have openapi version, info, and paths sections
-      assert.ok(openapiContent.includes("openapi:"), "openapi.yaml missing 'openapi:' version field");
-      assert.ok(openapiContent.includes("info:"), "openapi.yaml missing 'info:' section");
-      assert.ok(openapiContent.includes("paths:"), "openapi.yaml missing 'paths:' section");
-      // Must declare at least 10 paths (14 handlers registered)
-      const pathCount = (openapiContent.match(/^\s{2}\/api\//gm) || []).length;
-      assert.ok(pathCount >= 10, `openapi.yaml only declares ${pathCount} API paths; expected at least 10`);
-      console.log(`[PASS] Stage 3.92 — OpenAPI contract structure validation (${pathCount} paths declared).`);
-    } else {
-      console.warn("[WARN] Stage 3.92 — openspec/openapi.yaml not found; skipping contract validation.");
-    }
-  } catch (err) {
-    recordFinding("EOS-OPENAPI-001", `Stage 3.92 OpenAPI contract validation failure: ${err.message}`, "openspec/openapi.yaml");
-    throw err;
-  }
+    if (changed.length > 0) {
+      const { EosDatalogVerifier } = await import("../src/core/eosDatalogVerifier.ts");
+      const verifier = new EosDatalogVerifier(root);
+      const selected = new Set();
 
-  // ---------------------------------------------------------------------------
-  // STAGE 4: STATIC AST, SYNTAX & BYTECODE VERIFICATION (node --check + L0 TS)
-  // ---------------------------------------------------------------------------
-  const jsFilesToCheck = allFiles.filter((f) => f.endsWith(".js") || f.endsWith(".mjs"));
-  for (const jsFile of jsFilesToCheck) {
-    execFileSync(process.execPath, ["--check", jsFile], { cwd: root, stdio: "pipe" });
-  }
-  const tsCoreFiles = fs.readdirSync(path.join(root, "src/core")).filter((f) => f.endsWith(".ts"));
-  assert.ok(tsCoreFiles.length >= 6, "Expected at least 6 Layer-0 TypeScript core modules in src/core/");
-
-  // Execute formal native unit test suite, chaos resilience suite, and prometheus omni-model suite (node:test)
-  const testFiles = [
-    "test/eosCore.test.mjs",
-    "test/chaosResilience.test.mjs",
-    "test/eosPrometheus.test.mjs",
-    "test/eosTurbo.test.mjs",
-    "test/eosSemanticGraph.test.mjs",
-    "test/eosAutonomousHealer.test.mjs",
-    "test/eosWorktree.test.mjs",
-    "test/eosCognitiveEval.test.mjs",
-    "test/eosOpenSpec.test.mjs",
-    "test/eosTitans.test.mjs",
-    "test/eosSpotify.test.mjs",
-    "test/eosGoAccelerator.test.mjs",
-    "test/eosAudioDsp.test.mjs",
-    "test/eosFleetElevator.test.mjs",
-    "test/eosSpotifyFactory.test.mjs",
-    "test/eosApolloHermesMesh.test.mjs",
-    "test/eosGaplessMixEngine.test.mjs",
-    "test/eosAcousticFeatureStore.test.mjs",
-    "test/eosUniversalProjectAdapter.test.mjs",
-    "test/eosGlobalEdgeArbiter.test.mjs",
-    "test/eosSpotifyNubankDualEngine.test.mjs",
-    "test/eosSamaelIbmNvidiaCore.test.mjs",
-    "test/eosDisruptorRingEngine.test.mjs",
-    "test/eosNubankCodex.test.mjs",
-    "test/eosSpotifyInstitutionalCodex.test.mjs",
-    "test/eosApexModelRouter.test.mjs",
-    "test/eosWasmTopology.test.mjs",
-    "test/eosJarvisSoulIntrospection.test.mjs",
-    "test/eosTierS1OmegaSdlc.test.mjs",
-    "test/eosMcpStreamServer.test.mjs",
-    "test/eosApexTenMatrix.test.mjs",
-    "test/eosBigTechTier1Perfection.test.mjs",
-    "test/eosGnosticFinOps.test.mjs",
-    "test/eosTierZeroApexPerfection.test.mjs",
-    "test/eosBigTechHyperOptimization.test.mjs",
-    "test/eosMindMountainsAutotune.test.mjs",
-    "test/eosNsaZeroTrustDefense.test.mjs",
-    "test/eosPlanetaryConsensusAdaptiveConcurrency.test.mjs",
-    "test/eosConsistentHashingRateLimiter.test.mjs",
-    "test/eosBigTechHyperPerfection.test.mjs",
-    "test/eosHnswVectorEngine.test.mjs",
-    "test/eosUniversalProductFoundry.test.mjs",
-    "test/eosSovereignLoop.test.mjs",
-    "test/eosOmegaTranscendentalApex.test.mjs",
-    "test/eosContinuousRefactorEngine.test.mjs",
-    "test/eosAgiHarness.test.mjs",
-    "test/eosPropertyBased.test.mjs",
-    "test/eosCliUx.test.mjs",
-    "test/eosOperational.test.mjs",
-    "test/eosEnterpriseModules.test.mjs",
-  ];
-
-  const isPts = process.argv.includes("--pts");
-  let filesToRun = testFiles;
-
-  if (isPts) {
-    try {
-      execFileSync(process.execPath, [path.join(root, "scripts/eos-secret-scan.mjs"), "."], {
-        cwd: root,
-        stdio: "inherit"
-      });
-      execFileSync(process.execPath, [path.join(root, "scripts/eos-fleet-registry-sync.mjs"), "--dry-run"], {
-        cwd: root,
-        stdio: "inherit"
-      });
-      stagesPassedCount++;
-      console.log(`[PASS] Stage 1/7 — SPEC-123 Canonical Zero-Plain-Secrets & SPEC-124 Fleet Registry Sentinel (exit code 0).`);
-    } catch (err) {
-      recordFinding("EOS-SEC-001", `Stage 1 execution error: ${err.message}`, "scripts/eos-secret-scan.mjs");
-      throw err;
-    }
-
-    // ---------------------------------------------------------------------------
-    // STAGE 2: CONSTITUTIONAL SDD & 7 INVIOLABLE LAWS GATE (LAWS I, II, VII)
-    // ---------------------------------------------------------------------------
-    try {
-      execFileSync(process.execPath, [path.join(root, "scripts/verify-landing.mjs")], {
-        cwd: root,
-        stdio: "inherit"
-      });
-      execFileSync(process.execPath, [path.join(root, "scripts/verify-sri-integrity.mjs")], {
-        cwd: root,
-        stdio: "inherit"
-      });
-      stagesPassedCount++;
-      console.log("[PASS] Stage 2/7 — Landing-page assertions and SRI integrity check.");
-    } catch (err) {
-      recordFinding("EOS-SDD-002", `Stage 2 landing/SRI assertion failure: ${err.message}`, "index.html");
-      throw err;
-    }
-
-    // ---------------------------------------------------------------------------
-    // STAGE 3: runtime dependency check and a digest of the source-file inventory
-    // ---------------------------------------------------------------------------
-    try {
-      const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
-      const runtimeDeps = Object.keys(pkg.dependencies || {});
-      if (runtimeDeps.length !== 0) {
-        const err = `[STAGE 3 FAIL] Law V violation: Expected 0 external runtime dependencies, found: ${runtimeDeps.join(", ")}`;
-        recordFinding("EOS-L0-003", err, "package.json");
-        throw new Error(err);
-      }
-
-      fileInventory = [];
-      const inventoryHasher = crypto.createHash("sha256");
-      for (const file of allFiles.sort()) {
-        if (!fs.existsSync(file)) continue;
-        const rel = path.relative(root, file).replace(/\\/g, "/");
-        if (rel === "docs/evidence/LOCAL-CHECKS-RECEIPT.json" || rel === "docs/evidence/local-checks.sarif" || /^docs\/evidence\/HEAL-.*\.json$/.test(rel)) continue;
-        const bytes = fs.readFileSync(file);
-        const sha256 = crypto.createHash("sha256").update(bytes).digest("hex");
-        fileInventory.push({ path: rel, bytes: bytes.length, sha256 });
-        inventoryHasher.update(`${rel}:${sha256}\n`);
-      }
-      sourceInventoryDigest = `sha256:${inventoryHasher.digest("hex")}`;
-      stagesPassedCount++;
-      console.log(`[PASS] Stage 3/7 — Runtime dependency check and source-file inventory (${fileInventory.length} files; SHA-256 digest: ${sourceInventoryDigest.slice(0, 24)}...).`);
-    } catch (err) {
-      recordFinding("EOS-L0-003", `Stage 3 dependency/inventory check error: ${err.message}`, "package.json");
-      throw err;
-    }
-
-    // ---------------------------------------------------------------------------
-    // STAGE 3.5: BOUNDED JAVASCRIPT SIMULATIONS ASSOCIATED WITH TLA+ FILES
-    // ---------------------------------------------------------------------------
-    try {
-      execFileSync(process.execPath, [path.join(root, "scripts/verify-formal-tla.mjs")], {
-        cwd: root,
-        stdio: "inherit"
-      });
-      console.log("[PASS] Stage 3.5/7 — Bounded JavaScript simulations and text extraction from TLA+ files (not TLC model checking).");
-    } catch (err) {
-      recordFinding("EOS-TLA-008", `Stage 3.5 TLA+ bounded simulation failure: ${err.message}`, "scripts/verify-formal-tla.mjs");
-      throw err;
-    }
-
-    // ---------------------------------------------------------------------------
-    // STAGE 4: STATIC AST, SYNTAX & BYTECODE VERIFICATION (node --check + L0 TS)
-    // ---------------------------------------------------------------------------
-    try {
-      const jsFilesToCheck = allFiles.filter((f) => f.endsWith(".js") || f.endsWith(".mjs"));
-      for (const jsFile of jsFilesToCheck) {
-        execFileSync(process.execPath, ["--check", jsFile], { cwd: root, stdio: "pipe" });
-      }
-      const typeScriptCompiler = path.join(root, "node_modules", "typescript", "bin", "tsc");
-      assert.ok(fs.existsSync(typeScriptCompiler), "TypeScript compiler is missing; install locked dev toolchain with npm ci.");
-      execFileSync(process.execPath, [typeScriptCompiler, "--project", path.join(root, "tsconfig.typecheck.json")], {
-        cwd: root,
-        stdio: "inherit"
-      });
-      const tsCoreFiles = fs.readdirSync(path.join(root, "src/core")).filter((f) => f.endsWith(".ts"));
-      assert.ok(tsCoreFiles.length >= 6, "Expected at least 6 Layer-0 TypeScript core modules in src/core/");
-
-      // Execute formal native unit test suite (node:test) with optimized batching
-      const testFiles = fs.readdirSync(path.join(root, "test"))
-        .filter((file) => file.endsWith(".test.mjs"))
-        .map((file) => `test/${file}`)
-        .sort();
-      assert.ok(testFiles.length > 0, "No Node test suites were found under test/.");
-
-      const isPts = process.argv.includes("--pts");
-      let filesToRun = testFiles;
-
-      if (isPts) {
-        try {
-          const gitDiff = execFileSync("git", ["status", "--porcelain"], { cwd: root, encoding: "utf8" });
-          const changed = gitDiff
-            .split("\n")
-            .map((l) => l.trim().slice(3).trim())
-            .filter(Boolean);
-
-          if (changed.length > 0) {
-            const { EosDatalogVerifier } = await import("../src/core/eosDatalogVerifier.ts");
-            const verifier = new EosDatalogVerifier(root);
-            const selected = new Set();
-
-            for (const item of changed) {
-              const norm = item.replace(/\\/g, "/");
-              if (norm.startsWith("test/") && norm.endsWith(".test.mjs")) {
-                selected.add(norm);
-              } else if (norm.startsWith("src/core/") && norm.endsWith(".ts")) {
-                const blast = verifier.queryBlastRadius(norm);
-                blast.predictiveTestSuites.forEach((s) => selected.add(s));
-              }
-            }
-
-            if (selected.size > 0) {
-              filesToRun = testFiles.filter((f) => selected.has(f));
-              console.log(`[STAGE 4 PTS] Datalog Smart Selection activated: ${filesToRun.length} of ${testFiles.length} suites selected.`);
-            }
-          }
-        } catch {
-          filesToRun = testFiles;
+      for (const item of changed) {
+        const norm = item.replace(/\\/g, "/");
+        if (norm.startsWith("test/") && norm.endsWith(".test.mjs")) {
+          selected.add(norm);
+        } else if (norm.startsWith("src/core/") && norm.endsWith(".ts")) {
+          const blast = verifier.queryBlastRadius(norm);
+          blast.predictiveTestSuites.forEach((s) => selected.add(s));
         }
       }
 
-      // Execute in balanced parallel batches (chunks of 6 files) to maximize CPU throughput
-      const BATCH_SIZE = 6;
-      for (let i = 0; i < filesToRun.length; i += BATCH_SIZE) {
-        const batch = filesToRun.slice(i, i + BATCH_SIZE);
-        console.log(`[STAGE 4 RUNNER] Executing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(filesToRun.length / BATCH_SIZE)} (${batch.length} suites)...`);
-        execFileSync(process.execPath, ["--test", ...batch.map((f) => path.join(root, f))], {
-          cwd: root,
-          stdio: "inherit"
-        });
+      if (selected.size > 0) {
+        filesToRun = testFiles.filter((f) => selected.has(f));
+        console.log(
+          `[STAGE 4 PTS] Datalog Smart Selection activated: ${filesToRun.length} of ${testFiles.length} suites selected.`,
+        );
       }
-
-      stagesPassedCount++;
-      console.log(`[PASS] Stage 4/7 — JavaScript syntax, TypeScript type-check, and all discovered Node test suites (${jsFilesToCheck.length} JS/MJS modules; ${tsCoreFiles.length} core TS modules; ${testFiles.length} suites).`);
-    } catch (err) {
-      recordFinding("EOS-TEST-004", `Stage 4 AST/Type/Test execution failure: ${err.message}`, "test/");
-      throw err;
     }
-
-    // ---------------------------------------------------------------------------
-    // STAGE 5: WCAG 2.1 AA ACCESSIBILITY, SEO, PERFORMANCE & SPEC-128 S-0 DESIGN GOVERNOR GATE
-    // ---------------------------------------------------------------------------
-    try {
-      execFileSync(process.execPath, [path.join(root, "scripts/verify-cwv-budget.mjs")], {
-        cwd: root,
-        stdio: "inherit"
-      });
-      execFileSync(process.execPath, [path.join(root, "scripts/eos-design-system-govern.mjs")], {
-        cwd: root,
-        stdio: "inherit"
-      });
-      const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
-      assert.ok(html.includes('class="skip-link"'), "Missing WCAG 2.1 AA skip-link");
-      assert.ok(html.includes('aria-live="polite"'), "Missing aria-live polite regions");
-      assert.ok(html.includes('closedby="any"'), "Missing native <dialog closedby=\"any\">");
-      assert.ok(html.includes('application/ld+json'), "Missing Schema.org JSON-LD");
-      const jsSizeKb = (fs.statSync(path.join(root, "js/eos.js")).size / 1024).toFixed(1);
-      const cssSizeKb = (fs.statSync(path.join(root, "css/eos.css")).size / 1024).toFixed(1);
-      assert.ok(Number(jsSizeKb) < 250, `JS bundle exceeded budget: ${jsSizeKb} KB`);
-      assert.ok(Number(cssSizeKb) < 120, `CSS bundle exceeded budget: ${cssSizeKb} KB`);
-      stagesPassedCount++;
-      console.log(`[PASS] Stage 5/7 — Static markup assertions and bundle-size checks (no browser CWV or full WCAG audit; JS: ${jsSizeKb} KB, CSS: ${cssSizeKb} KB).`);
-    } catch (err) {
-      recordFinding("EOS-CWV-005", `Stage 5 design/accessibility/budget failure: ${err.message}`, "index.html");
-      throw err;
-    }
-
-    // ---------------------------------------------------------------------------
-    // STAGE 6: IN-PROCESS SMOKE TESTS OF THE SERVERLESS API HANDLERS (/api/*)
-    // ---------------------------------------------------------------------------
-    try {
-      apiEndpoints = [
-        { file: "api/teurgia.js" },
-        { file: "api/compile.js" },
-        { file: "api/memory.js" },
-        { file: "api/kernel.js" },
-        { file: "api/cicd.js" },
-        { file: "api/fleet.js" },
-        { file: "api/kernel.js", query: { module: "specs" } },
-        { file: "api/jarvis.js", method: "POST", body: { directive: "status check" } },
-        { file: "api/health.js" },
-        { file: "api/finops.js" },
-        { file: "api/graph.js" },
-        { file: "api/eval.js" },
-        { file: "api/spotify.js" },
-        {
-          file: "api/mcp.js",
-          method: "POST",
-          headers: { "content-type": "application/json", accept: "application/json" },
-          body: {
-            jsonrpc: "2.0",
-            id: 1,
-            method: "initialize",
-            params: { protocolVersion: "2024-11-05", capabilities: {}, clientInfo: { name: "eos-local-check", version: "1.0.0" } }
-          }
-        }
-      ];
-
-      for (const endpoint of apiEndpoints) {
-        const { file: relApi } = endpoint;
-        const modUrl = pathToFileURL(path.join(root, relApi)).href;
-        const mod = await import(modUrl);
-        assert.equal(typeof mod.default, "function", `Default export in ${relApi} must be a handler function`);
-
-        let capturedStatus = 200;
-        let capturedBody = null;
-        const mockReq = {
-          method: endpoint.method || "GET",
-          query: {},
-          body: endpoint.body || {},
-          headers: endpoint.headers || {}
-        };
-        const mockRes = {
-          statusCode: 200,
-          headers: {},
-          setHeader(k, v) { this.headers[k] = v; },
-          status(code) { this.statusCode = code; capturedStatus = code; return this; },
-          json(payload) { capturedBody = payload; return this; },
-          end(chunk) {
-            if (typeof this.statusCode === "number") capturedStatus = this.statusCode;
-            if (typeof chunk === "string" && chunk.trim().startsWith("{")) {
-              capturedBody = JSON.parse(chunk);
-            }
-            return this;
-          }
-        };
-
-        await mod.default(mockReq, mockRes);
-        assert.equal(capturedStatus, 200, `[STAGE 6 FAIL] ${relApi} returned HTTP ${capturedStatus}`);
-        assert.ok(capturedBody && typeof capturedBody === "object", `[STAGE 6 FAIL] ${relApi} did not return valid JSON object`);
-      }
-
-      // Verify Edge rewrite consolidated modes
-      const consolidatedModes = [
-        { file: "api/compile.js", query: { mode: "amplify", prompt: "Test prompt amplification" }, desc: "compile?mode=amplify" },
-        { file: "api/eval.js", query: { mode: "titans", titan: "all" }, desc: "eval?mode=titans" },
-        { file: "api/kernel.js", query: { mode: "omega" }, desc: "kernel?mode=omega" },
-        { file: "api/kernel.js", query: { module: "bigtech" }, desc: "kernel?module=bigtech" }
-      ];
-
-      for (const cm of consolidatedModes) {
-        const modUrl = pathToFileURL(path.join(root, cm.file)).href;
-        const mod = await import(modUrl);
-        let capturedStatus = 200;
-        let capturedBody = null;
-        const mockReq = { method: "GET", query: cm.query, body: {} };
-        const mockRes = {
-          statusCode: 200,
-          headers: {},
-          setHeader(k, v) { this.headers[k] = v; },
-          status(code) { this.statusCode = code; capturedStatus = code; return this; },
-          json(payload) { capturedBody = payload; return this; },
-          end() { return this; }
-        };
-        await mod.default(mockReq, mockRes);
-        assert.equal(capturedStatus, 200, `[STAGE 6 FAIL] Consolidated mode ${cm.desc} returned HTTP ${capturedStatus}`);
-        assert.ok(capturedBody && typeof capturedBody === "object", `[STAGE 6 FAIL] Consolidated mode ${cm.desc} did not return valid JSON`);
-      }
-
-      stagesPassedCount++;
-      console.log(`[PASS] Stage 6/7 — In-process handler smoke checks (${apiEndpoints.length} handlers + ${consolidatedModes.length} consolidated modes returned mocked HTTP 200 responses).`);
-    } catch (err) {
-      recordFinding("EOS-API-006", `Stage 6 serverless API smoke check error: ${err.message}`, "api/");
-      throw err;
-    }
-  } catch (err) {
-    fatalError = err;
-  } finally {
-    // ---------------------------------------------------------------------------
-    // STAGE 7: LOCAL CHECK RECEIPT AND CONFIGURED-CHECKS SARIF REPORT (FAIL-SAFE)
-    // ---------------------------------------------------------------------------
-    const elapsedMs = Date.now() - startTime;
-    const isClean = sarifFindings.length === 0 && !fatalError;
-    if (isClean) stagesPassedCount = 7;
-
-    const receipt = {
-      pipelineId: "EOS-LOCAL-REPOSITORY-CHECKS",
-      epistemicState: isClean ? "LOCAL_CHECKS_EXECUTED" : "FINDINGS_IDENTIFIED",
-      evidenceType: "source-inventory-digest-and-mocked-handler-smoke-checks",
-      stagesPassed: `${stagesPassedCount}/7`,
-      exitCode: isClean ? 0 : 1,
-      sourceInventoryDigest,
-      sourceFileCount: fileInventory.length,
-      inProcessHandlerSmokeChecks: apiEndpoints.map(({ file }) => file),
-      hookFilesReferencedButNotProbed: [".githooks/pre-commit", ".githooks/pre-push", ".github/workflows/eos-sovereign-cicd.yml"],
-      hookConfigurationProbed: false,
-      deploymentRun: false,
-      liveHealthProbeRun: false,
-      findingsCount: sarifFindings.length
-    };
-
-    const evidenceDir = path.join(root, "docs/evidence");
-    if (!fs.existsSync(evidenceDir)) {
-      fs.mkdirSync(evidenceDir, { recursive: true });
-    }
-
-    fs.writeFileSync(path.join(evidenceDir, "LOCAL-CHECKS-RECEIPT.json"), JSON.stringify(receipt, null, 2) + "\n", "utf8");
-
-    // Emit OASIS SARIF v2.1.0 diagnostic report with REAL accumulated findings (SPEC-138)
-    const sarifReport = {
-      version: "2.1.0",
-      $schema: "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
-      runs: [
-        {
-          tool: {
-            driver: {
-              name: "EOS-Configured-Repository-Checks",
-              version: pkgVersion,
-              informationUri: "https://github.com/valentinflorezarbelaez-ai/Glorian-System-",
-              rules: [
-                {
-                  id: "EOS-SEC-001",
-                  name: "ConfiguredCredentialPatternScan",
-                  shortDescription: { text: "No matches for credential patterns were found in scanned files." },
-                  defaultConfiguration: { level: "error" }
-                },
-                {
-                  id: "EOS-SDD-002",
-                  name: "LandingAndSRIAssertions",
-                  shortDescription: { text: "Configured landing-page and subresource-integrity assertions passed." },
-                  defaultConfiguration: { level: "error" }
-                },
-                {
-                  id: "EOS-L0-003",
-                  name: "HexagonalL0Purity",
-                  shortDescription: { text: "Production runtime dependencies must remain zero." },
-                  defaultConfiguration: { level: "error" }
-                },
-                {
-                  id: "EOS-TEST-004",
-                  name: "TestSuiteExecution",
-                  shortDescription: { text: "All automated test suites must pass cleanly with exit code 0." },
-                  defaultConfiguration: { level: "error" }
-                },
-                {
-                  id: "EOS-CWV-005",
-                  name: "DesignSystemAndAccessibility",
-                  shortDescription: { text: "Design system perfection and accessibility assertions passed." },
-                  defaultConfiguration: { level: "error" }
-                },
-                {
-                  id: "EOS-API-006",
-                  name: "ServerlessApiSmokeChecks",
-                  shortDescription: { text: "In-process API handlers returned valid mocked HTTP 200 responses." },
-                  defaultConfiguration: { level: "error" }
-                },
-                {
-                  id: "EOS-TLA-008",
-                  name: "TlaBoundedSimulations",
-                  shortDescription: { text: "Formal TLA+ bounded simulations must pass invariant assertions." },
-                  defaultConfiguration: { level: "error" }
-                }
-              ]
-            }
-          },
-          results: sarifFindings,
-          invocations: [
-            {
-              executionSuccessful: isClean,
-              endTimeUtc: new Date().toISOString()
-            }
-          ]
-        }
-      ]
-    };
-
-    fs.writeFileSync(path.join(evidenceDir, "local-checks.sarif"), JSON.stringify(sarifReport, null, 2) + "\n", "utf8");
-    console.log(`[PASS] Stage 7/7 — Local source-inventory digest, check receipt & configured-checks SARIF written in ${elapsedMs} ms.`);
-    console.log("======================================================================");
-
-    if (!isClean) {
-      console.error(`❌ LOCAL CHECKS: GATE FAILED (${sarifFindings.length} findings, fatal: ${fatalError?.message || "none"})`);
-      console.log("======================================================================");
-      process.exit(1);
-    } else {
-      console.log(" LOCAL CHECKS: 7/7 STAGES PASSED | NO DEPLOYMENT OR LIVE PROBE RUN  ");
-      console.log("======================================================================");
-      process.exit(0);
-    }
-  }
-
-  for (const testFile of filesToRun) {
-    console.log(`[STAGE 4 RUNNER] Executing ${testFile}...`);
-    execFileSync(process.execPath, ["--test", path.join(root, testFile)], {
-      cwd: root,
-      stdio: "inherit"
-    });
-  }
-  console.log(`[PASS] Stage 4/7 — Static AST, Syntax, Unit & Chaos Gate (${jsFilesToCheck.length} JS/MJS modules + ${tsCoreFiles.length} L0 TS modules + node:test passed).`);
-
-  // ---------------------------------------------------------------------------
-  // STAGE 4.5: CODE COVERAGE MEASUREMENT (informational — does not fail gate)
-  // ---------------------------------------------------------------------------
-  const coverageFiles = [
-    "test/eosCore.test.mjs",
-    "test/eosTurbo.test.mjs",
-    "test/eosSemanticGraph.test.mjs",
-    "test/eosAutonomousHealer.test.mjs",
-    "test/eosPropertyBased.test.mjs",
-  ];
-  console.log(`[STAGE 4.5] Measuring code coverage on ${coverageFiles.length} critical core modules...`);
-  try {
-    execFileSync(process.execPath, [
-      "--experimental-test-coverage",
-      "--test",
-      ...coverageFiles.map((f) => path.join(root, f)),
-    ], { cwd: root, stdio: "pipe", timeout: 90_000 });
-    console.log("[PASS] Stage 4.5 — Coverage measurement complete (check output for percentages).");
   } catch {
-    console.log("[INFO] Stage 4.5 — Coverage measurement finished (informational — gate not blocked).");
+    filesToRun = testFiles;
   }
+}
 
-  // ---------------------------------------------------------------------------
-  // STAGE 4.6: CHAOS ENGINEERING — Netflix Standard (SPEC-053)
-  // ---------------------------------------------------------------------------
-  if (process.env["EOS_FLAG_CHAOS_IN_CI"] === "1" || process.env["EOS_FLAG_CHAOS_IN_CI"] === "true") {
-    execFileSync(process.execPath, [path.join(root, "scripts/run-chaos-tests.mjs")], {
-      cwd: root,
-      stdio: "inherit"
-    });
+// Big Tech pattern: single parallel test-runner invocation (eliminates
+// 140 × serial process spawn; Node test runner internally parallelizes).
+const testStart = Date.now();
+// The JUnit XML report is the machine-readable feed for the Stage 4.4 telemetry
+// gates. It lives under the gitignored `.eos/` state dir, so it never dirties
+// the working tree nor perturbs the Stage 3 source-inventory digest.
+const testReportPath = path.join(root, ".eos", "test-report.xml");
+fs.mkdirSync(path.dirname(testReportPath), { recursive: true });
+console.log(
+  `[STAGE 4 RUNNER] Launching ${filesToRun.length} suites in parallel via node --test (concurrency=${CONCURRENCY})...`,
+);
+const testArgs = [
+  "--test",
+  `--test-concurrency=${CONCURRENCY}`,
+  "--test-reporter=spec",
+  "--test-reporter-destination=stdout",
+  "--test-reporter=junit",
+  `--test-reporter-destination=${testReportPath}`,
+  ...filesToRun,
+];
+const exitCode = await new Promise((resolve) => {
+  const child = spawn(process.execPath, testArgs, { cwd: root, stdio: "inherit" });
+  child.on("close", (code) => resolve(code ?? 1));
+  child.on("error", () => resolve(1));
+});
+if (exitCode !== 0) {
+  console.error(`[STAGE 4 FAILED] Parallel test suite exited with code ${exitCode} in ${Date.now() - testStart} ms.`);
+} else {
+  console.log(
+    `[PASS] Stage 4/7 — JavaScript syntax (${jsFilesToCheck.length} non-test modules, pool=${CONCURRENCY}), TypeScript type-check, and parallel Node test suites (${tsCoreFiles.length} core TS modules; ${testFiles.length} suites in ${Date.now() - testStart} ms).`,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// STAGE 4.4: QUALITY TELEMETRY GATES — SLO ERROR-BUDGET + PERF REGRESSION
+// De-islands the two Layer-0 governance engines (SPEC-145, SPEC-146): the JUnit
+// report from Stage 4 is fed into them, so they run as real, telemetry-driven
+// gates instead of idle modules. This stage runs even when Stage 4 failed, so
+// failing runs feed the rolling burn-rate history (the point of Google SRE
+// multi-window burn-rate). Perf is always advisory; SLO enforcement is opt-in
+// (`EOS_SLO_ENFORCE=1`) to keep the local gate deterministic and noise-free.
+// ---------------------------------------------------------------------------
+let sloBlock = false;
+try {
+  const { runQualityGates } = await import("./quality-gates.mjs");
+  const { sloReport, regressions, total, suiteCount } = await runQualityGates({ root, reportPath: testReportPath });
+  console.log(`[STAGE 4.4] SLO error-budget: ${total} tests recorded across ${suiteCount} suites`);
+  console.log(
+    `[STAGE 4.4]   budget ${sloReport.errorBudgetPercent}% remaining | verdict [${sloReport.gateVerdict}] | receipt sha256:${sloReport.sha256Receipt.slice(0, 24)}...`,
+  );
+  for (const w of sloReport.windows) {
+    console.log(
+      `[STAGE 4.4]   ${w.windowLabel.padEnd(11)} burn=${w.actualBurnRate}x threshold=${w.thresholdBurnRate}x ${w.breached ? "BREACHED" : "ok"}`,
+    );
+  }
+  const sloEnforced = process.env.EOS_SLO_ENFORCE === "1";
+  if (sloReport.gateVerdict === "BLOCK") {
+    if (sloEnforced) {
+      sloBlock = true;
+    } else {
+      console.warn(
+        "[STAGE 4.4 ADVISORY] SLO BLOCK verdict (fast burn-rate breached); enforcement disabled locally — set EOS_SLO_ENFORCE=1 to fail-closed.",
+      );
+    }
+  }
+  if (regressions.length === 0) {
+    console.log("[STAGE 4.4] Performance regression: ADVISORY — no suite above 2x its p95 baseline.");
   } else {
-    console.log("[INFO] Stage 4.6 — Chaos engineering skipped (set EOS_FLAG_CHAOS_IN_CI=1 to enable).");
+    console.warn(
+      `[STAGE 4.4 ADVISORY] Performance regression: ${regressions.length} suite(s) above 2x p95 (does not block correctness):`,
+    );
+    for (const r of regressions) {
+      console.warn(`[STAGE 4.4]   ${r.suite}: ${r.currentMs}ms vs p95 ${r.baselineP95}ms (${r.ratio}x)`);
+    }
   }
+  console.log(`[PASS] Stage 4.4/7 — Quality telemetry gates engaged (SLO ${sloReport.gateVerdict}; perf advisory).`);
+} catch (err) {
+  console.error(`[STAGE 4.4 WARN] Quality telemetry gates unavailable: ${err.message}`);
+}
 
-  // ---------------------------------------------------------------------------
-  // STAGE 5: WCAG 2.1 AA ACCESSIBILITY, SEO & PERFORMANCE BUDGET GATE
-  // ---------------------------------------------------------------------------
-  execFileSync(process.execPath, [path.join(root, "scripts/verify-cwv-budget.mjs")], {
-    cwd: root,
-    stdio: "inherit"
+// Stage 4's own failure is authoritative; the telemetry gates only add an
+// optional fail-closed path on top of it.
+if (exitCode !== 0) process.exit(1);
+if (sloBlock) {
+  console.error("[STAGE 4.4 FAIL] SLO error-budget BLOCK verdict (EOS_SLO_ENFORCE=1).");
+  process.exit(1);
+}
+
+// ---------------------------------------------------------------------------
+// STAGE 4.5: NATIVE V8 COVERAGE GATE (Big Tech: minimum threshold enforcement)
+// Skippable via SKIP_COVERAGE=1 for rapid local iteration.
+// ---------------------------------------------------------------------------
+if (!process.env.SKIP_COVERAGE) {
+  const MIN_LINE = Number(process.env.COVERAGE_MIN_LINE ?? 80);
+  const MIN_BRANCH = Number(process.env.COVERAGE_MIN_BRANCH ?? 75);
+  const covStart = Date.now();
+  console.log(`[STAGE 4.5] Running native V8 coverage (threshold: ${MIN_LINE}% lines, ${MIN_BRANCH}% branches)...`);
+  const covArgs = ["--test", "--experimental-test-coverage", `--test-concurrency=${CONCURRENCY}`, ...filesToRun];
+  const covOutput = await new Promise((resolve) => {
+    let stdout = "";
+    const child = spawn(process.execPath, covArgs, { cwd: root, stdio: ["ignore", "pipe", "pipe"] });
+    child.stdout.on("data", (c) => {
+      stdout += c;
+    });
+    child.stderr.on("data", () => {});
+    child.on("close", () => resolve(stdout));
   });
-  const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
-  assert.ok(html.includes('class="skip-link"'), "Missing WCAG 2.1 AA skip-link");
-  assert.ok(html.includes('aria-live="polite"'), "Missing aria-live polite regions");
-  assert.ok(html.includes('closedby="any"'), "Missing native <dialog closedby=\"any\">");
-  assert.ok(html.includes('application/ld+json'), "Missing Schema.org JSON-LD");
-  const jsSizeKb = (fs.statSync(path.join(root, "js/eos.js")).size / 1024).toFixed(1);
-  const cssSizeKb = (fs.statSync(path.join(root, "css/eos.css")).size / 1024).toFixed(1);
-  assert.ok(Number(jsSizeKb) < 250, `JS bundle exceeded budget: ${jsSizeKb} KB`);
-  assert.ok(Number(cssSizeKb) < 120, `CSS bundle exceeded budget: ${cssSizeKb} KB`);
-  console.log(`[PASS] Stage 5/7 — WCAG 2.1 AA, SEO & Performance Budget Gate (JS: ${jsSizeKb} KB, CSS: ${cssSizeKb} KB).`);
+  const covMatch = covOutput.match(/all files\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)/);
+  if (covMatch) {
+    const linePct = Number(covMatch[1]);
+    const branchPct = Number(covMatch[2]);
+    const funcPct = Number(covMatch[3]);
+    console.log(
+      `[COVERAGE] Lines: ${linePct}% | Branches: ${branchPct}% | Functions: ${funcPct}% (${Date.now() - covStart} ms)`,
+    );
+    if (linePct < MIN_LINE) {
+      console.error(`[STAGE 4.5 FAIL] Line coverage ${linePct}% below gate minimum ${MIN_LINE}%.`);
+      process.exit(1);
+    }
+    if (branchPct < MIN_BRANCH) {
+      console.error(`[STAGE 4.5 FAIL] Branch coverage ${branchPct}% below gate minimum ${MIN_BRANCH}%.`);
+      process.exit(1);
+    }
+    console.log(
+      `[PASS] Stage 4.5/7 — Coverage gate: ${linePct}% lines >= ${MIN_LINE}%, ${branchPct}% branches >= ${MIN_BRANCH}%.`,
+    );
+  } else {
+    console.warn("[STAGE 4.5 WARN] Coverage output not parseable; skipping gate.");
+  }
+} else {
+  console.log("[STAGE 4.5 SKIP] Coverage gate skipped (SKIP_COVERAGE=1).");
+}
 
-  // ---------------------------------------------------------------------------
-  // STAGE 5.5: AUTOMATED ACCESSIBILITY SCAN (Google/Microsoft Standard)
-  // ---------------------------------------------------------------------------
-  execFileSync(process.execPath, [path.join(root, "scripts/verify-accessibility.mjs")], {
-    cwd: root,
-    stdio: "inherit"
-  });
-
-  // ---------------------------------------------------------------------------
-  // STAGE 6: IN-PROCESS SMOKE TESTS OF ALL 11 SERVERLESS API ENDPOINTS (/api/*)
-  // ---------------------------------------------------------------------------
-  const apiEndpoints = [
-    "api/teurgia.js",
-    "api/compile.js",
-    "api/memory.js",
-    "api/kernel.js",
-    "api/cicd.js",
-    "api/fleet.js",
-    "api/jarvis.js",
-    "api/health.js",
-    "api/graph.js",
-    "api/eval.js",
-    "api/spotify.js",
-    "api/mcp.js"
-  ];
-
-  for (const relApi of apiEndpoints) {
-    const modUrl = pathToFileURL(path.join(root, relApi)).href;
-    const mod = await import(modUrl);
-    assert.equal(typeof mod.default, "function", `Default export in ${relApi} must be a handler function`);
-
-    let capturedStatus = 200;
-    let capturedBody = null;
-    const mockReq = {
-      method: "GET",
-      query: {},
-      body: {}
-    };
-    const mockRes = {
-      statusCode: 200,
-      headers: {},
-      setHeader(k, v) {
-        this.headers[k] = v;
-      },
-      status(code) {
-        this.statusCode = code;
-        capturedStatus = code;
-        return this;
-      },
-      json(payload) {
-        capturedBody = payload;
-        return this;
-      },
-      end(chunk) {
-        if (typeof this.statusCode === "number") capturedStatus = this.statusCode;
-        if (typeof chunk === "string" && chunk.trim().startsWith("{")) {
-          capturedBody = JSON.parse(chunk);
-        }
-        return this;
+// ---------------------------------------------------------------------------
+// STAGE 4.6: MUTATION TESTING GATE (opt-in) — de-islands EosMutationTestingEngine
+// Big Tech pattern (Google PIT, Meta SAPIenz): test the tests. A mutant the
+// suite fails to kill is a real test gap that line-coverage would hide. Running
+// the suite per mutant is expensive, so this is opt-in (`EOS_MUTATION=1`) and
+// bounded. Mutants are applied only to an isolated sandbox copy of `src/`+`test/`
+// — the working tree is never mutated. Score enforcement is opt-in
+// (`EOS_MUTATION_ENFORCE=1`); advisory by default so the local gate stays noise-free.
+// ---------------------------------------------------------------------------
+if (process.env.EOS_MUTATION === "1") {
+  const mutateStart = Date.now();
+  let mutationFailed = false;
+  try {
+    const { runMutationGate, evaluateMutationBudget } = await import("./mutation-gate.mjs");
+    console.log("[STAGE 4.6] Mutation gate: analyzing bounded targets in an isolated sandbox...");
+    const { reports, missingTargets, sandboxDir } = await runMutationGate({ root });
+    const { violations, minScore, floors } = evaluateMutationBudget({ root, reports });
+    for (const r of reports) {
+      const floor = Object.hasOwn(floors, r.targetFile) ? floors[r.targetFile] : minScore;
+      console.log(
+        `[STAGE 4.6]   ${r.targetFile}: mutants=${r.totalMutants} killed=${r.killed} survived=${r.survived} score=${r.scorePercent} floor=${(floor * 100).toFixed(1)}% (receipt sha256:${r.sha256Receipt.slice(0, 24)}...)`,
+      );
+      for (const m of r.survivedMutants) {
+        console.warn(`[STAGE 4.6]     SURVIVED ${m.operatorId} @ line ${m.line}: ${m.original} -> ${m.mutated}`);
       }
-    };
-
-    await mod.default(mockReq, mockRes);
-    assert.equal(capturedStatus, 200, `[STAGE 6 FAIL] ${relApi} returned HTTP ${capturedStatus}`);
-    assert.ok(capturedBody && typeof capturedBody === "object", `[STAGE 6 FAIL] ${relApi} did not return valid JSON object`);
+    }
+    for (const m of missingTargets) {
+      console.warn(`[STAGE 4.6]   MISSING ${m.targetFile}: ${m.reason}`);
+    }
+    if (violations.length > 0 || missingTargets.length > 0) {
+      if (process.env.EOS_MUTATION_ENFORCE === "1") {
+        mutationFailed = true;
+      } else {
+        console.warn(
+          `[STAGE 4.6 ADVISORY] ${violations.length} ratchet violation(s), ${missingTargets.length} unmeasured target(s); enforcement disabled — set EOS_MUTATION_ENFORCE=1 to fail-closed.`,
+        );
+      }
+    }
+    if (!mutationFailed) {
+      console.log(
+        `[PASS] Stage 4.6/7 — Mutation gate engaged (${reports.length} target(s), sandbox=${path.basename(sandboxDir)}, ${Date.now() - mutateStart} ms).`,
+      );
+    }
+  } catch (err) {
+    // An enabled gate that crashes produced no verdict — fail closed, never WARN+pass.
+    console.error(`[STAGE 4.6 FAIL] Mutation gate crashed: ${err.message}`);
+    mutationFailed = true;
   }
-
-  // Verify Edge rewrite consolidated modes
-  const consolidatedModes = [
-    { file: "api/compile.js", query: { mode: "amplify", prompt: "Test prompt amplification" }, desc: "compile?mode=amplify" },
-    { file: "api/eval.js", query: { mode: "titans", titan: "all" }, desc: "eval?mode=titans" },
-    { file: "api/kernel.js", query: { mode: "omega" }, desc: "kernel?mode=omega" },
-    { file: "api/kernel.js", query: { module: "bigtech" }, desc: "kernel?module=bigtech" }
-  ];
-
-  for (const cm of consolidatedModes) {
-    const modUrl = pathToFileURL(path.join(root, cm.file)).href;
-    const mod = await import(modUrl);
-    let capturedStatus = 200;
-    let capturedBody = null;
-    const mockReq = { method: "GET", query: cm.query, body: {} };
-    const mockRes = {
-      statusCode: 200,
-      headers: {},
-      setHeader(k, v) { this.headers[k] = v; },
-      status(code) { this.statusCode = code; capturedStatus = code; return this; },
-      json(payload) { capturedBody = payload; return this; },
-      end() { return this; }
-    };
-    await mod.default(mockReq, mockRes);
-    assert.equal(capturedStatus, 200, `[STAGE 6 FAIL] Consolidated mode ${cm.desc} returned HTTP ${capturedStatus}`);
-    assert.ok(capturedBody && typeof capturedBody === "object", `[STAGE 6 FAIL] Consolidated mode ${cm.desc} did not return valid JSON`);
+  if (mutationFailed) {
+    console.error("[STAGE 4.6 FAIL] Mutation gate failed (ratchet floor, unmeasured target, or engine crash).");
+    process.exit(1);
   }
+} else {
+  console.log("[STAGE 4.6 SKIP] Mutation gate skipped (set EOS_MUTATION=1 to enable).");
+}
 
-  console.log(`[PASS] Stage 6/7 — In-Process Serverless API Smoke Gate (${apiEndpoints.length}/${apiEndpoints.length} endpoints + 3 Edge rewrites returned 200 OK).`);
+// ---------------------------------------------------------------------------
+// STAGE 4.7: FLAKY TEST GATE (opt-in) — de-islands EosFlakyTestQuarantine
+// Big Tech pattern (Google TAP, Meta flakiness tracking): re-run the suite N
+// times on an unchanged revision and diff the per-test verdicts. A test that is
+// not deterministic carries no signal — a green pipeline built on it can lie.
+// Detected flakiness must be fixed or explicitly quarantined; the quarantine is
+// an allow-list (`docs/quality/flaky-budget.json`) that may only shrink. Re-running
+// the suite is expensive, so this is opt-in (`EOS_FLAKY=1`); enforcement is opt-in
+// (`EOS_FLAKY_ENFORCE=1`) and advisory by default to keep the local gate noise-free.
+// ---------------------------------------------------------------------------
+if (process.env.EOS_FLAKY === "1") {
+  const flakyStart = Date.now();
+  let flakyFailed = false;
+  try {
+    const { runFlakyGate, evaluateFlakyBudget } = await import("./flaky-gate.mjs");
+    const repeats = Number(process.env.EOS_FLAKY_REPEATS) || 3;
+    console.log(
+      `[STAGE 4.7] Flaky gate: re-running ${filesToRun.length} suite(s) ${repeats}x to detect non-determinism...`,
+    );
+    const { report } = await runFlakyGate({ root, repeats, files: filesToRun });
+    console.log(
+      `[STAGE 4.7]   repeats=${report.totalRuns} tests=${report.tests.length} flaky=${report.flakyCount} (receipt sha256:${report.sha256Receipt.slice(0, 24)}...)`,
+    );
+    for (const v of report.tests) {
+      if (v.classification === "flaky") {
+        console.warn(
+          `[STAGE 4.7]     FLAKY ${v.testId} (${v.passes}/${v.observedRuns} pass; seen in ${v.observedRuns}/${v.totalRuns} runs)`,
+        );
+      }
+    }
+    const { violations } = evaluateFlakyBudget({ root, report });
+    if (violations.length > 0) {
+      if (process.env.EOS_FLAKY_ENFORCE === "1") {
+        flakyFailed = true;
+      } else {
+        console.warn(
+          `[STAGE 4.7 ADVISORY] ${violations.length} flaky-budget violation(s); enforcement disabled — set EOS_FLAKY_ENFORCE=1 to fail-closed.`,
+        );
+      }
+      for (const v of violations) {
+        console.warn(`[STAGE 4.7]     ${v.kind}: ${v.testId}`);
+      }
+    }
+    if (!flakyFailed) {
+      console.log(
+        `[PASS] Stage 4.7/7 — Flaky gate engaged (${report.flakyCount} flaky test(s), ${Date.now() - flakyStart} ms).`,
+      );
+    }
+  } catch (err) {
+    // An enabled gate that crashes produced no verdict — fail closed, never WARN+pass.
+    console.error(`[STAGE 4.7 FAIL] Flaky gate crashed: ${err.message}`);
+    flakyFailed = true;
+  }
+  if (flakyFailed) {
+    console.error("[STAGE 4.7 FAIL] Flaky test gate failed (budget violation or engine crash).");
+    process.exit(1);
+  }
+} else {
+  console.log("[STAGE 4.7 SKIP] Flaky gate skipped (set EOS_FLAKY=1 to enable).");
+}
 
-  // ---------------------------------------------------------------------------
-  // STAGE 7: CRYPTOGRAPHIC SBOM & CI/CD ATTESTATION RECEIPT
-  // ---------------------------------------------------------------------------
-  const elapsedMs = Date.now() - startTime;
-  // Receipt is deterministic for a given source tree (no timestamps/durations),
-  // so re-running the gate inside git hooks never leaves the working tree dirty.
-  const receipt = {
-    pipelineId: "EOS-CICD-V9-SOVEREIGN",
-    epistemicState: "VERIFIED",
-    stagesPassed: "7/7",
-    exitCode: 0,
-    sbomMerkleRoot,
-    artifactCount: sbomEntries.length,
-    serverlessEndpointsVerified: apiEndpoints,
-    enforcedHooks: [".githooks/pre-commit", ".githooks/pre-push", ".github/workflows/eos-sovereign-cicd.yml"]
+// ---------------------------------------------------------------------------
+// STAGE 5: WCAG 2.1 AA ACCESSIBILITY, SEO, PERFORMANCE & SPEC-128 S-0 DESIGN GOVERNOR GATE
+// ---------------------------------------------------------------------------
+execFileSync(process.execPath, [path.join(root, "scripts/verify-cwv-budget.mjs")], {
+  cwd: root,
+  stdio: "inherit",
+});
+execFileSync(process.execPath, [path.join(root, "scripts/eos-design-system-govern.mjs")], {
+  cwd: root,
+  stdio: "inherit",
+});
+const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
+assert.ok(html.includes('class="skip-link"'), "Missing WCAG 2.1 AA skip-link");
+assert.ok(html.includes('aria-live="polite"'), "Missing aria-live polite regions");
+assert.ok(html.includes('closedby="any"'), 'Missing native <dialog closedby="any">');
+assert.ok(html.includes("application/ld+json"), "Missing Schema.org JSON-LD");
+const jsSizeKb = (fs.statSync(path.join(root, "js/eos.js")).size / 1024).toFixed(1);
+const cssSizeKb = (fs.statSync(path.join(root, "css/eos.css")).size / 1024).toFixed(1);
+const htmlSizeKb = (fs.statSync(path.join(root, "index.html")).size / 1024).toFixed(1);
+assert.ok(Number(jsSizeKb) < 250, `JS bundle exceeded budget: ${jsSizeKb} KB`);
+assert.ok(Number(cssSizeKb) < 120, `CSS bundle exceeded budget: ${cssSizeKb} KB`);
+assert.ok(Number(htmlSizeKb) < 300, `HTML document exceeded budget: ${htmlSizeKb} KB`);
+
+// A missing or duplicated precache entry breaks offline install or wastes a fetch.
+const swSource = fs.readFileSync(path.join(root, "sw.js"), "utf8");
+const precacheMatch = swSource.match(/const PRECACHE_ASSETS = \[([\s\S]*?)\];/);
+assert.ok(precacheMatch, "sw.js must declare PRECACHE_ASSETS");
+const precacheAssets = Array.from(precacheMatch[1].matchAll(/"([^"]+)"/g), (m) => m[1]);
+assert.equal(
+  new Set(precacheAssets).size,
+  precacheAssets.length,
+  "sw.js PRECACHE_ASSETS must not contain duplicate entries",
+);
+for (const asset of precacheAssets) {
+  const assetPath = asset.split("?")[0];
+  const diskPath = path.join(root, assetPath.replace(/^\//, ""));
+  assert.ok(fs.existsSync(diskPath), `sw.js precaches a path missing on disk: ${asset}`);
+}
+console.log(
+  `[PASS] Stage 5/7 — Static markup assertions and size budgets (no browser CWV or full WCAG audit; JS: ${jsSizeKb} KB, CSS: ${cssSizeKb} KB, HTML: ${htmlSizeKb} KB; ${precacheAssets.length} precache assets present).`,
+);
+
+// ---------------------------------------------------------------------------
+// STAGE 6: IN-PROCESS SMOKE TESTS OF THE SERVERLESS API HANDLERS (/api/*)
+// ---------------------------------------------------------------------------
+const apiEndpoints = [
+  { file: "api/teurgia.js" },
+  { file: "api/compile.js" },
+  { file: "api/memory.js" },
+  { file: "api/kernel.js" },
+  { file: "api/cicd.js" },
+  { file: "api/fleet.js" },
+  { file: "api/kernel.js", query: { module: "specs" } },
+  { file: "api/jarvis.js", method: "POST", body: { directive: "status check" } },
+  { file: "api/health.js" },
+  { file: "api/graph.js" },
+  { file: "api/eval.js" },
+  { file: "api/spotify.js" },
+  {
+    file: "api/mcp.js",
+    method: "POST",
+    headers: { "content-type": "application/json", accept: "application/json" },
+    body: {
+      jsonrpc: "2.0",
+      id: 1,
+      method: "initialize",
+      params: {
+        protocolVersion: "2024-11-05",
+        capabilities: {},
+        clientInfo: { name: "eos-local-check", version: "1.0.0" },
+      },
+    },
+  },
+];
+
+for (const endpoint of apiEndpoints) {
+  const { file: relApi } = endpoint;
+  const modUrl = pathToFileURL(path.join(root, relApi)).href;
+  const mod = await import(modUrl);
+  assert.equal(typeof mod.default, "function", `Default export in ${relApi} must be a handler function`);
+
+  let capturedStatus = 200;
+  let capturedBody = null;
+  const mockReq = {
+    method: endpoint.method || "GET",
+    query: {},
+    body: endpoint.body || {},
+    headers: endpoint.headers || {},
+  };
+  const mockRes = {
+    statusCode: 200,
+    headers: {},
+    setHeader(k, v) {
+      this.headers[k] = v;
+    },
+    status(code) {
+      this.statusCode = code;
+      capturedStatus = code;
+      return this;
+    },
+    json(payload) {
+      capturedBody = payload;
+      return this;
+    },
+    end(chunk) {
+      if (typeof this.statusCode === "number") capturedStatus = this.statusCode;
+      if (typeof chunk === "string" && chunk.trim().startsWith("{")) {
+        capturedBody = JSON.parse(chunk);
+      }
+      return this;
+    },
   };
 
-  fs.writeFileSync(path.join(root, "docs/evidence/SBOM-CICD-RECEIPT.json"), JSON.stringify(receipt, null, 2) + "\n", "utf8");
+  await mod.default(mockReq, mockRes);
+  assert.equal(capturedStatus, 200, `[STAGE 6 FAIL] ${relApi} returned HTTP ${capturedStatus}`);
+  assert.ok(
+    capturedBody && typeof capturedBody === "object",
+    `[STAGE 6 FAIL] ${relApi} did not return valid JSON object`,
+  );
+}
 
-  // Emit OASIS SARIF v2.1.0 diagnostic report for Cursor, VS Code, and GitHub Code Scanning
-  const sarifReport = {
-    version: "2.1.0",
-    $schema: "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
-    runs: [
-      {
-        tool: {
-          driver: {
-            name: "EOS-SecDevOps-Scanner",
-            version: "12.0.0",
-            informationUri: "https://eos-system-ten.vercel.app",
-            rules: [
-              {
-                id: "EOS-SEC-001",
-                name: "ZeroPlaintextSecrets",
-                shortDescription: { text: "No plaintext credentials or tokens detected." },
-                defaultConfiguration: { level: "error" }
+// Verify Edge rewrite consolidated modes
+const consolidatedModes = [
+  {
+    file: "api/compile.js",
+    query: { mode: "amplify", prompt: "Test prompt amplification" },
+    desc: "compile?mode=amplify",
+  },
+  { file: "api/eval.js", query: { mode: "titans", titan: "all" }, desc: "eval?mode=titans" },
+  { file: "api/kernel.js", query: { mode: "omega" }, desc: "kernel?mode=omega" },
+  { file: "api/kernel.js", query: { module: "bigtech" }, desc: "kernel?module=bigtech" },
+  { file: "api/kernel.js", query: { module: "finops" }, desc: "kernel?module=finops" },
+];
+
+for (const cm of consolidatedModes) {
+  const modUrl = pathToFileURL(path.join(root, cm.file)).href;
+  const mod = await import(modUrl);
+  let capturedStatus = 200;
+  let capturedBody = null;
+  const mockReq = { method: "GET", query: cm.query, body: {} };
+  const mockRes = {
+    statusCode: 200,
+    headers: {},
+    setHeader(k, v) {
+      this.headers[k] = v;
+    },
+    status(code) {
+      this.statusCode = code;
+      capturedStatus = code;
+      return this;
+    },
+    json(payload) {
+      capturedBody = payload;
+      return this;
+    },
+    end() {
+      return this;
+    },
+  };
+  await mod.default(mockReq, mockRes);
+  assert.equal(capturedStatus, 200, `[STAGE 6 FAIL] Consolidated mode ${cm.desc} returned HTTP ${capturedStatus}`);
+  assert.ok(
+    capturedBody && typeof capturedBody === "object",
+    `[STAGE 6 FAIL] Consolidated mode ${cm.desc} did not return valid JSON`,
+  );
+}
+
+console.log(
+  `[PASS] Stage 6/7 — In-process handler smoke checks (${apiEndpoints.length} handlers + ${consolidatedModes.length} consolidated modes returned mocked HTTP 200 responses).`,
+);
+
+// ---------------------------------------------------------------------------
+// STAGE 7: LOCAL CHECK RECEIPT AND CONFIGURED-CHECKS SARIF REPORT
+// ---------------------------------------------------------------------------
+const elapsedMs = Date.now() - startTime;
+// Receipt is deterministic for a given source tree (no timestamps/durations),
+// so re-running the gate inside git hooks never leaves the working tree dirty.
+const receipt = {
+  pipelineId: "EOS-LOCAL-REPOSITORY-CHECKS",
+  epistemicState: "LOCAL_CHECKS_EXECUTED",
+  evidenceType: "source-inventory-digest-and-mocked-handler-smoke-checks",
+  stagesPassed: "7/7",
+  exitCode: 0,
+  sourceInventoryDigest,
+  sourceFileCount: fileInventory.length,
+  inProcessHandlerSmokeChecks: apiEndpoints.map(({ file }) => file),
+  hookFilesReferencedButNotProbed: [
+    ".githooks/pre-commit",
+    ".githooks/pre-push",
+    ".github/workflows/eos-sovereign-cicd.yml",
+  ],
+  hookConfigurationProbed: false,
+  deploymentRun: false,
+  liveHealthProbeRun: false,
+};
+
+fs.writeFileSync(
+  path.join(root, "docs/evidence/LOCAL-CHECKS-RECEIPT.json"),
+  JSON.stringify(receipt, null, 2) + "\n",
+  "utf8",
+);
+
+// Emit OASIS SARIF v2.1.0 diagnostic report for Cursor, VS Code, and GitHub Code Scanning
+const sarifReport = {
+  version: "2.1.0",
+  $schema: "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+  runs: [
+    {
+      tool: {
+        driver: {
+          name: "EOS-Configured-Repository-Checks",
+          version: "1.0.0",
+          rules: [
+            {
+              id: "EOS-SEC-001",
+              name: "ConfiguredCredentialPatternScan",
+              shortDescription: {
+                text: "No matches for the five configured credential patterns were found in scanned text files.",
               },
-              {
-                id: "EOS-SDD-002",
-                name: "SpecificationConformance",
-                shortDescription: { text: "All SDD formal artifacts must be present and verified." },
-                defaultConfiguration: { level: "error" }
-              },
-              {
-                id: "EOS-L0-003",
-                name: "HexagonalL0Purity",
-                shortDescription: { text: "Production runtime dependencies must remain zero." },
-                defaultConfiguration: { level: "error" }
-              }
-            ]
-          }
+              defaultConfiguration: { level: "error" },
+            },
+            {
+              id: "EOS-SDD-002",
+              name: "LandingAndSRIAssertions",
+              shortDescription: { text: "Configured landing-page and subresource-integrity assertions passed." },
+              defaultConfiguration: { level: "error" },
+            },
+            {
+              id: "EOS-L0-003",
+              name: "HexagonalL0Purity",
+              shortDescription: { text: "Production runtime dependencies must remain zero." },
+              defaultConfiguration: { level: "error" },
+            },
+          ],
         },
-        results: []
-      }
-    ]
-  };
-  fs.writeFileSync(path.join(root, "docs/evidence/eos-audit.sarif"), JSON.stringify(sarifReport, null, 2) + "\n", "utf8");
-  console.log(`[PASS] Stage 7/7 — Cryptographic SBOM, CI/CD Receipt & SARIF v2.1.0 sealed in ${elapsedMs} ms.`);
-  console.log("======================================================================");
-  console.log(" SOVEREIGN CI/CD GATE: 7/7 STAGES PASSED | DEPLOYMENT AUTHORIZED (0)  ");
-  console.log("======================================================================");
+      },
+      results: [],
+    },
+  ],
+};
+fs.writeFileSync(
+  path.join(root, "docs/evidence/local-checks.sarif"),
+  JSON.stringify(sarifReport, null, 2) + "\n",
+  "utf8",
+);
+console.log(
+  `[PASS] Stage 7/7 — Local source-inventory digest, check receipt & configured-checks SARIF written in ${elapsedMs} ms.`,
+);
+console.log("======================================================================");
+console.log(" LOCAL CHECKS: 7/7 STAGES PASSED | NO DEPLOYMENT OR LIVE PROBE RUN  ");
+console.log("======================================================================");

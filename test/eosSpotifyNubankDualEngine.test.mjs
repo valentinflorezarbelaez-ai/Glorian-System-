@@ -18,18 +18,12 @@ import {
   executeSpotifySmartShuffle,
   isCamelotCompatible,
   EosBitemporalLedger,
-  verifyBackwardCompatibility
+  verifyBackwardCompatibility,
 } from "../src/core/eosSpotifyNubankEngine.ts";
 
-import {
-  detectPolyglotPlan
-} from "../src/core/eosPolyglotAdapter.ts";
+import { detectPolyglotPlan } from "../src/core/eosPolyglotAdapter.ts";
 
-import {
-  SOVEREIGN_FIVE_MATRIX,
-  selectOptimalSovereignModel,
-  amplifyPrompt
-} from "../src/core/eosPromptAmplifier.ts";
+import { SOVEREIGN_FIVE_MATRIX, selectOptimalSovereignModel, amplifyPrompt } from "../src/core/eosPromptAmplifier.ts";
 
 describe("EOS Sovereign Spotify & Nubank Dual-Engine Suite", () => {
   describe("Suite 1: Spotify Smart Shuffle & Jittered Proportional Spacing", () => {
@@ -42,7 +36,7 @@ describe("EOS Sovereign Spotify & Nubank Dual-Engine Suite", () => {
       { id: "tr-06", artistId: "Ferry Corsten", bpm: 130, camelotKey: "8A" },
       { id: "tr-07", artistId: "Aly & Fila", bpm: 138, camelotKey: "10A" },
       { id: "tr-08", artistId: "Markus Schulz", bpm: 130, camelotKey: "7A" },
-      { id: "tr-09", artistId: "Liquid Soul", bpm: 135, camelotKey: "9B" }
+      { id: "tr-09", artistId: "Liquid Soul", bpm: 135, camelotKey: "9B" },
     ];
 
     it("spreads multiple tracks by the same artist avoiding consecutive clusters", () => {
@@ -108,7 +102,12 @@ describe("EOS Sovereign Spotify & Nubank Dual-Engine Suite", () => {
   describe("Suite 3: Nubank Bitemporal Immutable Ledger & Idempotency", () => {
     it("records bitemporal facts with valid_time and tx_time", () => {
       const ledger = new EosBitemporalLedger();
-      const fact = ledger.commitFact("key-001", "acc-101", { amount: 250, description: "Streaming Royalty" }, 1700000000000);
+      const fact = ledger.commitFact(
+        "key-001",
+        "acc-101",
+        { amount: 250, description: "Streaming Royalty" },
+        1700000000000,
+      );
 
       assert.equal(fact.idempotencyKey, "key-001");
       assert.equal(fact.entityId, "acc-101");
@@ -208,7 +207,9 @@ describe("EOS Sovereign Spotify & Nubank Dual-Engine Suite", () => {
     });
 
     it("routes mathematical, benchmarking, and finOps prompts to DeepSeek", () => {
-      const profile = selectOptimalSovereignModel("Optimize algorithmic time complexity O(N) and benchmark memory cost");
+      const profile = selectOptimalSovereignModel(
+        "Optimize algorithmic time complexity O(N) and benchmark memory cost",
+      );
       assert.equal(profile.id, "deepseek");
     });
 
@@ -228,7 +229,9 @@ describe("EOS Sovereign Spotify & Nubank Dual-Engine Suite", () => {
     });
 
     it("routes code synthesis and surgical AST refactoring to Claude", () => {
-      const profile = selectOptimalSovereignModel("Implement pure domain use-case handler with clean hexagonal interfaces");
+      const profile = selectOptimalSovereignModel(
+        "Implement pure domain use-case handler with clean hexagonal interfaces",
+      );
       assert.equal(profile.id, "claude");
     });
 
@@ -236,7 +239,7 @@ describe("EOS Sovereign Spotify & Nubank Dual-Engine Suite", () => {
       const amplified = amplifyPrompt({
         rawPrompt: "Implement lockless ring buffer for audio DSP samples",
         targetModel: "grok",
-        strictLevel: "sovereign"
+        strictLevel: "sovereign",
       });
 
       assert.equal(amplified.targetModel, "grok");

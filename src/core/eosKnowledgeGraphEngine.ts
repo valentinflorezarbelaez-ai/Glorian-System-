@@ -218,7 +218,12 @@ export class EosKnowledgeGraphEngine {
     metadata?: Record<string, unknown>;
     sha256?: string;
   }): void {
-    const sha256 = node.sha256 || crypto.createHash("sha256").update(node.title + node.file).digest("hex");
+    const sha256 =
+      node.sha256 ||
+      crypto
+        .createHash("sha256")
+        .update(node.title + node.file)
+        .digest("hex");
     const metaStr = node.metadata ? JSON.stringify(node.metadata) : "{}";
     const now = Date.now();
 
@@ -280,7 +285,7 @@ export class EosKnowledgeGraphEngine {
       file: row.file,
       metadata,
       sha256: row.sha256,
-      updatedAt: Number(row.updated_at)
+      updatedAt: Number(row.updated_at),
     };
   }
 
@@ -295,7 +300,7 @@ export class EosKnowledgeGraphEngine {
       relation: row.relation as EdgeRelation,
       weight: Number(row.weight),
       metadata,
-      createdAt: Number(row.created_at)
+      createdAt: Number(row.created_at),
     };
   }
 
@@ -337,7 +342,7 @@ export class EosKnowledgeGraphEngine {
       nodesAdded: stats.totalNodes,
       edgesAdded: stats.totalEdges,
       durationMs,
-      graphSha256: stats.graphSha256
+      graphSha256: stats.graphSha256,
     };
   }
 
@@ -377,7 +382,7 @@ export class EosKnowledgeGraphEngine {
         title,
         file: relFile,
         metadata: { status, frCount, bddCount: bddIds.length },
-        sha256: fileSha256
+        sha256: fileSha256,
       });
 
       // Register BDD nodes and edges
@@ -387,12 +392,12 @@ export class EosKnowledgeGraphEngine {
           type: "BDD",
           title: `Scenario ${bddId}`,
           file: relFile,
-          metadata: { specRef: specId }
+          metadata: { specRef: specId },
         });
         this.upsertEdge({
           sourceId: specId,
           targetId: bddId,
-          relation: "HAS_SCENARIO"
+          relation: "HAS_SCENARIO",
         });
       }
 
@@ -405,7 +410,7 @@ export class EosKnowledgeGraphEngine {
             this.upsertEdge({
               sourceId: specId,
               targetId: depSpec,
-              relation: "DEPENDS_ON"
+              relation: "DEPENDS_ON",
             });
           }
         }
@@ -419,12 +424,12 @@ export class EosKnowledgeGraphEngine {
           type: "ADR",
           title: `Architectural Decision ${adrId}`,
           file: relFile,
-          metadata: {}
+          metadata: {},
         });
         this.upsertEdge({
           sourceId: specId,
           targetId: adrId,
-          relation: "DECIDED_BY"
+          relation: "DECIDED_BY",
         });
       }
 
@@ -438,12 +443,12 @@ export class EosKnowledgeGraphEngine {
             type: "MODULE",
             title: path.basename(targetPath),
             file: targetPath,
-            metadata: {}
+            metadata: {},
           });
           this.upsertEdge({
             sourceId: targetPath,
             targetId: specId,
-            relation: "IMPLEMENTS"
+            relation: "IMPLEMENTS",
           });
         }
       }
@@ -455,26 +460,34 @@ export class EosKnowledgeGraphEngine {
           type: "MODULE",
           title: toolName,
           file: "src/mcp/eosMcpServer.ts",
-          metadata: { role: "MCP_TOOL" }
+          metadata: { role: "MCP_TOOL" },
         });
         this.upsertEdge({
           sourceId: specId,
           targetId: toolId,
-          relation: "INSTRUMENTS"
+          relation: "INSTRUMENTS",
         });
       }
     }
   }
 
   private loadDeclaredMcpTools(): ReadonlySet<string> {
-    const serverFile = path.join(this.projectRoot, "src", "mcp", "eosMcpServer.ts");
-    if (!fs.existsSync(serverFile)) return new Set();
-    const text = fs.readFileSync(serverFile, "utf8");
+    // Tool schemas live in eosMcpToolDefinitions.ts; the dispatcher stays in
+    // eosMcpServer.ts. Scan both so declarations are never missed.
+    const candidates = [
+      path.join(this.projectRoot, "src", "mcp", "eosMcpServer.ts"),
+      path.join(this.projectRoot, "src", "mcp", "eosMcpToolDefinitions.ts"),
+    ];
     const names = new Set<string>();
     const matcher = /name:\s*"(eos_[a-z0-9_]+)"/g;
-    let match: RegExpExecArray | null;
-    while ((match = matcher.exec(text)) !== null) {
-      names.add(match[1]);
+    for (const serverFile of candidates) {
+      if (!fs.existsSync(serverFile)) continue;
+      const text = fs.readFileSync(serverFile, "utf8");
+      let match: RegExpExecArray | null;
+      while ((match = matcher.exec(text)) !== null) {
+        names.add(match[1]);
+      }
+      matcher.lastIndex = 0;
     }
     return names;
   }
@@ -494,7 +507,7 @@ export class EosKnowledgeGraphEngine {
         this.upsertEdge({
           sourceId: link.sourceId,
           targetId: link.targetId,
-          relation: "COVERED_BY"
+          relation: "COVERED_BY",
         });
       }
     }
@@ -529,14 +542,14 @@ export class EosKnowledgeGraphEngine {
         title,
         file: relFile,
         metadata: { specRef },
-        sha256: fileSha256
+        sha256: fileSha256,
       });
 
       if (specRef) {
         this.upsertEdge({
           sourceId: changeId,
           targetId: specRef,
-          relation: "MODIFIES"
+          relation: "MODIFIES",
         });
       }
 
@@ -549,12 +562,12 @@ export class EosKnowledgeGraphEngine {
             type: "MODULE",
             title: path.basename(tFile),
             file: tFile,
-            metadata: {}
+            metadata: {},
           });
           this.upsertEdge({
             sourceId: changeId,
             targetId: tFile,
-            relation: "TOUCHES"
+            relation: "TOUCHES",
           });
         }
       }
@@ -579,7 +592,7 @@ export class EosKnowledgeGraphEngine {
         type: "PLAN",
         title: `Plan ${planId}`,
         file: relFile,
-        metadata: {}
+        metadata: {},
       });
 
       // Extract ADR headers e.g. "### ADR-0181: Inconditional Preemptive Worker..."
@@ -594,13 +607,13 @@ export class EosKnowledgeGraphEngine {
           type: "ADR",
           title: adrTitle,
           file: relFile,
-          metadata: { planRef: planId }
+          metadata: { planRef: planId },
         });
 
         this.upsertEdge({
           sourceId: planId,
           targetId: adrId,
-          relation: "DECIDED_BY"
+          relation: "DECIDED_BY",
         });
       }
     }
@@ -622,7 +635,7 @@ export class EosKnowledgeGraphEngine {
         type: "MODULE",
         title: file,
         file: relFile,
-        metadata: { role: "TEST_SUITE" }
+        metadata: { role: "TEST_SUITE" },
       });
 
       // Find BDDs tested e.g. BDD-398
@@ -633,12 +646,12 @@ export class EosKnowledgeGraphEngine {
           type: "BDD",
           title: `Scenario ${bddId}`,
           file: relFile,
-          metadata: {}
+          metadata: {},
         });
         this.upsertEdge({
           sourceId: testId,
           targetId: bddId,
-          relation: "VERIFIES"
+          relation: "VERIFIES",
         });
       }
 
@@ -648,7 +661,7 @@ export class EosKnowledgeGraphEngine {
         this.upsertEdge({
           sourceId: testId,
           targetId: specId,
-          relation: "VERIFIES"
+          relation: "VERIFIES",
         });
         this.queueCoverage(specId, testId);
       }
@@ -689,16 +702,16 @@ export class EosKnowledgeGraphEngine {
             title: path.basename(relFile),
             file: relFile,
             metadata: { byteLength: content.length },
-            sha256: fileSha256
+            sha256: fileSha256,
           });
 
-          // Check spec references inside comments (e.g. SPEC-140, SPEC-144)
+          // Check spec references inside comments (e.g. SPEC-145, SPEC-144)
           const specMatches = content.match(/SPEC-\d+/g) || [];
           for (const specId of new Set(specMatches)) {
             this.upsertEdge({
               sourceId: relFile,
               targetId: specId,
-              relation: "IMPLEMENTS"
+              relation: "IMPLEMENTS",
             });
           }
         }
@@ -714,7 +727,7 @@ export class EosKnowledgeGraphEngine {
 
   public computeBlastRadius(
     rootNodeId: string,
-    options: { maxDepth?: number; direction?: "BOTH" | "OUT" | "IN" } = {}
+    options: { maxDepth?: number; direction?: "BOTH" | "OUT" | "IN" } = {},
   ): BlastRadiusResult {
     this.requireKnownNode(rootNodeId);
     const t0 = process.hrtime.bigint();
@@ -727,12 +740,8 @@ export class EosKnowledgeGraphEngine {
     reached.set(rootNodeId, { depth: 0, path: rootNodeId });
     queue.push({ id: rootNodeId, depth: 0, path: rootNodeId });
 
-    const outStmt = this.db.prepare(
-      "SELECT target_id, relation FROM eos_kg_edges WHERE source_id = ?"
-    );
-    const inStmt = this.db.prepare(
-      "SELECT source_id, relation FROM eos_kg_edges WHERE target_id = ?"
-    );
+    const outStmt = this.db.prepare("SELECT target_id, relation FROM eos_kg_edges WHERE source_id = ?");
+    const inStmt = this.db.prepare("SELECT source_id, relation FROM eos_kg_edges WHERE target_id = ?");
 
     while (head < queue.length) {
       const current = queue[head];
@@ -776,7 +785,7 @@ export class EosKnowledgeGraphEngine {
       nodes.push({
         ...this.mapNodeRow(row),
         depth: meta.depth,
-        path: meta.path
+        path: meta.path,
       });
       nodeIds.add(id);
     }
@@ -787,9 +796,9 @@ export class EosKnowledgeGraphEngine {
       for (let i = 0; i < idsArray.length; i += chunkSize) {
         const chunk = idsArray.slice(i, i + chunkSize);
         const placeholders = chunk.map(() => "?").join(",");
-        const edgeRows = this.db.prepare(
-          `SELECT * FROM eos_kg_edges WHERE source_id IN (${placeholders})`
-        ).all(...chunk) as any[];
+        const edgeRows = this.db
+          .prepare(`SELECT * FROM eos_kg_edges WHERE source_id IN (${placeholders})`)
+          .all(...chunk) as any[];
 
         for (const er of edgeRows) {
           if (nodeIds.has(er.target_id)) {
@@ -808,14 +817,11 @@ export class EosKnowledgeGraphEngine {
       totalReachable: nodes.length,
       nodes,
       edges,
-      durationMs
+      durationMs,
     };
   }
 
-  public computeMemoryClosure(
-    rootNodeId: string,
-    options: { maxDepth?: number } = {}
-  ): MemoryClosureResult {
+  public computeMemoryClosure(rootNodeId: string, options: { maxDepth?: number } = {}): MemoryClosureResult {
     this.requireKnownNode(rootNodeId);
     if (!this.memoryGraph) this.projectMemoryIndex();
     const maxDepth = Math.max(1, Math.min(16, options.maxDepth || 8));
@@ -827,7 +833,7 @@ export class EosKnowledgeGraphEngine {
       totalReachable: closure.totalReachable,
       depth: closure.depth,
       executionUs: closure.executionUs,
-      index: "memory-adjacency"
+      index: "memory-adjacency",
     };
   }
 
@@ -843,9 +849,11 @@ export class EosKnowledgeGraphEngine {
     for (const row of nodeRows) {
       cyclotron.registerNode(row.id, row.type, {});
     }
-    const edgeRows = this.db.prepare(
-      "SELECT source_id, target_id, relation FROM eos_kg_edges"
-    ).all() as Array<{ source_id: string; target_id: string; relation: string }>;
+    const edgeRows = this.db.prepare("SELECT source_id, target_id, relation FROM eos_kg_edges").all() as Array<{
+      source_id: string;
+      target_id: string;
+      relation: string;
+    }>;
     for (const row of edgeRows) {
       cyclotron.registerEdge(row.source_id, row.target_id, row.relation);
     }
@@ -854,7 +862,7 @@ export class EosKnowledgeGraphEngine {
 
   public getNeighbors(
     nodeId: string,
-    direction: "BOTH" | "OUT" | "IN" = "BOTH"
+    direction: "BOTH" | "OUT" | "IN" = "BOTH",
   ): {
     node: GraphNode | null;
     outgoing: Array<{ edge: GraphEdge; target: GraphNode }>;
@@ -885,8 +893,8 @@ export class EosKnowledgeGraphEngine {
           file: r.n_file,
           metadata: r.n_metadata,
           sha256: r.n_sha256,
-          updated_at: r.n_updated_at
-        })
+          updated_at: r.n_updated_at,
+        }),
       }));
     }
 
@@ -907,8 +915,8 @@ export class EosKnowledgeGraphEngine {
           file: r.n_file,
           metadata: r.n_metadata,
           sha256: r.n_sha256,
-          updated_at: r.n_updated_at
-        })
+          updated_at: r.n_updated_at,
+        }),
       }));
     }
 
@@ -960,7 +968,7 @@ export class EosKnowledgeGraphEngine {
       unanchoredModules: [],
       disconnectedNodes,
       coverageRatio,
-      durationMs: Date.now() - t0
+      durationMs: Date.now() - t0,
     };
   }
 
@@ -999,12 +1007,14 @@ export class EosKnowledgeGraphEngine {
     const topHubs = (hubsStmt.all() as any[]).map((r) => ({
       id: r.id,
       type: r.type as NodeType,
-      degree: Number(r.degree)
+      degree: Number(r.degree),
     }));
 
     // Cryptographic topology hash
     const allNodesStmt = this.db.prepare("SELECT id, sha256 FROM eos_kg_nodes ORDER BY id ASC");
-    const allEdgesStmt = this.db.prepare("SELECT source_id, target_id, relation FROM eos_kg_edges ORDER BY source_id, target_id, relation ASC");
+    const allEdgesStmt = this.db.prepare(
+      "SELECT source_id, target_id, relation FROM eos_kg_edges ORDER BY source_id, target_id, relation ASC",
+    );
 
     const hasher = crypto.createHash("sha256");
     for (const n of allNodesStmt.all() as any[]) {
@@ -1022,7 +1032,7 @@ export class EosKnowledgeGraphEngine {
       edgesByRelation,
       density,
       graphSha256,
-      topHubs
+      topHubs,
     };
   }
 }

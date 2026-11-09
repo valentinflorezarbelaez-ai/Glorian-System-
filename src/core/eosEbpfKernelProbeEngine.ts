@@ -11,12 +11,7 @@
  * Zero external runtime npm dependencies (Law V).
  */
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
 export type EbpfProbeType = "KPROBE_TCP" | "TRACEPOINT_SCHED" | "SOCKET_FILTER";
 
@@ -139,7 +134,7 @@ char LICENSE[] SEC("license") = "GPL";
       cSource,
       ringBufferName,
       license: "GPL",
-      sourceSha256
+      sourceSha256,
     });
   }
 
@@ -153,9 +148,11 @@ char LICENSE[] SEC("license") = "GPL";
       reasons.push("eBPF probe must declare GPL compatible license");
     }
 
-    if (!spec.cSource.includes(`SEC("kprobe/${spec.targetSymbol}")`) &&
-        !spec.cSource.includes(`SEC("tracepoint/sched/${spec.targetSymbol}")`) &&
-        !spec.cSource.includes('SEC("socket")')) {
+    if (
+      !spec.cSource.includes(`SEC("kprobe/${spec.targetSymbol}")`) &&
+      !spec.cSource.includes(`SEC("tracepoint/sched/${spec.targetSymbol}")`) &&
+      !spec.cSource.includes('SEC("socket")')
+    ) {
       reasons.push(`Missing valid section header for target: ${spec.targetSymbol}`);
     }
 
@@ -165,7 +162,7 @@ char LICENSE[] SEC("license") = "GPL";
 
     return {
       valid: reasons.length === 0,
-      reasons
+      reasons,
     };
   }
 
@@ -193,7 +190,7 @@ char LICENSE[] SEC("license") = "GPL";
       timestampNs,
       functionCode,
       payloadBytes,
-      latencyNs
+      latencyNs,
     });
   }
 }

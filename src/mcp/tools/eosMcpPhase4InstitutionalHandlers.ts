@@ -10,13 +10,13 @@ import {
   verifySachemContract,
   synthesizeNubankBlamelessPostmortem,
   transactDatomic,
-  createEmptyDatomicDb
+  createEmptyDatomicDb,
 } from "../../core/eosNubankCodex.ts";
 import {
   evaluateSpotifyArchitectureHealth,
   verifyBackstageGoldenPath,
   evaluateCanaryStage,
-  planFleetshiftMigration
+  planFleetshiftMigration,
 } from "../../core/eosSpotifyInstitutionalCodex.ts";
 import { EosSlsaProvenanceSbom } from "../../core/eosSlsaProvenanceSbom.ts";
 import { EosPlanetaryApexDoctrine } from "../../core/eosPlanetaryApexDoctrine.ts";
@@ -26,9 +26,7 @@ import { PHASE4_MIGRATED_TOOL_NAMES } from "./eosMcpPhase4ToolNames.ts";
 
 export { PHASE4_MIGRATED_TOOL_NAMES };
 
-export function createPhase4InstitutionalHandlers(
-  projectRoot: string
-): Readonly<Record<string, McpToolHandler>> {
+export function createPhase4InstitutionalHandlers(projectRoot: string): Readonly<Record<string, McpToolHandler>> {
   return {
     eos_nubank_audit: (args) =>
       evaluateNubankArchitectureHealth({
@@ -36,18 +34,14 @@ export function createPhase4InstitutionalHandlers(
         usesHexagonalLayerIsolation:
           args.usesHexagonalLayerIsolation === undefined || args.usesHexagonalLayerIsolation === true,
         usesContractTestingInsteadOfE2E:
-          args.usesContractTestingInsteadOfE2E === undefined ||
-          args.usesContractTestingInsteadOfE2E === true,
+          args.usesContractTestingInsteadOfE2E === undefined || args.usesContractTestingInsteadOfE2E === true,
         enforcesKafkaIdempotencyTokens:
-          args.enforcesKafkaIdempotencyTokens === undefined ||
-          args.enforcesKafkaIdempotencyTokens === true,
+          args.enforcesKafkaIdempotencyTokens === undefined || args.enforcesKafkaIdempotencyTokens === true,
         usesImmutableBitemporalLedgers:
-          args.usesImmutableBitemporalLedgers === undefined ||
-          args.usesImmutableBitemporalLedgers === true,
+          args.usesImmutableBitemporalLedgers === undefined || args.usesImmutableBitemporalLedgers === true,
         hasBlamelessPostmortemProcess:
-          args.hasBlamelessPostmortemProcess === undefined ||
-          args.hasBlamelessPostmortemProcess === true,
-        unitTestCoveragePercent: Number(args.unitTestCoveragePercent) || 90
+          args.hasBlamelessPostmortemProcess === undefined || args.hasBlamelessPostmortemProcess === true,
+        unitTestCoveragePercent: Number(args.unitTestCoveragePercent) || 90,
       }),
 
     eos_nubank_sachem_verify: (args) => {
@@ -57,7 +51,57 @@ export function createPhase4InstitutionalHandlers(
       return verifySachemContract(args.previousSchema, args.proposedSchema);
     },
 
-    eos_nubank_postmortem: (args) => synthesizeNubankBlamelessPostmortem(args as never),
+    eos_nubank_postmortem: (args) => {
+      const raw = (args || {}) as Record<string, unknown>;
+      const incidentId = String(raw.incidentId || "INC-UNKNOWN");
+      const title = String(raw.title || raw.description || "Unspecified Incident");
+      const severity = (["SEV1", "SEV2", "SEV3"].includes(String(raw.severity)) ? String(raw.severity) : "SEV2") as
+        | "SEV1"
+        | "SEV2"
+        | "SEV3";
+      const owningSquad = String(raw.owningSquad || "core-infrastructure");
+      const affectedServices = Array.isArray(raw.affectedServices) ? raw.affectedServices.map(String) : ["core-api"];
+      const customerImpact = String(raw.customerImpact || raw.description || "None observed");
+      const startTime = String(raw.startTime || new Date().toISOString());
+      const resolutionTime = String(raw.resolutionTime || new Date().toISOString());
+      const durationMinutes = Number(raw.durationMinutes) || 0;
+      const timeline = Array.isArray(raw.timeline)
+        ? raw.timeline.map((t: any) => ({
+            timestamp: String(t?.timestamp || new Date().toISOString()),
+            description: String(t?.description || String(t)),
+            detectedBy: (["alert", "customer", "engineer", "sentinel"].includes(String(t?.detectedBy))
+              ? String(t.detectedBy)
+              : "engineer") as "alert" | "customer" | "engineer" | "sentinel",
+          }))
+        : [{ timestamp: startTime, description: title, detectedBy: "engineer" as const }];
+      const fiveWhys = Array.isArray(raw.fiveWhys) ? raw.fiveWhys.map(String) : ["Root cause under investigation"];
+      const cognitiveFactors = Array.isArray(raw.cognitiveFactors)
+        ? raw.cognitiveFactors.map(String)
+        : ["Alert fatigue", "Complex state interaction"];
+      const systemicRemediations = Array.isArray(raw.systemicRemediations)
+        ? raw.systemicRemediations.map((r: any) => ({
+            action: String(r?.action || "Automate invariant check"),
+            owner: String(r?.owner || owningSquad),
+            deadline: String(r?.deadline || "2026-12-01"),
+          }))
+        : [{ action: "Automate invariant check", owner: owningSquad, deadline: "2026-12-01" }];
+
+      return synthesizeNubankBlamelessPostmortem({
+        incidentId,
+        title,
+        severity,
+        owningSquad,
+        affectedServices,
+        customerImpact,
+        startTime,
+        resolutionTime,
+        durationMinutes,
+        timeline,
+        fiveWhys,
+        cognitiveFactors,
+        systemicRemediations,
+      });
+    },
 
     eos_nubank_datomic_transact: (args) => {
       const txData = Array.isArray(args.txData) ? args.txData : [];
@@ -74,14 +118,14 @@ export function createPhase4InstitutionalHandlers(
         hasProgressiveCanaryPipeline: args.hasProgressiveCanaryPipeline !== false,
         hasAutomatedKillSwitch: args.hasAutomatedKillSwitch !== false,
         hasBlamelessPostmortemProcess: args.hasBlamelessPostmortemProcess !== false,
-        unitTestCoveragePercent: Number(args.unitTestCoveragePercent) || 90
+        unitTestCoveragePercent: Number(args.unitTestCoveragePercent) || 90,
       }),
 
     eos_spotify_golden_path_verify: (args) =>
       verifyBackstageGoldenPath({
         serviceName: String(args.serviceName || "service"),
         filesPresent: Array.isArray(args.filesPresent) ? args.filesPresent : [],
-        catalogInfoContent: args.catalogInfoContent ? String(args.catalogInfoContent) : undefined
+        catalogInfoContent: args.catalogInfoContent ? String(args.catalogInfoContent) : undefined,
       }),
 
     eos_spotify_canary_gate: (args) =>
@@ -92,7 +136,7 @@ export function createPhase4InstitutionalHandlers(
         errorCount: Number(args.errorCount) || 0,
         p99LatencyMs: Number(args.p99LatencyMs) || 30,
         maxAllowedP99Ms: Number(args.maxAllowedP99Ms) || 50,
-        observationWindowMinutes: Number(args.observationWindowMinutes) || 15
+        observationWindowMinutes: Number(args.observationWindowMinutes) || 15,
       }),
 
     eos_spotify_fleetshift_plan: (args) =>
@@ -100,7 +144,7 @@ export function createPhase4InstitutionalHandlers(
         migrationId: String(args.migrationId || "MIG-AUTO"),
         description: String(args.description || "Automated Fleet Migration"),
         targetRepos: Array.isArray(args.targetRepos) ? args.targetRepos : [],
-        action: String(args.action || "apply_golden_path")
+        action: String(args.action || "apply_golden_path"),
       }),
 
     eos_slsa_provenance_sbom: (args) => {
@@ -112,11 +156,7 @@ export function createPhase4InstitutionalHandlers(
         const sbomPath = args?.sbomPath ? String(args.sbomPath) : undefined;
         const provenancePath = args?.provenancePath ? String(args.provenancePath) : undefined;
         return {
-          verification: EosSlsaProvenanceSbom.verifySupplyChain(
-            projectRoot,
-            sbomPath,
-            provenancePath
-          )
+          verification: EosSlsaProvenanceSbom.verifySupplyChain(projectRoot, sbomPath, provenancePath),
         };
       }
       const result: {
@@ -155,8 +195,8 @@ export function createPhase4InstitutionalHandlers(
             compliant: p.compliant,
             score: p.score,
             latencyUs: p.latencyUs,
-            details: p.details
-          }))
+            details: p.details,
+          })),
         };
       }
       return report;
@@ -181,11 +221,11 @@ export function createPhase4InstitutionalHandlers(
             compliant: p.compliant,
             score: p.score,
             latencyUs: p.latencyUs,
-            details: p.details
-          }))
+            details: p.details,
+          })),
         };
       }
       return report;
-    }
+    },
   };
 }

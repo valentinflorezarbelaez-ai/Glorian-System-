@@ -15,32 +15,30 @@ function computeSri(filePath) {
 }
 
 const cssSri = computeSri("css/eos.css");
-const jsSri  = computeSri("js/eos.js");
-
-// WASM SRI (optional — Go must be compiled first)
-const wasmPath = path.join(root, "assets/eos_apex.wasm");
-let wasmSriNote = "WASM not present (run npm run build:apex to compile)";
-if (fs.existsSync(wasmPath)) {
-  const wasmBytes  = fs.readFileSync(wasmPath);
-  const wasmDigest = crypto.createHash("sha384").update(wasmBytes).digest("base64");
-  const wasmSri    = `sha384-${wasmDigest}`;
-  wasmSriNote = `${wasmSri.slice(0, 32)}...`;
-  console.log(`[INFO] WASM SRI computed: ${wasmSriNote}`);
-}
+const jsSri = computeSri("js/eos.js");
 
 let html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 
 // Auto-inject or update SRI attributes if requested or missing
 const shouldFix = process.argv.includes("--fix");
 
+// Tag matchers tolerate both single-line and Prettier-wrapped multi-line forms
+// (\s+ spans newlines), so reformatting index.html never silently breaks --fix.
+const CSS_TAG_RE =
+  /<link\s+rel="stylesheet"\s+href="\/css\/eos\.css(?:\?[^"]*)?"(?:\s+integrity="[^"]*")?(?:\s+crossorigin="[^"]*")?\s*\/>/;
+const JS_TAG_RE =
+  /<script\s+src="\/js\/eos\.js(?:\?[^"]*)?"(?:\s+integrity="[^"]*")?(?:\s+crossorigin="[^"]*")?\s+defer\s*><\/script>/;
+
 if (shouldFix) {
+  assert.ok(CSS_TAG_RE.test(html), "SRI fix found no <link> stylesheet tag for /css/eos.css in index.html");
   html = html.replace(
-    /<link rel="stylesheet" href="\/css\/eos\.css[^"]*"( integrity="[^"]*")?( crossorigin="[^"]*")? \/>/,
-    `<link rel="stylesheet" href="/css/eos.css?v=15.0" integrity="${cssSri}" crossorigin="anonymous" />`
+    CSS_TAG_RE,
+    `<link rel="stylesheet" href="/css/eos.css?v=15.0" integrity="${cssSri}" crossorigin="anonymous" />`,
   );
+  assert.ok(JS_TAG_RE.test(html), "SRI fix found no deferred <script> tag for /js/eos.js in index.html");
   html = html.replace(
-    /<script src="(\/js\/eos\.js(?:\?[^\"]*)?)"(?: integrity="[^\"]*")?(?: crossorigin="[^\"]*")? defer><\/script>/,
-    (_match, scriptUrl) => '<script src="' + scriptUrl + '" integrity="' + jsSri + '" crossorigin="anonymous" defer></script>'
+    JS_TAG_RE,
+    `<script src="/js/eos.js?v=18.0" integrity="${jsSri}" crossorigin="anonymous" defer></script>`,
   );
   fs.writeFileSync(path.join(root, "index.html"), html, "utf8");
   console.log(`[SRI FIX] Injected CSS SRI: ${cssSri.slice(0, 24)}...`);
@@ -52,4 +50,3 @@ assert.ok(html.includes(cssSri), `index.html missing matching CSS SRI hash: expe
 assert.ok(html.includes(jsSri), `index.html missing matching JS SRI hash: expected ${jsSri}`);
 
 console.log("[PASS] Subresource Integrity (SRI) SHA-384 verified for CSS & JS bundles.");
-console.log(`[INFO] WASM SRI status: ${wasmSriNote}`);

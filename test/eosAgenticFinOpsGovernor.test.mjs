@@ -40,19 +40,16 @@ test("BDD-316: Cognitive Stagnation Detection & Infinite Token Bleed Circuit Bre
   // Distinct progressing diffs
   const progressingDiffs = [
     "function add(a, b) { return a + b; }",
-    "function add(a: number, b: number): number { return a + b; }"
+    "function add(a: number, b: number): number { return a + b; }",
   ];
   const eval1 = governor.evaluateStagnation(progressingDiffs, false);
   assert.equal(eval1.stagnant, false);
   assert.equal(eval1.action, "PROCEED_NOMINAL");
 
   // 3 consecutive stagnant diffs with failing tests (>85% similarity)
-  const baseCode = "export function processTransaction(id: string, amount: number, currency: string) { if (amount <= 0) throw new Error('Invalid'); return { id, amount, currency, status: 'PROCESSED' }; }";
-  const stagnantDiffs = [
-    `${baseCode} // attempt 1`,
-    `${baseCode} // attempt 2`,
-    `${baseCode} // attempt 3`
-  ];
+  const baseCode =
+    "export function processTransaction(id: string, amount: number, currency: string) { if (amount <= 0) throw new Error('Invalid'); return { id, amount, currency, status: 'PROCESSED' }; }";
+  const stagnantDiffs = [`${baseCode} // attempt 1`, `${baseCode} // attempt 2`, `${baseCode} // attempt 3`];
   const eval2 = governor.evaluateStagnation(stagnantDiffs, false);
   assert.equal(eval2.stagnant, true);
   assert.equal(eval2.circuitBreakerState, "CIRCUIT_TRIPPED_STAGNATION");
@@ -93,7 +90,7 @@ test("BDD-318: 30-Day Code Survival & Human ROI Evaluation", () => {
 
   const healthyComponents = [
     { componentId: "comp-1", initialLines: 100, retainedLines30Days: 90, totalInferenceCostUsd: 1.5 },
-    { componentId: "comp-2", initialLines: 200, retainedLines30Days: 180, totalInferenceCostUsd: 3.0 }
+    { componentId: "comp-2", initialLines: 200, retainedLines30Days: 180, totalInferenceCostUsd: 3.0 },
   ];
 
   const healthyReport = governor.evaluateCodeSurvival(healthyComponents, 120);
@@ -104,7 +101,7 @@ test("BDD-318: 30-Day Code Survival & Human ROI Evaluation", () => {
 
   // Decayed/Churned components with >30% churn
   const decayedComponents = [
-    { componentId: "comp-3", initialLines: 100, retainedLines30Days: 40, totalInferenceCostUsd: 2.0 }
+    { componentId: "comp-3", initialLines: 100, retainedLines30Days: 40, totalInferenceCostUsd: 2.0 },
   ];
   const decayedReport = governor.evaluateCodeSurvival(decayedComponents, 120);
   assert.equal(decayedReport.averageSurvivalRatePercent, 40.0);
@@ -123,9 +120,9 @@ test("BDD-319: EosMcpServer Integration for FinOps Tools Dispatch", async () => 
       name: "eos_finops_route_task",
       arguments: {
         directive: "read-and-lint-source-tree",
-        estimatedTokens: 3000
-      }
-    }
+        estimatedTokens: 3000,
+      },
+    },
   };
   const routeRes = await server.handleRequest(routeReq);
   assert.equal(routeRes.error, undefined);
@@ -143,9 +140,9 @@ test("BDD-319: EosMcpServer Integration for FinOps Tools Dispatch", async () => 
       name: "eos_finops_evaluate_stagnation",
       arguments: {
         diffHistory: ["diff A", "diff A", "diff A"],
-        testPassed: false
-      }
-    }
+        testPassed: false,
+      },
+    },
   };
   const stagRes = await server.handleRequest(stagReq);
   assert.equal(stagRes.error, undefined);
@@ -161,8 +158,8 @@ test("BDD-319: EosMcpServer Integration for FinOps Tools Dispatch", async () => 
     method: "tools/call",
     params: {
       name: "eos_finops_wallet_status",
-      arguments: {}
-    }
+      arguments: {},
+    },
   };
   const walletRes = await server.handleRequest(walletReq);
   assert.equal(walletRes.error, undefined);

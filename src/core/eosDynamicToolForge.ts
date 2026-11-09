@@ -28,14 +28,10 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  assertInvariant,
-  deepFreeze,
-  Ok,
-  Err,
-  type Result,
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertInvariant, deepFreeze, Ok, Err, type Result } from "./eosKernelPrimitives.ts";
+import { createLogger } from "./eosLogger.ts";
+
+const _log = createLogger("eosDynamicToolForge");
 
 // ============================================================================
 // 1. DATA CONTRACTS
@@ -139,7 +135,16 @@ class ForgeManifestManager {
     };
     const tmp = `${this.manifestPath}.tmp`;
     fs.writeFileSync(tmp, JSON.stringify(updated, null, 2), "utf8");
-    fs.renameSync(tmp, this.manifestPath);
+    try {
+      fs.renameSync(tmp, this.manifestPath);
+    } catch {
+      try {
+        fs.copyFileSync(tmp, this.manifestPath);
+        fs.unlinkSync(tmp);
+      } catch {
+        fs.writeFileSync(this.manifestPath, JSON.stringify(updated, null, 2), "utf8");
+      }
+    }
     this.manifest = updated;
   }
 
@@ -168,9 +173,7 @@ class ForgeManifestManager {
 
   public remove(name: string): boolean {
     const before = this.manifest.tools.length;
-    (this.manifest as { tools: ForgedTool[] }).tools = this.manifest.tools.filter(
-      (t) => t.name !== name
-    );
+    (this.manifest as { tools: ForgedTool[] }).tools = this.manifest.tools.filter((t) => t.name !== name);
     if (this.manifest.tools.length < before) {
       this._save();
       return true;
@@ -231,7 +234,7 @@ export class EosDynamicToolForge {
       fs.writeFileSync(
         path.join(this.forgeDir, "README.md"),
         `# EOS Dynamic Tool Forge\n\nThis directory contains MCP tools auto-created by the EOS AGI Core at runtime.\nEach \`.tool.mjs\` file is a standalone ESM module. Do not edit manually.\n`,
-        "utf8"
+        "utf8",
       );
     }
 
@@ -242,7 +245,11 @@ export class EosDynamicToolForge {
    * Normalizes a tool name: adds "eos_" prefix if absent, lowercases, replaces spaces with underscores.
    */
   private _normalizeName(name: string): string {
-    const clean = name.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
+    const clean = name
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "_")
+      .replace(/[^a-z0-9_]/g, "");
     return clean.startsWith("eos_") ? clean : `eos_${clean}`;
   }
 
@@ -273,9 +280,7 @@ export class EosDynamicToolForge {
 
       return Ok(true);
     } catch (err) {
-      return Err(
-        new Error(`Syntax validation failed: ${err instanceof Error ? err.message : String(err)}`)
-      );
+      return Err(new Error(`Syntax validation failed: ${err instanceof Error ? err.message : String(err)}`));
     } finally {
       if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
     }
@@ -292,10 +297,7 @@ export class EosDynamicToolForge {
     const moduleFullPath = path.join(this.forgeDir, moduleFileName);
 
     assertPrecondition(toolName.length > 4, "Tool name must be non-empty after normalization.");
-    assertPrecondition(
-      req.moduleSource.trim().length > 0,
-      "Module source must not be empty."
-    );
+    assertPrecondition(req.moduleSource.trim().length > 0, "Module source must not be empty.");
 
     // ── CRITICAL FIX: Comprehensive allowlist-based security scanner ──────────
     // Operator precedence bug fixed + complete blocklist replacing the old incomplete check.
@@ -315,11 +317,13 @@ export class EosDynamicToolForge {
       /import\s*\(\s*['"`]vm['"`]/,
       /import\s*\(\s*['"`]worker_threads['"`]/,
       /import\s*\(\s*['"`]cluster['"`]/,
-      // Process access
+      // Process access — forged tools are pure computation; any handle on the
+      // host process is out of contract (env leaks, exits, kills, cwd changes).
       /\bprocess\.env\b/,
-      /\bprocess\.binding\b/,
-      /\bprocess\.dlopen\b/,
-      /\bglobalThis\.process\b/,
+      /\bprocess\s*\./,
+      /\bglobalThis\s*\.\s*process\b/,
+      /\bDeno\s*\./,
+      /\bBun\s*\./,
       // Code execution
       /\beval\s*\(/,
       /\bnew\s+Function\s*\(/,
@@ -333,10 +337,12 @@ export class EosDynamicToolForge {
     const src = req.moduleSource;
     for (const pattern of BLOCKED_MODULE_PATTERNS) {
       if (pattern.test(src)) {
-        return Err(new Error(
-          `Security violation: module source contains prohibited pattern [${pattern.source}]. ` +
-          `Forged tools may only use pure computation — no I/O, no process access, no dynamic imports of system modules.`
-        ));
+        return Err(
+          new Error(
+            `Security violation: module source contains prohibited pattern [${pattern.source}]. ` +
+              `Forged tools may only use pure computation — no I/O, no process access, no dynamic imports of system modules.`,
+          ),
+        );
       }
     }
     // ── END SECURITY SCANNER ──────────────────────────────────────────────────
@@ -344,7 +350,12 @@ export class EosDynamicToolForge {
     // Validate inputSchema is a valid JSON Schema draft-7 object
     if (req.inputSchema && typeof req.inputSchema === "object") {
       const schema = req.inputSchema as Record<string, unknown>;
-      if (schema["type"] !== undefined && schema["type"] !== "object" && schema["type"] !== "array" && schema["type"] !== "string") {
+      if (
+        schema["type"] !== undefined &&
+        schema["type"] !== "object" &&
+        schema["type"] !== "array" &&
+        schema["type"] !== "string"
+      ) {
         return Err(new Error(`inputSchema.type must be "object", "array", or "string", got: ${schema["type"]}`));
       }
       if (schema["properties"] !== undefined && typeof schema["properties"] !== "object") {
@@ -359,13 +370,10 @@ export class EosDynamicToolForge {
     const validationResult = this._validateSource(req.moduleSource, moduleFullPath);
 
     const forgedAt = new Date().toISOString();
-    const contentHash = `sha256:${crypto
-      .createHash("sha256")
-      .update(req.moduleSource)
-      .digest("hex")}`;
+    const contentHash = `sha256:${crypto.createHash("sha256").update(req.moduleSource).digest("hex")}`;
 
     if (!validationResult.ok) {
-      console.warn(`[FORGE] ✘ Validation failed for "${toolName}": ${validationResult.error.message}`);
+      _log.warn("Forge validation failed", { toolName, reason: validationResult.error.message });
       return Ok({
         success: false,
         toolName,
@@ -393,7 +401,7 @@ export class EosDynamicToolForge {
     };
     this.manifestMgr.register(forgedTool);
 
-    console.log(`[FORGE] ✔ Tool "${toolName}" forged and registered at ${moduleRelPath}`);
+    _log.info("Tool forged and registered", { toolName, moduleRelPath });
 
     return Ok({
       success: true,
@@ -409,10 +417,7 @@ export class EosDynamicToolForge {
    * Dynamically invokes a registered forged tool by name.
    * Loads the module, calls execute(args), and returns the result.
    */
-  public async invoke(
-    toolName: string,
-    args: Record<string, unknown>
-  ): Promise<ForgedToolInvocationResult> {
+  public async invoke(toolName: string, args: Record<string, unknown>): Promise<ForgedToolInvocationResult> {
     const name = this._normalizeName(toolName);
     const entry = this.manifestMgr.get(name);
     const t0 = Date.now();
@@ -442,14 +447,14 @@ export class EosDynamicToolForge {
     try {
       // TOCTOU fix: verify content hash matches manifest before dynamic import
       const currentBytes = fs.readFileSync(moduleFullPath);
-      const currentHash  = `sha256:${crypto.createHash("sha256").update(currentBytes).digest("hex")}`;
+      const currentHash = `sha256:${crypto.createHash("sha256").update(currentBytes).digest("hex")}`;
       if (currentHash !== entry.contentHash) {
         return {
           toolName: name,
           success: false,
           output: null,
           durationMs: Date.now() - t0,
-          error: `Security violation: tool module hash mismatch — file may have been tampered with. Expected ${entry.contentHash.slice(0,20)}, got ${currentHash.slice(0,20)}`,
+          error: `Security violation: tool module hash mismatch — file may have been tampered with. Expected ${entry.contentHash.slice(0, 20)}, got ${currentHash.slice(0, 20)}`,
         };
       }
 

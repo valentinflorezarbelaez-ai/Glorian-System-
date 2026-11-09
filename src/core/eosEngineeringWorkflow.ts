@@ -107,7 +107,13 @@ function assertLocalDirectory(root: string, directory: string): void {
 }
 
 function safeTaskSlug(task: string): string {
-  return task.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 36) || "task";
+  return (
+    task
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 36) || "task"
+  );
 }
 
 function getCleanGitEnv(): NodeJS.ProcessEnv {
@@ -123,8 +129,8 @@ export class EosEngineeringWorkflow {
   private readonly sandboxFactory: (repoRoot: string) => Pick<EosContainerSandbox, "run">;
 
   constructor(
-    sandboxFactory: (repoRoot: string) => Pick<EosContainerSandbox, "run"> =
-      (repoRoot) => new EosContainerSandbox(repoRoot)
+    sandboxFactory: (repoRoot: string) => Pick<EosContainerSandbox, "run"> = (repoRoot) =>
+      new EosContainerSandbox(repoRoot),
   ) {
     this.sandboxFactory = sandboxFactory;
   }
@@ -138,14 +144,15 @@ export class EosEngineeringWorkflow {
     try {
       candidate = fs.realpathSync(requestedPath);
     } catch (error) {
-      const code = error instanceof Error && "code" in error
-        ? (error as NodeJS.ErrnoException).code
-        : undefined;
+      const code = error instanceof Error && "code" in error ? (error as NodeJS.ErrnoException).code : undefined;
       if (code === "ENOENT" || code === "ENOTDIR") {
         throw new Error(`Repository path not found: ${requestedPath}. Check the path and try again.`, { cause: error });
       }
       if (code === "EACCES" || code === "EPERM") {
-        throw new Error(`Cannot access repository path: ${requestedPath}. Check the folder permissions and try again.`, { cause: error });
+        throw new Error(
+          `Cannot access repository path: ${requestedPath}. Check the folder permissions and try again.`,
+          { cause: error },
+        );
       }
       throw error;
     }
@@ -159,20 +166,24 @@ export class EosEngineeringWorkflow {
         cwd: candidate,
         encoding: "utf8",
         stdio: ["ignore", "pipe", "pipe"],
-        env: getCleanGitEnv()
+        env: getCleanGitEnv(),
       }).trim();
     } catch (error) {
-      const code = error instanceof Error && "code" in error
-        ? (error as NodeJS.ErrnoException).code
-        : undefined;
-      const status = error instanceof Error && "status" in error
-        ? (error as NodeJS.ErrnoException & { status?: number }).status
-        : undefined;
+      const code = error instanceof Error && "code" in error ? (error as NodeJS.ErrnoException).code : undefined;
+      const status =
+        error instanceof Error && "status" in error
+          ? (error as NodeJS.ErrnoException & { status?: number }).status
+          : undefined;
       if (code === "ENOENT") {
-        throw new Error("Git was not found on PATH. Install Git, restart the terminal, and try again.", { cause: error });
+        throw new Error("Git was not found on PATH. Install Git, restart the terminal, and try again.", {
+          cause: error,
+        });
       }
       if (status === 128) {
-        throw new Error(`Could not find a Git repository from ${candidate}. Pass a folder inside an initialized Git working tree.`, { cause: error });
+        throw new Error(
+          `Could not find a Git repository from ${candidate}. Pass a folder inside an initialized Git working tree.`,
+          { cause: error },
+        );
       }
       throw error;
     }
@@ -193,7 +204,7 @@ export class EosEngineeringWorkflow {
       stdio: ["ignore", "pipe", "pipe"],
       maxBuffer,
       windowsHide: true,
-      env: getCleanGitEnv()
+      env: getCleanGitEnv(),
     }).trimEnd();
   }
 
@@ -203,7 +214,7 @@ export class EosEngineeringWorkflow {
       stdio: ["ignore", "pipe", "pipe"],
       maxBuffer: MAX_DIFF_BYTES + 1,
       windowsHide: true,
-      env: getCleanGitEnv()
+      env: getCleanGitEnv(),
     });
   }
 
@@ -219,7 +230,8 @@ export class EosEngineeringWorkflow {
 
   private assertWorkflowBranch(record: WorkflowRecord): string {
     const checkedOutBranch = this.gitText(record.worktreePath, ["branch", "--show-current"]);
-    if (checkedOutBranch !== record.branchName) throw new Error("Workflow worktree is checked out on an unexpected branch.");
+    if (checkedOutBranch !== record.branchName)
+      throw new Error("Workflow worktree is checked out on an unexpected branch.");
     const worktreeHead = this.gitText(record.worktreePath, ["rev-parse", "HEAD"]);
     const branchHead = this.gitText(record.repoRoot, ["rev-parse", `refs/heads/${record.branchName}`]);
     if (worktreeHead !== branchHead) throw new Error("Workflow branch ref and worktree HEAD do not match.");
@@ -229,7 +241,9 @@ export class EosEngineeringWorkflow {
 
   private ensureWorkflowPathsIgnored(repoRoot: string): boolean {
     const gitDirectory = fs.realpathSync(this.gitText(repoRoot, ["rev-parse", "--absolute-git-dir"]));
-    const commonDirectory = fs.realpathSync(path.resolve(repoRoot, this.gitText(repoRoot, ["rev-parse", "--git-common-dir"])));
+    const commonDirectory = fs.realpathSync(
+      path.resolve(repoRoot, this.gitText(repoRoot, ["rev-parse", "--git-common-dir"])),
+    );
     const excludePath = path.resolve(repoRoot, this.gitText(repoRoot, ["rev-parse", "--git-path", "info/exclude"]));
     const excludeParent = fs.realpathSync(path.dirname(excludePath));
     const allowedGitDirs = [gitDirectory, commonDirectory];
@@ -251,9 +265,12 @@ export class EosEngineeringWorkflow {
     const addition = `${previous && !previous.endsWith("\n") ? "\n" : ""}# EOS local workflow state\n${missing.join("\n")}\n`;
     const temporaryPath = `${excludePath}.${crypto.randomUUID()}.tmp`;
     fs.writeFileSync(temporaryPath, previous + addition, { encoding: "utf8", flag: "wx", mode: 0o600 });
-    try { fs.renameSync(temporaryPath, excludePath); }
-    catch (error) {
-      try { fs.unlinkSync(temporaryPath); } catch {}
+    try {
+      fs.renameSync(temporaryPath, excludePath);
+    } catch (error) {
+      try {
+        fs.unlinkSync(temporaryPath);
+      } catch {}
       throw error;
     }
     return true;
@@ -276,7 +293,7 @@ export class EosEngineeringWorkflow {
     } catch {}
 
     const commands: string[] = [];
-    const packageManagerPrefix = ({ npm: "npm", pnpm: "pnpm", yarn: "yarn", bun: "bun" } as const);
+    const packageManagerPrefix = { npm: "npm", pnpm: "pnpm", yarn: "yarn", bun: "bun" } as const;
     const manager = audit.fingerprint.packageManager;
     if (manager === "npm" || manager === "pnpm" || manager === "yarn" || manager === "bun") {
       const prefix = packageManagerPrefix[manager];
@@ -312,7 +329,7 @@ export class EosEngineeringWorkflow {
       audit,
       branch: this.gitText(repoRoot, ["branch", "--show-current"]) || "DETACHED",
       headCommit: this.gitText(repoRoot, ["rev-parse", "HEAD"]),
-      dirtyFiles
+      dirtyFiles,
     };
   }
 
@@ -327,7 +344,7 @@ export class EosEngineeringWorkflow {
       taskName: task,
       repoPath: ".",
       specDescription: task,
-      dryRun: true
+      dryRun: true,
     });
     const candidateValidationCommands = this.candidateValidationCommands(repoRoot, audit);
     return {
@@ -345,10 +362,10 @@ export class EosEngineeringWorkflow {
         candidateValidationCommands.length > 0
           ? `Ejecutar las validaciones candidatas: ${candidateValidationCommands.join(", ")}.`
           : "Elegir manualmente un comando de validación del proyecto; EOS no detectó uno con confianza.",
-        "Revisar el diff y aplicar localmente solo después de confirmar su SHA-256."
+        "Revisar el diff y aplicar localmente solo después de confirmar su SHA-256.",
       ],
       executionPerformed: false,
-      note: "Análisis local heurístico y borrador; no usa un modelo, no ejecuta validaciones y no escribe archivos."
+      note: "Análisis local heurístico y borrador; no usa un modelo, no ejecuta validaciones y no escribe archivos.",
     };
   }
 
@@ -357,7 +374,9 @@ export class EosEngineeringWorkflow {
     const repoRoot = plan.audit.projectPath;
     const dirtyFiles = this.gitStatus(repoRoot);
     if (dirtyFiles.length > 0) {
-      throw new Error(`Refusing to create a workflow from a dirty checkout (${dirtyFiles.length} uncommitted path(s)). Commit, stash, or review them first.`);
+      throw new Error(
+        `Refusing to create a workflow from a dirty checkout (${dirtyFiles.length} uncommitted path(s)). Commit, stash, or review them first.`,
+      );
     }
     const localExcludeUpdated = this.ensureWorkflowPathsIgnored(repoRoot);
     const baseBranch = this.gitText(repoRoot, ["branch", "--show-current"]);
@@ -386,13 +405,13 @@ export class EosEngineeringWorkflow {
       baseBranch,
       baseCommit,
       worktreePath,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
     const worktrees = new EosWorktreeOrchestrator(repoRoot);
     worktrees.createWorktree(branchName, path.relative(repoRoot, worktreePath), {
       baseBranch,
       copyEnv: false,
-      copyHooks: false
+      copyHooks: false,
     });
     try {
       this.writeRecord(record);
@@ -403,27 +422,36 @@ export class EosEngineeringWorkflow {
     return { workflowId, branchName, baseBranch, baseCommit, worktreePath, localExcludeUpdated, plan };
   }
 
-  public async validate(targetPath: string, workflowId: string, command: string, commandArgs: readonly string[] = []): Promise<SandboxRunReport> {
+  public async validate(
+    targetPath: string,
+    workflowId: string,
+    command: string,
+    commandArgs: readonly string[] = [],
+  ): Promise<SandboxRunReport> {
     const record = this.readRecord(targetPath, workflowId);
     if (record.closedAt) throw new Error("This workflow is closed.");
     if (record.appliedAt) throw new Error("This workflow has already been applied to its base branch.");
     this.assertRegisteredWorktree(record);
     const branchHead = this.assertWorkflowBranch(record);
-    if (this.gitStatus(record.worktreePath).length > 0) throw new Error("Commit the worktree changes before running isolated validation.");
-    const commitCount = Number(this.gitText(record.repoRoot, ["rev-list", "--count", `${record.baseCommit}..${branchHead}`]));
-    if (!Number.isInteger(commitCount) || commitCount < 1) throw new Error("No committed changes exist in the workflow branch to validate.");
+    if (this.gitStatus(record.worktreePath).length > 0)
+      throw new Error("Commit the worktree changes before running isolated validation.");
+    const commitCount = Number(
+      this.gitText(record.repoRoot, ["rev-list", "--count", `${record.baseCommit}..${branchHead}`]),
+    );
+    if (!Number.isInteger(commitCount) || commitCount < 1)
+      throw new Error("No committed changes exist in the workflow branch to validate.");
 
     const report = await this.sandboxFactory(record.repoRoot).run({
       worktreePath: record.worktreePath,
       command,
       commandArgs,
-      applyChanges: false
+      applyChanges: false,
     });
     this.writeRecord({
       ...record,
       validationStatus: report.status,
       validationHead: branchHead,
-      validationReceipt: report.receiptPath
+      validationReceipt: report.receiptPath,
     });
     return report;
   }
@@ -437,26 +465,46 @@ export class EosEngineeringWorkflow {
       throw new Error("A successful isolated validation is required before review.");
     }
     const dirtyFiles = this.gitStatus(record.worktreePath);
-    if (dirtyFiles.length > 0) throw new Error("Commit all changes in the isolated worktree before generating a review diff.");
+    if (dirtyFiles.length > 0)
+      throw new Error("Commit all changes in the isolated worktree before generating a review diff.");
     const headCommit = this.assertWorkflowBranch(record);
-    if (headCommit !== record.validationHead) throw new Error("The worktree changed after validation; validate the current commit again.");
-    if (this.gitText(record.repoRoot, ["branch", "--show-current"]) !== record.baseBranch ||
-      this.gitText(record.repoRoot, ["rev-parse", "HEAD"]) !== record.baseCommit) {
+    if (headCommit !== record.validationHead)
+      throw new Error("The worktree changed after validation; validate the current commit again.");
+    if (
+      this.gitText(record.repoRoot, ["branch", "--show-current"]) !== record.baseBranch ||
+      this.gitText(record.repoRoot, ["rev-parse", "HEAD"]) !== record.baseCommit
+    ) {
       throw new Error("The base checkout changed after workflow start; recreate the review against the current base.");
     }
-    const commitCount = Number(this.gitText(record.repoRoot, ["rev-list", "--count", `${record.baseCommit}..${headCommit}`]));
-    if (!Number.isInteger(commitCount) || commitCount < 1) throw new Error("The workflow branch has no committed diff to review.");
+    const commitCount = Number(
+      this.gitText(record.repoRoot, ["rev-list", "--count", `${record.baseCommit}..${headCommit}`]),
+    );
+    if (!Number.isInteger(commitCount) || commitCount < 1)
+      throw new Error("The workflow branch has no committed diff to review.");
 
-    const diffBuffer = this.gitBuffer(record.repoRoot, ["diff", "--no-ext-diff", "--no-color", "--binary", record.baseCommit, headCommit]);
+    const diffBuffer = this.gitBuffer(record.repoRoot, [
+      "diff",
+      "--no-ext-diff",
+      "--no-color",
+      "--binary",
+      record.baseCommit,
+      headCommit,
+    ]);
     if (diffBuffer.byteLength > MAX_DIFF_BYTES) throw new RangeError("Review diff exceeds the 4 MiB safety limit.");
-    const changedFilesOutput = this.gitBuffer(record.repoRoot, ["diff", "--name-only", "-z", record.baseCommit, headCommit]).toString("utf8");
+    const changedFilesOutput = this.gitBuffer(record.repoRoot, [
+      "diff",
+      "--name-only",
+      "-z",
+      record.baseCommit,
+      headCommit,
+    ]).toString("utf8");
     const changedFiles = changedFilesOutput.split("\0").filter(Boolean);
     const diffSha256 = crypto.createHash("sha256").update(diffBuffer).digest("hex");
     this.writeRecord({
       ...record,
       reviewedHead: headCommit,
       reviewedDiffSha256: diffSha256,
-      reviewedAt: new Date().toISOString()
+      reviewedAt: new Date().toISOString(),
     });
     return {
       workflowId,
@@ -467,12 +515,13 @@ export class EosEngineeringWorkflow {
       changedFiles,
       diffSha256,
       diff: diffBuffer.toString("utf8"),
-      approvalCommand: `node bin/eos.mjs flow apply "${record.repoRoot}" ${workflowId} --confirm-diff=${diffSha256}`
+      approvalCommand: `node bin/eos.mjs flow apply "${record.repoRoot}" ${workflowId} --confirm-diff=${diffSha256}`,
     };
   }
 
   public apply(targetPath: string, workflowId: string, confirmedDiffSha256: string): string {
-    if (!/^[a-f0-9]{64}$/.test(confirmedDiffSha256)) throw new Error("Approval requires the 64-character SHA-256 printed by flow review.");
+    if (!/^[a-f0-9]{64}$/.test(confirmedDiffSha256))
+      throw new Error("Approval requires the 64-character SHA-256 printed by flow review.");
     const record = this.readRecord(targetPath, workflowId);
     if (record.closedAt) throw new Error("This workflow is closed.");
     if (record.appliedAt) throw new Error("This workflow has already been applied.");
@@ -486,14 +535,25 @@ export class EosEngineeringWorkflow {
     if (this.gitStatus(record.worktreePath).length > 0) throw new Error("The isolated worktree changed after review.");
     const branchHead = this.assertWorkflowBranch(record);
     if (branchHead !== record.reviewedHead) throw new Error("The workflow branch changed after review.");
-    const currentDiff = this.gitBuffer(record.repoRoot, ["diff", "--no-ext-diff", "--no-color", "--binary", record.baseCommit, branchHead]);
+    const currentDiff = this.gitBuffer(record.repoRoot, [
+      "diff",
+      "--no-ext-diff",
+      "--no-color",
+      "--binary",
+      record.baseCommit,
+      branchHead,
+    ]);
     const currentDiffHash = crypto.createHash("sha256").update(currentDiff).digest("hex");
-    if (currentDiffHash !== confirmedDiffSha256) throw new Error("The diff changed after review; review it again before approval.");
-    if (this.gitText(record.repoRoot, ["branch", "--show-current"]) !== record.baseBranch ||
-      this.gitText(record.repoRoot, ["rev-parse", "HEAD"]) !== record.baseCommit) {
+    if (currentDiffHash !== confirmedDiffSha256)
+      throw new Error("The diff changed after review; review it again before approval.");
+    if (
+      this.gitText(record.repoRoot, ["branch", "--show-current"]) !== record.baseBranch ||
+      this.gitText(record.repoRoot, ["rev-parse", "HEAD"]) !== record.baseCommit
+    ) {
       throw new Error("The base checkout changed after review; refusing to merge.");
     }
-    if (this.gitStatus(record.repoRoot).length > 0) throw new Error("The base checkout must be clean before applying the reviewed workflow.");
+    if (this.gitStatus(record.repoRoot).length > 0)
+      throw new Error("The base checkout must be clean before applying the reviewed workflow.");
 
     this.gitText(record.repoRoot, ["merge", "--ff-only", "--no-edit", record.branchName]);
     const appliedHead = this.gitText(record.repoRoot, ["rev-parse", "HEAD"]);
@@ -511,8 +571,9 @@ export class EosEngineeringWorkflow {
       worktreeDirtyFiles = this.gitStatus(record.worktreePath).map((line) => line.slice(3));
     }
     let branchHead: string | null = null;
-    try { branchHead = this.gitText(record.repoRoot, ["rev-parse", `refs/heads/${record.branchName}`]); }
-    catch {}
+    try {
+      branchHead = this.gitText(record.repoRoot, ["rev-parse", `refs/heads/${record.branchName}`]);
+    } catch {}
     return {
       workflowId,
       task: record.task,
@@ -527,7 +588,7 @@ export class EosEngineeringWorkflow {
       validationHead: record.validationHead || null,
       reviewedDiffSha256: record.reviewedDiffSha256 || null,
       appliedHead: record.appliedHead || null,
-      closedAt: record.closedAt || null
+      closedAt: record.closedAt || null,
     };
   }
 
@@ -540,11 +601,17 @@ export class EosEngineeringWorkflow {
       this.assertWorkflowBranch(record);
       const dirtyFiles = this.gitStatus(record.worktreePath);
       if (dirtyFiles.length > 0 && !force) {
-        throw new Error(`Worktree has ${dirtyFiles.length} uncommitted path(s); preserve them or close with --force to discard them. The branch will be preserved.`);
+        throw new Error(
+          `Worktree has ${dirtyFiles.length} uncommitted path(s); preserve them or close with --force to discard them. The branch will be preserved.`,
+        );
       }
       const result = new EosWorktreeOrchestrator(record.repoRoot).removeWorktree(record.worktreePath, { force });
-      if (!result.success) throw new Error(`Could not close workflow worktree: ${result.error || "git worktree remove failed"}`);
-      removalMessage = dirtyFiles.length > 0 ? "Uncommitted worktree files discarded; branch preserved." : "Clean worktree removed; branch preserved.";
+      if (!result.success)
+        throw new Error(`Could not close workflow worktree: ${result.error || "git worktree remove failed"}`);
+      removalMessage =
+        dirtyFiles.length > 0
+          ? "Uncommitted worktree files discarded; branch preserved."
+          : "Clean worktree removed; branch preserved.";
     }
     this.writeRecord({ ...record, closedAt: new Date().toISOString() });
     return removalMessage;
@@ -577,15 +644,19 @@ export class EosEngineeringWorkflow {
     const target = this.recordPath(record.repoRoot, record.id, true);
     try {
       const targetStat = fs.lstatSync(target);
-      if (!targetStat.isFile() || targetStat.isSymbolicLink()) throw new Error("Refusing to overwrite unsafe workflow state.");
+      if (!targetStat.isFile() || targetStat.isSymbolicLink())
+        throw new Error("Refusing to overwrite unsafe workflow state.");
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
     }
     const temporary = `${target}.${crypto.randomUUID()}.tmp`;
     fs.writeFileSync(temporary, `${JSON.stringify(record, null, 2)}\n`, { encoding: "utf8", flag: "wx", mode: 0o600 });
-    try { fs.renameSync(temporary, target); }
-    catch (error) {
-      try { fs.unlinkSync(temporary); } catch {}
+    try {
+      fs.renameSync(temporary, target);
+    } catch (error) {
+      try {
+        fs.unlinkSync(temporary);
+      } catch {}
       throw error;
     }
   }
@@ -594,13 +665,20 @@ export class EosEngineeringWorkflow {
     const repoRoot = this.resolveGitRoot(targetPath);
     const recordFile = this.recordPath(repoRoot, workflowId, false);
     const stat = fs.lstatSync(recordFile);
-    if (!stat.isFile() || stat.isSymbolicLink() || stat.size > 64 * 1024) throw new Error("Workflow state is not a bounded regular file.");
+    if (!stat.isFile() || stat.isSymbolicLink() || stat.size > 64 * 1024)
+      throw new Error("Workflow state is not a bounded regular file.");
     const value: unknown = JSON.parse(fs.readFileSync(recordFile, "utf8"));
     if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Workflow state is invalid.");
     const record = value as WorkflowRecord;
-    if (record.schemaVersion !== 1 || record.id !== workflowId || record.repoRoot !== repoRoot ||
-      typeof record.task !== "string" || typeof record.branchName !== "string" ||
-      typeof record.baseBranch !== "string" || !/^[a-f0-9]{40,64}$/.test(record.baseCommit)) {
+    if (
+      record.schemaVersion !== 1 ||
+      record.id !== workflowId ||
+      record.repoRoot !== repoRoot ||
+      typeof record.task !== "string" ||
+      typeof record.branchName !== "string" ||
+      typeof record.baseBranch !== "string" ||
+      !/^[a-f0-9]{40,64}$/.test(record.baseCommit)
+    ) {
       throw new Error("Workflow state does not match this repository or has an unsupported format.");
     }
     if (record.branchName !== `eos/${safeTaskSlug(record.task)}-${workflowId.slice(0, 8)}`) {
@@ -609,7 +687,8 @@ export class EosEngineeringWorkflow {
     this.gitText(repoRoot, ["check-ref-format", "--branch", record.baseBranch]);
     this.gitText(repoRoot, ["check-ref-format", "--branch", record.branchName]);
     const resolvedWorktree = path.resolve(record.worktreePath);
-    if (!isWithin(repoRoot, resolvedWorktree) || resolvedWorktree === repoRoot) throw new Error("Workflow worktree path escapes the repository.");
+    if (!isWithin(repoRoot, resolvedWorktree) || resolvedWorktree === repoRoot)
+      throw new Error("Workflow worktree path escapes the repository.");
     return { ...record, worktreePath: resolvedWorktree };
   }
 
@@ -618,7 +697,8 @@ export class EosEngineeringWorkflow {
     if (!isWithin(record.repoRoot, realWorktree) || realWorktree === record.repoRoot) {
       throw new Error("Workflow worktree resolves outside the project boundary.");
     }
-    const registered = new EosWorktreeOrchestrator(record.repoRoot).listWorktrees()
+    const registered = new EosWorktreeOrchestrator(record.repoRoot)
+      .listWorktrees()
       .some((worktree) => path.resolve(worktree.path) === realWorktree);
     if (!registered) throw new Error("Workflow path is no longer a registered Git worktree.");
   }

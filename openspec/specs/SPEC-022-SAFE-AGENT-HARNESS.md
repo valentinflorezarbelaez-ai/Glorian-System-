@@ -1,9 +1,11 @@
 # BASE SPECIFICATION: SAFE AGENT HARNESS BOUNDARIES (SPEC-022)
 
 ## 1. Scope
+
 Defines local MCP and agent-factory boundaries for untrusted tool arguments, repository context, filesystem writes, fleet checkout selection, and the optional Docker command runner. This specification does not claim a model-driven autonomous coding loop or microVM isolation; the Docker runner relies on the local engine and host kernel.
 
 ## 2. Requirements (EARS)
+
 - **UBIQUITOUS**: THE SYSTEM SHALL treat MCP arguments and repository metadata as untrusted, validate their runtime types, and enforce byte limits before processing.
 - **UBIQUITOUS**: THE SYSTEM SHALL enable write or force behavior only when the corresponding JSON boolean is exactly `true`; strings and other truthy values SHALL NOT authorize mutations.
 - **UBIQUITOUS**: THE SYSTEM SHALL resolve local read and write targets through real paths and keep them inside the configured project or selected repository boundary.
@@ -21,6 +23,7 @@ Defines local MCP and agent-factory boundaries for untrusted tool arguments, rep
 - **UBIQUITOUS**: THE SYSTEM SHALL describe the current tools by their actual scope and SHALL NOT imply model orchestration, microVM isolation, or autonomous deployment where those capabilities do not exist.
 
 ## 3. Invariants
+
 - A tool description is not an access-control boundary; server-side runtime checks enforce its limits.
 - A string such as `"false"` cannot enable a write or forced deletion.
 - A registered project ID alone is not proof that a local checkout is the matching repository.
@@ -28,3 +31,19 @@ Defines local MCP and agent-factory boundaries for untrusted tool arguments, rep
 - Plan generation does not create branches, run tests, or open pull requests.
 - An MCP error does not disclose a JavaScript stack trace.
 - The sandbox is not a microVM and does not isolate against Docker daemon or host-kernel vulnerabilities; workspace size is enforced by a polling watchdog and may briefly overshoot.
+
+## 4. Acceptance Criteria (BDD)
+
+```gherkin
+SCENARIO: Strict MCP Argument Type & Boundary Validation (BDD-053)
+  GIVEN incoming MCP tool arguments from untrusted clients
+  WHEN parsed and validated by the agent harness
+  THEN payloads exceeding 1 MiB are rejected before JSON deserialization
+  AND path arguments resolving outside the allowed workspace boundary are blocked.
+
+SCENARIO: Explicit Opt-in Requirement for Mutation Operations (BDD-053)
+  GIVEN an agent requesting destructive or state-modifying actions
+  WHEN the mutation parameter is not explicitly the boolean true
+  THEN the harness fails closed and rejects the request
+  AND string values like "true" or "false" are strictly forbidden from authorizing writes.
+```

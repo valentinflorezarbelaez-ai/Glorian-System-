@@ -52,4 +52,5 @@ ESCENARIO: [BDD-060] Cálculo de Topología y Blast Radius del Sovereign Fleet
 ```
 
 ---
-*Signed by Principal Architect: Valentín Flórez Arbeláez*
+
+_Signed by Principal Architect: Valentín Flórez Arbeláez_

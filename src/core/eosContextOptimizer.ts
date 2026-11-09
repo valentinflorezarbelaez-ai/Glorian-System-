@@ -23,10 +23,7 @@ export interface CompressedContextResult {
  * Retains export declarations, function signatures, class interfaces,
  * type aliases, and docstrings while pruning internal implementation bodies.
  */
-export function compressSourceContext(
-  content: string,
-  filePath: string = "source.ts"
-): CompressedContextResult {
+export function compressSourceContext(content: string, filePath: string = "source.ts"): CompressedContextResult {
   if (!content || typeof content !== "string") {
     return {
       filePath,
@@ -34,7 +31,7 @@ export function compressSourceContext(
       compressedTokensEstimate: 0,
       tokenSavingsPercent: 0,
       compressedOutline: "",
-      symbolsFound: []
+      symbolsFound: [],
     };
   }
 
@@ -118,6 +115,6 @@ export function compressSourceContext(
     compressedTokensEstimate: compressedTokens,
     tokenSavingsPercent: savings,
     compressedOutline,
-    symbolsFound: symbols
+    symbolsFound: symbols,
   };
 }

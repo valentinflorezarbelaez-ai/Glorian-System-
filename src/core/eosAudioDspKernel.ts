@@ -48,7 +48,7 @@ export class EosAudioDspKernel {
     cutoffHz: number,
     sampleRate: number = EosAudioDspKernel.SAMPLE_RATE_44K,
     q: number = 0.7071,
-    gainDb: number = 0.0
+    gainDb: number = 0.0,
   ): BiquadCoefficients {
     const w0 = (2 * Math.PI * cutoffHz) / sampleRate;
     const cosW0 = Math.cos(w0);
@@ -56,7 +56,12 @@ export class EosAudioDspKernel {
     const alpha = sinW0 / (2 * q);
     const A = Math.pow(10, gainDb / 40);
 
-    let b0 = 1, b1 = 0, b2 = 0, a0 = 1, a1 = 0, a2 = 0;
+    let b0 = 1,
+      b1 = 0,
+      b2 = 0,
+      a0 = 1,
+      a1 = 0,
+      a2 = 0;
 
     switch (type) {
       case "lowpass":
@@ -102,7 +107,7 @@ export class EosAudioDspKernel {
       b1: b1 / a0,
       b2: b2 / a0,
       a1: a1 / a0,
-      a2: a2 / a0
+      a2: a2 / a0,
     };
   }
 
@@ -128,7 +133,7 @@ export class EosAudioDspKernel {
    */
   public applySamplePeakLimiterInPlace(
     buffer: Float32Array,
-    ceilingLinear: number = EosAudioDspKernel.SAMPLE_PEAK_CEILING_LINEAR
+    ceilingLinear: number = EosAudioDspKernel.SAMPLE_PEAK_CEILING_LINEAR,
   ): { clamped: boolean; maxPeakDb: number } {
     let clamped = false;
     let maxAbs = 0.0;
@@ -141,7 +146,8 @@ export class EosAudioDspKernel {
         clamped = true;
         // Smooth soft-knee saturation curve
         const sign = buffer[i] > 0 ? 1 : -1;
-        buffer[i] = sign * (ceilingLinear + (1 - ceilingLinear) * Math.tanh((absVal - ceilingLinear) / (1 - ceilingLinear)));
+        buffer[i] =
+          sign * (ceilingLinear + (1 - ceilingLinear) * Math.tanh((absVal - ceilingLinear) / (1 - ceilingLinear)));
       }
     }
 
@@ -191,7 +197,8 @@ export class EosAudioDspKernel {
     }
     const samplePeakOutputDbfs = Number((20 * Math.log10(maxVal || 0.0001)).toFixed(2));
 
-    const proof = crypto.createHash("sha256")
+    const proof = crypto
+      .createHash("sha256")
       .update(`${totalSamplesProcessed}:${throughputSamplesSec}:${samplePeakOutputDbfs}`)
       .digest("hex");
 
@@ -204,7 +211,7 @@ export class EosAudioDspKernel {
       samplePeakOutputDbfs,
       limiterClamped: clamped,
       durationUs,
-      sha256Proof: proof
+      sha256Proof: proof,
     };
   }
 }

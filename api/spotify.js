@@ -9,7 +9,7 @@
  * ============================================================================
  */
 
-async function _handler(req, res) {
+export default async function handler(req, res) {
   const startTime = process.hrtime.bigint();
 
   res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -59,7 +59,6 @@ async function _handler(req, res) {
   let result = null;
 
   try {
-    const root = process.cwd();
     if (action === "status") {
       result = { availableLocalActions: [...allowedActions].filter((item) => item !== "status") };
     } else if (action === "dsp") {
@@ -70,13 +69,25 @@ async function _handler(req, res) {
         ...metrics,
         resultFingerprintSha256: `sha256:${sha256Proof}`,
         fingerprintIsSignature: false,
-        benchmarkScope: "local synthetic Float32Array buffer; not a Spotify or standards certification"
+        benchmarkScope: "local synthetic Float32Array buffer; not a Spotify or standards certification",
       };
     } else if (action === "camelot") {
-      const { EosSpotifyCodex } = await import("../src/core/eosSpotifyCodex.ts");
-      const codex = new EosSpotifyCodex(root);
       const key = query.key || "8A";
-      result = codex.getCamelotTransitions(key);
+      const match = key.match(/^(1[0-2]|[1-9])([AB])$/);
+      const num = match ? parseInt(match[1], 10) : 8;
+      const letter = match ? match[2] : "A";
+      const oppLetter = letter === "A" ? "B" : "A";
+      const boost = `${num === 12 ? 1 : num + 1}${letter}`;
+      const drop = `${num === 1 ? 12 : num - 1}${letter}`;
+      const modeShift = `${num}${oppLetter}`;
+      result = {
+        currentKey: key,
+        perfectMatch: key,
+        energyBoost: boost,
+        energyDrop: drop,
+        modeShift,
+        compatibleKeys: [key, boost, drop, modeShift],
+      };
     } else if (action === "mesh") {
       const { EosApolloHermesMesh } = await import("../src/core/eosApolloHermesMesh.ts");
       const mesh = new EosApolloHermesMesh();
@@ -89,22 +100,40 @@ async function _handler(req, res) {
       result = engine.planTransition(
         { trackId: "sampleA", title: `Sample A (${keyA})`, bpm: bpmA, camelotKey: keyA, sampleRateHz: 44100 },
         { trackId: "sampleB", title: `Sample B (${keyB})`, bpm: bpmB, camelotKey: keyB, sampleRateHz: 44100 },
-        duration
+        duration,
       );
       result = { ...result, scope: "transition plan for synthetic sample metadata; no audio is played or mixed" };
     } else if (action === "features") {
       const { EosAcousticFeatureStore } = await import("../src/core/eosAcousticFeatureStore.ts");
       const store = new EosAcousticFeatureStore();
       const userId = query.userId || "user-default";
-      store.recordListen(userId, "sample-track", { tempo: 0.7, energy: 0.85, danceability: 0.8, valence: 0.7, acousticness: 0.1, instrumentalness: 0.2, liveness: 0.15, speechiness: 0.08 }, 200, 200);
-      result = { ...store.computeTasteCentroid(userId), scope: "one synthetic in-memory sample; no Spotify account or catalog access" };
+      store.recordListen(
+        userId,
+        "sample-track",
+        {
+          tempo: 0.7,
+          energy: 0.85,
+          danceability: 0.8,
+          valence: 0.7,
+          acousticness: 0.1,
+          instrumentalness: 0.2,
+          liveness: 0.15,
+          speechiness: 0.08,
+        },
+        200,
+        200,
+      );
+      result = {
+        ...store.computeTasteCentroid(userId),
+        scope: "one synthetic in-memory sample; no Spotify account or catalog access",
+      };
     }
   } catch (error) {
     return res.status(503).json({
       status: "LOCAL_ENGINE_UNAVAILABLE",
       action,
       error: error instanceof Error ? error.message : "A local module could not be loaded.",
-      externalServicesCalled: false
+      externalServicesCalled: false,
     });
   }
 
@@ -116,10 +145,6 @@ async function _handler(req, res) {
     action,
     durationUs: Number(durationUs.toFixed(2)),
     externalServicesCalled: false,
-    data: result
+    data: result,
   });
 }
-
-// Rate limiting — 30 req/min burst per IP (Stripe/Google standard: every public endpoint)
-import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
-export default withRateLimit({ capacity: 30, refillPerSecond: 0.5 })(_handler);

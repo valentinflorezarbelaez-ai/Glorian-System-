@@ -1,6 +1,7 @@
 # INTAKE-037: EOS TIER-0 PRINCIPAL HARDENING & GENTLEMAN AI STACK CO-GOVERNANCE (v50.0.0)
 
 ## 1. Stakeholder & Context
+
 - **Owner & Principal Architect**: Valentín Flórez Arbeláez
 - **Target Control Plane**: `c:\Users\valen\Eos-System` (`eos-system`) + Google Antigravity Global Runtime (`C:\Users\valen\.gemini\config\`)
 - **Date**: 2026-10-30
@@ -9,6 +10,7 @@
   2. Install, wire, and co-govern the complete **Gentleman Programming AI Stack** (`gentle-ai` `v4.3.1`, `engram` `v3.2.1`, `gentleman-guardian-angel` / `gga` `v2.10.1`, `context7` MCP, and `agent-teams-lite` SDD + `judgment-day` skills) alongside **EOS System** inside Google Antigravity without clobbering the EOS Constitution.
 
 ## 2. Reconnaissance Findings
+
 - **Local Workstation Binaries**:
   - `go` `go1.27.1 windows/amd64`: Installed (`>= 1.25.10` required by `gentle-ai/v4`).
   - `engram` `3.2.1`: Installed at `C:\Users\valen\AppData\Local\engram\bin\engram.exe` and registered in `mcp_config.json`.

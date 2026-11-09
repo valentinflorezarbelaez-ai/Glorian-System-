@@ -11,12 +11,7 @@
  * Zero external runtime npm dependencies (Law V).
  */
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
 export interface AbacPolicyRule {
   readonly id: string;
@@ -158,7 +153,7 @@ spec:
       statusCode,
       reason,
       matchedPolicyId: matchedRuleId,
-      decisionSha256
+      decisionSha256,
     });
   }
 

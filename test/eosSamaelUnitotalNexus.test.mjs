@@ -1,20 +1,35 @@
-import test from "node:test";
+import test, { after } from "node:test";
 import assert from "node:assert/strict";
 import path from "node:path";
 import fs from "node:fs";
 import os from "node:os";
 import { fileURLToPath } from "node:url";
 
-import {
-  EosSamaelUnitotalNexus
-} from "../src/core/eosSamaelUnitotalNexus.ts";
+import { EosSamaelUnitotalNexus } from "../src/core/eosSamaelUnitotalNexus.ts";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
-import { EosDurableSqliteLedger } from "../src/core/eosDurableSqliteLedger.ts";
+import { materializeFleetFixture, disposeFleetFixture } from "./lib/fleetFixture.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "..");
-const isCI = Boolean(process.env.CI || process.env.GITHUB_ACTIONS);
+
+// Fleet checks run hermetically against throwaway sibling checkouts materialized
+// from docs/projects/registry.json (see test/lib/fleetFixture.mjs); the developer's
+// real sibling repositories are never read or written. If the registry provides no
+// fixtures, fall back to skipping unless EOS_LOCAL_FLEET_TESTS=1 opts in to the
+// real local fleet checkouts. Host-tool checks (engram.exe) always stay local-opt-in.
+// Materialized synchronously at module load so skip flags are decided before registration.
+const fleetFixture = materializeFleetFixture(projectRoot);
+const fleetAvailable = fleetFixture.complete || Boolean(process.env.EOS_LOCAL_FLEET_TESTS);
+
+after(() => disposeFleetFixture(fleetFixture));
+
+const fleetSkip = fleetAvailable
+  ? false
+  : "No fleet fixtures in docs/projects/registry.json; set EOS_LOCAL_FLEET_TESTS=1 with the local fleet checkouts present.";
+const hostToolSkip = process.env.EOS_LOCAL_FLEET_TESTS
+  ? false
+  : "Set EOS_LOCAL_FLEET_TESTS=1 to verify host tools installed in this machine.";
 
 test("BDD-203: Evaluation of the 10-Sephiroth Architectural Integrity Vector", () => {
   const vector = EosSamaelUnitotalNexus.evaluateSephirothVector(63, 23);
@@ -31,7 +46,7 @@ test("BDD-203: Evaluation of the 10-Sephiroth Architectural Integrity Vector", (
     "Netzach",
     "Hod",
     "Yesod",
-    "Malkuth"
+    "Malkuth",
   ]);
 
   for (const dim of vector) {
@@ -43,7 +58,7 @@ test("BDD-203: Evaluation of the 10-Sephiroth Architectural Integrity Vector", (
   }
 });
 
-test("BDD-204: Universal Fleet Repository Inventory and Law IV Compliance", () => {
+test("BDD-204: Universal Fleet Repository Inventory and Law IV Compliance", { skip: fleetSkip }, () => {
   const fleet = EosSamaelUnitotalNexus.auditFleetRepositories(projectRoot);
   assert.ok(fleet.length >= 5, `Expected at least 5 fleet repositories, got ${fleet.length}`);
 
@@ -54,21 +69,14 @@ test("BDD-204: Universal Fleet Repository Inventory and Law IV Compliance", () =
 
   const ptgRepo = fleet.find((r) => r.id === "performance-talent-group");
   assert.ok(ptgRepo);
-  if (!isCI) {
-    assert.equal(ptgRepo.diskPresent, true);
-  }
+  assert.equal(ptgRepo.diskPresent, true);
 });
 
-test("BDD-205: Drift detection and dry-run remediation proposal", () => {
+test("BDD-205: Drift detection and dry-run remediation proposal", { skip: fleetSkip }, () => {
   const tmpRepo = fs.mkdtempSync(path.join(os.tmpdir(), "eos-drift-test-"));
 
   try {
-    const targetRepo = isCI ? "eos-system" : "performance-talent-group";
-    const dryRunResult = EosSamaelUnitotalNexus.remediateFleetDrift(
-      targetRepo,
-      projectRoot,
-      true
-    );
+    const dryRunResult = EosSamaelUnitotalNexus.remediateFleetDrift("performance-talent-group", projectRoot, true);
     assert.equal(dryRunResult.success, true);
     assert.ok(dryRunResult.actionsTaken.length > 0);
   } finally {
@@ -76,62 +84,65 @@ test("BDD-205: Drift detection and dry-run remediation proposal", () => {
   }
 });
 
-test("BDD-206: Unitotal Perfection Score computation and SOVEREIGN_UNITOTAL_PERFECTION certification", () => {
-  const report = EosSamaelUnitotalNexus.evaluateUnitotalPerfection(projectRoot);
+test(
+  "BDD-206: Unitotal Perfection Score computation and SOVEREIGN_UNITOTAL_PERFECTION certification",
+  { skip: fleetSkip },
+  () => {
+    const report = EosSamaelUnitotalNexus.evaluateUnitotalPerfection(projectRoot);
 
-  if (isCI) {
-    assert.ok(report.healthyFleetRepos >= 1);
-    assert.ok(report.unitotalScore >= 70, `Expected score >= 70 in CI, got ${report.unitotalScore}`);
-  } else {
     assert.equal(report.status, "SOVEREIGN_UNITOTAL_PERFECTION");
     assert.ok(report.unitotalScore >= 90, `Expected score >= 90, got ${report.unitotalScore}`);
+    assert.ok(report.activeSpecsCount >= 63, `Expected activeSpecsCount >= 63, got ${report.activeSpecsCount}`);
+    assert.ok(
+      report.formalTlaModelsCount >= 23,
+      `Expected formalTlaModelsCount >= 23, got ${report.formalTlaModelsCount}`,
+    );
+    assert.ok(report.sha256Receipt.length === 64);
     assert.ok(report.healthyFleetRepos >= 4);
-  }
-  assert.ok(report.activeSpecsCount >= 63, `Expected activeSpecsCount >= 63, got ${report.activeSpecsCount}`);
-  assert.ok(report.formalTlaModelsCount >= 23, `Expected formalTlaModelsCount >= 23, got ${report.formalTlaModelsCount}`);
-  assert.ok(report.sha256Receipt.length === 64);
-});
+  },
+);
 
-test("BDD-207: Canonical Engram binary path points to valid user local environment", () => {
+test("BDD-207: Canonical Engram binary path points to valid user local environment", { skip: hostToolSkip }, () => {
   const engramPath = EosSamaelUnitotalNexus.CANONICAL_ENGRAM_PATH;
   assert.ok(typeof engramPath === "string");
   assert.ok(engramPath.includes("engram.exe"));
-  if (!isCI) {
-    assert.equal(fs.existsSync(engramPath), true);
-  }
+  assert.equal(fs.existsSync(engramPath), true);
 });
 
-test("BDD-208: MCP tool eos_unitotal_evaluate dispatches audit and records receipt in SQLite WAL", () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-unitotal-mcp-test-"));
+test(
+  "BDD-208: MCP tool eos_unitotal_evaluate dispatches audit and records receipt in SQLite WAL",
+  { skip: fleetSkip },
+  () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-unitotal-mcp-test-"));
 
-  try {
-    const server = new EosMcpServer(projectRoot, "core");
-    const mcpRes = server.handleRequest({
-      jsonrpc: "2.0",
-      id: 102,
-      method: "tools/call",
-      params: {
-        name: "eos_unitotal_evaluate",
-        arguments: {
-          action: "evaluate",
-          recordToLedger: true
-        }
-      }
-    });
+    try {
+      const server = new EosMcpServer(projectRoot, "core");
+      const mcpRes = server.handleRequest({
+        jsonrpc: "2.0",
+        id: 102,
+        method: "tools/call",
+        params: {
+          name: "eos_unitotal_evaluate",
+          arguments: {
+            action: "evaluate",
+            recordToLedger: true,
+          },
+        },
+      });
 
-    assert.ok(mcpRes.result);
-    const text = mcpRes.result.content[0].text;
-    const data = JSON.parse(text);
-    if (!isCI) {
+      assert.ok(mcpRes.result);
+      const text = mcpRes.result.content[0].text;
+      const data = JSON.parse(text);
       assert.equal(data.status, "SOVEREIGN_UNITOTAL_PERFECTION");
       assert.ok(data.unitotalScore >= 90);
-    } else {
-      assert.ok(data.unitotalScore >= 70);
+      assert.ok(data.activeSpecsCount >= 63, `Expected activeSpecsCount >= 63, got ${data.activeSpecsCount}`);
+      assert.ok(
+        data.formalTlaModelsCount >= 23,
+        `Expected formalTlaModelsCount >= 23, got ${data.formalTlaModelsCount}`,
+      );
+      assert.ok(data.sha256Receipt.length === 64);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
     }
-    assert.ok(data.activeSpecsCount >= 63, `Expected activeSpecsCount >= 63, got ${data.activeSpecsCount}`);
-    assert.ok(data.formalTlaModelsCount >= 23, `Expected formalTlaModelsCount >= 23, got ${data.formalTlaModelsCount}`);
-    assert.ok(data.sha256Receipt.length === 64);
-  } finally {
-    fs.rmSync(tmpDir, { recursive: true, force: true });
-  }
-});
+  },
+);

@@ -19,24 +19,19 @@ import {
   detectDomain,
   synthesizeEarsRequirements,
   synthesizeBddScenarios,
-  buildModelScaffold
+  buildModelScaffold,
 } from "../src/core/eosPromptAmplifier.ts";
 
 import {
   classifyLayer,
-  extractImports,
   validateLayerInvariants,
   detectCircularDependencies,
-  scanArchitecture
+  scanArchitecture,
 } from "../src/core/eosArchitectureGuard.ts";
 
-import {
-  evaluateDecision
-} from "../src/core/eosCognitiveJudge.ts";
+import { evaluateDecision } from "../src/core/eosCognitiveJudge.ts";
 
-import {
-  EosMcpServer
-} from "../src/mcp/eosMcpServer.ts";
+import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -62,7 +57,10 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
       assert.ok(types.includes("UBIQUITOUS"));
 
       const unwanted = ears.find((e) => e.type === "UNWANTED_CONDITION");
-      assert.match(unwanted?.syntax || "", /^IF .* is invalid, THEN THE SYSTEM SHALL reject it according to the reviewed error contract\.$/);
+      assert.match(
+        unwanted?.syntax || "",
+        /^IF .* is invalid, THEN THE SYSTEM SHALL reject it according to the reviewed error contract\.$/,
+      );
     });
 
     it("synthesizes BDD GIVEN-WHEN-THEN scenarios", () => {
@@ -89,7 +87,7 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
       const result = amplifyPrompt({
         rawPrompt: "Create a rate limiter for API endpoints",
         targetModel: "claude",
-        strictLevel: "sovereign"
+        strictLevel: "sovereign",
       });
 
       assert.equal(result.targetModel, "claude");
@@ -116,9 +114,9 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
         layer: "DOMAIN",
         imports: [
           { rawSpecifier: "react", resolvedPath: null, isExternal: true, lineNumber: 1 },
-          { rawSpecifier: "express", resolvedPath: null, isExternal: true, lineNumber: 2 }
+          { rawSpecifier: "express", resolvedPath: null, isExternal: true, lineNumber: 2 },
         ],
-        violations: []
+        violations: [],
       };
 
       const violations = validateLayerInvariants(fakeAnalysis);
@@ -129,13 +127,13 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
     it("detects directed circular import cycles", () => {
       const analyses = new Map();
       analyses.set("A.ts", {
-        imports: [{ resolvedPath: "B.ts" }]
+        imports: [{ resolvedPath: "B.ts" }],
       });
       analyses.set("B.ts", {
-        imports: [{ resolvedPath: "C.ts" }]
+        imports: [{ resolvedPath: "C.ts" }],
       });
       analyses.set("C.ts", {
-        imports: [{ resolvedPath: "A.ts" }] // Cycle A -> B -> C -> A
+        imports: [{ resolvedPath: "A.ts" }], // Cycle A -> B -> C -> A
       });
 
       const cycles = detectCircularDependencies(analyses);
@@ -159,7 +157,7 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
         title: "Clean Layer-0 Deterministic Tokenizer",
         description: "Pure TypeScript implementation with zero external runtime dependencies",
         proposedAction: "Synthesize token dictionary using standard String.split with EARS specification",
-        targetDomain: "DOMAIN"
+        targetDomain: "DOMAIN",
       });
 
       assert.equal(verdict.approved, true);
@@ -174,7 +172,7 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
         title: "Hardcoded API Token Integration",
         description: `Directly embed ${secretToken} in source code`,
         proposedAction: "Send bearer request",
-        targetDomain: "CORE"
+        targetDomain: "CORE",
       });
 
       assert.equal(verdict.approved, false);
@@ -187,7 +185,7 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
         title: "Database Cleanup Script",
         description: "Clear obsolete entries",
         proposedAction: "Run drop database production; rm -rf /",
-        targetDomain: "INFRA"
+        targetDomain: "INFRA",
       });
 
       assert.equal(verdict.approved, false);
@@ -202,7 +200,7 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 101,
-        method: "tools/list"
+        method: "tools/list",
       });
 
       assert.ok(res?.result?.tools);
@@ -222,9 +220,9 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
           name: "eos_amplify_prompt",
           arguments: {
             rawPrompt: "Design an in-memory ring buffer",
-            targetModel: "gemini"
-          }
-        }
+            targetModel: "gemini",
+          },
+        },
       });
 
       assert.ok(res?.result?.content?.[0]?.text);
@@ -242,9 +240,9 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
         params: {
           name: "eos_check_architecture",
           arguments: {
-            targetDir: "src"
-          }
-        }
+            targetDir: "src",
+          },
+        },
       });
 
       assert.ok(res?.result?.content?.[0]?.text);

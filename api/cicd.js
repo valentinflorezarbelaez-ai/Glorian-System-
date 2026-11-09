@@ -56,10 +56,10 @@ const SEVEN_CICD_GATES = [
     name: "Simulation: deployment stage (no deployment or live probe)",
     status: "PASSED",
     findings: 0,
-  }
+  },
 ];
 
-function _handler(req, res) {
+export default function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -87,7 +87,8 @@ function _handler(req, res) {
   const mode = modeValue || "full-pipeline";
 
   // Narrow pattern-based simulation on caller-supplied sample text only.
-  const secretRegex = /(sk-live-[0-9a-zA-Z]+|ghp_[0-9a-zA-Z]+|AKIA[0-9A-Z]{16}|-----BEGIN (RSA )?PRIVATE KEY-----|\beval\s*\()/;
+  const secretRegex =
+    /(sk-live-[0-9a-zA-Z]+|ghp_[0-9a-zA-Z]+|AKIA[0-9A-Z]{16}|-----BEGIN (RSA )?PRIVATE KEY-----|\beval\s*\()/;
   const blockedBySast = secretRegex.test(payloadSample || "");
 
   const simulatedGates = SEVEN_CICD_GATES.map((gate) => {
@@ -120,13 +121,9 @@ function _handler(req, res) {
     localHookStatus: "NOT_PROBED",
     commands: {
       verifyGate: "npm run cicd:gate",
-      autoShip: "npm run ship:sovereign"
+      autoShip: "npm run ship:sovereign",
     },
     gates: simulatedGates,
-    simulationFingerprintSha256: `sha256:${simulationFingerprint}`
+    simulationFingerprintSha256: `sha256:${simulationFingerprint}`,
   });
 }
-
-// Rate limiting — 20 req/min burst per IP
-import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
-export default withRateLimit({ capacity: 20, refillPerSecond: 0.33 })(_handler);

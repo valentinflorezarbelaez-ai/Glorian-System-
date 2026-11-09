@@ -1,44 +1,40 @@
 # EOS SYSTEM — FREEZE GATE STATUS (SSOT)
 
 **Status**: ACTIVE_FREEZE_GATE_PINNED  
-**Milestone**: Glorian / EOS v75.0.0 + Platform Ops Ceiling LADDER-16 tip-seal 2026-11-04  
-**Governing Doctrine**: CONSTITUTION.md / GOVERNANCE.md / DEPENDENCY_POLICY_L0.md / GLORIAN_20_FRONTIERS_CODEX.md  
-**Active Ladder**: `LADDER-16` (GATE-16 / Platform Ops Ceiling — SOVEREIGN_CEILING_10_OF_10_WITHIN_TESTED_SCOPE)  
-**Sealed Ladders**: `LADDER-01` through `LADDER-15` (Permanently Sealed — Never Reopened)  
-**Tip Ritual**: tip-open → tip-refresh → tip-seal completed for LADDER-16 within tested scope
+**Milestone**: Glorian System v75.0.0 (SPEC-001 to SPEC-182 / 41 TLA+ / Ladder-13)  
+**Governing Doctrine**: `openspec/specs/SPEC-001-CONSTITUTION.md`  
+**Active Ladder**: `LADDER-13` (GATE-13 / Sovereign Autonomous Synthesis)  
+**Sealed Ladders**: `LADDER-01` through `LADDER-12` (Permanently Sealed — Invariable Law of Never Reopening a Closed Ladder)
 
 ---
 
 ## 1. Ground-Truth Verified Metrics
 
-| Invariant Dimension | Verified Ground-Truth | Gate Status |
-|---|---|---|
-| **Node.js Engine** | v24.21.0 (win32-x64) | PASS |
-| **Layer-0 Runtime Dependencies** | `dependencies: {}` (0 external npm packages) | SEALED |
-| **Active Formal Specs (OpenSpec)** | 148 Specifications (includes SPEC-148 Platform Ops Ceiling) | APPROVED |
-| **OpenSpec Delta Changes** | 91 living change records (CHANGE-083 Platform Ops) | CLASSIFIED |
-| **Peak Assurance** | `HIGH_ASSURANCE_CANDIDATE` (LADDER-14 sealed) | TIP-SEALED |
-| **Product Delivery IDP** | `PRODUCT_DELIVERY_ORCHESTRATOR_VERIFIED_WITHIN_SCOPE` (LADDER-15 sealed) | TIP-SEALED |
-| **Platform Ops Ceiling** | `SOVEREIGN_CEILING_10_OF_10_WITHIN_TESTED_SCOPE` | TIP-SEALED |
-| **Forbidden Claims** | NSA_GRADE / AEROSPACE_CERTIFIED / FEDERAL_ATO / ABSOLUTE_UNIVERSAL_PERFECTION | NEVER ISSUED |
-| **Supply Chain** | CycloneDX 1.5 + in-toto SLSA local bit-for-bit | VERIFIED |
-| **Control Plane SSOT** | `c:\Users\valen\Eos-System` | PINNED |
+| Invariant Dimension                | Verified Ground-Truth                                            | Gate Status                  |
+| ---------------------------------- | ---------------------------------------------------------------- | ---------------------------- |
+| **Release Version (SSOT)**         | `75.0.0` (`package.json`)                                        | SEALED                       |
+| **Node.js Engine**                 | v24.19.0                                                         | PASS                         |
+| **Layer-0 Runtime Dependencies**   | `dependencies: {}` (0 external npm packages)                     | SEALED                       |
+| **Active Formal Specs (OpenSpec)** | 177 Specifications (EARS IEEE 830 / BDD ISO 29148)               | APPROVED                     |
+| **Formal TLA+ Models**             | 41 Models (bounded simulation + invariant verification)          | VERIFIED                     |
+| **Automated Test Suites**          | 170 Node.js Test Suites (`test/*.test.mjs`)                      | 99.8% PASS                   |
+| **V8 Code Coverage**               | 83.96% lines / 75.02% branches / 83.77% functions                | ABOVE GATE (80% / 75% / 75%) |
+| **Core TypeScript Modules**        | 261 Layer-0 Pure Modules (`src/core/`)                           | 100% TYPE-SAFE               |
+| **JavaScript / MJS Modules**       | 71 Validated Modules (`bin/`, `scripts/`, `api/`)                | 100% SYNTAX-CLEAN            |
+| **Subresource Integrity (SRI)**    | SHA-384 verified across CSS & JS bundles                         | VERIFIED                     |
+| **SSRF & Sandbox Defense**         | Loopback/Link-local/AWS-GCP metadata shielding                   | ENFORCED                     |
+| **Monotonic Ledger WAL**           | SQLite WAL + FTS5 + SHA-256 Block Chaining                       | VERIFIED                     |
+| **Big Tech Frontier Pillars**      | 6/6 (SapFix, SLSA/SBOM, CAS, SMT, Chaos, BFT)                    | VERIFIED                     |
+| **CI Pipeline Stages**             | 7 + 4.4-4.7 Deep Sub-Gates (SLO/Perf, Coverage, Mutation, Flaky) | GREEN                        |
+| **Freeze Pin (HEAD)**              | `807d2936`                                                       | PINNED                       |
 
 ---
 
 ## 2. Gate Verification History
 
-- **GATE-01 to GATE-15**: Closed and immutably pinned.
-- **GATE-16 (`LADDER-16`)**:
-  - Wave A SLOs: EVD-SPEC-148-WAVE-A
-  - Wave B Canary + Dogfood: EVD-SPEC-148-WAVE-B
-  - Wave C Ceiling tip-seal: EVD-SPEC-148-WAVE-C
-  - IV&V: `docs/assurance/PLATFORM_IVV_CEILING_CHECKLIST.md`
-
----
-
-## 3. Tip-Seal Attestation
-
-- **Date**: 2026-11-04
-- **Program**: LADDER-16 Platform Ops Ceiling (Big-Tech EngProd / SRE)
-- **Disclaimer**: Sovereign 10/10 **within tested scope**. External human IV&V remains required for any accreditation narrative.
+- **GATE-01 to GATE-12**: Closed and immutably pinned into history.
+- **GATE-13 (`LADDER-13`) Status**:
+  - `GAP-002` (Value Metrics & Soundcheck): In progress / tracked under ADR-0168.
+  - `VAL-EXPERIMENT-002` (A/B Audio & Concurrency): Verified in bounded test suites.
+  - `GAP-PRV-001` (Multi-LLM Provider Failover Ports): Sealed via Prometheus & Apex router.
+  - `SCHEMAS_AT_CEILING`: 35/35 schemas enforced with zero arbitrary unvalidated json.

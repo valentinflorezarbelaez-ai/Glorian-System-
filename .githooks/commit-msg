@@ -1,38 +1,48 @@
 #!/bin/sh
-# EOS Sovereign Fleet Gate — commit-msg
-# Enforces Conventional Commits format: https://www.conventionalcommits.org/
+set -eu
+# Conventional Commits enforcement (Angular/Google/Meta standard).
+# Format: <type>(<scope>): <subject>
+# Valid types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
+# This gate ensures machine-parsable history for changelog automation,
+# semantic versioning, and PR attestation.
+REPO_ROOT=$(git rev-parse --show-toplevel)
+MSG_FILE="$1"
 
-COMMIT_MSG_FILE="$1"
-COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+# Skip validation for merge commits, fixup!, and squash! (Git internal workflow)
+FIRST_LINE=$(head -n 1 "$MSG_FILE")
+case "$FIRST_LINE" in
+  Merge*|fixup!*|squash!*|Revert*|\#*)
+    exit 0
+    ;;
+esac
 
-# Strip comment lines (lines starting with #) before validation
-STRIPPED=$(echo "$COMMIT_MSG" | grep -v '^#' | head -1)
+# Validate conventional-commit format
+PATTERN='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z0-9 _/.-]+\))?(!)?: .{1,120}$'
 
-PATTERN='^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .{1,100}$'
-
-if echo "$STRIPPED" | grep -qE "$PATTERN"; then
-  exit 0
+if ! echo "$FIRST_LINE" | grep -qE "$PATTERN"; then
+  echo "══════════════════════════════════════════════════════════════"
+  echo " ✖ COMMIT REJECTED — Conventional Commits format required"
+  echo "══════════════════════════════════════════════════════════════"
+  echo ""
+  echo "  Expected: <type>(<scope>): <subject>"
+  echo "  Example:  feat(auth): add JWT refresh token rotation"
+  echo ""
+  echo "  Valid types:"
+  echo "    feat     — new feature"
+  echo "    fix      — bug fix"
+  echo "    docs     — documentation only"
+  echo "    style    — formatting (no logic change)"
+  echo "    refactor — code restructuring (no feature/fix)"
+  echo "    perf     — performance improvement"
+  echo "    test     — adding or fixing tests"
+  echo "    build    — build system or dependencies"
+  echo "    ci       — CI/CD configuration"
+  echo "    chore    — maintenance (no src/test change)"
+  echo "    revert   — revert previous commit"
+  echo ""
+  echo "  Your message: \"$FIRST_LINE\""
+  echo ""
+  echo "  Use GIT_SKIP_HOOKS=1 to bypass (NOT recommended)."
+  echo "══════════════════════════════════════════════════════════════"
+  exit 1
 fi
-
-echo ""
-echo "❌ Commit message does not follow Conventional Commits format."
-echo ""
-echo "   Expected format:  <type>(<scope>): <description>"
-echo "   Example:          feat(auth): add OAuth2 login support"
-echo ""
-echo "   Valid types:"
-echo "     feat     — a new feature"
-echo "     fix      — a bug fix"
-echo "     docs     — documentation changes only"
-echo "     style    — formatting, whitespace (no logic change)"
-echo "     refactor — code restructuring (no feature/fix)"
-echo "     perf     — performance improvements"
-echo "     test     — adding or updating tests"
-echo "     chore    — build process, tooling, dependencies"
-echo "     ci       — CI/CD configuration changes"
-echo "     build    — build system or external dependency changes"
-echo "     revert   — reverts a previous commit"
-echo ""
-echo "   Your message: \"$STRIPPED\""
-echo ""
-exit 1

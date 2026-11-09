@@ -119,9 +119,7 @@ export interface FleetshiftMigrationPlan {
  * 1. SPOTIFY ARCHITECTURE HEALTH EVALUATOR
  * Scores a service against the 6 pillars of engineering.atspotify.com.
  */
-export function evaluateSpotifyArchitectureHealth(
-  metrics: SpotifyArchitectureMetrics
-): SpotifyHealthEvaluation {
+export function evaluateSpotifyArchitectureHealth(metrics: SpotifyArchitectureMetrics): SpotifyHealthEvaluation {
   const findings: string[] = [];
   const recommendations: string[] = [];
 
@@ -129,8 +127,12 @@ export function evaluateSpotifyArchitectureHealth(
   let goldenPaths = 20;
   if (!metrics.usesGoldenPath) {
     goldenPaths -= 12;
-    findings.push("OFF_GOLDEN_PATH: Service operates on a custom, unsupported road ('rumour-driven development' risk).");
-    recommendations.push("Adopt a Backstage Golden Path software template to standardize CI/CD, telemetry, and security.");
+    findings.push(
+      "OFF_GOLDEN_PATH: Service operates on a custom, unsupported road ('rumour-driven development' risk).",
+    );
+    recommendations.push(
+      "Adopt a Backstage Golden Path software template to standardize CI/CD, telemetry, and security.",
+    );
   }
   if (!metrics.hasCatalogInfoYaml) {
     goldenPaths -= 8;
@@ -173,7 +175,9 @@ export function evaluateSpotifyArchitectureHealth(
   if (!metrics.hasAutomatedKillSwitch) {
     canaryDelivery -= 5;
     findings.push("NO_AUTOMATED_KILLSWITCH: Rollouts rely on manual human observation.");
-    recommendations.push("Configure automated fail-closed rollback thresholds on error rates > 0.1% or latency regression.");
+    recommendations.push(
+      "Configure automated fail-closed rollback thresholds on error rates > 0.1% or latency regression.",
+    );
   }
 
   // Pillar 6: Fleetshift & Blameless SRE (0-15)
@@ -185,12 +189,7 @@ export function evaluateSpotifyArchitectureHealth(
   }
 
   const institutionalScore =
-    goldenPaths +
-    alignedAutonomy +
-    eventDelivery +
-    audioDspStandard +
-    canaryDelivery +
-    fleetshiftSre;
+    goldenPaths + alignedAutonomy + eventDelivery + audioDspStandard + canaryDelivery + fleetshiftSre;
 
   let soundcheckTier: SpotifyHealthEvaluation["soundcheckTier"] = "SOUNDCHECK_APEX";
   if (institutionalScore < 50) soundcheckTier = "RUMOUR_DRIVEN_RISK";
@@ -206,10 +205,10 @@ export function evaluateSpotifyArchitectureHealth(
       eventDelivery,
       audioDspStandard,
       canaryDelivery,
-      fleetshiftSre
+      fleetshiftSre,
     },
     findings: Object.freeze(findings),
-    recommendations: Object.freeze(recommendations)
+    recommendations: Object.freeze(recommendations),
   };
 }
 
@@ -224,10 +223,7 @@ export function verifyBackstageGoldenPath(repo: {
 }): BackstageGoldenPathReport {
   const missingArtifacts: string[] = [];
 
-  const requiredFiles = [
-    "catalog-info.yaml",
-    "README.md"
-  ];
+  const requiredFiles = ["catalog-info.yaml", "README.md"];
 
   for (const rf of requiredFiles) {
     if (!repo.filesPresent.includes(rf)) {
@@ -249,7 +245,7 @@ export function verifyBackstageGoldenPath(repo: {
         kind: kindMatch ? kindMatch[1].trim() : "Component",
         name: nameMatch ? nameMatch[1].trim() : repo.serviceName,
         owner: ownerMatch ? ownerMatch[1].trim() : "unknown-squad",
-        lifecycle: lifecycleMatch ? lifecycleMatch[1].trim() : "production"
+        lifecycle: lifecycleMatch ? lifecycleMatch[1].trim() : "production",
       };
     } catch {
       missingArtifacts.push("malformed_catalog_info");
@@ -268,7 +264,7 @@ export function verifyBackstageGoldenPath(repo: {
     missingArtifacts: Object.freeze(missingArtifacts),
     soundcheckScore,
     catalogInfo,
-    sha256Receipt
+    sha256Receipt,
   };
 }
 
@@ -277,9 +273,8 @@ export function verifyBackstageGoldenPath(repo: {
  * Evaluates real-time Prometheus canary telemetry.
  */
 export function evaluateCanaryStage(metrics: CanaryStageMetrics): CanaryGateDecision {
-  const errorRatePercent = metrics.totalRequests > 0
-    ? Number(((metrics.errorCount / metrics.totalRequests) * 100).toFixed(3))
-    : 0;
+  const errorRatePercent =
+    metrics.totalRequests > 0 ? Number(((metrics.errorCount / metrics.totalRequests) * 100).toFixed(3)) : 0;
 
   // Rule 1: Fail-closed if error rate > 0.1%
   if (errorRatePercent > 0.1) {
@@ -290,7 +285,7 @@ export function evaluateCanaryStage(metrics: CanaryStageMetrics): CanaryGateDeci
       killSwitchEngaged: true,
       reason: `Automated kill-switch engaged: error rate ${errorRatePercent}% exceeds 0.10% threshold.`,
       nextStage: null,
-      sha256Proof: createHash("sha256").update(raw).digest("hex")
+      sha256Proof: createHash("sha256").update(raw).digest("hex"),
     };
   }
 
@@ -303,7 +298,7 @@ export function evaluateCanaryStage(metrics: CanaryStageMetrics): CanaryGateDeci
       killSwitchEngaged: true,
       reason: `Automated kill-switch engaged: p99 latency ${metrics.p99LatencyMs}ms exceeds ${metrics.maxAllowedP99Ms}ms budget.`,
       nextStage: null,
-      sha256Proof: createHash("sha256").update(raw).digest("hex")
+      sha256Proof: createHash("sha256").update(raw).digest("hex"),
     };
   }
 
@@ -312,7 +307,7 @@ export function evaluateCanaryStage(metrics: CanaryStageMetrics): CanaryGateDeci
     "1%": "5%",
     "5%": "25%",
     "25%": "100%",
-    "100%": "PROMOTED_TO_PRODUCTION"
+    "100%": "PROMOTED_TO_PRODUCTION",
   };
 
   const nextStage = stageMap[metrics.stage] ?? null;
@@ -324,7 +319,7 @@ export function evaluateCanaryStage(metrics: CanaryStageMetrics): CanaryGateDeci
     killSwitchEngaged: false,
     reason: `Canary stage ${metrics.stage} passed with 0.00% critical error rate and nominal p99 latency (${metrics.p99LatencyMs}ms).`,
     nextStage,
-    sha256Proof: createHash("sha256").update(raw).digest("hex")
+    sha256Proof: createHash("sha256").update(raw).digest("hex"),
   };
 }
 
@@ -344,7 +339,7 @@ export function planFleetshiftMigration(config: {
     migrationAction: config.action,
     targetBranch: `fleetshift/${config.migrationId}`,
     automatedPrTitle: `[Fleetshift] ${config.description} (${repo.name})`,
-    estimatedRisk: "LOW"
+    estimatedRisk: "LOW",
   }));
 
   const rawProof = `${config.migrationId}:${config.action}:${tasks.length}`;
@@ -356,6 +351,6 @@ export function planFleetshiftMigration(config: {
     totalReposTargeted: tasks.length,
     tasks: Object.freeze(tasks),
     rollbackStrategy: "git-revert-pr-batch",
-    sha256Proof
+    sha256Proof,
   };
 }

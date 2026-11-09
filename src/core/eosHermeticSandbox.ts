@@ -13,7 +13,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
-import type { EosDurableWal } from "./eosDurableWal.js";
+import type { EosDurableWal } from "./eosDurableWal.ts";
 
 export interface StagedEntry {
   relPath: string;
@@ -52,7 +52,7 @@ export class EosHermeticSandbox {
     /(?:api[_-]?key|secret|password|private[_-]?key)\s*[:=]\s*["'][A-Za-z0-9_\-]{20,}["']/i,
     /-----BEGIN (?:RSA |EC )?PRIVATE KEY-----/,
     /sk-[a-zA-Z0-9]{20,}/,
-    /ghp_[a-zA-Z0-9]{20,}/
+    /ghp_[a-zA-Z0-9]{20,}/,
   ];
 
   constructor(projectRoot: string = process.cwd()) {
@@ -69,7 +69,7 @@ export class EosHermeticSandbox {
     if (clean.startsWith("..") || clean.includes("/../") || clean.includes("\\..\\")) {
       throw new Error(
         `Security violation: path traversal attempt detected in staged path "${relPath}" → "${clean}". ` +
-        `Staged paths must remain within projectRoot.`
+          `Staged paths must remain within projectRoot.`,
       );
     }
     return clean.replace(/\\/g, "/");
@@ -85,7 +85,7 @@ export class EosHermeticSandbox {
     if (!normalizedFull.startsWith(normalizedRoot + "/") && normalizedFull !== normalizedRoot) {
       throw new Error(
         `Security violation: resolved path "${fullPath}" escapes projectRoot "${this.projectRoot}". ` +
-        `Origin relPath: "${relPath}"`
+          `Origin relPath: "${relPath}"`,
       );
     }
   }
@@ -99,7 +99,7 @@ export class EosHermeticSandbox {
       relPath: key,
       content,
       isDeletion: false,
-      stagedAtNs: process.hrtime.bigint()
+      stagedAtNs: process.hrtime.bigint(),
     });
   }
 
@@ -112,7 +112,7 @@ export class EosHermeticSandbox {
       relPath: key,
       content: null,
       isDeletion: true,
-      stagedAtNs: process.hrtime.bigint()
+      stagedAtNs: process.hrtime.bigint(),
     });
   }
 
@@ -171,7 +171,7 @@ export class EosHermeticSandbox {
           if (pattern.test(content)) {
             errors.push({
               file,
-              message: `Security invariant violation: Detected forbidden sensitive token or secret matching ${pattern.source}`
+              message: `Security invariant violation: Detected forbidden sensitive token or secret matching ${pattern.source}`,
             });
           }
         }
@@ -185,7 +185,7 @@ export class EosHermeticSandbox {
         } catch (e: any) {
           errors.push({
             file,
-            message: `JSON syntax error: ${e.message}`
+            message: `JSON syntax error: ${e.message}`,
           });
         }
       } else if (ext === ".js" || ext === ".mjs" || ext === ".cjs") {
@@ -197,7 +197,7 @@ export class EosHermeticSandbox {
             file,
             message: `JavaScript syntax error: ${e.message}`,
             line: e.lineNumber,
-            column: e.column
+            column: e.column,
           });
         }
       } else if (ext === ".ts" || ext === ".mts" || ext === ".cts") {
@@ -206,7 +206,7 @@ export class EosHermeticSandbox {
         if (balanceErr) {
           errors.push({
             file,
-            message: `TypeScript structure error: ${balanceErr}`
+            message: `TypeScript structure error: ${balanceErr}`,
           });
         }
       }
@@ -228,7 +228,7 @@ export class EosHermeticSandbox {
       passed,
       checkedFiles: entries.length,
       errors,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -297,11 +297,7 @@ export class EosHermeticSandbox {
           return `Unmatched closing delimiter '${c}' at line ${line}`;
         }
         const top = stack.pop()!;
-        if (
-          (c === "}" && top.char !== "{") ||
-          (c === ")" && top.char !== "(") ||
-          (c === "]" && top.char !== "[")
-        ) {
+        if ((c === "}" && top.char !== "{") || (c === ")" && top.char !== "(") || (c === "]" && top.char !== "[")) {
           return `Mismatched delimiter: expected closing for '${top.char}' (from line ${top.line}), found '${c}' at line ${line}`;
         }
       }
@@ -325,7 +321,7 @@ export class EosHermeticSandbox {
         status: "NO_OP",
         filesWritten: [],
         filesDeleted: [],
-        commitTimestamp: new Date().toISOString()
+        commitTimestamp: new Date().toISOString(),
       };
     }
 
@@ -335,7 +331,7 @@ export class EosHermeticSandbox {
         status: "ABORTED_ON_VALIDATION_FAILURE",
         filesWritten: [],
         filesDeleted: [],
-        commitTimestamp: new Date().toISOString()
+        commitTimestamp: new Date().toISOString(),
       };
     }
 
@@ -349,12 +345,12 @@ export class EosHermeticSandbox {
     if (wal) {
       const walPayload = {
         type: "HERMETIC_SANDBOX_COMMIT",
-        changes: entries.map(e => ({
+        changes: entries.map((e) => ({
           relPath: e.relPath,
           isDeletion: e.isDeletion,
-          byteLength: e.content ? Buffer.byteLength(e.content, "utf-8") : 0
+          byteLength: e.content ? Buffer.byteLength(e.content, "utf-8") : 0,
         })),
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
       walTxId = wal.append(walPayload).txId;
     }
@@ -387,7 +383,7 @@ export class EosHermeticSandbox {
       filesWritten,
       filesDeleted,
       walTxId,
-      commitTimestamp: new Date().toISOString()
+      commitTimestamp: new Date().toISOString(),
     };
   }
 }

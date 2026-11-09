@@ -15,15 +15,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
-import {
-  EosContinuousRefactorEngine,
-  type RefactorAuditReport
-} from "./eosContinuousRefactorEngine.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
+import { EosContinuousRefactorEngine, type RefactorAuditReport } from "./eosContinuousRefactorEngine.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface NocturnalEvolutionOptions {
@@ -63,9 +56,7 @@ export class EosNocturnalEvolutionEngine {
   public runEvolutionSweep(options?: NocturnalEvolutionOptions): NocturnalSweepReport {
     const startMs = Date.now();
     const targetDir = options?.targetDir || "src/core";
-    const resolvedTarget = path.isAbsolute(targetDir)
-      ? targetDir
-      : path.join(this.projectRoot, targetDir);
+    const resolvedTarget = path.isAbsolute(targetDir) ? targetDir : path.join(this.projectRoot, targetDir);
 
     assertPrecondition(fs.existsSync(resolvedTarget), `Target directory does not exist: ${resolvedTarget}`);
 
@@ -93,7 +84,7 @@ export class EosNocturnalEvolutionEngine {
       deadCode: auditReport.totalDeadCodeFound,
       complexityBottlenecks: auditReport.totalComplexityBottlenecks,
       potentialReduction: auditReport.potentialLinesReduction,
-      fitness: compositeFitnessScore
+      fitness: compositeFitnessScore,
     });
     const sha256Receipt = pureSha256(payload);
 
@@ -108,8 +99,8 @@ export class EosNocturnalEvolutionEngine {
           compositeFitnessScore,
           potentialLinesReduction: auditReport.potentialLinesReduction,
           sha256Receipt,
-          durationMs
-        }
+          durationMs,
+        },
       });
     } catch {
       // Non-blocking telemetry
@@ -129,7 +120,7 @@ export class EosNocturnalEvolutionEngine {
       details: auditReport,
       sha256Receipt,
       durationMs,
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     };
 
     return deepFreeze(report);
@@ -143,7 +134,9 @@ export class EosNocturnalEvolutionEngine {
     lines.push("==========================================================================================");
     lines.push(" 🧬 GLORIAN NOCTURNAL DARWINIAN EVOLUTION & DEBT ERADICATION (SPEC-133)");
     lines.push(` Sweep ID: ${report.sweepId} | Target: ${report.targetDir} | Duration: ${report.durationMs}ms`);
-    lines.push(` AlphaEvolve Fitness Score: ${report.compositeFitnessScore}/100 | Seal: ${report.sha256Receipt.slice(0, 32)}...`);
+    lines.push(
+      ` AlphaEvolve Fitness Score: ${report.compositeFitnessScore}/100 | Seal: ${report.sha256Receipt.slice(0, 32)}...`,
+    );
     lines.push("==========================================================================================");
     lines.push(" AUDIT TELEMETRY & CODE DIET METRICS:");
     lines.push(`  • Total Source Files Analyzed     : ${report.scannedFilesCount}`);
@@ -164,7 +157,9 @@ export class EosNocturnalEvolutionEngine {
     if (report.totalComplexityBottlenecks > 0) {
       lines.push(" ⚡ COMPLEXITY BOTTLENECKS ELIGIBLE FOR SIMPLIFICATION:");
       report.details.complexityBottlenecks.slice(0, 5).forEach((c) => {
-        lines.push(`    - ${c.functionName} (Score: ${c.cyclomaticScore}, Depth: ${c.nestedLoopsDepth} in ${path.basename(c.file)}:${c.line})`);
+        lines.push(
+          `    - ${c.functionName} (Score: ${c.cyclomaticScore}, Depth: ${c.nestedLoopsDepth} in ${path.basename(c.file)}:${c.line})`,
+        );
       });
     }
 

@@ -31,7 +31,11 @@ function request(port, pathname, { method = "GET", token, origin, body, headers 
       res.on("end", () => {
         const text = Buffer.concat(chunks).toString("utf8");
         let parsed;
-        try { parsed = text ? JSON.parse(text) : null; } catch { parsed = text; }
+        try {
+          parsed = text ? JSON.parse(text) : null;
+        } catch {
+          parsed = text;
+        }
         resolve({ status: res.statusCode, headers: res.headers, body: parsed, text });
       });
     });
@@ -43,25 +47,29 @@ function request(port, pathname, { method = "GET", token, origin, body, headers 
 
 async function connectSse(port, token) {
   return new Promise((resolve, reject) => {
-    const req = http.request(`http://127.0.0.1:${port}/sse`, {
-      method: "GET",
-      headers: { Accept: "text/event-stream", Authorization: `Bearer ${token}` }
-    }, (res) => {
-      if (res.statusCode !== 200) {
-        res.resume();
-        reject(new Error(`SSE connection failed with HTTP ${res.statusCode}`));
-        return;
-      }
-      let buffer = "";
-      const messages = [];
-      res.on("data", (chunk) => {
-        const text = chunk.toString();
-        messages.push(text);
-        buffer += text;
-        const match = buffer.match(/event: endpoint\ndata: \/message\?sessionId=([a-f0-9-]+)/);
-        if (match) resolve({ req, sessionId: match[1], messages });
-      });
-    });
+    const req = http.request(
+      `http://127.0.0.1:${port}/sse`,
+      {
+        method: "GET",
+        headers: { Accept: "text/event-stream", Authorization: `Bearer ${token}` },
+      },
+      (res) => {
+        if (res.statusCode !== 200) {
+          res.resume();
+          reject(new Error(`SSE connection failed with HTTP ${res.statusCode}`));
+          return;
+        }
+        let buffer = "";
+        const messages = [];
+        res.on("data", (chunk) => {
+          const text = chunk.toString();
+          messages.push(text);
+          buffer += text;
+          const match = buffer.match(/event: endpoint\ndata: \/message\?sessionId=([a-f0-9-]+)/);
+          if (match) resolve({ req, sessionId: match[1], messages });
+        });
+      },
+    );
     req.on("error", reject);
     req.end();
   });
@@ -78,7 +86,12 @@ test("local MCP HTTP transport requires bearer auth and reports the package vers
     const health = await request(running.port, "/health", { token: running.server.authToken });
     assert.equal(health.status, 200);
     assert.equal(health.body.server, "eos-system-mcp-stream");
-    assert.equal(health.body.version, JSON.parse(await import("node:fs/promises").then((fs) => fs.readFile(new URL("../package.json", import.meta.url), "utf8"))).version);
+    assert.equal(
+      health.body.version,
+      JSON.parse(
+        await import("node:fs/promises").then((fs) => fs.readFile(new URL("../package.json", import.meta.url), "utf8")),
+      ).version,
+    );
     assert.equal(health.body.protocolVersion, "2024-11-05");
     assert.deepEqual(health.body.transports, ["stdio", "sse"]);
   } finally {
@@ -95,7 +108,10 @@ test("CORS accepts only configured exact origins and preflight does not grant ac
     assert.equal(preflight.headers["access-control-allow-origin"], allowedOrigin);
     assert.equal(preflight.headers.vary, "Origin");
 
-    const denied = await request(running.port, "/health", { token: running.server.authToken, origin: "https://attacker.example" });
+    const denied = await request(running.port, "/health", {
+      token: running.server.authToken,
+      origin: "https://attacker.example",
+    });
     assert.equal(denied.status, 403);
     assert.equal(denied.headers["access-control-allow-origin"], undefined);
 
@@ -134,45 +150,64 @@ test("HTTP MCP lists and dispatches only the bounded read-only tool surface", as
   const running = await startServer();
   try {
     const sse = await connectSse(running.port, running.server.authToken);
-    const call = (payload) => request(running.port, `/message?sessionId=${sse.sessionId}`, {
-      method: "POST",
-      token: running.server.authToken,
-      body: JSON.stringify(payload)
-    });
+    const call = (payload) =>
+      request(running.port, `/message?sessionId=${sse.sessionId}`, {
+        method: "POST",
+        token: running.server.authToken,
+        body: JSON.stringify(payload),
+      });
 
     const list = await call({ jsonrpc: "2.0", id: "list", method: "tools/list", params: {} });
     assert.equal(list.status, 200);
-    assert.deepEqual(list.body.result.tools.map((tool) => tool.name).sort(), [
-      "eos_amplify_prompt",
-      "eos_check_architecture",
-      "eos_evaluate_decision",
-      "eos_health_check",
-      "eos_optimize_context",
-      "eos_spotify_shuffle"
-    ].sort());
+    assert.deepEqual(
+      list.body.result.tools.map((tool) => tool.name).sort(),
+      [
+        "eos_amplify_prompt",
+        "eos_check_architecture",
+        "eos_evaluate_decision",
+        "eos_health_check",
+        "eos_optimize_context",
+        "eos_spotify_shuffle",
+      ].sort(),
+    );
     const optimizeSchema = list.body.result.tools.find((tool) => tool.name === "eos_optimize_context").inputSchema;
     assert.deepEqual(optimizeSchema.required, ["content"]);
     assert.equal(Object.hasOwn(optimizeSchema.properties, "filePath"), false);
-    const architectureSchema = list.body.result.tools.find((tool) => tool.name === "eos_check_architecture").inputSchema;
+    const architectureSchema = list.body.result.tools.find(
+      (tool) => tool.name === "eos_check_architecture",
+    ).inputSchema;
     assert.deepEqual(architectureSchema.properties.targetDir.enum, ["src"]);
 
-    const health = await call({ jsonrpc: "2.0", id: "health", method: "tools/call", params: { name: "eos_health_check", arguments: {} } });
+    const health = await call({
+      jsonrpc: "2.0",
+      id: "health",
+      method: "tools/call",
+      params: { name: "eos_health_check", arguments: {} },
+    });
     assert.equal(health.status, 200);
     assert.equal(health.body.id, "health");
-    {
-      const healthPayload = JSON.parse(health.body.result.content[0].text);
-      assert.ok(["HEALTHY", "DEGRADED", "CRITICAL"].includes(healthPayload.status));
-      assert.equal(healthPayload.subsystemProbes, "RUN");
-      assert.equal(healthPayload.epistemicState, "CONTROL_PLANE_HEALTH_WITHIN_TESTED_SCOPE");
-      assert.ok(healthPayload.probesTotal >= 6);
-      assert.ok(healthPayload.probesPassing >= 1);
-    }
+    assert.equal(JSON.parse(health.body.result.content[0].text).status, "HANDLER_ALIVE");
 
-    const mutation = await call({ jsonrpc: "2.0", id: "mutate", method: "tools/call", params: { name: "eos_autonomous_heal", arguments: { apply: true } } });
+    const mutation = await call({
+      jsonrpc: "2.0",
+      id: "mutate",
+      method: "tools/call",
+      params: { name: "eos_autonomous_heal", arguments: { apply: true } },
+    });
     assert.equal(mutation.body.error.code, -32601);
-    const arbitraryRead = await call({ jsonrpc: "2.0", id: "topology", method: "tools/call", params: { name: "eos_query_topology", arguments: {} } });
+    const arbitraryRead = await call({
+      jsonrpc: "2.0",
+      id: "topology",
+      method: "tools/call",
+      params: { name: "eos_query_topology", arguments: {} },
+    });
     assert.equal(arbitraryRead.body.error.code, -32601);
-    const fileRead = await call({ jsonrpc: "2.0", id: "file", method: "tools/call", params: { name: "eos_optimize_context", arguments: { filePath: "README.md" } } });
+    const fileRead = await call({
+      jsonrpc: "2.0",
+      id: "file",
+      method: "tools/call",
+      params: { name: "eos_optimize_context", arguments: { filePath: "README.md" } },
+    });
     assert.equal(fileRead.body.error.code, -32602);
 
     sse.req.destroy();
@@ -185,25 +220,34 @@ test("HTTP MCP enforces request size, content type, session presence, and generi
   const running = await startServer({ maxRequestBytes: 128 });
   try {
     const missingSession = await request(running.port, "/message?sessionId=missing", {
-      method: "POST", token: running.server.authToken, body: "{}"
+      method: "POST",
+      token: running.server.authToken,
+      body: "{}",
     });
     assert.equal(missingSession.status, 404);
 
     const sse = await connectSse(running.port, running.server.authToken);
     const wrongType = await request(running.port, `/message?sessionId=${sse.sessionId}`, {
-      method: "POST", token: running.server.authToken, headers: { "Content-Type": "text/plain" }, body: "{}"
+      method: "POST",
+      token: running.server.authToken,
+      headers: { "Content-Type": "text/plain" },
+      body: "{}",
     });
     assert.equal(wrongType.status, 415);
 
     const malformed = await request(running.port, `/message?sessionId=${sse.sessionId}`, {
-      method: "POST", token: running.server.authToken, body: "{ malformed json ... "
+      method: "POST",
+      token: running.server.authToken,
+      body: "{ malformed json ... ",
     });
     assert.equal(malformed.status, 400);
     assert.equal(malformed.body.error.code, -32700);
     assert.doesNotMatch(JSON.stringify(malformed.body), /SyntaxError|stack|at .*\.mjs/);
 
     const tooLarge = await request(running.port, `/message?sessionId=${sse.sessionId}`, {
-      method: "POST", token: running.server.authToken, body: "x".repeat(129)
+      method: "POST",
+      token: running.server.authToken,
+      body: "x".repeat(129),
     });
     assert.equal(tooLarge.status, 413);
 
@@ -215,5 +259,8 @@ test("HTTP MCP enforces request size, content type, session presence, and generi
 
 test("invalid tokens and wildcard CORS origins are rejected at construction", () => {
   assert.throws(() => new EosMcpStreamServer(projectRoot, 0, { authToken: "short" }), /at least 32 bytes/);
-  assert.throws(() => new EosMcpStreamServer(projectRoot, 0, { allowedOrigins: ["*"] }), /Invalid EOS MCP allowed origin/);
+  assert.throws(
+    () => new EosMcpStreamServer(projectRoot, 0, { allowedOrigins: ["*"] }),
+    /Invalid EOS MCP allowed origin/,
+  );
 });

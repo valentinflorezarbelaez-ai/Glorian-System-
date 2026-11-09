@@ -14,17 +14,19 @@ function computeSha256(payload) {
 }
 
 function suggestTopicKey(type = "architecture", title = "core-decision") {
-  const cleanType = String(type || "architecture")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "") || "architecture";
-  const slug = String(title || "core-decision")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 44) || "core-decision";
+  const cleanType =
+    String(type || "architecture")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "") || "architecture";
+  const slug =
+    String(title || "core-decision")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 44) || "core-decision";
   return `${cleanType}/${slug}`;
 }
 
@@ -44,7 +46,7 @@ const GENESIS_AKASHIC_OBSERVATIONS = [
     why: "Explorar cómo conservar decisiones útiles entre sesiones.",
     where: "Fixture de demostración en /api/memory.",
     learned: "Este registro es un ejemplo estático; la API no implementa persistencia ni revisión de conflictos.",
-    created_at: "2026-10-25T02:35:00Z"
+    created_at: "2026-10-25T02:35:00Z",
   },
   {
     id: 2,
@@ -61,7 +63,7 @@ const GENESIS_AKASHIC_OBSERVATIONS = [
     why: "Separar hipótesis de optimización de resultados medidos.",
     where: "Fixture de demostración en /api/memory.",
     learned: "No se adjuntan mediciones, hardware ni una reproducción del benchmark.",
-    created_at: "2026-10-25T02:15:00Z"
+    created_at: "2026-10-25T02:15:00Z",
   },
   {
     id: 3,
@@ -78,7 +80,7 @@ const GENESIS_AKASHIC_OBSERVATIONS = [
     why: "Ilustrar la forma de un registro local.",
     where: "Fixture de demostración en /api/memory.",
     learned: "No se verificó un producto externo ni se realizó una reproducción de audio.",
-    created_at: "2026-10-25T02:05:00Z"
+    created_at: "2026-10-25T02:05:00Z",
   },
   {
     id: 4,
@@ -95,14 +97,14 @@ const GENESIS_AKASHIC_OBSERVATIONS = [
     why: "Hacer visibles varios criterios antes de una revisión técnica.",
     where: "Fixture de demostración en /api/memory.",
     learned: "El registro no demuestra que se ejecutó una revisión ni que se delegó trabajo.",
-    created_at: "2026-10-25T02:36:00Z"
-  }
+    created_at: "2026-10-25T02:36:00Z",
+  },
 ].map((observation) => ({
   ...observation,
-  sha256Fingerprint: `sha256:${computeSha256(JSON.stringify(observation))}`
+  sha256Fingerprint: `sha256:${computeSha256(JSON.stringify(observation))}`,
 }));
 
-function _handler(req, res) {
+export default function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -153,16 +155,22 @@ function _handler(req, res) {
         staticSeedData: true,
         serverSidePersistence: false,
         sqliteFts5: false,
-        tribunalExecution: false
+        tribunalExecution: false,
       },
-      snapshotSha256: `sha256:${snapshotSha256}`
+      snapshotSha256: `sha256:${snapshotSha256}`,
     });
   }
 
   if (action === "mem_save") {
     const fields = ["title", "type", "topic_key", "what", "content", "why", "where", "learned"];
-    if (fields.some((field) => body[field] !== undefined && (typeof body[field] !== "string" || body[field].length > 4096))) {
-      return res.status(400).json({ status: "INVALID_OBSERVATION", error: "Observation fields must be strings up to 4096 characters." });
+    if (
+      fields.some(
+        (field) => body[field] !== undefined && (typeof body[field] !== "string" || body[field].length > 4096),
+      )
+    ) {
+      return res
+        .status(400)
+        .json({ status: "INVALID_OBSERVATION", error: "Observation fields must be strings up to 4096 characters." });
     }
     const title = (body.title || "").trim();
     const type = (body.type || "architecture").trim();
@@ -184,10 +192,10 @@ function _handler(req, res) {
         what,
         why,
         where,
-        learned
+        learned,
       },
       previewSha256: `sha256:${previewSha256}`,
-      note: "Nothing was saved here. Browser-local records are stored only in this user's localStorage."
+      note: "Nothing was saved here. Browser-local records are stored only in this user's localStorage.",
     });
   }
 
@@ -203,7 +211,7 @@ function _handler(req, res) {
       relation,
       confidence: null,
       reasoningPreview: reasoningValue,
-      note: "No tribunal or judge executed a review."
+      note: "No tribunal or judge executed a review.",
     });
   }
 
@@ -213,10 +221,10 @@ function _handler(req, res) {
 
   const results = query
     ? GENESIS_AKASHIC_OBSERVATIONS.filter((o) =>
-      `${o.title} ${o.topic_key} ${o.what} ${o.why} ${o.where} ${o.learned} ${o.samaelianFactor}`
-        .toLowerCase()
-        .includes(query)
-    )
+        `${o.title} ${o.topic_key} ${o.what} ${o.why} ${o.where} ${o.learned} ${o.samaelianFactor}`
+          .toLowerCase()
+          .includes(query),
+      )
     : GENESIS_AKASHIC_OBSERVATIONS;
 
   const fixtureFingerprint = computeSha256(JSON.stringify(results.map((record) => record.sha256Fingerprint)));
@@ -228,10 +236,6 @@ function _handler(req, res) {
     totalObservations: results.length,
     fixtureSha256: `sha256:${fixtureFingerprint}`,
     note: "Static sample records only. Fingerprints cover fixture content and do not prove origin, history, or a Merkle chain. No persistence, FTS5, or Engram tools are provided.",
-    observations: results
+    observations: results,
   });
 }
-
-// Rate limiting — 20 req/min burst per IP
-import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
-export default withRateLimit({ capacity: 20, refillPerSecond: 0.33 })(_handler);

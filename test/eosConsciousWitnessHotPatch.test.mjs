@@ -33,7 +33,7 @@ test("BDD-215: Interrogación Metacognitiva del Testigo y Detección de Fascinac
   const ungroundedProposal = witness.interrogateAgentIntention({
     targetFiles: ["src/core/unknownFile.ts"],
     proposedAction: "Refactor without spec",
-    declaredSpecId: "SPEC-999-NON-EXISTENT"
+    declaredSpecId: "SPEC-999-NON-EXISTENT",
   });
 
   assert.equal(ungroundedProposal.verdict, "FASCINATION_DETECTED");
@@ -48,7 +48,7 @@ test("BDD-216: Verificación de Símbolos Reales y Poda de Alucinaciones", () =>
     declaredSpecId: "SPEC-059",
     targetFiles: ["src/core/eosConsciousWitness.ts"],
     proposedAction: "Use hallucinated helpers",
-    affirmedSymbols: ["EosConsciousWitness", "NonExistentMagicalFrameworkHelper"]
+    affirmedSymbols: ["EosConsciousWitness", "NonExistentMagicalFrameworkHelper"],
   });
 
   assert.equal(hallucinatedSymbols.verdict, "FASCINATION_DETECTED");
@@ -64,7 +64,7 @@ test("BDD-217: Emisión del Sello de Atestación de Conciencia", () => {
     declaredSpecId: "SPEC-059",
     targetFiles: ["src/core/eosConsciousWitness.ts", "src/core/eosHotPatchEngine.ts"],
     proposedAction: "Integrate verified conscious witness engine",
-    affirmedSymbols: ["EosConsciousWitness", "EosHotPatchEngine"]
+    affirmedSymbols: ["EosConsciousWitness", "EosHotPatchEngine"],
   });
 
   assert.equal(authentic.verdict, "CONSCIOUS_ALIGNMENT_PASS");
@@ -81,7 +81,7 @@ test("BDD-218 & BDD-219: Hot-Patching Atómico en Memoria sin Reinicio y Preserv
   const mockService = {
     serviceName: "telemetry-core",
     sessionCount: 42,
-    processEvent: (x) => `v1-${x * 2}`
+    processEvent: (x) => `v1-${x * 2}`,
   };
 
   engine.registerTarget("telemetry", mockService);
@@ -93,8 +93,8 @@ test("BDD-218 & BDD-219: Hot-Patching Atómico en Memoria sin Reinicio y Preserv
     patchId: "PATCH-001",
     targetName: "telemetry",
     methods: {
-      processEvent: (x) => `v2-sovereign-${x * 5}`
-    }
+      processEvent: (x) => `v2-sovereign-${x * 5}`,
+    },
   });
 
   assert.equal(patchRes.applied, true);
@@ -111,7 +111,7 @@ test("BDD-218 & BDD-219: Hot-Patching Atómico en Memoria sin Reinicio y Preserv
 test("BDD-220: Rollback Automático ante Discrepancia o Reversión Solicitada", () => {
   const engine = new EosHotPatchEngine();
   const mockKernel = {
-    compute: () => 100
+    compute: () => 100,
   };
 
   engine.registerTarget("kernel", mockKernel);
@@ -121,8 +121,8 @@ test("BDD-220: Rollback Automático ante Discrepancia o Reversión Solicitada", 
     patchId: "PATCH-KERNEL-TEMP",
     targetName: "kernel",
     methods: {
-      compute: () => 999
-    }
+      compute: () => 999,
+    },
   });
   assert.equal(mockKernel.compute(), 999);
 
@@ -133,19 +133,19 @@ test("BDD-220: Rollback Automático ante Discrepancia o Reversión Solicitada", 
   assert.equal(mockKernel.compute(), 100, "Must be cleanly restored to original function");
 });
 
-test("BDD-221: Despacho MCP de eos_conscious_witness en Perfil Full", () => {
-  const server = new EosMcpServer(projectRoot, "full");
+test("BDD-221: Despacho MCP de eos_conscious_witness en Perfil Core", () => {
+  const server = new EosMcpServer(projectRoot, "core");
 
-  // Verify tool is present in full catalog (outside lean core)
+  // Verify tool is present in core tools
   const listRes = server.handleRequest({
     jsonrpc: "2.0",
     id: 10,
-    method: "tools/list"
+    method: "tools/list",
   });
   const tools = listRes?.result?.tools || [];
   const witnessTool = tools.find((t) => t.name === "eos_conscious_witness");
-  assert.ok(witnessTool, "eos_conscious_witness must exist in full profile");
-  assert.ok(!CORE_TIER0_TOOL_NAMES.has("eos_conscious_witness"), "eos_conscious_witness belongs to full profile");
+  assert.ok(witnessTool, "eos_conscious_witness must exist in core profile");
+  assert.ok(CORE_TIER0_TOOL_NAMES.has("eos_conscious_witness"));
 
   // Invoke tool via MCP
   const callRes = server.handleRequest({
@@ -158,9 +158,9 @@ test("BDD-221: Despacho MCP de eos_conscious_witness en Perfil Full", () => {
         declaredSpecId: "SPEC-059",
         targetFiles: ["src/core/eosConsciousWitness.ts"],
         proposedAction: "Self-witness validation",
-        affirmedSymbols: ["EosConsciousWitness"]
-      }
-    }
+        affirmedSymbols: ["EosConsciousWitness"],
+      },
+    },
   });
 
   assert.ok(callRes?.result?.content?.[0]?.text);

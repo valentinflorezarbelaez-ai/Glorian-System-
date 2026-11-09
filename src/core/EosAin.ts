@@ -46,7 +46,7 @@ export class EosAin {
       allTestsPassed?: boolean;
       exitCodeZero?: boolean;
       contextSummary?: string;
-    }
+    },
   ): OctavicShockResult {
     const timestamp = new Date().toISOString();
 
@@ -67,7 +67,7 @@ export class EosAin {
         valid,
         details,
         sha256Receipt,
-        timestamp
+        timestamp,
       };
     } else {
       const valid = evidence.allTestsPassed === true && evidence.exitCodeZero === true;
@@ -86,7 +86,7 @@ export class EosAin {
         valid,
         details,
         sha256Receipt,
-        timestamp
+        timestamp,
       };
     }
   }
@@ -125,7 +125,7 @@ export class EosAin {
       zeroFilled: allZeros,
       sha384Seal,
       entropyZero: allZeros,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }

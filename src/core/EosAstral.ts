@@ -50,7 +50,12 @@ export class EosAstral {
    * Generates a tamper-evident Silver Cord HMAC-SHA256 token binding
    * the thread, parent path, projection path, and timestamp.
    */
-  public generateSilverCordToken(threadId: string, parentPath: string, projectionPath: string, timestamp: string): string {
+  public generateSilverCordToken(
+    threadId: string,
+    parentPath: string,
+    projectionPath: string,
+    timestamp: string,
+  ): string {
     return crypto
       .createHmac("sha256", this.silverCordSecret)
       .update(`${threadId}:${parentPath}:${projectionPath}:${timestamp}`)
@@ -65,12 +70,7 @@ export class EosAstral {
     const projectionPath = path.resolve(this.projectRoot, targetSubdir, threadId);
     const createdAtIso = new Date().toISOString();
 
-    const silverCordToken = this.generateSilverCordToken(
-      threadId,
-      this.projectRoot,
-      projectionPath,
-      createdAtIso
-    );
+    const silverCordToken = this.generateSilverCordToken(threadId, this.projectRoot, projectionPath, createdAtIso);
 
     const thread: AstralThreadProjection = Object.freeze({
       threadId,
@@ -78,7 +78,7 @@ export class EosAstral {
       projectionPath,
       createdAtIso,
       silverCordToken,
-      active: true
+      active: true,
     });
 
     this.activeThreads.set(threadId, thread);
@@ -94,16 +94,11 @@ export class EosAstral {
       thread.threadId,
       thread.parentPath,
       thread.projectionPath,
-      thread.createdAtIso
+      thread.createdAtIso,
     );
 
     // Constant-time comparison to prevent timing attacks
-    return (
-      crypto.timingSafeEqual(
-        Buffer.from(thread.silverCordToken, "hex"),
-        Buffer.from(expected, "hex")
-      )
-    );
+    return crypto.timingSafeEqual(Buffer.from(thread.silverCordToken, "hex"), Buffer.from(expected, "hex"));
   }
 
   /**
@@ -116,7 +111,7 @@ export class EosAstral {
         dissolved: false,
         threadId,
         rollbackVerified: false,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
 
@@ -127,7 +122,7 @@ export class EosAstral {
       dissolved: true,
       threadId,
       rollbackVerified: cordIntact,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -156,7 +151,7 @@ export class EosAstral {
       threadId,
       diffHash,
       sealReceipt,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 

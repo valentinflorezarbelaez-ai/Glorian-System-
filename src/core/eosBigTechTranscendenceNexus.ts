@@ -139,7 +139,7 @@ export class EosBigTechTranscendenceNexus {
       disruptorBufferSize: current?.disruptorBufferSize ?? 1024,
       cooldownPeriodSec: current?.cooldownPeriodSec ?? 30,
       traceSamplingRatePct: current?.traceSamplingRatePct ?? 0.1,
-      adaptiveConcurrencyGradient: current?.adaptiveConcurrencyGradient ?? 1.0
+      adaptiveConcurrencyGradient: current?.adaptiveConcurrencyGradient ?? 1.0,
     };
 
     // Bayesian acquisition optimization: evaluate surrogate Gaussian objective
@@ -151,7 +151,7 @@ export class EosBigTechTranscendenceNexus {
       disruptorBufferSize: optimalBuffer,
       cooldownPeriodSec: optimalCooldown,
       traceSamplingRatePct: optimalSampling,
-      adaptiveConcurrencyGradient: 1.05
+      adaptiveConcurrencyGradient: 1.05,
     };
 
     const acquisitionScore = 0.985;
@@ -163,7 +163,7 @@ export class EosBigTechTranscendenceNexus {
       optimizedParameters: optimized,
       acquisitionScore,
       appliedLive: true,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -187,7 +187,7 @@ export class EosBigTechTranscendenceNexus {
       sessionLossRatePct,
       trafficRebalancedPct,
       evacuationStatus: "SUCCESS",
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -196,13 +196,13 @@ export class EosBigTechTranscendenceNexus {
     const rules: NexusSmtClause[] = rulesInput ?? [
       { antecedent: ["UserAuthenticated", "TokenValid"], consequent: "SessionAdmitted" },
       { antecedent: ["SessionAdmitted", "ActionAllowedByRbac"], consequent: "ExecutionPermitted" },
-      { antecedent: ["RootRoleRequired", "NotRootIdentity"], consequent: "RejectEscalation" }
+      { antecedent: ["RootRoleRequired", "NotRootIdentity"], consequent: "RejectEscalation" },
     ];
 
     const logicProofChain = [
       "Rule 1: UserAuthenticated ∧ TokenValid ⊢ SessionAdmitted (SAT)",
       "Rule 2: SessionAdmitted ∧ ActionAllowedByRbac ⊢ ExecutionPermitted (SAT)",
-      "Rule 3: RootRoleRequired ∧ NotRootIdentity ⊢ RejectEscalation (UNSAT-for-Escalation)"
+      "Rule 3: RootRoleRequired ∧ NotRootIdentity ⊢ RejectEscalation (UNSAT-for-Escalation)",
     ];
 
     const satisfiable = true;
@@ -216,18 +216,18 @@ export class EosBigTechTranscendenceNexus {
       satisfiable,
       privilegeEscalationsFound,
       logicProofChain,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
   // 4. Meta Profile-Guided Hot-Path Layout (PGO)
   public executeMetaPgoLayout(callFrequenciesInput?: Record<string, number>): PgoLayoutResult {
     const freqs = callFrequenciesInput ?? {
-      "eos_kernel_orchestrator_reconcile": 8500,
-      "eos_remediation_correlate_execute": 4200,
-      "eos_trace_span_record": 12400,
-      "eos_canary_telemetry_evaluate": 1900,
-      "eos_sqlite_ledger": 950
+      eos_kernel_orchestrator_reconcile: 8500,
+      eos_remediation_correlate_execute: 4200,
+      eos_trace_span_record: 12400,
+      eos_canary_telemetry_evaluate: 1900,
+      eos_sqlite_ledger: 950,
     };
 
     const sortedEntries = Object.entries(freqs).sort((a, b) => b[1] - a[1]);
@@ -244,7 +244,7 @@ export class EosBigTechTranscendenceNexus {
       topHotFunction,
       cacheHitRatePct,
       zeroCopyDispatchConfirmed: true,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -262,7 +262,7 @@ export class EosBigTechTranscendenceNexus {
       rootOfTrustHash,
       hardwareSignature,
       tamperProofSealVerified: true,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -274,7 +274,12 @@ export class EosBigTechTranscendenceNexus {
       { agentRole: "ARCHITECT", approved: true, byzantineFaulty: false, stakeWeight: 1.0 },
       { agentRole: "SRE", approved: true, byzantineFaulty: false, stakeWeight: 1.0 },
       { agentRole: "SECURITY_AUDITOR", approved: true, byzantineFaulty: false, stakeWeight: 1.0 },
-      { agentRole: "CHAOS_ENGINEER", approved: !simulateFaultyVote, byzantineFaulty: simulateFaultyVote, stakeWeight: 1.0 }
+      {
+        agentRole: "CHAOS_ENGINEER",
+        approved: !simulateFaultyVote,
+        byzantineFaulty: simulateFaultyVote,
+        stakeWeight: 1.0,
+      },
     ];
 
     const validApprovals = votes.filter((v) => v.approved && !v.byzantineFaulty).length;
@@ -293,7 +298,7 @@ export class EosBigTechTranscendenceNexus {
       slashedAgents,
       totalStakeSlashed,
       ratificationStatus: quorumReached ? "RATIFIED" : "REJECTED",
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -316,43 +321,43 @@ export class EosBigTechTranscendenceNexus {
         success: vizier.appliedLive,
         durationMs: 1,
         metrics: { acquisitionScore: vizier.acquisitionScore, buffer: vizier.optimizedParameters.disruptorBufferSize },
-        sha256Attestation: vizier.sha256Attestation
+        sha256Attestation: vizier.sha256Attestation,
       },
       NETFLIX_CHAOS_KONG: {
         pillarId: "NETFLIX_CHAOS_KONG",
         success: kong.evacuationStatus === "SUCCESS",
         durationMs: 1,
         metrics: { drainDurationSec: kong.drainDurationSec, sessionLossRatePct: kong.sessionLossRatePct },
-        sha256Attestation: kong.sha256Attestation
+        sha256Attestation: kong.sha256Attestation,
       },
       AWS_SMT_REASONING: {
         pillarId: "AWS_SMT_REASONING",
         success: smt.satisfiable && smt.privilegeEscalationsFound === 0,
         durationMs: 1,
         metrics: { clauses: smt.clausesEvaluated, escalations: smt.privilegeEscalationsFound },
-        sha256Attestation: smt.sha256Attestation
+        sha256Attestation: smt.sha256Attestation,
       },
       META_PGO_LAYOUT: {
         pillarId: "META_PGO_LAYOUT",
         success: pgo.zeroCopyDispatchConfirmed && pgo.cacheHitRatePct > 90,
         durationMs: 1,
         metrics: { cacheHitRatePct: pgo.cacheHitRatePct, topHotFunction: pgo.topHotFunction },
-        sha256Attestation: pgo.sha256Attestation
+        sha256Attestation: pgo.sha256Attestation,
       },
       APPLE_SECURE_ENCLAVE: {
         pillarId: "APPLE_SECURE_ENCLAVE",
         success: enclave.tamperProofSealVerified,
         durationMs: 1,
         metrics: { hardwareType: enclave.enclaveHardwareType, sealVerified: enclave.tamperProofSealVerified },
-        sha256Attestation: enclave.sha256Attestation
+        sha256Attestation: enclave.sha256Attestation,
       },
       MICROSOFT_BFT_COUNCIL: {
         pillarId: "MICROSOFT_BFT_COUNCIL",
         success: bft.ratificationStatus === "RATIFIED",
         durationMs: 1,
         metrics: { quorum: bft.quorumReached, slashed: bft.slashedAgents.length },
-        sha256Attestation: bft.sha256Attestation
-      }
+        sha256Attestation: bft.sha256Attestation,
+      },
     };
 
     this.totalPillarsExecuted += 6;
@@ -362,7 +367,7 @@ export class EosBigTechTranscendenceNexus {
       executionId,
       timestamp,
       allPillarsSucceeded,
-      attestations: Object.values(pillarResults).map((p) => p.sha256Attestation)
+      attestations: Object.values(pillarResults).map((p) => p.sha256Attestation),
     });
     const masterSha256Receipt = createHash("sha256").update(masterDigestPayload).digest("hex");
 
@@ -373,7 +378,7 @@ export class EosBigTechTranscendenceNexus {
       pillarsExecuted: 6,
       allPillarsSucceeded,
       pillarResults,
-      masterSha256Receipt
+      masterSha256Receipt,
     };
 
     this.latestReceipt = receipt;
@@ -389,7 +394,7 @@ export class EosBigTechTranscendenceNexus {
       allPillarsSucceeded: this.latestReceipt ? this.latestReceipt.allPillarsSucceeded : true,
       lastExecutionTimestamp: this.latestReceipt ? this.latestReceipt.timestamp : Date.now(),
       latestReceipt: this.latestReceipt,
-      state: this.state
+      state: this.state,
     };
   }
 

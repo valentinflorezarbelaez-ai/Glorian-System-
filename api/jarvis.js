@@ -1,15 +1,19 @@
 const MAX_DIRECTIVE_LENGTH = 4096;
 
 function classifyDirective(directive) {
-  const normalized = directive.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  if (/\b(despliega|despliegue|publica|ship|deploy|produccion)\b/.test(normalized)) return "DEPLOYMENT_REQUEST_NOT_EXECUTED";
+  const normalized = directive
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  if (/\b(despliega|despliegue|publica|ship|deploy|produccion)\b/.test(normalized))
+    return "DEPLOYMENT_REQUEST_NOT_EXECUTED";
   if (/\b(estado|status|salud|health)\b/.test(normalized)) return "STATUS_REQUEST_NOT_PROBED";
   if (/\b(audita|auditoria|fleet|flota|repositorio)\b/.test(normalized)) return "AUDIT_REQUEST_NOT_EXECUTED";
   if (/\b(seguridad|sast|secretos|vulnerabilidad)\b/.test(normalized)) return "SECURITY_REQUEST_NOT_EXECUTED";
   return "UNCLASSIFIED_DIRECTIVE";
 }
 
-function _handler(req, res) {
+export default function handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -29,11 +33,12 @@ function _handler(req, res) {
   }
 
   const intent = classifyDirective(directive);
-  const responseText = intent === "DEPLOYMENT_REQUEST_NOT_EXECUTED"
-    ? "La solicitud fue clasificada como despliegue. No se ejecutó ninguna acción; revisa el proyecto y autoriza el flujo de publicación por separado."
-    : intent === "STATUS_REQUEST_NOT_PROBED"
-      ? "La solicitud fue clasificada como consulta de estado. Este endpoint no sondea procesos, subsistemas ni producción."
-      : "Directiva recibida y clasificada localmente por reglas de palabras clave. No se llamó a un modelo de IA.";
+  const responseText =
+    intent === "DEPLOYMENT_REQUEST_NOT_EXECUTED"
+      ? "La solicitud fue clasificada como despliegue. No se ejecutó ninguna acción; revisa el proyecto y autoriza el flujo de publicación por separado."
+      : intent === "STATUS_REQUEST_NOT_PROBED"
+        ? "La solicitud fue clasificada como consulta de estado. Este endpoint no sondea procesos, subsistemas ni producción."
+        : "Directiva recibida y clasificada localmente por reglas de palabras clave. No se llamó a un modelo de IA.";
 
   return res.status(200).json({
     status: "INTENT_CLASSIFIED",
@@ -47,11 +52,7 @@ function _handler(req, res) {
       commandsRun: false,
       testsRun: false,
       deploymentRun: false,
-      consensusRun: false
-    }
+      consensusRun: false,
+    },
   });
 }
-
-// Rate limiting — 10 req/min burst per IP (POST-only, higher cost)
-import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
-export default withRateLimit({ capacity: 10, refillPerSecond: 0.17 })(_handler);

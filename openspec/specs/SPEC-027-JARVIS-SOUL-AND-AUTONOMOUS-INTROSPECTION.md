@@ -53,4 +53,5 @@ ESCENARIO: [BDD-063] Escudo Militar Impenetrable y Purga Cuántica del Heap
 ```
 
 ---
-*Signed by Principal Architect: Valentín Flórez Arbeláez*
+
+_Signed by Principal Architect: Valentín Flórez Arbeláez_

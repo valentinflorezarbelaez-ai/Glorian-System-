@@ -16,21 +16,12 @@
 import crypto from "node:crypto";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
-export type TribunalJudgeType =
-  | "CONSTITUTIONAL_JUDGE"
-  | "SECURITY_JUDGE"
-  | "ARCHITECTURAL_JUDGE";
+export type TribunalJudgeType = "CONSTITUTIONAL_JUDGE" | "SECURITY_JUDGE" | "ARCHITECTURAL_JUDGE";
 
-export type TribunalVerdictStatus =
-  | "SOVEREIGN_TRIBUNAL_APPROVED"
-  | "TRIBUNAL_VETOED";
+export type TribunalVerdictStatus = "SOVEREIGN_TRIBUNAL_APPROVED" | "TRIBUNAL_VETOED";
 
 export interface JudgeVerdict {
   readonly judge: TribunalJudgeType;
@@ -71,7 +62,7 @@ const SENSITIVE_PATTERNS = [
   /vercel_[a-zA-Z0-9]{20,}/i,
   /AIza[0-9A-Za-z-_]{35}/,
   /-----BEGIN [A-Z ]*PRIVATE KEY-----/,
-  /bearer\s+[a-zA-Z0-9_\-\.]{20,}/i
+  /bearer\s+[a-zA-Z0-9_\-\.]{20,}/i,
 ];
 
 // External target paths that require formal write barrier approval
@@ -80,7 +71,7 @@ const SENSITIVE_EXTERNAL_PATHS = [
   /^[A-Za-z]:[\\\/]Windows[\\\/]/i,
   /^[A-Za-z]:[\\\/]Program Files/i,
   /^\/etc\//i,
-  /^\/var\//i
+  /^\/var\//i,
 ];
 
 export class GlorianConstitutionalTribunal {
@@ -141,7 +132,7 @@ export class GlorianConstitutionalTribunal {
       reason: approved
         ? "Constitutional alignment verified against the 7 Inviolable Commandments."
         : "Constitutional deficiencies or missing specification detected.",
-      findings
+      findings,
     });
   }
 
@@ -169,7 +160,9 @@ export class GlorianConstitutionalTribunal {
     if (request.targetDirectory) {
       for (const extPattern of SENSITIVE_EXTERNAL_PATHS) {
         if (extPattern.test(request.targetDirectory)) {
-          findings.push(`Law IV Fatal Violation: Target directory '${request.targetDirectory}' crosses external write barrier without level 2+ authorization.`);
+          findings.push(
+            `Law IV Fatal Violation: Target directory '${request.targetDirectory}' crosses external write barrier without level 2+ authorization.`,
+          );
           veto = true;
           score = 0;
           break;
@@ -195,7 +188,7 @@ export class GlorianConstitutionalTribunal {
         : approved
           ? "Security perimeter and blast radius verified within safe operational bounds."
           : "Security warnings detected requiring remediation.",
-      findings
+      findings,
     });
   }
 
@@ -211,7 +204,10 @@ export class GlorianConstitutionalTribunal {
 
     // Hexagonal purity check: Domain modules must not import frameworks or infrastructure
     if (request.category === "ARCHITECTURE" || request.category === "CODE_MUTATION") {
-      if (/from\s+["'](express|react|vue|next|fastify)["']/i.test(payload) && /src\/core\//i.test(request.targetDirectory || "")) {
+      if (
+        /from\s+["'](express|react|vue|next|fastify)["']/i.test(payload) &&
+        /src\/core\//i.test(request.targetDirectory || "")
+      ) {
         findings.push("Law V Violation: Infrastructure/Framework dependency detected inside Domain Layer (src/core).");
         score -= 40;
       }
@@ -235,7 +231,7 @@ export class GlorianConstitutionalTribunal {
       reason: approved
         ? "Architectural purity, layer isolation, and invariants verified."
         : "Architectural leakage or missing invariant declarations.",
-      findings
+      findings,
     });
   }
 
@@ -253,11 +249,7 @@ export class GlorianConstitutionalTribunal {
     const judges = [judge1, judge2, judge3];
 
     // Compute weighted composite score: 40% Constitutional, 35% Security, 25% Architectural
-    const compositeScore = Math.round(
-      judge1.score * 0.40 +
-      judge2.score * 0.35 +
-      judge3.score * 0.25
-    );
+    const compositeScore = Math.round(judge1.score * 0.4 + judge2.score * 0.35 + judge3.score * 0.25);
 
     const vetoCount = judges.filter((j) => j.veto).length;
     const approvalsCount = judges.filter((j) => j.approved).length;
@@ -265,9 +257,7 @@ export class GlorianConstitutionalTribunal {
 
     // Fail-closed condition: ANY veto or failure to reach quorum or composite score < 80 results in VETOED
     const overallVerdict: TribunalVerdictStatus =
-      vetoCount === 0 && quorumMet && compositeScore >= 80
-        ? "SOVEREIGN_TRIBUNAL_APPROVED"
-        : "TRIBUNAL_VETOED";
+      vetoCount === 0 && quorumMet && compositeScore >= 80 ? "SOVEREIGN_TRIBUNAL_APPROVED" : "TRIBUNAL_VETOED";
 
     const timestampIso = new Date().toISOString();
     const digestMaterial = JSON.stringify({
@@ -278,7 +268,7 @@ export class GlorianConstitutionalTribunal {
       approvalsCount,
       vetoCount,
       judges: judges.map((j) => ({ judge: j.judge, approved: j.approved, score: j.score, veto: j.veto })),
-      timestampIso
+      timestampIso,
     });
     const sha256Receipt = pureSha256(digestMaterial);
 
@@ -296,8 +286,8 @@ export class GlorianConstitutionalTribunal {
             compositeScore,
             approvalsCount,
             vetoCount,
-            sha256Receipt
-          }
+            sha256Receipt,
+          },
         });
         ledgerLogged = true;
       } catch {
@@ -316,7 +306,7 @@ export class GlorianConstitutionalTribunal {
       judges,
       sha256Receipt,
       timestampIso,
-      ledgerLogged
+      ledgerLogged,
     });
   }
 
@@ -331,7 +321,7 @@ export class GlorianConstitutionalTribunal {
       ` Verdict : [${report.overallVerdict}] | Score: ${report.compositeScore}/100`,
       ` Action  : ${report.actionId} (${report.category}) | Quorum: ${report.approvalsCount}/3 approved`,
       ` Receipt : ${report.sha256Receipt.slice(0, 16)}... | Timestamp: ${report.timestampIso}`,
-      "----------------------------------------------------------------------"
+      "----------------------------------------------------------------------",
     ];
 
     for (const j of report.judges) {

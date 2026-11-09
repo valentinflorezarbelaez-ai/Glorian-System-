@@ -48,12 +48,15 @@ export class EosGoDaemonIpc {
   private readonly projectRoot: string;
   private readonly binaryPath: string;
   private readonly watchdogTimeoutMs: number;
-  private pendingRequests = new Map<string, {
-    resolve: (res: IpcCommandResponse) => void;
-    reject: (err: Error) => void;
-    startTime: bigint;
-    timeoutId: NodeJS.Timeout;
-  }>();
+  private pendingRequests = new Map<
+    string,
+    {
+      resolve: (res: IpcCommandResponse) => void;
+      reject: (err: Error) => void;
+      startTime: bigint;
+      timeoutId: NodeJS.Timeout;
+    }
+  >();
 
   private totalDispatches = 0;
   private totalLatencyUs = 0;
@@ -84,7 +87,7 @@ export class EosGoDaemonIpc {
       this.child = spawn(this.binaryPath, ["-daemon"], {
         cwd: this.projectRoot,
         stdio: ["pipe", "pipe", "ignore"],
-        windowsHide: true
+        windowsHide: true,
       });
 
       if (!this.child.stdout || !this.child.stdin) {
@@ -94,7 +97,7 @@ export class EosGoDaemonIpc {
 
       this.rl = readline.createInterface({
         input: this.child.stdout,
-        crlfDelay: Infinity
+        crlfDelay: Infinity,
       });
 
       this.rl.on("line", (line: string) => {
@@ -140,7 +143,7 @@ export class EosGoDaemonIpc {
 
   public async dispatch(
     action: "ping" | "benchmark" | "route" | "status",
-    payload: Record<string, unknown> = {}
+    payload: Record<string, unknown> = {},
   ): Promise<IpcCommandResponse> {
     const id = `req-${++this.reqCounter}-${Date.now()}`;
     const start = process.hrtime.bigint();
@@ -163,7 +166,7 @@ export class EosGoDaemonIpc {
         resolve,
         reject,
         startTime: start,
-        timeoutId
+        timeoutId,
       });
 
       const message = JSON.stringify({ id, action, payload }) + "\n";
@@ -201,7 +204,7 @@ export class EosGoDaemonIpc {
           data: parsed.data || {},
           latencyUs,
           nativeGo: true,
-          engine: "Citadel HFT Native Go Daemon (Shared Stdio)"
+          engine: "Citadel HFT Native Go Daemon (Shared Stdio)",
         });
       }
     } catch {
@@ -209,11 +212,7 @@ export class EosGoDaemonIpc {
     }
   }
 
-  private executePureL0Fallback(
-    id: string,
-    action: string,
-    payload: Record<string, unknown>
-  ): IpcCommandResponse {
+  private executePureL0Fallback(id: string, action: string, payload: Record<string, unknown>): IpcCommandResponse {
     const start = process.hrtime.bigint();
     let data: Record<string, unknown> = {};
 
@@ -225,21 +224,21 @@ export class EosGoDaemonIpc {
         data = {
           throughputMbSec: 18500,
           tokensPerSec: 46250000,
-          status: "PASS"
+          status: "PASS",
         };
         break;
       case "route":
         data = {
           selectedModel: "claude-3-7-sonnet",
           confidence: 0.98,
-          task: payload.task || "core-architecture"
+          task: payload.task || "core-architecture",
         };
         break;
       default:
         data = {
           tier: "BIG_TECH_TIER_0",
           status: "ONLINE",
-          l0Engine: "Node.js Hermes / V8 TurboFan"
+          l0Engine: "Node.js Hermes / V8 TurboFan",
         };
         break;
     }
@@ -256,7 +255,7 @@ export class EosGoDaemonIpc {
       data,
       latencyUs,
       nativeGo: false,
-      engine: "Pure Layer-0 TypeScript Fallback (Hermetic)"
+      engine: "Pure Layer-0 TypeScript Fallback (Hermetic)",
     };
   }
 
@@ -268,7 +267,7 @@ export class EosGoDaemonIpc {
       averageLatencyUs: this.totalDispatches > 0 ? Math.round(this.totalLatencyUs / this.totalDispatches) : 0,
       fallbackCount: this.fallbackCount,
       binaryPath: this.binaryPath,
-      binaryExists: this.isBinaryAvailable()
+      binaryExists: this.isBinaryAvailable(),
     };
   }
 }

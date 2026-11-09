@@ -1,6 +1,7 @@
 # SPEC-098: NODE.JS SEA STANDALONE BINARY PACKAGER & BLOB SYNTHESIZER
 
 ## 1. Specification Metadata
+
 - **Spec ID**: `SPEC-098`
 - **Change**: `CHANGE-067`
 - **Status**: `APPROVED`
@@ -13,15 +14,19 @@
 ## 2. Functional Requirements (Formal EARS Syntax)
 
 ### FR-354: SEA Configuration & Bundle Preparation
+
 - **Pattern (Ubiquitous / Permanent)**: EL SISTEMA mantendrá una especificación declarativa `sea-config.json` apuntando al punto de entrada CLI autocontenido `bin/eos.mjs`, configurando `output: dist/eos.blob` con `disableExperimentalSEAWarning: true` y `useSnapshot: false`.
 
 ### FR-355: Deterministic Blob Generation & Injection Engine
+
 - **Pattern (Event-Driven)**: CUANDO el operador o el pipeline invoque el constructor `EosSingleExecutablePackager` o `scripts/build-sea-binary.mjs`, EL SISTEMA generará el blob inyectable de Node.js SEA (`dist/eos.blob`) mediante la API nativa de Node.js o el flag `--experimental-sea-config`, verificando que el hash SHA-256 del blob sea determinista.
 
 ### FR-356: Standalone Executable Verification & Code Signature
+
 - **Pattern (Ubiquitous / Permanent)**: EL SISTEMA validará que el empaquetador proporcione las instrucciones exactas y el código de post-procesamiento para inyectar el blob en los binarios host (`node.exe` en Windows, `node` en Linux/macOS) mediante herramientas estándar como `postject` o utilidades nativas del sistema operativo, preservando el código de salida 0 en todas las invocaciones de `eos guide`.
 
 ### FR-357: Layer-0 Purity & Zero Third-Party Compilers
+
 - **Pattern (Ubiquitous / Permanent)**: EL SISTEMA ejecutará el análisis, generación de configuración y verificación de empaquetado SEA utilizando exclusivamente módulos estándar de Node.js (`node:fs`, `node:path`, `node:crypto`, `node:child_process`) sin recurrir a dependencias externas en tiempo de ejecución.
 
 ---

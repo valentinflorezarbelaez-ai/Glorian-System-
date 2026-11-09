@@ -41,51 +41,51 @@ export const APEX_FRONTIER_MATRIX: Readonly<Record<FrontierModelKey, ApexModelSp
     modelId: "gemini-2.0-flash",
     provider: "Google",
     cognitiveSpecialty: "Massive Context Ingestion (2M+), Multimodal Audio/Video & Google Developer Knowledge",
-    costPer1MInputUSD: 0.10,
-    costPer1MOutputUSD: 0.40,
+    costPer1MInputUSD: 0.1,
+    costPer1MOutputUSD: 0.4,
     latencyP50Ms: 180,
     contextWindowLimit: 2097152,
     recommendedTasks: Object.freeze([
       "Large repository codebase comprehension",
       "Full documentation grounding and semantic search",
       "Rapid streaming and draft synthesis",
-      "Multimodal architectural diagram ingestion"
+      "Multimodal architectural diagram ingestion",
     ]),
-    constitutionalDirective: "ENFORCE: Maximum token absorption, developer doc fidelity, and sub-second streaming."
+    constitutionalDirective: "ENFORCE: Maximum token absorption, developer doc fidelity, and sub-second streaming.",
   },
   claude: {
     key: "claude",
     modelId: "claude-3-7-sonnet",
     provider: "Anthropic",
     cognitiveSpecialty: "Surgical AST Code Synthesis, Clean Hexagonal Purity & Complex Artifact Refactoring",
-    costPer1MInputUSD: 3.00,
-    costPer1MOutputUSD: 15.00,
+    costPer1MInputUSD: 3.0,
+    costPer1MOutputUSD: 15.0,
     latencyP50Ms: 450,
     contextWindowLimit: 200000,
     recommendedTasks: Object.freeze([
       "Layer-0 pure domain modeling and use cases",
       "Rigorous hexagonal port/adapter isolation",
       "Complex multi-file refactoring and AST transforms",
-      "Living specification authoring (OpenSpec / SDD)"
+      "Living specification authoring (OpenSpec / SDD)",
     ]),
-    constitutionalDirective: "ENFORCE: Zero vibe coding, 100% type safety, pure hexagonal domain isolation."
+    constitutionalDirective: "ENFORCE: Zero vibe coding, 100% type safety, pure hexagonal domain isolation.",
   },
   gpt: {
     key: "gpt",
     modelId: "o3-mini",
     provider: "OpenAI",
     cognitiveSpecialty: "Formal Mathematical Reasoning, TLA+ Verification & Bayesian Constitutional Judge",
-    costPer1MInputUSD: 1.10,
-    costPer1MOutputUSD: 4.40,
+    costPer1MInputUSD: 1.1,
+    costPer1MOutputUSD: 4.4,
     latencyP50Ms: 380,
     contextWindowLimit: 200000,
     recommendedTasks: Object.freeze([
       "Formal specification invariant verification",
       "Bayesian decision evaluations and ADR review",
       "TLA+ safety and liveness proofs",
-      "Security audit and secret scanning heuristics"
+      "Security audit and secret scanning heuristics",
     ]),
-    constitutionalDirective: "ENFORCE: Formal mathematical verification, ISO 29148 EARS compliance, zero ambiguity."
+    constitutionalDirective: "ENFORCE: Formal mathematical verification, ISO 29148 EARS compliance, zero ambiguity.",
   },
   deepseek: {
     key: "deepseek",
@@ -100,27 +100,27 @@ export const APEX_FRONTIER_MATRIX: Readonly<Record<FrontierModelKey, ApexModelSp
       "High-volume unit & chaos test suite generation",
       "Algorithmic space/time optimization (Big-O)",
       "Continuous mass migration planning (Fleetshift)",
-      "High-throughput token-constrained tasks"
+      "High-throughput token-constrained tasks",
     ]),
-    constitutionalDirective: "ENFORCE: Minimum computational complexity, token frugality, and deterministic rigor."
+    constitutionalDirective: "ENFORCE: Minimum computational complexity, token frugality, and deterministic rigor.",
   },
   grok: {
     key: "grok",
     modelId: "grok-2",
     provider: "xAI",
     cognitiveSpecialty: "Low-Level Systems, Concurrency, Hardware Sympathy & Kernel Telemetry",
-    costPer1MInputUSD: 2.00,
-    costPer1MOutputUSD: 10.00,
+    costPer1MInputUSD: 2.0,
+    costPer1MOutputUSD: 10.0,
     latencyP50Ms: 300,
     contextWindowLimit: 131072,
     recommendedTasks: Object.freeze([
       "Go / Rust concurrency pipelines and goroutines",
       "Zero-allocation lock-free ring buffers (LMAX)",
       "Raw socket / DPDK kernel bypass analysis",
-      "Real-time streaming telemetry and RDMA mesh"
+      "Real-time streaming telemetry and RDMA mesh",
     ]),
-    constitutionalDirective: "ENFORCE: Zero-copy memory sympathy, cache line padding, and mechanical sympathy."
-  }
+    constitutionalDirective: "ENFORCE: Zero-copy memory sympathy, cache line padding, and mechanical sympathy.",
+  },
 });
 
 export interface TaskRoutingResult {
@@ -170,7 +170,10 @@ export class EosApexModelRouter {
    * preserving 100% of types, interfaces, class definitions, function signatures,
    * and documentation comments. Achieves 70% to 85% token reduction.
    */
-  public compressContext(sourceContent: string, fileName: string = "source.ts"): {
+  public compressContext(
+    sourceContent: string,
+    fileName: string = "source.ts",
+  ): {
     readonly compressed: string;
     readonly originalTokens: number;
     readonly compressedTokens: number;
@@ -244,7 +247,10 @@ export class EosApexModelRouter {
     const compressed = preservedLines.join("\n");
     const originalTokens = Math.max(1, Math.round(sourceContent.length / 4));
     const compressedTokens = Math.max(1, Math.round(compressed.length / 4));
-    const savingsPercent = Math.max(0, Number((((originalTokens - compressedTokens) / originalTokens) * 100).toFixed(1)));
+    const savingsPercent = Math.max(
+      0,
+      Number((((originalTokens - compressedTokens) / originalTokens) * 100).toFixed(1)),
+    );
 
     return { compressed, originalTokens, compressedTokens, savingsPercent };
   }
@@ -308,7 +314,7 @@ export class EosApexModelRouter {
       try {
         const out = execFileSync(this.goBinaryPath, ["-route", directivePrompt], {
           encoding: "utf8",
-          timeout: 2000
+          timeout: 2000,
         });
         if (out && out.includes("selectedModel")) {
           nativeGoAccelerated = true;
@@ -338,7 +344,7 @@ export class EosApexModelRouter {
       compressedContext: compressed,
       sha256Receipt,
       timestamp,
-      nativeGoAccelerated
+      nativeGoAccelerated,
     };
   }
 
@@ -357,7 +363,7 @@ export class EosApexModelRouter {
         actionsApplied: [],
         verificationExitCode: 1,
         sha256Receipt: createHash("sha256").update(`NOT_FOUND:${filePath}`).digest("hex"),
-        durationMs: performance.now() - startTime
+        durationMs: performance.now() - startTime,
       };
     }
 
@@ -373,7 +379,7 @@ export class EosApexModelRouter {
         targetFile: filePath,
         originalSnippet: "[trailing whitespace on lines]",
         proposedRemediation: "Stripped all trailing whitespace across file",
-        confidenceScore: 1.0
+        confidenceScore: 1.0,
       });
     }
 
@@ -385,7 +391,7 @@ export class EosApexModelRouter {
         targetFile: filePath,
         originalSnippet: "\\r\\n Windows line endings",
         proposedRemediation: "Normalized to \\n UNIX standard",
-        confidenceScore: 1.0
+        confidenceScore: 1.0,
       });
     }
 
@@ -396,7 +402,7 @@ export class EosApexModelRouter {
         actionsApplied: [],
         verificationExitCode: 0,
         sha256Receipt: createHash("sha256").update(`CLEAN:${filePath}`).digest("hex"),
-        durationMs: performance.now() - startTime
+        durationMs: performance.now() - startTime,
       };
     }
 
@@ -404,9 +410,7 @@ export class EosApexModelRouter {
       fs.writeFileSync(fullPath, healedContent, "utf8");
     }
 
-    const sha256Receipt = createHash("sha256")
-      .update(`${filePath}:${actions.length}:${Date.now()}`)
-      .digest("hex");
+    const sha256Receipt = createHash("sha256").update(`${filePath}:${actions.length}:${Date.now()}`).digest("hex");
 
     return {
       targetFile: filePath,
@@ -414,7 +418,7 @@ export class EosApexModelRouter {
       actionsApplied: Object.freeze(actions),
       verificationExitCode: 0,
       sha256Receipt,
-      durationMs: performance.now() - startTime
+      durationMs: performance.now() - startTime,
     };
   }
 
@@ -433,7 +437,7 @@ export class EosApexModelRouter {
       try {
         const out = execFileSync(this.goBinaryPath, ["-benchmark"], {
           encoding: "utf8",
-          timeout: 5000
+          timeout: 5000,
         });
         const parsed = JSON.parse(out);
         return {
@@ -442,7 +446,7 @@ export class EosApexModelRouter {
           tokensPerSecond: parsed.tokensPerSecond || 50000000,
           durationUs: parsed.durationUs || 15000,
           status: "PASS",
-          nativeGo: true
+          nativeGo: true,
         };
       } catch (_err) {
         // Fallback to TS benchmark
@@ -459,7 +463,7 @@ export class EosApexModelRouter {
     }
     const elapsedMs = performance.now() - start;
     const tokens = count;
-    const tokensPerSec = (tokens / (elapsedMs / 1000));
+    const tokensPerSec = tokens / (elapsedMs / 1000);
 
     return {
       goroutines: 1,
@@ -467,7 +471,7 @@ export class EosApexModelRouter {
       tokensPerSecond: tokensPerSec,
       durationUs: Math.round(elapsedMs * 1000),
       status: "PASS",
-      nativeGo: false
+      nativeGo: false,
     };
   }
 }

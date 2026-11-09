@@ -12,11 +12,7 @@
  */
 
 import { monitorEventLoopDelay } from "node:perf_hooks";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze } from "./eosKernelPrimitives.ts";
 
 export type EventLoopHistogram = ReturnType<typeof monitorEventLoopDelay>;
 
@@ -135,7 +131,7 @@ export class EosEventLoopSaturationGovernor {
       criticalThresholdMs: this.criticalThresholdMs,
       totalSamples,
       sheddingActive: this.state === "SHEDDING_ACTIVE",
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     });
   }
 

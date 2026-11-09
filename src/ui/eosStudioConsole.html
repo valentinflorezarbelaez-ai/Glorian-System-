@@ -1,1073 +1,185 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Glorian System — Sovereign Studio Console</title>
-  <style>
-    :root {
-      --bg-pure: #050508;
-      --surface-clean: #0d0e15;
-      --surface-elevated: #12141f;
-      --border-strict: #161824;
-      --border-glow: #f59e0b33;
-      --text-primary: #ffffff;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
-      --accent-majestic: #f59e0b;
-      --accent-gold-bright: #fbbf24;
-      --accent-success: #10b981;
-      --accent-danger: #ef4444;
-      --accent-cyan: #06b6d4;
-    }
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      background-color: var(--bg-pure);
-      color: var(--text-primary);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Courier New', monospace;
-      margin: 0;
-      padding: 24px;
-      overflow-x: hidden;
-      line-height: 1.5;
-    }
-    header {
-      border-bottom: 1px solid var(--border-strict);
-      padding-bottom: 18px;
-      margin-bottom: 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    h1 {
-      font-size: 1.4rem;
-      letter-spacing: 2px;
-      margin: 0;
-      color: var(--text-primary);
-      font-weight: 800;
-    }
-    .system-status {
-      font-size: 0.82rem;
-      color: var(--accent-success);
-      text-transform: uppercase;
-      font-family: monospace;
-      display: flex;
-      gap: 16px;
-    }
-    .matrix-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      margin-bottom: 28px;
-    }
-    .card {
-      background-color: var(--surface-clean);
-      border: 1px solid var(--border-strict);
-      padding: 20px;
-      transition: all 0.25s ease;
-    }
-    .card:hover {
-      border-color: var(--accent-majestic);
-      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.08);
-    }
-    .card h2 {
-      font-size: 0.95rem;
-      margin-top: 0;
-      margin-bottom: 14px;
-      color: var(--text-secondary);
-      border-bottom: 1px dashed var(--border-strict);
-      padding-bottom: 6px;
-      letter-spacing: 1px;
-      font-family: monospace;
-    }
-    .model-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 0.88rem;
-      font-family: monospace;
-    }
-    .model-name {
-      font-weight: bold;
-    }
-    .model-status {
-      color: var(--accent-majestic);
-    }
-    .metric-value {
-      font-size: 1.75rem;
-      font-weight: 800;
-      color: var(--text-primary);
-      margin-top: 8px;
-      font-family: monospace;
-    }
-    .metric-unit {
-      font-size: 0.78rem;
-      color: var(--text-secondary);
-    }
-
-    /* FLEET RADAR SECTION */
-    .section-title {
-      font-size: 1.1rem;
-      margin: 28px 0 16px;
-      color: var(--accent-gold-bright);
-      letter-spacing: 1.5px;
-      font-family: monospace;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .fleet-radar-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: monospace;
-      font-size: 0.86rem;
-      background-color: var(--surface-clean);
-      border: 1px solid var(--border-strict);
-      margin-bottom: 28px;
-    }
-    .fleet-radar-table th {
-      background-color: var(--surface-elevated);
-      color: var(--text-secondary);
-      text-align: left;
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border-strict);
-      font-weight: 600;
-      text-transform: uppercase;
-      font-size: 0.78rem;
-    }
-    .fleet-radar-table td {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border-strict);
-    }
-    .fleet-radar-table tr:hover {
-      background-color: rgba(245, 158, 11, 0.04);
-    }
-    .badge-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-    .badge-status.nominal {
-      background-color: rgba(16, 185, 129, 0.15);
-      color: var(--accent-success);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-    .badge-status.warning {
-      background-color: rgba(245, 158, 11, 0.15);
-      color: var(--accent-majestic);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-    }
-    .url-link {
-      color: var(--accent-cyan);
-      text-decoration: none;
-    }
-    .url-link:hover {
-      text-decoration: underline;
-    }
-
-    /* CONSTITUTIONAL TRIBUNAL SIMULATOR */
-    .tribunal-container {
-      background-color: var(--surface-clean);
-      border: 1px solid var(--border-strict);
-      padding: 24px;
-      margin-bottom: 28px;
-    }
-    .tribunal-controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 18px;
-    }
-    @media (max-width: 768px) {
-      .tribunal-controls {
-        grid-template-columns: 1fr;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Glorian System — Sovereign Studio Console</title>
+    <style>
+      :root {
+        --bg-pure: #000000;
+        --surface-clean: #0a0a0a;
+        --border-strict: #1a1a1a;
+        --text-primary: #ffffff;
+        --text-secondary: #888888;
+        --accent-majestic: #0066ff;
+        --accent-success: #00ff66;
       }
-    }
-    .input-group label {
-      display: block;
-      font-family: monospace;
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-    }
-    .input-field {
-      width: 100%;
-      background-color: var(--bg-pure);
-      border: 1px solid var(--border-strict);
-      color: var(--text-primary);
-      padding: 12px 12px;
-      font-family: monospace;
-      font-size: 0.88rem;
-    }
-    .input-field:focus {
-      outline: none;
-      border-color: var(--accent-majestic);
-    }
-    .btn-action {
-      background-color: var(--accent-majestic);
-      color: #000000;
-      border: none;
-      padding: 12px 20px;
-      font-weight: 700;
-      font-family: monospace;
-      cursor: pointer;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      transition: background-color 0.2s;
-    }
-    .btn-action:hover {
-      background-color: var(--accent-gold-bright);
-    }
-    .btn-secondary {
-      background-color: transparent;
-      color: var(--text-secondary);
-      border: 1px solid var(--border-strict);
-      padding: 12px 16px;
-      font-family: monospace;
-      cursor: pointer;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      margin-left: 8px;
-    }
-    .btn-secondary:hover {
-      color: var(--text-primary);
-      border-color: var(--accent-majestic);
-    }
-    .judges-panel {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin-top: 20px;
-    }
-    .judge-card {
-      background-color: var(--surface-elevated);
-      border: 1px solid var(--border-strict);
-      padding: 16px;
-    }
-    .judge-card.passed {
-      border-left: 3px solid var(--accent-success);
-    }
-    .judge-card.vetoed {
-      border-left: 3px solid var(--accent-danger);
-    }
-    .judge-title {
-      font-family: monospace;
-      font-weight: 700;
-      font-size: 0.85rem;
-      margin-bottom: 8px;
-    }
-    .judge-score {
-      font-size: 1.3rem;
-      font-weight: 800;
-      font-family: monospace;
-      margin-bottom: 8px;
-    }
-    .verdict-banner {
-      margin-top: 20px;
-      padding: 16px 20px;
-      font-family: monospace;
-      font-size: 0.95rem;
-      font-weight: 700;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border: 1px solid var(--border-strict);
-    }
-    .verdict-approved {
-      background-color: rgba(16, 185, 129, 0.1);
-      border-color: var(--accent-success);
-      color: var(--accent-success);
-    }
-    .verdict-vetoed {
-      background-color: rgba(239, 68, 68, 0.1);
-      border-color: var(--accent-danger);
-      color: var(--accent-danger);
-    }
-
-    /* OPENTELEMETRY TRACE WATERFALL */
-    .trace-container {
-      background-color: var(--surface-clean);
-      border: 1px solid var(--border-strict);
-      padding: 24px;
-      margin-bottom: 28px;
-    }
-    .trace-summary {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-      margin-bottom: 20px;
-      padding: 16px;
-      background-color: var(--surface-elevated);
-      border: 1px solid var(--border-strict);
-      font-family: monospace;
-    }
-    .waterfall-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: monospace;
-      font-size: 0.84rem;
-      margin-top: 16px;
-    }
-    .waterfall-table th {
-      background-color: var(--surface-elevated);
-      color: var(--text-secondary);
-      text-align: left;
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border-strict);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-    }
-    .waterfall-table td {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border-strict);
-    }
-    .waterfall-bar-container {
-      width: 100%;
-      height: 16px;
-      background-color: rgba(255, 255, 255, 0.05);
-      border-radius: 4px;
-      position: relative;
-    }
-    .waterfall-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent-majestic), var(--accent-gold-bright));
-      border-radius: 4px;
-      position: absolute;
-    }
-    .waterfall-bar.bottleneck {
-      background: linear-gradient(90deg, #ef4444, #f87171);
-    }
-    .badge-bottleneck {
-      background-color: rgba(239, 68, 68, 0.2);
-      color: var(--accent-danger);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      padding: 4px 8px;
-      font-size: 0.7rem;
-      border-radius: 4px;
-      font-weight: bold;
-      margin-left: 8px;
-    }
-
-    /* TERMINAL STREAM */
-    .console-terminal {
-      background-color: var(--surface-clean);
-      border: 1px solid var(--border-strict);
-      padding: 16px;
-      height: 180px;
-      overflow-y: auto;
-      font-size: 0.82rem;
-      font-family: monospace;
-      color: var(--accent-success);
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
-    }
-    .terminal-line {
-      margin-bottom: 4px;
-    }
-    .terminal-prompt {
-      color: var(--accent-majestic);
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>GLORIAN SYSTEM // MATRIX &amp; SOVEREIGN FLEET COCKPIT v75.0.0</h1>
-    <div class="system-status">
-      <span>● Purity: SECURE (0-Deps)</span>
-      <span>● MCP Tools: 184</span>
-      <span>● OpenSpecs: 138</span>
-      <span>● Ledger: 1.000 Entries (MMR Certified)</span>
-      <span>● Fleet Health: 100% NOMINAL</span>
-      <span>● Tribunal: OPERATIONAL</span>
-      <span>● OTel Tracing: ACTIVE (v1.3.0)</span>
-    </div>
-  </header>
-
-  <!-- TOP METRICS GRID -->
-  <div class="matrix-grid">
-    <!-- COGNITIVE OMNI-MODELS -->
-    <div class="card">
-      <h2>PROMETHEUS COGNITIVE HUB</h2>
-      <div class="model-row"><span class="model-name">GROK</span><span class="model-status">SYS_ACTIVE</span></div>
-      <div class="model-row"><span class="model-name">GEMINI</span><span class="model-status">GRAPH_ACTIVE</span></div>
-      <div class="model-row"><span class="model-name">CLAUDE</span><span class="model-status">SURGICAL_PATCH</span></div>
-      <div class="model-row"><span class="model-name">GPT</span><span class="model-status">JUDGE_ACTIVE</span></div>
-      <div class="model-row"><span class="model-name">DEEPSEEK</span><span class="model-status">FINOPS_COMPRESS</span></div>
-    </div>
-    <!-- ENGINE PERFORMANCE -->
-    <div class="card">
-      <h2>TURBO VERIFICATION ENGINE</h2>
-      <div class="metric-unit">RECONCILIATION LATENCY</div>
-      <div class="metric-value">27.7 <span class="metric-unit">ms</span></div>
-      <div class="metric-unit" style="margin-top: 15px;">TRANSITIVE BLAST RADIUS</div>
-      <div class="metric-value" style="font-size: 1.4rem; color: var(--accent-majestic);">&lt; 150 <span class="metric-unit">µs</span></div>
-    </div>
-    <!-- FINOPS ECONOMY -->
-    <div class="card">
-      <h2>FINOPS TOKEN ROUTING</h2>
-      <div class="metric-unit">CONTEXT COMPRESSION</div>
-      <div class="metric-value" style="color: var(--accent-success);">85% <span class="metric-unit">SAVED</span></div>
-      <div class="metric-unit" style="margin-top: 15px;">IDEMPOTENCY CONFLICTS DETECTED</div>
-      <div class="metric-value" style="font-size: 1.4rem;">0 <span class="metric-unit">DUPLICATES</span></div>
-    </div>
-    <!-- SYNTHETIC SENTINEL -->
-    <div class="card">
-      <h2>SYNTHETIC SECURITY SENTINEL</h2>
-      <div class="metric-unit">FLEET AVAILABILITY QUORUM</div>
-      <div class="metric-value" style="color: var(--accent-success);">9/9 <span class="metric-unit">HTTP 200</span></div>
-      <div class="metric-unit" style="margin-top: 15px;">AVERAGE PROBE TTFB</div>
-      <div class="metric-value" style="font-size: 1.4rem; color: var(--accent-cyan);">42 <span class="metric-unit">ms</span></div>
-    </div>
-  </div>
-
-  <!-- LIVE SOVEREIGN FLEET RADAR -->
-  <div class="section-title">🛡️ LIVE SOVEREIGN FLEET RADAR</div>
-  <table class="fleet-radar-table">
-    <thead>
-      <tr>
-        <th>Project ID</th>
-        <th>System Purpose</th>
-        <th>Production Endpoint</th>
-        <th>Status</th>
-        <th>TTFB</th>
-        <th>Sec Score</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>aberamentho</strong></td>
-        <td>Sacred Acoustic & Sacred Harp Music</td>
-        <td><a class="url-link" href="https://aberamentosprelomamusic.vercel.app" target="_blank" rel="noopener">aberamentosprelomamusic.vercel.app</a></td>
-        <td><span class="badge-status nominal">200 OK</span></td>
-        <td>370ms</td>
-        <td>75/100</td>
-      </tr>
-      <tr>
-        <td><strong>atp-strength</strong></td>
-        <td>Physical Transmutation & Vital Strength</td>
-        <td><a class="url-link" href="https://atp-strength.vercel.app" target="_blank" rel="noopener">atp-strength.vercel.app</a></td>
-        <td><span class="badge-status nominal">200 OK</span></td>
-        <td>350ms</td>
-        <td>75/100</td>
-      </tr>
-      <tr>
-        <td><strong>biblioteca-gnostica-1</strong></td>
-        <td>Digital Preservation of Sacred Knowledge</td>
-        <td><a class="url-link" href="https://biblioteca-gnostica.vercel.app" target="_blank" rel="noopener">biblioteca-gnostica.vercel.app</a></td>
-        <td><span class="badge-status nominal">200 OK</span></td>
-        <td>344ms</td>
-        <td>100/100</td>
-      </tr>
-      <tr>
-        <td><strong>control-de-asistencia-abopack</strong></td>
-        <td>Industrial Biometric Roster & Telemetry</td>
-        <td><a class="url-link" href="https://avo-pack.vercel.app" target="_blank" rel="noopener">avo-pack.vercel.app</a></td>
-        <td><span class="badge-status nominal">200 OK</span></td>
-        <td>470ms</td>
-        <td>100/100</td>
-      </tr>
-      <tr>
-        <td><strong>crud-slack</strong></td>
-        <td>Instant Sovereign Messaging Matrix</td>
-        <td><a class="url-link" href="https://crud-slack.vercel.app" target="_blank" rel="noopener">crud-slack.vercel.app</a></td>
-        <td><span class="badge-status nominal">200 OK</span></td>
-        <td>902ms</td>
-        <td>100/100</td>
-      </tr>
-      <tr>
-        <td><strong>donaciones</strong></td>
-        <td>Conscious Human Altruism & Master Kanban</td>
-        <td><a class="url-link" href="https://donaciones-drab.vercel.app" target="_blank" rel="noopener">donaciones-drab.vercel.app</a></td>
-        <td><span class="badge-status nominal">200 OK</span></td>
-        <td>483ms</td>
-        <td>35/100</td>
-      </tr>
-      <tr>
-        <td><strong>eos-system</strong></td>
-        <td>Glorian Control Plane & Sovereign Core</td>
-        <td><a class="url-link" href="https://glorian-system.vercel.app" target="_blank" rel="noopener">glorian-system.vercel.app</a></td>
-        <td><span class="badge-status nominal">200 OK</span></td>
-        <td>413ms</td>
-        <td>100/100</td>
-      </tr>
-      <tr>
-        <td><strong>kegel-ham-sah</strong></td>
-        <td>HAM-SAH + Kegel Transmutation & Vital Strength</td>
-        <td><a class="url-link" href="https://kegel-ham-sah-trasnmutacion-y-forta.vercel.app" target="_blank" rel="noopener">kegel-ham-sah-trasnmutacion-y-forta.vercel.app</a></td>
-        <td><span class="badge-status nominal">200 OK</span></td>
-        <td>320ms</td>
-        <td>100/100</td>
-      </tr>
-      <tr>
-        <td><strong>performance-talent-group</strong></td>
-        <td>Elite Theatrical & Performer Talent Gateway</td>
-        <td><a class="url-link" href="https://ptg-performance-talent-group.vercel.app" target="_blank" rel="noopener">ptg-performance-talent-group.vercel.app</a></td>
-        <td><span class="badge-status nominal">200 OK</span></td>
-        <td>468ms</td>
-        <td>75/100</td>
-      </tr>
-      <tr>
-        <td><strong>portafolio</strong></td>
-        <td>Ing. Valentín Flórez Arbeláez — Principal Architect</td>
-        <td><a class="url-link" href="https://portafolio-valentin.vercel.app" target="_blank" rel="noopener">portafolio-valentin.vercel.app</a></td>
-        <td><span class="badge-status nominal">200 OK</span></td>
-        <td>477ms</td>
-        <td>60/100</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <!-- FINOPS COST RECEIPT + ROUTING POLICY CARD (Mission Golden Path FR-514) -->
-  <div class="section-title">FINOPS COST RECEIPT · ROUTING POLICY CARD</div>
-  <div class="tribunal-container" id="finopsPanel">
-    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 12px;">
-      Estimate only (WITHIN_TESTED_SCOPE). Subscription chat ≠ production API invoice.
-      Same tiering as <code>FINOPS_COST_RECEIPT</code> on <code>eos_mission_run</code>.
-    </p>
-    <div id="finopsPolicyCard" aria-label="Model routing policy" style="margin-bottom: 16px; overflow-x: auto;">
-      <table class="fleet-table" style="font-size: 0.85rem;">
-        <thead>
-          <tr>
-            <th>Tier</th>
-            <th>When</th>
-            <th>Model</th>
-            <th>Rate hint (USD / MTok)</th>
-          </tr>
-        </thead>
-        <tbody id="finopsPolicyBody">
-          <tr><td>TIER_1_LOCAL_SLM</td><td>Low-entropy format / lint / outline</td><td>local-slm-or-gemini-flash</td><td>0.075 / 0.3</td></tr>
-          <tr><td>TIER_2_BALANCED</td><td>Standard component / verification</td><td>gemini-2.5-pro</td><td>1.25 / 5.0</td></tr>
-          <tr><td>TIER_3_FRONTIER_REASONING</td><td>Formal / TLA+ / deep adjudication</td><td>claude-3-7-sonnet-or-o1</td><td>3.0 / 15.0</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="input-group" style="margin-bottom: 12px;">
-      <label for="finopsDirective">Engineering directive</label>
-      <textarea id="finopsDirective" class="input-field" rows="2">format and lint local AST outline for control plane</textarea>
-    </div>
-    <button class="btn-action" id="btnFinopsReceipt" type="button">Compute FinOps receipt</button>
-    <div class="verdict-banner verdict-approved" id="finopsBanner" style="margin-top: 14px;">
-      <span id="finopsText">Awaiting directive…</span>
-      <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 6px;" id="finopsRationale">Policy rationale: —</span>
-      <span style="font-size: 0.8rem; color: var(--text-muted);" id="finopsReceipt">SHA-256: —</span>
-    </div>
-  </div>
-
-  <!-- CONSTITUTIONAL TRIBUNAL SIMULATOR -->
-  <div class="section-title">🏛️ CONSTITUTIONAL TRIBUNAL & MULTI-MODEL CONSENSUS</div>
-  <div class="tribunal-container">
-    <div class="tribunal-controls">
-      <div class="input-group">
-        <label for="actionId">Mutation Action ID</label>
-        <input type="text" id="actionId" class="input-field" value="MUT-001-ARCH-UPGRADE">
-      </div>
-      <div class="input-group">
-        <label for="category">Operation Category</label>
-        <select id="category" class="input-field">
-          <option value="ARCHITECTURE">ARCHITECTURE</option>
-          <option value="CODE_MUTATION">CODE_MUTATION</option>
-          <option value="DEPLOYMENT">DEPLOYMENT</option>
-          <option value="CONFIG">CONFIG</option>
-        </select>
-      </div>
-    </div>
-    <div class="input-group" style="margin-bottom: 18px;">
-      <label for="diffPayload">Proposed Code Snippet / Payload / Path</label>
-      <textarea id="diffPayload" class="input-field" rows="3">export class SovereignNeuralNode { readonly id = "SOVEREIGN-NODE-1"; }</textarea>
-    </div>
-    <div>
-      <button class="btn-action" id="btnAdjudicate">Ejecutar Veredicto del Tribunal</button>
-      <button class="btn-secondary" id="btnSafePayload">Cargar Carga Segura</button>
-      <button class="btn-secondary" id="btnVetoPayload">Probar Intento de Veto (Secret Leak)</button>
-    </div>
-
-    <!-- JUDGES PANEL -->
-    <div class="judges-panel" id="judgesPanel">
-      <div class="judge-card passed" id="judgeConstitutional">
-        <div class="judge-title">CONSTITUTIONAL_JUDGE</div>
-        <div class="judge-score" style="color: var(--accent-success);" id="scoreConstitutional">100/100</div>
-        <div style="font-size: 0.8rem; color: var(--text-secondary);" id="reasonConstitutional">
-          Alineación total con las 7 Leyes Inviolables y Zero Vibe Coding.
-        </div>
-      </div>
-      <div class="judge-card passed" id="judgeSecurity">
-        <div class="judge-title">SECURITY_JUDGE</div>
-        <div class="judge-score" style="color: var(--accent-success);" id="scoreSecurity">100/100</div>
-        <div style="font-size: 0.8rem; color: var(--text-secondary);" id="reasonSecurity">
-          0 secretos en texto plano. Perímetro seguro sin infracción de barreras.
-        </div>
-      </div>
-      <div class="judge-card passed" id="judgeArchitectural">
-        <div class="judge-title">ARCHITECTURAL_JUDGE</div>
-        <div class="judge-score" style="color: var(--accent-success);" id="scoreArchitectural">100/100</div>
-        <div style="font-size: 0.8rem; color: var(--text-secondary);" id="reasonArchitectural">
-          Aislamiento hexagonal puro con preservación de invariantes.
-        </div>
-      </div>
-    </div>
-
-    <!-- VERDICT BANNER -->
-    <div class="verdict-banner verdict-approved" id="verdictBanner">
-      <span id="verdictText">VEREDICTO: [SOVEREIGN_TRIBUNAL_APPROVED] — Quórum 3/3 Votos</span>
-      <span style="font-size: 0.8rem; color: var(--text-muted);" id="receiptText">SHA-256: 84aa3309a684...</span>
-    </div>
-  </div>
-
-  <!-- OPENTELEMETRY TRACE WATERFALL COCKPIT -->
-  <div class="section-title">⚡ OPENTELEMETRY DISTRIBUTED TRACING &amp; WATERFALL COCKPIT</div>
-  <div class="trace-container">
-    <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
-      <button class="btn-action" id="btnTraceMcpSearch">Trace: MCP Semantic Search</button>
-      <button class="btn-action" id="btnTraceWasmEngine" style="background-color: var(--accent-cyan); color: #000;">Trace: Wasm Sandbox Exec</button>
-      <button class="btn-action" id="btnTraceCanaryDeploy" style="background-color: var(--accent-gold-bright); color: #000;">Trace: Canary Rollout</button>
-      <button class="btn-secondary" id="btnExportOtlp">Exportar OTLP/JSON</button>
-    </div>
-
-    <div class="trace-summary" id="traceSummary">
-      <div>
-        <div class="metric-unit">TRACE ID</div>
-        <div id="statTraceId" style="font-weight: 700; color: var(--accent-majestic); font-size: 0.85rem;">4bf92f3577b34da6a3ce929d0e0e4736</div>
-      </div>
-      <div>
-        <div class="metric-unit">ROOT OPERATION</div>
-        <div id="statRootName" style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem;">mcp.tool.eos_semantic_search</div>
-      </div>
-      <div>
-        <div class="metric-unit">TOTAL LATENCY</div>
-        <div id="statDuration" style="font-weight: 700; color: var(--accent-success); font-size: 0.85rem;">12.45 ms</div>
-      </div>
-      <div>
-        <div class="metric-unit">SPAN COUNT</div>
-        <div id="statSpanCount" style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem;">4 spans</div>
-      </div>
-      <div>
-        <div class="metric-unit">CRITICAL BOTTLENECK</div>
-        <div id="statBottleneck" style="font-weight: 700; color: var(--accent-danger); font-size: 0.85rem;">hnsw.cosine_similarity (9.80 ms)</div>
-      </div>
-    </div>
-
-    <table class="waterfall-table">
-      <thead>
-        <tr>
-          <th style="width: 32%;">Span Operation &amp; Hierarchy</th>
-          <th style="width: 10%;">Status</th>
-          <th style="width: 14%;">Duration (ms)</th>
-          <th style="width: 44%;">Timeline Waterfall (% of Root Duration)</th>
-        </tr>
-      </thead>
-      <tbody id="waterfallBody">
-        <!-- Rendered dynamically -->
-      </tbody>
-    </table>
-
-    <div id="otlpModal" style="display: none; margin-top: 16px; padding: 16px; background-color: var(--bg-pure); border: 1px solid var(--border-strict);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <span style="font-family: monospace; font-size: 0.8rem; color: var(--accent-gold-bright);">CANONICAL OTLP/JSON v1.3.0 PAYLOAD</span>
-        <button class="btn-secondary" id="btnCloseOtlp" style="padding: 4px 8px; font-size: 0.75rem;">Cerrar</button>
-      </div>
-      <pre id="otlpJsonDisplay" style="font-family: monospace; font-size: 0.75rem; color: var(--accent-cyan); overflow-x: auto; max-height: 200px; margin: 0;"></pre>
-    </div>
-  </div>
-
-  <!-- AUTONOMOUS CLOSED-LOOP SELF-HEALING COCKPIT -->
-  <div class="section-title">🤖 AUTONOMOUS CLOSED-LOOP SELF-HEALING &amp; AST REPAIR</div>
-  <div class="trace-container">
-    <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
-      <button class="btn-action" id="btnHealNullPointer">Fallo: Null Pointer Exception</button>
-      <button class="btn-action" id="btnHealFileLock" style="background-color: var(--accent-cyan); color: #000;">Fallo: Lock Concurrente E/S</button>
-      <button class="btn-action" id="btnHealGridSpacing" style="background-color: var(--accent-gold-bright); color: #000;">Fallo: Violación de Grid 4px</button>
-      <button class="btn-secondary" id="btnExecuteHeal">Ejecutar Bucle de Auto-Reparación</button>
-    </div>
-
-    <div class="trace-summary" id="healSummary">
-      <div>
-        <div class="metric-unit">HEALING CYCLE ID</div>
-        <div id="statHealId" style="font-weight: 700; color: var(--accent-majestic); font-size: 0.85rem;">HEAL-7a8b9c0d1e2f</div>
-      </div>
-      <div>
-        <div class="metric-unit">TARGET FILE</div>
-        <div id="statHealFile" style="font-weight: 700; color: var(--text-primary); font-size: 0.85rem;">src/core/eosProductDeliveryOrchestrator.ts</div>
-      </div>
-      <div>
-        <div class="metric-unit">ARCHETYPE</div>
-        <div id="statHealArch" style="font-weight: 700; color: var(--accent-cyan); font-size: 0.85rem;">NULL_POINTER_GUARD</div>
-      </div>
-      <div>
-        <div class="metric-unit">HEALING LATENCY</div>
-        <div id="statHealDuration" style="font-weight: 700; color: var(--accent-success); font-size: 0.85rem;">4.20 ms</div>
-      </div>
-      <div>
-        <div class="metric-unit">STATUS</div>
-        <div id="statHealStatus" style="font-weight: 700; color: var(--accent-success); font-size: 0.85rem;">HEALED (0 REGRESSIONS)</div>
-      </div>
-    </div>
-
-    <div style="background-color: var(--surface-elevated); border: 1px solid var(--border-strict); padding: 16px; margin-top: 16px;">
-      <div style="font-family: monospace; font-size: 0.8rem; color: var(--accent-gold-bright); margin-bottom: 8px;">SURGICAL AST MUTATION PATCH (SAPFIX / GETAFIX STANDARD)</div>
-      <pre id="healDiffDisplay" style="font-family: monospace; font-size: 0.8rem; color: var(--text-primary); margin: 0; overflow-x: auto; padding: 12px; background-color: var(--bg-pure); border: 1px solid var(--border-strict);">- const val = account.balance;
-+ const val = account?.balance ?? 0;</pre>
-      <div style="margin-top: 12px; display: flex; justify-content: space-between; font-family: monospace; font-size: 0.75rem; color: var(--text-secondary);">
-        <span id="healIsolationInfo">Blast Radius: &lt; 5.2ms | 2 Nodos Evaluados</span>
-        <span id="healReceiptInfo">SHA-256 Receipt: sha256:d4e5f6... (SEALED)</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- SOVEREIGN DISPATCH STREAM -->
-  <div class="section-title">📡 SOVEREIGN DISPATCH LOGS</div>
-  <div class="console-terminal" id="eosTerminal">
-    <div class="terminal-line"><span class="terminal-prompt">glorian init --sovereign</span> Loading Layer-0 Hexagonal Topology... Done (0.4ms)</div>
-    <div class="terminal-line"><span class="terminal-prompt">glorian mcp --status</span> 48 high-assurance tools exposed to Antigravity/Cursor.</div>
-    <div class="terminal-line"><span class="terminal-prompt">glorian fleet:health</span> Synthetic availability: 9/9 projects active (Composite Health: 94%).</div>
-    <div class="terminal-line"><span class="terminal-prompt">glorian tribunal:adjudicate</span> Multi-Model Tribunal established with 3 independent judges.</div>
-    <div class="terminal-line"><span class="terminal-prompt">glorian verify:strict</span> 7-stage CI/CD SecDevOps gate executed. Merkle Root sealed.</div>
-  </div>
-
-  <script>
-    // Stream dynamic logs
-    const consoleTerminal = document.getElementById('eosTerminal');
-    const tasks = [
-      "Spotify SmartShuffle algorithm compiled natively in < 85µs.",
-      "Glorian Synthetic Watchdog probed 9 production endpoints with 0 errors.",
-      "Constitutional Tribunal audited MUT-001 with 100/100 score.",
-      "Byzantine TMR Consensus established across 3 sandboxes.",
-      "Vercel Edge single-multiplexer route verified successfully."
-    ];
-    let index = 0;
-    setInterval(() => {
-      if (index < tasks.length) {
-        const line = document.createElement('div');
-        line.className = 'terminal-line';
-        line.innerHTML = `<span class="terminal-prompt">glorian monitor --stream</span> ${tasks[index]}`;
-        consoleTerminal.appendChild(line);
-        consoleTerminal.scrollTop = consoleTerminal.scrollHeight;
-        index++;
+      body {
+        background-color: var(--bg-pure);
+        color: var(--text-primary);
+        font-family: "Courier New", Courier, monospace;
+        margin: 0;
+        padding: 20px;
+        overflow-x: hidden;
       }
-    }, 3500);
-
-    // FinOps cost receipt + routing policy card (GET/POST /api/finops)
-    const btnFinops = document.getElementById('btnFinopsReceipt');
-    const finopsDirective = document.getElementById('finopsDirective');
-    const finopsText = document.getElementById('finopsText');
-    const finopsReceipt = document.getElementById('finopsReceipt');
-    const finopsRationale = document.getElementById('finopsRationale');
-    const finopsPolicyBody = document.getElementById('finopsPolicyBody');
-    (async () => {
-      try {
-        const res = await fetch('/api/finops', { method: 'GET' });
-        const data = await res.json();
-        const tiers = data && data.policyCard && Array.isArray(data.policyCard.tiers) ? data.policyCard.tiers : null;
-        if (tiers && finopsPolicyBody) {
-          finopsPolicyBody.innerHTML = tiers.map((t) => {
-            const rate = t.rateHintUsdPerMTok || {};
-            return `<tr><td>${t.id}</td><td>${t.when}</td><td>${t.model}</td><td>${rate.prompt} / ${rate.completion}</td></tr>`;
-          }).join('');
+      header {
+        border-bottom: 1px solid var(--border-strict);
+        padding-bottom: 15px;
+        margin-bottom: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      h1 {
+        font-size: 1.5rem;
+        letter-spacing: 2px;
+        margin: 0;
+        color: var(--text-primary);
+      }
+      .system-status {
+        font-size: 0.85rem;
+        color: var(--accent-success);
+        text-transform: uppercase;
+      }
+      .matrix-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 25px;
+      }
+      .card {
+        background-color: var(--surface-clean);
+        border: 1px solid var(--border-strict);
+        padding: 20px;
+        border-radius: 0;
+        transition: border-color 0.3s ease;
+      }
+      .card:hover {
+        border-color: var(--accent-majestic);
+      }
+      .card h2 {
+        font-size: 1rem;
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: var(--text-secondary);
+        border-bottom: 1px dashed var(--border-strict);
+        padding-bottom: 5px;
+      }
+      .model-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+      }
+      .model-name {
+        font-weight: bold;
+      }
+      .model-status {
+        color: var(--accent-majestic);
+      }
+      .metric-value {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--text-primary);
+        margin-top: 10px;
+      }
+      .metric-unit {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+      }
+      .console-terminal {
+        background-color: var(--surface-clean);
+        border: 1px solid var(--border-strict);
+        padding: 16px;
+        height: 200px;
+        overflow-y: auto;
+        font-size: 0.85rem;
+        color: var(--accent-success);
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+      }
+      .terminal-line {
+        margin-bottom: 4px;
+      }
+      .terminal-prompt {
+        color: var(--accent-majestic);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>GLORIAN SYSTEM // MATRIX v19.0</h1>
+      <div class="system-status">● Purity Gate: SECURE (0-Deps)</div>
+    </header>
+    <div class="matrix-grid">
+      <!-- COGNITIVE OMNI-MODELS -->
+      <div class="card">
+        <h2>PROMETHEUS COGNITIVE HUB</h2>
+        <div class="model-row"><span class="model-name">GROK</span><span class="model-status">SYS_ACTIVE</span></div>
+        <div class="model-row">
+          <span class="model-name">GEMINI</span><span class="model-status">GRAPH_ACTIVE</span>
+        </div>
+        <div class="model-row">
+          <span class="model-name">CLAUDE</span><span class="model-status">SURGICAL_PATCH</span>
+        </div>
+        <div class="model-row"><span class="model-name">GPT</span><span class="model-status">JUDGE_ACTIVE</span></div>
+        <div class="model-row">
+          <span class="model-name">DEEPSEEK</span><span class="model-status">FINOPS_COMPRESS</span>
+        </div>
+      </div>
+      <!-- ENGINE PERFORMANCE -->
+      <div class="card">
+        <h2>TURBO VERIFICATION ENGINE</h2>
+        <div class="metric-unit">RECONCILIATION LATENCY</div>
+        <div class="metric-value">27.7 <span class="metric-unit">ms</span></div>
+        <div class="metric-unit" style="margin-top: 15px">TRANSITIVE BLAST RADIUS</div>
+        <div class="metric-value" style="font-size: 1.4rem; color: var(--accent-majestic)">
+          &lt; 150 <span class="metric-unit">µs</span>
+        </div>
+      </div>
+      <!-- FINOPS ECONOMY -->
+      <div class="card">
+        <h2>FINOPS TOKEN ROUTING</h2>
+        <div class="metric-unit">CONTEXT COMPRESSION</div>
+        <div class="metric-value" style="color: var(--accent-success)">85% <span class="metric-unit">SAVED</span></div>
+        <div class="metric-unit" style="margin-top: 15px">IDEMPOTENCY CONFLICTS DETECTED</div>
+        <div class="metric-value" style="font-size: 1.4rem">0 <span class="metric-unit">DUPLICATES</span></div>
+      </div>
+    </div>
+    <h2>SOVEREIGN DISPATCH LOGS</h2>
+    <div class="console-terminal" id="eosTerminal">
+      <div class="terminal-line">
+        <span class="terminal-prompt">eos init --sovereign</span> Loading Layer-0 Hexagonal Topology... Done (0.4ms)
+      </div>
+      <div class="terminal-line">
+        <span class="terminal-prompt">eos mcp --status</span> 18 high-assurance tools exposed to Antigravity/Cursor.
+      </div>
+      <div class="terminal-line">
+        <span class="terminal-prompt">eos fleet --dispatch</span> Synchronizing telemetry with satellites.
+      </div>
+      <div class="terminal-line">
+        <span class="terminal-prompt">eos verify:strict</span> 7-stage CI/CD SecDevOps gate executed. Merkle Root
+        sealed.
+      </div>
+    </div>
+    <script>
+      const consoleTerminal = document.getElementById("eosTerminal");
+      const tasks = [
+        "Spotify SmartShuffle algorithm compiled natively in < 85µs.",
+        "Nubank Bitemporal Ledger initialized via Datomic core simulation.",
+        "Byzantine TMR Consensus established across 3 sandboxes.",
+        "Vercel Edge single-multiplexer route verified successfully.",
+      ];
+      let index = 0;
+      setInterval(() => {
+        if (index < tasks.length) {
+          const line = document.createElement("div");
+          line.className = "terminal-line";
+          line.innerHTML = `<span class="terminal-prompt">eos monitor --stream</span> ${tasks[index]}`;
+          consoleTerminal.appendChild(line);
+          consoleTerminal.scrollTop = consoleTerminal.scrollHeight;
+          index++;
         }
-      } catch (_) { /* static host: keep baked-in policy rows */ }
-    })();
-    if (btnFinops && finopsDirective && finopsText && finopsReceipt) {
-      btnFinops.addEventListener('click', async () => {
-        finopsText.textContent = 'Computing FinOps receipt…';
-        if (finopsRationale) finopsRationale.textContent = 'Policy rationale: …';
-        try {
-          const res = await fetch('/api/finops', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ directive: finopsDirective.value || '' })
-          });
-          const data = await res.json();
-          if (!res.ok || !data.ok) {
-            finopsText.textContent = `FinOps fail-closed: ${data.error || res.status}`;
-            finopsReceipt.textContent = 'SHA-256: —';
-            if (finopsRationale) finopsRationale.textContent = 'Policy rationale: —';
-            return;
-          }
-          finopsText.textContent =
-            `Tier ${data.tier} · est $${Number(data.estimatedCostUsd).toFixed(6)} · ${data.recommendedProviderModel} · ~${data.estimatedTokens} tok`;
-          if (finopsRationale) {
-            finopsRationale.textContent = `Policy rationale: ${data.rationale || '—'} · rate $${Number(data.ratePerMillionUsd || 0).toFixed(3)}/MTok`;
-          }
-          finopsReceipt.textContent = `SHA-256: ${String(data.sha256Attestation || '').slice(0, 16)}…`;
-        } catch (err) {
-          finopsText.textContent = 'FinOps endpoint unavailable (local static host?)';
-          finopsReceipt.textContent = 'SHA-256: —';
-          if (finopsRationale) finopsRationale.textContent = 'Policy rationale: —';
-        }
-      });
-    }
-
-    // Interactive Tribunal Simulator Logic
-    const btnAdjudicate = document.getElementById('btnAdjudicate');
-    const btnSafePayload = document.getElementById('btnSafePayload');
-    const btnVetoPayload = document.getElementById('btnVetoPayload');
-    const diffInput = document.getElementById('diffPayload');
-    const verdictBanner = document.getElementById('verdictBanner');
-    const verdictText = document.getElementById('verdictText');
-    const receiptText = document.getElementById('receiptText');
-
-    btnSafePayload.addEventListener('click', () => {
-      diffInput.value = 'export class SovereignNeuralNode { readonly id = "SOVEREIGN-NODE-1"; }';
-      runTribunal();
-    });
-
-    btnVetoPayload.addEventListener('click', () => {
-      diffInput.value = 'const developerSecret = "' + ['sk', 'ant', 'simulated_leak_test_token_12345'].join('-') + '";';
-      runTribunal();
-    });
-
-    btnAdjudicate.addEventListener('click', runTribunal);
-
-    function runTribunal() {
-      const payload = diffInput.value;
-      const isSecretLeak = /sk-[a-zA-Z0-9_-]{10,}|ghp_[a-zA-Z0-9]{15,}|bearer\s+[a-zA-Z0-9]/i.test(payload);
-      const isVibeCoding = /vibe-coding|hacky-fix/i.test(payload);
-
-      const judgeConstCard = document.getElementById('judgeConstitutional');
-      const judgeSecCard = document.getElementById('judgeSecurity');
-      const judgeArchCard = document.getElementById('judgeArchitectural');
-
-      let constScore = isVibeCoding ? 40 : 100;
-      let secScore = isSecretLeak ? 0 : 100;
-      let archScore = 100;
-
-      // Update Constitutional Judge
-      document.getElementById('scoreConstitutional').innerText = constScore + '/100';
-      if (constScore >= 75) {
-        judgeConstCard.className = 'judge-card passed';
-        document.getElementById('reasonConstitutional').innerText = 'Alineación total con las 7 Leyes Inviolables y Zero Vibe Coding.';
-      } else {
-        judgeConstCard.className = 'judge-card vetoed';
-        document.getElementById('reasonConstitutional').innerText = 'Falta de especificación o patrón de vibe coding detectado.';
-      }
-
-      // Update Security Judge
-      document.getElementById('scoreSecurity').innerText = secScore + '/100';
-      if (secScore >= 80) {
-        judgeSecCard.className = 'judge-card passed';
-        document.getElementById('reasonSecurity').innerText = '0 secretos en texto plano. Perímetro seguro sin infracción de barreras.';
-      } else {
-        judgeSecCard.className = 'judge-card vetoed';
-        document.getElementById('reasonSecurity').innerText = 'FATAL SECURITY VETO: Token o secreto detectado en texto plano (Ley VI).';
-      }
-
-      // Update Architectural Judge
-      document.getElementById('scoreArchitectural').innerText = archScore + '/100';
-      judgeArchCard.className = 'judge-card passed';
-
-      // Evaluate Quorum and Veto
-      if (isSecretLeak || constScore < 75) {
-        verdictBanner.className = 'verdict-banner verdict-vetoed';
-        verdictText.innerText = 'VEREDICTO: [TRIBUNAL_VETOED] — Veto Fail-Closed Inmediato';
-        receiptText.innerText = 'SHA-256: e83b2a71f01c... (VETOED)';
-      } else {
-        verdictBanner.className = 'verdict-banner verdict-approved';
-        verdictText.innerText = 'VEREDICTO: [SOVEREIGN_TRIBUNAL_APPROVED] — Quórum 3/3 Votos';
-        receiptText.innerText = 'SHA-256: 84aa3309a684... (CERTIFIED)';
-      }
-    }
-
-    // OpenTelemetry Distributed Tracing & Waterfall Cockpit
-    const traceScenarios = {
-      search: {
-        traceId: "4bf92f3577b34da6a3ce929d0e0e4736",
-        rootSpanName: "mcp.tool.eos_semantic_search",
-        totalDurationMs: 12.45,
-        spanCount: 4,
-        bottleneckSpanId: "hnsw-cosine-01",
-        bottleneckName: "hnsw.cosine_similarity",
-        bottleneckDurationMs: 9.80,
-        spans: [
-          { spanId: "root-01", name: "mcp.tool.eos_semantic_search", depth: 0, status: "OK", offsetMs: 0.0, durationMs: 12.45, durationPercent: 100.0, isBottleneck: false },
-          { spanId: "sqlite-fts-01", name: "sqlite.wal.query_fts5", depth: 1, status: "OK", offsetMs: 0.3, durationMs: 1.80, durationPercent: 14.5, isBottleneck: false },
-          { spanId: "hnsw-cosine-01", name: "hnsw.cosine_similarity", depth: 1, status: "OK", offsetMs: 2.2, durationMs: 9.80, durationPercent: 78.7, isBottleneck: true },
-          { spanId: "rrf-fuse-01", name: "reciprocal_rank_fusion", depth: 1, status: "OK", offsetMs: 12.0, durationMs: 0.45, durationPercent: 3.6, isBottleneck: false }
-        ]
-      },
-      wasm: {
-        traceId: "a1c73e9188d249f0b83e44281f62c019",
-        rootSpanName: "mcp.tool.eos_wasm_sandbox",
-        totalDurationMs: 4.60,
-        spanCount: 4,
-        bottleneckSpanId: "wasm-compile-01",
-        bottleneckName: "wasm.module_compile",
-        bottleneckDurationMs: 2.90,
-        spans: [
-          { spanId: "root-wasm-01", name: "mcp.tool.eos_wasm_sandbox", depth: 0, status: "OK", offsetMs: 0.0, durationMs: 4.60, durationPercent: 100.0, isBottleneck: false },
-          { spanId: "wasm-compile-01", name: "wasm.module_compile", depth: 1, status: "OK", offsetMs: 0.2, durationMs: 2.90, durationPercent: 63.0, isBottleneck: true },
-          { spanId: "wasm-inst-01", name: "wasm.instance_instantiate", depth: 1, status: "OK", offsetMs: 3.2, durationMs: 0.80, durationPercent: 17.4, isBottleneck: false },
-          { spanId: "wasm-bounds-01", name: "wasm.memory_bounds_check", depth: 1, status: "OK", offsetMs: 4.1, durationMs: 0.35, durationPercent: 7.6, isBottleneck: false }
-        ]
-      },
-      canary: {
-        traceId: "7f81e6205ba3485089304a08e13d9411",
-        rootSpanName: "canary.progressive_rollout",
-        totalDurationMs: 45.20,
-        spanCount: 5,
-        bottleneckSpanId: "stage-canary-10",
-        bottleneckName: "stage.canary_10_percent",
-        bottleneckDurationMs: 32.40,
-        spans: [
-          { spanId: "root-canary-01", name: "canary.progressive_rollout", depth: 0, status: "OK", offsetMs: 0.0, durationMs: 45.20, durationPercent: 100.0, isBottleneck: false },
-          { spanId: "preflight-01", name: "fleet.preflight_health_check", depth: 1, status: "OK", offsetMs: 0.5, durationMs: 5.10, durationPercent: 11.3, isBottleneck: false },
-          { spanId: "stage-canary-10", name: "stage.canary_10_percent", depth: 1, status: "OK", offsetMs: 6.0, durationMs: 32.40, durationPercent: 71.7, isBottleneck: true },
-          { spanId: "mwu-eval-01", name: "mann_whitney_u_statistical_eval", depth: 2, status: "OK", offsetMs: 39.0, durationMs: 3.80, durationPercent: 8.4, isBottleneck: false },
-          { spanId: "stage-canary-100", name: "stage.canary_100_percent", depth: 1, status: "OK", offsetMs: 41.5, durationMs: 3.20, durationPercent: 7.1, isBottleneck: false }
-        ]
-      }
-    };
-
-    let activeScenarioKey = "search";
-
-    function renderWaterfall(scenarioKey) {
-      activeScenarioKey = scenarioKey;
-      const data = traceScenarios[scenarioKey];
-      if (!data) return;
-
-      document.getElementById('statTraceId').innerText = data.traceId;
-      document.getElementById('statRootName').innerText = data.rootSpanName;
-      document.getElementById('statDuration').innerText = data.totalDurationMs.toFixed(2) + " ms";
-      document.getElementById('statSpanCount').innerText = data.spanCount + " spans";
-      document.getElementById('statBottleneck').innerText = data.bottleneckName + " (" + data.bottleneckDurationMs.toFixed(2) + " ms)";
-
-      const tbody = document.getElementById('waterfallBody');
-      tbody.innerHTML = '';
-
-      for (const span of data.spans) {
-        const tr = document.createElement('tr');
-        const indent = span.depth > 0 ? '&nbsp;&nbsp;'.repeat(span.depth) + '└─ ' : '';
-        const bottleneckBadge = span.isBottleneck ? '<span class="badge-bottleneck">BOTTLENECK</span>' : '';
-        const offsetPercent = data.totalDurationMs > 0 ? (span.offsetMs / data.totalDurationMs) * 100 : 0;
-        const widthPercent = Math.max(1, Math.min(100 - offsetPercent, span.durationPercent));
-
-        tr.innerHTML = `
-          <td>${indent}<code>${span.name}</code>${bottleneckBadge}</td>
-          <td><span class="badge-status nominal">${span.status}</span></td>
-          <td>+${span.offsetMs.toFixed(1)}ms (${span.durationMs.toFixed(2)}ms)</td>
-          <td>
-            <div class="waterfall-bar-container">
-              <div class="waterfall-bar ${span.isBottleneck ? 'bottleneck' : ''}" style="left: ${offsetPercent.toFixed(1)}%; width: ${widthPercent.toFixed(1)}%;"></div>
-            </div>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      }
-    }
-
-    renderWaterfall("search");
-
-    document.getElementById('btnTraceMcpSearch').addEventListener('click', () => renderWaterfall('search'));
-    document.getElementById('btnTraceWasmEngine').addEventListener('click', () => renderWaterfall('wasm'));
-    document.getElementById('btnTraceCanaryDeploy').addEventListener('click', () => renderWaterfall('canary'));
-
-    const btnExportOtlp = document.getElementById('btnExportOtlp');
-    const otlpModal = document.getElementById('otlpModal');
-    const otlpJsonDisplay = document.getElementById('otlpJsonDisplay');
-    const btnCloseOtlp = document.getElementById('btnCloseOtlp');
-
-    btnExportOtlp.addEventListener('click', () => {
-      const data = traceScenarios[activeScenarioKey];
-      const otlpPayload = {
-        resourceSpans: [{
-          resource: {
-            attributes: [
-              { key: "service.name", value: { stringValue: "glorian-system-control-plane" } },
-              { key: "service.version", value: { stringValue: "75.0.0" } },
-              { key: "telemetry.sdk.name", value: { stringValue: "glorian-otel-layer0" } },
-              { key: "telemetry.sdk.language", value: { stringValue: "nodejs" } }
-            ]
-          },
-          scopeSpans: [{
-            scope: { name: "glorian.system.core", version: "75.0.0" },
-            spans: data.spans.map(s => ({
-              traceId: data.traceId,
-              spanId: s.spanId,
-              name: s.name,
-              kind: s.depth === 0 ? 1 : 3,
-              durationMs: s.durationMs,
-              status: { code: s.status === "OK" ? 1 : 2 }
-            }))
-          }]
-        }]
-      };
-      otlpJsonDisplay.innerText = JSON.stringify(otlpPayload, null, 2);
-      otlpModal.style.display = 'block';
-    });
-
-    btnCloseOtlp.addEventListener('click', () => {
-      otlpModal.style.display = 'none';
-    });
-
-    // Autonomous Closed-Loop Self-Healing Cockpit
-    const healScenarios = {
-      nullPointer: {
-        id: "HEAL-7a8b9c0d1e2f",
-        file: "src/core/eosProductDeliveryOrchestrator.ts",
-        arch: "NULL_POINTER_GUARD",
-        duration: "4.20 ms",
-        status: "HEALED (0 REGRESSIONS)",
-        diff: "- const val = account.balance;\n+ const val = account?.balance ?? 0;",
-        isolation: "Blast Radius: < 5.2ms | 2 Nodos Evaluados",
-        receipt: "SHA-256 Receipt: sha256:d4e5f6... (SEALED)"
-      },
-      fileLock: {
-        id: "HEAL-3f4e5d6c7b8a",
-        file: "src/core/eosProductDeliveryOrchestrator.ts",
-        arch: "TIMEOUT_BACKOFF_RETRY",
-        duration: "8.65 ms",
-        status: "HEALED (0 REGRESSIONS)",
-        diff: "- fs.writeFileSync(filePath, content, \"utf8\");\n+ safeWriteFileSync(filePath, content); // 5-attempt backoff retry",
-        isolation: "Blast Radius: < 3.8ms | 1 Nodo Evaluado",
-        receipt: "SHA-256 Receipt: sha256:a1b2c3... (SEALED)"
-      },
-      gridSpacing: {
-        id: "HEAL-9e8d7c6b5a4f",
-        file: "src/ui/eosStudioConsole.html",
-        arch: "GRID_SPACING_CONFORMANCE",
-        duration: "2.10 ms",
-        status: "HEALED (0 REGRESSIONS)",
-        diff: "- legacy_spacing: 10px 14px;\n+ padding: 12px 16px; // 4px geometric grid conformance",
-        isolation: "Blast Radius: < 1.4ms | 1 Nodo Evaluado",
-        receipt: "SHA-256 Receipt: sha256:f7e8d9... (SEALED)"
-      }
-    };
-
-    let activeHealKey = "nullPointer";
-
-    function renderHealScenario(key) {
-      activeHealKey = key;
-      const data = healScenarios[key];
-      if (!data) return;
-
-      document.getElementById('statHealId').innerText = data.id;
-      document.getElementById('statHealFile').innerText = data.file;
-      document.getElementById('statHealArch').innerText = data.arch;
-      document.getElementById('statHealDuration').innerText = data.duration;
-      document.getElementById('statHealStatus').innerText = data.status;
-      document.getElementById('healDiffDisplay').innerText = data.diff;
-      document.getElementById('healIsolationInfo').innerText = data.isolation;
-      document.getElementById('healReceiptInfo').innerText = data.receipt;
-    }
-
-    document.getElementById('btnHealNullPointer').addEventListener('click', () => renderHealScenario('nullPointer'));
-    document.getElementById('btnHealFileLock').addEventListener('click', () => renderHealScenario('fileLock'));
-    document.getElementById('btnHealGridSpacing').addEventListener('click', () => renderHealScenario('gridSpacing'));
-
-    document.getElementById('btnExecuteHeal').addEventListener('click', () => {
-      renderHealScenario(activeHealKey);
-      const promptLine = document.createElement('div');
-      promptLine.className = 'terminal-line';
-      promptLine.innerHTML = `<span class="terminal-prompt">glorian heal:loop</span> Autonomous patch verified & sealed in SQLite WAL ledger.`;
-      consoleTerminal.appendChild(promptLine);
-      consoleTerminal.scrollTop = consoleTerminal.scrollHeight;
-    });
-  </script>
-</body>
+      }, 3000);
+    </script>
+  </body>
 </html>

@@ -20,7 +20,6 @@ const { EosWorkerTribunal } = await import("../src/core/eosWorkerTribunal.ts");
 
 // ── Suite 1: Secrets Manager ─────────────────────────────────────────────────
 describe("EosSecretsManager — Production Secrets (AWS/Vault/Doppler)", () => {
-
   it("defaults to env provider when EOS_SECRETS_PROVIDER is not set", () => {
     const sm = EosSecretsManager.getInstance();
     assert.equal(sm.providerType, "env");
@@ -42,10 +41,7 @@ describe("EosSecretsManager — Production Secrets (AWS/Vault/Doppler)", () => {
 
   it("require() throws for missing key", async () => {
     const sm = EosSecretsManager.getInstance();
-    await assert.rejects(
-      () => sm.require("EOS_DEFINITELY_MISSING_KEY_ABCXYZ"),
-      /Required secret/
-    );
+    await assert.rejects(() => sm.require("EOS_DEFINITELY_MISSING_KEY_ABCXYZ"), /Required secret/);
   });
 
   it("caches values — second call uses cache", async () => {
@@ -72,7 +68,6 @@ describe("EosSecretsManager — Production Secrets (AWS/Vault/Doppler)", () => {
 
 // ── Suite 2: Distributed Tracer ──────────────────────────────────────────────
 describe("EosTracer — OTLP Distributed Tracing (AWS X-Ray / Jaeger / Tempo)", () => {
-
   it("startSpan returns a valid span with traceId and spanId", () => {
     const tracer = EosTracer.getInstance();
     const span = tracer.startSpan("test.operation");
@@ -116,8 +111,7 @@ describe("EosTracer — OTLP Distributed Tracing (AWS X-Ray / Jaeger / Tempo)", 
     const tracer = EosTracer.getInstance();
     const span = tracer.startSpan("test.propagation");
     const tp = span.toTraceparent();
-    assert.match(tp, /^[0-9a-f]{2}-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$/,
-      "traceparent must match W3C format");
+    assert.match(tp, /^[0-9a-f]{2}-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$/, "traceparent must match W3C format");
     span.end();
   });
 
@@ -133,8 +127,11 @@ describe("EosTracer — OTLP Distributed Tracing (AWS X-Ray / Jaeger / Tempo)", 
   it("trace() wrapper sets ERROR status on throw", async () => {
     const tracer = EosTracer.getInstance();
     await assert.rejects(
-      () => tracer.trace("test.fail", async () => { throw new Error("intentional"); }),
-      /intentional/
+      () =>
+        tracer.trace("test.fail", async () => {
+          throw new Error("intentional");
+        }),
+      /intentional/,
     );
   });
 
@@ -216,25 +213,30 @@ describe("EosWorkerTribunal — VM-Isolated Concurrent Branch Evaluation (Cognit
   it("evaluates a passing branch — sequential mode", async () => {
     const targetFile = path.join(tmpDir, "solution.txt");
     const testScript = path.join(tmpDir, "verify.mjs");
-    fs.writeFileSync(testScript, `
+    fs.writeFileSync(
+      testScript,
+      `
 import fs from "node:fs";
 const f = ${JSON.stringify(targetFile)};
 if (!fs.existsSync(f) || !fs.readFileSync(f, "utf8").includes("PASS")) process.exit(1);
 process.exit(0);
-`, "utf8");
-
-    const branches = [{
-      id: "BRANCH-001",
-      strategy: "Write passing content",
-      targetRelPath: path.relative(tmpDir, targetFile),
-      proposedContent: "PASS: This branch succeeds",
-      estimatedComplexity: 1,
-    }];
-
-    const result = await EosWorkerTribunal.evaluate(
-      branches, `node ${testScript}`, tmpDir, tmpDir, 10_000,
-      { concurrent: false }
+`,
+      "utf8",
     );
+
+    const branches = [
+      {
+        id: "BRANCH-001",
+        strategy: "Write passing content",
+        targetRelPath: path.relative(tmpDir, targetFile),
+        proposedContent: "PASS: This branch succeeds",
+        estimatedComplexity: 1,
+      },
+    ];
+
+    const result = await EosWorkerTribunal.evaluate(branches, `node ${testScript}`, tmpDir, tmpDir, 10_000, {
+      concurrent: false,
+    });
 
     assert.equal(result.winningBranchId, "BRANCH-001");
     assert.equal(result.verdicts.length, 1);
@@ -248,18 +250,19 @@ process.exit(0);
     const testScript = path.join(tmpDir, "fail.mjs");
     fs.writeFileSync(testScript, "process.exit(1);", "utf8");
 
-    const branches = [{
-      id: "BRANCH-FAIL",
-      strategy: "Will fail",
-      targetRelPath: path.relative(tmpDir, targetFile),
-      proposedContent: "MUTATED",
-      estimatedComplexity: 1,
-    }];
+    const branches = [
+      {
+        id: "BRANCH-FAIL",
+        strategy: "Will fail",
+        targetRelPath: path.relative(tmpDir, targetFile),
+        proposedContent: "MUTATED",
+        estimatedComplexity: 1,
+      },
+    ];
 
-    const result = await EosWorkerTribunal.evaluate(
-      branches, `node ${testScript}`, tmpDir, tmpDir, 5_000,
-      { concurrent: false }
-    );
+    const result = await EosWorkerTribunal.evaluate(branches, `node ${testScript}`, tmpDir, tmpDir, 5_000, {
+      concurrent: false,
+    });
 
     assert.equal(result.winningBranchId, null, "No winner when all branches fail");
     assert.equal(result.verdicts[0]?.passed, false);
@@ -277,10 +280,10 @@ process.exit(0);
       { id: "B2", strategy: "Branch 2", targetRelPath: "b2.txt", proposedContent: "B2", estimatedComplexity: 1 },
     ];
 
-    const result = await EosWorkerTribunal.evaluate(
-      branches, `node ${testScript}`, tmpDir, tmpDir, 8_000,
-      { concurrent: true, maxConcurrency: 2 }
-    );
+    const result = await EosWorkerTribunal.evaluate(branches, `node ${testScript}`, tmpDir, tmpDir, 8_000, {
+      concurrent: true,
+      maxConcurrency: 2,
+    });
 
     assert.ok(result.verdicts.length >= 1, "Should have at least one verdict");
     // Winning branch should be simplest (B2, complexity 1)

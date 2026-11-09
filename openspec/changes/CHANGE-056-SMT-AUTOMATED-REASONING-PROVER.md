@@ -3,11 +3,12 @@
 **Specification**: SPEC-063  
 **Target Version**: 66.0.0  
 **Status**: APPROVED  
-**Author**: Antigravity Principal Architect / EOS System Core  
+**Author**: Antigravity Principal Architect / EOS System Core
 
 ---
 
 ## Proposed Changes
+
 1. **Core Engines**:
    - `src/core/eosSmtAutomatedReasoningProver.ts`: AWS-grade SMT/SAT solver for policy proofs and topological invariants.
 2. **Testing**:

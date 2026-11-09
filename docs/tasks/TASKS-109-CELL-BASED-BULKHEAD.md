@@ -1,11 +1,12 @@
 # TASKS-109: Distributed Cell-Based Bulkhead Governor & Fault Domain Isolation Engine
 
 ## Metadata
-* **Task DAG ID**: `TASKS-109`
-* **Governing Specification**: `SPEC-109`
-* **Plan Reference**: `PLAN-109`
-* **Status**: `IN_PROGRESS`
-* **Total Atomic Tasks**: 9
+
+- **Task DAG ID**: `TASKS-109`
+- **Governing Specification**: `SPEC-109`
+- **Plan Reference**: `PLAN-109`
+- **Status**: `IN_PROGRESS`
+- **Total Atomic Tasks**: 9
 
 ---
 

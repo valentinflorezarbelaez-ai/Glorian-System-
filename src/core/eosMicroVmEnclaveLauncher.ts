@@ -13,12 +13,7 @@
  */
 
 import os from "node:os";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface FirecrackerBootSource {
@@ -98,7 +93,7 @@ export class EosMicroVmEnclaveLauncher {
       architecture,
       cpuCores,
       hardwareVirtualizationSupported,
-      isolationTier
+      isolationTier,
     });
   }
 
@@ -108,7 +103,7 @@ export class EosMicroVmEnclaveLauncher {
   public generateFirecrackerProfile(
     enclaveId: string = "eos-agent-enclave-01",
     vcpus: number = 2,
-    memMib: number = 512
+    memMib: number = 512,
   ): FirecrackerMicroVmProfile {
     assertPrecondition(Boolean(enclaveId), "Enclave ID cannot be empty");
     assertPrecondition(vcpus >= 1, "vCPU count must be >= 1");
@@ -116,7 +111,7 @@ export class EosMicroVmEnclaveLauncher {
 
     const boot_source: FirecrackerBootSource = {
       kernel_image_path: "/opt/eos/enclave/vmlinux.bin",
-      boot_args: "console=ttyS0 reboot=k panic=1 pci=off init=/init quiet"
+      boot_args: "console=ttyS0 reboot=k panic=1 pci=off init=/init quiet",
     };
 
     const drives: FirecrackerDrive[] = [
@@ -124,19 +119,19 @@ export class EosMicroVmEnclaveLauncher {
         drive_id: "rootfs",
         path_on_host: "/opt/eos/enclave/rootfs.ext4",
         is_root_device: true,
-        is_read_only: false
-      }
+        is_read_only: false,
+      },
     ];
 
     const machine_config: FirecrackerMachineConfig = {
       vcpu_count: vcpus,
       mem_size_mib: memMib,
-      smt: false
+      smt: false,
     };
 
     const vsock: FirecrackerVsock = {
       guest_cid: 3,
-      uds_path: `/tmp/eos_vsock_${enclaveId}.sock`
+      uds_path: `/tmp/eos_vsock_${enclaveId}.sock`,
     };
 
     const digestPayload = `${enclaveId}:${vcpus}:${memMib}:${boot_source.kernel_image_path}:${drives[0].path_on_host}`;
@@ -148,7 +143,7 @@ export class EosMicroVmEnclaveLauncher {
       drives,
       machine_config,
       vsock,
-      profileSha256
+      profileSha256,
     });
 
     if (this.ledger) {
@@ -157,7 +152,7 @@ export class EosMicroVmEnclaveLauncher {
           category: "SECURITY_AUDIT",
           projectId: "eos-system",
           title: `Firecracker MicroVM Profile Generated: ${enclaveId}`,
-          payload: { enclaveId, vcpus, memMib, profileSha256 }
+          payload: { enclaveId, vcpus, memMib, profileSha256 },
         });
       } catch {
         // Fallback
@@ -174,7 +169,7 @@ export class EosMicroVmEnclaveLauncher {
   public generateHyperVProfile(
     containerName: string = "eos-agent-hyperv-enclave",
     memoryLimitMb: number = 512,
-    cpuCount: number = 2
+    cpuCount: number = 2,
   ): HyperVContainerProfile {
     assertPrecondition(Boolean(containerName), "Container name cannot be empty");
     const memoryLimitBytes = memoryLimitMb * 1024 * 1024;
@@ -185,7 +180,7 @@ export class EosMicroVmEnclaveLauncher {
       isolation: "hyperv",
       memoryLimitBytes,
       cpuCount,
-      profileSha256
+      profileSha256,
     });
   }
 }

@@ -13,12 +13,7 @@
  * 4. Zero external runtime dependencies — strictly pure Layer 0.
  */
 
-import {
-  pureSha256,
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze
-} from "./eosKernelPrimitives.ts";
+import { pureSha256, assertPrecondition, assertPostcondition, deepFreeze } from "./eosKernelPrimitives.ts";
 
 export type CanaryStage =
   | "INITIALIZED"
@@ -66,10 +61,7 @@ export class EosProgressiveCanaryMesh {
   private currentStage: CanaryStage = "INITIALIZED";
   private readonly history: CanaryTransitionResult[] = [];
 
-  constructor(
-    versionTarget: string = "v48.0.0",
-    previousStableVersion: string = "v47.0.0"
-  ) {
+  constructor(versionTarget: string = "v48.0.0", previousStableVersion: string = "v47.0.0") {
     this.versionTarget = versionTarget;
     this.previousStableVersion = previousStableVersion;
     assertPrecondition(Boolean(versionTarget && previousStableVersion), "Versions must be specified.");
@@ -87,7 +79,7 @@ export class EosProgressiveCanaryMesh {
         errorRate: 1.0,
         latencyIncreasePercent: 100.0,
         circuitBreakerTripped: true,
-        reason: "Deployment is locked in ROLLED_BACK state."
+        reason: "Deployment is locked in ROLLED_BACK state.",
       };
     }
 
@@ -98,18 +90,15 @@ export class EosProgressiveCanaryMesh {
         errorRate: 0.0,
         latencyIncreasePercent: 0.0,
         circuitBreakerTripped: false,
-        reason: "Canary rollout already at 100% full production."
+        reason: "Canary rollout already at 100% full production.",
       };
     }
 
-    const errorRate = telemetry.sampleRequests > 0
-      ? telemetry.failedRequests / telemetry.sampleRequests
-      : 0;
+    const errorRate = telemetry.sampleRequests > 0 ? telemetry.failedRequests / telemetry.sampleRequests : 0;
 
     const latencyDiff = telemetry.p99LatencyMs - telemetry.baselineP99LatencyMs;
-    const latencyIncreasePercent = telemetry.baselineP99LatencyMs > 0
-      ? Math.max(0, (latencyDiff / telemetry.baselineP99LatencyMs) * 100)
-      : 0;
+    const latencyIncreasePercent =
+      telemetry.baselineP99LatencyMs > 0 ? Math.max(0, (latencyDiff / telemetry.baselineP99LatencyMs) * 100) : 0;
 
     // Check breach of SLA budgets
     const errorBreach = errorRate > EosProgressiveCanaryMesh.MAX_ERROR_RATE;
@@ -137,7 +126,7 @@ export class EosProgressiveCanaryMesh {
       errorRate: Math.round(errorRate * 100000) / 100000,
       latencyIncreasePercent: Math.round(latencyIncreasePercent * 100) / 100,
       circuitBreakerTripped,
-      reason
+      reason,
     };
 
     this.history.push(transition);
@@ -169,7 +158,7 @@ export class EosProgressiveCanaryMesh {
       transitions: [...this.history],
       rollbackExecuted,
       verifiedSafe,
-      sha256Receipt
+      sha256Receipt,
     };
 
     return deepFreeze(report);

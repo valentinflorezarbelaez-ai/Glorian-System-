@@ -40,9 +40,11 @@
 ## 2. ADR-035: Graph-Based Datalog Verifier, Mutation Testing Saboteur, Deterministic Time-Travel Simulator, and 120Hz Constant-Time Micro-Scheduler in Pure Layer-0
 
 ### Context
+
 To achieve parity with the world's most critical systems (ASML EUV lithography, seL4, NASA, NSA, Google Piper, Palantir, Vercel), software validation must move beyond superficial unit test coverage into mathematical certainty, automated code sabotage (mutation testing), deterministic simulation (time-travel debugging), and hardware-sympathetic execution (constant-time branchless arithmetic and 8.33ms frame cooperative scheduling).
 
 ### Decision
+
 1. **Datalog/Mangle Deductive Engine (`src/core/eosDatalogVerifier.ts`)**:
    - Implements pure Layer-0 Datalog forward chaining with naive fixpoint resolution.
    - Evaluates dependency facts `depends_on(Module, Dep)` and transitive rule `impacts(Changed, Target) :- depends_on(Target, Changed)`.
@@ -57,8 +59,10 @@ To achieve parity with the world's most critical systems (ASML EUV lithography, 
    - Implements bitwise multiplexers `selectConstantTime(condition, valA, valB)` using bitwise masks to prevent timing side-channel attacks on secret data.
 
 ### Consequences
+
 - **Positive**: Eradicates test suite complacency through mutation analysis; provides exact, seed-reproducible debugging for distributed races; ensures sub-8.33ms responsiveness and timing-leak immunity.
 - **Negative / Constraints**: Must strictly operate with zero external dependencies (`dependencies: {}`) and minimal memory footprint.
 
 ---
-*Approved by Principal Architect: Valentín Flórez Arbeláez*
+
+_Approved by Principal Architect: Valentín Flórez Arbeláez_

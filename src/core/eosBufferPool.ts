@@ -12,8 +12,8 @@
  */
 
 export interface BufferPoolOptions {
-  slabSize?: number;  // Default 4096 bytes (4KB)
-  capacity?: number;  // Default 64 slabs (256KB pre-allocated)
+  slabSize?: number; // Default 4096 bytes (4KB)
+  capacity?: number; // Default 64 slabs (256KB pre-allocated)
 }
 
 export interface BufferPoolStats {
@@ -90,7 +90,7 @@ export class EosBufferPool {
       totalAcquires: this.acquires,
       totalReleases: this.releases,
       poolHitRatePercent: hitRate,
-      spillCount: this.spills
+      spillCount: this.spills,
     };
   }
 

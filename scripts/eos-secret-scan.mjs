@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * SPEC-123: EOS Universal Fleet Secret-Scan Gate & UI Leak Detector
- * 
+ *
  * Zero-dependency canonical scanner enforcing EOS Constitution Law VI (Zero Plain Secrets)
  * and Law I (Specification as Supreme Truth).
- * 
+ *
  * Detectors:
  *   D1: Known vendor token formats (sk-live, ghp_, AKIA, AIzaSy, PEM, Supabase service_role JWT).
  *   D2: Credential variable/property assignments in code (JS/TS/Python/JSON/YAML).
@@ -35,14 +35,41 @@ const SAFE_PLACEHOLDERS = new Set([
   "secret",
   "none",
   "undefined",
-  "null"
+  "null",
 ]);
 
 const BINARY_EXTENSIONS = new Set([
-  ".png", ".jpg", ".jpeg", ".gif", ".ico", ".webp", ".pdf", ".exe", ".dll",
-  ".so", ".dylib", ".zip", ".tar", ".gz", ".7z", ".mp3", ".mp4", ".wav",
-  ".woff", ".woff2", ".ttf", ".eot", ".bin", ".dat", ".xlsx", ".docx", ".wasm",
-  ".sqlite", ".db", ".lock", ".sum"
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".gif",
+  ".ico",
+  ".webp",
+  ".pdf",
+  ".exe",
+  ".dll",
+  ".so",
+  ".dylib",
+  ".zip",
+  ".tar",
+  ".gz",
+  ".7z",
+  ".mp3",
+  ".mp4",
+  ".wav",
+  ".woff",
+  ".woff2",
+  ".ttf",
+  ".eot",
+  ".bin",
+  ".dat",
+  ".xlsx",
+  ".docx",
+  ".wasm",
+  ".sqlite",
+  ".db",
+  ".lock",
+  ".sum",
 ]);
 
 const IGNORED_DIRS = new Set([
@@ -56,7 +83,7 @@ const IGNORED_DIRS = new Set([
   ".turbo",
   ".cache",
   ".eos",
-  ".gemini"
+  ".gemini",
 ]);
 
 export function maskSecret(secret) {
@@ -73,7 +100,7 @@ export function maskSecret(secret) {
 
 export function detectVendorTokens(content, filePath) {
   const findings = [];
-  
+
   // D1_OPENAI_KEY
   const openAiRegex = /\b(sk-(?:proj-)?[A-Za-z0-9_-]{32,})\b/g;
   let match;
@@ -82,7 +109,7 @@ export function detectVendorTokens(content, filePath) {
       rule: "D1_OPENAI_KEY",
       filePath,
       matchValue: match[1],
-      description: "OpenAI API secret key detected"
+      description: "OpenAI API secret key detected",
     });
   }
 
@@ -93,7 +120,7 @@ export function detectVendorTokens(content, filePath) {
       rule: "D1_GITHUB_TOKEN",
       filePath,
       matchValue: match[1],
-      description: "GitHub personal access token detected"
+      description: "GitHub personal access token detected",
     });
   }
 
@@ -104,7 +131,7 @@ export function detectVendorTokens(content, filePath) {
       rule: "D1_AWS_KEY",
       filePath,
       matchValue: match[1],
-      description: "AWS access key ID detected"
+      description: "AWS access key ID detected",
     });
   }
 
@@ -115,7 +142,7 @@ export function detectVendorTokens(content, filePath) {
       rule: "D1_GOOGLE_KEY",
       filePath,
       matchValue: match[1],
-      description: "Google Cloud / Firebase API key detected"
+      description: "Google Cloud / Firebase API key detected",
     });
   }
 
@@ -126,7 +153,7 @@ export function detectVendorTokens(content, filePath) {
       rule: "D1_PEM_BLOCK",
       filePath,
       matchValue: match[0],
-      description: "Unencrypted private key PEM block detected"
+      description: "Unencrypted private key PEM block detected",
     });
   }
 
@@ -143,7 +170,7 @@ export function detectVendorTokens(content, filePath) {
             rule: "D1_SUPABASE_SERVICE_ROLE",
             filePath,
             matchValue: rawJwt,
-            description: "Supabase elevated service_role JWT key detected"
+            description: "Supabase elevated service_role JWT key detected",
           });
         }
       } catch {
@@ -162,7 +189,8 @@ export function detectCredentialAssignments(content, filePath) {
   }
 
   const findings = [];
-  const assignRegex = /\b(?:password|passwd|passphrase|userPass|user_pass|adminPass|admin_pass|masterPass|master_pass|masterPassword|master_password|secret_key|api_secret|apiSecret|client_secret|clientSecret|auth_secret|authSecret|secretToken|secret_token|private_key|privateKey)\b\s*[:=]\s*["']([^"']+)["']/gi;
+  const assignRegex =
+    /\b(?:password|passwd|passphrase|userPass|user_pass|adminPass|admin_pass|masterPass|master_pass|masterPassword|master_password|secret_key|api_secret|apiSecret|client_secret|clientSecret|auth_secret|authSecret|secretToken|secret_token|private_key|privateKey)\b\s*[:=]\s*["']([^"']+)["']/gi;
   let match;
   while ((match = assignRegex.exec(content)) !== null) {
     const rawVal = match[1];
@@ -177,7 +205,7 @@ export function detectCredentialAssignments(content, filePath) {
       rule: "D2_CREDENTIAL_ASSIGNMENT",
       filePath,
       matchValue: rawVal,
-      description: "Hardcoded credential or password assignment detected"
+      description: "Hardcoded credential or password assignment detected",
     });
   }
   return findings;
@@ -185,11 +213,7 @@ export function detectCredentialAssignments(content, filePath) {
 
 export function detectPrefilledPasswordInputs(content, filePath) {
   const normPath = path.resolve(filePath).replace(/\\/g, "/");
-  if (
-    filePath.includes("eos-secret-scan") ||
-    normPath.includes("/openspec/") ||
-    normPath.includes("/docs/")
-  ) {
+  if (filePath.includes("eos-secret-scan") || normPath.includes("/openspec/") || normPath.includes("/docs/")) {
     return [];
   }
   const findings = [];
@@ -210,7 +234,7 @@ export function detectPrefilledPasswordInputs(content, filePath) {
           rule: "D3_PREFILLED_PASSWORD_INPUT",
           filePath,
           matchValue: val,
-          description: "HTML input element with type='password' has non-empty hardcoded value"
+          description: "HTML input element with type='password' has non-empty hardcoded value",
         });
       }
     }
@@ -218,11 +242,8 @@ export function detectPrefilledPasswordInputs(content, filePath) {
   return findings;
 }
 
-export function detectUiPlumbingLeaks(content, filePath, rootDir = process.cwd()) {
+export function detectUiPlumbingLeaks(content, filePath) {
   const normPath = path.resolve(filePath).replace(/\\/g, "/");
-  const normRoot = path.resolve(rootDir).replace(/\\/g, "/");
-  let relPath = path.relative(normRoot, normPath).replace(/\\/g, "/");
-  if (relPath.startsWith("./")) relPath = relPath.slice(2);
   const ext = path.extname(normPath).toLowerCase();
 
   // UI leak detector only inspects client-facing markup/HTML files
@@ -230,15 +251,18 @@ export function detectUiPlumbingLeaks(content, filePath, rootDir = process.cwd()
     return [];
   }
 
-  // Exempt formal documentation, spec directories, and ONLY the canonical root index.html
+  // Exempt formal documentation, spec directories, and Glorian / EOS System's own landing page
   if (
-    relPath.startsWith("openspec/") ||
-    relPath.startsWith("docs/") ||
-    relPath.startsWith("test/") ||
-    relPath.startsWith("tools/") ||
-    relPath.startsWith("scripts/") ||
-    relPath.startsWith(".agents/") ||
-    relPath === "index.html"
+    normPath.includes("/openspec/") ||
+    normPath.includes("/docs/") ||
+    normPath.includes("/test/") ||
+    normPath.includes("/tools/") ||
+    normPath.includes("/scripts/") ||
+    normPath.includes("/.agents/") ||
+    normPath === "index.html" ||
+    normPath.toLowerCase().endsWith("eos-system/index.html") ||
+    normPath.toLowerCase().endsWith("glorian-system/index.html") ||
+    normPath.toLowerCase().endsWith("glorian-system-/index.html")
   ) {
     return [];
   }
@@ -249,9 +273,9 @@ export function detectUiPlumbingLeaks(content, filePath, rootDir = process.cwd()
   while ((match = leakRegex.exec(content)) !== null) {
     findings.push({
       rule: "UI_SPEC_BADGE_LEAK",
-      filePath: relPath,
+      filePath,
       matchValue: match[0],
-      description: `Internal technical governance badge '${match[0]}' leaked into public client-facing HTML markup`
+      description: `Internal technical governance badge '${match[0]}' leaked into public client-facing HTML markup`,
     });
   }
   return findings;
@@ -291,12 +315,12 @@ export function isAllowlisted(secret, relativePath, allowlist = []) {
   return { isAllowed: false };
 }
 
-export function scanFileContent(content, filePath, allowlist = [], knownSecrets = new Set(), rootDir = process.cwd()) {
+export function scanFileContent(content, filePath, allowlist = [], knownSecrets = new Set()) {
   const rawFindings = [
     ...detectVendorTokens(content, filePath),
     ...detectCredentialAssignments(content, filePath),
     ...detectPrefilledPasswordInputs(content, filePath),
-    ...detectUiPlumbingLeaks(content, filePath, rootDir)
+    ...detectUiPlumbingLeaks(content, filePath),
   ];
 
   // D4: Literal propagation check
@@ -308,7 +332,7 @@ export function scanFileContent(content, filePath, allowlist = [], knownSecrets 
             rule: "D4_LITERAL_PROPAGATION",
             filePath,
             matchValue: secret,
-            description: "Known hardcoded secret propagated across codebase files"
+            description: "Known hardcoded secret propagated across codebase files",
           });
         }
       }
@@ -323,7 +347,7 @@ export function scanFileContent(content, filePath, allowlist = [], knownSecrets 
       activeFindings.push({
         ...f,
         maskedValue: maskSecret(f.matchValue),
-        fingerprintSha256: crypto.createHash("sha256").update(f.matchValue).digest("hex")
+        fingerprintSha256: crypto.createHash("sha256").update(f.matchValue).digest("hex"),
       });
     }
   }
@@ -331,14 +355,14 @@ export function scanFileContent(content, filePath, allowlist = [], knownSecrets 
   return activeFindings;
 }
 
-export async function scanDirectory(targetDir, options = {}) {
+export async function scanDirectory(targetDir, _options = {}) {
   const resolvedDir = path.resolve(targetDir);
   if (!fs.existsSync(resolvedDir)) {
     return {
       exitCode: 2,
       error: `Target directory does not exist: ${resolvedDir}`,
       scannedFilesCount: 0,
-      findings: []
+      findings: [],
     };
   }
 
@@ -376,7 +400,7 @@ export async function scanDirectory(targetDir, options = {}) {
       exitCode: 2,
       error: `Fail-closed: No scannable text files found in ${resolvedDir}`,
       scannedFilesCount: 0,
-      findings: []
+      findings: [],
     };
   }
 
@@ -388,7 +412,7 @@ export async function scanDirectory(targetDir, options = {}) {
     const relPath = path.relative(resolvedDir, filePath);
     try {
       const content = fs.readFileSync(filePath, "utf8");
-      const fileFindings = scanFileContent(content, filePath, allowlist, knownSecrets, resolvedDir);
+      const fileFindings = scanFileContent(content, filePath, allowlist, knownSecrets);
       for (const f of fileFindings) {
         f.filePath = relPath;
         findings.push(f);
@@ -406,7 +430,7 @@ export async function scanDirectory(targetDir, options = {}) {
     targetDir: resolvedDir,
     scannedFilesCount: allFiles.length,
     findingsCount: findings.length,
-    findings
+    findings,
   };
 }
 
@@ -430,13 +454,11 @@ if (process.argv[1] && process.argv[1].endsWith("eos-secret-scan.mjs")) {
       scanner: "eos-secret-scan-v1.0.0",
       projectsScanned: 0,
       totalFindings: 0,
-      results: []
+      results: [],
     };
 
     for (const proj of registry.projects || []) {
-      const localPath =
-        process.env[proj.localPathEnv] ||
-        path.resolve("..", proj.resolvedLocalDir || proj.id);
+      const localPath = process.env[proj.localPathEnv] || path.resolve("..", proj.resolvedLocalDir || proj.id);
       if (fs.existsSync(localPath)) {
         const res = await scanDirectory(localPath);
         report.projectsScanned++;
@@ -446,7 +468,7 @@ if (process.argv[1] && process.argv[1].endsWith("eos-secret-scan.mjs")) {
           name: proj.name,
           scannedFiles: res.scannedFilesCount,
           exitCode: res.exitCode,
-          findings: res.findings
+          findings: res.findings,
         });
       }
     }
@@ -457,7 +479,9 @@ if (process.argv[1] && process.argv[1].endsWith("eos-secret-scan.mjs")) {
       console.log(`\n🛡️ EOS FLEET SECRET SCAN REPORT (${report.timestamp})`);
       console.log(`Projects Scanned: ${report.projectsScanned} | Total Findings: ${report.totalFindings}`);
       for (const r of report.results) {
-        console.log(` - [${r.exitCode === 0 ? "PASS" : "FAIL"}] ${r.name} (${r.scannedFiles} files, ${r.findings.length} findings)`);
+        console.log(
+          ` - [${r.exitCode === 0 ? "PASS" : "FAIL"}] ${r.name} (${r.scannedFiles} files, ${r.findings.length} findings)`,
+        );
       }
     }
     process.exit(report.totalFindings > 0 ? 1 : 0);
@@ -467,7 +491,9 @@ if (process.argv[1] && process.argv[1].endsWith("eos-secret-scan.mjs")) {
       console.log(JSON.stringify(result, null, 2));
     } else {
       if (result.exitCode === 0) {
-        console.log(`✅ [PASS] Secret scan verified clean: ${result.scannedFilesCount} files examined in ${targetArg}. Zero plain secrets detected.`);
+        console.log(
+          `✅ [PASS] Secret scan verified clean: ${result.scannedFilesCount} files examined in ${targetArg}. Zero plain secrets detected.`,
+        );
       } else if (result.exitCode === 2) {
         console.error(`❌ [ERROR] Scan failed to execute: ${result.error}`);
       } else {

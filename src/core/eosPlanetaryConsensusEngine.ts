@@ -56,7 +56,7 @@ export class EosPlanetaryConsensusEngine {
         currentTerm: 0,
         votedFor: null,
         commitIndex: 0,
-        log: []
+        log: [],
       });
     }
   }
@@ -64,7 +64,12 @@ export class EosPlanetaryConsensusEngine {
   /**
    * Conducts a leader election for a specified candidate node.
    */
-  public electLeader(candidateId: string): { success: boolean; term: number; votesReceived: number; leaderId: string | null } {
+  public electLeader(candidateId: string): {
+    success: boolean;
+    term: number;
+    votesReceived: number;
+    leaderId: string | null;
+  } {
     const candidate = this.nodes.get(candidateId);
     if (!candidate) {
       throw new Error(`Unknown candidate node: ${candidateId}`);
@@ -108,7 +113,10 @@ export class EosPlanetaryConsensusEngine {
   /**
    * Leader proposes a new command to be replicated across the cluster.
    */
-  public propose(command: string, payload: any): { success: boolean; entryIndex: number; acks: number; stateHash: string } {
+  public propose(
+    command: string,
+    payload: any,
+  ): { success: boolean; entryIndex: number; acks: number; stateHash: string } {
     if (!this.activeLeaderId) {
       throw new Error("No active leader elected in cluster. Cannot propose log entry.");
     }
@@ -120,7 +128,8 @@ export class EosPlanetaryConsensusEngine {
 
     const nextIndex = leader.log.length + 1;
     const prevHash = leader.log.length > 0 ? leader.log[leader.log.length - 1].entryHash : "ROOT";
-    const entryHash = crypto.createHash("sha256")
+    const entryHash = crypto
+      .createHash("sha256")
       .update(`${leader.currentTerm}|${nextIndex}|${command}|${JSON.stringify(payload)}|${prevHash}`)
       .digest("hex");
 
@@ -130,7 +139,7 @@ export class EosPlanetaryConsensusEngine {
       command,
       payload,
       entryHash,
-      committed: false
+      committed: false,
     };
 
     leader.log.push(newEntry);
@@ -164,7 +173,7 @@ export class EosPlanetaryConsensusEngine {
       success: committed,
       entryIndex: nextIndex,
       acks,
-      stateHash
+      stateHash,
     };
   }
 
@@ -209,7 +218,10 @@ export class EosPlanetaryConsensusEngine {
   private computeClusterStateHash(): string {
     const leader = this.activeLeaderId ? this.nodes.get(this.activeLeaderId) : null;
     if (!leader) return "0000000000000000000000000000000000000000000000000000000000000000";
-    const committedEntries = leader.log.filter((e) => e.committed).map((e) => e.entryHash).join(";");
+    const committedEntries = leader.log
+      .filter((e) => e.committed)
+      .map((e) => e.entryHash)
+      .join(";");
     return crypto.createHash("sha256").update(committedEntries).digest("hex");
   }
 }

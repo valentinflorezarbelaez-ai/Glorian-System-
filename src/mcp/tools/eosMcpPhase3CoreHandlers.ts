@@ -14,10 +14,7 @@ import { EosHnswVectorEngine } from "../../core/eosHnswVectorEngine.ts";
 import { EosContinuousRefactorEngine } from "../../core/eosContinuousRefactorEngine.ts";
 import { EosMctsHyperTuner } from "../../core/eosMctsHyperTuner.ts";
 import { EosAntigravityDirector } from "../../core/eosAntigravityDirector.ts";
-import {
-  EosDurableSqliteLedger,
-  type LedgerCategory
-} from "../../core/eosDurableSqliteLedger.ts";
+import { EosDurableSqliteLedger, type LedgerCategory } from "../../core/eosDurableSqliteLedger.ts";
 import { EosGentlemanAutoUpdater } from "../../core/eosGentlemanAutoUpdater.ts";
 import { EosGentlemanStackBridge } from "../../core/eosGentlemanStackBridge.ts";
 import { GlorianFleetHealthWatchdog } from "../../core/glorianFleetHealthWatchdog.ts";
@@ -39,24 +36,21 @@ function isPathWithin(rootPath: string, candidatePath: string): boolean {
 
 export interface Phase3CoreHandlerDeps {
   readonly projectRoot: string;
-  readonly resolveProjectPath: (
-    value: unknown,
-    kind: "file" | "directory",
-    fallback?: string
-  ) => string;
+  readonly resolveProjectPath: (value: unknown, kind: "file" | "directory", fallback?: string) => string;
   readonly resolveConfinedLedgerPath: (value: unknown) => string;
   readonly hybridKnowledge: EosHybridKnowledgeEngine;
   readonly knowledgeStore: {
     search(query: string, topK: number): readonly { id: string; score: number; text: string; metadata?: unknown }[];
-    searchHybrid(query: string, topK: number): readonly { id: string; score: number; text: string; metadata?: unknown }[];
+    searchHybrid(
+      query: string,
+      topK: number,
+    ): readonly { id: string; score: number; text: string; metadata?: unknown }[];
   };
   readonly agentSessionContract: EosUniversalAgentSessionContract;
   readonly hnsw: EosHnswVectorEngine;
 }
 
-export function createPhase3CoreHandlers(
-  deps: Phase3CoreHandlerDeps
-): Readonly<Record<string, McpToolHandler>> {
+export function createPhase3CoreHandlers(deps: Phase3CoreHandlerDeps): Readonly<Record<string, McpToolHandler>> {
   return {
     eos_semantic_search: (args) => {
       const query = String(args.query || "");
@@ -78,14 +72,12 @@ export function createPhase3CoreHandlers(
             filePath: m.filePath,
             category: m.category,
             lexicalRank: m.lexicalRank,
-            vectorRank: m.vectorRank
-          }))
+            vectorRank: m.vectorRank,
+          })),
         };
       }
       const matches =
-        mode === "vector"
-          ? deps.knowledgeStore.search(query, topK)
-          : deps.knowledgeStore.searchHybrid(query, topK);
+        mode === "vector" ? deps.knowledgeStore.search(query, topK) : deps.knowledgeStore.searchHybrid(query, topK);
       return {
         query,
         mode,
@@ -97,8 +89,8 @@ export function createPhase3CoreHandlers(
           title: m.id,
           snippet: m.text,
           filePath: "",
-          category: (m.metadata as { domain?: string } | undefined)?.domain || "General"
-        }))
+          category: (m.metadata as { domain?: string } | undefined)?.domain || "General",
+        })),
       };
     },
 
@@ -107,7 +99,7 @@ export function createPhase3CoreHandlers(
       return healer.executeHealing({
         targetFile: args.targetFile === undefined ? undefined : String(args.targetFile),
         dryRun: args.apply !== true,
-        autoApply: args.apply === true
+        autoApply: args.apply === true,
       });
     },
 
@@ -139,9 +131,7 @@ export function createPhase3CoreHandlers(
             !worktreeStat.isDirectory() ||
             !isPathWithin(deps.projectRoot, fs.realpathSync(worktreeRoot))
           ) {
-            throw new Error(
-              "The .worktrees directory must be a regular directory inside the configured project root."
-            );
+            throw new Error("The .worktrees directory must be a regular directory inside the configured project root.");
           }
         } catch (error) {
           if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
@@ -176,7 +166,7 @@ export function createPhase3CoreHandlers(
         query: args.query ?? "custom_vector",
         k,
         count: results.length,
-        results
+        results,
       };
     },
 
@@ -187,7 +177,7 @@ export function createPhase3CoreHandlers(
           const opened = deps.agentSessionContract.openSession({
             ideFamily: String(args.ideFamily || ""),
             directive: String(args.directive || ""),
-            target: args.target ? String(args.target) : "eos-system"
+            target: args.target ? String(args.target) : "eos-system",
           });
           return { action: "open", preferred: ["cursor", "antigravity"], ...opened };
         }
@@ -195,7 +185,7 @@ export function createPhase3CoreHandlers(
           const ensured = deps.agentSessionContract.ensurePreferredIdeSession({
             ideFamily: String(args.ideFamily || ""),
             directive: args.directive ? String(args.directive) : undefined,
-            target: args.target ? String(args.target) : "eos-system"
+            target: args.target ? String(args.target) : "eos-system",
           });
           return {
             action: "ensure",
@@ -204,8 +194,8 @@ export function createPhase3CoreHandlers(
             gentlemanAlignment: deps.agentSessionContract.getGentlemanAlignment(),
             coGovernanceMessage: deps.agentSessionContract.formatCoGovernanceSessionMessage(
               String(args.ideFamily || "cursor"),
-              ensured
-            )
+              ensured,
+            ),
           };
         }
         case "record_tool": {
@@ -218,23 +208,23 @@ export function createPhase3CoreHandlers(
           const decision = deps.agentSessionContract.authorizeWrite({
             sessionId: String(args.sessionId || ""),
             sessionReceipt: args.sessionReceipt ? String(args.sessionReceipt) : undefined,
-            paths: Array.isArray(args.paths) ? args.paths.map(String) : undefined
+            paths: Array.isArray(args.paths) ? args.paths.map(String) : undefined,
           });
           return {
             action: "authorize_write",
             allowed: decision.decision === "allow",
-            ...decision
+            ...decision,
           };
         }
         case "evaluate_write": {
           const decision = deps.agentSessionContract.evaluatePreferredWriteGate(
             String(args.ideFamily || ""),
-            Array.isArray(args.paths) ? args.paths.map(String) : undefined
+            Array.isArray(args.paths) ? args.paths.map(String) : undefined,
           );
           return {
             action: "evaluate_write",
             allowed: decision.decision === "allow",
-            ...decision
+            ...decision,
           };
         }
         case "align_gentleman": {
@@ -251,8 +241,8 @@ export function createPhase3CoreHandlers(
             divisionOfLabor: {
               glorian: "constitution, Law IV, session write gates, product/mission golden path",
               gentleAi:
-                "Engram memory, ODD+SDD workflow (gentle-ai), focused agents, GGA native review, Context7 docs, agent-teams-lite; doctrine from gentlemanprogramming.com + YouTube main/VODs"
-            }
+                "Engram memory, ODD+SDD workflow (gentle-ai), focused agents, GGA native review, Context7 docs, agent-teams-lite; doctrine from gentlemanprogramming.com + YouTube main/VODs",
+            },
           };
         }
         case "status": {
@@ -260,12 +250,12 @@ export function createPhase3CoreHandlers(
           return {
             action: "status",
             ...status,
-            gentlemanAlignment: deps.agentSessionContract.getGentlemanAlignment()
+            gentlemanAlignment: deps.agentSessionContract.getGentlemanAlignment(),
           };
         }
         default:
           throw new Error(
-            "Unsupported eos_agent_session_contract action. Expected: open, ensure, record_tool, authorize_write, evaluate_write, align_gentleman, status"
+            "Unsupported eos_agent_session_contract action. Expected: open, ensure, record_tool, authorize_write, evaluate_write, align_gentleman, status",
           );
       }
     },
@@ -303,7 +293,9 @@ export function createPhase3CoreHandlers(
     },
 
     eos_sqlite_ledger: (args) => {
-      const action = String(args.action || "verify").trim().toLowerCase();
+      const action = String(args.action || "verify")
+        .trim()
+        .toLowerCase();
       const dbPath = deps.resolveConfinedLedgerPath(args.databasePath);
       const ledger = new EosDurableSqliteLedger(dbPath);
       try {
@@ -313,12 +305,10 @@ export function createPhase3CoreHandlers(
             "ARCHITECTURE_DECISION",
             "SECURITY_AUDIT",
             "VERIFICATION_RECEIPT",
-            "GENTLEMAN_ENGRAM_SYNC"
+            "GENTLEMAN_ENGRAM_SYNC",
           ];
           const rawCat = String(args.category || "VERIFICATION_RECEIPT") as LedgerCategory;
-          const category: LedgerCategory = validCategories.includes(rawCat)
-            ? rawCat
-            : "VERIFICATION_RECEIPT";
+          const category: LedgerCategory = validCategories.includes(rawCat) ? rawCat : "VERIFICATION_RECEIPT";
           return ledger.appendEntry({
             category,
             projectId:
@@ -327,7 +317,7 @@ export function createPhase3CoreHandlers(
                 : "eos-system",
             title: String(args.title || "EOS Ledger Event"),
             payload: isPlainRecord(args.payload) ? args.payload : {},
-            engramTopicKey: typeof args.engramTopicKey === "string" ? args.engramTopicKey : undefined
+            engramTopicKey: typeof args.engramTopicKey === "string" ? args.engramTopicKey : undefined,
           });
         }
         if (action === "search") {
@@ -335,7 +325,7 @@ export function createPhase3CoreHandlers(
           return {
             action: "search",
             query: String(args.query || ""),
-            records: ledger.searchEntries(String(args.query || ""), limit)
+            records: ledger.searchEntries(String(args.query || ""), limit),
           };
         }
         if (action === "recent") {
@@ -343,7 +333,7 @@ export function createPhase3CoreHandlers(
           const projectId = typeof args.projectId === "string" ? args.projectId : undefined;
           return {
             action: "recent",
-            records: ledger.listRecent(limit, projectId)
+            records: ledger.listRecent(limit, projectId),
           };
         }
         return ledger.verifyChainIntegrity();
@@ -353,13 +343,15 @@ export function createPhase3CoreHandlers(
     },
 
     eos_gentleman_update: (args) => {
-      const action = String(args.action || "status").trim().toLowerCase();
+      const action = String(args.action || "status")
+        .trim()
+        .toLowerCase();
       if (action === "status") {
         return {
           action: "status",
           isDue: EosGentlemanAutoUpdater.isAutoUpdateDue(deps.projectRoot),
           state: EosGentlemanAutoUpdater.readState(deps.projectRoot),
-          constitutionSha256: EosGentlemanAutoUpdater.computeConstitutionDigest(deps.projectRoot)
+          constitutionSha256: EosGentlemanAutoUpdater.computeConstitutionDigest(deps.projectRoot),
         };
       }
       const cliArgs = [
@@ -367,7 +359,7 @@ export function createPhase3CoreHandlers(
         "gentleman",
         "update",
         action === "apply" ? "--apply" : "--check",
-        "--json"
+        "--json",
       ];
       if (args.force === true) cliArgs.push("--force");
       const out = execFileSync(process.execPath, cliArgs, {
@@ -375,7 +367,7 @@ export function createPhase3CoreHandlers(
         encoding: "utf8",
         timeout: 180000,
         stdio: ["ignore", "pipe", "pipe"],
-        windowsHide: true
+        windowsHide: true,
       });
       return JSON.parse(out.trim());
     },
@@ -390,7 +382,7 @@ export function createPhase3CoreHandlers(
           summary: watchdog.formatHealthReport(report),
           compositeHealthIndex: report.compositeHealthIndex,
           auditStatus: report.auditStatus,
-          sha256Receipt: report.sha256Receipt
+          sha256Receipt: report.sha256Receipt,
         };
       }
       return report;
@@ -413,7 +405,7 @@ export function createPhase3CoreHandlers(
         description,
         diffOrPayload,
         targetDirectory,
-        declaredInvariants
+        declaredInvariants,
       });
       if (format === "summary") {
         return {
@@ -421,11 +413,11 @@ export function createPhase3CoreHandlers(
           overallVerdict: report.overallVerdict,
           compositeScore: report.compositeScore,
           quorumMet: report.quorumMet,
-          sha256Receipt: report.sha256Receipt
+          sha256Receipt: report.sha256Receipt,
         };
       }
       return report;
-    }
+    },
   };
 }
 
@@ -442,5 +434,5 @@ export const PHASE3_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
   "eos_semantic_search",
   "eos_sqlite_ledger",
   "glorian_constitutional_tribunal",
-  "glorian_fleet_health_watchdog"
+  "glorian_fleet_health_watchdog",
 ]);

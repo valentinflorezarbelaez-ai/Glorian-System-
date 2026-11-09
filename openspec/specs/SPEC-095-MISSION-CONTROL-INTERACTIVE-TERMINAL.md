@@ -1,6 +1,7 @@
 # SPEC-095: MISSION CONTROL IN-BROWSER INTERACTIVE TERMINAL & CHAOS ARENA
 
 ## 1. Specification Metadata
+
 - **Spec ID**: `SPEC-095`
 - **Change**: `CHANGE-066`
 - **Status**: `APPROVED`
@@ -13,15 +14,19 @@
 ## 2. Functional Requirements (Formal EARS Syntax)
 
 ### FR-342: Client-Side Interactive Command Dispatcher
+
 - **Pattern (Event-Driven)**: CUANDO el usuario introduzca un comando en la terminal interactiva del navegador (`eos guide`, `eos truetime`, `eos lsm`, `eos kademlia`, `eos threshold`, `eos microvm`, `eos chaos:kill`, `clear`), EL SISTEMA parseará los argumentos, ejecutará el motor correspondiente en memoria client-side y renderizará la respuesta formateada en menos de 10 ms.
 
 ### FR-343: ANSI Telemetry Formatting & Accessibility
+
 - **Pattern (Ubiquitous / Permanent)**: EL SISTEMA presentará la salida de la terminal con tipografía monoespaciada (`JetBrains Mono`), contraste WCAG 2.1 AA, y atributos semánticos `aria-live="polite"` y `role="region"`, garantizando soporte total para lectores de pantalla.
 
 ### FR-344: Interactive Chaos Arena & Sub-15ms Failover
+
 - **Pattern (Event-Driven)**: CUANDO el usuario presione el botón "Inyectar Caos / Matar Nodo" en la Arena de Caos, EL SISTEMA simulará la caída instantánea de 2 de 5 nodos, activará la re-elección de quórum Raft/Kademlia en el navegador y mostrará la estabilización en menos de 15 ms con preservación del 100% de los datos del ledger.
 
 ### FR-345: Zero Network Roundtrips
+
 - **Pattern (Ubiquitous / Permanent)**: EL SISTEMA ejecutará todas las demostraciones de la terminal y la arena de caos exclusivamente en el hilo del navegador sin realizar peticiones de red externas ni registrar telemetría no consentida.
 
 ---

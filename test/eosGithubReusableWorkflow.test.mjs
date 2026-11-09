@@ -21,11 +21,24 @@ test("BDD-267: Validación de estructura de flujo reutilizable de GitHub Actions
   assert.ok(workflowContent.includes("pull_request:"), "Must trigger on pull_request");
   assert.ok(workflowContent.includes("push:"), "Must trigger on push");
 
-  // 2. Verify critical steps
-  assert.ok(workflowContent.includes("actions/checkout"), "Must check out repository");
-  assert.ok(workflowContent.includes("actions/setup-node"), "Must setup Node.js runtime");
+  // 2. Verify critical steps. Actions must be hash-pinned (Hermetic Release Seal);
+  // exact versions are managed by Dependabot, so assert the pinned form, not a tag.
+  assert.match(
+    workflowContent,
+    /uses: actions\/checkout@[0-9a-f]{40}(\s|#)/,
+    "Must check out repository via hash-pinned action",
+  );
+  assert.match(
+    workflowContent,
+    /uses: actions\/setup-node@[0-9a-f]{40}(\s|#)/,
+    "Must setup Node.js runtime via hash-pinned action",
+  );
   assert.ok(workflowContent.includes("node scripts/eos-github-pr-attestation.mjs"), "Must run PR attestation script");
-  assert.ok(workflowContent.includes("github/codeql-action/upload-sarif@v3"), "Must upload SARIF report");
+  assert.match(
+    workflowContent,
+    /uses: github\/codeql-action\/upload-sarif@[0-9a-f]{40}(\s|#)/,
+    "Must upload SARIF report via hash-pinned action",
+  );
   assert.ok(workflowContent.includes("docs/evidence/local-checks.sarif"), "Must target local-checks.sarif");
 });
 
@@ -36,7 +49,7 @@ test("BDD-268: Verificación determinista de PR gate y generación de reporte SA
   // Execute attestation script
   const output = execSync(`node "${scriptPath}"`, {
     cwd: projectRoot,
-    encoding: "utf8"
+    encoding: "utf8",
   });
 
   assert.ok(output.includes("[GATE PASSED]"), "Script must log gate passed");
@@ -53,8 +66,7 @@ test("BDD-268: Verificación determinista de PR gate y generación de reporte SA
 
   const run = sarif.runs[0];
   assert.equal(run.tool.driver.name, "EOS-Strict-Sovereign-Gate");
-  const pkg = JSON.parse(fs.readFileSync(path.join(projectRoot, "package.json"), "utf8"));
-  assert.equal(run.tool.driver.version, pkg.version);
+  assert.equal(run.tool.driver.version, "74.0.0");
   assert.equal(run.invocations[0].executionSuccessful, true, "Execution must be successful");
   assert.equal(run.results.length, 0, "Gate must find 0 violations in clean repository");
 

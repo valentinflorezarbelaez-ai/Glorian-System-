@@ -27,7 +27,9 @@ async function main() {
   console.log("======================================================================");
   console.log(` Timestamp: ${report.timestamp}`);
   console.log(` Registry Seal: ${report.registrySha256.slice(0, 16)}...`);
-  console.log(` Quorum: ${report.healthyEndpointsCount}/${report.productionEndpointsCount} (${report.fleetQuorumPercentage}%) | Avg Latency: ${report.averageLatencyMs}ms`);
+  console.log(
+    ` Quorum: ${report.healthyEndpointsCount}/${report.productionEndpointsCount} (${report.fleetQuorumPercentage}%) | Avg Latency: ${report.averageLatencyMs}ms`,
+  );
   console.log("----------------------------------------------------------------------");
 
   for (const p of report.projects) {

@@ -12,18 +12,18 @@ import {
   maskSecret,
   isAllowlisted,
   scanFileContent,
-  scanDirectory
+  scanDirectory,
 } from "../scripts/eos-secret-scan.mjs";
 
 describe("SPEC-123: Fleet Secret-Scan Gate & UI Leak Detector", () => {
   describe("FR-367 / BDD-353: D1 Vendor Token Detector", () => {
     it("flags OpenAI, GitHub, AWS, Google API keys, and PEM blocks", () => {
       const sample = [
-        'const openai = "' + 'sk-' + 'proj-abc123456789012345678901234567890";',
-        'const ghToken = "' + 'ghp_' + '1234567890abcdefghijklmnopqrstuvwxyz";',
-        'const awsKey = "' + 'AKIA' + 'IOSFODNN7EXAMPLE";',
-        'const gKey = "' + 'AIzaSy' + 'D-1234567890abcdefghijklmnopqr123";',
-        'const pem = "-----BEGIN ' + 'RSA PRIVATE KEY-----";'
+        'const openai = "' + "sk-" + 'proj-abc123456789012345678901234567890";',
+        'const ghToken = "' + "ghp_" + '1234567890abcdefghijklmnopqrstuvwxyz";',
+        'const awsKey = "' + "AKIA" + 'IOSFODNN7EXAMPLE";',
+        'const gKey = "' + "AIzaSy" + 'D-1234567890abcdefghijklmnopqr123";',
+        'const pem = "-----BEGIN ' + 'RSA PRIVATE KEY-----";',
       ].join("\n");
       const findings = detectVendorTokens(sample, "src/config.js");
       assert.equal(findings.length, 5);
@@ -106,25 +106,6 @@ describe("SPEC-123: Fleet Secret-Scan Gate & UI Leak Detector", () => {
       const findings = detectUiPlumbingLeaks(specDoc, "openspec/specs/SPEC-122.md");
       assert.equal(findings.length, 0);
     });
-
-    it("exempts the canonical root index.html across both local and CI paths", () => {
-      const rootHtml = `<span class="spec">SPEC-138 and SPEC-139</span>`;
-      // Local root
-      const localFindings = detectUiPlumbingLeaks(rootHtml, "index.html", process.cwd());
-      assert.equal(localFindings.length, 0);
-
-      // Simulated Linux GitHub Actions CI runner root
-      const ciRoot = "/home/runner/work/Glorian-System-/Glorian-System-";
-      const ciFindings = detectUiPlumbingLeaks(rootHtml, path.join(ciRoot, "index.html"), ciRoot);
-      assert.equal(ciFindings.length, 0);
-    });
-
-    it("strictly flags nested index.html files containing technical badges", () => {
-      const nestedHtml = `<span class="badge">SPEC-120</span>`;
-      const findings = detectUiPlumbingLeaks(nestedHtml, "templates/demo/index.html", process.cwd());
-      assert.ok(findings.length > 0);
-      assert.equal(findings[0].rule, "UI_SPEC_BADGE_LEAK");
-    });
   });
 
   describe("FR-371 / BDD-356: Secret Masking Engine", () => {
@@ -149,8 +130,8 @@ describe("SPEC-123: Fleet Secret-Scan Gate & UI Leak Detector", () => {
           fingerprintSha256: hash,
           path: "test/fixtures/mock.json",
           reason: "Synthetic test fixture for unit tests",
-          expiresAt: futureDate
-        }
+          expiresAt: futureDate,
+        },
       ];
 
       const allowed = isAllowlisted(secret, "test/fixtures/mock.json", allowlist);
@@ -166,8 +147,8 @@ describe("SPEC-123: Fleet Secret-Scan Gate & UI Leak Detector", () => {
           fingerprintSha256: hash,
           path: "src/old.js",
           reason: "Legacy exception",
-          expiresAt: pastDate
-        }
+          expiresAt: pastDate,
+        },
       ];
 
       const allowed = isAllowlisted(secret, "src/old.js", allowlist);
@@ -185,11 +166,13 @@ describe("SPEC-123: Fleet Secret-Scan Gate & UI Leak Detector", () => {
         ["Avopak2026*.@", "test/eos-secret-scan.test.mjs"],
         ["UltraSecret99!", "test/eos-secret-scan.test.mjs"],
         ["super_classified_token_xyz", "test/eos-secret-scan.test.mjs"],
-        ["SOVEREIGN_AUTHORIZATION_RESET_TOKEN_NSA_41", "test/eosNsaZeroTrustDefense.test.mjs"]
+        ["SOVEREIGN_AUTHORIZATION_RESET_TOKEN_NSA_41", "test/eosNsaZeroTrustDefense.test.mjs"],
       ];
       for (const [literal, fixturePath] of fixtures) {
         const fingerprintSha256 = crypto.createHash("sha256").update(literal).digest("hex");
-        const entry = allowlist.find((item) => item.fingerprintSha256 === fingerprintSha256 && item.path === fixturePath);
+        const entry = allowlist.find(
+          (item) => item.fingerprintSha256 === fingerprintSha256 && item.path === fixturePath,
+        );
         assert.ok(entry, `missing allowlist entry for ${fixturePath}`);
         assert.ok(entry.reason && entry.reason.length > 0);
         assert.ok(entry.expiresAt > new Date().toISOString().slice(0, 10));

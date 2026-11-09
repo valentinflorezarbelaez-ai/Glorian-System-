@@ -68,7 +68,7 @@ function countCommitsAheadOfOrigin(checkoutRoot) {
     const out = execFileSync("git", ["rev-list", "--count", "@{u}..HEAD"], {
       cwd: checkoutRoot,
       encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"]
+      stdio: ["ignore", "pipe", "pipe"],
     }).trim();
     const n = Number(out);
     return Number.isFinite(n) ? n : 0;
@@ -77,7 +77,7 @@ function countCommitsAheadOfOrigin(checkoutRoot) {
       const out = execFileSync("git", ["rev-list", "--count", "origin/main..HEAD"], {
         cwd: checkoutRoot,
         encoding: "utf8",
-        stdio: ["ignore", "pipe", "pipe"]
+        stdio: ["ignore", "pipe", "pipe"],
       }).trim();
       const n = Number(out);
       return Number.isFinite(n) ? n : 0;
@@ -119,6 +119,34 @@ function normalizeGitRemote(value) {
   return `${hostname.toLowerCase()}/${normalizedPath.toLowerCase()}`;
 }
 
+// SECURITY: validate every registry entry before any path is used. A tampered
+// registry could otherwise inject arbitrary local paths or gate scripts.
+function validateRegistryEntry(proj) {
+  if (proj.localPath !== undefined && (typeof proj.localPath !== "string" || proj.localPath.includes(".."))) {
+    throw new Error(`invalid localPath in registry for "${proj.id}"`);
+  }
+  if (
+    proj.resolvedLocalDir !== undefined &&
+    (typeof proj.resolvedLocalDir !== "string" || proj.resolvedLocalDir.includes(".."))
+  ) {
+    throw new Error(`invalid resolvedLocalDir in registry for "${proj.id}"`);
+  }
+  if (proj.cicdGateScript) {
+    const isNpmCommand = /^npm(\.cmd)?\s+[a-zA-Z0-9_\-:]+$/i.test(proj.cicdGateScript);
+    const isFilePath = /^[a-zA-Z0-9_\-./]+$/.test(proj.cicdGateScript) && !path.isAbsolute(proj.cicdGateScript);
+    if (
+      typeof proj.cicdGateScript !== "string" ||
+      proj.cicdGateScript.includes("..") ||
+      (!isNpmCommand && !isFilePath)
+    ) {
+      throw new Error(`invalid cicdGateScript in registry for "${proj.id}"`);
+    }
+  }
+  if (proj.productionUrl && !proj.productionUrl.startsWith("https://")) {
+    throw new Error(`productionUrl must use https:// for "${proj.id}"`);
+  }
+}
+
 if (!fs.existsSync(registryFile)) {
   fail("Fleet registry is missing.");
 } else {
@@ -129,36 +157,24 @@ if (!fs.existsSync(registryFile)) {
     fail("Fleet registry is not valid JSON.");
   }
 
-const registry = JSON.parse(fs.readFileSync(registryFile, "utf8"));
-
-// SECURITY: validate all registry entries before use — tampered registry could inject paths
-function validateRegistryEntry(proj) {
-  // localPath must be an absolute path or start with known base
-  if (typeof proj.localPath !== "string" || proj.localPath.includes("..")) {
-    throw new Error(`Security: invalid localPath in registry for "${proj.id}": "${proj.localPath}"`);
-  }
-  // cicdGateScript must be a relative path (no absolute, no traversal)
-  if (proj.cicdGateScript) {
-    if (
-      typeof proj.cicdGateScript !== "string" ||
-      path.isAbsolute(proj.cicdGateScript) ||
-      proj.cicdGateScript.includes("..") ||
-      !proj.cicdGateScript.match(/^[a-zA-Z0-9_\-./]+$/)
-    ) {
-      throw new Error(`Security: invalid cicdGateScript in registry for "${proj.id}": "${proj.cicdGateScript}"`);
+  if (
+    registry &&
+    typeof registry === "object" &&
+    Array.isArray(registry.projects) &&
+    registry.projects.every(
+      (project) => project && typeof project === "object" && typeof project.id === "string" && project.id.length > 0,
+    ) &&
+    new Set(registry.projects.map((project) => project.id)).size === registry.projects.length
+  ) {
+    const projects = registry.projects;
+    try {
+      for (const project of projects) validateRegistryEntry(project);
+    } catch (err) {
+      fail(`Fleet registry rejected: ${err.message}`);
+      process.exit(1);
     }
-  }
-  // productionUrl must be https:// only
-  if (proj.productionUrl && !proj.productionUrl.startsWith("https://")) {
-    throw new Error(`Security: productionUrl must use https:// for "${proj.id}"`);
-  }
-}
-
-for (const proj of registry.projects) {
-  validateRegistryEntry(proj);
-}
-let audited = 0;
-let healthyCount = 0;
+    let selected = projects;
+    if (selectedProjectId) selected = projects.filter((project) => project.id === selectedProjectId);
 
     let canProceed = true;
     if (selected.length === 0) {
@@ -177,34 +193,173 @@ let healthyCount = 0;
       canProceed = false;
     }
 
-  if (!fs.existsSync(proj.localPath)) {
-    console.log(`  [STATUS] Path not found locally, checking production URL directly...`);
-  } else {
-    // Check working tree status
-    try {
-      const statusOutput = execFileSync("git", ["status", "--short"], { cwd: proj.localPath, encoding: "utf8" }).trim();
-      const hasChanges = statusOutput.length > 0;
-      console.log(`  Working Tree   : ${hasChanges ? "MODIFIED (Pending changes)" : "CLEAN"}`);
+    if (canProceed) {
+      let productionProbes = 0;
+      let healthyProbes = 0;
+      let localCheckFailures = 0;
+      let shipsCompleted = 0;
 
-      if (hasChanges && isShipMode) {
-        console.log(`  [AUTONOMOUS ACTION] Shipping modified project: ${proj.name}...`);
-        // Stage only tracked modified files (not untracked new files)
-        execFileSync("git", ["add", "--update"], { cwd: proj.localPath, stdio: "inherit" });
-        // Run CI gate before committing if a gate script is configured and exists
-        const gateScript = path.join(proj.localPath, proj.cicdGateScript || "");
-        if (proj.cicdGateScript && fs.existsSync(gateScript)) {
-          console.log(`  [CI GATE] Running ${proj.cicdGateScript} before commit...`);
-          execFileSync(process.execPath, [gateScript], { cwd: proj.localPath, stdio: "inherit" });
-          console.log(`  [CI GATE] PASSED`);
+      for (const project of selected) {
+        console.log(`\n▶ Project: ${project.name} [${project.id}]`);
+        const productionUrl = normalizeProductionUrl(project.productionUrl);
+        if (effectiveShip && !productionUrl) {
+          localCheckFailures++;
+          fail(`A valid HTTPS productionUrl is required for ${project.id}. No repository was changed.`);
+          break;
         }
-        execFileSync("git", ["commit", "-m", commitMessage], { cwd: proj.localPath, stdio: "inherit" });
-        if (proj.remoteUrl) {
-          execFileSync("git", ["push", "origin", "HEAD"], { cwd: proj.localPath, stdio: "inherit" });
-          console.log(`  [PUSHED] Changes pushed to ${proj.remoteUrl}`);
+
+        const projectPath = resolveFleetProjectPath(project, root);
+        if (!projectPath) {
+          console.log(`  Local checkout : NOT CONFIGURED (${project.localPathEnv || "no environment variable"})`);
+          if (effectiveShip) {
+            localCheckFailures++;
+            fail(`Local checkout for ${project.id} is not configured. No repository was changed.`);
+            break;
+          }
+        } else if (!fs.existsSync(projectPath)) {
+          console.log("  Local checkout : NOT FOUND");
+          if (effectiveShip) {
+            localCheckFailures++;
+            fail(`Local checkout for ${project.id} was not found. No repository was changed.`);
+            break;
+          }
+        } else {
+          let checkoutRoot;
+          let changes = "";
+          try {
+            const gitRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], {
+              cwd: projectPath,
+              encoding: "utf8",
+              stdio: ["ignore", "pipe", "pipe"],
+            }).trim();
+            checkoutRoot = fs.realpathSync(gitRoot);
+            const normalizedPath = fs.realpathSync(projectPath);
+            if (checkoutRoot !== normalizedPath) throw new Error("Configured path is not the Git repository root.");
+
+            changes = execFileSync("git", ["status", "--short"], {
+              cwd: checkoutRoot,
+              encoding: "utf8",
+              stdio: ["ignore", "pipe", "pipe"],
+            }).trim();
+            console.log(`  Git checkout   : VERIFIED (${changes ? "working tree has changes" : "clean"})`);
+            if (effectiveShip) {
+              const expectedRemote = normalizeGitRemote(project.remoteUrl);
+              const actualRemote = execFileSync("git", ["remote", "get-url", "origin"], {
+                cwd: checkoutRoot,
+                encoding: "utf8",
+                stdio: ["ignore", "pipe", "pipe"],
+              }).trim();
+              if (!expectedRemote || normalizeGitRemote(actualRemote) !== expectedRemote) {
+                throw new Error("The checkout's origin does not match the repository registered for this project.");
+              }
+              console.log("  Git remote     : MATCHES REGISTRY");
+            }
+          } catch (error) {
+            localCheckFailures++;
+            console.error(`  Git checkout   : CHECK FAILED (${error.message})`);
+            if (effectiveShip) {
+              fail(`Git checkout validation failed for ${project.id}; no further actions will run.`);
+              break;
+            }
+          }
+
+          if (checkoutRoot && effectiveShip) {
+            try {
+              runGate(project, checkoutRoot);
+              console.log("  CI gate        : PASSED");
+            } catch (error) {
+              localCheckFailures++;
+              console.error(`  CI gate        : FAILED for ${project.id}; skipping push. ${error.message}`);
+              if (!isShipAllMode) {
+                fail(`CI gate failed for ${project.id}; no commit or push was attempted. ${error.message}`);
+                break;
+              }
+              continue;
+            }
+
+            try {
+              // Re-read status after the gate because a configured verifier may create receipts.
+              changes = execFileSync("git", ["status", "--short"], {
+                cwd: checkoutRoot,
+                encoding: "utf8",
+                stdio: ["ignore", "pipe", "pipe"],
+              }).trim();
+              if (changes) {
+                execFileSync("git", ["add", "-A"], { cwd: checkoutRoot, stdio: "inherit" });
+                execFileSync("git", ["commit", "-m", commitMessage], { cwd: checkoutRoot, stdio: "inherit" });
+                console.log("  Ship           : local commit completed");
+              } else {
+                console.log("  Ship           : working tree clean (no new commit)");
+              }
+
+              const ahead = countCommitsAheadOfOrigin(checkoutRoot);
+              if (ahead === 0) {
+                console.log("  Ship           : already synced with upstream (nothing to push)");
+              } else {
+                console.log(
+                  `  Ship           : pushing HEAD to origin (ahead=${ahead < 0 ? "unknown/new-upstream" : ahead})`,
+                );
+                try {
+                  execFileSync("git", ["push", "-u", "origin", "HEAD"], { cwd: checkoutRoot, stdio: "inherit" });
+                } catch {
+                  console.log("  Ship           : non-fast-forward; attempting pull --rebase then retry push");
+                  execFileSync("git", ["pull", "--rebase", "origin", "HEAD"], { cwd: checkoutRoot, stdio: "inherit" });
+                  execFileSync("git", ["push", "-u", "origin", "HEAD"], { cwd: checkoutRoot, stdio: "inherit" });
+                }
+                console.log("  Ship           : push completed (Vercel auto-deploy if linked)");
+                shipsCompleted += 1;
+              }
+            } catch (error) {
+              localCheckFailures++;
+              console.error(`  Ship           : FAILED for ${project.id}. ${error.message}`);
+              if (!isShipAllMode) {
+                fail(`Ship operation failed for ${project.id}. ${error.message}`);
+                break;
+              }
+              continue;
+            }
+          }
+        }
+
+        if (productionUrl) {
+          productionProbes++;
+          let lastError = null;
+          let response = null;
+          for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+              response = await fetch(productionUrl, {
+                cache: "no-store",
+                signal: AbortSignal.timeout(12000),
+              });
+              lastError = null;
+              break;
+            } catch (error) {
+              lastError = error;
+              const code = error?.cause?.code || error?.code || "";
+              // Transient local resolver failures (ENOTFOUND/EAI_AGAIN) get bounded retries.
+              if (!/ENOTFOUND|EAI_AGAIN|UND_ERR_CONNECT|timeout|TimeoutError/i.test(`${code} ${error.message}`)) {
+                break;
+              }
+              await new Promise((resolve) => setTimeout(resolve, 350 * attempt));
+            }
+          }
+          if (response) {
+            console.log(`  Production     : HTTP ${response.status}`);
+            if (response.status === 200) healthyProbes++;
+            else localCheckFailures++;
+          } else {
+            localCheckFailures++;
+            console.log(`  Production     : UNREACHABLE (${lastError?.message || "fetch failed"})`);
+          }
+        } else {
+          console.log("  Production     : NOT CONFIGURED OR INVALID HTTPS URL");
+          localCheckFailures++;
         }
       }
 
-      console.log(`\nFleet report: ${healthyProbes}/${productionProbes} production probes returned HTTP 200; ${localCheckFailures} check(s) failed or were unreachable; shipsCompleted=${shipsCompleted}.`);
+      console.log(
+        `\nFleet report: ${healthyProbes}/${productionProbes} production probes returned HTTP 200; ${localCheckFailures} check(s) failed or were unreachable; shipsCompleted=${shipsCompleted}.`,
+      );
       if (localCheckFailures > 0 || productionProbes === 0) process.exitCode = 1;
       else console.log("All requested checks completed successfully.");
     }

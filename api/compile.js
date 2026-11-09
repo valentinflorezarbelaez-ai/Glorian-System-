@@ -53,7 +53,7 @@ function runTypedArrayBenchmark(iterations = 500) {
     throughputMillionElementsPerSecond: Number(millionElementsPerSecond.toFixed(2)),
     typedArrayBufferBytes: ARRAY_BUFFER_BYTES,
     heapAllocationMeasurement: "NOT_MEASURED",
-    benchmarkScope: "single-process Float64Array arithmetic loop; no hardware cache or vendor claims"
+    benchmarkScope: "single-process Float64Array arithmetic loop; no hardware cache or vendor claims",
   };
 }
 
@@ -79,13 +79,13 @@ async function handleAmplify(req, res, body = {}) {
     amplified = amplifyPrompt({
       rawPrompt,
       targetModel,
-      strictLevel
+      strictLevel,
     });
-  } catch (_err) {
+  } catch {
     return res.status(503).json({
       status: "AMPLIFIER_UNAVAILABLE",
       error: "The local prompt scaffolder could not be loaded. No draft was produced.",
-      retryable: true
+      retryable: true,
     });
   }
 
@@ -100,11 +100,11 @@ async function handleAmplify(req, res, body = {}) {
     latencyMicroseconds: latencyMicros,
     remoteModelCalled: false,
     amplification: amplified,
-    note: "The requested model name is metadata only. This route does not call an external language model or verify the generated draft."
+    note: "The requested model name is metadata only. This route does not call an external language model or verify the generated draft.",
   });
 }
 
-async function _handler(req, res) {
+export default async function handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -171,10 +171,6 @@ async function _handler(req, res) {
     benchmark,
     resultFingerprintSha256: `sha256:${resultFingerprintSha256}`,
     execution: { nativeCompilerInvoked: false, gpuUsed: false, cacheBehaviorMeasured: false, testsRun: false },
-    note: "This measures the local typed-array arithmetic loop only. The fingerprint is not a signature, proof, or hardware-performance claim."
+    note: "This measures the local typed-array arithmetic loop only. The fingerprint is not a signature, proof, or hardware-performance claim.",
   });
 }
-
-// Rate limiting — 20 req/min burst per IP
-import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
-export default withRateLimit({ capacity: 20, refillPerSecond: 0.33 })(_handler);

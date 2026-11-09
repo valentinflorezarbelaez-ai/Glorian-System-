@@ -11,11 +11,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface ArtifactFileDigest {
@@ -68,7 +64,7 @@ const CRITICAL_SECRET_PATTERNS = [
   new RegExp("ghp_" + "[0-9a-zA-Z]{24,}"),
   new RegExp("AKIA" + "[0-9A-Z]{16}"),
   new RegExp("AIza" + "[0-9A-Za-z\\-_]{35}"),
-  new RegExp("-----BEGIN " + "(RSA |EC |OPENSSH )?PRIVATE KEY-----")
+  new RegExp("-----BEGIN " + "(RSA |EC |OPENSSH )?PRIVATE KEY-----"),
 ];
 
 export class EosHermeticReleaseSealer {
@@ -89,7 +85,9 @@ export class EosHermeticReleaseSealer {
     // Fail-closed secret scan
     for (const pat of CRITICAL_SECRET_PATTERNS) {
       if (pat.test(textContent)) {
-        throw new Error(`RELEASE_SEAL_REJECTED: Critical secret pattern detected in ${path.relative(this.projectRoot, fullPath)}`);
+        throw new Error(
+          `RELEASE_SEAL_REJECTED: Critical secret pattern detected in ${path.relative(this.projectRoot, fullPath)}`,
+        );
       }
     }
 
@@ -97,7 +95,7 @@ export class EosHermeticReleaseSealer {
     return deepFreeze({
       relativePath: path.relative(this.projectRoot, fullPath).replace(/\\/g, "/"),
       byteSize: contentBuffer.byteLength,
-      sha256
+      sha256,
     });
   }
 
@@ -136,7 +134,7 @@ export class EosHermeticReleaseSealer {
       path.join(this.projectRoot, "package.json"),
       path.join(this.projectRoot, "bin", "eos.mjs"),
       path.join(this.projectRoot, "docs", "contracts", "mcp-tool-catalog.json"),
-      ...this.discoverCoreFiles("src/core").slice(0, 30) // Seal top Layer-0 core engines
+      ...this.discoverCoreFiles("src/core").slice(0, 30), // Seal top Layer-0 core engines
     ].filter((p) => fs.existsSync(p));
 
     const artifacts: ArtifactFileDigest[] = [];
@@ -155,7 +153,7 @@ export class EosHermeticReleaseSealer {
       _type: "https://in-toto.io/Statement/v1",
       subject: artifacts.map((a) => ({
         name: a.relativePath,
-        digest: { sha256: a.sha256 }
+        digest: { sha256: a.sha256 },
       })),
       predicateType: "https://slsa.dev/provenance/v1",
       predicate: {
@@ -163,20 +161,20 @@ export class EosHermeticReleaseSealer {
           buildType: "https://eos.engineer/release/hermetic-builder/v1",
           externalParameters: {
             version,
-            commitSha
-          }
+            commitSha,
+          },
         },
         runDetails: {
           builder: {
             id: "eos-system-hermetic-sealer",
-            version
+            version,
           },
           metadata: {
             invocationId: `inv-${releaseSealDigest.slice(0, 16)}`,
-            startedOn: generatedAtIso
-          }
-        }
-      }
+            startedOn: generatedAtIso,
+          },
+        },
+      },
     };
 
     return deepFreeze({
@@ -187,7 +185,7 @@ export class EosHermeticReleaseSealer {
       totalArtifactsScanned: artifacts.length,
       artifacts,
       slsaProvenance,
-      releaseSealDigest
+      releaseSealDigest,
     });
   }
 
@@ -196,7 +194,7 @@ export class EosHermeticReleaseSealer {
    */
   public persistReleaseSeal(
     manifest: ReleaseSealManifest,
-    ledgerPath?: string
+    ledgerPath?: string,
   ): { readonly savedPath: string; readonly ledgerReceiptHash: string } {
     const distDir = path.join(this.projectRoot, "dist", "releases");
     if (!fs.existsSync(distDir)) {
@@ -217,8 +215,8 @@ export class EosHermeticReleaseSealer {
           version: manifest.version,
           commitSha: manifest.commitSha,
           releaseSealDigest: manifest.releaseSealDigest,
-          totalArtifacts: manifest.totalArtifactsScanned
-        }
+          totalArtifacts: manifest.totalArtifactsScanned,
+        },
       });
       return { savedPath, ledgerReceiptHash: entry.entryHash };
     } finally {

@@ -34,15 +34,15 @@ export type SandboxStatus =
 
 export interface WasmSandboxOptions {
   readonly initialPages?: number; // 64 KiB per page (default: 1)
-  readonly maxPages?: number;     // Hard upper ceiling (default: 256 = 16 MiB)
-  readonly entryFunction?: string;// default: "main" or first export
+  readonly maxPages?: number; // Hard upper ceiling (default: 256 = 16 MiB)
+  readonly entryFunction?: string; // default: "main" or first export
   readonly functionArgs?: number[];
-  readonly timeoutMs?: number;    // Execution deadline
+  readonly timeoutMs?: number; // Execution deadline
 }
 
 export interface IsolateSandboxOptions {
-  readonly timeoutMs?: number;    // default: 2000 ms
-  readonly memoryLimitMb?: number;// default: 64 MiB
+  readonly timeoutMs?: number; // default: 2000 ms
+  readonly memoryLimitMb?: number; // default: 64 MiB
   readonly readOnlyGlobals?: Record<string, unknown>;
 }
 
@@ -82,40 +82,35 @@ export interface MicroVmDescriptorResult {
 export const WASM_BYTECODE_TEMPLATES = {
   // i32 add(i32 a, i32 b) -> a + b
   ADD: new Uint8Array([
-    0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x07, 0x01, 0x60,
-    0x02, 0x7f, 0x7f, 0x01, 0x7f, 0x03, 0x02, 0x01, 0x00, 0x07, 0x07, 0x01,
-    0x03, 0x61, 0x64, 0x64, 0x00, 0x00, 0x0a, 0x09, 0x01, 0x07, 0x00, 0x20,
-    0x00, 0x20, 0x01, 0x6a, 0x0b
+    0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x07, 0x01, 0x60, 0x02, 0x7f, 0x7f, 0x01, 0x7f, 0x03, 0x02,
+    0x01, 0x00, 0x07, 0x07, 0x01, 0x03, 0x61, 0x64, 0x64, 0x00, 0x00, 0x0a, 0x09, 0x01, 0x07, 0x00, 0x20, 0x00, 0x20,
+    0x01, 0x6a, 0x0b,
   ]),
 
   // void trap() -> executes unreachable opcode
   TRAP: new Uint8Array([
-    0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x04, 0x01, 0x60,
-    0x00, 0x00, 0x03, 0x02, 0x01, 0x00, 0x07, 0x08, 0x01, 0x04, 0x74, 0x72,
-    0x61, 0x70, 0x00, 0x00, 0x0a, 0x05, 0x01, 0x03, 0x00, 0x00, 0x0b
+    0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x04, 0x01, 0x60, 0x00, 0x00, 0x03, 0x02, 0x01, 0x00, 0x07,
+    0x08, 0x01, 0x04, 0x74, 0x72, 0x61, 0x70, 0x00, 0x00, 0x0a, 0x05, 0x01, 0x03, 0x00, 0x00, 0x0b,
   ]),
 
   // void oob() -> loads from memory index 100,000 (exceeds 1-page 65,536 limit)
   OOB: new Uint8Array([
-    0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x04, 0x01, 0x60,
-    0x00, 0x00, 0x03, 0x02, 0x01, 0x00, 0x05, 0x03, 0x01, 0x00, 0x01, 0x07,
-    0x07, 0x01, 0x03, 0x6f, 0x6f, 0x62, 0x00, 0x00, 0x0a, 0x0c, 0x01, 0x0a,
-    0x00, 0x41, 0xa0, 0x8d, 0x06, 0x28, 0x02, 0x00, 0x1a, 0x0b
+    0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x04, 0x01, 0x60, 0x00, 0x00, 0x03, 0x02, 0x01, 0x00, 0x05,
+    0x03, 0x01, 0x00, 0x01, 0x07, 0x07, 0x01, 0x03, 0x6f, 0x6f, 0x62, 0x00, 0x00, 0x0a, 0x0c, 0x01, 0x0a, 0x00, 0x41,
+    0xa0, 0x8d, 0x06, 0x28, 0x02, 0x00, 0x1a, 0x0b,
   ]),
 
   // void loop() -> infinite computation loop (loop (br 0))
   LOOP: new Uint8Array([
-    0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00,
-    0x01, 0x04, 0x01, 0x60, 0x00, 0x00,
-    0x03, 0x02, 0x01, 0x00,
-    0x07, 0x08, 0x01, 0x04, 0x6c, 0x6f, 0x6f, 0x70, 0x00, 0x00,
-    0x0a, 0x09, 0x01, 0x07, 0x00, 0x03, 0x40, 0x0c, 0x00, 0x0b, 0x0b
-  ])
+    0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x04, 0x01, 0x60, 0x00, 0x00, 0x03, 0x02, 0x01, 0x00, 0x07,
+    0x08, 0x01, 0x04, 0x6c, 0x6f, 0x6f, 0x70, 0x00, 0x00, 0x0a, 0x09, 0x01, 0x07, 0x00, 0x03, 0x40, 0x0c, 0x00, 0x0b,
+    0x0b,
+  ]),
 };
 
 export class EosWasmSandboxEngine {
   public static readonly WASM_PAGE_SIZE_BYTES = 65536; // 64 KiB
-  public static readonly MAX_WASM_PAGES_LIMIT = 256;   // 16 MiB
+  public static readonly MAX_WASM_PAGES_LIMIT = 256; // 16 MiB
   public static readonly MAX_CONCURRENT_WORKERS = 8;
   public static readonly MAX_BYTECODE_SIZE_BYTES = 512 * 1024; // 512 KiB
   public static activeWorkerCount = 0;
@@ -133,10 +128,7 @@ export class EosWasmSandboxEngine {
   /**
    * Tier 1: Executes WebAssembly bytecode in capability-isolated linear memory.
    */
-  public executeWasm(
-    wasmInput: Uint8Array | Buffer | string,
-    options?: WasmSandboxOptions
-  ): SandboxExecutionResult {
+  public executeWasm(wasmInput: Uint8Array | Buffer | string, options?: WasmSandboxOptions): SandboxExecutionResult {
     const executionId = crypto.randomUUID();
     const startNs = process.hrtime.bigint();
     const stdout: string[] = [];
@@ -155,11 +147,14 @@ export class EosWasmSandboxEngine {
     const inputSha256 = crypto.createHash("sha256").update(wasmBytes).digest("hex");
 
     const initialPages = Math.max(1, Math.min(64, options?.initialPages || 1));
-    const maxPages = Math.max(initialPages, Math.min(EosWasmSandboxEngine.MAX_WASM_PAGES_LIMIT, options?.maxPages || 256));
+    const maxPages = Math.max(
+      initialPages,
+      Math.min(EosWasmSandboxEngine.MAX_WASM_PAGES_LIMIT, options?.maxPages || 256),
+    );
 
     const memory = new WebAssembly.Memory({
       initial: initialPages,
-      maximum: maxPages
+      maximum: maxPages,
     });
 
     // Capability-based host imports: zero ambient host authority
@@ -187,8 +182,8 @@ export class EosWasmSandboxEngine {
         },
         host_time_ns: () => {
           return Number(process.hrtime.bigint() & 0x7fffffffffffffffn);
-        }
-      }
+        },
+      },
     };
 
     let status: SandboxStatus = "COMPLETED";
@@ -198,7 +193,7 @@ export class EosWasmSandboxEngine {
     try {
       const arrayBuf = wasmBytes.buffer.slice(
         wasmBytes.byteOffset,
-        wasmBytes.byteOffset + wasmBytes.byteLength
+        wasmBytes.byteOffset + wasmBytes.byteLength,
       ) as ArrayBuffer;
       const module = new WebAssembly.Module(arrayBuf);
       const instance = new WebAssembly.Instance(module, imports);
@@ -245,7 +240,7 @@ export class EosWasmSandboxEngine {
       stderr,
       durationNs,
       memoryConsumedBytes,
-      inputSha256
+      inputSha256,
     );
 
     this.commitExecutionReceipt(result);
@@ -261,7 +256,7 @@ export class EosWasmSandboxEngine {
    */
   public async executeWasmWorker(
     wasmInput: Uint8Array | Buffer | string,
-    options?: WasmSandboxOptions
+    options?: WasmSandboxOptions,
   ): Promise<SandboxExecutionResult> {
     const executionId = crypto.randomUUID();
     const startNs = process.hrtime.bigint();
@@ -279,7 +274,10 @@ export class EosWasmSandboxEngine {
 
     const inputSha256 = crypto.createHash("sha256").update(wasmBytes).digest("hex");
     const initialPages = Math.max(1, Math.min(64, options?.initialPages || 1));
-    const maxPages = Math.max(initialPages, Math.min(EosWasmSandboxEngine.MAX_WASM_PAGES_LIMIT, options?.maxPages || 256));
+    const maxPages = Math.max(
+      initialPages,
+      Math.min(EosWasmSandboxEngine.MAX_WASM_PAGES_LIMIT, options?.maxPages || 256),
+    );
     const timeoutMs = Math.max(20, Math.min(30000, options?.timeoutMs || 2000));
     const entryFunction = options?.entryFunction;
     const functionArgs = options?.functionArgs || [];
@@ -297,7 +295,7 @@ export class EosWasmSandboxEngine {
         [`WebAssembly bytecode exceeds maximum allowed size of ${EosWasmSandboxEngine.MAX_BYTECODE_SIZE_BYTES} bytes.`],
         durationNs,
         0,
-        inputSha256
+        inputSha256,
       );
       this.commitExecutionReceipt(result);
       return result;
@@ -316,7 +314,7 @@ export class EosWasmSandboxEngine {
         [`Worker concurrency limit reached (max ${EosWasmSandboxEngine.MAX_CONCURRENT_WORKERS} concurrent workers).`],
         durationNs,
         0,
-        inputSha256
+        inputSha256,
       );
       this.commitExecutionReceipt(result);
       return result;
@@ -385,8 +383,8 @@ export class EosWasmSandboxEngine {
             initialPages,
             maxPages,
             entryFunction,
-            functionArgs
-          }
+            functionArgs,
+          },
         });
       } catch (err: any) {
         EosWasmSandboxEngine.activeWorkerCount = Math.max(0, EosWasmSandboxEngine.activeWorkerCount - 1);
@@ -404,7 +402,7 @@ export class EosWasmSandboxEngine {
           stderr,
           durationNs,
           memoryConsumedBytes,
-          inputSha256
+          inputSha256,
         );
         this.commitExecutionReceipt(result);
         return resolve(result);
@@ -431,7 +429,9 @@ export class EosWasmSandboxEngine {
           }
           status = "COMPLETED";
           exitCode = 0;
-          try { worker.terminate(); } catch {}
+          try {
+            worker.terminate();
+          } catch {}
         } else if (msg.type === "error") {
           exitCode = 1;
           const errMsg = String(msg.message || "Wasm execution error");
@@ -447,7 +447,9 @@ export class EosWasmSandboxEngine {
           } else {
             status = "EXECUTION_FAILED";
           }
-          try { worker.terminate(); } catch {}
+          try {
+            worker.terminate();
+          } catch {}
         }
       });
 
@@ -482,7 +484,7 @@ export class EosWasmSandboxEngine {
           stderr,
           durationNs,
           memoryConsumedBytes,
-          inputSha256
+          inputSha256,
         );
         this.commitExecutionReceipt(result);
         resolve(result);
@@ -492,7 +494,7 @@ export class EosWasmSandboxEngine {
 
   public async executeWasmAsync(
     wasmInput: Uint8Array | Buffer | string,
-    options?: WasmSandboxOptions
+    options?: WasmSandboxOptions,
   ): Promise<SandboxExecutionResult> {
     return this.executeWasmWorker(wasmInput, options);
   }
@@ -508,39 +510,39 @@ export class EosWasmSandboxEngine {
    * Hostile untrusted agent execution MUST use Tier 1 (WebAssembly memory bounding)
    * or Tier 3 (MicroVM hardware enclaves).
    */
-  public executeIsolate(
-    code: string,
-    options?: IsolateSandboxOptions
-  ): SandboxExecutionResult {
+  public executeIsolate(code: string, options?: IsolateSandboxOptions): SandboxExecutionResult {
     const executionId = crypto.randomUUID();
     const startNs = process.hrtime.bigint();
     const stdout: string[] = [];
     const stderr: string[] = [];
-    const inputSha256 = crypto.createHash("sha256").update(code || "").digest("hex");
+    const inputSha256 = crypto
+      .createHash("sha256")
+      .update(code || "")
+      .digest("hex");
 
     // Frozen sandbox context: zero ambient authority
     const contextObj: Record<string, any> = {
       console: Object.freeze({
         log: (...args: any[]) => stdout.push(args.map(String).join(" ")),
         warn: (...args: any[]) => stderr.push(args.map(String).join(" ")),
-        error: (...args: any[]) => stderr.push(args.map(String).join(" "))
+        error: (...args: any[]) => stderr.push(args.map(String).join(" ")),
       }),
       Math: Math,
       Date: Date,
       JSON: JSON,
       Buffer: Object.freeze({
         from: Buffer.from,
-        byteLength: Buffer.byteLength
+        byteLength: Buffer.byteLength,
       }),
       crypto: Object.freeze({
-        createHash: (alg: string) => crypto.createHash(alg)
+        createHash: (alg: string) => crypto.createHash(alg),
       }),
       // Explicitly seal ambient dangerous globals
       process: undefined,
       require: undefined,
       import: undefined,
       fetch: undefined,
-      ...(options?.readOnlyGlobals || {})
+      ...(options?.readOnlyGlobals || {}),
     };
 
     const ctx = vm.createContext(contextObj);
@@ -551,12 +553,12 @@ export class EosWasmSandboxEngine {
 
     try {
       const script = new vm.Script(code, {
-        filename: `sandbox-agent-${executionId.slice(0, 8)}.js`
+        filename: `sandbox-agent-${executionId.slice(0, 8)}.js`,
       });
 
       returnValue = script.runInContext(ctx, {
         timeout: Math.max(50, options?.timeoutMs || 2000),
-        breakOnSigint: true
+        breakOnSigint: true,
       });
     } catch (err: any) {
       exitCode = 1;
@@ -582,7 +584,7 @@ export class EosWasmSandboxEngine {
       stderr,
       durationNs,
       memoryConsumedBytes,
-      inputSha256
+      inputSha256,
     );
 
     this.commitExecutionReceipt(result);
@@ -608,31 +610,31 @@ export class EosWasmSandboxEngine {
         memoryLimitBytes: memSizeMib * 1024 * 1024,
         cpuCount: vcpuCount,
         securityProfile: "RestrictedToken",
-        networkConfig: "IsolatedInternal"
+        networkConfig: "IsolatedInternal",
       };
     } else {
       spec = {
         boot_source: {
           kernel_image_path: config?.kernelPath || "/opt/eos/vmlinux-6.1",
-          boot_args: "console=ttyS0 reboot=k panic=1 pci=off init=/init"
+          boot_args: "console=ttyS0 reboot=k panic=1 pci=off init=/init",
         },
         drives: [
           {
             drive_id: "rootfs",
             path_on_host: config?.rootfsPath || "/opt/eos/rootfs.ext4",
             is_root_device: true,
-            is_read_only: true
-          }
+            is_read_only: true,
+          },
         ],
         machine_config: {
           vcpu_count: vcpuCount,
           mem_size_mib: memSizeMib,
-          smt: false
+          smt: false,
         },
         vsock: {
           guest_cid: 3,
-          uds_path: config?.vsockPath || `/tmp/firecracker-${enclaveId}.vsock`
-        }
+          uds_path: config?.vsockPath || `/tmp/firecracker-${enclaveId}.vsock`,
+        },
       };
     }
 
@@ -642,7 +644,7 @@ export class EosWasmSandboxEngine {
       enclaveId,
       platform: isWin ? "windows-hyperv" : "linux-firecracker",
       spec,
-      specSha256
+      specSha256,
     };
   }
 
@@ -667,9 +669,9 @@ export class EosWasmSandboxEngine {
             memoryConsumedBytes: result.memoryConsumedBytes,
             inputSha256: result.inputSha256,
             outputSha256: result.outputSha256,
-            receiptSha256: result.receiptSha256
+            receiptSha256: result.receiptSha256,
           },
-          engramTopicKey: `eos/wasm-sandbox/${result.executionId}`
+          engramTopicKey: `eos/wasm-sandbox/${result.executionId}`,
         });
         return true;
       } finally {
@@ -691,7 +693,7 @@ export class EosWasmSandboxEngine {
     stderr: string[],
     durationNs: number,
     memoryConsumedBytes: number,
-    inputSha256: string
+    inputSha256: string,
   ): SandboxExecutionResult {
     const outputPayload = JSON.stringify({ returnValue, stdout, stderr, status });
     const outputSha256 = crypto.createHash("sha256").update(outputPayload).digest("hex");
@@ -710,7 +712,7 @@ export class EosWasmSandboxEngine {
       memoryConsumedBytes,
       inputSha256,
       outputSha256,
-      receiptSha256
+      receiptSha256,
     };
   }
 

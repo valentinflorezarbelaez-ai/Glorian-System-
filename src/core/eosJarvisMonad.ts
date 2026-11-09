@@ -60,44 +60,49 @@ export const JARVIS_INTENT_REGISTRY: readonly JarvisIntentMapping[] = [
     intent: "AUDIT_FLEET",
     triggerKeywords: ["audita", "flota", "revisa", "fleet", "auditoria"],
     actionCommand: "npm run fleet:verify",
-    spokenResponse: "A la orden, Arquitecto Valentín. Auditando todos los repositorios de la Flota Soberana y sus aduanas SecDevOps.",
-    targetSubsystem: "EosFleetDispatcher"
+    spokenResponse:
+      "A la orden, Arquitecto Valentín. Auditando todos los repositorios de la Flota Soberana y sus aduanas SecDevOps.",
+    targetSubsystem: "EosFleetDispatcher",
   },
   {
     intent: "SHIP_FLEET",
     triggerKeywords: ["despliega", "despacha", "publica", "ship", "produccion", "sube"],
     actionCommand: "npm run fleet:ship",
-    spokenResponse: "Comprendido. Verificando las 7 aduanas, comiteando, pusheando y desplegando toda la flota a producción.",
-    targetSubsystem: "EosFleetDispatcher & Vercel"
+    spokenResponse:
+      "Comprendido. Verificando las 7 aduanas, comiteando, pusheando y desplegando toda la flota a producción.",
+    targetSubsystem: "EosFleetDispatcher & Vercel",
   },
   {
     intent: "VERIFY_SECURITY_GATES",
     triggerKeywords: ["seguridad", "aduanas", "sast", "secretos", "gates", "cicd"],
     actionCommand: "npm run cicd:gate",
     spokenResponse: "Preparando el escaneo local de patrones de credenciales; no es un análisis SAST general.",
-    targetSubsystem: "EosCicdPipeline"
+    targetSubsystem: "EosCicdPipeline",
   },
   {
     intent: "RUN_NANOSECOND_BENCHMARK",
     triggerKeywords: ["nanosegundos", "benchmark", "hft", "velocidad", "l1", "soa"],
     actionCommand: "npm run test",
-    spokenResponse: "Activando el motor de nanosegundos L1 Struct-of-Arrays. Latencia medida en sub-microsegundos con cero recolección de basura.",
-    targetSubsystem: "EosNanosecondEngine"
+    spokenResponse:
+      "Activando el motor de nanosegundos L1 Struct-of-Arrays. Latencia medida en sub-microsegundos con cero recolección de basura.",
+    targetSubsystem: "EosNanosecondEngine",
   },
   {
     intent: "QUERY_AKASHIC_MEMORY",
     triggerKeywords: ["memoria", "akashica", "engram", "nous", "recuerda", "aprende"],
     actionCommand: "curl.exe -s https://eos-system-ten.vercel.app/api/memory",
-    spokenResponse: "Accediendo a los archivos akáshicos del Átomo Maestro Nous y las veintisiete herramientas de memoria soberana.",
-    targetSubsystem: "EosAkashicMemory"
+    spokenResponse:
+      "Accediendo a los archivos akáshicos del Átomo Maestro Nous y las veintisiete herramientas de memoria soberana.",
+    targetSubsystem: "EosAkashicMemory",
   },
   {
     intent: "ACTIVATE_BELILIN_THEURGY",
     triggerKeywords: ["belilin", "teurgia", "oraculo", "samael", "templo", "anubis"],
     actionCommand: "curl.exe -s https://eos-system-ten.vercel.app/api/teurgia",
-    spokenResponse: "Círculo mágico de protección trazado con Belilin. El Tribunal de Anubis y la Balanza del Dharma están despiertos.",
-    targetSubsystem: "EosSolarSanctum & SamaelCodex"
-  }
+    spokenResponse:
+      "Círculo mágico de protección trazado con Belilin. El Tribunal de Anubis y la Balanza del Dharma están despiertos.",
+    targetSubsystem: "EosSolarSanctum & SamaelCodex",
+  },
 ] as const;
 
 /**
@@ -180,33 +185,72 @@ export function evaluateDirectiveWithTMR(directive: string): TmrExecutionReceipt
   // Windows commands, pipe-to-any-interpreter, subshell injection, and data exfiltration.
   const destructivePatterns = [
     // Unix filesystem destruction
-    "rm -rf", "rm -r /", "rm -f /",
+    "rm -rf",
+    "rm -r /",
+    "rm -f /",
     // Windows filesystem destruction
-    "del /f", "del /s", "del /q", "rmdir /s",
-    "format c:", "format d:", "format e:",
+    "del /f",
+    "del /s",
+    "del /q",
+    "rmdir /s",
+    "format c:",
+    "format d:",
+    "format e:",
     // SQL destruction
-    "drop table", "drop database", "drop schema", "drop view", "drop index",
-    "delete from", "truncate table", "truncate database",
+    "drop table",
+    "drop database",
+    "drop schema",
+    "drop view",
+    "drop index",
+    "delete from",
+    "truncate table",
+    "truncate database",
     // Pipe to any interpreter (not just bash/sh)
-    "| bash", "| sh ", "| sh\t", "| zsh", "| fish",
-    "| pwsh", "| powershell", "| cmd", "| python", "| python3",
-    "| node", "| ruby", "| perl", "| php",
+    "| bash",
+    "| sh ",
+    "| sh\t",
+    "| zsh",
+    "| fish",
+    "| pwsh",
+    "| powershell",
+    "| cmd",
+    "| python",
+    "| python3",
+    "| node",
+    "| ruby",
+    "| perl",
+    "| php",
     // Subshell injection
-    "$(",   // bash subshell
-    "`",    // backtick subshell
+    "$(", // bash subshell
+    "`", // backtick subshell
     // Fork bomb
     ":(){",
     // Sensitive file access
-    "/etc/shadow", "/etc/passwd", "/etc/sudoers", "/etc/crontab",
-    "c:\\windows\\system32", "c:/windows/system32",
+    "/etc/shadow",
+    "/etc/passwd",
+    "/etc/sudoers",
+    "/etc/crontab",
+    "c:\\windows\\system32",
+    "c:/windows/system32",
     // Filesystem tools
-    "mkfs", "fdisk", "wipefs", "shred",
+    "mkfs",
+    "fdisk",
+    "wipefs",
+    "shred",
     // Network exfiltration
-    "curl http", "curl https", "wget http", "wget https",
-    "nc -e", "netcat -e",
+    "curl http",
+    "curl https",
+    "wget http",
+    "wget https",
+    "nc -e",
+    "netcat -e",
     // Kernel / privilege escalation
-    "chmod 777", "chmod +s", "sudo su", "sudo bash",
-    "sudo sh", "sudo -s",
+    "chmod 777",
+    "chmod +s",
+    "sudo su",
+    "sudo bash",
+    "sudo sh",
+    "sudo -s",
   ];
   const isDestructive = destructivePatterns.some((p) => norm.includes(p.toLowerCase()));
   let intentGamma: string;
@@ -235,7 +279,7 @@ export function evaluateDirectiveWithTMR(directive: string): TmrExecutionReceipt
   const sandboxes: TmrSandboxVerdict[] = [
     { sandboxId: "ALPHA", targetIntent: intentAlpha, safeToExecute: true, checksum: checkAlpha },
     { sandboxId: "BETA", targetIntent: intentBeta, safeToExecute: true, checksum: checkBeta },
-    { sandboxId: "GAMMA", targetIntent: intentGamma, safeToExecute: safeGamma, checksum: checkGamma }
+    { sandboxId: "GAMMA", targetIntent: intentGamma, safeToExecute: safeGamma, checksum: checkGamma },
   ];
 
   // Count votes
@@ -264,13 +308,14 @@ export function evaluateDirectiveWithTMR(directive: string): TmrExecutionReceipt
     consensusAchieved,
     agreementRatio: `${maxVotes}/3`,
     selectedAction: matchedMapping.actionCommand,
-    consensusHash: `tmr-${simpleHash(`${majorityIntent}:${maxVotes}:${directive}`)}`
+    consensusHash: `tmr-${simpleHash(`${majorityIntent}:${maxVotes}:${directive}`)}`,
   };
 }
 
 export function interpretJarvisDirective(directive: string): JarvisThoughtReceipt {
   const tmr = evaluateDirectiveWithTMR(directive);
-  const matchedIntent = JARVIS_INTENT_REGISTRY.find((m) => m.actionCommand === tmr.selectedAction) || JARVIS_INTENT_REGISTRY[0];
+  const matchedIntent =
+    JARVIS_INTENT_REGISTRY.find((m) => m.actionCommand === tmr.selectedAction) || JARVIS_INTENT_REGISTRY[0];
   const hash = simpleHash(directive);
 
   return {
@@ -286,9 +331,9 @@ export function interpretJarvisDirective(directive: string): JarvisThoughtReceip
       `3. Verificación de Invariantes: 7 Leyes Inviolables`,
       `4. Despacho Autónomo: ${matchedIntent.actionCommand}`,
       `5. Subsistema Destino: ${matchedIntent.targetSubsystem}`,
-      `6. Emisión de Evidencia: EVD Criptográfico SHA-256`
+      `6. Emisión de Evidencia: EVD Criptográfico SHA-256`,
     ],
     dharmaConfidence: 0.999,
-    tmrConsensus: tmr
+    tmrConsensus: tmr,
   };
 }

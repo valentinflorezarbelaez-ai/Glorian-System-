@@ -19,7 +19,7 @@ test("BDD-196: Supermajority BFT Consensus Voting", () => {
     patchHash: "sha256:11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff",
     authorAgentId: "agent_architect",
     testsExitCode: 0,
-    conformsToConstitution: true
+    conformsToConstitution: true,
   };
 
   const report = EosBftAgentSwarmSlashing.evaluateConsensus(swarm, proposal);
@@ -46,7 +46,7 @@ test("BDD-197: Malicious Mutation Detection and Slashing Execution", () => {
       patchHash: "sha256:badbeefbadbeefbadbeefbadbeefbadbeefbadbeefbadbeefbadbeefbadbeef",
       authorAgentId: "agent_architect",
       testsExitCode: 1, // Failing tests, breaking Mandamiento II
-      conformsToConstitution: false
+      conformsToConstitution: false,
     };
 
     const report = EosBftAgentSwarmSlashing.evaluateConsensus(swarm, maliciousProposal);

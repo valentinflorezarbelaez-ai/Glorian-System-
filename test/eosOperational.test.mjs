@@ -11,7 +11,7 @@ import os from "node:os";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const root = path.resolve(__dirname, "..");
+const _root = path.resolve(__dirname, "..");
 
 const { EosFeatureFlags, isEnabled } = await import("../src/core/eosFeatureFlags.ts");
 const { parseDiff, applyDiff, generateDiff } = await import("../src/core/eosDiffPatcher.ts");
@@ -20,16 +20,24 @@ const { EosPluginLoader } = await import("../src/core/eosPluginLoader.ts");
 
 // ── Suite 1: Feature Flags ───────────────────────────────────────────────────
 describe("EosFeatureFlags — Progressive Delivery (Stripe/Netflix Standard)", () => {
-
   it("reads default values from the built-in config", () => {
-    const flags = new EosFeatureFlags();
-    // These are enabled by default
-    assert.equal(flags.isEnabled("agi_pipeline"), true);
-    assert.equal(flags.isEnabled("consultant_offline"), true);
-    assert.equal(flags.isEnabled("graph_cache"), true);
-    // These are disabled by default (require explicit opt-in)
-    assert.equal(flags.isEnabled("chaos_in_ci"), false);
-    assert.equal(flags.isEnabled("perf_regression"), false);
+    const savedChaos = process.env["EOS_FLAG_CHAOS_IN_CI"];
+    const savedPerf = process.env["EOS_FLAG_PERF_REGRESSION"];
+    delete process.env["EOS_FLAG_CHAOS_IN_CI"];
+    delete process.env["EOS_FLAG_PERF_REGRESSION"];
+    try {
+      const flags = new EosFeatureFlags();
+      // These are enabled by default
+      assert.equal(flags.isEnabled("agi_pipeline"), true);
+      assert.equal(flags.isEnabled("consultant_offline"), true);
+      assert.equal(flags.isEnabled("graph_cache"), true);
+      // These are disabled by default (require explicit opt-in)
+      assert.equal(flags.isEnabled("chaos_in_ci"), false);
+      assert.equal(flags.isEnabled("perf_regression"), false);
+    } finally {
+      if (savedChaos !== undefined) process.env["EOS_FLAG_CHAOS_IN_CI"] = savedChaos;
+      if (savedPerf !== undefined) process.env["EOS_FLAG_PERF_REGRESSION"] = savedPerf;
+    }
   });
 
   it("reads flag override from environment variable", () => {
@@ -69,7 +77,7 @@ describe("EosFeatureFlags — Progressive Delivery (Stripe/Netflix Standard)", (
     fs.writeFileSync(
       path.join(tmpDir, "flags.json"),
       JSON.stringify({ chaos_in_ci: true, perf_regression: true }),
-      "utf8"
+      "utf8",
     );
     const flags = new EosFeatureFlags(tmpDir);
     assert.equal(flags.isEnabled("chaos_in_ci"), true, "Should read from flags.json");
@@ -89,7 +97,6 @@ describe("EosFeatureFlags — Progressive Delivery (Stripe/Netflix Standard)", (
 
 // ── Suite 2: Diff Patcher ────────────────────────────────────────────────────
 describe("EosDiffPatcher — Diff-Based Patch Application (Cursor/Devin Standard)", () => {
-
   it("parseDiff correctly identifies old and new paths", () => {
     const diff = `--- a/src/core/foo.ts\n+++ b/src/core/foo.ts\n@@ -1,3 +1,3 @@\n line1\n-oldLine\n+newLine\n line3\n`;
     const parsed = parseDiff(diff);
@@ -103,7 +110,7 @@ describe("EosDiffPatcher — Diff-Based Patch Application (Cursor/Devin Standard
     const parsed = parseDiff(diff);
     const hunk = parsed.hunks[0];
     assert.ok(hunk);
-    const types = hunk.lines.map(l => l.type);
+    const types = hunk.lines.map((l) => l.type);
     assert.ok(types.includes("context"), "Should have context lines");
     assert.ok(types.includes("add"), "Should have add lines");
     assert.ok(types.includes("remove"), "Should have remove lines");
@@ -143,11 +150,34 @@ describe("EosDiffPatcher — Diff-Based Patch Application (Cursor/Devin Standard
     assert.ok(result.error?.includes("not exist"));
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
+
+  it("applyDiff returns error for path traversal targets outside projectRoot", () => {
+    const tmpDir = path.join(os.tmpdir(), `eos-diff-traversal-${Date.now()}`);
+    fs.mkdirSync(tmpDir, { recursive: true });
+    const diff = parseDiff("--- a/../../secret.txt\n+++ b/../../secret.txt\n@@ -1 +1 @@\n-old\n+new\n");
+    const result = applyDiff(diff, tmpDir);
+    assert.equal(result.success, false);
+    assert.ok(result.error?.includes("escapes project root"));
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it("applyDiff rejects patch when removal line mismatches target content", () => {
+    const tmpDir = path.join(os.tmpdir(), `eos-diff-mismatch-${Date.now()}`);
+    fs.mkdirSync(tmpDir, { recursive: true });
+    const targetFile = path.join(tmpDir, "target.ts");
+    fs.writeFileSync(targetFile, "const actual = 42;\n", "utf8");
+    const diff = parseDiff(
+      "--- a/target.ts\n+++ b/target.ts\n@@ -1 +1 @@\n-const expected = 99;\n+const newval = 100;\n",
+    );
+    const result = applyDiff(diff, tmpDir);
+    assert.equal(result.success, false);
+    assert.ok(result.error?.includes("Patch mismatch"));
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
 });
 
 // ── Suite 3: Rate Limiting ────────────────────────────────────────────────────
 describe("EosApiRateLimit — API Rate Limiting (Cloudflare/Stripe Standard)", () => {
-
   it("withRateLimit returns a function that wraps a handler", () => {
     const wrapped = withRateLimit({ capacity: 5, refillPerSecond: 10 })((req, res) => res);
     assert.equal(typeof wrapped, "function");
@@ -163,13 +193,26 @@ describe("EosApiRateLimit — API Rate Limiting (Cloudflare/Stripe Standard)", (
     const mockRes = {
       statusCode: 200,
       headers: {},
-      setHeader(k, v) { this.headers[k] = v; },
-      status(c) { this.statusCode = c; statusCode = c; return this; },
-      json(d) { body = d; return this; },
-      end(s) { if (s) body = JSON.parse(s); return this; },
+      setHeader(k, v) {
+        this.headers[k] = v;
+      },
+      status(c) {
+        this.statusCode = c;
+        statusCode = c;
+        return this;
+      },
+      json(d) {
+        body = d;
+        return this;
+      },
+      end(s) {
+        if (s) body = JSON.parse(s);
+        return this;
+      },
     };
     await wrapped({ method: "GET", headers: { "x-forwarded-for": "1.2.3.4" }, socket: {} }, mockRes);
     assert.equal(statusCode, 200, "Should allow request under limit");
+    assert.ok(body);
   });
 
   it("returns 429 after exceeding capacity", async () => {
@@ -183,10 +226,27 @@ describe("EosApiRateLimit — API Rate Limiting (Cloudflare/Stripe Standard)", (
       const res = {
         statusCode: 200,
         headers: {},
-        setHeader(k, v) { this.headers[k] = v; },
-        status(c) { this.statusCode = c; status = c; return this; },
-        json() { return this; },
-        end(s) { if (s) { try { JSON.parse(s); } catch {} } return this; },
+        setHeader(k, v) {
+          this.headers[k] = v;
+        },
+        status(c) {
+          this.statusCode = c;
+          status = c;
+          return this;
+        },
+        json() {
+          return this;
+        },
+        end(s) {
+          if (s) {
+            try {
+              JSON.parse(s);
+            } catch {
+              /* ignore parse error */
+            }
+          }
+          return this;
+        },
       };
       await wrapped({ method: "GET", headers: { "x-forwarded-for": "9.9.9.9" }, socket: {} }, res);
       return status;
@@ -206,10 +266,20 @@ describe("EosApiRateLimit — API Rate Limiting (Cloudflare/Stripe Standard)", (
     const mockRes = {
       statusCode: 200,
       headers: {},
-      setHeader(k, v) { this.headers[k] = v; },
-      status(c) { this.statusCode = c; statusCode = c; return this; },
-      json(d) { return this; },
-      end() { return this; },
+      setHeader(k, v) {
+        this.headers[k] = v;
+      },
+      status(c) {
+        this.statusCode = c;
+        statusCode = c;
+        return this;
+      },
+      json(_d) {
+        return this;
+      },
+      end() {
+        return this;
+      },
     };
     await wrapped({ method: "OPTIONS", headers: {}, socket: {} }, mockRes);
     assert.equal(statusCode, 200, "OPTIONS should bypass rate limiting");
@@ -218,7 +288,6 @@ describe("EosApiRateLimit — API Rate Limiting (Cloudflare/Stripe Standard)", (
 
 // ── Suite 4: Plugin Loader ────────────────────────────────────────────────────
 describe("EosPluginLoader — External Plugin System (DeepSeek/Cursor Standard)", () => {
-
   let tmpDir;
 
   before(() => {
@@ -234,8 +303,12 @@ describe("EosPluginLoader — External Plugin System (DeepSeek/Cursor Standard)"
     const loader = new EosPluginLoader(tmpDir);
     const mockRegistry = {
       tools: [],
-      register(tool) { this.tools.push(tool); },
-      listTools() { return this.tools; },
+      register(tool) {
+        this.tools.push(tool);
+      },
+      listTools() {
+        return this.tools;
+      },
     };
     const result = await loader.loadAll(mockRegistry);
     assert.equal(result.totalPlugins, 0);
@@ -245,12 +318,16 @@ describe("EosPluginLoader — External Plugin System (DeepSeek/Cursor Standard)"
   it("discovers plugins from plugins.json", async () => {
     // Create a simple plugin file
     const pluginPath = path.join(tmpDir, "plugins", "my-plugin.mjs");
-    fs.writeFileSync(pluginPath, `
+    fs.writeFileSync(
+      pluginPath,
+      `
       export const version = "1.0.0";
       export default function(registry) {
         registry.register({ name: "my_plugin_tool", description: "test", handle() { return {}; } });
       }
-    `, "utf8");
+    `,
+      "utf8",
+    );
 
     // Create plugins.json
     fs.writeFileSync(path.join(tmpDir, "plugins.json"), JSON.stringify({ plugins: ["my-plugin"] }), "utf8");
@@ -258,8 +335,12 @@ describe("EosPluginLoader — External Plugin System (DeepSeek/Cursor Standard)"
     const loader = new EosPluginLoader(tmpDir);
     const mockRegistry = {
       tools: [],
-      register(tool) { this.tools.push(tool); },
-      listTools() { return this.tools; },
+      register(tool) {
+        this.tools.push(tool);
+      },
+      listTools() {
+        return this.tools;
+      },
     };
     const result = await loader.loadAll(mockRegistry);
     assert.equal(result.totalPlugins, 1);
@@ -270,9 +351,15 @@ describe("EosPluginLoader — External Plugin System (DeepSeek/Cursor Standard)"
   it("records error for missing plugin", async () => {
     process.env["EOS_PLUGINS"] = "nonexistent-plugin-xyz";
     const loader = new EosPluginLoader(tmpDir);
-    const mockRegistry = { tools: [], register() {}, listTools() { return []; } };
+    const mockRegistry = {
+      tools: [],
+      register() {},
+      listTools() {
+        return [];
+      },
+    };
     const result = await loader.loadAll(mockRegistry);
-    const failed = result.plugins.find(p => p.name === "nonexistent-plugin-xyz");
+    const failed = result.plugins.find((p) => p.name === "nonexistent-plugin-xyz");
     assert.ok(failed, "Should record the failed plugin");
     assert.ok(failed.error, "Should have an error message");
     delete process.env["EOS_PLUGINS"];

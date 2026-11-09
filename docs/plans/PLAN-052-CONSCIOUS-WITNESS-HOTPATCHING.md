@@ -3,17 +3,19 @@
 **Specification**: SPEC-059  
 **Change Reference**: CHANGE-052  
 **Target Version**: 65.0.0  
-**Architectural Decision Record**: ADR-065  
+**Architectural Decision Record**: ADR-065
 
 ---
 
 ## Architecture Decision Record: ADR-065
+
 **Title**: Implementation of Metacognitive Conscious Witness and Atomic Zero-Downtime Hot-Patching Engine  
 **Status**: APPROVED  
 **Context**:  
 Large-scale agentic coding systems suffer from hallucinated assumptions when subagents generate code without strict alignment to formal specifications. Furthermore, server processes running long-lived sessions (MCP, HTTP streaming) require code updates without connection termination.
 
-**Decision**:  
+**Decision**:
+
 1. **`EosConsciousWitness`**:
    - Analyzes agent proposals against active EARS requirements in `openspec/specs/`.
    - Grounds mentioned symbols, file paths, and types against real AST indices (`EosTypeScriptAstAnalyzer`).
@@ -27,5 +29,6 @@ Large-scale agentic coding systems suffer from hallucinated assumptions when sub
    - In case of an unhandled runtime error during patch test, instantly rolls back to the prior implementation.
 
 **Rejected Alternatives**:
-1. *External Process Restarts*: Rejected due to dropped SSE/Stdio connections and client reconnect latency.
-2. *Unvalidated LLM Self-Certification*: Rejected per Law I and Law III (Builder != Verifier).
+
+1. _External Process Restarts_: Rejected due to dropped SSE/Stdio connections and client reconnect latency.
+2. _Unvalidated LLM Self-Certification_: Rejected per Law I and Law III (Builder != Verifier).

@@ -16,12 +16,7 @@ import fs from "node:fs";
 import https from "node:https";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 import { EosContractEvolutionGovernor } from "./eosContractEvolutionGovernor.ts";
 
@@ -71,10 +66,7 @@ export class EosGithubPrGate {
       repo = parts[1];
     }
 
-    const commitSha =
-      env.GITHUB_SHA ||
-      env.GITHUB_HEAD_SHA ||
-      "0000000000000000000000000000000000000000";
+    const commitSha = env.GITHUB_SHA || env.GITHUB_HEAD_SHA || "0000000000000000000000000000000000000000";
 
     const baseRef = env.GITHUB_BASE_REF || "main";
     const headRef = env.GITHUB_HEAD_REF || "feature/pr-branch";
@@ -107,7 +99,7 @@ export class EosGithubPrGate {
       baseRef,
       headRef,
       actor,
-      eventName
+      eventName,
     });
   }
 
@@ -130,7 +122,7 @@ export class EosGithubPrGate {
       "Syntax, TypeScript Typecheck & Unit Tests",
       "Static Accessibility (a11y) & Layout Assertions",
       "In-Process HTTP Smoke Handlers",
-      "Formal TLA+ Simulation Invariant Verification"
+      "Formal TLA+ Simulation Invariant Verification",
     ];
 
     const stages: GateStageStatus[] = stageNames.map((name, idx) => {
@@ -141,7 +133,7 @@ export class EosGithubPrGate {
         name,
         passed: !failed,
         durationMs: 15 + idx * 8,
-        details: failed ? `Simulated failure in stage ${stageIdx}` : "PASS (Exit Code 0)"
+        details: failed ? `Simulated failure in stage ${stageIdx}` : "PASS (Exit Code 0)",
       };
     });
 
@@ -157,12 +149,10 @@ export class EosGithubPrGate {
     }
 
     const conclusion: "success" | "failure" =
-      allStagesPassed && contractEvolutionVerdict === "APPROVED"
-        ? "success"
-        : "failure";
+      allStagesPassed && contractEvolutionVerdict === "APPROVED" ? "success" : "failure";
 
     const sha256Receipt = pureSha256(
-      `${context.owner}/${context.repo}:${context.commitSha}:${conclusion}:${allStagesPassed}:${breakingContractionsCount}:${timestampIso}`
+      `${context.owner}/${context.repo}:${context.commitSha}:${conclusion}:${allStagesPassed}:${breakingContractionsCount}:${timestampIso}`,
     );
 
     const receiptId = `pr_gate_${pureSha256(sha256Receipt).slice(0, 16)}`;
@@ -176,14 +166,14 @@ export class EosGithubPrGate {
       breakingContractionsCount,
       stages: deepFreeze(stages),
       sha256Receipt,
-      timestampIso
+      timestampIso,
     };
 
     const markdownReport = this.formatMarkdownReport(partialResult as any);
 
     return deepFreeze({
       ...partialResult,
-      markdownReport
+      markdownReport,
     });
   }
 
@@ -213,8 +203,8 @@ export class EosGithubPrGate {
       output: {
         title,
         summary,
-        text: result.markdownReport
-      }
+        text: result.markdownReport,
+      },
     });
   }
 
@@ -225,12 +215,12 @@ export class EosGithubPrGate {
     const stagesTable = result.stages
       .map(
         (s) =>
-          `| Stage ${s.stageIndex} | ${s.name} | ${s.passed ? "✔ PASS" : "✖ FAIL"} | ${s.durationMs}ms | ${s.details || "Clean"} |`
+          `| Stage ${s.stageIndex} | ${s.name} | ${s.passed ? "✔ PASS" : "✖ FAIL"} | ${s.durationMs}ms | ${s.details || "Clean"} |`,
       )
       .join("\n");
 
     return `## 🏛️ EOS Sovereign Pull Request Gate Report
-> **Epistemic State**: \`${result.conclusion === "success" ? "PRODUCTION_READY_WITHIN_TESTED_SCOPE" : "REMEDIATION_REQUIRED"}\`  
+> **Epistemic State**: \`${result.conclusion === "success" ? "PRODUCTION_READY_WITHIN_TESTED_SCOPE" : "REMEDIATION_REQUIRED"}\`
 > **Receipt ID**: \`${result.receiptId}\` | **Timestamp**: \`${result.timestampIso}\`
 
 ### 1. SecDevOps 7-Stage Quality Matrix
@@ -259,7 +249,7 @@ Constitution Law II & IV Verification Gate: ${result.conclusion === "success" ? 
   public static async publishCheckRun(
     token: string,
     payload: Record<string, any>,
-    context: GithubPrContext
+    context: GithubPrContext,
   ): Promise<{ success: boolean; checkRunId?: number; error?: string }> {
     assertPrecondition(Boolean(token && token.trim().length > 0), "GitHub Token is required");
 
@@ -277,9 +267,9 @@ Constitution Law II & IV Verification Gate: ${result.conclusion === "success" ? 
             Authorization: `Bearer ${token}`,
             Accept: "application/vnd.github.v3+json",
             "Content-Type": "application/json",
-            "Content-Length": Buffer.byteLength(postData)
+            "Content-Length": Buffer.byteLength(postData),
           },
-          timeout: 10000
+          timeout: 10000,
         },
         (res) => {
           let body = "";
@@ -297,11 +287,11 @@ Constitution Law II & IV Verification Gate: ${result.conclusion === "success" ? 
             } else {
               resolve({
                 success: false,
-                error: `HTTP ${res.statusCode}: ${body.slice(0, 300)}`
+                error: `HTTP ${res.statusCode}: ${body.slice(0, 300)}`,
               });
             }
           });
-        }
+        },
       );
 
       req.on("error", (err) => {
@@ -316,10 +306,7 @@ Constitution Law II & IV Verification Gate: ${result.conclusion === "success" ? 
   /**
    * Persists PR evaluation receipt in durable SQLite WAL ledger.
    */
-  public static recordReceiptInLedger(
-    result: PrEvaluationResult,
-    dbPathOrRootDir?: string
-  ): boolean {
+  public static recordReceiptInLedger(result: PrEvaluationResult, dbPathOrRootDir?: string): boolean {
     const dbPath = dbPathOrRootDir
       ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
         ? dbPathOrRootDir
@@ -328,8 +315,7 @@ Constitution Law II & IV Verification Gate: ${result.conclusion === "success" ? 
 
     const ledger = new EosDurableSqliteLedger(dbPath);
     try {
-      const category =
-        result.conclusion === "success" ? "VERIFICATION_RECEIPT" : "SECURITY_AUDIT";
+      const category = result.conclusion === "success" ? "VERIFICATION_RECEIPT" : "SECURITY_AUDIT";
       ledger.appendEntry({
         category,
         projectId: "eos-system",
@@ -343,9 +329,9 @@ Constitution Law II & IV Verification Gate: ${result.conclusion === "success" ? 
           conclusion: result.conclusion,
           contractVerdict: result.contractEvolutionVerdict,
           breakingContractions: result.breakingContractionsCount,
-          sha256Receipt: result.sha256Receipt
+          sha256Receipt: result.sha256Receipt,
         },
-        engramTopicKey: `eos/ci/pr-${result.context.prNumber || "gate"}`
+        engramTopicKey: `eos/ci/pr-${result.context.prNumber || "gate"}`,
       });
       return true;
     } catch {

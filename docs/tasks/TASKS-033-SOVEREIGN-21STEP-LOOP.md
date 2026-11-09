@@ -1,6 +1,7 @@
 # TASKS-033: 21-STEP AUTONOMOUS SOVEREIGN ENGINEERING LOOP ENGINE — ATOMIC DAG
 
 ## Task DAG
+
 ```mermaid
 graph TD
     T1["TASK-033-01: Documentation Package & Authorization"] --> T2
@@ -11,6 +12,7 @@ graph TD
 ```
 
 ## Tasks
+
 - **TASK-033-01**: Generate `INTAKE-033`, `SPEC-040`, `PLAN-033`, `TASKS-033`, `CHANGE-033`, and authorization in `IMPLEMENTATION_AUTHORIZATION.md`.
 - **TASK-033-02**: Implement `src/core/eosSovereignLoop.ts` with 21 pipeline stages, state transitions, EARS synthesis, BDD mapping, and evidence sealing.
 - **TASK-033-03**: Create unit test suite `test/eosSovereignLoop.test.mjs`.

@@ -13,19 +13,10 @@
  */
 
 import net from "node:net";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
-export type PeerMessageType =
-  | "HEARTBEAT"
-  | "TRUETIME_SYNC"
-  | "THRESHOLD_SHARE"
-  | "CONSENSUS_VOTE";
+export type PeerMessageType = "HEARTBEAT" | "TRUETIME_SYNC" | "THRESHOLD_SHARE" | "CONSENSUS_VOTE";
 
 export interface EosPeerFrame {
   readonly senderNodeId: string;
@@ -42,7 +33,7 @@ export function computeFrameSha256(
   seq: number,
   type: string,
   payload: unknown,
-  timestampIso: string
+  timestampIso: string,
 ): string {
   const serialized = `${senderNodeId}#${seq}#${type}#${JSON.stringify(payload)}#${timestampIso}`;
   return pureSha256(serialized);
@@ -155,7 +146,7 @@ export class EosPeerNode {
       frame.seq,
       frame.type,
       frame.payload,
-      frame.timestampIso
+      frame.timestampIso,
     );
 
     if (frame.frameSha256 !== expectedSha256) {
@@ -185,20 +176,10 @@ export class EosPeerNode {
   /**
    * Constructs, signs and broadcasts a message frame to all connected peers.
    */
-  public broadcastFrame(
-    type: PeerMessageType,
-    payload: Record<string, unknown>,
-    targetNodeId?: string
-  ): EosPeerFrame {
+  public broadcastFrame(type: PeerMessageType, payload: Record<string, unknown>, targetNodeId?: string): EosPeerFrame {
     this.currentSeq++;
     const timestampIso = new Date().toISOString();
-    const frameSha256 = computeFrameSha256(
-      this.nodeId,
-      this.currentSeq,
-      type,
-      payload,
-      timestampIso
-    );
+    const frameSha256 = computeFrameSha256(this.nodeId, this.currentSeq, type, payload, timestampIso);
 
     const frame: EosPeerFrame = deepFreeze({
       senderNodeId: this.nodeId,
@@ -207,7 +188,7 @@ export class EosPeerNode {
       type,
       payload: deepFreeze({ ...payload }),
       timestampIso,
-      frameSha256
+      frameSha256,
     });
 
     const serialized = JSON.stringify(frame) + "\n";
@@ -228,8 +209,8 @@ export class EosPeerNode {
           payload: {
             nodeId: this.nodeId,
             type,
-            frameSha256
-          }
+            frameSha256,
+          },
         });
       } catch {
         // Fallback

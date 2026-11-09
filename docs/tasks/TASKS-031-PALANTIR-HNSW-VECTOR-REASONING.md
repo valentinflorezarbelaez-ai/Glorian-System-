@@ -1,6 +1,7 @@
 # TASKS-031: PALANTIR HNSW VECTOR REASONING & ALADDIN RISK LEDGER — ATOMIC DAG
 
 ## Task DAG
+
 ```mermaid
 graph TD
     T1["TASK-031-01: EosHnswVectorEngine L0 Implementation"] --> T4
@@ -13,6 +14,7 @@ graph TD
 ```
 
 ## Tasks
+
 - **TASK-031-01**: Implement `src/core/eosHnswVectorEngine.ts` (Cosine, L2, deterministic token embedding projection, HNSW graph).
 - **TASK-031-02**: Implement `src/core/eosMonteCarloEngine.ts` (Mulberry32 PRNG, Beta-PERT, P10-P99 percentiles).
 - **TASK-031-03**: Implement `src/core/eosMonotonicHashChain.ts` (Monotonic timestamping, pure SHA-256 block chaining, tamper detection).

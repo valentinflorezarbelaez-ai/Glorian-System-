@@ -53,10 +53,7 @@ export class EosIntrospectionEngine {
    * Scans all TypeScript and JavaScript files in src/core/ and test/.
    */
   public analyzeCodebase(): { metrics: FileMetric[]; totalLines: number } {
-    const targetDirs = [
-      path.join(this.projectRoot, "src", "core"),
-      path.join(this.projectRoot, "test")
-    ];
+    const targetDirs = [path.join(this.projectRoot, "src", "core"), path.join(this.projectRoot, "test")];
 
     const metrics: FileMetric[] = [];
     let totalLines = 0;
@@ -101,7 +98,7 @@ export class EosIntrospectionEngine {
           functionsCount: funcMatches.length,
           externalImports,
           isPureL0,
-          cyclomaticRisk: risk
+          cyclomaticRisk: risk,
         });
       }
     }
@@ -132,7 +129,7 @@ export class EosIntrospectionEngine {
       detectedOpportunity: "Token estimation allocates temporary substrings during regex replacement.",
       proposedAction: "Refactor string splits to contiguous Uint8Array byte index ranges, cutting GC pauses to 0 B/op.",
       estimatedLatencyImpact: "-38% latency in token parsing loop",
-      rationale: "Aligns with Big Tech (SpaceX/ASML) sub-microsecond determinism."
+      rationale: "Aligns with Big Tech (SpaceX/ASML) sub-microsecond determinism.",
     });
 
     // Proposal 2: Formal Mathematical TLA+ State Machine Verification
@@ -142,9 +139,10 @@ export class EosIntrospectionEngine {
       priority: "ARCHITECTURAL",
       targetModule: "src/core/eosJarvisMonad.ts",
       detectedOpportunity: "State transitions operate on runtime assertions without pre-computed invariants.",
-      proposedAction: "Generate formal TLA+ state specs demonstrating non-deadlocking guarantees across all TMR states.",
+      proposedAction:
+        "Generate formal TLA+ state specs demonstrating non-deadlocking guarantees across all TMR states.",
       estimatedLatencyImpact: "Zero runtime overhead (compile-time proof verification)",
-      rationale: "Mathematical proof of correctness before execution ensures absolute impenetrability."
+      rationale: "Mathematical proof of correctness before execution ensures absolute impenetrability.",
     });
 
     // Proposal 3: Nanosecond Go Accelerator Native Daemon Integration
@@ -154,9 +152,10 @@ export class EosIntrospectionEngine {
       priority: "HIGH",
       targetModule: "src/core/eosGoAccelerator.ts",
       detectedOpportunity: "Child-process spawning incurs ~15ms cold start per execution.",
-      proposedAction: "Maintain an in-memory memory-mapped file or local unix/named-pipe stream with Go binary bin/eos-apex.exe.",
+      proposedAction:
+        "Maintain an in-memory memory-mapped file or local unix/named-pipe stream with Go binary bin/eos-apex.exe.",
       estimatedLatencyImpact: "Reduces IPC turnaround from 15.8ms to < 85µs",
-      rationale: "Achieves parity with Citadel HFT trading engines and LMAX Disruptor mechanics."
+      rationale: "Achieves parity with Citadel HFT trading engines and LMAX Disruptor mechanics.",
     });
 
     // Compute cryptographic Merkle root of the report
@@ -176,7 +175,7 @@ export class EosIntrospectionEngine {
       codeHealthScore: healthScore,
       proposals,
       sha256MerkleRoot,
-      epistemicState: "SELF_INTROSPECTED_AND_EVOLVING"
+      epistemicState: "SELF_INTROSPECTED_AND_EVOLVING",
     };
   }
 }

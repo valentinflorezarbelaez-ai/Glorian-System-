@@ -16,11 +16,11 @@ export const PHASE5_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
   "eos_spotify_shuffle",
   "eos_spotify_standup",
   "eos_spotify_taste_profile",
-  "eos_spotify_xirp_context"
+  "eos_spotify_xirp_context",
 ]);
 
 /** Dead god-file arms purged in Phase-5 (already registry-routed by Phase-3). */
 export const PHASE5_PURGED_DEAD_SWITCH_ARMS: readonly string[] = Object.freeze([
   "glorian_constitutional_tribunal",
-  "glorian_fleet_health_watchdog"
+  "glorian_fleet_health_watchdog",
 ]);

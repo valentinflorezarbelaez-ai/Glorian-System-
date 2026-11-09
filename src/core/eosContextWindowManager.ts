@@ -79,15 +79,11 @@ export class EosContextWindowManager {
    * @param options     Token budget, depth, and include flags.
    * @returns AssembledContext with a ready-to-paste contextBlock string.
    */
-  public assemble(
-    objective: string,
-    targetFile: string,
-    options: ContextWindowOptions = {}
-  ): AssembledContext {
-    const tokenBudget  = options.tokenBudget  ?? 32_000;
+  public assemble(objective: string, targetFile: string, options: ContextWindowOptions = {}): AssembledContext {
+    const tokenBudget = options.tokenBudget ?? 32_000;
     const includeTests = options.includeTests ?? true;
     const includeSpecs = options.includeSpecs ?? true;
-    const maxDepth     = options.maxDepth     ?? 2;
+    const maxDepth = options.maxDepth ?? 2;
 
     _log.info("Assembling context window", { objective: objective.slice(0, 60), targetFile, tokenBudget });
 
@@ -124,8 +120,9 @@ export class EosContextWindowManager {
       const specsDir = path.join(this.projectRoot, "openspec", "specs");
       if (fs.existsSync(specsDir)) {
         const baseName = path.basename(targetFile, path.extname(targetFile)).toLowerCase();
-        const specFiles = fs.readdirSync(specsDir)
-          .filter(f => f.toLowerCase().includes(baseName) && f.endsWith(".md"))
+        const specFiles = fs
+          .readdirSync(specsDir)
+          .filter((f) => f.toLowerCase().includes(baseName) && f.endsWith(".md"))
           .slice(0, 2);
         for (const sf of specFiles) {
           candidates.push({ relPath: `openspec/specs/${sf}`, role: "SPEC" });
@@ -156,7 +153,7 @@ export class EosContextWindowManager {
 
       // Use compressed content; fall back to first 200 lines of raw if compression empty
       const content = compressed.compressedOutline || raw.split("\n").slice(0, 200).join("\n");
-      const tokens  = compressed.compressedTokensEstimate || Math.ceil(content.length / 4);
+      const tokens = compressed.compressedTokensEstimate || Math.ceil(content.length / 4);
 
       if (tokensUsed + tokens > effectiveBudget) {
         excluded.push(candidate.relPath);
@@ -166,9 +163,9 @@ export class EosContextWindowManager {
 
       tokensUsed += tokens;
       included.push({
-        relPath:          candidate.relPath,
-        role:             candidate.role,
-        originalTokens:   compressed.originalTokensEstimate,
+        relPath: candidate.relPath,
+        role: candidate.role,
+        originalTokens: compressed.originalTokensEstimate,
         compressedTokens: tokens,
         content,
         compressionRatio: compressed.tokenSavingsPercent,
@@ -185,36 +182,38 @@ export class EosContextWindowManager {
       "",
     ].join("\n");
 
-    const fileSections = included.map(f => [
-      `### [${f.role}] ${f.relPath} (~${f.compressedTokens} tokens, ${f.compressionRatio.toFixed(0)}% compressed)`,
-      "```",
-      f.content,
-      "```",
-      "",
-    ].join("\n")).join("\n");
+    const fileSections = included
+      .map((f) =>
+        [
+          `### [${f.role}] ${f.relPath} (~${f.compressedTokens} tokens, ${f.compressionRatio.toFixed(0)}% compressed)`,
+          "```",
+          f.content,
+          "```",
+          "",
+        ].join("\n"),
+      )
+      .join("\n");
 
     const contextBlock = header + fileSections;
 
-    const sha256 = crypto
-      .createHash("sha256")
-      .update(`${objective}:${targetFile}:${tokensUsed}`)
-      .digest("hex");
+    const sha256 = crypto.createHash("sha256").update(`${objective}:${targetFile}:${tokensUsed}`).digest("hex");
 
     const result: AssembledContext = {
       objective,
       targetFile,
       tokenBudget,
-      totalTokensUsed:  tokensUsed,
-      filesIncluded:    included.length,
-      filesExcluded:    excluded.length,
-      compressionRatio: included.length > 0
-        ? Number((included.reduce((s, f) => s + f.compressionRatio, 0) / included.length).toFixed(1))
-        : 0,
+      totalTokensUsed: tokensUsed,
+      filesIncluded: included.length,
+      filesExcluded: excluded.length,
+      compressionRatio:
+        included.length > 0
+          ? Number((included.reduce((s, f) => s + f.compressionRatio, 0) / included.length).toFixed(1))
+          : 0,
       contextBlock,
-      includedFiles:    Object.freeze(included),
-      excludedFiles:    Object.freeze(excluded),
-      assembledAt:      new Date().toISOString(),
-      sha256:           `sha256:${sha256}`,
+      includedFiles: Object.freeze(included),
+      excludedFiles: Object.freeze(excluded),
+      assembledAt: new Date().toISOString(),
+      sha256: `sha256:${sha256}`,
     };
 
     _log.info("Context assembled", {
@@ -234,7 +233,7 @@ export class EosContextWindowManager {
   public estimateTokens(relPath: string): number {
     const fullPath = path.resolve(this.projectRoot, relPath);
     if (!fs.existsSync(fullPath)) return 0;
-    const raw        = fs.readFileSync(fullPath, "utf8");
+    const raw = fs.readFileSync(fullPath, "utf8");
     const compressed = compressSourceContext(raw, relPath);
     return compressed.compressedTokensEstimate;
   }

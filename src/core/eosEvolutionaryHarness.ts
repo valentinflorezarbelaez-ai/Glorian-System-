@@ -14,12 +14,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface FitnessVector {
@@ -106,7 +101,7 @@ export class EosEvolutionaryHarness {
     heapDeltaBytes: number,
     astPurityScore: number,
     cyclomaticComplexity: number,
-    contractComplianceScore: number
+    contractComplianceScore: number,
   ): FitnessVector {
     assertPrecondition(Number.isFinite(latencyNs) && latencyNs >= 0, "latencyNs must be >= 0");
     assertPrecondition(Number.isFinite(heapDeltaBytes), "heapDeltaBytes must be finite");
@@ -115,19 +110,19 @@ export class EosEvolutionaryHarness {
 
     // Normalized sub-scores (0..100)
     // Latency: sub-100us (100,000 ns) is optimal 100; degrades toward 0 at >= 10,000,000 ns
-    const latencyScore = Math.max(0, Math.min(100, 100 - (latencyNs / 100_000)));
+    const latencyScore = Math.max(0, Math.min(100, 100 - latencyNs / 100_000));
     // Heap: zero or negative delta is 100; degrades with allocations
-    const heapScore = Math.max(0, Math.min(100, 100 - (Math.max(0, heapDeltaBytes) / 1024)));
+    const heapScore = Math.max(0, Math.min(100, 100 - Math.max(0, heapDeltaBytes) / 1024));
     // Complexity: <= 5 is 100; degrades above 20
     const complexityScore = Math.max(0, Math.min(100, 100 - Math.max(0, cyclomaticComplexity - 5) * 5));
 
     // Weighted composite (AlphaEvolve multivariate objective)
     const compositeFitness = Math.round(
-      (contractComplianceScore * 0.40) +
-      (astPurityScore * 0.25) +
-      (latencyScore * 0.15) +
-      (complexityScore * 0.10) +
-      (heapScore * 0.10)
+      contractComplianceScore * 0.4 +
+        astPurityScore * 0.25 +
+        latencyScore * 0.15 +
+        complexityScore * 0.1 +
+        heapScore * 0.1,
     );
 
     return deepFreeze({
@@ -136,7 +131,7 @@ export class EosEvolutionaryHarness {
       astPurityScore: Math.round(astPurityScore),
       cyclomaticComplexity: Math.round(cyclomaticComplexity),
       contractComplianceScore: Math.round(contractComplianceScore),
-      compositeFitness: Math.max(0, Math.min(100, compositeFitness))
+      compositeFitness: Math.max(0, Math.min(100, compositeFitness)),
     });
   }
 
@@ -155,7 +150,7 @@ export class EosEvolutionaryHarness {
     options?: {
       ledgerDbPath?: string;
       projectId?: string;
-    }
+    },
   ): EvaluatedCandidate {
     assertPrecondition(Boolean(candidate && candidate.candidateId), "Candidate must be valid");
     const fitness = this.computeFitnessVector(
@@ -163,11 +158,11 @@ export class EosEvolutionaryHarness {
       measured.heapDeltaBytes,
       measured.astPurityScore,
       measured.cyclomaticComplexity,
-      measured.contractComplianceScore
+      measured.contractComplianceScore,
     );
 
     const mutantSha256 = pureSha256(
-      candidate.parentSha256 + ":" + candidate.patchContent + ":" + candidate.targetFilePath
+      candidate.parentSha256 + ":" + candidate.patchContent + ":" + candidate.targetFilePath,
     );
     const passesContracts = fitness.contractComplianceScore === 100;
 
@@ -176,7 +171,7 @@ export class EosEvolutionaryHarness {
       fitness,
       passesContracts,
       mutantSha256,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     if (options?.ledgerDbPath) {
@@ -191,9 +186,9 @@ export class EosEvolutionaryHarness {
             parentSha256: candidate.parentSha256,
             mutantSha256,
             fitness,
-            passesContracts
+            passesContracts,
           },
-          engramTopicKey: `eos/evolution/${candidate.candidateId}`
+          engramTopicKey: `eos/evolution/${candidate.candidateId}`,
         });
       } finally {
         ledger.close();
@@ -207,9 +202,7 @@ export class EosEvolutionaryHarness {
    * Clusters candidate mutations by AST/semantic behavior (AlphaCode 2)
    * to eliminate duplicate subagent outputs and retain only Pareto-dominant solutions.
    */
-  public static clusterCandidates(
-    candidates: readonly EvaluatedCandidate[]
-  ): readonly SemanticCluster[] {
+  public static clusterCandidates(candidates: readonly EvaluatedCandidate[]): readonly SemanticCluster[] {
     assertPrecondition(Array.isArray(candidates), "candidates must be an array");
     if (candidates.length === 0) return deepFreeze([]);
 
@@ -228,17 +221,21 @@ export class EosEvolutionaryHarness {
     for (const [key, group] of groups.entries()) {
       // Pick best representative within cluster by composite fitness
       const sorted = [...group].sort(
-        (a, b) => b.fitness.compositeFitness - a.fitness.compositeFitness || a.fitness.executionLatencyNs - b.fitness.executionLatencyNs
+        (a, b) =>
+          b.fitness.compositeFitness - a.fitness.compositeFitness ||
+          a.fitness.executionLatencyNs - b.fitness.executionLatencyNs,
       );
       const rep = sorted[0];
       const paretoDominant = rep.passesContracts && rep.fitness.compositeFitness >= 75;
 
-      clusters.push(deepFreeze({
-        clusterId: `CLUSTER-${String(clusterIdx).padStart(3, "0")}`,
-        representativeCandidate: rep,
-        memberCandidateIds: group.map((g) => g.mutation.candidateId),
-        paretoDominant
-      }));
+      clusters.push(
+        deepFreeze({
+          clusterId: `CLUSTER-${String(clusterIdx).padStart(3, "0")}`,
+          representativeCandidate: rep,
+          memberCandidateIds: group.map((g) => g.mutation.candidateId),
+          paretoDominant,
+        }),
+      );
       clusterIdx++;
     }
 
@@ -254,7 +251,7 @@ export class EosEvolutionaryHarness {
     session: AdversarialDoubleBlindSession,
     agentRole: "INQUISITOR_RED" | "CONSTRUCTOR_BLUE",
     targetFilePath: string,
-    action: "READ" | "WRITE"
+    action: "READ" | "WRITE",
   ): { allowed: boolean; violationReason?: string } {
     assertPrecondition(Boolean(session && session.sessionId), "Session must be valid");
     const normalizedTarget = targetFilePath.replace(/\\/g, "/");
@@ -269,7 +266,7 @@ export class EosEvolutionaryHarness {
       if (normalizedTarget.startsWith("src/") || normalizedTarget.startsWith("lib/")) {
         return {
           allowed: false,
-          violationReason: `[DOUBLE_BLIND_BREACH] Red Team Inquisitor attempted unauthorized write to production source: ${targetFilePath}`
+          violationReason: `[DOUBLE_BLIND_BREACH] Red Team Inquisitor attempted unauthorized write to production source: ${targetFilePath}`,
         };
       }
       return { allowed: true };
@@ -277,10 +274,14 @@ export class EosEvolutionaryHarness {
 
     if (agentRole === "CONSTRUCTOR_BLUE") {
       // Blue team cannot tamper with test suites
-      if (normalizedTarget.startsWith("test/") || normalizedTarget.startsWith("spec/") || normalizedTarget.includes(".test.")) {
+      if (
+        normalizedTarget.startsWith("test/") ||
+        normalizedTarget.startsWith("spec/") ||
+        normalizedTarget.includes(".test.")
+      ) {
         return {
           allowed: false,
-          violationReason: `[DOUBLE_BLIND_BREACH] Blue Team Constructor attempted unauthorized mutation of test assertions: ${targetFilePath}`
+          violationReason: `[DOUBLE_BLIND_BREACH] Blue Team Constructor attempted unauthorized mutation of test assertions: ${targetFilePath}`,
         };
       }
       return { allowed: true };
@@ -293,10 +294,7 @@ export class EosEvolutionaryHarness {
    * Locks shared interface signatures with a SHA-256 seal (InterfaceLock),
    * enabling safe high-concurrency subagent execution without coordination drift.
    */
-  public static lockInterfaceContract(
-    targetFilePath: string,
-    content: string
-  ): LockedInterfaceContract {
+  public static lockInterfaceContract(targetFilePath: string, content: string): LockedInterfaceContract {
     assertPrecondition(typeof targetFilePath === "string" && targetFilePath.length > 0, "Path required");
     assertPrecondition(typeof content === "string", "Content required");
 
@@ -310,7 +308,7 @@ export class EosEvolutionaryHarness {
       targetFilePath,
       exportedSignatures,
       lockedSha256,
-      lockedAt: new Date().toISOString()
+      lockedAt: new Date().toISOString(),
     });
   }
 
@@ -320,9 +318,11 @@ export class EosEvolutionaryHarness {
    */
   public static verifyInterfaceLock(
     locked: LockedInterfaceContract,
-    candidateContent: string
+    candidateContent: string,
   ): { valid: boolean; driftDetails?: string } {
-    const candidateSignatures = (candidateContent.match(/export\s+(?:interface|type|class|function|const)\s+([A-Za-z0-9_]+)/g) || [])
+    const candidateSignatures = (
+      candidateContent.match(/export\s+(?:interface|type|class|function|const)\s+([A-Za-z0-9_]+)/g) || []
+    )
       .map((s) => s.trim())
       .sort();
 
@@ -330,7 +330,7 @@ export class EosEvolutionaryHarness {
     if (missing.length > 0) {
       return {
         valid: false,
-        driftDetails: `Missing required exported interface signatures: ${missing.join(", ")}`
+        driftDetails: `Missing required exported interface signatures: ${missing.join(", ")}`,
       };
     }
     return { valid: true };
@@ -342,7 +342,7 @@ export class EosEvolutionaryHarness {
    */
   public static evaluateTokenCircuitBreaker(
     history: readonly EvaluatedCandidate[],
-    maxGenerations: number = 3
+    maxGenerations: number = 3,
   ): TokenCircuitBreakerState {
     const genCount = history.length;
     let stagnationCounter = 0;
@@ -365,7 +365,7 @@ export class EosEvolutionaryHarness {
         stagnationReason: "Fitness failed to improve over consecutive generations",
         generationsEvaluated: genCount,
         latestFitness: latest.fitness,
-        failingContracts: !latest.passesContracts
+        failingContracts: !latest.passesContracts,
       });
     }
 
@@ -375,7 +375,7 @@ export class EosEvolutionaryHarness {
       stagnationCounter,
       circuitTripped,
       recommendedModelTier,
-      diagnosticAstPayload
+      diagnosticAstPayload,
     });
   }
 }

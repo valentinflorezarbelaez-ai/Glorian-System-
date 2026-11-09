@@ -1,6 +1,7 @@
 # SPEC-126: ATP Strength & Hypertrophy Platform Governance Elevation (Level 3)
 
 ## 1. Metadata & Status
+
 - **Specification ID**: `SPEC-126`
 - **Title**: `ATP Strength & Hypertrophy Platform Governance Elevation (Level 3)`
 - **Version**: `1.0.0`
@@ -13,7 +14,9 @@
 ---
 
 ## 2. Executive Context & Objective
+
 `ATP-STRENGTH-1` is an athletic performance, volume tracking, and sports nutrition monolith deployed at `https://atp-strength.vercel.app`. Currently marked as `LEVEL_1_READ_ONLY` in `docs/projects/registry.json`, this specification defines the formal elevation to `LEVEL_3_PRODUCTION_AUTHORIZED`, validating:
+
 1. Working tree cleanliness and branch synchronization (`origin/main`).
 2. Zero secret leaks via `scripts/eos-secret-scan.mjs`.
 3. Live HTTP 200 reachability and SSL security on `https://atp-strength.vercel.app`.
@@ -24,15 +27,19 @@
 ## 3. Functional Requirements (IEEE 830 / EARS)
 
 ### FR-393: Git Repository Verification
+
 CUANDO se audita `ATP-STRENGTH-1`, EL SISTEMA debe verificar que el repositorio Git local no tenga modificaciones no registradas y esté sincronizado con `origin/main`.
 
 ### FR-394: Secret Hygiene Conformance (Law VI)
+
 CUANDO se ejecuta el escáner de secretos canónico sobre `ATP-STRENGTH-1`, EL SISTEMA debe reportar 0 credenciales ni tokens en texto plano expuestos en el código fuente.
 
 ### FR-395: Live Production Health Verification
+
 EL SISTEMA debe comprobar que el endpoint `https://atp-strength.vercel.app` responde con código HTTP 200 y latencia menor a 1000ms.
 
 ### FR-396: Level 3 Registry Promotion
+
 CUANDO se cumplen FR-393, FR-394 y FR-395, EL SISTEMA debe actualizar el registro canónico `docs/projects/registry.json` promoviendo `atp-strength` a `LEVEL_3_PRODUCTION_AUTHORIZED` con firma SHA-256 recalculada.
 
 ---

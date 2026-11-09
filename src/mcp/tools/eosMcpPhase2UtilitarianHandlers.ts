@@ -88,7 +88,7 @@ export const PHASE2_CORE_UTILITARIAN_HANDLERS: Readonly<Record<string, McpToolHa
       selectedAction: tmr.selectedAction,
       consensusHash: tmr.consensusHash,
       sandboxes: tmr.sandboxes,
-      voiceScript: thought.voiceTranscript
+      voiceScript: thought.voiceTranscript,
     };
   },
 
@@ -110,8 +110,8 @@ export const PHASE2_CORE_UTILITARIAN_HANDLERS: Readonly<Record<string, McpToolHa
         remoteUrl: typeof project.remoteUrl === "string" ? project.remoteUrl : null,
         health: "NOT_PROBED",
         ci: "NOT_PROBED",
-        hooks: "NOT_PROBED"
-      }))
+        hooks: "NOT_PROBED",
+      })),
     };
   },
 
@@ -153,9 +153,9 @@ export const PHASE2_CORE_UTILITARIAN_HANDLERS: Readonly<Record<string, McpToolHa
     if (action === "list_specs") return synchronizer.listSpecs();
     if (action === "list_changes") return synchronizer.listChanges();
     return synchronizer.audit();
-  }
+  },
 };
 
 export const PHASE2_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze(
-  Object.keys(PHASE2_CORE_UTILITARIAN_HANDLERS).sort()
+  Object.keys(PHASE2_CORE_UTILITARIAN_HANDLERS).sort(),
 );

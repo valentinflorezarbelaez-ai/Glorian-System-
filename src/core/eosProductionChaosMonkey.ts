@@ -15,17 +15,10 @@ import dns from "node:dns";
 import https from "node:https";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
-export type ChaosVerdict =
-  | "RESILIENT_CHAOS_SURVIVED"
-  | "CIRCUIT_BREAKER_ABORTED"
-  | "DEGRADED";
+export type ChaosVerdict = "RESILIENT_CHAOS_SURVIVED" | "CIRCUIT_BREAKER_ABORTED" | "DEGRADED";
 
 export interface ChaosOptions {
   readonly burstCount?: number;
@@ -64,7 +57,11 @@ function resilientLookup(hostname: string, options: any, callback: any): void {
     if (!err && address) return cb(null, address, family);
     fallbackResolver.resolve4(hostname, (rErr, addresses) => {
       if (rErr || !addresses || addresses.length === 0) return cb(err || rErr, "", 4);
-      if (opts.all) return cb(null, addresses.map((a) => ({ address: a, family: 4 })));
+      if (opts.all)
+        return cb(
+          null,
+          addresses.map((a) => ({ address: a, family: 4 })),
+        );
       return cb(null, addresses[0], 4);
     });
   });
@@ -81,7 +78,7 @@ export class EosProductionChaosMonkey {
     targetUrl: string,
     options: Omit<ChaosOptions, "mockTransport"> & {
       mockTransport?: (probeIndex: number) => { status: number; latencyMs: number };
-    } = {}
+    } = {},
   ): ChaosExperimentReport {
     assertPrecondition(typeof targetUrl === "string" && targetUrl.startsWith("http"), "Valid HTTP target required");
 
@@ -103,7 +100,7 @@ export class EosProductionChaosMonkey {
         latency = mockRes.latencyMs;
       } else {
         // Pure synthetic simulated probe without blocking network
-        latency = 10 + (i * 3);
+        latency = 10 + i * 3;
         status = i % 10 === 9 ? 503 : 200;
       }
 
@@ -115,7 +112,7 @@ export class EosProductionChaosMonkey {
       }
 
       const currentRate = (errorCount / (i + 1)) * 100;
-      if (currentRate > maxBudget && (i + 1) >= 2) {
+      if (currentRate > maxBudget && i + 1 >= 2) {
         emergencyAbort = true;
         break;
       }
@@ -138,7 +135,7 @@ export class EosProductionChaosMonkey {
 
     const timestampIso = new Date().toISOString();
     const sha256Receipt = pureSha256(
-      `CHAOS:${targetUrl}:${totalSent}:${successCount}:${errorCount}:${verdict}:${timestampIso}`
+      `CHAOS:${targetUrl}:${totalSent}:${successCount}:${errorCount}:${verdict}:${timestampIso}`,
     );
 
     return deepFreeze({
@@ -152,17 +149,14 @@ export class EosProductionChaosMonkey {
       p95LatencyMs: p95Latency,
       epistemicVerdict: verdict,
       sha256Receipt,
-      timestampIso
+      timestampIso,
     });
   }
 
   /**
    * Executes a controlled production chaos experiment with live emergency brake.
    */
-  public static async executeExperiment(
-    targetUrl: string,
-    options: ChaosOptions = {}
-  ): Promise<ChaosExperimentReport> {
+  public static async executeExperiment(targetUrl: string, options: ChaosOptions = {}): Promise<ChaosExperimentReport> {
     assertPrecondition(typeof targetUrl === "string" && targetUrl.startsWith("http"), "Valid HTTP target required");
 
     const burstCount = options.burstCount || this.DEFAULT_BURST_COUNT;
@@ -192,14 +186,14 @@ export class EosProductionChaosMonkey {
                 lookup: resilientLookup,
                 headers: {
                   "User-Agent": "EOS-Chaos-Monkey/v66.0.0 (Netflix Simian Army Resilience Probe)",
-                  "X-EOS-Chaos-Probe": `probe-${i}`
+                  "X-EOS-Chaos-Probe": `probe-${i}`,
                 },
-                timeout: 5000
+                timeout: 5000,
               },
               (res) => {
                 res.resume();
                 resolve(res.statusCode || 0);
-              }
+              },
             );
             req.on("error", () => resolve(503));
             req.on("timeout", () => {
@@ -223,7 +217,7 @@ export class EosProductionChaosMonkey {
 
       // Check error budget burn rate
       const currentRate = (errorCount / (i + 1)) * 100;
-      if (currentRate > maxBudget && (i + 1) >= 2) {
+      if (currentRate > maxBudget && i + 1 >= 2) {
         emergencyAbort = true;
         break; // Trip circuit breaker immediately
       }
@@ -246,7 +240,7 @@ export class EosProductionChaosMonkey {
 
     const timestampIso = new Date().toISOString();
     const sha256Receipt = pureSha256(
-      `CHAOS:${targetUrl}:${totalSent}:${successCount}:${errorCount}:${verdict}:${timestampIso}`
+      `CHAOS:${targetUrl}:${totalSent}:${successCount}:${errorCount}:${verdict}:${timestampIso}`,
     );
 
     return deepFreeze({
@@ -260,17 +254,14 @@ export class EosProductionChaosMonkey {
       p95LatencyMs: p95Latency,
       epistemicVerdict: verdict,
       sha256Receipt,
-      timestampIso
+      timestampIso,
     });
   }
 
   /**
    * Persists Chaos experiment attestation in durable SQLite WAL ledger.
    */
-  public static recordReceiptInLedger(
-    report: ChaosExperimentReport,
-    dbPathOrRootDir?: string
-  ): boolean {
+  public static recordReceiptInLedger(report: ChaosExperimentReport, dbPathOrRootDir?: string): boolean {
     const dbPath = dbPathOrRootDir
       ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
         ? dbPathOrRootDir
@@ -293,9 +284,9 @@ export class EosProductionChaosMonkey {
           avgLatencyMs: report.avgLatencyMs,
           p95LatencyMs: report.p95LatencyMs,
           epistemicVerdict: report.epistemicVerdict,
-          sha256Receipt: report.sha256Receipt
+          sha256Receipt: report.sha256Receipt,
         },
-        engramTopicKey: "eos/resilience/chaos"
+        engramTopicKey: "eos/resilience/chaos",
       });
       return true;
     } catch {

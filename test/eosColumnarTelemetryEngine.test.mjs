@@ -35,7 +35,7 @@ test("BDD-276: Ingests 10,000 telemetry events into contiguous TypedArrays with 
       repoId: repos[i % repos.length],
       stage: stages[i % stages.length],
       statusCode: i % 50 === 0 ? 500 : 200,
-      latencyMs: 30 + (i % 20)
+      latencyMs: 30 + (i % 20),
     });
 
     assert.equal(typeof res.index, "number");
@@ -61,7 +61,7 @@ test("BDD-276: Circular ring buffer bounds capacity without memory overrun", () 
       repoId: "test-repo",
       stage: "CANARY_1_PCT",
       statusCode: 200,
-      latencyMs: 40
+      latencyMs: 40,
     });
   }
 
@@ -78,15 +78,21 @@ test("BDD-277: Vector aggregation computes exact percentiles (P50, P90, P99) in 
       repoId: i % 2 === 0 ? "ptg" : "eos",
       stage: "CANARY_5_PCT",
       statusCode: 200,
-      latencyMs: i // Latencies 1 to 5000
+      latencyMs: i, // Latencies 1 to 5000
     });
   }
+
+  // JIT warmup on a different series; the timed pass then measures the optimized
+  // aggregation path instead of interpreter startup.
+  engine.query({ repoId: "eos" });
 
   const queryStart = performance.now();
   const result = engine.query({ repoId: "ptg" });
   const queryDuration = performance.now() - queryStart;
 
-  assert.ok(queryDuration < 150, `Query duration must be fast, took ${queryDuration}ms`);
+  // Absolute wall-clock bound is generous: under full-suite parallel scheduling
+  // a single event-loop deschedule can inflate one-shot timings by an order of magnitude.
+  assert.ok(queryDuration < 100, `Query duration must be fast, took ${queryDuration}ms`);
   assert.equal(result.matchedCount, 2500);
   assert.equal(result.stats.count, 2500);
   assert.ok(result.stats.min >= 2);
@@ -107,7 +113,7 @@ test("BDD-278: Streaming Z-Score anomaly detector flags statistical outliers (|Z
       repoId: "eos-core",
       stage: "FULL_PRODUCTION_100_PCT",
       statusCode: 200,
-      latencyMs: lat
+      latencyMs: lat,
     });
     assert.equal(ingestRes.isAnomaly, false);
   }
@@ -117,7 +123,7 @@ test("BDD-278: Streaming Z-Score anomaly detector flags statistical outliers (|Z
     repoId: "eos-core",
     stage: "FULL_PRODUCTION_100_PCT",
     statusCode: 504,
-    latencyMs: 195
+    latencyMs: 195,
   });
 
   assert.equal(spikeRes.isAnomaly, true);
@@ -140,7 +146,7 @@ test("SPEC-108: Contract invariants and precondition assertions reject invalid p
       repoId: "",
       stage: "CANARY_1_PCT",
       statusCode: 200,
-      latencyMs: 50
+      latencyMs: 50,
     });
   }, /repoId must not be empty/);
 
@@ -150,7 +156,7 @@ test("SPEC-108: Contract invariants and precondition assertions reject invalid p
       repoId: "test",
       stage: "CANARY_1_PCT",
       statusCode: 200,
-      latencyMs: -10
+      latencyMs: -10,
     });
   }, /latencyMs must be non-negative/);
 });
@@ -166,9 +172,9 @@ test("SPEC-108: MCP Server successfully handles eos_columnar_telemetry_query too
       name: "eos_columnar_telemetry_query",
       arguments: {
         repoId: "eos-system",
-        syntheticSamplesCount: 200
-      }
-    }
+        syntheticSamplesCount: 200,
+      },
+    },
   });
 
   assert.equal(response.jsonrpc, "2.0");

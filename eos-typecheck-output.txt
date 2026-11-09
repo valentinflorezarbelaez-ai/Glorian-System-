@@ -1,3 +1,0 @@
-[STAGE 3.8] TypeScript Strict Type Check (tsc --noEmit)...
-[STAGE 3.8 SKIP] tsc not found. Install TypeScript with: npm install --save-dev typescript
-         Skipping TypeScript check — add TypeScript to devDependencies for full strict enforcement.

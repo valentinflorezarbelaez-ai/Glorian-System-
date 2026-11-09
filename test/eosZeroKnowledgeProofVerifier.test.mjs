@@ -3,16 +3,16 @@
  * Zero-Knowledge Proof of Invariant Verifier (Schnorr / Fiat-Shamir)
  */
 
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import { EosZeroKnowledgeProofVerifier } from '../src/core/eosZeroKnowledgeProofVerifier.ts';
+import test from "node:test";
+import assert from "node:assert/strict";
+import { EosZeroKnowledgeProofVerifier } from "../src/core/eosZeroKnowledgeProofVerifier.ts";
 
-test('BDD-229: Valid Zero-Knowledge Proof Generation and Verification', () => {
+test("BDD-229: Valid Zero-Knowledge Proof Generation and Verification", () => {
   const verifier = new EosZeroKnowledgeProofVerifier();
 
   // Prover holds secret authorization x
   const secretX = 9876543210123456789n;
-  const contextMessage = 'deploy:production:enclave-seal';
+  const contextMessage = "deploy:production:enclave-seal";
 
   const proof = verifier.createProof(secretX, contextMessage);
   assert.ok(proof.statementY.length > 0);
@@ -27,25 +27,50 @@ test('BDD-229: Valid Zero-Knowledge Proof Generation and Verification', () => {
   assert.equal(result.attestationSha256.length, 64);
 });
 
-test('BDD-230: Rejection of Forged or Tampered Zero-Knowledge Proofs', () => {
+test("BDD-230: Rejection of Forged or Tampered Zero-Knowledge Proofs", () => {
   const verifier = new EosZeroKnowledgeProofVerifier();
   const secretX = 1234567890987654321n;
-  const contextMessage = 'execute:ledger:transaction';
+  const contextMessage = "execute:ledger:transaction";
 
   const proof = verifier.createProof(secretX, contextMessage);
 
   // 1. Altered context message
-  const tamperedContextProof = { ...proof, contextMessage: 'execute:ledger:unauthorized' };
+  const tamperedContextProof = { ...proof, contextMessage: "execute:ledger:unauthorized" };
   const r1 = verifier.verifyProof(tamperedContextProof);
   assert.equal(r1.valid, false);
 
   // 2. Forged response
-  const forgedResponseProof = { ...proof, responseS: 'deadbeef' };
+  const forgedResponseProof = { ...proof, responseS: "deadbeef" };
   const r2 = verifier.verifyProof(forgedResponseProof);
   assert.equal(r2.valid, false);
 
   // 3. Forged commitment
-  const forgedCommitmentProof = { ...proof, commitmentR: '123456' };
+  const forgedCommitmentProof = { ...proof, commitmentR: "123456" };
   const r3 = verifier.verifyProof(forgedCommitmentProof);
   assert.equal(r3.valid, false);
+});
+
+test("BDD-335: CSPRNG Ephemeral Nonce Is Never Reused Across Proofs", () => {
+  const verifier = new EosZeroKnowledgeProofVerifier();
+  const secretX = 55512345678901234567890n;
+  const contextMessage = "authorize:treasury:release";
+
+  // Freeze the wall clock so the assertion is deterministic. A nonce derived
+  // from Date.now() is identical for both proofs, which reuses v and leaks the
+  // witness: x = (s1 - s2) / (c2 - c1) mod q. A CSPRNG nonce never repeats.
+  const originalNow = Date.now;
+  Date.now = () => 1700000000000;
+  try {
+    const proofA = verifier.createProof(secretX, contextMessage);
+    const proofB = verifier.createProof(secretX, contextMessage);
+
+    assert.notEqual(proofA.commitmentR, proofB.commitmentR, "ephemeral nonce was reused across proofs");
+    assert.notEqual(proofA.responseS, proofB.responseS, "responses must differ when nonces differ");
+
+    // Completeness is preserved: both fresh proofs still verify.
+    assert.equal(verifier.verifyProof(proofA).valid, true);
+    assert.equal(verifier.verifyProof(proofB).valid, true);
+  } finally {
+    Date.now = originalNow;
+  }
 });

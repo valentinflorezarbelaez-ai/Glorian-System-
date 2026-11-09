@@ -12,11 +12,7 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
-import {
-  EosDisruptorRingEngine,
-  LmaxDisruptorRingBuffer,
-  FastStructuralByteScanner
-} from "../src/core/eosDisruptorRingEngine.ts";
+import { EosDisruptorRingEngine, LmaxDisruptorRingBuffer } from "../src/core/eosDisruptorRingEngine.ts";
 
 test("EOS typed-array ring and local benchmark suite (SPEC-022, BDD-052)", async (t) => {
   const engine = new EosDisruptorRingEngine(12); // 4096 slots

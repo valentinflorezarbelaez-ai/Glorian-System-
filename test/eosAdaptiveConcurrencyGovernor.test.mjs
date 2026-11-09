@@ -20,7 +20,7 @@ describe("EOS SPEC-112: Adaptive Concurrency Control & Priority Load Shedder Sui
       maxLimit: 100,
       initialLimit: 50,
       queueHeadroom: 3,
-      smoothingAlpha: 0.5
+      smoothingAlpha: 0.5,
     });
 
     // Establish baseline at 20ms
@@ -45,7 +45,7 @@ describe("EOS SPEC-112: Adaptive Concurrency Control & Priority Load Shedder Sui
     }
 
     const recoveredStatus = governor.getStatus();
-    assert.ok(recoveredStatus.gradient > 0.90, `Gradient should recover near 1.0, got ${recoveredStatus.gradient}`);
+    assert.ok(recoveredStatus.gradient > 0.9, `Gradient should recover near 1.0, got ${recoveredStatus.gradient}`);
     assert.ok(recoveredStatus.currentLimit > status.currentLimit, "Limit should expand upon recovery");
     assert.ok(recoveredStatus.sha256Receipt.length === 64);
   });
@@ -55,7 +55,7 @@ describe("EOS SPEC-112: Adaptive Concurrency Control & Priority Load Shedder Sui
       minLimit: 10,
       maxLimit: 50,
       initialLimit: 20,
-      emergencyHeadroom: 5
+      emergencyHeadroom: 5,
     });
 
     // Fill capacity up to 16 in-flight (80% of 20)
@@ -95,7 +95,7 @@ describe("EOS SPEC-112: Adaptive Concurrency Control & Priority Load Shedder Sui
 
   it("BDD-290: Binds queue residency delay and sheds requests experiencing bufferbloat (CoDel)", () => {
     const governor = new EosAdaptiveConcurrencyGovernor({
-      maxQueueDelayMs: 15
+      maxQueueDelayMs: 15,
     });
 
     // Request waiting within delay limit (10ms <= 15ms)
@@ -125,9 +125,9 @@ describe("EOS SPEC-112: Adaptive Concurrency Control & Priority Load Shedder Sui
         arguments: {
           priority: "CRITICAL",
           queueWaitMs: 5,
-          releaseAfterSimulatedRttMs: 25
-        }
-      }
+          releaseAfterSimulatedRttMs: 25,
+        },
+      },
     });
 
     assert.ok(evalRes.result);
@@ -145,9 +145,9 @@ describe("EOS SPEC-112: Adaptive Concurrency Control & Priority Load Shedder Sui
       params: {
         name: "eos_concurrency_status",
         arguments: {
-          recordLatencyMs: 30
-        }
-      }
+          recordLatencyMs: 30,
+        },
+      },
     });
 
     assert.ok(statusRes.result);

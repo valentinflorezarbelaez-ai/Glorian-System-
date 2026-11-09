@@ -102,10 +102,7 @@ export class EosPlanetaryMonorepoGovernor {
   /**
    * Projects the minimum hermetic transitive closure from a virtual planet-scale monorepo graph.
    */
-  public projectSparseClosure(
-    targetFile: string,
-    monorepoNodes: VirtualMonorepoNode[]
-  ): SparseProjectionResult {
+  public projectSparseClosure(targetFile: string, monorepoNodes: VirtualMonorepoNode[]): SparseProjectionResult {
     const nodeMap = new Map<string, VirtualMonorepoNode>();
     for (const node of monorepoNodes) {
       nodeMap.set(node.path, node);
@@ -134,9 +131,7 @@ export class EosPlanetaryMonorepoGovernor {
 
     const totalMonorepoNodes = Math.max(monorepoNodes.length, 1);
     const projectedNodesCount = closure.length;
-    const pruningRatioPercent = Number(
-      Math.max(0, (1 - projectedNodesCount / totalMonorepoNodes) * 100).toFixed(2)
-    );
+    const pruningRatioPercent = Number(Math.max(0, (1 - projectedNodesCount / totalMonorepoNodes) * 100).toFixed(2));
 
     // Compute Merkle Root of closure
     closure.sort();
@@ -158,7 +153,7 @@ export class EosPlanetaryMonorepoGovernor {
       pruningRatioPercent,
       transitiveClosure: closure,
       merkleRootSha256,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -175,7 +170,7 @@ export class EosPlanetaryMonorepoGovernor {
         rule: 1,
         ruleName: "Simple Control Flow",
         severity: "BLOCKER",
-        description: "Rule 1 Violation: 'goto' statements are forbidden in safety-critical systems."
+        description: "Rule 1 Violation: 'goto' statements are forbidden in safety-critical systems.",
       });
     }
 
@@ -187,7 +182,7 @@ export class EosPlanetaryMonorepoGovernor {
         rule: 2,
         ruleName: "Fixed Upper Bound on Loops",
         severity: "BLOCKER",
-        description: "Rule 2 Violation: Open-ended infinite loop detected without deterministic upper bound."
+        description: "Rule 2 Violation: Open-ended infinite loop detected without deterministic upper bound.",
       });
     }
 
@@ -217,7 +212,7 @@ export class EosPlanetaryMonorepoGovernor {
         rule: 4,
         ruleName: "Restrict Function Size",
         severity: "WARNING",
-        description: `Rule 4 Warning: Function exceeds 60 lines of code (${maxFunctionLinesObserved} lines).`
+        description: `Rule 4 Warning: Function exceeds 60 lines of code (${maxFunctionLinesObserved} lines).`,
       });
     }
 
@@ -231,7 +226,7 @@ export class EosPlanetaryMonorepoGovernor {
         rule: 5,
         ruleName: "Assertion Density",
         severity: "WARNING",
-        description: `Rule 5 Warning: Assertion density is ${assertionDensityRatio} (NASA requires >= 2 asserts/function).`
+        description: `Rule 5 Warning: Assertion density is ${assertionDensityRatio} (NASA requires >= 2 asserts/function).`,
       });
     }
 
@@ -241,7 +236,7 @@ export class EosPlanetaryMonorepoGovernor {
         rule: 6,
         ruleName: "Minimal Variable Scope",
         severity: "BLOCKER",
-        description: "Rule 6 Violation: Mutable global 'var' declarations are prohibited."
+        description: "Rule 6 Violation: Mutable global 'var' declarations are prohibited.",
       });
     }
 
@@ -269,7 +264,7 @@ export class EosPlanetaryMonorepoGovernor {
       maxFunctionLinesObserved,
       violationsCount: findings.length,
       findings,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -311,7 +306,7 @@ export class EosPlanetaryMonorepoGovernor {
       totalShards: sortedDepths.length,
       packagesAffected: grouped.get(depth)!.sort(),
       topologicalDepth: depth,
-      canarySafe: true
+      canarySafe: true,
     }));
 
     const digestPayload = `ROSIE:${planId}:${packages.length}:${shards.length}`;
@@ -324,7 +319,7 @@ export class EosPlanetaryMonorepoGovernor {
       totalPackagesAffected: packages.length,
       totalShards: shards.length,
       shards,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -341,7 +336,7 @@ export class EosPlanetaryMonorepoGovernor {
         verdict: "TMR_BYZANTINE_SPLIT_REJECTED",
         agreeingVotesCount: votes.length,
         totalVoters: votes.length,
-        sha256Attestation: createHash("sha256").update(digestPayload).digest("hex")
+        sha256Attestation: createHash("sha256").update(digestPayload).digest("hex"),
       };
     }
 
@@ -380,7 +375,7 @@ export class EosPlanetaryMonorepoGovernor {
       agreeingVotesCount: maxAgreement,
       totalVoters: votes.length,
       winningAssertionHash: winningGroup?.hash,
-      sha256Attestation
+      sha256Attestation,
     };
   }
 
@@ -390,7 +385,7 @@ export class EosPlanetaryMonorepoGovernor {
       totalJplAuditsExecuted: this.totalJplAuditsExecuted,
       totalTmrAdjudicationsExecuted: this.totalTmrAdjudicationsExecuted,
       totalRosiePlansGenerated: this.totalRosiePlansGenerated,
-      state: "FLIGHT_ACTIVE"
+      state: "FLIGHT_ACTIVE",
     };
   }
 

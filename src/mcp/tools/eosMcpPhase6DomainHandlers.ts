@@ -9,21 +9,16 @@ import path from "node:path";
 
 import { EosApexModelRouter } from "../../core/eosApexModelRouter.ts";
 import { EosFleetElevator } from "../../core/eosFleetElevator.ts";
+import { EosFleetMissionControl } from "../../core/eosFleetMissionControl.ts";
 import { EosSpotifyAgenticFactory } from "../../core/eosSpotifyAgenticFactory.ts";
 import { EosFleetPulseEngine } from "../../core/eosFleetPulseEngine.ts";
 import { EosFleetProductionVerifier } from "../../core/eosFleetProductionVerifier.ts";
 import { EosFinOpsBudget } from "../../core/eosFinOpsBudget.ts";
 import { EosAgenticFinOpsGovernor } from "../../core/eosAgenticFinOpsGovernor.ts";
-import {
-  EosUniversalProductFoundry,
-  type ProductManifest
-} from "../../core/eosUniversalProductFoundry.ts";
+import { EosUniversalProductFoundry, type ProductManifest } from "../../core/eosUniversalProductFoundry.ts";
 import { EosProductDeliveryOrchestrator } from "../../core/eosProductDeliveryOrchestrator.ts";
 import { EosMetaCognitiveSynapse } from "../../core/eosMetaCognitiveSynapse.ts";
-import {
-  EosCrossFleetNeuralSynapse,
-  type SynapticPatternCategory
-} from "../../core/eosCrossFleetNeuralSynapse.ts";
+import { EosCrossFleetNeuralSynapse, type SynapticPatternCategory } from "../../core/eosCrossFleetNeuralSynapse.ts";
 import { EosPlanetaryMonorepoGovernor } from "../../core/eosPlanetaryMonorepoGovernor.ts";
 import { EosPlanetaryMultiCloudEvacuationMesh } from "../../core/eosPlanetaryMultiCloudEvacuationMesh.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
@@ -33,11 +28,7 @@ export { PHASE6_MIGRATED_TOOL_NAMES };
 
 export interface Phase6DomainHandlerDeps {
   readonly projectRoot: string;
-  readonly resolveProjectPath: (
-    value: unknown,
-    kind: "file" | "directory",
-    fallback?: string
-  ) => string;
+  readonly resolveProjectPath: (value: unknown, kind: "file" | "directory", fallback?: string) => string;
 }
 
 const globalFinOpsGovernor = EosAgenticFinOpsGovernor.getInstance();
@@ -45,9 +36,7 @@ const globalPlanetaryGovernor = EosPlanetaryMonorepoGovernor.getInstance();
 const globalCrossFleetSynapse = EosCrossFleetNeuralSynapse.getInstance();
 const globalMultiCloudEvacuationMesh = EosPlanetaryMultiCloudEvacuationMesh.getInstance();
 
-export function createPhase6DomainHandlers(
-  deps: Phase6DomainHandlerDeps
-): Readonly<Record<string, McpToolHandler>> {
+export function createPhase6DomainHandlers(deps: Phase6DomainHandlerDeps): Readonly<Record<string, McpToolHandler>> {
   const { projectRoot, resolveProjectPath } = deps;
 
   return {
@@ -62,23 +51,28 @@ export function createPhase6DomainHandlers(
         encoding: "utf8",
         timeout: 60000,
         stdio: ["ignore", "pipe", "pipe"],
-        windowsHide: true
+        windowsHide: true,
       });
       return JSON.parse(out.trim());
     },
 
     eos_fleet_mission_control: (args) => {
       const probe = Boolean(args?.probe ?? false);
-      const cliArgs = [path.join(projectRoot, "scripts/eos-fleet-mission-control.mjs"), "--json"];
-      if (probe) cliArgs.push("--probe");
-      const out = execFileSync(process.execPath, cliArgs, {
-        cwd: projectRoot,
-        encoding: "utf8",
-        timeout: 60000,
-        stdio: ["ignore", "pipe", "pipe"],
-        windowsHide: true
-      });
-      return JSON.parse(out.trim());
+      try {
+        const cliArgs = [path.join(projectRoot, "scripts/eos-fleet-mission-control.mjs"), "--json"];
+        if (probe) cliArgs.push("--probe");
+        const out = execFileSync(process.execPath, cliArgs, {
+          cwd: projectRoot,
+          encoding: "utf8",
+          timeout: 60000,
+          stdio: ["ignore", "pipe", "pipe"],
+          windowsHide: true,
+        });
+        return JSON.parse(out.trim());
+      } catch {
+        const mc = new EosFleetMissionControl(projectRoot);
+        return mc.generateReportSync();
+      }
     },
 
     eos_fleet_elevate: (args) => {
@@ -94,7 +88,7 @@ export function createPhase6DomainHandlers(
         description: "Create one missing local catalog-info.yaml template after checkout verification.",
         action: "apply_backstage_rfc42",
         targetFleet: [targetProject],
-        dryRun: false
+        dryRun: false,
       });
       return { status: "SINGLE_PROJECT_ACTION", inventory, result };
     },
@@ -107,7 +101,7 @@ export function createPhase6DomainHandlers(
         target,
         projectRoot,
         recordToLedger,
-        simulateDegraded
+        simulateDegraded,
       });
     },
 
@@ -121,7 +115,7 @@ export function createPhase6DomainHandlers(
           totalProjects: report.totalProjects,
           quorumPercentage: report.fleetHealthQuorumPercentage,
           sha256Receipt: report.sha256Receipt,
-          timestampIso: report.timestampIso
+          timestampIso: report.timestampIso,
         };
       }
       return report;
@@ -182,17 +176,11 @@ export function createPhase6DomainHandlers(
       const domain = String(args.domain || "general");
       const tier = (args.tier as ProductManifest["tier"]) || "ENTERPRISE";
       const entities =
-        Array.isArray(args.entities) && args.entities.length > 0
-          ? args.entities
-          : ["PrimaryRecord", "AuditTrail"];
+        Array.isArray(args.entities) && args.entities.length > 0 ? args.entities : ["PrimaryRecord", "AuditTrail"];
       const commands =
-        Array.isArray(args.commands) && args.commands.length > 0
-          ? args.commands
-          : ["CreateRecord", "VerifyRecord"];
+        Array.isArray(args.commands) && args.commands.length > 0 ? args.commands : ["CreateRecord", "VerifyRecord"];
       const platforms =
-        Array.isArray(args.platforms) && args.platforms.length > 0
-          ? args.platforms
-          : ["web", "distributed-backend"];
+        Array.isArray(args.platforms) && args.platforms.length > 0 ? args.platforms : ["web", "distributed-backend"];
       const manifest: ProductManifest = {
         id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
         name,
@@ -201,7 +189,7 @@ export function createPhase6DomainHandlers(
         tier,
         platforms,
         entities,
-        commands
+        commands,
       };
       const blueprint = EosUniversalProductFoundry.createProductBlueprint(manifest);
       const report = EosUniversalProductFoundry.validateProductTopology(blueprint);
@@ -210,7 +198,7 @@ export function createPhase6DomainHandlers(
         status: "BLUEPRINT_CREATED",
         blueprint,
         validation: report,
-        totalFilesGenerated: blueprint.domainEntities.length + blueprint.useCases.length + 2
+        totalFilesGenerated: blueprint.domainEntities.length + blueprint.useCases.length + 2,
       };
     },
 
@@ -226,7 +214,7 @@ export function createPhase6DomainHandlers(
         tier,
         platforms: ["distributed-backend"],
         entities: ["SampleEntity"],
-        commands: ["ExecuteSample"]
+        commands: ["ExecuteSample"],
       };
       const blueprint = EosUniversalProductFoundry.createProductBlueprint(manifest);
       const report = EosUniversalProductFoundry.validateProductTopology(blueprint);
@@ -257,14 +245,14 @@ export function createPhase6DomainHandlers(
         platforms: ["distributed-backend", "web"],
         entities,
         commands,
-        compliance: ["SLSA_4"]
+        compliance: ["SLSA_4"],
       };
       ctx.onProgress?.(45, 100, "Foundry + Sovereign Loop + verification gates");
       const result = EosProductDeliveryOrchestrator.deliverProduct(manifest, {
         dryRun: !write,
         projectRoot,
         enforceGates: true,
-        externalSatellite: false
+        externalSatellite: false,
       });
       ctx.onProgress?.(100, 100, `Delivery ${result.status}`);
       return {
@@ -279,7 +267,7 @@ export function createPhase6DomainHandlers(
         epistemicState: result.epistemicState,
         sha256Receipt: result.sha256Receipt,
         deploymentAttempted: result.deploymentAttempted,
-        durationMs: result.durationMs
+        durationMs: result.durationMs,
       };
     },
 
@@ -292,9 +280,7 @@ export function createPhase6DomainHandlers(
 
     eos_synapse_propagate_golden_path: (args) => {
       const patternId = String(args.patternId || "");
-      const targetRepos = Array.isArray(args.targetRepos)
-        ? args.targetRepos.map(String)
-        : undefined;
+      const targetRepos = Array.isArray(args.targetRepos) ? args.targetRepos.map(String) : undefined;
       return globalCrossFleetSynapse.propagateGoldenPath(patternId, targetRepos);
     },
 
@@ -327,6 +313,6 @@ export function createPhase6DomainHandlers(
     eos_planetary_mesh_status: (args) => {
       if (args.reset) globalMultiCloudEvacuationMesh.reset();
       return globalMultiCloudEvacuationMesh.getStatus();
-    }
+    },
   };
 }

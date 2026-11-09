@@ -3,6 +3,7 @@
 ## 1. Architectural Design & ADR-043
 
 ### ADR-043: Citadel HFT IPC Daemon, SpaceX Zero-Copy Mechanical Sympathy & Netflix Autonomous Chaos Engine
+
 - **Status**: ACCEPTED
 - **Context**: EOS System requires sub-millisecond execution speeds for polyglot native acceleration, 0 B/op zero-copy memory efficiency during token analysis, and automated in-process chaos resilience under Byzantine conditions.
 - **Decision**:

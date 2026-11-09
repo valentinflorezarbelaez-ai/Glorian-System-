@@ -10,7 +10,7 @@
  * ZERO external dependencies — 100% pure TypeScript.
  */
 
-export type DistanceMetric = 'cosine' | 'euclidean';
+export type DistanceMetric = "cosine" | "euclidean";
 
 export interface HnswNode {
   readonly id: string;
@@ -67,7 +67,7 @@ export class EosHnswVectorEngine {
     this.m0 = 2 * this.m;
     this.efConstruction = Math.max(this.m, config.efConstruction ?? 64);
     this.efSearch = Math.max(1, config.efSearch ?? 32);
-    this.metric = config.metric ?? 'cosine';
+    this.metric = config.metric ?? "cosine";
     this.mL = 1.0 / Math.log(this.m);
 
     let seed = config.seed ?? 1337;
@@ -88,7 +88,7 @@ export class EosHnswVectorEngine {
       throw new Error(`Vector dimension mismatch: ${a.length} !== ${b.length}`);
     }
 
-    if (this.metric === 'euclidean') {
+    if (this.metric === "euclidean") {
       let sumSq = 0;
       for (let i = 0; i < a.length; i++) {
         const diff = a[i]! - b[i]!;
@@ -174,11 +174,7 @@ export class EosHnswVectorEngine {
   /**
    * Adds a high-dimensional vector point to the HNSW graph.
    */
-  public addPoint(
-    id: string,
-    rawVector: Float32Array | number[],
-    metadata?: Record<string, unknown>
-  ): void {
+  public addPoint(id: string, rawVector: Float32Array | number[], metadata?: Record<string, unknown>): void {
     if (this.idToIndex.has(id)) {
       throw new Error(`Node with id "${id}" already exists in index.`);
     }
@@ -283,7 +279,7 @@ export class EosHnswVectorEngine {
     queryVector: Float32Array,
     entryPoint: number,
     ef: number,
-    level: number
+    level: number,
   ): { index: number; distance: number }[] {
     const visited = new Set<number>();
     visited.add(entryPoint);
@@ -339,11 +335,7 @@ export class EosHnswVectorEngine {
   /**
    * Approximate k-Nearest Neighbor (k-NN) search.
    */
-  public searchKnn(
-    rawQuery: Float32Array | number[],
-    k: number = 10,
-    efSearch?: number
-  ): HnswSearchResult[] {
+  public searchKnn(rawQuery: Float32Array | number[], k: number = 10, efSearch?: number): HnswSearchResult[] {
     if (this.nodes.length === 0 || this.entryPointIndex === -1) {
       return [];
     }
@@ -382,9 +374,7 @@ export class EosHnswVectorEngine {
     const topK = candidates.slice(0, k);
     return topK.map((c) => {
       const node = this.nodes[c.index]!;
-      const similarity = this.metric === 'cosine'
-        ? Math.max(0, 1.0 - c.distance)
-        : 1.0 / (1.0 + c.distance);
+      const similarity = this.metric === "cosine" ? Math.max(0, 1.0 - c.distance) : 1.0 / (1.0 + c.distance);
 
       return {
         id: node.id,

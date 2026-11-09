@@ -9,10 +9,7 @@ import { EosSpotifyCodex } from "../../core/eosSpotifyCodex.ts";
 import { EosSpotifyAgenticFactory } from "../../core/eosSpotifyAgenticFactory.ts";
 import { EosGaplessMixEngine } from "../../core/eosGaplessMixEngine.ts";
 import { EosAcousticFeatureStore } from "../../core/eosAcousticFeatureStore.ts";
-import {
-  executeSpotifySmartShuffle,
-  type TrackNode
-} from "../../core/eosSpotifyNubankEngine.ts";
+import { executeSpotifySmartShuffle, type TrackNode } from "../../core/eosSpotifyNubankEngine.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 import { PHASE5_MIGRATED_TOOL_NAMES } from "./eosMcpPhase5ToolNames.ts";
 
@@ -20,16 +17,10 @@ export { PHASE5_MIGRATED_TOOL_NAMES };
 
 export interface Phase5DomainHandlerDeps {
   readonly projectRoot: string;
-  readonly resolveProjectPath: (
-    value: unknown,
-    kind: "file" | "directory",
-    fallback?: string
-  ) => string;
+  readonly resolveProjectPath: (value: unknown, kind: "file" | "directory", fallback?: string) => string;
 }
 
-export function createPhase5DomainHandlers(
-  deps: Phase5DomainHandlerDeps
-): Readonly<Record<string, McpToolHandler>> {
+export function createPhase5DomainHandlers(deps: Phase5DomainHandlerDeps): Readonly<Record<string, McpToolHandler>> {
   const { projectRoot, resolveProjectPath } = deps;
 
   return {
@@ -45,7 +36,7 @@ export function createPhase5DomainHandlers(
       return codex.scaffoldBackstageCatalog(targetPath, {
         name: args.name ? String(args.name) : undefined,
         owner: args.owner ? String(args.owner) : undefined,
-        write: args.apply === true
+        write: args.apply === true,
       });
     },
 
@@ -70,7 +61,7 @@ export function createPhase5DomainHandlers(
         taskName: String(args.taskName || "Autonomous task"),
         stack: args.stack,
         specDescription: String(args.specDescription || ""),
-        dryRun: true
+        dryRun: true,
       });
     },
 
@@ -89,7 +80,7 @@ export function createPhase5DomainHandlers(
         description: `Fleetshift migration batch`,
         action: args.action || "apply_backstage_rfc42",
         targetFleet: Array.isArray(args.targetFleet) ? args.targetFleet : undefined,
-        dryRun: args.apply !== true
+        dryRun: args.apply !== true,
       });
     },
 
@@ -99,7 +90,7 @@ export function createPhase5DomainHandlers(
         String(args.serviceName || "spotify-service"),
         String(args.squad || "Audio-Platform"),
         Number(args.p99LatencyMs) || 100,
-        Number(args.maxErrorRatePercent) || 0.1
+        Number(args.maxErrorRatePercent) || 0.1,
       );
     },
 
@@ -113,16 +104,16 @@ export function createPhase5DomainHandlers(
           title: `Track A (${keyA})`,
           bpm: Number(args.bpmA) || 126,
           camelotKey: keyA,
-          sampleRateHz: 44100
+          sampleRateHz: 44100,
         },
         {
           trackId: "track-B",
           title: `Track B (${keyB})`,
           bpm: Number(args.bpmB) || 128,
           camelotKey: keyB,
-          sampleRateHz: 44100
+          sampleRateHz: 44100,
         },
-        Number(args.duration) || 5.0
+        Number(args.duration) || 5.0,
       );
     },
 
@@ -140,10 +131,10 @@ export function createPhase5DomainHandlers(
           acousticness: 0.1,
           instrumentalness: 0.2,
           liveness: 0.15,
-          speechiness: 0.08
+          speechiness: 0.08,
         },
         200,
-        200
+        200,
       );
       return store.computeTasteCentroid(userId);
     },
@@ -157,10 +148,10 @@ export function createPhase5DomainHandlers(
               { id: "spotify:track:002", artistId: "Armin van Buuren", bpm: 134, camelotKey: "8A" },
               { id: "spotify:track:003", artistId: "Paul Oakenfold", bpm: 130, camelotKey: "9A" },
               { id: "spotify:track:004", artistId: "Paul Oakenfold", bpm: 132, camelotKey: "9A" },
-              { id: "spotify:track:005", artistId: "Ferry Corsten", bpm: 130, camelotKey: "8B" }
+              { id: "spotify:track:005", artistId: "Ferry Corsten", bpm: 130, camelotKey: "8B" },
             ];
       const seed = Number(args.seed) || 42108;
       return executeSpotifySmartShuffle(tracks, seed);
-    }
+    },
   };
 }

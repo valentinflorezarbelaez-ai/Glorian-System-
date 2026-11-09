@@ -10,7 +10,7 @@ test("SPEC-031 / BDD-074: Three-Brain Energy Harmonization & Triamonia", async (
     // 8 hours coding, 1 hour music, 1 hour motor -> 80% intellectual
     const report = temple.auditThreeBrains(8, 1, 1);
     assert.equal(report.status, "INTELLECTUAL_HYPERTROPHY");
-    assert.ok(report.intellectualRatio >= 0.70);
+    assert.ok(report.intellectualRatio >= 0.7);
     assert.ok(report.prescriptions.some((p) => p.includes("Cerebro Motor")));
   });
 
@@ -29,7 +29,7 @@ test("SPEC-031 / BDD-075: Clave de SOL & Psychological Impression Ledger", async
     const res = temple.evaluateClaveDeSol({
       subjectAware: true,
       objectFocused: true,
-      placePresent: true
+      placePresent: true,
     });
     assert.equal(res.consciousnessAwakeScore, 100);
     assert.equal(res.state, "DESPIERTO");
@@ -40,7 +40,7 @@ test("SPEC-031 / BDD-075: Clave de SOL & Psychological Impression Ledger", async
     const res = temple.evaluateClaveDeSol({
       subjectAware: false,
       objectFocused: false,
-      placePresent: false
+      placePresent: false,
     });
     assert.equal(res.consciousnessAwakeScore, 0);
     assert.equal(res.state, "FASCINADO_SUEÑO_CONCIENCIA");
@@ -91,7 +91,7 @@ test("SPEC-031 / BDD-076: Circadian Nightly Screen Veto & Octave Shocks", async 
 });
 
 test("SPEC-031 / BDD-077: Inviolable FinOps Budget Shield & Cajitas", async (t) => {
-  const finops = new EosFinOpsBudget(15.00);
+  const finops = new EosFinOpsBudget(15.0);
 
   await t.test("Subsuite 1: Micro-Cent Cost Calculation for Models", () => {
     // 100,000 prompt tokens + 20,000 completion tokens on deepseek-reasoner

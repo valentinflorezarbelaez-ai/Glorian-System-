@@ -1,7 +1,9 @@
 # TASKS-028: ATOMIC IMPLEMENTATION DAG — PLANETARY CONSENSUS & ADAPTIVE CONCURRENCY
+
 <!-- Formal Atomic Task Decomposition — DAG Standard -->
 
 ## Task Graph DAG
+
 ```text
 [TASK-001: Implement eosTrueTimeBoundedClock.ts]
        │
@@ -31,6 +33,7 @@
 ```
 
 ## Atomic Tasks Breakdown
+
 1. **TASK-001**: Build `src/core/eosTrueTimeBoundedClock.ts` (Google Spanner TrueTime, $[earliest, latest]$, commit-wait, monotonicity).
 2. **TASK-002**: Build `src/core/eosPlanetaryConsensusEngine.ts` (Monotonic terms, leader leases, majority voting, replicated state machine).
 3. **TASK-003**: Build `src/core/eosAdaptiveConcurrencyLimiter.ts` (Netflix Vegas RTT gradient, queue inflation estimation, proactive load-shedding).

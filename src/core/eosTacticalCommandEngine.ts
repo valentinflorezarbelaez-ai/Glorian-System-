@@ -11,6 +11,8 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 
+import { contentDerivedIso, writeDeterministicArtifact } from "./eosDeterministicArtifact.ts";
+
 export interface TacticalCommandItem {
   readonly id: string;
   readonly title: string;
@@ -76,7 +78,7 @@ export class EosTacticalCommandEngine {
               icon: "🌐",
               shortcut: `f ${proj.id}`,
               targetUrl: proj.productionUrl,
-              payload: { projectId: proj.id, localPath: proj.localPath }
+              payload: { projectId: proj.id, localPath: proj.localPath },
             });
           }
         }
@@ -94,7 +96,7 @@ export class EosTacticalCommandEngine {
         category: "ACTION",
         icon: "⚡",
         shortcut: "v cicd",
-        payload: { command: "npm run verify:strict" }
+        payload: { command: "npm run verify:strict" },
       },
       {
         id: "action:design-govern",
@@ -103,7 +105,7 @@ export class EosTacticalCommandEngine {
         category: "ACTION",
         icon: "🎨",
         shortcut: "v design",
-        payload: { command: "npm run design:govern" }
+        payload: { command: "npm run design:govern" },
       },
       {
         id: "action:secret-scan",
@@ -112,7 +114,7 @@ export class EosTacticalCommandEngine {
         category: "ACTION",
         icon: "🔒",
         shortcut: "v secrets",
-        payload: { command: "npm run secret-scan" }
+        payload: { command: "npm run secret-scan" },
       },
       {
         id: "action:fleet-radar",
@@ -121,7 +123,7 @@ export class EosTacticalCommandEngine {
         category: "ACTION",
         icon: "📡",
         shortcut: "g radar",
-        targetAnchor: "#fleet-synapse-radar"
+        targetAnchor: "#fleet-synapse-radar",
       },
       {
         id: "action:specs-explorer",
@@ -130,7 +132,7 @@ export class EosTacticalCommandEngine {
         category: "ACTION",
         icon: "📜",
         shortcut: "g specs",
-        targetAnchor: "#openspecs-explorer"
+        targetAnchor: "#openspecs-explorer",
       },
       {
         id: "action:hero-hud",
@@ -139,8 +141,8 @@ export class EosTacticalCommandEngine {
         category: "ACTION",
         icon: "🛸",
         shortcut: "g top",
-        targetAnchor: "#top"
-      }
+        targetAnchor: "#top",
+      },
     ];
     this.itemsIndex.push(...standardActions);
 
@@ -154,7 +156,7 @@ export class EosTacticalCommandEngine {
         icon: "📑",
         shortcut: spec.id.toLowerCase(),
         targetUrl: spec.file,
-        payload: { specId: spec.id, frCount: spec.frCount, bddCount: spec.bddCount }
+        payload: { specId: spec.id, frCount: spec.frCount, bddCount: spec.bddCount },
       });
     }
 
@@ -205,7 +207,7 @@ export class EosTacticalCommandEngine {
         frCount: uniqueFrs,
         bddCount: uniqueBdds,
         file: `openspec/specs/${file}`,
-        sha256
+        sha256,
       });
     }
 
@@ -232,7 +234,7 @@ export class EosTacticalCommandEngine {
         query,
         totalMatches: this.itemsIndex.length,
         durationMs: Number((performance.now() - start).toFixed(2)),
-        items: defaultItems
+        items: defaultItems,
       };
     }
 
@@ -273,7 +275,7 @@ export class EosTacticalCommandEngine {
       query,
       totalMatches: scored.length,
       durationMs: Number((performance.now() - start).toFixed(2)),
-      items: selected
+      items: selected,
     };
   }
 
@@ -283,31 +285,19 @@ export class EosTacticalCommandEngine {
   public exportOpenSpecsJson(outputPath?: string): string {
     const specs = this.extractOpenSpecs();
     const target = outputPath || path.join(this.projectRoot, "docs/specs/openspec-catalog-index.json");
-    const catalogSha256 = crypto.createHash("sha256").update(JSON.stringify(specs)).digest("hex");
-    const seconds = 1_577_836_800 + (parseInt(catalogSha256.slice(0, 8), 16) % 315_619_200);
     const payload = {
-      timestampIso: new Date(seconds * 1000).toISOString(),
+      timestampIso: new Date().toISOString(),
       totalSpecs: specs.length,
-      catalogSha256,
-      specs
+      catalogSha256: crypto.createHash("sha256").update(JSON.stringify(specs)).digest("hex"),
+      specs,
     };
 
-    fs.mkdirSync(path.dirname(target), { recursive: true });
-    safeWriteFileSync(target, JSON.stringify(payload, null, 2) + "\n");
+    // Deterministic artifact: the committed timestampIso is reused in place, so an
+    // unchanged spec set yields a byte-identical index with no working-tree churn.
+    writeDeterministicArtifact(target, payload, {
+      stampField: "timestampIso",
+      stampFor: (seedSha) => contentDerivedIso(seedSha),
+    });
     return target;
-  }
-}
-
-function safeWriteFileSync(filePath: string, content: string): void {
-  const maxAttempts = 10;
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      fs.writeFileSync(filePath, content, "utf8");
-      return;
-    } catch (err: any) {
-      if (attempt === maxAttempts) throw err;
-      const end = Date.now() + 25 * attempt;
-      while (Date.now() < end) {}
-    }
   }
 }

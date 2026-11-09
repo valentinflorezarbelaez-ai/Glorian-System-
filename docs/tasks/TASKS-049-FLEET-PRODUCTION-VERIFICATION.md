@@ -2,7 +2,7 @@
 
 **Specification**: SPEC-056  
 **Change Reference**: CHANGE-049  
-**Target Version**: 62.0.0  
+**Target Version**: 62.0.0
 
 ---
 

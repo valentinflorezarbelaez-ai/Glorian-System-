@@ -10,6 +10,7 @@ flowchart TD
 ```
 
 ## Task Checklist
+
 - [x] Task 1: Record Intake, Specification, Change Proposal, and ADR.
 - [ ] Task 2: Implement `EosSamaelIbmNvidiaCore` with Octaves, IBM Sysplex 2PC, and NVIDIA CUDA Warp Scheduler.
 - [ ] Task 3: Expand `src/core/eosTitansMatrix.ts` with IBM Sysplex Seven-Nines benchmark.

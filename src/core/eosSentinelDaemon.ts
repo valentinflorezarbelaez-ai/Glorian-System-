@@ -60,7 +60,7 @@ export class EosSentinelDaemon {
       "IMPLEMENTATION_AUTHORIZATION.md",
       "src/core/eosJarvisSoul.ts",
       "src/core/eosDurableWal.ts",
-      "src/core/eosWebGpuTopology.ts"
+      "src/core/eosWebGpuTopology.ts",
     ];
 
     const hasher = crypto.createHash("sha256");
@@ -82,7 +82,7 @@ export class EosSentinelDaemon {
     // 2. Memory Health Check
     const mem = process.memoryUsage();
     const utilizationRatio = mem.heapTotal > 0 ? Number((mem.heapUsed / mem.heapTotal).toFixed(3)) : 0;
-    const memStatus = utilizationRatio > 0.90 ? "HIGH_PRESSURE" : "HEALTHY";
+    const memStatus = utilizationRatio > 0.9 ? "HIGH_PRESSURE" : "HEALTHY";
     if (memStatus === "HIGH_PRESSURE") {
       anomalies.push(`V8 heap utilization critical: ${(utilizationRatio * 100).toFixed(1)}%`);
     }
@@ -112,14 +112,14 @@ export class EosSentinelDaemon {
         heapUsedBytes: mem.heapUsed,
         heapTotalBytes: mem.heapTotal,
         utilizationRatio,
-        status: memStatus
+        status: memStatus,
       },
       fleetHealth: {
         totalNodes: nodes.length,
         ringsActive: Array.from(ringSet).sort(),
-        orphanLinksDetected: orphans
+        orphanLinksDetected: orphans,
       },
-      anomaliesDetected: anomalies
+      anomaliesDetected: anomalies,
     };
   }
 

@@ -10,7 +10,13 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { pureSha256, assertPrecondition, assertPostcondition, assertInvariant, deepFreeze } from "./eosKernelPrimitives.ts";
+import {
+  pureSha256,
+  assertPrecondition,
+  assertPostcondition,
+  assertInvariant,
+  deepFreeze,
+} from "./eosKernelPrimitives.ts";
 
 export interface CodeDuplicationFinding {
   readonly fileA: string;
@@ -97,8 +103,8 @@ export class EosContinuousRefactorEngine {
     // Detect unused exports across files
     this.detectUnusedExports(files, fileContents, deadCode);
 
-    const potentialLinesReduction = duplications.reduce((sum, d) => sum + d.potentialLinesSaved, 0) +
-      deadCode.length * 5;
+    const potentialLinesReduction =
+      duplications.reduce((sum, d) => sum + d.potentialLinesSaved, 0) + deadCode.length * 5;
 
     const reportRaw = `${files.length}:${totalLinesAnalyzed}:${duplications.length}:${deadCode.length}:${complexityBottlenecks.length}`;
     const sha256AuditReceipt = pureSha256(reportRaw);
@@ -113,7 +119,7 @@ export class EosContinuousRefactorEngine {
       duplications,
       deadCode,
       complexityBottlenecks,
-      sha256AuditReceipt
+      sha256AuditReceipt,
     };
 
     assertPostcondition(report.scannedFilesCount === files.length, "All files must be accounted for.");
@@ -161,7 +167,7 @@ export class EosContinuousRefactorEngine {
   private static detectDuplicatePatterns(
     files: string[],
     tokenMap: Map<string, string[]>,
-    findings: CodeDuplicationFinding[]
+    findings: CodeDuplicationFinding[],
   ): void {
     const N = Math.min(files.length, 30); // Sample top files to maintain fast audit SLA (<50ms)
     for (let i = 0; i < N; i++) {
@@ -176,14 +182,14 @@ export class EosContinuousRefactorEngine {
         // Check for common sliding window token matches of size 20
         const commonTokens = this.findLongestCommonSubsequenceLength(tokensA, tokensB, 40);
         if (commonTokens >= 40) {
-          const sim = Math.min(100, Math.round((commonTokens * 2 / (tokensA.length + tokensB.length)) * 1000) / 10);
+          const sim = Math.min(100, Math.round(((commonTokens * 2) / (tokensA.length + tokensB.length)) * 1000) / 10);
           findings.push({
             fileA: path.basename(fileA),
             fileB: path.basename(fileB),
             similarityPercent: sim,
             duplicatedTokensCount: commonTokens,
             potentialLinesSaved: Math.round(commonTokens / 4),
-            description: `Shared token pattern between ${path.basename(fileA)} and ${path.basename(fileB)} (${commonTokens} common tokens).`
+            description: `Shared token pattern between ${path.basename(fileA)} and ${path.basename(fileB)} (${commonTokens} common tokens).`,
           });
         }
       }
@@ -212,7 +218,7 @@ export class EosContinuousRefactorEngine {
   private static detectUnusedExports(
     files: string[],
     contents: Map<string, string>,
-    findings: DeadCodeFinding[]
+    findings: DeadCodeFinding[],
   ): void {
     const allExports: Array<{ file: string; id: string; line: number }> = [];
 
@@ -228,7 +234,8 @@ export class EosContinuousRefactorEngine {
     }
 
     // Build frequency map of references across all files
-    for (const exp of allExports.slice(0, 50)) { // Sample subset
+    for (const exp of allExports.slice(0, 50)) {
+      // Sample subset
       let references = 0;
       for (const [file, code] of contents.entries()) {
         if (file === exp.file) continue;
@@ -243,7 +250,7 @@ export class EosContinuousRefactorEngine {
           identifier: exp.id,
           kind: "export",
           line: exp.line,
-          description: `Exported identifier '${exp.id}' in ${path.basename(exp.file)} has zero external usages in scanned modules.`
+          description: `Exported identifier '${exp.id}' in ${path.basename(exp.file)} has zero external usages in scanned modules.`,
         });
       }
     }
@@ -252,11 +259,7 @@ export class EosContinuousRefactorEngine {
   /**
    * Analyzes function lengths and nested loop depths.
    */
-  private static analyzeFileComplexity(
-    file: string,
-    content: string,
-    findings: ComplexityFinding[]
-  ): void {
+  private static analyzeFileComplexity(file: string, content: string, findings: ComplexityFinding[]): void {
     const lines = content.split("\n");
     let currentFunc = "";
     let funcStart = 0;
@@ -275,9 +278,10 @@ export class EosContinuousRefactorEngine {
             linesCount: i - funcStart,
             nestedLoopsDepth: maxLoopDepthInFunc,
             cyclomaticScore: maxLoopDepthInFunc * 3 + Math.floor((i - funcStart) / 20),
-            recommendation: maxLoopDepthInFunc >= 2
-              ? "Flatten nested loops using hash maps or O(1) lookups."
-              : "Decompose large function into atomic single-responsibility helpers (SOLID SRP)."
+            recommendation:
+              maxLoopDepthInFunc >= 2
+                ? "Flatten nested loops using hash maps or O(1) lookups."
+                : "Decompose large function into atomic single-responsibility helpers (SOLID SRP).",
           });
         }
         currentFunc = funcMatch[1] || funcMatch[2] || "anonymous";
@@ -308,7 +312,7 @@ export class EosContinuousRefactorEngine {
       linesReduced: audit.potentialLinesReduction,
       testsPassedAfterRefactor: true,
       epistemicState: "VERIFIED",
-      sha256Receipt: audit.sha256AuditReceipt
+      sha256Receipt: audit.sha256AuditReceipt,
     };
 
     return deepFreeze(summary);
@@ -331,7 +335,7 @@ export class EosContinuousRefactorEngine {
       totalLines: report.totalLinesAnalyzed,
       potentialSavings: report.potentialLinesReduction,
       dietPercentage,
-      duplicationDensity
+      duplicationDensity,
     };
   }
 
@@ -341,7 +345,7 @@ export class EosContinuousRefactorEngine {
   public static createDaemonRunner(
     projectRoot: string,
     intervalMs: number = 60000,
-    onCycle?: (summary: RefactorExecutionSummary) => void
+    onCycle?: (summary: RefactorExecutionSummary) => void,
   ): { stop: () => void; isRunning: () => boolean } {
     let running = true;
     let timer: NodeJS.Timeout | null = null;
@@ -366,7 +370,7 @@ export class EosContinuousRefactorEngine {
         running = false;
         if (timer) clearTimeout(timer);
       },
-      isRunning: () => running
+      isRunning: () => running,
     };
   }
 }

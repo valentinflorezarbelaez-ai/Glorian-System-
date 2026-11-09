@@ -15,18 +15,10 @@
  * Zero external runtime dependencies. Node 24 strip-only compliant.
  */
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
-export type CompatibilityCategory =
-  | "COMPATIBLE_EXPANSION"
-  | "BREAKING_CONTRACTION"
-  | "DANGEROUS_MUTATION";
+export type CompatibilityCategory = "COMPATIBLE_EXPANSION" | "BREAKING_CONTRACTION" | "DANGEROUS_MUTATION";
 
 export type SchemaMutationType =
   | "FIELD_ADDED"
@@ -87,7 +79,7 @@ export class EosContractEvolutionGovernor {
   public static compareContracts(
     base: SchemaContract,
     candidate: SchemaContract,
-    options?: { allowBreakingChanges?: boolean }
+    options?: { allowBreakingChanges?: boolean },
   ): ContractEvolutionReport {
     assertPrecondition(Boolean(base && base.contractId), "Valid base contract required");
     assertPrecondition(Boolean(candidate && candidate.contractId), "Valid candidate contract required");
@@ -116,7 +108,7 @@ export class EosContractEvolutionGovernor {
           classification: "BREAKING_CONTRACTION",
           fieldName: name,
           baseDetail: `${baseField.name}: ${baseField.type}`,
-          message: `Field '${name}' was deleted without deprecation`
+          message: `Field '${name}' was deleted without deprecation`,
         });
         breakingContractionsCount++;
       } else {
@@ -130,7 +122,7 @@ export class EosContractEvolutionGovernor {
             fieldName: name,
             baseDetail: baseField.type,
             candidateDetail: candField.type,
-            message: `Field '${name}' type changed from '${baseField.type}' to '${candField.type}'`
+            message: `Field '${name}' type changed from '${baseField.type}' to '${candField.type}'`,
           });
           breakingContractionsCount++;
         }
@@ -143,7 +135,7 @@ export class EosContractEvolutionGovernor {
             fieldName: name,
             baseDetail: "optional",
             candidateDetail: "required",
-            message: `Optional field '${name}' was made required, breaking existing payloads`
+            message: `Optional field '${name}' was made required, breaking existing payloads`,
           });
           breakingContractionsCount++;
         } else if (!baseField.optional && candField.optional) {
@@ -153,7 +145,7 @@ export class EosContractEvolutionGovernor {
             fieldName: name,
             baseDetail: "required",
             candidateDetail: "optional",
-            message: `Required field '${name}' was relaxed to optional`
+            message: `Required field '${name}' was relaxed to optional`,
           });
           compatibleExpansionsCount++;
         }
@@ -169,7 +161,7 @@ export class EosContractEvolutionGovernor {
             classification: "COMPATIBLE_EXPANSION",
             fieldName: name,
             candidateDetail: `${candField.name}?: ${candField.type}`,
-            message: `Optional field '${name}' added cleanly`
+            message: `Optional field '${name}' added cleanly`,
           });
           compatibleExpansionsCount++;
         } else {
@@ -179,7 +171,7 @@ export class EosContractEvolutionGovernor {
             classification: "BREAKING_CONTRACTION",
             fieldName: name,
             candidateDetail: `${candField.name}: ${candField.type}`,
-            message: `New field '${name}' added as required without default value`
+            message: `New field '${name}' added as required without default value`,
           });
           breakingContractionsCount++;
         }
@@ -187,13 +179,10 @@ export class EosContractEvolutionGovernor {
     }
 
     const allowBreaking = options?.allowBreakingChanges === true;
-    const gateVerdict =
-      breakingContractionsCount > 0 && !allowBreaking
-        ? "BREAKING_CHANGE_REJECTED"
-        : "APPROVED";
+    const gateVerdict = breakingContractionsCount > 0 && !allowBreaking ? "BREAKING_CHANGE_REJECTED" : "APPROVED";
 
     const sha256Receipt = pureSha256(
-      `${base.contractId}:${candidate.contractId}:${gateVerdict}:${diffs.map((d) => d.mutationType + ":" + d.fieldName).join(",")}`
+      `${base.contractId}:${candidate.contractId}:${gateVerdict}:${diffs.map((d) => d.mutationType + ":" + d.fieldName).join(",")}`,
     );
 
     return deepFreeze({
@@ -205,7 +194,7 @@ export class EosContractEvolutionGovernor {
       dangerousMutationsCount,
       diffs: deepFreeze(diffs),
       sqlHazards: deepFreeze([]),
-      sha256Receipt
+      sha256Receipt,
     });
   }
 
@@ -231,7 +220,8 @@ export class EosContractEvolutionGovernor {
           lineNumber: idx + 1,
           statement: line,
           riskExplanation: "Dropping columns immediately breaks running application replicas.",
-          remediation: "Deprecate column in application code first, stop reading/writing, then drop in subsequent release."
+          remediation:
+            "Deprecate column in application code first, stop reading/writing, then drop in subsequent release.",
         });
       }
 
@@ -243,7 +233,7 @@ export class EosContractEvolutionGovernor {
           lineNumber: idx + 1,
           statement: line,
           riskExplanation: "Dropping a table permanently destroys data and causes immediate client errors.",
-          remediation: "Archive table data and ensure zero queries reference the table before dropping."
+          remediation: "Archive table data and ensure zero queries reference the table before dropping.",
         });
       }
 
@@ -254,8 +244,10 @@ export class EosContractEvolutionGovernor {
           classification: "DANGEROUS_MUTATION",
           lineNumber: idx + 1,
           statement: line,
-          riskExplanation: "Adding a NOT NULL column without DEFAULT locks the entire table and fails if existing rows exist.",
-          remediation: "Add column as nullable, backfill data, and then apply NOT NULL constraint, or supply a DEFAULT value."
+          riskExplanation:
+            "Adding a NOT NULL column without DEFAULT locks the entire table and fails if existing rows exist.",
+          remediation:
+            "Add column as nullable, backfill data, and then apply NOT NULL constraint, or supply a DEFAULT value.",
         });
       }
     }
@@ -272,7 +264,13 @@ export class EosContractEvolutionGovernor {
 
     for (const rawLine of lines) {
       const line = rawLine.trim().replace(/;$/, "");
-      if (!line || line.startsWith("//") || line.startsWith("/*") || line.startsWith("*") || line.startsWith("export interface")) {
+      if (
+        !line ||
+        line.startsWith("//") ||
+        line.startsWith("/*") ||
+        line.startsWith("*") ||
+        line.startsWith("export interface")
+      ) {
         continue;
       }
 
@@ -282,7 +280,7 @@ export class EosContractEvolutionGovernor {
         fields.push({
           name: name.trim(),
           type: type.trim(),
-          optional: optMark === "?"
+          optional: optMark === "?",
         });
       }
     }
@@ -290,7 +288,7 @@ export class EosContractEvolutionGovernor {
     return deepFreeze({
       contractId,
       version: "vCurrent",
-      fields: deepFreeze(fields)
+      fields: deepFreeze(fields),
     });
   }
 
@@ -299,7 +297,7 @@ export class EosContractEvolutionGovernor {
    */
   public static recordEvolutionAttestation(
     report: ContractEvolutionReport,
-    options?: { ledgerDbPath?: string; projectId?: string }
+    options?: { ledgerDbPath?: string; projectId?: string },
   ): string {
     if (options?.ledgerDbPath) {
       const ledger = new EosDurableSqliteLedger(options.ledgerDbPath);
@@ -316,9 +314,9 @@ export class EosContractEvolutionGovernor {
             contractions: report.breakingContractionsCount,
             mutations: report.dangerousMutationsCount,
             diffsCount: report.diffs.length,
-            sha256Receipt: report.sha256Receipt
+            sha256Receipt: report.sha256Receipt,
           },
-          engramTopicKey: `eos/contracts/${report.baseContractId}`
+          engramTopicKey: `eos/contracts/${report.baseContractId}`,
         });
         return rec.entryId;
       } finally {

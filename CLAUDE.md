@@ -11,10 +11,6 @@
 - Go Titan Native Benchmark: `node bin/eos.mjs go benchmark`
 - Honk Local Draft: `node bin/eos.mjs honk "<directive>"` (plan only; no files changed)
 - Xirp Context Sync: `node bin/eos.mjs xirp sync`
-- AGI Harness — Axioms: `eos agi axioms`
-- AGI Consult: `eos consult "<problem>"`  
-- AGI Forge List: `eos forge list`
-- AGI Test Suite: `node --test test/eosAgiHarness.test.mjs`
 
 ## Code & Architecture Standards
 These are repository notes, not verified vendor standards. Review requirements and run matching checks before applying them.

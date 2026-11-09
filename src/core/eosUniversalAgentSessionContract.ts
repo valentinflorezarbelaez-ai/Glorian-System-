@@ -10,18 +10,13 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import {
   EosAntigravityDirector,
   type AntigravityMissionProfile,
   type MissionDirectionPlan,
   type PrescribedMcpStep,
-  type WriteBarrierStatus
+  type WriteBarrierStatus,
 } from "./eosAntigravityDirector.ts";
 import { EosGentlemanStackBridge } from "./eosGentlemanStackBridge.ts";
 
@@ -31,14 +26,11 @@ export const SUPPORTED_IDE_FAMILIES: readonly IdeFamily[] = Object.freeze([
   "cursor",
   "antigravity",
   "claude-code",
-  "vscode"
+  "vscode",
 ]);
 
 /** Preferred enforcement surfaces (SPEC-153). */
-export const PREFERRED_IDE_FAMILIES: readonly IdeFamily[] = Object.freeze([
-  "cursor",
-  "antigravity"
-]);
+export const PREFERRED_IDE_FAMILIES: readonly IdeFamily[] = Object.freeze(["cursor", "antigravity"]);
 
 export interface AgentSessionRecord {
   readonly sessionId: string;
@@ -115,6 +107,17 @@ interface DurableLedger {
 }
 
 const DEFAULT_TTL_MS = 60 * 60 * 1000;
+const LEDGER_LOCK_TIMEOUT_MS = 5_000;
+const LEDGER_LOCK_STALE_MS = 10_000;
+// Windows refuses to replace a file that another process holds open for reading.
+const TRANSIENT_RENAME_CODES = new Set(["EPERM", "EBUSY", "EACCES"]);
+// Windows reports a held lock file as EPERM/EACCES instead of EEXIST.
+const LOCK_CONTENTION_CODES = new Set(["EEXIST", "EPERM", "EACCES", "EBUSY"]);
+
+function sleepSync(ms: number): void {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
 const DEFAULT_DIRECTIVE =
   "Govern engineering work under Glorian SPEC-152/153: classify mission, complete mandatory MCP DAG, then authorize writes.";
 
@@ -132,10 +135,13 @@ export class EosUniversalAgentSessionContract {
   private readonly projectRoot: string;
   private readonly ttlMs: number;
   private readonly ledgerPath: string;
-  private readonly sessions = new Map<string, {
-    record: AgentSessionRecord;
-    completed: Set<string>;
-  }>();
+  private readonly sessions = new Map<
+    string,
+    {
+      record: AgentSessionRecord;
+      completed: Set<string>;
+    }
+  >();
   private activeByIde: Partial<Record<IdeFamily, string>> = {};
   private gentlemanAlignment: GentlemanSessionAlignment | null = null;
 
@@ -148,18 +154,14 @@ export class EosUniversalAgentSessionContract {
     this.reloadFromDisk();
   }
 
-  public openSession(input: {
-    ideFamily: string;
-    directive: string;
-    target?: string;
-  }): OpenSessionResult {
+  public openSession(input: { ideFamily: string; directive: string; target?: string }): OpenSessionResult {
     assertPrecondition(typeof input.ideFamily === "string", "ideFamily must be a string");
     if (!isIdeFamily(input.ideFamily)) {
       throw new Error(`Unsupported ideFamily: ${input.ideFamily}`);
     }
     assertPrecondition(
       typeof input.directive === "string" && input.directive.trim().length > 0,
-      "directive must be non-empty"
+      "directive must be non-empty",
     );
 
     this.reloadFromDisk();
@@ -167,15 +169,13 @@ export class EosUniversalAgentSessionContract {
     const plan: MissionDirectionPlan = EosAntigravityDirector.directMission(
       input.directive.trim(),
       input.target || "eos-system",
-      this.projectRoot
+      this.projectRoot,
     );
 
     const sessionId = crypto.randomUUID();
     const openedAtMs = Date.now();
     const expiresAtMs = openedAtMs + this.ttlMs;
-    const mandatoryTools = plan.prescribedMcpDag
-      .filter((step) => step.mandatory)
-      .map((step) => step.toolName);
+    const mandatoryTools = plan.prescribedMcpDag.filter((step) => step.mandatory).map((step) => step.toolName);
 
     const sessionReceipt = pureSha256(
       JSON.stringify({
@@ -183,8 +183,8 @@ export class EosUniversalAgentSessionContract {
         ideFamily: input.ideFamily,
         missionReceipt: plan.sha256Receipt,
         mandatoryTools,
-        openedAtMs
-      })
+        openedAtMs,
+      }),
     );
     assertPostcondition(sessionReceipt.length === 64, "sessionReceipt must be 64-hex");
 
@@ -202,7 +202,7 @@ export class EosUniversalAgentSessionContract {
       sessionReceipt,
       missionReceipt: plan.sha256Receipt,
       openedAtMs,
-      expiresAtMs
+      expiresAtMs,
     });
 
     this.sessions.set(sessionId, { record, completed: new Set() });
@@ -229,7 +229,7 @@ export class EosUniversalAgentSessionContract {
     return this.openSession({
       ideFamily: input.ideFamily,
       directive: input.directive?.trim() || DEFAULT_DIRECTIVE,
-      target: input.target || "eos-system"
+      target: input.target || "eos-system",
     });
   }
 
@@ -240,10 +240,7 @@ export class EosUniversalAgentSessionContract {
   public alignGentlemanStack(): GentlemanSessionAlignment {
     this.reloadFromDisk();
     const freshMs = 60 * 60 * 1000;
-    if (
-      this.gentlemanAlignment &&
-      Date.now() - this.gentlemanAlignment.alignedAtMs < freshMs
-    ) {
+    if (this.gentlemanAlignment && Date.now() - this.gentlemanAlignment.alignedAtMs < freshMs) {
       return this.gentlemanAlignment;
     }
     const report = EosGentlemanStackBridge.auditStack(this.projectRoot);
@@ -254,7 +251,7 @@ export class EosUniversalAgentSessionContract {
       constitutionPreserved: report.constitutionPreserved,
       protocol: EosGentlemanStackBridge.CO_GOVERNANCE_PROTOCOL,
       source: "Gentleman-Programming/gentle-ai-stack",
-      alignedAtMs: Date.now()
+      alignedAtMs: Date.now(),
     });
     this.gentlemanAlignment = alignment;
     this.persistToDisk();
@@ -298,11 +295,14 @@ export class EosUniversalAgentSessionContract {
     }
     return deepFreeze({
       ...live.record,
-      completedTools: new Set(live.completed)
+      completedTools: new Set(live.completed),
     });
   }
 
-  public recordToolInvocation(sessionId: string, toolName: string): {
+  public recordToolInvocation(
+    sessionId: string,
+    toolName: string,
+  ): {
     readonly recorded: boolean;
     readonly completedTools: readonly string[];
     readonly remainingMandatory: readonly string[];
@@ -319,7 +319,7 @@ export class EosUniversalAgentSessionContract {
     return deepFreeze({
       recorded: known,
       completedTools: Array.from(live.completed).sort(),
-      remainingMandatory: remaining
+      remainingMandatory: remaining,
     });
   }
 
@@ -357,7 +357,7 @@ export class EosUniversalAgentSessionContract {
         sessionId: input.sessionId || null,
         sessionReceipt: null,
         missingTools: [],
-        writeBarrierStatus: null
+        writeBarrierStatus: null,
       });
     }
 
@@ -371,7 +371,7 @@ export class EosUniversalAgentSessionContract {
         sessionId: input.sessionId,
         sessionReceipt: null,
         missingTools: [],
-        writeBarrierStatus: null
+        writeBarrierStatus: null,
       });
     }
 
@@ -386,7 +386,7 @@ export class EosUniversalAgentSessionContract {
         sessionId: input.sessionId,
         sessionReceipt: live.record.sessionReceipt,
         missingTools: [],
-        writeBarrierStatus: live.record.writeBarrierStatus
+        writeBarrierStatus: live.record.writeBarrierStatus,
       });
     }
 
@@ -397,7 +397,7 @@ export class EosUniversalAgentSessionContract {
         sessionId: input.sessionId,
         sessionReceipt: live.record.sessionReceipt,
         missingTools: [],
-        writeBarrierStatus: live.record.writeBarrierStatus
+        writeBarrierStatus: live.record.writeBarrierStatus,
       });
     }
 
@@ -409,7 +409,7 @@ export class EosUniversalAgentSessionContract {
         sessionId: input.sessionId,
         sessionReceipt: live.record.sessionReceipt,
         missingTools,
-        writeBarrierStatus: live.record.writeBarrierStatus
+        writeBarrierStatus: live.record.writeBarrierStatus,
       });
     }
 
@@ -419,7 +419,7 @@ export class EosUniversalAgentSessionContract {
       sessionId: input.sessionId,
       sessionReceipt: live.record.sessionReceipt,
       missingTools: [],
-      writeBarrierStatus: live.record.writeBarrierStatus
+      writeBarrierStatus: live.record.writeBarrierStatus,
     });
   }
 
@@ -431,7 +431,7 @@ export class EosUniversalAgentSessionContract {
         sessionId: null,
         sessionReceipt: null,
         missingTools: [],
-        writeBarrierStatus: null
+        writeBarrierStatus: null,
       });
     }
     const active = this.getActiveSessionForIde(ideFamily);
@@ -442,13 +442,13 @@ export class EosUniversalAgentSessionContract {
         sessionId: null,
         sessionReceipt: null,
         missingTools: [],
-        writeBarrierStatus: null
+        writeBarrierStatus: null,
       });
     }
     return this.authorizeWrite({
       sessionId: active.sessionId,
       sessionReceipt: active.sessionReceipt,
-      paths
+      paths,
     });
   }
 
@@ -482,7 +482,7 @@ export class EosUniversalAgentSessionContract {
       completedTools: Array.from(live.completed).sort(),
       remainingMandatory: remaining,
       sessionReceipt: live.record.sessionReceipt,
-      expiresAtMs: live.record.expiresAtMs
+      expiresAtMs: live.record.expiresAtMs,
     });
   }
 
@@ -501,7 +501,7 @@ export class EosUniversalAgentSessionContract {
       mandatoryTools: record.mandatoryTools,
       sessionReceipt: record.sessionReceipt,
       missionReceipt: record.missionReceipt,
-      expiresAtMs: record.expiresAtMs
+      expiresAtMs: record.expiresAtMs,
     });
   }
 
@@ -520,81 +520,202 @@ export class EosUniversalAgentSessionContract {
   }
 
   private reloadFromDisk(): void {
-    if (!fs.existsSync(this.ledgerPath)) return;
-    try {
-      const raw = fs.readFileSync(this.ledgerPath, "utf8");
-      const ledger = JSON.parse(raw) as DurableLedger;
-      if (!ledger || ledger.version !== 1 || typeof ledger.sessions !== "object") return;
-      this.sessions.clear();
-      this.activeByIde = { ...(ledger.activeByIde || {}) };
-      if (ledger.gentlemanAlignment && typeof ledger.gentlemanAlignment.readinessScore === "number") {
-        this.gentlemanAlignment = deepFreeze({ ...ledger.gentlemanAlignment });
+    const ledger = this.readLedgerFromDisk();
+    if (!ledger) return;
+
+    // Merge instead of clearing: another IDE/process may have written the ledger
+    // while this instance kept live sessions in memory. Clearing here would make
+    // concurrent agents invalidate each other's sessions.
+    this.activeByIde = { ...(ledger.activeByIde || {}), ...this.activeByIde };
+    if (
+      ledger.gentlemanAlignment &&
+      typeof ledger.gentlemanAlignment.readinessScore === "number" &&
+      !this.gentlemanAlignment
+    ) {
+      this.gentlemanAlignment = deepFreeze({ ...ledger.gentlemanAlignment });
+    }
+
+    const now = Date.now();
+    for (const [id, blob] of Object.entries(ledger.sessions || {})) {
+      if (!blob || now > blob.expiresAtMs) continue;
+      const existing = this.sessions.get(id);
+      if (!existing) {
+        this.sessions.set(id, this.liveFromBlob(blob));
+        continue;
       }
-      const now = Date.now();
-      for (const [id, blob] of Object.entries(ledger.sessions || {})) {
-        if (!blob || now > blob.expiresAtMs) continue;
-        this.sessions.set(id, {
-          record: deepFreeze({
-            sessionId: blob.sessionId,
-            ideFamily: blob.ideFamily,
-            directive: blob.directive,
-            target: blob.target,
-            profile: blob.profile,
-            writeBarrierStatus: blob.writeBarrierStatus,
-            missingPreconditions: blob.missingPreconditions || [],
-            prescribedMcpDag: blob.prescribedMcpDag || [],
-            mandatoryTools: blob.mandatoryTools || [],
-            completedTools: new Set(blob.completedTools || []),
-            sessionReceipt: blob.sessionReceipt,
-            missionReceipt: blob.missionReceipt,
-            openedAtMs: blob.openedAtMs,
-            expiresAtMs: blob.expiresAtMs
-          }),
-          completed: new Set(blob.completedTools || [])
-        });
+      for (const toolName of blob.completedTools || []) {
+        existing.completed.add(toolName);
       }
-    } catch {
-      // Fail closed to empty in-memory state on corrupt ledger; next persist rewrites.
     }
   }
 
-  private persistToDisk(): void {
-    const sessions: Record<string, DurableSessionBlob> = {};
-    for (const [id, live] of this.sessions) {
-      if (Date.now() > live.record.expiresAtMs) continue;
-      sessions[id] = {
-        sessionId: live.record.sessionId,
-        ideFamily: live.record.ideFamily,
-        directive: live.record.directive,
-        target: live.record.target,
-        profile: live.record.profile,
-        writeBarrierStatus: live.record.writeBarrierStatus,
-        missingPreconditions: [...live.record.missingPreconditions],
-        prescribedMcpDag: live.record.prescribedMcpDag.map((s) => ({ ...s })),
-        mandatoryTools: [...live.record.mandatoryTools],
-        completedTools: Array.from(live.completed),
-        sessionReceipt: live.record.sessionReceipt,
-        missionReceipt: live.record.missionReceipt,
-        openedAtMs: live.record.openedAtMs,
-        expiresAtMs: live.record.expiresAtMs
-      };
+  private readLedgerFromDisk(): DurableLedger | null {
+    try {
+      if (!fs.existsSync(this.ledgerPath)) return null;
+      const raw = fs.readFileSync(this.ledgerPath, "utf8");
+      const ledger = JSON.parse(raw) as DurableLedger;
+      if (!ledger || ledger.version !== 1 || typeof ledger.sessions !== "object") return null;
+      return ledger;
+    } catch {
+      // Corrupt ledger: keep in-memory live sessions and let the next persist rewrite it.
+      return null;
     }
-    const ledger: DurableLedger = {
-      version: 1,
-      activeByIde: { ...this.activeByIde },
-      sessions,
-      gentlemanAlignment: this.gentlemanAlignment || undefined
+  }
+
+  private liveFromBlob(blob: DurableSessionBlob): {
+    record: AgentSessionRecord;
+    completed: Set<string>;
+  } {
+    return {
+      record: deepFreeze({
+        sessionId: blob.sessionId,
+        ideFamily: blob.ideFamily,
+        directive: blob.directive,
+        target: blob.target,
+        profile: blob.profile,
+        writeBarrierStatus: blob.writeBarrierStatus,
+        missingPreconditions: blob.missingPreconditions || [],
+        prescribedMcpDag: blob.prescribedMcpDag || [],
+        mandatoryTools: blob.mandatoryTools || [],
+        completedTools: new Set(blob.completedTools || []),
+        sessionReceipt: blob.sessionReceipt,
+        missionReceipt: blob.missionReceipt,
+        openedAtMs: blob.openedAtMs,
+        expiresAtMs: blob.expiresAtMs,
+      }),
+      completed: new Set(blob.completedTools || []),
     };
+  }
+
+  private blobFromLive(record: AgentSessionRecord, completed: ReadonlySet<string>): DurableSessionBlob {
+    return {
+      sessionId: record.sessionId,
+      ideFamily: record.ideFamily,
+      directive: record.directive,
+      target: record.target,
+      profile: record.profile,
+      writeBarrierStatus: record.writeBarrierStatus,
+      missingPreconditions: [...record.missingPreconditions],
+      prescribedMcpDag: record.prescribedMcpDag.map((step) => ({ ...step })),
+      mandatoryTools: [...record.mandatoryTools],
+      completedTools: Array.from(completed),
+      sessionReceipt: record.sessionReceipt,
+      missionReceipt: record.missionReceipt,
+      openedAtMs: record.openedAtMs,
+      expiresAtMs: record.expiresAtMs,
+    };
+  }
+
+  private persistToDisk(): void {
+    this.withLedgerLock(() => {
+      const disk = this.readLedgerFromDisk();
+      const now = Date.now();
+      const sessions = new Map<string, DurableSessionBlob>();
+
+      // Preserve sessions written by other processes before merging ours in.
+      for (const [id, blob] of Object.entries(disk?.sessions || {})) {
+        if (!blob || now > blob.expiresAtMs) continue;
+        sessions.set(id, { ...blob, completedTools: [...(blob.completedTools || [])] });
+      }
+
+      for (const [id, live] of this.sessions) {
+        if (now > live.record.expiresAtMs) continue;
+        const prior = sessions.get(id);
+        const completed = new Set([...(prior?.completedTools || []), ...live.completed]);
+        sessions.set(id, this.blobFromLive(live.record, completed));
+      }
+
+      const ledger: DurableLedger = {
+        version: 1,
+        activeByIde: { ...(disk?.activeByIde || {}), ...this.activeByIde },
+        sessions: Object.fromEntries(sessions),
+        gentlemanAlignment: this.gentlemanAlignment || disk?.gentlemanAlignment || undefined,
+      };
+
+      const tempPath = `${this.ledgerPath}.${process.pid}.${crypto.randomBytes(4).toString("hex")}.tmp`;
+      try {
+        fs.writeFileSync(tempPath, JSON.stringify(ledger, null, 2) + "\n", "utf8");
+        this.replaceLedgerFile(tempPath);
+      } catch (error) {
+        try {
+          fs.unlinkSync(tempPath);
+        } catch {
+          // Best-effort cleanup; the original ledger stays intact.
+        }
+        throw error;
+      }
+    });
+  }
+
+  /**
+   * Serializes read-merge-write across processes. Without it, two agents that
+   * open sessions simultaneously can each write a snapshot missing the other.
+   */
+  private withLedgerLock<T>(operation: () => T): T {
     fs.mkdirSync(path.dirname(this.ledgerPath), { recursive: true });
-    fs.writeFileSync(this.ledgerPath, JSON.stringify(ledger, null, 2) + "\n", "utf8");
+    const lockPath = `${this.ledgerPath}.lock`;
+    const deadline = Date.now() + LEDGER_LOCK_TIMEOUT_MS;
+    let handle: number | null = null;
+
+    while (handle === null) {
+      try {
+        handle = fs.openSync(lockPath, "wx");
+      } catch (error) {
+        if (!LOCK_CONTENTION_CODES.has((error as NodeJS.ErrnoException).code || "")) throw error;
+        this.removeStaleLedgerLock(lockPath);
+        if (Date.now() > deadline) {
+          throw new Error(`Timed out waiting for agent session ledger lock: ${lockPath}`);
+        }
+        sleepSync(5 + Math.floor(Math.random() * 15));
+      }
+    }
+
+    try {
+      fs.writeSync(handle, `${process.pid}\n`);
+      return operation();
+    } finally {
+      try {
+        fs.closeSync(handle);
+      } catch {
+        // Handle already closed; the unlink below still releases the lock.
+      }
+      try {
+        fs.unlinkSync(lockPath);
+      } catch {
+        // Stale-lock collection on the next writer recovers this case.
+      }
+    }
+  }
+
+  private removeStaleLedgerLock(lockPath: string): void {
+    try {
+      const stats = fs.statSync(lockPath);
+      if (Date.now() - stats.mtimeMs > LEDGER_LOCK_STALE_MS) {
+        fs.unlinkSync(lockPath);
+      }
+    } catch {
+      // Another process released the lock between our attempts.
+    }
+  }
+
+  private replaceLedgerFile(tempPath: string): void {
+    const deadline = Date.now() + 2_000;
+    for (;;) {
+      try {
+        fs.renameSync(tempPath, this.ledgerPath);
+        return;
+      } catch (error) {
+        const code = (error as NodeJS.ErrnoException).code;
+        if (!TRANSIENT_RENAME_CODES.has(code || "") || Date.now() > deadline) throw error;
+        sleepSync(5 + Math.floor(Math.random() * 10));
+      }
+    }
   }
 }
 
 const defaultContracts = new Map<string, EosUniversalAgentSessionContract>();
 
-export function getDefaultAgentSessionContract(
-  projectRoot: string = process.cwd()
-): EosUniversalAgentSessionContract {
+export function getDefaultAgentSessionContract(projectRoot: string = process.cwd()): EosUniversalAgentSessionContract {
   const key = path.resolve(projectRoot);
   let engine = defaultContracts.get(key);
   if (!engine) {

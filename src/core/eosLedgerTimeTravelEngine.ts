@@ -8,16 +8,8 @@
  * Zero external runtime npm dependencies (Law V). Node 24 strip-only compliant.
  */
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
-import {
-  EosDurableSqliteLedger,
-  type DurableLedgerRecord,
-  type LedgerCategory
-} from "./eosDurableSqliteLedger.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
+import { EosDurableSqliteLedger, type DurableLedgerRecord, type LedgerCategory } from "./eosDurableSqliteLedger.ts";
 
 export interface MaterializedStateProjection {
   readonly asOfSequence: number;
@@ -55,7 +47,7 @@ export class CounterfactualSandbox {
         title: entry.title,
         payload: entry.payload,
         engramTopicKey: entry.engramTopicKey || undefined,
-        createdAtIso: entry.createdAtIso
+        createdAtIso: entry.createdAtIso,
       });
     }
   }
@@ -64,13 +56,13 @@ export class CounterfactualSandbox {
     category: LedgerCategory,
     projectId: string,
     title: string,
-    payload: Record<string, unknown>
+    payload: Record<string, unknown>,
   ): DurableLedgerRecord {
     return this.branchedLedger.appendEntry({
       category,
       projectId,
       title: `[COUNTERFACTUAL] ${title}`,
-      payload
+      payload,
     });
   }
 
@@ -134,8 +126,8 @@ export class EosLedgerTimeTravelEngine {
         asOfSequence: targetSequence,
         projects: Array.from(projects).sort(),
         categoryCounts,
-        latestReceiptHash: latestEntry.entryHash
-      })
+        latestReceiptHash: latestEntry.entryHash,
+      }),
     );
 
     const projection: MaterializedStateProjection = {
@@ -146,7 +138,7 @@ export class EosLedgerTimeTravelEngine {
       categoryCounts: Object.freeze(categoryCounts),
       latestReceiptHash: latestEntry.entryHash,
       isChainIntact,
-      stateDigest
+      stateDigest,
     };
 
     const evaluatedAtIso = new Date().toISOString();
@@ -154,8 +146,8 @@ export class EosLedgerTimeTravelEngine {
       JSON.stringify({
         targetSequence,
         projection,
-        evaluatedAtIso
-      })
+        evaluatedAtIso,
+      }),
     );
 
     return deepFreeze({
@@ -163,7 +155,7 @@ export class EosLedgerTimeTravelEngine {
       projection,
       replayedEntries: replayed,
       evaluatedAtIso,
-      sha256Receipt
+      sha256Receipt,
     });
   }
 

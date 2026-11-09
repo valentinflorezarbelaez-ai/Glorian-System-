@@ -77,11 +77,7 @@ export class GlorianFleetHealthWatchdog {
       }
 
       // RFC 1918 Private Subnets
-      if (
-        host.startsWith("10.") ||
-        host.startsWith("192.168.") ||
-        /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host)
-      ) {
+      if (host.startsWith("10.") || host.startsWith("192.168.") || /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host)) {
         return { allowed: false, reason: "SSRF_QUARANTINE_BLOCKED" };
       }
 
@@ -116,7 +112,7 @@ export class GlorianFleetHealthWatchdog {
       hasHsts,
       hasNosniff,
       hasCsp,
-      hasFrameOptions
+      hasFrameOptions,
     };
   }
 
@@ -129,12 +125,11 @@ export class GlorianFleetHealthWatchdog {
     const totalTtfb = probes.reduce((acc, p) => acc + (p.ttfbMs || 0), 0);
     const averageTtfb = totalProjects > 0 ? Math.round(totalTtfb / totalProjects) : 0;
 
-    const avgSecurity = totalProjects > 0
-      ? Math.round(probes.reduce((acc, p) => acc + p.securityScore, 0) / totalProjects)
-      : 0;
+    const avgSecurity =
+      totalProjects > 0 ? Math.round(probes.reduce((acc, p) => acc + p.securityScore, 0) / totalProjects) : 0;
 
     const healthRatio = totalProjects > 0 ? (healthyProjects / totalProjects) * 100 : 0;
-    const compositeIndex = Math.round((healthRatio * 0.7) + (avgSecurity * 0.3));
+    const compositeIndex = Math.round(healthRatio * 0.7 + avgSecurity * 0.3);
 
     const timestamp = new Date().toISOString();
     const digestPayload = JSON.stringify({
@@ -142,7 +137,7 @@ export class GlorianFleetHealthWatchdog {
       totalProjects,
       healthyProjects,
       compositeIndex,
-      probes: probes.map((p) => ({ id: p.projectId, status: p.status, ttfb: p.ttfbMs, sec: p.securityScore }))
+      probes: probes.map((p) => ({ id: p.projectId, status: p.status, ttfb: p.ttfbMs, sec: p.securityScore })),
     });
 
     const sha256Receipt = crypto.createHash("sha256").update(digestPayload).digest("hex");
@@ -155,7 +150,7 @@ export class GlorianFleetHealthWatchdog {
       compositeHealthIndex: compositeIndex,
       auditStatus: compositeIndex >= 85 ? "FLEET_HEALTH_CERTIFIED" : "FLEET_HEALTH_DEGRADED",
       projects: probes,
-      sha256Receipt
+      sha256Receipt,
     };
   }
 
@@ -168,13 +163,13 @@ export class GlorianFleetHealthWatchdog {
       " 🛡️  GLORIAN FLEET HEALTH WATCHDOG & SYNTHETIC SECURITY SENTINEL",
       ` Status: [${report.auditStatus}] | Composite Health: ${report.compositeHealthIndex}%`,
       ` Timestamp: ${report.timestamp} | Receipt: ${report.sha256Receipt.slice(0, 16)}...`,
-      "----------------------------------------------------------------------"
+      "----------------------------------------------------------------------",
     ];
 
     for (const proj of report.projects) {
       const statusIcon = proj.status >= 200 && proj.status < 400 ? "✅" : "❌";
       lines.push(
-        ` ${statusIcon} [${proj.projectId.padEnd(28)}] ${proj.status} HTTP | ${proj.ttfbMs}ms TTFB | Sec: ${proj.securityScore}/100`
+        ` ${statusIcon} [${proj.projectId.padEnd(28)}] ${proj.status} HTTP | ${proj.ttfbMs}ms TTFB | Sec: ${proj.securityScore}/100`,
       );
       lines.push(`    ↳ ${proj.url}`);
     }
@@ -215,7 +210,7 @@ export class GlorianFleetHealthWatchdog {
           status: 0,
           ttfbMs: 0,
           securityScore: 0,
-          safetyReason: safety.reason
+          safetyReason: safety.reason,
         });
         continue;
       }
@@ -227,7 +222,7 @@ export class GlorianFleetHealthWatchdog {
           url: proj.targetUrl,
           status: 200,
           ttfbMs: Math.floor(25 + Math.random() * 45),
-          securityScore: 100
+          securityScore: 100,
         });
       } else {
         try {
@@ -238,7 +233,7 @@ export class GlorianFleetHealthWatchdog {
             url: proj.targetUrl,
             status: probe.status,
             ttfbMs: probe.ttfbMs,
-            securityScore: sec.score
+            securityScore: sec.score,
           });
         } catch {
           probes.push({
@@ -246,7 +241,7 @@ export class GlorianFleetHealthWatchdog {
             url: proj.targetUrl,
             status: 504,
             ttfbMs: 4000,
-            securityScore: 0
+            securityScore: 0,
           });
         }
       }
@@ -288,7 +283,7 @@ export class GlorianFleetHealthWatchdog {
           status: 0,
           ttfbMs: 0,
           securityScore: 0,
-          safetyReason: safety.reason
+          safetyReason: safety.reason,
         });
         continue;
       }
@@ -298,7 +293,7 @@ export class GlorianFleetHealthWatchdog {
         url: proj.targetUrl,
         status: 200,
         ttfbMs: 38,
-        securityScore: 100
+        securityScore: 100,
       });
     }
 
@@ -308,7 +303,10 @@ export class GlorianFleetHealthWatchdog {
   /**
    * Performs an in-flight non-blocking HTTPS probe with strict timeout.
    */
-  private probeEndpoint(targetUrl: string, timeoutMs: number = 4000): Promise<{ status: number; ttfbMs: number; headers: Record<string, string | undefined> }> {
+  private probeEndpoint(
+    targetUrl: string,
+    timeoutMs: number = 4000,
+  ): Promise<{ status: number; ttfbMs: number; headers: Record<string, string | undefined> }> {
     return new Promise((resolve, reject) => {
       const start = Date.now();
       const parsed = new URL(targetUrl);
@@ -320,9 +318,9 @@ export class GlorianFleetHealthWatchdog {
           method: "HEAD",
           headers: {
             "User-Agent": "Glorian-Fleet-Watchdog/1.0 (+https://glorian-system.vercel.app)",
-            "Accept": "*/*"
+            Accept: "*/*",
           },
-          timeout: timeoutMs
+          timeout: timeoutMs,
         },
         (res) => {
           const ttfbMs = Date.now() - start;
@@ -333,9 +331,9 @@ export class GlorianFleetHealthWatchdog {
           resolve({
             status: res.statusCode || 200,
             ttfbMs,
-            headers
+            headers,
           });
-        }
+        },
       );
 
       req.on("timeout", () => {

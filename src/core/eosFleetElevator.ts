@@ -44,7 +44,9 @@ export class EosFleetElevator {
   public elevateFleet(options: { dryRun?: boolean; targetProject?: string } = {}): FleetElevationReport {
     const dryRun = options.dryRun !== false;
     if (!dryRun && !options.targetProject) {
-      throw new Error("Applying a fleet change requires one explicit targetProject; use dryRun for a registry-wide report.");
+      throw new Error(
+        "Applying a fleet change requires one explicit targetProject; use dryRun for a registry-wide report.",
+      );
     }
     if (!fs.existsSync(this.registryPath)) {
       throw new Error(`Registry not found at ${this.registryPath}`);
@@ -52,7 +54,10 @@ export class EosFleetElevator {
 
     const registry = JSON.parse(fs.readFileSync(this.registryPath, "utf8"));
     const rawProjects = Array.isArray(registry.projects) ? registry.projects : [];
-    if (options.targetProject && !rawProjects.some((project: { id?: string }) => project.id === options.targetProject)) {
+    if (
+      options.targetProject &&
+      !rawProjects.some((project: { id?: string }) => project.id === options.targetProject)
+    ) {
       throw new Error(`Unknown fleet project ID: ${options.targetProject}`);
     }
 
@@ -66,9 +71,12 @@ export class EosFleetElevator {
 
       const envName = typeof proj.localPathEnv === "string" ? proj.localPathEnv : "";
       const envPath = envName && /^EOS_FLEET_[A-Z0-9_]+_PATH$/.test(envName) ? process.env[envName] : undefined;
-      const pPath = proj.id === "eos-system"
-        ? this.projectRoot
-        : typeof envPath === "string" && envPath.trim() ? path.resolve(this.projectRoot, envPath.trim()) : null;
+      const pPath =
+        proj.id === "eos-system"
+          ? this.projectRoot
+          : typeof envPath === "string" && envPath.trim()
+            ? path.resolve(this.projectRoot, envPath.trim())
+            : null;
       const exists = pPath !== null && fs.existsSync(pPath);
       let catalogStatus: ProjectElevationReport["catalogInfoStatus"] = "MISSING";
       let hooksStatus: ProjectElevationReport["hooksStatus"] = "MISSING";
@@ -90,7 +98,7 @@ export class EosFleetElevator {
             this.codex.scaffoldBackstageCatalog(pPath, {
               name: proj.id,
               owner: "user:unassigned",
-              description: proj.name
+              description: proj.name,
             });
             catalogStatus = "SCAFFOLDED";
             score = this.codex.auditUniversalProject(pPath).localInventoryScore;
@@ -110,7 +118,9 @@ export class EosFleetElevator {
       } else {
         score = 0;
         const pathDescription = envName || "a local checkout setting";
-        recs.push(`Local checkout is unavailable; configure ${pathDescription} before auditing or changing this project.`);
+        recs.push(
+          `Local checkout is unavailable; configure ${pathDescription} before auditing or changing this project.`,
+        );
       }
 
       totalScore += score;
@@ -121,7 +131,7 @@ export class EosFleetElevator {
         localInventoryScore: score,
         catalogInfoStatus: catalogStatus,
         hooksStatus,
-        recommendations: recs
+        recommendations: recs,
       });
     }
 
@@ -137,7 +147,7 @@ export class EosFleetElevator {
       meanLocalInventoryScore: fleetScore,
       projects: reports,
       resultFingerprintSha256,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Seal receipt if not in dry-run

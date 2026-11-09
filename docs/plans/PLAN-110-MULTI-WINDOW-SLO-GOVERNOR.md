@@ -1,13 +1,14 @@
 # PLAN-110: Multi-Window Multi-Burn-Rate SLO & Error Budget Governor
 
 ## Metadata
-* **Plan ID**: `PLAN-110`
-* **Architecture Decision Record**: `ADR-110`
-* **Governing Specification**: `SPEC-110`
-* **Author / Architect**: `Valentín Flórez Arbeláez`
-* **Date**: `2026-10-31`
-* **Status**: `APPROVED`
-* **Target Layer**: `Layer 0 (Core Infrastructure)`
+
+- **Plan ID**: `PLAN-110`
+- **Architecture Decision Record**: `ADR-110`
+- **Governing Specification**: `SPEC-110`
+- **Author / Architect**: `Valentín Flórez Arbeláez`
+- **Date**: `2026-10-31`
+- **Status**: `APPROVED`
+- **Target Layer**: `Layer 0 (Core Infrastructure)`
 
 ---
 
@@ -49,15 +50,17 @@ To achieve Google SRE-grade operational excellence across all fleet repositories
 ## 2. ADR-110: Architectural Decision Record
 
 ### Context & Problem Statement
+
 Simple static threshold alerts cause engineer alert fatigue on transient spikes and allow slow outages to exhaust error budgets before anyone notices. Furthermore, deployments during active degradation exacerbate outages.
 
 ### Considered Alternatives
+
 1. **Static Threshold Alerting (e.g. 5xx > 1%)**:
-   * *Rejected*: Cannot distinguish between a brief 10-second blip and a sustained bleed. Causes high on-call noise.
+   - _Rejected_: Cannot distinguish between a brief 10-second blip and a sustained bleed. Causes high on-call noise.
 2. **Single 30-Day Long Window Alerting**:
-   * *Rejected*: Far too slow to catch catastrophic outages that burn through the entire month's budget in 2 hours.
+   - _Rejected_: Far too slow to catch catastrophic outages that burn through the entire month's budget in 2 hours.
 3. **Google SRE Multi-Window Multi-Burn-Rate Model with Deployment Freeze Gate (SELECTED)**:
-   * *Rationale*: Correlates short (5m) and long (1h) windows to ensure alerts fire only during active, sustained incidents. Directly couples error budget depletion to the autonomous deployment gate to freeze releases during outages.
+   - _Rationale_: Correlates short (5m) and long (1h) windows to ensure alerts fire only during active, sustained incidents. Directly couples error budget depletion to the autonomous deployment gate to freeze releases during outages.
 
 ---
 
@@ -66,12 +69,16 @@ Simple static threshold alerts cause engineer alert fatigue on transient spikes 
 ```typescript
 export interface SloTargetConfig {
   readonly serviceId: string;
-  readonly availabilitySlo: number;       // e.g. 0.999 (99.9%)
-  readonly latencyThresholdMs?: number;   // e.g. 400ms
-  readonly latencySlo?: number;           // e.g. 0.99 (99%)
+  readonly availabilitySlo: number; // e.g. 0.999 (99.9%)
+  readonly latencyThresholdMs?: number; // e.g. 400ms
+  readonly latencySlo?: number; // e.g. 0.99 (99%)
 }
 
-export type SloHealthState = "NOMINAL_HEALTHY" | "ELEVATED_BURN" | "CRITICAL_BURN" | "BUDGET_EXHAUSTED";
+export type SloHealthState =
+  | "NOMINAL_HEALTHY"
+  | "ELEVATED_BURN"
+  | "CRITICAL_BURN"
+  | "BUDGET_EXHAUSTED";
 
 export interface BurnRateSnapshot {
   readonly windowLabel: string;
@@ -84,8 +91,8 @@ export interface BurnRateSnapshot {
 export interface ServiceSloStatus {
   readonly serviceId: string;
   readonly availabilitySlo: number;
-  readonly errorBudgetFraction: number;    // 1.0 - availabilitySlo
-  readonly errorBudgetRemainingPct: number;// Remaining % of error budget
+  readonly errorBudgetFraction: number; // 1.0 - availabilitySlo
+  readonly errorBudgetRemainingPct: number; // Remaining % of error budget
   readonly isDeploymentFrozen: boolean;
   readonly healthState: SloHealthState;
   readonly windows: {
@@ -102,6 +109,7 @@ export interface ServiceSloStatus {
 ---
 
 ## 4. Operational Invariants
-* **Non-Negative Headroom Precision**: Floating-point budget accounting operates in IEEE 754 Float64 precision.
-* **Fail-Closed Deployment Block**: Any service in `DEPLOYMENT_FROZEN` state rejects canary promotions deterministically.
-* **Dual-Window Alert Suppression**: No Tier 1 alert can fire unless both short and long windows exceed $14.4\times$.
+
+- **Non-Negative Headroom Precision**: Floating-point budget accounting operates in IEEE 754 Float64 precision.
+- **Fail-Closed Deployment Block**: Any service in `DEPLOYMENT_FROZEN` state rejects canary promotions deterministically.
+- **Dual-Window Alert Suppression**: No Tier 1 alert can fire unless both short and long windows exceed $14.4\times$.

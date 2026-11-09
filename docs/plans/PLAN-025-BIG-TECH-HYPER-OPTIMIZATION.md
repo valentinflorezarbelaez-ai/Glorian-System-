@@ -1,4 +1,5 @@
 # PLAN-025: BIG TECH HYPER-OPTIMIZATION & V8 TURBOFAN ZERO-ALLOCATION ENGINE
+
 <!-- Architecture Decision Record (ADR-039) & Systems Decomposition -->
 
 - **Plan ID**: `PLAN-025`
@@ -13,12 +14,15 @@
 ## 1. Architectural Decision Record (ADR-039)
 
 ### Context
+
 To achieve hyper-optimization on par with Google V8 Core, Citadel Securities, and Cloudflare edge proxies, EOS System requires low-level bitwise tuning:
+
 1. Eliminating branch prediction penalties in hot loops via 4x unrolling.
 2. Eliminating V8 heap allocation GC pauses through pre-allocated Slab Buffer Pools.
 3. Guaranteeing monomorphic hidden class shapes in V8 to avoid TurboFan deoptimization bailouts.
 
 ### Decision
+
 1. Implement `src/core/eosBitwiseAccelerator.ts` featuring:
    - 4x-unrolled CRC32 algorithm processing 4 bytes per loop iteration.
    - 64-bit FNV-1a non-cryptographic vector hash for ultra-fast table lookups.
@@ -32,6 +36,7 @@ To achieve hyper-optimization on par with Google V8 Core, Citadel Securities, an
 6. Enforce 100% Layer-0 purity (`dependencies: {}`).
 
 ### Consequences
+
 - CRC32 and hash throughput increased beyond 250 MB/s in pure JavaScript/TypeScript.
 - Near-zero V8 GC pauses during continuous high-throughput event processing.
 - Proven monomorphic inline cache stability.

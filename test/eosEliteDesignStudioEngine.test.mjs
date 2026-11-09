@@ -16,7 +16,7 @@ test("BDD-310: Spotify XIRP Incident Timeline Scaffolding with Acoustic Aestheti
 
   const res = studio.scaffoldComponent("SPOTIFY_XIRP", "INCIDENT_TIMELINE", {
     title: "XIRP Live Incident Radar",
-    subtitle: "Acoustic SRE Incident Response Console"
+    subtitle: "Acoustic SRE Incident Response Console",
   });
 
   assert.equal(res.archetype, "SPOTIFY_XIRP");
@@ -25,8 +25,8 @@ test("BDD-310: Spotify XIRP Incident Timeline Scaffolding with Acoustic Aestheti
   assert.equal(res.tokens.background, "#121212");
   assert.equal(res.tokens.primaryAccent, "#1DB954");
   assert.ok(res.scopedCss.includes("#1DB954"));
-  assert.ok(res.htmlMarkup.includes("role=\"region\""));
-  assert.ok(res.htmlMarkup.includes("aria-label=\"XIRP Live Incident Radar\""));
+  assert.ok(res.htmlMarkup.includes('role="region"'));
+  assert.ok(res.htmlMarkup.includes('aria-label="XIRP Live Incident Radar"'));
   assert.ok(res.wcagContrastRatio >= 7.0, "Contrast ratio must exceed WCAG AAA (7:1)");
   assert.equal(res.sha256Attestation.length, 64);
 
@@ -41,7 +41,7 @@ test("BDD-311: Palantir Foundry Telemetry Grid Scaffolding with High-Density Tok
   studio.reset();
 
   const res = studio.scaffoldComponent("PALANTIR_FOUNDRY", "TELEMETRY_GRID", {
-    title: "Foundry Ontology Shard Matrix"
+    title: "Foundry Ontology Shard Matrix",
   });
 
   assert.equal(res.archetype, "PALANTIR_FOUNDRY");
@@ -49,7 +49,7 @@ test("BDD-311: Palantir Foundry Telemetry Grid Scaffolding with High-Density Tok
   assert.equal(res.tokens.background, "#0B0F19");
   assert.equal(res.tokens.primaryAccent, "#06B6D4");
   assert.equal(res.tokens.secondaryAccent, "#F59E0B");
-  assert.ok(res.htmlMarkup.includes("role=\"grid\""));
+  assert.ok(res.htmlMarkup.includes('role="grid"'));
   assert.ok(res.scopedCss.includes("grid-template-columns"));
   assert.ok(res.wcagContrastRatio >= 7.0);
   assert.equal(res.sha256Attestation.length, 64);
@@ -60,7 +60,7 @@ test("BDD-312: Anduril Lattice Tactical HUD Scaffolding with Radar Emerald Accen
   studio.reset();
 
   const res = studio.scaffoldComponent("ANDURIL_LATTICE", "TACTICAL_HUD", {
-    title: "Lattice Edge Defense HUD"
+    title: "Lattice Edge Defense HUD",
   });
 
   assert.equal(res.archetype, "ANDURIL_LATTICE");
@@ -116,9 +116,9 @@ test("BDD-314: EosMcpServer Integration for Scaffold and Audit Tools", async () 
       arguments: {
         archetype: "SPOTIFY_XIRP",
         componentType: "INCIDENT_TIMELINE",
-        title: "Live SRE Acoustic Stream"
-      }
-    }
+        title: "Live SRE Acoustic Stream",
+      },
+    },
   };
 
   const scaffoldRes = await server.handleRequest(scaffoldReq);
@@ -139,9 +139,9 @@ test("BDD-314: EosMcpServer Integration for Scaffold and Audit Tools", async () 
     params: {
       name: "eos_design_audit_markup",
       arguments: {
-        markup: scaffoldData.htmlMarkup + "<style>" + scaffoldData.scopedCss + "</style>"
-      }
-    }
+        markup: scaffoldData.htmlMarkup + "<style>" + scaffoldData.scopedCss + "</style>",
+      },
+    },
   };
 
   const auditRes = await server.handleRequest(auditReq);

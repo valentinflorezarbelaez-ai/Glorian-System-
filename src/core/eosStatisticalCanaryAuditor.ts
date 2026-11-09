@@ -9,11 +9,7 @@
  * Zero external runtime npm dependencies (Law V). Node 24 strip-only compliant.
  */
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface MannWhitneyUResult {
@@ -61,14 +57,7 @@ function erfc(x: number): number {
                     t *
                       (-0.18628806 +
                         t *
-                          (0.27886807 +
-                            t *
-                              (-1.13520398 +
-                                t *
-                                  (1.48851587 +
-                                    t *
-                                      (-0.82215223 +
-                                        t * 0.17087277))))))))
+                          (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))),
     );
   return x >= 0 ? ans : 2.0 - ans;
 }
@@ -94,10 +83,7 @@ export class EosStatisticalCanaryAuditor {
   /**
    * Executes the Mann-Whitney U rank-sum test between baseline and canary metric samples.
    */
-  public static runMannWhitneyUTest(
-    baseline: readonly number[],
-    canary: readonly number[]
-  ): MannWhitneyUResult {
+  public static runMannWhitneyUTest(baseline: readonly number[], canary: readonly number[]): MannWhitneyUResult {
     assertPrecondition(baseline.length >= 3, "Baseline sample size must be >= 3");
     assertPrecondition(canary.length >= 3, "Canary sample size must be >= 3");
 
@@ -113,7 +99,7 @@ export class EosStatisticalCanaryAuditor {
 
     const combined: ScoredItem[] = [
       ...baseline.map((v, i) => ({ value: v, group: 0 as const, originalIndex: i })),
-      ...canary.map((v, i) => ({ value: v, group: 1 as const, originalIndex: i }))
+      ...canary.map((v, i) => ({ value: v, group: 1 as const, originalIndex: i })),
     ];
 
     // Sort ascending
@@ -170,7 +156,7 @@ export class EosStatisticalCanaryAuditor {
       baselineMedian,
       canaryMedian,
       sampleSizeBaseline: n1,
-      sampleSizeCanary: n2
+      sampleSizeCanary: n2,
     });
   }
 
@@ -182,7 +168,7 @@ export class EosStatisticalCanaryAuditor {
     metricName: string,
     baseline: readonly number[],
     canary: readonly number[],
-    significanceThreshold = 0.05
+    significanceThreshold = 0.05,
   ): CanaryAuditReport {
     const stats = this.runMannWhitneyUTest(baseline, canary);
 
@@ -191,9 +177,7 @@ export class EosStatisticalCanaryAuditor {
     const isStatisticallySignificant = stats.pValue < significanceThreshold;
     const regressionDetected = isStatisticallySignificant && stats.canaryMedian > stats.baselineMedian;
 
-    const verdict: CanaryAuditVerdict = regressionDetected
-      ? "CANARY_ROLLBACK_REQUIRED"
-      : "CANARY_PASS_OPTIMAL";
+    const verdict: CanaryAuditVerdict = regressionDetected ? "CANARY_ROLLBACK_REQUIRED" : "CANARY_PASS_OPTIMAL";
 
     const evaluatedAtIso = new Date().toISOString();
     const payloadForReceipt = JSON.stringify({
@@ -202,7 +186,7 @@ export class EosStatisticalCanaryAuditor {
       isStatisticallySignificant,
       regressionDetected,
       stats,
-      evaluatedAtIso
+      evaluatedAtIso,
     });
     const sha256Receipt = pureSha256(payloadForReceipt);
 
@@ -213,7 +197,7 @@ export class EosStatisticalCanaryAuditor {
       regressionDetected,
       statistics: stats,
       evaluatedAtIso,
-      sha256Receipt
+      sha256Receipt,
     });
   }
 
@@ -222,7 +206,7 @@ export class EosStatisticalCanaryAuditor {
    */
   public static recordAuditInLedger(
     report: CanaryAuditReport,
-    ledgerPath?: string
+    ledgerPath?: string,
   ): { readonly recorded: boolean; readonly receiptHash: string } {
     const ledger = new EosDurableSqliteLedger(ledgerPath || ":memory:");
     try {
@@ -236,8 +220,8 @@ export class EosStatisticalCanaryAuditor {
           pValue: report.statistics.pValue,
           baselineMedian: report.statistics.baselineMedian,
           canaryMedian: report.statistics.canaryMedian,
-          sha256Receipt: report.sha256Receipt
-        }
+          sha256Receipt: report.sha256Receipt,
+        },
       });
       return { recorded: true, receiptHash: entry.entryHash };
     } finally {

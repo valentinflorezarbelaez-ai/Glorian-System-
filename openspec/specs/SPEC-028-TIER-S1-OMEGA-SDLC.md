@@ -52,4 +52,5 @@ ESCENARIO: [BDD-066] Simulación Determinista con Semilla y Planificación a 120
 ```
 
 ---
-*Signed by Principal Architect: Valentín Flórez Arbeláez*
+
+_Signed by Principal Architect: Valentín Flórez Arbeláez_

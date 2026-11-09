@@ -36,9 +36,11 @@
 ## 2. ADR-033: Client-Side Go WebAssembly Engine & Zero-Dependency Canvas 3D Sovereign Topology Graph
 
 ### Context
+
 Browser clients interacting with EOS System benefit from instant, deterministic computations without network round-trips. Running Go routines in the browser through WebAssembly brings Go's strict typing, AST parsing routines, and high-speed tokenization to the client. Simultaneously, a dynamic 3D visual graph communicates the entire sovereign architecture (Aberamentho, Portafolio, PTG, EOS System, Disruptor, DSP, Datomic, Healer) in real-time.
 
 ### Decision
+
 1. **Compilation of Go to WASM**:
    - Utilize standard Go WebAssembly target (`GOOS=js GOARCH=wasm`) with `-ldflags="-s -w"` to build `assets/eos_apex.wasm`.
    - Vend the official Go runtime bridge `wasm_exec.js` directly in `js/wasm_exec.js` without any external npm packages.
@@ -51,8 +53,10 @@ Browser clients interacting with EOS System benefit from instant, deterministic 
    - Support mouse dragging for 3D rotation, auto-rotation drift, node hover hit-testing, and dynamic blast-radius highlighting with glowing particle pulse animation.
 
 ### Consequences
+
 - **Positive**: 0-latency client-side token compression and Go benchmark execution; instant visual feedback of system topology; 100% compliant with Law V (0 external npm dependencies).
 - **Negative / Trade-off**: The compiled `.wasm` file adds static asset weight (~1.8-2.2MB uncompressed, ~500KB gzipped), which must be loaded asynchronously or deferred so it never blocks First Contentful Paint (FCP) or Largest Contentful Paint (LCP).
 
 ---
-*Approved by Principal Architect: Valentín Flórez Arbeláez*
+
+_Approved by Principal Architect: Valentín Flórez Arbeláez_

@@ -12,12 +12,7 @@
  * 4. Zero external runtime dependencies — strictly pure Layer 0.
  */
 
-import {
-  pureSha256,
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze
-} from "./eosKernelPrimitives.ts";
+import { pureSha256, assertPrecondition, assertPostcondition, deepFreeze } from "./eosKernelPrimitives.ts";
 
 export interface TelemetryIngestEvent {
   readonly timestamp?: number;
@@ -174,7 +169,7 @@ export class EosColumnarTelemetryEngine {
       isAnomaly,
       zScore,
       runningMean: this.meanStats,
-      runningStdDev: stdDev
+      runningStdDev: stdDev,
     };
   }
 
@@ -209,7 +204,7 @@ export class EosColumnarTelemetryEngine {
         totalCapacity: this.capacity,
         stats: { count: 0, min: 0, max: 0, mean: 0, p50: 0, p90: 0, p99: 0 },
         anomaliesCount: 0,
-        sha256Receipt: emptyReceipt
+        sha256Receipt: emptyReceipt,
       });
     }
 
@@ -264,7 +259,7 @@ export class EosColumnarTelemetryEngine {
       mean: Math.round(mean * 100) / 100,
       p50: Math.round(p50 * 100) / 100,
       p90: Math.round(p90 * 100) / 100,
-      p99: Math.round(p99 * 100) / 100
+      p99: Math.round(p99 * 100) / 100,
     };
 
     assertPostcondition(stats.p50 <= stats.p90 && stats.p90 <= stats.p99, "Percentile ordering invariant breached");
@@ -275,7 +270,7 @@ export class EosColumnarTelemetryEngine {
       totalCapacity: this.capacity,
       stats,
       anomaliesCount,
-      sha256Receipt
+      sha256Receipt,
     });
   }
 }

@@ -3,6 +3,7 @@
 ## 1. Architectural Design & ADR-042
 
 ### ADR-042: Amazon Dynamo Consistent Hash Ring, Virtual Nodes & Hierarchical Anti-Entropy
+
 - **Status**: ACCEPTED
 - **Context**: Scaling storage and compute across planetary clusters requires deterministic node assignment with minimal movement during topology mutations. State drift between partitioned nodes must be synchronized efficiently.
 - **Decision**:

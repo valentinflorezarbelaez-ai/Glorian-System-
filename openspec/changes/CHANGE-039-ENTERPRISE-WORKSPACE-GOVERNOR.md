@@ -1,8 +1,8 @@
 # CHANGE-039: ENTERPRISE MULTI-PROJECT WORKSPACE GOVERNOR (v52.0.0)
 
-* **Specification**: `SPEC-046`
-* **ADR**: `ADR-052` (`PLAN-039`)
-* **Type**: `CAPABILITY_ELEVATION` (Layer-0 Core + MCP Multi-Tenant Boundary + CLI)
+- **Specification**: `SPEC-046`
+- **ADR**: `ADR-052` (`PLAN-039`)
+- **Type**: `CAPABILITY_ELEVATION` (Layer-0 Core + MCP Multi-Tenant Boundary + CLI)
 
 ## Summary of Delta Changes
 

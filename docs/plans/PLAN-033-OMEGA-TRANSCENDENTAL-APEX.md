@@ -3,6 +3,7 @@
 ## 1. Architectural Design & ADR-045
 
 ### ADR-045: Palantir Ontology Cyclotron, NIST Post-Quantum Lattice Shield & Meta-Cognitive Synapse
+
 - **Status**: ACCEPTED
 - **Context**: EOS System requires complete unification of its knowledge fabric into an instant bi-temporal semantic ontology graph, cryptographic immunity against quantum computer cryptanalysis (NIST PQC ML-KEM standard), and autonomous multi-agent Bayesian meta-cognitive orchestration.
 - **Decision**:

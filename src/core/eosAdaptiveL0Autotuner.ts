@@ -43,7 +43,7 @@ export class EosAdaptiveL0Autotuner {
       optimalBatchSize: 64,
       targetFrameBudgetMs: 8.33, // 120Hz VSync
       totalReconfigurations: 0,
-      lastAdjustmentReason: "INITIALIZED_NOMINAL"
+      lastAdjustmentReason: "INITIALIZED_NOMINAL",
     };
   }
 
@@ -66,7 +66,7 @@ export class EosAdaptiveL0Autotuner {
       const heapStats = v8.getHeapStatistics();
       if (heapStats.total_heap_size > 0) {
         heapFragmentationRatio = Number(
-          ((heapStats.total_heap_size - heapStats.used_heap_size) / heapStats.total_heap_size).toFixed(4)
+          ((heapStats.total_heap_size - heapStats.used_heap_size) / heapStats.total_heap_size).toFixed(4),
         );
       }
     } catch {
@@ -84,7 +84,11 @@ export class EosAdaptiveL0Autotuner {
       this.state.totalReconfigurations++;
       this.state.lastAdjustmentReason = `HIGH_LOAD_SPIKE (${(loadRatio * 100).toFixed(1)}%) -> DOUBLED_CAPACITY`;
       action = "CAPACITY_EXPANDED";
-    } else if (loadRatio < 0.20 && this.state.ringBufferCapacity > this.minCapacity && queueDepth < (this.state.ringBufferCapacity / 4)) {
+    } else if (
+      loadRatio < 0.2 &&
+      this.state.ringBufferCapacity > this.minCapacity &&
+      queueDepth < this.state.ringBufferCapacity / 4
+    ) {
       this.state.ringBufferCapacity = Math.max(this.minCapacity, Math.floor(this.state.ringBufferCapacity / 2));
       this.state.totalReconfigurations++;
       this.state.lastAdjustmentReason = `LOW_LOAD_CONTRACTION (${(loadRatio * 100).toFixed(1)}%) -> HALVED_CAPACITY`;
@@ -115,7 +119,7 @@ export class EosAdaptiveL0Autotuner {
       `eos_autotuner_reconfigurations_total ${this.state.totalReconfigurations}`,
       `# HELP eos_autotuner_optimal_batch_size Dynamic optimal batch processing size`,
       `# TYPE eos_autotuner_optimal_batch_size gauge`,
-      `eos_autotuner_optimal_batch_size ${this.state.optimalBatchSize}`
+      `eos_autotuner_optimal_batch_size ${this.state.optimalBatchSize}`,
     ].join("\n");
 
     const proofData = `${timestamp}|${this.state.ringBufferCapacity}|${this.state.totalReconfigurations}|${action}|${eventLoopLagMs}`;
@@ -132,7 +136,7 @@ export class EosAdaptiveL0Autotuner {
       stateAfter,
       actionTaken: action,
       prometheusMetrics,
-      sha256Proof
+      sha256Proof,
     };
   }
 }

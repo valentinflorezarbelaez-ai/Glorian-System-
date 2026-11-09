@@ -12,12 +12,8 @@
  * Zero external runtime dependencies. Node 24 strip-only compliant.
  */
 
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import crypto from "node:crypto";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export interface ShamirShare {
@@ -67,7 +63,7 @@ export class EosThresholdCryptography {
     let t = 0n;
     let newt = 1n;
     let r = p;
-    let newr = (a % p + p) % p;
+    let newr = ((a % p) + p) % p;
 
     while (newr !== 0n) {
       const quotient = r / newr;
@@ -92,7 +88,11 @@ export class EosThresholdCryptography {
   /**
    * Evaluates polynomial f(x) = a0 + a1*x + ... + a_{t-1}*x^{t-1} mod p at point x.
    */
-  public static evaluatePolynomial(coefficients: readonly bigint[], x: bigint, p: bigint = EosThresholdCryptography.PRIME_P): bigint {
+  public static evaluatePolynomial(
+    coefficients: readonly bigint[],
+    x: bigint,
+    p: bigint = EosThresholdCryptography.PRIME_P,
+  ): bigint {
     let result = 0n;
     let currentX = 1n;
     for (const coef of coefficients) {
@@ -104,18 +104,42 @@ export class EosThresholdCryptography {
   }
 
   /**
+   * Draws a uniformly random BigInt in [0, upperBound) from the OS CSPRNG.
+   * Rejection sampling is used so the result carries no modulo bias.
+   */
+  private static secureRandomBelow(upperBound: bigint): bigint {
+    assertPrecondition(upperBound > 1n, "upperBound must be greater than 1");
+    const byteLength = Math.ceil(upperBound.toString(2).length / 8);
+    for (;;) {
+      const bytes = crypto.randomBytes(byteLength);
+      let candidate = 0n;
+      for (const b of bytes) {
+        candidate = (candidate << 8n) | BigInt(b);
+      }
+      if (candidate < upperBound) {
+        return candidate;
+      }
+    }
+  }
+
+  /**
    * Splits a secret S into n shares with threshold t.
    */
   public splitSecret(secretValue: bigint, t: number, n: number): readonly ShamirShare[] {
     assertPrecondition(t >= 2, "Threshold t must be at least 2");
     assertPrecondition(n >= t, "Total shares n must be >= threshold t");
-    assertPrecondition(secretValue >= 0n && secretValue < EosThresholdCryptography.PRIME_P, "Secret must be within field F_p");
+    assertPrecondition(
+      secretValue >= 0n && secretValue < EosThresholdCryptography.PRIME_P,
+      "Secret must be within field F_p",
+    );
 
     const coefficients: bigint[] = [secretValue];
-    // Generate t - 1 pseudo-random coefficients
+    // The t - 1 non-constant coefficients MUST come from a CSPRNG. Deriving
+    // them deterministically (e.g. from the secret plus Date.now()) collapses
+    // the polynomial entropy and breaks Shamir's information-theoretic
+    // guarantee H(S | < t shares) = H(S).
     for (let i = 1; i < t; i++) {
-      const entropyHex = pureSha256(`eos:tss:coeff:${secretValue}:${i}:${Date.now()}`);
-      const coef = BigInt(`0x${entropyHex}`) % (EosThresholdCryptography.PRIME_P - 1n) + 1n;
+      const coef = EosThresholdCryptography.secureRandomBelow(EosThresholdCryptography.PRIME_P - 1n) + 1n;
       coefficients.push(coef);
     }
 
@@ -125,7 +149,7 @@ export class EosThresholdCryptography {
       const y = EosThresholdCryptography.evaluatePolynomial(coefficients, x);
       shares.push({
         x: i,
-        yHex: y.toString(16)
+        yHex: y.toString(16),
       });
     }
 
@@ -159,7 +183,7 @@ export class EosThresholdCryptography {
       const lagrangeBasis = EosThresholdCryptography.modMul(
         numerator,
         EosThresholdCryptography.modInverse(denominator, p),
-        p
+        p,
       );
 
       const term = EosThresholdCryptography.modMul(yi, lagrangeBasis, p);
@@ -173,7 +197,7 @@ export class EosThresholdCryptography {
           category: "SECURITY_AUDIT",
           projectId: "eos-system",
           title: `Threshold Quorum Reconstructed [t=${t}, shares=${shares.length}]`,
-          payload: { thresholdT: t, sharesUsed: subset.length, digest }
+          payload: { thresholdT: t, sharesUsed: subset.length, digest },
         });
       } catch {
         // Fallback

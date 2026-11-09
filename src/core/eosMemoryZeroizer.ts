@@ -12,11 +12,7 @@
  */
 
 import crypto from "node:crypto";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze } from "./eosKernelPrimitives.ts";
 
 /**
  * Deterministically overwrites a memory buffer across three cryptographic passes
@@ -30,7 +26,7 @@ export function secureZeroizeBuffer(buffer: Buffer | Uint8Array): void {
   crypto.randomFillSync(buffer);
 
   // Pass 2: Inverted bitwise mask (0xFF)
-  buffer.fill(0xFF);
+  buffer.fill(0xff);
 
   // Pass 3: Pure zero baseline (0x00)
   buffer.fill(0x00);
@@ -65,10 +61,7 @@ export class EosZeroizableSecret {
    * Scoped execution helper: provides temporary access to raw secret bytes,
    * then immediately purges and zeroizes the memory when the scope exits.
    */
-  public static useTemporary<T>(
-    secretData: string | Buffer | Uint8Array,
-    consumer: (secretBytes: Buffer) => T
-  ): T {
+  public static useTemporary<T>(secretData: string | Buffer | Uint8Array, consumer: (secretBytes: Buffer) => T): T {
     const secret = new EosZeroizableSecret(secretData);
     try {
       return secret.use(consumer);

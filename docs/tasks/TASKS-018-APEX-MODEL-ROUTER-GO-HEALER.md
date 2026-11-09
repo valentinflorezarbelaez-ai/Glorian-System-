@@ -1,8 +1,8 @@
 # TASKS-018: APEX MODEL ROUTER, TOKEN COMPRESSOR & GO AUTONOMOUS HEALER
 
-* **Spec**: `SPEC-025`
-* **Change**: `CHANGE-018`
-* **Status**: `IN_PROGRESS`
+- **Spec**: `SPEC-025`
+- **Change**: `CHANGE-018`
+- **Status**: `IN_PROGRESS`
 
 ---
 

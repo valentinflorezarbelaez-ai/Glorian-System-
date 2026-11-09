@@ -101,7 +101,9 @@ export class EosAutonomousSelfHealingEngine {
     }
 
     // Pattern 2: Symbol or function name
-    const propMatch = diagnosticReport.match(/Cannot read propert(?:y|ies) (?:of undefined \(reading '(\w+)'\)|'(\w+)' of undefined)/i);
+    const propMatch = diagnosticReport.match(
+      /Cannot read propert(?:y|ies) (?:of undefined \(reading '(\w+)'\)|'(\w+)' of undefined)/i,
+    );
     const funcMatch = diagnosticReport.match(/TypeError:\s*(\w+)\s+is not a function/i);
     const badgeMatch = diagnosticReport.match(/\[(\w+_VIOLATION|\w+_LEAK)\]/i);
     if (propMatch) {
@@ -131,7 +133,7 @@ export class EosAutonomousSelfHealingEngine {
       targetSymbol: targetSymbol ? String(targetSymbol) : undefined,
       line,
       causalBlastRadiusMs: Number(elapsedMs.toFixed(3)),
-      affectedNodes
+      affectedNodes,
     };
   }
 
@@ -142,7 +144,7 @@ export class EosAutonomousSelfHealingEngine {
   public synthesizeCandidateMutations(
     targetFile: string,
     archetype: HealingArchetype,
-    context: { symbol?: string; line?: number; originalSnippet?: string } = {}
+    context: { symbol?: string; line?: number; originalSnippet?: string } = {},
   ): CandidateMutation[] {
     const absPath = path.isAbsolute(targetFile) ? targetFile : path.join(this.projectRoot, targetFile);
     let content = "";
@@ -168,7 +170,7 @@ export class EosAutonomousSelfHealingEngine {
           originalSnippet: original1,
           mutatedSnippet: mutated1,
           rationale: `Guard property access on ${sym} with optional chaining to prevent undefined dereference.`,
-          diff: `- ${original1}\n+ ${mutated1}`
+          diff: `- ${original1}\n+ ${mutated1}`,
         });
 
         // Candidate 2: Defensive falsy check with fallback
@@ -182,7 +184,7 @@ export class EosAutonomousSelfHealingEngine {
           originalSnippet: original2,
           mutatedSnippet: mutated2,
           rationale: `Defensively verify ${sym} existence and method type before invocation.`,
-          diff: `- ${original2}\n+ ${mutated2}`
+          diff: `- ${original2}\n+ ${mutated2}`,
         });
         break;
       }
@@ -197,7 +199,7 @@ export class EosAutonomousSelfHealingEngine {
           originalSnippet: original,
           mutatedSnippet: mutated,
           rationale: `Wrap synchronous file write in 5-attempt retry loop with exponential backoff for Windows I/O lock resilience.`,
-          diff: `- ${original}\n+ ${mutated}`
+          diff: `- ${original}\n+ ${mutated}`,
         });
         break;
       }
@@ -213,7 +215,7 @@ export class EosAutonomousSelfHealingEngine {
           originalSnippet: original,
           mutatedSnippet: mutated,
           rationale: `Align CSS padding to strict 4px geometric grid conformance (SPEC-128).`,
-          diff: `- ${original}\n+ ${mutated}`
+          diff: `- ${original}\n+ ${mutated}`,
         });
         break;
       }
@@ -228,7 +230,7 @@ export class EosAutonomousSelfHealingEngine {
           originalSnippet: original,
           mutatedSnippet: mutated,
           rationale: `Inject empty array fallback using nullish coalescing operator to guarantee array contract.`,
-          diff: `- ${original}\n+ ${mutated}`
+          diff: `- ${original}\n+ ${mutated}`,
         });
         break;
       }
@@ -243,7 +245,7 @@ export class EosAutonomousSelfHealingEngine {
           originalSnippet: original,
           mutatedSnippet: mutated,
           rationale: `Downgrade circular import to TypeScript type-only import to eliminate runtime cycle.`,
-          diff: `- ${original}\n+ ${mutated}`
+          diff: `- ${original}\n+ ${mutated}`,
         });
         break;
       }
@@ -255,10 +257,7 @@ export class EosAutonomousSelfHealingEngine {
   /**
    * Evaluates a candidate mutation inside an isolated sandbox without polluting host state.
    */
-  public evaluateCandidateInSandbox(
-    candidate: CandidateMutation,
-    testSnippet?: string
-  ): SandboxEvaluationResult {
+  public evaluateCandidateInSandbox(candidate: CandidateMutation, testSnippet?: string): SandboxEvaluationResult {
     const startNs = process.hrtime.bigint();
     const regressionFindings: string[] = [];
 
@@ -268,13 +267,15 @@ export class EosAutonomousSelfHealingEngine {
       assert: (condition: boolean, msg: string) => {
         if (!condition) throw new Error(msg || "Assertion failed in sandbox");
       },
-      candidateResult: null
+      candidateResult: null,
     };
 
     vm.createContext(sandboxContext);
 
     // Test program executed in sandbox
-    const testCode = testSnippet || `
+    const testCode =
+      testSnippet ||
+      `
       // Verify candidate syntax evaluation
       let testObj = undefined;
       let evaluated = false;
@@ -315,7 +316,7 @@ export class EosAutonomousSelfHealingEngine {
       testsPassed,
       executionTimeMs: Number(elapsedMs.toFixed(3)),
       memoryUsageMb: 0.12,
-      regressionFindings
+      regressionFindings,
     };
   }
 
@@ -323,19 +324,21 @@ export class EosAutonomousSelfHealingEngine {
    * Executes the full closed-loop autonomous self-healing cycle.
    * Integrates OpenTelemetry span tracing and SQLite WAL ledger receipts.
    */
-  public runAutonomousHealingLoop(options: {
-    targetFile?: string;
-    diagnosticReport?: string;
-    archetype?: HealingArchetype;
-    dryRun?: boolean;
-  } = {}): HealingReport {
+  public runAutonomousHealingLoop(
+    options: {
+      targetFile?: string;
+      diagnosticReport?: string;
+      archetype?: HealingArchetype;
+      dryRun?: boolean;
+    } = {},
+  ): HealingReport {
     const traceEngine = EosOtelTraceEngine.getInstance({ projectRoot: this.projectRoot });
     const span = traceEngine.startSpan("autonomous.self_healing.loop", {
       attributes: {
         "healing.target_file": options.targetFile || "auto-detected",
         "healing.archetype": options.archetype || "AUTO_INFER",
-        "healing.dry_run": options.dryRun !== false
-      }
+        "healing.dry_run": options.dryRun !== false,
+      },
     });
 
     const startNs = process.hrtime.bigint();
@@ -345,7 +348,7 @@ export class EosAutonomousSelfHealingEngine {
 
     // 1. Fault Isolation
     const isolationSpan = traceEngine.startSpan("autonomous.fault_isolation", {
-      parentContext: formatW3cTraceparent(span.context)
+      parentContext: formatW3cTraceparent(span.context),
     });
     const fault = this.isolateFault(reportText, options.targetFile);
     isolationSpan.setAttribute("fault.target_file", fault.targetFile);
@@ -368,17 +371,17 @@ export class EosAutonomousSelfHealingEngine {
 
     // 3. AST Candidate Synthesis
     const synthSpan = traceEngine.startSpan("autonomous.ast_synthesis", {
-      parentContext: formatW3cTraceparent(span.context)
+      parentContext: formatW3cTraceparent(span.context),
     });
     const candidates = this.synthesizeCandidateMutations(fault.targetFile, archetype, {
-      symbol: fault.targetSymbol
+      symbol: fault.targetSymbol,
     });
     synthSpan.setAttribute("candidates.generated_count", candidates.length);
     synthSpan.end();
 
     // 4. Sandboxed Verification
     const evalSpan = traceEngine.startSpan("autonomous.sandbox_verification", {
-      parentContext: formatW3cTraceparent(span.context)
+      parentContext: formatW3cTraceparent(span.context),
     });
     const evaluations: SandboxEvaluationResult[] = [];
     let selectedMutation: CandidateMutation | null = null;
@@ -390,7 +393,7 @@ export class EosAutonomousSelfHealingEngine {
         selectedMutation = candidate;
       }
     }
-    evalSpan.setAttribute("evaluations.passed_count", evaluations.filter(e => e.passed).length);
+    evalSpan.setAttribute("evaluations.passed_count", evaluations.filter((e) => e.passed).length);
     evalSpan.end();
 
     // 5. Promotion & Attestation
@@ -420,7 +423,8 @@ export class EosAutonomousSelfHealingEngine {
     }
 
     const elapsedMs = Number(process.hrtime.bigint() - startNs) / 1_000_000;
-    const sha256Receipt = crypto.createHash("sha256")
+    const sha256Receipt = crypto
+      .createHash("sha256")
       .update(JSON.stringify({ healingId, fault, selectedMutation, status, elapsedMs }))
       .digest("hex");
 
@@ -437,7 +441,7 @@ export class EosAutonomousSelfHealingEngine {
       evaluations,
       sha256Receipt,
       durationMs: Number(elapsedMs.toFixed(3)),
-      traceId: span.context.traceId
+      traceId: span.context.traceId,
     };
 
     this.history.unshift(report);

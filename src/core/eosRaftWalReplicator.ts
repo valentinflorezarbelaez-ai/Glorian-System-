@@ -8,11 +8,7 @@
  * Zero external runtime npm dependencies (Law V). Node 24 strip-only compliant.
  */
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export type RaftRole = "FOLLOWER" | "CANDIDATE" | "LEADER";
@@ -107,7 +103,7 @@ export class EosRaftWalReplicator {
       term: this.currentTerm,
       candidateId: this.nodeId,
       lastLogIndex,
-      lastLogTerm
+      lastLogTerm,
     });
   }
 
@@ -129,9 +125,7 @@ export class EosRaftWalReplicator {
     const lastIndex = this.log.length;
     const lastTerm = this.log.length > 0 ? this.log[this.log.length - 1].term : 0;
 
-    const logUpToDate =
-      req.lastLogTerm > lastTerm ||
-      (req.lastLogTerm === lastTerm && req.lastLogIndex >= lastIndex);
+    const logUpToDate = req.lastLogTerm > lastTerm || (req.lastLogTerm === lastTerm && req.lastLogIndex >= lastIndex);
 
     if (canVote && logUpToDate) {
       this.votedFor = req.candidateId;
@@ -141,7 +135,7 @@ export class EosRaftWalReplicator {
     return {
       term: this.currentTerm,
       voteGranted: false,
-      reason: !canVote ? "Already voted in term" : "Candidate log is not sufficiently up-to-date"
+      reason: !canVote ? "Already voted in term" : "Candidate log is not sufficiently up-to-date",
     };
   }
 
@@ -184,7 +178,7 @@ export class EosRaftWalReplicator {
       index,
       term: this.currentTerm,
       command: deepFreeze({ ...command }),
-      digest
+      digest,
     });
 
     this.log.push(entry);
@@ -196,7 +190,7 @@ export class EosRaftWalReplicator {
       prevLogIndex,
       prevLogTerm,
       entries: [entry],
-      leaderCommit: this.commitIndex
+      leaderCommit: this.commitIndex,
     });
 
     return { entry, appendArgs };
@@ -217,7 +211,7 @@ export class EosRaftWalReplicator {
         term: this.currentTerm,
         success: false,
         matchIndex: this.commitIndex,
-        reason: "Leader term is obsolete"
+        reason: "Leader term is obsolete",
       };
     }
 
@@ -231,7 +225,7 @@ export class EosRaftWalReplicator {
           term: this.currentTerm,
           success: false,
           matchIndex: this.log.length,
-          reason: "Log does not contain prevLogIndex"
+          reason: "Log does not contain prevLogIndex",
         };
       }
       if (this.log[req.prevLogIndex - 1].term !== req.prevLogTerm) {
@@ -239,7 +233,7 @@ export class EosRaftWalReplicator {
           term: this.currentTerm,
           success: false,
           matchIndex: req.prevLogIndex - 1,
-          reason: "Term mismatch at prevLogIndex"
+          reason: "Term mismatch at prevLogIndex",
         };
       }
     }
@@ -266,14 +260,17 @@ export class EosRaftWalReplicator {
     return {
       term: this.currentTerm,
       success: true,
-      matchIndex: this.log.length
+      matchIndex: this.log.length,
     };
   }
 
   /**
    * Leader records follower ACK and advances commitIndex if quorum is achieved.
    */
-  public recordAppendEntriesAck(followerId: string, reply: AppendEntriesReply): {
+  public recordAppendEntriesAck(
+    followerId: string,
+    reply: AppendEntriesReply,
+  ): {
     readonly commitAdvanced: boolean;
     readonly newCommitIndex: number;
   } {
@@ -300,16 +297,14 @@ export class EosRaftWalReplicator {
 
     return {
       commitAdvanced: this.commitIndex > oldCommit,
-      newCommitIndex: this.commitIndex
+      newCommitIndex: this.commitIndex,
     };
   }
 
   /**
    * Persists Raft state snapshot to SQLite WAL ledger.
    */
-  public recordStateInLedger(
-    ledgerPath?: string
-  ): { readonly recorded: boolean; readonly receiptHash: string } {
+  public recordStateInLedger(ledgerPath?: string): { readonly recorded: boolean; readonly receiptHash: string } {
     const ledger = new EosDurableSqliteLedger(ledgerPath || ":memory:");
     try {
       const entry = ledger.appendEntry({
@@ -322,8 +317,8 @@ export class EosRaftWalReplicator {
           currentTerm: this.currentTerm,
           commitIndex: this.commitIndex,
           logLength: this.log.length,
-          quorumSize: this.getQuorumSize()
-        }
+          quorumSize: this.getQuorumSize(),
+        },
       });
       return { recorded: true, receiptHash: entry.entryHash };
     } finally {

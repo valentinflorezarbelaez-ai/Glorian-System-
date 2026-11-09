@@ -31,19 +31,24 @@
 ### Task Definitions
 
 1. **TASK-020-1: Architect Soul & Purpose Engine (`src/core/eosJarvisSoul.ts`)**:
+
    - Codify Valentín's Master Kanban Plan, Gnostic Tres Factores, Cristo Íntimo, and Daily Wellbeing Trilogy.
    - Enforce "SOLO EOS" and verify landing page closure.
 
 2. **TASK-020-2: Autonomous Introspection Engine (`src/core/eosIntrospectionEngine.ts`)**:
+
    - Implement codebase AST scanning, metric calculation, and automatic generation of RFC improvement proposals.
 
 3. **TASK-020-3: Impenetrable Military Shield (`src/core/eosImpenetrableShield.ts`)**:
+
    - Implement formal mathematical invariant proofs, Merkle Chain-of-Thought hashing, and XOR white-noise heap purge (EosAin).
 
 4. **TASK-020-4: Test Suite (`test/eosJarvisSoulIntrospection.test.mjs`)**:
+
    - Test soul alignment, introspection synthesis, and shield invariants.
 
 5. **TASK-020-5: CLI & MCP Integration**:
+
    - Add `eos soul`, `eos introspect`, `eos shield` in `bin/eos.mjs`.
    - Register MCP tools in `src/mcp/eosMcpServer.ts`.
 

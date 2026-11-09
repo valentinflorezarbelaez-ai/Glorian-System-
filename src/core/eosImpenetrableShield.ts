@@ -49,17 +49,14 @@ export class EosImpenetrableShield {
 
     for (let i = 0; i < thoughts.length; i++) {
       const text = thoughts[i];
-      const currentHash = crypto
-        .createHash("sha256")
-        .update(`${prevHash}:${i}:${text}`)
-        .digest("hex");
+      const currentHash = crypto.createHash("sha256").update(`${prevHash}:${i}:${text}`).digest("hex");
 
       chain.push({
         index: i,
         thought: text,
         previousHash: prevHash,
         currentHash,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       prevHash = currentHash;
@@ -69,7 +66,7 @@ export class EosImpenetrableShield {
     return {
       chain,
       rootHash: prevHash,
-      isValid
+      isValid,
     };
   }
 
@@ -81,10 +78,7 @@ export class EosImpenetrableShield {
 
     for (const node of chain) {
       if (node.previousHash !== prevHash) return false;
-      const expected = crypto
-        .createHash("sha256")
-        .update(`${prevHash}:${node.index}:${node.thought}`)
-        .digest("hex");
+      const expected = crypto.createHash("sha256").update(`${prevHash}:${node.index}:${node.thought}`).digest("hex");
       if (node.currentHash !== expected) return false;
       prevHash = node.currentHash;
     }
@@ -111,7 +105,7 @@ export class EosImpenetrableShield {
     return {
       originalLength,
       purged: true,
-      sha384Seal
+      sha384Seal,
     };
   }
 
@@ -119,21 +113,26 @@ export class EosImpenetrableShield {
    * EosElohim: Karmic Token & Deadlock Circuit Breaker.
    * Ensures execution terminates if token budgets or time budgets are exceeded.
    */
-  public evaluateKarmicCircuitBreaker(tokensConsumed: number, elapsedMs: number, maxTokens = 50000, maxMs = 5000): {
+  public evaluateKarmicCircuitBreaker(
+    tokensConsumed: number,
+    elapsedMs: number,
+    maxTokens = 50000,
+    maxMs = 5000,
+  ): {
     tripped: boolean;
     reason?: string;
   } {
     if (tokensConsumed > maxTokens) {
       return {
         tripped: true,
-        reason: `Runa NOT Disparada: Consumo excesivo de tokens (${tokensConsumed} > ${maxTokens}). Bucle kármico cortado.`
+        reason: `Runa NOT Disparada: Consumo excesivo de tokens (${tokensConsumed} > ${maxTokens}). Bucle kármico cortado.`,
       };
     }
 
     if (elapsedMs > maxMs) {
       return {
         tripped: true,
-        reason: `Runa NOT Disparada: Deadlock mecánico detectado (${elapsedMs}ms > ${maxMs}ms). Hilo congelado y purgado.`
+        reason: `Runa NOT Disparada: Deadlock mecánico detectado (${elapsedMs}ms > ${maxMs}ms). Hilo congelado y purgado.`,
       };
     }
 
@@ -144,10 +143,7 @@ export class EosImpenetrableShield {
    * EosAstral: Generates an HMAC-SHA256 Silver Cord token sealing an ephemeral sandbox mutation.
    */
   public generateSilverCord(targetFile: string, diffHash: string): string {
-    return crypto
-      .createHmac("sha256", this.secretKey)
-      .update(`${targetFile}:${diffHash}`)
-      .digest("hex");
+    return crypto.createHmac("sha256", this.secretKey).update(`${targetFile}:${diffHash}`).digest("hex");
   }
 
   /**
@@ -171,7 +167,7 @@ export class EosImpenetrableShield {
         /AKIA[0-9A-Z]{16}/,
         /AIzaSy[0-9A-Za-z\\-_]{33}/,
         /sk-[a-zA-Z0-9]{32,}/,
-        /ghp_[a-zA-Z0-9]{36}/
+        /ghp_[a-zA-Z0-9]{36}/,
       ];
 
       for (const file of files) {
@@ -190,7 +186,7 @@ export class EosImpenetrableShield {
       "Directive: Initialize Sovereign Shield",
       "Analysis: Zero vulnerabilities discovered",
       "Action: Verify Layer-0 Invariants",
-      "Seal: Epistemic State Confirmed"
+      "Seal: Epistemic State Confirmed",
     ]);
 
     // 4. Test Heap Purge
@@ -210,7 +206,7 @@ export class EosImpenetrableShield {
       heapZeroEntropyPurged: purgeRes.purged,
       karmicCircuitBreakerReady: true,
       silverCordSignature: cord,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }

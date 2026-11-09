@@ -45,9 +45,7 @@ export class EosMetaCognitiveSynapse {
    * Arbitrates concurrent multi-agent intents using Bayesian belief updates.
    * P(H_i | E) = (P(E | H_i) * P(H_i)) / sum(P(E | H_j) * P(H_j))
    */
-  public static arbitrateIntents(
-    candidates: readonly AgentIntentCandidate[]
-  ): SynapseArbitrationReport {
+  public static arbitrateIntents(candidates: readonly AgentIntentCandidate[]): SynapseArbitrationReport {
     const startNs = process.hrtime.bigint();
 
     if (candidates.length === 0) {

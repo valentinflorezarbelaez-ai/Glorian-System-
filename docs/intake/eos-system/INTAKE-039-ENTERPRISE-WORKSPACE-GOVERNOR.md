@@ -1,10 +1,10 @@
 # INTAKE-039: ENTERPRISE MULTI-PROJECT WORKSPACE GOVERNOR & POLYGLOT TOPOLOGY ENGINE (v52.0.0)
 
-* **Project**: `eos-system` (`EOS System — Sovereign Control Plane`)
-* **Date**: 2026-10-30
-* **Owner**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
-* **Status**: `INTAKE_COMPLETE`
-* **Target Specification**: `SPEC-046-ENTERPRISE-WORKSPACE-GOVERNOR.md`
+- **Project**: `eos-system` (`EOS System — Sovereign Control Plane`)
+- **Date**: 2026-10-30
+- **Owner**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+- **Status**: `INTAKE_COMPLETE`
+- **Target Specification**: `SPEC-046-ENTERPRISE-WORKSPACE-GOVERNOR.md`
 
 ---
 
@@ -13,6 +13,7 @@
 To operate as an authentic Tier-0 Engineering Operating System across real-world high-scale production codebases (polyglot monorepos, microservices, frontend/mobile apps, cloud-native backends, and AI/ML pipelines), EOS requires two mission-critical capabilities beyond single-repository self-governance:
 
 1. **Deep Enterprise Polyglot Monorepo, Contract & Supply-Chain Discovery**:
+
    - Real enterprise repositories use multi-package workspace orchestrators (`pnpm-workspace.yaml`, `turbo.json`, `nx.json`, `package.json#workspaces`, `Cargo.toml [workspace]`, `go.work`, `pyproject.toml` uv/poetry, `bazel`, `gradle`, `melos.yaml`), formal interface contracts (`OpenAPI/Swagger`, `Protocol Buffers .proto`, `GraphQL .graphql`, `JSON Schema`, `Prisma/SQL migrations`, `TLA+`), and supply-chain lockfiles (`package-lock.json`, `pnpm-lock.yaml`, `Cargo.lock`, `go.sum`, `uv.lock`).
    - Previous repository heuristics (`EosUniversalProjectAdapter`) stopped at depth 3 and scanned at most 50 files without enumerating internal workspace packages, API contract schemas, or lockfile determinism.
 

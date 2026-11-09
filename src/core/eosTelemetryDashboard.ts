@@ -14,11 +14,7 @@
 import http from "node:http";
 import path from "node:path";
 
-import {
-  assertPrecondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 import { EosAgentTopologyMesh } from "./eosAgentTopologyMesh.ts";
 
@@ -65,10 +61,7 @@ export class EosTelemetryDashboard {
   private readonly projectRoot: string;
   private readonly port: number;
 
-  constructor(
-    projectRoot: string = process.cwd(),
-    port: number = EosTelemetryDashboard.DEFAULT_PORT
-  ) {
+  constructor(projectRoot: string = process.cwd(), port: number = EosTelemetryDashboard.DEFAULT_PORT) {
     this.projectRoot = path.resolve(projectRoot);
     this.port = port;
   }
@@ -108,18 +101,43 @@ export class EosTelemetryDashboard {
   public static getTopologySnapshot(): TopologySummary {
     const nodes = [
       { id: "planner", name: "Architecture Planner", assignedModulePath: "docs/plans/", dependencies: [] },
-      { id: "spec_agent", name: "EARS/BDD Specification Agent", assignedModulePath: "openspec/specs/", dependencies: ["planner"] },
-      { id: "contract_agent", name: "Interface Contract Governor", assignedModulePath: "src/contracts/", dependencies: ["spec_agent"] },
-      { id: "core_impl", name: "L0 Pure Domain Generator", assignedModulePath: "src/core/", dependencies: ["contract_agent"] },
-      { id: "eval_agent", name: "In-Memory Sandbox Evaluator", assignedModulePath: "test/", dependencies: ["core_impl"] },
-      { id: "attestation", name: "SHA-256 Cryptographic Scribe", assignedModulePath: "docs/evidence/", dependencies: ["eval_agent"] }
+      {
+        id: "spec_agent",
+        name: "EARS/BDD Specification Agent",
+        assignedModulePath: "openspec/specs/",
+        dependencies: ["planner"],
+      },
+      {
+        id: "contract_agent",
+        name: "Interface Contract Governor",
+        assignedModulePath: "src/contracts/",
+        dependencies: ["spec_agent"],
+      },
+      {
+        id: "core_impl",
+        name: "L0 Pure Domain Generator",
+        assignedModulePath: "src/core/",
+        dependencies: ["contract_agent"],
+      },
+      {
+        id: "eval_agent",
+        name: "In-Memory Sandbox Evaluator",
+        assignedModulePath: "test/",
+        dependencies: ["core_impl"],
+      },
+      {
+        id: "attestation",
+        name: "SHA-256 Cryptographic Scribe",
+        assignedModulePath: "docs/evidence/",
+        dependencies: ["eval_agent"],
+      },
     ];
     const edges = [
       { from: "planner", to: "spec_agent" },
       { from: "spec_agent", to: "contract_agent" },
       { from: "contract_agent", to: "core_impl" },
       { from: "core_impl", to: "eval_agent" },
-      { from: "eval_agent", to: "attestation" }
+      { from: "eval_agent", to: "attestation" },
     ];
     const compiled = EosAgentTopologyMesh.compileTopology("dag-sovereign-mesh", nodes);
 
@@ -129,7 +147,7 @@ export class EosTelemetryDashboard {
       cycleDetected: !compiled.isAcyclic,
       activeAgents: nodes.length,
       totalEvents: 42,
-      totalEdges: edges.length
+      totalEdges: edges.length,
     });
   }
 
@@ -166,18 +184,16 @@ export class EosTelemetryDashboard {
       totalSavedTokens: efficiency.coordinationTokensSaved,
       savedRatio: efficiency.reductionRatioPct / 100,
       rawEstimatedTokens: Math.round(efficiency.fullFileContextBytes / 4),
-      coordinatedTokens: Math.round(efficiency.compactBytes / 4)
+      coordinatedTokens: Math.round(efficiency.compactBytes / 4),
     };
 
     const ledgerSummary: LedgerSummary = {
       totalEntries,
       chainIntact,
-      recentEntries: recent
+      recentEntries: recent,
     };
 
-    const sha256Receipt = pureSha256(
-      `v61.0.0:61:21:${totalEntries}:${tokenEfficiency.totalSavedTokens}:${timestamp}`
-    );
+    const sha256Receipt = pureSha256(`v61.0.0:61:21:${totalEntries}:${tokenEfficiency.totalSavedTokens}:${timestamp}`);
 
     return deepFreeze({
       status: "NOMINAL",
@@ -191,7 +207,7 @@ export class EosTelemetryDashboard {
       health: { status: "NOMINAL" },
       uptimeSeconds,
       memoryRssMb: Math.round(mem.rss / 1024 / 1024),
-      sha256Receipt
+      sha256Receipt,
     });
   }
 
@@ -436,7 +452,7 @@ export class EosTelemetryDashboard {
    */
   public static async startServer(
     port: number = EosTelemetryDashboard.DEFAULT_PORT,
-    projectRoot: string = process.cwd()
+    projectRoot: string = process.cwd(),
   ): Promise<{ server: http.Server; port: number; url: string }> {
     return new Promise((resolve, reject) => {
       const server = http.createServer((req, res) => {
@@ -467,12 +483,18 @@ export class EosTelemetryDashboard {
           const entries = EosTelemetryDashboard.getLedgerEntries(limit, projectRoot);
           const snapshot = EosTelemetryDashboard.getTelemetrySnapshot(projectRoot);
           res.writeHead(200, { "Content-Type": "application/json" });
-          res.end(JSON.stringify({
-            success: true,
-            entries,
-            totalEntries: snapshot.ledger.totalEntries,
-            chainIntact: snapshot.ledger.chainIntact
-          }, null, 2));
+          res.end(
+            JSON.stringify(
+              {
+                success: true,
+                entries,
+                totalEntries: snapshot.ledger.totalEntries,
+                chainIntact: snapshot.ledger.chainIntact,
+              },
+              null,
+              2,
+            ),
+          );
           return;
         }
 
@@ -503,7 +525,7 @@ export class EosTelemetryDashboard {
         resolve({
           server,
           port: actualPort,
-          url: `http://localhost:${actualPort}`
+          url: `http://localhost:${actualPort}`,
         });
       });
     });
@@ -528,10 +550,7 @@ export class EosTelemetryDashboard {
   /**
    * Persists dashboard snapshot in durable SQLite WAL ledger.
    */
-  public static recordReceiptInLedger(
-    snapshot: TelemetrySnapshot,
-    dbPathOrRootDir?: string
-  ): boolean {
+  public static recordReceiptInLedger(snapshot: TelemetrySnapshot, dbPathOrRootDir?: string): boolean {
     const dbPath = dbPathOrRootDir
       ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
         ? dbPathOrRootDir
@@ -550,9 +569,9 @@ export class EosTelemetryDashboard {
           formalModelsCount: snapshot.formalModelsCount,
           ledgerEntriesCount: snapshot.ledger.totalEntries,
           tokenSavingsPercent: snapshot.tokenEfficiency.savedRatio * 100,
-          sha256Receipt: snapshot.sha256Receipt
+          sha256Receipt: snapshot.sha256Receipt,
         },
-        engramTopicKey: `eos/telemetry/dashboard`
+        engramTopicKey: `eos/telemetry/dashboard`,
       });
       return true;
     } catch {

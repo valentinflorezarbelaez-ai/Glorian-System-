@@ -1,0 +1,77 @@
+# Labeler — auto-label PRs based on changed paths (Kubernetes/Google standard).
+# https://github.com/actions/labeler
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/workflows/**"
+          - ".githooks/**"
+
+core:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/core/**"
+
+mcp:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/mcp/**"
+
+cli:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "bin/**"
+
+api:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "api/**"
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "test/**"
+
+docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/**"
+          - "*.md"
+          - "ARCHITECTURE-S0.md"
+          - "DESIGN.md"
+
+security:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "scripts/eos-secret-scan.mjs"
+          - "SECURITY.md"
+          - ".eos/secret-allowlist.json"
+          - "vercel.json"
+          - "Dockerfile"
+          - "deploy/**"
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "package.json"
+          - "package-lock.json"
+          - ".npmrc"
+
+ci-infra:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/workflows/**"
+          - ".github/dependabot.yml"
+          - "Dockerfile"
+          - "deploy/**"
+
+templates:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "templates/**"
+
+formal:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/formal/**"
+          - "scripts/verify-formal-tla.mjs"

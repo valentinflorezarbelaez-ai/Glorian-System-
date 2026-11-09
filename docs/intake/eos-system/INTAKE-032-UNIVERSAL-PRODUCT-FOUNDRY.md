@@ -1,9 +1,11 @@
 # INTAKE-032: EOS UNIVERSAL PRODUCT FOUNDRY ENGINE (APEX PRODUCT CREATOR)
 
 ## 1. Context & Business Intent
+
 - **System**: EOS System (Engineering Operating System)
 - **Target Tier**: Big Tech Tier-0 Product Foundry (Apple Design, Stripe Reliability, SpaceX Mechanical Sympathy, Spotify Scalability, Nubank FinOps)
 - **Problem Statement**:
+
   - Building complex products from human ideas often suffers from ambiguity, chaotic architecture ("vibe coding"), missing edge-case specifications, brittle dependencies, and lack of rigorous verification.
   - Software teams frequently lack an autonomous factory that can deterministically transform a raw concept or manifest into a fully architected, rigorously tested, hexagonal, multi-platform software product with 0 defects and automated CI/CD.
 
@@ -16,6 +18,7 @@
     5. Formally verifying the generated product architecture against mathematical TLA+ state models.
 
 ## 2. Inviolable Invariants
+
 - 0 external runtime dependencies (`dependencies: {}`).
 - Generated products strictly adhere to the 7 Inviolable Commandments of EOS.
 - All code and documentation written in standard professional English.

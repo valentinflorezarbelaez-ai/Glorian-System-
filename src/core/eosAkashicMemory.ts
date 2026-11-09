@@ -9,9 +9,9 @@
  */
 
 export type SamaelianMemoryFactor =
-  | "MORIR"      // Incineración de defectos, bugfixes, deuda técnica y anti-patrones (Devi Kundalini)
-  | "NACER"      // Nacimiento Segundo: Arquitectura, patrones SoA/SIMD, transmutación del Hidrógeno SI-12
-  | "SACRIFICIO";// Tercer Factor: Handoffs, mem_session_summary, documentación y servicio consciente
+  | "MORIR" // Incineración de defectos, bugfixes, deuda técnica y anti-patrones (Devi Kundalini)
+  | "NACER" // Nacimiento Segundo: Arquitectura, patrones SoA/SIMD, transmutación del Hidrógeno SI-12
+  | "SACRIFICIO"; // Tercer Factor: Handoffs, mem_session_summary, documentación y servicio consciente
 
 export type AkashicSephirah =
   | "Kether (Anciano de los Días · Raíz Suprema)"
@@ -37,13 +37,7 @@ export type EngramObservationType =
   | "session_summary"
   | "manual";
 
-export type EngramRelationVerb =
-  | "related"
-  | "compatible"
-  | "scoped"
-  | "conflicts_with"
-  | "supersedes"
-  | "not_conflict";
+export type EngramRelationVerb = "related" | "compatible" | "scoped" | "conflicts_with" | "supersedes" | "not_conflict";
 
 export interface AkashicObservation {
   readonly id: number;
@@ -106,65 +100,79 @@ export const MEMORY_CAPABILITY_REFERENCE_CATALOG: readonly {
 }[] = [
   {
     capability: "Browser-local notes",
-    eosCurrentBehavior: "The browser UI stores bounded note records in localStorage; this does not sync between devices or persist on the server."
+    eosCurrentBehavior:
+      "The browser UI stores bounded note records in localStorage; this does not sync between devices or persist on the server.",
   },
   {
     capability: "Text search and filters",
-    eosCurrentBehavior: "The browser performs case-insensitive substring matching and local category/pinned filters; there is no FTS5 or semantic index."
+    eosCurrentBehavior:
+      "The browser performs case-insensitive substring matching and local category/pinned filters; there is no FTS5 or semantic index.",
   },
   {
     capability: "topic_key updates",
-    eosCurrentBehavior: "Saving an existing key replaces that local record and increments an edit counter; previous versions are not retained."
+    eosCurrentBehavior:
+      "Saving an existing key replaces that local record and increments an edit counter; previous versions are not retained.",
   },
   {
     capability: "API memory actions",
-    eosCurrentBehavior: "The stateless API serves fixtures and previews. Its diagnostics and judge responses explicitly report that checks or judgments did not execute."
+    eosCurrentBehavior:
+      "The stateless API serves fixtures and previews. Its diagnostics and judge responses explicitly report that checks or judgments did not execute.",
   },
   {
     capability: "This TypeScript module",
-    eosCurrentBehavior: "Exports types, a reference catalog, deterministic topic-key and factor helpers, a keyword router, and a review template."
+    eosCurrentBehavior:
+      "Exports types, a reference catalog, deterministic topic-key and factor helpers, a keyword router, and a review template.",
   },
   {
     capability: "Export",
-    eosCurrentBehavior: "The browser can download local notes as Markdown; there is no Obsidian integration or signed provenance."
-  }
+    eosCurrentBehavior:
+      "The browser can download local notes as Markdown; there is no Obsidian integration or signed provenance.",
+  },
 ] as const;
 
 export function suggestAkashicTopicKey(type: string, title: string): string {
-  const cleanType = (type || "architecture")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "") || "architecture";
-  const slug = (title || "core-decision")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 44) || "core-decision";
+  const cleanType =
+    (type || "architecture")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "") || "architecture";
+  const slug =
+    (title || "core-decision")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 44) || "core-decision";
   return `${cleanType}/${slug}`;
 }
 
 export function classifySamaelianFactorAndSephirah(
   type: EngramObservationType,
-  text: string
+  text: string,
 ): { factor: SamaelianMemoryFactor; sephirah: AkashicSephirah } {
   const lower = `${type} ${text}`.toLowerCase();
-  if (type === "bugfix" || lower.includes("bug") || lower.includes("fix") || lower.includes("error") || lower.includes("fdir")) {
+  if (
+    type === "bugfix" ||
+    lower.includes("bug") ||
+    lower.includes("fix") ||
+    lower.includes("error") ||
+    lower.includes("fdir")
+  ) {
     return {
       factor: "MORIR",
-      sephirah: "Geburah (Rigor de la Ley · Tribunal de Anubis)"
+      sephirah: "Geburah (Rigor de la Ley · Tribunal de Anubis)",
     };
   }
   if (type === "session_summary" || lower.includes("handoff") || lower.includes("resumen") || lower.includes("flota")) {
     return {
       factor: "SACRIFICIO",
-      sephirah: "Tiphereth (Alma Humana · Voluntad Thelema)"
+      sephirah: "Tiphereth (Alma Humana · Voluntad Thelema)",
     };
   }
   return {
     factor: "NACER",
-    sephirah: "Daath (Gnosis / Conocimiento Akáshico)"
+    sephirah: "Daath (Gnosis / Conocimiento Akáshico)",
   };
 }
 
@@ -185,7 +193,7 @@ export function evaluateOddProportionalRouting(taskDescription: string): OddProp
       sizeTier: "LARGE_FEATURE_DOC",
       delegationReason: "INDEPENDENT_VERIFIER",
       publicState: "Checking",
-      testFirstRule: "1 RED behavior test per rule + 1 regression test per touched command + Independent 4R Verifier."
+      testFirstRule: "1 RED behavior test per rule + 1 regression test per touched command + Independent 4R Verifier.",
     };
   }
   return {
@@ -193,13 +201,13 @@ export function evaluateOddProportionalRouting(taskDescription: string): OddProp
     sizeTier: "SMALL_INLINE",
     delegationReason: "NONE_INLINE",
     publicState: "Ready",
-    testFirstRule: "Inline execution with 0 subagent overhead + deterministic functional verification."
+    testFirstRule: "Inline execution with 0 subagent overhead + deterministic functional verification.",
   };
 }
 
 export function createRddFourRLensesReviewTemplate(
   candidateTitle: string,
-  suppliedCandidateFingerprint: string
+  suppliedCandidateFingerprint: string,
 ): RddFourRReview {
   return {
     suppliedCandidateFingerprint,
@@ -208,8 +216,8 @@ export function createRddFourRLensesReviewTemplate(
       risk: "[NOT RUN] No secrets scan or risk assessment was performed.",
       resilience: "[NOT RUN] No resilience or recovery checks were performed.",
       readability: "[NOT RUN] No readability or architecture review was performed.",
-      reliability: `[NOT RUN] The review template for "${candidateTitle}" does not validate the supplied fingerprint or execute checks.`
+      reliability: `[NOT RUN] The review template for "${candidateTitle}" does not validate the supplied fingerprint or execute checks.`,
     },
-    epistemicVerdict: "NOT_EXECUTED_TEMPLATE"
+    epistemicVerdict: "NOT_EXECUTED_TEMPLATE",
   };
 }

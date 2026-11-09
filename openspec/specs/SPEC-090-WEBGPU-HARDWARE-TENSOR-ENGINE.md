@@ -1,6 +1,7 @@
 # SPEC-090: WEBGPU WGSL HARDWARE TENSOR ACCELERATOR & LOCAL NEURAL COMPUTATION
 
 ## 1. Specification Metadata
+
 - **Spec ID**: `SPEC-090`
 - **Change**: `CHANGE-065`
 - **Status**: `APPROVED`
@@ -13,15 +14,19 @@
 ## 2. Functional Requirements (Formal EARS Syntax)
 
 ### FR-322: WGSL Compute Shader Synthesis
+
 - **Pattern (Ubiquitous / Permanent)**: EL SISTEMA mantendrá generadores de código de sombreadores en lenguaje WebGPU Shading Language (WGSL) optimizados para workgroups paralelos (`@workgroup_size(16, 16)`) para operaciones $GEMM$ ($C = A \times B$), ReLU, Softmax y producto punto vectorial.
 
 ### FR-323: Device Bind Group & Pipeline Assembly
+
 - **Pattern (Event-Driven)**: CUANDO se configure un trabajo de computación tensorial, EL SISTEMA generará la especificación declarativa del bind group, definiendo buffers de entrada de solo lectura (`storage, read`) y buffer de salida escribible (`storage, read_write`) con alineación fija a 16 bytes.
 
 ### FR-324: Deterministic Numerical Precision
+
 - **Pattern (Ubiquitous / Permanent)**: EL SISTEMA garantizará que tanto la ejecución sobre aceleradores gráficos como el motor de respaldo determinista en CPU produzcan resultados numéricos con una discrepancia relativa inferior a $\epsilon = 10^{-5}$ para valores de precisión simple `float32`.
 
 ### FR-325: Safe CPU Fallback on Headless Environments
+
 - **Pattern (State-Driven)**: MIENTRAS el entorno de ejecución no disponga de un adaptador físico GPU accesible (`navigator.gpu === undefined`), EL SISTEMA ejecutará el cómputo tensorial mediante un motor multihilo SIMD en CPU sin emitir fallos no controlados.
 
 ---

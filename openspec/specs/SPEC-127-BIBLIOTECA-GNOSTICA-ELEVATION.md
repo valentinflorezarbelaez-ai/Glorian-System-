@@ -1,6 +1,7 @@
 # SPEC-127: Biblioteca Gnóstica Web Platform Governance Elevation (Level 3)
 
 ## 1. Metadata & Status
+
 - **Specification ID**: `SPEC-127`
 - **Title**: `Biblioteca Gnóstica Web Platform Governance Elevation (Level 3)`
 - **Version**: `1.0.0`
@@ -13,7 +14,9 @@
 ---
 
 ## 2. Executive Context & Objective
+
 `Biblioteca-gnostica-1` is a Next.js / TypeScript web application dedicated to the preservation and study of gnostic literature, lectures, and sacred texts, deployed to Vercel at `https://biblioteca-gnostica.vercel.app`. Currently marked as `LEVEL_1_READ_ONLY` with missing production URL in `docs/projects/registry.json`, this specification:
+
 1. Binds `https://biblioteca-gnostica.vercel.app` as its official production endpoint.
 2. Validates working tree cleanliness and secret hygiene via `scripts/eos-secret-scan.mjs`.
 3. Confirms live HTTP 200 reachability and SSL security.
@@ -24,15 +27,19 @@
 ## 3. Functional Requirements (IEEE 830 / EARS)
 
 ### FR-397: Production Endpoint Binding
+
 EL SISTEMA debe registrar permanentemente `https://biblioteca-gnostica.vercel.app` como la URL de producción de `biblioteca-gnostica-1` en `docs/projects/registry.json`.
 
 ### FR-398: Secret Hygiene Conformance (Law VI)
+
 CUANDO se audita el código fuente de `Biblioteca-gnostica-1`, EL SISTEMA debe certificar que no existen credenciales de servicio, llaves privadas ni contraseñas expuestas en texto plano.
 
 ### FR-399: Production Health Reachability
+
 EL SISTEMA debe verificar que `https://biblioteca-gnostica.vercel.app` responde con código HTTP 200 y renderiza el contenido de la biblioteca con tiempos de respuesta óptimos.
 
 ### FR-400: Level 3 Registry Promotion
+
 CUANDO se validan los requisitos FR-397 a FR-399, EL SISTEMA debe actualizar el registro canónico con estado `LEVEL_3_PRODUCTION_AUTHORIZED`.
 
 ---

@@ -21,7 +21,6 @@ export interface FileImport {
   resolvedPath: string | null;
   isExternal: boolean;
   lineNumber: number;
-  isDynamicUnresolvable?: boolean;
 }
 
 export interface FileAnalysis {
@@ -57,119 +56,29 @@ export function classifyLayer(relativePath: string): ArchitecturalLayer {
   if (norm.includes("src/mcp/") || norm.includes("api/") || norm.includes("infra/") || norm.includes("adapters/")) {
     return "INFRASTRUCTURE";
   }
-  if (norm.includes("src/components/") || norm.includes("src/ui/") || norm.includes("js/") || norm.includes("css/") || norm.includes("pages/")) {
+  if (
+    norm.includes("src/components/") ||
+    norm.includes("src/ui/") ||
+    norm.includes("js/") ||
+    norm.includes("css/") ||
+    norm.includes("pages/")
+  ) {
     return "PRESENTATION";
   }
   return "UNKNOWN";
 }
 
 /**
- * Reads tsconfig.json from projectRoot and extracts path alias → real directory mappings.
- * e.g. { "@core/*": ["src/core/*"] } → { "@core/": "src/core/" }
- */
-export function resolveTsconfigPaths(projectRoot: string): Record<string, string> {
-  const tsconfigPath = path.join(projectRoot, "tsconfig.json");
-  if (!fs.existsSync(tsconfigPath)) return {};
-
-  let raw: string;
-  try {
-    raw = fs.readFileSync(tsconfigPath, "utf8");
-  } catch {
-    return {};
-  }
-
-  let tsconfig: Record<string, unknown>;
-  try {
-    // Strip single-line comments and trailing commas for lenient JSON parsing
-    const stripped = raw
-      .replace(/\/\/[^\n]*/g, "")
-      .replace(/,(\s*[}\]])/g, "$1");
-    tsconfig = JSON.parse(stripped) as Record<string, unknown>;
-  } catch {
-    return {};
-  }
-
-  const compilerOptions = tsconfig["compilerOptions"] as Record<string, unknown> | undefined;
-  if (!compilerOptions) return {};
-
-  const paths = compilerOptions["paths"] as Record<string, string[]> | undefined;
-  if (!paths || typeof paths !== "object") return {};
-
-  const baseUrl = typeof compilerOptions["baseUrl"] === "string"
-    ? compilerOptions["baseUrl"]
-    : ".";
-
-  const aliasMap: Record<string, string> = {};
-  for (const [aliasPattern, targets] of Object.entries(paths)) {
-    if (!Array.isArray(targets) || targets.length === 0) continue;
-    // Convert glob patterns: "@core/*" → "@core/"  and  "src/core/*" → "src/core/"
-    const aliasPrefix = aliasPattern.endsWith("/*")
-      ? aliasPattern.slice(0, -1)   // "@core/*" → "@core/"
-      : aliasPattern + "/";
-
-    const targetPattern = targets[0];
-    const realPrefix = targetPattern.endsWith("/*")
-      ? path.join(projectRoot, baseUrl, targetPattern.slice(0, -1))
-      : path.join(projectRoot, baseUrl, targetPattern);
-
-    aliasMap[aliasPrefix] = realPrefix.replace(/\\/g, "/");
-  }
-
-  return aliasMap;
-}
-
-/**
  * Extracts import/require statements from source code text.
  */
-export function extractImports(
-  sourceCode: string,
-  sourceFilePath: string,
-  projectRoot: string,
-  aliasMap: Record<string, string> = {}
-): FileImport[] {
+export function extractImports(sourceCode: string, sourceFilePath: string, projectRoot: string): FileImport[] {
   const imports: FileImport[] = [];
   const lines = sourceCode.split(/\r?\n/);
 
   // Regex patterns for static imports and dynamic imports/requires
   const staticImportRegex = /import\s+(?:(?:[\w*\s{},]+)\s+from\s+)?['"]([^'"]+)['"]/g;
   const requireRegex = /require\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
-  // Matches only string-literal dynamic imports
   const dynamicImportRegex = /import\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
-  // Matches non-literal dynamic imports (template literals, variables, concatenation)
-  const dynamicImportUnresolvableRegex = /import\s*\(\s*(?!['"])([^)]+)\)/g;
-
-  const resolveSpecifier = (specifier: string): string | null => {
-    const extensions = ["", ".ts", ".tsx", ".js", ".mjs", ".jsx", "/index.ts", "/index.js"];
-
-    if (specifier.startsWith(".")) {
-      const sourceDir = path.dirname(sourceFilePath);
-      const candidate = path.resolve(sourceDir, specifier);
-      for (const ext of extensions) {
-        const testPath = candidate + ext;
-        if (fs.existsSync(testPath) && fs.statSync(testPath).isFile()) {
-          return path.resolve(testPath);
-        }
-      }
-      return null;
-    }
-
-    // Alias resolution
-    for (const [aliasPrefix, realPrefix] of Object.entries(aliasMap)) {
-      if (specifier.startsWith(aliasPrefix)) {
-        const remainder = specifier.slice(aliasPrefix.length);
-        const candidate = path.join(realPrefix, remainder);
-        for (const ext of extensions) {
-          const testPath = candidate + ext;
-          if (fs.existsSync(testPath) && fs.statSync(testPath).isFile()) {
-            return path.resolve(testPath);
-          }
-        }
-        return null;
-      }
-    }
-
-    return null;
-  };
 
   lines.forEach((line, idx) => {
     const trimmed = line.trim();
@@ -177,64 +86,51 @@ export function extractImports(
       return; // Skip comments
     }
 
-    const checkMatch = (regex: RegExp, isDynamic = false) => {
+    const checkMatch = (regex: RegExp) => {
       let match: RegExpExecArray | null;
-      // Reset lastIndex to avoid cross-line state issues
-      regex.lastIndex = 0;
       while ((match = regex.exec(line)) !== null) {
         const specifier = match[1];
         const isExternal = !specifier.startsWith(".") && !specifier.startsWith("/") && !specifier.startsWith("node:");
-        const resolved = resolveSpecifier(specifier);
+        let resolved: string | null = null;
+
+        if (specifier.startsWith(".")) {
+          // Resolve relative path
+          const sourceDir = path.dirname(sourceFilePath);
+          const candidate = path.resolve(sourceDir, specifier);
+
+          const extensions = ["", ".ts", ".tsx", ".js", ".mjs", ".jsx", "/index.ts", "/index.js"];
+          for (const ext of extensions) {
+            const testPath = candidate + ext;
+            if (fs.existsSync(testPath) && fs.statSync(testPath).isFile()) {
+              resolved = path.resolve(testPath);
+              break;
+            }
+          }
+        }
 
         imports.push({
           rawSpecifier: specifier,
           resolvedPath: resolved,
           isExternal,
-          lineNumber: idx + 1
-        });
-      }
-    };
-
-    // Handle non-literal dynamic imports — warn and flag as unresolvable
-    const checkDynamicUnresolvable = (regex: RegExp) => {
-      regex.lastIndex = 0;
-      let match: RegExpExecArray | null;
-      while ((match = regex.exec(line)) !== null) {
-        const rawExpr = match[1].trim();
-        imports.push({
-          rawSpecifier: rawExpr,
-          resolvedPath: null,
-          isExternal: false,
           lineNumber: idx + 1,
-          isDynamicUnresolvable: true
         });
       }
     };
 
     checkMatch(staticImportRegex);
     checkMatch(requireRegex);
-    checkMatch(dynamicImportRegex, true);
-    checkDynamicUnresolvable(dynamicImportUnresolvableRegex);
+    checkMatch(dynamicImportRegex);
   });
 
   return imports;
 }
 
 /**
- * Disallowed imports for Domain Layer (Layer 0 Core).
+ * Disallowed external frameworks and browser globals for Domain Layer (Layer 0 Core).
  */
-const FORBIDDEN_DOMAIN_PATTERNS = [
-  "react",
-  "vue",
-  "angular",
-  "express",
-  "next",
-  "koa",
-  "fastify",
-  "components",
-  "window",
-  "document"
-];
+const FORBIDDEN_DOMAIN_FRAMEWORKS = ["react", "vue", "angular", "express", "next", "koa", "fastify"];
+
+const FORBIDDEN_DOMAIN_GLOBALS = ["window", "document"];
 
 /**
  * Inspects imports of a file against Hexagonal Layer invariants.
@@ -244,14 +140,22 @@ export function validateLayerInvariants(analysis: FileAnalysis): string[] {
 
   if (analysis.layer === "DOMAIN") {
     for (const imp of analysis.imports) {
-      // 1. Domain must not import UI / framework libraries
+      // 1. Domain must not import UI / framework libraries or browser globals
       const lowerSpec = imp.rawSpecifier.toLowerCase();
-      for (const forbidden of FORBIDDEN_DOMAIN_PATTERNS) {
-        if (lowerSpec.includes(forbidden)) {
-          violations.push(
-            `Domain Purity Violation at line ${imp.lineNumber}: Domain module cannot import '${imp.rawSpecifier}' (Law V).`
-          );
-        }
+      const isForbiddenFramework = FORBIDDEN_DOMAIN_FRAMEWORKS.some(
+        (f) => lowerSpec === f || lowerSpec.startsWith(`${f}/`) || lowerSpec.startsWith(`@${f}/`),
+      );
+      const isForbiddenGlobal = FORBIDDEN_DOMAIN_GLOBALS.includes(lowerSpec);
+      const isForbiddenInternal =
+        !imp.isExternal &&
+        (lowerSpec.includes("/components/") ||
+          lowerSpec.includes("\\components\\") ||
+          lowerSpec.startsWith("components/"));
+
+      if (isForbiddenFramework || isForbiddenGlobal || isForbiddenInternal) {
+        violations.push(
+          `Domain Purity Violation at line ${imp.lineNumber}: Domain module cannot import '${imp.rawSpecifier}' (Law V).`,
+        );
       }
 
       // 2. Domain must not import Presentation components
@@ -259,7 +163,7 @@ export function validateLayerInvariants(analysis: FileAnalysis): string[] {
         const rel = imp.resolvedPath.replace(/\\/g, "/").toLowerCase();
         if (rel.includes("src/components") || rel.includes("src/ui") || rel.includes("/js/")) {
           violations.push(
-            `Inward Dependency Violation at line ${imp.lineNumber}: Domain module cannot import Presentation module '${imp.rawSpecifier}'.`
+            `Inward Dependency Violation at line ${imp.lineNumber}: Domain module cannot import Presentation module '${imp.rawSpecifier}'.`,
           );
         }
       }
@@ -272,7 +176,7 @@ export function validateLayerInvariants(analysis: FileAnalysis): string[] {
         const rel = imp.resolvedPath.replace(/\\/g, "/").toLowerCase();
         if (rel.includes("src/components") || rel.includes("src/ui")) {
           violations.push(
-            `Inward Dependency Violation at line ${imp.lineNumber}: Application module cannot import Presentation module '${imp.rawSpecifier}'.`
+            `Inward Dependency Violation at line ${imp.lineNumber}: Application module cannot import Presentation module '${imp.rawSpecifier}'.`,
           );
         }
       }
@@ -283,8 +187,7 @@ export function validateLayerInvariants(analysis: FileAnalysis): string[] {
 }
 
 /**
- * Detects circular dependencies in the module import graph using an iterative DFS.
- * Uses an explicit worklist to avoid call-stack overflow on large graphs.
+ * Detects circular dependencies in the module import graph using Depth-First Search (DFS).
  */
 export function detectCircularDependencies(analyses: Map<string, FileAnalysis>): string[][] {
   const adj = new Map<string, string[]>();
@@ -302,66 +205,39 @@ export function detectCircularDependencies(analyses: Map<string, FileAnalysis>):
   const cycles: string[][] = [];
   const visited = new Set<string>();
   const inStack = new Set<string>();
+  const stack: string[] = [];
 
-  for (const startNode of adj.keys()) {
-    if (visited.has(startNode)) continue;
+  function dfs(node: string) {
+    visited.add(node);
+    inStack.add(node);
+    stack.push(node);
 
-    // Each worklist entry records the node and which neighbor index to explore next.
-    // The `path` array mirrors the DFS call stack (nodes currently being explored).
-    const worklist: Array<{ node: string; neighborIndex: number }> = [];
-    const currentPath: string[] = [];
-
-    // Push the start node
-    worklist.push({ node: startNode, neighborIndex: 0 });
-    visited.add(startNode);
-    inStack.add(startNode);
-    currentPath.push(startNode);
-
-    while (worklist.length > 0) {
-      const frame = worklist[worklist.length - 1];
-      const neighbors = adj.get(frame.node) ?? [];
-
-      if (frame.neighborIndex < neighbors.length) {
-        const neighbor = neighbors[frame.neighborIndex];
-        frame.neighborIndex++;
-
-        if (inStack.has(neighbor)) {
-          // Back-edge → cycle detected
-          const cycleStartIndex = currentPath.indexOf(neighbor);
-          if (cycleStartIndex !== -1) {
-            const cyclePath = currentPath.slice(cycleStartIndex);
-            cyclePath.push(neighbor); // close the loop
-            cycles.push(cyclePath);
-          }
-        } else if (!visited.has(neighbor)) {
-          visited.add(neighbor);
-          inStack.add(neighbor);
-          currentPath.push(neighbor);
-          worklist.push({ node: neighbor, neighborIndex: 0 });
+    const neighbors = adj.get(node) || [];
+    for (const neighbor of neighbors) {
+      if (!visited.has(neighbor)) {
+        dfs(neighbor);
+      } else if (inStack.has(neighbor)) {
+        // Cycle detected
+        const cycleStartIndex = stack.indexOf(neighbor);
+        if (cycleStartIndex !== -1) {
+          const cyclePath = stack.slice(cycleStartIndex);
+          cyclePath.push(neighbor); // Close loop
+          cycles.push(cyclePath);
         }
-        // Already visited but not in stack → cross/forward edge, skip
-      } else {
-        // All neighbors exhausted — pop this frame
-        worklist.pop();
-        inStack.delete(frame.node);
-        currentPath.pop();
       }
+    }
+
+    stack.pop();
+    inStack.delete(node);
+  }
+
+  for (const node of adj.keys()) {
+    if (!visited.has(node)) {
+      dfs(node);
     }
   }
 
   return cycles;
-}
-
-interface CachedFileAnalysis {
-  mtimeNs: bigint;
-  size: number;
-  analysis: FileAnalysis;
-}
-
-const ARCH_FILE_CACHE = new Map<string, CachedFileAnalysis>();
-
-export function clearArchitectureCache(): void {
-  ARCH_FILE_CACHE.clear();
 }
 
 /**
@@ -374,11 +250,8 @@ export function scanArchitecture(targetDir: string, projectRoot: string = proces
     APPLICATION: 0,
     INFRASTRUCTURE: 0,
     PRESENTATION: 0,
-    UNKNOWN: 0
+    UNKNOWN: 0,
   };
-
-  // Resolve tsconfig path aliases once for the whole scan
-  const aliasMap = resolveTsconfigPaths(projectRoot);
 
   function walk(dir: string) {
     if (!fs.existsSync(dir)) return;
@@ -396,32 +269,17 @@ export function scanArchitecture(targetDir: string, projectRoot: string = proces
         layerCounts[layer] = (layerCounts[layer] || 0) + 1;
 
         const content = fs.readFileSync(fullPath, "utf8");
-        const imports = extractImports(content, fullPath, projectRoot, aliasMap);
+        const imports = extractImports(content, fullPath, projectRoot);
 
-        const cached = stat ? ARCH_FILE_CACHE.get(fullPath) : undefined;
-        if (cached && stat && cached.mtimeNs === stat.mtimeNs && cached.size === Number(stat.size)) {
-          analysis = cached.analysis;
-        } else {
-          const content = fs.readFileSync(fullPath, "utf8");
-          const imports = extractImports(content, fullPath, projectRoot);
+        const analysis: FileAnalysis = {
+          filePath: fullPath,
+          relativeFilePath: relPath,
+          layer,
+          imports,
+          violations: [],
+        };
 
-          analysis = {
-            filePath: fullPath,
-            relativeFilePath: relPath,
-            layer,
-            imports,
-            violations: []
-          };
-
-          analysis.violations = validateLayerInvariants(analysis);
-          if (stat) {
-            ARCH_FILE_CACHE.set(fullPath, {
-              mtimeNs: stat.mtimeNs,
-              size: Number(stat.size),
-              analysis
-            });
-          }
-        }
+        analysis.violations = validateLayerInvariants(analysis);
         analyses.set(fullPath, analysis);
       }
     }
@@ -437,7 +295,7 @@ export function scanArchitecture(targetDir: string, projectRoot: string = proces
       flatViolations.push({
         file: analysis.relativeFilePath,
         rule: "Hexagonal Layer Invariant",
-        details: v
+        details: v,
       });
     }
   }
@@ -447,7 +305,7 @@ export function scanArchitecture(targetDir: string, projectRoot: string = proces
     flatViolations.push({
       file: path.relative(projectRoot, cycle[0]),
       rule: "Circular Dependency Detected",
-      details: `Circular import cycle: ${readable}`
+      details: `Circular import cycle: ${readable}`,
     });
   }
 
@@ -462,6 +320,6 @@ export function scanArchitecture(targetDir: string, projectRoot: string = proces
     violations: flatViolations,
     circularDependencies: cycles.map((c) => c.map((p) => path.relative(projectRoot, p))),
     architecturePurityScore: purityScore,
-    isClean: flatViolations.length === 0
+    isClean: flatViolations.length === 0,
   };
 }

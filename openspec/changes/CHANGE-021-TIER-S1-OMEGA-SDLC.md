@@ -10,6 +10,7 @@
 ---
 
 ## 1. Summary of Changes
+
 1. **Datalog/Mangle Deductive Engine (`src/core/eosDatalogVerifier.ts`)**:
    - Forward-chaining fixpoint deductive engine for dependency graph blast radius calculations.
 2. **Automated Mutation Saboteur (`src/core/eosMutationTester.ts`)**:
@@ -24,4 +25,5 @@
    - MCP tools `eos_mutation_test`, `eos_datalog_query`, `eos_time_travel_simulate` in `src/mcp/eosMcpServer.ts`.
 
 ---
-*Signed by Principal Architect: Valentín Flórez Arbeláez*
+
+_Signed by Principal Architect: Valentín Flórez Arbeláez_

@@ -3,28 +3,34 @@
 **Version**: 63.0.0  
 **Status**: APPROVED  
 **Author**: Antigravity Principal Architect / EOS System Core  
-**Governing Standard**: IEEE 830 / ISO 29148 / RFC 9110 / Clean Hexagonal Architecture  
+**Governing Standard**: IEEE 830 / ISO 29148 / RFC 9110 / Clean Hexagonal Architecture
 
 ---
 
 ## 1. Functional Requirements (EARS Syntax)
 
 ### FR-207 (10-Sephiroth Architectural Vector Evaluation)
+
 **CUANDO** el motor de gobernanza unitotal evalúa un repositorio o subsistema de la flota, **EL SISTEMA** computará un vector de integridad de 10 dimensiones correspondientes a las Sephiroth del Árbol de la Vida (`Kether` hasta `Malkuth`), asignando a cada una una puntuación normalizada de 0 a 100 con justificación determinista.
 
 ### FR-208 (Universal Multi-Fleet Repository Inventory)
+
 **MIENTRAS** el auditor inspecciona la flota soberana registrada (`eos-system`, `portafolio`, `performance-talent-group`, `crud-slack`, `aberamentho`), **EL SISTEMA** verificará la presencia en disco, el nivel de autorización según la Ley IV, y el estado de sus configuraciones locales (.cursor, hooks, contratos).
 
 ### FR-209 (Autonomous Tooling Drift Remediation)
+
 **CUANDO** se detecta una discrepancia en las rutas binarias de herramientas hermanas (e.g. ruta de `engram.exe` o ausencia de `.cursor/mcp.json`), **EL SISTEMA** generará una propuesta de remediación quirúrgica no destructiva garantizando que las rutas apunten al entorno real del sistema operativo.
 
 ### FR-210 (Hermetic Production Endpoint Smoke Verification)
+
 **CUANDO** el operador ejecuta una auditoría de humo sobre la plataforma de producción `ptg-performance-talent-group.vercel.app`, **EL SISTEMA** verificará la disponibilidad de la raíz, el sitemap, robots.txt, service worker, manifiesto PWA y los 5 expedientes de jugadores.
 
 ### FR-211 (Unitotal Health Composite Scoring)
+
 **CUANDO** se consolidan las evaluaciones de las 10 Sephiroth y el estado de la flota, **EL SISTEMA** computará un índice compuesto de Perfección Unitotal (0-100), requiriendo un mínimo de 90/100 para certificar el estado `SOVEREIGN_UNITOTAL_PERFECTION`.
 
 ### FR-212 (Tamper-Evident Ledger Attestation & MCP Dispatch)
+
 **SI** la auditoría unitotal concluye satisfactoriamente, **ENTONCES EL SISTEMA** emitirá un bloque inmutable en el ledger SQLite WAL con firma SHA-256 bajo la categoría `ARCHITECTURE_DECISION` o `VERIFICATION_RECEIPT`.
 
 ---

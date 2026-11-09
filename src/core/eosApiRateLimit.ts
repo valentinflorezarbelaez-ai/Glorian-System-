@@ -13,32 +13,49 @@
 
 import { EosTokenBucketRateLimiter } from "./eosTokenBucketRateLimiter.ts";
 
+/** Minimal request surface needed for keying; matches Node/Vercel handlers. */
+export interface RateLimitRequest {
+  readonly method?: string;
+  readonly headers?: Readonly<Record<string, string | string[] | undefined>>;
+  readonly socket?: { readonly remoteAddress?: string };
+  readonly connection?: { readonly remoteAddress?: string };
+}
+
+/** Minimal response surface needed to reject a request. */
+export interface RateLimitResponse {
+  statusCode?: number;
+  status?(code: number): unknown;
+  setHeader(name: string, value: string | number): unknown;
+  end(body?: string): unknown;
+}
+
+export type RateLimitHandler = (req: RateLimitRequest, res: RateLimitResponse) => unknown;
+
 export interface RateLimitConfig {
   /** Max burst tokens. Default: 10. */
   readonly capacity?: number;
   /** Tokens refilled per second. Default: 5. */
   readonly refillPerSecond?: number;
   /** Key function — defaults to client IP (spoofing-resistant). */
-  readonly keyFn?: (req: any) => string;
+  readonly keyFn?: (req: RateLimitRequest) => string;
 }
 
 /**
  * Returns the true client IP — resistant to X-Forwarded-For spoofing.
  * X-Forwarded-For is ONLY trusted when the connection originates from a known trusted proxy.
  */
-function getTrueClientIp(req: any): string {
+function getTrueClientIp(req: RateLimitRequest): string {
   const remoteAddr = req.socket?.remoteAddress ?? req.connection?.remoteAddress ?? "unknown";
 
   // Read trusted proxy CIDR list from env (e.g. EOS_TRUSTED_PROXIES=127.0.0.1,::1)
-  const trustedProxies = (process.env["EOS_TRUSTED_PROXIES"] ?? "127.0.0.1,::1")
-    .split(",")
-    .map(p => p.trim());
+  const trustedProxies = (process.env["EOS_TRUSTED_PROXIES"] ?? "127.0.0.1,::1").split(",").map((p) => p.trim());
 
   const isTrustedProxy = trustedProxies.includes(remoteAddr);
 
   if (isTrustedProxy) {
     // Only trust X-Forwarded-For from a known proxy
-    const xff = req.headers?.["x-forwarded-for"];
+    const rawXff = req.headers?.["x-forwarded-for"];
+    const xff = Array.isArray(rawXff) ? rawXff[0] : rawXff;
     if (xff) {
       const firstIp = xff.split(",")[0]?.trim();
       if (firstIp && firstIp.length > 0) return firstIp;
@@ -66,8 +83,8 @@ export function withRateLimit(config: RateLimitConfig = {}) {
   // FIXED: per-call limiter instance — no singleton contamination across endpoints
   const limiter = new EosTokenBucketRateLimiter({ capacity, refillPerSecond, maxKeys: 10_000 });
 
-  return function rateLimitedHandler(handler: (req: any, res: any) => any) {
-    return async function(req: any, res: any): Promise<any> {
+  return function rateLimitedHandler(handler: RateLimitHandler): RateLimitHandler {
+    return async function (req: RateLimitRequest, res: RateLimitResponse): Promise<unknown> {
       // Skip rate limiting for OPTIONS pre-flight
       if (req.method === "OPTIONS") {
         return handler(req, res);
@@ -83,14 +100,20 @@ export function withRateLimit(config: RateLimitConfig = {}) {
       if (!decision.granted) {
         res.setHeader("Retry-After", String(Math.ceil(decision.retryAfterSeconds)));
         res.setHeader("X-RateLimit-Policy", `${capacity};w=60`);
-        res.statusCode = 429;
-        return res.end(JSON.stringify({
-          error: "Rate limit exceeded",
-          code: "EOS_RATE_LIMITED",
-          retryAfterSeconds: Math.ceil(decision.retryAfterSeconds),
-          limit: capacity,
-          remaining: 0,
-        }));
+        if (typeof res.status === "function") {
+          res.status(429);
+        } else {
+          res.statusCode = 429;
+        }
+        return res.end(
+          JSON.stringify({
+            error: "Rate limit exceeded",
+            code: "EOS_RATE_LIMITED",
+            retryAfterSeconds: Math.ceil(decision.retryAfterSeconds),
+            limit: capacity,
+            remaining: 0,
+          }),
+        );
       }
 
       return handler(req, res);

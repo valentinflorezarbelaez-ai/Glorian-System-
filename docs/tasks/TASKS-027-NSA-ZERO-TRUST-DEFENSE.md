@@ -1,7 +1,9 @@
 # TASKS-027: ATOMIC IMPLEMENTATION DAG — NSA DEFENSE-IN-DEPTH & CNSA 2.0 ENGINE
+
 <!-- Formal Atomic Task Decomposition — DAG Standard -->
 
 ## Task Graph DAG
+
 ```text
 [TASK-001: Implement eosNsaCryptoSuite.ts]
        │
@@ -31,6 +33,7 @@
 ```
 
 ## Atomic Tasks Breakdown
+
 1. **TASK-001**: Build `src/core/eosNsaCryptoSuite.ts` (AES-256-GCM, SHA-384/SHA-512, timingSafeEqual, multi-pass DoD 5220.22-M zeroization).
 2. **TASK-002**: Build `src/core/eosNsaZeroTrustCompartment.ts` (Bell-LaPadula MAC lattice, Red/Black boundary isolation, Merkle audit log).
 3. **TASK-003**: Build `src/core/eosNsaAnomalyDetector.ts` (Timing anomaly detection, consecutive auth-failure tracking, emergency lockdown & key zeroization).

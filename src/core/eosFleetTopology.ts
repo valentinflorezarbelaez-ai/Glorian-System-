@@ -37,7 +37,7 @@ export const FLEET_TOPOLOGY: Record<string, FleetNode> = {
     color: "#ec4899",
     dependencies: ["dsp-bs1770", "apollo-mesh", "eos-core"],
     downstream: ["client-web", "audio-dsp"],
-    latencyUs: 24.5
+    latencyUs: 24.5,
   },
   portafolio: {
     id: "portafolio",
@@ -47,7 +47,7 @@ export const FLEET_TOPOLOGY: Record<string, FleetNode> = {
     color: "#a855f7",
     dependencies: ["eos-core", "disruptor-ring"],
     downstream: ["global-anycast"],
-    latencyUs: 18.2
+    latencyUs: 18.2,
   },
   ptg: {
     id: "ptg",
@@ -57,7 +57,7 @@ export const FLEET_TOPOLOGY: Record<string, FleetNode> = {
     color: "#3b82f6",
     dependencies: ["eos-core", "datomic-ledger"],
     downstream: ["talent-mesh"],
-    latencyUs: 21.0
+    latencyUs: 21.0,
   },
   "eos-system": {
     id: "eos-system",
@@ -67,7 +67,7 @@ export const FLEET_TOPOLOGY: Record<string, FleetNode> = {
     color: "#10b981",
     dependencies: ["eos-core", "eos-ain", "eos-astral", "eos-elohim", "velo-isis", "apex-router"],
     downstream: ["aberamentho", "portafolio", "ptg"],
-    latencyUs: 12.4
+    latencyUs: 12.4,
   },
   "eos-core": {
     id: "eos-core",
@@ -77,7 +77,7 @@ export const FLEET_TOPOLOGY: Record<string, FleetNode> = {
     color: "#06b6d4",
     dependencies: ["disruptor-ring", "go-wasm-kernel"],
     downstream: ["eos-system", "aberamentho", "portafolio", "ptg"],
-    latencyUs: 5.1
+    latencyUs: 5.1,
   },
   "eos-ain": {
     id: "eos-ain",
@@ -87,7 +87,7 @@ export const FLEET_TOPOLOGY: Record<string, FleetNode> = {
     color: "#6366f1",
     dependencies: ["datomic-ledger"],
     downstream: ["eos-system"],
-    latencyUs: 6.2
+    latencyUs: 6.2,
   },
   "eos-astral": {
     id: "eos-astral",
@@ -97,7 +97,7 @@ export const FLEET_TOPOLOGY: Record<string, FleetNode> = {
     color: "#8b5cf6",
     dependencies: ["apollo-mesh"],
     downstream: ["eos-system"],
-    latencyUs: 7.8
+    latencyUs: 7.8,
   },
   "eos-elohim": {
     id: "eos-elohim",
@@ -107,7 +107,7 @@ export const FLEET_TOPOLOGY: Record<string, FleetNode> = {
     color: "#f59e0b",
     dependencies: ["disruptor-ring"],
     downstream: ["eos-system"],
-    latencyUs: 4.9
+    latencyUs: 4.9,
   },
   "velo-isis": {
     id: "velo-isis",
@@ -117,7 +117,7 @@ export const FLEET_TOPOLOGY: Record<string, FleetNode> = {
     color: "#ef4444",
     dependencies: ["datomic-ledger"],
     downstream: ["eos-system"],
-    latencyUs: 8.5
+    latencyUs: 8.5,
   },
   "apex-router": {
     id: "apex-router",
@@ -127,7 +127,7 @@ export const FLEET_TOPOLOGY: Record<string, FleetNode> = {
     color: "#14b8a6",
     dependencies: ["go-wasm-kernel"],
     downstream: ["eos-system"],
-    latencyUs: 3.2
+    latencyUs: 3.2,
   },
   "go-wasm-kernel": {
     id: "go-wasm-kernel",
@@ -137,7 +137,7 @@ export const FLEET_TOPOLOGY: Record<string, FleetNode> = {
     color: "#00add8",
     dependencies: [],
     downstream: ["eos-core", "apex-router"],
-    latencyUs: 0.8
+    latencyUs: 0.8,
   },
   "disruptor-ring": {
     id: "disruptor-ring",
@@ -147,7 +147,7 @@ export const FLEET_TOPOLOGY: Record<string, FleetNode> = {
     color: "#f97316",
     dependencies: [],
     downstream: ["eos-core", "eos-elohim"],
-    latencyUs: 0.15
+    latencyUs: 0.15,
   },
   "dsp-bs1770": {
     id: "dsp-bs1770",
@@ -157,7 +157,7 @@ export const FLEET_TOPOLOGY: Record<string, FleetNode> = {
     color: "#84cc16",
     dependencies: [],
     downstream: ["aberamentho"],
-    latencyUs: 1.1
+    latencyUs: 1.1,
   },
   "datomic-ledger": {
     id: "datomic-ledger",
@@ -167,8 +167,8 @@ export const FLEET_TOPOLOGY: Record<string, FleetNode> = {
     color: "#eab308",
     dependencies: [],
     downstream: ["ptg", "eos-ain", "velo-isis"],
-    latencyUs: 1.4
-  }
+    latencyUs: 1.4,
+  },
 };
 
 /**
@@ -203,7 +203,7 @@ export function calculateBlastRadius(nodeId: string): BlastRadiusResult {
       blastRadiusCount: 0,
       totalSystemNodes: totalNodes,
       blastRadiusRatio: 0,
-      estimatedLatencyUs: 0
+      estimatedLatencyUs: 0,
     };
   }
 
@@ -232,7 +232,7 @@ export function calculateBlastRadius(nodeId: string): BlastRadiusResult {
     blastRadiusCount: blastRadius.length,
     totalSystemNodes: totalNodes,
     blastRadiusRatio: Number((blastRadius.length / totalNodes).toFixed(4)),
-    estimatedLatencyUs: maxLatency
+    estimatedLatencyUs: maxLatency,
   };
 }
 
@@ -268,6 +268,6 @@ export function getTopologyMetrics(): {
     ring2Count: r2,
     ring3Count: r3,
     averageLatencyUs: Number((totalLatency / nodes.length).toFixed(2)),
-    totalEdges
+    totalEdges,
   };
 }

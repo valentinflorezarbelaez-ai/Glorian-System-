@@ -15,19 +15,9 @@ import fs from "node:fs";
 import path from "node:path";
 import net from "node:net";
 import os from "node:os";
-import {
-  assertPrecondition,
-  assertPostcondition,
-  deepFreeze,
-  pureSha256
-} from "./eosKernelPrimitives.ts";
+import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
-export type MicroVmState =
-  | "UNINITIALIZED"
-  | "CONFIGURING"
-  | "RUNNING"
-  | "PAUSED"
-  | "TERMINATED";
+export type MicroVmState = "UNINITIALIZED" | "CONFIGURING" | "RUNNING" | "PAUSED" | "TERMINATED";
 
 export interface FirecrackerHttpResponse {
   readonly statusCode: number;
@@ -118,7 +108,7 @@ export class EosFirecrackerDaemonSupervisor {
   public async configureMachine(
     vcpuCount: number,
     memSizeMib: number,
-    smt: boolean = false
+    smt: boolean = false,
   ): Promise<FirecrackerHttpResponse> {
     assertPrecondition(this.state === "CONFIGURING", "Can only configure machine in CONFIGURING state");
     assertPrecondition(vcpuCount >= 1 && vcpuCount <= 32, "vCPU count must be between 1 and 32");
@@ -128,7 +118,7 @@ export class EosFirecrackerDaemonSupervisor {
       vcpu_count: vcpuCount,
       mem_size_mib: memSizeMib,
       smt,
-      track_dirty_pages: true
+      track_dirty_pages: true,
     };
 
     this.recordAction("CONFIGURE_MACHINE");
@@ -138,7 +128,7 @@ export class EosFirecrackerDaemonSupervisor {
       statusText: "No Content",
       headers: { "content-type": "application/json" },
       body: { configured: true, ...this.machineConfig },
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     });
   }
 
@@ -147,14 +137,14 @@ export class EosFirecrackerDaemonSupervisor {
    */
   public async setBootSource(
     kernelPath: string,
-    bootArgs: string = "console=ttyS0 reboot=k panic=1 pci=off"
+    bootArgs: string = "console=ttyS0 reboot=k panic=1 pci=off",
   ): Promise<FirecrackerHttpResponse> {
     assertPrecondition(this.state === "CONFIGURING", "Can only set boot source in CONFIGURING state");
     assertPrecondition(Boolean(kernelPath), "Kernel path cannot be empty");
 
     this.bootSource = {
       kernel_image_path: kernelPath,
-      boot_args: bootArgs
+      boot_args: bootArgs,
     };
 
     this.recordAction("SET_BOOT_SOURCE");
@@ -164,7 +154,7 @@ export class EosFirecrackerDaemonSupervisor {
       statusText: "No Content",
       headers: { "content-type": "application/json" },
       body: { boot_source_set: true, kernel: kernelPath },
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     });
   }
 
@@ -175,7 +165,7 @@ export class EosFirecrackerDaemonSupervisor {
     driveId: string,
     hostPath: string,
     isRoot: boolean = true,
-    readOnly: boolean = true
+    readOnly: boolean = true,
   ): Promise<FirecrackerHttpResponse> {
     assertPrecondition(this.state === "CONFIGURING", "Can only attach drives in CONFIGURING state");
     assertPrecondition(Boolean(driveId && hostPath), "Drive ID and Host Path must be non-empty");
@@ -184,7 +174,7 @@ export class EosFirecrackerDaemonSupervisor {
       drive_id: driveId,
       path_on_host: hostPath,
       is_root_device: isRoot,
-      is_read_only: readOnly
+      is_read_only: readOnly,
     };
 
     this.drives.push(drive);
@@ -195,7 +185,7 @@ export class EosFirecrackerDaemonSupervisor {
       statusText: "No Content",
       headers: { "content-type": "application/json" },
       body: { drive_attached: true, driveId },
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     });
   }
 
@@ -220,9 +210,9 @@ export class EosFirecrackerDaemonSupervisor {
         state: "RUNNING",
         action: "InstanceStart",
         vcpu_count: this.machineConfig.vcpu_count,
-        mem_size_mib: this.machineConfig.mem_size_mib
+        mem_size_mib: this.machineConfig.mem_size_mib,
       },
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     });
   }
 
@@ -240,7 +230,7 @@ export class EosFirecrackerDaemonSupervisor {
       statusText: "No Content",
       headers: { "content-type": "application/json" },
       body: { enclaveId: this.enclaveId, state: "PAUSED" },
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     });
   }
 
@@ -258,7 +248,7 @@ export class EosFirecrackerDaemonSupervisor {
       statusText: "No Content",
       headers: { "content-type": "application/json" },
       body: { enclaveId: this.enclaveId, state: "RUNNING" },
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     });
   }
 
@@ -275,7 +265,7 @@ export class EosFirecrackerDaemonSupervisor {
       statusText: "No Content",
       headers: { "content-type": "application/json" },
       body: { action: "SendCtrlAltDel", dispatched: true },
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     });
   }
 
@@ -307,7 +297,7 @@ export class EosFirecrackerDaemonSupervisor {
   private recordAction(action: string): void {
     this.actionLog.push({
       action,
-      timestampIso: new Date().toISOString()
+      timestampIso: new Date().toISOString(),
     });
   }
 }

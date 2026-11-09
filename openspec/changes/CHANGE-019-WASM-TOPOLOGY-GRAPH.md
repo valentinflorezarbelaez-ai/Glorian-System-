@@ -10,6 +10,7 @@
 ---
 
 ## 1. Summary of Changes
+
 1. **Go WebAssembly Bridge**:
    - Create `src/native/eos_wasm_bridge.go` exporting `eosEstimateTokens`, `eosCompressContext`, `eosBenchmarkGo`, and `eosAnalyzeTopology`.
    - Compile to `assets/eos_apex.wasm` using `GOOS=js GOARCH=wasm go build -ldflags="-s -w"`.
@@ -27,4 +28,5 @@
    - Update SRI integrity hashes via `node scripts/verify-sri-integrity.mjs --fix`.
 
 ---
-*Signed by Principal Architect: Valentín Flórez Arbeláez*
+
+_Signed by Principal Architect: Valentín Flórez Arbeláez_
