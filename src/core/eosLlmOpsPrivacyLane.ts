@@ -1,5 +1,6 @@
 /**
  * LLMOps Privacy Lane — local / open-weight fail-closed gate (Layer-0).
+ * SPEC-183: LLMOps Privacy Lane (Local / Open-Weight)
  * WITHIN_TESTED_SCOPE — software policy only; not a physical enclave claim.
  *
  * WHEN EOS_LLM_PRIVACY_LANE=local|open_weight, THE SYSTEM SHALL refuse cloud

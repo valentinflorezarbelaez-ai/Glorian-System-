@@ -33,7 +33,7 @@ test("BDD-MCP-ARG-FUZZ-001: unknown tool is rejected fail-closed", () => {
 test("BDD-MCP-ARG-FUZZ-002: missing required args rejected", () => {
   const tools = loadCatalog();
   const validator = new EosMcpSchemaValidator(projectRoot);
-  const result = validator.validateToolCallArguments(tools, "eos_amplify_prompt", {});
+  const result = validator.validateToolCallArguments(tools, "eos_amplify_prompt", {}, { enforceRequired: true });
   assert.equal(result.ok, false);
   assert.equal(result.code, "MISSING_REQUIRED");
   assert.equal(result.field, "rawPrompt");

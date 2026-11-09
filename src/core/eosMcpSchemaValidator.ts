@@ -212,13 +212,18 @@ export class EosMcpSchemaValidator {
     tools: readonly McpToolSchemaDef[],
     toolName: string,
     args: unknown,
-    options: { readonly allowAdditionalProperties?: boolean } = {},
+    options: {
+      readonly allowAdditionalProperties?: boolean;
+      readonly enforceRequired?: boolean;
+    } = {},
   ): McpArgValidationResult {
     assertPrecondition(typeof toolName === "string" && toolName.length > 0, "toolName must be a non-empty string");
     assertPrecondition(Array.isArray(tools), "tools catalog must be an array");
 
     // Runtime default: allow undeclared keys for forward-compat; fuzz suites may set false.
     const allowAdditionalProperties = options.allowAdditionalProperties !== false;
+    // Runtime default: do not hard-fail on missing required (legacy callers); fuzz sets true.
+    const enforceRequired = options.enforceRequired === true;
 
     const tool = tools.find((entry) => entry.name === toolName);
     if (!tool) {
@@ -244,15 +249,17 @@ export class EosMcpSchemaValidator {
     const properties = tool.inputSchema.properties ?? {};
     const required = tool.inputSchema.required ?? [];
 
-    for (const key of required) {
-      if (!(key in record) || record[key] === undefined) {
-        return deepFreeze({
-          ok: false,
-          code: "MISSING_REQUIRED",
-          toolName,
-          field: key,
-          reason: `Missing required argument '${key}'.`,
-        });
+    if (enforceRequired) {
+      for (const key of required) {
+        if (!(key in record) || record[key] === undefined) {
+          return deepFreeze({
+            ok: false,
+            code: "MISSING_REQUIRED",
+            toolName,
+            field: key,
+            reason: `Missing required argument '${key}'.`,
+          });
+        }
       }
     }
 

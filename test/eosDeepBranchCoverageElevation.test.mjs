@@ -2219,7 +2219,7 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
         method: "tools/call",
         params: {
           name: "eos_query_knowledge_graph",
-          arguments: { action: "blast_radius", target: "src/core/eosKernelPrimitives.ts" },
+          arguments: { action: "blast_radius", target: "src/core/eosKernelPrimitives.ts", maxDepth: 1 },
         },
       });
       assert.ok(!resBlast.error);
@@ -2383,7 +2383,17 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
 
       const reliabilityCalls = [
         { name: "eos_canary_rollout", arguments: {} },
-        { name: "eos_canary_telemetry_evaluate", arguments: { deploymentId: "dep-1", stage: "CANARY_1_PCT" } },
+        {
+          name: "eos_canary_telemetry_evaluate",
+          arguments: {
+            deploymentId: "dep-1",
+            environment: "preview",
+            stage: "CANARY_1_PCT",
+            errorRate5xx: 0,
+            latencyP99Ms: 120,
+            requestCount: 100,
+          },
+        },
         { name: "eos_cell_bulkhead_route", arguments: { partitionKey: "task-1" } },
         { name: "eos_cell_bulkhead_status", arguments: {} },
         { name: "eos_slo_burn_rate_evaluate", arguments: { serviceId: "auth-svc" } },

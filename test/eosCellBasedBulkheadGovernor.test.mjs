@@ -132,7 +132,7 @@ describe("EOS SPEC-109: Distributed Cell-Based Bulkhead Governor Suite", () => {
         name: "eos_cell_bulkhead_route",
         arguments: {
           partitionKey: "fleet:repo-aberamentho",
-          payload: { action: "sync_playlists" },
+          payload: JSON.stringify({ action: "sync_playlists" }),
         },
       },
     });
