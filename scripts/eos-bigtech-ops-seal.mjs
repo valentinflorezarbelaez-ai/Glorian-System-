@@ -67,42 +67,19 @@ const steps = [];
 }
 
 {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "eos-ops-siem-"));
-  try {
-    appendIamAuditEntry(tmp, {
-      toolName: "eos_manage_worktree",
-      decision: {
-        ok: true,
-        code: "ALLOW",
-        reason: "ops-seal",
-        matchedPolicyId: "ops-seal",
-        sha256Receipt: "c".repeat(64),
-      },
-      principal: { subjectId: "ops-seal", tenantId: "tenant-local", roles: ["engineer"] },
-      resourceId: "mcp/tools/eos_manage_worktree",
-      requestId: "ops-seal",
-    });
-    const verified = verifyIamAuditLedger(tmp);
-    const exported = exportIamAuditLedgerForSiem(
-      tmp,
-      path.join("docs", "evidence", "IAM_AUDIT_SIEM_EXPORT.ndjson"),
-    );
-    const durable = path.join(projectRoot, "docs", "evidence", "IAM_AUDIT_SIEM_EXPORT.ndjson");
-    fs.mkdirSync(path.dirname(durable), { recursive: true });
-    fs.copyFileSync(exported.outputPath, durable);
-    steps.push({
-      id: "IAM_SIEM_EXPORT",
-      ok: verified.ok && exported.ok && exported.entries >= 1,
-      entries: exported.entries,
-      sha256Receipt: exported.sha256Receipt,
-    });
-  } finally {
-    try {
-      fs.rmSync(tmp, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
-    } catch {
-      // ignore Windows TEMP locks
-    }
-  }
+  // Verify and export the operational MCP audit ledger at the project root.
+  // Missing or empty ledger => entries 0 => step fails (no synthetic audit data).
+  const verified = verifyIamAuditLedger(projectRoot);
+  const exported = exportIamAuditLedgerForSiem(
+    projectRoot,
+    path.join("docs", "evidence", "IAM_AUDIT_SIEM_EXPORT.ndjson"),
+  );
+  steps.push({
+    id: "IAM_SIEM_EXPORT",
+    ok: verified.ok && exported.ok && exported.entries >= 1,
+    entries: exported.entries,
+    sha256Receipt: exported.sha256Receipt,
+  });
 }
 
 {
@@ -126,7 +103,7 @@ const steps = [];
   fs.writeFileSync(scorecardPath, `${JSON.stringify(scorecard, null, 2)}\n`, "utf8");
   steps.push({
     id: "POST_DEPLOY_SCORECARD",
-    ok: factory.status === "SUCCESS" || factory.reason === "SCORECARD_FLOOR",
+    ok: factory.status === "SUCCESS",
     score: scorecard.score,
     grade: scorecard.grade,
     sha256Receipt: scorecard.sha256Receipt,
@@ -150,3 +127,4 @@ fs.writeFileSync(outPath, `${JSON.stringify(receipt, null, 2)}\n`, "utf8");
 console.log(JSON.stringify(receipt, null, 2));
 console.log(`[BIGTECH-OPS] wrote ${path.relative(projectRoot, outPath)}`);
 if (!allOk) process.exitCode = 1;
+ss.exitCode = 1;
