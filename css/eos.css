@@ -1912,6 +1912,8 @@ body {
   .header-actions .btn {
     padding: 0.4rem 0.65rem;
     font-size: 0.74rem;
+    min-height: 44px;
+    touch-action: manipulation;
   }
 
   .header-actions a[href*="github.com"] {
@@ -1924,6 +1926,18 @@ body {
 
   .demo-disclosure[open] > .terminal-shell {
     margin: 0 0.5rem 0.5rem;
+  }
+
+  body {
+    padding-left: env(safe-area-inset-left, 0);
+    padding-right: env(safe-area-inset-right, 0);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .top-nav,
+  .site-header,
+  header {
+    padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
   }
 }
 
