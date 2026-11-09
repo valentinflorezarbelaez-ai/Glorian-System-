@@ -117,10 +117,6 @@ jobs:
           path: docs/evidence/
           retention-days: 30
 
-      - name: Track DORA Metrics
-        run: node scripts/track-dora-metrics.mjs
-        continue-on-error: true
-
   # ── JOB 4: Mutation testing (runs after sovereign gate passes) ─────────────
   mutation-testing:
     name: "Mutation Testing — Kill Score Gate"
@@ -179,22 +175,69 @@ jobs:
         run: node scripts/generate-changelog.mjs
         continue-on-error: true
 
+      - name: Track DORA Metrics (fail-closed)
+        run: npm run dora:track
+
+      - name: Big Tech Ops Seal (ACA · IAM · Scorecard)
+        run: npm run ops:seal
+
+      - name: Fleet Dogfood TTV (sibling-aware)
+        run: npm run fleet:dogfood
+        env:
+          EOS_WORKSPACE_ROOT: ${{ github.workspace }}/..
+
       - name: Print Final Integration Summary
         run: |
           VERSION=$(node -p "require('./package.json').version")
           echo "======================================================================"
           echo " ALL GATES PASSED — EOS v${VERSION} is PRODUCTION_READY"
-          echo " TypeCheck ✔ | PBT ✔ | SecDevOps Matrix ✔ | Mutation ✔"
+          echo " TypeCheck ✔ | PBT ✔ | SecDevOps Matrix ✔ | Mutation ✔ | Ops Seal ✔"
           echo "======================================================================"
 
-  # ── JOB 6: SLSA Provenance Attestation (runs on main push only) ────────────
+  # ── JOB 6a: SLSA SBOM gate (always required — never skip on PR) ────────────
+  slsa-sbom-gate:
+    name: "SLSA SBOM & Supply-Chain Gate"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [integration-summary]
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pinned SHA — SLSA L3
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # pinned SHA — SLSA L3
+        with:
+          node-version: "22"
+
+      - name: Install locked development toolchain
+        run: npm ci --include=dev
+
+      - name: Generate & Verify SBOM (fail-closed CycloneDX gate)
+        run: npm run sbom:gate
+        env:
+          NODE_ENV: "production"
+
+      - name: Upload SBOM Evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: eos-sbom-provenance-pr
+          path: |
+            docs/evidence/sbom.cdx.json
+            docs/evidence/SBOM-CICD-RECEIPT.json
+          retention-days: 30
+          if-no-files-found: warn
+
+  # ── JOB 6b: SLSA signed attestation (main push only — OIDC/sigstore) ───────
   # Google SLSA L2+: the build platform must generate signed provenance.
-  # Uses GitHub's native build attestation (OIDC-based, no external sigstore needed).
   slsa-provenance:
     name: "SLSA Provenance Attestation"
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [integration-summary]
+    needs: [slsa-sbom-gate]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     permissions:
       contents: write # needed to create GitHub release (if triggered)
@@ -214,8 +257,8 @@ jobs:
       - name: Install locked development toolchain
         run: npm ci --include=dev
 
-      - name: Generate SBOM & In-Toto Provenance Document
-        run: node scripts/eos-generate-sbom.mjs
+      - name: Generate & Verify SBOM (fail-closed CycloneDX gate)
+        run: npm run sbom:gate
         env:
           NODE_ENV: "production"
 
@@ -223,7 +266,7 @@ jobs:
         uses: actions/attest-build-provenance@e8998e9431f8212ec1abc6095f8e5b4d3b0373ea # v2.4.0
         with:
           subject-path: |
-            docs/evidence/SBOM-CICD-RECEIPT.json
+            docs/evidence/sbom.cdx.json
             package.json
 
       - name: Upload SBOM Evidence

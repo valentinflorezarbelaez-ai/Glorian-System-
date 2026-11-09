@@ -1,22 +1,22 @@
 {
-  "measuredAt": "2026-11-08T14:44:08.361Z",
+  "measuredAt": "2026-11-09T20:38:30.159Z",
   "windowDays": 30,
   "deploymentFrequency": {
-    "commitsInWindow": 198,
-    "perDay": "6.60",
+    "commitsInWindow": 300,
+    "perDay": "10.00",
     "rating": "ELITE",
     "eliteThreshold": "1+ deploys/day"
   },
   "leadTimeForChanges": {
-    "verifiedReceipts": 3,
-    "note": "3 CI/CD receipts in docs/evidence/",
+    "verifiedReceipts": 8,
+    "note": "8 CI/CD receipts in docs/evidence/",
     "rating": "HIGH",
     "eliteThreshold": "< 1 day"
   },
   "changeFailureRate": {
     "incidents": 1,
-    "deploysInWindow": 198,
-    "percent": "0.51%",
+    "deploysInWindow": 300,
+    "percent": "0.33%",
     "rating": "ELITE",
     "eliteThreshold": "≤ 5%"
   },
@@ -27,5 +27,5 @@
     "eliteThreshold": "< 1 hour"
   },
   "overallRating": "HIGH",
-  "sha256": "71ba5006fed695f3b747e4587f85d9c7f067ece2edd2a802c593abfe9efdba74"
+  "sha256": "18a68f87a1926e2fbc288e1435f45362f5b394c885c6e51182e7270fa32cd142"
 }
