@@ -11,7 +11,9 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  assertIncidentRemediationClosed,
   buildHealthyAcaDogfoodInput,
+  runAcaGateFromVercelSignals,
   runBigTechAcaCanaryGate,
   writeAcaCanaryEvidence,
 } from "../src/core/eosBigTechAcaCanaryGate.ts";
@@ -21,6 +23,7 @@ import {
   verifyIamAuditLedger,
 } from "../src/core/eosIamAuditLedger.ts";
 import { evaluateBreakGlassGrant, issueBreakGlassGrant } from "../src/core/eosIamBreakGlass.ts";
+import { authorizeMcpToolsCall } from "../src/core/eosMcpIamCallGate.ts";
 import {
   buildDemoLedgerManifest,
   loadDefaultIamPolicyPack,
@@ -39,6 +42,45 @@ const steps = [];
 {
   const aca = runBigTechAcaCanaryGate(buildHealthyAcaDogfoodInput());
   const written = writeAcaCanaryEvidence(projectRoot, aca);
+  const vercelAca = runAcaGateFromVercelSignals({
+    versionTarget: "v75.1.0",
+    previousStableVersion: "v75.0.0",
+    signals: [
+      {
+        deploymentId: "dpl_dogfood_healthy",
+        environment: "production",
+        stage: "CANARY_1_PCT",
+        errorRate5xx: 0.0001,
+        latencyP99Ms: 40,
+        requestCount: 5000,
+      },
+      {
+        deploymentId: "dpl_dogfood_healthy",
+        environment: "production",
+        stage: "CANARY_5_PCT",
+        errorRate5xx: 0.0001,
+        latencyP99Ms: 41,
+        requestCount: 8000,
+      },
+      {
+        deploymentId: "dpl_dogfood_healthy",
+        environment: "production",
+        stage: "CANARY_25_PCT",
+        errorRate5xx: 0.00012,
+        latencyP99Ms: 39,
+        requestCount: 12000,
+      },
+      {
+        deploymentId: "dpl_dogfood_healthy",
+        environment: "production",
+        stage: "FULL_PRODUCTION_100_PCT",
+        errorRate5xx: 0.0001,
+        latencyP99Ms: 40,
+        requestCount: 20000,
+      },
+    ],
+  });
+  const incidentGate = assertIncidentRemediationClosed(projectRoot);
   steps.push({
     id: "ACA_CANARY",
     ok: aca.verdict === "PASS" && !aca.incidentRequired,
@@ -46,21 +88,52 @@ const steps = [];
     sha256Receipt: aca.sha256Receipt,
     evidence: path.relative(projectRoot, written.canaryPath).replaceAll("\\", "/"),
   });
+  steps.push({
+    id: "ACA_VERCEL_SIGNALS",
+    ok: vercelAca.verdict === "PASS" && !vercelAca.incidentRequired,
+    verdict: vercelAca.verdict,
+    sha256Receipt: vercelAca.sha256Receipt,
+  });
+  steps.push({
+    id: "INCIDENT_LOOP_CLOSED",
+    ok: incidentGate.ok,
+    reason: incidentGate.reason,
+  });
 }
 
 {
   const now = Date.now();
+  const principal = { subjectId: "sre-oncall", tenantId: "tenant-local", roles: ["break-glass", "engineer"] };
   const grant = issueBreakGlassGrant({
-    principal: { subjectId: "sre-oncall", tenantId: "tenant-local", roles: ["break-glass", "engineer"] },
+    principal,
     reason: "production-incident-mitigation",
     nowMs: now,
     ttlMs: 15 * 60_000,
   });
   const active = evaluateBreakGlassGrant(grant, now);
   const expired = evaluateBreakGlassGrant(grant, now + 16 * 60_000);
+  const denied = authorizeMcpToolsCall({
+    toolName: "eos_manage_worktree",
+    args: { apply: true },
+    policies: [],
+    defaultPrincipal: principal,
+  });
+  const elevated = authorizeMcpToolsCall({
+    toolName: "eos_manage_worktree",
+    args: { apply: true },
+    policies: [],
+    defaultPrincipal: principal,
+    breakGlassGrant: grant,
+    nowMs: now,
+  });
   steps.push({
     id: "IAM_BREAK_GLASS",
-    ok: active.active === true && expired.active === false,
+    ok:
+      active.active === true &&
+      expired.active === false &&
+      denied.ok === false &&
+      elevated.ok === true &&
+      String(elevated.gate.decision?.matchedPolicyId || "").startsWith("break-glass:"),
     grantId: grant.grantId,
     sha256Receipt: grant.sha256Receipt,
   });

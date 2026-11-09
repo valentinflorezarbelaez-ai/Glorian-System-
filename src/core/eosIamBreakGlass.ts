@@ -4,6 +4,8 @@
  */
 
 import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
 
 import { deepFreeze } from "./eosKernelPrimitives.ts";
 import type { IamPrincipal } from "./eosMultiTenantIamFoundation.ts";
@@ -87,4 +89,20 @@ export function evaluateBreakGlassGrant(
     grant,
     remainingMs,
   });
+}
+
+/** Load `.eos/break-glass-grant.json` when present and still within TTL. */
+export function loadBreakGlassGrantFromProject(
+  projectRoot: string,
+  nowMs: number = Date.now(),
+): BreakGlassGrant | null {
+  const filePath = path.join(projectRoot, ".eos", "break-glass-grant.json");
+  try {
+    if (!fs.existsSync(filePath)) return null;
+    const parsed = JSON.parse(fs.readFileSync(filePath, "utf8")) as BreakGlassGrant;
+    const evaluation = evaluateBreakGlassGrant(parsed, nowMs);
+    return evaluation.active ? evaluation.grant : null;
+  } catch {
+    return null;
+  }
 }

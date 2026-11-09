@@ -15,6 +15,7 @@ import {
   type IamPolicyRule,
   type IamPrincipal,
 } from "./eosMultiTenantIamFoundation.ts";
+import { evaluateBreakGlassGrant, type BreakGlassGrant } from "./eosIamBreakGlass.ts";
 import { deepFreeze } from "./eosKernelPrimitives.ts";
 
 /** JSON-RPC server error reserved for Glorian IAM deny at tools/call. */
@@ -58,6 +59,10 @@ export interface McpIamGateInput {
   readonly meta?: Record<string, unknown> | null;
   readonly policies: readonly IamPolicyRule[];
   readonly defaultPrincipal?: IamPrincipal | null;
+  /** Optional active break-glass grant (SPEC-184 composition). */
+  readonly breakGlassGrant?: BreakGlassGrant | null;
+  /** Clock override for hermetic TTL evaluation. */
+  readonly nowMs?: number;
 }
 
 export interface McpIamGateResult {
@@ -150,7 +155,7 @@ export function evaluateMcpIamCallGate(input: McpIamGateInput): McpIamGateResult
     });
   }
 
-  const decision = evaluateIamAccess(
+  let decision = evaluateIamAccess(
     {
       principal,
       action: MCP_IAM_ACTION,
@@ -159,12 +164,41 @@ export function evaluateMcpIamCallGate(input: McpIamGateInput): McpIamGateResult
     input.policies,
   );
 
+  if (!decision.ok) {
+    decision = maybeElevateWithBreakGlass(decision, principal, input.breakGlassGrant, input.nowMs) ?? decision;
+  }
+
   return deepFreeze({
     required: true,
     allowed: decision.ok && decision.code === "ALLOW",
     decision,
     principal,
     resourceId,
+  });
+}
+
+function maybeElevateWithBreakGlass(
+  denied: IamDecision,
+  principal: IamPrincipal,
+  grant: BreakGlassGrant | null | undefined,
+  nowMs?: number,
+): IamDecision | null {
+  if (!grant) return null;
+  const evaluation = evaluateBreakGlassGrant(grant, nowMs ?? Date.now());
+  if (!evaluation.active || !evaluation.grant) return null;
+  const g = evaluation.grant;
+  if (g.principal.subjectId !== principal.subjectId || g.principal.tenantId !== principal.tenantId) {
+    return null;
+  }
+  if (!g.principal.roles.map((r) => r.toLowerCase()).includes("break-glass")) {
+    return null;
+  }
+  return deepFreeze({
+    ok: true,
+    code: "ALLOW" as const,
+    reason: `break-glass:${g.grantId}:${denied.code}:${g.reason}`,
+    matchedPolicyId: `break-glass:${g.grantId}`,
+    sha256Receipt: g.sha256Receipt,
   });
 }
 

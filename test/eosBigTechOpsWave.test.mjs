@@ -8,13 +8,17 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  assertIncidentRemediationClosed,
   buildHealthyAcaDogfoodInput,
+  runAcaGateFromVercelSignals,
   runBigTechAcaCanaryGate,
   writeAcaCanaryEvidence,
+  writeCanaryRemediationReceipt,
 } from "../src/core/eosBigTechAcaCanaryGate.ts";
 import { resolveFleetProjectPath, resolveFleetRegistryPaths } from "../src/core/eosFleetPathResolver.ts";
 import { appendIamAuditEntry, exportIamAuditLedgerForSiem } from "../src/core/eosIamAuditLedger.ts";
 import { evaluateBreakGlassGrant, issueBreakGlassGrant } from "../src/core/eosIamBreakGlass.ts";
+import { authorizeMcpToolsCall } from "../src/core/eosMcpIamCallGate.ts";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -203,4 +207,107 @@ test("BDD-ACA-003: mesh rollback marks incident required", () => {
   assert.equal(result.verdict, "ROLLED_BACK_SAFE");
   assert.equal(result.incidentRequired, true);
   assert.equal(result.mesh.rollbackExecuted, true);
+});
+
+test("BDD-ACA-004: Vercel SPEC-107 signals drive ACA gate", () => {
+  const healthy = runAcaGateFromVercelSignals({
+    versionTarget: "v75.1.0",
+    previousStableVersion: "v75.0.0",
+    signals: [
+      {
+        deploymentId: "dpl_ok",
+        environment: "production",
+        stage: "CANARY_1_PCT",
+        errorRate5xx: 0.0001,
+        latencyP99Ms: 40,
+        requestCount: 2000,
+      },
+      {
+        deploymentId: "dpl_ok",
+        environment: "production",
+        stage: "FULL_PRODUCTION_100_PCT",
+        errorRate5xx: 0.0001,
+        latencyP99Ms: 41,
+        requestCount: 5000,
+      },
+    ],
+  });
+  assert.equal(healthy.incidentRequired, false);
+
+  const bad = runAcaGateFromVercelSignals({
+    versionTarget: "v75.1.0",
+    previousStableVersion: "v75.0.0",
+    signals: [
+      {
+        deploymentId: "dpl_bad",
+        environment: "production",
+        stage: "CANARY_1_PCT",
+        errorRate5xx: 0.05,
+        latencyP99Ms: 1200,
+        requestCount: 2000,
+      },
+    ],
+  });
+  assert.equal(bad.incidentRequired, true);
+});
+
+test("BDD-ACA-005: incident without remediation fails closed", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "eos-incident-"));
+  try {
+    assert.equal(assertIncidentRemediationClosed(tmp).ok, true);
+    const failing = runBigTechAcaCanaryGate({
+      ...buildHealthyAcaDogfoodInput(),
+      canarySamples: {
+        errorRate: [0.2, 0.25, 0.22, 0.28],
+        p99LatencyMs: [900, 950, 1000, 980],
+        memoryMb: [2000, 2100, 2050, 2200],
+      },
+    });
+    writeAcaCanaryEvidence(tmp, failing);
+    assert.equal(assertIncidentRemediationClosed(tmp).ok, false);
+    writeCanaryRemediationReceipt(tmp, {
+      canaryReceipt: failing.sha256Receipt,
+      summary: "rolled back and patched canary thresholds",
+    });
+    assert.equal(assertIncidentRemediationClosed(tmp).ok, true);
+  } finally {
+    removeTempDir(tmp);
+  }
+});
+
+test("BDD-IAM-BG-003: MCP gate elevates only with active break-glass", () => {
+  const now = 1_700_000_000_000;
+  const principal = { subjectId: "sre-1", tenantId: "t1", roles: ["break-glass", "engineer"] };
+  const grant = issueBreakGlassGrant({
+    principal,
+    reason: "sev1-customer-outage",
+    nowMs: now,
+    ttlMs: 10 * 60_000,
+  });
+  const denied = authorizeMcpToolsCall({
+    toolName: "eos_manage_worktree",
+    args: { apply: true },
+    policies: [],
+    defaultPrincipal: principal,
+  });
+  assert.equal(denied.ok, false);
+  const elevated = authorizeMcpToolsCall({
+    toolName: "eos_manage_worktree",
+    args: { apply: true },
+    policies: [],
+    defaultPrincipal: principal,
+    breakGlassGrant: grant,
+    nowMs: now,
+  });
+  assert.equal(elevated.ok, true);
+  assert.match(String(elevated.gate.decision?.matchedPolicyId), /^break-glass:/);
+  const expired = authorizeMcpToolsCall({
+    toolName: "eos_manage_worktree",
+    args: { apply: true },
+    policies: [],
+    defaultPrincipal: principal,
+    breakGlassGrant: grant,
+    nowMs: now + 11 * 60_000,
+  });
+  assert.equal(expired.ok, false);
 });
