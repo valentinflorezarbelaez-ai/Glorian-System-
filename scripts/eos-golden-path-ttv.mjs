@@ -13,6 +13,12 @@ import { fileURLToPath } from "node:url";
 import { runMissionGoldenPath } from "../src/core/eosMissionGoldenPathOrchestrator.ts";
 import { EosPlatformOpsCeiling } from "../src/core/eosPlatformOpsCeiling.ts";
 import { runTurboPipeline } from "../src/core/eosTurboEngine.ts";
+import {
+  buildDemoLedgerManifest,
+  loadDefaultIamPolicyPack,
+  runBigTechProductFactory,
+  writeBigTechFactoryReceipt,
+} from "../src/core/eosBigTechProductFactory.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, "..");
@@ -75,6 +81,27 @@ const paths = [];
     status: turbo.success ? "SUCCESS" : "FAILED",
     epistemicState: turbo.success ? "TURBO_PASS_WITHIN_TESTED_SCOPE" : "REMEDIATION_REQUIRED",
     sha256Receipt: sha256(JSON.stringify(turbo.stages?.map((s) => [s.stageId, s.status]) || [])),
+  });
+}
+
+{
+  const t0 = msNow();
+  const factory = runBigTechProductFactory(buildDemoLedgerManifest(), {
+    projectRoot,
+    dryRun: true,
+    policies: loadDefaultIamPolicyPack(projectRoot),
+  });
+  writeBigTechFactoryReceipt(projectRoot, factory);
+  const durationMs = msNow() - t0;
+  const factoryOk =
+    factory.status === "SUCCESS" || (factory.status === "BLOCKED" && factory.reason === "SCORECARD_FLOOR");
+  paths.push({
+    id: "PRODUCT_FACTORY_E2E",
+    ok: factoryOk,
+    durationMs: factory.durationMs || durationMs,
+    status: factory.status,
+    epistemicState: factory.epistemicState,
+    sha256Receipt: factory.sha256Receipt,
   });
 }
 

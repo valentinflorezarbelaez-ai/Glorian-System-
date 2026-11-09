@@ -37,6 +37,7 @@ export const MCP_MUTATION_CAPABLE_TOOLS: ReadonlySet<string> = new Set([
   "eos_apex_autonomous_heal",
   "eos_hnsw_index_add",
   "eos_product_foundry_create",
+  "eos_product_deliver_run",
   "eos_sqlite_ledger",
   "eos_gentleman_update",
   "eos_enterprise_workspace",

@@ -1,0 +1,16 @@
+{
+  "epistemicState": "BIGTECH_PRODUCT_FACTORY_WITHIN_TESTED_SCOPE",
+  "generatedAt": "2026-11-09T19:56:53.433Z",
+  "status": "SUCCESS",
+  "reason": null,
+  "dryRun": true,
+  "productId": "demo-ledger-mvp",
+  "iamCode": "ALLOW",
+  "iamReceipt": "f79e521d09642719978f7ffd53ffb7b67750997bc363e978f0c1b1b431cd0009",
+  "deliveryStatus": "SUCCESS",
+  "deliveryReceipt": "890d430f798ec9730d8e057152c57fe8b335b295d99022dfba4313519dcedfa3",
+  "scorecardScore": 100,
+  "scorecardGrade": "A+",
+  "durationMs": 8.049,
+  "sha256Receipt": "6a4a34431878b1e15f2bd95c48e8976cd5a7456bd370764bde2cc7278c129f27"
+}

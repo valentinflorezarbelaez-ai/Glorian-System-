@@ -2706,6 +2706,19 @@ switch (command) {
     break;
   }
 
+  case "product:deliver":
+  case "factory:e2e": {
+    printBanner();
+    const { spawnSync } = await import("node:child_process");
+    const child = spawnSync(
+      process.execPath,
+      [path.join(__dirname, "../scripts/eos-product-deliver.mjs"), ...args.slice(1)],
+      { cwd: process.cwd(), stdio: "inherit", env: process.env },
+    );
+    process.exitCode = child.status === null ? 1 : child.status;
+    break;
+  }
+
   case "product:validate": {
     printBanner();
     console.log("[EOS PRODUCT VALIDATE] Auditoría Topológica y Aislamiento Hexagonal...\n");

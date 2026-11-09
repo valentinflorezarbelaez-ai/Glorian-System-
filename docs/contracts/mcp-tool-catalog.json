@@ -3,7 +3,7 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "ae86ac911d36a1aab181e1489bc4bb1a50ab0effc4326f79c94c6e2736590d40",
+  "catalogSha256": "36a6dc36d84486d083b44a375507c30ad950868699cb09c5c02de4f7bb12d656",
   "totalTools": 208,
   "coreTier0Count": 46,
   "tools": [
@@ -3303,9 +3303,9 @@
       },
       "annotations": {
         "title": "EOS product Deliver Run",
-        "readOnlyHint": true,
+        "readOnlyHint": false,
         "destructiveHint": false,
-        "idempotentHint": true,
+        "idempotentHint": false,
         "openWorldHint": false
       }
     },
