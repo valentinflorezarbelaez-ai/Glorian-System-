@@ -1,6 +1,6 @@
 {
   "epistemicState": "BIGTECH_OPS_WAVE_WITHIN_TESTED_SCOPE",
-  "generatedAt": "2026-11-09T21:08:56.906Z",
+  "generatedAt": "2026-11-09T21:13:37.938Z",
   "composes": [
     "SPEC-042",
     "SPEC-066",
@@ -31,8 +31,8 @@
     {
       "id": "IAM_BREAK_GLASS",
       "ok": true,
-      "grantId": "54c93f96805efc66",
-      "sha256Receipt": "fb1842baca8174c70da39098b2efa79a214ddf0a55c746cec749b04159e83fb5"
+      "grantId": "2325488f08e2e761",
+      "sha256Receipt": "7ab6d52be1ed8841c84b240fd6ff049a2e22b117f40b673fe7d8a4d409ad0132"
     },
     {
       "id": "IAM_SIEM_EXPORT",
@@ -45,12 +45,12 @@
       "ok": true,
       "score": 100,
       "grade": "A+",
-      "sha256Receipt": "e8bb1cb43aa53f274fa2ffff2a53cb1c678b56b9a6fed7f14bdc86394c0590cd"
+      "sha256Receipt": "0ed4e6f2ed7aa1519a1cb9363f05f45d98e2a44df0427500c3c5b2bc5ba50f51"
     }
   ],
   "metrics": {
     "allOk": true,
     "stepCount": 6
   },
-  "sha256Receipt": "a64932a4f3e6050d70ff63748fbc9c64fcadb00b57da8e6b7dc0e8035435b693"
+  "sha256Receipt": "28c46c83435a916ebcdf14333a95b6f747820036032fe14b546b471ae79f4a6b"
 }
