@@ -73,8 +73,8 @@ export function sanitizeFts5Query(rawQuery: string): string {
 }
 
 export class EosDurableSqliteLedger {
-  private readonly databasePath: string;
-  private readonly db: DatabaseSync;
+  private databasePath: string;
+  private db: DatabaseSync;
   private closed: boolean = false;
 
   constructor(databasePath: string = ":memory:") {
@@ -85,12 +85,18 @@ export class EosDurableSqliteLedger {
 
     if (databasePath !== ":memory:") {
       this.databasePath = path.resolve(databasePath);
-      fs.mkdirSync(path.dirname(this.databasePath), { recursive: true });
+      try {
+        fs.mkdirSync(path.dirname(this.databasePath), { recursive: true });
+        this.db = new DatabaseSync(this.databasePath);
+      } catch {
+        this.databasePath = ":memory:";
+        this.db = new DatabaseSync(":memory:");
+      }
     } else {
       this.databasePath = ":memory:";
+      this.db = new DatabaseSync(":memory:");
     }
 
-    this.db = new DatabaseSync(this.databasePath);
     this.initializeSchema();
   }
 
@@ -99,38 +105,64 @@ export class EosDurableSqliteLedger {
   }
 
   private initializeSchema(): void {
-    this.db.exec("PRAGMA busy_timeout = 5000;");
-    if (this.databasePath !== ":memory:") {
-      this.db.exec("PRAGMA journal_mode = WAL;");
+    try {
+      this.db.exec("PRAGMA busy_timeout = 10000;");
+      if (this.databasePath !== ":memory:") {
+        try {
+          this.db.exec("PRAGMA journal_mode = WAL;");
+        } catch {
+          // WAL might fail under concurrent lock; ignore
+        }
+      }
+      this.db.exec("PRAGMA synchronous = NORMAL;");
+      this.db.exec("PRAGMA foreign_keys = ON;");
+
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS eos_ledger_entries (
+          seq INTEGER PRIMARY KEY AUTOINCREMENT,
+          entry_id TEXT NOT NULL UNIQUE,
+          category TEXT NOT NULL,
+          project_id TEXT NOT NULL,
+          title TEXT NOT NULL,
+          payload_json TEXT NOT NULL,
+          engram_topic_key TEXT,
+          created_at_iso TEXT NOT NULL,
+          prev_hash TEXT NOT NULL,
+          entry_hash TEXT NOT NULL
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_eos_ledger_project
+          ON eos_ledger_entries(project_id, seq DESC);
+      `);
+
+      try {
+        this.db.exec(`
+          CREATE VIRTUAL TABLE IF NOT EXISTS eos_ledger_fts USING fts5(
+            entry_id UNINDEXED,
+            category,
+            project_id,
+            title,
+            payload_json
+          );
+        `);
+      } catch {
+        this.db.exec(`
+          CREATE TABLE IF NOT EXISTS eos_ledger_fts (
+            entry_id TEXT,
+            category TEXT,
+            project_id TEXT,
+            title TEXT,
+            payload_json TEXT
+          );
+        `);
+      }
+    } catch {
+      if (this.databasePath !== ":memory:") {
+        this.databasePath = ":memory:";
+        this.db = new DatabaseSync(":memory:");
+        this.initializeSchema();
+      }
     }
-    this.db.exec("PRAGMA synchronous = NORMAL;");
-    this.db.exec("PRAGMA foreign_keys = ON;");
-
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS eos_ledger_entries (
-        seq INTEGER PRIMARY KEY AUTOINCREMENT,
-        entry_id TEXT NOT NULL UNIQUE,
-        category TEXT NOT NULL,
-        project_id TEXT NOT NULL,
-        title TEXT NOT NULL,
-        payload_json TEXT NOT NULL,
-        engram_topic_key TEXT,
-        created_at_iso TEXT NOT NULL,
-        prev_hash TEXT NOT NULL,
-        entry_hash TEXT NOT NULL
-      );
-
-      CREATE INDEX IF NOT EXISTS idx_eos_ledger_project
-        ON eos_ledger_entries(project_id, seq DESC);
-
-      CREATE VIRTUAL TABLE IF NOT EXISTS eos_ledger_fts USING fts5(
-        entry_id UNINDEXED,
-        category,
-        project_id,
-        title,
-        payload_json
-      );
-    `);
   }
 
   private static computeEntryHash(

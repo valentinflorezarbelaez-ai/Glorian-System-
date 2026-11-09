@@ -289,14 +289,15 @@ export class EosTlcFormalChecker {
    * Persists TLC verification result in durable SQLite WAL ledger.
    */
   public static recordReceiptInLedger(result: TlcVerificationResult, dbPathOrRootDir?: string): boolean {
-    const dbPath = dbPathOrRootDir
-      ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
-        ? dbPathOrRootDir
-        : EosDurableSqliteLedger.defaultLedgerPath(dbPathOrRootDir)
-      : EosDurableSqliteLedger.defaultLedgerPath();
-
-    const ledger = new EosDurableSqliteLedger(dbPath);
+    let ledger: EosDurableSqliteLedger | null = null;
     try {
+      const dbPath = dbPathOrRootDir
+        ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
+          ? dbPathOrRootDir
+          : EosDurableSqliteLedger.defaultLedgerPath(dbPathOrRootDir)
+        : EosDurableSqliteLedger.defaultLedgerPath();
+
+      ledger = new EosDurableSqliteLedger(dbPath);
       ledger.appendEntry({
         category: result.status === "PASS" ? "VERIFICATION_RECEIPT" : "SECURITY_AUDIT",
         projectId: "eos-system",
@@ -318,7 +319,9 @@ export class EosTlcFormalChecker {
     } catch {
       return false;
     } finally {
-      ledger.close();
+      if (ledger) {
+        ledger.close();
+      }
     }
   }
 }
