@@ -67,11 +67,12 @@ export function parseJUnitOutcomes(xml, root) {
     const inner = match[2] ?? "";
     if (/<skipped\b/.test(inner)) continue;
     const nameMatch = attrs.match(/\bname="([^"]*)"/);
-    const fileMatch = attrs.match(/\bfile="([^"]*)"/);
+    const fileMatch = attrs.match(/\bfile="([^"]*)"/) || attrs.match(/\bclassname="([^"]*)"/);
     if (!nameMatch || !fileMatch) continue;
     const file = path.relative(root, unescapeXml(fileMatch[1])).replace(/\\/g, "/");
     const name = unescapeXml(nameMatch[1]);
-    outcomes.push({ testId: `${file}::${name}`, passed: !/<failure\b|<error\b/.test(inner) });
+    const hasFailure = /\bfailure=|\berror=/.test(attrs) || /<failure\b|<error\b/.test(inner);
+    outcomes.push({ testId: `${file}::${name}`, passed: !hasFailure });
   }
   return outcomes;
 }
@@ -112,8 +113,11 @@ export async function runFlakyGate({
   // neuter the nested runner; strip the knobs so each repetition is a clean,
   // authoritative run (same hazard as the mutation gate).
   const childEnv = { ...process.env };
-  delete childEnv.NODE_TEST_CONTEXT;
-  delete childEnv.NODE_TEST_REPORTER;
+  for (const key of Object.keys(childEnv)) {
+    if (key.startsWith("NODE_TEST_")) {
+      delete childEnv[key];
+    }
+  }
 
   const runs = [];
   for (let i = 0; i < repeats; i++) {

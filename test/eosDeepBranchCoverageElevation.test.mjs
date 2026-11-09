@@ -94,6 +94,8 @@ import { EosWorktreeOrchestrator } from "../src/core/eosWorktreeOrchestrator.ts"
 import { EosContinuousRefactorEngine } from "../src/core/eosContinuousRefactorEngine.ts";
 import { EosFleetSoundcheckMesh } from "../src/core/eosFleetSoundcheckMesh.ts";
 import { EosMctsHyperTuner } from "../src/core/eosMctsHyperTuner.ts";
+import { EosAdaptiveConcurrencyGovernor } from "../src/core/eosAdaptiveConcurrencyGovernor.ts";
+import { isValidEntry, loadFlakyBudget } from "../scripts/flaky-gate.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -2084,7 +2086,21 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       assert.ok(handlers.eos_finops_route_task({ taskType: "code-generation", tokenBudget: 4000 }));
       assert.ok(handlers.eos_fleet_pulse({}));
       assert.ok(handlers.eos_fleet_pulse({ format: "table" }));
-      assert.ok(handlers.eos_fleet_registry_sync({ dryRun: true, audit: true }));
+      assert.ok(handlers.eos_fleet_registry_sync({ dryRun: true, audit: false }));
+      const origWorkspace = process.env.EOS_WORKSPACE_ROOT;
+      const emptyTmp = fs.mkdtempSync(path.join(os.tmpdir(), "eos-empty-workspace-"));
+      try {
+        process.env.EOS_WORKSPACE_ROOT = emptyTmp;
+        assert.ok(handlers.eos_fleet_registry_sync({ dryRun: true, audit: true }));
+      } finally {
+        if (origWorkspace !== undefined) process.env.EOS_WORKSPACE_ROOT = origWorkspace;
+        else delete process.env.EOS_WORKSPACE_ROOT;
+        try {
+          fs.rmSync(emptyTmp, { recursive: true, force: true });
+        } catch {
+          void 0;
+        }
+      }
       assert.ok(handlers.eos_fleet_mission_control({ probe: false }));
       assert.ok(handlers.eos_fleet_elevate({ apply: false }));
       assert.throws(
@@ -3134,6 +3150,94 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       assert.equal(report.totalIterations, 20);
       assert.ok(report.optimalFitness > 0);
       assert.ok(report.sha256Receipt.length === 64);
+    });
+
+    it("exercises eosAdaptiveConcurrencyGovernor, flaky-gate validator, and kernel primitives branch conditions", () => {
+      // 1. EosAdaptiveConcurrencyGovernor branches
+      const gov = new EosAdaptiveConcurrencyGovernor({
+        minLimit: 5,
+        maxLimit: 100,
+        initialLimit: 20,
+        queueHeadroom: 2,
+        maxQueueDelayMs: 10,
+        emergencyHeadroom: 5,
+        smoothingAlpha: 0.5,
+      });
+
+      // Queue delay exceeded branch
+      const shedDelay = gov.tryAcquire("NORMAL", 15);
+      assert.equal(shedDelay.admitted, false);
+      assert.ok(shedDelay.reason?.includes("QUEUE_DELAY_EXCEEDED"));
+
+      // Priority shed branches
+      // Fill to limit
+      for (let i = 0; i < 25; i++) {
+        gov.tryAcquire("NORMAL", 0);
+      }
+      // BEST_EFFORT shed
+      const shedBest = gov.tryAcquire("BEST_EFFORT", 0);
+      assert.equal(shedBest.admitted, false);
+
+      // HIGH and CRITICAL tryAcquire
+      const critAcq = gov.tryAcquire("CRITICAL", 0);
+      assert.ok(critAcq.sha256Receipt.length === 64);
+
+      // Release branches (inFlight > 0, inFlight == 0, observedRttMs <= 0, observedRttMs > 0)
+      gov.release(0);
+      gov.release(-5);
+      gov.release(25);
+      for (let i = 0; i < 30; i++) {
+        gov.release();
+      }
+      // release when inFlight is 0
+      gov.release();
+
+      // recordLatency branches
+      gov.recordLatency(5);
+      gov.recordLatency(50);
+
+      // getStatus and reset
+      const status = gov.getStatus();
+      assert.ok(status.sha256Receipt.length === 64);
+      assert.equal(typeof status.gradient, "number");
+      gov.reset();
+      gov.reset(40);
+
+      // 2. flaky-gate isValidEntry branch coverage
+      assert.equal(isValidEntry(null), false);
+      assert.equal(isValidEntry("not an object"), false);
+      assert.equal(isValidEntry({}), false);
+      assert.equal(isValidEntry({ testId: "" }), false);
+      assert.equal(isValidEntry({ testId: "a", owner: "" }), false);
+      assert.equal(isValidEntry({ testId: "a", owner: "o", expiresOn: "invalid-date" }), false);
+      assert.equal(isValidEntry({ testId: "a", owner: "o", expiresOn: "2026-02-30" }), false);
+      assert.equal(isValidEntry({ testId: "a", owner: "o", expiresOn: "2026-12-31" }), true);
+
+      // loadFlakyBudget fallback when file has no quarantined array
+      const budgetTmp = fs.mkdtempSync(path.join(os.tmpdir(), "eos-bad-budget-"));
+      try {
+        fs.mkdirSync(path.join(budgetTmp, "docs", "quality"), { recursive: true });
+        fs.writeFileSync(
+          path.join(budgetTmp, "docs", "quality", "flaky-budget.json"),
+          JSON.stringify({ notQuarantined: true }),
+        );
+        const loaded = loadFlakyBudget(budgetTmp);
+        assert.deepEqual(loaded.quarantined, []);
+      } finally {
+        try {
+          fs.rmSync(budgetTmp, { recursive: true, force: true });
+        } catch {
+          void 0;
+        }
+      }
+
+      // 3. EosKernelPrimitives deepFreeze & contract assertions
+      const view = new Uint8Array([1, 2, 3]);
+      assert.equal(deepFreeze(view), view);
+      const fnObj = { fn: () => 42 };
+      assert.equal(deepFreeze(fnObj), fnObj);
+      assert.doesNotThrow(() => assertPostcondition(true, "valid"));
+      assert.doesNotThrow(() => assertInvariant(true, "valid"));
     });
   });
 });
