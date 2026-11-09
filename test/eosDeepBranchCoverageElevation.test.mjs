@@ -104,6 +104,14 @@ import { EosAgenticFinOpsGovernor } from "../src/core/eosAgenticFinOpsGovernor.t
 import { EosApolloHermesMesh, EosCircuitBreaker, EosTokenBucketRateLimiter } from "../src/core/eosApolloHermesMesh.ts";
 import { EosAcousticFeatureStore } from "../src/core/eosAcousticFeatureStore.ts";
 import { EosAntiEntropyMerkleSync } from "../src/core/eosAntiEntropyMerkleSync.ts";
+import {
+  buildHealthyAcaDogfoodInput,
+  runBigTechAcaCanaryGate,
+  writeAcaCanaryEvidence,
+} from "../src/core/eosBigTechAcaCanaryGate.ts";
+import { issueBreakGlassGrant, evaluateBreakGlassGrant } from "../src/core/eosIamBreakGlass.ts";
+import { resolveFleetProjectPath, resolveFleetRegistryPaths } from "../src/core/eosFleetPathResolver.ts";
+import { EosPlanetaryMultiCloudEvacuationMesh } from "../src/core/eosPlanetaryMultiCloudEvacuationMesh.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -4073,6 +4081,197 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       const diffLeaves = EosAntiEntropyMerkleSync.compareTrees(leafA, leafB);
       assert.equal(diffLeaves.inSync, false);
       assert.equal(diffLeaves.divergentRanges.length, 1);
+    });
+
+    it("exercises BigTech ops wave, IAM break-glass, Fleet path resolver, and Planetary multi-cloud evacuation edge branches", async () => {
+      // 1. EosPlanetaryMultiCloudEvacuationMesh edge branches
+      const mesh = EosPlanetaryMultiCloudEvacuationMesh.getInstance();
+      mesh.reset();
+
+      assert.throws(() => mesh.evacuateCloudProvider("unregistered-cloud"), /not registered/);
+      assert.throws(() => mesh.reintegrateProvider("unregistered-cloud", []), /not found/);
+
+      // Register new custom cloud via updateTelemetry
+      mesh.updateTelemetry("custom-cloud", 100, 5);
+      const statusAfterRegister = mesh.getStatus();
+      assert.equal(statusAfterRegister.activeCloudsCount, 4);
+
+      // Trigger latency-only degradation (latency > 1500)
+      mesh.updateTelemetry("custom-cloud", 1600, 5);
+      // Trigger error-rate degradation (errorRate > 50)
+      mesh.updateTelemetry("custom-cloud", 100, 55);
+
+      // Flapping test with < 10 probes
+      mesh.evacuateCloudProvider("custom-cloud", "test-evac");
+      const shortProbes = [true, true, true];
+      const flapResult = mesh.reintegrateProvider("custom-cloud", shortProbes);
+      assert.equal(flapResult.success, false);
+      assert.equal(flapResult.status, "COOLDOWN");
+
+      mesh.reset();
+
+      // 2. BigTech ACA Canary Gate edge branches
+      const healthy = buildHealthyAcaDogfoodInput();
+      const marginalResult = runBigTechAcaCanaryGate({
+        ...healthy,
+        baselineSamples: {
+          errorRate: [0.0001, 0.0001],
+          p99LatencyMs: [100, 100],
+          memoryMb: [500, 500],
+        },
+        canarySamples: {
+          errorRate: [0.0001, 0.0001],
+          p99LatencyMs: [100, 100],
+          memoryMb: [1500, 1500],
+        },
+        metricConfigs: [
+          { name: "errorRate", importance: "HARD", upperBound: 0.001 },
+          { name: "p99LatencyMs", importance: "HARD", upperBound: 500 },
+          { name: "memoryMb", importance: "SOFT", upperBound: 1000 },
+        ],
+      });
+      assert.equal(marginalResult.acaVerdict, "MARGINAL");
+      assert.equal(marginalResult.verdict, "MARGINAL");
+
+      const tmpAca = fs.mkdtempSync(path.join(os.tmpdir(), "aca-marginal-"));
+      try {
+        const written = writeAcaCanaryEvidence(tmpAca, marginalResult);
+        assert.ok(fs.existsSync(written.canaryPath));
+        assert.equal(written.incidentPath, null);
+      } finally {
+        fs.rmSync(tmpAca, { recursive: true, force: true });
+      }
+
+      // 3. IAM Break-Glass clamping and invalids
+      const gLow = issueBreakGlassGrant({
+        principal: { subjectId: "s1", tenantId: "t1", roles: [] },
+        reason: "sev1-urgent-fix",
+        ttlMs: 5000,
+      });
+      assert.equal(gLow.expiresAtMs - gLow.issuedAtMs, 60_000);
+
+      const gHigh = issueBreakGlassGrant({
+        principal: { subjectId: "s1", tenantId: "t1", roles: [] },
+        reason: "sev1-urgent-fix",
+        ttlMs: 999_999_999,
+      });
+      assert.equal(gHigh.expiresAtMs - gHigh.issuedAtMs, 3_600_000);
+
+      assert.equal(evaluateBreakGlassGrant(null).code, "BREAK_GLASS_INVALID");
+      assert.equal(evaluateBreakGlassGrant(undefined).code, "BREAK_GLASS_INVALID");
+      assert.equal(evaluateBreakGlassGrant({}).code, "BREAK_GLASS_INVALID");
+      assert.equal(evaluateBreakGlassGrant({ principal: { subjectId: "" } }).code, "BREAK_GLASS_INVALID");
+
+      // 4. Fleet Path Resolver branches
+      const invalidEnvRes = resolveFleetProjectPath(root, {
+        id: "test-invalid-env",
+        localPathEnv: "INVALID_NAME_NOT_UPPERCASE_PATTERN",
+      });
+      assert.equal(invalidEnvRes.status, "SKIPPED_SIBLING");
+
+      const missingLocalRes = resolveFleetProjectPath(root, {
+        id: "test-missing-local",
+        localPath: path.join(root, "non-existent-folder-12345"),
+      });
+      assert.equal(missingLocalRes.status, "SKIPPED_SIBLING");
+
+      // Test with EOS_WORKSPACE_ROOT
+      const prevWsRoot = process.env.EOS_WORKSPACE_ROOT;
+      const tmpWsRoot = fs.mkdtempSync(path.join(os.tmpdir(), "ws-root-"));
+      try {
+        const dummyGitDir = path.join(tmpWsRoot, "sibling-repo", ".git");
+        fs.mkdirSync(dummyGitDir, { recursive: true });
+        process.env.EOS_WORKSPACE_ROOT = tmpWsRoot;
+
+        const resolvedWs = resolveFleetProjectPath(root, {
+          id: "sibling-repo",
+          resolvedLocalDir: "sibling-repo",
+        });
+        assert.equal(resolvedWs.status, "AVAILABLE");
+        assert.equal(resolvedWs.resolution, "RESOLVED_LOCAL_DIR");
+      } finally {
+        if (prevWsRoot === undefined) delete process.env.EOS_WORKSPACE_ROOT;
+        else process.env.EOS_WORKSPACE_ROOT = prevWsRoot;
+        fs.rmSync(tmpWsRoot, { recursive: true, force: true });
+      }
+
+      const allResolved = resolveFleetRegistryPaths(root, [{ id: "eos-system" }, { id: "sibling-missing" }]);
+      assert.equal(allResolved.length, 2);
+
+      // 5. Serverless API routes edge branches
+      const mcpMod = await import(pathToFileURL(path.join(root, "api/mcp.js")).href);
+      const mcpHandler = mcpMod.default;
+
+      const res415 = createMockResponse();
+      await mcpHandler({ method: "POST", headers: {} }, res415);
+      assert.equal(res415.getStatusCode(), 415);
+
+      const res406 = createMockResponse();
+      await mcpHandler(
+        { method: "POST", headers: { "content-type": "application/json", accept: "text/event-stream" } },
+        res406,
+      );
+      assert.equal(res406.getStatusCode(), 406);
+
+      const res413 = createMockResponse();
+      await mcpHandler(
+        { method: "POST", headers: { "content-type": "application/json" }, body: "x".repeat(1024 * 1024 + 10) },
+        res413,
+      );
+      assert.equal(res413.getStatusCode(), 413);
+
+      const resUnknownMethod = createMockResponse();
+      await mcpHandler(
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: { jsonrpc: "2.0", method: "unregistered/call", id: 99 },
+        },
+        resUnknownMethod,
+      );
+      assert.equal(resUnknownMethod.getStatusCode(), 200);
+
+      const specsMod = await import(pathToFileURL(path.join(root, "api/_specs.js")).href);
+      const specsHandler = specsMod.default;
+
+      const resSpecsOpt = createMockResponse();
+      await specsHandler({ method: "OPTIONS" }, resSpecsOpt);
+      assert.equal(resSpecsOpt.getStatusCode(), 200);
+
+      const resSpecs405 = createMockResponse();
+      await specsHandler({ method: "POST" }, resSpecs405);
+      assert.equal(resSpecs405.getStatusCode(), 405);
+
+      const resSpecsAll = createMockResponse();
+      await specsHandler({ method: "GET", query: { status: "ALL", q: "SPEC-001" } }, resSpecsAll);
+      assert.equal(resSpecsAll.getStatusCode(), 200);
+
+      const resSpecsFilter = createMockResponse();
+      await specsHandler({ method: "GET", query: { status: "APPROVED", q: "system" } }, resSpecsFilter);
+      assert.equal(resSpecsFilter.getStatusCode(), 200);
+
+      const bigtechMod = await import(pathToFileURL(path.join(root, "api/_bigtech.js")).href);
+      const bigtechHandler = bigtechMod.default;
+
+      const resBtOpt = createMockResponse();
+      await bigtechHandler({ method: "OPTIONS" }, resBtOpt);
+      assert.equal(resBtOpt.getStatusCode(), 200);
+
+      const resBt405 = createMockResponse();
+      await bigtechHandler({ method: "POST" }, resBt405);
+      assert.equal(resBt405.getStatusCode(), 405);
+
+      const resBtScenario = createMockResponse();
+      await bigtechHandler({ method: "GET", query: { scenario: "secret-leak-attempt" } }, resBtScenario);
+      assert.equal(resBtScenario.getStatusCode(), 200);
+
+      const resBtBadScenario = createMockResponse();
+      await bigtechHandler({ method: "GET", query: { scenario: "invalid-drill-xyz" } }, resBtBadScenario);
+      assert.equal(resBtBadScenario.getStatusCode(), 400);
+
+      const resBtRisk = createMockResponse();
+      await bigtechHandler({ method: "GET", query: { action: "risk", iterations: "25", deadline: "5" } }, resBtRisk);
+      assert.equal(resBtRisk.getStatusCode(), 200);
     });
   });
 });
