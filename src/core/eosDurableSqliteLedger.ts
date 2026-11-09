@@ -65,7 +65,7 @@ export function sanitizeFts5Query(rawQuery: string): string {
     .replace(/["'`]/g, " ")
     .split(/\s+/)
     .map((t) => t.replace(/[^\p{L}\p{N}_-]/gu, "").trim())
-    .filter((t) => t.length > 0)
+    .filter((t) => /[\p{L}\p{N}]/u.test(t))
     .slice(0, 16);
 
   if (tokens.length === 0) return "";
@@ -291,7 +291,8 @@ export class EosDurableSqliteLedger {
           .replace(/["*:?^~]/g, " ")
           .trim()
           .split(/\s+/)
-          .filter((t) => t.length > 0);
+          .map((t) => t.replace(/[^\p{L}\p{N}_-]/gu, "").trim())
+          .filter((t) => /[\p{L}\p{N}]/u.test(t));
 
         if (tokens.length === 0) {
           return this.listRecent(safeLimit);

@@ -346,10 +346,13 @@ if (sloBlock) {
 // ---------------------------------------------------------------------------
 if (!process.env.SKIP_COVERAGE) {
   const MIN_LINE = Number(process.env.COVERAGE_MIN_LINE ?? 80);
-  const MIN_BRANCH = Number(process.env.COVERAGE_MIN_BRANCH ?? 75);
+  const MIN_BRANCH = Number(process.env.COVERAGE_MIN_BRANCH ?? 80);
+  const covConcurrency = Number(process.env.COVERAGE_CONCURRENCY ?? 4);
   const covStart = Date.now();
-  console.log(`[STAGE 4.5] Running native V8 coverage (threshold: ${MIN_LINE}% lines, ${MIN_BRANCH}% branches)...`);
-  const covArgs = ["--test", "--experimental-test-coverage", `--test-concurrency=${CONCURRENCY}`, ...filesToRun];
+  console.log(
+    `[STAGE 4.5] Running native V8 coverage (threshold: ${MIN_LINE}% lines, ${MIN_BRANCH}% branches, concurrency: ${covConcurrency})...`,
+  );
+  const covArgs = ["--test", "--experimental-test-coverage", `--test-concurrency=${covConcurrency}`, ...filesToRun];
   const covOutput = await new Promise((resolve) => {
     let stdout = "";
     const child = spawn(process.execPath, covArgs, { cwd: root, stdio: ["ignore", "pipe", "pipe"] });

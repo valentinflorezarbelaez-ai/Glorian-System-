@@ -167,3 +167,43 @@ test("BDD-319: EosMcpServer Integration for FinOps Tools Dispatch", async () => 
   const walletData = JSON.parse(walletRes.result.content[0].text);
   assert.ok(walletData.totalDirectivesRouted >= 1);
 });
+
+test("BDD-320: Deep Edge Cases: Short Diff History, Warning Thresholds, Empty Survival, Auto-Wallet Allocation", () => {
+  const governor = EosAgenticFinOpsGovernor.getInstance();
+
+  // 1. evaluateStagnation with < 2 diffs
+  const emptyDiffRes = governor.evaluateStagnation([], false);
+  assert.equal(emptyDiffRes.stagnant, false);
+  assert.equal(emptyDiffRes.action, "PROCEED_NOMINAL");
+
+  const singleDiffRes = governor.evaluateStagnation(["diff one only"], false);
+  assert.equal(singleDiffRes.stagnant, false);
+  assert.equal(singleDiffRes.action, "PROCEED_NOMINAL");
+
+  // 2. evaluateStagnation with exactly 2 diffs and high similarity -> WARNING state
+  const warningDiffRes = governor.evaluateStagnation(["const x = 1;", "const x = 1;"], false);
+  assert.equal(warningDiffRes.stagnant, false);
+  assert.equal(warningDiffRes.circuitBreakerState, "WARNING");
+  assert.equal(warningDiffRes.action, "WARN_COGNITIVE_STALL");
+
+  // 3. recordTokenUsage auto-allocating wallet and remaining ACTIVE
+  const autoWallet = governor.recordTokenUsage("unallocated-mission-xyz", 100, 50, "TIER_1_LOCAL_SLM");
+  assert.equal(autoWallet.status, "ACTIVE");
+  assert.ok(autoWallet.totalTokensIn >= 100);
+
+  // 4. evaluateCodeSurvival with empty components array
+  const emptySurvival = governor.evaluateCodeSurvival([]);
+  assert.equal(emptySurvival.totalComponentsTracked, 0);
+  assert.equal(emptySurvival.averageSurvivalRatePercent, 100);
+  assert.equal(emptySurvival.roiMultiple, 1.0);
+
+  // 5. getStatus & reset
+  const status = governor.getStatus();
+  assert.ok(status.totalDirectivesRouted > 0);
+  assert.ok(status.totalWalletsAllocated > 0);
+
+  governor.reset();
+  const resetStatus = governor.getStatus();
+  assert.equal(resetStatus.totalDirectivesRouted, 0);
+  assert.equal(resetStatus.totalWalletsAllocated, 0);
+});

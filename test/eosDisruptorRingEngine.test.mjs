@@ -86,4 +86,36 @@ test("EOS typed-array ring and local benchmark suite (SPEC-022, BDD-052)", async
     assert.equal(master.disruptorReport.heapAllocationMeasurement, "NOT_MEASURED");
     assert.ok(master.byteScanReport.structuralDelimitersFound > 0);
   });
+
+  await t.test("Suite 6: Input boundary validations and tail-byte scanning", () => {
+    // 1. Exponent RangeErrors
+    assert.throws(() => new LmaxDisruptorRingBuffer(0), /Ring capacity exponent must be an integer between 1 and 20/);
+    assert.throws(() => new LmaxDisruptorRingBuffer(21), /Ring capacity exponent must be an integer between 1 and 20/);
+    assert.throws(() => new LmaxDisruptorRingBuffer(3.5), /Ring capacity exponent must be an integer between 1 and 20/);
+
+    // 2. Benchmark eventCount RangeErrors
+    const ring = new LmaxDisruptorRingBuffer(4);
+    assert.throws(() => ring.benchmarkThroughput(0), /Event count must be an integer between 1 and 10,000,000/);
+    assert.throws(
+      () => ring.benchmarkThroughput(20_000_000),
+      /Event count must be an integer between 1 and 10,000,000/,
+    );
+
+    // 3. Scanner tail bytes (length not multiple of 8, e.g. 11 bytes)
+    const scanner = engine.getScanner();
+    const oddBuffer = new Uint8Array([123, 10, 11, 12, 13, 14, 15, 16, 58, 44, 125]); // 11 bytes, contains '{', ':', ',', '}'
+    const oddReport = scanner.scanDelimiters(oddBuffer);
+    assert.equal(oddReport.totalBytesScanned, 11);
+    assert.equal(oddReport.structuralDelimitersFound, 4);
+
+    // 4. Master speed benchmark payload bounds
+    assert.throws(
+      () => engine.runMasterSpeedBenchmark(100, 0),
+      /Payload size must be an integer between 1 byte and 256 MiB/,
+    );
+    assert.throws(
+      () => engine.runMasterSpeedBenchmark(100, 300 * 1024 * 1024),
+      /Payload size must be an integer between 1 byte and 256 MiB/,
+    );
+  });
 });

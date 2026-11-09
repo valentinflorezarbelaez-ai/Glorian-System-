@@ -1,5 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { EosTitansMatrix } from "../src/core/eosTitansMatrix.ts";
@@ -45,6 +46,33 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
       assert.ok(typeof tmr.channelVotes.beta === "string");
       assert.ok(typeof tmr.channelVotes.gamma === "string");
     });
+
+    it("detects Byzantine faults when channel calculations diverge", () => {
+      const origCreateHash = crypto.createHash;
+      let count = 0;
+      try {
+        crypto.createHash = function (alg, opts) {
+          count++;
+          if (count === 2) {
+            return {
+              update: () => ({ digest: () => "fault_beta" }),
+            };
+          }
+          if (count === 3) {
+            return {
+              update: () => ({ digest: () => "fault_gamma" }),
+            };
+          }
+          return origCreateHash.call(crypto, alg, opts);
+        };
+
+        const faultyTmr = matrix.benchmarkSpaceXTmr("FAULT_INJECTION", 1);
+        assert.equal(faultyTmr.consensusReached, false);
+        assert.equal(faultyTmr.byzantineFaultsDetected, 1);
+      } finally {
+        crypto.createHash = origCreateHash;
+      }
+    });
   });
 
   describe("Suite 3: NVIDIA TensorRT / CUDA Float32 Flat Buffer SIMD Kernel (BDD-034)", () => {
@@ -56,6 +84,13 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
       assert.equal(res.metrics.vectorLength, 4096);
       assert.ok(res.metrics.dotProductResult > 0);
       assert.ok(res.latencyUs < 200_000, `NVIDIA SIMD latency: ${res.latencyUs}µs (parallel CI ceiling)`);
+    });
+
+    it("executes SIMD kernel with odd vectorLength (unroll remainder elements)", () => {
+      const oddRes = matrix.benchmarkNvidiaSimd(4097);
+      assert.equal(oddRes.status, "PASS");
+      assert.equal(oddRes.metrics.vectorLength, 4097);
+      assert.ok(oddRes.metrics.dotProductResult > 0);
     });
   });
 

@@ -263,4 +263,130 @@ test("invalid tokens and wildcard CORS origins are rejected at construction", ()
     () => new EosMcpStreamServer(projectRoot, 0, { allowedOrigins: ["*"] }),
     /Invalid EOS MCP allowed origin/,
   );
+  assert.throws(
+    () => new EosMcpStreamServer(projectRoot, 0, { allowedOrigins: ["ftp://invalid.com"] }),
+    /must be exact HTTP\(S\) origins without paths/,
+  );
+  assert.throws(
+    () => new EosMcpStreamServer(projectRoot, 0, { allowedOrigins: ["https://example.com/extra/path"] }),
+    /must be exact HTTP\(S\) origins without paths/,
+  );
+});
+
+test("EosMcpSession and EosMcpSessionManager direct lifecycle & streaming operations", async () => {
+  // Test server close when not running
+  const unstarted = new EosMcpStreamServer(projectRoot, 0);
+  await unstarted.close();
+
+  // Test session and session manager with mock response
+  let written = "";
+  const mockRes = {
+    writable: true,
+    writableEnded: false,
+    write(chunk) {
+      written += chunk;
+      return true;
+    },
+    end() {
+      this.writableEnded = true;
+      this.writable = false;
+    },
+  };
+
+  const mgr = unstarted.sessionManager;
+  const session = mgr.createSession(mockRes);
+  assert.ok(session.id);
+  assert.equal(session.isAlive(), true);
+
+  // Send heartbeat
+  session.sendHeartbeat();
+  assert.ok(written.includes(": keep-alive"));
+
+  // Send progress
+  const sentProgress = session.sendProgress("tok-1", 50, 100, "processing");
+  assert.equal(sentProgress, true);
+  assert.ok(written.includes("notifications/progress"));
+
+  // Get session
+  const fetched = mgr.getSession(session.id);
+  assert.equal(fetched?.id, session.id);
+
+  // Active sessions
+  const active = mgr.getActiveSessions();
+  assert.equal(active.length, 1);
+  assert.equal(active[0].id, session.id);
+
+  // GC
+  mgr._gc();
+  assert.equal(mgr.getActiveSessions().length, 1);
+
+  // Remove session
+  assert.equal(mgr.removeSession(session.id), true);
+  assert.equal(mgr.removeSession("nonexistent-id"), false);
+  assert.equal(session.isAlive(), false);
+
+  // Repeated close is idempotent
+  session.close();
+
+  // Close all
+  mgr.closeAll();
+});
+
+test("HTTP MCP tool argument boundary validation (SPEC-090)", async () => {
+  const running = await startServer();
+  try {
+    const sse = await connectSse(running.port, running.server.authToken);
+
+    const callTool = async (name, args) => {
+      const res = await request(running.port, `/message?sessionId=${sse.sessionId}`, {
+        method: "POST",
+        token: running.server.authToken,
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: `tool-${name}`,
+          method: "tools/call",
+          params: { name, arguments: args },
+        }),
+      });
+      return res.body;
+    };
+
+    // 1. eos_check_architecture with forbidden targetDir
+    const badDir = await callTool("eos_check_architecture", { targetDir: "forbidden_dir" });
+    assert.equal(badDir.error.code, -32602);
+    assert.ok(badDir.error.message.includes("only scans the repository src directory"));
+
+    // 2. eos_amplify_prompt with empty rawPrompt
+    const emptyPrompt = await callTool("eos_amplify_prompt", { rawPrompt: "" });
+    assert.equal(emptyPrompt.error.code, -32602);
+
+    // 3. eos_evaluate_decision with missing title
+    const badDecision = await callTool("eos_evaluate_decision", {
+      title: "",
+      description: "desc",
+      proposedAction: "act",
+    });
+    assert.equal(badDecision.error.code, -32602);
+
+    // 4. eos_spotify_shuffle with non-array tracks
+    const badShuffle = await callTool("eos_spotify_shuffle", { tracks: "not an array" });
+    assert.equal(badShuffle.error.code, -32602);
+
+    // 5. Arguments not an object
+    const nonObjArgs = await request(running.port, `/message?sessionId=${sse.sessionId}`, {
+      method: "POST",
+      token: running.server.authToken,
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: "tool-non-obj",
+        method: "tools/call",
+        params: { name: "eos_amplify_prompt", arguments: "not-an-object" },
+      }),
+    });
+    assert.equal(nonObjArgs.body.error.code, -32602);
+
+    sse.req.destroy();
+  } finally {
+    await running.close();
+  }
 });

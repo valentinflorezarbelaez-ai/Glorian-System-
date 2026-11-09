@@ -84,6 +84,37 @@ describe("SPEC-032: Big Tech Hyper-Optimization Verification", () => {
     assert.equal(finalStats.poolHitRatePercent, 100, "Must maintain 100% pool hit rate without memory leaks");
     assert.equal(finalStats.spillCount, 0, "Zero memory spills allowed");
     assert.equal(finalStats.availableSlabs, 32);
+
+    // Edge Cases: default constructor, spills, mismatched release, reset
+    const defaultPool = new EosBufferPool();
+    assert.equal(defaultPool.slabSize, 4096);
+    assert.equal(defaultPool.capacity, 64);
+    assert.equal(defaultPool.getStats().poolHitRatePercent, 100);
+
+    // Exhaust small pool to trigger spill
+    const tinyPool = new EosBufferPool({ slabSize: 64, capacity: 2 });
+    const s1 = tinyPool.acquire();
+    const s2 = tinyPool.acquire();
+    const spillSlab = tinyPool.acquire(); // Spill!
+    assert.equal(tinyPool.getStats().spillCount, 1);
+    assert.ok(tinyPool.getStats().poolHitRatePercent < 100);
+
+    // Mismatched releases
+    tinyPool.release(null);
+    tinyPool.release(new Uint8Array(128)); // wrong size
+    assert.equal(tinyPool.getStats().totalReleases, 0);
+
+    // Release back
+    tinyPool.release(s1);
+    tinyPool.release(s2);
+    tinyPool.release(spillSlab); // extra slab when pool already at capacity
+    assert.equal(tinyPool.getStats().availableSlabs, 2);
+
+    // Reset
+    tinyPool.reset();
+    assert.equal(tinyPool.getStats().totalAcquires, 0);
+    assert.equal(tinyPool.getStats().spillCount, 0);
+    assert.equal(tinyPool.getStats().availableSlabs, 2);
   });
 
   // =========================================================================

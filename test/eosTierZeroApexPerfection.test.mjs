@@ -112,6 +112,72 @@ describe("SPEC-031: Tier-Zero Transcendental Apex Perfection Verification", () =
     assert.ok(impureReport.agregadosDetectedCount >= 2, "Must detect external npm import and hardcoded secret");
     assert.ok(impureReport.nousPurityPercent < 80);
     assert.ok(impureReport.transmutationAdvice.includes("Muerte Mística"));
+
+    // 3. Test branch density penalty and all octave vibrational notes
+    const highBranchDense = `if (a) { if (b) { if (c) { if (d) { if (e) { if (f) { if (g) {} } } } } } }`;
+    const denseReport = transmuter.analyzeContent(highBranchDense, "dense.ts");
+    assert.ok(denseReport.cyclomaticDensity > 0);
+
+    // Test non-existent file error
+    assert.throws(
+      () => transmuter.analyzeFile("non/existent/path/for/sure.ts"),
+      /File not found for alchemical analysis/,
+    );
+
+    // Test across octave bands by synthesizing content with controlled purity
+    // DO_SUPERIOR: pure code (score 100)
+    const r100 = transmuter.analyzeContent("// Pure math and algorithms\nconst phi = 1.618033988749895;\n", "pure.ts");
+    assert.equal(r100.octaveVibrationalNote, "DO_SUPERIOR");
+
+    // SI: score 90-97 (0 agregados but branch penalty ~6)
+    // 1000 chars with 31 branches -> densityRatio 31 -> penalty 6 -> score 94 -> SI
+    const branchPadding = "if (x) {} ".repeat(31) + " ".repeat(700);
+    const rSi = transmuter.analyzeContent(branchPadding, "si.ts");
+    assert.ok(rSi.nousPurityPercent >= 90 && rSi.nousPurityPercent < 98);
+    assert.equal(rSi.octaveVibrationalNote, "SI");
+
+    // LA: score 80-89 (1 agregado of TODO = -20, plus entropy bonus +5 = 85)
+    const rLa = transmuter.analyzeContent(
+      "// TODO: clean this\nconst x = 1234567890;\nconst y = 9876543210;\n",
+      "la.ts",
+    );
+    assert.ok(rLa.nousPurityPercent >= 80 && rLa.nousPurityPercent < 90);
+    assert.equal(rLa.octaveVibrationalNote, "LA");
+
+    // SOL: score 70-79 (1 agregado -20 and 5 branch penalty = 75)
+    const rSol = transmuter.analyzeContent("// TODO: fix\n" + "if (a) {} ".repeat(30) + " ".repeat(700), "sol.ts");
+    assert.equal(rSol.nousPurityPercent, 75);
+    assert.equal(rSol.octaveVibrationalNote, "SOL");
+
+    // FA: score 60-69 (1 agregado -20 and 11 branch penalty = 69)
+    const rFa = transmuter.analyzeContent("// TODO: fix\n" + "if (a) {} ".repeat(35) + " ".repeat(600), "fa.ts");
+    assert.equal(rFa.nousPurityPercent, 69);
+    assert.equal(rFa.octaveVibrationalNote, "FA");
+
+    // MI: score 45-59 (2 agregados = -40 and 10 branch penalty = 50)
+    const rMi = transmuter.analyzeContent(
+      `// TODO: fix\nimport pkg from "ext-pkg";\n` + "if (a) {} ".repeat(35) + " ".repeat(600),
+      "mi.ts",
+    );
+    assert.ok(rMi.nousPurityPercent >= 45 && rMi.nousPurityPercent < 60);
+    assert.equal(rMi.octaveVibrationalNote, "MI");
+
+    // RE: score 25-44 (3 agregados = -60 without bonus = 40)
+    const rRe = transmuter.analyzeContent(
+      `// TODO: fix\nimport pkg from "ext-pkg";\nconst apiKey = "sk-123456789012345678901234";\n` + "a".repeat(200),
+      "re.ts",
+    );
+    assert.ok(rRe.nousPurityPercent >= 25 && rRe.nousPurityPercent < 45);
+    assert.equal(rRe.octaveVibrationalNote, "RE");
+
+    // DO: score < 25 (4 agregados = -80 without bonus = 20)
+    const rDo = transmuter.analyzeContent(
+      `// TODO: fix\nimport pkg1 from "ext-pkg1";\nimport pkg2 from "ext-pkg2";\nconst apiKey = "sk-123456789012345678901234";\n` +
+        "a".repeat(200),
+      "do.ts",
+    );
+    assert.ok(rDo.nousPurityPercent < 25);
+    assert.equal(rDo.octaveVibrationalNote, "DO");
   });
 
   // =========================================================================

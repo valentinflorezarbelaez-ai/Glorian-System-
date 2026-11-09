@@ -150,6 +150,60 @@ describe("SPEC-035: Planetary Consensus & Adaptive Concurrency Verification", ()
       assert.equal(overflow.granted, false);
       assert.equal(overflow.reason, "SHED_LOAD_CONCURRENCY_EXCEEDED");
     });
+
+    test("covers default options, execute helper, Prometheus metrics, and edge cases", async () => {
+      // Default constructor
+      const defaultLimiter = new EosAdaptiveConcurrencyLimiter();
+      const defaultMetrics = defaultLimiter.getMetrics();
+      assert.equal(defaultMetrics.currentLimit, 20);
+      assert.equal(defaultMetrics.inFlight, 0);
+      assert.equal(defaultMetrics.rttMinMs, 0);
+
+      // formatPrometheusMetrics
+      const promOutput = defaultLimiter.formatPrometheusMetrics();
+      assert.ok(promOutput.includes("eos_concurrency_limit 20"));
+      assert.ok(promOutput.includes("eos_concurrency_inflight 0"));
+      assert.ok(promOutput.includes("eos_concurrency_shed_total 0"));
+
+      // execute() helper - success
+      const execSuccess = await defaultLimiter.execute(async () => {
+        return "computed-result";
+      });
+      assert.equal(execSuccess.success, true);
+      assert.equal(execSuccess.result, "computed-result");
+      assert.ok(execSuccess.rttMs !== undefined);
+
+      // execute() helper - failure
+      const execFailure = await defaultLimiter.execute(async () => {
+        throw new Error("Simulated task failure");
+      });
+      assert.equal(execFailure.success, false);
+      assert.ok(execFailure.reason?.includes("Simulated task failure"));
+
+      // execute() helper - load shed when capacity filled
+      const smallLimiter = new EosAdaptiveConcurrencyLimiter({ initialLimit: 1, minLimit: 1, maxLimit: 5 });
+      const acq1 = smallLimiter.acquire();
+      assert.equal(acq1.granted, true);
+      const execShed = await smallLimiter.execute(async () => "never-run");
+      assert.equal(execShed.success, false);
+      assert.equal(execShed.reason, "SHED_LOAD_CONCURRENCY_EXCEEDED");
+
+      // release edge cases
+      smallLimiter.release(-5); // non-positive rtt ignored
+      smallLimiter.release(0);
+      smallLimiter.release(10); // inFlight reaches 0
+      smallLimiter.release(10); // inFlight already 0 (safe branch)
+
+      // Severe congestion floor at minLimit
+      const clampLimiter = new EosAdaptiveConcurrencyLimiter({ initialLimit: 10, minLimit: 5, beta: 1 });
+      clampLimiter.acquire();
+      clampLimiter.release(1.0); // sets rttMin to 1.0
+      for (let i = 0; i < 20; i++) {
+        clampLimiter.acquire();
+        clampLimiter.release(1000.0); // massive latency forces contraction
+      }
+      assert.equal(clampLimiter.getMetrics().currentLimit, 5, "Must clamp to minLimit");
+    });
   });
 
   // =========================================================================

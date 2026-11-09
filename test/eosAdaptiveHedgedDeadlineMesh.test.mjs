@@ -173,4 +173,67 @@ describe("EOS SPEC-111: Distributed Adaptive Hedged Requests & Deadline Mesh Sui
     assert.strictEqual(execData.executedBy, "PRIMARY");
     assert.ok(execData.sha256Receipt.length === 64);
   });
+
+  it("BDD-288: Deep Edge Cases: DeadlineContext, Reservoir Shifting, Sync Shedding, Async Fallbacks, Reset", async () => {
+    // 1. EosDeadlineContext.fromTimeout
+    const ctx = EosDeadlineContext.fromTimeout(100, "custom-trace-id");
+    assert.strictEqual(ctx.traceId, "custom-trace-id");
+    assert.ok(ctx.getRemainingMs() > 0);
+    assert.strictEqual(ctx.isExpired(), false);
+
+    // 2. executeHedgedSync early deadline exceeded shedding
+    const mesh = new EosAdaptiveHedgedDeadlineMesh();
+    assert.throws(() => {
+      mesh.executeHedgedSync({ endpointId: "shed-ep", deadlineMs: -10 });
+    }, /DEADLINE_EXCEEDED/);
+
+    // 3. executeHedgedSync hedged dispatched but primary finishes earlier
+    const syncPrimaryFaster = mesh.executeHedgedSync({
+      endpointId: "race-ep",
+      hedgingDelayMs: 5,
+      simulatedPrimaryDelayMs: 10,
+      simulatedHedgedDelayMs: 20, // 5 + 20 = 25 > 10 (Primary wins!)
+    });
+    assert.strictEqual(syncPrimaryFaster.executedBy, "PRIMARY");
+    assert.strictEqual(syncPrimaryFaster.hedgeDispatched, true);
+
+    // 4. executeHedged hedged dispatched, primary finishes first and aborts hedged
+    const raceMesh = new EosAdaptiveHedgedDeadlineMesh({ defaultP95Ms: 10 });
+    const asyncPrimaryWin = await raceMesh.executeHedged({
+      endpointId: "async-race",
+      hedgingDelayMs: 10,
+      primaryFn: async () => {
+        await new Promise((r) => setTimeout(r, 20));
+        return "primary-quick";
+      },
+      hedgedFn: async () => {
+        await new Promise((r) => setTimeout(r, 60));
+        return "hedged-slow";
+      },
+    });
+    assert.strictEqual(asyncPrimaryWin.executedBy, "PRIMARY");
+    assert.strictEqual(asyncPrimaryWin.result, "primary-quick");
+
+    // 5. executeHedged failure branch
+    await assert.rejects(async () => {
+      await raceMesh.executeHedged({
+        endpointId: "failing-ep",
+        primaryFn: async () => {
+          throw new Error("Instant Primary Failure");
+        },
+      });
+    }, /Instant Primary Failure/);
+
+    // 6. LatencyReservoir capacity shift (>200 samples)
+    for (let i = 0; i < 210; i++) {
+      raceMesh.executeHedgedSync({ endpointId: "high-volume-ep", simulatedPrimaryDelayMs: 5 });
+    }
+
+    // 7. mesh.reset()
+    raceMesh.reset();
+    const cleanMetrics = raceMesh.getMetrics();
+    assert.strictEqual(cleanMetrics.totalRequests, 0);
+    assert.strictEqual(cleanMetrics.hedgedRequests, 0);
+    assert.strictEqual(cleanMetrics.shedRequests, 0);
+  });
 });

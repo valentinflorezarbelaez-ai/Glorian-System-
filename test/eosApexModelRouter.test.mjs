@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 import { EosApexModelRouter, APEX_FRONTIER_MATRIX } from "../src/core/eosApexModelRouter.ts";
 
 test("EOS Apex Frontier Model Router, Token Squeezer & Go Healer Suite (SPEC-025)", async (t) => {
@@ -111,5 +112,41 @@ export function executeOrder(order: OrderContract): boolean {
       `Expected throughput above the 100k tok/s sanity floor, got ${bench.tokensPerSecond}`,
     );
     assert.ok(bench.durationUs > 0, "Benchmark must measure execution duration in microseconds");
+  });
+
+  await t.test("Suite 5: Edge cases, non-existent files, and binary fallback resilience", () => {
+    // 1. healFile on non-existent file
+    const missingRes = router.healFile("non-existent-diagnostic-file.txt");
+    assert.equal(missingRes.status, "REMEDIATION_BLOCKED");
+    assert.equal(missingRes.verificationExitCode, 1);
+    assert.ok(missingRes.sha256Receipt.length === 64);
+
+    // 2. Fallback router when bin/eos-apex.exe does not exist
+    const noBinRouter = new EosApexModelRouter(os.tmpdir());
+    const noBinBench = noBinRouter.runGoThroughputBenchmark();
+    assert.equal(noBinBench.status, "PASS");
+    assert.equal(noBinBench.nativeGo, false);
+
+    // 3. Mock binary that exists on disk in projectRoot/bin/ but errors out on execution
+    const tmpDir = path.join(os.tmpdir(), `eos-mock-root-${Date.now()}`);
+    const tmpBinDir = path.join(tmpDir, "bin");
+    fs.mkdirSync(tmpBinDir, { recursive: true });
+    const mockExe = path.join(tmpBinDir, process.platform === "win32" ? "eos-apex.exe" : "eos-apex");
+    fs.writeFileSync(mockExe, "not-a-valid-executable", "utf8");
+
+    try {
+      const mockRouter = new EosApexModelRouter(tmpDir);
+      // Route task: should catch execFileSync error and set nativeGoAccelerated = false
+      const routeRes = mockRouter.routeTask("Simple test prompt");
+      assert.equal(routeRes.nativeGoAccelerated, false);
+
+      // runGoThroughputBenchmark: should catch execFileSync error and run pure TS fallback
+      const bench = mockRouter.runGoThroughputBenchmark();
+      assert.equal(bench.status, "PASS");
+      assert.equal(bench.nativeGo, false);
+      assert.ok(bench.tokensPerSecond > 0);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
   });
 });

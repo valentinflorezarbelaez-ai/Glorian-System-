@@ -41,6 +41,49 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
       assert.equal(report.steps[3].status, "NOT_RUN");
       assert.ok(report.totalDurationMs > 0);
     });
+
+    it("exercises dispatchHonk input boundary validations and supported stacks", () => {
+      // Non-object directive
+      assert.throws(() => factory.dispatchHonk(null), TypeError);
+
+      // Empty and oversized taskName
+      assert.throws(() => factory.dispatchHonk({ taskName: "", specDescription: "valid spec" }), RangeError);
+      assert.throws(
+        () => factory.dispatchHonk({ taskName: "t".repeat(600), specDescription: "valid spec" }),
+        RangeError,
+      );
+
+      // Empty and oversized specDescription
+      assert.throws(() => factory.dispatchHonk({ taskName: "task", specDescription: "" }), RangeError);
+      assert.throws(() => factory.dispatchHonk({ taskName: "task", specDescription: "x".repeat(20000) }), RangeError);
+
+      // Oversized repoPath
+      assert.throws(
+        () => factory.dispatchHonk({ taskName: "task", specDescription: "spec", repoPath: "p".repeat(5000) }),
+        RangeError,
+      );
+
+      // Unsupported stack
+      assert.throws(
+        () => factory.dispatchHonk({ taskName: "task", specDescription: "spec", stack: "unsupported" }),
+        /Unsupported Honk stack/,
+      );
+
+      // Supported stacks: node and java
+      const nodeReport = factory.dispatchHonk({
+        taskName: "node task",
+        specDescription: "node spec",
+        stack: "node",
+      });
+      assert.equal(nodeReport.stack, "node");
+
+      const javaReport = factory.dispatchHonk({
+        taskName: "java task",
+        specDescription: "java spec",
+        stack: "java",
+      });
+      assert.equal(javaReport.stack, "java");
+    });
   });
 
   describe("Suite 2: Xirp Architecture Context Protocol (BDD-044)", () => {
