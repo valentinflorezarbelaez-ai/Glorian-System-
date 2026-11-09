@@ -96,6 +96,8 @@ import { EosFleetSoundcheckMesh } from "../src/core/eosFleetSoundcheckMesh.ts";
 import { EosMctsHyperTuner } from "../src/core/eosMctsHyperTuner.ts";
 import { EosAdaptiveConcurrencyGovernor } from "../src/core/eosAdaptiveConcurrencyGovernor.ts";
 import { isValidEntry, loadFlakyBudget } from "../scripts/flaky-gate.mjs";
+import { EosSurgicalSelfHealingKernel } from "../src/core/eosSurgicalSelfHealingKernel.ts";
+import { EosDocumentationSearch } from "../src/core/eosDocumentationSearch.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -3238,6 +3240,174 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       assert.equal(deepFreeze(fnObj), fnObj);
       assert.doesNotThrow(() => assertPostcondition(true, "valid"));
       assert.doesNotThrow(() => assertInvariant(true, "valid"));
+    });
+
+    it("exercises EosDiffPatcher, EosSurgicalSelfHealingKernel, and EosSapFixAutoshipper edge branches", () => {
+      // 1. EosDiffPatcher branches
+      const diffWithNoNewline = [
+        "--- a/test.txt",
+        "+++ b/test.txt",
+        "@@ -1 +1 @@",
+        "-old line",
+        "\\ No newline at end of file",
+        "+new line",
+        "\\ No newline at end of file",
+      ].join("\n");
+      const parsedNoNewline = parseDiff(diffWithNoNewline);
+      assert.equal(parsedNoNewline.hunks.length, 1);
+      assert.equal(parsedNoNewline.hunks[0].oldCount, 1);
+      assert.equal(parsedNoNewline.hunks[0].newCount, 1);
+
+      // applyDiff escape target
+      const patchEscape = applyDiff(
+        { oldPath: "../escape.txt", newPath: "../escape.txt", hunks: [], sha256: "00" },
+        root,
+      );
+      assert.equal(patchEscape.success, false);
+      assert.ok(patchEscape.error?.includes("escapes project root"));
+
+      // applyDiff non-existent target
+      const patchNotFound = applyDiff(
+        { oldPath: "nonexistent-file.xyz", newPath: "nonexistent-file.xyz", hunks: [], sha256: "00" },
+        root,
+      );
+      assert.equal(patchNotFound.success, false);
+      assert.ok(patchNotFound.error?.includes("does not exist"));
+
+      // applyDiff mismatch removal line (triggers restore from backup)
+      const tmpPatchDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-patch-test-"));
+      try {
+        const testFile = path.join(tmpPatchDir, "target.txt");
+        fs.writeFileSync(testFile, "line 1\nline 2\nline 3\n", "utf8");
+        const mismatchDiff = {
+          oldPath: "target.txt",
+          newPath: "target.txt",
+          hunks: [
+            {
+              oldStart: 2,
+              oldCount: 1,
+              newStart: 2,
+              newCount: 1,
+              lines: [
+                { type: "remove", content: "WRONG LINE" },
+                { type: "add", content: "REPLACED" },
+              ],
+            },
+          ],
+          sha256: "11",
+        };
+        const mismatchRes = applyDiff(mismatchDiff, tmpPatchDir);
+        assert.equal(mismatchRes.success, false);
+        assert.ok(mismatchRes.error?.includes("Patch mismatch"));
+        // original content must be restored intact
+        assert.equal(fs.readFileSync(testFile, "utf8"), "line 1\nline 2\nline 3\n");
+
+        // generateDiff variations
+        const diffLeading = generateDiff("first\nsecond\nthird", "modified\nsecond\nthird", "file.txt");
+        assert.ok(diffLeading.includes("@@ -1,1 +1,1 @@"));
+        const diffTrailing = generateDiff("first\nsecond\nthird", "first\nsecond\nchanged", "file.txt");
+        assert.ok(diffTrailing.includes("@@ -3,1 +3,1 @@"));
+      } finally {
+        try {
+          fs.rmSync(tmpPatchDir, { recursive: true, force: true });
+        } catch {
+          void 0;
+        }
+      }
+
+      // 2. EosSurgicalSelfHealingKernel branches
+      // isolateFault bare stack and single-line fallback
+      const bareDiag = EosSurgicalSelfHealingKernel.isolateFault(
+        "TypeError: Cannot read properties of undefined (reading 'token')\n    at src/core/auth.ts:15:8",
+      );
+      assert.equal(bareDiag.targetExpression, "token");
+      assert.equal(bareDiag.filePath, "src/core/auth.ts");
+      assert.equal(bareDiag.lineNumber, 15);
+
+      const notDefDiag = EosSurgicalSelfHealingKernel.isolateFault(
+        "ReferenceError: client is not defined",
+        "src/client.ts",
+      );
+      assert.equal(notDefDiag.targetExpression, "client");
+      assert.equal(notDefDiag.filePath, "src/client.ts");
+
+      // synthesizeSurgicalPatch with BOUNDARY_CLAMP and TRY_CATCH_WRAPPER
+      const clampPatch = EosSurgicalSelfHealingKernel.synthesizeSurgicalPatch(
+        bareDiag,
+        "const x = array[idx];",
+        "BOUNDARY_CLAMP",
+      );
+      assert.equal(clampPatch.strategy, "BOUNDARY_CLAMP");
+
+      const tryCatchPatch = EosSurgicalSelfHealingKernel.synthesizeSurgicalPatch(
+        notDefDiag,
+        "return client.connect();",
+        "TRY_CATCH_WRAPPER",
+      );
+      assert.equal(tryCatchPatch.strategy, "TRY_CATCH_WRAPPER");
+
+      // synthesizeSurgicalPatch NULL_CHECK_GUARD with nested property
+      const nestedDiag = EosSurgicalSelfHealingKernel.isolateFault(
+        "TypeError: Cannot read properties of undefined (reading 'port')",
+        "const p = config.network.port;",
+      );
+      const nestedPatch = EosSurgicalSelfHealingKernel.synthesizeSurgicalPatch(
+        nestedDiag,
+        "const p = config.network.port;",
+        "NULL_CHECK_GUARD",
+      );
+      assert.ok(nestedPatch.replacementSnippet.includes("!config"));
+
+      // applyPatchInMemory
+      const patchedMemory = EosSurgicalSelfHealingKernel.applyPatchInMemory("line 1\nline 2", tryCatchPatch);
+      assert.ok(patchedMemory.includes("try {"));
+
+      // verifyInSandbox with intentional regression failure
+      const failSim = EosSurgicalSelfHealingKernel.verifyInSandbox({
+        originalSource: "function run() { return 1; }",
+        patch: clampPatch,
+        regressionTestCode: "throw new Error('Sandbox assertion regression');",
+      });
+      assert.equal(failSim.status, "FAIL");
+      assert.equal(failSim.targetFunctionPass, false);
+
+      // 3. EosSapFixAutoshipper branches
+      assert.throws(
+        () => EosSapFixAutoshipper.executeCycle({ faultId: "", targetFilePath: "x", failingLine: 1 }),
+        /faultId is required/,
+      );
+      assert.throws(
+        () => EosSapFixAutoshipper.executeCycle({ faultId: "F1", targetFilePath: "", failingLine: 1 }),
+        /targetFilePath is required/,
+      );
+      assert.throws(
+        () => EosSapFixAutoshipper.executeCycle({ faultId: "F1", targetFilePath: "x", failingLine: 0 }),
+        /failingLine must be positive/,
+      );
+
+      const sapReport = EosSapFixAutoshipper.executeCycle(
+        {
+          faultId: "FA-002",
+          targetFilePath: "nonexistent/mocked.ts",
+          failingLine: 2,
+          errorMessage: "Cannot read properties of null (reading 'id')",
+          offendingExpression: "data.id",
+        },
+        root,
+        { customBranchPrefix: "fix/custom-branch" },
+      );
+      assert.ok(sapReport.branchName.startsWith("fix/custom-branch"));
+      assert.equal(typeof sapReport.verificationPassed, "boolean");
+      assert.ok(sapReport.status === "PR_READY" || sapReport.status === "REGRESSION_REJECTED");
+      assert.equal(EosSapFixAutoshipper.recordReceiptInLedger(sapReport, ":memory:"), true);
+
+      // 4. EosDocumentationSearch empty query and getStats
+      const docSearch = new EosDocumentationSearch(root, ":memory:");
+      assert.throws(() => docSearch.search("   "), /Search query must be a non-empty string/);
+      assert.deepEqual(docSearch.search("???"), []);
+      const stats = docSearch.getStats();
+      assert.equal(typeof stats.totalIndexed, "number");
+      docSearch.close();
     });
   });
 });
