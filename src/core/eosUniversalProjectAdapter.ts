@@ -190,7 +190,11 @@ export class EosUniversalProjectAdapter {
     if (!fs.statSync(resolvedPath).isDirectory()) throw new Error(`Target path is not a directory: ${resolvedPath}`);
 
     let projectName = path.basename(resolvedPath);
-    if (projectName === "path0" || projectName.startsWith("tmp")) {
+    // Agent sandboxes often check out the repo as path0, tmp*, or workspace.
+    // Keep the folder name for real projects; only relabel those generic roots
+    // when this checkout still carries the Glorian catalog descriptor.
+    const genericCheckout = projectName === "path0" || projectName === "workspace" || projectName.startsWith("tmp");
+    if (genericCheckout) {
       const catalogPath = path.join(resolvedPath, "catalog-info.yaml");
       if (fs.existsSync(catalogPath)) {
         projectName = "Eos-System";

@@ -25,6 +25,23 @@ describe("EOS Universal Polyglot Repository Inventory Suite (SPEC-019, BDD-049)"
       assert.equal(report.fingerprint.ciCd, "github_actions");
     });
 
+    it("relabels a generic workspace checkout when the Glorian catalog is present", () => {
+      const parent = fs.mkdtempSync(path.join(os.tmpdir(), "eos-checkout-"));
+      const checkout = path.join(parent, "workspace");
+      const unrelated = path.join(parent, "real-app");
+      try {
+        fs.mkdirSync(checkout);
+        fs.writeFileSync(path.join(checkout, "catalog-info.yaml"), "metadata:\n  name: eos-system-control-plane\n");
+        fs.mkdirSync(unrelated);
+        fs.writeFileSync(path.join(unrelated, "catalog-info.yaml"), "metadata:\n  name: other\n");
+
+        assert.equal(new EosUniversalProjectAdapter(checkout).audit().projectName, "Eos-System");
+        assert.equal(new EosUniversalProjectAdapter(unrelated).audit().projectName, "real-app");
+      } finally {
+        fs.rmSync(parent, { recursive: true, force: true });
+      }
+    });
+
     it("reports bounded signal groups and states that production readiness is not assessed", () => {
       const report = adapter.audit();
       const { pillars } = report;
