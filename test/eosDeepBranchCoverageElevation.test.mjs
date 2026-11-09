@@ -92,6 +92,8 @@ import { EosDatalogVerifier } from "../src/core/eosDatalogVerifier.ts";
 import { EosHnswVectorEngine } from "../src/core/eosHnswVectorEngine.ts";
 import { EosWorktreeOrchestrator } from "../src/core/eosWorktreeOrchestrator.ts";
 import { EosContinuousRefactorEngine } from "../src/core/eosContinuousRefactorEngine.ts";
+import { EosFleetSoundcheckMesh } from "../src/core/eosFleetSoundcheckMesh.ts";
+import { EosMctsHyperTuner } from "../src/core/eosMctsHyperTuner.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -3019,6 +3021,119 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       assert.equal(daemon.isRunning(), true);
       daemon.stop();
       assert.equal(daemon.isRunning(), false);
+    });
+
+    it("exercises eosFleetSoundcheckMesh.ts comprehensive branches and registry resolution", () => {
+      // 1. projectRoot omitted / non-existent -> default repos
+      const defReport = EosFleetSoundcheckMesh.auditFleet();
+      assert.equal(defReport.totalRepositories, 5);
+
+      const nonExistentReport = EosFleetSoundcheckMesh.auditFleet("C:/non-existent-fleet-root-xyz");
+      assert.equal(nonExistentReport.totalRepositories, 5);
+
+      // 2. Corrupt JSON in registry
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "soundcheck-test-"));
+      try {
+        const regDir = path.join(tmpDir, "docs/projects");
+        fs.mkdirSync(regDir, { recursive: true });
+
+        fs.writeFileSync(path.join(regDir, "registry.json"), "{ invalid-json ::: }");
+        const corruptReport = EosFleetSoundcheckMesh.auditFleet(tmpDir);
+        assert.equal(corruptReport.totalRepositories, 5);
+
+        // Empty projects
+        fs.writeFileSync(path.join(regDir, "registry.json"), JSON.stringify({ projects: [] }));
+        const emptyReport = EosFleetSoundcheckMesh.auditFleet(tmpDir);
+        assert.equal(emptyReport.totalRepositories, 5);
+
+        // Set custom env variable for fleet path resolution
+        const customFleetDir = path.join(tmpDir, "custom-fleet-repo");
+        fs.mkdirSync(customFleetDir, { recursive: true });
+        process.env.EOS_FLEET_CUSTOM_TEST_PATH = "custom-fleet-repo";
+
+        // Multi-tier project list hitting all branch conditions
+        const richProjects = [
+          { id: "eos-system", name: "Core", productionUrl: "https://core.app" },
+          {
+            id: "env-repo",
+            name: "Env Repo",
+            localPathEnv: "EOS_FLEET_CUSTOM_TEST_PATH",
+            productionUrl: "https://env.app",
+          },
+          {
+            id: "dir-repo",
+            name: "Dir Repo",
+            resolvedLocalDir: "custom-fleet-repo",
+            productionUrl: "http://insecure.app",
+          },
+          { id: "path-repo", name: "Path Repo", localPath: customFleetDir, productionUrl: "" },
+          { id: "missing-ineligible", name: "Missing 1", localPath: "C:/missing-1", productionUrl: "" },
+          {
+            id: "missing-eligible",
+            name: "Missing 2",
+            localPath: "C:/missing-2",
+            productionUrl: "https://missing2.app",
+          },
+          { id: "portafolio", name: "Fallback Match" },
+        ];
+        fs.writeFileSync(path.join(regDir, "registry.json"), JSON.stringify({ projects: richProjects }));
+
+        const richReport = EosFleetSoundcheckMesh.auditFleet(tmpDir);
+        assert.equal(richReport.totalRepositories, richProjects.length);
+        assert.equal(typeof richReport.deploymentAuthorizedQuorum, "boolean");
+        assert.equal(typeof richReport.fleetAverageScore, "number");
+
+        // Verify grades & remediation branches
+        const missingIneligible = richReport.reports.find((r) => r.id === "missing-ineligible");
+        assert.ok(missingIneligible);
+        assert.equal(missingIneligible.grade, "F");
+        assert.equal(missingIneligible.eligibleForAutonomousDeploy, false);
+        assert.ok(missingIneligible.remediationAction.includes("Remediar árbol de trabajo"));
+
+        const missingEligible = richReport.reports.find((r) => r.id === "missing-eligible");
+        assert.ok(missingEligible);
+        assert.equal(missingEligible.grade, "A+");
+        assert.equal(missingEligible.eligibleForAutonomousDeploy, true);
+      } finally {
+        delete process.env.EOS_FLEET_CUSTOM_TEST_PATH;
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
+    });
+
+    it("exercises eosMctsHyperTuner.ts parameter spaces, fitness calculation, and UCT tuning", () => {
+      const tunerDefault = new EosMctsHyperTuner();
+      const tunerCustom = new EosMctsHyperTuner(12345);
+
+      // Precondition error
+      assert.throws(() => tunerDefault.tuneParameters(0), /MCTS iterations must be > 0/);
+
+      // Fitness function evaluation across edge parameters
+      const fit1 = tunerDefault.evaluateFitness({
+        ringBufferSize: 1024,
+        maxConcurrency: 50,
+        gcThresholdMb: 64,
+        faultRate: 0.01,
+      });
+      assert.ok(fit1 > 0);
+
+      const fit2 = tunerDefault.evaluateFitness({
+        ringBufferSize: 16384,
+        maxConcurrency: 1000,
+        gcThresholdMb: 512,
+        faultRate: 0.1,
+      });
+      assert.ok(fit2 > 0);
+
+      // Tune parameters with small iteration count
+      const report = tunerCustom.tuneParameters(20, {
+        ringBufferSize: [1024, 2048],
+        maxConcurrency: [50, 100],
+        gcThresholdMb: [64, 128],
+        faultRate: [0.01, 0.02],
+      });
+      assert.equal(report.totalIterations, 20);
+      assert.ok(report.optimalFitness > 0);
+      assert.ok(report.sha256Receipt.length === 64);
     });
   });
 });
