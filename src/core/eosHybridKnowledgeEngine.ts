@@ -50,17 +50,11 @@ export interface SearchOptions {
   readonly category?: DocCategory | "ALL";
 }
 
-const STOPWORDS = new Set([
-  "a", "an", "the", "and", "or", "in", "on", "at", "to", "for", "with", "of", "is", "are",
-  "was", "were", "be", "been", "being", "have", "has", "had", "do", "does", "did", "but", "by",
-  "from", "into", "through", "during", "before", "after", "above", "below", "up", "down", "out",
-  "off", "over", "under", "again", "further", "then", "once", "here", "there", "when", "where",
-  "why", "how", "all", "any", "both", "each", "few", "more", "most", "other", "some", "such",
-  "no", "nor", "not", "only", "own", "same", "so", "than", "too", "very", "s", "t", "can",
-  "will", "just", "don", "should", "now", "de", "la", "el", "los", "las", "un", "una", "unos",
-  "unas", "en", "para", "por", "con", "sin", "sobre", "y", "o", "u", "e", "que", "es", "son",
-  "fue", "era", "se", "su", "sus", "al", "del", "lo", "como",
-]);
+const STOPWORDS = new Set(
+  "a an the and or in on at to for with of is are was were be been being have has had do does did but by from into through during before after above below up down out off over under again further then once here there when where why how all any both each few more most other some such no nor not only own same so than too very s t can will just don should now de la el los las un una unos unas en para por con sin sobre y o u e que es son fue era se su sus al del lo como".split(
+    " ",
+  ),
+);
 
 export class EosHybridKnowledgeEngine {
   public static readonly VECTOR_DIMENSIONS = 64;
@@ -494,7 +488,60 @@ export class EosHybridKnowledgeEngine {
         lexicalRank: idx + 1,
       }));
     } catch {
-      return [];
+      try {
+        const rawTerms = query
+          .replace(/[^\w\s-]/g, " ")
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean);
+        if (rawTerms.length === 0) return [];
+
+        const clauses: string[] = [];
+        const params: (string | number)[] = [];
+        for (const term of rawTerms) {
+          clauses.push("(f.title LIKE ? OR f.content LIKE ?)");
+          const pat = `%${term}%`;
+          params.push(pat, pat);
+        }
+
+        let sql = `
+          SELECT m.doc_id, m.title, m.file_path, m.category,
+                 substr(f.content, 1, 120) AS snippet,
+                 0 AS rank
+          FROM eos_docs_fts f
+          JOIN eos_docs_metadata m ON f.doc_id = m.doc_id
+          WHERE ${clauses.join(" AND ")}
+        `;
+
+        if (categoryFilter) {
+          sql += " AND m.category = ?";
+          params.push(categoryFilter);
+        }
+
+        sql += " LIMIT ?";
+        params.push(topK);
+
+        const rows = this.db.prepare(sql).all(...params) as Array<{
+          doc_id: string;
+          title: string;
+          file_path: string;
+          category: string;
+          snippet: string;
+          rank: number;
+        }>;
+
+        return rows.map((r, idx) => ({
+          id: r.doc_id,
+          score: Number((1 / (1 + idx)).toFixed(4)),
+          title: r.title,
+          snippet: r.snippet || "",
+          filePath: r.file_path,
+          category: r.category as DocCategory,
+          lexicalRank: idx + 1,
+        }));
+      } catch {
+        return [];
+      }
     }
   }
 

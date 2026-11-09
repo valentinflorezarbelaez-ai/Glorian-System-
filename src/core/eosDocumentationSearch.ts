@@ -249,8 +249,45 @@ export class EosDocumentationSearch {
 
       return deepFreeze(results);
     } catch {
-      // Fallback simple search if FTS syntax error
-      return deepFreeze([]);
+      try {
+        const queryTerms = sanitized.split(/\s+/).filter(Boolean);
+        if (queryTerms.length === 0) return deepFreeze([]);
+
+        const clauses: string[] = [];
+        const params: string[] = [];
+        for (const term of queryTerms) {
+          clauses.push("(title LIKE ? OR content LIKE ? OR doc_path LIKE ?)");
+          const pat = `%${term}%`;
+          params.push(pat, pat, pat);
+        }
+
+        const stmt = this.db.prepare(`
+          SELECT doc_path, doc_type, title, substr(content, 1, 120) as snippet, 0 as rank
+          FROM eos_docs_fts
+          WHERE ${clauses.join(" AND ")}
+          LIMIT ?
+        `);
+
+        const rows = stmt.all(...params, Math.min(limit, 50)) as Array<{
+          doc_path: string;
+          doc_type: string;
+          title: string;
+          snippet: string;
+          rank: number;
+        }>;
+
+        const results: DocSearchResult[] = rows.map((r) => ({
+          path: r.doc_path,
+          docType: r.doc_type,
+          title: r.title,
+          snippet: (r.snippet || "").replace(/\n+/g, " "),
+          rank: Number(r.rank || 0),
+        }));
+
+        return deepFreeze(results);
+      } catch {
+        return deepFreeze([]);
+      }
     }
   }
 
