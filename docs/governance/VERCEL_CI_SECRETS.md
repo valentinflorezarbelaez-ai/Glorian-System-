@@ -8,6 +8,7 @@ Never commit token values. Prefer GitHub Actions → Settings → Secrets and va
 | `VERCEL_TOKEN` | Yes | Bearer token for Vercel REST (`/v6/deployments`) |
 | `VERCEL_PROJECT_ID` | Optional | Overrides `docs/governance/vercel-fleet-projects.json` `controlPlane.projectId` |
 | `VERCEL_TEAM_ID` | Optional | Overrides committed `teamId` when the token is team-scoped |
+| `EOS_FLEET_CHECKOUT_TOKEN` | Optional | PAT with `repo` read on private fleet siblings (e.g. `portafolio`). Without it, dogfood sibling checkout is skipped (`continue-on-error`) and TTV records `SKIPPED_SIBLING`. |
 
 ## Fail-closed behavior
 
