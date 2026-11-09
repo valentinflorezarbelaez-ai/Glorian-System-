@@ -49,11 +49,47 @@ test("BDD-FLEET-SC-003: live probe boosts reachability when HTTPS is healthy", (
       httpStatus: 200,
       latencyMs: 120,
       probedAt: "2026-11-09T22:00:00.000Z",
+      policy: "ALLOWED",
     },
   );
   assert.equal(card.liveReachability, 100);
   assert.equal(card.liveProbe?.httpStatus, 200);
   assert.ok(card.score >= 90);
+});
+
+test("BDD-FLEET-SC-004: policy-rejected host scores below neutral unprobed", () => {
+  const rejected = buildFleetProductScorecard(
+    {
+      id: "portafolio",
+      name: "Portafolio",
+      status: "REGISTERED",
+      intake: "INTAKE_COMPLETE",
+      specification: "SPECIFICATION_APPROVED",
+      audit: "AUDIT_COMPLETE",
+      authorization: "LEVEL_3_PRODUCTION_AUTHORIZED",
+      productionUrl: "https://evil.example.com",
+    },
+    {
+      reachable: false,
+      httpStatus: 0,
+      latencyMs: 0,
+      probedAt: "2026-11-09T22:00:00.000Z",
+      policy: "REJECTED_HOST",
+    },
+  );
+  const unprobed = buildFleetProductScorecard({
+    id: "portafolio",
+    name: "Portafolio",
+    status: "REGISTERED",
+    intake: "INTAKE_COMPLETE",
+    specification: "SPECIFICATION_APPROVED",
+    audit: "AUDIT_COMPLETE",
+    authorization: "LEVEL_3_PRODUCTION_AUTHORIZED",
+    productionUrl: "https://evil.example.com",
+  });
+  assert.equal(rejected.liveReachability, 20);
+  assert.equal(unprobed.liveReachability, 70);
+  assert.ok(rejected.score < unprobed.score);
 });
 
 test("BDD-FLEET-SC-002: writeFleetProductScorecards persists registry products", () => {

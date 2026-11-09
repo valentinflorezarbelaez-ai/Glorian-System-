@@ -28,6 +28,8 @@ export interface FleetLiveProbeSignal {
   readonly httpStatus: number;
   readonly latencyMs: number;
   readonly probedAt: string;
+  /** Present when probing was attempted; REJECTED_* means SSRF/policy deny without network I/O. */
+  readonly policy?: "ALLOWED" | "REJECTED_HOST" | "REJECTED_SCHEME" | "MISSING_URL";
 }
 
 export interface FleetProductScorecard {
@@ -61,6 +63,13 @@ function pct(ok: boolean, weight = 100): number {
 
 function liveReachabilityPct(liveProbe: FleetLiveProbeSignal | null | undefined): number {
   if (!liveProbe) return 70;
+  if (
+    liveProbe.policy === "REJECTED_HOST" ||
+    liveProbe.policy === "REJECTED_SCHEME" ||
+    liveProbe.policy === "MISSING_URL"
+  ) {
+    return 20;
+  }
   if (!liveProbe.reachable) return 30;
   if (liveProbe.httpStatus >= 500) return 40;
   if (liveProbe.httpStatus >= 400) return 55;

@@ -93,14 +93,45 @@ async function probeUrl(url) {
   }
 }
 
-/** @type {Record<string, { reachable: boolean, httpStatus: number, latencyMs: number, probedAt: string }>} */
+/** @type {Record<string, { reachable: boolean, httpStatus: number, latencyMs: number, probedAt: string, policy: string }>} */
 const liveProbes = {};
 if (probeEnabled) {
   for (const project of projects) {
     if (!project?.id || project.id === "eos-system" || project.status !== "REGISTERED") continue;
-    const url = typeof project.productionUrl === "string" ? project.productionUrl : "";
-    if (!isAllowedProductionUrl(url)) continue;
-    liveProbes[project.id] = await probeUrl(url);
+    const probedAt = new Date().toISOString();
+    const url = typeof project.productionUrl === "string" ? project.productionUrl.trim() : "";
+    if (!url) {
+      liveProbes[project.id] = {
+        reachable: false,
+        httpStatus: 0,
+        latencyMs: 0,
+        probedAt,
+        policy: "MISSING_URL",
+      };
+      continue;
+    }
+    if (!url.startsWith("https://")) {
+      liveProbes[project.id] = {
+        reachable: false,
+        httpStatus: 0,
+        latencyMs: 0,
+        probedAt,
+        policy: "REJECTED_SCHEME",
+      };
+      continue;
+    }
+    if (!isAllowedProductionUrl(url)) {
+      // Explicit policy reject — never credit neutral "unprobed" reachability.
+      liveProbes[project.id] = {
+        reachable: false,
+        httpStatus: 0,
+        latencyMs: 0,
+        probedAt,
+        policy: "REJECTED_HOST",
+      };
+      continue;
+    }
+    liveProbes[project.id] = { ...(await probeUrl(url)), policy: "ALLOWED" };
   }
 }
 
