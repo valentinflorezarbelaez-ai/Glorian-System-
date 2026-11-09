@@ -286,17 +286,33 @@ export class EosDurableSqliteLedger {
       return deepFreeze(rows.map((r) => this.mapRow(r)));
     } catch {
       try {
-        const pattern = `%${rawQuery.replace(/[%_]/g, "")}%`;
-        const rows = this.db
-          .prepare(
-            `SELECT seq, entry_id, category, project_id, title, payload_json,
-                    engram_topic_key, created_at_iso, prev_hash, entry_hash
-             FROM eos_ledger_entries
-             WHERE title LIKE ? OR category LIKE ? OR project_id LIKE ?
-             ORDER BY seq DESC
-             LIMIT ?`,
-          )
-          .all(pattern, pattern, pattern, safeLimit) as Array<Record<string, unknown>>;
+        // Fallback for runtimes without FTS5 (e.g. Node 23 official builds where node:sqlite lacks SQLITE_ENABLE_FTS5)
+        const tokens = (ftsQuery || rawQuery)
+          .replace(/["*:?^~]/g, " ")
+          .trim()
+          .split(/\s+/)
+          .filter((t) => t.length > 0);
+
+        if (tokens.length === 0) {
+          return this.listRecent(safeLimit);
+        }
+
+        const clauses: string[] = [];
+        const params: string[] = [];
+        for (const token of tokens) {
+          clauses.push("(title LIKE ? OR category LIKE ? OR project_id LIKE ? OR payload_json LIKE ?)");
+          const pat = `%${token.replace(/[%_]/g, "")}%`;
+          params.push(pat, pat, pat, pat);
+        }
+
+        const sql = `SELECT seq, entry_id, category, project_id, title, payload_json,
+                            engram_topic_key, created_at_iso, prev_hash, entry_hash
+                     FROM eos_ledger_entries
+                     WHERE ${clauses.join(" AND ")}
+                     ORDER BY seq DESC
+                     LIMIT ?`;
+
+        const rows = this.db.prepare(sql).all(...params, safeLimit) as Array<Record<string, unknown>>;
         return deepFreeze(rows.map((r) => this.mapRow(r)));
       } catch {
         return this.listRecent(safeLimit);
