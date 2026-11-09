@@ -88,7 +88,11 @@ test("BDD-177: Cryptographic Verification Receipt & Ledger Monotonic Chain", () 
       ledger.close();
     }
   } finally {
-    fs.rmSync(tempDir, { recursive: true, force: true });
+    try {
+      fs.rmSync(tempDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+    } catch {
+      // Ignore cleanup error on Windows CI
+    }
   }
 });
 

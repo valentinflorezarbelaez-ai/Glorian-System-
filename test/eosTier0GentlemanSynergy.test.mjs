@@ -195,7 +195,11 @@ test("BDD-130: EosDurableSqliteLedger persists WAL + FTS5 across restarts and de
     assert.ok(tamperedReport.corruptedSequences.includes(2));
     ledger3.close();
   } finally {
-    fs.rmSync(tmpDir, { recursive: true, force: true });
+    try {
+      fs.rmSync(tmpDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+    } catch {
+      // Ignore cleanup error on Windows CI
+    }
   }
 });
 
@@ -323,6 +327,10 @@ test("BDD-132: EosGentlemanStackBridge certifies 100/100 SOVEREIGN_GENTLEMAN_APE
     assert.equal(parsedMcp.constitutionPreserved, true);
     assert.equal(parsedMcp.activeSddSkills.length, 11);
   } finally {
-    fs.rmSync(tmpRoot, { recursive: true, force: true });
+    try {
+      fs.rmSync(tmpRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+    } catch {
+      // Ignore cleanup error on Windows CI
+    }
   }
 });
