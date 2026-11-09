@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
   "totalSpecs": 180,
-  "catalogSha256": "b12e274ecb89ce6633dfa8a86a3adb67b9113ca0e13514fc6ab0a7d5ffd6125c",
+  "catalogSha256": "997608c7ea9c50f3a34d1756a0c926abd154c265cf7aa093bf0fde8253419679",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1609,10 +1609,10 @@
       "id": "SPEC-184",
       "title": "Multi-Tenant IAM Foundation",
       "status": "APPROVED",
-      "frCount": 10,
-      "bddCount": 6,
+      "frCount": 12,
+      "bddCount": 8,
       "file": "openspec/specs/SPEC-184-MULTI-TENANT-IAM-FOUNDATION.md",
-      "sha256": "83e055b05ce6e014ef7cd7274f08bd951cf7b2cecb6ffd78ae41a7fe95271735"
+      "sha256": "595fe396066e8e16666bde07b828e941ba6e826201125d366c3830eb42ab9216"
     },
     {
       "id": "SPEC-185",

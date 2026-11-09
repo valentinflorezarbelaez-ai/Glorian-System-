@@ -80,18 +80,19 @@ export function loadDefaultIamPolicyPack(projectRoot: string): readonly IamPolic
   }
 }
 
-/** True when the pack never grants the entire mcp/tools/ prefix (FR-944). */
+const REQUIRED_FINE_PREFIXES = [
+  "mcp/tools/eos_product_deliver_run",
+  "mcp/tools/eos_product_foundry_create",
+  "mcp/tools/eos_manage_worktree",
+  "mcp/tools/eos_autonomous_heal",
+] as const;
+
+/** True when the pack is fine-grained (FR-936 / FR-944): required tools, no broad prefix. */
 export function isLeastPrivilegeProductPolicyPack(policies: readonly IamPolicyRule[]): boolean {
   if (policies.length === 0) return false;
-  let hasDeliver = false;
-  for (const policy of policies) {
-    const prefix = policy.resourcePrefix || "";
-    if (prefix === "mcp/tools/" || prefix === "mcp/tools") return false;
-    if (prefix === "mcp/tools/eos_product_deliver_run" || prefix.startsWith("mcp/tools/eos_product_deliver_run")) {
-      hasDeliver = true;
-    }
-  }
-  return hasDeliver;
+  const prefixes = new Set(policies.map((policy) => policy.resourcePrefix || ""));
+  if (prefixes.has("mcp/tools/") || prefixes.has("mcp/tools")) return false;
+  return REQUIRED_FINE_PREFIXES.every((required) => prefixes.has(required));
 }
 
 export function defaultFactoryPrincipal(): IamPrincipal {

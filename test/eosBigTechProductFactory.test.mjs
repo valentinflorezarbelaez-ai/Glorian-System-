@@ -18,12 +18,22 @@ import { MCP_MUTATION_CAPABLE_TOOLS } from "../src/core/eosMcpIamCallGate.ts";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-test("BDD-942: default policy pack is least privilege", () => {
+test("BDD-942/936: default policy pack is fine-grained least privilege", () => {
   const policies = loadDefaultIamPolicyPack(projectRoot);
-  assert.ok(policies.length >= 2);
+  assert.ok(policies.length >= 4);
   assert.equal(isLeastPrivilegeProductPolicyPack(policies), true);
   assert.ok(policies.every((p) => p.resourcePrefix !== "mcp/tools/"));
-  assert.ok(policies.some((p) => p.resourcePrefix === "mcp/tools/eos_product_deliver_run"));
+  for (const required of [
+    "mcp/tools/eos_product_deliver_run",
+    "mcp/tools/eos_product_foundry_create",
+    "mcp/tools/eos_manage_worktree",
+    "mcp/tools/eos_autonomous_heal",
+  ]) {
+    assert.ok(
+      policies.some((p) => p.resourcePrefix === required),
+      `missing ${required}`,
+    );
+  }
 });
 
 test("BDD-940: authorized dry-run factory succeeds", () => {

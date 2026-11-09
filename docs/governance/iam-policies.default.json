@@ -1,6 +1,6 @@
 {
   "epistemicState": "IAM_DEFAULT_PACK_WITHIN_TESTED_SCOPE",
-  "note": "Least-privilege dogfood pack. Copy to .eos/iam-policies.json to enforce on MCP stdio. Does not grant the entire mcp/tools/ prefix.",
+  "note": "Fine-grained least-privilege dogfood pack (SPEC-184 FR-936). Copy to .eos/iam-policies.json for MCP stdio enforcement. Never grants the entire mcp/tools/ prefix.",
   "policies": [
     {
       "id": "local-engineer-product-deliver",
@@ -15,6 +15,20 @@
       "roles": ["engineer"],
       "actions": ["mcp.tools.call"],
       "resourcePrefix": "mcp/tools/eos_product_foundry_create"
+    },
+    {
+      "id": "local-engineer-manage-worktree",
+      "tenantId": "tenant-local",
+      "roles": ["engineer"],
+      "actions": ["mcp.tools.call"],
+      "resourcePrefix": "mcp/tools/eos_manage_worktree"
+    },
+    {
+      "id": "local-engineer-autonomous-heal",
+      "tenantId": "tenant-local",
+      "roles": ["engineer"],
+      "actions": ["mcp.tools.call"],
+      "resourcePrefix": "mcp/tools/eos_autonomous_heal"
     }
   ]
 }

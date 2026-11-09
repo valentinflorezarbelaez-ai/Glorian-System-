@@ -195,10 +195,12 @@ export type McpIamAuthorization =
       readonly dispatchArgs: Record<string, unknown>;
       readonly iamRequired: boolean;
       readonly iamCode: string;
+      readonly gate: McpIamGateResult;
     }
   | {
       readonly ok: false;
       readonly error: { code: number; message: string; data: Record<string, unknown> };
+      readonly gate: McpIamGateResult;
     };
 
 /** Single entry for EosMcpServer tools/call: deny or return stripped dispatch args. */
@@ -207,6 +209,7 @@ export function authorizeMcpToolsCall(input: McpIamGateInput): McpIamAuthorizati
   if (gate.required && (!gate.allowed || !gate.decision)) {
     return deepFreeze({
       ok: false,
+      gate,
       error: mcpIamDeniedRpcError(
         gate.decision || {
           ok: false,
@@ -221,6 +224,7 @@ export function authorizeMcpToolsCall(input: McpIamGateInput): McpIamAuthorizati
   }
   return deepFreeze({
     ok: true,
+    gate,
     dispatchArgs: stripMcpIamEnvelope(input.args || {}),
     iamRequired: gate.required,
     iamCode: gate.decision?.code || "NOT_REQUIRED",

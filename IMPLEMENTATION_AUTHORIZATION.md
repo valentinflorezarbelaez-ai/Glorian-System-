@@ -939,3 +939,11 @@
   - `test/eosBigTechProductFactory.test.mjs`
   - `docs/governance/iam-policies.default.json`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-09-IAM-AUDIT-LEDGER-184
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 2`)
+- **Milestone**: SPEC-184 FR-935/FR-936 (catalog freeze — no OpenSpec ids after 185)
+- **Owner Approval**: Owner directive 2026-11-09 — execute Big Tech backlog in order
+- **Scope**: Append-only IAM audit ledger; fine-grained default policies; fleet dogfood TTV; catalog freeze doctrine.
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

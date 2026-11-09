@@ -26,6 +26,10 @@ Ordered by product value:
 8. Multi-tenant IAM foundation: SPEC-184 + `eosMultiTenantIamFoundation.ts`.
 9. **MCP runtime IAM gate** — SPEC-184 FR-931..934 + `eosMcpIamCallGate.ts` on stdio `tools/call` mutating writes (fail-closed).
 10. **Big Tech Product Factory E2E** — SPEC-185 + `eosBigTechProductFactory.ts` + `npm run factory:e2e` (IAM → deliver → scorecard → receipt).
+11. **IAM audit ledger** — SPEC-184 FR-935 append-only `.eos/iam-audit.jsonl` hash chain on mutating tools/call.
+12. **Fine-grained IAM pack** — heal / worktree / deliver / foundry (FR-936); no broad `mcp/tools/` grant.
+13. **Fleet dogfood TTV** — `npm run fleet:dogfood` → `docs/evidence/FLEET_DOGFOOD_TTV_RECEIPT.json`.
+14. **Catalog freeze** — no OpenSpec ids after 185 until fleet dogfood has ≥1 AVAILABLE sibling (`docs/governance/CATALOG_FREEZE.md`).
 
 ## Mobile / touch hygiene (2026-11-09)
 

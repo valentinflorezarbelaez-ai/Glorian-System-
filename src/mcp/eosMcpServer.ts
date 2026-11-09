@@ -49,6 +49,7 @@ import {
   loadMcpIamPoliciesFromProject,
   loadMcpIamPrincipalFromEnv,
 } from "../core/eosMcpIamCallGate.ts";
+import { appendIamAuditEntry } from "../core/eosIamAuditLedger.ts";
 import type { IamPolicyRule, IamPrincipal } from "../core/eosMultiTenantIamFoundation.ts";
 
 export interface JsonRpcRequest {
@@ -399,6 +400,31 @@ export class EosMcpServer {
             policies: this.iamPolicies,
             defaultPrincipal: this.iamDefaultPrincipal,
           });
+          if (authz.gate.required && authz.gate.decision) {
+            try {
+              appendIamAuditEntry(this.projectRoot, {
+                toolName,
+                decision: authz.gate.decision,
+                principal: authz.gate.principal,
+                resourceId: authz.gate.resourceId,
+                requestId: id,
+              });
+            } catch (auditErr: any) {
+              return {
+                jsonrpc: "2.0",
+                id,
+                error: {
+                  code: -32030,
+                  message: "IAM audit ledger append failed (fail-closed).",
+                  data: {
+                    code: "DENY_AUDIT_IO",
+                    reason: String(auditErr?.message || auditErr),
+                    toolName,
+                  },
+                },
+              };
+            }
+          }
           if (!authz.ok) {
             return { jsonrpc: "2.0", id, error: authz.error };
           }

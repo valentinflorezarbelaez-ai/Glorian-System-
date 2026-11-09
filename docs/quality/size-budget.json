@@ -13,6 +13,7 @@
     "src/core/eosSpotifyAgenticFactory.ts": 863,
     "src/core/eosSpotifyCodex.ts": 849,
     "src/core/eosUniversalProjectAdapter.ts": 833,
+    "src/mcp/eosMcpServer.ts": 822,
     "src/mcp/eosMcpToolDefinitions.ts": 3243,
     "src/mcp/tools/eosMcpPhase7DomainHandlers.ts": 1447
   }

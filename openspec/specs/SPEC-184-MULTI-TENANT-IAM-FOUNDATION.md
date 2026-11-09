@@ -44,6 +44,10 @@ and resource at the dispatch boundary and fail closed when context is missing.
 
 - **FR-934 (Event-Driven - Allow Mutating Call)**: `WHEN a registered policy grants action mcp.tools.call on resource mcp/tools/<toolName> for the caller's tenant and roles, THE SYSTEM SHALL allow the call and attach the IAM SHA-256 receipt to the decision audit field.`
 
+- **FR-935 (Event-Driven - Append-Only Audit Ledger)**: `WHEN an IAM decision is required for a mutating tools/call, THE SYSTEM SHALL append an allow or deny record to .eos/iam-audit.jsonl with previousHash and entryHash before returning the JSON-RPC response. IF the append fails, THEN THE SYSTEM SHALL fail closed and SHALL NOT dispatch the tool.`
+
+- **FR-936 (Ubiquitous - Fine-Grained Default Pack)**: `THE SYSTEM SHALL ship a default IAM policy pack that grants mcp.tools.call per tool resource (eos_product_deliver_run, eos_product_foundry_create, eos_manage_worktree, eos_autonomous_heal) and SHALL NOT grant the entire mcp/tools/ prefix.`
+
 ## 3. Acceptance Criteria (BDD Gherkin)
 
 ```gherkin
@@ -91,6 +95,19 @@ SCENARIO: BDD-933 granted policy allows mutating write
   WHEN tools/call is handled with apply=true
   THEN IAM code is ALLOW
   AND the tool handler is dispatched
+
+SCENARIO: BDD-935 IAM decisions are hash-chained into the audit ledger
+  GIVEN a mutating write tools/call that requires IAM
+  WHEN the call is handled
+  THEN .eos/iam-audit.jsonl gains one entry
+  AND entry.previousHash matches the prior entryHash or genesis
+  AND verifyIamAuditLedger reports ok
+
+SCENARIO: BDD-936 default pack covers heal worktree deliver foundry without broad prefix
+  GIVEN the shipped default IAM policy pack
+  WHEN policies are inspected
+  THEN resource prefixes include eos_autonomous_heal, eos_manage_worktree, eos_product_deliver_run, and eos_product_foundry_create
+  AND no policy grants mcp/tools/ as a whole
 ```
 
 ## 4. Non-Claims

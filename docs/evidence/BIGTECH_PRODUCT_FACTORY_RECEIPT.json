@@ -1,6 +1,6 @@
 {
   "epistemicState": "BIGTECH_PRODUCT_FACTORY_WITHIN_TESTED_SCOPE",
-  "generatedAt": "2026-11-09T19:56:53.433Z",
+  "generatedAt": "2026-11-09T20:06:03.720Z",
   "status": "SUCCESS",
   "reason": null,
   "dryRun": true,
@@ -8,9 +8,9 @@
   "iamCode": "ALLOW",
   "iamReceipt": "f79e521d09642719978f7ffd53ffb7b67750997bc363e978f0c1b1b431cd0009",
   "deliveryStatus": "SUCCESS",
-  "deliveryReceipt": "890d430f798ec9730d8e057152c57fe8b335b295d99022dfba4313519dcedfa3",
+  "deliveryReceipt": "8357891ea6e5f6cf0cb7f18fee3b119f47d830084c6f7ac01211863a9789ae53",
   "scorecardScore": 100,
   "scorecardGrade": "A+",
-  "durationMs": 8.049,
-  "sha256Receipt": "6a4a34431878b1e15f2bd95c48e8976cd5a7456bd370764bde2cc7278c129f27"
+  "durationMs": 9.198,
+  "sha256Receipt": "d67c8e9505d1ca96f4f7febddbfd5c7cd34d613338b84a2d5bce7a14e5a661ff"
 }
