@@ -242,8 +242,32 @@ export function detectPrefilledPasswordInputs(content, filePath) {
   return findings;
 }
 
+function isExemptMarkupPath(filePath) {
+  const normPath = String(filePath || "").replace(/\\/g, "/");
+  const lower = normPath.toLowerCase();
+  const resolved = path.resolve(normPath).replace(/\\/g, "/");
+  const cwdLanding = path.resolve(process.cwd(), "index.html").replace(/\\/g, "/");
+  const directoryMarkers = ["/openspec/", "/docs/", "/test/", "/tools/", "/scripts/", "/.agents/"];
+  const relativeMarkers = ["openspec/", "docs/", "test/", "tools/", "scripts/", ".agents/"];
+
+  if (directoryMarkers.some((marker) => lower.includes(marker) || resolved.toLowerCase().includes(marker))) {
+    return true;
+  }
+  if (relativeMarkers.some((marker) => lower.startsWith(marker))) {
+    return true;
+  }
+  if (lower === "index.html" || resolved === cwdLanding) {
+    return true;
+  }
+  return (
+    lower.endsWith("eos-system/index.html") ||
+    lower.endsWith("glorian-system/index.html") ||
+    lower.endsWith("glorian-system-/index.html")
+  );
+}
+
 export function detectUiPlumbingLeaks(content, filePath) {
-  const normPath = path.resolve(filePath).replace(/\\/g, "/");
+  const normPath = String(filePath || "").replace(/\\/g, "/");
   const ext = path.extname(normPath).toLowerCase();
 
   // UI leak detector only inspects client-facing markup/HTML files
@@ -251,19 +275,10 @@ export function detectUiPlumbingLeaks(content, filePath) {
     return [];
   }
 
-  // Exempt formal documentation, spec directories, and Glorian / EOS System's own landing page
-  if (
-    normPath.includes("/openspec/") ||
-    normPath.includes("/docs/") ||
-    normPath.includes("/test/") ||
-    normPath.includes("/tools/") ||
-    normPath.includes("/scripts/") ||
-    normPath.includes("/.agents/") ||
-    normPath === "index.html" ||
-    normPath.toLowerCase().endsWith("eos-system/index.html") ||
-    normPath.toLowerCase().endsWith("glorian-system/index.html") ||
-    normPath.toLowerCase().endsWith("glorian-system-/index.html")
-  ) {
+  // Exempt formal documentation, spec directories, and this checkout's own landing page.
+  // The landing exemption follows the file, not the folder name: CI workspaces are not
+  // always named Glorian-System, and path.resolve("index.html") is never equal to "index.html".
+  if (isExemptMarkupPath(normPath)) {
     return [];
   }
 

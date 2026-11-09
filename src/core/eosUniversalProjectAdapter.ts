@@ -190,11 +190,9 @@ export class EosUniversalProjectAdapter {
     if (!fs.statSync(resolvedPath).isDirectory()) throw new Error(`Target path is not a directory: ${resolvedPath}`);
 
     let projectName = path.basename(resolvedPath);
-    if (projectName === "path0" || projectName.startsWith("tmp")) {
-      const catalogPath = path.join(resolvedPath, "catalog-info.yaml");
-      if (fs.existsSync(catalogPath)) {
-        projectName = "Eos-System";
-      }
+    const genericCheckout = projectName === "path0" || projectName === "workspace" || projectName.startsWith("tmp");
+    if (genericCheckout && fs.existsSync(path.join(resolvedPath, "catalog-info.yaml"))) {
+      projectName = "Eos-System";
     }
     const files = this.scanDir(resolvedPath, 3);
     const fingerprint = this.fingerprintRepo(resolvedPath, files);

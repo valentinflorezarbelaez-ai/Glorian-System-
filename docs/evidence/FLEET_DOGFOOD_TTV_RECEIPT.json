@@ -1,0 +1,171 @@
+{
+  "epistemicState": "FLEET_DOGFOOD_TTV_WITHIN_TESTED_SCOPE",
+  "generatedAt": "2026-11-09T20:06:03.832Z",
+  "catalogFreeze": {
+    "active": true,
+    "rule": "No new OpenSpec ids after 185 until fleet dogfood has >=1 AVAILABLE sibling and this receipt stays green.",
+    "openSpecCountAtSeal": 180
+  },
+  "fleet": {
+    "registered": 9,
+    "available": 1,
+    "skippedSibling": 8,
+    "targets": [
+      {
+        "id": "aberamentho",
+        "name": "Aberamentho Pleroma Music",
+        "localPathEnv": "EOS_FLEET_ABERAMENTHO_PATH",
+        "path": null,
+        "status": "SKIPPED_SIBLING"
+      },
+      {
+        "id": "atp-strength",
+        "name": "ATP Strength & Hypertrophy Platform",
+        "localPathEnv": "EOS_FLEET_ATP_STRENGTH_PATH",
+        "path": null,
+        "status": "SKIPPED_SIBLING"
+      },
+      {
+        "id": "biblioteca-gnostica-1",
+        "name": "Biblioteca Gnóstica — Preservación Digital de Textos Sagrados",
+        "localPathEnv": "EOS_FLEET_BIBLIOTECA_GNOSTICA_1_PATH",
+        "path": null,
+        "status": "SKIPPED_SIBLING"
+      },
+      {
+        "id": "control-de-asistencia-abopack",
+        "name": "Avo Pack S.A.S. — Central de Asistencia y Liquidación Laboral",
+        "localPathEnv": "EOS_FLEET_CONTROL_DE_ASISTENCIA_ABOPACK_PATH",
+        "path": null,
+        "status": "SKIPPED_SIBLING"
+      },
+      {
+        "id": "crud-slack",
+        "name": "TaskFlow AI — Omnichannel Request-to-Task CRUD & Triage",
+        "localPathEnv": "EOS_FLEET_CRUD_SLACK_PATH",
+        "path": null,
+        "status": "SKIPPED_SIBLING"
+      },
+      {
+        "id": "donaciones",
+        "name": "Portal de Donaciones — Sede AGEAC & Tercer Factor",
+        "localPathEnv": "EOS_FLEET_DONACIONES_PATH",
+        "path": null,
+        "status": "SKIPPED_SIBLING"
+      },
+      {
+        "id": "eos-system",
+        "name": "Glorian (Control Plane Core)",
+        "localPathEnv": "EOS_FLEET_EOS_SYSTEM_PATH",
+        "path": "/workspace",
+        "status": "AVAILABLE"
+      },
+      {
+        "id": "performance-talent-group",
+        "name": "PTG — Performance Talent Group",
+        "localPathEnv": "EOS_FLEET_PTG_PATH",
+        "path": null,
+        "status": "SKIPPED_SIBLING"
+      },
+      {
+        "id": "portafolio",
+        "name": "Portafolio Oficial — Valentín Flórez",
+        "localPathEnv": "EOS_FLEET_PORTAFOLIO_PATH",
+        "path": null,
+        "status": "SKIPPED_SIBLING"
+      }
+    ]
+  },
+  "paths": [
+    {
+      "id": "CONTROL_PLANE_PRODUCT_FACTORY",
+      "ok": true,
+      "durationMs": 9.198,
+      "status": "SUCCESS",
+      "sha256Receipt": "d67c8e9505d1ca96f4f7febddbfd5c7cd34d613338b84a2d5bce7a14e5a661ff"
+    },
+    {
+      "id": "FLOW_INSPECT:aberamentho",
+      "ok": true,
+      "skipped": true,
+      "status": "SKIPPED_SIBLING",
+      "durationMs": 0,
+      "path": null
+    },
+    {
+      "id": "FLOW_INSPECT:atp-strength",
+      "ok": true,
+      "skipped": true,
+      "status": "SKIPPED_SIBLING",
+      "durationMs": 0,
+      "path": null
+    },
+    {
+      "id": "FLOW_INSPECT:biblioteca-gnostica-1",
+      "ok": true,
+      "skipped": true,
+      "status": "SKIPPED_SIBLING",
+      "durationMs": 0,
+      "path": null
+    },
+    {
+      "id": "FLOW_INSPECT:control-de-asistencia-abopack",
+      "ok": true,
+      "skipped": true,
+      "status": "SKIPPED_SIBLING",
+      "durationMs": 0,
+      "path": null
+    },
+    {
+      "id": "FLOW_INSPECT:crud-slack",
+      "ok": true,
+      "skipped": true,
+      "status": "SKIPPED_SIBLING",
+      "durationMs": 0,
+      "path": null
+    },
+    {
+      "id": "FLOW_INSPECT:donaciones",
+      "ok": true,
+      "skipped": true,
+      "status": "SKIPPED_SIBLING",
+      "durationMs": 0,
+      "path": null
+    },
+    {
+      "id": "FLOW_INSPECT:eos-system",
+      "ok": true,
+      "skipped": false,
+      "status": "SUCCESS",
+      "durationMs": 111,
+      "path": "/workspace",
+      "exitCode": 0
+    },
+    {
+      "id": "FLOW_INSPECT:performance-talent-group",
+      "ok": true,
+      "skipped": true,
+      "status": "SKIPPED_SIBLING",
+      "durationMs": 0,
+      "path": null
+    },
+    {
+      "id": "FLOW_INSPECT:portafolio",
+      "ok": true,
+      "skipped": true,
+      "status": "SKIPPED_SIBLING",
+      "durationMs": 0,
+      "path": null
+    }
+  ],
+  "metrics": {
+    "pathCount": 10,
+    "allOk": true,
+    "totalDurationMs": 120.19800000000001,
+    "maxPathDurationMs": 111,
+    "p99BudgetMs": 180000,
+    "withinBudget": true,
+    "siblingDogfoodReady": false
+  },
+  "sha256Receipt": "eace91f5adad6cb925f080aa2652b4bb97f001eb88cb2b3ed759e5c82fdf91d1"
+}

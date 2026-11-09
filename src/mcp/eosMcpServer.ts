@@ -44,6 +44,13 @@ import { createPhase7DomainHandlers } from "./tools/eosMcpPhase7DomainHandlers.t
 import { createPhase8AgiHandlers } from "./tools/eosMcpPhase8AgiHandlers.ts";
 import { resolveConfinedLedgerPath, resolveProjectPath } from "./eosMcpPathResolver.ts";
 import { EosMcpSchemaValidator, type McpToolSchemaDef } from "../core/eosMcpSchemaValidator.ts";
+import {
+  authorizeMcpToolsCall,
+  loadMcpIamPoliciesFromProject,
+  loadMcpIamPrincipalFromEnv,
+} from "../core/eosMcpIamCallGate.ts";
+import { appendIamAuditEntry } from "../core/eosIamAuditLedger.ts";
+import type { IamPolicyRule, IamPrincipal } from "../core/eosMultiTenantIamFoundation.ts";
 
 export interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -131,6 +138,8 @@ export class EosMcpServer {
   private readonly serverVersion: string;
   private toolProfile: McpToolProfile;
   private readonly dispatchRegistry = new EosMcpDispatchRegistry();
+  private iamPolicies: readonly IamPolicyRule[] = [];
+  private iamDefaultPrincipal: IamPrincipal | null = null;
 
   constructor(projectRoot?: string, profile?: McpToolProfile) {
     this.toolProfile = normalizeToolProfile(profile ?? process.env.EOS_MCP_PROFILE);
@@ -221,10 +230,22 @@ export class EosMcpServer {
         projectRoot: this.projectRoot,
       }),
     );
+    this.iamPolicies = loadMcpIamPoliciesFromProject(this.projectRoot);
+    this.iamDefaultPrincipal = loadMcpIamPrincipalFromEnv();
   }
 
   public setToolProfile(profile: McpToolProfile): void {
     this.toolProfile = normalizeToolProfile(profile);
+  }
+
+  /** Test/dogfood hook: replace in-memory IAM policies (SPEC-184 MCP gate). */
+  public configureIamPolicies(policies: readonly IamPolicyRule[]): void {
+    this.iamPolicies = policies.slice();
+  }
+
+  /** Test/dogfood hook: set a default principal when _meta.iam is absent. */
+  public configureIamDefaultPrincipal(principal: IamPrincipal | null): void {
+    this.iamDefaultPrincipal = principal;
   }
 
   /** Tool names with a modular handler registered in the dispatch registry. */
@@ -372,6 +393,42 @@ export class EosMcpServer {
             };
           }
 
+          const authz = authorizeMcpToolsCall({
+            toolName,
+            args,
+            meta: isPlainRecord(params?._meta) ? params._meta : null,
+            policies: this.iamPolicies,
+            defaultPrincipal: this.iamDefaultPrincipal,
+          });
+          if (authz.gate.required && authz.gate.decision) {
+            try {
+              appendIamAuditEntry(this.projectRoot, {
+                toolName,
+                decision: authz.gate.decision,
+                principal: authz.gate.principal,
+                resourceId: authz.gate.resourceId,
+                requestId: id,
+              });
+            } catch (auditErr: any) {
+              return {
+                jsonrpc: "2.0",
+                id,
+                error: {
+                  code: -32030,
+                  message: "IAM audit ledger append failed (fail-closed).",
+                  data: {
+                    code: "DENY_AUDIT_IO",
+                    reason: String(auditErr?.message || auditErr),
+                    toolName,
+                  },
+                },
+              };
+            }
+          }
+          if (!authz.ok) {
+            return { jsonrpc: "2.0", id, error: authz.error };
+          }
+
           const traceEngine = EosOtelTraceEngine.getInstance({ projectRoot: this.projectRoot });
           const traceparent = (params?._meta as any)?.traceparent || (params as any)?.traceparent;
           const span = traceEngine.startSpan(`mcp.tool.${toolName}`, {
@@ -380,12 +437,14 @@ export class EosMcpServer {
             attributes: {
               "mcp.tool_name": toolName,
               "mcp.request_id": String(id),
+              "mcp.iam.required": authz.iamRequired,
+              "mcp.iam.code": authz.iamCode,
             },
           });
 
           let rawResult: any;
           try {
-            rawResult = this.dispatchTool(toolName, args, onProgress);
+            rawResult = this.dispatchTool(toolName, authz.dispatchArgs, onProgress);
           } catch (dispatchErr: any) {
             span.recordException(dispatchErr);
             span.end();

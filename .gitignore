@@ -22,4 +22,8 @@ pipeline-run.log
 .eos-graph-cache.json
 data/
 *.db
+# Runtime forge + consulting fixtures left by hermetic MCP/AGI suites.
+src/dynamic_tools/*.tool.mjs
+src/dynamic_tools/forge_manifest.json
+docs/consulting/
 
