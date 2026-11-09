@@ -310,7 +310,7 @@ export class EosWorktreeOrchestrator {
         clean: modifiedFiles.length === 0,
         modifiedFiles,
         untrackedFiles,
-        currentBranch: branchOutput.trim(),
+        currentBranch: branchOutput.trim() || process.env.GITHUB_REF_NAME || "HEAD",
       };
     } catch {
       return {
