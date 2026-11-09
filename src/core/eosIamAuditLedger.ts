@@ -93,6 +93,65 @@ export function appendIamAuditEntry(projectRoot: string, input: IamAuditAppendIn
   return deepFreeze({ entry, ledgerPath });
 }
 
+/**
+ * Export verified ledger rows as NDJSON for SIEM / log shipper ingest.
+ * Fail-closed if the hash chain does not verify.
+ */
+export function exportIamAuditLedgerForSiem(
+  projectRoot: string,
+  outputRelPath: string = path.join("docs", "evidence", "IAM_AUDIT_SIEM_EXPORT.ndjson"),
+): {
+  readonly ok: boolean;
+  readonly entries: number;
+  readonly outputPath: string;
+  readonly reason: string | null;
+  readonly sha256Receipt: string;
+} {
+  const verified = verifyIamAuditLedger(projectRoot);
+  const outputPath = path.join(projectRoot, outputRelPath);
+  if (!verified.ok) {
+    return deepFreeze({
+      ok: false,
+      entries: verified.entries,
+      outputPath,
+      reason: verified.reason,
+      sha256Receipt: crypto.createHash("sha256").update(`SIEM_EXPORT_FAIL:${verified.reason}`).digest("hex"),
+    });
+  }
+  const ledgerPath = path.join(projectRoot, ledgerRelPath());
+  const raw = fs.existsSync(ledgerPath) ? fs.readFileSync(ledgerPath, "utf8").trim() : "";
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  const ndjson = raw
+    ? raw
+        .split("\n")
+        .map((line) => {
+          const entry = JSON.parse(line) as IamAuditEntry;
+          return JSON.stringify({
+            eventType: "glorian.iam.decision",
+            ts: entry.ts,
+            toolName: entry.toolName,
+            code: entry.code,
+            ok: entry.ok,
+            subjectId: entry.subjectId,
+            tenantId: entry.tenantId,
+            resourceId: entry.resourceId,
+            matchedPolicyId: entry.matchedPolicyId,
+            decisionReceipt: entry.decisionReceipt,
+            entryHash: entry.entryHash,
+          });
+        })
+        .join("\n") + "\n"
+    : "";
+  fs.writeFileSync(outputPath, ndjson, "utf8");
+  return deepFreeze({
+    ok: true,
+    entries: verified.entries,
+    outputPath,
+    reason: null,
+    sha256Receipt: crypto.createHash("sha256").update(`SIEM_EXPORT:${verified.entries}:${ndjson.length}`).digest("hex"),
+  });
+}
+
 /** Verify hash chain integrity of an on-disk ledger. */
 export function verifyIamAuditLedger(projectRoot: string): {
   readonly ok: boolean;

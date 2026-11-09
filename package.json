@@ -29,6 +29,8 @@
     "ttv:golden": "node scripts/eos-golden-path-ttv.mjs",
     "factory:e2e": "node scripts/eos-bigtech-product-factory-e2e.mjs",
     "fleet:dogfood": "node scripts/eos-fleet-dogfood-ttv.mjs",
+    "ops:seal": "node scripts/eos-bigtech-ops-seal.mjs",
+    "dora:track": "node scripts/track-dora-metrics.mjs",
     "scale:proof": "node scripts/eos-bounded-scale-proof.mjs",
     "llmops:privacy": "node --test test/eosLlmOpsPrivacyLane.test.mjs",
     "attest": "node scripts/eos-github-pr-attestation.mjs",

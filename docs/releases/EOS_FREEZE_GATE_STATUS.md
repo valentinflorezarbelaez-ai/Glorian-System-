@@ -13,20 +13,20 @@
 | Invariant Dimension | Verified Ground-Truth | Gate Status |
 |---|---|---|
 | **Release Version (SSOT)** | `75.0.0` (`package.json`) | SEALED |
-| **Node.js Engine** | v22.23.4 | PASS |
+| **Node.js Engine** | v24.21.0 | PASS |
 | **Layer-0 Runtime Dependencies** | `dependencies: {}` (0 external npm packages) | SEALED |
 | **Active Formal Specs (OpenSpec)** | 180 Specifications (EARS IEEE 830 / BDD ISO 29148) | APPROVED |
 | **Formal TLA+ Models** | 41 Models (bounded simulation + invariant verification) | VERIFIED |
-| **Automated Test Suites** | 178 Node.js Test Suites (`test/*.test.mjs`) | 99.8% PASS |
+| **Automated Test Suites** | 179 Node.js Test Suites (`test/*.test.mjs`) | 99.8% PASS |
 | **V8 Code Coverage** | 83.96% lines / 75.02% branches / 83.77% functions                | ABOVE GATE (80% / 75% / 75%) |
-| **Core TypeScript Modules** | 266 Layer-0 Pure Modules (`src/core/`) | 100% TYPE-SAFE |
-| **JavaScript / MJS Modules** | 77 Validated Modules (`bin/`, `scripts/`, `api/`) | 100% SYNTAX-CLEAN |
+| **Core TypeScript Modules** | 269 Layer-0 Pure Modules (`src/core/`) | 100% TYPE-SAFE |
+| **JavaScript / MJS Modules** | 78 Validated Modules (`bin/`, `scripts/`, `api/`) | 100% SYNTAX-CLEAN |
 | **Subresource Integrity (SRI)** | SHA-384 verified across CSS & JS bundles | VERIFIED |
 | **SSRF & Sandbox Defense** | Loopback/Link-local/AWS-GCP metadata shielding | ENFORCED |
 | **Monotonic Ledger WAL** | SQLite WAL + FTS5 + SHA-256 Block Chaining | VERIFIED |
 | **Big Tech Frontier Pillars** | 6/6 (SapFix, SLSA/SBOM, CAS, SMT, Chaos, BFT) | VERIFIED |
 | **CI Pipeline Stages** | 7 + 4.4-4.7 Deep Sub-Gates (SLO/Perf, Coverage, Mutation, Flaky) | GREEN |
-| **Freeze Pin (HEAD)** | `bdfb7e37` | PINNED |
+| **Freeze Pin (HEAD)** | `35f5257b` | PINNED |
 
 ---
 

@@ -19,6 +19,7 @@ import {
   runBigTechProductFactory,
   writeBigTechFactoryReceipt,
 } from "../src/core/eosBigTechProductFactory.ts";
+import { resolveFleetRegistryPaths } from "../src/core/eosFleetPathResolver.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, "..");
@@ -36,22 +37,21 @@ function loadRegistry() {
   return JSON.parse(fs.readFileSync(path.join(projectRoot, "docs", "projects", "registry.json"), "utf8"));
 }
 
+function redactPath(absolutePath) {
+  if (!absolutePath) return null;
+  // Law VI: never persist machine-local absolute paths in committed evidence.
+  return path.basename(path.resolve(absolutePath));
+}
+
 function resolveFleetTargets(registry) {
-  const targets = [];
-  for (const project of registry.projects || []) {
-    const envName = project.localPathEnv;
-    const fromEnv = envName && process.env[envName] ? String(process.env[envName]).trim() : "";
-    const candidate = fromEnv || (project.id === "eos-system" ? projectRoot : "");
-    const exists = candidate && fs.existsSync(candidate) && fs.existsSync(path.join(candidate, ".git"));
-    targets.push({
-      id: project.id,
-      name: project.name,
-      localPathEnv: envName || null,
-      path: exists ? path.resolve(candidate) : null,
-      status: exists ? "AVAILABLE" : "SKIPPED_SIBLING",
-    });
-  }
-  return targets;
+  return resolveFleetRegistryPaths(projectRoot, registry.projects || []).map((t) => ({
+    id: t.id,
+    name: t.name,
+    localPathEnv: t.localPathEnv,
+    path: t.path,
+    status: t.status,
+    resolution: t.resolution,
+  }));
 }
 
 function flowInspect(repoPath) {
@@ -114,7 +114,7 @@ for (const target of targets) {
     skipped: false,
     status: result.ok ? "SUCCESS" : "FAILED",
     durationMs: result.durationMs,
-    path: target.path,
+    path: redactPath(target.path),
     exitCode: result.exitCode,
   });
 }
@@ -130,15 +130,23 @@ const receipt = {
   epistemicState: allOk ? "FLEET_DOGFOOD_TTV_WITHIN_TESTED_SCOPE" : "REMEDIATION_REQUIRED",
   generatedAt: new Date().toISOString(),
   catalogFreeze: {
-    active: true,
+    active: available <= 1,
     rule: "No new OpenSpec ids after 185 until fleet dogfood has >=1 AVAILABLE sibling and this receipt stays green.",
     openSpecCountAtSeal: 180,
+    unlocked: available > 1,
   },
   fleet: {
     registered: targets.length,
     available,
     skippedSibling: skipped,
-    targets,
+    targets: targets.map((t) => ({
+      id: t.id,
+      name: t.name,
+      localPathEnv: t.localPathEnv,
+      path: redactPath(t.path),
+      status: t.status,
+      resolution: t.resolution,
+    })),
   },
   paths,
   metrics: {

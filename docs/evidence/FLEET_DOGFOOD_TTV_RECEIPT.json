@@ -1,78 +1,88 @@
 {
   "epistemicState": "FLEET_DOGFOOD_TTV_WITHIN_TESTED_SCOPE",
-  "generatedAt": "2026-11-09T20:06:03.832Z",
+  "generatedAt": "2026-11-09T20:43:22.466Z",
   "catalogFreeze": {
-    "active": true,
+    "active": false,
     "rule": "No new OpenSpec ids after 185 until fleet dogfood has >=1 AVAILABLE sibling and this receipt stays green.",
-    "openSpecCountAtSeal": 180
+    "openSpecCountAtSeal": 180,
+    "unlocked": true
   },
   "fleet": {
     "registered": 9,
-    "available": 1,
-    "skippedSibling": 8,
+    "available": 9,
+    "skippedSibling": 0,
     "targets": [
       {
         "id": "aberamentho",
         "name": "Aberamentho Pleroma Music",
         "localPathEnv": "EOS_FLEET_ABERAMENTHO_PATH",
-        "path": null,
-        "status": "SKIPPED_SIBLING"
+        "path": "Aberamentho-s-Pleroma-music",
+        "status": "AVAILABLE",
+        "resolution": "RESOLVED_LOCAL_DIR"
       },
       {
         "id": "atp-strength",
         "name": "ATP Strength & Hypertrophy Platform",
         "localPathEnv": "EOS_FLEET_ATP_STRENGTH_PATH",
-        "path": null,
-        "status": "SKIPPED_SIBLING"
+        "path": "ATP-STRENGTH-1",
+        "status": "AVAILABLE",
+        "resolution": "RESOLVED_LOCAL_DIR"
       },
       {
         "id": "biblioteca-gnostica-1",
         "name": "Biblioteca Gnóstica — Preservación Digital de Textos Sagrados",
         "localPathEnv": "EOS_FLEET_BIBLIOTECA_GNOSTICA_1_PATH",
-        "path": null,
-        "status": "SKIPPED_SIBLING"
+        "path": "Biblioteca-gnostica-1",
+        "status": "AVAILABLE",
+        "resolution": "RESOLVED_LOCAL_DIR"
       },
       {
         "id": "control-de-asistencia-abopack",
         "name": "Avo Pack S.A.S. — Central de Asistencia y Liquidación Laboral",
         "localPathEnv": "EOS_FLEET_CONTROL_DE_ASISTENCIA_ABOPACK_PATH",
-        "path": null,
-        "status": "SKIPPED_SIBLING"
+        "path": "Control-De-Asistencia-Abopack",
+        "status": "AVAILABLE",
+        "resolution": "RESOLVED_LOCAL_DIR"
       },
       {
         "id": "crud-slack",
         "name": "TaskFlow AI — Omnichannel Request-to-Task CRUD & Triage",
         "localPathEnv": "EOS_FLEET_CRUD_SLACK_PATH",
-        "path": null,
-        "status": "SKIPPED_SIBLING"
+        "path": "Crud-slack",
+        "status": "AVAILABLE",
+        "resolution": "RESOLVED_LOCAL_DIR"
       },
       {
         "id": "donaciones",
         "name": "Portal de Donaciones — Sede AGEAC & Tercer Factor",
         "localPathEnv": "EOS_FLEET_DONACIONES_PATH",
-        "path": null,
-        "status": "SKIPPED_SIBLING"
+        "path": "Donaciones",
+        "status": "AVAILABLE",
+        "resolution": "RESOLVED_LOCAL_DIR"
       },
       {
         "id": "eos-system",
         "name": "Glorian (Control Plane Core)",
         "localPathEnv": "EOS_FLEET_EOS_SYSTEM_PATH",
-        "path": "/workspace",
-        "status": "AVAILABLE"
+        "path": "Glorian-System-",
+        "status": "AVAILABLE",
+        "resolution": "CONTROL_PLANE"
       },
       {
         "id": "performance-talent-group",
         "name": "PTG — Performance Talent Group",
         "localPathEnv": "EOS_FLEET_PTG_PATH",
-        "path": null,
-        "status": "SKIPPED_SIBLING"
+        "path": "Performance-Talent-Group-1",
+        "status": "AVAILABLE",
+        "resolution": "RESOLVED_LOCAL_DIR"
       },
       {
         "id": "portafolio",
         "name": "Portafolio Oficial — Valentín Flórez",
         "localPathEnv": "EOS_FLEET_PORTAFOLIO_PATH",
-        "path": null,
-        "status": "SKIPPED_SIBLING"
+        "path": "portafolio",
+        "status": "AVAILABLE",
+        "resolution": "RESOLVED_LOCAL_DIR"
       }
     ]
   },
@@ -80,92 +90,100 @@
     {
       "id": "CONTROL_PLANE_PRODUCT_FACTORY",
       "ok": true,
-      "durationMs": 9.198,
+      "durationMs": 40.6,
       "status": "SUCCESS",
-      "sha256Receipt": "d67c8e9505d1ca96f4f7febddbfd5c7cd34d613338b84a2d5bce7a14e5a661ff"
+      "sha256Receipt": "b0512ed4315e4c557c9d8e5ad702e4e71de66f5583689ada71da9cedd4ed6581"
     },
     {
       "id": "FLOW_INSPECT:aberamentho",
       "ok": true,
-      "skipped": true,
-      "status": "SKIPPED_SIBLING",
-      "durationMs": 0,
-      "path": null
+      "skipped": false,
+      "status": "SUCCESS",
+      "durationMs": 1164,
+      "path": "Aberamentho-s-Pleroma-music",
+      "exitCode": 0
     },
     {
       "id": "FLOW_INSPECT:atp-strength",
       "ok": true,
-      "skipped": true,
-      "status": "SKIPPED_SIBLING",
-      "durationMs": 0,
-      "path": null
+      "skipped": false,
+      "status": "SUCCESS",
+      "durationMs": 1021,
+      "path": "ATP-STRENGTH-1",
+      "exitCode": 0
     },
     {
       "id": "FLOW_INSPECT:biblioteca-gnostica-1",
       "ok": true,
-      "skipped": true,
-      "status": "SKIPPED_SIBLING",
-      "durationMs": 0,
-      "path": null
+      "skipped": false,
+      "status": "SUCCESS",
+      "durationMs": 763,
+      "path": "Biblioteca-gnostica-1",
+      "exitCode": 0
     },
     {
       "id": "FLOW_INSPECT:control-de-asistencia-abopack",
       "ok": true,
-      "skipped": true,
-      "status": "SKIPPED_SIBLING",
-      "durationMs": 0,
-      "path": null
+      "skipped": false,
+      "status": "SUCCESS",
+      "durationMs": 835,
+      "path": "Control-De-Asistencia-Abopack",
+      "exitCode": 0
     },
     {
       "id": "FLOW_INSPECT:crud-slack",
       "ok": true,
-      "skipped": true,
-      "status": "SKIPPED_SIBLING",
-      "durationMs": 0,
-      "path": null
+      "skipped": false,
+      "status": "SUCCESS",
+      "durationMs": 893,
+      "path": "Crud-slack",
+      "exitCode": 0
     },
     {
       "id": "FLOW_INSPECT:donaciones",
       "ok": true,
-      "skipped": true,
-      "status": "SKIPPED_SIBLING",
-      "durationMs": 0,
-      "path": null
+      "skipped": false,
+      "status": "SUCCESS",
+      "durationMs": 1024,
+      "path": "Donaciones",
+      "exitCode": 0
     },
     {
       "id": "FLOW_INSPECT:eos-system",
       "ok": true,
       "skipped": false,
       "status": "SUCCESS",
-      "durationMs": 111,
-      "path": "/workspace",
+      "durationMs": 1062,
+      "path": "Glorian-System-",
       "exitCode": 0
     },
     {
       "id": "FLOW_INSPECT:performance-talent-group",
       "ok": true,
-      "skipped": true,
-      "status": "SKIPPED_SIBLING",
-      "durationMs": 0,
-      "path": null
+      "skipped": false,
+      "status": "SUCCESS",
+      "durationMs": 866,
+      "path": "Performance-Talent-Group-1",
+      "exitCode": 0
     },
     {
       "id": "FLOW_INSPECT:portafolio",
       "ok": true,
-      "skipped": true,
-      "status": "SKIPPED_SIBLING",
-      "durationMs": 0,
-      "path": null
+      "skipped": false,
+      "status": "SUCCESS",
+      "durationMs": 724,
+      "path": "portafolio",
+      "exitCode": 0
     }
   ],
   "metrics": {
     "pathCount": 10,
     "allOk": true,
-    "totalDurationMs": 120.19800000000001,
-    "maxPathDurationMs": 111,
+    "totalDurationMs": 8392.6,
+    "maxPathDurationMs": 1164,
     "p99BudgetMs": 180000,
     "withinBudget": true,
-    "siblingDogfoodReady": false
+    "siblingDogfoodReady": true
   },
-  "sha256Receipt": "eace91f5adad6cb925f080aa2652b4bb97f001eb88cb2b3ed759e5c82fdf91d1"
+  "sha256Receipt": "4e5b821d28cb38d2b2962e6999fdd44f2f0a09d1d17811840658211579905477"
 }
