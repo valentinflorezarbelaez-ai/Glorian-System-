@@ -98,6 +98,12 @@ import { EosAdaptiveConcurrencyGovernor } from "../src/core/eosAdaptiveConcurren
 import { isValidEntry, loadFlakyBudget } from "../scripts/flaky-gate.mjs";
 import { EosSurgicalSelfHealingKernel } from "../src/core/eosSurgicalSelfHealingKernel.ts";
 import { EosDocumentationSearch } from "../src/core/eosDocumentationSearch.ts";
+import { EosAdaptiveRateLimiter } from "../src/core/eosAdaptiveRateLimiter.ts";
+import { EosBackpressureFlowController } from "../src/core/eosBackpressureFlowController.ts";
+import { EosAgenticFinOpsGovernor } from "../src/core/eosAgenticFinOpsGovernor.ts";
+import { EosApolloHermesMesh, EosCircuitBreaker, EosTokenBucketRateLimiter } from "../src/core/eosApolloHermesMesh.ts";
+import { EosAcousticFeatureStore } from "../src/core/eosAcousticFeatureStore.ts";
+import { EosAntiEntropyMerkleSync } from "../src/core/eosAntiEntropyMerkleSync.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -3408,6 +3414,254 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       const stats = docSearch.getStats();
       assert.equal(typeof stats.totalIndexed, "number");
       docSearch.close();
+    });
+
+    it("exercises EosAdaptiveRateLimiter, EosBackpressureFlowController, and EosAgenticFinOpsGovernor edge branches", async () => {
+      // 1. EosAdaptiveRateLimiter
+      const limiter = new EosAdaptiveRateLimiter({
+        bucketCapacity: 2,
+        refillRatePerSec: 100,
+        windowSizeMs: 500,
+        maxPerWindow: 2,
+        adaptive: true,
+      });
+
+      // Stats on initial state
+      const initialStats = limiter.getStats();
+      assert.equal(initialStats.totalRequests, 0);
+      assert.equal(initialStats.totalRejections, 0);
+      assert.equal(initialStats.currentCapacity, 2);
+
+      // Acquire 1 and 2
+      const dec1 = limiter.tryAcquire();
+      assert.equal(dec1.allowed, true);
+      const dec2 = limiter.tryAcquire();
+      assert.equal(dec2.allowed, true);
+
+      // 3rd acquire triggers WINDOW limit denial (maxPerWindow = 2)
+      const decWindowDeny = limiter.tryAcquire();
+      assert.equal(decWindowDeny.allowed, false);
+      assert.ok(decWindowDeny.rejectionRatio > 0);
+
+      // Token bucket denial (when tokens < 1 with high maxPerWindow)
+      const bucketLimiter = new EosAdaptiveRateLimiter({
+        bucketCapacity: 1,
+        refillRatePerSec: 0.001,
+        windowSizeMs: 10000,
+        maxPerWindow: 50,
+        adaptive: false,
+      });
+      assert.equal(bucketLimiter.tryAcquire().allowed, true);
+      const bucketDeny = bucketLimiter.tryAcquire();
+      assert.equal(bucketDeny.allowed, false);
+      assert.ok(bucketDeny.retryAfterMs > 0);
+
+      // 2. EosBackpressureFlowController
+      const bp = new EosBackpressureFlowController({
+        initialWindow: 2,
+        maxWindow: 4,
+        highWatermark: 80,
+        lowWatermark: 20,
+        congestionMultiplier: 0.5,
+      });
+
+      assert.throws(() => bp.signalDemand(-1), /demand must be non-negative/);
+
+      // tryEmit with 0 demand
+      assert.equal(bp.tryEmit(), false);
+
+      bp.signalDemand(5);
+      // Emit 1 (inflight=1, window=2 -> 50% -> OPEN)
+      assert.equal(bp.tryEmit(), true);
+      // Emit 2 (inflight=2, window=2 -> 100% >= 80% -> HIGH_WATER)
+      assert.equal(bp.tryEmit(), true);
+      assert.equal(bp.getSnapshot().pressure, "HIGH_WATER");
+
+      // Emit 3 (inflight >= window -> rejected)
+      assert.equal(bp.tryEmit(), false);
+
+      // Acknowledge item 1 -> inflight=1, window increases to 3 (additive)
+      bp.acknowledge();
+      assert.equal(bp.getSnapshot().windowSize, 3);
+
+      // Acknowledge item 2 -> inflight=0, ratio=0 <= 20% -> OPEN
+      bp.acknowledge();
+      assert.equal(bp.getSnapshot().pressure, "OPEN");
+
+      // Acknowledge when inflight=0 (no-op on inflight)
+      bp.acknowledge();
+      assert.equal(bp.getSnapshot().inflight, 0);
+
+      // signalLoss with inflight=0
+      bp.signalLoss();
+      assert.equal(bp.getSnapshot().windowSize, 2);
+
+      // signalLoss with inflight>0
+      bp.tryEmit();
+      assert.equal(bp.getSnapshot().inflight, 1);
+      bp.signalLoss();
+      assert.equal(bp.getSnapshot().inflight, 0);
+
+      const bpStats = bp.getStats();
+      assert.ok(bpStats.totalAccepted >= 2);
+      assert.ok(bpStats.totalRejected >= 2);
+
+      // 3. EosAgenticFinOpsGovernor
+      const finops = EosAgenticFinOpsGovernor.getInstance();
+      finops.reset();
+
+      // evaluateStagnation with < 2 diffs
+      const emptyStag = finops.evaluateStagnation([], false);
+      assert.equal(emptyStag.stagnant, false);
+      assert.equal(emptyStag.action, "PROCEED_NOMINAL");
+
+      const singleStag = finops.evaluateStagnation(["diff one"], false);
+      assert.equal(singleStag.stagnant, false);
+
+      // evaluateStagnation with empty diff strings
+      const emptyDiffStag = finops.evaluateStagnation(["", ""], false);
+      assert.equal(emptyDiffStag.similarityScore, 1.0);
+
+      // evaluateStagnation with 2 diffs approaching threshold (<3 length, failing test)
+      const baseDiff = "w1 w2 w3 w4 w5 w6 w7 w8 w9 w10";
+      const nearStag = finops.evaluateStagnation([baseDiff, `${baseDiff} w11`], false);
+      assert.equal(nearStag.circuitBreakerState, "WARNING");
+      assert.equal(nearStag.action, "WARN_COGNITIVE_STALL");
+
+      // recordTokenUsage without prior wallet allocation
+      const autoWallet = finops.recordTokenUsage("auto-mission-1", 1000, 500, "TIER_1_LOCAL_SLM");
+      assert.equal(autoWallet.status, "ACTIVE");
+      assert.ok(autoWallet.accumulatedSpendUsd > 0);
+
+      // recordTokenUsage balanced tier
+      const balWallet = finops.recordTokenUsage("auto-mission-1", 1000, 500, "TIER_2_BALANCED");
+      assert.equal(balWallet.status, "ACTIVE");
+
+      // evaluateCodeSurvival empty components
+      const emptySurvival = finops.evaluateCodeSurvival([]);
+      assert.equal(emptySurvival.totalComponentsTracked, 0);
+      assert.equal(emptySurvival.roiMultiple, 1.0);
+
+      // evaluateCodeSurvival with net negative AI debt (>30% churn)
+      const highChurn = finops.evaluateCodeSurvival([
+        { componentId: "debt-comp", initialLines: 100, retainedLines30Days: 20, totalInferenceCostUsd: 10.0 },
+      ]);
+      assert.equal(highChurn.netNegativeAiDebt, true);
+
+      // evaluateCodeSurvival with totalInferenceCost = 0
+      const zeroCostSurvival = finops.evaluateCodeSurvival([
+        { componentId: "free-comp", initialLines: 100, retainedLines30Days: 90, totalInferenceCostUsd: 0 },
+      ]);
+      assert.equal(zeroCostSurvival.roiMultiple, 100.0);
+
+      // evaluateCodeSurvival with totalInitial = 0
+      const zeroInitial = finops.evaluateCodeSurvival([
+        { componentId: "zero-init", initialLines: 0, retainedLines30Days: 0, totalInferenceCostUsd: 1.0 },
+      ]);
+      assert.equal(zeroInitial.averageSurvivalRatePercent, 100);
+
+      // 4. EosApolloHermesMesh, EosCircuitBreaker, and EosTokenBucketRateLimiter
+      const mesh = new EosApolloHermesMesh();
+
+      // traceparent parsing errors
+      assert.equal(mesh.parseTraceparent("malformed"), null);
+      assert.equal(mesh.parseTraceparent("01-trace-span-flag"), null);
+
+      // generateTraceContext with invalid string fallback
+      const randomTrace = mesh.generateTraceContext("invalid-traceparent");
+      assert.equal(randomTrace.version, "00");
+
+      // CircuitBreaker HALF_OPEN failure transition to OPEN
+      const cb = new EosCircuitBreaker({ resetTimeoutMs: 10, halfOpenTrialSuccesses: 2, slidingWindowSize: 2 });
+      cb.recordFailure();
+      cb.recordFailure();
+      assert.equal(cb.getState(), "OPEN");
+      await new Promise((r) => setTimeout(r, 20));
+      assert.equal(cb.getState(), "HALF_OPEN");
+      cb.recordFailure();
+      assert.equal(cb.getState(), "OPEN");
+      assert.equal(cb.canExecute(), false);
+
+      // TokenBucketRateLimiter getAvailableTokens
+      const tbLimiter = new EosTokenBucketRateLimiter(10, 10);
+      assert.ok(tbLimiter.getAvailableTokens() > 0);
+
+      // invokeRpc failure with Error instance
+      const rpcErr = await mesh.invokeRpc("error-service", "fail", {}, () => {
+        throw new Error("RPC simulated error");
+      });
+      assert.equal(rpcErr.success, false);
+      assert.equal(rpcErr.error, "RPC simulated error");
+
+      // invokeRpc failure with non-Error string
+      const rpcStrErr = await mesh.invokeRpc("string-error-service", "fail", {}, () => {
+        throw "Raw string failure";
+      });
+      assert.equal(rpcStrErr.success, false);
+      assert.equal(rpcStrErr.error, "Raw string failure");
+
+      // invokeRpc rate limit denial
+      const exhaustedMesh = new EosApolloHermesMesh(0, 0);
+      const rpc429 = await exhaustedMesh.invokeRpc("fast-service", "op", {}, () => "ok");
+      assert.equal(rpc429.success, false);
+      assert.ok(rpc429.error?.includes("429"));
+
+      // invokeRpc circuit breaker OPEN denial
+      const openCb = mesh.getCircuitBreaker("broken-service", { slidingWindowSize: 1 });
+      openCb.recordFailure();
+      const rpcOpen = await mesh.invokeRpc("broken-service", "op", {}, () => "ok");
+      assert.equal(rpcOpen.success, false);
+      assert.ok(rpcOpen.error?.includes("OPEN"));
+
+      // publishEvent with subscriber that throws
+      mesh.subscribe("failing.topic", () => {
+        throw new Error("Subscriber blown up");
+      });
+      const publishedEvt = mesh.publishEvent("failing.topic", "key-1", { data: 123 });
+      assert.equal(publishedEvt.topic, "failing.topic");
+
+      // 5. EosAcousticFeatureStore
+      const acousticStore = new EosAcousticFeatureStore();
+      const zeroVec = {
+        tempo: 0,
+        energy: 0,
+        danceability: 0,
+        valence: 0,
+        acousticness: 0,
+        instrumentalness: 0,
+        liveness: 0,
+        speechiness: 0,
+      };
+      // Affinity with zero vectors (magA === 0 or magB === 0)
+      assert.equal(acousticStore.computeAffinityScore(zeroVec, zeroVec), 0.0);
+
+      // Compute taste centroid with ONLY skipped tracks
+      acousticStore.recordListen("user-all-skips", "track-s1", zeroVec, 10, 200);
+      acousticStore.recordListen("user-all-skips", "track-s2", zeroVec, 15, 200);
+      const allSkipsProfile = acousticStore.computeTasteCentroid("user-all-skips");
+      assert.equal(allSkipsProfile.skipRate, 1.0);
+      assert.equal(allSkipsProfile.totalSkips, 2);
+
+      // 6. EosAntiEntropyMerkleSync
+      const merkleSync = new EosAntiEntropyMerkleSync(3); // odd number of buckets
+      merkleSync.put("k1", "val1");
+      merkleSync.put("k2", { complex: "json" });
+      merkleSync.put("k3", "val3");
+      merkleSync.delete("k3");
+      const treeOdd = merkleSync.buildMerkleTree();
+      assert.ok(treeOdd.hash.length === 64);
+
+      // compare identical trees
+      const sameDiff = EosAntiEntropyMerkleSync.compareTrees(treeOdd, treeOdd);
+      assert.equal(sameDiff.inSync, true);
+      assert.equal(sameDiff.divergentRanges.length, 0);
+
+      // compare different leaf trees
+      const leafA = { hash: "a", rangeStart: 0, rangeEnd: 1, keysCount: 1 };
+      const leafB = { hash: "b", rangeStart: 0, rangeEnd: 1, keysCount: 1 };
+      const diffLeaves = EosAntiEntropyMerkleSync.compareTrees(leafA, leafB);
+      assert.equal(diffLeaves.inSync, false);
+      assert.equal(diffLeaves.divergentRanges.length, 1);
     });
   });
 });
