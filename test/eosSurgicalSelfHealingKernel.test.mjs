@@ -252,3 +252,121 @@ test("BDD-172: MCP Dispatch of eos_surgical_healing via EosMcpServer", () => {
   assert.equal(cycleData.zeroRegressionPreserved, true);
   assert.equal(cycleData.sha256Receipt.length, 64);
 });
+
+test("BDD-173: Exhaustive Branch Coverage for evaluateAndHeal, sandbox assert, and strategy variations", () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-healing-cov-"));
+  try {
+    const src = `function testFn(x) {\n  return x.val;\n}\n`;
+
+    // 1. Diagnose with bare stack trace (no function name)
+    const bareDiag = EosSurgicalSelfHealingKernel.diagnoseFault(
+      "TypeError: Cannot read properties of undefined (reading 'val')\n    at src/test.ts:2:12",
+      src,
+    );
+    assert.equal(bareDiag.filePath, "src/test.ts");
+    assert.equal(bareDiag.lineNumber, 2);
+
+    // 2. Diagnose with single-line fallback file path
+    const fallbackDiag = EosSurgicalSelfHealingKernel.diagnoseFault(
+      "Error: Something failed without stack",
+      "src/standalone.ts",
+    );
+    assert.equal(fallbackDiag.filePath, "src/standalone.ts");
+
+    // 3. Diagnose with 'is not defined' error message
+    const notDefDiag = EosSurgicalSelfHealingKernel.diagnoseFault(
+      "ReferenceError: missingVar is not defined\n    at eval (src/app.ts:5:10)",
+      src,
+    );
+    assert.equal(notDefDiag.targetExpression, "missingVar");
+
+    // 4. Synthesize BOUNDARY_CLAMP and TRY_CATCH_FALLBACK patches
+    const singleVarDiag = { ...bareDiag, targetExpression: "singleVar" };
+    const singleVarPatch = EosSurgicalSelfHealingKernel.synthesizeSurgicalPatch(singleVarDiag, src, "NULL_CHECK_GUARD");
+    assert.ok(singleVarPatch.replacementSnippet.includes("!singleVar"));
+
+    const clampPatch = EosSurgicalSelfHealingKernel.synthesizeSurgicalPatch(bareDiag, src, "BOUNDARY_CLAMP");
+    assert.equal(clampPatch.strategy, "BOUNDARY_CLAMP");
+
+    const tryPatch = EosSurgicalSelfHealingKernel.synthesizeSurgicalPatch(bareDiag, src, "TRY_CATCH_FALLBACK");
+    assert.equal(tryPatch.strategy, "TRY_CATCH_FALLBACK");
+
+    // 4b. executeHealingCycle yielding PATCH_FAILED_TO_RESOLVE
+    const throwingSrc = "throw new Error('Immediate panic');\nfunction testPanic() { return 1; }\n";
+    const unresolvedCycle = EosSurgicalSelfHealingKernel.executeHealingCycle({
+      stackTrace: "Error: Immediate panic\n    at testPanic (src/panic.ts:1:1)",
+      sourceCode: throwingSrc,
+      reason: "Unresolved patch verification test",
+    });
+    assert.equal(unresolvedCycle.verdict, "PATCH_FAILED_TO_RESOLVE");
+
+    // 5. applyPatchInMemory
+    const patchedMem = EosSurgicalSelfHealingKernel.applyPatchInMemory(src, clampPatch);
+    assert.ok(patchedMem.includes("EOS Surgical Boundary Guard"));
+
+    // 6. verifyInSandbox with assert.ok falsy and assert.strictEqual mismatch
+    const failAssertOk = EosSurgicalSelfHealingKernel.verifyInSandbox({
+      patchedSourceCode: "assert.ok(false);",
+    });
+    assert.equal(failAssertOk.status, "FAIL");
+    assert.equal(failAssertOk.targetFunctionPass, false);
+
+    const failAssertStrict = EosSurgicalSelfHealingKernel.verifyInSandbox({
+      patchedSourceCode: "assert.strictEqual(1, 2);",
+    });
+    assert.equal(failAssertStrict.status, "FAIL");
+
+    // 7. evaluateAndHeal: HEALED_VERIFIED with ledgerDbPath
+    const ledgerDbPath = path.join(tempDir, "healing-ledger.sqlite");
+    const healedReport = EosSurgicalSelfHealingKernel.evaluateAndHeal(
+      bareDiag,
+      src,
+      () => ({
+        passesFailingTest: true,
+        regressionsDetected: false,
+        testOutput: "PASS",
+        durationMs: 5,
+        targetFunctionPass: true,
+        zeroRegressionPreserved: true,
+        errors: [],
+      }),
+      { ledgerDbPath, projectId: "eos-system" },
+    );
+    assert.equal(healedReport.status, "HEALED_VERIFIED");
+    assert.ok(healedReport.ledgerEntryId);
+    assert.ok(healedReport.sha256Receipt.length === 64);
+
+    // 8. evaluateAndHeal: REGRESSION_REJECTED
+    const regReport = EosSurgicalSelfHealingKernel.evaluateAndHeal(bareDiag, src, () => ({
+      passesFailingTest: true,
+      regressionsDetected: true,
+      testOutput: "FAIL",
+      durationMs: 5,
+      targetFunctionPass: true,
+      zeroRegressionPreserved: false,
+      errors: ["Regression broken"],
+    }));
+    assert.equal(regReport.status, "REGRESSION_REJECTED");
+
+    // 9. evaluateAndHeal: PATCH_FAILED_TO_RESOLVE
+    const failedReport = EosSurgicalSelfHealingKernel.evaluateAndHeal(bareDiag, src, () => ({
+      passesFailingTest: false,
+      regressionsDetected: false,
+      testOutput: "FAIL",
+      durationMs: 5,
+      targetFunctionPass: false,
+      zeroRegressionPreserved: true,
+      errors: ["Still failing"],
+    }));
+    assert.equal(failedReport.status, "PATCH_FAILED_TO_RESOLVE");
+
+    // 10. recordReceiptInLedger exception catch returns false
+    const badLedgerRecord = EosSurgicalSelfHealingKernel.recordReceiptInLedger(
+      { sha256Receipt: "abc" },
+      path.join(tempDir, "non_existent_dir", "deep", "file.txt", "ledger.db"),
+    );
+    assert.equal(badLedgerRecord, false);
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});

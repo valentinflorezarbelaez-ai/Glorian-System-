@@ -151,6 +151,41 @@ describe("SPEC-155: Connection Pool Manager", () => {
     pool.drain();
     await assert.rejects(promise, /POOL_DRAINING/);
   });
+
+  it("BDD-543: waiter queue FIFO handover, lease timeout, leak detection, and unknown release", async () => {
+    // 1. Waiter handover
+    const pool = new EosConnectionPoolManager({
+      maxSize: 1,
+      minSize: 0,
+      leaseTimeoutMs: 1000,
+      leakDetectionThresholdMs: 10,
+      validationQuery: async () => true,
+    });
+    const c1 = await pool.acquire();
+    const waitPromise = pool.acquire(); // enqueued
+    pool.release(c1); // hands over to waiter
+    const c2 = await waitPromise;
+    assert.equal(c2, c1);
+
+    // 2. Lease timeout
+    const timeoutPool = new EosConnectionPoolManager({
+      maxSize: 1,
+      minSize: 0,
+      leaseTimeoutMs: 15,
+      leakDetectionThresholdMs: 5000,
+      validationQuery: async () => true,
+    });
+    await timeoutPool.acquire();
+    await assert.rejects(timeoutPool.acquire(), /LEASE_TIMEOUT/);
+
+    // 3. Leak detection
+    await new Promise((r) => setTimeout(r, 20));
+    const leaks = pool.detectLeaks();
+    assert.ok(leaks.includes(c2));
+
+    // 4. Unknown release
+    pool.release("non-existent-conn");
+  });
 });
 
 // ---------------------------------------------------------------------------

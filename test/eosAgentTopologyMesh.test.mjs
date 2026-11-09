@@ -221,3 +221,27 @@ test("BDD-154: Invocación MCP Integrada de eos_agent_topology_mesh", () => {
   const effData = JSON.parse(effRes.result.content[0].text);
   assert.equal(effData.reductionRatioPct, 94);
 });
+
+test("BDD-154: Exhaustive branch coverage for unknown dependency & in-memory attestation fallback", () => {
+  // 1. Unknown dependency throws error
+  assert.throws(() => {
+    EosAgentTopologyMesh.compileTopology("DAG-ERR-01", [
+      { id: "A", name: "A", assignedModulePath: "a.ts", dependencies: ["GHOST_NODE"] },
+    ]);
+  }, /UNKNOWN_DEPENDENCY/);
+
+  // 2. recordMeshAttestation without ledgerDbPath (in-memory receipt)
+  const topology = EosAgentTopologyMesh.compileTopology("DAG-MEM-01", [
+    { id: "A", name: "A", assignedModulePath: "a.ts", dependencies: [] },
+  ]);
+  const receipt = EosAgentTopologyMesh.recordMeshAttestation(topology, []);
+  assert.ok(receipt.startsWith("MREC-"));
+
+  // 3. Efficiency calculation precondition validation
+  assert.throws(() => {
+    EosAgentTopologyMesh.calculateTokenEfficiency(-1, 100);
+  }, /compactBytes must be >= 0/);
+  assert.throws(() => {
+    EosAgentTopologyMesh.calculateTokenEfficiency(10, 0);
+  }, /fullFileContextBytes must be > 0/);
+});

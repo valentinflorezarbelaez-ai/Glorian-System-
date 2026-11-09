@@ -142,6 +142,51 @@ describe("SPEC-033: 49 Levels of Mind, Three Mountains & Adaptive L0 Autotuner",
       const report = autotuner.runAutotuneTick(10);
       assert.equal(report.stateAfter.ringBufferCapacity, 1024);
     });
+
+    it("covers batch downsizing on event loop lag and heap stats fallback", async () => {
+      const autotuner = new EosAdaptiveL0Autotuner(65536);
+
+      // Steady optimal
+      const steadyReport = autotuner.runAutotuneTick(30000); // ~45% load
+      assert.equal(steadyReport.actionTaken, "STEADY_OPTIMAL");
+
+      // Max capacity ceiling check
+      const maxReport = autotuner.runAutotuneTick(60000); // >75% load but capacity is max
+      assert.equal(maxReport.stateAfter.ringBufferCapacity, 65536);
+
+      // Event loop lag simulation via performance.now
+      const origPerfNow = performance.now;
+      let count = 0;
+      performance.now = () => {
+        count++;
+        return count % 2 === 1 ? 100 : 115; // 15ms diff > 8.0ms
+      };
+
+      try {
+        const lagReport = autotuner.runAutotuneTick(30000);
+        assert.equal(lagReport.actionTaken, "BATCH_DOWNSIZED");
+        assert.ok(lagReport.stateAfter.optimalBatchSize < 64);
+      } finally {
+        performance.now = origPerfNow;
+      }
+
+      // Heap stats failure fallback
+      const v8 = await import("node:v8");
+      const origGetHeapStatistics = v8.default?.getHeapStatistics ?? v8.getHeapStatistics;
+      if (origGetHeapStatistics) {
+        const targetObj = v8.default?.getHeapStatistics ? v8.default : v8;
+        const originalFn = targetObj.getHeapStatistics;
+        targetObj.getHeapStatistics = () => {
+          throw new Error("Simulated V8 Heap failure");
+        };
+        try {
+          const fallbackReport = autotuner.runAutotuneTick(30000);
+          assert.equal(fallbackReport.heapFragmentationRatio, 0.05);
+        } finally {
+          targetObj.getHeapStatistics = originalFn;
+        }
+      }
+    });
   });
 
   // BDD-085: Invariants & Purity

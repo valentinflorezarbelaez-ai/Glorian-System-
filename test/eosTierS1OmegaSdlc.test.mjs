@@ -149,6 +149,20 @@ test("SPEC-028: 120Hz VSync Cooperative Scheduler & Constant-Time Security", asy
     assert.equal(report.totalTasksExecuted, 100);
     assert.ok(report.totalTimeSlices >= 1);
     assert.ok(report.totalElapsedMs >= 0);
+
+    // Force cooperative yielding with small budget and heavier tasks
+    const tightScheduler = new EosCooperativeScheduler(1.0);
+    const heavyTasks = Array.from({ length: 4 }, (_, i) => () => {
+      const s = performance.now();
+      while (performance.now() - s < 3) {
+        /* busy wait */
+      }
+      return i;
+    });
+    const heavyRun = await tightScheduler.executeBatch(heavyTasks);
+    assert.equal(heavyRun.results.length, 4);
+    assert.ok(heavyRun.report.totalTimeSlices > 1);
+    assert.ok(heavyRun.report.frameBudgetViolations > 0);
   });
 });
 

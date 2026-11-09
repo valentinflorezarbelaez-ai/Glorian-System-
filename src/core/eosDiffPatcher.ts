@@ -282,10 +282,15 @@ export function generateDiff(oldContent: string, newContent: string, filePath: s
     endNew--;
   }
 
-  const oldCount = endOld - startLine + 1;
-  const newCount = endNew - startLine + 1;
+  const hasLeadingContext = startLine > 0;
+  const hasTrailingContext = endOld + 1 < oldLines.length;
 
-  lines.push(`@@ -${startLine + 1},${oldCount} +${startLine + 1},${newCount} @@`);
+  const headerOldStart = hasLeadingContext ? startLine : startLine + 1;
+  const headerNewStart = hasLeadingContext ? startLine : startLine + 1;
+  const oldCount = endOld - startLine + 1 + (hasLeadingContext ? 1 : 0) + (hasTrailingContext ? 1 : 0);
+  const newCount = endNew - startLine + 1 + (hasLeadingContext ? 1 : 0) + (hasTrailingContext ? 1 : 0);
+
+  lines.push(`@@ -${headerOldStart},${oldCount} +${headerNewStart},${newCount} @@`);
 
   // Add context line before changes (if exists)
   if (startLine > 0) {

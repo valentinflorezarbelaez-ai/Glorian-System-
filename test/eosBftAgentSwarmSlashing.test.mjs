@@ -76,3 +76,96 @@ test("BDD-197: Malicious Mutation Detection and Slashing Execution", () => {
     }
   }
 });
+
+test("BDD-198: Security Veto Overrides Swarm Vote", () => {
+  const swarm = EosBftAgentSwarmSlashing.createDefaultSwarm();
+  const proposalWithVeto = {
+    proposalId: "PROP-SECURITY-VETO",
+    patchHash: "sha256:3333444455556666777788889999000011112222333344445555666677778888",
+    authorAgentId: "agent_architect",
+    hasSecurityVeto: true,
+    testsExitCode: 0,
+    conformsToConstitution: true,
+  };
+
+  const report = EosBftAgentSwarmSlashing.evaluateConsensus(swarm, proposalWithVeto);
+
+  assert.equal(report.verdict, "VETOED_BY_SECURITY");
+  assert.equal(report.vetoTriggered, true);
+  assert.equal(report.votesAgainst, 1);
+  assert.equal(report.votesFor, 3);
+  assert.equal(report.slashedAgents.length, 0);
+});
+
+test("BDD-199: Preconditions and Slashed Inactive Agent Exclusion", () => {
+  // Precondition: Swarm must have at least 4 agents
+  assert.throws(
+    () => EosBftAgentSwarmSlashing.evaluateConsensus([], { proposalId: "PROP-EMPTY" }),
+    /Swarm requires at least 4 agents/,
+  );
+
+  // Precondition: proposalId required
+  const defaultSwarm = EosBftAgentSwarmSlashing.createDefaultSwarm();
+  assert.throws(() => EosBftAgentSwarmSlashing.evaluateConsensus(defaultSwarm, {}), /proposalId is required/);
+
+  // Slashed agent exclusion & stake floor at zero
+  const swarmWithSlashed = EosBftAgentSwarmSlashing.createDefaultSwarm();
+  swarmWithSlashed[0].isSlashed = true; // Slashed agent cannot vote
+  swarmWithSlashed[1].stake = 20; // Stake lower than SLASH_AMOUNT (50) to verify Math.max(0, ...)
+
+  const maliciousProp = {
+    proposalId: "PROP-SLASH-FLOOR",
+    patchHash: "sha256:eeeeffff00001111222233334444555566667777888899990000111122223333",
+    authorAgentId: "agent_security",
+    conformsToConstitution: false,
+    testsExitCode: 1,
+  };
+
+  const report = EosBftAgentSwarmSlashing.evaluateConsensus(swarmWithSlashed, maliciousProp);
+  assert.equal(report.verdict, "BYZANTINE_SLASHING_TRIPPED");
+  assert.equal(swarmWithSlashed[1].stake, 0); // Floored to 0
+  assert.equal(swarmWithSlashed[1].isSlashed, true);
+  assert.equal(report.activeVotersCount, 2); // 2 remaining non-slashed agents
+});
+
+test("BDD-200: Quorum Not Met and Directory / Fallback Ledger Paths", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-swarm-dir-"));
+
+  try {
+    // Construct scenario where votesFor < quorumThreshold (e.g. 2 already slashed agents out of 4)
+    const swarm = EosBftAgentSwarmSlashing.createDefaultSwarm();
+    swarm[0].isSlashed = true;
+    swarm[1].isSlashed = true;
+    // 2 active voters left, so votesFor will be 2, but quorum is ceil((2*4 + 1)/3) = 3
+    const normalProp = {
+      proposalId: "PROP-NO-QUORUM",
+      patchHash: "sha256:aaaaabbbbbcccccdddddeeeeefffff00000111112222233333444445555566666",
+      authorAgentId: "agent_architect",
+      testsExitCode: 0,
+      conformsToConstitution: true,
+    };
+
+    const report = EosBftAgentSwarmSlashing.evaluateConsensus(swarm, normalProp);
+    assert.equal(report.verdict, "QUORUM_NOT_MET");
+    assert.equal(report.votesFor, 2);
+
+    // Test recordReceiptInLedger with directory (triggers defaultLedgerPath(dbPathOrRootDir))
+    const savedInDir = EosBftAgentSwarmSlashing.recordReceiptInLedger(report, tmpDir);
+    assert.equal(savedInDir, true);
+
+    // Test recordReceiptInLedger with .db extension
+    const dbFilePath = path.join(tmpDir, "custom.db");
+    const savedInDb = EosBftAgentSwarmSlashing.recordReceiptInLedger(report, dbFilePath);
+    assert.equal(savedInDb, true);
+
+    // Test error handling in recordReceiptInLedger (catch branch)
+    const failed = EosBftAgentSwarmSlashing.recordReceiptInLedger(null, tmpDir);
+    assert.equal(failed, false);
+  } finally {
+    try {
+      fs.rmSync(tmpDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 });
+    } catch {
+      // Ignore transient cleanup locks
+    }
+  }
+});

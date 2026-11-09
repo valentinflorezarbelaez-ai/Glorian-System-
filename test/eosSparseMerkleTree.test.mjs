@@ -51,3 +51,42 @@ test("BDD-228: Cryptographic Non-Membership Proof for Unset Keys", () => {
   const verified = EosSparseMerkleTree.verifyProof(nonMembershipProof, depth);
   assert.equal(verified, true);
 });
+
+test("BDD-229: SMT Preconditions, Default Depth, and Ledger Integration", () => {
+  // Invalid depth
+  assert.throws(() => new EosSparseMerkleTree(0), /Depth must be between 1 and 256/);
+  assert.throws(() => new EosSparseMerkleTree(257), /Depth must be between 1 and 256/);
+
+  // Default depth (32)
+  const defaultSmt = new EosSparseMerkleTree();
+  assert.ok(defaultSmt.getRoot().length === 64);
+  assert.throws(() => defaultSmt.set("", "value"), /Key cannot be empty/);
+
+  // Ledger integration with successful ledger
+  const mockLedgerSuccess = {
+    appendEntry: (entry) => {
+      assert.equal(entry.category, "SECURITY_AUDIT");
+      assert.ok(entry.title.includes("SMT Key Mutated"));
+      return { entryHash: "ledger_receipt_hash" };
+    },
+  };
+  const smtLedger = new EosSparseMerkleTree(8, mockLedgerSuccess);
+  smtLedger.set("key:1", "val:1");
+
+  // Ledger integration with throwing ledger (catches error)
+  const mockLedgerThrow = {
+    appendEntry: () => {
+      throw new Error("Ledger disk full");
+    },
+  };
+  const smtLedgerThrow = new EosSparseMerkleTree(8, mockLedgerThrow);
+  assert.doesNotThrow(() => {
+    smtLedgerThrow.set("key:2", "val:2");
+  });
+
+  // verifyProof length mismatch
+  const proof8 = smtLedger.prove("key:1");
+  assert.throws(() => {
+    EosSparseMerkleTree.verifyProof(proof8, 16); // depth 16 !== 8
+  }, /Proof sibling count must match depth/);
+});

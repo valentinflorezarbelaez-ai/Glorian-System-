@@ -66,3 +66,62 @@ test("BDD-246: Verificación de empaquetado OCI y manifiesto de distribución (S
   assert.ok(dockerfile.includes("gcr.io/distroless/nodejs24-debian12:nonroot"));
   assert.ok(dockerfile.includes("USER nonroot:nonroot"));
 });
+
+test("BDD-247: Sovereign 5/5 Scorecard operational ceiling evaluation", async () => {
+  const { evaluateSovereignFiveScorecard } = await import("../src/core/eosSovereignFiveScorecard.ts");
+  const scorecard = evaluateSovereignFiveScorecard(projectRoot);
+
+  assert.equal(scorecard.title, "Glorian Sovereign 5/5 Scorecard");
+  assert.ok(["5/5", "4/5", "3/5", "BELOW"].includes(scorecard.grade));
+  assert.ok(scorecard.percent > 0 && scorecard.percent <= 100);
+  assert.ok(scorecard.pillars.length === 5);
+  assert.ok(scorecard.claimsDenied.includes("Level 5"));
+  assert.ok(scorecard.claimsDenied.includes("NSA_GRADE"));
+  assert.equal(scorecard.sha256Receipt.length, 64);
+
+  // Verify pillar IDs
+  const pillarIds = scorecard.pillars.map((p) => p.id);
+  assert.ok(pillarIds.includes("LAYER0_PURITY"));
+  assert.ok(pillarIds.includes("MCP_MODULAR_AUTHORITY"));
+  assert.ok(pillarIds.includes("FLEET_LAW_IV"));
+  assert.ok(pillarIds.includes("EVIDENCE_TIP_SEAL"));
+  assert.ok(pillarIds.includes("EPISTEMIC_HONESTY"));
+
+  // Synthetic root to test drift, dependencies penalty, and lower grades
+  const os = await import("node:os");
+  const tmpRoot = path.join(os.default.tmpdir(), `eos-scorecard-${Date.now()}`);
+  fs.mkdirSync(path.join(tmpRoot, "docs/projects"), { recursive: true });
+  fs.writeFileSync(path.join(tmpRoot, "package.json"), JSON.stringify({ dependencies: { "external-dep": "1.0.0" } }));
+  fs.writeFileSync(
+    path.join(tmpRoot, "docs/projects/registry.json"),
+    JSON.stringify({ projects: [{ ownerApproval: "" }] }),
+  );
+  fs.writeFileSync(path.join(tmpRoot, "README.md"), "# Absolute Level-5 Marketing\nWithout any constraints.");
+
+  try {
+    const degradedScorecard = evaluateSovereignFiveScorecard(tmpRoot);
+    assert.equal(degradedScorecard.grade, "BELOW");
+    assert.equal(degradedScorecard.epistemicState, "SOVEREIGN_PROGRESS_WITHIN_TESTED_SCOPE");
+    assert.equal(degradedScorecard.pillars.find((p) => p.id === "LAYER0_PURITY").score, 0);
+    assert.equal(degradedScorecard.pillars.find((p) => p.id === "EVIDENCE_TIP_SEAL").score, 0);
+    assert.equal(degradedScorecard.pillars.find((p) => p.id === "EPISTEMIC_HONESTY").score, 5);
+
+    // Grade 4/5 (score 80): pure layer 0, tip seal, epistemic honesty, 10 projects ok, but 0 migrated tools
+    fs.writeFileSync(path.join(tmpRoot, "package.json"), JSON.stringify({ dependencies: {} }));
+    fs.mkdirSync(path.join(tmpRoot, "docs/evidence"), { recursive: true });
+    fs.writeFileSync(path.join(tmpRoot, "docs/evidence/provenance.intoto.jsonl"), "receipt");
+    fs.writeFileSync(path.join(tmpRoot, "README.md"), "Within tested scope notice.");
+    const tenProjects = Array.from({ length: 10 }, (_, i) => ({ id: `p${i}`, ownerApproval: "APPROVED" }));
+    fs.writeFileSync(path.join(tmpRoot, "docs/projects/registry.json"), JSON.stringify({ projects: tenProjects }));
+
+    const grade4 = evaluateSovereignFiveScorecard(tmpRoot);
+    assert.ok(["4/5", "5/5"].includes(grade4.grade));
+
+    // Grade 3/5: remove tip seal
+    fs.unlinkSync(path.join(tmpRoot, "docs/evidence/provenance.intoto.jsonl"));
+    const grade3 = evaluateSovereignFiveScorecard(tmpRoot);
+    assert.ok(["3/5", "4/5"].includes(grade3.grade));
+  } finally {
+    fs.rmSync(tmpRoot, { recursive: true, force: true });
+  }
+});

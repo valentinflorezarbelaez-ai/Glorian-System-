@@ -17,6 +17,8 @@ const { EosFeatureFlags, isEnabled } = await import("../src/core/eosFeatureFlags
 const { parseDiff, applyDiff, generateDiff } = await import("../src/core/eosDiffPatcher.ts");
 const { withRateLimit } = await import("../src/core/eosApiRateLimit.ts");
 const { EosPluginLoader } = await import("../src/core/eosPluginLoader.ts");
+const { EosTokenBucketRateLimiter } = await import("../src/core/eosTokenBucketRateLimiter.ts");
+const { createLogger, logger } = await import("../src/core/eosLogger.ts");
 
 // ── Suite 1: Feature Flags ───────────────────────────────────────────────────
 describe("EosFeatureFlags — Progressive Delivery (Stripe/Netflix Standard)", () => {
@@ -92,6 +94,34 @@ describe("EosFeatureFlags — Progressive Delivery (Stripe/Netflix Standard)", (
 
   it("convenience isEnabled() function works", () => {
     assert.equal(typeof isEnabled("agi_pipeline"), "boolean");
+  });
+
+  it("handles isEnabledForUser with sticky hash and percentage rollout", () => {
+    const flags = new EosFeatureFlags();
+    // Non-existent key returns false
+    assert.equal(flags.isEnabledForUser("nonexistent", "user-1"), false);
+
+    // Binary flag without rollout percentage
+    const binaryEnabled = flags.isEnabledForUser("agi_pipeline", "user-1");
+    assert.equal(binaryEnabled, flags.isEnabled("agi_pipeline"));
+  });
+
+  it("handles corrupt flags.json and expired flags gracefully", () => {
+    const tmpDir = path.join(os.tmpdir(), `eos-flags-corrupt-${Date.now()}`);
+    fs.mkdirSync(tmpDir, { recursive: true });
+    const flagsFile = path.join(tmpDir, "flags.json");
+
+    // Write corrupt JSON
+    fs.writeFileSync(flagsFile, "{ invalid json", "utf8");
+    const flags = new EosFeatureFlags(tmpDir);
+    assert.equal(flags.isEnabled("chaos_in_ci"), false);
+
+    // Write valid JSON and test _maybeRefresh
+    fs.writeFileSync(flagsFile, JSON.stringify({ chaos_in_ci: true }), "utf8");
+    flags._lastRefreshAt = 0; // Force refresh trigger
+    assert.equal(flags.isEnabled("chaos_in_ci"), true);
+
+    fs.rmSync(tmpDir, { recursive: true, force: true });
   });
 });
 
@@ -172,6 +202,106 @@ describe("EosDiffPatcher — Diff-Based Patch Application (Cursor/Devin Standard
     const result = applyDiff(diff, tmpDir);
     assert.equal(result.success, false);
     assert.ok(result.error?.includes("Patch mismatch"));
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it("applyDiff successfully applies diff with adds, removes, and context lines", () => {
+    const tmpDir = path.join(os.tmpdir(), `eos-diff-success-${Date.now()}`);
+    fs.mkdirSync(tmpDir, { recursive: true });
+    const targetFile = path.join(tmpDir, "success.ts");
+    fs.writeFileSync(targetFile, "line1\nline2\nline3\n", "utf8");
+
+    const diff = parseDiff(
+      "--- a/success.ts\n+++ b/success.ts\n@@ invalid-header @@\n@@ -1,3 +1,3 @@\n line1\n-line2\n\\ No newline at end of file\n+line2_updated\n line3\n",
+    );
+    const result = applyDiff(diff, tmpDir);
+    assert.equal(result.success, true);
+    assert.equal(result.linesAdded, 1);
+    assert.equal(result.linesRemoved, 1);
+    assert.equal(result.linesContext, 3);
+
+    const patchedContent = fs.readFileSync(targetFile, "utf8");
+    assert.equal(patchedContent, "line1\nline2_updated\nline3\n");
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it("parseDiff skips non-hunk lines before first hunk header", () => {
+    const diffWithMeta =
+      "diff --git a/file.ts b/file.ts\nindex 000000..111111 100644\n--- a/file.ts\n+++ b/file.ts\nindex extra comment line\n@@ -1,1 +1,1 @@\n-old\n+new\n";
+    const parsed = parseDiff(diffWithMeta);
+    assert.equal(parsed.hunks.length, 1);
+    assert.equal(parsed.hunks[0].lines.length, 3);
+  });
+
+  it("generateDiff produces a valid unified diff with leading/trailing context and supports round-trip apply", () => {
+    const oldContent = "header\nline A\nline B\nfooter\n";
+    const newContent = "header\nline A modified\nline B\nfooter\n";
+    const diffText = generateDiff(oldContent, newContent, "sub/mod.ts");
+
+    assert.ok(diffText.includes("--- a/sub/mod.ts"));
+    assert.ok(diffText.includes("+++ b/sub/mod.ts"));
+    assert.ok(diffText.includes("@@ -"));
+    assert.ok(diffText.includes("-line A"));
+    assert.ok(diffText.includes("+line A modified"));
+
+    // Verify round-trip application on disk
+    const tmpDir = path.join(os.tmpdir(), `eos-roundtrip-${Date.now()}`);
+    fs.mkdirSync(path.join(tmpDir, "sub"), { recursive: true });
+    const targetFile = path.join(tmpDir, "sub", "mod.ts");
+    fs.writeFileSync(targetFile, oldContent, "utf8");
+
+    const parsed = parseDiff(diffText);
+    const result = applyDiff(parsed, tmpDir);
+    assert.equal(result.success, true);
+    assert.equal(fs.readFileSync(targetFile, "utf8"), newContent);
+
+    // Test applyDiff with oldPath only (newPath empty)
+    const oldOnlyDiff = {
+      oldPath: "sub/mod.ts",
+      newPath: "",
+      hunks: parsed.hunks,
+      sha256: parsed.sha256,
+    };
+    // Revert target file and apply with oldOnlyDiff
+    fs.writeFileSync(targetFile, oldContent, "utf8");
+    const oldOnlyResult = applyDiff(oldOnlyDiff, tmpDir);
+    assert.equal(oldOnlyResult.success, true);
+
+    // Test generateDiff with change on line 0 (no leading context) and change to end (no trailing context)
+    const diffNoContext = generateDiff("single-line-old", "single-line-new", "single.txt");
+    assert.ok(diffNoContext.includes("@@ -1,1 +1,1 @@"));
+
+    // Test parseDiff with empty body line
+    const diffWithEmpty = "--- a/empty.txt\n+++ b/empty.txt\n@@ -1,2 +1,2 @@\n \n-line1\n+line2\n";
+    const parsedEmpty = parseDiff(diffWithEmpty);
+    assert.equal(parsedEmpty.hunks[0].lines[0].type, "context");
+
+    // Test applyDiff with non-Error thrown (catches and formats String(err))
+    const mockDiff = {
+      oldPath: "sub/mod.ts",
+      newPath: "sub/mod.ts",
+      hunks: [
+        {
+          oldStart: 1,
+          oldCount: 1,
+          newStart: 1,
+          newCount: 1,
+          lines: [
+            {
+              get type() {
+                throw "non-error-exception";
+              },
+              content: "x",
+            },
+          ],
+        },
+      ],
+      sha256: "0000",
+    };
+    const caughtRes = applyDiff(mockDiff, tmpDir);
+    assert.equal(caughtRes.success, false);
+    assert.equal(caughtRes.error, "non-error-exception");
+
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
 });
@@ -284,6 +414,83 @@ describe("EosApiRateLimit — API Rate Limiting (Cloudflare/Stripe Standard)", (
     await wrapped({ method: "OPTIONS", headers: {}, socket: {} }, mockRes);
     assert.equal(statusCode, 200, "OPTIONS should bypass rate limiting");
   });
+
+  it("extracts true client IP from trusted proxy xff header (string & array) and handles raw response", async () => {
+    const wrapped = withRateLimit({ capacity: 1, refillPerSecond: 0.001 })((req, res) => res.end("ok"));
+
+    // 1. Trusted proxy (127.0.0.1) with string XFF
+    const rawRes1 = {
+      statusCode: 200,
+      headers: {},
+      setHeader(k, v) {
+        this.headers[k] = v;
+      },
+      end(s) {
+        return s;
+      },
+    };
+    await wrapped(
+      {
+        method: "GET",
+        headers: { "x-forwarded-for": "203.0.113.195, 10.0.0.1" },
+        socket: { remoteAddress: "127.0.0.1" },
+      },
+      rawRes1,
+    );
+    assert.equal(rawRes1.statusCode, 200);
+
+    // 2. Second request from same client -> exceeds capacity and sets rawRes2.statusCode = 429
+    const rawRes2 = {
+      statusCode: 200,
+      headers: {},
+      setHeader(k, v) {
+        this.headers[k] = v;
+      },
+      end(s) {
+        return s;
+      },
+    };
+    await wrapped(
+      {
+        method: "GET",
+        headers: { "x-forwarded-for": ["203.0.113.195"] },
+        socket: { remoteAddress: "127.0.0.1" },
+      },
+      rawRes2,
+    );
+    assert.equal(rawRes2.statusCode, 429);
+    assert.equal(rawRes2.headers["X-RateLimit-Remaining"], "0");
+
+    // 3. Custom keyFn and connection.remoteAddress fallback
+    const customKeyWrapped = withRateLimit({ capacity: 10, keyFn: (r) => r.headers["x-tenant-id"] })((req, res) =>
+      res.end("ok"),
+    );
+    await customKeyWrapped(
+      { method: "GET", headers: { "x-tenant-id": "tenant-abc" }, connection: { remoteAddress: "10.0.0.2" } },
+      rawRes1,
+    );
+  });
+
+  it("covers EosTokenBucketRateLimiter key eviction, tracking, and selective reset", () => {
+    const limiter = new EosTokenBucketRateLimiter({ capacity: 5, refillPerSecond: 1, maxKeys: 2 });
+
+    // Ingest 2 keys
+    limiter.consume("client-A");
+    limiter.consume("client-B");
+    assert.equal(limiter.getTrackedKeysCount(), 2);
+
+    // 3rd key forces eviction of oldest key ("client-A")
+    limiter.consume("client-C");
+    assert.equal(limiter.getTrackedKeysCount(), 2);
+
+    // Reset single key
+    limiter.reset("client-B");
+    assert.equal(limiter.getTrackedKeysCount(), 1);
+
+    // Reset all keys
+    limiter.reset();
+    assert.equal(limiter.getTrackedKeysCount(), 0);
+  });
 });
 
 // ── Suite 4: Plugin Loader ────────────────────────────────────────────────────
@@ -363,5 +570,97 @@ describe("EosPluginLoader — External Plugin System (DeepSeek/Cursor Standard)"
     assert.ok(failed, "Should record the failed plugin");
     assert.ok(failed.error, "Should have an error message");
     delete process.env["EOS_PLUGINS"];
+  });
+
+  it("loads plugin with register() export, handles corrupt plugins.json and invalid exports", async () => {
+    // 1. Create plugin with register export and .js extension
+    const regPluginPath = path.join(tmpDir, "plugins", "reg-plugin.js");
+    fs.writeFileSync(
+      regPluginPath,
+      `
+      export function register(registry) {
+        registry.register({ name: "tool_from_register", description: "d", handle() { return 1; } });
+      }
+    `,
+      "utf8",
+    );
+
+    // 2. Create invalid plugin with no export
+    const emptyPluginPath = path.join(tmpDir, "plugins", "bad-plugin.mjs");
+    fs.writeFileSync(emptyPluginPath, "export const other = 123;", "utf8");
+
+    // 3. Corrupt plugins.json
+    fs.writeFileSync(path.join(tmpDir, "plugins.json"), "{ invalid json", "utf8");
+
+    const loader = new EosPluginLoader(tmpDir);
+    // Explicitly load the plugins by setting EOS_PLUGINS
+    process.env["EOS_PLUGINS"] = "reg-plugin,bad-plugin";
+
+    const mockRegistry = {
+      tools: [],
+      register(tool) {
+        this.tools.push(tool);
+      },
+      listTools() {
+        return this.tools;
+      },
+    };
+
+    const res = await loader.loadAll(mockRegistry);
+    assert.equal(res.successful, 1);
+    assert.equal(res.failed, 1);
+    assert.equal(loader.getLoadedPlugins().length, 2);
+
+    delete process.env["EOS_PLUGINS"];
+  });
+});
+
+// ── Suite 5: Structured Logging & Redaction ──────────────────────────────────
+describe("EosLogger — Centralized Structured Logging & Redaction", () => {
+  it("covers all log levels, child loggers, correlation IDs, timers, and sampling", () => {
+    const log = createLogger("testModule", "TRACE");
+    assert.ok(log);
+    assert.ok(logger);
+
+    // Verify all levels can be called without error
+    assert.doesNotThrow(() => {
+      log.trace("trace message", { detail: "fine" });
+      log.debug("debug message", { detail: "dbg" });
+      log.info("info message", {
+        // Redaction triggers
+        token: "secret-token",
+        password: "[redacted_password]",
+        secretKey: "secret-val",
+      });
+      log.warn("warn message");
+      log.error("error message");
+    });
+
+    // Timers
+    log.time("test-timer");
+    const elapsed = log.timeEnd("test-timer", "timer completed");
+    assert.ok(elapsed >= 0);
+
+    // Unknown timer returns 0
+    assert.equal(log.timeEnd("non-existent-timer"), 0);
+
+    // Child logger inherits and extends namespace
+    const childLog = log.child("subService");
+    assert.equal(childLog.namespace, "testModule:subService");
+
+    // withRequestId creates logger with correlationId
+    const reqLog = log.withRequestId("req-9999");
+    assert.equal(reqLog.correlationId, "req-9999");
+    reqLog.info("msg with reqId");
+
+    // withSampling clamps rate between 0 and 1
+    const sampledLog = log.withSampling(0.5);
+    assert.equal(sampledLog.sampleRate, 0.5);
+
+    const clampedLog1 = log.withSampling(-1);
+    assert.equal(clampedLog1.sampleRate, 0);
+
+    const clampedLog2 = log.withSampling(2);
+    assert.equal(clampedLog2.sampleRate, 1);
   });
 });

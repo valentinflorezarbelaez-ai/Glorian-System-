@@ -131,6 +131,18 @@ test("BDD-278: Streaming Z-Score anomaly detector flags statistical outliers (|Z
 
   const queryRes = engine.query({ repoId: "eos-core" });
   assert.ok(queryRes.anomaliesCount >= 1);
+
+  // Filter with 0 matches
+  const emptyRes = engine.query({
+    repoId: "non-existent-repo",
+    stage: "CANARY_100_PCT",
+    statusCodeMin: 900,
+    statusCodeMax: 999,
+    minTimestamp: 9999999999999,
+  });
+  assert.equal(emptyRes.matchedCount, 0);
+  assert.equal(emptyRes.stats.count, 0);
+  assert.ok(emptyRes.sha256Receipt.length === 64);
 });
 
 test("SPEC-108: Contract invariants and precondition assertions reject invalid parameters", () => {

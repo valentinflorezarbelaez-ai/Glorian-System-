@@ -59,3 +59,65 @@ test("BDD-234: Bloom Filter Fast Non-Membership and Point-Lookup", () => {
   assert.ok(purged >= 0);
   assert.equal(engine.getSsTableCount(), 1);
 });
+
+test("BDD-235: LSM Preconditions, Ledger Logging, Deletion Flushes, and Empty Compaction", () => {
+  // Capacity <= 0 throws
+  assert.throws(() => new EosLsmTreeStorageEngine(0), /MemTable capacity must be positive/);
+
+  // Default constructor
+  const defaultEngine = new EosLsmTreeStorageEngine();
+  assert.equal(defaultEngine.flushMemTable(), null); // Flush empty memTable returns null
+  assert.equal(defaultEngine.compact(), 0); // Compaction with 0 sstables returns 0
+
+  // Empty key preconditions
+  assert.throws(() => defaultEngine.put("", "val"), /Key cannot be empty/);
+  assert.throws(() => defaultEngine.delete(""), /Key cannot be empty/);
+  assert.throws(() => defaultEngine.get(""), /Key cannot be empty/);
+
+  // Key range check in SSTable get() (key < minKey or key > maxKey)
+  defaultEngine.put("m-middle", "val-m");
+  defaultEngine.flushMemTable();
+  assert.equal(defaultEngine.get("a-before"), null); // key < table.minKey
+  assert.equal(defaultEngine.get("z-after"), null); // key > table.maxKey
+
+  // Deletion triggering flush
+  const delEngine = new EosLsmTreeStorageEngine(2);
+  delEngine.delete("del:1");
+  delEngine.delete("del:2"); // Triggers flushMemTable from delete()
+  assert.equal(delEngine.getSsTableCount(), 1);
+
+  // Compaction resulting in 0 alive entries (all tombstones)
+  const tombEngine = new EosLsmTreeStorageEngine(2);
+  tombEngine.put("item1", "v1");
+  tombEngine.put("item2", "v2"); // Flushed to SSTable 1
+  tombEngine.delete("item1");
+  tombEngine.delete("item2"); // Flushed to SSTable 2
+  assert.equal(tombEngine.getSsTableCount(), 2);
+  const eliminated = tombEngine.compact();
+  assert.equal(eliminated, 0);
+  assert.equal(tombEngine.getSsTableCount(), 0);
+
+  // Ledger integration in flushMemTable (success & error catch)
+  const mockLedgerSuccess = {
+    appendEntry: (entry) => {
+      assert.equal(entry.category, "VERIFICATION_RECEIPT");
+      assert.ok(entry.title.includes("LSM SSTable Flushed"));
+      return { entryHash: "ledger_receipt" };
+    },
+  };
+  const ledgerEngine = new EosLsmTreeStorageEngine(2, mockLedgerSuccess);
+  ledgerEngine.put("x", "1");
+  ledgerEngine.put("y", "2"); // Triggers flush with ledger
+  assert.equal(ledgerEngine.getSsTableCount(), 1);
+
+  const mockLedgerError = {
+    appendEntry: () => {
+      throw new Error("Disk full");
+    },
+  };
+  const ledgerErrEngine = new EosLsmTreeStorageEngine(2, mockLedgerError);
+  assert.doesNotThrow(() => {
+    ledgerErrEngine.put("x", "1");
+    ledgerErrEngine.put("y", "2");
+  });
+});

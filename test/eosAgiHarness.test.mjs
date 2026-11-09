@@ -256,6 +256,78 @@ process.exit(0);
       /security violation/i,
     );
   });
+
+  it("fires all onProgress event types and handles multi-file targets & empty mutations", async () => {
+    const progressEvents = [];
+    const testScript = path.join(tmpDir, "verify_multi.mjs");
+    fs.writeFileSync(
+      testScript,
+      `
+import fs from "node:fs";
+const ok = fs.existsSync("fileA.txt") && fs.existsSync("fileB.txt");
+process.exit(ok ? 0 : 1);
+`,
+      "utf8",
+    );
+
+    const result = await core.solve(
+      "Multi-file and empty branch test",
+      [
+        {
+          id: "BRANCH-EMPTY",
+          strategy: "No targets provided",
+          targets: [],
+          estimatedComplexity: 1,
+        },
+        {
+          id: "BRANCH-MULTI",
+          strategy: "Write fileA and fileB",
+          targets: [
+            { relPath: "fileA.txt", content: "A content" },
+            { relPath: "fileB.txt", content: "B content" },
+          ],
+          estimatedComplexity: 2,
+        },
+      ],
+      {
+        testCommand: `node ${testScript}`,
+        testCwd: tmpDir,
+        timeoutMs: 3_000,
+        onProgress: (evt) => progressEvents.push(evt),
+      },
+    );
+
+    assert.equal(result.solved, true);
+    assert.equal(result.winningBranchId, "BRANCH-MULTI");
+    assert.ok(progressEvents.some((e) => e.type === "SOLVE_STARTED"));
+    assert.ok(progressEvents.some((e) => e.type === "BRANCH_STARTED"));
+    assert.ok(progressEvents.some((e) => e.type === "BRANCH_FAILED"));
+    assert.ok(progressEvents.some((e) => e.type === "AXIOM_CRYSTALLIZED"));
+    assert.ok(progressEvents.some((e) => e.type === "BRANCH_PASSED"));
+    assert.ok(progressEvents.some((e) => e.type === "SOLVE_COMPLETE"));
+  });
+
+  it("handles EosAxiomMemory LRU eviction and corrupt store recovery", () => {
+    const smallStore = path.join(tmpDir, "small_axioms.json");
+    const mem = new EosAxiomMemory(smallStore, 2);
+
+    mem.crystallize("strat 1", "err 1");
+    mem.crystallize("strat 2", "err 2");
+    assert.equal(mem.size, 2);
+
+    // Bump recurrence on strat 1
+    mem.crystallize("strat 1", "err 1");
+
+    // Add 3rd axiom -> triggers eviction of strat 2
+    mem.crystallize("strat 3", "err 3");
+    assert.equal(mem.size, 2);
+
+    // Corrupt store file recovery
+    const corruptStore = path.join(tmpDir, "corrupt_axioms.json");
+    fs.writeFileSync(corruptStore, "{ not-valid-json ]", "utf8");
+    const recoveredMem = new EosAxiomMemory(corruptStore);
+    assert.equal(recoveredMem.size, 0);
+  });
 });
 
 // ============================================================================
@@ -297,6 +369,114 @@ describe("EosMultiModelRouter — Routing Configuration", () => {
     assert.ok(result.error.message.includes("ANTHROPIC_API_KEY"));
 
     if (originalKey) process.env.ANTHROPIC_API_KEY = originalKey;
+  });
+
+  it("exercises task type selection, FinOps tracking, and cache hits across all models", async () => {
+    const savedAnthropicKey = process.env.ANTHROPIC_API_KEY;
+    process.env.ANTHROPIC_API_KEY = "mock-test-key-for-router";
+
+    try {
+      const cachedRouter = new EosMultiModelRouter();
+      const branchPayload = JSON.stringify({
+        branches: [
+          {
+            id: "BRANCH-001",
+            strategy: "Minimal complexity",
+            targetRelPath: "src/target.ts",
+            proposedContent: "export const x = 1;",
+            estimatedComplexity: 1,
+          },
+        ],
+      });
+
+      // Mock cache to return valid cached responses
+      cachedRouter._responseCache.get = () => ({
+        content: branchPayload,
+        cachedAt: Date.now(),
+      });
+
+      // 1. Call ARCHITECT without system message
+      const archRes = await cachedRouter.call("ARCHITECT", [{ role: "user", content: "design system" }]);
+      assert.equal(archRes.ok, true);
+      assert.equal(archRes.value.taskType, "ARCHITECT");
+      assert.ok(archRes.value.estimatedCostUsd > 0);
+
+      // 2. Call REVIEW with existing system message and rules block
+      const revRes = await cachedRouter.call(
+        "REVIEW",
+        [
+          { role: "system", content: "Initial system instruction" },
+          { role: "user", content: "review patch" },
+        ],
+        "RULE-001: Law IV write barrier must hold",
+      );
+      assert.equal(revRes.ok, true);
+      assert.equal(revRes.value.taskType, "REVIEW");
+
+      // 3. Call SECURITY
+      const secRes = await cachedRouter.call("SECURITY", [{ role: "user", content: "audit secrets" }]);
+      assert.equal(secRes.ok, true);
+      assert.equal(secRes.value.taskType, "SECURITY");
+
+      // 4. Call COMPRESS
+      const compRes = await cachedRouter.call("COMPRESS", [{ role: "user", content: "compress context" }]);
+      assert.equal(compRes.ok, true);
+      assert.equal(compRes.value.taskType, "COMPRESS");
+
+      // 5. FinOps summary verification
+      const stats = cachedRouter.getUsageStats();
+      assert.equal(stats.totalCalls, 4);
+      assert.equal(stats.callsByTaskType.ARCHITECT, 1);
+      assert.equal(stats.callsByTaskType.REVIEW, 1);
+      assert.equal(stats.callsByTaskType.SECURITY, 1);
+      assert.equal(stats.callsByTaskType.COMPRESS, 1);
+      assert.ok(stats.totalEstimatedCostUsd > 0);
+
+      // 6. generateBranches with extraContext and currentContent
+      const branches = await cachedRouter.generateBranches({
+        objective: "Build auth module",
+        targetRelPath: "src/auth.ts",
+        currentContent: "// initial content",
+        extraContext: "Keep hexagonal boundaries",
+        branchCount: 1,
+        rulesBlock: "NO_PLAIN_SECRETS",
+      });
+      assert.equal(branches.length, 1);
+      assert.equal(branches[0].id, "BRANCH-001");
+
+      // 7. generateBranches with markdown code fences in response
+      cachedRouter._responseCache.get = () => ({
+        content: `\`\`\`json\n${branchPayload}\n\`\`\``,
+        cachedAt: Date.now(),
+      });
+      const fencedBranches = await cachedRouter.generateBranches({
+        objective: "Fenced test",
+        targetRelPath: "src/fenced.ts",
+      });
+      assert.equal(fencedBranches.length, 1);
+
+      // 8. generateBranches with corrupt JSON in response
+      cachedRouter._responseCache.get = () => ({
+        content: "{ corrupted json not valid",
+        cachedAt: Date.now(),
+      });
+      const corruptBranches = await cachedRouter.generateBranches({
+        objective: "Corrupt test",
+        targetRelPath: "src/corrupt.ts",
+      });
+      assert.deepEqual(corruptBranches, []);
+
+      // 9. Rate limiting threshold breach
+      const rateLimitedRouter = new EosMultiModelRouter({}, { maxCallsPerMinute: 1 });
+      // Force rate limit queue to be full
+      rateLimitedRouter._callsPerMinute.set("anthropic", [Date.now(), Date.now()]);
+      const rateRes = await rateLimitedRouter.call("CODE", [{ role: "user", content: "hi" }]);
+      assert.equal(rateRes.ok, false);
+      assert.ok(rateRes.error.message.includes("Rate limit exceeded"));
+    } finally {
+      if (savedAnthropicKey) process.env.ANTHROPIC_API_KEY = savedAnthropicKey;
+      else delete process.env.ANTHROPIC_API_KEY;
+    }
   });
 });
 

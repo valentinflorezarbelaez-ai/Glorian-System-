@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import https from "node:https";
+import { EventEmitter } from "node:events";
 import { fileURLToPath } from "node:url";
 
 import { EosTlcFormalChecker } from "../src/core/eosTlcFormalChecker.ts";
@@ -149,4 +151,99 @@ test("BDD-178: MCP Dispatch of eos_tlc_checker via EosMcpServer", () => {
   assert.equal(checkData.status, "PASS");
   assert.equal(checkData.specification, "TlcFormalModelChecker.tla");
   assert.equal(checkData.sha256Receipt.length, 64);
+});
+
+test("BDD-179: Deep Branch Coverage for TLC Native, Jar Location, Downloads, and Invariants", async () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-tlc-branches-"));
+  try {
+    // 1. Candidate paths with mock jar
+    const mockJar = path.join(tmpDir, "tla2tools.jar");
+    fs.writeFileSync(mockJar, "dummy jar content", "utf8");
+    process.env.TLA2TOOLS_JAR_PATH = mockJar;
+
+    const diagWithJar = EosTlcFormalChecker.detectRuntime(projectRoot);
+    assert.equal(diagWithJar.tlaJarPresent, true);
+    assert.equal(diagWithJar.tlaJarPath, path.resolve(mockJar));
+
+    // 2. Mock downloadTlaJar with redirect, 200 stream, 404 error, and network error
+    const origGet = https.get;
+    try {
+      // 2a. Successful download with 302 redirect
+      let callCount = 0;
+      https.get = (urlStr, cb) => {
+        const req = new EventEmitter();
+        process.nextTick(() => {
+          if (callCount === 0) {
+            callCount++;
+            // 302 redirect
+            cb({
+              statusCode: 302,
+              headers: { location: "https://redirect.example.com/tla2tools.jar" },
+            });
+          } else {
+            // 200 OK
+            const res = new EventEmitter();
+            res.statusCode = 200;
+            res.pipe = (dest) => {
+              dest.write(Buffer.from("PK-fake-jar"));
+              dest.end();
+            };
+            cb(res);
+            res.emit("data", Buffer.from("PK-fake-jar"));
+          }
+        });
+        return req;
+      };
+
+      const downloadResult = await EosTlcFormalChecker.downloadTlaJar(path.join(tmpDir, "dl"));
+      assert.equal(downloadResult.success, true);
+      assert.ok(downloadResult.bytesDownloaded > 0);
+
+      // 2b. 404 HTTP error
+      https.get = (urlStr, cb) => {
+        const req = new EventEmitter();
+        process.nextTick(() => {
+          cb({ statusCode: 404 });
+        });
+        return req;
+      };
+      await assert.rejects(() => EosTlcFormalChecker.downloadTlaJar(path.join(tmpDir, "dl_fail")), /HTTP 404/);
+
+      // 2c. Network error
+      https.get = () => {
+        const req = new EventEmitter();
+        process.nextTick(() => {
+          req.emit("error", new Error("DNS resolution failed"));
+        });
+        return req;
+      };
+      await assert.rejects(
+        () => EosTlcFormalChecker.downloadTlaJar(path.join(tmpDir, "dl_fail_net")),
+        /DNS resolution failed/,
+      );
+    } finally {
+      https.get = origGet;
+    }
+
+    // 3. recordReceiptInLedger failure with circular payload
+    const circular = { x: 1 };
+    circular.self = circular;
+    const badReceipt = {
+      specification: "Mock.tla",
+      status: "PASS",
+      executionMode: "FALLBACK_BOUNDED_JS",
+      exploredStates: 10,
+      distinctStates: 5,
+      transitionsCalculated: 10,
+      durationMs: 1,
+      sha256Receipt: "0".repeat(64),
+      receiptId: circular,
+      timestampIso: new Date().toISOString(),
+    };
+    const recFail = EosTlcFormalChecker.recordReceiptInLedger(badReceipt, ":memory:");
+    assert.equal(recFail, false);
+  } finally {
+    delete process.env.TLA2TOOLS_JAR_PATH;
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
 });

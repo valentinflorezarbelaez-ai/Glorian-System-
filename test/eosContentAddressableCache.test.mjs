@@ -94,3 +94,96 @@ test("BDD-191: Action Cache Hit and Redundant Execution Avoidance", () => {
     }
   }
 });
+
+test("BDD-192: CAS Buffer Input, Missing Blobs and Precondition Validations", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-cas-buffer-test-"));
+
+  try {
+    const cas = new EosContentAddressableCache(tmpDir);
+
+    // Initial stats before any queries
+    const emptyStats = cas.getStats();
+    assert.equal(emptyStats.hitRatio, 0);
+
+    // Put blob as Buffer
+    const buf = Buffer.from([0x00, 0x01, 0x02, 0xff]);
+    const digest = cas.putBlob(buf);
+    assert.equal(digest.length, 64);
+
+    // Retrieve existing blob
+    const retrieved = cas.getBlob(digest);
+    assert.ok(retrieved);
+    assert.deepEqual(retrieved, buf);
+
+    // Non-existent blob -> returns null
+    const missingDigest = "f".repeat(64);
+    assert.equal(cas.getBlob(missingDigest), null);
+
+    // Preconditions for getBlob and putBlob
+    assert.throws(() => cas.getBlob("short-digest"), /valid 64-char digest required/);
+    assert.throws(() => cas.computeActionKey("not-array", "cmd"), /sourceAstHashes must be an array/);
+    assert.throws(() => cas.computeActionKey([], ""), /command is required/);
+    assert.throws(() => cas.putAction("short", { exitCode: 0, originalDurationMs: 10 }), /valid actionKey required/);
+    assert.throws(() => cas.getAction("short"), /valid actionKey required/);
+
+    // computeActionKey with default envContext
+    const keyWithoutEnv = cas.computeActionKey(["hash1"], "test-cmd");
+    assert.equal(keyWithoutEnv.length, 64);
+  } finally {
+    try {
+      fs.rmSync(tmpDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 });
+    } catch {
+      // Ignore transient cleanup locks
+    }
+  }
+});
+
+test("BDD-193: Corrupted Action JSON Handling & Ledger Branches", () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-cas-corrupt-test-"));
+
+  try {
+    const cas = new EosContentAddressableCache(tmpDir);
+    const validKey = "e".repeat(64);
+
+    // Write malformed JSON directly into action directory
+    const actionPath = path.join(tmpDir, ".eos", "cas", "actions", validKey);
+    fs.writeFileSync(actionPath, "{ malformed json", "utf8");
+
+    // getAction should catch JSON.parse error and return null, counting as miss
+    const result = cas.getAction(validKey);
+    assert.equal(result, null);
+    const stats = cas.getStats();
+    assert.equal(stats.cacheMisses, 1);
+
+    // Test recordReceiptInLedger with directory path
+    const savedInDir = cas.recordReceiptInLedger(tmpDir);
+    assert.equal(savedInDir, true);
+
+    // Test recordReceiptInLedger with .db path
+    const dbPath = path.join(tmpDir, "custom.db");
+    const savedInDb = cas.recordReceiptInLedger(dbPath);
+    assert.equal(savedInDb, true);
+
+    // Test recordReceiptInLedger default ledger path (calls defaultLedgerPath())
+    const savedDefault = cas.recordReceiptInLedger();
+    assert.equal(typeof savedDefault, "boolean");
+
+    // Test catch block when appendEntry fails
+    const originalAppend = EosDurableSqliteLedger.prototype.appendEntry;
+    try {
+      EosDurableSqliteLedger.prototype.appendEntry = () => {
+        throw new Error("Disk full simulation");
+      };
+      const failed = cas.recordReceiptInLedger(tmpDir);
+      assert.equal(failed, false);
+    } finally {
+      EosDurableSqliteLedger.prototype.appendEntry = originalAppend;
+    }
+  } finally {
+    try {
+      fs.rmSync(tmpDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 });
+    } catch {
+      // Ignore transient cleanup locks
+    }
+  }
+});

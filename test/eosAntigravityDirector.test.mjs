@@ -328,3 +328,141 @@ test("BDD-127: Hermetic Antigravity installer heals dangling junctions, preserve
     fs.rmSync(tempRoot, { recursive: true, force: true });
   }
 });
+
+test("BDD-128: Director Edge Paths, Missing Registry, Gamma Empty Commands, and Diagnostic Invariants", () => {
+  // 1. evaluateGammaCommand with empty/whitespace or non-string commands
+  assert.equal(EosAntigravityDirector.evaluateGammaCommand("").decision, "allow");
+  assert.equal(EosAntigravityDirector.evaluateGammaCommand("   ").decision, "allow");
+  assert.equal(EosAntigravityDirector.evaluateGammaCommand(null).decision, "allow");
+
+  // 2. classifyProfile fallback for generic/unrecognized prompts
+  const fallbackProfile = EosAntigravityDirector.classifyProfile("just a general greeting or non-keyword task");
+  assert.equal(fallbackProfile, "SDD_FULL_21_STEP");
+
+  // 3. synthesizeAntigravityMcpEntry with fleet overrides
+  const customConfig = EosAntigravityDirector.synthesizeAntigravityMcpEntry(projectRoot, {
+    EOS_FLEET_CRUD_SLACK_PATH: path.join(projectRoot, "custom-fleet"),
+  });
+  assert.equal(customConfig.command, "node");
+  assert.ok(customConfig.env.EOS_PROJECT_ROOT);
+  assert.ok(customConfig.env.EOS_FLEET_CRUD_SLACK_PATH);
+
+  // 4. Director mission plan when registry.json is missing in target directory
+  const emptyTemp = fs.mkdtempSync(path.join(os.tmpdir(), "eos-missing-reg-"));
+  try {
+    const plan = EosAntigravityDirector.directMission(
+      "Do something in an unconfigured project",
+      "nonexistent",
+      emptyTemp,
+    );
+    assert.equal(plan.writeBarrierStatus, "BLOCKED_BY_LAW_IV");
+    assert.ok(plan.missingPreconditions.includes("REGISTRY_NOT_FOUND"));
+
+    // Corrupted registry.json
+    const docsProj = path.join(emptyTemp, "docs", "projects");
+    fs.mkdirSync(docsProj, { recursive: true });
+    fs.writeFileSync(path.join(docsProj, "registry.json"), "{ invalid json syntax", "utf8");
+
+    const planCorrupt = EosAntigravityDirector.directMission("Try with corrupted registry", "corrupt", emptyTemp);
+    assert.equal(planCorrupt.writeBarrierStatus, "BLOCKED_BY_LAW_IV");
+    assert.ok(planCorrupt.missingPreconditions.includes("REGISTRY_PARSE_ERROR"));
+  } finally {
+    fs.rmSync(emptyTemp, { recursive: true, force: true });
+  }
+});
+
+test("BDD-129: Gamma Destructive Patterns, BUGFIX_FDIR DAG, Doctor Diagnostics, and Write Barrier Preconditions", () => {
+  // 1. All 5 GAMMA Destructive Rules
+  const r1 = EosAntigravityDirector.evaluateGammaCommand("rm -rf /");
+  assert.equal(r1.decision, "deny");
+  assert.equal(r1.matchedRule, "GAMMA-001-ROOT-WIPE");
+
+  const r2 = EosAntigravityDirector.evaluateGammaCommand("git push --force origin main");
+  assert.equal(r2.decision, "deny");
+  assert.equal(r2.matchedRule, "GAMMA-002-FORCE-PUSH-MAIN");
+
+  const r3 = EosAntigravityDirector.evaluateGammaCommand("DROP TABLE users");
+  assert.equal(r3.decision, "deny");
+  assert.equal(r3.matchedRule, "GAMMA-003-SQL-DROP");
+
+  const r4 = EosAntigravityDirector.evaluateGammaCommand("Format-Volume -DriveLetter C");
+  assert.equal(r4.decision, "deny");
+  assert.equal(r4.matchedRule, "GAMMA-004-DISK-FORMAT");
+
+  const r5 = EosAntigravityDirector.evaluateGammaCommand("rd /s /q C:\\");
+  assert.equal(r5.decision, "deny");
+  assert.equal(r5.matchedRule, "GAMMA-005-WIN-SYSTEM-DEL");
+
+  // 2. BUGFIX_FDIR Mission Directing
+  const bugfixPlan = EosAntigravityDirector.directMission("Fix bug in kernel primitives", "eos-system", projectRoot);
+  assert.equal(bugfixPlan.profile, "BUGFIX_FDIR");
+  assert.equal(bugfixPlan.prescribedMcpDag.length, 4);
+  assert.equal(bugfixPlan.prescribedMcpDag[0].toolName, "eos_semantic_search");
+  assert.equal(bugfixPlan.prescribedMcpDag[1].toolName, "eos_get_blast_radius");
+  assert.equal(bugfixPlan.prescribedMcpDag[2].toolName, "eos_validate_patch");
+  assert.equal(bugfixPlan.prescribedMcpDag[3].toolName, "eos_turbo_verify");
+
+  // 3. Write Barrier Preconditions with Incomplete Preconditions
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "eos-barrier-precond-"));
+  try {
+    const docsProj = path.join(tmpRoot, "docs", "projects");
+    fs.mkdirSync(docsProj, { recursive: true });
+    const registryContent = {
+      projects: [
+        {
+          id: "incomplete-proj",
+          status: "DRAFT",
+          intake: "PENDING",
+          specification: "PENDING",
+          audit: "PENDING",
+          authorization: "LEVEL_1",
+          localPath: path.join(tmpRoot, "incomplete-proj"),
+        },
+      ],
+    };
+    fs.writeFileSync(path.join(docsProj, "registry.json"), JSON.stringify(registryContent), "utf8");
+
+    // Match by localPath
+    const planLocal = EosAntigravityDirector.directMission(
+      "Update incomplete project",
+      path.join(tmpRoot, "incomplete-proj"),
+      tmpRoot,
+    );
+    assert.equal(planLocal.writeBarrierStatus, "BLOCKED_BY_LAW_IV");
+    assert.ok(planLocal.missingPreconditions.includes("REGISTERED"));
+    assert.ok(planLocal.missingPreconditions.includes("INTAKE_COMPLETE"));
+    assert.ok(planLocal.missingPreconditions.includes("SPECIFICATION_APPROVED"));
+    assert.ok(planLocal.missingPreconditions.includes("AUDIT_COMPLETE"));
+    assert.ok(planLocal.missingPreconditions.includes("LEVEL_2_OR_LEVEL_3_AUTHORIZED"));
+
+    // 4. Doctor with corrupted mcp_config.json
+    const tmpGemini = fs.mkdtempSync(path.join(os.tmpdir(), "eos-gemini-corrupt-"));
+    fs.writeFileSync(path.join(tmpGemini, "mcp_config.json"), "invalid json", "utf8");
+    const docCorrupt = EosAntigravityDirector.auditAntigravityIntegration(tmpRoot, tmpGemini);
+    assert.ok(docCorrupt.checks.some((c) => c.id === "GLOBAL_MCP_CONFIG" && c.detail.includes("Failed to parse")));
+
+    // Doctor with mcp args pointing to non-existent file
+    const badArgsMcp = {
+      mcpServers: {
+        "eos-system": {
+          command: "node",
+          args: [path.join(tmpRoot, "ghost-script.mjs")],
+        },
+      },
+    };
+    fs.writeFileSync(path.join(tmpGemini, "mcp_config.json"), JSON.stringify(badArgsMcp), "utf8");
+    const docBadArgs = EosAntigravityDirector.auditAntigravityIntegration(tmpRoot, tmpGemini);
+    assert.ok(docBadArgs.checks.some((c) => c.id === "GLOBAL_MCP_CONFIG" && c.detail.includes("non-existent file")));
+
+    // Doctor with duplicate plugin mcp
+    const pluginDir = path.join(tmpRoot, "integrations", "antigravity", "eos-governance");
+    fs.mkdirSync(pluginDir, { recursive: true });
+    fs.writeFileSync(path.join(pluginDir, "mcp_config.json"), "{}", "utf8");
+    const docDup = EosAntigravityDirector.auditAntigravityIntegration(tmpRoot, tmpGemini);
+    assert.equal(docDup.singleServerInvariantVerified, false);
+
+    fs.rmSync(tmpGemini, { recursive: true, force: true });
+  } finally {
+    fs.rmSync(tmpRoot, { recursive: true, force: true });
+  }
+});

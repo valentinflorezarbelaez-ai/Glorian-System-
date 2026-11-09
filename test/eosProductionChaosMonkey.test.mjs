@@ -62,3 +62,51 @@ test("BDD-195: Error Budget Circuit Breaker Safety Trip", async () => {
     }
   }
 });
+
+test("BDD-196: executeExperimentSync Nominal, Synthetic, Degraded & Abort Modes", () => {
+  // 1. Nominal with mockTransport
+  const repNominal = EosProductionChaosMonkey.executeExperimentSync("http://localhost:3000", {
+    burstCount: 3,
+    mockTransport: (_i) => ({ status: 200, latencyMs: 5 }),
+  });
+  assert.equal(repNominal.epistemicVerdict, "RESILIENT_CHAOS_SURVIVED");
+  assert.equal(repNominal.probesSent, 3);
+  assert.equal(repNominal.probesSuccess, 3);
+
+  // 2. Pure synthetic without mockTransport
+  const repSim = EosProductionChaosMonkey.executeExperimentSync("http://localhost:3000", {
+    burstCount: 5,
+  });
+  assert.equal(repSim.epistemicVerdict, "RESILIENT_CHAOS_SURVIVED");
+  assert.equal(repSim.probesSent, 5);
+
+  // 3. Circuit breaker abort
+  const repAbort = EosProductionChaosMonkey.executeExperimentSync("http://localhost:3000", {
+    burstCount: 10,
+    maxErrorBudgetPercent: 1.0,
+    mockTransport: (i) => ({ status: i === 0 ? 200 : 500, latencyMs: 10 }),
+  });
+  assert.equal(repAbort.epistemicVerdict, "CIRCUIT_BREAKER_ABORTED");
+  assert.equal(repAbort.emergencyAbortTriggered, true);
+
+  // 4. DEGRADED verdict (errors present but within budget)
+  const repDegraded = EosProductionChaosMonkey.executeExperimentSync("http://localhost:3000", {
+    burstCount: 10,
+    maxErrorBudgetPercent: 50.0,
+    mockTransport: (i) => ({ status: i === 0 ? 500 : 200, latencyMs: 10 }),
+  });
+  assert.equal(repDegraded.epistemicVerdict, "DEGRADED");
+
+  // 5. Precondition failure
+  assert.throws(() => EosProductionChaosMonkey.executeExperimentSync("ftp://invalid"), /Valid HTTP target/);
+});
+
+test("BDD-197: Async DEGRADED verdict within error budget", async () => {
+  const repDegradedAsync = await EosProductionChaosMonkey.executeExperiment("https://example.com", {
+    burstCount: 5,
+    maxErrorBudgetPercent: 50.0,
+    mockTransport: async (i) => ({ status: i === 1 ? 503 : 200, latencyMs: 20 }),
+  });
+  assert.equal(repDegradedAsync.epistemicVerdict, "DEGRADED");
+  assert.equal(repDegradedAsync.emergencyAbortTriggered, false);
+});
