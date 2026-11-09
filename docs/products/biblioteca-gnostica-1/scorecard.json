@@ -1,0 +1,14 @@
+{
+  "productId": "biblioteca-gnostica-1",
+  "name": "Biblioteca Gnóstica — Preservación Digital de Textos Sagrados",
+  "specCoverage": 100,
+  "gatePassRate": 100,
+  "mutationFloor": 90,
+  "layer0Purity": 100,
+  "timeToGreenMs": 3500,
+  "blastRadiusKnown": 95,
+  "score": 97,
+  "grade": "A+",
+  "epistemicState": "FLEET_PRODUCT_SCORECARD_WITHIN_TESTED_SCOPE",
+  "sha256Receipt": "c3e197625f815fe5cf2855d6ec1646a14edefcba879f059d8a9a2e33691a0796"
+}

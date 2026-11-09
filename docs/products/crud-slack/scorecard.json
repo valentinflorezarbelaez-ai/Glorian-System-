@@ -1,0 +1,14 @@
+{
+  "productId": "crud-slack",
+  "name": "TaskFlow AI — Omnichannel Request-to-Task CRUD & Triage",
+  "specCoverage": 100,
+  "gatePassRate": 100,
+  "mutationFloor": 90,
+  "layer0Purity": 100,
+  "timeToGreenMs": 3500,
+  "blastRadiusKnown": 95,
+  "score": 97,
+  "grade": "A+",
+  "epistemicState": "FLEET_PRODUCT_SCORECARD_WITHIN_TESTED_SCOPE",
+  "sha256Receipt": "8d49712859a62333d83df6043668964ed0b8c755006061e481b99b8efa32cb47"
+}

@@ -31,6 +31,7 @@
     "fleet:dogfood": "node scripts/eos-fleet-dogfood-ttv.mjs",
     "ops:seal": "node scripts/eos-bigtech-ops-seal.mjs",
     "aca:vercel": "node scripts/eos-vercel-aca-live.mjs",
+    "fleet:scorecards": "node scripts/eos-fleet-product-scorecards.mjs",
     "dora:track": "node scripts/track-dora-metrics.mjs",
     "scale:proof": "node scripts/eos-bounded-scale-proof.mjs",
     "llmops:privacy": "node --test test/eosLlmOpsPrivacyLane.test.mjs",

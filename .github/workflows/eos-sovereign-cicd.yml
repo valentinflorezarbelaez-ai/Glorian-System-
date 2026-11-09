@@ -196,6 +196,13 @@ jobs:
 
       - name: Vercel ACA live-or-fixture seal
         run: npm run aca:vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+
+      - name: Fleet product scorecards
+        run: npm run fleet:scorecards
 
       - name: Print Final Integration Summary
         run: |
