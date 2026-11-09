@@ -5,6 +5,9 @@
 
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import os from "node:os";
 import { EosStructuredLogger, parseTraceparent, formatTraceparent } from "../src/core/eosStructuredLogger.ts";
 import { EosFeatureFlagEngine } from "../src/core/eosFeatureFlagEngine.ts";
 import { EosLoadTestEngine } from "../src/core/eosLoadTestEngine.ts";
@@ -81,6 +84,66 @@ describe("SPEC-147: Structured Logger + W3C Trace-Context", () => {
     assert.equal(result, 42);
     const entry = JSON.parse(lines[0]);
     assert.ok(entry.metadata.durationMs >= 0);
+  });
+
+  it("BDD-465: all log levels, fromTraceparent, correlationId, error in timed, sampling", async () => {
+    const lines = [];
+    const logger = new EosStructuredLogger({
+      moduleName: "all-levels",
+      minLevel: "TRACE",
+      sampleRate: 1,
+      output: (l) => lines.push(l),
+    });
+
+    logger.trace("trace msg");
+    logger.debug("debug msg");
+    logger.info("info msg");
+    logger.warn("warn msg");
+    logger.error("error msg");
+    logger.fatal("fatal msg");
+    assert.equal(lines.length, 6);
+
+    assert.equal(logger.getCorrelationId().length, 36);
+    const header = logger.traceparentHeader();
+    assert.ok(header.startsWith("00-"));
+
+    // fromTraceparent valid and invalid
+    const fromValid = EosStructuredLogger.fromTraceparent(header, {
+      moduleName: "child",
+      minLevel: "INFO",
+      sampleRate: 1,
+      output: () => {},
+    });
+    assert.ok(fromValid);
+    assert.equal(fromValid.getTraceContext().traceId, logger.getTraceContext().traceId);
+
+    const fromInvalid = EosStructuredLogger.fromTraceparent("invalid-traceparent-header", {
+      moduleName: "child",
+      minLevel: "INFO",
+      sampleRate: 1,
+      output: () => {},
+    });
+    assert.equal(fromInvalid, null);
+
+    // timed() error handling
+    await assert.rejects(async () => {
+      await logger.timed("failing-op", async () => {
+        throw new Error("timed failure test");
+      });
+    }, /timed failure test/);
+
+    // Sampling rate = 0 drops TRACE / DEBUG
+    const sampledLines = [];
+    const zeroSampleLogger = new EosStructuredLogger({
+      moduleName: "zero-sample",
+      minLevel: "TRACE",
+      sampleRate: 0,
+      output: (l) => sampledLines.push(l),
+    });
+    zeroSampleLogger.trace("drop me");
+    zeroSampleLogger.debug("drop me too");
+    zeroSampleLogger.info("keep me");
+    assert.equal(sampledLines.length, 1);
   });
 });
 
@@ -198,10 +261,11 @@ describe("SPEC-149: Load Test Engine with SLA", () => {
     const engine = new EosLoadTestEngine(() => (virtualNowMs += 1));
     const report = await engine.run(
       () => {},
-      { concurrency: 2, totalRequests: 20, rampUpMs: 0, timeoutMs: 1000 },
-      { p99: 50, errorRate: 1 },
+      { concurrency: 2, totalRequests: 20, rampUpMs: 5, timeoutMs: 1000 },
+      { p50: 50, p95: 50, p99: 50, throughput: 1, errorRate: 1 },
     );
     assert.ok(report.allSLAPassed);
+    assert.equal(report.slaAssertions.length, 5);
   });
 });
 
@@ -271,6 +335,60 @@ describe("SPEC-150: Incident Severity Classifier", () => {
     assert.equal(r.severity, "P4");
     assert.deepEqual(r.actions, ["LOG_ONLY"]);
   });
+
+  it("BDD-495: P1/P2/P3 rules and rule metadata coverage", () => {
+    // P1: customerFacing with burnRateMultiplier >= 6 but blastRadiusPercent < 20
+    const p1Burn = classifier.classify({
+      burnRateMultiplier: 8,
+      blastRadiusPercent: 5,
+      durationMinutes: 5,
+      dataLoss: false,
+      customerFacing: true,
+      errorBudgetRemaining: 40,
+    });
+    assert.equal(p1Burn.severity, "P1");
+
+    // P2: errorBudgetRemaining < 25
+    const p2Budget = classifier.classify({
+      burnRateMultiplier: 0.5,
+      blastRadiusPercent: 2,
+      durationMinutes: 10,
+      dataLoss: false,
+      customerFacing: false,
+      errorBudgetRemaining: 20,
+    });
+    assert.equal(p2Budget.severity, "P2");
+
+    // P3: blastRadiusPercent >= 1
+    const p3Blast = classifier.classify({
+      burnRateMultiplier: 0.2,
+      blastRadiusPercent: 2,
+      durationMinutes: 5,
+      dataLoss: false,
+      customerFacing: false,
+      errorBudgetRemaining: 80,
+    });
+    assert.equal(p3Blast.severity, "P3");
+    assert.equal(p3Blast.autoRevert, false);
+    assert.deepEqual(p3Blast.actions, ["TICKET", "LOG_ONLY"]);
+
+    // P3: errorBudgetRemaining < 50
+    const p3Budget = classifier.classify({
+      burnRateMultiplier: 0.2,
+      blastRadiusPercent: 0,
+      durationMinutes: 5,
+      dataLoss: false,
+      customerFacing: false,
+      errorBudgetRemaining: 45,
+    });
+    assert.equal(p3Budget.severity, "P3");
+
+    // getRules() returns 5 rules
+    const rules = classifier.getRules();
+    assert.equal(rules.length, 5);
+    assert.equal(rules[0].severity, "P0");
+    assert.equal(rules[4].severity, "P4");
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -289,6 +407,26 @@ describe("SPEC-151: CycloneDX SBOM Generator", () => {
   it("BDD-501: dependency graph has entries", () => {
     const sbom = generateCycloneDxSbom(process.cwd());
     assert.ok(sbom.dependencies.length > 0);
+  });
+
+  it("BDD-502: handles directory without src/core gracefully", () => {
+    const tmp = os.tmpdir();
+    const pkgPath = path.join(tmp, "package.json");
+    const hadPkg = fs.existsSync(pkgPath);
+    const oldPkg = hadPkg ? fs.readFileSync(pkgPath, "utf8") : null;
+    try {
+      fs.writeFileSync(pkgPath, JSON.stringify({ name: "mock-empty", version: "0.1.0" }), "utf8");
+      const emptySbom = generateCycloneDxSbom(tmp);
+      assert.equal(emptySbom.components.length, 0);
+      assert.equal(emptySbom.dependencies.length, 0);
+      assert.equal(emptySbom.metadata.component.version, "0.1.0");
+    } finally {
+      if (hadPkg && oldPkg !== null) {
+        fs.writeFileSync(pkgPath, oldPkg, "utf8");
+      } else if (fs.existsSync(pkgPath)) {
+        fs.unlinkSync(pkgPath);
+      }
+    }
   });
 });
 

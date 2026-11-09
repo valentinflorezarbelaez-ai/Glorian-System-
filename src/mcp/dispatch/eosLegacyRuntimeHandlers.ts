@@ -90,7 +90,13 @@ const handlers: Record<string, EosLegacyToolHandler> = {
         onProgress?.(Math.round((stageId / 21) * 100), 100, `[Stage ${stageId}/21] ${name}`);
       },
     });
-    return summary;
+    return {
+      ...summary,
+      stageResults: summary.stageResults.map((s) => ({
+        ...s,
+        monotonicNs: Number(s.monotonicNs),
+      })),
+    };
   },
 
   eos_sovereign_loop_stages: (ctx, args, onProgress) => {

@@ -1,5 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { EosFleetMissionControl } from "../src/core/eosFleetMissionControl.ts";
@@ -100,6 +102,71 @@ describe("SPEC-125: EOS Fleet Mission Control Dashboard & Synthetic Health Senti
       assert.equal(body.totalProjects, 9);
       assert.equal(body.productionEndpointsCount, 9);
       assert.ok(/^[0-9a-f]{64}$/.test(body.registrySha256));
+    });
+  });
+
+  describe("BDD-373: Full Branch Coverage & Probe Error Handling", () => {
+    it("exercises generateReportSync and missing registry errors", async () => {
+      // 1. generateReportSync
+      const syncReport = missionControl.generateReportSync();
+      assert.equal(syncReport.totalProjects, 9);
+      assert.equal(syncReport.fleetQuorumPercentage, 100);
+      assert.equal(syncReport.averageLatencyMs, 0);
+
+      // 2. Missing registry error
+      const badControl = new EosFleetMissionControl(path.join(projectRoot, "nonexistent_dir_xyz"));
+      assert.throws(() => badControl.getRawRegistry(), /Fleet registry not found/);
+
+      // 3. Null projects array handling
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-bad-reg-"));
+      try {
+        fs.mkdirSync(path.join(tmpDir, "docs/projects"), { recursive: true });
+        fs.writeFileSync(
+          path.join(tmpDir, "docs/projects/registry.json"),
+          JSON.stringify({ version: "1.0", registrySha256: "abc", projects: null }),
+        );
+        const emptyControl = new EosFleetMissionControl(tmpDir);
+        assert.deepEqual(emptyControl.getFleetOverview(), []);
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
+
+      // 4. Live probing variations with mocked fetch
+      const originalFetch = globalThis.fetch;
+      try {
+        // Success probe
+        globalThis.fetch = async () => ({ status: 200 });
+        const liveReport = await missionControl.generateReport({ probe: true });
+        assert.equal(liveReport.healthyEndpointsCount, 9);
+        assert.equal(liveReport.fleetQuorumPercentage, 100);
+        assert.ok(liveReport.averageLatencyMs >= 0);
+
+        // AbortError
+        globalThis.fetch = async () => {
+          const err = new Error("timeout");
+          err.name = "AbortError";
+          throw err;
+        };
+        const abortProbe = await EosFleetMissionControl.probeEndpoint("https://example.com/abort", 100);
+        assert.equal(abortProbe.reachable, false);
+        assert.equal(abortProbe.error, "TIMEOUT");
+
+        // Generic network error
+        globalThis.fetch = async () => {
+          throw new Error("ECONNREFUSED");
+        };
+        const netFailProbe = await EosFleetMissionControl.probeEndpoint("https://example.com/netfail", 100);
+        assert.equal(netFailProbe.reachable, false);
+        assert.equal(netFailProbe.error, "ECONNREFUSED");
+
+        // HTTP 503 error
+        globalThis.fetch = async () => ({ status: 503 });
+        const s503Probe = await EosFleetMissionControl.probeEndpoint("https://example.com/503", 100);
+        assert.equal(s503Probe.reachable, false);
+        assert.equal(s503Probe.statusCode, 503);
+      } finally {
+        globalThis.fetch = originalFetch;
+      }
     });
   });
 });

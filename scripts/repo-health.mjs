@@ -47,11 +47,12 @@ console.log("===================================================================
 for (const check of CHECKS) {
   process.stdout.write(`  ${check.name}...`);
   try {
+    const isNpm = check.cmd[0] === npmBin;
     execFileSync(check.cmd[0], check.cmd[1], {
       cwd: root,
       stdio: ["ignore", "pipe", "pipe"],
       timeout: 120_000,
-      shell: process.platform === "win32",
+      shell: isNpm && process.platform === "win32",
     });
     results.push({ ...check, status: "PASS" });
     console.log(" ✅ PASS");

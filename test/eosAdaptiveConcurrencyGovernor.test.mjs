@@ -157,4 +157,53 @@ describe("EOS SPEC-112: Adaptive Concurrency Control & Priority Load Shedder Sui
     assert.ok(statusData.gradient > 0);
     assert.ok(statusData.sha256Receipt.length === 64);
   });
+
+  it("BDD-291: Exhaustive branch coverage for shed thresholds, defaults, and state reset", () => {
+    // Test default constructor
+    const defaultGov = new EosAdaptiveConcurrencyGovernor();
+    assert.strictEqual(defaultGov.getStatus().currentLimit, 50);
+
+    // BEST_EFFORT admitted when inFlight < threshold
+    const bestEffortAdmitted = defaultGov.tryAcquire("BEST_EFFORT");
+    assert.strictEqual(bestEffortAdmitted.admitted, true);
+    defaultGov.release();
+
+    // Setup tight limit governor
+    const gov = new EosAdaptiveConcurrencyGovernor({
+      minLimit: 5,
+      maxLimit: 20,
+      initialLimit: 10,
+      emergencyHeadroom: 2,
+    });
+
+    // 10 limit: 95% is 9.5 -> floor is 9.
+    // Fill to 9 in-flight
+    for (let i = 0; i < 9; i++) {
+      gov.tryAcquire("HIGH");
+    }
+    // Now inFlight is 9. NORMAL threshold is floor(10 * 0.95) = 9.
+    // At inFlight = 9, inFlight < 9 is false -> SHED_NORMAL
+    const shedNormal = gov.tryAcquire("NORMAL");
+    assert.strictEqual(shedNormal.admitted, false);
+    assert.ok(shedNormal.reason?.includes("SHED_NORMAL"));
+
+    // Fill to limit + emergencyHeadroom = 10 + 2 = 12
+    gov.tryAcquire("CRITICAL"); // inFlight = 10
+    gov.tryAcquire("CRITICAL"); // inFlight = 11
+    gov.tryAcquire("CRITICAL"); // inFlight = 12
+
+    // Now inFlight is 12, criticalThreshold is 12 -> SHED_CRITICAL
+    const shedCritical = gov.tryAcquire("CRITICAL");
+    assert.strictEqual(shedCritical.admitted, false);
+    assert.ok(shedCritical.reason?.includes("SHED_CRITICAL"));
+
+    // Test reset() with default and custom initialLimit
+    gov.reset(30);
+    assert.strictEqual(gov.getStatus().currentLimit, 30);
+    assert.strictEqual(gov.getStatus().inFlight, 0);
+    assert.strictEqual(gov.getStatus().totalShed, 0);
+
+    gov.reset();
+    assert.strictEqual(gov.getStatus().currentLimit, 50);
+  });
 });

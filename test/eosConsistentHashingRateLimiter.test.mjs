@@ -72,6 +72,25 @@ describe("SPEC-036: Amazon Dynamo Consistent Hashing & Cloudflare Rate Limiting"
       const pref = ring.getPreferenceList("random-key-xyz", 3);
       assert.equal(pref.length, 2);
       assert.ok(!pref.includes("node-B"));
+
+      // Duplicate addNode safe return
+      ring.addNode("node-A");
+      assert.equal(ring.getPhysicalNodeCount(), 2);
+
+      // Non-existent removeNode safe return
+      ring.removeNode("node-ghost");
+      assert.equal(ring.getPhysicalNodeCount(), 2);
+
+      // getPhysicalNodes
+      const nodes = ring.getPhysicalNodes();
+      assert.equal(nodes.length, 2);
+      assert.ok(nodes.includes("node-A"));
+      assert.ok(nodes.includes("node-C"));
+
+      // Empty ring error invariants
+      const emptyRing = new EosConsistentHashRing([], 16);
+      assert.throws(() => emptyRing.getNode("key"), /ConsistentHashRing is empty/);
+      assert.throws(() => emptyRing.getPreferenceList("key", 2), /ConsistentHashRing is empty/);
     });
   });
 

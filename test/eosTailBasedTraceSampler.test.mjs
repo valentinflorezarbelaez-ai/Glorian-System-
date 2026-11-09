@@ -176,3 +176,51 @@ test("BDD-294: EosMcpServer Integration for Trace Sampling Tools", async () => {
   assert.ok(statusContent.totalSpansRecorded >= 1);
   assert.ok(statusContent.sha256Receipt.length === 64);
 });
+
+test("BDD-295: Deep Edge Cases: Empty Trace, Force Sample, Max Buffer Eviction, Full/Fractional Baseline, Reset", () => {
+  const sampler = new EosTailBasedTraceSampler({
+    maxActiveTraces: 2,
+    nominalSampleRate: 1.0,
+  });
+
+  // 1. evaluateTrace on unknown/empty trace
+  const unknownDecision = sampler.evaluateTrace("non-existent-trace-id");
+  assert.equal(unknownDecision.sampled, false);
+  assert.equal(unknownDecision.spanCount, 0);
+  assert.equal(unknownDecision.reason, "DROPPED_NOMINAL_TRACE");
+
+  // 2. forceSample on recorded trace
+  sampler.recordSpan({
+    traceId: "force-trace-1",
+    spanId: "s1",
+    name: "test",
+    startTimeMs: 100,
+    durationMs: 10,
+  });
+  const forceDecision = sampler.evaluateTrace("force-trace-1", { forceSample: true });
+  assert.equal(forceDecision.sampled, true);
+  assert.equal(forceDecision.reason, "SAMPLE_REASON_NOMINAL_SAMPLE");
+
+  // 3. Max active traces buffer overflow -> evictOldestTrace
+  sampler.recordSpan({ traceId: "t-1", spanId: "s1", name: "t1", startTimeMs: 10, durationMs: 1 });
+  sampler.recordSpan({ traceId: "t-2", spanId: "s2", name: "t2", startTimeMs: 20, durationMs: 1 });
+  // 3rd trace exceeds maxActiveTraces (2)
+  sampler.recordSpan({ traceId: "t-3", spanId: "s3", name: "t3", startTimeMs: 30, durationMs: 1 });
+  assert.equal(sampler.getStatus().tracesEvicted, 1);
+
+  // 4. Nominal sample rate 1.0 (all sampled)
+  const allSampleDecision = sampler.evaluateTrace("t-3");
+  assert.equal(allSampleDecision.sampled, true);
+
+  // 5. Fractional nominal sample rate (0.5)
+  const fracSampler = new EosTailBasedTraceSampler({ nominalSampleRate: 0.5 });
+  fracSampler.recordSpan({ traceId: "trace-half", spanId: "s", name: "half", startTimeMs: 1, durationMs: 1 });
+  const fracDecision = fracSampler.evaluateTrace("trace-half");
+  assert.equal(typeof fracDecision.sampled, "boolean");
+
+  // 6. Reset
+  sampler.reset();
+  const resetStatus = sampler.getStatus();
+  assert.equal(resetStatus.activeTraces, 0);
+  assert.equal(resetStatus.totalSpansRecorded, 0);
+});
