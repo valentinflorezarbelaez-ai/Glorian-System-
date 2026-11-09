@@ -21,14 +21,23 @@ const { EosPluginLoader } = await import("../src/core/eosPluginLoader.ts");
 // ── Suite 1: Feature Flags ───────────────────────────────────────────────────
 describe("EosFeatureFlags — Progressive Delivery (Stripe/Netflix Standard)", () => {
   it("reads default values from the built-in config", () => {
-    const flags = new EosFeatureFlags();
-    // These are enabled by default
-    assert.equal(flags.isEnabled("agi_pipeline"), true);
-    assert.equal(flags.isEnabled("consultant_offline"), true);
-    assert.equal(flags.isEnabled("graph_cache"), true);
-    // These are disabled by default (require explicit opt-in)
-    assert.equal(flags.isEnabled("chaos_in_ci"), false);
-    assert.equal(flags.isEnabled("perf_regression"), false);
+    const savedChaos = process.env["EOS_FLAG_CHAOS_IN_CI"];
+    const savedPerf = process.env["EOS_FLAG_PERF_REGRESSION"];
+    delete process.env["EOS_FLAG_CHAOS_IN_CI"];
+    delete process.env["EOS_FLAG_PERF_REGRESSION"];
+    try {
+      const flags = new EosFeatureFlags();
+      // These are enabled by default
+      assert.equal(flags.isEnabled("agi_pipeline"), true);
+      assert.equal(flags.isEnabled("consultant_offline"), true);
+      assert.equal(flags.isEnabled("graph_cache"), true);
+      // These are disabled by default (require explicit opt-in)
+      assert.equal(flags.isEnabled("chaos_in_ci"), false);
+      assert.equal(flags.isEnabled("perf_regression"), false);
+    } finally {
+      if (savedChaos !== undefined) process.env["EOS_FLAG_CHAOS_IN_CI"] = savedChaos;
+      if (savedPerf !== undefined) process.env["EOS_FLAG_PERF_REGRESSION"] = savedPerf;
+    }
   });
 
   it("reads flag override from environment variable", () => {

@@ -80,9 +80,6 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         node: ["22", "23"]
     runs-on: ${{ matrix.os }}
-    env:
-      # Netflix chaos standard: chaos tests run in CI on non-prod environments
-      EOS_FLAG_CHAOS_IN_CI: "1"
     steps:
       - name: Checkout Repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pinned SHA — SLSA L3
