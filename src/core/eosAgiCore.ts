@@ -162,7 +162,25 @@ export class EosAxiomMemory {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     const tmp = `${this.storePath}.tmp`;
     fs.writeFileSync(tmp, JSON.stringify([...this.axioms.values()], null, 2), "utf8");
-    fs.renameSync(tmp, this.storePath);
+    try {
+      fs.renameSync(tmp, this.storePath);
+    } catch (err: any) {
+      if (err.code === "EPERM" || err.code === "EBUSY") {
+        try {
+          fs.unlinkSync(this.storePath);
+        } catch {}
+        try {
+          fs.renameSync(tmp, this.storePath);
+        } catch {
+          fs.copyFileSync(tmp, this.storePath);
+          try {
+            fs.unlinkSync(tmp);
+          } catch {}
+        }
+      } else {
+        throw err;
+      }
+    }
   }
 
   /**

@@ -4,7 +4,7 @@
  *
  * Runs the full test suite with native V8 coverage and asserts that:
  *   - Line coverage >= MIN_LINE_PCT (default 80%)
- *   - Branch coverage >= MIN_BRANCH_PCT (default 65%)
+ *   - Branch coverage >= MIN_BRANCH_PCT (default 75%)
  *   - Function coverage >= MIN_FUNC_PCT (default 75%)
  *
  * Zero external dependencies. Uses Node.js --experimental-test-coverage.
@@ -17,7 +17,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const MIN_LINE_PCT = Number(process.env.COVERAGE_MIN_LINE ?? 80);
-const MIN_BRANCH_PCT = Number(process.env.COVERAGE_MIN_BRANCH ?? 65);
+const MIN_BRANCH_PCT = Number(process.env.COVERAGE_MIN_BRANCH ?? 75);
 const MIN_FUNC_PCT = Number(process.env.COVERAGE_MIN_FUNC ?? 75);
 const CONCURRENCY = Number(process.env.COVERAGE_CONCURRENCY ?? 4);
 

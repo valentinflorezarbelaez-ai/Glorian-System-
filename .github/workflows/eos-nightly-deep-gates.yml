@@ -8,7 +8,7 @@ name: EOS Nightly Deep Quality Gates
 # per-run report to the job summary. Fail-closed: ratchet drift fails the job.
 on:
   schedule:
-    - cron: "23 5 * * 2"
+    - cron: "0 2 * * *"
   workflow_dispatch:
     inputs:
       update-ratchets:
@@ -90,6 +90,40 @@ jobs:
             echo ""
             echo '```'
             cat flaky-report.txt 2>/dev/null || echo "(no report captured)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  nocturnal-evolution-gate:
+    name: Darwinian nocturnal evolution sweep (SPEC-133)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Install locked development toolchain
+        run: npm ci
+
+      - name: Run Darwinian nocturnal evolution sweep
+        run: |
+          set -o pipefail
+          npm run nocturnal 2>&1 | tee nocturnal-report.txt
+
+      - name: Publish nocturnal report to the job summary
+        if: ${{ !cancelled() }}
+        run: |
+          {
+            echo "### Darwinian Nocturnal Evolution Gate (SPEC-133)"
+            echo ""
+            echo '```'
+            cat nocturnal-report.txt 2>/dev/null || echo "(no report captured)"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 

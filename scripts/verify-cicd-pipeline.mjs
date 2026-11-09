@@ -346,8 +346,9 @@ if (sloBlock) {
 // ---------------------------------------------------------------------------
 if (!process.env.SKIP_COVERAGE) {
   const MIN_LINE = Number(process.env.COVERAGE_MIN_LINE ?? 80);
+  const MIN_BRANCH = Number(process.env.COVERAGE_MIN_BRANCH ?? 75);
   const covStart = Date.now();
-  console.log(`[STAGE 4.5] Running native V8 coverage (threshold: ${MIN_LINE}% lines)...`);
+  console.log(`[STAGE 4.5] Running native V8 coverage (threshold: ${MIN_LINE}% lines, ${MIN_BRANCH}% branches)...`);
   const covArgs = ["--test", "--experimental-test-coverage", `--test-concurrency=${CONCURRENCY}`, ...filesToRun];
   const covOutput = await new Promise((resolve) => {
     let stdout = "";
@@ -370,7 +371,13 @@ if (!process.env.SKIP_COVERAGE) {
       console.error(`[STAGE 4.5 FAIL] Line coverage ${linePct}% below gate minimum ${MIN_LINE}%.`);
       process.exit(1);
     }
-    console.log(`[PASS] Stage 4.5/7 — Coverage gate: ${linePct}% lines >= ${MIN_LINE}% threshold.`);
+    if (branchPct < MIN_BRANCH) {
+      console.error(`[STAGE 4.5 FAIL] Branch coverage ${branchPct}% below gate minimum ${MIN_BRANCH}%.`);
+      process.exit(1);
+    }
+    console.log(
+      `[PASS] Stage 4.5/7 — Coverage gate: ${linePct}% lines >= ${MIN_LINE}%, ${branchPct}% branches >= ${MIN_BRANCH}%.`,
+    );
   } else {
     console.warn("[STAGE 4.5 WARN] Coverage output not parseable; skipping gate.");
   }
