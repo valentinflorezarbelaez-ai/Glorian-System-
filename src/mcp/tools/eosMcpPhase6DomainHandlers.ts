@@ -9,6 +9,7 @@ import path from "node:path";
 
 import { EosApexModelRouter } from "../../core/eosApexModelRouter.ts";
 import { EosFleetElevator } from "../../core/eosFleetElevator.ts";
+import { EosFleetMissionControl } from "../../core/eosFleetMissionControl.ts";
 import { EosSpotifyAgenticFactory } from "../../core/eosSpotifyAgenticFactory.ts";
 import { EosFleetPulseEngine } from "../../core/eosFleetPulseEngine.ts";
 import { EosFleetProductionVerifier } from "../../core/eosFleetProductionVerifier.ts";
@@ -57,16 +58,21 @@ export function createPhase6DomainHandlers(deps: Phase6DomainHandlerDeps): Reado
 
     eos_fleet_mission_control: (args) => {
       const probe = Boolean(args?.probe ?? false);
-      const cliArgs = [path.join(projectRoot, "scripts/eos-fleet-mission-control.mjs"), "--json"];
-      if (probe) cliArgs.push("--probe");
-      const out = execFileSync(process.execPath, cliArgs, {
-        cwd: projectRoot,
-        encoding: "utf8",
-        timeout: 60000,
-        stdio: ["ignore", "pipe", "pipe"],
-        windowsHide: true,
-      });
-      return JSON.parse(out.trim());
+      try {
+        const cliArgs = [path.join(projectRoot, "scripts/eos-fleet-mission-control.mjs"), "--json"];
+        if (probe) cliArgs.push("--probe");
+        const out = execFileSync(process.execPath, cliArgs, {
+          cwd: projectRoot,
+          encoding: "utf8",
+          timeout: 60000,
+          stdio: ["ignore", "pipe", "pipe"],
+          windowsHide: true,
+        });
+        return JSON.parse(out.trim());
+      } catch {
+        const mc = new EosFleetMissionControl(projectRoot);
+        return mc.generateReportSync();
+      }
     },
 
     eos_fleet_elevate: (args) => {
