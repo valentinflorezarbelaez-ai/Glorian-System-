@@ -224,12 +224,16 @@ export class EosDurableSqliteLedger {
         )
         .run(entryId, category, projectId, title, payloadJson, engramTopicKey, createdAtIso, prevHash, entryHash);
 
-      this.db
-        .prepare(
-          `INSERT INTO eos_ledger_fts (entry_id, category, project_id, title, payload_json)
-           VALUES (?, ?, ?, ?, ?)`,
-        )
-        .run(entryId, category, projectId, title, payloadJson);
+      try {
+        this.db
+          .prepare(
+            `INSERT INTO eos_ledger_fts (entry_id, category, project_id, title, payload_json)
+             VALUES (?, ?, ?, ?, ?)`,
+          )
+          .run(entryId, category, projectId, title, payloadJson);
+      } catch {
+        // FTS index failure is non-fatal to ACID ledger durability
+      }
 
       this.db.exec("COMMIT;");
 
@@ -266,19 +270,38 @@ export class EosDurableSqliteLedger {
       return this.listRecent(safeLimit);
     }
 
-    const rows = this.db
-      .prepare(
-        `SELECT e.seq, e.entry_id, e.category, e.project_id, e.title, e.payload_json,
-                e.engram_topic_key, e.created_at_iso, e.prev_hash, e.entry_hash
-         FROM eos_ledger_fts f
-         JOIN eos_ledger_entries e ON e.entry_id = f.entry_id
-         WHERE eos_ledger_fts MATCH ?
-         ORDER BY f.rank, e.seq DESC
-         LIMIT ?`,
-      )
-      .all(ftsQuery, safeLimit) as Array<Record<string, unknown>>;
+    try {
+      const rows = this.db
+        .prepare(
+          `SELECT e.seq, e.entry_id, e.category, e.project_id, e.title, e.payload_json,
+                  e.engram_topic_key, e.created_at_iso, e.prev_hash, e.entry_hash
+           FROM eos_ledger_fts
+           JOIN eos_ledger_entries e ON e.entry_id = eos_ledger_fts.entry_id
+           WHERE eos_ledger_fts MATCH ?
+           ORDER BY rank, e.seq DESC
+           LIMIT ?`,
+        )
+        .all(ftsQuery, safeLimit) as Array<Record<string, unknown>>;
 
-    return deepFreeze(rows.map((r) => this.mapRow(r)));
+      return deepFreeze(rows.map((r) => this.mapRow(r)));
+    } catch {
+      try {
+        const pattern = `%${rawQuery.replace(/[%_]/g, "")}%`;
+        const rows = this.db
+          .prepare(
+            `SELECT seq, entry_id, category, project_id, title, payload_json,
+                    engram_topic_key, created_at_iso, prev_hash, entry_hash
+             FROM eos_ledger_entries
+             WHERE title LIKE ? OR category LIKE ? OR project_id LIKE ?
+             ORDER BY seq DESC
+             LIMIT ?`,
+          )
+          .all(pattern, pattern, pattern, safeLimit) as Array<Record<string, unknown>>;
+        return deepFreeze(rows.map((r) => this.mapRow(r)));
+      } catch {
+        return this.listRecent(safeLimit);
+      }
+    }
   }
 
   public listRecent(limit: number = 10, projectId?: string): readonly DurableLedgerRecord[] {
