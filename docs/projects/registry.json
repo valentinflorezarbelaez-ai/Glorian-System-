@@ -1,6 +1,6 @@
 {
   "version": "11.0.0-autonomous-fleet-registry",
-  "updatedAt": "2026-11-02T13:25:29.554Z",
+  "updatedAt": "2026-11-10T00:34:15.507Z",
   "masterOrchestrator": "EOS System control plane (SPEC-124)",
   "complianceStandard": "EOS_CONSTITUTION_LAW_IV_EXTERNAL_WRITE_BARRIER",
   "totalFleetProjects": 9,
@@ -108,14 +108,15 @@
       "productionUrl": "https://donaciones-drab.vercel.app",
       "type": "general-application",
       "status": "REGISTERED",
-      "intake": "PENDING_INTAKE",
-      "specification": "PENDING_SPECIFICATION",
-      "audit": "PENDING_AUDIT",
-      "authorization": "LEVEL_1_READ_ONLY",
+      "intake": "INTAKE_COMPLETE",
+      "specification": "SPECIFICATION_APPROVED",
+      "audit": "AUDIT_COMPLETE",
+      "authorization": "LEVEL_2_AUTHORIZED",
+      "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "npm test",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "99dfa2efc71cb818d5e1e95b8241c0c2f6a95bf2"
+      "headCommitSha": "2f45b0ab86c70e00066d6d442690c446942d3cf4"
     },
     {
       "id": "eos-system",
@@ -172,5 +173,5 @@
       "headCommitSha": "36ba9c3b11406979f07a29fe8a544b14f8ec3c7a"
     }
   ],
-  "registrySha256": "2f105adc69600b5de1c1c269db5e8ae68432125b399e4d7839722cfca76d9f1e"
+  "registrySha256": "55afc664cf862352cef7a369d5488b81119fab53a8b771c4b73d19644c06ca8e"
 }

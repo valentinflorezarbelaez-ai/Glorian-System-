@@ -30,9 +30,17 @@ function isGitCheckout(candidate: string): boolean {
   return fs.existsSync(candidate) && fs.existsSync(path.join(candidate, ".git"));
 }
 
-/** Require a usable project root — empty `git init` residue from failed CI checkouts must not count. */
+/**
+ * Require a usable project root — empty `git init` residue from failed CI checkouts must not count.
+ * Node apps: `package.json`. Static Vercel sites (e.g. donaciones): `index.html` + `vercel.json`.
+ */
+function hasFleetProjectMarker(candidate: string): boolean {
+  if (fs.existsSync(path.join(candidate, "package.json"))) return true;
+  return fs.existsSync(path.join(candidate, "index.html")) && fs.existsSync(path.join(candidate, "vercel.json"));
+}
+
 function isUsableFleetCheckout(candidate: string): boolean {
-  return isGitCheckout(candidate) && fs.existsSync(path.join(candidate, "package.json"));
+  return isGitCheckout(candidate) && hasFleetProjectMarker(candidate);
 }
 
 function workspaceCandidates(projectRoot: string, resolvedLocalDir: string): string[] {
@@ -45,10 +53,7 @@ function workspaceCandidates(projectRoot: string, resolvedLocalDir: string): str
 }
 
 /** Resolve one registered fleet project to a local git checkout when present. */
-export function resolveFleetProjectPath(
-  projectRoot: string,
-  project: FleetPathProject,
-): ResolvedFleetPath {
+export function resolveFleetProjectPath(projectRoot: string, project: FleetPathProject): ResolvedFleetPath {
   const id = String(project.id || "").trim();
   const name = String(project.name || id);
   const envName = typeof project.localPathEnv === "string" ? project.localPathEnv.trim() : "";

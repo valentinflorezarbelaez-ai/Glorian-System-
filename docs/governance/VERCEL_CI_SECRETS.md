@@ -3,12 +3,14 @@
 Repository secrets used by `aca:vercel` and `.github/workflows/eos-aca-cron.yml`.
 Never commit token values. Prefer GitHub Actions → Settings → Secrets and variables → Actions.
 
-| Secret | Required for live path | Purpose |
-| --- | --- | --- |
-| `VERCEL_TOKEN` | Yes | Bearer token for Vercel REST (`/v6/deployments`) |
-| `VERCEL_PROJECT_ID` | Optional | Overrides `docs/governance/vercel-fleet-projects.json` `controlPlane.projectId` |
-| `VERCEL_TEAM_ID` | Optional | Overrides committed `teamId` when the token is team-scoped |
-| `EOS_FLEET_CHECKOUT_TOKEN` | Optional | PAT with `repo` read on private fleet siblings (e.g. `portafolio`). Without it, dogfood sibling checkout is skipped (`continue-on-error`) and TTV records `SKIPPED_SIBLING`. |
+**Public repo note (2026-11-09):** Glorian-System- is `PUBLIC`, so Actions minutes are unrestricted for Linux/macOS public workflows; secrets are still required for the **live** Vercel ACA path (fixture/snapshot remains the fail-closed default without `VERCEL_TOKEN`).
+
+| Secret                     | Required for live path | Purpose                                                                                                                                                                      |
+| -------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VERCEL_TOKEN`             | Yes                    | Bearer token for Vercel REST (`/v6/deployments`)                                                                                                                             |
+| `VERCEL_PROJECT_ID`        | Optional               | Overrides `docs/governance/vercel-fleet-projects.json` `controlPlane.projectId`                                                                                              |
+| `VERCEL_TEAM_ID`           | Optional               | Overrides committed `teamId` when the token is team-scoped                                                                                                                   |
+| `EOS_FLEET_CHECKOUT_TOKEN` | Optional               | PAT with `repo` read on private fleet siblings (e.g. `portafolio`). Without it, dogfood sibling checkout is skipped (`continue-on-error`) and TTV records `SKIPPED_SIBLING`. |
 
 ## Fail-closed behavior
 

@@ -1,6 +1,6 @@
 {
   "epistemicState": "FLEET_PRODUCT_SCORECARDS_WITHIN_TESTED_SCOPE",
-  "generatedAt": "2026-11-09T22:10:14.800Z",
+  "generatedAt": "2026-11-10T00:34:15.751Z",
   "probeEnabled": false,
   "probedCount": 0,
   "ssrfPolicy": "https-vercel-app-allowlist-no-redirect",
@@ -47,8 +47,8 @@
       "liveProbe": null
     },
     "donaciones": {
-      "score": 69,
-      "grade": "F",
+      "score": 94,
+      "grade": "A",
       "liveReachability": 70,
       "liveProbe": null
     },
@@ -65,5 +65,5 @@
       "liveProbe": null
     }
   },
-  "sha256Receipt": "3de4bfd78689c156693c697a8f413da1b2b651c727fc88db329cbe593d3b24fd"
+  "sha256Receipt": "081dd23ab220e02d360c76948f5fadc182efdc32f508373f882314eb490aaaf2"
 }
