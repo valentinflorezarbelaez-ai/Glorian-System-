@@ -20,6 +20,16 @@ updates:
       time: "09:00"
       timezone: America/Bogota
     open-pull-requests-limit: 5
+    # docs/governance/DEPENDABOT_MAJOR_POLICY.md — WONT_FIX_UNTIL_2026-12-15
+    ignore:
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@eslint/js"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "eslint-plugin-n"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
       development-dependencies:
         dependency-type: development

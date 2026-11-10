@@ -20,6 +20,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const dryRun = process.argv.includes("--dry-run");
+const sealPinOnly = process.argv.includes("--seal-pin");
 
 // ---------------------------------------------------------------------------
 // 1. Measure ground truth
@@ -129,6 +130,33 @@ const matrixUpdated = matrixExisting.replace(
   `**Version**: v${version} (Frontier Big Tech & Theurgic Singularity Edition)  \n`,
 );
 
+/**
+ * After a tip-refresh commit lands, Freeze Pin still names the parent HEAD.
+ * `--seal-pin` rewrites only the Freeze Pin cell to the current HEAD so a
+ * follow-up amend (or pin-only commit that is then amended) can make pin==HEAD.
+ *
+ * Ritual (local main / tip-refresh PR tip):
+ *   node scripts/tip-refresh.mjs
+ *   git add docs/releases && git commit -m "chore(freeze): tip-refresh"
+ *   node scripts/tip-refresh.mjs --seal-pin
+ *   git add docs/releases/EOS_FREEZE_GATE_STATUS.md && git commit --amend --no-edit
+ */
+if (sealPinOnly) {
+  const pinRegex = /(\|\s*\*\*Freeze Pin \(HEAD\)\*\*\s*\|)([^|]*)(\|[^|\n]*\|)/;
+  const sealed = existing.replace(pinRegex, `$1 \`${m.head}\` $3`);
+  if (dryRun) {
+    console.log(`--- DRY-RUN: seal Freeze Pin → ${m.head} ---`);
+    process.exit(0);
+  }
+  if (sealed === existing) {
+    console.error("tip-refresh --seal-pin: Freeze Pin row not found");
+    process.exit(1);
+  }
+  fs.writeFileSync(freezePath, sealed, "utf8");
+  console.log(`✅ Freeze Pin sealed to HEAD ${m.head} (amend this file into the tip-refresh commit for pin==HEAD).`);
+  process.exit(0);
+}
+
 if (dryRun) {
   console.log("--- DRY-RUN: Tip-Refresh would update ---");
   console.log(
@@ -145,3 +173,4 @@ fs.writeFileSync(matrixPath, matrixUpdated, "utf8");
 console.log(
   `✅ Tip-refresh complete: freeze gate + capability matrix synced to v${version} @ HEAD ${m.head} (${m.specs} specs, ${m.tla} TLA+, ${m.tests} tests, ${m.tsModules} modules).`,
 );
+console.log("Next: commit these docs, then `node scripts/tip-refresh.mjs --seal-pin` + amend so Freeze Pin == HEAD.");

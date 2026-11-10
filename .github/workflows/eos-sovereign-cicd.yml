@@ -102,6 +102,8 @@ jobs:
           # Windows V8 coverage is matrix-noisy at the 80% branch floor (79.85–79.97);
           # functional Stage 1–4 still runs on every cell.
           SKIP_COVERAGE: ${{ matrix.os == 'windows-latest' && '1' || '' }}
+          # Google SRE burn-rate fail-closed on main Linux (advisory elsewhere).
+          EOS_SLO_ENFORCE: ${{ github.ref == 'refs/heads/main' && matrix.os == 'ubuntu-latest' && '1' || '' }}
 
       - name: Git History Secret Scan (Cognition/Anthropic standard)
         # Scans for leaked credentials in all commits, not just the working tree

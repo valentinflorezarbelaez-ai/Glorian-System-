@@ -2,7 +2,7 @@
 
 <!-- Epistemic: READY_FOR_EXTERNAL_HUMAN_IVV · WITHIN_TESTED_SCOPE · builder ≠ verifier -->
 <!-- Forbidden outputs: NSA_GRADE · AEROSPACE_CERTIFIED · FEDERAL_ATO · Level-5 -->
-<!-- Refreshed: 2026-11-09 (Big Tech improvement wave) -->
+<!-- Refreshed: 2026-11-10 (residuals wave — pair with EXTERNAL_IVV_EXECUTION_RECEIPT.md) -->
 
 ## Purpose
 
