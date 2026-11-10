@@ -19,38 +19,42 @@ function fail(message) {
   process.exitCode = 1;
 }
 
-function runGate(project, checkoutRoot) {
-  if (typeof project.cicdGateScript !== "string" || project.cicdGateScript.trim() === "") {
-    throw new Error("No CI gate script is configured for this project.");
-  }
+function isOutsideDir(baseDir, candidatePath) {
+  const rel = path.relative(baseDir, candidatePath);
+  return rel === ".." || rel.startsWith(`..${path.sep}`) || path.isAbsolute(rel);
+}
 
-  const configuredPath = project.cicdGateScript.trim();
-
-  // Allow registered npm scripts (e.g. "npm test", "npm run verify") without path traversal.
-  if (/^npm(\.cmd)?\s+/i.test(configuredPath)) {
-    const tokens = configuredPath.split(/\s+/).filter(Boolean);
-    const npmBin = process.platform === "win32" ? "npm.cmd" : "npm";
-    const npmArgs = tokens.slice(1);
-    console.log(`  CI gate        : RUNNING (${configuredPath})`);
-    execFileSync(npmBin, npmArgs, { cwd: checkoutRoot, stdio: "inherit", shell: process.platform === "win32" });
-    return;
-  }
-
+function resolveConfinedGateFile(checkoutRoot, configuredPath) {
   const gatePath = path.resolve(checkoutRoot, configuredPath);
-  const relative = path.relative(checkoutRoot, gatePath);
-  if (relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+  if (isOutsideDir(checkoutRoot, gatePath)) {
     throw new Error("Configured CI gate must stay inside the selected repository.");
   }
   if (!fs.existsSync(gatePath)) throw new Error(`Configured CI gate was not found: ${configuredPath}`);
 
   const realCheckout = fs.realpathSync(checkoutRoot);
   const realGate = fs.realpathSync(gatePath);
-  const realRelative = path.relative(realCheckout, realGate);
-  if (realRelative === ".." || realRelative.startsWith(`..${path.sep}`) || path.isAbsolute(realRelative)) {
+  if (isOutsideDir(realCheckout, realGate)) {
     throw new Error("Configured CI gate resolves outside the selected repository.");
   }
   if (!fs.statSync(realGate).isFile()) throw new Error("Configured CI gate must be a regular file.");
+  return { realCheckout, realGate };
+}
 
+function runGate(project, checkoutRoot) {
+  if (typeof project.cicdGateScript !== "string" || project.cicdGateScript.trim() === "") {
+    throw new Error("No CI gate script is configured for this project.");
+  }
+
+  const configuredPath = project.cicdGateScript.trim();
+  if (/^npm(\.cmd)?\s+/i.test(configuredPath)) {
+    const tokens = configuredPath.split(/\s+/).filter(Boolean);
+    const npmBin = process.platform === "win32" ? "npm.cmd" : "npm";
+    console.log(`  CI gate        : RUNNING (${configuredPath})`);
+    execFileSync(npmBin, tokens.slice(1), { cwd: checkoutRoot, stdio: "inherit", shell: process.platform === "win32" });
+    return;
+  }
+
+  const { realCheckout, realGate } = resolveConfinedGateFile(checkoutRoot, configuredPath);
   const extension = path.extname(realGate).toLowerCase();
   console.log(`  CI gate        : RUNNING (${path.relative(realCheckout, realGate).replace(/\\/g, "/")})`);
   if (extension === ".js" || extension === ".mjs") {

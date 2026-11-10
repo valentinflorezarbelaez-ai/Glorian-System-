@@ -2,7 +2,6 @@
   "defaultMaxLines": 800,
   "ceilings": {
     "bin/eos.mjs": 4902,
-    "js/eos.js": 4296,
-    "scripts/verify-formal-tla.mjs": 2213
+    "js/eos.js": 4296
   }
 }

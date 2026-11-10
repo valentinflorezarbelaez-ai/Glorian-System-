@@ -25,15 +25,19 @@ const CHECKS = [
   { name: "Import Boundary (Law V)", cmd: [process.execPath, ["scripts/import-boundary-gate.mjs"]], blocking: true },
   { name: "Code Complexity ≤15", cmd: [process.execPath, ["scripts/complexity-gate.mjs"]], blocking: true },
   { name: "License Audit", cmd: [process.execPath, ["scripts/license-audit.mjs"]], blocking: true },
-  { name: "CODEOWNERS Validation", cmd: [process.execPath, ["scripts/codeowners-validate.mjs"]], blocking: false },
-  { name: "Markdown Link Checker", cmd: [process.execPath, ["scripts/link-checker.mjs"]], blocking: false },
-  { name: "PWA Validation", cmd: [process.execPath, ["scripts/pwa-validate.mjs"]], blocking: false },
-  { name: "A11y Static Check", cmd: [process.execPath, ["scripts/a11y-check.mjs"]], blocking: false },
-  { name: "Unused Dependencies", cmd: [process.execPath, ["scripts/unused-deps-check.mjs"]], blocking: false },
+  { name: "CODEOWNERS Validation", cmd: [process.execPath, ["scripts/codeowners-validate.mjs"]], blocking: true },
+  { name: "Markdown Link Checker", cmd: [process.execPath, ["scripts/link-checker.mjs"]], blocking: true },
+  { name: "PWA Validation", cmd: [process.execPath, ["scripts/pwa-validate.mjs"]], blocking: true },
+  { name: "A11y Static Check", cmd: [process.execPath, ["scripts/a11y-check.mjs"]], blocking: true },
+  { name: "Unused Dependencies", cmd: [process.execPath, ["scripts/unused-deps-check.mjs"]], blocking: true },
   { name: "Size Budget", cmd: [process.execPath, ["scripts/size-budget.mjs"]], blocking: true },
-  { name: "Bundle Size Budget", cmd: [process.execPath, ["scripts/bundle-budget.mjs"]], blocking: false },
-  { name: "SBOM Gate (CycloneDX)", cmd: [process.execPath, ["scripts/sbom-gate.mjs"]], blocking: false },
-  { name: "MCP Smoke Test", cmd: [process.execPath, ["scripts/mcp-smoke-test.mjs"]], blocking: false },
+  { name: "Bundle Size Budget", cmd: [process.execPath, ["scripts/bundle-budget.mjs"]], blocking: true },
+  {
+    name: "SBOM Gate (CycloneDX)",
+    cmd: [process.execPath, ["scripts/sbom-gate.mjs", "--verify-only"]],
+    blocking: true,
+  },
+  { name: "MCP Smoke Test", cmd: [process.execPath, ["scripts/mcp-smoke-test.mjs"]], blocking: true },
 ];
 
 const startTime = Date.now();
