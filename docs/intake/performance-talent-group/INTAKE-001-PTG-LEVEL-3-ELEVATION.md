@@ -11,11 +11,11 @@
 
 ## 1. Gap
 
-| Field           | Current                | Target                              |
-| --------------- | ---------------------- | ----------------------------------- |
-| `authorization` | `LEVEL_2_AUTHORIZED`   | `LEVEL_3_PRODUCTION_AUTHORIZED`     |
-| `headCommitSha` | stale pin              | current `origin/main` HEAD          |
-| `ownerApproval` | missing on registry row | `OWNER_APPROVAL`                   |
+| Field           | Current                 | Target                          |
+| --------------- | ----------------------- | ------------------------------- |
+| `authorization` | `LEVEL_2_AUTHORIZED`    | `LEVEL_3_PRODUCTION_AUTHORIZED` |
+| `headCommitSha` | stale pin               | current `origin/main` HEAD      |
+| `ownerApproval` | missing on registry row | `OWNER_APPROVAL`                |
 
 Last fleet project still at Level 2 after `donaciones` elevation (#620).
 

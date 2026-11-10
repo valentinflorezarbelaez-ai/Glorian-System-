@@ -196,7 +196,7 @@ export class EosFleetProductionVerifier {
     const xFrameOptions = Boolean(
       (typeof h["x-frame-options"] === "string" &&
         (h["x-frame-options"] === "DENY" || h["x-frame-options"] === "SAMEORIGIN")) ||
-        (typeof h["content-security-policy"] === "string" && h["content-security-policy"].includes("frame-ancestors")),
+      (typeof h["content-security-policy"] === "string" && h["content-security-policy"].includes("frame-ancestors")),
     );
     const referrerPolicy = typeof h["referrer-policy"] === "string" && h["referrer-policy"].length > 0;
     const contentSecurityPolicy =

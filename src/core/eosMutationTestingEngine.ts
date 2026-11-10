@@ -82,13 +82,13 @@ const DEFAULT_OPERATORS: readonly MutationOperator[] = [
   {
     id: "cmp-gt-gte",
     name: "Greater → Greater-or-Equal",
-    pattern: /(?<!=)>(?!=)/g,
+    pattern: /(?<![=>])>(?![=>])/g,
     replace: () => ">=",
   },
   {
     id: "cmp-lt-lte",
     name: "Less → Less-or-Equal",
-    pattern: /(?<!=)<(?!=)/g,
+    pattern: /(?<![=<])<(?![=<])/g,
     replace: () => "<=",
   },
   {
@@ -159,13 +159,36 @@ export class EosMutationTestingEngine {
     const mutants: Mutant[] = [];
     const seen = new Set<string>();
 
+    let inTypeBlock = false;
     for (let lineIdx = 0; lineIdx < lines.length && mutants.length < this.maxPerFile; lineIdx++) {
       const line = lines[lineIdx];
-      // Skip comments and blank lines
-      if (line.trim().startsWith("//") || line.trim().startsWith("*") || line.trim().length === 0) continue;
+      const trimmed = line.trim();
+      // Skip comments, blank lines, and compile-time-only TypeScript interface/type declarations
+      if (
+        trimmed.startsWith("//") ||
+        trimmed.startsWith("*") ||
+        trimmed.startsWith("/*") ||
+        trimmed.length === 0 ||
+        /^(?:export\s+)?type\s+/.test(trimmed)
+      ) {
+        continue;
+      }
+      if (/^(?:export\s+)?interface\s+/.test(trimmed)) {
+        if (!trimmed.includes("}")) inTypeBlock = true;
+        continue;
+      }
+      if (inTypeBlock) {
+        if (trimmed.startsWith("}")) inTypeBlock = false;
+        continue;
+      }
+
+      // Only match against the executable code prefix (never mutate trailing // comments)
+      const commentIdx = line.indexOf("//");
+      const codeSlice =
+        commentIdx >= 0 && !line.slice(0, commentIdx).includes("://") ? line.slice(0, commentIdx) : line;
 
       for (const op of this.operators) {
-        const matches = [...line.matchAll(op.pattern)];
+        const matches = [...codeSlice.matchAll(op.pattern)];
         for (const match of matches) {
           if (mutants.length >= this.maxPerFile) break;
           const mutatedLine =

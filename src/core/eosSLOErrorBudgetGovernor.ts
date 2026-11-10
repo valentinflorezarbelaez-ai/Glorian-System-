@@ -99,7 +99,7 @@ export class EosSLOErrorBudgetGovernor {
   recordCIEvent(total: number, passed: number, failed: number): void {
     assertPrecondition(total > 0, "total must be positive");
     const event: CIEvent = { timestamp: Date.now(), total, passed, failed };
-    fs.appendFileSync(this.eventsPath, JSON.stringify(event) + "\n", "utf8");
+    fs.appendFileSync(this.eventsPath, `${JSON.stringify(event)}\n`);
   }
 
   /**
@@ -138,7 +138,7 @@ export class EosSLOErrorBudgetGovernor {
 
     const anyBreached = windows.some((w) => w.breached);
     const fastBreached = windows.find((w) => w.windowLabel === "1h-fast")?.breached ?? false;
-    const gateVerdict: "PASS" | "WARN" | "BLOCK" = fastBreached ? "BLOCK" : anyBreached ? "WARN" : "PASS";
+    const gateVerdict = fastBreached ? "BLOCK" : anyBreached ? "WARN" : "PASS";
 
     const canonical = JSON.stringify({ totalTests, totalFailed, errorBudgetPercent, gateVerdict });
 

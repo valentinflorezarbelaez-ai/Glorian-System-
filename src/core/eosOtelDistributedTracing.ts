@@ -177,36 +177,17 @@ export function parseW3cTraceparent(header?: string | null): SpanContext | null 
   };
 }
 
+const SPAN_KIND_CODES: Record<SpanKind, number> = { INTERNAL: 1, SERVER: 2, CLIENT: 3, PRODUCER: 4, CONSUMER: 5 };
+const STATUS_CODE_CODES: Record<SpanStatusCode, number> = { UNSET: 0, OK: 1, ERROR: 2 };
+
 // Helper to convert SpanKind to OTLP int
 function spanKindToOtlpCode(kind: SpanKind): number {
-  switch (kind) {
-    case "INTERNAL":
-      return 1;
-    case "SERVER":
-      return 2;
-    case "CLIENT":
-      return 3;
-    case "PRODUCER":
-      return 4;
-    case "CONSUMER":
-      return 5;
-    default:
-      return 0;
-  }
+  return SPAN_KIND_CODES[kind] ?? 0;
 }
 
 // Helper to convert SpanStatusCode to OTLP int
 function statusCodeToOtlpCode(code: SpanStatusCode): number {
-  switch (code) {
-    case "UNSET":
-      return 0;
-    case "OK":
-      return 1;
-    case "ERROR":
-      return 2;
-    default:
-      return 0;
-  }
+  return STATUS_CODE_CODES[code] ?? 0;
 }
 
 // ============================================================================

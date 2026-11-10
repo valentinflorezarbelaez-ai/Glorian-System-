@@ -71,12 +71,7 @@ export interface AgiSolveResult {
 }
 
 export type AgiProgressEventType =
-  | "SOLVE_STARTED"
-  | "BRANCH_STARTED"
-  | "BRANCH_PASSED"
-  | "BRANCH_FAILED"
-  | "AXIOM_CRYSTALLIZED"
-  | "SOLVE_COMPLETE";
+  "SOLVE_STARTED" | "BRANCH_STARTED" | "BRANCH_PASSED" | "BRANCH_FAILED" | "AXIOM_CRYSTALLIZED" | "SOLVE_COMPLETE";
 
 export interface AgiProgressEvent {
   readonly type: AgiProgressEventType;

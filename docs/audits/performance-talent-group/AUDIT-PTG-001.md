@@ -13,14 +13,14 @@
 
 ## 2. Evidence Collected
 
-| Check | Result | Notes |
-| --- | --- | --- |
-| Remote | PASS | `https://github.com/valentinflorezarbelaez-ai/Performance-Talent-Group.git` |
-| HEAD | PASS | `f0882a07c0acc2a449ad34bfec6cd754f9efe3b8` on `main` (clean) |
-| Canonical secret scan | PASS | 69 files, **0** secrets, exit 0 |
-| Production URL | PASS | Node `fetch` HEAD → **HTTP 200** |
-| Fleet Soundcheck | PASS | A+ / 100 |
-| Scorecard live probe | PASS | HTTP 200 @ 195ms (prior cron receipt) |
+| Check                 | Result | Notes                                                                       |
+| --------------------- | ------ | --------------------------------------------------------------------------- |
+| Remote                | PASS   | `https://github.com/valentinflorezarbelaez-ai/Performance-Talent-Group.git` |
+| HEAD                  | PASS   | `f0882a07c0acc2a449ad34bfec6cd754f9efe3b8` on `main` (clean)                |
+| Canonical secret scan | PASS   | 69 files, **0** secrets, exit 0                                             |
+| Production URL        | PASS   | Node `fetch` HEAD → **HTTP 200**                                            |
+| Fleet Soundcheck      | PASS   | A+ / 100                                                                    |
+| Scorecard live probe  | PASS   | HTTP 200 @ 195ms (prior cron receipt)                                       |
 
 ## 3. Residual Risks
 

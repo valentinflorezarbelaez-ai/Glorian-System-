@@ -10,11 +10,7 @@ import { createHash } from "node:crypto";
 import { assertPrecondition, deepFreeze } from "./eosKernelPrimitives.ts";
 
 export type IamDecisionCode =
-  | "ALLOW"
-  | "DENY_TENANT_MISMATCH"
-  | "DENY_NO_POLICY"
-  | "DENY_ACTION_NOT_PERMITTED"
-  | "DENY_INVALID_INPUT";
+  "ALLOW" | "DENY_TENANT_MISMATCH" | "DENY_NO_POLICY" | "DENY_ACTION_NOT_PERMITTED" | "DENY_INVALID_INPUT";
 
 export interface IamPrincipal {
   readonly subjectId: string;

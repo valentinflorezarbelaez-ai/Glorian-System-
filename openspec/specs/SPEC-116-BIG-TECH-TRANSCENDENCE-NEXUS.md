@@ -24,7 +24,7 @@ Where each pillar $\mathcal{P}_i$ maintains its deterministic verification state
 3. $\mathcal{P}_{\text{smt}} = \langle \phi_{\text{policy}}, \text{SAT}(\phi) \rangle$: First-order logic formula $\phi$ and satisfiability proof with zero privilege escalation.
 4. $\mathcal{P}_{\text{pgo}} = \langle \mathcal{C}_{\text{hot}}, \mathcal{U}_{\text{hit\_rate}} \rangle$: In-memory hot-path cache ordering and cache hit rate ($\ge 0.90$).
 5. $\mathcal{P}_{\text{enclave}} = \langle \sigma_{\text{tpm}}, \mathcal{H}_{\text{root}} \rangle$: Hardware-grade root-of-trust signature $\sigma_{\text{tpm}} \in \{0, 1\}^{256}$.
-6. $\mathcal{P}_{\text{bft}} = \langle \mathcal{V}_e, \mathcal{Q}_{\text{bft}}, \mathcal{S}_{\text{slashed}} \rangle$: Agent votes $\mathcal{V}_e$, quorum ($\ge 3/4$), and slashed Byzantine stakes.
+6. $\mathcal{P}_{\text{bft}} = \langle \mathcal{V}*e, \mathcal{Q}*{\text{bft}}, \mathcal{S}_{\text{slashed}} \rangle$: Agent votes $\mathcal{V}_e$, quorum ($\ge 3/4$), and slashed Byzantine stakes.
 7. $\mathcal{R}_e \in \{0, 1\}^{256}$: Cryptographic SHA-256 consolidated master receipt.
 
 ### Fundamental Invariants

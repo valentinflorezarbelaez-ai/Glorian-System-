@@ -13,10 +13,12 @@
 // 1. DESIGN BY CONTRACT (DbC — Meyer 1988)
 // ============================================================================
 
-export class ContractError extends Error {
-  public readonly contractType: "PRECONDITION" | "POSTCONDITION" | "INVARIANT";
+export type ContractType = "PRECONDITION" | "POSTCONDITION" | "INVARIANT";
 
-  constructor(type: "PRECONDITION" | "POSTCONDITION" | "INVARIANT", message: string) {
+export class ContractError extends Error {
+  public readonly contractType: ContractType;
+
+  constructor(type: ContractType, message: string) {
     super(`[${type}_FAILED] ${message}`);
     this.name = "ContractError";
     this.contractType = type;
@@ -71,7 +73,7 @@ export function deepFreeze<T>(obj: T): Readonly<T> {
 
   for (const key of Object.getOwnPropertyNames(obj)) {
     const val = (obj as any)[key];
-    if (val !== null && (typeof val === "object" || typeof val === "function") && !Object.isFrozen(val)) {
+    if (val !== null && typeof val === "object" && !Object.isFrozen(val)) {
       deepFreeze(val);
     }
   }
@@ -135,10 +137,10 @@ export function pureSha256(asciiOrUtf8: string): string {
   for (let offset = 0; offset < bytes.length; offset += 64) {
     for (let i = 0; i < 16; i++) {
       const idx = offset + i * 4;
-      const b0 = bytes[idx] ?? 0;
-      const b1 = bytes[idx + 1] ?? 0;
-      const b2 = bytes[idx + 2] ?? 0;
-      const b3 = bytes[idx + 3] ?? 0;
+      const b0 = bytes[idx]!;
+      const b1 = bytes[idx + 1]!;
+      const b2 = bytes[idx + 2]!;
+      const b3 = bytes[idx + 3]!;
       w[i] = ((b0 << 24) | (b1 << 16) | (b2 << 8) | b3) >>> 0;
     }
     for (let i = 16; i < 64; i++) {
@@ -159,7 +161,7 @@ export function pureSha256(asciiOrUtf8: string): string {
     for (let i = 0; i < 64; i++) {
       const S1 = (rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25)) >>> 0;
       const ch = ((e & f) ^ (~e & g)) >>> 0;
-      const temp1 = (((h + S1) >>> 0) + ((ch + (K[i] ?? 0)) >>> 0) + w[i]!) >>> 0;
+      const temp1 = (((h + S1) >>> 0) + ((ch + K[i]!) >>> 0) + w[i]!) >>> 0;
       const S0 = (rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22)) >>> 0;
       const maj = ((a & b) ^ (a & c) ^ (b & c)) >>> 0;
       const temp2 = (S0 + maj) >>> 0;

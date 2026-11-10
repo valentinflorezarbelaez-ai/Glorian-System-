@@ -15,10 +15,7 @@ import {
   type CanaryRolloutReport,
   type CanaryTelemetry,
 } from "./eosProgressiveCanaryMesh.ts";
-import {
-  EosVercelCanaryObservability,
-  type CanaryTelemetryInput,
-} from "./eosVercelCanaryObservability.ts";
+import { EosVercelCanaryObservability, type CanaryTelemetryInput } from "./eosVercelCanaryObservability.ts";
 
 export interface AcaCanaryGateInput {
   readonly versionTarget: string;
@@ -123,10 +120,7 @@ export function writeAcaCanaryEvidence(
           trigger: "ACA_OR_MESH_ROLLBACK",
           requiredNext: ["blameless_postmortem", "remediation_correlate", "revalidation"],
           canaryReceipt: result.sha256Receipt,
-          sha256Receipt: crypto
-            .createHash("sha256")
-            .update(`INCIDENT:${result.sha256Receipt}`)
-            .digest("hex"),
+          sha256Receipt: crypto.createHash("sha256").update(`INCIDENT:${result.sha256Receipt}`).digest("hex"),
         },
         null,
         2,
@@ -193,10 +187,7 @@ export function runAcaGateFromVercelSignals(input: {
       ...result,
       verdict: "FAIL",
       incidentRequired: true,
-      sha256Receipt: crypto
-        .createHash("sha256")
-        .update(`ACA_VERCEL_ROLLBACK:${result.sha256Receipt}`)
-        .digest("hex"),
+      sha256Receipt: crypto.createHash("sha256").update(`ACA_VERCEL_ROLLBACK:${result.sha256Receipt}`).digest("hex"),
     });
   }
   return result;
@@ -209,9 +200,10 @@ function assertNonEmptySignals(signals: readonly CanaryTelemetryInput[]): void {
 }
 
 /** Fail-closed: incident receipt requires a remediation receipt before ops seal can pass. */
-export function assertIncidentRemediationClosed(
-  projectRoot: string,
-): { readonly ok: boolean; readonly reason: string | null } {
+export function assertIncidentRemediationClosed(projectRoot: string): {
+  readonly ok: boolean;
+  readonly reason: string | null;
+} {
   const incidentPath = path.join(projectRoot, "docs", "evidence", "INCIDENT_CANARY_ROLLBACK_RECEIPT.json");
   if (!fs.existsSync(incidentPath)) {
     return deepFreeze({ ok: true, reason: null });

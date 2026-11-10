@@ -403,8 +403,7 @@ export class EosHybridKnowledgeEngine {
     if (this.corpusIndexed && !force) return false;
     try {
       const row = this.db.prepare("SELECT count(*) as count FROM eos_docs_metadata").get() as
-        | { count: number }
-        | undefined;
+        { count: number } | undefined;
       if (!row || Number(row.count) === 0 || force) {
         this.indexCorpus();
         this.corpusIndexed = true;

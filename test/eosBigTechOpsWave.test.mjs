@@ -121,9 +121,7 @@ test("BDD-FLEET-PATH-001: control plane resolves; missing sibling skipped", () =
   });
   assert.equal(missing.status, "SKIPPED_SIBLING");
 
-  const registry = JSON.parse(
-    fs.readFileSync(path.join(projectRoot, "docs", "projects", "registry.json"), "utf8"),
-  );
+  const registry = JSON.parse(fs.readFileSync(path.join(projectRoot, "docs", "projects", "registry.json"), "utf8"));
   const resolved = resolveFleetRegistryPaths(projectRoot, registry.projects || []);
   assert.ok(resolved.some((r) => r.id === "eos-system" && r.status === "AVAILABLE"));
 });

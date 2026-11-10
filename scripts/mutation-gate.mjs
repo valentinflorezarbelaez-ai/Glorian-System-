@@ -41,6 +41,8 @@ const DEFAULT_TARGETS = [
   "src/core/eosThreeMountainsCompass.ts",
   "src/core/eosKernelPrimitives.ts",
   "src/core/eosAutonomousHealer.ts",
+  "src/core/eosFleetProductScorecard.ts",
+  "src/core/eosVercelCanaryObservability.ts",
 ];
 
 /**

@@ -17,17 +17,10 @@ import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from 
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export type RepairStrategy =
-  | "NULL_CHECK_GUARD"
-  | "BOUNDARY_CLAMP"
-  | "DEFAULT_VALUE_FALLBACK"
-  | "TRY_CATCH_WRAPPER"
-  | "INVARIANT_ASSERTION";
+  "NULL_CHECK_GUARD" | "BOUNDARY_CLAMP" | "DEFAULT_VALUE_FALLBACK" | "TRY_CATCH_WRAPPER" | "INVARIANT_ASSERTION";
 
 export type SelfHealingStatus =
-  | "HEALED_VERIFIED"
-  | "REGRESSION_REJECTED"
-  | "PATCH_FAILED_TO_RESOLVE"
-  | "DIAGNOSED_ONLY";
+  "HEALED_VERIFIED" | "REGRESSION_REJECTED" | "PATCH_FAILED_TO_RESOLVE" | "DIAGNOSED_ONLY";
 
 export interface FaultDiagnostic {
   readonly faultId: string;

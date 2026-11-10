@@ -158,10 +158,7 @@ const steps = [];
       requestId: "ops-seal",
     });
     const verified = verifyIamAuditLedger(tmp);
-    const exported = exportIamAuditLedgerForSiem(
-      tmp,
-      path.join("docs", "evidence", "IAM_AUDIT_SIEM_EXPORT.ndjson"),
-    );
+    const exported = exportIamAuditLedgerForSiem(tmp, path.join("docs", "evidence", "IAM_AUDIT_SIEM_EXPORT.ndjson"));
     const durable = path.join(projectRoot, "docs", "evidence", "IAM_AUDIT_SIEM_EXPORT.ndjson");
     fs.mkdirSync(path.dirname(durable), { recursive: true });
     fs.copyFileSync(exported.outputPath, durable);

@@ -10,11 +10,7 @@ export const MCP_MAX_PAYLOAD_BYTES = 1_048_576;
 export const TCB_MUTATION_SCORE_FLOOR = 80;
 
 export type TcbRejectReason =
-  | "ORIGIN_DENIED"
-  | "PAYLOAD_TOO_LARGE"
-  | "TOKEN_BINDING_MISMATCH"
-  | "LAW_IV_INCOMPLETE"
-  | "MISSING_TOKEN";
+  "ORIGIN_DENIED" | "PAYLOAD_TOO_LARGE" | "TOKEN_BINDING_MISMATCH" | "LAW_IV_INCOMPLETE" | "MISSING_TOKEN";
 
 export interface TcbDecision {
   readonly admitted: boolean;

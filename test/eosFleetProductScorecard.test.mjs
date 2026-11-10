@@ -7,10 +7,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  buildFleetProductScorecard,
-  writeFleetProductScorecards,
-} from "../src/core/eosFleetProductScorecard.ts";
+import { buildFleetProductScorecard, writeFleetProductScorecards } from "../src/core/eosFleetProductScorecard.ts";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -140,9 +137,7 @@ test("BDD-FLEET-SC-004: policy-rejected host scores below neutral unprobed", () 
 test("BDD-FLEET-SC-002: writeFleetProductScorecards persists registry products", () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "eos-fleet-sc-"));
   try {
-    const registry = JSON.parse(
-      fs.readFileSync(path.join(projectRoot, "docs", "projects", "registry.json"), "utf8"),
-    );
+    const registry = JSON.parse(fs.readFileSync(path.join(projectRoot, "docs", "projects", "registry.json"), "utf8"));
     const result = writeFleetProductScorecards(tmp, registry.projects || []);
     assert.ok(result.scorecards.length >= 5);
     assert.ok(result.written.every((p) => p.includes("scorecard.json")));

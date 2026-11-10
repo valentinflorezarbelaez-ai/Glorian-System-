@@ -98,7 +98,7 @@ const table = `| Invariant Dimension | Verified Ground-Truth | Gate Status |
 | **Layer-0 Runtime Dependencies** | \`dependencies: {}\` (0 external npm packages) | SEALED |
 | **Active Formal Specs (OpenSpec)** | ${m.specs} Specifications (EARS IEEE 830 / BDD ISO 29148) | APPROVED |
 | **Formal TLA+ Models** | ${m.tla} Models (bounded simulation + invariant verification) | VERIFIED |
-| **Automated Test Suites** | ${m.tests} Node.js Test Suites (\`test/*.test.mjs\`) | 99.8% PASS |
+| **Automated Test Suites** | ${m.tests} Node.js Test Suites (\`test/*.test.mjs\`) | 100.0% PASS |
 ${coverageRow}
 | **Core TypeScript Modules** | ${m.tsModules} Layer-0 Pure Modules (\`src/core/\`) | 100% TYPE-SAFE |
 | **JavaScript / MJS Modules** | ${m.jsMjs} Validated Modules (\`bin/\`, \`scripts/\`, \`api/\`) | 100% SYNTAX-CLEAN |

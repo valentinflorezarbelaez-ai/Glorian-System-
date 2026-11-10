@@ -16,12 +16,7 @@
 import { pureSha256, assertPrecondition, assertPostcondition, deepFreeze } from "./eosKernelPrimitives.ts";
 
 export type CanaryStage =
-  | "INITIALIZED"
-  | "CANARY_1_PCT"
-  | "CANARY_5_PCT"
-  | "CANARY_25_PCT"
-  | "FULL_PRODUCTION_100_PCT"
-  | "ROLLED_BACK";
+  "INITIALIZED" | "CANARY_1_PCT" | "CANARY_5_PCT" | "CANARY_25_PCT" | "FULL_PRODUCTION_100_PCT" | "ROLLED_BACK";
 
 export interface CanaryTelemetry {
   readonly stage: CanaryStage;

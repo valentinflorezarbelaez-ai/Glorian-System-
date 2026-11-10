@@ -88,8 +88,7 @@ export function buildFleetProductScorecard(
   const specOk = project.specification === "SPECIFICATION_APPROVED";
   const auditOk = project.audit === "AUDIT_COMPLETE";
   const authOk =
-    project.authorization === "LEVEL_3_PRODUCTION_AUTHORIZED" ||
-    project.authorization === "LEVEL_2_AUTHORIZED";
+    project.authorization === "LEVEL_3_PRODUCTION_AUTHORIZED" || project.authorization === "LEVEL_2_AUTHORIZED";
   const registered = project.status === "REGISTERED";
   const hasUrl = typeof project.productionUrl === "string" && project.productionUrl.startsWith("https://");
   const probe = liveProbe && typeof liveProbe === "object" ? liveProbe : null;

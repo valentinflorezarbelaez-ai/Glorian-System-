@@ -13,11 +13,7 @@ import { deepFreeze } from "./eosKernelPrimitives.ts";
 export type PrivacyLaneMode = "cloud_allowed" | "local" | "open_weight";
 
 export type PrivacyLaneDecisionCode =
-  | "ALLOW_LOCAL"
-  | "ALLOW_CLOUD"
-  | "REJECT_CLOUD_IN_LOCAL_LANE"
-  | "REJECT_PLAINTEXT_SECRET"
-  | "REJECT_REMOTE_PROVIDER";
+  "ALLOW_LOCAL" | "ALLOW_CLOUD" | "REJECT_CLOUD_IN_LOCAL_LANE" | "REJECT_PLAINTEXT_SECRET" | "REJECT_REMOTE_PROVIDER";
 
 export interface PrivacyLaneDecision {
   readonly ok: boolean;

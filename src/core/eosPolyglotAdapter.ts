@@ -28,10 +28,7 @@ export interface PolyglotExecutionPlan {
   readonly raceCheckCommand: string;
   readonly benchmarkCommand: string;
   readonly targetCompanyStandard:
-    | "Spotify / Cloud Native"
-    | "Nubank / Functional"
-    | "EOS Sovereign"
-    | "Universal Mobile";
+    "Spotify / Cloud Native" | "Nubank / Functional" | "EOS Sovereign" | "Universal Mobile";
   readonly detectedIndicators: string[];
 }
 

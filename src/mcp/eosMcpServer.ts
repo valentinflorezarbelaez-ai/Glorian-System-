@@ -449,54 +449,24 @@ export class EosMcpServer {
             throw dispatchErr;
           }
 
-          if (rawResult instanceof Promise) {
-            return rawResult.then(
-              (result) => {
-                span.setAttribute("mcp.success", true);
-                span.end();
-                const resultText = typeof result === "string" ? result : (JSON.stringify(result, null, 2) ?? "null");
-                if (Buffer.byteLength(resultText, "utf8") > MAX_MCP_REQUEST_BYTES - 4096) {
-                  throw new RangeError("MCP tool output exceeds the 1 MiB response limit.");
-                }
-                return {
-                  jsonrpc: "2.0",
-                  id,
-                  result: {
-                    content: [
-                      {
-                        type: "text",
-                        text: resultText,
-                      },
-                    ],
-                  },
-                };
-              },
-              (promiseErr) => {
-                span.recordException(promiseErr);
-                span.end();
-                throw promiseErr;
-              },
-            ) as any;
-          }
-          span.setAttribute("mcp.success", true);
-          span.end();
-          const result = rawResult;
-          const resultText = typeof result === "string" ? result : (JSON.stringify(result, null, 2) ?? "null");
-          if (Buffer.byteLength(resultText, "utf8") > MAX_MCP_REQUEST_BYTES - 4096) {
-            throw new RangeError("MCP tool output exceeds the 1 MiB response limit.");
-          }
-          return {
-            jsonrpc: "2.0",
-            id,
-            result: {
-              content: [
-                {
-                  type: "text",
-                  text: resultText,
-                },
-              ],
-            },
+          const finalizeToolResult = (result: any): JsonRpcResponse => {
+            span.setAttribute("mcp.success", true);
+            span.end();
+            const resultText = typeof result === "string" ? result : (JSON.stringify(result, null, 2) ?? "null");
+            if (Buffer.byteLength(resultText, "utf8") > MAX_MCP_REQUEST_BYTES - 4096) {
+              throw new RangeError("MCP tool output exceeds the 1 MiB response limit.");
+            }
+            return { jsonrpc: "2.0", id, result: { content: [{ type: "text", text: resultText }] } };
           };
+
+          if (rawResult instanceof Promise) {
+            return rawResult.then(finalizeToolResult, (promiseErr) => {
+              span.recordException(promiseErr);
+              span.end();
+              throw promiseErr;
+            }) as any;
+          }
+          return finalizeToolResult(rawResult);
         }
 
         case "resources/list":

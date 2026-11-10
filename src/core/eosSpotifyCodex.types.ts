@@ -93,10 +93,7 @@ export interface SquadManifest {
   readonly squadName: string;
   readonly tribe: string;
   readonly chapter:
-    | "Backend (Java/Python/Go)"
-    | "Web (TypeScript/React)"
-    | "Mobile (Kotlin/Swift)"
-    | "Data & Machine Learning";
+    "Backend (Java/Python/Go)" | "Web (TypeScript/React)" | "Mobile (Kotlin/Swift)" | "Data & Machine Learning";
   readonly mission: string;
   readonly productManager: string;
   readonly techLead: string;
