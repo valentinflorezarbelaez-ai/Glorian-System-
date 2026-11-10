@@ -1121,3 +1121,23 @@
   - `docs/plans/PLAN-077-SLSA-SUPPLY-CHAIN.md`
   - `docs/tasks/TASKS-077-SLSA-SUPPLY-CHAIN.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-UNIVERSAL-DOCTOR-193
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Universal Project Doctor & SDLC Acceleration Engine (`SPEC-193`, `CHANGE-078`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “bien que mas podemos mejorar que mas podemos mejorar que mas”)
+- **Scope**:
+  1. Implement Layer-0 polyglot repository health scoring and CI/CD synthesizer `src/core/eosUniversalProjectDoctor.ts`.
+  2. Subpath export `"./doctor"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI command `glorian doctor` in `bin/commands/cliPlatform.mjs`.
+  5. Wire MCP action `action: "doctor"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosUniversalProjectDoctor.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-078-UNIVERSAL-PROJECT-DOCTOR.md`
+  - `openspec/changes/CHANGE-078-UNIVERSAL-PROJECT-DOCTOR.md`
+  - `openspec/specs/SPEC-193-UNIVERSAL-PROJECT-DOCTOR.md`
+  - `docs/plans/PLAN-078-UNIVERSAL-PROJECT-DOCTOR.md`
+  - `docs/tasks/TASKS-078-UNIVERSAL-PROJECT-DOCTOR.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

@@ -514,6 +514,7 @@ Uso Universal Exhaustivo:
   eos swarm                  Consenso BFT (3f+1) con veto de seguridad y slashing (DeepMind)
   eos search <query>         Búsqueda de texto completo SQLite FTS5 en specs, plans y ADRs
   eos guide                  Muestra el glosario de arquitectura y equivalencias de la industria
+  eos doctor [ruta] [--write-ci] Diagnostica 5 pilares SDLC Soundcheck (0-100) y sintetiza CI
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

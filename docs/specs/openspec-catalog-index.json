@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
-  "totalSpecs": 187,
-  "catalogSha256": "8ef2dab56591a96ae02f2f9a5abe0a113dec8589094ce209d5d0f4f3e2df1ea2",
+  "totalSpecs": 188,
+  "catalogSha256": "94fff35a58b3538ecdc95f1989e3ac4f8a4c6945259a9627b3fa16f30f66c365",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1685,6 +1685,15 @@
       "bddCount": 4,
       "file": "openspec/specs/SPEC-192-SLSA-SUPPLY-CHAIN.md",
       "sha256": "8f335e959612314026fa3abb302b713786725165c85bdc35f617135452a8adb2"
+    },
+    {
+      "id": "SPEC-193",
+      "title": "Universal Project Doctor & SDLC Acceleration Engine",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-193-UNIVERSAL-PROJECT-DOCTOR.md",
+      "sha256": "e73282b202a7dd9e5f45496542079afe28302db02d81a672ff7537fee390817a"
     }
   ]
 }

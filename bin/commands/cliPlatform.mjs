@@ -555,6 +555,55 @@ async function cmd_slsa_attest_133(commandContext) {
 HANDLERS["slsa:attest"] = cmd_slsa_attest_133;
 HANDLERS["provenance:attest"] = cmd_slsa_attest_133;
 
+async function cmd_doctor_134(commandContext) {
+  const { args, command, root } = commandContext;
+  const isJson = args.includes("--json");
+  const writeCi = args.includes("--write-ci");
+  const candidateTarget = args.filter((a) => !a.startsWith("-") && a !== command).join(" ");
+  const target = candidateTarget ? path.resolve(candidateTarget) : root;
+
+  const { EosUniversalProjectDoctor } = await import("../../src/core/eosUniversalProjectDoctor.ts");
+  const report = EosUniversalProjectDoctor.diagnose(target);
+
+  let ciResult = null;
+  if (writeCi) {
+    const workflow = EosUniversalProjectDoctor.generateHardenedCiWorkflow(report.detectedStack);
+    ciResult = EosUniversalProjectDoctor.writeCiWorkflow(target, workflow);
+  }
+
+  if (isJson) {
+    console.log(JSON.stringify({ ...report, ciResult }, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN UNIVERSAL PROJECT DOCTOR & SDLC ACCELERATOR (SPEC-193)`);
+  console.log(`===============================================================`);
+  console.log(`  Target Directory : ${report.targetPath}`);
+  console.log(`  Detected Stack   : ${report.detectedStack} (${report.primaryLanguage})`);
+  console.log(`  Package Manager  : ${report.packageManager}`);
+  console.log(`  Overall Score    : ${report.overallScore} / 100 [${report.readinessStatus}]`);
+  console.log(`  Receipt SHA-256  : sha256:${report.sha256Receipt}`);
+  console.log(`---------------------------------------------------------------`);
+  console.log(`  SOUNDCHECK 5-PILLAR DIAGNOSTIC:`);
+  for (const key of Object.keys(report.pillars)) {
+    const p = report.pillars[key];
+    console.log(`   - ${p.pillar.padEnd(28)}: ${p.score.toString().padStart(2)} / ${p.maxScore}`);
+  }
+  if (report.detectedVulnerabilities.length > 0) {
+    console.log(`---------------------------------------------------------------`);
+    console.log(`  VULNERABILITIES  : ${report.detectedVulnerabilities.join(", ")}`);
+  }
+  if (ciResult?.written) {
+    console.log(`---------------------------------------------------------------`);
+    console.log(`  ✔ Hardened CI workflow written to: ${ciResult.path}`);
+  }
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["doctor"] = cmd_doctor_134;
+HANDLERS["project:doctor"] = cmd_doctor_134;
+
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {

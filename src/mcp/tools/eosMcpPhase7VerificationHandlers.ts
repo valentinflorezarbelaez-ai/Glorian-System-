@@ -22,6 +22,7 @@ import { EosNeuroSymbolicVerifier } from "../../core/eosNeuroSymbolicVerifier.ts
 import { EosSlsaSupplyChainAttestation } from "../../core/eosSlsaSupplyChainAttestation.ts";
 import { EosHardwareMemoryArena } from "../../core/eosHardwareMemoryArena.ts";
 import { EosDelayTolerantMesh } from "../../core/eosDelayTolerantMesh.ts";
+import { EosUniversalProjectDoctor } from "../../core/eosUniversalProjectDoctor.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -388,6 +389,22 @@ export function dispatchPhase7VerificationCase(
       if (action === "dtn_status") {
         const mesh = new EosDelayTolerantMesh("local-control-plane");
         return mesh.getMeshMetrics();
+      }
+      if (action === "doctor") {
+        const targetPath =
+          typeof args?.targetPath === "string" && args.targetPath.trim().length > 0
+            ? args.targetPath.trim()
+            : deps.projectRoot;
+        const report = EosUniversalProjectDoctor.diagnose(targetPath);
+        let ciResult: { written: boolean; path: string } | undefined = undefined;
+        if (args?.writeCi === true) {
+          const workflow = EosUniversalProjectDoctor.generateHardenedCiWorkflow(report.detectedStack);
+          ciResult = EosUniversalProjectDoctor.writeCiWorkflow(targetPath, workflow);
+        }
+        return {
+          ...report,
+          ciResult,
+        };
       }
       if (action === "list") {
         return {

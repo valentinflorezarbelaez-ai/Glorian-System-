@@ -17,6 +17,7 @@
     "./dtn": "./src/core/eosDelayTolerantMesh.ts",
     "./neuro-symbolic": "./src/core/eosNeuroSymbolicVerifier.ts",
     "./provenance": "./src/core/eosSlsaSupplyChainAttestation.ts",
+    "./doctor": "./src/core/eosUniversalProjectDoctor.ts",
     "./package.json": "./package.json"
   },
   "bin": {
