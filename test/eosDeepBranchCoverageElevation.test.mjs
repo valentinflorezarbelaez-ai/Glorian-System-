@@ -4175,14 +4175,19 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       });
       assert.equal(missingLocalRes.status, "SKIPPED_SIBLING");
 
-      // Test with EOS_WORKSPACE_ROOT — usable checkout needs .git + package.json
+      // Test with EOS_WORKSPACE_ROOT — usable checkout needs .git + project marker
       const prevWsRoot = process.env.EOS_WORKSPACE_ROOT;
       const tmpWsRoot = fs.mkdtempSync(path.join(os.tmpdir(), "ws-root-"));
       try {
         const siblingRoot = path.join(tmpWsRoot, "sibling-repo");
         fs.mkdirSync(path.join(siblingRoot, ".git"), { recursive: true });
         fs.writeFileSync(path.join(siblingRoot, "package.json"), "{}\n", "utf8");
-        // Empty git residue (no package.json) must stay SKIPPED — CI checkout failure residue.
+        // Static Vercel sibling (no package.json) — index.html + vercel.json counts as usable.
+        const staticRoot = path.join(tmpWsRoot, "static-site");
+        fs.mkdirSync(path.join(staticRoot, ".git"), { recursive: true });
+        fs.writeFileSync(path.join(staticRoot, "index.html"), "<!doctype html>\n", "utf8");
+        fs.writeFileSync(path.join(staticRoot, "vercel.json"), "{}\n", "utf8");
+        // Empty git residue (no project marker) must stay SKIPPED — CI checkout failure residue.
         const residueRoot = path.join(tmpWsRoot, "git-residue-only");
         fs.mkdirSync(path.join(residueRoot, ".git"), { recursive: true });
         process.env.EOS_WORKSPACE_ROOT = tmpWsRoot;
@@ -4193,6 +4198,13 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
         });
         assert.equal(resolvedWs.status, "AVAILABLE");
         assert.equal(resolvedWs.resolution, "RESOLVED_LOCAL_DIR");
+
+        const staticWs = resolveFleetProjectPath(root, {
+          id: "static-site",
+          resolvedLocalDir: "static-site",
+        });
+        assert.equal(staticWs.status, "AVAILABLE");
+        assert.equal(staticWs.resolution, "RESOLVED_LOCAL_DIR");
 
         const residue = resolveFleetProjectPath(root, {
           id: "git-residue-only",
