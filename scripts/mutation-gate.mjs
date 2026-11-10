@@ -40,7 +40,9 @@ const DEFAULT_TARGETS = [
   "src/core/eosAdaptiveConcurrencyGovernor.ts",
   "src/core/eosAutonomousHealer.ts",
   "src/core/eosCellBasedBulkheadGovernor.ts",
+  "src/core/eosDurableSqliteLedger.ts",
   "src/core/eosFleetProductScorecard.ts",
+  "src/core/eosIamAuditLedger.ts",
   "src/core/eosKernelPrimitives.ts",
   "src/core/eosMultiWindowSloGovernor.ts",
   "src/core/eosPropertyFuzzingHypervisor.ts",
@@ -149,7 +151,7 @@ export function loadMutationBudget(root) {
  *
  * @returns {{ violations: Array<{target: string, score: number, floor: number}>, minScore: number }}
  */
-export function evaluateMutationBudget({ root, reports }) {
+export function evaluateMutationBudget({ root, reports, targets }) {
   const { minScore, floors } = loadMutationBudget(root);
   const violations = [];
   const reported = new Set(reports.map((r) => r.targetFile));
@@ -159,8 +161,9 @@ export function evaluateMutationBudget({ root, reports }) {
   }
   // A ratcheted target with no report is an unverified claim, not a pass: its
   // source or test may have been renamed/deleted, silently disabling the gate.
+  const targetsToCheck = targets && targets.length > 0 ? new Set(targets) : new Set(Object.keys(floors));
   for (const [targetFile, floor] of Object.entries(floors)) {
-    if (!reported.has(targetFile)) {
+    if (targetsToCheck.has(targetFile) && !reported.has(targetFile)) {
       violations.push({ kind: "MISSING_TARGET_REPORT", target: targetFile, score: 0, floor });
     }
   }
@@ -189,7 +192,9 @@ export function updateMutationBudget({ root, reports }) {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url))) {
   const update = process.argv.includes("--update");
-  const { reports, missingTargets, sandboxDir } = await runMutationGate();
+  const specificTargets = process.argv.slice(2).filter((arg) => !arg.startsWith("--"));
+  const targets = specificTargets.length > 0 ? specificTargets : DEFAULT_TARGETS;
+  const { reports, missingTargets, sandboxDir } = await runMutationGate({ targets });
 
   console.log("======================================================================");
   console.log(" EOS MUTATION GATE — Testing the Tests (isolated sandbox)  ");
@@ -210,7 +215,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToP
     process.exit(0);
   }
 
-  const { violations, minScore } = evaluateMutationBudget({ root: repoRoot, reports });
+  const { violations, minScore } = evaluateMutationBudget({ root: repoRoot, reports, targets: specificTargets });
   if (violations.length === 0 && missingTargets.length === 0) {
     console.log(`✅ Mutation ratchet OK (default floor ${Math.round(minScore * 100)}%).`);
     process.exit(0);
