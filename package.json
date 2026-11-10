@@ -51,6 +51,7 @@
     "fuzzer": "node bin/eos.mjs fuzzer",
     "seccomp": "node bin/eos.mjs sandbox:profile",
     "aca": "node bin/eos.mjs aca",
+    "tlc": "node bin/eos.mjs tlc",
     "release:seal": "node bin/eos.mjs release:seal",
     "timetravel": "node bin/eos.mjs timetravel",
     "intercept": "node bin/eos.mjs intercept",

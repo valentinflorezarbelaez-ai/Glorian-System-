@@ -35,9 +35,13 @@ const repoRoot = path.resolve(scriptsDir, "..");
 const BUDGET_REL_PATH = "docs/quality/mutation-budget.json";
 const DEFAULT_MIN_SCORE = 0.8;
 
-// A small, fast, well-covered module: the mutation run stays bounded while
-// still exercising the engine end to end.
-const DEFAULT_TARGETS = ["src/core/eosSLOErrorBudgetGovernor.ts"];
+// Core high-value modules governed under mutation testing ratchet
+const DEFAULT_TARGETS = [
+  "src/core/eosSLOErrorBudgetGovernor.ts",
+  "src/core/eosThreeMountainsCompass.ts",
+  "src/core/eosKernelPrimitives.ts",
+  "src/core/eosAutonomousHealer.ts",
+];
 
 /**
  * Runs mutation analysis on each target inside a throwaway sandbox copy.
