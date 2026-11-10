@@ -5,7 +5,7 @@ const HANDLERS = {};
 async function cmd_aca_114(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosStatisticalCanaryAuditor } = await import("../src/core/eosStatisticalCanaryAuditor.ts");
+  const { EosStatisticalCanaryAuditor } = await import("../../src/core/eosStatisticalCanaryAuditor.ts");
   console.log("[EOS NETFLIX-GRADE STATISTICAL CANARY AUDITOR (ACA) — SPEC-066 v67.0.0]\n");
 
   const metric = args[1] || "p95_latency_ms";
@@ -36,7 +36,7 @@ HANDLERS["canary:stat"] = cmd_aca_114;
 async function cmd_release_seal_115(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosHermeticReleaseSealer } = await import("../src/core/eosHermeticReleaseSealer.ts");
+  const { EosHermeticReleaseSealer } = await import("../../src/core/eosHermeticReleaseSealer.ts");
   console.log("[EOS HERMETIC RELEASE SEALER & SLSA LEVEL 4 PROVENANCE — SPEC-067 v67.0.0]\n");
 
   const sealer = new EosHermeticReleaseSealer(root);
@@ -62,7 +62,7 @@ HANDLERS["release:seal"] = cmd_release_seal_115;
 async function cmd_ledger_replay_116(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosLedgerTimeTravelEngine } = await import("../src/core/eosLedgerTimeTravelEngine.ts");
+  const { EosLedgerTimeTravelEngine } = await import("../../src/core/eosLedgerTimeTravelEngine.ts");
   const targetSeq = Number.parseInt(args[1] || "1", 10);
   console.log(`[EOS BITEMPORAL TIME-TRAVEL STATE REPLAY — SPEC-068 v67.0.0]\n`);
   console.log(`Viajando en el tiempo hacia secuencia K = ${targetSeq}...\n`);
@@ -88,7 +88,7 @@ HANDLERS["ledger:timetravel"] = cmd_ledger_replay_116;
 async function cmd_intercept_117(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosConstitutionalRuntimeInterceptor } = await import("../src/core/eosConstitutionalRuntimeInterceptor.ts");
+  const { EosConstitutionalRuntimeInterceptor } = await import("../../src/core/eosConstitutionalRuntimeInterceptor.ts");
   console.log("[EOS DYNAMIC CONSTITUTIONAL RUNTIME INTERCEPTOR — SPEC-069 v67.0.0]\n");
 
   const targetTool = args[1] || "eos_write_file";
@@ -118,7 +118,7 @@ HANDLERS["intercept"] = cmd_intercept_117;
 async function cmd_mmr_118(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosMerkleMountainRange } = await import("../src/core/eosMerkleMountainRange.ts");
+  const { EosMerkleMountainRange } = await import("../../src/core/eosMerkleMountainRange.ts");
   console.log("[EOS MERKLE MOUNTAIN RANGE (MMR) & O(LOG N) INCLUSION PROOFS — SPEC-070 v68.0.0]\n");
 
   const mmr = new EosMerkleMountainRange();
@@ -151,7 +151,7 @@ HANDLERS["mmr"] = cmd_mmr_118;
 async function cmd_raft_119(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
-  const { EosRaftWalReplicator } = await import("../src/core/eosRaftWalReplicator.ts");
+  const { EosRaftWalReplicator } = await import("../../src/core/eosRaftWalReplicator.ts");
   console.log("[EOS DISTRIBUTED RAFT WAL REPLICATOR — SPEC-071 v68.0.0]\n");
 
   const members = ["eos-node-1", "eos-node-2", "eos-node-3"];
@@ -185,7 +185,7 @@ HANDLERS["raft:elect"] = cmd_raft_119;
 async function cmd_fuzzer_120(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosGeneticCoverageFuzzer } = await import("../src/core/eosGeneticCoverageFuzzer.ts");
+  const { EosGeneticCoverageFuzzer } = await import("../../src/core/eosGeneticCoverageFuzzer.ts");
   const cycles = Number.parseInt(args[1] || "50", 10);
   console.log(`[EOS CONTINUOUS GENETIC COVERAGE-GUIDED FUZZER — SPEC-072 v68.0.0]\n`);
   console.log(`Ejecutando campaña de mutaciones genéticas (${cycles} ciclos)...`);
@@ -219,7 +219,7 @@ HANDLERS["fuzz"] = cmd_fuzzer_120;
 async function cmd_seccomp_121(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
-  const { EosKernelSyscallSandbox } = await import("../src/core/eosKernelSyscallSandbox.ts");
+  const { EosKernelSyscallSandbox } = await import("../../src/core/eosKernelSyscallSandbox.ts");
   console.log("[EOS KERNEL-GRADE SECCOMP & SYSCALL SANDBOX GENERATOR — SPEC-073 v68.0.0]\n");
 
   const profile = EosKernelSyscallSandbox.generateSandboxProfile("eos-agent-production-enclave");
@@ -243,7 +243,7 @@ HANDLERS["sandbox:profile"] = cmd_seccomp_121;
 async function cmd_simd_122(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
-  const { EosSimdVectorAccelerator } = await import("../src/core/eosSimdVectorAccelerator.ts");
+  const { EosSimdVectorAccelerator } = await import("../../src/core/eosSimdVectorAccelerator.ts");
   console.log("[EOS HARDWARE-ACCELERATED SIMD VECTOR ALGEBRA — SPEC-074 v69.0.0]\n");
 
   const accelerator = new EosSimdVectorAccelerator();
@@ -262,7 +262,7 @@ HANDLERS["simd"] = cmd_simd_122;
 async function cmd_enforce_123(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
-  const { EosActiveKernelProcessEnforcer } = await import("../src/core/eosActiveKernelProcessEnforcer.ts");
+  const { EosActiveKernelProcessEnforcer } = await import("../../src/core/eosActiveKernelProcessEnforcer.ts");
   console.log("[EOS ACTIVE KERNEL PROCESS ENFORCER & RUNTIME CONTAINMENT — SPEC-075 v69.0.0]\n");
 
   const enforcer = new EosActiveKernelProcessEnforcer();
@@ -286,7 +286,7 @@ HANDLERS["enforce"] = cmd_enforce_123;
 async function cmd_sparse_tree_124(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
-  const { EosSparseMerkleTree } = await import("../src/core/eosSparseMerkleTree.ts");
+  const { EosSparseMerkleTree } = await import("../../src/core/eosSparseMerkleTree.ts");
   console.log("[EOS 256-BIT SPARSE MERKLE TREE & EXCLUSION PROOFS — SPEC-076 v69.0.0]\n");
 
   const smt = new EosSparseMerkleTree(32);
@@ -317,7 +317,7 @@ HANDLERS["smt:tree"] = cmd_sparse_tree_124;
 async function cmd_zk_125(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
-  const { EosZeroKnowledgeProofVerifier } = await import("../src/core/eosZeroKnowledgeProofVerifier.ts");
+  const { EosZeroKnowledgeProofVerifier } = await import("../../src/core/eosZeroKnowledgeProofVerifier.ts");
   console.log("[EOS ZERO-KNOWLEDGE PROOF OF INVARIANT VERIFIER — SPEC-077 v69.0.0]\n");
 
   const verifier = new EosZeroKnowledgeProofVerifier();
@@ -344,7 +344,7 @@ HANDLERS["zk:verify"] = cmd_zk_125;
 async function cmd_truetime_126(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
-  const { EosTrueTimeEngine } = await import("../src/core/eosTrueTimeEngine.ts");
+  const { EosTrueTimeEngine } = await import("../../src/core/eosTrueTimeEngine.ts");
   console.log("[EOS GOOGLE SPANNER TRUETIME UNCERTAINTY & COMMIT-WAIT ENGINE — SPEC-078 v70.0.0]\n");
 
   const tt = new EosTrueTimeEngine(5.0);
@@ -368,7 +368,7 @@ HANDLERS["spanner:time"] = cmd_truetime_126;
 async function cmd_lsm_127(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
-  const { EosLsmTreeStorageEngine } = await import("../src/core/eosLsmTreeStorageEngine.ts");
+  const { EosLsmTreeStorageEngine } = await import("../../src/core/eosLsmTreeStorageEngine.ts");
   console.log("[EOS META ROCKSDB LSM-TREE STORAGE ENGINE — SPEC-079 v70.0.0]\n");
 
   const lsm = new EosLsmTreeStorageEngine(5);
@@ -392,7 +392,7 @@ HANDLERS["lsm"] = cmd_lsm_127;
 async function cmd_threshold_128(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
-  const { EosThresholdCryptography } = await import("../src/core/eosThresholdCryptography.ts");
+  const { EosThresholdCryptography } = await import("../../src/core/eosThresholdCryptography.ts");
   console.log("[EOS STRIPE TREASURY MULTI-PARTY THRESHOLD CRYPTOGRAPHY — SPEC-080 v70.0.0]\n");
 
   const tss = new EosThresholdCryptography();
@@ -419,7 +419,7 @@ HANDLERS["tss"] = cmd_threshold_128;
 async function cmd_microvm_129(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
-  const { EosMicroVmEnclaveLauncher } = await import("../src/core/eosMicroVmEnclaveLauncher.ts");
+  const { EosMicroVmEnclaveLauncher } = await import("../../src/core/eosMicroVmEnclaveLauncher.ts");
   console.log("[EOS AWS NITRO MICROVM HARDWARE ENCLAVE LAUNCHER — SPEC-081 v70.0.0]\n");
 
   const launcher = new EosMicroVmEnclaveLauncher();

@@ -5,7 +5,7 @@ const HANDLERS = {};
 async function cmd_invariant_98(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
-  const { EosInvariantVerificationEngine } = await import("../src/core/eosInvariantVerificationEngine.ts");
+  const { EosInvariantVerificationEngine } = await import("../../src/core/eosInvariantVerificationEngine.ts");
 
   const sampleModel = {
     name: "TransferLedger",
@@ -72,7 +72,7 @@ async function cmd_contract_99(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   const subAction = (args[1] || "diff").toLowerCase();
-  const { EosContractEvolutionGovernor } = await import("../src/core/eosContractEvolutionGovernor.ts");
+  const { EosContractEvolutionGovernor } = await import("../../src/core/eosContractEvolutionGovernor.ts");
 
   if (subAction === "lint" || subAction === "sql") {
     const sqlSnippet = args[2] || "ALTER TABLE users ADD COLUMN age INT NOT NULL; DROP COLUMN legacy_id;";
@@ -121,7 +121,7 @@ async function cmd_heal_surgical_100(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   const subAction = (args[1] || "diagnose").toLowerCase();
-  const { EosSurgicalSelfHealingKernel } = await import("../src/core/eosSurgicalSelfHealingKernel.ts");
+  const { EosSurgicalSelfHealingKernel } = await import("../../src/core/eosSurgicalSelfHealingKernel.ts");
 
   if (subAction === "diagnose") {
     const sampleTrace =
@@ -173,7 +173,7 @@ async function cmd_tlc_101(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const subAction = (args[1] || "status").toLowerCase();
-  const { EosTlcFormalChecker } = await import("../src/core/eosTlcFormalChecker.ts");
+  const { EosTlcFormalChecker } = await import("../../src/core/eosTlcFormalChecker.ts");
 
   if (subAction === "status" || subAction === "detect") {
     const diag = EosTlcFormalChecker.detectRuntime(root);
@@ -218,7 +218,7 @@ HANDLERS["tlc"] = cmd_tlc_101;
 async function cmd_pr_check_102(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
-  const { EosGithubPrGate } = await import("../src/core/eosGithubPrGate.ts");
+  const { EosGithubPrGate } = await import("../../src/core/eosGithubPrGate.ts");
   const evalResult = EosGithubPrGate.evaluatePr({ projectRoot: root });
 
   console.log("[EOS NATIVE GITHUB ACTIONS PR GATE & ATTESTATION BOT]\n");
@@ -258,7 +258,7 @@ async function cmd_sandbox_vm_103(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const subAction = (args[1] || "doctor").toLowerCase();
-  const { EosMicroVmSandbox } = await import("../src/core/eosMicroVmSandbox.ts");
+  const { EosMicroVmSandbox } = await import("../../src/core/eosMicroVmSandbox.ts");
 
   if (subAction === "doctor" || subAction === "status") {
     const diag = EosMicroVmSandbox.diagnoseHost();
@@ -305,7 +305,7 @@ async function cmd_dashboard_104(commandContext) {
   const subAction = (args[1] || "status").toLowerCase();
   const portArgIdx = args.findIndex((a) => a === "--port");
   const port = portArgIdx !== -1 && args[portArgIdx + 1] ? Number.parseInt(args[portArgIdx + 1], 10) : 4321;
-  const { EosTelemetryDashboard } = await import("../src/core/eosTelemetryDashboard.ts");
+  const { EosTelemetryDashboard } = await import("../../src/core/eosTelemetryDashboard.ts");
   const dashboard = new EosTelemetryDashboard(root, port);
 
   if (subAction === "start") {
@@ -342,7 +342,7 @@ async function cmd_fleet_verify_105(commandContext) {
   printBanner();
   const targetArg = args[1] || "all";
   const { EosFleetProductionVerifier, REGISTERED_FLEET_TARGETS } =
-    await import("../src/core/eosFleetProductionVerifier.ts");
+    await import("../../src/core/eosFleetProductionVerifier.ts");
 
   console.log("[EOS FLEET PRODUCTION LIVING VERIFICATION & BAUTISMO DE FUEGO — SPEC-056 v62.0.0]\n");
 
@@ -383,7 +383,7 @@ async function cmd_sapfix_106(commandContext) {
   const msg = args[4] || "Cannot read properties of undefined";
 
   console.log(`[EOS META-GRADE AUTONOMOUS SAPFIX ENGINE — SPEC-060 v66.0.0]\n`);
-  const { EosSapFixAutoshipper } = await import("../src/core/eosSapFixAutoshipper.ts");
+  const { EosSapFixAutoshipper } = await import("../../src/core/eosSapFixAutoshipper.ts");
 
   const report = await EosSapFixAutoshipper.executeCycle(
     {
@@ -412,7 +412,7 @@ HANDLERS["sapfix"] = cmd_sapfix_106;
 async function cmd_sbom_107(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
-  const { EosSlsaProvenanceSbom } = await import("../src/core/eosSlsaProvenanceSbom.ts");
+  const { EosSlsaProvenanceSbom } = await import("../../src/core/eosSlsaProvenanceSbom.ts");
   console.log("[EOS CYCLONEDX v1.5 SOFTWARE BILL OF MATERIALS — SPEC-061 v66.0.0]\n");
 
   const sbom = EosSlsaProvenanceSbom.generateCycloneDxSbom(root);
@@ -432,7 +432,7 @@ HANDLERS["sbom"] = cmd_sbom_107;
 async function cmd_slsa_108(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosSlsaProvenanceSbom } = await import("../src/core/eosSlsaProvenanceSbom.ts");
+  const { EosSlsaProvenanceSbom } = await import("../../src/core/eosSlsaProvenanceSbom.ts");
   console.log("[EOS IN-TOTO SLSA LEVEL 4 PROVENANCE STATEMENT — SPEC-061 v66.0.0]\n");
 
   const commitSha = args[1] || "HEAD";
@@ -453,7 +453,7 @@ HANDLERS["slsa"] = cmd_slsa_108;
 async function cmd_cas_109(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
-  const { EosContentAddressableCache } = await import("../src/core/eosContentAddressableCache.ts");
+  const { EosContentAddressableCache } = await import("../../src/core/eosContentAddressableCache.ts");
   console.log("[EOS GOOGLE BAZEL-GRADE CAS & ACTION CACHE — SPEC-062 v66.0.0]\n");
 
   const cas = new EosContentAddressableCache(root);
@@ -475,7 +475,7 @@ HANDLERS["cas"] = cmd_cas_109;
 async function cmd_smt_110(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
-  const { EosSmtAutomatedReasoningProver } = await import("../src/core/eosSmtAutomatedReasoningProver.ts");
+  const { EosSmtAutomatedReasoningProver } = await import("../../src/core/eosSmtAutomatedReasoningProver.ts");
   console.log("[EOS AWS-GRADE SMT AUTOMATED REASONING PROVER — SPEC-063 v66.0.0]\n");
 
   const rules = [
@@ -501,7 +501,7 @@ HANDLERS["smt"] = cmd_smt_110;
 async function cmd_chaos_live_111(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosProductionChaosMonkey } = await import("../src/core/eosProductionChaosMonkey.ts");
+  const { EosProductionChaosMonkey } = await import("../../src/core/eosProductionChaosMonkey.ts");
   const target = args[1] || "https://portafolio-valentin.vercel.app";
   console.log(`[EOS NETFLIX-GRADE PRODUCTION CHAOS MONKEY — SPEC-064 v66.0.0]\n`);
   console.log(`Inyectando batería de caos controlado en: ${target}...`);
@@ -529,7 +529,7 @@ HANDLERS["chaos:live"] = cmd_chaos_live_111;
 async function cmd_swarm_112(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosBftAgentSwarmSlashing } = await import("../src/core/eosBftAgentSwarmSlashing.ts");
+  const { EosBftAgentSwarmSlashing } = await import("../../src/core/eosBftAgentSwarmSlashing.ts");
   console.log("[EOS DEEPMIND-GRADE BFT AGENT SWARM & SLASHING HYPERVISOR — SPEC-065 v66.0.0]\n");
 
   const swarm = EosBftAgentSwarmSlashing.createDefaultSwarm();
@@ -565,7 +565,7 @@ HANDLERS["swarm"] = cmd_swarm_112;
 async function cmd_search_113(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosDocumentationSearch } = await import("../src/core/eosDocumentationSearch.ts");
+  const { EosDocumentationSearch } = await import("../../src/core/eosDocumentationSearch.ts");
   const query = args.slice(1).join(" ") || "SPEC";
   console.log(`[EOS ARCHITECTURE & SPECIFICATION FULL-TEXT SEARCH (FTS5)]\n`);
   console.log(`Buscando: "${query}"...\n`);

@@ -7,7 +7,7 @@ async function cmd_ontology_84(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[PALANTIR ONTOLOGY CYCLOTRON] Grafo de Conocimiento Semántico Bi-Temporal (Layer 0)...\n");
-  const { EosOntologyCyclotron } = await import("../src/core/eosOntologyCyclotron.ts");
+  const { EosOntologyCyclotron } = await import("../../src/core/eosOntologyCyclotron.ts");
   const sub = (args[1] || "status").toLowerCase();
   const cyclotron = new EosOntologyCyclotron();
 
@@ -42,7 +42,7 @@ async function cmd_quantum_seal_85(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[NIST POST-QUANTUM LATTICE SHIELD] Reducción Modular ML-KEM-768 FIPS 203...\n");
-  const { EosQuantumLatticeShield } = await import("../src/core/eosQuantumLatticeShield.ts");
+  const { EosQuantumLatticeShield } = await import("../../src/core/eosQuantumLatticeShield.ts");
   const payload = args.slice(1).join(" ") || "eos-sovereign-production-attestation";
   const t0 = performance.now();
   const seal = EosQuantumLatticeShield.generateLatticeSeal(payload);
@@ -62,9 +62,9 @@ async function cmd_refactor_86(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const subAction = (args[1] || "summary").toLowerCase();
-  const { EosContinuousRefactorEngine } = await import("../src/core/eosContinuousRefactorEngine.ts");
+  const { EosContinuousRefactorEngine } = await import("../../src/core/eosContinuousRefactorEngine.ts");
   const { assertPrecondition, assertPostcondition, assertInvariant, deepFreeze, pureSha256 } =
-    await import("../src/core/eosKernelPrimitives.ts");
+    await import("../../src/core/eosKernelPrimitives.ts");
 
   if (subAction === "audit") {
     const targetDir = args[2] || "src/core";
@@ -132,7 +132,7 @@ async function cmd_dst_87(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[DETERMINISTIC SIMULATION TESTING] Simulador DST FoundationDB / Antithesis (SPEC-041)...\n");
-  const { EosDeterministicSimulator } = await import("../src/core/eosDeterministicSimulator.ts");
+  const { EosDeterministicSimulator } = await import("../../src/core/eosDeterministicSimulator.ts");
   const seed = parseInt(args[1], 10) || 42;
   const steps = parseInt(args[2], 10) || 200;
   const faultRate = parseFloat(args[3]) || 0.08;
@@ -174,7 +174,7 @@ async function cmd_synapse_88(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
   console.log("[META-COGNITIVE SYNAPSE] Arbitraje Bayesiano Multi-Agente Sin Bloqueos...\n");
-  const { EosMetaCognitiveSynapse } = await import("../src/core/eosMetaCognitiveSynapse.ts");
+  const { EosMetaCognitiveSynapse } = await import("../../src/core/eosMetaCognitiveSynapse.ts");
   const candidates = [
     {
       agentId: "agent-architect",
@@ -219,7 +219,7 @@ async function cmd_fleet_soundcheck_89(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
   console.log("[FLEET SOUNDCHECK] Auditoría de Dimensiones de Salud de la Flota (Spotify Backstage)...\n");
-  const { EosFleetSoundcheckMesh } = await import("../src/core/eosFleetSoundcheckMesh.ts");
+  const { EosFleetSoundcheckMesh } = await import("../../src/core/eosFleetSoundcheckMesh.ts");
   const report = EosFleetSoundcheckMesh.auditFleet(root);
   console.log(`Reporte de Soundcheck Culminado:`);
   console.log(`  Repositorios Auditados : ${report.totalRepositories}`);
@@ -248,7 +248,7 @@ async function cmd_mcts_tune_90(commandContext) {
   printBanner();
   const iters = Number(args[1]) || 120;
   console.log(`[MCTS HYPER-TUNING] Optimizador Monte Carlo Tree Search (UCT Exploration, ${iters} iteraciones)...\n`);
-  const { EosMctsHyperTuner } = await import("../src/core/eosMctsHyperTuner.ts");
+  const { EosMctsHyperTuner } = await import("../../src/core/eosMctsHyperTuner.ts");
   const tuner = new EosMctsHyperTuner(42);
   const report = tuner.tuneParameters(iters);
   console.log(`Convergencia MCTS Completada:`);
@@ -273,7 +273,7 @@ async function cmd_canary_rollout_91(commandContext) {
   const versionTarget = args[1] || "v48.0.0";
   const previousVersion = args[2] || "v47.0.0";
   console.log(`[PROGRESSIVE CANARY] Despliegue Progresivo Automatizado: ${previousVersion} -> ${versionTarget}...\n`);
-  const { EosProgressiveCanaryMesh } = await import("../src/core/eosProgressiveCanaryMesh.ts");
+  const { EosProgressiveCanaryMesh } = await import("../../src/core/eosProgressiveCanaryMesh.ts");
   const mesh = new EosProgressiveCanaryMesh(versionTarget, previousVersion);
   const report = mesh.executeRollout([
     { stage: "CANARY_1_PCT", sampleRequests: 10000, failedRequests: 0, p99LatencyMs: 45, baselineP99LatencyMs: 44 },
@@ -311,10 +311,10 @@ async function cmd_antigravity_92(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const subAction = (args[1] || "doctor").toLowerCase();
-  const { EosAntigravityDirector } = await import("../src/core/eosAntigravityDirector.ts");
+  const { EosAntigravityDirector } = await import("../../src/core/eosAntigravityDirector.ts");
 
   if (subAction === "install" || subAction === "setup") {
-    const { installAntigravityIntegration } = await import("../scripts/install-antigravity-mcp.mjs");
+    const { installAntigravityIntegration } = await import("../../scripts/install-antigravity-mcp.mjs");
     const result = installAntigravityIntegration({ projectRoot: root });
     console.log("[EOS ANTIGRAVITY] Sincronización e Instalación del Plano de Control MCP:\n");
     result.actions.forEach((a) => console.log(`  [+] ${a}`));
@@ -376,7 +376,7 @@ async function cmd_gentleman_93(commandContext) {
   if (subAction === "update" || subAction === "upgrade") {
     const shouldApply = args.includes("--apply") || subAction === "upgrade";
     const shouldForce = args.includes("--force");
-    const { EosGentlemanAutoUpdater } = await import("../src/core/eosGentlemanAutoUpdater.ts");
+    const { EosGentlemanAutoUpdater } = await import("../../src/core/eosGentlemanAutoUpdater.ts");
     const cycleReport = await EosGentlemanAutoUpdater.runUpdateCycle({
       projectRoot: root,
       apply: shouldApply,
@@ -429,7 +429,7 @@ async function cmd_gentleman_93(commandContext) {
   if (subAction === "autoupdate:install" || subAction === "schedule") {
     printBanner();
     const { installGentlemanAutoUpdateSchedule, queryGentlemanAutoUpdateSchedule } =
-      await import("../scripts/install-gentleman-autoupdate.mjs");
+      await import("../../scripts/install-gentleman-autoupdate.mjs");
     const installed = installGentlemanAutoUpdateSchedule({ projectRoot: root, intervalHours: 6 });
     const status = queryGentlemanAutoUpdateSchedule();
     console.log("[EOS GENTLEMAN EVERGREEN SCHEDULER] Automatización Desatendida Instalada:\n");
@@ -445,8 +445,8 @@ async function cmd_gentleman_93(commandContext) {
 
   if (subAction === "autoupdate:status") {
     printBanner();
-    const { queryGentlemanAutoUpdateSchedule } = await import("../scripts/install-gentleman-autoupdate.mjs");
-    const { EosGentlemanAutoUpdater } = await import("../src/core/eosGentlemanAutoUpdater.ts");
+    const { queryGentlemanAutoUpdateSchedule } = await import("../../scripts/install-gentleman-autoupdate.mjs");
+    const { EosGentlemanAutoUpdater } = await import("../../src/core/eosGentlemanAutoUpdater.ts");
     const status = queryGentlemanAutoUpdateSchedule();
     const state = EosGentlemanAutoUpdater.readState(root);
     const due = EosGentlemanAutoUpdater.isAutoUpdateDue(root);
@@ -460,7 +460,7 @@ async function cmd_gentleman_93(commandContext) {
 
   if (subAction === "autoupdate:uninstall") {
     printBanner();
-    const { uninstallGentlemanAutoUpdateSchedule } = await import("../scripts/install-gentleman-autoupdate.mjs");
+    const { uninstallGentlemanAutoUpdateSchedule } = await import("../../scripts/install-gentleman-autoupdate.mjs");
     const removed = uninstallGentlemanAutoUpdateSchedule();
     console.log(
       `[EOS GENTLEMAN EVERGREEN SCHEDULER] Tarea ${removed.taskName}: ${removed.uninstalled ? "REMOVED" : "NOT_FOUND"}\n`,
@@ -469,7 +469,7 @@ async function cmd_gentleman_93(commandContext) {
   }
 
   printBanner();
-  const { EosGentlemanStackBridge } = await import("../src/core/eosGentlemanStackBridge.ts");
+  const { EosGentlemanStackBridge } = await import("../../src/core/eosGentlemanStackBridge.ts");
   const report = EosGentlemanStackBridge.auditStack(root);
   console.log("[EOS + GENTLEMAN AI STACK CO-GOVERNANCE DOCTOR]\n");
   console.log(`  Estado Co-Gobernanza   : ${report.status}`);
@@ -496,7 +496,7 @@ async function cmd_ledger_94(commandContext) {
   const { root, args, packageMetadata, printBanner } = commandContext;
   printBanner();
   const sub = (args[1] || "verify").toLowerCase();
-  const { EosDurableSqliteLedger } = await import("../src/core/eosDurableSqliteLedger.ts");
+  const { EosDurableSqliteLedger } = await import("../../src/core/eosDurableSqliteLedger.ts");
   const dbPath = EosDurableSqliteLedger.defaultLedgerPath(root);
   const ledger = new EosDurableSqliteLedger(dbPath);
   try {
@@ -546,7 +546,7 @@ async function cmd_ast_95(commandContext) {
   printBanner();
   const targetRel = args[1] || "src/core";
   const targetDir = path.resolve(root, targetRel);
-  const { EosTypeScriptAstAnalyzer } = await import("../src/core/eosTypeScriptAstAnalyzer.ts");
+  const { EosTypeScriptAstAnalyzer } = await import("../../src/core/eosTypeScriptAstAnalyzer.ts");
   const report = EosTypeScriptAstAnalyzer.analyzeDirectory(targetDir, root);
   console.log("[EOS COMPILER-GRADE TYPESCRIPT AST ANALYZER]\n");
   console.log(`  Directorio Auditado    : ${report.targetDir}`);
@@ -577,13 +577,13 @@ async function cmd_nocturnal_96(commandContext) {
   const subAction = (args[1] || "sweep").toLowerCase();
 
   if (subAction === "sweep" || subAction === "nocturnal") {
-    const { EosNocturnalEvolutionEngine } = await import("../src/core/eosNocturnalEvolutionEngine.ts");
+    const { EosNocturnalEvolutionEngine } = await import("../../src/core/eosNocturnalEvolutionEngine.ts");
     const engine = new EosNocturnalEvolutionEngine(root);
     const targetDir = args[2] || "src/core";
     const report = engine.runEvolutionSweep({ targetDir });
     console.log(EosNocturnalEvolutionEngine.formatNocturnalSummary(report));
   } else if (subAction === "evaluate") {
-    const { EosEvolutionaryHarness } = await import("../src/core/eosEvolutionaryHarness.ts");
+    const { EosEvolutionaryHarness } = await import("../../src/core/eosEvolutionaryHarness.ts");
     const res = EosEvolutionaryHarness.computeFitnessVector(113000, 0, 100, 4, 100);
     console.log("[EOS DEEPMIND SOVEREIGN EVOLUTIONARY HARNESS — ALPHAEVOLVE]\n");
     console.log(`  Composite Fitness      : ${res.compositeFitness}/100`);
@@ -593,7 +593,7 @@ async function cmd_nocturnal_96(commandContext) {
     console.log(`  Cyclomatic Complexity  : ${res.cyclomaticComplexity}`);
     console.log(`  Contract Score         : ${res.contractComplianceScore}/100\n`);
   } else if (subAction === "lock") {
-    const { EosEvolutionaryHarness } = await import("../src/core/eosEvolutionaryHarness.ts");
+    const { EosEvolutionaryHarness } = await import("../../src/core/eosEvolutionaryHarness.ts");
     const targetArg = args[2] || "src/core/eosKernelPrimitives.ts";
     const fullPath = path.resolve(root, targetArg);
     const content = fs.readFileSync(fullPath, "utf8");
@@ -615,7 +615,7 @@ async function cmd_mesh_97(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   const subAction = (args[1] || "compile").toLowerCase();
-  const { EosAgentTopologyMesh } = await import("../src/core/eosAgentTopologyMesh.ts");
+  const { EosAgentTopologyMesh } = await import("../../src/core/eosAgentTopologyMesh.ts");
 
   if (subAction === "compile") {
     const demoNodes = [

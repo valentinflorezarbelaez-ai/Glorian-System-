@@ -7,7 +7,7 @@ async function cmd_worktree_20(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const subAction = (args[1] || "list").toLowerCase();
-  const { EosWorktreeOrchestrator } = await import("../src/core/eosWorktreeOrchestrator.ts");
+  const { EosWorktreeOrchestrator } = await import("../../src/core/eosWorktreeOrchestrator.ts");
   const orchestrator = new EosWorktreeOrchestrator(root);
 
   if (subAction === "list") {
@@ -52,7 +52,7 @@ async function cmd_eval_21(commandContext) {
   printBanner();
   const target = args[1] || "src/core/eosPromptAmplifier.ts";
   console.log(`[EOS EVAL] Evaluando Calidad Cognitiva de: ${target} (Google/Anthropic Standard)...\n`);
-  const { EosCognitiveEval } = await import("../src/core/eosCognitiveEval.ts");
+  const { EosCognitiveEval } = await import("../../src/core/eosCognitiveEval.ts");
   const evaluator = new EosCognitiveEval();
   const fullPath = path.resolve(root, target);
   const result = fs.existsSync(fullPath) ? evaluator.evaluate(fullPath) : evaluator.evaluate(target, { isText: true });
@@ -88,7 +88,7 @@ async function cmd_spec_22(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const subAction = (args[1] || "check").toLowerCase();
-  const { EosOpenSpecSync } = await import("../src/core/eosOpenSpecSync.ts");
+  const { EosOpenSpecSync } = await import("../../src/core/eosOpenSpecSync.ts");
   const synchronizer = new EosOpenSpecSync(root);
 
   if (subAction === "list") {
@@ -121,7 +121,7 @@ async function cmd_titan_23(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const sub = (args[1] || "all").toLowerCase();
-  const { EosTitansMatrix } = await import("../src/core/eosTitansMatrix.ts");
+  const { EosTitansMatrix } = await import("../../src/core/eosTitansMatrix.ts");
   const matrix = new EosTitansMatrix(root);
 
   console.log(`[EOS TITANS] Ejecutando Matriz de Ingeniería de Frontera (${sub.toUpperCase()})...\n`);
@@ -179,7 +179,7 @@ async function cmd_reconcile_24(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
   console.log("[EOS RECONCILE] Ejecutando Reconciliador Declarativo de Estado Estilo Google Borg...\n");
-  const { EosTitansMatrix } = await import("../src/core/eosTitansMatrix.ts");
+  const { EosTitansMatrix } = await import("../../src/core/eosTitansMatrix.ts");
   const matrix = new EosTitansMatrix(root);
   const report = matrix.reconcileGoogleBorg();
   console.log(`Estado Deseado        : ${report.desiredStateCount} módulos invariantes`);
@@ -200,7 +200,7 @@ async function cmd_spotify_25(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const action = (args[1] || "").toLowerCase();
-  const { EosSpotifyCodex } = await import("../src/core/eosSpotifyCodex.ts");
+  const { EosSpotifyCodex } = await import("../../src/core/eosSpotifyCodex.ts");
   const codex = new EosSpotifyCodex(root);
 
   if (action === "scaffold") {
@@ -274,7 +274,7 @@ async function cmd_spotify_25(commandContext) {
   }
 
   if (action === "canary") {
-    const { evaluateCanaryStage } = await import("../src/core/eosSpotifyInstitutionalCodex.ts");
+    const { evaluateCanaryStage } = await import("../../src/core/eosSpotifyInstitutionalCodex.ts");
     const stage = args[2] || "5%";
     const errorCount = parseInt(args[3], 10) || 5;
     const totalRequests = parseInt(args[4], 10) || 50000;
@@ -333,7 +333,7 @@ async function cmd_pts_26(commandContext) {
   printBanner();
   const targetFile = args[1];
   console.log(`[EOS PTS] Disparando Selección Predictiva de Pruebas (Predictive Test Selection)...\n`);
-  const { EosSemanticGraph } = await import("../src/core/eosSemanticGraph.ts");
+  const { EosSemanticGraph } = await import("../../src/core/eosSemanticGraph.ts");
   const graph = new EosSemanticGraph(root);
   const result = graph.runPredictiveTests(targetFile);
 
@@ -357,7 +357,7 @@ async function cmd_go_27(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const sub = (args[1] || "benchmark").toLowerCase();
-  const { EosGoAccelerator } = await import("../src/core/eosGoAccelerator.ts");
+  const { EosGoAccelerator } = await import("../../src/core/eosGoAccelerator.ts");
   const accelerator = new EosGoAccelerator(root);
 
   console.log(`[EOS GO TITAN] Disparando Acelerador Nativo en Go (Modo: ${sub.toUpperCase()})...\n`);
@@ -396,7 +396,7 @@ HANDLERS["go"] = cmd_go_27;
 async function cmd_honk_28(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosSpotifyAgenticFactory } = await import("../src/core/eosSpotifyAgenticFactory.ts");
+  const { EosSpotifyAgenticFactory } = await import("../../src/core/eosSpotifyAgenticFactory.ts");
   const factory = new EosSpotifyAgenticFactory(root);
 
   let directiveIndex = 1;

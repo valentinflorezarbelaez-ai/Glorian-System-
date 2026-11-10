@@ -8,7 +8,7 @@ async function cmd_edge_40(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   const sub = (args[1] || "route").toLowerCase();
-  const { EosGlobalEdgeArbiter } = await import("../src/core/eosGlobalEdgeArbiter.ts");
+  const { EosGlobalEdgeArbiter } = await import("../../src/core/eosGlobalEdgeArbiter.ts");
   const arbiter = new EosGlobalEdgeArbiter("cli-arbiter");
 
   if (sub === "bench" || sub === "hedged") {
@@ -62,7 +62,7 @@ async function cmd_octave_41(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   const task = args.slice(1).join(" ") || "Evolución y Perfección Continua de la Flota Soberana";
-  const { SamaelianOctaveEngine } = await import("../src/core/eosSamaelIbmNvidiaCore.ts");
+  const { SamaelianOctaveEngine } = await import("../../src/core/eosSamaelIbmNvidiaCore.ts");
   const engine = new SamaelianOctaveEngine();
   const report = engine.executeConsciousOctave(task);
   console.log(`[EOS OCTAVE] Ley de las Octavas Samaeliana & Dos Shocks Conscientes:\n`);
@@ -81,7 +81,7 @@ HANDLERS["octave"] = cmd_octave_41;
 async function cmd_warp_42(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
-  const { NvidiaCudaWarpEngine } = await import("../src/core/eosSamaelIbmNvidiaCore.ts");
+  const { NvidiaCudaWarpEngine } = await import("../../src/core/eosSamaelIbmNvidiaCore.ts");
   const cuda = new NvidiaCudaWarpEngine();
   const warp = cuda.executeWarpShuffle(0);
   const gemm = cuda.runTensorMmaGemm(500);
@@ -102,7 +102,7 @@ async function cmd_apex_43(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   const task = args.slice(1).join(" ") || "Soberanía Tecnológica Absoluta";
-  const { EosSamaelIbmNvidiaCore } = await import("../src/core/eosSamaelIbmNvidiaCore.ts");
+  const { EosSamaelIbmNvidiaCore } = await import("../../src/core/eosSamaelIbmNvidiaCore.ts");
   const core = new EosSamaelIbmNvidiaCore();
   const res = core.runApexSynthesis(task);
   console.log(`[EOS APEX SYNTHESIS] Fusión Samaeliana · IBM Sysplex · NVIDIA CUDA:\n`);
@@ -131,7 +131,7 @@ async function cmd_disruptor_44(commandContext) {
     process.exitCode = 2;
     return;
   }
-  const { EosDisruptorRingEngine } = await import("../src/core/eosDisruptorRingEngine.ts");
+  const { EosDisruptorRingEngine } = await import("../../src/core/eosDisruptorRingEngine.ts");
   const engine = new EosDisruptorRingEngine(12);
   const rep = engine.runMasterSpeedBenchmark(count, 1024 * 1024);
   console.log(`[EOS Disruptor-style ring] Benchmark local de JavaScript, un solo hilo:\n`);
@@ -160,7 +160,7 @@ async function cmd_nubank_45(commandContext) {
   printBanner();
   const sub = (args[1] || "audit").toLowerCase();
   const { evaluateNubankArchitectureHealth, synthesizeNubankBlamelessPostmortem } =
-    await import("../src/core/eosNubankCodex.ts");
+    await import("../../src/core/eosNubankCodex.ts");
 
   if (sub === "postmortem") {
     const rep = synthesizeNubankBlamelessPostmortem({
@@ -238,7 +238,7 @@ async function cmd_frontier_46(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const action = (args[1] || "route").toLowerCase();
-  const { EosApexModelRouter } = await import("../src/core/eosApexModelRouter.ts");
+  const { EosApexModelRouter } = await import("../../src/core/eosApexModelRouter.ts");
   const router = new EosApexModelRouter(root);
 
   if (action === "benchmark" || action === "bench") {
@@ -306,8 +306,9 @@ async function cmd_topology_47(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const action = (args[1] || "status").toLowerCase();
-  const { getFleetNodes, calculateBlastRadius, getTopologyMetrics } = await import("../src/core/eosFleetTopology.ts");
-  const { runBenchmark, compressContext, estimateTokens } = await import("../src/core/eosWasmEngine.ts");
+  const { getFleetNodes, calculateBlastRadius, getTopologyMetrics } =
+    await import("../../src/core/eosFleetTopology.ts");
+  const { runBenchmark, compressContext, estimateTokens } = await import("../../src/core/eosWasmEngine.ts");
 
   if (action === "bench" || action === "benchmark") {
     const it = parseInt(args[2] || "100000", 10);
@@ -371,7 +372,7 @@ async function cmd_soul_48(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   const { getArchitectIdentity, getMasterKanbanState, evaluateAlignment, getDailyDisciplineCheck } =
-    await import("../src/core/eosJarvisSoul.ts");
+    await import("../../src/core/eosJarvisSoul.ts");
   const directive = args.slice(1).join(" ");
 
   if (directive) {
@@ -418,7 +419,7 @@ async function cmd_introspect_49(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
   console.log(`[EOS INTROSPECTION] Iniciando Auto-Estudio y Auditoría Recursiva del Código...\n`);
-  const { EosIntrospectionEngine } = await import("../src/core/eosIntrospectionEngine.ts");
+  const { EosIntrospectionEngine } = await import("../../src/core/eosIntrospectionEngine.ts");
   const engine = new EosIntrospectionEngine(root);
   const report = engine.runIntrospection();
 
@@ -448,7 +449,7 @@ async function cmd_shield_50(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
   console.log(`[EOS SHIELD] Ejecutando Auditoría de Seguridad Militar y Aislamiento Air-Gapped...\n`);
-  const { EosImpenetrableShield } = await import("../src/core/eosImpenetrableShield.ts");
+  const { EosImpenetrableShield } = await import("../../src/core/eosImpenetrableShield.ts");
   const shield = new EosImpenetrableShield(root);
   const audit = shield.runFullSecurityAudit();
 
@@ -471,7 +472,7 @@ async function cmd_datalog_51(commandContext) {
   printBanner();
   const targetModule = args[1] || "src/core/eosJarvisSoul.ts";
   console.log(`[EOS DATALOG] Ejecución Deductiva en Punto Fijo (Estilo Google Piper / Mangle)...\n`);
-  const { EosDatalogVerifier } = await import("../src/core/eosDatalogVerifier.ts");
+  const { EosDatalogVerifier } = await import("../../src/core/eosDatalogVerifier.ts");
   const verifier = new EosDatalogVerifier(root);
   const blast = verifier.queryBlastRadius(targetModule);
 
@@ -510,7 +511,7 @@ async function cmd_mutate_52(commandContext) {
     process.exit(1);
   }
   const code = fs.readFileSync(full, "utf8");
-  const { EosMutationTester } = await import("../src/core/eosMutationTester.ts");
+  const { EosMutationTester } = await import("../../src/core/eosMutationTester.ts");
   const tester = new EosMutationTester();
   const mutants = tester.generateMutants(code);
 
@@ -534,7 +535,7 @@ async function cmd_sim_53(commandContext) {
   printBanner();
   const seed = parseInt(args[1] || "948102", 10);
   console.log(`[EOS SIMULATION] Hipervisor de Viaje en el Tiempo Determinista (Seed #${seed})...\n`);
-  const { EosTimeTravelSim } = await import("../src/core/eosTimeTravelSim.ts");
+  const { EosTimeTravelSim } = await import("../../src/core/eosTimeTravelSim.ts");
   const sim = new EosTimeTravelSim(seed);
 
   sim.scheduleEvent("core-node-1", "TRANSACTION_PROPOSE", 15);
@@ -558,7 +559,7 @@ async function cmd_schedule_54(commandContext) {
   printBanner();
   console.log(`[EOS SCHEDULER] Planificador Cooperativo a 120Hz (< 8.33ms por Frame)...\n`);
   const { EosCooperativeScheduler, constantTimeSelect, constantTimeEquals } =
-    await import("../src/core/eosMicroScheduler.ts");
+    await import("../../src/core/eosMicroScheduler.ts");
   const scheduler = new EosCooperativeScheduler(8.33);
 
   const tasks = Array.from({ length: 150 }, (_, _i) => () => {
@@ -609,7 +610,7 @@ async function cmd_jepsen_56(commandContext) {
   console.log(
     `[EOS NETWORK SIMULATION] Escenario local de partición y pérdida de paquetes; no es una prueba Jepsen distribuida.\n`,
   );
-  const { EosTimeTravelSim } = await import("../src/core/eosTimeTravelSim.ts");
+  const { EosTimeTravelSim } = await import("../../src/core/eosTimeTravelSim.ts");
   const sim = new EosTimeTravelSim(774411);
 
   console.log("Configurando Clúster de 3 Réplicas: {replica-1, replica-2, replica-3}");
@@ -644,7 +645,7 @@ async function cmd_vault_57(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
   console.log(`[EOS VAULT] Bóveda de Memoria Pinned Capped & Purga Cero-Entropía (Zero V8 Residue)...\n`);
-  const { EosSecureMemoryVault } = await import("../src/core/eosSecureMemoryVault.ts");
+  const { EosSecureMemoryVault } = await import("../../src/core/eosSecureMemoryVault.ts");
   const vault = new EosSecureMemoryVault();
 
   const sampleKey = new Uint8Array([0x01, 0x02, 0x03, 0x04, 0x05, 0xde, 0xad, 0xbe, 0xef]);
@@ -675,7 +676,7 @@ async function cmd_temple_58(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log(`[EOS GNOSTIC TEMPLE] Centinela del Templo Biológico & Armonización de los Tres Cerebros...\n`);
-  const { EosGnosticTemple } = await import("../src/core/eosGnosticTemple.ts");
+  const { EosGnosticTemple } = await import("../../src/core/eosGnosticTemple.ts");
   const temple = new EosGnosticTemple();
 
   const circadian = temple.checkCircadianVeto();
@@ -705,7 +706,7 @@ async function cmd_sol_59(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log(`[EOS CLAVE DE SOL] Práctica Gnóstica de Auto-Observación y Auto-Recuerdo...\n`);
-  const { EosGnosticTemple } = await import("../src/core/eosGnosticTemple.ts");
+  const { EosGnosticTemple } = await import("../../src/core/eosGnosticTemple.ts");
   const temple = new EosGnosticTemple();
 
   const subj = args[1] !== "0" && args[1] !== "false";

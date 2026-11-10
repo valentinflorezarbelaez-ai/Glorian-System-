@@ -6,7 +6,7 @@ const HANDLERS = {};
 async function cmd_unitotal_audit_130(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
-  const { EosSamaelUnitotalNexus } = await import("../src/core/eosSamaelUnitotalNexus.ts");
+  const { EosSamaelUnitotalNexus } = await import("../../src/core/eosSamaelUnitotalNexus.ts");
   console.log("[EOS SAMAELIAN UNITOTAL NEXUS & UNIVERSAL FLEET MESH — SPEC-057 v63.0.0]\n");
 
   const report = EosSamaelUnitotalNexus.evaluateUnitotalPerfection(root);
@@ -40,7 +40,7 @@ HANDLERS["unitotal:audit"] = cmd_unitotal_audit_130;
 async function cmd_fuzz_hypervisor_131(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosPropertyFuzzingHypervisor } = await import("../src/core/eosPropertyFuzzingHypervisor.ts");
+  const { EosPropertyFuzzingHypervisor } = await import("../../src/core/eosPropertyFuzzingHypervisor.ts");
   console.log("[EOS PROPERTY-BASED FUZZING & TIME-TRAVEL HYPERVISOR — SPEC-058 v64.0.0]\n");
 
   const hypervisor = new EosPropertyFuzzingHypervisor(root);
@@ -103,7 +103,7 @@ HANDLERS["fuzz:hypervisor"] = cmd_fuzz_hypervisor_131;
 async function cmd_replay_ledger_132(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosPropertyFuzzingHypervisor } = await import("../src/core/eosPropertyFuzzingHypervisor.ts");
+  const { EosPropertyFuzzingHypervisor } = await import("../../src/core/eosPropertyFuzzingHypervisor.ts");
   console.log("[EOS TIME-TRAVEL EVENT REPLAY HYPERVISOR — SPEC-058 v64.0.0]\n");
 
   const hypervisor = new EosPropertyFuzzingHypervisor(root);
@@ -128,7 +128,7 @@ HANDLERS["replay:ledger"] = cmd_replay_ledger_132;
 async function cmd_sync_stack_133(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
-  const { syncGentleAiStack } = await import("../scripts/sync-gentle-ai-stack.mjs");
+  const { syncGentleAiStack } = await import("../../scripts/sync-gentle-ai-stack.mjs");
   console.log("[EOS GENTLEMAN AI STACK HERMETIC SYNC DAEMON — PELDAÑO 3]\n");
   const receipt = syncGentleAiStack({ projectRoot: root });
   console.log(`  Estado Global  : ${receipt.status}`);
@@ -150,7 +150,7 @@ HANDLERS["sync-stack"] = cmd_sync_stack_133;
 async function cmd_witness_interrogate_134(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosConsciousWitness } = await import("../src/core/eosConsciousWitness.ts");
+  const { EosConsciousWitness } = await import("../../src/core/eosConsciousWitness.ts");
   console.log("[EOS SOVEREIGN CONSCIOUS WITNESS — SPEC-059 v65.0.0]\n");
 
   const witness = new EosConsciousWitness(root);
@@ -174,7 +174,7 @@ HANDLERS["witness:interrogate"] = cmd_witness_interrogate_134;
 async function cmd_hotpatch_135(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
-  const { EosHotPatchEngine } = await import("../src/core/eosHotPatchEngine.ts");
+  const { EosHotPatchEngine } = await import("../../src/core/eosHotPatchEngine.ts");
   console.log("[EOS ATOMIC ZERO-DOWNTIME HOT-PATCHING ENGINE — SPEC-059 v65.0.0]\n");
 
   const engine = new EosHotPatchEngine();
@@ -205,7 +205,7 @@ async function cmd_project_136(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const subAction = (args[1] || "list").toLowerCase();
-  const { EosEnterpriseWorkspaceGovernor } = await import("../src/core/eosEnterpriseWorkspaceGovernor.ts");
+  const { EosEnterpriseWorkspaceGovernor } = await import("../../src/core/eosEnterpriseWorkspaceGovernor.ts");
 
   if (subAction === "list") {
     const fleet = EosEnterpriseWorkspaceGovernor.listRegisteredWorkspaces(root);
@@ -296,7 +296,7 @@ HANDLERS["cheat-sheet"] = cmd_guide_137;
 async function cmd_slo_138(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
-  const { EosSLOErrorBudgetGovernor } = await import("../src/core/eosSLOErrorBudgetGovernor.ts");
+  const { EosSLOErrorBudgetGovernor } = await import("../../src/core/eosSLOErrorBudgetGovernor.ts");
   const gov = new EosSLOErrorBudgetGovernor({ stateDir: path.join(root, ".eos") });
   const report = gov.evaluate();
   console.log("[EOS SLO ERROR-BUDGET GATE]\n");
@@ -319,7 +319,7 @@ HANDLERS["slo"] = cmd_slo_138;
 async function cmd_perf_139(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
-  const { EosPerformanceRegressionTracker } = await import("../src/core/eosPerformanceRegressionTracker.ts");
+  const { EosPerformanceRegressionTracker } = await import("../../src/core/eosPerformanceRegressionTracker.ts");
   const tracker = new EosPerformanceRegressionTracker(path.join(root, ".eos"));
   const regressions = tracker.checkAll(2.0);
   console.log("[EOS PERFORMANCE REGRESSION GATE]\n");
@@ -339,7 +339,7 @@ HANDLERS["perf"] = cmd_perf_139;
 async function cmd_drift_140(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
-  const { EosSpecDriftDetector } = await import("../src/core/eosSpecDriftDetector.ts");
+  const { EosSpecDriftDetector } = await import("../../src/core/eosSpecDriftDetector.ts");
   const detector = new EosSpecDriftDetector(root);
   const report = detector.detect({ driftThresholdDays: 7 });
   console.log("[EOS SPEC-DRIFT GATE — LAW I SPECIFICATION AS SUPREME TRUTH]\n");
@@ -360,7 +360,7 @@ HANDLERS["drift"] = cmd_drift_140;
 async function cmd_flags_141(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
-  const { EosFeatureFlags } = await import("../src/core/eosFeatureFlags.ts");
+  const { EosFeatureFlags } = await import("../../src/core/eosFeatureFlags.ts");
   const flags = new EosFeatureFlags(root);
   const all = flags.getAllFlags();
   console.log("[EOS FEATURE FLAGS GOVERNOR — STRIPE/NETFLIX PROGRESSIVE DELIVERY]\n");
@@ -377,8 +377,8 @@ HANDLERS["flags"] = cmd_flags_141;
 async function cmd_loadtest_142(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosLoadTestEngine } = await import("../src/core/eosLoadTestEngine.ts");
-  const { runTurboPipeline } = await import("../src/core/eosTurboEngine.ts");
+  const { EosLoadTestEngine } = await import("../../src/core/eosLoadTestEngine.ts");
+  const { runTurboPipeline } = await import("../../src/core/eosTurboEngine.ts");
   const engine = new EosLoadTestEngine();
   const concurrency = parseInt(args[1] || "4", 10);
   const totalRequests = parseInt(args[2] || "20", 10);

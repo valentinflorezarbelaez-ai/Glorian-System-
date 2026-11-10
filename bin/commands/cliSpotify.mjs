@@ -35,7 +35,7 @@ async function cmd_flow_29(commandContext) {
     return;
   }
   const repoPath = path.resolve(process.cwd(), repoArgument);
-  const { EosEngineeringWorkflow } = await import("../src/core/eosEngineeringWorkflow.ts");
+  const { EosEngineeringWorkflow } = await import("../../src/core/eosEngineeringWorkflow.ts");
   const workflow = new EosEngineeringWorkflow();
 
   try {
@@ -145,7 +145,7 @@ HANDLERS["flow"] = cmd_flow_29;
 async function cmd_sandbox_30(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
-  const { EosContainerSandbox } = await import("../src/core/eosContainerSandbox.ts");
+  const { EosContainerSandbox } = await import("../../src/core/eosContainerSandbox.ts");
   const sandbox = new EosContainerSandbox(root);
   const subcommand = (args[1] || "help").toLowerCase();
 
@@ -242,7 +242,7 @@ async function cmd_xirp_31(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const sub = (args[1] || "sync").toLowerCase();
-  const { EosSpotifyAgenticFactory } = await import("../src/core/eosSpotifyAgenticFactory.ts");
+  const { EosSpotifyAgenticFactory } = await import("../../src/core/eosSpotifyAgenticFactory.ts");
   const factory = new EosSpotifyAgenticFactory(root);
 
   if (sub === "sync") {
@@ -274,7 +274,7 @@ async function cmd_fleetshift_32(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const actionArg = (args[1] || "apply_backstage_rfc42").toLowerCase();
-  const { EosSpotifyAgenticFactory } = await import("../src/core/eosSpotifyAgenticFactory.ts");
+  const { EosSpotifyAgenticFactory } = await import("../../src/core/eosSpotifyAgenticFactory.ts");
   const factory = new EosSpotifyAgenticFactory(root);
 
   console.log(`[EOS FLEETSHIFT] Disparando Migración Masiva de Flota (Acción: ${actionArg})...\n`);
@@ -306,7 +306,7 @@ HANDLERS["fleetshift"] = cmd_fleetshift_32;
 async function cmd_dsp_33(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
-  const { EosAudioDspKernel } = await import("../src/core/eosAudioDspKernel.ts");
+  const { EosAudioDspKernel } = await import("../../src/core/eosAudioDspKernel.ts");
   const kernel = new EosAudioDspKernel();
   console.log("[EOS AUDIO DSP] Ejecutando benchmark de filtrado Biquad Transpuesto & Limitador ITU-R BS.1770...\n");
   const bench = kernel.benchmarkDsp(65536, 20);
@@ -328,7 +328,7 @@ async function cmd_fleet_elevate_34(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const dryRun = args.includes("--dry") || args.includes("--dry-run");
-  const { EosFleetElevator } = await import("../src/core/eosFleetElevator.ts");
+  const { EosFleetElevator } = await import("../../src/core/eosFleetElevator.ts");
   const elevator = new EosFleetElevator(root);
   console.log(`[EOS FLEET ELEVATOR] Elevando repositorios de la flota al Golden Path RFC-42 (Dry Run: ${dryRun})...\n`);
   const report = elevator.elevateFleet({ dryRun });
@@ -349,7 +349,7 @@ HANDLERS["fleet:elevate"] = cmd_fleet_elevate_34;
 async function cmd_rpc_35(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
-  const { EosApolloHermesMesh } = await import("../src/core/eosApolloHermesMesh.ts");
+  const { EosApolloHermesMesh } = await import("../../src/core/eosApolloHermesMesh.ts");
   const mesh = new EosApolloHermesMesh();
   console.log("[EOS APOLLO/HERMES MESH] Despachando llamada RPC con Circuit Breaker y W3C Tracing...\n");
   const res = await mesh.invokeRpc(
@@ -380,7 +380,7 @@ async function cmd_mix_36(commandContext) {
   const bpmA = Number(args[3]) || 126;
   const bpmB = Number(args[4]) || 128;
 
-  const { EosGaplessMixEngine } = await import("../src/core/eosGaplessMixEngine.ts");
+  const { EosGaplessMixEngine } = await import("../../src/core/eosGaplessMixEngine.ts");
   const engine = new EosGaplessMixEngine();
 
   console.log(`[EOS DJ AUTOMIX ENGINE] Planificando transición armónica (${keyA} -> ${keyB})...\n`);
@@ -407,7 +407,7 @@ async function cmd_features_37(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   const userId = args[1] || "user-spotify-listener";
-  const { EosAcousticFeatureStore } = await import("../src/core/eosAcousticFeatureStore.ts");
+  const { EosAcousticFeatureStore } = await import("../../src/core/eosAcousticFeatureStore.ts");
   const store = new EosAcousticFeatureStore(7);
 
   // Populate with representative user history
@@ -467,7 +467,7 @@ async function cmd_fingerprint_38(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const target = args[1] || root;
-  const { EosUniversalProjectAdapter } = await import("../src/core/eosUniversalProjectAdapter.ts");
+  const { EosUniversalProjectAdapter } = await import("../../src/core/eosUniversalProjectAdapter.ts");
   const adapter = new EosUniversalProjectAdapter(target);
   const report = adapter.audit(target);
   const fp = report.fingerprint;
@@ -492,7 +492,7 @@ async function cmd_adapt_39(commandContext) {
   printBanner();
   const target = args[1] || root;
   const doScaffold = args.includes("--scaffold") || args.includes("--elevate");
-  const { EosUniversalProjectAdapter } = await import("../src/core/eosUniversalProjectAdapter.ts");
+  const { EosUniversalProjectAdapter } = await import("../../src/core/eosUniversalProjectAdapter.ts");
   const adapter = new EosUniversalProjectAdapter(target);
   const report = adapter.audit(target);
 

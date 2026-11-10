@@ -7,7 +7,7 @@ async function cmd_diary_60(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log(`[EOS GNOSTIC DIARY] Registro de Impresiones Psicológicas y Muerte Mística...\n`);
-  const { EosGnosticTemple } = await import("../src/core/eosGnosticTemple.ts");
+  const { EosGnosticTemple } = await import("../../src/core/eosGnosticTemple.ts");
   const temple = new EosGnosticTemple();
 
   const eventDesc = args[1] || "Observación de impaciencia en compilación";
@@ -30,7 +30,7 @@ async function cmd_budget_61(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
   console.log(`[EOS FINOPS] Escudo Inviolable de Presupuesto & Partición de Cajitas...\n`);
-  const { EosFinOpsBudget } = await import("../src/core/eosFinOpsBudget.ts");
+  const { EosFinOpsBudget } = await import("../../src/core/eosFinOpsBudget.ts");
   const budget = new EosFinOpsBudget(15.0);
 
   const report = budget.getReport();
@@ -60,7 +60,7 @@ async function cmd_mind_62(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[EOS MIND] Introspección Psicológica en los 49 Niveles del Subconsciente (Samael Aun Weor)...\n");
-  const { EosMindLevelsIntrospector } = await import("../src/core/eosMindLevelsIntrospector.ts");
+  const { EosMindLevelsIntrospector } = await import("../../src/core/eosMindLevelsIntrospector.ts");
   const introspector = new EosMindLevelsIntrospector();
   const desc = args[1] || "Observación de impaciencia ante respuesta del entorno";
   const category = (args[2] || "IMPATIENCE").toUpperCase();
@@ -89,7 +89,7 @@ async function cmd_mountains_63(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
   console.log("[EOS MOUNTAINS] Brújula de Vida de las Tres Montañas & Propósitos de Valentín...\n");
-  const { EosThreeMountainsCompass } = await import("../src/core/eosThreeMountainsCompass.ts");
+  const { EosThreeMountainsCompass } = await import("../../src/core/eosThreeMountainsCompass.ts");
   const compass = new EosThreeMountainsCompass();
 
   const audit = compass.evaluateDailyAlignment({
@@ -127,7 +127,7 @@ async function cmd_autotune_64(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[EOS AUTOTUNER] Micro-Profiling y Auto-Optimización Dinámica Capa 0...\n");
-  const { EosAdaptiveL0Autotuner } = await import("../src/core/eosAdaptiveL0Autotuner.ts");
+  const { EosAdaptiveL0Autotuner } = await import("../../src/core/eosAdaptiveL0Autotuner.ts");
   const autotuner = new EosAdaptiveL0Autotuner();
   const queueDepth = parseInt(args[1] || "3200", 10);
   const report = autotuner.runAutotuneTick(queueDepth);
@@ -152,7 +152,7 @@ async function cmd_nsa_encrypt_65(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[EOS NSA] Cifrado Militar CNSA 2.0 AES-256-GCM con AAD Binding...\n");
-  const { EosNsaCryptoSuite } = await import("../src/core/eosNsaCryptoSuite.ts");
+  const { EosNsaCryptoSuite } = await import("../../src/core/eosNsaCryptoSuite.ts");
   const plaintext = args[1] || "DIRECTIVA_CLASIFICADA_NIVEL_ALPHA";
   const classification = (args[2] || "TOP_SECRET").toUpperCase();
   const compartment = args[3] || "EOS-NOUS";
@@ -174,7 +174,7 @@ async function cmd_nsa_audit_66(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
   console.log("[EOS NSA] Auditoría de Control de Acceso Mandatorio & Aislamiento Red/Black...\n");
-  const { EosNsaZeroTrustCompartment } = await import("../src/core/eosNsaZeroTrustCompartment.ts");
+  const { EosNsaZeroTrustCompartment } = await import("../../src/core/eosNsaZeroTrustCompartment.ts");
   const comp = new EosNsaZeroTrustCompartment();
   const subject = {
     subjectId: "AGENT_VALENTIN",
@@ -204,7 +204,7 @@ async function cmd_nsa_zeroize_67(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
   console.log("[EOS NSA] Purgado Destructivo de Memoria DoD 5220.22-M (4-Pass Zeroization)...\n");
-  const { EosNsaCryptoSuite } = await import("../src/core/eosNsaCryptoSuite.ts");
+  const { EosNsaCryptoSuite } = await import("../../src/core/eosNsaCryptoSuite.ts");
   const testBuf = Buffer.from("CRITICAL_EPHEMERAL_KEY_MATERIAL_IN_RAM", "utf8");
   console.log(`Longitud Búfer        : ${testBuf.length} bytes`);
   console.log(`Estado Previo         : ${testBuf.toString("utf8")}`);
@@ -220,7 +220,7 @@ async function cmd_consensus_68(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
   console.log("[EOS CONSENSUS] Consenso Planetario Raft/Paxos & Replicación de Log...\n");
-  const { EosPlanetaryConsensusEngine } = await import("../src/core/eosPlanetaryConsensusEngine.ts");
+  const { EosPlanetaryConsensusEngine } = await import("../../src/core/eosPlanetaryConsensusEngine.ts");
   const engine = new EosPlanetaryConsensusEngine([
     "node-us-east",
     "node-us-west",
@@ -244,7 +244,7 @@ async function cmd_truetime_bounded_69(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[EOS TRUETIME] Google Spanner TrueTime Bounded Clock & Commit-Wait...\n");
-  const { EosTrueTimeBoundedClock } = await import("../src/core/eosTrueTimeBoundedClock.ts");
+  const { EosTrueTimeBoundedClock } = await import("../../src/core/eosTrueTimeBoundedClock.ts");
   const epsilon = parseFloat(args[1] || "2.0");
   const clock = new EosTrueTimeBoundedClock(epsilon);
   const interval = clock.now();
@@ -264,7 +264,7 @@ async function cmd_concurrency_70(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
   console.log("[EOS CONCURRENCY] Limitador Adaptativo Netflix Vegas (TCP BBR)...\n");
-  const { EosAdaptiveConcurrencyLimiter } = await import("../src/core/eosAdaptiveConcurrencyLimiter.ts");
+  const { EosAdaptiveConcurrencyLimiter } = await import("../../src/core/eosAdaptiveConcurrencyLimiter.ts");
   const limiter = new EosAdaptiveConcurrencyLimiter({ initialLimit: 25 });
   for (let i = 0; i < 20; i++) {
     const acq = limiter.acquire();
@@ -285,7 +285,7 @@ async function cmd_hashring_71(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[EOS HASHRING] Amazon Dynamo Consistent Hash Ring & Vnodes (O(log M))...\n");
-  const { EosConsistentHashRing } = await import("../src/core/eosConsistentHashRing.ts");
+  const { EosConsistentHashRing } = await import("../../src/core/eosConsistentHashRing.ts");
   const ring = new EosConsistentHashRing(["node-us-east", "node-eu-west", "node-ap-southeast"], 64);
   const key = args[1] || "user:valentin:portfolio";
   const primary = ring.getNode(key);
@@ -302,7 +302,7 @@ async function cmd_antientropy_72(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
   console.log("[EOS ANTI-ENTROPY] Dynamo Merkle Tree State Synchronization...\n");
-  const { EosAntiEntropyMerkleSync } = await import("../src/core/eosAntiEntropyMerkleSync.ts");
+  const { EosAntiEntropyMerkleSync } = await import("../../src/core/eosAntiEntropyMerkleSync.ts");
   const repA = new EosAntiEntropyMerkleSync(16);
   const repB = new EosAntiEntropyMerkleSync(16);
   for (let i = 0; i < 20; i++) {
@@ -327,7 +327,7 @@ async function cmd_ratelimit_73(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[EOS RATELIMIT] Limitador de Tasa Token-Bucket Cloudflare a Escala Edge...\n");
-  const { EosTokenBucketRateLimiter } = await import("../src/core/eosTokenBucketRateLimiter.ts");
+  const { EosTokenBucketRateLimiter } = await import("../../src/core/eosTokenBucketRateLimiter.ts");
   const limiter = new EosTokenBucketRateLimiter({ capacity: 5, refillPerSecond: 10 });
   const clientId = args[1] || "edge-client-pop-bogota";
   console.log(`Evaluando ráfaga de 6 peticiones consecutivas para '${clientId}':`);
@@ -347,7 +347,7 @@ async function cmd_hft_74(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[EOS HFT IPC] Despacho Resident Daemon Citadel HFT a Latencia Ultra-Baja...\n");
-  const { EosGoDaemonIpc } = await import("../src/core/eosGoDaemonIpc.ts");
+  const { EosGoDaemonIpc } = await import("../../src/core/eosGoDaemonIpc.ts");
   const ipc = new EosGoDaemonIpc(process.cwd());
   const action = args[1] || "benchmark";
   console.log(`Despachando acción '${action}' al daemon Go nativo o fallback L0:`);
@@ -366,7 +366,7 @@ async function cmd_zerocopy_75(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[EOS ZERO-COPY] Escáner de Tokens SpaceX / ASML con Simpatía Mecánica (0 B/op)...\n");
-  const { EosZeroCopyScanner } = await import("../src/core/eosZeroCopyScanner.ts");
+  const { EosZeroCopyScanner } = await import("../../src/core/eosZeroCopyScanner.ts");
   const targetFile = args[1] || "src/core/eosApexModelRouter.ts";
   let buffer;
   if (fs.existsSync(targetFile)) {
@@ -390,7 +390,7 @@ async function cmd_chaos_run_76(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[EOS CHAOS RUNNER] Inyección Autónoma de Fallas y Circuit Breaker Netflix...\n");
-  const { EosAutonomousChaosRunner } = await import("../src/core/eosAutonomousChaosRunner.ts");
+  const { EosAutonomousChaosRunner } = await import("../../src/core/eosAutonomousChaosRunner.ts");
   const runner = new EosAutonomousChaosRunner({ failureThreshold: 3, cooldownMs: 20 });
   const iterations = parseInt(args[1], 10) || 30;
   console.log(`Ejecutando batería de caos con ${iterations} iteraciones bajo fallas sintéticas...`);
@@ -411,7 +411,7 @@ async function cmd_vector_77(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[EOS HNSW VECTOR] Motor de Razonamiento Vectorial Palantir / Apple (L0)...\n");
-  const { EosHnswVectorEngine } = await import("../src/core/eosHnswVectorEngine.ts");
+  const { EosHnswVectorEngine } = await import("../../src/core/eosHnswVectorEngine.ts");
   const sub = (args[1] || "demo").toLowerCase();
   const engine = new EosHnswVectorEngine({ dimensions: 128, m: 16 });
 
@@ -456,7 +456,7 @@ async function cmd_risk_78(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[EOS ALADDIN RISK] Simulación Estocástica de Riesgo Monte Carlo BlackRock...\n");
-  const { EosMonteCarloEngine } = await import("../src/core/eosMonteCarloEngine.ts");
+  const { EosMonteCarloEngine } = await import("../../src/core/eosMonteCarloEngine.ts");
   const iters = parseInt(args[1], 10) || 10000;
   const deadline = parseFloat(args[2]) || 18.0;
 
@@ -499,7 +499,7 @@ async function cmd_chain_79(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[EOS HASH-CHAIN] Ledger Criptográfico Monotónico SpaceX / NSA (SHA-256)...\n");
-  const { EosMonotonicHashChain } = await import("../src/core/eosMonotonicHashChain.ts");
+  const { EosMonotonicHashChain } = await import("../../src/core/eosMonotonicHashChain.ts");
   const chain = new EosMonotonicHashChain();
 
   // Append sample verifiable events
@@ -533,7 +533,7 @@ async function cmd_product_create_80(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[EOS PRODUCT FOUNDRY] Síntesis Autónoma de Productos Soberanos (Cero Defectos)...\n");
-  const { EosUniversalProductFoundry } = await import("../src/core/eosUniversalProductFoundry.ts");
+  const { EosUniversalProductFoundry } = await import("../../src/core/eosUniversalProductFoundry.ts");
   const name = args[1] || "Sovereign Apex Platform";
   const domain = args[2] || "fintech";
   const tier = (args[3] || "ENTERPRISE").toUpperCase();
@@ -584,7 +584,7 @@ async function cmd_product_validate_82(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[EOS PRODUCT VALIDATE] Auditoría Topológica y Aislamiento Hexagonal...\n");
-  const { EosUniversalProductFoundry } = await import("../src/core/eosUniversalProductFoundry.ts");
+  const { EosUniversalProductFoundry } = await import("../../src/core/eosUniversalProductFoundry.ts");
   const domain = args[1] || "general";
   const tier = (args[2] || "MISSION_CRITICAL").toUpperCase();
   const manifest = {
@@ -612,7 +612,7 @@ async function cmd_loop_83(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   console.log("[EOS SOVEREIGN LOOP] Motor Autónomo de Ciclo Completo de 21 Pasos (IEEE 830)...\n");
-  const { EosSovereignLoop, SOVEREIGN_21_STAGES } = await import("../src/core/eosSovereignLoop.ts");
+  const { EosSovereignLoop, SOVEREIGN_21_STAGES } = await import("../../src/core/eosSovereignLoop.ts");
   const sub = (args[1] || "run").toLowerCase();
 
   if (sub === "stages" || sub === "list") {

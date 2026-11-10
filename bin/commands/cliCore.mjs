@@ -24,7 +24,7 @@ async function cmd_turbo_1(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
   console.log("[EOS TURBO] Disparando Tubería de Verificación Ultrarrápida en Memoria...\n");
-  const { runTurboPipeline } = await import("../src/core/eosTurboEngine.ts");
+  const { runTurboPipeline } = await import("../../src/core/eosTurboEngine.ts");
   const result = runTurboPipeline(root);
 
   console.log(`Estado Epistémico    : ${result.epistemicState}`);
@@ -128,7 +128,7 @@ async function cmd_mcp_4(commandContext) {
     printBanner();
     const port = args[2] ? parseInt(args[2], 10) : process.env.PORT ? parseInt(process.env.PORT, 10) : 3333;
     const host = process.env.HOST || "127.0.0.1";
-    const { EosMcpStreamServer } = await import("../src/mcp/eosMcpStreamServer.ts");
+    const { EosMcpStreamServer } = await import("../../src/mcp/eosMcpStreamServer.ts");
     const streamServer = new EosMcpStreamServer(root);
     await streamServer.listen(port, host);
     console.log(`[EOS MCP] Bi-Directional SSE Live Stream Server active on http://${host}:${port}`);
@@ -144,7 +144,7 @@ async function cmd_mcp_4(commandContext) {
     console.log(`[EOS MCP] Press Ctrl+C to terminate server.`);
   } else if (subCommand === "status" || subCommand === "--status") {
     printBanner();
-    const { EosMcpServer } = await import("../src/mcp/eosMcpServer.ts");
+    const { EosMcpServer } = await import("../../src/mcp/eosMcpServer.ts");
     const server = new EosMcpServer(root);
     const initRes = server.handleRequest({ jsonrpc: "2.0", id: 1, method: "initialize", params: {} });
     const toolsRes = server.handleRequest({ jsonrpc: "2.0", id: 2, method: "tools/list", params: {} });
@@ -156,7 +156,7 @@ async function cmd_mcp_4(commandContext) {
     console.log(`[EOS MCP]   ↳ Supported Modes    : stdio (default), sse (--sse [port])`);
   } else {
     // Default: stdio loop for Cursor / Antigravity / Claude Code
-    const { EosMcpServer } = await import("../src/mcp/eosMcpServer.ts");
+    const { EosMcpServer } = await import("../../src/mcp/eosMcpServer.ts");
     const server = new EosMcpServer(root);
     server.startStdioLoop();
   }
@@ -168,7 +168,7 @@ async function cmd_jarvis_5(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   const directive = args.slice(1).join(" ") || "Estado general del sistema";
-  const { interpretJarvisDirective } = await import("../src/core/eosJarvisMonad.ts");
+  const { interpretJarvisDirective } = await import("../../src/core/eosJarvisMonad.ts");
   const receipt = interpretJarvisDirective(directive);
 
   console.log(`\nDirectiva     : "${receipt.promptInput}"`);
@@ -201,7 +201,7 @@ HANDLERS["health"] = cmd_health_6;
 
 async function cmd_metrics_7(commandContext) {
   const { root } = commandContext;
-  const { EosPrometheusExporter } = await import("../src/core/eosPrometheusExporter.ts");
+  const { EosPrometheusExporter } = await import("../../src/core/eosPrometheusExporter.ts");
   const exporter = new EosPrometheusExporter(root);
   process.stdout.write(exporter.formatPrometheusText());
 }
@@ -230,7 +230,7 @@ async function cmd_bench_nano_9(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
   console.log("\n[EOS APEX] Running Nanosecond Micro-Benchmarking Suite (Tier-0)...");
-  const { EosNanoBenchmarkEngine } = await import("../src/core/eosNanoBenchmarkEngine.ts");
+  const { EosNanoBenchmarkEngine } = await import("../../src/core/eosNanoBenchmarkEngine.ts");
   const reports = await EosNanoBenchmarkEngine.runApexCoreSuite();
   for (const r of reports) {
     console.log(`\n--- ${r.name} (${r.iterations} iters) ---`);
@@ -249,7 +249,7 @@ HANDLERS["bench:nano"] = cmd_bench_nano_9;
 async function cmd_daemon_10(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
-  const { EosSentinelDaemon } = await import("../src/core/eosSentinelDaemon.ts");
+  const { EosSentinelDaemon } = await import("../../src/core/eosSentinelDaemon.ts");
   const sentinel = new EosSentinelDaemon(root);
   const report = sentinel.tick();
   console.log("\n[EOS SENTINEL] 24/7 Sovereign Heartbeat Pulse (Tick)");
@@ -271,7 +271,7 @@ async function cmd_transmute_11(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();
   const targetFile = args[1] || "src/core/eosJarvisSoul.ts";
-  const { EosAlchemicalTransmuter } = await import("../src/core/eosAlchemicalTransmuter.ts");
+  const { EosAlchemicalTransmuter } = await import("../../src/core/eosAlchemicalTransmuter.ts");
   const transmuter = new EosAlchemicalTransmuter(root);
   const rep = transmuter.analyzeFile(targetFile);
   console.log(`\n[EOS ALQUIMIA] Análisis de Entropía & Pureza Nous: ${rep.target}`);
@@ -289,9 +289,9 @@ async function cmd_optimize_v8_12(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
   console.log("\n[EOS V8] Big Tech Hyper-Optimization Suite (4x Unrolling & Slab Pool)...");
-  const { EosBitwiseAccelerator } = await import("../src/core/eosBitwiseAccelerator.ts");
-  const { EosBufferPool } = await import("../src/core/eosBufferPool.ts");
-  const { EosApexProfiler } = await import("../src/core/eosApexProfiler.ts");
+  const { EosBitwiseAccelerator } = await import("../../src/core/eosBitwiseAccelerator.ts");
+  const { EosBufferPool } = await import("../../src/core/eosBufferPool.ts");
+  const { EosApexProfiler } = await import("../../src/core/eosApexProfiler.ts");
 
   // 1. Bitwise 4x Unrolled Benchmark
   const bench = EosBitwiseAccelerator.benchmarkSpeedup(65536, 1000);
@@ -348,7 +348,7 @@ async function cmd_optimize_13(commandContext) {
     process.exit(1);
   }
   const content = fs.readFileSync(fullPath, "utf8");
-  const { compressSourceContext } = await import("../src/core/eosContextOptimizer.ts");
+  const { compressSourceContext } = await import("../../src/core/eosContextOptimizer.ts");
   const res = compressSourceContext(content, targetFile);
   console.log(`\nArchivo Comprimido : ${res.filePath}`);
   console.log(`Tokens Originales  : ~${res.originalTokensEstimate}`);
@@ -369,7 +369,7 @@ async function cmd_amplify_14(commandContext) {
     console.log("Uso: eos amplify <directiva-o-prompt>");
     process.exit(1);
   }
-  const { amplifyPrompt } = await import("../src/core/eosPromptAmplifier.ts");
+  const { amplifyPrompt } = await import("../../src/core/eosPromptAmplifier.ts");
   const result = amplifyPrompt({ rawPrompt, strictLevel: "sovereign" });
   console.log(`\nDirectiva Original   : "${result.originalPrompt}"`);
   console.log(`Dominio Detectado    : ${result.detectedDomain}`);
@@ -397,7 +397,7 @@ async function cmd_guard_15(commandContext) {
   printBanner();
   const targetDir = args[1] ? path.resolve(root, args[1]) : path.resolve(root, "src");
   console.log(`[EOS GUARD] Escaneando arquitectura Hexagonal en: ${targetDir}\n`);
-  const { scanArchitecture } = await import("../src/core/eosArchitectureGuard.ts");
+  const { scanArchitecture } = await import("../../src/core/eosArchitectureGuard.ts");
   const report = scanArchitecture(targetDir, root);
 
   console.log(`Archivos Analizados  : ${report.scannedFilesCount}`);
@@ -425,7 +425,7 @@ async function cmd_judge_16(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   const scenarioDesc = args.slice(1).join(" ") || "Propuesta de refactorización de módulo";
-  const { evaluateDecision } = await import("../src/core/eosCognitiveJudge.ts");
+  const { evaluateDecision } = await import("../../src/core/eosCognitiveJudge.ts");
   const verdict = evaluateDecision({
     title: "Evaluación Soberana de Propuesta",
     description: scenarioDesc,
@@ -461,7 +461,7 @@ async function cmd_blast_17(commandContext) {
     console.log("Uso: eos blast <archivo>");
     process.exit(1);
   }
-  const { EosSemanticGraph } = await import("../src/core/eosSemanticGraph.ts");
+  const { EosSemanticGraph } = await import("../../src/core/eosSemanticGraph.ts");
   const graph = new EosSemanticGraph(root);
   const report = graph.calculateBlastRadius(targetFile);
 
@@ -493,7 +493,7 @@ async function cmd_graph_18(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
   console.log("[EOS GRAPH] Construyendo Grafo Semántico Big Tech Tier 1...\n");
-  const { EosSemanticGraph } = await import("../src/core/eosSemanticGraph.ts");
+  const { EosSemanticGraph } = await import("../../src/core/eosSemanticGraph.ts");
   const graph = new EosSemanticGraph(root);
   const summary = graph.getSummary();
 
@@ -521,7 +521,7 @@ async function cmd_heal_19(commandContext) {
   const dryRun = args.includes("--dry-run");
   const autoApply = args.includes("--apply") || args.includes("-a") || (!dryRun && args.includes("--write"));
 
-  const { EosAutonomousHealer } = await import("../src/core/eosAutonomousHealer.ts");
+  const { EosAutonomousHealer } = await import("../../src/core/eosAutonomousHealer.ts");
   const healer = new EosAutonomousHealer(root);
   const report = healer.executeHealing({ targetFile, dryRun, autoApply });
 
