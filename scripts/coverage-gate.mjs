@@ -48,6 +48,7 @@ const child = spawn(
     "--experimental-test-coverage",
     "--test-coverage-exclude=bin/**",
     "--test-coverage-exclude=scripts/**",
+    "--test-coverage-exclude=test/**",
     `--test-concurrency=${CONCURRENCY}`,
     ...testFiles,
   ],

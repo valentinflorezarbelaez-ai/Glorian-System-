@@ -63,13 +63,9 @@ test("Size budget baseline has no stale or unnecessary ceilings", () => {
   assert.deepEqual(stale, [], `stale size-budget ceilings; run 'npm run size:budget -- --update': ${stale.join(", ")}`);
 });
 
-test("Zero src/ and scripts/ modules exceed the 800-line defaultMaxLines ceiling", () => {
-  const srcOrScriptsExceptions = Object.keys(budget.ceilings).filter(
-    (file) => file.startsWith("src/") || file.startsWith("scripts/"),
+test("Zero src/, scripts/, and bin/ modules exceed the 800-line defaultMaxLines ceiling", () => {
+  const exceptions = Object.keys(budget.ceilings).filter(
+    (file) => file.startsWith("src/") || file.startsWith("scripts/") || file.startsWith("bin/"),
   );
-  assert.deepEqual(
-    srcOrScriptsExceptions,
-    [],
-    `src/ and scripts/ must have 0 ceiling exceptions: ${srcOrScriptsExceptions.join(", ")}`,
-  );
+  assert.deepEqual(exceptions, [], `src/, scripts/, and bin/ must have 0 ceiling exceptions: ${exceptions.join(", ")}`);
 });

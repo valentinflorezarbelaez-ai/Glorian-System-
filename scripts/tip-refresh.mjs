@@ -143,14 +143,14 @@ const matrixUpdated = matrixExisting.replace(
  */
 if (sealPinOnly) {
   const pinRegex = /(\|\s*\*\*Freeze Pin \(HEAD\)\*\*\s*\|)([^|]*)(\|[^|\n]*\|)/;
+  if (!pinRegex.test(existing)) {
+    console.error("tip-refresh --seal-pin: Freeze Pin row not found");
+    process.exit(1);
+  }
   const sealed = existing.replace(pinRegex, `$1 \`${m.head}\` $3`);
   if (dryRun) {
     console.log(`--- DRY-RUN: seal Freeze Pin → ${m.head} ---`);
     process.exit(0);
-  }
-  if (sealed === existing) {
-    console.error("tip-refresh --seal-pin: Freeze Pin row not found");
-    process.exit(1);
   }
   fs.writeFileSync(freezePath, sealed, "utf8");
   console.log(`✅ Freeze Pin sealed to HEAD ${m.head} (amend this file into the tip-refresh commit for pin==HEAD).`);

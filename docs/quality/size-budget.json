@@ -1,7 +1,6 @@
 {
   "defaultMaxLines": 800,
   "ceilings": {
-    "bin/eos.mjs": 4902,
     "js/eos.js": 4296
   }
 }
