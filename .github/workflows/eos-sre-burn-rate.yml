@@ -1,0 +1,86 @@
+name: EOS SRE Burn-Rate + On-Call Page
+
+# Google SRE multi-window burn-rate: page via GitHub incident when budget freezes.
+on:
+  schedule:
+    - cron: "5 * * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/core/eosMultiWindowSloGovernor.ts"
+      - "scripts/product-canary-sibling.mjs"
+      - ".github/workflows/eos-sre-burn-rate.yml"
+
+concurrency:
+  group: eos-sre-burn-rate-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  burn-rate-and-canary:
+    name: Burn-rate evaluate + PTG product canary
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pinned SHA — SLSA L3
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # pinned SHA
+        with:
+          node-version: 22
+
+      - name: Install locked development toolchain
+        run: npm ci --include=dev
+
+      - name: Product canary (PTG) measured probe
+        id: product_canary
+        run: npm run canary:product
+        env:
+          EOS_CANARY_PROBES: "8"
+
+      - name: Multi-window burn-rate evaluate
+        id: burn_rate
+        run: node scripts/eos-sre-burn-rate-evaluate.mjs
+
+      - name: Upload SRE evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: eos-sre-burn-rate-evidence
+          path: |
+            docs/evidence/PRODUCT_CANARY_*_RECEIPT.json
+            docs/evidence/SRE_BURN_RATE_PTG_RECEIPT.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Page on-call (GitHub incident)
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TITLE="[SRE] Burn-rate / product canary page — $(date -u +%Y-%m-%dT%H:%MZ)"
+          BODY=$(cat <<EOF
+          ## SRE page (auto)
+
+          - **Workflow**: \`${{ github.workflow }}\`
+          - **Run**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          - **Product canary**: \`${{ steps.product_canary.outcome }}\`
+          - **Burn-rate**: \`${{ steps.burn_rate.outcome }}\`
+
+          Follow \`docs/runbooks/ON_CALL.md\` (first 15 minutes).
+          EOF
+          )
+          if gh issue list --state open --search "SRE] Burn-rate / product canary page in:title" --json number --jq 'length' | grep -vq '^0$'; then
+            echo "Open SRE page already exists — skipping create."
+            exit 0
+          fi
+          gh issue create --title "$TITLE" --body "$BODY" --label "incident" || \
+            gh issue create --title "$TITLE" --body "$BODY"

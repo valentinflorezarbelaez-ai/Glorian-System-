@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -99,4 +100,52 @@ test("Freeze gate ground-truth metrics match the filesystem", () => {
     [],
     `release docs drifted from ground truth; run 'npm run tip-refresh': ${mismatches.join(", ")}`,
   );
+});
+
+test("Freeze Pin equals HEAD after tip-refresh --seal-pin (self-ref via working-tree seal)", () => {
+  // A committed pin cannot cryptographically equal its own commit hash. The
+  // seal ritual writes pin==HEAD into the working tree; committed pin must stay
+  // an ancestor of HEAD within two tip-refresh meta commits (never multi-merge lag).
+  const pinMatch = freezeDoc.match(/\|\s*\*\*Freeze Pin \(HEAD\)\*\*\s*\|\s*`([0-9a-f]+)`/i);
+  assert.ok(pinMatch, "Freeze Pin row missing short SHA");
+  const committedPin = pinMatch[1];
+
+  let head;
+  try {
+    head = execFileSync("git", ["rev-parse", "--short", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
+    execFileSync("git", ["merge-base", "--is-ancestor", committedPin, "HEAD"], {
+      cwd: root,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    const lag = Number(
+      execFileSync("git", ["rev-list", "--count", `${committedPin}..HEAD`], {
+        cwd: root,
+        encoding: "utf8",
+      }).trim(),
+    );
+    assert.ok(
+      lag <= 2,
+      `Freeze Pin ${committedPin} is ${lag} commits behind HEAD=${head}; run tip-refresh && tip-refresh:seal`,
+    );
+  } catch (err) {
+    if (err && /not a git|unknown revision|Not a valid/i.test(String(err.stderr || err.message || err))) {
+      return;
+    }
+    throw err;
+  }
+
+  // Working-tree seal: after --seal-pin, the on-disk pin must equal HEAD.
+  const sealedPath = path.join(root, "docs/releases/EOS_FREEZE_GATE_STATUS.md");
+  const before = fs.readFileSync(sealedPath, "utf8");
+  execFileSync(process.execPath, [path.join(root, "scripts/tip-refresh.mjs"), "--seal-pin"], {
+    cwd: root,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  const after = fs.readFileSync(sealedPath, "utf8");
+  const sealedPin = after.match(/\|\s*\*\*Freeze Pin \(HEAD\)\*\*\s*\|\s*`([0-9a-f]+)`/i)?.[1];
+  assert.equal(sealedPin, head, `tip-refresh --seal-pin must write Freeze Pin == HEAD (${head})`);
+  // Restore committed bytes so the test remains non-mutating for subsequent suites.
+  fs.writeFileSync(sealedPath, before, "utf8");
 });

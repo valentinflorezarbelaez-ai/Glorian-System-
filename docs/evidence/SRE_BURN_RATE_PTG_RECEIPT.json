@@ -1,0 +1,50 @@
+{
+  "measuredAt": "2026-11-10T13:00:02.062Z",
+  "serviceId": "performance-talent-group",
+  "canarySha256": "7cf8171c72bea22e0fd9edb01be0bedf8f0f6f717c6d0aae87e280fac0351cd6",
+  "report": {
+    "serviceId": "performance-talent-group",
+    "availabilitySlo": 0.999,
+    "errorBudgetFraction": 0.001,
+    "errorBudgetRemainingPct": 100,
+    "isDeploymentFrozen": false,
+    "healthState": "NOMINAL_HEALTHY",
+    "windows": {
+      "window5m": {
+        "windowLabel": "5m",
+        "windowMs": 300000,
+        "totalEvents": 5,
+        "totalErrors": 0,
+        "errorRate": 0,
+        "burnRate": 0
+      },
+      "window30m": {
+        "windowLabel": "30m",
+        "windowMs": 1800000,
+        "totalEvents": 30,
+        "totalErrors": 0,
+        "errorRate": 0,
+        "burnRate": 0
+      },
+      "window1h": {
+        "windowLabel": "1h",
+        "windowMs": 3600000,
+        "totalEvents": 50,
+        "totalErrors": 0,
+        "errorRate": 0,
+        "burnRate": 0
+      },
+      "window6h": {
+        "windowLabel": "6h",
+        "windowMs": 21600000,
+        "totalEvents": 50,
+        "totalErrors": 0,
+        "errorRate": 0,
+        "burnRate": 0
+      }
+    },
+    "activeAlerts": [],
+    "sha256Receipt": "c198b5bbbd192b967553448ebc76cf7c8b4582ca1e74af61541fcc8cbbf7c4ad"
+  },
+  "onCallRunbook": "docs/runbooks/ON_CALL.md"
+}

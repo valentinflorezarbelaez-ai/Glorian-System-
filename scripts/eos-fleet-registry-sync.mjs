@@ -36,6 +36,19 @@ const EXCLUDED_DIRS = new Set([
   "OneDrive",
 ]);
 
+/**
+ * Local clones that must never inflate the fleet registry as LEVEL_1 ghosts.
+ * Control-plane SSOT remains `Eos-System` in docs/projects/registry.json;
+ * `Glorian-System-` / `Glorian-System--1` are workspace aliases of the same remote.
+ */
+export function isExcludedFleetClone(dirName) {
+  if (typeof dirName !== "string" || dirName.length === 0) return true;
+  if (/^Eos-System-\d+$/i.test(dirName)) return true;
+  if (/^Glorian-System-/i.test(dirName)) return true;
+  if (/^Kegel/i.test(dirName)) return true;
+  return false;
+}
+
 export function discoverGitRepositories(workspaceRoot = DEFAULT_WORKSPACE_ROOT) {
   if (!fs.existsSync(workspaceRoot)) return [];
 
@@ -46,6 +59,7 @@ export function discoverGitRepositories(workspaceRoot = DEFAULT_WORKSPACE_ROOT) 
     if (!entry.isDirectory()) continue;
     if (EXCLUDED_DIRS.has(entry.name)) continue;
     if (entry.name.startsWith(".")) continue;
+    if (isExcludedFleetClone(entry.name)) continue;
 
     const fullPath = path.join(workspaceRoot, entry.name);
     const gitDir = path.join(fullPath, ".git");
@@ -210,15 +224,22 @@ export function computeRegistrySignature(registry) {
   return crypto.createHash("sha256").update(normalized).digest("hex");
 }
 
-export function reconcileFleetRegistry(existingRegistry, discoveredList) {
+export function reconcileFleetRegistry(existingRegistry, discoveredList, options = {}) {
+  const allowNewProjects = options.allowNewProjects === true;
   const existingProjects = new Map();
   for (const p of existingRegistry.projects || []) {
+    if (isExcludedFleetClone(p.resolvedLocalDir || p.id || "")) {
+      // Drop previously auto-inflated ghost LEVEL_1 rows on the next sync.
+      continue;
+    }
     existingProjects.set(p.id, p);
   }
 
   const updatedProjects = [];
 
   for (const disc of discoveredList) {
+    if (isExcludedFleetClone(disc.dirName || "")) continue;
+
     // Generate canonical ID
     const dirLower = disc.dirName.toLowerCase();
     let id = disc.id;
@@ -233,14 +254,29 @@ export function reconcileFleetRegistry(existingRegistry, discoveredList) {
         id = "performance-talent-group";
       } else if (dirLower.includes("crud-slack")) {
         id = "crud-slack";
-      } else if (dirLower === "eos-system") {
+      } else if (dirLower === "eos-system" || dirLower.startsWith("glorian-system")) {
         id = "eos-system";
+      } else if (dirLower.includes("donaciones")) {
+        id = "donaciones";
+      } else if (dirLower.includes("biblioteca-gnostica")) {
+        id = "biblioteca-gnostica-1";
+      } else if (dirLower.includes("portafolio")) {
+        id = "portafolio";
       } else {
         id = disc.dirName.toLowerCase();
       }
     }
 
     const prev = existingProjects.get(id);
+    if (!prev && !allowNewProjects) {
+      // Law IV: discovery refreshes registered tenants only; no disk-ghost LEVEL_1 inflation.
+      continue;
+    }
+
+    // Prefer the registry-pinned checkout when multiple local clones share an id.
+    if (prev?.resolvedLocalDir && disc.dirName !== prev.resolvedLocalDir) {
+      continue;
+    }
 
     const merged = {
       id,
@@ -312,8 +348,7 @@ export async function runFleetRegistrySync(options = {}) {
   const discovered = [];
 
   for (const r of rawRepos) {
-    // Skip backup or auxiliary copies like Eos-System-1, Eos-System-2 etc.
-    if (/^Eos-System-\d+$/i.test(r.name)) continue;
+    if (isExcludedFleetClone(r.name)) continue;
 
     const gitMeta = extractGitMetadata(r.fullPath);
     const projMeta = inferProjectMetadata(r.fullPath);
@@ -326,7 +361,9 @@ export async function runFleetRegistrySync(options = {}) {
     });
   }
 
-  const reconciled = reconcileFleetRegistry(existingRegistry, discovered);
+  const reconciled = reconcileFleetRegistry(existingRegistry, discovered, {
+    allowNewProjects: options.allowNewProjects === true,
+  });
 
   // Optional Secret Audit
   const auditResults = [];

@@ -10,6 +10,7 @@ import {
   inferProjectMetadata,
   reconcileFleetRegistry,
   computeRegistrySignature,
+  isExcludedFleetClone,
 } from "../scripts/eos-fleet-registry-sync.mjs";
 
 delete process.env.GIT_DIR;
@@ -251,7 +252,7 @@ describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => 
         },
       ];
 
-      const reconciled = reconcileFleetRegistry(existingRegistry, discovered);
+      const reconciled = reconcileFleetRegistry(existingRegistry, discovered, { allowNewProjects: true });
 
       assert.equal(reconciled.projects.length, 3);
 
@@ -279,12 +280,62 @@ describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => 
     });
   });
 
+  describe("BDD-368: Ghost LEVEL_1 clone exclusion", () => {
+    it("excludes Glorian-System- / Glorian-System--1 / Kegel clones from discovery inflation", () => {
+      assert.equal(isExcludedFleetClone("Glorian-System-"), true);
+      assert.equal(isExcludedFleetClone("Glorian-System--1"), true);
+      assert.equal(isExcludedFleetClone("Kegel-Ham-Sah-trasnmutacion-y-fortalecimiento-pelvico"), true);
+      assert.equal(isExcludedFleetClone("Eos-System-3"), true);
+      assert.equal(isExcludedFleetClone("Eos-System"), false);
+      assert.equal(isExcludedFleetClone("Performance-Talent-Group-1"), false);
+    });
+
+    it("does not auto-register unregistered disk clones without allowNewProjects", () => {
+      const existingRegistry = {
+        projects: [
+          {
+            id: "eos-system",
+            name: "Glorian",
+            resolvedLocalDir: "Eos-System",
+            authorization: "LEVEL_3_PRODUCTION_AUTHORIZED",
+          },
+        ],
+      };
+      const discovered = [
+        {
+          id: undefined,
+          dirName: "Glorian-System-",
+          name: "Glorian-System-",
+          remoteUrl: "https://github.com/example/Glorian-System-.git",
+          currentBranch: "main",
+          headCommitSha: "aaa",
+        },
+        {
+          id: undefined,
+          dirName: "fixture-ghost-app",
+          name: "fixture-ghost-app",
+          remoteUrl: "https://github.com/example/fixture-ghost-app.git",
+          currentBranch: "main",
+          headCommitSha: "bbb",
+        },
+      ];
+      const sealed = reconcileFleetRegistry(existingRegistry, discovered);
+      assert.equal(sealed.projects.length, 1);
+      assert.equal(sealed.projects[0].id, "eos-system");
+      assert.equal(sealed.projects[0].resolvedLocalDir, "Eos-System");
+    });
+  });
+
   describe("BDD-367: MCP Tool Execution (eos_fleet_registry_sync)", async () => {
     it("dispatches eos_fleet_registry_sync tool via EosMcpServer in dryRun mode", async (t) => {
       const workspace = makeWorkspace(t);
-      const remoteUrl = "https://github.com/eos-fixture/fixture-fleet-repo.git";
-      const repoRoot = createFixtureRepository(workspace, "fixture-fleet-repo", { remoteUrl });
-      const fixtureSha = git(repoRoot, ["rev-parse", "HEAD"]);
+      createFixtureRepository(workspace, "fixture-fleet-repo", {
+        remoteUrl: "https://github.com/eos-fixture/fixture-fleet-repo.git",
+      });
+      // Ghost clones must not inflate dry-run beyond the sealed registry.
+      createFixtureRepository(workspace, "Glorian-System--1", {
+        remoteUrl: "https://github.com/eos-fixture/Glorian-System-.git",
+      });
 
       const previousWorkspaceRoot = process.env.EOS_WORKSPACE_ROOT;
       process.env.EOS_WORKSPACE_ROOT = workspace;
@@ -315,11 +366,18 @@ describe("SPEC-124: Autonomous Dynamic Fleet Registry & Law IV Sentinel", () => 
       assert.equal(body.dryRun, true);
       assert.ok(body.totalRegistered >= 5);
       assert.ok(/^[0-9a-f]{64}$/.test(body.registrySha256));
-      const fixture = body.projects.find((p) => p.id === "fixture-fleet-repo");
-      assert.ok(fixture, "Hermetic fixture repository must be discovered through the MCP tool");
-      assert.equal(fixture.remoteUrl, remoteUrl);
-      assert.equal(fixture.currentBranch, "main");
-      assert.equal(fixture.headCommitSha, fixtureSha);
+      // Law IV update-only: unregistered fixtures and Glorian ghosts stay out of dry-run.
+      assert.equal(
+        body.projects.some((p) => p.id === "fixture-fleet-repo"),
+        false,
+        "Unregistered fixture must not auto-inflate registry",
+      );
+      assert.equal(
+        body.projects.some((p) => String(p.id).startsWith("glorian-system")),
+        false,
+        "Glorian-System ghost clones must be excluded",
+      );
+      assert.equal(body.totalRegistered, body.projects.length);
     });
   });
 });
