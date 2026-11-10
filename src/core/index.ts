@@ -135,3 +135,4 @@ export * from "./eosDelayTolerantMesh.ts";
 export * from "./eosNeuroSymbolicVerifier.ts";
 export * from "./eosSlsaSupplyChainAttestation.ts";
 export * from "./eosUniversalProjectDoctor.ts";
+export * from "./eosUniversalCodeRemediator.ts";

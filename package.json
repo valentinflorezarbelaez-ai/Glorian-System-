@@ -18,6 +18,7 @@
     "./neuro-symbolic": "./src/core/eosNeuroSymbolicVerifier.ts",
     "./provenance": "./src/core/eosSlsaSupplyChainAttestation.ts",
     "./doctor": "./src/core/eosUniversalProjectDoctor.ts",
+    "./remediator": "./src/core/eosUniversalCodeRemediator.ts",
     "./package.json": "./package.json"
   },
   "bin": {

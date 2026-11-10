@@ -261,19 +261,54 @@ console.log(`¿Firma válida y sin alteraciones?: ${verificacion.verified}`);
 
 ---
 
+### Módulo 8: Diagnóstico Universal de Proyectos (`EosUniversalProjectDoctor`)
+
+**Propósito:** Evaluar cualquier repositorio en microsegundos según el estándar Spotify Soundcheck RFC-42 (0-100), detectar huella de lenguaje políglota (Go, Rust, Python, Node, Flutter, Java, C/C++), escanear credenciales expuestas y generar flujos de trabajo CI/CD herméticos.
+
+```ts
+import { EosUniversalProjectDoctor } from "./src/core/eosUniversalProjectDoctor.ts";
+
+const reporte = EosUniversalProjectDoctor.diagnose("./mi-proyecto");
+console.log(`Stack detectado : ${reporte.detectedStack}`);
+console.log(`Puntaje global  : ${reporte.overallScore} / 100 [${reporte.readinessStatus}]`);
+console.log(`Pilar Seguridad : ${reporte.pillars.security.score} / 25`);
+```
+
+---
+
+### Módulo 9: Auto-Remediación y Modernización de Código (`EosUniversalCodeRemediator`)
+
+**Propósito:** Auto-remediar y elevar cualquier repositorio externo a estándares de producción: generar `.gitignore` adaptado al stack, crear arneses y pruebas smoke iniciales, inyectar documentación y licencias SPDX, y sintetizar pipelines CI/CD con soporte de simulación (dry-run).
+
+```ts
+import { EosUniversalCodeRemediator } from "./src/core/eosUniversalCodeRemediator.ts";
+
+// Modo simulación (sin escribir en disco)
+const plan = EosUniversalCodeRemediator.remediate("./mi-proyecto", { dryRun: true });
+console.log(`Acciones planeadas: ${plan.actions.length}`);
+
+// Modo remediación activa
+const recibo = EosUniversalCodeRemediator.remediate("./mi-proyecto", { dryRun: false });
+console.log(`Puntaje elevado: ${recibo.initialScore} -> ${recibo.projectedOrFinalScore} / 100`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
 
-| Comando                                     | Descripción                                                                               |
-| :------------------------------------------ | :---------------------------------------------------------------------------------------- |
-| `node bin/eos.mjs help`                     | Muestra el menú completo de comandos disponibles.                                         |
-| `node bin/eos.mjs enterprise:health`        | Audita la salud del sistema y emite tabla de estado con recibo SHA-256.                   |
-| `node bin/eos.mjs enterprise:health --json` | Emite el reporte de salud en formato JSON machine-readable para CI/CD.                    |
-| `node bin/eos.mjs metrics`                  | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
-| `node bin/eos.mjs guard [directorio]`       | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
-| `node bin/eos.mjs flow inspect <ruta>`      | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |
-| `node bin/eos.mjs worktree list`            | Lista los árboles de trabajo (_worktrees_) aislados de Git.                               |
+| Comando                                         | Descripción                                                                               |
+| :---------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `node bin/eos.mjs help`                         | Muestra el menú completo de comandos disponibles.                                         |
+| `node bin/eos.mjs enterprise:health`            | Audita la salud del sistema y emite tabla de estado con recibo SHA-256.                   |
+| `node bin/eos.mjs enterprise:health --json`     | Emite el reporte de salud en formato JSON machine-readable para CI/CD.                    |
+| `node bin/eos.mjs doctor [ruta] [--write-ci]`   | Diagnostica los 5 pilares Soundcheck (0-100) y opcionalmente sintetiza pipeline CI.       |
+| `node bin/eos.mjs remediate [ruta] [--dry-run]` | Auto-remedia el repositorio: genera .gitignore, pruebas smoke, CI y gobernanza.           |
+| `node bin/eos.mjs metrics`                      | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
+| `node bin/eos.mjs guard [directorio]`           | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
+| `node bin/eos.mjs flow inspect <ruta>`          | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |
+| `node bin/eos.mjs worktree list`                | Lista los árboles de trabajo (_worktrees_) aislados de Git.                               |
 
 ---
 

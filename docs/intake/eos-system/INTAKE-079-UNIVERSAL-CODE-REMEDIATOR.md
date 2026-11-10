@@ -1,0 +1,5 @@
+# INTAKE-079: Universal Code Remediation & Modernizer Engine
+
+- **Owner directive**: Expand Glorian System so it can not only diagnose any software project via `glorian doctor`, but also automatically remediate missing quality gates, governance standards, test harnesses, and CI/CD pipelines across any polyglot stack (Node/TS, Python, Go, Rust, Java, Flutter, C/C++) with maximum speed and zero regressions.
+- **Gap**: `EosUniversalProjectDoctor` (SPEC-193) identifies vulnerabilities and missing quality gates (missing .gitignore, missing tests, missing license, missing CI), but lacks an automated, non-destructive remediation engine (`glorian fix [path]` / `glorian heal:repo`) that transforms and elevates unhardened codebases into production-ready repositories.
+- **Outcome**: A pure Layer-0 Universal Code Remediation Engine (`src/core/eosUniversalCodeRemediator.ts`) that executes stack-aware scaffolding (tailored `.gitignore`, boilerplate smoke tests, governance documentation, hardened CI/CD workflows, and lockfile validation) with dry-run support, returning tamper-evident cryptographic receipts.

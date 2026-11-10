@@ -23,6 +23,7 @@ import { EosSlsaSupplyChainAttestation } from "../../core/eosSlsaSupplyChainAtte
 import { EosHardwareMemoryArena } from "../../core/eosHardwareMemoryArena.ts";
 import { EosDelayTolerantMesh } from "../../core/eosDelayTolerantMesh.ts";
 import { EosUniversalProjectDoctor } from "../../core/eosUniversalProjectDoctor.ts";
+import { EosUniversalCodeRemediator } from "../../core/eosUniversalCodeRemediator.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -405,6 +406,14 @@ export function dispatchPhase7VerificationCase(
           ...report,
           ciResult,
         };
+      }
+      if (action === "remediate") {
+        const targetPath =
+          typeof args?.targetPath === "string" && args.targetPath.trim().length > 0
+            ? args.targetPath.trim()
+            : deps.projectRoot;
+        const dryRun = args?.dryRun === true;
+        return EosUniversalCodeRemediator.remediate(targetPath, { dryRun });
       }
       if (action === "list") {
         return {

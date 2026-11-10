@@ -571,8 +571,15 @@ async function cmd_doctor_134(commandContext) {
     ciResult = EosUniversalProjectDoctor.writeCiWorkflow(target, workflow);
   }
 
+  const autoFix = args.includes("--fix");
+  let fixResult = null;
+  if (autoFix) {
+    const { EosUniversalCodeRemediator } = await import("../../src/core/eosUniversalCodeRemediator.ts");
+    fixResult = EosUniversalCodeRemediator.remediate(target, { dryRun: false });
+  }
+
   if (isJson) {
-    console.log(JSON.stringify({ ...report, ciResult }, null, 2));
+    console.log(JSON.stringify({ ...report, ciResult, fixResult }, null, 2));
     return;
   }
 
@@ -598,11 +605,54 @@ async function cmd_doctor_134(commandContext) {
     console.log(`---------------------------------------------------------------`);
     console.log(`  ✔ Hardened CI workflow written to: ${ciResult.path}`);
   }
+  if (fixResult) {
+    console.log(`---------------------------------------------------------------`);
+    console.log(
+      `  ✔ Auto-remediation complete: Score elevated ${fixResult.initialScore} -> ${fixResult.projectedOrFinalScore} / 100`,
+    );
+  }
   console.log(`===============================================================\n`);
 }
 
 HANDLERS["doctor"] = cmd_doctor_134;
 HANDLERS["project:doctor"] = cmd_doctor_134;
+
+async function cmd_fix_135(commandContext) {
+  const { args, command, root } = commandContext;
+  const isJson = args.includes("--json");
+  const dryRun = args.includes("--dry-run");
+  const candidateTarget = args.filter((a) => !a.startsWith("-") && a !== command).join(" ");
+  const target = candidateTarget ? path.resolve(candidateTarget) : root;
+
+  const { EosUniversalCodeRemediator } = await import("../../src/core/eosUniversalCodeRemediator.ts");
+  const receipt = EosUniversalCodeRemediator.remediate(target, { dryRun });
+
+  if (isJson) {
+    console.log(JSON.stringify(receipt, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN UNIVERSAL CODE REMEDIATION & MODERNIZER (SPEC-194)   `);
+  console.log(`===============================================================`);
+  console.log(`  Target Directory : ${receipt.targetPath}`);
+  console.log(`  Detected Stack   : ${receipt.detectedStack}`);
+  console.log(`  Mode             : ${receipt.dryRun ? "SIMULATION (DRY-RUN)" : "ACTIVE REMEDIATION"}`);
+  console.log(`  Score Evolution  : ${receipt.initialScore} -> ${receipt.projectedOrFinalScore} / 100`);
+  console.log(`  Receipt SHA-256  : sha256:${receipt.sha256Receipt}`);
+  console.log(`---------------------------------------------------------------`);
+  console.log(`  REMEDIATION ACTIONS:`);
+  for (const act of receipt.actions) {
+    const symbol = act.status === "CREATED" ? "✔" : act.status === "PLANNED" ? "⚡" : "–";
+    console.log(`   ${symbol} [${act.status.padEnd(14)}] ${act.file.padEnd(30)} : ${act.description}`);
+  }
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["remediate"] = cmd_fix_135;
+HANDLERS["doctor:fix"] = cmd_fix_135;
+HANDLERS["heal:repo"] = cmd_fix_135;
+HANDLERS["project:fix"] = cmd_fix_135;
 
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];

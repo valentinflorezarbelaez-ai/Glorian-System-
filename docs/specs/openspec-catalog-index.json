@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
-  "totalSpecs": 188,
-  "catalogSha256": "94fff35a58b3538ecdc95f1989e3ac4f8a4c6945259a9627b3fa16f30f66c365",
+  "totalSpecs": 189,
+  "catalogSha256": "acd948e17dd47f370faf4ea1673bb40a5cbba504efbd67211f729843879ec84b",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1694,6 +1694,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-193-UNIVERSAL-PROJECT-DOCTOR.md",
       "sha256": "e73282b202a7dd9e5f45496542079afe28302db02d81a672ff7537fee390817a"
+    },
+    {
+      "id": "SPEC-194",
+      "title": "Universal Code Remediation & Modernizer Engine",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-194-UNIVERSAL-CODE-REMEDIATOR.md",
+      "sha256": "c62e74959891b734baf9a5a598c612c36dfde5ff99ca1ab37305b00564f9f906"
     }
   ]
 }

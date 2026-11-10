@@ -285,5 +285,15 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(typeof doctorRes.overallScore, "number");
     assert.ok(doctorRes.overallScore >= 0 && doctorRes.overallScore <= 100);
     assert.equal(doctorRes.detectedStack, "NODE_TYPESCRIPT");
+
+    // 6. remediate
+    const remediateRes = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "remediate", targetPath: process.cwd(), dryRun: true },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(remediateRes.dryRun, true);
+    assert.equal(remediateRes.detectedStack, "NODE_TYPESCRIPT");
+    assert.ok(remediateRes.actions.length > 0);
   });
 });

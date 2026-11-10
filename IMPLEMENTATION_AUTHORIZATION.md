@@ -1141,3 +1141,23 @@
   - `docs/plans/PLAN-078-UNIVERSAL-PROJECT-DOCTOR.md`
   - `docs/tasks/TASKS-078-UNIVERSAL-PROJECT-DOCTOR.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-UNIVERSAL-REMEDIATOR-194
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Universal Code Remediation & Modernizer Engine (`SPEC-194`, `CHANGE-079`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “vamos con todo vamos con todos uno por uno con maxima perfeccion”)
+- **Scope**:
+  1. Implement Layer-0 polyglot automated code remediator `src/core/eosUniversalCodeRemediator.ts`.
+  2. Subpath export `"./remediator"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI command `glorian fix [path]` in `bin/commands/cliPlatform.mjs`.
+  5. Wire MCP action `action: "remediate"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosUniversalCodeRemediator.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-079-UNIVERSAL-CODE-REMEDIATOR.md`
+  - `openspec/changes/CHANGE-079-UNIVERSAL-CODE-REMEDIATOR.md`
+  - `openspec/specs/SPEC-194-UNIVERSAL-CODE-REMEDIATOR.md`
+  - `docs/plans/PLAN-079-UNIVERSAL-CODE-REMEDIATOR.md`
+  - `docs/tasks/TASKS-079-UNIVERSAL-CODE-REMEDIATOR.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
