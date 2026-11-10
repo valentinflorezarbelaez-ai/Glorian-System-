@@ -5,8 +5,8 @@
   "buildCommand": "node scripts/verify-sri-integrity.mjs",
   "outputDirectory": ".",
   "functions": {
-    "api/mcp.js": {
-      "includeFiles": "docs/evidence/**"
+    "api/**/*.js": {
+      "includeFiles": "{src/**,docs/evidence/**}"
     }
   },
   "rewrites": [

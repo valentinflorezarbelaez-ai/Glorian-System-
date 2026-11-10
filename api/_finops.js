@@ -92,6 +92,12 @@ async function _handler(req, res) {
   }
 }
 
-// Rate limiting — 20 req/min burst per IP
-import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+// Rate limiting — 20 req/min burst per IP with graceful fallback
+let withRateLimit = () => (fn) => fn;
+try {
+  const mod = await import("../src/core/eosApiRateLimit.ts");
+  withRateLimit = mod.withRateLimit;
+} catch {
+  // Pass-through when rate limiter module is unavailable
+}
 export default withRateLimit({ capacity: 20, refillPerSecond: 0.33 })(_handler);

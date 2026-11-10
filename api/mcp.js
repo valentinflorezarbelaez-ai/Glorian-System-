@@ -445,6 +445,12 @@ async function _handler(req, res) {
   }
 }
 
-// Rate limiting — 30 req/min burst per IP (MCP requests can be high-frequency from agents)
-import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+// Rate limiting — 30 req/min burst per IP with graceful fallback
+let withRateLimit = () => (fn) => fn;
+try {
+  const mod = await import("../src/core/eosApiRateLimit.ts");
+  withRateLimit = mod.withRateLimit;
+} catch {
+  // Pass-through when rate limiter module is unavailable
+}
 export default withRateLimit({ capacity: 30, refillPerSecond: 0.5 })(_handler);

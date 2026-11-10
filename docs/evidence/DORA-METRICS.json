@@ -1,27 +1,27 @@
 {
-  "measuredAt": "2026-11-10T01:07:28.565Z",
+  "measuredAt": "2026-11-10T20:59:42.496Z",
   "windowDays": 30,
   "deploymentFrequency": {
-    "commitsInWindow": 309,
-    "perDay": "10.30",
+    "commitsInWindow": 356,
+    "perDay": "11.87",
     "rating": "ELITE",
     "eliteThreshold": "1+ deploys/day"
   },
   "leadTimeForChanges": {
-    "verifiedReceipts": 11,
+    "verifiedReceipts": 13,
     "github": {
-      "averageHours": 2.83,
-      "sampleSize": 11,
+      "averageHours": 0.22,
+      "sampleSize": 20,
       "source": "github_pulls_api"
     },
-    "note": "GitHub PR lead time avg 2.83h (n=11)",
+    "note": "GitHub PR lead time avg 0.22h (n=20)",
     "rating": "ELITE",
     "eliteThreshold": "< 1 day"
   },
   "changeFailureRate": {
     "incidents": 1,
-    "deploysInWindow": 309,
-    "percent": "0.32%",
+    "deploysInWindow": 356,
+    "percent": "0.28%",
     "rating": "ELITE",
     "eliteThreshold": "≤ 5%"
   },
@@ -40,5 +40,5 @@
     "sha256Receipt": "776ad56572610b009ae441ea5506656e560285df90c04baca242802f21b0ec50"
   },
   "overallRating": "HIGH",
-  "sha256": "fd0e8f9bd86bdf205f55cd7e7b2af1a1c3fa25f2bc6429e65e13ccc1f82d7a1e"
+  "sha256": "65b519a6850db1e169033836ca3f1c03531f00a7a95c55583b764b78fcfe3909"
 }

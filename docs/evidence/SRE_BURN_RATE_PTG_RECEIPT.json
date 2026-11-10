@@ -1,7 +1,7 @@
 {
-  "measuredAt": "2026-11-10T13:00:02.062Z",
+  "measuredAt": "2026-11-10T20:59:46.377Z",
   "serviceId": "performance-talent-group",
-  "canarySha256": "7cf8171c72bea22e0fd9edb01be0bedf8f0f6f717c6d0aae87e280fac0351cd6",
+  "canarySha256": "8088de29ef5fdea446bca5b8f065fc5457a40eabec3c98d0921c2c7d7357206a",
   "report": {
     "serviceId": "performance-talent-group",
     "availabilitySlo": 0.999,
@@ -44,7 +44,7 @@
       }
     },
     "activeAlerts": [],
-    "sha256Receipt": "c198b5bbbd192b967553448ebc76cf7c8b4582ca1e74af61541fcc8cbbf7c4ad"
+    "sha256Receipt": "ba3ce085e7ff3968e5d15626431efc88cf42b545da8c832add05bfb45f198356"
   },
   "onCallRunbook": "docs/runbooks/ON_CALL.md"
 }

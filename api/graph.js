@@ -5,7 +5,13 @@
  * runtime behavior.
  */
 
-import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
+let withRateLimit = () => (fn) => fn;
+try {
+  const mod = await import("../src/core/eosApiRateLimit.ts");
+  withRateLimit = mod.withRateLimit;
+} catch {
+  // Pass-through when rate limiter module is unavailable
+}
 import { getQueryObject } from "./_safeQuery.js";
 
 async function _handler(req, res) {

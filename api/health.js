@@ -12,17 +12,29 @@ try {
   /* keep default */
 }
 
-// SLO Governor — Google SRE multi-window burn-rate tracking (wired at module load)
-import { EosMultiWindowSloGovernor } from "../src/core/eosMultiWindowSloGovernor.ts";
-const _sloGovernor = new EosMultiWindowSloGovernor();
+// SLO Governor — Google SRE multi-window burn-rate tracking (wired at module load with graceful fallback)
+let _sloGovernor = null;
+try {
+  const { EosMultiWindowSloGovernor } = await import("../src/core/eosMultiWindowSloGovernor.ts");
+  _sloGovernor = new EosMultiWindowSloGovernor();
+} catch {
+  // Fallback in environments without src tree
+}
 // Record every request as a telemetry event
 function _recordSloEvent(isError) {
-  _sloGovernor.ingestEvent("eos-system-health-endpoint", { isError, latencyMs: 0 });
+  if (_sloGovernor) {
+    _sloGovernor.ingestEvent("eos-system-health-endpoint", { isError, latencyMs: 0 });
+  }
 }
 
-// Rate limiting — 20 requests/sec burst, 10/sec steady
-import { withRateLimit } from "../src/core/eosApiRateLimit.ts";
-const _rateLimited = withRateLimit({ capacity: 20, refillPerSecond: 10 });
+// Rate limiting — 20 requests/sec burst, 10/sec steady with graceful fallback
+let _rateLimited = (fn) => fn;
+try {
+  const { withRateLimit } = await import("../src/core/eosApiRateLimit.ts");
+  _rateLimited = withRateLimit({ capacity: 20, refillPerSecond: 10 });
+} catch {
+  // Pass-through when rate limiter module is unavailable
+}
 
 /**
  * EOS SYSTEM — CNCF & GOOGLE SRE STANDARDIZED HEALTH & OBSERVABILITY ENDPOINT (/api/health)

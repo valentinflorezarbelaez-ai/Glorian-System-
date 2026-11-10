@@ -54,6 +54,28 @@ describe("EOS Turbo Engine & Nanosecond Precision Suite", () => {
       assert.equal(afterClear.fromCache, false);
     });
 
+    it("hits sha256 verification cache when file timestamp changes but content remains identical", async () => {
+      const fs = await import("node:fs");
+      const os = await import("node:os");
+      const tmpFile = path.join(os.tmpdir(), `test-sha-cache-${Date.now()}.txt`);
+      fs.writeFileSync(tmpFile, "strictly clean content with zero secrets");
+      try {
+        const c1 = checkFileSecretsCached(tmpFile);
+        assert.equal(c1.fromCache, false);
+        assert.equal(c1.isClean, true);
+
+        // Update file timestamp without changing content
+        const futureTime = new Date(Date.now() + 5000);
+        fs.utimesSync(tmpFile, futureTime, futureTime);
+
+        const c2 = checkFileSecretsCached(tmpFile);
+        assert.equal(c2.fromCache, true);
+        assert.equal(c2.isClean, true);
+      } finally {
+        fs.rmSync(tmpFile, { force: true });
+      }
+    });
+
     it("recursively collects project source files excluding node_modules and .git", () => {
       const files = collectSourceFiles(path.join(root, "src"), root);
       assert.ok(files.length >= 10);
@@ -82,6 +104,12 @@ describe("EOS Turbo Engine & Nanosecond Precision Suite", () => {
       assert.ok(result.totalDurationUs > 0);
       assert.ok(result.totalFilesChecked > 20);
       assert.ok(result.sourceInventoryDigest.startsWith("sha256:"));
+
+      // Second consecutive run must hit the inventory cache
+      const warm = runTurboPipeline(root);
+      assert.equal(warm.success, true);
+      assert.equal(warm.sourceInventoryDigest, result.sourceInventoryDigest);
+      assert.equal(warm.totalFilesChecked, result.totalFilesChecked);
     });
 
     it("fails closed when external runtime dependencies are introduced into package.json (Law V)", async () => {
