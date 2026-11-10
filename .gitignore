@@ -16,6 +16,7 @@ bin/*.exe
 /tools/
 *.jar
 .coverage/
+.coverage-summary.json
 dist/
 test-run.log
 pipeline-run.log
