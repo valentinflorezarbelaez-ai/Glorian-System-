@@ -1,6 +1,9 @@
 {
   "minScore": 0.8,
   "floors": {
-    "src/core/eosSLOErrorBudgetGovernor.ts": 0.89
+    "src/core/eosSLOErrorBudgetGovernor.ts": 0.89,
+    "src/core/eosThreeMountainsCompass.ts": 0.95,
+    "src/core/eosKernelPrimitives.ts": 0.95,
+    "src/core/eosAutonomousHealer.ts": 0.95
   }
 }
