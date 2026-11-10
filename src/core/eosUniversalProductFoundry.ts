@@ -15,10 +15,13 @@
  */
 
 import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
 
 export type ProductComplexityTier = "MVP" | "ENTERPRISE" | "MISSION_CRITICAL" | "PLANETARY";
 
-export type ProductPlatform = "web" | "mobile-flutter" | "distributed-backend" | "hft-native-go" | "acoustic-dsp-rust";
+export type ProductPlatform =
+  "web" | "mobile-flutter" | "distributed-backend" | "hft-native-go" | "acoustic-dsp-rust" | "python-ai-service";
 
 export interface ProductManifest {
   readonly id: string;
@@ -311,7 +314,7 @@ export class ${uc.command}Handler {
       tree.set(`src/application/${uc.command}Handler.ts`, code);
     }
 
-    // 4. Constitutional Specification Package
+    // 4. Constitutional Specification & 21-Step SDD Governance Package
     const specMd = `# SPECIFICATION: ${blueprint.manifest.name}
 ## Tier: ${blueprint.manifest.tier} · Domain: ${blueprint.manifest.domain}
 
@@ -322,7 +325,107 @@ ${blueprint.useCases.map((u, i) => `#### FR-${i + 1}: ${u.command}\n- **Pattern*
 ${blueprint.useCases.map((u) => `\`\`\`gherkin\n${u.bddScenario}\n\`\`\``).join("\n\n")}
 `;
     tree.set("docs/specs/spec.md", specMd);
+    tree.set(
+      "docs/intake/PROJECT_CONTEXT.md",
+      `# Intake Context: ${blueprint.manifest.name}\n- **ID**: \`${blueprint.manifest.id}\`\n- **Domain**: \`${blueprint.manifest.domain}\`\n- **Tier**: \`${blueprint.manifest.tier}\`\n- **Platforms**: ${blueprint.manifest.platforms.join(", ")}\n`,
+    );
+    tree.set(
+      "docs/plans/ADR-001-HEXAGONAL-ISOLATION.md",
+      `# ADR-001: Strict Layer-0 Hexagonal Isolation\n- **Status**: Accepted\n- **Context**: ${blueprint.manifest.description}\n- **Decision**: Core domain entities (${blueprint.domainEntities.map((e) => e.name).join(", ")}) maintain zero runtime dependencies.\n`,
+    );
+    tree.set(
+      "docs/tasks/tasks.md",
+      `# Atomic Task DAG — ${blueprint.manifest.name}\n${blueprint.useCases.map((u, i) => `- [ ] T-${i + 1}: Implement and verify \`${u.command}Handler\``).join("\n")}\n`,
+    );
+    tree.set(
+      "catalog-info.yaml",
+      `apiVersion: backstage.io/v1alpha1\nkind: Component\nmetadata:\n  name: ${blueprint.manifest.id}\n  title: ${JSON.stringify(blueprint.manifest.name)}\n  description: ${JSON.stringify(blueprint.manifest.description)}\nspec:\n  type: service\n  lifecycle: production\n  owner: squad:${blueprint.manifest.domain}\n`,
+    );
+
+    const firstEnt = blueprint.domainEntities[0]?.name || "Entity";
+    tree.set(
+      "test/domain.test.mjs",
+      `import { describe, it } from "node:test";\nimport assert from "node:assert/strict";\nimport { ${firstEnt} } from "../src/domain/${firstEnt}.ts";\n\ndescribe("${blueprint.manifest.name} Domain Suite", () => {\n  it("enforces non-empty entity id invariant", () => {\n    const ent = new ${firstEnt}({ id: "ent-1", createdAt: "2026-01-01T00:00:00Z", version: 1, state: "ACTIVE" });\n    assert.equal(ent.toJSON().id, "ent-1");\n    assert.throws(() => new ${firstEnt}({ id: "", createdAt: "", version: 1, state: "INIT" }));\n  });\n});\n`,
+    );
+
+    // 5. Polyglot Platform Golden-Path Artifacts
+    const platforms = blueprint.manifest.platforms || [];
+    if (platforms.includes("web")) {
+      tree.set(
+        "index.html",
+        `<!doctype html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <title>${blueprint.manifest.name}</title>\n</head>\n<body>\n  <main id="app" role="main">\n    <h1>${blueprint.manifest.name}</h1>\n  </main>\n</body>\n</html>\n`,
+      );
+    }
+    if (platforms.includes("hft-native-go")) {
+      tree.set("go.mod", `module github.com/glorian-foundry/${blueprint.manifest.id}\n\ngo 1.22\n`);
+      tree.set(
+        "cmd/server/main.go",
+        `package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println(${JSON.stringify(blueprint.manifest.id)})\n}\n`,
+      );
+    }
+    if (platforms.includes("acoustic-dsp-rust")) {
+      tree.set(
+        "Cargo.toml",
+        `[package]\nname = ${JSON.stringify(blueprint.manifest.id)}\nversion = "1.0.0"\nedition = "2021"\n`,
+      );
+      tree.set(
+        "src/lib.rs",
+        `//! ${blueprint.manifest.name} — Pure Rust Core\npub fn verify_invariant(id: &str) -> bool {\n    !id.is_empty()\n}\n\n#[cfg(test)]\nmod tests {\n    use super::*;\n    #[test]\n    fn checks_non_empty_id() {\n        assert!(verify_invariant("ok"));\n    }\n}\n`,
+      );
+    }
+    if (platforms.includes("mobile-flutter")) {
+      tree.set(
+        "pubspec.yaml",
+        `name: ${blueprint.manifest.id.replace(/-/g, "_")}\ndescription: ${JSON.stringify(blueprint.manifest.description)}\nversion: 1.0.0+1\nenvironment:\n  sdk: ">=3.2.0 <4.0.0"\n`,
+      );
+      tree.set("lib/main.dart", `void main() {\n  // ${blueprint.manifest.name} entrypoint\n}\n`);
+    }
+    if (platforms.includes("python-ai-service")) {
+      tree.set(
+        "pyproject.toml",
+        `[project]\nname = ${JSON.stringify(blueprint.manifest.id)}\nversion = "1.0.0"\nrequires-python = ">=3.11"\n`,
+      );
+      tree.set(
+        "src/service.py",
+        `"""${blueprint.manifest.name} — Pure Python Domain Service"""\n\ndef handle_command(entity_id: str) -> dict[str, object]:\n    if not entity_id:\n        raise ValueError("entity_id is required")\n    return {"id": entity_id, "status": "VERIFIED"}\n`,
+      );
+    }
 
     return tree;
+  }
+
+  /**
+   * Instantiates (or previews in dry-run mode) the generated polyglot scaffold tree to a target directory.
+   */
+  public static instantiateScaffoldTree(
+    blueprint: ProductBlueprint,
+    targetDir: string,
+    options: { dryRun?: boolean } = {},
+  ): { writtenFiles: string[]; dryRun: boolean; sha256TreeRoot: string } {
+    const dryRun = options.dryRun !== false;
+    const resolvedRoot = path.resolve(targetDir);
+    const tree = this.generateScaffoldTree(blueprint);
+    const writtenFiles: string[] = [];
+    const hash = crypto.createHash("sha256");
+
+    for (const [relPath, content] of tree.entries()) {
+      const fullPath = path.resolve(resolvedRoot, relPath);
+      const rel = path.relative(resolvedRoot, fullPath);
+      if (!rel || rel.startsWith("..") || path.isAbsolute(rel)) {
+        throw new Error(`Refusing to scaffold path outside target directory: ${relPath}`);
+      }
+      hash.update(`${relPath}:${content}`);
+      writtenFiles.push(relPath);
+      if (!dryRun) {
+        fs.mkdirSync(path.dirname(fullPath), { recursive: true });
+        fs.writeFileSync(fullPath, content, "utf8");
+      }
+    }
+
+    return {
+      writtenFiles,
+      dryRun,
+      sha256TreeRoot: hash.digest("hex"),
+    };
   }
 }

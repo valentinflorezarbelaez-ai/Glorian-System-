@@ -4,10 +4,6 @@
     "bin/eos.mjs": 4902,
     "js/eos.js": 4296,
     "scripts/verify-formal-tla.mjs": 2213,
-    "src/core/eosConsultantCore.ts": 1222,
-    "src/core/eosEnterpriseWorkspaceGovernor.ts": 1300,
-    "src/core/eosGentlemanAutoUpdater.ts": 1278,
-    "src/core/eosKnowledgeGraphEngine.ts": 1048,
     "src/mcp/eosMcpToolDefinitions.ts": 3243,
     "src/mcp/tools/eosMcpPhase7DomainHandlers.ts": 1447
   }

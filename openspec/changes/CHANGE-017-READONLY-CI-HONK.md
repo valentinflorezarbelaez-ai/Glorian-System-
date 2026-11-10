@@ -4,7 +4,7 @@
 
 - **Status**: `IMPLEMENTED_UNVERIFIED`
 - **Authorization**: Local repository changes requested by the project owner; no workflow was dispatched and no external write was performed.
-- **Impacted Specifications**: `SPEC-012-SPOTIFY-AGENTIC-FACTORY.md`, `SPEC-022-SAFE-AGENT-HARNESS.md`
+- **Impacted Specifications**: `SPEC-012-SPOTIFY-AGENTIC-FACTORY.md`, `SPEC-138-SAFE-AGENT-HARNESS.md`
 - **Modules Targeted**:
   - `.github/workflows/eos-honk-agent.yml`
   - `.github/workflows/eos-sovereign-cicd.yml`

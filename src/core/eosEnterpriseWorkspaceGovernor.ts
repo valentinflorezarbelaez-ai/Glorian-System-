@@ -1,15 +1,6 @@
 /**
  * EOS SYSTEM — ENTERPRISE MULTI-PROJECT WORKSPACE GOVERNOR & POLYGLOT TOPOLOGY ENGINE (Layer 0)
  * Governed by SPEC-046, CHANGE-039, ADR-052 (v52.0.0)
- *
- * Pure Layer-0 orchestration engine enabling EOS to inspect, onboard, resolve,
- * and verify Tier-0 enterprise polyglot repositories (monorepos, microservices,
- * frontend/mobile clients, cloud-native systems) while strictly enforcing:
- * - Law IV External Write Barrier (zero writes inside external projects on onboard/audit;
- *   6-precondition + LEVEL_2/LEVEL_3 check required before any write-gated access).
- * - Law V Layer-0 Purity (0 external runtime npm dependencies; Node 24 strip-only TS).
- * - Law VI Symlink, Traversal, and Plaintext-Secret Immunity.
- * - Law III Tamper-Evident Cryptographic Receipts in EosDurableSqliteLedger.
  */
 
 import fs from "node:fs";
@@ -18,7 +9,6 @@ import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from 
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 import { EosAntigravityDirector } from "./eosAntigravityDirector.ts";
 
-// Re-export all public types for backward-compatible external imports.
 export type {
   WorkspaceOrchestrator,
   EnterpriseLanguage,
@@ -41,97 +31,34 @@ export type {
   EnterpriseWorkspaceVerificationReport,
 } from "./eosEnterpriseWorkspaceGovernor.types.ts";
 
-import type {
-  WorkspaceOrchestrator,
-  EnterpriseLanguage,
-  WorkspaceArchitecturalRole,
-  ContractStandard,
-  WorkspaceMember,
-  ContractArtifact,
-  SecretFinding,
-  SupplyChainPosture,
-  EnterpriseVerificationCommand,
-  EnterpriseWorkspaceTopology,
-  InspectWorkspaceOptions,
-  RegisteredFleetWorkspace,
-  OnboardWorkspaceInput,
-  OnboardGeneratedArtifact,
-  OnboardWorkspaceResult,
-  AuthorizedWorkspaceResolution,
-  StructuralGateResult,
-  EnterpriseWorkspaceVerificationReport,
-  WorkspaceAccessMode,
+import {
+  IGNORED_SCAN_DIRS,
+  BINARY_EXTENSIONS,
+  CREDENTIAL_PATTERNS,
+  DETERMINISTIC_LOCKFILE_NAMES,
+  inspectContractFile,
+  inspectWorkspaceMemberManifest,
+  synthesizeWorkspaceVerificationCommands,
+  buildOnboardIntakeMarkdown,
+  buildOnboardSpecMarkdown,
+  type WorkspaceOrchestrator,
+  type EnterpriseLanguage,
+  type WorkspaceMember,
+  type ContractArtifact,
+  type SecretFinding,
+  type SupplyChainPosture,
+  type EnterpriseVerificationCommand,
+  type EnterpriseWorkspaceTopology,
+  type InspectWorkspaceOptions,
+  type RegisteredFleetWorkspace,
+  type OnboardWorkspaceInput,
+  type OnboardGeneratedArtifact,
+  type OnboardWorkspaceResult,
+  type AuthorizedWorkspaceResolution,
+  type StructuralGateResult,
+  type EnterpriseWorkspaceVerificationReport,
+  type WorkspaceAccessMode,
 } from "./eosEnterpriseWorkspaceGovernor.types.ts";
-
-const IGNORED_SCAN_DIRS: ReadonlySet<string> = new Set([
-  ".git",
-  "node_modules",
-  ".next",
-  "dist",
-  "build",
-  "out",
-  "target",
-  "vendor",
-  ".venv",
-  "venv",
-  "__pycache__",
-  ".eos",
-  ".vercel",
-  ".turbo",
-  ".nx",
-  "coverage",
-  "_sandbox",
-]);
-
-const BINARY_EXTENSIONS: ReadonlySet<string> = new Set([
-  ".png",
-  ".jpg",
-  ".jpeg",
-  ".gif",
-  ".webp",
-  ".ico",
-  ".woff",
-  ".woff2",
-  ".ttf",
-  ".eot",
-  ".wasm",
-  ".exe",
-  ".dll",
-  ".so",
-  ".dylib",
-  ".zip",
-  ".tar",
-  ".gz",
-  ".pdf",
-  ".sqlite",
-  ".sqlite-wal",
-  ".sqlite-shm",
-  ".db",
-  ".lockb",
-]);
-
-const CREDENTIAL_PATTERNS: ReadonlyArray<{ readonly name: string; readonly regex: RegExp }> = [
-  { name: "Live Stripe/OpenAI Key", regex: new RegExp("sk-" + "live-[0-9a-zA-Z]{16,}") },
-  { name: "GitHub Personal Access Token", regex: new RegExp("ghp_" + "[0-9a-zA-Z]{24,}") },
-  { name: "AWS Access Key ID", regex: new RegExp("AKIA" + "[0-9A-Z]{16}") },
-  { name: "Google API Key", regex: new RegExp("AIza" + "[0-9A-Za-z\\-_]{35}") },
-  { name: "PEM Private Key Block", regex: new RegExp("-----BEGIN " + "(RSA |EC |OPENSSH )?PRIVATE KEY-----") },
-];
-
-const DETERMINISTIC_LOCKFILE_NAMES: ReadonlySet<string> = new Set([
-  "package-lock.json",
-  "pnpm-lock.yaml",
-  "yarn.lock",
-  "bun.lock",
-  "bun.lockb",
-  "Cargo.lock",
-  "go.sum",
-  "uv.lock",
-  "poetry.lock",
-  "pubspec.lock",
-  "gradle.lockfile",
-  "Pipfile.lock",
-]);
 
 function toPosixRelative(rootDir: string, targetPath: string): string {
   const rel = path.relative(rootDir, targetPath).replace(/\\/g, "/");
@@ -157,28 +84,24 @@ function sanitizeProjectId(rawId: string): string {
 }
 
 function defaultEnvVarForProject(projectId: string): string {
-  const upper = projectId.replace(/[^a-zA-Z0-9]+/g, "_").toUpperCase();
-  return `EOS_FLEET_${upper}_PATH`;
+  return `EOS_FLEET_${projectId.replace(/[^a-zA-Z0-9]+/g, "_").toUpperCase()}_PATH`;
 }
 
 function safeReadUtf8(filePath: string, maxBytes: number = 256 * 1024): string | null {
   try {
     const stat = fs.lstatSync(filePath);
-    if (!stat.isFile() || stat.isSymbolicLink() || stat.size > maxBytes) {
-      return null;
-    }
+    if (!stat.isFile() || stat.isSymbolicLink() || stat.size > maxBytes) return null;
     return fs.readFileSync(filePath, "utf8");
   } catch {
     return null;
   }
 }
 
-interface ScannedWorkspaceFiles {
-  readonly files: readonly string[];
-  readonly skippedSymlinkCount: number;
-}
-
-function scanWorkspaceTree(rootDir: string, maxDepth: number, maxFiles: number): ScannedWorkspaceFiles {
+function scanWorkspaceTree(
+  rootDir: string,
+  maxDepth: number,
+  maxFiles: number,
+): { files: readonly string[]; skippedSymlinkCount: number } {
   const collected: string[] = [];
   let skippedSymlinkCount = 0;
 
@@ -194,9 +117,7 @@ function scanWorkspaceTree(rootDir: string, maxDepth: number, maxFiles: number):
 
     for (const entry of entries) {
       if (collected.length >= maxFiles) break;
-      if (IGNORED_SCAN_DIRS.has(entry.name) || entry.name.startsWith(".worktree")) {
-        continue;
-      }
+      if (IGNORED_SCAN_DIRS.has(entry.name) || entry.name.startsWith(".worktree")) continue;
       const fullPath = path.join(currentDir, entry.name);
       let stat: fs.Stats;
       try {
@@ -208,11 +129,8 @@ function scanWorkspaceTree(rootDir: string, maxDepth: number, maxFiles: number):
         skippedSymlinkCount += 1;
         continue;
       }
-      if (stat.isDirectory()) {
-        visit(fullPath, depth + 1);
-      } else if (stat.isFile()) {
-        collected.push(fullPath);
-      }
+      if (stat.isDirectory()) visit(fullPath, depth + 1);
+      else if (stat.isFile()) collected.push(fullPath);
     }
   };
 
@@ -220,42 +138,7 @@ function scanWorkspaceTree(rootDir: string, maxDepth: number, maxFiles: number):
   return { files: collected, skippedSymlinkCount };
 }
 
-function inferArchitecturalRole(
-  relativeDir: string,
-  language: EnterpriseLanguage,
-  manifestContent: string,
-): WorkspaceArchitecturalRole {
-  const lowerDir = relativeDir.toLowerCase();
-  const lowerContent = manifestContent.toLowerCase();
-
-  if (
-    /(?:^|\/)(?:core|domain|kernel)(?:\/|$)/.test(lowerDir) ||
-    lowerContent.includes("control-plane") ||
-    lowerContent.includes("eos-system")
-  ) {
-    return "CONTROL_PLANE_OR_CORE";
-  }
-  if (/(?:^|\/)(?:infra|terraform|deploy|k8s|helm|scripts|tools)(?:\/|$)/.test(lowerDir)) {
-    return "INFRASTRUCTURE_OR_TOOLING";
-  }
-  if (
-    language === "flutter_dart" ||
-    /(?:^|\/)(?:web|frontend|client|ui|mobile|app-web|dashboard)(?:\/|$)/.test(lowerDir) ||
-    /"(?:next|react|vue|svelte|astro|nuxt)"/.test(lowerContent)
-  ) {
-    return "FRONTEND_OR_CLIENT";
-  }
-  if (/(?:^|\/)(?:packages|libs|shared|common|sdk)(?:\/|$)/.test(lowerDir)) {
-    return "SHARED_LIBRARY";
-  }
-  return "BACKEND_OR_SERVICE";
-}
-
 export class EosEnterpriseWorkspaceGovernor {
-  /**
-   * Performs a bounded, symlink-safe deep polyglot architectural, contract,
-   * and supply-chain topology inspection of any target workspace directory.
-   */
   public static inspectWorkspace(targetPath: string, options?: InspectWorkspaceOptions): EnterpriseWorkspaceTopology {
     assertPrecondition(
       typeof targetPath === "string" && targetPath.trim().length > 0,
@@ -275,7 +158,6 @@ export class EosEnterpriseWorkspaceGovernor {
     const { files, skippedSymlinkCount } = scanWorkspaceTree(realRoot, maxDepth, maxFiles);
     const relSet = new Set<string>(files.map((f) => toPosixRelative(realRoot, f)));
 
-    // 1. Detect workspace orchestrators
     const orchestrators: WorkspaceOrchestrator[] = [];
     if (relSet.has("turbo.json")) orchestrators.push("turborepo");
     if (relSet.has("nx.json")) orchestrators.push("nx");
@@ -285,39 +167,22 @@ export class EosEnterpriseWorkspaceGovernor {
     if (rootPkgText) {
       try {
         const parsed = JSON.parse(rootPkgText);
-        if (parsed && parsed.workspaces) {
-          orchestrators.push("npm_workspaces");
-        }
-      } catch {
-        // Invalid JSON will be surfaced by contract/structural verification.
-      }
+        if (parsed && parsed.workspaces) orchestrators.push("npm_workspaces");
+      } catch {}
     }
 
     const rootCargoText = safeReadUtf8(path.join(realRoot, "Cargo.toml"));
-    if (rootCargoText && /\[workspace\]/.test(rootCargoText)) {
-      orchestrators.push("cargo_workspace");
-    }
-    if (relSet.has("go.work")) {
-      orchestrators.push("go_workspace");
-    }
+    if (rootCargoText && /\[workspace\]/.test(rootCargoText)) orchestrators.push("cargo_workspace");
+    if (relSet.has("go.work")) orchestrators.push("go_workspace");
     const rootPyproject = safeReadUtf8(path.join(realRoot, "pyproject.toml"));
-    if (rootPyproject && /\[(?:tool\.uv|tool\.poetry|project)\]/.test(rootPyproject)) {
+    if (rootPyproject && /\[(?:tool\.uv|tool\.poetry|project)\]/.test(rootPyproject))
       orchestrators.push("python_uv_poetry");
-    }
-    if (relSet.has("MODULE.bazel") || relSet.has("WORKSPACE") || relSet.has("WORKSPACE.bazel")) {
+    if (relSet.has("MODULE.bazel") || relSet.has("WORKSPACE") || relSet.has("WORKSPACE.bazel"))
       orchestrators.push("bazel");
-    }
-    if (relSet.has("settings.gradle") || relSet.has("settings.gradle.kts")) {
-      orchestrators.push("gradle_multi");
-    }
-    if (relSet.has("melos.yaml")) {
-      orchestrators.push("melos_flutter");
-    }
-    if (orchestrators.length === 0) {
-      orchestrators.push("single_package");
-    }
+    if (relSet.has("settings.gradle") || relSet.has("settings.gradle.kts")) orchestrators.push("gradle_multi");
+    if (relSet.has("melos.yaml")) orchestrators.push("melos_flutter");
+    if (orchestrators.length === 0) orchestrators.push("single_package");
 
-    // 2. Detect languages, workspace members, contracts, supply chain, and secrets
     const languageSet = new Set<EnterpriseLanguage>();
     const members: WorkspaceMember[] = [];
     const contracts: ContractArtifact[] = [];
@@ -335,7 +200,6 @@ export class EosEnterpriseWorkspaceGovernor {
       const ext = path.extname(fullFile).toLowerCase();
       const relDir = path.posix.dirname(relPath);
 
-      // Language signals from source extensions
       if (ext === ".ts" || ext === ".tsx") languageSet.add("typescript");
       else if (ext === ".js" || ext === ".mjs" || ext === ".cjs" || ext === ".jsx") languageSet.add("javascript");
       else if (ext === ".go") languageSet.add("go");
@@ -349,12 +213,8 @@ export class EosEnterpriseWorkspaceGovernor {
       else if (ext === ".sql") languageSet.add("sql");
       else if (ext === ".tla") languageSet.add("tla_plus");
 
-      // Deterministic lockfiles
-      if (DETERMINISTIC_LOCKFILE_NAMES.has(baseName)) {
-        lockfiles.push(relPath);
-      }
+      if (DETERMINISTIC_LOCKFILE_NAMES.has(baseName)) lockfiles.push(relPath);
 
-      // Containerization & IaC & CI/CD
       if (
         lowerBase === "dockerfile" ||
         lowerBase.startsWith("dockerfile.") ||
@@ -383,227 +243,39 @@ export class EosEnterpriseWorkspaceGovernor {
         ciWorkflows.push(relPath);
       }
 
-      // Workspace member manifests
-      if (baseName === "package.json") {
-        const text = safeReadUtf8(fullFile) || "";
-        let pkgName = relDir === "." ? path.basename(realRoot) : relDir;
-        let hasTs = relSet.has(relDir === "." ? "tsconfig.json" : `${relDir}/tsconfig.json`);
-        try {
-          const pkg = JSON.parse(text);
-          if (typeof pkg.name === "string" && pkg.name.trim().length > 0) {
-            pkgName = pkg.name.trim();
-          }
-          if (
-            (pkg.devDependencies && pkg.devDependencies.typescript) ||
-            (pkg.dependencies && pkg.dependencies.typescript)
-          ) {
-            hasTs = true;
-          }
-          const depCount =
-            Object.keys(pkg.dependencies || {}).length +
-            Object.keys(pkg.devDependencies || {}).length +
-            Object.keys(pkg.optionalDependencies || {}).length;
-          if (depCount > 0) {
-            hasExternalPackageDependencies = true;
-          }
-        } catch {
-          // Handled during structural verification
-        }
-        const lang: EnterpriseLanguage = hasTs ? "typescript" : "javascript";
-        languageSet.add(lang);
-        members.push({
-          name: pkgName,
-          relativeDir: relDir,
-          manifestPath: relPath,
-          language: lang,
-          architecturalRole: inferArchitecturalRole(relDir, lang, text),
-        });
-      } else if (baseName === "go.mod") {
-        const text = safeReadUtf8(fullFile) || "";
-        if (/^\s*require\b/m.test(text)) {
-          hasExternalPackageDependencies = true;
-        }
-        const modMatch = text.match(/^\s*module\s+(\S+)/m);
-        const modName = modMatch ? modMatch[1] : relDir === "." ? path.basename(realRoot) : relDir;
-        languageSet.add("go");
-        members.push({
-          name: modName,
-          relativeDir: relDir,
-          manifestPath: relPath,
-          language: "go",
-          architecturalRole: inferArchitecturalRole(relDir, "go", text),
-        });
-      } else if (baseName === "Cargo.toml") {
-        const text = safeReadUtf8(fullFile) || "";
-        if (/\[(?:dev-)?dependencies\]\s*\n\s*[A-Za-z0-9_-]+\s*=/.test(text)) {
-          hasExternalPackageDependencies = true;
-        }
-        const nameMatch = text.match(/\[package\][\s\S]*?^\s*name\s*=\s*"([^"]+)"/m);
-        if (nameMatch) {
-          languageSet.add("rust");
-          members.push({
-            name: nameMatch[1],
-            relativeDir: relDir,
-            manifestPath: relPath,
-            language: "rust",
-            architecturalRole: inferArchitecturalRole(relDir, "rust", text),
-          });
-        }
-      } else if (baseName === "pyproject.toml") {
-        const text = safeReadUtf8(fullFile) || "";
-        const nameMatch = text.match(/^\s*name\s*=\s*"([^"]+)"/m);
-        languageSet.add("python");
-        members.push({
-          name: nameMatch ? nameMatch[1] : relDir === "." ? path.basename(realRoot) : relDir,
-          relativeDir: relDir,
-          manifestPath: relPath,
-          language: "python",
-          architecturalRole: inferArchitecturalRole(relDir, "python", text),
-        });
-      } else if (baseName === "pubspec.yaml") {
-        const text = safeReadUtf8(fullFile) || "";
-        const nameMatch = text.match(/^\s*name:\s*([A-Za-z0-9_-]+)/m);
-        languageSet.add("flutter_dart");
-        members.push({
-          name: nameMatch ? nameMatch[1] : relDir === "." ? path.basename(realRoot) : relDir,
-          relativeDir: relDir,
-          manifestPath: relPath,
-          language: "flutter_dart",
-          architecturalRole: "FRONTEND_OR_CLIENT",
-        });
-      } else if (baseName === "pom.xml" || baseName === "build.gradle" || baseName === "build.gradle.kts") {
-        const text = safeReadUtf8(fullFile) || "";
-        languageSet.add("java_kotlin");
-        members.push({
-          name: relDir === "." ? path.basename(realRoot) : relDir,
-          relativeDir: relDir,
-          manifestPath: relPath,
-          language: "java_kotlin",
-          architecturalRole: inferArchitecturalRole(relDir, "java_kotlin", text),
-        });
+      const manifestRes = inspectWorkspaceMemberManifest({
+        baseName,
+        relPath,
+        relDir,
+        defaultName: path.basename(realRoot),
+        relSet,
+        readContent: () => safeReadUtf8(fullFile) || "",
+      });
+      if (manifestRes.hasExternalDeps) hasExternalPackageDependencies = true;
+      if (manifestRes.member) {
+        languageSet.add(manifestRes.member.language);
+        members.push(manifestRes.member);
       }
 
-      // Formal Interface & Schema Contracts
-      const statSize = (() => {
-        try {
-          return fs.lstatSync(fullFile).size;
-        } catch {
-          return 0;
-        }
-      })();
+      let statSize = 0;
+      try {
+        statSize = fs.lstatSync(fullFile).size;
+      } catch {}
 
-      if (
-        /^(?:openapi|swagger)\.(?:json|ya?ml)$/.test(lowerBase) ||
-        /\.(?:openapi|swagger)\.(?:json|ya?ml)$/.test(lowerBase)
-      ) {
-        const content = safeReadUtf8(fullFile) || "";
-        let validSyntax = content.trim().length > 0;
-        if (ext === ".json") {
-          try {
-            const parsed = JSON.parse(content);
-            validSyntax = Boolean(parsed && (parsed.openapi || parsed.swagger));
-          } catch {
-            validSyntax = false;
-          }
-        } else {
-          validSyntax = /(?:^|\n)\s*(?:openapi|swagger)\s*:/i.test(content);
-        }
-        contracts.push({
-          standard: "openapi",
-          relativePath: relPath,
-          byteSize: statSize,
-          validSyntax,
-          detail: validSyntax
-            ? "Valid OpenAPI/Swagger specification header"
-            : "Malformed OpenAPI/Swagger specification",
-        });
-      } else if (/^asyncapi\.(?:json|ya?ml)$/.test(lowerBase)) {
-        const content = safeReadUtf8(fullFile) || "";
-        const validSyntax = /asyncapi/i.test(content);
-        contracts.push({
-          standard: "asyncapi",
-          relativePath: relPath,
-          byteSize: statSize,
-          validSyntax,
-          detail: validSyntax ? "AsyncAPI event contract" : "Missing asyncapi root field",
-        });
-      } else if (ext === ".proto") {
-        const content = safeReadUtf8(fullFile) || "";
-        const validSyntax = /\bsyntax\s*=\s*"proto[23]"\s*;|\bmessage\s+[A-Za-z_]/.test(content);
-        contracts.push({
-          standard: "protobuf",
-          relativePath: relPath,
-          byteSize: statSize,
-          validSyntax,
-          detail: validSyntax ? "Protocol Buffers IDL contract" : "Incomplete .proto definition",
-        });
-      } else if (ext === ".graphql" || ext === ".gql") {
-        const content = safeReadUtf8(fullFile) || "";
-        const validSyntax = /\b(?:type|query|mutation|schema|input|interface)\b/.test(content);
-        contracts.push({
-          standard: "graphql",
-          relativePath: relPath,
-          byteSize: statSize,
-          validSyntax,
-          detail: validSyntax ? "GraphQL schema definition" : "Empty or invalid GraphQL schema",
-        });
-      } else if (lowerBase.endsWith(".schema.json")) {
-        const content = safeReadUtf8(fullFile) || "";
-        let validSyntax = false;
-        try {
-          const parsed = JSON.parse(content);
-          validSyntax = typeof parsed === "object" && parsed !== null;
-        } catch {
-          validSyntax = false;
-        }
-        contracts.push({
-          standard: "json_schema",
-          relativePath: relPath,
-          byteSize: statSize,
-          validSyntax,
-          detail: validSyntax ? "Valid JSON Schema contract" : "Invalid JSON in schema file",
-        });
-      } else if (ext === ".prisma") {
-        const content = safeReadUtf8(fullFile) || "";
-        const validSyntax = /\b(?:datasource|model|generator)\b/.test(content);
-        contracts.push({
-          standard: "prisma",
-          relativePath: relPath,
-          byteSize: statSize,
-          validSyntax,
-          detail: validSyntax ? "Prisma relational data schema" : "Incomplete Prisma schema",
-        });
-      } else if (ext === ".sql" && /(?:^|\/)(?:migrations|db|sql|schema)(?:\/|$)/i.test(relPath)) {
-        contracts.push({
-          standard: "sql_migration",
-          relativePath: relPath,
-          byteSize: statSize,
-          validSyntax: statSize > 0,
-          detail: "SQL database migration / schema script",
-        });
-      } else if (ext === ".tla") {
-        const content = safeReadUtf8(fullFile) || "";
-        const validSyntax = /----+\s*MODULE\s+[A-Za-z0-9_]+\s*----+/.test(content);
-        contracts.push({
-          standard: "tla_plus",
-          relativePath: relPath,
-          byteSize: statSize,
-          validSyntax,
-          detail: validSyntax ? "TLA+ formal state-machine specification" : "Malformed TLA+ module header",
-        });
-      }
+      const contract = inspectContractFile({
+        lowerBase,
+        ext,
+        relPath,
+        statSize,
+        readContent: () => safeReadUtf8(fullFile) || "",
+      });
+      if (contract) contracts.push(contract);
 
-      // Bounded Plaintext Secret Hygiene Scan (Law VI)
       if (!BINARY_EXTENSIONS.has(ext)) {
         const text = safeReadUtf8(fullFile, 512 * 1024);
         if (text !== null) {
           for (const pat of CREDENTIAL_PATTERNS) {
-            if (pat.regex.test(text)) {
-              secretFindings.push({
-                patternName: pat.name,
-                relativePath: relPath,
-              });
-            }
+            if (pat.regex.test(text)) secretFindings.push({ patternName: pat.name, relativePath: relPath });
           }
         }
       }
@@ -620,11 +292,9 @@ export class EosEnterpriseWorkspaceGovernor {
             ? "ENTERPRISE_SERVICE"
             : "MINIMAL_REPOSITORY";
 
-    const hasDeterministicLockfile = lockfiles.length > 0 || !hasExternalPackageDependencies;
-
     const supplyChain: SupplyChainPosture = {
       lockfiles,
-      hasDeterministicLockfile,
+      hasDeterministicLockfile: lockfiles.length > 0 || !hasExternalPackageDependencies,
       containerManifests,
       iacManifests,
       ciWorkflows,
@@ -632,14 +302,13 @@ export class EosEnterpriseWorkspaceGovernor {
       secretFindings,
     };
 
-    const recommendedVerificationCommands = this.synthesizeVerificationCommands(
-      realRoot,
+    const recommendedVerificationCommands = synthesizeWorkspaceVerificationCommands(
+      safeReadUtf8(path.join(realRoot, "package.json")),
       relSet,
       languages,
       orchestrators,
     );
 
-    // Weighted bounded structural signals (0..100) — explicitly labeled as structural signal count
     let signalPoints = 0;
     if (members.length > 0) signalPoints += 20;
     if (contracts.length > 0 && contracts.every((c) => c.validSyntax)) signalPoints += 20;
@@ -655,18 +324,19 @@ export class EosEnterpriseWorkspaceGovernor {
     }
 
     const workspaceName = path.basename(realRoot);
-    const canonicalSummary = JSON.stringify({
-      workspaceName,
-      archetype,
-      orchestrators,
-      languages,
-      members: members.map((m) => `${m.manifestPath}:${m.language}:${m.architecturalRole}`),
-      contracts: contracts.map((c) => `${c.standard}:${c.relativePath}:${c.validSyntax}`),
-      lockfiles,
-      secretHygieneClean: supplyChain.secretHygieneClean,
-      scannedFileCount: files.length,
-    });
-    const sha256TopologyReceipt = pureSha256(canonicalSummary);
+    const sha256TopologyReceipt = pureSha256(
+      JSON.stringify({
+        workspaceName,
+        archetype,
+        orchestrators,
+        languages,
+        members: members.map((m) => `${m.manifestPath}:${m.language}:${m.architecturalRole}`),
+        contracts: contracts.map((c) => `${c.standard}:${c.relativePath}:${c.validSyntax}`),
+        lockfiles,
+        secretHygieneClean: supplyChain.secretHygieneClean,
+        scannedFileCount: files.length,
+      }),
+    );
     assertPostcondition(sha256TopologyReceipt.length === 64, "Topology receipt must be 64-char SHA-256 hex");
 
     return deepFreeze({
@@ -689,103 +359,12 @@ export class EosEnterpriseWorkspaceGovernor {
     });
   }
 
-  private static synthesizeVerificationCommands(
-    realRoot: string,
-    relSet: ReadonlySet<string>,
-    languages: readonly EnterpriseLanguage[],
-    orchestrators: readonly WorkspaceOrchestrator[],
-  ): EnterpriseVerificationCommand[] {
-    const commands: EnterpriseVerificationCommand[] = [];
-    const usesPnpm = orchestrators.includes("pnpm_workspaces") || relSet.has("pnpm-lock.yaml");
-
-    if (relSet.has("tsconfig.typecheck.json")) {
-      commands.push({
-        id: "ts-typecheck-strict",
-        stack: "typescript",
-        command: "npx tsc --project tsconfig.typecheck.json --noEmit",
-        rationale: "Strict TypeScript compiler verification across configured project graph",
-      });
-    } else if (relSet.has("tsconfig.json") || languages.includes("typescript")) {
-      commands.push({
-        id: "ts-typecheck",
-        stack: "typescript",
-        command: "npx tsc --noEmit",
-        rationale: "Static TypeScript type-safety verification without emitting build artifacts",
-      });
-    }
-
-    const rootPkgText = safeReadUtf8(path.join(realRoot, "package.json"));
-    if (rootPkgText) {
-      try {
-        const pkg = JSON.parse(rootPkgText);
-        if (pkg?.scripts?.["verify:strict"]) {
-          commands.push({
-            id: "node-verify-strict",
-            stack: "nodejs",
-            command: usesPnpm ? "pnpm run verify:strict" : "npm run verify:strict",
-            rationale: "Execute repository-declared strict verification pipeline",
-          });
-        } else if (pkg?.scripts?.test) {
-          commands.push({
-            id: "node-test-suite",
-            stack: "nodejs",
-            command: usesPnpm ? "pnpm test" : "npm test",
-            rationale: "Execute declared package test suite",
-          });
-        }
-      } catch {
-        // Ignored here; caught in JSON structural gate
-      }
-    }
-
-    if (languages.includes("go")) {
-      commands.push({
-        id: "go-vet-race",
-        stack: "go",
-        command: "go vet ./... && go test -race ./...",
-        rationale: "Static Go analyzer and data-race detector test execution",
-      });
-    }
-    if (languages.includes("rust")) {
-      commands.push({
-        id: "cargo-check-test",
-        stack: "rust",
-        command: "cargo check --workspace && cargo test --workspace",
-        rationale: "Borrow-checker verification and workspace crate test suite",
-      });
-    }
-    if (languages.includes("python")) {
-      commands.push({
-        id: "python-pytest",
-        stack: "python",
-        command: "pytest --maxfail=1",
-        rationale: "Python automated test suite verification",
-      });
-    }
-    if (languages.includes("flutter_dart")) {
-      commands.push({
-        id: "dart-analyze",
-        stack: "flutter_dart",
-        command: "dart analyze --fatal-infos",
-        rationale: "Static Dart/Flutter analyzer with zero-warning tolerance",
-      });
-    }
-
-    return commands;
-  }
-
-  /**
-   * Lists all registered fleet & enterprise workspaces declared in docs/projects/registry.json,
-   * evaluating their local filesystem presence and Law IV 6-precondition write status.
-   */
   public static listRegisteredWorkspaces(
     controlPlaneRoot: string = process.cwd(),
   ): readonly RegisteredFleetWorkspace[] {
     const resolvedControlPlane = fs.realpathSync(path.resolve(controlPlaneRoot));
     const registryPath = path.join(resolvedControlPlane, "docs", "projects", "registry.json");
-    if (!fs.existsSync(registryPath)) {
-      return deepFreeze([]);
-    }
+    if (!fs.existsSync(registryPath)) return deepFreeze([]);
 
     const raw = JSON.parse(fs.readFileSync(registryPath, "utf8"));
     const entries = Array.isArray(raw?.projects) ? raw.projects : [];
@@ -826,12 +405,8 @@ export class EosEnterpriseWorkspaceGovernor {
       if (p.audit !== "AUDIT_COMPLETE") missing.push("AUDIT_COMPLETE");
       const auth = String(p.authorization || "NONE");
       const hasLevel2Plus = /^LEVEL_[23]/.test(auth);
-      if (p.ownerApproval !== "OWNER_APPROVAL" && !hasLevel2Plus) {
-        missing.push("OWNER_APPROVAL");
-      }
-      if (!hasLevel2Plus) {
-        missing.push("IMPLEMENTATION_AUTHORIZED_LEVEL_2_PLUS");
-      }
+      if (p.ownerApproval !== "OWNER_APPROVAL" && !hasLevel2Plus) missing.push("OWNER_APPROVAL");
+      if (!hasLevel2Plus) missing.push("IMPLEMENTATION_AUTHORIZED_LEVEL_2_PLUS");
 
       results.push({
         id,
@@ -857,11 +432,6 @@ export class EosEnterpriseWorkspaceGovernor {
     return deepFreeze(results);
   }
 
-  /**
-   * Resolves a target path inside a registered workspace in docs/projects/registry.json,
-   * rejecting path traversal and symlinks, and strictly enforcing Law IV External Write Barrier
-   * whenever accessMode === "WRITE_GATED".
-   */
   public static resolveAuthorizedWorkspace(
     projectId: string,
     relativeSubPath: string = ".",
@@ -882,7 +452,6 @@ export class EosEnterpriseWorkspaceGovernor {
         `[WORKSPACE_PATH_UNAVAILABLE] Registered project '${cleanId}' local path is not present on disk (check ${matched.localPathEnv || "localPath"}).`,
       );
     }
-
     if (accessMode === "WRITE_GATED" && !matched.writeAuthorizedUnderLawIV) {
       throw new Error(
         `[LAW_IV_WRITE_BARRIER_BLOCKED] External writes to '${cleanId}' are prohibited; missing preconditions: ${matched.missingLawIVPreconditions.join(", ")}.`,
@@ -918,12 +487,6 @@ export class EosEnterpriseWorkspaceGovernor {
     });
   }
 
-  /**
-   * Brings an external enterprise repository under EOS Constitutional Governance
-   * while strictly honoring Law IV (0 bytes written into the external target repository!).
-   * All governance artifacts are written exclusively inside controlPlaneRoot, and the
-   * project is registered at LEVEL_1_READ_ONLY_AUDIT until explicit human OWNER_APPROVAL.
-   */
   public static onboardWorkspace(input: OnboardWorkspaceInput): OnboardWorkspaceResult {
     assertPrecondition(Boolean(input && typeof input.targetPath === "string"), "targetPath is required");
     const topology = this.inspectWorkspace(input.targetPath);
@@ -936,73 +499,9 @@ export class EosEnterpriseWorkspaceGovernor {
     const dryRun = input.dryRun === true;
     const controlPlaneRoot = fs.realpathSync(path.resolve(input.controlPlaneRoot || process.cwd()));
 
-    const intakeRel = `docs/intake/${projectId}/PROJECT_CONTEXT.md`;
-    const inventoryRel = `docs/intake/${projectId}/inventory.json`;
-    const specRel = `docs/specs/${projectId}/SPEC-001-BASELINE.md`;
-    const auditRel = `docs/audits/${projectId}/AUDIT-001-BASELINE.json`;
-
-    const intakeMd = [
-      `# PROJECT CONTEXT — ${projectName} (${projectId})`,
-      "",
-      `* **Project ID**: \`${projectId}\``,
-      `* **Archetype**: \`${topology.archetype}\``,
-      `* **Workspace Orchestrators**: ${topology.orchestrators.map((o) => `\`${o}\``).join(", ")}`,
-      `* **Detected Languages**: ${topology.languages.map((l) => `\`${l}\``).join(", ") || "`none`"}`,
-      `* **Local Path Environment Variable**: \`${localPathEnv}\``,
-      `* **Remote URL**: \`${remoteUrl}\``,
-      `* **Governance Tier**: \`LEVEL_1_READ_ONLY_AUDIT\` (Law IV External Write Barrier Active)`,
-      `* **Topology SHA-256**: \`${topology.sha256TopologyReceipt}\``,
-      "",
-      "## Discovered Workspace Members",
-      ...(topology.members.length > 0
-        ? topology.members.map(
-            (m) =>
-              `- **\`${m.name}\`** (\`${m.manifestPath}\`) — Language: \`${m.language}\`, Role: \`${m.architecturalRole}\``,
-          )
-        : ["- No package manifests discovered at current scan depth."]),
-      "",
-      "## Discovered Formal Interface & Data Contracts",
-      ...(topology.contracts.length > 0
-        ? topology.contracts.map(
-            (c) =>
-              `- **\`${c.standard}\`**: \`${c.relativePath}\` (${c.byteSize} bytes, validSyntax: \`${c.validSyntax}\`)`,
-          )
-        : ["- No formal OpenAPI/Protobuf/GraphQL/Schema contracts detected yet."]),
-      "",
-    ].join("\n");
-
+    const intakeMd = buildOnboardIntakeMarkdown({ projectId, projectName, localPathEnv, remoteUrl, topology });
     const inventoryJson = JSON.stringify(topology, null, 2) + "\n";
-
-    const specMd = [
-      `# SPEC-001-BASELINE: CONSTITUTIONAL GOVERNANCE BASELINE FOR ${projectName.toUpperCase()}`,
-      "",
-      `* **Project ID**: \`${projectId}\``,
-      `* **Status**: \`SPECIFICATION_APPROVED\` (Baseline Read-Only Governance)`,
-      `* **External Write Authorization**: \`LEVEL_1_READ_ONLY_AUDIT\` (Requires explicit human \`OWNER_APPROVAL\` + \`LEVEL_2\`+ for external mutations)`,
-      "",
-      "## 1. Formal Functional Requirements (IEEE 830 / EARS)",
-      "",
-      "* **FR-BASE-001 (Zero-Secret Supply Chain Invariant)**:",
-      "  `EL SISTEMA mantendrá cero credenciales, llaves privadas o tokens de API en texto plano dentro de los archivos rastreados del workspace.`",
-      "",
-      "* **FR-BASE-002 (Deterministic Lockfile & Contract Integrity)**:",
-      "  `CUANDO se modifique una dependencia o contrato de interfaz (OpenAPI, Protobuf, GraphQL, JSON Schema, Prisma), EL SISTEMA validará la sintaxis del contrato y la consistencia del lockfile antes de autorizar despliegues.`",
-      "",
-      "* **FR-BASE-003 (Law IV External Write Containment)**:",
-      "  `MIENTRAS el nivel de autorización sea LEVEL_1_READ_ONLY_AUDIT, EL SISTEMA permitirá únicamente auditorías e inspecciones sin mutar archivos en el repositorio externo.`",
-      "",
-      "## 2. Formal Acceptance Criteria (Gherkin BDD)",
-      "",
-      "```gherkin",
-      `ESCENARIO: BDD-BASE-001 — Verificación estructural limpia sobre ${projectId}`,
-      `  DADO el workspace registrado ${projectId} bajo gobernanza EOS`,
-      "  CUANDO se ejecuta eos project verify en modo estructural de solo lectura",
-      "  ENTONCES todos los contratos declarados son sintácticamente válidos y el escaneo de secretos reporta 0 hallazgos",
-      "  Y se registra un recibo criptográfico SHA-256 en EosDurableSqliteLedger",
-      "```",
-      "",
-    ].join("\n");
-
+    const specMd = buildOnboardSpecMarkdown(projectId, projectName);
     const auditJson =
       JSON.stringify(
         {
@@ -1024,11 +523,11 @@ export class EosEnterpriseWorkspaceGovernor {
         2,
       ) + "\n";
 
-    const fileEntries: ReadonlyArray<{ readonly rel: string; readonly content: string }> = [
-      { rel: intakeRel, content: intakeMd },
-      { rel: inventoryRel, content: inventoryJson },
-      { rel: specRel, content: specMd },
-      { rel: auditRel, content: auditJson },
+    const fileEntries = [
+      { rel: `docs/intake/${projectId}/PROJECT_CONTEXT.md`, content: intakeMd },
+      { rel: `docs/intake/${projectId}/inventory.json`, content: inventoryJson },
+      { rel: `docs/specs/${projectId}/SPEC-001-BASELINE.md`, content: specMd },
+      { rel: `docs/audits/${projectId}/AUDIT-001-BASELINE.json`, content: auditJson },
     ];
 
     const generatedArtifacts: OnboardGeneratedArtifact[] = fileEntries.map((entry) => ({
@@ -1047,7 +546,6 @@ export class EosEnterpriseWorkspaceGovernor {
           isPathWithin(controlPlaneRoot, dest),
           "Onboarding artifact destination escaped controlPlaneRoot",
         );
-        // Double-check we NEVER write inside externalTargetPath unless externalTargetPath IS controlPlaneRoot itself
         if (!isPathWithin(controlPlaneRoot, topology.workspaceRoot)) {
           assertPrecondition(
             !isPathWithin(topology.workspaceRoot, dest),
@@ -1072,9 +570,7 @@ export class EosEnterpriseWorkspaceGovernor {
             projects: [],
           };
 
-      if (!Array.isArray(registryDoc.projects)) {
-        registryDoc.projects = [];
-      }
+      if (!Array.isArray(registryDoc.projects)) registryDoc.projects = [];
 
       const existingIdx = registryDoc.projects.findIndex(
         (p: Record<string, unknown>) => String(p.id || "").toLowerCase() === projectId,
@@ -1098,13 +594,10 @@ export class EosEnterpriseWorkspaceGovernor {
 
       if (existingIdx >= 0) {
         const prev = registryDoc.projects[existingIdx];
-        // Preserve existing higher-level human authorization if already granted
         if (typeof prev.authorization === "string" && /^LEVEL_[23]/.test(prev.authorization)) {
           newEntry.authorization = prev.authorization;
         }
-        if (prev.ownerApproval === "OWNER_APPROVAL") {
-          newEntry.ownerApproval = "OWNER_APPROVAL";
-        }
+        if (prev.ownerApproval === "OWNER_APPROVAL") newEntry.ownerApproval = "OWNER_APPROVAL";
         registryDoc.projects[existingIdx] = { ...prev, ...newEntry };
       } else {
         registryDoc.projects.push(newEntry);
@@ -1167,12 +660,6 @@ export class EosEnterpriseWorkspaceGovernor {
     });
   }
 
-  /**
-   * Executes bounded, non-mutating structural verification gates across any
-   * enterprise workspace (JSON manifest validity, formal API/data contract syntax,
-   * deterministic lockfile presence, and plaintext secret hygiene), sealing a
-   * cryptographic verification receipt in EosDurableSqliteLedger.
-   */
   public static verifyWorkspace(
     targetPath: string,
     options?: {
@@ -1185,7 +672,6 @@ export class EosEnterpriseWorkspaceGovernor {
     const topology = this.inspectWorkspace(targetPath);
     const { files } = scanWorkspaceTree(topology.workspaceRoot, 5, 2500);
 
-    // Gate 1: JSON Manifest Structural Integrity (package.json, tsconfig*.json, *.json contracts)
     const malformedJsonFiles: string[] = [];
     for (const f of files) {
       const base = path.basename(f).toLowerCase();

@@ -1,7 +1,7 @@
 # PLAN-023: BIG TECH TIER-1 PERFECTION & PHYSICAL PRODUCTION HARDENING
 
 - **Plan ID**: `PLAN-023`
-- **Related Spec**: `SPEC-030-BIG-TECH-TIER-1-PERFECTION`
+- **Related Spec**: `SPEC-139-BIG-TECH-TIER-1-PERFECTION`
 - **Architect**: Valentín Flórez Arbeláez
 - **Status**: `APPROVED`
 - **Date**: 2026-10-25

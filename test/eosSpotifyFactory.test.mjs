@@ -131,7 +131,7 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
       assert.ok(report.projectResults.length >= 1);
     });
 
-    it("enforces strict SRE invariants across fleet repositories", () => {
+    it("enforces strict SRE invariants, dependency audits, and SDD codemod readiness across fleet repositories", () => {
       const report = factory.executeFleetshift({
         migrationId: "FS-2026-STRICT-SRE",
         description: "Audit robots.txt, sitemap.xml, and HTML5 semantic tags",
@@ -141,6 +141,27 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
 
       assert.ok(["PLAN_ONLY", "APPLIED", "PARTIAL", "FAILED"].includes(report.status));
       assert.ok(report.resultFingerprintSha256.length === 64);
+
+      const depReport = factory.executeFleetshift({
+        migrationId: "FS-2026-DEPS",
+        description: "Audit polyglot dependency manifests across fleet",
+        action: "upgrade_dependencies",
+        dryRun: true,
+      });
+      assert.equal(depReport.status, "PLAN_ONLY");
+      assert.ok(depReport.projectsWithActions >= 1);
+      const eosDep = depReport.projectResults.find((p) => p.projectId === "eos-system");
+      assert.ok(eosDep?.actions.some((a) => a.includes("Audited package.json:")));
+
+      const codemodReport = factory.executeFleetshift({
+        migrationId: "FS-2026-CODEMOD",
+        description: "Audit SDD codemod readiness across fleet",
+        action: "custom_codemod",
+        dryRun: true,
+      });
+      assert.equal(codemodReport.status, "PLAN_ONLY");
+      const eosCodemod = codemodReport.projectResults.find((p) => p.projectId === "eos-system");
+      assert.ok(eosCodemod?.actions.some((a) => a.includes("catalog=present, specs=present")));
     });
   });
 

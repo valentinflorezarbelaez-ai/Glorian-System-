@@ -12,6 +12,9 @@
 
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 
 import { EosUniversalProductFoundry } from "../src/core/eosUniversalProductFoundry.ts";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
@@ -51,12 +54,60 @@ describe("SPEC-039: Universal Product Foundry Engine Verification", () => {
       const tree = EosUniversalProductFoundry.generateScaffoldTree(blueprint);
 
       assert.ok(tree.has("package.json"));
+      assert.ok(tree.has("catalog-info.yaml"));
+      assert.ok(tree.has("docs/intake/PROJECT_CONTEXT.md"));
       assert.ok(tree.has("docs/specs/spec.md"));
+      assert.ok(tree.has("docs/plans/ADR-001-HEXAGONAL-ISOLATION.md"));
+      assert.ok(tree.has("docs/tasks/tasks.md"));
+      assert.ok(tree.has("test/domain.test.mjs"));
+      assert.ok(tree.has("index.html"));
       assert.ok(tree.has("src/domain/LedgerAccount.ts"));
       assert.ok(tree.has("src/application/ExecuteSettlementHandler.ts"));
 
       const pkg = JSON.parse(tree.get("package.json"));
       assert.deepEqual(pkg.dependencies, {}, "Generated core domain must have 0 external dependencies");
+    });
+
+    it("scaffolds polyglot golden-path manifests (Go, Rust, Flutter, Python) and instantiates to disk", () => {
+      const polyglotBlueprint = EosUniversalProductFoundry.createProductBlueprint({
+        ...sampleManifest,
+        platforms: [
+          "web",
+          "distributed-backend",
+          "hft-native-go",
+          "acoustic-dsp-rust",
+          "mobile-flutter",
+          "python-ai-service",
+        ],
+      });
+      const tree = EosUniversalProductFoundry.generateScaffoldTree(polyglotBlueprint);
+      assert.ok(tree.has("go.mod"));
+      assert.ok(tree.has("cmd/server/main.go"));
+      assert.ok(tree.has("Cargo.toml"));
+      assert.ok(tree.has("src/lib.rs"));
+      assert.ok(tree.has("pubspec.yaml"));
+      assert.ok(tree.has("lib/main.dart"));
+      assert.ok(tree.has("pyproject.toml"));
+      assert.ok(tree.has("src/service.py"));
+
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-foundry-"));
+      try {
+        const dryRes = EosUniversalProductFoundry.instantiateScaffoldTree(polyglotBlueprint, tmpDir, { dryRun: true });
+        assert.equal(dryRes.dryRun, true);
+        assert.equal(fs.existsSync(path.join(tmpDir, "package.json")), false);
+
+        const writeRes = EosUniversalProductFoundry.instantiateScaffoldTree(polyglotBlueprint, tmpDir, {
+          dryRun: false,
+        });
+        assert.equal(writeRes.dryRun, false);
+        assert.ok(writeRes.sha256TreeRoot.length === 64);
+        assert.equal(fs.existsSync(path.join(tmpDir, "package.json")), true);
+        assert.equal(fs.existsSync(path.join(tmpDir, "go.mod")), true);
+        assert.equal(fs.existsSync(path.join(tmpDir, "Cargo.toml")), true);
+        assert.equal(fs.existsSync(path.join(tmpDir, "pyproject.toml")), true);
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
     });
   });
 

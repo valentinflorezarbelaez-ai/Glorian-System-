@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
   "totalSpecs": 180,
-  "catalogSha256": "997608c7ea9c50f3a34d1756a0c926abd154c265cf7aa093bf0fde8253419679",
+  "catalogSha256": "5e72d775e07a8d902eab6dd69283424985fa35f27cd91cbc36cd10c56fc00c7e",
   "specs": [
     {
       "id": "SPEC-001",
@@ -184,15 +184,6 @@
       "sha256": "8bc279f2506377d71f30ef7487f644144651d45bbf1d5dc7fb8193be647ed811"
     },
     {
-      "id": "SPEC-020",
-      "title": "BASE SPECIFICATION: UNTRUSTED BROWSER DATA (SPEC-020)",
-      "status": "UNKNOWN",
-      "frCount": 0,
-      "bddCount": 0,
-      "file": "openspec/specs/SPEC-020-UNTRUSTED-BROWSER-DATA.md",
-      "sha256": "13a2143903bb5d9dd89014469801bc1abf418d60805e165efdd505d4397d0837"
-    },
-    {
       "id": "SPEC-021",
       "title": "OPENSPEC BASE SPECIFICATION: SAMAELIAN CYBER-THEURGIC SYNTHESIS — IBM SYSPLEX & NVIDIA WARP (SPEC-021)",
       "status": "UNKNOWN",
@@ -202,15 +193,6 @@
       "sha256": "12645744de390405471f634a94a65402c8b2991d7fe5c573b932f7485c424b5b"
     },
     {
-      "id": "SPEC-021",
-      "title": "BASE SPECIFICATION: VERIFIABLE API RESULTS (SPEC-021)",
-      "status": "UNKNOWN",
-      "frCount": 0,
-      "bddCount": 0,
-      "file": "openspec/specs/SPEC-021-VERIFIABLE-API-RESULTS.md",
-      "sha256": "68bb0e33d3a5abb92267bf18b6e8f1c70c170407e453cd14f51101b4158ab2fb"
-    },
-    {
       "id": "SPEC-022",
       "title": "OPENSPEC BASE SPECIFICATION: LMAX DISRUPTOR LOCK-FREE RING BUFFER & SPEED ENGINE (SPEC-022)",
       "status": "UNKNOWN",
@@ -218,15 +200,6 @@
       "bddCount": 1,
       "file": "openspec/specs/SPEC-022-DISRUPTOR-RING-BUFFER.md",
       "sha256": "3bfe9a48cf3d09e0bf6e0485ea6fe161c3aac153676201caa26564bf8bf0e299"
-    },
-    {
-      "id": "SPEC-022",
-      "title": "BASE SPECIFICATION: SAFE AGENT HARNESS BOUNDARIES (SPEC-022)",
-      "status": "UNKNOWN",
-      "frCount": 0,
-      "bddCount": 1,
-      "file": "openspec/specs/SPEC-022-SAFE-AGENT-HARNESS.md",
-      "sha256": "709d3a4ba2a871d11c0a3c6c48ebda856eb6b7f08e449c6529fbfe3ae3a5e926"
     },
     {
       "id": "SPEC-023",
@@ -301,15 +274,6 @@
       "sha256": "f55e22c7dfaad91f0a0f6f179dc58a3d6ae7f925c5f56bbb30b2cdbdc677b352"
     },
     {
-      "id": "SPEC-030",
-      "title": "BIG TECH TIER-1 PERFECTION & PHYSICAL PRODUCTION HARDENING",
-      "status": "APPROVED",
-      "frCount": 5,
-      "bddCount": 4,
-      "file": "openspec/specs/SPEC-030-BIG-TECH-TIER-1-PERFECTION.md",
-      "sha256": "e7de4e62b54198f0e2307a4ee7756e169977786aa5fa87c9a06a14f233d6891d"
-    },
-    {
       "id": "SPEC-031",
       "title": "THE SOVEREIGN GNOSTIC TEMPLE SENTINEL & INVIOLABLE FINOPS BUDGET SHIELD",
       "status": "SPECIFICATION_APPROVED",
@@ -317,15 +281,6 @@
       "bddCount": 0,
       "file": "openspec/specs/SPEC-031-GNOSTIC-TEMPLE-FINOPS-SHIELD.md",
       "sha256": "82c226c17bf37274f55e3a3d00dbbf5ae7aef155f0f2835268d97c0aca7e1a0d"
-    },
-    {
-      "id": "SPEC-031",
-      "title": "TIER-ZERO TRANSCENDENTAL APEX PERFECTION ENGINE",
-      "status": "APPROVED",
-      "frCount": 4,
-      "bddCount": 4,
-      "file": "openspec/specs/SPEC-031-TIER-ZERO-APEX-PERFECTION.md",
-      "sha256": "bddad4da30c443a6134781e9871b6f8ce2e955d088c5f4c94fd2dd3e480a9a80"
     },
     {
       "id": "SPEC-032",
@@ -407,15 +362,6 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-040-OMEGA-TRANSCENDENTAL-APEX.md",
       "sha256": "3965109edd3b05b7055718f88479e1604822466dbde9dfcbea90c985cf0a0d2d"
-    },
-    {
-      "id": "SPEC-040",
-      "title": "21-STEP AUTONOMOUS SOVEREIGN ENGINEERING LOOP ENGINE (v46.0.0)",
-      "status": "APPROVED",
-      "frCount": 4,
-      "bddCount": 3,
-      "file": "openspec/specs/SPEC-040-SOVEREIGN-21STEP-LOOP.md",
-      "sha256": "1780b9b801aa869ba170981df97833bf2de53b22e02647f578f33342cc749bd7"
     },
     {
       "id": "SPEC-041",
@@ -958,6 +904,15 @@
       "sha256": "25bfb5b4257fb0b1281e4f00fe89c675467e06414f9c95ea501062ca5e3bbebf"
     },
     {
+      "id": "SPEC-106",
+      "title": "21-STEP AUTONOMOUS SOVEREIGN ENGINEERING LOOP ENGINE (v46.0.0)",
+      "status": "APPROVED",
+      "frCount": 4,
+      "bddCount": 3,
+      "file": "openspec/specs/SPEC-106-SOVEREIGN-21STEP-LOOP.md",
+      "sha256": "9de5f7774267e6452136b93a88ea47dcdca411bd4435710fb8d39d0ba1544c8d"
+    },
+    {
       "id": "SPEC-107",
       "title": "Sovereign Cross-Fleet Telemetry, Real-Time Soundcheck & Canary Observability Engine",
       "status": "APPROVED",
@@ -1045,7 +1000,7 @@
       "frCount": 7,
       "bddCount": 7,
       "file": "openspec/specs/SPEC-116-BIG-TECH-TRANSCENDENCE-NEXUS.md",
-      "sha256": "0f1f293521054250d31826abcdbaa15058ffcf24aafa8d9858d63b44e18d91a4"
+      "sha256": "63e88673bbcbc82866b42530ed65be287a846adc02333335acb8317a033d82e5"
     },
     {
       "id": "SPEC-117",
@@ -1217,6 +1172,51 @@
       "bddCount": 3,
       "file": "openspec/specs/SPEC-135-GLORIAN-CONSTITUTIONAL-TRIBUNAL.md",
       "sha256": "bd723225eaca2171e9d90027f8a34693dbdcd4a383330d03c6000a90931ddb6f"
+    },
+    {
+      "id": "SPEC-136",
+      "title": "BASE SPECIFICATION: UNTRUSTED BROWSER DATA (SPEC-136)",
+      "status": "UNKNOWN",
+      "frCount": 0,
+      "bddCount": 0,
+      "file": "openspec/specs/SPEC-136-UNTRUSTED-BROWSER-DATA.md",
+      "sha256": "dd24ccad912e0dd7261515c16464fe79d24729ff9f64d20d171048271e416338"
+    },
+    {
+      "id": "SPEC-137",
+      "title": "BASE SPECIFICATION: VERIFIABLE API RESULTS (SPEC-137)",
+      "status": "UNKNOWN",
+      "frCount": 0,
+      "bddCount": 0,
+      "file": "openspec/specs/SPEC-137-VERIFIABLE-API-RESULTS.md",
+      "sha256": "8519bacab7009efbe52b07db019370562d4efc8de8776498e8f51a624ce1a522"
+    },
+    {
+      "id": "SPEC-138",
+      "title": "BASE SPECIFICATION: SAFE AGENT HARNESS BOUNDARIES (SPEC-138)",
+      "status": "UNKNOWN",
+      "frCount": 0,
+      "bddCount": 1,
+      "file": "openspec/specs/SPEC-138-SAFE-AGENT-HARNESS.md",
+      "sha256": "037ee66809a54d84ea9891b4495bb9a7ef4838dc7e7476038e441ff88b2aec5f"
+    },
+    {
+      "id": "SPEC-139",
+      "title": "BIG TECH TIER-1 PERFECTION & PHYSICAL PRODUCTION HARDENING",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-139-BIG-TECH-TIER-1-PERFECTION.md",
+      "sha256": "5d991681f1a6824a1a7c122f0c545ade7f1db7a50e9de36bc8f67ba928d96225"
+    },
+    {
+      "id": "SPEC-140",
+      "title": "TIER-ZERO TRANSCENDENTAL APEX PERFECTION ENGINE",
+      "status": "APPROVED",
+      "frCount": 4,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-140-TIER-ZERO-APEX-PERFECTION.md",
+      "sha256": "5a36294c3ce2ed116c83d8bf0b4de017fa7ea5a064687d0fda42b7fa5d0f8842"
     },
     {
       "id": "SPEC-141",

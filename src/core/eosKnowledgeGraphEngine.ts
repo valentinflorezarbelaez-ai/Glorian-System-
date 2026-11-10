@@ -3,12 +3,6 @@
  *
  * SPEC-145: Repository Knowledge Graph & Relational Impact Engine (Big Tech Standard)
  * Implements a persistent, zero-dependency directed property graph in SQLite WAL mode.
- *
- * Models architectural entities (SPEC, CHANGE, PLAN, ADR, BDD, MODULE, EVIDENCE)
- * and directed edges (IMPLEMENTS, VERIFIES, DECIDED_BY, MODIFIES, DEPENDS_ON,
- * SUPERSEDES, HAS_SCENARIO, INSTRUMENTS, COVERED_BY).
- * Supports a single-visit blast-radius walk, an in-memory adjacency
- * closure projected through EosOntologyCyclotron, and orphan drift detection.
  * Governed together with SPEC-151.
  *
  * ZERO runtime NPM dependencies — 100% Layer-0 Pure TypeScript.
@@ -78,7 +72,7 @@ export interface OrphanReport {
   readonly bddsWithoutSpec: string[];
   readonly unanchoredModules: string[];
   readonly disconnectedNodes: string[];
-  readonly coverageRatio: number; // 0.0 to 1.0
+  readonly coverageRatio: number;
   readonly durationMs: number;
 }
 
@@ -91,6 +85,15 @@ export interface GraphStats {
   readonly graphSha256: string;
   readonly topHubs: Array<{ id: string; type: NodeType; degree: number }>;
 }
+
+const KG_SCHEMA_SQL = [
+  "CREATE TABLE IF NOT EXISTS eos_kg_nodes (id TEXT PRIMARY KEY, type TEXT NOT NULL, title TEXT NOT NULL, file TEXT NOT NULL, metadata TEXT, sha256 TEXT NOT NULL, updated_at INTEGER NOT NULL);",
+  "CREATE INDEX IF NOT EXISTS idx_kg_nodes_type ON eos_kg_nodes(type);",
+  "CREATE TABLE IF NOT EXISTS eos_kg_edges (source_id TEXT NOT NULL, target_id TEXT NOT NULL, relation TEXT NOT NULL, weight REAL DEFAULT 1.0, metadata TEXT, created_at INTEGER NOT NULL, PRIMARY KEY (source_id, target_id, relation), FOREIGN KEY (source_id) REFERENCES eos_kg_nodes(id) ON DELETE CASCADE, FOREIGN KEY (target_id) REFERENCES eos_kg_nodes(id) ON DELETE CASCADE);",
+  "CREATE INDEX IF NOT EXISTS idx_kg_edges_source ON eos_kg_edges(source_id);",
+  "CREATE INDEX IF NOT EXISTS idx_kg_edges_target ON eos_kg_edges(target_id);",
+  "CREATE INDEX IF NOT EXISTS idx_kg_edges_relation ON eos_kg_edges(relation);",
+].join("\n");
 
 export class EosKnowledgeGraphEngine {
   public static readonly DEFAULT_DB_REL_PATH = "data/eos_knowledge_graph.db";
@@ -105,7 +108,6 @@ export class EosKnowledgeGraphEngine {
 
   constructor(projectRoot: string = process.cwd(), dbPath?: string) {
     this.projectRoot = path.resolve(projectRoot);
-
     if (dbPath === ":memory:") {
       this.dbPath = ":memory:";
       this.isMemory = true;
@@ -116,7 +118,6 @@ export class EosKnowledgeGraphEngine {
       this.dbPath = path.join(this.projectRoot, EosKnowledgeGraphEngine.DEFAULT_DB_REL_PATH);
       this.isMemory = false;
     }
-
     this.initializeDatabase();
   }
 
@@ -125,8 +126,7 @@ export class EosKnowledgeGraphEngine {
       try {
         fs.mkdirSync(path.dirname(this.dbPath), { recursive: true });
         this.db = new DatabaseSync(this.dbPath);
-        this.db.exec("PRAGMA busy_timeout = 10000;");
-        this.db.exec("PRAGMA journal_mode = WAL;");
+        this.db.exec("PRAGMA busy_timeout = 10000; PRAGMA journal_mode = WAL;");
       } catch {
         this.db = new DatabaseSync(":memory:");
       }
@@ -135,67 +135,13 @@ export class EosKnowledgeGraphEngine {
     }
 
     try {
-      this.db.exec("PRAGMA busy_timeout = 10000;");
-      this.db.exec("PRAGMA synchronous = NORMAL;");
-      this.db.exec("PRAGMA foreign_keys = ON;");
-
-      // Nodes Table
-      this.db.exec(`
-        CREATE TABLE IF NOT EXISTS eos_kg_nodes (
-          id TEXT PRIMARY KEY,
-          type TEXT NOT NULL,
-          title TEXT NOT NULL,
-          file TEXT NOT NULL,
-          metadata TEXT,
-          sha256 TEXT NOT NULL,
-          updated_at INTEGER NOT NULL
-        );
-        CREATE INDEX IF NOT EXISTS idx_kg_nodes_type ON eos_kg_nodes(type);
-      `);
-
-      // Edges Table
-      this.db.exec(`
-        CREATE TABLE IF NOT EXISTS eos_kg_edges (
-          source_id TEXT NOT NULL,
-          target_id TEXT NOT NULL,
-          relation TEXT NOT NULL,
-          weight REAL DEFAULT 1.0,
-          metadata TEXT,
-          created_at INTEGER NOT NULL,
-          PRIMARY KEY (source_id, target_id, relation),
-          FOREIGN KEY (source_id) REFERENCES eos_kg_nodes(id) ON DELETE CASCADE,
-          FOREIGN KEY (target_id) REFERENCES eos_kg_nodes(id) ON DELETE CASCADE
-        );
-        CREATE INDEX IF NOT EXISTS idx_kg_edges_source ON eos_kg_edges(source_id);
-        CREATE INDEX IF NOT EXISTS idx_kg_edges_target ON eos_kg_edges(target_id);
-        CREATE INDEX IF NOT EXISTS idx_kg_edges_relation ON eos_kg_edges(relation);
-      `);
+      this.db.exec("PRAGMA busy_timeout = 10000; PRAGMA synchronous = NORMAL; PRAGMA foreign_keys = ON;");
+      this.db.exec(KG_SCHEMA_SQL);
     } catch {
-      // In concurrent multi-process environments, if busy, fallback to :memory: safely
       try {
         this.db = new DatabaseSync(":memory:");
-        this.db.exec("PRAGMA synchronous = NORMAL;");
-        this.db.exec("PRAGMA foreign_keys = ON;");
-        this.db.exec(`
-          CREATE TABLE IF NOT EXISTS eos_kg_nodes (
-            id TEXT PRIMARY KEY,
-            type TEXT NOT NULL,
-            title TEXT NOT NULL,
-            file TEXT NOT NULL,
-            metadata TEXT,
-            sha256 TEXT NOT NULL,
-            updated_at INTEGER NOT NULL
-          );
-          CREATE TABLE IF NOT EXISTS eos_kg_edges (
-            source_id TEXT NOT NULL,
-            target_id TEXT NOT NULL,
-            relation TEXT NOT NULL,
-            weight REAL DEFAULT 1.0,
-            metadata TEXT,
-            created_at INTEGER NOT NULL,
-            PRIMARY KEY (source_id, target_id, relation)
-          );
-        `);
+        this.db.exec("PRAGMA synchronous = NORMAL; PRAGMA foreign_keys = ON;");
+        this.db.exec(KG_SCHEMA_SQL);
       } catch {}
     }
   }
@@ -205,10 +151,6 @@ export class EosKnowledgeGraphEngine {
       this.db.close();
     } catch {}
   }
-
-  // ===========================================================================
-  // CRUD OPERATIONS FOR NODES & EDGES
-  // ===========================================================================
 
   public upsertNode(node: {
     id: string;
@@ -225,20 +167,10 @@ export class EosKnowledgeGraphEngine {
         .update(node.title + node.file)
         .digest("hex");
     const metaStr = node.metadata ? JSON.stringify(node.metadata) : "{}";
-    const now = Date.now();
-
-    const stmt = this.db.prepare(`
-      INSERT INTO eos_kg_nodes (id, type, title, file, metadata, sha256, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-      ON CONFLICT(id) DO UPDATE SET
-        type = excluded.type,
-        title = excluded.title,
-        file = excluded.file,
-        metadata = excluded.metadata,
-        sha256 = excluded.sha256,
-        updated_at = excluded.updated_at
-    `);
-    stmt.run(node.id, node.type, node.title, node.file, metaStr, sha256, now);
+    const stmt = this.db.prepare(
+      "INSERT INTO eos_kg_nodes (id, type, title, file, metadata, sha256, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET type = excluded.type, title = excluded.title, file = excluded.file, metadata = excluded.metadata, sha256 = excluded.sha256, updated_at = excluded.updated_at",
+    );
+    stmt.run(node.id, node.type, node.title, node.file, metaStr, sha256, Date.now());
   }
 
   public upsertEdge(edge: {
@@ -250,27 +182,17 @@ export class EosKnowledgeGraphEngine {
   }): void {
     const weight = typeof edge.weight === "number" ? edge.weight : 1.0;
     const metaStr = edge.metadata ? JSON.stringify(edge.metadata) : "{}";
-    const now = Date.now();
-
     try {
-      const stmt = this.db.prepare(`
-        INSERT INTO eos_kg_edges (source_id, target_id, relation, weight, metadata, created_at)
-        VALUES (?, ?, ?, ?, ?, ?)
-        ON CONFLICT(source_id, target_id, relation) DO UPDATE SET
-          weight = excluded.weight,
-          metadata = excluded.metadata
-      `);
-      stmt.run(edge.sourceId, edge.targetId, edge.relation, weight, metaStr, now);
-    } catch {
-      // If either foreign key does not exist yet in bulk ingestion, ignore gracefully
-    }
+      const stmt = this.db.prepare(
+        "INSERT INTO eos_kg_edges (source_id, target_id, relation, weight, metadata, created_at) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(source_id, target_id, relation) DO UPDATE SET weight = excluded.weight, metadata = excluded.metadata",
+      );
+      stmt.run(edge.sourceId, edge.targetId, edge.relation, weight, metaStr, Date.now());
+    } catch {}
   }
 
   public getNode(id: string): GraphNode | null {
-    const stmt = this.db.prepare("SELECT * FROM eos_kg_nodes WHERE id = ?");
-    const row = stmt.get(id) as any;
-    if (!row) return null;
-    return this.mapNodeRow(row);
+    const row = this.db.prepare("SELECT * FROM eos_kg_nodes WHERE id = ?").get(id) as any;
+    return row ? this.mapNodeRow(row) : null;
   }
 
   private mapNodeRow(row: any): GraphNode {
@@ -304,10 +226,6 @@ export class EosKnowledgeGraphEngine {
     };
   }
 
-  // ===========================================================================
-  // AUTOMATED MULTI-SOURCE INGESTION & EXTRACTION
-  // ===========================================================================
-
   public syncGraph(): {
     nodesAdded: number;
     edgesAdded: number;
@@ -334,7 +252,6 @@ export class EosKnowledgeGraphEngine {
     }
 
     this.projectMemoryIndex();
-
     const durationMs = Date.now() - t0;
     const stats = this.getGraphStats();
 
@@ -350,8 +267,7 @@ export class EosKnowledgeGraphEngine {
     const specsDir = path.join(this.projectRoot, "openspec", "specs");
     if (!fs.existsSync(specsDir)) return;
 
-    const files = fs.readdirSync(specsDir).filter((f) => f.endsWith(".md"));
-    for (const file of files) {
+    for (const file of fs.readdirSync(specsDir).filter((f) => f.endsWith(".md"))) {
       const fullPath = path.join(specsDir, file);
       const content = fs.readFileSync(fullPath, "utf8");
       const relFile = path.relative(this.projectRoot, fullPath).replace(/\\/g, "/");
@@ -359,22 +275,13 @@ export class EosKnowledgeGraphEngine {
       const idMatch = content.match(/Specification ID\*?:\s*`?(SPEC-\d+)`?/i) || file.match(/(SPEC-\d+)/i);
       if (!idMatch) continue;
       const specId = idMatch[1].toUpperCase();
-
       const titleMatch = content.match(/^#\s+(?:SPEC-\d+:\s*)?([^\n\r]+)/m);
       const title = titleMatch ? titleMatch[1].trim() : specId;
-
       const statusMatch = content.match(/Status\*?:\s*`?([A-Z_]+)`?/i);
       const status = statusMatch ? statusMatch[1].toUpperCase() : "APPROVED";
-
       const fileSha256 = crypto.createHash("sha256").update(content).digest("hex");
-
-      // Extract EARS requirements count
-      const frMatches = content.match(/FR-\d+/g) || [];
-      const frCount = new Set(frMatches).size;
-
-      // Extract BDD scenarios
-      const bddMatches = content.match(/BDD-\d+/g) || [];
-      const bddIds = Array.from(new Set(bddMatches));
+      const frCount = new Set(content.match(/FR-\d+/g) || []).size;
+      const bddIds = Array.from(new Set(content.match(/BDD-\d+/g) || []));
 
       this.upsertNode({
         id: specId,
@@ -385,7 +292,6 @@ export class EosKnowledgeGraphEngine {
         sha256: fileSha256,
       });
 
-      // Register BDD nodes and edges
       for (const bddId of bddIds) {
         this.upsertNode({
           id: bddId,
@@ -394,31 +300,17 @@ export class EosKnowledgeGraphEngine {
           file: relFile,
           metadata: { specRef: specId },
         });
-        this.upsertEdge({
-          sourceId: specId,
-          targetId: bddId,
-          relation: "HAS_SCENARIO",
-        });
+        this.upsertEdge({ sourceId: specId, targetId: bddId, relation: "HAS_SCENARIO" });
       }
 
-      // Extract Related Specs (DEPENDS_ON)
       const relatedMatches = content.match(/Related Specs\*?:\s*([^\n\r]+)/i);
       if (relatedMatches) {
-        const foundSpecs = relatedMatches[1].match(/SPEC-\d+/g) || [];
-        for (const depSpec of foundSpecs) {
-          if (depSpec !== specId) {
-            this.upsertEdge({
-              sourceId: specId,
-              targetId: depSpec,
-              relation: "DEPENDS_ON",
-            });
-          }
+        for (const depSpec of relatedMatches[1].match(/SPEC-\d+/g) || []) {
+          if (depSpec !== specId) this.upsertEdge({ sourceId: specId, targetId: depSpec, relation: "DEPENDS_ON" });
         }
       }
 
-      // Extract ADR references (DECIDED_BY)
-      const adrMatches = content.match(/ADR-\d+/g) || [];
-      for (const adrId of new Set(adrMatches)) {
+      for (const adrId of new Set(content.match(/ADR-\d+/g) || [])) {
         this.upsertNode({
           id: adrId,
           type: "ADR",
@@ -426,18 +318,12 @@ export class EosKnowledgeGraphEngine {
           file: relFile,
           metadata: {},
         });
-        this.upsertEdge({
-          sourceId: specId,
-          targetId: adrId,
-          relation: "DECIDED_BY",
-        });
+        this.upsertEdge({ sourceId: specId, targetId: adrId, relation: "DECIDED_BY" });
       }
 
-      // Extract Module Target (IMPLEMENTS)
       const targetMatch = content.match(/Module Target\*?:\s*([^\n\r]+)/i);
       if (targetMatch) {
-        const paths = targetMatch[1].match(/(?:src|api|test)\/[a-zA-Z0-9_\-\.\/]+/g) || [];
-        for (const targetPath of paths) {
+        for (const targetPath of targetMatch[1].match(/(?:src|api|test)\/[a-zA-Z0-9_\-\.\/]+/g) || []) {
           this.upsertNode({
             id: targetPath,
             type: "MODULE",
@@ -445,11 +331,7 @@ export class EosKnowledgeGraphEngine {
             file: targetPath,
             metadata: {},
           });
-          this.upsertEdge({
-            sourceId: targetPath,
-            targetId: specId,
-            relation: "IMPLEMENTS",
-          });
+          this.upsertEdge({ sourceId: targetPath, targetId: specId, relation: "IMPLEMENTS" });
         }
       }
 
@@ -462,18 +344,12 @@ export class EosKnowledgeGraphEngine {
           file: "src/mcp/eosMcpServer.ts",
           metadata: { role: "MCP_TOOL" },
         });
-        this.upsertEdge({
-          sourceId: specId,
-          targetId: toolId,
-          relation: "INSTRUMENTS",
-        });
+        this.upsertEdge({ sourceId: specId, targetId: toolId, relation: "INSTRUMENTS" });
       }
     }
   }
 
   private loadDeclaredMcpTools(): ReadonlySet<string> {
-    // Tool schemas live in eosMcpToolDefinitions.ts; the dispatcher stays in
-    // eosMcpServer.ts. Scan both so declarations are never missed.
     const candidates = [
       path.join(this.projectRoot, "src", "mcp", "eosMcpServer.ts"),
       path.join(this.projectRoot, "src", "mcp", "eosMcpToolDefinitions.ts"),
@@ -484,9 +360,7 @@ export class EosKnowledgeGraphEngine {
       if (!fs.existsSync(serverFile)) continue;
       const text = fs.readFileSync(serverFile, "utf8");
       let match: RegExpExecArray | null;
-      while ((match = matcher.exec(text)) !== null) {
-        names.add(match[1]);
-      }
+      while ((match = matcher.exec(text)) !== null) names.add(match[1]);
       matcher.lastIndex = 0;
     }
     return names;
@@ -504,11 +378,7 @@ export class EosKnowledgeGraphEngine {
   private flushCoverage(): void {
     for (const link of this.pendingCoverage) {
       if (this.getNode(link.sourceId) && this.getNode(link.targetId)) {
-        this.upsertEdge({
-          sourceId: link.sourceId,
-          targetId: link.targetId,
-          relation: "COVERED_BY",
-        });
+        this.upsertEdge({ sourceId: link.sourceId, targetId: link.targetId, relation: "COVERED_BY" });
       }
     }
     this.pendingCoverage = [];
@@ -518,8 +388,7 @@ export class EosKnowledgeGraphEngine {
     const changesDir = path.join(this.projectRoot, "openspec", "changes");
     if (!fs.existsSync(changesDir)) return;
 
-    const files = fs.readdirSync(changesDir).filter((f) => f.endsWith(".md"));
-    for (const file of files) {
+    for (const file of fs.readdirSync(changesDir).filter((f) => f.endsWith(".md"))) {
       const fullPath = path.join(changesDir, file);
       const content = fs.readFileSync(fullPath, "utf8");
       const relFile = path.relative(this.projectRoot, fullPath).replace(/\\/g, "/");
@@ -527,13 +396,10 @@ export class EosKnowledgeGraphEngine {
       const idMatch = content.match(/Change ID\*?:\s*`?(CHANGE-\d+)`?/i) || file.match(/(CHANGE-\d+)/i);
       if (!idMatch) continue;
       const changeId = idMatch[1].toUpperCase();
-
       const titleMatch = content.match(/^#\s+(?:CHANGE-\d+:\s*)?([^\n\r]+)/m);
       const title = titleMatch ? titleMatch[1].trim() : changeId;
-
       const specMatch = content.match(/Specification ID\*?:\s*`?(SPEC-\d+)`?/i);
       const specRef = specMatch ? specMatch[1].toUpperCase() : null;
-
       const fileSha256 = crypto.createHash("sha256").update(content).digest("hex");
 
       this.upsertNode({
@@ -544,31 +410,12 @@ export class EosKnowledgeGraphEngine {
         metadata: { specRef },
         sha256: fileSha256,
       });
+      if (specRef) this.upsertEdge({ sourceId: changeId, targetId: specRef, relation: "MODIFIES" });
 
-      if (specRef) {
-        this.upsertEdge({
-          sourceId: changeId,
-          targetId: specRef,
-          relation: "MODIFIES",
-        });
-      }
-
-      // Extract target files (TOUCHES)
-      const targetFiles = content.match(/(?:src|api|test|docs)\/[a-zA-Z0-9_\-\.\/]+/g) || [];
-      for (const tFile of new Set(targetFiles)) {
+      for (const tFile of new Set(content.match(/(?:src|api|test|docs)\/[a-zA-Z0-9_\-\.\/]+/g) || [])) {
         if (!tFile.endsWith(".md") && !tFile.endsWith(".json")) {
-          this.upsertNode({
-            id: tFile,
-            type: "MODULE",
-            title: path.basename(tFile),
-            file: tFile,
-            metadata: {},
-          });
-          this.upsertEdge({
-            sourceId: changeId,
-            targetId: tFile,
-            relation: "TOUCHES",
-          });
+          this.upsertNode({ id: tFile, type: "MODULE", title: path.basename(tFile), file: tFile, metadata: {} });
+          this.upsertEdge({ sourceId: changeId, targetId: tFile, relation: "TOUCHES" });
         }
       }
     }
@@ -578,43 +425,27 @@ export class EosKnowledgeGraphEngine {
     const plansDir = path.join(this.projectRoot, "docs", "plans");
     if (!fs.existsSync(plansDir)) return;
 
-    const files = fs.readdirSync(plansDir).filter((f) => f.endsWith(".md"));
-    for (const file of files) {
+    for (const file of fs.readdirSync(plansDir).filter((f) => f.endsWith(".md"))) {
       const fullPath = path.join(plansDir, file);
       const content = fs.readFileSync(fullPath, "utf8");
       const relFile = path.relative(this.projectRoot, fullPath).replace(/\\/g, "/");
-
       const planMatch = file.match(/(PLAN-\d+)/i);
       const planId = planMatch ? planMatch[1].toUpperCase() : path.basename(file, ".md");
 
-      this.upsertNode({
-        id: planId,
-        type: "PLAN",
-        title: `Plan ${planId}`,
-        file: relFile,
-        metadata: {},
-      });
+      this.upsertNode({ id: planId, type: "PLAN", title: `Plan ${planId}`, file: relFile, metadata: {} });
 
-      // Extract ADR headers e.g. "### ADR-0181: Inconditional Preemptive Worker..."
       const adrRegex = /###\s+(ADR-\d+)[:\s]+([^\n\r]+)/gi;
       let m: RegExpExecArray | null;
       while ((m = adrRegex.exec(content)) !== null) {
         const adrId = m[1].toUpperCase();
-        const adrTitle = m[2].trim();
-
         this.upsertNode({
           id: adrId,
           type: "ADR",
-          title: adrTitle,
+          title: m[2].trim(),
           file: relFile,
           metadata: { planRef: planId },
         });
-
-        this.upsertEdge({
-          sourceId: planId,
-          targetId: adrId,
-          relation: "DECIDED_BY",
-        });
+        this.upsertEdge({ sourceId: planId, targetId: adrId, relation: "DECIDED_BY" });
       }
     }
   }
@@ -623,46 +454,21 @@ export class EosKnowledgeGraphEngine {
     const testDir = path.join(this.projectRoot, "test");
     if (!fs.existsSync(testDir)) return;
 
-    const files = fs.readdirSync(testDir).filter((f) => f.endsWith(".test.mjs") || f.endsWith(".test.ts"));
-    for (const file of files) {
+    for (const file of fs.readdirSync(testDir).filter((f) => f.endsWith(".test.mjs") || f.endsWith(".test.ts"))) {
       const fullPath = path.join(testDir, file);
       const content = fs.readFileSync(fullPath, "utf8");
       const relFile = path.relative(this.projectRoot, fullPath).replace(/\\/g, "/");
-
       const testId = `test/${file}`;
-      this.upsertNode({
-        id: testId,
-        type: "MODULE",
-        title: file,
-        file: relFile,
-        metadata: { role: "TEST_SUITE" },
-      });
 
-      // Find BDDs tested e.g. BDD-398
-      const bddMatches = content.match(/BDD-\d+/g) || [];
-      for (const bddId of new Set(bddMatches)) {
-        this.upsertNode({
-          id: bddId,
-          type: "BDD",
-          title: `Scenario ${bddId}`,
-          file: relFile,
-          metadata: {},
-        });
-        this.upsertEdge({
-          sourceId: testId,
-          targetId: bddId,
-          relation: "VERIFIES",
-        });
+      this.upsertNode({ id: testId, type: "MODULE", title: file, file: relFile, metadata: { role: "TEST_SUITE" } });
+
+      for (const bddId of new Set(content.match(/BDD-\d+/g) || [])) {
+        this.upsertNode({ id: bddId, type: "BDD", title: `Scenario ${bddId}`, file: relFile, metadata: {} });
+        this.upsertEdge({ sourceId: testId, targetId: bddId, relation: "VERIFIES" });
       }
 
-      // Find Specs referenced in comments e.g. SPEC-144
-      const specMatches = content.match(/SPEC-\d+/g) || [];
-      for (const specId of new Set(specMatches)) {
-        this.upsertEdge({
-          sourceId: testId,
-          targetId: specId,
-          relation: "VERIFIES",
-        });
+      for (const specId of new Set(content.match(/SPEC-\d+/g) || [])) {
+        this.upsertEdge({ sourceId: testId, targetId: specId, relation: "VERIFIES" });
         this.queueCoverage(specId, testId);
       }
 
@@ -671,12 +477,8 @@ export class EosKnowledgeGraphEngine {
       while ((importMatch = importMatcher.exec(content)) !== null) {
         const resolved = path.normalize(path.join(path.dirname(fullPath), importMatch[1]));
         let rel = path.relative(this.projectRoot, resolved).replace(/\\/g, "/");
-        if (!/\.(?:ts|mjs|js)$/.test(rel) && fs.existsSync(`${resolved}.ts`)) {
-          rel = `${rel}.ts`;
-        }
-        if (rel.startsWith("src/") || rel.startsWith("api/")) {
-          this.queueCoverage(rel, testId);
-        }
+        if (!/\.(?:ts|mjs|js)$/.test(rel) && fs.existsSync(`${resolved}.ts`)) rel = `${rel}.ts`;
+        if (rel.startsWith("src/") || rel.startsWith("api/")) this.queueCoverage(rel, testId);
       }
     }
   }
@@ -686,8 +488,7 @@ export class EosKnowledgeGraphEngine {
     if (!fs.existsSync(srcDir)) return;
 
     const scanDir = (dir: string) => {
-      const entries = fs.readdirSync(dir, { withFileTypes: true });
-      for (const entry of entries) {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
         const fullPath = path.join(dir, entry.name);
         if (entry.isDirectory()) {
           scanDir(fullPath);
@@ -704,26 +505,14 @@ export class EosKnowledgeGraphEngine {
             metadata: { byteLength: content.length },
             sha256: fileSha256,
           });
-
-          // Check spec references inside comments (e.g. SPEC-145, SPEC-144)
-          const specMatches = content.match(/SPEC-\d+/g) || [];
-          for (const specId of new Set(specMatches)) {
-            this.upsertEdge({
-              sourceId: relFile,
-              targetId: specId,
-              relation: "IMPLEMENTS",
-            });
+          for (const specId of new Set(content.match(/SPEC-\d+/g) || [])) {
+            this.upsertEdge({ sourceId: relFile, targetId: specId, relation: "IMPLEMENTS" });
           }
         }
       }
     };
-
     scanDir(srcDir);
   }
-
-  // ===========================================================================
-  // GRAPH ALGORITHMS: BLAST RADIUS, NEIGHBORS, ORPHAN DETECTION
-  // ===========================================================================
 
   public computeBlastRadius(
     rootNodeId: string,
@@ -734,37 +523,37 @@ export class EosKnowledgeGraphEngine {
     const maxDepth = Math.max(1, Math.min(10, options.maxDepth || 4));
     const direction = options.direction || "BOTH";
 
-    const reached = new Map<string, { depth: number; path: string }>();
-    const queue: Array<{ id: string; depth: number; path: string }> = [];
+    const reached = new Map<string, { depth: number; path: string }>([[rootNodeId, { depth: 0, path: rootNodeId }]]);
+    const queue: Array<{ id: string; depth: number; path: string }> = [{ id: rootNodeId, depth: 0, path: rootNodeId }];
     let head = 0;
-    reached.set(rootNodeId, { depth: 0, path: rootNodeId });
-    queue.push({ id: rootNodeId, depth: 0, path: rootNodeId });
 
     const outStmt = this.db.prepare("SELECT target_id, relation FROM eos_kg_edges WHERE source_id = ?");
     const inStmt = this.db.prepare("SELECT source_id, relation FROM eos_kg_edges WHERE target_id = ?");
 
     while (head < queue.length) {
-      const current = queue[head];
-      head += 1;
+      const current = queue[head++];
       if (current.depth >= maxDepth) continue;
 
       if (direction === "OUT" || direction === "BOTH") {
-        const outgoing = outStmt.all(current.id) as Array<{ target_id: string; relation: string }>;
-        for (const edge of outgoing) {
+        for (const edge of outStmt.all(current.id) as Array<{ target_id: string; relation: string }>) {
           if (reached.has(edge.target_id)) continue;
-          const nextPath = `${current.path} -> ${edge.relation} -> ${edge.target_id}`;
-          const next = { id: edge.target_id, depth: current.depth + 1, path: nextPath };
+          const next = {
+            id: edge.target_id,
+            depth: current.depth + 1,
+            path: `${current.path} -> ${edge.relation} -> ${edge.target_id}`,
+          };
           reached.set(edge.target_id, { depth: next.depth, path: next.path });
           queue.push(next);
         }
       }
-
       if (direction === "IN" || direction === "BOTH") {
-        const incoming = inStmt.all(current.id) as Array<{ source_id: string; relation: string }>;
-        for (const edge of incoming) {
+        for (const edge of inStmt.all(current.id) as Array<{ source_id: string; relation: string }>) {
           if (reached.has(edge.source_id)) continue;
-          const nextPath = `${current.path} <- ${edge.relation} <- ${edge.source_id}`;
-          const next = { id: edge.source_id, depth: current.depth + 1, path: nextPath };
+          const next = {
+            id: edge.source_id,
+            depth: current.depth + 1,
+            path: `${current.path} <- ${edge.relation} <- ${edge.source_id}`,
+          };
           reached.set(edge.source_id, { depth: next.depth, path: next.path });
           queue.push(next);
         }
@@ -782,33 +571,24 @@ export class EosKnowledgeGraphEngine {
       const row = nodeStmt.get(id) as any;
       if (!row) continue;
       const meta = reached.get(id)!;
-      nodes.push({
-        ...this.mapNodeRow(row),
-        depth: meta.depth,
-        path: meta.path,
-      });
+      nodes.push({ ...this.mapNodeRow(row), depth: meta.depth, path: meta.path });
       nodeIds.add(id);
     }
+
     const edges: GraphEdge[] = [];
     if (nodeIds.size > 0) {
       const idsArray = Array.from(nodeIds);
-      const chunkSize = 200;
-      for (let i = 0; i < idsArray.length; i += chunkSize) {
-        const chunk = idsArray.slice(i, i + chunkSize);
+      for (let i = 0; i < idsArray.length; i += 200) {
+        const chunk = idsArray.slice(i, i + 200);
         const placeholders = chunk.map(() => "?").join(",");
         const edgeRows = this.db
           .prepare(`SELECT * FROM eos_kg_edges WHERE source_id IN (${placeholders})`)
           .all(...chunk) as any[];
-
         for (const er of edgeRows) {
-          if (nodeIds.has(er.target_id)) {
-            edges.push(this.mapEdgeRow(er));
-          }
+          if (nodeIds.has(er.target_id)) edges.push(this.mapEdgeRow(er));
         }
       }
     }
-
-    const durationMs = Number(process.hrtime.bigint() - t0) / 1_000_000;
 
     return {
       rootNodeId,
@@ -817,7 +597,7 @@ export class EosKnowledgeGraphEngine {
       totalReachable: nodes.length,
       nodes,
       edges,
-      durationMs,
+      durationMs: Number(process.hrtime.bigint() - t0) / 1_000_000,
     };
   }
 
@@ -838,23 +618,22 @@ export class EosKnowledgeGraphEngine {
   }
 
   private requireKnownNode(nodeId: string): void {
-    if (!nodeId || !this.getNode(nodeId)) {
-      throw new Error(`Unknown knowledge graph node: ${nodeId}`);
-    }
+    if (!nodeId || !this.getNode(nodeId)) throw new Error(`Unknown knowledge graph node: ${nodeId}`);
   }
 
   private projectMemoryIndex(): void {
     const cyclotron = new EosOntologyCyclotron();
-    const nodeRows = this.db.prepare("SELECT id, type FROM eos_kg_nodes").all() as Array<{ id: string; type: string }>;
-    for (const row of nodeRows) {
+    for (const row of this.db.prepare("SELECT id, type FROM eos_kg_nodes").all() as Array<{
+      id: string;
+      type: string;
+    }>) {
       cyclotron.registerNode(row.id, row.type, {});
     }
-    const edgeRows = this.db.prepare("SELECT source_id, target_id, relation FROM eos_kg_edges").all() as Array<{
+    for (const row of this.db.prepare("SELECT source_id, target_id, relation FROM eos_kg_edges").all() as Array<{
       source_id: string;
       target_id: string;
       relation: string;
-    }>;
-    for (const row of edgeRows) {
+    }>) {
       cyclotron.registerEdge(row.source_id, row.target_id, row.relation);
     }
     this.memoryGraph = cyclotron;
@@ -869,97 +648,71 @@ export class EosKnowledgeGraphEngine {
     incoming: Array<{ edge: GraphEdge; source: GraphNode }>;
   } {
     const node = this.getNode(nodeId);
-    if (!node) {
-      return { node: null, outgoing: [], incoming: [] };
-    }
+    if (!node) return { node: null, outgoing: [], incoming: [] };
 
-    let outgoing: Array<{ edge: GraphEdge; target: GraphNode }> = [];
-    let incoming: Array<{ edge: GraphEdge; source: GraphNode }> = [];
+    const mapJoined = (r: any, idKey: "target_id" | "source_id") =>
+      this.mapNodeRow({
+        id: r[idKey],
+        type: r.n_type,
+        title: r.n_title,
+        file: r.n_file,
+        metadata: r.n_metadata,
+        sha256: r.n_sha256,
+        updated_at: r.n_updated_at,
+      });
 
-    if (direction === "BOTH" || direction === "OUT") {
-      const outStmt = this.db.prepare(`
-        SELECT e.*, n.type as n_type, n.title as n_title, n.file as n_file, n.metadata as n_metadata, n.sha256 as n_sha256, n.updated_at as n_updated_at
-        FROM eos_kg_edges e
-        JOIN eos_kg_nodes n ON e.target_id = n.id
-        WHERE e.source_id = ?
-      `);
-      const outRows = outStmt.all(nodeId) as any[];
-      outgoing = outRows.map((r) => ({
-        edge: this.mapEdgeRow(r),
-        target: this.mapNodeRow({
-          id: r.target_id,
-          type: r.n_type,
-          title: r.n_title,
-          file: r.n_file,
-          metadata: r.n_metadata,
-          sha256: r.n_sha256,
-          updated_at: r.n_updated_at,
-        }),
-      }));
-    }
+    const outRows =
+      direction === "BOTH" || direction === "OUT"
+        ? (this.db
+            .prepare(
+              "SELECT e.*, n.type as n_type, n.title as n_title, n.file as n_file, n.metadata as n_metadata, n.sha256 as n_sha256, n.updated_at as n_updated_at FROM eos_kg_edges e JOIN eos_kg_nodes n ON e.target_id = n.id WHERE e.source_id = ?",
+            )
+            .all(nodeId) as any[])
+        : [];
+    const inRows =
+      direction === "BOTH" || direction === "IN"
+        ? (this.db
+            .prepare(
+              "SELECT e.*, n.type as n_type, n.title as n_title, n.file as n_file, n.metadata as n_metadata, n.sha256 as n_sha256, n.updated_at as n_updated_at FROM eos_kg_edges e JOIN eos_kg_nodes n ON e.source_id = n.id WHERE e.target_id = ?",
+            )
+            .all(nodeId) as any[])
+        : [];
 
-    if (direction === "BOTH" || direction === "IN") {
-      const inStmt = this.db.prepare(`
-        SELECT e.*, n.type as n_type, n.title as n_title, n.file as n_file, n.metadata as n_metadata, n.sha256 as n_sha256, n.updated_at as n_updated_at
-        FROM eos_kg_edges e
-        JOIN eos_kg_nodes n ON e.source_id = n.id
-        WHERE e.target_id = ?
-      `);
-      const inRows = inStmt.all(nodeId) as any[];
-      incoming = inRows.map((r) => ({
-        edge: this.mapEdgeRow(r),
-        source: this.mapNodeRow({
-          id: r.source_id,
-          type: r.n_type,
-          title: r.n_title,
-          file: r.n_file,
-          metadata: r.n_metadata,
-          sha256: r.n_sha256,
-          updated_at: r.n_updated_at,
-        }),
-      }));
-    }
-
-    return { node, outgoing, incoming };
+    return {
+      node,
+      outgoing: outRows.map((r) => ({ edge: this.mapEdgeRow(r), target: mapJoined(r, "target_id") })),
+      incoming: inRows.map((r) => ({ edge: this.mapEdgeRow(r), source: mapJoined(r, "source_id") })),
+    };
   }
 
   public findOrphans(): OrphanReport {
     const t0 = Date.now();
-
-    // 1. Specs without BDDs
-    const specsNoBddStmt = this.db.prepare(`
-      SELECT s.id FROM eos_kg_nodes s
-      WHERE s.type = 'SPEC'
-        AND s.id NOT IN (
-          SELECT source_id FROM eos_kg_edges WHERE relation = 'HAS_SCENARIO'
+    const specsWithoutBdd = (
+      this.db
+        .prepare(
+          "SELECT s.id FROM eos_kg_nodes s WHERE s.type = 'SPEC' AND s.id NOT IN (SELECT source_id FROM eos_kg_edges WHERE relation = 'HAS_SCENARIO')",
         )
-    `);
-    const specsWithoutBdd = (specsNoBddStmt.all() as any[]).map((r) => r.id);
-
-    // 2. BDDs without Specs
-    const bddNoSpecStmt = this.db.prepare(`
-      SELECT b.id FROM eos_kg_nodes b
-      WHERE b.type = 'BDD'
-        AND b.id NOT IN (
-          SELECT target_id FROM eos_kg_edges WHERE relation = 'HAS_SCENARIO'
+        .all() as any[]
+    ).map((r) => r.id);
+    const bddsWithoutSpec = (
+      this.db
+        .prepare(
+          "SELECT b.id FROM eos_kg_nodes b WHERE b.type = 'BDD' AND b.id NOT IN (SELECT target_id FROM eos_kg_edges WHERE relation = 'HAS_SCENARIO')",
         )
-    `);
-    const bddsWithoutSpec = (bddNoSpecStmt.all() as any[]).map((r) => r.id);
+        .all() as any[]
+    ).map((r) => r.id);
+    const disconnectedNodes = (
+      this.db
+        .prepare(
+          "SELECT id FROM eos_kg_nodes WHERE id NOT IN (SELECT source_id FROM eos_kg_edges) AND id NOT IN (SELECT target_id FROM eos_kg_edges)",
+        )
+        .all() as any[]
+    ).map((r) => r.id);
 
-    // 3. Disconnected nodes (degree 0)
-    const disconnectedStmt = this.db.prepare(`
-      SELECT id FROM eos_kg_nodes
-      WHERE id NOT IN (SELECT source_id FROM eos_kg_edges)
-        AND id NOT IN (SELECT target_id FROM eos_kg_edges)
-    `);
-    const disconnectedNodes = (disconnectedStmt.all() as any[]).map((r) => r.id);
-
-    // 4. Total specs for coverage ratio
-    const totalSpecsStmt = this.db.prepare("SELECT COUNT(*) as count FROM eos_kg_nodes WHERE type = 'SPEC'");
-    const totalSpecs = Number((totalSpecsStmt.get() as any)?.count || 0);
-
-    const specsWithBddCount = totalSpecs - specsWithoutBdd.length;
-    const coverageRatio = totalSpecs > 0 ? specsWithBddCount / totalSpecs : 1.0;
+    const totalSpecs = Number(
+      (this.db.prepare("SELECT COUNT(*) as count FROM eos_kg_nodes WHERE type = 'SPEC'").get() as any)?.count || 0,
+    );
+    const coverageRatio = totalSpecs > 0 ? (totalSpecs - specsWithoutBdd.length) / totalSpecs : 1.0;
 
     return {
       totalOrphans: specsWithoutBdd.length + bddsWithoutSpec.length + disconnectedNodes.length,
@@ -973,57 +726,39 @@ export class EosKnowledgeGraphEngine {
   }
 
   public getGraphStats(): GraphStats {
-    const totalNodesStmt = this.db.prepare("SELECT COUNT(*) as c FROM eos_kg_nodes");
-    const totalNodes = Number((totalNodesStmt.get() as any)?.c || 0);
+    const totalNodes = Number((this.db.prepare("SELECT COUNT(*) as c FROM eos_kg_nodes").get() as any)?.c || 0);
+    const totalEdges = Number((this.db.prepare("SELECT COUNT(*) as c FROM eos_kg_edges").get() as any)?.c || 0);
 
-    const totalEdgesStmt = this.db.prepare("SELECT COUNT(*) as c FROM eos_kg_edges");
-    const totalEdges = Number((totalEdgesStmt.get() as any)?.c || 0);
-
-    const nodesByTypeStmt = this.db.prepare("SELECT type, COUNT(*) as c FROM eos_kg_nodes GROUP BY type");
     const nodesByType: Record<string, number> = {};
-    for (const r of nodesByTypeStmt.all() as any[]) {
+    for (const r of this.db.prepare("SELECT type, COUNT(*) as c FROM eos_kg_nodes GROUP BY type").all() as any[]) {
       nodesByType[r.type] = Number(r.c);
     }
 
-    const edgesByRelStmt = this.db.prepare("SELECT relation, COUNT(*) as c FROM eos_kg_edges GROUP BY relation");
     const edgesByRelation: Record<string, number> = {};
-    for (const r of edgesByRelStmt.all() as any[]) {
+    for (const r of this.db
+      .prepare("SELECT relation, COUNT(*) as c FROM eos_kg_edges GROUP BY relation")
+      .all() as any[]) {
       edgesByRelation[r.relation] = Number(r.c);
     }
 
-    const maxPossibleEdges = totalNodes > 1 ? totalNodes * (totalNodes - 1) : 1;
-    const density = totalNodes > 1 ? totalEdges / maxPossibleEdges : 0;
-
-    // Top Hubs by Degree
-    const hubsStmt = this.db.prepare(`
-      SELECT n.id, n.type, (
-        (SELECT COUNT(*) FROM eos_kg_edges WHERE source_id = n.id) +
-        (SELECT COUNT(*) FROM eos_kg_edges WHERE target_id = n.id)
-      ) as degree
-      FROM eos_kg_nodes n
-      ORDER BY degree DESC
-      LIMIT 10
-    `);
-    const topHubs = (hubsStmt.all() as any[]).map((r) => ({
-      id: r.id,
-      type: r.type as NodeType,
-      degree: Number(r.degree),
-    }));
-
-    // Cryptographic topology hash
-    const allNodesStmt = this.db.prepare("SELECT id, sha256 FROM eos_kg_nodes ORDER BY id ASC");
-    const allEdgesStmt = this.db.prepare(
-      "SELECT source_id, target_id, relation FROM eos_kg_edges ORDER BY source_id, target_id, relation ASC",
-    );
+    const density = totalNodes > 1 ? totalEdges / (totalNodes * (totalNodes - 1)) : 0;
+    const topHubs = (
+      this.db
+        .prepare(
+          "SELECT n.id, n.type, ((SELECT COUNT(*) FROM eos_kg_edges WHERE source_id = n.id) + (SELECT COUNT(*) FROM eos_kg_edges WHERE target_id = n.id)) as degree FROM eos_kg_nodes n ORDER BY degree DESC LIMIT 10",
+        )
+        .all() as any[]
+    ).map((r) => ({ id: r.id, type: r.type as NodeType, degree: Number(r.degree) }));
 
     const hasher = crypto.createHash("sha256");
-    for (const n of allNodesStmt.all() as any[]) {
+    for (const n of this.db.prepare("SELECT id, sha256 FROM eos_kg_nodes ORDER BY id ASC").all() as any[]) {
       hasher.update(`${n.id}:${n.sha256};`);
     }
-    for (const e of allEdgesStmt.all() as any[]) {
+    for (const e of this.db
+      .prepare("SELECT source_id, target_id, relation FROM eos_kg_edges ORDER BY source_id, target_id, relation ASC")
+      .all() as any[]) {
       hasher.update(`${e.source_id}->${e.relation}->${e.target_id};`);
     }
-    const graphSha256 = hasher.digest("hex");
 
     return {
       totalNodes,
@@ -1031,7 +766,7 @@ export class EosKnowledgeGraphEngine {
       nodesByType,
       edgesByRelation,
       density,
-      graphSha256,
+      graphSha256: hasher.digest("hex"),
       topHubs,
     };
   }
