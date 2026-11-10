@@ -13,13 +13,14 @@
 
 import { spawn } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 
 const root = process.cwd();
-const MIN_LINE_PCT = Number(process.env.COVERAGE_MIN_LINE ?? 80);
-const MIN_BRANCH_PCT = Number(process.env.COVERAGE_MIN_BRANCH ?? 80);
-const MIN_FUNC_PCT = Number(process.env.COVERAGE_MIN_FUNC ?? 75);
-const CONCURRENCY = Number(process.env.COVERAGE_CONCURRENCY ?? 4);
+const MIN_LINE_PCT = Number(process.env.COVERAGE_MIN_LINE ?? 85);
+const MIN_BRANCH_PCT = Number(process.env.COVERAGE_MIN_BRANCH ?? 85);
+const MIN_FUNC_PCT = Number(process.env.COVERAGE_MIN_FUNC ?? 85);
+const CONCURRENCY = Number(process.env.COVERAGE_CONCURRENCY ?? Math.min(8, os.cpus().length));
 
 console.log("======================================================================");
 console.log(" EOS SYSTEM — COVERAGE GATE (native V8, zero external deps)");
@@ -42,7 +43,14 @@ if (testFiles.length === 0) {
 
 const child = spawn(
   process.execPath,
-  ["--test", "--experimental-test-coverage", `--test-concurrency=${CONCURRENCY}`, ...testFiles],
+  [
+    "--test",
+    "--experimental-test-coverage",
+    "--test-coverage-exclude=bin/**",
+    "--test-coverage-exclude=scripts/**",
+    `--test-concurrency=${CONCURRENCY}`,
+    ...testFiles,
+  ],
   {
     cwd: root,
     stdio: ["ignore", "pipe", "pipe"],
@@ -84,6 +92,40 @@ child.on("close", (exitCode) => {
   console.log(`    Branches: ${branchPct}%`);
   console.log(`    Functions: ${funcPct}%`);
   console.log("");
+
+  // Extract file-by-file breakdown for targeted aerospace elevation
+  const fileMatches = [
+    ...stdout.matchAll(/ℹ?\s*([a-zA-Z0-9_\-/.]+\.(?:ts|js|mjs))\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)/g),
+  ];
+  if (fileMatches.length > 0) {
+    const fileStats = fileMatches
+      .map((m) => ({
+        file: m[1],
+        linePct: Number(m[2]),
+        branchPct: Number(m[3]),
+        funcPct: Number(m[4]),
+      }))
+      .filter((f) => f.file !== "all files")
+      .sort((a, b) => a.branchPct - b.branchPct);
+
+    fs.writeFileSync(
+      path.join(root, ".coverage-summary.json"),
+      JSON.stringify(
+        { timestamp: new Date().toISOString(), summary: { linePct, branchPct, funcPct }, files: fileStats },
+        null,
+        2,
+      ),
+    );
+
+    const lowest10 = fileStats.slice(0, 10);
+    console.log(" 🎯 Lowest 10 Modules by Branch Coverage:");
+    for (const f of lowest10) {
+      console.log(
+        `    • ${f.file.padEnd(45)} Branches: ${String(f.branchPct).padStart(5)}% | Lines: ${String(f.linePct).padStart(5)}%`,
+      );
+    }
+    console.log("");
+  }
 
   const violations = [];
   if (linePct < MIN_LINE_PCT) violations.push(`Lines ${linePct}% < minimum ${MIN_LINE_PCT}%`);

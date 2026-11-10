@@ -13,12 +13,12 @@
 
 Registry posture is intentionally fail-closed:
 
-| Field | Current | Blocks scorecard |
-| --- | --- | --- |
-| `intake` | `PENDING_INTAKE` | yes (`specCoverage`) |
-| `specification` | `PENDING_SPECIFICATION` | yes (`specCoverage`) |
-| `audit` | `PENDING_AUDIT` | yes (`gatePassRate`) |
-| `authorization` | `LEVEL_1_READ_ONLY` | yes (`mutationFloor`) |
+| Field           | Current                 | Blocks scorecard      |
+| --------------- | ----------------------- | --------------------- |
+| `intake`        | `PENDING_INTAKE`        | yes (`specCoverage`)  |
+| `specification` | `PENDING_SPECIFICATION` | yes (`specCoverage`)  |
+| `audit`         | `PENDING_AUDIT`         | yes (`gatePassRate`)  |
+| `authorization` | `LEVEL_1_READ_ONLY`     | yes (`mutationFloor`) |
 
 Sibling repo already has local `IMPLEMENTATION_AUTHORIZATION.md` (`LEVEL 2`) and production URL `https://donaciones-drab.vercel.app`. Control-plane registry must not copy that status until Law IV preconditions are sealed here.
 

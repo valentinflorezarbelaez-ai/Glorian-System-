@@ -148,6 +148,7 @@ export class EosFleetProductionVerifier {
         host === "localhost" ||
         host === "127.0.0.1" ||
         host === "::1" ||
+        host === "[::1]" ||
         host.startsWith("127.") ||
         host === "0.0.0.0"
       ) {
@@ -165,7 +166,12 @@ export class EosFleetProductionVerifier {
       }
 
       // Guard against IPv6 unique local / link-local addresses
-      if (host.startsWith("fc00:") || host.startsWith("fe80:")) {
+      if (
+        host.startsWith("fc00:") ||
+        host.startsWith("fe80:") ||
+        host.startsWith("[fc00:") ||
+        host.startsWith("[fe80:")
+      ) {
         throw new Error(`SSRF_TARGET_PROHIBITED: Target hostname '${host}' is a private IPv6 address`);
       }
     }

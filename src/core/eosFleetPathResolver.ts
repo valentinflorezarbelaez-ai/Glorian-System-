@@ -36,10 +36,7 @@ function isGitCheckout(candidate: string): boolean {
  */
 function hasFleetProjectMarker(candidate: string): boolean {
   if (fs.existsSync(path.join(candidate, "package.json"))) return true;
-  return (
-    fs.existsSync(path.join(candidate, "index.html")) &&
-    fs.existsSync(path.join(candidate, "vercel.json"))
-  );
+  return fs.existsSync(path.join(candidate, "index.html")) && fs.existsSync(path.join(candidate, "vercel.json"));
 }
 
 function isUsableFleetCheckout(candidate: string): boolean {
@@ -56,10 +53,7 @@ function workspaceCandidates(projectRoot: string, resolvedLocalDir: string): str
 }
 
 /** Resolve one registered fleet project to a local git checkout when present. */
-export function resolveFleetProjectPath(
-  projectRoot: string,
-  project: FleetPathProject,
-): ResolvedFleetPath {
+export function resolveFleetProjectPath(projectRoot: string, project: FleetPathProject): ResolvedFleetPath {
   const id = String(project.id || "").trim();
   const name = String(project.name || id);
   const envName = typeof project.localPathEnv === "string" ? project.localPathEnv.trim() : "";

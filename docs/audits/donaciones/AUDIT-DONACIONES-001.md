@@ -13,16 +13,16 @@
 
 ## 2. Evidence Collected
 
-| Check | Result | Notes |
-| --- | --- | --- |
-| Remote | PASS | `https://github.com/valentinflorezarbelaez-ai/Donaciones.git` |
-| HEAD pin | PASS | `2f45b0ab86c70e00066d6d442690c446942d3cf4` |
-| Static markers | PASS | `index.html` + `vercel.json` present; no `package.json` (expected) |
-| Security headers in `vercel.json` | PASS | CSP, HSTS, `X-Content-Type-Options`, `X-Frame-Options`, Permissions-Policy |
-| Plaintext secret patterns in `index.html`/`app.js`/`styles.css` | PASS | No `api_key` / `Bearer` / `sk-` matches in scanned sources |
-| Production URL allowlist | PASS | `https://donaciones-drab.vercel.app` (`.vercel.app`) |
-| Fleet live probe (control plane `/api/fleet?probe=1`) | PASS | `productionProbe=HEALTHY` observed post-#614 tip |
-| Dogfood path | PASS | After static checkout fix, `FLOW_INSPECT:donaciones` → `SUCCESS` with workspace root |
+| Check                                                           | Result | Notes                                                                                |
+| --------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------ |
+| Remote                                                          | PASS   | `https://github.com/valentinflorezarbelaez-ai/Donaciones.git`                        |
+| HEAD pin                                                        | PASS   | `2f45b0ab86c70e00066d6d442690c446942d3cf4`                                           |
+| Static markers                                                  | PASS   | `index.html` + `vercel.json` present; no `package.json` (expected)                   |
+| Security headers in `vercel.json`                               | PASS   | CSP, HSTS, `X-Content-Type-Options`, `X-Frame-Options`, Permissions-Policy           |
+| Plaintext secret patterns in `index.html`/`app.js`/`styles.css` | PASS   | No `api_key` / `Bearer` / `sk-` matches in scanned sources                           |
+| Production URL allowlist                                        | PASS   | `https://donaciones-drab.vercel.app` (`.vercel.app`)                                 |
+| Fleet live probe (control plane `/api/fleet?probe=1`)           | PASS   | `productionProbe=HEALTHY` observed post-#614 tip                                     |
+| Dogfood path                                                    | PASS   | After static checkout fix, `FLOW_INSPECT:donaciones` → `SUCCESS` with workspace root |
 
 ## 3. Residual Risks (not blockers for AUDIT_COMPLETE)
 
