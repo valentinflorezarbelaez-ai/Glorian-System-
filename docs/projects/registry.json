@@ -148,11 +148,12 @@
       "intake": "INTAKE_COMPLETE",
       "specification": "SPECIFICATION_APPROVED",
       "audit": "AUDIT_COMPLETE",
-      "authorization": "LEVEL_2_AUTHORIZED",
+      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
+      "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "scripts/smoke-test.ps1",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "581de7a5e7fc2624c851551a82ba142ae1c8b9c8"
+      "headCommitSha": "f0882a07c0acc2a449ad34bfec6cd754f9efe3b8"
     },
     {
       "id": "portafolio",

@@ -979,3 +979,19 @@
   - `docs/audits/donaciones/AUDIT-DONACIONES-002.md`
   - `docs/projects/registry.json` (`donaciones` → `LEVEL_3_PRODUCTION_AUTHORIZED`)
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-09-PTG-LAW-IV-LEVEL-3
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Control-plane Level 3 elevation for `performance-talent-group` (project-scoped `SPEC-PTG-001`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-09: “continuemos”)
+- **Scope**:
+  1. Revalidate git cleanliness, canonical secret scan (0/69), live HTTPS 200 on `https://ptg-performance-talent-group.vercel.app`.
+  2. Promote registry authorization `LEVEL_2_AUTHORIZED` → `LEVEL_3_PRODUCTION_AUTHORIZED`; set `ownerApproval`; refresh `headCommitSha` to `f0882a07…`.
+  3. Sibling PTG tree unmodified (`Δ = 0`); future writes require scoped missions.
+- **Artifacts Approved**:
+  - `docs/intake/performance-talent-group/INTAKE-001-PTG-LEVEL-3-ELEVATION.md`
+  - `docs/specs/performance-talent-group/SPEC-PTG-001.md`
+  - `docs/audits/performance-talent-group/AUDIT-PTG-001.md`
+  - `docs/projects/registry.json` (`performance-talent-group` → Level 3)
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
