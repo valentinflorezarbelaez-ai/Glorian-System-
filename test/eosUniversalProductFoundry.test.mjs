@@ -196,6 +196,57 @@ describe("SPEC-039: Universal Product Foundry Engine Verification", () => {
       assert.ok(parsed.blueprint.sha256MerkleRoot);
     });
 
+    it("instantiates polyglot scaffold tree via eos_product_foundry_create MCP call with targetDir", () => {
+      const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "eos-mcp-foundry-"));
+      try {
+        fs.writeFileSync(path.join(tmpRoot, "package.json"), JSON.stringify({ name: "tmp-foundry", version: "1.0.0" }));
+        const server = new EosMcpServer(tmpRoot);
+        server.configureIamPolicies([
+          {
+            id: "allow-foundry-create",
+            tenantId: "tenant-local",
+            roles: ["engineer"],
+            actions: ["mcp.tools.call"],
+            resourcePrefix: "mcp/tools/eos_product_foundry_create",
+          },
+        ]);
+        server.configureIamDefaultPrincipal({
+          subjectId: "user:architect",
+          tenantId: "tenant-local",
+          roles: ["engineer"],
+        });
+        const res = server.handleRequest({
+          jsonrpc: "2.0",
+          id: 3,
+          method: "tools/call",
+          params: {
+            name: "eos_product_foundry_create",
+            arguments: {
+              name: "Polyglot Edge Core",
+              domain: "fintech",
+              tier: "MISSION_CRITICAL",
+              platforms: ["web", "hft-native-go", "acoustic-dsp-rust"],
+              entities: ["OrderBook"],
+              commands: ["SettleTrade"],
+              targetDir: "scaffold-out",
+              dryRun: false,
+            },
+          },
+        });
+        assert.equal(res.jsonrpc, "2.0");
+        const parsed = JSON.parse(res.result.content[0].text);
+        assert.equal(parsed.status, "BLUEPRINT_CREATED");
+        assert.ok(parsed.instantiation);
+        assert.equal(parsed.instantiation.dryRun, false);
+        assert.ok(parsed.instantiation.writtenFiles.includes("go.mod"));
+        assert.ok(parsed.instantiation.writtenFiles.includes("Cargo.toml"));
+        assert.ok(fs.existsSync(path.join(tmpRoot, "scaffold-out", "go.mod")));
+        assert.ok(fs.existsSync(path.join(tmpRoot, "scaffold-out", "docs/specs/spec.md")));
+      } finally {
+        fs.rmSync(tmpRoot, { recursive: true, force: true });
+      }
+    });
+
     it("dispatches eos_product_foundry_validate via MCP server", () => {
       const server = new EosMcpServer();
       const res = server.handleRequest({

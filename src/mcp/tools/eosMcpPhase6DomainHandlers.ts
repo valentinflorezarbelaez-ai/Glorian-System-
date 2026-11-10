@@ -193,11 +193,24 @@ export function createPhase6DomainHandlers(deps: Phase6DomainHandlerDeps): Reado
       };
       const blueprint = EosUniversalProductFoundry.createProductBlueprint(manifest);
       const report = EosUniversalProductFoundry.validateProductTopology(blueprint);
+      let instantiation: ReturnType<typeof EosUniversalProductFoundry.instantiateScaffoldTree> | null = null;
+      if (typeof args.targetDir === "string" && args.targetDir.trim().length > 0) {
+        const resolvedRoot = path.resolve(projectRoot);
+        const resolvedTarget = path.resolve(resolvedRoot, args.targetDir.trim());
+        const rel = path.relative(resolvedRoot, resolvedTarget);
+        if (!rel || rel.startsWith("..") || path.isAbsolute(rel)) {
+          throw new Error("targetDir must be a relative subdirectory inside projectRoot");
+        }
+        instantiation = EosUniversalProductFoundry.instantiateScaffoldTree(blueprint, resolvedTarget, {
+          dryRun: args.dryRun !== false,
+        });
+      }
       ctx.onProgress?.(100, 100, "Product blueprint created and verified");
       return {
         status: "BLUEPRINT_CREATED",
         blueprint,
         validation: report,
+        instantiation,
         totalFilesGenerated: blueprint.domainEntities.length + blueprint.useCases.length + 2,
       };
     },

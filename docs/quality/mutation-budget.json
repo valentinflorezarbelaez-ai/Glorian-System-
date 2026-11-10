@@ -6,6 +6,7 @@
     "src/core/eosKernelPrimitives.ts": 0.87,
     "src/core/eosSLOErrorBudgetGovernor.ts": 1,
     "src/core/eosThreeMountainsCompass.ts": 0.97,
+    "src/core/eosUniversalProductFoundry.ts": 1,
     "src/core/eosVercelCanaryObservability.ts": 1
   }
 }
