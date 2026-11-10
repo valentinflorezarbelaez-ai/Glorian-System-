@@ -1049,3 +1049,75 @@
   - `docs/plans/PLAN-073-DISTRIBUTED-PEER-MESH.md`
   - `docs/tasks/TASKS-073-DISTRIBUTED-PEER-MESH.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-HARDWARE-ARENA-189
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Hardware-Sympathetic Memory Arena & Cache-Line Alignment Engine (`SPEC-189`, `CHANGE-074`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “todos uno a uno perfeccion perfeccion como todos ellos lo harian unidos”)
+- **Scope**:
+  1. Implement Layer-0 64-byte aligned bump & slab memory arena `src/core/eosHardwareMemoryArena.ts`.
+  2. Subpath export `"./arena"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. 100% BDD test coverage in `test/eosHardwareMemoryArena.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-074-HARDWARE-MEMORY-ARENA.md`
+  - `openspec/changes/CHANGE-074-HARDWARE-MEMORY-ARENA.md`
+  - `openspec/specs/SPEC-189-HARDWARE-MEMORY-ARENA.md`
+  - `docs/plans/PLAN-074-HARDWARE-MEMORY-ARENA.md`
+  - `docs/tasks/TASKS-074-HARDWARE-MEMORY-ARENA.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-DELAY-TOLERANT-190
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Delay-Tolerant Networking & Opportunistic Bundle Protocol Engine (`SPEC-190`, `CHANGE-075`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “todos uno a uno perfeccion perfeccion como todos ellos lo harian unidos”)
+- **Scope**:
+  1. Implement Layer-0 DTN Bundle Protocol & store-and-forward engine `src/core/eosDelayTolerantMesh.ts`.
+  2. Subpath export `"./dtn"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. 100% BDD test coverage in `test/eosDelayTolerantMesh.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-075-DELAY-TOLERANT-MESH.md`
+  - `openspec/changes/CHANGE-075-DELAY-TOLERANT-MESH.md`
+  - `openspec/specs/SPEC-190-DELAY-TOLERANT-MESH.md`
+  - `docs/plans/PLAN-075-DELAY-TOLERANT-MESH.md`
+  - `docs/tasks/TASKS-075-DELAY-TOLERANT-MESH.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-NEURO-SYMBOLIC-191
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Neuro-Symbolic Runtime Invariant Verification Engine (`SPEC-191`, `CHANGE-076`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “todos uno a uno perfeccion perfeccion como todos ellos lo harian unidos”)
+- **Scope**:
+  1. Implement Layer-0 Hoare-logic invariant proof & Horn clause engine `src/core/eosNeuroSymbolicVerifier.ts`.
+  2. Subpath export `"./neuro-symbolic"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. 100% BDD test coverage in `test/eosNeuroSymbolicVerifier.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-076-NEURO-SYMBOLIC-VERIFIER.md`
+  - `openspec/changes/CHANGE-076-NEURO-SYMBOLIC-VERIFIER.md`
+  - `openspec/specs/SPEC-191-NEURO-SYMBOLIC-VERIFIER.md`
+  - `docs/plans/PLAN-076-NEURO-SYMBOLIC-VERIFIER.md`
+  - `docs/tasks/TASKS-076-NEURO-SYMBOLIC-VERIFIER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-SLSA-PROVENANCE-192
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Hermetic Supply-Chain & SLSA Level-4 Provenance Attestation Engine (`SPEC-192`, `CHANGE-077`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “todos uno a uno perfeccion perfeccion como todos ellos lo harian unidos”)
+- **Scope**:
+  1. Implement Layer-0 in-toto v1.0 / SLSA Provenance v1.0 and Ed25519 signing engine `src/core/eosSlsaSupplyChainAttestation.ts`.
+  2. Subpath export `"./provenance"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. 100% BDD test coverage in `test/eosSlsaSupplyChainAttestation.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-077-SLSA-SUPPLY-CHAIN.md`
+  - `openspec/changes/CHANGE-077-SLSA-SUPPLY-CHAIN.md`
+  - `openspec/specs/SPEC-192-SLSA-SUPPLY-CHAIN.md`
+  - `docs/plans/PLAN-077-SLSA-SUPPLY-CHAIN.md`
+  - `docs/tasks/TASKS-077-SLSA-SUPPLY-CHAIN.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

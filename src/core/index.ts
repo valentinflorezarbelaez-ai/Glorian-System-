@@ -130,3 +130,7 @@ export * from "./eosPlanetaryMultiCloudEvacuationMesh.ts";
 export * from "./eosEnterpriseFacade.ts";
 export * from "./eosOtelPrometheusExporter.ts";
 export * from "./eosDistributedPeerMesh.ts";
+export * from "./eosHardwareMemoryArena.ts";
+export * from "./eosDelayTolerantMesh.ts";
+export * from "./eosNeuroSymbolicVerifier.ts";
+export * from "./eosSlsaSupplyChainAttestation.ts";

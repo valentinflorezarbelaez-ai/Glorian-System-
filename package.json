@@ -13,6 +13,10 @@
     "./simulator": "./src/core/eosDeterministicSimulator.ts",
     "./sandbox": "./src/core/eosWasmSandboxEngine.ts",
     "./peer-mesh": "./src/core/eosDistributedPeerMesh.ts",
+    "./arena": "./src/core/eosHardwareMemoryArena.ts",
+    "./dtn": "./src/core/eosDelayTolerantMesh.ts",
+    "./neuro-symbolic": "./src/core/eosNeuroSymbolicVerifier.ts",
+    "./provenance": "./src/core/eosSlsaSupplyChainAttestation.ts",
     "./package.json": "./package.json"
   },
   "bin": {

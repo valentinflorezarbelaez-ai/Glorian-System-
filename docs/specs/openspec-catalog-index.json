@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
-  "totalSpecs": 183,
-  "catalogSha256": "beaa2e7b23c133748da22181e8d34915b473d2aac61ce25797472786b17abd61",
+  "totalSpecs": 187,
+  "catalogSha256": "8ef2dab56591a96ae02f2f9a5abe0a113dec8589094ce209d5d0f4f3e2df1ea2",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1649,6 +1649,42 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-188-DISTRIBUTED-PEER-MESH.md",
       "sha256": "ec595e43e4708c89993971c9230f9e30f3456d4e359548215843fe684cbdf548"
+    },
+    {
+      "id": "SPEC-189",
+      "title": "Hardware-Sympathetic Memory Arena & Cache-Line Alignment Engine",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-189-HARDWARE-MEMORY-ARENA.md",
+      "sha256": "00127816f7d293d760394b6d25831cf1bc4cebf41e9e37abbe75d2feb5f8adf9"
+    },
+    {
+      "id": "SPEC-190",
+      "title": "Delay-Tolerant Networking & Opportunistic Bundle Protocol Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-190-DELAY-TOLERANT-MESH.md",
+      "sha256": "496287b9989378108efa5e085810b06dd2a6e70122d3f1e21639baba25717314"
+    },
+    {
+      "id": "SPEC-191",
+      "title": "Neuro-Symbolic Runtime Invariant Verification Engine",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-191-NEURO-SYMBOLIC-VERIFIER.md",
+      "sha256": "6a7242d95877f684e7441a574e140424b38853bd14d46b01bccdcd0dbe97bdcf"
+    },
+    {
+      "id": "SPEC-192",
+      "title": "Hermetic Supply-Chain & SLSA Level-4 Provenance Attestation Engine",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-192-SLSA-SUPPLY-CHAIN.md",
+      "sha256": "8f335e959612314026fa3abb302b713786725165c85bdc35f617135452a8adb2"
     }
   ]
 }
