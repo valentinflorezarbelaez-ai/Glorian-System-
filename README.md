@@ -44,6 +44,8 @@ npm run test:ci
 
 The root `index.html` is the browser guide and demo catalog; it cannot run commands on your computer. The read-only `flow inspect` and `flow plan` commands do not change the target repository. Git and Node.js 22 or later must be installed. The routes under `api/` use Vercel's serverless-function conventions. Static file opening can show the page, but API-backed demos need a compatible function host.
 
+For a comprehensive developer manual and recipes covering the enterprise facade, peer mesh, memory arena, DTN, neuro-symbolic verifier, and IDE integration (Cursor / Antigravity), see [the Glorian Developer Guide](docs/DEVELOPER_GUIDE.md).
+
 For a first-time-user evaluation, task script, and qualitative launch gate, see [the EOS usability pilot](docs/USABILITY-PILOT.md). No user-study results are claimed yet.
 
 ## Useful commands

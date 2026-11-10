@@ -1,0 +1,296 @@
+# Manual del Desarrollador: Glorian System (Control Plane & SDLC Accelerator)
+
+Bienvenido a la guía de arquitectura y uso de **Glorian System**. Este documento explica de forma clara, estándar y práctica qué compone el sistema, para qué sirve cada subsistema, cómo integrarlo en tu flujo diario de trabajo y cómo conectarlo como servidor MCP a los entornos de desarrollo **Cursor** y **Google Antigravity**.
+
+---
+
+## 1. ¿Qué es Glorian System?
+
+Glorian System es un **plano de control de ingeniería de software** diseñado para asistir, auditar, acelerar y gobernar el desarrollo de software en proyectos de cualquier escala y lenguaje (TypeScript, Python, Go, Rust, C/C++, Java).
+
+### Principios Fundamentales de Diseño
+
+- **Cero Dependencias de Runtime (`dependencies: {}`)**: Todo el código de Capa-0 se ejecuta sobre la biblioteca estándar de Node.js (`node:crypto`, `node:fs`, `node:path`, `node:net`, `node:events`). No hay riesgo de dependencias maliciosas ni saturación de `node_modules`.
+- **Node.js 24 Strip-Only TypeScript**: Compilación instantánea sin compiladores pesados ni constructores complejos.
+- **Design by Contract (DbC)**: Verificación rigurosa de precondiciones, poscondiciones e invariantes en cada llamada de función crítica.
+- **Especificaciones Formales Previas (EARS y BDD)**: Ninguna función entra al sistema sin una especificación formal y escenarios de prueba asociados.
+
+---
+
+## 2. Integración con IDEs: Cursor y Google Antigravity (Vía MCP)
+
+Glorian System implementa el protocolo abierto **Model Context Protocol (MCP)**, permitiendo que asistentes inteligentes en **Cursor** y **Google Antigravity** inspeccionen código, calculen radio de impacto (_blast radius_), ejecuten auditorías y administren workspaces de forma segura.
+
+### A. Configuración en Cursor
+
+En tu proyecto o en tu configuración global de Cursor (`~/.cursor/mcp.json` o `.cursor/mcp.json` en la raíz del repositorio):
+
+```json
+{
+  "mcpServers": {
+    "glorian-system": {
+      "command": "node",
+      "args": ["/ruta/absoluta/a/Glorian-System-/bin/eos.mjs", "mcp"]
+    }
+  }
+}
+```
+
+### B. Configuración en Google Antigravity
+
+En el archivo de configuración de extensiones MCP o ajustes del agente:
+
+```json
+{
+  "servers": {
+    "glorian": {
+      "transport": "stdio",
+      "command": "node",
+      "args": ["/home/antigravity/valentinflorezarbelaez-ai/Glorian-System-/bin/eos.mjs", "mcp"]
+    }
+  }
+}
+```
+
+### C. Modo Streaming HTTP / Server-Sent Events (Opcional)
+
+Si prefieres conectar múltiples herramientas mediante HTTP en lugar de Stdio:
+
+```bash
+# Inicia el servidor MCP sobre HTTP/SSE en el puerto 3333
+npm run mcp:stream
+```
+
+Endpoint disponible: `http://127.0.0.1:3333/sse`
+
+---
+
+## 3. Catálogo de Módulos Principales y Recetas de Código
+
+El sistema expone submódulos limpios a través de los _subpath exports_ de `package.json`. Puedes importarlos directamente:
+
+```ts
+import { EosEnterpriseFacade } from "eos-system-landing/enterprise";
+import {
+  EosOtelPrometheusExporter,
+  getDefaultPrometheusExporter,
+} from "eos-system-landing/telemetry";
+import { EosDistributedPeerMesh } from "eos-system-landing/peer-mesh";
+import { EosHardwareMemoryArena } from "eos-system-landing/arena";
+import { EosDelayTolerantMesh } from "eos-system-landing/dtn";
+import { EosNeuroSymbolicVerifier } from "eos-system-landing/neuro-symbolic";
+import { EosSlsaSupplyChainAttestation } from "eos-system-landing/provenance";
+```
+
+---
+
+### Módulo 1: Fachada Empresarial (`EosEnterpriseFacade`)
+
+**Propósito:** Proporcionar ergonomía estándar empresarial (CNCF/IEEE) para aislar cambios en workspaces efímeros, monitorear circuitos de protección (_circuit breakers_) y auditar la salud del sistema.
+
+```ts
+import { EosEnterpriseFacade } from "./src/core/eosEnterpriseFacade.ts";
+
+const facade = new EosEnterpriseFacade();
+
+// 1. Auditar salud del sistema
+const health = facade.auditHealth();
+console.log(`Estado: ${health.status}, Hash SHA-256: ${health.sha256Receipt}`);
+
+// 2. Proteger una operación crítica con Circuit Breaker
+const result = facade.circuitBreaker.executeWithProtection(() => {
+  return "Operación ejecutada de forma segura";
+});
+
+// 3. Crear un workspace efímero con atestación
+const ws = facade.workspaces.createWorkspace(".worktrees/tarea-nueva");
+console.log(`Workspace activo: ${ws.workspaceId}, Token: ${ws.attestationToken}`);
+```
+
+---
+
+### Módulo 2: Exportador OpenTelemetry / Prometheus (`EosOtelPrometheusExporter`)
+
+**Propósito:** Calcular métricas RED de Google SRE (Rate, Errors, Duration con cuantiles P50, P90, P99) y exponerlas en formato canónico de texto Prometheus (0.0.4) para Datadog, Prometheus o Grafana.
+
+```ts
+import { getDefaultPrometheusExporter } from "./src/core/eosOtelPrometheusExporter.ts";
+
+const exporter = getDefaultPrometheusExporter();
+
+// Registrar una operación
+const inicio = Date.now();
+// ... lógica de negocio ...
+exporter.recordOperation("api-gateway", Date.now() - inicio, true);
+
+// Obtener métricas en formato texto Prometheus
+const prometheusOutput = exporter.exportPrometheusText();
+console.log(prometheusOutput);
+// Salida incluye:
+// # HELP glorian_requests_total Total number of requests tracked
+// # TYPE glorian_requests_total counter
+// # HELP glorian_request_duration_seconds Latency percentiles
+// # TYPE glorian_request_duration_seconds summary
+```
+
+---
+
+### Módulo 3: Malla Descentralizada Peer-to-Peer (`EosDistributedPeerMesh`)
+
+**Propósito:** Coordinar clústeres multi-nodo sin coordinadores centrales mediante el protocolo gossip SWIM, detección automática de caídas (`ALIVE` $\rightarrow$ `SUSPECT` $\rightarrow$ `DEAD`) y sincronización causal con relojes vectoriales.
+
+```ts
+import { EosDistributedPeerMesh } from "./src/core/eosDistributedPeerMesh.ts";
+
+const node = new EosDistributedPeerMesh({
+  localNodeId: "nodo-primario",
+  gossipFanout: 3,
+});
+
+// Registrar un par en el clúster
+node.registerPeer({
+  nodeId: "nodo-secundario",
+  address: "192.168.1.50",
+  port: 8080,
+  status: "ALIVE",
+  incarnation: 0,
+});
+
+// Compartir estado distribuido con reloj vectorial
+node.setState("cluster.config.version", "2.4.0");
+
+// Generar paquete para propagación epidémica
+const paquete = node.createGossipPacket();
+```
+
+---
+
+### Módulo 4: Simbiosis de Silicio y Memoria Directa (`EosHardwareMemoryArena`)
+
+**Propósito:** Eliminar pausas de Garbage Collector (GC) mediante asignación lineal continua (_bump allocation_) alineada estrictamente a 64 bytes (línea de caché L1/L2) y pools de slabs en potencias de 2 (64B a 4096B).
+
+```ts
+import { EosHardwareMemoryArena } from "./src/core/eosHardwareMemoryArena.ts";
+
+const arena = new EosHardwareMemoryArena(65536, 32);
+
+// Ejecutar operaciones intensivas dentro de un alcance temporal (reset en O(1) con 0 B/op)
+const respuesta = arena.withScope((bump) => {
+  const buffer = bump.allocate(256); // Garantizado: byteOffset % 64 === 0
+  buffer[0] = 123;
+  return buffer[0] * 2;
+});
+
+// Asignar un slab reutilizable
+const slab = arena.slabs.allocate(100); // Obtiene un slab de 128B
+// ... procesar buffer ...
+arena.slabs.release(slab); // Se limpia a ceros y vuelve a la lista libre
+```
+
+---
+
+### Módulo 5: Malla Tolerante a Retardos y Redes Particionadas (`EosDelayTolerantMesh`)
+
+**Propósito:** Enviar datos entre nodos con conectividad intermitente o enlaces de alta latencia (aeroespacial, edge, satélites) implementando el protocolo RFC 5050/9171 Bundle Protocol con transferencia de custodia.
+
+```ts
+import { EosDelayTolerantMesh } from "./src/core/eosDelayTolerantMesh.ts";
+
+const mesh = new EosDelayTolerantMesh("estacion-tierra");
+
+// Crear un paquete con TTL de 2 horas
+const paquete = mesh.createBundle("sonda-espacial", { telemetria: "ok" }, 7200000);
+
+// Abrir ventana de contacto oportunista y transferir custodia
+mesh.openContact("satelite-retransmisor", 30000);
+const recibo = mesh.transferCustody(paquete.bundleId, "satelite-retransmisor");
+console.log(`Custodia transferida, firma SHA-256: ${recibo.receiptSignatureSha256}`);
+```
+
+---
+
+### Módulo 6: Verificación Neuro-Simbólica en Bucle Cerrado (`EosNeuroSymbolicVerifier`)
+
+**Propósito:** Proteger la ejecución de agentes de IA comprobando precondiciones y poscondiciones matemáticas (lógica de Hoare), evaluando reglas SAT de cláusulas de Horn y bloqueando inyección de comandos o fuga de credenciales antes de tocar el sistema de archivos.
+
+```ts
+import { EosNeuroSymbolicVerifier } from "./src/core/eosNeuroSymbolicVerifier.ts";
+
+const verifier = new EosNeuroSymbolicVerifier();
+
+// Evaluar una acción propuesta por el agente
+const veredicto = verifier.verifyAction({
+  actionId: "ACCION-001",
+  actionType: "SHELL_COMMAND",
+  target: "npm test",
+  declaredPreconditions: { auth: true },
+});
+
+if (veredicto.status === "VERIFIED_SAFE") {
+  console.log("Acción formalmente verificada y segura para ejecución");
+} else {
+  console.error("Acción bloqueada por violaciones:", veredicto.violations);
+}
+```
+
+---
+
+### Módulo 7: Atestación de Cadena de Suministro SLSA Nivel 4 (`EosSlsaSupplyChainAttestation`)
+
+**Propósito:** Generar declaraciones de procedencia in-toto v1.0, firmar artefactos con criptografía asimétrica Ed25519 nativa y emitir listas de materiales de software (SBOM CycloneDX v1.5) certificando cero dependencias de terceros.
+
+```ts
+import { EosSlsaSupplyChainAttestation } from "./src/core/eosSlsaSupplyChainAttestation.ts";
+
+// 1. Generar par de claves Ed25519 nativo
+const { publicKeyPem, privateKeyPem, keyId } =
+  EosSlsaSupplyChainAttestation.generateEd25519KeyPair();
+
+// 2. Generar declaración de procedencia in-toto v1.0 / SLSA Provenance v1.0
+const declaracion = EosSlsaSupplyChainAttestation.generateProvenanceStatement({
+  subjects: [{ name: "dist/binario", digest: { sha256: "hash-del-binario..." } }],
+});
+
+// 3. Firmar digitalmente la declaración
+const sobreFirmado = EosSlsaSupplyChainAttestation.signStatement(declaracion, privateKeyPem, keyId);
+
+// 4. Verificar integridad y autenticidad
+const verificacion = EosSlsaSupplyChainAttestation.verifyEnvelope(sobreFirmado, publicKeyPem);
+console.log(`¿Firma válida y sin alteraciones?: ${verificacion.verified}`);
+```
+
+---
+
+## 4. Guía Rápida de Comandos CLI
+
+El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
+
+| Comando                                     | Descripción                                                                               |
+| :------------------------------------------ | :---------------------------------------------------------------------------------------- |
+| `node bin/eos.mjs help`                     | Muestra el menú completo de comandos disponibles.                                         |
+| `node bin/eos.mjs enterprise:health`        | Audita la salud del sistema y emite tabla de estado con recibo SHA-256.                   |
+| `node bin/eos.mjs enterprise:health --json` | Emite el reporte de salud en formato JSON machine-readable para CI/CD.                    |
+| `node bin/eos.mjs metrics`                  | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
+| `node bin/eos.mjs guard [directorio]`       | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
+| `node bin/eos.mjs flow inspect <ruta>`      | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |
+| `node bin/eos.mjs worktree list`            | Lista los árboles de trabajo (_worktrees_) aislados de Git.                               |
+
+---
+
+## 5. Verificación de Calidad y Mantenimiento
+
+Para asegurar que el repositorio se mantenga en el estado más alto de estabilidad:
+
+```bash
+# 1. Comprobación estricta de tipos TypeScript (0 errores)
+npm run typecheck
+
+# 2. Análisis estático de código con ESLint (0 advertencias, 0 errores)
+npm run lint
+
+# 3. Verificación de estilo y formato con Prettier
+npm run format:check
+
+# 4. Ejecución de la suite completa de pruebas
+npm test
+```
