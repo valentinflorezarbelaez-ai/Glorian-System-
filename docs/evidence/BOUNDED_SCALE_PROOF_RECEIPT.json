@@ -1,14 +1,14 @@
 {
   "epistemicState": "BOUNDED_SCALE_PROOF_WITHIN_TESTED_SCOPE",
-  "generatedAt": "2026-11-09T18:37:06.908Z",
+  "generatedAt": "2026-11-10T13:17:36.306Z",
   "load": {
     "allSLAPassed": true,
-    "p99Ms": 1,
+    "p99Ms": 0,
     "p99BudgetMs": 50,
     "withinBudget": true,
     "errorRate": 0,
-    "throughputRps": 32000,
-    "sha256Receipt": "0cabe43770391e8150811e2426024712acde9a7d498278468163020822afa13b"
+    "throughputRps": 64000,
+    "sha256Receipt": "658af6e8597d770c2c6851a58b41f7faf3208f943963e1f292486481fda91857"
   },
   "canary": {
     "cleanFinalStage": "FULL_PRODUCTION_100_PCT",
@@ -19,5 +19,5 @@
     "breachSha256": "41317cd0f62ee34222c541e1d88de452e924d5f13d89c06e0c77f21a134d2d8a"
   },
   "ok": true,
-  "sha256Receipt": "bdc433fbc3b42a4e51e99e747784b3f687b2625f847abc944ff331a1615ae66e"
+  "sha256Receipt": "bc55fa94c0ff1774cf892be3a16b19f267de0e45bdb019164c8430f292f35a2f"
 }

@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:8d6b83b5-f2a2-4a3a-9bbc-2aa4bdc01696",
+  "serialNumber": "urn:uuid:8b9f1e12-1ca3-47f6-8f04-4782dbf31008",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-09T21:15:31.379Z",
+    "timestamp": "2026-11-10T13:24:26.046Z",
     "tools": [
       {
         "type": "application",
@@ -31,11 +31,11 @@
     "properties": [
       {
         "name": "eos:lockfileHash",
-        "value": "sha256:5ae21c87122e0bcf0b456df2357debf1c9237e1c9d636fd40a24c04e7dd61c5c"
+        "value": "sha256:80fe02e34146d7f350790b981a57ac440e35a9736a2cf179bf63675b3525562e"
       },
       {
         "name": "eos:nodeVersion",
-        "value": "v24.21.0"
+        "value": "v24.19.0"
       },
       {
         "name": "eos:platform",
@@ -51,18 +51,18 @@
       },
       {
         "name": "eos:sbomReceipt",
-        "value": "sha256:27c0dcc06ec3ee631dd8d2cfbdffe8050ff9e91cc1d56ad0905c50018dcabec2"
+        "value": "sha256:b20e8c2f4426cb964cc411d4a7e470736d0310f1c8b72fbd2c347006d0794bc1"
       }
     ]
   },
   "components": [
     {
       "type": "platform",
-      "bom-ref": "node:v24.21.0",
+      "bom-ref": "node:v24.19.0",
       "name": "nodejs",
-      "version": "24.21.0",
+      "version": "24.19.0",
       "description": "Node.js runtime — win32/x64",
-      "purl": "pkg:generic/nodejs@24.21.0"
+      "purl": "pkg:generic/nodejs@24.19.0"
     },
     {
       "type": "library",
@@ -285,6 +285,20 @@
         {
           "alg": "SHA512",
           "content": "6d5d13828f4ae217cf09e93e68c027f35469a452afdb248341e328499baf4c04b2c0d4e7549080ac2644d855aaa6f21ab4abbb54c44b5a547511acef5610f285"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "npm:@isaacs/nonrecursive-glob-match@1.1.0",
+      "name": "@isaacs/nonrecursive-glob-match",
+      "version": "1.1.0",
+      "scope": "excluded",
+      "purl": "pkg:npm/%40isaacs/nonrecursive-glob-match@1.1.0",
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "18f9bf0dbbe4e512e68519f15c86bb9d3a4ad31b65e04d308f432c96cb8d889d45211394fb6fbd960502fdd805ec4cb84025a17c4b20c6294c44c09d1cf7c37f"
         }
       ]
     },
@@ -682,29 +696,29 @@
     },
     {
       "type": "library",
-      "bom-ref": "npm:balanced-match@1.0.2",
+      "bom-ref": "npm:balanced-match@4.0.4",
       "name": "balanced-match",
-      "version": "1.0.2",
+      "version": "4.0.4",
       "scope": "excluded",
-      "purl": "pkg:npm/balanced-match@1.0.2",
+      "purl": "pkg:npm/balanced-match@4.0.4",
       "hashes": [
         {
           "alg": "SHA512",
-          "content": "de849e50ed13315ebb84dd4099b5ec2b8c9aa94eed8e21e56f144364ea47d0a5bdf82797e1b440697d009f1b74b71d8cae94695b041a3f02252121098585393f"
+          "content": "04bae011c453c17da8ea01b118e08dc8cbc64a9df96287ee633c3d87520c4d198aaadb40659554ebb6dd6fd3ebdaf50703cfa3de2dad25f8cee82ebee26c864c"
         }
       ]
     },
     {
       "type": "library",
-      "bom-ref": "npm:brace-expansion@1.1.21",
+      "bom-ref": "npm:brace-expansion@5.0.12",
       "name": "brace-expansion",
-      "version": "1.1.21",
+      "version": "5.0.12",
       "scope": "excluded",
-      "purl": "pkg:npm/brace-expansion@1.1.21",
+      "purl": "pkg:npm/brace-expansion@5.0.12",
       "hashes": [
         {
           "alg": "SHA512",
-          "content": "f73780f8a2d934dce0945d933ca450103cb1e986f2edd68092ecbc3223f3a573ec6035a2fc344cf239b0503c689108d8a81a6fe4380f8b00f88786594b2d548f"
+          "content": "628bd0debce168b308ac38cd0cc90d4b4d6d79af77aa11211b9c72f1febe47497e770dca8bee6c0a822823de368ae2d94c75a881692d830543854d3d88d12299"
         }
       ]
     },
@@ -761,20 +775,6 @@
         {
           "alg": "SHA512",
           "content": "74ecbedc0b96ddadb035b64722e319a537208c6b8b53fb812ffb9b71917d3976c3a3c7dfe0ef32569e417f479f4bcb84a18a39ab8171edd63d3a04065e002c40"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "npm:concat-map@0.0.1",
-      "name": "concat-map",
-      "version": "0.0.1",
-      "scope": "excluded",
-      "purl": "pkg:npm/concat-map@0.0.1",
-      "hashes": [
-        {
-          "alg": "SHA512",
-          "content": "fd2aefe1db30c903417e8846a73f68e986f71b3dd2ad40ea047e6b4ee84647b6a1b656d82a7571c366c214c4658da03b1171da5d9f30b07768745bdb9212a6aa"
         }
       ]
     },
@@ -906,20 +906,6 @@
     },
     {
       "type": "library",
-      "bom-ref": "npm:eslint-plugin-n/node_modules/brace-expansion@2.1.7",
-      "name": "eslint-plugin-n/node_modules/brace-expansion",
-      "version": "2.1.7",
-      "scope": "excluded",
-      "purl": "pkg:npm/eslint-plugin-n/node_modules/brace-expansion@2.1.7",
-      "hashes": [
-        {
-          "alg": "SHA512",
-          "content": "b996dec3536a7663c34cc27c6a1d72f9bfbd40426b7e45c593745c4d0c375f48d6ff1454bc52ac83509f41d49819d4db5d9584c6d53727771cc6d9dfc35162d2"
-        }
-      ]
-    },
-    {
-      "type": "library",
       "bom-ref": "npm:eslint-plugin-n/node_modules/globals@15.15.0",
       "name": "eslint-plugin-n/node_modules/globals",
       "version": "15.15.0",
@@ -929,20 +915,6 @@
         {
           "alg": "SHA512",
           "content": "ec00b24f7c26ca9dc8eb54b87c6ebcd8bd150364460fda2d92a189230354305d52594a266c8224f9a7f5ba7b83620326d3cd9a1d8c03fa6cc9beff48bbc76c82"
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "npm:eslint-plugin-n/node_modules/minimatch@9.0.9",
-      "name": "eslint-plugin-n/node_modules/minimatch",
-      "version": "9.0.9",
-      "scope": "excluded",
-      "purl": "pkg:npm/eslint-plugin-n/node_modules/minimatch@9.0.9",
-      "hashes": [
-        {
-          "alg": "SHA512",
-          "content": "381c0137d00be1daa61139694b6cdab31faf4de59c956ce46e57d993b2930398f78de38e373fed4429d9a26532bcd83cdf02f966ff52b3a1cc2570202fc47662"
         }
       ]
     },
@@ -1410,15 +1382,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "npm:minimatch@3.1.5",
+      "bom-ref": "npm:minimatch@11.0.5",
       "name": "minimatch",
-      "version": "3.1.5",
+      "version": "11.0.5",
       "scope": "excluded",
-      "purl": "pkg:npm/minimatch@3.1.5",
+      "purl": "pkg:npm/minimatch@11.0.5",
       "hashes": [
         {
           "alg": "SHA512",
-          "content": "5608d652c9e74fa9fe35493a799abbef37857695b62d60f33facc51ab09b1d789836e9790f3aa4d871d0e6e147d83356e576e9f3e8d5cda78db7de2cb04125e3"
+          "content": "b273e5569a4571859f2cb1501a10f153205c1cdb4c9569a7de3b63ee911a3be0cff29a8bd08bc0cd784c6269f5cfd01236d826c0b05d17149fe2d31407439328"
         }
       ]
     },
@@ -1550,15 +1522,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "npm:prettier@3.5.3",
+      "bom-ref": "npm:prettier@3.9.10",
       "name": "prettier",
-      "version": "3.5.3",
+      "version": "3.9.10",
       "scope": "excluded",
-      "purl": "pkg:npm/prettier@3.5.3",
+      "purl": "pkg:npm/prettier@3.9.10",
       "hashes": [
         {
           "alg": "SHA512",
-          "content": "410b5ac67a0325e0240ef0ca5822e2c085e44e0461c180c440282153d67aab4de2c9e93faf1461ff6942dc707b3fcb164f6c42ff2e490dcb4f2c1206cc729b87"
+          "content": "b241874c7d586fd42f6930b88569d14f3118b42a40a45d143013f3fadff464fccff2285e7e8fdbb4a77e400ee9504d1f13003549b4bf36687211cb2d75738874"
         }
       ]
     },
