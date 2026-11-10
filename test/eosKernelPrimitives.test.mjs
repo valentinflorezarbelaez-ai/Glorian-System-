@@ -78,6 +78,7 @@ test("BDD-116: Deep Immutability & View Bypass in deepFreeze", () => {
   assert.ok(Object.isFrozen(frozen.level1.level2));
   assert.ok(Object.isFrozen(frozen.arr));
   assert.ok(Object.isFrozen(frozen.arr[2]));
+  assert.equal(frozen.fn(), "func");
 });
 
 test("BDD-117: FIPS 180-4 Pure SHA-256 Multi-Byte Unicode & Surrogate Pairs", () => {
@@ -86,16 +87,17 @@ test("BDD-117: FIPS 180-4 Pure SHA-256 Multi-Byte Unicode & Surrogate Pairs", ()
   assert.equal(pureSha256("abc"), "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
 
   // 2-byte UTF-8: ñ, é, ü (code < 0x800)
-  const hash2Byte = pureSha256("español");
-  assert.equal(hash2Byte.length, 64);
+  assert.equal(pureSha256("español"), "0c7ab686d80cf896676d2c6e09c7853c0b1a2c1477789cc8030e8abf978edf85");
 
   // 3-byte UTF-8: 日本語 (code < 0xd800)
-  const hash3Byte = pureSha256("日本語");
-  assert.equal(hash3Byte.length, 64);
+  assert.equal(pureSha256("日本語"), "77710aedc74ecfa33685e33a6c7df5cc83004da1bdcef7fb280f5c2b2e97e0a5");
 
   // 4-byte UTF-8: Emoji surrogate pairs: 🚀🔥 (code >= 0x10000)
-  const hash4Byte = pureSha256("🚀 Glorian System 🔥");
-  assert.equal(hash4Byte.length, 64);
+  assert.equal(pureSha256("🚀 Glorian System 🔥"), "784a9409a6df80379fe00ca345489d905149568f738b4e646890f1492d1a3c2f");
+
+  // Multi-block payloads spanning multiple 64-byte chunks and boundary conditions
+  assert.equal(pureSha256("a".repeat(65)), "635361c48bb9eab14198e76ea8ab7f1a41685d6ad62aa9146d301d4f17eb0ae0");
+  assert.equal(pureSha256("b".repeat(128)), "70ae1c5307f5250d5cb9e40742ba9613fcdf9b8d9eb6dd393330443b2d5effbd");
 });
 
 test("BDD-118: Mulberry32 PRNG and Result Functional Containers", () => {
