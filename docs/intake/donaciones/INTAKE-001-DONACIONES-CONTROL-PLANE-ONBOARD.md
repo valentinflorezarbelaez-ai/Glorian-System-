@@ -3,9 +3,9 @@
 - **Project**: `donaciones` (Portal de Donaciones — Sede AGEAC & Tercer Factor)
 - **Date**: 2026-11-09
 - **Owner**: Valentín Flórez Arbeláez
-- **Status**: `INTAKE_DRAFT` (not yet `INTAKE_COMPLETE` in `docs/projects/registry.json`)
-- **Epistemic state**: `FINDINGS_IDENTIFIED` · `WITHIN_TESTED_SCOPE`
-- **Catalog rule**: Prefer composing existing SPECs (100/124/042). No new OpenSpec id required for registry hygiene.
+- **Status**: `INTAKE_COMPLETE`
+- **Epistemic state**: `REMEDIATION_IN_PROGRESS` → registry intake/spec/audit sealed; authorization still `LEVEL_1_READ_ONLY`
+- **Catalog rule**: Prefer composing existing SPECs (100/124/042). Project-scoped `SPEC-DONACIONES-001` (no new OpenSpec catalog id).
 
 ---
 
@@ -45,7 +45,8 @@ Sibling repo already has local `IMPLEMENTATION_AUTHORIZATION.md` (`LEVEL 2`) and
 
 ## 5. Next executable steps
 
-1. Merge static-checkout path resolver + tip evidence refresh.
-2. Re-run `npm run fleet:dogfood` with `EOS_WORKSPACE_ROOT` (or sibling layout) and confirm `FLOW_INSPECT:donaciones` is `SUCCESS` when checkout is present.
-3. Owner review of this intake → flip registry `intake` to `INTAKE_COMPLETE` only.
-4. Spec + audit packages before any authorization bump.
+1. [x] Merge static-checkout path resolver + tip evidence refresh (#614).
+2. [x] Dogfood `FLOW_INSPECT:donaciones` SUCCESS with workspace root.
+3. [x] Seal intake + `SPEC-DONACIONES-001` + `AUDIT-DONACIONES-001` in control plane.
+4. [ ] Owner decision to promote registry `authorization` → `LEVEL_2_AUTHORIZED` (explicit; not implied by sibling markdown).
+5. [ ] Configure Actions secrets for live ACA / private sibling PAT when needed.
