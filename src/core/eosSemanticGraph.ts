@@ -203,16 +203,21 @@ export class EosSemanticGraph {
       const d = path.join(this.projectRoot, dir);
       if (!fs.existsSync(d)) continue;
       const walk = (p: string) => {
-        for (const e of fs.readdirSync(p, { withFileTypes: true })) {
-          const full = path.join(p, e.name);
-          if (e.isDirectory() && e.name !== "node_modules" && !e.name.startsWith(".")) walk(full);
-          else if (e.isFile() && /\.(ts|tsx|js|mjs)$/.test(e.name)) {
-            try {
-              fsum += BigInt(Math.floor(fs.statSync(full).mtimeMs));
-            } catch {
-              /* skip */
+        try {
+          for (const e of fs.readdirSync(p, { withFileTypes: true })) {
+            const full = path.join(p, e.name);
+            if (e.isDirectory() && e.name !== "node_modules" && !e.name.startsWith(".") && e.name !== "_sandbox") {
+              walk(full);
+            } else if (e.isFile() && /\.(ts|tsx|js|mjs)$/.test(e.name)) {
+              try {
+                fsum += BigInt(Math.floor(fs.statSync(full).mtimeMs));
+              } catch {
+                /* skip concurrent file removal */
+              }
             }
           }
+        } catch {
+          /* directory may be removed concurrently by a parallel worker */
         }
       };
       walk(d);
