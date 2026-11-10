@@ -155,7 +155,7 @@
       "cicdGateScript": "scripts/smoke-test.ps1",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "f0882a07c0acc2a449ad34bfec6cd754f9efe3b8"
+      "headCommitSha": "e957a480be480c17b4fa65199887030e302156f5"
     },
     {
       "id": "portafolio",

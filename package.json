@@ -104,7 +104,7 @@
     "flags": "node bin/eos.mjs flags",
     "loadtest": "node bin/eos.mjs loadtest",
     "nocturnal": "node bin/eos.mjs nocturnal",
-    "mutate": "node bin/eos.mjs mutate --run",
+    "mutate": "node bin/eos.mjs mutate",
     "eos": "node bin/eos.mjs",
     "packaging:verify": "node scripts/verify-packaging.mjs",
     "mcp:verify": "node --test test/eosMcpSchemaValidator.test.mjs",
@@ -160,7 +160,6 @@
     "jepsen": "node bin/eos.mjs jepsen",
     "vault": "node bin/eos.mjs vault",
     "datalog": "node bin/eos.mjs datalog",
-    "mutate": "node bin/eos.mjs mutate",
     "sim": "node bin/eos.mjs sim",
     "schedule": "node bin/eos.mjs schedule",
     "mcp:stream": "node bin/eos.mjs mcp --sse 3333",
@@ -230,5 +229,8 @@
     "typescript": "7.0.2"
   },
   "author": "Valentín Flórez Arbeláez",
-  "license": "MIT"
+  "license": "MIT",
+  "overrides": {
+    "minimatch": "^11.0.1"
+  }
 }

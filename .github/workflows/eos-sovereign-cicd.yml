@@ -299,7 +299,7 @@ jobs:
           NODE_ENV: "production"
 
       - name: Attest Build Provenance (GitHub native SLSA L2)
-        uses: actions/attest-build-provenance@e8998e9431f8212ec1abc6095f8e5b4d3b0373ea # v2.4.0
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
         with:
           subject-path: |
             docs/evidence/sbom.cdx.json
