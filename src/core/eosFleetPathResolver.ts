@@ -49,6 +49,7 @@ function workspaceCandidates(projectRoot: string, resolvedLocalDir: string): str
   const envRoot = process.env.EOS_WORKSPACE_ROOT?.trim();
   if (envRoot) out.push(path.resolve(envRoot, dir));
   out.push(path.resolve(projectRoot, "..", dir));
+  out.push(path.resolve(projectRoot, "../..", dir));
   return out;
 }
 

@@ -14,12 +14,17 @@ export function resolveFleetProjectPath(project, projectRoot = process.cwd()) {
     }
   }
 
-  // Fallback to local sibling directory in parent workspace if it exists
+  // Fallback to local sibling directory in parent or grandparent workspace if it exists
   if (typeof project.resolvedLocalDir === "string" && project.resolvedLocalDir.length > 0) {
     const parentDir = path.resolve(projectRoot, "..");
     const candidate = path.resolve(parentDir, project.resolvedLocalDir);
     if (fs.existsSync(candidate) && fs.existsSync(path.join(candidate, ".git"))) {
       return candidate;
+    }
+    const grandparentDir = path.resolve(projectRoot, "../..");
+    const gpCandidate = path.resolve(grandparentDir, project.resolvedLocalDir);
+    if (fs.existsSync(gpCandidate) && fs.existsSync(path.join(gpCandidate, ".git"))) {
+      return gpCandidate;
     }
   }
 

@@ -22,6 +22,7 @@
     "format:check": "prettier --check .",
     "fleet:mission": "node scripts/eos-fleet-mission-control.mjs",
     "fleet:sync": "node scripts/eos-fleet-registry-sync.mjs",
+    "fleet:heal": "node scripts/fleet-autonomous-heal.mjs",
     "secret-scan": "node scripts/eos-secret-scan.mjs",
     "quickstart": "node scripts/quickstart.mjs",
     "sea:build": "node scripts/build-sea-binary.mjs",
