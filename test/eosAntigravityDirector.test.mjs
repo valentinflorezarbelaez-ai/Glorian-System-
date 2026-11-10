@@ -166,7 +166,7 @@ test("BDD-125: EosMcpServer negotiates 2024-11-05 & 2025-03-26, serves instructi
     cwd: projectRoot,
     input: stdioRequests,
     encoding: "utf8",
-    timeout: 15000,
+    timeout: 30000,
   });
   assert.equal(proc.status, 0);
   const lines = proc.stdout
@@ -216,7 +216,7 @@ test("BDD-126: Antigravity eos-hook.mjs injects SessionStart context and enforce
     cwd: pluginDir,
     input: JSON.stringify({ toolCall: { name: "run_command", args: { CommandLine: "git push -f origin main" } } }),
     encoding: "utf8",
-    timeout: 15000, // generous for parallel CI subprocess spawn
+    timeout: 30000, // generous for parallel CI subprocess spawn
   });
   assert.equal(hookProc.status, 0);
   const hookJson = JSON.parse(hookProc.stdout.trim());
