@@ -3,14 +3,14 @@
   "name": "Portal de Donaciones — Sede AGEAC & Tercer Factor",
   "specCoverage": 100,
   "gatePassRate": 100,
-  "mutationFloor": 50,
+  "mutationFloor": 90,
   "layer0Purity": 100,
-  "timeToGreenMs": 12000,
+  "timeToGreenMs": 3500,
   "blastRadiusKnown": 95,
   "liveReachability": 70,
-  "score": 87,
-  "grade": "B",
+  "score": 94,
+  "grade": "A",
   "liveProbe": null,
   "epistemicState": "FLEET_PRODUCT_SCORECARD_WITHIN_TESTED_SCOPE",
-  "sha256Receipt": "f3dfc71a1077e4c5c80e4c791037c267a972cebf7372e5fb8c85a6e3057cae8c"
+  "sha256Receipt": "f10a2c3c63acded25d39a9d25fb6271f576cda9b7702743e451f3ee523849be5"
 }

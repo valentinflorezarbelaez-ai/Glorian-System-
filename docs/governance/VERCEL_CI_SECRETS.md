@@ -3,6 +3,8 @@
 Repository secrets used by `aca:vercel` and `.github/workflows/eos-aca-cron.yml`.
 Never commit token values. Prefer GitHub Actions → Settings → Secrets and variables → Actions.
 
+**Public repo note (2026-11-09):** Glorian-System- is `PUBLIC`, so Actions minutes are unrestricted for Linux/macOS public workflows; secrets are still required for the **live** Vercel ACA path (fixture/snapshot remains the fail-closed default without `VERCEL_TOKEN`).
+
 | Secret | Required for live path | Purpose |
 | --- | --- | --- |
 | `VERCEL_TOKEN` | Yes | Bearer token for Vercel REST (`/v6/deployments`) |
