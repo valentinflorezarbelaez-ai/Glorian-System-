@@ -17,6 +17,7 @@ import { EosSmtAutomatedReasoningProver } from "../../core/eosSmtAutomatedReason
 import { EosThresholdCryptography } from "../../core/eosThresholdCryptography.ts";
 import { EosColumnarTelemetryEngine, type ColumnarQueryFilter } from "../../core/eosColumnarTelemetryEngine.ts";
 import { EosNeuroSymbolicFleetHealingEngine } from "../../core/eosNeuroSymbolicFleetHealingEngine.ts";
+import { EosEnterpriseFacade } from "../../core/eosEnterpriseFacade.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
 export const PHASE7_VERIFICATION_TOOL_NAMES: ReadonlySet<string> = new Set([
@@ -349,6 +350,10 @@ export function dispatchPhase7VerificationCase(
       const action = String(args?.action || "list")
         .trim()
         .toLowerCase();
+      if (action === "health") {
+        const facade = new EosEnterpriseFacade(deps.projectRoot);
+        return facade.auditHealth();
+      }
       if (action === "list") {
         return {
           action: "list",

@@ -455,6 +455,8 @@ async function cmd_help_143(commandContext) {
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
   eos health                 Muestra el estado de salud SRE / CNCF del sistema
+  eos enterprise:health      Auditoría empresarial unificada de salud CNCF y digest SHA-256
+  eos otel:metrics           Telemetría OpenTelemetry Prometheus en formato de texto canónico
 
 📖 AYUDA Y GLOSARIO:
   eos guide                  Muestra el glosario de arquitectura y equivalencias de la industria

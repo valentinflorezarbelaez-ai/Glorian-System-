@@ -995,3 +995,57 @@
   - `docs/audits/performance-talent-group/AUDIT-PTG-001.md`
   - `docs/projects/registry.json` (`performance-talent-group` → Level 3)
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-ENTERPRISE-FACADE-186
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Big Tech Superlative Elevation — Enterprise Domain Facade (`SPEC-186`, `CHANGE-071`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “mejoremos todo esto hagamoslo como los mejores con perfeccion superlativa”)
+- **Scope**:
+  1. Proxy-resilient synthetic probe hardening in `src/core/eosFleetMissionControl.ts`.
+  2. Implement canonical Layer-0 `EosEnterpriseFacade` conforming to standard CNCF/IEEE architecture abstractions.
+  3. Export enterprise facade abstractions in `src/core/index.ts`.
+  4. 100% BDD test coverage in `test/eosEnterpriseFacade.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-071-ENTERPRISE-DOMAIN-FACADE.md`
+  - `openspec/changes/CHANGE-071-ENTERPRISE-DOMAIN-FACADE.md`
+  - `openspec/specs/SPEC-186-ENTERPRISE-DOMAIN-FACADE.md`
+  - `docs/plans/PLAN-071-ENTERPRISE-DOMAIN-FACADE.md`
+  - `docs/tasks/TASKS-071-ENTERPRISE-DOMAIN-FACADE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-OTEL-PROMETHEUS-187
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: OpenTelemetry Prometheus Metrics Exposition Exporter (`SPEC-187`, `CHANGE-072`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “todos uno por uno”)
+- **Scope**:
+  1. Implement Layer-0 OpenMetrics/Prometheus exposition engine `src/core/eosOtelPrometheusExporter.ts`.
+  2. Wire CLI subcommand `eos metrics` in `bin/commands/cliPlatform.mjs` and `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. 100% BDD test coverage in `test/eosOtelPrometheusExporter.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-072-OTEL-PROMETHEUS-EXPORTER.md`
+  - `openspec/changes/CHANGE-072-OTEL-PROMETHEUS-EXPORTER.md`
+  - `openspec/specs/SPEC-187-OTEL-PROMETHEUS-EXPORTER.md`
+  - `docs/plans/PLAN-072-OTEL-PROMETHEUS-EXPORTER.md`
+  - `docs/tasks/TASKS-072-OTEL-PROMETHEUS-EXPORTER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-PEER-MESH-188
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Distributed Peer Mesh Engine (`SPEC-188`, `CHANGE-073`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “ok mejoremos todo como harian los mas grandes del mundo dejemoslo y llevemoslo al 10 de 10 al 100% por ciento de perfeccion superlativa”)
+- **Scope**:
+  1. Implement Layer-0 SWIM gossip protocol & vector clock causality engine `src/core/eosDistributedPeerMesh.ts`.
+  2. Subpath export `"./peer-mesh"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. 100% BDD test coverage in `test/eosDistributedPeerMesh.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-073-DISTRIBUTED-PEER-MESH.md`
+  - `openspec/changes/CHANGE-073-DISTRIBUTED-PEER-MESH.md`
+  - `openspec/specs/SPEC-188-DISTRIBUTED-PEER-MESH.md`
+  - `docs/plans/PLAN-073-DISTRIBUTED-PEER-MESH.md`
+  - `docs/tasks/TASKS-073-DISTRIBUTED-PEER-MESH.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

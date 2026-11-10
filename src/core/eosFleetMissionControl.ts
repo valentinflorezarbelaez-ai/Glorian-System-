@@ -126,6 +126,7 @@ export class EosFleetMissionControl {
         statusCode: res.status,
         latencyMs,
         ssl: isSsl,
+        ...(reachable ? {} : { error: `HTTP_${res.status}` }),
         probedAt,
       };
     } catch (err: any) {

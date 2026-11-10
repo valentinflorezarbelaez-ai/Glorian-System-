@@ -7,6 +7,12 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./enterprise": "./src/core/eosEnterpriseFacade.ts",
+    "./telemetry": "./src/core/eosOtelPrometheusExporter.ts",
+    "./tracing": "./src/core/eosOtelDistributedTracing.ts",
+    "./simulator": "./src/core/eosDeterministicSimulator.ts",
+    "./sandbox": "./src/core/eosWasmSandboxEngine.ts",
+    "./peer-mesh": "./src/core/eosDistributedPeerMesh.ts",
     "./package.json": "./package.json"
   },
   "bin": {
@@ -39,6 +45,8 @@
     "sre:burn-rate": "node scripts/eos-sre-burn-rate-evaluate.mjs",
     "scale:proof": "node scripts/eos-bounded-scale-proof.mjs",
     "llmops:privacy": "node --test test/eosLlmOpsPrivacyLane.test.mjs",
+    "enterprise:health": "node bin/eos.mjs enterprise:health",
+    "metrics": "node bin/eos.mjs metrics",
     "attest": "node scripts/eos-github-pr-attestation.mjs",
     "guide": "node bin/eos.mjs guide",
     "truetime": "node bin/eos.mjs truetime",

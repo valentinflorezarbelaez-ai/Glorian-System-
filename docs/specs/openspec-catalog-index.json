@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
-  "totalSpecs": 180,
-  "catalogSha256": "5e72d775e07a8d902eab6dd69283424985fa35f27cd91cbc36cd10c56fc00c7e",
+  "totalSpecs": 183,
+  "catalogSha256": "beaa2e7b23c133748da22181e8d34915b473d2aac61ce25797472786b17abd61",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1622,6 +1622,33 @@
       "bddCount": 3,
       "file": "openspec/specs/SPEC-185-BIGTECH-PRODUCT-FACTORY-E2E.md",
       "sha256": "d375b3cf4fcedb63ef8c519e9a59a5252d7544031573200a73fab375ddb149bf"
+    },
+    {
+      "id": "SPEC-186",
+      "title": "Big Tech Enterprise Domain Facade & Standardized System Ergonomics",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-186-ENTERPRISE-DOMAIN-FACADE.md",
+      "sha256": "c2f222301dbebcf45edd8c52c7797a11b97614ca283e35d63d3b6f1ea2312acb"
+    },
+    {
+      "id": "SPEC-187",
+      "title": "OpenTelemetry Prometheus Metrics Exposition Exporter",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 4,
+      "file": "openspec/specs/SPEC-187-OTEL-PROMETHEUS-EXPORTER.md",
+      "sha256": "d4bc3df6d4efbfb348d8fdfc6b124cc13e6105d4108e60d8f3ceb28c1c6ff34a"
+    },
+    {
+      "id": "SPEC-188",
+      "title": "Decentralized Distributed Peer Mesh Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-188-DISTRIBUTED-PEER-MESH.md",
+      "sha256": "ec595e43e4708c89993971c9230f9e30f3456d4e359548215843fe684cbdf548"
     }
   ]
 }
