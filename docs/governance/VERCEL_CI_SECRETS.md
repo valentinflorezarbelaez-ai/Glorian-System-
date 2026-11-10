@@ -24,5 +24,7 @@ Never commit token values. Prefer GitHub Actions → Settings → Secrets and va
 2. Add `VERCEL_TOKEN` (and optionally project/team IDs) as repository secrets.
 3. Dispatch **EOS ACA Canary Cron** manually once and confirm the job summary / artifacts.
 4. Confirm PR CI step `Vercel ACA live-or-fixture seal` no longer falls back solely because secrets are missing.
+5. Confirm cron step **ACA LIVE gate** passes with `mode=LIVE_DEPLOYMENT_PROBE` (or `LIVE_CAPTURED_SNAPSHOT`). Fixture while a token is set is a **hard fail**.
+6. On LIVE gate failure, cron opens a GitHub issue (incident) — triage via `docs/runbooks/INCIDENT_ONE_PAGER.md`.
 
 Epistemic scope: `WITHIN_TESTED_SCOPE` — secrets configuration does not by itself certify production SLOs.

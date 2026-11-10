@@ -1,8 +1,8 @@
 name: EOS ACA Canary Cron (Vercel live-or-fixture)
 
 # Periodic mesh/ACA seal + fleet scorecard probes so canary hygiene does not
-# depend solely on PR traffic. Fail-closed when the seal rejects; secrets are
-# optional (fixture path remains valid without VERCEL_TOKEN).
+# depend solely on PR traffic. Fail-closed when the seal rejects.
+# With VERCEL_TOKEN present, LIVE probe is required (Big Tech EngProd).
 on:
   schedule:
     - cron: "17 */6 * * *"
@@ -14,6 +14,7 @@ concurrency:
 
 permissions:
   contents: read
+  issues: write
 
 jobs:
   aca-live-or-fixture:
@@ -35,18 +36,32 @@ jobs:
         run: npm ci --include=dev
 
       - name: Vercel ACA live-or-fixture seal
+        id: aca_seal
         run: npm run aca:vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
 
+      - name: ACA LIVE gate (fail-closed when token present)
+        id: aca_live_gate
+        run: npm run aca:live-gate
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Track DORA Metrics (incl. ACA LIVE tip)
+        id: dora
+        run: npm run dora:track
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
       - name: Fleet product scorecards with live URL probes
+        id: scorecards
         run: npm run fleet:scorecards
         env:
           EOS_FLEET_SCORECARD_PROBE: "1"
 
-      - name: Upload ACA / scorecard evidence
+      - name: Upload ACA / scorecard / DORA evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -54,6 +69,39 @@ jobs:
           path: |
             docs/evidence/*ACA*
             docs/evidence/FLEET_PRODUCT_SCORECARDS_RECEIPT.json
+            docs/evidence/DORA-METRICS.json
             docs/products/*/scorecard.json
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Open incident issue on ACA / LIVE gate failure
+        if: failure() && (steps.aca_seal.outcome == 'failure' || steps.aca_live_gate.outcome == 'failure')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TITLE="[ACA] LIVE canary gate failed — $(date -u +%Y-%m-%dT%H:%MZ)"
+          BODY=$(cat <<EOF
+          ## ACA LIVE incident (auto)
+
+          - **Workflow**: \`${{ github.workflow }}\`
+          - **Run**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          - **Seal step**: \`${{ steps.aca_seal.outcome }}\`
+          - **LIVE gate**: \`${{ steps.aca_live_gate.outcome }}\`
+          - **DORA step**: \`${{ steps.dora.outcome }}\`
+
+          ### Operator actions
+          1. Inspect \`docs/evidence/VERCEL_ACA_LIVE_RECEIPT.json\` in the run artifact.
+          2. Confirm \`VERCEL_TOKEN\` / project / team secrets are valid.
+          3. Follow \`docs/runbooks/INCIDENT_ONE_PAGER.md\`.
+
+          Epistemic scope: \`REMEDIATION_REQUIRED\` until tip re-seals LIVE PASS.
+          EOF
+          )
+          # Dedupe: skip if an open ACA incident already exists today.
+          if gh issue list --state open --search "ACA LIVE canary gate failed in:title" --json number --jq 'length' | grep -vq '^0$'; then
+            echo "Open ACA incident already exists — skipping create."
+            exit 0
+          fi
+          gh issue create --title "$TITLE" --body "$BODY" --label "incident" || \
+            gh issue create --title "$TITLE" --body "$BODY"
