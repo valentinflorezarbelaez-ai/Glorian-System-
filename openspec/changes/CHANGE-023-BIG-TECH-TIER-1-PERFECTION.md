@@ -1,7 +1,7 @@
 # CHANGE-023: BIG TECH TIER-1 PERFECTION & PHYSICAL PRODUCTION HARDENING
 
 - **Change ID**: `CHANGE-023`
-- **Specification**: `SPEC-030-BIG-TECH-TIER-1-PERFECTION`
+- **Specification**: `SPEC-139-BIG-TECH-TIER-1-PERFECTION`
 - **Plan**: `PLAN-023`
 - **Date**: 2026-10-25
 - **Author**: Valentín Flórez Arbeláez

@@ -11,10 +11,276 @@
  */
 
 import { execFileSync } from "node:child_process";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
+import { assertPostcondition, assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
+
+export interface ParsedSemVer {
+  readonly major: number;
+  readonly minor: number;
+  readonly patch: number;
+  readonly clean: string;
+}
+
+export interface UpstreamTagResolution {
+  readonly version: string;
+  readonly tag: string;
+  readonly commitSha: string;
+}
+
+export interface HotSwapResult {
+  readonly swapped: boolean;
+  readonly rolledBack: boolean;
+  readonly targetPath: string;
+  readonly backupPath: string | null;
+  readonly verifiedOutput: string;
+  readonly binarySha256: string;
+  readonly error?: string;
+}
+
+export interface SkillSyncReport {
+  readonly syncedSkillFolders: readonly string[];
+  readonly preservedEosSkills: readonly string[];
+  readonly filesVerified: number;
+  readonly treeSha256: string;
+}
+
+const PIPE_STDIO = ["ignore", "pipe", "pipe"] as ["ignore", "pipe", "pipe"];
+
+const SKILL_SECRET_PATTERNS: ReadonlyArray<{ readonly name: string; readonly regex: RegExp }> = [
+  { name: "Live Stripe/OpenAI Key", regex: new RegExp("sk-" + "live-[0-9a-zA-Z]{16,}") },
+  { name: "GitHub Personal Access Token", regex: new RegExp("ghp_" + "[0-9a-zA-Z]{24,}") },
+  { name: "AWS Access Key ID", regex: new RegExp("AKIA" + "[0-9A-Z]{16}") },
+  { name: "Google API Key", regex: new RegExp("AIza" + "[0-9A-Za-z\\-_]{35}") },
+  { name: "PEM Private Key Block", regex: new RegExp("-----BEGIN " + "(RSA |EC |OPENSSH )?PRIVATE KEY-----") },
+];
+
+export function parseSemVer(raw: string): ParsedSemVer | null {
+  if (typeof raw !== "string") return null;
+  const match = raw.trim().match(/(?:^|\s|\/|^v)v?(\d+)\.(\d+)\.(\d+)(?![0-9A-Za-z.-])/i);
+  if (!match) return null;
+  const [major, minor, patch] = [Number(match[1]), Number(match[2]), Number(match[3])];
+  if (!Number.isSafeInteger(major) || !Number.isSafeInteger(minor) || !Number.isSafeInteger(patch)) return null;
+  return { major, minor, patch, clean: `${major}.${minor}.${patch}` };
+}
+
+export function compareSemVer(a: string, b: string): number {
+  const pa = parseSemVer(a);
+  const pb = parseSemVer(b);
+  if (!pa && !pb) return 0;
+  if (pa && !pb) return 1;
+  if (!pa && pb) return -1;
+  if (pa!.major !== pb!.major) return pa!.major > pb!.major ? 1 : -1;
+  if (pa!.minor !== pb!.minor) return pa!.minor > pb!.minor ? 1 : -1;
+  if (pa!.patch !== pb!.patch) return pa!.patch > pb!.patch ? 1 : -1;
+  return 0;
+}
+
+export function selectLatestStableTag(lsRemoteOutput: string): UpstreamTagResolution | null {
+  if (typeof lsRemoteOutput !== "string" || lsRemoteOutput.trim().length === 0) return null;
+  let best: UpstreamTagResolution | null = null;
+  for (const rawLine of lsRemoteOutput.split(/\r?\n/)) {
+    const match = rawLine.trim().match(/^([0-9a-f]{40})\s+refs\/tags\/(v?(\d+\.\d+\.\d+))$/i);
+    if (!match) continue;
+    const [commitSha, tag, version] = [match[1]!.toLowerCase(), match[2]!, match[3]!];
+    if (!best || compareSemVer(version, best.version) > 0) best = { version, tag, commitSha };
+  }
+  return best ? deepFreeze(best) : null;
+}
+
+export function parseChecksumsManifest(manifestText: string): ReadonlyMap<string, string> {
+  const map = new Map<string, string>();
+  if (typeof manifestText !== "string") return map;
+  for (const rawLine of manifestText.split(/\r?\n/)) {
+    const match = rawLine.trim().match(/^([0-9a-fA-F]{64})\s+\*?([^\s]+)$/);
+    if (match) map.set(path.basename(match[2]!), match[1]!.toLowerCase());
+  }
+  return map;
+}
+
+export function verifyArchiveChecksum(
+  archiveBytes: Uint8Array,
+  assetFileName: string,
+  manifestText: string,
+): { readonly verified: boolean; readonly expectedSha256: string; readonly actualSha256: string } {
+  const manifest = parseChecksumsManifest(manifestText);
+  const expectedSha256 = manifest.get(path.basename(assetFileName)) || "";
+  const actualSha256 = crypto.createHash("sha256").update(archiveBytes).digest("hex").toLowerCase();
+  const verified = expectedSha256.length === 64 && actualSha256 === expectedSha256;
+  return deepFreeze({ verified, expectedSha256, actualSha256 });
+}
+
+export function hotSwapExecutableWithRollback(options: {
+  readonly targetPath: string;
+  readonly candidatePath: string;
+  readonly smokeArgs: readonly string[];
+  readonly expectedVersionSubstring?: string;
+}): HotSwapResult {
+  const targetPath = path.resolve(options.targetPath);
+  const candidatePath = path.resolve(options.candidatePath);
+  assertPrecondition(fs.existsSync(candidatePath), `Candidate binary does not exist: ${candidatePath}`);
+  fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+
+  try {
+    const dir = path.dirname(targetPath);
+    const base = path.basename(targetPath);
+    for (const entry of fs.readdirSync(dir)) {
+      if (entry.startsWith(`${base}.bak`)) {
+        try {
+          fs.rmSync(path.join(dir, entry), { force: true });
+        } catch {}
+      }
+    }
+  } catch {}
+
+  let backupPath: string | null = null;
+  if (fs.existsSync(targetPath)) {
+    const primaryBak = `${targetPath}.bak`;
+    backupPath = fs.existsSync(primaryBak) ? `${targetPath}.bak.${Date.now()}` : primaryBak;
+    fs.renameSync(targetPath, backupPath);
+  }
+
+  try {
+    fs.copyFileSync(candidatePath, targetPath);
+    if (process.platform !== "win32") fs.chmodSync(targetPath, 0o755);
+
+    const isBatch = targetPath.toLowerCase().endsWith(".bat") || targetPath.toLowerCase().endsWith(".cmd");
+    const execOpts = { encoding: "utf8" as const, timeout: 6000, stdio: PIPE_STDIO, windowsHide: true };
+    const rawOut = isBatch
+      ? execFileSync("cmd.exe", ["/d", "/s", "/c", targetPath, ...options.smokeArgs], execOpts)
+      : execFileSync(targetPath, [...options.smokeArgs], execOpts);
+
+    const verifiedOutput =
+      String(rawOut || "")
+        .trim()
+        .split(/\r?\n/)[0] || "ok";
+    if (options.expectedVersionSubstring && !String(rawOut || "").includes(options.expectedVersionSubstring)) {
+      throw new Error(
+        `Post-install version mismatch: expected '${options.expectedVersionSubstring}' in '${verifiedOutput}'`,
+      );
+    }
+
+    const binarySha256 = crypto.createHash("sha256").update(fs.readFileSync(targetPath)).digest("hex");
+    if (backupPath) {
+      try {
+        fs.rmSync(backupPath, { force: true });
+      } catch {}
+    }
+
+    return deepFreeze({ swapped: true, rolledBack: false, targetPath, backupPath, verifiedOutput, binarySha256 });
+  } catch (err: any) {
+    let rolledBack = false;
+    try {
+      if (fs.existsSync(targetPath)) fs.rmSync(targetPath, { force: true });
+      if (backupPath && fs.existsSync(backupPath)) {
+        fs.renameSync(backupPath, targetPath);
+        rolledBack = true;
+      }
+    } catch {
+      rolledBack = false;
+    }
+    const restoredSha = fs.existsSync(targetPath)
+      ? crypto.createHash("sha256").update(fs.readFileSync(targetPath)).digest("hex")
+      : "";
+    return deepFreeze({
+      swapped: false,
+      rolledBack,
+      targetPath,
+      backupPath,
+      verifiedOutput: "",
+      binarySha256: restoredSha,
+      error: String(err?.message || err),
+    });
+  }
+}
+
+function validateStagingTreeSecurity(
+  dirPath: string,
+  filesCounter = { count: 0 },
+  hashParts: string[] = [],
+  rootDir = dirPath,
+): { filesVerified: number; treeSha256: string } {
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name));
+  for (const entry of entries) {
+    const full = path.join(dirPath, entry.name);
+    const lstat = fs.lstatSync(full);
+    if (lstat.isSymbolicLink()) {
+      throw new Error(`Security gate blocked symbolic link in upstream skills bundle: ${entry.name}`);
+    }
+    if (lstat.isDirectory()) {
+      validateStagingTreeSecurity(full, filesCounter, hashParts, rootDir);
+    } else if (lstat.isFile()) {
+      const content = fs.readFileSync(full, "utf8");
+      for (const pat of SKILL_SECRET_PATTERNS) {
+        if (pat.regex.test(content)) {
+          throw new Error(
+            `Security gate blocked credential pattern (${pat.name}) in upstream skill file: ${entry.name}`,
+          );
+        }
+      }
+      filesCounter.count++;
+      hashParts.push(`${path.relative(rootDir, full).replace(/\\/g, "/")}:${pureSha256(content)}`);
+    }
+  }
+  return { filesVerified: filesCounter.count, treeSha256: pureSha256(hashParts.join("\n")) };
+}
+
+export function copyDirClean(src: string, dest: string): void {
+  fs.mkdirSync(dest, { recursive: true });
+  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    if (entry.isDirectory()) copyDirClean(srcPath, destPath);
+    else if (entry.isFile()) fs.copyFileSync(srcPath, destPath);
+  }
+}
+
+export function syncSkillsTreeSafely(upstreamSkillsDir: string, localSkillsDir: string): SkillSyncReport {
+  const resolvedUpstream = path.resolve(upstreamSkillsDir);
+  const resolvedLocal = path.resolve(localSkillsDir);
+  assertPrecondition(fs.existsSync(resolvedUpstream), `Upstream skills directory missing: ${resolvedUpstream}`);
+
+  const securityScan = validateStagingTreeSecurity(resolvedUpstream);
+  fs.mkdirSync(resolvedLocal, { recursive: true });
+
+  const preservedEosSkills = fs
+    .readdirSync(resolvedLocal, { withFileTypes: true })
+    .filter((d) => d.isDirectory() && d.name.startsWith("eos-"))
+    .map((d) => d.name)
+    .sort();
+
+  const syncedSkillFolders: string[] = [];
+  const upstreamEntries = fs
+    .readdirSync(resolvedUpstream, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  for (const dirEntry of upstreamEntries) {
+    if (dirEntry.name.startsWith("eos-")) continue;
+    const targetFolder = path.join(resolvedLocal, dirEntry.name);
+    const stagingBackup = `${targetFolder}.eos-sync-bak`;
+    if (fs.existsSync(stagingBackup)) fs.rmSync(stagingBackup, { recursive: true, force: true });
+    if (fs.existsSync(targetFolder)) fs.renameSync(targetFolder, stagingBackup);
+    try {
+      copyDirClean(path.join(resolvedUpstream, dirEntry.name), targetFolder);
+      if (fs.existsSync(stagingBackup)) fs.rmSync(stagingBackup, { recursive: true, force: true });
+      syncedSkillFolders.push(dirEntry.name);
+    } catch (err) {
+      if (fs.existsSync(targetFolder)) fs.rmSync(targetFolder, { recursive: true, force: true });
+      if (fs.existsSync(stagingBackup)) fs.renameSync(stagingBackup, targetFolder);
+      throw err;
+    }
+  }
+
+  return deepFreeze({
+    syncedSkillFolders,
+    preservedEosSkills,
+    filesVerified: securityScan.filesVerified,
+    treeSha256: securityScan.treeSha256,
+  });
+}
 
 export interface GentlemanPillarAudit {
   readonly id: string;
@@ -374,5 +640,37 @@ export class EosGentlemanStackBridge {
       coGovernanceProtocol: this.CO_GOVERNANCE_PROTOCOL,
       sha256Receipt,
     });
+  }
+}
+
+export function resolvePlatformTargets(): { osName: string; archName: string; archiveExt: string } {
+  const osName = process.platform === "win32" ? "windows" : process.platform === "darwin" ? "darwin" : "linux";
+  const archName = process.arch === "arm64" ? "arm64" : "amd64";
+  return { osName, archName, archiveExt: osName === "windows" ? "zip" : "tar.gz" };
+}
+
+export function extractArchiveToDir(archivePath: string, extractDir: string): void {
+  fs.mkdirSync(extractDir, { recursive: true });
+  try {
+    execFileSync("tar", ["-xf", archivePath, "-C", extractDir], {
+      timeout: 20000,
+      stdio: PIPE_STDIO,
+      windowsHide: true,
+    });
+  } catch {
+    if (process.platform === "win32" && archivePath.endsWith(".zip")) {
+      execFileSync(
+        "powershell.exe",
+        [
+          "-NoProfile",
+          "-NonInteractive",
+          "-Command",
+          `Expand-Archive -LiteralPath '${archivePath.replace(/'/g, "''")}' -DestinationPath '${extractDir.replace(/'/g, "''")}' -Force`,
+        ],
+        { timeout: 30000, stdio: PIPE_STDIO, windowsHide: true },
+      );
+    } else {
+      throw new Error(`Failed to extract archive: ${archivePath}`);
+    }
   }
 }

@@ -80,7 +80,7 @@
   - `docs/plans/PLAN-033-SOVEREIGN-21STEP-LOOP.md`
   - `docs/tasks/TASKS-033-SOVEREIGN-21STEP-LOOP.md`
   - `openspec/changes/CHANGE-033-SOVEREIGN-21STEP-LOOP.md`
-  - `openspec/specs/SPEC-040-SOVEREIGN-21STEP-LOOP.md`
+  - `openspec/specs/SPEC-106-SOVEREIGN-21STEP-LOOP.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
 
 ## Authorization Record: AUTH-2026-10-26-OMEGA-TRANSCENDENTAL-APEX-040

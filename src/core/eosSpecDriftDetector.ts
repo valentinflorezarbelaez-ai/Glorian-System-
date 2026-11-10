@@ -68,9 +68,9 @@ const KNOWN_MODULE_SPECS: Readonly<Record<string, number>> = Object.freeze({
   "EosElohim.ts": 10,
   "eosAgiTypes.ts": 1,
   "eosAntiEntropyMerkleSync.ts": 70,
-  "eosApexDoctrineScorecard.ts": 30,
+  "eosApexDoctrineScorecard.ts": 139,
   "eosArchitectureGuard.ts": 2,
-  "eosBigTechPantheon.ts": 30,
+  "eosBigTechPantheon.ts": 139,
   "eosCicdPipeline.ts": 96,
   "eosDeterministicArtifact.ts": 67,
   "eosErrorCatalog.ts": 35,
@@ -84,6 +84,7 @@ const KNOWN_MODULE_SPECS: Readonly<Record<string, number>> = Object.freeze({
   "eosOmegaSingularity.ts": 28,
   "eosOpenSpecSync.ts": 44,
   "eosPatchValidator.ts": 12,
+  "eosProductDeliveryOrchestrator.ts": 106,
   "eosPromptAmplifier.ts": 15,
   "eosTurboEngine.ts": 7,
   "eosWorktreeOrchestrator.ts": 3,
@@ -317,7 +318,11 @@ export class EosSpecDriftDetector {
           specName.includes("gnostic") ||
           specName.includes("transcendental") ||
           specName.includes("secret-scan") ||
-          specName.includes("autotuner");
+          specName.includes("autotuner") ||
+          specName.includes("untrusted-browser-data") ||
+          specName.includes("verifiable-api-results") ||
+          specName.includes("safe-agent-harness") ||
+          specName.includes("sovereign-21step-loop");
 
         if (isCrossCutting) continue;
 

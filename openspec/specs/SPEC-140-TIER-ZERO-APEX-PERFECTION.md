@@ -1,6 +1,6 @@
-# SPEC-031: TIER-ZERO TRANSCENDENTAL APEX PERFECTION ENGINE
+# SPEC-140: TIER-ZERO TRANSCENDENTAL APEX PERFECTION ENGINE
 
-- **Spec ID**: `SPEC-031`
+- **Spec ID**: `SPEC-140`
 - **Related Plan**: `PLAN-024`
 - **Author**: Valentín Flórez Arbeláez (Principal Architect)
 - **Status**: `APPROVED`

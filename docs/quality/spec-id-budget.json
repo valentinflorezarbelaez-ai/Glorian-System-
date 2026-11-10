@@ -1,4 +1,4 @@
 {
   "rationale": "OpenSpec identifiers must be unique. Each entry below is a pre-existing collision (two distinct files sharing one SPEC number) that is tolerated only under a ratchet allow-list that MAY ONLY SHRINK: once a duplicate is renumbered, delete its entry. Never add a new id here — a new duplicate fails the reference-integrity gate closed.",
-  "knownDuplicateSpecIds": ["020", "021", "022", "030", "031", "040"]
+  "knownDuplicateSpecIds": []
 }

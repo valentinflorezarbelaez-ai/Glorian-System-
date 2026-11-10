@@ -2,7 +2,7 @@
 
 - **Intake ID**: `INTAKE-023`
 - **Project**: `EOS System (Engineering Operating System)`
-- **Target Specification**: `SPEC-030-BIG-TECH-TIER-1-PERFECTION`
+- **Target Specification**: `SPEC-139-BIG-TECH-TIER-1-PERFECTION`
 - **Author**: Valentín Flórez Arbeláez (Principal Architect)
 - **Status**: `INTAKE_COMPLETE`
 - **Date**: 2026-10-25

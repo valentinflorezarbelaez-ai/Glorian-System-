@@ -2,20 +2,6 @@
  * EOS CONSULTANT CORE — OFFLINE HIGH-LEVEL CONSULTING ENGINE (Layer 0)
  * SPEC-047: Frontier Agent Harness — World-Class Consulting Mode
  *
- * When you're in a client environment without direct IDE connection:
- *   1. You describe the problem in natural language (architecture, bug, design decision)
- *   2. EOS produces a complete consulting deliverable at Thoughtworks / McKinsey level:
- *      - Executive Summary (1 paragraph)
- *      - Root Cause Analysis (5 Whys structured)
- *      - Architecture Recommendation (ADR format with rejected alternatives)
- *      - Implementation Plan (atomic tasks with done-criteria)
- *      - Risk Matrix (probability × impact)
- *      - Exact code (TypeScript / Go / Python / SQL — whatever is needed)
- *      - Verification criteria (how to know it worked)
- *      - Cost estimate (FinOps hours × complexity)
- *
- * This is the "no-IDE mode" — EOS is your senior staff engineer on call.
- *
  * Zero external runtime dependencies. Pure Layer-0 TypeScript.
  */
 
@@ -25,75 +11,56 @@ import path from "node:path";
 
 import { assertPrecondition, deepFreeze } from "./eosKernelPrimitives.ts";
 
-// ============================================================================
-// 1. CONSULTING ENGAGEMENT DATA CONTRACTS
-// ============================================================================
-
 export type EngagementType =
-  | "ARCHITECTURE_REVIEW" // Review and improve existing system design
-  | "NEW_FEATURE" // Design and implement a new feature from scratch
-  | "BUG_INVESTIGATION" // Root cause analysis + fix for a production bug
-  | "PERFORMANCE_AUDIT" // Find and fix performance bottlenecks
-  | "SECURITY_AUDIT" // Find and fix security vulnerabilities
-  | "TECH_DEBT_REDUCTION" // Refactor/simplify existing complex code
-  | "MIGRATION" // Migrate from one tech/pattern to another
-  | "INCIDENT_POSTMORTEM" // Blameless postmortem + prevention plan
-  | "GENERAL"; // Open-ended consulting question
+  | "ARCHITECTURE_REVIEW"
+  | "NEW_FEATURE"
+  | "BUG_INVESTIGATION"
+  | "PERFORMANCE_AUDIT"
+  | "SECURITY_AUDIT"
+  | "TECH_DEBT_REDUCTION"
+  | "MIGRATION"
+  | "INCIDENT_POSTMORTEM"
+  | "GENERAL";
 
 export type SeverityLevel = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "INFORMATIONAL";
 
 export type TechStack =
   "typescript" | "javascript" | "go" | "rust" | "python" | "java" | "sql" | "terraform" | "kubernetes" | "unknown";
 
-/** Input to a consulting engagement. */
 export interface ConsultingRequest {
-  /** What is the problem or question? */
   readonly problem: string;
-  /** What type of engagement is this? (auto-detected if not provided) */
   readonly engagementType?: EngagementType;
-  /** What technology/language is involved? */
   readonly techStack?: TechStack;
-  /** Relevant code snippets, error messages, or context (paste it here). */
   readonly context?: string;
-  /** What is the business impact / urgency? */
   readonly businessImpact?: string;
-  /** Current architecture or system description. */
   readonly currentArchitecture?: string;
-  /** Specific constraints (performance budget, team size, timeline). */
   readonly constraints?: string;
 }
 
-/** A risk entry in the risk matrix. */
 export interface RiskEntry {
   readonly risk: string;
   readonly probability: "HIGH" | "MEDIUM" | "LOW";
   readonly impact: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
   readonly mitigation: string;
-  readonly riskScore: number; // 1-9 (probability × impact numeric)
+  readonly riskScore: number;
 }
 
-/** An atomic implementation task. */
 export interface ImplementationTask {
   readonly id: string;
   readonly title: string;
   readonly description: string;
   readonly estimatedHours: number;
   readonly doneCriteria: string;
-  readonly dependencies: readonly string[]; // task IDs
+  readonly dependencies: readonly string[];
   readonly priority: "MUST_HAVE" | "SHOULD_HAVE" | "NICE_TO_HAVE";
 }
 
-/** A complete consulting deliverable. */
 export interface ConsultingDeliverable {
   readonly engagementId: string;
   readonly engagementType: EngagementType;
   readonly techStack: TechStack;
   readonly timestamp: string;
-
-  /** One-paragraph executive summary for non-technical stakeholders. */
   readonly executiveSummary: string;
-
-  /** Structured root cause analysis (5 Whys). */
   readonly rootCauseAnalysis: {
     readonly symptom: string;
     readonly why1: string;
@@ -103,56 +70,31 @@ export interface ConsultingDeliverable {
     readonly why5: string;
     readonly rootCause: string;
   };
-
-  /** Architecture Decision Record with alternatives. */
   readonly architectureRecommendation: {
     readonly title: string;
     readonly status: "Proposed" | "Accepted";
     readonly context: string;
     readonly decision: string;
     readonly consequences: readonly string[];
-    readonly rejectedAlternatives: ReadonlyArray<{
-      readonly name: string;
-      readonly reason: string;
-    }>;
+    readonly rejectedAlternatives: ReadonlyArray<{ readonly name: string; readonly reason: string }>;
   };
-
-  /** Exact implementation code. */
   readonly implementationCode: ReadonlyArray<{
     readonly filename: string;
     readonly language: string;
     readonly content: string;
     readonly description: string;
   }>;
-
-  /** Atomic task breakdown. */
   readonly implementationPlan: readonly ImplementationTask[];
-
-  /** Risk matrix sorted by risk score descending. */
   readonly riskMatrix: readonly RiskEntry[];
-
-  /** How to verify the solution worked. */
   readonly verificationCriteria: readonly string[];
-
-  /** FinOps estimate. */
   readonly finOpsEstimate: {
     readonly totalEstimatedHours: number;
-    readonly complexityScore: number; // 1-10
+    readonly complexityScore: number;
     readonly recommendedTeamSize: number;
-    readonly estimatedCostUsd: {
-      readonly low: number;
-      readonly mid: number;
-      readonly high: number;
-    };
+    readonly estimatedCostUsd: { readonly low: number; readonly mid: number; readonly high: number };
   };
-
-  /** SHA-256 integrity hash of this deliverable. */
   readonly integrityHash: string;
 }
-
-// ============================================================================
-// 2. KNOWLEDGE BASES (pure in-memory — no external deps)
-// ============================================================================
 
 const ARCHITECTURE_PATTERNS: Record<string, string> = {
   "god class":
@@ -187,10 +129,6 @@ const TECH_HOURLY_RATES: Record<TechStack, number> = {
   unknown: 150,
 };
 
-// ============================================================================
-// 3. ENGAGEMENT CLASSIFIER
-// ============================================================================
-
 function classifyEngagement(problem: string): EngagementType {
   const lower = problem.toLowerCase();
   if (/bug|error|crash|exception|fail|broken|not work/.test(lower)) return "BUG_INVESTIGATION";
@@ -215,23 +153,13 @@ function detectTechStack(problem: string, context?: string): TechStack {
   if (/terraform|hcl|\.tf\b/.test(text)) return "terraform";
   if (/kubernetes|kubectl|helm|k8s/.test(text)) return "kubernetes";
   if (/javascript|\.js\b|node|react|vue/.test(text)) return "javascript";
-  return "typescript"; // default for EOS ecosystem
+  return "typescript";
 }
 
-// ============================================================================
-// 4. DELIVERABLE GENERATORS
-// ============================================================================
-
-function generateRootCauseAnalysis(
-  problem: string,
-  engagementType: EngagementType,
-  context?: string,
-): ConsultingDeliverable["rootCauseAnalysis"] {
-  // Pattern-match the problem to known root cause chains
+function generateRootCauseAnalysis(problem: string): ConsultingDeliverable["rootCauseAnalysis"] {
   const lower = problem.toLowerCase();
-
-  const patterns: Record<string, ConsultingDeliverable["rootCauseAnalysis"]> = {
-    performance: {
+  if (/slow|latency|performance|memory/.test(lower)) {
+    return {
       symptom: `Performance degradation: ${problem.slice(0, 100)}`,
       why1: "The system response time exceeds acceptable SLO thresholds",
       why2: "Resource utilization (CPU, memory, I/O) is disproportionate to request volume",
@@ -240,8 +168,10 @@ function generateRootCauseAnalysis(
       why5: "No explicit performance budget was defined or enforced at architecture time",
       rootCause:
         "Missing performance contracts (SLOs) enforced at design time — optimizations are reactive, not preventive",
-    },
-    bug: {
+    };
+  }
+  if (/bug|error|crash|fail/.test(lower)) {
+    return {
       symptom: `Defect: ${problem.slice(0, 100)}`,
       why1: "The system behavior diverges from the specified contract under certain inputs",
       why2: "The code path for this input combination was not covered by tests",
@@ -249,8 +179,10 @@ function generateRootCauseAnalysis(
       why4: "No formal EARS/BDD specification defined the expected behavior for this state",
       why5: "The development process lacks a spec-first gate that forces test-first implementation",
       rootCause: "Absent spec-driven development: code was written before the acceptance criterion was defined",
-    },
-    security: {
+    };
+  }
+  if (/security|vuln|injection/.test(lower)) {
+    return {
       symptom: `Security vulnerability: ${problem.slice(0, 100)}`,
       why1: "User-supplied input reaches a sensitive operation without validation",
       why2: "Trust boundaries between layers are not enforced programmatically",
@@ -258,13 +190,8 @@ function generateRootCauseAnalysis(
       why4: "Security requirements were not formalized before implementation",
       why5: "No automated SAST or secret-scanning gate exists in the CI/CD pipeline",
       rootCause: "Security is not a first-class architecture invariant — it is bolted on after implementation",
-    },
-  };
-
-  if (/slow|latency|performance|memory/.test(lower)) return patterns.performance;
-  if (/bug|error|crash|fail/.test(lower)) return patterns.bug;
-  if (/security|vuln|injection/.test(lower)) return patterns.security;
-
+    };
+  }
   return {
     symptom: `Problem: ${problem.slice(0, 100)}`,
     why1: "The current implementation does not satisfy the stated requirement",
@@ -276,7 +203,7 @@ function generateRootCauseAnalysis(
   };
 }
 
-function generateRiskMatrix(engagementType: EngagementType, techStack: TechStack): RiskEntry[] {
+function generateRiskMatrix(engagementType: EngagementType): RiskEntry[] {
   const baseRisks: RiskEntry[] = [
     {
       risk: "Regression: existing functionality breaks during implementation",
@@ -301,7 +228,6 @@ function generateRiskMatrix(engagementType: EngagementType, techStack: TechStack
       riskScore: 4,
     },
   ];
-
   const typeSpecific: Partial<Record<EngagementType, RiskEntry[]>> = {
     SECURITY_AUDIT: [
       {
@@ -332,16 +258,11 @@ function generateRiskMatrix(engagementType: EngagementType, techStack: TechStack
       },
     ],
   };
-
   return [...baseRisks, ...(typeSpecific[engagementType] ?? [])].sort((a, b) => b.riskScore - a.riskScore);
 }
 
-function generateImplementationPlan(
-  problem: string,
-  engagementType: EngagementType,
-  techStack: TechStack,
-): ImplementationTask[] {
-  const tasks: ImplementationTask[] = [
+function generateImplementationPlan(problem: string, engagementType: EngagementType): ImplementationTask[] {
+  return [
     {
       id: "TASK-001",
       title: "Formal Specification (EARS/BDD)",
@@ -398,17 +319,14 @@ function generateImplementationPlan(
       priority: "SHOULD_HAVE",
     },
   ];
-  return tasks;
 }
 
 function estimateCost(tasks: ImplementationTask[], techStack: TechStack): ConsultingDeliverable["finOpsEstimate"] {
   const totalHours = tasks.reduce((sum, t) => sum + t.estimatedHours, 0);
   const rate = TECH_HOURLY_RATES[techStack];
-  const complexity = Math.min(10, Math.ceil(totalHours / 2));
-
   return {
     totalEstimatedHours: totalHours,
-    complexityScore: complexity,
+    complexityScore: Math.min(10, Math.ceil(totalHours / 2)),
     recommendedTeamSize: totalHours > 20 ? 2 : 1,
     estimatedCostUsd: {
       low: Math.round(totalHours * rate * 0.8),
@@ -418,32 +336,6 @@ function estimateCost(tasks: ImplementationTask[], techStack: TechStack): Consul
   };
 }
 
-// ============================================================================
-// 5. CONSULTANT CORE
-// ============================================================================
-
-/**
- * The EOS Consultant Core — your senior staff engineer on-call.
- *
- * Works offline (no API calls needed) using:
- *   - Pattern-matched root cause analysis
- *   - Architecture knowledge base (ADR format)
- *   - Standard implementation plan generator (TDD cycle)
- *   - Risk matrix calculator
- *
- * For richer AI-generated deliverables, integrate EosMultiModelRouter.
- *
- * Usage:
- * ```ts
- * const consultant = new EosConsultantCore("/workspace");
- * const deliverable = consultant.engage({
- *   problem: "Our API endpoint /users takes 8 seconds to respond with 10k users in DB",
- *   techStack: "typescript",
- *   context: "Using Prisma ORM with PostgreSQL. No indexing on email column.",
- * });
- * consultant.saveDeliverable(deliverable);
- * ```
- */
 export class EosConsultantCore {
   private readonly projectRoot: string;
 
@@ -451,10 +343,6 @@ export class EosConsultantCore {
     this.projectRoot = path.resolve(projectRoot);
   }
 
-  /**
-   * Produces a complete consulting deliverable for the given problem.
-   * Runs fully offline — no AI model call needed for the structural deliverable.
-   */
   public engage(req: ConsultingRequest): ConsultingDeliverable {
     assertPrecondition(req.problem.trim().length > 0, "Problem description must not be empty.");
 
@@ -462,22 +350,20 @@ export class EosConsultantCore {
     const techStack = req.techStack ?? detectTechStack(req.problem, req.context);
     const engagementId = `ENG-${Date.now()}-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
 
-    // Find matching patterns in knowledge base
     const lower = req.problem.toLowerCase();
     const matchedPatterns = Object.entries(ARCHITECTURE_PATTERNS)
       .filter(([key]) => lower.includes(key))
       .map(([, value]) => value);
 
-    // Build architecture recommendation
     const archTitle = `${engagementType.replace(/_/g, " ")}: ${req.problem.slice(0, 60)}`;
     const archDecision =
       matchedPatterns.length > 0
         ? matchedPatterns.join(" Additionally: ")
         : "Apply EARS/BDD spec-driven development: define acceptance criteria before writing implementation code. Use TDD (Red-Green-Refactor) cycle. Enforce architectural boundaries via automated CI gate.";
 
-    const rootCause = generateRootCauseAnalysis(req.problem, engagementType, req.context);
-    const riskMatrix = generateRiskMatrix(engagementType, techStack);
-    const implementationPlan = generateImplementationPlan(req.problem, engagementType, techStack);
+    const rootCause = generateRootCauseAnalysis(req.problem);
+    const riskMatrix = generateRiskMatrix(engagementType);
+    const implementationPlan = generateImplementationPlan(req.problem, engagementType);
     const finOps = estimateCost(implementationPlan, techStack);
 
     const deliverable: ConsultingDeliverable = {
@@ -485,16 +371,13 @@ export class EosConsultantCore {
       engagementType,
       techStack,
       timestamp: new Date().toISOString(),
-
       executiveSummary:
         `This engagement addresses: "${req.problem.slice(0, 120)}". ` +
         `Root cause: ${rootCause.rootCause}. ` +
         `Recommended approach: ${archDecision.slice(0, 200)}. ` +
         `Estimated effort: ${finOps.totalEstimatedHours}h (${finOps.estimatedCostUsd.low}–${finOps.estimatedCostUsd.high} USD). ` +
         `Top risk: ${riskMatrix[0]?.risk ?? "scope creep"}.`,
-
       rootCauseAnalysis: rootCause,
-
       architectureRecommendation: {
         title: archTitle,
         status: "Proposed",
@@ -519,26 +402,22 @@ export class EosConsultantCore {
           },
         ],
       },
-
       implementationCode: this._generateCode(req, engagementType, techStack),
       implementationPlan,
       riskMatrix,
-
       verificationCriteria: [
         "All new tests pass with exit code 0.",
         "Zero regressions in existing test suite.",
         "TypeScript strict mode reports 0 errors.",
         "SAST scanner reports 0 security findings.",
-        `Performance within defined SLO (verify with benchmark).`,
+        "Performance within defined SLO (verify with benchmark).",
         "Code reviewed by ≥1 additional engineer.",
         "ADR and CHANGELOG updated.",
       ],
-
       finOpsEstimate: finOps,
       integrityHash: "",
     };
 
-    // Seal integrity hash
     const hashData = JSON.stringify({
       engagementId,
       problem: req.problem,
@@ -551,9 +430,6 @@ export class EosConsultantCore {
     return deepFreeze({ ...deliverable, integrityHash });
   }
 
-  /**
-   * Generates example code for the engagement based on tech stack and type.
-   */
   private _generateCode(
     req: ConsultingRequest,
     engagementType: EngagementType,
@@ -567,56 +443,19 @@ export class EosConsultantCore {
           filename: `docs/postmortems/INC-${Date.now()}-postmortem.md`,
           language: "markdown",
           description: "Blameless postmortem template following Spotify/Google SRE standard",
-          content: `# Blameless Postmortem — INC-${Date.now()}
-
-## Summary
-**Severity**: P1 | **Duration**: TBD | **Date**: ${new Date().toISOString().slice(0, 10)}
-
-> One paragraph: what happened, what was the user impact, and how was it resolved.
-
-## Timeline (UTC)
-| Time | Event |
-|------|-------|
-| HH:MM | Issue first detected |
-| HH:MM | On-call engineer paged |
-| HH:MM | Root cause identified |
-| HH:MM | Mitigation deployed |
-| HH:MM | Service fully restored |
-
-## Root Cause
-${req.problem.slice(0, 300)}
-
-## Contributing Factors (5 Whys)
-1. **Why did it fail?** — ...
-2. **Why did that happen?** — ...
-3. **Why was that possible?** — ...
-4. **Why wasn't it caught earlier?** — ...
-5. **Why wasn't there a safeguard?** — ...
-
-## Impact
-- Users affected: TBD
-- Error budget consumed: TBD%
-- Revenue impact: TBD
-
-## Action Items
-| Action | Owner | Due Date | Priority |
-|--------|-------|----------|----------|
-| Add monitoring alert for early detection | @engineer | +3 days | P0 |
-| Add test case covering the failure scenario | @engineer | +1 week | P0 |
-| Review related code paths for similar issues | @team | +2 weeks | P1 |
-
-## Lessons Learned
-- What went well:
-- What could be improved:
-- Where we got lucky:
-
----
-*This document is blameless. Systems and processes are improved, not people blamed.*`,
+          content: [
+            `# Blameless Postmortem — INC-${Date.now()}`,
+            `## Summary\n**Severity**: P1 | **Duration**: TBD | **Date**: ${new Date().toISOString().slice(0, 10)}`,
+            `## Timeline (UTC)\n| Time | Event |\n|------|-------|\n| HH:MM | Issue first detected |\n| HH:MM | Mitigation deployed |`,
+            `## Root Cause\n${req.problem.slice(0, 300)}`,
+            "## Contributing Factors (5 Whys)\n1. **Why did it fail?** — ...\n2. **Why did that happen?** — ...",
+            "## Action Items\n| Action | Owner | Due Date | Priority |\n|--------|-------|----------|----------|\n| Add test case covering failure scenario | @engineer | +1 week | P0 |",
+            "---\n*This document is blameless. Systems and processes are improved, not people blamed.*",
+          ].join("\n\n"),
         },
       ];
     }
 
-    // Pattern-matched code templates
     if (techStack === "typescript" || techStack === "javascript") {
       if (/n\+1|query|orm|database|slow/.test(lower)) {
         return [
@@ -624,129 +463,49 @@ ${req.problem.slice(0, 300)}
             filename: "src/core/queryOptimizer.ts",
             language: "typescript",
             description: "Batched query pattern with DataLoader-style caching to eliminate N+1",
-            content: `/**
- * Batch query loader — eliminates N+1 by grouping individual lookups
- * into a single batch request within the same event-loop tick.
- */
-export class BatchQueryLoader<K, V> {
-  private readonly batchFn: (keys: K[]) => Promise<Map<K, V>>;
-  private pending: K[] = [];
-  private callbacks: Map<K, { resolve: (v: V | undefined) => void }> = new Map();
-  private scheduled = false;
-
-  constructor(batchFn: (keys: K[]) => Promise<Map<K, V>>) {
-    this.batchFn = batchFn;
-  }
-
-  public load(key: K): Promise<V | undefined> {
-    return new Promise((resolve) => {
-      if (!this.pending.includes(key)) this.pending.push(key);
-      this.callbacks.set(key as K, { resolve });
-      if (!this.scheduled) {
-        this.scheduled = true;
-        // Collect all loads in the same tick, then fire one batch
-        queueMicrotask(() => this._flush());
-      }
-    });
-  }
-
-  private async _flush(): Promise<void> {
-    const keys = [...this.pending];
-    this.pending = [];
-    this.scheduled = false;
-    try {
-      const results = await this.batchFn(keys);
-      for (const key of keys) {
-        this.callbacks.get(key)?.resolve(results.get(key));
-        this.callbacks.delete(key);
-      }
-    } catch (err) {
-      for (const key of keys) {
-        this.callbacks.get(key)?.resolve(undefined);
-        this.callbacks.delete(key);
-      }
-    }
-  }
-}`,
+            content: [
+              "export class BatchQueryLoader<K, V> {",
+              "  private pending: K[] = [];",
+              "  private callbacks = new Map<K, { resolve: (v: V | undefined) => void }>();",
+              "  private scheduled = false;",
+              "  constructor(private readonly batchFn: (keys: K[]) => Promise<Map<K, V>>) {}",
+              "  public load(key: K): Promise<V | undefined> {",
+              "    return new Promise((resolve) => {",
+              "      if (!this.pending.includes(key)) this.pending.push(key);",
+              "      this.callbacks.set(key, { resolve });",
+              "      if (!this.scheduled) { this.scheduled = true; queueMicrotask(() => this._flush()); }",
+              "    });",
+              "  }",
+              "  private async _flush(): Promise<void> {",
+              "    const keys = [...this.pending]; this.pending = []; this.scheduled = false;",
+              "    try { const results = await this.batchFn(keys); for (const k of keys) { this.callbacks.get(k)?.resolve(results.get(k)); this.callbacks.delete(k); } }",
+              "    catch { for (const k of keys) { this.callbacks.get(k)?.resolve(undefined); this.callbacks.delete(k); } }",
+              "  }",
+              "}",
+            ].join("\n"),
           },
         ];
       }
-
       if (/auth|jwt|token|session/.test(lower)) {
         return [
           {
             filename: "src/core/authGuard.ts",
             language: "typescript",
             description: "Zero-trust JWT validator with timing-safe comparison",
-            content: `import crypto from "node:crypto";
-
-export interface JwtClaims {
-  sub: string;
-  iss: string;
-  aud: string;
-  exp: number;
-  iat: number;
-}
-
-/**
- * Validates a JWT token with:
- *   - Signature verification (HMAC-SHA256)
- *   - Expiry check
- *   - Issuer and audience validation
- *   - Timing-safe comparison (prevents timing attacks)
- */
-export function validateJwt(
-  token: string,
-  secret: string,
-  expectedIssuer: string,
-  expectedAudience: string
-): { valid: boolean; claims?: JwtClaims; error?: string } {
-  try {
-    const parts = token.split(".");
-    if (parts.length !== 3) return { valid: false, error: "Malformed JWT: expected 3 parts" };
-
-    const [headerB64, payloadB64, signatureB64] = parts;
-
-    // Recompute expected signature
-    const signingInput = \`\${headerB64}.\${payloadB64}\`;
-    const expectedSig = crypto
-      .createHmac("sha256", secret)
-      .update(signingInput)
-      .digest("base64url");
-
-    // Timing-safe comparison — prevents oracle attacks
-    const actualSigBuf = Buffer.from(signatureB64, "base64url");
-    const expectedSigBuf = Buffer.from(expectedSig, "base64url");
-
-    if (
-      actualSigBuf.length !== expectedSigBuf.length ||
-      !crypto.timingSafeEqual(actualSigBuf, expectedSigBuf)
-    ) {
-      return { valid: false, error: "Invalid signature" };
-    }
-
-    const claims = JSON.parse(
-      Buffer.from(payloadB64, "base64url").toString("utf8")
-    ) as JwtClaims;
-
-    // Expiry check
-    if (Date.now() / 1000 > claims.exp) {
-      return { valid: false, error: "Token expired" };
-    }
-
-    // Issuer and audience validation
-    if (claims.iss !== expectedIssuer) {
-      return { valid: false, error: \`Invalid issuer: \${claims.iss}\` };
-    }
-    if (claims.aud !== expectedAudience) {
-      return { valid: false, error: \`Invalid audience: \${claims.aud}\` };
-    }
-
-    return { valid: true, claims };
-  } catch (err) {
-    return { valid: false, error: \`Parse error: \${String(err)}\` };
-  }
-}`,
+            content: [
+              'import crypto from "node:crypto";',
+              "export interface JwtClaims { sub: string; iss: string; aud: string; exp: number; iat: number; }",
+              "export function validateJwt(token: string, secret: string, expectedIssuer: string, expectedAudience: string): { valid: boolean; claims?: JwtClaims; error?: string } {",
+              '  const parts = token.split("."); if (parts.length !== 3) return { valid: false, error: "Malformed JWT" };',
+              '  const [h, p, s] = parts; const expected = crypto.createHmac("sha256", secret).update(`${h}.${p}`).digest("base64url");',
+              '  const aBuf = Buffer.from(s, "base64url"); const eBuf = Buffer.from(expected, "base64url");',
+              '  if (aBuf.length !== eBuf.length || !crypto.timingSafeEqual(aBuf, eBuf)) return { valid: false, error: "Invalid signature" };',
+              '  const claims = JSON.parse(Buffer.from(p, "base64url").toString("utf8")) as JwtClaims;',
+              '  if (Date.now() / 1000 > claims.exp) return { valid: false, error: "Token expired" };',
+              '  if (claims.iss !== expectedIssuer || claims.aud !== expectedAudience) return { valid: false, error: "Invalid issuer/audience" };',
+              "  return { valid: true, claims };",
+              "}",
+            ].join("\n"),
           },
         ];
       }
@@ -758,24 +517,7 @@ export function validateJwt(
           filename: "migrations/optimize_indexes.sql",
           language: "sql",
           description: "Index and query optimization for the identified bottleneck",
-          content: `-- Performance optimization migration
--- Problem: ${req.problem.slice(0, 100)}
-
--- STEP 1: Add missing index on high-cardinality lookup columns
--- (Replace 'users' and 'email' with your actual table/column)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email
-  ON users (email)
-  WHERE deleted_at IS NULL; -- partial index: only active records
-
--- STEP 2: Analyze query plan to confirm index usage
-EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT)
-  SELECT * FROM users WHERE email = 'example@test.com';
-
--- STEP 3: Vacuum to update statistics
-ANALYZE users;
-
--- ROLLBACK PLAN:
--- DROP INDEX CONCURRENTLY IF EXISTS idx_users_email;`,
+          content: `-- Performance optimization migration: ${req.problem.slice(0, 100)}\nCREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email ON users (email) WHERE deleted_at IS NULL;\nEXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT) SELECT * FROM users WHERE email = 'example@test.com';\nANALYZE users;`,
         },
       ];
     }
@@ -787,60 +529,8 @@ ANALYZE users;
             filename: "internal/repository/batch_loader.go",
             language: "go",
             description: "Batch DataLoader pattern in Go to eliminate N+1 database queries",
-            content: `package repository
-
-import (
-	"context"
-	"database/sql"
-	"fmt"
-	"strings"
-)
-
-// BatchLoader groups individual lookups into a single SQL IN query.
-// Eliminates N+1 queries: 1000 individual SELECTs → 1 batch SELECT.
-type BatchLoader[K comparable, V any] struct {
-	db      *sql.DB
-	queryFn func(ctx context.Context, db *sql.DB, keys []K) (map[K]V, error)
-}
-
-func NewBatchLoader[K comparable, V any](
-	db *sql.DB,
-	queryFn func(ctx context.Context, db *sql.DB, keys []K) (map[K]V, error),
-) *BatchLoader[K, V] {
-	return &BatchLoader[K, V]{db: db, queryFn: queryFn}
-}
-
-func (l *BatchLoader[K, V]) LoadMany(ctx context.Context, keys []K) (map[K]V, error) {
-	if len(keys) == 0 {
-		return make(map[K]V), nil
-	}
-	return l.queryFn(ctx, l.db, keys)
-}
-
-// Example: batch load users by ID
-func BatchLoadUsers(ctx context.Context, db *sql.DB, ids []int64) (map[int64]User, error) {
-	placeholders := make([]string, len(ids))
-	args := make([]any, len(ids))
-	for i, id := range ids {
-		placeholders[i] = fmt.Sprintf("$%d", i+1)
-		args[i] = id
-	}
-	query := fmt.Sprintf("SELECT id, email, name FROM users WHERE id IN (%s)", strings.Join(placeholders, ","))
-	rows, err := db.QueryContext(ctx, query, args...)
-	if err != nil {
-		return nil, fmt.Errorf("batch load users: %w", err)
-	}
-	defer rows.Close()
-	result := make(map[int64]User, len(ids))
-	for rows.Next() {
-		var u User
-		if err := rows.Scan(&u.ID, &u.Email, &u.Name); err != nil {
-			return nil, err
-		}
-		result[u.ID] = u
-	}
-	return result, rows.Err()
-}`,
+            content:
+              'package repository\n\nimport (\n\t"context"\n\t"database/sql"\n)\n\ntype BatchLoader[K comparable, V any] struct {\n\tdb *sql.DB\n\tqueryFn func(ctx context.Context, db *sql.DB, keys []K) (map[K]V, error)\n}\n\nfunc (l *BatchLoader[K, V]) LoadMany(ctx context.Context, keys []K) (map[K]V, error) {\n\tif len(keys) == 0 { return make(map[K]V), nil }\n\treturn l.queryFn(ctx, l.db, keys)\n}',
           },
         ];
       }
@@ -850,44 +540,8 @@ func BatchLoadUsers(ctx context.Context, db *sql.DB, ids []int64) (map[int64]Use
             filename: "internal/worker/pool.go",
             language: "go",
             description: "Worker pool with bounded concurrency to prevent goroutine explosion",
-            content: `package worker
-
-import (
-	"context"
-	"sync"
-)
-
-// Pool runs tasks with bounded concurrency — prevents goroutine explosion.
-// Implements the classic semaphore pattern with a buffered channel.
-type Pool struct {
-	sem chan struct{}
-	wg  sync.WaitGroup
-}
-
-func NewPool(maxConcurrency int) *Pool {
-	return &Pool{sem: make(chan struct{}, maxConcurrency)}
-}
-
-// Submit enqueues a task. Blocks if pool is at capacity (backpressure).
-func (p *Pool) Submit(ctx context.Context, task func()) error {
-	select {
-	case p.sem <- struct{}{}:
-	case <-ctx.Done():
-		return ctx.Err()
-	}
-	p.wg.Add(1)
-	go func() {
-		defer func() {
-			<-p.sem
-			p.wg.Done()
-		}()
-		task()
-	}()
-	return nil
-}
-
-// Wait blocks until all submitted tasks complete.
-func (p *Pool) Wait() { p.wg.Wait() }`,
+            content:
+              'package worker\n\nimport (\n\t"context"\n\t"sync"\n)\n\ntype Pool struct { sem chan struct{}; wg sync.WaitGroup }\nfunc NewPool(max int) *Pool { return &Pool{sem: make(chan struct{}, max)} }\nfunc (p *Pool) Submit(ctx context.Context, task func()) error {\n\tselect { case p.sem <- struct{}{}: case <-ctx.Done(): return ctx.Err() }\n\tp.wg.Add(1); go func() { defer func() { <-p.sem; p.wg.Done() }(); task() }(); return nil\n}\nfunc (p *Pool) Wait() { p.wg.Wait() }',
           },
         ];
       }
@@ -896,15 +550,8 @@ func (p *Pool) Wait() { p.wg.Wait() }`,
           filename: "internal/solution.go",
           language: "go",
           description: `Solution template for: ${req.problem.slice(0, 80)}`,
-          content: `package internal
-
-import "context"
-
-// TODO: Implement solution following approved ADR.
-// Write tests in *_test.go first (TDD Red Phase), then implement here.
-func Solve(ctx context.Context) error {
-	panic("not implemented — write tests first (TDD Red Phase)")
-}`,
+          content:
+            'package internal\n\nimport "context"\n\nfunc Solve(ctx context.Context) error {\n\tpanic("not implemented — write tests first (TDD Red Phase)")\n}',
         },
       ];
     }
@@ -915,45 +562,8 @@ func Solve(ctx context.Context) error {
           filename: "src/solution.rs",
           language: "rust",
           description: `Rust solution template with proper error handling for: ${req.problem.slice(0, 80)}`,
-          content: `use std::fmt;
-
-/// Domain error type — never use Box<dyn Error> in library code.
-#[derive(Debug)]
-pub enum SolutionError {
-    InvalidInput(String),
-    ProcessingFailed { reason: String, source: Option<Box<SolutionError>> },
-}
-
-impl fmt::Display for SolutionError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::InvalidInput(msg) => write!(f, "Invalid input: {}", msg),
-            Self::ProcessingFailed { reason, .. } => write!(f, "Processing failed: {}", reason),
-        }
-    }
-}
-
-/// TODO: implement the solution.
-/// Write #[test] modules first (TDD Red Phase), then implement.
-pub fn solve(input: &str) -> Result<String, SolutionError> {
-    if input.is_empty() {
-        return Err(SolutionError::InvalidInput("input must not be empty".to_string()));
-    }
-    // TODO: implement
-    todo!("write tests first — TDD Red Phase")
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_solve_basic() {
-        // TODO: implement test before implementing solve()
-        let result = solve("test input");
-        assert!(result.is_ok());
-    }
-}`,
+          content:
+            '#[derive(Debug)]\npub enum SolutionError { InvalidInput(String) }\npub fn solve(input: &str) -> Result<String, SolutionError> {\n    if input.is_empty() { return Err(SolutionError::InvalidInput("input must not be empty".to_string())); }\n    Ok(input.to_string())\n}\n#[cfg(test)]\nmod tests {\n    use super::*;\n    #[test]\n    fn test_solve_basic() { assert!(solve("test input").is_ok()); }\n}',
         },
       ];
     }
@@ -964,47 +574,8 @@ mod tests {
           filename: "solution.py",
           language: "python",
           description: `Python solution with async/await and proper typing for: ${req.problem.slice(0, 80)}`,
-          content: `from __future__ import annotations
-from typing import Any
-import asyncio
-import logging
-
-logger = logging.getLogger(__name__)
-
-
-class SolutionError(Exception):
-    """Domain-level error with structured context."""
-    def __init__(self, message: str, code: str = "SOLUTION_ERROR", **context: Any) -> None:
-        super().__init__(message)
-        self.code = code
-        self.context = context
-
-
-async def solve(input_data: dict[str, Any]) -> dict[str, Any]:
-    """
-    TODO: Implement the solution following the approved ADR.
-    Write tests in test_solution.py first (TDD Red Phase).
-
-    Args:
-        input_data: Validated input dict matching the agreed contract.
-    Returns:
-        Result dict matching the output contract.
-    Raises:
-        SolutionError: On any domain-level validation or processing failure.
-    """
-    if not input_data:
-        raise SolutionError("input_data must not be empty", code="INVALID_INPUT")
-
-    # TODO: implement after writing tests
-    raise NotImplementedError("Write tests first — TDD Red Phase")
-
-
-# Tests go in test_solution.py:
-# import pytest
-# @pytest.mark.asyncio
-# async def test_solve_basic():
-#     result = await solve({"key": "value"})
-#     assert result["status"] == "ok"`,
+          content:
+            'from __future__ import annotations\nfrom typing import Any\n\nclass SolutionError(Exception):\n    def __init__(self, message: str, code: str = "SOLUTION_ERROR") -> None:\n        super().__init__(message); self.code = code\n\nasync def solve(input_data: dict[str, Any]) -> dict[str, Any]:\n    if not input_data: raise SolutionError("input_data must not be empty", code="INVALID_INPUT")\n    raise NotImplementedError("Write tests first — TDD Red Phase")',
         },
       ];
     }
@@ -1015,99 +586,28 @@ async def solve(input_data: dict[str, Any]) -> dict[str, Any]:
           filename: "modules/solution/main.tf",
           language: "hcl",
           description: `Terraform module template for: ${req.problem.slice(0, 80)}`,
-          content: `terraform {
-  required_version = ">= 1.6.0"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
-# ---------------------------------------------------------------------------
-# Variables
-# ---------------------------------------------------------------------------
-
-variable "environment" {
-  description = "Deployment environment (dev, staging, prod)"
-  type        = string
-  validation {
-    condition     = contains(["dev", "staging", "prod"], var.environment)
-    error_message = "environment must be dev, staging, or prod."
-  }
-}
-
-variable "name_prefix" {
-  description = "Resource name prefix for all resources in this module"
-  type        = string
-}
-
-# ---------------------------------------------------------------------------
-# TODO: Add resources following the approved ADR.
-# Write terratest tests in /test/ first (TDD Red Phase).
-# ---------------------------------------------------------------------------
-
-# ---------------------------------------------------------------------------
-# Outputs
-# ---------------------------------------------------------------------------
-
-output "module_status" {
-  description = "Status of the deployed module"
-  value       = "DEPLOYED: \${var.name_prefix}-\${var.environment}"
-}`,
+          content:
+            'terraform {\n  required_version = ">= 1.6.0"\n}\nvariable "environment" { type = string }\nvariable "name_prefix" { type = string }\noutput "module_status" { value = "DEPLOYED: ${var.name_prefix}-${var.environment}" }',
         },
       ];
     }
 
-    // Generic TypeScript template for any engagement
     return [
       {
         filename: `src/core/eos${engagementType.replace(/_/g, "")}Solution.ts`,
         language: "typescript",
         description: `Solution template for: ${req.problem.slice(0, 80)}`,
-        content: `/**
- * Solution: ${req.problem.slice(0, 80)}
- * Engagement: ${engagementType}
- * Generated by EOS Consultant Core
- *
- * IMPORTANT: This is a template — implement the TODO sections
- * following the TDD cycle (write tests in TASK-002 first).
- */
-
-export interface SolutionInput {
-  // TODO: Define input contract based on EARS specification
-}
-
-export interface SolutionOutput {
-  success: boolean;
-  // TODO: Define output contract based on BDD acceptance criteria
-}
-
-/**
- * TODO: Implement the solution following the approved ADR.
- * Reference: ${engagementType} engagement.
- */
-export function solve(input: SolutionInput): SolutionOutput {
-  // TODO: Implement — start with the simplest code that makes tests pass
-  throw new Error("Not implemented — write tests in TASK-002 first (TDD Red Phase)");
-}`,
+        content: `export interface SolutionInput {}\nexport interface SolutionOutput { success: boolean; }\nexport function solve(_input: SolutionInput): SolutionOutput {\n  throw new Error("Not implemented — write tests in TASK-002 first (TDD Red Phase)");\n}`,
       },
     ];
   }
 
-  /**
-   * Saves a consulting deliverable as a markdown report in docs/consulting/.
-   */
   public saveDeliverable(deliverable: ConsultingDeliverable): string {
     const dir = path.join(this.projectRoot, "docs", "consulting");
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-
     const filename = `${deliverable.engagementId}-${deliverable.engagementType.toLowerCase()}.md`;
     const filePath = path.join(dir, filename);
-
-    const md = this._formatMarkdown(deliverable);
-    fs.writeFileSync(filePath, md, "utf8");
+    fs.writeFileSync(filePath, this._formatMarkdown(deliverable), "utf8");
     return filePath;
   }
 
@@ -1118,95 +618,28 @@ export function solve(input: SolutionInput): SolutionOutput {
           `### ${t.id}: ${t.title}\n- **Hours**: ${t.estimatedHours}\n- **Priority**: ${t.priority}\n- **Done criteria**: ${t.doneCriteria}\n- **Depends on**: ${t.dependencies.join(", ") || "none"}`,
       )
       .join("\n\n");
-
     const risks = d.riskMatrix
       .map(
         (r) =>
           `| ${r.risk.slice(0, 60)} | ${r.probability} | ${r.impact} | ${r.riskScore} | ${r.mitigation.slice(0, 80)} |`,
       )
       .join("\n");
-
     const code = d.implementationCode
       .map((c) => `### ${c.filename}\n${c.description}\n\n\`\`\`${c.language}\n${c.content}\n\`\`\``)
       .join("\n\n");
 
-    return `# Consulting Deliverable: ${d.engagementId}
-
-> **Type**: ${d.engagementType} | **Stack**: ${d.techStack} | **Date**: ${d.timestamp}
-
-## Executive Summary
-
-${d.executiveSummary}
-
----
-
-## Root Cause Analysis (5 Whys)
-
-| Layer | Finding |
-|-------|---------|
-| Symptom | ${d.rootCauseAnalysis.symptom} |
-| Why 1 | ${d.rootCauseAnalysis.why1} |
-| Why 2 | ${d.rootCauseAnalysis.why2} |
-| Why 3 | ${d.rootCauseAnalysis.why3} |
-| Why 4 | ${d.rootCauseAnalysis.why4} |
-| Why 5 | ${d.rootCauseAnalysis.why5} |
-| **Root Cause** | **${d.rootCauseAnalysis.rootCause}** |
-
----
-
-## Architecture Recommendation (ADR)
-
-**Title**: ${d.architectureRecommendation.title}
-**Status**: ${d.architectureRecommendation.status}
-
-**Context**: ${d.architectureRecommendation.context}
-
-**Decision**: ${d.architectureRecommendation.decision}
-
-**Consequences**:
-${d.architectureRecommendation.consequences.map((c) => `- ${c}`).join("\n")}
-
-**Rejected Alternatives**:
-${d.architectureRecommendation.rejectedAlternatives.map((a) => `- **${a.name}**: ${a.reason}`).join("\n")}
-
----
-
-## Implementation Plan
-
-${tasks}
-
----
-
-## Risk Matrix
-
-| Risk | Probability | Impact | Score | Mitigation |
-|------|-------------|--------|-------|------------|
-${risks}
-
----
-
-## Implementation Code
-
-${code}
-
----
-
-## Verification Criteria
-
-${d.verificationCriteria.map((v, i) => `${i + 1}. ${v}`).join("\n")}
-
----
-
-## FinOps Estimate
-
-- **Total hours**: ${d.finOpsEstimate.totalEstimatedHours}h
-- **Complexity**: ${d.finOpsEstimate.complexityScore}/10
-- **Team size**: ${d.finOpsEstimate.recommendedTeamSize} engineer(s)
-- **Cost range**: $${d.finOpsEstimate.estimatedCostUsd.low} – $${d.finOpsEstimate.estimatedCostUsd.high} USD
-
----
-
-*Integrity: \`${d.integrityHash}\`*
-`;
+    return [
+      `# Consulting Deliverable: ${d.engagementId}`,
+      `> **Type**: ${d.engagementType} | **Stack**: ${d.techStack} | **Date**: ${d.timestamp}`,
+      `## Executive Summary\n\n${d.executiveSummary}`,
+      `## Root Cause Analysis (5 Whys)\n\n| Layer | Finding |\n|-------|---------|\n| Symptom | ${d.rootCauseAnalysis.symptom} |\n| Why 1 | ${d.rootCauseAnalysis.why1} |\n| Why 2 | ${d.rootCauseAnalysis.why2} |\n| Why 3 | ${d.rootCauseAnalysis.why3} |\n| Why 4 | ${d.rootCauseAnalysis.why4} |\n| Why 5 | ${d.rootCauseAnalysis.why5} |\n| **Root Cause** | **${d.rootCauseAnalysis.rootCause}** |`,
+      `## Architecture Recommendation (ADR)\n\n**Title**: ${d.architectureRecommendation.title}\n**Status**: ${d.architectureRecommendation.status}\n**Context**: ${d.architectureRecommendation.context}\n**Decision**: ${d.architectureRecommendation.decision}\n**Consequences**:\n${d.architectureRecommendation.consequences.map((c) => `- ${c}`).join("\n")}\n**Rejected Alternatives**:\n${d.architectureRecommendation.rejectedAlternatives.map((a) => `- **${a.name}**: ${a.reason}`).join("\n")}`,
+      `## Implementation Plan\n\n${tasks}`,
+      `## Risk Matrix\n\n| Risk | Probability | Impact | Score | Mitigation |\n|------|-------------|--------|-------|------------|\n${risks}`,
+      `## Implementation Code\n\n${code}`,
+      `## Verification Criteria\n\n${d.verificationCriteria.map((v, i) => `${i + 1}. ${v}`).join("\n")}`,
+      `## FinOps Estimate\n\n- **Total hours**: ${d.finOpsEstimate.totalEstimatedHours}h\n- **Complexity**: ${d.finOpsEstimate.complexityScore}/10\n- **Team size**: ${d.finOpsEstimate.recommendedTeamSize} engineer(s)\n- **Cost range**: $${d.finOpsEstimate.estimatedCostUsd.low} – $${d.finOpsEstimate.estimatedCostUsd.high} USD`,
+      `*Integrity: \`${d.integrityHash}\`*\n`,
+    ].join("\n\n---\n\n");
   }
 }
