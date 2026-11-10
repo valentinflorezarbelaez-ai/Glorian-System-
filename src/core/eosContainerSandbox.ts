@@ -17,21 +17,11 @@ const MAX_SINGLE_FILE_BYTES = 64 * 1024 * 1024;
 const MAX_RUN_TIMEOUT_MS = 15 * 60 * 1000;
 const DEFAULT_RUN_TIMEOUT_MS = 10 * 60 * 1000;
 const MAX_RUN_DISK_CHECK_MS = 1_000;
-const EXCLUDED_DIRECTORIES = new Set([
-  ".git",
-  ".worktrees",
-  ".eos",
-  ".vercel",
-  ".next",
-  ".turbo",
-  ".terraform",
-  ".secrets",
-  "secret",
-  "secrets",
-  "credentials",
-  "coverage",
-  "node_modules",
-]);
+const EXCLUDED_DIRECTORIES = new Set(
+  ".git,.worktrees,.eos,.vercel,.next,.turbo,.terraform,.secrets,secret,secrets,credentials,coverage,node_modules".split(
+    ",",
+  ),
+);
 
 export interface SandboxRunOptions {
   readonly worktreePath: string;
@@ -78,21 +68,10 @@ function isPathWithin(root: string, candidate: string): boolean {
 }
 
 function sanitizeDockerEnv(): NodeJS.ProcessEnv {
-  const allowed = [
-    "PATH",
-    "SYSTEMROOT",
-    "WINDIR",
-    "TEMP",
-    "TMP",
-    "USERPROFILE",
-    "HOME",
-    "DOCKER_HOST",
-    "DOCKER_CONTEXT",
-    "DOCKER_CONFIG",
-    "DOCKER_TLS_VERIFY",
-    "DOCKER_CERT_PATH",
-    "DOCKER_API_VERSION",
-  ];
+  const allowed =
+    "PATH,SYSTEMROOT,WINDIR,TEMP,TMP,USERPROFILE,HOME,DOCKER_HOST,DOCKER_CONTEXT,DOCKER_CONFIG,DOCKER_TLS_VERIFY,DOCKER_CERT_PATH,DOCKER_API_VERSION".split(
+      ",",
+    );
   const env: NodeJS.ProcessEnv = {};
   for (const key of allowed) {
     const value = process.env[key];
@@ -218,27 +197,9 @@ function isExcluded(relativePath: string, isDirectory: boolean): boolean {
     return true;
   if (lower.startsWith(".env") && ![".env.example", ".env.sample", ".env.template"].includes(lower)) return true;
   if (
-    [
-      ".npmrc",
-      ".pypirc",
-      ".netrc",
-      "credentials",
-      "credentials.json",
-      "credential.json",
-      "credentials.yaml",
-      "credentials.yml",
-      "secrets",
-      "secrets.json",
-      "secrets.yaml",
-      "secrets.yml",
-      "secret.json",
-      "secret.yaml",
-      "secret.yml",
-      "service-account.json",
-      "service_account.json",
-      "terraform.tfstate",
-      "terraform.tfstate.backup",
-    ].includes(lower)
+    ".npmrc,.pypirc,.netrc,credentials,credentials.json,credential.json,credentials.yaml,credentials.yml,secrets,secrets.json,secrets.yaml,secrets.yml,secret.json,secret.yaml,secret.yml,service-account.json,service_account.json,terraform.tfstate,terraform.tfstate.backup"
+      .split(",")
+      .includes(lower)
   )
     return true;
   if (/(secret|credential|service.account|firebase.adminsdk).+\.(json|ya?ml)$/i.test(name)) return true;

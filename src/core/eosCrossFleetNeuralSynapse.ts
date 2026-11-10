@@ -10,11 +10,7 @@
 import { createHash } from "node:crypto";
 
 export type SynapticPatternCategory =
-  | "PERFORMANCE_OPT"
-  | "SECURITY_HARDENING"
-  | "FINOPS_GOVERNANCE"
-  | "AEROSPACE_SAFETY"
-  | "GOLDEN_PATH";
+  "PERFORMANCE_OPT" | "SECURITY_HARDENING" | "FINOPS_GOVERNANCE" | "AEROSPACE_SAFETY" | "GOLDEN_PATH";
 
 export interface SynapticPattern {
   id: string;

@@ -14,11 +14,7 @@ import { DatabaseSync } from "node:sqlite";
 import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
 export type LedgerCategory =
-  | "MISSION_DIRECTION"
-  | "ARCHITECTURE_DECISION"
-  | "SECURITY_AUDIT"
-  | "VERIFICATION_RECEIPT"
-  | "GENTLEMAN_ENGRAM_SYNC";
+  "MISSION_DIRECTION" | "ARCHITECTURE_DECISION" | "SECURITY_AUDIT" | "VERIFICATION_RECEIPT" | "GENTLEMAN_ENGRAM_SYNC";
 
 export interface LedgerAppendInput {
   readonly entryId?: string;

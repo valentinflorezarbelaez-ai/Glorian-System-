@@ -94,9 +94,8 @@ test("BDD-935b: MCP mutating deny appends an audit row", async () => {
 });
 
 test("BDD-936: default pack covers heal/worktree/deliver/foundry", async () => {
-  const { loadDefaultIamPolicyPack, isLeastPrivilegeProductPolicyPack } = await import(
-    "../src/core/eosBigTechProductFactory.ts"
-  );
+  const { loadDefaultIamPolicyPack, isLeastPrivilegeProductPolicyPack } =
+    await import("../src/core/eosBigTechProductFactory.ts");
   const policies = loadDefaultIamPolicyPack(projectRoot);
   assert.equal(isLeastPrivilegeProductPolicyPack(policies), true);
   const prefixes = policies.map((p) => p.resourcePrefix);

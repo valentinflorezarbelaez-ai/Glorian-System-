@@ -169,19 +169,15 @@ export class EosSpotifyAgenticFactory {
     const checkoutPath = fs.realpathSync(project.localPath);
     if (!fs.statSync(checkoutPath).isDirectory()) throw new Error("Selected checkout must be a directory.");
 
-    const gitRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], {
+    const gitExecOpts = {
       cwd: checkoutPath,
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-    }).trim();
-    const realGitRoot = fs.realpathSync(gitRoot);
-    if (realGitRoot !== checkoutPath) throw new Error("Selected path is not the Git repository root.");
+      encoding: "utf8" as const,
+      stdio: ["ignore", "pipe", "pipe"] as ["ignore", "pipe", "pipe"],
+    };
+    const gitRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], gitExecOpts).trim();
+    if (fs.realpathSync(gitRoot) !== checkoutPath) throw new Error("Selected path is not the Git repository root.");
 
-    const actualRemote = execFileSync("git", ["remote", "get-url", "origin"], {
-      cwd: checkoutPath,
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-    }).trim();
+    const actualRemote = execFileSync("git", ["remote", "get-url", "origin"], gitExecOpts).trim();
     const expected = normalizeGitRemote(project.remoteUrl);
     if (!expected || normalizeGitRemote(actualRemote) !== expected) {
       throw new Error("Selected checkout origin does not match the fleet registry.");
@@ -207,11 +203,10 @@ export class EosSpotifyAgenticFactory {
       descriptorOpen = false;
       fs.renameSync(temporaryPath, targetPath);
     } catch (error) {
-      if (descriptorOpen) {
+      if (descriptorOpen)
         try {
           fs.closeSync(descriptor);
         } catch {}
-      }
       try {
         fs.unlinkSync(temporaryPath);
       } catch {}
@@ -220,17 +215,12 @@ export class EosSpotifyAgenticFactory {
     return targetPath;
   }
 
-  // =========================================================================
-  // 1. LOCAL TASK AND FILE-INVENTORY DRAFT
-  // =========================================================================
-
   public dispatchHonk(directive: HonkDirective): HonkExecutionReport {
     if (!directive || typeof directive !== "object") throw new TypeError("A Honk directive object is required.");
     const taskName = typeof directive.taskName === "string" ? directive.taskName.trim().replace(/\s+/g, " ") : "";
     const specDescription = typeof directive.specDescription === "string" ? directive.specDescription.trim() : "";
-    if (!taskName || Buffer.byteLength(taskName, "utf8") > 512) {
+    if (!taskName || Buffer.byteLength(taskName, "utf8") > 512)
       throw new RangeError("taskName must contain 1 to 512 UTF-8 bytes.");
-    }
     if (!specDescription || Buffer.byteLength(specDescription, "utf8") > 16 * 1024) {
       throw new RangeError("specDescription must contain 1 to 16384 UTF-8 bytes.");
     }
@@ -252,47 +242,44 @@ export class EosSpotifyAgenticFactory {
     const targetDir = this.resolveProjectDirectory(directive.repoPath);
     const stack: SupportedStack = directive.stack || this.detectStack(targetDir);
 
-    const steps: HonkStepTelemetry[] = [];
     const t0 = process.hrtime.bigint();
     const xirpContext = this.compileXirpContext(targetDir);
-    const d0 = Number(process.hrtime.bigint() - t0) / 1e6;
-    steps.push({
-      name: "1. Local metadata inventory",
-      durationMs: Number(d0.toFixed(2)),
-      status: "LOCAL_ONLY",
-      details: `Read local catalog metadata when present; service=${xirpContext.serviceName}, owner=${xirpContext.squad}`,
-    });
-
-    steps.push({
-      name: "2. Git branch or worktree",
-      durationMs: 0,
-      status: "NOT_RUN",
-      details: `Not created. Proposed name: '${branchNameProposal}'.`,
-    });
-
+    const d0 = Number((Number(process.hrtime.bigint() - t0) / 1e6).toFixed(2));
     const t2 = process.hrtime.bigint();
     const suggestedFiles = this.inventoryCandidateFiles(stack);
-    const d2 = Number(process.hrtime.bigint() - t2) / 1e6;
-    steps.push({
-      name: "3. Template-path inventory",
-      durationMs: Number(d2.toFixed(2)),
-      status: "LOCAL_ONLY",
-      details: `Listed ${suggestedFiles.length} candidate template/source path(s); no files were created or edited.`,
-    });
-
-    steps.push({
-      name: "4. Build and tests",
-      durationMs: 0,
-      status: "NOT_RUN",
-      details: "Not run; this planner does not execute project commands.",
-    });
-
-    steps.push({
-      name: "5. Pull request draft",
-      durationMs: 0,
-      status: "LOCAL_ONLY",
-      details: "Draft text prepared locally; no remote pull request was opened.",
-    });
+    const d2 = Number((Number(process.hrtime.bigint() - t2) / 1e6).toFixed(2));
+    const steps: HonkStepTelemetry[] = [
+      {
+        name: "1. Local metadata inventory",
+        durationMs: d0,
+        status: "LOCAL_ONLY",
+        details: `Read local catalog metadata when present; service=${xirpContext.serviceName}, owner=${xirpContext.squad}`,
+      },
+      {
+        name: "2. Git branch or worktree",
+        durationMs: 0,
+        status: "NOT_RUN",
+        details: `Not created. Proposed name: '${branchNameProposal}'.`,
+      },
+      {
+        name: "3. Template-path inventory",
+        durationMs: d2,
+        status: "LOCAL_ONLY",
+        details: `Listed ${suggestedFiles.length} candidate template/source path(s); no files were created or edited.`,
+      },
+      {
+        name: "4. Build and tests",
+        durationMs: 0,
+        status: "NOT_RUN",
+        details: "Not run; this planner does not execute project commands.",
+      },
+      {
+        name: "5. Pull request draft",
+        durationMs: 0,
+        status: "LOCAL_ONLY",
+        details: "Draft text prepared locally; no remote pull request was opened.",
+      },
+    ];
     const pullRequestDraft = this.synthesizePullRequestBody({
       taskId,
       taskName,
@@ -344,36 +331,25 @@ export class EosSpotifyAgenticFactory {
 
     if (fs.existsSync(catalogPath)) {
       const content = fs.readFileSync(this.resolveProjectFile(catalogPath, safeTargetDir), "utf8");
-      const nameMatch = content.match(/metadata:\s*\n\s*name:\s*([^\s\n]+)/);
-      if (nameMatch) serviceName = nameMatch[1];
-      const titleMatch = content.match(/title:\s*([^\n]+)/);
-      if (titleMatch) title = titleMatch[1].trim();
-      const ownerMatch = content.match(/owner:\s*([^\n]+)/);
-      if (ownerMatch) squad = ownerMatch[1].trim();
-      const lifecycleMatch = content.match(/lifecycle:\s*([^\n]+)/);
-      if (lifecycleMatch) lifecycle = lifecycleMatch[1].trim();
-
-      const tagMatches = content.matchAll(/- ([a-z0-9-]+)/g);
-      for (const m of tagMatches) {
+      serviceName = content.match(/metadata:\s*\n\s*name:\s*([^\s\n]+)/)?.[1] || serviceName;
+      title = content.match(/title:\s*([^\n]+)/)?.[1]?.trim() || title;
+      squad = content.match(/owner:\s*([^\n]+)/)?.[1]?.trim() || squad;
+      lifecycle = content.match(/lifecycle:\s*([^\n]+)/)?.[1]?.trim() || lifecycle;
+      for (const m of content.matchAll(/- ([a-z0-9-]+)/g)) {
         if (!tags.includes(m[1])) tags.push(m[1]);
       }
     }
 
-    // Scan ADRs in docs/plans or openspec/specs
-    let adrCount = 0;
     const openspecDir = path.join(this.projectRoot, "openspec", "specs");
-    if (fs.existsSync(openspecDir)) {
-      const safeOpenSpecDir = this.resolveProjectDirectory(openspecDir);
-      adrCount = fs.readdirSync(safeOpenSpecDir).filter((f) => f.endsWith(".md")).length;
-    }
+    const adrCount = fs.existsSync(openspecDir)
+      ? fs.readdirSync(this.resolveProjectDirectory(openspecDir)).filter((f) => f.endsWith(".md")).length
+      : 0;
 
-    // Read fleet registry
     let fleetCount = 0;
     const registryPath = path.join(this.projectRoot, "docs", "projects", "registry.json");
     if (fs.existsSync(registryPath)) {
       try {
-        const reg = JSON.parse(fs.readFileSync(this.resolveProjectFile(registryPath), "utf8"));
-        fleetCount = reg.projects?.length || 0;
+        fleetCount = JSON.parse(fs.readFileSync(this.resolveProjectFile(registryPath), "utf8")).projects?.length || 0;
       } catch {
         fleetCount = 0;
       }
@@ -508,39 +484,25 @@ These are repository notes, not verified vendor standards. Review requirements a
         if (typeof p?.id !== "string" || !p.id || typeof p?.name !== "string" || typeof p?.remoteUrl !== "string") {
           throw new Error("Fleet registry entries require string id, name, and remoteUrl fields.");
         }
-        const envName =
+        const envKey =
           typeof p.localPathEnv === "string" && /^EOS_FLEET_[A-Z0-9_]+_PATH$/.test(p.localPathEnv)
             ? p.localPathEnv
             : "";
-        const configuredPath = envName ? process.env[envName] : undefined;
-        return {
-          id: p.id,
-          name: p.name,
-          remoteUrl: p.remoteUrl,
-          localPath:
-            p.id === "eos-system"
-              ? this.projectRoot
-              : typeof configuredPath === "string" && configuredPath.trim()
-                ? path.resolve(this.projectRoot, configuredPath.trim())
-                : null,
-        };
+        const cfg = envKey ? process.env[envKey]?.trim() : "";
+        const localPath = p.id === "eos-system" ? this.projectRoot : cfg ? path.resolve(this.projectRoot, cfg) : null;
+        return { id: p.id, name: p.name, remoteUrl: p.remoteUrl, localPath };
       });
     if (new Set(fleetProjects.map((project) => project.id)).size !== fleetProjects.length) {
       throw new Error("Fleet registry project IDs must be unique.");
     }
-
     if (directive.targetFleet?.some((id) => !fleetProjects.some((project) => project.id === id))) {
       throw new Error("targetFleet contains an unregistered project ID.");
     }
-
-    // Filter by targetFleet if specified
-    if (directive.targetFleet && directive.targetFleet.length > 0) {
+    if (directive.targetFleet?.length)
       fleetProjects = fleetProjects.filter((p) => directive.targetFleet?.includes(p.id));
-    }
     if (applyChanges) {
-      const target = fleetProjects[0];
-      if (!target) throw new Error("The selected Fleetshift project is not registered.");
-      target.localPath = this.verifyFleetCheckout(target);
+      if (!fleetProjects[0]) throw new Error("The selected Fleetshift project is not registered.");
+      fleetProjects[0].localPath = this.verifyFleetCheckout(fleetProjects[0]);
     }
 
     const projectResults: FleetshiftProjectResult[] = [];
@@ -591,44 +553,29 @@ These are repository notes, not verified vendor standards. Review requirements a
           }
 
           case "enforce_strict_sre": {
-            const indexHtml = path.join(effectivePath, "index.html");
-            if (fs.existsSync(indexHtml)) {
+            if (fs.existsSync(path.join(effectivePath, "index.html"))) {
               changes.push("index.html found; no semantic, CSP, or SEO audit was run");
             }
-            const robotsTxt = path.join(effectivePath, "robots.txt");
-            if (fs.existsSync(robotsTxt)) {
+            if (fs.existsSync(path.join(effectivePath, "robots.txt"))) {
               changes.push("robots.txt found; crawl directives were not validated");
             }
             break;
           }
-
-          case "upgrade_dependencies": {
+          case "upgrade_dependencies":
             changes.push("Dependency audit is not implemented; no dependency analysis was run");
             break;
-          }
-          case "custom_codemod": {
+          case "custom_codemod":
             changes.push("Custom codemod execution is not implemented; no files were changed");
             break;
-          }
-          default: {
+          default:
             throw new Error(`Unsupported Fleetshift action: ${String(directive.action)}`);
-          }
         }
-
-        if (changes.length > 0) {
-          updatedCount++;
-        }
+        if (changes.length > 0) updatedCount++;
       } catch (err: any) {
         status = "FAILED";
         error = err.message;
       }
-
-      projectResults.push({
-        projectId: proj.id,
-        status,
-        actions: changes,
-        error,
-      });
+      projectResults.push({ projectId: proj.id, status, actions: changes, error });
     }
 
     const resultFingerprintSha256 = crypto
@@ -799,33 +746,15 @@ spec:
   }
 
   private inventoryCandidateFiles(stack: SupportedStack): string[] {
-    const candidates: string[] = [];
-
-    switch (stack) {
-      case "rust": {
-        const templateRust = path.join(this.projectRoot, "templates", "spotify-rust-audio-core", "src", "lib.rs");
-        if (fs.existsSync(templateRust)) {
-          candidates.push("templates/spotify-rust-audio-core/src/lib.rs");
-        }
-        break;
-      }
-
-      case "go": {
-        const templateGo = path.join(this.projectRoot, "templates", "spotify-go-microservice", "main.go");
-        if (fs.existsSync(templateGo)) {
-          candidates.push("templates/spotify-go-microservice/main.go");
-        }
-        break;
-      }
-
-      case "node":
-      default: {
-        candidates.push("src/core/eosSpotifyAgenticFactory.ts");
-        break;
-      }
+    if (stack === "rust") {
+      const p = path.join(this.projectRoot, "templates", "spotify-rust-audio-core", "src", "lib.rs");
+      return fs.existsSync(p) ? ["templates/spotify-rust-audio-core/src/lib.rs"] : [];
     }
-
-    return candidates;
+    if (stack === "go") {
+      const p = path.join(this.projectRoot, "templates", "spotify-go-microservice", "main.go");
+      return fs.existsSync(p) ? ["templates/spotify-go-microservice/main.go"] : [];
+    }
+    return ["src/core/eosSpotifyAgenticFactory.ts"];
   }
 
   private synthesizePullRequestBody(params: {

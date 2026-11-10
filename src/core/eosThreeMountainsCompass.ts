@@ -83,14 +83,14 @@ export class EosThreeMountainsCompass {
     if (input.selflessServiceOrDonation) m3Score += 0.5;
     else m3Insights.push("Practicar el Tercer Factor: caridad consciente, ayuda al prójimo o donación desinteresada.");
 
-    const overallAlignment = Number((m1Score * 0.4 + m2Score * 0.35 + m3Score * 0.25).toFixed(4));
+    const overallAlignment = Math.round(m1Score * 400 + m2Score * 350 + m3Score * 250) / 1000;
 
     const mountains: MountainEvaluation[] = [
       {
         mountain: "FIRST_MOUNTAIN_INITIATION",
         title: "Primera Montaña: Iniciación, Templo Físico y Fundación Material",
         pillar: "Trilogía de Bienestar (Comida, Aseo, Ejercicio) + Maestría de Software Capa 0",
-        score: Number(m1Score.toFixed(2)),
+        score: m1Score,
         status: m1Score >= 0.75 ? "ELEVATED_VIBRATION" : "ATTENTION_REQUIRED",
         insights: m1Insights,
       },
@@ -98,7 +98,7 @@ export class EosThreeMountainsCompass {
         mountain: "SECOND_MOUNTAIN_RESURRECTION",
         title: "Segunda Montaña: Muerte Psicológica, Transmutación y Regeneración",
         pillar: "Clave de SOL continua + Veto Circadiano 22:30 + Regeneración Celular",
-        score: Number(m2Score.toFixed(2)),
+        score: m2Score,
         status: m2Score >= 0.75 ? "ELEVATED_VIBRATION" : "ATTENTION_REQUIRED",
         insights: m2Insights,
       },
@@ -106,7 +106,7 @@ export class EosThreeMountainsCompass {
         mountain: "THIRD_MOUNTAIN_ASCENSION",
         title: "Tercera Montaña: Ascensión, Cajitas Sagradas y Tercer Factor",
         pillar: "Independencia Financiera (El Refugio) + Donaciones y Sacrificio Consciente",
-        score: Number(m3Score.toFixed(2)),
+        score: m3Score,
         status: m3Score >= 0.75 ? "ELEVATED_VIBRATION" : "ATTENTION_REQUIRED",
         insights: m3Insights,
       },

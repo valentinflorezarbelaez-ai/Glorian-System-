@@ -51,13 +51,7 @@ export function issueBreakGlassGrant(input: {
     reason,
     issuedAtMs: nowMs,
     expiresAtMs,
-    sha256Receipt: attest([
-      grantId,
-      input.principal.subjectId,
-      input.principal.tenantId,
-      String(expiresAtMs),
-      reason,
-    ]),
+    sha256Receipt: attest([grantId, input.principal.subjectId, input.principal.tenantId, String(expiresAtMs), reason]),
   });
 }
 

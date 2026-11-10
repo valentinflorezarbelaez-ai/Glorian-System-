@@ -75,10 +75,7 @@ export interface SloTargetConfig {
 }
 
 export type SloHealthState =
-  | "NOMINAL_HEALTHY"
-  | "ELEVATED_BURN"
-  | "CRITICAL_BURN"
-  | "BUDGET_EXHAUSTED";
+  "NOMINAL_HEALTHY" | "ELEVATED_BURN" | "CRITICAL_BURN" | "BUDGET_EXHAUSTED";
 
 export interface BurnRateSnapshot {
   readonly windowLabel: string;

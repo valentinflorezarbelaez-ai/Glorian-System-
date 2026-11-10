@@ -13,11 +13,7 @@ import { createHash } from "node:crypto";
 export type DesignArchetype = "SPOTIFY_XIRP" | "PALANTIR_FOUNDRY" | "ANDURIL_LATTICE" | "GLORIAN_SOLAR";
 
 export type DesignComponentType =
-  | "INCIDENT_TIMELINE"
-  | "WAVEFORM_MONITOR"
-  | "TELEMETRY_GRID"
-  | "TACTICAL_HUD"
-  | "MISSION_CONTROL_DECK";
+  "INCIDENT_TIMELINE" | "WAVEFORM_MONITOR" | "TELEMETRY_GRID" | "TACTICAL_HUD" | "MISSION_CONTROL_DECK";
 
 export interface DesignTokens {
   background: string;

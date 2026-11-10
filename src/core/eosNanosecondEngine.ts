@@ -31,11 +31,7 @@ export interface NanosecondEngineeringSecret {
 }
 
 export type EosEngineeringProfile =
-  | "zed-gpui-120fps"
-  | "tigerbeetle-zig-backend"
-  | "citadel-kdb-hft"
-  | "xirp-bun-edge"
-  | "aberamentho-rtos-dsp";
+  "zed-gpui-120fps" | "tigerbeetle-zig-backend" | "citadel-kdb-hft" | "xirp-bun-edge" | "aberamentho-rtos-dsp";
 
 export interface EosCompiledBlueprint {
   readonly instruction: string;

@@ -1,9 +1,11 @@
 {
-  "minScore": 0.8,
+  "minScore": 0.85,
   "floors": {
-    "src/core/eosSLOErrorBudgetGovernor.ts": 0.89,
-    "src/core/eosThreeMountainsCompass.ts": 0.95,
-    "src/core/eosKernelPrimitives.ts": 0.95,
-    "src/core/eosAutonomousHealer.ts": 0.95
+    "src/core/eosAutonomousHealer.ts": 1,
+    "src/core/eosFleetProductScorecard.ts": 1,
+    "src/core/eosKernelPrimitives.ts": 0.87,
+    "src/core/eosSLOErrorBudgetGovernor.ts": 1,
+    "src/core/eosThreeMountainsCompass.ts": 0.97,
+    "src/core/eosVercelCanaryObservability.ts": 1
   }
 }

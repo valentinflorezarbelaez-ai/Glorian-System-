@@ -16,11 +16,7 @@ import { createHash } from "node:crypto";
 export type KernelOperationalState = "INITIALIZING" | "BALANCED" | "DEGRADED" | "CRITICAL";
 
 export type KernelMitigationAction =
-  | "STABILIZE_NOMINAL"
-  | "THROTTLE_ADAPTIVE"
-  | "FREEZE_CANARIES"
-  | "DRAIN_SATURATED_SHARDS"
-  | "EMERGENCY_SHED";
+  "STABILIZE_NOMINAL" | "THROTTLE_ADAPTIVE" | "FREEZE_CANARIES" | "DRAIN_SATURATED_SHARDS" | "EMERGENCY_SHED";
 
 export interface KernelSystemTelemetry {
   fleetSoundcheckScore: number; // 0-100

@@ -20,10 +20,7 @@ import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from 
 export type AstEngineMode = "TYPESCRIPT_COMPILER_AST" | "NATIVE_TS_TOKEN_AST";
 
 export type AstViolationCode =
-  | "EXTERNAL_IMPORT_IN_LAYER0"
-  | "TS_ENUM_PROHIBITED"
-  | "TS_NAMESPACE_PROHIBITED"
-  | "TS_PARAMETER_PROPERTY_PROHIBITED";
+  "EXTERNAL_IMPORT_IN_LAYER0" | "TS_ENUM_PROHIBITED" | "TS_NAMESPACE_PROHIBITED" | "TS_PARAMETER_PROPERTY_PROHIBITED";
 
 export interface AstViolation {
   readonly file: string;
@@ -621,14 +618,14 @@ export class EosTypeScriptAstAnalyzer {
             const modifiers = ts.canHaveModifiers(param) ? ts.getModifiers(param) : undefined;
             const hasParamProp = Boolean(
               modifiers &&
-                modifiers.some((m: any) =>
-                  [
-                    ts.SyntaxKind.PublicKeyword,
-                    ts.SyntaxKind.PrivateKeyword,
-                    ts.SyntaxKind.ProtectedKeyword,
-                    ts.SyntaxKind.ReadonlyKeyword,
-                  ].includes(m.kind),
-                ),
+              modifiers.some((m: any) =>
+                [
+                  ts.SyntaxKind.PublicKeyword,
+                  ts.SyntaxKind.PrivateKeyword,
+                  ts.SyntaxKind.ProtectedKeyword,
+                  ts.SyntaxKind.ReadonlyKeyword,
+                ].includes(m.kind),
+              ),
             );
             if (hasParamProp) {
               recordViolation(

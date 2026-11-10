@@ -25,6 +25,7 @@ test("BDD-115: Design by Contract & ContractError Validation", () => {
     () => assertPrecondition(false, "precondition violated"),
     (err) =>
       err instanceof ContractError &&
+      err.name === "ContractError" &&
       err.contractType === "PRECONDITION" &&
       err.message.includes("[PRECONDITION_FAILED]"),
   );
@@ -92,8 +93,12 @@ test("BDD-117: FIPS 180-4 Pure SHA-256 Multi-Byte Unicode & Surrogate Pairs", ()
   // 3-byte UTF-8: 日本語 (code < 0xd800)
   assert.equal(pureSha256("日本語"), "77710aedc74ecfa33685e33a6c7df5cc83004da1bdcef7fb280f5c2b2e97e0a5");
 
-  // 4-byte UTF-8: Emoji surrogate pairs: 🚀🔥 (code >= 0x10000)
+  // 4-byte UTF-8: Emoji surrogate pairs: 🚀🔥 (code >= 0x10000) and exact UTF-8 boundaries (\x80, \u0800, \ud800\udc00)
   assert.equal(pureSha256("🚀 Glorian System 🔥"), "784a9409a6df80379fe00ca345489d905149568f738b4e646890f1492d1a3c2f");
+  assert.equal(
+    pureSha256("\x80\u0800\ud800\udc00"),
+    "7da36282ca2dc2e26c1548d052d854142afb6e3f64ed35ed3d6043c67e780d5f",
+  );
 
   // Multi-block payloads spanning multiple 64-byte chunks and boundary conditions
   assert.equal(pureSha256("a".repeat(65)), "635361c48bb9eab14198e76ea8ab7f1a41685d6ad62aa9146d301d4f17eb0ae0");

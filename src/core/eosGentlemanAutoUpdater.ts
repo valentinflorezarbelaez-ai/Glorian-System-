@@ -38,12 +38,7 @@ export interface UpstreamTagResolution {
 }
 
 export type ComponentUpdateStatus =
-  | "UP_TO_DATE"
-  | "UPDATE_AVAILABLE"
-  | "UPDATED"
-  | "ROLLED_BACK"
-  | "SKIPPED_OFFLINE"
-  | "ERROR";
+  "UP_TO_DATE" | "UPDATE_AVAILABLE" | "UPDATED" | "ROLLED_BACK" | "SKIPPED_OFFLINE" | "ERROR";
 
 export interface GentlemanComponentCheck {
   readonly componentId: "gentle-ai" | "engram" | "gga" | "agent-teams-lite";

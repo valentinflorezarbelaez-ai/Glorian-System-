@@ -7,26 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 
-export type {
-  AcousticVector,
-  TrackCandidate,
-  LoudnessProfile,
-  EqualPowerCrossfadeStep,
-  AudioStreamingReport,
-  ScaffoldResult,
-  CamelotTransition,
-  SpotifyProjectAuditReport,
-  SquadManifest,
-  AsyncStandupOptions,
-  AsyncStandupReport,
-  BlamelessPostMortemOptions,
-  BlamelessPostMortem,
-  CanaryExperimentOptions,
-  CanaryExperimentSpec,
-  GoldenPathScaffoldOptions,
-  GoldenPathPackage,
-} from "./eosSpotifyCodex.types.ts";
-
+export type * from "./eosSpotifyCodex.types.ts";
 import type {
   AcousticVector,
   TrackCandidate,
@@ -153,35 +134,8 @@ export class EosSpotifyCodex {
    */
   public evaluateHarmonicTransition(keyA: number, modeA: number, keyB: number, modeB: number): CamelotTransition {
     // Standard Camelot Map: [key, mode (0=min, 1=maj)] -> "Number + Letter"
-    // Modes: 0 = Minor (A), 1 = Major (B)
-    const majorMap: Record<number, number> = {
-      0: 8,
-      1: 3,
-      2: 10,
-      3: 5,
-      4: 12,
-      5: 7,
-      6: 2,
-      7: 9,
-      8: 4,
-      9: 11,
-      10: 6,
-      11: 1,
-    };
-    const minorMap: Record<number, number> = {
-      0: 5,
-      1: 12,
-      2: 7,
-      3: 2,
-      4: 9,
-      5: 4,
-      6: 11,
-      7: 6,
-      8: 1,
-      9: 8,
-      10: 3,
-      11: 10,
-    };
+    const majorMap = [8, 3, 10, 5, 12, 7, 2, 9, 4, 11, 6, 1];
+    const minorMap = [5, 12, 7, 2, 9, 4, 11, 6, 1, 8, 3, 10];
 
     const numA = modeA === 1 ? majorMap[keyA] || 8 : minorMap[keyA] || 5;
     const letterA = modeA === 1 ? "B" : "A";
@@ -672,37 +626,17 @@ spec:
     const primaryMetric = opts.primaryMetric || "Define a primary metric";
 
     const rolloutStages = [
-      {
-        stage: "Stage 1: Internal cohort",
-        trafficPercentage: 0.1,
-        minimumObservationHours: 24,
-        passCriteria: "Define acceptance criteria",
-      },
-      {
-        stage: "Stage 2: Small canary",
-        trafficPercentage: 1.0,
-        minimumObservationHours: 48,
-        passCriteria: "Define acceptance criteria",
-      },
-      {
-        stage: "Stage 3: Expanded cohort",
-        trafficPercentage: 10.0,
-        minimumObservationHours: 72,
-        passCriteria: "Define acceptance criteria",
-      },
-      {
-        stage: "Stage 4: Broad cohort",
-        trafficPercentage: 50.0,
-        minimumObservationHours: 96,
-        passCriteria: "Define acceptance criteria",
-      },
-      {
-        stage: "Stage 5: General availability decision",
-        trafficPercentage: 100.0,
-        minimumObservationHours: 0,
-        passCriteria: "Requires explicit release approval",
-      },
-    ];
+      ["Stage 1: Internal cohort", 0.1, 24, "Define acceptance criteria"],
+      ["Stage 2: Small canary", 1.0, 48, "Define acceptance criteria"],
+      ["Stage 3: Expanded cohort", 10.0, 72, "Define acceptance criteria"],
+      ["Stage 4: Broad cohort", 50.0, 96, "Define acceptance criteria"],
+      ["Stage 5: General availability decision", 100.0, 0, "Requires explicit release approval"],
+    ].map(([stage, trafficPercentage, minimumObservationHours, passCriteria]) => ({
+      stage: String(stage),
+      trafficPercentage: Number(trafficPercentage),
+      minimumObservationHours: Number(minimumObservationHours),
+      passCriteria: String(passCriteria),
+    }));
 
     const guardrails =
       opts.guardrails && opts.guardrails.length > 0

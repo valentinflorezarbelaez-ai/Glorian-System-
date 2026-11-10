@@ -13,16 +13,16 @@
 
 ## 2. Evidence Collected
 
-| Check | Result | Notes |
-| --- | --- | --- |
-| Remote | PASS | `https://github.com/valentinflorezarbelaez-ai/Donaciones.git` |
-| HEAD pin | PASS | `2f45b0ab86c70e00066d6d442690c446942d3cf4` (matches registry) |
-| Working tree | PASS | `main` clean vs `origin/main` |
-| Static markers | PASS | `index.html` + `vercel.json`; no `package.json` (expected) |
-| Canonical secret scan | PASS | `node scripts/eos-secret-scan.mjs --target Donaciones` → 18 files, **0** secrets, exit 0 |
-| Production URL | PASS | `HEAD https://donaciones-drab.vercel.app` → **HTTP 200** |
-| Fleet Soundcheck | PASS | grade A+ / totalScore 100 |
-| Prior Law IV package | PASS | INTAKE-001 / SPEC-001 / AUDIT-001 / AUTH Level 2 sealed |
+| Check                 | Result | Notes                                                                                    |
+| --------------------- | ------ | ---------------------------------------------------------------------------------------- |
+| Remote                | PASS   | `https://github.com/valentinflorezarbelaez-ai/Donaciones.git`                            |
+| HEAD pin              | PASS   | `2f45b0ab86c70e00066d6d442690c446942d3cf4` (matches registry)                            |
+| Working tree          | PASS   | `main` clean vs `origin/main`                                                            |
+| Static markers        | PASS   | `index.html` + `vercel.json`; no `package.json` (expected)                               |
+| Canonical secret scan | PASS   | `node scripts/eos-secret-scan.mjs --target Donaciones` → 18 files, **0** secrets, exit 0 |
+| Production URL        | PASS   | `HEAD https://donaciones-drab.vercel.app` → **HTTP 200**                                 |
+| Fleet Soundcheck      | PASS   | grade A+ / totalScore 100                                                                |
+| Prior Law IV package  | PASS   | INTAKE-001 / SPEC-001 / AUDIT-001 / AUTH Level 2 sealed                                  |
 
 ## 3. Residual Risks (not blockers for AUDIT_COMPLETE)
 

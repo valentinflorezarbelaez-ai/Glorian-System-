@@ -114,6 +114,10 @@ function classifySignalBand(score: number, maxScore: number): LocalSignalBand {
   return "FEW_SIGNALS";
 }
 
+function buildPillar(name: string, score: number, findings: readonly string[]): PillarEvaluation {
+  return { name, score, maxScore: 20, signalBand: classifySignalBand(score, 20), findings };
+}
+
 export interface PolyglotFingerprint {
   readonly primaryLanguage: PolyglotLanguage;
   readonly languagesDetected: readonly PolyglotLanguage[];
@@ -490,7 +494,10 @@ export class EosUniversalProjectAdapter {
     const dockerfilePath = fs.existsSync(path.join(baseDir, "Dockerfile"))
       ? path.join(baseDir, "Dockerfile")
       : files.find((f) => f.endsWith("Dockerfile") || f.endsWith("/Dockerfile"))
-        ? path.join(baseDir, files.find((f) => f.endsWith("Dockerfile") || f.endsWith("/Dockerfile"))!)
+        ? path.join(
+            baseDir,
+            files.find((f) => f.endsWith("Dockerfile") || f.endsWith("/Dockerfile"))!,
+          )
         : null;
 
     if (dockerfilePath && fs.existsSync(dockerfilePath)) {
@@ -542,11 +549,8 @@ export class EosUniversalProjectAdapter {
     const hasModularDir = files.some(
       (f) => f.startsWith("src/") || f.startsWith("lib/") || f.startsWith("pkg/") || f.startsWith("cmd/"),
     );
-    if (hasModularDir) {
-      score += 10;
-    } else {
-      findings.push("Organize source files under clear domain directories (src/, lib/, or pkg/).");
-    }
+    if (hasModularDir) score += 10;
+    else findings.push("Organize source files under clear domain directories (src/, lib/, or pkg/).");
 
     if (fp.primaryLanguage === "typescript" || fp.primaryLanguage === "javascript") {
       const pkgPath = path.join(baseDir, "package.json");
@@ -570,13 +574,7 @@ export class EosUniversalProjectAdapter {
       score += 10; // Standard parity for non-JS languages
     }
 
-    return {
-      name: "Source Organization & Dependency Signals",
-      score,
-      maxScore: 20,
-      signalBand: classifySignalBand(score, 20),
-      findings,
-    };
+    return buildPillar("Source Organization & Dependency Signals", score, findings);
   }
 
   private evaluateTestInfrastructure(baseDir: string, files: string[], fp: PolyglotFingerprint): PillarEvaluation {
@@ -592,36 +590,20 @@ export class EosUniversalProjectAdapter {
         f.endsWith("_test.go"),
     );
 
-    if (hasTestDir) {
-      score += 10;
-    } else {
-      findings.push("Establish dedicated automated test suite (test/ or tests/ directory).");
-    }
+    if (hasTestDir) score += 10;
+    else findings.push("Establish dedicated automated test suite (test/ or tests/ directory).");
 
-    if (fp.testFramework !== "none") {
-      score += 5;
-    } else {
-      findings.push("Configure standard automated test runner in build descriptors.");
-    }
+    if (fp.testFramework !== "none") score += 5;
+    else findings.push("Configure standard automated test runner in build descriptors.");
 
     const testFileCount = files.filter(
       (f) => f.includes("test") || f.includes("spec") || f.endsWith("_test.go"),
     ).length;
-    if (testFileCount >= 5) {
-      score += 5;
-    } else if (testFileCount >= 1) {
-      score += 3;
-    } else {
-      findings.push("Expand automated test coverage across edge cases and invariants.");
-    }
+    if (testFileCount >= 5) score += 5;
+    else if (testFileCount >= 1) score += 3;
+    else findings.push("Expand automated test coverage across edge cases and invariants.");
 
-    return {
-      name: "Test Setup Signals (execution and coverage are not measured)",
-      score,
-      maxScore: 20,
-      signalBand: classifySignalBand(score, 20),
-      findings,
-    };
+    return buildPillar("Test Setup Signals (execution and coverage are not measured)", score, findings);
   }
 
   private evaluateSecretSecurity(baseDir: string, files: string[]): PillarEvaluation {
@@ -658,83 +640,42 @@ export class EosUniversalProjectAdapter {
       }
     }
 
-    score = Math.max(0, score);
-    return {
-      name: "Credential Protection Signals (limited local pattern check)",
-      score,
-      maxScore: 20,
-      signalBand: classifySignalBand(score, 20),
-      findings,
-    };
+    return buildPillar("Credential Protection Signals (limited local pattern check)", Math.max(0, score), findings);
   }
 
   private evaluateCiCdGateways(baseDir: string, files: string[]): PillarEvaluation {
     let score = 0;
     const findings: string[] = [];
 
-    const hasWorkflows = fs.existsSync(path.join(baseDir, ".github", "workflows"));
-    if (hasWorkflows) {
-      score += 10;
-    } else {
-      findings.push("Add automated CI/CD pipeline under .github/workflows/.");
-    }
+    if (fs.existsSync(path.join(baseDir, ".github", "workflows"))) score += 10;
+    else findings.push("Add automated CI/CD pipeline under .github/workflows/.");
 
-    const hasGithooks = fs.existsSync(path.join(baseDir, ".githooks")) || fs.existsSync(path.join(baseDir, ".husky"));
-    if (hasGithooks) {
-      score += 5;
-    } else {
-      findings.push("Configure pre-commit hooks (.githooks/) for fast local verification.");
-    }
+    if (fs.existsSync(path.join(baseDir, ".githooks")) || fs.existsSync(path.join(baseDir, ".husky"))) score += 5;
+    else findings.push("Configure pre-commit hooks (.githooks/) for fast local verification.");
 
-    const hasContainer =
-      fs.existsSync(path.join(baseDir, "Dockerfile")) || fs.existsSync(path.join(baseDir, "docker-compose.yml"));
-    if (hasContainer) {
+    if (fs.existsSync(path.join(baseDir, "Dockerfile")) || fs.existsSync(path.join(baseDir, "docker-compose.yml"))) {
       score += 5;
     } else {
       findings.push("Provide standardized containerization (Dockerfile or distroless image).");
     }
 
-    return {
-      name: "CI/CD Configuration Signals (execution status is not checked)",
-      score,
-      maxScore: 20,
-      signalBand: classifySignalBand(score, 20),
-      findings,
-    };
+    return buildPillar("CI/CD Configuration Signals (execution status is not checked)", score, findings);
   }
 
   private evaluateAiScaffolding(baseDir: string, files: string[]): PillarEvaluation {
     let score = 0;
     const findings: string[] = [];
 
-    const hasBackstage = fs.existsSync(path.join(baseDir, "catalog-info.yaml"));
-    if (hasBackstage) {
-      score += 7;
-    } else {
-      findings.push("Scaffold Spotify Backstage catalog-info.yaml descriptor.");
-    }
+    if (fs.existsSync(path.join(baseDir, "catalog-info.yaml"))) score += 7;
+    else findings.push("Scaffold Spotify Backstage catalog-info.yaml descriptor.");
 
-    const hasAgents = fs.existsSync(path.join(baseDir, "AGENTS.md")) || fs.existsSync(path.join(baseDir, "CLAUDE.md"));
-    if (hasAgents) {
-      score += 7;
-    } else {
-      findings.push("Add AGENTS.md or CLAUDE.md containing squad context and engineering laws.");
-    }
+    if (fs.existsSync(path.join(baseDir, "AGENTS.md")) || fs.existsSync(path.join(baseDir, "CLAUDE.md"))) score += 7;
+    else findings.push("Add AGENTS.md or CLAUDE.md containing squad context and engineering laws.");
 
-    const hasDocs = fs.existsSync(path.join(baseDir, "README.md")) || fs.existsSync(path.join(baseDir, "docs"));
-    if (hasDocs) {
-      score += 6;
-    } else {
-      findings.push("Provide comprehensive technical documentation (README.md / docs/).");
-    }
+    if (fs.existsSync(path.join(baseDir, "README.md")) || fs.existsSync(path.join(baseDir, "docs"))) score += 6;
+    else findings.push("Provide comprehensive technical documentation (README.md / docs/).");
 
-    return {
-      name: "Documentation & Agent Context Signals",
-      score,
-      maxScore: 20,
-      signalBand: classifySignalBand(score, 20),
-      findings,
-    };
+    return buildPillar("Documentation & Agent Context Signals", score, findings);
   }
 
   // ---------------------------------------------------------------------------

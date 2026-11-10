@@ -43,16 +43,7 @@ export type EngagementType =
 export type SeverityLevel = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "INFORMATIONAL";
 
 export type TechStack =
-  | "typescript"
-  | "javascript"
-  | "go"
-  | "rust"
-  | "python"
-  | "java"
-  | "sql"
-  | "terraform"
-  | "kubernetes"
-  | "unknown";
+  "typescript" | "javascript" | "go" | "rust" | "python" | "java" | "sql" | "terraform" | "kubernetes" | "unknown";
 
 /** Input to a consulting engagement. */
 export interface ConsultingRequest {

@@ -14,13 +14,7 @@
 import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
 export type DeployState =
-  | "IDLE"
-  | "DEPLOYING_GREEN"
-  | "VALIDATING"
-  | "SHIFTING"
-  | "PROMOTED"
-  | "ROLLING_BACK"
-  | "CLEANUP";
+  "IDLE" | "DEPLOYING_GREEN" | "VALIDATING" | "SHIFTING" | "PROMOTED" | "ROLLING_BACK" | "CLEANUP";
 
 export interface DeployConfig {
   readonly serviceId: string;

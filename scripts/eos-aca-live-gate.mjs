@@ -84,6 +84,10 @@ if (receipt.incidentRequired || verdict === "FAIL") {
   process.exit(1);
 }
 
-lines.push(isLive ? "**PASS**: LIVE path within tested scope." : "**PASS**: Fixture path allowed (no token / live not required).");
+lines.push(
+  isLive
+    ? "**PASS**: LIVE path within tested scope."
+    : "**PASS**: Fixture path allowed (no token / live not required).",
+);
 appendSummary(lines.join("\n"));
 console.log(JSON.stringify({ ok: true, mode, verdict, tokenPresent, requireLive, isLive }, null, 2));

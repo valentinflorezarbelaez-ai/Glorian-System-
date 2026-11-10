@@ -40,14 +40,7 @@ export type WorkspaceArchitecturalRole =
   | "INFRASTRUCTURE_OR_TOOLING";
 
 export type ContractStandard =
-  | "openapi"
-  | "protobuf"
-  | "graphql"
-  | "asyncapi"
-  | "json_schema"
-  | "prisma"
-  | "sql_migration"
-  | "tla_plus";
+  "openapi" | "protobuf" | "graphql" | "asyncapi" | "json_schema" | "prisma" | "sql_migration" | "tla_plus";
 
 export type WorkspaceAccessMode = "READ_ONLY" | "WRITE_GATED";
 

@@ -56,9 +56,7 @@ export function createPhase4InstitutionalHandlers(projectRoot: string): Readonly
       const incidentId = String(raw.incidentId || "INC-UNKNOWN");
       const title = String(raw.title || raw.description || "Unspecified Incident");
       const severity = (["SEV1", "SEV2", "SEV3"].includes(String(raw.severity)) ? String(raw.severity) : "SEV2") as
-        | "SEV1"
-        | "SEV2"
-        | "SEV3";
+        "SEV1" | "SEV2" | "SEV3";
       const owningSquad = String(raw.owningSquad || "core-infrastructure");
       const affectedServices = Array.isArray(raw.affectedServices) ? raw.affectedServices.map(String) : ["core-api"];
       const customerImpact = String(raw.customerImpact || raw.description || "None observed");

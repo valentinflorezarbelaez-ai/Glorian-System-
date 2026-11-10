@@ -29,6 +29,7 @@ describe("EosThreeMountainsCompass — Unit & Mutation Suite", () => {
     assert.equal(res.architect, "Valentin Florez Arbelaez");
     assert.equal(res.coPilot, "EOS System (JARVIS)");
     assert.ok(res.auditId.startsWith("COMPASS-"));
+    assert.equal(res.auditId.length, 20);
     assert.equal(res.overallAlignmentIndex, 1.0);
     assert.equal(res.sacredCovenantPreserved, true);
 
@@ -170,6 +171,21 @@ describe("EosThreeMountainsCompass — Unit & Mutation Suite", () => {
     });
     assert.equal(resM3Half.mountains[2].score, 0.5);
     assert.equal(resM3Half.mountains[2].status, "ATTENTION_REQUIRED");
+
+    // Score exactly 0.75 for Mountain 1 => ELEVATED_VIBRATION
+    const resM1ThreeQuarters = compass.evaluateDailyAlignment({
+      nutritiousFoodLogged: false,
+      impeccableCleanliness: true,
+      dailyExerciseCompleted: true,
+      layer0SoftwareFocusOnly: true,
+      cajitasBudgetRespected: true,
+      claveDeSolPracticed: true,
+      circadianScreenVetoRespected: true,
+      selflessServiceOrDonation: true,
+    });
+    assert.equal(resM1ThreeQuarters.mountains[0].score, 0.75);
+    assert.equal(resM1ThreeQuarters.mountains[0].status, "ELEVATED_VIBRATION");
+    assert.equal(resM1ThreeQuarters.overallAlignmentIndex, 0.9);
   });
 
   it("returns codified pillars correctly with full structural assertions", () => {

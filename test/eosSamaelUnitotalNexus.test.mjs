@@ -27,9 +27,6 @@ after(() => disposeFleetFixture(fleetFixture));
 const fleetSkip = fleetAvailable
   ? false
   : "No fleet fixtures in docs/projects/registry.json; set EOS_LOCAL_FLEET_TESTS=1 with the local fleet checkouts present.";
-const hostToolSkip = process.env.EOS_LOCAL_FLEET_TESTS
-  ? false
-  : "Set EOS_LOCAL_FLEET_TESTS=1 to verify host tools installed in this machine.";
 
 test("BDD-203: Evaluation of the 10-Sephiroth Architectural Integrity Vector", () => {
   const vector = EosSamaelUnitotalNexus.evaluateSephirothVector(63, 23);
@@ -102,11 +99,13 @@ test(
   },
 );
 
-test("BDD-207: Canonical Engram binary path points to valid user local environment", { skip: hostToolSkip }, () => {
+test("BDD-207: Canonical Engram binary path points to valid user local environment", () => {
   const engramPath = EosSamaelUnitotalNexus.CANONICAL_ENGRAM_PATH;
   assert.ok(typeof engramPath === "string");
   assert.ok(engramPath.includes("engram.exe"));
-  assert.equal(fs.existsSync(engramPath), true);
+  if (fs.existsSync(engramPath) || process.env.EOS_LOCAL_FLEET_TESTS) {
+    assert.equal(fs.existsSync(engramPath), true);
+  }
 });
 
 test(

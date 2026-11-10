@@ -72,11 +72,7 @@ export interface OddProportionalRoute {
   readonly taskDescription: string;
   readonly sizeTier: "SMALL_INLINE" | "LARGE_FEATURE_DOC";
   readonly delegationReason:
-    | "NONE_INLINE"
-    | "EXPLORATION"
-    | "PARALLEL_WRITERS"
-    | "CONTEXT_BACKSTOP"
-    | "INDEPENDENT_VERIFIER";
+    "NONE_INLINE" | "EXPLORATION" | "PARALLEL_WRITERS" | "CONTEXT_BACKSTOP" | "INDEPENDENT_VERIFIER";
   readonly publicState: "Working" | "Checking" | "Ready" | "Needs your decision";
   readonly testFirstRule: string;
 }

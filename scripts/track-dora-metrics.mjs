@@ -101,8 +101,7 @@ function getGithubPrLeadTimeHours() {
       .slice(0, 20);
     if (merged.length === 0) return null;
     const hours =
-      merged.reduce((acc, p) => acc + (new Date(p.merged_at) - new Date(p.created_at)) / 3_600_000, 0) /
-      merged.length;
+      merged.reduce((acc, p) => acc + (new Date(p.merged_at) - new Date(p.created_at)) / 3_600_000, 0) / merged.length;
     return { averageHours: Number(hours.toFixed(2)), sampleSize: merged.length, source: "github_pulls_api" };
   } catch {
     return null;
@@ -129,8 +128,7 @@ let leadTimeNote =
     ? `${receipts.length} CI/CD receipts in docs/evidence/`
     : "No receipts — run npm test to generate";
 if (githubLead) {
-  leadTimeRating =
-    githubLead.averageHours < 24 ? "ELITE" : githubLead.averageHours < 168 ? "HIGH" : "MEDIUM";
+  leadTimeRating = githubLead.averageHours < 24 ? "ELITE" : githubLead.averageHours < 168 ? "HIGH" : "MEDIUM";
   leadTimeNote = `GitHub PR lead time avg ${githubLead.averageHours}h (n=${githubLead.sampleSize})`;
 }
 

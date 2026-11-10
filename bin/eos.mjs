@@ -1638,9 +1638,8 @@ switch (command) {
   case "nu": {
     printBanner();
     const sub = (args[1] || "audit").toLowerCase();
-    const { evaluateNubankArchitectureHealth, synthesizeNubankBlamelessPostmortem } = await import(
-      "../src/core/eosNubankCodex.ts"
-    );
+    const { evaluateNubankArchitectureHealth, synthesizeNubankBlamelessPostmortem } =
+      await import("../src/core/eosNubankCodex.ts");
 
     if (sub === "postmortem") {
       const rep = synthesizeNubankBlamelessPostmortem({
@@ -1845,9 +1844,8 @@ switch (command) {
   case "soul":
   case "architect": {
     printBanner();
-    const { getArchitectIdentity, getMasterKanbanState, evaluateAlignment, getDailyDisciplineCheck } = await import(
-      "../src/core/eosJarvisSoul.ts"
-    );
+    const { getArchitectIdentity, getMasterKanbanState, evaluateAlignment, getDailyDisciplineCheck } =
+      await import("../src/core/eosJarvisSoul.ts");
     const directive = args.slice(1).join(" ");
 
     if (directive) {
@@ -2020,9 +2018,8 @@ switch (command) {
   case "schedule": {
     printBanner();
     console.log(`[EOS SCHEDULER] Planificador Cooperativo a 120Hz (< 8.33ms por Frame)...\n`);
-    const { EosCooperativeScheduler, constantTimeSelect, constantTimeEquals } = await import(
-      "../src/core/eosMicroScheduler.ts"
-    );
+    const { EosCooperativeScheduler, constantTimeSelect, constantTimeEquals } =
+      await import("../src/core/eosMicroScheduler.ts");
     const scheduler = new EosCooperativeScheduler(8.33);
 
     const tasks = Array.from({ length: 150 }, (_, _i) => () => {
@@ -2852,9 +2849,8 @@ switch (command) {
     printBanner();
     const subAction = (args[1] || "summary").toLowerCase();
     const { EosContinuousRefactorEngine } = await import("../src/core/eosContinuousRefactorEngine.ts");
-    const { assertPrecondition, assertPostcondition, assertInvariant, deepFreeze, pureSha256 } = await import(
-      "../src/core/eosKernelPrimitives.ts"
-    );
+    const { assertPrecondition, assertPostcondition, assertInvariant, deepFreeze, pureSha256 } =
+      await import("../src/core/eosKernelPrimitives.ts");
 
     if (subAction === "audit") {
       const targetDir = args[2] || "src/core";
@@ -3205,9 +3201,8 @@ switch (command) {
 
     if (subAction === "autoupdate:install" || subAction === "schedule") {
       printBanner();
-      const { installGentlemanAutoUpdateSchedule, queryGentlemanAutoUpdateSchedule } = await import(
-        "../scripts/install-gentleman-autoupdate.mjs"
-      );
+      const { installGentlemanAutoUpdateSchedule, queryGentlemanAutoUpdateSchedule } =
+        await import("../scripts/install-gentleman-autoupdate.mjs");
       const installed = installGentlemanAutoUpdateSchedule({ projectRoot: root, intervalHours: 6 });
       const status = queryGentlemanAutoUpdateSchedule();
       console.log("[EOS GENTLEMAN EVERGREEN SCHEDULER] Automatización Desatendida Instalada:\n");
@@ -3759,9 +3754,8 @@ switch (command) {
   case "fleet:verify": {
     printBanner();
     const targetArg = args[1] || "all";
-    const { EosFleetProductionVerifier, REGISTERED_FLEET_TARGETS } = await import(
-      "../src/core/eosFleetProductionVerifier.ts"
-    );
+    const { EosFleetProductionVerifier, REGISTERED_FLEET_TARGETS } =
+      await import("../src/core/eosFleetProductionVerifier.ts");
 
     console.log("[EOS FLEET PRODUCTION LIVING VERIFICATION & BAUTISMO DE FUEGO — SPEC-056 v62.0.0]\n");
 

@@ -12,9 +12,7 @@ import { fileURLToPath } from "node:url";
 import { writeFleetProductScorecards } from "../src/core/eosFleetProductScorecard.ts";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const registry = JSON.parse(
-  fs.readFileSync(path.join(projectRoot, "docs", "projects", "registry.json"), "utf8"),
-);
+const registry = JSON.parse(fs.readFileSync(path.join(projectRoot, "docs", "projects", "registry.json"), "utf8"));
 const projects = registry.projects || [];
 const probeEnabled = process.env.EOS_FLEET_SCORECARD_PROBE === "1" || process.env.EOS_FLEET_SCORECARD_PROBE === "true";
 

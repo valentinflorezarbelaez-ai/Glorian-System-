@@ -10,10 +10,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  runAcaGateFromVercelSignals,
-  writeAcaCanaryEvidence,
-} from "../src/core/eosBigTechAcaCanaryGate.ts";
+import { runAcaGateFromVercelSignals, writeAcaCanaryEvidence } from "../src/core/eosBigTechAcaCanaryGate.ts";
 import {
   loadVercelRuntimeSignalFixture,
   mapVercelRuntimeSnapshotToSignals,
@@ -162,9 +159,7 @@ const aca = runAcaGateFromVercelSignals({
 const written = writeAcaCanaryEvidence(projectRoot, aca);
 
 const receipt = {
-  epistemicState: aca.incidentRequired
-    ? "REMEDIATION_REQUIRED"
-    : "VERCEL_ACA_LIVE_OR_FIXTURE_WITHIN_TESTED_SCOPE",
+  epistemicState: aca.incidentRequired ? "REMEDIATION_REQUIRED" : "VERCEL_ACA_LIVE_OR_FIXTURE_WITHIN_TESTED_SCOPE",
   generatedAt: new Date().toISOString(),
   mode,
   signalCount: mapped.signals.length,

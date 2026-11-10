@@ -15,10 +15,7 @@ import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitive
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 
 export type SmtVerdict =
-  | "PROVED_UNSAT_SECURE"
-  | "VIOLATION_SAT_MODEL_FOUND"
-  | "SAT_ACYCLIC_ORDER_VALID"
-  | "UNSAT_CYCLE_DEADLOCK";
+  "PROVED_UNSAT_SECURE" | "VIOLATION_SAT_MODEL_FOUND" | "SAT_ACYCLIC_ORDER_VALID" | "UNSAT_CYCLE_DEADLOCK";
 
 export interface SmtClause {
   readonly literals: readonly string[]; // Disjunction: L1 || L2 || ...
