@@ -111,7 +111,7 @@
       "intake": "INTAKE_COMPLETE",
       "specification": "SPECIFICATION_APPROVED",
       "audit": "AUDIT_COMPLETE",
-      "authorization": "LEVEL_2_AUTHORIZED",
+      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
       "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "npm test",
       "autoShipScript": "git push origin main",

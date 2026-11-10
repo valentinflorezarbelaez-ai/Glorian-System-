@@ -49,5 +49,5 @@ Sibling repo already has local `IMPLEMENTATION_AUTHORIZATION.md` (`LEVEL 2`) and
 2. [x] Dogfood `FLOW_INSPECT:donaciones` SUCCESS with workspace root.
 3. [x] Seal intake + `SPEC-DONACIONES-001` + `AUDIT-DONACIONES-001` in control plane.
 4. [x] Owner directive → registry `LEVEL_2_AUTHORIZED` + `OWNER_APPROVAL` (AUTH-2026-11-09-DONACIONES-LAW-IV-LEVEL-2).
-5. [ ] Configure Actions secrets (`VERCEL_TOKEN`, optional project/team, `EOS_FLEET_CHECKOUT_TOKEN`) for live ACA path.
-6. [ ] Separate Level 3 ritual before any control-plane write into sibling `Donaciones` (`Δ = 0` until then).
+5. [x] Configure Actions secrets (`VERCEL_TOKEN`, optional project/team) for live ACA path (LIVE_DEPLOYMENT_PROBE PASS post-#617).
+6. [x] Separate Level 3 ritual sealed via `INTAKE-002` / `SPEC-DONACIONES-002` / `AUDIT-DONACIONES-002` / AUTH Level 3 (sibling `Δ = 0` in that change set).
