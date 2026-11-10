@@ -1,10 +1,16 @@
 {
   "minScore": 0.85,
   "floors": {
+    "src/core/eosAdaptiveConcurrencyGovernor.ts": 1,
     "src/core/eosAutonomousHealer.ts": 1,
+    "src/core/eosCellBasedBulkheadGovernor.ts": 1,
     "src/core/eosFleetProductScorecard.ts": 1,
     "src/core/eosKernelPrimitives.ts": 0.87,
+    "src/core/eosMultiWindowSloGovernor.ts": 1,
+    "src/core/eosPropertyFuzzingHypervisor.ts": 1,
     "src/core/eosSLOErrorBudgetGovernor.ts": 1,
+    "src/core/eosSlsaProvenanceSbom.ts": 1,
+    "src/core/eosSurgicalSelfHealingKernel.ts": 1,
     "src/core/eosThreeMountainsCompass.ts": 0.97,
     "src/core/eosUniversalProductFoundry.ts": 1,
     "src/core/eosVercelCanaryObservability.ts": 1

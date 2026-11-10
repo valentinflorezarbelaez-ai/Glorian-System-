@@ -37,13 +37,19 @@ const DEFAULT_MIN_SCORE = 0.8;
 
 // Core high-value modules governed under mutation testing ratchet
 const DEFAULT_TARGETS = [
-  "src/core/eosSLOErrorBudgetGovernor.ts",
-  "src/core/eosThreeMountainsCompass.ts",
-  "src/core/eosKernelPrimitives.ts",
+  "src/core/eosAdaptiveConcurrencyGovernor.ts",
   "src/core/eosAutonomousHealer.ts",
+  "src/core/eosCellBasedBulkheadGovernor.ts",
   "src/core/eosFleetProductScorecard.ts",
-  "src/core/eosVercelCanaryObservability.ts",
+  "src/core/eosKernelPrimitives.ts",
+  "src/core/eosMultiWindowSloGovernor.ts",
+  "src/core/eosPropertyFuzzingHypervisor.ts",
+  "src/core/eosSLOErrorBudgetGovernor.ts",
+  "src/core/eosSlsaProvenanceSbom.ts",
+  "src/core/eosSurgicalSelfHealingKernel.ts",
+  "src/core/eosThreeMountainsCompass.ts",
   "src/core/eosUniversalProductFoundry.ts",
+  "src/core/eosVercelCanaryObservability.ts",
 ];
 
 /**
