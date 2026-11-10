@@ -202,11 +202,15 @@ export class EosAutonomousHealer {
         throw new Error("Target file must stay inside the project root.");
       }
       if (fs.existsSync(full)) {
-        const realFile = fs.realpathSync(full);
-        if (!isPathWithin(realRoot, realFile)) {
-          throw new Error("Target file must resolve inside the project root.");
+        try {
+          const realFile = fs.realpathSync(full);
+          if (!isPathWithin(realRoot, realFile)) {
+            throw new Error("Target file must resolve inside the project root.");
+          }
+          if (fs.statSync(realFile).isFile()) filesToScan.push(realFile);
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
         }
-        if (fs.statSync(realFile).isFile()) filesToScan.push(realFile);
       }
     } else {
       // Scan all source files in src/
@@ -233,15 +237,24 @@ export class EosAutonomousHealer {
     }
     let totalBytes = 0;
     for (const fullPath of filesToScan) {
-      const fileStat = fs.statSync(fullPath);
-      if (fileStat.size > MAX_HEAL_SOURCE_FILE_BYTES) {
-        throw new RangeError(`Healing target exceeds the 1 MiB file limit: ${path.relative(realRoot, fullPath)}`);
+      // TOCTOU: parallel tests / forge cleanup may unlink between readdir and read.
+      let fileStat: fs.Stats;
+      let origContent: string;
+      try {
+        fileStat = fs.statSync(fullPath);
+        if (!fileStat.isFile()) continue;
+        if (fileStat.size > MAX_HEAL_SOURCE_FILE_BYTES) {
+          throw new RangeError(`Healing target exceeds the 1 MiB file limit: ${path.relative(realRoot, fullPath)}`);
+        }
+        totalBytes += fileStat.size;
+        if (totalBytes > MAX_HEAL_SCAN_BYTES)
+          throw new RangeError("Healing scan exceeds the 50 MiB aggregate file limit.");
+        origContent = fs.readFileSync(fullPath, "utf8");
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === "ENOENT") continue;
+        throw error;
       }
-      totalBytes += fileStat.size;
-      if (totalBytes > MAX_HEAL_SCAN_BYTES)
-        throw new RangeError("Healing scan exceeds the 50 MiB aggregate file limit.");
       const relPath = path.relative(realRoot, fullPath).replace(/\\/g, "/");
-      const origContent = fs.readFileSync(fullPath, "utf8");
       let proposed = origContent;
       let action: RemediationAction | null = null;
 
