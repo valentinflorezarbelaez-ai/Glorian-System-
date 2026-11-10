@@ -37,6 +37,9 @@ import { EosFleetElevator } from "../src/core/eosFleetElevator.ts";
 import { EosWasmSandboxEngine } from "../src/core/eosWasmSandboxEngine.ts";
 import { EosMicroVmSandbox } from "../src/core/eosMicroVmSandbox.ts";
 import { EosTlsPeerTransport } from "../src/core/eosTlsPeerTransport.ts";
+import { EosConsistentHashRing } from "../src/core/eosConsistentHashRing.ts";
+import { EosHashedTimingWheel } from "../src/core/eosHashedTimingWheel.ts";
+import { EosPlanetaryConsensusEngine } from "../src/core/eosPlanetaryConsensusEngine.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -524,6 +527,155 @@ describe("SOVEREIGN APEX BRANCH ELEVATION — MISSION CRITICAL SUITE", () => {
         }),
         null,
       );
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // 11. EosConsistentHashRing
+  // -------------------------------------------------------------------------
+  describe("11. EosConsistentHashRing — Comprehensive Branch Coverage", () => {
+    it("handles empty ring errors, duplicate node additions, and preference routing", () => {
+      const emptyRing = new EosConsistentHashRing([], 16);
+      assert.throws(() => emptyRing.getNode("user-123"), /ConsistentHashRing is empty/);
+      assert.throws(() => emptyRing.getPreferenceList("user-123", 2), /ConsistentHashRing is empty/);
+
+      const ring = new EosConsistentHashRing(["node-a", "node-b", "node-c"], 32);
+      assert.equal(ring.getPhysicalNodeCount(), 3);
+
+      // Duplicate add is a safe no-op
+      ring.addNode("node-a");
+      assert.equal(ring.getPhysicalNodeCount(), 3);
+
+      // Removal of non-existent node is a safe no-op
+      ring.removeNode("node-phantom");
+      assert.equal(ring.getPhysicalNodeCount(), 3);
+
+      // Node lookup covers bisect boundary wraps
+      const node1 = ring.getNode("alpha-key");
+      assert.ok(["node-a", "node-b", "node-c"].includes(node1));
+
+      // Preference list clamping when replicas requested exceed available physical nodes
+      const prefs = ring.getPreferenceList("alpha-key", 10);
+      assert.equal(prefs.length, 3);
+      assert.equal(new Set(prefs).size, 3);
+
+      // Normal removal
+      ring.removeNode("node-c");
+      assert.equal(ring.getPhysicalNodeCount(), 2);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // 12. EosHashedTimingWheel
+  // -------------------------------------------------------------------------
+  describe("12. EosHashedTimingWheel — Comprehensive Branch Coverage", () => {
+    it("enforces preconditions, handles multi-round timers, and supports cancellation", () => {
+      // Precondition validations
+      assert.throws(() => new EosHashedTimingWheel({ slots: 1, tickDurationMs: 10 }), /slots must be >= 2/);
+      assert.throws(() => new EosHashedTimingWheel({ slots: 8, tickDurationMs: 0 }), /tickDurationMs must be positive/);
+
+      const wheel = new EosHashedTimingWheel({ slots: 4, tickDurationMs: 10 });
+      assert.throws(() => wheel.schedule(-5, () => {}), /delay must be >= 0/);
+      assert.throws(() => wheel.scheduleRecurring(10, 5, () => {}), /interval must be >= tick/);
+
+      let oneShotFired = 0;
+      let multiRoundFired = 0;
+      let repeatingFired = 0;
+
+      // Schedule one-shot in slot 1 (10ms = 1 tick)
+      wheel.schedule(10, () => {
+        oneShotFired++;
+      });
+      // Schedule multi-round timer (100ms = 10 ticks = 2 full rounds + 2 slots)
+      wheel.schedule(100, () => {
+        multiRoundFired++;
+      });
+      // Schedule timer that throws: errors are safely swallowed
+      wheel.schedule(10, () => {
+        throw new Error("expected test explosion");
+      });
+      // Schedule timer to cancel
+      const hToCancel = wheel.schedule(20, () => {
+        assert.fail("cancelled timer must not fire");
+      });
+
+      assert.equal(wheel.cancel(hToCancel), true);
+      assert.equal(wheel.cancel(hToCancel), false); // Cancelling again returns false
+      assert.equal(wheel.cancel({ id: 9999, deadlineTick: 1, intervalTicks: 0 }), false);
+
+      // Schedule recurring timer (10ms initial, 20ms interval = 2 ticks)
+      wheel.scheduleRecurring(10, 20, () => {
+        repeatingFired++;
+      });
+
+      assert.ok(wheel.pending >= 3);
+      assert.ok(typeof wheel.fingerprint() === "string");
+
+      // Advance by 1 tick: slot 1 fires
+      wheel.advance(1);
+      assert.equal(oneShotFired, 1);
+      assert.equal(repeatingFired, 1);
+
+      // Advance by 10 more ticks: multi-round timer completes and recurring fires again
+      wheel.advance(10);
+      assert.equal(multiRoundFired, 1);
+      assert.ok(repeatingFired >= 4);
+
+      const tel = wheel.telemetry();
+      assert.ok(tel.scheduled >= 4);
+      assert.ok(tel.fired >= 5);
+      assert.equal(tel.cancelled, 1);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // 13. EosPlanetaryConsensusEngine
+  // -------------------------------------------------------------------------
+  describe("13. EosPlanetaryConsensusEngine — Comprehensive Branch Coverage", () => {
+    it("evaluates Raft election, log replication, network partitions, and healing", () => {
+      assert.throws(() => new EosPlanetaryConsensusEngine(["n1", "n2"]), /requires at least 3 nodes/);
+
+      const cluster = new EosPlanetaryConsensusEngine(["node-1", "node-2", "node-3"]);
+      assert.equal(cluster.getClusterSize(), 3);
+      assert.equal(cluster.getQuorumSize(), 2);
+      assert.equal(cluster.getLeaderId(), null);
+
+      // Propose without leader fails
+      assert.throws(() => cluster.propose("SET", { x: 1 }), /No active leader elected/);
+      assert.throws(() => cluster.electLeader("node-phantom"), /Unknown candidate node/);
+
+      // Elect leader
+      const election = cluster.electLeader("node-1");
+      assert.equal(election.success, true);
+      assert.equal(election.leaderId, "node-1");
+      assert.equal(cluster.getLeaderId(), "node-1");
+
+      // Propose mutation with quorum active
+      const prop1 = cluster.propose("WRITE_RECORD", { key: "alpha", val: 42 });
+      assert.equal(prop1.success, true);
+      assert.equal(prop1.entryIndex, 1);
+      assert.equal(prop1.acks, 3);
+      assert.ok(prop1.stateHash.length === 64);
+
+      // Partition leader and verify it cannot propose
+      cluster.partitionNodes(["node-1"]);
+      assert.equal(cluster.getLeaderId(), null);
+      assert.throws(() => cluster.propose("WRITE_RECORD", { key: "beta" }), /No active leader elected/);
+
+      // Elect new leader among surviving majority ("node-2", "node-3")
+      const election2 = cluster.electLeader("node-2");
+      assert.equal(election2.success, true);
+      assert.equal(cluster.getLeaderId(), "node-2");
+
+      // Isolated candidate cannot get elected
+      const isolatedElect = cluster.electLeader("node-1");
+      assert.equal(isolatedElect.success, false);
+      assert.equal(isolatedElect.votesReceived, 0);
+
+      // Heal partition
+      cluster.healPartition();
+      const nodeState = cluster.getNodeState("node-2");
+      assert.equal(nodeState?.role, "LEADER");
     });
   });
 });
