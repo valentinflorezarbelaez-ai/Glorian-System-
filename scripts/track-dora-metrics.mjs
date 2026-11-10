@@ -101,8 +101,7 @@ function getGithubPrLeadTimeHours() {
       .slice(0, 20);
     if (merged.length === 0) return null;
     const hours =
-      merged.reduce((acc, p) => acc + (new Date(p.merged_at) - new Date(p.created_at)) / 3_600_000, 0) /
-      merged.length;
+      merged.reduce((acc, p) => acc + (new Date(p.merged_at) - new Date(p.created_at)) / 3_600_000, 0) / merged.length;
     return { averageHours: Number(hours.toFixed(2)), sampleSize: merged.length, source: "github_pulls_api" };
   } catch {
     return null;
@@ -129,8 +128,7 @@ let leadTimeNote =
     ? `${receipts.length} CI/CD receipts in docs/evidence/`
     : "No receipts — run npm test to generate";
 if (githubLead) {
-  leadTimeRating =
-    githubLead.averageHours < 24 ? "ELITE" : githubLead.averageHours < 168 ? "HIGH" : "MEDIUM";
+  leadTimeRating = githubLead.averageHours < 24 ? "ELITE" : githubLead.averageHours < 168 ? "HIGH" : "MEDIUM";
   leadTimeNote = `GitHub PR lead time avg ${githubLead.averageHours}h (n=${githubLead.sampleSize})`;
 }
 
@@ -140,6 +138,28 @@ const cfrRating = Number(cfr) <= 5 ? "ELITE" : Number(cfr) <= 15 ? "HIGH" : "MED
 
 // MTTR: no incidents logged = Elite
 const mttrRating = incidents.length === 0 ? "ELITE" : "HIGH";
+
+/** ACA LIVE tip signal (SPEC-107 / EngProd) — optional receipt from aca:vercel cron. */
+function getAcaLiveSignal() {
+  const p = path.join(root, "docs/evidence/VERCEL_ACA_LIVE_RECEIPT.json");
+  if (!fs.existsSync(p)) return null;
+  try {
+    const r = JSON.parse(fs.readFileSync(p, "utf8"));
+    const liveModes = new Set(["LIVE_DEPLOYMENT_PROBE", "LIVE_CAPTURED_SNAPSHOT"]);
+    return {
+      mode: r.mode || "UNKNOWN",
+      verdict: r.verdict || "UNKNOWN",
+      isLive: liveModes.has(r.mode),
+      incidentRequired: Boolean(r.incidentRequired),
+      generatedAt: r.generatedAt || null,
+      sha256Receipt: r.sha256Receipt || null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+const acaLive = getAcaLiveSignal();
 
 const metrics = {
   measuredAt: new Date().toISOString(),
@@ -171,12 +191,21 @@ const metrics = {
     rating: mttrRating,
     eliteThreshold: "< 1 hour",
   },
+  acaLive: acaLive || {
+    mode: "MISSING",
+    verdict: "UNKNOWN",
+    isLive: false,
+    incidentRequired: false,
+    note: "Run npm run aca:vercel (cron) to tip-seal LIVE receipt",
+  },
   overallRating: [deployFreqRating, leadTimeRating, cfrRating, mttrRating].every((r) => r === "ELITE")
     ? "ELITE"
     : "HIGH",
   sha256: crypto
     .createHash("sha256")
-    .update(`${deployCount}:${cfr}:${incidents.length}:${new Date().toISOString().slice(0, 10)}`)
+    .update(
+      `${deployCount}:${cfr}:${incidents.length}:${acaLive?.mode || "none"}:${new Date().toISOString().slice(0, 10)}`,
+    )
     .digest("hex"),
 };
 
@@ -191,6 +220,9 @@ console.log(`Deployment Frequency : ${deploysPerDay}/day (${deployCount} in ${WI
 console.log(`Lead Time            : ${metrics.leadTimeForChanges.note} [${leadTimeRating}]`);
 console.log(`Change Failure Rate  : ${cfr}% [${cfrRating}]`);
 console.log(`MTTR                 : ${metrics.mttr.value} [${mttrRating}]`);
+console.log(
+  `ACA LIVE             : mode=${metrics.acaLive.mode} verdict=${metrics.acaLive.verdict} live=${metrics.acaLive.isLive}`,
+);
 console.log(`Overall Rating       : ${metrics.overallRating}`);
 console.log(`Saved to             : docs/evidence/DORA-METRICS.json`);
 console.log("======================================================================");
