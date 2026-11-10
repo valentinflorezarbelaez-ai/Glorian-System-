@@ -53,6 +53,26 @@ function tryLoadCommittedLiveSnapshots() {
   }
 }
 
+function mapDeploymentToSnapshot(dep) {
+  const id = dep?.uid || dep?.id;
+  if (!id) return null;
+  const state = String(dep.readyState || dep.state || "");
+  const ready = state === "READY";
+  const errorish = state === "ERROR" || state === "CANCELED";
+  let errorRate5xx = 0.01;
+  if (errorish) errorRate5xx = 0.05;
+  else if (ready) errorRate5xx = 0.0001;
+  return {
+    deploymentId: String(id),
+    environment: "production",
+    stage: "FULL_PRODUCTION_100_PCT",
+    requestCount: 10_000,
+    latencyP99Ms: ready ? 45 : 900,
+    errorRate5xx,
+    errorClusters: errorish ? [{ name: state, occurrenceCount: 50 }] : [],
+  };
+}
+
 function tryFetchLiveVercelSnapshot() {
   const defaults = loadVercelProjectDefaults();
   const token = process.env.VERCEL_TOKEN?.trim();
@@ -60,12 +80,8 @@ function tryFetchLiveVercelSnapshot() {
   if (!token || !projectId) return null;
   try {
     const team = process.env.VERCEL_TEAM_ID?.trim() || defaults.teamId;
-    const qs = new URLSearchParams({
-      projectId,
-      target: "production",
-      limit: "1",
-      ...(team ? { teamId: team } : {}),
-    });
+    const qs = new URLSearchParams({ projectId, target: "production", limit: "1" });
+    if (team) qs.set("teamId", team);
     const url = `https://api.vercel.com/v6/deployments?${qs.toString()}`;
     const raw = execFileSync(
       "curl",
@@ -74,18 +90,7 @@ function tryFetchLiveVercelSnapshot() {
     );
     const parsed = JSON.parse(raw);
     const dep = Array.isArray(parsed.deployments) ? parsed.deployments[0] : null;
-    if (!dep?.uid && !dep?.id) return null;
-    const ready = (dep.readyState || dep.state) === "READY";
-    const errorish = ["ERROR", "CANCELED"].includes(dep.readyState || dep.state);
-    return {
-      deploymentId: String(dep.uid || dep.id),
-      environment: "production",
-      stage: "FULL_PRODUCTION_100_PCT",
-      requestCount: 10_000,
-      latencyP99Ms: ready ? 45 : 900,
-      errorRate5xx: errorish ? 0.05 : ready ? 0.0001 : 0.01,
-      errorClusters: errorish ? [{ name: String(dep.readyState || dep.state), occurrenceCount: 50 }] : [],
-    };
+    return mapDeploymentToSnapshot(dep);
   } catch {
     return null;
   }

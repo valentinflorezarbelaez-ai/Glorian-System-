@@ -101,111 +101,135 @@ export function extractGitMetadata(repoPath) {
   }
 }
 
-export function inferProjectMetadata(repoPath) {
-  const dirName = path.basename(repoPath);
+const CANONICAL_FLEET_PROFILES = [
+  {
+    match: (lower) => lower.includes("abopack") || lower.includes("avopak"),
+    id: "control-de-asistencia-abopack",
+    name: "Avo Pack S.A.S. — Central de Asistencia y Liquidación Laboral",
+    productionUrl: "https://avo-pack.vercel.app",
+    type: "industrial-operations-suite",
+    cicdGateScript: "npm test",
+  },
+  {
+    match: (lower) => lower.includes("atp-strength"),
+    id: "atp-strength",
+    name: "ATP Strength & Hypertrophy Platform",
+    productionUrl: "https://atp-strength.vercel.app",
+    type: "athletic-performance-monolith",
+    cicdGateScript: "npm test",
+  },
+  {
+    match: (lower) => lower.includes("aberamentho"),
+    id: "aberamentho",
+    name: "Aberamentho Pleroma Music",
+    productionUrl: "https://aberamentosprelomamusic.vercel.app",
+    type: "sacred-acoustic-app",
+    cicdGateScript: "scripts/verify-landing.mjs",
+  },
+  {
+    match: (lower) => lower.includes("portafolio"),
+    id: "portafolio",
+    name: "Portafolio Oficial — Valentín Flórez",
+    productionUrl: "https://portafolio-valentin.vercel.app",
+    type: "executive-showcase",
+    cicdGateScript: "scripts/verify-landing.mjs",
+  },
+  {
+    match: (lower) => lower.includes("crud-slack"),
+    id: "crud-slack",
+    name: "TaskFlow AI — Omnichannel Request-to-Task CRUD & Triage",
+    productionUrl: "https://crud-slack.vercel.app",
+    type: "ai-productivity-workspace",
+    cicdGateScript: "scripts/verify-strict.mjs",
+  },
+  {
+    match: (lower) => lower.includes("performance-talent"),
+    id: "performance-talent-group",
+    name: "PTG — Performance Talent Group",
+    productionUrl: "https://ptg-performance-talent-group.vercel.app",
+    type: "enterprise-operations",
+    cicdGateScript: "scripts/smoke-test.ps1",
+  },
+  {
+    match: (lower) => lower === "eos-system" || lower.startsWith("glorian-system"),
+    id: "eos-system",
+    name: "EOS System (Control Plane Core)",
+    productionUrl: "https://eos-system-ten.vercel.app",
+    type: "control-plane-monolith",
+    cicdGateScript: "scripts/verify-cicd-pipeline.mjs",
+  },
+  {
+    match: (lower) => lower.includes("biblioteca-gnostica"),
+    id: "biblioteca-gnostica-1",
+    name: "Biblioteca Gnóstica — Preservación Digital de Textos Sagrados",
+    productionUrl: "https://biblioteca-gnostica.vercel.app",
+    type: "cultural-archive-platform",
+    cicdGateScript: "npm test",
+  },
+  {
+    match: (lower) => lower.includes("donaciones"),
+    id: "donaciones",
+    name: "Portal de Donaciones — Sede AGEAC & Tercer Factor",
+    productionUrl: "https://donaciones-drab.vercel.app",
+    type: "philanthropic-portal",
+    cicdGateScript: "npm test",
+  },
+];
+
+function inferManifestDefaults(repoPath, dirName) {
   let name = dirName;
   let productionUrl = "";
-  let type = "general-application";
   let cicdGateScript = "npm test";
 
-  // Check package.json
   const pkgPath = path.join(repoPath, "package.json");
   if (fs.existsSync(pkgPath)) {
     try {
       const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
-      if (pkg.name) name = pkg.name;
-      if (pkg.description) name = `${pkg.name} — ${pkg.description}`;
-      if (pkg.scripts && pkg.scripts["verify:strict"]) {
-        cicdGateScript = "scripts/verify-strict.mjs";
-      } else if (pkg.scripts && pkg.scripts.test) {
-        cicdGateScript = "npm test";
-      }
+      if (pkg.name) name = pkg.description ? `${pkg.name} — ${pkg.description}` : pkg.name;
+      if (pkg.scripts?.["verify:strict"]) cicdGateScript = "scripts/verify-strict.mjs";
     } catch {
-      // Ignore parse error
+      // Ignore malformed package.json
     }
   }
 
-  // Infer production URL and type
   const vercelPath = path.join(repoPath, "vercel.json");
   if (fs.existsSync(vercelPath)) {
     try {
       const v = JSON.parse(fs.readFileSync(vercelPath, "utf8"));
-      if (v.alias) {
-        productionUrl = `https://${Array.isArray(v.alias) ? v.alias[0] : v.alias}`;
-      }
+      if (v.alias) productionUrl = `https://${Array.isArray(v.alias) ? v.alias[0] : v.alias}`;
     } catch {
-      // Ignore
+      // Ignore malformed vercel.json
     }
   }
 
-  // Check HTML for canonical or known project URLs
   const indexPath = path.join(repoPath, "index.html");
   if (fs.existsSync(indexPath)) {
     try {
       const html = fs.readFileSync(indexPath, "utf8");
       const m = html.match(/https:\/\/([a-zA-Z0-9-]+\.vercel\.app)/);
-      if (m && !productionUrl) {
-        productionUrl = `https://${m[1]}`;
-      }
+      if (m && !productionUrl) productionUrl = `https://${m[1]}`;
       const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
-      if (titleMatch && titleMatch[1]) {
-        name = titleMatch[1].trim();
-      }
+      if (titleMatch?.[1]) name = titleMatch[1].trim();
     } catch {
-      // Ignore
+      // Ignore unreadable index.html
     }
   }
 
-  // Specific canonical mappings for known fleet projects
-  const lower = dirName.toLowerCase();
-  if (lower.includes("abopack") || lower.includes("avopak")) {
-    name = "Avo Pack S.A.S. — Central de Asistencia y Liquidación Laboral";
-    productionUrl = "https://avo-pack.vercel.app";
-    type = "industrial-operations-suite";
-    cicdGateScript = "npm test";
-  } else if (lower.includes("atp-strength")) {
-    name = "ATP Strength & Hypertrophy Platform";
-    productionUrl = "https://atp-strength.vercel.app";
-    type = "athletic-performance-monolith";
-    cicdGateScript = "npm test";
-  } else if (lower.includes("aberamentho")) {
-    name = "Aberamentho Pleroma Music";
-    productionUrl = "https://aberamentosprelomamusic.vercel.app";
-    type = "sacred-acoustic-app";
-    cicdGateScript = "scripts/verify-landing.mjs";
-  } else if (lower.includes("portafolio")) {
-    name = "Portafolio Oficial — Valentín Flórez";
-    productionUrl = "https://portafolio-valentin.vercel.app";
-    type = "executive-showcase";
-    cicdGateScript = "scripts/verify-landing.mjs";
-  } else if (lower.includes("crud-slack")) {
-    name = "TaskFlow AI — Omnichannel Request-to-Task CRUD & Triage";
-    productionUrl = "https://crud-slack.vercel.app";
-    type = "ai-productivity-workspace";
-    cicdGateScript = "scripts/verify-strict.mjs";
-  } else if (lower.includes("performance-talent")) {
-    name = "PTG — Performance Talent Group";
-    productionUrl = "https://ptg-performance-talent-group.vercel.app";
-    type = "enterprise-operations";
-    cicdGateScript = "scripts/smoke-test.ps1";
-  } else if (lower === "eos-system") {
-    name = "EOS System (Control Plane Core)";
-    productionUrl = "https://eos-system-ten.vercel.app";
-    type = "control-plane-monolith";
-    cicdGateScript = "scripts/verify-cicd-pipeline.mjs";
-  } else if (lower.includes("biblioteca-gnostica")) {
-    name = "Biblioteca Gnóstica — Preservación Digital de Textos Sagrados";
-    productionUrl = "https://biblioteca-gnostica.vercel.app";
-    type = "cultural-archive-platform";
-    cicdGateScript = "npm test";
-  } else if (lower.includes("donaciones")) {
-    name = "Portal de Donaciones — Sede AGEAC & Tercer Factor";
-    productionUrl = "https://donaciones-drab.vercel.app";
-    type = "philanthropic-portal";
-    cicdGateScript = "npm test";
-  }
+  return { name, productionUrl, type: "general-application", cicdGateScript };
+}
 
-  return { name, productionUrl, type, cicdGateScript };
+export function inferProjectMetadata(repoPath) {
+  const dirName = path.basename(repoPath);
+  const defaults = inferManifestDefaults(repoPath, dirName);
+  const lower = dirName.toLowerCase();
+  const profile = CANONICAL_FLEET_PROFILES.find((p) => p.match(lower));
+  if (!profile) return defaults;
+  return {
+    name: profile.name,
+    productionUrl: profile.productionUrl,
+    type: profile.type,
+    cicdGateScript: profile.cicdGateScript,
+  };
 }
 
 export function computeRegistrySignature(registry) {
@@ -224,97 +248,88 @@ export function computeRegistrySignature(registry) {
   return crypto.createHash("sha256").update(normalized).digest("hex");
 }
 
+function resolveCanonicalProjectId(disc) {
+  if (disc.id) return disc.id;
+  const dirLower = String(disc.dirName || "").toLowerCase();
+  const profile = CANONICAL_FLEET_PROFILES.find((p) => p.match(dirLower));
+  return profile ? profile.id : dirLower;
+}
+
+function defaultGovernancePosture(id) {
+  const isAbopack = id === "control-de-asistencia-abopack";
+  return {
+    intake: isAbopack ? "INTAKE_COMPLETE" : "PENDING_INTAKE",
+    specification: isAbopack ? "SPECIFICATION_APPROVED" : "PENDING_SPECIFICATION",
+    audit: isAbopack ? "AUDIT_COMPLETE" : "PENDING_AUDIT",
+    authorization: isAbopack ? "LEVEL_3_PRODUCTION_AUTHORIZED" : "LEVEL_1_READ_ONLY",
+    ownerApproval: isAbopack ? "OWNER_APPROVAL" : undefined,
+  };
+}
+
+function definedFields(obj) {
+  const result = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v !== undefined && v !== null && v !== "") result[k] = v;
+  }
+  return result;
+}
+
+function mergeDiscoveredProject(id, disc, prev = {}) {
+  const defaults = defaultGovernancePosture(id);
+  const envKey = `EOS_FLEET_${id.toUpperCase().replace(/-/g, "_")}_PATH`;
+  const base = {
+    id,
+    name: disc.name,
+    resolvedLocalDir: disc.dirName,
+    localPathEnv: envKey,
+    remoteUrl: "",
+    productionUrl: disc.productionUrl || "",
+    type: disc.type || "application",
+    status: "REGISTERED",
+    intake: defaults.intake,
+    specification: defaults.specification,
+    audit: defaults.audit,
+    authorization: defaults.authorization,
+    ...(defaults.ownerApproval ? { ownerApproval: defaults.ownerApproval } : {}),
+    cicdGateScript: disc.cicdGateScript || "npm test",
+    autoShipScript: "git push origin main",
+  };
+  return {
+    ...base,
+    ...definedFields(prev),
+    id,
+    resolvedLocalDir: disc.dirName,
+    remoteUrl: disc.remoteUrl || prev.remoteUrl || "",
+    currentBranch: disc.currentBranch || "main",
+    headCommitSha: disc.headCommitSha || "",
+  };
+}
+
 export function reconcileFleetRegistry(existingRegistry, discoveredList, options = {}) {
   const allowNewProjects = options.allowNewProjects === true;
   const existingProjects = new Map();
   for (const p of existingRegistry.projects || []) {
-    if (isExcludedFleetClone(p.resolvedLocalDir || p.id || "")) {
-      // Drop previously auto-inflated ghost LEVEL_1 rows on the next sync.
-      continue;
+    if (!isExcludedFleetClone(p.resolvedLocalDir || p.id || "")) {
+      existingProjects.set(p.id, p);
     }
-    existingProjects.set(p.id, p);
   }
 
   const updatedProjects = [];
-
   for (const disc of discoveredList) {
     if (isExcludedFleetClone(disc.dirName || "")) continue;
-
-    // Generate canonical ID
-    const dirLower = disc.dirName.toLowerCase();
-    let id = disc.id;
-    if (!id) {
-      if (dirLower.includes("abopack") || dirLower.includes("avopak")) {
-        id = "control-de-asistencia-abopack";
-      } else if (dirLower.includes("atp-strength")) {
-        id = "atp-strength";
-      } else if (dirLower.includes("aberamentho")) {
-        id = "aberamentho";
-      } else if (dirLower.includes("performance-talent")) {
-        id = "performance-talent-group";
-      } else if (dirLower.includes("crud-slack")) {
-        id = "crud-slack";
-      } else if (dirLower === "eos-system" || dirLower.startsWith("glorian-system")) {
-        id = "eos-system";
-      } else if (dirLower.includes("donaciones")) {
-        id = "donaciones";
-      } else if (dirLower.includes("biblioteca-gnostica")) {
-        id = "biblioteca-gnostica-1";
-      } else if (dirLower.includes("portafolio")) {
-        id = "portafolio";
-      } else {
-        id = disc.dirName.toLowerCase();
-      }
-    }
-
+    const id = resolveCanonicalProjectId(disc);
     const prev = existingProjects.get(id);
-    if (!prev && !allowNewProjects) {
-      // Law IV: discovery refreshes registered tenants only; no disk-ghost LEVEL_1 inflation.
-      continue;
-    }
+    if (!prev && !allowNewProjects) continue;
+    if (prev?.resolvedLocalDir && disc.dirName !== prev.resolvedLocalDir) continue;
 
-    // Prefer the registry-pinned checkout when multiple local clones share an id.
-    if (prev?.resolvedLocalDir && disc.dirName !== prev.resolvedLocalDir) {
-      continue;
-    }
-
-    const merged = {
-      id,
-      name: prev?.name || disc.name,
-      resolvedLocalDir: disc.dirName,
-      localPathEnv: prev?.localPathEnv || `EOS_FLEET_${id.toUpperCase().replace(/-/g, "_")}_PATH`,
-      remoteUrl: disc.remoteUrl || prev?.remoteUrl || "",
-      productionUrl: prev?.productionUrl || disc.productionUrl || "",
-      type: prev?.type || disc.type || "application",
-      status: prev?.status || "REGISTERED",
-      intake: prev?.intake || (id === "control-de-asistencia-abopack" ? "INTAKE_COMPLETE" : "PENDING_INTAKE"),
-      specification:
-        prev?.specification ||
-        (id === "control-de-asistencia-abopack" ? "SPECIFICATION_APPROVED" : "PENDING_SPECIFICATION"),
-      audit: prev?.audit || (id === "control-de-asistencia-abopack" ? "AUDIT_COMPLETE" : "PENDING_AUDIT"),
-      authorization:
-        prev?.authorization ||
-        (id === "control-de-asistencia-abopack" ? "LEVEL_3_PRODUCTION_AUTHORIZED" : "LEVEL_1_READ_ONLY"),
-      ownerApproval: prev?.ownerApproval || (id === "control-de-asistencia-abopack" ? "OWNER_APPROVAL" : undefined),
-      cicdGateScript: prev?.cicdGateScript || disc.cicdGateScript || "npm test",
-      autoShipScript: prev?.autoShipScript || "git push origin main",
-      currentBranch: disc.currentBranch || "main",
-      headCommitSha: disc.headCommitSha || "",
-    };
-
-    // Clean undefined fields
-    if (!merged.ownerApproval) delete merged.ownerApproval;
-
-    updatedProjects.push(merged);
+    updatedProjects.push(mergeDiscoveredProject(id, disc, prev));
     existingProjects.delete(id);
   }
 
-  // Retain any projects from existing registry that were not discovered locally
   for (const [, remaining] of existingProjects) {
     updatedProjects.push(remaining);
   }
 
-  // Sort deterministically by id
   updatedProjects.sort((a, b) => a.id.localeCompare(b.id));
 
   const newRegistry = {
@@ -327,7 +342,6 @@ export function reconcileFleetRegistry(existingRegistry, discoveredList, options
   };
 
   newRegistry.registrySha256 = computeRegistrySignature(newRegistry);
-
   return newRegistry;
 }
 

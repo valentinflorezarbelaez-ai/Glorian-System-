@@ -93,15 +93,27 @@ function ensureJunctionOrCopy(sourceDir, targetLink, mergeSubdirsOnly = false) {
   }
 }
 
+function readJsonObjectOrDefault(filePath, fallback) {
+  if (!fs.existsSync(filePath)) return fallback;
+  try {
+    const parsed = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function resolveAppDataMcpDir(appDataMcpDirOption) {
+  if (appDataMcpDirOption === undefined) {
+    return path.join(os.homedir(), ".gemini", "antigravity", "mcp", "eos-system");
+  }
+  return appDataMcpDirOption ? path.resolve(appDataMcpDirOption) : null;
+}
+
 export function installAntigravityIntegration(options = {}) {
   const projectRoot = path.resolve(options.projectRoot || DEFAULT_PROJECT_ROOT);
   const geminiConfigDir = path.resolve(options.geminiConfigDir || path.join(os.homedir(), ".gemini", "config"));
-  const appDataMcpDir =
-    options.appDataMcpDir !== undefined
-      ? options.appDataMcpDir
-        ? path.resolve(options.appDataMcpDir)
-        : null
-      : path.join(os.homedir(), ".gemini", "antigravity", "mcp", "eos-system");
+  const appDataMcpDir = resolveAppDataMcpDir(options.appDataMcpDir);
   const fleetOverrides = options.fleetOverrides || {};
 
   const actions = [];
@@ -109,14 +121,7 @@ export function installAntigravityIntegration(options = {}) {
 
   // 1. Wire ~/.gemini/config/mcp_config.json preserving all third-party servers untouched
   const mcpConfigPath = path.join(geminiConfigDir, "mcp_config.json");
-  let mcpDoc = { mcpServers: {} };
-  if (fs.existsSync(mcpConfigPath)) {
-    const raw = fs.readFileSync(mcpConfigPath, "utf8");
-    const parsed = JSON.parse(raw);
-    if (parsed && typeof parsed === "object") {
-      mcpDoc = parsed;
-    }
-  }
+  const mcpDoc = readJsonObjectOrDefault(mcpConfigPath, { mcpServers: {} });
   if (!mcpDoc.mcpServers || typeof mcpDoc.mcpServers !== "object" || Array.isArray(mcpDoc.mcpServers)) {
     mcpDoc.mcpServers = {};
   }
@@ -146,17 +151,7 @@ export function installAntigravityIntegration(options = {}) {
 
   // 4. Enable eos-governance in ~/.gemini/config/config.json preserving existing preferences
   const globalConfigPath = path.join(geminiConfigDir, "config.json");
-  let configDoc = {};
-  if (fs.existsSync(globalConfigPath)) {
-    try {
-      const parsedConfig = JSON.parse(fs.readFileSync(globalConfigPath, "utf8"));
-      if (parsedConfig && typeof parsedConfig === "object" && !Array.isArray(parsedConfig)) {
-        configDoc = parsedConfig;
-      }
-    } catch {
-      configDoc = {};
-    }
-  }
+  const configDoc = readJsonObjectOrDefault(globalConfigPath, {});
   if (!configDoc.plugins || typeof configDoc.plugins !== "object" || Array.isArray(configDoc.plugins)) {
     configDoc.plugins = {};
   }

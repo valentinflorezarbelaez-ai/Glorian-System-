@@ -370,6 +370,28 @@ export function scanFileContent(content, filePath, allowlist = [], knownSecrets 
   return activeFindings;
 }
 
+function loadAllowlist(resolvedDir) {
+  const allowlistPath = path.join(resolvedDir, ".eos", "secret-allowlist.json");
+  if (!fs.existsSync(allowlistPath)) return [];
+  try {
+    const parsed = JSON.parse(fs.readFileSync(allowlistPath, "utf8"));
+    return Array.isArray(parsed) ? parsed : parsed.allowlist || [];
+  } catch {
+    return [];
+  }
+}
+
+function collectScannableFiles(dir, out = []) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      if (!IGNORED_DIRS.has(entry.name)) collectScannableFiles(path.join(dir, entry.name), out);
+    } else if (entry.isFile() && !BINARY_EXTENSIONS.has(path.extname(entry.name).toLowerCase())) {
+      out.push(path.join(dir, entry.name));
+    }
+  }
+  return out;
+}
+
 export async function scanDirectory(targetDir, _options = {}) {
   const resolvedDir = path.resolve(targetDir);
   if (!fs.existsSync(resolvedDir)) {
@@ -381,35 +403,8 @@ export async function scanDirectory(targetDir, _options = {}) {
     };
   }
 
-  // Load allowlist if exists
-  let allowlist = [];
-  const allowlistPath = path.join(resolvedDir, ".eos", "secret-allowlist.json");
-  if (fs.existsSync(allowlistPath)) {
-    try {
-      const parsed = JSON.parse(fs.readFileSync(allowlistPath, "utf8"));
-      allowlist = Array.isArray(parsed) ? parsed : parsed.allowlist || [];
-    } catch {
-      // Corrupt allowlist file
-    }
-  }
-
-  const allFiles = [];
-  function walk(dir) {
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (entry.isDirectory()) {
-        if (IGNORED_DIRS.has(entry.name)) continue;
-        walk(path.join(dir, entry.name));
-      } else if (entry.isFile()) {
-        const ext = path.extname(entry.name).toLowerCase();
-        if (BINARY_EXTENSIONS.has(ext)) continue;
-        allFiles.push(path.join(dir, entry.name));
-      }
-    }
-  }
-
-  walk(resolvedDir);
-
+  const allowlist = loadAllowlist(resolvedDir);
+  const allFiles = collectScannableFiles(resolvedDir);
   if (allFiles.length === 0) {
     return {
       exitCode: 2,
@@ -422,13 +417,11 @@ export async function scanDirectory(targetDir, _options = {}) {
   const findings = [];
   const knownSecrets = new Set();
 
-  // First pass: collect findings & known secrets
   for (const filePath of allFiles) {
     const relPath = path.relative(resolvedDir, filePath);
     try {
       const content = fs.readFileSync(filePath, "utf8");
-      const fileFindings = scanFileContent(content, filePath, allowlist, knownSecrets);
-      for (const f of fileFindings) {
+      for (const f of scanFileContent(content, filePath, allowlist, knownSecrets)) {
         f.filePath = relPath;
         findings.push(f);
         if (f.rule.startsWith("D") && f.matchValue && f.matchValue.length >= 6) {
