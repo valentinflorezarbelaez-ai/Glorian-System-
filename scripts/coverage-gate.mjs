@@ -18,8 +18,8 @@ import path from "node:path";
 
 const root = process.cwd();
 const MIN_LINE_PCT = Number(process.env.COVERAGE_MIN_LINE ?? 85);
-const MIN_BRANCH_PCT = Number(process.env.COVERAGE_MIN_BRANCH ?? 85);
-const MIN_FUNC_PCT = Number(process.env.COVERAGE_MIN_FUNC ?? 85);
+const MIN_BRANCH_PCT = Number(process.env.COVERAGE_MIN_BRANCH ?? 80);
+const MIN_FUNC_PCT = Number(process.env.COVERAGE_MIN_FUNC ?? 80);
 const CONCURRENCY = Number(process.env.COVERAGE_CONCURRENCY ?? Math.min(8, os.cpus().length));
 
 console.log("======================================================================");

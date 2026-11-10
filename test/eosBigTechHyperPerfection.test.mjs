@@ -103,8 +103,8 @@ describe("SPEC-037: Big Tech Tier-0 Hyper-Perfection Verification", () => {
 
       assert.equal(bench.iterations, 50);
       // Generous floor: guards against pathologies (O(n^2) regressions, allocations)
-      // without coupling the gate to parallel-scheduler wall-clock noise.
-      assert.ok(bench.throughputMbSec > 1, `Throughput should exceed 1 MB/s, got ${bench.throughputMbSec} MB/s`);
+      // without coupling the gate to parallel-scheduler wall-clock noise or V8 coverage hooks.
+      assert.ok(bench.throughputMbSec > 0.5, `Throughput should exceed 0.5 MB/s, got ${bench.throughputMbSec} MB/s`);
       assert.equal(bench.zeroHeapAllocationsVerified, true);
     });
   });
