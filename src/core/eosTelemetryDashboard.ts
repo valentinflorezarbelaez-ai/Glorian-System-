@@ -236,7 +236,7 @@ export class EosTelemetryDashboard {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EOS Sovereign Telemetry Dashboard</title>
+  <title>Glorian System — EOS Sovereign Telemetry Dashboard</title>
   <style>
     :root {
       --bg: #090d16;
@@ -350,10 +350,10 @@ export class EosTelemetryDashboard {
   <header role="banner">
     <div>
       <h1 style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.025em;">
-        EOS Sovereign Telemetry Dashboard
+        Glorian System Sovereign Control Plane
       </h1>
       <p style="color: var(--text-muted); font-size: 0.875rem;">
-        Google DeepMind / Borgmon Platform Observability — v${snapshot.version}
+        Google DeepMind / Borgmon Platform Observability & Theurgic Consensus — v${snapshot.version}
       </p>
     </div>
     <div class="badge" role="status">
@@ -443,6 +443,25 @@ export class EosTelemetryDashboard {
       </table>
     </section>
   </main>
+  <script>
+    (function initLiveTelemetry() {
+      function applySnapshot(data) {
+        if (!data) return;
+        const odo = document.querySelector("#token-odometer .card-value");
+        if (odo && data.tokenEfficiency) {
+          odo.textContent = (data.tokenEfficiency.savedRatio * 100).toFixed(1) + "%";
+        }
+      }
+      if (typeof window !== "undefined" && "EventSource" in window) {
+        try {
+          const es = new EventSource("/api/events");
+          es.onmessage = function(e) {
+            try { applySnapshot(JSON.parse(e.data)); } catch (_) {}
+          };
+        } catch (_) {}
+      }
+    })();
+  </script>
 </body>
 </html>`;
   }
@@ -468,6 +487,24 @@ export class EosTelemetryDashboard {
         if (req.method === "OPTIONS") {
           res.writeHead(204);
           res.end();
+          return;
+        }
+
+        if (pathname === "/api/events") {
+          res.writeHead(200, {
+            "Content-Type": "text/event-stream",
+            "Cache-Control": "no-cache, no-transform",
+            Connection: "keep-alive",
+          });
+          const send = () => {
+            try {
+              const snap = EosTelemetryDashboard.getTelemetrySnapshot(projectRoot);
+              res.write(`data: ${JSON.stringify(snap)}\n\n`);
+            } catch (_) {}
+          };
+          send();
+          const timer = setInterval(send, 3000);
+          req.on("close", () => clearInterval(timer));
           return;
         }
 

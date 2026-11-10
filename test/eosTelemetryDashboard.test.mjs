@@ -176,3 +176,35 @@ test("BDD-196: MCP tool eos_dashboard_status dispatches nominal snapshot and rec
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
 });
+
+test("BDD-197: GET /api/events streams real-time Server-Sent Events (SSE)", async () => {
+  const dashboard = new EosTelemetryDashboard(projectRoot, 0);
+
+  try {
+    const server = await dashboard.start();
+    const port = server.address().port;
+
+    const sseData = await new Promise((resolve, reject) => {
+      const req = http.get(`http://127.0.0.1:${port}/api/events`, (res) => {
+        assert.equal(res.statusCode, 200);
+        assert.equal(res.headers["content-type"], "text/event-stream");
+        let buffer = "";
+        res.on("data", (chunk) => {
+          buffer += chunk.toString();
+          if (buffer.includes("data: {")) {
+            req.destroy();
+            resolve(buffer);
+          }
+        });
+      });
+      req.on("error", (err) => {
+        if (err.code !== "ECONNRESET") reject(err);
+      });
+    });
+
+    assert.ok(sseData.startsWith("data: {"));
+    assert.ok(sseData.includes('"tokenEfficiency"'));
+  } finally {
+    await dashboard.stop();
+  }
+});
