@@ -4,7 +4,7 @@
 - **Date**: 2026-11-09
 - **Owner**: Valentín Flórez Arbeláez
 - **Status**: `INTAKE_COMPLETE`
-- **Epistemic state**: `REMEDIATION_IN_PROGRESS` → registry intake/spec/audit sealed; authorization still `LEVEL_1_READ_ONLY`
+- **Epistemic state**: `PRODUCTION_READY_WITHIN_TESTED_SCOPE` for control-plane onboarding; registry `LEVEL_2_AUTHORIZED` (sibling write barrier still fail-closed)
 - **Catalog rule**: Prefer composing existing SPECs (100/124/042). Project-scoped `SPEC-DONACIONES-001` (no new OpenSpec catalog id).
 
 ---
@@ -48,5 +48,6 @@ Sibling repo already has local `IMPLEMENTATION_AUTHORIZATION.md` (`LEVEL 2`) and
 1. [x] Merge static-checkout path resolver + tip evidence refresh (#614).
 2. [x] Dogfood `FLOW_INSPECT:donaciones` SUCCESS with workspace root.
 3. [x] Seal intake + `SPEC-DONACIONES-001` + `AUDIT-DONACIONES-001` in control plane.
-4. [ ] Owner decision to promote registry `authorization` → `LEVEL_2_AUTHORIZED` (explicit; not implied by sibling markdown).
-5. [ ] Configure Actions secrets for live ACA / private sibling PAT when needed.
+4. [x] Owner directive → registry `LEVEL_2_AUTHORIZED` + `OWNER_APPROVAL` (AUTH-2026-11-09-DONACIONES-LAW-IV-LEVEL-2).
+5. [ ] Configure Actions secrets (`VERCEL_TOKEN`, optional project/team, `EOS_FLEET_CHECKOUT_TOKEN`) for live ACA path.
+6. [ ] Separate Level 3 ritual before any control-plane write into sibling `Donaciones` (`Δ = 0` until then).

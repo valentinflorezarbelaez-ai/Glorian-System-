@@ -947,3 +947,19 @@
 - **Owner Approval**: Owner directive 2026-11-09 — execute Big Tech backlog in order
 - **Scope**: Append-only IAM audit ledger; fine-grained default policies; fleet dogfood TTV; catalog freeze doctrine.
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-09-DONACIONES-LAW-IV-LEVEL-2
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 2`)
+- **Milestone**: Control-plane fleet onboarding for `donaciones` (composes SPEC-100 / SPEC-124; project-scoped `SPEC-DONACIONES-001`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-09: “ok debemos llevar a glorian system al maximo absoluto”)
+- **Scope**:
+  1. Promote registry `donaciones.authorization` from `LEVEL_1_READ_ONLY` → `LEVEL_2_AUTHORIZED` after sealed intake/spec/audit.
+  2. Control-plane scorecard/dogfood/ACA visibility for the static Vercel sibling.
+  3. **Does not** authorize unbounded writes into the `Donaciones` repository; External Write Barrier remains fail-closed for sibling mutation until a separate Level 3 write ritual.
+- **Artifacts Approved**:
+  - `docs/intake/donaciones/INTAKE-001-DONACIONES-CONTROL-PLANE-ONBOARD.md`
+  - `docs/specs/donaciones/SPEC-DONACIONES-001.md`
+  - `docs/audits/donaciones/AUDIT-DONACIONES-001.md`
+  - `docs/projects/registry.json` (`donaciones` entry)
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
