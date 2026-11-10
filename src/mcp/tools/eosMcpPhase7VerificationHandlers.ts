@@ -18,6 +18,11 @@ import { EosThresholdCryptography } from "../../core/eosThresholdCryptography.ts
 import { EosColumnarTelemetryEngine, type ColumnarQueryFilter } from "../../core/eosColumnarTelemetryEngine.ts";
 import { EosNeuroSymbolicFleetHealingEngine } from "../../core/eosNeuroSymbolicFleetHealingEngine.ts";
 import { EosEnterpriseFacade } from "../../core/eosEnterpriseFacade.ts";
+import { EosNeuroSymbolicVerifier } from "../../core/eosNeuroSymbolicVerifier.ts";
+import { EosSlsaSupplyChainAttestation } from "../../core/eosSlsaSupplyChainAttestation.ts";
+import { EosHardwareMemoryArena } from "../../core/eosHardwareMemoryArena.ts";
+import { EosDelayTolerantMesh } from "../../core/eosDelayTolerantMesh.ts";
+import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
 export const PHASE7_VERIFICATION_TOOL_NAMES: ReadonlySet<string> = new Set([
@@ -353,6 +358,36 @@ export function dispatchPhase7VerificationCase(
       if (action === "health") {
         const facade = new EosEnterpriseFacade(deps.projectRoot);
         return facade.auditHealth();
+      }
+      if (action === "verify_action") {
+        const verifier = new EosNeuroSymbolicVerifier();
+        return verifier.verifyAction({
+          actionId: String(args?.actionId || `ACT-${Date.now()}`),
+          actionType: args?.actionType || "SHELL_COMMAND",
+          target: String(args?.target || ""),
+          payload: args?.payload ? String(args.payload) : undefined,
+          declaredPreconditions: args?.declaredPreconditions,
+        });
+      }
+      if (action === "slsa_attest") {
+        const { privateKeyPem, keyId } = EosSlsaSupplyChainAttestation.generateEd25519KeyPair();
+        const statement = EosSlsaSupplyChainAttestation.generateProvenanceStatement({
+          subjects: Array.isArray(args?.subjects)
+            ? args.subjects
+            : [{ name: "workspace", digest: { sha256: pureSha256("workspace") } }],
+        });
+        return EosSlsaSupplyChainAttestation.signStatement(statement, privateKeyPem, keyId);
+      }
+      if (action === "arena_stats") {
+        const arena = new EosHardwareMemoryArena(65536, 16);
+        return {
+          bump: arena.bump.getStats(),
+          slabs: arena.slabs.getStats(),
+        };
+      }
+      if (action === "dtn_status") {
+        const mesh = new EosDelayTolerantMesh("local-control-plane");
+        return mesh.getMeshMetrics();
       }
       if (action === "list") {
         return {

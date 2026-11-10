@@ -223,4 +223,57 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(result.tribunalReady, true);
     assert.equal(result.sha256Receipt.length, 64);
   });
+
+  it("MCP tool 'eos_enterprise_workspace' dispatches verify_action, slsa_attest, arena_stats, and dtn_status", async () => {
+    const { dispatchPhase7VerificationCase } = await import("../src/mcp/tools/eosMcpPhase7VerificationHandlers.ts");
+
+    // 1. verify_action
+    const verifyRes = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      {
+        action: "verify_action",
+        target: "npm run test",
+        actionType: "SHELL_COMMAND",
+        declaredPreconditions: { auth: true },
+      },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(verifyRes.status, "VERIFIED_SAFE");
+
+    // 2. slsa_attest
+    const slsaRes = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      {
+        action: "slsa_attest",
+        subjects: [
+          {
+            name: "release.tar.gz",
+            digest: {
+              sha256: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+            },
+          },
+        ],
+      },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(slsaRes.payloadType, "application/vnd.in-toto+json");
+    assert.ok(slsaRes.signatures.length > 0);
+
+    // 3. arena_stats
+    const arenaRes = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "arena_stats" },
+      { projectRoot: process.cwd() },
+    );
+    assert.ok(arenaRes.bump.capacity > 0);
+    assert.ok(arenaRes.slabs.classes.length > 0);
+
+    // 4. dtn_status
+    const dtnRes = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "dtn_status" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(typeof dtnRes.totalStoredBundles, "number");
+  });
 });

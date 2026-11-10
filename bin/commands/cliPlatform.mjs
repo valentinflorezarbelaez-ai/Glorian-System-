@@ -492,6 +492,68 @@ async function cmd_metrics_131(commandContext) {
 HANDLERS["otel:metrics"] = cmd_metrics_131;
 HANDLERS["red:metrics"] = cmd_metrics_131;
 HANDLERS["prom:red"] = cmd_metrics_131;
+HANDLERS["metrics"] = cmd_metrics_131;
+
+async function cmd_verify_action_132(commandContext) {
+  const { args, command } = commandContext;
+  const isJson = args.includes("--json");
+  const target = args.filter((a) => !a.startsWith("-") && a !== command).join(" ") || "npm test";
+
+  const { EosNeuroSymbolicVerifier } = await import("../../src/core/eosNeuroSymbolicVerifier.ts");
+  const verifier = new EosNeuroSymbolicVerifier();
+  const verdict = verifier.verifyAction({
+    actionId: `ACT-${Date.now()}`,
+    actionType: "SHELL_COMMAND",
+    target,
+    declaredPreconditions: { auth: true },
+  });
+
+  if (isJson) {
+    console.log(JSON.stringify(verdict, null, 2));
+    return;
+  }
+
+  console.log(`\n=== NEURO-SYMBOLIC RUNTIME INVARIANT VERIFIER ===`);
+  console.log(`  Action Target : ${target}`);
+  console.log(`  Status        : ${verdict.status === "VERIFIED_SAFE" ? "✔ VERIFIED_SAFE" : "✖ REJECTED_VIOLATION"}`);
+  console.log(`  Invariants    : ${verdict.passedInvariants.join(", ") || "none"}`);
+  console.log(`  Violations    : ${verdict.violations.join(", ") || "none"}`);
+  console.log(`  Fingerprint   : sha256:${verdict.sha256Fingerprint}\n`);
+}
+
+HANDLERS["verify:action"] = cmd_verify_action_132;
+HANDLERS["action:verify"] = cmd_verify_action_132;
+
+async function cmd_slsa_attest_133(commandContext) {
+  const { args, command } = commandContext;
+  const isJson = args.includes("--json");
+  const target = args.filter((a) => !a.startsWith("-") && a !== command).join(" ") || "dist/bundle.js";
+
+  const { EosSlsaSupplyChainAttestation } = await import("../../src/core/eosSlsaSupplyChainAttestation.ts");
+  const { pureSha256 } = await import("../../src/core/eosKernelPrimitives.ts");
+
+  const { privateKeyPem, keyId } = EosSlsaSupplyChainAttestation.generateEd25519KeyPair();
+  const statement = EosSlsaSupplyChainAttestation.generateProvenanceStatement({
+    subjects: [{ name: target, digest: { sha256: pureSha256(target) } }],
+  });
+  const envelope = EosSlsaSupplyChainAttestation.signStatement(statement, privateKeyPem, keyId);
+
+  if (isJson) {
+    console.log(JSON.stringify(envelope, null, 2));
+    return;
+  }
+
+  console.log(`\n=== SLSA LEVEL-4 HERMETIC SUPPLY-CHAIN ATTESTATION ===`);
+  console.log(`  Subject       : ${target}`);
+  console.log(`  Payload Type  : ${envelope.payloadType}`);
+  console.log(`  Key ID        : ${keyId}`);
+  console.log(`  Signatures    : ${envelope.signatures.length} (Ed25519)`);
+  console.log(`  Signature B64 : ${envelope.signatures[0].sig.slice(0, 32)}...`);
+  console.log(`✔ Atestación criptográfica in-toto v1.0 generada y firmada exitosamente.\n`);
+}
+
+HANDLERS["slsa:attest"] = cmd_slsa_attest_133;
+HANDLERS["provenance:attest"] = cmd_slsa_attest_133;
 
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];

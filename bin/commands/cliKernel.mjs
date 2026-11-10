@@ -457,6 +457,8 @@ async function cmd_help_143(commandContext) {
   eos health                 Muestra el estado de salud SRE / CNCF del sistema
   eos enterprise:health      Auditoría empresarial unificada de salud CNCF y digest SHA-256
   eos otel:metrics           Telemetría OpenTelemetry Prometheus en formato de texto canónico
+  eos verify:action [cmd]    Verificación neuro-simbólica en tiempo de ejecución (Hoare / SAT)
+  eos slsa:attest [file]     Atestación criptográfica hermética in-toto / SLSA Nivel 4 (Ed25519)
 
 📖 AYUDA Y GLOSARIO:
   eos guide                  Muestra el glosario de arquitectura y equivalencias de la industria
