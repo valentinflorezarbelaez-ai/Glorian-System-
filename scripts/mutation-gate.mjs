@@ -43,6 +43,7 @@ const DEFAULT_TARGETS = [
   "src/core/eosAutonomousHealer.ts",
   "src/core/eosFleetProductScorecard.ts",
   "src/core/eosVercelCanaryObservability.ts",
+  "src/core/eosUniversalProductFoundry.ts",
 ];
 
 /**

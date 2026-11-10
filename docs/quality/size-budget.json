@@ -3,8 +3,6 @@
   "ceilings": {
     "bin/eos.mjs": 4902,
     "js/eos.js": 4296,
-    "scripts/verify-formal-tla.mjs": 2213,
-    "src/mcp/eosMcpToolDefinitions.ts": 3243,
-    "src/mcp/tools/eosMcpPhase7DomainHandlers.ts": 1447
+    "scripts/verify-formal-tla.mjs": 2213
   }
 }
