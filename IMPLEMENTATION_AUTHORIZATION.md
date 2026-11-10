@@ -963,3 +963,19 @@
   - `docs/audits/donaciones/AUDIT-DONACIONES-001.md`
   - `docs/projects/registry.json` (`donaciones` entry)
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-09-DONACIONES-LAW-IV-LEVEL-3
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Control-plane Level 3 elevation for `donaciones` (project-scoped `SPEC-DONACIONES-002`; composes SPEC-100 / SPEC-124)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-09: “continuemos” after Level 3 was the declared next Law IV ritual)
+- **Scope**:
+  1. Revalidate git cleanliness, canonical secret scan (0 findings), and live HTTPS 200 on `https://donaciones-drab.vercel.app`.
+  2. Promote registry `donaciones.authorization` from `LEVEL_2_AUTHORIZED` → `LEVEL_3_PRODUCTION_AUTHORIZED`.
+  3. Enables write-gated fleet eligibility on the control plane; **this change set does not mutate** the sibling `Donaciones` repository (`Δ = 0`). Future sibling writes require scoped missions with fresh evidence.
+- **Artifacts Approved**:
+  - `docs/intake/donaciones/INTAKE-002-DONACIONES-LEVEL-3-ELEVATION.md`
+  - `docs/specs/donaciones/SPEC-DONACIONES-002.md`
+  - `docs/audits/donaciones/AUDIT-DONACIONES-002.md`
+  - `docs/projects/registry.json` (`donaciones` → `LEVEL_3_PRODUCTION_AUTHORIZED`)
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
