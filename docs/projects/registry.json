@@ -21,7 +21,8 @@
       "cicdGateScript": "scripts/verify-landing.mjs",
       "autoShipScript": "npm run ship:sovereign",
       "currentBranch": "main",
-      "headCommitSha": "77b9733c029d1a6e916c877410e5f0869100edec"
+      "headCommitSha": "77b9733c029d1a6e916c877410e5f0869100edec",
+      "ownerApproval": "OWNER_APPROVAL"
     },
     {
       "id": "atp-strength",
@@ -134,7 +135,8 @@
       "cicdGateScript": "scripts/verify-cicd-pipeline.mjs",
       "autoShipScript": "scripts/ship-sovereign.mjs",
       "currentBranch": "main",
-      "headCommitSha": "d87230132aeb00bfdbcbb2aebb68b6ce290e6ef1"
+      "headCommitSha": "d87230132aeb00bfdbcbb2aebb68b6ce290e6ef1",
+      "ownerApproval": "OWNER_APPROVAL"
     },
     {
       "id": "performance-talent-group",
@@ -171,7 +173,8 @@
       "cicdGateScript": "scripts/verify-landing.mjs",
       "autoShipScript": "npm run ship:sovereign",
       "currentBranch": "main",
-      "headCommitSha": "36ba9c3b11406979f07a29fe8a544b14f8ec3c7a"
+      "headCommitSha": "36ba9c3b11406979f07a29fe8a544b14f8ec3c7a",
+      "ownerApproval": "OWNER_APPROVAL"
     }
   ],
   "registrySha256": "55afc664cf862352cef7a369d5488b81119fab53a8b771c4b73d19644c06ca8e"
