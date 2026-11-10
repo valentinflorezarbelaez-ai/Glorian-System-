@@ -17,7 +17,7 @@
 | **Layer-0 Runtime Dependencies** | `dependencies: {}` (0 external npm packages) | SEALED |
 | **Active Formal Specs (OpenSpec)** | 180 Specifications (EARS IEEE 830 / BDD ISO 29148) | APPROVED |
 | **Formal TLA+ Models** | 41 Models (bounded simulation + invariant verification) | VERIFIED |
-| **Automated Test Suites** | 193 Node.js Test Suites (`test/*.test.mjs`) | 99.8% PASS |
+| **Automated Test Suites** | 194 Node.js Test Suites (`test/*.test.mjs`) | 99.8% PASS |
 | **V8 Code Coverage** | 94.32% lines / 85.92% branches / 93.61% functions                | ABOVE GATE (85% / 85% / 85%) |
 | **Core TypeScript Modules** | 271 Layer-0 Pure Modules (`src/core/`) | 100% TYPE-SAFE |
 | **JavaScript / MJS Modules** | 82 Validated Modules (`bin/`, `scripts/`, `api/`) | 100% SYNTAX-CLEAN |
@@ -26,7 +26,7 @@
 | **Monotonic Ledger WAL** | SQLite WAL + FTS5 + SHA-256 Block Chaining | VERIFIED |
 | **Big Tech Frontier Pillars** | 6/6 (SapFix, SLSA/SBOM, CAS, SMT, Chaos, BFT) | VERIFIED |
 | **CI Pipeline Stages** | 7 + 4.4-4.7 Deep Sub-Gates (SLO/Perf, Coverage, Mutation, Flaky) | GREEN |
-| **Freeze Pin (HEAD)** | `91fef85c` | PINNED |
+| **Freeze Pin (HEAD)** | `d2e24c8a` | PINNED |
 
 ---
 
@@ -34,7 +34,7 @@
 
 - **GATE-01 to GATE-12**: Closed and immutably pinned into history.
 - **GATE-13 (`LADDER-13`) Status**:
-  - `GAP-002` (Value Metrics & Soundcheck): In progress / tracked under ADR-0168.
+  - `GAP-002` (Value Metrics & Soundcheck): **SEALED** — fleet Soundcheck 9/9 A+ (average 100; receipt `bde142610f093900f894aff08bf383ab604e6ea55b0c83617f1e18e0993fc4d7`, 2026-11-10).
   - `VAL-EXPERIMENT-002` (A/B Audio & Concurrency): Verified in bounded test suites.
   - `GAP-PRV-001` (Multi-LLM Provider Failover Ports): Sealed via Prometheus & Apex router.
   - `SCHEMAS_AT_CEILING`: 35/35 schemas enforced with zero arbitrary unvalidated json.
