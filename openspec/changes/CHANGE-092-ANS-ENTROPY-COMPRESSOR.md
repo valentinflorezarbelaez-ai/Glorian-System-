@@ -14,6 +14,7 @@
 Introduces `EosAnsEntropyCompressor` (`src/core/eosAnsEntropyCompressor.ts`), implementing a sovereign, zero-dependency, range Asymmetric Numeral Systems (rANS) entropy compressor and decompressor in pure TypeScript.
 
 Key Capabilities:
+
 1. Symbol frequency analysis and normalization to power-of-two precision ($M = 4096$).
 2. Backward rANS encoding with forward streaming bit/byte emission and renormalization.
 3. Forward rANS decoding with binary cumulative search and state update.

@@ -14,6 +14,7 @@
 Introduces `EosIsolationForestDetector` (`src/core/eosIsolationForestDetector.ts`), implementing a sovereign, zero-dependency, streaming Isolation Forest unsupervised anomaly detector in pure TypeScript.
 
 Key Capabilities:
+
 1. Recursive Isolation Tree (`EosIsolationTree`) builder partitioning random feature attributes at random uniform split values.
 2. Height limit bounds $h_{\max} = \lceil \log_2(\psi) \rceil$ and BST average path adjustment $c(n)$.
 3. Normalized anomaly score calculation $s(x, \psi) = 2^{-\mathbb{E}(h(x)) / c(\psi)}$.

@@ -12,6 +12,7 @@
 Distributed consensus protocols, concurrent data structures, and multi-agent coordination schemes in Glorian require mathematical guarantees of correctness before code deployment. External TLC model checkers and Java-based TLA+ toolchains require JVM installations, disk-based state storage, and external CLI runners, which violate air-gapped zero-dependency mandates (Law V: zero external runtime dependencies).
 
 Glorian requires an in-memory, zero-dependency, Layer-0 **Autonomous Bounded TLA+ Model Checker & Invariant Synthesizer** (`EosAutonomousTlaModelChecker`) capable of:
+
 1. Executing bounded symbolic state exploration over initial predicates ($Init$) and transition relations ($Next$).
 2. Validating inductive safety invariants ($\square P$) and detecting deadlocks.
 3. Synthesizing minimal, deterministic counterexample error traces upon invariant violation.

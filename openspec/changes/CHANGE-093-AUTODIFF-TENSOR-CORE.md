@@ -14,6 +14,7 @@
 Introduces `EosReverseModeAutodiff` (`src/core/eosReverseModeAutodiff.ts`), implementing a sovereign, zero-dependency, reverse-mode automatic differentiation engine and multidimensional Tensor core in pure TypeScript.
 
 Key Capabilities:
+
 1. `EosTensor`: multidimensional strided `Float64Array` tensor with broadcasting and zero-copy contiguous operations.
 2. Elementwise arithmetic (`add`, `sub`, `mul`, `div`, `pow`, `neg`) and nonlinear activations (`relu`, `sigmoid`, `tanh`).
 3. Reductions (`sum`, `mean`) and 2D matrix multiplication (`matmul`).

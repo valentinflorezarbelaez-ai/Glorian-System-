@@ -12,6 +12,7 @@
 Autonomous multi-agent swarms, distributed lock managers, and planetary registry synchronizers require shared linearizable state across nodes without central single points of failure. Traditional consensus solutions (ZooKeeper, etcd, Consul) introduce heavy external daemon processes, Go/Java runtime dependencies, and complex network configurations that violate air-gapped zero-dependency mandates (Law V: zero external runtime dependencies).
 
 Glorian requires an in-memory, zero-dependency, Layer-0 **Distributed Raft Consensus Engine with Replicated Finite State Machine** (`EosRaftConsensusEngine`) capable of:
+
 1. Maintaining node roles (`FOLLOWER`, `CANDIDATE`, `LEADER`) with term-based randomized election timeouts.
 2. Safe leader election under majority quorums ($\lfloor N/2 \rfloor + 1$) preventing split-brain scenarios.
 3. Linearizable log entry replication with leader dominance and automatic log conflict truncation.
