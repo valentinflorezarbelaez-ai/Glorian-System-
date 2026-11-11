@@ -36,6 +36,7 @@ import { EosWasmBytecodeDecompilerProver } from "../../core/eosWasmBytecodeDecom
 import { EosMctsPolicyValueMesh } from "../../core/eosMctsPolicyValueMesh.ts";
 import { EosAutonomousTlaModelChecker } from "../../core/eosAutonomousTlaModelChecker.ts";
 import { EosRaftCluster } from "../../core/eosRaftConsensusEngine.ts";
+import { EosAnsEntropyCompressor } from "../../core/eosAnsEntropyCompressor.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -748,6 +749,28 @@ export function dispatchPhase7VerificationCase(
           proposal,
           status,
           receipt,
+        };
+      }
+      if (action === "ans_compress") {
+        const payload = typeof args?.payload === "string" ? args.payload : "GLORIAN_MCP_ANS_PAYLOAD_2026";
+        const result = EosAnsEntropyCompressor.compress(payload);
+        return {
+          action: "ans_compress",
+          metadata: result.metadata,
+          compressedBase64: Buffer.from(result.compressed).toString("base64"),
+          sha256Receipt: result.sha256Receipt,
+        };
+      }
+      if (action === "ans_decompress") {
+        const base64 = typeof args?.base64 === "string" ? args.base64 : "";
+        const buf = Buffer.from(base64, "base64");
+        const result = EosAnsEntropyCompressor.decompress(buf);
+        return {
+          action: "ans_decompress",
+          verified: result.verified,
+          decompressedText: Buffer.from(result.decompressed).toString("utf8"),
+          originalSha256: result.originalSha256,
+          sha256Receipt: result.sha256Receipt,
         };
       }
       if (action === "list") {

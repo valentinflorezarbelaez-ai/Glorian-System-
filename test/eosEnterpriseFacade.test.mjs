@@ -489,5 +489,26 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(raftProposeReport.proposal.committed, true);
     assert.equal(raftProposeReport.status.isQuorumFormed, true);
     assert.equal(raftProposeReport.receipt.sha256Receipt.length, 64);
+
+    // 19. ans_compress & ans_decompress
+    const ansCompressReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "ans_compress", payload: "ENTERPRISE_FACADE_ANS_COMPRESSION_TEST" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(ansCompressReport.action, "ans_compress");
+    assert.ok(ansCompressReport.metadata.uncompressedSize > 0);
+    assert.ok(ansCompressReport.compressedBase64.length > 0);
+    assert.equal(ansCompressReport.sha256Receipt.length, 64);
+
+    const ansDecompressReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "ans_decompress", base64: ansCompressReport.compressedBase64 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(ansDecompressReport.action, "ans_decompress");
+    assert.equal(ansDecompressReport.verified, true);
+    assert.equal(ansDecompressReport.decompressedText, "ENTERPRISE_FACADE_ANS_COMPRESSION_TEST");
+    assert.equal(ansDecompressReport.sha256Receipt.length, 64);
   });
 });

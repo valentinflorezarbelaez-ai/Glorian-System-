@@ -1553,6 +1553,95 @@ HANDLERS["raft:cluster"] = cmd_raft_consensus_149;
 HANDLERS["raft:status"] = cmd_raft_consensus_149;
 HANDLERS["raft:consensus"] = cmd_raft_consensus_149;
 
+async function cmd_ans_compressor_150(commandContext) {
+  const { args, command } = commandContext;
+  const isJson = args.includes("--json");
+  const { EosAnsEntropyCompressor } = await import("../../src/core/eosAnsEntropyCompressor.ts");
+
+  if (command === "decompress:ans" || command === "ans:decompress") {
+    const rawPayload = args
+      .slice(1)
+      .filter((a) => !a.startsWith("--"))
+      .join(" ");
+    const inputBuf = Buffer.from(rawPayload, "base64");
+    const result = EosAnsEntropyCompressor.decompress(inputBuf);
+
+    if (isJson) {
+      console.log(
+        JSON.stringify(
+          {
+            originalSha256: result.originalSha256,
+            verified: result.verified,
+            decompressedLength: result.decompressed.length,
+            sha256Receipt: result.sha256Receipt,
+          },
+          null,
+          2,
+        ),
+      );
+      return;
+    }
+
+    console.log(`\n===============================================================`);
+    console.log(`  GLORIAN LAYER-0 ANS/rANS ENTROPY DECOMPRESSOR (SPEC-207)     `);
+    console.log(`===============================================================`);
+    console.log(`  Decompressed Size: ${result.decompressed.length} bytes`);
+    console.log(`  Integrity Check  : ${result.verified ? "✔ EXACT_ROUNDTRIP_MATCH" : "✖ CORRUPT"}`);
+    console.log(`  Original SHA-256 : sha256:${result.originalSha256}`);
+    console.log(`  Receipt SHA-256  : sha256:${result.sha256Receipt}`);
+    console.log(`===============================================================\n`);
+    return;
+  }
+
+  // Compress
+  const payloadArg = args
+    .slice(1)
+    .filter((a) => !a.startsWith("--"))
+    .join(" ");
+  const text =
+    payloadArg.length > 0
+      ? payloadArg
+      : "GLORIAN_SOVEREIGN_SYSTEM_ANS_ENTROPY_COMPRESSOR_SPEC_207_LAYER_0_ZERO_DEPENDENCY_PERFECTION";
+
+  const result = EosAnsEntropyCompressor.compress(text);
+  const verifyDecompress = EosAnsEntropyCompressor.decompress(result.compressed);
+
+  if (isJson) {
+    console.log(
+      JSON.stringify(
+        {
+          metadata: result.metadata,
+          verifiedRoundTrip: verifyDecompress.verified,
+          sha256Receipt: result.sha256Receipt,
+          compressedBase64: Buffer.from(result.compressed).toString("base64"),
+        },
+        null,
+        2,
+      ),
+    );
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN LAYER-0 ANS/rANS ENTROPY COMPRESSOR (SPEC-207)       `);
+  console.log(`===============================================================`);
+  console.log(`  Uncompressed Size: ${result.metadata.uncompressedSize} bytes`);
+  console.log(`  Compressed Size  : ${result.metadata.compressedSize} bytes`);
+  console.log(`  Compression Ratio: ${result.metadata.compressionRatio}x`);
+  console.log(`  Space Savings    : ${result.metadata.spaceSavingsPercent}%`);
+  console.log(`  Shannon Entropy  : ${result.metadata.shannonEntropyBitsPerSymbol} bits/symbol`);
+  console.log(`  Unique Symbols   : ${result.metadata.uniqueSymbols} / 256`);
+  console.log(`  Roundtrip Verify : ${verifyDecompress.verified ? "✔ 100% LOSSLESS PASS" : "✖ MISMATCH"}`);
+  console.log(`  Original Hash    : sha256:${result.metadata.originalSha256.slice(0, 24)}...`);
+  console.log(`  Receipt SHA-256  : sha256:${result.sha256Receipt}`);
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["compress:ans"] = cmd_ans_compressor_150;
+HANDLERS["decompress:ans"] = cmd_ans_compressor_150;
+HANDLERS["ans:compress"] = cmd_ans_compressor_150;
+HANDLERS["ans:decompress"] = cmd_ans_compressor_150;
+
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {

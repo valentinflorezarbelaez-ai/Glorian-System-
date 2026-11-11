@@ -598,6 +598,30 @@ console.log(`Recibo de consenso SHA-256  : ${receipt.sha256Receipt}`);
 
 ---
 
+### Módulo 22: Compresor de Entropía Asymmetric Numeral Systems (`EosAnsEntropyCompressor`)
+
+**Propósito:** Compresión y descompresión de entropía sin pérdidas de ultra-alto rendimiento basada en rANS (Jarek Duda, 2014) en TypeScript puro sin dependencias nativas externas (Ley V). Combina la tasa de compresión casi óptima de la codificación aritmética (límite de Shannon $H(X)$) con el rendimiento y procesamiento por bytes de la codificación Huffman. Implementa normalización exacta de frecuencias a escala potencia de dos ($M = 4096$), mantenimiento acotado de estado $x \in [L, b \cdot L - 1]$, reconstrucción 100% libre de pérdidas (round-trip) y recibos criptográficos SHA-256 inmutables.
+
+```ts
+import { EosAnsEntropyCompressor } from "./src/core/eosAnsEntropyCompressor.ts";
+
+const data = "GLORIAN_SOVEREIGN_SYSTEM_2026_LAYER_0_ZERO_DEPENDENCIES";
+
+// 1. Compresión rANS
+const compressedResult = EosAnsEntropyCompressor.compress(data);
+console.log(`Ratio de compresión    : ${compressedResult.metadata.compressionRatio}x`);
+console.log(
+  `Entropía de Shannon    : ${compressedResult.metadata.shannonEntropyBitsPerSymbol} bits/símbolo`,
+);
+console.log(`Recibo SHA-256         : ${compressedResult.sha256Receipt}`);
+
+// 2. Descompresión exacta sin pérdidas
+const decompressedResult = EosAnsEntropyCompressor.decompress(compressedResult.compressed);
+console.log(`¿Coincidencia exacta?  : ${decompressedResult.verified}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -628,6 +652,8 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs tla:synthesize [mod]`              | Sintetiza especificación canónica formal TLA+ a partir de contratos TypeScript (SPEC-205). |
 | `node bin/eos.mjs raft:cluster [--nodes=N]`          | Simula clúster de consenso Raft distribuido con FSM replicada (SPEC-206).                  |
 | `node bin/eos.mjs raft:status [--json]`              | Estado en vivo del clúster Raft, quórum de mayoría y recibo criptográfico (SPEC-206).      |
+| `node bin/eos.mjs compress:ans [texto]`              | Compresor de entropía rANS Layer-0 cercano al límite de Shannon (SPEC-207).                |
+| `node bin/eos.mjs decompress:ans <base64>`           | Descompresor sin pérdidas rANS con verificación de integridad SHA-256 (SPEC-207).          |
 | `node bin/eos.mjs metrics`                           | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`               | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |

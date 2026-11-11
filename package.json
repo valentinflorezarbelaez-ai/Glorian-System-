@@ -31,6 +31,7 @@
     "./mcts": "./src/core/eosMctsPolicyValueMesh.ts",
     "./tla-checker": "./src/core/eosAutonomousTlaModelChecker.ts",
     "./raft": "./src/core/eosRaftConsensusEngine.ts",
+    "./ans": "./src/core/eosAnsEntropyCompressor.ts",
     "./package.json": "./package.json"
   },
   "bin": {

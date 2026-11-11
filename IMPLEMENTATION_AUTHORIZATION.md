@@ -1404,3 +1404,26 @@
   - `docs/plans/PLAN-091-RAFT-CONSENSUS-ENGINE.md`
   - `docs/tasks/TASKS-091-RAFT-CONSENSUS-ENGINE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-ANS-COMPRESSOR-207
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Asymmetric Numeral Systems (ANS/rANS) Entropy Compressor (`SPEC-207`, `CHANGE-092`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “todos uno por uno”, “vamos con toda si con toda perfeccion superlatva absoluta”)
+- **Scope**:
+  1. Implement Layer-0 rANS Entropy Compressor `src/core/eosAnsEntropyCompressor.ts`.
+  2. Subpath export `"./ans"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI commands `glorian compress:ans` and `glorian decompress:ans` in `bin/commands/cliPlatform.mjs` and `bin/commands/cliKernel.mjs`.
+  5. Wire MCP actions `action: "ans_compress"` and `action: "ans_decompress"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosAnsEntropyCompressor.test.mjs` (BDD-1054..BDD-1058).
+  7. Add test step #19 in `test/eosEnterpriseFacade.test.mjs`.
+  8. Document Módulo 22 in `docs/DEVELOPER_GUIDE.md`.
+  9. Update OpenSpec catalog index to 202 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-092-ANS-ENTROPY-COMPRESSOR.md`
+  - `openspec/changes/CHANGE-092-ANS-ENTROPY-COMPRESSOR.md`
+  - `openspec/specs/SPEC-207-ANS-ENTROPY-COMPRESSOR.md`
+  - `docs/plans/PLAN-092-ANS-ENTROPY-COMPRESSOR.md`
+  - `docs/tasks/TASKS-092-ANS-ENTROPY-COMPRESSOR.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

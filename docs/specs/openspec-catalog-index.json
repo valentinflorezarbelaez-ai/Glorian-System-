@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-11T03:04:08.115Z",
-  "totalSpecs": 201,
-  "catalogSha256": "8165173c9ab93f43bf6141052e21e1ef596a4ee9ef82eaa2766b5b84f504c767",
+  "timestampIso": "2026-11-11T03:12:20.453Z",
+  "totalSpecs": 202,
+  "catalogSha256": "2cd3c8f3d1bb99109f4fbf0892682ffc910ed209f0b6d1b0fdff5dec8f6a23fa",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1811,6 +1811,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-206-RAFT-CONSENSUS-ENGINE.md",
       "sha256": "a1f0111c9bd51bdc1061d93c55c991d0c7e05b2e2aafb867d456b6338a827813"
+    },
+    {
+      "id": "SPEC-207",
+      "title": "Layer-0 Asymmetric Numeral Systems (ANS/rANS) Entropy Compressor",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-207-ANS-ENTROPY-COMPRESSOR.md",
+      "sha256": "2164c68709866045d8733cf354a22e0b79c4940200f63a20f92aa90ce90d2b83"
     }
   ]
 }
