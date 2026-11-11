@@ -861,6 +861,34 @@ console.log(`Secuencia convergida RGA : "${replica1.readSequence("doc").join("")
 
 ---
 
+### Módulo 31: Motor de Acumulador Criptográfico Merkle Mountain Range (`EosMerkleMountainRangeCore`)
+
+**Propósito:** Estructura de datos acumuladora criptográfica de solo anexión (append-only) basada en Merkle Mountain Ranges (MMR) de Peter Todd y RFC 6962 sin dependencias externas (Ley V). Permite a los registros de auditoría y ledgers de transacciones indexar secuencias continuas de eventos con direccionamiento secuencial por posición $O(1)$, descomposición binaria de cumbres de montañas ($\{p_1, \dots, p_k\}$), compromiso raíz canónico mediante el algoritmo _bag-of-peaks_ ($\text{SHA-256}(\text{size} \,\|\, p_1 \,\|\, \dots \,\|\, p_k)$), generación de pruebas de inclusión sucintas de tamaño logarítmico $O(\log n)$ verificables en $< 1$ ms, y demostración de consistencia de prefijos históricos entre tamaños arbitrarios $M \le N$.
+
+```ts
+import { EosMerkleMountainRangeCore } from "./src/core/eosMerkleMountainRangeCore.ts";
+
+// 1. Inicialización del acumulador MMR
+const mmr = new EosMerkleMountainRangeCore();
+
+// 2. Anexión inmutable de eventos o transacciones
+for (let i = 0; i < 7; i++) {
+  mmr.append(`tx-record-${i}`);
+}
+console.log(`Hojas totales : ${mmr.getLeafCount()}`); // 7
+console.log(`Nodos en MMR  : ${mmr.getSize()}`); // 11
+console.log(`Raíz canónica : sha256:${mmr.getRoot()}`);
+
+// 3. Generación y verificación de prueba de inclusión logarítmica O(log n)
+const prueba = mmr.getInclusionProof(2); // Hoja 2
+const veredicto = mmr.verifyInclusion(prueba);
+console.log(`¿Inclusión válida?  : ${veredicto.valid}`); // true
+console.log(`Tiempo verificación : ${veredicto.verificationTimeMs.toFixed(3)} ms`);
+console.log(`Recibo SHA-256      : ${veredicto.receipt.receiptSha256}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -911,6 +939,9 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs crdt:mutate [--node=N]`             | Mutación local de estado CRDT (LWW, ORSet, RGA) con reloj vectorial (SPEC-215).            |
 | `node bin/eos.mjs crdt:merge [--json]`                | Fusión semilattice bidireccional con consistencia eventual fuerte SEC (SPEC-215).          |
 | `node bin/eos.mjs crdt:delta [--json]`                | Extracción y aplicación de parches delta mínimos entre réplicas (SPEC-215).                |
+| `node bin/eos.mjs mmr:append [--count=N]`             | Anexa registros al acumulador MMR y calcula cumbres de montaña y raíz (SPEC-216).          |
+| `node bin/eos.mjs mmr:prove [--leaf=N]`               | Genera prueba de inclusión O(log n) para una hoja del acumulador MMR (SPEC-216).           |
+| `node bin/eos.mjs mmr:verify [--leaf=N]`              | Verifica la autenticidad de una prueba de inclusión MMR en sub-milisegundo (SPEC-216).     |
 | `node bin/eos.mjs metrics`                            | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                 | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`                | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |

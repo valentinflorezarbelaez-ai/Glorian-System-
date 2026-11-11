@@ -738,5 +738,36 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(crdtDeltaReport.action, "crdt_delta");
     assert.equal(crdtDeltaReport.converged, true);
     assert.ok(crdtDeltaReport.receipt.receiptSha256.length === 64);
+
+    // 28. mmr_append, mmr_prove & mmr_verify (SPEC-216)
+    const mmrAppendReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "mmr_append", count: 7 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(mmrAppendReport.action, "mmr_append");
+    assert.equal(mmrAppendReport.leafCount, 7);
+    assert.equal(mmrAppendReport.mmrSize, 11);
+    assert.ok(mmrAppendReport.root.length === 64);
+    assert.equal(mmrAppendReport.peakCount, 3);
+
+    const mmrProveReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "mmr_prove" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(mmrProveReport.action, "mmr_prove");
+    assert.equal(mmrProveReport.leafIndex, 2);
+    assert.ok(mmrProveReport.root.length === 64);
+    assert.ok(mmrProveReport.siblingCount >= 1);
+
+    const mmrVerifyReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "mmr_verify" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(mmrVerifyReport.action, "mmr_verify");
+    assert.equal(mmrVerifyReport.valid, true);
+    assert.ok(mmrVerifyReport.receipt.receiptSha256.length === 64);
   });
 });

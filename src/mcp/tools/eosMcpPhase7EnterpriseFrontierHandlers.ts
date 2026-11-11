@@ -31,6 +31,7 @@ import { EosSecureMpcShamirCore } from "../../core/eosSecureMpcShamirCore.ts";
 import { EosVerifiableDelayFunctionCore } from "../../core/eosVerifiableDelayFunctionCore.ts";
 import { EosZeroKnowledgeR1csCore } from "../../core/eosZeroKnowledgeR1csCore.ts";
 import { EosCrdtStateSyncCore } from "../../core/eosCrdtStateSyncCore.ts";
+import { EosMerkleMountainRangeCore } from "../../core/eosMerkleMountainRangeCore.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -746,6 +747,44 @@ export function dispatchPhase7FrontierAction(
       converged: mergeRes.converged,
       stateHashSha256: mergeRes.stateHashSha256,
       receipt: mergeRes.receipt,
+    };
+  }
+  if (action === "mmr_append") {
+    const mmr = new EosMerkleMountainRangeCore();
+    const count = typeof args?.count === "number" ? Math.max(1, args.count) : 5;
+    for (let i = 0; i < count; i++) {
+      mmr.append(`mcp-leaf-${i}`);
+    }
+    return {
+      action: "mmr_append",
+      leafCount: mmr.getLeafCount(),
+      mmrSize: mmr.getSize(),
+      root: mmr.getRoot(),
+      peakCount: mmr.getPeaks().length,
+    };
+  }
+  if (action === "mmr_prove") {
+    const mmr = new EosMerkleMountainRangeCore();
+    for (let i = 0; i < 7; i++) mmr.append(`entry-${i}`);
+    const proof = mmr.getInclusionProof(2);
+    return {
+      action: "mmr_prove",
+      leafIndex: proof.leafIndex,
+      leafPos: proof.leafPos,
+      root: proof.root,
+      siblingCount: proof.siblings.length,
+    };
+  }
+  if (action === "mmr_verify") {
+    const mmr = new EosMerkleMountainRangeCore();
+    for (let i = 0; i < 7; i++) mmr.append(`entry-${i}`);
+    const proof = mmr.getInclusionProof(2);
+    const verifyRes = mmr.verifyInclusion(proof);
+    return {
+      action: "mmr_verify",
+      valid: verifyRes.valid,
+      verificationTimeMs: verifyRes.verificationTimeMs,
+      receipt: verifyRes.receipt,
     };
   }
   return undefined;

@@ -40,6 +40,7 @@
     "./vdf": "./src/core/eosVerifiableDelayFunctionCore.ts",
     "./zk-r1cs": "./src/core/eosZeroKnowledgeR1csCore.ts",
     "./crdt": "./src/core/eosCrdtStateSyncCore.ts",
+    "./mmr": "./src/core/eosMerkleMountainRangeCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

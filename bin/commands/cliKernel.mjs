@@ -556,6 +556,9 @@ Uso Universal Exhaustivo:
   eos crdt:mutate [--node=N]   Mutación local de estado CRDT (LWW, ORSet, RGA) con reloj vectorial (SPEC-215)
   eos crdt:merge [--json]      Fusión semilattice bidireccional con consistencia eventual fuerte (SEC)
   eos crdt:delta [--json]      Extracción y aplicación de parches delta de estado mínimos entre réplicas
+  eos mmr:append [--count=N]   Adición inmutable de hojas y fusión de picos en Merkle Mountain Range (SPEC-216)
+  eos mmr:prove [--leaf=N]     Generación de prueba de inclusión logarítmica O(log n) a la raíz bag-of-peaks
+  eos mmr:verify [--json]      Verificación sub-milisegundo de prueba de pertenencia o consistencia MMR
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

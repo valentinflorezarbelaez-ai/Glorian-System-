@@ -1617,3 +1617,27 @@
   - `docs/plans/PLAN-100-CRDT-STATE-SYNC.md`
   - `docs/tasks/TASKS-100-CRDT-STATE-SYNC.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-MERKLE-MOUNTAIN-RANGE-216
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Merkle Mountain Range (MMR) & Cryptographic Accumulator Engine (`SPEC-216`, `CHANGE-101`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "continua")
+- **Scope**:
+  1. Implement Layer-0 MMR types in `src/core/eosMerkleMountainRangeCore.types.ts`.
+  2. Implement Layer-0 MMR Engine in `src/core/eosMerkleMountainRangeCore.ts`.
+  3. Subpath export `"./mmr"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian mmr:append`, `glorian mmr:prove`, `glorian mmr:verify` in `bin/commands/cliMmrMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "mmr_append"`, `action: "mmr_prove"`, `action: "mmr_verify"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosMerkleMountainRangeCore.test.mjs` (BDD-1099..BDD-1103).
+  8. Add test step #28 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 31 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 211 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-101-MERKLE-MOUNTAIN-RANGE.md`
+  - `openspec/changes/CHANGE-101-MERKLE-MOUNTAIN-RANGE.md`
+  - `openspec/specs/SPEC-216-MERKLE-MOUNTAIN-RANGE.md`
+  - `docs/plans/PLAN-101-MERKLE-MOUNTAIN-RANGE.md`
+  - `docs/tasks/TASKS-101-MERKLE-MOUNTAIN-RANGE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

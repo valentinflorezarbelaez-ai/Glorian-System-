@@ -196,3 +196,5 @@ export {
 export * from "./eosZeroKnowledgeR1csCore.types.ts";
 export * from "./eosCrdtStateSyncCore.ts";
 export * from "./eosCrdtStateSyncCore.types.ts";
+export * from "./eosMerkleMountainRangeCore.ts";
+export * from "./eosMerkleMountainRangeCore.types.ts";
