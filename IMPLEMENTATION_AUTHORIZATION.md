@@ -1569,3 +1569,27 @@
   - `docs/plans/PLAN-098-VERIFIABLE-DELAY-FUNCTION.md`
   - `docs/tasks/TASKS-098-VERIFIABLE-DELAY-FUNCTION.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-ZERO-KNOWLEDGE-R1CS-QAP-214
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Zero-Knowledge Rank-1 Constraint System (R1CS) & QAP Arithmetic Circuit Core (`SPEC-214`, `CHANGE-099`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "dale con toda la perfeccion")
+- **Scope**:
+  1. Implement Layer-0 Zero-Knowledge R1CS & QAP types in `src/core/eosZeroKnowledgeR1csCore.types.ts`.
+  2. Implement Layer-0 Zero-Knowledge R1CS & QAP in `src/core/eosZeroKnowledgeR1csCore.ts`.
+  3. Subpath export `"./zk-r1cs"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian r1cs:synthesize`, `glorian r1cs:prove`, `glorian r1cs:verify` in `bin/commands/cliFrontierMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "r1cs_synthesize"`, `action: "r1cs_prove"`, `action: "r1cs_verify"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosZeroKnowledgeR1csCore.test.mjs` (BDD-1089..BDD-1093).
+  8. Add test step #26 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 29 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 209 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-099-ZERO-KNOWLEDGE-R1CS-QAP.md`
+  - `openspec/changes/CHANGE-099-ZERO-KNOWLEDGE-R1CS-QAP.md`
+  - `openspec/specs/SPEC-214-ZERO-KNOWLEDGE-R1CS-QAP.md`
+  - `docs/plans/PLAN-099-ZERO-KNOWLEDGE-R1CS-QAP.md`
+  - `docs/tasks/TASKS-099-ZERO-KNOWLEDGE-R1CS-QAP.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

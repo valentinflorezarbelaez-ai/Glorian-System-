@@ -681,5 +681,34 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     );
     assert.equal(vdfBeaconReport.action, "vdf_beacon");
     assert.equal(vdfBeaconReport.beacon.length, 64);
+
+    // 26. r1cs_synthesize, r1cs_prove & r1cs_verify (SPEC-214)
+    const r1csSynthReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "r1cs_synthesize", secret: 3 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(r1csSynthReport.action, "r1cs_synthesize");
+    assert.equal(r1csSynthReport.numVariables, 5);
+    assert.equal(r1csSynthReport.numConstraints, 3);
+    assert.equal(r1csSynthReport.witnessCommitment.length, 64);
+
+    const r1csProveReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "r1cs_prove", secret: 3 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(r1csProveReport.action, "r1cs_prove");
+    assert.ok(r1csProveReport.tau.length > 0);
+    assert.equal(r1csProveReport.proofDigest.length, 64);
+
+    const r1csVerifyReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "r1cs_verify", secret: 3 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(r1csVerifyReport.action, "r1cs_verify");
+    assert.equal(r1csVerifyReport.valid, true);
+    assert.ok(r1csVerifyReport.receipt.receiptSha256.length === 64);
   });
 });

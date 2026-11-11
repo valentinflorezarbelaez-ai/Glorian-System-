@@ -550,6 +550,9 @@ Uso Universal Exhaustivo:
   eos mpc:combine [--json]    Reconstrucción exacta vía interpolación de Lagrange y suma homomórfica
   eos vdf:compute [--delay=T] Evaluación secuencial Wesolowski VDF y baliza de aleatoriedad (SPEC-213)
   eos vdf:verify [--json]     Verificación logarítmica O(1) de prueba de tiempo transcurrido en <5ms
+  eos r1cs:synthesize [--secret=N] Síntesis de circuito R1CS y asignación de testigo (SPEC-214)
+  eos r1cs:prove [--secret=N]  Generación de prueba de conocimiento cero QAP a punto de desafío τ
+  eos r1cs:verify [--json]     Verificación sub-milisegundo O(1) de argumento de evaluación polinomial
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

@@ -175,3 +175,22 @@ export * from "./eosSecureMpcShamirCore.ts";
 export * from "./eosSecureMpcShamirCore.types.ts";
 export * from "./eosVerifiableDelayFunctionCore.ts";
 export * from "./eosVerifiableDelayFunctionCore.types.ts";
+export {
+  EosZeroKnowledgeR1csCore,
+  DEFAULT_ZK_FIELD_PRIME,
+  fieldNormalize,
+  fieldAdd,
+  fieldSub,
+  fieldMul,
+  fieldInverse,
+  fieldPow,
+  polyTrim as zkPolyTrim,
+  polyAdd as zkPolyAdd,
+  polySub as zkPolySub,
+  polyMul as zkPolyMul,
+  polyScalarMul as zkPolyScalarMul,
+  polyEval as zkPolyEval,
+  polyDiv as zkPolyDiv,
+  lagrangeInterpolate,
+} from "./eosZeroKnowledgeR1csCore.ts";
+export * from "./eosZeroKnowledgeR1csCore.types.ts";

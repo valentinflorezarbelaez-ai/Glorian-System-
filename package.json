@@ -38,6 +38,7 @@
     "./homomorphic": "./src/core/eosHomomorphicLatticeCore.ts",
     "./mpc": "./src/core/eosSecureMpcShamirCore.ts",
     "./vdf": "./src/core/eosVerifiableDelayFunctionCore.ts",
+    "./zk-r1cs": "./src/core/eosZeroKnowledgeR1csCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

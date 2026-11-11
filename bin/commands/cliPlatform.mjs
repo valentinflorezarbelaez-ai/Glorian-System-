@@ -655,6 +655,7 @@ HANDLERS["project:fix"] = cmd_fix_135;
 
 import { handleAutonomousCommands } from "./cliAutonomous.mjs";
 import { handleFrontierMeshCommands } from "./cliFrontierMesh.mjs";
+import { handleZkR1csCommands } from "./cliZkR1csMesh.mjs";
 
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
@@ -664,5 +665,6 @@ export async function handlePlatformCommands(commandContext) {
   }
   if (await handleAutonomousCommands(commandContext)) return true;
   if (await handleFrontierMeshCommands(commandContext)) return true;
+  if (await handleZkR1csCommands(commandContext)) return true;
   return false;
 }

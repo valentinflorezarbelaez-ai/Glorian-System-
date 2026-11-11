@@ -29,6 +29,7 @@ import { EosPbftCluster } from "../../core/eosPbftConsensusEngine.ts";
 import { EosHomomorphicLatticeCore, DEFAULT_HOMOMORPHIC_PARAMS } from "../../core/eosHomomorphicLatticeCore.ts";
 import { EosSecureMpcShamirCore } from "../../core/eosSecureMpcShamirCore.ts";
 import { EosVerifiableDelayFunctionCore } from "../../core/eosVerifiableDelayFunctionCore.ts";
+import { EosZeroKnowledgeR1csCore } from "../../core/eosZeroKnowledgeR1csCore.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -667,6 +668,42 @@ export function dispatchPhase7FrontierAction(
     return {
       action: "vdf_beacon",
       beacon,
+    };
+  }
+  if (action === "r1cs_synthesize") {
+    const secret = typeof args?.secret === "number" ? BigInt(args.secret) : 3n;
+    const core = new EosZeroKnowledgeR1csCore();
+    const { system, witness } = core.synthesizeExampleCircuit(secret);
+    return {
+      action: "r1cs_synthesize",
+      numVariables: system.numVariables,
+      numConstraints: system.numConstraints,
+      publicInputCount: system.publicInputCount,
+      witnessCommitment: witness.witnessCommitment,
+    };
+  }
+  if (action === "r1cs_prove") {
+    const secret = typeof args?.secret === "number" ? BigInt(args.secret) : 3n;
+    const core = new EosZeroKnowledgeR1csCore();
+    const { system, witness } = core.synthesizeExampleCircuit(secret);
+    const proof = core.prove(system, witness.values);
+    return {
+      action: "r1cs_prove",
+      tau: proof.tau.toString(),
+      proofDigest: proof.proofDigest,
+    };
+  }
+  if (action === "r1cs_verify") {
+    const secret = typeof args?.secret === "number" ? BigInt(args.secret) : 3n;
+    const core = new EosZeroKnowledgeR1csCore();
+    const { system, witness } = core.synthesizeExampleCircuit(secret);
+    const proof = core.prove(system, witness.values);
+    const verifyRes = core.verify(system, [witness.values[1]], proof);
+    return {
+      action: "r1cs_verify",
+      valid: verifyRes.valid,
+      verificationTimeMs: verifyRes.verificationTimeMs,
+      receipt: verifyRes.receipt,
     };
   }
   return undefined;

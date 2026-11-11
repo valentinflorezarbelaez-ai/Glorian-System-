@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-11T18:56:45.274Z",
-  "totalSpecs": 208,
-  "catalogSha256": "2648170d08ea8150424409f1d38960883aa17fd235e37e259a7bb025e9a0cfb4",
+  "timestampIso": "2026-11-11T19:08:55.830Z",
+  "totalSpecs": 209,
+  "catalogSha256": "026f785828a5b190298078d0b222ddfc80b01ce4bab9e4f26c0052a17a6e762f",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1874,6 +1874,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-213-VERIFIABLE-DELAY-FUNCTION.md",
       "sha256": "2f3c18eebb65601a6a458c1ba9b9766e4afe81a48fa54463bf1b6d5004851085"
+    },
+    {
+      "id": "SPEC-214",
+      "title": "SPEC-214: Layer-0 Zero-Knowledge Rank-1 Constraint System (R1CS) & QAP Arithmetic Circuit Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-214-ZERO-KNOWLEDGE-R1CS-QAP.md",
+      "sha256": "60a10a192bef27c0bd59c68ceff0937325405ea33fa30ab1071432e86f522315"
     }
   ]
 }

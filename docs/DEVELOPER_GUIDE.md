@@ -803,6 +803,34 @@ console.log(`Recibo SHA-256      : ${veredicto.receipt.receiptSha256}`);
 
 ---
 
+### Módulo 29: Motor de Circuitos R1CS y Pruebas de Conocimiento Cero QAP (`EosZeroKnowledgeR1csCore`)
+
+**Propósito:** Síntesis y verificación de circuitos aritméticos mediante sistemas de restricciones de rango 1 (R1CS: $(A\mathbf{s}) \odot (B\mathbf{s}) = C\mathbf{s}$) y programas aritméticos cuadráticos (QAP) sobre el cuerpo finito primo BN254 ($\mathbb{Z}_p$, $p \approx 2^{254}$) sin dependencias externas (Ley V). Permite a agentes autónomos generar argumentos no interactivos de conocimiento (zk-SNARK foundations) mediante el cómputo del polinomio cociente $H(x) = \frac{A(x)B(x) - C(x)}{T(x)}$ por interpolación de Lagrange y división polinomial exacta (resto estrictamente cero para testigos válidos). Incluye evaluación en puntos de desafío $\tau$ (heurística de Fiat-Shamir) con verificación constante $O(1)$ en sub-milisegundos ($< 1$ ms) y emisión de recibos criptográficos SHA-256.
+
+```ts
+import { EosZeroKnowledgeR1csCore } from "./src/core/eosZeroKnowledgeR1csCore.ts";
+
+// 1. Inicialización del motor ZK sobre cuerpo BN254
+const core = new EosZeroKnowledgeR1csCore();
+
+// 2. Síntesis de circuito aritmético (ejemplo cúbico: x^3 + x + 5 = 35 con x = 3)
+const { system, witness } = core.synthesizeExampleCircuit(3n);
+console.log(`Variables en circuito : ${system.numVariables}`); // 5 wires
+console.log(`Restricciones R1CS   : ${system.numConstraints}`); // 3 gates
+
+// 3. Generación de prueba QAP no interactiva
+const prueba = core.prove(system, witness.values);
+console.log(`Digest de prueba     : sha256:${prueba.proofDigest}`);
+
+// 4. Verificación O(1) de argumento de evaluación
+const veredicto = core.verify(system, [witness.values[1]], prueba);
+console.log(`¿Es válido?          : ${veredicto.valid}`); // true
+console.log(`Tiempo verificación  : ${veredicto.verificationTimeMs.toFixed(3)} ms`);
+console.log(`Recibo SHA-256       : ${veredicto.receipt.receiptSha256}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -847,6 +875,9 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs vdf:compute [--delay=N] [--seed=S]` | Cómputo de retardo secuencial T pasos y prueba Wesolowski (SPEC-213).                      |
 | `node bin/eos.mjs vdf:verify [--delay=N] [--seed=S]`  | Verificación O(log T) sub-milisegundo de prueba de retardo (SPEC-213).                     |
 | `node bin/eos.mjs vdf:beacon [--seed=S]`              | Baliza de aleatoriedad inmanipulable derivada de VDF (SPEC-213).                           |
+| `node bin/eos.mjs r1cs:synthesize [--secret=N]`       | Síntesis de circuito R1CS y asignación de testigo (SPEC-214).                              |
+| `node bin/eos.mjs r1cs:prove [--secret=N]`            | Generación de prueba QAP evaluada a desafío Fiat-Shamir τ (SPEC-214).                      |
+| `node bin/eos.mjs r1cs:verify [--json]`               | Verificación O(1) sub-milisegundo de prueba de conocimiento cero (SPEC-214).               |
 | `node bin/eos.mjs metrics`                            | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                 | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`                | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |
