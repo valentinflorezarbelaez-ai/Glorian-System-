@@ -1127,6 +1127,125 @@ HANDLERS["vector:index"] = cmd_vector_search_144;
 HANDLERS["vector:search"] = cmd_vector_search_144;
 HANDLERS["hnsw:search"] = cmd_vector_search_144;
 
+async function cmd_temporal_knowledge_graph_145(commandContext) {
+  const { args, command } = commandContext;
+  const isJson = args.includes("--json");
+  const { EosTemporalKnowledgeGraph } = await import("../../src/core/eosTemporalKnowledgeGraph.ts");
+  const { pureSha256 } = await import("../../src/core/eosKernelPrimitives.ts");
+
+  if (command === "tkg:assert") {
+    const nonFlags = args.filter((a) => !a.startsWith("-") && a !== command);
+    const subject = nonFlags[0] || "auth_service";
+    const predicate = nonFlags[1] || "calls_api";
+    const object = nonFlags[2] || "payment_gateway";
+
+    const startArg = args.find((a) => a.startsWith("--start="));
+    const validFrom = startArg ? parseInt(startArg.split("=")[1], 10) : 0;
+
+    const endArg = args.find((a) => a.startsWith("--end="));
+    const validTo = endArg ? parseInt(endArg.split("=")[1], 10) : Infinity;
+
+    const graph = new EosTemporalKnowledgeGraph();
+    const fact = graph.assertFact(subject, predicate, object, validFrom, validTo, { source: "cli" });
+    const receipt = pureSha256(`TKG_ASSERT:${fact.id}:${fact.subject}:${fact.predicate}:${fact.object}`);
+
+    const result = {
+      action: "tkg:assert",
+      fact,
+      sha256Receipt: receipt,
+    };
+
+    if (isJson) {
+      console.log(JSON.stringify(result, null, 2));
+      return;
+    }
+
+    console.log(`\n===============================================================`);
+    console.log(`  GLORIAN TEMPORAL KNOWLEDGE GRAPH ASSERTION (SPEC-202)        `);
+    console.log(`===============================================================`);
+    console.log(`  Fact ID          : ${fact.id}`);
+    console.log(`  Subject          : ${fact.subject}`);
+    console.log(`  Predicate        : ${fact.predicate}`);
+    console.log(`  Object           : ${fact.object}`);
+    console.log(`  Valid Interval   : [${fact.validFrom}, ${fact.validTo === Infinity ? "∞" : fact.validTo}]`);
+    console.log(`  Receipt SHA-256  : sha256:${receipt}`);
+    console.log(`===============================================================\n`);
+    return;
+  }
+
+  // Otherwise tkg:query or graph:datalog
+  const nonFlags = args.filter((a) => !a.startsWith("-") && a !== command);
+  const predicate = nonFlags[0] || "transitive_depends";
+  const sArg = nonFlags[1] || null;
+  const oArg = nonFlags[2] || null;
+
+  const asOfArg = args.find((a) => a.startsWith("--as-of="));
+  const asOf = asOfArg ? parseInt(asOfArg.split("=")[1], 10) : undefined;
+
+  const graph = new EosTemporalKnowledgeGraph();
+
+  // Populate representative architecture dependency facts
+  graph.assertFact("gateway_api", "depends_on", "auth_service", 0, Infinity);
+  graph.assertFact("auth_service", "depends_on", "user_db", 0, Infinity);
+  graph.assertFact("checkout_api", "depends_on", "payment_service", 0, Infinity);
+  graph.assertFact("payment_service", "depends_on", "ledger_db", 0, 1000); // Deprecated at t=1000
+  graph.assertFact("payment_service", "depends_on", "distributed_ledger", 1001, Infinity);
+
+  // Add Datalog transitive dependency rules
+  graph.addRule(
+    { predicate: "transitive_depends", terms: ["?X", "?Y"] },
+    [{ predicate: "depends_on", terms: ["?X", "?Y"] }],
+    "base_dependency",
+  );
+  graph.addRule(
+    { predicate: "transitive_depends", terms: ["?X", "?Y"] },
+    [
+      { predicate: "depends_on", terms: ["?X", "?Z"] },
+      { predicate: "transitive_depends", terms: ["?Z", "?Y"] },
+    ],
+    "inductive_transitive_dependency",
+  );
+
+  const derivationReceipt = graph.evaluateRules(asOf);
+  const bindings = graph.query(predicate, [sArg, oArg], { asOf });
+  const queryReceipt = pureSha256(`TKG_QUERY:${predicate}:${JSON.stringify(bindings)}`);
+
+  const output = {
+    action: "tkg:query",
+    predicate,
+    asOf: asOf ?? "CURRENT",
+    resultsCount: bindings.length,
+    bindings,
+    derivation: derivationReceipt,
+    sha256Receipt: queryReceipt,
+  };
+
+  if (isJson) {
+    console.log(JSON.stringify(output, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN TEMPORAL DATALOG INFERENCE & QUERY (SPEC-202)        `);
+  console.log(`===============================================================`);
+  console.log(`  Target Predicate : ${predicate}`);
+  console.log(`  Temporal Filter  : asOf = ${asOf ?? "HEAD (∞)"}`);
+  console.log(`  Fixed-Point      : ${derivationReceipt.fixedPointReached ? "CONVERGED" : "MAX_ITERATIONS"}`);
+  console.log(
+    `  Derivation Stats : ${derivationReceipt.newFactsDerived} derived in ${derivationReceipt.iterations} iterations`,
+  );
+  console.log(`  Query Results    : ${bindings.length} facts matching`);
+  bindings.forEach((b, i) => {
+    console.log(`  [#${i + 1}] (${b.subject}) --[${b.predicate}]--> (${b.object})`);
+  });
+  console.log(`  Receipt SHA-256  : sha256:${queryReceipt}`);
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["tkg:assert"] = cmd_temporal_knowledge_graph_145;
+HANDLERS["tkg:query"] = cmd_temporal_knowledge_graph_145;
+HANDLERS["graph:datalog"] = cmd_temporal_knowledge_graph_145;
+
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {

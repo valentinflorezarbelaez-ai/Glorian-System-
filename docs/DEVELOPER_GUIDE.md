@@ -458,6 +458,43 @@ console.log(`Elementos restaurados: ${restored.size()} | Checksum: ${serialized.
 
 ---
 
+### Módulo 17: Motor de Grafo de Conocimiento Temporal y Datalog Layer-0 (`EosTemporalKnowledgeGraph`)
+
+**Propósito:** Razonamiento deductivo y trazabilidad bi-temporal sobre grafos de conocimiento sin dependencias externas (Ley V). Almacena hechos como cuadruplas `(sujeto, predicado, objeto, [validFrom, validTo])`, soporta consultas de viaje en el tiempo (`asOf` e intersección `during`), evalúa reglas Datalog estratificadas mediante encadenamiento hacia adelante con operador $T_P$ hasta punto fijo determinista, y descubre caminos causales temporales entre componentes arquitectónicos.
+
+```ts
+import { EosTemporalKnowledgeGraph } from "./src/core/eosTemporalKnowledgeGraph.ts";
+
+const graph = new EosTemporalKnowledgeGraph();
+
+// 1. Aserción de hechos cuadripolares con intervalos de validez
+graph.assertFact("gateway", "depends_on", "auth_service", 0, Infinity);
+graph.assertFact("auth_service", "depends_on", "postgres", 0, 1000);
+graph.assertFact("auth_service", "depends_on", "cockroachdb", 1001, Infinity);
+
+// 2. Reglas Datalog para clausura transitiva
+graph.addRule({ predicate: "transitive_depends", terms: ["?X", "?Y"] }, [
+  { predicate: "depends_on", terms: ["?X", "?Y"] },
+]);
+graph.addRule({ predicate: "transitive_depends", terms: ["?X", "?Y"] }, [
+  { predicate: "depends_on", terms: ["?X", "?Z"] },
+  { predicate: "transitive_depends", terms: ["?Z", "?Y"] },
+]);
+
+// 3. Inferencia inductiva y consulta retrospectiva (Time-Travel)
+const derivation = graph.evaluateRules();
+const historicDependencies = graph.queryAsOf(500, "transitive_depends", ["gateway", null]);
+console.log(
+  `Punto fijo alcanzado: ${derivation.fixedPointReached} (${derivation.newFactsDerived} hechos derivados)`,
+);
+console.log(
+  `Dependencias transitivas en t=500:`,
+  historicDependencies.map((d) => d.object),
+);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -478,6 +515,8 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs synthesize [codigo] [--json]`      | Sintetiza y repara código automáticamente mediante mutación genética y cruce de AST.      |
 | `node bin/eos.mjs vector:search <query> [--k=N]`     | Búsqueda semántica ANN con grafo HNSW Layer-0 y proyección de subpalabras (SPEC-201).     |
 | `node bin/eos.mjs vector:index <id> <code>`          | Indexa fragmentos de código o documentos en el espacio vectorial HNSW multidimensional.   |
+| `node bin/eos.mjs tkg:query <pred> [--as-of=T]`      | Inferencia deductiva y consulta Datalog sobre grafo de conocimiento temporal (SPEC-202).  |
+| `node bin/eos.mjs tkg:assert <s> <p> <o>`            | Aserción de hechos cuadripolares bi-temporales con recibos criptográficos SHA-256.        |
 | `node bin/eos.mjs metrics`                           | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
 | `node bin/eos.mjs guard [directorio]`                | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
 | `node bin/eos.mjs flow inspect <ruta>`               | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |

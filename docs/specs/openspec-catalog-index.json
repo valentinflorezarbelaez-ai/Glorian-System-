@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-11T01:06:37.649Z",
-  "totalSpecs": 196,
-  "catalogSha256": "b95e72e2d828bb1381643f8b934ab14a8e0f87977978ca48b9b8e61cd194d4db",
+  "timestampIso": "2026-11-11T01:13:26.630Z",
+  "totalSpecs": 197,
+  "catalogSha256": "ae55f5bd75e16e77b990339a07954d2873338da507570970d1498c1fda4c025e",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1766,6 +1766,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-201-HNSW-VECTOR-INDEX.md",
       "sha256": "f2a73d83942b54973d7dc11581cfae4efe875fefe7ab0ba3cb374c80105d9309"
+    },
+    {
+      "id": "SPEC-202",
+      "title": "Layer-0 Temporal Knowledge Graph & Datalog Query Engine",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-202-TEMPORAL-KNOWLEDGE-GRAPH.md",
+      "sha256": "4cc635663db95dd3a387d3837d1ed56fd04363e39ce0c93f548b1823a23a907d"
     }
   ]
 }

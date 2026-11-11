@@ -31,6 +31,7 @@ import { EosHermeticSeaCompiler } from "../../core/eosHermeticSeaCompiler.ts";
 import { EosPostQuantumCryptography } from "../../core/eosPostQuantumCryptography.ts";
 import { EosGeneticAstSynthesizer } from "../../core/eosGeneticAstSynthesizer.ts";
 import { EosHnswVectorIndex } from "../../core/eosHnswVectorIndex.ts";
+import { EosTemporalKnowledgeGraph } from "../../core/eosTemporalKnowledgeGraph.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -540,6 +541,68 @@ export function dispatchPhase7VerificationCase(
           k,
           matches,
           indexSize: index.size(),
+          sha256Receipt: receipt,
+        };
+      }
+      if (action === "tkg_assert") {
+        const subject = String(args?.subject || "service_a");
+        const predicate = String(args?.predicate || "calls_api");
+        const object = String(args?.object || "service_b");
+        const validFrom = typeof args?.validFrom === "number" ? args.validFrom : 0;
+        const validTo = typeof args?.validTo === "number" ? args.validTo : Infinity;
+        const graph = new EosTemporalKnowledgeGraph();
+        const fact = graph.assertFact(subject, predicate, object, validFrom, validTo);
+        const receipt = pureSha256(`MCP_TKG_ASSERT:${fact.id}:${fact.subject}:${fact.predicate}:${fact.object}`);
+        return {
+          action: "tkg_assert",
+          fact,
+          sha256Receipt: receipt,
+        };
+      }
+      if (action === "tkg_query") {
+        const predicate = String(args?.predicate || "depends_on");
+        const asOf = typeof args?.asOf === "number" ? args.asOf : undefined;
+        const graph = new EosTemporalKnowledgeGraph();
+
+        if (Array.isArray(args?.facts)) {
+          for (const f of args.facts) {
+            if (f && f.subject && f.predicate && f.object) {
+              graph.assertFact(
+                String(f.subject),
+                String(f.predicate),
+                String(f.object),
+                f.validFrom ?? 0,
+                f.validTo ?? Infinity,
+              );
+            }
+          }
+        } else {
+          // Default architectural lineage facts
+          graph.assertFact("gateway", "depends_on", "auth", 0, Infinity);
+          graph.assertFact("auth", "depends_on", "db", 0, Infinity);
+        }
+
+        // Add transitive dependency rules
+        graph.addRule({ predicate: "transitive_depends", terms: ["?X", "?Y"] }, [
+          { predicate: "depends_on", terms: ["?X", "?Y"] },
+        ]);
+        graph.addRule({ predicate: "transitive_depends", terms: ["?X", "?Y"] }, [
+          { predicate: "depends_on", terms: ["?X", "?Z"] },
+          { predicate: "transitive_depends", terms: ["?Z", "?Y"] },
+        ]);
+
+        const derivation = graph.evaluateRules(asOf);
+        const sFilter = args?.subject ? String(args.subject) : null;
+        const oFilter = args?.object ? String(args.object) : null;
+        const bindings = graph.query(predicate, [sFilter, oFilter], { asOf });
+        const receipt = pureSha256(`MCP_TKG_QUERY:${predicate}:${JSON.stringify(bindings)}`);
+
+        return {
+          action: "tkg_query",
+          predicate,
+          asOf: asOf ?? "CURRENT",
+          bindings,
+          derivation,
           sha256Receipt: receipt,
         };
       }

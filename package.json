@@ -26,6 +26,7 @@
     "./post-quantum": "./src/core/eosPostQuantumCryptography.ts",
     "./synthesizer": "./src/core/eosGeneticAstSynthesizer.ts",
     "./vector": "./src/core/eosHnswVectorIndex.ts",
+    "./knowledge-graph": "./src/core/eosTemporalKnowledgeGraph.ts",
     "./package.json": "./package.json"
   },
   "bin": {

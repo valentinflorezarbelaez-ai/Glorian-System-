@@ -143,3 +143,4 @@ export * from "./eosHermeticSeaCompiler.ts";
 export * from "./eosPostQuantumCryptography.ts";
 export * from "./eosGeneticAstSynthesizer.ts";
 export * from "./eosHnswVectorIndex.ts";
+export * from "./eosTemporalKnowledgeGraph.ts";

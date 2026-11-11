@@ -387,5 +387,25 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(vectorSearchReport.action, "vector_search");
     assert.equal(vectorSearchReport.matches.length, 2);
     assert.ok(vectorSearchReport.sha256Receipt.length === 64);
+
+    // 14. tkg_assert & tkg_query
+    const tkgAssertReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "tkg_assert", subject: "api_gateway", predicate: "routes_to", object: "order_service" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(tkgAssertReport.action, "tkg_assert");
+    assert.equal(tkgAssertReport.fact.subject, "api_gateway");
+    assert.ok(tkgAssertReport.sha256Receipt.length === 64);
+
+    const tkgQueryReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "tkg_query", predicate: "transitive_depends", asOf: 100 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(tkgQueryReport.action, "tkg_query");
+    assert.ok(tkgQueryReport.bindings.length >= 2);
+    assert.equal(tkgQueryReport.derivation.fixedPointReached, true);
+    assert.ok(tkgQueryReport.sha256Receipt.length === 64);
   });
 });

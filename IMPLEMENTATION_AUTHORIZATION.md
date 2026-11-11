@@ -1301,3 +1301,23 @@
   - `docs/plans/PLAN-086-HNSW-VECTOR-INDEX.md`
   - `docs/tasks/TASKS-086-HNSW-VECTOR-INDEX.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-TKG-DATALOG-202
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Temporal Knowledge Graph & Datalog Query Engine (`SPEC-202`, `CHANGE-087`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “si dale con toda”)
+- **Scope**:
+  1. Implement Layer-0 Temporal Knowledge Graph engine `src/core/eosTemporalKnowledgeGraph.ts`.
+  2. Subpath export `"./knowledge-graph"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI commands `glorian tkg:assert` and `glorian tkg:query` in `bin/commands/cliPlatform.mjs`.
+  5. Wire MCP actions `action: "tkg_assert"` and `action: "tkg_query"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosTemporalKnowledgeGraph.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-087-TEMPORAL-KNOWLEDGE-GRAPH.md`
+  - `openspec/changes/CHANGE-087-TEMPORAL-KNOWLEDGE-GRAPH.md`
+  - `openspec/specs/SPEC-202-TEMPORAL-KNOWLEDGE-GRAPH.md`
+  - `docs/plans/PLAN-087-TEMPORAL-KNOWLEDGE-GRAPH.md`
+  - `docs/tasks/TASKS-087-TEMPORAL-KNOWLEDGE-GRAPH.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

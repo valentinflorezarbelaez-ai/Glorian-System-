@@ -525,6 +525,8 @@ Uso Universal Exhaustivo:
   eos synthesize [codigo]    Sintetizador genético autónomo de código AST (Meta APR / SPEC-200)
   eos vector:search <query>  Búsqueda semántica ANN con grafo HNSW Layer-0 (SPEC-201)
   eos vector:index <id> <code> Indexa código o texto en el grafo vectorial HNSW multidimensional
+  eos tkg:query <pred>       Inferencia y consulta Datalog sobre grafo de conocimiento temporal (SPEC-202)
+  eos tkg:assert <s> <p> <o> Aserción de hechos cuadripolares bi-temporales con recibos inmutables
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);
