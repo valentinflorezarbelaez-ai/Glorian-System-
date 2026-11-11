@@ -35,6 +35,7 @@
     "./autodiff": "./src/core/eosReverseModeAutodiff.ts",
     "./isolation-forest": "./src/core/eosIsolationForestDetector.ts",
     "./pbft": "./src/core/eosPbftConsensusEngine.ts",
+    "./homomorphic": "./src/core/eosHomomorphicLatticeCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

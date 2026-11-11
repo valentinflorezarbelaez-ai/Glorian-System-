@@ -26,6 +26,7 @@ import { EosAnsEntropyCompressor } from "../../core/eosAnsEntropyCompressor.ts";
 import { EosTensor, EosReverseModeAutodiff, EosSgdOptimizer } from "../../core/eosReverseModeAutodiff.ts";
 import { EosIsolationForest, EosStreamingIsolationForest } from "../../core/eosIsolationForestDetector.ts";
 import { EosPbftCluster } from "../../core/eosPbftConsensusEngine.ts";
+import { EosHomomorphicLatticeCore, DEFAULT_HOMOMORPHIC_PARAMS } from "../../core/eosHomomorphicLatticeCore.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -534,6 +535,43 @@ export function dispatchPhase7FrontierAction(
     return {
       action: "pbft_slash",
       slashingReceipt,
+    };
+  }
+  if (action === "homomorphic_keygen") {
+    const polyDegree = typeof args?.polyDegree === "number" ? args.polyDegree : 32;
+    const core = new EosHomomorphicLatticeCore({ ...DEFAULT_HOMOMORPHIC_PARAMS, polyDegree });
+    const keypair = core.generateKeypair();
+    return {
+      action: "homomorphic_keygen",
+      keypair,
+    };
+  }
+  if (action === "homomorphic_encrypt") {
+    const polyDegree = typeof args?.polyDegree === "number" ? args.polyDegree : 32;
+    const core = new EosHomomorphicLatticeCore({ ...DEFAULT_HOMOMORPHIC_PARAMS, polyDegree });
+    const keypair = core.generateKeypair(1337);
+    const message = Array.isArray(args?.message) ? args.message : [42, 100, 7];
+    const ct = core.encrypt(keypair.publicKey, message);
+    return {
+      action: "homomorphic_encrypt",
+      ciphertext: ct,
+    };
+  }
+  if (action === "homomorphic_add") {
+    const polyDegree = typeof args?.polyDegree === "number" ? args.polyDegree : 32;
+    const core = new EosHomomorphicLatticeCore({ ...DEFAULT_HOMOMORPHIC_PARAMS, polyDegree, errorBound: 1 });
+    const keypair = core.generateKeypair(999);
+    const msgA = Array.isArray(args?.msgA) ? args.msgA : [10, 20, 30];
+    const msgB = Array.isArray(args?.msgB) ? args.msgB : [5, 15, 25];
+    const ctA = core.encrypt(keypair.publicKey, msgA, 101);
+    const ctB = core.encrypt(keypair.publicKey, msgB, 102);
+    const ctSum = core.add(ctA, ctB);
+    const decResult = core.decrypt(keypair.secretKey, ctSum);
+    return {
+      action: "homomorphic_add",
+      sumPlaintext: decResult.plaintext.slice(0, Math.max(msgA.length, msgB.length)),
+      noiseBudgetBits: decResult.noiseBudgetBits,
+      receipt: decResult.receipt,
     };
   }
   return undefined;

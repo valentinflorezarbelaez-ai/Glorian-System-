@@ -169,3 +169,5 @@ export {
   defaultPbftFsmReducer,
   signPbftPayload,
 } from "./eosPbftConsensusEngine.ts";
+export * from "./eosHomomorphicLatticeCore.ts";
+export * from "./eosHomomorphicLatticeCore.types.ts";

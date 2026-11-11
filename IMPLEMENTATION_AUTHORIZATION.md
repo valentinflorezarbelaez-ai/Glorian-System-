@@ -1497,3 +1497,27 @@
   - `docs/plans/PLAN-095-PBFT-CONSENSUS-ENGINE.md`
   - `docs/tasks/TASKS-095-PBFT-CONSENSUS-ENGINE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-HOMOMORPHIC-LATTICE-211
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Lattice-Based Homomorphic Encryption Core (`SPEC-211`, `CHANGE-096`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "todos uno por uno / dale con toda")
+- **Scope**:
+  1. Implement Layer-0 Homomorphic Lattice Core types in `src/core/eosHomomorphicLatticeCore.types.ts`.
+  2. Implement Layer-0 Homomorphic Lattice Core in `src/core/eosHomomorphicLatticeCore.ts`.
+  3. Subpath export `"./homomorphic"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian homomorphic:keygen`, `glorian homomorphic:encrypt`, `glorian homomorphic:add`, `glorian homomorphic:decrypt` in `bin/commands/cliFrontierMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "homomorphic_keygen"`, `action: "homomorphic_encrypt"`, `action: "homomorphic_add"`, `action: "homomorphic_decrypt"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosHomomorphicLatticeCore.test.mjs` (BDD-1074..BDD-1078).
+  8. Add test step #23 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 26 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 206 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-096-HOMOMORPHIC-LATTICE-CORE.md`
+  - `openspec/changes/CHANGE-096-HOMOMORPHIC-LATTICE-CORE.md`
+  - `openspec/specs/SPEC-211-HOMOMORPHIC-LATTICE-CORE.md`
+  - `docs/plans/PLAN-096-HOMOMORPHIC-LATTICE-CORE.md`
+  - `docs/tasks/TASKS-096-HOMOMORPHIC-LATTICE-CORE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

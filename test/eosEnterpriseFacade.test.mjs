@@ -589,5 +589,34 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(pbftSlashReport.action, "pbft_slash");
     assert.equal(pbftSlashReport.slashingReceipt.evidenceType, "EQUIVOCATION_DETECTED");
     assert.equal(pbftSlashReport.slashingReceipt.slashedNodeId, "node-0");
+
+    // 23. homomorphic_keygen, homomorphic_encrypt & homomorphic_add
+    const heKeygenReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "homomorphic_keygen", polyDegree: 32 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(heKeygenReport.action, "homomorphic_keygen");
+    assert.equal(heKeygenReport.keypair.publicKey.params.polyDegree, 32);
+    assert.equal(heKeygenReport.keypair.publicKey.keyFingerprint.length, 64);
+
+    const heEncryptReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "homomorphic_encrypt", polyDegree: 32, message: [42, 100, 7] },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(heEncryptReport.action, "homomorphic_encrypt");
+    assert.equal(heEncryptReport.ciphertext.c0.length, 32);
+    assert.ok(heEncryptReport.ciphertext.noiseBudgetBits > 0);
+
+    const heAddReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "homomorphic_add", polyDegree: 32, msgA: [10, 20], msgB: [5, 15] },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(heAddReport.action, "homomorphic_add");
+    assert.deepEqual(heAddReport.sumPlaintext, [15, 35]);
+    assert.ok(heAddReport.noiseBudgetBits > 0);
+    assert.equal(heAddReport.receipt.receiptSha256.length, 64);
   });
 });

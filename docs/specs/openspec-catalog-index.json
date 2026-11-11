@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-11T18:13:54.600Z",
-  "totalSpecs": 205,
-  "catalogSha256": "b9ec0da540f89a212ab549a8dc321027bbabd17e7174bea5b5a3aa33f1b4b0b9",
+  "timestampIso": "2026-11-11T18:29:39.907Z",
+  "totalSpecs": 206,
+  "catalogSha256": "b9d2483e11d0dc942da53900ae4dfc7e94730de80be0d9c32fe54b89c43bccdd",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1847,6 +1847,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-210-PBFT-CONSENSUS-ENGINE.md",
       "sha256": "ea602f6d798e7c6a9c008faae398b12f837a9b736dedf476866cff1b36310988"
+    },
+    {
+      "id": "SPEC-211",
+      "title": "SPEC-211: Layer-0 Lattice-Based Homomorphic Encryption Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-211-HOMOMORPHIC-LATTICE-CORE.md",
+      "sha256": "4fd0a96f46cf094993be343ce0b65bb5636ba2f8e0531911cb0e35f1af6630e5"
     }
   ]
 }

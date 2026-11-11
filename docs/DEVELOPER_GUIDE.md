@@ -720,6 +720,39 @@ console.log(`Validador penalizado  : ${slashReceipt.slashedNodeId}`);
 
 ---
 
+### Módulo 26: Núcleo Criptográfico Homomórfico de Retículos (`EosHomomorphicLatticeCore`)
+
+**Propósito:** Cómputo ciego confidencial basado en retículos (Ring Learning with Errors / esquema BFV) sobre anillos de polinomios ciclotómicos $R_q = \mathbb{Z}_q[X] / (X^N + 1)$ con cero dependencias externas (Ley V). Permite a nodos y agentes de trabajo no confiables o semi-honestos ejecutar operaciones aritméticas directamente sobre textos cifrados (adición, sustracción, escalamiento lineal) preservando la exactitud del texto plano sin descifrar jamás los datos en memoria. Incluye muestreo ternario y de error discreto gaussiano acotado, modulación de ruido, escala $\Delta = \lfloor q / t \rfloor$, seguimiento en tiempo real del presupuesto de ruido (noise budget en bits) y recibos criptográficos SHA-256.
+
+```ts
+import { EosHomomorphicLatticeCore } from "./src/core/eosHomomorphicLatticeCore.ts";
+
+// 1. Inicialización del motor en anillo ciclotómico R_q
+const core = new EosHomomorphicLatticeCore({
+  polyDegree: 32,
+  ciphertextModulus: 65537,
+  plaintextModulus: 257,
+});
+
+// 2. Generación de claves pública / secreta
+const keypair = core.generateKeypair();
+
+// 3. Cifrado ciego de vectores planos
+const ctA = core.encrypt(keypair.publicKey, [10, 20, 30, 40]);
+const ctB = core.encrypt(keypair.publicKey, [5, 15, 25, 35]);
+
+// 4. Cómputo homomórfico directo (sin descifrar)
+const ctSuma = core.add(ctA, ctB);
+
+// 5. Descifrado verificado con presupuesto de ruido
+const resultado = core.decrypt(keypair.secretKey, ctSuma);
+console.log(`Resultado ciego : [${resultado.plaintext.slice(0, 4).join(", ")}]`); // [15, 35, 55, 75]
+console.log(`Presupuesto de ruido: ${resultado.noiseBudgetBits} bits`);
+console.log(`Recibo SHA-256  : ${resultado.receipt.receiptSha256}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -756,6 +789,9 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs autodiff:train [--epochs=N]`       | Optimización cerrada de parámetros vía SGD y tensor core multidimensional (SPEC-208).      |
 | `node bin/eos.mjs anomaly:detect [--threshold=F]`    | Detector de anomalías no supervisado con Isolation Forest (SPEC-209).                      |
 | `node bin/eos.mjs anomaly:forest [--trees=N]`        | Simulación de ensamble de árboles aleatorios iTrees en streaming (SPEC-209).               |
+| `node bin/eos.mjs pbft:cluster [--nodes=A,B,C,D]`    | Consenso bizantino PBFT 3-fases con quórum supermayoritario 2f+1 y slashing (SPEC-210).    |
+| `node bin/eos.mjs homomorphic:keygen [--degree=N]`   | Generación de par de claves en anillo ciclotómico R_q con cifrado BFV (SPEC-211).          |
+| `node bin/eos.mjs homomorphic:add [--json]`          | Cómputo ciego homomórfico (adición de textos cifrados) con recibo SHA-256 (SPEC-211).      |
 | `node bin/eos.mjs metrics`                           | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`               | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |

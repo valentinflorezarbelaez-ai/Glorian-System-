@@ -514,10 +514,87 @@ async function cmd_pbft_consensus_153(commandContext) {
   console.log(`===============================================================\n`);
 }
 
+async function cmd_homomorphic_lattice_154(commandContext) {
+  const { args, command } = commandContext;
+  const isJson = args.includes("--json");
+  const { EosHomomorphicLatticeCore, DEFAULT_HOMOMORPHIC_PARAMS } =
+    await import("../../src/core/eosHomomorphicLatticeCore.ts");
+
+  const degreeArg = args.find((a) => a.startsWith("--degree="));
+  const polyDegree = degreeArg ? parseInt(degreeArg.split("=")[1], 10) : 32;
+
+  const core = new EosHomomorphicLatticeCore({
+    ...DEFAULT_HOMOMORPHIC_PARAMS,
+    polyDegree,
+  });
+
+  if (command === "homomorphic:keygen") {
+    const keypair = core.generateKeypair();
+    if (isJson) {
+      console.log(JSON.stringify(keypair, null, 2));
+      return;
+    }
+    console.log(`\n===============================================================`);
+    console.log(`  GLORIAN LAYER-0 HOMOMORPHIC LATTICE KEYGEN (SPEC-211)`);
+    console.log(`===============================================================`);
+    console.log(`  Ring Dimension (N) : ${keypair.publicKey.params.polyDegree}`);
+    console.log(`  Modulus (q)        : ${keypair.publicKey.params.ciphertextModulus}`);
+    console.log(`  Plaintext (t)      : ${keypair.publicKey.params.plaintextModulus}`);
+    console.log(`  Key Fingerprint    : sha256:${keypair.publicKey.keyFingerprint}`);
+    console.log(`  Created At         : ${keypair.createdAt}`);
+    console.log(`===============================================================\n`);
+    return;
+  }
+
+  const keypair = core.generateKeypair(1337);
+  const msgArg = args.find((a) => a.startsWith("--message="));
+  const message = msgArg ? msgArg.split("=")[1].split(",").map(Number) : [42, 100, 7, 25];
+
+  const ct = core.encrypt(keypair.publicKey, message);
+
+  if (command === "homomorphic:encrypt") {
+    if (isJson) {
+      console.log(JSON.stringify(ct, null, 2));
+      return;
+    }
+    console.log(`\n===============================================================`);
+    console.log(`  GLORIAN LAYER-0 HOMOMORPHIC ENCRYPTION (SPEC-211)`);
+    console.log(`===============================================================`);
+    console.log(`  Ciphertext Digest  : sha256:${ct.ciphertextDigest}`);
+    console.log(`  Scale Delta (Δ)    : ${ct.scaleDelta}`);
+    console.log(`  Noise Budget (bits): ${ct.noiseBudgetBits} bits`);
+    console.log(`===============================================================\n`);
+    return;
+  }
+
+  const ct2 = core.encrypt(keypair.publicKey, [10, 20, 30, 40]);
+  const ctSum = core.add(ct, ct2);
+  const decResult = core.decrypt(keypair.secretKey, ctSum);
+
+  if (isJson) {
+    console.log(JSON.stringify({ ciphertext: ctSum, decryption: decResult }, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN LAYER-0 HOMOMORPHIC COMPUTATION (SPEC-211)`);
+  console.log(`===============================================================`);
+  console.log(`  Operation          : Blind Addition (ctA + ctB)`);
+  console.log(`  Decrypted Result   : [${decResult.plaintext.slice(0, 4).join(", ")}]`);
+  console.log(`  Remaining Noise    : ${decResult.noiseBudgetBits} bits`);
+  console.log(`  Receipt ID         : ${decResult.receipt.receiptId}`);
+  console.log(`  Receipt SHA-256    : sha256:${decResult.receipt.receiptSha256}`);
+  console.log(`===============================================================\n`);
+}
+
 HANDLERS["pbft:cluster"] = cmd_pbft_consensus_153;
 HANDLERS["pbft:propose"] = cmd_pbft_consensus_153;
 HANDLERS["pbft:status"] = cmd_pbft_consensus_153;
 HANDLERS["pbft:slash"] = cmd_pbft_consensus_153;
+HANDLERS["homomorphic:keygen"] = cmd_homomorphic_lattice_154;
+HANDLERS["homomorphic:encrypt"] = cmd_homomorphic_lattice_154;
+HANDLERS["homomorphic:add"] = cmd_homomorphic_lattice_154;
+HANDLERS["homomorphic:decrypt"] = cmd_homomorphic_lattice_154;
 
 export async function handleFrontierMeshCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];

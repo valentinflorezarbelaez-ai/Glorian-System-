@@ -543,6 +543,9 @@ Uso Universal Exhaustivo:
   eos anomaly:forest [--trees=N] Simulación de ensamble de árboles aleatorios iTrees en streaming
   eos pbft:cluster [--nodes=A,B,C,D] Consenso bizantino PBFT 3-fases con quórum supermayoritario 2f+1 (SPEC-210)
   eos pbft:propose [--proposal=JSON] Ejecuta mutación FSM linealizable bajo PBFT con recibo de commit
+  eos homomorphic:keygen [--degree=N] Genera par de claves pública/privada en anillo ciclotómico R_q (SPEC-211)
+  eos homomorphic:encrypt [--msg=CSV] Cifrado homomórfico ciego BFV con modulación de ruido y escala Δ
+  eos homomorphic:add [--json]        Cálculo directo de suma ciega sobre textos cifrados sin descifrar
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);
