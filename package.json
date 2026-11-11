@@ -36,6 +36,7 @@
     "./isolation-forest": "./src/core/eosIsolationForestDetector.ts",
     "./pbft": "./src/core/eosPbftConsensusEngine.ts",
     "./homomorphic": "./src/core/eosHomomorphicLatticeCore.ts",
+    "./mpc": "./src/core/eosSecureMpcShamirCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

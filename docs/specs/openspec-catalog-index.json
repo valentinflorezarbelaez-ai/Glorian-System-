@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-11T18:29:39.907Z",
-  "totalSpecs": 206,
-  "catalogSha256": "b9d2483e11d0dc942da53900ae4dfc7e94730de80be0d9c32fe54b89c43bccdd",
+  "timestampIso": "2026-11-11T18:40:37.754Z",
+  "totalSpecs": 207,
+  "catalogSha256": "73287aa7dd3d7a7e8187da3c42057de895cc229cb04f79581f4be06a791efa6d",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1856,6 +1856,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-211-HOMOMORPHIC-LATTICE-CORE.md",
       "sha256": "4fd0a96f46cf094993be343ce0b65bb5636ba2f8e0531911cb0e35f1af6630e5"
+    },
+    {
+      "id": "SPEC-212",
+      "title": "SPEC-212: Layer-0 Secure Multi-Party Computation Engine with Shamir Secret Sharing",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-212-SECURE-MPC-SHAMIR-CORE.md",
+      "sha256": "72bda4f6b8478526be9427ac6377f973524dec94a81ee65f0750d65854526534"
     }
   ]
 }

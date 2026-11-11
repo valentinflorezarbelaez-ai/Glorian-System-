@@ -27,6 +27,7 @@ import { EosTensor, EosReverseModeAutodiff, EosSgdOptimizer } from "../../core/e
 import { EosIsolationForest, EosStreamingIsolationForest } from "../../core/eosIsolationForestDetector.ts";
 import { EosPbftCluster } from "../../core/eosPbftConsensusEngine.ts";
 import { EosHomomorphicLatticeCore, DEFAULT_HOMOMORPHIC_PARAMS } from "../../core/eosHomomorphicLatticeCore.ts";
+import { EosSecureMpcShamirCore } from "../../core/eosSecureMpcShamirCore.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -572,6 +573,63 @@ export function dispatchPhase7FrontierAction(
       sumPlaintext: decResult.plaintext.slice(0, Math.max(msgA.length, msgB.length)),
       noiseBudgetBits: decResult.noiseBudgetBits,
       receipt: decResult.receipt,
+    };
+  }
+  if (action === "mpc_split") {
+    const threshold = typeof args?.threshold === "number" ? args.threshold : 3;
+    const totalParties = typeof args?.totalParties === "number" ? args.totalParties : 5;
+    const core = new EosSecureMpcShamirCore({ threshold, totalParties });
+    const secret = typeof args?.secret === "number" ? BigInt(args.secret) : 424242n;
+    const shares = core.split(secret);
+    return {
+      action: "mpc_split",
+      threshold,
+      totalParties,
+      shares: shares.map((s) => ({ x: s.x.toString(), y: s.y.toString(), commitment: s.commitment })),
+    };
+  }
+  if (action === "mpc_combine") {
+    const core = new EosSecureMpcShamirCore({ threshold: 3, totalParties: 5 });
+    const secret = 9999n;
+    const shares = core.split(secret, 999);
+    const rec = core.combine(shares.slice(0, 3));
+    return {
+      action: "mpc_combine",
+      secret: rec.secret.toString(),
+      sharesUsed: rec.sharesUsed,
+      receipt: rec.receipt,
+    };
+  }
+  if (action === "mpc_add") {
+    const core = new EosSecureMpcShamirCore({ threshold: 3, totalParties: 5 });
+    const valA = typeof args?.valA === "number" ? BigInt(args.valA) : 1500n;
+    const valB = typeof args?.valB === "number" ? BigInt(args.valB) : 3500n;
+    const sharesA = core.split(valA, 101);
+    const sharesB = core.split(valB, 102);
+    const sumShares = [];
+    for (let i = 0; i < 5; i++) {
+      sumShares.push(core.addShares(sharesA[i], sharesB[i]));
+    }
+    const rec = core.combine(sumShares.slice(0, 3));
+    return {
+      action: "mpc_add",
+      sum: rec.secret.toString(),
+      receipt: rec.receipt,
+    };
+  }
+  if (action === "mpc_multiply") {
+    const core = new EosSecureMpcShamirCore({ threshold: 3, totalParties: 5 });
+    const x = typeof args?.x === "number" ? BigInt(args.x) : 120n;
+    const y = typeof args?.y === "number" ? BigInt(args.y) : 35n;
+    const sharesX = core.split(x, 777);
+    const sharesY = core.split(y, 888);
+    const triple = core.generateBeaverTriple(555);
+    const productShares = core.multiplyShares(sharesX, sharesY, triple);
+    const rec = core.combine(productShares.slice(0, 3));
+    return {
+      action: "mpc_multiply",
+      product: rec.secret.toString(),
+      receipt: rec.receipt,
     };
   }
   return undefined;

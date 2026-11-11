@@ -753,6 +753,31 @@ console.log(`Recibo SHA-256  : ${resultado.receipt.receiptSha256}`);
 
 ---
 
+### Módulo 27: Motor de Cómputo Multipartito Seguro y Esquema Shamir (`EosSecureMpcShamirCore`)
+
+**Propósito:** Evaluación multipartita segura (SMPC) basada en el esquema de compartición de secretos de Shamir $(k, N)$ y tríos multiplicativos de Beaver sobre campos finitos primos $\mathbb{Z}_p$ utilizando aritmética nativa `BigInt` sin dependencias externas (Ley V). Permite a enjambres de $N$ agentes evaluar operaciones conjuntas sobre valores privados (adición local homomórfica sin comunicación, escalamiento lineal, multiplicación segura $[x \cdot y]$) garantizando seguridad teórica de la información: cualquier subconjunto con menos de $k$ participantes no puede extraer ningún bit del secreto original. Incluye compromisos criptográficos SHA-256 por cada acción (Verifiable Secret Sharing) e interpolación de Lagrange con algoritmo extendido de Euclides para el inverso modular exacto.
+
+```ts
+import { EosSecureMpcShamirCore } from "./src/core/eosSecureMpcShamirCore.ts";
+
+// 1. Inicialización de parámetros MPC: umbral k = 3, N = 5 partes
+const core = new EosSecureMpcShamirCore({ threshold: 3, totalParties: 5 });
+
+// 2. División de secreto confidencial
+const shares = core.split(424242n);
+
+// 3. Adición homomórfica no interactiva entre partes
+const sharesB = core.split(1000n);
+const sharesSuma = shares.map((s, i) => core.addShares(s, sharesB[i]));
+
+// 4. Reconstrucción exacta con cualquier subconjunto >= k partes
+const resultado = core.combine(sharesSuma.slice(0, 3));
+console.log(`Secreto reconstruido: ${resultado.secret}`); // 425242n
+console.log(`Recibo SHA-256      : ${resultado.receipt.receiptSha256}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -792,6 +817,8 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs pbft:cluster [--nodes=A,B,C,D]`    | Consenso bizantino PBFT 3-fases con quórum supermayoritario 2f+1 y slashing (SPEC-210).    |
 | `node bin/eos.mjs homomorphic:keygen [--degree=N]`   | Generación de par de claves en anillo ciclotómico R_q con cifrado BFV (SPEC-211).          |
 | `node bin/eos.mjs homomorphic:add [--json]`          | Cómputo ciego homomórfico (adición de textos cifrados) con recibo SHA-256 (SPEC-211).      |
+| `node bin/eos.mjs mpc:split [--secret=N]`            | División de secreto Shamir (k, N) con compromisos de integridad SHA-256 (SPEC-212).        |
+| `node bin/eos.mjs mpc:combine [--json]`              | Reconstrucción exacta vía interpolación de Lagrange y suma homomórfica (SPEC-212).         |
 | `node bin/eos.mjs metrics`                           | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`               | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |

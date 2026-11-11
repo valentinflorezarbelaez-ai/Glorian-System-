@@ -1521,3 +1521,27 @@
   - `docs/plans/PLAN-096-HOMOMORPHIC-LATTICE-CORE.md`
   - `docs/tasks/TASKS-096-HOMOMORPHIC-LATTICE-CORE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-SECURE-MPC-SHAMIR-212
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Secure Multi-Party Computation Engine (`SPEC-212`, `CHANGE-097`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "si dale con toda")
+- **Scope**:
+  1. Implement Layer-0 Secure MPC Shamir Core types in `src/core/eosSecureMpcShamirCore.types.ts`.
+  2. Implement Layer-0 Secure MPC Shamir Core in `src/core/eosSecureMpcShamirCore.ts`.
+  3. Subpath export `"./mpc"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian mpc:split`, `glorian mpc:combine`, `glorian mpc:add`, `glorian mpc:multiply` in `bin/commands/cliFrontierMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "mpc_split"`, `action: "mpc_combine"`, `action: "mpc_add"`, `action: "mpc_multiply"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosSecureMpcShamirCore.test.mjs` (BDD-1079..BDD-1083).
+  8. Add test step #24 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 27 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 207 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-097-SECURE-MPC-SHAMIR-CORE.md`
+  - `openspec/changes/CHANGE-097-SECURE-MPC-SHAMIR-CORE.md`
+  - `openspec/specs/SPEC-212-SECURE-MPC-SHAMIR-CORE.md`
+  - `docs/plans/PLAN-097-SECURE-MPC-SHAMIR-CORE.md`
+  - `docs/tasks/TASKS-097-SECURE-MPC-SHAMIR-CORE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

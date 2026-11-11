@@ -618,5 +618,41 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.deepEqual(heAddReport.sumPlaintext, [15, 35]);
     assert.ok(heAddReport.noiseBudgetBits > 0);
     assert.equal(heAddReport.receipt.receiptSha256.length, 64);
+
+    // 24. mpc_split, mpc_combine, mpc_add & mpc_multiply
+    const mpcSplitReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "mpc_split", threshold: 3, totalParties: 5, secret: 424242 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(mpcSplitReport.action, "mpc_split");
+    assert.equal(mpcSplitReport.threshold, 3);
+    assert.equal(mpcSplitReport.shares.length, 5);
+
+    const mpcCombineReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "mpc_combine" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(mpcCombineReport.action, "mpc_combine");
+    assert.equal(mpcCombineReport.secret, "9999");
+    assert.equal(mpcCombineReport.sharesUsed, 3);
+
+    const mpcAddReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "mpc_add", valA: 1500, valB: 3500 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(mpcAddReport.action, "mpc_add");
+    assert.equal(mpcAddReport.sum, "5000");
+
+    const mpcMultiplyReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "mpc_multiply", x: 120, y: 35 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(mpcMultiplyReport.action, "mpc_multiply");
+    assert.equal(mpcMultiplyReport.product, "4200");
+    assert.ok(mpcMultiplyReport.receipt.receiptSha256.length === 64);
   });
 });

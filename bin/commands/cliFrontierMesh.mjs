@@ -587,6 +587,123 @@ async function cmd_homomorphic_lattice_154(commandContext) {
   console.log(`===============================================================\n`);
 }
 
+async function cmd_secure_mpc_155(commandContext) {
+  const { args, command } = commandContext;
+  const isJson = args.includes("--json");
+  const { EosSecureMpcShamirCore, DEFAULT_MPC_PRIME } = await import("../../src/core/eosSecureMpcShamirCore.ts");
+
+  const threshArg = args.find((a) => a.startsWith("--threshold="));
+  const threshold = threshArg ? parseInt(threshArg.split("=")[1], 10) : 3;
+
+  const partiesArg = args.find((a) => a.startsWith("--parties="));
+  const totalParties = partiesArg ? parseInt(partiesArg.split("=")[1], 10) : 5;
+
+  const core = new EosSecureMpcShamirCore({
+    prime: DEFAULT_MPC_PRIME,
+    threshold,
+    totalParties,
+  });
+
+  const secArg = args.find((a) => a.startsWith("--secret="));
+  const secret = secArg ? BigInt(secArg.split("=")[1]) : 9999n;
+
+  if (command === "mpc:split") {
+    const shares = core.split(secret);
+    if (isJson) {
+      console.log(
+        JSON.stringify(
+          {
+            threshold,
+            totalParties,
+            shares: shares.map((s) => ({ x: s.x.toString(), y: s.y.toString(), commitment: s.commitment })),
+          },
+          null,
+          2,
+        ),
+      );
+      return;
+    }
+    console.log(`\n===============================================================`);
+    console.log(`  GLORIAN LAYER-0 SECURE MPC SHAMIR SPLIT (SPEC-212)`);
+    console.log(`===============================================================`);
+    console.log(`  Threshold (k)      : ${threshold} shares required`);
+    console.log(`  Total Parties (N)  : ${totalParties} shares distributed`);
+    console.log(`  Prime Modulus      : ${DEFAULT_MPC_PRIME.toString()}`);
+    console.log(`  Shares Produced    : ${shares.length}`);
+    for (let i = 0; i < Math.min(3, shares.length); i++) {
+      console.log(
+        `    Share #${shares[i].x}        : y=${shares[i].y.toString().slice(0, 8)}... [sha256:${shares[i].commitment.slice(0, 8)}...]`,
+      );
+    }
+    console.log(`===============================================================\n`);
+    return;
+  }
+
+  const sharesA = core.split(1500n, 101);
+  const sharesB = core.split(3500n, 102);
+
+  if (command === "mpc:add") {
+    const sumShares = [];
+    for (let i = 0; i < totalParties; i++) {
+      sumShares.push(core.addShares(sharesA[i], sharesB[i]));
+    }
+    const rec = core.combine(sumShares.slice(0, threshold));
+    if (isJson) {
+      console.log(
+        JSON.stringify(
+          {
+            operation: "add",
+            secretA: "1500",
+            secretB: "3500",
+            sum: rec.secret.toString(),
+            receipt: rec.receipt,
+          },
+          null,
+          2,
+        ),
+      );
+      return;
+    }
+    console.log(`\n===============================================================`);
+    console.log(`  GLORIAN LAYER-0 SECURE MPC HOMOMORPHIC ADDITION (SPEC-212)`);
+    console.log(`===============================================================`);
+    console.log(`  Operation          : Non-Interactive Share Addition [a + b]`);
+    console.log(`  Reconstructed Sum  : ${rec.secret.toString()}`);
+    console.log(`  Shares Used        : ${rec.sharesUsed}`);
+    console.log(`  Receipt ID         : ${rec.receipt.receiptId}`);
+    console.log(`  Receipt SHA-256    : sha256:${rec.receipt.receiptSha256}`);
+    console.log(`===============================================================\n`);
+    return;
+  }
+
+  const shares = core.split(secret, 999);
+  const rec = core.combine(shares.slice(0, threshold));
+  if (isJson) {
+    console.log(
+      JSON.stringify(
+        {
+          reconstruction: {
+            secret: rec.secret.toString(),
+            sharesUsed: rec.sharesUsed,
+            receipt: rec.receipt,
+          },
+        },
+        null,
+        2,
+      ),
+    );
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN LAYER-0 SECURE MPC RECONSTRUCTION (SPEC-212)`);
+  console.log(`===============================================================`);
+  console.log(`  Reconstructed Secret : ${rec.secret.toString()}`);
+  console.log(`  Shares Evaluated     : ${rec.sharesUsed} of ${totalParties}`);
+  console.log(`  Receipt SHA-256      : sha256:${rec.receipt.receiptSha256}`);
+  console.log(`===============================================================\n`);
+}
+
 HANDLERS["pbft:cluster"] = cmd_pbft_consensus_153;
 HANDLERS["pbft:propose"] = cmd_pbft_consensus_153;
 HANDLERS["pbft:status"] = cmd_pbft_consensus_153;
@@ -595,6 +712,10 @@ HANDLERS["homomorphic:keygen"] = cmd_homomorphic_lattice_154;
 HANDLERS["homomorphic:encrypt"] = cmd_homomorphic_lattice_154;
 HANDLERS["homomorphic:add"] = cmd_homomorphic_lattice_154;
 HANDLERS["homomorphic:decrypt"] = cmd_homomorphic_lattice_154;
+HANDLERS["mpc:split"] = cmd_secure_mpc_155;
+HANDLERS["mpc:combine"] = cmd_secure_mpc_155;
+HANDLERS["mpc:add"] = cmd_secure_mpc_155;
+HANDLERS["mpc:multiply"] = cmd_secure_mpc_155;
 
 export async function handleFrontierMeshCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];

@@ -546,6 +546,8 @@ Uso Universal Exhaustivo:
   eos homomorphic:keygen [--degree=N] Genera par de claves pública/privada en anillo ciclotómico R_q (SPEC-211)
   eos homomorphic:encrypt [--msg=CSV] Cifrado homomórfico ciego BFV con modulación de ruido y escala Δ
   eos homomorphic:add [--json]        Cálculo directo de suma ciega sobre textos cifrados sin descifrar
+  eos mpc:split [--secret=N]  División de secreto Shamir (k, N) con compromisos de integridad SHA-256 (SPEC-212)
+  eos mpc:combine [--json]    Reconstrucción exacta vía interpolación de Lagrange y suma homomórfica
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

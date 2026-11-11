@@ -171,3 +171,5 @@ export {
 } from "./eosPbftConsensusEngine.ts";
 export * from "./eosHomomorphicLatticeCore.ts";
 export * from "./eosHomomorphicLatticeCore.types.ts";
+export * from "./eosSecureMpcShamirCore.ts";
+export * from "./eosSecureMpcShamirCore.types.ts";
