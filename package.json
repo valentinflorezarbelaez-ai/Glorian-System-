@@ -37,6 +37,7 @@
     "./pbft": "./src/core/eosPbftConsensusEngine.ts",
     "./homomorphic": "./src/core/eosHomomorphicLatticeCore.ts",
     "./mpc": "./src/core/eosSecureMpcShamirCore.ts",
+    "./vdf": "./src/core/eosVerifiableDelayFunctionCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

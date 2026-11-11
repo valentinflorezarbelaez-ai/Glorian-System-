@@ -548,6 +548,8 @@ Uso Universal Exhaustivo:
   eos homomorphic:add [--json]        Cálculo directo de suma ciega sobre textos cifrados sin descifrar
   eos mpc:split [--secret=N]  División de secreto Shamir (k, N) con compromisos de integridad SHA-256 (SPEC-212)
   eos mpc:combine [--json]    Reconstrucción exacta vía interpolación de Lagrange y suma homomórfica
+  eos vdf:compute [--delay=T] Evaluación secuencial Wesolowski VDF y baliza de aleatoriedad (SPEC-213)
+  eos vdf:verify [--json]     Verificación logarítmica O(1) de prueba de tiempo transcurrido en <5ms
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

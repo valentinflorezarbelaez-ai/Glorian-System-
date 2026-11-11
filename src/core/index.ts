@@ -173,3 +173,5 @@ export * from "./eosHomomorphicLatticeCore.ts";
 export * from "./eosHomomorphicLatticeCore.types.ts";
 export * from "./eosSecureMpcShamirCore.ts";
 export * from "./eosSecureMpcShamirCore.types.ts";
+export * from "./eosVerifiableDelayFunctionCore.ts";
+export * from "./eosVerifiableDelayFunctionCore.types.ts";

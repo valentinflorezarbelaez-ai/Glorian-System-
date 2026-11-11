@@ -28,6 +28,7 @@ import { EosIsolationForest, EosStreamingIsolationForest } from "../../core/eosI
 import { EosPbftCluster } from "../../core/eosPbftConsensusEngine.ts";
 import { EosHomomorphicLatticeCore, DEFAULT_HOMOMORPHIC_PARAMS } from "../../core/eosHomomorphicLatticeCore.ts";
 import { EosSecureMpcShamirCore } from "../../core/eosSecureMpcShamirCore.ts";
+import { EosVerifiableDelayFunctionCore } from "../../core/eosVerifiableDelayFunctionCore.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -630,6 +631,42 @@ export function dispatchPhase7FrontierAction(
       action: "mpc_multiply",
       product: rec.secret.toString(),
       receipt: rec.receipt,
+    };
+  }
+  if (action === "vdf_compute") {
+    const delay = typeof args?.delay === "number" ? Math.max(1, Math.floor(args.delay)) : 100;
+    const seed = typeof args?.seed === "string" ? args.seed : "mcp-vdf-entropy";
+    const core = new EosVerifiableDelayFunctionCore({ defaultDelay: delay });
+    const result = core.compute(seed, delay);
+    return {
+      action: "vdf_compute",
+      delayT: result.delayT,
+      proofHex: result.proof.proofHex,
+      challengePrime: result.proof.challengePrime.toString(),
+      randomnessBeacon: result.randomnessBeacon,
+      elapsedMs: result.elapsedMs,
+      receipt: result.receipt,
+    };
+  }
+  if (action === "vdf_verify") {
+    const delay = typeof args?.delay === "number" ? Math.max(1, Math.floor(args.delay)) : 100;
+    const seed = typeof args?.seed === "string" ? args.seed : "mcp-vdf-entropy";
+    const core = new EosVerifiableDelayFunctionCore({ defaultDelay: delay });
+    const evalRes = core.compute(seed, delay);
+    const verifyRes = core.verify(evalRes.x, evalRes.y, evalRes.delayT, evalRes.proof);
+    return {
+      action: "vdf_verify",
+      valid: verifyRes.valid,
+      verificationTimeMs: verifyRes.verificationTimeMs,
+      receipt: verifyRes.receipt,
+    };
+  }
+  if (action === "vdf_beacon") {
+    const core = new EosVerifiableDelayFunctionCore();
+    const beacon = core.generateBeacon(BigInt(typeof args?.val === "number" ? args.val : 424242));
+    return {
+      action: "vdf_beacon",
+      beacon,
     };
   }
   return undefined;

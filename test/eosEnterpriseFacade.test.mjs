@@ -654,5 +654,32 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(mpcMultiplyReport.action, "mpc_multiply");
     assert.equal(mpcMultiplyReport.product, "4200");
     assert.ok(mpcMultiplyReport.receipt.receiptSha256.length === 64);
+
+    // 25. vdf_compute, vdf_verify & vdf_beacon
+    const vdfComputeReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "vdf_compute", delay: 100, seed: "facade-vdf-entropy" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(vdfComputeReport.action, "vdf_compute");
+    assert.equal(vdfComputeReport.delayT, 100);
+    assert.ok(vdfComputeReport.proofHex.length > 0);
+    assert.equal(vdfComputeReport.randomnessBeacon.length, 64);
+
+    const vdfVerifyReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "vdf_verify", delay: 100, seed: "facade-vdf-entropy" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(vdfVerifyReport.action, "vdf_verify");
+    assert.equal(vdfVerifyReport.valid, true);
+
+    const vdfBeaconReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "vdf_beacon", val: 123456 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(vdfBeaconReport.action, "vdf_beacon");
+    assert.equal(vdfBeaconReport.beacon.length, 64);
   });
 });

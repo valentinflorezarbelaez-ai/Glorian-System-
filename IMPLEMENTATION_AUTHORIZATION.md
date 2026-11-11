@@ -1545,3 +1545,27 @@
   - `docs/plans/PLAN-097-SECURE-MPC-SHAMIR-CORE.md`
   - `docs/tasks/TASKS-097-SECURE-MPC-SHAMIR-CORE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-VERIFIABLE-DELAY-FUNCTION-213
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Verifiable Delay Function & Proof of Elapsed Time Engine (`SPEC-213`, `CHANGE-098`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "dale con toda la perfeccion")
+- **Scope**:
+  1. Implement Layer-0 Verifiable Delay Function types in `src/core/eosVerifiableDelayFunctionCore.types.ts`.
+  2. Implement Layer-0 Verifiable Delay Function in `src/core/eosVerifiableDelayFunctionCore.ts`.
+  3. Subpath export `"./vdf"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian vdf:compute`, `glorian vdf:verify`, `glorian vdf:beacon` in `bin/commands/cliFrontierMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "vdf_compute"`, `action: "vdf_verify"`, `action: "vdf_beacon"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosVerifiableDelayFunctionCore.test.mjs` (BDD-1084..BDD-1088).
+  8. Add test step #25 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 28 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 208 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-098-VERIFIABLE-DELAY-FUNCTION.md`
+  - `openspec/changes/CHANGE-098-VERIFIABLE-DELAY-FUNCTION.md`
+  - `openspec/specs/SPEC-213-VERIFIABLE-DELAY-FUNCTION.md`
+  - `docs/plans/PLAN-098-VERIFIABLE-DELAY-FUNCTION.md`
+  - `docs/tasks/TASKS-098-VERIFIABLE-DELAY-FUNCTION.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

@@ -704,6 +704,71 @@ async function cmd_secure_mpc_155(commandContext) {
   console.log(`===============================================================\n`);
 }
 
+async function cmd_vdf_wesolowski_156(commandContext) {
+  const { args, command } = commandContext;
+  const isJson = args.includes("--json");
+  const { EosVerifiableDelayFunctionCore } = await import("../../src/core/eosVerifiableDelayFunctionCore.ts");
+
+  const delayArg = args.find((a) => a.startsWith("--delay="));
+  const delayT = delayArg ? parseInt(delayArg.split("=")[1], 10) : 100;
+
+  const seedArg = args.find((a) => a.startsWith("--seed="));
+  const seed = seedArg ? seedArg.split("=")[1] : "eos-sovereign-entropy";
+
+  const core = new EosVerifiableDelayFunctionCore({ defaultDelay: delayT });
+
+  if (command === "vdf:verify") {
+    const evalRes = core.compute(seed, delayT);
+    const verifyRes = core.verify(evalRes.x, evalRes.y, evalRes.delayT, evalRes.proof);
+    if (isJson) {
+      console.log(JSON.stringify(verifyRes, null, 2));
+      return;
+    }
+    console.log(`\n===============================================================`);
+    console.log(`  GLORIAN LAYER-0 WESOLOWSKI VDF VERIFICATION (SPEC-213)`);
+    console.log(`===============================================================`);
+    console.log(`  Verification Verdict : ${verifyRes.valid ? "VALID (PROVABLY AUTHENTIC)" : "FORGED"}`);
+    console.log(`  Verification Time    : ${verifyRes.verificationTimeMs.toFixed(3)} ms`);
+    console.log(`  Receipt SHA-256      : sha256:${verifyRes.receipt.receiptSha256}`);
+    console.log(`===============================================================\n`);
+    return;
+  }
+
+  const evalRes = core.compute(seed, delayT);
+
+  if (isJson) {
+    console.log(
+      JSON.stringify(
+        {
+          delayT: evalRes.delayT,
+          proof: {
+            pi: evalRes.proof.pi.toString(16),
+            challengePrime: evalRes.proof.challengePrime.toString(),
+            proofHex: evalRes.proof.proofHex,
+          },
+          randomnessBeacon: evalRes.randomnessBeacon,
+          elapsedMs: evalRes.elapsedMs,
+          receipt: evalRes.receipt,
+        },
+        null,
+        2,
+      ),
+    );
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN LAYER-0 WESOLOWSKI VDF COMPUTATION (SPEC-213)`);
+  console.log(`===============================================================`);
+  console.log(`  Squarings (T)        : ${evalRes.delayT} sequential steps`);
+  console.log(`  Challenge Prime (ℓ)  : ${evalRes.proof.challengePrime.toString().slice(0, 16)}...`);
+  console.log(`  Proof Hex (π)        : ${evalRes.proof.proofHex.slice(0, 24)}...`);
+  console.log(`  Randomness Beacon    : sha256:${evalRes.randomnessBeacon}`);
+  console.log(`  Elapsed Evaluation   : ${evalRes.elapsedMs.toFixed(3)} ms`);
+  console.log(`  Receipt SHA-256      : sha256:${evalRes.receipt.receiptSha256}`);
+  console.log(`===============================================================\n`);
+}
+
 HANDLERS["pbft:cluster"] = cmd_pbft_consensus_153;
 HANDLERS["pbft:propose"] = cmd_pbft_consensus_153;
 HANDLERS["pbft:status"] = cmd_pbft_consensus_153;
@@ -716,6 +781,9 @@ HANDLERS["mpc:split"] = cmd_secure_mpc_155;
 HANDLERS["mpc:combine"] = cmd_secure_mpc_155;
 HANDLERS["mpc:add"] = cmd_secure_mpc_155;
 HANDLERS["mpc:multiply"] = cmd_secure_mpc_155;
+HANDLERS["vdf:compute"] = cmd_vdf_wesolowski_156;
+HANDLERS["vdf:verify"] = cmd_vdf_wesolowski_156;
+HANDLERS["vdf:beacon"] = cmd_vdf_wesolowski_156;
 
 export async function handleFrontierMeshCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
