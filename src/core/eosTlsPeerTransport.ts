@@ -132,6 +132,7 @@ export class EosTlsPeerTransport {
         this.activeSockets.delete(socket);
         this.sharedSessionKeys.delete(socket);
         this.peerIdentities.delete(socket);
+        socket.destroy();
         reject(err);
       });
     });

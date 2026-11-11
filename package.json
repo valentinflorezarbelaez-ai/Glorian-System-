@@ -266,5 +266,8 @@
   "license": "MIT",
   "overrides": {
     "minimatch": "^11.0.1"
+  },
+  "optionalDependencies": {
+    "@typescript/typescript-linux-x64": "7.0.2"
   }
 }
