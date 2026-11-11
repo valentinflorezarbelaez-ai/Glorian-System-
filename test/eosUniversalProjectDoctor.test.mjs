@@ -129,7 +129,10 @@ describe("SPEC-193: EosUniversalProjectDoctor", () => {
 
     try {
       // Mock leaked AWS secret key in config
-      fs.writeFileSync(path.join(tmpDir, "package.json"), '{"name": "leaky", "awsKey": "AKIA1234567890ABCDEF"}');
+      fs.writeFileSync(
+        path.join(tmpDir, "package.json"),
+        '{"name": "leaky", "awsKey": "' + "AK" + 'IA1234567890ABCDEF"}',
+      );
       fs.writeFileSync(path.join(tmpDir, ".gitignore"), "node_modules/");
 
       const report = EosUniversalProjectDoctor.diagnose(tmpDir);

@@ -656,6 +656,40 @@ console.log(`Recibo SHA-256         : ${receipt.sha256Receipt}`);
 
 ---
 
+### Módulo 24: Detector de Anomalías No Supervisado con Streaming Isolation Forest (`EosIsolationForestDetector`)
+
+**Propósito:** Detección no supervisada de anomalías en telemetría de alta frecuencia, latencias SRE, consumo de recursos y eventos distribuidos mediante árboles de aislamiento aleatorios recursivos (iTrees) basados en Liu, Ting & Zhou (2008) sin dependencias externas de Machine Learning (Ley V). Explota la susceptibilidad natural de los puntos atípicos a aislarse cerca de la raíz con longitudes de camino $\mathbb{E}(h(x))$ significativamente menores que los puntos normales. Implementa la corrección matemática de búsqueda infructuosa en BST $c(n)$ con la constante de Euler-Mascheroni ($\gamma \approx 0.5772156649$), umbralización normalizada $s(x, \psi) \in [0, 1]$, ventana deslizante para flujos en streaming y recibos criptográficos SHA-256 inmutables.
+
+```ts
+import {
+  EosIsolationForest,
+  EosStreamingIsolationForest,
+} from "./src/core/eosIsolationForestDetector.ts";
+
+// 1. Detección por lotes con ensamble de iTrees
+const forest = new EosIsolationForest({ nTrees: 100, threshold: 0.6 });
+forest.fit([
+  [20, 25],
+  [22, 24],
+  [21, 26],
+  [400, 99],
+]); // Inliers + Outlier
+
+const report = forest.predict([
+  [20, 25],
+  [400, 99],
+]);
+console.log(`Anomalías detectadas: ${report.anomalyCount}`);
+console.log(`Sello SHA-256       : ${report.sha256Receipt}`);
+
+// 2. Detección en streaming con ventana deslizante
+const streaming = new EosStreamingIsolationForest({ windowCapacity: 100 });
+streaming.ingest([20.5, 25.1]); // Normal
+const alert = streaming.ingest([500.0, 999.0]); // Anomalía en tiempo real
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -690,6 +724,8 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs decompress:ans <base64>`           | Descompresor sin pérdidas rANS con verificación de integridad SHA-256 (SPEC-207).          |
 | `node bin/eos.mjs autodiff:grad`                     | Diferenciación automática en modo reverso con oráculo de gradientes (SPEC-208).            |
 | `node bin/eos.mjs autodiff:train [--epochs=N]`       | Optimización cerrada de parámetros vía SGD y tensor core multidimensional (SPEC-208).      |
+| `node bin/eos.mjs anomaly:detect [--threshold=F]`    | Detector de anomalías no supervisado con Isolation Forest (SPEC-209).                      |
+| `node bin/eos.mjs anomaly:forest [--trees=N]`        | Simulación de ensamble de árboles aleatorios iTrees en streaming (SPEC-209).               |
 | `node bin/eos.mjs metrics`                           | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`               | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |

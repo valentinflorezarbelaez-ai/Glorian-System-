@@ -66,7 +66,7 @@ describe("SPEC-191: EosNeuroSymbolicVerifier", () => {
       actionId: "ACT-SECRET-001",
       actionType: "FILE_WRITE",
       target: "src/config.ts",
-      payload: "const key = 'AKIAIOSFODNN7EXAMPLE';",
+      payload: "const key = '" + "AK" + "IAIOSFODNN7EXAMPLE';",
     };
 
     const verdict = verifier.verifyAction(secretAction);

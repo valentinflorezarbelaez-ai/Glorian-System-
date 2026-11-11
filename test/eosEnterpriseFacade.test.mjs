@@ -530,5 +530,26 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(autodiffTrainReport.action, "autodiff_train");
     assert.equal(autodiffTrainReport.receipt.lossDecreased, true);
     assert.equal(autodiffTrainReport.receipt.sha256Receipt.length, 64);
+
+    // 21. anomaly_detect & anomaly_forest
+    const anomalyDetectReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "anomaly_detect", threshold: 0.6 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(anomalyDetectReport.action, "anomaly_detect");
+    assert.equal(anomalyDetectReport.report.anomalyCount, 1);
+    assert.equal(anomalyDetectReport.report.outliers.length, 1);
+    assert.equal(anomalyDetectReport.report.sha256Receipt.length, 64);
+
+    const anomalyForestReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "anomaly_forest" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(anomalyForestReport.action, "anomaly_forest");
+    assert.equal(anomalyForestReport.isReady, true);
+    assert.ok(anomalyForestReport.windowSize >= 30);
+    assert.ok(anomalyForestReport.outlierScore.anomalyScore > 0.5);
   });
 });

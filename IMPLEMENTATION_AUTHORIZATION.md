@@ -1450,3 +1450,26 @@
   - `docs/plans/PLAN-093-AUTODIFF-TENSOR-CORE.md`
   - `docs/tasks/TASKS-093-AUTODIFF-TENSOR-CORE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-ISOLATION-FOREST-209
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Streaming Isolation Forest Anomaly Detector (`SPEC-209`, `CHANGE-094`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “todos uno por uno”, “vamos con toda si con toda perfeccion superlatva absoluta”)
+- **Scope**:
+  1. Implement Layer-0 Streaming Isolation Forest Anomaly Detector `src/core/eosIsolationForestDetector.ts`.
+  2. Subpath export `"./isolation-forest"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI commands `glorian anomaly:detect` and `glorian anomaly:forest` in `bin/commands/cliPlatform.mjs` and `bin/commands/cliKernel.mjs`.
+  5. Wire MCP actions `action: "anomaly_detect"` and `action: "anomaly_forest"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosIsolationForestDetector.test.mjs` (BDD-1064..BDD-1068).
+  7. Add test step #21 in `test/eosEnterpriseFacade.test.mjs`.
+  8. Document Módulo 24 in `docs/DEVELOPER_GUIDE.md`.
+  9. Update OpenSpec catalog index to 204 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-094-ISOLATION-FOREST.md`
+  - `openspec/changes/CHANGE-094-ISOLATION-FOREST.md`
+  - `openspec/specs/SPEC-209-ISOLATION-FOREST.md`
+  - `docs/plans/PLAN-094-ISOLATION-FOREST.md`
+  - `docs/tasks/TASKS-094-ISOLATION-FOREST.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

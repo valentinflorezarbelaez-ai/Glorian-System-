@@ -150,3 +150,4 @@ export * from "./eosAutonomousTlaModelChecker.ts";
 export * from "./eosRaftConsensusEngine.ts";
 export * from "./eosAnsEntropyCompressor.ts";
 export * from "./eosReverseModeAutodiff.ts";
+export * from "./eosIsolationForestDetector.ts";

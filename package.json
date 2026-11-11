@@ -33,6 +33,7 @@
     "./raft": "./src/core/eosRaftConsensusEngine.ts",
     "./ans": "./src/core/eosAnsEntropyCompressor.ts",
     "./autodiff": "./src/core/eosReverseModeAutodiff.ts",
+    "./isolation-forest": "./src/core/eosIsolationForestDetector.ts",
     "./package.json": "./package.json"
   },
   "bin": {

@@ -539,6 +539,8 @@ Uso Universal Exhaustivo:
   eos decompress:ans <base64> Descompresor sin pérdidas rANS con verificación de integridad SHA-256
   eos autodiff:grad          Diferenciación automática en modo reverso con oráculo de gradientes (SPEC-208)
   eos autodiff:train [--epochs=N] Optimización cerrada de parámetros vía SGD y tensor core multidimensional
+  eos anomaly:detect [--threshold=F] Detector de anomalías no supervisado con Isolation Forest (SPEC-209)
+  eos anomaly:forest [--trees=N] Simulación de ensamble de árboles aleatorios iTrees en streaming
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);
