@@ -191,3 +191,26 @@ test("flow close refuses dirty worktrees unless force is explicit and preserves 
   assert.equal(git(repoRoot, ["show-ref", "--verify", `refs/heads/${started.branchName}`]).length > 0, true);
   assert.equal(workflow.status(repoRoot, started.workflowId).closedAt !== null, true);
 });
+
+test("flow input validations, error branches, and boundary guards", (t) => {
+  const repoRoot = createFixtureRepository(t);
+  const workflow = new EosEngineeringWorkflow();
+
+  // Task exceeding 512 bytes
+  const longTask = "x".repeat(600);
+  assert.throws(() => workflow.plan(repoRoot, longTask), /Task must contain 1 to 512/);
+  assert.throws(() => workflow.start(repoRoot, longTask), /Task must contain 1 to 512/);
+
+  // Invalid workflow ID format
+  assert.throws(() => workflow.status(repoRoot, "not-a-uuid"), /Workflow ID must be a UUID/);
+  assert.throws(() => workflow.review(repoRoot, "not-a-uuid"), /Workflow ID must be a UUID/);
+  assert.throws(() => workflow.apply(repoRoot, "not-a-uuid", "0".repeat(64)), /Workflow ID must be a UUID/);
+  assert.throws(() => workflow.close(repoRoot, "not-a-uuid"), /Workflow ID must be a UUID/);
+
+  // Nonexistent workflow record throws ENOENT
+  const randomUuid = "12345678-1234-4234-8234-123456789abc";
+  assert.throws(() => workflow.status(repoRoot, randomUuid), { code: "ENOENT" });
+  assert.throws(() => workflow.review(repoRoot, randomUuid), { code: "ENOENT" });
+  assert.throws(() => workflow.apply(repoRoot, randomUuid, "0".repeat(64)), { code: "ENOENT" });
+  assert.throws(() => workflow.close(repoRoot, randomUuid), { code: "ENOENT" });
+});

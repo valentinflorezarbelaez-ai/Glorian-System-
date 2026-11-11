@@ -5,6 +5,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 import { EosAntigravityDirector } from "./eosAntigravityDirector.ts";
@@ -375,14 +376,19 @@ export class EosEnterpriseWorkspaceGovernor {
       const id = String(p.id || "");
       const envName = typeof p.localPathEnv === "string" ? p.localPathEnv : undefined;
       const envVal = envName ? process.env[envName] || synthesizedFleetEnv[envName] : undefined;
-      const candidatePath =
-        id === "eos-system"
-          ? resolvedControlPlane
-          : typeof envVal === "string" && envVal.trim().length > 0
-            ? path.resolve(envVal.trim())
-            : typeof p.localPath === "string" && p.localPath.trim().length > 0
-              ? path.resolve(p.localPath.trim())
-              : null;
+      let candidatePath = id === "eos-system" ? resolvedControlPlane
+        : envVal?.trim() ? path.resolve(envVal.trim())
+        : p.localPath?.trim() ? path.resolve(p.localPath.trim())
+        : null;
+
+      if (id !== "eos-system" && (!candidatePath || !fs.existsSync(candidatePath)) && p.resolvedLocalDir?.trim()) {
+        const dirName = p.resolvedLocalDir.trim();
+        const rootCandidates = [path.dirname(resolvedControlPlane), path.resolve(resolvedControlPlane, "..", ".."), process.env.EOS_WORKSPACE_ROOT || "c:\\Users\\valen", os.homedir()];
+        for (const root of rootCandidates) {
+          const check = path.join(root, dirName);
+          if (fs.existsSync(check)) { candidatePath = check; break; }
+        }
+      }
 
       let pathExistsOnDisk = false;
       let resolvedLocalPath: string | null = candidatePath;

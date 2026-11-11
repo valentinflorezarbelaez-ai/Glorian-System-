@@ -1,6 +1,6 @@
 {
   "version": "11.0.0-autonomous-fleet-registry",
-  "updatedAt": "2026-11-10T00:34:15.507Z",
+  "updatedAt": "2026-11-11T23:50:44.543Z",
   "masterOrchestrator": "EOS System control plane (SPEC-124)",
   "complianceStandard": "EOS_CONSTITUTION_LAW_IV_EXTERNAL_WRITE_BARRIER",
   "totalFleetProjects": 9,
@@ -21,7 +21,7 @@
       "cicdGateScript": "scripts/verify-landing.mjs",
       "autoShipScript": "npm run ship:sovereign",
       "currentBranch": "main",
-      "headCommitSha": "77b9733c029d1a6e916c877410e5f0869100edec",
+      "headCommitSha": "bc172749f9f4dcfcba79f67c1364d4efe05202f6",
       "ownerApproval": "OWNER_APPROVAL"
     },
     {
@@ -37,11 +37,11 @@
       "specification": "SPECIFICATION_APPROVED",
       "audit": "AUDIT_COMPLETE",
       "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
-      "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "npm test",
       "autoShipScript": "git push origin main",
+      "ownerApproval": "OWNER_APPROVAL",
       "currentBranch": "main",
-      "headCommitSha": "2ea9054f110009e16d60abe14025d5b0b999429c"
+      "headCommitSha": "102593fdecd9bfa86cddea54a8cd09a898fb210a"
     },
     {
       "id": "biblioteca-gnostica-1",
@@ -56,11 +56,11 @@
       "specification": "SPECIFICATION_APPROVED",
       "audit": "AUDIT_COMPLETE",
       "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
-      "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "scripts/verify-strict.mjs",
       "autoShipScript": "git push origin main",
+      "ownerApproval": "OWNER_APPROVAL",
       "currentBranch": "main",
-      "headCommitSha": "ac436e0a758f6bd4461bb319397d4dfe7c73a0a1"
+      "headCommitSha": "0856571029d95c8e0576fedee098c4343b60f36a"
     },
     {
       "id": "control-de-asistencia-abopack",
@@ -79,7 +79,7 @@
       "cicdGateScript": "npm test",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "5ba39af35e4229cac499579a8e76e36692431fc5"
+      "headCommitSha": "9f5f1d39ebfa6b1177b4556d51f8fd9b8939e077"
     },
     {
       "id": "crud-slack",
@@ -94,11 +94,11 @@
       "specification": "SPECIFICATION_APPROVED",
       "audit": "AUDIT_COMPLETE",
       "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
-      "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "scripts/verify-strict.mjs",
       "autoShipScript": "git push origin main",
+      "ownerApproval": "OWNER_APPROVAL",
       "currentBranch": "main",
-      "headCommitSha": "d8a8be196bdc1b1ae130983e8f3caadafab2b5c5"
+      "headCommitSha": "15a5cb02b1fa04b53e776fb9c7ba386788713a2a"
     },
     {
       "id": "donaciones",
@@ -113,9 +113,9 @@
       "specification": "SPECIFICATION_APPROVED",
       "audit": "AUDIT_COMPLETE",
       "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
-      "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "npm test",
       "autoShipScript": "git push origin main",
+      "ownerApproval": "OWNER_APPROVAL",
       "currentBranch": "main",
       "headCommitSha": "2f45b0ab86c70e00066d6d442690c446942d3cf4"
     },
@@ -124,7 +124,7 @@
       "name": "Glorian (Control Plane Core)",
       "resolvedLocalDir": "Eos-System",
       "localPathEnv": "EOS_FLEET_EOS_SYSTEM_PATH",
-      "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Eos-System.git",
+      "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Glorian-System-.git",
       "productionUrl": "https://glorian-system.vercel.app",
       "type": "control-plane-monolith",
       "status": "REGISTERED",
@@ -135,7 +135,7 @@
       "cicdGateScript": "scripts/verify-cicd-pipeline.mjs",
       "autoShipScript": "scripts/ship-sovereign.mjs",
       "currentBranch": "main",
-      "headCommitSha": "d87230132aeb00bfdbcbb2aebb68b6ce290e6ef1",
+      "headCommitSha": "f73324a22b57c841b7d8460754c7e519c6f5589d",
       "ownerApproval": "OWNER_APPROVAL"
     },
     {
@@ -151,11 +151,11 @@
       "specification": "SPECIFICATION_APPROVED",
       "audit": "AUDIT_COMPLETE",
       "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
-      "ownerApproval": "OWNER_APPROVAL",
       "cicdGateScript": "scripts/smoke-test.ps1",
       "autoShipScript": "git push origin main",
+      "ownerApproval": "OWNER_APPROVAL",
       "currentBranch": "main",
-      "headCommitSha": "e957a480be480c17b4fa65199887030e302156f5"
+      "headCommitSha": "3868cefbbe45aebf371d396be4e97f6d1fa036a6"
     },
     {
       "id": "portafolio",
@@ -173,9 +173,9 @@
       "cicdGateScript": "scripts/verify-landing.mjs",
       "autoShipScript": "npm run ship:sovereign",
       "currentBranch": "main",
-      "headCommitSha": "36ba9c3b11406979f07a29fe8a544b14f8ec3c7a",
+      "headCommitSha": "79edabdde54611c38c6cec070cb8a3b8240753a2",
       "ownerApproval": "OWNER_APPROVAL"
     }
   ],
-  "registrySha256": "55afc664cf862352cef7a369d5488b81119fab53a8b771c4b73d19644c06ca8e"
+  "registrySha256": "d191da6038edabecf04808bf346412c25c8b13d94d6d90d195e6b13bce40ef12"
 }

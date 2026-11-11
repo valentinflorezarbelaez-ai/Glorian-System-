@@ -251,24 +251,43 @@ export class EosAntigravityDirector {
     const parentDir = path.dirname(resolvedRoot);
     const serverScript = path.join(resolvedRoot, "src", "mcp", "eosMcpServer.ts");
 
+    const candidateRoots = [
+      parentDir,
+      path.resolve(resolvedRoot, "..", ".."),
+      process.env.EOS_WORKSPACE_ROOT || "c:\\Users\\valen",
+      os.homedir(),
+    ];
+
     const defaultFleetCandidates: Record<string, string> = {
       EOS_FLEET_EOS_SYSTEM_PATH: resolvedRoot,
-      EOS_FLEET_ABERAMENTHO_PATH: path.join(parentDir, "Aberamentho-s-Pleroma-music"),
-      EOS_FLEET_PORTAFOLIO_PATH: path.join(parentDir, "portafolio"),
-      EOS_FLEET_PTG_PATH: path.join(parentDir, "Performance-Talent-Group-1"),
-      EOS_FLEET_CRUD_SLACK_PATH: path.join(parentDir, "Crud-slack"),
+      EOS_FLEET_ABERAMENTHO_PATH: "Aberamentho-s-Pleroma-music",
+      EOS_FLEET_PORTAFOLIO_PATH: "portafolio",
+      EOS_FLEET_PTG_PATH: "Performance-Talent-Group-1",
+      EOS_FLEET_CRUD_SLACK_PATH: "Crud-slack",
+      EOS_FLEET_ATP_STRENGTH_PATH: "ATP-STRENGTH-1",
+      EOS_FLEET_BIBLIOTECA_GNOSTICA_1_PATH: "Biblioteca-gnostica-1",
+      EOS_FLEET_CONTROL_DE_ASISTENCIA_ABOPACK_PATH: "Control-De-Asistencia-Abopack",
+      EOS_FLEET_DONACIONES_PATH: "Donaciones",
     };
 
     const env: Record<string, string> = {
       EOS_PROJECT_ROOT: resolvedRoot,
     };
 
-    for (const [envKey, candidatePath] of Object.entries(defaultFleetCandidates)) {
+    for (const [envKey, candidateTarget] of Object.entries(defaultFleetCandidates)) {
       const override = fleetOverrides[envKey] || process.env[envKey];
       if (override && override.trim().length > 0) {
         env[envKey] = path.resolve(override.trim());
-      } else if (fs.existsSync(candidatePath)) {
-        env[envKey] = path.resolve(candidatePath);
+      } else if (envKey === "EOS_FLEET_EOS_SYSTEM_PATH") {
+        env[envKey] = resolvedRoot;
+      } else {
+        for (const root of candidateRoots) {
+          const cand = path.join(root, candidateTarget);
+          if (fs.existsSync(cand)) {
+            env[envKey] = path.resolve(cand);
+            break;
+          }
+        }
       }
     }
 
