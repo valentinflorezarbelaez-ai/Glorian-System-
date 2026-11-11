@@ -917,6 +917,38 @@ console.log(`¿Elegido como líder?     : ${eleccion.isElected}`);
 
 ---
 
+### Módulo 33: Motor de Árbol de Merkle Disperso (Sparse Merkle Tree - SMT) con Pruebas de No-Membresía (`EosSparseMerkleTreeCore`)
+
+**Propósito:** Almacenamiento autenticado de pares clave-valor sobre un trie binario de 256 niveles con direccionamiento criptográfico $\text{SHA256}(key)$ y pruebas sucintas tanto de membresía (inclusión) como de **no-membresía (exclusión)** sin dependencias externas (Ley V). Al precalcular y almacenar en memoria los hashes de subárboles vacíos ($Z_0 \dots Z_{256}$), el árbol disperso mantiene un coste de memoria proporcional únicamente al número de claves activas ($O(N \log 256)$) y genera compromisos de raíz canónicos deterministas independientes del orden de inserción. Permite a registros de identidad, listas de revocación (CRLs) y rollups descentralizados demostrar formalmente la ausencia de un registro o credencial en tiempo sub-milisegundo ($< 1$ ms).
+
+```ts
+import { EosSparseMerkleTreeCore } from "./src/core/eosSparseMerkleTreeCore.ts";
+
+// 1. Inicialización del SMT de 256 niveles
+const smt = new EosSparseMerkleTreeCore();
+
+// 2. Inserción de pares clave-valor autenticados
+smt.set("cert:alice-2026", "STATUS_ACTIVE");
+smt.set("cert:bob-2026", "STATUS_ACTIVE");
+console.log(`Hojas activas : ${smt.getLeafCount()}`); // 2
+console.log(`Raíz canónica : sha256:${smt.getRoot()}`);
+
+// 3. Generación y verificación de prueba de membresía
+const pruebaInclusion = smt.getProof("cert:alice-2026");
+console.log(`Tipo de prueba : ${pruebaInclusion.proofType}`); // "membership"
+const veredictoInclusion = smt.verifyProof(pruebaInclusion);
+console.log(`¿Membresía válida? : ${veredictoInclusion.valid}`); // true
+
+// 4. Generación y verificación de prueba criptográfica de NO-MEMBRESÍA (Exclusión)
+const pruebaExclusion = smt.getProof("cert:revocada-999");
+console.log(`Tipo de prueba : ${pruebaExclusion.proofType}`); // "non_membership"
+console.log(`Razón exclusión: ${pruebaExclusion.nonMembershipReason}`); // "EMPTY_SUBTREE" o "KEY_COLLISION"
+const veredictoExclusion = smt.verifyProof(pruebaExclusion);
+console.log(`¿Ausencia probada? : ${veredictoExclusion.valid}`); // true
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -973,6 +1005,9 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs vrf:eval [--alpha=S]`               | Evaluación de función aleatoria verificable ECVRF RFC 9381 (SPEC-217).                     |
 | `node bin/eos.mjs vrf:verify [--json]`                | Verificación no interactiva de prueba VRF y reconstrucción de beta en <2ms (SPEC-217).     |
 | `node bin/eos.mjs vrf:elect [--thresh=F]`             | Elección verificable e inmanipulable de líder de consenso mediante score VRF (SPEC-217).   |
+| `node bin/eos.mjs smt:set [--key=K] [--value=V]`      | Mutación autenticada de clave-valor en Sparse Merkle Tree (SPEC-218).                      |
+| `node bin/eos.mjs smt:prove [--key=K]`                | Genera prueba de membresía o no-membresía (exclusión) en tiempo O(log n) (SPEC-218).       |
+| `node bin/eos.mjs smt:verify [--key=K]`               | Verifica criptográficamente existencia o ausencia en SMT en sub-milisegundo (SPEC-218).    |
 | `node bin/eos.mjs metrics`                            | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                 | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`                | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |

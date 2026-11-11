@@ -1665,3 +1665,27 @@
   - `docs/plans/PLAN-102-VERIFIABLE-RANDOM-FUNCTION.md`
   - `docs/tasks/TASKS-102-VERIFIABLE-RANDOM-FUNCTION.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-SPARSE-MERKLE-TREE-218
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Sparse Merkle Tree (SMT) with Non-Membership Proofs Core (`SPEC-218`, `CHANGE-103`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "continuemos si")
+- **Scope**:
+  1. Implement Layer-0 SMT types in `src/core/eosSparseMerkleTreeCore.types.ts`.
+  2. Implement Layer-0 SMT Engine in `src/core/eosSparseMerkleTreeCore.ts`.
+  3. Subpath export `"./smt"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian smt:set`, `glorian smt:prove`, `glorian smt:verify` in `bin/commands/cliSmtMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "smt_set"`, `action: "smt_prove"`, `action: "smt_verify"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosSparseMerkleTreeCore.test.mjs` (BDD-1109..BDD-1113).
+  8. Add test step #30 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 33 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 213 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-103-SPARSE-MERKLE-TREE.md`
+  - `openspec/changes/CHANGE-103-SPARSE-MERKLE-TREE.md`
+  - `openspec/specs/SPEC-218-SPARSE-MERKLE-TREE.md`
+  - `docs/plans/PLAN-103-SPARSE-MERKLE-TREE.md`
+  - `docs/tasks/TASKS-103-SPARSE-MERKLE-TREE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

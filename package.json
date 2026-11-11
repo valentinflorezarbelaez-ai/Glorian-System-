@@ -42,6 +42,7 @@
     "./crdt": "./src/core/eosCrdtStateSyncCore.ts",
     "./mmr": "./src/core/eosMerkleMountainRangeCore.ts",
     "./vrf": "./src/core/eosVerifiableRandomFunctionCore.ts",
+    "./smt": "./src/core/eosSparseMerkleTreeCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

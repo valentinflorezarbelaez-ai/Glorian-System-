@@ -562,6 +562,9 @@ Uso Universal Exhaustivo:
   eos vrf:eval [--alpha=S]     Evaluación de función aleatoria verificable ECVRF RFC 9381 (SPEC-217)
   eos vrf:verify [--json]      Verificación no interactiva de prueba VRF y reconstrucción de beta en <2ms
   eos vrf:elect [--thresh=F]   Elección verificable e inmanipulable de líder de consenso mediante score VRF
+  eos smt:set [--key=K]        Mutación autenticada de clave-valor en Sparse Merkle Tree (SPEC-218)
+  eos smt:prove [--key=K]      Generación de prueba de membresía o no-membresía (exclusión) O(log n)
+  eos smt:verify [--key=K]     Verificación criptográfica de existencia o ausencia en sub-milisegundo
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

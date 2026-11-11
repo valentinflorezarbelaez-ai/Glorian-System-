@@ -200,3 +200,5 @@ export * from "./eosMerkleMountainRangeCore.ts";
 export * from "./eosMerkleMountainRangeCore.types.ts";
 export * from "./eosVerifiableRandomFunctionCore.ts";
 export * from "./eosVerifiableRandomFunctionCore.types.ts";
+export * from "./eosSparseMerkleTreeCore.ts";
+export * from "./eosSparseMerkleTreeCore.types.ts";

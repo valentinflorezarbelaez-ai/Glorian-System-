@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-11T19:20:08.664Z",
-  "totalSpecs": 212,
-  "catalogSha256": "faababe69138d3826a0bd0337d7474e7015d38f3b583e3ab51348fe570bd3187",
+  "totalSpecs": 213,
+  "catalogSha256": "83d5b4294f0fd5e8052fa5fafb9a508fb56a142a2ee06dd2a6df059bfbad1590",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1910,6 +1910,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-217-VERIFIABLE-RANDOM-FUNCTION.md",
       "sha256": "38f0be9f9bdce63268dce034fd1652e00e9803892b1f3ecf14acd1baf20f9d4b"
+    },
+    {
+      "id": "SPEC-218",
+      "title": "Layer-0 Sparse Merkle Tree (SMT) with Non-Membership Proofs Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-218-SPARSE-MERKLE-TREE.md",
+      "sha256": "d5200be7689b375f7a99b45c49af27961023bf67ea49a10fab4333767217073e"
     }
   ]
 }

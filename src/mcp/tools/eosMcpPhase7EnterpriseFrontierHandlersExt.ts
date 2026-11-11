@@ -5,6 +5,7 @@
  */
 
 import { EosVerifiableRandomFunctionCore } from "../../core/eosVerifiableRandomFunctionCore.ts";
+import { EosSparseMerkleTreeCore } from "../../core/eosSparseMerkleTreeCore.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
@@ -57,6 +58,49 @@ export function dispatchPhase7FrontierActionExt(
       threshold: electRes.threshold,
       beta: electRes.beta,
       receipt: electRes.receipt,
+    };
+  }
+  if (action === "smt_set") {
+    const smt = new EosSparseMerkleTreeCore();
+    const key = typeof args?.key === "string" ? args.key : "mcp-key";
+    const value = typeof args?.value === "string" ? args.value : "mcp-value";
+    const setRes = smt.set(key, value);
+    return {
+      action: "smt_set",
+      key,
+      value,
+      root: setRes.root,
+      leafCount: setRes.leafCount,
+      receipt: setRes.receipt,
+    };
+  }
+  if (action === "smt_prove") {
+    const smt = new EosSparseMerkleTreeCore();
+    smt.set("cert-001", "active");
+    smt.set("cert-002", "revoked");
+    const key = typeof args?.key === "string" ? args.key : "cert-001";
+    const proof = smt.getProof(key);
+    return {
+      action: "smt_prove",
+      key,
+      proofType: proof.proofType,
+      value: proof.value,
+      root: proof.root,
+      siblingCount: proof.siblings.length,
+    };
+  }
+  if (action === "smt_verify") {
+    const smt = new EosSparseMerkleTreeCore();
+    smt.set("cert-001", "active");
+    const key = typeof args?.key === "string" ? args.key : "cert-001";
+    const proof = smt.getProof(key);
+    const verifyRes = smt.verifyProof(proof);
+    return {
+      action: "smt_verify",
+      valid: verifyRes.valid,
+      proofType: verifyRes.proofType,
+      verificationTimeMs: verifyRes.verificationTimeMs,
+      receipt: verifyRes.receipt,
     };
   }
   return undefined;

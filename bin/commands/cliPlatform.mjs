@@ -659,6 +659,7 @@ import { handleZkR1csCommands } from "./cliZkR1csMesh.mjs";
 import { handleCrdtCommands } from "./cliCrdtMesh.mjs";
 import { handleMmrCommands } from "./cliMmrMesh.mjs";
 import { handleVrfCommands } from "./cliVrfMesh.mjs";
+import { handleSmtCommands } from "./cliSmtMesh.mjs";
 
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
@@ -672,5 +673,6 @@ export async function handlePlatformCommands(commandContext) {
   if (await handleCrdtCommands(commandContext)) return true;
   if (await handleMmrCommands(commandContext)) return true;
   if (await handleVrfCommands(commandContext)) return true;
+  if (await handleSmtCommands(commandContext)) return true;
   return false;
 }
