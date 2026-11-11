@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
-  "totalSpecs": 192,
-  "catalogSha256": "7eea052fbe74c5f00a50b5b1947236a6b6047e2ea317dc0303ca024c0059b7f3",
+  "totalSpecs": 193,
+  "catalogSha256": "907538a4878f7f62077b364c24709307873917ba989bfb38e45a37b32ca45927",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1730,6 +1730,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-197-ZERO-KNOWLEDGE-STATE-PROOF.md",
       "sha256": "b897cdb024ded3a43f7e69ca642506cae992d2caa68d1c8c09ec2a314bf116e7"
+    },
+    {
+      "id": "SPEC-198",
+      "title": "Hermetic Single-Executable Application (SEA) Binary Compiler",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-198-HERMETIC-SEA-COMPILER.md",
+      "sha256": "f8d33be9ab13e974784e1fab82402e1c7c752d0b7ea64a5896dd6d13cbadaa71"
     }
   ]
 }

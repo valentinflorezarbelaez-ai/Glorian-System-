@@ -27,6 +27,7 @@ import { EosUniversalCodeRemediator } from "../../core/eosUniversalCodeRemediato
 import { EosDynamicFuzzingOracle } from "../../core/eosDynamicFuzzingOracle.ts";
 import { EosSwarmAdversarialArena } from "../../core/eosSwarmAdversarialArena.ts";
 import { EosZkStateProof } from "../../core/eosZkStateProof.ts";
+import { EosHermeticSeaCompiler } from "../../core/eosHermeticSeaCompiler.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -446,6 +447,15 @@ export function dispatchPhase7VerificationCase(
         return {
           verified: EosZkStateProof.verifyInclusionProof(proof, publicRoot),
         };
+      }
+      if (action === "compile_sea") {
+        const dryRun = Boolean(args?.dryRun);
+        const targetPlatform = typeof args?.targetPlatform === "string" ? args.targetPlatform.trim() : undefined;
+        return EosHermeticSeaCompiler.compileStandaloneBinary({
+          projectRoot: deps.projectRoot,
+          dryRun,
+          targetPlatform,
+        });
       }
       if (action === "list") {
         return {

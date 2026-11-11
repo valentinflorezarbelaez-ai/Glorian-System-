@@ -139,3 +139,4 @@ export * from "./eosUniversalCodeRemediator.ts";
 export * from "./eosDynamicFuzzingOracle.ts";
 export * from "./eosSwarmAdversarialArena.ts";
 export * from "./eosZkStateProof.ts";
+export * from "./eosHermeticSeaCompiler.ts";

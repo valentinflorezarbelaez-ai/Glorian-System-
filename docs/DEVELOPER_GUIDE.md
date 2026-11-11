@@ -347,24 +347,46 @@ console.log(`¿Prueba ZK válida?      : ${verified}`);
 
 ---
 
+### Módulo 13: Compilador Hermético de Ejecutable Único (SEA) (`EosHermeticSeaCompiler`)
+
+**Propósito:** Síntesis determinista de binarios nativos autónomos auto-contenidos (Single-Executable Applications / SEA) para despliegue en entornos soberanos, air-gapped o distroless. Clona el runtime del host, inyecta el blob de la aplicación, sella con firma digital asimétrica Ed25519, emite atestación de procedencia in-toto v1.0 / SLSA Nivel 4 y genera SBOM CycloneDX v1.5 con 0 dependencias externas en tiempo de ejecución (Ley V).
+
+```ts
+import { EosHermeticSeaCompiler } from "./src/core/eosHermeticSeaCompiler.ts";
+
+const result = EosHermeticSeaCompiler.compileStandaloneBinary({
+  dryRun: true, // o false para sintetizar el ejecutable real en dist/
+  targetPlatform: "linux-x64",
+});
+
+console.log(`Binario generado   : ${result.binaryPath}`);
+console.log(`Digest SHA-256     : sha256:${result.sha256}`);
+console.log(`Firma Ed25519      : ${result.signaturePath}`);
+console.log(`SLSA Nivel 4       : ${result.provenancePath}`);
+console.log(`Recibo Compilador  : sha256:${result.sha256Receipt}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
 
-| Comando                                         | Descripción                                                                               |
-| :---------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| `node bin/eos.mjs help`                         | Muestra el menú completo de comandos disponibles.                                         |
-| `node bin/eos.mjs enterprise:health`            | Audita la salud del sistema y emite tabla de estado con recibo SHA-256.                   |
-| `node bin/eos.mjs enterprise:health --json`     | Emite el reporte de salud en formato JSON machine-readable para CI/CD.                    |
-| `node bin/eos.mjs doctor [ruta] [--write-ci]`   | Diagnostica los 5 pilares Soundcheck (0-100) y opcionalmente sintetiza pipeline CI.       |
-| `node bin/eos.mjs remediate [ruta] [--dry-run]` | Auto-remedia el repositorio: genera .gitignore, pruebas smoke, CI y gobernanza.           |
-| `node bin/eos.mjs fuzz [--iterations=N]`        | Fuzzing dinámico guiado por cobertura sobre funciones y primitivas del sistema.           |
-| `node bin/eos.mjs arena [accion] [--rounds=N]`  | Torneo adversario multi-agente bajo consenso BFT 3f+1 (Red vs Blue vs White).             |
-| `node bin/eos.mjs zk:prove [--spec=ID]`         | Genera y verifica prueba Merkle de Conocimiento Cero (ZKP) para un requisito o spec.      |
-| `node bin/eos.mjs metrics`                      | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
-| `node bin/eos.mjs guard [directorio]`           | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
-| `node bin/eos.mjs flow inspect <ruta>`          | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |
-| `node bin/eos.mjs worktree list`                | Lista los árboles de trabajo (_worktrees_) aislados de Git.                               |
+| Comando                                             | Descripción                                                                               |
+| :-------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `node bin/eos.mjs help`                             | Muestra el menú completo de comandos disponibles.                                         |
+| `node bin/eos.mjs enterprise:health`                | Audita la salud del sistema y emite tabla de estado con recibo SHA-256.                   |
+| `node bin/eos.mjs enterprise:health --json`         | Emite el reporte de salud en formato JSON machine-readable para CI/CD.                    |
+| `node bin/eos.mjs doctor [ruta] [--write-ci]`       | Diagnostica los 5 pilares Soundcheck (0-100) y opcionalmente sintetiza pipeline CI.       |
+| `node bin/eos.mjs remediate [ruta] [--dry-run]`     | Auto-remedia el repositorio: genera .gitignore, pruebas smoke, CI y gobernanza.           |
+| `node bin/eos.mjs fuzz [--iterations=N]`            | Fuzzing dinámico guiado por cobertura sobre funciones y primitivas del sistema.           |
+| `node bin/eos.mjs arena [accion] [--rounds=N]`      | Torneo adversario multi-agente bajo consenso BFT 3f+1 (Red vs Blue vs White).             |
+| `node bin/eos.mjs zk:prove [--spec=ID]`             | Genera y verifica prueba Merkle de Conocimiento Cero (ZKP) para un requisito o spec.      |
+| `node bin/eos.mjs compile [plataforma] [--dry-run]` | Compila Glorian en ejecutable nativo hermético SEA (Ed25519 + SLSA Nivel 4).              |
+| `node bin/eos.mjs metrics`                          | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
+| `node bin/eos.mjs guard [directorio]`               | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
+| `node bin/eos.mjs flow inspect <ruta>`              | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |
+| `node bin/eos.mjs worktree list`                    | Lista los árboles de trabajo (_worktrees_) aislados de Git.                               |
 
 ---
 

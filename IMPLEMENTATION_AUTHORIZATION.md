@@ -1221,3 +1221,23 @@
   - `docs/plans/PLAN-082-ZERO-KNOWLEDGE-STATE-PROOF.md`
   - `docs/tasks/TASKS-082-ZERO-KNOWLEDGE-STATE-PROOF.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-HERMETIC-SEA-198
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Hermetic Single-Executable Application (SEA) Binary Compiler (`SPEC-198`, `CHANGE-083`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “dale vamos con toda”)
+- **Scope**:
+  1. Implement Layer-0 Hermetic SEA binary compiler `src/core/eosHermeticSeaCompiler.ts`.
+  2. Subpath export `"./compiler"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI command `glorian compile [platform]` in `bin/commands/cliPlatform.mjs`.
+  5. Wire MCP action `action: "compile_sea"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosHermeticSeaCompiler.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-083-HERMETIC-SEA-COMPILER.md`
+  - `openspec/changes/CHANGE-083-HERMETIC-SEA-COMPILER.md`
+  - `openspec/specs/SPEC-198-HERMETIC-SEA-COMPILER.md`
+  - `docs/plans/PLAN-083-HERMETIC-SEA-COMPILER.md`
+  - `docs/tasks/TASKS-083-HERMETIC-SEA-COMPILER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

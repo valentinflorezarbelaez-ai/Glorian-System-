@@ -779,6 +779,54 @@ async function cmd_zk_prove_138(commandContext) {
 HANDLERS["zk:prove"] = cmd_zk_prove_138;
 HANDLERS["zk:attest"] = cmd_zk_prove_138;
 
+async function cmd_compile_139(commandContext) {
+  const { args, command, root } = commandContext;
+  const isJson = args.includes("--json");
+  const dryRun = args.includes("--dry-run");
+  const noSign = args.includes("--no-sign");
+  const candidatePlatform = args.filter((a) => !a.startsWith("-") && a !== command).join(" ");
+  const targetPlatform = candidatePlatform || `${process.platform}-${process.arch}`;
+
+  const { EosHermeticSeaCompiler } = await import("../../src/core/eosHermeticSeaCompiler.ts");
+  const result = EosHermeticSeaCompiler.compileStandaloneBinary({
+    projectRoot: root,
+    targetPlatform,
+    dryRun,
+    sign: !noSign,
+  });
+
+  if (isJson) {
+    console.log(JSON.stringify(result, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN HERMETIC SEA BINARY COMPILER (SPEC-198)              `);
+  console.log(`===============================================================`);
+  console.log(`  Target Platform  : ${result.targetPlatform}`);
+  console.log(`  Mode             : ${result.dryRun ? "SIMULATION (DRY-RUN)" : "HERMETIC NATIVE SYNTHESIS"}`);
+  console.log(`  Binary Path      : ${result.binaryPath}`);
+  console.log(
+    `  Binary Size      : ${(result.binarySizeBytes / (1024 * 1024)).toFixed(2)} MB (${result.binarySizeBytes} bytes)`,
+  );
+  console.log(`  Binary SHA-256   : sha256:${result.sha256}`);
+  console.log(`  SEA Blob Digest  : sha256:${result.blobSha256}`);
+  if (result.signaturePath) {
+    console.log(`  Ed25519 Sig      : ${result.signaturePath}`);
+  }
+  if (result.provenancePath) {
+    console.log(`  SLSA Provenance  : ${result.provenancePath} (in-toto v1.0 Level-4)`);
+  }
+  if (result.sbomPath) {
+    console.log(`  CycloneDX SBOM   : ${result.sbomPath} (v1.5, 0 runtime dependencies)`);
+  }
+  console.log(`  Compiler Receipt : sha256:${result.sha256Receipt}`);
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["compile"] = cmd_compile_139;
+HANDLERS["sea:compile"] = cmd_compile_139;
+
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {

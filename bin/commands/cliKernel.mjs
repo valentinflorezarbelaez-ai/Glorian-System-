@@ -519,6 +519,7 @@ Uso Universal Exhaustivo:
   eos fuzz [--iterations=N]      Fuzzing dinámico guiado por cobertura (números, unicode, objetos)
   eos arena [accion] [--rounds=N] Torneo adversario multi-agente bajo consenso BFT (Red/Blue/White)
   eos zk:prove [--spec=ID]       Atestación de estado Merkle de Conocimiento Cero (ZKP)
+  eos compile [plataforma] [--dry-run] Compila ejecutable nativo hermético SEA (Node 24)
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);
