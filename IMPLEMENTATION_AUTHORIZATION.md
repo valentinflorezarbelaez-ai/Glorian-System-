@@ -1181,3 +1181,23 @@
   - `docs/plans/PLAN-080-DYNAMIC-FUZZING-ORACLE.md`
   - `docs/tasks/TASKS-080-DYNAMIC-FUZZING-ORACLE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-SWARM-ARENA-196
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Multi-Agent Holographic Swarm & Adversarial Arena (`SPEC-196`, `CHANGE-081`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “dale con toda si”)
+- **Scope**:
+  1. Implement Layer-0 multi-agent adversarial arena `src/core/eosSwarmAdversarialArena.ts`.
+  2. Subpath export `"./arena-swarm"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI command `glorian arena [target]` in `bin/commands/cliPlatform.mjs`.
+  5. Wire MCP action `action: "arena"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosSwarmAdversarialArena.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-081-SWARM-ADVERSARIAL-ARENA.md`
+  - `openspec/changes/CHANGE-081-SWARM-ADVERSARIAL-ARENA.md`
+  - `openspec/specs/SPEC-196-SWARM-ADVERSARIAL-ARENA.md`
+  - `docs/plans/PLAN-081-SWARM-ADVERSARIAL-ARENA.md`
+  - `docs/tasks/TASKS-081-SWARM-ADVERSARIAL-ARENA.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

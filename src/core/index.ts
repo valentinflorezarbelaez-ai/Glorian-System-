@@ -137,3 +137,4 @@ export * from "./eosSlsaSupplyChainAttestation.ts";
 export * from "./eosUniversalProjectDoctor.ts";
 export * from "./eosUniversalCodeRemediator.ts";
 export * from "./eosDynamicFuzzingOracle.ts";
+export * from "./eosSwarmAdversarialArena.ts";

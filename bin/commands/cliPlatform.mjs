@@ -702,6 +702,52 @@ async function cmd_fuzz_136(commandContext) {
 HANDLERS["fuzz"] = cmd_fuzz_136;
 HANDLERS["fuzz:target"] = cmd_fuzz_136;
 
+async function cmd_arena_137(commandContext) {
+  const { args, command } = commandContext;
+  const isJson = args.includes("--json");
+  const roundArg = args.find((a) => a.startsWith("--rounds="));
+  const rounds = roundArg ? parseInt(roundArg.split("=")[1], 10) : 3;
+  const candidateTarget = args.filter((a) => !a.startsWith("-") && a !== command).join(" ");
+  const target = candidateTarget || "npm test";
+
+  const { EosSwarmAdversarialArena } = await import("../../src/core/eosSwarmAdversarialArena.ts");
+  const report = EosSwarmAdversarialArena.executeTournament(target, rounds);
+
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN MULTI-AGENT HOLOGRAPHIC SWARM ARENA (SPEC-196)      `);
+  console.log(`===============================================================`);
+  console.log(`  Tournament ID    : ${report.tournamentId}`);
+  console.log(`  Target Action    : ${report.targetAction}`);
+  console.log(`  Swarm Nodes      : ${report.participatingAgents.length} Agents (BFT 3f+1 Quorum)`);
+  console.log(
+    `  Rounds Total     : ${report.totalRounds} (Mitigated: ${report.mitigatedRounds} | Breaches: ${report.breachRounds})`,
+  );
+  console.log(`  Resilience Score : ${report.resilienceScore} / 100`);
+  console.log(
+    `  BFT Verdict      : ${report.bftVerdict === "CONSENSUS_HARDENED" ? "✔ CONSENSUS_HARDENED" : "✖ " + report.bftVerdict}`,
+  );
+  console.log(`  Receipt SHA-256  : sha256:${report.sha256Receipt}`);
+  console.log(`---------------------------------------------------------------`);
+  console.log(`  TOURNAMENT ENGAGEMENT ROUNDS:`);
+  for (const r of report.rounds) {
+    const symbol = r.penetrated ? "✖" : "✔";
+    console.log(
+      `   ${symbol} [Ronda ${r.roundNumber}] ${r.attack.category.padEnd(18)} vs ${r.defense.strategy.padEnd(20)} [${r.arbiterVerdict}]`,
+    );
+    console.log(`     ↳ Attack : ${r.attack.payload.slice(0, 48)}...`);
+    console.log(`     ↳ Defense: ${r.defense.invariantAssertion}`);
+  }
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["arena"] = cmd_arena_137;
+HANDLERS["swarm:arena"] = cmd_arena_137;
+
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {

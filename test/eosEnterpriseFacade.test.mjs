@@ -305,5 +305,16 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(fuzzRes.totalIterations, 20);
     assert.equal(fuzzRes.stabilityScore, 100);
     assert.equal(fuzzRes.crashCount, 0);
+
+    // 8. arena
+    const arenaReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "arena", target: "npm test", rounds: 2 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(arenaReport.totalRounds, 2);
+    assert.equal(typeof arenaReport.resilienceScore, "number");
+    assert.ok(arenaReport.participatingAgents.length >= 4);
+    assert.equal(arenaReport.bftVerdict, "CONSENSUS_HARDENED");
   });
 });

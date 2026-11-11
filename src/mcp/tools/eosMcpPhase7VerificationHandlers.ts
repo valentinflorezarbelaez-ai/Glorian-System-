@@ -25,6 +25,7 @@ import { EosDelayTolerantMesh } from "../../core/eosDelayTolerantMesh.ts";
 import { EosUniversalProjectDoctor } from "../../core/eosUniversalProjectDoctor.ts";
 import { EosUniversalCodeRemediator } from "../../core/eosUniversalCodeRemediator.ts";
 import { EosDynamicFuzzingOracle } from "../../core/eosDynamicFuzzingOracle.ts";
+import { EosSwarmAdversarialArena } from "../../core/eosSwarmAdversarialArena.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -427,6 +428,12 @@ export function dispatchPhase7VerificationCase(
           String(args?.targetName || "kernel:pureSha256"),
           { iterations, corpusType },
         );
+      }
+      if (action === "arena") {
+        const rounds = typeof args?.rounds === "number" ? Math.floor(args.rounds) : 3;
+        const target =
+          typeof args?.target === "string" && args.target.trim().length > 0 ? args.target.trim() : "npm test";
+        return EosSwarmAdversarialArena.executeTournament(target, rounds);
       }
       if (action === "list") {
         return {

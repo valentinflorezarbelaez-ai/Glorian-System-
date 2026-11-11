@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
-  "totalSpecs": 190,
-  "catalogSha256": "00d9c52274e9f13b5d7905c7eafdbc7e48e578bad4674480ad8346c7a22da8b6",
+  "totalSpecs": 191,
+  "catalogSha256": "105cdeff36d7d2269483c1f0e40e606a1723ece86363ef3f03502657281313c1",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1712,6 +1712,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-195-DYNAMIC-FUZZING-ORACLE.md",
       "sha256": "d22525469f8fde7a14c70cb51261236b06f02e959e0d24f3ff6e492ec99362eb"
+    },
+    {
+      "id": "SPEC-196",
+      "title": "Multi-Agent Holographic Swarm & Adversarial Arena",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-196-SWARM-ADVERSARIAL-ARENA.md",
+      "sha256": "fcf14d39bb0ca4a8f4417a3fbdaafc5a877f64e348bddecfbe552ab3ddda94a1"
     }
   ]
 }

@@ -20,6 +20,7 @@
     "./doctor": "./src/core/eosUniversalProjectDoctor.ts",
     "./remediator": "./src/core/eosUniversalCodeRemediator.ts",
     "./fuzzing": "./src/core/eosDynamicFuzzingOracle.ts",
+    "./arena-swarm": "./src/core/eosSwarmAdversarialArena.ts",
     "./package.json": "./package.json"
   },
   "bin": {

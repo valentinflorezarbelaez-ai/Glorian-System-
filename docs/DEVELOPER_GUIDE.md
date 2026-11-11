@@ -315,6 +315,21 @@ console.log(`Colapsos detectados    : ${resultado.crashCount}`);
 
 ---
 
+### Módulo 11: Arena Adversaria Multi-Agente (`EosSwarmAdversarialArena`)
+
+**Propósito:** Torneos adversarios de auto-auditoría basados en Teoría de Juegos (Palantir AIP, Lockheed Skunk Works Swarms Vectis, DeepMind): despliega agentes Rojo (Atacante), Azul (Defensor) y Blanco (Árbitro) evaluando acciones bajo consenso Bizantino BFT ($3f+1$).
+
+```ts
+import { EosSwarmAdversarialArena } from "./src/core/eosSwarmAdversarialArena.ts";
+
+const torneo = EosSwarmAdversarialArena.executeTournament("git push origin main", 3);
+console.log(`Veredicto BFT           : ${torneo.bftVerdict}`);
+console.log(`Puntaje de Resiliencia  : ${torneo.resilienceScore} / 100`);
+console.log(`Rondas mitigadas        : ${torneo.mitigatedRounds} / ${torneo.totalRounds}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -327,6 +342,7 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs doctor [ruta] [--write-ci]`   | Diagnostica los 5 pilares Soundcheck (0-100) y opcionalmente sintetiza pipeline CI.       |
 | `node bin/eos.mjs remediate [ruta] [--dry-run]` | Auto-remedia el repositorio: genera .gitignore, pruebas smoke, CI y gobernanza.           |
 | `node bin/eos.mjs fuzz [--iterations=N]`        | Fuzzing dinámico guiado por cobertura sobre funciones y primitivas del sistema.           |
+| `node bin/eos.mjs arena [accion] [--rounds=N]`  | Torneo adversario multi-agente bajo consenso BFT 3f+1 (Red vs Blue vs White).             |
 | `node bin/eos.mjs metrics`                      | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
 | `node bin/eos.mjs guard [directorio]`           | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
 | `node bin/eos.mjs flow inspect <ruta>`          | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |
