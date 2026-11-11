@@ -1349,6 +1349,89 @@ HANDLERS["wasm:decompile"] = cmd_wasm_prover_146;
 HANDLERS["wasm:disasm"] = cmd_wasm_prover_146;
 HANDLERS["wasm:prove"] = cmd_wasm_prover_146;
 
+async function cmd_mcts_policy_value_147(commandContext) {
+  const { args, command } = commandContext;
+  const isJson = args.includes("--json");
+  const { EosMctsPolicyValueMesh } = await import("../../src/core/eosMctsPolicyValueMesh.ts");
+
+  const simArg = args.find((a) => a.startsWith("--simulations="));
+  const simulations = simArg ? parseInt(simArg.split("=")[1], 10) : 80;
+
+  const puctArg = args.find((a) => a.startsWith("--c-puct="));
+  const cPuct = puctArg ? parseFloat(puctArg.split("=")[1]) : 1.414;
+
+  const tempArg = args.find((a) => a.startsWith("--temp="));
+  const temperature = tempArg ? parseFloat(tempArg.split("=")[1]) : 0.0;
+
+  // Cloud Refactoring / Architecture Migration Domain
+  const problemName = args.filter((a) => !a.startsWith("-") && a !== command)[0] || "cloud_migration";
+
+  const initialState = {
+    id: "step_0_legacy_monolith",
+    legalActions: ["isolate_auth_service", "extract_payment_api", "shard_database", "deploy_edge_proxy"],
+    isTerminal: false,
+    metadata: { fitness: 0.1, step: 0 },
+  };
+
+  const transitionFn = (state, action) => {
+    const currentStep = (state.metadata?.step ?? 0) + 1;
+    const isTerminal = currentStep >= 4;
+
+    const actionRewards = {
+      isolate_auth_service: 0.25,
+      extract_payment_api: 0.35,
+      shard_database: 0.3,
+      deploy_edge_proxy: 0.2,
+      canary_rollout: 0.4,
+      cutover_traffic: 0.5,
+    };
+
+    const addedFitness = actionRewards[action] ?? 0.1;
+    const newFitness = Math.min(1.0, (state.metadata?.fitness ?? 0) + addedFitness);
+
+    return {
+      id: `step_${currentStep}_after_${action}`,
+      legalActions: isTerminal ? [] : ["canary_rollout", "shard_database", "cutover_traffic"],
+      isTerminal,
+      reward: isTerminal ? newFitness : undefined,
+      metadata: { fitness: newFitness, step: currentStep },
+    };
+  };
+
+  const mcts = new EosMctsPolicyValueMesh({ cPuct, simulations, temperature });
+  const result = mcts.search(initialState, transitionFn, simulations);
+
+  if (isJson) {
+    console.log(JSON.stringify(result, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN MCTS POLICY-VALUE HEURISTIC PLANNER (SPEC-204)       `);
+  console.log(`===============================================================`);
+  console.log(`  Problem Domain   : ${problemName}`);
+  console.log(`  Simulations Run  : ${result.totalSimulations} rollouts (Root Visits: ${result.rootVisits})`);
+  console.log(`  Exploration cPUCT: ${cPuct}`);
+  console.log(`  Selected Action  : ✔ ${result.bestAction}`);
+  console.log(`  Expected Value Q : ${result.expectedValue} (Scale: [-1.0, 1.0])`);
+  console.log(`  Visit Distribution Pi(a|s):`);
+  for (const [action, prob] of Object.entries(result.actionProbabilities)) {
+    console.log(`    - ${action.padEnd(25)}: ${(prob * 100).toFixed(1)}%`);
+  }
+  console.log(`  Optimal Trajectory Steps (${result.trajectory.steps.length} hops):`);
+  result.trajectory.steps.forEach((s) => {
+    console.log(`    [#${s.stepIndex}] State: ${s.stateId} -> Action: ${s.selectedAction} (Q: ${s.expectedValue})`);
+  });
+  console.log(`  Final State      : ${result.trajectory.finalStateId}`);
+  console.log(`  Cumulative Reward: ${result.trajectory.totalExpectedReward}`);
+  console.log(`  Decision Receipt : sha256:${result.sha256Receipt}`);
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["mcts:search"] = cmd_mcts_policy_value_147;
+HANDLERS["mcts:play"] = cmd_mcts_policy_value_147;
+HANDLERS["mcts:plan"] = cmd_mcts_policy_value_147;
+
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {

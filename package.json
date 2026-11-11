@@ -28,6 +28,7 @@
     "./vector": "./src/core/eosHnswVectorIndex.ts",
     "./knowledge-graph": "./src/core/eosTemporalKnowledgeGraph.ts",
     "./wasm-prover": "./src/core/eosWasmBytecodeDecompilerProver.ts",
+    "./mcts": "./src/core/eosMctsPolicyValueMesh.ts",
     "./package.json": "./package.json"
   },
   "bin": {

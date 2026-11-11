@@ -145,3 +145,4 @@ export * from "./eosGeneticAstSynthesizer.ts";
 export * from "./eosHnswVectorIndex.ts";
 export * from "./eosTemporalKnowledgeGraph.ts";
 export * from "./eosWasmBytecodeDecompilerProver.ts";
+export * from "./eosMctsPolicyValueMesh.ts";

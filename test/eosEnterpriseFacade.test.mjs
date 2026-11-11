@@ -428,5 +428,25 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(wasmProveReport.stackSafe, true);
     assert.equal(wasmProveReport.isPure, true);
     assert.ok(wasmProveReport.sha256Receipt.length === 64);
+
+    // 16. mcts_search & mcts_evaluate
+    const mctsEvalReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "mcts_evaluate", stateId: "eval_node", legalActions: ["act_x", "act_y"], metadata: { fitness: 0.5 } },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(mctsEvalReport.action, "mcts_evaluate");
+    assert.equal(mctsEvalReport.value, 0.5);
+    assert.ok(mctsEvalReport.sha256Receipt.length === 64);
+
+    const mctsSearchReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "mcts_search", simulations: 20 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(mctsSearchReport.action, "mcts_search");
+    assert.ok(mctsSearchReport.bestAction.length > 0);
+    assert.equal(mctsSearchReport.totalSimulations, 20);
+    assert.ok(mctsSearchReport.sha256Receipt.length === 64);
   });
 });

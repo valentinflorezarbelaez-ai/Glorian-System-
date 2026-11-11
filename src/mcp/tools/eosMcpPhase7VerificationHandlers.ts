@@ -33,6 +33,7 @@ import { EosGeneticAstSynthesizer } from "../../core/eosGeneticAstSynthesizer.ts
 import { EosHnswVectorIndex } from "../../core/eosHnswVectorIndex.ts";
 import { EosTemporalKnowledgeGraph } from "../../core/eosTemporalKnowledgeGraph.ts";
 import { EosWasmBytecodeDecompilerProver } from "../../core/eosWasmBytecodeDecompilerProver.ts";
+import { EosMctsPolicyValueMesh } from "../../core/eosMctsPolicyValueMesh.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -641,6 +642,59 @@ export function dispatchPhase7VerificationCase(
           action: "wasm_prove",
           target,
           ...proof,
+        };
+      }
+      if (action === "mcts_search") {
+        const simulations = typeof args?.simulations === "number" ? Math.floor(args.simulations) : 50;
+        const cPuct = typeof args?.cPuct === "number" ? args.cPuct : 1.414;
+        const temperature = typeof args?.temperature === "number" ? args.temperature : 0.0;
+
+        const initialState = {
+          id: String(args?.stateId || "root_state"),
+          legalActions: Array.isArray(args?.legalActions)
+            ? args.legalActions.map(String)
+            : ["action_a", "action_b", "action_c"],
+          isTerminal: false,
+          metadata: { step: 0, fitness: 0.1 },
+        };
+
+        const transitionFn = (state: any, action: string) => {
+          const step = (state.metadata?.step ?? 0) + 1;
+          const isTerminal = step >= 3;
+          const addedReward = action === "action_b" ? 0.4 : 0.2;
+          const fitness = Math.min(1.0, (state.metadata?.fitness ?? 0) + addedReward);
+          return {
+            id: `${state.id}->${action}`,
+            legalActions: isTerminal ? [] : ["action_a", "action_b"],
+            isTerminal,
+            reward: isTerminal ? fitness : undefined,
+            metadata: { step, fitness },
+          };
+        };
+
+        const mcts = new EosMctsPolicyValueMesh({ cPuct, simulations, temperature });
+        const result = mcts.search(initialState, transitionFn, simulations);
+        return {
+          action: "mcts_search",
+          ...result,
+        };
+      }
+      if (action === "mcts_evaluate") {
+        const state = {
+          id: String(args?.stateId || "eval_state"),
+          legalActions: Array.isArray(args?.legalActions) ? args.legalActions.map(String) : ["left", "right"],
+          isTerminal: Boolean(args?.isTerminal),
+          reward: typeof args?.reward === "number" ? args.reward : undefined,
+          metadata: isPlainRecord(args?.metadata) ? args.metadata : {},
+        };
+        const mcts = new EosMctsPolicyValueMesh();
+        const evaluation = mcts.evaluateState(state);
+        const receipt = pureSha256(`MCTS_EVAL:${state.id}:${evaluation.value}:${JSON.stringify(evaluation.priors)}`);
+        return {
+          action: "mcts_evaluate",
+          stateId: state.id,
+          ...evaluation,
+          sha256Receipt: receipt,
         };
       }
       if (action === "list") {

@@ -1341,3 +1341,23 @@
   - `docs/plans/PLAN-088-WASM-DECOMPILER-PROVER.md`
   - `docs/tasks/TASKS-088-WASM-DECOMPILER-PROVER.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-MCTS-POLICY-VALUE-204
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Monte Carlo Tree Search Policy-Value Mesh (`SPEC-204`, `CHANGE-089`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “dale con toda”)
+- **Scope**:
+  1. Implement Layer-0 MCTS Policy-Value Mesh engine `src/core/eosMctsPolicyValueMesh.ts`.
+  2. Subpath export `"./mcts"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI commands `glorian mcts:search` and `glorian mcts:play` in `bin/commands/cliPlatform.mjs`.
+  5. Wire MCP actions `action: "mcts_search"` and `action: "mcts_evaluate"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosMctsPolicyValueMesh.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-089-MCTS-POLICY-VALUE-MESH.md`
+  - `openspec/changes/CHANGE-089-MCTS-POLICY-VALUE-MESH.md`
+  - `openspec/specs/SPEC-204-MCTS-POLICY-VALUE-MESH.md`
+  - `docs/plans/PLAN-089-MCTS-POLICY-VALUE-MESH.md`
+  - `docs/tasks/TASKS-089-MCTS-POLICY-VALUE-MESH.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

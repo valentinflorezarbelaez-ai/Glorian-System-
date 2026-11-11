@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-11T01:21:50.313Z",
-  "totalSpecs": 198,
-  "catalogSha256": "38f715509b885f4e65c21aed58ba3bcc2b9af19762fc95ce1dc295b167299fc1",
+  "timestampIso": "2026-11-11T01:31:25.064Z",
+  "totalSpecs": 199,
+  "catalogSha256": "efd97d7925ae7477eba89ab78947efa17783b2fa82d039ab2e96b0f4315c255f",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1784,6 +1784,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-203-WASM-DECOMPILER-PROVER.md",
       "sha256": "2579cc6f3cdf2f049bcf55e343d00a4b1ca0fba83a79698fe7b0570c22a264e4"
+    },
+    {
+      "id": "SPEC-204",
+      "title": "Monte Carlo Tree Search Policy-Value Mesh",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-204-MCTS-POLICY-VALUE-MESH.md",
+      "sha256": "68dd4adb3bc4ca522aabfd1b407d4c4362c2ceeec731beab41584d6c64692ae7"
     }
   ]
 }

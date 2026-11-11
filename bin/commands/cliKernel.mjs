@@ -529,6 +529,8 @@ Uso Universal Exhaustivo:
   eos tkg:assert <s> <p> <o> Aserción de hechos cuadripolares bi-temporales con recibos inmutables
   eos wasm:decompile [target] Descompila bytecode WebAssembly a formato de texto WAT canónico (SPEC-203)
   eos wasm:prove [target]     Demostrador formal de seguridad de pila, límites de memoria y CFI en WASM
+  eos mcts:search [domain]   Planificador heurístico Monte Carlo Tree Search con red política-valor (SPEC-204)
+  eos mcts:play [domain]     Simulación interactiva de toma de decisiones estratégicas óptimas
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

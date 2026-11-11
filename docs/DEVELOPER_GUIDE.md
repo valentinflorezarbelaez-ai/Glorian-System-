@@ -518,6 +518,36 @@ console.log(`Sello criptográfico SHA-256        : ${proof.sha256Receipt}`);
 
 ---
 
+### Módulo 19: Orquestador Heurístico Monte Carlo Tree Search con Red Política-Valor (`EosMctsPolicyValueMesh`)
+
+**Propósito:** Planificación heurística autónoma y resolución de decisiones combinatorias complejas (migraciones de microservicios, optimización de topologías y síntesis de parches) inspirado en AlphaZero (Silver et al. 2017). Implementa selección guiada por árboles de confianza superior polinomiales (PUCT), evaluación dual de distribución de probabilidades previas $P(s, a)$ y valor de estado escalar $V(s) \in [-1, 1]$, retropropagación de recompensas acumuladas, muestreo con temperatura $\tau$ y recibos inmutables de decisión sellados con SHA-256 sin requerir dependencias externas de Deep Learning (Ley V).
+
+```ts
+import { EosMctsPolicyValueMesh } from "./src/core/eosMctsPolicyValueMesh.ts";
+
+const mcts = new EosMctsPolicyValueMesh({ simulations: 80, cPuct: 1.414, temperature: 0.0 });
+
+const initialState = {
+  id: "state_legacy_monolith",
+  legalActions: ["extract_auth", "shard_database", "deploy_canary"],
+  isTerminal: false,
+};
+
+const transitionFn = (state, action) => ({
+  id: `${state.id}->${action}`,
+  legalActions: ["cutover_traffic"],
+  isTerminal: true,
+  reward: action === "shard_database" ? 0.95 : 0.4,
+});
+
+const result = mcts.search(initialState, transitionFn);
+console.log(`Acción óptima seleccionada : ✔ ${result.bestAction}`);
+console.log(`Valor esperado Q          : ${result.expectedValue}`);
+console.log(`Recibo de decisión SHA-256: ${result.sha256Receipt}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -542,6 +572,8 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs tkg:assert <s> <p> <o>`            | Aserción de hechos cuadripolares bi-temporales con recibos criptográficos SHA-256.        |
 | `node bin/eos.mjs wasm:decompile [target] [--wat]`   | Descompila bytecode WebAssembly a formato de texto WAT canónico (SPEC-203).               |
 | `node bin/eos.mjs wasm:prove [target] [--json]`      | Demostrador formal de seguridad de pila, memoria y CFI en WASM (SPEC-203).                |
+| `node bin/eos.mjs mcts:search [problem]`             | Planificador heurístico Monte Carlo Tree Search con red política-valor (SPEC-204).        |
+| `node bin/eos.mjs mcts:play [problem]`               | Simulación interactiva de toma de decisiones estratégicas óptimas (SPEC-204).             |
 | `node bin/eos.mjs metrics`                           | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
 | `node bin/eos.mjs guard [directorio]`                | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
 | `node bin/eos.mjs flow inspect <ruta>`               | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |
