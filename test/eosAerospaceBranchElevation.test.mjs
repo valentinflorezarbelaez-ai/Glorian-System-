@@ -56,6 +56,8 @@ import {
   defaultFactoryPrincipal,
 } from "../src/core/eosBigTechProductFactory.ts";
 import { dispatchLegacyTool, LEGACY_TOOL_NAMES } from "../src/mcp/dispatch/eosLegacyDispatch.ts";
+import { RUNTIME_LEGACY_HANDLERS } from "../src/mcp/dispatch/eosLegacyRuntimeHandlers.ts";
+import { EosHnswVectorEngine } from "../src/core/eosHnswVectorEngine.ts";
 import { EosPlanetaryApexDoctrine } from "../src/core/eosPlanetaryApexDoctrine.ts";
 import { EosSpotifyAgenticFactory } from "../src/core/eosSpotifyAgenticFactory.ts";
 import { EosSentinelDaemon } from "../src/core/eosSentinelDaemon.ts";
@@ -1359,6 +1361,140 @@ describe("AEROSPACE BRANCH ELEVATION — MISSION CRITICAL SUITE", () => {
 
       assert.ok(LEGACY_TOOL_NAMES.length >= 90);
       assert.ok(progressCalls > 0);
+    });
+
+    it("exercises RUNTIME_LEGACY_HANDLERS branches comprehensively", () => {
+      const hnsw = new EosHnswVectorEngine({ dimensions: 4, metric: "cosine" });
+      const mockCtx = {
+        projectRoot: root,
+        hnsw,
+        resolveProjectPath: (v, k, def) => def || String(v),
+      };
+
+      // 1. eos_chaos_inject_eval
+      let progressFired = false;
+      const resChaos1 = RUNTIME_LEGACY_HANDLERS.eos_chaos_inject_eval(
+        mockCtx,
+        { experimentName: "custom-chaos", iterations: 5 },
+        () => {
+          progressFired = true;
+        },
+      );
+      assert.equal(resChaos1.status, "EVALUATED_AND_RESILIENT");
+      assert.ok(progressFired);
+      const resChaos2 = RUNTIME_LEGACY_HANDLERS.eos_chaos_inject_eval(mockCtx, {});
+      assert.equal(resChaos2.experimentName, "autonomous-mesh-chaos");
+
+      // 2. eos_hnsw_index_add
+      const resAdd1 = RUNTIME_LEGACY_HANDLERS.eos_hnsw_index_add(mockCtx, { id: "p1", text: "sample text" });
+      assert.equal(resAdd1.status, "INDEXED");
+      const resAdd2 = RUNTIME_LEGACY_HANDLERS.eos_hnsw_index_add(mockCtx, { id: "p2", vector: [0.1, 0.2, 0.3, 0.4] });
+      assert.equal(resAdd2.status, "INDEXED");
+      assert.throws(
+        () => RUNTIME_LEGACY_HANDLERS.eos_hnsw_index_add(mockCtx, { id: "p3" }),
+        /Must provide either 'text' or 'vector'/,
+      );
+
+      // 3. eos_vector_similarity
+      const resSimEuc = RUNTIME_LEGACY_HANDLERS.eos_vector_similarity(mockCtx, {
+        textA: "alpha",
+        textB: "beta",
+        metric: "euclidean",
+      });
+      assert.equal(resSimEuc.metric, "euclidean");
+      const resSimCos = RUNTIME_LEGACY_HANDLERS.eos_vector_similarity(mockCtx, {
+        textA: "alpha",
+        textB: "beta",
+        metric: "cosine",
+      });
+      assert.equal(resSimCos.metric, "cosine");
+
+      // 4. eos_sovereign_loop_run & stages
+      const resLoopStages = RUNTIME_LEGACY_HANDLERS.eos_sovereign_loop_stages(mockCtx, {});
+      assert.equal(resLoopStages.totalStages, 21);
+      const resLoopRun = RUNTIME_LEGACY_HANDLERS.eos_sovereign_loop_run(
+        mockCtx,
+        {
+          projectId: "test",
+          title: "test-run",
+          userPrompt: "prompt",
+          authLevel: 2,
+        },
+        () => {},
+      );
+      assert.ok(resLoopRun.stageResults.length > 0);
+
+      // 5. eos_otel_query_traces & waterfall & otlp
+      const resTracesOk = RUNTIME_LEGACY_HANDLERS.eos_otel_query_traces(mockCtx, {
+        statusCode: "OK",
+        name: "span",
+        minDurationMs: 0,
+        limit: 5,
+      });
+      assert.ok(resTracesOk.sha256Receipt);
+      RUNTIME_LEGACY_HANDLERS.eos_otel_query_traces(mockCtx, { statusCode: "UNSET" });
+      RUNTIME_LEGACY_HANDLERS.eos_otel_query_traces(mockCtx, { statusCode: "INVALID" });
+      assert.throws(() => RUNTIME_LEGACY_HANDLERS.eos_otel_trace_waterfall(mockCtx, {}), /traceId is required/);
+      try {
+        RUNTIME_LEGACY_HANDLERS.eos_otel_trace_waterfall(mockCtx, { traceId: "nonexistent" });
+      } catch {
+        // Expected nonexistent trace to throw
+      }
+      const resOtlpAll = RUNTIME_LEGACY_HANDLERS.eos_otel_export_otlp(mockCtx, {});
+      assert.ok(resOtlpAll);
+      const resOtlpSingle = RUNTIME_LEGACY_HANDLERS.eos_otel_export_otlp(mockCtx, { traceId: "trace-1" });
+      assert.ok(resOtlpSingle);
+
+      // 6. eos_autonomous_heal_loop & ast_mutation & status
+      const resHealDry = RUNTIME_LEGACY_HANDLERS.eos_autonomous_heal_loop(mockCtx, {
+        diagnosticReport: "test err",
+        targetFile: "src/core/eosKernelPrimitives.ts",
+        archetype: "NULL_POINTER_GUARD",
+        dryRun: true,
+      });
+      assert.ok(resHealDry);
+      assert.throws(() => RUNTIME_LEGACY_HANDLERS.eos_ast_mutation_synthesize(mockCtx, {}), /targetFile is required/);
+      const resAst = RUNTIME_LEGACY_HANDLERS.eos_ast_mutation_synthesize(mockCtx, {
+        targetFile: "src/core/eosKernelPrimitives.ts",
+        archetype: "NULL_POINTER_GUARD",
+        symbol: "assertPrecondition",
+      });
+      assert.ok(resAst.sha256Receipt);
+      const resHealStat = RUNTIME_LEGACY_HANDLERS.eos_self_healing_status(mockCtx, {});
+      assert.equal(resHealStat.status, "AUTONOMOUS_HEALING_ACTIVE");
+
+      // 7. eos_ontology_query & quantum lattice & refactor execute
+      const resOntStatus = RUNTIME_LEGACY_HANDLERS.eos_ontology_query(mockCtx, { action: "status" });
+      assert.equal(resOntStatus.status, "ONTOLOGY_ACTIVE");
+      const resOntTrans = RUNTIME_LEGACY_HANDLERS.eos_ontology_query(mockCtx, {
+        action: "transitive",
+        startId: "root",
+      });
+      assert.ok(resOntTrans);
+      const resOntAsOf = RUNTIME_LEGACY_HANDLERS.eos_ontology_query(mockCtx, { action: "asOf", timestamp: 1000 });
+      assert.ok(resOntAsOf);
+      const resOntOther = RUNTIME_LEGACY_HANDLERS.eos_ontology_query(mockCtx, { action: "other" });
+      assert.equal(resOntOther.action, "other");
+
+      const resQuantum = RUNTIME_LEGACY_HANDLERS.eos_quantum_lattice_seal(mockCtx, { payload: "test" });
+      assert.ok(resQuantum);
+
+      const resRefactor = RUNTIME_LEGACY_HANDLERS.eos_refactor_execute(mockCtx, {});
+      assert.ok(resRefactor);
+
+      // 8. eos_dst_simulate & dbc_verify
+      const resSim = RUNTIME_LEGACY_HANDLERS.eos_dst_simulate(mockCtx, {
+        seed: 10,
+        steps: 5,
+        faultRate: 0.1,
+      });
+      assert.ok(resSim.totalStepsExecuted >= 0);
+      const resDbc = RUNTIME_LEGACY_HANDLERS.eos_dbc_verify(mockCtx, { sampleValue: 10 });
+      assert.equal(resDbc.dbcStatus, "VERIFIED");
+      assert.throws(
+        () => RUNTIME_LEGACY_HANDLERS.eos_dbc_verify(mockCtx, { sampleValue: -5 }),
+        /sampleValue must be strictly positive/,
+      );
     });
   });
 

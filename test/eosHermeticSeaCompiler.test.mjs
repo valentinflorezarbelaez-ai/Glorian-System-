@@ -26,8 +26,8 @@ describe("EosHermeticSeaCompiler (SPEC-198 / BDD-1009..BDD-1013)", () => {
 
     assert.ok(fs.existsSync(configPath));
     assert.equal(config.disableExperimentalSEAWarning, true);
-    assert.ok(config.main.endsWith("bin/sea-bootstrap.cjs"));
-    assert.ok(config.output.endsWith("dist/test-sea/glorian.blob"));
+    assert.ok(config.main.replace(/\\/g, "/").endsWith("bin/sea-bootstrap.cjs"));
+    assert.ok(config.output.replace(/\\/g, "/").endsWith("dist/test-sea/glorian.blob"));
 
     // 2. Compile SEA blob
     const blobResult = EosHermeticSeaCompiler.compileBlob({
@@ -72,8 +72,12 @@ describe("EosHermeticSeaCompiler (SPEC-198 / BDD-1009..BDD-1013)", () => {
 
     // Verify file permissions (0o755)
     const stats = fs.statSync(activeResult.binaryPath);
-    // On POSIX, executable bit should be present
-    assert.ok((stats.mode & 0o111) !== 0, "Binary must be executable");
+    // On POSIX, executable bit should be present (Windows NTFS does not support POSIX mode bits)
+    if (process.platform !== "win32") {
+      assert.ok((stats.mode & 0o111) !== 0, "Binary must be executable");
+    } else {
+      assert.ok(stats.size > 0, "Binary must exist and have non-zero size");
+    }
 
     // Clean up large test binary to conserve disk space
     try {

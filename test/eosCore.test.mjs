@@ -53,6 +53,14 @@ test("EOS Neural Vector Core — Term Frequency & Cosine Similarity Invariants",
   const sim31 = cosineSimilarity(v3, v1);
   assert.equal(sim13, sim31, "Cosine similarity must be symmetric");
 
+  // Positive term frequency weighting invariant (kills mutation L95)
+  const repeatedTf = computeTermFrequency(["soberana", "soberana", "flota"]);
+  assert.ok(repeatedTf.get("soberana") > 0, "Term frequency must be positive");
+  assert.ok(
+    repeatedTf.get("soberana") > repeatedTf.get("flota"),
+    "Repeated term frequency must exceed single occurrence",
+  );
+
   // Zero-allocation Float64Array SIMD dot product
   const f1 = new Float64Array([1, 0, 0, 1]);
   const f2 = new Float64Array([1, 0, 0, 1]);
@@ -73,6 +81,17 @@ test("EOS Neural Vector Store — Semantic Top-K Retrieval", () => {
     `Top result should match security or fleet audit, got: ${results[0].id}`,
   );
   assert.ok(results[0].score > 0, "Score must be positive");
+
+  // Hybrid search testing both vector cosine and lexical exact-token ranking
+  // With kRrf = 60 and rank 0 in both vector and lexical, score is 2 / 61 ≈ 0.03278.
+  // If either vectorScored (MUT-012 L208) or lexicalScored (MUT-013 L224) is mutated,
+  // score drops to <= 1 / 61 ≈ 0.01639.
+  const hybridResults = store.searchHybrid("auditar y escanear secretos en los repositorios", 2);
+  assert.ok(hybridResults.length > 0, "Hybrid search must return results");
+  assert.ok(
+    hybridResults[0].score > 0.02,
+    `Hybrid score must combine both vector and lexical ranking signals (expected > 0.02, got ${hybridResults[0].score})`,
+  );
 });
 
 test("EOS JARVIS Monad — Triple-Modular Redundancy (TMR) Consensus", () => {
@@ -364,7 +383,7 @@ export function computeStats(values: number[]): { mean: number } {
 });
 
 test("EOS Hybrid RAG Search (Vector Cosine + Lexical BM25 RRF Fusion)", async () => {
-  const { createDefaultEosKnowledgeStore } = await import("../src/core/eosNeuralVectorCore.ts");
+  const { createDefaultEosKnowledgeStore, EosNeuralVectorStore } = await import("../src/core/eosNeuralVectorCore.ts");
   const store = createDefaultEosKnowledgeStore();
 
   const hybridMatches = store.searchHybrid("auditoría de repositorios git y secretos", 2);
@@ -374,4 +393,14 @@ test("EOS Hybrid RAG Search (Vector Cosine + Lexical BM25 RRF Fusion)", async ()
     hybridMatches[0].id === "DOC-FLEET-AUDIT" || hybridMatches[0].id === "DOC-SECURITY-SAST",
     `Top hybrid match should match fleet audit or security, got: ${hybridMatches[0].id}`,
   );
+
+  // Custom store targeting vector and lexical scoring branches (kills mutations L208 and L224)
+  const customStore = new EosNeuralVectorStore();
+  customStore.addDocument("doc-vec-only", "soberania y algoritmos criptograficos avanzados", { category: "crypto" });
+  customStore.addDocument("doc-other-node", "dispositivos hardware completamente aislados", { category: "hardware" });
+
+  const vectorMatches = customStore.searchHybrid("soberania", 1);
+  assert.equal(vectorMatches.length, 1);
+  assert.equal(vectorMatches[0].id, "doc-vec-only");
+  assert.ok(vectorMatches[0].score > 0);
 });

@@ -70,7 +70,10 @@ async function probeProcessLiveness() {
     }
 
     const payload = await response.json();
-    const live = payload?.status === "UP" && payload?.service?.verificationScope === "PROCESS_LIVENESS_ONLY";
+    const live =
+      payload?.status === "UP" &&
+      (payload?.service?.verificationScope === "PROCESS_LIVENESS_ONLY" ||
+        payload?.service?.name === "eos-system-control-plane");
     console.log(`[PRODUCTION PROCESS] ${live ? "UP" : "UNVERIFIED"} (HTTP 200; process liveness only)`);
     return live;
   } catch (error) {

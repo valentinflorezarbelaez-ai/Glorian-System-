@@ -11,6 +11,8 @@
 
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -61,6 +63,7 @@ describe("EOS Big Tech Tier 1 Semantic Graph & Blast Radius Suite", () => {
       const symbols = extractExports(mockCode, "src/mock/comments.ts");
       assert.equal(symbols.length, 1);
       assert.equal(symbols[0].name, "activeFunction");
+      assert.equal(symbols[0].lineNumber, 4);
     });
   });
 
@@ -82,6 +85,27 @@ describe("EOS Big Tech Tier 1 Semantic Graph & Blast Radius Suite", () => {
         }
       }
       assert.ok(foundVectorNode, "Must index eosNeuralVectorCore");
+    });
+
+    it("hits semantic graph disk cache and detects dead symbols with predictive test fallback", () => {
+      const graph1 = new EosSemanticGraph(root);
+      const summary1 = graph1.getSummary();
+      assert.ok(summary1.totalFiles >= 20);
+
+      // Second instance should hit disk cache cleanly
+      const graph2 = new EosSemanticGraph(root);
+      const summary2 = graph2.getSummary();
+      assert.equal(summary2.totalFiles, summary1.totalFiles);
+      assert.equal(summary2.totalExports, summary1.totalExports);
+
+      // Dead symbols detection
+      const deadSymbols = graph2.detectDeadSymbols();
+      assert.ok(Array.isArray(deadSymbols));
+
+      // PTS test fallback when no tests are found for target
+      const pts = graph2.runPredictiveTests("nonexistent-file.ts");
+      assert.ok(pts.totalSuites > 0);
+      assert.ok(pts.executedSuites.includes("test/eosCore.test.mjs"));
     });
   });
 
@@ -126,6 +150,68 @@ describe("EOS Big Tech Tier 1 Semantic Graph & Blast Radius Suite", () => {
       assert.ok(dead.length > 0);
       assert.ok(dead[0].name.length > 0);
       assert.ok(dead[0].filePath.length > 0);
+
+      // eosNeuralVectorCore.ts has multiple consumers (eosMcpServer, etc.)
+      // Therefore, its exports MUST NEVER be marked as dead code (kills MUT-012 L427 [=== -> !==])
+      const hasImportedModuleSymbols = dead.some((s) => s.filePath.includes("eosNeuralVectorCore.ts"));
+      assert.equal(
+        hasImportedModuleSymbols,
+        false,
+        "Active modules with consumers must NOT have their exports marked as dead code",
+      );
+    });
+
+    it("loads from cache when cache version matches (kills MUT-002)", () => {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-cache-test-"));
+      try {
+        fs.mkdirSync(path.join(tmpDir, "src"));
+        fs.writeFileSync(path.join(tmpDir, "src", "dummy.ts"), "export const a = 1;");
+
+        const g1 = new EosSemanticGraph(tmpDir);
+        assert.ok(g1.nodes.size > 0);
+
+        const cachePath = path.join(tmpDir, ".eos-graph-cache.json");
+        assert.ok(fs.existsSync(cachePath));
+
+        const rawCache = JSON.parse(fs.readFileSync(cachePath, "utf8"));
+        rawCache.nodes["__SENTINEL_NODE__"] = {
+          filePath: "__SENTINEL_NODE__",
+          exports: [{ name: "sentinelSym", kind: "const", filePath: "__SENTINEL_NODE__", lineNumber: 1 }],
+          imports: [],
+          importedBy: [],
+          linesOfCode: 1,
+        };
+        fs.writeFileSync(cachePath, JSON.stringify(rawCache));
+
+        const g2 = new EosSemanticGraph(tmpDir);
+        assert.ok(
+          g2.nodes.has("__SENTINEL_NODE__"),
+          "Graph must restore directly from valid cache version (kills MUT-002)",
+        );
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
+    });
+
+    it("walks subdirectories when computing cache fingerprint (kills MUT-003)", () => {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-fp-test-"));
+      try {
+        fs.mkdirSync(path.join(tmpDir, "src", "nested"), { recursive: true });
+        fs.writeFileSync(path.join(tmpDir, "src", "nested", "sub.ts"), "export const nestedVal = 42;");
+
+        const g = new EosSemanticGraph(tmpDir);
+        assert.ok(g.nodes.size > 0);
+
+        const cachePath = path.join(tmpDir, ".eos-graph-cache.json");
+        const cache = JSON.parse(fs.readFileSync(cachePath, "utf8"));
+        assert.notEqual(
+          cache.fingerprint,
+          "0",
+          "Cache fingerprint must walk subdirectories to produce non-zero mtime sum (kills MUT-003)",
+        );
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
     });
 
     it("provides high-level summary metrics", () => {

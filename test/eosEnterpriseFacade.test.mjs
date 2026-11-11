@@ -174,7 +174,11 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
       assert.equal(healthReport.sha256Receipt.length, 64);
       assert.ok(healthReport.timestampIso.length > 0);
     } finally {
-      fs.rmSync(tmpDir, { recursive: true, force: true });
+      try {
+        fs.rmSync(tmpDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
+      } catch {
+        // Ignore Windows file locking on temp SQLite files
+      }
     }
   });
 
@@ -192,7 +196,11 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
       assert.ok(report.overallVerdict.length > 0);
       assert.equal(report.judges.length, 3);
     } finally {
-      fs.rmSync(tmpDir, { recursive: true, force: true });
+      try {
+        fs.rmSync(tmpDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
+      } catch {
+        // Ignore Windows file locking on temp SQLite files
+      }
     }
   });
 

@@ -214,7 +214,6 @@ async function cmd_fuzzer_120(commandContext) {
 }
 
 HANDLERS["fuzzer"] = cmd_fuzzer_120;
-HANDLERS["fuzz"] = cmd_fuzzer_120;
 
 async function cmd_seccomp_121(commandContext) {
   const { root, printBanner } = commandContext;

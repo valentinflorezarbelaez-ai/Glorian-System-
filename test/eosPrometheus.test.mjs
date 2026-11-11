@@ -24,6 +24,7 @@ import {
 
 import {
   classifyLayer,
+  extractImports,
   validateLayerInvariants,
   detectCircularDependencies,
   scanArchitecture,
@@ -124,6 +125,34 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
       assert.ok(violations[0].includes("Domain Purity Violation"));
     });
 
+    it("extracts imports with correct 1-based line numbers (kills MUT-002 L115)", () => {
+      const code = `// header line 1\nimport { foo } from "./bar.ts";`;
+      const imps = extractImports(code, path.join(root, "src/core/module.ts"), root);
+      assert.equal(imps.length, 1);
+      assert.equal(imps[0].lineNumber, 2, `Line number must be 1-based index (expected 2, got ${imps[0].lineNumber})`);
+    });
+
+    it("detects presentation imports in Application layer (kills MUT-005 L186)", () => {
+      const fakeAppAnalysis = {
+        filePath: path.join(root, "src/usecases/badApp.ts"),
+        relativeFilePath: "src/usecases/badApp.ts",
+        layer: "APPLICATION",
+        imports: [
+          {
+            rawSpecifier: "../components/Button.tsx",
+            resolvedPath: path.join(root, "src/components/Button.tsx"),
+            isExternal: false,
+            lineNumber: 5,
+          },
+        ],
+        violations: [],
+      };
+
+      const violations = validateLayerInvariants(fakeAppAnalysis);
+      assert.equal(violations.length, 1);
+      assert.ok(violations[0].includes("Application module cannot import Presentation module"));
+    });
+
     it("detects directed circular import cycles", () => {
       const analyses = new Map();
       analyses.set("A.ts", {
@@ -148,6 +177,11 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
       assert.equal(report.totalViolations, 0);
       assert.equal(report.architecturePurityScore, 100);
       assert.equal(report.isClean, true);
+      // Verify layer counts are strictly positive (kills MUT-008 L282 [+ 1 -> - 1])
+      assert.ok(
+        report.layersDistribution.DOMAIN > 0,
+        `Domain layer count must be positive, got ${report.layersDistribution.DOMAIN}`,
+      );
     });
   });
 

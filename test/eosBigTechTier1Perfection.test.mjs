@@ -134,6 +134,43 @@ describe("SPEC-030: Big Tech Tier-1 Apex Engineering Verification", () => {
     assert.ok(["WEBGPU_HARDWARE_ACCELERATED", "ZERO_ALLOCATION_CPU_SIMD_FALLBACK"].includes(report.executionMode));
     assert.equal(report.shaderValid, true);
     assert.equal(report.wgslWorkgroupSize, 64);
+    assert.equal(report.zeroAllocationGuaranteed, true);
+    assert.equal(bridge.getShaderCode(), wgslSource);
+    assert.equal(typeof bridge.isWebGpuSupported(), "boolean");
+
+    // 4. Project full fleet topology with Layer-0 fallback
+    const projectedFleet = bridge.projectTopology(0.2, 0.4, 1.1);
+    assert.ok(projectedFleet.nodes.length > 0);
+    assert.equal(projectedFleet.report.status, "APEX_COMPUTE_SUCCESS");
+    assert.ok(projectedFleet.report.durationUs >= 0);
+    assert.ok(["WEBGPU_HARDWARE", "CPU_LAYER0_FALLBACK"].includes(projectedFleet.report.backend));
+
+    // 5. Fallback path when shader file is absent
+    const tmpMissingDir = path.join(process.cwd(), ".nonexistent_gpu_dir");
+    const missingBridge = new EosWebGpuTopologyBridge(tmpMissingDir);
+    assert.ok(missingBridge.getShaderSource().includes("Embedded WGSL Fallback"));
+    assert.equal(missingBridge.getCapabilityReport().shaderValid, true);
+
+    // 6. Simulated WebGPU hardware availability branch
+    const origNavDesc = Object.getOwnPropertyDescriptor(globalThis, "navigator");
+    try {
+      Object.defineProperty(globalThis, "navigator", {
+        value: { gpu: {} },
+        configurable: true,
+        writable: true,
+      });
+      const gpuBridge = new EosWebGpuTopologyBridge();
+      assert.equal(gpuBridge.isWebGpuSupported(), true);
+      assert.equal(gpuBridge.getCapabilityReport().executionMode, "WEBGPU_HARDWARE_ACCELERATED");
+      const gpuProj = gpuBridge.projectTopology();
+      assert.equal(gpuProj.report.backend, "WEBGPU_HARDWARE");
+    } finally {
+      if (origNavDesc) {
+        Object.defineProperty(globalThis, "navigator", origNavDesc);
+      } else {
+        delete globalThis.navigator;
+      }
+    }
   });
 
   // =========================================================================
