@@ -559,6 +559,9 @@ Uso Universal Exhaustivo:
   eos mmr:append [--count=N]   Adición inmutable de hojas y fusión de picos en Merkle Mountain Range (SPEC-216)
   eos mmr:prove [--leaf=N]     Generación de prueba de inclusión logarítmica O(log n) a la raíz bag-of-peaks
   eos mmr:verify [--json]      Verificación sub-milisegundo de prueba de pertenencia o consistencia MMR
+  eos vrf:eval [--alpha=S]     Evaluación de función aleatoria verificable ECVRF RFC 9381 (SPEC-217)
+  eos vrf:verify [--json]      Verificación no interactiva de prueba VRF y reconstrucción de beta en <2ms
+  eos vrf:elect [--thresh=F]   Elección verificable e inmanipulable de líder de consenso mediante score VRF
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

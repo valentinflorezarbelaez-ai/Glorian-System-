@@ -34,6 +34,7 @@ import { EosCrdtStateSyncCore } from "../../core/eosCrdtStateSyncCore.ts";
 import { EosMerkleMountainRangeCore } from "../../core/eosMerkleMountainRangeCore.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
+import { dispatchPhase7FrontierActionExt } from "./eosMcpPhase7EnterpriseFrontierHandlersExt.ts";
 
 export function dispatchPhase7FrontierAction(
   action: string,
@@ -787,5 +788,5 @@ export function dispatchPhase7FrontierAction(
       receipt: verifyRes.receipt,
     };
   }
-  return undefined;
+  return dispatchPhase7FrontierActionExt(action, args, deps);
 }

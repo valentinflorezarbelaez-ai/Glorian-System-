@@ -889,6 +889,34 @@ console.log(`Recibo SHA-256      : ${veredicto.receipt.receiptSha256}`);
 
 ---
 
+### Módulo 32: Motor de Funciones Aleatorias Verificables (ECVRF RFC 9381) (`EosVerifiableRandomFunctionCore`)
+
+**Propósito:** Generación de aleatoriedad pública no manipulable, impredecible y públicamente verificable basada en funciones aleatorias verificables sobre curvas elípticas (ECVRF) bajo el estándar RFC 9381 y la curva secp256k1 ($y^2 = x^3 + 7 \pmod p$) sin dependencias externas (Ley V). Permite a participantes descentralizados evaluar una entrada $\alpha$ con su clave privada $sk$ para producir una salida pseudorandom $\beta$ y una prueba sucinta $\pi = (\Gamma, c, s)$ basada en el supuesto de Diffie-Hellman decisional (DDH) y desafío Fiat-Shamir. Cualquier nodo con la clave pública $PK$ puede verificar $\pi$ en sub-milisegundo ($< 2$ ms) y evaluar primitivas de elección de líderes o asignación de slots (`isElected`) con resistencia total a sesgos o manipulaciones.
+
+```ts
+import { EosVerifiableRandomFunctionCore } from "./src/core/eosVerifiableRandomFunctionCore.ts";
+
+// 1. Generación determinista o aleatoria de par de claves secp256k1
+const keyPair = EosVerifiableRandomFunctionCore.generateKeyPair("seed-vrf-node-1");
+
+// 2. Evaluación de VRF sobre un mensaje/semilla de slot alpha
+const core = new EosVerifiableRandomFunctionCore();
+const evaluacion = core.evaluate(keyPair.secretKey, "epoch-slot-102");
+console.log(`Salida pseudorandom beta : sha256:${evaluacion.beta}`);
+console.log(`Punto VRF Gamma (Γ)      : ${evaluacion.proof.gammaHex}`);
+
+// 3. Verificación pública no interactiva (O(1), < 2 ms)
+const veredicto = core.verify(keyPair.publicKey, "epoch-slot-102", evaluacion.proof);
+console.log(`¿Prueba auténtica?       : ${veredicto.valid}`); // true
+console.log(`Tiempo verificación      : ${veredicto.verificationTimeMs.toFixed(3)} ms`);
+
+// 4. Elección verificable de líder con umbral probabilístico
+const eleccion = core.isElected(evaluacion.beta, 0.25);
+console.log(`¿Elegido como líder?     : ${eleccion.isElected}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -942,6 +970,9 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs mmr:append [--count=N]`             | Anexa registros al acumulador MMR y calcula cumbres de montaña y raíz (SPEC-216).          |
 | `node bin/eos.mjs mmr:prove [--leaf=N]`               | Genera prueba de inclusión O(log n) para una hoja del acumulador MMR (SPEC-216).           |
 | `node bin/eos.mjs mmr:verify [--leaf=N]`              | Verifica la autenticidad de una prueba de inclusión MMR en sub-milisegundo (SPEC-216).     |
+| `node bin/eos.mjs vrf:eval [--alpha=S]`               | Evaluación de función aleatoria verificable ECVRF RFC 9381 (SPEC-217).                     |
+| `node bin/eos.mjs vrf:verify [--json]`                | Verificación no interactiva de prueba VRF y reconstrucción de beta en <2ms (SPEC-217).     |
+| `node bin/eos.mjs vrf:elect [--thresh=F]`             | Elección verificable e inmanipulable de líder de consenso mediante score VRF (SPEC-217).   |
 | `node bin/eos.mjs metrics`                            | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                 | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`                | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |

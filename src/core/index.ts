@@ -198,3 +198,5 @@ export * from "./eosCrdtStateSyncCore.ts";
 export * from "./eosCrdtStateSyncCore.types.ts";
 export * from "./eosMerkleMountainRangeCore.ts";
 export * from "./eosMerkleMountainRangeCore.types.ts";
+export * from "./eosVerifiableRandomFunctionCore.ts";
+export * from "./eosVerifiableRandomFunctionCore.types.ts";

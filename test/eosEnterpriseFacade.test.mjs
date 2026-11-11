@@ -769,5 +769,31 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(mmrVerifyReport.action, "mmr_verify");
     assert.equal(mmrVerifyReport.valid, true);
     assert.ok(mmrVerifyReport.receipt.receiptSha256.length === 64);
+
+    // 29. vrf_eval, vrf_verify & vrf_elect (SPEC-217)
+    const vrfEvalReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "vrf_eval", alpha: "facade-slot-102" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(vrfEvalReport.action, "vrf_eval");
+    assert.ok(vrfEvalReport.publicKeyHex.length === 66);
+    assert.ok(vrfEvalReport.beta.length === 64);
+
+    const vrfVerifyReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "vrf_verify", alpha: "facade-slot-102" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(vrfVerifyReport.action, "vrf_verify");
+    assert.equal(vrfVerifyReport.valid, true);
+
+    const vrfElectReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "vrf_elect", alpha: "facade-slot-102", threshold: 0.99 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(vrfElectReport.action, "vrf_elect");
+    assert.equal(vrfElectReport.isElected, true);
   });
 });

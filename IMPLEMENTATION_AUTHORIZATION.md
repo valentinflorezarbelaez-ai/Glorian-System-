@@ -1641,3 +1641,27 @@
   - `docs/plans/PLAN-101-MERKLE-MOUNTAIN-RANGE.md`
   - `docs/tasks/TASKS-101-MERKLE-MOUNTAIN-RANGE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-VERIFIABLE-RANDOM-FUNCTION-217
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Verifiable Random Functions (ECVRF RFC 9381) Core (`SPEC-217`, `CHANGE-102`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "continua")
+- **Scope**:
+  1. Implement Layer-0 VRF types in `src/core/eosVerifiableRandomFunctionCore.types.ts`.
+  2. Implement Layer-0 VRF Engine in `src/core/eosVerifiableRandomFunctionCore.ts`.
+  3. Subpath export `"./vrf"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian vrf:eval`, `glorian vrf:verify`, `glorian vrf:elect` in `bin/commands/cliVrfMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "vrf_eval"`, `action: "vrf_verify"`, `action: "vrf_elect"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosVerifiableRandomFunctionCore.test.mjs` (BDD-1104..BDD-1108).
+  8. Add test step #29 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 32 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 212 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-102-VERIFIABLE-RANDOM-FUNCTION.md`
+  - `openspec/changes/CHANGE-102-VERIFIABLE-RANDOM-FUNCTION.md`
+  - `openspec/specs/SPEC-217-VERIFIABLE-RANDOM-FUNCTION.md`
+  - `docs/plans/PLAN-102-VERIFIABLE-RANDOM-FUNCTION.md`
+  - `docs/tasks/TASKS-102-VERIFIABLE-RANDOM-FUNCTION.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

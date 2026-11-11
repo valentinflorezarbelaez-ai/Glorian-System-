@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-11T19:20:08.664Z",
-  "totalSpecs": 211,
-  "catalogSha256": "853e65f627b8744a7a487cc61eb3c6964a6251c8e108bf140434c5bf3002df0c",
+  "totalSpecs": 212,
+  "catalogSha256": "faababe69138d3826a0bd0337d7474e7015d38f3b583e3ab51348fe570bd3187",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1901,6 +1901,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-216-MERKLE-MOUNTAIN-RANGE.md",
       "sha256": "696e5a6c8916b321755c510727b167531d215dd2d22b4520fda3509d9ba985a7"
+    },
+    {
+      "id": "SPEC-217",
+      "title": "Layer-0 Verifiable Random Functions (ECVRF RFC 9381) Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-217-VERIFIABLE-RANDOM-FUNCTION.md",
+      "sha256": "38f0be9f9bdce63268dce034fd1652e00e9803892b1f3ecf14acd1baf20f9d4b"
     }
   ]
 }
