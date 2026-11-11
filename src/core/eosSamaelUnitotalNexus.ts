@@ -298,7 +298,7 @@ export class EosSamaelUnitotalNexus {
    * Persists Unitotal Perfection Receipt into SQLite WAL Ledger.
    */
   public static recordReceiptInLedger(report: UnitotalAuditReport, projectRoot: string = process.cwd()): boolean {
-    const dbPath = EosDurableSqliteLedger.defaultLedgerPath(projectRoot);
+    const dbPath = EosDurableSqliteLedger.resolveLedgerPath(projectRoot);
     const ledger = new EosDurableSqliteLedger(dbPath);
 
     try {

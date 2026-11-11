@@ -1131,7 +1131,7 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       assert.ok(typeof table === "string" && table.includes("GLORIAN FLEET TACTICAL SOVEREIGNTY"));
 
       // 1. Missing registry error
-      const badEngine = new EosFleetPulseEngine(path.join(root, "nonexistent_dir_pulse"));
+      const badEngine = new EosFleetPulseEngine(path.join(os.tmpdir(), `nonexistent_dir_pulse_${Date.now()}`));
       assert.throws(() => badEngine.auditFleetPulse(), /registry\.json must exist/);
 
       // 2. Custom registry exercising localPathEnv, localPath, resolvedLocalDir, git dirty, and git non-existent

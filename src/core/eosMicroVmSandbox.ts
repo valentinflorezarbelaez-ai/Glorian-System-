@@ -256,11 +256,7 @@ export class EosMicroVmSandbox {
    * Persists sandbox execution receipt into durable SQLite WAL ledger.
    */
   public static recordReceiptInLedger(result: SandboxRunResult, dbPathOrRootDir?: string): boolean {
-    const dbPath = dbPathOrRootDir
-      ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
-        ? dbPathOrRootDir
-        : EosDurableSqliteLedger.defaultLedgerPath(dbPathOrRootDir)
-      : EosDurableSqliteLedger.defaultLedgerPath();
+    const dbPath = EosDurableSqliteLedger.resolveLedgerPath(dbPathOrRootDir);
 
     const ledger = new EosDurableSqliteLedger(dbPath);
     try {

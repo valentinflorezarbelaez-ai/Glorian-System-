@@ -341,10 +341,22 @@ test("BDD-228: entries survive close/reopen and the chain continues", () => {
   }
 });
 
-test("BDD-229: default ledger path is canonical under .eos/state", () => {
+test("BDD-229: default ledger path is canonical under .eos/state and hermetic for :memory:", () => {
   const p = EosDurableSqliteLedger.defaultLedgerPath(process.cwd());
   assert.ok(p.endsWith(path.join(".eos", "state", "eos_sovereign_ledger.sqlite")));
   assert.ok(path.isAbsolute(p));
+
+  // Hermetic safeguard against leaking disk files for :memory:
+  assert.equal(EosDurableSqliteLedger.defaultLedgerPath(":memory:"), ":memory:");
+  assert.equal(EosDurableSqliteLedger.resolveLedgerPath(":memory:"), ":memory:");
+  assert.equal(EosDurableSqliteLedger.resolveLedgerPath(), EosDurableSqliteLedger.defaultLedgerPath());
+  assert.ok(EosDurableSqliteLedger.resolveLedgerPath("custom.sqlite").endsWith("custom.sqlite"));
+  assert.ok(EosDurableSqliteLedger.resolveLedgerPath("custom.db").endsWith("custom.db"));
+  assert.ok(
+    EosDurableSqliteLedger.resolveLedgerPath("/tmp/foo").endsWith(
+      path.join(".eos", "state", "eos_sovereign_ledger.sqlite"),
+    ),
+  );
 });
 
 test("BDD-230: mutation hardening — defaults, boundaries, rollback, and filters", () => {

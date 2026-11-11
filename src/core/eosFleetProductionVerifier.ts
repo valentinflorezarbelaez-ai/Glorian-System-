@@ -532,7 +532,7 @@ export class EosFleetProductionVerifier {
    * Records a probe verification receipt into durable SQLite WAL ledger.
    */
   public static recordReceiptInLedger(result: ProbeResult, projectRoot: string = process.cwd()): boolean {
-    const dbPath = EosDurableSqliteLedger.defaultLedgerPath(projectRoot);
+    const dbPath = EosDurableSqliteLedger.resolveLedgerPath(projectRoot);
     const ledger = new EosDurableSqliteLedger(dbPath);
 
     try {
@@ -623,7 +623,7 @@ export class EosFleetProductionVerifier {
     });
 
     if (options.recordToLedger === true && options.projectRoot) {
-      const dbPath = EosDurableSqliteLedger.defaultLedgerPath(options.projectRoot);
+      const dbPath = EosDurableSqliteLedger.resolveLedgerPath(options.projectRoot);
       const ledger = new EosDurableSqliteLedger(dbPath);
       try {
         ledger.appendEntry({

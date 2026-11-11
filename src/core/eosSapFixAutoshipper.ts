@@ -178,11 +178,7 @@ export class EosSapFixAutoshipper {
    * Persists SapFix report in durable SQLite WAL ledger.
    */
   public static recordReceiptInLedger(report: SapFixRemediationReport, dbPathOrRootDir?: string): boolean {
-    const dbPath = dbPathOrRootDir
-      ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
-        ? dbPathOrRootDir
-        : EosDurableSqliteLedger.defaultLedgerPath(dbPathOrRootDir)
-      : EosDurableSqliteLedger.defaultLedgerPath();
+    const dbPath = EosDurableSqliteLedger.resolveLedgerPath(dbPathOrRootDir);
 
     const ledger = new EosDurableSqliteLedger(dbPath);
     try {

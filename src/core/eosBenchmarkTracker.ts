@@ -186,11 +186,7 @@ export class EosBenchmarkTracker {
    * Persists benchmark attestation into durable SQLite WAL ledger.
    */
   public recordReceiptInLedger(report: BenchmarkComparisonReport, dbPathOrRootDir?: string): boolean {
-    const dbPath = dbPathOrRootDir
-      ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
-        ? dbPathOrRootDir
-        : EosDurableSqliteLedger.defaultLedgerPath(dbPathOrRootDir)
-      : EosDurableSqliteLedger.defaultLedgerPath();
+    const dbPath = EosDurableSqliteLedger.resolveLedgerPath(dbPathOrRootDir);
 
     const ledger = new EosDurableSqliteLedger(dbPath);
     try {

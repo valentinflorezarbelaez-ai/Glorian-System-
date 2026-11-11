@@ -97,7 +97,23 @@ export class EosDurableSqliteLedger {
   }
 
   public static defaultLedgerPath(projectRoot: string = process.cwd()): string {
+    if (projectRoot === ":memory:") {
+      return ":memory:";
+    }
     return path.join(path.resolve(projectRoot), ".eos", "state", "eos_sovereign_ledger.sqlite");
+  }
+
+  public static resolveLedgerPath(dbPathOrRootDir?: string): string {
+    if (!dbPathOrRootDir) {
+      return EosDurableSqliteLedger.defaultLedgerPath();
+    }
+    if (dbPathOrRootDir === ":memory:") {
+      return ":memory:";
+    }
+    if (dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")) {
+      return path.resolve(dbPathOrRootDir);
+    }
+    return EosDurableSqliteLedger.defaultLedgerPath(dbPathOrRootDir);
   }
 
   private initializeSchema(): void {

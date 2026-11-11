@@ -387,11 +387,7 @@ export class EosSurgicalSelfHealingKernel {
    * Records a surgical healing receipt in the durable SQLite WAL ledger.
    */
   public static recordReceiptInLedger(receipt: SurgicalHealingReceipt, dbPathOrRootDir?: string): boolean {
-    const dbPath = dbPathOrRootDir
-      ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
-        ? dbPathOrRootDir
-        : EosDurableSqliteLedger.defaultLedgerPath(dbPathOrRootDir)
-      : EosDurableSqliteLedger.defaultLedgerPath();
+    const dbPath = EosDurableSqliteLedger.resolveLedgerPath(dbPathOrRootDir);
     const ledger = new EosDurableSqliteLedger(dbPath);
     try {
       const category = receipt.verdict === "HEALED_VERIFIED" ? "SECURITY_AUDIT" : "VERIFICATION_RECEIPT";

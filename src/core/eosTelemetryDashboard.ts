@@ -588,11 +588,7 @@ export class EosTelemetryDashboard {
    * Persists dashboard snapshot in durable SQLite WAL ledger.
    */
   public static recordReceiptInLedger(snapshot: TelemetrySnapshot, dbPathOrRootDir?: string): boolean {
-    const dbPath = dbPathOrRootDir
-      ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
-        ? dbPathOrRootDir
-        : EosDurableSqliteLedger.defaultLedgerPath(dbPathOrRootDir)
-      : EosDurableSqliteLedger.defaultLedgerPath();
+    const dbPath = EosDurableSqliteLedger.resolveLedgerPath(dbPathOrRootDir);
 
     const ledger = new EosDurableSqliteLedger(dbPath);
     try {

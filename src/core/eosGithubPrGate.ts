@@ -307,11 +307,7 @@ Constitution Law II & IV Verification Gate: ${result.conclusion === "success" ? 
    * Persists PR evaluation receipt in durable SQLite WAL ledger.
    */
   public static recordReceiptInLedger(result: PrEvaluationResult, dbPathOrRootDir?: string): boolean {
-    const dbPath = dbPathOrRootDir
-      ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
-        ? dbPathOrRootDir
-        : EosDurableSqliteLedger.defaultLedgerPath(dbPathOrRootDir)
-      : EosDurableSqliteLedger.defaultLedgerPath();
+    const dbPath = EosDurableSqliteLedger.resolveLedgerPath(dbPathOrRootDir);
 
     const ledger = new EosDurableSqliteLedger(dbPath);
     try {

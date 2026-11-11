@@ -64,11 +64,17 @@ const ESOTERIC_ARCHETYPES: Readonly<Record<string, string>> = {
 
 export class EosFleetPulseEngine {
   private readonly projectRoot: string;
-  private readonly ledger: EosDurableSqliteLedger;
+  private _ledger?: EosDurableSqliteLedger;
 
   constructor(projectRoot: string = process.cwd()) {
     this.projectRoot = path.resolve(projectRoot);
-    this.ledger = new EosDurableSqliteLedger(path.join(this.projectRoot, ".eos", "state.db"));
+  }
+
+  private get ledger(): EosDurableSqliteLedger {
+    if (!this._ledger) {
+      this._ledger = new EosDurableSqliteLedger(path.join(this.projectRoot, ".eos", "state.db"));
+    }
+    return this._ledger;
   }
 
   /**

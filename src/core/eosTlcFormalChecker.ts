@@ -291,11 +291,7 @@ export class EosTlcFormalChecker {
   public static recordReceiptInLedger(result: TlcVerificationResult, dbPathOrRootDir?: string): boolean {
     let ledger: EosDurableSqliteLedger | null = null;
     try {
-      const dbPath = dbPathOrRootDir
-        ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
-          ? dbPathOrRootDir
-          : EosDurableSqliteLedger.defaultLedgerPath(dbPathOrRootDir)
-        : EosDurableSqliteLedger.defaultLedgerPath();
+      const dbPath = EosDurableSqliteLedger.resolveLedgerPath(dbPathOrRootDir);
 
       ledger = new EosDurableSqliteLedger(dbPath);
       ledger.appendEntry({

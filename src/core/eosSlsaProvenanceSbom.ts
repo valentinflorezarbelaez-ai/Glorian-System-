@@ -521,11 +521,7 @@ export class EosSlsaProvenanceSbom {
     report: CycloneDxSbomReport | SlsaProvenanceReport,
     dbPathOrRootDir?: string,
   ): boolean {
-    const dbPath = dbPathOrRootDir
-      ? dbPathOrRootDir.endsWith(".sqlite") || dbPathOrRootDir.endsWith(".db")
-        ? dbPathOrRootDir
-        : EosDurableSqliteLedger.defaultLedgerPath(dbPathOrRootDir)
-      : EosDurableSqliteLedger.defaultLedgerPath();
+    const dbPath = EosDurableSqliteLedger.resolveLedgerPath(dbPathOrRootDir);
 
     const isSbom = "bomFormat" in report;
     const title = isSbom
