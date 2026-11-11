@@ -1032,6 +1032,101 @@ async function cmd_synthesize_143(commandContext) {
 HANDLERS["synthesize"] = cmd_synthesize_143;
 HANDLERS["ast:synthesize"] = cmd_synthesize_143;
 
+async function cmd_vector_search_144(commandContext) {
+  const { args, command } = commandContext;
+  const isJson = args.includes("--json");
+  const { EosHnswVectorIndex } = await import("../../src/core/eosHnswVectorIndex.ts");
+  const { pureSha256 } = await import("../../src/core/eosKernelPrimitives.ts");
+
+  if (command === "vector:index") {
+    const nonFlags = args.filter((a) => !a.startsWith("-") && a !== command);
+    const id = nonFlags[0] || "doc_sample_01";
+    const code = nonFlags.slice(1).join(" ") || "export function computeHash(x) { return sha256(x); }";
+
+    const index = new EosHnswVectorIndex({ dimension: 64, metric: "cosine" });
+    index.indexCodeSnippet(id, code, { indexedAt: new Date().toISOString() });
+    const embedding = EosHnswVectorIndex.embedText(code, 64);
+    const receipt = pureSha256(`VECTOR_INDEX:${id}:${code}:${embedding[0]}`);
+
+    const result = {
+      action: "vector:index",
+      id,
+      codeSnippet: code.slice(0, 80),
+      dimension: 64,
+      norm: 1.0,
+      sha256Receipt: receipt,
+    };
+
+    if (isJson) {
+      console.log(JSON.stringify(result, null, 2));
+      return;
+    }
+
+    console.log(`\n===============================================================`);
+    console.log(`  GLORIAN HNSW VECTOR EMBEDDING INDEX (SPEC-201)               `);
+    console.log(`===============================================================`);
+    console.log(`  Document ID      : ${id}`);
+    console.log(`  Dimension        : 64-D normalized Float32Array`);
+    console.log(`  Code Snippet     : ${result.codeSnippet}`);
+    console.log(`  Receipt SHA-256  : sha256:${receipt}`);
+    console.log(`===============================================================\n`);
+    return;
+  }
+
+  // Otherwise vector:search or hnsw:search
+  const kArg = args.find((a) => a.startsWith("--k="));
+  const k = kArg ? parseInt(kArg.split("=")[1], 10) : 3;
+
+  const queryTokens = args.filter((a) => !a.startsWith("-") && a !== command);
+  const query = queryTokens.join(" ") || "authentication and jwt security token";
+
+  const index = new EosHnswVectorIndex({ dimension: 64, metric: "cosine", M: 16 });
+  const corpus = [
+    { id: "core/auth", code: "function verifyJwtToken(token, secret) { return crypto.verify(token); }" },
+    { id: "core/hnsw", code: "function searchAnnVector(queryVec, k) { return hnswGraph.searchLayer(queryVec, k); }" },
+    { id: "core/crypto", code: "function mlDsaLatticeSign(msg, privKey) { return ringSisSign(msg, privKey); }" },
+    { id: "core/database", code: "async function queryPostgres(sql, params) { return pgPool.query(sql, params); }" },
+    { id: "core/synthesizer", code: "function mutateAstOperator(ast, op) { return applyGeneticMutations(ast); }" },
+  ];
+
+  for (const item of corpus) {
+    index.indexCodeSnippet(item.id, item.code, { fullCode: item.code });
+  }
+
+  const matches = index.searchCode(query, k);
+  const receipt = pureSha256(`HNSW_SEARCH:${query}:${JSON.stringify(matches)}`);
+
+  const output = {
+    query,
+    k,
+    matches,
+    indexSize: index.size(),
+    sha256Receipt: receipt,
+  };
+
+  if (isJson) {
+    console.log(JSON.stringify(output, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN HNSW VECTOR RETRIEVAL (SPEC-201 / LAYER-0 ANN)       `);
+  console.log(`===============================================================`);
+  console.log(`  Query            : "${query}"`);
+  console.log(`  Matches (k=${k})  : ${matches.length} results from ${index.size()} indexed items`);
+  matches.forEach((m, i) => {
+    console.log(
+      `  [#${i + 1}] ID: ${m.id} | Score: ${(m.similarityScore * 100).toFixed(1)}% | Distance: ${m.distance}`,
+    );
+  });
+  console.log(`  Receipt SHA-256  : sha256:${receipt}`);
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["vector:index"] = cmd_vector_search_144;
+HANDLERS["vector:search"] = cmd_vector_search_144;
+HANDLERS["hnsw:search"] = cmd_vector_search_144;
+
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {

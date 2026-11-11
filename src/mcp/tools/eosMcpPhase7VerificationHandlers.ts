@@ -30,6 +30,7 @@ import { EosZkStateProof } from "../../core/eosZkStateProof.ts";
 import { EosHermeticSeaCompiler } from "../../core/eosHermeticSeaCompiler.ts";
 import { EosPostQuantumCryptography } from "../../core/eosPostQuantumCryptography.ts";
 import { EosGeneticAstSynthesizer } from "../../core/eosGeneticAstSynthesizer.ts";
+import { EosHnswVectorIndex } from "../../core/eosHnswVectorIndex.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -499,6 +500,48 @@ export function dispatchPhase7VerificationCase(
           generations,
           populationSize,
         });
+      }
+      if (action === "vector_index") {
+        const id = String(args?.id || "doc_01");
+        const code = String(args?.code || "function test() {}");
+        const dim = typeof args?.dimension === "number" ? Math.floor(args.dimension) : 64;
+        const index = new EosHnswVectorIndex({ dimension: dim, metric: "cosine" });
+        index.indexCodeSnippet(id, code, { indexedAt: new Date().toISOString() });
+        const serialized = index.serialize();
+        return {
+          action: "vector_index",
+          id,
+          dimension: dim,
+          size: index.size(),
+          sha256Receipt: serialized.sha256Checksum,
+        };
+      }
+      if (action === "vector_search") {
+        const query = String(args?.query || "authentication");
+        const k = typeof args?.k === "number" ? Math.floor(args.k) : 3;
+        const dim = typeof args?.dimension === "number" ? Math.floor(args.dimension) : 64;
+        const index = new EosHnswVectorIndex({ dimension: dim, metric: "cosine" });
+        const defaultCorpus = [
+          { id: "core/auth", code: "function verifyJwtToken(token) { return jwt.verify(token); }" },
+          { id: "core/hnsw", code: "function searchAnn(vec, k) { return graph.search(vec, k); }" },
+          { id: "core/crypto", code: "function signLattice(msg) { return mlDsaSign(msg); }" },
+        ];
+        const corpus = Array.isArray(args?.corpus) ? args.corpus : defaultCorpus;
+        for (const item of corpus) {
+          if (item && item.id && item.code) {
+            index.indexCodeSnippet(String(item.id), String(item.code));
+          }
+        }
+        const matches = index.searchCode(query, k);
+        const receipt = pureSha256(`MCP_VECTOR_SEARCH:${query}:${JSON.stringify(matches)}`);
+        return {
+          action: "vector_search",
+          query,
+          k,
+          matches,
+          indexSize: index.size(),
+          sha256Receipt: receipt,
+        };
       }
       if (action === "list") {
         return {

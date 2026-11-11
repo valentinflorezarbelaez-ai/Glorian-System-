@@ -425,6 +425,39 @@ console.log(`Parche Diff:\n${result.diffPatch}`);
 
 ---
 
+### Módulo 16: Motor de Búsqueda Vectorial HNSW Layer-0 (`EosHnswVectorIndex`)
+
+**Propósito:** Búsqueda aproximada de vecinos más cercanos (ANN) de sub-milisegundo en grafos navegables de mundos pequeños jerárquicos (HNSW, Malkov & Yashunin 2018 TPAMI). Incorpora proyección autónoma de embeddings mediante hashing de subpalabras (shingles de 3 caracteres y tokens de código), soporte para distancias Coseno, Euclidiana y Producto Punto, serialización determinista con suma de comprobación SHA-256 e integración con CLI y MCP bajo cero dependencias externas (Ley V).
+
+```ts
+import { EosHnswVectorIndex } from "./src/core/eosHnswVectorIndex.ts";
+
+const index = new EosHnswVectorIndex({ dimension: 64, metric: "cosine", M: 16 });
+
+// 1. Indexar fragmentos de código o documentación
+index.indexCodeSnippet("core/auth", "function verifyJwtToken(token) { return jwt.verify(token); }");
+index.indexCodeSnippet(
+  "core/crypto",
+  "function mlDsaLatticeSign(msg, privKey) { return ringSisSign(msg, privKey); }",
+);
+
+// 2. Búsqueda semántica por lenguaje natural o código
+const results = index.searchCode("autenticacion y verificacion de firmas criptograficas", 2);
+
+for (const match of results) {
+  console.log(
+    `ID: ${match.id} | Similitud: ${(match.similarityScore * 100).toFixed(1)}% | Distancia: ${match.distance}`,
+  );
+}
+
+// 3. Serialización y restauración hermética
+const serialized = index.serialize();
+const restored = EosHnswVectorIndex.deserialize(serialized);
+console.log(`Elementos restaurados: ${restored.size()} | Checksum: ${serialized.sha256Checksum}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -443,6 +476,8 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs pq:kem [--hybrid] [--json]`        | Encapsula clave post-cuántica (NIST FIPS 203 ML-KEM + X25519) con verificación inmediata. |
 | `node bin/eos.mjs pq:sign [msg] [--hybrid] [--json]` | Genera y verifica firma digital de retículos (NIST FIPS 204 ML-DSA + Ed25519).            |
 | `node bin/eos.mjs synthesize [codigo] [--json]`      | Sintetiza y repara código automáticamente mediante mutación genética y cruce de AST.      |
+| `node bin/eos.mjs vector:search <query> [--k=N]`     | Búsqueda semántica ANN con grafo HNSW Layer-0 y proyección de subpalabras (SPEC-201).     |
+| `node bin/eos.mjs vector:index <id> <code>`          | Indexa fragmentos de código o documentos en el espacio vectorial HNSW multidimensional.   |
 | `node bin/eos.mjs metrics`                           | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
 | `node bin/eos.mjs guard [directorio]`                | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
 | `node bin/eos.mjs flow inspect <ruta>`               | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |

@@ -367,5 +367,25 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(synthReport.success, true);
     assert.equal(synthReport.finalFitness, 100);
     assert.equal(synthReport.bestCandidate.code, "a + b");
+
+    // 13. vector_index & vector_search
+    const vectorIndexReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "vector_index", id: "auth_mod", code: "function verifyJwt() {}" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(vectorIndexReport.action, "vector_index");
+    assert.equal(vectorIndexReport.id, "auth_mod");
+    assert.equal(vectorIndexReport.size, 1);
+    assert.ok(vectorIndexReport.sha256Receipt.length === 64);
+
+    const vectorSearchReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "vector_search", query: "verify JWT authentication token", k: 2 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(vectorSearchReport.action, "vector_search");
+    assert.equal(vectorSearchReport.matches.length, 2);
+    assert.ok(vectorSearchReport.sha256Receipt.length === 64);
   });
 });

@@ -523,6 +523,8 @@ Uso Universal Exhaustivo:
   eos pq:kem [--hybrid]      Encapsulación de claves post-cuántica (NIST FIPS 203 ML-KEM + X25519)
   eos pq:sign [msg] [--hybrid] Firmas digitales de retículos post-cuánticos (NIST FIPS 204 ML-DSA)
   eos synthesize [codigo]    Sintetizador genético autónomo de código AST (Meta APR / SPEC-200)
+  eos vector:search <query>  Búsqueda semántica ANN con grafo HNSW Layer-0 (SPEC-201)
+  eos vector:index <id> <code> Indexa código o texto en el grafo vectorial HNSW multidimensional
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

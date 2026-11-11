@@ -1281,3 +1281,23 @@
   - `docs/plans/PLAN-085-GENETIC-AST-SYNTHESIZER.md`
   - `docs/tasks/TASKS-085-GENETIC-AST-SYNTHESIZER.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-HNSW-VECTOR-201
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Hierarchical Navigable Small World (HNSW) Vector Search Engine (`SPEC-201`, `CHANGE-086`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “dale con toda”)
+- **Scope**:
+  1. Implement Layer-0 HNSW vector search engine `src/core/eosHnswVectorIndex.ts`.
+  2. Subpath export `"./vector"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI commands `glorian vector:index` and `glorian vector:search` in `bin/commands/cliPlatform.mjs`.
+  5. Wire MCP actions `action: "vector_index"` and `action: "vector_search"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosHnswVectorIndex.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-086-HNSW-VECTOR-INDEX.md`
+  - `openspec/changes/CHANGE-086-HNSW-VECTOR-INDEX.md`
+  - `openspec/specs/SPEC-201-HNSW-VECTOR-INDEX.md`
+  - `docs/plans/PLAN-086-HNSW-VECTOR-INDEX.md`
+  - `docs/tasks/TASKS-086-HNSW-VECTOR-INDEX.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

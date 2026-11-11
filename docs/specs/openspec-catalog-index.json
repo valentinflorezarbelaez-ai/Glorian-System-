@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-02T19:57:00.797Z",
-  "totalSpecs": 195,
-  "catalogSha256": "d8d5aa8706d696e522c8deda938f1a4079c5c5edb5eb69ebdaf36e8c7bf5eddf",
+  "timestampIso": "2026-11-11T01:06:37.649Z",
+  "totalSpecs": 196,
+  "catalogSha256": "b95e72e2d828bb1381643f8b934ab14a8e0f87977978ca48b9b8e61cd194d4db",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1757,6 +1757,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-200-GENETIC-AST-SYNTHESIZER.md",
       "sha256": "5c5dff902faa8d94a9f08aee71f3466abe3f59559908d1303c23cc5e1d265609"
+    },
+    {
+      "id": "SPEC-201",
+      "title": "Layer-0 Hierarchical Navigable Small World (HNSW) Vector Search Engine",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-201-HNSW-VECTOR-INDEX.md",
+      "sha256": "f2a73d83942b54973d7dc11581cfae4efe875fefe7ab0ba3cb374c80105d9309"
     }
   ]
 }
