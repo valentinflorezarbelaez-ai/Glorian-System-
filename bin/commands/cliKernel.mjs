@@ -537,6 +537,8 @@ Uso Universal Exhaustivo:
   eos raft:status [--json]   Estado en vivo del cluster Raft, quórum de mayoría y recibo criptográfico
   eos compress:ans [texto]   Compresor de entropía rANS Layer-0 cercano al límite de Shannon (SPEC-207)
   eos decompress:ans <base64> Descompresor sin pérdidas rANS con verificación de integridad SHA-256
+  eos autodiff:grad          Diferenciación automática en modo reverso con oráculo de gradientes (SPEC-208)
+  eos autodiff:train [--epochs=N] Optimización cerrada de parámetros vía SGD y tensor core multidimensional
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

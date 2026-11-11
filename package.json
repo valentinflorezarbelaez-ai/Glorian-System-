@@ -32,6 +32,7 @@
     "./tla-checker": "./src/core/eosAutonomousTlaModelChecker.ts",
     "./raft": "./src/core/eosRaftConsensusEngine.ts",
     "./ans": "./src/core/eosAnsEntropyCompressor.ts",
+    "./autodiff": "./src/core/eosReverseModeAutodiff.ts",
     "./package.json": "./package.json"
   },
   "bin": {

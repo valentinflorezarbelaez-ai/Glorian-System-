@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-11T03:12:20.453Z",
-  "totalSpecs": 202,
-  "catalogSha256": "2cd3c8f3d1bb99109f4fbf0892682ffc910ed209f0b6d1b0fdff5dec8f6a23fa",
+  "timestampIso": "2026-11-11T03:19:44.497Z",
+  "totalSpecs": 203,
+  "catalogSha256": "a69c00d76d59cd2b9586b3ee3b0e294a9ee3a653677c0ff9c0ec5eed9c307461",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1820,6 +1820,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-207-ANS-ENTROPY-COMPRESSOR.md",
       "sha256": "2164c68709866045d8733cf354a22e0b79c4940200f63a20f92aa90ce90d2b83"
+    },
+    {
+      "id": "SPEC-208",
+      "title": "Layer-0 Reverse-Mode Automatic Differentiation & Multidimensional Tensor Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-208-AUTODIFF-TENSOR-CORE.md",
+      "sha256": "5e246bbde490104717b0382b11a612f13e0cc7d7ffbc12c84ee9295d7c6fb59d"
     }
   ]
 }

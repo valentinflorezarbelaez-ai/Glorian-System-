@@ -510,5 +510,25 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(ansDecompressReport.verified, true);
     assert.equal(ansDecompressReport.decompressedText, "ENTERPRISE_FACADE_ANS_COMPRESSION_TEST");
     assert.equal(ansDecompressReport.sha256Receipt.length, 64);
+
+    // 20. autodiff_grad & autodiff_train
+    const autodiffGradReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "autodiff_grad", values: [1.0, 2.0, 3.0] },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(autodiffGradReport.action, "autodiff_grad");
+    assert.equal(autodiffGradReport.gradientCheck.passed, true);
+    assert.equal(autodiffGradReport.analyticalGrad.length, 3);
+    assert.equal(autodiffGradReport.sha256Receipt.length, 64);
+
+    const autodiffTrainReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "autodiff_train", epochs: 5 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(autodiffTrainReport.action, "autodiff_train");
+    assert.equal(autodiffTrainReport.receipt.lossDecreased, true);
+    assert.equal(autodiffTrainReport.receipt.sha256Receipt.length, 64);
   });
 });

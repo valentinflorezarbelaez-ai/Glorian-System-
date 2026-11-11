@@ -37,6 +37,7 @@ import { EosMctsPolicyValueMesh } from "../../core/eosMctsPolicyValueMesh.ts";
 import { EosAutonomousTlaModelChecker } from "../../core/eosAutonomousTlaModelChecker.ts";
 import { EosRaftCluster } from "../../core/eosRaftConsensusEngine.ts";
 import { EosAnsEntropyCompressor } from "../../core/eosAnsEntropyCompressor.ts";
+import { EosTensor, EosReverseModeAutodiff, EosSgdOptimizer } from "../../core/eosReverseModeAutodiff.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -771,6 +772,42 @@ export function dispatchPhase7VerificationCase(
           decompressedText: Buffer.from(result.decompressed).toString("utf8"),
           originalSha256: result.originalSha256,
           sha256Receipt: result.sha256Receipt,
+        };
+      }
+      if (action === "autodiff_grad") {
+        const rawVals = Array.isArray(args?.values) ? args.values : [1.5, -2.0, 3.0, 0.5];
+        const x = EosTensor.from(rawVals, [rawVals.length], true);
+        const gradCheck = EosReverseModeAutodiff.checkGradient((p) => p.pow(2).add(p.mul(2.0)).sum(), x);
+        x.zeroGrad();
+        const loss = x.pow(2).add(x.mul(2.0)).sum();
+        loss.backward();
+        const receipt = pureSha256(`AUTODIFF_GRAD:${x.id}:${loss.item()}`);
+        return {
+          action: "autodiff_grad",
+          lossValue: loss.item(),
+          analyticalGrad: x.grad ? Array.from(x.grad) : [],
+          gradientCheck: gradCheck,
+          sha256Receipt: receipt,
+        };
+      }
+      if (action === "autodiff_train") {
+        const epochs = typeof args?.epochs === "number" ? Math.max(1, Math.floor(args.epochs)) : 10;
+        const X = EosTensor.from([1.0, 2.0, 3.0, 4.0], [2, 2], false);
+        const target = EosTensor.from([5.0, 11.0], [2, 1], false);
+        const W = EosTensor.from([0.1, 0.1], [2, 1], true);
+        const optimizer = new EosSgdOptimizer([W], 0.05);
+        const receipt = EosReverseModeAutodiff.trainStep(
+          () => {
+            const pred = X.matmul(W);
+            return EosReverseModeAutodiff.mseLoss(pred, target);
+          },
+          optimizer,
+          epochs,
+        );
+        return {
+          action: "autodiff_train",
+          receipt,
+          trainedWeights: W.toArray(),
         };
       }
       if (action === "list") {

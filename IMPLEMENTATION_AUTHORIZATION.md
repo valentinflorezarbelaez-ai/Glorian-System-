@@ -1427,3 +1427,26 @@
   - `docs/plans/PLAN-092-ANS-ENTROPY-COMPRESSOR.md`
   - `docs/tasks/TASKS-092-ANS-ENTROPY-COMPRESSOR.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-AUTODIFF-TENSOR-208
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Reverse-Mode Automatic Differentiation & Multidimensional Tensor Core (`SPEC-208`, `CHANGE-093`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “todos uno por uno”, “vamos con toda si con toda perfeccion superlatva absoluta”)
+- **Scope**:
+  1. Implement Layer-0 Reverse-Mode Autodiff and Multidimensional Tensor Core `src/core/eosReverseModeAutodiff.ts`.
+  2. Subpath export `"./autodiff"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI commands `glorian autodiff:grad` and `glorian autodiff:train` in `bin/commands/cliPlatform.mjs` and `bin/commands/cliKernel.mjs`.
+  5. Wire MCP actions `action: "autodiff_grad"` and `action: "autodiff_train"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosReverseModeAutodiff.test.mjs` (BDD-1059..BDD-1063).
+  7. Add test step #20 in `test/eosEnterpriseFacade.test.mjs`.
+  8. Document Módulo 23 in `docs/DEVELOPER_GUIDE.md`.
+  9. Update OpenSpec catalog index to 203 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-093-AUTODIFF-TENSOR-CORE.md`
+  - `openspec/changes/CHANGE-093-AUTODIFF-TENSOR-CORE.md`
+  - `openspec/specs/SPEC-208-AUTODIFF-TENSOR-CORE.md`
+  - `docs/plans/PLAN-093-AUTODIFF-TENSOR-CORE.md`
+  - `docs/tasks/TASKS-093-AUTODIFF-TENSOR-CORE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

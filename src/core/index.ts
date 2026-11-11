@@ -149,3 +149,4 @@ export * from "./eosMctsPolicyValueMesh.ts";
 export * from "./eosAutonomousTlaModelChecker.ts";
 export * from "./eosRaftConsensusEngine.ts";
 export * from "./eosAnsEntropyCompressor.ts";
+export * from "./eosReverseModeAutodiff.ts";

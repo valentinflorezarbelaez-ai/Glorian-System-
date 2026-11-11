@@ -622,6 +622,40 @@ console.log(`¿Coincidencia exacta?  : ${decompressedResult.verified}`);
 
 ---
 
+### Módulo 23: Núcleo de Tensores Multidimensionales y Autodiferenciación en Modo Reverso (`EosReverseModeAutodiff`)
+
+**Propósito:** Cálculo analítico exacto de gradientes multidimensionales $\nabla_\theta \mathcal{L}$ para optimización de parámetros, auto-calibración heurística y aprendizaje cerrado sin requerir PyTorch ni TensorFlow (Ley V). Proporciona un tensor multidimensional sobre `Float64Array` continuo con indexación strided, grafo de computación dinámico (cinta/Wengert list), retropropagación en modo reverso con regla de la cadena multivariable, activaciones no lineales (ReLU, Sigmoid, Tanh), multiplicación de matrices 2D (`matmul`), oráculo de verificación contra diferencias finitas centrales y optimizador de descenso de gradiente estocástico (SGD) con recibos criptográficos SHA-256.
+
+```ts
+import {
+  EosTensor,
+  EosReverseModeAutodiff,
+  EosSgdOptimizer,
+} from "./src/core/eosReverseModeAutodiff.ts";
+
+// 1. Tensores con seguimiento de gradiente
+const X = EosTensor.from([1.0, 2.0, 3.0, 4.0], [2, 2], false);
+const W = EosTensor.from([0.1, 0.1], [2, 1], true);
+const target = EosTensor.from([5.0, 11.0], [2, 1], false);
+
+// 2. Paso de optimización SGD
+const optimizer = new EosSgdOptimizer([W], 0.05);
+const receipt = EosReverseModeAutodiff.trainStep(
+  () => {
+    const pred = X.matmul(W);
+    return EosReverseModeAutodiff.mseLoss(pred, target);
+  },
+  optimizer,
+  15,
+);
+
+console.log(`Convergencia confirmada: ${receipt.lossDecreased}`);
+console.log(`Pérdida final          : ${receipt.finalLoss}`);
+console.log(`Recibo SHA-256         : ${receipt.sha256Receipt}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -654,6 +688,8 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs raft:status [--json]`              | Estado en vivo del clúster Raft, quórum de mayoría y recibo criptográfico (SPEC-206).      |
 | `node bin/eos.mjs compress:ans [texto]`              | Compresor de entropía rANS Layer-0 cercano al límite de Shannon (SPEC-207).                |
 | `node bin/eos.mjs decompress:ans <base64>`           | Descompresor sin pérdidas rANS con verificación de integridad SHA-256 (SPEC-207).          |
+| `node bin/eos.mjs autodiff:grad`                     | Diferenciación automática en modo reverso con oráculo de gradientes (SPEC-208).            |
+| `node bin/eos.mjs autodiff:train [--epochs=N]`       | Optimización cerrada de parámetros vía SGD y tensor core multidimensional (SPEC-208).      |
 | `node bin/eos.mjs metrics`                           | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`               | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |
