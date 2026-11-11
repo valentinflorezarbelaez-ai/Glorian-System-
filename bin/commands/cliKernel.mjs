@@ -522,6 +522,7 @@ Uso Universal Exhaustivo:
   eos compile [plataforma] [--dry-run] Compila ejecutable nativo hermético SEA (Node 24)
   eos pq:kem [--hybrid]      Encapsulación de claves post-cuántica (NIST FIPS 203 ML-KEM + X25519)
   eos pq:sign [msg] [--hybrid] Firmas digitales de retículos post-cuánticos (NIST FIPS 204 ML-DSA)
+  eos synthesize [codigo]    Sintetizador genético autónomo de código AST (Meta APR / SPEC-200)
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

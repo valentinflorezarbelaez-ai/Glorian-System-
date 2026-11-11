@@ -399,6 +399,32 @@ console.log(`¿Firma post-cuántica válida? : ${valid}`);
 
 ---
 
+### Módulo 15: Sintetizador Genético de Código AST (`EosGeneticAstSynthesizer`)
+
+**Propósito:** Síntesis autónoma de código y reparación automática de programas (inspirado en Meta APR, DARPA CRASH/VDO y AlphaCode 2): modela código en árboles de sintaxis abstracta (AST) y aplica algoritmos genéticos (mutaciones puntuales de operadores, reparación de límites _off-by-one_, salvaguardas contra nulos y cruzamiento de subárboles) guiados por funciones de fitness multiobjetivo para elevar la aptitud del código al 100% de forma determinista y sin dependencias externas.
+
+```ts
+import { EosGeneticAstSynthesizer } from "./src/core/eosGeneticAstSynthesizer.ts";
+
+const result = EosGeneticAstSynthesizer.synthesize({
+  initialCode: "a - b",
+  generations: 8,
+  populationSize: 12,
+  testCases: [
+    { input: [1, 2], expected: 3 },
+    { input: [10, 20], expected: 30 },
+  ],
+});
+
+console.log(`Código inicial      : a - b`);
+console.log(`Código sintetizado  : ${result.bestCandidate.code}`);
+console.log(`Puntaje de fitness  : ${result.finalFitness} / 100`);
+console.log(`Mutaciones aplicadas: ${result.bestCandidate.appliedMutations.join(", ")}`);
+console.log(`Parche Diff:\n${result.diffPatch}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -416,6 +442,7 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs compile [plataforma] [--dry-run]`  | Compila Glorian en ejecutable nativo hermético SEA (Ed25519 + SLSA Nivel 4).              |
 | `node bin/eos.mjs pq:kem [--hybrid] [--json]`        | Encapsula clave post-cuántica (NIST FIPS 203 ML-KEM + X25519) con verificación inmediata. |
 | `node bin/eos.mjs pq:sign [msg] [--hybrid] [--json]` | Genera y verifica firma digital de retículos (NIST FIPS 204 ML-DSA + Ed25519).            |
+| `node bin/eos.mjs synthesize [codigo] [--json]`      | Sintetiza y repara código automáticamente mediante mutación genética y cruce de AST.      |
 | `node bin/eos.mjs metrics`                           | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
 | `node bin/eos.mjs guard [directorio]`                | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
 | `node bin/eos.mjs flow inspect <ruta>`               | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |

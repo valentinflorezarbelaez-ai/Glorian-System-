@@ -29,6 +29,7 @@ import { EosSwarmAdversarialArena } from "../../core/eosSwarmAdversarialArena.ts
 import { EosZkStateProof } from "../../core/eosZkStateProof.ts";
 import { EosHermeticSeaCompiler } from "../../core/eosHermeticSeaCompiler.ts";
 import { EosPostQuantumCryptography } from "../../core/eosPostQuantumCryptography.ts";
+import { EosGeneticAstSynthesizer } from "../../core/eosGeneticAstSynthesizer.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -488,6 +489,16 @@ export function dispatchPhase7VerificationCase(
         return {
           verified: EosPostQuantumCryptography.verifyMlDsa(msg, sig, vk),
         };
+      }
+      if (action === "synthesize_code") {
+        const initialCode = String(args?.initialCode || "return a + b;");
+        const generations = typeof args?.generations === "number" ? Math.floor(args.generations) : 6;
+        const populationSize = typeof args?.populationSize === "number" ? Math.floor(args.populationSize) : 10;
+        return EosGeneticAstSynthesizer.synthesize({
+          initialCode,
+          generations,
+          populationSize,
+        });
       }
       if (action === "list") {
         return {

@@ -357,5 +357,15 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(pqReport.verified, true);
     assert.equal(pqReport.mode, "HYBRID");
     assert.equal(pqReport.sharedSecretHex.length, 64);
+
+    // 12. synthesize_code
+    const synthReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "synthesize_code", initialCode: "a - b" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(synthReport.success, true);
+    assert.equal(synthReport.finalFitness, 100);
+    assert.equal(synthReport.bestCandidate.code, "a + b");
   });
 });

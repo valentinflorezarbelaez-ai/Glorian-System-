@@ -985,6 +985,53 @@ async function cmd_pq_sign_141(commandContext) {
 
 HANDLERS["pq:sign"] = cmd_pq_sign_141;
 
+async function cmd_synthesize_143(commandContext) {
+  const { args, command } = commandContext;
+  const isJson = args.includes("--json");
+  const codeCandidate = args.filter((a) => !a.startsWith("-") && a !== command).join(" ");
+  const initialCode = codeCandidate || "return a - b;";
+
+  const genArg = args.find((a) => a.startsWith("--generations="));
+  const generations = genArg ? parseInt(genArg.split("=")[1], 10) : 8;
+
+  const popArg = args.find((a) => a.startsWith("--population="));
+  const populationSize = popArg ? parseInt(popArg.split("=")[1], 10) : 10;
+
+  const { EosGeneticAstSynthesizer } = await import("../../src/core/eosGeneticAstSynthesizer.ts");
+  const result = EosGeneticAstSynthesizer.synthesize({
+    initialCode,
+    generations,
+    populationSize,
+    testCases: [
+      { input: [1, 2], expected: 3 },
+      { input: [5, 10], expected: 15 },
+      { input: [20, 30], expected: 50 },
+    ],
+  });
+
+  if (isJson) {
+    console.log(JSON.stringify(result, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN GENETIC AST CODE SYNTHESIZER (SPEC-200)              `);
+  console.log(`===============================================================`);
+  console.log(`  Initial Code     : ${initialCode}`);
+  console.log(`  Synthesized Code : ${result.bestCandidate.code}`);
+  console.log(`  Fitness Score    : ${result.finalFitness} / 100 (elevated from ${result.initialFitness})`);
+  console.log(`  Generations      : ${result.generationsElapsed} (population: ${result.populationSize})`);
+  console.log(`  Mutations Used   : ${result.bestCandidate.appliedMutations.join(", ") || "None (Converged)"}`);
+  console.log(`  Receipt SHA-256  : sha256:${result.sha256Receipt}`);
+  console.log(`---------------------------------------------------------------`);
+  console.log(`  UNIFIED PATCH DIFF:`);
+  console.log(result.diffPatch);
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["synthesize"] = cmd_synthesize_143;
+HANDLERS["ast:synthesize"] = cmd_synthesize_143;
+
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {

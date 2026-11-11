@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
-  "totalSpecs": 194,
-  "catalogSha256": "5f47a64c24ccd7650b727dedb396a7c69b26a0a1ad7b17babc059b883a31acc7",
+  "totalSpecs": 195,
+  "catalogSha256": "d8d5aa8706d696e522c8deda938f1a4079c5c5edb5eb69ebdaf36e8c7bf5eddf",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1748,6 +1748,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-199-POST-QUANTUM-CRYPTO.md",
       "sha256": "cab31b34e979e07db1265eec175ba06d048f9e911c6df2e700a03f4be6b28a22"
+    },
+    {
+      "id": "SPEC-200",
+      "title": "Autonomous Genetic AST Code Synthesizer",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-200-GENETIC-AST-SYNTHESIZER.md",
+      "sha256": "5c5dff902faa8d94a9f08aee71f3466abe3f59559908d1303c23cc5e1d265609"
     }
   ]
 }
