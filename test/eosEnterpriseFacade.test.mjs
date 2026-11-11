@@ -316,5 +316,25 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(typeof arenaReport.resilienceScore, "number");
     assert.ok(arenaReport.participatingAgents.length >= 4);
     assert.equal(arenaReport.bftVerdict, "CONSENSUS_HARDENED");
+
+    // 9. zk_prove & zk_verify
+    const zkProveReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "zk_prove", specId: "SPEC-193" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(zkProveReport.verified, true);
+    assert.ok(zkProveReport.publicMerkleRoot.length === 64);
+
+    const zkVerifyReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      {
+        action: "zk_verify",
+        proof: zkProveReport.proof,
+        publicMerkleRoot: zkProveReport.publicMerkleRoot,
+      },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(zkVerifyReport.verified, true);
   });
 });

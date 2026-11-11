@@ -26,6 +26,7 @@ import { EosUniversalProjectDoctor } from "../../core/eosUniversalProjectDoctor.
 import { EosUniversalCodeRemediator } from "../../core/eosUniversalCodeRemediator.ts";
 import { EosDynamicFuzzingOracle } from "../../core/eosDynamicFuzzingOracle.ts";
 import { EosSwarmAdversarialArena } from "../../core/eosSwarmAdversarialArena.ts";
+import { EosZkStateProof } from "../../core/eosZkStateProof.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -434,6 +435,17 @@ export function dispatchPhase7VerificationCase(
         const target =
           typeof args?.target === "string" && args.target.trim().length > 0 ? args.target.trim() : "npm test";
         return EosSwarmAdversarialArena.executeTournament(target, rounds);
+      }
+      if (action === "zk_prove") {
+        const spec = typeof args?.specId === "string" ? args.specId.trim() : "SPEC-193";
+        return EosZkStateProof.generateDefaultRepositoryProof(spec);
+      }
+      if (action === "zk_verify") {
+        const proof = args?.proof;
+        const publicRoot = typeof args?.publicMerkleRoot === "string" ? args.publicMerkleRoot : undefined;
+        return {
+          verified: EosZkStateProof.verifyInclusionProof(proof, publicRoot),
+        };
       }
       if (action === "list") {
         return {

@@ -1201,3 +1201,23 @@
   - `docs/plans/PLAN-081-SWARM-ADVERSARIAL-ARENA.md`
   - `docs/tasks/TASKS-081-SWARM-ADVERSARIAL-ARENA.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-ZK-STATE-PROOF-197
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Zero-Knowledge Merkle State Attestation Engine (`SPEC-197`, `CHANGE-082`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “vamos con toda si con toda perfeccion superlatva absoluta”)
+- **Scope**:
+  1. Implement Layer-0 Zero-Knowledge Merkle state engine `src/core/eosZkStateProof.ts`.
+  2. Subpath export `"./zk-proof"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI command `glorian zk:prove` in `bin/commands/cliPlatform.mjs`.
+  5. Wire MCP action `action: "zk_prove"` and `action: "zk_verify"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosZkStateProof.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-082-ZERO-KNOWLEDGE-STATE-PROOF.md`
+  - `openspec/changes/CHANGE-082-ZERO-KNOWLEDGE-STATE-PROOF.md`
+  - `openspec/specs/SPEC-197-ZERO-KNOWLEDGE-STATE-PROOF.md`
+  - `docs/plans/PLAN-082-ZERO-KNOWLEDGE-STATE-PROOF.md`
+  - `docs/tasks/TASKS-082-ZERO-KNOWLEDGE-STATE-PROOF.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

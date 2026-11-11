@@ -21,6 +21,7 @@
     "./remediator": "./src/core/eosUniversalCodeRemediator.ts",
     "./fuzzing": "./src/core/eosDynamicFuzzingOracle.ts",
     "./arena-swarm": "./src/core/eosSwarmAdversarialArena.ts",
+    "./zk-proof": "./src/core/eosZkStateProof.ts",
     "./package.json": "./package.json"
   },
   "bin": {

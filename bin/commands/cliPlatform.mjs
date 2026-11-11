@@ -748,6 +748,37 @@ async function cmd_arena_137(commandContext) {
 HANDLERS["arena"] = cmd_arena_137;
 HANDLERS["swarm:arena"] = cmd_arena_137;
 
+async function cmd_zk_prove_138(commandContext) {
+  const { args } = commandContext;
+  const isJson = args.includes("--json");
+  const specArg = args.find((a) => a.startsWith("--spec="));
+  const spec = specArg ? specArg.split("=")[1] : "SPEC-193";
+
+  const { EosZkStateProof } = await import("../../src/core/eosZkStateProof.ts");
+  const result = EosZkStateProof.generateDefaultRepositoryProof(spec);
+
+  if (isJson) {
+    console.log(JSON.stringify(result, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN ZERO-KNOWLEDGE MERKLE STATE ATTESTATION (SPEC-197)   `);
+  console.log(`===============================================================`);
+  console.log(`  Proof ID         : ${result.proof.proofId}`);
+  console.log(`  Verified Claim   : ${result.proof.claimId} [${result.proof.claimStatus}]`);
+  console.log(`  Blinding Salt    : ${result.proof.salt}`);
+  console.log(`  Leaf Hash        : sha256:${result.proof.leafHash}`);
+  console.log(`  Merkle Root      : sha256:${result.publicMerkleRoot}`);
+  console.log(`  Audit Path Depth : ${result.proof.auditPath.length} sibling hops`);
+  console.log(`  ZK Verification  : ${result.verified ? "✔ VALID_INCLUSION_PROVEN" : "✖ INVALID_PROOF"}`);
+  console.log(`  Receipt SHA-256  : sha256:${result.proof.sha256ProofReceipt}`);
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["zk:prove"] = cmd_zk_prove_138;
+HANDLERS["zk:attest"] = cmd_zk_prove_138;
+
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {

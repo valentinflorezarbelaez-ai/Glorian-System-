@@ -1,0 +1,5 @@
+# INTAKE-082: Zero-Knowledge Merkle State Attestation Engine
+
+- **Owner directive**: Elevate Glorian System with zero-knowledge cryptographic state attestation inspired by Post-Quantum Cryptography, Apple Secure Enclave / Intel SGX, and W3C Verifiable Credentials, enabling mathematical verification of repository compliance and specification integrity without disclosing proprietary code or secrets.
+- **Gap**: While Glorian has SLSA level-4 and in-toto provenance attestation, it lacks selective-disclosure Zero-Knowledge Merkle proofs (`glorian zk:prove`) that prove a specific compliance claim (e.g. Soundcheck score, SLSA L4, invariant safety) against a public state root without exposing repository source files to external auditors.
+- **Outcome**: A pure Layer-0 Zero-Knowledge Merkle State Attestation Engine (`src/core/eosZkStateProof.ts`) that constructs binary Merkle trees over state commitments, generates logarithmic audit path proofs, verifies root inclusion in constant time, and emits cryptographic receipts accessible via CLI and MCP.

@@ -330,6 +330,23 @@ console.log(`Rondas mitigadas        : ${torneo.mitigatedRounds} / ${torneo.tota
 
 ---
 
+### Módulo 12: Atestación de Estado de Conocimiento Cero (`EosZkStateProof`)
+
+**Propósito:** Demostración matemática y verificación de cumplimiento (inspirado en Criptografía Post-Cuántica, Intel SGX / Apple Secure Enclave y W3C Verifiable Credentials): construye árboles de Merkle binarios sobre hojas de estado selladas con sales de cegado (_blinding salts_), emitiendo pruebas de inclusión $O(\log N)$ que permiten verificar cumplimiento normativo sin revelar código confidencial ni secretos.
+
+```ts
+import { EosZkStateProof } from "./src/core/eosZkStateProof.ts";
+
+const { proof, publicMerkleRoot, verified } =
+  EosZkStateProof.generateDefaultRepositoryProof("SPEC-193");
+
+console.log(`Requisito verificado    : ${proof.claimId}`);
+console.log(`Raíz pública de Merkle  : sha256:${publicMerkleRoot}`);
+console.log(`¿Prueba ZK válida?      : ${verified}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -343,6 +360,7 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs remediate [ruta] [--dry-run]` | Auto-remedia el repositorio: genera .gitignore, pruebas smoke, CI y gobernanza.           |
 | `node bin/eos.mjs fuzz [--iterations=N]`        | Fuzzing dinámico guiado por cobertura sobre funciones y primitivas del sistema.           |
 | `node bin/eos.mjs arena [accion] [--rounds=N]`  | Torneo adversario multi-agente bajo consenso BFT 3f+1 (Red vs Blue vs White).             |
+| `node bin/eos.mjs zk:prove [--spec=ID]`         | Genera y verifica prueba Merkle de Conocimiento Cero (ZKP) para un requisito o spec.      |
 | `node bin/eos.mjs metrics`                      | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
 | `node bin/eos.mjs guard [directorio]`           | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
 | `node bin/eos.mjs flow inspect <ruta>`          | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |
