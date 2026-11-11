@@ -1381,3 +1381,26 @@
   - `docs/plans/PLAN-090-AUTONOMOUS-TLA-MODEL-CHECKER.md`
   - `docs/tasks/TASKS-090-AUTONOMOUS-TLA-MODEL-CHECKER.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-RAFT-CONSENSUS-206
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Distributed Raft Consensus Engine with Replicated FSM (`SPEC-206`, `CHANGE-091`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “todos uno por uno”, “vamos con toda si con toda perfeccion superlatva absoluta”)
+- **Scope**:
+  1. Implement Layer-0 Distributed Raft Consensus Engine `src/core/eosRaftConsensusEngine.ts`.
+  2. Subpath export `"./raft"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI commands `glorian raft:cluster` and `glorian raft:status` in `bin/commands/cliPlatform.mjs` and `bin/commands/cliKernel.mjs`.
+  5. Wire MCP actions `action: "raft_cluster"` and `action: "raft_propose"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosRaftConsensusEngine.test.mjs` (BDD-1049..BDD-1053).
+  7. Add test step #18 in `test/eosEnterpriseFacade.test.mjs`.
+  8. Document Módulo 21 in `docs/DEVELOPER_GUIDE.md`.
+  9. Update OpenSpec catalog index to 201 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-091-RAFT-CONSENSUS-ENGINE.md`
+  - `openspec/changes/CHANGE-091-RAFT-CONSENSUS-ENGINE.md`
+  - `openspec/specs/SPEC-206-RAFT-CONSENSUS-ENGINE.md`
+  - `docs/plans/PLAN-091-RAFT-CONSENSUS-ENGINE.md`
+  - `docs/tasks/TASKS-091-RAFT-CONSENSUS-ENGINE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

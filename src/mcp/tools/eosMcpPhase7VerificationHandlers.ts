@@ -35,6 +35,7 @@ import { EosTemporalKnowledgeGraph } from "../../core/eosTemporalKnowledgeGraph.
 import { EosWasmBytecodeDecompilerProver } from "../../core/eosWasmBytecodeDecompilerProver.ts";
 import { EosMctsPolicyValueMesh } from "../../core/eosMctsPolicyValueMesh.ts";
 import { EosAutonomousTlaModelChecker } from "../../core/eosAutonomousTlaModelChecker.ts";
+import { EosRaftCluster } from "../../core/eosRaftConsensusEngine.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -717,6 +718,36 @@ export function dispatchPhase7VerificationCase(
           moduleName: model.moduleName,
           tlaCode,
           sha256Receipt: receipt,
+        };
+      }
+      if (action === "raft_cluster") {
+        const nodeCount = typeof args?.nodeCount === "number" ? Math.max(1, Math.floor(args.nodeCount)) : 3;
+        const nodeIds = Array.from({ length: nodeCount }, (_, i) => `node-${i + 1}`);
+        const cluster = new EosRaftCluster("mcp-raft-cluster", nodeIds);
+        const election = cluster.startElection(nodeIds[0]);
+        const status = cluster.getClusterStatus();
+        const receipt = cluster.generateReceipt();
+        return {
+          action: "raft_cluster",
+          election,
+          status,
+          receipt,
+        };
+      }
+      if (action === "raft_propose") {
+        const nodeCount = typeof args?.nodeCount === "number" ? Math.max(1, Math.floor(args.nodeCount)) : 3;
+        const nodeIds = Array.from({ length: nodeCount }, (_, i) => `node-${i + 1}`);
+        const cluster = new EosRaftCluster("mcp-raft-cluster", nodeIds);
+        cluster.startElection(nodeIds[0]);
+        const cmd = args?.command ?? { type: "SET", key: "mcp_key", value: "mcp_value" };
+        const proposal = cluster.propose(cmd);
+        const status = cluster.getClusterStatus();
+        const receipt = cluster.generateReceipt();
+        return {
+          action: "raft_propose",
+          proposal,
+          status,
+          receipt,
         };
       }
       if (action === "list") {

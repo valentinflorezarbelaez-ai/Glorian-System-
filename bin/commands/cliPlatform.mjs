@@ -1491,6 +1491,68 @@ HANDLERS["tla:check"] = cmd_tla_model_checker_148;
 HANDLERS["tla:model-check"] = cmd_tla_model_checker_148;
 HANDLERS["tla:synthesize"] = cmd_tla_model_checker_148;
 
+async function cmd_raft_consensus_149(commandContext) {
+  const { args } = commandContext;
+  const isJson = args.includes("--json");
+  const { EosRaftCluster } = await import("../../src/core/eosRaftConsensusEngine.ts");
+
+  const nodesArg = args.find((a) => a.startsWith("--nodes="));
+  const nodeCount = nodesArg ? Math.max(1, parseInt(nodesArg.split("=")[1], 10)) : 3;
+  const nodeIds = Array.from({ length: nodeCount }, (_, i) => `node-${i + 1}`);
+
+  const cluster = new EosRaftCluster("glorian-raft-01", nodeIds);
+  // Elect leader
+  const election = cluster.startElection("node-1");
+
+  // Propose default or user command
+  const proposeArg = args.find((a) => a.startsWith("--propose="));
+  let cmd = { type: "SET", key: "cluster_epoch", value: "2026.11" };
+  if (proposeArg) {
+    const raw = proposeArg.split("=").slice(1).join("=");
+    if (raw.includes("=")) {
+      const [k, v] = raw.split("=");
+      cmd = { type: "SET", key: k, value: v };
+    } else {
+      cmd = { type: "SET", key: "payload", value: raw };
+    }
+  }
+
+  const proposal = cluster.propose(cmd);
+  const status = cluster.getClusterStatus();
+  const receipt = cluster.generateReceipt();
+
+  if (isJson) {
+    console.log(JSON.stringify({ election, proposal, status, receipt }, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN LAYER-0 RAFT DISTRIBUTED CONSENSUS ENGINE (SPEC-206) `);
+  console.log(`===============================================================`);
+  console.log(`  Cluster ID       : ${status.clusterId}`);
+  console.log(`  Current Term     : ${status.currentTerm}`);
+  console.log(`  Elected Leader   : ${status.leaderId ?? "NONE"}`);
+  console.log(`  Quorum Size      : ${status.quorumSize} / ${status.nodeCount} nodes`);
+  console.log(`  Active Quorum    : ${status.isQuorumFormed ? "✔ QUORUM_ACHIEVED" : "✖ NO_QUORUM"}`);
+  console.log(`  Nodes Status:`);
+  for (const n of status.nodes) {
+    console.log(
+      `    - ${n.nodeId.padEnd(10)} [${n.role.padEnd(9)}] Term: ${n.currentTerm} CommitIdx: ${n.commitIndex} LastApplied: ${n.lastApplied} LogLen: ${n.logLength}`,
+    );
+  }
+  console.log(`  Command Propose  : ${proposal.committed ? "✔ COMMITTED_TO_REPLICATED_FSM" : "✖ UNCOMMITTED"}`);
+  console.log(
+    `  Leader FSM State : ${JSON.stringify(status.nodes.find((n) => n.nodeId === status.leaderId)?.fsmState ?? {})}`,
+  );
+  console.log(`  State Hash       : ${receipt.fsmStateHash.slice(0, 24)}...`);
+  console.log(`  Receipt SHA-256  : sha256:${receipt.sha256Receipt}`);
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["raft:cluster"] = cmd_raft_consensus_149;
+HANDLERS["raft:status"] = cmd_raft_consensus_149;
+HANDLERS["raft:consensus"] = cmd_raft_consensus_149;
+
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {

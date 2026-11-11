@@ -30,6 +30,7 @@
     "./wasm-prover": "./src/core/eosWasmBytecodeDecompilerProver.ts",
     "./mcts": "./src/core/eosMctsPolicyValueMesh.ts",
     "./tla-checker": "./src/core/eosAutonomousTlaModelChecker.ts",
+    "./raft": "./src/core/eosRaftConsensusEngine.ts",
     "./package.json": "./package.json"
   },
   "bin": {

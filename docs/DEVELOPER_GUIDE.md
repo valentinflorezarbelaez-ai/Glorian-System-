@@ -574,6 +574,30 @@ console.log("Especificación TLA+ sintetizada:\n" + tlaModule);
 
 ---
 
+### Módulo 21: Motor de Consenso Distribuido Raft con FSM Replicada (`EosRaftConsensusEngine`)
+
+**Propósito:** Consenso distribuido tolerante a fallos y máquinas de estado finito (FSM) linealizables replicadas entre nodos sin requerir daemons externos como etcd, ZooKeeper o Consul (Ley V). Implementa el protocolo Raft completo (Ongaro & Ousterhout, Stanford 2014) en TypeScript puro: elección de líderes con quórum de mayoría estricta ($\lfloor N/2 \rfloor + 1$), replicación de entradas con RPC `AppendEntries`, resolución y truncamiento de conflictos de logs desfasados, aislamiento y resiliencia ante particiones de red (prevención total de _split-brain_), compactación de logs mediante Merkle snapshots y recibos criptográficos SHA-256 inmutables.
+
+```ts
+import { EosRaftCluster } from "./src/core/eosRaftConsensusEngine.ts";
+
+const cluster = new EosRaftCluster("glorian-cluster-01", ["node-1", "node-2", "node-3"]);
+
+// 1. Elección de líder por quórum de mayoría
+const election = cluster.startElection("node-1");
+console.log(`Líder electo: ${cluster.leaderId} en término ${election.term}`);
+
+// 2. Proposición y replicación linealizable en FSM
+const proposal = cluster.propose({ type: "SET", key: "cluster_epoch", value: "2026.11" });
+console.log(`¿Comando confirmado en FSM? : ${proposal.committed}`);
+
+// 3. Recibo criptográfico de consenso SHA-256
+const receipt = cluster.generateReceipt();
+console.log(`Recibo de consenso SHA-256  : ${receipt.sha256Receipt}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -602,6 +626,8 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs mcts:play [problem]`               | Simulación interactiva de toma de decisiones estratégicas óptimas (SPEC-204).              |
 | `node bin/eos.mjs tla:check [modelo]`                | Verificador de modelos simbólico TLA+ y prueba de invariantes inductivos (SPEC-205).       |
 | `node bin/eos.mjs tla:synthesize [mod]`              | Sintetiza especificación canónica formal TLA+ a partir de contratos TypeScript (SPEC-205). |
+| `node bin/eos.mjs raft:cluster [--nodes=N]`          | Simula clúster de consenso Raft distribuido con FSM replicada (SPEC-206).                  |
+| `node bin/eos.mjs raft:status [--json]`              | Estado en vivo del clúster Raft, quórum de mayoría y recibo criptográfico (SPEC-206).      |
 | `node bin/eos.mjs metrics`                           | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`               | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |

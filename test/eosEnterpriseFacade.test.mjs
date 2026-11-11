@@ -468,5 +468,26 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(tlaSynthReport.action, "tla_synthesize");
     assert.ok(tlaSynthReport.tlaCode.includes("MODULE DistributedMutualExclusion"));
     assert.ok(tlaSynthReport.sha256Receipt.length === 64);
+
+    // 18. raft_cluster & raft_propose
+    const raftClusterReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "raft_cluster", nodeCount: 3 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(raftClusterReport.action, "raft_cluster");
+    assert.equal(raftClusterReport.election.success, true);
+    assert.equal(raftClusterReport.status.isQuorumFormed, true);
+    assert.equal(raftClusterReport.receipt.sha256Receipt.length, 64);
+
+    const raftProposeReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "raft_propose", command: { type: "SET", key: "mcp_audit", value: "PASSED" } },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(raftProposeReport.action, "raft_propose");
+    assert.equal(raftProposeReport.proposal.committed, true);
+    assert.equal(raftProposeReport.status.isQuorumFormed, true);
+    assert.equal(raftProposeReport.receipt.sha256Receipt.length, 64);
   });
 });

@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-11T02:51:50.698Z",
-  "totalSpecs": 200,
-  "catalogSha256": "4f7889fe58abb2169245c835976a738173fc2c74ebfd90414be422e7fb940866",
+  "timestampIso": "2026-11-11T03:04:08.115Z",
+  "totalSpecs": 201,
+  "catalogSha256": "8165173c9ab93f43bf6141052e21e1ef596a4ee9ef82eaa2766b5b84f504c767",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1802,6 +1802,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-205-AUTONOMOUS-TLA-MODEL-CHECKER.md",
       "sha256": "96160cc5d58acc14dce1485e0e18831c6f7f8749506b4d04ae83dda0d2923a8a"
+    },
+    {
+      "id": "SPEC-206",
+      "title": "Layer-0 Distributed Raft Consensus Engine with Replicated FSM",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-206-RAFT-CONSENSUS-ENGINE.md",
+      "sha256": "a1f0111c9bd51bdc1061d93c55c991d0c7e05b2e2aafb867d456b6338a827813"
     }
   ]
 }

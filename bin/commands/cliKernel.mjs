@@ -533,6 +533,8 @@ Uso Universal Exhaustivo:
   eos mcts:play [domain]     Simulación interactiva de toma de decisiones estratégicas óptimas
   eos tla:check [modelo]     Verificador de modelos simbólico TLA+ y prueba de invariantes inductivos (SPEC-205)
   eos tla:synthesize [mod]   Sintetiza módulo canónico formal TLA+ a partir de especificaciones TypeScript
+  eos raft:cluster [--nodes=N] Simula cluster de consenso Raft distribuido con FSM replicada (SPEC-206)
+  eos raft:status [--json]   Estado en vivo del cluster Raft, quórum de mayoría y recibo criptográfico
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);
