@@ -7,6 +7,7 @@
 import { EosVerifiableRandomFunctionCore } from "../../core/eosVerifiableRandomFunctionCore.ts";
 import { EosSparseMerkleTreeCore } from "../../core/eosSparseMerkleTreeCore.ts";
 import { EosFrostThresholdSignatureCore } from "../../core/eosFrostThresholdSignatureCore.ts";
+import { EosKzgPolynomialCommitmentCore } from "../../core/eosKzgPolynomialCommitmentCore.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
@@ -149,6 +150,60 @@ export function dispatchPhase7FrontierActionExt(
     return {
       action: "frost_verify",
       message,
+      valid: verifyRes.valid,
+      verificationTimeMs: verifyRes.verificationTimeMs,
+      receipt: verifyRes.receipt,
+    };
+  }
+  if (action === "kzg_commit") {
+    const rawCoeffs = Array.isArray(args?.coeffs) ? args.coeffs : [7, 5, 2, 3];
+    const coeffs = rawCoeffs.map((c: any) => BigInt(c));
+    const srs = EosKzgPolynomialCommitmentCore.setup(16, "mcp-kzg-seed");
+    const core = new EosKzgPolynomialCommitmentCore(srs);
+    const commitRes = core.commit(coeffs);
+    return {
+      action: "kzg_commit",
+      degree: commitRes.degree,
+      commitmentHex: commitRes.commitmentHex,
+      receipt: commitRes.receipt,
+    };
+  }
+  if (action === "kzg_open") {
+    const rawCoeffs = Array.isArray(args?.coeffs) ? args.coeffs : [7, 5, 2, 3];
+    const coeffs = rawCoeffs.map((c: any) => BigInt(c));
+    const point = typeof args?.point === "number" ? BigInt(args.point) : 4n;
+    const srs = EosKzgPolynomialCommitmentCore.setup(16, "mcp-kzg-seed");
+    const core = new EosKzgPolynomialCommitmentCore(srs);
+    const commitRes = core.commit(coeffs);
+    const openRes = core.open(coeffs, point);
+    return {
+      action: "kzg_open",
+      point: point.toString(),
+      claimedValue: openRes.claimedValue.toString(),
+      proofHex: openRes.proofHex,
+      commitmentHex: commitRes.commitmentHex,
+      receipt: openRes.receipt,
+    };
+  }
+  if (action === "kzg_verify") {
+    const rawCoeffs = Array.isArray(args?.coeffs) ? args.coeffs : [7, 5, 2, 3];
+    const coeffs = rawCoeffs.map((c: any) => BigInt(c));
+    const point = typeof args?.point === "number" ? BigInt(args.point) : 4n;
+    const srs = EosKzgPolynomialCommitmentCore.setup(16, "mcp-kzg-seed");
+    const core = new EosKzgPolynomialCommitmentCore(srs);
+    const commitRes = core.commit(coeffs);
+    const openRes = core.open(coeffs, point);
+    const verifyRes = core.verify(
+      commitRes.commitmentPoint,
+      point,
+      openRes.claimedValue,
+      openRes.proofPoint,
+      openRes.quotientDegree,
+    );
+    return {
+      action: "kzg_verify",
+      point: point.toString(),
+      claimedValue: openRes.claimedValue.toString(),
       valid: verifyRes.valid,
       verificationTimeMs: verifyRes.verificationTimeMs,
       receipt: verifyRes.receipt,

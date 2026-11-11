@@ -1713,3 +1713,27 @@
   - `docs/plans/PLAN-104-FROST-THRESHOLD-SIGNATURES.md`
   - `docs/tasks/TASKS-104-FROST-THRESHOLD-SIGNATURES.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-KZG-POLYNOMIAL-COMMITMENTS-220
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 KZG Polynomial Commitments & Multi-Proof Core (`SPEC-220`, `CHANGE-105`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "dale con toda si")
+- **Scope**:
+  1. Implement Layer-0 KZG types in `src/core/eosKzgPolynomialCommitmentCore.types.ts`.
+  2. Implement Layer-0 KZG Engine in `src/core/eosKzgPolynomialCommitmentCore.ts`.
+  3. Subpath export `"./kzg"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian kzg:commit`, `glorian kzg:open`, `glorian kzg:verify`, `glorian kzg:batch` in `bin/commands/cliKzgMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "kzg_commit"`, `action: "kzg_open"`, `action: "kzg_verify"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosKzgPolynomialCommitmentCore.test.mjs` (BDD-1119..BDD-1123).
+  8. Add test step #32 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 35 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 215 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-105-KZG-POLYNOMIAL-COMMITMENTS.md`
+  - `openspec/changes/CHANGE-105-KZG-POLYNOMIAL-COMMITMENTS.md`
+  - `openspec/specs/SPEC-220-KZG-POLYNOMIAL-COMMITMENTS.md`
+  - `docs/plans/PLAN-105-KZG-POLYNOMIAL-COMMITMENTS.md`
+  - `docs/tasks/TASKS-105-KZG-POLYNOMIAL-COMMITMENTS.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

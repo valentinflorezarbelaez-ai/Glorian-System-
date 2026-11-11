@@ -568,6 +568,10 @@ Uso Universal Exhaustivo:
   eos frost:keygen [--t=3]     Configuración de claves distribuidas (t, n) FROST RFC 9591 (SPEC-219)
   eos frost:sign [--active=S]  Firma de umbral en dos rondas con factores anti-ROS y agregación Lagrange
   eos frost:verify [--json]    Verificación no interactiva indistinguible de Schnorr de clave única
+  eos kzg:commit [--coeffs=C]  Compromiso de polinomio O(1) Kate-Zaverucha-Goldberg (SPEC-220)
+  eos kzg:open [--point=z]     Generación de prueba de evaluación q(x) = (p(x)-v)/(x-z)
+  eos kzg:verify [--json]      Verificación algebraica O(1) de prueba de apertura KZG en <2ms
+  eos kzg:batch [--points=Z]   Prueba y verificación por lotes con polinomio anulador Z(x)
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

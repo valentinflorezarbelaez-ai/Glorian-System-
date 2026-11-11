@@ -204,3 +204,16 @@ export * from "./eosSparseMerkleTreeCore.ts";
 export * from "./eosSparseMerkleTreeCore.types.ts";
 export * from "./eosFrostThresholdSignatureCore.ts";
 export * from "./eosFrostThresholdSignatureCore.types.ts";
+export {
+  EosKzgPolynomialCommitmentCore,
+  modQ as kzgModQ,
+  polyTrim as kzgPolyTrim,
+  polyEval as kzgPolyEval,
+  polyAdd as kzgPolyAdd,
+  polySub as kzgPolySub,
+  polyMul as kzgPolyMul,
+  polySyntheticDiv as kzgPolySyntheticDiv,
+  polyDiv as kzgPolyDiv,
+  lagrangeInterpolatePolynomial as kzgLagrangeInterpolatePolynomial,
+} from "./eosKzgPolynomialCommitmentCore.ts";
+export * from "./eosKzgPolynomialCommitmentCore.types.ts";

@@ -234,6 +234,8 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
 
   it("MCP tool 'eos_enterprise_workspace' dispatches verify_action, slsa_attest, arena_stats, and dtn_status", async () => {
     const { dispatchPhase7VerificationCase } = await import("../src/mcp/tools/eosMcpPhase7VerificationHandlers.ts");
+    const callFacade = (payload) =>
+      dispatchPhase7VerificationCase("eos_enterprise_workspace", payload, { projectRoot: process.cwd() });
 
     // 1. verify_action
     const verifyRes = dispatchPhase7VerificationCase(
@@ -716,96 +718,59 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(crdtDeltaReport.converged, true);
 
     // 28. mmr_append, mmr_prove & mmr_verify (SPEC-216)
-    const mmrAppendReport = dispatchPhase7VerificationCase(
-      "eos_enterprise_workspace",
-      { action: "mmr_append", count: 7 },
-      { projectRoot: process.cwd() },
-    );
+    const mmrAppendReport = callFacade({ action: "mmr_append", count: 7 });
     assert.equal(mmrAppendReport.action, "mmr_append");
     assert.equal(mmrAppendReport.leafCount, 7);
     assert.equal(mmrAppendReport.mmrSize, 11);
-    const mmrProveReport = dispatchPhase7VerificationCase(
-      "eos_enterprise_workspace",
-      { action: "mmr_prove" },
-      { projectRoot: process.cwd() },
-    );
+    const mmrProveReport = callFacade({ action: "mmr_prove" });
     assert.equal(mmrProveReport.action, "mmr_prove");
     assert.equal(mmrProveReport.leafIndex, 2);
-    const mmrVerifyReport = dispatchPhase7VerificationCase(
-      "eos_enterprise_workspace",
-      { action: "mmr_verify" },
-      { projectRoot: process.cwd() },
-    );
+    const mmrVerifyReport = callFacade({ action: "mmr_verify" });
     assert.equal(mmrVerifyReport.action, "mmr_verify");
     assert.equal(mmrVerifyReport.valid, true);
 
     // 29. vrf_eval, vrf_verify & vrf_elect (SPEC-217)
-    const vrfEvalReport = dispatchPhase7VerificationCase(
-      "eos_enterprise_workspace",
-      { action: "vrf_eval", alpha: "facade-slot-102" },
-      { projectRoot: process.cwd() },
-    );
+    const vrfEvalReport = callFacade({ action: "vrf_eval", alpha: "facade-slot-102" });
     assert.equal(vrfEvalReport.action, "vrf_eval");
     assert.ok(vrfEvalReport.publicKeyHex.length === 66);
-    const vrfVerifyReport = dispatchPhase7VerificationCase(
-      "eos_enterprise_workspace",
-      { action: "vrf_verify", alpha: "facade-slot-102" },
-      { projectRoot: process.cwd() },
-    );
+    const vrfVerifyReport = callFacade({ action: "vrf_verify", alpha: "facade-slot-102" });
     assert.equal(vrfVerifyReport.action, "vrf_verify");
     assert.equal(vrfVerifyReport.valid, true);
-    const vrfElectReport = dispatchPhase7VerificationCase(
-      "eos_enterprise_workspace",
-      { action: "vrf_elect", alpha: "facade-slot-102", threshold: 0.99 },
-      { projectRoot: process.cwd() },
-    );
+    const vrfElectReport = callFacade({ action: "vrf_elect", alpha: "facade-slot-102", threshold: 0.99 });
     assert.equal(vrfElectReport.action, "vrf_elect");
     assert.equal(vrfElectReport.isElected, true);
 
     // 30. smt_set, smt_prove & smt_verify (SPEC-218)
-    const smtSetReport = dispatchPhase7VerificationCase(
-      "eos_enterprise_workspace",
-      { action: "smt_set", key: "facade-k", value: "facade-v" },
-      { projectRoot: process.cwd() },
-    );
+    const smtSetReport = callFacade({ action: "smt_set", key: "facade-k", value: "facade-v" });
     assert.equal(smtSetReport.action, "smt_set");
     assert.equal(smtSetReport.leafCount, 1);
-    const smtProveReport = dispatchPhase7VerificationCase(
-      "eos_enterprise_workspace",
-      { action: "smt_prove", key: "cert-001" },
-      { projectRoot: process.cwd() },
-    );
+    const smtProveReport = callFacade({ action: "smt_prove", key: "cert-001" });
     assert.equal(smtProveReport.action, "smt_prove");
     assert.equal(smtProveReport.proofType, "membership");
-    const smtVerifyReport = dispatchPhase7VerificationCase(
-      "eos_enterprise_workspace",
-      { action: "smt_verify", key: "cert-001" },
-      { projectRoot: process.cwd() },
-    );
+    const smtVerifyReport = callFacade({ action: "smt_verify", key: "cert-001" });
     assert.equal(smtVerifyReport.action, "smt_verify");
     assert.equal(smtVerifyReport.valid, true);
 
     // 31. frost_keygen, frost_sign & frost_verify (SPEC-219)
-    const frostKeygen = dispatchPhase7VerificationCase(
-      "eos_enterprise_workspace",
-      { action: "frost_keygen", threshold: 2, signers: 3 },
-      { projectRoot: process.cwd() },
-    );
+    const frostKeygen = callFacade({ action: "frost_keygen", threshold: 2, signers: 3 });
     assert.equal(frostKeygen.action, "frost_keygen");
     assert.equal(frostKeygen.participantCount, 3);
-    const frostSign = dispatchPhase7VerificationCase(
-      "eos_enterprise_workspace",
-      { action: "frost_sign", message: "facade-tx" },
-      { projectRoot: process.cwd() },
-    );
+    const frostSign = callFacade({ action: "frost_sign", message: "facade-tx" });
     assert.equal(frostSign.action, "frost_sign");
     assert.ok(frostSign.signatureHex.length > 64);
-    const frostVerify = dispatchPhase7VerificationCase(
-      "eos_enterprise_workspace",
-      { action: "frost_verify", message: "facade-tx" },
-      { projectRoot: process.cwd() },
-    );
+    const frostVerify = callFacade({ action: "frost_verify", message: "facade-tx" });
     assert.equal(frostVerify.action, "frost_verify");
     assert.equal(frostVerify.valid, true);
+
+    // 32. kzg_commit, kzg_open & kzg_verify (SPEC-220)
+    const kzgCommit = callFacade({ action: "kzg_commit", coeffs: [7, 5, 2, 3] });
+    assert.equal(kzgCommit.action, "kzg_commit");
+    assert.equal(kzgCommit.degree, 3);
+    const kzgOpen = callFacade({ action: "kzg_open", coeffs: [7, 5, 2, 3], point: 4 });
+    assert.equal(kzgOpen.action, "kzg_open");
+    assert.equal(kzgOpen.claimedValue, "251");
+    const kzgVerify = callFacade({ action: "kzg_verify", coeffs: [7, 5, 2, 3], point: 4 });
+    assert.equal(kzgVerify.action, "kzg_verify");
+    assert.equal(kzgVerify.valid, true);
   });
 });

@@ -980,6 +980,41 @@ console.log(`Tiempo de verificación   : ${veredicto.verificationTimeMs.toFixed(
 
 ---
 
+### Módulo 35: Motor de Compromisos Polinomiales Kate-Zaverucha-Goldberg (KZG) (`EosKzgPolynomialCommitmentCore`)
+
+**Propósito:** Compromisos polinomiales de tamaño constante $O(1)$ y pruebas de evaluación sucintas basados en el esquema de Kate-Zaverucha-Goldberg (KZG) sobre curvas elípticas (secp256k1) sin dependencias externas (Ley V). Permite a los rollups descentralizados, capas de disponibilidad de datos (EIP-4844 / Blobs) y sistemas zk-SNARK comprometer un polinomio completo $p(x) = \sum_{i=0}^d c_i x^i$ en un único punto comprimido de curva elíptica $C = [p(\tau)] \in \mathbb{G}_1$ (33 bytes) mediante multiscalar multiplication (MSM) sobre un Structured Reference String (SRS) powers-of-tau. Permite abrir evaluaciones $p(z) = v$ calculando el polinomio cociente $q(x) = \frac{p(x) - v}{x - z}$ mediante división sintética con resto cero demostrable, generando una prueba constante $\pi = [q(\tau)] \in \mathbb{G}_1$ verificable en sub-milisegundo ($< 2$ ms). Soporta agregación por lotes (_batched multi-proofs_) con polinomio anulador $Z(x) = \prod (x - z_j)$ y polinomio interpolador de Lagrange $I(x)$.
+
+```ts
+import { EosKzgPolynomialCommitmentCore } from "./src/core/eosKzgPolynomialCommitmentCore.ts";
+
+// 1. Configuración de parámetros SRS powers-of-tau
+const srs = EosKzgPolynomialCommitmentCore.setup(16, "entropy-seed-kzg");
+const core = new EosKzgPolynomialCommitmentCore(srs);
+
+// 2. Compromiso O(1) de polinomio p(x) = 3x^3 + 2x^2 + 5x + 7
+const polinomio = [7n, 5n, 2n, 3n];
+const compromiso = core.commit(polinomio);
+console.log(`Compromiso KZG (C) : 0x${compromiso.commitmentHex}`); // 33 bytes
+console.log(`Grado de polinomio : ${compromiso.degree}`);
+
+// 3. Apertura de evaluación en el punto z = 4 (v = p(4) = 251)
+const apertura = core.open(polinomio, 4n);
+console.log(`Valor evaluado v=p(z): ${apertura.claimedValue}`); // 251n
+console.log(`Prueba de cociente π : 0x${apertura.proofHex}`);
+
+// 4. Verificación algebraica constante O(1) en sub-milisegundo
+const veredicto = core.verify(
+  compromiso.commitmentPoint,
+  4n,
+  apertura.claimedValue,
+  apertura.proofPoint,
+);
+console.log(`¿Evaluación auténtica?: ${veredicto.valid}`); // true
+console.log(`Tiempo verificación   : ${veredicto.verificationTimeMs.toFixed(3)} ms`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -1042,6 +1077,10 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs frost:keygen [--t=N] [--signers=N]`  | Configuración distribuida de claves de umbral FROST (RFC 9591 / SPEC-219).                 |
 | `node bin/eos.mjs frost:sign [--message=M] [--active]` | Firma de umbral en dos rondas con factores anti-ROS y agregación Lagrange (SPEC-219).      |
 | `node bin/eos.mjs frost:verify [--message=M]`          | Verificación no interactiva indistinguible de Schnorr de clave única (SPEC-219).           |
+| `node bin/eos.mjs kzg:commit [--coeffs=C]`             | Compromiso polinomial O(1) Kate-Zaverucha-Goldberg (SPEC-220).                             |
+| `node bin/eos.mjs kzg:open [--coeffs=C] [--point=z]`   | Generación de prueba de apertura q(x) = (p(x)-v)/(x-z) (SPEC-220).                         |
+| `node bin/eos.mjs kzg:verify [--coeffs=C] [--point=z]` | Verificación no interactiva O(1) de prueba de evaluación KZG (SPEC-220).                   |
+| `node bin/eos.mjs kzg:batch [--points=Z]`              | Prueba y verificación por lotes multi-punto con polinomio anulador (SPEC-220).             |
 | `node bin/eos.mjs metrics`                             | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                  | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`                 | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |

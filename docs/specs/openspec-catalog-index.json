@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-11T19:20:08.664Z",
-  "totalSpecs": 214,
-  "catalogSha256": "ccc2fec985c187e1bae636621d8f2a68bc7e87eeb2d19ca3623d85655305adcb",
+  "totalSpecs": 215,
+  "catalogSha256": "ca08b373a9dc2761e04729509c414972252b578ef254fb8be97f9c4258f1cf6b",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1927,7 +1927,16 @@
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-219-FROST-THRESHOLD-SIGNATURES.md",
-      "sha256": "48df869fce1121a613d7a7baf8714b340e7b84284c56d35286f8c97752513889"
+      "sha256": "b3bafd1d8486f3a265ded367a7ba6cb58acb214596c9decc2f88c9d5006508bf"
+    },
+    {
+      "id": "SPEC-220",
+      "title": "Layer-0 KZG Polynomial Commitments & Batched Multi-Proofs Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-220-KZG-POLYNOMIAL-COMMITMENTS.md",
+      "sha256": "09962c7ae40cbb4ec46f883ee4bbaf882e399e08954efec965978720bc05c1e4"
     }
   ]
 }

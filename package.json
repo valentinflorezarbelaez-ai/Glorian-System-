@@ -44,6 +44,7 @@
     "./vrf": "./src/core/eosVerifiableRandomFunctionCore.ts",
     "./smt": "./src/core/eosSparseMerkleTreeCore.ts",
     "./frost": "./src/core/eosFrostThresholdSignatureCore.ts",
+    "./kzg": "./src/core/eosKzgPolynomialCommitmentCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {
