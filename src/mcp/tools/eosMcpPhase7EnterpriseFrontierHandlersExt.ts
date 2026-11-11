@@ -6,6 +6,7 @@
 
 import { EosVerifiableRandomFunctionCore } from "../../core/eosVerifiableRandomFunctionCore.ts";
 import { EosSparseMerkleTreeCore } from "../../core/eosSparseMerkleTreeCore.ts";
+import { EosFrostThresholdSignatureCore } from "../../core/eosFrostThresholdSignatureCore.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
@@ -99,6 +100,56 @@ export function dispatchPhase7FrontierActionExt(
       action: "smt_verify",
       valid: verifyRes.valid,
       proofType: verifyRes.proofType,
+      verificationTimeMs: verifyRes.verificationTimeMs,
+      receipt: verifyRes.receipt,
+    };
+  }
+  if (action === "frost_keygen") {
+    const threshold = typeof args?.threshold === "number" ? args.threshold : 3;
+    const signers = typeof args?.signers === "number" ? args.signers : 5;
+    const seed = typeof args?.seed === "string" ? args.seed : "mcp-frost-seed";
+    const setup = EosFrostThresholdSignatureCore.setup(threshold, signers, seed);
+    return {
+      action: "frost_keygen",
+      threshold,
+      totalSigners: signers,
+      groupPublicKeyHex: setup.groupKey.groupPublicKeyHex,
+      participantCount: setup.keyShares.length,
+    };
+  }
+  if (action === "frost_sign") {
+    const threshold = typeof args?.threshold === "number" ? args.threshold : 3;
+    const signers = typeof args?.signers === "number" ? args.signers : 5;
+    const seed = typeof args?.seed === "string" ? args.seed : "mcp-frost-seed";
+    const message = typeof args?.message === "string" ? args.message : "mcp-frost-tx";
+    const setup = EosFrostThresholdSignatureCore.setup(threshold, signers, seed);
+    const selected = setup.keyShares.slice(0, threshold);
+    const core = new EosFrostThresholdSignatureCore();
+    const signRes = core.sign(setup.groupKey, selected, message, seed);
+    return {
+      action: "frost_sign",
+      message,
+      groupPublicKeyHex: signRes.groupPublicKeyHex,
+      signatureHex: signRes.signatureHex,
+      rHex: signRes.signature.rHex,
+      zHex: signRes.signature.zHex,
+      receipt: signRes.receipt,
+    };
+  }
+  if (action === "frost_verify") {
+    const threshold = typeof args?.threshold === "number" ? args.threshold : 3;
+    const signers = typeof args?.signers === "number" ? args.signers : 5;
+    const seed = typeof args?.seed === "string" ? args.seed : "mcp-frost-seed";
+    const message = typeof args?.message === "string" ? args.message : "mcp-frost-tx";
+    const setup = EosFrostThresholdSignatureCore.setup(threshold, signers, seed);
+    const selected = setup.keyShares.slice(0, threshold);
+    const core = new EosFrostThresholdSignatureCore();
+    const signRes = core.sign(setup.groupKey, selected, message, seed);
+    const verifyRes = core.verify(setup.groupKey.groupPublicKey, message, signRes.signature);
+    return {
+      action: "frost_verify",
+      message,
+      valid: verifyRes.valid,
       verificationTimeMs: verifyRes.verificationTimeMs,
       receipt: verifyRes.receipt,
     };

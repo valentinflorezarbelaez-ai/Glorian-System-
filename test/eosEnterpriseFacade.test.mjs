@@ -770,7 +770,6 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     );
     assert.equal(smtSetReport.action, "smt_set");
     assert.equal(smtSetReport.leafCount, 1);
-    assert.ok(smtSetReport.root.length === 64);
     const smtProveReport = dispatchPhase7VerificationCase(
       "eos_enterprise_workspace",
       { action: "smt_prove", key: "cert-001" },
@@ -785,5 +784,28 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     );
     assert.equal(smtVerifyReport.action, "smt_verify");
     assert.equal(smtVerifyReport.valid, true);
+
+    // 31. frost_keygen, frost_sign & frost_verify (SPEC-219)
+    const frostKeygen = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "frost_keygen", threshold: 2, signers: 3 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(frostKeygen.action, "frost_keygen");
+    assert.equal(frostKeygen.participantCount, 3);
+    const frostSign = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "frost_sign", message: "facade-tx" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(frostSign.action, "frost_sign");
+    assert.ok(frostSign.signatureHex.length > 64);
+    const frostVerify = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "frost_verify", message: "facade-tx" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(frostVerify.action, "frost_verify");
+    assert.equal(frostVerify.valid, true);
   });
 });

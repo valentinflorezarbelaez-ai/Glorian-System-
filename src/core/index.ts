@@ -202,3 +202,5 @@ export * from "./eosVerifiableRandomFunctionCore.ts";
 export * from "./eosVerifiableRandomFunctionCore.types.ts";
 export * from "./eosSparseMerkleTreeCore.ts";
 export * from "./eosSparseMerkleTreeCore.types.ts";
+export * from "./eosFrostThresholdSignatureCore.ts";
+export * from "./eosFrostThresholdSignatureCore.types.ts";

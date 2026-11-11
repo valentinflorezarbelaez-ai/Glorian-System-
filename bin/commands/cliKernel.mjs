@@ -565,6 +565,9 @@ Uso Universal Exhaustivo:
   eos smt:set [--key=K]        Mutación autenticada de clave-valor en Sparse Merkle Tree (SPEC-218)
   eos smt:prove [--key=K]      Generación de prueba de membresía o no-membresía (exclusión) O(log n)
   eos smt:verify [--key=K]     Verificación criptográfica de existencia o ausencia en sub-milisegundo
+  eos frost:keygen [--t=3]     Configuración de claves distribuidas (t, n) FROST RFC 9591 (SPEC-219)
+  eos frost:sign [--active=S]  Firma de umbral en dos rondas con factores anti-ROS y agregación Lagrange
+  eos frost:verify [--json]    Verificación no interactiva indistinguible de Schnorr de clave única
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

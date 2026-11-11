@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-11T19:20:08.664Z",
-  "totalSpecs": 213,
-  "catalogSha256": "83d5b4294f0fd5e8052fa5fafb9a508fb56a142a2ee06dd2a6df059bfbad1590",
+  "totalSpecs": 214,
+  "catalogSha256": "ccc2fec985c187e1bae636621d8f2a68bc7e87eeb2d19ca3623d85655305adcb",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1919,6 +1919,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-218-SPARSE-MERKLE-TREE.md",
       "sha256": "d5200be7689b375f7a99b45c49af27961023bf67ea49a10fab4333767217073e"
+    },
+    {
+      "id": "SPEC-219",
+      "title": "Layer-0 FROST Threshold Schnorr Signatures (RFC 9591) Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-219-FROST-THRESHOLD-SIGNATURES.md",
+      "sha256": "48df869fce1121a613d7a7baf8714b340e7b84284c56d35286f8c97752513889"
     }
   ]
 }

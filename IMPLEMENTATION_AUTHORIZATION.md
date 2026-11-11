@@ -1689,3 +1689,27 @@
   - `docs/plans/PLAN-103-SPARSE-MERKLE-TREE.md`
   - `docs/tasks/TASKS-103-SPARSE-MERKLE-TREE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-FROST-THRESHOLD-SIGNATURES-219
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 FROST Threshold Schnorr Signatures Core (`SPEC-219`, `CHANGE-104`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "dale con toda si")
+- **Scope**:
+  1. Implement Layer-0 FROST types in `src/core/eosFrostThresholdSignatureCore.types.ts`.
+  2. Implement Layer-0 FROST Engine in `src/core/eosFrostThresholdSignatureCore.ts`.
+  3. Subpath export `"./frost"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian frost:keygen`, `glorian frost:sign`, `glorian frost:verify` in `bin/commands/cliFrostMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "frost_keygen"`, `action: "frost_sign"`, `action: "frost_verify"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosFrostThresholdSignatureCore.test.mjs` (BDD-1114..BDD-1118).
+  8. Add test step #31 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 34 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 214 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-104-FROST-THRESHOLD-SIGNATURES.md`
+  - `openspec/changes/CHANGE-104-FROST-THRESHOLD-SIGNATURES.md`
+  - `openspec/specs/SPEC-219-FROST-THRESHOLD-SIGNATURES.md`
+  - `docs/plans/PLAN-104-FROST-THRESHOLD-SIGNATURES.md`
+  - `docs/tasks/TASKS-104-FROST-THRESHOLD-SIGNATURES.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

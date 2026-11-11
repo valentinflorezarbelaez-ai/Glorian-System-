@@ -43,6 +43,7 @@
     "./mmr": "./src/core/eosMerkleMountainRangeCore.ts",
     "./vrf": "./src/core/eosVerifiableRandomFunctionCore.ts",
     "./smt": "./src/core/eosSparseMerkleTreeCore.ts",
+    "./frost": "./src/core/eosFrostThresholdSignatureCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {
