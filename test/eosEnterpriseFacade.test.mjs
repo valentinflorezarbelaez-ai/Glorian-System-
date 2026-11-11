@@ -407,5 +407,26 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.ok(tkgQueryReport.bindings.length >= 2);
     assert.equal(tkgQueryReport.derivation.fixedPointReached, true);
     assert.ok(tkgQueryReport.sha256Receipt.length === 64);
+
+    // 15. wasm_decompile & wasm_prove
+    const wasmDecompileReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "wasm_decompile", target: "ADD" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(wasmDecompileReport.action, "wasm_decompile");
+    assert.ok(wasmDecompileReport.wat.includes("(module"));
+    assert.equal(wasmDecompileReport.sha256Checksum.length, 64);
+
+    const wasmProveReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "wasm_prove", target: "ADD" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(wasmProveReport.action, "wasm_prove");
+    assert.equal(wasmProveReport.verified, true);
+    assert.equal(wasmProveReport.stackSafe, true);
+    assert.equal(wasmProveReport.isPure, true);
+    assert.ok(wasmProveReport.sha256Receipt.length === 64);
   });
 });

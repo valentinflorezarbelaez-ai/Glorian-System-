@@ -1321,3 +1321,23 @@
   - `docs/plans/PLAN-087-TEMPORAL-KNOWLEDGE-GRAPH.md`
   - `docs/tasks/TASKS-087-TEMPORAL-KNOWLEDGE-GRAPH.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-WASM-DECOMPILER-PROVER-203
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 WebAssembly Bytecode Decompiler & Formal Prover (`SPEC-203`, `CHANGE-088`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “dale con toda”)
+- **Scope**:
+  1. Implement Layer-0 WASM decompiler and prover engine `src/core/eosWasmBytecodeDecompilerProver.ts`.
+  2. Subpath export `"./wasm-prover"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI commands `glorian wasm:decompile` and `glorian wasm:prove` in `bin/commands/cliPlatform.mjs`.
+  5. Wire MCP actions `action: "wasm_decompile"` and `action: "wasm_prove"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosWasmBytecodeDecompilerProver.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-088-WASM-DECOMPILER-PROVER.md`
+  - `openspec/changes/CHANGE-088-WASM-DECOMPILER-PROVER.md`
+  - `openspec/specs/SPEC-203-WASM-DECOMPILER-PROVER.md`
+  - `docs/plans/PLAN-088-WASM-DECOMPILER-PROVER.md`
+  - `docs/tasks/TASKS-088-WASM-DECOMPILER-PROVER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

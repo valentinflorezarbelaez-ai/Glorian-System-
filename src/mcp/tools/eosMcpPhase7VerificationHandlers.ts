@@ -32,6 +32,7 @@ import { EosPostQuantumCryptography } from "../../core/eosPostQuantumCryptograph
 import { EosGeneticAstSynthesizer } from "../../core/eosGeneticAstSynthesizer.ts";
 import { EosHnswVectorIndex } from "../../core/eosHnswVectorIndex.ts";
 import { EosTemporalKnowledgeGraph } from "../../core/eosTemporalKnowledgeGraph.ts";
+import { EosWasmBytecodeDecompilerProver } from "../../core/eosWasmBytecodeDecompilerProver.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -604,6 +605,42 @@ export function dispatchPhase7VerificationCase(
           bindings,
           derivation,
           sha256Receipt: receipt,
+        };
+      }
+      if (action === "wasm_decompile") {
+        const target = String(args?.target || "ADD").toUpperCase();
+        let wasmBytes: Uint8Array = WASM_BYTECODE_TEMPLATES.ADD;
+        if (target in WASM_BYTECODE_TEMPLATES) {
+          wasmBytes = (WASM_BYTECODE_TEMPLATES as Record<string, Uint8Array>)[target]!;
+        } else if (typeof args?.base64Bytes === "string") {
+          wasmBytes = Buffer.from(args.base64Bytes, "base64");
+        }
+        const parsed = EosWasmBytecodeDecompilerProver.parseModule(wasmBytes);
+        const wat = EosWasmBytecodeDecompilerProver.decompileToWat(parsed);
+        return {
+          action: "wasm_decompile",
+          target,
+          byteLength: parsed.rawByteLength,
+          version: parsed.version,
+          functionCount: parsed.functions.length,
+          wat,
+          sha256Checksum: parsed.sha256Checksum,
+        };
+      }
+      if (action === "wasm_prove") {
+        const target = String(args?.target || "ADD").toUpperCase();
+        let wasmBytes: Uint8Array = WASM_BYTECODE_TEMPLATES.ADD;
+        if (target in WASM_BYTECODE_TEMPLATES) {
+          wasmBytes = (WASM_BYTECODE_TEMPLATES as Record<string, Uint8Array>)[target]!;
+        } else if (typeof args?.base64Bytes === "string") {
+          wasmBytes = Buffer.from(args.base64Bytes, "base64");
+        }
+        const parsed = EosWasmBytecodeDecompilerProver.parseModule(wasmBytes);
+        const proof = EosWasmBytecodeDecompilerProver.proveModuleSafety(parsed);
+        return {
+          action: "wasm_prove",
+          target,
+          ...proof,
         };
       }
       if (action === "list") {

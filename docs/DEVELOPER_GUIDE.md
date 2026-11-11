@@ -495,6 +495,29 @@ console.log(
 
 ---
 
+### Módulo 18: Descompilador y Demostrador Formal de Bytecode WebAssembly (`EosWasmBytecodeDecompilerProver`)
+
+**Propósito:** Desensamblado binario, decompilación a formato de texto WAT canónico y demostración formal de invariantes de seguridad en bytecode WebAssembly 2.0 bajo cero dependencias externas (Ley V). Simula la pila de operandos garantizando la imposibilidad de desbordamiento negativo (_underflow_), verifica la integridad del flujo de control (CFI) en saltos ramificados, audita límites estáticos de páginas de memoria lineal y clasifica la pureza matemática y el aislamiento de capacidades del módulo antes de su ejecución.
+
+```ts
+import { EosWasmBytecodeDecompilerProver } from "./src/core/eosWasmBytecodeDecompilerProver.ts";
+import { WASM_BYTECODE_TEMPLATES } from "./src/core/eosWasmSandboxEngine.ts";
+
+// 1. Decompilar bytecode binario a sintaxis canónica WAT (S-Expressions)
+const wat = EosWasmBytecodeDecompilerProver.decompileToWat(WASM_BYTECODE_TEMPLATES.ADD);
+console.log("WAT Decompilado:\n" + wat);
+
+// 2. Demostración formal de seguridad e invariantes
+const proof = EosWasmBytecodeDecompilerProver.proveModuleSafety(WASM_BYTECODE_TEMPLATES.ADD);
+console.log(`¿Módulo verificado formalmente? : ${proof.verified}`);
+console.log(`¿Seguridad de pila (No Underflow)?: ${proof.stackSafe}`);
+console.log(`¿Límites de memoria respetados?   : ${proof.memoryBoundsSafe}`);
+console.log(`¿Función matemáticamente pura?    : ${proof.isPure}`);
+console.log(`Sello criptográfico SHA-256        : ${proof.sha256Receipt}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -517,6 +540,8 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs vector:index <id> <code>`          | Indexa fragmentos de código o documentos en el espacio vectorial HNSW multidimensional.   |
 | `node bin/eos.mjs tkg:query <pred> [--as-of=T]`      | Inferencia deductiva y consulta Datalog sobre grafo de conocimiento temporal (SPEC-202).  |
 | `node bin/eos.mjs tkg:assert <s> <p> <o>`            | Aserción de hechos cuadripolares bi-temporales con recibos criptográficos SHA-256.        |
+| `node bin/eos.mjs wasm:decompile [target] [--wat]`   | Descompila bytecode WebAssembly a formato de texto WAT canónico (SPEC-203).               |
+| `node bin/eos.mjs wasm:prove [target] [--json]`      | Demostrador formal de seguridad de pila, memoria y CFI en WASM (SPEC-203).                |
 | `node bin/eos.mjs metrics`                           | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
 | `node bin/eos.mjs guard [directorio]`                | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
 | `node bin/eos.mjs flow inspect <ruta>`               | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |

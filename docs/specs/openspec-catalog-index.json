@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-11T01:13:26.630Z",
-  "totalSpecs": 197,
-  "catalogSha256": "ae55f5bd75e16e77b990339a07954d2873338da507570970d1498c1fda4c025e",
+  "timestampIso": "2026-11-11T01:21:50.313Z",
+  "totalSpecs": 198,
+  "catalogSha256": "38f715509b885f4e65c21aed58ba3bcc2b9af19762fc95ce1dc295b167299fc1",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1775,6 +1775,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-202-TEMPORAL-KNOWLEDGE-GRAPH.md",
       "sha256": "4cc635663db95dd3a387d3837d1ed56fd04363e39ce0c93f548b1823a23a907d"
+    },
+    {
+      "id": "SPEC-203",
+      "title": "Layer-0 WebAssembly Bytecode Decompiler & Formal Prover",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-203-WASM-DECOMPILER-PROVER.md",
+      "sha256": "2579cc6f3cdf2f049bcf55e343d00a4b1ca0fba83a79698fe7b0570c22a264e4"
     }
   ]
 }

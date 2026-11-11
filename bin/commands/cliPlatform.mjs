@@ -1246,6 +1246,109 @@ HANDLERS["tkg:assert"] = cmd_temporal_knowledge_graph_145;
 HANDLERS["tkg:query"] = cmd_temporal_knowledge_graph_145;
 HANDLERS["graph:datalog"] = cmd_temporal_knowledge_graph_145;
 
+async function cmd_wasm_prover_146(commandContext) {
+  const { args, command } = commandContext;
+  const isJson = args.includes("--json");
+  const isWatOnly = args.includes("--wat");
+  const { EosWasmBytecodeDecompilerProver } = await import("../../src/core/eosWasmBytecodeDecompilerProver.ts");
+  const { WASM_BYTECODE_TEMPLATES } = await import("../../src/core/eosWasmSandboxEngine.ts");
+  const fs = await import("node:fs");
+
+  const nonFlags = args.filter((a) => !a.startsWith("-") && a !== command);
+  const target = (nonFlags[0] || "ADD").toUpperCase();
+
+  let wasmBytes;
+  if (target in WASM_BYTECODE_TEMPLATES) {
+    wasmBytes = WASM_BYTECODE_TEMPLATES[target];
+  } else if (fs.existsSync(nonFlags[0])) {
+    wasmBytes = fs.readFileSync(nonFlags[0]);
+  } else {
+    // Default to ADD
+    wasmBytes = WASM_BYTECODE_TEMPLATES.ADD;
+  }
+
+  const parsed = EosWasmBytecodeDecompilerProver.parseModule(wasmBytes);
+  const wat = EosWasmBytecodeDecompilerProver.decompileToWat(parsed);
+
+  if (command === "wasm:decompile" || command === "wasm:disasm") {
+    if (isWatOnly) {
+      console.log(wat);
+      return;
+    }
+
+    const result = {
+      action: "wasm:decompile",
+      target,
+      byteLength: parsed.rawByteLength,
+      version: parsed.version,
+      functionCount: parsed.functions.length,
+      exports: parsed.exports,
+      wat,
+      sha256Checksum: parsed.sha256Checksum,
+    };
+
+    if (isJson) {
+      console.log(JSON.stringify(result, null, 2));
+      return;
+    }
+
+    console.log(`\n===============================================================`);
+    console.log(`  GLORIAN WASM BYTECODE DECOMPILER (SPEC-203 / WAT OUTPUT)     `);
+    console.log(`===============================================================`);
+    console.log(`  Target Source    : ${target} (${parsed.rawByteLength} bytes)`);
+    console.log(`  Module Version   : WebAssembly Core v${parsed.version}`);
+    console.log(`  Functions Found  : ${parsed.functions.length}`);
+    console.log(`  Module SHA-256   : sha256:${parsed.sha256Checksum}`);
+    console.log(`---------------------------------------------------------------`);
+    console.log(wat);
+    console.log(`===============================================================\n`);
+    return;
+  }
+
+  // Otherwise wasm:prove
+  const proof = EosWasmBytecodeDecompilerProver.proveModuleSafety(parsed);
+
+  const report = {
+    action: "wasm:prove",
+    target,
+    verified: proof.verified,
+    stackSafe: proof.stackSafe,
+    controlFlowSafe: proof.controlFlowSafe,
+    memoryBoundsSafe: proof.memoryBoundsSafe,
+    isPure: proof.isPure,
+    maxOperandStackDepth: proof.maxOperandStackDepth,
+    totalInstructions: proof.totalInstructions,
+    issues: proof.issues,
+    sha256Receipt: proof.sha256Receipt,
+  };
+
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN WASM FORMAL INVARIANT SAFETY PROVER (SPEC-203)       `);
+  console.log(`===============================================================`);
+  console.log(`  Target Binary    : ${target} (${parsed.rawByteLength} bytes)`);
+  console.log(`  Formal Verdict   : ${proof.verified ? "✔ MATHEMATICALLY_VERIFIED" : "✖ PROOF_FAILED"}`);
+  console.log(`  Stack Safe       : ${proof.stackSafe ? "✔ NO_UNDERFLOW" : "✖ STACK_CORRUPTION"}`);
+  console.log(`  Control Flow CFI : ${proof.controlFlowSafe ? "✔ VALID_NESTING" : "✖ ILLEGAL_BRANCH"}`);
+  console.log(`  Memory Bounds    : ${proof.memoryBoundsSafe ? "✔ WITHIN_BOUNDS" : "✖ BUFFER_OVERFLOW"}`);
+  console.log(`  Purity / Side-Eff: ${proof.isPure ? "✔ PURE_FUNCTIONAL" : "⚠ WRITES_MEMORY"}`);
+  console.log(`  Max Stack Depth  : ${proof.maxOperandStackDepth} operands (${proof.totalInstructions} instructions)`);
+  if (proof.issues.length > 0) {
+    console.log(`  Proof Diagnostics:`);
+    proof.issues.forEach((iss) => console.log(`    - ${iss}`));
+  }
+  console.log(`  Receipt SHA-256  : sha256:${proof.sha256Receipt}`);
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["wasm:decompile"] = cmd_wasm_prover_146;
+HANDLERS["wasm:disasm"] = cmd_wasm_prover_146;
+HANDLERS["wasm:prove"] = cmd_wasm_prover_146;
+
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {
