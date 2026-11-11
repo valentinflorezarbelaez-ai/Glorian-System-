@@ -448,5 +448,25 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.ok(mctsSearchReport.bestAction.length > 0);
     assert.equal(mctsSearchReport.totalSimulations, 20);
     assert.ok(mctsSearchReport.sha256Receipt.length === 64);
+
+    // 17. tla_check & tla_synthesize
+    const tlaCheckReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "tla_check", maxDepth: 10 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(tlaCheckReport.action, "tla_check");
+    assert.equal(tlaCheckReport.verified, true);
+    assert.ok(tlaCheckReport.totalStatesExplored >= 3);
+    assert.ok(tlaCheckReport.sha256Receipt.length === 64);
+
+    const tlaSynthReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "tla_synthesize" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(tlaSynthReport.action, "tla_synthesize");
+    assert.ok(tlaSynthReport.tlaCode.includes("MODULE DistributedMutualExclusion"));
+    assert.ok(tlaSynthReport.sha256Receipt.length === 64);
   });
 });

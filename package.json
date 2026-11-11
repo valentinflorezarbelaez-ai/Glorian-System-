@@ -29,6 +29,7 @@
     "./knowledge-graph": "./src/core/eosTemporalKnowledgeGraph.ts",
     "./wasm-prover": "./src/core/eosWasmBytecodeDecompilerProver.ts",
     "./mcts": "./src/core/eosMctsPolicyValueMesh.ts",
+    "./tla-checker": "./src/core/eosAutonomousTlaModelChecker.ts",
     "./package.json": "./package.json"
   },
   "bin": {

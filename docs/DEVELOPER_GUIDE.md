@@ -548,36 +548,64 @@ console.log(`Recibo de decisión SHA-256: ${result.sha256Receipt}`);
 
 ---
 
+### Módulo 20: Verificador Simbólico de Modelos y Síntesis Bounded TLA+ (`EosAutonomousTlaModelChecker`)
+
+**Propósito:** Verificación formal rigurosa de protocolos concurrentes, algoritmos distribuidos y máquinas de estado sin requerir Java, JVM ni TLC externo (Ley V). Explora el grafo de estados simbólico acotado a partir del predicado inicial $Init$ y la relación de transición $Next$, comprueba invariantes inductivos de seguridad $\square P$ (exclusión mutua, ausencia de pérdida de datos, invariantes de tipo), detecta interbloqueos (_deadlocks_), genera trazas mínimas de contraejemplo reproducibles y sintetiza módulos canónicos formales de TLA+ (Leslie Lamport).
+
+```ts
+import { EosAutonomousTlaModelChecker } from "./src/core/eosAutonomousTlaModelChecker.ts";
+
+const model = EosAutonomousTlaModelChecker.generateDefaultDistributedLockModel();
+
+// 1. Verificación de invariantes y detección de deadlocks
+const result = EosAutonomousTlaModelChecker.checkModel(model, {
+  maxDepth: 15,
+  checkDeadlocks: true,
+});
+console.log(`¿Modelo formalmente verificado? : ${result.verified}`);
+console.log(`Estados alcanzables explorados   : ${result.totalStatesExplored}`);
+console.log(`Transiciones transitadas         : ${result.totalTransitionsExplored}`);
+console.log(`Sello criptográfico SHA-256      : ${result.sha256Receipt}`);
+
+// 2. Síntesis autónoma de especificación canónica TLA+
+const tlaModule = EosAutonomousTlaModelChecker.synthesizeTlaModule(model);
+console.log("Especificación TLA+ sintetizada:\n" + tlaModule);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
 
-| Comando                                              | Descripción                                                                               |
-| :--------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| `node bin/eos.mjs help`                              | Muestra el menú completo de comandos disponibles.                                         |
-| `node bin/eos.mjs enterprise:health`                 | Audita la salud del sistema y emite tabla de estado con recibo SHA-256.                   |
-| `node bin/eos.mjs enterprise:health --json`          | Emite el reporte de salud en formato JSON machine-readable para CI/CD.                    |
-| `node bin/eos.mjs doctor [ruta] [--write-ci]`        | Diagnostica los 5 pilares Soundcheck (0-100) y opcionalmente sintetiza pipeline CI.       |
-| `node bin/eos.mjs remediate [ruta] [--dry-run]`      | Auto-remedia el repositorio: genera .gitignore, pruebas smoke, CI y gobernanza.           |
-| `node bin/eos.mjs fuzz [--iterations=N]`             | Fuzzing dinámico guiado por cobertura sobre funciones y primitivas del sistema.           |
-| `node bin/eos.mjs arena [accion] [--rounds=N]`       | Torneo adversario multi-agente bajo consenso BFT 3f+1 (Red vs Blue vs White).             |
-| `node bin/eos.mjs zk:prove [--spec=ID]`              | Genera y verifica prueba Merkle de Conocimiento Cero (ZKP) para un requisito o spec.      |
-| `node bin/eos.mjs compile [plataforma] [--dry-run]`  | Compila Glorian en ejecutable nativo hermético SEA (Ed25519 + SLSA Nivel 4).              |
-| `node bin/eos.mjs pq:kem [--hybrid] [--json]`        | Encapsula clave post-cuántica (NIST FIPS 203 ML-KEM + X25519) con verificación inmediata. |
-| `node bin/eos.mjs pq:sign [msg] [--hybrid] [--json]` | Genera y verifica firma digital de retículos (NIST FIPS 204 ML-DSA + Ed25519).            |
-| `node bin/eos.mjs synthesize [codigo] [--json]`      | Sintetiza y repara código automáticamente mediante mutación genética y cruce de AST.      |
-| `node bin/eos.mjs vector:search <query> [--k=N]`     | Búsqueda semántica ANN con grafo HNSW Layer-0 y proyección de subpalabras (SPEC-201).     |
-| `node bin/eos.mjs vector:index <id> <code>`          | Indexa fragmentos de código o documentos en el espacio vectorial HNSW multidimensional.   |
-| `node bin/eos.mjs tkg:query <pred> [--as-of=T]`      | Inferencia deductiva y consulta Datalog sobre grafo de conocimiento temporal (SPEC-202).  |
-| `node bin/eos.mjs tkg:assert <s> <p> <o>`            | Aserción de hechos cuadripolares bi-temporales con recibos criptográficos SHA-256.        |
-| `node bin/eos.mjs wasm:decompile [target] [--wat]`   | Descompila bytecode WebAssembly a formato de texto WAT canónico (SPEC-203).               |
-| `node bin/eos.mjs wasm:prove [target] [--json]`      | Demostrador formal de seguridad de pila, memoria y CFI en WASM (SPEC-203).                |
-| `node bin/eos.mjs mcts:search [problem]`             | Planificador heurístico Monte Carlo Tree Search con red política-valor (SPEC-204).        |
-| `node bin/eos.mjs mcts:play [problem]`               | Simulación interactiva de toma de decisiones estratégicas óptimas (SPEC-204).             |
-| `node bin/eos.mjs metrics`                           | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
-| `node bin/eos.mjs guard [directorio]`                | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
-| `node bin/eos.mjs flow inspect <ruta>`               | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |
-| `node bin/eos.mjs worktree list`                     | Lista los árboles de trabajo (_worktrees_) aislados de Git.                               |
+| Comando                                              | Descripción                                                                                |
+| :--------------------------------------------------- | :----------------------------------------------------------------------------------------- |
+| `node bin/eos.mjs help`                              | Muestra el menú completo de comandos disponibles.                                          |
+| `node bin/eos.mjs enterprise:health`                 | Audita la salud del sistema y emite tabla de estado con recibo SHA-256.                    |
+| `node bin/eos.mjs enterprise:health --json`          | Emite el reporte de salud en formato JSON machine-readable para CI/CD.                     |
+| `node bin/eos.mjs doctor [ruta] [--write-ci]`        | Diagnostica los 5 pilares Soundcheck (0-100) y opcionalmente sintetiza pipeline CI.        |
+| `node bin/eos.mjs remediate [ruta] [--dry-run]`      | Auto-remedia el repositorio: genera .gitignore, pruebas smoke, CI y gobernanza.            |
+| `node bin/eos.mjs fuzz [--iterations=N]`             | Fuzzing dinámico guiado por cobertura sobre funciones y primitivas del sistema.            |
+| `node bin/eos.mjs arena [accion] [--rounds=N]`       | Torneo adversario multi-agente bajo consenso BFT 3f+1 (Red vs Blue vs White).              |
+| `node bin/eos.mjs zk:prove [--spec=ID]`              | Genera y verifica prueba Merkle de Conocimiento Cero (ZKP) para un requisito o spec.       |
+| `node bin/eos.mjs compile [plataforma] [--dry-run]`  | Compila Glorian en ejecutable nativo hermético SEA (Ed25519 + SLSA Nivel 4).               |
+| `node bin/eos.mjs pq:kem [--hybrid] [--json]`        | Encapsula clave post-cuántica (NIST FIPS 203 ML-KEM + X25519) con verificación inmediata.  |
+| `node bin/eos.mjs pq:sign [msg] [--hybrid] [--json]` | Genera y verifica firma digital de retículos (NIST FIPS 204 ML-DSA + Ed25519).             |
+| `node bin/eos.mjs synthesize [codigo] [--json]`      | Sintetiza y repara código automáticamente mediante mutación genética y cruce de AST.       |
+| `node bin/eos.mjs vector:search <query> [--k=N]`     | Búsqueda semántica ANN con grafo HNSW Layer-0 y proyección de subpalabras (SPEC-201).      |
+| `node bin/eos.mjs vector:index <id> <code>`          | Indexa fragmentos de código o documentos en el espacio vectorial HNSW multidimensional.    |
+| `node bin/eos.mjs tkg:query <pred> [--as-of=T]`      | Inferencia deductiva y consulta Datalog sobre grafo de conocimiento temporal (SPEC-202).   |
+| `node bin/eos.mjs tkg:assert <s> <p> <o>`            | Aserción de hechos cuadripolares bi-temporales con recibos criptográficos SHA-256.         |
+| `node bin/eos.mjs wasm:decompile [target] [--wat]`   | Descompila bytecode WebAssembly a formato de texto WAT canónico (SPEC-203).                |
+| `node bin/eos.mjs wasm:prove [target] [--json]`      | Demostrador formal de seguridad de pila, memoria y CFI en WASM (SPEC-203).                 |
+| `node bin/eos.mjs mcts:search [problem]`             | Planificador heurístico Monte Carlo Tree Search con red política-valor (SPEC-204).         |
+| `node bin/eos.mjs mcts:play [problem]`               | Simulación interactiva de toma de decisiones estratégicas óptimas (SPEC-204).              |
+| `node bin/eos.mjs tla:check [modelo]`                | Verificador de modelos simbólico TLA+ y prueba de invariantes inductivos (SPEC-205).       |
+| `node bin/eos.mjs tla:synthesize [mod]`              | Sintetiza especificación canónica formal TLA+ a partir de contratos TypeScript (SPEC-205). |
+| `node bin/eos.mjs metrics`                           | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
+| `node bin/eos.mjs guard [directorio]`                | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
+| `node bin/eos.mjs flow inspect <ruta>`               | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |
+| `node bin/eos.mjs worktree list`                     | Lista los árboles de trabajo (_worktrees_) aislados de Git.                                |
 
 ---
 

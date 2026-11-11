@@ -34,6 +34,7 @@ import { EosHnswVectorIndex } from "../../core/eosHnswVectorIndex.ts";
 import { EosTemporalKnowledgeGraph } from "../../core/eosTemporalKnowledgeGraph.ts";
 import { EosWasmBytecodeDecompilerProver } from "../../core/eosWasmBytecodeDecompilerProver.ts";
 import { EosMctsPolicyValueMesh } from "../../core/eosMctsPolicyValueMesh.ts";
+import { EosAutonomousTlaModelChecker } from "../../core/eosAutonomousTlaModelChecker.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -694,6 +695,27 @@ export function dispatchPhase7VerificationCase(
           action: "mcts_evaluate",
           stateId: state.id,
           ...evaluation,
+          sha256Receipt: receipt,
+        };
+      }
+      if (action === "tla_check") {
+        const maxDepth = typeof args?.maxDepth === "number" ? Math.floor(args.maxDepth) : 20;
+        const maxStates = typeof args?.maxStates === "number" ? Math.floor(args.maxStates) : 2000;
+        const model = EosAutonomousTlaModelChecker.generateDefaultDistributedLockModel();
+        const result = EosAutonomousTlaModelChecker.checkModel(model, { maxDepth, maxStates, checkDeadlocks: true });
+        return {
+          action: "tla_check",
+          ...result,
+        };
+      }
+      if (action === "tla_synthesize") {
+        const model = EosAutonomousTlaModelChecker.generateDefaultDistributedLockModel();
+        const tlaCode = EosAutonomousTlaModelChecker.synthesizeTlaModule(model);
+        const receipt = pureSha256(`TLA_SYNTH:${model.moduleName}:${tlaCode.length}`);
+        return {
+          action: "tla_synthesize",
+          moduleName: model.moduleName,
+          tlaCode,
           sha256Receipt: receipt,
         };
       }

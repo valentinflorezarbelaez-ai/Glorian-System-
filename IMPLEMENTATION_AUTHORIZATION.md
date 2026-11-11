@@ -1361,3 +1361,23 @@
   - `docs/plans/PLAN-089-MCTS-POLICY-VALUE-MESH.md`
   - `docs/tasks/TASKS-089-MCTS-POLICY-VALUE-MESH.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-TLA-MODEL-CHECKER-205
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Autonomous Bounded TLA+ Model Checker & Invariant Synthesizer (`SPEC-205`, `CHANGE-090`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “dale con toda”)
+- **Scope**:
+  1. Implement Layer-0 Autonomous TLA+ Model Checker engine `src/core/eosAutonomousTlaModelChecker.ts`.
+  2. Subpath export `"./tla-checker"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI commands `glorian tla:check` and `glorian tla:synthesize` in `bin/commands/cliPlatform.mjs`.
+  5. Wire MCP actions `action: "tla_check"` and `action: "tla_synthesize"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosAutonomousTlaModelChecker.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-090-AUTONOMOUS-TLA-MODEL-CHECKER.md`
+  - `openspec/changes/CHANGE-090-AUTONOMOUS-TLA-MODEL-CHECKER.md`
+  - `openspec/specs/SPEC-205-AUTONOMOUS-TLA-MODEL-CHECKER.md`
+  - `docs/plans/PLAN-090-AUTONOMOUS-TLA-MODEL-CHECKER.md`
+  - `docs/tasks/TASKS-090-AUTONOMOUS-TLA-MODEL-CHECKER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

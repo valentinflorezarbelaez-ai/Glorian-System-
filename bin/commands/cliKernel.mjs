@@ -531,6 +531,8 @@ Uso Universal Exhaustivo:
   eos wasm:prove [target]     Demostrador formal de seguridad de pila, límites de memoria y CFI en WASM
   eos mcts:search [domain]   Planificador heurístico Monte Carlo Tree Search con red política-valor (SPEC-204)
   eos mcts:play [domain]     Simulación interactiva de toma de decisiones estratégicas óptimas
+  eos tla:check [modelo]     Verificador de modelos simbólico TLA+ y prueba de invariantes inductivos (SPEC-205)
+  eos tla:synthesize [mod]   Sintetiza módulo canónico formal TLA+ a partir de especificaciones TypeScript
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

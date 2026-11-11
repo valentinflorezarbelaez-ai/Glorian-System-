@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-11T01:31:25.064Z",
-  "totalSpecs": 199,
-  "catalogSha256": "efd97d7925ae7477eba89ab78947efa17783b2fa82d039ab2e96b0f4315c255f",
+  "timestampIso": "2026-11-11T02:51:50.698Z",
+  "totalSpecs": 200,
+  "catalogSha256": "4f7889fe58abb2169245c835976a738173fc2c74ebfd90414be422e7fb940866",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1793,6 +1793,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-204-MCTS-POLICY-VALUE-MESH.md",
       "sha256": "68dd4adb3bc4ca522aabfd1b407d4c4362c2ceeec731beab41584d6c64692ae7"
+    },
+    {
+      "id": "SPEC-205",
+      "title": "Autonomous Bounded TLA+ Model Checker & Invariant Synthesizer",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-205-AUTONOMOUS-TLA-MODEL-CHECKER.md",
+      "sha256": "96160cc5d58acc14dce1485e0e18831c6f7f8749506b4d04ae83dda0d2923a8a"
     }
   ]
 }

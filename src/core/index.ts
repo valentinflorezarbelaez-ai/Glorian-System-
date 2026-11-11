@@ -146,3 +146,4 @@ export * from "./eosHnswVectorIndex.ts";
 export * from "./eosTemporalKnowledgeGraph.ts";
 export * from "./eosWasmBytecodeDecompilerProver.ts";
 export * from "./eosMctsPolicyValueMesh.ts";
+export * from "./eosAutonomousTlaModelChecker.ts";

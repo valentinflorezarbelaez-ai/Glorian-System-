@@ -1432,6 +1432,65 @@ HANDLERS["mcts:search"] = cmd_mcts_policy_value_147;
 HANDLERS["mcts:play"] = cmd_mcts_policy_value_147;
 HANDLERS["mcts:plan"] = cmd_mcts_policy_value_147;
 
+async function cmd_tla_model_checker_148(commandContext) {
+  const { args, command } = commandContext;
+  const isJson = args.includes("--json");
+  const { EosAutonomousTlaModelChecker } = await import("../../src/core/eosAutonomousTlaModelChecker.ts");
+
+  const model = EosAutonomousTlaModelChecker.generateDefaultDistributedLockModel();
+
+  if (command === "tla:synthesize") {
+    const tlaCode = EosAutonomousTlaModelChecker.synthesizeTlaModule(model);
+    if (isJson) {
+      console.log(JSON.stringify({ moduleName: model.moduleName, tlaCode }, null, 2));
+      return;
+    }
+    console.log(`\n===============================================================`);
+    console.log(`  GLORIAN SYNTHESIZED TLA+ SPECIFICATION (SPEC-205)            `);
+    console.log(`===============================================================`);
+    console.log(tlaCode);
+    console.log(`===============================================================\n`);
+    return;
+  }
+
+  const depthArg = args.find((a) => a.startsWith("--depth="));
+  const maxDepth = depthArg ? parseInt(depthArg.split("=")[1], 10) : 20;
+
+  const result = EosAutonomousTlaModelChecker.checkModel(model, { maxDepth, checkDeadlocks: true });
+
+  if (isJson) {
+    console.log(JSON.stringify(result, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN BOUNDED TLA+ MODEL CHECKER & PROVER (SPEC-205)       `);
+  console.log(`===============================================================`);
+  console.log(`  Module Name      : ${result.moduleName}`);
+  console.log(`  Verification     : ${result.verified ? "✔ ALL_INVARIANTS_HOLD" : "✖ INVARIANT_VIOLATED"}`);
+  console.log(`  States Explored  : ${result.totalStatesExplored} states (Max Depth: ${result.maxDepthReached})`);
+  console.log(`  Transitions      : ${result.totalTransitionsExplored} distinct edges traversed`);
+  console.log(`  Deadlocks Found  : ${result.deadlocksFound}`);
+  console.log(`  Verified Invariants:`);
+  for (const [invName, passed] of Object.entries(result.invariantResults)) {
+    console.log(`    - ${invName.padEnd(20)}: ${passed ? "✔ PASS (Inductively Valid)" : "✖ FAIL"}`);
+  }
+  if (result.counterexample) {
+    console.log(`  Counterexample Trace for ${result.counterexample.invariantViolated}:`);
+    result.counterexample.trace.forEach((step) => {
+      console.log(
+        `    Step ${step.stepIndex}: [Action: ${step.actionTaken || "Init"}] State: ${JSON.stringify(step.state)}`,
+      );
+    });
+  }
+  console.log(`  Receipt SHA-256  : sha256:${result.sha256Receipt}`);
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["tla:check"] = cmd_tla_model_checker_148;
+HANDLERS["tla:model-check"] = cmd_tla_model_checker_148;
+HANDLERS["tla:synthesize"] = cmd_tla_model_checker_148;
+
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {
