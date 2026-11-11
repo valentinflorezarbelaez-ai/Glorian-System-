@@ -831,6 +831,36 @@ console.log(`Recibo SHA-256       : ${veredicto.receipt.receiptSha256}`);
 
 ---
 
+### Módulo 30: Motor de Tipos de Datos Replicados Libres de Conflictos (CRDT) y Sincronización de Estado (`EosCrdtStateSyncCore`)
+
+**Propósito:** Sincronización multi-maestro descentralizada y libre de bloqueos basada en tipos de datos replicados libres de conflictos (CRDTs) con semilattices de unión convergentes ($\sqcup$) bajo Consistencia Eventual Fuerte (SEC) sin dependencias externas (Ley V). Proporciona relojes vectoriales de causalidad de Lamport, registros y conjuntos Last-Write-Wins (LWW) con desempate determinista, conjuntos Observed-Remove (ORSet) inmunes a anomalías de resurrección de elementos, y secuencias Replicated Growable Array (RGA) para edición colaborativa de texto y listas con predecesores causales. Incluye extracción de deltas mínimos para redes peer-to-peer y DTN, y emisión de recibos criptográficos SHA-256 por cada mutación y fusión.
+
+```ts
+import { EosCrdtStateSyncCore } from "./src/core/eosCrdtStateSyncCore.ts";
+
+// 1. Inicialización de dos réplicas concurrentes
+const replica1 = new EosCrdtStateSyncCore("replica-1");
+const replica2 = new EosCrdtStateSyncCore("replica-2");
+
+// 2. Mutaciones locales concurrentes sin coordinación
+replica1.setRegister("status", "ACTIVE_LEADER");
+replica1.addToSet("nodes", "node-101");
+replica1.insertSequence("doc", "H");
+
+replica2.setRegister("status", "STANDBY");
+replica2.addToSet("nodes", "node-102");
+replica2.insertSequence("doc", "I");
+
+// 3. Fusión semilattice bidireccional (convergencia automática)
+const res1 = replica1.mergeSnapshot(replica2.exportSnapshot());
+const res2 = replica2.mergeSnapshot(replica1.exportSnapshot());
+console.log(`¿Convergencia idéntica? : ${res1.stateHashSha256 === res2.stateHashSha256}`); // true
+console.log(`Hash de estado final     : sha256:${res1.stateHashSha256}`);
+console.log(`Secuencia convergida RGA : "${replica1.readSequence("doc").join("")}"`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -878,6 +908,9 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs r1cs:synthesize [--secret=N]`       | Síntesis de circuito R1CS y asignación de testigo (SPEC-214).                              |
 | `node bin/eos.mjs r1cs:prove [--secret=N]`            | Generación de prueba QAP evaluada a desafío Fiat-Shamir τ (SPEC-214).                      |
 | `node bin/eos.mjs r1cs:verify [--json]`               | Verificación O(1) sub-milisegundo de prueba de conocimiento cero (SPEC-214).               |
+| `node bin/eos.mjs crdt:mutate [--node=N]`             | Mutación local de estado CRDT (LWW, ORSet, RGA) con reloj vectorial (SPEC-215).            |
+| `node bin/eos.mjs crdt:merge [--json]`                | Fusión semilattice bidireccional con consistencia eventual fuerte SEC (SPEC-215).          |
+| `node bin/eos.mjs crdt:delta [--json]`                | Extracción y aplicación de parches delta mínimos entre réplicas (SPEC-215).                |
 | `node bin/eos.mjs metrics`                            | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                 | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`                | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |

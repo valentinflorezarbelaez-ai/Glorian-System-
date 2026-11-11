@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-11T19:08:55.830Z",
-  "totalSpecs": 209,
-  "catalogSha256": "026f785828a5b190298078d0b222ddfc80b01ce4bab9e4f26c0052a17a6e762f",
+  "timestampIso": "2026-11-11T19:20:08.664Z",
+  "totalSpecs": 210,
+  "catalogSha256": "2859528990cd774ac7c30c17865af5626dd6ecc79cdadf28406280a6f0e59f2c",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1883,6 +1883,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-214-ZERO-KNOWLEDGE-R1CS-QAP.md",
       "sha256": "60a10a192bef27c0bd59c68ceff0937325405ea33fa30ab1071432e86f522315"
+    },
+    {
+      "id": "SPEC-215",
+      "title": "SPEC-215: Layer-0 Conflict-Free Replicated Data Types (CRDT) Collaborative State Synchronization Engine",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-215-CRDT-STATE-SYNC.md",
+      "sha256": "57a81e57c6ad5192de504b13bc0bbb9874499117978de2fd11344be4b6489674"
     }
   ]
 }

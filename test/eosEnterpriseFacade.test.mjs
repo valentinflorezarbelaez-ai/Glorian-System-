@@ -710,5 +710,33 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(r1csVerifyReport.action, "r1cs_verify");
     assert.equal(r1csVerifyReport.valid, true);
     assert.ok(r1csVerifyReport.receipt.receiptSha256.length === 64);
+
+    // 27. crdt_mutate, crdt_merge & crdt_delta (SPEC-215)
+    const crdtMutateReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "crdt_mutate", nodeId: "facade-node" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(crdtMutateReport.action, "crdt_mutate");
+    assert.equal(crdtMutateReport.nodeId, "facade-node");
+    assert.ok(crdtMutateReport.stateHashSha256.length === 64);
+
+    const crdtMergeReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "crdt_merge" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(crdtMergeReport.action, "crdt_merge");
+    assert.equal(crdtMergeReport.converged, true);
+    assert.ok(crdtMergeReport.receipt.receiptSha256.length === 64);
+
+    const crdtDeltaReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "crdt_delta" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(crdtDeltaReport.action, "crdt_delta");
+    assert.equal(crdtDeltaReport.converged, true);
+    assert.ok(crdtDeltaReport.receipt.receiptSha256.length === 64);
   });
 });

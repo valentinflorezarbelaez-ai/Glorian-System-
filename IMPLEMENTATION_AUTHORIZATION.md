@@ -1593,3 +1593,27 @@
   - `docs/plans/PLAN-099-ZERO-KNOWLEDGE-R1CS-QAP.md`
   - `docs/tasks/TASKS-099-ZERO-KNOWLEDGE-R1CS-QAP.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-CRDT-STATE-SYNC-215
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Conflict-Free Replicated Data Types (CRDT) Collaborative State Synchronization Engine (`SPEC-215`, `CHANGE-100`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "dale con toda")
+- **Scope**:
+  1. Implement Layer-0 CRDT types in `src/core/eosCrdtStateSyncCore.types.ts`.
+  2. Implement Layer-0 CRDT State Sync in `src/core/eosCrdtStateSyncCore.ts`.
+  3. Subpath export `"./crdt"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian crdt:mutate`, `glorian crdt:merge`, `glorian crdt:delta` in `bin/commands/cliCrdtMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "crdt_mutate"`, `action: "crdt_merge"`, `action: "crdt_delta"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosCrdtStateSyncCore.test.mjs` (BDD-1094..BDD-1098).
+  8. Add test step #27 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 30 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 210 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-100-CRDT-STATE-SYNC.md`
+  - `openspec/changes/CHANGE-100-CRDT-STATE-SYNC.md`
+  - `openspec/specs/SPEC-215-CRDT-STATE-SYNC.md`
+  - `docs/plans/PLAN-100-CRDT-STATE-SYNC.md`
+  - `docs/tasks/TASKS-100-CRDT-STATE-SYNC.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

@@ -553,6 +553,9 @@ Uso Universal Exhaustivo:
   eos r1cs:synthesize [--secret=N] Síntesis de circuito R1CS y asignación de testigo (SPEC-214)
   eos r1cs:prove [--secret=N]  Generación de prueba de conocimiento cero QAP a punto de desafío τ
   eos r1cs:verify [--json]     Verificación sub-milisegundo O(1) de argumento de evaluación polinomial
+  eos crdt:mutate [--node=N]   Mutación local de estado CRDT (LWW, ORSet, RGA) con reloj vectorial (SPEC-215)
+  eos crdt:merge [--json]      Fusión semilattice bidireccional con consistencia eventual fuerte (SEC)
+  eos crdt:delta [--json]      Extracción y aplicación de parches delta de estado mínimos entre réplicas
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

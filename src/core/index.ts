@@ -194,3 +194,5 @@ export {
   lagrangeInterpolate,
 } from "./eosZeroKnowledgeR1csCore.ts";
 export * from "./eosZeroKnowledgeR1csCore.types.ts";
+export * from "./eosCrdtStateSyncCore.ts";
+export * from "./eosCrdtStateSyncCore.types.ts";
