@@ -24,6 +24,7 @@ import { EosHardwareMemoryArena } from "../../core/eosHardwareMemoryArena.ts";
 import { EosDelayTolerantMesh } from "../../core/eosDelayTolerantMesh.ts";
 import { EosUniversalProjectDoctor } from "../../core/eosUniversalProjectDoctor.ts";
 import { EosUniversalCodeRemediator } from "../../core/eosUniversalCodeRemediator.ts";
+import { EosDynamicFuzzingOracle } from "../../core/eosDynamicFuzzingOracle.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -414,6 +415,18 @@ export function dispatchPhase7VerificationCase(
             : deps.projectRoot;
         const dryRun = args?.dryRun === true;
         return EosUniversalCodeRemediator.remediate(targetPath, { dryRun });
+      }
+      if (action === "fuzz") {
+        const iterations = typeof args?.iterations === "number" ? Math.floor(args.iterations) : 50;
+        const corpusType = args?.corpusType || "ALL";
+        return EosDynamicFuzzingOracle.runCampaign(
+          (input) => {
+            const repr = typeof input === "object" ? JSON.stringify(input) : String(input);
+            pureSha256(repr || "empty");
+          },
+          String(args?.targetName || "kernel:pureSha256"),
+          { iterations, corpusType },
+        );
       }
       if (action === "list") {
         return {

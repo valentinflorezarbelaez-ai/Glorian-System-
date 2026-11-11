@@ -1161,3 +1161,23 @@
   - `docs/plans/PLAN-079-UNIVERSAL-CODE-REMEDIATOR.md`
   - `docs/tasks/TASKS-079-UNIVERSAL-CODE-REMEDIATOR.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-DYNAMIC-FUZZING-195
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Dynamic Coverage-Guided Fuzzing Oracle (`SPEC-195`, `CHANGE-080`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “vamos con toda perfeccion con toda”)
+- **Scope**:
+  1. Implement Layer-0 dynamic fuzzing engine `src/core/eosDynamicFuzzingOracle.ts`.
+  2. Subpath export `"./fuzzing"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI command `glorian fuzz [target]` in `bin/commands/cliPlatform.mjs`.
+  5. Wire MCP action `action: "fuzz"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosDynamicFuzzingOracle.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-080-DYNAMIC-FUZZING-ORACLE.md`
+  - `openspec/changes/CHANGE-080-DYNAMIC-FUZZING-ORACLE.md`
+  - `openspec/specs/SPEC-195-DYNAMIC-FUZZING-ORACLE.md`
+  - `docs/plans/PLAN-080-DYNAMIC-FUZZING-ORACLE.md`
+  - `docs/tasks/TASKS-080-DYNAMIC-FUZZING-ORACLE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

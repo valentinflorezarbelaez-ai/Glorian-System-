@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
-  "totalSpecs": 189,
-  "catalogSha256": "acd948e17dd47f370faf4ea1673bb40a5cbba504efbd67211f729843879ec84b",
+  "totalSpecs": 190,
+  "catalogSha256": "00d9c52274e9f13b5d7905c7eafdbc7e48e578bad4674480ad8346c7a22da8b6",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1703,6 +1703,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-194-UNIVERSAL-CODE-REMEDIATOR.md",
       "sha256": "c62e74959891b734baf9a5a598c612c36dfde5ff99ca1ab37305b00564f9f906"
+    },
+    {
+      "id": "SPEC-195",
+      "title": "Dynamic Coverage-Guided Fuzzing Oracle",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-195-DYNAMIC-FUZZING-ORACLE.md",
+      "sha256": "d22525469f8fde7a14c70cb51261236b06f02e959e0d24f3ff6e492ec99362eb"
     }
   ]
 }

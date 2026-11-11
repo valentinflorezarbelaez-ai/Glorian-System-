@@ -516,6 +516,7 @@ Uso Universal Exhaustivo:
   eos guide                  Muestra el glosario de arquitectura y equivalencias de la industria
   eos doctor [ruta] [--write-ci] Diagnostica 5 pilares SDLC Soundcheck (0-100) y sintetiza CI
   eos fix [ruta] [--dry-run]     Auto-remedia y eleva cualquier repo (gitignore, tests, CI, docs)
+  eos fuzz [--iterations=N]      Fuzzing dinámico guiado por cobertura (números, unicode, objetos)
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

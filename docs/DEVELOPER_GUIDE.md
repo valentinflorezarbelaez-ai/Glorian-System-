@@ -294,6 +294,27 @@ console.log(`Puntaje elevado: ${recibo.initialScore} -> ${recibo.projectedOrFina
 
 ---
 
+### Módulo 10: Oráculo de Fuzzing Dinámico (`EosDynamicFuzzingOracle`)
+
+**Propósito:** Pruebas de estrés y resiliencia en tiempo de ejecución (inspirado en DARPA Cyber Grand Challenge y LLVM LibFuzzer): genera mutaciones numéricas límite (IEEE 754, enteros 32/64 bits), anomalías Unicode (bytes nulos, surrogates, inyecciones), y trampas estructurales (polución de prototipos, referencias circulares), midiendo percentiles de latencia ($p_{50}, p_{95}, p_{99}$) y emitiendo recibos SHA-256.
+
+```ts
+import { EosDynamicFuzzingOracle } from "./src/core/eosDynamicFuzzingOracle.ts";
+
+// Ejecutar campaña de fuzzing sobre cualquier función
+const resultado = EosDynamicFuzzingOracle.runCampaign(
+  (entrada) => JSON.stringify(entrada),
+  "serializador_json",
+  { iterations: 50 },
+);
+
+console.log(`Puntaje de estabilidad : ${resultado.stabilityScore} / 100`);
+console.log(`Latencia p50           : ${resultado.latencyMetricsUs.p50Us} µs`);
+console.log(`Colapsos detectados    : ${resultado.crashCount}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -305,6 +326,7 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs enterprise:health --json`     | Emite el reporte de salud en formato JSON machine-readable para CI/CD.                    |
 | `node bin/eos.mjs doctor [ruta] [--write-ci]`   | Diagnostica los 5 pilares Soundcheck (0-100) y opcionalmente sintetiza pipeline CI.       |
 | `node bin/eos.mjs remediate [ruta] [--dry-run]` | Auto-remedia el repositorio: genera .gitignore, pruebas smoke, CI y gobernanza.           |
+| `node bin/eos.mjs fuzz [--iterations=N]`        | Fuzzing dinámico guiado por cobertura sobre funciones y primitivas del sistema.           |
 | `node bin/eos.mjs metrics`                      | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
 | `node bin/eos.mjs guard [directorio]`           | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
 | `node bin/eos.mjs flow inspect <ruta>`          | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |

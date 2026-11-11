@@ -19,6 +19,7 @@
     "./provenance": "./src/core/eosSlsaSupplyChainAttestation.ts",
     "./doctor": "./src/core/eosUniversalProjectDoctor.ts",
     "./remediator": "./src/core/eosUniversalCodeRemediator.ts",
+    "./fuzzing": "./src/core/eosDynamicFuzzingOracle.ts",
     "./package.json": "./package.json"
   },
   "bin": {

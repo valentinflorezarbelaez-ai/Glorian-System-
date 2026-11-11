@@ -654,6 +654,54 @@ HANDLERS["doctor:fix"] = cmd_fix_135;
 HANDLERS["heal:repo"] = cmd_fix_135;
 HANDLERS["project:fix"] = cmd_fix_135;
 
+async function cmd_fuzz_136(commandContext) {
+  const { args } = commandContext;
+  const isJson = args.includes("--json");
+  const iterArg = args.find((a) => a.startsWith("--iterations="));
+  const iterations = iterArg ? parseInt(iterArg.split("=")[1], 10) : 50;
+
+  const { EosDynamicFuzzingOracle } = await import("../../src/core/eosDynamicFuzzingOracle.ts");
+  const { pureSha256 } = await import("../../src/core/eosKernelPrimitives.ts");
+
+  // Default target: testing kernel hashing & serialization resilience against adversarial payloads
+  const result = EosDynamicFuzzingOracle.runCampaign(
+    (input) => {
+      const repr = typeof input === "object" ? JSON.stringify(input) : String(input);
+      pureSha256(repr || "empty");
+    },
+    "kernel:pureSha256",
+    { iterations },
+  );
+
+  if (isJson) {
+    console.log(JSON.stringify(result, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN DYNAMIC COVERAGE-GUIDED FUZZING ORACLE (SPEC-195)   `);
+  console.log(`===============================================================`);
+  console.log(`  Target Name      : ${result.targetName}`);
+  console.log(`  Iterations       : ${result.totalIterations}`);
+  console.log(`  Success / Crash  : ${result.successfulExecutions} / ${result.crashCount}`);
+  console.log(`  Stability Score  : ${result.stabilityScore} / 100`);
+  console.log(
+    `  Latency (us)     : p50: ${result.latencyMetricsUs.p50Us}us | p95: ${result.latencyMetricsUs.p95Us}us | p99: ${result.latencyMetricsUs.p99Us}us`,
+  );
+  console.log(`  Receipt SHA-256  : sha256:${result.sha256Receipt}`);
+  if (result.crashes.length > 0) {
+    console.log(`---------------------------------------------------------------`);
+    console.log(`  CRASH DETECTED   : ${result.crashes.length} crashes`);
+    for (const c of result.crashes.slice(0, 3)) {
+      console.log(`   ✖ [#${c.iteration}] ${c.errorName}: ${c.errorMessage}`);
+    }
+  }
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["fuzz"] = cmd_fuzz_136;
+HANDLERS["fuzz:target"] = cmd_fuzz_136;
+
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {
