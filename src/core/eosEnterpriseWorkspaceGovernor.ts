@@ -382,7 +382,9 @@ export class EosEnterpriseWorkspaceGovernor {
             ? path.resolve(envVal.trim())
             : typeof p.localPath === "string" && p.localPath.trim().length > 0
               ? path.resolve(p.localPath.trim())
-              : null;
+              : typeof p.resolvedLocalDir === "string" && p.resolvedLocalDir.trim().length > 0
+                ? path.resolve(path.dirname(resolvedControlPlane), p.resolvedLocalDir.trim())
+                : null;
 
       let pathExistsOnDisk = false;
       let resolvedLocalPath: string | null = candidatePath;

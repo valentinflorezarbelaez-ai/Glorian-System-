@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-11T19:20:08.664Z",
   "totalSpecs": 215,
-  "catalogSha256": "ca08b373a9dc2761e04729509c414972252b578ef254fb8be97f9c4258f1cf6b",
+  "catalogSha256": "ed1e8bcfc31b8661d4de137d9a0fb45334421890a7dfcbd3ce7e99e0eac6d3b4",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1936,7 +1936,7 @@
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-220-KZG-POLYNOMIAL-COMMITMENTS.md",
-      "sha256": "09962c7ae40cbb4ec46f883ee4bbaf882e399e08954efec965978720bc05c1e4"
+      "sha256": "b3ed09380b5b0ed569b052163746dcbaa87223bc23e2fe19b14d29c557b86aec"
     }
   ]
 }

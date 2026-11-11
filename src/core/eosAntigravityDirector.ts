@@ -254,9 +254,13 @@ export class EosAntigravityDirector {
     const defaultFleetCandidates: Record<string, string> = {
       EOS_FLEET_EOS_SYSTEM_PATH: resolvedRoot,
       EOS_FLEET_ABERAMENTHO_PATH: path.join(parentDir, "Aberamentho-s-Pleroma-music"),
-      EOS_FLEET_PORTAFOLIO_PATH: path.join(parentDir, "portafolio"),
-      EOS_FLEET_PTG_PATH: path.join(parentDir, "Performance-Talent-Group-1"),
+      EOS_FLEET_ATP_STRENGTH_PATH: path.join(parentDir, "ATP-STRENGTH-1"),
+      EOS_FLEET_BIBLIOTECA_GNOSTICA_1_PATH: path.join(parentDir, "Biblioteca-gnostica-1"),
+      EOS_FLEET_CONTROL_DE_ASISTENCIA_ABOPACK_PATH: path.join(parentDir, "Control-De-Asistencia-Abopack"),
       EOS_FLEET_CRUD_SLACK_PATH: path.join(parentDir, "Crud-slack"),
+      EOS_FLEET_DONACIONES_PATH: path.join(parentDir, "Donaciones"),
+      EOS_FLEET_PTG_PATH: path.join(parentDir, "Performance-Talent-Group-1"),
+      EOS_FLEET_PORTAFOLIO_PATH: path.join(parentDir, "portafolio"),
     };
 
     const env: Record<string, string> = {
