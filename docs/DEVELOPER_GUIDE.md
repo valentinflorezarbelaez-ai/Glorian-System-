@@ -690,6 +690,36 @@ const alert = streaming.ingest([500.0, 999.0]); // Anomalía en tiempo real
 
 ---
 
+### Módulo 25: Motor de Consenso Bizantino Tolerante a Fallos (`EosPbftConsensusEngine`)
+
+**Propósito:** Replicación de máquinas de estados (SMR) y consenso distribuido tolerante a fallos bizantinos (PBFT) basado en Castro & Liskov (1999) en TypeScript puro sin dependencias externas (Ley V). Garantiza seguridad y vivacidad bajo la cota $N \ge 3f + 1$ donde $f$ es el número máximo de nodos arbitrarios, maliciosos o caídos tolerados. Implementa el protocolo formal de 3 fases (`PRE-PREPARE`, `PREPARE`, `COMMIT`), umbral supermayoritario de quórum $2f + 1$, detección automática de equivocación (double-propose) del primario con recibos de penalización (slashing) criptográficos, failover distribuido con protocolo de cambio de vista (`VIEW-CHANGE` $\to$ `NEW-VIEW`) y máquina de estados replicada linealizable con recibos inmutables SHA-256.
+
+```ts
+import { EosPbftCluster } from "./src/core/eosPbftConsensusEngine.ts";
+
+// 1. Inicialización de cluster BFT con 4 validadores (f = 1, quórum = 3)
+const cluster = new EosPbftCluster(["node-0", "node-1", "node-2", "node-3"]);
+
+// 2. Proposición y consenso de 3 fases
+const receipt = cluster.propose({
+  type: "SET",
+  key: "ledger_epoch",
+  value: "byzantine_secure",
+});
+console.log(`Secuencia comprometida: #${receipt.sequenceNumber}`);
+console.log(`Recibo SHA-256        : ${receipt.sha256Receipt}`);
+
+// 3. Simulación de ataque por equivocación y emisión de recibo de slashing
+const slashReceipt = cluster.simulateEquivocation(
+  "node-0",
+  { type: "SET", key: "audit", value: "honest" },
+  { type: "SET", key: "audit", value: "forged" },
+);
+console.log(`Validador penalizado  : ${slashReceipt.slashedNodeId}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):

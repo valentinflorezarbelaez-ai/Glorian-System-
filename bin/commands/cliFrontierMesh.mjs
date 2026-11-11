@@ -446,6 +446,79 @@ async function cmd_isolation_forest_152(commandContext) {
 HANDLERS["anomaly:detect"] = cmd_isolation_forest_152;
 HANDLERS["anomaly:forest"] = cmd_isolation_forest_152;
 
+async function cmd_pbft_consensus_153(commandContext) {
+  const { args, command } = commandContext;
+  const isJson = args.includes("--json");
+  const { EosPbftCluster } = await import("../../src/core/eosPbftConsensusEngine.ts");
+
+  const nodesArg = args.find((a) => a.startsWith("--nodes="));
+  const nodeIds = nodesArg
+    ? nodesArg
+        .split("=")[1]
+        .split(",")
+        .map((s) => s.trim())
+    : ["node-0", "node-1", "node-2", "node-3"];
+
+  const cluster = new EosPbftCluster(nodeIds);
+
+  if (command === "pbft:slash" || args.includes("--simulate-equivocation")) {
+    const maliciousId = nodeIds[0];
+    const slashingReceipt = cluster.simulateEquivocation(
+      maliciousId,
+      { type: "SET", key: "audit", value: "honest" },
+      { type: "SET", key: "audit", value: "forged" },
+    );
+    if (isJson) {
+      console.log(JSON.stringify(slashingReceipt, null, 2));
+      return;
+    }
+    console.log(`\n===============================================================`);
+    console.log(`  GLORIAN PBFT BYZANTINE EQUIVOCATION SLASHING RECEIPT`);
+    console.log(`===============================================================`);
+    console.log(`  Slashed Node     : ${slashingReceipt.slashedNodeId}`);
+    console.log(`  Evidence Type    : ${slashingReceipt.evidenceType}`);
+    console.log(`  Digest A         : sha256:${slashingReceipt.digestA}`);
+    console.log(`  Digest B         : sha256:${slashingReceipt.digestB}`);
+    console.log(`  Receipt SHA-256  : sha256:${slashingReceipt.sha256Receipt}`);
+    console.log(`  Timestamp        : ${slashingReceipt.timestamp}`);
+    console.log(`===============================================================\n`);
+    return;
+  }
+
+  // Handle proposal or status
+  const proposalArg = args.find((a) => a.startsWith("--proposal="));
+  const proposal = proposalArg
+    ? JSON.parse(proposalArg.split("=")[1])
+    : { type: "SET", key: "planetary_quorum", value: "3f+1_active" };
+
+  const execReceipt = cluster.propose(proposal);
+  const status = cluster.getClusterStatus();
+
+  if (isJson) {
+    console.log(JSON.stringify({ status, executionReceipt: execReceipt }, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN LAYER-0 PBFT CONSENSUS ENGINE (SPEC-210)`);
+  console.log(`===============================================================`);
+  console.log(`  Cluster ID       : ${status.clusterId}`);
+  console.log(`  Total Nodes (N)  : ${status.totalNodes} validators`);
+  console.log(`  Max Byzantine (f): ${status.f} faulty nodes tolerated`);
+  console.log(`  Quorum Size      : ${status.quorumSize} matching votes (2f + 1)`);
+  console.log(`  Current Primary  : ${status.primaryNodeId} (View: ${status.currentView})`);
+  console.log(`  Active Quorum?   : ${status.activeQuorum ? "YES (ONLINE)" : "NO (DEGRADED)"}`);
+  console.log(`  Committed Seq    : #${execReceipt.sequenceNumber}`);
+  console.log(`  State Hash       : sha256:${execReceipt.fsmStateHash}`);
+  console.log(`  Execution Receipt: sha256:${execReceipt.sha256Receipt}`);
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["pbft:cluster"] = cmd_pbft_consensus_153;
+HANDLERS["pbft:propose"] = cmd_pbft_consensus_153;
+HANDLERS["pbft:status"] = cmd_pbft_consensus_153;
+HANDLERS["pbft:slash"] = cmd_pbft_consensus_153;
+
 export async function handleFrontierMeshCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {

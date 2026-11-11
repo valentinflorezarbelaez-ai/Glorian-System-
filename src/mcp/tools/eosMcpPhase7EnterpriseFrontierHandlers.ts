@@ -25,6 +25,7 @@ import { EosRaftCluster } from "../../core/eosRaftConsensusEngine.ts";
 import { EosAnsEntropyCompressor } from "../../core/eosAnsEntropyCompressor.ts";
 import { EosTensor, EosReverseModeAutodiff, EosSgdOptimizer } from "../../core/eosReverseModeAutodiff.ts";
 import { EosIsolationForest, EosStreamingIsolationForest } from "../../core/eosIsolationForestDetector.ts";
+import { EosPbftCluster } from "../../core/eosPbftConsensusEngine.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -499,6 +500,40 @@ export function dispatchPhase7FrontierAction(
       windowSize: streaming.windowSize,
       ingestedCount: streaming.ingestedCount,
       outlierScore,
+    };
+  }
+  if (action === "pbft_cluster") {
+    const nodeCount = typeof args?.nodeCount === "number" ? Math.max(4, Math.floor(args.nodeCount)) : 4;
+    const nodeIds = Array.from({ length: nodeCount }, (_, i) => `node-${i}`);
+    const cluster = new EosPbftCluster(nodeIds);
+    const status = cluster.getClusterStatus();
+    return {
+      action: "pbft_cluster",
+      status,
+    };
+  }
+  if (action === "pbft_propose") {
+    const nodeCount = typeof args?.nodeCount === "number" ? Math.max(4, Math.floor(args.nodeCount)) : 4;
+    const nodeIds = Array.from({ length: nodeCount }, (_, i) => `node-${i}`);
+    const cluster = new EosPbftCluster(nodeIds);
+    const command = args?.proposal || { type: "SET", key: "mcp_key", value: "active" };
+    const receipt = cluster.propose(command);
+    return {
+      action: "pbft_propose",
+      receipt,
+      fsmState: cluster.getNode(nodeIds[0])?.fsmState,
+    };
+  }
+  if (action === "pbft_slash") {
+    const cluster = new EosPbftCluster(["node-0", "node-1", "node-2", "node-3"]);
+    const slashingReceipt = cluster.simulateEquivocation(
+      "node-0",
+      { type: "SET", key: "state", value: "valid" },
+      { type: "SET", key: "state", value: "forged" },
+    );
+    return {
+      action: "pbft_slash",
+      slashingReceipt,
     };
   }
   return undefined;

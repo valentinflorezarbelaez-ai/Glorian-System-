@@ -151,3 +151,21 @@ export * from "./eosRaftConsensusEngine.ts";
 export * from "./eosAnsEntropyCompressor.ts";
 export * from "./eosReverseModeAutodiff.ts";
 export * from "./eosIsolationForestDetector.ts";
+export {
+  EosPbftNode,
+  EosPbftCluster,
+  type PbftPhase,
+  type PbftMessage,
+  type PreparedCertificate,
+  type CommittedCertificate,
+  type ViewChangeCertificate,
+  type ByzantineSlashingReceipt,
+  type PbftNodeStatus,
+  type PbftClusterStatus,
+  type PbftExecutionReceipt,
+  type PbftFsmReducer,
+  computeMessageDigest,
+  computePbftFsmHash,
+  defaultPbftFsmReducer,
+  signPbftPayload,
+} from "./eosPbftConsensusEngine.ts";

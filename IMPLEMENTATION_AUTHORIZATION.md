@@ -1473,3 +1473,27 @@
   - `docs/plans/PLAN-094-ISOLATION-FOREST.md`
   - `docs/tasks/TASKS-094-ISOLATION-FOREST.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-PBFT-CONSENSUS-210
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Practical Byzantine Fault Tolerant (PBFT) Consensus Engine (`SPEC-210`, `CHANGE-095`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: “continua”)
+- **Scope**:
+  1. Implement Layer-0 PBFT Consensus Engine types in `src/core/eosPbftConsensusEngine.types.ts`.
+  2. Implement Layer-0 PBFT Consensus Engine core in `src/core/eosPbftConsensusEngine.ts`.
+  3. Subpath export `"./pbft"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian pbft:cluster`, `glorian pbft:propose`, and `glorian pbft:status` in `bin/commands/cliFrontierMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "pbft_cluster"`, `action: "pbft_propose"`, and `action: "pbft_slash"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosPbftConsensusEngine.test.mjs` (BDD-1069..BDD-1073).
+  8. Add test step #22 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 25 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 205 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-095-PBFT-CONSENSUS-ENGINE.md`
+  - `openspec/changes/CHANGE-095-PBFT-CONSENSUS-ENGINE.md`
+  - `openspec/specs/SPEC-210-PBFT-CONSENSUS-ENGINE.md`
+  - `docs/plans/PLAN-095-PBFT-CONSENSUS-ENGINE.md`
+  - `docs/tasks/TASKS-095-PBFT-CONSENSUS-ENGINE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

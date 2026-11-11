@@ -559,5 +559,35 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(anomalyForestReport.isReady, true);
     assert.ok(anomalyForestReport.windowSize >= 30);
     assert.ok(anomalyForestReport.outlierScore.anomalyScore > 0.5);
+
+    // 22. pbft_cluster, pbft_propose & pbft_slash
+    const pbftClusterReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "pbft_cluster", nodeCount: 4 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(pbftClusterReport.action, "pbft_cluster");
+    assert.equal(pbftClusterReport.status.totalNodes, 4);
+    assert.equal(pbftClusterReport.status.f, 1);
+    assert.equal(pbftClusterReport.status.quorumSize, 3);
+    assert.equal(pbftClusterReport.status.activeQuorum, true);
+
+    const pbftProposeReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "pbft_propose", nodeCount: 4, proposal: { type: "SET", key: "facade_key", value: "active" } },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(pbftProposeReport.action, "pbft_propose");
+    assert.ok(pbftProposeReport.receipt.sha256Receipt.length === 64);
+    assert.equal(pbftProposeReport.fsmState.facade_key, "active");
+
+    const pbftSlashReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "pbft_slash" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(pbftSlashReport.action, "pbft_slash");
+    assert.equal(pbftSlashReport.slashingReceipt.evidenceType, "EQUIVOCATION_DETECTED");
+    assert.equal(pbftSlashReport.slashingReceipt.slashedNodeId, "node-0");
   });
 });

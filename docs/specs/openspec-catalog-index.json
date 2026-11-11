@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-11T03:27:08.637Z",
-  "totalSpecs": 204,
-  "catalogSha256": "50310ccbe101ddec0acb480f1c6eacaf51af8cb99cea67ee33eca99ac73e6762",
+  "timestampIso": "2026-11-11T18:13:54.600Z",
+  "totalSpecs": 205,
+  "catalogSha256": "b9ec0da540f89a212ab549a8dc321027bbabd17e7174bea5b5a3aa33f1b4b0b9",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1838,6 +1838,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-209-ISOLATION-FOREST.md",
       "sha256": "f1cb69b6d5fdd9e641cf048ca78d3df55280fc25cd794b4aa7ce89a1a605abca"
+    },
+    {
+      "id": "SPEC-210",
+      "title": "Layer-0 Practical Byzantine Fault Tolerant (PBFT) Consensus Engine & Replicated State Machine",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-210-PBFT-CONSENSUS-ENGINE.md",
+      "sha256": "ea602f6d798e7c6a9c008faae398b12f837a9b736dedf476866cff1b36310988"
     }
   ]
 }

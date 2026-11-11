@@ -541,6 +541,8 @@ Uso Universal Exhaustivo:
   eos autodiff:train [--epochs=N] Optimización cerrada de parámetros vía SGD y tensor core multidimensional
   eos anomaly:detect [--threshold=F] Detector de anomalías no supervisado con Isolation Forest (SPEC-209)
   eos anomaly:forest [--trees=N] Simulación de ensamble de árboles aleatorios iTrees en streaming
+  eos pbft:cluster [--nodes=A,B,C,D] Consenso bizantino PBFT 3-fases con quórum supermayoritario 2f+1 (SPEC-210)
+  eos pbft:propose [--proposal=JSON] Ejecuta mutación FSM linealizable bajo PBFT con recibo de commit
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

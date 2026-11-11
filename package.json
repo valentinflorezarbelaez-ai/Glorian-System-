@@ -34,6 +34,7 @@
     "./ans": "./src/core/eosAnsEntropyCompressor.ts",
     "./autodiff": "./src/core/eosReverseModeAutodiff.ts",
     "./isolation-forest": "./src/core/eosIsolationForestDetector.ts",
+    "./pbft": "./src/core/eosPbftConsensusEngine.ts",
     "./package.json": "./package.json"
   },
   "bin": {
