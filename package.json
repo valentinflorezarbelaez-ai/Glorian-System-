@@ -23,6 +23,7 @@
     "./arena-swarm": "./src/core/eosSwarmAdversarialArena.ts",
     "./zk-proof": "./src/core/eosZkStateProof.ts",
     "./compiler": "./src/core/eosHermeticSeaCompiler.ts",
+    "./post-quantum": "./src/core/eosPostQuantumCryptography.ts",
     "./package.json": "./package.json"
   },
   "bin": {

@@ -827,6 +827,164 @@ async function cmd_compile_139(commandContext) {
 HANDLERS["compile"] = cmd_compile_139;
 HANDLERS["sea:compile"] = cmd_compile_139;
 
+async function cmd_pq_kem_140(commandContext) {
+  const { args } = commandContext;
+  const isJson = args.includes("--json");
+  const isHybrid = args.includes("--hybrid");
+  const levelArg = args.find((a) => a.startsWith("--level="));
+  const level = levelArg ? levelArg.split("=")[1] : "ML-KEM-768";
+
+  const { EosPostQuantumCryptography } = await import("../../src/core/eosPostQuantumCryptography.ts");
+
+  if (isHybrid) {
+    const keypair = EosPostQuantumCryptography.generateHybridKemKeyPair();
+    const enc = EosPostQuantumCryptography.encapsulateHybridKem(keypair.publicKey);
+    const dec = EosPostQuantumCryptography.decapsulateHybridKem(enc.ciphertext, keypair.privateKey);
+    const verified = enc.sharedSecretHex === dec.sharedSecretHex;
+
+    const report = {
+      mode: "HYBRID (X25519 + ML-KEM-768)",
+      nistSecurityCategory: keypair.nistSecurityCategory,
+      verified,
+      sharedSecretHex: enc.sharedSecretHex,
+      ciphertextSample: enc.ciphertext.mlKemCiphertextHex.slice(0, 32) + "...",
+      sha256Receipt: enc.sha256Receipt,
+    };
+
+    if (isJson) {
+      console.log(JSON.stringify(report, null, 2));
+      return;
+    }
+
+    console.log(`\n===============================================================`);
+    console.log(`  GLORIAN HYBRID POST-QUANTUM KEY ENCAPSULATION (SPEC-199)    `);
+    console.log(`===============================================================`);
+    console.log(`  Standard         : IETF Hybrid KEM / NIST FIPS 203 + RFC 7748`);
+    console.log(`  Primitives       : Curve25519 (ECDH) + ML-KEM-768 Lattice`);
+    console.log(`  Security Level   : NIST Category ${report.nistSecurityCategory} (AES-192 equivalent)`);
+    console.log(`  Shared Secret    : ${report.sharedSecretHex}`);
+    console.log(`  KEM Verification : ${verified ? "✔ MATCH (DEC == ENC)" : "✖ MISMATCH"}`);
+    console.log(`  Ciphertext Digest: sha256:${enc.ciphertext.saltHex}`);
+    console.log(`  Receipt SHA-256  : sha256:${report.sha256Receipt}`);
+    console.log(`===============================================================\n`);
+    return;
+  }
+
+  const keypair = EosPostQuantumCryptography.generateMlKemKeyPair(level);
+  const enc = EosPostQuantumCryptography.encapsulateMlKem(keypair.publicKeyHex, level);
+  const dec = EosPostQuantumCryptography.decapsulateMlKem(enc.ciphertextHex, keypair.privateKeyHex);
+  const verified = enc.sharedSecretHex === dec.sharedSecretHex;
+
+  const report = {
+    level,
+    nistSecurityCategory: keypair.nistSecurityCategory,
+    verified,
+    sharedSecretHex: enc.sharedSecretHex,
+    publicKeySample: keypair.publicKeyHex.slice(0, 32) + "...",
+    ciphertextSample: enc.ciphertextHex.slice(0, 32) + "...",
+    sha256Receipt: enc.sha256Receipt,
+  };
+
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN POST-QUANTUM LATTICE KEM (NIST FIPS 203 / SPEC-199) `);
+  console.log(`===============================================================`);
+  console.log(`  Algorithm        : ${level} (Module-Lattice Ring R_q, q=3329)`);
+  console.log(`  Security Level   : NIST Category ${report.nistSecurityCategory}`);
+  console.log(`  Shared Secret    : ${report.sharedSecretHex}`);
+  console.log(`  KEM Verification : ${verified ? "✔ MATCH (DEC == ENC)" : "✖ MISMATCH"}`);
+  console.log(`  Receipt SHA-256  : sha256:${report.sha256Receipt}`);
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["pq:kem"] = cmd_pq_kem_140;
+HANDLERS["pq:encap"] = cmd_pq_kem_140;
+
+async function cmd_pq_sign_141(commandContext) {
+  const { args, command } = commandContext;
+  const isJson = args.includes("--json");
+  const isHybrid = args.includes("--hybrid");
+  const messageCandidate = args.filter((a) => !a.startsWith("-") && a !== command).join(" ");
+  const message = messageCandidate || "GLORIAN_SOVEREIGN_POST_QUANTUM_AFFIRMATION";
+
+  const { EosPostQuantumCryptography } = await import("../../src/core/eosPostQuantumCryptography.ts");
+
+  if (isHybrid) {
+    const { EosSlsaSupplyChainAttestation } = await import("../../src/core/eosSlsaSupplyChainAttestation.ts");
+    const edKeys = EosSlsaSupplyChainAttestation.generateEd25519KeyPair();
+    const mlDsaKeys = EosPostQuantumCryptography.generateMlDsaKeyPair();
+
+    const sigResult = EosPostQuantumCryptography.signHybrid(message, {
+      ed25519PrivateKeyPem: edKeys.privateKeyPem,
+      mlDsaSigningKeyHex: mlDsaKeys.signingKeyHex,
+    });
+
+    const verified = EosPostQuantumCryptography.verifyHybrid(message, sigResult, {
+      ed25519PublicKeyPem: edKeys.publicKeyPem,
+      mlDsaVerificationKeyHex: mlDsaKeys.verificationKeyHex,
+    });
+
+    const report = {
+      algorithm: sigResult.algorithm,
+      message,
+      verified,
+      ed25519SignatureB64: sigResult.ed25519SignatureB64.slice(0, 32) + "...",
+      mlDsaSignatureHex: sigResult.mlDsaSignatureHex.slice(0, 32) + "...",
+      sha256Receipt: sigResult.sha256Receipt,
+    };
+
+    if (isJson) {
+      console.log(JSON.stringify(report, null, 2));
+      return;
+    }
+
+    console.log(`\n===============================================================`);
+    console.log(`  GLORIAN HYBRID POST-QUANTUM SIGNATURE (SPEC-199)             `);
+    console.log(`===============================================================`);
+    console.log(`  Message          : ${message}`);
+    console.log(`  Algorithm        : ${sigResult.algorithm}`);
+    console.log(`  Dual Signature   : Ed25519 + ML-DSA-65 (Lattice)`);
+    console.log(`  Verification     : ${verified ? "✔ VALID_HYBRID_SIGNATURE" : "✖ REJECTED"}`);
+    console.log(`  Receipt SHA-256  : sha256:${sigResult.sha256Receipt}`);
+    console.log(`===============================================================\n`);
+    return;
+  }
+
+  const keypair = EosPostQuantumCryptography.generateMlDsaKeyPair();
+  const sigResult = EosPostQuantumCryptography.signMlDsa(message, keypair.signingKeyHex);
+  const verified = EosPostQuantumCryptography.verifyMlDsa(message, sigResult.signatureHex, keypair.verificationKeyHex);
+
+  const report = {
+    algorithm: sigResult.algorithm,
+    message,
+    verified,
+    signatureHex: sigResult.signatureHex.slice(0, 48) + "...",
+    verificationKeyHex: keypair.verificationKeyHex.slice(0, 32) + "...",
+    sha256Receipt: sigResult.sha256Receipt,
+  };
+
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN ML-DSA LATTICE SIGNATURE (NIST FIPS 204 / SPEC-199)  `);
+  console.log(`===============================================================`);
+  console.log(`  Message          : ${message}`);
+  console.log(`  Algorithm        : ${sigResult.algorithm} (Module-Lattice)`);
+  console.log(`  Signature (Hex)  : ${report.signatureHex}`);
+  console.log(`  Verification     : ${verified ? "✔ VALID_LATTICE_SIGNATURE" : "✖ REJECTED"}`);
+  console.log(`  Receipt SHA-256  : sha256:${sigResult.sha256Receipt}`);
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["pq:sign"] = cmd_pq_sign_141;
+
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {

@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-02T19:57:00.797Z",
-  "totalSpecs": 193,
-  "catalogSha256": "907538a4878f7f62077b364c24709307873917ba989bfb38e45a37b32ca45927",
+  "totalSpecs": 194,
+  "catalogSha256": "5f47a64c24ccd7650b727dedb396a7c69b26a0a1ad7b17babc059b883a31acc7",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1739,6 +1739,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-198-HERMETIC-SEA-COMPILER.md",
       "sha256": "f8d33be9ab13e974784e1fab82402e1c7c752d0b7ea64a5896dd6d13cbadaa71"
+    },
+    {
+      "id": "SPEC-199",
+      "title": "Post-Quantum Cryptographic Key Encapsulation & Lattice Signatures (NIST FIPS 203/204)",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-199-POST-QUANTUM-CRYPTO.md",
+      "sha256": "cab31b34e979e07db1265eec175ba06d048f9e911c6df2e700a03f4be6b28a22"
     }
   ]
 }

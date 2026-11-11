@@ -368,25 +368,58 @@ console.log(`Recibo Compilador  : sha256:${result.sha256Receipt}`);
 
 ---
 
+### Módulo 14: Criptografía Post-Cuántica ML-KEM y ML-DSA (`EosPostQuantumCryptography`)
+
+**Propósito:** Blindaje criptográfico inmune a computadoras cuánticas según los estándares **NIST FIPS 203** (ML-KEM / Kyber) y **NIST FIPS 204** (ML-DSA / Dilithium) con soporte híbrido post-cuántico (X25519 + ML-KEM y Ed25519 + ML-DSA). Ofrece intercambio de claves inmune a ataques _Harvest Now, Decrypt Later_ (HNDL) con rechazo implícito constante frente a manipulación de texto cifrado.
+
+```ts
+import { EosPostQuantumCryptography } from "./src/core/eosPostQuantumCryptography.ts";
+
+// 1. Intercambio de Claves Híbrido Post-Cuántica (X25519 + ML-KEM-768)
+const bobKeys = EosPostQuantumCryptography.generateHybridKemKeyPair();
+const aliceEnc = EosPostQuantumCryptography.encapsulateHybridKem(bobKeys.publicKey);
+const bobDec = EosPostQuantumCryptography.decapsulateHybridKem(
+  aliceEnc.ciphertext,
+  bobKeys.privateKey,
+);
+
+console.log(`Clave compartida derivada : ${aliceEnc.sharedSecretHex}`);
+console.log(`¿Coincidencia exacta?     : ${bobDec.sharedSecretHex === aliceEnc.sharedSecretHex}`);
+
+// 2. Firmas Digitales de Retículos (ML-DSA-65)
+const dsaKeys = EosPostQuantumCryptography.generateMlDsaKeyPair();
+const signature = EosPostQuantumCryptography.signMlDsa("MENSAJE_CRITICO", dsaKeys.signingKeyHex);
+const valid = EosPostQuantumCryptography.verifyMlDsa(
+  "MENSAJE_CRITICO",
+  signature.signatureHex,
+  dsaKeys.verificationKeyHex,
+);
+console.log(`¿Firma post-cuántica válida? : ${valid}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
 
-| Comando                                             | Descripción                                                                               |
-| :-------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| `node bin/eos.mjs help`                             | Muestra el menú completo de comandos disponibles.                                         |
-| `node bin/eos.mjs enterprise:health`                | Audita la salud del sistema y emite tabla de estado con recibo SHA-256.                   |
-| `node bin/eos.mjs enterprise:health --json`         | Emite el reporte de salud en formato JSON machine-readable para CI/CD.                    |
-| `node bin/eos.mjs doctor [ruta] [--write-ci]`       | Diagnostica los 5 pilares Soundcheck (0-100) y opcionalmente sintetiza pipeline CI.       |
-| `node bin/eos.mjs remediate [ruta] [--dry-run]`     | Auto-remedia el repositorio: genera .gitignore, pruebas smoke, CI y gobernanza.           |
-| `node bin/eos.mjs fuzz [--iterations=N]`            | Fuzzing dinámico guiado por cobertura sobre funciones y primitivas del sistema.           |
-| `node bin/eos.mjs arena [accion] [--rounds=N]`      | Torneo adversario multi-agente bajo consenso BFT 3f+1 (Red vs Blue vs White).             |
-| `node bin/eos.mjs zk:prove [--spec=ID]`             | Genera y verifica prueba Merkle de Conocimiento Cero (ZKP) para un requisito o spec.      |
-| `node bin/eos.mjs compile [plataforma] [--dry-run]` | Compila Glorian en ejecutable nativo hermético SEA (Ed25519 + SLSA Nivel 4).              |
-| `node bin/eos.mjs metrics`                          | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
-| `node bin/eos.mjs guard [directorio]`               | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
-| `node bin/eos.mjs flow inspect <ruta>`              | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |
-| `node bin/eos.mjs worktree list`                    | Lista los árboles de trabajo (_worktrees_) aislados de Git.                               |
+| Comando                                              | Descripción                                                                               |
+| :--------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `node bin/eos.mjs help`                              | Muestra el menú completo de comandos disponibles.                                         |
+| `node bin/eos.mjs enterprise:health`                 | Audita la salud del sistema y emite tabla de estado con recibo SHA-256.                   |
+| `node bin/eos.mjs enterprise:health --json`          | Emite el reporte de salud en formato JSON machine-readable para CI/CD.                    |
+| `node bin/eos.mjs doctor [ruta] [--write-ci]`        | Diagnostica los 5 pilares Soundcheck (0-100) y opcionalmente sintetiza pipeline CI.       |
+| `node bin/eos.mjs remediate [ruta] [--dry-run]`      | Auto-remedia el repositorio: genera .gitignore, pruebas smoke, CI y gobernanza.           |
+| `node bin/eos.mjs fuzz [--iterations=N]`             | Fuzzing dinámico guiado por cobertura sobre funciones y primitivas del sistema.           |
+| `node bin/eos.mjs arena [accion] [--rounds=N]`       | Torneo adversario multi-agente bajo consenso BFT 3f+1 (Red vs Blue vs White).             |
+| `node bin/eos.mjs zk:prove [--spec=ID]`              | Genera y verifica prueba Merkle de Conocimiento Cero (ZKP) para un requisito o spec.      |
+| `node bin/eos.mjs compile [plataforma] [--dry-run]`  | Compila Glorian en ejecutable nativo hermético SEA (Ed25519 + SLSA Nivel 4).              |
+| `node bin/eos.mjs pq:kem [--hybrid] [--json]`        | Encapsula clave post-cuántica (NIST FIPS 203 ML-KEM + X25519) con verificación inmediata. |
+| `node bin/eos.mjs pq:sign [msg] [--hybrid] [--json]` | Genera y verifica firma digital de retículos (NIST FIPS 204 ML-DSA + Ed25519).            |
+| `node bin/eos.mjs metrics`                           | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                     |
+| `node bin/eos.mjs guard [directorio]`                | Inspecciona la arquitectura de dependencias de cualquier repositorio local.               |
+| `node bin/eos.mjs flow inspect <ruta>`               | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura. |
+| `node bin/eos.mjs worktree list`                     | Lista los árboles de trabajo (_worktrees_) aislados de Git.                               |
 
 ---
 

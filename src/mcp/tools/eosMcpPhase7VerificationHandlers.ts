@@ -28,6 +28,7 @@ import { EosDynamicFuzzingOracle } from "../../core/eosDynamicFuzzingOracle.ts";
 import { EosSwarmAdversarialArena } from "../../core/eosSwarmAdversarialArena.ts";
 import { EosZkStateProof } from "../../core/eosZkStateProof.ts";
 import { EosHermeticSeaCompiler } from "../../core/eosHermeticSeaCompiler.ts";
+import { EosPostQuantumCryptography } from "../../core/eosPostQuantumCryptography.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, type Phase7HandlerContext, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -456,6 +457,37 @@ export function dispatchPhase7VerificationCase(
           dryRun,
           targetPlatform,
         });
+      }
+      if (action === "pq_kem") {
+        const isHybrid = Boolean(args?.hybrid);
+        if (isHybrid) {
+          const kp = EosPostQuantumCryptography.generateHybridKemKeyPair();
+          const enc = EosPostQuantumCryptography.encapsulateHybridKem(kp.publicKey);
+          const dec = EosPostQuantumCryptography.decapsulateHybridKem(enc.ciphertext, kp.privateKey);
+          return {
+            mode: "HYBRID",
+            verified: enc.sharedSecretHex === dec.sharedSecretHex,
+            sharedSecretHex: enc.sharedSecretHex,
+            sha256Receipt: enc.sha256Receipt,
+          };
+        }
+        const kp = EosPostQuantumCryptography.generateMlKemKeyPair("ML-KEM-768");
+        const enc = EosPostQuantumCryptography.encapsulateMlKem(kp.publicKeyHex);
+        const dec = EosPostQuantumCryptography.decapsulateMlKem(enc.ciphertextHex, kp.privateKeyHex);
+        return {
+          mode: "ML-KEM-768",
+          verified: enc.sharedSecretHex === dec.sharedSecretHex,
+          sharedSecretHex: enc.sharedSecretHex,
+          sha256Receipt: enc.sha256Receipt,
+        };
+      }
+      if (action === "pq_verify") {
+        const msg = String(args?.message || "test");
+        const sig = String(args?.signatureHex || "");
+        const vk = String(args?.verificationKeyHex || "");
+        return {
+          verified: EosPostQuantumCryptography.verifyMlDsa(msg, sig, vk),
+        };
       }
       if (action === "list") {
         return {

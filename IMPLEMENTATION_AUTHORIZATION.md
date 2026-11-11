@@ -1241,3 +1241,23 @@
   - `docs/plans/PLAN-083-HERMETIC-SEA-COMPILER.md`
   - `docs/tasks/TASKS-083-HERMETIC-SEA-COMPILER.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-10-POST-QUANTUM-199
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Post-Quantum Cryptographic Key Encapsulation & Lattice Signatures (`SPEC-199`, `CHANGE-084`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-10: “dale con toda”)
+- **Scope**:
+  1. Implement Layer-0 Post-Quantum Cryptography engine `src/core/eosPostQuantumCryptography.ts`.
+  2. Subpath export `"./post-quantum"` in `package.json`.
+  3. Export module in `src/core/index.ts`.
+  4. Wire CLI commands `glorian pq:kem`, `glorian pq:sign`, `glorian pq:verify` in `bin/commands/cliPlatform.mjs`.
+  5. Wire MCP actions `action: "pq_kem"` and `action: "pq_verify"` in `src/mcp/tools/eosMcpPhase7VerificationHandlers.ts`.
+  6. 100% BDD test coverage in `test/eosPostQuantumCryptography.test.mjs`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-084-POST-QUANTUM-CRYPTO.md`
+  - `openspec/changes/CHANGE-084-POST-QUANTUM-CRYPTO.md`
+  - `openspec/specs/SPEC-199-POST-QUANTUM-CRYPTO.md`
+  - `docs/plans/PLAN-084-POST-QUANTUM-CRYPTO.md`
+  - `docs/tasks/TASKS-084-POST-QUANTUM-CRYPTO.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

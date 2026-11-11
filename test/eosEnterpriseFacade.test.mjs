@@ -347,5 +347,15 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(seaReport.dryRun, true);
     assert.ok(seaReport.binaryPath.includes("glorian"));
     assert.ok(seaReport.sha256Receipt.length === 64);
+
+    // 11. pq_kem
+    const pqReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "pq_kem", hybrid: true },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(pqReport.verified, true);
+    assert.equal(pqReport.mode, "HYBRID");
+    assert.equal(pqReport.sharedSecretHex.length, 64);
   });
 });
