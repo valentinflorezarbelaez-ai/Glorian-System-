@@ -587,6 +587,9 @@ Uso Universal Exhaustivo:
   eos tensor:matmul [--rows=R]    Multiplicación streaming de matriz cuantizada y vector sin heap allocation
   eos tensor:embed [--text=T]     Generación soberana de embeddings semánticos densos con RMSNorm
   eos tensor:benchmark            Benchmark de rendimiento GFLOPS y tasas de cuantización por segundo
+  eos fleet:sync-all [--heal]     Sincronización federada universal de los 9 repositorios de la flota (SPEC-225)
+  eos fleet:audit-all             Auditoría Soundcheck 4-pilares (0-100) y Merkle Root criptográfico de la flota
+  eos fleet:heal-all              Sanación autónoma de deriva de configuración y marcadores de worktrees
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

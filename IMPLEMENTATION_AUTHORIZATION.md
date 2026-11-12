@@ -1833,3 +1833,27 @@
   - `docs/plans/PLAN-109-QUANTIZED-TENSOR-INFERENCE.md`
   - `docs/tasks/TASKS-109-QUANTIZED-TENSOR-INFERENCE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-UNIVERSAL-FLEET-SYNC-225
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Universal Federated Cross-Fleet Sync & Health Healing Core (`SPEC-225`, `CHANGE-110`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: "uno a uno pero en orden")
+- **Scope**:
+  1. Implement Layer-0 Universal Fleet Sync types in `src/core/eosUniversalFleetSyncCore.types.ts`.
+  2. Implement Layer-0 Universal Fleet Sync Core in `src/core/eosUniversalFleetSyncCore.ts`.
+  3. Subpath export `"./fleet-sync"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian fleet:sync-all`, `glorian fleet:audit-all`, `glorian fleet:heal-all` in `bin/commands/cliFleetMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "fleet_sync_all"`, `action: "fleet_audit_all"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosUniversalFleetSyncCore.test.mjs` (BDD-1144..BDD-1148).
+  8. Add test step #37 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 40 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 220 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-110-UNIVERSAL-FLEET-SYNC.md`
+  - `openspec/changes/CHANGE-110-UNIVERSAL-FLEET-SYNC.md`
+  - `openspec/specs/SPEC-225-UNIVERSAL-FLEET-SYNC.md`
+  - `docs/plans/PLAN-110-UNIVERSAL-FLEET-SYNC.md`
+  - `docs/tasks/TASKS-110-UNIVERSAL-FLEET-SYNC.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

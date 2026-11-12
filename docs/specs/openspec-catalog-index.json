@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 219,
-  "catalogSha256": "b94fe54d37caebc832348c6fb5ac59690f91de1f1d222c0af44b985ffe48d2ae",
+  "totalSpecs": 220,
+  "catalogSha256": "6fc91cae16a45294fc4009905656bfa2ea331f28798b5ceefbdde458577cffe7",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1972,7 +1972,16 @@
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-224-QUANTIZED-TENSOR-INFERENCE.md",
-      "sha256": "a3de629999e0dfa7f2ba6282d816824f03b1e8a1eb21da24014dd4ebc47072ec"
+      "sha256": "fcb1f0a4526edb7b29530e51240d02ef0133029d3fe5de117533dba399af176c"
+    },
+    {
+      "id": "SPEC-225",
+      "title": "Layer-0 Universal Federated Cross-Fleet Sync & Health Healing Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-225-UNIVERSAL-FLEET-SYNC.md",
+      "sha256": "62a1b7fc03d00c6fe9de0a2c8049580d0f99a3a1bc1181ea60332a2e4d0f978c"
     }
   ]
 }

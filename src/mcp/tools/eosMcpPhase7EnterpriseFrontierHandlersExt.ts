@@ -12,6 +12,7 @@ import { EosPostQuantumMlKemCore } from "../../core/eosPostQuantumMlKemCore.ts";
 import { EosBulletproofsRangeProofCore } from "../../core/eosBulletproofsRangeProofCore.ts";
 import { EosHotStuffConsensusEngine } from "../../core/eosHotStuffConsensusEngine.ts";
 import { EosQuantizedTensorInferenceCore } from "../../core/eosQuantizedTensorInferenceCore.ts";
+import { EosUniversalFleetSyncCore } from "../../core/eosUniversalFleetSyncCore.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
@@ -407,6 +408,33 @@ export function dispatchPhase7FrontierActionExt(
       norm: res.norm,
       durationMs: res.durationMs,
       receipt: res.receipt,
+    };
+  }
+  if (action === "fleet_sync_all") {
+    const root = typeof args?.root === "string" ? args.root : process.cwd();
+    const heal = args?.heal === true;
+    const report = EosUniversalFleetSyncCore.syncFleet(root, { heal });
+    return {
+      action: "fleet_sync_all",
+      totalProjects: report.totalProjects,
+      inSyncProjects: report.inSyncProjects,
+      federatedAttestedProjects: report.federatedAttestedProjects,
+      divergedProjects: report.divergedProjects,
+      fleetMerkleRoot: report.fleetMerkleRoot,
+      receipt: report.receipt,
+    };
+  }
+  if (action === "fleet_audit_all") {
+    const root = typeof args?.root === "string" ? args.root : process.cwd();
+    const report = EosUniversalFleetSyncCore.auditFleetHealth(root);
+    return {
+      action: "fleet_audit_all",
+      totalProjects: report.totalProjects,
+      fleetAverageScore: report.fleetAverageScore,
+      deploymentAuthorizedQuorum: report.deploymentAuthorizedQuorum,
+      gradeCounts: report.gradeCounts,
+      fleetMerkleRoot: report.fleetMerkleRoot,
+      receipt: report.receipt,
     };
   }
   return undefined;
