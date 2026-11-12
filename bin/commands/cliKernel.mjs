@@ -580,6 +580,9 @@ Uso Universal Exhaustivo:
   eos bp:prove [--value=V]     Generación NIZK de rango [0, 2^m - 1] con doblado logarítmico O(log m)
   eos bp:verify [--m=32]       Verificación no interactiva sin ceremonia de confianza en <5ms
   eos bp:benchmark [--m=16]    Benchmark de operaciones por segundo para compromiso, prueba y verificación
+  eos hotstuff:propose [--node=N] Propuesta de bloque con Justify QC en consenso HotStuff BFT (SPEC-223)
+  eos hotstuff:vote [--node=N]    Emisión de voto validado bajo predicado de seguridad y liveness
+  eos hotstuff:status [--node=N]  Estado de consenso HotStuff: vista, líder, High-QC, Locked-QC
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

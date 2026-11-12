@@ -763,37 +763,27 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(frostVerify.valid, true);
 
     // 32. kzg_commit, kzg_open & kzg_verify (SPEC-220)
-    const kzgCommit = callFacade({ action: "kzg_commit", coeffs: [7, 5, 2, 3] });
-    assert.equal(kzgCommit.action, "kzg_commit");
-    assert.equal(kzgCommit.degree, 3);
-    const kzgOpen = callFacade({ action: "kzg_open", coeffs: [7, 5, 2, 3], point: 4 });
-    assert.equal(kzgOpen.action, "kzg_open");
-    assert.equal(kzgOpen.claimedValue, "251");
-    const kzgVerify = callFacade({ action: "kzg_verify", coeffs: [7, 5, 2, 3], point: 4 });
-    assert.equal(kzgVerify.action, "kzg_verify");
-    assert.equal(kzgVerify.valid, true);
+    assert.equal(callFacade({ action: "kzg_commit", coeffs: [7, 5, 2, 3] }).degree, 3);
+    assert.equal(callFacade({ action: "kzg_open", coeffs: [7, 5, 2, 3], point: 4 }).claimedValue, "251");
+    assert.equal(callFacade({ action: "kzg_verify", coeffs: [7, 5, 2, 3], point: 4 }).valid, true);
 
     // 33. ml_kem_keygen, ml_kem_encaps & ml_kem_decaps (SPEC-221)
     const mlKeyGen = callFacade({ action: "ml_kem_keygen" });
-    assert.equal(mlKeyGen.action, "ml_kem_keygen");
     assert.equal(mlKeyGen.algorithm, "ML-KEM-768");
     const mlEncaps = callFacade({ action: "ml_kem_encaps", ek: mlKeyGen.encapsulationKeyHex });
-    assert.equal(mlEncaps.action, "ml_kem_encaps");
-    const mlDecaps = callFacade({
-      action: "ml_kem_decaps",
-      dk: mlKeyGen.decapsulationKeyHex,
-      ct: mlEncaps.ciphertextHex,
-    });
-    assert.equal(mlDecaps.action, "ml_kem_decaps");
-    assert.equal(mlDecaps.valid, true);
+    assert.equal(
+      callFacade({ action: "ml_kem_decaps", dk: mlKeyGen.decapsulationKeyHex, ct: mlEncaps.ciphertextHex }).valid,
+      true,
+    );
 
     // 34. bp_commit, bp_prove & bp_verify (SPEC-222)
-    const bpComm = callFacade({ action: "bp_commit", value: 3333 });
-    assert.equal(bpComm.action, "bp_commit");
-    const bpProve = callFacade({ action: "bp_prove", value: 3333, m: 16 });
-    assert.equal(bpProve.action, "bp_prove");
-    const bpVerify = callFacade({ action: "bp_verify", value: 3333, m: 16 });
-    assert.equal(bpVerify.action, "bp_verify");
-    assert.equal(bpVerify.valid, true);
+    assert.equal(callFacade({ action: "bp_commit", value: 3333 }).action, "bp_commit");
+    assert.equal(callFacade({ action: "bp_prove", value: 3333, m: 16 }).action, "bp_prove");
+    assert.equal(callFacade({ action: "bp_verify", value: 3333, m: 16 }).valid, true);
+
+    // 35. hotstuff_propose, hotstuff_vote & hotstuff_status (SPEC-223)
+    assert.equal(callFacade({ action: "hotstuff_propose", node: "node-1" }).isLeader, true);
+    assert.equal(callFacade({ action: "hotstuff_vote", node: "node-1" }).accepted, true);
+    assert.equal(callFacade({ action: "hotstuff_status", node: "node-1" }).quorumSize, 3);
   });
 });

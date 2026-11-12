@@ -251,3 +251,18 @@ export type {
   BulletproofsReceipt,
   BulletproofsBenchmarkResult,
 } from "./eosBulletproofsRangeProofCore.types.ts";
+export { EosHotStuffConsensusEngine, HOTSTUFF_GENESIS_HASH } from "./eosHotStuffConsensusEngine.ts";
+export type {
+  HotStuffNodeId,
+  HotStuffView,
+  HotStuffPhase,
+  HotStuffQuorumCertificate,
+  HotStuffBlock,
+  HotStuffVote,
+  HotStuffCommitResult,
+  HotStuffSlashingReceipt,
+  HotStuffOperationType,
+  HotStuffReceipt,
+  HotStuffEngineStatus,
+  HotStuffEngineOptions,
+} from "./eosHotStuffConsensusEngine.types.ts";

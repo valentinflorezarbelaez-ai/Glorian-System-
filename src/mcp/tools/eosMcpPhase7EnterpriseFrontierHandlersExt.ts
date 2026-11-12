@@ -10,6 +10,7 @@ import { EosFrostThresholdSignatureCore } from "../../core/eosFrostThresholdSign
 import { EosKzgPolynomialCommitmentCore } from "../../core/eosKzgPolynomialCommitmentCore.ts";
 import { EosPostQuantumMlKemCore } from "../../core/eosPostQuantumMlKemCore.ts";
 import { EosBulletproofsRangeProofCore } from "../../core/eosBulletproofsRangeProofCore.ts";
+import { EosHotStuffConsensusEngine } from "../../core/eosHotStuffConsensusEngine.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
@@ -302,6 +303,55 @@ export function dispatchPhase7FrontierActionExt(
       bitLength: result.bitLength,
       verificationTimeMs: result.verificationTimeMs,
       receipt: result.receipt,
+    };
+  }
+  if (action === "hotstuff_propose") {
+    const cluster = Array.isArray(args?.cluster) ? args.cluster : ["node-1", "node-2", "node-3", "node-4"];
+    const nodeId = typeof args?.node === "string" ? args.node : cluster[0];
+    const engine = new EosHotStuffConsensusEngine(nodeId, cluster);
+    const payload = args?.payload ?? { task: "mcp_state_sync", ts: Date.now() };
+    const block = engine.createProposal(payload);
+    return {
+      action: "hotstuff_propose",
+      algorithm: "HotStuff Pipelined BFT",
+      nodeId: engine.nodeId,
+      currentView: engine.currentView,
+      isLeader: engine.isLeader(),
+      blockHash: block.hash,
+      parentHash: block.parentHash,
+      justifyView: block.justify.view,
+    };
+  }
+  if (action === "hotstuff_vote") {
+    const cluster = Array.isArray(args?.cluster) ? args.cluster : ["node-1", "node-2", "node-3", "node-4"];
+    const nodeId = typeof args?.node === "string" ? args.node : cluster[0];
+    const engine = new EosHotStuffConsensusEngine(nodeId, cluster);
+    const proposal = engine.createProposal(args?.payload ?? { tx: "mcp-vote-tx" });
+    const vote = engine.vote(proposal);
+    return {
+      action: "hotstuff_vote",
+      algorithm: "HotStuff Pipelined BFT",
+      voter: vote?.voter,
+      view: vote?.view,
+      blockHash: vote?.blockHash,
+      accepted: vote !== null,
+    };
+  }
+  if (action === "hotstuff_status") {
+    const cluster = Array.isArray(args?.cluster) ? args.cluster : ["node-1", "node-2", "node-3", "node-4"];
+    const nodeId = typeof args?.node === "string" ? args.node : cluster[0];
+    const engine = new EosHotStuffConsensusEngine(nodeId, cluster);
+    const status = engine.getStatus();
+    return {
+      action: "hotstuff_status",
+      nodeId: status.nodeId,
+      currentView: status.currentView,
+      currentLeader: status.currentLeader,
+      highQcView: status.highQC.view,
+      lockedQcView: status.lockedQC.view,
+      committedCount: status.committedCount,
+      quorumSize: status.quorumSize,
+      receipt: status.receipt,
     };
   }
   return undefined;

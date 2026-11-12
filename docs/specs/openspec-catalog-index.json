@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 217,
-  "catalogSha256": "f5d8d9eea83e76dd4883d891afb616da28d175141ac76cbb131725e0e1d2b3a8",
+  "totalSpecs": 218,
+  "catalogSha256": "975638b93d4106d10d6670a348e348d6b07c266fecd9d31f86a920a0e94b24a8",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1954,7 +1954,16 @@
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-222-BULLETPROOFS-RANGE-PROOFS.md",
-      "sha256": "d39e683e6b0718f19d63edd1954805928d4694fc59a22318d155e8567d6b4344"
+      "sha256": "b0f70d45c3b930f7c55a6968a1ed7b4273e6e0229b6e825c9ee091ef86423fef"
+    },
+    {
+      "id": "SPEC-223",
+      "title": "Layer-0 HotStuff Pipelined BFT Consensus Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-223-HOTSTUFF-BFT-CONSENSUS.md",
+      "sha256": "097e9cbaaaed769647a5c11168c0049eadf4121c9f27cd35d34e82907467f159"
     }
   ]
 }

@@ -49,6 +49,7 @@
     "./pqc": "./src/core/eosPostQuantumMlKemCore.ts",
     "./bulletproofs": "./src/core/eosBulletproofsRangeProofCore.ts",
     "./range-proof": "./src/core/eosBulletproofsRangeProofCore.ts",
+    "./hotstuff": "./src/core/eosHotStuffConsensusEngine.ts",
     "./package.json": "./package.json"
   },
   "bin": {

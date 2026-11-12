@@ -1065,6 +1065,36 @@ console.log(`¿Prueba válida y sana?: ${verificacion.valid}`); // true
 console.log(`Tiempo de verificación: ${verificacion.verificationTimeMs} ms`);
 ```
 
+### Módulo 38: Motor de Consenso BFT Pipelined HotStuff (`EosHotStuffConsensusEngine`)
+
+**Propósito:** Consenso tolerante a fallas bizantinas ($f < n/3$) con complejidad de cambio de vista lineal $O(n)$ y regla de confirmación de 3 cadenas encadenadas (3-chain commit rule) según Yin et al. (SPEC-223 / CHANGE-108). Supera las limitaciones de PBFT ($O(n^2)$ en cambio de vista) al centralizar la agregación en Certificados de Quórum (QC) compactos. Cada propuesta de bloque actúa simultáneamente como fase Prepare para la vista actual, Pre-commit para la vista previa y Commit para dos vistas anteriores, alcanzando finalidad irrevocablemente en 3 vistas consecutivas sin difusión cuadrática.
+
+```ts
+import { EosHotStuffConsensusEngine } from "./src/core/eosHotStuffConsensusEngine.ts";
+
+// 1. Instanciación del clúster de validadores
+const cluster = ["node-1", "node-2", "node-3", "node-4"];
+const engine = new EosHotStuffConsensusEngine("node-1", cluster);
+
+// 2. Propuesta de bloque con Justify QC por el líder
+const propuesta = engine.createProposal({ tx: "transfer_100_tokens" });
+console.log(`Bloque propuesto: ${propuesta.hash} en vista ${propuesta.view}`);
+
+// 3. Emisión de voto bajo predicado de seguridad y liveness
+const voto = engine.vote(propuesta);
+console.log(`Voto emitido por ${voto?.voter} para bloque ${voto?.blockHash}`);
+
+// 4. Recepción de votos y formación de Quorum Certificate (QC)
+const qc = engine.receiveVote({
+  view: 1,
+  blockHash: propuesta.hash,
+  phase: "prepare",
+  voter: "node-2",
+  signature: "sig2",
+});
+// Al recibir 2f + 1 = 3 votos, qc contiene las firmas agregadas
+```
+
 ---
 
 ## 4. Guía Rápida de Comandos CLI
@@ -1141,6 +1171,9 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs bp:prove [--value=V] [--m=32]`       | Genera prueba NIZK Bulletproofs acotada a [0, 2^m - 1] con doblado logarítmico (SPEC-222). |
 | `node bin/eos.mjs bp:verify [--m=32]`                  | Verifica algebraicamente la prueba NIZK sin ceremonia de confianza en <5ms (SPEC-222).     |
 | `node bin/eos.mjs bp:benchmark [--m=16]`               | Benchmark de operaciones por segundo para compromiso, prueba y verificación (SPEC-222).    |
+| `node bin/eos.mjs hotstuff:propose [--node=N]`         | Propuesta de bloque con Justify QC en consenso HotStuff BFT pipelined (SPEC-223).          |
+| `node bin/eos.mjs hotstuff:vote [--node=N]`            | Emisión de voto con predicado de seguridad y liveness en consenso HotStuff (SPEC-223).     |
+| `node bin/eos.mjs hotstuff:status [--node=N]`          | Estado de consenso HotStuff: vista, líder, High-QC, Locked-QC (SPEC-223).                  |
 | `node bin/eos.mjs metrics`                             | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                  | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`                 | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |
