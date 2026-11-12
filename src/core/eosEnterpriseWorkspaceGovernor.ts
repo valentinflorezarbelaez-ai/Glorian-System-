@@ -10,27 +10,7 @@ import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from 
 import { EosDurableSqliteLedger } from "./eosDurableSqliteLedger.ts";
 import { EosAntigravityDirector } from "./eosAntigravityDirector.ts";
 
-export type {
-  WorkspaceOrchestrator,
-  EnterpriseLanguage,
-  WorkspaceArchitecturalRole,
-  ContractStandard,
-  WorkspaceAccessMode,
-  WorkspaceMember,
-  ContractArtifact,
-  SecretFinding,
-  SupplyChainPosture,
-  EnterpriseVerificationCommand,
-  EnterpriseWorkspaceTopology,
-  InspectWorkspaceOptions,
-  RegisteredFleetWorkspace,
-  OnboardWorkspaceInput,
-  OnboardGeneratedArtifact,
-  OnboardWorkspaceResult,
-  AuthorizedWorkspaceResolution,
-  StructuralGateResult,
-  EnterpriseWorkspaceVerificationReport,
-} from "./eosEnterpriseWorkspaceGovernor.types.ts";
+export type * from "./eosEnterpriseWorkspaceGovernor.types.ts";
 
 import {
   IGNORED_SCAN_DIRS,
@@ -376,17 +356,22 @@ export class EosEnterpriseWorkspaceGovernor {
       const id = String(p.id || "");
       const envName = typeof p.localPathEnv === "string" ? p.localPathEnv : undefined;
       const envVal = envName ? process.env[envName] || synthesizedFleetEnv[envName] : undefined;
-      let candidatePath = id === "eos-system" ? resolvedControlPlane
-        : envVal?.trim() ? path.resolve(envVal.trim())
-        : p.localPath?.trim() ? path.resolve(p.localPath.trim())
-        : null;
+      const rawCandidate = id === "eos-system" ? resolvedControlPlane : envVal?.trim() || p.localPath?.trim();
+      let candidatePath = rawCandidate ? path.resolve(rawCandidate) : null;
 
       if (id !== "eos-system" && (!candidatePath || !fs.existsSync(candidatePath)) && p.resolvedLocalDir?.trim()) {
         const dirName = p.resolvedLocalDir.trim();
-        const rootCandidates = [path.dirname(resolvedControlPlane), path.resolve(resolvedControlPlane, "..", ".."), process.env.EOS_WORKSPACE_ROOT || "c:\\Users\\valen", os.homedir()];
-        for (const root of rootCandidates) {
+        for (const root of [
+          path.dirname(resolvedControlPlane),
+          path.resolve(resolvedControlPlane, "..", ".."),
+          process.env.EOS_WORKSPACE_ROOT || "c:\\Users\\valen",
+          os.homedir(),
+        ]) {
           const check = path.join(root, dirName);
-          if (fs.existsSync(check)) { candidatePath = check; break; }
+          if (fs.existsSync(check)) {
+            candidatePath = check;
+            break;
+          }
         }
       }
 
@@ -404,11 +389,16 @@ export class EosEnterpriseWorkspaceGovernor {
         }
       }
 
-      const missing: string[] = [];
-      if (p.status !== "REGISTERED") missing.push("REGISTERED");
-      if (p.intake !== "INTAKE_COMPLETE") missing.push("INTAKE_COMPLETE");
-      if (p.specification !== "SPECIFICATION_APPROVED") missing.push("SPECIFICATION_APPROVED");
-      if (p.audit !== "AUDIT_COMPLETE") missing.push("AUDIT_COMPLETE");
+      const missing: string[] = (
+        [
+          ["status", "REGISTERED"],
+          ["intake", "INTAKE_COMPLETE"],
+          ["specification", "SPECIFICATION_APPROVED"],
+          ["audit", "AUDIT_COMPLETE"],
+        ] as const
+      )
+        .filter(([k, v]) => p[k] !== v)
+        .map(([, v]) => v);
       const auth = String(p.authorization || "NONE");
       const hasLevel2Plus = /^LEVEL_[23]/.test(auth);
       if (p.ownerApproval !== "OWNER_APPROVAL" && !hasLevel2Plus) missing.push("OWNER_APPROVAL");
@@ -465,7 +455,7 @@ export class EosEnterpriseWorkspaceGovernor {
     }
 
     const workspaceRoot = matched.resolvedLocalPath;
-    const sub = relativeSubPath && relativeSubPath.trim().length > 0 ? relativeSubPath.trim() : ".";
+    const sub = relativeSubPath?.trim() || ".";
     const candidate = path.resolve(workspaceRoot, sub);
     if (!isPathWithin(workspaceRoot, candidate)) {
       throw new Error(
