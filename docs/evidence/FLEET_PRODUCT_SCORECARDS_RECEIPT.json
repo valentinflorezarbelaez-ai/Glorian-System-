@@ -1,8 +1,8 @@
 {
   "epistemicState": "FLEET_PRODUCT_SCORECARDS_WITHIN_TESTED_SCOPE",
-  "generatedAt": "2026-11-12T01:19:33.104Z",
-  "probeEnabled": false,
-  "probedCount": 0,
+  "generatedAt": "2026-11-12T01:59:36.801Z",
+  "probeEnabled": true,
+  "probedCount": 8,
   "ssrfPolicy": "https-vercel-app-allowlist-no-redirect",
   "written": [
     "docs/products/aberamentho/scorecard.json",
@@ -17,53 +17,101 @@
   "count": 8,
   "grades": {
     "aberamentho": {
-      "score": 94,
-      "grade": "A",
-      "liveReachability": 70,
-      "liveProbe": null
+      "score": 98,
+      "grade": "A+",
+      "liveReachability": 100,
+      "liveProbe": {
+        "reachable": true,
+        "httpStatus": 200,
+        "latencyMs": 348,
+        "probedAt": "2026-11-12T01:59:34.387Z",
+        "policy": "ALLOWED"
+      }
     },
     "atp-strength": {
-      "score": 94,
-      "grade": "A",
-      "liveReachability": 70,
-      "liveProbe": null
+      "score": 98,
+      "grade": "A+",
+      "liveReachability": 100,
+      "liveProbe": {
+        "reachable": true,
+        "httpStatus": 200,
+        "latencyMs": 309,
+        "probedAt": "2026-11-12T01:59:34.735Z",
+        "policy": "ALLOWED"
+      }
     },
     "biblioteca-gnostica-1": {
-      "score": 94,
-      "grade": "A",
-      "liveReachability": 70,
-      "liveProbe": null
+      "score": 98,
+      "grade": "A+",
+      "liveReachability": 100,
+      "liveProbe": {
+        "reachable": true,
+        "httpStatus": 200,
+        "latencyMs": 307,
+        "probedAt": "2026-11-12T01:59:35.044Z",
+        "policy": "ALLOWED"
+      }
     },
     "control-de-asistencia-abopack": {
-      "score": 94,
-      "grade": "A",
-      "liveReachability": 70,
-      "liveProbe": null
+      "score": 98,
+      "grade": "A+",
+      "liveReachability": 100,
+      "liveProbe": {
+        "reachable": true,
+        "httpStatus": 200,
+        "latencyMs": 277,
+        "probedAt": "2026-11-12T01:59:35.351Z",
+        "policy": "ALLOWED"
+      }
     },
     "crud-slack": {
-      "score": 94,
-      "grade": "A",
-      "liveReachability": 70,
-      "liveProbe": null
+      "score": 98,
+      "grade": "A+",
+      "liveReachability": 100,
+      "liveProbe": {
+        "reachable": true,
+        "httpStatus": 200,
+        "latencyMs": 290,
+        "probedAt": "2026-11-12T01:59:35.628Z",
+        "policy": "ALLOWED"
+      }
     },
     "donaciones": {
-      "score": 94,
-      "grade": "A",
-      "liveReachability": 70,
-      "liveProbe": null
+      "score": 98,
+      "grade": "A+",
+      "liveReachability": 100,
+      "liveProbe": {
+        "reachable": true,
+        "httpStatus": 200,
+        "latencyMs": 277,
+        "probedAt": "2026-11-12T01:59:35.918Z",
+        "policy": "ALLOWED"
+      }
     },
     "performance-talent-group": {
-      "score": 94,
-      "grade": "A",
-      "liveReachability": 70,
-      "liveProbe": null
+      "score": 98,
+      "grade": "A+",
+      "liveReachability": 100,
+      "liveProbe": {
+        "reachable": true,
+        "httpStatus": 200,
+        "latencyMs": 284,
+        "probedAt": "2026-11-12T01:59:36.195Z",
+        "policy": "ALLOWED"
+      }
     },
     "portafolio": {
-      "score": 94,
-      "grade": "A",
-      "liveReachability": 70,
-      "liveProbe": null
+      "score": 98,
+      "grade": "A+",
+      "liveReachability": 100,
+      "liveProbe": {
+        "reachable": true,
+        "httpStatus": 200,
+        "latencyMs": 318,
+        "probedAt": "2026-11-12T01:59:36.479Z",
+        "policy": "ALLOWED"
+      }
     }
   },
-  "sha256Receipt": "081dd23ab220e02d360c76948f5fadc182efdc32f508373f882314eb490aaaf2"
+  "sha256Receipt": "c1eb5d07b6bb715fb2f1b4d83733c8c783ff145755040606dd2e514e728716f0"
 }

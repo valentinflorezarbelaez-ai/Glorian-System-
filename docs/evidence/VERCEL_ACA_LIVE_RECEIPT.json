@@ -1,12 +1,12 @@
 {
   "epistemicState": "VERCEL_ACA_LIVE_OR_FIXTURE_WITHIN_TESTED_SCOPE",
-  "generatedAt": "2026-11-10T00:56:44.883Z",
-  "mode": "LIVE_DEPLOYMENT_PROBE",
+  "generatedAt": "2026-11-12T01:58:45.237Z",
+  "mode": "LIVE_CAPTURED_SNAPSHOT",
   "signalCount": 4,
   "totalErrorEvents": 0,
   "verdict": "PASS",
   "incidentRequired": false,
   "canaryReceipt": "e8d17cc8a0df2432c62f574cc1377f0733c920564bfdeb192e788596636cc096",
   "evidence": "docs/evidence/BIGTECH_ACA_CANARY_RECEIPT.json",
-  "sha256Receipt": "776ad56572610b009ae441ea5506656e560285df90c04baca242802f21b0ec50"
+  "sha256Receipt": "2792ccf7049af49791de960046bfa58aa589c529878d3e3a29458802e177ec52"
 }
