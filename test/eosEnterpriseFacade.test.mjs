@@ -815,5 +815,19 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(congStats.action, "congestion_stats");
     assert.equal(congStats.stats.capacity, 20);
     assert.equal(congStats.stats.refillRate, 10);
+
+    // 41. mpt_put, mpt_prove, mpt_verify (SPEC-229)
+    const mptPut = callFacade({ action: "mpt_put", key: "facade-state-key", value: "facade-state-val" });
+    assert.equal(mptPut.action, "mpt_put");
+    assert.equal(mptPut.keyCount, 1);
+    assert.ok(mptPut.rootHash.length === 64);
+    const mptProve = callFacade({ action: "mpt_prove", key: "facade-state-key", value: "facade-state-val" });
+    assert.equal(mptProve.action, "mpt_prove");
+    assert.equal(mptProve.inclusion, true);
+    assert.ok(mptProve.proofNodesCount >= 1);
+    const mptVerify = callFacade({ action: "mpt_verify", key: "facade-state-key", value: "facade-state-val" });
+    assert.equal(mptVerify.action, "mpt_verify");
+    assert.equal(mptVerify.valid, true);
+    assert.equal(mptVerify.recoveredValue, "facade-state-val");
   });
 });

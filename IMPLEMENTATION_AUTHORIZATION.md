@@ -1931,3 +1931,27 @@
   - `docs/plans/PLAN-113-ADAPTIVE-CONGESTION-RATE-LIMITER.md`
   - `docs/tasks/TASKS-113-ADAPTIVE-CONGESTION-RATE-LIMITER.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-12-MERKLE-PATRICIA-TRIE-229
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Modified Merkle Patricia Trie (MPT) Engine for Cryptographic State Commitments (`SPEC-229`, `CHANGE-114`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: "dale con toda")
+- **Scope**:
+  1. Implement Layer-0 MPT types in `src/core/eosMerklePatriciaTrieCore.types.ts`.
+  2. Implement Layer-0 MPT Core (RLP, HexPrefix, CRUD, prove, verifyProof) in `src/core/eosMerklePatriciaTrieCore.ts`.
+  3. Subpath exports `"./mpt"` and `"./trie"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian trie:demo`, `glorian trie:prove`, `glorian trie:verify` in `bin/commands/cliTrieMesh.mjs` and `bin/commands/cliPlatform.mjs`.
+  6. Wire MCP actions `action: "mpt_put"`, `action: "mpt_prove"`, `action: "mpt_verify"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosMerklePatriciaTrieCore.test.mjs` (BDD-1164..BDD-1168).
+  8. Add test step #41 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Module 44 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 224 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-114-MERKLE-PATRICIA-TRIE.md`
+  - `openspec/changes/CHANGE-114-MERKLE-PATRICIA-TRIE.md`
+  - `openspec/specs/SPEC-229-MERKLE-PATRICIA-TRIE.md`
+  - `docs/plans/PLAN-114-MERKLE-PATRICIA-TRIE.md`
+  - `docs/tasks/TASKS-114-MERKLE-PATRICIA-TRIE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

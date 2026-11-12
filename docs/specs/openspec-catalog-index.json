@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 223,
-  "catalogSha256": "f978c35886bb69333afba2a6dd5faf5ea7e10594fc51718d676b0bc309dd59f9",
+  "totalSpecs": 224,
+  "catalogSha256": "3a51630db96b10cfec6a0f69f68e43180b5a930f47fc876e54458aa32da0b6f4",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2008,7 +2008,16 @@
       "frCount": 1,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-228-ADAPTIVE-CONGESTION-RATE-LIMITER.md",
-      "sha256": "8140493631592ab6ee852e53d52562b3df9786840d1d086e1a3c216a6fabc535"
+      "sha256": "da38a38d55f1e0cb42b388c47e45e8639a3ab1b47fed9eb7fb5f85194a70d4aa"
+    },
+    {
+      "id": "SPEC-229",
+      "title": "— Layer-0 Modified Merkle Patricia Trie (MPT) for Cryptographic State Commitments",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-229-MERKLE-PATRICIA-TRIE.md",
+      "sha256": "bcec11ee0972fccb0825cc76ecb8c76dbcaaf58e44ce08ca26d56cb6e3c26af5"
     }
   ]
 }

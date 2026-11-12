@@ -16,6 +16,7 @@ import { EosUniversalFleetSyncCore } from "../../core/eosUniversalFleetSyncCore.
 import { EosOtlpDistributedTracingCore } from "../../core/eosOtlpDistributedTracingCore.ts";
 import { EosPostQuantumMlDsaCore } from "../../core/eosPostQuantumMlDsaCore.ts";
 import { EosAdaptiveCongestionRateLimiterCore } from "../../core/eosAdaptiveCongestionRateLimiterCore.ts";
+import { EosMerklePatriciaTrieCore } from "../../core/eosMerklePatriciaTrieCore.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
@@ -531,6 +532,47 @@ export function dispatchPhase7FrontierActionExt(
     return {
       action: "congestion_stats",
       stats,
+    };
+  }
+  if (action === "mpt_put") {
+    const key = typeof args?.key === "string" ? args.key : "mcp:state:key";
+    const value = typeof args?.value === "string" ? args.value : "mcp:state:val";
+    const trie = new EosMerklePatriciaTrieCore();
+    trie.put(key, value);
+    return {
+      action: "mpt_put",
+      key,
+      value,
+      rootHash: trie.getRootHash(),
+      keyCount: trie.stats().keyCount,
+    };
+  }
+  if (action === "mpt_prove") {
+    const key = typeof args?.key === "string" ? args.key : "mcp:state:key";
+    const value = typeof args?.value === "string" ? args.value : "mcp:state:val";
+    const trie = new EosMerklePatriciaTrieCore();
+    trie.put(key, value);
+    const proof = trie.prove(key);
+    return {
+      action: "mpt_prove",
+      key,
+      rootHash: proof.rootHashHex,
+      inclusion: proof.inclusion,
+      proofNodesCount: proof.proofNodesHex.length,
+    };
+  }
+  if (action === "mpt_verify") {
+    const key = typeof args?.key === "string" ? args.key : "mcp:state:key";
+    const value = typeof args?.value === "string" ? args.value : "mcp:state:val";
+    const trie = new EosMerklePatriciaTrieCore();
+    trie.put(key, value);
+    const proof = trie.prove(key);
+    const verified = EosMerklePatriciaTrieCore.verifyProof(proof.rootHashHex, key, proof.proofNodesHex);
+    return {
+      action: "mpt_verify",
+      key,
+      valid: verified !== null,
+      recoveredValue: verified ? verified.toString("utf8") : null,
     };
   }
   return undefined;

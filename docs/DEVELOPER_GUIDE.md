@@ -1263,6 +1263,37 @@ console.log(
 
 ---
 
+### Módulo 44: Motor de Árbol de Prefijos de Merkle Patricia Modificado (`EosMerklePatriciaTrieCore`)
+
+**Propósito:** Estructura de datos criptográfica para compromisos de estado clave-valor y generación de pruebas de inclusión/exclusión de conocimiento cero o verificación ligera conforme al estándar de Merkle Patricia Trie modificado (`SPEC-229` / `CHANGE-114`). Implementa codificación compacta de prefijos hexadecimales (_Hex-Prefix_ con banderas de paridad y hoja/extensión), serialización canónica RLP (_Recursive Length Prefix_) pura en Layer-0, 4 arquitecturas de nodo (Null, Leaf, Extension y Branch de 16 ramas), compactación estructural automática ante eliminaciones (`delete`) y generación determinista de raíz criptográfica SHA-256 de 32 bytes con verificación estática e independiente de pruebas (`verifyProof`).
+
+```ts
+import { EosMerklePatriciaTrieCore } from "./src/core/eosMerklePatriciaTrieCore.ts";
+
+// 1. Instanciar el árbol de estado
+const trie = new EosMerklePatriciaTrieCore();
+
+// 2. Insertar claves con prefijos compartidos (se comprimen en ramas y extensiones)
+trie.put("dog", "puppy");
+trie.put("doge", "coin");
+trie.put("dove", "peace");
+trie.put("door", "wood");
+
+// 3. Obtener raíz de estado criptográfica (SHA-256)
+const rootHash = trie.getRootHash();
+console.log(`Raíz criptográfica de estado (32 bytes): sha256:${rootHash}`);
+
+// 4. Generar prueba de inclusión de Merkle para un cliente ligero
+const proof = trie.prove("doge");
+console.log(`Nodos de prueba RLP: ${proof.proofNodesHex.length}`);
+
+// 5. Verificación estática e independiente sin acceso a la base de datos completa
+const verifiedValue = EosMerklePatriciaTrieCore.verifyProof(rootHash, "doge", proof.proofNodesHex);
+console.log(`Valor verificado: "${verifiedValue?.toString("utf8")}"`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -1355,6 +1386,9 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs congestion:demo`                     | Simula carga de trabajo con picos de latencia demostrando retroalimentación AIMD (SPEC-228).       |
 | `node bin/eos.mjs congestion:admit`                    | Evalúa la admisión de una solicitud y reporta tokens y ventana cwnd (SPEC-228).                    |
 | `node bin/eos.mjs congestion:stats`                    | Reporta telemetría de capacidad, cwnd, solicitudes en vuelo y latencia P99 (SPEC-228).             |
+| `node bin/eos.mjs trie:demo`                           | Demostración de compresión de prefijos MPT, cálculo de raíz y verificación de pruebas (SPEC-229).  |
+| `node bin/eos.mjs trie:prove [key]`                    | Genera prueba criptográfica Merkle RLP para una clave de estado dada (SPEC-229).                   |
+| `node bin/eos.mjs trie:verify [key]`                   | Verifica independientemente una prueba de estado Merkle contra la raíz (SPEC-229).                 |
 | `node bin/eos.mjs metrics`                             | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                              |
 | `node bin/eos.mjs guard [directorio]`                  | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                        |
 | `node bin/eos.mjs flow inspect <ruta>`                 | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.          |

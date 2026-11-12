@@ -338,3 +338,16 @@ export type {
   AdmissionResult,
   RateLimiterStats,
 } from "./eosAdaptiveCongestionRateLimiterCore.types.ts";
+export { EosMerklePatriciaTrieCore, EosRlp, EosHexPrefix } from "./eosMerklePatriciaTrieCore.ts";
+export type {
+  TrieNodeType,
+  Nibbles,
+  NullNode,
+  LeafNode,
+  ExtensionNode,
+  BranchNode,
+  TrieNode,
+  RlpItem,
+  TrieProof,
+  TrieStats,
+} from "./eosMerklePatriciaTrieCore.types.ts";

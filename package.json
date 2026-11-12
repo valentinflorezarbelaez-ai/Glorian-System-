@@ -58,6 +58,8 @@
     "./dsa": "./src/core/eosPostQuantumMlDsaCore.ts",
     "./congestion": "./src/core/eosAdaptiveCongestionRateLimiterCore.ts",
     "./rate-limiter": "./src/core/eosAdaptiveCongestionRateLimiterCore.ts",
+    "./mpt": "./src/core/eosMerklePatriciaTrieCore.ts",
+    "./trie": "./src/core/eosMerklePatriciaTrieCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

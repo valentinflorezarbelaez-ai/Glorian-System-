@@ -670,6 +670,7 @@ import { handleFleetMeshCommands } from "./cliFleetMesh.mjs";
 import { handleOtlpCommands } from "./cliOtlpMesh.mjs";
 import { handleMlDsaCommands } from "./cliMlDsaMesh.mjs";
 import { handleCongestionCommands } from "./cliCongestionMesh.mjs";
+import { handleTrieCommands } from "./cliTrieMesh.mjs";
 
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
@@ -694,5 +695,6 @@ export async function handlePlatformCommands(commandContext) {
   if (await handleOtlpCommands(commandContext)) return true;
   if (await handleMlDsaCommands(commandContext.command, commandContext)) return true;
   if (await handleCongestionCommands(commandContext.command, commandContext)) return true;
+  if (await handleTrieCommands(commandContext.command, commandContext)) return true;
   return false;
 }
