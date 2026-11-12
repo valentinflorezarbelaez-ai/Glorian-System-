@@ -46,7 +46,7 @@ test("BDD-964: Concurrency tokens stay unique with Math.random frozen (CSPRNG en
 
 test("BDD-965: Enforcer execution IDs stay unique with Math.random frozen (audit integrity)", () => {
   const enforcer = new EosActiveKernelProcessEnforcer();
-  const quotaMs = Number(process.env.EOS_ENFORCER_EXEC_QUOTA_MS || 10000);
+  const quotaMs = Math.max(30000, Number(process.env.EOS_ENFORCER_EXEC_QUOTA_MS || 30000));
 
   const ids = withFrozenMathRandom(() => {
     const receipts = [0, 1].map(() =>

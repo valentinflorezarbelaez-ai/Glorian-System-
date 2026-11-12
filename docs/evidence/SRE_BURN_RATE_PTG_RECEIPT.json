@@ -1,5 +1,5 @@
 {
-  "measuredAt": "2026-11-10T20:59:46.377Z",
+  "measuredAt": "2026-11-12T00:13:49.299Z",
   "serviceId": "performance-talent-group",
   "canarySha256": "8088de29ef5fdea446bca5b8f065fc5457a40eabec3c98d0921c2c7d7357206a",
   "report": {
@@ -44,7 +44,7 @@
       }
     },
     "activeAlerts": [],
-    "sha256Receipt": "ba3ce085e7ff3968e5d15626431efc88cf42b545da8c832add05bfb45f198356"
+    "sha256Receipt": "b4d9c8caf526836f75de3fd2bd60c7b30b6b8d0308c6d27acd950c5c677347c5"
   },
   "onCallRunbook": "docs/runbooks/ON_CALL.md"
 }
