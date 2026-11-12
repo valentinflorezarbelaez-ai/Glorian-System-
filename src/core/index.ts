@@ -301,3 +301,22 @@ export type {
   FleetSyncOperationType,
   FleetSyncReceipt,
 } from "./eosUniversalFleetSyncCore.types.ts";
+export { EosOtlpDistributedTracingCore, ActiveSpan } from "./eosOtlpDistributedTracingCore.ts";
+export type {
+  SpanKind,
+  StatusCode,
+  W3CTraceContext,
+  SpanAttributeValue,
+  SpanStatus,
+  SpanEvent,
+  SpanData,
+  OtlpAttributeValue,
+  OtlpKeyValue,
+  OtlpEventWire,
+  OtlpSpanWire,
+  OtlpScopeSpans,
+  OtlpResourceSpans,
+  OtlpExportPayload,
+  OtlpTraceExportReport,
+  TracerConfig,
+} from "./eosOtlpDistributedTracingCore.types.ts";

@@ -13,6 +13,7 @@ import { EosBulletproofsRangeProofCore } from "../../core/eosBulletproofsRangePr
 import { EosHotStuffConsensusEngine } from "../../core/eosHotStuffConsensusEngine.ts";
 import { EosQuantizedTensorInferenceCore } from "../../core/eosQuantizedTensorInferenceCore.ts";
 import { EosUniversalFleetSyncCore } from "../../core/eosUniversalFleetSyncCore.ts";
+import { EosOtlpDistributedTracingCore } from "../../core/eosOtlpDistributedTracingCore.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
@@ -435,6 +436,42 @@ export function dispatchPhase7FrontierActionExt(
       gradeCounts: report.gradeCounts,
       fleetMerkleRoot: report.fleetMerkleRoot,
       receipt: report.receipt,
+    };
+  }
+  if (action === "otlp_trace_create") {
+    const traceId = typeof args?.traceId === "string" ? args.traceId : EosOtlpDistributedTracingCore.generateTraceId();
+    const spanId = typeof args?.spanId === "string" ? args.spanId : EosOtlpDistributedTracingCore.generateSpanId();
+    const traceFlags = typeof args?.traceFlags === "string" ? args.traceFlags : "01";
+    const header = EosOtlpDistributedTracingCore.formatTraceparent({ traceId, spanId, traceFlags });
+    const parsed = EosOtlpDistributedTracingCore.parseTraceparent(header);
+    return {
+      action: "otlp_trace_create",
+      traceId,
+      spanId,
+      traceFlags,
+      traceparent: header,
+      valid: parsed !== null,
+    };
+  }
+  if (action === "otlp_trace_export") {
+    const serviceName = typeof args?.serviceName === "string" ? args.serviceName : "glorian-system";
+    const tracer = new EosOtlpDistributedTracingCore({ serviceName });
+    const spanName = typeof args?.spanName === "string" ? args.spanName : "mcp-frontier-span";
+    const span = tracer.startSpan(spanName, {
+      kind: "INTERNAL",
+      attributes: { "mcp.source": "phase7-frontier", ...(args?.attributes || {}) },
+    });
+    span.addEvent("mcp.event.dispatched", { status: "success" });
+    span.setStatus("OK");
+    tracer.recordSpan(span);
+    const report = tracer.exportToOtlpJson();
+    return {
+      action: "otlp_trace_export",
+      serviceName,
+      spansExported: report.spansExported,
+      overflowCount: report.overflowCount,
+      receipt: report.receipt,
+      payload: report.payload,
     };
   }
   return undefined;

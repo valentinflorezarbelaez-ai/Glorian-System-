@@ -667,6 +667,7 @@ import { handleBulletproofsCommands } from "./cliBulletproofsMesh.mjs";
 import { handleHotStuffCommands } from "./cliHotStuffMesh.mjs";
 import { handleTensorCommands } from "./cliTensorMesh.mjs";
 import { handleFleetMeshCommands } from "./cliFleetMesh.mjs";
+import { handleOtlpCommands } from "./cliOtlpMesh.mjs";
 
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
@@ -688,5 +689,6 @@ export async function handlePlatformCommands(commandContext) {
   if (await handleHotStuffCommands(commandContext)) return true;
   if (await handleTensorCommands(commandContext)) return true;
   if (await handleFleetMeshCommands(commandContext)) return true;
+  if (await handleOtlpCommands(commandContext)) return true;
   return false;
 }

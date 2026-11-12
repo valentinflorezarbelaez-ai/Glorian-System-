@@ -1857,3 +1857,28 @@
   - `docs/plans/PLAN-110-UNIVERSAL-FLEET-SYNC.md`
   - `docs/tasks/TASKS-110-UNIVERSAL-FLEET-SYNC.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-12-OTLP-DISTRIBUTED-TRACING-226
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 High-Throughput OTLP Distributed Tracing & W3C Context Propagation Engine (`SPEC-226`, `CHANGE-111`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: "todo uno por uno perfeccion")
+- **Scope**:
+  1. Implement Layer-0 OTLP Tracing types in `src/core/eosOtlpDistributedTracingCore.types.ts`.
+  2. Implement Layer-0 OTLP Tracing Core in `src/core/eosOtlpDistributedTracingCore.ts`.
+  3. Subpath exports `"./otlp"` and `"./trace"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Add Facade actions `otlp_trace_create`, `otlp_trace_span`, `otlp_trace_export` in `src/core/eosEnterpriseFacade.ts`.
+  6. Wire CLI commands `glorian trace:demo`, `glorian trace:export` in `bin/commands/cliPlatform.mjs`.
+  7. Wire MCP actions `action: "otlp_trace_create"`, `action: "otlp_trace_export"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  8. 100% BDD test coverage in `test/eosOtlpDistributedTracingCore.test.mjs` (BDD-1149..BDD-1153).
+  9. Add test step #38 in `test/eosEnterpriseFacade.test.mjs`.
+  10. Document Módulo 41 in `docs/DEVELOPER_GUIDE.md`.
+  11. Update OpenSpec catalog index to 226 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-111-OTLP-DISTRIBUTED-TRACING.md`
+  - `openspec/changes/CHANGE-111-OTLP-DISTRIBUTED-TRACING.md`
+  - `openspec/specs/SPEC-226-OTLP-DISTRIBUTED-TRACING.md`
+  - `docs/plans/PLAN-111-OTLP-DISTRIBUTED-TRACING.md`
+  - `docs/tasks/TASKS-111-OTLP-DISTRIBUTED-TRACING.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

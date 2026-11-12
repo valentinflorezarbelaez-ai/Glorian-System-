@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 220,
-  "catalogSha256": "6fc91cae16a45294fc4009905656bfa2ea331f28798b5ceefbdde458577cffe7",
+  "totalSpecs": 221,
+  "catalogSha256": "a22543375b1568ec91172a5670b7f5940bb100acbeddcf2fcd819bfbecd39e4a",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1982,6 +1982,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-225-UNIVERSAL-FLEET-SYNC.md",
       "sha256": "62a1b7fc03d00c6fe9de0a2c8049580d0f99a3a1bc1181ea60332a2e4d0f978c"
+    },
+    {
+      "id": "SPEC-226",
+      "title": "Layer-0 High-Throughput OTLP Distributed Tracing & W3C Context Propagation Engine",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-226-OTLP-DISTRIBUTED-TRACING.md",
+      "sha256": "45ce2779efc4694757ccdaa179fc7ed8daa9e1966f1083464d58adcc147fc488"
     }
   ]
 }

@@ -782,5 +782,15 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     // 37. fleet_sync_all & fleet_audit_all (SPEC-225)
     assert.equal(callFacade({ action: "fleet_sync_all" }).totalProjects, 9);
     assert.ok(callFacade({ action: "fleet_audit_all" }).fleetAverageScore >= 70);
+
+    // 38. otlp_trace_create & otlp_trace_export (SPEC-226)
+    const traceCreate = callFacade({ action: "otlp_trace_create" });
+    assert.equal(traceCreate.action, "otlp_trace_create");
+    assert.equal(traceCreate.valid, true);
+    assert.ok(traceCreate.traceparent.startsWith("00-"));
+    const traceExport = callFacade({ action: "otlp_trace_export", serviceName: "facade-tracer" });
+    assert.equal(traceExport.action, "otlp_trace_export");
+    assert.equal(traceExport.spansExported, 1);
+    assert.ok(traceExport.receipt.length === 64);
   });
 });

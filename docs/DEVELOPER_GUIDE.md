@@ -1144,6 +1144,43 @@ console.log(
 
 ---
 
+### Módulo 41: Motor de Trazado Distribuido OTLP y Propagación de Contexto W3C (`EosOtlpDistributedTracingCore`)
+
+**Propósito:** Trazado distribuido de alto rendimiento y propagación de contexto conforme a W3C Trace Context Level 1 y OpenTelemetry (OTLP JSON v1.3.0) sin dependencias externas (`SPEC-226` / `CHANGE-111`). Proporciona generación de identificadores hex criptográficos de 128 bits (TraceId) y 64 bits (SpanId), parsing e inyección bidireccional de encabezados HTTP `traceparent` (`00-{trace_id}-{span_id}-{flags}`) y `tracestate`, gestión de spans anidados con eventos, atributos tipados, estados de error canónicos, y serialización sin asignaciones innecesarias a esquemas OTLP `ResourceSpans` para ingestion directa en Jaeger, Tempo, OTEL Collector o Datadog.
+
+```ts
+import { EosOtlpDistributedTracingCore } from "./src/core/eosOtlpDistributedTracingCore.ts";
+
+const tracer = new EosOtlpDistributedTracingCore({ serviceName: "glorian-core" });
+
+// 1. Iniciar span raíz y propagar encabezados W3C
+const rootSpan = tracer.startSpan("orchestrator.dispatch", {
+  kind: "SERVER",
+  attributes: { "eos.fleet.project": "eos-system-control-plane" },
+});
+const headers = tracer.injectHeaders(rootSpan);
+console.log(`W3C traceparent : ${headers.traceparent}`);
+
+// 2. Span hijo continuo
+const childSpan = tracer.startSpan("crypto.kzg.verify", {
+  parentSpanId: rootSpan.spanId,
+  traceId: rootSpan.traceId,
+  kind: "INTERNAL",
+});
+childSpan.addEvent("kzg.msm.complete", { "g1.points": 16 });
+childSpan.setStatus("OK");
+childSpan.end();
+
+rootSpan.setStatus("OK");
+rootSpan.end();
+
+// 3. Exportar lote OTLP canónico
+const otlpPayload = tracer.exportOtlpJson([rootSpan, childSpan]);
+console.log(`Spans serializados OTLP : ${otlpPayload.resourceSpans[0].scopeSpans[0].spans.length}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -1228,6 +1265,8 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs fleet:sync-all [--heal]`             | Sincronización federada universal de los 9 repositorios con sanación autónoma (SPEC-225).     |
 | `node bin/eos.mjs fleet:audit-all [--json]`            | Auditoría Soundcheck 4-pilares y cálculo de Merkle Root criptográfico de la flota (SPEC-225). |
 | `node bin/eos.mjs fleet:heal-all [--json]`             | Sanación autónoma de deriva de configuración y marcadores en la flota (SPEC-225).             |
+| `node bin/eos.mjs trace:demo`                          | Demostración de trazado distribuido W3C y exportación OTLP JSON canónica (SPEC-226).          |
+| `node bin/eos.mjs trace:export [--json]`               | Exporta spans activos de trazado distribuido conforme al esquema OpenTelemetry (SPEC-226).    |
 | `node bin/eos.mjs metrics`                             | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                         |
 | `node bin/eos.mjs guard [directorio]`                  | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                   |
 | `node bin/eos.mjs flow inspect <ruta>`                 | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.     |
