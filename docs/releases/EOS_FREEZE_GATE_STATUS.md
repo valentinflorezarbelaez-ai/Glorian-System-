@@ -1,7 +1,7 @@
 # EOS SYSTEM — FREEZE GATE STATUS (SSOT)
 
 **Status**: ACTIVE_FREEZE_GATE_PINNED  
-**Milestone**: Glorian System v75.0.0 (SPEC-001 to SPEC-224 / 41 TLA+ / Ladder-13)  
+**Milestone**: Glorian System v75.0.0 (SPEC-001 to SPEC-225 / 41 TLA+ / Ladder-13)  
 **Governing Doctrine**: `openspec/specs/SPEC-001-CONSTITUTION.md`  
 **Active Ladder**: `LADDER-13` (GATE-13 / Sovereign Autonomous Synthesis)  
 **Sealed Ladders**: `LADDER-01` through `LADDER-12` (Permanently Sealed — Invariable Law of Never Reopening a Closed Ladder)
@@ -26,7 +26,7 @@
 | **Monotonic Ledger WAL**           | SQLite WAL + FTS5 + SHA-256 Block Chaining                       | VERIFIED                     |
 | **Big Tech Frontier Pillars**      | 6/6 (SapFix, SLSA/SBOM, CAS, SMT, Chaos, BFT)                    | VERIFIED                     |
 | **CI Pipeline Stages**             | 7 + 4.4-4.7 Deep Sub-Gates (SLO/Perf, Coverage, Mutation, Flaky) | GREEN                        |
-| **Freeze Pin (HEAD)**              | `aa8f932b`                                                       | PINNED                       |
+| **Freeze Pin (HEAD)**              | `58ffef35`                                                       | PINNED                       |
 
 ---
 
