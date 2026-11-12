@@ -1,6 +1,6 @@
 {
   "version": "11.0.0-autonomous-fleet-registry",
-  "updatedAt": "2026-11-12T01:25:47.148Z",
+  "updatedAt": "2026-11-12T02:23:29.238Z",
   "masterOrchestrator": "EOS System control plane (SPEC-124)",
   "complianceStandard": "EOS_CONSTITUTION_LAW_IV_EXTERNAL_WRITE_BARRIER",
   "totalFleetProjects": 9,
@@ -135,7 +135,7 @@
       "cicdGateScript": "scripts/verify-cicd-pipeline.mjs",
       "autoShipScript": "scripts/ship-sovereign.mjs",
       "currentBranch": "main",
-      "headCommitSha": "f73324a22b57c841b7d8460754c7e519c6f5589d",
+      "headCommitSha": "4a4212aa9e612cb7f10bfe15b74b6f12d59fe57e",
       "ownerApproval": "OWNER_APPROVAL"
     },
     {
@@ -177,5 +177,5 @@
       "ownerApproval": "OWNER_APPROVAL"
     }
   ],
-  "registrySha256": "112913e474117a2b4fc8ee10bb90682ff13d6cb7b3069974ce504c59575b7538"
+  "registrySha256": "2fc7b6668f10fd598841046f9ba940ca017f42d1b56e26376da509f45f5eac2c"
 }

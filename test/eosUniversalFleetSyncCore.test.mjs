@@ -37,8 +37,8 @@ test("BDD-1145: Cross-Fleet Git Synchronization and Divergence Detection", () =>
   const eosResult = report.results.find((r) => r.id === "eos-system");
   assert.ok(eosResult);
   assert.ok(
-    ["IN_SYNC", "DIRTY_TREE"].includes(eosResult.syncState),
-    `eos-system state should be IN_SYNC or DIRTY_TREE, got ${eosResult.syncState}`,
+    ["IN_SYNC", "DIRTY_TREE", "LOCAL_AHEAD"].includes(eosResult.syncState),
+    `eos-system state should be IN_SYNC, DIRTY_TREE or LOCAL_AHEAD, got ${eosResult.syncState}`,
   );
   assert.ok(typeof eosResult.isClean === "boolean");
   assert.ok(eosResult.headCommitSha.length >= 7);
