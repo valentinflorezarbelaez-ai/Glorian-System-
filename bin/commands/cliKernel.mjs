@@ -541,6 +541,45 @@ Uso Universal Exhaustivo:
   eos autodiff:train [--epochs=N] Optimización cerrada de parámetros vía SGD y tensor core multidimensional
   eos anomaly:detect [--threshold=F] Detector de anomalías no supervisado con Isolation Forest (SPEC-209)
   eos anomaly:forest [--trees=N] Simulación de ensamble de árboles aleatorios iTrees en streaming
+  eos pbft:cluster [--nodes=A,B,C,D] Consenso bizantino PBFT 3-fases con quórum supermayoritario 2f+1 (SPEC-210)
+  eos pbft:propose [--proposal=JSON] Ejecuta mutación FSM linealizable bajo PBFT con recibo de commit
+  eos homomorphic:keygen [--degree=N] Genera par de claves pública/privada en anillo ciclotómico R_q (SPEC-211)
+  eos homomorphic:encrypt [--msg=CSV] Cifrado homomórfico ciego BFV con modulación de ruido y escala Δ
+  eos homomorphic:add [--json]        Cálculo directo de suma ciega sobre textos cifrados sin descifrar
+  eos mpc:split [--secret=N]  División de secreto Shamir (k, N) con compromisos de integridad SHA-256 (SPEC-212)
+  eos mpc:combine [--json]    Reconstrucción exacta vía interpolación de Lagrange y suma homomórfica
+  eos vdf:compute [--delay=T] Evaluación secuencial Wesolowski VDF y baliza de aleatoriedad (SPEC-213)
+  eos vdf:verify [--json]     Verificación logarítmica O(1) de prueba de tiempo transcurrido en <5ms
+  eos r1cs:synthesize [--secret=N] Síntesis de circuito R1CS y asignación de testigo (SPEC-214)
+  eos r1cs:prove [--secret=N]  Generación de prueba de conocimiento cero QAP a punto de desafío τ
+  eos r1cs:verify [--json]     Verificación sub-milisegundo O(1) de argumento de evaluación polinomial
+  eos crdt:mutate [--node=N]   Mutación local de estado CRDT (LWW, ORSet, RGA) con reloj vectorial (SPEC-215)
+  eos crdt:merge [--json]      Fusión semilattice bidireccional con consistencia eventual fuerte (SEC)
+  eos crdt:delta [--json]      Extracción y aplicación de parches delta de estado mínimos entre réplicas
+  eos mmr:append [--count=N]   Adición inmutable de hojas y fusión de picos en Merkle Mountain Range (SPEC-216)
+  eos mmr:prove [--leaf=N]     Generación de prueba de inclusión logarítmica O(log n) a la raíz bag-of-peaks
+  eos mmr:verify [--json]      Verificación sub-milisegundo de prueba de pertenencia o consistencia MMR
+  eos vrf:eval [--alpha=S]     Evaluación de función aleatoria verificable ECVRF RFC 9381 (SPEC-217)
+  eos vrf:verify [--json]      Verificación no interactiva de prueba VRF y reconstrucción de beta en <2ms
+  eos vrf:elect [--thresh=F]   Elección verificable e inmanipulable de líder de consenso mediante score VRF
+  eos smt:set [--key=K]        Mutación autenticada de clave-valor en Sparse Merkle Tree (SPEC-218)
+  eos smt:prove [--key=K]      Generación de prueba de membresía o no-membresía (exclusión) O(log n)
+  eos smt:verify [--key=K]     Verificación criptográfica de existencia o ausencia en sub-milisegundo
+  eos frost:keygen [--t=3]     Configuración de claves distribuidas (t, n) FROST RFC 9591 (SPEC-219)
+  eos frost:sign [--active=S]  Firma de umbral en dos rondas con factores anti-ROS y agregación Lagrange
+  eos frost:verify [--json]    Verificación no interactiva indistinguible de Schnorr de clave única
+  eos kzg:commit [--coeffs=C]  Compromiso de polinomio O(1) Kate-Zaverucha-Goldberg (SPEC-220)
+  eos kzg:open [--point=z]     Generación de prueba de evaluación q(x) = (p(x)-v)/(x-z)
+  eos kzg:verify [--json]      Verificación algebraica O(1) de prueba de apertura KZG en <2ms
+  eos kzg:batch [--points=Z]   Prueba y verificación por lotes con polinomio anulador Z(x)
+  eos ml-kem:keygen [--json]   Generación de par de claves post-cuánticas ML-KEM-768 (NIST FIPS 203)
+  eos ml-kem:encaps [--ek=EK]  Encapsulación IND-CCA2 de secreto compartido (32B) y texto cifrado (1088B)
+  eos ml-kem:decaps [--dk=DK]  Decapsulación con rechazo implícito determinista constante contra falsificaciones
+  eos ml-kem:benchmark         Benchmark de rendimiento de operaciones post-cuánticas por segundo
+  eos bp:commit [--value=V]    Compromiso homomórfico Pedersen V = v*G + gamma*H (SPEC-222)
+  eos bp:prove [--value=V]     Generación NIZK de rango [0, 2^m - 1] con doblado logarítmico O(log m)
+  eos bp:verify [--m=32]       Verificación no interactiva sin ceremonia de confianza en <5ms
+  eos bp:benchmark [--m=16]    Benchmark de operaciones por segundo para compromiso, prueba y verificación
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

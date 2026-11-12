@@ -25,8 +25,16 @@ import { EosRaftCluster } from "../../core/eosRaftConsensusEngine.ts";
 import { EosAnsEntropyCompressor } from "../../core/eosAnsEntropyCompressor.ts";
 import { EosTensor, EosReverseModeAutodiff, EosSgdOptimizer } from "../../core/eosReverseModeAutodiff.ts";
 import { EosIsolationForest, EosStreamingIsolationForest } from "../../core/eosIsolationForestDetector.ts";
+import { EosPbftCluster } from "../../core/eosPbftConsensusEngine.ts";
+import { EosHomomorphicLatticeCore, DEFAULT_HOMOMORPHIC_PARAMS } from "../../core/eosHomomorphicLatticeCore.ts";
+import { EosSecureMpcShamirCore } from "../../core/eosSecureMpcShamirCore.ts";
+import { EosVerifiableDelayFunctionCore } from "../../core/eosVerifiableDelayFunctionCore.ts";
+import { EosZeroKnowledgeR1csCore } from "../../core/eosZeroKnowledgeR1csCore.ts";
+import { EosCrdtStateSyncCore } from "../../core/eosCrdtStateSyncCore.ts";
+import { EosMerkleMountainRangeCore } from "../../core/eosMerkleMountainRangeCore.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
+import { dispatchPhase7FrontierActionExt } from "./eosMcpPhase7EnterpriseFrontierHandlersExt.ts";
 
 export function dispatchPhase7FrontierAction(
   action: string,
@@ -501,5 +509,284 @@ export function dispatchPhase7FrontierAction(
       outlierScore,
     };
   }
-  return undefined;
+  if (action === "pbft_cluster") {
+    const nodeCount = typeof args?.nodeCount === "number" ? Math.max(4, Math.floor(args.nodeCount)) : 4;
+    const nodeIds = Array.from({ length: nodeCount }, (_, i) => `node-${i}`);
+    const cluster = new EosPbftCluster(nodeIds);
+    const status = cluster.getClusterStatus();
+    return {
+      action: "pbft_cluster",
+      status,
+    };
+  }
+  if (action === "pbft_propose") {
+    const nodeCount = typeof args?.nodeCount === "number" ? Math.max(4, Math.floor(args.nodeCount)) : 4;
+    const nodeIds = Array.from({ length: nodeCount }, (_, i) => `node-${i}`);
+    const cluster = new EosPbftCluster(nodeIds);
+    const command = args?.proposal || { type: "SET", key: "mcp_key", value: "active" };
+    const receipt = cluster.propose(command);
+    return {
+      action: "pbft_propose",
+      receipt,
+      fsmState: cluster.getNode(nodeIds[0])?.fsmState,
+    };
+  }
+  if (action === "pbft_slash") {
+    const cluster = new EosPbftCluster(["node-0", "node-1", "node-2", "node-3"]);
+    const slashingReceipt = cluster.simulateEquivocation(
+      "node-0",
+      { type: "SET", key: "state", value: "valid" },
+      { type: "SET", key: "state", value: "forged" },
+    );
+    return {
+      action: "pbft_slash",
+      slashingReceipt,
+    };
+  }
+  if (action === "homomorphic_keygen") {
+    const polyDegree = typeof args?.polyDegree === "number" ? args.polyDegree : 32;
+    const core = new EosHomomorphicLatticeCore({ ...DEFAULT_HOMOMORPHIC_PARAMS, polyDegree });
+    const keypair = core.generateKeypair();
+    return {
+      action: "homomorphic_keygen",
+      keypair,
+    };
+  }
+  if (action === "homomorphic_encrypt") {
+    const polyDegree = typeof args?.polyDegree === "number" ? args.polyDegree : 32;
+    const core = new EosHomomorphicLatticeCore({ ...DEFAULT_HOMOMORPHIC_PARAMS, polyDegree });
+    const keypair = core.generateKeypair(1337);
+    const message = Array.isArray(args?.message) ? args.message : [42, 100, 7];
+    const ct = core.encrypt(keypair.publicKey, message);
+    return {
+      action: "homomorphic_encrypt",
+      ciphertext: ct,
+    };
+  }
+  if (action === "homomorphic_add") {
+    const polyDegree = typeof args?.polyDegree === "number" ? args.polyDegree : 32;
+    const core = new EosHomomorphicLatticeCore({ ...DEFAULT_HOMOMORPHIC_PARAMS, polyDegree, errorBound: 1 });
+    const keypair = core.generateKeypair(999);
+    const msgA = Array.isArray(args?.msgA) ? args.msgA : [10, 20, 30];
+    const msgB = Array.isArray(args?.msgB) ? args.msgB : [5, 15, 25];
+    const ctA = core.encrypt(keypair.publicKey, msgA, 101);
+    const ctB = core.encrypt(keypair.publicKey, msgB, 102);
+    const ctSum = core.add(ctA, ctB);
+    const decResult = core.decrypt(keypair.secretKey, ctSum);
+    return {
+      action: "homomorphic_add",
+      sumPlaintext: decResult.plaintext.slice(0, Math.max(msgA.length, msgB.length)),
+      noiseBudgetBits: decResult.noiseBudgetBits,
+      receipt: decResult.receipt,
+    };
+  }
+  if (action === "mpc_split") {
+    const threshold = typeof args?.threshold === "number" ? args.threshold : 3;
+    const totalParties = typeof args?.totalParties === "number" ? args.totalParties : 5;
+    const core = new EosSecureMpcShamirCore({ threshold, totalParties });
+    const secret = typeof args?.secret === "number" ? BigInt(args.secret) : 424242n;
+    const shares = core.split(secret);
+    return {
+      action: "mpc_split",
+      threshold,
+      totalParties,
+      shares: shares.map((s) => ({ x: s.x.toString(), y: s.y.toString(), commitment: s.commitment })),
+    };
+  }
+  if (action === "mpc_combine") {
+    const core = new EosSecureMpcShamirCore({ threshold: 3, totalParties: 5 });
+    const secret = 9999n;
+    const shares = core.split(secret, 999);
+    const rec = core.combine(shares.slice(0, 3));
+    return {
+      action: "mpc_combine",
+      secret: rec.secret.toString(),
+      sharesUsed: rec.sharesUsed,
+      receipt: rec.receipt,
+    };
+  }
+  if (action === "mpc_add") {
+    const core = new EosSecureMpcShamirCore({ threshold: 3, totalParties: 5 });
+    const valA = typeof args?.valA === "number" ? BigInt(args.valA) : 1500n;
+    const valB = typeof args?.valB === "number" ? BigInt(args.valB) : 3500n;
+    const sharesA = core.split(valA, 101);
+    const sharesB = core.split(valB, 102);
+    const sumShares = [];
+    for (let i = 0; i < 5; i++) {
+      sumShares.push(core.addShares(sharesA[i], sharesB[i]));
+    }
+    const rec = core.combine(sumShares.slice(0, 3));
+    return {
+      action: "mpc_add",
+      sum: rec.secret.toString(),
+      receipt: rec.receipt,
+    };
+  }
+  if (action === "mpc_multiply") {
+    const core = new EosSecureMpcShamirCore({ threshold: 3, totalParties: 5 });
+    const x = typeof args?.x === "number" ? BigInt(args.x) : 120n;
+    const y = typeof args?.y === "number" ? BigInt(args.y) : 35n;
+    const sharesX = core.split(x, 777);
+    const sharesY = core.split(y, 888);
+    const triple = core.generateBeaverTriple(555);
+    const productShares = core.multiplyShares(sharesX, sharesY, triple);
+    const rec = core.combine(productShares.slice(0, 3));
+    return {
+      action: "mpc_multiply",
+      product: rec.secret.toString(),
+      receipt: rec.receipt,
+    };
+  }
+  if (action === "vdf_compute") {
+    const delay = typeof args?.delay === "number" ? Math.max(1, Math.floor(args.delay)) : 100;
+    const seed = typeof args?.seed === "string" ? args.seed : "mcp-vdf-entropy";
+    const core = new EosVerifiableDelayFunctionCore({ defaultDelay: delay });
+    const result = core.compute(seed, delay);
+    return {
+      action: "vdf_compute",
+      delayT: result.delayT,
+      proofHex: result.proof.proofHex,
+      challengePrime: result.proof.challengePrime.toString(),
+      randomnessBeacon: result.randomnessBeacon,
+      elapsedMs: result.elapsedMs,
+      receipt: result.receipt,
+    };
+  }
+  if (action === "vdf_verify") {
+    const delay = typeof args?.delay === "number" ? Math.max(1, Math.floor(args.delay)) : 100;
+    const seed = typeof args?.seed === "string" ? args.seed : "mcp-vdf-entropy";
+    const core = new EosVerifiableDelayFunctionCore({ defaultDelay: delay });
+    const evalRes = core.compute(seed, delay);
+    const verifyRes = core.verify(evalRes.x, evalRes.y, evalRes.delayT, evalRes.proof);
+    return {
+      action: "vdf_verify",
+      valid: verifyRes.valid,
+      verificationTimeMs: verifyRes.verificationTimeMs,
+      receipt: verifyRes.receipt,
+    };
+  }
+  if (action === "vdf_beacon") {
+    const core = new EosVerifiableDelayFunctionCore();
+    const beacon = core.generateBeacon(BigInt(typeof args?.val === "number" ? args.val : 424242));
+    return {
+      action: "vdf_beacon",
+      beacon,
+    };
+  }
+  if (action === "r1cs_synthesize") {
+    const secret = typeof args?.secret === "number" ? BigInt(args.secret) : 3n;
+    const core = new EosZeroKnowledgeR1csCore();
+    const { system, witness } = core.synthesizeExampleCircuit(secret);
+    return {
+      action: "r1cs_synthesize",
+      numVariables: system.numVariables,
+      numConstraints: system.numConstraints,
+      publicInputCount: system.publicInputCount,
+      witnessCommitment: witness.witnessCommitment,
+    };
+  }
+  if (action === "r1cs_prove") {
+    const secret = typeof args?.secret === "number" ? BigInt(args.secret) : 3n;
+    const core = new EosZeroKnowledgeR1csCore();
+    const { system, witness } = core.synthesizeExampleCircuit(secret);
+    const proof = core.prove(system, witness.values);
+    return {
+      action: "r1cs_prove",
+      tau: proof.tau.toString(),
+      proofDigest: proof.proofDigest,
+    };
+  }
+  if (action === "r1cs_verify") {
+    const secret = typeof args?.secret === "number" ? BigInt(args.secret) : 3n;
+    const core = new EosZeroKnowledgeR1csCore();
+    const { system, witness } = core.synthesizeExampleCircuit(secret);
+    const proof = core.prove(system, witness.values);
+    const verifyRes = core.verify(system, [witness.values[1]], proof);
+    return {
+      action: "r1cs_verify",
+      valid: verifyRes.valid,
+      verificationTimeMs: verifyRes.verificationTimeMs,
+      receipt: verifyRes.receipt,
+    };
+  }
+  if (action === "crdt_mutate") {
+    const nodeId = typeof args?.nodeId === "string" ? args.nodeId : "mcp-node";
+    const core = new EosCrdtStateSyncCore(nodeId);
+    core.setRegister("status", "ACTIVE");
+    core.addToSet("keys", "key-1");
+    core.insertSequence("stream", "X");
+    const snapshot = core.exportSnapshot();
+    return {
+      action: "crdt_mutate",
+      nodeId: snapshot.nodeId,
+      stateHashSha256: snapshot.stateHashSha256,
+      vectorClock: snapshot.vectorClock,
+    };
+  }
+  if (action === "crdt_merge") {
+    const nodeA = new EosCrdtStateSyncCore("node-A");
+    const nodeB = new EosCrdtStateSyncCore("node-B");
+    nodeA.setRegister("key", "A");
+    nodeB.setRegister("key", "B");
+    const resA = nodeA.mergeSnapshot(nodeB.exportSnapshot());
+    const resB = nodeB.mergeSnapshot(nodeA.exportSnapshot());
+    return {
+      action: "crdt_merge",
+      converged: resA.stateHashSha256 === resB.stateHashSha256,
+      stateHashSha256: resA.stateHashSha256,
+      receipt: resA.receipt,
+    };
+  }
+  if (action === "crdt_delta") {
+    const node1 = new EosCrdtStateSyncCore("node-1");
+    const node2 = new EosCrdtStateSyncCore("node-2");
+    node1.setRegister("val", 42);
+    const delta = node1.getDelta(node2.vectorClock);
+    const mergeRes = node2.mergeDelta(delta);
+    return {
+      action: "crdt_delta",
+      converged: mergeRes.converged,
+      stateHashSha256: mergeRes.stateHashSha256,
+      receipt: mergeRes.receipt,
+    };
+  }
+  if (action === "mmr_append") {
+    const mmr = new EosMerkleMountainRangeCore();
+    const count = typeof args?.count === "number" ? Math.max(1, args.count) : 5;
+    for (let i = 0; i < count; i++) {
+      mmr.append(`mcp-leaf-${i}`);
+    }
+    return {
+      action: "mmr_append",
+      leafCount: mmr.getLeafCount(),
+      mmrSize: mmr.getSize(),
+      root: mmr.getRoot(),
+      peakCount: mmr.getPeaks().length,
+    };
+  }
+  if (action === "mmr_prove") {
+    const mmr = new EosMerkleMountainRangeCore();
+    for (let i = 0; i < 7; i++) mmr.append(`entry-${i}`);
+    const proof = mmr.getInclusionProof(2);
+    return {
+      action: "mmr_prove",
+      leafIndex: proof.leafIndex,
+      leafPos: proof.leafPos,
+      root: proof.root,
+      siblingCount: proof.siblings.length,
+    };
+  }
+  if (action === "mmr_verify") {
+    const mmr = new EosMerkleMountainRangeCore();
+    for (let i = 0; i < 7; i++) mmr.append(`entry-${i}`);
+    const proof = mmr.getInclusionProof(2);
+    const verifyRes = mmr.verifyInclusion(proof);
+    return {
+      action: "mmr_verify",
+      valid: verifyRes.valid,
+      verificationTimeMs: verifyRes.verificationTimeMs,
+      receipt: verifyRes.receipt,
+    };
+  }
+  return dispatchPhase7FrontierActionExt(action, args, deps);
 }

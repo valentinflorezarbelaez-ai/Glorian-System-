@@ -151,3 +151,103 @@ export * from "./eosRaftConsensusEngine.ts";
 export * from "./eosAnsEntropyCompressor.ts";
 export * from "./eosReverseModeAutodiff.ts";
 export * from "./eosIsolationForestDetector.ts";
+export {
+  EosPbftNode,
+  EosPbftCluster,
+  type PbftPhase,
+  type PbftMessage,
+  type PreparedCertificate,
+  type CommittedCertificate,
+  type ViewChangeCertificate,
+  type ByzantineSlashingReceipt,
+  type PbftNodeStatus,
+  type PbftClusterStatus,
+  type PbftExecutionReceipt,
+  type PbftFsmReducer,
+  computeMessageDigest,
+  computePbftFsmHash,
+  defaultPbftFsmReducer,
+  signPbftPayload,
+} from "./eosPbftConsensusEngine.ts";
+export * from "./eosHomomorphicLatticeCore.ts";
+export * from "./eosHomomorphicLatticeCore.types.ts";
+export * from "./eosSecureMpcShamirCore.ts";
+export * from "./eosSecureMpcShamirCore.types.ts";
+export * from "./eosVerifiableDelayFunctionCore.ts";
+export * from "./eosVerifiableDelayFunctionCore.types.ts";
+export {
+  EosZeroKnowledgeR1csCore,
+  DEFAULT_ZK_FIELD_PRIME,
+  fieldNormalize,
+  fieldAdd,
+  fieldSub,
+  fieldMul,
+  fieldInverse,
+  fieldPow,
+  polyTrim as zkPolyTrim,
+  polyAdd as zkPolyAdd,
+  polySub as zkPolySub,
+  polyMul as zkPolyMul,
+  polyScalarMul as zkPolyScalarMul,
+  polyEval as zkPolyEval,
+  polyDiv as zkPolyDiv,
+  lagrangeInterpolate,
+} from "./eosZeroKnowledgeR1csCore.ts";
+export * from "./eosZeroKnowledgeR1csCore.types.ts";
+export * from "./eosCrdtStateSyncCore.ts";
+export * from "./eosCrdtStateSyncCore.types.ts";
+export * from "./eosMerkleMountainRangeCore.ts";
+export * from "./eosMerkleMountainRangeCore.types.ts";
+export * from "./eosVerifiableRandomFunctionCore.ts";
+export * from "./eosVerifiableRandomFunctionCore.types.ts";
+export * from "./eosSparseMerkleTreeCore.ts";
+export * from "./eosSparseMerkleTreeCore.types.ts";
+export * from "./eosFrostThresholdSignatureCore.ts";
+export * from "./eosFrostThresholdSignatureCore.types.ts";
+export {
+  EosKzgPolynomialCommitmentCore,
+  modQ as kzgModQ,
+  polyTrim as kzgPolyTrim,
+  polyEval as kzgPolyEval,
+  polyAdd as kzgPolyAdd,
+  polySub as kzgPolySub,
+  polyMul as kzgPolyMul,
+  polySyntheticDiv as kzgPolySyntheticDiv,
+  polyDiv as kzgPolyDiv,
+  lagrangeInterpolatePolynomial as kzgLagrangeInterpolatePolynomial,
+} from "./eosKzgPolynomialCommitmentCore.ts";
+export * from "./eosKzgPolynomialCommitmentCore.types.ts";
+export {
+  EosPostQuantumMlKemCore,
+  ML_KEM_768_PARAMS,
+  ntt as kemNtt,
+  intt as kemIntt,
+  multiplyNTTs as kemMultiplyNTTs,
+  compressQ as kemCompressQ,
+  decompressQ as kemDecompressQ,
+  encode12 as kemEncode12,
+  decode12 as kemDecode12,
+  encode10 as kemEncode10,
+  decode10 as kemDecode10,
+  encode4 as kemEncode4,
+  decode4 as kemDecode4,
+} from "./eosPostQuantumMlKemCore.ts";
+export type {
+  MlKemParams,
+  MlKem768KeyPair,
+  MlKem768EncapsulationResult,
+  MlKem768DecapsulationResult,
+  MlKem768BenchmarkResult,
+  MlKem768Receipt,
+} from "./eosPostQuantumMlKemCore.types.ts";
+export { EosBulletproofsRangeProofCore } from "./eosBulletproofsRangeProofCore.ts";
+export type {
+  BulletproofsGenerators,
+  BulletproofsCommitment,
+  InnerProductProof,
+  BulletproofsRangeProof,
+  BulletproofsVerificationResult,
+  BulletproofsOperationType,
+  BulletproofsReceipt,
+  BulletproofsBenchmarkResult,
+} from "./eosBulletproofsRangeProofCore.types.ts";

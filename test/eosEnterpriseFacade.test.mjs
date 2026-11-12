@@ -234,6 +234,8 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
 
   it("MCP tool 'eos_enterprise_workspace' dispatches verify_action, slsa_attest, arena_stats, and dtn_status", async () => {
     const { dispatchPhase7VerificationCase } = await import("../src/mcp/tools/eosMcpPhase7VerificationHandlers.ts");
+    const callFacade = (payload) =>
+      dispatchPhase7VerificationCase("eos_enterprise_workspace", payload, { projectRoot: process.cwd() });
 
     // 1. verify_action
     const verifyRes = dispatchPhase7VerificationCase(
@@ -559,5 +561,239 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(anomalyForestReport.isReady, true);
     assert.ok(anomalyForestReport.windowSize >= 30);
     assert.ok(anomalyForestReport.outlierScore.anomalyScore > 0.5);
+
+    // 22. pbft_cluster, pbft_propose & pbft_slash
+    const pbftClusterReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "pbft_cluster", nodeCount: 4 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(pbftClusterReport.action, "pbft_cluster");
+    assert.equal(pbftClusterReport.status.totalNodes, 4);
+    assert.equal(pbftClusterReport.status.f, 1);
+    assert.equal(pbftClusterReport.status.quorumSize, 3);
+    assert.equal(pbftClusterReport.status.activeQuorum, true);
+
+    const pbftProposeReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "pbft_propose", nodeCount: 4, proposal: { type: "SET", key: "facade_key", value: "active" } },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(pbftProposeReport.action, "pbft_propose");
+    assert.ok(pbftProposeReport.receipt.sha256Receipt.length === 64);
+    assert.equal(pbftProposeReport.fsmState.facade_key, "active");
+
+    const pbftSlashReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "pbft_slash" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(pbftSlashReport.action, "pbft_slash");
+    assert.equal(pbftSlashReport.slashingReceipt.evidenceType, "EQUIVOCATION_DETECTED");
+    assert.equal(pbftSlashReport.slashingReceipt.slashedNodeId, "node-0");
+
+    // 23. homomorphic_keygen, homomorphic_encrypt & homomorphic_add
+    const heKeygenReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "homomorphic_keygen", polyDegree: 32 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(heKeygenReport.action, "homomorphic_keygen");
+    assert.equal(heKeygenReport.keypair.publicKey.params.polyDegree, 32);
+    assert.equal(heKeygenReport.keypair.publicKey.keyFingerprint.length, 64);
+
+    const heEncryptReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "homomorphic_encrypt", polyDegree: 32, message: [42, 100, 7] },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(heEncryptReport.action, "homomorphic_encrypt");
+    assert.equal(heEncryptReport.ciphertext.c0.length, 32);
+    assert.ok(heEncryptReport.ciphertext.noiseBudgetBits > 0);
+
+    const heAddReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "homomorphic_add", polyDegree: 32, msgA: [10, 20], msgB: [5, 15] },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(heAddReport.action, "homomorphic_add");
+    assert.deepEqual(heAddReport.sumPlaintext, [15, 35]);
+    assert.ok(heAddReport.noiseBudgetBits > 0);
+    assert.equal(heAddReport.receipt.receiptSha256.length, 64);
+
+    // 24. mpc_split, mpc_combine, mpc_add & mpc_multiply
+    const mpcSplitReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "mpc_split", threshold: 3, totalParties: 5, secret: 424242 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(mpcSplitReport.action, "mpc_split");
+    assert.equal(mpcSplitReport.shares.length, 5);
+    const mpcCombineReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "mpc_combine" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(mpcCombineReport.action, "mpc_combine");
+    assert.equal(mpcCombineReport.secret, "9999");
+    const mpcAddReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "mpc_add", valA: 1500, valB: 3500 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(mpcAddReport.sum, "5000");
+    const mpcMultiplyReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "mpc_multiply", x: 120, y: 35 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(mpcMultiplyReport.product, "4200");
+
+    // 25. vdf_compute, vdf_verify & vdf_beacon
+    const vdfComputeReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "vdf_compute", delay: 100, seed: "facade-vdf-entropy" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(vdfComputeReport.action, "vdf_compute");
+    assert.equal(vdfComputeReport.delayT, 100);
+    const vdfVerifyReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "vdf_verify", delay: 100, seed: "facade-vdf-entropy" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(vdfVerifyReport.action, "vdf_verify");
+    assert.equal(vdfVerifyReport.valid, true);
+    const vdfBeaconReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "vdf_beacon", val: 123456 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(vdfBeaconReport.beacon.length, 64);
+
+    // 26. r1cs_synthesize, r1cs_prove & r1cs_verify (SPEC-214)
+    const r1csSynthReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "r1cs_synthesize", secret: 3 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(r1csSynthReport.action, "r1cs_synthesize");
+    assert.equal(r1csSynthReport.numConstraints, 3);
+    const r1csProveReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "r1cs_prove", secret: 3 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(r1csProveReport.action, "r1cs_prove");
+    assert.equal(r1csProveReport.proofDigest.length, 64);
+    const r1csVerifyReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "r1cs_verify", secret: 3 },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(r1csVerifyReport.action, "r1cs_verify");
+    assert.equal(r1csVerifyReport.valid, true);
+
+    // 27. crdt_mutate, crdt_merge & crdt_delta (SPEC-215)
+    const crdtMutateReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "crdt_mutate", nodeId: "facade-node" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(crdtMutateReport.action, "crdt_mutate");
+    assert.ok(crdtMutateReport.stateHashSha256.length === 64);
+    const crdtMergeReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "crdt_merge" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(crdtMergeReport.action, "crdt_merge");
+    assert.equal(crdtMergeReport.converged, true);
+    const crdtDeltaReport = dispatchPhase7VerificationCase(
+      "eos_enterprise_workspace",
+      { action: "crdt_delta" },
+      { projectRoot: process.cwd() },
+    );
+    assert.equal(crdtDeltaReport.action, "crdt_delta");
+    assert.equal(crdtDeltaReport.converged, true);
+
+    // 28. mmr_append, mmr_prove & mmr_verify (SPEC-216)
+    const mmrAppendReport = callFacade({ action: "mmr_append", count: 7 });
+    assert.equal(mmrAppendReport.action, "mmr_append");
+    assert.equal(mmrAppendReport.leafCount, 7);
+    assert.equal(mmrAppendReport.mmrSize, 11);
+    const mmrProveReport = callFacade({ action: "mmr_prove" });
+    assert.equal(mmrProveReport.action, "mmr_prove");
+    assert.equal(mmrProveReport.leafIndex, 2);
+    const mmrVerifyReport = callFacade({ action: "mmr_verify" });
+    assert.equal(mmrVerifyReport.action, "mmr_verify");
+    assert.equal(mmrVerifyReport.valid, true);
+
+    // 29. vrf_eval, vrf_verify & vrf_elect (SPEC-217)
+    const vrfEvalReport = callFacade({ action: "vrf_eval", alpha: "facade-slot-102" });
+    assert.equal(vrfEvalReport.action, "vrf_eval");
+    assert.ok(vrfEvalReport.publicKeyHex.length === 66);
+    const vrfVerifyReport = callFacade({ action: "vrf_verify", alpha: "facade-slot-102" });
+    assert.equal(vrfVerifyReport.action, "vrf_verify");
+    assert.equal(vrfVerifyReport.valid, true);
+    const vrfElectReport = callFacade({ action: "vrf_elect", alpha: "facade-slot-102", threshold: 0.99 });
+    assert.equal(vrfElectReport.action, "vrf_elect");
+    assert.equal(vrfElectReport.isElected, true);
+
+    // 30. smt_set, smt_prove & smt_verify (SPEC-218)
+    const smtSetReport = callFacade({ action: "smt_set", key: "facade-k", value: "facade-v" });
+    assert.equal(smtSetReport.action, "smt_set");
+    assert.equal(smtSetReport.leafCount, 1);
+    const smtProveReport = callFacade({ action: "smt_prove", key: "cert-001" });
+    assert.equal(smtProveReport.action, "smt_prove");
+    assert.equal(smtProveReport.proofType, "membership");
+    const smtVerifyReport = callFacade({ action: "smt_verify", key: "cert-001" });
+    assert.equal(smtVerifyReport.action, "smt_verify");
+    assert.equal(smtVerifyReport.valid, true);
+
+    // 31. frost_keygen, frost_sign & frost_verify (SPEC-219)
+    const frostKeygen = callFacade({ action: "frost_keygen", threshold: 2, signers: 3 });
+    assert.equal(frostKeygen.action, "frost_keygen");
+    assert.equal(frostKeygen.participantCount, 3);
+    const frostSign = callFacade({ action: "frost_sign", message: "facade-tx" });
+    assert.equal(frostSign.action, "frost_sign");
+    assert.ok(frostSign.signatureHex.length > 64);
+    const frostVerify = callFacade({ action: "frost_verify", message: "facade-tx" });
+    assert.equal(frostVerify.action, "frost_verify");
+    assert.equal(frostVerify.valid, true);
+
+    // 32. kzg_commit, kzg_open & kzg_verify (SPEC-220)
+    const kzgCommit = callFacade({ action: "kzg_commit", coeffs: [7, 5, 2, 3] });
+    assert.equal(kzgCommit.action, "kzg_commit");
+    assert.equal(kzgCommit.degree, 3);
+    const kzgOpen = callFacade({ action: "kzg_open", coeffs: [7, 5, 2, 3], point: 4 });
+    assert.equal(kzgOpen.action, "kzg_open");
+    assert.equal(kzgOpen.claimedValue, "251");
+    const kzgVerify = callFacade({ action: "kzg_verify", coeffs: [7, 5, 2, 3], point: 4 });
+    assert.equal(kzgVerify.action, "kzg_verify");
+    assert.equal(kzgVerify.valid, true);
+
+    // 33. ml_kem_keygen, ml_kem_encaps & ml_kem_decaps (SPEC-221)
+    const mlKeyGen = callFacade({ action: "ml_kem_keygen" });
+    assert.equal(mlKeyGen.action, "ml_kem_keygen");
+    assert.equal(mlKeyGen.algorithm, "ML-KEM-768");
+    const mlEncaps = callFacade({ action: "ml_kem_encaps", ek: mlKeyGen.encapsulationKeyHex });
+    assert.equal(mlEncaps.action, "ml_kem_encaps");
+    const mlDecaps = callFacade({
+      action: "ml_kem_decaps",
+      dk: mlKeyGen.decapsulationKeyHex,
+      ct: mlEncaps.ciphertextHex,
+    });
+    assert.equal(mlDecaps.action, "ml_kem_decaps");
+    assert.equal(mlDecaps.valid, true);
+
+    // 34. bp_commit, bp_prove & bp_verify (SPEC-222)
+    const bpComm = callFacade({ action: "bp_commit", value: 3333 });
+    assert.equal(bpComm.action, "bp_commit");
+    const bpProve = callFacade({ action: "bp_prove", value: 3333, m: 16 });
+    assert.equal(bpProve.action, "bp_prove");
+    const bpVerify = callFacade({ action: "bp_verify", value: 3333, m: 16 });
+    assert.equal(bpVerify.action, "bp_verify");
+    assert.equal(bpVerify.valid, true);
   });
 });

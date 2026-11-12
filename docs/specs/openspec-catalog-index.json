@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-11T03:27:08.637Z",
-  "totalSpecs": 204,
-  "catalogSha256": "50310ccbe101ddec0acb480f1c6eacaf51af8cb99cea67ee33eca99ac73e6762",
+  "timestampIso": "2026-11-12T00:02:03.791Z",
+  "totalSpecs": 217,
+  "catalogSha256": "f5d8d9eea83e76dd4883d891afb616da28d175141ac76cbb131725e0e1d2b3a8",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1838,6 +1838,123 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-209-ISOLATION-FOREST.md",
       "sha256": "f1cb69b6d5fdd9e641cf048ca78d3df55280fc25cd794b4aa7ce89a1a605abca"
+    },
+    {
+      "id": "SPEC-210",
+      "title": "Layer-0 Practical Byzantine Fault Tolerant (PBFT) Consensus Engine & Replicated State Machine",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-210-PBFT-CONSENSUS-ENGINE.md",
+      "sha256": "6b3eee3e9e5bd85fe494b4430dd133377d51fc53fc7563079f1e129dda0234ab"
+    },
+    {
+      "id": "SPEC-211",
+      "title": "Layer-0 Lattice-Based Homomorphic Encryption Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-211-HOMOMORPHIC-LATTICE-CORE.md",
+      "sha256": "4fd0a96f46cf094993be343ce0b65bb5636ba2f8e0531911cb0e35f1af6630e5"
+    },
+    {
+      "id": "SPEC-212",
+      "title": "Layer-0 Secure Multi-Party Computation Engine with Shamir Secret Sharing",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-212-SECURE-MPC-SHAMIR-CORE.md",
+      "sha256": "083da214ffcc95db1588185f4411e2afb43f7b27e3df0ff37bdb7a3773c61052"
+    },
+    {
+      "id": "SPEC-213",
+      "title": "Layer-0 Verifiable Delay Function & Proof of Elapsed Time Engine",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-213-VERIFIABLE-DELAY-FUNCTION.md",
+      "sha256": "2f3c18eebb65601a6a458c1ba9b9766e4afe81a48fa54463bf1b6d5004851085"
+    },
+    {
+      "id": "SPEC-214",
+      "title": "Layer-0 Zero-Knowledge Rank-1 Constraint System (R1CS) & QAP Arithmetic Circuit Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-214-ZERO-KNOWLEDGE-R1CS-QAP.md",
+      "sha256": "60a10a192bef27c0bd59c68ceff0937325405ea33fa30ab1071432e86f522315"
+    },
+    {
+      "id": "SPEC-215",
+      "title": "Layer-0 Conflict-Free Replicated Data Types (CRDT) Collaborative State Synchronization Engine",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-215-CRDT-STATE-SYNC.md",
+      "sha256": "57a81e57c6ad5192de504b13bc0bbb9874499117978de2fd11344be4b6489674"
+    },
+    {
+      "id": "SPEC-216",
+      "title": "Layer-0 Merkle Mountain Range (MMR) & Cryptographic Accumulator Engine",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-216-MERKLE-MOUNTAIN-RANGE.md",
+      "sha256": "696e5a6c8916b321755c510727b167531d215dd2d22b4520fda3509d9ba985a7"
+    },
+    {
+      "id": "SPEC-217",
+      "title": "Layer-0 Verifiable Random Functions (ECVRF RFC 9381) Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-217-VERIFIABLE-RANDOM-FUNCTION.md",
+      "sha256": "38f0be9f9bdce63268dce034fd1652e00e9803892b1f3ecf14acd1baf20f9d4b"
+    },
+    {
+      "id": "SPEC-218",
+      "title": "Layer-0 Sparse Merkle Tree (SMT) with Non-Membership Proofs Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-218-SPARSE-MERKLE-TREE.md",
+      "sha256": "d5200be7689b375f7a99b45c49af27961023bf67ea49a10fab4333767217073e"
+    },
+    {
+      "id": "SPEC-219",
+      "title": "Layer-0 FROST Threshold Schnorr Signatures (RFC 9591) Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-219-FROST-THRESHOLD-SIGNATURES.md",
+      "sha256": "b3bafd1d8486f3a265ded367a7ba6cb58acb214596c9decc2f88c9d5006508bf"
+    },
+    {
+      "id": "SPEC-220",
+      "title": "Layer-0 KZG Polynomial Commitments & Batched Multi-Proofs Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-220-KZG-POLYNOMIAL-COMMITMENTS.md",
+      "sha256": "b3ed09380b5b0ed569b052163746dcbaa87223bc23e2fe19b14d29c557b86aec"
+    },
+    {
+      "id": "SPEC-221",
+      "title": "Layer-0 Post-Quantum Key Encapsulation Mechanism (NIST FIPS 203 ML-KEM / Kyber-768)",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-221-POST-QUANTUM-ML-KEM.md",
+      "sha256": "7b874062045d1c4430be9c98a30bade23dba0388d64f879b7bc144c8bba9b3b4"
+    },
+    {
+      "id": "SPEC-222",
+      "title": "Layer-0 Bulletproofs NIZK Range Proofs without Trusted Setup Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-222-BULLETPROOFS-RANGE-PROOFS.md",
+      "sha256": "d39e683e6b0718f19d63edd1954805928d4694fc59a22318d155e8567d6b4344"
     }
   ]
 }

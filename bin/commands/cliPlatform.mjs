@@ -655,6 +655,15 @@ HANDLERS["project:fix"] = cmd_fix_135;
 
 import { handleAutonomousCommands } from "./cliAutonomous.mjs";
 import { handleFrontierMeshCommands } from "./cliFrontierMesh.mjs";
+import { handleZkR1csCommands } from "./cliZkR1csMesh.mjs";
+import { handleCrdtCommands } from "./cliCrdtMesh.mjs";
+import { handleMmrCommands } from "./cliMmrMesh.mjs";
+import { handleVrfCommands } from "./cliVrfMesh.mjs";
+import { handleSmtCommands } from "./cliSmtMesh.mjs";
+import { handleFrostCommands } from "./cliFrostMesh.mjs";
+import { handleKzgCommands } from "./cliKzgMesh.mjs";
+import { handleMlKemCommands } from "./cliMlKemMesh.mjs";
+import { handleBulletproofsCommands } from "./cliBulletproofsMesh.mjs";
 
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
@@ -664,5 +673,14 @@ export async function handlePlatformCommands(commandContext) {
   }
   if (await handleAutonomousCommands(commandContext)) return true;
   if (await handleFrontierMeshCommands(commandContext)) return true;
+  if (await handleZkR1csCommands(commandContext)) return true;
+  if (await handleCrdtCommands(commandContext)) return true;
+  if (await handleMmrCommands(commandContext)) return true;
+  if (await handleVrfCommands(commandContext)) return true;
+  if (await handleSmtCommands(commandContext)) return true;
+  if (await handleFrostCommands(commandContext)) return true;
+  if (await handleKzgCommands(commandContext)) return true;
+  if (await handleMlKemCommands(commandContext)) return true;
+  if (await handleBulletproofsCommands(commandContext)) return true;
   return false;
 }

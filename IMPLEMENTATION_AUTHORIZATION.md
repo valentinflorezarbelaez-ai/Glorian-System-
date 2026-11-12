@@ -1473,3 +1473,315 @@
   - `docs/plans/PLAN-094-ISOLATION-FOREST.md`
   - `docs/tasks/TASKS-094-ISOLATION-FOREST.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-PBFT-CONSENSUS-210
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Practical Byzantine Fault Tolerant (PBFT) Consensus Engine (`SPEC-210`, `CHANGE-095`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: “continua”)
+- **Scope**:
+  1. Implement Layer-0 PBFT Consensus Engine types in `src/core/eosPbftConsensusEngine.types.ts`.
+  2. Implement Layer-0 PBFT Consensus Engine core in `src/core/eosPbftConsensusEngine.ts`.
+  3. Subpath export `"./pbft"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian pbft:cluster`, `glorian pbft:propose`, and `glorian pbft:status` in `bin/commands/cliFrontierMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "pbft_cluster"`, `action: "pbft_propose"`, and `action: "pbft_slash"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosPbftConsensusEngine.test.mjs` (BDD-1069..BDD-1073).
+  8. Add test step #22 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 25 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 205 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-095-PBFT-CONSENSUS-ENGINE.md`
+  - `openspec/changes/CHANGE-095-PBFT-CONSENSUS-ENGINE.md`
+  - `openspec/specs/SPEC-210-PBFT-CONSENSUS-ENGINE.md`
+  - `docs/plans/PLAN-095-PBFT-CONSENSUS-ENGINE.md`
+  - `docs/tasks/TASKS-095-PBFT-CONSENSUS-ENGINE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-HOMOMORPHIC-LATTICE-211
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Lattice-Based Homomorphic Encryption Core (`SPEC-211`, `CHANGE-096`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "todos uno por uno / dale con toda")
+- **Scope**:
+  1. Implement Layer-0 Homomorphic Lattice Core types in `src/core/eosHomomorphicLatticeCore.types.ts`.
+  2. Implement Layer-0 Homomorphic Lattice Core in `src/core/eosHomomorphicLatticeCore.ts`.
+  3. Subpath export `"./homomorphic"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian homomorphic:keygen`, `glorian homomorphic:encrypt`, `glorian homomorphic:add`, `glorian homomorphic:decrypt` in `bin/commands/cliFrontierMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "homomorphic_keygen"`, `action: "homomorphic_encrypt"`, `action: "homomorphic_add"`, `action: "homomorphic_decrypt"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosHomomorphicLatticeCore.test.mjs` (BDD-1074..BDD-1078).
+  8. Add test step #23 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 26 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 206 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-096-HOMOMORPHIC-LATTICE-CORE.md`
+  - `openspec/changes/CHANGE-096-HOMOMORPHIC-LATTICE-CORE.md`
+  - `openspec/specs/SPEC-211-HOMOMORPHIC-LATTICE-CORE.md`
+  - `docs/plans/PLAN-096-HOMOMORPHIC-LATTICE-CORE.md`
+  - `docs/tasks/TASKS-096-HOMOMORPHIC-LATTICE-CORE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-SECURE-MPC-SHAMIR-212
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Secure Multi-Party Computation Engine (`SPEC-212`, `CHANGE-097`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "si dale con toda")
+- **Scope**:
+  1. Implement Layer-0 Secure MPC Shamir Core types in `src/core/eosSecureMpcShamirCore.types.ts`.
+  2. Implement Layer-0 Secure MPC Shamir Core in `src/core/eosSecureMpcShamirCore.ts`.
+  3. Subpath export `"./mpc"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian mpc:split`, `glorian mpc:combine`, `glorian mpc:add`, `glorian mpc:multiply` in `bin/commands/cliFrontierMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "mpc_split"`, `action: "mpc_combine"`, `action: "mpc_add"`, `action: "mpc_multiply"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosSecureMpcShamirCore.test.mjs` (BDD-1079..BDD-1083).
+  8. Add test step #24 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 27 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 207 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-097-SECURE-MPC-SHAMIR-CORE.md`
+  - `openspec/changes/CHANGE-097-SECURE-MPC-SHAMIR-CORE.md`
+  - `openspec/specs/SPEC-212-SECURE-MPC-SHAMIR-CORE.md`
+  - `docs/plans/PLAN-097-SECURE-MPC-SHAMIR-CORE.md`
+  - `docs/tasks/TASKS-097-SECURE-MPC-SHAMIR-CORE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-VERIFIABLE-DELAY-FUNCTION-213
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Verifiable Delay Function & Proof of Elapsed Time Engine (`SPEC-213`, `CHANGE-098`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "dale con toda la perfeccion")
+- **Scope**:
+  1. Implement Layer-0 Verifiable Delay Function types in `src/core/eosVerifiableDelayFunctionCore.types.ts`.
+  2. Implement Layer-0 Verifiable Delay Function in `src/core/eosVerifiableDelayFunctionCore.ts`.
+  3. Subpath export `"./vdf"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian vdf:compute`, `glorian vdf:verify`, `glorian vdf:beacon` in `bin/commands/cliFrontierMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "vdf_compute"`, `action: "vdf_verify"`, `action: "vdf_beacon"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosVerifiableDelayFunctionCore.test.mjs` (BDD-1084..BDD-1088).
+  8. Add test step #25 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 28 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 208 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-098-VERIFIABLE-DELAY-FUNCTION.md`
+  - `openspec/changes/CHANGE-098-VERIFIABLE-DELAY-FUNCTION.md`
+  - `openspec/specs/SPEC-213-VERIFIABLE-DELAY-FUNCTION.md`
+  - `docs/plans/PLAN-098-VERIFIABLE-DELAY-FUNCTION.md`
+  - `docs/tasks/TASKS-098-VERIFIABLE-DELAY-FUNCTION.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-ZERO-KNOWLEDGE-R1CS-QAP-214
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Zero-Knowledge Rank-1 Constraint System (R1CS) & QAP Arithmetic Circuit Core (`SPEC-214`, `CHANGE-099`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "dale con toda la perfeccion")
+- **Scope**:
+  1. Implement Layer-0 Zero-Knowledge R1CS & QAP types in `src/core/eosZeroKnowledgeR1csCore.types.ts`.
+  2. Implement Layer-0 Zero-Knowledge R1CS & QAP in `src/core/eosZeroKnowledgeR1csCore.ts`.
+  3. Subpath export `"./zk-r1cs"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian r1cs:synthesize`, `glorian r1cs:prove`, `glorian r1cs:verify` in `bin/commands/cliFrontierMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "r1cs_synthesize"`, `action: "r1cs_prove"`, `action: "r1cs_verify"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosZeroKnowledgeR1csCore.test.mjs` (BDD-1089..BDD-1093).
+  8. Add test step #26 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 29 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 209 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-099-ZERO-KNOWLEDGE-R1CS-QAP.md`
+  - `openspec/changes/CHANGE-099-ZERO-KNOWLEDGE-R1CS-QAP.md`
+  - `openspec/specs/SPEC-214-ZERO-KNOWLEDGE-R1CS-QAP.md`
+  - `docs/plans/PLAN-099-ZERO-KNOWLEDGE-R1CS-QAP.md`
+  - `docs/tasks/TASKS-099-ZERO-KNOWLEDGE-R1CS-QAP.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-CRDT-STATE-SYNC-215
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Conflict-Free Replicated Data Types (CRDT) Collaborative State Synchronization Engine (`SPEC-215`, `CHANGE-100`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "dale con toda")
+- **Scope**:
+  1. Implement Layer-0 CRDT types in `src/core/eosCrdtStateSyncCore.types.ts`.
+  2. Implement Layer-0 CRDT State Sync in `src/core/eosCrdtStateSyncCore.ts`.
+  3. Subpath export `"./crdt"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian crdt:mutate`, `glorian crdt:merge`, `glorian crdt:delta` in `bin/commands/cliCrdtMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "crdt_mutate"`, `action: "crdt_merge"`, `action: "crdt_delta"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosCrdtStateSyncCore.test.mjs` (BDD-1094..BDD-1098).
+  8. Add test step #27 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 30 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 210 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-100-CRDT-STATE-SYNC.md`
+  - `openspec/changes/CHANGE-100-CRDT-STATE-SYNC.md`
+  - `openspec/specs/SPEC-215-CRDT-STATE-SYNC.md`
+  - `docs/plans/PLAN-100-CRDT-STATE-SYNC.md`
+  - `docs/tasks/TASKS-100-CRDT-STATE-SYNC.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-MERKLE-MOUNTAIN-RANGE-216
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Merkle Mountain Range (MMR) & Cryptographic Accumulator Engine (`SPEC-216`, `CHANGE-101`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "continua")
+- **Scope**:
+  1. Implement Layer-0 MMR types in `src/core/eosMerkleMountainRangeCore.types.ts`.
+  2. Implement Layer-0 MMR Engine in `src/core/eosMerkleMountainRangeCore.ts`.
+  3. Subpath export `"./mmr"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian mmr:append`, `glorian mmr:prove`, `glorian mmr:verify` in `bin/commands/cliMmrMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "mmr_append"`, `action: "mmr_prove"`, `action: "mmr_verify"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosMerkleMountainRangeCore.test.mjs` (BDD-1099..BDD-1103).
+  8. Add test step #28 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 31 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 211 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-101-MERKLE-MOUNTAIN-RANGE.md`
+  - `openspec/changes/CHANGE-101-MERKLE-MOUNTAIN-RANGE.md`
+  - `openspec/specs/SPEC-216-MERKLE-MOUNTAIN-RANGE.md`
+  - `docs/plans/PLAN-101-MERKLE-MOUNTAIN-RANGE.md`
+  - `docs/tasks/TASKS-101-MERKLE-MOUNTAIN-RANGE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-VERIFIABLE-RANDOM-FUNCTION-217
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Verifiable Random Functions (ECVRF RFC 9381) Core (`SPEC-217`, `CHANGE-102`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "continua")
+- **Scope**:
+  1. Implement Layer-0 VRF types in `src/core/eosVerifiableRandomFunctionCore.types.ts`.
+  2. Implement Layer-0 VRF Engine in `src/core/eosVerifiableRandomFunctionCore.ts`.
+  3. Subpath export `"./vrf"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian vrf:eval`, `glorian vrf:verify`, `glorian vrf:elect` in `bin/commands/cliVrfMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "vrf_eval"`, `action: "vrf_verify"`, `action: "vrf_elect"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts`.
+  7. 100% BDD test coverage in `test/eosVerifiableRandomFunctionCore.test.mjs` (BDD-1104..BDD-1108).
+  8. Add test step #29 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 32 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 212 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-102-VERIFIABLE-RANDOM-FUNCTION.md`
+  - `openspec/changes/CHANGE-102-VERIFIABLE-RANDOM-FUNCTION.md`
+  - `openspec/specs/SPEC-217-VERIFIABLE-RANDOM-FUNCTION.md`
+  - `docs/plans/PLAN-102-VERIFIABLE-RANDOM-FUNCTION.md`
+  - `docs/tasks/TASKS-102-VERIFIABLE-RANDOM-FUNCTION.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-SPARSE-MERKLE-TREE-218
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Sparse Merkle Tree (SMT) with Non-Membership Proofs Core (`SPEC-218`, `CHANGE-103`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "continuemos si")
+- **Scope**:
+  1. Implement Layer-0 SMT types in `src/core/eosSparseMerkleTreeCore.types.ts`.
+  2. Implement Layer-0 SMT Engine in `src/core/eosSparseMerkleTreeCore.ts`.
+  3. Subpath export `"./smt"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian smt:set`, `glorian smt:prove`, `glorian smt:verify` in `bin/commands/cliSmtMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "smt_set"`, `action: "smt_prove"`, `action: "smt_verify"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosSparseMerkleTreeCore.test.mjs` (BDD-1109..BDD-1113).
+  8. Add test step #30 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 33 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 213 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-103-SPARSE-MERKLE-TREE.md`
+  - `openspec/changes/CHANGE-103-SPARSE-MERKLE-TREE.md`
+  - `openspec/specs/SPEC-218-SPARSE-MERKLE-TREE.md`
+  - `docs/plans/PLAN-103-SPARSE-MERKLE-TREE.md`
+  - `docs/tasks/TASKS-103-SPARSE-MERKLE-TREE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-FROST-THRESHOLD-SIGNATURES-219
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 FROST Threshold Schnorr Signatures Core (`SPEC-219`, `CHANGE-104`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "dale con toda si")
+- **Scope**:
+  1. Implement Layer-0 FROST types in `src/core/eosFrostThresholdSignatureCore.types.ts`.
+  2. Implement Layer-0 FROST Engine in `src/core/eosFrostThresholdSignatureCore.ts`.
+  3. Subpath export `"./frost"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian frost:keygen`, `glorian frost:sign`, `glorian frost:verify` in `bin/commands/cliFrostMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "frost_keygen"`, `action: "frost_sign"`, `action: "frost_verify"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosFrostThresholdSignatureCore.test.mjs` (BDD-1114..BDD-1118).
+  8. Add test step #31 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 34 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 214 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-104-FROST-THRESHOLD-SIGNATURES.md`
+  - `openspec/changes/CHANGE-104-FROST-THRESHOLD-SIGNATURES.md`
+  - `openspec/specs/SPEC-219-FROST-THRESHOLD-SIGNATURES.md`
+  - `docs/plans/PLAN-104-FROST-THRESHOLD-SIGNATURES.md`
+  - `docs/tasks/TASKS-104-FROST-THRESHOLD-SIGNATURES.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-KZG-POLYNOMIAL-COMMITMENTS-220
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 KZG Polynomial Commitments & Multi-Proof Core (`SPEC-220`, `CHANGE-105`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "dale con toda si")
+- **Scope**:
+  1. Implement Layer-0 KZG types in `src/core/eosKzgPolynomialCommitmentCore.types.ts`.
+  2. Implement Layer-0 KZG Engine in `src/core/eosKzgPolynomialCommitmentCore.ts`.
+  3. Subpath export `"./kzg"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian kzg:commit`, `glorian kzg:open`, `glorian kzg:verify`, `glorian kzg:batch` in `bin/commands/cliKzgMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "kzg_commit"`, `action: "kzg_open"`, `action: "kzg_verify"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosKzgPolynomialCommitmentCore.test.mjs` (BDD-1119..BDD-1123).
+  8. Add test step #32 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 35 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 215 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-105-KZG-POLYNOMIAL-COMMITMENTS.md`
+  - `openspec/changes/CHANGE-105-KZG-POLYNOMIAL-COMMITMENTS.md`
+  - `openspec/specs/SPEC-220-KZG-POLYNOMIAL-COMMITMENTS.md`
+  - `docs/plans/PLAN-105-KZG-POLYNOMIAL-COMMITMENTS.md`
+  - `docs/tasks/TASKS-105-KZG-POLYNOMIAL-COMMITMENTS.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-POST-QUANTUM-ML-KEM-221
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Post-Quantum Key Encapsulation Mechanism (NIST FIPS 203 ML-KEM / Kyber-768) Core (`SPEC-221`, `CHANGE-106`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "uno a uno pero en orden")
+- **Scope**:
+  1. Implement Layer-0 ML-KEM types in `src/core/eosPostQuantumMlKemCore.types.ts`.
+  2. Implement Layer-0 ML-KEM Engine in `src/core/eosPostQuantumMlKemCore.ts`.
+  3. Subpath export `"./ml-kem"` and `"./pqc"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian ml-kem:keygen`, `glorian ml-kem:encaps`, `glorian ml-kem:decaps`, `glorian ml-kem:benchmark` in `bin/commands/cliMlKemMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "ml_kem_keygen"`, `action: "ml_kem_encaps"`, `action: "ml_kem_decaps"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosPostQuantumMlKemCore.test.mjs` (BDD-1124..BDD-1128).
+  8. Add test step #33 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 36 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 216 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-106-POST-QUANTUM-ML-KEM.md`
+  - `openspec/changes/CHANGE-106-POST-QUANTUM-ML-KEM.md`
+  - `openspec/specs/SPEC-221-POST-QUANTUM-ML-KEM.md`
+  - `docs/plans/PLAN-106-POST-QUANTUM-ML-KEM.md`
+  - `docs/tasks/TASKS-106-POST-QUANTUM-ML-KEM.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-BULLETPROOFS-RANGE-PROOFS-222
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Bulletproofs NIZK Range Proofs without Trusted Setup Core (`SPEC-222`, `CHANGE-107`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "dale con toda")
+- **Scope**:
+  1. Implement Layer-0 Bulletproofs types in `src/core/eosBulletproofsRangeProofCore.types.ts`.
+  2. Implement Layer-0 Bulletproofs Engine in `src/core/eosBulletproofsRangeProofCore.ts`.
+  3. Subpath export `"./bulletproofs"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian bp:commit`, `glorian bp:prove`, `glorian bp:verify`, `glorian bp:benchmark` in `bin/commands/cliBulletproofsMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "bp_commit"`, `action: "bp_prove"`, `action: "bp_verify"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosBulletproofsRangeProofCore.test.mjs` (BDD-1129..BDD-1133).
+  8. Add test step #34 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 37 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 217 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-107-BULLETPROOFS-RANGE-PROOFS.md`
+  - `openspec/changes/CHANGE-107-BULLETPROOFS-RANGE-PROOFS.md`
+  - `openspec/specs/SPEC-222-BULLETPROOFS-RANGE-PROOFS.md`
+  - `docs/plans/PLAN-107-BULLETPROOFS-RANGE-PROOFS.md`
+  - `docs/tasks/TASKS-107-BULLETPROOFS-RANGE-PROOFS.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
