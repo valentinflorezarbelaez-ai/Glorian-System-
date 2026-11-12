@@ -44,6 +44,10 @@ import { EosUniversalAgentSessionContract } from "../src/core/eosUniversalAgentS
 
 import { EosGoDaemonIpc } from "../src/core/eosGoDaemonIpc.ts";
 
+import { EosSpotifyCodex } from "../src/core/eosSpotifyCodex.ts";
+
+import { EosSpotifyAgenticFactory } from "../src/core/eosSpotifyAgenticFactory.ts";
+
 describe("Horizon 1 Omega: Deep Branch Coverage Elevation Suite", () => {
   describe("Subsuite 1: eosRaftConsensusEngine.types pure reducers and hashers", () => {
     it("defaultFsmReducer handles SET, DELETE, APPEND, and boundary commands", () => {
@@ -669,6 +673,99 @@ describe("Horizon 1 Omega: Deep Branch Coverage Elevation Suite", () => {
       ipc.terminate();
       const termStats = ipc.getStats();
       assert.equal(termStats.running, false);
+    });
+  });
+
+  describe("Subsuite 11: EosSpotifyCodex and EosSpotifyAgenticFactory audio & factory branches", () => {
+    it("exercises loudness codecs, zero-vector similarity, harmonic transitions, and backoff", () => {
+      const codex = new EosSpotifyCodex(process.cwd());
+
+      // computeLoudnessProfile: loud with limiter required -> OGG_VORBIS_320
+      const loudLimiter = codex.computeLoudnessProfile(-10.0, 5.0);
+      assert.equal(loudLimiter.limiterRequired, true);
+      assert.equal(loudLimiter.recommendedCodec, "OGG_VORBIS_320");
+
+      // computeLoudnessProfile: quiet audio -> FLAC_LOSSLESS
+      const quiet = codex.computeLoudnessProfile(-18.0, -5.0);
+      assert.equal(quiet.recommendedCodec, "FLAC_LOSSLESS");
+
+      // calculateCosineSimilarity: zero vectors (normA === 0 || normB === 0)
+      const zeroVec = {
+        tempo: 50,
+        energy: 0,
+        danceability: 0,
+        valence: 0,
+        acousticness: 0,
+        instrumentalness: 0,
+        liveness: 0,
+        speechiness: 0,
+      };
+      assert.equal(codex.calculateCosineSimilarity(zeroVec, zeroVec), 0);
+
+      // evaluateHarmonicTransition: perfect match
+      const perfectMatch = codex.evaluateHarmonicTransition(0, 1, 0, 1);
+      assert.equal(perfectMatch.compatible, true);
+      assert.equal(perfectMatch.harmonicRelationship, "PERFECT_MATCH");
+
+      // evaluateHarmonicTransition: energy boost (8B to 9B)
+      const boostTransition = codex.evaluateHarmonicTransition(0, 1, 7, 1);
+      assert.equal(boostTransition.compatible, true);
+      assert.equal(boostTransition.harmonicRelationship, "ENERGY_BOOST");
+
+      // evaluateHarmonicTransition: energy drop (8B to 7B)
+      const dropTransition = codex.evaluateHarmonicTransition(0, 1, 5, 1);
+      assert.equal(dropTransition.compatible, true);
+      assert.equal(dropTransition.harmonicRelationship, "ENERGY_DROP");
+
+      // evaluateHarmonicTransition: mode shift (same key number, different mode letter)
+      const modeShift = codex.evaluateHarmonicTransition(0, 1, 9, 0);
+      assert.equal(modeShift.compatible, true);
+      assert.equal(modeShift.harmonicRelationship, "MODE_SHIFT");
+
+      // evaluateHarmonicTransition: dissonant (different key number and letter)
+      const dissonant = codex.evaluateHarmonicTransition(0, 1, 2, 0);
+      assert.equal(dissonant.compatible, false);
+      assert.equal(dissonant.harmonicRelationship, "DISSONANT");
+
+      // calculateBackoffMs: with retryAfterHeaderSec
+      const retryMs = codex.calculateBackoffMs(1, 200, 8000, 3);
+      assert.equal(retryMs, 3000);
+
+      // calculateBackoffMs: default jittered exponential
+      const jitterMs = codex.calculateBackoffMs(2, 100, 1000);
+      assert.ok(jitterMs >= 0 && jitterMs <= 1000);
+
+      // auditUniversalProject on non-existent directory
+      const nonExistentAudit = codex.auditUniversalProject("data/nonexistent-audit-dir");
+      assert.equal(nonExistentAudit.catalogInfoExists, false);
+      assert.equal(nonExistentAudit.catalogInfoMarkersPresent, false);
+      assert.ok(nonExistentAudit.localInventoryScore >= 0);
+    });
+
+    it("exercises EosSpotifyAgenticFactory dispatchHonk and progressive canary", () => {
+      const factory = new EosSpotifyAgenticFactory(process.cwd());
+
+      // dispatchHonk across supported stacks
+      for (const stack of ["rust", "go", "node", "java"]) {
+        const report = factory.dispatchHonk({
+          taskName: `test-honk-${stack}`,
+          stack,
+          specDescription: `Test spec for ${stack}`,
+        });
+        assert.ok(report.taskId);
+        assert.equal(report.status, "PLAN_ONLY");
+        assert.equal(report.steps.length > 0, true);
+        assert.ok(report.pullRequestDraft.includes("Draft pull request"));
+      }
+
+      // generateProgressiveCanary
+      const canary = factory.generateProgressiveCanary("eos-test-canary", "audio-infra", 150, 0.05);
+      assert.equal(canary.serviceName, "eos-test-canary");
+      assert.equal(canary.squad, "audio-infra");
+      assert.equal(canary.p99LatencyMs, 150);
+      assert.ok(canary.flaggerCanaryYaml.includes("eos-test-canary-canary"));
+      assert.ok(canary.argoRolloutYaml.includes("eos-test-canary-rollout"));
+      assert.ok(canary.prometheusRuleYaml.includes("ServiceP99LatencyBreach"));
     });
   });
 });
