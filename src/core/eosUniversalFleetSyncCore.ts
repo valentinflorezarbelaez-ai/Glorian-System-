@@ -490,9 +490,7 @@ export class EosUniversalFleetSyncCore {
       try {
         const raw = fs.readFileSync(regRel, "utf-8");
         const parsed = JSON.parse(raw);
-        const withoutSha = { ...parsed };
-        delete withoutSha.registrySha256;
-        const newSha = pureSha256(JSON.stringify(withoutSha));
+        const newSha = this.computeRegistrySignature(parsed);
         if (parsed.registrySha256 !== newSha) {
           parsed.registrySha256 = newSha;
           fs.writeFileSync(regRel, JSON.stringify(parsed, null, 2) + "\n", "utf-8");
@@ -511,6 +509,24 @@ export class EosUniversalFleetSyncCore {
       results,
       receipt,
     });
+  }
+
+  /**
+   * Deterministically computes the SHA-256 signature of the fleet registry.
+   */
+  public static computeRegistrySignature(registry: any): string {
+    function sortObj(obj: any): any {
+      if (obj === null || typeof obj !== "object") return obj;
+      if (Array.isArray(obj)) return obj.map(sortObj);
+      const sorted: Record<string, any> = {};
+      for (const key of Object.keys(obj).sort()) {
+        if (key !== "registrySha256" && key !== "updatedAt") {
+          sorted[key] = sortObj(obj[key]);
+        }
+      }
+      return sorted;
+    }
+    return pureSha256(JSON.stringify(sortObj(registry)));
   }
 
   /**
