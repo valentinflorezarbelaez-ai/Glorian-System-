@@ -51,10 +51,10 @@ export class EosSingleExecutablePackager {
   /**
    * Generates or validates the declarative sea-config.json file.
    */
-  public generateSeaConfig(customPath?: string): SeaConfig {
+  public generateSeaConfig(customPath?: string, customMain?: string): SeaConfig {
     const configPath = customPath || path.join(this.projectRoot, "sea-config.json");
     const config: SeaConfig = {
-      main: "bin/eos.mjs",
+      main: customMain || "bin/eos.mjs",
       output: "dist/eos.blob",
       disableExperimentalSEAWarning: true,
       useSnapshot: false,
