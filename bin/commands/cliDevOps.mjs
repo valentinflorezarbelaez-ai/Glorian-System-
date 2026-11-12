@@ -303,20 +303,26 @@ async function cmd_spotify_25(commandContext) {
   const target = args[1] || root;
   console.log(`[EOS SPOTIFY] Auditando proyecto universal contra estándares Spotify Golden Path...\n`);
   const report = codex.auditUniversalProject(target);
+  const isBackstageCompliant = report.catalogInfoMarkersPresent ?? report.isBackstageCompliant ?? false;
+  const score = report.localInventoryScore ?? report.goldenPathScore ?? 0;
+  const audioDetected = report.audioInventory?.audioAssetsDetected ?? report.audioCompliance?.audioAssetsDetected ?? 0;
+  const audioNorm =
+    (report.audioInventory?.standardsChecked ?? report.audioCompliance?.loudnessStandardCompliant)
+      ? "Verificado (-14 LUFS)"
+      : "Pendiente";
+  const proof = (report.resultFingerprintSha256 ?? report.sha256Proof ?? "").slice(0, 32);
 
   console.log(`Proyecto Auditado     : ${report.projectPath}`);
-  console.log(`Cumplimiento Backstage: ${report.isBackstageCompliant ? "RFC-42 COMPLIANT (✔)" : "NO COMPATIBLE (✖)"}`);
-  console.log(`Puntaje Golden Path   : ${report.goldenPathScore}/100`);
+  console.log(`Cumplimiento Backstage: ${isBackstageCompliant ? "RFC-42 COMPLIANT (✔)" : "NO COMPATIBLE (✖)"}`);
+  console.log(`Puntaje Golden Path   : ${score}/100`);
   console.log(`Descriptor Catálogo   : ${report.catalogInfoExists ? "catalog-info.yaml detectado" : "Faltante"}`);
   if (report.catalogInfoDetails) {
     console.log(`  ↳ Componente        : ${report.catalogInfoDetails.name} (${report.catalogInfoDetails.lifecycle})`);
     console.log(`  ↳ Propietario       : ${report.catalogInfoDetails.owner}`);
   }
-  console.log(`Archivos de Audio     : ${report.audioCompliance.audioAssetsDetected}`);
-  console.log(
-    `Norma ITU-R BS.1770   : ${report.audioCompliance.loudnessStandardCompliant ? "Verificado (-14 LUFS)" : "Pendiente"}`,
-  );
-  console.log(`Sello Criptográfico   : ${report.sha256Proof.slice(0, 32)}...\n`);
+  console.log(`Archivos de Audio     : ${audioDetected}`);
+  console.log(`Norma ITU-R BS.1770   : ${audioNorm}`);
+  console.log(`Sello Criptográfico   : ${proof}...\n`);
 
   if (report.recommendations.length > 0) {
     console.log("=== RECOMENDACIONES DE MEJORA SPOTIFY ===");
