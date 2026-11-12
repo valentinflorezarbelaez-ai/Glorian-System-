@@ -9,6 +9,7 @@ import { EosSparseMerkleTreeCore } from "../../core/eosSparseMerkleTreeCore.ts";
 import { EosFrostThresholdSignatureCore } from "../../core/eosFrostThresholdSignatureCore.ts";
 import { EosKzgPolynomialCommitmentCore } from "../../core/eosKzgPolynomialCommitmentCore.ts";
 import { EosPostQuantumMlKemCore } from "../../core/eosPostQuantumMlKemCore.ts";
+import { EosBulletproofsRangeProofCore } from "../../core/eosBulletproofsRangeProofCore.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
@@ -261,6 +262,46 @@ export function dispatchPhase7FrontierActionExt(
       valid: dec.valid,
       sharedSecretHex: Buffer.from(dec.sharedSecret).toString("hex"),
       receiptSha256: dec.receiptSha256,
+    };
+  }
+  if (action === "bp_commit") {
+    const value = args?.value !== undefined ? BigInt(args.value) : 42000n;
+    const gamma = args?.gamma !== undefined ? BigInt(args.gamma) : undefined;
+    const comm = EosBulletproofsRangeProofCore.commit(value, gamma);
+    return {
+      action: "bp_commit",
+      algorithm: "Bulletproofs Pedersen Commitment",
+      curve: "secp256k1",
+      value: comm.value.toString(),
+      gammaHex: comm.gamma.toString(16),
+      pointHex: comm.pointHex,
+    };
+  }
+  if (action === "bp_prove") {
+    const value = args?.value !== undefined ? BigInt(args.value) : 42000n;
+    const bitLength = typeof args?.m === "number" ? args.m : 32;
+    const gamma = args?.gamma !== undefined ? BigInt(args.gamma) : undefined;
+    const proof = EosBulletproofsRangeProofCore.prove(value, gamma, bitLength);
+    return {
+      action: "bp_prove",
+      algorithm: "Bulletproofs NIZK Range Proof",
+      bitLength: proof.bitLength,
+      commitmentHex: proof.commitmentHex,
+      innerProductRounds: proof.ipProof.L.length,
+      proofSha256: proof.proofSha256,
+    };
+  }
+  if (action === "bp_verify") {
+    const value = args?.value !== undefined ? BigInt(args.value) : 42000n;
+    const bitLength = typeof args?.m === "number" ? args.m : 32;
+    const proof = EosBulletproofsRangeProofCore.prove(value, undefined, bitLength);
+    const result = EosBulletproofsRangeProofCore.verify(proof);
+    return {
+      action: "bp_verify",
+      valid: result.valid,
+      bitLength: result.bitLength,
+      verificationTimeMs: result.verificationTimeMs,
+      receipt: result.receipt,
     };
   }
   return undefined;

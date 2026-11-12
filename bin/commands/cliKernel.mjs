@@ -576,6 +576,10 @@ Uso Universal Exhaustivo:
   eos ml-kem:encaps [--ek=EK]  Encapsulación IND-CCA2 de secreto compartido (32B) y texto cifrado (1088B)
   eos ml-kem:decaps [--dk=DK]  Decapsulación con rechazo implícito determinista constante contra falsificaciones
   eos ml-kem:benchmark         Benchmark de rendimiento de operaciones post-cuánticas por segundo
+  eos bp:commit [--value=V]    Compromiso homomórfico Pedersen V = v*G + gamma*H (SPEC-222)
+  eos bp:prove [--value=V]     Generación NIZK de rango [0, 2^m - 1] con doblado logarítmico O(log m)
+  eos bp:verify [--m=32]       Verificación no interactiva sin ceremonia de confianza en <5ms
+  eos bp:benchmark [--m=16]    Benchmark de operaciones por segundo para compromiso, prueba y verificación
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

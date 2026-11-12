@@ -1761,3 +1761,27 @@
   - `docs/plans/PLAN-106-POST-QUANTUM-ML-KEM.md`
   - `docs/tasks/TASKS-106-POST-QUANTUM-ML-KEM.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-BULLETPROOFS-RANGE-PROOFS-222
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Bulletproofs NIZK Range Proofs without Trusted Setup Core (`SPEC-222`, `CHANGE-107`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "dale con toda")
+- **Scope**:
+  1. Implement Layer-0 Bulletproofs types in `src/core/eosBulletproofsRangeProofCore.types.ts`.
+  2. Implement Layer-0 Bulletproofs Engine in `src/core/eosBulletproofsRangeProofCore.ts`.
+  3. Subpath export `"./bulletproofs"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian bp:commit`, `glorian bp:prove`, `glorian bp:verify`, `glorian bp:benchmark` in `bin/commands/cliBulletproofsMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "bp_commit"`, `action: "bp_prove"`, `action: "bp_verify"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosBulletproofsRangeProofCore.test.mjs` (BDD-1129..BDD-1133).
+  8. Add test step #34 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 37 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 217 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-107-BULLETPROOFS-RANGE-PROOFS.md`
+  - `openspec/changes/CHANGE-107-BULLETPROOFS-RANGE-PROOFS.md`
+  - `openspec/specs/SPEC-222-BULLETPROOFS-RANGE-PROOFS.md`
+  - `docs/plans/PLAN-107-BULLETPROOFS-RANGE-PROOFS.md`
+  - `docs/tasks/TASKS-107-BULLETPROOFS-RANGE-PROOFS.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

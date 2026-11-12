@@ -240,3 +240,14 @@ export type {
   MlKem768BenchmarkResult,
   MlKem768Receipt,
 } from "./eosPostQuantumMlKemCore.types.ts";
+export { EosBulletproofsRangeProofCore } from "./eosBulletproofsRangeProofCore.ts";
+export type {
+  BulletproofsGenerators,
+  BulletproofsCommitment,
+  InnerProductProof,
+  BulletproofsRangeProof,
+  BulletproofsVerificationResult,
+  BulletproofsOperationType,
+  BulletproofsReceipt,
+  BulletproofsBenchmarkResult,
+} from "./eosBulletproofsRangeProofCore.types.ts";

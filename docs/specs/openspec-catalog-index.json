@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 216,
-  "catalogSha256": "23ca0ca4eda4702df5dded25369762622f2f2f9e84aff112095c8026c69f23d8",
+  "totalSpecs": 217,
+  "catalogSha256": "f5d8d9eea83e76dd4883d891afb616da28d175141ac76cbb131725e0e1d2b3a8",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1940,12 +1940,21 @@
     },
     {
       "id": "SPEC-221",
-      "title": "Layer-0 Post-Quantum Key Encapsulation Mechanism (NIST FIPS 203 ML-KEM / Kyber-768) Core",
+      "title": "Layer-0 Post-Quantum Key Encapsulation Mechanism (NIST FIPS 203 ML-KEM / Kyber-768)",
       "status": "APPROVED",
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-221-POST-QUANTUM-ML-KEM.md",
       "sha256": "7b874062045d1c4430be9c98a30bade23dba0388d64f879b7bc144c8bba9b3b4"
+    },
+    {
+      "id": "SPEC-222",
+      "title": "Layer-0 Bulletproofs NIZK Range Proofs without Trusted Setup Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-222-BULLETPROOFS-RANGE-PROOFS.md",
+      "sha256": "d39e683e6b0718f19d63edd1954805928d4694fc59a22318d155e8567d6b4344"
     }
   ]
 }

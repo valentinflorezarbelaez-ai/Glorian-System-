@@ -1043,6 +1043,28 @@ console.log(
 ); // true
 ```
 
+### Módulo 37: Motor de Pruebas de Rango de Conocimiento Cero Bulletproofs (`EosBulletproofsRangeProofCore`)
+
+**Propósito:** Pruebas no interactivas de conocimiento cero (NIZK) compactas sin ceremonia de configuración de confianza (zero trusted setup) basadas en el protocolo de doblado logarítmico del producto interno (Bünz et al., SPEC-222 / CHANGE-107). Permite demostrar que un valor secreto $v$ (e.g. cuotas de balance, límites computacionales o transacciones confidenciales) se encuentra acotado en el intervalo $[0, 2^m - 1]$ para $m \in \{16, 32, 64\}$ bits sin revelar su magnitud ni el factor de cegado $\gamma$ en el compromiso homomórfico Pedersen $V = v \cdot G + \gamma \cdot H$. Produce pruebas de tamaño $O(\log m)$ (14 elementos de grupo y 5 escalares para 32 bits) verificables en tiempo sub-milisegundo sobre secp256k1 en TypeScript puro (Ley V).
+
+```ts
+import { EosBulletproofsRangeProofCore } from "./src/core/eosBulletproofsRangeProofCore.ts";
+
+// 1. Compromiso homomórfico de Pedersen
+const compromiso = EosBulletproofsRangeProofCore.commit(42000n);
+console.log(`Punto de compromiso (V): ${compromiso.pointHex}`);
+
+// 2. Generación de prueba NIZK para rango [0, 2^32 - 1]
+const prueba = EosBulletproofsRangeProofCore.prove(42000n, compromiso.gamma, 32);
+console.log(`Rondas del producto interno: ${prueba.ipProof.L.length}`); // 5 rondas
+console.log(`Digest SHA-256 de la prueba: sha256:${prueba.proofSha256}`);
+
+// 3. Verificación algebraica sin ceremonia de confianza
+const verificacion = EosBulletproofsRangeProofCore.verify(prueba);
+console.log(`¿Prueba válida y sana?: ${verificacion.valid}`); // true
+console.log(`Tiempo de verificación: ${verificacion.verificationTimeMs} ms`);
+```
+
 ---
 
 ## 4. Guía Rápida de Comandos CLI
@@ -1115,6 +1137,10 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs ml-kem:encaps [--ek=EK]`             | Encapsula secreto compartido de 32B y emite texto cifrado de 1088B (SPEC-221).             |
 | `node bin/eos.mjs ml-kem:decaps [--dk=DK] [--ct=CT]`   | Decapsula con rechazo implícito determinista constante ante falsificaciones (SPEC-221).    |
 | `node bin/eos.mjs ml-kem:benchmark [--iterations=N]`   | Benchmark de operaciones post-cuánticas por segundo (>1000 ops/sec) (SPEC-221).            |
+| `node bin/eos.mjs bp:commit [--value=V]`               | Compromiso homomórfico Pedersen V = v*G + gamma*H (SPEC-222).                              |
+| `node bin/eos.mjs bp:prove [--value=V] [--m=32]`       | Genera prueba NIZK Bulletproofs acotada a [0, 2^m - 1] con doblado logarítmico (SPEC-222). |
+| `node bin/eos.mjs bp:verify [--m=32]`                  | Verifica algebraicamente la prueba NIZK sin ceremonia de confianza en <5ms (SPEC-222).     |
+| `node bin/eos.mjs bp:benchmark [--m=16]`               | Benchmark de operaciones por segundo para compromiso, prueba y verificación (SPEC-222).    |
 | `node bin/eos.mjs metrics`                             | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                  | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`                 | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |

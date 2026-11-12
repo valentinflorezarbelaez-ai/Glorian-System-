@@ -47,6 +47,8 @@
     "./kzg": "./src/core/eosKzgPolynomialCommitmentCore.ts",
     "./ml-kem": "./src/core/eosPostQuantumMlKemCore.ts",
     "./pqc": "./src/core/eosPostQuantumMlKemCore.ts",
+    "./bulletproofs": "./src/core/eosBulletproofsRangeProofCore.ts",
+    "./range-proof": "./src/core/eosBulletproofsRangeProofCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

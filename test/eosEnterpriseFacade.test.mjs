@@ -786,5 +786,14 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     });
     assert.equal(mlDecaps.action, "ml_kem_decaps");
     assert.equal(mlDecaps.valid, true);
+
+    // 34. bp_commit, bp_prove & bp_verify (SPEC-222)
+    const bpComm = callFacade({ action: "bp_commit", value: 3333 });
+    assert.equal(bpComm.action, "bp_commit");
+    const bpProve = callFacade({ action: "bp_prove", value: 3333, m: 16 });
+    assert.equal(bpProve.action, "bp_prove");
+    const bpVerify = callFacade({ action: "bp_verify", value: 3333, m: 16 });
+    assert.equal(bpVerify.action, "bp_verify");
+    assert.equal(bpVerify.valid, true);
   });
 });
