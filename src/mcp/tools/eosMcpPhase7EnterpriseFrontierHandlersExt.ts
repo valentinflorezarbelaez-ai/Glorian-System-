@@ -8,6 +8,7 @@ import { EosVerifiableRandomFunctionCore } from "../../core/eosVerifiableRandomF
 import { EosSparseMerkleTreeCore } from "../../core/eosSparseMerkleTreeCore.ts";
 import { EosFrostThresholdSignatureCore } from "../../core/eosFrostThresholdSignatureCore.ts";
 import { EosKzgPolynomialCommitmentCore } from "../../core/eosKzgPolynomialCommitmentCore.ts";
+import { EosPostQuantumMlKemCore } from "../../core/eosPostQuantumMlKemCore.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
@@ -207,6 +208,59 @@ export function dispatchPhase7FrontierActionExt(
       valid: verifyRes.valid,
       verificationTimeMs: verifyRes.verificationTimeMs,
       receipt: verifyRes.receipt,
+    };
+  }
+  if (action === "ml_kem_keygen") {
+    const kem = new EosPostQuantumMlKemCore();
+    const kp = kem.generateKeyPair();
+    return {
+      action: "ml_kem_keygen",
+      algorithm: "ML-KEM-768",
+      standard: "NIST FIPS 203",
+      encapsulationKeyHex: Buffer.from(kp.encapsulationKey).toString("hex"),
+      decapsulationKeyHex: Buffer.from(kp.decapsulationKey).toString("hex"),
+      receiptSha256: kp.receiptSha256,
+    };
+  }
+  if (action === "ml_kem_encaps") {
+    const kem = new EosPostQuantumMlKemCore();
+    let ek: Uint8Array;
+    if (typeof args?.ek === "string") {
+      ek = Buffer.from(args.ek, "hex");
+    } else {
+      ek = kem.generateKeyPair().encapsulationKey;
+    }
+    const enc = kem.encapsulate(ek);
+    return {
+      action: "ml_kem_encaps",
+      algorithm: "ML-KEM-768",
+      standard: "NIST FIPS 203",
+      sharedSecretHex: Buffer.from(enc.sharedSecret).toString("hex"),
+      ciphertextHex: Buffer.from(enc.ciphertext).toString("hex"),
+      receiptSha256: enc.receiptSha256,
+    };
+  }
+  if (action === "ml_kem_decaps") {
+    const kem = new EosPostQuantumMlKemCore();
+    let dk: Uint8Array;
+    let ct: Uint8Array;
+    if (typeof args?.dk === "string" && typeof args?.ct === "string") {
+      dk = Buffer.from(args.dk, "hex");
+      ct = Buffer.from(args.ct, "hex");
+    } else {
+      const kp = kem.generateKeyPair();
+      const enc = kem.encapsulate(kp.encapsulationKey);
+      dk = kp.decapsulationKey;
+      ct = enc.ciphertext;
+    }
+    const dec = kem.decapsulate(dk, ct);
+    return {
+      action: "ml_kem_decaps",
+      algorithm: "ML-KEM-768",
+      standard: "NIST FIPS 203",
+      valid: dec.valid,
+      sharedSecretHex: Buffer.from(dec.sharedSecret).toString("hex"),
+      receiptSha256: dec.receiptSha256,
     };
   }
   return undefined;

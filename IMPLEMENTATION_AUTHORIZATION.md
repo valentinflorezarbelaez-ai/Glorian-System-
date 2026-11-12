@@ -1737,3 +1737,27 @@
   - `docs/plans/PLAN-105-KZG-POLYNOMIAL-COMMITMENTS.md`
   - `docs/tasks/TASKS-105-KZG-POLYNOMIAL-COMMITMENTS.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-POST-QUANTUM-ML-KEM-221
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Post-Quantum Key Encapsulation Mechanism (NIST FIPS 203 ML-KEM / Kyber-768) Core (`SPEC-221`, `CHANGE-106`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive 2026-11-11: "uno a uno pero en orden")
+- **Scope**:
+  1. Implement Layer-0 ML-KEM types in `src/core/eosPostQuantumMlKemCore.types.ts`.
+  2. Implement Layer-0 ML-KEM Engine in `src/core/eosPostQuantumMlKemCore.ts`.
+  3. Subpath export `"./ml-kem"` and `"./pqc"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian ml-kem:keygen`, `glorian ml-kem:encaps`, `glorian ml-kem:decaps`, `glorian ml-kem:benchmark` in `bin/commands/cliMlKemMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "ml_kem_keygen"`, `action: "ml_kem_encaps"`, `action: "ml_kem_decaps"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosPostQuantumMlKemCore.test.mjs` (BDD-1124..BDD-1128).
+  8. Add test step #33 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 36 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 216 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-106-POST-QUANTUM-ML-KEM.md`
+  - `openspec/changes/CHANGE-106-POST-QUANTUM-ML-KEM.md`
+  - `openspec/specs/SPEC-221-POST-QUANTUM-ML-KEM.md`
+  - `docs/plans/PLAN-106-POST-QUANTUM-ML-KEM.md`
+  - `docs/tasks/TASKS-106-POST-QUANTUM-ML-KEM.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

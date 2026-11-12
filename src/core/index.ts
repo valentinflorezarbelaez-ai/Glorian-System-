@@ -217,3 +217,26 @@ export {
   lagrangeInterpolatePolynomial as kzgLagrangeInterpolatePolynomial,
 } from "./eosKzgPolynomialCommitmentCore.ts";
 export * from "./eosKzgPolynomialCommitmentCore.types.ts";
+export {
+  EosPostQuantumMlKemCore,
+  ML_KEM_768_PARAMS,
+  ntt as kemNtt,
+  intt as kemIntt,
+  multiplyNTTs as kemMultiplyNTTs,
+  compressQ as kemCompressQ,
+  decompressQ as kemDecompressQ,
+  encode12 as kemEncode12,
+  decode12 as kemDecode12,
+  encode10 as kemEncode10,
+  decode10 as kemDecode10,
+  encode4 as kemEncode4,
+  decode4 as kemDecode4,
+} from "./eosPostQuantumMlKemCore.ts";
+export type {
+  MlKemParams,
+  MlKem768KeyPair,
+  MlKem768EncapsulationResult,
+  MlKem768DecapsulationResult,
+  MlKem768BenchmarkResult,
+  MlKem768Receipt,
+} from "./eosPostQuantumMlKemCore.types.ts";

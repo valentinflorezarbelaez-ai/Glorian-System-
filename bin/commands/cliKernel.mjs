@@ -572,6 +572,10 @@ Uso Universal Exhaustivo:
   eos kzg:open [--point=z]     Generación de prueba de evaluación q(x) = (p(x)-v)/(x-z)
   eos kzg:verify [--json]      Verificación algebraica O(1) de prueba de apertura KZG en <2ms
   eos kzg:batch [--points=Z]   Prueba y verificación por lotes con polinomio anulador Z(x)
+  eos ml-kem:keygen [--json]   Generación de par de claves post-cuánticas ML-KEM-768 (NIST FIPS 203)
+  eos ml-kem:encaps [--ek=EK]  Encapsulación IND-CCA2 de secreto compartido (32B) y texto cifrado (1088B)
+  eos ml-kem:decaps [--dk=DK]  Decapsulación con rechazo implícito determinista constante contra falsificaciones
+  eos ml-kem:benchmark         Benchmark de rendimiento de operaciones post-cuánticas por segundo
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos ledger recent          Consulta los últimos eventos y recibos criptográficos SHA-256
 `);

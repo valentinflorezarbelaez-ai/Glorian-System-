@@ -1015,6 +1015,36 @@ console.log(`Tiempo verificación   : ${veredicto.verificationTimeMs.toFixed(3)}
 
 ---
 
+### Módulo 36: Motor de Encapsulación de Claves Post-Cuánticas NIST FIPS 203 ML-KEM-768 (`EosPostQuantumMlKemCore`)
+
+**Propósito:** Mecanismo de encapsulación de claves resistente a computación cuántica basado en retículos modulares (Module Learning with Errors - M-LWE) bajo el estándar oficial NIST FIPS 203 (ML-KEM-768 / Categoría de Seguridad 3, equivalente a AES-192) sin dependencias externas (Ley V). Implementa aritmética polinomial exacta en el anillo $R_q = \mathbb{Z}_q[X]/(X^{256} + 1)$ con $q = 3329$ mediante la transformada de teoría de números (NTT / INTT) con raíz primitiva $\zeta = 17$, muestreo de ruido gaussiano mediante Centered Binomial Distribution (CBD con $\eta = 2$), y la transformada Fujisaki-Okamoto con **rechazo implícito determinista a tiempo constante** ($J(z, c)$) ante ataques de texto cifrado activo (IND-CCA2). Permite a los 9 nodos soberanos de la flota acordar secretos compartidos simétricos de 256 bits (32 bytes) a prueba de ataques cuánticos ("harvest-now, decrypt-later").
+
+```ts
+import { EosPostQuantumMlKemCore } from "./src/core/eosPostQuantumMlKemCore.ts";
+
+// 1. Generación de par de claves post-cuánticas ML-KEM-768
+const kem = new EosPostQuantumMlKemCore();
+const parClaves = kem.generateKeyPair();
+console.log(`Clave de encapsulación (ek): ${parClaves.encapsulationKey.length} bytes`); // 1184 bytes
+console.log(`Clave de decapsulación (dk): ${parClaves.decapsulationKey.length} bytes`); // 2400 bytes
+
+// 2. Encapsulación de secreto compartido contra clave pública (emisor / Alice)
+const encapsulacion = kem.encapsulate(parClaves.encapsulationKey);
+console.log(`Texto cifrado (c)          : ${encapsulacion.ciphertext.length} bytes`); // 1088 bytes
+console.log(
+  `Secreto compartido (K)     : 0x${Buffer.from(encapsulacion.sharedSecret).toString("hex")}`,
+);
+
+// 3. Decapsulación con clave secreta (receptor / Bob)
+const decapsulacion = kem.decapsulate(parClaves.decapsulationKey, encapsulacion.ciphertext);
+console.log(`¿Texto cifrado auténtico?  : ${decapsulacion.valid}`); // true
+console.log(
+  `¿Coincidencia de secretos? : ${Buffer.from(encapsulacion.sharedSecret).equals(Buffer.from(decapsulacion.sharedSecret))}`,
+); // true
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -1081,6 +1111,10 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs kzg:open [--coeffs=C] [--point=z]`   | Generación de prueba de apertura q(x) = (p(x)-v)/(x-z) (SPEC-220).                         |
 | `node bin/eos.mjs kzg:verify [--coeffs=C] [--point=z]` | Verificación no interactiva O(1) de prueba de evaluación KZG (SPEC-220).                   |
 | `node bin/eos.mjs kzg:batch [--points=Z]`              | Prueba y verificación por lotes multi-punto con polinomio anulador (SPEC-220).             |
+| `node bin/eos.mjs ml-kem:keygen [--json]`              | Genera par de claves post-cuánticas ML-KEM-768 (NIST FIPS 203 / SPEC-221).                 |
+| `node bin/eos.mjs ml-kem:encaps [--ek=EK]`             | Encapsula secreto compartido de 32B y emite texto cifrado de 1088B (SPEC-221).             |
+| `node bin/eos.mjs ml-kem:decaps [--dk=DK] [--ct=CT]`   | Decapsula con rechazo implícito determinista constante ante falsificaciones (SPEC-221).    |
+| `node bin/eos.mjs ml-kem:benchmark [--iterations=N]`   | Benchmark de operaciones post-cuánticas por segundo (>1000 ops/sec) (SPEC-221).            |
 | `node bin/eos.mjs metrics`                             | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                  | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`                 | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |

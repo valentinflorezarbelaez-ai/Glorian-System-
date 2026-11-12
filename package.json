@@ -45,6 +45,8 @@
     "./smt": "./src/core/eosSparseMerkleTreeCore.ts",
     "./frost": "./src/core/eosFrostThresholdSignatureCore.ts",
     "./kzg": "./src/core/eosKzgPolynomialCommitmentCore.ts",
+    "./ml-kem": "./src/core/eosPostQuantumMlKemCore.ts",
+    "./pqc": "./src/core/eosPostQuantumMlKemCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

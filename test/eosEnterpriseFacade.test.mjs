@@ -772,5 +772,19 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     const kzgVerify = callFacade({ action: "kzg_verify", coeffs: [7, 5, 2, 3], point: 4 });
     assert.equal(kzgVerify.action, "kzg_verify");
     assert.equal(kzgVerify.valid, true);
+
+    // 33. ml_kem_keygen, ml_kem_encaps & ml_kem_decaps (SPEC-221)
+    const mlKeyGen = callFacade({ action: "ml_kem_keygen" });
+    assert.equal(mlKeyGen.action, "ml_kem_keygen");
+    assert.equal(mlKeyGen.algorithm, "ML-KEM-768");
+    const mlEncaps = callFacade({ action: "ml_kem_encaps", ek: mlKeyGen.encapsulationKeyHex });
+    assert.equal(mlEncaps.action, "ml_kem_encaps");
+    const mlDecaps = callFacade({
+      action: "ml_kem_decaps",
+      dk: mlKeyGen.decapsulationKeyHex,
+      ct: mlEncaps.ciphertextHex,
+    });
+    assert.equal(mlDecaps.action, "ml_kem_decaps");
+    assert.equal(mlDecaps.valid, true);
   });
 });
