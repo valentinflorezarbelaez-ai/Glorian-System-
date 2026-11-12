@@ -351,3 +351,12 @@ export type {
   TrieProof,
   TrieStats,
 } from "./eosMerklePatriciaTrieCore.types.ts";
+export { EosTimeLockPuzzleCore, SLOTH_SECP256K1_PRIME, STANDARD_RSW_TRAPDOOR } from "./eosTimeLockPuzzleCore.ts";
+export type {
+  TimeLockTrapdoor,
+  TimeLockPuzzle,
+  PuzzleSolution,
+  SlothPuzzle,
+  SlothSolution,
+  CheckpointVerificationResult,
+} from "./eosTimeLockPuzzleCore.types.ts";

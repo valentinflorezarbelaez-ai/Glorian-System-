@@ -1294,6 +1294,40 @@ console.log(`Valor verificado: "${verifiedValue?.toString("utf8")}"`);
 
 ---
 
+### Módulo 45: Motor de Rompecabezas Criptográfico de Bloqueo Temporal (`EosTimeLockPuzzleCore`)
+
+**Propósito:** Cifrado de liberación temporal demostrable (Timed-Release Cryptography) que garantiza que un secreto no pueda ser descifrado antes de que transcurran $T$ operaciones de cómputo intrínsecamente secuenciales, no paralelizables en hardware distribuido (`SPEC-230` / `CHANGE-115`). Combina el esquema clásico de Rivest-Shamir-Wagner (RSW96) con atajo de trampa algebraico en $O(\log T)$ para el creador ($e = 2^T \pmod{\phi(N)}$), encapsulamiento autenticado AES-256-GCM, la permutación de raíz cuadrada modular de Sloth ($p \equiv 3 \pmod 4$) con verificación rápida en $O(\log T)$, y muestreo de puntos de control (_checkpoints_) verificables en tiempo constante.
+
+```ts
+import { EosTimeLockPuzzleCore } from "./src/core/eosTimeLockPuzzleCore.ts";
+
+// 1. Crear un rompecabezas de bloqueo temporal con atajo de trampa (en < 5ms)
+const secret = "Clave Soberana de Custodia (Liberación Programada)";
+const difficultyT = 10000; // 10,000 cuadraturas secuenciales mod N
+const puzzle = EosTimeLockPuzzleCore.createPuzzle(secret, difficultyT);
+
+console.log(`Rompecabezas creado: T = ${puzzle.difficultyT} cuadraturas`);
+console.log(`Módulo RSA N: ${puzzle.modulusHex.slice(0, 32)}...`);
+
+// 2. Resolver el rompecabezas secuencialmente sin la trampa
+const solution = EosTimeLockPuzzleCore.solvePuzzle(puzzle);
+console.log(`Secreto descifrado: "${solution.plaintext}"`);
+console.log(`Tiempo de resolución: ${solution.elapsedMs} ms`);
+
+// 3. Permutación de bloqueo temporal Sloth (raíz cuadrada modular)
+const sloth = EosTimeLockPuzzleCore.createSlothPuzzle("Payload-Sloth", 50);
+const slothSol = EosTimeLockPuzzleCore.solveSlothPuzzle(sloth);
+const valid = EosTimeLockPuzzleCore.verifySloth(
+  sloth.primeHex,
+  sloth.inputHex,
+  slothSol.outputHex,
+  50,
+);
+console.log(`Verificación Sloth en O(log T): ${valid ? "VÁLIDA" : "RECHAZADA"}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -1389,6 +1423,9 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs trie:demo`                           | Demostración de compresión de prefijos MPT, cálculo de raíz y verificación de pruebas (SPEC-229).  |
 | `node bin/eos.mjs trie:prove [key]`                    | Genera prueba criptográfica Merkle RLP para una clave de estado dada (SPEC-229).                   |
 | `node bin/eos.mjs trie:verify [key]`                   | Verifica independientemente una prueba de estado Merkle contra la raíz (SPEC-229).                 |
+| `node bin/eos.mjs timelock:demo`                       | Demostración completa de rompecabezas temporal RSW96, checkpoints y Sloth VDF (SPEC-230).          |
+| `node bin/eos.mjs timelock:create [msg]`               | Genera un rompecabezas de bloqueo temporal cifrado con trampa en O(log T) (SPEC-230).              |
+| `node bin/eos.mjs timelock:solve`                      | Resuelve secuencialmente un rompecabezas temporal y recupera el secreto autenticado (SPEC-230).    |
 | `node bin/eos.mjs metrics`                             | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                              |
 | `node bin/eos.mjs guard [directorio]`                  | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                        |
 | `node bin/eos.mjs flow inspect <ruta>`                 | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.          |

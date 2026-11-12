@@ -17,6 +17,7 @@ import { EosOtlpDistributedTracingCore } from "../../core/eosOtlpDistributedTrac
 import { EosPostQuantumMlDsaCore } from "../../core/eosPostQuantumMlDsaCore.ts";
 import { EosAdaptiveCongestionRateLimiterCore } from "../../core/eosAdaptiveCongestionRateLimiterCore.ts";
 import { EosMerklePatriciaTrieCore } from "../../core/eosMerklePatriciaTrieCore.ts";
+import { EosTimeLockPuzzleCore } from "../../core/eosTimeLockPuzzleCore.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
@@ -573,6 +574,30 @@ export function dispatchPhase7FrontierActionExt(
       key,
       valid: verified !== null,
       recoveredValue: verified ? verified.toString("utf8") : null,
+    };
+  }
+  if (action === "timelock_create") {
+    const message = typeof args?.message === "string" ? args.message : "mcp-timelock-secret";
+    const difficultyT = typeof args?.difficultyT === "number" ? args.difficultyT : 1000;
+    const puzzle = EosTimeLockPuzzleCore.createPuzzle(message, difficultyT);
+    return {
+      action: "timelock_create",
+      difficultyT: puzzle.difficultyT,
+      modulusHex: puzzle.modulusHex,
+      ciphertextHex: puzzle.ciphertextHex,
+      authTagHex: puzzle.authTagHex,
+    };
+  }
+  if (action === "timelock_solve") {
+    const message = typeof args?.message === "string" ? args.message : "mcp-timelock-secret";
+    const difficultyT = typeof args?.difficultyT === "number" ? args.difficultyT : 500;
+    const puzzle = EosTimeLockPuzzleCore.createPuzzle(message, difficultyT);
+    const solution = EosTimeLockPuzzleCore.solvePuzzle(puzzle);
+    return {
+      action: "timelock_solve",
+      plaintext: solution.plaintext,
+      difficultyT: solution.squaringsPerformed,
+      keyHex: solution.keyHex,
     };
   }
   return undefined;

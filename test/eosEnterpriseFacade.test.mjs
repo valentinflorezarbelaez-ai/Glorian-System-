@@ -829,5 +829,17 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(mptVerify.action, "mpt_verify");
     assert.equal(mptVerify.valid, true);
     assert.equal(mptVerify.recoveredValue, "facade-state-val");
+
+    // 42. timelock_create & timelock_solve (SPEC-230)
+    const tlCreate = callFacade({ action: "timelock_create", message: "facade-timelock-secret", difficultyT: 1000 });
+    assert.equal(tlCreate.action, "timelock_create");
+    assert.equal(tlCreate.difficultyT, 1000);
+    assert.ok(tlCreate.modulusHex.length > 0);
+    assert.ok(tlCreate.authTagHex.length === 32);
+    const tlSolve = callFacade({ action: "timelock_solve", message: "facade-timelock-secret", difficultyT: 500 });
+    assert.equal(tlSolve.action, "timelock_solve");
+    assert.equal(tlSolve.plaintext, "facade-timelock-secret");
+    assert.equal(tlSolve.difficultyT, 500);
+    assert.ok(tlSolve.keyHex.length === 64);
   });
 });

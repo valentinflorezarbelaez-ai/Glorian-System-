@@ -671,6 +671,7 @@ import { handleOtlpCommands } from "./cliOtlpMesh.mjs";
 import { handleMlDsaCommands } from "./cliMlDsaMesh.mjs";
 import { handleCongestionCommands } from "./cliCongestionMesh.mjs";
 import { handleTrieCommands } from "./cliTrieMesh.mjs";
+import { handleTimeLockCommands } from "./cliTimeLockMesh.mjs";
 
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
@@ -696,5 +697,6 @@ export async function handlePlatformCommands(commandContext) {
   if (await handleMlDsaCommands(commandContext.command, commandContext)) return true;
   if (await handleCongestionCommands(commandContext.command, commandContext)) return true;
   if (await handleTrieCommands(commandContext.command, commandContext)) return true;
+  if (await handleTimeLockCommands(commandContext.command, commandContext)) return true;
   return false;
 }

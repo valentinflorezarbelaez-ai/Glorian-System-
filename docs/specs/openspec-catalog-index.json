@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 224,
-  "catalogSha256": "3a51630db96b10cfec6a0f69f68e43180b5a930f47fc876e54458aa32da0b6f4",
+  "totalSpecs": 225,
+  "catalogSha256": "f8aeadacc8caba0f777e432a73ccb4f56f6f5dd53ac81275ea6d0c7aec35a0be",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2017,7 +2017,16 @@
       "frCount": 1,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-229-MERKLE-PATRICIA-TRIE.md",
-      "sha256": "bcec11ee0972fccb0825cc76ecb8c76dbcaaf58e44ce08ca26d56cb6e3c26af5"
+      "sha256": "8a77d187e4891c91e76a21b9d13e9613d381b10c85246bd56811a334af7816fb"
+    },
+    {
+      "id": "SPEC-230",
+      "title": "— Layer-0 Cryptographic Time-Lock Puzzle Engine (RSW96 & Sloth)",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-230-TIME-LOCK-PUZZLE.md",
+      "sha256": "27c5adce023b0fa25bc6d6cb6c77ad59de2132715f72bc37fe135651923b6215"
     }
   ]
 }

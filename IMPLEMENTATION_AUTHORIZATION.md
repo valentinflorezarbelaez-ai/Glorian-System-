@@ -1955,3 +1955,27 @@
   - `docs/plans/PLAN-114-MERKLE-PATRICIA-TRIE.md`
   - `docs/tasks/TASKS-114-MERKLE-PATRICIA-TRIE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-12-TIME-LOCK-PUZZLE-230
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Cryptographic Time-Lock Puzzle Engine (RSW96 & Sloth) (`SPEC-230`, `CHANGE-115`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: "dale con toda")
+- **Scope**:
+  1. Implement Layer-0 Time-Lock Puzzle types in `src/core/eosTimeLockPuzzleCore.types.ts`.
+  2. Implement Layer-0 Time-Lock Puzzle Core (RSW96, Sloth, checkpoints, AES-256-GCM) in `src/core/eosTimeLockPuzzleCore.ts`.
+  3. Subpath exports `"./timelock"` and `"./vdf-lock"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian timelock:create`, `glorian timelock:solve`, `glorian timelock:demo` in `bin/commands/cliTimeLockMesh.mjs` and `bin/commands/cliPlatform.mjs`.
+  6. Wire MCP actions `action: "timelock_create"`, `action: "timelock_solve"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosTimeLockPuzzleCore.test.mjs` (BDD-1169..BDD-1173).
+  8. Add test step #42 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Module 45 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 225 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-115-TIME-LOCK-PUZZLE.md`
+  - `openspec/changes/CHANGE-115-TIME-LOCK-PUZZLE.md`
+  - `openspec/specs/SPEC-230-TIME-LOCK-PUZZLE.md`
+  - `docs/plans/PLAN-115-TIME-LOCK-PUZZLE.md`
+  - `docs/tasks/TASKS-115-TIME-LOCK-PUZZLE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
