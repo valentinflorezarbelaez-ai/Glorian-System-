@@ -1217,6 +1217,52 @@ console.log(`Firma Híbrida Válida  : ${hybridValid ? "SÍ" : "NO"}`);
 
 ---
 
+### Módulo 43: Motor de Control de Congestión Adaptativo AIMD (`EosAdaptiveCongestionRateLimiterCore`)
+
+**Propósito:** Limitador de tasa y admisión consciente de latencia en bucle cerrado que combina Token Bucket clásico con Ventana de Congestión AIMD (Additive Increase / Multiplicative Decrease inspirada en TCP) y estimador de latencia P99 de histograma HDR deslizante (`SPEC-228` / `CHANGE-113`). Governa la admisión bajo 3 señales inequívocas (`ADMIT`, `THROTTLE`, `REJECT`), limitando el volumen concurrente en vuelo (`inFlight < cwnd`) de forma desacoplada de la tasa de recarga de tokens. Al completarse cada solicitud con su latencia observada, la ventana `cwnd` decrece multiplicativamente si $P99 \ge \text{threshold}$ o se expande aditivamente si la latencia es nominal, convergiendo automáticamente sin intervención humana y garantizando cero dependencias externas de runtime.
+
+```ts
+import { EosAdaptiveCongestionRateLimiterCore } from "./src/core/eosAdaptiveCongestionRateLimiterCore.ts";
+
+// 1. Instanciar limitador con control AIMD y umbral P99
+const limiter = new EosAdaptiveCongestionRateLimiterCore({
+  capacity: 50, // Capacidad máxima de ráfaga
+  refillRate: 20, // Tasa de reposición (tokens/segundo)
+  initialCwnd: 20, // Ventana inicial de congestión
+  minCwnd: 2, // Piso de seguridad de cwnd
+  maxCwnd: 100, // Techo de concurrencia de cwnd
+  alpha: 1, // Incremento aditivo (+1 por muestra nominal)
+  beta: 0.5, // Decremento multiplicativo (50% en congestión)
+  latencyThresholdMs: 50, // Umbral P99 en milisegundos
+  windowMs: 10000, // Ventana deslizante de 10 segundos
+});
+
+// 2. Evaluar admisión antes de procesar una solicitud
+const admission = limiter.admit();
+if (admission.decision === "ADMIT") {
+  const startTime = Date.now();
+  try {
+    // Procesar carga de trabajo...
+  } finally {
+    const elapsedMs = Date.now() - startTime;
+    // 3. Notificar completitud con latencia observada para retroalimentación AIMD
+    limiter.complete(elapsedMs);
+  }
+} else if (admission.decision === "THROTTLE") {
+  console.warn("Solicitud throttled: ventana de congestión saturada");
+} else {
+  console.error("Solicitud rechazada: bucket de tokens agotado");
+}
+
+// 4. Consultar telemetría e histograma P99
+const stats = limiter.stats();
+console.log(
+  `Estado cwnd: ${stats.cwnd}, P99: ${stats.p99LatencyMs} ms, En vuelo: ${stats.inFlight}`,
+);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -1306,6 +1352,9 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs ml-dsa:keygen`                       | Generación de par de claves post-cuánticas de retículos NIST FIPS 204 ML-DSA-65 (SPEC-227).        |
 | `node bin/eos.mjs ml-dsa:sign [msg]`                   | Firma digital de mensajes con esquema Fiat-Shamir con Abortos en categoría 3 (SPEC-227).           |
 | `node bin/eos.mjs ml-dsa:verify [msg]`                 | Verificación determinista en tiempo constante y reconstrucción de pistas de bits altos (SPEC-227). |
+| `node bin/eos.mjs congestion:demo`                     | Simula carga de trabajo con picos de latencia demostrando retroalimentación AIMD (SPEC-228).       |
+| `node bin/eos.mjs congestion:admit`                    | Evalúa la admisión de una solicitud y reporta tokens y ventana cwnd (SPEC-228).                    |
+| `node bin/eos.mjs congestion:stats`                    | Reporta telemetría de capacidad, cwnd, solicitudes en vuelo y latencia P99 (SPEC-228).             |
 | `node bin/eos.mjs metrics`                             | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                              |
 | `node bin/eos.mjs guard [directorio]`                  | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                        |
 | `node bin/eos.mjs flow inspect <ruta>`                 | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.          |

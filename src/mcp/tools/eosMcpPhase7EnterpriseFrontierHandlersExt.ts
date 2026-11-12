@@ -15,6 +15,7 @@ import { EosQuantizedTensorInferenceCore } from "../../core/eosQuantizedTensorIn
 import { EosUniversalFleetSyncCore } from "../../core/eosUniversalFleetSyncCore.ts";
 import { EosOtlpDistributedTracingCore } from "../../core/eosOtlpDistributedTracingCore.ts";
 import { EosPostQuantumMlDsaCore } from "../../core/eosPostQuantumMlDsaCore.ts";
+import { EosAdaptiveCongestionRateLimiterCore } from "../../core/eosAdaptiveCongestionRateLimiterCore.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
@@ -506,6 +507,30 @@ export function dispatchPhase7FrontierActionExt(
       algorithm: "ML-DSA-65",
       message,
       valid,
+    };
+  }
+  if (action === "congestion_admit") {
+    const capacity = typeof args?.capacity === "number" ? args.capacity : 10;
+    const refillRate = typeof args?.refillRate === "number" ? args.refillRate : 5;
+    const limiter = new EosAdaptiveCongestionRateLimiterCore({ capacity, refillRate });
+    const res = limiter.admit();
+    return {
+      action: "congestion_admit",
+      decision: res.decision,
+      allowed: res.allowed,
+      availableTokens: res.availableTokens,
+      inFlight: res.inFlight,
+      cwnd: res.cwnd,
+    };
+  }
+  if (action === "congestion_stats") {
+    const capacity = typeof args?.capacity === "number" ? args.capacity : 20;
+    const refillRate = typeof args?.refillRate === "number" ? args.refillRate : 10;
+    const limiter = new EosAdaptiveCongestionRateLimiterCore({ capacity, refillRate });
+    const stats = limiter.stats();
+    return {
+      action: "congestion_stats",
+      stats,
     };
   }
   return undefined;

@@ -803,5 +803,17 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     const dsaVerify = callFacade({ action: "ml_dsa_verify", message: "facade-dsa-test" });
     assert.equal(dsaVerify.action, "ml_dsa_verify");
     assert.equal(dsaVerify.valid, true);
+
+    // 40. congestion_admit & congestion_stats (SPEC-228)
+    const congAdmit = callFacade({ action: "congestion_admit", capacity: 10, refillRate: 5 });
+    assert.equal(congAdmit.action, "congestion_admit");
+    assert.equal(congAdmit.decision, "ADMIT");
+    assert.equal(congAdmit.allowed, true);
+    assert.equal(congAdmit.availableTokens, 9);
+    assert.equal(congAdmit.inFlight, 1);
+    const congStats = callFacade({ action: "congestion_stats", capacity: 20, refillRate: 10 });
+    assert.equal(congStats.action, "congestion_stats");
+    assert.equal(congStats.stats.capacity, 20);
+    assert.equal(congStats.stats.refillRate, 10);
   });
 });

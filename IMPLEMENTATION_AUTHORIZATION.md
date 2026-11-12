@@ -1907,3 +1907,27 @@
   - `docs/plans/PLAN-112-POST-QUANTUM-ML-DSA.md`
   - `docs/tasks/TASKS-112-POST-QUANTUM-ML-DSA.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-12-ADAPTIVE-CONGESTION-RATE-LIMITER-228
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Adaptive AIMD Congestion Control Rate Limiter with P99 Latency Feedback Loop (`SPEC-228`, `CHANGE-113`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: "continua")
+- **Scope**:
+  1. Implement Layer-0 Adaptive Congestion Rate Limiter types in `src/core/eosAdaptiveCongestionRateLimiterCore.types.ts`.
+  2. Implement Layer-0 Adaptive Congestion Rate Limiter Core in `src/core/eosAdaptiveCongestionRateLimiterCore.ts`.
+  3. Subpath exports `"./congestion"` and `"./rate-limiter"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian congestion:admit`, `glorian congestion:complete`, `glorian congestion:stats` in `bin/commands/cliCongestionMesh.mjs` and `bin/commands/cliPlatform.mjs`.
+  6. Wire MCP actions `action: "congestion_admit"`, `action: "congestion_complete"`, `action: "congestion_stats"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosAdaptiveCongestionRateLimiterCore.test.mjs` (BDD-1159..BDD-1163).
+  8. Add test step #40 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Module 43 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 223 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-113-ADAPTIVE-CONGESTION-RATE-LIMITER.md`
+  - `openspec/changes/CHANGE-113-ADAPTIVE-CONGESTION-RATE-LIMITER.md`
+  - `openspec/specs/SPEC-228-ADAPTIVE-CONGESTION-RATE-LIMITER.md`
+  - `docs/plans/PLAN-113-ADAPTIVE-CONGESTION-RATE-LIMITER.md`
+  - `docs/tasks/TASKS-113-ADAPTIVE-CONGESTION-RATE-LIMITER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

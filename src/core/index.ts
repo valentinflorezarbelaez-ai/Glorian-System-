@@ -331,3 +331,10 @@ export type {
   HybridMlDsaKeyPair,
   HybridMlDsaSignature,
 } from "./eosPostQuantumMlDsaCore.types.ts";
+export { EosAdaptiveCongestionRateLimiterCore, SlidingHdrHistogram } from "./eosAdaptiveCongestionRateLimiterCore.ts";
+export type {
+  AdaptiveCongestionConfig,
+  AdmissionDecision,
+  AdmissionResult,
+  RateLimiterStats,
+} from "./eosAdaptiveCongestionRateLimiterCore.types.ts";

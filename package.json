@@ -56,6 +56,8 @@
     "./trace": "./src/core/eosOtlpDistributedTracingCore.ts",
     "./ml-dsa": "./src/core/eosPostQuantumMlDsaCore.ts",
     "./dsa": "./src/core/eosPostQuantumMlDsaCore.ts",
+    "./congestion": "./src/core/eosAdaptiveCongestionRateLimiterCore.ts",
+    "./rate-limiter": "./src/core/eosAdaptiveCongestionRateLimiterCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

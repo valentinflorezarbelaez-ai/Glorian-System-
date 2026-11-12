@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 222,
-  "catalogSha256": "f3d0d8b26ea38c7da9d24cb927493c7a34f4d2b295388e5b0cd75c8e5adaae38",
+  "totalSpecs": 223,
+  "catalogSha256": "f978c35886bb69333afba2a6dd5faf5ea7e10594fc51718d676b0bc309dd59f9",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1999,7 +1999,16 @@
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-227-POST-QUANTUM-ML-DSA.md",
-      "sha256": "76a8825a686afab7480df0aa18f6499d0b4d90a3211f45ae14fa72499ee0a310"
+      "sha256": "6b524d977d888b95b237910bb4833a4c2e4fa0ac9c785b00fca9e8217386f7a6"
+    },
+    {
+      "id": "SPEC-228",
+      "title": "— Layer-0 Adaptive AIMD Congestion Control Rate Limiter with P99 Latency Feedback Loop",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-228-ADAPTIVE-CONGESTION-RATE-LIMITER.md",
+      "sha256": "8140493631592ab6ee852e53d52562b3df9786840d1d086e1a3c216a6fabc535"
     }
   ]
 }
