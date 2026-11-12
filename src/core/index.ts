@@ -251,3 +251,36 @@ export type {
   BulletproofsReceipt,
   BulletproofsBenchmarkResult,
 } from "./eosBulletproofsRangeProofCore.types.ts";
+export { EosHotStuffConsensusEngine, HOTSTUFF_GENESIS_HASH } from "./eosHotStuffConsensusEngine.ts";
+export type {
+  HotStuffNodeId,
+  HotStuffView,
+  HotStuffPhase,
+  HotStuffQuorumCertificate,
+  HotStuffBlock,
+  HotStuffVote,
+  HotStuffCommitResult,
+  HotStuffSlashingReceipt,
+  HotStuffOperationType,
+  HotStuffReceipt,
+  HotStuffEngineStatus,
+  HotStuffEngineOptions,
+} from "./eosHotStuffConsensusEngine.types.ts";
+export {
+  EosQuantizedTensorInferenceCore,
+  GGUF_MAGIC,
+  GGUF_VERSION,
+  floatToFp16,
+  fp16ToFloat,
+} from "./eosQuantizedTensorInferenceCore.ts";
+export type {
+  GgmlType,
+  GgufTensorDescriptor,
+  QuantizedTensor,
+  GgufContainer,
+  MatMulResult,
+  EmbeddingResult,
+  TensorOperationType,
+  TensorReceipt,
+  TensorBenchmarkResult,
+} from "./eosQuantizedTensorInferenceCore.types.ts";

@@ -1785,3 +1785,51 @@
   - `docs/plans/PLAN-107-BULLETPROOFS-RANGE-PROOFS.md`
   - `docs/tasks/TASKS-107-BULLETPROOFS-RANGE-PROOFS.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-HOTSTUFF-BFT-CONSENSUS-223
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 HotStuff Pipelined BFT Consensus Core (`SPEC-223`, `CHANGE-108`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: "uno a uno pero en orden")
+- **Scope**:
+  1. Implement Layer-0 HotStuff types in `src/core/eosHotStuffConsensusEngine.types.ts`.
+  2. Implement Layer-0 HotStuff Consensus Engine in `src/core/eosHotStuffConsensusEngine.ts`.
+  3. Subpath export `"./hotstuff"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian hotstuff:propose`, `glorian hotstuff:vote`, `glorian hotstuff:status` in `bin/commands/cliHotStuffMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "hotstuff_propose"`, `action: "hotstuff_vote"`, `action: "hotstuff_status"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosHotStuffConsensusEngine.test.mjs` (BDD-1134..BDD-1138).
+  8. Add test step #35 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 38 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 218 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-108-HOTSTUFF-BFT-CONSENSUS.md`
+  - `openspec/changes/CHANGE-108-HOTSTUFF-BFT-CONSENSUS.md`
+  - `openspec/specs/SPEC-223-HOTSTUFF-BFT-CONSENSUS.md`
+  - `docs/plans/PLAN-108-HOTSTUFF-BFT-CONSENSUS.md`
+  - `docs/tasks/TASKS-108-HOTSTUFF-BFT-CONSENSUS.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-11-QUANTIZED-TENSOR-INFERENCE-224
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Quantized GGUF/Q4_K Integer Tensor Inference Core (`SPEC-224`, `CHANGE-109`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: "uno a uno pero en orden")
+- **Scope**:
+  1. Implement Layer-0 Quantized Tensor types in `src/core/eosQuantizedTensorInferenceCore.types.ts`.
+  2. Implement Layer-0 Quantized Tensor Inference Engine in `src/core/eosQuantizedTensorInferenceCore.ts`.
+  3. Subpath export `"./tensor"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian tensor:quantize`, `glorian tensor:matmul`, `glorian tensor:embed`, `glorian tensor:benchmark` in `bin/commands/cliTensorMesh.mjs` and `bin/commands/cliKernel.mjs`.
+  6. Wire MCP actions `action: "tensor_quantize"`, `action: "tensor_matmul"`, `action: "tensor_embed"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosQuantizedTensorInferenceCore.test.mjs` (BDD-1139..BDD-1143).
+  8. Add test step #36 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Módulo 39 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 219 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-109-QUANTIZED-TENSOR-INFERENCE.md`
+  - `openspec/changes/CHANGE-109-QUANTIZED-TENSOR-INFERENCE.md`
+  - `openspec/specs/SPEC-224-QUANTIZED-TENSOR-INFERENCE.md`
+  - `docs/plans/PLAN-109-QUANTIZED-TENSOR-INFERENCE.md`
+  - `docs/tasks/TASKS-109-QUANTIZED-TENSOR-INFERENCE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

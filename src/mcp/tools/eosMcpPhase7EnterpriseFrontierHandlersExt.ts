@@ -10,6 +10,8 @@ import { EosFrostThresholdSignatureCore } from "../../core/eosFrostThresholdSign
 import { EosKzgPolynomialCommitmentCore } from "../../core/eosKzgPolynomialCommitmentCore.ts";
 import { EosPostQuantumMlKemCore } from "../../core/eosPostQuantumMlKemCore.ts";
 import { EosBulletproofsRangeProofCore } from "../../core/eosBulletproofsRangeProofCore.ts";
+import { EosHotStuffConsensusEngine } from "../../core/eosHotStuffConsensusEngine.ts";
+import { EosQuantizedTensorInferenceCore } from "../../core/eosQuantizedTensorInferenceCore.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
@@ -302,6 +304,109 @@ export function dispatchPhase7FrontierActionExt(
       bitLength: result.bitLength,
       verificationTimeMs: result.verificationTimeMs,
       receipt: result.receipt,
+    };
+  }
+  if (action === "hotstuff_propose") {
+    const cluster = Array.isArray(args?.cluster) ? args.cluster : ["node-1", "node-2", "node-3", "node-4"];
+    const nodeId = typeof args?.node === "string" ? args.node : cluster[0];
+    const engine = new EosHotStuffConsensusEngine(nodeId, cluster);
+    const payload = args?.payload ?? { task: "mcp_state_sync", ts: Date.now() };
+    const block = engine.createProposal(payload);
+    return {
+      action: "hotstuff_propose",
+      algorithm: "HotStuff Pipelined BFT",
+      nodeId: engine.nodeId,
+      currentView: engine.currentView,
+      isLeader: engine.isLeader(),
+      blockHash: block.hash,
+      parentHash: block.parentHash,
+      justifyView: block.justify.view,
+    };
+  }
+  if (action === "hotstuff_vote") {
+    const cluster = Array.isArray(args?.cluster) ? args.cluster : ["node-1", "node-2", "node-3", "node-4"];
+    const nodeId = typeof args?.node === "string" ? args.node : cluster[0];
+    const engine = new EosHotStuffConsensusEngine(nodeId, cluster);
+    const proposal = engine.createProposal(args?.payload ?? { tx: "mcp-vote-tx" });
+    const vote = engine.vote(proposal);
+    return {
+      action: "hotstuff_vote",
+      algorithm: "HotStuff Pipelined BFT",
+      voter: vote?.voter,
+      view: vote?.view,
+      blockHash: vote?.blockHash,
+      accepted: vote !== null,
+    };
+  }
+  if (action === "hotstuff_status") {
+    const cluster = Array.isArray(args?.cluster) ? args.cluster : ["node-1", "node-2", "node-3", "node-4"];
+    const nodeId = typeof args?.node === "string" ? args.node : cluster[0];
+    const engine = new EosHotStuffConsensusEngine(nodeId, cluster);
+    const status = engine.getStatus();
+    return {
+      action: "hotstuff_status",
+      nodeId: status.nodeId,
+      currentView: status.currentView,
+      currentLeader: status.currentLeader,
+      highQcView: status.highQC.view,
+      lockedQcView: status.lockedQC.view,
+      committedCount: status.committedCount,
+      quorumSize: status.quorumSize,
+      receipt: status.receipt,
+    };
+  }
+  if (action === "tensor_quantize") {
+    const format = typeof args?.type === "string" ? args.type.toUpperCase() : "Q4_0";
+    const size = typeof args?.size === "number" ? args.size : 256;
+    const weights = new Float32Array(size);
+    for (let i = 0; i < size; i++) weights[i] = Math.sin(i * 0.1);
+    const qData =
+      format === "Q8_0"
+        ? EosQuantizedTensorInferenceCore.quantizeQ8_0(weights)
+        : format === "Q4_K"
+          ? EosQuantizedTensorInferenceCore.quantizeQ4_K(weights)
+          : EosQuantizedTensorInferenceCore.quantizeQ4_0(weights);
+    return {
+      action: "tensor_quantize",
+      format,
+      elements: size,
+      quantizedBytes: qData.byteLength,
+      compressionRatio: `${(weights.byteLength / qData.byteLength).toFixed(2)}x`,
+    };
+  }
+  if (action === "tensor_matmul") {
+    const rows = typeof args?.rows === "number" ? args.rows : 64;
+    const cols = typeof args?.cols === "number" ? args.cols : 128;
+    const format = typeof args?.type === "string" ? args.type.toUpperCase() : "Q4_0";
+    const mat = new Float32Array(rows * cols);
+    for (let i = 0; i < mat.length; i++) mat[i] = Math.cos(i * 0.05);
+    const x = new Float32Array(cols);
+    for (let i = 0; i < cols; i++) x[i] = 1.0;
+    const qMat = EosQuantizedTensorInferenceCore.quantizeQ4_0(mat);
+    const y = EosQuantizedTensorInferenceCore.quantizedMatMulVec(qMat, x, rows, cols, format as any);
+    return {
+      action: "tensor_matmul",
+      format,
+      rows,
+      cols,
+      outputLength: y.length,
+      sampleSum: Array.from(y.slice(0, 3)),
+    };
+  }
+  if (action === "tensor_embed") {
+    const text = typeof args?.text === "string" ? args.text : "Glorian sovereign tensor";
+    const dims = typeof args?.dims === "number" ? args.dims : 64;
+    const projMat = new Float32Array(dims * (dims * 2));
+    for (let i = 0; i < projMat.length; i++) projMat[i] = Math.sin(i * 0.13);
+    const qProj = EosQuantizedTensorInferenceCore.quantizeQ4_0(projMat);
+    const res = EosQuantizedTensorInferenceCore.embedText(text, qProj, dims);
+    return {
+      action: "tensor_embed",
+      text: res.text,
+      dimensions: res.dimensions,
+      norm: res.norm,
+      durationMs: res.durationMs,
+      receipt: res.receipt,
     };
   }
   return undefined;

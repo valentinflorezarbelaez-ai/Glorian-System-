@@ -1065,6 +1065,60 @@ console.log(`¿Prueba válida y sana?: ${verificacion.valid}`); // true
 console.log(`Tiempo de verificación: ${verificacion.verificationTimeMs} ms`);
 ```
 
+### Módulo 38: Motor de Consenso BFT Pipelined HotStuff (`EosHotStuffConsensusEngine`)
+
+**Propósito:** Consenso tolerante a fallas bizantinas ($f < n/3$) con complejidad de cambio de vista lineal $O(n)$ y regla de confirmación de 3 cadenas encadenadas (3-chain commit rule) según Yin et al. (SPEC-223 / CHANGE-108). Supera las limitaciones de PBFT ($O(n^2)$ en cambio de vista) al centralizar la agregación en Certificados de Quórum (QC) compactos. Cada propuesta de bloque actúa simultáneamente como fase Prepare para la vista actual, Pre-commit para la vista previa y Commit para dos vistas anteriores, alcanzando finalidad irrevocablemente en 3 vistas consecutivas sin difusión cuadrática.
+
+```ts
+import { EosHotStuffConsensusEngine } from "./src/core/eosHotStuffConsensusEngine.ts";
+
+// 1. Instanciación del clúster de validadores
+const cluster = ["node-1", "node-2", "node-3", "node-4"];
+const engine = new EosHotStuffConsensusEngine("node-1", cluster);
+
+// 2. Propuesta de bloque con Justify QC por el líder
+const propuesta = engine.createProposal({ tx: "transfer_100_tokens" });
+console.log(`Bloque propuesto: ${propuesta.hash} en vista ${propuesta.view}`);
+
+// 3. Emisión de voto bajo predicado de seguridad y liveness
+const voto = engine.vote(propuesta);
+console.log(`Voto emitido por ${voto?.voter} para bloque ${voto?.blockHash}`);
+
+// 4. Recepción de votos y formación de Quorum Certificate (QC)
+const qc = engine.receiveVote({
+  view: 1,
+  blockHash: propuesta.hash,
+  phase: "prepare",
+  voter: "node-2",
+  signature: "sig2",
+});
+// Al recibir 2f + 1 = 3 votos, qc contiene las firmas agregadas
+```
+
+### Módulo 39: Motor de Inferencia de Tensores Enteros Cuantizados GGUF / Q4_K (`EosQuantizedTensorInferenceCore`)
+
+**Propósito:** Inferencia soberana y generación de embeddings semánticos densos directamente sobre arreglos tipados (`Uint8Array`, `Float32Array`, `DataView`) sin requerir Python, PyTorch, C++ bindings ni librerías externas (SPEC-224 / CHANGE-109). Soporta serialización y parseo binario de contenedores GGUF v3 (`0x46554747`), cuantización y descuantización de bloques Q4_0, Q8_0 y Q4_K con retención de fidelidad $>99\%$ de similitud coseno y reducción de memoria de hasta $7.1\times$. Ejecuta multiplicación de matriz-vector cuantizada directamente sobre flujos de bytes (streaming block-wise matmul) con cero reservas en heap durante el cálculo, facilitando indexación HNSW y búsqueda semántica local instantánea.
+
+```ts
+import { EosQuantizedTensorInferenceCore } from "./src/core/eosQuantizedTensorInferenceCore.ts";
+
+// 1. Cuantización de vector Float32 a bloque Q4_0 (4.5 bits por peso)
+const pesos = new Float32Array(256);
+for (let i = 0; i < 256; i++) pesos[i] = Math.sin(i * 0.1);
+const q4Bytes = EosQuantizedTensorInferenceCore.quantizeQ4_0(pesos);
+console.log(`Memoria reducida: de ${pesos.byteLength}B a ${q4Bytes.byteLength}B (7.1x compresión)`);
+
+// 2. Generación soberana de embedding de texto con RMSNorm
+const matrizProyeccion = new Float32Array(64 * 128);
+const qMatriz = EosQuantizedTensorInferenceCore.quantizeQ4_0(matrizProyeccion);
+const embedding = EosQuantizedTensorInferenceCore.embedText(
+  "Glorian post-quantum consensus",
+  qMatriz,
+  64,
+);
+console.log(`Embedding generado: [${embedding.dimensions} dimensiones, norma: ${embedding.norm}]`);
+```
+
 ---
 
 ## 4. Guía Rápida de Comandos CLI
@@ -1141,6 +1195,13 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs bp:prove [--value=V] [--m=32]`       | Genera prueba NIZK Bulletproofs acotada a [0, 2^m - 1] con doblado logarítmico (SPEC-222). |
 | `node bin/eos.mjs bp:verify [--m=32]`                  | Verifica algebraicamente la prueba NIZK sin ceremonia de confianza en <5ms (SPEC-222).     |
 | `node bin/eos.mjs bp:benchmark [--m=16]`               | Benchmark de operaciones por segundo para compromiso, prueba y verificación (SPEC-222).    |
+| `node bin/eos.mjs hotstuff:propose [--node=N]`         | Propuesta de bloque con Justify QC en consenso HotStuff BFT pipelined (SPEC-223).          |
+| `node bin/eos.mjs hotstuff:vote [--node=N]`            | Emisión de voto con predicado de seguridad y liveness en consenso HotStuff (SPEC-223).     |
+| `node bin/eos.mjs hotstuff:status [--node=N]`          | Estado de consenso HotStuff: vista, líder, High-QC, Locked-QC (SPEC-223).                  |
+| `node bin/eos.mjs tensor:quantize [--type=Q]`          | Cuantización entera Q4_0, Q8_0, Q4_K de tensores GGUF (SPEC-224).                          |
+| `node bin/eos.mjs tensor:matmul [--rows=R]`            | Multiplicación streaming de matriz cuantizada y vector sin heap allocation (SPEC-224).     |
+| `node bin/eos.mjs tensor:embed [--text=T]`             | Generación soberana de embeddings semánticos densos con RMSNorm (SPEC-224).                |
+| `node bin/eos.mjs tensor:benchmark`                    | Benchmark de rendimiento GFLOPS y tasas de cuantización por segundo (SPEC-224).            |
 | `node bin/eos.mjs metrics`                             | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                  | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`                 | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |
