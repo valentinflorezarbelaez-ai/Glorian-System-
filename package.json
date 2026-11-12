@@ -62,6 +62,8 @@
     "./trie": "./src/core/eosMerklePatriciaTrieCore.ts",
     "./timelock": "./src/core/eosTimeLockPuzzleCore.ts",
     "./vdf-lock": "./src/core/eosTimeLockPuzzleCore.ts",
+    "./cuckoo": "./src/core/eosCuckooFilterCore.ts",
+    "./filter": "./src/core/eosCuckooFilterCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

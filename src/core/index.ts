@@ -360,3 +360,10 @@ export type {
   SlothSolution,
   CheckpointVerificationResult,
 } from "./eosTimeLockPuzzleCore.types.ts";
+export { EosCuckooFilterCore } from "./eosCuckooFilterCore.ts";
+export type {
+  CuckooFilterConfig,
+  CuckooFilterStats,
+  CuckooInsertResult,
+  CuckooHashPair,
+} from "./eosCuckooFilterCore.types.ts";

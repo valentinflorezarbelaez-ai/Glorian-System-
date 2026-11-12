@@ -1328,6 +1328,38 @@ console.log(`Verificación Sloth en O(log T): ${valid ? "VÁLIDA" : "RECHAZADA"}
 
 ---
 
+### Módulo 46: Filtro Cuckoo de Membresía Dinámica y Eliminación Verificable (`EosCuckooFilterCore`)
+
+**Propósito:** Estructura de datos probabilística Layer-0 de alta eficiencia espacial con hashing Cuckoo de clave parcial ($i_2 = (i_1 \oplus \text{hash}(fp)) \pmod m$) que soporta eliminación dinámica real de elementos sin falsos negativos ni degradación del filtro (`SPEC-231` / `CHANGE-116`). Emplea cubetas acotadas de 4 ranuras ($b = 4$) con capacidad potencia de 2 para garantizar simetría e involución exacta en operaciones XOR, resolución de colisiones mediante desplazamientos recursivos (_cuckoo kicks_), y serialización binaria compacta sobre arrays tipados contiguos `Uint8Array` / `Uint16Array`.
+
+```ts
+import { EosCuckooFilterCore } from "./src/core/eosCuckooFilterCore.ts";
+
+// 1. Inicializar filtro Cuckoo de 1,000 elementos con huellas de 8 bits
+const filter = new EosCuckooFilterCore({ capacity: 1000, fingerprintBits: 8 });
+
+// 2. Inserción de elementos con desplazamientos cuckoo acotados
+filter.insert("transaccion_alpha_001");
+filter.insert("transaccion_beta_002");
+
+// 3. Verificación de membresía O(1) con cero falsos negativos
+console.log(`¿Contiene alpha?: ${filter.contains("transaccion_alpha_001")}`); // true
+console.log(`¿Contiene desconocido?: ${filter.contains("no_existe")}`); // false
+
+// 4. Eliminación dinámica real sin degradación
+filter.delete("transaccion_beta_002");
+console.log(`¿Contiene beta tras borrar?: ${filter.contains("transaccion_beta_002")}`); // false
+
+// 5. Serialización binaria instantánea (< 5ms)
+const binaryBuffer = filter.serialize();
+const restoredFilter = EosCuckooFilterCore.deserialize(binaryBuffer);
+console.log(
+  `Filtro restaurado contiene alpha: ${restoredFilter.contains("transaccion_alpha_001")}`,
+);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -1426,6 +1458,9 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs timelock:demo`                       | Demostración completa de rompecabezas temporal RSW96, checkpoints y Sloth VDF (SPEC-230).          |
 | `node bin/eos.mjs timelock:create [msg]`               | Genera un rompecabezas de bloqueo temporal cifrado con trampa en O(log T) (SPEC-230).              |
 | `node bin/eos.mjs timelock:solve`                      | Resuelve secuencialmente un rompecabezas temporal y recupera el secreto autenticado (SPEC-230).    |
+| `node bin/eos.mjs cuckoo:demo`                         | Demostración de filtro Cuckoo, inserción, eliminación y serialización binaria (SPEC-231).          |
+| `node bin/eos.mjs cuckoo:insert [clave]`               | Inserta una clave en el filtro Cuckoo y reporta desplazamientos kicks (SPEC-231).                  |
+| `node bin/eos.mjs cuckoo:query [clave]`                | Consulta membresía probabilística O(1) en el filtro Cuckoo (SPEC-231).                             |
 | `node bin/eos.mjs metrics`                             | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                              |
 | `node bin/eos.mjs guard [directorio]`                  | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                        |
 | `node bin/eos.mjs flow inspect <ruta>`                 | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.          |

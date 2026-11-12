@@ -1979,3 +1979,27 @@
   - `docs/plans/PLAN-115-TIME-LOCK-PUZZLE.md`
   - `docs/tasks/TASKS-115-TIME-LOCK-PUZZLE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-12-CUCKOO-FILTER-231
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Cuckoo Filter for Dynamic Set Membership and Verifiable Deletion (`SPEC-231`, `CHANGE-116`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: "dale con toda")
+- **Scope**:
+  1. Implement Layer-0 Cuckoo Filter types in `src/core/eosCuckooFilterCore.types.ts`.
+  2. Implement Layer-0 Cuckoo Filter Core (partial-key hashing, cuckoo kicks, 4-slot buckets, dynamic deletion, binary serialization) in `src/core/eosCuckooFilterCore.ts`.
+  3. Subpath exports `"./cuckoo"` and `"./filter"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian cuckoo:demo`, `glorian cuckoo:insert`, `glorian cuckoo:query` in `bin/commands/cliCuckooMesh.mjs` and `bin/commands/cliPlatform.mjs`.
+  6. Wire MCP actions `action: "cuckoo_insert"`, `action: "cuckoo_contains"`, `action: "cuckoo_delete"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosCuckooFilterCore.test.mjs` (BDD-1174..BDD-1178).
+  8. Add test step #43 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Module 46 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 226 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-116-CUCKOO-FILTER.md`
+  - `openspec/changes/CHANGE-116-CUCKOO-FILTER.md`
+  - `openspec/specs/SPEC-231-CUCKOO-FILTER.md`
+  - `docs/plans/PLAN-116-CUCKOO-FILTER.md`
+  - `docs/tasks/TASKS-116-CUCKOO-FILTER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

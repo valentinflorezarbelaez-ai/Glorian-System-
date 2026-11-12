@@ -841,5 +841,19 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(tlSolve.plaintext, "facade-timelock-secret");
     assert.equal(tlSolve.difficultyT, 500);
     assert.ok(tlSolve.keyHex.length === 64);
+
+    // 43. cuckoo_insert, cuckoo_contains, cuckoo_delete (SPEC-231)
+    const ckInsert = callFacade({ action: "cuckoo_insert", item: "facade-cuckoo-key", capacity: 500 });
+    assert.equal(ckInsert.action, "cuckoo_insert");
+    assert.equal(ckInsert.success, true);
+    assert.equal(ckInsert.contains, true);
+    assert.equal(ckInsert.stats.count, 1);
+    const ckContains = callFacade({ action: "cuckoo_contains", item: "facade-cuckoo-key", capacity: 500 });
+    assert.equal(ckContains.action, "cuckoo_contains");
+    assert.equal(ckContains.contains, true);
+    const ckDelete = callFacade({ action: "cuckoo_delete", item: "facade-cuckoo-key", capacity: 500 });
+    assert.equal(ckDelete.action, "cuckoo_delete");
+    assert.equal(ckDelete.deleted, true);
+    assert.equal(ckDelete.containsAfterDelete, false);
   });
 });

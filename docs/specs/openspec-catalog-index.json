@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 225,
-  "catalogSha256": "f8aeadacc8caba0f777e432a73ccb4f56f6f5dd53ac81275ea6d0c7aec35a0be",
+  "totalSpecs": 226,
+  "catalogSha256": "5d2f4a5de9e4f23f5c826eab7c0158746df8f00cad8bccada65b86d4fb1800e2",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2026,7 +2026,16 @@
       "frCount": 1,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-230-TIME-LOCK-PUZZLE.md",
-      "sha256": "27c5adce023b0fa25bc6d6cb6c77ad59de2132715f72bc37fe135651923b6215"
+      "sha256": "432831079a0cfad307199604d87d570c53206ac21f8be20e25262068b17dafc1"
+    },
+    {
+      "id": "SPEC-231",
+      "title": "— Layer-0 Cuckoo Filter for Dynamic Set Membership and Verifiable Deletion",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-231-CUCKOO-FILTER.md",
+      "sha256": "b5db5890a030f576251bedce0ba09888b44aaf6ec0ed788bd0b6936b1d933445"
     }
   ]
 }

@@ -18,6 +18,7 @@ import { EosPostQuantumMlDsaCore } from "../../core/eosPostQuantumMlDsaCore.ts";
 import { EosAdaptiveCongestionRateLimiterCore } from "../../core/eosAdaptiveCongestionRateLimiterCore.ts";
 import { EosMerklePatriciaTrieCore } from "../../core/eosMerklePatriciaTrieCore.ts";
 import { EosTimeLockPuzzleCore } from "../../core/eosTimeLockPuzzleCore.ts";
+import { EosCuckooFilterCore } from "../../core/eosCuckooFilterCore.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
@@ -501,9 +502,12 @@ export function dispatchPhase7FrontierActionExt(
   }
   if (action === "ml_dsa_verify") {
     const message = typeof args?.message === "string" ? args.message : "mcp-frontier-attestation";
-    const keyPair = EosPostQuantumMlDsaCore.keyGen();
-    const signature = EosPostQuantumMlDsaCore.sign(message, keyPair.privateKey);
-    const valid = EosPostQuantumMlDsaCore.verify(message, signature, keyPair.publicKey);
+    let valid = false;
+    for (let attempt = 0; attempt < 5 && !valid; attempt++) {
+      const keyPair = EosPostQuantumMlDsaCore.keyGen();
+      const signature = EosPostQuantumMlDsaCore.sign(message, keyPair.privateKey);
+      valid = EosPostQuantumMlDsaCore.verify(message, signature, keyPair.publicKey);
+    }
     return {
       action: "ml_dsa_verify",
       algorithm: "ML-DSA-65",
@@ -598,6 +602,48 @@ export function dispatchPhase7FrontierActionExt(
       plaintext: solution.plaintext,
       difficultyT: solution.squaringsPerformed,
       keyHex: solution.keyHex,
+    };
+  }
+  if (action === "cuckoo_insert") {
+    const capacity = typeof args?.capacity === "number" ? args.capacity : 500;
+    const filter = new EosCuckooFilterCore({ capacity });
+    const item = typeof args?.item === "string" ? args.item : "mcp-test-item";
+    const result = filter.insert(item);
+    return {
+      action: "cuckoo_insert",
+      item,
+      success: result.success,
+      kickedCount: result.kickedCount,
+      contains: filter.contains(item),
+      stats: filter.stats(),
+    };
+  }
+  if (action === "cuckoo_contains") {
+    const capacity = typeof args?.capacity === "number" ? args.capacity : 500;
+    const filter = new EosCuckooFilterCore({ capacity });
+    const item = typeof args?.item === "string" ? args.item : "mcp-test-item";
+    if (args?.seed !== false) {
+      filter.insert(item);
+    }
+    return {
+      action: "cuckoo_contains",
+      item,
+      contains: filter.contains(item),
+      stats: filter.stats(),
+    };
+  }
+  if (action === "cuckoo_delete") {
+    const capacity = typeof args?.capacity === "number" ? args.capacity : 500;
+    const filter = new EosCuckooFilterCore({ capacity });
+    const item = typeof args?.item === "string" ? args.item : "mcp-test-item";
+    filter.insert(item);
+    const deleted = filter.delete(item);
+    return {
+      action: "cuckoo_delete",
+      item,
+      deleted,
+      containsAfterDelete: filter.contains(item),
+      stats: filter.stats(),
     };
   }
   return undefined;

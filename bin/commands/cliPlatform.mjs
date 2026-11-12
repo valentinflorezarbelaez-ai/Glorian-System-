@@ -672,6 +672,7 @@ import { handleMlDsaCommands } from "./cliMlDsaMesh.mjs";
 import { handleCongestionCommands } from "./cliCongestionMesh.mjs";
 import { handleTrieCommands } from "./cliTrieMesh.mjs";
 import { handleTimeLockCommands } from "./cliTimeLockMesh.mjs";
+import { handleCuckooCommands } from "./cliCuckooMesh.mjs";
 
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
@@ -698,5 +699,6 @@ export async function handlePlatformCommands(commandContext) {
   if (await handleCongestionCommands(commandContext.command, commandContext)) return true;
   if (await handleTrieCommands(commandContext.command, commandContext)) return true;
   if (await handleTimeLockCommands(commandContext.command, commandContext)) return true;
+  if (await handleCuckooCommands(commandContext.command, commandContext)) return true;
   return false;
 }
