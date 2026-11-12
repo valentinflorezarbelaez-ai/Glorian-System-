@@ -51,6 +51,7 @@
     "./range-proof": "./src/core/eosBulletproofsRangeProofCore.ts",
     "./hotstuff": "./src/core/eosHotStuffConsensusEngine.ts",
     "./tensor": "./src/core/eosQuantizedTensorInferenceCore.ts",
+    "./fleet-sync": "./src/core/eosUniversalFleetSyncCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

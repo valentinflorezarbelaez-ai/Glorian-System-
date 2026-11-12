@@ -284,3 +284,20 @@ export type {
   TensorReceipt,
   TensorBenchmarkResult,
 } from "./eosQuantizedTensorInferenceCore.types.ts";
+export { EosUniversalFleetSyncCore } from "./eosUniversalFleetSyncCore.ts";
+export type {
+  FleetSyncState,
+  SoundcheckGrade,
+  FleetProjectRegistryEntry,
+  FleetRegistryData,
+  FleetProjectResolved,
+  FleetProjectSyncResult,
+  FleetProjectSoundcheck,
+  FleetSyncOptions,
+  FleetSyncReport,
+  FleetAuditReport,
+  FleetHealingResult,
+  FleetHealAllReport,
+  FleetSyncOperationType,
+  FleetSyncReceipt,
+} from "./eosUniversalFleetSyncCore.types.ts";

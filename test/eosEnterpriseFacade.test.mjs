@@ -741,26 +741,14 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(vrfElectReport.isElected, true);
 
     // 30. smt_set, smt_prove & smt_verify (SPEC-218)
-    const smtSetReport = callFacade({ action: "smt_set", key: "facade-k", value: "facade-v" });
-    assert.equal(smtSetReport.action, "smt_set");
-    assert.equal(smtSetReport.leafCount, 1);
-    const smtProveReport = callFacade({ action: "smt_prove", key: "cert-001" });
-    assert.equal(smtProveReport.action, "smt_prove");
-    assert.equal(smtProveReport.proofType, "membership");
-    const smtVerifyReport = callFacade({ action: "smt_verify", key: "cert-001" });
-    assert.equal(smtVerifyReport.action, "smt_verify");
-    assert.equal(smtVerifyReport.valid, true);
+    assert.equal(callFacade({ action: "smt_set", key: "facade-k", value: "facade-v" }).leafCount, 1);
+    assert.equal(callFacade({ action: "smt_prove", key: "cert-001" }).proofType, "membership");
+    assert.equal(callFacade({ action: "smt_verify", key: "cert-001" }).valid, true);
 
     // 31. frost_keygen, frost_sign & frost_verify (SPEC-219)
-    const frostKeygen = callFacade({ action: "frost_keygen", threshold: 2, signers: 3 });
-    assert.equal(frostKeygen.action, "frost_keygen");
-    assert.equal(frostKeygen.participantCount, 3);
-    const frostSign = callFacade({ action: "frost_sign", message: "facade-tx" });
-    assert.equal(frostSign.action, "frost_sign");
-    assert.ok(frostSign.signatureHex.length > 64);
-    const frostVerify = callFacade({ action: "frost_verify", message: "facade-tx" });
-    assert.equal(frostVerify.action, "frost_verify");
-    assert.equal(frostVerify.valid, true);
+    assert.equal(callFacade({ action: "frost_keygen", threshold: 2, signers: 3 }).participantCount, 3);
+    assert.ok(callFacade({ action: "frost_sign", message: "facade-tx" }).signatureHex.length > 64);
+    assert.equal(callFacade({ action: "frost_verify", message: "facade-tx" }).valid, true);
 
     // 32. kzg_commit, kzg_open & kzg_verify (SPEC-220)
     assert.equal(callFacade({ action: "kzg_commit", coeffs: [7, 5, 2, 3] }).degree, 3);
@@ -790,5 +778,9 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(callFacade({ action: "tensor_quantize", size: 128 }).action, "tensor_quantize");
     assert.equal(callFacade({ action: "tensor_matmul", rows: 32, cols: 64 }).outputLength, 32);
     assert.equal(callFacade({ action: "tensor_embed", text: "facade-tensor" }).dimensions, 64);
+
+    // 37. fleet_sync_all & fleet_audit_all (SPEC-225)
+    assert.equal(callFacade({ action: "fleet_sync_all" }).totalProjects, 9);
+    assert.ok(callFacade({ action: "fleet_audit_all" }).fleetAverageScore >= 70);
   });
 });
