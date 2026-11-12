@@ -1,6 +1,6 @@
 {
   "version": "11.0.0-autonomous-fleet-registry",
-  "updatedAt": "2026-11-12T02:23:29.238Z",
+  "updatedAt": "2026-11-12T13:54:05.046Z",
   "masterOrchestrator": "EOS System control plane (SPEC-124)",
   "complianceStandard": "EOS_CONSTITUTION_LAW_IV_EXTERNAL_WRITE_BARRIER",
   "totalFleetProjects": 9,
@@ -21,7 +21,7 @@
       "cicdGateScript": "scripts/verify-landing.mjs",
       "autoShipScript": "npm run ship:sovereign",
       "currentBranch": "main",
-      "headCommitSha": "bc172749f9f4dcfcba79f67c1364d4efe05202f6",
+      "headCommitSha": "4060be97acb20e09cdcc5c454ba603a8f2d9af76",
       "ownerApproval": "OWNER_APPROVAL"
     },
     {
@@ -41,7 +41,7 @@
       "autoShipScript": "git push origin main",
       "ownerApproval": "OWNER_APPROVAL",
       "currentBranch": "main",
-      "headCommitSha": "102593fdecd9bfa86cddea54a8cd09a898fb210a"
+      "headCommitSha": "79ea06dafa6c33c28fe807c853672dcc537f4e39"
     },
     {
       "id": "biblioteca-gnostica-1",
@@ -60,7 +60,7 @@
       "autoShipScript": "git push origin main",
       "ownerApproval": "OWNER_APPROVAL",
       "currentBranch": "main",
-      "headCommitSha": "0856571029d95c8e0576fedee098c4343b60f36a"
+      "headCommitSha": "b6da439d3617188af3730251ca62bd6dabf85d1c"
     },
     {
       "id": "control-de-asistencia-abopack",
@@ -79,7 +79,7 @@
       "cicdGateScript": "npm test",
       "autoShipScript": "git push origin main",
       "currentBranch": "main",
-      "headCommitSha": "22a63d563bac1468af3787cb5714de2c1003bc26"
+      "headCommitSha": "4fbcf9011d76c166a545e71331d439d2785c5563"
     },
     {
       "id": "crud-slack",
@@ -98,7 +98,7 @@
       "autoShipScript": "git push origin main",
       "ownerApproval": "OWNER_APPROVAL",
       "currentBranch": "main",
-      "headCommitSha": "15a5cb02b1fa04b53e776fb9c7ba386788713a2a"
+      "headCommitSha": "733e52d7ddc91aa620bc0c13964b66d41e27009e"
     },
     {
       "id": "donaciones",
@@ -117,7 +117,7 @@
       "autoShipScript": "git push origin main",
       "ownerApproval": "OWNER_APPROVAL",
       "currentBranch": "main",
-      "headCommitSha": "2f45b0ab86c70e00066d6d442690c446942d3cf4"
+      "headCommitSha": "2e352cb34f0926c309f06ba5a3084bd6ce8898b3"
     },
     {
       "id": "eos-system",
@@ -135,7 +135,7 @@
       "cicdGateScript": "scripts/verify-cicd-pipeline.mjs",
       "autoShipScript": "scripts/ship-sovereign.mjs",
       "currentBranch": "main",
-      "headCommitSha": "4a4212aa9e612cb7f10bfe15b74b6f12d59fe57e",
+      "headCommitSha": "f73324a22b57c841b7d8460754c7e519c6f5589d",
       "ownerApproval": "OWNER_APPROVAL"
     },
     {
@@ -155,7 +155,7 @@
       "autoShipScript": "git push origin main",
       "ownerApproval": "OWNER_APPROVAL",
       "currentBranch": "main",
-      "headCommitSha": "3868cefbbe45aebf371d396be4e97f6d1fa036a6"
+      "headCommitSha": "6f125c27a43ff160f0ee328a01b3686c0e2860f0"
     },
     {
       "id": "portafolio",
@@ -173,9 +173,9 @@
       "cicdGateScript": "scripts/verify-landing.mjs",
       "autoShipScript": "npm run ship:sovereign",
       "currentBranch": "main",
-      "headCommitSha": "79edabdde54611c38c6cec070cb8a3b8240753a2",
+      "headCommitSha": "1ed120dc7be8b25ef611f7b621d4dc8511c1071e",
       "ownerApproval": "OWNER_APPROVAL"
     }
   ],
-  "registrySha256": "0f57b3928a0658d63d89596f40de9c3764d57144d21ad939d91d02c45d6be154"
+  "registrySha256": "4f8da39c226f3a8df5e42801bb4ff32e72a5a26cdf499fc7eda2859398180338"
 }
