@@ -67,7 +67,7 @@ function getDeploymentReceipts() {
 function getIncidentReports() {
   const dir = path.join(root, "docs/postmortems");
   if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir).filter((f) => f.endsWith(".md"));
+  return fs.readdirSync(dir).filter((f) => f.endsWith(".md") && f !== "TEMPLATE.md" && !f.startsWith("."));
 }
 
 /**

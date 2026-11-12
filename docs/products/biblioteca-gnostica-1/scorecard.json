@@ -5,18 +5,12 @@
   "gatePassRate": 100,
   "mutationFloor": 90,
   "layer0Purity": 100,
-  "timeToGreenMs": 2800,
+  "timeToGreenMs": 3500,
   "blastRadiusKnown": 95,
-  "liveReachability": 100,
-  "score": 98,
-  "grade": "A+",
-  "liveProbe": {
-    "reachable": true,
-    "httpStatus": 200,
-    "latencyMs": 192,
-    "probedAt": "2026-11-10T00:56:45.560Z",
-    "policy": "ALLOWED"
-  },
+  "liveReachability": 70,
+  "score": 94,
+  "grade": "A",
+  "liveProbe": null,
   "epistemicState": "FLEET_PRODUCT_SCORECARD_WITHIN_TESTED_SCOPE",
-  "sha256Receipt": "0128b29e5820e24e1b7760a49350e51a654c28113ece10d9729e452244c24e60"
+  "sha256Receipt": "c46c5bdf5b00720f627129e6fab660164f8163603ec964d751bb8f9c6ec2a748"
 }
