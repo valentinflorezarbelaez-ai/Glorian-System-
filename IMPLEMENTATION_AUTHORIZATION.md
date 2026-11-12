@@ -2003,3 +2003,27 @@
   - `docs/plans/PLAN-116-CUCKOO-FILTER.md`
   - `docs/tasks/TASKS-116-CUCKOO-FILTER.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-12-HYPERLOGLOG-PLUS-232
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 HyperLogLog++ (HLL++) Cardinality Estimation Engine (`SPEC-232`, `CHANGE-117`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: "dale con toda")
+- **Scope**:
+  1. Implement Layer-0 HyperLogLog++ types in `src/core/eosHyperLogLogPlusCore.types.ts`.
+  2. Implement Layer-0 HyperLogLog++ Core (64-bit hashing, Linear Counting, bias correction, merge, serialize) in `src/core/eosHyperLogLogPlusCore.ts`.
+  3. Subpath exports `"./hll"` and `"./hyperloglog"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Wire CLI commands `glorian hll:demo`, `glorian hll:add`, `glorian hll:estimate` in `bin/commands/cliHllMesh.mjs` and `bin/commands/cliPlatform.mjs`.
+  6. Wire MCP actions `action: "hll_add"`, `action: "hll_estimate"`, `action: "hll_merge"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  7. 100% BDD test coverage in `test/eosHyperLogLogPlusCore.test.mjs` (BDD-1179..BDD-1183).
+  8. Add test step #44 in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Module 47 in `docs/DEVELOPER_GUIDE.md`.
+  10. Update OpenSpec catalog index to 227 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-117-HYPERLOGLOG-PLUS.md`
+  - `openspec/changes/CHANGE-117-HYPERLOGLOG-PLUS.md`
+  - `openspec/specs/SPEC-232-HYPERLOGLOG-PLUS.md`
+  - `docs/plans/PLAN-117-HYPERLOGLOG-PLUS.md`
+  - `docs/tasks/TASKS-117-HYPERLOGLOG-PLUS.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

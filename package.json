@@ -64,6 +64,8 @@
     "./vdf-lock": "./src/core/eosTimeLockPuzzleCore.ts",
     "./cuckoo": "./src/core/eosCuckooFilterCore.ts",
     "./filter": "./src/core/eosCuckooFilterCore.ts",
+    "./hll": "./src/core/eosHyperLogLogPlusCore.ts",
+    "./hyperloglog": "./src/core/eosHyperLogLogPlusCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

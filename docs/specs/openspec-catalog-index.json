@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 226,
-  "catalogSha256": "5d2f4a5de9e4f23f5c826eab7c0158746df8f00cad8bccada65b86d4fb1800e2",
+  "totalSpecs": 227,
+  "catalogSha256": "bac89ad3daba3a5d5d9f12744686c6307609ac25671318dd78724477b76ad56a",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2035,7 +2035,16 @@
       "frCount": 1,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-231-CUCKOO-FILTER.md",
-      "sha256": "b5db5890a030f576251bedce0ba09888b44aaf6ec0ed788bd0b6936b1d933445"
+      "sha256": "447b1717b03c7df090b3ab70ba8b0f6f85a7990e38077307420f4d4da654d9a7"
+    },
+    {
+      "id": "SPEC-232",
+      "title": "— Layer-0 HyperLogLog++ (HLL++) Cardinality Estimation Engine",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-232-HYPERLOGLOG-PLUS.md",
+      "sha256": "1df35a1ee6546b2eba6e45c9e157d7948497ca5455853d8ec61a8dbce0ca986a"
     }
   ]
 }

@@ -367,3 +367,5 @@ export type {
   CuckooInsertResult,
   CuckooHashPair,
 } from "./eosCuckooFilterCore.types.ts";
+export { EosHyperLogLogPlusCore } from "./eosHyperLogLogPlusCore.ts";
+export type { HyperLogLogConfig, HyperLogLogStats, HllHashComponents } from "./eosHyperLogLogPlusCore.types.ts";

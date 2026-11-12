@@ -19,6 +19,7 @@ import { EosAdaptiveCongestionRateLimiterCore } from "../../core/eosAdaptiveCong
 import { EosMerklePatriciaTrieCore } from "../../core/eosMerklePatriciaTrieCore.ts";
 import { EosTimeLockPuzzleCore } from "../../core/eosTimeLockPuzzleCore.ts";
 import { EosCuckooFilterCore } from "../../core/eosCuckooFilterCore.ts";
+import { EosHyperLogLogPlusCore } from "../../core/eosHyperLogLogPlusCore.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
@@ -644,6 +645,49 @@ export function dispatchPhase7FrontierActionExt(
       deleted,
       containsAfterDelete: filter.contains(item),
       stats: filter.stats(),
+    };
+  }
+  if (action === "hll_add") {
+    const precision = typeof args?.precision === "number" ? args.precision : 14;
+    const hll = new EosHyperLogLogPlusCore({ precision });
+    const item = typeof args?.item === "string" ? args.item : "mcp-hll-item";
+    hll.add(item);
+    return {
+      action: "hll_add",
+      item,
+      estimate: hll.estimate(),
+      stats: hll.stats(),
+    };
+  }
+  if (action === "hll_estimate") {
+    const precision = typeof args?.precision === "number" ? args.precision : 14;
+    const hll = new EosHyperLogLogPlusCore({ precision });
+    const count = typeof args?.count === "number" ? args.count : 100;
+    for (let i = 0; i < count; i++) {
+      hll.add(`mcp_stream_item_${i}`);
+    }
+    return {
+      action: "hll_estimate",
+      itemsAdded: count,
+      estimate: hll.estimate(),
+      stats: hll.stats(),
+    };
+  }
+  if (action === "hll_merge") {
+    const precision = typeof args?.precision === "number" ? args.precision : 14;
+    const hllA = new EosHyperLogLogPlusCore({ precision });
+    const hllB = new EosHyperLogLogPlusCore({ precision });
+    hllA.add("shared_entity_alpha");
+    hllA.add("entity_only_in_A");
+    hllB.add("shared_entity_alpha");
+    hllB.add("entity_only_in_B");
+    const merged = hllA.merge(hllB);
+    return {
+      action: "hll_merge",
+      estimateA: hllA.estimate(),
+      estimateB: hllB.estimate(),
+      mergedEstimate: merged.estimate(),
+      stats: merged.stats(),
     };
   }
   return undefined;

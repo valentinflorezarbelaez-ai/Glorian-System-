@@ -1360,6 +1360,34 @@ console.log(
 
 ---
 
+### Módulo 47: Motor de Estimación de Cardinalidad HyperLogLog++ (`EosHyperLogLogPlusCore`)
+
+**Propósito:** Estimador probabilístico de cardinalidad en espacio logarítmico $O(\log \log N)$ basado en el algoritmo HyperLogLog++ de Google (Heule, Nunkesser, Hall 2013) (`SPEC-232` / `CHANGE-117`). Emplea funciones hash criptográficas de 64 bits para erradicar colisiones hasta cardinalidades $> 10^{18}$, precisión configurable $p \in [4, 18]$ ($m = 2^p$ registros) con error estándar acotado ($\approx 1.04 / \sqrt{m}$), conteo lineal (_Linear Counting_) para regímenes reducidos con registros vacíos ($V > 0$), mitigación empírica de sesgo en rangos pequeños-medianos, operador de unión algebraica conmutativo y asociativo para agregaciones MapReduce distribuidas, y serialización binaria compacta.
+
+```ts
+import { EosHyperLogLogPlusCore } from "./src/core/eosHyperLogLogPlusCore.ts";
+
+// 1. Inicializar estimador HLL++ con precisión p = 14 (16,384 registros, error estándar < 0.82%)
+const hllA = new EosHyperLogLogPlusCore({ precision: 14 });
+const hllB = new EosHyperLogLogPlusCore({ precision: 14 });
+
+// 2. Inserción de flujo masivo de eventos en O(1)
+for (let i = 0; i < 5000; i++) hllA.add(`transaccion_nodo_a_${i}`);
+for (let i = 4000; i < 9000; i++) hllB.add(`transaccion_nodo_b_${i}`);
+
+// 3. Estimación individual y agregación MapReduce distribuida (unión)
+console.log(`Cardinalidad A: ${hllA.estimate()}`); // ~5000
+const unionSketch = hllA.merge(hllB);
+console.log(`Cardinalidad Unión A+B: ${unionSketch.estimate()}`); // ~8000 elementos únicos
+
+// 4. Serialización binaria para transporte en red
+const wireBuffer = unionSketch.serialize();
+const restored = EosHyperLogLogPlusCore.deserialize(wireBuffer);
+console.log(`Estimación restaurada: ${restored.estimate()}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -1461,6 +1489,9 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs cuckoo:demo`                         | Demostración de filtro Cuckoo, inserción, eliminación y serialización binaria (SPEC-231).          |
 | `node bin/eos.mjs cuckoo:insert [clave]`               | Inserta una clave en el filtro Cuckoo y reporta desplazamientos kicks (SPEC-231).                  |
 | `node bin/eos.mjs cuckoo:query [clave]`                | Consulta membresía probabilística O(1) en el filtro Cuckoo (SPEC-231).                             |
+| `node bin/eos.mjs hll:demo`                            | Demostración de estimación de cardinalidad HLL++, fusión y precisión empírica (SPEC-232).          |
+| `node bin/eos.mjs hll:add [clave]`                     | Agrega una entidad al sketch HLL++ y actualiza los registros en O(1) (SPEC-232).                   |
+| `node bin/eos.mjs hll:estimate`                        | Simula flujo de elementos y reporta cardinalidad con cota de error estándar (SPEC-232).            |
 | `node bin/eos.mjs metrics`                             | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                              |
 | `node bin/eos.mjs guard [directorio]`                  | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                        |
 | `node bin/eos.mjs flow inspect <ruta>`                 | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.          |

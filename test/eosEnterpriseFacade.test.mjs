@@ -855,5 +855,18 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(ckDelete.action, "cuckoo_delete");
     assert.equal(ckDelete.deleted, true);
     assert.equal(ckDelete.containsAfterDelete, false);
+
+    // 44. hll_add, hll_estimate, hll_merge (SPEC-232)
+    const hllAdd = callFacade({ action: "hll_add", item: "facade-hll-item", precision: 12 });
+    assert.equal(hllAdd.action, "hll_add");
+    assert.equal(hllAdd.item, "facade-hll-item");
+    assert.ok(hllAdd.estimate >= 1);
+    const hllEst = callFacade({ action: "hll_estimate", count: 200, precision: 14 });
+    assert.equal(hllEst.action, "hll_estimate");
+    assert.equal(hllEst.itemsAdded, 200);
+    assert.ok(hllEst.estimate >= 190 && hllEst.estimate <= 215);
+    const hllMerge = callFacade({ action: "hll_merge", precision: 12 });
+    assert.equal(hllMerge.action, "hll_merge");
+    assert.ok(hllMerge.mergedEstimate >= 2);
   });
 });
