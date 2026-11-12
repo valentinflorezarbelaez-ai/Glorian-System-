@@ -1181,96 +1181,135 @@ console.log(`Spans serializados OTLP : ${otlpPayload.resourceSpans[0].scopeSpans
 
 ---
 
+### Módulo 42: Motor de Firmas Digitales Post-Cuánticas NIST FIPS 204 ML-DSA-65 (`EosPostQuantumMlDsaCore`)
+
+**Propósito:** Firmas digitales resistentes a la computación cuántica basadas en retículos modulares conformes al estándar definitivo NIST FIPS 204 (ML-DSA-65 / Dilithium) sin dependencias externas (`SPEC-227` / `CHANGE-112`). Opera sobre el anillo polinomial $R_q = \mathbb{Z}_q[X] / (X^{256} + 1)$ con módulo primo $q = 8380417$, matriz de expansión $A \in R_q^{6 \times 5}$ y muestreo acotado $\eta = 4$. Implementa el paradigma Fiat-Shamir con Abortos para garantizar secreto perfecto de conocimiento cero, descomposición de bits altos/bajos (`Power2Round`, `Decompose`) y reconstrucción determinista de pistas (`MakeHint`, `UseHint`). Soporta firmas compuestas híbridas Ed25519 + ML-DSA-65 para transición criptográfica de grado gubernamental y aeroespacial.
+
+```ts
+import { EosPostQuantumMlDsaCore } from "./src/core/eosPostQuantumMlDsaCore.ts";
+
+// 1. Generar par de claves post-cuánticas ML-DSA-65
+const keyPair = EosPostQuantumMlDsaCore.keyGen();
+console.log(`Clave pública (pk): ${keyPair.publicKey.verificationKeyHex.length / 2} bytes`);
+console.log(`Clave privada (sk): ${keyPair.privateKey.signingKeyHex.length / 2} bytes`);
+
+// 2. Firmar payload con Fiat-Shamir con Abortos
+const message = "Sovereign Quantum-Resilient Attestation across Glorian Fleet";
+const signature = EosPostQuantumMlDsaCore.sign(message, keyPair.privateKey);
+console.log(`Semilla de Desafío (c~): ${signature.cTildeHex}`);
+console.log(`Firma Digital (sigma) : ${signature.signatureHex.length / 2} bytes`);
+
+// 3. Verificación determinista en tiempo constante
+const isValid = EosPostQuantumMlDsaCore.verify(message, signature, keyPair.publicKey);
+console.log(`Verificación de Firma : ${isValid ? "VÁLIDA" : "RECHAZADA"}`);
+
+// 4. Firma híbrida clásica + post-cuántica (Ed25519 + ML-DSA-65)
+const hybridKey = EosPostQuantumMlDsaCore.generateHybridKeyPair();
+const hybridSig = EosPostQuantumMlDsaCore.signHybrid(message, hybridKey);
+const hybridValid = EosPostQuantumMlDsaCore.verifyHybrid(
+  message,
+  hybridSig,
+  hybridKey.ed25519PublicKeyPem,
+  hybridKey.mlDsaKeyPair.publicKey,
+);
+console.log(`Firma Híbrida Válida  : ${hybridValid ? "SÍ" : "NO"}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
 
-| Comando                                                | Descripción                                                                                   |
-| :----------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
-| `node bin/eos.mjs help`                                | Muestra el menú completo de comandos disponibles.                                             |
-| `node bin/eos.mjs enterprise:health`                   | Audita la salud del sistema y emite tabla de estado con recibo SHA-256.                       |
-| `node bin/eos.mjs enterprise:health --json`            | Emite el reporte de salud en formato JSON machine-readable para CI/CD.                        |
-| `node bin/eos.mjs doctor [ruta] [--write-ci]`          | Diagnostica los 5 pilares Soundcheck (0-100) y opcionalmente sintetiza pipeline CI.           |
-| `node bin/eos.mjs remediate [ruta] [--dry-run]`        | Auto-remedia el repositorio: genera .gitignore, pruebas smoke, CI y gobernanza.               |
-| `node bin/eos.mjs fuzz [--iterations=N]`               | Fuzzing dinámico guiado por cobertura sobre funciones y primitivas del sistema.               |
-| `node bin/eos.mjs arena [accion] [--rounds=N]`         | Torneo adversario multi-agente bajo consenso BFT 3f+1 (Red vs Blue vs White).                 |
-| `node bin/eos.mjs zk:prove [--spec=ID]`                | Genera y verifica prueba Merkle de Conocimiento Cero (ZKP) para un requisito o spec.          |
-| `node bin/eos.mjs compile [plataforma] [--dry-run]`    | Compila Glorian en ejecutable nativo hermético SEA (Ed25519 + SLSA Nivel 4).                  |
-| `node bin/eos.mjs pq:kem [--hybrid] [--json]`          | Encapsula clave post-cuántica (NIST FIPS 203 ML-KEM + X25519) con verificación inmediata.     |
-| `node bin/eos.mjs pq:sign [msg] [--hybrid] [--json]`   | Genera y verifica firma digital de retículos (NIST FIPS 204 ML-DSA + Ed25519).                |
-| `node bin/eos.mjs synthesize [codigo] [--json]`        | Sintetiza y repara código automáticamente mediante mutación genética y cruce de AST.          |
-| `node bin/eos.mjs vector:search <query> [--k=N]`       | Búsqueda semántica ANN con grafo HNSW Layer-0 y proyección de subpalabras (SPEC-201).         |
-| `node bin/eos.mjs vector:index <id> <code>`            | Indexa fragmentos de código o documentos en el espacio vectorial HNSW multidimensional.       |
-| `node bin/eos.mjs tkg:query <pred> [--as-of=T]`        | Inferencia deductiva y consulta Datalog sobre grafo de conocimiento temporal (SPEC-202).      |
-| `node bin/eos.mjs tkg:assert <s> <p> <o>`              | Aserción de hechos cuadripolares bi-temporales con recibos criptográficos SHA-256.            |
-| `node bin/eos.mjs wasm:decompile [target] [--wat]`     | Descompila bytecode WebAssembly a formato de texto WAT canónico (SPEC-203).                   |
-| `node bin/eos.mjs wasm:prove [target] [--json]`        | Demostrador formal de seguridad de pila, memoria y CFI en WASM (SPEC-203).                    |
-| `node bin/eos.mjs mcts:search [problem]`               | Planificador heurístico Monte Carlo Tree Search con red política-valor (SPEC-204).            |
-| `node bin/eos.mjs mcts:play [problem]`                 | Simulación interactiva de toma de decisiones estratégicas óptimas (SPEC-204).                 |
-| `node bin/eos.mjs tla:check [modelo]`                  | Verificador de modelos simbólico TLA+ y prueba de invariantes inductivos (SPEC-205).          |
-| `node bin/eos.mjs tla:synthesize [mod]`                | Sintetiza especificación canónica formal TLA+ a partir de contratos TypeScript (SPEC-205).    |
-| `node bin/eos.mjs raft:cluster [--nodes=N]`            | Simula clúster de consenso Raft distribuido con FSM replicada (SPEC-206).                     |
-| `node bin/eos.mjs raft:status [--json]`                | Estado en vivo del clúster Raft, quórum de mayoría y recibo criptográfico (SPEC-206).         |
-| `node bin/eos.mjs compress:ans [texto]`                | Compresor de entropía rANS Layer-0 cercano al límite de Shannon (SPEC-207).                   |
-| `node bin/eos.mjs decompress:ans <base64>`             | Descompresor sin pérdidas rANS con verificación de integridad SHA-256 (SPEC-207).             |
-| `node bin/eos.mjs autodiff:grad`                       | Diferenciación automática en modo reverso con oráculo de gradientes (SPEC-208).               |
-| `node bin/eos.mjs autodiff:train [--epochs=N]`         | Optimización cerrada de parámetros vía SGD y tensor core multidimensional (SPEC-208).         |
-| `node bin/eos.mjs anomaly:detect [--threshold=F]`      | Detector de anomalías no supervisado con Isolation Forest (SPEC-209).                         |
-| `node bin/eos.mjs anomaly:forest [--trees=N]`          | Simulación de ensamble de árboles aleatorios iTrees en streaming (SPEC-209).                  |
-| `node bin/eos.mjs pbft:cluster [--nodes=A,B,C,D]`      | Consenso bizantino PBFT 3-fases con quórum supermayoritario 2f+1 y slashing (SPEC-210).       |
-| `node bin/eos.mjs homomorphic:keygen [--degree=N]`     | Generación de par de claves en anillo ciclotómico R_q con cifrado BFV (SPEC-211).             |
-| `node bin/eos.mjs homomorphic:add [--json]`            | Cómputo ciego homomórfico (adición de textos cifrados) con recibo SHA-256 (SPEC-211).         |
-| `node bin/eos.mjs mpc:split [--secret=N]`              | División de secreto Shamir (k, N) con compromisos de integridad SHA-256 (SPEC-212).           |
-| `node bin/eos.mjs mpc:combine [--json]`                | Reconstrucción exacta vía interpolación de Lagrange y suma homomórfica (SPEC-212).            |
-| `node bin/eos.mjs vdf:compute [--delay=N] [--seed=S]`  | Cómputo de retardo secuencial T pasos y prueba Wesolowski (SPEC-213).                         |
-| `node bin/eos.mjs vdf:verify [--delay=N] [--seed=S]`   | Verificación O(log T) sub-milisegundo de prueba de retardo (SPEC-213).                        |
-| `node bin/eos.mjs vdf:beacon [--seed=S]`               | Baliza de aleatoriedad inmanipulable derivada de VDF (SPEC-213).                              |
-| `node bin/eos.mjs r1cs:synthesize [--secret=N]`        | Síntesis de circuito R1CS y asignación de testigo (SPEC-214).                                 |
-| `node bin/eos.mjs r1cs:prove [--secret=N]`             | Generación de prueba QAP evaluada a desafío Fiat-Shamir τ (SPEC-214).                         |
-| `node bin/eos.mjs r1cs:verify [--json]`                | Verificación O(1) sub-milisegundo de prueba de conocimiento cero (SPEC-214).                  |
-| `node bin/eos.mjs crdt:mutate [--node=N]`              | Mutación local de estado CRDT (LWW, ORSet, RGA) con reloj vectorial (SPEC-215).               |
-| `node bin/eos.mjs crdt:merge [--json]`                 | Fusión semilattice bidireccional con consistencia eventual fuerte SEC (SPEC-215).             |
-| `node bin/eos.mjs crdt:delta [--json]`                 | Extracción y aplicación de parches delta mínimos entre réplicas (SPEC-215).                   |
-| `node bin/eos.mjs mmr:append [--count=N]`              | Anexa registros al acumulador MMR y calcula cumbres de montaña y raíz (SPEC-216).             |
-| `node bin/eos.mjs mmr:prove [--leaf=N]`                | Genera prueba de inclusión O(log n) para una hoja del acumulador MMR (SPEC-216).              |
-| `node bin/eos.mjs mmr:verify [--leaf=N]`               | Verifica la autenticidad de una prueba de inclusión MMR en sub-milisegundo (SPEC-216).        |
-| `node bin/eos.mjs vrf:eval [--alpha=S]`                | Evaluación de función aleatoria verificable ECVRF RFC 9381 (SPEC-217).                        |
-| `node bin/eos.mjs vrf:verify [--json]`                 | Verificación no interactiva de prueba VRF y reconstrucción de beta en <2ms (SPEC-217).        |
-| `node bin/eos.mjs vrf:elect [--thresh=F]`              | Elección verificable e inmanipulable de líder de consenso mediante score VRF (SPEC-217).      |
-| `node bin/eos.mjs smt:set [--key=K] [--value=V]`       | Mutación autenticada de clave-valor en Sparse Merkle Tree (SPEC-218).                         |
-| `node bin/eos.mjs smt:prove [--key=K]`                 | Genera prueba de membresía o no-membresía (exclusión) en tiempo O(log n) (SPEC-218).          |
-| `node bin/eos.mjs smt:verify [--key=K]`                | Verifica criptográficamente existencia o ausencia en SMT en sub-milisegundo (SPEC-218).       |
-| `node bin/eos.mjs frost:keygen [--t=N] [--signers=N]`  | Configuración distribuida de claves de umbral FROST (RFC 9591 / SPEC-219).                    |
-| `node bin/eos.mjs frost:sign [--message=M] [--active]` | Firma de umbral en dos rondas con factores anti-ROS y agregación Lagrange (SPEC-219).         |
-| `node bin/eos.mjs frost:verify [--message=M]`          | Verificación no interactiva indistinguible de Schnorr de clave única (SPEC-219).              |
-| `node bin/eos.mjs kzg:commit [--coeffs=C]`             | Compromiso polinomial O(1) Kate-Zaverucha-Goldberg (SPEC-220).                                |
-| `node bin/eos.mjs kzg:open [--coeffs=C] [--point=z]`   | Generación de prueba de apertura q(x) = (p(x)-v)/(x-z) (SPEC-220).                            |
-| `node bin/eos.mjs kzg:verify [--coeffs=C] [--point=z]` | Verificación no interactiva O(1) de prueba de evaluación KZG (SPEC-220).                      |
-| `node bin/eos.mjs kzg:batch [--points=Z]`              | Prueba y verificación por lotes multi-punto con polinomio anulador (SPEC-220).                |
-| `node bin/eos.mjs ml-kem:keygen [--json]`              | Genera par de claves post-cuánticas ML-KEM-768 (NIST FIPS 203 / SPEC-221).                    |
-| `node bin/eos.mjs ml-kem:encaps [--ek=EK]`             | Encapsula secreto compartido de 32B y emite texto cifrado de 1088B (SPEC-221).                |
-| `node bin/eos.mjs ml-kem:decaps [--dk=DK] [--ct=CT]`   | Decapsula con rechazo implícito determinista constante ante falsificaciones (SPEC-221).       |
-| `node bin/eos.mjs ml-kem:benchmark [--iterations=N]`   | Benchmark de operaciones post-cuánticas por segundo (>1000 ops/sec) (SPEC-221).               |
-| `node bin/eos.mjs bp:commit [--value=V]`               | Compromiso homomórfico Pedersen V = v*G + gamma*H (SPEC-222).                                 |
-| `node bin/eos.mjs bp:prove [--value=V] [--m=32]`       | Genera prueba NIZK Bulletproofs acotada a [0, 2^m - 1] con doblado logarítmico (SPEC-222).    |
-| `node bin/eos.mjs bp:verify [--m=32]`                  | Verifica algebraicamente la prueba NIZK sin ceremonia de confianza en <5ms (SPEC-222).        |
-| `node bin/eos.mjs bp:benchmark [--m=16]`               | Benchmark de operaciones por segundo para compromiso, prueba y verificación (SPEC-222).       |
-| `node bin/eos.mjs hotstuff:propose [--node=N]`         | Propuesta de bloque con Justify QC en consenso HotStuff BFT pipelined (SPEC-223).             |
-| `node bin/eos.mjs hotstuff:vote [--node=N]`            | Emisión de voto con predicado de seguridad y liveness en consenso HotStuff (SPEC-223).        |
-| `node bin/eos.mjs hotstuff:status [--node=N]`          | Estado de consenso HotStuff: vista, líder, High-QC, Locked-QC (SPEC-223).                     |
-| `node bin/eos.mjs tensor:quantize [--type=Q]`          | Cuantización entera Q4_0, Q8_0, Q4_K de tensores GGUF (SPEC-224).                             |
-| `node bin/eos.mjs tensor:matmul [--rows=R]`            | Multiplicación streaming de matriz cuantizada y vector sin heap allocation (SPEC-224).        |
-| `node bin/eos.mjs tensor:embed [--text=T]`             | Generación soberana de embeddings semánticos densos con RMSNorm (SPEC-224).                   |
-| `node bin/eos.mjs tensor:benchmark`                    | Benchmark de rendimiento GFLOPS y tasas de cuantización por segundo (SPEC-224).               |
-| `node bin/eos.mjs fleet:sync-all [--heal]`             | Sincronización federada universal de los 9 repositorios con sanación autónoma (SPEC-225).     |
-| `node bin/eos.mjs fleet:audit-all [--json]`            | Auditoría Soundcheck 4-pilares y cálculo de Merkle Root criptográfico de la flota (SPEC-225). |
-| `node bin/eos.mjs fleet:heal-all [--json]`             | Sanación autónoma de deriva de configuración y marcadores en la flota (SPEC-225).             |
-| `node bin/eos.mjs trace:demo`                          | Demostración de trazado distribuido W3C y exportación OTLP JSON canónica (SPEC-226).          |
-| `node bin/eos.mjs trace:export [--json]`               | Exporta spans activos de trazado distribuido conforme al esquema OpenTelemetry (SPEC-226).    |
-| `node bin/eos.mjs metrics`                             | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                         |
-| `node bin/eos.mjs guard [directorio]`                  | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                   |
-| `node bin/eos.mjs flow inspect <ruta>`                 | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.     |
-| `node bin/eos.mjs worktree list`                       | Lista los árboles de trabajo (_worktrees_) aislados de Git.                                   |
+| Comando                                                | Descripción                                                                                        |
+| :----------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
+| `node bin/eos.mjs help`                                | Muestra el menú completo de comandos disponibles.                                                  |
+| `node bin/eos.mjs enterprise:health`                   | Audita la salud del sistema y emite tabla de estado con recibo SHA-256.                            |
+| `node bin/eos.mjs enterprise:health --json`            | Emite el reporte de salud en formato JSON machine-readable para CI/CD.                             |
+| `node bin/eos.mjs doctor [ruta] [--write-ci]`          | Diagnostica los 5 pilares Soundcheck (0-100) y opcionalmente sintetiza pipeline CI.                |
+| `node bin/eos.mjs remediate [ruta] [--dry-run]`        | Auto-remedia el repositorio: genera .gitignore, pruebas smoke, CI y gobernanza.                    |
+| `node bin/eos.mjs fuzz [--iterations=N]`               | Fuzzing dinámico guiado por cobertura sobre funciones y primitivas del sistema.                    |
+| `node bin/eos.mjs arena [accion] [--rounds=N]`         | Torneo adversario multi-agente bajo consenso BFT 3f+1 (Red vs Blue vs White).                      |
+| `node bin/eos.mjs zk:prove [--spec=ID]`                | Genera y verifica prueba Merkle de Conocimiento Cero (ZKP) para un requisito o spec.               |
+| `node bin/eos.mjs compile [plataforma] [--dry-run]`    | Compila Glorian en ejecutable nativo hermético SEA (Ed25519 + SLSA Nivel 4).                       |
+| `node bin/eos.mjs pq:kem [--hybrid] [--json]`          | Encapsula clave post-cuántica (NIST FIPS 203 ML-KEM + X25519) con verificación inmediata.          |
+| `node bin/eos.mjs pq:sign [msg] [--hybrid] [--json]`   | Genera y verifica firma digital de retículos (NIST FIPS 204 ML-DSA + Ed25519).                     |
+| `node bin/eos.mjs synthesize [codigo] [--json]`        | Sintetiza y repara código automáticamente mediante mutación genética y cruce de AST.               |
+| `node bin/eos.mjs vector:search <query> [--k=N]`       | Búsqueda semántica ANN con grafo HNSW Layer-0 y proyección de subpalabras (SPEC-201).              |
+| `node bin/eos.mjs vector:index <id> <code>`            | Indexa fragmentos de código o documentos en el espacio vectorial HNSW multidimensional.            |
+| `node bin/eos.mjs tkg:query <pred> [--as-of=T]`        | Inferencia deductiva y consulta Datalog sobre grafo de conocimiento temporal (SPEC-202).           |
+| `node bin/eos.mjs tkg:assert <s> <p> <o>`              | Aserción de hechos cuadripolares bi-temporales con recibos criptográficos SHA-256.                 |
+| `node bin/eos.mjs wasm:decompile [target] [--wat]`     | Descompila bytecode WebAssembly a formato de texto WAT canónico (SPEC-203).                        |
+| `node bin/eos.mjs wasm:prove [target] [--json]`        | Demostrador formal de seguridad de pila, memoria y CFI en WASM (SPEC-203).                         |
+| `node bin/eos.mjs mcts:search [problem]`               | Planificador heurístico Monte Carlo Tree Search con red política-valor (SPEC-204).                 |
+| `node bin/eos.mjs mcts:play [problem]`                 | Simulación interactiva de toma de decisiones estratégicas óptimas (SPEC-204).                      |
+| `node bin/eos.mjs tla:check [modelo]`                  | Verificador de modelos simbólico TLA+ y prueba de invariantes inductivos (SPEC-205).               |
+| `node bin/eos.mjs tla:synthesize [mod]`                | Sintetiza especificación canónica formal TLA+ a partir de contratos TypeScript (SPEC-205).         |
+| `node bin/eos.mjs raft:cluster [--nodes=N]`            | Simula clúster de consenso Raft distribuido con FSM replicada (SPEC-206).                          |
+| `node bin/eos.mjs raft:status [--json]`                | Estado en vivo del clúster Raft, quórum de mayoría y recibo criptográfico (SPEC-206).              |
+| `node bin/eos.mjs compress:ans [texto]`                | Compresor de entropía rANS Layer-0 cercano al límite de Shannon (SPEC-207).                        |
+| `node bin/eos.mjs decompress:ans <base64>`             | Descompresor sin pérdidas rANS con verificación de integridad SHA-256 (SPEC-207).                  |
+| `node bin/eos.mjs autodiff:grad`                       | Diferenciación automática en modo reverso con oráculo de gradientes (SPEC-208).                    |
+| `node bin/eos.mjs autodiff:train [--epochs=N]`         | Optimización cerrada de parámetros vía SGD y tensor core multidimensional (SPEC-208).              |
+| `node bin/eos.mjs anomaly:detect [--threshold=F]`      | Detector de anomalías no supervisado con Isolation Forest (SPEC-209).                              |
+| `node bin/eos.mjs anomaly:forest [--trees=N]`          | Simulación de ensamble de árboles aleatorios iTrees en streaming (SPEC-209).                       |
+| `node bin/eos.mjs pbft:cluster [--nodes=A,B,C,D]`      | Consenso bizantino PBFT 3-fases con quórum supermayoritario 2f+1 y slashing (SPEC-210).            |
+| `node bin/eos.mjs homomorphic:keygen [--degree=N]`     | Generación de par de claves en anillo ciclotómico R_q con cifrado BFV (SPEC-211).                  |
+| `node bin/eos.mjs homomorphic:add [--json]`            | Cómputo ciego homomórfico (adición de textos cifrados) con recibo SHA-256 (SPEC-211).              |
+| `node bin/eos.mjs mpc:split [--secret=N]`              | División de secreto Shamir (k, N) con compromisos de integridad SHA-256 (SPEC-212).                |
+| `node bin/eos.mjs mpc:combine [--json]`                | Reconstrucción exacta vía interpolación de Lagrange y suma homomórfica (SPEC-212).                 |
+| `node bin/eos.mjs vdf:compute [--delay=N] [--seed=S]`  | Cómputo de retardo secuencial T pasos y prueba Wesolowski (SPEC-213).                              |
+| `node bin/eos.mjs vdf:verify [--delay=N] [--seed=S]`   | Verificación O(log T) sub-milisegundo de prueba de retardo (SPEC-213).                             |
+| `node bin/eos.mjs vdf:beacon [--seed=S]`               | Baliza de aleatoriedad inmanipulable derivada de VDF (SPEC-213).                                   |
+| `node bin/eos.mjs r1cs:synthesize [--secret=N]`        | Síntesis de circuito R1CS y asignación de testigo (SPEC-214).                                      |
+| `node bin/eos.mjs r1cs:prove [--secret=N]`             | Generación de prueba QAP evaluada a desafío Fiat-Shamir τ (SPEC-214).                              |
+| `node bin/eos.mjs r1cs:verify [--json]`                | Verificación O(1) sub-milisegundo de prueba de conocimiento cero (SPEC-214).                       |
+| `node bin/eos.mjs crdt:mutate [--node=N]`              | Mutación local de estado CRDT (LWW, ORSet, RGA) con reloj vectorial (SPEC-215).                    |
+| `node bin/eos.mjs crdt:merge [--json]`                 | Fusión semilattice bidireccional con consistencia eventual fuerte SEC (SPEC-215).                  |
+| `node bin/eos.mjs crdt:delta [--json]`                 | Extracción y aplicación de parches delta mínimos entre réplicas (SPEC-215).                        |
+| `node bin/eos.mjs mmr:append [--count=N]`              | Anexa registros al acumulador MMR y calcula cumbres de montaña y raíz (SPEC-216).                  |
+| `node bin/eos.mjs mmr:prove [--leaf=N]`                | Genera prueba de inclusión O(log n) para una hoja del acumulador MMR (SPEC-216).                   |
+| `node bin/eos.mjs mmr:verify [--leaf=N]`               | Verifica la autenticidad de una prueba de inclusión MMR en sub-milisegundo (SPEC-216).             |
+| `node bin/eos.mjs vrf:eval [--alpha=S]`                | Evaluación de función aleatoria verificable ECVRF RFC 9381 (SPEC-217).                             |
+| `node bin/eos.mjs vrf:verify [--json]`                 | Verificación no interactiva de prueba VRF y reconstrucción de beta en <2ms (SPEC-217).             |
+| `node bin/eos.mjs vrf:elect [--thresh=F]`              | Elección verificable e inmanipulable de líder de consenso mediante score VRF (SPEC-217).           |
+| `node bin/eos.mjs smt:set [--key=K] [--value=V]`       | Mutación autenticada de clave-valor en Sparse Merkle Tree (SPEC-218).                              |
+| `node bin/eos.mjs smt:prove [--key=K]`                 | Genera prueba de membresía o no-membresía (exclusión) en tiempo O(log n) (SPEC-218).               |
+| `node bin/eos.mjs smt:verify [--key=K]`                | Verifica criptográficamente existencia o ausencia en SMT en sub-milisegundo (SPEC-218).            |
+| `node bin/eos.mjs frost:keygen [--t=N] [--signers=N]`  | Configuración distribuida de claves de umbral FROST (RFC 9591 / SPEC-219).                         |
+| `node bin/eos.mjs frost:sign [--message=M] [--active]` | Firma de umbral en dos rondas con factores anti-ROS y agregación Lagrange (SPEC-219).              |
+| `node bin/eos.mjs frost:verify [--message=M]`          | Verificación no interactiva indistinguible de Schnorr de clave única (SPEC-219).                   |
+| `node bin/eos.mjs kzg:commit [--coeffs=C]`             | Compromiso polinomial O(1) Kate-Zaverucha-Goldberg (SPEC-220).                                     |
+| `node bin/eos.mjs kzg:open [--coeffs=C] [--point=z]`   | Generación de prueba de apertura q(x) = (p(x)-v)/(x-z) (SPEC-220).                                 |
+| `node bin/eos.mjs kzg:verify [--coeffs=C] [--point=z]` | Verificación no interactiva O(1) de prueba de evaluación KZG (SPEC-220).                           |
+| `node bin/eos.mjs kzg:batch [--points=Z]`              | Prueba y verificación por lotes multi-punto con polinomio anulador (SPEC-220).                     |
+| `node bin/eos.mjs ml-kem:keygen [--json]`              | Genera par de claves post-cuánticas ML-KEM-768 (NIST FIPS 203 / SPEC-221).                         |
+| `node bin/eos.mjs ml-kem:encaps [--ek=EK]`             | Encapsula secreto compartido de 32B y emite texto cifrado de 1088B (SPEC-221).                     |
+| `node bin/eos.mjs ml-kem:decaps [--dk=DK] [--ct=CT]`   | Decapsula con rechazo implícito determinista constante ante falsificaciones (SPEC-221).            |
+| `node bin/eos.mjs ml-kem:benchmark [--iterations=N]`   | Benchmark de operaciones post-cuánticas por segundo (>1000 ops/sec) (SPEC-221).                    |
+| `node bin/eos.mjs bp:commit [--value=V]`               | Compromiso homomórfico Pedersen V = v*G + gamma*H (SPEC-222).                                      |
+| `node bin/eos.mjs bp:prove [--value=V] [--m=32]`       | Genera prueba NIZK Bulletproofs acotada a [0, 2^m - 1] con doblado logarítmico (SPEC-222).         |
+| `node bin/eos.mjs bp:verify [--m=32]`                  | Verifica algebraicamente la prueba NIZK sin ceremonia de confianza en <5ms (SPEC-222).             |
+| `node bin/eos.mjs bp:benchmark [--m=16]`               | Benchmark de operaciones por segundo para compromiso, prueba y verificación (SPEC-222).            |
+| `node bin/eos.mjs hotstuff:propose [--node=N]`         | Propuesta de bloque con Justify QC en consenso HotStuff BFT pipelined (SPEC-223).                  |
+| `node bin/eos.mjs hotstuff:vote [--node=N]`            | Emisión de voto con predicado de seguridad y liveness en consenso HotStuff (SPEC-223).             |
+| `node bin/eos.mjs hotstuff:status [--node=N]`          | Estado de consenso HotStuff: vista, líder, High-QC, Locked-QC (SPEC-223).                          |
+| `node bin/eos.mjs tensor:quantize [--type=Q]`          | Cuantización entera Q4_0, Q8_0, Q4_K de tensores GGUF (SPEC-224).                                  |
+| `node bin/eos.mjs tensor:matmul [--rows=R]`            | Multiplicación streaming de matriz cuantizada y vector sin heap allocation (SPEC-224).             |
+| `node bin/eos.mjs tensor:embed [--text=T]`             | Generación soberana de embeddings semánticos densos con RMSNorm (SPEC-224).                        |
+| `node bin/eos.mjs tensor:benchmark`                    | Benchmark de rendimiento GFLOPS y tasas de cuantización por segundo (SPEC-224).                    |
+| `node bin/eos.mjs fleet:sync-all [--heal]`             | Sincronización federada universal de los 9 repositorios con sanación autónoma (SPEC-225).          |
+| `node bin/eos.mjs fleet:audit-all [--json]`            | Auditoría Soundcheck 4-pilares y cálculo de Merkle Root criptográfico de la flota (SPEC-225).      |
+| `node bin/eos.mjs fleet:heal-all [--json]`             | Sanación autónoma de deriva de configuración y marcadores en la flota (SPEC-225).                  |
+| `node bin/eos.mjs trace:demo`                          | Demostración de trazado distribuido W3C y exportación OTLP JSON canónica (SPEC-226).               |
+| `node bin/eos.mjs trace:export [--json]`               | Exporta spans activos de trazado distribuido conforme al esquema OpenTelemetry (SPEC-226).         |
+| `node bin/eos.mjs ml-dsa:keygen`                       | Generación de par de claves post-cuánticas de retículos NIST FIPS 204 ML-DSA-65 (SPEC-227).        |
+| `node bin/eos.mjs ml-dsa:sign [msg]`                   | Firma digital de mensajes con esquema Fiat-Shamir con Abortos en categoría 3 (SPEC-227).           |
+| `node bin/eos.mjs ml-dsa:verify [msg]`                 | Verificación determinista en tiempo constante y reconstrucción de pistas de bits altos (SPEC-227). |
+| `node bin/eos.mjs metrics`                             | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                              |
+| `node bin/eos.mjs guard [directorio]`                  | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                        |
+| `node bin/eos.mjs flow inspect <ruta>`                 | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.          |
+| `node bin/eos.mjs worktree list`                       | Lista los árboles de trabajo (_worktrees_) aislados de Git.                                        |
 
 ---
 

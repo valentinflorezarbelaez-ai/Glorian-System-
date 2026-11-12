@@ -320,3 +320,14 @@ export type {
   OtlpTraceExportReport,
   TracerConfig,
 } from "./eosOtlpDistributedTracingCore.types.ts";
+export { EosPostQuantumMlDsaCore, ML_DSA_65_PARAMS } from "./eosPostQuantumMlDsaCore.ts";
+export type {
+  MlDsaParameters,
+  MlDsaPublicKey,
+  MlDsaPrivateKey,
+  MlDsaKeyPair,
+  MlDsaSignature,
+  MlDsaSignatureResult,
+  HybridMlDsaKeyPair,
+  HybridMlDsaSignature,
+} from "./eosPostQuantumMlDsaCore.types.ts";

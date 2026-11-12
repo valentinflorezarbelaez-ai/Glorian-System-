@@ -54,6 +54,8 @@
     "./fleet-sync": "./src/core/eosUniversalFleetSyncCore.ts",
     "./otlp": "./src/core/eosOtlpDistributedTracingCore.ts",
     "./trace": "./src/core/eosOtlpDistributedTracingCore.ts",
+    "./ml-dsa": "./src/core/eosPostQuantumMlDsaCore.ts",
+    "./dsa": "./src/core/eosPostQuantumMlDsaCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

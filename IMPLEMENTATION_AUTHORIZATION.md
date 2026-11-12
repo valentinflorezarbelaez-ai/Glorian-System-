@@ -1882,3 +1882,28 @@
   - `docs/plans/PLAN-111-OTLP-DISTRIBUTED-TRACING.md`
   - `docs/tasks/TASKS-111-OTLP-DISTRIBUTED-TRACING.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-12-POST-QUANTUM-ML-DSA-227
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Post-Quantum Digital Signature Algorithm NIST FIPS 204 ML-DSA-65 (`SPEC-227`, `CHANGE-112`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: "si dale con toda")
+- **Scope**:
+  1. Implement Layer-0 ML-DSA types in `src/core/eosPostQuantumMlDsaCore.types.ts`.
+  2. Implement Layer-0 ML-DSA Core in `src/core/eosPostQuantumMlDsaCore.ts`.
+  3. Subpath exports `"./ml-dsa"` and `"./dsa"` in `package.json`.
+  4. Export module in `src/core/index.ts`.
+  5. Add Facade actions `ml_dsa_keygen`, `ml_dsa_sign`, `ml_dsa_verify` in `src/core/eosEnterpriseFacade.ts`.
+  6. Wire CLI commands `glorian ml-dsa:keygen`, `glorian ml-dsa:sign`, `glorian ml-dsa:verify` in `bin/commands/cliPlatform.mjs`.
+  7. Wire MCP actions `action: "ml_dsa_keygen"`, `action: "ml_dsa_sign"`, `action: "ml_dsa_verify"` in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts`.
+  8. 100% BDD test coverage in `test/eosPostQuantumMlDsaCore.test.mjs` (BDD-1154..BDD-1158).
+  9. Add test step #39 in `test/eosEnterpriseFacade.test.mjs`.
+  10. Document Módulo 42 in `docs/DEVELOPER_GUIDE.md`.
+  11. Update OpenSpec catalog index to 222 specs in `docs/specs/openspec-catalog-index.json`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-112-POST-QUANTUM-ML-DSA.md`
+  - `openspec/changes/CHANGE-112-POST-QUANTUM-ML-DSA.md`
+  - `openspec/specs/SPEC-227-POST-QUANTUM-ML-DSA.md`
+  - `docs/plans/PLAN-112-POST-QUANTUM-ML-DSA.md`
+  - `docs/tasks/TASKS-112-POST-QUANTUM-ML-DSA.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

@@ -14,6 +14,7 @@ import { EosHotStuffConsensusEngine } from "../../core/eosHotStuffConsensusEngin
 import { EosQuantizedTensorInferenceCore } from "../../core/eosQuantizedTensorInferenceCore.ts";
 import { EosUniversalFleetSyncCore } from "../../core/eosUniversalFleetSyncCore.ts";
 import { EosOtlpDistributedTracingCore } from "../../core/eosOtlpDistributedTracingCore.ts";
+import { EosPostQuantumMlDsaCore } from "../../core/eosPostQuantumMlDsaCore.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
@@ -472,6 +473,39 @@ export function dispatchPhase7FrontierActionExt(
       overflowCount: report.overflowCount,
       receipt: report.receipt,
       payload: report.payload,
+    };
+  }
+  if (action === "ml_dsa_keygen") {
+    const keyPair = EosPostQuantumMlDsaCore.keyGen();
+    return {
+      action: "ml_dsa_keygen",
+      algorithm: "ML-DSA-65",
+      publicKey: keyPair.publicKey,
+      privateKey: keyPair.privateKey,
+    };
+  }
+  if (action === "ml_dsa_sign") {
+    const keyPair = EosPostQuantumMlDsaCore.keyGen();
+    const message = typeof args?.message === "string" ? args.message : "mcp-frontier-attestation";
+    const signature = EosPostQuantumMlDsaCore.sign(message, keyPair.privateKey);
+    return {
+      action: "ml_dsa_sign",
+      algorithm: "ML-DSA-65",
+      message,
+      signature,
+      publicKey: keyPair.publicKey,
+    };
+  }
+  if (action === "ml_dsa_verify") {
+    const message = typeof args?.message === "string" ? args.message : "mcp-frontier-attestation";
+    const keyPair = EosPostQuantumMlDsaCore.keyGen();
+    const signature = EosPostQuantumMlDsaCore.sign(message, keyPair.privateKey);
+    const valid = EosPostQuantumMlDsaCore.verify(message, signature, keyPair.publicKey);
+    return {
+      action: "ml_dsa_verify",
+      algorithm: "ML-DSA-65",
+      message,
+      valid,
     };
   }
   return undefined;

@@ -792,5 +792,16 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(traceExport.action, "otlp_trace_export");
     assert.equal(traceExport.spansExported, 1);
     assert.ok(traceExport.receipt.length === 64);
+
+    // 39. ml_dsa_keygen, ml_dsa_sign, ml_dsa_verify (SPEC-227)
+    const dsaKeygen = callFacade({ action: "ml_dsa_keygen" });
+    assert.equal(dsaKeygen.action, "ml_dsa_keygen");
+    assert.equal(dsaKeygen.algorithm, "ML-DSA-65");
+    const dsaSign = callFacade({ action: "ml_dsa_sign", message: "facade-dsa-test" });
+    assert.equal(dsaSign.action, "ml_dsa_sign");
+    assert.equal(dsaSign.algorithm, "ML-DSA-65");
+    const dsaVerify = callFacade({ action: "ml_dsa_verify", message: "facade-dsa-test" });
+    assert.equal(dsaVerify.action, "ml_dsa_verify");
+    assert.equal(dsaVerify.valid, true);
   });
 });

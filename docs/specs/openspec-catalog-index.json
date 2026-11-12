@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 221,
-  "catalogSha256": "a22543375b1568ec91172a5670b7f5940bb100acbeddcf2fcd819bfbecd39e4a",
+  "totalSpecs": 222,
+  "catalogSha256": "f3d0d8b26ea38c7da9d24cb927493c7a34f4d2b295388e5b0cd75c8e5adaae38",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1990,7 +1990,16 @@
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-226-OTLP-DISTRIBUTED-TRACING.md",
-      "sha256": "45ce2779efc4694757ccdaa179fc7ed8daa9e1966f1083464d58adcc147fc488"
+      "sha256": "ea8fdaa2d3ffd16c9d6542b73a3192e612958f82ea8a3aa92b9e40d74e507dac"
+    },
+    {
+      "id": "SPEC-227",
+      "title": "Layer-0 Post-Quantum Digital Signature Algorithm (NIST FIPS 204 ML-DSA-65)",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-227-POST-QUANTUM-ML-DSA.md",
+      "sha256": "76a8825a686afab7480df0aa18f6499d0b4d90a3211f45ae14fa72499ee0a310"
     }
   ]
 }
