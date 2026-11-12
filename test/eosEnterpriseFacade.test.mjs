@@ -785,5 +785,10 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(callFacade({ action: "hotstuff_propose", node: "node-1" }).isLeader, true);
     assert.equal(callFacade({ action: "hotstuff_vote", node: "node-1" }).accepted, true);
     assert.equal(callFacade({ action: "hotstuff_status", node: "node-1" }).quorumSize, 3);
+
+    // 36. tensor_quantize, tensor_matmul & tensor_embed (SPEC-224)
+    assert.equal(callFacade({ action: "tensor_quantize", size: 128 }).action, "tensor_quantize");
+    assert.equal(callFacade({ action: "tensor_matmul", rows: 32, cols: 64 }).outputLength, 32);
+    assert.equal(callFacade({ action: "tensor_embed", text: "facade-tensor" }).dimensions, 64);
   });
 });

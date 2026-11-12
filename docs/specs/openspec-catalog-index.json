@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 218,
-  "catalogSha256": "975638b93d4106d10d6670a348e348d6b07c266fecd9d31f86a920a0e94b24a8",
+  "totalSpecs": 219,
+  "catalogSha256": "b94fe54d37caebc832348c6fb5ac59690f91de1f1d222c0af44b985ffe48d2ae",
   "specs": [
     {
       "id": "SPEC-001",
@@ -1963,7 +1963,16 @@
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-223-HOTSTUFF-BFT-CONSENSUS.md",
-      "sha256": "097e9cbaaaed769647a5c11168c0049eadf4121c9f27cd35d34e82907467f159"
+      "sha256": "6d9b7060f9bcb9d4114b87f6e52550f4643f05b90b99bd4dfed9696812a42a77"
+    },
+    {
+      "id": "SPEC-224",
+      "title": "Layer-0 Quantized GGUF/Q4_K Integer Tensor Inference Core",
+      "status": "APPROVED",
+      "frCount": 5,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-224-QUANTIZED-TENSOR-INFERENCE.md",
+      "sha256": "a3de629999e0dfa7f2ba6282d816824f03b1e8a1eb21da24014dd4ebc47072ec"
     }
   ]
 }

@@ -266,3 +266,21 @@ export type {
   HotStuffEngineStatus,
   HotStuffEngineOptions,
 } from "./eosHotStuffConsensusEngine.types.ts";
+export {
+  EosQuantizedTensorInferenceCore,
+  GGUF_MAGIC,
+  GGUF_VERSION,
+  floatToFp16,
+  fp16ToFloat,
+} from "./eosQuantizedTensorInferenceCore.ts";
+export type {
+  GgmlType,
+  GgufTensorDescriptor,
+  QuantizedTensor,
+  GgufContainer,
+  MatMulResult,
+  EmbeddingResult,
+  TensorOperationType,
+  TensorReceipt,
+  TensorBenchmarkResult,
+} from "./eosQuantizedTensorInferenceCore.types.ts";

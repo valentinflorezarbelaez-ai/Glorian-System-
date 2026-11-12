@@ -665,6 +665,7 @@ import { handleKzgCommands } from "./cliKzgMesh.mjs";
 import { handleMlKemCommands } from "./cliMlKemMesh.mjs";
 import { handleBulletproofsCommands } from "./cliBulletproofsMesh.mjs";
 import { handleHotStuffCommands } from "./cliHotStuffMesh.mjs";
+import { handleTensorCommands } from "./cliTensorMesh.mjs";
 
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
@@ -684,5 +685,6 @@ export async function handlePlatformCommands(commandContext) {
   if (await handleMlKemCommands(commandContext)) return true;
   if (await handleBulletproofsCommands(commandContext)) return true;
   if (await handleHotStuffCommands(commandContext)) return true;
+  if (await handleTensorCommands(commandContext)) return true;
   return false;
 }

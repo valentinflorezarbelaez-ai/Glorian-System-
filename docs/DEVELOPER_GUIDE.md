@@ -1095,6 +1095,30 @@ const qc = engine.receiveVote({
 // Al recibir 2f + 1 = 3 votos, qc contiene las firmas agregadas
 ```
 
+### Módulo 39: Motor de Inferencia de Tensores Enteros Cuantizados GGUF / Q4_K (`EosQuantizedTensorInferenceCore`)
+
+**Propósito:** Inferencia soberana y generación de embeddings semánticos densos directamente sobre arreglos tipados (`Uint8Array`, `Float32Array`, `DataView`) sin requerir Python, PyTorch, C++ bindings ni librerías externas (SPEC-224 / CHANGE-109). Soporta serialización y parseo binario de contenedores GGUF v3 (`0x46554747`), cuantización y descuantización de bloques Q4_0, Q8_0 y Q4_K con retención de fidelidad $>99\%$ de similitud coseno y reducción de memoria de hasta $7.1\times$. Ejecuta multiplicación de matriz-vector cuantizada directamente sobre flujos de bytes (streaming block-wise matmul) con cero reservas en heap durante el cálculo, facilitando indexación HNSW y búsqueda semántica local instantánea.
+
+```ts
+import { EosQuantizedTensorInferenceCore } from "./src/core/eosQuantizedTensorInferenceCore.ts";
+
+// 1. Cuantización de vector Float32 a bloque Q4_0 (4.5 bits por peso)
+const pesos = new Float32Array(256);
+for (let i = 0; i < 256; i++) pesos[i] = Math.sin(i * 0.1);
+const q4Bytes = EosQuantizedTensorInferenceCore.quantizeQ4_0(pesos);
+console.log(`Memoria reducida: de ${pesos.byteLength}B a ${q4Bytes.byteLength}B (7.1x compresión)`);
+
+// 2. Generación soberana de embedding de texto con RMSNorm
+const matrizProyeccion = new Float32Array(64 * 128);
+const qMatriz = EosQuantizedTensorInferenceCore.quantizeQ4_0(matrizProyeccion);
+const embedding = EosQuantizedTensorInferenceCore.embedText(
+  "Glorian post-quantum consensus",
+  qMatriz,
+  64,
+);
+console.log(`Embedding generado: [${embedding.dimensions} dimensiones, norma: ${embedding.norm}]`);
+```
+
 ---
 
 ## 4. Guía Rápida de Comandos CLI
@@ -1174,6 +1198,10 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs hotstuff:propose [--node=N]`         | Propuesta de bloque con Justify QC en consenso HotStuff BFT pipelined (SPEC-223).          |
 | `node bin/eos.mjs hotstuff:vote [--node=N]`            | Emisión de voto con predicado de seguridad y liveness en consenso HotStuff (SPEC-223).     |
 | `node bin/eos.mjs hotstuff:status [--node=N]`          | Estado de consenso HotStuff: vista, líder, High-QC, Locked-QC (SPEC-223).                  |
+| `node bin/eos.mjs tensor:quantize [--type=Q]`          | Cuantización entera Q4_0, Q8_0, Q4_K de tensores GGUF (SPEC-224).                          |
+| `node bin/eos.mjs tensor:matmul [--rows=R]`            | Multiplicación streaming de matriz cuantizada y vector sin heap allocation (SPEC-224).     |
+| `node bin/eos.mjs tensor:embed [--text=T]`             | Generación soberana de embeddings semánticos densos con RMSNorm (SPEC-224).                |
+| `node bin/eos.mjs tensor:benchmark`                    | Benchmark de rendimiento GFLOPS y tasas de cuantización por segundo (SPEC-224).            |
 | `node bin/eos.mjs metrics`                             | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                      |
 | `node bin/eos.mjs guard [directorio]`                  | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                |
 | `node bin/eos.mjs flow inspect <ruta>`                 | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.  |
