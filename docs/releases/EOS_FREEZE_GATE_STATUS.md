@@ -26,7 +26,7 @@
 | **Monotonic Ledger WAL**           | SQLite WAL + FTS5 + SHA-256 Block Chaining                       | VERIFIED                     |
 | **Big Tech Frontier Pillars**      | 6/6 (SapFix, SLSA/SBOM, CAS, SMT, Chaos, BFT)                    | VERIFIED                     |
 | **CI Pipeline Stages**             | 7 + 4.4-4.7 Deep Sub-Gates (SLO/Perf, Coverage, Mutation, Flaky) | GREEN                        |
-| **Freeze Pin (HEAD)**              | `d1cf0d4b`                                                       | PINNED                       |
+| **Freeze Pin (HEAD)**              | `c17e6f58`                                                       | PINNED                       |
 
 ---
 
