@@ -1,11 +1,11 @@
 {
   "epistemicState": "GOLDEN_PATH_TTV_WITHIN_TESTED_SCOPE",
-  "generatedAt": "2026-11-09T19:56:53.433Z",
+  "generatedAt": "2026-11-12T00:22:08.445Z",
   "paths": [
     {
       "id": "MISSION_GOLDEN_PATH",
       "ok": true,
-      "durationMs": 131,
+      "durationMs": 474,
       "status": "SUCCESS",
       "epistemicState": "MISSION_GOLDEN_PATH_WITHIN_TESTED_SCOPE",
       "sha256Receipt": "f35959e71e47ae3dc167ae25424d1b08e945ec530aa4e0af22ff6b110c908d70"
@@ -13,7 +13,7 @@
     {
       "id": "PLATFORM_OPS_CEILING",
       "ok": true,
-      "durationMs": 0.977,
+      "durationMs": 2.591,
       "status": "SUCCESS",
       "epistemicState": "SOVEREIGN_CEILING_10_OF_10_WITHIN_TESTED_SCOPE",
       "sha256Receipt": "f2ab1a6ba7c7457541cee9f821e3d8ddd5e3744417576899ec0916f38493e6b9"
@@ -21,7 +21,7 @@
     {
       "id": "TURBO_VERIFY",
       "ok": true,
-      "durationMs": 42,
+      "durationMs": 125,
       "status": "SUCCESS",
       "epistemicState": "TURBO_PASS_WITHIN_TESTED_SCOPE",
       "sha256Receipt": "21e7a8c14c022a66da3389e2634049ca61a67b890b344abae7aad865ec7b528e"
@@ -29,19 +29,19 @@
     {
       "id": "PRODUCT_FACTORY_E2E",
       "ok": true,
-      "durationMs": 8.049,
+      "durationMs": 6.889,
       "status": "SUCCESS",
       "epistemicState": "BIGTECH_PRODUCT_FACTORY_WITHIN_TESTED_SCOPE",
-      "sha256Receipt": "6a4a34431878b1e15f2bd95c48e8976cd5a7456bd370764bde2cc7278c129f27"
+      "sha256Receipt": "ae2c8e14952de31a9155e1531dabe8b8b2d06192bc4de5801c6da8facd94a60c"
     }
   ],
   "metrics": {
     "pathCount": 4,
     "allOk": true,
-    "totalDurationMs": 182.026,
-    "maxPathDurationMs": 131,
+    "totalDurationMs": 608.48,
+    "maxPathDurationMs": 474,
     "p99BudgetMs": 120000,
     "withinBudget": true
   },
-  "sha256Receipt": "42191cd67fabe4fb5243390673df8d3523f263a90469e220505c6b012764926b"
+  "sha256Receipt": "d7be0168c13b16874247b7b0782ac8724f5fae675fee7fee729501e4da319db6"
 }
