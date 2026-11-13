@@ -1388,6 +1388,70 @@ console.log(`Estimación restaurada: ${restored.estimate()}`);
 
 ---
 
+### Módulo 48: Motor de Compartición Secreta Verificable Feldman & Pedersen (`EosVerifiableSecretSharingCore`)
+
+**Propósito:** Implementación experimental de compartición secreta verificable (VSS) con umbral $(k, n)$ que permite comprobar si un fragmento coincide con los compromisos públicos (`SPEC-233` / `CHANGE-118`). Soporta Feldman y Pedersen; Pedersen es el modo predeterminado y ofrece ocultación teórica de la información bajo los supuestos del generador y del cegado. La implementación no ha recibido una auditoría criptográfica independiente, y JavaScript BigInt no garantiza operaciones de tiempo constante. No usar para secretos de producción.
+
+```ts
+import { EosVerifiableSecretSharingCore } from "./src/core/eosVerifiableSecretSharingCore.ts";
+
+// Solo demostración: usar datos ficticios, no secretos de producción.
+// 1. Dividir secreto en (3, 5) con Pedersen (modo predeterminado)
+const secret = "Demo-Only-Secret-123";
+const deal = EosVerifiableSecretSharingCore.splitSecret(secret, 3, 5);
+
+// 2. Cada participante audita su fragmento independientemente
+const participant1 = deal.shares[0];
+const verification = EosVerifiableSecretSharingCore.verifyShare(participant1, deal.commitments);
+console.log(`Fragmento 1 válido: ${verification.valid}`); // true
+
+// 3. Reconstrucción que excluye fragmentos que no verifican
+const subset = [deal.shares[0], deal.shares[2], deal.shares[4]]; // k=3
+const result = EosVerifiableSecretSharingCore.reconstruct(subset, 3, deal.commitments);
+console.log(`Secreto reconstruido: "${result.secretString}"`);
+console.log(`IDs de fragmentos inválidos: [${result.cheatersIdentified.join(", ")}]`);
+```
+
+---
+
+### Módulo 49: Orquestador Autónomo SDLC Modo Jarvis, Asimilación de ADN Empresarial y Backstage Golden Path (`EosJarvisSdlcOrchestratorCore`)
+
+**Propósito:** Motor determinista Layer-0 de orquestación autónoma SDLC y asimilación de ADN organizacional (`SPEC-234` / `CHANGE-119`). Adapta automáticamente el flujo de ingeniería a estándares de clase mundial (Spotify Squads/Tribes, Trunk-Based Development, Feature Flags _dark-launch_, Testing Honeycomb, Regla de Beyoncé, aislamiento Hexagonal y Backstage `catalog-info.yaml` + Fleet Soundcheck), transforma tickets en contratos formales EARS/BDD dentro de _worktrees_ aislados, ejecuta un bucle acotado FDIR de auto-reparación y compila reglas unificadas para Cursor, Antigravity, Claude Code y Kiro.
+
+```ts
+import { EosJarvisSdlcOrchestratorCore } from "./src/core/eosJarvisSdlcOrchestratorCore.ts";
+
+// 1. Asimilar ADN empresarial (p. ej. Spotify Engineering)
+const dna = EosJarvisSdlcOrchestratorCore.assimilateCompanyDna({
+  preset: "spotify",
+  squadOwner: "music-expression-squad",
+  tribe: "music-expression",
+});
+
+// 2. Iniciar misión SDLC desde un ticket de Jira/Linear/GitHub
+const mission = EosJarvisSdlcOrchestratorCore.initiateMission({
+  ticketId: "SPOT-402",
+  ticketTitle: "Add Backstage telemetry endpoint",
+  ticketDescription: "Deliver microservice endpoint behind feature flag.",
+  companyPreset: "spotify",
+});
+
+// 3. Validar con bucle acotado FDIR y emitir Soundcheck 100/100 + hash de aprobación
+const verified = EosJarvisSdlcOrchestratorCore.verifyAndHealMission(mission, {
+  testsPassed: 14,
+  totalTests: 14,
+  coveragePercent: 93,
+  domainImportsInfrastructure: false,
+  plainSecretsCount: 0,
+  runtimeDependenciesCount: 0,
+  lintErrorsCount: 0,
+});
+console.log(`Estado: ${verified.status}, Soundcheck: ${verified.soundcheck?.score}/100`);
+console.log(`Hash --confirm-diff: ${verified.approvalDiffSha256}`);
+```
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -1492,6 +1556,13 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs hll:demo`                            | Demostración de estimación de cardinalidad HLL++, fusión y precisión empírica (SPEC-232).          |
 | `node bin/eos.mjs hll:add [clave]`                     | Agrega una entidad al sketch HLL++ y actualiza los registros en O(1) (SPEC-232).                   |
 | `node bin/eos.mjs hll:estimate`                        | Simula flujo de elementos y reporta cardinalidad con cota de error estándar (SPEC-232).            |
+| `node bin/eos.mjs vss:demo`                            | Demostración experimental de VSS con datos ficticios; no es una auditoría de seguridad (SPEC-233). |
+| `node bin/eos.mjs vss:split`                           | Demostración con datos ficticios; rechaza secretos como argumentos de línea de comandos.           |
+| `node bin/eos.mjs vss:verify`                          | Verifica un fragmento ficticio de demostración contra sus compromisos (SPEC-233).                  |
+| `node bin/eos.mjs jarvis:demo [--json]`                | Demostración completa SDLC Modo Jarvis (ADN Spotify, FDIR healing, Soundcheck 100/100) (SPEC-234). |
+| `node bin/eos.mjs jarvis:dna [--company=spotify]`      | Asimila y audita el ADN empresarial (Trunk-Based, Honeycomb, Backstage, Hexagonal) (SPEC-234).     |
+| `node bin/eos.mjs jarvis:sdlc --ticket=ID [--json]`    | Inicia y valida una misión SDLC desde un ticket con contrato EARS/BDD y hash `--confirm-diff`.     |
+| `node bin/eos.mjs jarvis:rules [--write] [--json]`     | Compila reglas unificadas `.eos/rules/jarvis-autopilot.md` para Cursor, Antigravity, Claude, Kiro. |
 | `node bin/eos.mjs metrics`                             | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                              |
 | `node bin/eos.mjs guard [directorio]`                  | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                        |
 | `node bin/eos.mjs flow inspect <ruta>`                 | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.          |

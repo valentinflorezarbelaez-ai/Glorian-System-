@@ -369,3 +369,36 @@ export type {
 } from "./eosCuckooFilterCore.types.ts";
 export { EosHyperLogLogPlusCore } from "./eosHyperLogLogPlusCore.ts";
 export type { HyperLogLogConfig, HyperLogLogStats, HllHashComponents } from "./eosHyperLogLogPlusCore.types.ts";
+export {
+  EosVerifiableSecretSharingCore,
+  VSS_SAFE_PRIME_P,
+  VSS_SUBGROUP_ORDER_Q,
+  VSS_GENERATOR_G,
+  VSS_GENERATOR_H,
+  VSS_MAX_SHARES,
+} from "./eosVerifiableSecretSharingCore.ts";
+export type {
+  VssScheme,
+  VssShare,
+  VssCommitmentPackage,
+  VssDeal,
+  VssVerificationResult,
+  VssReconstructionResult,
+} from "./eosVerifiableSecretSharingCore.types.ts";
+export { EosJarvisSdlcOrchestratorCore } from "./eosJarvisSdlcOrchestratorCore.ts";
+export type {
+  CompanyPresetId,
+  SdlcExecutionTrack,
+  JarvisMissionStatus,
+  JarvisFailureCategory,
+  AssimilateCompanyDnaOptions,
+  CompanyDnaProfile,
+  JarvisSdlcDirective,
+  FeatureFlagGuardContract,
+  JarvisValidationInput,
+  JarvisHealDiagnosis,
+  SoundcheckEvaluation,
+  JarvisMissionState,
+  CompileAutopilotRulesOptions,
+  IdeAutopilotRulesPackage,
+} from "./eosJarvisSdlcOrchestratorCore.types.ts";

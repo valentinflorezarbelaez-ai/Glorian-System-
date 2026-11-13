@@ -66,6 +66,10 @@
     "./filter": "./src/core/eosCuckooFilterCore.ts",
     "./hll": "./src/core/eosHyperLogLogPlusCore.ts",
     "./hyperloglog": "./src/core/eosHyperLogLogPlusCore.ts",
+    "./vss": "./src/core/eosVerifiableSecretSharingCore.ts",
+    "./verifiable-sharing": "./src/core/eosVerifiableSecretSharingCore.ts",
+    "./jarvis-sdlc": "./src/core/eosJarvisSdlcOrchestratorCore.ts",
+    "./autopilot": "./src/core/eosJarvisSdlcOrchestratorCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {
@@ -284,7 +288,7 @@
     "sync:stack": "node scripts/sync-gentle-ai-stack.mjs"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.18.0"
   },
   "devDependencies": {
     "@eslint/js": "9.28.0",

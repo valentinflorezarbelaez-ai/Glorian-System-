@@ -2,7 +2,7 @@
 
 [![Quality Gate](https://github.com/valentin-florez-arbelaez/Glorian-System/actions/workflows/eos-gate.yml/badge.svg)](https://github.com/valentin-florez-arbelaez/Glorian-System/actions/workflows/eos-gate.yml)
 [![CodeQL](https://github.com/valentin-florez-arbelaez/Glorian-System/actions/workflows/eos-codeql.yml/badge.svg)](https://github.com/valentin-florez-arbelaez/Glorian-System/actions/workflows/eos-codeql.yml)
-[![Node.js 24](https://img.shields.io/badge/node-%3E%3D24-green)](https://nodejs.org)
+[![Node.js 22.18+](https://img.shields.io/badge/node-%3E%3D22.18-green)](https://nodejs.org/en/blog/release/v22.18.0)
 [![TypeScript 7](https://img.shields.io/badge/TypeScript-7.0.2-blue)](tsconfig.typecheck.json)
 [![Zero Dependencies](https://img.shields.io/badge/runtime%20deps-0-brightgreen)](package.json)
 [![Coverage ≥80%](https://img.shields.io/badge/coverage-%E2%89%A580%25-brightgreen)](scripts/coverage-gate.mjs)
@@ -16,7 +16,7 @@ Some pages and endpoints are demonstrations. Static fixtures, generated drafts, 
 ## Quickstart
 
 ```sh
-# 1. Prerequisites: Node.js >= 24 (strip-only TypeScript)
+# 1. Prerequisites: Node.js >= 22.18 (built-in TypeScript type stripping)
 node --version
 
 # 2. Clone and install
@@ -37,12 +37,16 @@ npm run test:ci
 
 ## Requirements
 
-- Node.js 24+ (strip-only TypeScript runtime standard).
+- Node.js 22.18+ (built-in TypeScript type stripping).
 - Zero third-party runtime dependencies (enforced by Law V in CI).
 - Git 2.30+ for hooks (`git config core.hooksPath .githooks`).
 - Run `npm ci` to install the pinned dev toolchain (TypeScript 7, @types/node 24).
 
-The root `index.html` is the browser guide and demo catalog; it cannot run commands on your computer. The read-only `flow inspect` and `flow plan` commands do not change the target repository. Git and Node.js 22 or later must be installed. The routes under `api/` use Vercel's serverless-function conventions. Static file opening can show the page, but API-backed demos need a compatible function host.
+## Cryptography status
+
+`EosVerifiableSecretSharingCore` is experimental and is not approved for production secrets. It uses the 3072-bit RFC 3526 MODP Group 15 parameters, but the BigInt VSS implementation has not had an independent cryptographic audit and JavaScript BigInt does not promise constant-time arithmetic. Use a vetted, independently reviewed implementation for production key custody. The CLI VSS commands are demonstrations and refuse secrets passed as command-line arguments.
+
+The root `index.html` is the browser guide and demo catalog; it cannot run commands on your computer. The read-only `flow inspect` and `flow plan` commands do not change the target repository. Git and Node.js 22.18 or later must be installed. The routes under `api/` use Vercel's serverless-function conventions. Static file opening can show the page, but API-backed demos need a compatible function host.
 
 For a comprehensive developer manual and recipes covering the enterprise facade, peer mesh, memory arena, DTN, neuro-symbolic verifier, and IDE integration (Cursor / Antigravity), see [the Glorian Developer Guide](docs/DEVELOPER_GUIDE.md).
 

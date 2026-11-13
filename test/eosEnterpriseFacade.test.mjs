@@ -868,5 +868,58 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     const hllMerge = callFacade({ action: "hll_merge", precision: 12 });
     assert.equal(hllMerge.action, "hll_merge");
     assert.ok(hllMerge.mergedEstimate >= 2);
+
+    // 45. vss_split, vss_verify, vss_reconstruct (SPEC-233)
+    const vssSplit = callFacade({ action: "vss_split", secret: "facade-vss-token", k: 3, n: 5 });
+    assert.equal(vssSplit.action, "vss_split");
+    assert.equal(vssSplit.commitmentsCount, 3);
+    assert.equal(vssSplit.sharesCount, 5);
+    const vssVerify = callFacade({ action: "vss_verify" });
+    assert.equal(vssVerify.action, "vss_verify");
+    assert.equal(vssVerify.valid, true);
+    const vssRecon = callFacade({
+      action: "vss_reconstruct",
+      shares: vssSplit.shares.slice(0, 3),
+      commitments: vssSplit.commitments,
+      k: 3,
+    });
+    assert.equal(vssRecon.action, "vss_reconstruct");
+    assert.equal(vssRecon.secretString, "facade-vss-token");
+    assert.equal(vssRecon.validShareCount, 3);
+
+    // 46. jarvis_dna_assimilate, jarvis_sdlc_start, jarvis_sdlc_verify, jarvis_sync_rules (SPEC-234)
+    const jDna = callFacade({ action: "jarvis_dna_assimilate", preset: "spotify" });
+    assert.equal(jDna.action, "jarvis_dna_assimilate");
+    assert.equal(jDna.gitStrategy, "TRUNK_BASED_DEVELOPMENT");
+    assert.equal(jDna.backstageEnabled, true);
+    const jStart = callFacade({
+      action: "jarvis_sdlc_start",
+      ticketId: "SPOT-900",
+      ticketTitle: "Verify Jarvis MCP flow",
+      ticketDescription: "Deliver pure domain microservice behind dark-launch feature flag.",
+      companyPreset: "spotify",
+    });
+    assert.equal(jStart.action, "jarvis_sdlc_start");
+    assert.equal(jStart.status, "AWAITING_IMPLEMENTATION");
+    const jVerify = callFacade({
+      action: "jarvis_sdlc_verify",
+      missionState: jStart,
+      validation: {
+        testsPassed: 12,
+        totalTests: 12,
+        coveragePercent: 95,
+        domainImportsInfrastructure: false,
+        plainSecretsCount: 0,
+        runtimeDependenciesCount: 0,
+        lintErrorsCount: 0,
+      },
+    });
+    assert.equal(jVerify.action, "jarvis_sdlc_verify");
+    assert.equal(jVerify.status, "READY_FOR_APPROVAL");
+    assert.equal(jVerify.soundcheck.score, 100);
+    const jRules = callFacade({ action: "jarvis_sync_rules", companyPreset: "spotify", writeToDisk: false });
+    assert.equal(jRules.action, "jarvis_sync_rules");
+    assert.equal(jRules.writtenToDisk, false);
+    assert.equal(jRules.canonicalRulePath, ".eos/rules/jarvis-autopilot.md");
   });
 });

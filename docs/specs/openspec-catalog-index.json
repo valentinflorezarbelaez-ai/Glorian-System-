@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 227,
-  "catalogSha256": "bac89ad3daba3a5d5d9f12744686c6307609ac25671318dd78724477b76ad56a",
+  "totalSpecs": 229,
+  "catalogSha256": "de04a0a3e939b2da8c874265b26a97a03380654d39be27abe857d0cb5852aa2f",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2044,7 +2044,25 @@
       "frCount": 1,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-232-HYPERLOGLOG-PLUS.md",
-      "sha256": "1df35a1ee6546b2eba6e45c9e157d7948497ca5455853d8ec61a8dbce0ca986a"
+      "sha256": "db5dd0f26eb09482c85fabc7eabcaf6d45efbc6109be38e8c7e4e8dfdd18423b"
+    },
+    {
+      "id": "SPEC-233",
+      "title": "— Layer-0 Verifiable Secret Sharing Engine (Feldman & Pedersen VSS)",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-233-VERIFIABLE-SECRET-SHARING.md",
+      "sha256": "a9798edfc7a09fdb40e5577c3d8a144ef2bf78dc65faf27c06afe0d9b7306b5a"
+    },
+    {
+      "id": "SPEC-234",
+      "title": "— Layer-0 Jarvis Autonomous SDLC Orchestrator, Enterprise DNA Assimilation & Spotify Backstage Golden Path Engine",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-234-JARVIS-SDLC-ORCHESTRATOR.md",
+      "sha256": "5f2b63095f6ed8c0b46bc9a0ce77cc91924112dd809bda40b5307bba37eaf0c3"
     }
   ]
 }
