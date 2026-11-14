@@ -2170,3 +2170,26 @@
   - `docs/plans/PLAN-123-LIVE-CONTRACT-INTOTO-SWEBENCH.md`
   - `docs/tasks/TASKS-123-LIVE-CONTRACT-INTOTO-SWEBENCH.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-13-EDA-APOLLO-ALADDIN-247-249
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: EDA Equivalence/Timing/seL4 Prover (`SPEC-247`), Apollo Air-Gapped Bundle Orchestrator (`SPEC-248`), and Aladdin Systemic Risk Stress Engine (`SPEC-249`) + Docs-Only Beyoncé Rule Refinement (`CHANGE-124`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: `"si dale con toda"`)
+- **Scope**:
+  1. Refine `src/core/eosIssueToPrCanaryBridgeCore.ts` to classify `docs/**`, `openspec/**`, and `*.md` under `Documentation` so documentation commits do not fail production Beyoncé checks.
+  2. Implement `src/core/eosEdaEquivalenceTimingProverCore.types.ts` and `src/core/eosEdaEquivalenceTimingProverCore.ts` (`SPEC-247`).
+  3. Implement `src/core/eosApolloAirGappedBundleOrchestratorCore.types.ts` and `src/core/eosApolloAirGappedBundleOrchestratorCore.ts` (`SPEC-248`).
+  4. Implement `src/core/eosAladdinSystemicRiskStressCore.types.ts` and `src/core/eosAladdinSystemicRiskStressCore.ts` (`SPEC-249`).
+  5. Export Modules 62–64 in `src/core/index.ts`, expose `./eda-prover`, `./apollo-airgap`, `./aladdin-stress` in `package.json`, wire CLI commands (`eda:prove`, `apollo:bundle`, `aladdin:stress`, enriched `ship`), and wire MCP actions (`eda_equivalence_timing_prove`, `apollo_airgap_bundle`, `aladdin_systemic_stress`).
+  6. Add BDD suites (`BDD-1256`..`BDD-1270`) in `test/eosEdaApolloAladdin.test.mjs`, extend `test/eosEnterpriseFacade.test.mjs` (step `#51`), and document Modules 62–64 in `docs/DEVELOPER_GUIDE.md`.
+  7. Refresh pins (`tip-refresh.mjs`), pass all static and concurrent test gates, commit, seal Freeze Gate, and push to `origin/main`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-124-EDA-APOLLO-ALADDIN.md`
+  - `openspec/changes/CHANGE-124-EDA-APOLLO-ALADDIN.md`
+  - `openspec/specs/SPEC-247-EDA-EQUIVALENCE-TIMING-PROVER.md`
+  - `openspec/specs/SPEC-248-APOLLO-AIRGAPPED-BUNDLE-ORCHESTRATOR.md`
+  - `openspec/specs/SPEC-249-ALADDIN-SYSTEMIC-RISK-STRESS.md`
+  - `docs/plans/PLAN-124-EDA-APOLLO-ALADDIN.md`
+  - `docs/tasks/TASKS-124-EDA-APOLLO-ALADDIN.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

@@ -31,6 +31,15 @@ import type { ContractFilePairOverride } from "../../core/eosLiveGitContractEvol
 import { EosInTotoSlsaEd25519AttestorCore } from "../../core/eosInTotoSlsaEd25519AttestorCore.ts";
 import { EosGoldenSweBenchmarkHarnessCore } from "../../core/eosGoldenSweBenchmarkHarnessCore.ts";
 import type { SweBenchmarkCaseInput } from "../../core/eosGoldenSweBenchmarkHarnessCore.types.ts";
+import { EosEdaEquivalenceTimingProverCore } from "../../core/eosEdaEquivalenceTimingProverCore.ts";
+import type { InformationFlowEdgeInput, TimingNodeInput } from "../../core/eosEdaEquivalenceTimingProverCore.types.ts";
+import { EosApolloAirGappedBundleOrchestratorCore } from "../../core/eosApolloAirGappedBundleOrchestratorCore.ts";
+import type {
+  AirGappedArtifactInput,
+  AirGappedBundleConstraints,
+  AirGappedTargetNodeSpec,
+} from "../../core/eosApolloAirGappedBundleOrchestratorCore.types.ts";
+import { EosAladdinSystemicRiskStressCore } from "../../core/eosAladdinSystemicRiskStressCore.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
 function numOr(val: unknown, fallback: number): number {
@@ -246,6 +255,67 @@ function dispatchLiveContractAttestBenchActions(
   if (action === "live_contract_evolution") return handleLiveContractEvolution(args, deps);
   if (action === "intoto_slsa_attest") return handleInTotoSlsaAttest(args, deps);
   if (action === "golden_swe_benchmark") return handleGoldenSweBenchmark(args);
+  return dispatchEdaApolloAladdinActions(action, args, deps);
+}
+
+function optNumArg(args: Record<string, unknown> | undefined, key: string): number | undefined {
+  const val = args?.[key];
+  return typeof val === "number" && Number.isFinite(val) ? val : undefined;
+}
+
+function handleEdaEquivalenceTimingProve(args: Record<string, unknown> | undefined): Record<string, unknown> {
+  const report = EosEdaEquivalenceTimingProverCore.proveEquivalenceTimingAndIsolation({
+    circuitId: optStringArg(args, "circuitId"),
+    clockBudgetMicros: optNumArg(args, "clockBudgetMicros"),
+    timingDag: Array.isArray(args?.timingDag) ? (args.timingDag as TimingNodeInput[]) : undefined,
+    flows: Array.isArray(args?.flows) ? (args.flows as InformationFlowEdgeInput[]) : undefined,
+  });
+  return { ...report, action: "eda_equivalence_timing_prove" };
+}
+
+function handleApolloAirGapBundle(
+  args: Record<string, unknown> | undefined,
+  deps: { readonly projectRoot: string },
+): Record<string, unknown> {
+  const report = EosApolloAirGappedBundleOrchestratorCore.compileAndVerifyAirGappedBundle({
+    projectRoot: deps.projectRoot,
+    bundleId: optStringArg(args, "bundleId"),
+    version: optStringArg(args, "version"),
+    artifacts: Array.isArray(args?.artifacts) ? (args.artifacts as AirGappedArtifactInput[]) : undefined,
+    recalledVersions: Array.isArray(args?.recalledVersions) ? (args.recalledVersions as string[]) : undefined,
+    constraints: isPlainRecord(args?.constraints) ? (args.constraints as AirGappedBundleConstraints) : undefined,
+    targetNode: isPlainRecord(args?.targetNode) ? (args.targetNode as unknown as AirGappedTargetNodeSpec) : undefined,
+    keySeed: optStringArg(args, "keySeed"),
+    writeBundleToDisk: args?.writeBundleToDisk === true,
+    outputRelPath: optStringArg(args, "outputRelPath"),
+  });
+  return { ...report, action: "apollo_airgap_bundle" };
+}
+
+function handleAladdinSystemicStress(
+  args: Record<string, unknown> | undefined,
+  deps: { readonly projectRoot: string },
+): Record<string, unknown> {
+  const report = EosAladdinSystemicRiskStressCore.runSystemicStressSimulation({
+    projectRoot: deps.projectRoot,
+    registryRelPath: optStringArg(args, "registryRelPath"),
+    trials: optNumArg(args, "trials"),
+    seed: optNumArg(args, "seed"),
+    shockProbability: optNumArg(args, "shockProbability"),
+    contagionCoupling: optNumArg(args, "contagionCoupling"),
+    portfolioCountOverride: optNumArg(args, "portfolioCountOverride"),
+  });
+  return { ...report, action: "aladdin_systemic_stress" };
+}
+
+function dispatchEdaApolloAladdinActions(
+  action: string,
+  args: Record<string, unknown> | undefined,
+  deps: { readonly projectRoot: string },
+): Record<string, unknown> | undefined {
+  if (action === "eda_equivalence_timing_prove") return handleEdaEquivalenceTimingProve(args);
+  if (action === "apollo_airgap_bundle") return handleApolloAirGapBundle(args, deps);
+  if (action === "aladdin_systemic_stress") return handleAladdinSystemicStress(args, deps);
   return undefined;
 }
 

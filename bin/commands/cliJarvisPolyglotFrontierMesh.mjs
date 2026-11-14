@@ -11,6 +11,9 @@ import { EosFleetMultiRepoShipOrchestratorCore } from "../../src/core/eosFleetMu
 import { EosLiveGitContractEvolutionCore } from "../../src/core/eosLiveGitContractEvolutionCore.ts";
 import { EosInTotoSlsaEd25519AttestorCore } from "../../src/core/eosInTotoSlsaEd25519AttestorCore.ts";
 import { EosGoldenSweBenchmarkHarnessCore } from "../../src/core/eosGoldenSweBenchmarkHarnessCore.ts";
+import { EosEdaEquivalenceTimingProverCore } from "../../src/core/eosEdaEquivalenceTimingProverCore.ts";
+import { EosApolloAirGappedBundleOrchestratorCore } from "../../src/core/eosApolloAirGappedBundleOrchestratorCore.ts";
+import { EosAladdinSystemicRiskStressCore } from "../../src/core/eosAladdinSystemicRiskStressCore.ts";
 
 const HANDLERS = {};
 
@@ -336,6 +339,60 @@ async function cmd_bench_swe(commandContext) {
   );
 }
 
+async function cmd_eda_prove(commandContext) {
+  const { args } = commandContext;
+  const isJson = args.includes("--json");
+  const budget = Number.parseInt(readFlag(args, "budget", "500"), 10);
+  const report = EosEdaEquivalenceTimingProverCore.proveEquivalenceTimingAndIsolation({
+    clockBudgetMicros: Number.isFinite(budget) ? budget : 500,
+  });
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+  console.log(
+    `\n[EDA PROVE] verdict=${report.verdict} lec=${report.lecEquivalent} slack=${report.slackMicros}us nonInterference=${report.nonInterferenceVerified}`,
+  );
+}
+
+async function cmd_apollo_bundle(commandContext) {
+  const { args, root } = commandContext;
+  const isJson = args.includes("--json");
+  const writeBundleToDisk = args.includes("--write");
+  const bundleId = readFlag(args, "id", "APOLLO-BUNDLE-001");
+  const report = EosApolloAirGappedBundleOrchestratorCore.compileAndVerifyAirGappedBundle({
+    projectRoot: root,
+    bundleId,
+    writeBundleToDisk,
+  });
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+  console.log(
+    `\n[APOLLO BUNDLE] verdict=${report.verdict} artifacts=${report.artifactCount} dsse=${report.dsseVerified} merkle=${report.artifactMerkleRootSha256.slice(0, 16)}`,
+  );
+}
+
+async function cmd_aladdin_stress(commandContext) {
+  const { args, root } = commandContext;
+  const isJson = args.includes("--json");
+  const trials = Number.parseInt(readFlag(args, "trials", "200"), 10);
+  const seed = Number.parseInt(readFlag(args, "seed", "42"), 10);
+  const report = EosAladdinSystemicRiskStressCore.runSystemicStressSimulation({
+    projectRoot: root,
+    trials: Number.isFinite(trials) ? trials : 200,
+    seed: Number.isFinite(seed) ? seed : 42,
+  });
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+  console.log(
+    `\n[ALADDIN STRESS] tier=${report.riskTier} avail=${report.expectedAvailabilityPercent}% VaR99=${report.valueAtRisk99Percent}% CVaR99=${report.expectedShortfall99Percent}%`,
+  );
+}
+
 async function cmd_ship(commandContext) {
   const { args, root } = commandContext;
   const isJson = args.includes("--json");
@@ -397,6 +454,16 @@ async function cmd_ship(commandContext) {
     staffVerdict: staffJudge.verdict,
   });
   const sweBenchmark = EosGoldenSweBenchmarkHarnessCore.runGoldenBenchmark();
+  const edaFormalProof = EosEdaEquivalenceTimingProverCore.proveEquivalenceTimingAndIsolation({
+    circuitId: `${ticketId}-EDA`,
+  });
+  const apolloAirGapBundle = EosApolloAirGappedBundleOrchestratorCore.compileAndVerifyAirGappedBundle({
+    projectRoot: root,
+    bundleId: `${ticketId}-APOLLO`,
+  });
+  const aladdinSystemicRisk = EosAladdinSystemicRiskStressCore.runSystemicStressSimulation({
+    projectRoot: root,
+  });
   const approved = [
     liveDiff.readyToShip,
     propertySuite.allPassed,
@@ -404,6 +471,9 @@ async function cmd_ship(commandContext) {
     contractDiff.backwardCompatible,
     liveContractEvolution.backwardCompatible,
     dsseAttestation.verified,
+    edaFormalProof.verdict === "SILICON_FORMAL_VERIFIED",
+    apolloAirGapBundle.verdict === "AIRGAP_DEPLOY_READY",
+    aladdinSystemicRisk.riskTier !== "SYSTEMIC_CRITICAL",
   ].every(Boolean);
   const payload = {
     mode: "ship",
@@ -420,13 +490,16 @@ async function cmd_ship(commandContext) {
     canaryPlan,
     dsseAttestation,
     sweBenchmark,
+    edaFormalProof,
+    apolloAirGapBundle,
+    aladdinSystemicRisk,
   };
   if (isJson) {
     console.log(JSON.stringify(payload, null, 2));
     return;
   }
   console.log(
-    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, SLSA=${dsseAttestation.verified}, F1=${sweBenchmark.f1Score.toFixed(2)}, Tokens=${repoMap.estimatedCompressedTokens})`,
+    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, SLSA=${dsseAttestation.verified}, F1=${sweBenchmark.f1Score.toFixed(2)}, EDA=${edaFormalProof.verdict}, Apollo=${apolloAirGapBundle.verdict}, Aladdin=${aladdinSystemicRisk.riskTier}, Tokens=${repoMap.estimatedCompressedTokens})`,
   );
 }
 
@@ -446,6 +519,9 @@ HANDLERS["fleet:ship"] = cmd_fleet_ship;
 HANDLERS["contract:live"] = cmd_contract_live;
 HANDLERS["attest:ship"] = cmd_attest_ship;
 HANDLERS["bench:swe"] = cmd_bench_swe;
+HANDLERS["eda:prove"] = cmd_eda_prove;
+HANDLERS["apollo:bundle"] = cmd_apollo_bundle;
+HANDLERS["aladdin:stress"] = cmd_aladdin_stress;
 HANDLERS["ship"] = cmd_ship;
 
 export async function handleJarvisPolyglotFrontierCommands(command, commandContext) {

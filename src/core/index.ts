@@ -502,3 +502,27 @@ export type {
   SweBenchmarkCaseOutcome,
   GoldenSweBenchmarkReport,
 } from "./eosGoldenSweBenchmarkHarnessCore.types.ts";
+export { EosEdaEquivalenceTimingProverCore } from "./eosEdaEquivalenceTimingProverCore.ts";
+export type {
+  TimingNodeInput,
+  SecurityDomainLevel,
+  InformationFlowEdgeInput,
+  LecCounterexample,
+  ProveEdaAndSeL4Options,
+  EdaEquivalenceTimingReport,
+} from "./eosEdaEquivalenceTimingProverCore.types.ts";
+export { EosApolloAirGappedBundleOrchestratorCore } from "./eosApolloAirGappedBundleOrchestratorCore.ts";
+export type {
+  AirGappedArtifactInput,
+  AirGappedBundleConstraints,
+  AirGappedTargetNodeSpec,
+  AirGappedBundleOptions,
+  AirGappedVerdict,
+  AirGappedBundleReport,
+} from "./eosApolloAirGappedBundleOrchestratorCore.types.ts";
+export { EosAladdinSystemicRiskStressCore } from "./eosAladdinSystemicRiskStressCore.ts";
+export type {
+  AladdinStressOptions,
+  AladdinRiskTier,
+  AladdinSystemicRiskReport,
+} from "./eosAladdinSystemicRiskStressCore.types.ts";

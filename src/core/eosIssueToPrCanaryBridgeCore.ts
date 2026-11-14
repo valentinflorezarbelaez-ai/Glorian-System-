@@ -81,6 +81,7 @@ function classifyFileLayer(filePath: string): string {
   const p = filePath.replace(/\\/g, "/").toLowerCase();
   if (p.includes("test") || p.includes("spec.") || p.endsWith(".test.mjs")) return "Tests";
   if (p.includes("migration") || p.endsWith(".sql")) return "DatabaseMigration";
+  if (p.startsWith("docs/") || p.startsWith("openspec/") || p.endsWith(".md")) return "Documentation";
   if (p.includes("/domain/") || p.includes("/core/")) return "Domain";
   if (p.includes("/application/") || p.includes("/usecase")) return "Application";
   if (p.includes("/ui/") || p.includes("/web/") || p.endsWith(".tsx") || p.endsWith(".html")) return "Presentation";
@@ -137,7 +138,9 @@ export class EosIssueToPrCanaryBridgeCore {
     const files = Array.isArray(input.changedFiles) ? input.changedFiles : [];
     const layerSet = new Set(files.map((f) => classifyFileLayer(f.path)));
     const touchedLayers = [...layerSet];
-    const hasProdCode = touchedLayers.some((layer) => layer !== "Tests" && layer !== "DatabaseMigration");
+    const hasProdCode = touchedLayers.some(
+      (layer) => layer !== "Tests" && layer !== "DatabaseMigration" && layer !== "Documentation",
+    );
     const beyonceRuleSatisfied = !hasProdCode || layerSet.has("Tests");
     const ddlCheck = detectUnsafeDdl(input.sqlMigrationSnippet ?? "");
 

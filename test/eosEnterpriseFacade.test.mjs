@@ -1035,5 +1035,22 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(sweBench.action, "golden_swe_benchmark");
     assert.equal(sweBench.f1Score, 1);
     assert.equal(sweBench.falsePositiveRate, 0);
+
+    // 51. eda_equivalence_timing_prove, apollo_airgap_bundle, aladdin_systemic_stress (SPEC-247..SPEC-249)
+    const edaProve = callFacade({ action: "eda_equivalence_timing_prove", circuitId: "FACADE-EDA-247" });
+    assert.equal(edaProve.action, "eda_equivalence_timing_prove");
+    assert.equal(edaProve.verdict, "SILICON_FORMAL_VERIFIED");
+    assert.equal(edaProve.lecEquivalent, true);
+    assert.equal(edaProve.nonInterferenceVerified, true);
+
+    const apolloBundle = callFacade({ action: "apollo_airgap_bundle", bundleId: "FACADE-APOLLO-248" });
+    assert.equal(apolloBundle.action, "apollo_airgap_bundle");
+    assert.equal(apolloBundle.verdict, "AIRGAP_DEPLOY_READY");
+    assert.equal(apolloBundle.dsseVerified, true);
+
+    const aladdinStress = callFacade({ action: "aladdin_systemic_stress", trials: 100, seed: 77 });
+    assert.equal(aladdinStress.action, "aladdin_systemic_stress");
+    assert.equal(aladdinStress.portfolioSize, 9);
+    assert.ok(aladdinStress.expectedShortfall99Percent >= aladdinStress.valueAtRisk99Percent);
   });
 });

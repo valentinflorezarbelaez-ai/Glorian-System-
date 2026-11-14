@@ -82,6 +82,9 @@
     "./contract-live": "./src/core/eosLiveGitContractEvolutionCore.ts",
     "./intoto-attest": "./src/core/eosInTotoSlsaEd25519AttestorCore.ts",
     "./swe-bench": "./src/core/eosGoldenSweBenchmarkHarnessCore.ts",
+    "./eda-prover": "./src/core/eosEdaEquivalenceTimingProverCore.ts",
+    "./apollo-airgap": "./src/core/eosApolloAirGappedBundleOrchestratorCore.ts",
+    "./aladdin-stress": "./src/core/eosAladdinSystemicRiskStressCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {
