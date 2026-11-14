@@ -70,6 +70,9 @@
     "./verifiable-sharing": "./src/core/eosVerifiableSecretSharingCore.ts",
     "./jarvis-sdlc": "./src/core/eosJarvisSdlcOrchestratorCore.ts",
     "./autopilot": "./src/core/eosJarvisSdlcOrchestratorCore.ts",
+    "./polyglot": "./src/core/eosPolyglotToolchainAdapterCore.ts",
+    "./issue-bridge": "./src/core/eosIssueToPrCanaryBridgeCore.ts",
+    "./staff-judge": "./src/core/eosStaffEngineerAdversarialJudgeCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

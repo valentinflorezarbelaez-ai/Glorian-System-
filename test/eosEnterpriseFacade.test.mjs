@@ -921,5 +921,34 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(jRules.action, "jarvis_sync_rules");
     assert.equal(jRules.writtenToDisk, false);
     assert.equal(jRules.canonicalRulePath, ".eos/rules/jarvis-autopilot.md");
+
+    // 47. polyglot_detect, polyglot_normalize, issue_bridge_parse, diff_migration_audit, canary_rollback_plan, staff_adversarial_judge (SPEC-235..SPEC-237)
+    const pDetect = callFacade({ action: "polyglot_detect", stackId: "java-maven", serviceName: "player-service" });
+    assert.equal(pDetect.action, "polyglot_detect");
+    assert.equal(pDetect.language, "Java 21 LTS");
+    const pNorm = callFacade({
+      action: "polyglot_normalize",
+      stackId: "java-maven",
+      rawOutput: "Tests run: 18, Failures: 0, Errors: 0 coverage: 93.2%",
+    });
+    assert.equal(pNorm.action, "polyglot_normalize");
+    assert.equal(pNorm.validation.testsPassed, 18);
+    const iParse = callFacade({ action: "issue_bridge_parse", key: "PAY-881", priority: "Critical" });
+    assert.equal(iParse.action, "issue_bridge_parse");
+    assert.equal(iParse.priority, "P1");
+    const dAudit = callFacade({
+      action: "diff_migration_audit",
+      changedFiles: [{ path: "src/core/billing.ts" }, { path: "test/billing.test.mjs" }],
+      sqlMigrationSnippet: "ALTER TABLE bills ADD COLUMN trace_id TEXT;",
+    });
+    assert.equal(dAudit.action, "diff_migration_audit");
+    assert.equal(dAudit.beyonceRuleSatisfied, true);
+    assert.equal(dAudit.migrationPattern, "SAFE_EXPAND_AND_CONTRACT");
+    const cPlan = callFacade({ action: "canary_rollback_plan", ticketId: "PAY-881", featureFlagKey: "ff_pay_881" });
+    assert.equal(cPlan.action, "canary_rollback_plan");
+    assert.equal(cPlan.stages.length, 4);
+    const sJudge = callFacade({ action: "staff_adversarial_judge", targetId: "PR-237" });
+    assert.equal(sJudge.action, "staff_adversarial_judge");
+    assert.equal(sJudge.verdict, "APPROVED");
   });
 });

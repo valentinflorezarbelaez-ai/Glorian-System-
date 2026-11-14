@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 229,
-  "catalogSha256": "de04a0a3e939b2da8c874265b26a97a03380654d39be27abe857d0cb5852aa2f",
+  "totalSpecs": 232,
+  "catalogSha256": "16e384c4fea3bbaf1701cd4346018f1cb7e2e33cde5f5f86dcf92517aa3925ac",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2053,7 +2053,7 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-233-VERIFIABLE-SECRET-SHARING.md",
-      "sha256": "a9798edfc7a09fdb40e5577c3d8a144ef2bf78dc65faf27c06afe0d9b7306b5a"
+      "sha256": "93feac2aa882b1fa884234bcd4e87be62b2cc851d0356da48cc02a61653548dc"
     },
     {
       "id": "SPEC-234",
@@ -2062,7 +2062,34 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-234-JARVIS-SDLC-ORCHESTRATOR.md",
-      "sha256": "5f2b63095f6ed8c0b46bc9a0ce77cc91924112dd809bda40b5307bba37eaf0c3"
+      "sha256": "37d87987c0aded4586281947acb2cf82ce8aa20f7c0b41f75de3749185ab3802"
+    },
+    {
+      "id": "SPEC-235",
+      "title": "— Layer-0 Polyglot Toolchain Adapter & Universal Verification Normalizer",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-235-POLYGLOT-TOOLCHAIN-ADAPTER.md",
+      "sha256": "91334754316f590a740351ad7e98bfda656144449eac3a8bbc0435980081f09b"
+    },
+    {
+      "id": "SPEC-236",
+      "title": "— Layer-0 Issue-to-PR Bridge, Diff Blast-Radius Auditor & Canary Rollback Governor",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-236-ISSUE-PR-CANARY-BRIDGE.md",
+      "sha256": "b0533b765a2301f7070b2c797922024c851adb8793dc324deb5572d06b987862"
+    },
+    {
+      "id": "SPEC-237",
+      "title": "— Layer-0 Staff Engineer Adversarial PR & System Design Dual-Judge",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-237-STAFF-ADVERSARIAL-JUDGE.md",
+      "sha256": "d40843222cf5b4b7d9fd2e940607db6224b17de6a056be9ad0e0e641e93dd452"
     }
   ]
 }

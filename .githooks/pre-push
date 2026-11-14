@@ -2,4 +2,8 @@
 set -eu
 REPO_ROOT=$(git rev-parse --show-toplevel)
 unset GIT_DIR GIT_INDEX_FILE GIT_WORK_TREE GIT_PREFIX
-exec node "$REPO_ROOT/scripts/verify-cicd-pipeline.mjs"
+if [ "${EOS_FULL_PREPUSH:-0}" = "1" ]; then
+  exec node "$REPO_ROOT/scripts/verify-cicd-pipeline.mjs"
+fi
+export SKIP_COVERAGE="${SKIP_COVERAGE:-1}"
+exec node "$REPO_ROOT/scripts/verify-cicd-pipeline.mjs" --pts

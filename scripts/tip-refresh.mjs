@@ -170,7 +170,29 @@ if (dryRun) {
 
 fs.writeFileSync(freezePath, updatedWithMilestone, "utf8");
 fs.writeFileSync(matrixPath, matrixUpdated, "utf8");
+
+// Sync OpenSpec catalog index & AGENTS.md snapshot prior to commit so subsequent
+// verification suites leave zero uncommitted doc drift in the working tree.
+const agentsPath = path.join(root, "AGENTS.md");
+if (fs.existsSync(agentsPath)) {
+  const agentsExisting = fs.readFileSync(agentsPath, "utf8");
+  const agentsUpdated = agentsExisting.replace(
+    /(- \*\*Active Formal Architectural Specs \(OpenSpec\)\*\*: )\d+/,
+    `$1${m.specs}`,
+  );
+  if (agentsUpdated !== agentsExisting) {
+    fs.writeFileSync(agentsPath, agentsUpdated, "utf8");
+  }
+}
+
+try {
+  const { EosTacticalCommandEngine } = await import("../src/core/eosTacticalCommandEngine.ts");
+  new EosTacticalCommandEngine(root).exportOpenSpecsJson();
+} catch (err) {
+  console.warn(`⚠️ OpenSpec catalog index sync skipped: ${err?.message ?? err}`);
+}
+
 console.log(
-  `✅ Tip-refresh complete: freeze gate + capability matrix synced to v${version} @ HEAD ${m.head} (${m.specs} specs, ${m.tla} TLA+, ${m.tests} tests, ${m.tsModules} modules).`,
+  `✅ Tip-refresh complete: freeze gate + capability matrix + AGENTS.md + catalog index synced to v${version} @ HEAD ${m.head} (${m.specs} specs, ${m.tla} TLA+, ${m.tests} tests, ${m.tsModules} modules).`,
 );
 console.log("Next: commit these docs, then `node scripts/tip-refresh.mjs --seal-pin` + amend so Freeze Pin == HEAD.");

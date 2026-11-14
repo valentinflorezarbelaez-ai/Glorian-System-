@@ -215,37 +215,57 @@ assert.ok(testFiles.length > 0, "No Node test suites were found under test/.");
 const isPts = process.argv.includes("--pts");
 let filesToRun = testFiles;
 
+function collectPtsChangedFiles(repoRoot) {
+  const porcelain = execFileSync("git", ["status", "--porcelain"], { cwd: repoRoot, encoding: "utf8" });
+  const workingChanged = porcelain
+    .split("\n")
+    .filter(Boolean)
+    .map((l) => l.slice(3).trim())
+    .map((l) => (l.includes(" -> ") ? l.slice(l.indexOf(" -> ") + 4) : l))
+    .filter(Boolean);
+  if (workingChanged.length > 0) return workingChanged;
+  try {
+    const commitDiff = execFileSync("git", ["diff", "--name-only", "HEAD~2..HEAD"], {
+      cwd: repoRoot,
+      encoding: "utf8",
+    });
+    return commitDiff
+      .split("\n")
+      .map((l) => l.trim())
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
 if (isPts) {
   try {
-    const gitDiff = execFileSync("git", ["status", "--porcelain"], { cwd: root, encoding: "utf8" });
-    const changed = gitDiff
-      .split("\n")
-      .filter(Boolean)
-      .map((l) => l.slice(3).trim())
-      .map((l) => (l.includes(" -> ") ? l.slice(l.indexOf(" -> ") + 4) : l))
-      .filter(Boolean);
-
+    const changed = collectPtsChangedFiles(root);
     if (changed.length > 0) {
       const { EosDatalogVerifier } = await import("../src/core/eosDatalogVerifier.ts");
       const verifier = new EosDatalogVerifier(root);
-      const selected = new Set();
+      const selected = new Set([
+        "test/eosCore.test.mjs",
+        "test/eosReleaseDocConsistency.test.mjs",
+        "test/eosModuleSizeBudget.test.mjs",
+      ]);
 
       for (const item of changed) {
         const norm = item.replace(/\\/g, "/");
         if (norm.startsWith("test/") && norm.endsWith(".test.mjs")) {
           selected.add(norm);
         } else if (norm.startsWith("src/core/") && norm.endsWith(".ts")) {
-          const blast = verifier.queryBlastRadius(norm);
-          blast.predictiveTestSuites.forEach((s) => selected.add(s));
+          verifier.queryBlastRadius(norm).predictiveTestSuites.forEach((s) => selected.add(s));
+        } else if (norm.startsWith("bin/") || norm.startsWith("src/mcp/")) {
+          selected.add("test/eosEnterpriseFacade.test.mjs");
+          selected.add("test/eosMcpSchemaValidator.test.mjs");
         }
       }
 
-      if (selected.size > 0) {
-        filesToRun = testFiles.filter((f) => selected.has(f));
-        console.log(
-          `[STAGE 4 PTS] Datalog Smart Selection activated: ${filesToRun.length} of ${testFiles.length} suites selected.`,
-        );
-      }
+      filesToRun = testFiles.filter((f) => selected.has(f));
+      console.log(
+        `[STAGE 4 PTS] Datalog Smart Selection activated: ${filesToRun.length} of ${testFiles.length} suites selected.`,
+      );
     }
   } catch {
     filesToRun = testFiles;

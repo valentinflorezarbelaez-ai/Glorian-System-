@@ -676,6 +676,7 @@ import { handleCuckooCommands } from "./cliCuckooMesh.mjs";
 import { handleHllCommands } from "./cliHllMesh.mjs";
 import { handleVssCommands } from "./cliVssMesh.mjs";
 import { handleJarvisSdlcCommands } from "./cliJarvisSdlcMesh.mjs";
+import { handleJarvisPolyglotFrontierCommands } from "./cliJarvisPolyglotFrontierMesh.mjs";
 
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
@@ -706,5 +707,6 @@ export async function handlePlatformCommands(commandContext) {
   if (await handleHllCommands(commandContext.command, commandContext)) return true;
   if (await handleVssCommands(commandContext.command, commandContext)) return true;
   if (await handleJarvisSdlcCommands(commandContext.command, commandContext)) return true;
+  if (await handleJarvisPolyglotFrontierCommands(commandContext.command, commandContext)) return true;
   return false;
 }

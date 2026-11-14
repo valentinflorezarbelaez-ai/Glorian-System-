@@ -2075,3 +2075,28 @@
   - `docs/plans/PLAN-119-JARVIS-SDLC-ORCHESTRATOR.md`
   - `docs/tasks/TASKS-119-JARVIS-SDLC-ORCHESTRATOR.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-13-JARVIS-POLYGLOT-FRONTIER-235-237
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Polyglot Toolchain Adapter (`SPEC-235`), Issue-to-PR & Canary Rollback Bridge (`SPEC-236`), Staff Engineer Adversarial Dual-Judge (`SPEC-237`) & CI/CD Pre-Push/Tip-Refresh Hygiene (`CHANGE-120`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: "D" — implement all 4 roadmap waves in order)
+- **Scope**:
+  1. Implement `src/core/eosPolyglotToolchainAdapterCore.types.ts` and `src/core/eosPolyglotToolchainAdapterCore.ts` (`SPEC-235`).
+  2. Implement `src/core/eosIssueToPrCanaryBridgeCore.types.ts` and `src/core/eosIssueToPrCanaryBridgeCore.ts` (`SPEC-236`).
+  3. Implement `src/core/eosStaffEngineerAdversarialJudgeCore.types.ts` and `src/core/eosStaffEngineerAdversarialJudgeCore.ts` (`SPEC-237`).
+  4. Export Modules 50–52 in `src/core/index.ts` and add `./polyglot`, `./issue-bridge`, `./staff-judge` in `package.json`.
+  5. Wire CLI commands in `bin/commands/cliJarvisPolyglotFrontierMesh.mjs` and `bin/commands/cliPlatform.mjs`.
+  6. Extend `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt2.ts` with 6 frontier actions while preserving the 46 Tier-0 core tool schemas.
+  7. Update `scripts/tip-refresh.mjs`, `scripts/verify-cicd-pipeline.mjs`, and `.githooks/pre-push` for clean doc sync and fast PTS pre-push checks.
+  8. Add BDD test coverage (`BDD-1196`..`BDD-1210`) in `test/eosJarvisPolyglotFrontier.test.mjs` and step `#47` in `test/eosEnterpriseFacade.test.mjs`.
+  9. Document Modules 50–52 in `docs/DEVELOPER_GUIDE.md` and refresh `docs/specs/openspec-catalog-index.json` + `AGENTS.md`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-120-JARVIS-POLYGLOT-FRONTIER.md`
+  - `openspec/changes/CHANGE-120-JARVIS-POLYGLOT-FRONTIER.md`
+  - `openspec/specs/SPEC-235-POLYGLOT-TOOLCHAIN-ADAPTER.md`
+  - `openspec/specs/SPEC-236-ISSUE-PR-CANARY-BRIDGE.md`
+  - `openspec/specs/SPEC-237-STAFF-ADVERSARIAL-JUDGE.md`
+  - `docs/plans/PLAN-120-JARVIS-POLYGLOT-FRONTIER.md`
+  - `docs/tasks/TASKS-120-JARVIS-POLYGLOT-FRONTIER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

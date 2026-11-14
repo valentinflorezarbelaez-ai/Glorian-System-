@@ -402,3 +402,35 @@ export type {
   CompileAutopilotRulesOptions,
   IdeAutopilotRulesPackage,
 } from "./eosJarvisSdlcOrchestratorCore.types.ts";
+export { EosPolyglotToolchainAdapterCore } from "./eosPolyglotToolchainAdapterCore.ts";
+export type {
+  PolyglotStackId,
+  DetectPolyglotStackOptions,
+  PolyglotCommandMatrix,
+  HexagonalDirectoryMap,
+  PolyglotToolchainProfile,
+  NormalizePolyglotReportInput,
+  NormalizedPolyglotVerification,
+} from "./eosPolyglotToolchainAdapterCore.types.ts";
+export { EosIssueToPrCanaryBridgeCore } from "./eosIssueToPrCanaryBridgeCore.ts";
+export type {
+  IssueSourceSystem,
+  IssuePriorityLevel,
+  MigrationSafetyPattern,
+  RawIssuePayloadInput,
+  CanonicalIssueDescriptor,
+  DiffFileEntry,
+  AnalyzeDiffAndMigrationInput,
+  DiffAndMigrationAuditReport,
+  CompileCanaryPlanInput,
+  CanaryStageDescriptor,
+  CanaryRolloutAndRollbackPlan,
+} from "./eosIssueToPrCanaryBridgeCore.types.ts";
+export { EosStaffEngineerAdversarialJudgeCore } from "./eosStaffEngineerAdversarialJudgeCore.ts";
+export type {
+  AdversarialVerdictStatus,
+  StaffPillarScores,
+  StaffJudgeInput,
+  JudgePersonaEvaluation,
+  StaffAdversarialVerdictReport,
+} from "./eosStaffEngineerAdversarialJudgeCore.types.ts";
