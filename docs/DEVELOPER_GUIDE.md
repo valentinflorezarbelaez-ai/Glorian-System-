@@ -1607,7 +1607,37 @@ const normalized = EosPolyglotToolchainAdapterCore.normalizeTestAndCoverageRepor
 
 ### Módulo 73: Criterio de Lawson de Ignición de Fusión Inercial y Balance Alfa (`EosInertialFusionLawsonIgnitionCore`)
 
-**Propósito:** Calcula el producto triple de Lawson ($n \tau_E T$), reactividad Bosch-Hale D-T, autocalentamiento alfa frente a pérdidas por radiación Bremsstrahlung y conducción, ganancia $Q_{\text{plasma}}$ y asimetría de implosión $P_2/P_0$ con cierre estricto de conservación energética (`SPEC-105` / `CHANGE-127`).
+**Propósito:** Calcula el producto triple de Lawson ($n \tau_E T$), reactividad Bosch-Hale D-T, autocalentamiento alfa frente a pérdidas por radiación Bremsstrahlung y conducción, ganancia $Q_{\text{plasma}}$ y asimetría de implosión $P_2/P0$ con cierre estricto de conservación energética (`SPEC-105` / `CHANGE-127`).
+
+---
+
+### Módulo 74: Litografía Computacional High-NA EUV y Convergencia OPC (`EosComputationalLithographyOpcCore`)
+
+**Propósito:** Evalúa resolución de Rayleigh ($k_1 \lambda / \mathrm{NA}$), contraste NILS, profundidad de foco (DoF), factor MEEF y convergencia iterativa de error EPE en máscaras High-NA EUV (`SPEC-254` / `CHANGE-128`).
+
+---
+
+### Módulo 75: Gobernanza ABAC Zero-Trust y Contabilidad de Privacidad Diferencial (`EosDifferentialPrivacyAbacGovernorCore`)
+
+**Propósito:** Aplica control de acceso basado en atributos Zero-Trust (clearance, compartimentos, MFA, confianza de dispositivo y $k$-anonimato) junto con contabilidad secuencial de presupuesto $(\varepsilon, \delta)$ y calibración de ruido Laplace/Gaussiano (`SPEC-255` / `CHANGE-128`).
+
+---
+
+### Módulo 76: Ejecución Óptima Almgren-Chriss LOB y Detector VPIN (`EosLobAlmgrenChrissVpinCore`)
+
+**Propósito:** Sintetiza trayectorias óptimas hiperbólicas Almgren-Chriss conservando el total exacto de acciones, descompone shortfall esperado ($\Delta$ bps) y detiene flujo tóxico informado mediante VPIN (`SPEC-256` / `CHANGE-128`).
+
+---
+
+### Módulo 77: Arbitraje DMA de Memoria Unificada, DVFS y QoS Térmico (`EosUnifiedMemoryDmaDvfsQosCore`)
+
+**Propósito:** Arbitra flujos DMA por prioridad estricta sobre ancho de banda unificado de SoC, modela potencia dinámica CMOS ($C_{\mathrm{eff}} V^2 f$) más fugas estáticas, estima temperatura de unión y gobierna estados P-State DVFS (`SPEC-257` / `CHANGE-128`).
+
+---
+
+### Módulo 78: Óptica Simpléctica FODO Relativista y Luminosidad de Colisionador (`EosRelativisticBeamTwissLuminosityCore`)
+
+**Propósito:** Resuelve matrices de transferencia FODO 2x2 simplécticas ($\det(M) = 1$, $|\mathrm{Tr}(M)| < 2$), evalúa emittance adiabática de Lorentz, luminosidad instantánea en punto de interacción ($\mathrm{cm}^{-2}\mathrm{s}^{-1}$) y pérdida sincrotrónica por vuelta (`SPEC-258` / `CHANGE-128`).
 
 ---
 
@@ -1750,24 +1780,29 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs grid:opf [--json]`                            | Resuelve despacho económico DC-OPF, droop de frecuencia ($\Delta f$) e inercia RoCoF UHV ante picos IA (SPEC-103).                                                    |
 | `node bin/eos.mjs bio:fold [--json]`                            | Evalúa alineamiento Smith-Waterman, contactos $C_\alpha$, choques estéricos y confianza `pLDDT`/`PAE` (SPEC-104).                                                     |
 | `node bin/eos.mjs fusion:ignite [--json]`                       | Calcula criterio triple de Lawson D-T, autocalentamiento alfa, balance energético y simetría $P_2/P_0$ (SPEC-105).                                                    |
-| `node bin/eos.mjs ship [--ticket=ID] [--json]`                  | Comando maestro pre-PR (SPEC-101..105 y SPEC-236..253): Live Diff + Contract Live + SARIF + Fleet + Judge + SLSA + SWE + EDA + Apollo + Aladdin + Hygiene + Frontier. |
+| `node bin/eos.mjs litho:opc [--json]`                           | Evalúa litografía High-NA EUV (Rayleigh, NILS, DoF, MEEF) y convergencia iterativa OPC de error EPE (SPEC-254).                                                       |
+| `node bin/eos.mjs privacy:abac [--json]`                        | Aplica control Zero-Trust ABAC, $k$-anonimato y contabilidad secuencial de presupuesto $(\varepsilon, \delta)$-DP con ruido Laplace/Gaussiano (SPEC-255).             |
+| `node bin/eos.mjs lob:vpin [--json]`                            | Optimiza trayectoria hiperbólica Almgren-Chriss en LOB conservando acciones y monitorea flujo tóxico VPIN (SPEC-256).                                                 |
+| `node bin/eos.mjs dvfs:qos [--json]`                            | Arbitra DMA en memoria unificada por prioridad estricta, calcula potencia CMOS/unión térmica y gobierna DVFS P-States (SPEC-257).                                     |
+| `node bin/eos.mjs beam:twiss [--json]`                          | Resuelve óptica simpléctica FODO relativista ($\det(M) = 1$), luminosidad IP en $\mathrm{cm}^{-2}\mathrm{s}^{-1}$ y pérdida sincrotrónica (SPEC-258).                 |
+| `node bin/eos.mjs ship [--ticket=ID] [--json]`                  | Comando maestro pre-PR (SPEC-101..105 y SPEC-236..258): Live Diff + Contract Live + SARIF + Fleet + Judge + SLSA + SWE + EDA + Apollo + Aladdin + Hygiene + Frontier. |
 | `node bin/eos.mjs metrics`                                      | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                                                                                                 |
 | `node bin/eos.mjs guard [directorio]`                           | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                                                                                           |
 | `node bin/eos.mjs flow inspect <ruta>`                          | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.                                                                             |
 | `node bin/eos.mjs worktree list`                                | Lista los árboles de trabajo (_worktrees_) aislados de Git.                                                                                                           |
 
-### 4.1. Índice Exhaustivo de Comandos y Alias Registrados (100% Paridad CLI — 347 Comandos)
+### 4.1. Índice Exhaustivo de Comandos y Alias Registrados (100% Paridad CLI — 352 Comandos)
 
-Cada identificador registrado en `bin/eos.mjs` y despachado en `bin/commands/*.mjs` cuenta con paridad documental verificada por `hygiene:audit` (`347/347`):
+Cada identificador registrado en `bin/eos.mjs` y despachado en `bin/commands/*.mjs` cuenta con paridad documental verificada por `hygiene:audit` (`352/352`):
 
 - **Gobernanza, Auditoría, Arquitectura, Jarvis y Flujo Pre-PR**:
-  `aca`, `action:verify`, `adapt`, `agent-topology`, `amplify`, `antientropy`, `antigravity`, `architect`, `audit`, `blast`, `budget`, `cheat-sheet`, `compile`, `contract`, `contract:diff`, `contract:live`, `daemon`, `dashboard`, `defense`, `diary`, `diff:live`, `doctor`, `doctor:fix`, `drift`, `enforce`, `enterprise`, `enterprise:audit`, `enterprise:health`, `eval`, `evolution`, `evolve`, `fast`, `features`, `fingerprint`, `finops`, `fix`, `flags`, `flow`, `frontier`, `gentle-ai`, `gentleman`, `go`, `guard`, `guide`, `heal`, `heal:repo`, `heal:surgical`, `health`, `hygiene:audit`, `intercept`, `introspect`, `invariant`, `jarvis`, `jarvis:demo`, `jarvis:dna`, `jarvis:rules`, `jarvis:sdlc`, `judge`, `loop`, `mangle`, `mcp`, `memory`, `mesh`, `metrics`, `mind`, `mix`, `mountains`, `nocturnal`, `nu`, `nubank`, `octave`, `ontology`, `optimize`, `optimize:v8`, `otel:metrics`, `perf`, `polyglot:detect`, `polyglot:normalize`, `pr:check`, `product`, `product:create`, `product:deliver`, `product:validate`, `project`, `project:doctor`, `project:fix`, `prom:red`, `pts`, `reconcile`, `red:metrics`, `refactor`, `remediate`, `repomap:build`, `risk`, `router`, `sapfix`, `sarif:export`, `sbom`, `schedule`, `search`, `shield`, `ship`, `sim`, `slo`, `soul`, `sovereign`, `spec`, `spotify`, `squeezer`, `staff:demo`, `staff:judge`, `swarm`, `swarm:arena`, `synapse`, `sync-stack`, `synthesize`, `temple`, `test`, `titan`, `titans`, `tkg:assert`, `tkg:query`, `topology`, `transmute`, `turbo`, `unitotal:audit`, `vault`, `verify`, `verify:action`, `witness:interrogate`, `worktree`, `xirp`.
+  `aca`, `action:verify`, `adapt`, `agent-topology`, `amplify`, `antientropy`, `antigravity`, `architect`, `audit`, `blast`, `budget`, `cheat-sheet`, `compile`, `contract`, `contract:diff`, `contract:live`, `daemon`, `dashboard`, `defense`, `diary`, `diff:live`, `doctor`, `doctor:fix`, `drift`, `enforce`, `enterprise`, `enterprise:audit`, `enterprise:health`, `eval`, `evolution`, `evolve`, `fast`, `features`, `fingerprint`, `finops`, `fix`, `flags`, `flow`, `frontier`, `gentle-ai`, `gentleman`, `go`, `guard`, `guide`, `heal`, `heal:repo`, `heal:surgical`, `health`, `hygiene:audit`, `intercept`, `introspect`, `invariant`, `jarvis`, `jarvis:demo`, `jarvis:dna`, `jarvis:rules`, `jarvis:sdlc`, `judge`, `loop`, `mangle`, `mcp`, `memory`, `mesh`, `metrics`, `mind`, `mix`, `mountains`, `nocturnal`, `nu`, `nubank`, `octave`, `ontology`, `optimize`, `optimize:v8`, `otel:metrics`, `perf`, `polyglot:detect`, `polyglot:normalize`, `pr:check`, `privacy:abac`, `product`, `product:create`, `product:deliver`, `product:validate`, `project`, `project:doctor`, `project:fix`, `prom:red`, `pts`, `reconcile`, `red:metrics`, `refactor`, `remediate`, `repomap:build`, `risk`, `router`, `sapfix`, `sarif:export`, `sbom`, `schedule`, `search`, `shield`, `ship`, `sim`, `slo`, `soul`, `sovereign`, `spec`, `spotify`, `squeezer`, `staff:demo`, `staff:judge`, `swarm`, `swarm:arena`, `synapse`, `sync-stack`, `synthesize`, `temple`, `test`, `titan`, `titans`, `tkg:assert`, `tkg:query`, `topology`, `transmute`, `turbo`, `unitotal:audit`, `vault`, `verify`, `verify:action`, `witness:interrogate`, `worktree`, `xirp`.
 
 - **Flota, Despliegue Canario, Sandboxing Air-Gapped y Procedencia**:
   `apollo:bundle`, `attest:ship`, `canary:rollout`, `canary:stat`, `fleet:audit-all`, `fleet:elevate`, `fleet:heal-all`, `fleet:ship`, `fleet:soundcheck`, `fleet:sync-all`, `fleet:verify`, `fleetshift`, `microvm`, `provenance:attest`, `release:seal`, `sandbox`, `sandbox:profile`, `sandbox:vm`, `sea:compile`, `seccomp`, `slsa`, `slsa:attest`.
 
-- **IA, Cómputo Tensorial, Control Six-Sigma, Kalman, Cuántica, LEO, Energía, Bio y Fusión**:
-  `aladdin`, `aladdin:stress`, `anomaly:detect`, `anomaly:forest`, `autodiff:grad`, `autodiff:train`, `autotune`, `bench:nano`, `bench:swe`, `bio:fold`, `factory:e2e`, `fusion:ignite`, `grid:opf`, `hft`, `hnsw:search`, `kalman:estimate`, `leo:route`, `mcts:plan`, `mcts:play`, `mcts:search`, `mcts:tune`, `qec:decode`, `roofline:plan`, `simulate:models`, `spc:audit`, `tensor:benchmark`, `tensor:embed`, `tensor:matmul`, `tensor:quantize`, `vector`, `vector:index`, `vector:search`.
+- **IA, Cómputo Tensorial, Control Six-Sigma, Kalman, Cuántica, LEO, Energía, Bio, Fusión y Frontera `258`**:
+  `aladdin`, `aladdin:stress`, `anomaly:detect`, `anomaly:forest`, `autodiff:grad`, `autodiff:train`, `autotune`, `beam:twiss`, `bench:nano`, `bench:swe`, `bio:fold`, `dvfs:qos`, `factory:e2e`, `fusion:ignite`, `grid:opf`, `hft`, `hnsw:search`, `kalman:estimate`, `leo:route`, `litho:opc`, `lob:vpin`, `mcts:plan`, `mcts:play`, `mcts:search`, `mcts:tune`, `qec:decode`, `roofline:plan`, `simulate:models`, `spc:audit`, `tensor:benchmark`, `tensor:embed`, `tensor:matmul`, `tensor:quantize`, `vector`, `vector:index`, `vector:search`.
 
 - **Criptografía Poscuántica, ZK-Proofs, MPC, Consenso BFT y Sistemas Distribuidos**:
   `anycast`, `apex`, `bp:benchmark`, `bp:commit`, `bp:prove`, `bp:verify`, `bridge:canary`, `bridge:diff`, `bridge:parse`, `cas`, `chain`, `chaos`, `chaos:live`, `chaos:net`, `chaos:run`, `congestion:admit`, `congestion:demo`, `congestion:stats`, `consensus`, `crdt:delta`, `crdt:merge`, `crdt:mutate`, `disruptor`, `edge`, `frost:keygen`, `frost:sign`, `frost:verify`, `hashring`, `homomorphic:add`, `homomorphic:decrypt`, `homomorphic:encrypt`, `homomorphic:keygen`, `honk`, `hotstuff:propose`, `hotstuff:status`, `hotstuff:vote`, `jepsen`, `kzg:batch`, `kzg:commit`, `kzg:open`, `kzg:verify`, `ml-dsa:keygen`, `ml-dsa:sign`, `ml-dsa:verify`, `ml-kem:benchmark`, `ml-kem:decaps`, `ml-kem:encaps`, `ml-kem:keygen`, `mmr`, `mmr:append`, `mmr:prove`, `mmr:verify`, `mpc:add`, `mpc:combine`, `mpc:multiply`, `mpc:split`, `nsa:audit`, `nsa:encrypt`, `nsa:zeroize`, `pbft:cluster`, `pbft:propose`, `pbft:slash`, `pbft:status`, `pq:encap`, `pq:kem`, `pq:sign`, `quantum:seal`, `r1cs:prove`, `r1cs:synthesize`, `r1cs:verify`, `raft`, `raft:cluster`, `raft:consensus`, `raft:elect`, `raft:status`, `ratelimit`, `ring`, `rpc`, `sabotage`, `spanner:time`, `threshold`, `timelock:create`, `timelock:demo`, `timelock:solve`, `truetime`, `truetime:bounded`, `truetime:spanner`, `tss`, `vdf:beacon`, `vdf:compute`, `vdf:verify`, `vrf:elect`, `vrf:eval`, `vrf:verify`, `vss:demo`, `vss:split`, `vss:verify`, `zk`, `zk:attest`, `zk:prove`, `zk:verify`.

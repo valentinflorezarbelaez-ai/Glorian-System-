@@ -19,10 +19,15 @@ import { EosComputeGraphRooflinePlannerCore } from "../../src/core/eosComputeGra
 import { EosStatisticalProcessYieldControlCore } from "../../src/core/eosStatisticalProcessYieldControlCore.ts";
 import { EosKalmanStateEstimatorAndQuadVoterCore } from "../../src/core/eosKalmanStateEstimatorAndQuadVoterCore.ts";
 import {
+  cmd_beam_twiss,
   cmd_bio_fold,
+  cmd_dvfs_qos,
   cmd_fusion_ignite,
   cmd_grid_opf,
   cmd_leo_route,
+  cmd_litho_opc,
+  cmd_lob_vpin,
+  cmd_privacy_abac,
   cmd_qec_decode,
   evaluateContiguous253ShipSnapshot,
 } from "./cliContiguous253FrontierMesh.mjs";
@@ -525,6 +530,11 @@ async function cmd_ship(commandContext) {
     gridOpfVerdict: contiguous253.gridOpfVerdict,
     bioFoldVerdict: contiguous253.bioFoldVerdict,
     fusionVerdict: contiguous253.fusionVerdict,
+    lithoVerdict: contiguous253.lithoVerdict,
+    privacyAbacVerdict: contiguous253.privacyAbacVerdict,
+    lobVpinVerdict: contiguous253.lobVpinVerdict,
+    dvfsQosVerdict: contiguous253.dvfsQosVerdict,
+    beamTwissVerdict: contiguous253.beamTwissVerdict,
     contiguous253Frontier: contiguous253,
     hygieneAudit,
   };
@@ -533,7 +543,7 @@ async function cmd_ship(commandContext) {
     return;
   }
   console.log(
-    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, SLSA=${dsseAttestation.verified}, F1=${sweBenchmark.f1Score.toFixed(2)}, EDA=${edaFormalProof.verdict}, Apollo=${apolloAirGapBundle.verdict}, Aladdin=${aladdinSystemicRisk.riskTier}, Roofline=${rooflinePlan.verdict}, SPC=${spcYieldAudit.verdict}, Kalman=${kalmanGncState.verdict}, QEC=${contiguous253.qecVerdict}, LEO=${contiguous253.leoRouteVerdict}, Grid=${contiguous253.gridOpfVerdict}, Bio=${contiguous253.bioFoldVerdict}, Fusion=${contiguous253.fusionVerdict}, Hygiene=${hygieneAudit.verdict}, Tokens=${repoMap.estimatedCompressedTokens})`,
+    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, SLSA=${dsseAttestation.verified}, F1=${sweBenchmark.f1Score.toFixed(2)}, EDA=${edaFormalProof.verdict}, Apollo=${apolloAirGapBundle.verdict}, Aladdin=${aladdinSystemicRisk.riskTier}, Roofline=${rooflinePlan.verdict}, SPC=${spcYieldAudit.verdict}, Kalman=${kalmanGncState.verdict}, QEC=${contiguous253.qecVerdict}, LEO=${contiguous253.leoRouteVerdict}, Grid=${contiguous253.gridOpfVerdict}, Bio=${contiguous253.bioFoldVerdict}, Fusion=${contiguous253.fusionVerdict}, Litho=${contiguous253.lithoVerdict}, DP=${contiguous253.privacyAbacVerdict}, LOB=${contiguous253.lobVpinVerdict}, DVFS=${contiguous253.dvfsQosVerdict}, Beam=${contiguous253.beamTwissVerdict}, Hygiene=${hygieneAudit.verdict}, Tokens=${repoMap.estimatedCompressedTokens})`,
   );
 }
 
@@ -631,6 +641,11 @@ HANDLERS["leo:route"] = cmd_leo_route;
 HANDLERS["grid:opf"] = cmd_grid_opf;
 HANDLERS["bio:fold"] = cmd_bio_fold;
 HANDLERS["fusion:ignite"] = cmd_fusion_ignite;
+HANDLERS["litho:opc"] = cmd_litho_opc;
+HANDLERS["privacy:abac"] = cmd_privacy_abac;
+HANDLERS["lob:vpin"] = cmd_lob_vpin;
+HANDLERS["dvfs:qos"] = cmd_dvfs_qos;
+HANDLERS["beam:twiss"] = cmd_beam_twiss;
 HANDLERS["hygiene:audit"] = cmd_hygiene_audit;
 HANDLERS["ship"] = cmd_ship;
 

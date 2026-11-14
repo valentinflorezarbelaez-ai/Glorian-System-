@@ -56,6 +56,12 @@ import {
   verifyInvariantVerificationEngineModel,
   verifyPlanetaryMultiCloudEvacuationModel,
 } from "./tla/tlaSimulationsPart3.mjs";
+import {
+  verifySurfaceCodeQecModel,
+  verifyLeoOpticalIslRoutingModel,
+  verifyUhvGridDcOpfModel,
+  verifyLawsonFusionIgnitionModel,
+} from "./tla/tlaSimulationsPart4.mjs";
 
 export {
   parseTlaModule,
@@ -100,6 +106,10 @@ export {
   verifyAutonomousClosedLoopHealingModel,
   verifyContractEvolutionGovernanceModel,
   verifyInvariantVerificationEngineModel,
+  verifySurfaceCodeQecModel,
+  verifyLeoOpticalIslRoutingModel,
+  verifyUhvGridDcOpfModel,
+  verifyLawsonFusionIgnitionModel,
 };
 
 export function runAllFormalVerifications() {
@@ -145,6 +155,10 @@ export function runAllFormalVerifications() {
     verifyPlanetaryMonorepoGovernorModel(),
     verifyCrossFleetNeuralSynapseModel(),
     verifyPlanetaryMultiCloudEvacuationModel(),
+    verifySurfaceCodeQecModel(),
+    verifyLeoOpticalIslRoutingModel(),
+    verifyUhvGridDcOpfModel(),
+    verifyLawsonFusionIgnitionModel(),
   ];
 }
 

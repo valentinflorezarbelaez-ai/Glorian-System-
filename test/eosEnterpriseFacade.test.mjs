@@ -1103,5 +1103,31 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(fusion.action, "lawson_fusion_ignite");
     assert.equal(fusion.verdict, "IGNITION_SELF_SUSTAINING");
     assert.equal(fusion.fusionDigestSha256.length, 64);
+
+    // 55. Elite Consortia SPEC-254..SPEC-258 frontier engines (EUV OPC, DP-ABAC, LOB-VPIN, DVFS-QoS, Beam Twiss)
+    const litho = callFacade({ action: "asml_opc_lithography" });
+    assert.equal(litho.action, "asml_opc_lithography");
+    assert.equal(litho.verdict, "LITHO_OPC_CONVERGED");
+    assert.equal(litho.opcDigestSha256.length, 64);
+
+    const dpAbac = callFacade({ action: "differential_privacy_abac" });
+    assert.equal(dpAbac.action, "differential_privacy_abac");
+    assert.equal(dpAbac.verdict, "PRIVACY_AND_ABAC_AUTHORIZED");
+    assert.equal(dpAbac.privacyAbacDigestSha256.length, 64);
+
+    const lobVpin = callFacade({ action: "lob_almgren_chriss_vpin" });
+    assert.equal(lobVpin.action, "lob_almgren_chriss_vpin");
+    assert.equal(lobVpin.verdict, "EXECUTION_TRAJECTORY_OPTIMAL");
+    assert.equal(lobVpin.lobVpinDigestSha256.length, 64);
+
+    const dvfsQos = callFacade({ action: "unified_memory_dvfs_qos" });
+    assert.equal(dvfsQos.action, "unified_memory_dvfs_qos");
+    assert.equal(dvfsQos.verdict, "QOS_AND_THERMAL_NOMINAL");
+    assert.equal(dvfsQos.dvfsQosDigestSha256.length, 64);
+
+    const beamTwiss = callFacade({ action: "relativistic_beam_twiss" });
+    assert.equal(beamTwiss.action, "relativistic_beam_twiss");
+    assert.equal(beamTwiss.verdict, "BEAM_OPTICS_LUMINOSITY_LOCKED");
+    assert.equal(beamTwiss.beamOpticsDigestSha256.length, 64);
   });
 });

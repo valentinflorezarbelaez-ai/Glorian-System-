@@ -12,6 +12,7 @@ import path from "node:path";
 
 import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { contentDerivedIso, writeDeterministicArtifact } from "./eosDeterministicArtifact.ts";
+import { ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS } from "./eosMcpEnterpriseActionRegistry.ts";
 
 /**
  * Essential LLM surface — high-signal director / verify / tribunal tools only.
@@ -304,7 +305,7 @@ export class EosMcpSchemaValidator {
         toolName === "eos_enterprise_workspace" &&
         key === "action" &&
         typeof value === "string" &&
-        /^[a-z][a-z0-9_]{1,63}$/.test(value);
+        ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS.has(value.trim().toLowerCase());
       if (prop.enum && prop.enum.length > 0 && !prop.enum.includes(value as string) && !isExtendedEnterpriseAction) {
         return deepFreeze({
           ok: false,

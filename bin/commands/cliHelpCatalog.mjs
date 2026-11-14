@@ -1,5 +1,5 @@
 /**
- * Synchronized CLI Help Catalog for `eos help` and `eos help --all` (v75.0.0, SPEC-001..SPEC-253).
+ * Synchronized CLI Help Catalog for `eos help` and `eos help --all` (v75.0.0, SPEC-001..SPEC-258).
  * Audited for 100% handler parity by EosCliCatalogAndHygieneGovernorCore (SPEC-250).
  */
 
@@ -23,7 +23,12 @@ export const QUICK_HELP_TEXT = `
   eos grid:opf [--json]      Despacho económico DC-OPF, droop de frecuencia y RoCoF UHV (SPEC-103)
   eos bio:fold [--json]      Alineamiento Smith-Waterman, contactos 3D y pLDDT/PAE (SPEC-104)
   eos fusion:ignite [--json] Criterio Lawson de ignición D-T, balance alfa y P2/P0 (SPEC-105)
-  eos ship [--ticket=ID]     Pipeline maestro pre-PR (SPEC-101..105 + SPEC-236..253 + Hygiene)
+  eos litho:opc [--json]     Litografía EUV High-NA Rayleigh/NILS/MEEF y convergencia OPC (SPEC-254)
+  eos privacy:abac [--json]  Gobernanza ABAC Zero-Trust, k-anonimato y presupuesto (eps,delta)-DP (SPEC-255)
+  eos lob:vpin [--json]      Ejecución óptima Almgren-Chriss LOB e índice de toxicidad VPIN (SPEC-256)
+  eos dvfs:qos [--json]      Árbitro DMA memoria unificada, potencia CMOS y P-State DVFS (SPEC-257)
+  eos beam:twiss [--json]    Óptica simpléctica FODO relativista, luminosidad IP y U0 (SPEC-258)
+  eos ship [--ticket=ID]     Pipeline maestro pre-PR (SPEC-101..105 + SPEC-236..258 + Hygiene)
 
 🛡️ SEGURIDAD, CADENA DE SUMINISTRO & FORMAL METHODS:
   eos sbom                   Genera inventario CycloneDX v1.5 con atestación SHA-256
@@ -166,7 +171,12 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos grid:opf [--json]          Despacho económico DC-OPF, droop de frecuencia y RoCoF UHV (SPEC-103)
   eos bio:fold [--json]          Alineamiento Smith-Waterman, contactos 3D y pLDDT/PAE (SPEC-104)
   eos fusion:ignite [--json]     Criterio Lawson de ignición D-T, balance alfa y P2/P0 (SPEC-105)
-  eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..253
+  eos litho:opc [--json]         Litografía EUV High-NA Rayleigh/NILS/MEEF y OPC EPE (SPEC-254)
+  eos privacy:abac [--json]      ABAC Zero-Trust, k-anonimato y presupuesto (eps,delta)-DP (SPEC-255)
+  eos lob:vpin [--json]          Trayectoria óptima Almgren-Chriss LOB y detector VPIN (SPEC-256)
+  eos dvfs:qos [--json]          Árbitro DMA memoria unificada, potencia CMOS y DVFS P-State (SPEC-257)
+  eos beam:twiss [--json]        Óptica simpléctica FODO relativista, luminosidad IP y U0 (SPEC-258)
+  eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..258
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
 📦 ÍNDICE DE ALIAS Y SUBCOMANDOS ESPECIALIZADOS (100% REGISTRADOS):

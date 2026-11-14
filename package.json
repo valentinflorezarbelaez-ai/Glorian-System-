@@ -94,6 +94,11 @@
     "./grid-opf": "./src/core/eosPowerGridOptimalPowerFlowCore.ts",
     "./bio-folding": "./src/core/eosBioSequenceFoldingConfidenceCore.ts",
     "./fusion-lawson": "./src/core/eosInertialFusionLawsonIgnitionCore.ts",
+    "./litho-opc": "./src/core/eosComputationalLithographyOpcCore.ts",
+    "./privacy-abac": "./src/core/eosDifferentialPrivacyAbacGovernorCore.ts",
+    "./lob-vpin": "./src/core/eosLobAlmgrenChrissVpinCore.ts",
+    "./unified-dvfs": "./src/core/eosUnifiedMemoryDmaDvfsQosCore.ts",
+    "./beam-twiss": "./src/core/eosRelativisticBeamTwissLuminosityCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {
@@ -323,7 +328,12 @@
     "leo:route": "node bin/eos.mjs leo:route",
     "grid:opf": "node bin/eos.mjs grid:opf",
     "bio:fold": "node bin/eos.mjs bio:fold",
-    "fusion:ignite": "node bin/eos.mjs fusion:ignite"
+    "fusion:ignite": "node bin/eos.mjs fusion:ignite",
+    "litho:opc": "node bin/eos.mjs litho:opc",
+    "privacy:abac": "node bin/eos.mjs privacy:abac",
+    "lob:vpin": "node bin/eos.mjs lob:vpin",
+    "dvfs:qos": "node bin/eos.mjs dvfs:qos",
+    "beam:twiss": "node bin/eos.mjs beam:twiss"
   },
   "engines": {
     "node": ">=22.18.0"

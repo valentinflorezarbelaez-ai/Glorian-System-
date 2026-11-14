@@ -599,3 +599,48 @@ export type {
   LawsonFusionOptions,
   LawsonFusionReport,
 } from "./eosInertialFusionLawsonIgnitionCore.types.ts";
+export { ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS } from "./eosMcpEnterpriseActionRegistry.ts";
+export {
+  EosComputationalLithographyOpcCore,
+  evaluateComputationalLithographyOpc,
+} from "./eosComputationalLithographyOpcCore.ts";
+export type {
+  ComputationalLithographyVerdict,
+  ComputationalLithographyOpcOptions,
+  ComputationalLithographyOpcReport,
+} from "./eosComputationalLithographyOpcCore.types.ts";
+export {
+  EosDifferentialPrivacyAbacGovernorCore,
+  evaluateDifferentialPrivacyAbac,
+} from "./eosDifferentialPrivacyAbacGovernorCore.ts";
+export type {
+  DifferentialPrivacyAbacVerdict,
+  DifferentialPrivacyAbacOptions,
+  DifferentialPrivacyAbacReport,
+} from "./eosDifferentialPrivacyAbacGovernorCore.types.ts";
+export { EosLobAlmgrenChrissVpinCore, evaluateLobAlmgrenChrissVpin } from "./eosLobAlmgrenChrissVpinCore.ts";
+export type {
+  LobOrderSide,
+  LobExecutionVerdict,
+  LobVolumeBucketInput,
+  LobAlmgrenChrissVpinOptions,
+  LobAlmgrenChrissVpinReport,
+} from "./eosLobAlmgrenChrissVpinCore.types.ts";
+export { EosUnifiedMemoryDmaDvfsQosCore, evaluateUnifiedMemoryDmaDvfsQos } from "./eosUnifiedMemoryDmaDvfsQosCore.ts";
+export type {
+  DvfsPState,
+  UnifiedMemoryQosVerdict,
+  DmaQosStreamSpec,
+  DmaQosStreamGrant,
+  UnifiedMemoryDmaDvfsQosOptions,
+  UnifiedMemoryDmaDvfsQosReport,
+} from "./eosUnifiedMemoryDmaDvfsQosCore.types.ts";
+export {
+  EosRelativisticBeamTwissLuminosityCore,
+  evaluateRelativisticBeamTwissLuminosity,
+} from "./eosRelativisticBeamTwissLuminosityCore.ts";
+export type {
+  BeamOpticsVerdict,
+  RelativisticBeamTwissOptions,
+  RelativisticBeamTwissReport,
+} from "./eosRelativisticBeamTwissLuminosityCore.types.ts";

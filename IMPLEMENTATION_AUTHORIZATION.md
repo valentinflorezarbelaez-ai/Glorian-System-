@@ -2258,3 +2258,26 @@
   - `docs/plans/PLAN-127-CONTIGUOUS-253-QUANTUM-LEO-GRID-BIO-FUSION.md`
   - `docs/tasks/TASKS-127-CONTIGUOUS-253-QUANTUM-LEO-GRID-BIO-FUSION.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-14-ELITE-CONSORTIA-AUDIT-TLA-AND-FRONTIER-254-258
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Elite Consortia Audit Hardenings (`0` Dependency Advisories, Exact `162`-Action `-32602` Schema Guard, Zero-`any` MCP Dispatch, Flake-Free Time-Lock CI), `45` Formal TLA+ Models, & Modules 74–78 (`SPEC-254`..`SPEC-258`, `258/258` Specs, `352/352` CLI Parity) (`CHANGE-128`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: `"todo junto si"`)
+- **Scope**:
+  1. Exempt `@types/node` in `scripts/unused-deps-check.mjs`, upgrade `BDD-1169` in `test/eosTimeLockPuzzleCore.test.mjs` to `performance.now()` (`< 100`ms), replace open regex validation in `src/core/eosMcpSchemaValidator.ts` with `ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS` in `src/core/eosMcpEnterpriseActionRegistry.ts`, and eliminate `Record<string, any>` in `src/mcp/tools/eosMcpPhase7FrontierExt3.ts`.
+  2. Author 4 new TLA+ specifications (`SurfaceCodeQec.tla`, `LeoOpticalIslRouting.tla`, `UhvGridDcOpf.tla`, `LawsonFusionIgnition.tla`), implement `scripts/tla/tlaSimulationsPart4.mjs` (`200` steps each), and wire into `scripts/verify-formal-tla.mjs` (`41 -> 45` models).
+  3. Implement Modules 74–78 (`SPEC-254`..`SPEC-258` — Computational Lithography OPC, Differential Privacy & Zero-Trust ABAC, Almgren-Chriss & VPIN Execution, Unified Memory DMA/DVFS QoS, and Relativistic Symplectic Beam Twiss Optics).
+  4. Export Modules 74–78 + Action Registry in `src/core/index.ts`, expose subpath exports and npm scripts in `package.json`, wire CLI commands (`litho:opc`, `privacy:abac`, `lob:vpin`, `dvfs:qos`, `beam:twiss`), enrich `ship`, wire MCP actions in `eosMcpPhase7FrontierExt3.ts`, and bring `cliHelpCatalog.mjs` + `docs/DEVELOPER_GUIDE.md` to `352/352` (`100%`) parity.
+  5. Add `BDD-1316`..`BDD-1340` + `-32602` rejection check in `test/eosEliteConsortiaFrontier254To258.test.mjs` and step `#55` in `test/eosEnterpriseFacade.test.mjs`, verify full static & sequential runtime gates, commit, seal Freeze Gate, and push to `origin/main`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-128-ELITE-CONSORTIA-AUDIT-TLA-AND-FRONTIER-254-258.md`
+  - `openspec/changes/CHANGE-128-elite-consortia-audit-tla-and-frontier-254-258.md`
+  - `openspec/specs/SPEC-254-COMPUTATIONAL-LITHOGRAPHY-OPC-RETICLE.md`
+  - `openspec/specs/SPEC-255-DIFFERENTIAL-PRIVACY-ABAC-POLICY-GOVERNOR.md`
+  - `openspec/specs/SPEC-256-LOB-ALMGREN-CHRISS-VPIN-EXECUTION.md`
+  - `openspec/specs/SPEC-257-UNIFIED-MEMORY-DMA-DVFS-QOS-ARBITER.md`
+  - `openspec/specs/SPEC-258-RELATIVISTIC-BEAM-TWISS-LUMINOSITY.md`
+  - `docs/plans/PLAN-128-ELITE-CONSORTIA-AUDIT-TLA-AND-FRONTIER-254-258.md`
+  - `docs/tasks/TASKS-128-ELITE-CONSORTIA-AUDIT-TLA-AND-FRONTIER-254-258.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

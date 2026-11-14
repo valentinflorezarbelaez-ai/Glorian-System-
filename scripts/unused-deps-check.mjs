@@ -29,6 +29,7 @@ const TOOLING_PACKAGES = new Set([
   "prettier", // used via CLI, not imported
   "eslint", // used via CLI, not imported
   "typescript", // used via tsc CLI, not imported
+  "@types/node", // compile-time Node type declarations, not imported directly
 ]);
 
 // Scan all source files for import statements

@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 253,
-  "catalogSha256": "430129924ca94af1297571bbb84badadb461dd72f41c3e97774bb1da96bfee9d",
+  "totalSpecs": 258,
+  "catalogSha256": "a6bc82b4fceb8294d5a7421030cd558bfa7af49a7ab50170e49fd890944af011",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2279,6 +2279,51 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-253-SPACEX-KALMAN-GNC-QUAD-VOTER.md",
       "sha256": "0424f64f8abda96d16c80cec0dd8e8a40bc473bebbe89ab9408c6b4df8443576"
+    },
+    {
+      "id": "SPEC-254",
+      "title": "— Layer-0 High-NA EUV Computational Lithography & OPC Reticle Mask Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-254-COMPUTATIONAL-LITHOGRAPHY-OPC-RETICLE.md",
+      "sha256": "8c53d22e4225d14614597e0591995def903b57b1311a34091c9630a23917413d"
+    },
+    {
+      "id": "SPEC-255",
+      "title": "— Layer-0 Differential Privacy & Zero-Trust ABAC Policy Governor Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-255-DIFFERENTIAL-PRIVACY-ABAC-POLICY-GOVERNOR.md",
+      "sha256": "be318a889b6c5d8b5431185bb9b37566ac008beebc9fabf5ca4c45498aa10157"
+    },
+    {
+      "id": "SPEC-256",
+      "title": "— Layer-0 Limit Order Book Almgren-Chriss Execution & VPIN Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-256-LOB-ALMGREN-CHRISS-VPIN-EXECUTION.md",
+      "sha256": "cc7a9a60b3a4868f50866dad87f8d91e7f572e0a714527aa9d0b1467d94aace0"
+    },
+    {
+      "id": "SPEC-257",
+      "title": "— Layer-0 Unified Memory Fabric DMA Arbitration, DVFS & Thermal QoS Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-257-UNIFIED-MEMORY-DMA-DVFS-QOS-ARBITER.md",
+      "sha256": "3ce40f5e2888c74633af2588fafe38738f4ce60ea5f4347e90d706c91fde5c99"
+    },
+    {
+      "id": "SPEC-258",
+      "title": "— Layer-0 Relativistic Symplectic FODO Twiss Lattice & Luminosity Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-258-RELATIVISTIC-BEAM-TWISS-LUMINOSITY.md",
+      "sha256": "981c49f881c4522c39d8f8bd84cca832b18982213446a06a9f62e52c06f0a2c8"
     }
   ]
 }
