@@ -14,6 +14,7 @@ import { EosGoldenSweBenchmarkHarnessCore } from "../../src/core/eosGoldenSweBen
 import { EosEdaEquivalenceTimingProverCore } from "../../src/core/eosEdaEquivalenceTimingProverCore.ts";
 import { EosApolloAirGappedBundleOrchestratorCore } from "../../src/core/eosApolloAirGappedBundleOrchestratorCore.ts";
 import { EosAladdinSystemicRiskStressCore } from "../../src/core/eosAladdinSystemicRiskStressCore.ts";
+import { EosCliCatalogAndHygieneGovernorCore } from "../../src/core/eosCliCatalogAndHygieneGovernorCore.ts";
 
 const HANDLERS = {};
 
@@ -464,6 +465,9 @@ async function cmd_ship(commandContext) {
   const aladdinSystemicRisk = EosAladdinSystemicRiskStressCore.runSystemicStressSimulation({
     projectRoot: root,
   });
+  const hygieneAudit = EosCliCatalogAndHygieneGovernorCore.auditCliCatalogAndModuleHeadroom({
+    projectRoot: root,
+  });
   const approved = [
     liveDiff.readyToShip,
     propertySuite.allPassed,
@@ -474,6 +478,7 @@ async function cmd_ship(commandContext) {
     edaFormalProof.verdict === "SILICON_FORMAL_VERIFIED",
     apolloAirGapBundle.verdict === "AIRGAP_DEPLOY_READY",
     aladdinSystemicRisk.riskTier !== "SYSTEMIC_CRITICAL",
+    hygieneAudit.verdict === "HYGIENE_GOVERNED",
   ].every(Boolean);
   const payload = {
     mode: "ship",
@@ -493,13 +498,33 @@ async function cmd_ship(commandContext) {
     edaFormalProof,
     apolloAirGapBundle,
     aladdinSystemicRisk,
+    hygieneAudit,
   };
   if (isJson) {
     console.log(JSON.stringify(payload, null, 2));
     return;
   }
   console.log(
-    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, SLSA=${dsseAttestation.verified}, F1=${sweBenchmark.f1Score.toFixed(2)}, EDA=${edaFormalProof.verdict}, Apollo=${apolloAirGapBundle.verdict}, Aladdin=${aladdinSystemicRisk.riskTier}, Tokens=${repoMap.estimatedCompressedTokens})`,
+    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, SLSA=${dsseAttestation.verified}, F1=${sweBenchmark.f1Score.toFixed(2)}, EDA=${edaFormalProof.verdict}, Apollo=${apolloAirGapBundle.verdict}, Aladdin=${aladdinSystemicRisk.riskTier}, Hygiene=${hygieneAudit.verdict}, Tokens=${repoMap.estimatedCompressedTokens})`,
+  );
+}
+
+async function cmd_hygiene_audit(commandContext) {
+  const { args, root } = commandContext;
+  const isJson = args.includes("--json");
+  const hardLimitLines = Number(readFlag(args, "hard-limit", "800"));
+  const minRequiredHeadroomLines = Number(readFlag(args, "min-headroom", "12"));
+  const report = EosCliCatalogAndHygieneGovernorCore.auditCliCatalogAndModuleHeadroom({
+    projectRoot: root,
+    hardLimitLines: Number.isFinite(hardLimitLines) ? hardLimitLines : 800,
+    minRequiredHeadroomLines: Number.isFinite(minRequiredHeadroomLines) ? minRequiredHeadroomLines : 35,
+  });
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+  console.log(
+    `\n[HYGIENE GOVERNOR] ${report.verdict} | CLI Parity: ${report.catalogedCommandsCount}/${report.totalCommandsRegistered} (${(report.catalogCoverageRatio * 100).toFixed(2)}%) | MaxLines=${report.maxLinesObserved}/${report.hardLimitLines} (MinHeadroom=${report.minHeadroomLines})`,
   );
 }
 
@@ -522,6 +547,7 @@ HANDLERS["bench:swe"] = cmd_bench_swe;
 HANDLERS["eda:prove"] = cmd_eda_prove;
 HANDLERS["apollo:bundle"] = cmd_apollo_bundle;
 HANDLERS["aladdin:stress"] = cmd_aladdin_stress;
+HANDLERS["hygiene:audit"] = cmd_hygiene_audit;
 HANDLERS["ship"] = cmd_ship;
 
 export async function handleJarvisPolyglotFrontierCommands(command, commandContext) {

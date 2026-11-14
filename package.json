@@ -85,6 +85,7 @@
     "./eda-prover": "./src/core/eosEdaEquivalenceTimingProverCore.ts",
     "./apollo-airgap": "./src/core/eosApolloAirGappedBundleOrchestratorCore.ts",
     "./aladdin-stress": "./src/core/eosAladdinSystemicRiskStressCore.ts",
+    "./hygiene-governor": "./src/core/eosCliCatalogAndHygieneGovernorCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {
@@ -300,7 +301,13 @@
     "project:verify": "node bin/eos.mjs project verify .",
     "design:govern": "node scripts/eos-design-system-govern.mjs",
     "test:design": "node --test test/eosS0DesignSystemGovernor.test.mjs",
-    "sync:stack": "node scripts/sync-gentle-ai-stack.mjs"
+    "sync:stack": "node scripts/sync-gentle-ai-stack.mjs",
+    "ship": "node bin/eos.mjs ship",
+    "hygiene:audit": "node bin/eos.mjs hygiene:audit",
+    "bench:swe": "node bin/eos.mjs bench:swe",
+    "eda:prove": "node bin/eos.mjs eda:prove",
+    "apollo:bundle": "node bin/eos.mjs apollo:bundle",
+    "aladdin:stress": "node bin/eos.mjs aladdin:stress"
   },
   "engines": {
     "node": ">=22.18.0"

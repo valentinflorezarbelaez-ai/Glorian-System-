@@ -1052,5 +1052,14 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(aladdinStress.action, "aladdin_systemic_stress");
     assert.equal(aladdinStress.portfolioSize, 9);
     assert.ok(aladdinStress.expectedShortfall99Percent >= aladdinStress.valueAtRisk99Percent);
+
+    // 52. cli_hygiene_audit (SPEC-250)
+    const hygieneAudit = callFacade({ action: "cli_hygiene_audit" });
+    assert.equal(hygieneAudit.action, "cli_hygiene_audit");
+    assert.equal(hygieneAudit.verdict, "HYGIENE_GOVERNED");
+    assert.deepEqual(hygieneAudit.missingFromHelpCatalog, []);
+    assert.deepEqual(hygieneAudit.breachedModules, []);
+    assert.deepEqual(hygieneAudit.nearCeilingModules, []);
+    assert.equal(hygieneAudit.sha256Receipt.length, 64);
   });
 });

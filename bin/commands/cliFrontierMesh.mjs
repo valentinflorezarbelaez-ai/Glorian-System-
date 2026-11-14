@@ -664,15 +664,13 @@ async function cmd_secure_mpc_155(commandContext) {
       );
       return;
     }
-    console.log(`\n===============================================================`);
-    console.log(`  GLORIAN LAYER-0 SECURE MPC HOMOMORPHIC ADDITION (SPEC-212)`);
-    console.log(`===============================================================`);
-    console.log(`  Operation          : Non-Interactive Share Addition [a + b]`);
-    console.log(`  Reconstructed Sum  : ${rec.secret.toString()}`);
-    console.log(`  Shares Used        : ${rec.sharesUsed}`);
-    console.log(`  Receipt ID         : ${rec.receipt.receiptId}`);
-    console.log(`  Receipt SHA-256    : sha256:${rec.receipt.receiptSha256}`);
-    console.log(`===============================================================\n`);
+    emitBannerBox("GLORIAN LAYER-0 SECURE MPC HOMOMORPHIC ADDITION (SPEC-212)", [
+      "Operation          : Non-Interactive Share Addition [a + b]",
+      `Reconstructed Sum  : ${rec.secret.toString()}`,
+      `Shares Used        : ${rec.sharesUsed}`,
+      `Receipt ID         : ${rec.receipt.receiptId}`,
+      `Receipt SHA-256    : sha256:${rec.receipt.receiptSha256}`,
+    ]);
     return;
   }
 
@@ -681,13 +679,7 @@ async function cmd_secure_mpc_155(commandContext) {
   if (isJson) {
     console.log(
       JSON.stringify(
-        {
-          reconstruction: {
-            secret: rec.secret.toString(),
-            sharesUsed: rec.sharesUsed,
-            receipt: rec.receipt,
-          },
-        },
+        { reconstruction: { secret: rec.secret.toString(), sharesUsed: rec.sharesUsed, receipt: rec.receipt } },
         null,
         2,
       ),
@@ -695,13 +687,16 @@ async function cmd_secure_mpc_155(commandContext) {
     return;
   }
 
-  console.log(`\n===============================================================`);
-  console.log(`  GLORIAN LAYER-0 SECURE MPC RECONSTRUCTION (SPEC-212)`);
-  console.log(`===============================================================`);
-  console.log(`  Reconstructed Secret : ${rec.secret.toString()}`);
-  console.log(`  Shares Evaluated     : ${rec.sharesUsed} of ${totalParties}`);
-  console.log(`  Receipt SHA-256      : sha256:${rec.receipt.receiptSha256}`);
-  console.log(`===============================================================\n`);
+  emitBannerBox("GLORIAN LAYER-0 SECURE MPC RECONSTRUCTION (SPEC-212)", [
+    `Reconstructed Secret : ${rec.secret.toString()}`,
+    `Shares Evaluated     : ${rec.sharesUsed} of ${totalParties}`,
+    `Receipt SHA-256      : sha256:${rec.receipt.receiptSha256}`,
+  ]);
+}
+
+function emitBannerBox(title, rows) {
+  const sep = "=".repeat(63);
+  console.log(`\n${sep}\n  ${title}\n${sep}\n${rows.map((r) => `  ${r}`).join("\n")}\n${sep}\n`);
 }
 
 async function cmd_vdf_wesolowski_156(commandContext) {
@@ -724,13 +719,11 @@ async function cmd_vdf_wesolowski_156(commandContext) {
       console.log(JSON.stringify(verifyRes, null, 2));
       return;
     }
-    console.log(`\n===============================================================`);
-    console.log(`  GLORIAN LAYER-0 WESOLOWSKI VDF VERIFICATION (SPEC-213)`);
-    console.log(`===============================================================`);
-    console.log(`  Verification Verdict : ${verifyRes.valid ? "VALID (PROVABLY AUTHENTIC)" : "FORGED"}`);
-    console.log(`  Verification Time    : ${verifyRes.verificationTimeMs.toFixed(3)} ms`);
-    console.log(`  Receipt SHA-256      : sha256:${verifyRes.receipt.receiptSha256}`);
-    console.log(`===============================================================\n`);
+    emitBannerBox("GLORIAN LAYER-0 WESOLOWSKI VDF VERIFICATION (SPEC-213)", [
+      `Verification Verdict : ${verifyRes.valid ? "VALID (PROVABLY AUTHENTIC)" : "FORGED"}`,
+      `Verification Time    : ${verifyRes.verificationTimeMs.toFixed(3)} ms`,
+      `Receipt SHA-256      : sha256:${verifyRes.receipt.receiptSha256}`,
+    ]);
     return;
   }
 
@@ -757,16 +750,14 @@ async function cmd_vdf_wesolowski_156(commandContext) {
     return;
   }
 
-  console.log(`\n===============================================================`);
-  console.log(`  GLORIAN LAYER-0 WESOLOWSKI VDF COMPUTATION (SPEC-213)`);
-  console.log(`===============================================================`);
-  console.log(`  Squarings (T)        : ${evalRes.delayT} sequential steps`);
-  console.log(`  Challenge Prime (ℓ)  : ${evalRes.proof.challengePrime.toString().slice(0, 16)}...`);
-  console.log(`  Proof Hex (π)        : ${evalRes.proof.proofHex.slice(0, 24)}...`);
-  console.log(`  Randomness Beacon    : sha256:${evalRes.randomnessBeacon}`);
-  console.log(`  Elapsed Evaluation   : ${evalRes.elapsedMs.toFixed(3)} ms`);
-  console.log(`  Receipt SHA-256      : sha256:${evalRes.receipt.receiptSha256}`);
-  console.log(`===============================================================\n`);
+  emitBannerBox("GLORIAN LAYER-0 WESOLOWSKI VDF COMPUTATION (SPEC-213)", [
+    `Squarings (T)        : ${evalRes.delayT} sequential steps`,
+    `Challenge Prime (ℓ)  : ${evalRes.proof.challengePrime.toString().slice(0, 16)}...`,
+    `Proof Hex (π)        : ${evalRes.proof.proofHex.slice(0, 24)}...`,
+    `Randomness Beacon    : sha256:${evalRes.randomnessBeacon}`,
+    `Elapsed Evaluation   : ${evalRes.elapsedMs.toFixed(3)} ms`,
+    `Receipt SHA-256      : sha256:${evalRes.receipt.receiptSha256}`,
+  ]);
 }
 
 HANDLERS["pbft:cluster"] = cmd_pbft_consensus_153;

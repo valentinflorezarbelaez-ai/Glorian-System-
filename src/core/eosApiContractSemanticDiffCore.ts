@@ -90,6 +90,28 @@ function collectSimpleExports(source: string, out: Map<string, ContractSymbolDes
   }
 }
 
+function collectNamedReExports(source: string, out: Map<string, ContractSymbolDescriptor>): void {
+  const reExportRe = /export\s+(?:type\s+)?\{([^}]+)\}/g;
+  for (const m of source.matchAll(reExportRe)) {
+    for (const raw of m[1].split(",")) {
+      const cleaned = raw.trim().replace(/^type\s+/, "");
+      const alias =
+        cleaned
+          .split(/\s+as\s+/)
+          .pop()
+          ?.trim() ?? "";
+      if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(alias) || out.has(alias)) continue;
+      out.set(alias, {
+        name: alias,
+        kind: "type",
+        requiredParams: 0,
+        fields: [],
+        optionalFields: [],
+      });
+    }
+  }
+}
+
 function compareMatchedSymbol(
   baseSym: ContractSymbolDescriptor,
   candSym: ContractSymbolDescriptor,
@@ -105,15 +127,17 @@ function compareMatchedSymbol(
       expandContractRemediation: `Keep existing '${baseSym.name}' arity intact and introduce the new parameter as optional ('param?: T') or default-initialized.`,
     });
   }
-  for (const field of baseSym.fields) {
-    if (!candSym.fields.includes(field)) {
-      breaking.push({
-        symbolName: baseSym.name,
-        changeKind: "REMOVED_REQUIRED_FIELD",
-        breaking: true,
-        summary: `Interface '${baseSym.name}' removed required field '${field}'.`,
-        expandContractRemediation: `Retain deprecated field '${field}' during an Expand phase before contracting in the next major release.`,
-      });
+  if (candSym.kind === "interface") {
+    for (const field of baseSym.fields) {
+      if (!candSym.fields.includes(field)) {
+        breaking.push({
+          symbolName: baseSym.name,
+          changeKind: "REMOVED_REQUIRED_FIELD",
+          breaking: true,
+          summary: `Interface '${baseSym.name}' removed required field '${field}'.`,
+          expandContractRemediation: `Retain deprecated field '${field}' during an Expand phase before contracting in the next major release.`,
+        });
+      }
     }
   }
   const baseOpt = new Set(baseSym.optionalFields ?? []);
@@ -136,6 +160,7 @@ export class EosApiContractSemanticDiffCore {
     collectExportedFunctions(source, out);
     collectExportedInterfaces(source, out);
     collectSimpleExports(source, out);
+    collectNamedReExports(source, out);
     return deepFreeze([...out.values()].sort((a, b) => a.name.localeCompare(b.name)));
   }
 

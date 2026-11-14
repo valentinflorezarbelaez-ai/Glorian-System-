@@ -20,7 +20,6 @@ import { EosMerklePatriciaTrieCore } from "../../core/eosMerklePatriciaTrieCore.
 import { EosTimeLockPuzzleCore } from "../../core/eosTimeLockPuzzleCore.ts";
 import { EosCuckooFilterCore } from "../../core/eosCuckooFilterCore.ts";
 import { EosHyperLogLogPlusCore } from "../../core/eosHyperLogLogPlusCore.ts";
-import { EosVerifiableSecretSharingCore } from "../../core/eosVerifiableSecretSharingCore.ts";
 import { dispatchPhase7FrontierActionExt2 } from "./eosMcpPhase7EnterpriseFrontierHandlersExt2.ts";
 import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
 
@@ -690,89 +689,6 @@ export function dispatchPhase7FrontierActionExt(
       estimateB: hllB.estimate(),
       mergedEstimate: merged.estimate(),
       stats: merged.stats(),
-    };
-  }
-  if (action === "vss_split") {
-    if (typeof args?.secret !== "string" || args.secret.length === 0) {
-      throw new TypeError("Pass a non-empty secret explicitly; no default secret is used.");
-    }
-    const k = args?.k === undefined ? 3 : args.k;
-    const n = args?.n === undefined ? 5 : args.n;
-    if (args?.scheme !== undefined && args.scheme !== "feldman" && args.scheme !== "pedersen") {
-      throw new TypeError("VSS scheme must be feldman or pedersen.");
-    }
-    const scheme = args?.scheme === "feldman" ? "feldman" : "pedersen";
-    const deal = EosVerifiableSecretSharingCore.splitSecret(args.secret, k, n, scheme);
-    return {
-      action: "vss_split",
-      mode: "dealer-only",
-      securityStatus: "experimental-not-for-production-secrets",
-      distributionNote:
-        "This response contains every private share. Send only one share to each participant; never broadcast the full response.",
-      scheme: deal.scheme,
-      k: deal.k,
-      n: deal.n,
-      commitmentsCount: deal.commitments.commitmentsHex.length,
-      commitments: deal.commitments,
-      sharesCount: deal.shares.length,
-      shares: deal.shares,
-    };
-  }
-  if (action === "vss_verify") {
-    const suppliedShare = args?.share;
-    const suppliedCommitments = args?.commitments;
-    const usingInput = suppliedShare !== undefined || suppliedCommitments !== undefined;
-    let share = suppliedShare;
-    let commitments = suppliedCommitments;
-    if (usingInput && (!share || !commitments)) {
-      throw new TypeError("Provide both share and commitments for VSS verification.");
-    }
-    if (!usingInput) {
-      const demo = EosVerifiableSecretSharingCore.splitSecret("mcp-vss-demo-only", 3, 5, "pedersen");
-      share = demo.shares[0];
-      commitments = demo.commitments;
-    }
-    const res = EosVerifiableSecretSharingCore.verifyShare(share, commitments);
-    return {
-      action: "vss_verify",
-      mode: usingInput ? "provided-input" : "demo",
-      securityStatus: "experimental-not-for-production-secrets",
-      participantId: Number.isSafeInteger(share?.id) ? share.id : -1,
-      valid: res.valid,
-      reason: res.reason,
-    };
-  }
-  if (action === "vss_reconstruct") {
-    const hasSuppliedData = args?.shares !== undefined || args?.commitments !== undefined;
-    let shares;
-    let commitments;
-    let k;
-    let mode;
-    if (hasSuppliedData) {
-      if (!Array.isArray(args?.shares) || !args?.commitments || args?.k === undefined) {
-        throw new TypeError("Provide shares, commitments, and k for VSS reconstruction.");
-      }
-      shares = args.shares;
-      commitments = args.commitments;
-      k = args.k;
-      mode = "provided-input";
-    } else {
-      const demo = EosVerifiableSecretSharingCore.splitSecret("mcp-vss-demo-only", 3, 5, "pedersen");
-      shares = [demo.shares[0], demo.shares[2], demo.shares[4]];
-      commitments = demo.commitments;
-      k = 3;
-      mode = "demo";
-    }
-    const res = EosVerifiableSecretSharingCore.reconstruct(shares, k, commitments);
-    return {
-      action: "vss_reconstruct",
-      mode,
-      securityStatus: "experimental-not-for-production-secrets",
-      secretHex: res.secretHex,
-      secretString: res.secretString,
-      validShareCount: res.validShareCount,
-      cheatersCount: res.cheatersIdentified.length,
-      cheatersIdentified: res.cheatersIdentified,
     };
   }
   return dispatchPhase7FrontierActionExt2(action, args, _deps);

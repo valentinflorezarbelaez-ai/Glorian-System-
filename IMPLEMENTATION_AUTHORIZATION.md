@@ -2193,3 +2193,22 @@
   - `docs/plans/PLAN-124-EDA-APOLLO-ALADDIN.md`
   - `docs/tasks/TASKS-124-EDA-APOLLO-ALADDIN.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-13-CLI-CATALOG-HYGIENE-GOVERNOR-250
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: CLI Catalog Parity & Module Headroom Governor (`SPEC-250`), CLI Help Extraction, & Near-Ceiling Module Decompression (`CHANGE-125`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: `"si dale con toda"`)
+- **Scope**:
+  1. Decompress `src/core/eosContainerSandbox.ts` (`<= 760` lines via `eosContainerSandbox.types.ts`) and delegate `crdt_*`/`mmr_*`/`vss_*` MCP handlers from `eosMcpPhase7EnterpriseFrontierHandlers.ts` and `Ext.ts` to `Ext2.ts`.
+  2. Extract `bin/commands/cliHelpCatalog.mjs` (`QUICK_HELP_TEXT` + `EXHAUSTIVE_HELP_TEXT`) covering through `SPEC-250` and slim `bin/commands/cliKernel.mjs`.
+  3. Implement Module 65 (`src/core/eosCliCatalogAndHygieneGovernorCore.types.ts` & `.ts`), export in `src/core/index.ts`, expose `./hygiene-governor` and convenience scripts in `package.json`, wire `hygiene:audit` + enriched `ship` in CLI, and wire `cli_hygiene_audit` in MCP.
+  4. Add `BDD-1271`..`BDD-1275` in `test/eosCliCatalogHygieneGovernor.test.mjs`, extend `test/eosEnterpriseFacade.test.mjs` (step `#52`), and document Module 65 in `docs/DEVELOPER_GUIDE.md`.
+  5. Format, refresh pins, pass all static/test gates, commit, seal Freeze Gate, and push to `origin/main`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-125-CLI-CATALOG-HYGIENE-GOVERNOR.md`
+  - `openspec/changes/CHANGE-125-CLI-CATALOG-HYGIENE-GOVERNOR.md`
+  - `openspec/specs/SPEC-250-CLI-CATALOG-HYGIENE-GOVERNOR.md`
+  - `docs/plans/PLAN-125-CLI-CATALOG-HYGIENE-GOVERNOR.md`
+  - `docs/tasks/TASKS-125-CLI-CATALOG-HYGIENE-GOVERNOR.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

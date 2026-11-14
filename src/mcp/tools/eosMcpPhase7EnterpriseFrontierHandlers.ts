@@ -30,8 +30,6 @@ import { EosHomomorphicLatticeCore, DEFAULT_HOMOMORPHIC_PARAMS } from "../../cor
 import { EosSecureMpcShamirCore } from "../../core/eosSecureMpcShamirCore.ts";
 import { EosVerifiableDelayFunctionCore } from "../../core/eosVerifiableDelayFunctionCore.ts";
 import { EosZeroKnowledgeR1csCore } from "../../core/eosZeroKnowledgeR1csCore.ts";
-import { EosCrdtStateSyncCore } from "../../core/eosCrdtStateSyncCore.ts";
-import { EosMerkleMountainRangeCore } from "../../core/eosMerkleMountainRangeCore.ts";
 import { pureSha256 } from "../../core/eosKernelPrimitives.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 import { dispatchPhase7FrontierActionExt } from "./eosMcpPhase7EnterpriseFrontierHandlersExt.ts";
@@ -704,85 +702,6 @@ export function dispatchPhase7FrontierAction(
     const verifyRes = core.verify(system, [witness.values[1]], proof);
     return {
       action: "r1cs_verify",
-      valid: verifyRes.valid,
-      verificationTimeMs: verifyRes.verificationTimeMs,
-      receipt: verifyRes.receipt,
-    };
-  }
-  if (action === "crdt_mutate") {
-    const nodeId = typeof args?.nodeId === "string" ? args.nodeId : "mcp-node";
-    const core = new EosCrdtStateSyncCore(nodeId);
-    core.setRegister("status", "ACTIVE");
-    core.addToSet("keys", "key-1");
-    core.insertSequence("stream", "X");
-    const snapshot = core.exportSnapshot();
-    return {
-      action: "crdt_mutate",
-      nodeId: snapshot.nodeId,
-      stateHashSha256: snapshot.stateHashSha256,
-      vectorClock: snapshot.vectorClock,
-    };
-  }
-  if (action === "crdt_merge") {
-    const nodeA = new EosCrdtStateSyncCore("node-A");
-    const nodeB = new EosCrdtStateSyncCore("node-B");
-    nodeA.setRegister("key", "A");
-    nodeB.setRegister("key", "B");
-    const resA = nodeA.mergeSnapshot(nodeB.exportSnapshot());
-    const resB = nodeB.mergeSnapshot(nodeA.exportSnapshot());
-    return {
-      action: "crdt_merge",
-      converged: resA.stateHashSha256 === resB.stateHashSha256,
-      stateHashSha256: resA.stateHashSha256,
-      receipt: resA.receipt,
-    };
-  }
-  if (action === "crdt_delta") {
-    const node1 = new EosCrdtStateSyncCore("node-1");
-    const node2 = new EosCrdtStateSyncCore("node-2");
-    node1.setRegister("val", 42);
-    const delta = node1.getDelta(node2.vectorClock);
-    const mergeRes = node2.mergeDelta(delta);
-    return {
-      action: "crdt_delta",
-      converged: mergeRes.converged,
-      stateHashSha256: mergeRes.stateHashSha256,
-      receipt: mergeRes.receipt,
-    };
-  }
-  if (action === "mmr_append") {
-    const mmr = new EosMerkleMountainRangeCore();
-    const count = typeof args?.count === "number" ? Math.max(1, args.count) : 5;
-    for (let i = 0; i < count; i++) {
-      mmr.append(`mcp-leaf-${i}`);
-    }
-    return {
-      action: "mmr_append",
-      leafCount: mmr.getLeafCount(),
-      mmrSize: mmr.getSize(),
-      root: mmr.getRoot(),
-      peakCount: mmr.getPeaks().length,
-    };
-  }
-  if (action === "mmr_prove") {
-    const mmr = new EosMerkleMountainRangeCore();
-    for (let i = 0; i < 7; i++) mmr.append(`entry-${i}`);
-    const proof = mmr.getInclusionProof(2);
-    return {
-      action: "mmr_prove",
-      leafIndex: proof.leafIndex,
-      leafPos: proof.leafPos,
-      root: proof.root,
-      siblingCount: proof.siblings.length,
-    };
-  }
-  if (action === "mmr_verify") {
-    const mmr = new EosMerkleMountainRangeCore();
-    for (let i = 0; i < 7; i++) mmr.append(`entry-${i}`);
-    const proof = mmr.getInclusionProof(2);
-    const verifyRes = mmr.verifyInclusion(proof);
-    return {
-      action: "mmr_verify",
       valid: verifyRes.valid,
       verificationTimeMs: verifyRes.verificationTimeMs,
       receipt: verifyRes.receipt,

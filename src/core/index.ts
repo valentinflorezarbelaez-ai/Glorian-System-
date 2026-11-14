@@ -526,3 +526,11 @@ export type {
   AladdinRiskTier,
   AladdinSystemicRiskReport,
 } from "./eosAladdinSystemicRiskStressCore.types.ts";
+export { EosCliCatalogAndHygieneGovernorCore } from "./eosCliCatalogAndHygieneGovernorCore.ts";
+export type {
+  ModuleLineCountInput,
+  CliCatalogHygieneAuditInput,
+  CliCatalogHygieneVerdict,
+  ModuleHeadroomRecord,
+  CliCatalogHygieneAuditReport,
+} from "./eosCliCatalogAndHygieneGovernorCore.types.ts";

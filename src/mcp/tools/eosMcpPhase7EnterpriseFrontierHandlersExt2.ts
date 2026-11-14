@@ -40,6 +40,11 @@ import type {
   AirGappedTargetNodeSpec,
 } from "../../core/eosApolloAirGappedBundleOrchestratorCore.types.ts";
 import { EosAladdinSystemicRiskStressCore } from "../../core/eosAladdinSystemicRiskStressCore.ts";
+import { EosCliCatalogAndHygieneGovernorCore } from "../../core/eosCliCatalogAndHygieneGovernorCore.ts";
+import type { ModuleLineCountInput } from "../../core/eosCliCatalogAndHygieneGovernorCore.types.ts";
+import { EosCrdtStateSyncCore } from "../../core/eosCrdtStateSyncCore.ts";
+import { EosMerkleMountainRangeCore } from "../../core/eosMerkleMountainRangeCore.ts";
+import { EosVerifiableSecretSharingCore } from "../../core/eosVerifiableSecretSharingCore.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
 function numOr(val: unknown, fallback: number): number {
@@ -308,15 +313,199 @@ function handleAladdinSystemicStress(
   return { ...report, action: "aladdin_systemic_stress" };
 }
 
+function handleCliHygieneAudit(
+  args: Record<string, unknown> | undefined,
+  deps: { readonly projectRoot: string },
+): Record<string, unknown> {
+  const registeredCommands = Array.isArray(args?.registeredCommands)
+    ? (args.registeredCommands as string[])
+    : undefined;
+  const moduleLineCounts = Array.isArray(args?.moduleLineCounts)
+    ? (args.moduleLineCounts as ModuleLineCountInput[])
+    : undefined;
+  const report = EosCliCatalogAndHygieneGovernorCore.auditCliCatalogAndModuleHeadroom({
+    projectRoot: optStringArg(args, "projectRoot") ?? deps.projectRoot,
+    registeredCommands,
+    helpCatalogText: optStringArg(args, "helpCatalogText"),
+    developerGuideText: optStringArg(args, "developerGuideText"),
+    moduleLineCounts,
+    hardLimitLines: optNumArg(args, "hardLimitLines"),
+    minRequiredHeadroomLines: optNumArg(args, "minRequiredHeadroomLines"),
+  });
+  return { ...report, action: "cli_hygiene_audit" };
+}
+
+function handleCrdtMmrAction(
+  action: string,
+  args: Record<string, any> | undefined,
+): Record<string, unknown> | undefined {
+  if (action === "crdt_mutate") {
+    const nodeId = typeof args?.nodeId === "string" ? args.nodeId : "mcp-node";
+    const core = new EosCrdtStateSyncCore(nodeId);
+    core.setRegister("status", "ACTIVE");
+    core.addToSet("keys", "key-1");
+    core.insertSequence("stream", "X");
+    const snapshot = core.exportSnapshot();
+    return {
+      action: "crdt_mutate",
+      nodeId: snapshot.nodeId,
+      stateHashSha256: snapshot.stateHashSha256,
+      vectorClock: snapshot.vectorClock,
+    };
+  }
+  if (action === "crdt_merge") {
+    const nodeA = new EosCrdtStateSyncCore("node-A");
+    const nodeB = new EosCrdtStateSyncCore("node-B");
+    nodeA.setRegister("key", "A");
+    nodeB.setRegister("key", "B");
+    const resA = nodeA.mergeSnapshot(nodeB.exportSnapshot());
+    const resB = nodeB.mergeSnapshot(nodeA.exportSnapshot());
+    return {
+      action: "crdt_merge",
+      converged: resA.stateHashSha256 === resB.stateHashSha256,
+      stateHashSha256: resA.stateHashSha256,
+      receipt: resA.receipt,
+    };
+  }
+  if (action === "crdt_delta") {
+    const node1 = new EosCrdtStateSyncCore("node-1");
+    const node2 = new EosCrdtStateSyncCore("node-2");
+    node1.setRegister("val", 42);
+    const delta = node1.getDelta(node2.vectorClock);
+    const mergeRes = node2.mergeDelta(delta);
+    return {
+      action: "crdt_delta",
+      converged: mergeRes.converged,
+      stateHashSha256: mergeRes.stateHashSha256,
+      receipt: mergeRes.receipt,
+    };
+  }
+  if (action === "mmr_append") {
+    const mmr = new EosMerkleMountainRangeCore();
+    const count = typeof args?.count === "number" ? Math.max(1, args.count) : 5;
+    for (let i = 0; i < count; i++) mmr.append(`mcp-leaf-${i}`);
+    return {
+      action: "mmr_append",
+      leafCount: mmr.getLeafCount(),
+      mmrSize: mmr.getSize(),
+      root: mmr.getRoot(),
+      peakCount: mmr.getPeaks().length,
+    };
+  }
+  if (action === "mmr_prove" || action === "mmr_verify") {
+    const mmr = new EosMerkleMountainRangeCore();
+    for (let i = 0; i < 7; i++) mmr.append(`entry-${i}`);
+    const proof = mmr.getInclusionProof(2);
+    if (action === "mmr_prove") {
+      return {
+        action: "mmr_prove",
+        leafIndex: proof.leafIndex,
+        leafPos: proof.leafPos,
+        root: proof.root,
+        siblingCount: proof.siblings.length,
+      };
+    }
+    const verifyRes = mmr.verifyInclusion(proof);
+    return {
+      action: "mmr_verify",
+      valid: verifyRes.valid,
+      verificationTimeMs: verifyRes.verificationTimeMs,
+      receipt: verifyRes.receipt,
+    };
+  }
+  return undefined;
+}
+
+function handleVssSplit(args: Record<string, any> | undefined): Record<string, unknown> {
+  if (typeof args?.secret !== "string" || args.secret.length === 0) {
+    throw new TypeError("Pass a non-empty secret explicitly; no default secret is used.");
+  }
+  const k = args?.k === undefined ? 3 : args.k;
+  const n = args?.n === undefined ? 5 : args.n;
+  if (args?.scheme !== undefined && args.scheme !== "feldman" && args.scheme !== "pedersen") {
+    throw new TypeError("VSS scheme must be feldman or pedersen.");
+  }
+  const scheme = args?.scheme === "feldman" ? "feldman" : "pedersen";
+  const deal = EosVerifiableSecretSharingCore.splitSecret(args.secret, k, n, scheme);
+  return {
+    action: "vss_split",
+    mode: "dealer-only",
+    securityStatus: "experimental-not-for-production-secrets",
+    distributionNote:
+      "This response contains every private share. Send only one share to each participant; never broadcast the full response.",
+    scheme: deal.scheme,
+    k: deal.k,
+    n: deal.n,
+    commitmentsCount: deal.commitments.commitmentsHex.length,
+    commitments: deal.commitments,
+    sharesCount: deal.shares.length,
+    shares: deal.shares,
+  };
+}
+
+function dispatchCrdtMmrVssActions(
+  action: string,
+  args: Record<string, any> | undefined,
+): Record<string, unknown> | undefined {
+  const crdtMmr = handleCrdtMmrAction(action, args);
+  if (crdtMmr !== undefined) return crdtMmr;
+  if (action === "vss_split") return handleVssSplit(args);
+  if (action === "vss_verify") {
+    const usingInput = args?.share !== undefined || args?.commitments !== undefined;
+    if (usingInput && (!args?.share || !args?.commitments)) {
+      throw new TypeError("Provide both share and commitments for VSS verification.");
+    }
+    const demo = usingInput
+      ? undefined
+      : EosVerifiableSecretSharingCore.splitSecret("mcp-vss-demo-only", 3, 5, "pedersen");
+    const share = usingInput ? args?.share : demo!.shares[0];
+    const commitments = usingInput ? args?.commitments : demo!.commitments;
+    const res = EosVerifiableSecretSharingCore.verifyShare(share, commitments);
+    return {
+      action: "vss_verify",
+      mode: usingInput ? "provided-input" : "demo",
+      securityStatus: "experimental-not-for-production-secrets",
+      participantId: Number.isSafeInteger(share?.id) ? share.id : -1,
+      valid: res.valid,
+      reason: res.reason,
+    };
+  }
+  if (action === "vss_reconstruct") {
+    const hasSupplied = args?.shares !== undefined || args?.commitments !== undefined;
+    if (hasSupplied && (!Array.isArray(args?.shares) || !args?.commitments || args?.k === undefined)) {
+      throw new TypeError("Provide shares, commitments, and k for VSS reconstruction.");
+    }
+    const demo = hasSupplied
+      ? undefined
+      : EosVerifiableSecretSharingCore.splitSecret("mcp-vss-demo-only", 3, 5, "pedersen");
+    const shares = hasSupplied ? args!.shares : [demo!.shares[0], demo!.shares[2], demo!.shares[4]];
+    const commitments = hasSupplied ? args!.commitments : demo!.commitments;
+    const k = hasSupplied ? args!.k : 3;
+    const res = EosVerifiableSecretSharingCore.reconstruct(shares, k, commitments);
+    return {
+      action: "vss_reconstruct",
+      mode: hasSupplied ? "provided-input" : "demo",
+      securityStatus: "experimental-not-for-production-secrets",
+      secretHex: res.secretHex,
+      secretString: res.secretString,
+      validShareCount: res.validShareCount,
+      cheatersCount: res.cheatersIdentified.length,
+      cheatersIdentified: res.cheatersIdentified,
+    };
+  }
+  return undefined;
+}
+
 function dispatchEdaApolloAladdinActions(
   action: string,
-  args: Record<string, unknown> | undefined,
+  args: Record<string, any> | undefined,
   deps: { readonly projectRoot: string },
 ): Record<string, unknown> | undefined {
   if (action === "eda_equivalence_timing_prove") return handleEdaEquivalenceTimingProve(args);
   if (action === "apollo_airgap_bundle") return handleApolloAirGapBundle(args, deps);
   if (action === "aladdin_systemic_stress") return handleAladdinSystemicStress(args, deps);
-  return undefined;
+  if (action === "cli_hygiene_audit") return handleCliHygieneAudit(args, deps);
+  return dispatchCrdtMmrVssActions(action, args);
 }
 
 function dispatchPolyglotOrBridge(

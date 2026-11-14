@@ -10,6 +10,15 @@ import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import type {
+  DockerImageInfo,
+  FileRecord,
+  SandboxRunOptions,
+  SandboxRunReport,
+  SnapshotManifest,
+} from "./eosContainerSandbox.types.ts";
+
+export type { SandboxRunOptions, SandboxRunReport } from "./eosContainerSandbox.types.ts";
 
 const MAX_SNAPSHOT_FILES = 20_000;
 const MAX_SNAPSHOT_BYTES = 512 * 1024 * 1024;
@@ -17,50 +26,9 @@ const MAX_SINGLE_FILE_BYTES = 64 * 1024 * 1024;
 const MAX_RUN_TIMEOUT_MS = 15 * 60 * 1000;
 const DEFAULT_RUN_TIMEOUT_MS = 10 * 60 * 1000;
 const MAX_RUN_DISK_CHECK_MS = 1_000;
-const EXCLUDED_DIRECTORIES = new Set(
-  ".git,.worktrees,.eos,.vercel,.next,.turbo,.terraform,.secrets,secret,secrets,credentials,coverage,node_modules".split(
-    ",",
-  ),
-);
-
-export interface SandboxRunOptions {
-  readonly worktreePath: string;
-  readonly command: string;
-  readonly commandArgs?: readonly string[];
-  readonly applyChanges?: boolean;
-  readonly timeoutMs?: number;
-}
-
-export interface SandboxRunReport {
-  readonly success: boolean;
-  readonly status: "COMPLETED" | "COMMAND_FAILED" | "TIMED_OUT" | "CONFLICT" | "FAILED";
-  readonly exitCode: number | null;
-  readonly timeoutMs: number;
-  readonly appliedChanges: boolean;
-  readonly changedFiles: readonly string[];
-  readonly conflicts: readonly string[];
-  readonly excludedPaths: readonly string[];
-  readonly receiptPath: string | null;
-  readonly error?: string;
-}
-
-interface FileRecord {
-  readonly sha256: string;
-  readonly size: number;
-  readonly mode: number;
-  readonly sandboxMode: number;
-}
-
-interface SnapshotManifest {
-  readonly files: Map<string, FileRecord>;
-  readonly bytes: number;
-  readonly symlinks: readonly string[];
-}
-
-interface DockerImageInfo {
-  readonly ref: string;
-  readonly digest: string;
-}
+const EXCLUDED_DIRS_CSV =
+  ".git,.worktrees,.eos,.vercel,.next,.turbo,.terraform,.secrets,secret,secrets,credentials,coverage,node_modules";
+const EXCLUDED_DIRECTORIES = new Set(EXCLUDED_DIRS_CSV.split(","));
 
 function isPathWithin(root: string, candidate: string): boolean {
   const relative = path.relative(root, candidate);

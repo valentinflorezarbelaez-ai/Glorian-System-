@@ -1,16 +1,6 @@
 /**
- * EOS SYSTEM — MODEL CONTEXT PROTOCOL (MCP) NATIVE SERVER (Layer 0)
- * Governed by ADR-015, FR-022 & BDD-017
- *
- * Implements the open Model Context Protocol (MCP) JSON-RPC 2.0 specification over stdio.
- * Enables Cursor, Antigravity, Claude Code, and Gemini to invoke EOS sovereign tools:
- * - eos_semantic_search: High-dimensional vector space queries.
- * - eos_tmr_consensus: Triple-Modular Redundancy Byzantine evaluation of directives.
- * - eos_audit_fleet: Cross-repository health and git status checks.
- * - eos_simulate_bounded_models: bounded JavaScript simulations associated with TLA+ text files.
- * - eos_health_check: CNCF / Google SRE observability telemetry.
- *
- * Zero external runtime dependencies.
+ * EOS SYSTEM — MODEL CONTEXT PROTOCOL (MCP) NATIVE SERVER (Layer 0, ADR-015, FR-022, BDD-017).
+ * Implements JSON-RPC 2.0 over stdio with zero external runtime dependencies.
  */
 
 import fs from "node:fs";
