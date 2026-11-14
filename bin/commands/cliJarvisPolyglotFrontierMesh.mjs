@@ -5,6 +5,9 @@ import { EosJarvisSdlcOrchestratorCore } from "../../src/core/eosJarvisSdlcOrche
 import { EosLiveGitDiffPrInspectorCore } from "../../src/core/eosLiveGitDiffPrInspectorCore.ts";
 import { EosRepoMapSymbolCompressorCore } from "../../src/core/eosRepoMapSymbolCompressorCore.ts";
 import { EosPropertyBasedShrinkingFuzzerCore } from "../../src/core/eosPropertyBasedShrinkingFuzzerCore.ts";
+import { EosApiContractSemanticDiffCore } from "../../src/core/eosApiContractSemanticDiffCore.ts";
+import { EosSarifDiagnosticPatchSynthesizerCore } from "../../src/core/eosSarifDiagnosticPatchSynthesizerCore.ts";
+import { EosFleetMultiRepoShipOrchestratorCore } from "../../src/core/eosFleetMultiRepoShipOrchestratorCore.ts";
 
 const HANDLERS = {};
 
@@ -209,6 +212,80 @@ async function cmd_pbt_check(commandContext) {
   console.log(`\n[PBT SHRINKER] seed=${suite.seed} passed=${suite.passedProperties}/${suite.totalProperties}`);
 }
 
+async function cmd_contract_diff(commandContext) {
+  const { args } = commandContext;
+  const isJson = args.includes("--json");
+  const contractId = readFlag(args, "id", "CONTRACT-LIVE-001");
+  const baselineSource = readFlag(
+    args,
+    "baseline",
+    "export interface HealthDto { readonly ok: boolean }\nexport function getStatus(id: string) {}",
+  );
+  const candidateSource = readFlag(
+    args,
+    "candidate",
+    "export interface HealthDto { readonly ok: boolean; readonly region?: string }\nexport function getStatus(id: string) {}\nexport function getReceipt(id: string) {}",
+  );
+  const report = EosApiContractSemanticDiffCore.compareContracts({
+    contractId,
+    baselineSource,
+    candidateSource,
+  });
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+  console.log(
+    `\n[CONTRACT DIFF] ${report.contractId} -> compat=${report.backwardCompatible} semver=${report.semverBumpRequired} breaking=${report.breakingChanges.length} additive=${report.additiveChanges.length}`,
+  );
+}
+
+async function cmd_sarif_export(commandContext) {
+  const { args, root } = commandContext;
+  const isJson = args.includes("--json");
+  const writeSarifToDisk = args.includes("--write");
+  const outputRelPath = readFlag(args, "out", ".eos/glorian-ship.sarif.json");
+  const liveDiff = EosLiveGitDiffPrInspectorCore.inspectLiveGitDiff({ projectRoot: root, ticketId: "SARIF-LIVE" });
+  const findings = liveDiff.diffAudit.blockingRisks.map((risk, idx) => ({
+    ruleId: `EOS-SHIP-${String(idx + 1).padStart(3, "0")}`,
+    level: "error",
+    message: risk,
+    filePath: liveDiff.changedFiles[0]?.path ?? "src/index.ts",
+    startLine: 1,
+  }));
+  const report = EosSarifDiagnosticPatchSynthesizerCore.synthesizeSarifAndPatches({
+    projectRoot: root,
+    runTitle: "Glorian System Live Diff SARIF 2.1.0",
+    findings,
+    writeSarifToDisk,
+    outputRelPath,
+  });
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+  console.log(
+    `\n[SARIF 2.1.0] results=${report.totalResults} errors=${report.errorCount} warnings=${report.warningCount} digest=${report.sarifDigestSha256.slice(0, 12)}`,
+  );
+}
+
+async function cmd_fleet_ship(commandContext) {
+  const { args, root } = commandContext;
+  const isJson = args.includes("--json");
+  const probeLocalCheckouts = args.includes("--probe");
+  const report = EosFleetMultiRepoShipOrchestratorCore.orchestrateFleetShipReadiness({
+    projectRoot: root,
+    probeLocalCheckouts,
+  });
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+  console.log(
+    `\n[FLEET SHIP] verdict=${report.fleetVerdict} authorized=${report.authorizedProjects}/${report.totalProjects} avgScore=${report.averageReadinessScore}`,
+  );
+}
+
 async function cmd_ship(commandContext) {
   const { args, root } = commandContext;
   const isJson = args.includes("--json");
@@ -221,6 +298,28 @@ async function cmd_ship(commandContext) {
     maxFiles: 30,
   });
   const propertySuite = EosPropertyBasedShrinkingFuzzerCore.runBuiltInSuite(1337);
+  const contractDiff = EosApiContractSemanticDiffCore.compareContracts({
+    contractId: `${ticketId}-CONTRACT`,
+    baselineSource:
+      "export interface ShipReceipt { readonly ticketId: string }\nexport function runShip(id: string) {}",
+    candidateSource:
+      "export interface ShipReceipt { readonly ticketId: string; readonly sarifVersion?: string }\nexport function runShip(id: string) {}",
+  });
+  const sarifFindings = liveDiff.diffAudit.blockingRisks.map((risk, idx) => ({
+    ruleId: `EOS-SHIP-${String(idx + 1).padStart(3, "0")}`,
+    level: "error",
+    message: risk,
+    filePath: liveDiff.changedFiles[0]?.path ?? "src/index.ts",
+    startLine: 1,
+  }));
+  const sarifReport = EosSarifDiagnosticPatchSynthesizerCore.synthesizeSarifAndPatches({
+    projectRoot: root,
+    runTitle: `Glorian Ship SARIF 2.1.0 (${ticketId})`,
+    findings: sarifFindings,
+  });
+  const fleetOrchestration = EosFleetMultiRepoShipOrchestratorCore.orchestrateFleetShipReadiness({
+    projectRoot: root,
+  });
   const staffJudge = EosStaffEngineerAdversarialJudgeCore.evaluateProposalOrPr({
     targetId: ticketId,
     title: "Master Ship Readiness Verification",
@@ -234,7 +333,11 @@ async function cmd_ship(commandContext) {
     workflowId: "flow-ship-readiness",
     approvalDiffSha256: liveDiff.inspectionDigestSha256,
   });
-  const approved = liveDiff.readyToShip && propertySuite.allPassed && staffJudge.verdict === "APPROVED";
+  const approved =
+    liveDiff.readyToShip &&
+    propertySuite.allPassed &&
+    staffJudge.verdict === "APPROVED" &&
+    contractDiff.backwardCompatible;
   const payload = {
     mode: "ship",
     ticketId,
@@ -242,6 +345,9 @@ async function cmd_ship(commandContext) {
     liveDiff,
     repoMap,
     propertySuite,
+    contractDiff,
+    sarifReport,
+    fleetOrchestration,
     staffJudge,
     canaryPlan,
   };
@@ -250,7 +356,7 @@ async function cmd_ship(commandContext) {
     return;
   }
   console.log(
-    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Tokens=${repoMap.estimatedCompressedTokens})`,
+    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, Tokens=${repoMap.estimatedCompressedTokens})`,
   );
 }
 
@@ -264,6 +370,9 @@ HANDLERS["staff:demo"] = cmd_staff_demo;
 HANDLERS["diff:live"] = cmd_diff_live;
 HANDLERS["repomap:build"] = cmd_repomap_build;
 HANDLERS["pbt:check"] = cmd_pbt_check;
+HANDLERS["contract:diff"] = cmd_contract_diff;
+HANDLERS["sarif:export"] = cmd_sarif_export;
+HANDLERS["fleet:ship"] = cmd_fleet_ship;
 HANDLERS["ship"] = cmd_ship;
 
 export async function handleJarvisPolyglotFrontierCommands(command, commandContext) {

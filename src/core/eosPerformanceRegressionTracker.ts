@@ -76,8 +76,8 @@ export class EosPerformanceRegressionTracker {
    * Returns all suites with regressions.
    * Compares the latest sample against the p95 of all prior samples.
    */
-  checkAll(threshold = 2.0): readonly RegressionReport[] {
-    const suites = [...new Set(this.samples.map((s) => s.suite))];
+  checkAll(threshold = 2.0, activeSuites?: ReadonlySet<string>): readonly RegressionReport[] {
+    const suites = [...new Set(this.samples.map((s) => s.suite))].filter((s) => !activeSuites || activeSuites.has(s));
     return suites
       .map((s) => {
         const latest = this.latestDuration(s);
@@ -113,6 +113,8 @@ export class EosPerformanceRegressionTracker {
   private loadSamples(): void {
     if (!fs.existsSync(this.statePath)) return;
     const lines = fs.readFileSync(this.statePath, "utf8").split("\n").filter(Boolean);
-    this.samples = lines.map((l) => JSON.parse(l));
+    this.samples = lines
+      .map((l) => JSON.parse(l) as TimingSample)
+      .filter((s) => typeof s.durationMs === "number" && s.durationMs >= 0 && s.durationMs <= 300_000);
   }
 }

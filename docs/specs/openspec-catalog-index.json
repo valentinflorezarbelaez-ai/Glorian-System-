@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 235,
-  "catalogSha256": "99c9698d735bdcd4f23f93292b463b25437a49a6a15114a7c566bf79e84b6bc8",
+  "totalSpecs": 238,
+  "catalogSha256": "4b297608698edbb523e7d9f880e5a09344366d46b1fead975069c3492893d364",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2117,6 +2117,33 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-240-PROPERTY-SHRINKING-FUZZER.md",
       "sha256": "4448e00eada99014cc257f2071b1d2347396ddca55b0572d365711a52b1a3f5e"
+    },
+    {
+      "id": "SPEC-241",
+      "title": "— Layer-0 API Contract Semantic Diff Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-241-API-CONTRACT-SEMANTIC-DIFF.md",
+      "sha256": "5f4a6a9ee6631e52632f34e3ebdd4f35b907de9ee43f8522a3372750c4d2b89e"
+    },
+    {
+      "id": "SPEC-242",
+      "title": "— Layer-0 SARIF 2.1.0 Diagnostic & Unified Patch Synthesizer",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-242-SARIF-DIAGNOSTIC-PATCH-SYNTHESIZER.md",
+      "sha256": "2242a4138aa9ab7f43fdc4b51ce7b310734453a2d305f2d5b125d3c28a1c6064"
+    },
+    {
+      "id": "SPEC-243",
+      "title": "— Layer-0 Fleet Multi-Repo Ship Orchestrator",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-243-FLEET-MULTI-REPO-SHIP-ORCHESTRATOR.md",
+      "sha256": "22d5d541907e456e2319772b3621594ed2f06f66d8cde0c2b792e7af251086c1"
     }
   ]
 }

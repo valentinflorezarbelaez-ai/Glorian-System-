@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -135,17 +136,18 @@ test("Freeze Pin equals HEAD after tip-refresh --seal-pin (self-ref via working-
     throw err;
   }
 
-  // Working-tree seal: after --seal-pin, the on-disk pin must equal HEAD.
-  const sealedPath = path.join(root, "docs/releases/EOS_FREEZE_GATE_STATUS.md");
-  const before = fs.readFileSync(sealedPath, "utf8");
-  execFileSync(process.execPath, [path.join(root, "scripts/tip-refresh.mjs"), "--seal-pin"], {
-    cwd: root,
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
-  });
-  const after = fs.readFileSync(sealedPath, "utf8");
-  const sealedPin = after.match(/\|\s*\*\*Freeze Pin \(HEAD\)\*\*\s*\|\s*`([0-9a-f]+)`/i)?.[1];
-  assert.equal(sealedPin, head, `tip-refresh --seal-pin must write Freeze Pin == HEAD (${head})`);
-  // Restore committed bytes so the test remains non-mutating for subsequent suites.
-  fs.writeFileSync(sealedPath, before, "utf8");
+  // Working-tree seal: after --seal-pin, the emitted pin must equal HEAD (isolated via tmpdir to prevent parallel Windows lock races).
+  const tmpSealPath = path.join(os.tmpdir(), `eos-freeze-seal-${process.pid}-${Date.now()}.md`);
+  try {
+    execFileSync(process.execPath, [path.join(root, "scripts/tip-refresh.mjs"), "--seal-pin", `--out=${tmpSealPath}`], {
+      cwd: root,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    const after = fs.readFileSync(tmpSealPath, "utf8");
+    const sealedPin = after.match(/\|\s*\*\*Freeze Pin \(HEAD\)\*\*\s*\|\s*`([0-9a-f]+)`/i)?.[1];
+    assert.equal(sealedPin, head, `tip-refresh --seal-pin must write Freeze Pin == HEAD (${head})`);
+  } finally {
+    if (fs.existsSync(tmpSealPath)) fs.unlinkSync(tmpSealPath);
+  }
 });

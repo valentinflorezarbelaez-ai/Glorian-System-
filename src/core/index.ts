@@ -450,3 +450,31 @@ export type {
   PropertyCheckResult,
   PropertySuiteReport,
 } from "./eosPropertyBasedShrinkingFuzzerCore.types.ts";
+export { EosApiContractSemanticDiffCore } from "./eosApiContractSemanticDiffCore.ts";
+export type {
+  ContractChangeKind,
+  SemverBumpLevel,
+  ContractSymbolDescriptor,
+  ContractChangeItem,
+  CompareApiContractsInput,
+  ApiContractDiffReport,
+} from "./eosApiContractSemanticDiffCore.types.ts";
+export { EosSarifDiagnosticPatchSynthesizerCore } from "./eosSarifDiagnosticPatchSynthesizerCore.ts";
+export type {
+  SarifSeverityLevel,
+  DiagnosticFindingInput,
+  SynthesizeSarifOptions,
+  SarifPhysicalLocation,
+  SarifFixDescriptor,
+  SarifResultEntry,
+  SarifDocument210,
+  SarifSynthesisReport,
+} from "./eosSarifDiagnosticPatchSynthesizerCore.types.ts";
+export { EosFleetMultiRepoShipOrchestratorCore } from "./eosFleetMultiRepoShipOrchestratorCore.ts";
+export type {
+  FleetProjectRecordInput,
+  OrchestrateFleetShipOptions,
+  FleetRepoShipStatus,
+  FleetVerdictStatus,
+  FleetShipOrchestrationReport,
+} from "./eosFleetMultiRepoShipOrchestratorCore.types.ts";

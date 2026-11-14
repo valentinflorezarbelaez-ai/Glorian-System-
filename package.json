@@ -76,6 +76,9 @@
     "./live-diff": "./src/core/eosLiveGitDiffPrInspectorCore.ts",
     "./repomap": "./src/core/eosRepoMapSymbolCompressorCore.ts",
     "./property-fuzzer": "./src/core/eosPropertyBasedShrinkingFuzzerCore.ts",
+    "./contract-diff": "./src/core/eosApiContractSemanticDiffCore.ts",
+    "./sarif": "./src/core/eosSarifDiagnosticPatchSynthesizerCore.ts",
+    "./fleet-ship": "./src/core/eosFleetMultiRepoShipOrchestratorCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

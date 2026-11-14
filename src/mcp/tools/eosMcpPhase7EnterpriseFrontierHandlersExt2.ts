@@ -1,5 +1,5 @@
 /**
- * EOS MCP Phase 7 Enterprise Frontier Handlers Extension 2 (SPEC-234..SPEC-240 / CHANGE-119..CHANGE-121)
+ * EOS MCP Phase 7 Enterprise Frontier Handlers Extension 2 (SPEC-234..SPEC-243 / CHANGE-119..CHANGE-122)
  * Strict Zero Runtime Dependencies (EOS Law V), Node 22.18+ Strip-Only TypeScript.
  * Enforces strict line count ceiling <= 800 lines across all MCP handler modules.
  */
@@ -21,6 +21,11 @@ import { EosLiveGitDiffPrInspectorCore } from "../../core/eosLiveGitDiffPrInspec
 import { EosRepoMapSymbolCompressorCore } from "../../core/eosRepoMapSymbolCompressorCore.ts";
 import type { RepoMapSourceFileInput } from "../../core/eosRepoMapSymbolCompressorCore.types.ts";
 import { EosPropertyBasedShrinkingFuzzerCore } from "../../core/eosPropertyBasedShrinkingFuzzerCore.ts";
+import { EosApiContractSemanticDiffCore } from "../../core/eosApiContractSemanticDiffCore.ts";
+import { EosSarifDiagnosticPatchSynthesizerCore } from "../../core/eosSarifDiagnosticPatchSynthesizerCore.ts";
+import type { DiagnosticFindingInput } from "../../core/eosSarifDiagnosticPatchSynthesizerCore.types.ts";
+import { EosFleetMultiRepoShipOrchestratorCore } from "../../core/eosFleetMultiRepoShipOrchestratorCore.ts";
+import type { FleetProjectRecordInput } from "../../core/eosFleetMultiRepoShipOrchestratorCore.types.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
 function numOr(val: unknown, fallback: number): number {
@@ -134,6 +139,44 @@ function dispatchLiveShipActions(
       staffJudge,
       canaryPlan,
     };
+  }
+  return dispatchContractSarifFleetActions(action, args, deps);
+}
+
+function dispatchContractSarifFleetActions(
+  action: string,
+  args: Record<string, any> | undefined,
+  deps: Phase7DomainHandlerDeps,
+): unknown | undefined {
+  if (action === "api_contract_diff") {
+    const report = EosApiContractSemanticDiffCore.compareContracts({
+      contractId: typeof args?.contractId === "string" ? args.contractId : undefined,
+      baselineSource: strOr(args?.baselineSource, "export function ping(id: string) {}"),
+      candidateSource: strOr(args?.candidateSource, "export function ping(id: string) {}"),
+    });
+    return { ...report, action: "api_contract_diff" };
+  }
+  if (action === "sarif_patch_synthesize") {
+    const findings: DiagnosticFindingInput[] = Array.isArray(args?.findings) ? args.findings : [];
+    const report = EosSarifDiagnosticPatchSynthesizerCore.synthesizeSarifAndPatches({
+      projectRoot: deps.projectRoot,
+      runTitle: typeof args?.runTitle === "string" ? args.runTitle : undefined,
+      findings,
+      writeSarifToDisk: args?.writeSarifToDisk === true,
+      outputRelPath: typeof args?.outputRelPath === "string" ? args.outputRelPath : undefined,
+    });
+    return { ...report, action: "sarif_patch_synthesize" };
+  }
+  if (action === "fleet_ship_orchestrate") {
+    const report = EosFleetMultiRepoShipOrchestratorCore.orchestrateFleetShipReadiness({
+      projectRoot: deps.projectRoot,
+      registryRelPath: typeof args?.registryRelPath === "string" ? args.registryRelPath : undefined,
+      projectsOverride: Array.isArray(args?.projectsOverride)
+        ? (args.projectsOverride as FleetProjectRecordInput[])
+        : undefined,
+      probeLocalCheckouts: args?.probeLocalCheckouts === true,
+    });
+    return { ...report, action: "fleet_ship_orchestrate" };
   }
   return undefined;
 }

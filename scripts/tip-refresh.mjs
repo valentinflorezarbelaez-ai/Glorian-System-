@@ -21,6 +21,23 @@ import path from "node:path";
 const root = process.cwd();
 const dryRun = process.argv.includes("--dry-run");
 const sealPinOnly = process.argv.includes("--seal-pin");
+const outArg = process.argv.find((a) => a.startsWith("--out="));
+const customOutPath = outArg ? path.resolve(root, outArg.slice("--out=".length)) : null;
+
+const TRANSIENT_LOCK_CODES = new Set(["UNKNOWN", "EBUSY", "EPERM", "EACCES"]);
+
+function writeFileWithRetry(targetPath, content) {
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    try {
+      fs.writeFileSync(targetPath, content, "utf8");
+      return;
+    } catch (err) {
+      const transient = TRANSIENT_LOCK_CODES.has(err?.code) || err?.errno === -4094;
+      if (!transient || attempt === 5) throw err;
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 40);
+    }
+  }
+}
 
 // ---------------------------------------------------------------------------
 // 1. Measure ground truth
@@ -152,7 +169,8 @@ if (sealPinOnly) {
     console.log(`--- DRY-RUN: seal Freeze Pin → ${m.head} ---`);
     process.exit(0);
   }
-  fs.writeFileSync(freezePath, sealed, "utf8");
+  const sealOutPath = customOutPath ?? freezePath;
+  writeFileWithRetry(sealOutPath, sealed);
   console.log(`✅ Freeze Pin sealed to HEAD ${m.head} (amend this file into the tip-refresh commit for pin==HEAD).`);
   process.exit(0);
 }
@@ -168,8 +186,8 @@ if (dryRun) {
   process.exit(0);
 }
 
-fs.writeFileSync(freezePath, updatedWithMilestone, "utf8");
-fs.writeFileSync(matrixPath, matrixUpdated, "utf8");
+writeFileWithRetry(freezePath, updatedWithMilestone);
+writeFileWithRetry(matrixPath, matrixUpdated);
 
 // Sync OpenSpec catalog index & AGENTS.md snapshot prior to commit so subsequent
 // verification suites leave zero uncommitted doc drift in the working tree.

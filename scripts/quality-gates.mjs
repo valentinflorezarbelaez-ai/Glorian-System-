@@ -74,10 +74,13 @@ export async function runQualityGates({ root, reportPath, stateDir }) {
 
   // Performance regression: record per-suite timings, then check against p95.
   const perf = new EosPerformanceRegressionTracker(dir);
+  const recordedSuites = new Set();
   for (const [file, ms] of suitesMs) {
-    perf.record(path.relative(root, file).replace(/\\/g, "/"), ms);
+    const rel = path.relative(root, file).replace(/\\/g, "/");
+    recordedSuites.add(rel);
+    perf.record(rel, ms);
   }
-  const regressions = perf.checkAll(2.0);
+  const regressions = perf.checkAll(2.0, recordedSuites);
 
   return { sloReport, regressions, total, passed, failed, suiteCount: suitesMs.size };
 }

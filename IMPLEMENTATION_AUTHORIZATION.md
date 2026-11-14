@@ -2123,3 +2123,27 @@
   - `docs/plans/PLAN-121-LIVE-DIFF-REPOMAP-PBT.md`
   - `docs/tasks/TASKS-121-LIVE-DIFF-REPOMAP-PBT.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-13-CONTRACT-SARIF-FLEET-SHIP-241-243
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Windows/p95 Telemetry Hardening + Layer-0 API Contract Semantic Diff (`SPEC-241`), OASIS SARIF 2.1.0 & Unified Patch Synthesizer (`SPEC-242`), and Fleet Multi-Repo Ship Orchestrator (`SPEC-243`) (`CHANGE-122`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: "todo y mas")
+- **Scope**:
+  1. Harden `scripts/tip-refresh.mjs`, `test/eosReleaseDocConsistency.test.mjs`, `src/core/eosPerformanceRegressionTracker.ts`, and `scripts/quality-gates.mjs` against parallel Windows file locks and stale p95 telemetry outliers.
+  2. Implement `src/core/eosApiContractSemanticDiffCore.types.ts` and `src/core/eosApiContractSemanticDiffCore.ts` (`SPEC-241`).
+  3. Implement `src/core/eosSarifDiagnosticPatchSynthesizerCore.types.ts` and `src/core/eosSarifDiagnosticPatchSynthesizerCore.ts` (`SPEC-242`).
+  4. Implement `src/core/eosFleetMultiRepoShipOrchestratorCore.types.ts` and `src/core/eosFleetMultiRepoShipOrchestratorCore.ts` (`SPEC-243`).
+  5. Export Modules 56–58 in `src/core/index.ts` and expose `./contract-diff`, `./sarif`, `./fleet-ship` in `package.json`.
+  6. Wire CLI commands `contract:diff`, `sarif:export`, `fleet:ship` (and enrich `ship`) + MCP actions `api_contract_diff`, `sarif_patch_synthesize`, `fleet_ship_orchestrate`.
+  7. Add BDD suites (`BDD-1226`..`BDD-1240`) in `test/eosContractSarifFleetShip.test.mjs` and step `#49` in `test/eosEnterpriseFacade.test.mjs`.
+  8. Document Modules 56–58 in `docs/DEVELOPER_GUIDE.md`, refresh pins (`tip-refresh.mjs`), commit, seal Freeze Gate, and push to `origin/main`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-122-CONTRACT-SARIF-FLEET-SHIP.md`
+  - `openspec/changes/CHANGE-122-CONTRACT-SARIF-FLEET-SHIP.md`
+  - `openspec/specs/SPEC-241-API-CONTRACT-SEMANTIC-DIFF.md`
+  - `openspec/specs/SPEC-242-SARIF-DIAGNOSTIC-PATCH-SYNTHESIZER.md`
+  - `openspec/specs/SPEC-243-FLEET-MULTI-REPO-SHIP-ORCHESTRATOR.md`
+  - `docs/plans/PLAN-122-CONTRACT-SARIF-FLEET-SHIP.md`
+  - `docs/tasks/TASKS-122-CONTRACT-SARIF-FLEET-SHIP.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

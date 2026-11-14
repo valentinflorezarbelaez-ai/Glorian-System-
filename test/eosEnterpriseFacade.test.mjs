@@ -974,5 +974,37 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     });
     assert.equal(shipReady.action, "jarvis_ship_readiness");
     assert.equal(shipReady.shipReadinessVerdict, "SHIP_APPROVED");
+
+    // 49. api_contract_diff, sarif_patch_synthesize, fleet_ship_orchestrate (SPEC-241..SPEC-243)
+    const cDiff = callFacade({
+      action: "api_contract_diff",
+      contractId: "SPOT-241",
+      baselineSource: "export function pay(id: string) {}",
+      candidateSource: "export function pay(id: string) {}\nexport function refund(id: string) {}",
+    });
+    assert.equal(cDiff.action, "api_contract_diff");
+    assert.equal(cDiff.backwardCompatible, true);
+    assert.equal(cDiff.semverBumpRequired, "MINOR");
+    const sarif = callFacade({
+      action: "sarif_patch_synthesize",
+      runTitle: "Facade SARIF Audit",
+      findings: [
+        {
+          ruleId: "EOS-CONTRACT-001",
+          level: "warning",
+          message: "Use optional parameter for Expand-and-Contract.",
+          filePath: "src/core/api.ts",
+          startLine: 4,
+          originalLine: "export function run(a: string, b: number) {}",
+          replacementLine: "export function run(a: string, b?: number) {}",
+        },
+      ],
+    });
+    assert.equal(sarif.action, "sarif_patch_synthesize");
+    assert.equal(sarif.sarifDocument.version, "2.1.0");
+    assert.ok(sarif.synthesizedUnifiedDiff.includes("@@ -4,1 +4,1 @@"));
+    const fleetShip = callFacade({ action: "fleet_ship_orchestrate" });
+    assert.equal(fleetShip.action, "fleet_ship_orchestrate");
+    assert.equal(fleetShip.fleetVerdict, "FLEET_SHIP_READY");
   });
 });
