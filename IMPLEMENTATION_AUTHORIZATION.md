@@ -2147,3 +2147,26 @@
   - `docs/plans/PLAN-122-CONTRACT-SARIF-FLEET-SHIP.md`
   - `docs/tasks/TASKS-122-CONTRACT-SARIF-FLEET-SHIP.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-13-LIVE-CONTRACT-INTOTO-SWEBENCH-244-246
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Live Git Contract Evolution (`SPEC-244`), In-Toto Statement v1 / SLSA v1.0 Ed25519 DSSE Attestor (`SPEC-245`), and Golden SWE Benchmark Harness (`SPEC-246`) (`CHANGE-123`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: "si dale con todo")
+- **Scope**:
+  1. Implement `src/core/eosLiveGitContractEvolutionCore.types.ts` and `src/core/eosLiveGitContractEvolutionCore.ts` (`SPEC-244`).
+  2. Implement `src/core/eosInTotoSlsaEd25519AttestorCore.types.ts` and `src/core/eosInTotoSlsaEd25519AttestorCore.ts` (`SPEC-245`).
+  3. Implement `src/core/eosGoldenSweBenchmarkHarnessCore.types.ts` and `src/core/eosGoldenSweBenchmarkHarnessCore.ts` (`SPEC-246`).
+  4. Export Modules 59–61 in `src/core/index.ts` and expose `./contract-live`, `./intoto-attest`, `./swe-bench` in `package.json`.
+  5. Wire CLI commands `contract:live`, `attest:ship`, `bench:swe`, enrich `ship`, and wire MCP actions `live_contract_evolution`, `intoto_slsa_attest`, `golden_swe_benchmark`.
+  6. Add BDD suites (`BDD-1241`..`BDD-1255`) in `test/eosLiveContractAttestSweBench.test.mjs` and step `#50` in `test/eosEnterpriseFacade.test.mjs`.
+  7. Document Modules 59–61 in `docs/DEVELOPER_GUIDE.md`, refresh pins (`tip-refresh.mjs`), commit, seal Freeze Gate, and push to `origin/main`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-123-LIVE-CONTRACT-INTOTO-SWEBENCH.md`
+  - `openspec/changes/CHANGE-123-LIVE-CONTRACT-INTOTO-SWEBENCH.md`
+  - `openspec/specs/SPEC-244-LIVE-GIT-CONTRACT-EVOLUTION.md`
+  - `openspec/specs/SPEC-245-INTOTO-SLSA-ED25519-ATTESTOR.md`
+  - `openspec/specs/SPEC-246-GOLDEN-SWE-BENCHMARK-HARNESS.md`
+  - `docs/plans/PLAN-123-LIVE-CONTRACT-INTOTO-SWEBENCH.md`
+  - `docs/tasks/TASKS-123-LIVE-CONTRACT-INTOTO-SWEBENCH.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

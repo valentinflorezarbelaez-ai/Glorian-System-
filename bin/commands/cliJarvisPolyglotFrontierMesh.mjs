@@ -8,6 +8,9 @@ import { EosPropertyBasedShrinkingFuzzerCore } from "../../src/core/eosPropertyB
 import { EosApiContractSemanticDiffCore } from "../../src/core/eosApiContractSemanticDiffCore.ts";
 import { EosSarifDiagnosticPatchSynthesizerCore } from "../../src/core/eosSarifDiagnosticPatchSynthesizerCore.ts";
 import { EosFleetMultiRepoShipOrchestratorCore } from "../../src/core/eosFleetMultiRepoShipOrchestratorCore.ts";
+import { EosLiveGitContractEvolutionCore } from "../../src/core/eosLiveGitContractEvolutionCore.ts";
+import { EosInTotoSlsaEd25519AttestorCore } from "../../src/core/eosInTotoSlsaEd25519AttestorCore.ts";
+import { EosGoldenSweBenchmarkHarnessCore } from "../../src/core/eosGoldenSweBenchmarkHarnessCore.ts";
 
 const HANDLERS = {};
 
@@ -286,10 +289,58 @@ async function cmd_fleet_ship(commandContext) {
   );
 }
 
+async function cmd_contract_live(commandContext) {
+  const { args, root } = commandContext;
+  const isJson = args.includes("--json");
+  const baseRef = readFlag(args, "base", "HEAD");
+  const report = EosLiveGitContractEvolutionCore.auditLiveGitContracts({
+    projectRoot: root,
+    baseRef,
+  });
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+  console.log(
+    `\n[CONTRACT LIVE] base=${report.baseRef} files=${report.filesAuditedCount} bump=${report.overallSemverBump} compat=${report.backwardCompatible}`,
+  );
+}
+
+async function cmd_attest_ship(commandContext) {
+  const { args, root } = commandContext;
+  const isJson = args.includes("--json");
+  const ticketId = readFlag(args, "ticket", "SHIP-001");
+  const writeAttestationToDisk = args.includes("--write");
+  const bundle = EosInTotoSlsaEd25519AttestorCore.issueShipAttestation({
+    projectRoot: root,
+    ticketId,
+    writeAttestationToDisk,
+  });
+  if (isJson) {
+    console.log(JSON.stringify(bundle, null, 2));
+    return;
+  }
+  console.log(`\n[ATTEST SHIP] ticket=${bundle.ticketId} keyId=${bundle.keyId} verified=${bundle.verified}`);
+}
+
+async function cmd_bench_swe(commandContext) {
+  const { args } = commandContext;
+  const isJson = args.includes("--json");
+  const report = EosGoldenSweBenchmarkHarnessCore.runGoldenBenchmark();
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+  console.log(
+    `\n[BENCH SWE] cases=${report.totalCases} f1=${report.f1Score.toFixed(3)} fpr=${report.falsePositiveRate.toFixed(3)} accuracy=${report.accuracy.toFixed(3)}`,
+  );
+}
+
 async function cmd_ship(commandContext) {
   const { args, root } = commandContext;
   const isJson = args.includes("--json");
   const ticketId = readFlag(args, "ticket", "SHIP-001");
+  const baseRef = readFlag(args, "base", "HEAD");
   const liveDiff = EosLiveGitDiffPrInspectorCore.inspectLiveGitDiff({ projectRoot: root, ticketId });
   const repoMap = EosRepoMapSymbolCompressorCore.buildCompressedRepoMap({
     projectRoot: root,
@@ -304,6 +355,10 @@ async function cmd_ship(commandContext) {
       "export interface ShipReceipt { readonly ticketId: string }\nexport function runShip(id: string) {}",
     candidateSource:
       "export interface ShipReceipt { readonly ticketId: string; readonly sarifVersion?: string }\nexport function runShip(id: string) {}",
+  });
+  const liveContractEvolution = EosLiveGitContractEvolutionCore.auditLiveGitContracts({
+    projectRoot: root,
+    baseRef,
   });
   const sarifFindings = liveDiff.diffAudit.blockingRisks.map((risk, idx) => ({
     ruleId: `EOS-SHIP-${String(idx + 1).padStart(3, "0")}`,
@@ -333,11 +388,23 @@ async function cmd_ship(commandContext) {
     workflowId: "flow-ship-readiness",
     approvalDiffSha256: liveDiff.inspectionDigestSha256,
   });
-  const approved =
-    liveDiff.readyToShip &&
-    propertySuite.allPassed &&
-    staffJudge.verdict === "APPROVED" &&
-    contractDiff.backwardCompatible;
+  const dsseAttestation = EosInTotoSlsaEd25519AttestorCore.issueShipAttestation({
+    projectRoot: root,
+    ticketId,
+    diffDigestSha256: liveDiff.inspectionDigestSha256,
+    sarifDigestSha256: sarifReport.sarifDigestSha256,
+    contractDiffDigestSha256: liveContractEvolution.evolutionDigestSha256,
+    staffVerdict: staffJudge.verdict,
+  });
+  const sweBenchmark = EosGoldenSweBenchmarkHarnessCore.runGoldenBenchmark();
+  const approved = [
+    liveDiff.readyToShip,
+    propertySuite.allPassed,
+    staffJudge.verdict === "APPROVED",
+    contractDiff.backwardCompatible,
+    liveContractEvolution.backwardCompatible,
+    dsseAttestation.verified,
+  ].every(Boolean);
   const payload = {
     mode: "ship",
     ticketId,
@@ -346,17 +413,20 @@ async function cmd_ship(commandContext) {
     repoMap,
     propertySuite,
     contractDiff,
+    liveContractEvolution,
     sarifReport,
     fleetOrchestration,
     staffJudge,
     canaryPlan,
+    dsseAttestation,
+    sweBenchmark,
   };
   if (isJson) {
     console.log(JSON.stringify(payload, null, 2));
     return;
   }
   console.log(
-    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, Tokens=${repoMap.estimatedCompressedTokens})`,
+    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, SLSA=${dsseAttestation.verified}, F1=${sweBenchmark.f1Score.toFixed(2)}, Tokens=${repoMap.estimatedCompressedTokens})`,
   );
 }
 
@@ -373,6 +443,9 @@ HANDLERS["pbt:check"] = cmd_pbt_check;
 HANDLERS["contract:diff"] = cmd_contract_diff;
 HANDLERS["sarif:export"] = cmd_sarif_export;
 HANDLERS["fleet:ship"] = cmd_fleet_ship;
+HANDLERS["contract:live"] = cmd_contract_live;
+HANDLERS["attest:ship"] = cmd_attest_ship;
+HANDLERS["bench:swe"] = cmd_bench_swe;
 HANDLERS["ship"] = cmd_ship;
 
 export async function handleJarvisPolyglotFrontierCommands(command, commandContext) {

@@ -79,6 +79,9 @@
     "./contract-diff": "./src/core/eosApiContractSemanticDiffCore.ts",
     "./sarif": "./src/core/eosSarifDiagnosticPatchSynthesizerCore.ts",
     "./fleet-ship": "./src/core/eosFleetMultiRepoShipOrchestratorCore.ts",
+    "./contract-live": "./src/core/eosLiveGitContractEvolutionCore.ts",
+    "./intoto-attest": "./src/core/eosInTotoSlsaEd25519AttestorCore.ts",
+    "./swe-bench": "./src/core/eosGoldenSweBenchmarkHarnessCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

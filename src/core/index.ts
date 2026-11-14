@@ -478,3 +478,27 @@ export type {
   FleetVerdictStatus,
   FleetShipOrchestrationReport,
 } from "./eosFleetMultiRepoShipOrchestratorCore.types.ts";
+export { EosLiveGitContractEvolutionCore } from "./eosLiveGitContractEvolutionCore.ts";
+export type {
+  ContractFilePairOverride,
+  AuditLiveGitContractsOptions,
+  LiveGitContractEvolutionReport,
+} from "./eosLiveGitContractEvolutionCore.types.ts";
+export { EosInTotoSlsaEd25519AttestorCore } from "./eosInTotoSlsaEd25519AttestorCore.ts";
+export type {
+  InTotoSubjectEntry,
+  SlsaProvenancePredicateV1,
+  InTotoStatementV1,
+  DsseEnvelope,
+  IssueShipAttestationOptions,
+  ShipAttestationBundle,
+  VerifyDsseAttestationResult,
+} from "./eosInTotoSlsaEd25519AttestorCore.types.ts";
+export { EosGoldenSweBenchmarkHarnessCore } from "./eosGoldenSweBenchmarkHarnessCore.ts";
+export type {
+  SweBenchmarkCaseInput,
+  RunGoldenSweBenchmarkOptions,
+  ConfusionClassification,
+  SweBenchmarkCaseOutcome,
+  GoldenSweBenchmarkReport,
+} from "./eosGoldenSweBenchmarkHarnessCore.types.ts";

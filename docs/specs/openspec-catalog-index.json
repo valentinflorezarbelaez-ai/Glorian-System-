@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 238,
-  "catalogSha256": "4b297608698edbb523e7d9f880e5a09344366d46b1fead975069c3492893d364",
+  "totalSpecs": 241,
+  "catalogSha256": "39f38782b3ef55d48f16bf05527380dce8789b2fce79d494ea9737b9a39fbb4b",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2144,6 +2144,33 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-243-FLEET-MULTI-REPO-SHIP-ORCHESTRATOR.md",
       "sha256": "22d5d541907e456e2319772b3621594ed2f06f66d8cde0c2b792e7af251086c1"
+    },
+    {
+      "id": "SPEC-244",
+      "title": "— Layer-0 Live Git Contract Evolution Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-244-LIVE-GIT-CONTRACT-EVOLUTION.md",
+      "sha256": "4c46a3223f7b0e62cb4b81c52d16d7620c6c50fbf37887b2ec775faaec990a7e"
+    },
+    {
+      "id": "SPEC-245",
+      "title": "— Layer-0 In-Toto Statement v1 & SLSA v1.0 Ed25519 DSSE Attestor",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-245-INTOTO-SLSA-ED25519-ATTESTOR.md",
+      "sha256": "ee2e8c8fa1e9b10a925dcdfcadf00cce33e1d44333a98c235776c27ec838332d"
+    },
+    {
+      "id": "SPEC-246",
+      "title": "— Layer-0 Golden SWE Benchmark Harness",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-246-GOLDEN-SWE-BENCHMARK-HARNESS.md",
+      "sha256": "1a68ad2f3d3d8a5f5fd06f8ee609283809f2b5f44a2979caa93cb2053910c8dc"
     }
   ]
 }

@@ -1,5 +1,5 @@
 /**
- * EOS MCP Phase 7 Enterprise Frontier Handlers Extension 2 (SPEC-234..SPEC-243 / CHANGE-119..CHANGE-122)
+ * EOS MCP Phase 7 Enterprise Frontier Handlers Extension 2 (SPEC-234..SPEC-246 / CHANGE-119..CHANGE-123)
  * Strict Zero Runtime Dependencies (EOS Law V), Node 22.18+ Strip-Only TypeScript.
  * Enforces strict line count ceiling <= 800 lines across all MCP handler modules.
  */
@@ -26,6 +26,11 @@ import { EosSarifDiagnosticPatchSynthesizerCore } from "../../core/eosSarifDiagn
 import type { DiagnosticFindingInput } from "../../core/eosSarifDiagnosticPatchSynthesizerCore.types.ts";
 import { EosFleetMultiRepoShipOrchestratorCore } from "../../core/eosFleetMultiRepoShipOrchestratorCore.ts";
 import type { FleetProjectRecordInput } from "../../core/eosFleetMultiRepoShipOrchestratorCore.types.ts";
+import { EosLiveGitContractEvolutionCore } from "../../core/eosLiveGitContractEvolutionCore.ts";
+import type { ContractFilePairOverride } from "../../core/eosLiveGitContractEvolutionCore.types.ts";
+import { EosInTotoSlsaEd25519AttestorCore } from "../../core/eosInTotoSlsaEd25519AttestorCore.ts";
+import { EosGoldenSweBenchmarkHarnessCore } from "../../core/eosGoldenSweBenchmarkHarnessCore.ts";
+import type { SweBenchmarkCaseInput } from "../../core/eosGoldenSweBenchmarkHarnessCore.types.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
 function numOr(val: unknown, fallback: number): number {
@@ -178,6 +183,69 @@ function dispatchContractSarifFleetActions(
     });
     return { ...report, action: "fleet_ship_orchestrate" };
   }
+  return dispatchLiveContractAttestBenchActions(action, args, deps);
+}
+
+function optStringArg(args: Record<string, unknown> | undefined, key: string): string | undefined {
+  const val = args?.[key];
+  return typeof val === "string" ? val : undefined;
+}
+
+function handleLiveContractEvolution(
+  args: Record<string, unknown> | undefined,
+  deps: { readonly projectRoot: string },
+): Record<string, unknown> {
+  const filePairsOverride = Array.isArray(args?.filePairsOverride)
+    ? (args.filePairsOverride as NonNullable<
+        Parameters<typeof EosLiveGitContractEvolutionCore.auditLiveGitContracts>[0]
+      >["filePairsOverride"])
+    : undefined;
+  const report = EosLiveGitContractEvolutionCore.auditLiveGitContracts({
+    projectRoot: deps.projectRoot,
+    repoPath: optStringArg(args, "repoPath"),
+    baseRef: optStringArg(args, "baseRef"),
+    filePairsOverride,
+  });
+  return { ...report, action: "live_contract_evolution" };
+}
+
+function handleInTotoSlsaAttest(
+  args: Record<string, unknown> | undefined,
+  deps: { readonly projectRoot: string },
+): Record<string, unknown> {
+  const bundle = EosInTotoSlsaEd25519AttestorCore.issueShipAttestation({
+    projectRoot: deps.projectRoot,
+    ticketId: optStringArg(args, "ticketId"),
+    headCommitSha: optStringArg(args, "headCommitSha"),
+    diffDigestSha256: optStringArg(args, "diffDigestSha256"),
+    sarifDigestSha256: optStringArg(args, "sarifDigestSha256"),
+    contractDiffDigestSha256: optStringArg(args, "contractDiffDigestSha256"),
+    staffVerdict: optStringArg(args, "staffVerdict"),
+    keySeed: optStringArg(args, "keySeed"),
+    writeAttestationToDisk: args?.writeAttestationToDisk === true,
+    outputRelPath: optStringArg(args, "outputRelPath"),
+  });
+  return { ...bundle, action: "intoto_slsa_attest" };
+}
+
+function handleGoldenSweBenchmark(args: Record<string, unknown> | undefined): Record<string, unknown> {
+  const casesOverride = Array.isArray(args?.casesOverride)
+    ? (args.casesOverride as NonNullable<
+        Parameters<typeof EosGoldenSweBenchmarkHarnessCore.runGoldenBenchmark>[0]
+      >["casesOverride"])
+    : undefined;
+  const report = EosGoldenSweBenchmarkHarnessCore.runGoldenBenchmark({ casesOverride });
+  return { ...report, action: "golden_swe_benchmark" };
+}
+
+function dispatchLiveContractAttestBenchActions(
+  action: string,
+  args: Record<string, unknown> | undefined,
+  deps: { readonly projectRoot: string },
+): Record<string, unknown> | undefined {
+  if (action === "live_contract_evolution") return handleLiveContractEvolution(args, deps);
+  if (action === "intoto_slsa_attest") return handleInTotoSlsaAttest(args, deps);
+  if (action === "golden_swe_benchmark") return handleGoldenSweBenchmark(args);
   return undefined;
 }
 

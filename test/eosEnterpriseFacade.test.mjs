@@ -1006,5 +1006,34 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     const fleetShip = callFacade({ action: "fleet_ship_orchestrate" });
     assert.equal(fleetShip.action, "fleet_ship_orchestrate");
     assert.equal(fleetShip.fleetVerdict, "FLEET_SHIP_READY");
+
+    // 50. live_contract_evolution, intoto_slsa_attest, golden_swe_benchmark (SPEC-244..SPEC-246)
+    const liveEvolution = callFacade({
+      action: "live_contract_evolution",
+      filePairsOverride: [
+        {
+          filePath: "src/core/sample.ts",
+          baselineSource: "export function ping(id: string) {}",
+          candidateSource: "export function ping(id: string) {}\nexport function pong() {}",
+        },
+      ],
+    });
+    assert.equal(liveEvolution.action, "live_contract_evolution");
+    assert.equal(liveEvolution.overallSemverBump, "MINOR");
+    assert.equal(liveEvolution.backwardCompatible, true);
+
+    const dsseAttest = callFacade({
+      action: "intoto_slsa_attest",
+      ticketId: "SPOT-245",
+      headCommitSha: "73792680",
+    });
+    assert.equal(dsseAttest.action, "intoto_slsa_attest");
+    assert.equal(dsseAttest.verified, true);
+    assert.equal(dsseAttest.statement.predicateType, "https://slsa.dev/provenance/v1");
+
+    const sweBench = callFacade({ action: "golden_swe_benchmark" });
+    assert.equal(sweBench.action, "golden_swe_benchmark");
+    assert.equal(sweBench.f1Score, 1);
+    assert.equal(sweBench.falsePositiveRate, 0);
   });
 });
