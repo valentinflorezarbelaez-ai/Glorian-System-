@@ -20,6 +20,7 @@ import type { LobVolumeBucketInput } from "../../core/eosLobAlmgrenChrissVpinCor
 import { EosUnifiedMemoryDmaDvfsQosCore } from "../../core/eosUnifiedMemoryDmaDvfsQosCore.ts";
 import type { DmaQosStreamSpec } from "../../core/eosUnifiedMemoryDmaDvfsQosCore.types.ts";
 import { EosRelativisticBeamTwissLuminosityCore } from "../../core/eosRelativisticBeamTwissLuminosityCore.ts";
+import { dispatchEnterpriseFrontierExt4Action } from "./eosMcpPhase7FrontierExt4.ts";
 
 function optNum(val: unknown): number | undefined {
   return typeof val === "number" && Number.isFinite(val) ? val : undefined;
@@ -222,5 +223,5 @@ export function dispatchContiguous253FrontierActions(
   args: Record<string, unknown> | undefined,
 ): Record<string, unknown> | undefined {
   const handler = FRONTIER_EXT3_DISPATCH[action];
-  return handler ? handler(args) : undefined;
+  return handler ? handler(args) : dispatchEnterpriseFrontierExt4Action(action, args);
 }

@@ -550,210 +550,179 @@ export class EosAntigravityDirector {
     directive: string,
     targetId: string,
   ): PrescribedMcpStep[] {
+    const mk = (
+      order: number,
+      toolName: string,
+      phase: string,
+      purpose: string,
+      suggestedArguments: Record<string, unknown> = {},
+      mandatory = true,
+    ): PrescribedMcpStep => ({ order, toolName, phase, purpose, mandatory, suggestedArguments });
+
     switch (profile) {
       case "SECURITY_HARDENING":
         return [
-          {
-            order: 1,
-            toolName: "eos_semantic_search",
-            phase: "RECONNAISSANCE",
-            purpose: "Retrieve security invariants, Law VI secret rules, and boundary contracts.",
-            mandatory: true,
-            suggestedArguments: { query: directive.slice(0, 120), topK: 3 },
-          },
-          {
-            order: 2,
-            toolName: "eos_nsa_zero_trust_check",
-            phase: "SECURITY_AUDIT",
-            purpose: "Audit zero-trust compartment boundaries and credential isolation.",
-            mandatory: true,
-            suggestedArguments: {},
-          },
-          {
-            order: 3,
-            toolName: "eos_validate_patch",
-            phase: "PATCH_VALIDATION",
-            purpose: "Verify candidate changes contain zero secrets or destructive patterns.",
-            mandatory: true,
-            suggestedArguments: { filePath: "src/target.ts", content: "<candidate>" },
-          },
-          {
-            order: 4,
-            toolName: "eos_turbo_verify",
-            phase: "VERIFICATION",
-            purpose: "Execute fast in-memory credential and architecture verification gate.",
-            mandatory: true,
-            suggestedArguments: {},
-          },
+          mk(
+            1,
+            "eos_semantic_search",
+            "RECONNAISSANCE",
+            "Retrieve security invariants, Law VI secret rules, and boundary contracts.",
+            { query: directive.slice(0, 120), topK: 3 },
+          ),
+          mk(
+            2,
+            "eos_nsa_zero_trust_check",
+            "SECURITY_AUDIT",
+            "Audit zero-trust compartment boundaries and credential isolation.",
+          ),
+          mk(
+            3,
+            "eos_validate_patch",
+            "PATCH_VALIDATION",
+            "Verify candidate changes contain zero secrets or destructive patterns.",
+            { filePath: "src/target.ts", content: "<candidate>" },
+          ),
+          mk(
+            4,
+            "eos_turbo_verify",
+            "VERIFICATION",
+            "Execute fast in-memory credential and architecture verification gate.",
+          ),
         ];
 
       case "FLEET_ORCHESTRATION":
         return [
-          {
-            order: 1,
-            toolName: "eos_fleet_soundcheck",
-            phase: "FLEET_AUDIT",
-            purpose: "Evaluate Spotify Soundcheck scores (0..100) and deployment quorum across registered repos.",
-            mandatory: true,
-            suggestedArguments: {},
-          },
-          {
-            order: 2,
-            toolName: "eos_mcts_tune",
-            phase: "HYPER_TUNING",
-            purpose: "Converge runtime parameters via Monte Carlo Tree Search (UCT).",
-            mandatory: false,
-            suggestedArguments: { iterations: 120, seed: 42 },
-          },
-          {
-            order: 3,
-            toolName: "eos_canary_rollout",
-            phase: "PROGRESSIVE_DELIVERY",
-            purpose: "Execute progressive canary stages (1% -> 5% -> 25% -> 100%) with fail-closed rollback.",
-            mandatory: true,
-            suggestedArguments: { versionTarget: "v49.0.0", previousVersion: "v48.0.0" },
-          },
+          mk(
+            1,
+            "eos_fleet_soundcheck",
+            "FLEET_AUDIT",
+            "Evaluate Spotify Soundcheck scores (0..100) and deployment quorum across registered repos.",
+          ),
+          mk(
+            2,
+            "eos_mcts_tune",
+            "HYPER_TUNING",
+            "Converge runtime parameters via Monte Carlo Tree Search (UCT).",
+            { iterations: 120, seed: 42 },
+            false,
+          ),
+          mk(
+            3,
+            "eos_canary_rollout",
+            "PROGRESSIVE_DELIVERY",
+            "Execute progressive canary stages (1% -> 5% -> 25% -> 100%) with fail-closed rollback.",
+            { versionTarget: "v49.0.0", previousVersion: "v48.0.0" },
+          ),
         ];
 
       case "PERFORMANCE_TUNING":
         return [
-          {
-            order: 1,
-            toolName: "eos_nano_benchmark",
-            phase: "BASELINE_BENCHMARK",
-            purpose: "Capture nanosecond percentile baseline (p50, p99, ops/sec) before optimization.",
-            mandatory: true,
-            suggestedArguments: {},
-          },
-          {
-            order: 2,
-            toolName: "eos_mcts_tune",
-            phase: "PARAMETER_CONVERGENCE",
-            purpose: "Explore optimal concurrency, ring buffer, and GC thresholds via UCT MCTS.",
-            mandatory: true,
-            suggestedArguments: { iterations: 120, seed: 42 },
-          },
-          {
-            order: 3,
-            toolName: "eos_turbo_verify",
-            phase: "VERIFICATION",
-            purpose: "Confirm zero architectural regressions after optimization.",
-            mandatory: true,
-            suggestedArguments: {},
-          },
+          mk(
+            1,
+            "eos_nano_benchmark",
+            "BASELINE_BENCHMARK",
+            "Capture nanosecond percentile baseline (p50, p99, ops/sec) before optimization.",
+          ),
+          mk(
+            2,
+            "eos_mcts_tune",
+            "PARAMETER_CONVERGENCE",
+            "Explore optimal concurrency, ring buffer, and GC thresholds via UCT MCTS.",
+            { iterations: 120, seed: 42 },
+          ),
+          mk(3, "eos_turbo_verify", "VERIFICATION", "Confirm zero architectural regressions after optimization."),
         ];
 
       case "ARCHITECTURE_AUDIT":
         return [
-          {
-            order: 1,
-            toolName: "eos_check_architecture",
-            phase: "HEXAGONAL_GUARD",
-            purpose: "Verify Layer-0 hexagonal purity (0 runtime dependencies) and 0 circular imports.",
-            mandatory: true,
-            suggestedArguments: { targetDir: "src" },
-          },
-          {
-            order: 2,
-            toolName: "eos_refactor_audit",
-            phase: "DEBT_ANALYSIS",
-            purpose: "Scan for dead code, duplication, and complexity hotspots with SHA-256 receipt.",
-            mandatory: true,
-            suggestedArguments: { targetDir: "src/core" },
-          },
-          {
-            order: 3,
-            toolName: "eos_check_openspec",
-            phase: "SPEC_ALIGNMENT",
-            purpose: "Ensure codebase remains 100% aligned with approved OpenSpec artifacts.",
-            mandatory: true,
-            suggestedArguments: {},
-          },
+          mk(
+            1,
+            "eos_check_architecture",
+            "HEXAGONAL_GUARD",
+            "Verify Layer-0 hexagonal purity (0 runtime dependencies) and 0 circular imports.",
+            { targetDir: "src" },
+          ),
+          mk(
+            2,
+            "eos_refactor_audit",
+            "DEBT_ANALYSIS",
+            "Scan for dead code, duplication, and complexity hotspots with SHA-256 receipt.",
+            { targetDir: "src/core" },
+          ),
+          mk(
+            3,
+            "eos_check_openspec",
+            "SPEC_ALIGNMENT",
+            "Ensure codebase remains 100% aligned with approved OpenSpec artifacts.",
+          ),
         ];
 
       case "BUGFIX_FDIR":
         return [
-          {
-            order: 1,
-            toolName: "eos_semantic_search",
-            phase: "ROOT_CAUSE_SEARCH",
-            purpose: "Locate governing specifications and invariants for the failing component.",
-            mandatory: true,
-            suggestedArguments: { query: directive.slice(0, 120), topK: 3 },
-          },
-          {
-            order: 2,
-            toolName: "eos_get_blast_radius",
-            phase: "IMPACT_ISOLATION",
-            purpose: "Compute transitive dependents and predictive test suites affected by the fix.",
-            mandatory: true,
-            suggestedArguments: { changedFiles: ["src/core/eosKernelPrimitives.ts"] },
-          },
-          {
-            order: 3,
-            toolName: "eos_validate_patch",
-            phase: "PATCH_VALIDATION",
-            purpose: "Validate candidate fix for syntax and security compliance before commit.",
-            mandatory: true,
-            suggestedArguments: { filePath: "src/fix.ts", content: "<candidate>" },
-          },
-          {
-            order: 4,
-            toolName: "eos_turbo_verify",
-            phase: "REGRESSION_GATE",
-            purpose: "Confirm clean verification state across repository invariants.",
-            mandatory: true,
-            suggestedArguments: {},
-          },
+          mk(
+            1,
+            "eos_semantic_search",
+            "ROOT_CAUSE_SEARCH",
+            "Locate governing specifications and invariants for the failing component.",
+            { query: directive.slice(0, 120), topK: 3 },
+          ),
+          mk(
+            2,
+            "eos_get_blast_radius",
+            "IMPACT_ISOLATION",
+            "Compute transitive dependents and predictive test suites affected by the fix.",
+            { changedFiles: ["src/core/eosKernelPrimitives.ts"] },
+          ),
+          mk(
+            3,
+            "eos_validate_patch",
+            "PATCH_VALIDATION",
+            "Validate candidate fix for syntax and security compliance before commit.",
+            { filePath: "src/fix.ts", content: "<candidate>" },
+          ),
+          mk(
+            4,
+            "eos_turbo_verify",
+            "REGRESSION_GATE",
+            "Confirm clean verification state across repository invariants.",
+          ),
         ];
 
       case "SDD_FULL_21_STEP":
       default:
         return [
-          {
-            order: 1,
-            toolName: "eos_amplify_prompt",
-            phase: "REQUIREMENTS_EARS_BDD",
-            purpose: "Amplify raw directive into formal IEEE 830 EARS requirements and BDD acceptance criteria.",
-            mandatory: true,
-            suggestedArguments: { rawPrompt: directive.slice(0, 500), targetModel: "gemini", strictLevel: "sovereign" },
-          },
-          {
-            order: 2,
-            toolName: "eos_check_architecture",
-            phase: "ARCHITECTURE_GATE",
-            purpose: "Verify clean/hexagonal boundaries and zero circular dependencies before implementation.",
-            mandatory: true,
-            suggestedArguments: { targetDir: "src" },
-          },
-          {
-            order: 3,
-            toolName: "eos_evaluate_decision",
-            phase: "CONSTITUTIONAL_TRIBUNAL",
-            purpose: "Validate architectural plan against the Seven Inviolable Commandments.",
-            mandatory: true,
-            suggestedArguments: {
+          mk(
+            1,
+            "eos_amplify_prompt",
+            "REQUIREMENTS_EARS_BDD",
+            "Amplify raw directive into formal IEEE 830 EARS requirements and BDD acceptance criteria.",
+            { rawPrompt: directive.slice(0, 500), targetModel: "gemini", strictLevel: "sovereign" },
+          ),
+          mk(
+            2,
+            "eos_check_architecture",
+            "ARCHITECTURE_GATE",
+            "Verify clean/hexagonal boundaries and zero circular dependencies before implementation.",
+            { targetDir: "src" },
+          ),
+          mk(
+            3,
+            "eos_evaluate_decision",
+            "CONSTITUTIONAL_TRIBUNAL",
+            "Validate architectural plan against the Seven Inviolable Commandments.",
+            {
               title: `SDD Mission (${targetId})`,
               description: directive.slice(0, 300),
               proposedAction: "Implement strictly against approved SPEC, PLAN, TASKS, and LEVEL 2+ authorization.",
             },
-          },
-          {
-            order: 4,
-            toolName: "eos_turbo_verify",
-            phase: "STRICT_VERIFICATION",
-            purpose: "Run fast 4-stage in-memory verification prior to full 7-stage CI/CD pipeline.",
-            mandatory: true,
-            suggestedArguments: {},
-          },
-          {
-            order: 5,
-            toolName: "eos_fleet_soundcheck",
-            phase: "FLEET_CERTIFICATION",
-            purpose: "Confirm sovereign fleet health and deployment quorum.",
-            mandatory: true,
-            suggestedArguments: {},
-          },
+          ),
+          mk(
+            4,
+            "eos_turbo_verify",
+            "STRICT_VERIFICATION",
+            "Run fast 4-stage in-memory verification prior to full 7-stage CI/CD pipeline.",
+          ),
+          mk(5, "eos_fleet_soundcheck", "FLEET_CERTIFICATION", "Confirm sovereign fleet health and deployment quorum."),
         ];
     }
   }

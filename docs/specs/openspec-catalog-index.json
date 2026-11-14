@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 258,
-  "catalogSha256": "a6bc82b4fceb8294d5a7421030cd558bfa7af49a7ab50170e49fd890944af011",
+  "totalSpecs": 263,
+  "catalogSha256": "eb15bccd17a72a812de4bd637a320e815a22b67468fb8ce45157054347215e8d",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2324,6 +2324,51 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-258-RELATIVISTIC-BEAM-TWISS-LUMINOSITY.md",
       "sha256": "981c49f881c4522c39d8f8bd84cca832b18982213446a06a9f62e52c06f0a2c8"
+    },
+    {
+      "id": "SPEC-259",
+      "title": "— Layer-0 Deep Space Optical Navigation & XNAV Ephemeris Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-259-DEEP-SPACE-OPTICAL-NAV-EPHEMERIS.md",
+      "sha256": "dfaefdf5dc0925ede4a435f3ce488eb2b05e2ff31923fa2b52079287778310b8"
+    },
+    {
+      "id": "SPEC-260",
+      "title": "— Layer-0 Cryogenic Josephson Junction & SFQ Control Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-260-CRYOGENIC-JOSEPHSON-SFQ-CONTROL.md",
+      "sha256": "2e4a9300fb20e401845eefb749ca71829cc413f05f539e5b289e4f10f39ffca6"
+    },
+    {
+      "id": "SPEC-261",
+      "title": "— Layer-0 Subsea Coherent DWDM Nonlinear Shannon Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-261-SUBSEA-COHERENT-DWDM-NONLINEAR-SHANNON.md",
+      "sha256": "054805298d705e312123ec8821b8e3344e0a33f623ff2ee61186887e9febbdce"
+    },
+    {
+      "id": "SPEC-262",
+      "title": "— Layer-0 Hypersonic Aerothermodynamics & Scramjet Isolator Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-262-HYPERSONIC-AEROTHERMODYNAMICS-SCRAMJET.md",
+      "sha256": "984234259df3e1ba18cc8ff7d5f9fa857958e9cbbc85e0a903901f9b18ddd5d5"
+    },
+    {
+      "id": "SPEC-263",
+      "title": "— Layer-0 Wholesale CBDC RTGS Multilateral Gridlock Resolution Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-263-CBDC-RTGS-GRIDLOCK-RESOLUTION.md",
+      "sha256": "faea76f8e771b3a845e8c3a0484ab60dc37ef545f58042297c432a502e5068ab"
     }
   ]
 }

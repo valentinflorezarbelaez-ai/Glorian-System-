@@ -176,7 +176,12 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos lob:vpin [--json]          Trayectoria óptima Almgren-Chriss LOB y detector VPIN (SPEC-256)
   eos dvfs:qos [--json]          Árbitro DMA memoria unificada, potencia CMOS y DVFS P-State (SPEC-257)
   eos beam:twiss [--json]        Óptica simpléctica FODO relativista, luminosidad IP y U0 (SPEC-258)
-  eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..258
+  eos nav:ephemeris [--json]     Navegación óptica espacial XNAV, retardo Shapiro y Delta-DOR (SPEC-259)
+  eos cryo:josephson [--json]    Unión Josephson RCSJ criogénica 15mK, BetaC y carga térmica SFQ (SPEC-260)
+  eos dwdm:shannon [--json]      DWDM submarino coherente, no-linealidad Kerr GN y capacidad Tbps (SPEC-261)
+  eos aero:scramjet [--json]     Choque oblicuo hipersónico, calor Fay-Riddell y margen unstart (SPEC-262)
+  eos rtgs:clear [--json]        Liquidación CBDC RTGS multilateral LSM, HHI y conservación exacta (SPEC-263)
+  eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..263
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
 📦 ÍNDICE DE ALIAS Y SUBCOMANDOS ESPECIALIZADOS (100% REGISTRADOS):

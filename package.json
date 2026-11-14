@@ -99,6 +99,11 @@
     "./lob-vpin": "./src/core/eosLobAlmgrenChrissVpinCore.ts",
     "./unified-dvfs": "./src/core/eosUnifiedMemoryDmaDvfsQosCore.ts",
     "./beam-twiss": "./src/core/eosRelativisticBeamTwissLuminosityCore.ts",
+    "./deep-space-nav": "./src/core/eosDeepSpaceOpticalNavEphemerisCore.ts",
+    "./cryo-josephson": "./src/core/eosCryogenicJosephsonSfqControlCore.ts",
+    "./subsea-dwdm": "./src/core/eosSubseaCoherentDwdmNonlinearShannonCore.ts",
+    "./hypersonic-scramjet": "./src/core/eosHypersonicAerothermodynamicsScramjetCore.ts",
+    "./cbdc-rtgs": "./src/core/eosCbdcRtgsGridlockResolutionCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {
@@ -333,7 +338,12 @@
     "privacy:abac": "node bin/eos.mjs privacy:abac",
     "lob:vpin": "node bin/eos.mjs lob:vpin",
     "dvfs:qos": "node bin/eos.mjs dvfs:qos",
-    "beam:twiss": "node bin/eos.mjs beam:twiss"
+    "beam:twiss": "node bin/eos.mjs beam:twiss",
+    "nav:ephemeris": "node bin/eos.mjs nav:ephemeris",
+    "cryo:josephson": "node bin/eos.mjs cryo:josephson",
+    "dwdm:shannon": "node bin/eos.mjs dwdm:shannon",
+    "aero:scramjet": "node bin/eos.mjs aero:scramjet",
+    "rtgs:clear": "node bin/eos.mjs rtgs:clear"
   },
   "engines": {
     "node": ">=22.18.0"

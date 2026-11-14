@@ -50,6 +50,7 @@ import type { QuadTelemetryFrameInput } from "../../core/eosKalmanStateEstimator
 import { EosCrdtStateSyncCore } from "../../core/eosCrdtStateSyncCore.ts";
 import { EosMerkleMountainRangeCore } from "../../core/eosMerkleMountainRangeCore.ts";
 import { EosVerifiableSecretSharingCore } from "../../core/eosVerifiableSecretSharingCore.ts";
+import type { VssCommitmentPackage, VssShare } from "../../core/eosVerifiableSecretSharingCore.types.ts";
 import { dispatchContiguous253FrontierActions } from "./eosMcpPhase7FrontierExt3.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
@@ -74,7 +75,7 @@ function buildDefaultValidation(raw?: Record<string, unknown>): JarvisValidation
   };
 }
 
-function resolveMissionState(args: Record<string, any> | undefined): JarvisMissionState {
+function resolveMissionState(args: Record<string, unknown> | undefined): JarvisMissionState {
   if (isPlainRecord(args?.missionState)) {
     return args.missionState as unknown as JarvisMissionState;
   }
@@ -96,7 +97,7 @@ function resolveMissionState(args: Record<string, any> | undefined): JarvisMissi
 
 function dispatchLiveShipActions(
   action: string,
-  args: Record<string, any> | undefined,
+  args: Record<string, unknown> | undefined,
   deps: Phase7DomainHandlerDeps,
 ): unknown | undefined {
   if (action === "live_diff_inspect") {
@@ -170,7 +171,7 @@ function dispatchLiveShipActions(
 
 function dispatchContractSarifFleetActions(
   action: string,
-  args: Record<string, any> | undefined,
+  args: Record<string, unknown> | undefined,
   deps: Phase7DomainHandlerDeps,
 ): unknown | undefined {
   if (action === "api_contract_diff") {
@@ -182,7 +183,9 @@ function dispatchContractSarifFleetActions(
     return { ...report, action: "api_contract_diff" };
   }
   if (action === "sarif_patch_synthesize") {
-    const findings: DiagnosticFindingInput[] = Array.isArray(args?.findings) ? args.findings : [];
+    const findings: DiagnosticFindingInput[] = Array.isArray(args?.findings)
+      ? (args.findings as DiagnosticFindingInput[])
+      : [];
     const report = EosSarifDiagnosticPatchSynthesizerCore.synthesizeSarifAndPatches({
       projectRoot: deps.projectRoot,
       runTitle: typeof args?.runTitle === "string" ? args.runTitle : undefined,
@@ -380,7 +383,7 @@ function handleKalmanQuadVote(args: Record<string, unknown> | undefined): Record
 
 function handleCrdtMmrAction(
   action: string,
-  args: Record<string, any> | undefined,
+  args: Record<string, unknown> | undefined,
 ): Record<string, unknown> | undefined {
   if (action === "crdt_mutate") {
     const nodeId = typeof args?.nodeId === "string" ? args.nodeId : "mcp-node";
@@ -459,12 +462,12 @@ function handleCrdtMmrAction(
   return undefined;
 }
 
-function handleVssSplit(args: Record<string, any> | undefined): Record<string, unknown> {
+function handleVssSplit(args: Record<string, unknown> | undefined): Record<string, unknown> {
   if (typeof args?.secret !== "string" || args.secret.length === 0) {
     throw new TypeError("Pass a non-empty secret explicitly; no default secret is used.");
   }
-  const k = args?.k === undefined ? 3 : args.k;
-  const n = args?.n === undefined ? 5 : args.n;
+  const k = args?.k === undefined ? 3 : (args.k as number);
+  const n = args?.n === undefined ? 5 : (args.n as number);
   if (args?.scheme !== undefined && args.scheme !== "feldman" && args.scheme !== "pedersen") {
     throw new TypeError("VSS scheme must be feldman or pedersen.");
   }
@@ -488,7 +491,7 @@ function handleVssSplit(args: Record<string, any> | undefined): Record<string, u
 
 function dispatchCrdtMmrVssActions(
   action: string,
-  args: Record<string, any> | undefined,
+  args: Record<string, unknown> | undefined,
 ): Record<string, unknown> | undefined {
   const crdtMmr = handleCrdtMmrAction(action, args);
   if (crdtMmr !== undefined) return crdtMmr;
@@ -501,8 +504,8 @@ function dispatchCrdtMmrVssActions(
     const demo = usingInput
       ? undefined
       : EosVerifiableSecretSharingCore.splitSecret("mcp-vss-demo-only", 3, 5, "pedersen");
-    const share = usingInput ? args?.share : demo!.shares[0];
-    const commitments = usingInput ? args?.commitments : demo!.commitments;
+    const share = (usingInput ? args?.share : demo!.shares[0]) as VssShare;
+    const commitments = (usingInput ? args?.commitments : demo!.commitments) as VssCommitmentPackage;
     const res = EosVerifiableSecretSharingCore.verifyShare(share, commitments);
     return {
       action: "vss_verify",
@@ -521,9 +524,9 @@ function dispatchCrdtMmrVssActions(
     const demo = hasSupplied
       ? undefined
       : EosVerifiableSecretSharingCore.splitSecret("mcp-vss-demo-only", 3, 5, "pedersen");
-    const shares = hasSupplied ? args!.shares : [demo!.shares[0], demo!.shares[2], demo!.shares[4]];
-    const commitments = hasSupplied ? args!.commitments : demo!.commitments;
-    const k = hasSupplied ? args!.k : 3;
+    const shares = (hasSupplied ? args!.shares : [demo!.shares[0], demo!.shares[2], demo!.shares[4]]) as VssShare[];
+    const commitments = (hasSupplied ? args!.commitments : demo!.commitments) as VssCommitmentPackage;
+    const k = (hasSupplied ? args!.k : 3) as number;
     const res = EosVerifiableSecretSharingCore.reconstruct(shares, k, commitments);
     return {
       action: "vss_reconstruct",
@@ -541,7 +544,7 @@ function dispatchCrdtMmrVssActions(
 
 function dispatchEdaApolloAladdinActions(
   action: string,
-  args: Record<string, any> | undefined,
+  args: Record<string, unknown> | undefined,
   deps: { readonly projectRoot: string },
 ): Record<string, unknown> | undefined {
   if (action === "eda_equivalence_timing_prove") return handleEdaEquivalenceTimingProve(args);
@@ -556,7 +559,7 @@ function dispatchEdaApolloAladdinActions(
 
 function dispatchPolyglotOrBridge(
   action: string,
-  args: Record<string, any> | undefined,
+  args: Record<string, unknown> | undefined,
   deps: Phase7DomainHandlerDeps,
 ): unknown | undefined {
   if (action === "polyglot_detect") {
@@ -589,13 +592,13 @@ function dispatchPolyglotOrBridge(
       title: typeof args?.title === "string" ? args.title : undefined,
       description: typeof args?.description === "string" ? args.description : undefined,
       priority: typeof args?.priority === "string" ? args.priority : undefined,
-      acceptanceCriteria: Array.isArray(args?.acceptanceCriteria) ? args.acceptanceCriteria : undefined,
+      acceptanceCriteria: Array.isArray(args?.acceptanceCriteria) ? (args.acceptanceCriteria as string[]) : undefined,
     });
     return { ...issue, action: "issue_bridge_parse" };
   }
   if (action === "diff_migration_audit") {
     const changedFiles: DiffFileEntry[] = Array.isArray(args?.changedFiles)
-      ? args.changedFiles
+      ? (args.changedFiles as DiffFileEntry[])
       : [
           { path: "src/core/service.ts", additions: 20 },
           { path: "test/service.test.mjs", additions: 30 },
@@ -611,7 +614,7 @@ function dispatchPolyglotOrBridge(
 
 export function dispatchPhase7FrontierActionExt2(
   action: string,
-  args: Record<string, any> | undefined,
+  args: Record<string, unknown> | undefined,
   deps: Phase7DomainHandlerDeps,
 ): unknown | undefined {
   if (action === "jarvis_dna_assimilate") {

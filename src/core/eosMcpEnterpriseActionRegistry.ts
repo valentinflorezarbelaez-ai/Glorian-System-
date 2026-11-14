@@ -1,6 +1,6 @@
 /**
  * src/core/eosMcpEnterpriseActionRegistry.ts
- * Exact 162-Action Registry for `eos_enterprise_workspace` (`CHANGE-128`).
+ * Exact 167-Action Registry for `eos_enterprise_workspace` (`CHANGE-129`).
  * Enables fail-closed JSON-RPC `-32602` (`ENUM_VIOLATION`) validation without bloating `tools/list`.
  * Zero runtime NPM dependencies (Strict Layer-0 Pure).
  */
@@ -24,6 +24,7 @@ export const ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS: ReadonlySet<string> = new Se
   "bp_prove",
   "bp_verify",
   "canary_rollback_plan",
+  "cbdc_rtgs_gridlock",
   "cli_hygiene_audit",
   "combine",
   "compile",
@@ -33,9 +34,11 @@ export const ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS: ReadonlySet<string> = new Se
   "crdt_delta",
   "crdt_merge",
   "crdt_mutate",
+  "cryogenic_josephson_sfq",
   "cuckoo_contains",
   "cuckoo_delete",
   "cuckoo_insert",
+  "deep_space_optical_nav",
   "diagnose",
   "diff_migration_audit",
   "differential_privacy_abac",
@@ -67,6 +70,7 @@ export const ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS: ReadonlySet<string> = new Se
   "hotstuff_propose",
   "hotstuff_status",
   "hotstuff_vote",
+  "hypersonic_scramjet_aero",
   "inspect",
   "intoto_slsa_attest",
   "issue_bridge_parse",
@@ -140,6 +144,7 @@ export const ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS: ReadonlySet<string> = new Se
   "sql_lint",
   "staff_adversarial_judge",
   "starlink_leo_route",
+  "subsea_dwdm_shannon",
   "synthesize_code",
   "tensor_embed",
   "tensor_matmul",

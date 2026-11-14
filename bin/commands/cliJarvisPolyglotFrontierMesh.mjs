@@ -29,6 +29,11 @@ import {
   cmd_lob_vpin,
   cmd_privacy_abac,
   cmd_qec_decode,
+  cmd_nav_ephemeris,
+  cmd_cryo_josephson,
+  cmd_dwdm_shannon,
+  cmd_aero_scramjet,
+  cmd_rtgs_clear,
   evaluateContiguous253ShipSnapshot,
 } from "./cliContiguous253FrontierMesh.mjs";
 
@@ -535,6 +540,11 @@ async function cmd_ship(commandContext) {
     lobVpinVerdict: contiguous253.lobVpinVerdict,
     dvfsQosVerdict: contiguous253.dvfsQosVerdict,
     beamTwissVerdict: contiguous253.beamTwissVerdict,
+    deepSpaceNavRegime: contiguous253.deepSpaceNavRegime,
+    cryoSfqRegime: contiguous253.cryoSfqRegime,
+    subseaDwdmRegime: contiguous253.subseaDwdmRegime,
+    hypersonicAeroRegime: contiguous253.hypersonicAeroRegime,
+    cbdcRtgsRegime: contiguous253.cbdcRtgsRegime,
     contiguous253Frontier: contiguous253,
     hygieneAudit,
   };
@@ -543,7 +553,7 @@ async function cmd_ship(commandContext) {
     return;
   }
   console.log(
-    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, SLSA=${dsseAttestation.verified}, F1=${sweBenchmark.f1Score.toFixed(2)}, EDA=${edaFormalProof.verdict}, Apollo=${apolloAirGapBundle.verdict}, Aladdin=${aladdinSystemicRisk.riskTier}, Roofline=${rooflinePlan.verdict}, SPC=${spcYieldAudit.verdict}, Kalman=${kalmanGncState.verdict}, QEC=${contiguous253.qecVerdict}, LEO=${contiguous253.leoRouteVerdict}, Grid=${contiguous253.gridOpfVerdict}, Bio=${contiguous253.bioFoldVerdict}, Fusion=${contiguous253.fusionVerdict}, Litho=${contiguous253.lithoVerdict}, DP=${contiguous253.privacyAbacVerdict}, LOB=${contiguous253.lobVpinVerdict}, DVFS=${contiguous253.dvfsQosVerdict}, Beam=${contiguous253.beamTwissVerdict}, Hygiene=${hygieneAudit.verdict}, Tokens=${repoMap.estimatedCompressedTokens})`,
+    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, SLSA=${dsseAttestation.verified}, F1=${sweBenchmark.f1Score.toFixed(2)}, EDA=${edaFormalProof.verdict}, Apollo=${apolloAirGapBundle.verdict}, Aladdin=${aladdinSystemicRisk.riskTier}, Roofline=${rooflinePlan.verdict}, SPC=${spcYieldAudit.verdict}, Kalman=${kalmanGncState.verdict}, QEC=${contiguous253.qecVerdict}, LEO=${contiguous253.leoRouteVerdict}, Grid=${contiguous253.gridOpfVerdict}, Bio=${contiguous253.bioFoldVerdict}, Fusion=${contiguous253.fusionVerdict}, Litho=${contiguous253.lithoVerdict}, DP=${contiguous253.privacyAbacVerdict}, LOB=${contiguous253.lobVpinVerdict}, DVFS=${contiguous253.dvfsQosVerdict}, Beam=${contiguous253.beamTwissVerdict}, DeepSpace=${contiguous253.deepSpaceNavRegime}, CryoSFQ=${contiguous253.cryoSfqRegime}, SubseaDWDM=${contiguous253.subseaDwdmRegime}, Scramjet=${contiguous253.hypersonicAeroRegime}, CBDC=${contiguous253.cbdcRtgsRegime}, Hygiene=${hygieneAudit.verdict}, Tokens=${repoMap.estimatedCompressedTokens})`,
   );
 }
 
@@ -646,6 +656,11 @@ HANDLERS["privacy:abac"] = cmd_privacy_abac;
 HANDLERS["lob:vpin"] = cmd_lob_vpin;
 HANDLERS["dvfs:qos"] = cmd_dvfs_qos;
 HANDLERS["beam:twiss"] = cmd_beam_twiss;
+HANDLERS["nav:ephemeris"] = cmd_nav_ephemeris;
+HANDLERS["cryo:josephson"] = cmd_cryo_josephson;
+HANDLERS["dwdm:shannon"] = cmd_dwdm_shannon;
+HANDLERS["aero:scramjet"] = cmd_aero_scramjet;
+HANDLERS["rtgs:clear"] = cmd_rtgs_clear;
 HANDLERS["hygiene:audit"] = cmd_hygiene_audit;
 HANDLERS["ship"] = cmd_ship;
 

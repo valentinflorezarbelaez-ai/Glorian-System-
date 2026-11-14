@@ -708,40 +708,13 @@ spec:
     const ownerSquad = opts.ownerSquad || "user:unassigned";
     const systemName = opts.systemName || "local-system";
 
-    const catalogInfoYaml = [
-      "apiVersion: backstage.io/v1alpha1",
-      "kind: Component",
-      "metadata:",
-      `  name: ${JSON.stringify(serviceName)}`,
-      `  title: ${JSON.stringify(serviceName)}`,
-      `  description: ${JSON.stringify(description)}`,
-      "  annotations:",
-      "    backstage.io/techdocs-ref: dir:.",
-      "  tags:",
-      `    - ${serviceType}`,
-      "spec:",
-      `  type: ${JSON.stringify(serviceType)}`,
-      "  lifecycle: experimental",
-      `  owner: ${JSON.stringify(ownerSquad)}`,
-      `  system: ${JSON.stringify(systemName)}`,
-      "  providesApis:",
-      `    - ${JSON.stringify(`${serviceName}-api`)}`,
-    ].join("\n");
+    const catalogInfoYaml = `apiVersion: backstage.io/v1alpha1\nkind: Component\nmetadata:\n  name: ${JSON.stringify(serviceName)}\n  title: ${JSON.stringify(serviceName)}\n  description: ${JSON.stringify(description)}\n  annotations:\n    backstage.io/techdocs-ref: dir:.\n  tags:\n    - ${serviceType}\nspec:\n  type: ${JSON.stringify(serviceType)}\n  lifecycle: experimental\n  owner: ${JSON.stringify(ownerSquad)}\n  system: ${JSON.stringify(systemName)}\n  providesApis:\n    - ${JSON.stringify(`${serviceName}-api`)}`;
 
     const mkdocsYaml = `site_name: ${JSON.stringify(`${serviceName} Documentation`)}\nsite_description: ${JSON.stringify(description)}\nplugins:\n  - techdocs-core\nnav:\n  - Overview: index.md\n  - Architecture: architecture.md\n  - Runbook: runbook.md\n  - API Contract: api.md`;
 
     const techdocsIndexMd = `# ${serviceName}\n\n> ${description}\n\n## Overview\nThis is a starter template. Replace placeholders and verify architecture, ownership, observability, and release requirements.`;
 
-    const runbookMd = [
-      `# 🚨 On-Call Runbook: ${serviceName}`,
-      `**Owner:** ${ownerSquad} | **Service tier:** Not assigned\n`,
-      "## Service-Level Objectives (SLO)",
-      "- Availability: define from product requirements.\n- Latency: define from product requirements.\n- Error rate: define from product requirements.\n",
-      "## Common Alerts & Remediation Procedures",
-      "### Placeholder: latency alert",
-      "1. Add the service dashboard and alert links.\n2. Document actual diagnostic and mitigation steps.\n",
-      "### Placeholder: process restart or crash\n1. Add platform-specific log and recovery steps after review.",
-    ].join("\n");
+    const runbookMd = `# 🚨 On-Call Runbook: ${serviceName}\n**Owner:** ${ownerSquad} | **Service tier:** Not assigned\n\n## Service-Level Objectives (SLO)\n- Availability: define from product requirements.\n- Latency: define from product requirements.\n- Error rate: define from product requirements.\n\n## Common Alerts & Remediation Procedures\n### Placeholder: latency alert\n1. Add the service dashboard and alert links.\n2. Document actual diagnostic and mitigation steps.\n\n### Placeholder: process restart or crash\n1. Add platform-specific log and recovery steps after review.`;
 
     return {
       templateOnly: true,

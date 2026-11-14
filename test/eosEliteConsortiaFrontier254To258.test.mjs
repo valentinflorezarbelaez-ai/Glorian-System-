@@ -56,7 +56,7 @@ async function callWorkspaceMcp(action) {
 }
 
 test("CHANGE-128 Registry: Fail-closed JSON-RPC -32602 for unknown eos_enterprise_workspace actions", async () => {
-  assert.equal(ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS.size, 162);
+  assert.equal(ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS.size, 167);
   const res = await callWorkspaceMcpRaw("nonexistent_frontier_action_xyz");
   assert.equal(res.error?.code, -32602);
 });

@@ -703,21 +703,17 @@ async function cmd_vdf_wesolowski_156(commandContext) {
 
   if (isJson) {
     console.log(
-      JSON.stringify(
-        {
-          delayT: evalRes.delayT,
-          proof: {
-            pi: evalRes.proof.pi.toString(16),
-            challengePrime: evalRes.proof.challengePrime.toString(),
-            proofHex: evalRes.proof.proofHex,
-          },
-          randomnessBeacon: evalRes.randomnessBeacon,
-          elapsedMs: evalRes.elapsedMs,
-          receipt: evalRes.receipt,
+      JSON.stringify({
+        delayT: evalRes.delayT,
+        proof: {
+          pi: evalRes.proof.pi.toString(16),
+          challengePrime: evalRes.proof.challengePrime.toString(),
+          proofHex: evalRes.proof.proofHex,
         },
-        null,
-        2,
-      ),
+        randomnessBeacon: evalRes.randomnessBeacon,
+        elapsedMs: evalRes.elapsedMs,
+        receipt: evalRes.receipt,
+      }),
     );
     return;
   }
@@ -732,21 +728,11 @@ async function cmd_vdf_wesolowski_156(commandContext) {
   ]);
 }
 
-HANDLERS["pbft:cluster"] = cmd_pbft_consensus_153;
-HANDLERS["pbft:propose"] = cmd_pbft_consensus_153;
-HANDLERS["pbft:status"] = cmd_pbft_consensus_153;
-HANDLERS["pbft:slash"] = cmd_pbft_consensus_153;
-HANDLERS["homomorphic:keygen"] = cmd_homomorphic_lattice_154;
-HANDLERS["homomorphic:encrypt"] = cmd_homomorphic_lattice_154;
-HANDLERS["homomorphic:add"] = cmd_homomorphic_lattice_154;
-HANDLERS["homomorphic:decrypt"] = cmd_homomorphic_lattice_154;
-HANDLERS["mpc:split"] = cmd_secure_mpc_155;
-HANDLERS["mpc:combine"] = cmd_secure_mpc_155;
-HANDLERS["mpc:add"] = cmd_secure_mpc_155;
-HANDLERS["mpc:multiply"] = cmd_secure_mpc_155;
-HANDLERS["vdf:compute"] = cmd_vdf_wesolowski_156;
-HANDLERS["vdf:verify"] = cmd_vdf_wesolowski_156;
-HANDLERS["vdf:beacon"] = cmd_vdf_wesolowski_156;
+for (const k of ["pbft:cluster", "pbft:propose", "pbft:status", "pbft:slash"]) HANDLERS[k] = cmd_pbft_consensus_153;
+for (const k of ["homomorphic:keygen", "homomorphic:encrypt", "homomorphic:add", "homomorphic:decrypt"])
+  HANDLERS[k] = cmd_homomorphic_lattice_154;
+for (const k of ["mpc:split", "mpc:combine", "mpc:add", "mpc:multiply"]) HANDLERS[k] = cmd_secure_mpc_155;
+for (const k of ["vdf:compute", "vdf:verify", "vdf:beacon"]) HANDLERS[k] = cmd_vdf_wesolowski_156;
 
 export async function handleFrontierMeshCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];

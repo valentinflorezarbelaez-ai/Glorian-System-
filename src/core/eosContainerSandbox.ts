@@ -574,43 +574,20 @@ export class EosContainerSandbox {
       if (snapshotPath.includes(","))
         throw new Error("Sandbox temp path contains a comma; Docker bind mounts cannot encode it safely.");
 
+      const baseDockerFlags =
+        "run --rm --init --pull=never --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges=true --pids-limit=128 --memory=2g --memory-swap=2g --cpus=2";
+      const limitFlags =
+        "--ulimit core=0 --ulimit nofile=1024:1024 --ulimit nproc=128:128 --ulimit fsize=67108864:67108864";
+      const envFlags =
+        "--tmpfs /tmp:rw,noexec,nosuid,nodev,size=128m --workdir /workspace --user 65532:65532 --env HOME=/tmp --env TMPDIR=/tmp --env LANG=C.UTF-8";
       const dockerArgs = [
-        "run",
-        "--rm",
-        "--init",
-        "--pull=never",
+        ...baseDockerFlags.split(" "),
         "--name",
         containerName,
-        "--network=none",
-        "--read-only",
-        "--cap-drop=ALL",
-        "--security-opt=no-new-privileges=true",
-        "--pids-limit=128",
-        "--memory=2g",
-        "--memory-swap=2g",
-        "--cpus=2",
-        "--ulimit",
-        "core=0",
-        "--ulimit",
-        "nofile=1024:1024",
-        "--ulimit",
-        "nproc=128:128",
-        "--ulimit",
-        "fsize=67108864:67108864",
-        "--tmpfs",
-        "/tmp:rw,noexec,nosuid,nodev,size=128m",
+        ...limitFlags.split(" "),
+        ...envFlags.split(" "),
         "--mount",
         `type=bind,source=${snapshotPath},target=/workspace,bind-propagation=rprivate`,
-        "--workdir",
-        "/workspace",
-        "--user",
-        "65532:65532",
-        "--env",
-        "HOME=/tmp",
-        "--env",
-        "TMPDIR=/tmp",
-        "--env",
-        "LANG=C.UTF-8",
         "--entrypoint",
         command,
         image.ref,

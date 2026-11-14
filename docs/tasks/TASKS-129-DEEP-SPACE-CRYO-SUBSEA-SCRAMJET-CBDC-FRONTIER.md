@@ -1,0 +1,14 @@
+# TASKS-129 — Implementation Checklist (`CHANGE-129` / `SPEC-259`..`SPEC-263`)
+
+- [x] `T-01`: Author `INTAKE-129`, `CHANGE-129`, `SPEC-259`..`SPEC-263`, `PLAN-129`, `TASKS-129`, and record `AUTH-2026-11-14-DEEP-SPACE-CRYO-SUBSEA-SCRAMJET-CBDC-FRONTIER` (`LEVEL 3`).
+- [x] `T-02`: Decompress Top-5 modules (`scripts/verify-cicd-pipeline.mjs`, `src/core/eosContainerSandbox.ts`, `src/core/eosAntigravityDirector.ts`, `bin/commands/cliFrontierMesh.mjs`, `src/core/eosSpotifyCodex.ts`) to `<= 745` lines (`minHeadroomLines >= 55`) with `0` `contract:live` breaking changes.
+- [x] `T-03`: Eliminate explicit `any` (`Record<string, unknown>`, narrowed casts) in `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts` and `src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt2.ts`.
+- [x] `T-04`: Author 5 formal TLA+ models (`HighNaEuvLithoOpc.tla`, `DifferentialPrivacyAbac.tla`, `LobAlmgrenChrissVpin.tla`, `UnifiedMemoryDvfsQos.tla`, `RelativisticBeamTwiss.tla`), add 5 `200`-step verifiers to `scripts/tla/tlaSimulationsPart4.mjs`, and wire into `scripts/verify-formal-tla.mjs` (`45 -> 50` models, `10,200` total steps).
+- [x] `T-05`: Expand `src/core/eosMcpEnterpriseActionRegistry.ts` from `162` to `167` actions (`deep_space_optical_nav`, `cryogenic_josephson_sfq`, `subsea_dwdm_shannon`, `hypersonic_scramjet_aero`, `cbdc_rtgs_gridlock`).
+- [x] `T-06`: Implement Module 79 (`SPEC-259` — Deep Space Optical Navigation & XNAV Ephemeris) in `src/core/eosDeepSpaceOpticalNavEphemerisCore{.types,}.ts`.
+- [x] `T-07`: Implement Module 80 (`SPEC-260` — Cryogenic Josephson Junction & SFQ Control) in `src/core/eosCryogenicJosephsonSfqControlCore{.types,}.ts`.
+- [x] `T-08`: Implement Module 81 (`SPEC-261` — Subsea Coherent DWDM Nonlinear Shannon) in `src/core/eosSubseaCoherentDwdmNonlinearShannonCore{.types,}.ts`.
+- [x] `T-09`: Implement Module 82 (`SPEC-262` — Hypersonic Aerothermodynamics & Scramjet Isolator) in `src/core/eosHypersonicAerothermodynamicsScramjetCore{.types,}.ts`.
+- [x] `T-10`: Implement Module 83 (`SPEC-263` — Wholesale CBDC RTGS Gridlock Resolution) in `src/core/eosCbdcRtgsGridlockResolutionCore{.types,}.ts`.
+- [x] `T-11`: Wire Modules 79–83 into `src/core/index.ts`, `package.json` (subpaths & scripts), `src/mcp/tools/eosMcpPhase7FrontierExt4.ts` + `eosMcpPhase7FrontierExt3.ts`, `bin/commands/cliDeepTech259To263FrontierMesh.mjs` + `cliContiguous253FrontierMesh.mjs` + `cliJarvisPolyglotFrontierMesh.mjs`, `bin/commands/cliHelpCatalog.mjs` (`357/357`), and `docs/DEVELOPER_GUIDE.md` (`357/357`).
+- [x] `T-12`: Author `test/eosDeepSpaceCryoSubseaScramjetCbdc259To263.test.mjs` (`BDD-1341`..`BDD-1365`), update `test/eosEliteConsortiaFrontier254To258.test.mjs` (`167` actions) and step `#56` in `test/eosEnterpriseFacade.test.mjs`, verify all 12+ gates & sequential `npm run test:ci`, mark `[x]`, commit, seal Freeze Gate, and push to `origin/main`.

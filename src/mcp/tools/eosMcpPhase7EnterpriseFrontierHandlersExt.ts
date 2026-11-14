@@ -14,6 +14,7 @@ import { EosHotStuffConsensusEngine } from "../../core/eosHotStuffConsensusEngin
 import { EosQuantizedTensorInferenceCore } from "../../core/eosQuantizedTensorInferenceCore.ts";
 import { EosUniversalFleetSyncCore } from "../../core/eosUniversalFleetSyncCore.ts";
 import { EosOtlpDistributedTracingCore } from "../../core/eosOtlpDistributedTracingCore.ts";
+import type { SpanAttributeValue } from "../../core/eosOtlpDistributedTracingCore.types.ts";
 import { EosPostQuantumMlDsaCore } from "../../core/eosPostQuantumMlDsaCore.ts";
 import { EosAdaptiveCongestionRateLimiterCore } from "../../core/eosAdaptiveCongestionRateLimiterCore.ts";
 import { EosMerklePatriciaTrieCore } from "../../core/eosMerklePatriciaTrieCore.ts";
@@ -21,11 +22,11 @@ import { EosTimeLockPuzzleCore } from "../../core/eosTimeLockPuzzleCore.ts";
 import { EosCuckooFilterCore } from "../../core/eosCuckooFilterCore.ts";
 import { EosHyperLogLogPlusCore } from "../../core/eosHyperLogLogPlusCore.ts";
 import { dispatchPhase7FrontierActionExt2 } from "./eosMcpPhase7EnterpriseFrontierHandlersExt2.ts";
-import { type Phase7DomainHandlerDeps } from "./eosMcpPhase7Shared.ts";
+import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
 export function dispatchPhase7FrontierActionExt(
   action: string,
-  args: Record<string, any> | undefined,
+  args: Record<string, unknown> | undefined,
   _deps: Phase7DomainHandlerDeps,
 ): unknown | undefined {
   if (action === "vrf_eval") {
@@ -170,7 +171,7 @@ export function dispatchPhase7FrontierActionExt(
   }
   if (action === "kzg_commit") {
     const rawCoeffs = Array.isArray(args?.coeffs) ? args.coeffs : [7, 5, 2, 3];
-    const coeffs = rawCoeffs.map((c: any) => BigInt(c));
+    const coeffs = rawCoeffs.map((c: unknown) => BigInt(c as string | number | bigint));
     const srs = EosKzgPolynomialCommitmentCore.setup(16, "mcp-kzg-seed");
     const core = new EosKzgPolynomialCommitmentCore(srs);
     const commitRes = core.commit(coeffs);
@@ -183,7 +184,7 @@ export function dispatchPhase7FrontierActionExt(
   }
   if (action === "kzg_open") {
     const rawCoeffs = Array.isArray(args?.coeffs) ? args.coeffs : [7, 5, 2, 3];
-    const coeffs = rawCoeffs.map((c: any) => BigInt(c));
+    const coeffs = rawCoeffs.map((c: unknown) => BigInt(c as string | number | bigint));
     const point = typeof args?.point === "number" ? BigInt(args.point) : 4n;
     const srs = EosKzgPolynomialCommitmentCore.setup(16, "mcp-kzg-seed");
     const core = new EosKzgPolynomialCommitmentCore(srs);
@@ -200,7 +201,7 @@ export function dispatchPhase7FrontierActionExt(
   }
   if (action === "kzg_verify") {
     const rawCoeffs = Array.isArray(args?.coeffs) ? args.coeffs : [7, 5, 2, 3];
-    const coeffs = rawCoeffs.map((c: any) => BigInt(c));
+    const coeffs = rawCoeffs.map((c: unknown) => BigInt(c as string | number | bigint));
     const point = typeof args?.point === "number" ? BigInt(args.point) : 4n;
     const srs = EosKzgPolynomialCommitmentCore.setup(16, "mcp-kzg-seed");
     const core = new EosKzgPolynomialCommitmentCore(srs);
@@ -276,8 +277,8 @@ export function dispatchPhase7FrontierActionExt(
     };
   }
   if (action === "bp_commit") {
-    const value = args?.value !== undefined ? BigInt(args.value) : 42000n;
-    const gamma = args?.gamma !== undefined ? BigInt(args.gamma) : undefined;
+    const value = args?.value !== undefined ? BigInt(args.value as string | number | bigint) : 42000n;
+    const gamma = args?.gamma !== undefined ? BigInt(args.gamma as string | number | bigint) : undefined;
     const comm = EosBulletproofsRangeProofCore.commit(value, gamma);
     return {
       action: "bp_commit",
@@ -289,9 +290,9 @@ export function dispatchPhase7FrontierActionExt(
     };
   }
   if (action === "bp_prove") {
-    const value = args?.value !== undefined ? BigInt(args.value) : 42000n;
+    const value = args?.value !== undefined ? BigInt(args.value as string | number | bigint) : 42000n;
     const bitLength = typeof args?.m === "number" ? args.m : 32;
-    const gamma = args?.gamma !== undefined ? BigInt(args.gamma) : undefined;
+    const gamma = args?.gamma !== undefined ? BigInt(args.gamma as string | number | bigint) : undefined;
     const proof = EosBulletproofsRangeProofCore.prove(value, gamma, bitLength);
     return {
       action: "bp_prove",
@@ -303,7 +304,7 @@ export function dispatchPhase7FrontierActionExt(
     };
   }
   if (action === "bp_verify") {
-    const value = args?.value !== undefined ? BigInt(args.value) : 42000n;
+    const value = args?.value !== undefined ? BigInt(args.value as string | number | bigint) : 42000n;
     const bitLength = typeof args?.m === "number" ? args.m : 32;
     const proof = EosBulletproofsRangeProofCore.prove(value, undefined, bitLength);
     const result = EosBulletproofsRangeProofCore.verify(proof);
@@ -316,7 +317,9 @@ export function dispatchPhase7FrontierActionExt(
     };
   }
   if (action === "hotstuff_propose") {
-    const cluster = Array.isArray(args?.cluster) ? args.cluster : ["node-1", "node-2", "node-3", "node-4"];
+    const cluster = Array.isArray(args?.cluster)
+      ? (args.cluster as string[])
+      : ["node-1", "node-2", "node-3", "node-4"];
     const nodeId = typeof args?.node === "string" ? args.node : cluster[0];
     const engine = new EosHotStuffConsensusEngine(nodeId, cluster);
     const payload = args?.payload ?? { task: "mcp_state_sync", ts: Date.now() };
@@ -333,7 +336,9 @@ export function dispatchPhase7FrontierActionExt(
     };
   }
   if (action === "hotstuff_vote") {
-    const cluster = Array.isArray(args?.cluster) ? args.cluster : ["node-1", "node-2", "node-3", "node-4"];
+    const cluster = Array.isArray(args?.cluster)
+      ? (args.cluster as string[])
+      : ["node-1", "node-2", "node-3", "node-4"];
     const nodeId = typeof args?.node === "string" ? args.node : cluster[0];
     const engine = new EosHotStuffConsensusEngine(nodeId, cluster);
     const proposal = engine.createProposal(args?.payload ?? { tx: "mcp-vote-tx" });
@@ -348,7 +353,9 @@ export function dispatchPhase7FrontierActionExt(
     };
   }
   if (action === "hotstuff_status") {
-    const cluster = Array.isArray(args?.cluster) ? args.cluster : ["node-1", "node-2", "node-3", "node-4"];
+    const cluster = Array.isArray(args?.cluster)
+      ? (args.cluster as string[])
+      : ["node-1", "node-2", "node-3", "node-4"];
     const nodeId = typeof args?.node === "string" ? args.node : cluster[0];
     const engine = new EosHotStuffConsensusEngine(nodeId, cluster);
     const status = engine.getStatus();
@@ -392,7 +399,7 @@ export function dispatchPhase7FrontierActionExt(
     const x = new Float32Array(cols);
     for (let i = 0; i < cols; i++) x[i] = 1.0;
     const qMat = EosQuantizedTensorInferenceCore.quantizeQ4_0(mat);
-    const y = EosQuantizedTensorInferenceCore.quantizedMatMulVec(qMat, x, rows, cols, format as any);
+    const y = EosQuantizedTensorInferenceCore.quantizedMatMulVec(qMat, x, rows, cols, format as "Q4_0" | "Q8_0");
     return {
       action: "tensor_matmul",
       format,
@@ -464,9 +471,10 @@ export function dispatchPhase7FrontierActionExt(
     const serviceName = typeof args?.serviceName === "string" ? args.serviceName : "glorian-system";
     const tracer = new EosOtlpDistributedTracingCore({ serviceName });
     const spanName = typeof args?.spanName === "string" ? args.spanName : "mcp-frontier-span";
+    const extraAttrs = isPlainRecord(args?.attributes) ? (args.attributes as Record<string, SpanAttributeValue>) : {};
     const span = tracer.startSpan(spanName, {
       kind: "INTERNAL",
-      attributes: { "mcp.source": "phase7-frontier", ...(args?.attributes || {}) },
+      attributes: { "mcp.source": "phase7-frontier", ...extraAttrs },
     });
     span.addEvent("mcp.event.dispatched", { status: "success" });
     span.setStatus("OK");

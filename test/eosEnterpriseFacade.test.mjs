@@ -1129,5 +1129,31 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(beamTwiss.action, "relativistic_beam_twiss");
     assert.equal(beamTwiss.verdict, "BEAM_OPTICS_LUMINOSITY_LOCKED");
     assert.equal(beamTwiss.beamOpticsDigestSha256.length, 64);
+
+    // 56. Deep-Space Optical Nav, Cryogenic Josephson SFQ, Subsea DWDM Shannon, Hypersonic Scramjet & CBDC RTGS (SPEC-259..263)
+    const deepSpaceNav = callFacade({ action: "deep_space_optical_nav" });
+    assert.equal(deepSpaceNav.action, "deep_space_optical_nav");
+    assert.equal(deepSpaceNav.regime, "NOMINAL_DEEP_SPACE_LOCK");
+    assert.equal(deepSpaceNav.deepSpaceNavDigestSha256.length, 64);
+
+    const cryoSfq = callFacade({ action: "cryogenic_josephson_sfq" });
+    assert.equal(cryoSfq.action, "cryogenic_josephson_sfq");
+    assert.equal(cryoSfq.regime, "OVERDAMPED_SFQ_LOCKED");
+    assert.equal(cryoSfq.cryoSfqDigestSha256.length, 64);
+
+    const subseaDwdm = callFacade({ action: "subsea_dwdm_shannon" });
+    assert.equal(subseaDwdm.action, "subsea_dwdm_shannon");
+    assert.equal(subseaDwdm.regime, "OPTIMAL_NONLINEAR_SHANNON");
+    assert.equal(subseaDwdm.subseaDwdmDigestSha256.length, 64);
+
+    const hypersonicAero = callFacade({ action: "hypersonic_scramjet_aero" });
+    assert.equal(hypersonicAero.action, "hypersonic_scramjet_aero");
+    assert.equal(hypersonicAero.regime, "SUPERSONIC_COMBUSTION_STABLE");
+    assert.equal(hypersonicAero.hypersonicAeroDigestSha256.length, 64);
+
+    const cbdcRtgs = callFacade({ action: "cbdc_rtgs_gridlock" });
+    assert.equal(cbdcRtgs.action, "cbdc_rtgs_gridlock");
+    assert.equal(cbdcRtgs.regime, "MULTILATERAL_LSM_CLEARED");
+    assert.equal(cbdcRtgs.cbdcRtgsDigestSha256.length, 64);
   });
 });

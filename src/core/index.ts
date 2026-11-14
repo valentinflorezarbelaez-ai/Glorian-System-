@@ -644,3 +644,53 @@ export type {
   RelativisticBeamTwissOptions,
   RelativisticBeamTwissReport,
 } from "./eosRelativisticBeamTwissLuminosityCore.types.ts";
+export {
+  DEFAULT_DEEP_SPACE_NAV_OPTIONS,
+  EosDeepSpaceOpticalNavEphemerisCore,
+  evaluateDeepSpaceOpticalNavEphemeris,
+} from "./eosDeepSpaceOpticalNavEphemerisCore.ts";
+export type {
+  DeepSpaceNavRegime,
+  DeepSpaceOpticalNavOptions,
+  DeepSpaceOpticalNavAssessment,
+} from "./eosDeepSpaceOpticalNavEphemerisCore.types.ts";
+export {
+  DEFAULT_CRYOGENIC_JOSEPHSON_SFQ_OPTIONS,
+  EosCryogenicJosephsonSfqControlCore,
+  evaluateCryogenicJosephsonSfqControl,
+} from "./eosCryogenicJosephsonSfqControlCore.ts";
+export type {
+  CryogenicJosephsonRegime,
+  CryogenicJosephsonSfqOptions,
+  CryogenicJosephsonSfqAssessment,
+} from "./eosCryogenicJosephsonSfqControlCore.types.ts";
+export {
+  DEFAULT_SUBSEA_DWDM_SHANNON_OPTIONS,
+  EosSubseaCoherentDwdmNonlinearShannonCore,
+  evaluateSubseaCoherentDwdmNonlinearShannon,
+} from "./eosSubseaCoherentDwdmNonlinearShannonCore.ts";
+export type {
+  SubseaDwdmRegime,
+  SubseaDwdmShannonOptions,
+  SubseaDwdmShannonAssessment,
+} from "./eosSubseaCoherentDwdmNonlinearShannonCore.types.ts";
+export {
+  DEFAULT_HYPERSONIC_SCRAMJET_OPTIONS,
+  EosHypersonicAerothermodynamicsScramjetCore,
+  evaluateHypersonicAerothermodynamicsScramjet,
+} from "./eosHypersonicAerothermodynamicsScramjetCore.ts";
+export type {
+  HypersonicScramjetRegime,
+  HypersonicScramjetOptions,
+  HypersonicScramjetAssessment,
+} from "./eosHypersonicAerothermodynamicsScramjetCore.types.ts";
+export {
+  DEFAULT_CBDC_RTGS_GRIDLOCK_OPTIONS,
+  EosCbdcRtgsGridlockResolutionCore,
+  evaluateCbdcRtgsGridlockResolution,
+} from "./eosCbdcRtgsGridlockResolutionCore.ts";
+export type {
+  CbdcRtgsRegime,
+  CbdcRtgsGridlockOptions,
+  CbdcRtgsGridlockAssessment,
+} from "./eosCbdcRtgsGridlockResolutionCore.types.ts";

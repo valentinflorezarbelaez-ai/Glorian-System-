@@ -578,18 +578,12 @@ console.log(
 // STAGE 6: IN-PROCESS SMOKE TESTS OF THE SERVERLESS API HANDLERS (/api/*)
 // ---------------------------------------------------------------------------
 const apiEndpoints = [
-  { file: "api/teurgia.js" },
-  { file: "api/compile.js" },
-  { file: "api/memory.js" },
-  { file: "api/kernel.js" },
-  { file: "api/cicd.js" },
-  { file: "api/fleet.js" },
+  ...["api/teurgia.js", "api/compile.js", "api/memory.js", "api/kernel.js", "api/cicd.js", "api/fleet.js"].map(
+    (file) => ({ file }),
+  ),
   { file: "api/kernel.js", query: { module: "specs" } },
   { file: "api/jarvis.js", method: "POST", body: { directive: "status check" } },
-  { file: "api/health.js" },
-  { file: "api/graph.js" },
-  { file: "api/eval.js" },
-  { file: "api/spotify.js" },
+  ...["api/health.js", "api/graph.js", "api/eval.js", "api/spotify.js"].map((file) => ({ file })),
   {
     file: "api/mcp.js",
     method: "POST",
@@ -688,8 +682,6 @@ console.log(
 // STAGE 7: LOCAL CHECK RECEIPT AND CONFIGURED-CHECKS SARIF REPORT
 // ---------------------------------------------------------------------------
 const elapsedMs = Date.now() - startTime;
-// Receipt is deterministic for a given source tree (no timestamps/durations),
-// so re-running the gate inside git hooks never leaves the working tree dirty.
 const receipt = {
   pipelineId: "EOS-LOCAL-REPOSITORY-CHECKS",
   epistemicState: "LOCAL_CHECKS_EXECUTED",
@@ -699,68 +691,32 @@ const receipt = {
   sourceInventoryDigest,
   sourceFileCount: fileInventory.length,
   inProcessHandlerSmokeChecks: apiEndpoints.map(({ file }) => file),
-  hookFilesReferencedButNotProbed: [
-    ".githooks/pre-commit",
-    ".githooks/pre-push",
-    ".github/workflows/eos-sovereign-cicd.yml",
-  ],
+  hookFilesReferencedButNotProbed:
+    ".githooks/pre-commit,.githooks/pre-push,.github/workflows/eos-sovereign-cicd.yml".split(","),
   hookConfigurationProbed: false,
   deploymentRun: false,
   liveHealthProbeRun: false,
 };
+const writeEvdJson = (rel, data) =>
+  fs.writeFileSync(path.join(root, rel), JSON.stringify(data, null, 2) + "\n", "utf8");
+writeEvdJson("docs/evidence/LOCAL-CHECKS-RECEIPT.json", receipt);
 
-fs.writeFileSync(
-  path.join(root, "docs/evidence/LOCAL-CHECKS-RECEIPT.json"),
-  JSON.stringify(receipt, null, 2) + "\n",
-  "utf8",
-);
-
-// Emit OASIS SARIF v2.1.0 diagnostic report for Cursor, VS Code, and GitHub Code Scanning
+const rules = [
+  [
+    "EOS-SEC-001",
+    "ConfiguredCredentialPatternScan",
+    "No matches for the five configured credential patterns were found in scanned text files.",
+  ],
+  ["EOS-SDD-002", "LandingAndSRIAssertions", "Configured landing-page and subresource-integrity assertions passed."],
+  ["EOS-L0-003", "HexagonalL0Purity", "Production runtime dependencies must remain zero."],
+].map(([id, name, text]) => ({ id, name, shortDescription: { text }, defaultConfiguration: { level: "error" } }));
 const sarifReport = {
   version: "2.1.0",
   $schema: "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
-  runs: [
-    {
-      tool: {
-        driver: {
-          name: "EOS-Configured-Repository-Checks",
-          version: "1.0.0",
-          rules: [
-            {
-              id: "EOS-SEC-001",
-              name: "ConfiguredCredentialPatternScan",
-              shortDescription: {
-                text: "No matches for the five configured credential patterns were found in scanned text files.",
-              },
-              defaultConfiguration: { level: "error" },
-            },
-            {
-              id: "EOS-SDD-002",
-              name: "LandingAndSRIAssertions",
-              shortDescription: { text: "Configured landing-page and subresource-integrity assertions passed." },
-              defaultConfiguration: { level: "error" },
-            },
-            {
-              id: "EOS-L0-003",
-              name: "HexagonalL0Purity",
-              shortDescription: { text: "Production runtime dependencies must remain zero." },
-              defaultConfiguration: { level: "error" },
-            },
-          ],
-        },
-      },
-      results: [],
-    },
-  ],
+  runs: [{ tool: { driver: { name: "EOS-Configured-Repository-Checks", version: "1.0.0", rules } }, results: [] }],
 };
-fs.writeFileSync(
-  path.join(root, "docs/evidence/local-checks.sarif"),
-  JSON.stringify(sarifReport, null, 2) + "\n",
-  "utf8",
-);
+writeEvdJson("docs/evidence/local-checks.sarif", sarifReport);
+const banner = "======================================================================";
 console.log(
-  `[PASS] Stage 7/7 — Local source-inventory digest, check receipt & configured-checks SARIF written in ${elapsedMs} ms.`,
+  `[PASS] Stage 7/7 — Local digest, receipt & SARIF written in ${elapsedMs} ms.\n${banner}\n LOCAL CHECKS: 7/7 STAGES PASSED | NO DEPLOYMENT OR LIVE PROBE RUN  \n${banner}`,
 );
-console.log("======================================================================");
-console.log(" LOCAL CHECKS: 7/7 STAGES PASSED | NO DEPLOYMENT OR LIVE PROBE RUN  ");
-console.log("======================================================================");

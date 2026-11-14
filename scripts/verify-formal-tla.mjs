@@ -61,6 +61,11 @@ import {
   verifyLeoOpticalIslRoutingModel,
   verifyUhvGridDcOpfModel,
   verifyLawsonFusionIgnitionModel,
+  verifyHighNaEuvLithoOpcModel,
+  verifyDifferentialPrivacyAbacModel,
+  verifyLobAlmgrenChrissVpinModel,
+  verifyUnifiedMemoryDvfsQosModel,
+  verifyRelativisticBeamTwissModel,
 } from "./tla/tlaSimulationsPart4.mjs";
 
 export {
@@ -110,6 +115,11 @@ export {
   verifyLeoOpticalIslRoutingModel,
   verifyUhvGridDcOpfModel,
   verifyLawsonFusionIgnitionModel,
+  verifyHighNaEuvLithoOpcModel,
+  verifyDifferentialPrivacyAbacModel,
+  verifyLobAlmgrenChrissVpinModel,
+  verifyUnifiedMemoryDvfsQosModel,
+  verifyRelativisticBeamTwissModel,
 };
 
 export function runAllFormalVerifications() {
@@ -159,6 +169,11 @@ export function runAllFormalVerifications() {
     verifyLeoOpticalIslRoutingModel(),
     verifyUhvGridDcOpfModel(),
     verifyLawsonFusionIgnitionModel(),
+    verifyHighNaEuvLithoOpcModel(),
+    verifyDifferentialPrivacyAbacModel(),
+    verifyLobAlmgrenChrissVpinModel(),
+    verifyUnifiedMemoryDvfsQosModel(),
+    verifyRelativisticBeamTwissModel(),
   ];
 }
 

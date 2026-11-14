@@ -8,6 +8,16 @@ import { EosDifferentialPrivacyAbacGovernorCore } from "../../src/core/eosDiffer
 import { EosLobAlmgrenChrissVpinCore } from "../../src/core/eosLobAlmgrenChrissVpinCore.ts";
 import { EosUnifiedMemoryDmaDvfsQosCore } from "../../src/core/eosUnifiedMemoryDmaDvfsQosCore.ts";
 import { EosRelativisticBeamTwissLuminosityCore } from "../../src/core/eosRelativisticBeamTwissLuminosityCore.ts";
+import {
+  cmd_nav_ephemeris,
+  cmd_cryo_josephson,
+  cmd_dwdm_shannon,
+  cmd_aero_scramjet,
+  cmd_rtgs_clear,
+  computeDeepTech259To263ShipMetrics,
+} from "./cliDeepTech259To263FrontierMesh.mjs";
+
+export { cmd_nav_ephemeris, cmd_cryo_josephson, cmd_dwdm_shannon, cmd_aero_scramjet, cmd_rtgs_clear };
 
 function readOptNum(args, name) {
   const prefix = `--${name}=`;
@@ -227,6 +237,7 @@ export function evaluateContiguous253ShipSnapshot() {
   const lobVpin = EosLobAlmgrenChrissVpinCore.evaluateLobAlmgrenChrissVpin();
   const dvfsQos = EosUnifiedMemoryDmaDvfsQosCore.evaluateUnifiedMemoryDmaDvfsQos();
   const beamTwiss = EosRelativisticBeamTwissLuminosityCore.evaluateRelativisticBeamTwissLuminosity();
+  const deepTech = computeDeepTech259To263ShipMetrics();
   const allNominal =
     qec.verdict === "BELOW_THRESHOLD_SUPPRESSION" &&
     leo.verdict === "ISL_QUANTUM_LINK_LOCKED" &&
@@ -237,7 +248,8 @@ export function evaluateContiguous253ShipSnapshot() {
     privacyAbac.verdict === "PRIVACY_AND_ABAC_AUTHORIZED" &&
     lobVpin.verdict === "EXECUTION_TRAJECTORY_OPTIMAL" &&
     dvfsQos.verdict === "QOS_AND_THERMAL_NOMINAL" &&
-    beamTwiss.verdict === "BEAM_OPTICS_LUMINOSITY_LOCKED";
+    beamTwiss.verdict === "BEAM_OPTICS_LUMINOSITY_LOCKED" &&
+    deepTech.deepTechNominal;
   return {
     allNominal,
     qecVerdict: qec.verdict,
@@ -260,5 +272,6 @@ export function evaluateContiguous253ShipSnapshot() {
     lobVpin,
     dvfsQos,
     beamTwiss,
+    ...deepTech,
   };
 }
