@@ -2100,3 +2100,26 @@
   - `docs/plans/PLAN-120-JARVIS-POLYGLOT-FRONTIER.md`
   - `docs/tasks/TASKS-120-JARVIS-POLYGLOT-FRONTIER.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-13-LIVE-DIFF-REPOMAP-PBT-238-240
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Layer-0 Live Git Diff Inspector (`SPEC-238`), Polyglot RepoMap Compressor (`SPEC-239`), Shrinking Property Fuzzer (`SPEC-240`) & Master `glorian ship` Orchestration (`CHANGE-121`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: "si dale con toda")
+- **Scope**:
+  1. Implement `src/core/eosLiveGitDiffPrInspectorCore.types.ts` and `src/core/eosLiveGitDiffPrInspectorCore.ts` (`SPEC-238`).
+  2. Implement `src/core/eosRepoMapSymbolCompressorCore.types.ts` and `src/core/eosRepoMapSymbolCompressorCore.ts` (`SPEC-239`).
+  3. Implement `src/core/eosPropertyBasedShrinkingFuzzerCore.types.ts` and `src/core/eosPropertyBasedShrinkingFuzzerCore.ts` (`SPEC-240`).
+  4. Export Modules 53–55 in `src/core/index.ts` and expose `./live-diff`, `./repomap`, `./property-fuzzer` in `package.json`.
+  5. Wire CLI commands `diff:live`, `repomap:build`, `pbt:check`, `ship` and MCP actions `live_diff_inspect`, `repomap_compress`, `pbt_shrink_check`, `jarvis_ship_readiness`.
+  6. Add BDD suites (`BDD-1211`..`BDD-1225`) in `test/eosLiveDiffRepoMapPbt.test.mjs` and step `#48` in `test/eosEnterpriseFacade.test.mjs`.
+  7. Document Modules 53–55 in `docs/DEVELOPER_GUIDE.md`, refresh pins (`tip-refresh.mjs`), commit, seal Freeze Gate, and push to `origin/main`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-121-LIVE-DIFF-REPOMAP-PBT.md`
+  - `openspec/changes/CHANGE-121-LIVE-DIFF-REPOMAP-PBT.md`
+  - `openspec/specs/SPEC-238-LIVE-GIT-DIFF-PR-INSPECTOR.md`
+  - `openspec/specs/SPEC-239-REPOMAP-SYMBOL-COMPRESSOR.md`
+  - `openspec/specs/SPEC-240-PROPERTY-SHRINKING-FUZZER.md`
+  - `docs/plans/PLAN-121-LIVE-DIFF-REPOMAP-PBT.md`
+  - `docs/tasks/TASKS-121-LIVE-DIFF-REPOMAP-PBT.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

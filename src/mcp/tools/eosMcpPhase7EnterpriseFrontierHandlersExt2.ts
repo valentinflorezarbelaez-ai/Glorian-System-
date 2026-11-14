@@ -1,5 +1,5 @@
 /**
- * EOS MCP Phase 7 Enterprise Frontier Handlers Extension 2 (SPEC-234..SPEC-237 / CHANGE-119..CHANGE-120)
+ * EOS MCP Phase 7 Enterprise Frontier Handlers Extension 2 (SPEC-234..SPEC-240 / CHANGE-119..CHANGE-121)
  * Strict Zero Runtime Dependencies (EOS Law V), Node 22.18+ Strip-Only TypeScript.
  * Enforces strict line count ceiling <= 800 lines across all MCP handler modules.
  */
@@ -17,6 +17,10 @@ import { EosIssueToPrCanaryBridgeCore } from "../../core/eosIssueToPrCanaryBridg
 import type { DiffFileEntry, IssueSourceSystem } from "../../core/eosIssueToPrCanaryBridgeCore.types.ts";
 import { EosStaffEngineerAdversarialJudgeCore } from "../../core/eosStaffEngineerAdversarialJudgeCore.ts";
 import type { StaffPillarScores } from "../../core/eosStaffEngineerAdversarialJudgeCore.types.ts";
+import { EosLiveGitDiffPrInspectorCore } from "../../core/eosLiveGitDiffPrInspectorCore.ts";
+import { EosRepoMapSymbolCompressorCore } from "../../core/eosRepoMapSymbolCompressorCore.ts";
+import type { RepoMapSourceFileInput } from "../../core/eosRepoMapSymbolCompressorCore.types.ts";
+import { EosPropertyBasedShrinkingFuzzerCore } from "../../core/eosPropertyBasedShrinkingFuzzerCore.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
 function numOr(val: unknown, fallback: number): number {
@@ -58,6 +62,80 @@ function resolveMissionState(args: Record<string, any> | undefined): JarvisMissi
     featureFlagKey: typeof args?.featureFlagKey === "string" ? args.featureFlagKey : undefined,
     maxHealAttempts: typeof args?.maxHealAttempts === "number" ? args.maxHealAttempts : undefined,
   });
+}
+
+function dispatchLiveShipActions(
+  action: string,
+  args: Record<string, any> | undefined,
+  deps: Phase7DomainHandlerDeps,
+): unknown | undefined {
+  if (action === "live_diff_inspect") {
+    const report = EosLiveGitDiffPrInspectorCore.inspectLiveGitDiff({
+      projectRoot: deps.projectRoot,
+      baseRef: typeof args?.baseRef === "string" ? args.baseRef : undefined,
+      ticketId: typeof args?.ticketId === "string" ? args.ticketId : undefined,
+      title: typeof args?.title === "string" ? args.title : undefined,
+      numstatOverride: typeof args?.numstatOverride === "string" ? args.numstatOverride : undefined,
+      patchOverride: typeof args?.patchOverride === "string" ? args.patchOverride : undefined,
+      writeBundle: args?.writeBundle === true,
+    });
+    return { ...report, action: "live_diff_inspect" };
+  }
+  if (action === "repomap_compress") {
+    const report = EosRepoMapSymbolCompressorCore.buildCompressedRepoMap({
+      projectRoot: deps.projectRoot,
+      targetDir: typeof args?.targetDir === "string" ? args.targetDir : "src/core",
+      maxTokenBudget: typeof args?.maxTokenBudget === "number" ? args.maxTokenBudget : undefined,
+      maxFiles: typeof args?.maxFiles === "number" ? args.maxFiles : undefined,
+      sourceFilesOverride: Array.isArray(args?.sourceFilesOverride)
+        ? (args.sourceFilesOverride as RepoMapSourceFileInput[])
+        : undefined,
+    });
+    return { ...report, action: "repomap_compress" };
+  }
+  if (action === "pbt_shrink_check") {
+    const suite = EosPropertyBasedShrinkingFuzzerCore.runBuiltInSuite(numOr(args?.seed, 1337));
+    return { ...suite, action: "pbt_shrink_check" };
+  }
+  if (action === "jarvis_ship_readiness") {
+    const ticketId = strOr(args?.ticketId, "SHIP-240");
+    const liveDiff = EosLiveGitDiffPrInspectorCore.inspectLiveGitDiff({
+      projectRoot: deps.projectRoot,
+      ticketId,
+      numstatOverride: typeof args?.numstatOverride === "string" ? args.numstatOverride : undefined,
+      patchOverride: typeof args?.patchOverride === "string" ? args.patchOverride : undefined,
+    });
+    const repoMap = EosRepoMapSymbolCompressorCore.buildCompressedRepoMap({
+      projectRoot: deps.projectRoot,
+      targetDir: "src/core",
+      maxTokenBudget: 1200,
+      maxFiles: 25,
+    });
+    const propertySuite = EosPropertyBasedShrinkingFuzzerCore.runBuiltInSuite(numOr(args?.seed, 1337));
+    const staffJudge = EosStaffEngineerAdversarialJudgeCore.evaluateProposalOrPr({
+      targetId: ticketId,
+      plainSecretsDetected: liveDiff.secretMatchesCount > 0,
+      unsafeMigrationDetected: liveDiff.diffAudit.migrationPattern === "UNSAFE_BREAKING_DDL",
+      missingTestsForProdChanges: !liveDiff.diffAudit.beyonceRuleSatisfied,
+    });
+    const canaryPlan = EosIssueToPrCanaryBridgeCore.compileCanaryAndRollbackPlan({
+      ticketId,
+      featureFlagKey: `ff_${ticketId.toLowerCase().replace(/[^a-z0-9]+/g, "_")}`,
+      workflowId: "flow-ship-mcp",
+      approvalDiffSha256: liveDiff.inspectionDigestSha256,
+    });
+    const approved = liveDiff.readyToShip && propertySuite.allPassed && staffJudge.verdict === "APPROVED";
+    return {
+      action: "jarvis_ship_readiness",
+      shipReadinessVerdict: approved ? "SHIP_APPROVED" : "SHIP_BLOCKED",
+      liveDiff,
+      repoMap,
+      propertySuite,
+      staffJudge,
+      canaryPlan,
+    };
+  }
+  return undefined;
 }
 
 function dispatchPolyglotOrBridge(
@@ -112,7 +190,7 @@ function dispatchPolyglotOrBridge(
     });
     return { ...report, action: "diff_migration_audit" };
   }
-  return undefined;
+  return dispatchLiveShipActions(action, args, deps);
 }
 
 export function dispatchPhase7FrontierActionExt2(

@@ -434,3 +434,19 @@ export type {
   JudgePersonaEvaluation,
   StaffAdversarialVerdictReport,
 } from "./eosStaffEngineerAdversarialJudgeCore.types.ts";
+export { EosLiveGitDiffPrInspectorCore } from "./eosLiveGitDiffPrInspectorCore.ts";
+export type { InspectLiveGitDiffOptions, LiveGitDiffInspectionReport } from "./eosLiveGitDiffPrInspectorCore.types.ts";
+export { EosRepoMapSymbolCompressorCore } from "./eosRepoMapSymbolCompressorCore.ts";
+export type {
+  RepoMapSourceFileInput,
+  BuildRepoMapOptions,
+  RepoMapFileEntry,
+  CompressedRepoMapReport,
+} from "./eosRepoMapSymbolCompressorCore.types.ts";
+export { EosPropertyBasedShrinkingFuzzerCore } from "./eosPropertyBasedShrinkingFuzzerCore.ts";
+export type {
+  NumericPropertyOptions,
+  StringPropertyOptions,
+  PropertyCheckResult,
+  PropertySuiteReport,
+} from "./eosPropertyBasedShrinkingFuzzerCore.types.ts";

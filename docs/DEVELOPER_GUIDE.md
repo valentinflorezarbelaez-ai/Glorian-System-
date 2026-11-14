@@ -1485,6 +1485,24 @@ const normalized = EosPolyglotToolchainAdapterCore.normalizeTestAndCoverageRepor
 
 ---
 
+### Módulo 53: Inspector en Vivo de `git diff` (`EosLiveGitDiffPrInspectorCore`)
+
+**Propósito:** Inspecciona directamente el repositorio Git local (`git diff --numstat` y líneas añadidas en parches vivos, `SPEC-238` / `CHANGE-121`), busca firmas de credenciales filtradas en tiempo real, valida la Regla de Beyoncé y migraciones DDL SQL (_Expand & Contract_), y opcionalmente genera el paquete `.eos/pr-ready-bundle.md`.
+
+---
+
+### Módulo 54: Compresor Políglota de Símbolos y `RepoMap` (`EosRepoMapSymbolCompressorCore`)
+
+**Propósito:** Escanea archivos TS/JS/Go/Python/Java/Rust dentro de `projectRoot` (`SPEC-239` / `CHANGE-121`), extrae declaraciones públicas e importaciones relativas, ordena módulos por centralidad de grafo (`inDegree * 3 + symbols.length`) y comprime el mapa dentro de un presupuesto exacto de tokens (`maxTokenBudget`).
+
+---
+
+### Módulo 55: Motor _Property-Based Testing_ con _Shrinking_ (`EosPropertyBasedShrinkingFuzzerCore`)
+
+**Propósito:** Motor determinista basado en semillas `xorshift32` (`SPEC-240` / `CHANGE-121`) para comprobar propiedades numéricas y de cadenas, reduciendo automáticamente (_binary / structural shrinking_) cualquier fallo al contraejemplo mínimo reproducible sin dependencias externas.
+
+---
+
 ## 4. Guía Rápida de Comandos CLI
 
 El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o `eos`):
@@ -1603,6 +1621,10 @@ El ejecutable principal es `./bin/eos.mjs` (disponible como comandos `glorian` o
 | `node bin/eos.mjs bridge:canary [--ticket=ID] [--json]`     | Compila plan Canary progresivo (`1% -> 10% -> 50% -> 100%`) y kill-switch (SPEC-236).               |
 | `node bin/eos.mjs staff:judge [--target=ID] [--json]`       | Ejecuta juicio dual adversarial de Staff Engineer (`APPROVED` / `CHANGES_REQUIRED` / `BLOCKED`).    |
 | `node bin/eos.mjs staff:demo [--json]`                      | Demostración end-to-end políglota Go -> Jarvis Soundcheck -> Canary -> Staff Judge (SPEC-235..237). |
+| `node bin/eos.mjs diff:live [--base=HEAD] [--json]`         | Inspecciona el `git diff` vivo local contra secretos, DDL y Regla de Beyoncé (SPEC-238).            |
+| `node bin/eos.mjs repomap:build [--budget=1500] [--json]`   | Genera un `RepoMap` políglota comprimido dentro del presupuesto exacto de tokens (SPEC-239).        |
+| `node bin/eos.mjs pbt:check [--seed=1337] [--json]`         | Ejecuta la suite de _Property-Based Testing_ con _counterexample shrinking_ (SPEC-240).             |
+| `node bin/eos.mjs ship [--ticket=ID] [--json]`              | Comando maestro pre-PR: une Live Diff + RepoMap + PBT + Canary + Staff Judge (SPEC-236..240).       |
 | `node bin/eos.mjs metrics`                                  | Exporta métricas OpenMetrics / Prometheus directamente a la terminal.                               |
 | `node bin/eos.mjs guard [directorio]`                       | Inspecciona la arquitectura de dependencias de cualquier repositorio local.                         |
 | `node bin/eos.mjs flow inspect <ruta>`                      | Analiza la estructura y salud arquitectónica de un proyecto externo en modo solo lectura.           |

@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 232,
-  "catalogSha256": "16e384c4fea3bbaf1701cd4346018f1cb7e2e33cde5f5f86dcf92517aa3925ac",
+  "totalSpecs": 235,
+  "catalogSha256": "99c9698d735bdcd4f23f93292b463b25437a49a6a15114a7c566bf79e84b6bc8",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2090,6 +2090,33 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-237-STAFF-ADVERSARIAL-JUDGE.md",
       "sha256": "d40843222cf5b4b7d9fd2e940607db6224b17de6a056be9ad0e0e641e93dd452"
+    },
+    {
+      "id": "SPEC-238",
+      "title": "— Layer-0 Live Git Diff PR Inspector & Bundle Packager",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-238-LIVE-GIT-DIFF-PR-INSPECTOR.md",
+      "sha256": "57b7dd31ce1580f1267d7d5a93d784c96409226cc5ff6c78119d8a07cbb003bf"
+    },
+    {
+      "id": "SPEC-239",
+      "title": "— Layer-0 Polyglot RepoMap Symbol Compressor",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-239-REPOMAP-SYMBOL-COMPRESSOR.md",
+      "sha256": "2f10677392a6a214566e34fab4a0abcd19efbc89c5f86b2ced9d8e2d41214226"
+    },
+    {
+      "id": "SPEC-240",
+      "title": "— Layer-0 Property-Based Testing & Counterexample Shrinking Engine",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-240-PROPERTY-SHRINKING-FUZZER.md",
+      "sha256": "4448e00eada99014cc257f2071b1d2347396ddca55b0572d365711a52b1a3f5e"
     }
   ]
 }

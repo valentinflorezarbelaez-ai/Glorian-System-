@@ -950,5 +950,29 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     const sJudge = callFacade({ action: "staff_adversarial_judge", targetId: "PR-237" });
     assert.equal(sJudge.action, "staff_adversarial_judge");
     assert.equal(sJudge.verdict, "APPROVED");
+
+    // 48. live_diff_inspect, repomap_compress, pbt_shrink_check, jarvis_ship_readiness (SPEC-238..SPEC-240)
+    const liveDiff = callFacade({
+      action: "live_diff_inspect",
+      ticketId: "SPOT-238",
+      numstatOverride: "8\t1\tsrc/core/mod.ts\n12\t0\ttest/mod.test.mjs\n",
+      patchOverride: "+export const x = 1;\n",
+    });
+    assert.equal(liveDiff.action, "live_diff_inspect");
+    assert.equal(liveDiff.readyToShip, true);
+    const repoMap = callFacade({ action: "repomap_compress", targetDir: "src/core", maxTokenBudget: 800, maxFiles: 8 });
+    assert.equal(repoMap.action, "repomap_compress");
+    assert.ok(repoMap.estimatedCompressedTokens <= 800);
+    const pbt = callFacade({ action: "pbt_shrink_check", seed: 1337 });
+    assert.equal(pbt.action, "pbt_shrink_check");
+    assert.equal(pbt.allPassed, true);
+    const shipReady = callFacade({
+      action: "jarvis_ship_readiness",
+      ticketId: "SPOT-240",
+      numstatOverride: "8\t0\tsrc/core/mod.ts\n12\t0\ttest/mod.test.mjs\n",
+      patchOverride: "+export const ok = true;\n",
+    });
+    assert.equal(shipReady.action, "jarvis_ship_readiness");
+    assert.equal(shipReady.shipReadinessVerdict, "SHIP_APPROVED");
   });
 });
