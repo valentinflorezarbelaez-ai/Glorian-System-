@@ -534,3 +534,29 @@ export type {
   ModuleHeadroomRecord,
   CliCatalogHygieneAuditReport,
 } from "./eosCliCatalogAndHygieneGovernorCore.types.ts";
+export { EosComputeGraphRooflinePlannerCore } from "./eosComputeGraphRooflinePlannerCore.ts";
+export type {
+  ComputeOpKind,
+  RooflineBoundRegime,
+  ComputeGraphRooflineVerdict,
+  ComputeGraphNodeInput,
+  ComputeGraphRooflineOptions,
+  OperatorRooflineProfile,
+  FusedOperatorGroup,
+  ArenaBufferAllocation,
+  ComputeGraphRooflineReport,
+} from "./eosComputeGraphRooflinePlannerCore.types.ts";
+export { EosStatisticalProcessYieldControlCore } from "./eosStatisticalProcessYieldControlCore.ts";
+export type {
+  SpcYieldVerdict,
+  SpcYieldAuditOptions,
+  SpcYieldAuditReport,
+} from "./eosStatisticalProcessYieldControlCore.types.ts";
+export { EosKalmanStateEstimatorAndQuadVoterCore } from "./eosKalmanStateEstimatorAndQuadVoterCore.ts";
+export type {
+  KalmanQuadVoterVerdict,
+  QuadTelemetryFrameInput,
+  KalmanQuadVoterOptions,
+  KalmanFrameEstimate,
+  KalmanQuadVoterReport,
+} from "./eosKalmanStateEstimatorAndQuadVoterCore.types.ts";

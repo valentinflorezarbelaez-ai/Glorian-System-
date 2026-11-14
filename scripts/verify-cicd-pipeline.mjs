@@ -607,21 +607,8 @@ const apiEndpoints = [
   },
 ];
 
-for (const endpoint of apiEndpoints) {
-  const { file: relApi } = endpoint;
-  const modUrl = pathToFileURL(path.join(root, relApi)).href;
-  const mod = await import(modUrl);
-  assert.equal(typeof mod.default, "function", `Default export in ${relApi} must be a handler function`);
-
-  let capturedStatus = 200;
-  let capturedBody = null;
-  const mockReq = {
-    method: endpoint.method || "GET",
-    query: {},
-    body: endpoint.body || {},
-    headers: endpoint.headers || {},
-  };
-  const mockRes = {
+function createMockRes(state, parseChunk = false) {
+  return {
     statusCode: 200,
     headers: {},
     setHeader(k, v) {
@@ -629,28 +616,42 @@ for (const endpoint of apiEndpoints) {
     },
     status(code) {
       this.statusCode = code;
-      capturedStatus = code;
+      state.status = code;
       return this;
     },
     json(payload) {
-      capturedBody = payload;
+      state.body = payload;
       return this;
     },
     end(chunk) {
-      if (typeof this.statusCode === "number") capturedStatus = this.statusCode;
-      if (typeof chunk === "string" && chunk.trim().startsWith("{")) {
-        capturedBody = JSON.parse(chunk);
+      if (parseChunk) {
+        if (typeof this.statusCode === "number") state.status = this.statusCode;
+        if (typeof chunk === "string" && chunk.trim().startsWith("{")) {
+          state.body = JSON.parse(chunk);
+        }
       }
       return this;
     },
   };
+}
 
-  await mod.default(mockReq, mockRes);
-  assert.equal(capturedStatus, 200, `[STAGE 6 FAIL] ${relApi} returned HTTP ${capturedStatus}`);
-  assert.ok(
-    capturedBody && typeof capturedBody === "object",
-    `[STAGE 6 FAIL] ${relApi} did not return valid JSON object`,
-  );
+for (const endpoint of apiEndpoints) {
+  const { file: relApi } = endpoint;
+  const modUrl = pathToFileURL(path.join(root, relApi)).href;
+  const mod = await import(modUrl);
+  assert.equal(typeof mod.default, "function", `Default export in ${relApi} must be a handler function`);
+
+  const state = { status: 200, body: null };
+  const mockReq = {
+    method: endpoint.method || "GET",
+    query: {},
+    body: endpoint.body || {},
+    headers: endpoint.headers || {},
+  };
+
+  await mod.default(mockReq, createMockRes(state, true));
+  assert.equal(state.status, 200, `[STAGE 6 FAIL] ${relApi} returned HTTP ${state.status}`);
+  assert.ok(state.body && typeof state.body === "object", `[STAGE 6 FAIL] ${relApi} did not return valid JSON object`);
 }
 
 // Verify Edge rewrite consolidated modes
@@ -669,32 +670,12 @@ const consolidatedModes = [
 for (const cm of consolidatedModes) {
   const modUrl = pathToFileURL(path.join(root, cm.file)).href;
   const mod = await import(modUrl);
-  let capturedStatus = 200;
-  let capturedBody = null;
+  const state = { status: 200, body: null };
   const mockReq = { method: "GET", query: cm.query, body: {} };
-  const mockRes = {
-    statusCode: 200,
-    headers: {},
-    setHeader(k, v) {
-      this.headers[k] = v;
-    },
-    status(code) {
-      this.statusCode = code;
-      capturedStatus = code;
-      return this;
-    },
-    json(payload) {
-      capturedBody = payload;
-      return this;
-    },
-    end() {
-      return this;
-    },
-  };
-  await mod.default(mockReq, mockRes);
-  assert.equal(capturedStatus, 200, `[STAGE 6 FAIL] Consolidated mode ${cm.desc} returned HTTP ${capturedStatus}`);
+  await mod.default(mockReq, createMockRes(state));
+  assert.equal(state.status, 200, `[STAGE 6 FAIL] Consolidated mode ${cm.desc} returned HTTP ${state.status}`);
   assert.ok(
-    capturedBody && typeof capturedBody === "object",
+    state.body && typeof state.body === "object",
     `[STAGE 6 FAIL] Consolidated mode ${cm.desc} did not return valid JSON`,
   );
 }

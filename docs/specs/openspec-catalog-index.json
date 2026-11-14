@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 245,
-  "catalogSha256": "8aad8daba4827c35ced3955d3af6a7acf9eeef749701c615d2be4eac5e644db8",
+  "totalSpecs": 248,
+  "catalogSha256": "8c440ab52fb0d2a549faa1c4ddd191660bcfce1fe25c63a8ce890690723e0f3b",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2207,6 +2207,33 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-250-CLI-CATALOG-HYGIENE-GOVERNOR.md",
       "sha256": "d61bc3aa75e1002a159a0b0c824cf320650c57f763f1e32749fcfc87b5d5e037"
+    },
+    {
+      "id": "SPEC-251",
+      "title": "— Layer-0 Compute Graph Roofline Planner & Static Arena Allocator",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-251-NVIDIA-COMPUTE-ROOFLINE-PLANNER.md",
+      "sha256": "78cf0ace2325e55710f068d9cb46e93167b107525c49d4fd03d0b89261deac9c"
+    },
+    {
+      "id": "SPEC-252",
+      "title": "— Layer-0 Six-Sigma Statistical Process Control (SPC) & Yield Engine",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-252-TSMC-ASML-SIX-SIGMA-SPC-YIELD.md",
+      "sha256": "7fc98aa03cd452fc381b2339794b6f56728203e6941b2ee1e242500b839c585a"
+    },
+    {
+      "id": "SPEC-253",
+      "title": "— Layer-0 Kalman State Estimator & Quad-Modular Redundant Voter",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-253-SPACEX-KALMAN-GNC-QUAD-VOTER.md",
+      "sha256": "0424f64f8abda96d16c80cec0dd8e8a40bc473bebbe89ab9408c6b4df8443576"
     }
   ]
 }

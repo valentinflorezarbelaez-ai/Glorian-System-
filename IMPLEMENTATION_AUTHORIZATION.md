@@ -2212,3 +2212,26 @@
   - `docs/plans/PLAN-125-CLI-CATALOG-HYGIENE-GOVERNOR.md`
   - `docs/tasks/TASKS-125-CLI-CATALOG-HYGIENE-GOVERNOR.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## Authorization Record: AUTH-2026-11-14-ROOFLINE-SPC-KALMAN-FRONTIER-253
+
+- **Status**: `IMPLEMENTATION_AUTHORIZED` (`LEVEL 3`)
+- **Milestone**: Compute Graph Roofline Planner (`SPEC-251`), Six-Sigma SPC & Yield Control (`SPEC-252`), Kalman GNC Quad-Voter (`SPEC-253`), Preventive Structural Decompression (`<= 782` lines), & 100% (`342/342`) Developer Guide CLI Parity (`CHANGE-126`)
+- **Owner Approval**: `OWNER_APPROVAL` GRANTED (Explicit owner directive: `"todo junto"`)
+- **Scope**:
+  1. Decompress top 6 largest modules (`cliFrontierMesh.mjs`, `verify-cicd-pipeline.mjs`, `eosGentlemanAutoUpdater.ts`, `tlaSimulationsPart2.mjs`, `eosKnowledgeGraphEngine.ts`, `eosSpotifyCodex.ts`) to `<= 782` lines (`minHeadroomLines >= 18`).
+  2. Implement Module 66 (`src/core/eosComputeGraphRooflinePlannerCore.types.ts` & `.ts` — `SPEC-251`).
+  3. Implement Module 67 (`src/core/eosStatisticalProcessYieldControlCore.types.ts` & `.ts` — `SPEC-252`).
+  4. Implement Module 68 (`src/core/eosKalmanStateEstimatorAndQuadVoterCore.types.ts` & `.ts` — `SPEC-253`).
+  5. Export Modules 66–68 in `src/core/index.ts`, expose subpath exports and scripts in `package.json`, wire `roofline:plan`, `spc:audit`, `kalman:estimate`, enrich `ship`, and wire MCP actions (`roofline_compute_plan`, `spc_yield_audit`, `kalman_quad_vote`).
+  6. Synchronize `bin/commands/cliHelpCatalog.mjs` (`SPEC-065`-safe) and elevate `docs/DEVELOPER_GUIDE.md` to `342/342` (`100%`) command documentation parity.
+  7. Add `BDD-1276`..`BDD-1290` in `test/eosRooflineSpcKalmanFrontier.test.mjs` and step `#53` in `test/eosEnterpriseFacade.test.mjs`, verify full static & concurrent test gates, commit, seal Freeze Gate, and push to `origin/main`.
+- **Artifacts Approved**:
+  - `docs/intake/eos-system/INTAKE-126-ROOFLINE-SPC-KALMAN-FRONTIER.md`
+  - `openspec/changes/CHANGE-126-ROOFLINE-SPC-KALMAN-FRONTIER.md`
+  - `openspec/specs/SPEC-251-NVIDIA-COMPUTE-ROOFLINE-PLANNER.md`
+  - `openspec/specs/SPEC-252-TSMC-ASML-SIX-SIGMA-SPC-YIELD.md`
+  - `openspec/specs/SPEC-253-SPACEX-KALMAN-GNC-QUAD-VOTER.md`
+  - `docs/plans/PLAN-126-ROOFLINE-SPC-KALMAN-FRONTIER.md`
+  - `docs/tasks/TASKS-126-ROOFLINE-SPC-KALMAN-FRONTIER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

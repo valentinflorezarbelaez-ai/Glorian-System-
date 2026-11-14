@@ -2,6 +2,18 @@ import path from "node:path";
 import assert from "node:assert/strict";
 import { formalDir, parseTlaModule } from "./tlaShared.mjs";
 
+function buildSimReport(parsed, stepsExecuted) {
+  return {
+    stepsExecuted,
+    moduleName: parsed.moduleName,
+    sourceFileRead: true,
+    extractedVariables: parsed.variables,
+    extractedInvariantNames: parsed.invariants,
+    executionMode: "bounded-javascript-simulation",
+    simulationAssertionsPassed: true,
+  };
+}
+
 export function verifyColumnarTelemetryEngineModel(steps = 200) {
   const filePath = path.join(formalDir, "ColumnarTelemetryEngine.tla");
   const parsed = parseTlaModule(filePath);
@@ -39,13 +51,7 @@ export function verifyColumnarTelemetryEngineModel(steps = 200) {
 
   return {
     specification: "ColumnarTelemetryEngine.tla",
-    moduleName: parsed.moduleName,
-    sourceFileRead: true,
-    extractedVariables: parsed.variables,
-    extractedInvariantNames: parsed.invariants,
-    stepsExecuted,
-    executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true,
+    ...buildSimReport(parsed, stepsExecuted),
   };
 }
 
@@ -92,13 +98,7 @@ export function verifyCellBasedBulkheadGovernorModel(steps = 200) {
 
   return {
     specification: "CellBasedBulkheadGovernor.tla",
-    moduleName: parsed.moduleName,
-    sourceFileRead: true,
-    extractedVariables: parsed.variables,
-    extractedInvariantNames: parsed.invariants,
-    stepsExecuted,
-    executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true,
+    ...buildSimReport(parsed, stepsExecuted),
   };
 }
 
@@ -156,13 +156,7 @@ export function verifyMultiWindowSloGovernorModel(steps = 200) {
 
   return {
     specification: "MultiWindowSloGovernor.tla",
-    moduleName: parsed.moduleName,
-    sourceFileRead: true,
-    extractedVariables: parsed.variables,
-    extractedInvariantNames: parsed.invariants,
-    stepsExecuted,
-    executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true,
+    ...buildSimReport(parsed, stepsExecuted),
   };
 }
 
@@ -223,13 +217,7 @@ export function verifyAdaptiveHedgedDeadlineMeshModel(steps = 200) {
 
   return {
     specification: "AdaptiveHedgedDeadlineMesh.tla",
-    moduleName: parsed.moduleName,
-    sourceFileRead: true,
-    extractedVariables: parsed.variables,
-    extractedInvariantNames: parsed.invariants,
-    stepsExecuted,
-    executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true,
+    ...buildSimReport(parsed, stepsExecuted),
   };
 }
 
@@ -288,13 +276,7 @@ export function verifyAdaptiveConcurrencyGovernorModel(steps = 200) {
 
   return {
     specification: "AdaptiveConcurrencyGovernor.tla",
-    moduleName: parsed.moduleName,
-    sourceFileRead: true,
-    extractedVariables: parsed.variables,
-    extractedInvariantNames: parsed.invariants,
-    stepsExecuted,
-    executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true,
+    ...buildSimReport(parsed, stepsExecuted),
   };
 }
 
@@ -366,13 +348,7 @@ export function verifyTailBasedTraceSamplerModel(steps = 200) {
 
   return {
     specification: "TailBasedTraceSampler.tla",
-    moduleName: parsed.moduleName,
-    sourceFileRead: true,
-    extractedVariables: parsed.variables,
-    extractedInvariantNames: parsed.invariants,
-    stepsExecuted,
-    executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true,
+    ...buildSimReport(parsed, stepsExecuted),
   };
 }
 
@@ -441,13 +417,7 @@ export function verifyPredictiveRemediationEngineModel(steps = 200) {
 
   return {
     specification: "PredictiveRemediationEngine.tla",
-    moduleName: parsed.moduleName,
-    sourceFileRead: true,
-    extractedVariables: parsed.variables,
-    extractedInvariantNames: parsed.invariants,
-    stepsExecuted,
-    executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true,
+    ...buildSimReport(parsed, stepsExecuted),
   };
 }
 
@@ -498,13 +468,7 @@ export function verifyUnifiedKernelOrchestratorModel(steps = 200) {
 
   return {
     specification: "UnifiedKernelOrchestrator.tla",
-    moduleName: parsed.moduleName,
-    sourceFileRead: true,
-    extractedVariables: parsed.variables,
-    extractedInvariantNames: parsed.invariants,
-    stepsExecuted,
-    executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true,
+    ...buildSimReport(parsed, stepsExecuted),
   };
 }
 
@@ -563,13 +527,7 @@ export function verifyBigTechTranscendenceNexusModel(steps = 200) {
 
   return {
     specification: "BigTechTranscendenceNexus.tla",
-    moduleName: parsed.moduleName,
-    sourceFileRead: true,
-    extractedVariables: parsed.variables,
-    extractedInvariantNames: parsed.invariants,
-    stepsExecuted,
-    executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true,
+    ...buildSimReport(parsed, stepsExecuted),
   };
 }
 
@@ -617,13 +575,7 @@ export function verifyEliteDesignStudioModel(steps = 200) {
 
   return {
     specification: "EliteDesignStudio.tla",
-    moduleName: parsed.moduleName,
-    sourceFileRead: true,
-    extractedVariables: parsed.variables,
-    extractedInvariantNames: parsed.invariants,
-    stepsExecuted,
-    executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true,
+    ...buildSimReport(parsed, stepsExecuted),
   };
 }
 
@@ -674,13 +626,7 @@ export function verifyAgenticFinOpsGovernorModel(steps = 200) {
 
   return {
     specification: "AgenticFinOpsGovernor.tla",
-    moduleName: parsed.moduleName,
-    sourceFileRead: true,
-    extractedVariables: parsed.variables,
-    extractedInvariantNames: parsed.invariants,
-    stepsExecuted,
-    executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true,
+    ...buildSimReport(parsed, stepsExecuted),
   };
 }
 
@@ -727,13 +673,7 @@ export function verifyPlanetaryMonorepoGovernorModel(steps = 200) {
 
   return {
     specification: "PlanetaryMonorepoGovernor.tla",
-    moduleName: parsed.moduleName,
-    sourceFileRead: true,
-    extractedVariables: parsed.variables,
-    extractedInvariantNames: parsed.invariants,
-    stepsExecuted,
-    executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true,
+    ...buildSimReport(parsed, stepsExecuted),
   };
 }
 
@@ -772,12 +712,6 @@ export function verifyCrossFleetNeuralSynapseModel(steps = 200) {
 
   return {
     specification: "CrossFleetNeuralSynapse.tla",
-    moduleName: parsed.moduleName,
-    sourceFileRead: true,
-    extractedVariables: parsed.variables,
-    extractedInvariantNames: parsed.invariants,
-    stepsExecuted,
-    executionMode: "bounded-javascript-simulation",
-    simulationAssertionsPassed: true,
+    ...buildSimReport(parsed, stepsExecuted),
   };
 }

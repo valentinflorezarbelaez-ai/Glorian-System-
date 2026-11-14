@@ -15,6 +15,9 @@ import { EosEdaEquivalenceTimingProverCore } from "../../src/core/eosEdaEquivale
 import { EosApolloAirGappedBundleOrchestratorCore } from "../../src/core/eosApolloAirGappedBundleOrchestratorCore.ts";
 import { EosAladdinSystemicRiskStressCore } from "../../src/core/eosAladdinSystemicRiskStressCore.ts";
 import { EosCliCatalogAndHygieneGovernorCore } from "../../src/core/eosCliCatalogAndHygieneGovernorCore.ts";
+import { EosComputeGraphRooflinePlannerCore } from "../../src/core/eosComputeGraphRooflinePlannerCore.ts";
+import { EosStatisticalProcessYieldControlCore } from "../../src/core/eosStatisticalProcessYieldControlCore.ts";
+import { EosKalmanStateEstimatorAndQuadVoterCore } from "../../src/core/eosKalmanStateEstimatorAndQuadVoterCore.ts";
 
 const HANDLERS = {};
 
@@ -465,6 +468,9 @@ async function cmd_ship(commandContext) {
   const aladdinSystemicRisk = EosAladdinSystemicRiskStressCore.runSystemicStressSimulation({
     projectRoot: root,
   });
+  const rooflinePlan = EosComputeGraphRooflinePlannerCore.planComputeGraphAndArena();
+  const spcYieldAudit = EosStatisticalProcessYieldControlCore.auditProcessCapabilityAndYield();
+  const kalmanGncState = EosKalmanStateEstimatorAndQuadVoterCore.estimateTrajectoryWithQuadVoter();
   const hygieneAudit = EosCliCatalogAndHygieneGovernorCore.auditCliCatalogAndModuleHeadroom({
     projectRoot: root,
   });
@@ -478,6 +484,9 @@ async function cmd_ship(commandContext) {
     edaFormalProof.verdict === "SILICON_FORMAL_VERIFIED",
     apolloAirGapBundle.verdict === "AIRGAP_DEPLOY_READY",
     aladdinSystemicRisk.riskTier !== "SYSTEMIC_CRITICAL",
+    rooflinePlan.verdict === "ROOFLINE_OPTIMIZED",
+    spcYieldAudit.verdict !== "PROCESS_EXCURSION_HALT",
+    kalmanGncState.verdict !== "GNC_QUORUM_LOST",
     hygieneAudit.verdict === "HYGIENE_GOVERNED",
   ].every(Boolean);
   const payload = {
@@ -498,6 +507,9 @@ async function cmd_ship(commandContext) {
     edaFormalProof,
     apolloAirGapBundle,
     aladdinSystemicRisk,
+    rooflinePlan,
+    spcYieldAudit,
+    kalmanGncState,
     hygieneAudit,
   };
   if (isJson) {
@@ -505,7 +517,55 @@ async function cmd_ship(commandContext) {
     return;
   }
   console.log(
-    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, SLSA=${dsseAttestation.verified}, F1=${sweBenchmark.f1Score.toFixed(2)}, EDA=${edaFormalProof.verdict}, Apollo=${apolloAirGapBundle.verdict}, Aladdin=${aladdinSystemicRisk.riskTier}, Hygiene=${hygieneAudit.verdict}, Tokens=${repoMap.estimatedCompressedTokens})`,
+    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, SLSA=${dsseAttestation.verified}, F1=${sweBenchmark.f1Score.toFixed(2)}, EDA=${edaFormalProof.verdict}, Apollo=${apolloAirGapBundle.verdict}, Aladdin=${aladdinSystemicRisk.riskTier}, Roofline=${rooflinePlan.verdict}, SPC=${spcYieldAudit.verdict}, Kalman=${kalmanGncState.verdict}, Hygiene=${hygieneAudit.verdict}, Tokens=${repoMap.estimatedCompressedTokens})`,
+  );
+}
+
+async function cmd_roofline_plan(commandContext) {
+  const { args } = commandContext;
+  const isJson = args.includes("--json");
+  const hardwareName = readFlag(args, "hardware", "GLORIAN-TENSOR-SM90");
+  const memoryBudgetBytes = Number(readFlag(args, "budget-bytes", "67108864"));
+  const report = EosComputeGraphRooflinePlannerCore.planComputeGraphAndArena({
+    hardwareName,
+    memoryBudgetBytes: Number.isFinite(memoryBudgetBytes) ? memoryBudgetBytes : 67_108_864,
+  });
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+  console.log(
+    `\n[ROOFLINE PLANNER] ${report.verdict} | Hardware=${report.hardwareName} | Ridge=${report.ridgePointFlopsPerByte} FLOP/B | Fused=${report.fusedGroups.length} (${report.memoryTrafficSavedBytes}B saved) | Arena=${report.peakArenaBytes}B/${report.memoryBudgetBytes}B`,
+  );
+}
+
+async function cmd_spc_audit(commandContext) {
+  const { args } = commandContext;
+  const isJson = args.includes("--json");
+  const processId = readFlag(args, "process", "SUBNM-LITHO-SPC-01");
+  const rawSamples = readFlag(args, "samples", "");
+  const samples = rawSamples ? rawSamples.split(",").map((s) => Number(s.trim())) : undefined;
+  const report = EosStatisticalProcessYieldControlCore.auditProcessCapabilityAndYield({ processId, samples });
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+  console.log(
+    `\n[SIX-SIGMA SPC] ${report.verdict} | Cpk=${report.cpk} | Excursions=${report.outOfControlPointsCount} | CUSUMDrift=${report.cusumDriftDetected} | MurphyYield=${report.murphyYieldPercent}%`,
+  );
+}
+
+async function cmd_kalman_estimate(commandContext) {
+  const { args } = commandContext;
+  const isJson = args.includes("--json");
+  const vehicleId = readFlag(args, "vehicle", "STARSHIP-GNC-QUAD-01");
+  const report = EosKalmanStateEstimatorAndQuadVoterCore.estimateTrajectoryWithQuadVoter({ vehicleId });
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+  console.log(
+    `\n[KALMAN QUAD-VOTER] ${report.verdict} | Pos=${report.finalPosition} | Vel=${report.finalVelocity} | Isolated=${report.totalChannelsIsolated} | TraceP=${report.finalCovarianceTrace}`,
   );
 }
 
@@ -547,6 +607,9 @@ HANDLERS["bench:swe"] = cmd_bench_swe;
 HANDLERS["eda:prove"] = cmd_eda_prove;
 HANDLERS["apollo:bundle"] = cmd_apollo_bundle;
 HANDLERS["aladdin:stress"] = cmd_aladdin_stress;
+HANDLERS["roofline:plan"] = cmd_roofline_plan;
+HANDLERS["spc:audit"] = cmd_spc_audit;
+HANDLERS["kalman:estimate"] = cmd_kalman_estimate;
 HANDLERS["hygiene:audit"] = cmd_hygiene_audit;
 HANDLERS["ship"] = cmd_ship;
 

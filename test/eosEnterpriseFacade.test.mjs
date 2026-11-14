@@ -1061,5 +1061,21 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.deepEqual(hygieneAudit.breachedModules, []);
     assert.deepEqual(hygieneAudit.nearCeilingModules, []);
     assert.equal(hygieneAudit.sha256Receipt.length, 64);
+
+    // 53. roofline_compute_plan, spc_yield_audit, kalman_quad_vote (SPEC-251..SPEC-253)
+    const rooflinePlan = callFacade({ action: "roofline_compute_plan" });
+    assert.equal(rooflinePlan.action, "roofline_compute_plan");
+    assert.equal(rooflinePlan.verdict, "ROOFLINE_OPTIMIZED");
+    assert.equal(rooflinePlan.rooflineDigestSha256.length, 64);
+
+    const spcAudit = callFacade({ action: "spc_yield_audit" });
+    assert.equal(spcAudit.action, "spc_yield_audit");
+    assert.equal(spcAudit.verdict, "SIX_SIGMA_LOCKED");
+    assert.equal(spcAudit.spcDigestSha256.length, 64);
+
+    const kalmanVote = callFacade({ action: "kalman_quad_vote" });
+    assert.equal(kalmanVote.action, "kalman_quad_vote");
+    assert.equal(kalmanVote.verdict, "GNC_NOMINAL_LOCK");
+    assert.equal(kalmanVote.kalmanDigestSha256.length, 64);
   });
 });

@@ -86,6 +86,9 @@
     "./apollo-airgap": "./src/core/eosApolloAirGappedBundleOrchestratorCore.ts",
     "./aladdin-stress": "./src/core/eosAladdinSystemicRiskStressCore.ts",
     "./hygiene-governor": "./src/core/eosCliCatalogAndHygieneGovernorCore.ts",
+    "./roofline-planner": "./src/core/eosComputeGraphRooflinePlannerCore.ts",
+    "./spc-yield": "./src/core/eosStatisticalProcessYieldControlCore.ts",
+    "./kalman-voter": "./src/core/eosKalmanStateEstimatorAndQuadVoterCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {
@@ -307,7 +310,10 @@
     "bench:swe": "node bin/eos.mjs bench:swe",
     "eda:prove": "node bin/eos.mjs eda:prove",
     "apollo:bundle": "node bin/eos.mjs apollo:bundle",
-    "aladdin:stress": "node bin/eos.mjs aladdin:stress"
+    "aladdin:stress": "node bin/eos.mjs aladdin:stress",
+    "roofline:plan": "node bin/eos.mjs roofline:plan",
+    "spc:audit": "node bin/eos.mjs spc:audit",
+    "kalman:estimate": "node bin/eos.mjs kalman:estimate"
   },
   "engines": {
     "node": ">=22.18.0"

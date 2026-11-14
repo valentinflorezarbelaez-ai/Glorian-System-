@@ -42,6 +42,11 @@ import type {
 import { EosAladdinSystemicRiskStressCore } from "../../core/eosAladdinSystemicRiskStressCore.ts";
 import { EosCliCatalogAndHygieneGovernorCore } from "../../core/eosCliCatalogAndHygieneGovernorCore.ts";
 import type { ModuleLineCountInput } from "../../core/eosCliCatalogAndHygieneGovernorCore.types.ts";
+import { EosComputeGraphRooflinePlannerCore } from "../../core/eosComputeGraphRooflinePlannerCore.ts";
+import type { ComputeGraphNodeInput } from "../../core/eosComputeGraphRooflinePlannerCore.types.ts";
+import { EosStatisticalProcessYieldControlCore } from "../../core/eosStatisticalProcessYieldControlCore.ts";
+import { EosKalmanStateEstimatorAndQuadVoterCore } from "../../core/eosKalmanStateEstimatorAndQuadVoterCore.ts";
+import type { QuadTelemetryFrameInput } from "../../core/eosKalmanStateEstimatorAndQuadVoterCore.types.ts";
 import { EosCrdtStateSyncCore } from "../../core/eosCrdtStateSyncCore.ts";
 import { EosMerkleMountainRangeCore } from "../../core/eosMerkleMountainRangeCore.ts";
 import { EosVerifiableSecretSharingCore } from "../../core/eosVerifiableSecretSharingCore.ts";
@@ -335,6 +340,43 @@ function handleCliHygieneAudit(
   return { ...report, action: "cli_hygiene_audit" };
 }
 
+function handleRooflineComputePlan(args: Record<string, unknown> | undefined): Record<string, unknown> {
+  const report = EosComputeGraphRooflinePlannerCore.planComputeGraphAndArena({
+    hardwareName: optStringArg(args, "hardwareName"),
+    peakFlopsGiga: optNumArg(args, "peakFlopsGiga"),
+    memoryBandwidthGBps: optNumArg(args, "memoryBandwidthGBps"),
+    memoryBudgetBytes: optNumArg(args, "memoryBudgetBytes"),
+    alignBytes: optNumArg(args, "alignBytes"),
+    nodes: Array.isArray(args?.nodes) ? (args.nodes as ComputeGraphNodeInput[]) : undefined,
+  });
+  return { ...report, action: "roofline_compute_plan" };
+}
+
+function handleSpcYieldAudit(args: Record<string, unknown> | undefined): Record<string, unknown> {
+  const report = EosStatisticalProcessYieldControlCore.auditProcessCapabilityAndYield({
+    processId: optStringArg(args, "processId"),
+    samples: Array.isArray(args?.samples) ? (args.samples as number[]) : undefined,
+    lsl: optNumArg(args, "lsl"),
+    usl: optNumArg(args, "usl"),
+    target: optNumArg(args, "target"),
+    criticalAreaCm2: optNumArg(args, "criticalAreaCm2"),
+    defectDensityPerCm2: optNumArg(args, "defectDensityPerCm2"),
+  });
+  return { ...report, action: "spc_yield_audit" };
+}
+
+function handleKalmanQuadVote(args: Record<string, unknown> | undefined): Record<string, unknown> {
+  const report = EosKalmanStateEstimatorAndQuadVoterCore.estimateTrajectoryWithQuadVoter({
+    vehicleId: optStringArg(args, "vehicleId"),
+    frames: Array.isArray(args?.frames) ? (args.frames as QuadTelemetryFrameInput[]) : undefined,
+    dtSeconds: optNumArg(args, "dtSeconds"),
+    processNoiseQ: optNumArg(args, "processNoiseQ"),
+    measurementNoiseR: optNumArg(args, "measurementNoiseR"),
+    faultThreshold: optNumArg(args, "faultThreshold"),
+  });
+  return { ...report, action: "kalman_quad_vote" };
+}
+
 function handleCrdtMmrAction(
   action: string,
   args: Record<string, any> | undefined,
@@ -505,6 +547,9 @@ function dispatchEdaApolloAladdinActions(
   if (action === "apollo_airgap_bundle") return handleApolloAirGapBundle(args, deps);
   if (action === "aladdin_systemic_stress") return handleAladdinSystemicStress(args, deps);
   if (action === "cli_hygiene_audit") return handleCliHygieneAudit(args, deps);
+  if (action === "roofline_compute_plan") return handleRooflineComputePlan(args);
+  if (action === "spc_yield_audit") return handleSpcYieldAudit(args);
+  if (action === "kalman_quad_vote") return handleKalmanQuadVote(args);
   return dispatchCrdtMmrVssActions(action, args);
 }
 

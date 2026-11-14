@@ -1,5 +1,5 @@
 /**
- * Synchronized CLI Help Catalog for `eos help` and `eos help --all` (v75.0.0, SPEC-001..SPEC-250).
+ * Synchronized CLI Help Catalog for `eos help` and `eos help --all` (v75.0.0, SPEC-001..SPEC-253).
  * Audited for 100% handler parity by EosCliCatalogAndHygieneGovernorCore (SPEC-250).
  */
 
@@ -15,7 +15,10 @@ export const QUICK_HELP_TEXT = `
   eos turbo                  Verificación en memoria con telemetría en microsegundos (<350ms)
   eos diff:live [--json]     Inspecciona el git diff vivo (secretos, SQL DDL, Regla Beyoncé)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
-  eos ship [--ticket=ID]     Pipeline maestro pre-PR (Diff, Contract, SARIF, Fleet, SLSA, SWE, EDA, Apollo, Aladdin, Hygiene)
+  eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
+  eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
+  eos kalman:estimate [--json] Estimador Kalman cinemático + votador 4-canales QMR (SPEC-253)
+  eos ship [--ticket=ID]     Pipeline maestro pre-PR (Diff, Contract, SARIF, Fleet, SLSA, SWE, EDA, Apollo, Aladdin, Roofline, SPC, Kalman, Hygiene)
 
 🛡️ SEGURIDAD, CADENA DE SUMINISTRO & FORMAL METHODS:
   eos sbom                   Genera inventario CycloneDX v1.5 con atestación SHA-256
@@ -40,7 +43,7 @@ export const QUICK_HELP_TEXT = `
 `;
 
 export const EXHAUSTIVE_HELP_TEXT = `
-Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-250):
+Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos turbo                      Verificación ultrarrápida en memoria con telemetría en microsegundos
   eos verify                     Ejecuta las 7 aduanas de seguridad SecDevOps (fail-closed)
   eos audit                      Audita en paralelo todos los repositorios de la flota
@@ -150,7 +153,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-250):
   eos apollo:bundle [--write]    Paquete soberano Air-Gapped con Merkle + Ed25519 DSSE (SPEC-248)
   eos aladdin:stress [--trials=N] Simulación Monte Carlo VaR 95%/99%, CVaR 99% y contagio (SPEC-249)
   eos hygiene:audit [--json]     Auditoría Layer-0 de paridad CLI y margen <=800 líneas (SPEC-250)
-  eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-236..SPEC-250
+  eos roofline:plan [--json]     Modelo Roofline NVIDIA, fusión de operadores y arena 64B (SPEC-251)
+  eos spc:audit [--json]         Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
+  eos kalman:estimate [--json]   Estimador Kalman cinemático + votador QMR 4-canales (SPEC-253)
+  eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-236..SPEC-253
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
 📦 ÍNDICE DE ALIAS Y SUBCOMANDOS ESPECIALIZADOS (100% REGISTRADOS):

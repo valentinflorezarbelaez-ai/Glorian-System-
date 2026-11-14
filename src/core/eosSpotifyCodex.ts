@@ -709,62 +709,38 @@ spec:
     const systemName = opts.systemName || "local-system";
 
     const catalogInfoYaml = [
-      `apiVersion: backstage.io/v1alpha1`,
-      `kind: Component`,
-      `metadata:`,
+      "apiVersion: backstage.io/v1alpha1",
+      "kind: Component",
+      "metadata:",
       `  name: ${JSON.stringify(serviceName)}`,
       `  title: ${JSON.stringify(serviceName)}`,
       `  description: ${JSON.stringify(description)}`,
-      `  annotations:`,
-      `    backstage.io/techdocs-ref: dir:.`,
-      `  tags:`,
+      "  annotations:",
+      "    backstage.io/techdocs-ref: dir:.",
+      "  tags:",
       `    - ${serviceType}`,
-      `spec:`,
+      "spec:",
       `  type: ${JSON.stringify(serviceType)}`,
-      `  lifecycle: experimental`,
+      "  lifecycle: experimental",
       `  owner: ${JSON.stringify(ownerSquad)}`,
       `  system: ${JSON.stringify(systemName)}`,
-      `  providesApis:`,
+      "  providesApis:",
       `    - ${JSON.stringify(`${serviceName}-api`)}`,
     ].join("\n");
 
-    const mkdocsYaml = [
-      `site_name: ${JSON.stringify(`${serviceName} Documentation`)}`,
-      `site_description: ${JSON.stringify(description)}`,
-      `plugins:`,
-      `  - techdocs-core`,
-      `nav:`,
-      `  - Overview: index.md`,
-      `  - Architecture: architecture.md`,
-      `  - Runbook: runbook.md`,
-      `  - API Contract: api.md`,
-    ].join("\n");
+    const mkdocsYaml = `site_name: ${JSON.stringify(`${serviceName} Documentation`)}\nsite_description: ${JSON.stringify(description)}\nplugins:\n  - techdocs-core\nnav:\n  - Overview: index.md\n  - Architecture: architecture.md\n  - Runbook: runbook.md\n  - API Contract: api.md`;
 
-    const techdocsIndexMd = [
-      `# ${serviceName}`,
-      "",
-      `> ${description}`,
-      "",
-      `## Overview`,
-      `This is a starter template. Replace placeholders and verify architecture, ownership, observability, and release requirements.`,
-    ].join("\n");
+    const techdocsIndexMd = `# ${serviceName}\n\n> ${description}\n\n## Overview\nThis is a starter template. Replace placeholders and verify architecture, ownership, observability, and release requirements.`;
 
     const runbookMd = [
       `# 🚨 On-Call Runbook: ${serviceName}`,
-      `**Owner:** ${ownerSquad} | **Service tier:** Not assigned`,
-      "",
-      `## Service-Level Objectives (SLO)`,
-      `- Availability: define from product requirements.`,
-      `- Latency: define from product requirements.`,
-      `- Error rate: define from product requirements.`,
-      "",
-      `## Common Alerts & Remediation Procedures`,
-      `### Placeholder: latency alert`,
-      `1. Add the service dashboard and alert links.`,
-      `2. Document actual diagnostic and mitigation steps.`,
-      "",
-      `### Placeholder: process restart or crash`,
-      `1. Add platform-specific log and recovery steps after review.`,
+      `**Owner:** ${ownerSquad} | **Service tier:** Not assigned\n`,
+      "## Service-Level Objectives (SLO)",
+      "- Availability: define from product requirements.\n- Latency: define from product requirements.\n- Error rate: define from product requirements.\n",
+      "## Common Alerts & Remediation Procedures",
+      "### Placeholder: latency alert",
+      "1. Add the service dashboard and alert links.\n2. Document actual diagnostic and mitigation steps.\n",
+      "### Placeholder: process restart or crash\n1. Add platform-specific log and recovery steps after review.",
     ].join("\n");
 
     return {

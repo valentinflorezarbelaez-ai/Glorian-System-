@@ -472,16 +472,14 @@ async function cmd_pbft_consensus_153(commandContext) {
       console.log(JSON.stringify(slashingReceipt, null, 2));
       return;
     }
-    console.log(`\n===============================================================`);
-    console.log(`  GLORIAN PBFT BYZANTINE EQUIVOCATION SLASHING RECEIPT`);
-    console.log(`===============================================================`);
-    console.log(`  Slashed Node     : ${slashingReceipt.slashedNodeId}`);
-    console.log(`  Evidence Type    : ${slashingReceipt.evidenceType}`);
-    console.log(`  Digest A         : sha256:${slashingReceipt.digestA}`);
-    console.log(`  Digest B         : sha256:${slashingReceipt.digestB}`);
-    console.log(`  Receipt SHA-256  : sha256:${slashingReceipt.sha256Receipt}`);
-    console.log(`  Timestamp        : ${slashingReceipt.timestamp}`);
-    console.log(`===============================================================\n`);
+    emitBannerBox("GLORIAN PBFT BYZANTINE EQUIVOCATION SLASHING RECEIPT", [
+      `Slashed Node     : ${slashingReceipt.slashedNodeId}`,
+      `Evidence Type    : ${slashingReceipt.evidenceType}`,
+      `Digest A         : sha256:${slashingReceipt.digestA}`,
+      `Digest B         : sha256:${slashingReceipt.digestB}`,
+      `Receipt SHA-256  : sha256:${slashingReceipt.sha256Receipt}`,
+      `Timestamp        : ${slashingReceipt.timestamp}`,
+    ]);
     return;
   }
 
@@ -499,19 +497,17 @@ async function cmd_pbft_consensus_153(commandContext) {
     return;
   }
 
-  console.log(`\n===============================================================`);
-  console.log(`  GLORIAN LAYER-0 PBFT CONSENSUS ENGINE (SPEC-210)`);
-  console.log(`===============================================================`);
-  console.log(`  Cluster ID       : ${status.clusterId}`);
-  console.log(`  Total Nodes (N)  : ${status.totalNodes} validators`);
-  console.log(`  Max Byzantine (f): ${status.f} faulty nodes tolerated`);
-  console.log(`  Quorum Size      : ${status.quorumSize} matching votes (2f + 1)`);
-  console.log(`  Current Primary  : ${status.primaryNodeId} (View: ${status.currentView})`);
-  console.log(`  Active Quorum?   : ${status.activeQuorum ? "YES (ONLINE)" : "NO (DEGRADED)"}`);
-  console.log(`  Committed Seq    : #${execReceipt.sequenceNumber}`);
-  console.log(`  State Hash       : sha256:${execReceipt.fsmStateHash}`);
-  console.log(`  Execution Receipt: sha256:${execReceipt.sha256Receipt}`);
-  console.log(`===============================================================\n`);
+  emitBannerBox("GLORIAN LAYER-0 PBFT CONSENSUS ENGINE (SPEC-210)", [
+    `Cluster ID       : ${status.clusterId}`,
+    `Total Nodes (N)  : ${status.totalNodes} validators`,
+    `Max Byzantine (f): ${status.f} faulty nodes tolerated`,
+    `Quorum Size      : ${status.quorumSize} matching votes (2f + 1)`,
+    `Current Primary  : ${status.primaryNodeId} (View: ${status.currentView})`,
+    `Active Quorum?   : ${status.activeQuorum ? "YES (ONLINE)" : "NO (DEGRADED)"}`,
+    `Committed Seq    : #${execReceipt.sequenceNumber}`,
+    `State Hash       : sha256:${execReceipt.fsmStateHash}`,
+    `Execution Receipt: sha256:${execReceipt.sha256Receipt}`,
+  ]);
 }
 
 async function cmd_homomorphic_lattice_154(commandContext) {
@@ -534,15 +530,13 @@ async function cmd_homomorphic_lattice_154(commandContext) {
       console.log(JSON.stringify(keypair, null, 2));
       return;
     }
-    console.log(`\n===============================================================`);
-    console.log(`  GLORIAN LAYER-0 HOMOMORPHIC LATTICE KEYGEN (SPEC-211)`);
-    console.log(`===============================================================`);
-    console.log(`  Ring Dimension (N) : ${keypair.publicKey.params.polyDegree}`);
-    console.log(`  Modulus (q)        : ${keypair.publicKey.params.ciphertextModulus}`);
-    console.log(`  Plaintext (t)      : ${keypair.publicKey.params.plaintextModulus}`);
-    console.log(`  Key Fingerprint    : sha256:${keypair.publicKey.keyFingerprint}`);
-    console.log(`  Created At         : ${keypair.createdAt}`);
-    console.log(`===============================================================\n`);
+    emitBannerBox("GLORIAN LAYER-0 HOMOMORPHIC LATTICE KEYGEN (SPEC-211)", [
+      `Ring Dimension (N) : ${keypair.publicKey.params.polyDegree}`,
+      `Modulus (q)        : ${keypair.publicKey.params.ciphertextModulus}`,
+      `Plaintext (t)      : ${keypair.publicKey.params.plaintextModulus}`,
+      `Key Fingerprint    : sha256:${keypair.publicKey.keyFingerprint}`,
+      `Created At         : ${keypair.createdAt}`,
+    ]);
     return;
   }
 
@@ -557,13 +551,11 @@ async function cmd_homomorphic_lattice_154(commandContext) {
       console.log(JSON.stringify(ct, null, 2));
       return;
     }
-    console.log(`\n===============================================================`);
-    console.log(`  GLORIAN LAYER-0 HOMOMORPHIC ENCRYPTION (SPEC-211)`);
-    console.log(`===============================================================`);
-    console.log(`  Ciphertext Digest  : sha256:${ct.ciphertextDigest}`);
-    console.log(`  Scale Delta (Δ)    : ${ct.scaleDelta}`);
-    console.log(`  Noise Budget (bits): ${ct.noiseBudgetBits} bits`);
-    console.log(`===============================================================\n`);
+    emitBannerBox("GLORIAN LAYER-0 HOMOMORPHIC ENCRYPTION (SPEC-211)", [
+      `Ciphertext Digest  : sha256:${ct.ciphertextDigest}`,
+      `Scale Delta (Δ)    : ${ct.scaleDelta}`,
+      `Noise Budget (bits): ${ct.noiseBudgetBits} bits`,
+    ]);
     return;
   }
 
@@ -576,15 +568,13 @@ async function cmd_homomorphic_lattice_154(commandContext) {
     return;
   }
 
-  console.log(`\n===============================================================`);
-  console.log(`  GLORIAN LAYER-0 HOMOMORPHIC COMPUTATION (SPEC-211)`);
-  console.log(`===============================================================`);
-  console.log(`  Operation          : Blind Addition (ctA + ctB)`);
-  console.log(`  Decrypted Result   : [${decResult.plaintext.slice(0, 4).join(", ")}]`);
-  console.log(`  Remaining Noise    : ${decResult.noiseBudgetBits} bits`);
-  console.log(`  Receipt ID         : ${decResult.receipt.receiptId}`);
-  console.log(`  Receipt SHA-256    : sha256:${decResult.receipt.receiptSha256}`);
-  console.log(`===============================================================\n`);
+  emitBannerBox("GLORIAN LAYER-0 HOMOMORPHIC COMPUTATION (SPEC-211)", [
+    "Operation          : Blind Addition (ctA + ctB)",
+    `Decrypted Result   : [${decResult.plaintext.slice(0, 4).join(", ")}]`,
+    `Remaining Noise    : ${decResult.noiseBudgetBits} bits`,
+    `Receipt ID         : ${decResult.receipt.receiptId}`,
+    `Receipt SHA-256    : sha256:${decResult.receipt.receiptSha256}`,
+  ]);
 }
 
 async function cmd_secure_mpc_155(commandContext) {
@@ -623,19 +613,19 @@ async function cmd_secure_mpc_155(commandContext) {
       );
       return;
     }
-    console.log(`\n===============================================================`);
-    console.log(`  GLORIAN LAYER-0 SECURE MPC SHAMIR SPLIT (SPEC-212)`);
-    console.log(`===============================================================`);
-    console.log(`  Threshold (k)      : ${threshold} shares required`);
-    console.log(`  Total Parties (N)  : ${totalParties} shares distributed`);
-    console.log(`  Prime Modulus      : ${DEFAULT_MPC_PRIME.toString()}`);
-    console.log(`  Shares Produced    : ${shares.length}`);
+    const shareRows = [];
     for (let i = 0; i < Math.min(3, shares.length); i++) {
-      console.log(
-        `    Share #${shares[i].x}        : y=${shares[i].y.toString().slice(0, 8)}... [sha256:${shares[i].commitment.slice(0, 8)}...]`,
+      shareRows.push(
+        `  Share #${shares[i].x}        : y=${shares[i].y.toString().slice(0, 8)}... [sha256:${shares[i].commitment.slice(0, 8)}...]`,
       );
     }
-    console.log(`===============================================================\n`);
+    emitBannerBox("GLORIAN LAYER-0 SECURE MPC SHAMIR SPLIT (SPEC-212)", [
+      `Threshold (k)      : ${threshold} shares required`,
+      `Total Parties (N)  : ${totalParties} shares distributed`,
+      `Prime Modulus      : ${DEFAULT_MPC_PRIME.toString()}`,
+      `Shares Produced    : ${shares.length}`,
+      ...shareRows,
+    ]);
     return;
   }
 
