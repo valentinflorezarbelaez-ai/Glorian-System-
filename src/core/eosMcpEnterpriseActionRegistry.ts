@@ -1,6 +1,6 @@
 /**
  * src/core/eosMcpEnterpriseActionRegistry.ts
- * Exact 167-Action Registry for `eos_enterprise_workspace` (`CHANGE-129`).
+ * Exact 172-Action Registry for `eos_enterprise_workspace` (`CHANGE-130`).
  * Enables fail-closed JSON-RPC `-32602` (`ENUM_VIOLATION`) validation without bloating `tools/list`.
  * Zero runtime NPM dependencies (Strict Layer-0 Pure).
  */
@@ -23,6 +23,7 @@ export const ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS: ReadonlySet<string> = new Se
   "bp_commit",
   "bp_prove",
   "bp_verify",
+  "bytecode_symbolic_gas_prover",
   "canary_rollback_plan",
   "cbdc_rtgs_gridlock",
   "cli_hygiene_audit",
@@ -71,6 +72,7 @@ export const ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS: ReadonlySet<string> = new Se
   "hotstuff_status",
   "hotstuff_vote",
   "hypersonic_scramjet_aero",
+  "insar_crustal_deformation",
   "inspect",
   "intoto_slsa_attest",
   "issue_bridge_parse",
@@ -103,10 +105,12 @@ export const ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS: ReadonlySet<string> = new Se
   "mpc_combine",
   "mpc_multiply",
   "mpc_split",
+  "mpd_magnetoplasmadynamic_thruster",
   "mpt_prove",
   "mpt_put",
   "mpt_verify",
   "onboard",
+  "optical_atomic_clock_sync",
   "otlp_trace_create",
   "otlp_trace_export",
   "patch",
@@ -123,6 +127,7 @@ export const ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS: ReadonlySet<string> = new Se
   "put_action",
   "put_blob",
   "quantum_qec_decode",
+  "quantum_repeater_bbpssw",
   "r1cs_prove",
   "r1cs_synthesize",
   "r1cs_verify",

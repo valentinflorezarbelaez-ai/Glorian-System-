@@ -608,28 +608,10 @@ export class EosRaftCluster {
   } {
     assertPrecondition(command !== undefined, "Command must be defined");
 
-    if (!this._leaderId) {
-      return {
-        success: false,
-        committed: false,
-        leaderId: null,
-        term: 0,
-        logIndex: 0,
-        replicatedCount: 0,
-      };
-    }
-
-    const leader = this._nodes.get(this._leaderId);
+    const leader = this._leaderId ? this._nodes.get(this._leaderId) : undefined;
     if (!leader || leader.role !== "LEADER") {
       this._leaderId = null;
-      return {
-        success: false,
-        committed: false,
-        leaderId: null,
-        term: 0,
-        logIndex: 0,
-        replicatedCount: 0,
-      };
+      return { success: false, committed: false, leaderId: null, term: 0, logIndex: 0, replicatedCount: 0 };
     }
 
     // Leader appends command to local log

@@ -1,0 +1,14 @@
+# TASKS-130 — Implementation Checklist (`CHANGE-130` / `SPEC-264`..`SPEC-268`)
+
+- [x] `T-01`: Author `INTAKE-130`, `CHANGE-130`, `SPEC-264`..`SPEC-268`, `PLAN-130`, `TASKS-130`, and record `AUTH-2026-11-14-OPTICAL-CLOCK-INSAR-MPD-QREPEATER-EVM-FRONTIER` (`LEVEL 3`).
+- [x] `T-02`: Author 5 formal TLA+ models (`DeepSpaceOpticalNav.tla`, `CryogenicJosephsonSfq.tla`, `SubseaDwdmShannon.tla`, `HypersonicScramjetAero.tla`, `CbdcRtgsGridlock.tla`), add 5 `200`-step verifiers to `scripts/tla/tlaSimulationsPart4.mjs`, and wire into `scripts/verify-formal-tla.mjs` (`50 -> 55` models, `11,200` total steps).
+- [x] `T-03`: Decompress Top-5 largest modules (`src/core/eosGentlemanAutoUpdater.ts`, `src/core/eosMerklePatriciaTrieCore.ts`, `src/core/eosRaftConsensusEngine.ts`, `src/core/eosSpotifyAgenticFactory.ts`, `src/core/eosHybridKnowledgeEngine.ts`) to `<= 738` lines (`minHeadroomLines >= 55`) with zero public contract breakage.
+- [x] `T-04`: Expand `src/core/eosMcpEnterpriseActionRegistry.ts` from `167` to `172` actions (`optical_atomic_clock_sync`, `insar_crustal_deformation`, `mpd_magnetoplasmadynamic_thruster`, `quantum_repeater_bbpssw`, `bytecode_symbolic_gas_prover`).
+- [x] `T-05`: Implement Module 84 (`SPEC-264` — Optical Lattice Atomic Clock & Relativistic Geodesy Sync) in `src/core/eosOpticalLatticeAtomicClockRelativisticSyncCore{.types,}.ts`.
+- [x] `T-06`: Implement Module 85 (`SPEC-265` — Interferometric SAR Crustal Deformation & Coherence) in `src/core/eosInterferometricSarDeformationCore{.types,}.ts`.
+- [x] `T-07`: Implement Module 86 (`SPEC-266` — Magnetoplasmadynamic Thruster MHD) in `src/core/eosMagnetoplasmadynamicThrusterMhdCore{.types,}.ts`.
+- [x] `T-08`: Implement Module 87 (`SPEC-267` — Quantum Entanglement Repeater BBPSSW) in `src/core/eosQuantumEntanglementRepeaterBbpsswCore{.types,}.ts`.
+- [x] `T-09`: Implement Module 88 (`SPEC-268` — Smart-Contract Bytecode Gas & Symbolic CEI Verifier) in `src/core/eosSmartContractBytecodeGasSymbolicVerifierCore{.types,}.ts`.
+- [x] `T-10`: Wire Modules 84–88 into `src/core/index.ts`, `package.json` (`exports` + `scripts`), `src/mcp/tools/eosMcpPhase7FrontierExt4.ts`, `bin/commands/` (`clock:optical`, `insar:deform`, `mpd:thruster`, `qnet:repeater`, `evm:prove` + `ship`), `bin/commands/cliHelpCatalog.mjs`, and `docs/DEVELOPER_GUIDE.md` (`347 Comandos` / `347/347`).
+- [x] `T-11`: Author `test/eosNationalLabsFrontier264To268.test.mjs` (`BDD-1366`..`BDD-1390`), update `test/eosEliteConsortiaFrontier254To258.test.mjs` & `test/eosDeepSpaceCryoSubseaScramjetCbdc259To263.test.mjs` (`172` actions), and add step `#57` in `test/eosEnterpriseFacade.test.mjs`.
+- [x] `T-12`: Verify all CI/static/formal/hygiene gates (`npm run test:ci`, `minHeadroomLines >= 55`, `55` TLA+ models, `347/347` CLI parity, `268` specs), mark `[x]`, commit, seal Freeze Gate, and push to `origin/main`.

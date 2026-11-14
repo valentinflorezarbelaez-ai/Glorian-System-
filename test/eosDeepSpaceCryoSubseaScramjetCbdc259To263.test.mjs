@@ -38,8 +38,8 @@ async function callWorkspaceMcp(action, extraArgs = {}) {
   return JSON.parse(res.result.content[0].text);
 }
 
-test("CHANGE-129 Registry: Extended enterprise workspace action catalog reaches 167 actions", () => {
-  assert.equal(ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS.size, 167);
+test("CHANGE-129 Registry: Extended enterprise workspace action catalog reaches 172 actions", () => {
+  assert.equal(ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS.size, 172);
   for (const action of [
     "deep_space_optical_nav",
     "cryogenic_josephson_sfq",

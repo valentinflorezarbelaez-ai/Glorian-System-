@@ -5,14 +5,13 @@ async function cmd_mcts_policy_value_147(commandContext) {
   const isJson = args.includes("--json");
   const { EosMctsPolicyValueMesh } = await import("../../src/core/eosMctsPolicyValueMesh.ts");
 
-  const simArg = args.find((a) => a.startsWith("--simulations="));
-  const simulations = simArg ? parseInt(simArg.split("=")[1], 10) : 80;
-
-  const puctArg = args.find((a) => a.startsWith("--c-puct="));
-  const cPuct = puctArg ? parseFloat(puctArg.split("=")[1]) : 1.414;
-
-  const tempArg = args.find((a) => a.startsWith("--temp="));
-  const temperature = tempArg ? parseFloat(tempArg.split("=")[1]) : 0.0;
+  const parseOpt = (pre, fb, fn = parseFloat) => {
+    const a = args.find((x) => x.startsWith(pre));
+    return a ? fn(a.split("=")[1]) : fb;
+  };
+  const simulations = parseOpt("--simulations=", 80, (v) => parseInt(v, 10));
+  const cPuct = parseOpt("--c-puct=", 1.414);
+  const temperature = parseOpt("--temp=", 0.0);
 
   // Cloud Refactoring / Architecture Migration Domain
   const problemName = args.filter((a) => !a.startsWith("-") && a !== command)[0] || "cloud_migration";

@@ -210,30 +210,13 @@ export class EosHybridKnowledgeEngine {
       const token = tokens[pos];
       const posWeight = 1.0 + 1.0 / (pos + 1);
 
-      // Whole-word hash projection
-      let wordHash = 0x811c9dc5;
-      for (let i = 0; i < token.length; i++) {
-        wordHash ^= token.charCodeAt(i);
-        wordHash = Math.imul(wordHash, 0x01000193);
-      }
-      const wordBucket = (wordHash >>> 0) % dim;
-      const wordSign = wordHash & 0x80000000 ? 1.0 : -1.0;
-      vector[wordBucket] += wordSign * posWeight * 2.0;
-
-      // Subword character 3-grams
-      if (token.length >= 3) {
-        for (let i = 0; i <= token.length - 3; i++) {
-          const gram = token.slice(i, i + 3);
-          let gramHash = 0x811c9dc5;
-          for (let j = 0; j < 3; j++) {
-            gramHash ^= gram.charCodeAt(j);
-            gramHash = Math.imul(gramHash, 0x01000193);
-          }
-          const gramBucket = (gramHash >>> 0) % dim;
-          const gramSign = gramHash & 0x80000000 ? 1.0 : -1.0;
-          vector[gramBucket] += gramSign * posWeight * 0.75;
-        }
-      }
+      const projectFeature = (text: string, weight: number): void => {
+        let h = 0x811c9dc5;
+        for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 0x01000193);
+        vector[(h >>> 0) % dim] += (h & 0x80000000 ? 1.0 : -1.0) * posWeight * weight;
+      };
+      projectFeature(token, 2.0);
+      for (let i = 0; i <= token.length - 3; i++) projectFeature(token.slice(i, i + 3), 0.75);
     }
 
     // L2 unit-sphere normalization
@@ -544,20 +527,20 @@ export class EosHybridKnowledgeEngine {
     }
   }
 
-  private searchVector(query: string, topK: number, categoryFilter: DocCategory | null): HybridSearchResult[] {
+  private rankVectorMatches(query: string, limit: number, categoryFilter: DocCategory | null) {
     const queryVec = this.generateDenseEmbedding(query);
     const scored: Array<{ docId: string; score: number }> = [];
-
     for (const [docId, entry] of this.vectorCache.entries()) {
       if (categoryFilter && entry.category !== categoryFilter) continue;
       const score = this.cosineSimilarity(queryVec, entry.vector);
-      if (score > 0.01) {
-        scored.push({ docId, score });
-      }
+      if (score > 0.01) scored.push({ docId, score });
     }
-
     scored.sort((a, b) => b.score - a.score);
-    const topScored = scored.slice(0, topK);
+    return scored.slice(0, limit);
+  }
+
+  private searchVector(query: string, topK: number, categoryFilter: DocCategory | null): HybridSearchResult[] {
+    const topScored = this.rankVectorMatches(query, topK, categoryFilter);
 
     return topScored.map((item, idx) => {
       const meta = this.getDocument(item.docId);
@@ -578,18 +561,7 @@ export class EosHybridKnowledgeEngine {
     const lexicalResults = this.searchLexical(query, candidateLimit, categoryFilter);
 
     // Vector search
-    const queryVec = this.generateDenseEmbedding(query);
-    const vectorScored: Array<{ docId: string; score: number }> = [];
-
-    for (const [docId, entry] of this.vectorCache.entries()) {
-      if (categoryFilter && entry.category !== categoryFilter) continue;
-      const score = this.cosineSimilarity(queryVec, entry.vector);
-      if (score > 0.01) {
-        vectorScored.push({ docId, score });
-      }
-    }
-    vectorScored.sort((a, b) => b.score - a.score);
-    const topVector = vectorScored.slice(0, candidateLimit);
+    const topVector = this.rankVectorMatches(query, candidateLimit, categoryFilter);
 
     // Reciprocal Rank Fusion (RRF)
     const k = EosHybridKnowledgeEngine.RRF_K;

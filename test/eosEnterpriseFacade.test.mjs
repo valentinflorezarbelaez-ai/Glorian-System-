@@ -1155,5 +1155,31 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(cbdcRtgs.action, "cbdc_rtgs_gridlock");
     assert.equal(cbdcRtgs.regime, "MULTILATERAL_LSM_CLEARED");
     assert.equal(cbdcRtgs.cbdcRtgsDigestSha256.length, 64);
+
+    // 57. Optical Lattice Clock Sync, InSAR Crustal Deformation, MPD Thruster MHD, Quantum Repeater BBPSSW & EVM Bytecode Symbolic Prover (SPEC-264..268)
+    const opticalClock = callFacade({ action: "optical_atomic_clock_sync" });
+    assert.equal(opticalClock.action, "optical_atomic_clock_sync");
+    assert.equal(opticalClock.regime, "FEMTOSECOND_TAI_LOCKED");
+    assert.equal(opticalClock.opticalClockDigestSha256.length, 64);
+
+    const insarDeform = callFacade({ action: "insar_crustal_deformation" });
+    assert.equal(insarDeform.action, "insar_crustal_deformation");
+    assert.equal(insarDeform.regime, "PHASE_UNWRAPPED_COHERENT");
+    assert.equal(insarDeform.insarDeformationDigestSha256.length, 64);
+
+    const mpdThruster = callFacade({ action: "mpd_magnetoplasmadynamic_thruster" });
+    assert.equal(mpdThruster.action, "mpd_magnetoplasmadynamic_thruster");
+    assert.equal(mpdThruster.regime, "LORENTZ_PLASMA_ACCELERATION_LOCKED");
+    assert.equal(mpdThruster.mpdThrusterDigestSha256.length, 64);
+
+    const qnetRepeater = callFacade({ action: "quantum_repeater_bbpssw" });
+    assert.equal(qnetRepeater.action, "quantum_repeater_bbpssw");
+    assert.equal(qnetRepeater.regime, "BELL_PAIR_DISTILLATION_LOCKED");
+    assert.equal(qnetRepeater.quantumRepeaterDigestSha256.length, 64);
+
+    const evmProve = callFacade({ action: "bytecode_symbolic_gas_prover" });
+    assert.equal(evmProve.action, "bytecode_symbolic_gas_prover");
+    assert.equal(evmProve.regime, "SYMBOLIC_GAS_AND_CEI_PROVED");
+    assert.equal(evmProve.bytecodeGasDigestSha256.length, 64);
   });
 });

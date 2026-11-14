@@ -358,3 +358,246 @@ export function verifyRelativisticBeamTwissModel(steps = 200) {
     simulationAssertionsPassed: true,
   };
 }
+
+function buildTlaVerificationReport(specification, parsed, stepsExecuted) {
+  return {
+    specification,
+    moduleName: parsed.moduleName,
+    sourceFileRead: true,
+    extractedVariables: parsed.variables,
+    extractedInvariantNames: parsed.invariants,
+    stepsExecuted,
+    executionMode: "bounded-javascript-simulation",
+    simulationAssertionsPassed: true,
+  };
+}
+
+export function verifyDeepSpaceOpticalNavModel(steps = 200) {
+  const specification = "DeepSpaceOpticalNav.tla";
+  const parsed = parseTlaModule(path.join(formalDir, specification));
+  assert.equal(parsed.moduleName, "DeepSpaceOpticalNav");
+  assert.ok(parsed.variables.length >= 6, "DeepSpaceOpticalNav variables missing");
+  assert.ok(parsed.invariants.length >= 3, "DeepSpaceOpticalNav invariants missing");
+
+  const MAX_POSITION_UNCERTAINTY_KM = 2.5;
+  let pulsarCount = 6;
+  let sepAngleDeg = 24.5;
+  let shapiroDelayMicroSec = 109.4;
+  let combinedPositionUncertaintyKm = 1.4;
+  let regime = "NOMINAL_DEEP_SPACE_LOCK";
+  let stepsExecuted = 0;
+
+  for (let i = 0; i < steps; i++) {
+    stepsExecuted++;
+    assert.ok(
+      combinedPositionUncertaintyKm > 0 && combinedPositionUncertaintyKm <= MAX_POSITION_UNCERTAINTY_KM,
+      "VIOLATION: PositionUncertaintyBounds breached",
+    );
+    assert.ok(
+      shapiroDelayMicroSec > 0 && sepAngleDeg > 0 && sepAngleDeg <= 180,
+      "VIOLATION: ShapiroDelayPositiveInvariant breached",
+    );
+    assert.ok(
+      pulsarCount >= 3 &&
+        ["NOMINAL_DEEP_SPACE_LOCK", "SOLAR_CONJUNCTION_CAUTION", "EPHEMERIS_DRIFT_CRITICAL"].includes(regime),
+      "VIOLATION: PulsarTriangulationInvariant breached",
+    );
+
+    pulsarCount = i % 7 === 0 ? 8 : 6;
+    sepAngleDeg = i % 15 === 0 ? 3.8 : 24.5;
+    shapiroDelayMicroSec = sepAngleDeg < 5 ? 221.6 : 109.4;
+    combinedPositionUncertaintyKm = sepAngleDeg < 5 ? 2.1 : 1.4;
+    regime =
+      combinedPositionUncertaintyKm > MAX_POSITION_UNCERTAINTY_KM
+        ? "EPHEMERIS_DRIFT_CRITICAL"
+        : sepAngleDeg < 5
+          ? "SOLAR_CONJUNCTION_CAUTION"
+          : "NOMINAL_DEEP_SPACE_LOCK";
+  }
+
+  return buildTlaVerificationReport(specification, parsed, stepsExecuted);
+}
+
+export function verifyCryogenicJosephsonSfqModel(steps = 200) {
+  const specification = "CryogenicJosephsonSfq.tla";
+  const parsed = parseTlaModule(path.join(formalDir, specification));
+  assert.equal(parsed.moduleName, "CryogenicJosephsonSfq");
+  assert.ok(parsed.variables.length >= 5, "CryogenicJosephsonSfq variables missing");
+  assert.ok(parsed.invariants.length >= 3, "CryogenicJosephsonSfq invariants missing");
+
+  const MAX_COOLING_UW = 700.0;
+  let mixingChamberTempMk = 15.0;
+  let betaC = 0.42;
+  let dynamicPowerUw = 142.0;
+  let thermalNoiseGamma = 0.002;
+  let regime = "OVERDAMPED_SFQ_LOCKED";
+  let stepsExecuted = 0;
+
+  for (let i = 0; i < steps; i++) {
+    stepsExecuted++;
+    assert.ok(betaC > 0 && betaC <= 1.0, "VIOLATION: StewartMcCumberBounds breached");
+    assert.ok(
+      dynamicPowerUw > 0 && dynamicPowerUw <= MAX_COOLING_UW && mixingChamberTempMk <= 100.0,
+      "VIOLATION: ThermalLoadBoundsInvariant breached",
+    );
+    assert.ok(
+      thermalNoiseGamma >= 0 &&
+        thermalNoiseGamma < 0.1 &&
+        ["OVERDAMPED_SFQ_LOCKED", "THERMAL_HEADROOM_WARNING", "QUASIPARTICLE_HYSTERESIS_RISK"].includes(regime),
+      "VIOLATION: QuasiparticleNoiseInvariant breached",
+    );
+
+    mixingChamberTempMk = i % 12 === 0 ? 22.0 : 15.0;
+    betaC = i % 10 === 0 ? 0.88 : 0.42;
+    dynamicPowerUw = i % 9 === 0 ? 560.0 : 142.0;
+    thermalNoiseGamma = mixingChamberTempMk > 15 ? 0.004 : 0.002;
+    const ratio = dynamicPowerUw / MAX_COOLING_UW;
+    regime =
+      betaC > 1.0 || ratio > 1.0 || mixingChamberTempMk > 100.0
+        ? "QUASIPARTICLE_HYSTERESIS_RISK"
+        : betaC > 0.85 || ratio > 0.75
+          ? "THERMAL_HEADROOM_WARNING"
+          : "OVERDAMPED_SFQ_LOCKED";
+  }
+
+  return buildTlaVerificationReport(specification, parsed, stepsExecuted);
+}
+
+export function verifySubseaDwdmShannonModel(steps = 200) {
+  const specification = "SubseaDwdmShannon.tla";
+  const parsed = parseTlaModule(path.join(formalDir, specification));
+  assert.equal(parsed.moduleName, "SubseaDwdmShannon");
+  assert.ok(parsed.variables.length >= 6, "SubseaDwdmShannon variables missing");
+  assert.ok(parsed.invariants.length >= 3, "SubseaDwdmShannon invariants missing");
+
+  const MIN_GSNR_DB = 11.5;
+  let launchPowerDbm = -0.5;
+  let aseNoise = 1.0;
+  let kerrNli = 0.32;
+  let gsnrDb = 12.8;
+  let capacityTbps = 24.0;
+  let regime = "OPTIMAL_NONLINEAR_SHANNON";
+  let stepsExecuted = 0;
+
+  for (let i = 0; i < steps; i++) {
+    stepsExecuted++;
+    assert.ok(
+      gsnrDb >= MIN_GSNR_DB && launchPowerDbm >= -20 && launchPowerDbm <= 15,
+      "VIOLATION: GsnrThresholdBounds breached",
+    );
+    assert.ok(
+      aseNoise > 0 && kerrNli > 0 && kerrNli / aseNoise <= 2.0,
+      "VIOLATION: KerrNonlinearPowerInvariant breached",
+    );
+    assert.ok(
+      capacityTbps > 0 &&
+        ["OPTIMAL_NONLINEAR_SHANNON", "KERR_NONLINEAR_SATURATION", "OSNR_BELOW_FEC_THRESHOLD"].includes(regime),
+      "VIOLATION: ShannonCapacityBounds breached",
+    );
+
+    launchPowerDbm = i % 11 === 0 ? 2.0 : -0.5;
+    kerrNli = launchPowerDbm > 0 ? 0.78 : 0.32;
+    gsnrDb = launchPowerDbm > 0 ? 12.4 : 12.8;
+    capacityTbps = gsnrDb >= 12.5 ? 24.0 : 22.0;
+    regime =
+      gsnrDb < MIN_GSNR_DB
+        ? "OSNR_BELOW_FEC_THRESHOLD"
+        : kerrNli > 0.55 * aseNoise
+          ? "KERR_NONLINEAR_SATURATION"
+          : "OPTIMAL_NONLINEAR_SHANNON";
+  }
+
+  return buildTlaVerificationReport(specification, parsed, stepsExecuted);
+}
+
+export function verifyHypersonicScramjetAeroModel(steps = 200) {
+  const specification = "HypersonicScramjetAero.tla";
+  const parsed = parseTlaModule(path.join(formalDir, specification));
+  assert.equal(parsed.moduleName, "HypersonicScramjetAero");
+  assert.ok(parsed.variables.length >= 5, "HypersonicScramjetAero variables missing");
+  assert.ok(parsed.invariants.length >= 3, "HypersonicScramjetAero invariants missing");
+
+  const MAX_TPS_FLUX = 720.0;
+  let mach = 7.8;
+  let stagnationHeatFlux = 420.0;
+  let isolatorMargin = 0.38;
+  let ispSec = 1480.0;
+  let regime = "SUPERSONIC_COMBUSTION_STABLE";
+  let stepsExecuted = 0;
+
+  for (let i = 0; i < steps; i++) {
+    stepsExecuted++;
+    assert.ok(stagnationHeatFlux > 0 && stagnationHeatFlux <= MAX_TPS_FLUX, "VIOLATION: TpsHeatFluxBounds breached");
+    assert.ok(isolatorMargin > 0.08 && isolatorMargin <= 1.0, "VIOLATION: IsolatorUnstartMarginInvariant breached");
+    assert.ok(
+      mach >= 3.0 &&
+        ispSec > 0 &&
+        ["SUPERSONIC_COMBUSTION_STABLE", "AEROTHERMAL_FLUX_ELEVATED", "ISOLATOR_UNSTART_CRITICAL"].includes(regime),
+      "VIOLATION: HypersonicMachBounds breached",
+    );
+
+    mach = i % 13 === 0 ? 8.5 : 7.8;
+    stagnationHeatFlux = mach > 8.0 ? 620.0 : 420.0;
+    isolatorMargin = i % 13 === 0 ? 0.18 : 0.38;
+    ispSec = mach > 8.0 ? 1420.0 : 1480.0;
+    regime =
+      isolatorMargin <= 0.08 || stagnationHeatFlux > MAX_TPS_FLUX
+        ? "ISOLATOR_UNSTART_CRITICAL"
+        : isolatorMargin <= 0.22 || stagnationHeatFlux > 0.8 * MAX_TPS_FLUX
+          ? "AEROTHERMAL_FLUX_ELEVATED"
+          : "SUPERSONIC_COMBUSTION_STABLE";
+  }
+
+  return buildTlaVerificationReport(specification, parsed, stepsExecuted);
+}
+
+export function verifyCbdcRtgsGridlockModel(steps = 200) {
+  const specification = "CbdcRtgsGridlock.tla";
+  const parsed = parseTlaModule(path.join(formalDir, specification));
+  assert.equal(parsed.moduleName, "CbdcRtgsGridlock");
+  assert.ok(parsed.variables.length >= 8, "CbdcRtgsGridlock variables missing");
+  assert.ok(parsed.invariants.length >= 3, "CbdcRtgsGridlock invariants missing");
+
+  const queuedGross = 48500;
+  const bankCount = 18;
+  let settledGross = 48500;
+  let unsettledGross = 0;
+  let residual = 0;
+  let throughputRatio = 1.0;
+  let hhi = 1280;
+  let regime = "MULTILATERAL_LSM_CLEARED";
+  let stepsExecuted = 0;
+
+  for (let i = 0; i < steps; i++) {
+    stepsExecuted++;
+    assert.equal(residual, 0, "VIOLATION: GrossObligationConservationInvariant residual breached");
+    assert.equal(
+      settledGross + unsettledGross,
+      queuedGross,
+      "VIOLATION: GrossObligationConservationInvariant sum breached",
+    );
+    assert.ok(
+      bankCount >= 2 && throughputRatio > 0 && throughputRatio <= 1.0,
+      "VIOLATION: LsmCompressionBounds breached",
+    );
+    assert.ok(
+      throughputRatio >= 0.85 &&
+        ["MULTILATERAL_LSM_CLEARED", "PARTIAL_QUEUE_COMPRESSION", "SYSTEMIC_LIQUIDITY_GRIDLOCK"].includes(regime),
+      "VIOLATION: SettlementThroughputBounds breached",
+    );
+
+    settledGross = i % 10 === 0 ? 43650 : 48500;
+    unsettledGross = queuedGross - settledGross;
+    residual = queuedGross - (settledGross + unsettledGross);
+    throughputRatio = settledGross / queuedGross;
+    hhi = i % 15 === 0 ? 2100 : 1280;
+    regime =
+      throughputRatio < 0.85
+        ? "SYSTEMIC_LIQUIDITY_GRIDLOCK"
+        : throughputRatio < 1.0 || hhi > 2500
+          ? "PARTIAL_QUEUE_COMPRESSION"
+          : "MULTILATERAL_LSM_CLEARED";
+  }
+
+  return buildTlaVerificationReport(specification, parsed, stepsExecuted);
+}

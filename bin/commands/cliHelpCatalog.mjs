@@ -181,7 +181,12 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos dwdm:shannon [--json]      DWDM submarino coherente, no-linealidad Kerr GN y capacidad Tbps (SPEC-261)
   eos aero:scramjet [--json]     Choque oblicuo hipersónico, calor Fay-Riddell y margen unstart (SPEC-262)
   eos rtgs:clear [--json]        Liquidación CBDC RTGS multilateral LSM, HHI y conservación exacta (SPEC-263)
-  eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..263
+  eos clock:optical [--json]     Reloj atómico red óptica Sr-87, geodesia relativista y TAI (SPEC-264)
+  eos insar:deform [--json]      Interferometría SAR orbital, coherencia gamma y deformación mm (SPEC-265)
+  eos mpd:thruster [--json]      Propulsor magnetoplasmadinámico MPD Lorentz y estabilidad onset (SPEC-266)
+  eos qnet:repeater [--json]     Repetidor cuántico BBPSSW, purificación Bell y decoherencia (SPEC-267)
+  eos evm:prove [--json]         Verificador simbólico de gas EVM y contratos reentrancy CEI (SPEC-268)
+  eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
 📦 ÍNDICE DE ALIAS Y SUBCOMANDOS ESPECIALIZADOS (100% REGISTRADOS):

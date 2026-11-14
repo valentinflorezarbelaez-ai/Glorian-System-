@@ -104,6 +104,11 @@
     "./subsea-dwdm": "./src/core/eosSubseaCoherentDwdmNonlinearShannonCore.ts",
     "./hypersonic-scramjet": "./src/core/eosHypersonicAerothermodynamicsScramjetCore.ts",
     "./cbdc-rtgs": "./src/core/eosCbdcRtgsGridlockResolutionCore.ts",
+    "./optical-clock": "./src/core/eosOpticalLatticeAtomicClockRelativisticSyncCore.ts",
+    "./insar-deform": "./src/core/eosInterferometricSarDeformationCore.ts",
+    "./mpd-thruster": "./src/core/eosMagnetoplasmadynamicThrusterMhdCore.ts",
+    "./quantum-repeater": "./src/core/eosQuantumEntanglementRepeaterBbpsswCore.ts",
+    "./evm-symbolic-prover": "./src/core/eosSmartContractBytecodeGasSymbolicVerifierCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {
@@ -343,7 +348,12 @@
     "cryo:josephson": "node bin/eos.mjs cryo:josephson",
     "dwdm:shannon": "node bin/eos.mjs dwdm:shannon",
     "aero:scramjet": "node bin/eos.mjs aero:scramjet",
-    "rtgs:clear": "node bin/eos.mjs rtgs:clear"
+    "rtgs:clear": "node bin/eos.mjs rtgs:clear",
+    "clock:optical": "node bin/eos.mjs clock:optical",
+    "insar:deform": "node bin/eos.mjs insar:deform",
+    "mpd:thruster": "node bin/eos.mjs mpd:thruster",
+    "qnet:repeater": "node bin/eos.mjs qnet:repeater",
+    "evm:prove": "node bin/eos.mjs evm:prove"
   },
   "engines": {
     "node": ">=22.18.0"

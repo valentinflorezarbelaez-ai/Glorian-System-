@@ -1,7 +1,9 @@
 /**
- * EOS MCP Phase 7 Enterprise Frontier Extension 4 (SPEC-259..SPEC-263 / CHANGE-129)
+ * EOS MCP Phase 7 Enterprise Frontier Extension 4 (SPEC-259..SPEC-268 / CHANGE-130)
  * Handles deep_space_optical_nav, cryogenic_josephson_sfq, subsea_dwdm_shannon,
- * hypersonic_scramjet_aero, and cbdc_rtgs_gridlock.
+ * hypersonic_scramjet_aero, cbdc_rtgs_gridlock, optical_atomic_clock_sync,
+ * insar_crustal_deformation, mpd_magnetoplasmadynamic_thruster, quantum_repeater_bbpssw,
+ * and bytecode_symbolic_gas_prover.
  * Strict Zero Runtime Dependencies (EOS Law V), Node 22.18+ Strip-Only TypeScript.
  */
 
@@ -10,11 +12,21 @@ import { evaluateCryogenicJosephsonSfqControl } from "../../core/eosCryogenicJos
 import { evaluateSubseaCoherentDwdmNonlinearShannon } from "../../core/eosSubseaCoherentDwdmNonlinearShannonCore.ts";
 import { evaluateHypersonicAerothermodynamicsScramjet } from "../../core/eosHypersonicAerothermodynamicsScramjetCore.ts";
 import { evaluateCbdcRtgsGridlockResolution } from "../../core/eosCbdcRtgsGridlockResolutionCore.ts";
+import { evaluateOpticalLatticeAtomicClockRelativisticSync } from "../../core/eosOpticalLatticeAtomicClockRelativisticSyncCore.ts";
+import { evaluateInterferometricSarDeformation } from "../../core/eosInterferometricSarDeformationCore.ts";
+import { evaluateMagnetoplasmadynamicThrusterMhd } from "../../core/eosMagnetoplasmadynamicThrusterMhdCore.ts";
+import { evaluateQuantumEntanglementRepeaterBbpssw } from "../../core/eosQuantumEntanglementRepeaterBbpsswCore.ts";
+import { evaluateSmartContractBytecodeGasSymbolicVerifier } from "../../core/eosSmartContractBytecodeGasSymbolicVerifierCore.ts";
 import type {
+  BytecodeSymbolicGasOptions,
   CbdcRtgsGridlockOptions,
   CryogenicJosephsonSfqOptions,
   DeepSpaceOpticalNavOptions,
   HypersonicScramjetOptions,
+  InSarDeformationOptions,
+  MpdThrusterMhdOptions,
+  OpticalLatticeClockOptions,
+  QuantumRepeaterBbpsswOptions,
   SubseaDwdmShannonOptions,
 } from "../../core/index.ts";
 
@@ -124,6 +136,102 @@ const FRONTIER_EXT4_DISPATCH: Readonly<Record<string, (args?: Record<string, unk
       ) as CbdcRtgsGridlockOptions,
     ),
     action: "cbdc_rtgs_gridlock",
+  }),
+  optical_atomic_clock_sync: (args) => ({
+    ...evaluateOpticalLatticeAtomicClockRelativisticSync(
+      opt(
+        args,
+        [
+          "clockTransitionFreqThz",
+          "naturalLinewidthMhz",
+          "interrogationAtomCount",
+          "averagingTimeSec",
+          "ambientTempK",
+          "geopotentialHeightDiffMeters",
+          "fiberLinkPhaseNoiseFs",
+          "maxFractionalInstabilityE18",
+        ],
+        ["clockEnsembleId"],
+      ) as OpticalLatticeClockOptions,
+    ),
+    action: "optical_atomic_clock_sync",
+  }),
+  insar_crustal_deformation: (args) => ({
+    ...evaluateInterferometricSarDeformation(
+      opt(
+        args,
+        [
+          "radarWavelengthMeters",
+          "slantRangeKm",
+          "incidenceAngleDeg",
+          "rangeResolutionMeters",
+          "perpendicularBaselineMeters",
+          "temporalBaselineDays",
+          "decorrelationTimeConstantDays",
+          "thermalSnrDb",
+          "unwrappedPhaseRad",
+          "minCoherenceThreshold",
+        ],
+        ["passPairId"],
+      ) as InSarDeformationOptions,
+    ),
+    action: "insar_crustal_deformation",
+  }),
+  mpd_magnetoplasmadynamic_thruster: (args) => ({
+    ...evaluateMagnetoplasmadynamicThrusterMhd(
+      opt(
+        args,
+        [
+          "dischargeCurrentAmps",
+          "appliedMagneticFieldTesla",
+          "massFlowRateKgPerSec",
+          "anodeRadiusMeters",
+          "cathodeRadiusMeters",
+          "inputPowerKw",
+          "propellantAtomicMassAmu",
+        ],
+        ["thrusterId"],
+      ) as MpdThrusterMhdOptions,
+    ),
+    action: "mpd_magnetoplasmadynamic_thruster",
+  }),
+  quantum_repeater_bbpssw: (args) => ({
+    ...evaluateQuantumEntanglementRepeaterBbpssw(
+      opt(
+        args,
+        [
+          "repeaterSwapLevels",
+          "purificationRounds",
+          "rawBellPairFidelity",
+          "entanglementAttemptRateHz",
+          "memoryCoherenceTimeMs",
+          "heraldingRoundTripMs",
+          "minEndToEndFidelity",
+        ],
+        ["linkTopologyId"],
+      ) as QuantumRepeaterBbpsswOptions,
+    ),
+    action: "quantum_repeater_bbpssw",
+  }),
+  bytecode_symbolic_gas_prover: (args) => ({
+    ...evaluateSmartContractBytecodeGasSymbolicVerifier({
+      ...opt(
+        args,
+        [
+          "cfgNodeCount",
+          "cfgEdgeCount",
+          "maxLoopBound",
+          "loopBodyGasCost",
+          "coldSstoreCount",
+          "externalCallCount",
+          "stateWritesAfterExternalCall",
+          "blockGasLimitCeiling",
+        ],
+        ["contractId"],
+      ),
+      reentrancyMutexLocked: typeof args?.reentrancyMutexLocked === "boolean" ? args.reentrancyMutexLocked : undefined,
+    } as BytecodeSymbolicGasOptions),
+    action: "bytecode_symbolic_gas_prover",
   }),
 };
 

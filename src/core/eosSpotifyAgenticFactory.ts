@@ -203,13 +203,13 @@ export class EosSpotifyAgenticFactory {
       descriptorOpen = false;
       fs.renameSync(temporaryPath, targetPath);
     } catch (error) {
-      if (descriptorOpen)
+      const safe = (fn: () => void) => {
         try {
-          fs.closeSync(descriptor);
+          fn();
         } catch {}
-      try {
-        fs.unlinkSync(temporaryPath);
-      } catch {}
+      };
+      if (descriptorOpen) safe(() => fs.closeSync(descriptor));
+      safe(() => fs.unlinkSync(temporaryPath));
       throw error;
     }
     return targetPath;
@@ -623,9 +623,7 @@ export class EosSpotifyAgenticFactory {
     };
   }
 
-  // =========================================================================
-  // 4. CONFIDENCE PROGRESSIVE CANARY MANIFEST GENERATOR
-  // =========================================================================
+  // 4. Confidence progressive canary manifest generator
 
   public generateProgressiveCanary(
     serviceName: string,
@@ -650,30 +648,20 @@ export class EosSpotifyAgenticFactory {
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-|-$/g, "") || "unassigned";
-    const flaggerYaml = [
-      "apiVersion: flagger.app/v1beta1\nkind: Canary\nmetadata:",
-      `  name: ${serviceName}-canary\n  namespace: default\n  labels:\n    squad: ${JSON.stringify(squad)}`,
-      `spec:\n  targetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: ${serviceName}`,
-      "  service:\n    port: 8080\n    targetPort: 8080\n  analysis:\n    interval: 30s\n    threshold: 3\n    maxWeight: 100\n    stepWeight: 10\n    metrics:",
-      `      - name: request-success-rate\n        thresholdRange:\n          min: ${(100 - maxErrorRatePercent).toFixed(2)}\n        interval: 1m`,
-      `      - name: latency-p99\n        thresholdRange:\n          max: ${p99LatencyMs}\n        interval: 30s`,
-      `    alerts:\n      - name: "slack-squad-alert"\n        severity: error\n        providerRef:\n          name: squad-${squadSlug}\n`,
-    ].join("\n");
-
-    const argoRolloutYaml = [
-      "apiVersion: argoproj.io/v1alpha1\nkind: Rollout\nmetadata:",
-      `  name: ${serviceName}-rollout\n  namespace: default\n  labels:\n    squad: ${JSON.stringify(squad)}`,
-      "spec:\n  replicas: 5\n  strategy:\n    canary:\n      steps:",
-      "        - setWeight: 1\n        - pause: { duration: 5m }\n        - setWeight: 5\n        - pause: { duration: 10m }\n        - setWeight: 20\n        - pause: { duration: 15m }\n        - setWeight: 50\n        - pause: { duration: 20m }\n        - setWeight: 100",
-      `      analysis:\n        templates:\n          - templateName: ${serviceName}-latency-and-error-guardrail\n`,
-    ].join("\n");
-
-    const prometheusRuleYaml = [
-      `apiVersion: monitoring.coreos.com/v1\nkind: PrometheusRule\nmetadata:\n  name: ${serviceName}-sla-guardrails\n  namespace: default\nspec:\n  groups:\n    - name: ${serviceName}.alerts\n      rules:`,
-      `        - alert: ServiceP99LatencyBreach\n          expr: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{service="${serviceName}"}[1m])) by (le)) > ${(p99LatencyMs / 1000).toFixed(3)}\n          for: 1m\n          labels:\n            severity: critical\n            squad: ${JSON.stringify(squad)}\n          annotations:\n            summary: "Service ${serviceName} P99 latency breached threshold (${p99LatencyMs}ms)"`,
-      `        - alert: ServiceHighErrorRateBreach\n          expr: sum(rate(http_requests_total{service="${serviceName}",status=~"5.."}[1m])) / sum(rate(http_requests_total{service="${serviceName}"}[1m])) * 100 > ${maxErrorRatePercent}\n          for: 30s\n          labels:\n            severity: page\n            squad: ${JSON.stringify(squad)}\n          annotations:\n            summary: "Service ${serviceName} error rate exceeded ${maxErrorRatePercent}%"\n`,
-    ].join("\n");
-
+    const sq = JSON.stringify(squad);
+    const flaggerYaml =
+      `apiVersion: flagger.app/v1beta1\nkind: Canary\nmetadata:\n  name: ${serviceName}-canary\n  namespace: default\n  labels:\n    squad: ${sq}\n` +
+      `spec:\n  targetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: ${serviceName}\n  service:\n    port: 8080\n    targetPort: 8080\n` +
+      `  analysis:\n    interval: 30s\n    threshold: 3\n    maxWeight: 100\n    stepWeight: 10\n    metrics:\n      - name: request-success-rate\n` +
+      `        thresholdRange:\n          min: ${(100 - maxErrorRatePercent).toFixed(2)}\n        interval: 1m\n      - name: latency-p99\n` +
+      `        thresholdRange:\n          max: ${p99LatencyMs}\n        interval: 30s\n    alerts:\n      - name: "slack-squad-alert"\n        severity: error\n        providerRef:\n          name: squad-${squadSlug}\n`;
+    const argoRolloutYaml =
+      `apiVersion: argoproj.io/v1alpha1\nkind: Rollout\nmetadata:\n  name: ${serviceName}-rollout\n  namespace: default\n  labels:\n    squad: ${sq}\n` +
+      `spec:\n  replicas: 5\n  strategy:\n    canary:\n      steps:\n        - setWeight: 1\n        - pause: { duration: 5m }\n        - setWeight: 5\n        - pause: { duration: 10m }\n        - setWeight: 20\n        - pause: { duration: 15m }\n        - setWeight: 50\n        - pause: { duration: 20m }\n        - setWeight: 100\n      analysis:\n        templates:\n          - templateName: ${serviceName}-latency-and-error-guardrail\n`;
+    const prometheusRuleYaml =
+      `apiVersion: monitoring.coreos.com/v1\nkind: PrometheusRule\nmetadata:\n  name: ${serviceName}-sla-guardrails\n  namespace: default\nspec:\n  groups:\n    - name: ${serviceName}.alerts\n      rules:\n` +
+      `        - alert: ServiceP99LatencyBreach\n          expr: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{service="${serviceName}"}[1m])) by (le)) > ${(p99LatencyMs / 1000).toFixed(3)}\n          for: 1m\n          labels:\n            severity: critical\n            squad: ${sq}\n          annotations:\n            summary: "Service ${serviceName} P99 latency breached threshold (${p99LatencyMs}ms)"\n` +
+      `        - alert: ServiceHighErrorRateBreach\n          expr: sum(rate(http_requests_total{service="${serviceName}",status=~"5.."}[1m])) / sum(rate(http_requests_total{service="${serviceName}"}[1m])) * 100 > ${maxErrorRatePercent}\n          for: 30s\n          labels:\n            severity: page\n            squad: ${sq}\n          annotations:\n            summary: "Service ${serviceName} error rate exceeded ${maxErrorRatePercent}%"\n`;
     const resultFingerprintSha256 = crypto
       .createHash("sha256")
       .update(`${serviceName}:${squad}:${p99LatencyMs}:${maxErrorRatePercent}:${flaggerYaml}`)
@@ -692,9 +680,7 @@ export class EosSpotifyAgenticFactory {
     };
   }
 
-  // =========================================================================
-  // HELPER METHODS
-  // =========================================================================
+  // Helper methods
 
   private detectStack(dir: string): SupportedStack {
     if (fs.existsSync(path.join(dir, "Cargo.toml"))) return "rust";

@@ -152,24 +152,11 @@ export class EosHexPrefix {
   static encodePath(nibbles: Nibbles, isLeaf: boolean): Buffer {
     const isOdd = nibbles.length % 2 === 1;
     const flag = (isLeaf ? 2 : 0) | (isOdd ? 1 : 0);
-
-    if (isOdd) {
-      // First byte combines flag and first nibble
-      const firstByte = (flag << 4) | nibbles[0];
-      const restBytes: number[] = [firstByte];
-      for (let i = 1; i < nibbles.length; i += 2) {
-        restBytes.push((nibbles[i] << 4) | nibbles[i + 1]);
-      }
-      return Buffer.from(restBytes);
+    const bytes: number[] = [isOdd ? (flag << 4) | nibbles[0] : flag << 4];
+    for (let i = isOdd ? 1 : 0; i < nibbles.length; i += 2) {
+      bytes.push((nibbles[i] << 4) | nibbles[i + 1]);
     }
-
-    // Even length: first byte has flag in high nibble, 0 in low nibble
-    const firstByte = flag << 4;
-    const restBytes: number[] = [firstByte];
-    for (let i = 0; i < nibbles.length; i += 2) {
-      restBytes.push((nibbles[i] << 4) | nibbles[i + 1]);
-    }
-    return Buffer.from(restBytes);
+    return Buffer.from(bytes);
   }
 
   static decodePath(buf: Buffer): { nibbles: Nibbles; isLeaf: boolean } {
@@ -552,26 +539,11 @@ export class EosMerklePatriciaTrieCore {
     // Case 3: Exactly 1 child, and no value -> compact branch into child path
     if (nonNullCount === 1 && !branch.value) {
       const child = this.resolveChild(branch.branches[singleIdx]!);
-      if (child.type === "leaf") {
-        return {
-          type: "leaf",
-          path: [singleIdx, ...child.path],
-          value: child.value,
-        };
-      }
+      if (child.type === "leaf") return { type: "leaf", path: [singleIdx, ...child.path], value: child.value };
       if (child.type === "extension") {
-        return {
-          type: "extension",
-          path: [singleIdx, ...child.path],
-          child: child.child,
-        };
+        return { type: "extension", path: [singleIdx, ...child.path], child: child.child };
       }
-      // If child is a branch, wrap in extension of length 1
-      return {
-        type: "extension",
-        path: [singleIdx],
-        child,
-      };
+      return { type: "extension", path: [singleIdx], child };
     }
 
     return branch;

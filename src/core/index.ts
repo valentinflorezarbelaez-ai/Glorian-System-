@@ -1,21 +1,11 @@
 /**
- * EOS SYSTEM — CORE LAYER-0 UNIFIED EXPORT BARREL
- * Governed by SPEC-085..SPEC-094, CHANGE-065, ADR-089 (v73.0.0)
- *
- * Exposes the Supreme Theurgic Trilogy:
- * - EosAstral: 5D Molecular Projection & Silver Cord HMAC-SHA256
- * - EosElohim: Runa NOT & Karmic Circuit Breaker SHA-384
- * - EosAin / EosAbsoluto: The Two Octavic Shocks & Radical Void Zero Entropy
- *
- * Alongside foundational Layer-0 sovereign engines, Zenith, Frontier, and Supreme Omnipresence modules.
- * Invariant: Pure Layer-0 TypeScript (dependencies: {}).
+ * EOS SYSTEM — CORE LAYER-0 UNIFIED EXPORT BARREL (SPEC-085..SPEC-268 / v75.0.0).
+ * Foundational Layer-0 sovereign engines, Zenith, Frontier & National Labs modules. Zero dependencies.
  */
-
 export * from "./eosKernelPrimitives.ts";
 export * from "./EosAstral.ts";
 export * from "./EosElohim.ts";
 export * from "./EosAin.ts";
-
 export * from "./eosDurableSqliteLedger.ts";
 export * from "./eosPropertyFuzzingHypervisor.ts";
 export * from "./eosSamaelUnitotalNexus.ts";
@@ -694,3 +684,53 @@ export type {
   CbdcRtgsGridlockOptions,
   CbdcRtgsGridlockAssessment,
 } from "./eosCbdcRtgsGridlockResolutionCore.types.ts";
+export {
+  DEFAULT_OPTICAL_LATTICE_CLOCK_OPTIONS,
+  EosOpticalLatticeAtomicClockRelativisticSyncCore,
+  evaluateOpticalLatticeAtomicClockRelativisticSync,
+} from "./eosOpticalLatticeAtomicClockRelativisticSyncCore.ts";
+export type {
+  OpticalClockRegime,
+  OpticalLatticeClockOptions,
+  OpticalLatticeClockAssessment,
+} from "./eosOpticalLatticeAtomicClockRelativisticSyncCore.types.ts";
+export {
+  DEFAULT_INSAR_DEFORMATION_OPTIONS,
+  EosInterferometricSarDeformationCore,
+  evaluateInterferometricSarDeformation,
+} from "./eosInterferometricSarDeformationCore.ts";
+export type {
+  InSarDeformationRegime,
+  InSarDeformationOptions,
+  InSarDeformationAssessment,
+} from "./eosInterferometricSarDeformationCore.types.ts";
+export {
+  DEFAULT_MPD_THRUSTER_MHD_OPTIONS,
+  EosMagnetoplasmadynamicThrusterMhdCore,
+  evaluateMagnetoplasmadynamicThrusterMhd,
+} from "./eosMagnetoplasmadynamicThrusterMhdCore.ts";
+export type {
+  MpdThrusterRegime,
+  MpdThrusterMhdOptions,
+  MpdThrusterMhdAssessment,
+} from "./eosMagnetoplasmadynamicThrusterMhdCore.types.ts";
+export {
+  DEFAULT_QUANTUM_REPEATER_BBPSSW_OPTIONS,
+  EosQuantumEntanglementRepeaterBbpsswCore,
+  evaluateQuantumEntanglementRepeaterBbpssw,
+} from "./eosQuantumEntanglementRepeaterBbpsswCore.ts";
+export type {
+  QuantumRepeaterRegime,
+  QuantumRepeaterBbpsswOptions,
+  QuantumRepeaterBbpsswAssessment,
+} from "./eosQuantumEntanglementRepeaterBbpsswCore.types.ts";
+export {
+  DEFAULT_BYTECODE_SYMBOLIC_GAS_OPTIONS,
+  EosSmartContractBytecodeGasSymbolicVerifierCore,
+  evaluateSmartContractBytecodeGasSymbolicVerifier,
+} from "./eosSmartContractBytecodeGasSymbolicVerifierCore.ts";
+export type {
+  BytecodeSymbolicGasRegime,
+  BytecodeSymbolicGasOptions,
+  BytecodeSymbolicGasAssessment,
+} from "./eosSmartContractBytecodeGasSymbolicVerifierCore.types.ts";

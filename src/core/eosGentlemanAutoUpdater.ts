@@ -82,20 +82,25 @@ export class EosGentlemanAutoUpdater {
     }
   }
 
+  private static hasFreshLock(lockPath: string, nowMs: number, removeStale = false): boolean {
+    if (!fs.existsSync(lockPath)) return false;
+    try {
+      const rawLock = JSON.parse(fs.readFileSync(lockPath, "utf8"));
+      const acquiredAt =
+        typeof rawLock?.acquiredAtMs === "number" ? rawLock.acquiredAtMs : fs.statSync(lockPath).mtimeMs;
+      if (nowMs - acquiredAt < LOCK_STALE_TIMEOUT_MS) return true;
+      if (removeStale) fs.rmSync(lockPath, { force: true });
+    } catch {}
+    return false;
+  }
+
   public static isAutoUpdateDue(
     projectRoot: string = process.cwd(),
     intervalHours: number = DEFAULT_AUTO_UPDATE_INTERVAL_HOURS,
     nowMs: number = Date.now(),
   ): boolean {
     const lockPath = this.defaultLockPath(projectRoot);
-    if (fs.existsSync(lockPath)) {
-      try {
-        const rawLock = JSON.parse(fs.readFileSync(lockPath, "utf8"));
-        const acquiredAt =
-          typeof rawLock?.acquiredAtMs === "number" ? rawLock.acquiredAtMs : fs.statSync(lockPath).mtimeMs;
-        if (nowMs - acquiredAt < LOCK_STALE_TIMEOUT_MS) return false;
-      } catch {}
-    }
+    if (this.hasFreshLock(lockPath, nowMs)) return false;
 
     const state = this.readState(projectRoot);
     if (!state || typeof state.lastCheckedAtMs !== "number") return true;
@@ -106,15 +111,7 @@ export class EosGentlemanAutoUpdater {
     const lockPath = this.defaultLockPath(projectRoot);
     fs.mkdirSync(path.dirname(lockPath), { recursive: true });
 
-    if (fs.existsSync(lockPath)) {
-      try {
-        const rawLock = JSON.parse(fs.readFileSync(lockPath, "utf8"));
-        const acquiredAt =
-          typeof rawLock?.acquiredAtMs === "number" ? rawLock.acquiredAtMs : fs.statSync(lockPath).mtimeMs;
-        if (nowMs - acquiredAt >= LOCK_STALE_TIMEOUT_MS) fs.rmSync(lockPath, { force: true });
-        else return false;
-      } catch {}
-    }
+    if (this.hasFreshLock(lockPath, nowMs, true)) return false;
 
     try {
       const fd = fs.openSync(lockPath, "wx");
@@ -510,24 +507,16 @@ export class EosGentlemanAutoUpdater {
       let updatesApplied = 0;
       let rollbacksTriggered = 0;
 
-      const gentleProbe = EosGentlemanStackBridge.probeBinary(
-        "gentle-ai",
-        ["--version"],
-        [
-          path.join(homeDir, "go", "bin", process.platform === "win32" ? "gentle-ai.exe" : "gentle-ai"),
-          path.join(homeDir, "AppData", "Local", "gentle-ai", "bin", "gentle-ai.exe"),
-        ],
-        homeDir,
-      );
-      const engramProbe = EosGentlemanStackBridge.probeBinary(
-        "engram",
-        ["version"],
-        [
-          path.join(homeDir, "AppData", "Local", "engram", "bin", "engram.exe"),
-          path.join(homeDir, "go", "bin", process.platform === "win32" ? "engram.exe" : "engram"),
-        ],
-        homeDir,
-      );
+      const probeHome = (bin: string, arg: string) => {
+        const exe = process.platform === "win32" ? `${bin}.exe` : bin;
+        const candidates = [
+          path.join(homeDir, "go", "bin", exe),
+          path.join(homeDir, "AppData", "Local", bin, "bin", `${bin}.exe`),
+        ];
+        return EosGentlemanStackBridge.probeBinary(bin, [arg], candidates, homeDir);
+      };
+      const gentleProbe = probeHome("gentle-ai", "--version");
+      const engramProbe = probeHome("engram", "version");
       const ggaProbe = EosGentlemanStackBridge.probeBinary(
         "gga",
         ["--version"],
@@ -602,8 +591,9 @@ export class EosGentlemanAutoUpdater {
 
       let syncedAtlCommit = priorState?.agentTeamsLiteCommitSha || null;
       try {
-        const headOut = this.queryGitLsRemote([GENTLEMAN_REPOS["agent-teams-lite"], "HEAD"]);
-        const headMatch = headOut.trim().match(/^([0-9a-f]{40})\s+HEAD$/m);
+        const headMatch = this.queryGitLsRemote([GENTLEMAN_REPOS["agent-teams-lite"], "HEAD"])
+          .trim()
+          .match(/^([0-9a-f]{40})\s+HEAD$/m);
         const latestHeadSha = headMatch ? headMatch[1]!.toLowerCase() : "";
         if (!latestHeadSha) throw new Error("Unable to parse HEAD SHA");
 
@@ -614,48 +604,42 @@ export class EosGentlemanAutoUpdater {
           (syncedAtlCommit !== null && syncedAtlCommit !== latestHeadSha) ||
           (syncedAtlCommit === null && apply) ||
           (force && apply);
-
         if (needsSync) updatesDetected++;
 
-        if (apply && needsSync) {
-          const syncReport = this.upgradeAgentTeamsLiteSkills(projectRoot, gentleProbe.executablePath);
-          syncedAtlCommit = latestHeadSha;
-          updatesApplied++;
-          components.push({
-            componentId: "agent-teams-lite",
-            repositoryUrl: GENTLEMAN_REPOS["agent-teams-lite"],
-            installedVersion: latestHeadSha.slice(0, 12),
-            latestVersion: latestHeadSha.slice(0, 12),
-            latestCommitSha: latestHeadSha,
-            updateAvailable: false,
-            status: "UPDATED",
-            detail: `Synced ${syncReport.syncedSkillFolders.length} Gentleman skill dirs (${syncReport.filesVerified} files SAST-verified; preserved ${syncReport.preservedEosSkills.length} eos-* skills)`,
-          });
-        } else {
-          if (!syncedAtlCommit && localSddExists) syncedAtlCommit = latestHeadSha;
-          const drift = syncedAtlCommit !== latestHeadSha;
-          components.push({
-            componentId: "agent-teams-lite",
-            repositoryUrl: GENTLEMAN_REPOS["agent-teams-lite"],
-            installedVersion:
-              effectiveInstalledSha === "vendored-initial"
-                ? latestHeadSha.slice(0, 12)
-                : effectiveInstalledSha.slice(0, 12),
-            latestVersion: latestHeadSha.slice(0, 12),
-            latestCommitSha: latestHeadSha,
-            updateAvailable: drift,
-            status: drift ? "UPDATE_AVAILABLE" : "UP_TO_DATE",
-            detail: drift
-              ? `New upstream skills commit available: ${latestHeadSha.slice(0, 12)}`
-              : `Skills aligned at commit ${latestHeadSha.slice(0, 12)}`,
-          });
-        }
-      } catch (err: any) {
+        const s12 = latestHeadSha.slice(0, 12);
+        const didSync = apply && needsSync;
+        if (!didSync && !syncedAtlCommit && localSddExists) syncedAtlCommit = latestHeadSha;
+        const drift = !didSync && syncedAtlCommit !== latestHeadSha;
+        const detail = didSync
+          ? (() => {
+              const syncReport = this.upgradeAgentTeamsLiteSkills(projectRoot, gentleProbe.executablePath);
+              syncedAtlCommit = latestHeadSha;
+              updatesApplied++;
+              return `Synced ${syncReport.syncedSkillFolders.length} Gentleman skill dirs (${syncReport.filesVerified} files SAST-verified; preserved ${syncReport.preservedEosSkills.length} eos-* skills)`;
+            })()
+          : drift
+            ? `New upstream skills commit available: ${s12}`
+            : `Skills aligned at commit ${s12}`;
+        const installedVersion = didSync
+          ? s12
+          : (effectiveInstalledSha === "vendored-initial" ? latestHeadSha : effectiveInstalledSha).slice(0, 12);
         components.push({
           componentId: "agent-teams-lite",
           repositoryUrl: GENTLEMAN_REPOS["agent-teams-lite"],
-          installedVersion: (syncedAtlCommit || "local").slice(0, 12),
-          latestVersion: (syncedAtlCommit || "local").slice(0, 12),
+          installedVersion,
+          latestVersion: s12,
+          latestCommitSha: latestHeadSha,
+          updateAvailable: drift,
+          status: didSync ? "UPDATED" : drift ? "UPDATE_AVAILABLE" : "UP_TO_DATE",
+          detail,
+        });
+      } catch (err: any) {
+        const s12 = (syncedAtlCommit || "local").slice(0, 12);
+        components.push({
+          componentId: "agent-teams-lite",
+          repositoryUrl: GENTLEMAN_REPOS["agent-teams-lite"],
+          installedVersion: s12,
+          latestVersion: s12,
           latestCommitSha: syncedAtlCommit || "",
           updateAvailable: false,
           status: "SKIPPED_OFFLINE",

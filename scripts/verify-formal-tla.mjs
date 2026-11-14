@@ -66,6 +66,11 @@ import {
   verifyLobAlmgrenChrissVpinModel,
   verifyUnifiedMemoryDvfsQosModel,
   verifyRelativisticBeamTwissModel,
+  verifyDeepSpaceOpticalNavModel,
+  verifyCryogenicJosephsonSfqModel,
+  verifySubseaDwdmShannonModel,
+  verifyHypersonicScramjetAeroModel,
+  verifyCbdcRtgsGridlockModel,
 } from "./tla/tlaSimulationsPart4.mjs";
 
 export {
@@ -120,6 +125,11 @@ export {
   verifyLobAlmgrenChrissVpinModel,
   verifyUnifiedMemoryDvfsQosModel,
   verifyRelativisticBeamTwissModel,
+  verifyDeepSpaceOpticalNavModel,
+  verifyCryogenicJosephsonSfqModel,
+  verifySubseaDwdmShannonModel,
+  verifyHypersonicScramjetAeroModel,
+  verifyCbdcRtgsGridlockModel,
 };
 
 export function runAllFormalVerifications() {
@@ -174,6 +184,11 @@ export function runAllFormalVerifications() {
     verifyLobAlmgrenChrissVpinModel(),
     verifyUnifiedMemoryDvfsQosModel(),
     verifyRelativisticBeamTwissModel(),
+    verifyDeepSpaceOpticalNavModel(),
+    verifyCryogenicJosephsonSfqModel(),
+    verifySubseaDwdmShannonModel(),
+    verifyHypersonicScramjetAeroModel(),
+    verifyCbdcRtgsGridlockModel(),
   ];
 }
 

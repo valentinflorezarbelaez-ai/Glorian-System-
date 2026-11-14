@@ -34,6 +34,11 @@ import {
   cmd_dwdm_shannon,
   cmd_aero_scramjet,
   cmd_rtgs_clear,
+  cmd_clock_optical,
+  cmd_insar_deform,
+  cmd_mpd_thruster,
+  cmd_qnet_repeater,
+  cmd_evm_prove,
   evaluateContiguous253ShipSnapshot,
 } from "./cliContiguous253FrontierMesh.mjs";
 
@@ -545,6 +550,11 @@ async function cmd_ship(commandContext) {
     subseaDwdmRegime: contiguous253.subseaDwdmRegime,
     hypersonicAeroRegime: contiguous253.hypersonicAeroRegime,
     cbdcRtgsRegime: contiguous253.cbdcRtgsRegime,
+    clockRegime: contiguous253.clockRegime,
+    insarRegime: contiguous253.insarRegime,
+    mpdRegime: contiguous253.mpdRegime,
+    qnetRegime: contiguous253.qnetRegime,
+    evmRegime: contiguous253.evmRegime,
     contiguous253Frontier: contiguous253,
     hygieneAudit,
   };
@@ -553,7 +563,7 @@ async function cmd_ship(commandContext) {
     return;
   }
   console.log(
-    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, SLSA=${dsseAttestation.verified}, F1=${sweBenchmark.f1Score.toFixed(2)}, EDA=${edaFormalProof.verdict}, Apollo=${apolloAirGapBundle.verdict}, Aladdin=${aladdinSystemicRisk.riskTier}, Roofline=${rooflinePlan.verdict}, SPC=${spcYieldAudit.verdict}, Kalman=${kalmanGncState.verdict}, QEC=${contiguous253.qecVerdict}, LEO=${contiguous253.leoRouteVerdict}, Grid=${contiguous253.gridOpfVerdict}, Bio=${contiguous253.bioFoldVerdict}, Fusion=${contiguous253.fusionVerdict}, Litho=${contiguous253.lithoVerdict}, DP=${contiguous253.privacyAbacVerdict}, LOB=${contiguous253.lobVpinVerdict}, DVFS=${contiguous253.dvfsQosVerdict}, Beam=${contiguous253.beamTwissVerdict}, DeepSpace=${contiguous253.deepSpaceNavRegime}, CryoSFQ=${contiguous253.cryoSfqRegime}, SubseaDWDM=${contiguous253.subseaDwdmRegime}, Scramjet=${contiguous253.hypersonicAeroRegime}, CBDC=${contiguous253.cbdcRtgsRegime}, Hygiene=${hygieneAudit.verdict}, Tokens=${repoMap.estimatedCompressedTokens})`,
+    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, SLSA=${dsseAttestation.verified}, F1=${sweBenchmark.f1Score.toFixed(2)}, EDA=${edaFormalProof.verdict}, Apollo=${apolloAirGapBundle.verdict}, Aladdin=${aladdinSystemicRisk.riskTier}, Roofline=${rooflinePlan.verdict}, SPC=${spcYieldAudit.verdict}, Kalman=${kalmanGncState.verdict}, QEC=${contiguous253.qecVerdict}, LEO=${contiguous253.leoRouteVerdict}, Grid=${contiguous253.gridOpfVerdict}, Bio=${contiguous253.bioFoldVerdict}, Fusion=${contiguous253.fusionVerdict}, Litho=${contiguous253.lithoVerdict}, DP=${contiguous253.privacyAbacVerdict}, LOB=${contiguous253.lobVpinVerdict}, DVFS=${contiguous253.dvfsQosVerdict}, Beam=${contiguous253.beamTwissVerdict}, DeepSpace=${contiguous253.deepSpaceNavRegime}, CryoSFQ=${contiguous253.cryoSfqRegime}, SubseaDWDM=${contiguous253.subseaDwdmRegime}, Scramjet=${contiguous253.hypersonicAeroRegime}, CBDC=${contiguous253.cbdcRtgsRegime}, OpticalClock=${contiguous253.clockRegime}, InSAR=${contiguous253.insarRegime}, MPD=${contiguous253.mpdRegime}, QRepeater=${contiguous253.qnetRegime}, EVM=${contiguous253.evmRegime}, Hygiene=${hygieneAudit.verdict}, Tokens=${repoMap.estimatedCompressedTokens})`,
   );
 }
 
@@ -661,6 +671,11 @@ HANDLERS["cryo:josephson"] = cmd_cryo_josephson;
 HANDLERS["dwdm:shannon"] = cmd_dwdm_shannon;
 HANDLERS["aero:scramjet"] = cmd_aero_scramjet;
 HANDLERS["rtgs:clear"] = cmd_rtgs_clear;
+HANDLERS["clock:optical"] = cmd_clock_optical;
+HANDLERS["insar:deform"] = cmd_insar_deform;
+HANDLERS["mpd:thruster"] = cmd_mpd_thruster;
+HANDLERS["qnet:repeater"] = cmd_qnet_repeater;
+HANDLERS["evm:prove"] = cmd_evm_prove;
 HANDLERS["hygiene:audit"] = cmd_hygiene_audit;
 HANDLERS["ship"] = cmd_ship;
 

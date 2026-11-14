@@ -14,10 +14,27 @@ import {
   cmd_dwdm_shannon,
   cmd_aero_scramjet,
   cmd_rtgs_clear,
+  cmd_clock_optical,
+  cmd_insar_deform,
+  cmd_mpd_thruster,
+  cmd_qnet_repeater,
+  cmd_evm_prove,
   computeDeepTech259To263ShipMetrics,
+  computeNationalLabs264To268ShipMetrics,
 } from "./cliDeepTech259To263FrontierMesh.mjs";
 
-export { cmd_nav_ephemeris, cmd_cryo_josephson, cmd_dwdm_shannon, cmd_aero_scramjet, cmd_rtgs_clear };
+export {
+  cmd_nav_ephemeris,
+  cmd_cryo_josephson,
+  cmd_dwdm_shannon,
+  cmd_aero_scramjet,
+  cmd_rtgs_clear,
+  cmd_clock_optical,
+  cmd_insar_deform,
+  cmd_mpd_thruster,
+  cmd_qnet_repeater,
+  cmd_evm_prove,
+};
 
 function readOptNum(args, name) {
   const prefix = `--${name}=`;
@@ -238,6 +255,7 @@ export function evaluateContiguous253ShipSnapshot() {
   const dvfsQos = EosUnifiedMemoryDmaDvfsQosCore.evaluateUnifiedMemoryDmaDvfsQos();
   const beamTwiss = EosRelativisticBeamTwissLuminosityCore.evaluateRelativisticBeamTwissLuminosity();
   const deepTech = computeDeepTech259To263ShipMetrics();
+  const nationalLabs = computeNationalLabs264To268ShipMetrics();
   const allNominal =
     qec.verdict === "BELOW_THRESHOLD_SUPPRESSION" &&
     leo.verdict === "ISL_QUANTUM_LINK_LOCKED" &&
@@ -249,7 +267,8 @@ export function evaluateContiguous253ShipSnapshot() {
     lobVpin.verdict === "EXECUTION_TRAJECTORY_OPTIMAL" &&
     dvfsQos.verdict === "QOS_AND_THERMAL_NOMINAL" &&
     beamTwiss.verdict === "BEAM_OPTICS_LUMINOSITY_LOCKED" &&
-    deepTech.deepTechNominal;
+    deepTech.deepTechNominal &&
+    nationalLabs.nationalLabsNominal;
   return {
     allNominal,
     qecVerdict: qec.verdict,
@@ -273,5 +292,6 @@ export function evaluateContiguous253ShipSnapshot() {
     dvfsQos,
     beamTwiss,
     ...deepTech,
+    ...nationalLabs,
   };
 }

@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 263,
-  "catalogSha256": "eb15bccd17a72a812de4bd637a320e815a22b67468fb8ce45157054347215e8d",
+  "totalSpecs": 268,
+  "catalogSha256": "27aa82954b4aca7fd224bbe0d7053c6ccea2993f38b40380aedb77c287bce185",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2369,6 +2369,51 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-263-CBDC-RTGS-GRIDLOCK-RESOLUTION.md",
       "sha256": "faea76f8e771b3a845e8c3a0484ab60dc37ef545f58042297c432a502e5068ab"
+    },
+    {
+      "id": "SPEC-264",
+      "title": "— Layer-0 Optical Lattice Atomic Clock & Relativistic Geodesy Sync Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-264-OPTICAL-LATTICE-ATOMIC-CLOCK-RELATIVISTIC-SYNC.md",
+      "sha256": "75a0e28152ab2da8d3543832f2f2380f3f2aef80defdc36c253de1cfa11cc26e"
+    },
+    {
+      "id": "SPEC-265",
+      "title": "— Layer-0 Interferometric SAR Crustal Deformation & Coherence Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-265-INTERFEROMETRIC-SAR-CRUSTAL-DEFORMATION.md",
+      "sha256": "2d22a51e158c7123f7ef28bf60823b12942aef0b7c9ce0950d14725a0c37a915"
+    },
+    {
+      "id": "SPEC-266",
+      "title": "— Layer-0 Magnetoplasmadynamic (MPD) Thruster & Lorentz MHD Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-266-MAGNETOPLASMADYNAMIC-THRUSTER-MHD.md",
+      "sha256": "b6883c4c4300bca355fdd52e967027137f35b552aff8c20bf5a2f4ef7554a8ec"
+    },
+    {
+      "id": "SPEC-267",
+      "title": "— Layer-0 Quantum Entanglement Repeater & BBPSSW Purification Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-267-QUANTUM-ENTANGLEMENT-REPEATER-BBPSSW.md",
+      "sha256": "7b3b1eada871d95e09eae0127c5fce553ffd144b6bffd5b5bc6b9ed1270133db"
+    },
+    {
+      "id": "SPEC-268",
+      "title": "— Layer-0 Smart-Contract Bytecode Gas & Symbolic CEI Verifier Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-268-SMART-CONTRACT-BYTECODE-GAS-SYMBOLIC-VERIFIER.md",
+      "sha256": "2805409b9295df378cbb287340d4ef406c263bc2a5aab58448331025d87002df"
     }
   ]
 }
