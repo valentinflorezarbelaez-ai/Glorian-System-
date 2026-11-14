@@ -1077,5 +1077,31 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(kalmanVote.action, "kalman_quad_vote");
     assert.equal(kalmanVote.verdict, "GNC_NOMINAL_LOCK");
     assert.equal(kalmanVote.kalmanDigestSha256.length, 64);
+
+    // 54. Contiguous SPEC-101..SPEC-105 frontier engines (Quantum QEC, LEO ISL, Grid OPF, Bio Fold, Fusion)
+    const qec = callFacade({ action: "quantum_qec_decode" });
+    assert.equal(qec.action, "quantum_qec_decode");
+    assert.equal(qec.verdict, "BELOW_THRESHOLD_SUPPRESSION");
+    assert.equal(qec.qecDigestSha256.length, 64);
+
+    const leo = callFacade({ action: "starlink_leo_route" });
+    assert.equal(leo.action, "starlink_leo_route");
+    assert.equal(leo.verdict, "ISL_QUANTUM_LINK_LOCKED");
+    assert.equal(leo.leoRouteDigestSha256.length, 64);
+
+    const grid = callFacade({ action: "power_grid_opf" });
+    assert.equal(grid.action, "power_grid_opf");
+    assert.equal(grid.verdict, "GRID_OPF_STABLE");
+    assert.equal(grid.gridOpfDigestSha256.length, 64);
+
+    const bio = callFacade({ action: "alphafold_fold_audit" });
+    assert.equal(bio.action, "alphafold_fold_audit");
+    assert.equal(bio.verdict, "HIGH_CONFIDENCE_FOLD");
+    assert.equal(bio.bioFoldDigestSha256.length, 64);
+
+    const fusion = callFacade({ action: "lawson_fusion_ignite" });
+    assert.equal(fusion.action, "lawson_fusion_ignite");
+    assert.equal(fusion.verdict, "IGNITION_SELF_SUSTAINING");
+    assert.equal(fusion.fusionDigestSha256.length, 64);
   });
 });

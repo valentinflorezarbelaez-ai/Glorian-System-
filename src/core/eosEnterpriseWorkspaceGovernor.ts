@@ -22,6 +22,12 @@ import {
   synthesizeWorkspaceVerificationCommands,
   buildOnboardIntakeMarkdown,
   buildOnboardSpecMarkdown,
+  toPosixRelative,
+  isPathWithin,
+  sanitizeProjectId,
+  defaultEnvVarForProject,
+  safeReadUtf8,
+  scanWorkspaceTree,
   type WorkspaceOrchestrator,
   type EnterpriseLanguage,
   type WorkspaceMember,
@@ -41,84 +47,6 @@ import {
   type WorkspaceAccessMode,
 } from "./eosEnterpriseWorkspaceGovernor.types.ts";
 
-function toPosixRelative(rootDir: string, targetPath: string): string {
-  const rel = path.relative(rootDir, targetPath).replace(/\\/g, "/");
-  return rel === "" ? "." : rel;
-}
-
-function isPathWithin(rootPath: string, candidatePath: string): boolean {
-  const relative = path.relative(rootPath, candidatePath);
-  return relative === "" || (relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative));
-}
-
-function sanitizeProjectId(rawId: string): string {
-  const normalized = rawId
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9-]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-  assertPrecondition(
-    normalized.length >= 2 && normalized.length <= 64,
-    "projectId must contain 2..64 alphanumeric/hyphen characters",
-  );
-  return normalized;
-}
-
-function defaultEnvVarForProject(projectId: string): string {
-  return `EOS_FLEET_${projectId.replace(/[^a-zA-Z0-9]+/g, "_").toUpperCase()}_PATH`;
-}
-
-function safeReadUtf8(filePath: string, maxBytes: number = 256 * 1024): string | null {
-  try {
-    const stat = fs.lstatSync(filePath);
-    if (!stat.isFile() || stat.isSymbolicLink() || stat.size > maxBytes) return null;
-    return fs.readFileSync(filePath, "utf8");
-  } catch {
-    return null;
-  }
-}
-
-function scanWorkspaceTree(
-  rootDir: string,
-  maxDepth: number,
-  maxFiles: number,
-): { files: readonly string[]; skippedSymlinkCount: number } {
-  const collected: string[] = [];
-  let skippedSymlinkCount = 0;
-
-  const visit = (currentDir: string, depth: number): void => {
-    if (depth > maxDepth || collected.length >= maxFiles) return;
-    let entries: fs.Dirent[];
-    try {
-      entries = fs.readdirSync(currentDir, { withFileTypes: true });
-    } catch {
-      return;
-    }
-    entries.sort((a, b) => a.name.localeCompare(b.name));
-
-    for (const entry of entries) {
-      if (collected.length >= maxFiles) break;
-      if (IGNORED_SCAN_DIRS.has(entry.name) || entry.name.startsWith(".worktree")) continue;
-      const fullPath = path.join(currentDir, entry.name);
-      let stat: fs.Stats;
-      try {
-        stat = fs.lstatSync(fullPath);
-      } catch {
-        continue;
-      }
-      if (stat.isSymbolicLink()) {
-        skippedSymlinkCount += 1;
-        continue;
-      }
-      if (stat.isDirectory()) visit(fullPath, depth + 1);
-      else if (stat.isFile()) collected.push(fullPath);
-    }
-  };
-
-  visit(rootDir, 0);
-  return { files: collected, skippedSymlinkCount };
-}
-
 export class EosEnterpriseWorkspaceGovernor {
   public static inspectWorkspace(targetPath: string, options?: InspectWorkspaceOptions): EnterpriseWorkspaceTopology {
     assertPrecondition(
@@ -136,7 +64,7 @@ export class EosEnterpriseWorkspaceGovernor {
     const maxDepth = Math.min(Math.max(options?.maxDepth ?? 6, 1), 8);
     const maxFiles = Math.min(Math.max(options?.maxFiles ?? 4000, 50), 10000);
 
-    const { files, skippedSymlinkCount } = scanWorkspaceTree(realRoot, maxDepth, maxFiles);
+    const { files, skippedSymlinkCount } = scanWorkspaceTree(realRoot, maxDepth, maxFiles, IGNORED_SCAN_DIRS);
     const relSet = new Set<string>(files.map((f) => toPosixRelative(realRoot, f)));
 
     const orchestrators: WorkspaceOrchestrator[] = [];
@@ -666,7 +594,7 @@ export class EosEnterpriseWorkspaceGovernor {
     },
   ): EnterpriseWorkspaceVerificationReport {
     const topology = this.inspectWorkspace(targetPath);
-    const { files } = scanWorkspaceTree(topology.workspaceRoot, 5, 2500);
+    const { files } = scanWorkspaceTree(topology.workspaceRoot, 5, 2500, IGNORED_SCAN_DIRS);
 
     const malformedJsonFiles: string[] = [];
     for (const f of files) {

@@ -50,6 +50,7 @@ import type { QuadTelemetryFrameInput } from "../../core/eosKalmanStateEstimator
 import { EosCrdtStateSyncCore } from "../../core/eosCrdtStateSyncCore.ts";
 import { EosMerkleMountainRangeCore } from "../../core/eosMerkleMountainRangeCore.ts";
 import { EosVerifiableSecretSharingCore } from "../../core/eosVerifiableSecretSharingCore.ts";
+import { dispatchContiguous253FrontierActions } from "./eosMcpPhase7FrontierExt3.ts";
 import { type Phase7DomainHandlerDeps, isPlainRecord } from "./eosMcpPhase7Shared.ts";
 
 function numOr(val: unknown, fallback: number): number {
@@ -550,7 +551,7 @@ function dispatchEdaApolloAladdinActions(
   if (action === "roofline_compute_plan") return handleRooflineComputePlan(args);
   if (action === "spc_yield_audit") return handleSpcYieldAudit(args);
   if (action === "kalman_quad_vote") return handleKalmanQuadVote(args);
-  return dispatchCrdtMmrVssActions(action, args);
+  return dispatchContiguous253FrontierActions(action, args) ?? dispatchCrdtMmrVssActions(action, args);
 }
 
 function dispatchPolyglotOrBridge(

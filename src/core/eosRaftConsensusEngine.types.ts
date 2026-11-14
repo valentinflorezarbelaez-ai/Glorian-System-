@@ -122,3 +122,28 @@ export function computeFsmHash(state: Record<string, unknown>): string {
   }
   return pureSha256(JSON.stringify(canonical));
 }
+
+export function buildRaftClusterReceipt(
+  status: RaftClusterStatus,
+  fsmState: Record<string, unknown>,
+  logHashes: readonly string[],
+  commitIndex: number,
+  nonce: string,
+): RaftClusterReceipt {
+  const payload = {
+    clusterId: status.clusterId,
+    currentTerm: status.currentTerm,
+    leaderId: status.leaderId,
+    commitIndex,
+    activeQuorum: status.isQuorumFormed,
+    nodeCount: status.nodeCount,
+    fsmStateHash: computeFsmHash(fsmState),
+    logRootHash: pureSha256(JSON.stringify(logHashes)),
+    nonce,
+  };
+  return {
+    ...payload,
+    sha256Receipt: pureSha256(JSON.stringify(payload)),
+    generatedAt: new Date().toISOString(),
+  };
+}

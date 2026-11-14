@@ -57,26 +57,23 @@ async function cmd_mcts_policy_value_147(commandContext) {
     return;
   }
 
-  console.log(`\n===============================================================`);
-  console.log(`  GLORIAN MCTS POLICY-VALUE HEURISTIC PLANNER (SPEC-204)       `);
-  console.log(`===============================================================`);
-  console.log(`  Problem Domain   : ${problemName}`);
-  console.log(`  Simulations Run  : ${result.totalSimulations} rollouts (Root Visits: ${result.rootVisits})`);
-  console.log(`  Exploration cPUCT: ${cPuct}`);
-  console.log(`  Selected Action  : ✔ ${result.bestAction}`);
-  console.log(`  Expected Value Q : ${result.expectedValue} (Scale: [-1.0, 1.0])`);
-  console.log(`  Visit Distribution Pi(a|s):`);
-  for (const [action, prob] of Object.entries(result.actionProbabilities)) {
-    console.log(`    - ${action.padEnd(25)}: ${(prob * 100).toFixed(1)}%`);
-  }
-  console.log(`  Optimal Trajectory Steps (${result.trajectory.steps.length} hops):`);
-  result.trajectory.steps.forEach((s) => {
-    console.log(`    [#${s.stepIndex}] State: ${s.stateId} -> Action: ${s.selectedAction} (Q: ${s.expectedValue})`);
-  });
-  console.log(`  Final State      : ${result.trajectory.finalStateId}`);
-  console.log(`  Cumulative Reward: ${result.trajectory.totalExpectedReward}`);
-  console.log(`  Decision Receipt : sha256:${result.sha256Receipt}`);
-  console.log(`===============================================================\n`);
+  const lines = [
+    `Problem Domain   : ${problemName}`,
+    `Simulations Run  : ${result.totalSimulations} rollouts (Root Visits: ${result.rootVisits})`,
+    `Exploration cPUCT: ${cPuct}`,
+    `Selected Action  : ✔ ${result.bestAction}`,
+    `Expected Value Q : ${result.expectedValue} (Scale: [-1.0, 1.0])`,
+    `Visit Distribution Pi(a|s):`,
+    ...Object.entries(result.actionProbabilities).map(([a, p]) => `  - ${a.padEnd(25)}: ${(p * 100).toFixed(1)}%`),
+    `Optimal Trajectory Steps (${result.trajectory.steps.length} hops):`,
+    ...result.trajectory.steps.map(
+      (s) => `  [#${s.stepIndex}] State: ${s.stateId} -> Action: ${s.selectedAction} (Q: ${s.expectedValue})`,
+    ),
+    `Final State      : ${result.trajectory.finalStateId}`,
+    `Cumulative Reward: ${result.trajectory.totalExpectedReward}`,
+    `Decision Receipt : sha256:${result.sha256Receipt}`,
+  ];
+  emitBannerBox("GLORIAN MCTS POLICY-VALUE HEURISTIC PLANNER (SPEC-204)", lines);
 }
 
 HANDLERS["mcts:search"] = cmd_mcts_policy_value_147;
@@ -96,11 +93,7 @@ async function cmd_tla_model_checker_148(commandContext) {
       console.log(JSON.stringify({ moduleName: model.moduleName, tlaCode }, null, 2));
       return;
     }
-    console.log(`\n===============================================================`);
-    console.log(`  GLORIAN SYNTHESIZED TLA+ SPECIFICATION (SPEC-205)            `);
-    console.log(`===============================================================`);
-    console.log(tlaCode);
-    console.log(`===============================================================\n`);
+    emitBannerBox("GLORIAN SYNTHESIZED TLA+ SPECIFICATION (SPEC-205)", [tlaCode]);
     return;
   }
 
@@ -114,28 +107,26 @@ async function cmd_tla_model_checker_148(commandContext) {
     return;
   }
 
-  console.log(`\n===============================================================`);
-  console.log(`  GLORIAN BOUNDED TLA+ MODEL CHECKER & PROVER (SPEC-205)       `);
-  console.log(`===============================================================`);
-  console.log(`  Module Name      : ${result.moduleName}`);
-  console.log(`  Verification     : ${result.verified ? "✔ ALL_INVARIANTS_HOLD" : "✖ INVARIANT_VIOLATED"}`);
-  console.log(`  States Explored  : ${result.totalStatesExplored} states (Max Depth: ${result.maxDepthReached})`);
-  console.log(`  Transitions      : ${result.totalTransitionsExplored} distinct edges traversed`);
-  console.log(`  Deadlocks Found  : ${result.deadlocksFound}`);
-  console.log(`  Verified Invariants:`);
-  for (const [invName, passed] of Object.entries(result.invariantResults)) {
-    console.log(`    - ${invName.padEnd(20)}: ${passed ? "✔ PASS (Inductively Valid)" : "✖ FAIL"}`);
-  }
-  if (result.counterexample) {
-    console.log(`  Counterexample Trace for ${result.counterexample.invariantViolated}:`);
-    result.counterexample.trace.forEach((step) => {
-      console.log(
-        `    Step ${step.stepIndex}: [Action: ${step.actionTaken || "Init"}] State: ${JSON.stringify(step.state)}`,
-      );
-    });
-  }
-  console.log(`  Receipt SHA-256  : sha256:${result.sha256Receipt}`);
-  console.log(`===============================================================\n`);
+  emitBannerBox("GLORIAN BOUNDED TLA+ MODEL CHECKER & PROVER (SPEC-205)", [
+    `Module Name      : ${result.moduleName}`,
+    `Verification     : ${result.verified ? "✔ ALL_INVARIANTS_HOLD" : "✖ INVARIANT_VIOLATED"}`,
+    `States Explored  : ${result.totalStatesExplored} states (Max Depth: ${result.maxDepthReached})`,
+    `Transitions      : ${result.totalTransitionsExplored} distinct edges traversed`,
+    `Deadlocks Found  : ${result.deadlocksFound}`,
+    `Verified Invariants:`,
+    ...Object.entries(result.invariantResults).map(
+      ([inv, passed]) => `  - ${inv.padEnd(20)}: ${passed ? "✔ PASS (Inductively Valid)" : "✖ FAIL"}`,
+    ),
+    ...(result.counterexample
+      ? [
+          `Counterexample Trace for ${result.counterexample.invariantViolated}:`,
+          ...result.counterexample.trace.map(
+            (s) => `  Step ${s.stepIndex}: [Action: ${s.actionTaken || "Init"}] State: ${JSON.stringify(s.state)}`,
+          ),
+        ]
+      : []),
+    `Receipt SHA-256  : sha256:${result.sha256Receipt}`,
+  ]);
 }
 
 HANDLERS["tla:check"] = cmd_tla_model_checker_148;
@@ -177,27 +168,22 @@ async function cmd_raft_consensus_149(commandContext) {
     return;
   }
 
-  console.log(`\n===============================================================`);
-  console.log(`  GLORIAN LAYER-0 RAFT DISTRIBUTED CONSENSUS ENGINE (SPEC-206) `);
-  console.log(`===============================================================`);
-  console.log(`  Cluster ID       : ${status.clusterId}`);
-  console.log(`  Current Term     : ${status.currentTerm}`);
-  console.log(`  Elected Leader   : ${status.leaderId ?? "NONE"}`);
-  console.log(`  Quorum Size      : ${status.quorumSize} / ${status.nodeCount} nodes`);
-  console.log(`  Active Quorum    : ${status.isQuorumFormed ? "✔ QUORUM_ACHIEVED" : "✖ NO_QUORUM"}`);
-  console.log(`  Nodes Status:`);
-  for (const n of status.nodes) {
-    console.log(
-      `    - ${n.nodeId.padEnd(10)} [${n.role.padEnd(9)}] Term: ${n.currentTerm} CommitIdx: ${n.commitIndex} LastApplied: ${n.lastApplied} LogLen: ${n.logLength}`,
-    );
-  }
-  console.log(`  Command Propose  : ${proposal.committed ? "✔ COMMITTED_TO_REPLICATED_FSM" : "✖ UNCOMMITTED"}`);
-  console.log(
-    `  Leader FSM State : ${JSON.stringify(status.nodes.find((n) => n.nodeId === status.leaderId)?.fsmState ?? {})}`,
-  );
-  console.log(`  State Hash       : ${receipt.fsmStateHash.slice(0, 24)}...`);
-  console.log(`  Receipt SHA-256  : sha256:${receipt.sha256Receipt}`);
-  console.log(`===============================================================\n`);
+  emitBannerBox("GLORIAN LAYER-0 RAFT DISTRIBUTED CONSENSUS ENGINE (SPEC-206)", [
+    `Cluster ID       : ${status.clusterId}`,
+    `Current Term     : ${status.currentTerm}`,
+    `Elected Leader   : ${status.leaderId ?? "NONE"}`,
+    `Quorum Size      : ${status.quorumSize} / ${status.nodeCount} nodes`,
+    `Active Quorum    : ${status.isQuorumFormed ? "✔ QUORUM_ACHIEVED" : "✖ NO_QUORUM"}`,
+    `Nodes Status:`,
+    ...status.nodes.map(
+      (n) =>
+        `  - ${n.nodeId.padEnd(10)} [${n.role.padEnd(9)}] Term: ${n.currentTerm} CommitIdx: ${n.commitIndex} LastApplied: ${n.lastApplied} LogLen: ${n.logLength}`,
+    ),
+    `Command Propose  : ${proposal.committed ? "✔ COMMITTED_TO_REPLICATED_FSM" : "✖ UNCOMMITTED"}`,
+    `Leader FSM State : ${JSON.stringify(status.nodes.find((n) => n.nodeId === status.leaderId)?.fsmState ?? {})}`,
+    `State Hash       : ${receipt.fsmStateHash.slice(0, 24)}...`,
+    `Receipt SHA-256  : sha256:${receipt.sha256Receipt}`,
+  ]);
 }
 
 HANDLERS["raft:cluster"] = cmd_raft_consensus_149;
@@ -233,14 +219,12 @@ async function cmd_ans_compressor_150(commandContext) {
       return;
     }
 
-    console.log(`\n===============================================================`);
-    console.log(`  GLORIAN LAYER-0 ANS/rANS ENTROPY DECOMPRESSOR (SPEC-207)     `);
-    console.log(`===============================================================`);
-    console.log(`  Decompressed Size: ${result.decompressed.length} bytes`);
-    console.log(`  Integrity Check  : ${result.verified ? "✔ EXACT_ROUNDTRIP_MATCH" : "✖ CORRUPT"}`);
-    console.log(`  Original SHA-256 : sha256:${result.originalSha256}`);
-    console.log(`  Receipt SHA-256  : sha256:${result.sha256Receipt}`);
-    console.log(`===============================================================\n`);
+    emitBannerBox("GLORIAN LAYER-0 ANS/rANS ENTROPY DECOMPRESSOR (SPEC-207)", [
+      `Decompressed Size: ${result.decompressed.length} bytes`,
+      `Integrity Check  : ${result.verified ? "✔ EXACT_ROUNDTRIP_MATCH" : "✖ CORRUPT"}`,
+      `Original SHA-256 : sha256:${result.originalSha256}`,
+      `Receipt SHA-256  : sha256:${result.sha256Receipt}`,
+    ]);
     return;
   }
 
@@ -273,19 +257,17 @@ async function cmd_ans_compressor_150(commandContext) {
     return;
   }
 
-  console.log(`\n===============================================================`);
-  console.log(`  GLORIAN LAYER-0 ANS/rANS ENTROPY COMPRESSOR (SPEC-207)       `);
-  console.log(`===============================================================`);
-  console.log(`  Uncompressed Size: ${result.metadata.uncompressedSize} bytes`);
-  console.log(`  Compressed Size  : ${result.metadata.compressedSize} bytes`);
-  console.log(`  Compression Ratio: ${result.metadata.compressionRatio}x`);
-  console.log(`  Space Savings    : ${result.metadata.spaceSavingsPercent}%`);
-  console.log(`  Shannon Entropy  : ${result.metadata.shannonEntropyBitsPerSymbol} bits/symbol`);
-  console.log(`  Unique Symbols   : ${result.metadata.uniqueSymbols} / 256`);
-  console.log(`  Roundtrip Verify : ${verifyDecompress.verified ? "✔ 100% LOSSLESS PASS" : "✖ MISMATCH"}`);
-  console.log(`  Original Hash    : sha256:${result.metadata.originalSha256.slice(0, 24)}...`);
-  console.log(`  Receipt SHA-256  : sha256:${result.sha256Receipt}`);
-  console.log(`===============================================================\n`);
+  emitBannerBox("GLORIAN LAYER-0 ANS/rANS ENTROPY COMPRESSOR (SPEC-207)", [
+    `Uncompressed Size: ${result.metadata.uncompressedSize} bytes`,
+    `Compressed Size  : ${result.metadata.compressedSize} bytes`,
+    `Compression Ratio: ${result.metadata.compressionRatio}x`,
+    `Space Savings    : ${result.metadata.spaceSavingsPercent}%`,
+    `Shannon Entropy  : ${result.metadata.shannonEntropyBitsPerSymbol} bits/symbol`,
+    `Unique Symbols   : ${result.metadata.uniqueSymbols} / 256`,
+    `Roundtrip Verify : ${verifyDecompress.verified ? "✔ 100% LOSSLESS PASS" : "✖ MISMATCH"}`,
+    `Original Hash    : sha256:${result.metadata.originalSha256.slice(0, 24)}...`,
+    `Receipt SHA-256  : sha256:${result.sha256Receipt}`,
+  ]);
 }
 
 HANDLERS["compress:ans"] = cmd_ans_compressor_150;

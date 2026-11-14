@@ -18,7 +18,12 @@ export const QUICK_HELP_TEXT = `
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
   eos kalman:estimate [--json] Estimador Kalman cinemático + votador 4-canales QMR (SPEC-253)
-  eos ship [--ticket=ID]     Pipeline maestro pre-PR (Diff, Contract, SARIF, Fleet, SLSA, SWE, EDA, Apollo, Aladdin, Roofline, SPC, Kalman, Hygiene)
+  eos qec:decode [--json]    Código Surface QEC rotado, lambda y emparejamiento síndromes (SPEC-101)
+  eos leo:route [--json]     Enrutamiento óptico ISL LEO Dijkstra, Doppler y QKD BB84 (SPEC-102)
+  eos grid:opf [--json]      Despacho económico DC-OPF, droop de frecuencia y RoCoF UHV (SPEC-103)
+  eos bio:fold [--json]      Alineamiento Smith-Waterman, contactos 3D y pLDDT/PAE (SPEC-104)
+  eos fusion:ignite [--json] Criterio Lawson de ignición D-T, balance alfa y P2/P0 (SPEC-105)
+  eos ship [--ticket=ID]     Pipeline maestro pre-PR (SPEC-101..105 + SPEC-236..253 + Hygiene)
 
 🛡️ SEGURIDAD, CADENA DE SUMINISTRO & FORMAL METHODS:
   eos sbom                   Genera inventario CycloneDX v1.5 con atestación SHA-256
@@ -156,7 +161,12 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos roofline:plan [--json]     Modelo Roofline NVIDIA, fusión de operadores y arena 64B (SPEC-251)
   eos spc:audit [--json]         Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
   eos kalman:estimate [--json]   Estimador Kalman cinemático + votador QMR 4-canales (SPEC-253)
-  eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-236..SPEC-253
+  eos qec:decode [--json]        Código Surface QEC rotado, lambda y emparejamiento síndromes (SPEC-101)
+  eos leo:route [--json]         Enrutamiento óptico ISL LEO Dijkstra, Doppler y QKD BB84 (SPEC-102)
+  eos grid:opf [--json]          Despacho económico DC-OPF, droop de frecuencia y RoCoF UHV (SPEC-103)
+  eos bio:fold [--json]          Alineamiento Smith-Waterman, contactos 3D y pLDDT/PAE (SPEC-104)
+  eos fusion:ignite [--json]     Criterio Lawson de ignición D-T, balance alfa y P2/P0 (SPEC-105)
+  eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..253
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
 📦 ÍNDICE DE ALIAS Y SUBCOMANDOS ESPECIALIZADOS (100% REGISTRADOS):

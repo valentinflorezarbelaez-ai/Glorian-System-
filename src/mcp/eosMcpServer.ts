@@ -32,7 +32,13 @@ import { createPhase5DomainHandlers } from "./tools/eosMcpPhase5DomainHandlers.t
 import { createPhase6DomainHandlers } from "./tools/eosMcpPhase6DomainHandlers.ts";
 import { createPhase7DomainHandlers } from "./tools/eosMcpPhase7DomainHandlers.ts";
 import { createPhase8AgiHandlers } from "./tools/eosMcpPhase8AgiHandlers.ts";
-import { resolveConfinedLedgerPath, resolveProjectPath } from "./eosMcpPathResolver.ts";
+import {
+  isPlainRecord,
+  MAX_MCP_REQUEST_BYTES,
+  resolveConfinedLedgerPath,
+  resolveProjectPath,
+  validateBoundedJson,
+} from "./eosMcpPathResolver.ts";
 import { EosMcpSchemaValidator, type McpToolSchemaDef } from "../core/eosMcpSchemaValidator.ts";
 import { appendIamAuditEntry } from "../core/eosIamAuditLedger.ts";
 import type { BreakGlassGrant } from "../core/eosIamBreakGlass.ts";
@@ -55,59 +61,6 @@ export interface JsonRpcResponse {
     message: string;
     data?: any;
   };
-}
-
-const MAX_MCP_REQUEST_BYTES = 1024 * 1024;
-const MAX_MCP_STRING_BYTES = 256 * 1024;
-const MAX_MCP_NESTING_DEPTH = 24;
-const MAX_MCP_VALUE_COUNT = 20_000;
-
-function isPlainRecord(value: unknown): value is Record<string, unknown> {
-  if (value === null || typeof value !== "object" || Array.isArray(value)) return false;
-  const prototype = Object.getPrototypeOf(value);
-  return prototype === Object.prototype || prototype === null;
-}
-
-function validateBoundedJson(value: unknown): void {
-  const pending: Array<{ value: unknown; depth: number }> = [{ value, depth: 0 }];
-  let visited = 0;
-
-  while (pending.length > 0) {
-    const current = pending.pop()!;
-    visited += 1;
-    if (visited > MAX_MCP_VALUE_COUNT) throw new RangeError("MCP arguments exceed the item-count limit.");
-    if (current.depth > MAX_MCP_NESTING_DEPTH) throw new RangeError("MCP arguments exceed the nesting-depth limit.");
-
-    if (typeof current.value === "string") {
-      if (Buffer.byteLength(current.value, "utf8") > MAX_MCP_STRING_BYTES) {
-        throw new RangeError("An MCP string argument exceeds the 256 KiB limit.");
-      }
-      continue;
-    }
-    if (current.value === null || typeof current.value === "boolean") continue;
-    if (typeof current.value === "number") {
-      if (!Number.isFinite(current.value)) throw new TypeError("MCP numeric arguments must be finite.");
-      continue;
-    }
-    if (Array.isArray(current.value)) {
-      if (current.value.length > MAX_MCP_VALUE_COUNT)
-        throw new RangeError("An MCP array exceeds the item-count limit.");
-      for (const item of current.value) pending.push({ value: item, depth: current.depth + 1 });
-      continue;
-    }
-    if (isPlainRecord(current.value)) {
-      const entries = Object.entries(current.value);
-      for (const [key, child] of entries) {
-        if (Buffer.byteLength(key, "utf8") > 1024) throw new RangeError("An MCP object key exceeds the 1 KiB limit.");
-        if (key === "__proto__" || key === "prototype" || key === "constructor") {
-          throw new TypeError("MCP arguments cannot contain prototype-control keys.");
-        }
-        pending.push({ value: child, depth: current.depth + 1 });
-      }
-      continue;
-    }
-    throw new TypeError("MCP arguments must contain JSON values only.");
-  }
 }
 
 export class EosMcpServer {

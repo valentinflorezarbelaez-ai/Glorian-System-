@@ -560,3 +560,42 @@ export type {
   KalmanFrameEstimate,
   KalmanQuadVoterReport,
 } from "./eosKalmanStateEstimatorAndQuadVoterCore.types.ts";
+export { EosSurfaceCodeQuantumErrorCorrectionCore } from "./eosSurfaceCodeQuantumErrorCorrectionCore.ts";
+export type {
+  SurfaceCodeVerdict,
+  SyndromeDefectCoordinate,
+  SurfaceCodeDistanceProfile,
+  DefectMatchedPair,
+  SurfaceCodeQecOptions,
+  SurfaceCodeQecReport,
+} from "./eosSurfaceCodeQuantumErrorCorrectionCore.types.ts";
+export { EosLeoConstellationOpticalRoutingCore } from "./eosLeoConstellationOpticalRoutingCore.ts";
+export type {
+  LeoRouteVerdict,
+  OpticalIslLinkEdge,
+  LeoConstellationRoutingOptions,
+  LeoConstellationRoutingReport,
+} from "./eosLeoConstellationOpticalRoutingCore.types.ts";
+export { EosPowerGridOptimalPowerFlowCore } from "./eosPowerGridOptimalPowerFlowCore.ts";
+export type {
+  GridOpfVerdict,
+  GridGeneratorUnit,
+  TransmissionCorridor,
+  GridOpfOptions,
+  GeneratorDispatchAllocation,
+  CorridorFlowStatus,
+  GridOpfReport,
+} from "./eosPowerGridOptimalPowerFlowCore.types.ts";
+export { EosBioSequenceFoldingConfidenceCore } from "./eosBioSequenceFoldingConfidenceCore.ts";
+export type {
+  BioFoldVerdict,
+  ResiduePoint3D,
+  BioFoldingOptions,
+  BioFoldingReport,
+} from "./eosBioSequenceFoldingConfidenceCore.types.ts";
+export { EosInertialFusionLawsonIgnitionCore } from "./eosInertialFusionLawsonIgnitionCore.ts";
+export type {
+  FusionIgnitionVerdict,
+  LawsonFusionOptions,
+  LawsonFusionReport,
+} from "./eosInertialFusionLawsonIgnitionCore.types.ts";

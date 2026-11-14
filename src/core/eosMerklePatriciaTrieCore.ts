@@ -690,66 +690,26 @@ export class EosMerklePatriciaTrieCore {
         }
         const nextNibble = curNibbles[0];
         const childRef = curNode[nextNibble];
-        if (!childRef || (Buffer.isBuffer(childRef) && childRef.length === 0)) {
-          return null; // Exclusion proof verified
-        }
-
+        if (!childRef || (Buffer.isBuffer(childRef) && childRef.length === 0)) return null;
         curNibbles = curNibbles.slice(1);
-        if (Buffer.isBuffer(childRef) && childRef.length === 32) {
-          const nextHash = childRef.toString("hex").toLowerCase();
-          const nextNodeBuf = proofDict.get(nextHash);
-          if (!nextNodeBuf) {
-            throw new Error(`verifyProof: Missing proof node for hash ${nextHash}`);
-          }
-          curNode = EosRlp.decode(nextNodeBuf);
-        } else if (Array.isArray(childRef)) {
-          curNode = childRef;
-        } else if (Buffer.isBuffer(childRef)) {
-          curNode = EosRlp.decode(childRef);
-        } else {
-          return null;
-        }
+        curNode = EosMerklePatriciaTrieCore.resolveProofChild(childRef, proofDict, "hash") as RlpItem;
+        if (!curNode) return null;
         continue;
       }
 
-      // 2 elements: Leaf or Extension
       if (curNode.length === 2) {
-        const pathBuf = curNode[0] as Buffer;
-        const { nibbles: nodeNibbles, isLeaf } = EosHexPrefix.decodePath(pathBuf);
-
+        const { nibbles: nodeNibbles, isLeaf } = EosHexPrefix.decodePath(curNode[0] as Buffer);
         if (isLeaf) {
-          if (
-            nodeNibbles.length === curNibbles.length &&
+          return nodeNibbles.length === curNibbles.length &&
             EosHexPrefix.matchingNibbleCount(nodeNibbles, curNibbles) === curNibbles.length
-          ) {
-            return curNode[1] as Buffer;
-          }
-          return null; // Exclusion: leaf path diverges
+            ? (curNode[1] as Buffer)
+            : null;
         }
-
-        // Extension node
         const match = EosHexPrefix.matchingNibbleCount(nodeNibbles, curNibbles);
-        if (match !== nodeNibbles.length) {
-          return null; // Exclusion: extension path diverges
-        }
-
-        const childRef = curNode[1];
+        if (match !== nodeNibbles.length) return null;
         curNibbles = curNibbles.slice(match);
-
-        if (Buffer.isBuffer(childRef) && childRef.length === 32) {
-          const nextHash = childRef.toString("hex").toLowerCase();
-          const nextNodeBuf = proofDict.get(nextHash);
-          if (!nextNodeBuf) {
-            throw new Error(`verifyProof: Missing proof node for extension hash ${nextHash}`);
-          }
-          curNode = EosRlp.decode(nextNodeBuf);
-        } else if (Array.isArray(childRef)) {
-          curNode = childRef;
-        } else if (Buffer.isBuffer(childRef)) {
-          curNode = EosRlp.decode(childRef);
-        } else {
-          return null;
-        }
+        curNode = EosMerklePatriciaTrieCore.resolveProofChild(curNode[1], proofDict, "extension hash") as RlpItem;
+        if (!curNode) return null;
         continue;
       }
 
@@ -757,6 +717,17 @@ export class EosMerklePatriciaTrieCore {
     }
 
     return null;
+  }
+
+  private static resolveProofChild(childRef: RlpItem, proofDict: Map<string, Buffer>, label: string): RlpItem | null {
+    if (Buffer.isBuffer(childRef) && childRef.length === 32) {
+      const nextHash = childRef.toString("hex").toLowerCase();
+      const nextNodeBuf = proofDict.get(nextHash);
+      if (!nextNodeBuf) throw new Error(`verifyProof: Missing proof node for ${label} ${nextHash}`);
+      return EosRlp.decode(nextNodeBuf);
+    }
+    if (Array.isArray(childRef)) return childRef;
+    return Buffer.isBuffer(childRef) ? EosRlp.decode(childRef) : null;
   }
 
   /**

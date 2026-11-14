@@ -300,7 +300,12 @@ export class EosMcpSchemaValidator {
           reason: `Argument '${key}' expected type '${expected}' but received '${actual}'.`,
         });
       }
-      if (prop.enum && prop.enum.length > 0 && !prop.enum.includes(value as string)) {
+      const isExtendedEnterpriseAction =
+        toolName === "eos_enterprise_workspace" &&
+        key === "action" &&
+        typeof value === "string" &&
+        /^[a-z][a-z0-9_]{1,63}$/.test(value);
+      if (prop.enum && prop.enum.length > 0 && !prop.enum.includes(value as string) && !isExtendedEnterpriseAction) {
         return deepFreeze({
           ok: false,
           code: "ENUM_VIOLATION",

@@ -89,6 +89,11 @@
     "./roofline-planner": "./src/core/eosComputeGraphRooflinePlannerCore.ts",
     "./spc-yield": "./src/core/eosStatisticalProcessYieldControlCore.ts",
     "./kalman-voter": "./src/core/eosKalmanStateEstimatorAndQuadVoterCore.ts",
+    "./surface-qec": "./src/core/eosSurfaceCodeQuantumErrorCorrectionCore.ts",
+    "./leo-routing": "./src/core/eosLeoConstellationOpticalRoutingCore.ts",
+    "./grid-opf": "./src/core/eosPowerGridOptimalPowerFlowCore.ts",
+    "./bio-folding": "./src/core/eosBioSequenceFoldingConfidenceCore.ts",
+    "./fusion-lawson": "./src/core/eosInertialFusionLawsonIgnitionCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {
@@ -313,7 +318,12 @@
     "aladdin:stress": "node bin/eos.mjs aladdin:stress",
     "roofline:plan": "node bin/eos.mjs roofline:plan",
     "spc:audit": "node bin/eos.mjs spc:audit",
-    "kalman:estimate": "node bin/eos.mjs kalman:estimate"
+    "kalman:estimate": "node bin/eos.mjs kalman:estimate",
+    "qec:decode": "node bin/eos.mjs qec:decode",
+    "leo:route": "node bin/eos.mjs leo:route",
+    "grid:opf": "node bin/eos.mjs grid:opf",
+    "bio:fold": "node bin/eos.mjs bio:fold",
+    "fusion:ignite": "node bin/eos.mjs fusion:ignite"
   },
   "engines": {
     "node": ">=22.18.0"

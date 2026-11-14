@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 248,
-  "catalogSha256": "8c440ab52fb0d2a549faa1c4ddd191660bcfce1fe25c63a8ce890690723e0f3b",
+  "totalSpecs": 253,
+  "catalogSha256": "430129924ca94af1297571bbb84badadb461dd72f41c3e97774bb1da96bfee9d",
   "specs": [
     {
       "id": "SPEC-001",
@@ -902,6 +902,51 @@
       "bddCount": 2,
       "file": "openspec/specs/SPEC-100-AUTONOMOUS-FLEET-DOGFOODING-ATTESTATION.md",
       "sha256": "25bfb5b4257fb0b1281e4f00fe89c675467e06414f9c95ea501062ca5e3bbebf"
+    },
+    {
+      "id": "SPEC-101",
+      "title": "— Layer-0 Rotated Surface Code Quantum Error Correction & Magic-State Factory Governor",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-101-SURFACE-CODE-QUANTUM-ERROR-CORRECTION.md",
+      "sha256": "ebbbc63d4724bf9e99e74138aaf189abaa859bb3b214fb2b8638e017a119371b"
+    },
+    {
+      "id": "SPEC-102",
+      "title": "— Layer-0 LEO Constellation Optical ISL & Satellite QKD Routing Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-102-STARLINK-LEO-OPTICAL-ISL-QKD-ROUTING.md",
+      "sha256": "b7a0c369894e2d29917fc7f20e4c29a467177fc560ea606d8db3c79fc15fa713"
+    },
+    {
+      "id": "SPEC-103",
+      "title": "— Layer-0 DC Optimal Power Flow & Hyperscale Frequency Stability Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-103-STATE-GRID-DC-OPF-FREQUENCY-STABILITY.md",
+      "sha256": "382c22af581c32942a302b2129ca101261161ac5308980c6e24f843f0fe84024"
+    },
+    {
+      "id": "SPEC-104",
+      "title": "— Layer-0 Bio-Sequence Alignment & Folding Confidence (`pLDDT` / `PAE`) Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-104-ALPHAFOLD-BIO-SEQUENCE-FOLDING-CONFIDENCE.md",
+      "sha256": "565f33faf9745b9808466bb474d5b2556676dabff789c4987a303b722da13e16"
+    },
+    {
+      "id": "SPEC-105",
+      "title": "— Layer-0 Exascale Inertial Fusion Lawson Ignition & Energy Balance Core",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-105-EXASCALE-INERTIAL-FUSION-LAWSON-IGNITION.md",
+      "sha256": "457863ae45f5c1c1721ee5ab2e9f85aaf83cfd45ce5f900e93d933dce41c9f99"
     },
     {
       "id": "SPEC-106",

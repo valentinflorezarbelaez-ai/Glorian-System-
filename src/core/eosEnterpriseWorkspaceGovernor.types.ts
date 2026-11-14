@@ -6,6 +6,87 @@
  * Extracted from eosEnterpriseWorkspaceGovernor.ts for module cohesion.
  */
 
+import fs from "node:fs";
+import path from "node:path";
+
+export function toPosixRelative(rootDir: string, targetPath: string): string {
+  const rel = path.relative(rootDir, targetPath).replace(/\\/g, "/");
+  return rel === "" ? "." : rel;
+}
+
+export function isPathWithin(rootPath: string, candidatePath: string): boolean {
+  const relative = path.relative(rootPath, candidatePath);
+  return relative === "" || (relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative));
+}
+
+export function sanitizeProjectId(rawId: string): string {
+  const normalized = rawId
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  if (normalized.length < 2 || normalized.length > 64) {
+    throw new Error("Precondition failed: projectId must contain 2..64 alphanumeric/hyphen characters");
+  }
+  return normalized;
+}
+
+export function defaultEnvVarForProject(projectId: string): string {
+  return `EOS_FLEET_${projectId.replace(/[^a-zA-Z0-9]+/g, "_").toUpperCase()}_PATH`;
+}
+
+export function safeReadUtf8(filePath: string, maxBytes: number = 256 * 1024): string | null {
+  try {
+    const stat = fs.lstatSync(filePath);
+    if (!stat.isFile() || stat.isSymbolicLink() || stat.size > maxBytes) return null;
+    return fs.readFileSync(filePath, "utf8");
+  } catch {
+    return null;
+  }
+}
+
+export function scanWorkspaceTree(
+  rootDir: string,
+  maxDepth: number,
+  maxFiles: number,
+  ignoredDirs: ReadonlySet<string>,
+): { files: readonly string[]; skippedSymlinkCount: number } {
+  const collected: string[] = [];
+  let skippedSymlinkCount = 0;
+
+  const visit = (currentDir: string, depth: number): void => {
+    if (depth > maxDepth || collected.length >= maxFiles) return;
+    let entries: fs.Dirent[];
+    try {
+      entries = fs.readdirSync(currentDir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    entries.sort((a, b) => a.name.localeCompare(b.name));
+
+    for (const entry of entries) {
+      if (collected.length >= maxFiles) break;
+      if (ignoredDirs.has(entry.name) || entry.name.startsWith(".worktree")) continue;
+      const fullPath = path.join(currentDir, entry.name);
+      let stat: fs.Stats;
+      try {
+        stat = fs.lstatSync(fullPath);
+      } catch {
+        continue;
+      }
+      if (stat.isSymbolicLink()) {
+        skippedSymlinkCount += 1;
+        continue;
+      }
+      if (stat.isDirectory()) visit(fullPath, depth + 1);
+      else if (stat.isFile()) collected.push(fullPath);
+    }
+  };
+
+  visit(rootDir, 0);
+  return { files: collected, skippedSymlinkCount };
+}
+
 export type WorkspaceOrchestrator =
   | "turborepo"
   | "nx"

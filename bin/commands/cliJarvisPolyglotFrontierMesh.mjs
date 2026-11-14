@@ -18,6 +18,14 @@ import { EosCliCatalogAndHygieneGovernorCore } from "../../src/core/eosCliCatalo
 import { EosComputeGraphRooflinePlannerCore } from "../../src/core/eosComputeGraphRooflinePlannerCore.ts";
 import { EosStatisticalProcessYieldControlCore } from "../../src/core/eosStatisticalProcessYieldControlCore.ts";
 import { EosKalmanStateEstimatorAndQuadVoterCore } from "../../src/core/eosKalmanStateEstimatorAndQuadVoterCore.ts";
+import {
+  cmd_bio_fold,
+  cmd_fusion_ignite,
+  cmd_grid_opf,
+  cmd_leo_route,
+  cmd_qec_decode,
+  evaluateContiguous253ShipSnapshot,
+} from "./cliContiguous253FrontierMesh.mjs";
 
 const HANDLERS = {};
 
@@ -471,6 +479,7 @@ async function cmd_ship(commandContext) {
   const rooflinePlan = EosComputeGraphRooflinePlannerCore.planComputeGraphAndArena();
   const spcYieldAudit = EosStatisticalProcessYieldControlCore.auditProcessCapabilityAndYield();
   const kalmanGncState = EosKalmanStateEstimatorAndQuadVoterCore.estimateTrajectoryWithQuadVoter();
+  const contiguous253 = evaluateContiguous253ShipSnapshot();
   const hygieneAudit = EosCliCatalogAndHygieneGovernorCore.auditCliCatalogAndModuleHeadroom({
     projectRoot: root,
   });
@@ -487,6 +496,7 @@ async function cmd_ship(commandContext) {
     rooflinePlan.verdict === "ROOFLINE_OPTIMIZED",
     spcYieldAudit.verdict !== "PROCESS_EXCURSION_HALT",
     kalmanGncState.verdict !== "GNC_QUORUM_LOST",
+    contiguous253.allNominal,
     hygieneAudit.verdict === "HYGIENE_GOVERNED",
   ].every(Boolean);
   const payload = {
@@ -510,6 +520,12 @@ async function cmd_ship(commandContext) {
     rooflinePlan,
     spcYieldAudit,
     kalmanGncState,
+    qecVerdict: contiguous253.qecVerdict,
+    leoRouteVerdict: contiguous253.leoRouteVerdict,
+    gridOpfVerdict: contiguous253.gridOpfVerdict,
+    bioFoldVerdict: contiguous253.bioFoldVerdict,
+    fusionVerdict: contiguous253.fusionVerdict,
+    contiguous253Frontier: contiguous253,
     hygieneAudit,
   };
   if (isJson) {
@@ -517,7 +533,7 @@ async function cmd_ship(commandContext) {
     return;
   }
   console.log(
-    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, SLSA=${dsseAttestation.verified}, F1=${sweBenchmark.f1Score.toFixed(2)}, EDA=${edaFormalProof.verdict}, Apollo=${apolloAirGapBundle.verdict}, Aladdin=${aladdinSystemicRisk.riskTier}, Roofline=${rooflinePlan.verdict}, SPC=${spcYieldAudit.verdict}, Kalman=${kalmanGncState.verdict}, Hygiene=${hygieneAudit.verdict}, Tokens=${repoMap.estimatedCompressedTokens})`,
+    `\n[GLORIAN SHIP] ${ticketId} -> ${payload.shipReadinessVerdict} (Staff=${staffJudge.verdict}, PBT=${propertySuite.allPassed}, Fleet=${fleetOrchestration.fleetVerdict}, SLSA=${dsseAttestation.verified}, F1=${sweBenchmark.f1Score.toFixed(2)}, EDA=${edaFormalProof.verdict}, Apollo=${apolloAirGapBundle.verdict}, Aladdin=${aladdinSystemicRisk.riskTier}, Roofline=${rooflinePlan.verdict}, SPC=${spcYieldAudit.verdict}, Kalman=${kalmanGncState.verdict}, QEC=${contiguous253.qecVerdict}, LEO=${contiguous253.leoRouteVerdict}, Grid=${contiguous253.gridOpfVerdict}, Bio=${contiguous253.bioFoldVerdict}, Fusion=${contiguous253.fusionVerdict}, Hygiene=${hygieneAudit.verdict}, Tokens=${repoMap.estimatedCompressedTokens})`,
   );
 }
 
@@ -610,6 +626,11 @@ HANDLERS["aladdin:stress"] = cmd_aladdin_stress;
 HANDLERS["roofline:plan"] = cmd_roofline_plan;
 HANDLERS["spc:audit"] = cmd_spc_audit;
 HANDLERS["kalman:estimate"] = cmd_kalman_estimate;
+HANDLERS["qec:decode"] = cmd_qec_decode;
+HANDLERS["leo:route"] = cmd_leo_route;
+HANDLERS["grid:opf"] = cmd_grid_opf;
+HANDLERS["bio:fold"] = cmd_bio_fold;
+HANDLERS["fusion:ignite"] = cmd_fusion_ignite;
 HANDLERS["hygiene:audit"] = cmd_hygiene_audit;
 HANDLERS["ship"] = cmd_ship;
 

@@ -31,7 +31,7 @@ import {
   type FsmReducer,
   defaultFsmReducer,
   computeLogEntryHash,
-  computeFsmHash,
+  buildRaftClusterReceipt,
 } from "./eosRaftConsensusEngine.types.ts";
 
 /**
@@ -65,27 +65,21 @@ export class EosRaftNode {
   get role(): RaftRole {
     return this._role;
   }
-
   get currentTerm(): number {
     return this._currentTerm;
   }
-
   get votedFor(): string | null {
     return this._votedFor;
   }
-
   get commitIndex(): number {
     return this._commitIndex;
   }
-
   get lastApplied(): number {
     return this._lastApplied;
   }
-
   get logLength(): number {
     return this._log.length + this._lastIncludedIndex;
   }
-
   get fsmState(): Readonly<Record<string, unknown>> {
     return deepFreeze({ ...this._fsmState });
   }
@@ -742,8 +736,6 @@ export class EosRaftCluster {
     const status = this.getClusterStatus();
     const leader = this._leaderId ? this._nodes.get(this._leaderId) : null;
     const fsmState = leader ? (leader.fsmState as Record<string, unknown>) : {};
-    const fsmStateHash = computeFsmHash(fsmState);
-
     const logHashes: string[] = [];
     if (leader) {
       for (let i = 1; i <= leader.getLastLogIndex(); i++) {
@@ -751,28 +743,7 @@ export class EosRaftCluster {
         if (e) logHashes.push(e.entryHash);
       }
     }
-    const logRootHash = pureSha256(JSON.stringify(logHashes));
-
-    const receiptPayload = {
-      clusterId: this.clusterId,
-      currentTerm: status.currentTerm,
-      leaderId: status.leaderId,
-      commitIndex: leader ? leader.commitIndex : 0,
-      activeQuorum: status.isQuorumFormed,
-      nodeCount: status.nodeCount,
-      fsmStateHash,
-      logRootHash,
-      nonce,
-    };
-
-    const sha256Receipt = pureSha256(JSON.stringify(receiptPayload));
-
-    const receipt: RaftClusterReceipt = {
-      ...receiptPayload,
-      sha256Receipt,
-      generatedAt: new Date().toISOString(),
-    };
-
+    const receipt = buildRaftClusterReceipt(status, fsmState, logHashes, leader ? leader.commitIndex : 0, nonce);
     assertPostcondition(receipt.sha256Receipt.length === 64, "Receipt hash must be valid 64-char SHA-256");
     return deepFreeze(receipt);
   }
