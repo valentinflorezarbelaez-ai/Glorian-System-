@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { getShieldDiagnostics } from "./_shield.js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 // Read version once at module load (not per request)
 let _pkgVersion = "65.0.0";
@@ -99,6 +100,7 @@ function handler(req, res) {
     telemetry: {
       traceparent,
       latencyMicroseconds: latencyMicros,
+      shield: getShieldDiagnostics(),
       memory: {
         rss: formatMb(mem.rss),
         heapTotal: formatMb(mem.heapTotal),

@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:9e228dee-9138-4aef-a4fd-ad682a12ed20",
+  "serialNumber": "urn:uuid:76dca1f8-a181-4b4a-b0c6-75c3e421e7ce",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-11T16:41:09.464Z",
+    "timestamp": "2026-11-15T01:20:22.777Z",
     "tools": [
       {
         "type": "application",
@@ -31,7 +31,7 @@
     "properties": [
       {
         "name": "eos:lockfileHash",
-        "value": "sha256:da81a08216e132412e1251d31d29fd550cc0d24a53adf38e5a21b8d99f1bba10"
+        "value": "sha256:6a5014090e054c058e7e1407d46fdc715f91670e8ba35669e0b9acd0fc226a01"
       },
       {
         "name": "eos:nodeVersion",
@@ -51,7 +51,7 @@
       },
       {
         "name": "eos:sbomReceipt",
-        "value": "sha256:4063299812f28aea785618f93702fc57b855a4abd74d77a90fa8fb57907dd85d"
+        "value": "sha256:28bc1288f24303fb7fe026bdf5a8d8243e1a394b2c10c2a5bb46310f4675b35d"
       }
     ]
   },

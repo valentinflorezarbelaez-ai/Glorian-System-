@@ -322,6 +322,8 @@ export class EosSpecDriftDetector {
           specName.includes("budget-gate") ||
           specName.includes("tlc-formal") ||
           specName.includes("mutation-ratchet") ||
+          specName.includes("devsecops-platform") ||
+          specName.includes("tlc-consensus") ||
           specName.includes("autotuner") ||
           specName.includes("untrusted-browser-data") ||
           specName.includes("verifiable-api-results") ||

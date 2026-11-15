@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-15T01:08:44.663Z",
+  "timestampIso": "2026-11-15T01:25:13.401Z",
   "totalModules": 432,
-  "consumedModules": 364,
-  "unconsumedModules": 68,
-  "graphDensity": 0.8426,
+  "consumedModules": 368,
+  "unconsumedModules": 64,
+  "graphDensity": 0.8519,
   "modules": {
     "EosAin": {
       "file": "src/core/EosAin.ts",
@@ -168,9 +168,14 @@
     "eosAdaptiveRateLimiter": {
       "file": "src/core/eosAdaptiveRateLimiter.ts",
       "baseName": "eosAdaptiveRateLimiter",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "api/_shield.js",
+          "category": "api"
+        }
+      ]
     },
     "eosAgentTopologyMesh": {
       "file": "src/core/eosAgentTopologyMesh.ts",
@@ -1441,9 +1446,14 @@
     "eosCycloneDxSbomGenerator": {
       "file": "src/core/eosCycloneDxSbomGenerator.ts",
       "baseName": "eosCycloneDxSbomGenerator",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "scripts/sbom-gate.mjs",
+          "category": "scripts"
+        }
+      ]
     },
     "eosDagJobScheduler": {
       "file": "src/core/eosDagJobScheduler.ts",
@@ -2052,9 +2062,14 @@
     "eosEventLoopSaturationGovernor": {
       "file": "src/core/eosEventLoopSaturationGovernor.ts",
       "baseName": "eosEventLoopSaturationGovernor",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "api/_shield.js",
+          "category": "api"
+        }
+      ]
     },
     "eosEventSourcingEngine": {
       "file": "src/core/eosEventSourcingEngine.ts",
@@ -2893,9 +2908,14 @@
     "eosIdempotencyKeyStore": {
       "file": "src/core/eosIdempotencyKeyStore.ts",
       "baseName": "eosIdempotencyKeyStore",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "api/_shield.js",
+          "category": "api"
+        }
+      ]
     },
     "eosImpenetrableShield": {
       "file": "src/core/eosImpenetrableShield.ts",

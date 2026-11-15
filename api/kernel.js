@@ -2,6 +2,7 @@ import handleBigTech from "./_bigtech.js";
 import handleSpecs from "./_specs.js";
 import handleFinops from "./_finops.js";
 import handleMetrics from "./_metrics.js";
+import { applyKernelShield, recordIdempotentResponse } from "./_shield.js";
 import { createHash } from "node:crypto";
 import { getQueryObject, getQueryParam } from "./_safeQuery.js";
 
@@ -48,10 +49,12 @@ function respondWithOmegaDemo(req, res) {
 export default function handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Idempotency-Key, x-idempotency-key");
   res.setHeader("Cache-Control", "no-store");
 
   if (req.method === "OPTIONS") return res.status(200).end();
+
+  if (!applyKernelShield(req, res)) return;
 
   const query = getQueryObject(req);
   const url = req.url || "";
@@ -89,7 +92,7 @@ export default function handler(req, res) {
   const content = LINUX_CONCEPT_FIXTURES[vfsPath];
   const outputFingerprintSha256 = createHash("sha256").update(`EOS_LOCAL_FIXTURE:${vfsPath}:${content}`).digest("hex");
 
-  return res.status(200).json({
+  const payload = {
     status: "STATIC_FIXTURE",
     scope:
       "Static explanatory text only; no Linux kernel, VFS, eBPF verifier, real-time scheduler, ABI, or security control was queried or run.",
@@ -98,5 +101,7 @@ export default function handler(req, res) {
     outputFingerprintSha256: `sha256:${outputFingerprintSha256}`,
     fingerprintIsSignature: false,
     kernelOperationsPerformed: false,
-  });
+  };
+  recordIdempotentResponse(req, payload);
+  return res.status(200).json(payload);
 }

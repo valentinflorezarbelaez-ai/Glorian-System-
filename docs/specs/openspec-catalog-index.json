@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 270,
-  "catalogSha256": "9aa984e31cab8c507131d7907b64ee16908d7138fd6accade48e17161441316f",
+  "totalSpecs": 271,
+  "catalogSha256": "b9c2627ac49ae5ed8e23bde1c4327c92d9dc70c05b24dc87755a72bb3f883a94",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2432,6 +2432,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-270-TLC-FORMAL-VERIFICATION-AND-MUTATION-RATCHET.md",
       "sha256": "bc75917c7fe6a1f46dd7890e04d9553d74d9e4fa269dbe8ef2270b17224f2edd"
+    },
+    {
+      "id": "SPEC-271",
+      "title": "— DevSecOps Platform Engineering, Core De-Insularization, and Distributed TLC Consensus",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-271-DEVSECOPS-PLATFORM-ENGINEERING-AND-TLC-CONSENSUS.md",
+      "sha256": "913dc7d616cad72702948f68854642787afb2ce52acd2077d217f5d029778b92"
     }
   ]
 }

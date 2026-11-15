@@ -429,17 +429,16 @@ if (!process.env.SKIP_COVERAGE) {
     console.warn("[STAGE 4.5 WARN] Coverage output not parseable; skipping gate.");
   }
 } else {
-  console.log("[STAGE 4.5 SKIP] Coverage gate skipped (SKIP_COVERAGE=1).");
+  console.log("[STAGE 4.5] Incremental PTS Coverage Ratchet active (SPEC-271)...");
+  execFileSync(process.execPath, [path.join(root, "scripts/coverage-ratchet.mjs")], {
+    cwd: root,
+    stdio: "inherit",
+  });
+  console.log("[PASS] Stage 4.5/7 — Incremental PTS coverage ratchet passed (SPEC-271).");
 }
 
 // ---------------------------------------------------------------------------
-// STAGE 4.6: MUTATION TESTING GATE (opt-in) — de-islands EosMutationTestingEngine
-// Big Tech pattern (Google PIT, Meta SAPIenz): test the tests. A mutant the
-// suite fails to kill is a real test gap that line-coverage would hide. Running
-// the suite per mutant is expensive, so this is opt-in (`EOS_MUTATION=1`) and
-// bounded. Mutants are applied only to an isolated sandbox copy of `src/`+`test/`
-// — the working tree is never mutated. Score enforcement is opt-in
-// (`EOS_MUTATION_ENFORCE=1`); advisory by default so the local gate stays noise-free.
+// STAGE 4.6: MUTATION TESTING GATE (opt-in via EOS_MUTATION=1)
 // ---------------------------------------------------------------------------
 if (process.env.EOS_MUTATION === "1") {
   const mutateStart = Date.now();

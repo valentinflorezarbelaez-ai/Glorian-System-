@@ -27,6 +27,8 @@ export const CONFIGURED_SPECS = [
   "HermesConsensusMesh",
   "DatomicBitemporalLedger",
   "AutonomousChaosDisruptor",
+  "BftAgentSwarmSlashing",
+  "CellBasedBulkheadGovernor",
 ];
 
 /**

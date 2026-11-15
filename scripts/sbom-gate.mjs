@@ -29,6 +29,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { generateCycloneDxSbom } from "../src/core/eosCycloneDxSbomGenerator.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -172,6 +173,11 @@ if (VERIFY_ONLY) {
 }
 
 fs.writeFileSync(OUT_PATH, finalJson, "utf8");
+
+// Generate internal Layer-0 CycloneDX SBOM via EosCycloneDxSbomGenerator
+const internalCdxPath = path.join(root, "docs", "evidence", "cyclonedx-sbom.json");
+const internalCdx = generateCycloneDxSbom(root);
+fs.writeFileSync(internalCdxPath, JSON.stringify(internalCdx, null, 2) + "\n", "utf8");
 
 console.log(`[PASS] SBOM generated → ${path.relative(root, OUT_PATH)}`);
 console.log(
