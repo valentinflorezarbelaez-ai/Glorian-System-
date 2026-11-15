@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
   "totalSpecs": 271,
-  "catalogSha256": "b9c2627ac49ae5ed8e23bde1c4327c92d9dc70c05b24dc87755a72bb3f883a94",
+  "catalogSha256": "a0d44ec3f95fcf5da0e55a796c10b82010916fe998b952ba7612eddf7fa93bc8",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2440,7 +2440,7 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-271-DEVSECOPS-PLATFORM-ENGINEERING-AND-TLC-CONSENSUS.md",
-      "sha256": "913dc7d616cad72702948f68854642787afb2ce52acd2077d217f5d029778b92"
+      "sha256": "e29594bda96fac9f5099762c8510ed195ba66397c6e4bc6c76ff3e9881e9eebb"
     }
   ]
 }

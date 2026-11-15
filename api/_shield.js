@@ -32,6 +32,7 @@ const idempotencyStore = new EosIdempotencyKeyStore();
  * Extracts idempotency key from standard headers.
  */
 export function extractIdempotencyKey(req) {
+  if (!req || !req.headers) return null;
   const key = req.headers["idempotency-key"] || req.headers["x-idempotency-key"];
   if (typeof key === "string" && key.trim().length > 0) {
     return key.trim().slice(0, 128);
@@ -99,7 +100,7 @@ export function applyKernelShield(req, res) {
  * Completes an idempotent record with its generated response.
  */
 export function recordIdempotentResponse(req, payload) {
-  if (req._idempotencyKey) {
+  if (req && req._idempotencyKey) {
     try {
       idempotencyStore.complete(req._idempotencyKey, payload);
     } catch {
