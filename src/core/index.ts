@@ -738,3 +738,5 @@ export * from "./eosToolchainDoctor.ts";
 export * from "./eosTrivyScannerAdapter.ts";
 export * from "./eosOpaPolicyGovernor.ts";
 export * from "./eosKubectlClusterInspector.ts";
+export * from "./eosKubernetesDeployGovernor.ts";
+export * from "./eosK6LoadTestAdapter.ts";

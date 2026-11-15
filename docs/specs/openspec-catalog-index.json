@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 273,
-  "catalogSha256": "ba09a10ae77f4221b63de7078658fe2a6ccd9b02bf9cb580914bc80aad987915",
+  "totalSpecs": 274,
+  "catalogSha256": "ff29243a955631017d2c30d48f7d8bf784099353b5c3da86dd7b68e1c2fa19eb",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2458,7 +2458,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-273-TOOLCHAIN-ADAPTERS-AND-POLICY-GOVERNOR.md",
-      "sha256": "45ef2d731bda35d1b27ad185d811087d00b3fedcaadeb4ea9db95067c88b1602"
+      "sha256": "ceb2d4e8d253110110cd6d7e4789e58c13270e565aa5662cddf500105ce7d18c"
+    },
+    {
+      "id": "SPEC-274",
+      "title": "Kubernetes Gated Deployment Pipeline & k6 SLO Load Testing Engine",
+      "status": "UNKNOWN",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-274-K8S-DEPLOYMENT-AND-K6-LOADTEST.md",
+      "sha256": "0d234f7bbec0bdb00f7d1497828415b03d7f9d20f59d1f00061fb2d6f73b267e"
     }
   ]
 }

@@ -1,0 +1,31 @@
+{
+  "timestampIso": "2026-11-15T14:15:26.320Z",
+  "manifestTarget": "sample_pod.json",
+  "targetContext": "kind-glorian-cluster",
+  "status": "ADMISSION_REJECTED",
+  "dryRun": true,
+  "stages": [
+    {
+      "stage": "CONTEXT_GUARD",
+      "passed": true,
+      "message": "Context 'kind-glorian-cluster' verified within kind safety boundary."
+    },
+    {
+      "stage": "OPA_POLICY",
+      "passed": true,
+      "message": "OPA policy evaluation passed: 0 security violations across 1 container(s)."
+    },
+    {
+      "stage": "TRIVY_SECURITY",
+      "passed": true,
+      "message": "Trivy vulnerability gate passed: zero CRITICAL CVEs detected."
+    },
+    {
+      "stage": "SERVER_DRY_RUN",
+      "passed": false,
+      "message": "Server dry-run rejected: error: error validating \"C:\\\\Users\\\\valen\\\\Documents\\\\Glorian-System\\\\policies\\\\k8s\\\\sample_pod.json\": error validating data: failed to download openapi: Get \"https://127.0.0.1:4600/openapi/v2?timeout=32s\": dial tcp 127.0.0.1:4600: connectex: No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión.; if you choose to ignore these errors, turn validation off with --validate=false"
+    }
+  ],
+  "sha256Receipt": "802525e01ece71b7dc3eff9d20ad2d2428e7be5dbfd6b661b9a7e10b4aefd4cc",
+  "error": "error: error validating \"C:\\\\Users\\\\valen\\\\Documents\\\\Glorian-System\\\\policies\\\\k8s\\\\sample_pod.json\": error validating data: failed to download openapi: Get \"https://127.0.0.1:4600/openapi/v2?timeout=32s\": dial tcp 127.0.0.1:4600: connectex: No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión.; if you choose to ignore these errors, turn validation off with --validate=false"
+}

@@ -549,8 +549,7 @@ async function cmd_toolchain_policy(commandContext) {
 
   const { EosOpaPolicyGovernor } = await import("../../src/core/eosOpaPolicyGovernor.ts");
   const result = EosOpaPolicyGovernor.evaluateManifest(manifest, {
-    regoPolicyPath: regoPath,
-    workingDirectory: root,
+    policyPath: regoPath,
   });
 
   if (isJson) {
@@ -628,6 +627,111 @@ async function cmd_toolchain_k8s(commandContext) {
 HANDLERS["toolchain:scan"] = cmd_toolchain_scan;
 HANDLERS["toolchain:policy"] = cmd_toolchain_policy;
 HANDLERS["toolchain:k8s"] = cmd_toolchain_k8s;
+
+async function cmd_toolchain_deploy(commandContext) {
+  const { args, root, printBanner } = commandContext;
+  printBanner();
+  const isJson = args.includes("--json");
+  const isLiveApply = args.includes("--yes");
+  const ctxArg = args.find((a) => a.startsWith("--context="));
+  const customContext = ctxArg ? ctxArg.split("=")[1] : undefined;
+  const manifestArg = args.slice(1).find((a) => !a.startsWith("-")) || "policies/k8s/sample_pod.json";
+  const manifestPath = path.isAbsolute(manifestArg) ? manifestArg : path.join(root, manifestArg);
+  const receiptPath = path.join(root, "docs/evidence/DEPLOY_RECEIPT.json");
+
+  const { EosKubernetesDeployGovernor } = await import("../../src/core/eosKubernetesDeployGovernor.ts");
+  const report = EosKubernetesDeployGovernor.deployWorkload(manifestPath, {
+    customContext,
+    dryRun: !isLiveApply,
+    receiptPath,
+    workingDirectory: root,
+  });
+
+  const isSuccess = report.status === "DRY_RUN_PASSED" || report.status === "APPLIED";
+
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    if (!isSuccess) process.exitCode = 1;
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN KUBERNETES GATED DEPLOY GOVERNOR (SPEC-274)`);
+  console.log(`===============================================================`);
+  console.log(`  Target Context       : ${report.targetContext}`);
+  console.log(`  Manifest             : ${report.manifestTarget}`);
+  console.log(`  Execution Mode       : ${report.dryRun ? "DRY-RUN (Server Admission)" : "LIVE APPLY"}`);
+  console.log(`  Deployment Status    : ${isSuccess ? "✔ " + report.status : "✖ " + report.status}`);
+  console.log(`  Stages Evaluated     : ${report.stages.length}`);
+  for (const s of report.stages) {
+    const icon = s.passed ? "✔ PASS" : "✖ FAIL";
+    console.log(`    [${icon}] [${s.stage.padEnd(16)}] ${s.message}`);
+  }
+  if (report.error) {
+    console.log(`  Error Diagnostics    : ${report.error}`);
+  }
+  console.log(`  Receipt SHA-256      : sha256:${report.sha256Receipt}`);
+  console.log(`===============================================================\n`);
+  if (!isSuccess) process.exitCode = 1;
+}
+
+async function cmd_toolchain_loadtest(commandContext) {
+  const { args, root, printBanner } = commandContext;
+  printBanner();
+  const isJson = args.includes("--json");
+  const vusArg = args.find((a) => a.startsWith("--vus="));
+  const vus = vusArg ? Number(vusArg.split("=")[1]) : 5;
+  const durArg = args.find((a) => a.startsWith("--duration="));
+  const duration = durArg ? durArg.split("=")[1] : "5s";
+  const p95Arg = args.find((a) => a.startsWith("--p95="));
+  const targetP95Ms = p95Arg ? Number(p95Arg.split("=")[1]) : 250;
+  const targetUrl = args.slice(1).find((a) => !a.startsWith("-")) || "http://localhost:3000/api/health";
+  const receiptPath = path.join(root, "docs/evidence/K6_RECEIPT.json");
+
+  const { EosK6LoadTestAdapter } = await import("../../src/core/eosK6LoadTestAdapter.ts");
+  const report = EosK6LoadTestAdapter.runLoadTest(targetUrl, {
+    vus,
+    duration,
+    thresholds: { targetP95Ms },
+    receiptPath,
+    workingDirectory: root,
+  });
+
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    if (!report.sloPassed) process.exitCode = 1;
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN K6 LOAD TEST & SLO PERFORMANCE ENGINE (SPEC-274)`);
+  console.log(`===============================================================`);
+  console.log(`  Target Endpoint      : ${report.targetUrl}`);
+  console.log(`  Virtual Users (VUs)  : ${report.vus}`);
+  console.log(`  Duration             : ${report.duration}`);
+  console.log(`  Verdict              : ${report.sloPassed ? "✔ PASS" : "✖ " + report.verdict}`);
+  console.log(
+    `  Requests Processed   : ${report.metrics.totalRequests} (${report.metrics.requestsPerSecond.toFixed(1)} req/s)`,
+  );
+  console.log(
+    `  P95 Latency          : ${report.metrics.p95DurationMs.toFixed(2)} ms (Threshold: <= ${report.thresholds.targetP95Ms} ms)`,
+  );
+  console.log(
+    `  P99 Latency          : ${report.metrics.p99DurationMs.toFixed(2)} ms (Threshold: <= ${report.thresholds.targetP99Ms} ms)`,
+  );
+  console.log(
+    `  Error Rate           : ${(report.metrics.errorRate * 100).toFixed(2)}% (Max: ${(report.thresholds.maxErrorRate * 100).toFixed(2)}%)`,
+  );
+  if (report.error) {
+    console.log(`  Diagnostics          : ${report.error}`);
+  }
+  console.log(`  Receipt SHA-256      : sha256:${report.sha256Receipt}`);
+  console.log(`===============================================================\n`);
+  if (!report.sloPassed) process.exitCode = 1;
+}
+
+HANDLERS["toolchain:deploy"] = cmd_toolchain_deploy;
+HANDLERS["toolchain:loadtest"] = cmd_toolchain_loadtest;
 
 export async function handleDevOpsCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];

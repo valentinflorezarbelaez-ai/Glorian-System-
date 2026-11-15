@@ -2386,3 +2386,16 @@
   - `docs/plans/PLAN-135-TOOLCHAIN-ADAPTERS-AND-POLICY-GOVERNOR.md`
   - `docs/tasks/TASKS-135-TOOLCHAIN-ADAPTERS-AND-POLICY-GOVERNOR.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-K8S-DEPLOYMENT-AND-K6-LOADTEST
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-136` (`SPEC-274`), Phase C Kubernetes Gated Deployment Pipeline & k6 SLO Load Testing Engine: `src/core/eosKubernetesDeployGovernor.ts` with 5-stage barrier (Context Guard, OPA Policy, Trivy Gate, Server Dry-Run, Explicit Apply) and `src/core/eosK6LoadTestAdapter.ts` with ephemeral script synthesis, k6 execution, SLO metrics extraction, and receipt generation. Wire CLI subcommands `toolchain:deploy` and `toolchain:loadtest` in `bin/commands/cliDevOps.mjs` and verify BDD-1419..BDD-1424.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-136-K8S-DEPLOYMENT-AND-K6-LOADTEST.md`
+  - `openspec/changes/CHANGE-136-k8s-deployment-and-k6-loadtest.md`
+  - `openspec/specs/SPEC-274-K8S-DEPLOYMENT-AND-K6-LOADTEST.md`
+  - `docs/plans/PLAN-136-K8S-DEPLOYMENT-AND-K6-LOADTEST.md`
+  - `docs/tasks/TASKS-136-K8S-DEPLOYMENT-AND-K6-LOADTEST.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
