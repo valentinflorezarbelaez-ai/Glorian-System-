@@ -53,24 +53,43 @@ function tryLoadCommittedLiveSnapshots() {
   }
 }
 
+function resolveDeploymentMetrics(state) {
+  if (state === "READY") {
+    return { errorRate5xx: 0.0001, latencyP99Ms: 45, errorish: false };
+  }
+  if (state === "ERROR" || state === "CANCELED") {
+    return { errorRate5xx: 0.05, latencyP99Ms: 900, errorish: true };
+  }
+  return { errorRate5xx: 0.01, latencyP99Ms: 900, errorish: false };
+}
+
+function resolveDeploymentDiagnostics(dep, state, errorish) {
+  const code = dep.errorCode || (errorish ? "DEPLOYMENT_UNHEALTHY" : "");
+  const message = dep.errorMessage || (errorish ? `Deployment state is ${state}` : "");
+  const clusters = errorish ? [{ name: code || state, occurrenceCount: 50 }] : [];
+  return { code, message, clusters };
+}
+
 function mapDeploymentToSnapshot(dep) {
-  const id = dep?.uid || dep?.id;
+  const id = dep?.uid ?? dep?.id;
   if (!id) return null;
-  const state = String(dep.readyState || dep.state || "");
-  const ready = state === "READY";
-  const errorish = state === "ERROR" || state === "CANCELED";
-  let errorRate5xx = 0.01;
-  if (errorish) errorRate5xx = 0.05;
-  else if (ready) errorRate5xx = 0.0001;
-  return {
+  const state = String(dep.readyState ?? dep.state ?? "");
+  const { errorRate5xx, latencyP99Ms, errorish } = resolveDeploymentMetrics(state);
+  const { code, message, clusters } = resolveDeploymentDiagnostics(dep, state, errorish);
+
+  const snapshot = {
     deploymentId: String(id),
     environment: "production",
     stage: "FULL_PRODUCTION_100_PCT",
     requestCount: 10_000,
-    latencyP99Ms: ready ? 45 : 900,
+    latencyP99Ms,
     errorRate5xx,
-    errorClusters: errorish ? [{ name: state, occurrenceCount: 50 }] : [],
+    errorClusters: clusters,
+    syntheticTelemetry: true,
   };
+  if (code) snapshot.errorCode = code;
+  if (message) snapshot.errorMessage = message;
+  return snapshot;
 }
 
 function tryFetchLiveVercelSnapshot() {
@@ -167,6 +186,7 @@ const receipt = {
   epistemicState: aca.incidentRequired ? "REMEDIATION_REQUIRED" : "VERCEL_ACA_LIVE_OR_FIXTURE_WITHIN_TESTED_SCOPE",
   generatedAt: new Date().toISOString(),
   mode,
+  syntheticTelemetry: mode === "LIVE_DEPLOYMENT_PROBE" || mode === "FIXTURE",
   signalCount: mapped.signals.length,
   totalErrorEvents: mapped.totalErrorEvents,
   verdict: aca.verdict,

@@ -5,7 +5,8 @@
 
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import handler from "../api/metrics.js";
+import handler from "../api/_metrics.js";
+import kernelHandler from "../api/kernel.js";
 
 describe("API: /api/metrics", () => {
   it("serves Prometheus text exposition format with correct headers", async () => {
@@ -75,5 +76,45 @@ describe("API: /api/metrics", () => {
 
     assert.equal(statusCode, 405);
     assert.equal(jsonPayload?.error, "Method Not Allowed");
+  });
+
+  it("BDD-1393: api/kernel.js routes /api/metrics preserving Prometheus exposition and headers", async () => {
+    const headers = {};
+    let statusCode = 0;
+    let responseBody = "";
+
+    const req = {
+      method: "GET",
+      headers: {},
+      url: "/api/metrics",
+      query: { module: "metrics" },
+    };
+
+    const res = {
+      setHeader(name, val) {
+        headers[name.toLowerCase()] = val;
+      },
+      status(code) {
+        statusCode = code;
+        return this;
+      },
+      send(body) {
+        responseBody = body;
+        return this;
+      },
+      end(body) {
+        if (body) responseBody = body;
+        return this;
+      },
+    };
+
+    await kernelHandler(req, res);
+
+    assert.equal(statusCode, 200);
+    assert.ok(headers["content-type"].includes("text/plain"));
+    assert.ok(headers["content-type"].includes("version=0.0.4"));
+    assert.ok(headers["cache-control"].includes("no-cache"));
+    assert.ok(responseBody.includes("# HELP glorian_requests_total"));
+    assert.ok(responseBody.includes("# TYPE glorian_requests_total counter"));
   });
 });

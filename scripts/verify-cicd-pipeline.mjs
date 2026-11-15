@@ -143,6 +143,14 @@ console.log(
 );
 
 // ---------------------------------------------------------------------------
+// STAGE 3.1: SPEC-269 SERVERLESS FUNCTION BUDGET & HOST QUOTA GATE
+// ---------------------------------------------------------------------------
+execFileSync(process.execPath, [path.join(root, "scripts/verify-vercel-function-budget.mjs")], {
+  cwd: root,
+  stdio: "inherit",
+});
+
+// ---------------------------------------------------------------------------
 // STAGE 3.5: BOUNDED JAVASCRIPT SIMULATIONS ASSOCIATED WITH TLA+ FILES
 // ---------------------------------------------------------------------------
 execFileSync(process.execPath, [path.join(root, "scripts/verify-formal-tla.mjs")], {
@@ -582,6 +590,7 @@ const apiEndpoints = [
     (file) => ({ file }),
   ),
   { file: "api/kernel.js", query: { module: "specs" } },
+  { file: "api/kernel.js", query: { module: "metrics" } },
   { file: "api/jarvis.js", method: "POST", body: { directive: "status check" } },
   ...["api/health.js", "api/graph.js", "api/eval.js", "api/spotify.js"].map((file) => ({ file })),
   {

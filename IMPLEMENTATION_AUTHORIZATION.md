@@ -2321,3 +2321,16 @@
   - `docs/plans/PLAN-130-OPTICAL-CLOCK-INSAR-MPD-QREPEATER-EVM-FRONTIER.md`
   - `docs/tasks/TASKS-130-OPTICAL-CLOCK-INSAR-MPD-QREPEATER-EVM-FRONTIER.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-14-DEPLOYMENT-TRUTH-AND-SERVERLESS-BUDGET
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-131` (`SPEC-269`), consolidate `api/metrics.js` to `api/_metrics.js` routed via `api/kernel.js`, add `vercel.json` rewrite (`/api/metrics`), pin `package.json` engines to `">=22.18.0 <25"`, implement `docs/quality/vercel-function-budget.json` (12 functions) and `scripts/verify-vercel-function-budget.mjs`, integrate into CI stage 3, author `test/eosServerlessBudgetAndDeploymentTruth.test.mjs`, update `scripts/eos-vercel-aca-live.mjs`, add `--remote` in `bin/commands/cliJarvisPolyglotFrontierMesh.mjs` (`cmd_ship`), restore green production deployments, and triage Incident `#636`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-131-DEPLOYMENT-TRUTH-AND-SERVERLESS-BUDGET.md`
+  - `openspec/changes/CHANGE-131-deployment-truth-and-serverless-budget.md`
+  - `openspec/specs/SPEC-269-DEPLOYMENT-TRUTH-AND-SERVERLESS-BUDGET-GATE.md`
+  - `docs/plans/PLAN-131-DEPLOYMENT-TRUTH-AND-SERVERLESS-BUDGET.md`
+  - `docs/tasks/TASKS-131-DEPLOYMENT-TRUTH-AND-SERVERLESS-BUDGET.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

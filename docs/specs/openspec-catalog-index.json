@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-12T00:02:03.791Z",
-  "totalSpecs": 268,
-  "catalogSha256": "27aa82954b4aca7fd224bbe0d7053c6ccea2993f38b40380aedb77c287bce185",
+  "timestampIso": "2026-11-14T21:26:00.000Z",
+  "totalSpecs": 269,
+  "catalogSha256": "8f82df6b9508c28f8dfbe91437f69c30f36b0674da378d25c09e5f295f0d630d",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2414,6 +2414,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-268-SMART-CONTRACT-BYTECODE-GAS-SYMBOLIC-VERIFIER.md",
       "sha256": "2805409b9295df378cbb287340d4ef406c263bc2a5aab58448331025d87002df"
+    },
+    {
+      "id": "SPEC-269",
+      "title": "— Serverless Function Budget Gate & Deployment Truth Engine",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-269-DEPLOYMENT-TRUTH-AND-SERVERLESS-BUDGET-GATE.md",
+      "sha256": "e5b4a19a7fd299411e6a594665411ebcae7c62fc1efb4d555e61ee6877557c20"
     }
   ]
 }

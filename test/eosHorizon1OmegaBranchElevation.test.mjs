@@ -22,7 +22,7 @@ import crypto from "node:crypto";
 
 import { defaultFsmReducer, computeLogEntryHash, computeFsmHash } from "../src/core/eosRaftConsensusEngine.types.ts";
 
-import metricsHandler from "../api/metrics.js";
+import metricsHandler from "../api/_metrics.js";
 
 import { EosGeneticAstSynthesizer } from "../src/core/eosGeneticAstSynthesizer.ts";
 

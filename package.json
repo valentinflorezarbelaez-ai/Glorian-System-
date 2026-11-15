@@ -353,10 +353,11 @@
     "insar:deform": "node bin/eos.mjs insar:deform",
     "mpd:thruster": "node bin/eos.mjs mpd:thruster",
     "qnet:repeater": "node bin/eos.mjs qnet:repeater",
-    "evm:prove": "node bin/eos.mjs evm:prove"
+    "evm:prove": "node bin/eos.mjs evm:prove",
+    "vercel:budget": "node scripts/verify-vercel-function-budget.mjs"
   },
   "engines": {
-    "node": ">=22.18.0"
+    "node": ">=22.18.0 <25"
   },
   "devDependencies": {
     "@eslint/js": "9.28.0",

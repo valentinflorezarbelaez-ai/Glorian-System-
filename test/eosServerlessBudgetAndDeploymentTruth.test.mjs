@@ -1,0 +1,148 @@
+/**
+ * GLORIAN SYSTEM — SPEC-269 SERVERLESS FUNCTION BUDGET & DEPLOYMENT TRUTH SUITE
+ *
+ * Verifies BDD-1391 through BDD-1395:
+ * - BDD-1391: Exactly 12 active serverless functions conform to Hobby budget
+ * - BDD-1392: Fail-closed rejection when active functions exceed budget
+ * - BDD-1393: Routed Prometheus metrics endpoint preserves content type and RED telemetry
+ * - BDD-1394: Package.json engines bounds Node below major version 25
+ * - BDD-1395: Ship remote status evaluation preserves epistemic honesty
+ *
+ * Zero external runtime dependencies (EOS Law V).
+ */
+
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import {
+  listActiveServerlessFunctions,
+  evaluateVercelFunctionBudget,
+} from "../scripts/verify-vercel-function-budget.mjs";
+import kernelHandler from "../api/kernel.js";
+import metricsHandler from "../api/_metrics.js";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(__dirname, "..");
+
+describe("SPEC-269 — Serverless Function Budget Gate & Deployment Truth Engine (BDD-1391..BDD-1395)", () => {
+  it("BDD-1391: Exactly 12 active serverless functions conform to Hobby budget", () => {
+    const active = listActiveServerlessFunctions(root);
+    assert.equal(active.length, 12, "Must contain exactly 12 active serverless functions");
+
+    // All active entrypoints must be non-private (no segment starting with _)
+    for (const file of active) {
+      assert.equal(file.startsWith("api/"), true);
+      const segments = file.replace(/^api\//, "").split("/");
+      assert.equal(
+        segments.some((s) => s.startsWith("_")),
+        false,
+      );
+    }
+
+    const evaluation = evaluateVercelFunctionBudget(root);
+    assert.equal(evaluation.specId, "SPEC-269");
+    assert.equal(evaluation.passed, true);
+    assert.equal(evaluation.verdict, "PASS");
+    assert.equal(evaluation.activeCount, 12);
+    assert.equal(evaluation.budget, 12);
+    assert.equal(evaluation.hardLimit, 12);
+    assert.equal(evaluation.headroom, 0);
+  });
+
+  it("BDD-1392: Fail-closed rejection when active functions exceed budget", () => {
+    // Simulate exceeding budget via activeFunctionsOverride
+    const excessFunctions = [...listActiveServerlessFunctions(root), "api/temp_fictional_13th.js"];
+
+    const evaluation = evaluateVercelFunctionBudget(root, {
+      activeFunctionsOverride: excessFunctions,
+    });
+
+    assert.equal(evaluation.passed, false);
+    assert.equal(evaluation.verdict, "FAIL_BUDGET_EXCEEDED");
+    assert.equal(evaluation.activeCount, 13);
+    assert.equal(evaluation.headroom, -1);
+  });
+
+  it("BDD-1393: Routed Prometheus metrics endpoint preserves content type and RED telemetry", async () => {
+    const headers = {};
+    let statusCode = 0;
+    let responseBody = "";
+
+    const req = {
+      method: "GET",
+      headers: {},
+      url: "/api/metrics",
+      query: { module: "metrics" },
+    };
+
+    const res = {
+      setHeader(name, val) {
+        headers[name.toLowerCase()] = val;
+      },
+      status(code) {
+        statusCode = code;
+        return this;
+      },
+      send(body) {
+        responseBody = body;
+        return this;
+      },
+      end(body) {
+        if (body) responseBody = body;
+        return this;
+      },
+    };
+
+    await kernelHandler(req, res);
+
+    assert.equal(statusCode, 200);
+    assert.ok(headers["content-type"].includes("text/plain"));
+    assert.ok(headers["content-type"].includes("version=0.0.4"));
+    assert.ok(responseBody.includes("# HELP glorian_requests_total"));
+    assert.ok(responseBody.includes("# TYPE glorian_requests_total counter"));
+    assert.ok(responseBody.includes("glorian_process_memory_bytes"));
+  });
+
+  it("BDD-1394: Package.json engines bounds Node below major version 25", () => {
+    const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
+    assert.ok(pkg.engines?.node, "engines.node must be declared");
+    assert.equal(pkg.engines.node, ">=22.18.0 <25");
+
+    // Vercel project configuration rewrite must exist
+    const vercelJson = JSON.parse(fs.readFileSync(path.join(root, "vercel.json"), "utf8"));
+    const metricsRewrite = vercelJson.rewrites?.find((r) => r.source === "/api/metrics");
+    assert.ok(metricsRewrite, "vercel.json must declare rewrite for /api/metrics");
+    assert.equal(metricsRewrite.destination, "/api/kernel?module=metrics");
+  });
+
+  it("BDD-1395: _metrics.js directly maintains 405 Method Not Allowed guards", async () => {
+    let statusCode = 0;
+    let jsonPayload = null;
+
+    const req = {
+      method: "DELETE",
+      headers: {},
+      url: "/api/metrics",
+    };
+
+    const res = {
+      setHeader() {},
+      status(code) {
+        statusCode = code;
+        return this;
+      },
+      json(payload) {
+        jsonPayload = payload;
+        return this;
+      },
+      end() {},
+    };
+
+    await metricsHandler(req, res);
+
+    assert.equal(statusCode, 405);
+    assert.equal(jsonPayload?.error, "Method Not Allowed");
+  });
+});

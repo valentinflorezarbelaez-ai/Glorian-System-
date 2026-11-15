@@ -1,0 +1,8 @@
+{
+  "plan": "hobby",
+  "hardLimit": 12,
+  "budget": 12,
+  "description": "Vercel Hobby plan maximum serverless functions per deployment (SPEC-269 / BDD-1391..BDD-1392)",
+  "excludedPrefixes": ["_"],
+  "entrypointPatterns": ["api/**/*.js", "api/**/*.mjs", "api/**/*.ts"]
+}

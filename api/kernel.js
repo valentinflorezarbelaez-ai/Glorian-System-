@@ -1,6 +1,7 @@
 import handleBigTech from "./_bigtech.js";
 import handleSpecs from "./_specs.js";
 import handleFinops from "./_finops.js";
+import handleMetrics from "./_metrics.js";
 import { createHash } from "node:crypto";
 import { getQueryObject, getQueryParam } from "./_safeQuery.js";
 
@@ -57,6 +58,10 @@ export default function handler(req, res) {
 
   if (url.includes("/api/finops") || query.module === "finops" || query.mode === "finops") {
     return handleFinops(req, res);
+  }
+
+  if (url.includes("/api/metrics") || query.module === "metrics" || query.mode === "metrics") {
+    return handleMetrics(req, res);
   }
 
   if (req.method !== "GET") {

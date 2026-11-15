@@ -318,6 +318,8 @@ export class EosSpecDriftDetector {
           specName.includes("gnostic") ||
           specName.includes("transcendental") ||
           specName.includes("secret-scan") ||
+          specName.includes("serverless-budget") ||
+          specName.includes("budget-gate") ||
           specName.includes("autotuner") ||
           specName.includes("untrusted-browser-data") ||
           specName.includes("verifiable-api-results") ||

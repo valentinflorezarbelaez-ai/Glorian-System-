@@ -1,3 +1,5 @@
+import { execFileSync } from "node:child_process";
+import { evaluateVercelFunctionBudget } from "../../scripts/verify-vercel-function-budget.mjs";
 import { EosPolyglotToolchainAdapterCore } from "../../src/core/eosPolyglotToolchainAdapterCore.ts";
 import { EosIssueToPrCanaryBridgeCore } from "../../src/core/eosIssueToPrCanaryBridgeCore.ts";
 import { EosStaffEngineerAdversarialJudgeCore } from "../../src/core/eosStaffEngineerAdversarialJudgeCore.ts";
@@ -498,6 +500,43 @@ async function cmd_ship(commandContext) {
   const hygieneAudit = EosCliCatalogAndHygieneGovernorCore.auditCliCatalogAndModuleHeadroom({
     projectRoot: root,
   });
+  const functionBudget = evaluateVercelFunctionBudget(root);
+  const isRemote = args.includes("--remote");
+  let remoteChecks = null;
+  if (isRemote) {
+    let ghCiStatus = "UNKNOWN";
+    let vercelDeploymentStatus = "UNKNOWN";
+    try {
+      const ghRaw = execFileSync("gh", ["run", "list", "--limit", "1", "--json", "conclusion"], {
+        encoding: "utf8",
+        timeout: 10_000,
+        stdio: ["ignore", "pipe", "ignore"],
+      });
+      const ghParsed = JSON.parse(ghRaw);
+      ghCiStatus = ghParsed[0]?.conclusion || "IN_PROGRESS";
+    } catch {
+      ghCiStatus = "UNAVAILABLE";
+    }
+
+    try {
+      const vercelRaw = execFileSync("vercel", ["ls", "--environment", "production"], {
+        encoding: "utf8",
+        timeout: 15_000,
+        stdio: ["ignore", "pipe", "ignore"],
+      });
+      if (vercelRaw.includes("● Ready")) {
+        vercelDeploymentStatus = "READY";
+      } else if (vercelRaw.includes("● Error")) {
+        vercelDeploymentStatus = "ERROR";
+      }
+    } catch {
+      vercelDeploymentStatus = "UNAVAILABLE";
+    }
+
+    const remoteGreen = ghCiStatus === "success" && vercelDeploymentStatus === "READY";
+    const remoteUnavailable = ghCiStatus === "UNAVAILABLE" && vercelDeploymentStatus === "UNAVAILABLE";
+    remoteChecks = { ghCiStatus, vercelDeploymentStatus, remoteGreen, remoteUnavailable };
+  }
   const approved = [
     liveDiff.readyToShip,
     propertySuite.allPassed,
@@ -513,11 +552,28 @@ async function cmd_ship(commandContext) {
     kalmanGncState.verdict !== "GNC_QUORUM_LOST",
     contiguous253.allNominal,
     hygieneAudit.verdict === "HYGIENE_GOVERNED",
+    functionBudget.passed,
   ].every(Boolean);
+
+  let shipReadinessVerdict = approved ? "SHIP_APPROVED" : "SHIP_BLOCKED";
+  if (isRemote) {
+    if (!approved) {
+      shipReadinessVerdict = "SHIP_BLOCKED";
+    } else if (remoteChecks?.remoteGreen) {
+      shipReadinessVerdict = "SHIP_APPROVED";
+    } else if (remoteChecks?.remoteUnavailable) {
+      shipReadinessVerdict = "SHIP_APPROVED_LOCAL_ONLY";
+    } else {
+      shipReadinessVerdict = "SHIP_BLOCKED_REMOTE_RED";
+    }
+  }
+
   const payload = {
     mode: "ship",
     ticketId,
-    shipReadinessVerdict: approved ? "SHIP_APPROVED" : "SHIP_BLOCKED",
+    shipReadinessVerdict,
+    functionBudget,
+    ...(remoteChecks ? { remoteChecks } : {}),
     liveDiff,
     repoMap,
     propertySuite,
