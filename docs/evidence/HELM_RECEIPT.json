@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-15T19:02:53.766Z",
+  "timestampIso": "2026-11-15T19:38:43.324Z",
   "chartPath": "glorian-enterprise-workload",
   "releaseName": "glorian-enterprise-app",
   "targetContext": "kind-glorian-cluster",
@@ -32,5 +32,5 @@
       "message": "Release 'glorian-enterprise-app' successfully deployed and validated."
     }
   ],
-  "sha256Receipt": "7f895d0a56166cebd137946a968d3fee39a22ee10028c6d0fdf936dd8f36fea7"
+  "sha256Receipt": "07056b3c8ff6957ec726f0c289035b707e6ce5322fdb47f5f4dfe64e89fe842d"
 }

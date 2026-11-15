@@ -1,0 +1,22 @@
+{
+  "timestampIso": "2026-11-15T19:40:38.085Z",
+  "status": "DESTRUCTION_REJECTED",
+  "allowed": false,
+  "totalViolations": 2,
+  "violations": [
+    {
+      "rule": "no_public_ingress",
+      "resource": "aws_security_group.ingress_bad",
+      "message": "Security Group 'aws_security_group.ingress_bad' permits public ingress on sensitive port 22"
+    },
+    {
+      "rule": "no_unauthorized_deletion",
+      "resource": "aws_db_instance.db_drop",
+      "message": "Database 'aws_db_instance.db_drop' (aws_db_instance) is scheduled for deletion without explicit authorization"
+    }
+  ],
+  "evaluatedResources": 2,
+  "executionEngine": "NATIVE_AST_FALLBACK",
+  "latencyMs": 1,
+  "sha256Receipt": "cbdab1ed360e8b77002b27941eaeb2aaca04425df37a79fd624b92bf239e52cf"
+}

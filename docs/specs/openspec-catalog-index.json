@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 275,
-  "catalogSha256": "d3ec32141efbc5b9d1ab78024a78788fa07907ae9f7aa22ee4b82a8c0bc01fe7",
+  "totalSpecs": 276,
+  "catalogSha256": "5a666e70c2bf140d38279c5ec392a2d503b48ab46b9539ca639c5817471ef34e",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2477,6 +2477,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-275-HELM-RELEASE-GOVERNOR.md",
       "sha256": "1a535fe9bf7b39233a946ff4cef2173ef58f11b8a4276bf8ad1c8633744e58e2"
+    },
+    {
+      "id": "SPEC-276",
+      "title": "Terraform / OpenTofu Infrastructure as Code (IaC) Governor",
+      "status": "UNKNOWN",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-276-TERRAFORM-IAC-GOVERNOR.md",
+      "sha256": "7d1cf2cc3d4e8337316c110f02ca36d1f8bd0b9b9e90d5a695996e4bd228a1a6"
     }
   ]
 }

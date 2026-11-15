@@ -666,9 +666,7 @@ async function cmd_toolchain_deploy(commandContext) {
     const icon = s.passed ? "✔ PASS" : "✖ FAIL";
     console.log(`    [${icon}] [${s.stage.padEnd(16)}] ${s.message}`);
   }
-  if (report.error) {
-    console.log(`  Error Diagnostics    : ${report.error}`);
-  }
+  if (report.error) console.log(`  Error Diagnostics    : ${report.error}`);
   console.log(`  Receipt SHA-256      : sha256:${report.sha256Receipt}`);
   console.log(`===============================================================\n`);
   if (!isSuccess) process.exitCode = 1;
@@ -738,6 +736,9 @@ export async function handleDevOpsCommands(commandContext) {
   }
   if (commandContext.command.startsWith("toolchain:helm:")) {
     return (await import("./cliHelm.mjs")).handleHelmCommands(commandContext);
+  }
+  if (commandContext.command.startsWith("toolchain:tf:")) {
+    return (await import("./cliTerraform.mjs")).handleTerraformCommands(commandContext);
   }
   return false;
 }

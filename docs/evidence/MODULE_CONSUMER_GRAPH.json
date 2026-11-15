@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-15T18:09:53.677Z",
-  "totalModules": 438,
-  "consumedModules": 374,
+  "timestampIso": "2026-11-15T19:41:04.139Z",
+  "totalModules": 440,
+  "consumedModules": 376,
   "unconsumedModules": 64,
-  "graphDensity": 0.8539,
+  "graphDensity": 0.8545,
   "modules": {
     "EosAin": {
       "file": "src/core/EosAin.ts",
@@ -2627,6 +2627,18 @@
       "consumerCount": 0,
       "consumers": []
     },
+    "eosHelmReleaseGovernor": {
+      "file": "src/core/eosHelmReleaseGovernor.ts",
+      "baseName": "eosHelmReleaseGovernor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliHelm.mjs",
+          "category": "bin"
+        }
+      ]
+    },
     "eosHermeticReleaseSealer": {
       "file": "src/core/eosHermeticReleaseSealer.ts",
       "baseName": "eosHermeticReleaseSealer",
@@ -3256,7 +3268,7 @@
       "file": "src/core/eosKernelPrimitives.ts",
       "baseName": "eosKernelPrimitives",
       "isConsumed": true,
-      "consumerCount": 209,
+      "consumerCount": 211,
       "consumers": [
         {
           "consumerPath": "src/core/eosActiveKernelProcessEnforcer.ts",
@@ -3572,6 +3584,10 @@
         },
         {
           "consumerPath": "src/core/eosHashedTimingWheel.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosHelmReleaseGovernor.ts",
           "category": "core"
         },
         {
@@ -3967,6 +3983,10 @@
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosTerraformIaCGovernor.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosThresholdCryptography.ts",
           "category": "core"
         },
@@ -4140,8 +4160,12 @@
       "file": "src/core/eosKubectlClusterInspector.ts",
       "baseName": "eosKubectlClusterInspector",
       "isConsumed": true,
-      "consumerCount": 2,
+      "consumerCount": 3,
       "consumers": [
+        {
+          "consumerPath": "src/core/eosHelmReleaseGovernor.ts",
+          "category": "core"
+        },
         {
           "consumerPath": "src/core/eosKubernetesDeployGovernor.ts",
           "category": "core"
@@ -5146,8 +5170,12 @@
       "file": "src/core/eosOpaPolicyGovernor.ts",
       "baseName": "eosOpaPolicyGovernor",
       "isConsumed": true,
-      "consumerCount": 2,
+      "consumerCount": 3,
       "consumers": [
+        {
+          "consumerPath": "src/core/eosHelmReleaseGovernor.ts",
+          "category": "core"
+        },
         {
           "consumerPath": "src/core/eosKubernetesDeployGovernor.ts",
           "category": "core"
@@ -6824,6 +6852,18 @@
         },
         {
           "consumerPath": "bin/commands/cliAutonomous.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosTerraformIaCGovernor": {
+      "file": "src/core/eosTerraformIaCGovernor.ts",
+      "baseName": "eosTerraformIaCGovernor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliTerraform.mjs",
           "category": "bin"
         }
       ]
