@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 281,
-  "catalogSha256": "0a152dcc74631aaddd110598824831c3592b47f3c5ca0120f05c9b3c1db8c8ca",
+  "totalSpecs": 282,
+  "catalogSha256": "22867b21d8407d180a94e62f386505ad8daa619429e7534d08daa43cc75fa395",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2531,6 +2531,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-281-BITEMPORAL-EVENT-STORE-CDC.md",
       "sha256": "697139c5bcf88ab1465b9c793c5382beb7486d7940ba60f09857eed04dff5872"
+    },
+    {
+      "id": "SPEC-282",
+      "title": "Zero-Knowledge State Attestation & Merkle Tree Snapshot Governor",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-282-MERKLE-SNAPSHOT-ZK-ATTESTATION.md",
+      "sha256": "e385f929879f8541dc63c1c4395bca29b2b5306f5b9532a7e63b3481c8463340"
     }
   ]
 }

@@ -41,6 +41,9 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:events:append <file> Ingesta de eventos bitemporales con idempotencia (SPEC-281)
   eos toolchain:events:replay <id>   Reconstrucción de estado determinista y viaje en el tiempo (SPEC-281)
   eos toolchain:events:cdc <id>      Flujo de captura de cambios (CDC) con antes/después (SPEC-281)
+  eos toolchain:merkle:build <file>  Construcción de árbol Merkle con separación de dominio (SPEC-282)
+  eos toolchain:merkle:proof <file>  Generación de prueba de inclusión logarítmica (SPEC-282)
+  eos toolchain:merkle:verify <file> Verificación de prueba de inclusión zero-knowledge (SPEC-282)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -240,6 +243,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:events:append <file> Ingesta de eventos bitemporales con idempotencia (SPEC-281)
   eos toolchain:events:replay <id>   Reconstrucción de estado determinista y viaje en el tiempo (SPEC-281)
   eos toolchain:events:cdc <id>      Flujo de captura de cambios (CDC) con antes/después (SPEC-281)
+  eos toolchain:merkle:build <file>  Construcción de árbol Merkle con separación de dominio (SPEC-282)
+  eos toolchain:merkle:proof <file>  Generación de prueba de inclusión logarítmica (SPEC-282)
+  eos toolchain:merkle:verify <file> Verificación de prueba de inclusión zero-knowledge (SPEC-282)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

@@ -739,3 +739,4 @@ export * from "./eosOtlpCollectorGateway.ts";
 export * from "./eosChaosCircuitBreaker.ts";
 export * from "./eosBayesianCanaryEvaluator.ts";
 export * from "./eosBitemporalEventStore.ts";
+export * from "./eosMerkleSnapshotGovernor.ts";

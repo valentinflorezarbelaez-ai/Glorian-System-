@@ -755,5 +755,8 @@ export async function handleDevOpsCommands(commandContext) {
   if (commandContext.command.startsWith("toolchain:events:")) {
     return (await import("./cliEventStore.mjs")).handleEventStoreCommands(commandContext);
   }
+  if (commandContext.command.startsWith("toolchain:merkle:")) {
+    return (await import("./cliMerkleSnapshot.mjs")).handleMerkleCommands(commandContext);
+  }
   return false;
 }

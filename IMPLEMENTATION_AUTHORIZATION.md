@@ -2399,3 +2399,16 @@
   - `docs/plans/PLAN-136-K8S-DEPLOYMENT-AND-K6-LOADTEST.md`
   - `docs/tasks/TASKS-136-K8S-DEPLOYMENT-AND-K6-LOADTEST.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-MERKLE-SNAPSHOT-ZK-ATTESTATION
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-144` (`SPEC-282`), Phase E4 Zero-Knowledge State Attestation & Merkle Tree Snapshot Governor: `src/core/eosMerkleSnapshotGovernor.ts` with domain-separated SHA-256 node hashing (`0x00`/`0x01`), $O(\log N)$ inclusion proof generation, zero-knowledge leaf inclusion verification against root hash, time-travel tree delta detector, and cryptographic receipt emission at `docs/evidence/MERKLE_SNAPSHOT_RECEIPT.json`. Wire subcommands `toolchain:merkle:build`, `toolchain:merkle:proof`, `toolchain:merkle:verify` in `bin/commands/cliMerkleSnapshot.mjs` and `bin/commands/cliDevOps.mjs`. Verify BDD-1467..BDD-1472.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-144-MERKLE-SNAPSHOT-ZK-ATTESTATION.md`
+  - `openspec/changes/CHANGE-144-merkle-snapshot-zk-attestation.md`
+  - `openspec/specs/SPEC-282-MERKLE-SNAPSHOT-ZK-ATTESTATION.md`
+  - `docs/plans/PLAN-144-MERKLE-SNAPSHOT-ZK-ATTESTATION.md`
+  - `docs/tasks/TASKS-144-MERKLE-SNAPSHOT-ZK-ATTESTATION.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

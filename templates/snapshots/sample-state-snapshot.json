@@ -1,0 +1,37 @@
+[
+  {
+    "id": "tenant-001-config",
+    "cluster": "us-east-1",
+    "tier": "enterprise",
+    "concurrencyLimit": 5000,
+    "encryptionEnabled": true
+  },
+  {
+    "id": "tenant-002-config",
+    "cluster": "eu-central-1",
+    "tier": "business",
+    "concurrencyLimit": 2000,
+    "encryptionEnabled": true
+  },
+  {
+    "id": "tenant-003-config",
+    "cluster": "ap-southeast-1",
+    "tier": "starter",
+    "concurrencyLimit": 500,
+    "encryptionEnabled": false
+  },
+  {
+    "id": "tenant-004-config",
+    "cluster": "sa-east-1",
+    "tier": "enterprise",
+    "concurrencyLimit": 4000,
+    "encryptionEnabled": true
+  },
+  {
+    "id": "tenant-005-config",
+    "cluster": "us-west-2",
+    "tier": "enterprise",
+    "concurrencyLimit": 7500,
+    "encryptionEnabled": true
+  }
+]
