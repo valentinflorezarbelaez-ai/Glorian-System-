@@ -70,10 +70,8 @@ export class EosK6LoadTestAdapter {
    * Generates ephemeral k6 test script content.
    */
   public static generateScript(targetUrl: string, vus: number, duration: string, thresholds: K6SloThresholds): string {
-    return `import http from 'k6/http';
-import { check, sleep } from 'k6';
-
-export const options = {
+    const k6Imports = ["import http from 'k6/http';", "import { check, sleep } from 'k6';", ""].join("\n");
+    return `${k6Imports}export const options = {
   vus: ${vus},
   duration: '${duration}',
   thresholds: {

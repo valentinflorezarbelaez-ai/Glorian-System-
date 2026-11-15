@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-15T14:04:46.351Z",
-  "totalModules": 436,
-  "consumedModules": 372,
+  "timestampIso": "2026-11-15T18:09:53.677Z",
+  "totalModules": 438,
+  "consumedModules": 374,
   "unconsumedModules": 64,
-  "graphDensity": 0.8532,
+  "graphDensity": 0.8539,
   "modules": {
     "EosAin": {
       "file": "src/core/EosAin.ts",
@@ -3208,6 +3208,18 @@
         }
       ]
     },
+    "eosK6LoadTestAdapter": {
+      "file": "src/core/eosK6LoadTestAdapter.ts",
+      "baseName": "eosK6LoadTestAdapter",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliDevOps.mjs",
+          "category": "bin"
+        }
+      ]
+    },
     "eosKalmanStateEstimatorAndQuadVoterCore": {
       "file": "src/core/eosKalmanStateEstimatorAndQuadVoterCore.ts",
       "baseName": "eosKalmanStateEstimatorAndQuadVoterCore",
@@ -3244,7 +3256,7 @@
       "file": "src/core/eosKernelPrimitives.ts",
       "baseName": "eosKernelPrimitives",
       "isConsumed": true,
-      "consumerCount": 207,
+      "consumerCount": 209,
       "consumers": [
         {
           "consumerPath": "src/core/eosActiveKernelProcessEnforcer.ts",
@@ -3627,6 +3639,10 @@
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosK6LoadTestAdapter.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosKalmanStateEstimatorAndQuadVoterCore.ts",
           "category": "core"
         },
@@ -3636,6 +3652,10 @@
         },
         {
           "consumerPath": "src/core/eosKubectlClusterInspector.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosKubernetesDeployGovernor.ts",
           "category": "core"
         },
         {
@@ -4119,6 +4139,22 @@
     "eosKubectlClusterInspector": {
       "file": "src/core/eosKubectlClusterInspector.ts",
       "baseName": "eosKubectlClusterInspector",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosKubernetesDeployGovernor.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "bin/commands/cliDevOps.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosKubernetesDeployGovernor": {
+      "file": "src/core/eosKubernetesDeployGovernor.ts",
+      "baseName": "eosKubernetesDeployGovernor",
       "isConsumed": true,
       "consumerCount": 1,
       "consumers": [
@@ -5110,8 +5146,12 @@
       "file": "src/core/eosOpaPolicyGovernor.ts",
       "baseName": "eosOpaPolicyGovernor",
       "isConsumed": true,
-      "consumerCount": 1,
+      "consumerCount": 2,
       "consumers": [
+        {
+          "consumerPath": "src/core/eosKubernetesDeployGovernor.ts",
+          "category": "core"
+        },
         {
           "consumerPath": "bin/commands/cliDevOps.mjs",
           "category": "bin"
@@ -6963,8 +7003,12 @@
       "file": "src/core/eosTrivyScannerAdapter.ts",
       "baseName": "eosTrivyScannerAdapter",
       "isConsumed": true,
-      "consumerCount": 1,
+      "consumerCount": 2,
       "consumers": [
+        {
+          "consumerPath": "src/core/eosKubernetesDeployGovernor.ts",
+          "category": "core"
+        },
         {
           "consumerPath": "bin/commands/cliDevOps.mjs",
           "category": "bin"
