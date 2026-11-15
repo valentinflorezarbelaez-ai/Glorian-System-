@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0.0",
+  "timestamp": "2026-11-15T20:27:42.810Z",
+  "metrics": {
+    "totalIngested": 3,
+    "totalRetained": 2,
+    "totalDropped": 1,
+    "retentionRatio": 0.6667,
+    "errorCount": 1,
+    "errorRate": 0.3333,
+    "latencyOutlierCount": 1,
+    "p50Ms": 65,
+    "p90Ms": 480,
+    "p95Ms": 480,
+    "p99Ms": 480,
+    "meanDurationMs": 190,
+    "maxDurationMs": 480,
+    "minDurationMs": 25
+  },
+  "evidenceSha256": "3afacdbb008f4a7c41ab36a81908b7d5df2f779b848535e10cd6478115ee1bdc"
+}

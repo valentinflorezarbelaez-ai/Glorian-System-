@@ -735,3 +735,4 @@ export * from "./eosK6LoadTestAdapter.ts";
 export * from "./eosHelmReleaseGovernor.ts";
 export * from "./eosTerraformIaCGovernor.ts";
 export * from "./eosDatabaseMigrationGovernor.ts";
+export * from "./eosOtlpCollectorGateway.ts";

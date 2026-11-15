@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 277,
-  "catalogSha256": "1c07a2186c3274af9b6a211d0e3eb18044fbbc1cb5ebd849280b6397332ee345",
+  "totalSpecs": 278,
+  "catalogSha256": "28f806bcea7eef6973e1f8ef94dde0e251a3a787aebb257d0dfad9b48a53d85b",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2494,7 +2494,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-277-DATABASE-MIGRATION-GOVERNOR.md",
-      "sha256": "4667823a0a283ad6d8f1aaa0b0c5154a49ed38d14de1945deb89dfd93c20319e"
+      "sha256": "267dddafe0b86af299d9cc6fbbff8bca3f73e9cb11b34aa4739256e4f35151d6"
+    },
+    {
+      "id": "SPEC-278",
+      "title": "OPENTELEMETRY DISTRIBUTED TRACING & HIGH-THROUGHPUT OTLP COLLECTOR GATEWAY",
+      "status": "PROPOSED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-278-OTEL-COLLECTOR-GATEWAY.md",
+      "sha256": "6e5edca99e86a251475ad8a4acbce953afe31462e7173455ca65485e65773842"
     }
   ]
 }

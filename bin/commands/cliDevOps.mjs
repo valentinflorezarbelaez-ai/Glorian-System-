@@ -743,5 +743,8 @@ export async function handleDevOpsCommands(commandContext) {
   if (commandContext.command.startsWith("toolchain:db:")) {
     return (await import("./cliDatabase.mjs")).handleDatabaseCommands(commandContext);
   }
+  if (commandContext.command.startsWith("toolchain:otel:")) {
+    return (await import("./cliOtelGateway.mjs")).handleOtelCommands(commandContext);
+  }
   return false;
 }

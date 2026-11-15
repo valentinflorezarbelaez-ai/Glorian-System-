@@ -29,6 +29,9 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:db:lint <file.sql> Linter de bloqueos de tabla y DDL no-concurrente (SPEC-277)
   eos toolchain:db:audit <dir>    Auditoría de secuencia y timeouts de migraciones (SPEC-277)
   eos toolchain:db:plan <dir>     Plan de migración determinista y stubs de reversión (SPEC-277)
+  eos toolchain:otel:ingest <file> Ingesta de trazas OTLP con tail-based sampling (SPEC-278)
+  eos toolchain:otel:spans [--err] Inspección de spans capturados y filtrado (SPEC-278)
+  eos toolchain:otel:stats         Métricas de percentiles P50/P90/P99 de observabilidad (SPEC-278)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -216,6 +219,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:db:lint <file.sql> Linter de bloqueos de tabla y DDL no-concurrente (SPEC-277)
   eos toolchain:db:audit <dir>    Auditoría de secuencia y timeouts de migraciones (SPEC-277)
   eos toolchain:db:plan <dir>     Plan de migración determinista y stubs de reversión (SPEC-277)
+  eos toolchain:otel:ingest <file> Ingesta de trazas OTLP con tail-based sampling (SPEC-278)
+  eos toolchain:otel:spans [--err] Inspección de spans capturados y filtrado (SPEC-278)
+  eos toolchain:otel:stats         Métricas de percentiles P50/P90/P99 de observabilidad (SPEC-278)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
