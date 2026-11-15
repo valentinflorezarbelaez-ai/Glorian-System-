@@ -2438,3 +2438,16 @@
   - `docs/plans/PLAN-146-DISTRIBUTED-QUORUM-LOCK.md`
   - `docs/tasks/TASKS-146-DISTRIBUTED-QUORUM-LOCK.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-DISTRIBUTED-DEADLOCK-DETECTOR
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-147` (`SPEC-285`), Phase E7 Distributed Deadlock Detection & Wait-For Graph (WFG) Cycle Governor: `src/core/eosDeadlockDetectionGovernor.ts` with directed Wait-For Graph representation, Tarjan/DFS elementary cycle detection, Wound-Wait / Wait-Die deadlock prevention algorithms, deterministic victim transaction selection, and cryptographic receipt emission at `docs/evidence/DEADLOCK_RECEIPT.json`. Wire subcommands `toolchain:deadlock:audit`, `toolchain:deadlock:wfg`, `toolchain:deadlock:resolve` in `bin/commands/cliDeadlock.mjs` and `bin/commands/cliDevOps.mjs`. Verify BDD-1485..BDD-1490.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-147-DISTRIBUTED-DEADLOCK-DETECTOR.md`
+  - `openspec/changes/CHANGE-147-distributed-deadlock-detector.md`
+  - `openspec/specs/SPEC-285-DISTRIBUTED-DEADLOCK-DETECTOR.md`
+  - `docs/plans/PLAN-147-DISTRIBUTED-DEADLOCK-DETECTOR.md`
+  - `docs/tasks/TASKS-147-DISTRIBUTED-DEADLOCK-DETECTOR.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

@@ -764,5 +764,8 @@ export async function handleDevOpsCommands(commandContext) {
   if (commandContext.command.startsWith("toolchain:lock:")) {
     return (await import("./cliDistributedLock.mjs")).handleLockCommands(commandContext);
   }
+  if (commandContext.command.startsWith("toolchain:deadlock:")) {
+    return (await import("./cliDeadlock.mjs")).handleDeadlockCommands(commandContext);
+  }
   return false;
 }

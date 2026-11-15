@@ -1,0 +1,23 @@
+{
+  "graphId": "cluster-tx-wfg-01",
+  "transactions": [
+    {
+      "txId": "tx-100",
+      "timestamp": 1700000000100,
+      "holds": ["account-balance-A", "user-profile-1"],
+      "waitingFor": ["order-status-99"]
+    },
+    {
+      "txId": "tx-200",
+      "timestamp": 1700000000200,
+      "holds": ["order-status-99"],
+      "waitingFor": ["inventory-sku-42"]
+    },
+    {
+      "txId": "tx-300",
+      "timestamp": 1700000000300,
+      "holds": ["inventory-sku-42"],
+      "waitingFor": ["account-balance-A"]
+    }
+  ]
+}

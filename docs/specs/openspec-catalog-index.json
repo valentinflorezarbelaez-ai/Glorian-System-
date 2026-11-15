@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 284,
-  "catalogSha256": "81cc4f03829a8c3e07ec87b3c781ee9d90fef0efe5244aa03dbf48f10bb64117",
+  "totalSpecs": 285,
+  "catalogSha256": "14ff2eae5b345a3ef32bc1b1f9b0089467ed38a62dd5a4e69bbeef835f5b00c2",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2557,7 +2557,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-284-DISTRIBUTED-QUORUM-LOCK.md",
-      "sha256": "3b35340fc10e7891678c59ad61282b4f2e09f72c98f4400957cef03d5b09dfd2"
+      "sha256": "f45491c130239f4d99272fe506bff054d1d164c65546df288012b76daf83111f"
+    },
+    {
+      "id": "SPEC-285",
+      "title": "Distributed Deadlock Detection & Wait-For Graph (WFG) Cycle Governor",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-285-DISTRIBUTED-DEADLOCK-DETECTOR.md",
+      "sha256": "7f453cf68f4812ca3f02d8f54c73b67fcb1c51f7a6d0b5543109b1f76f443fcc"
     }
   ]
 }
