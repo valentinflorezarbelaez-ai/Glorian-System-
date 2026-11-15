@@ -1,0 +1,27 @@
+{
+  "timestampIso": "2026-11-15T13:47:31.418Z",
+  "target": "policies/k8s/sample_pod.json",
+  "scanType": "FS",
+  "status": "PASS",
+  "criticalCount": 0,
+  "highCount": 0,
+  "totalVulnerabilities": 0,
+  "vulnerabilities": [],
+  "sarif": {
+    "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+    "version": "2.1.0",
+    "runs": [
+      {
+        "tool": {
+          "driver": {
+            "name": "Trivy",
+            "informationUri": "https://github.com/aquasecurity/trivy",
+            "rules": []
+          }
+        },
+        "results": []
+      }
+    ]
+  },
+  "sha256Receipt": "bfa950b47ef22bfacb775c37238bffaf88e665feee07346db58b74af2217b485"
+}

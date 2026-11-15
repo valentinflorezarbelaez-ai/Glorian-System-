@@ -735,3 +735,6 @@ export type {
   BytecodeSymbolicGasAssessment,
 } from "./eosSmartContractBytecodeGasSymbolicVerifierCore.types.ts";
 export * from "./eosToolchainDoctor.ts";
+export * from "./eosTrivyScannerAdapter.ts";
+export * from "./eosOpaPolicyGovernor.ts";
+export * from "./eosKubectlClusterInspector.ts";

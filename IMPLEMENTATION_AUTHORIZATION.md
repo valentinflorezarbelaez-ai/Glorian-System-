@@ -2373,3 +2373,16 @@
   - `docs/plans/PLAN-134-TOOLCHAIN-CONTROL-PLANE-AND-TLC-LOCAL.md`
   - `docs/tasks/TASKS-134-TOOLCHAIN-CONTROL-PLANE-AND-TLC-LOCAL.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-TOOLCHAIN-ADAPTERS-AND-POLICY-GOVERNOR
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-135` (`SPEC-273`), Phase B Toolchain Adapters: `src/core/eosTrivyScannerAdapter.ts` with OASIS SARIF v2.1.0 output, `src/core/eosOpaPolicyGovernor.ts` and `policies/k8s/security_baseline.rego` for Kubernetes declarative security policy evaluation, and `src/core/eosKubectlClusterInspector.ts` with strict `kind-*` context isolation and read-only telemetry. Wire CLI subcommands in `bin/commands/cliDevOps.mjs` and verify BDD-1413..BDD-1418.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-135-TOOLCHAIN-ADAPTERS-AND-POLICY-GOVERNOR.md`
+  - `openspec/changes/CHANGE-135-toolchain-adapters-and-policy-governor.md`
+  - `openspec/specs/SPEC-273-TOOLCHAIN-ADAPTERS-AND-POLICY-GOVERNOR.md`
+  - `docs/plans/PLAN-135-TOOLCHAIN-ADAPTERS-AND-POLICY-GOVERNOR.md`
+  - `docs/tasks/TASKS-135-TOOLCHAIN-ADAPTERS-AND-POLICY-GOVERNOR.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

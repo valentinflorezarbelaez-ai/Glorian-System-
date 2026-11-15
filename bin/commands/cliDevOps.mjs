@@ -486,6 +486,149 @@ async function cmd_toolchain_doctor(commandContext) {
 HANDLERS["toolchain:doctor"] = cmd_toolchain_doctor;
 HANDLERS["toolchain"] = cmd_toolchain_doctor;
 
+async function cmd_toolchain_scan(commandContext) {
+  const { args, root, printBanner } = commandContext;
+  printBanner();
+  const isJson = args.includes("--json");
+  const isSarif = args.includes("--sarif");
+  const noFail = args.includes("--no-fail");
+  const target = args.slice(1).find((a) => !a.startsWith("-")) || ".";
+  const receiptPath = path.join(root, "docs/evidence/TRIVY_RECEIPT.json");
+
+  const { EosTrivyScannerAdapter } = await import("../../src/core/eosTrivyScannerAdapter.ts");
+  const report = EosTrivyScannerAdapter.scan(target, {
+    failClosedOnCritical: !noFail,
+    receiptPath,
+    workingDirectory: root,
+  });
+
+  const gatePassed = report.status !== "FAIL_CLOSED";
+
+  if (isSarif) {
+    console.log(JSON.stringify(report.sarif, null, 2));
+    if (!gatePassed) process.exitCode = 1;
+    return;
+  }
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    if (!gatePassed) process.exitCode = 1;
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN TRIVY SECURITY VULNERABILITY SCANNER (SPEC-273)`);
+  console.log(`===============================================================`);
+  console.log(`  Target Scanned       : ${report.target}`);
+  console.log(`  Gate Status          : ${gatePassed ? "✔ " + report.status : "✖ FAIL_CLOSED (CRITICAL DETECTED)"}`);
+  console.log(`  Total Vulnerabilities: ${report.totalVulnerabilities}`);
+  console.log(`  Critical CVEs        : ${report.criticalCount}`);
+  console.log(`  High CVEs            : ${report.highCount}`);
+  console.log(`  Receipt SHA-256      : sha256:${report.sha256Receipt}`);
+  console.log(`===============================================================\n`);
+  if (!gatePassed) process.exitCode = 1;
+}
+
+async function cmd_toolchain_policy(commandContext) {
+  const { args, root, printBanner } = commandContext;
+  printBanner();
+  const isJson = args.includes("--json");
+  const regoArg = args.find((a) => a.startsWith("--rego="));
+  const regoPath = regoArg ? regoArg.split("=")[1] : undefined;
+  const manifestArg = args.slice(1).find((a) => !a.startsWith("-")) || "policies/k8s/sample_pod.json";
+  const manifestPath = path.isAbsolute(manifestArg) ? manifestArg : path.join(root, manifestArg);
+
+  let manifest;
+  try {
+    const raw = fs.readFileSync(manifestPath, "utf8");
+    manifest = JSON.parse(raw);
+  } catch (err) {
+    console.error(`Failed to read manifest at ${manifestPath}: ${err.message}`);
+    process.exitCode = 1;
+    return;
+  }
+
+  const { EosOpaPolicyGovernor } = await import("../../src/core/eosOpaPolicyGovernor.ts");
+  const result = EosOpaPolicyGovernor.evaluateManifest(manifest, {
+    regoPolicyPath: regoPath,
+    workingDirectory: root,
+  });
+
+  if (isJson) {
+    console.log(JSON.stringify(result, null, 2));
+    if (!result.allowed) process.exitCode = 1;
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN OPA KUBERNETES POLICY GOVERNOR (SPEC-273)`);
+  console.log(`===============================================================`);
+  console.log(`  Evaluation Engine    : ${result.executionEngine}`);
+  console.log(`  Policy Verdict       : ${result.allowed ? "✔ ALLOWED" : "✖ REJECTED"}`);
+  console.log(`  Violations Count     : ${result.violations.length}`);
+  console.log(`  Receipt SHA-256      : sha256:${result.sha256Receipt}`);
+  if (result.violations.length > 0) {
+    console.log(`---------------------------------------------------------------`);
+    console.log(`  VIOLATIONS DETECTED:`);
+    for (const v of result.violations) {
+      console.log(`  - [${v.rule}] ${v.message} (${v.severity})`);
+    }
+  }
+  console.log(`===============================================================\n`);
+  if (!result.allowed) process.exitCode = 1;
+}
+
+async function cmd_toolchain_k8s(commandContext) {
+  const { args, root, printBanner } = commandContext;
+  printBanner();
+  const isJson = args.includes("--json");
+  const nsArg = args.find((a) => a.startsWith("--namespace="));
+  const namespace = nsArg ? nsArg.split("=")[1] : undefined;
+  const receiptPath = path.join(root, "docs/evidence/KUBECTL_RECEIPT.json");
+
+  const { EosKubectlClusterInspector } = await import("../../src/core/eosKubectlClusterInspector.ts");
+  const report = EosKubectlClusterInspector.inspectCluster({
+    namespace,
+    receiptPath,
+    workingDirectory: root,
+  });
+
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    if (!report.allowedContext) process.exitCode = 1;
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN KUBERNETES CLUSTER INSPECTOR (SPEC-273)`);
+  console.log(`===============================================================`);
+  console.log(`  Context Guard Verdict: ${report.status}`);
+  console.log(`  Active Context       : ${report.context}`);
+  console.log(
+    `  Execution Allowed    : ${report.allowedContext ? "✔ YES (KIND BOUNDED)" : "✖ NO (CONTEXT UNTRUSTED)"}`,
+  );
+  console.log(`  Total Nodes          : ${report.totalNodes} (${report.readyNodes} Ready)`);
+  console.log(
+    `  Total Pods           : ${report.pods.total} (${report.pods.running} Running, ${report.pods.failed} Failed)`,
+  );
+  if (report.error) {
+    console.log(`  Diagnostics          : ${report.error}`);
+  }
+  console.log(`  Receipt SHA-256      : sha256:${report.sha256Receipt}`);
+  if (report.nodes.length > 0) {
+    console.log(`---------------------------------------------------------------`);
+    console.log(`  NODE TELEMETRY:`);
+    for (const n of report.nodes) {
+      console.log(`  - ${n.name} [${n.status}] Kubelet: ${n.kubeletVersion} InternalIP: ${n.internalIp}`);
+    }
+  }
+  console.log(`===============================================================\n`);
+  if (!report.allowedContext) process.exitCode = 1;
+}
+
+HANDLERS["toolchain:scan"] = cmd_toolchain_scan;
+HANDLERS["toolchain:policy"] = cmd_toolchain_policy;
+HANDLERS["toolchain:k8s"] = cmd_toolchain_k8s;
+
 export async function handleDevOpsCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {

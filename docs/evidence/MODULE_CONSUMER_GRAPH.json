@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-15T03:56:49.023Z",
-  "totalModules": 433,
-  "consumedModules": 369,
+  "timestampIso": "2026-11-15T14:04:46.351Z",
+  "totalModules": 436,
+  "consumedModules": 372,
   "unconsumedModules": 64,
-  "graphDensity": 0.8522,
+  "graphDensity": 0.8532,
   "modules": {
     "EosAin": {
       "file": "src/core/EosAin.ts",
@@ -3244,7 +3244,7 @@
       "file": "src/core/eosKernelPrimitives.ts",
       "baseName": "eosKernelPrimitives",
       "isConsumed": true,
-      "consumerCount": 204,
+      "consumerCount": 207,
       "consumers": [
         {
           "consumerPath": "src/core/eosActiveKernelProcessEnforcer.ts",
@@ -3635,6 +3635,10 @@
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosKubectlClusterInspector.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosKubernetesFleetOperator.ts",
           "category": "core"
         },
@@ -3740,6 +3744,10 @@
         },
         {
           "consumerPath": "src/core/eosNumericContractGuards.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosOpaPolicyGovernor.ts",
           "category": "core"
         },
         {
@@ -3955,6 +3963,10 @@
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosTrivyScannerAdapter.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosTrueTimeEngine.ts",
           "category": "core"
         },
@@ -4101,6 +4113,18 @@
         {
           "consumerPath": "src/core/eosKnowledgeGraphEngine.ts",
           "category": "core"
+        }
+      ]
+    },
+    "eosKubectlClusterInspector": {
+      "file": "src/core/eosKubectlClusterInspector.ts",
+      "baseName": "eosKubectlClusterInspector",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliDevOps.mjs",
+          "category": "bin"
         }
       ]
     },
@@ -5078,6 +5102,18 @@
         },
         {
           "consumerPath": "bin/commands/cliSovereign.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosOpaPolicyGovernor": {
+      "file": "src/core/eosOpaPolicyGovernor.ts",
+      "baseName": "eosOpaPolicyGovernor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliDevOps.mjs",
           "category": "bin"
         }
       ]
@@ -6920,6 +6956,18 @@
         {
           "consumerPath": "src/core/eosPipeline.ts",
           "category": "core"
+        }
+      ]
+    },
+    "eosTrivyScannerAdapter": {
+      "file": "src/core/eosTrivyScannerAdapter.ts",
+      "baseName": "eosTrivyScannerAdapter",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliDevOps.mjs",
+          "category": "bin"
         }
       ]
     },

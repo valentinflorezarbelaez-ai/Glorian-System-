@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 272,
-  "catalogSha256": "79c36a9516d194322ae9d978db9220f3e9a0e4272f2ef05a99ba2b6c58174377",
+  "totalSpecs": 273,
+  "catalogSha256": "ba09a10ae77f4221b63de7078658fe2a6ccd9b02bf9cb580914bc80aad987915",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2449,7 +2449,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-272-TOOLCHAIN-CONTROL-PLANE-AND-TLC-LOCAL.md",
-      "sha256": "2062cc479f1a0bbd82bcb45e1412914db14728bd2e8b53e832b4d7eab82b5287"
+      "sha256": "ab44e06fb2f32f13c5df357a8fab813f13f203dc5d3d9057c2a6f778a2d62d7e"
+    },
+    {
+      "id": "SPEC-273",
+      "title": "Toolchain Adapters, Kubernetes Security Policy & Cluster Safety Guard",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-273-TOOLCHAIN-ADAPTERS-AND-POLICY-GOVERNOR.md",
+      "sha256": "45ef2d731bda35d1b27ad185d811087d00b3fedcaadeb4ea9db95067c88b1602"
     }
   ]
 }
