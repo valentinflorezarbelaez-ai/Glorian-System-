@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 280,
-  "catalogSha256": "4f8276d7f4498485cde75f48bd7ee73367df0173c6e69e11d88f7f7a90c30929",
+  "totalSpecs": 281,
+  "catalogSha256": "0a152dcc74631aaddd110598824831c3592b47f3c5ca0120f05c9b3c1db8c8ca",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2522,6 +2522,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-280-BAYESIAN-CANARY-EVALUATION.md",
       "sha256": "98c2a604be1220c2330211c2814ecb5dcd106a4545ef6756d4d00643de73a37c"
+    },
+    {
+      "id": "SPEC-281",
+      "title": "BITEMPORAL EVENT STORE & CHANGE DATA CAPTURE (CDC) GOVERNOR",
+      "status": "PROPOSED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-281-BITEMPORAL-EVENT-STORE-CDC.md",
+      "sha256": "697139c5bcf88ab1465b9c793c5382beb7486d7940ba60f09857eed04dff5872"
     }
   ]
 }

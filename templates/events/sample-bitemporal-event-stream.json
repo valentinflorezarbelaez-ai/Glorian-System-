@@ -1,0 +1,48 @@
+{
+  "$schema": "https://glorian.ai/schemas/bitemporal-event-stream.v1.json",
+  "streamId": "account-vault-88992",
+  "entityType": "LedgerAccount",
+  "events": [
+    {
+      "eventType": "ACCOUNT_CREATED",
+      "validTime": "2026-11-01T08:00:00.000Z",
+      "idempotencyKey": "tx-init-88992-001",
+      "payload": {
+        "accountId": "account-vault-88992",
+        "owner": "Valentin Florez",
+        "currency": "USD",
+        "balance": 100.0,
+        "status": "ACTIVE"
+      }
+    },
+    {
+      "eventType": "FUNDS_DEPOSITED",
+      "validTime": "2026-11-05T12:00:00.000Z",
+      "idempotencyKey": "tx-dep-88992-002",
+      "payload": {
+        "amount": 250.0,
+        "balance": 350.0,
+        "reference": "WIRE-IN-0988"
+      }
+    },
+    {
+      "eventType": "FUNDS_WITHDRAWN",
+      "validTime": "2026-11-10T15:30:00.000Z",
+      "idempotencyKey": "tx-wth-88992-003",
+      "payload": {
+        "amount": 50.0,
+        "balance": 300.0,
+        "reference": "ATM-TX-4411"
+      }
+    },
+    {
+      "eventType": "ACCOUNT_CONTACT_UPDATED",
+      "validTime": "2026-11-12T10:00:00.000Z",
+      "idempotencyKey": "tx-cnt-88992-004",
+      "payload": {
+        "email": "valentin@glorian.ai",
+        "tier": "ENTERPRISE_PLATINUM"
+      }
+    }
+  ]
+}

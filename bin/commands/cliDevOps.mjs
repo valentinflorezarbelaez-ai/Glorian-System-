@@ -752,5 +752,8 @@ export async function handleDevOpsCommands(commandContext) {
   if (commandContext.command.startsWith("toolchain:canary:")) {
     return (await import("./cliCanaryEval.mjs")).handleCanaryCommands(commandContext);
   }
+  if (commandContext.command.startsWith("toolchain:events:")) {
+    return (await import("./cliEventStore.mjs")).handleEventStoreCommands(commandContext);
+  }
   return false;
 }
