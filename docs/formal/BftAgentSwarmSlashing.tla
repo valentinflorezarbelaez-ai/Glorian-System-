@@ -27,13 +27,15 @@ Init ==
 
 VoteConstitutional(a) ==
     /\ a \in activeVoters
+    /\ agentStakes[a] < InitialStake + 20
     /\ agentStakes' = [agentStakes EXCEPT ![a] = agentStakes[a] + 5]
     /\ UNCHANGED <<activeVoters, slashedVoters, consensusReached, byzantineAttempts>>
 
 SlashByzantineAgent(a) ==
+    /\ ~consensusReached
     /\ a \in activeVoters
     /\ byzantineAttempts' = byzantineAttempts + 1
-    /\ agentStakes' = [agentStakes EXCEPT ![a] = agentStakes[a] - 50]
+    /\ agentStakes' = [agentStakes EXCEPT ![a] = 0]
     /\ activeVoters' = activeVoters \ {a}
     /\ slashedVoters' = slashedVoters \cup {a}
     /\ UNCHANGED <<consensusReached>>

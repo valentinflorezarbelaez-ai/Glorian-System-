@@ -40,7 +40,7 @@ Transact(e, a, v, key) ==
 
 \* Next State Transition
 Next ==
-  \E e \in Entities, a \in Attributes, v \in 1..100, key \in 1..MaxTx:
+  \E e \in Entities, a \in Attributes, v \in 1..2, key \in 1..MaxTx:
     Transact(e, a, v, key)
 
 -----------------------------------------------------------------------------

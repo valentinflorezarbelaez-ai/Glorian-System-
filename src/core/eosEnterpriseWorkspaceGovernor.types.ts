@@ -300,6 +300,7 @@ export const BINARY_EXTENSIONS: ReadonlySet<string> = new Set([
   ".ttf",
   ".eot",
   ".wasm",
+  ".jar",
   ".exe",
   ".dll",
   ".so",

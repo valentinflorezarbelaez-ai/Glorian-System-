@@ -23,7 +23,7 @@ const rateLimiter = new EosAdaptiveRateLimiter({
   adaptive: true,
 });
 
-const saturationGovernor = new EosEventLoopSaturationGovernor(50.0, 3);
+const saturationGovernor = new EosEventLoopSaturationGovernor(50.0, 3, 5);
 saturationGovernor.start();
 
 const idempotencyStore = new EosIdempotencyKeyStore();
@@ -117,6 +117,7 @@ export function getShieldDiagnostics() {
   return {
     rateLimiterActive: true,
     eventLoopLagMs: satReport.p99Ms,
+    warmupActive: satReport.warmupActive,
     sheddingActive: satReport.sheddingActive,
     governorState: satReport.state,
   };

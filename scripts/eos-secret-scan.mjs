@@ -66,6 +66,7 @@ const BINARY_EXTENSIONS = new Set([
   ".xlsx",
   ".docx",
   ".wasm",
+  ".jar",
   ".sqlite",
   ".db",
   ".lock",
@@ -84,6 +85,7 @@ const IGNORED_DIRS = new Set([
   ".cache",
   ".eos",
   ".gemini",
+  "tools",
 ]);
 
 export function maskSecret(secret) {

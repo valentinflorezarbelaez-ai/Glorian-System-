@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 271,
-  "catalogSha256": "a0d44ec3f95fcf5da0e55a796c10b82010916fe998b952ba7612eddf7fa93bc8",
+  "totalSpecs": 272,
+  "catalogSha256": "79c36a9516d194322ae9d978db9220f3e9a0e4272f2ef05a99ba2b6c58174377",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2441,6 +2441,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-271-DEVSECOPS-PLATFORM-ENGINEERING-AND-TLC-CONSENSUS.md",
       "sha256": "e29594bda96fac9f5099762c8510ed195ba66397c6e4bc6c76ff3e9881e9eebb"
+    },
+    {
+      "id": "SPEC-272",
+      "title": "— Toolchain Control Plane, Local TLC Execution, and Cold-Start Shield Grace",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-272-TOOLCHAIN-CONTROL-PLANE-AND-TLC-LOCAL.md",
+      "sha256": "2062cc479f1a0bbd82bcb45e1412914db14728bd2e8b53e832b4d7eab82b5287"
     }
   ]
 }

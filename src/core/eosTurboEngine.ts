@@ -130,6 +130,7 @@ export function collectSourceFiles(dir: string, projectRoot: string = dir): stri
     "_sandbox",
     ".turbo",
     "target",
+    "evidence",
   ]);
   const binaryExtensions = new Set([
     ".exe",
@@ -138,6 +139,7 @@ export function collectSourceFiles(dir: string, projectRoot: string = dir): stri
     ".so",
     ".dylib",
     ".wasm",
+    ".jar",
     ".png",
     ".jpg",
     ".jpeg",
@@ -257,6 +259,7 @@ export function runTurboPipeline(projectRoot: string = process.cwd()): TurboPipe
       rel.includes(".git") ||
       rel.startsWith(".eos/") ||
       rel.startsWith("data/") ||
+      rel.startsWith("docs/evidence/") ||
       rel.endsWith("-wal") ||
       rel.endsWith("-shm") ||
       rel.endsWith("-journal")

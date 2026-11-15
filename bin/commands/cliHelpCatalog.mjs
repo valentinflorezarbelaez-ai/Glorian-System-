@@ -14,6 +14,7 @@ export const QUICK_HELP_TEXT = `
   eos test                   Ejecuta todas las suites automatizadas (node:test)
   eos turbo                  Verificación en memoria con telemetría en microsegundos (<350ms)
   eos diff:live [--json]     Inspecciona el git diff vivo (secretos, SQL DDL, Regla Beyoncé)
+  eos toolchain:doctor [--json] Audita 13 herramientas fundacionales de ingeniería (SPEC-272)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -186,6 +187,7 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos mpd:thruster [--json]      Propulsor magnetoplasmadinámico MPD Lorentz y estabilidad onset (SPEC-266)
   eos qnet:repeater [--json]     Repetidor cuántico BBPSSW, purificación Bell y decoherencia (SPEC-267)
   eos evm:prove [--json]         Verificador simbólico de gas EVM y contratos reentrancy CEI (SPEC-268)
+  eos toolchain:doctor [--json]  Diagnóstico del control plane de herramientas de ingeniería (SPEC-272)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
@@ -206,5 +208,6 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   contract, heal:surgical, tlc, pr:check, sandbox:vm, fleet:verify, ontology, quantum:seal, refactor, dst,
   synapse, fleet:soundcheck, mcts:tune, canary:rollout, antigravity, gentleman, gentle-ai, ledger, ast,
   nocturnal, evolve, mesh, agent-topology, sandbox, timetravel, truetime, lsm, threshold, microvm, simd, enforce,
-  sparse-tree, enterprise:health, otel:metrics, mmr, raft, fuzzer, seccomp, zk:verify, aca, intercept
+  sparse-tree, enterprise:health, otel:metrics, mmr, raft, fuzzer, seccomp, zk:verify, aca, intercept,
+  toolchain, toolchain:doctor
 `;

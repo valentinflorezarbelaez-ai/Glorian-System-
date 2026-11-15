@@ -423,6 +423,36 @@ export class EosPostQuantumMlDsaCore {
       }
       if (rejectZ) continue;
 
+      // FIPS 204 Step 22 & 24: Check r0 of (w - cs2) and ct0 bounds
+      let rejectLowBits = false;
+      for (let r = 0; r < K_ROWS; r++) {
+        const cs2 = EosPostQuantumMlDsaCore.polyMul(c, s2[r]!);
+        const wSubCs2 = EosPostQuantumMlDsaCore.polySub(w[r]!, cs2);
+        for (let i = 0; i < N; i++) {
+          const r0Val = EosPostQuantumMlDsaCore.lowBits(wSubCs2[i]!);
+          if (Math.abs(r0Val) >= GAMMA2 - BETA) {
+            rejectLowBits = true;
+            break;
+          }
+        }
+        if (rejectLowBits) break;
+      }
+      if (rejectLowBits) continue;
+
+      let rejectCt0 = false;
+      for (let r = 0; r < K_ROWS; r++) {
+        const ct0 = EosPostQuantumMlDsaCore.polyMul(c, t0[r]!);
+        for (let i = 0; i < N; i++) {
+          const ct0Signed = ct0[i]! > Q / 2 ? ct0[i]! - Q : ct0[i]!;
+          if (Math.abs(ct0Signed) >= GAMMA2) {
+            rejectCt0 = true;
+            break;
+          }
+        }
+        if (rejectCt0) break;
+      }
+      if (rejectCt0) continue;
+
       // Make hints h
       const hints: number[] = [];
       let hintCount = 0;

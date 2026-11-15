@@ -734,3 +734,4 @@ export type {
   BytecodeSymbolicGasOptions,
   BytecodeSymbolicGasAssessment,
 } from "./eosSmartContractBytecodeGasSymbolicVerifierCore.types.ts";
+export * from "./eosToolchainDoctor.ts";

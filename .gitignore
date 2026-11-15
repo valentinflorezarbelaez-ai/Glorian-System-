@@ -15,6 +15,11 @@ test/_sandbox/
 docs/evidence/LOCAL-CHECKS-RECEIPT.json
 docs/evidence/local-checks.sarif
 docs/evidence/HEAL-*.json
+docs/evidence/TOOLCHAIN_RECEIPT.json
+docs/evidence/TLC_RECEIPT.json
+docs/formal/*_TTrace_*
+docs/formal/states/
+states/
 bin/*.exe
 *.exe
 /tools/

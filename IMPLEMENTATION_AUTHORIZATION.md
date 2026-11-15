@@ -2360,3 +2360,16 @@
   - `docs/plans/PLAN-133-DEVSECOPS-PLATFORM-ENGINEERING-AND-TLC-CONSENSUS.md`
   - `docs/tasks/TASKS-133-DEVSECOPS-PLATFORM-ENGINEERING-AND-TLC-CONSENSUS.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-14-TOOLCHAIN-CONTROL-PLANE-AND-TLC-LOCAL
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-134` (`SPEC-272`), `src/core/eosToolchainDoctor.ts` host CLI inspection engine, SRE warmup grace in `src/core/eosEventLoopSaturationGovernor.ts` and `api/_shield.js`, fetch and verify `tools/tla2tools.jar` for local TLC formal verification in `scripts/run-tlc.mjs`, CLI integration for `eos toolchain:doctor`, and full test suite verification.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-134-TOOLCHAIN-CONTROL-PLANE-AND-TLC-LOCAL.md`
+  - `openspec/changes/CHANGE-134-toolchain-control-plane-and-tlc-local.md`
+  - `openspec/specs/SPEC-272-TOOLCHAIN-CONTROL-PLANE-AND-TLC-LOCAL.md`
+  - `docs/plans/PLAN-134-TOOLCHAIN-CONTROL-PLANE-AND-TLC-LOCAL.md`
+  - `docs/tasks/TASKS-134-TOOLCHAIN-CONTROL-PLANE-AND-TLC-LOCAL.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

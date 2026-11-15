@@ -451,6 +451,41 @@ async function cmd_honk_28(commandContext) {
 
 HANDLERS["honk"] = cmd_honk_28;
 
+async function cmd_toolchain_doctor(commandContext) {
+  const { args, root, printBanner } = commandContext;
+  printBanner();
+  const isJson = args.includes("--json");
+  const receiptPath = path.join(root, "docs/evidence/TOOLCHAIN_RECEIPT.json");
+
+  const { EosToolchainDoctor } = await import("../../src/core/eosToolchainDoctor.ts");
+  const report = EosToolchainDoctor.diagnose({ receiptPath });
+
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+
+  console.log(`\n===============================================================`);
+  console.log(`  GLORIAN UNIVERSAL TOOLCHAIN DOCTOR (SPEC-272)`);
+  console.log(`===============================================================`);
+  console.log(`  Total Tools Audited  : ${report.totalTools}`);
+  console.log(`  Available Tools      : ${report.availableCount} / ${report.totalTools}`);
+  console.log(`  Unavailable Tools    : ${report.unavailableCount}`);
+  console.log(`  Receipt SHA-256      : sha256:${report.sha256Receipt}`);
+  console.log(`  Receipt Path         : ${receiptPath}`);
+  console.log(`---------------------------------------------------------------`);
+  console.log(`  TOOLCHAIN INVENTORY STATUS:`);
+  for (const t of report.tools) {
+    const status = t.available ? "✔ AVAILABLE  " : "✖ UNAVAILABLE";
+    const detail = t.available ? t.version || "OK" : t.error || "Not found in PATH";
+    console.log(`  [${status}] [${t.category.padEnd(13)}] ${t.name.padEnd(10)}: ${detail} (${t.latencyMs}ms)`);
+  }
+  console.log(`===============================================================\n`);
+}
+
+HANDLERS["toolchain:doctor"] = cmd_toolchain_doctor;
+HANDLERS["toolchain"] = cmd_toolchain_doctor;
+
 export async function handleDevOpsCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {

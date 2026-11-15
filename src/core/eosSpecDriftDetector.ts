@@ -324,6 +324,8 @@ export class EosSpecDriftDetector {
           specName.includes("mutation-ratchet") ||
           specName.includes("devsecops-platform") ||
           specName.includes("tlc-consensus") ||
+          specName.includes("toolchain-control") ||
+          specName.includes("tlc-local") ||
           specName.includes("autotuner") ||
           specName.includes("untrusted-browser-data") ||
           specName.includes("verifiable-api-results") ||

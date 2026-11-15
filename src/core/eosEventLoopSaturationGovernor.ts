@@ -29,6 +29,7 @@ export interface EventLoopLatencyReport {
   readonly meanMs: number;
   readonly criticalThresholdMs: number;
   readonly totalSamples: number;
+  readonly warmupActive: boolean;
   readonly sheddingActive: boolean;
   readonly timestampIso: string;
 }
@@ -36,16 +37,20 @@ export interface EventLoopLatencyReport {
 export class EosEventLoopSaturationGovernor {
   private readonly criticalThresholdMs: number;
   private readonly coolingCyclesRequired: number;
+  private readonly warmupCyclesRequired: number;
   private histogram: EventLoopHistogram | null = null;
   private state: GovernorState = "NORMAL";
   private consecutiveCoolCycles: number = 0;
   private simulatedLagMs: number = 0;
+  private sampleCount: number = 0;
 
-  constructor(criticalThresholdMs: number = 10.0, coolingCyclesRequired: number = 3) {
+  constructor(criticalThresholdMs: number = 10.0, coolingCyclesRequired: number = 3, warmupCyclesRequired: number = 0) {
     assertPrecondition(criticalThresholdMs > 0, "Threshold must be greater than 0 ms");
     assertPrecondition(coolingCyclesRequired >= 1, "Cooling cycles must be at least 1");
+    assertPrecondition(warmupCyclesRequired >= 0, "Warmup cycles must be at least 0");
     this.criticalThresholdMs = criticalThresholdMs;
     this.coolingCyclesRequired = coolingCyclesRequired;
+    this.warmupCyclesRequired = warmupCyclesRequired;
   }
 
   public start(): void {
@@ -107,13 +112,16 @@ export class EosEventLoopSaturationGovernor {
       meanMs = Math.max(meanMs, this.simulatedLagMs * 0.7);
     }
 
+    this.sampleCount++;
+    const warmupActive = this.sampleCount <= this.warmupCyclesRequired;
+
     // Evaluate state machine transitions
-    if (p99Ms >= this.criticalThresholdMs) {
+    if (p99Ms >= this.criticalThresholdMs && !warmupActive) {
       this.state = "SHEDDING_ACTIVE";
       this.consecutiveCoolCycles = 0;
-    } else if (p99Ms < this.criticalThresholdMs / 2) {
+    } else if (p99Ms < this.criticalThresholdMs / 2 || warmupActive) {
       this.consecutiveCoolCycles++;
-      if (this.consecutiveCoolCycles >= this.coolingCyclesRequired) {
+      if (this.consecutiveCoolCycles >= this.coolingCyclesRequired || warmupActive) {
         this.state = "NORMAL";
       }
     } else {
@@ -130,6 +138,7 @@ export class EosEventLoopSaturationGovernor {
       meanMs: Math.round(meanMs * 100) / 100,
       criticalThresholdMs: this.criticalThresholdMs,
       totalSamples,
+      warmupActive,
       sheddingActive: this.state === "SHEDDING_ACTIVE",
       timestampIso: new Date().toISOString(),
     });
@@ -161,6 +170,7 @@ export class EosEventLoopSaturationGovernor {
       }
     }
     this.simulatedLagMs = 0;
+    this.sampleCount = 0;
     this.state = "NORMAL";
     this.consecutiveCoolCycles = 0;
   }

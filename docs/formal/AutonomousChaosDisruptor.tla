@@ -48,7 +48,8 @@ InjectChaosFault ==
 RecoverCircuit ==
   /\ circuitState \in {"OPEN", "HALF_OPEN"}
   /\ IF circuitState = "OPEN"
-     THEN circuitState' = "HALF_OPEN"
+     THEN /\ circuitState' = "HALF_OPEN"
+          /\ UNCHANGED <<faultCounter>>
      ELSE /\ circuitState' = "CLOSED"
           /\ faultCounter' = 0
   /\ UNCHANGED <<scanPosition, tokensRecorded>>

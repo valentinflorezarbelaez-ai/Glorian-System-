@@ -32,11 +32,69 @@ export const CONFIGURED_SPECS = [
 ];
 
 /**
+ * Resolves the path to the Java executable.
+ */
+export function resolveJavaExecutable() {
+  if (process.env.JAVA_HOME) {
+    const binName = process.platform === "win32" ? "java.exe" : "java";
+    const fromHome = path.join(process.env.JAVA_HOME, "bin", binName);
+    if (fs.existsSync(fromHome)) return fromHome;
+  }
+
+  try {
+    const res = spawnSync("java", ["-version"], { encoding: "utf8" });
+    if (res.status === 0) return "java";
+  } catch {
+    // java not in current PATH
+  }
+
+  if (process.platform === "win32") {
+    const adoptiumBase = "C:\\Program Files\\Eclipse Adoptium";
+    if (fs.existsSync(adoptiumBase)) {
+      try {
+        const entries = fs.readdirSync(adoptiumBase);
+        for (const entry of entries) {
+          const candidate = path.join(adoptiumBase, entry, "bin", "java.exe");
+          if (fs.existsSync(candidate)) return candidate;
+        }
+      } catch {
+        // adoptium directory unreadable
+      }
+    }
+    const javaBase = "C:\\Program Files\\Java";
+    if (fs.existsSync(javaBase)) {
+      try {
+        const entries = fs.readdirSync(javaBase);
+        for (const entry of entries) {
+          const candidate = path.join(javaBase, entry, "bin", "java.exe");
+          if (fs.existsSync(candidate)) return candidate;
+        }
+      } catch {
+        // java directory unreadable
+      }
+    }
+  }
+
+  const nixCandidates = [
+    "/usr/lib/jvm/java-21-openjdk/bin/java",
+    "/usr/lib/jvm/java-21-openjdk-amd64/bin/java",
+    "/usr/bin/java",
+  ];
+  for (const candidate of nixCandidates) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+
+  return null;
+}
+
+/**
  * Checks if Java runtime is available in the current environment.
  */
 export function detectJavaRuntime() {
+  const javaExec = resolveJavaExecutable();
+  if (!javaExec) return false;
   try {
-    const res = spawnSync("java", ["-version"], { encoding: "utf8" });
+    const res = spawnSync(javaExec, ["-version"], { encoding: "utf8" });
     return res.status === 0;
   } catch {
     return false;
@@ -130,16 +188,38 @@ export function parseTlcOutput(output) {
  * Executes TLC on a given spec using the Java CLI.
  */
 export function runTlcExecutable(specName, jarPath, formalDir = FORMAL_DIR, opts = {}) {
-  const tlaFile = path.join(formalDir, `${specName}.tla`);
-  const cfgFile = path.join(formalDir, `${specName}.cfg`);
+  const javaExec = resolveJavaExecutable() || "java";
 
-  const args = ["-cp", jarPath, "tlc2.TLC", "-cleanup", "-deadlock", "-config", cfgFile, tlaFile];
+  const args = ["-cp", jarPath, "tlc2.TLC", "-cleanup", "-deadlock", "-config", `${specName}.cfg`, `${specName}.tla`];
 
-  const res = spawnSync("java", args, {
+  const res = spawnSync(javaExec, args, {
     cwd: formalDir,
     encoding: "utf8",
     timeout: opts.timeoutMs || 30000,
   });
+
+  const statesDir = path.join(formalDir, "states");
+  if (fs.existsSync(statesDir)) {
+    try {
+      fs.rmSync(statesDir, { recursive: true, force: true });
+    } catch {
+      // states directory cleanup fallback
+    }
+  }
+  try {
+    const formalFiles = fs.readdirSync(formalDir);
+    for (const f of formalFiles) {
+      if (f.includes("_TTrace_")) {
+        try {
+          fs.rmSync(path.join(formalDir, f), { force: true });
+        } catch {
+          // trace file cleanup fallback
+        }
+      }
+    }
+  } catch {
+    // formal dir readdir fallback
+  }
 
   const combinedOutput = `${res.stdout || ""}\n${res.stderr || ""}`;
   const parsed = parseTlcOutput(combinedOutput);

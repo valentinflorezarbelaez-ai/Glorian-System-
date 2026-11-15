@@ -12,7 +12,8 @@ EXTENDS Naturals
 CONSTANTS
   CellCount,            \* Total partitioned failure domains (e.g. 8)
   CellCapacity,         \* Maximum concurrent in-flight requests per cell (e.g. 100)
-  MaxConsecutiveFails   \* Consecutive failures triggering poison pill quarantine (e.g. 3)
+  MaxConsecutiveFails,  \* Consecutive failures triggering poison pill quarantine (e.g. 3)
+  MaxRequests           \* Finite bound for model checking exploration
 
 VARIABLES
   totalRequests,        \* Cumulative requests processed
@@ -37,14 +38,14 @@ Init ==
 
 \* Nominal execution: request mapped to healthy target cell within capacity
 RouteNominalRequest ==
-  /\ totalRequests < 500
+  /\ totalRequests < MaxRequests
   /\ totalRequests' = totalRequests + 1
   /\ maxCellLoad' = IF maxCellLoad < CellCapacity THEN maxCellLoad + 1 ELSE maxCellLoad
   /\ UNCHANGED <<quarantinedSignatures, activeCells, reroutedRequests, shedRequests>>
 
 \* Degraded cell failover: target cell is degraded, rerouted to adjacent warm cell with headroom
 RouteRerouteDegraded ==
-  /\ totalRequests < 500
+  /\ totalRequests < MaxRequests
   /\ activeCells > 1
   /\ totalRequests' = totalRequests + 1
   /\ reroutedRequests' = reroutedRequests + 1
@@ -52,14 +53,14 @@ RouteRerouteDegraded ==
 
 \* Cell saturation: all target and failover cells at capacity, shedding load safely
 RouteShedOverload ==
-  /\ totalRequests < 500
+  /\ totalRequests < MaxRequests
   /\ totalRequests' = totalRequests + 1
   /\ shedRequests' = shedRequests + 1
   /\ UNCHANGED <<quarantinedSignatures, activeCells, reroutedRequests, maxCellLoad>>
 
 \* Poison pill detection: 3 consecutive failures trigger signature quarantine
 QuarantinePoisonPill ==
-  /\ quarantinedSignatures < 100
+  /\ quarantinedSignatures < MaxConsecutiveFails
   /\ quarantinedSignatures' = quarantinedSignatures + 1
   /\ UNCHANGED <<totalRequests, activeCells, reroutedRequests, shedRequests, maxCellLoad>>
 

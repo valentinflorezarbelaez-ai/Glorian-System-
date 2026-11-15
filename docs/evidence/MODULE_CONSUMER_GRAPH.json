@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-15T01:38:10.783Z",
-  "totalModules": 432,
-  "consumedModules": 368,
+  "timestampIso": "2026-11-15T03:56:49.023Z",
+  "totalModules": 433,
+  "consumedModules": 369,
   "unconsumedModules": 64,
-  "graphDensity": 0.8519,
+  "graphDensity": 0.8522,
   "modules": {
     "EosAin": {
       "file": "src/core/EosAin.ts",
@@ -3244,7 +3244,7 @@
       "file": "src/core/eosKernelPrimitives.ts",
       "baseName": "eosKernelPrimitives",
       "isConsumed": true,
-      "consumerCount": 203,
+      "consumerCount": 204,
       "consumers": [
         {
           "consumerPath": "src/core/eosActiveKernelProcessEnforcer.ts",
@@ -3948,6 +3948,10 @@
         },
         {
           "consumerPath": "src/core/eosTlsPeerTransport.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosToolchainDoctor.ts",
           "category": "core"
         },
         {
@@ -6891,6 +6895,18 @@
         },
         {
           "consumerPath": "bin/commands/cliResilience.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosToolchainDoctor": {
+      "file": "src/core/eosToolchainDoctor.ts",
+      "baseName": "eosToolchainDoctor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliDevOps.mjs",
           "category": "bin"
         }
       ]
