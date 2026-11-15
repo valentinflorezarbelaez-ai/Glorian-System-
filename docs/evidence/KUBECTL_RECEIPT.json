@@ -1,18 +1,26 @@
 {
-  "timestampIso": "2026-11-15T13:47:39.522Z",
+  "timestampIso": "2026-11-15T17:59:30.149Z",
   "context": "kind-glorian-cluster",
   "allowedContext": true,
-  "status": "INSPECTION_FAILED",
-  "totalNodes": 0,
-  "readyNodes": 0,
-  "nodes": [],
+  "status": "HEALTHY",
+  "totalNodes": 1,
+  "readyNodes": 1,
+  "nodes": [
+    {
+      "name": "glorian-cluster-control-plane",
+      "ready": true,
+      "roles": [
+        "control-plane"
+      ],
+      "kubeletVersion": "v1.37.0"
+    }
+  ],
   "pods": {
-    "total": 0,
-    "running": 0,
+    "total": 11,
+    "running": 11,
     "pending": 0,
     "failed": 0,
     "succeeded": 0
   },
-  "sha256Receipt": "ac99fa28b3ac96ce1374fd8406e65e2df6cf6bf0cd7e065822868b23aa8e3a9f",
-  "error": "Cluster API server unreachable or inactive"
+  "sha256Receipt": "115abeb255af936294dc49f6c58954ffc00151a98ed3773df16f7068d77c3f3c"
 }

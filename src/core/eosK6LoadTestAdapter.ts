@@ -196,16 +196,17 @@ export default function () {
     }
 
     // 4. Parse k6 Metrics
-    const reqDuration = k6Output.metrics?.http_req_duration?.values || {};
-    const reqFailed = k6Output.metrics?.http_req_failed?.values || {};
-    const reqs = k6Output.metrics?.http_reqs?.values || {};
+    const rawDuration = k6Output.metrics?.http_req_duration?.values || k6Output.metrics?.http_req_duration || {};
+    const rawFailed = k6Output.metrics?.http_req_failed?.values || k6Output.metrics?.http_req_failed || {};
+    const rawReqs = k6Output.metrics?.http_reqs?.values || k6Output.metrics?.http_reqs || {};
 
-    const p95DurationMs = reqDuration["p(95)"] || 0;
-    const p99DurationMs = reqDuration["p(99)"] || 0;
-    const medianDurationMs = reqDuration.med || 0;
-    const totalRequests = reqs.count || 0;
-    const requestsPerSecond = reqs.rate || 0;
-    const errorRate = reqFailed.rate || 0;
+    const p95DurationMs = rawDuration["p(95)"] || rawDuration.max || 0;
+    const p99DurationMs = rawDuration["p(99)"] || rawDuration.max || p95DurationMs;
+    const medianDurationMs = rawDuration.med || rawDuration.avg || 0;
+    const totalRequests = rawReqs.count || 0;
+    const requestsPerSecond = rawReqs.rate || 0;
+    const errorRate =
+      typeof rawFailed.rate === "number" ? rawFailed.rate : typeof rawFailed.value === "number" ? rawFailed.value : 0;
 
     const metrics: K6LoadMetrics = {
       totalRequests,

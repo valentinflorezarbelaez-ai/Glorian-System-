@@ -1,16 +1,16 @@
 {
-  "timestampIso": "2026-11-15T14:15:37.236Z",
-  "targetUrl": "http://localhost:3000/api/health",
-  "vus": 5,
-  "duration": "5s",
+  "timestampIso": "2026-11-15T18:00:42.220Z",
+  "targetUrl": "https://glorian-system.vercel.app/api/health",
+  "vus": 2,
+  "duration": "3s",
   "verdict": "PASS",
   "sloPassed": true,
   "metrics": {
-    "totalRequests": 0,
-    "requestsPerSecond": 0,
-    "p95DurationMs": 0,
-    "p99DurationMs": 0,
-    "medianDurationMs": 0,
+    "totalRequests": 31,
+    "requestsPerSecond": 10.07707008212162,
+    "p95DurationMs": 164.6248,
+    "p99DurationMs": 225.7069,
+    "medianDurationMs": 127.8422,
     "errorRate": 0
   },
   "thresholds": {
@@ -18,5 +18,5 @@
     "targetP99Ms": 500,
     "maxErrorRate": 0.01
   },
-  "sha256Receipt": "80ddccba196580d8c1a286c1aa9d079bcf73b5f46a808da7e21f25bb2c25af65"
+  "sha256Receipt": "52341f61385d7bfd1ae6219d2c71c2a2c0bcdc34762968ec93c3f4a56a52ca85"
 }

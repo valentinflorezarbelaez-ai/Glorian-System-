@@ -609,15 +609,14 @@ async function cmd_toolchain_k8s(commandContext) {
   console.log(
     `  Total Pods           : ${report.pods.total} (${report.pods.running} Running, ${report.pods.failed} Failed)`,
   );
-  if (report.error) {
-    console.log(`  Diagnostics          : ${report.error}`);
-  }
+  if (report.error) console.log(`  Diagnostics          : ${report.error}`);
   console.log(`  Receipt SHA-256      : sha256:${report.sha256Receipt}`);
   if (report.nodes.length > 0) {
     console.log(`---------------------------------------------------------------`);
     console.log(`  NODE TELEMETRY:`);
     for (const n of report.nodes) {
-      console.log(`  - ${n.name} [${n.status}] Kubelet: ${n.kubeletVersion} InternalIP: ${n.internalIp}`);
+      const state = n.ready ? "Ready" : "NotReady";
+      console.log(`  - ${n.name} [${state}] (${n.roles}) Kubelet: ${n.kubeletVersion}`);
     }
   }
   console.log(`===============================================================\n`);
@@ -722,9 +721,7 @@ async function cmd_toolchain_loadtest(commandContext) {
   console.log(
     `  Error Rate           : ${(report.metrics.errorRate * 100).toFixed(2)}% (Max: ${(report.thresholds.maxErrorRate * 100).toFixed(2)}%)`,
   );
-  if (report.error) {
-    console.log(`  Diagnostics          : ${report.error}`);
-  }
+  if (report.error) console.log(`  Diagnostics          : ${report.error}`);
   console.log(`  Receipt SHA-256      : sha256:${report.sha256Receipt}`);
   console.log(`===============================================================\n`);
   if (!report.sloPassed) process.exitCode = 1;

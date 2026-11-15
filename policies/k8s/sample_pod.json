@@ -6,12 +6,15 @@
   },
   "spec": {
     "securityContext": {
-      "runAsNonRoot": true
+      "runAsNonRoot": true,
+      "runAsUser": 10001,
+      "runAsGroup": 10001
     },
     "containers": [
       {
         "name": "worker",
         "image": "busybox:1.36.1",
+        "command": ["sleep", "3600"],
         "securityContext": {
           "privileged": false,
           "allowPrivilegeEscalation": false

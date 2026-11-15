@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-15T14:15:26.320Z",
+  "timestampIso": "2026-11-15T17:59:04.676Z",
   "manifestTarget": "sample_pod.json",
   "targetContext": "kind-glorian-cluster",
-  "status": "ADMISSION_REJECTED",
-  "dryRun": true,
+  "status": "APPLIED",
+  "dryRun": false,
   "stages": [
     {
       "stage": "CONTEXT_GUARD",
@@ -22,10 +22,14 @@
     },
     {
       "stage": "SERVER_DRY_RUN",
-      "passed": false,
-      "message": "Server dry-run rejected: error: error validating \"C:\\\\Users\\\\valen\\\\Documents\\\\Glorian-System\\\\policies\\\\k8s\\\\sample_pod.json\": error validating data: failed to download openapi: Get \"https://127.0.0.1:4600/openapi/v2?timeout=32s\": dial tcp 127.0.0.1:4600: connectex: No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión.; if you choose to ignore these errors, turn validation off with --validate=false"
+      "passed": true,
+      "message": "Server dry-run verified successfully against cluster API server."
+    },
+    {
+      "stage": "APPLY",
+      "passed": true,
+      "message": "pod/glorian-sample-workload created"
     }
   ],
-  "sha256Receipt": "802525e01ece71b7dc3eff9d20ad2d2428e7be5dbfd6b661b9a7e10b4aefd4cc",
-  "error": "error: error validating \"C:\\\\Users\\\\valen\\\\Documents\\\\Glorian-System\\\\policies\\\\k8s\\\\sample_pod.json\": error validating data: failed to download openapi: Get \"https://127.0.0.1:4600/openapi/v2?timeout=32s\": dial tcp 127.0.0.1:4600: connectex: No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión.; if you choose to ignore these errors, turn validation off with --validate=false"
+  "sha256Receipt": "3fee5b6e93545d4fda79ab25adb00879fd729db19c17161867ba8b82f48550a2"
 }
