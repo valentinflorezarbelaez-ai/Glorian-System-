@@ -47,6 +47,9 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:vector:quantize <file> Cuantización escalar SQ8 (FP32 a Int8 con 4x compresión) (SPEC-283)
   eos toolchain:vector:index <file>  Construcción de índice vectorial particionado en shards (SPEC-283)
   eos toolchain:vector:search <file> Búsqueda k-NN de vecinos más cercanos con similitud coseno (SPEC-283)
+  eos toolchain:lock:acquire <res>   Adquisición de bloqueo con quórum mayoritario y fencing token (SPEC-284)
+  eos toolchain:lock:renew <res>     Renovación de lease distribuido con heartbeat autenticado (SPEC-284)
+  eos toolchain:lock:release <res>   Liberación explícita autenticada de bloqueo distribuido (SPEC-284)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -252,6 +255,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:vector:quantize <file> Cuantización escalar SQ8 (FP32 a Int8 con 4x compresión) (SPEC-283)
   eos toolchain:vector:index <file>  Construcción de índice vectorial particionado en shards (SPEC-283)
   eos toolchain:vector:search <file> Búsqueda k-NN de vecinos más cercanos con similitud coseno (SPEC-283)
+  eos toolchain:lock:acquire <res>   Adquisición de bloqueo con quórum mayoritario y fencing token (SPEC-284)
+  eos toolchain:lock:renew <res>     Renovación de lease distribuido con heartbeat autenticado (SPEC-284)
+  eos toolchain:lock:release <res>   Liberación explícita autenticada de bloqueo distribuido (SPEC-284)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

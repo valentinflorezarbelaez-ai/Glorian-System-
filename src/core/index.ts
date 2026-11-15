@@ -741,3 +741,4 @@ export * from "./eosBayesianCanaryEvaluator.ts";
 export * from "./eosBitemporalEventStore.ts";
 export * from "./eosMerkleSnapshotGovernor.ts";
 export * from "./eosVectorQuantizationGovernor.ts";
+export * from "./eosDistributedLockGovernor.ts";

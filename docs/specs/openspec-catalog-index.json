@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 283,
-  "catalogSha256": "6b3e82f2cf63898b7beb42335862810d1b1d2d3c2520b5d56aeea9ddd4b8a42c",
+  "totalSpecs": 284,
+  "catalogSha256": "81cc4f03829a8c3e07ec87b3c781ee9d90fef0efe5244aa03dbf48f10bb64117",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2548,7 +2548,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-283-VECTOR-QUANTIZATION-INDEX.md",
-      "sha256": "e9bebcdc3dcfb41ad3392be18844c244ad0cee1044f97c02c40afa834d5d3e72"
+      "sha256": "55388f382c40afa273656f6544ce152d00f9c324c33c19cb2f90abc5c0e54d63"
+    },
+    {
+      "id": "SPEC-284",
+      "title": "Multi-Region Quorum Lease & Distributed Lock Governor",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-284-DISTRIBUTED-QUORUM-LOCK.md",
+      "sha256": "3b35340fc10e7891678c59ad61282b4f2e09f72c98f4400957cef03d5b09dfd2"
     }
   ]
 }

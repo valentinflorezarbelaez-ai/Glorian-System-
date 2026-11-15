@@ -761,5 +761,8 @@ export async function handleDevOpsCommands(commandContext) {
   if (commandContext.command.startsWith("toolchain:vector:")) {
     return (await import("./cliVectorIndex.mjs")).handleVectorCommands(commandContext);
   }
+  if (commandContext.command.startsWith("toolchain:lock:")) {
+    return (await import("./cliDistributedLock.mjs")).handleLockCommands(commandContext);
+  }
   return false;
 }

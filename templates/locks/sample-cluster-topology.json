@@ -1,0 +1,10 @@
+{
+  "clusterId": "glorian-global-quorum-01",
+  "nodes": [
+    { "nodeId": "node-us-east-1a", "region": "us-east-1", "weight": 1 },
+    { "nodeId": "node-eu-west-1a", "region": "eu-west-1", "weight": 1 },
+    { "nodeId": "node-ap-northeast-1a", "region": "ap-northeast-1", "weight": 1 }
+  ],
+  "defaultTtlMs": 5000,
+  "heartbeatIntervalMs": 1500
+}

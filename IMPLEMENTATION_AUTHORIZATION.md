@@ -2425,3 +2425,16 @@
   - `docs/plans/PLAN-145-VECTOR-QUANTIZATION-INDEX.md`
   - `docs/tasks/TASKS-145-VECTOR-QUANTIZATION-INDEX.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-DISTRIBUTED-QUORUM-LOCK
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-146` (`SPEC-284`), Phase E6 Multi-Region Quorum Lease & Distributed Lock Governor: `src/core/eosDistributedLockGovernor.ts` with quorum lease consensus ($Q = \lfloor N/2 \rfloor + 1$), monotonic fencing tokens ($f_{token} \in \mathbb{N}$), TTL expiration with monotonic clock, heartbeat renewal, safe lock preemption on timeout, and cryptographic receipt emission at `docs/evidence/DISTRIBUTED_LOCK_RECEIPT.json`. Wire subcommands `toolchain:lock:acquire`, `toolchain:lock:renew`, `toolchain:lock:release` in `bin/commands/cliDistributedLock.mjs` and `bin/commands/cliDevOps.mjs`. Verify BDD-1479..BDD-1484.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-146-DISTRIBUTED-QUORUM-LOCK.md`
+  - `openspec/changes/CHANGE-146-distributed-quorum-lock.md`
+  - `openspec/specs/SPEC-284-DISTRIBUTED-QUORUM-LOCK.md`
+  - `docs/plans/PLAN-146-DISTRIBUTED-QUORUM-LOCK.md`
+  - `docs/tasks/TASKS-146-DISTRIBUTED-QUORUM-LOCK.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
