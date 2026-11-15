@@ -767,5 +767,8 @@ export async function handleDevOpsCommands(commandContext) {
   if (commandContext.command.startsWith("toolchain:deadlock:")) {
     return (await import("./cliDeadlock.mjs")).handleDeadlockCommands(commandContext);
   }
+  if (commandContext.command.startsWith("toolchain:ratelimit:")) {
+    return (await import("./cliRateLimit.mjs")).handleRateLimitCommands(commandContext);
+  }
   return false;
 }

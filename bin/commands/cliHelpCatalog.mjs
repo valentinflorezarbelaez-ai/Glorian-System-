@@ -53,6 +53,9 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:deadlock:audit <file> Detección de ciclos WFG y selección de víctimas de aborto (SPEC-285)
   eos toolchain:deadlock:wfg <file>  Topología del grafo dirigido Wait-For Graph (WFG) (SPEC-285)
   eos toolchain:deadlock:resolve <file> Resolución de interbloqueos con Wound-Wait / Wait-Die (SPEC-285)
+  eos toolchain:ratelimit:audit [--count=N] Simulación y auditoría criptográfica de control de tráfico (SPEC-286)
+  eos toolchain:ratelimit:consume [--tier=T] [--key=K] [--cost=N] Consumo y emisión de cabeceras RFC 6585 (SPEC-286)
+  eos toolchain:ratelimit:inspect Inspección en vivo de niveles y tasas de buckets activos (SPEC-286)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -264,6 +267,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:deadlock:audit <file> Detección de ciclos WFG y selección de víctimas de aborto (SPEC-285)
   eos toolchain:deadlock:wfg <file>  Topología del grafo dirigido Wait-For Graph (WFG) (SPEC-285)
   eos toolchain:deadlock:resolve <file> Resolución de interbloqueos con Wound-Wait / Wait-Die (SPEC-285)
+  eos toolchain:ratelimit:audit [--count=N] Simulación y auditoría criptográfica de control de tráfico (SPEC-286)
+  eos toolchain:ratelimit:consume [--tier=T] [--key=K] [--cost=N] Consumo y emisión de cabeceras RFC 6585 (SPEC-286)
+  eos toolchain:ratelimit:inspect Inspección en vivo de niveles y tasas de buckets activos (SPEC-286)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

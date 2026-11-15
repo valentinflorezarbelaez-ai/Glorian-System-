@@ -1,0 +1,27 @@
+{
+  "name": "Standard-Hierarchical-Production-Policy",
+  "version": "1.0.0",
+  "defaultAlgorithm": "token-bucket",
+  "tiers": {
+    "global": {
+      "algorithm": "token-bucket",
+      "burstCapacity": 1000,
+      "refillRatePerSec": 200
+    },
+    "tenant": {
+      "algorithm": "token-bucket",
+      "burstCapacity": 100,
+      "refillRatePerSec": 20
+    },
+    "client": {
+      "algorithm": "token-bucket",
+      "burstCapacity": 20,
+      "refillRatePerSec": 5
+    },
+    "endpoint": {
+      "algorithm": "leaky-bucket",
+      "queueCapacity": 10,
+      "drainRatePerSec": 2
+    }
+  }
+}

@@ -2451,3 +2451,16 @@
   - `docs/plans/PLAN-147-DISTRIBUTED-DEADLOCK-DETECTOR.md`
   - `docs/tasks/TASKS-147-DISTRIBUTED-DEADLOCK-DETECTOR.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-HIERARCHICAL-RATE-LIMITER
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-148` (`SPEC-286`), Phase E8 Bounded Token Bucket & Leaky Bucket Rate Limiting Governor with Hierarchical Domain Isolation: `src/core/eosRateLimitingGovernor.ts` with Token Bucket burst capacity, Leaky Bucket continuous drain smoothing, multi-tier cascaded domain resolution, monotonic nanosecond clock timing, RFC 6585 rate limit telemetry, and cryptographic receipt emission at `docs/evidence/RATE_LIMITER_RECEIPT.json`. Wire subcommands `toolchain:ratelimit:audit`, `toolchain:ratelimit:consume`, `toolchain:ratelimit:inspect` in `bin/commands/cliRateLimit.mjs` and `bin/commands/cliDevOps.mjs`. Verify BDD-1491..BDD-1496.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-148-HIERARCHICAL-RATE-LIMITER.md`
+  - `openspec/changes/CHANGE-148-hierarchical-rate-limiter.md`
+  - `openspec/specs/SPEC-286-HIERARCHICAL-RATE-LIMITER.md`
+  - `docs/plans/PLAN-148-HIERARCHICAL-RATE-LIMITER.md`
+  - `docs/tasks/TASKS-148-HIERARCHICAL-RATE-LIMITER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

@@ -743,3 +743,4 @@ export * from "./eosMerkleSnapshotGovernor.ts";
 export * from "./eosVectorQuantizationGovernor.ts";
 export * from "./eosDistributedLockGovernor.ts";
 export * from "./eosDeadlockDetectionGovernor.ts";
+export * from "./eosRateLimitingGovernor.ts";

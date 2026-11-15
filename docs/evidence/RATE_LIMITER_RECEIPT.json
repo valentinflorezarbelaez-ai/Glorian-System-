@@ -1,0 +1,9 @@
+{
+  "timestampIso": "2026-11-15T23:48:27.426Z",
+  "totalEvaluations": 100,
+  "grantedCount": 80,
+  "rejectedCount": 20,
+  "rejectionRate": 0.2,
+  "activeBucketsCount": 8,
+  "sha256Signature": "47814082aac3a8052688c2d728b033b28d5393453f393c66f001cb971eb2e37e"
+}
