@@ -740,5 +740,8 @@ export async function handleDevOpsCommands(commandContext) {
   if (commandContext.command.startsWith("toolchain:tf:")) {
     return (await import("./cliTerraform.mjs")).handleTerraformCommands(commandContext);
   }
+  if (commandContext.command.startsWith("toolchain:db:")) {
+    return (await import("./cliDatabase.mjs")).handleDatabaseCommands(commandContext);
+  }
   return false;
 }
