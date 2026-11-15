@@ -737,3 +737,4 @@ export * from "./eosTerraformIaCGovernor.ts";
 export * from "./eosDatabaseMigrationGovernor.ts";
 export * from "./eosOtlpCollectorGateway.ts";
 export * from "./eosChaosCircuitBreaker.ts";
+export * from "./eosBayesianCanaryEvaluator.ts";

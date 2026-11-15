@@ -749,5 +749,8 @@ export async function handleDevOpsCommands(commandContext) {
   if (commandContext.command.startsWith("toolchain:chaos:")) {
     return (await import("./cliChaos.mjs")).handleChaosCommands(commandContext);
   }
+  if (commandContext.command.startsWith("toolchain:canary:")) {
+    return (await import("./cliCanaryEval.mjs")).handleCanaryCommands(commandContext);
+  }
   return false;
 }

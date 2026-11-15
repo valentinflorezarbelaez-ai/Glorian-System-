@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 279,
-  "catalogSha256": "5aadc830e65ff2de143621ffb24c15cde0dbc31e36401beefb00c4828e1f7ab1",
+  "totalSpecs": 280,
+  "catalogSha256": "4f8276d7f4498485cde75f48bd7ee73367df0173c6e69e11d88f7f7a90c30929",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2513,6 +2513,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-279-CHAOS-CIRCUIT-BREAKER.md",
       "sha256": "9228f5dd0401ded2d22e2ceaf1d62a5454049456602e8fbd66eed2346064d0ee"
+    },
+    {
+      "id": "SPEC-280",
+      "title": "BAYESIAN DYNAMIC CANARY EVALUATION & AUTOMATED ROLLBACK GATEWAY",
+      "status": "PROPOSED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-280-BAYESIAN-CANARY-EVALUATION.md",
+      "sha256": "98c2a604be1220c2330211c2814ecb5dcd106a4545ef6756d4d00643de73a37c"
     }
   ]
 }

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.0.0",
+  "timestamp": "2026-11-15T21:45:10.758Z",
+  "report": {
+    "status": "COMPLETED",
+    "serviceName": "receipt-test-service",
+    "verdict": "ROLLBACK_TRIGGERED",
+    "compositeScore": 0,
+    "rollbackRequired": true,
+    "baselineMetrics": {
+      "sampleCount": 3,
+      "meanMs": 56.67,
+      "stdDevMs": 33,
+      "p50Ms": 50,
+      "p90Ms": 100,
+      "p95Ms": 100,
+      "p99Ms": 100,
+      "errorRate": 0.01
+    },
+    "canaryMetrics": {
+      "sampleCount": 3,
+      "meanMs": 106.67,
+      "stdDevMs": 102.09,
+      "p50Ms": 50,
+      "p90Ms": 250,
+      "p95Ms": 250,
+      "p99Ms": 250,
+      "errorRate": 0.2
+    },
+    "deltaP99": 1.5,
+    "deltaErrorRate": 0.19,
+    "failureReasons": [
+      "ERROR_RATE_REGRESSION",
+      "P99_LATENCY_REGRESSION",
+      "COMPOSITE_SCORE_CRITICAL"
+    ],
+    "rollbackManifest": {
+      "action": "INSTANT_TRAFFIC_DRAIN_AND_REVERT",
+      "serviceName": "receipt-test-service",
+      "targetRevision": "rev-1",
+      "failedRevision": "rev-2",
+      "reasons": [
+        "ERROR_RATE_REGRESSION",
+        "P99_LATENCY_REGRESSION",
+        "COMPOSITE_SCORE_CRITICAL"
+      ],
+      "timestamp": "2026-11-15T21:45:10.758Z"
+    }
+  },
+  "evidenceSha256": "8758e2bf70191c8f675524cd48bee99a1b0c11b484be6b63473e1ea97654a0f1"
+}

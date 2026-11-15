@@ -35,6 +35,9 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:chaos:inject <policy> Inyección de fallas y evaluación de resiliencia (SPEC-279)
   eos toolchain:chaos:circuit <svc> Estado del circuit breaker y ratios de fallo (SPEC-279)
   eos toolchain:chaos:reset <svc>   Reinicio del circuit breaker a estado CLOSED (SPEC-279)
+  eos toolchain:canary:eval <dataset> Evaluación bayesiana de telemetría canary vs baseline (SPEC-280)
+  eos toolchain:canary:score <b.json> <c.json> Puntuación compuesta de salud canary (SPEC-280)
+  eos toolchain:canary:rollback <dataset> Síntesis de manifiesto de rollback automatizado (SPEC-280)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -228,6 +231,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:chaos:inject <policy> Inyección de fallas y evaluación de resiliencia (SPEC-279)
   eos toolchain:chaos:circuit <svc> Estado del circuit breaker y ratios de fallo (SPEC-279)
   eos toolchain:chaos:reset <svc>   Reinicio del circuit breaker a estado CLOSED (SPEC-279)
+  eos toolchain:canary:eval <dataset> Evaluación bayesiana de telemetría canary vs baseline (SPEC-280)
+  eos toolchain:canary:score <b.json> <c.json> Puntuación compuesta de salud canary (SPEC-280)
+  eos toolchain:canary:rollback <dataset> Síntesis de manifiesto de rollback automatizado (SPEC-280)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
