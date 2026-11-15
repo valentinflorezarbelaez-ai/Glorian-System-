@@ -2334,3 +2334,16 @@
   - `docs/plans/PLAN-131-DEPLOYMENT-TRUTH-AND-SERVERLESS-BUDGET.md`
   - `docs/tasks/TASKS-131-DEPLOYMENT-TRUTH-AND-SERVERLESS-BUDGET.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-14-TLC-FORMAL-VERIFICATION-AND-MUTATION-RATCHET
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-132` (`SPEC-270`), declarative `.cfg` model configurations for core TLA+ specs (`LmaxDisruptor`, `HermesConsensusMesh`, `DatomicBitemporalLedger`, `AutonomousChaosDisruptor`), implement `scripts/run-tlc.mjs` with distinct state parsing, negative calibration, and evidence receipt generation, wire Java 21 + TLC model checking step into `.github/workflows/eos-nightly-deep-gates.yml`, expand `scripts/mutation-gate.mjs` with `CUSTOM_TARGET_TEST_MAP` and governance modules, ratchet `docs/quality/mutation-budget.json`, author `scripts/verify-module-consumers.mjs` with architectural moratorium enforcement, and verify with full test suite.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-132-TLC-FORMAL-VERIFICATION-AND-MUTATION-RATCHET.md`
+  - `openspec/changes/CHANGE-132-tlc-formal-verification-and-mutation-ratchet.md`
+  - `openspec/specs/SPEC-270-TLC-FORMAL-VERIFICATION-AND-MUTATION-RATCHET.md`
+  - `docs/plans/PLAN-132-TLC-FORMAL-VERIFICATION-AND-MUTATION-RATCHET.md`
+  - `docs/tasks/TASKS-132-TLC-FORMAL-VERIFICATION-AND-MUTATION-RATCHET.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

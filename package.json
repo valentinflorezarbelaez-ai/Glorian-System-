@@ -354,7 +354,9 @@
     "mpd:thruster": "node bin/eos.mjs mpd:thruster",
     "qnet:repeater": "node bin/eos.mjs qnet:repeater",
     "evm:prove": "node bin/eos.mjs evm:prove",
-    "vercel:budget": "node scripts/verify-vercel-function-budget.mjs"
+    "vercel:budget": "node scripts/verify-vercel-function-budget.mjs",
+    "tlc:gate": "node scripts/run-tlc.mjs",
+    "consumers:audit": "node scripts/verify-module-consumers.mjs"
   },
   "engines": {
     "node": ">=22.18.0 <25"

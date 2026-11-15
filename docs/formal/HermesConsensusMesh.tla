@@ -5,7 +5,7 @@
   Proves 3-State Circuit Breaker Safety, Quorum Consensus, and Split-Brain Prevention.
 *)
 
-EXTENDS Naturals
+EXTENDS Naturals, FiniteSets
 
 CONSTANTS
   Nodes,             \* Set of replica nodes in the cluster

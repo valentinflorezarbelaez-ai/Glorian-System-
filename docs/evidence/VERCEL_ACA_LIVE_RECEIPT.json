@@ -1,7 +1,8 @@
 {
   "epistemicState": "VERCEL_ACA_LIVE_OR_FIXTURE_WITHIN_TESTED_SCOPE",
-  "generatedAt": "2026-11-12T01:58:45.237Z",
+  "generatedAt": "2026-11-15T00:22:22.602Z",
   "mode": "LIVE_CAPTURED_SNAPSHOT",
+  "syntheticTelemetry": false,
   "signalCount": 4,
   "totalErrorEvents": 0,
   "verdict": "PASS",

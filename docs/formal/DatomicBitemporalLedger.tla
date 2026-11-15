@@ -5,7 +5,7 @@
   Proves Append-Only Invariance, Monotonic Time Travel, and Banking-Grade Idempotency.
 *)
 
-EXTENDS Naturals, Sequences
+EXTENDS Naturals, Sequences, TLC
 
 CONSTANTS
   Entities,      \* Set of entities (e.g. accounts)

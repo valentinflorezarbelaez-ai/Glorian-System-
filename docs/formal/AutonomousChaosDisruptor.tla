@@ -53,6 +53,15 @@ RecoverCircuit ==
           /\ faultCounter' = 0
   /\ UNCHANGED <<scanPosition, tokensRecorded>>
 
+\* Next State Transition
+Next ==
+  \/ ScanAdvance
+  \/ InjectChaosFault
+  \/ RecoverCircuit
+
+Spec ==
+  Init /\ [][Next]_vars
+
 -----------------------------------------------------------------------------
 
 \* Formal Invariants

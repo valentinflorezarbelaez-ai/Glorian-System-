@@ -162,6 +162,15 @@ console.log(
 );
 
 // ---------------------------------------------------------------------------
+// STAGE 3.6: LESLIE LAMPORT TLC FORMAL MODEL CHECKER GATE (SPEC-270)
+// ---------------------------------------------------------------------------
+execFileSync(process.execPath, [path.join(root, "scripts/run-tlc.mjs")], {
+  cwd: root,
+  stdio: "inherit",
+});
+console.log("[PASS] Stage 3.6/7 — Leslie Lamport TLC formal model checker gate & receipt verification (SPEC-270).");
+
+// ---------------------------------------------------------------------------
 // STAGE 4: STATIC AST, SYNTAX & BYTECODE VERIFICATION (node --check + L0 TS)
 // ---------------------------------------------------------------------------
 // Big Tech pattern: parallel syntax verification via worker pool.

@@ -164,6 +164,52 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
+  tlc-formal-model-gate:
+    name: Leslie Lamport TLC formal model checker gate (SPEC-270)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Java 21 for TLC
+        uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12 # v4.7.0
+        with:
+          distribution: "temurin"
+          java-version: "21"
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Cache or download tla2tools.jar
+        run: |
+          mkdir -p tools
+          if [ ! -f tools/tla2tools.jar ]; then
+            echo "Downloading Leslie Lamport TLC tla2tools.jar..."
+            curl -sSL -o tools/tla2tools.jar https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar
+          fi
+
+      - name: Run TLC formal verification and negative calibration
+        run: |
+          set -o pipefail
+          node scripts/run-tlc.mjs --negative-calibration
+          node scripts/run-tlc.mjs 2>&1 | tee tlc-report.txt
+
+      - name: Publish TLC report to the job summary
+        if: ${{ !cancelled() }}
+        run: |
+          {
+            echo "### Leslie Lamport TLC Formal Verification Gate (SPEC-270)"
+            echo ""
+            echo '```'
+            cat tlc-report.txt 2>/dev/null || echo "(no report captured)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
   ratchet-refresh:
     name: Refresh ratchets and open a pull request
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.update-ratchets }}

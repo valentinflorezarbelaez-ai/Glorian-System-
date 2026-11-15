@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 269,
-  "catalogSha256": "8f82df6b9508c28f8dfbe91437f69c30f36b0674da378d25c09e5f295f0d630d",
+  "totalSpecs": 270,
+  "catalogSha256": "9aa984e31cab8c507131d7907b64ee16908d7138fd6accade48e17161441316f",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2423,6 +2423,15 @@
       "bddCount": 5,
       "file": "openspec/specs/SPEC-269-DEPLOYMENT-TRUTH-AND-SERVERLESS-BUDGET-GATE.md",
       "sha256": "e5b4a19a7fd299411e6a594665411ebcae7c62fc1efb4d555e61ee6877557c20"
+    },
+    {
+      "id": "SPEC-270",
+      "title": "— TLC Formal Verification Engine, Mutation Ratchet Expansion, and Consumer Governance",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 5,
+      "file": "openspec/specs/SPEC-270-TLC-FORMAL-VERIFICATION-AND-MUTATION-RATCHET.md",
+      "sha256": "bc75917c7fe6a1f46dd7890e04d9553d74d9e4fa269dbe8ef2270b17224f2edd"
     }
   ]
 }

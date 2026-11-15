@@ -1,10 +1,15 @@
 {
   "minScore": 0.85,
   "floors": {
+    "scripts/verify-vercel-function-budget.mjs": 1,
     "src/core/eosAdaptiveConcurrencyGovernor.ts": 1,
     "src/core/eosAutonomousHealer.ts": 1,
+    "src/core/eosAutonomousTlaModelChecker.ts": 1,
+    "src/core/eosBftAgentSwarmSlashing.ts": 0.85,
     "src/core/eosCellBasedBulkheadGovernor.ts": 1,
+    "src/core/eosContractEvolutionGovernor.ts": 0.85,
     "src/core/eosDurableSqliteLedger.ts": 0.89,
+    "src/core/eosEnterpriseWorkspaceGovernor.ts": 0.85,
     "src/core/eosFleetProductScorecard.ts": 1,
     "src/core/eosIamAuditLedger.ts": 1,
     "src/core/eosKernelPrimitives.ts": 0.87,

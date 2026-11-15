@@ -39,8 +39,12 @@ const DEFAULT_MIN_SCORE = 0.8;
 const DEFAULT_TARGETS = [
   "src/core/eosAdaptiveConcurrencyGovernor.ts",
   "src/core/eosAutonomousHealer.ts",
+  "src/core/eosAutonomousTlaModelChecker.ts",
+  "src/core/eosBftAgentSwarmSlashing.ts",
   "src/core/eosCellBasedBulkheadGovernor.ts",
+  "src/core/eosContractEvolutionGovernor.ts",
   "src/core/eosDurableSqliteLedger.ts",
+  "src/core/eosEnterpriseWorkspaceGovernor.ts",
   "src/core/eosFleetProductScorecard.ts",
   "src/core/eosIamAuditLedger.ts",
   "src/core/eosKernelPrimitives.ts",
@@ -52,7 +56,23 @@ const DEFAULT_TARGETS = [
   "src/core/eosThreeMountainsCompass.ts",
   "src/core/eosUniversalProductFoundry.ts",
   "src/core/eosVercelCanaryObservability.ts",
+  "scripts/verify-vercel-function-budget.mjs",
 ];
+
+export const CUSTOM_TARGET_TEST_MAP = {
+  "scripts/verify-vercel-function-budget.mjs": "test/eosServerlessBudgetAndDeploymentTruth.test.mjs",
+  "src/core/eosContractEvolutionGovernor.ts": "test/eosContractEvolutionGovernor.test.mjs",
+  "src/core/eosEnterpriseWorkspaceGovernor.ts": "test/eosEnterpriseWorkspaceGovernor.test.mjs",
+  "src/core/eosBftAgentSwarmSlashing.ts": "test/eosBftAgentSwarmSlashing.test.mjs",
+  "src/core/eosAutonomousTlaModelChecker.ts": "test/eosAutonomousTlaModelChecker.test.mjs",
+};
+
+export function resolveTestForTarget(relTarget, customMap = CUSTOM_TARGET_TEST_MAP) {
+  if (customMap && Object.hasOwn(customMap, relTarget)) {
+    return customMap[relTarget];
+  }
+  return relTarget.replace(/^src\/core\//, "test/").replace(/\.ts$/, ".test.mjs");
+}
 
 /**
  * Runs mutation analysis on each target inside a throwaway sandbox copy.
@@ -75,7 +95,7 @@ export async function runMutationGate({
 
   const sandboxDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-mutate-"));
   // `node --test` needs only these to resolve the module graph (zero runtime deps).
-  for (const rel of ["src", "test", "package.json"]) {
+  for (const rel of ["src", "test", "scripts", "package.json"]) {
     const from = path.join(root, rel);
     if (fs.existsSync(from)) fs.cpSync(from, path.join(sandboxDir, rel), { recursive: true });
   }
@@ -84,7 +104,7 @@ export async function runMutationGate({
   const missingTargets = [];
   for (const target of targets) {
     const relTarget = target.replace(/\\/g, "/");
-    const testRel = relTarget.replace(/^src\/core\//, "test/").replace(/\.ts$/, ".test.mjs");
+    const testRel = resolveTestForTarget(relTarget);
     const boxTarget = path.join(sandboxDir, relTarget);
     const boxTest = path.join(sandboxDir, testRel);
     // Fail-closed: a configured target that cannot be analyzed is surfaced, never

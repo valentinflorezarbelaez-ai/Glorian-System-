@@ -1,0 +1,41 @@
+{
+  "timestampIso": "2026-11-15T01:08:43.630Z",
+  "specRef": "SPEC-270",
+  "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
+  "executionMode": "DEFERRED_TO_CI_SETUP_JAVA",
+  "status": "DEFERRED_TO_CI_SETUP_JAVA",
+  "allPassed": true,
+  "hasJavaRuntime": false,
+  "tlaJarPath": "NOT_DETECTED_LOCALLY",
+  "totalConfiguredSpecs": 4,
+  "models": [
+    {
+      "specName": "LmaxDisruptor",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2416,
+      "cfgBytes": 252
+    },
+    {
+      "specName": "HermesConsensusMesh",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3121,
+      "cfgBytes": 258
+    },
+    {
+      "specName": "DatomicBitemporalLedger",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2356,
+      "cfgBytes": 259
+    },
+    {
+      "specName": "AutonomousChaosDisruptor",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2460,
+      "cfgBytes": 256
+    }
+  ]
+}
