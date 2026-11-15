@@ -61,6 +61,7 @@ export const SUPPORTED_TOOLS: readonly ToolDefinition[] = deepFreeze([
   { name: "java", command: "java", versionArgs: ["-version"], category: "RUNTIME", timeoutMs: 4000 },
   { name: "rustc", command: "rustc", versionArgs: ["--version"], category: "COMPILER", timeoutMs: 4000 },
   { name: "cargo", command: "cargo", versionArgs: ["--version"], category: "COMPILER", timeoutMs: 4000 },
+  { name: "zig", command: "zig", versionArgs: ["version"], category: "COMPILER", timeoutMs: 4000 },
   { name: "go", command: "go", versionArgs: ["version"], category: "COMPILER", timeoutMs: 4000 },
   { name: "python", command: "python", versionArgs: ["--version"], category: "RUNTIME", timeoutMs: 4000 },
 ]);
@@ -80,6 +81,24 @@ function buildSanitizedEnv(): NodeJS.ProcessEnv {
         for (const entry of entries) {
           const binPath = path.join(adoptiumDir, entry, "bin");
           if (fs.existsSync(binPath)) extraPaths.push(binPath);
+        }
+      } catch {}
+    }
+
+    const wingetDir = path.join(userHome, "AppData", "Local", "Microsoft", "WinGet", "Packages");
+    if (fs.existsSync(wingetDir)) {
+      try {
+        const entries = fs.readdirSync(wingetDir);
+        for (const entry of entries) {
+          const entryPath = path.join(wingetDir, entry);
+          if (fs.statSync(entryPath).isDirectory()) {
+            extraPaths.push(entryPath);
+            const subEntries = fs.readdirSync(entryPath);
+            for (const sub of subEntries) {
+              const subPath = path.join(entryPath, sub);
+              if (fs.statSync(subPath).isDirectory()) extraPaths.push(subPath);
+            }
+          }
         }
       } catch {}
     }
