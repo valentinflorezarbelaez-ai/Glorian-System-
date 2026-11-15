@@ -2412,3 +2412,16 @@
   - `docs/plans/PLAN-144-MERKLE-SNAPSHOT-ZK-ATTESTATION.md`
   - `docs/tasks/TASKS-144-MERKLE-SNAPSHOT-ZK-ATTESTATION.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-VECTOR-QUANTIZATION-INDEX
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-145` (`SPEC-283`), Phase E5 Sharded Vector Indexing & SIMD-Style Quantization Governor: `src/core/eosVectorQuantizationGovernor.ts` with Scalar Quantization SQ8 (Float32 to Int8), unrolled inner product dot calculation, partitioned sharded vector indexing, sub-linear k-NN similarity search with Cosine/Euclidean metrics, and cryptographic receipt emission at `docs/evidence/VECTOR_INDEX_RECEIPT.json`. Wire subcommands `toolchain:vector:quantize`, `toolchain:vector:index`, `toolchain:vector:search` in `bin/commands/cliVectorIndex.mjs` and `bin/commands/cliDevOps.mjs`. Verify BDD-1473..BDD-1478.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-145-VECTOR-QUANTIZATION-INDEX.md`
+  - `openspec/changes/CHANGE-145-vector-quantization-index.md`
+  - `openspec/specs/SPEC-283-VECTOR-QUANTIZATION-INDEX.md`
+  - `docs/plans/PLAN-145-VECTOR-QUANTIZATION-INDEX.md`
+  - `docs/tasks/TASKS-145-VECTOR-QUANTIZATION-INDEX.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

@@ -740,3 +740,4 @@ export * from "./eosChaosCircuitBreaker.ts";
 export * from "./eosBayesianCanaryEvaluator.ts";
 export * from "./eosBitemporalEventStore.ts";
 export * from "./eosMerkleSnapshotGovernor.ts";
+export * from "./eosVectorQuantizationGovernor.ts";

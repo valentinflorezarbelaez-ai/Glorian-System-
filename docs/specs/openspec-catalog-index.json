@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 282,
-  "catalogSha256": "22867b21d8407d180a94e62f386505ad8daa619429e7534d08daa43cc75fa395",
+  "totalSpecs": 283,
+  "catalogSha256": "6b3e82f2cf63898b7beb42335862810d1b1d2d3c2520b5d56aeea9ddd4b8a42c",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2539,7 +2539,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-282-MERKLE-SNAPSHOT-ZK-ATTESTATION.md",
-      "sha256": "e385f929879f8541dc63c1c4395bca29b2b5306f5b9532a7e63b3481c8463340"
+      "sha256": "5072b0bee446d7d9bb1f9c9a1b1630813cfbdf923202169728d15f4e416664cf"
+    },
+    {
+      "id": "SPEC-283",
+      "title": "Sharded Vector Indexing & SIMD-Style Quantization Governor",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-283-VECTOR-QUANTIZATION-INDEX.md",
+      "sha256": "e9bebcdc3dcfb41ad3392be18844c244ad0cee1044f97c02c40afa834d5d3e72"
     }
   ]
 }

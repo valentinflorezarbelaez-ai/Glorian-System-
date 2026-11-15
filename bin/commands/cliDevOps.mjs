@@ -758,5 +758,8 @@ export async function handleDevOpsCommands(commandContext) {
   if (commandContext.command.startsWith("toolchain:merkle:")) {
     return (await import("./cliMerkleSnapshot.mjs")).handleMerkleCommands(commandContext);
   }
+  if (commandContext.command.startsWith("toolchain:vector:")) {
+    return (await import("./cliVectorIndex.mjs")).handleVectorCommands(commandContext);
+  }
   return false;
 }

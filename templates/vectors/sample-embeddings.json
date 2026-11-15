@@ -1,0 +1,32 @@
+[
+  {
+    "id": "doc-001",
+    "partition": "us-east",
+    "values": [0.12, 0.45, -0.67, 0.89, -0.23, 0.56, 0.78, -0.34],
+    "metadata": { "title": "Distributed Consensus Architecture", "author": "Valentin" }
+  },
+  {
+    "id": "doc-002",
+    "partition": "us-east",
+    "values": [0.15, 0.42, -0.65, 0.87, -0.21, 0.58, 0.76, -0.32],
+    "metadata": { "title": "Raft Consensus and Leader Election", "author": "Valentin" }
+  },
+  {
+    "id": "doc-003",
+    "partition": "eu-central",
+    "values": [-0.85, 0.12, 0.33, -0.45, 0.67, -0.12, -0.54, 0.23],
+    "metadata": { "title": "European Cloud Sovereignty", "author": "Architect" }
+  },
+  {
+    "id": "doc-004",
+    "partition": "eu-central",
+    "values": [-0.82, 0.14, 0.31, -0.48, 0.65, -0.15, -0.51, 0.25],
+    "metadata": { "title": "GDPR Compliance and Data Residency", "author": "LegalOps" }
+  },
+  {
+    "id": "doc-005",
+    "partition": "ap-southeast",
+    "values": [0.05, -0.78, 0.45, 0.12, 0.88, -0.34, 0.21, -0.65],
+    "metadata": { "title": "Asia-Pacific Subsea Edge Networks", "author": "Infra" }
+  }
+]
