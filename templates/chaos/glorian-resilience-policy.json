@@ -1,0 +1,25 @@
+{
+  "$schema": "https://glorian.ai/schemas/chaos-resilience-policy.v1.json",
+  "policyName": "glorian-tier1-resilience-policy",
+  "version": "1.0.0",
+  "enabled": true,
+  "circuitBreaker": {
+    "slidingWindowSize": 20,
+    "minimumNumberOfCalls": 5,
+    "failureRateThreshold": 50.0,
+    "slowCallRateThreshold": 50.0,
+    "slowCallDurationThresholdMs": 250,
+    "waitDurationInOpenStateMs": 5000,
+    "permittedNumberOfCallsInHalfOpenState": 5
+  },
+  "faultInjection": {
+    "targetServicePattern": "^payment-gateway|orders-api$",
+    "latencyDelayMs": 350,
+    "failureProbability": 0.25,
+    "simulatedErrorCode": "DOWNSTREAM_SERVICE_TIMEOUT",
+    "blastRadius": {
+      "maxAffectedFraction": 0.25,
+      "environment": "staging-or-chaos-drill"
+    }
+  }
+}

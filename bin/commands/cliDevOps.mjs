@@ -746,5 +746,8 @@ export async function handleDevOpsCommands(commandContext) {
   if (commandContext.command.startsWith("toolchain:otel:")) {
     return (await import("./cliOtelGateway.mjs")).handleOtelCommands(commandContext);
   }
+  if (commandContext.command.startsWith("toolchain:chaos:")) {
+    return (await import("./cliChaos.mjs")).handleChaosCommands(commandContext);
+  }
   return false;
 }

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0.0",
+  "timestamp": "2026-11-15T21:34:52.242Z",
+  "serviceName": "metrics-service",
+  "metrics": {
+    "serviceName": "metrics-service",
+    "state": "CLOSED",
+    "totalCalls": 1,
+    "successfulCalls": 1,
+    "failedCalls": 0,
+    "slowCalls": 0,
+    "rejectedCalls": 0,
+    "failureRate": 0,
+    "slowCallRate": 0,
+    "lastStateTransitionTime": "2026-11-15T21:34:52.242Z"
+  },
+  "evidenceSha256": "3be51cb7b24ff63f7dd974cbc890773c24145a6effb1ea5121ec037b7c75928d"
+}

@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 278,
-  "catalogSha256": "28f806bcea7eef6973e1f8ef94dde0e251a3a787aebb257d0dfad9b48a53d85b",
+  "totalSpecs": 279,
+  "catalogSha256": "5aadc830e65ff2de143621ffb24c15cde0dbc31e36401beefb00c4828e1f7ab1",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2504,6 +2504,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-278-OTEL-COLLECTOR-GATEWAY.md",
       "sha256": "6e5edca99e86a251475ad8a4acbce953afe31462e7173455ca65485e65773842"
+    },
+    {
+      "id": "SPEC-279",
+      "title": "CHAOS ENGINEERING & CIRCUIT BREAKER FAULT INJECTION GATEWAY",
+      "status": "PROPOSED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-279-CHAOS-CIRCUIT-BREAKER.md",
+      "sha256": "9228f5dd0401ded2d22e2ceaf1d62a5454049456602e8fbd66eed2346064d0ee"
     }
   ]
 }

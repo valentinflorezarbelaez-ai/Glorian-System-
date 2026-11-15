@@ -32,6 +32,9 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:otel:ingest <file> Ingesta de trazas OTLP con tail-based sampling (SPEC-278)
   eos toolchain:otel:spans [--err] Inspección de spans capturados y filtrado (SPEC-278)
   eos toolchain:otel:stats         Métricas de percentiles P50/P90/P99 de observabilidad (SPEC-278)
+  eos toolchain:chaos:inject <policy> Inyección de fallas y evaluación de resiliencia (SPEC-279)
+  eos toolchain:chaos:circuit <svc> Estado del circuit breaker y ratios de fallo (SPEC-279)
+  eos toolchain:chaos:reset <svc>   Reinicio del circuit breaker a estado CLOSED (SPEC-279)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -222,6 +225,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:otel:ingest <file> Ingesta de trazas OTLP con tail-based sampling (SPEC-278)
   eos toolchain:otel:spans [--err] Inspección de spans capturados y filtrado (SPEC-278)
   eos toolchain:otel:stats         Métricas de percentiles P50/P90/P99 de observabilidad (SPEC-278)
+  eos toolchain:chaos:inject <policy> Inyección de fallas y evaluación de resiliencia (SPEC-279)
+  eos toolchain:chaos:circuit <svc> Estado del circuit breaker y ratios de fallo (SPEC-279)
+  eos toolchain:chaos:reset <svc>   Reinicio del circuit breaker a estado CLOSED (SPEC-279)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
