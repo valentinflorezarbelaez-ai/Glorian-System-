@@ -736,5 +736,8 @@ export async function handleDevOpsCommands(commandContext) {
     await handler(commandContext);
     return true;
   }
+  if (commandContext.command.startsWith("toolchain:helm:")) {
+    return (await import("./cliHelm.mjs")).handleHelmCommands(commandContext);
+  }
   return false;
 }

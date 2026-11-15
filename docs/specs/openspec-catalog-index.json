@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 274,
-  "catalogSha256": "ff29243a955631017d2c30d48f7d8bf784099353b5c3da86dd7b68e1c2fa19eb",
+  "totalSpecs": 275,
+  "catalogSha256": "d3ec32141efbc5b9d1ab78024a78788fa07907ae9f7aa22ee4b82a8c0bc01fe7",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2468,6 +2468,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-274-K8S-DEPLOYMENT-AND-K6-LOADTEST.md",
       "sha256": "0d234f7bbec0bdb00f7d1497828415b03d7f9d20f59d1f00061fb2d6f73b267e"
+    },
+    {
+      "id": "SPEC-275",
+      "title": "Helm Packaging & Release Governor",
+      "status": "UNKNOWN",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-275-HELM-RELEASE-GOVERNOR.md",
+      "sha256": "1a535fe9bf7b39233a946ff4cef2173ef58f11b8a4276bf8ad1c8633744e58e2"
     }
   ]
 }

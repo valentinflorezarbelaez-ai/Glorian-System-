@@ -1,0 +1,9 @@
+apiVersion: v2
+name: glorian-enterprise-workload
+description: Enterprise OPA-hardened Kubernetes Helm Chart for Glorian System
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+maintainers:
+  - name: Valentín Flórez Arbeláez
+    email: valentin@glorian.system

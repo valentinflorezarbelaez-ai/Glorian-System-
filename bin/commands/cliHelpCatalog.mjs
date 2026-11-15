@@ -20,6 +20,9 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:k8s [--ns=NS] Inspección de clúster Kubernetes acotada a kind-* (SPEC-273)
   eos toolchain:deploy <manifest> Despliegue en 5 aduanas (Kind, OPA, Trivy, Dry-Run, Apply) (SPEC-274)
   eos toolchain:loadtest <url> Test de carga k6 con verificación de umbrales P95/P99 SLO (SPEC-274)
+  eos toolchain:helm:lint <chart> Auditoría y validación estricta de Helm chart (SPEC-275)
+  eos toolchain:helm:template <chart> Renderizado hermético en memoria de manifiestos Helm (SPEC-275)
+  eos toolchain:helm:deploy <chart> Despliegue gobernado Helm con OPA, dry-run y apply (SPEC-275)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -198,6 +201,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:k8s [--ns=NS]    Inspección segura de clúster Kubernetes acotada a kind-* (SPEC-273)
   eos toolchain:deploy <manifest> Despliegue con compuertas Kind, OPA, Trivy y server dry-run (SPEC-274)
   eos toolchain:loadtest <url>    Benchmarking de carga k6 con compuertas P95/P99 y SLO (SPEC-274)
+  eos toolchain:helm:lint <chart> Auditoría y validación estricta de Helm chart (SPEC-275)
+  eos toolchain:helm:template <chart> Renderizado hermético en memoria de manifiestos Helm (SPEC-275)
+  eos toolchain:helm:deploy <chart> Despliegue gobernado Helm con OPA, dry-run y apply (SPEC-275)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
@@ -219,5 +225,6 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   synapse, fleet:soundcheck, mcts:tune, canary:rollout, antigravity, gentleman, gentle-ai, ledger, ast,
   nocturnal, evolve, mesh, agent-topology, sandbox, timetravel, truetime, lsm, threshold, microvm, simd, enforce,
   sparse-tree, enterprise:health, otel:metrics, mmr, raft, fuzzer, seccomp, zk:verify, aca, intercept,
-  toolchain, toolchain:doctor, toolchain:scan, toolchain:policy, toolchain:k8s, toolchain:deploy, toolchain:loadtest
+  toolchain, toolchain:doctor, toolchain:scan, toolchain:policy, toolchain:k8s, toolchain:deploy, toolchain:loadtest,
+  toolchain:helm:lint, toolchain:helm:template, toolchain:helm:deploy
 `;

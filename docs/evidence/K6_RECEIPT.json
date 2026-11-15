@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-15T18:00:42.220Z",
+  "timestampIso": "2026-11-15T18:43:00.348Z",
   "targetUrl": "https://glorian-system.vercel.app/api/health",
   "vus": 2,
   "duration": "3s",
@@ -7,10 +7,10 @@
   "sloPassed": true,
   "metrics": {
     "totalRequests": 31,
-    "requestsPerSecond": 10.07707008212162,
-    "p95DurationMs": 164.6248,
-    "p99DurationMs": 225.7069,
-    "medianDurationMs": 127.8422,
+    "requestsPerSecond": 9.879488092093656,
+    "p95DurationMs": 158.36735,
+    "p99DurationMs": 172.2582,
+    "medianDurationMs": 129.1212,
     "errorRate": 0
   },
   "thresholds": {
@@ -18,5 +18,5 @@
     "targetP99Ms": 500,
     "maxErrorRate": 0.01
   },
-  "sha256Receipt": "52341f61385d7bfd1ae6219d2c71c2a2c0bcdc34762968ec93c3f4a56a52ca85"
+  "sha256Receipt": "a4b8038592250b79efd5300e208a093c4af9a71cecb017c483fd1b10c4e2ccff"
 }
