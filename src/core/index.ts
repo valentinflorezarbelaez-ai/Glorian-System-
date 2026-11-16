@@ -753,3 +753,5 @@ export * from "./eosZ3WasmProver.ts";
 export * from "./eosSlsaProvenanceGovernor.ts";
 export * from "./eosDurableExecutionEngine.ts";
 export * from "./eosFirecrackerMicroVmEngine.ts";
+export * from "./eosEbpfOtlpTelemetryGovernor.ts";
+export * from "./eosEbpfOtlpTelemetryGovernor.types.ts";

@@ -27,6 +27,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:slsa:", file: "./cliSlsaGovernor.mjs", fn: "handleSlsaCommands" },
   { prefix: "toolchain:durable:", file: "./cliDurableEngine.mjs", fn: "handleDurableCommands" },
   { prefix: "toolchain:microvm:", file: "./cliMicroVmEngine.mjs", fn: "handleMicroVmCommands" },
+  { prefix: "toolchain:ebpf:", file: "./cliEbpfOtlpGovernor.mjs", fn: "handleEbpfCommands" },
 ];
 
 export async function handleToolchainCommands(commandContext) {

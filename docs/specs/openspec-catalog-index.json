@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 295,
-  "catalogSha256": "2abfcb1739f15225b518fce916330b6251c232b52d3cd0a8684a684e2c197e48",
+  "totalSpecs": 296,
+  "catalogSha256": "3827d87ed81ad6ee4d749b27595b949dcf5f57a00637230d06f8addfaacf2d4b",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2657,6 +2657,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-295-FIRECRACKER-GVISOR-MICROVM.md",
       "sha256": "76cf1d2224bad6e9956ad70300840124ee089aecc284d528e03c10b79bf415b3"
+    },
+    {
+      "id": "SPEC-296",
+      "title": "eBPF Kernel Probe Telemetry & Zero-Dependency Native OTLP Gateway",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-296-EBPF-OTLP-TELEMETRY.md",
+      "sha256": "5bc3befed5e868f5fc096431cc01ab2edf96cba7c2374c06aa8b79119f3ca54b"
     }
   ]
 }

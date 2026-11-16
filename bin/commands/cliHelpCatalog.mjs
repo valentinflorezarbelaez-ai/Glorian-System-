@@ -85,6 +85,11 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:microvm:config [--gvisor] [--json] Emisión de especificación JSON de microVM Firecracker u OCI gVisor (SPEC-295)
   eos toolchain:microvm:diag [--json] Diagnóstico de aceleración por hardware KVM y binarios de virtualización (SPEC-295)
   eos toolchain:microvm:audit [--json] Auditoría de sandboxing, contención de timeout y bloqueo de red (SPEC-295)
+  eos toolchain:ebpf:probe [SYSCALL] [--json] Síntesis declarativa de sondas eBPF y políticas Tetragon (SPEC-296)
+  eos toolchain:ebpf:spans [--json] Ingestión de buffer kernel y proyección a spans OTLP v1 (SPEC-296)
+  eos toolchain:ebpf:export [URL] [--json] Exportación nativa HTTP/JSON de trazas OTLP a Colectores (SPEC-296)
+  eos toolchain:ebpf:audit [--json] Auditoría de observabilidad de kernel eBPF y emisión de recibo (SPEC-296)
+
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -328,6 +333,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:microvm:config [--gvisor] [--json] Emisión de especificación JSON de microVM Firecracker u OCI gVisor (SPEC-295)
   eos toolchain:microvm:diag [--json] Diagnóstico de aceleración por hardware KVM y binarios de virtualización (SPEC-295)
   eos toolchain:microvm:audit [--json] Auditoría de sandboxing, contención de timeout y bloqueo de red (SPEC-295)
+  eos toolchain:ebpf:probe [SYSCALL] [--json] Síntesis declarativa de sondas eBPF y políticas Tetragon (SPEC-296)
+  eos toolchain:ebpf:spans [--json] Ingestión de buffer kernel y proyección a spans OTLP v1 (SPEC-296)
+  eos toolchain:ebpf:export [URL] [--json] Exportación nativa HTTP/JSON de trazas OTLP a Colectores (SPEC-296)
+  eos toolchain:ebpf:audit [--json] Auditoría de observabilidad de kernel eBPF y emisión de recibo (SPEC-296)
+
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

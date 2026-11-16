@@ -2581,3 +2581,16 @@
   - `docs/plans/PLAN-157-FIRECRACKER-GVISOR-MICROVM.md`
   - `docs/tasks/TASKS-157-FIRECRACKER-GVISOR-MICROVM.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-EBPF-OTLP-TELEMETRY
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-158` (`SPEC-296`), Phase 3.2 eBPF Kernel Probe Telemetry & Zero-Dependency Native OTLP Gateway: `src/core/eosEbpfOtlpTelemetryGovernor.types.ts` and `src/core/eosEbpfOtlpTelemetryGovernor.ts` with declarative eBPF probe code and Tetragon security policy synthesis (`sys_enter_execve`, `sys_enter_connect`, `sys_enter_openat`, `sys_enter_socket`), kernel ring buffer event stream zero-copy decoding, syscall security policy violation detection and fail-closed mitigation (`BLOCK`/`SIGKILL`), pure Layer-0 OpenTelemetry OTLP v1 distributed trace serialization, zero-dependency native HTTP/HTTPS export to OTel collectors, and cryptographic receipt emission at `docs/evidence/EBPF_OTLP_RECEIPT.json`. Wire subcommands `toolchain:ebpf:probe`, `toolchain:ebpf:spans`, `toolchain:ebpf:export`, `toolchain:ebpf:audit` in `bin/commands/cliEbpfOtlpGovernor.mjs` and `bin/commands/cliToolchainRouter.mjs`. Verify BDD-1551..BDD-1556.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-158-EBPF-OTLP-TELEMETRY.md`
+  - `openspec/changes/CHANGE-158-ebpf-otlp-telemetry.md`
+  - `openspec/specs/SPEC-296-EBPF-OTLP-TELEMETRY.md`
+  - `docs/plans/PLAN-158-EBPF-OTLP-TELEMETRY.md`
+  - `docs/tasks/TASKS-158-EBPF-OTLP-TELEMETRY.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
