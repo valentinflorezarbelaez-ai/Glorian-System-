@@ -207,8 +207,8 @@ export class EosBlackProjectsTriad {
       {
         ruleId: 12,
         title: "Rapid access without bureaucracy",
-        passed: fs.existsSync(path.join(this.projectRoot, "scripts/eos-generate-sbom.mjs")),
-        evidence: "SBOM generate script present",
+        passed: fs.existsSync(path.join(this.projectRoot, "scripts/sbom-gate.mjs")),
+        evidence: "SBOM gate script present (scripts/sbom-gate.mjs)",
       },
       {
         ruleId: 13,

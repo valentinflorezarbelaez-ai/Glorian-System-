@@ -1,0 +1,125 @@
+{
+  "artifactId": "INSTITUTIONAL_MAX_POWER_SCORECARD_20261116",
+  "epistemicState": "AUDIT_EXECUTED_WITHIN_TESTED_SCOPE",
+  "claimsDenied": [
+    "FEDERAL_ATO",
+    "FedRAMP",
+    "Level 5",
+    "NSA_GRADE",
+    "EXTERNAL_SOUNDCHECK_OK",
+    "multi-region SRE certification",
+    "black-budget / Waived SAP parity"
+  ],
+  "auditedAtIso": "2026-11-16T22:55:00.000Z",
+  "controlPlaneTipAtAudit": "005663d3",
+  "lenses": [
+    {
+      "lens": "EOS_MILITARY_SHIELD",
+      "score": 100,
+      "status": "IMPREGNABLE",
+      "notes": "zeroPlaintextSecrets + Layer-0 purity + merkle + heap purge"
+    },
+    {
+      "lens": "OPENSPEC_CATALOG",
+      "score": 100,
+      "status": "VALID",
+      "totalSpecs": 309,
+      "orphanLinks": 0,
+      "missingAuthorizations": 0
+    },
+    {
+      "lens": "FLEET_SOUNDCHECK",
+      "score": 100,
+      "status": "A+_QUORUM",
+      "reposAtGradeA": 9,
+      "totalRepositories": 9,
+      "deploymentAuthorizedQuorum": true
+    },
+    {
+      "lens": "NUBANK_BUILDING_NU",
+      "score": 100,
+      "tier": "BUILDING_NU_APEX",
+      "notes": "Idempotency-Key on mutation ports after Absolute-Max W5"
+    },
+    {
+      "lens": "SPOTIFY_INSTITUTIONAL",
+      "score": 85,
+      "tier": "HIGH_ALIGNMENT",
+      "gap": "NON_COMPLIANT_AUDIO BS.1770 (-14 LUFS / -1 dBTP) — fleet music sibling Aberamentho"
+    },
+    {
+      "lens": "PLANETARY_APEX_DOCTRINE",
+      "score": 100,
+      "status": "APEX_DRILL_PASS",
+      "epistemicState": "APEX_DRILL_WITHIN_TESTED_SCOPE"
+    },
+    {
+      "lens": "BLACK_PROJECTS_TRIAD",
+      "score": 97.7,
+      "status": "TRIAD_DRILL_PASS",
+      "gapPreFix": "Kelly rule 12 pointed at missing eos-generate-sbom.mjs; remapped to scripts/sbom-gate.mjs",
+      "targetAfterFix": 100
+    },
+    {
+      "lens": "TURBO_VERIFY",
+      "score": 100,
+      "status": "LOCAL_CHECKS_PASSED",
+      "architectureScore": 100,
+      "cycles": 0
+    },
+    {
+      "lens": "HEALTH",
+      "score": 100,
+      "status": "HEALTHY",
+      "probesPassing": "6/6"
+    },
+    {
+      "lens": "ATO_LITE_NIST",
+      "score": null,
+      "status": "PACKET_READY_OWNER_GATED",
+      "blockers": [
+        "Seat B IV&V vacant until 2026-12-15",
+        "External pen-test window 2026-12-01..2026-12-15 unsigned",
+        "30d SLO receipts not yet filled",
+        "Bus-factor = 1 until dual IV&V signature"
+      ]
+    }
+  ],
+  "rankedNextRemediations": [
+    {
+      "rank": 1,
+      "id": "G1_KELLY_SBOM_PATH",
+      "track": "A",
+      "action": "Point Kelly rule 12 at scripts/sbom-gate.mjs (in-flight)"
+    },
+    {
+      "rank": 2,
+      "id": "G2_BS1770_ABERAMENTHO",
+      "track": "A_FLEET",
+      "action": "Enforce ITU-R BS.1770 loudness + true-peak on Aberamentho music sibling"
+    },
+    {
+      "rank": 3,
+      "id": "G3_DUAL_IVV_SEAT_B",
+      "track": "OWNER",
+      "action": "Nominate independent human IV&V; sign EXTERNAL_IVV_EXECUTION_RECEIPT"
+    },
+    {
+      "rank": 4,
+      "id": "G4_EXTERNAL_PENTEST",
+      "track": "OWNER",
+      "action": "Execute scheduled external pen-test; close PT-05 with signed report"
+    },
+    {
+      "rank": 5,
+      "id": "G5_SLO_30D_FILL",
+      "track": "A",
+      "action": "Populate fleet-slo-30d receipts with continuous RUM/error-budget samples"
+    }
+  ],
+  "compositeInstitutionalIndex": {
+    "automatedLensesAverage": 97.5,
+    "governmentCeiling": "ATO_LITE_READY_PENDING_HUMAN_SEATS",
+    "honestyNote": "Max corporate/consortia drill power inside software scope; federal ATO remains owner+external gated."
+  }
+}
