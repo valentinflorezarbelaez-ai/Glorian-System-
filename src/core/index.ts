@@ -755,3 +755,5 @@ export * from "./eosDurableExecutionEngine.ts";
 export * from "./eosFirecrackerMicroVmEngine.ts";
 export * from "./eosEbpfOtlpTelemetryGovernor.ts";
 export * from "./eosEbpfOtlpTelemetryGovernor.types.ts";
+export * from "./eosCloudflareDurableBridge.ts";
+export * from "./eosCloudflareDurableBridge.types.ts";

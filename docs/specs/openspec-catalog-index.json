@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 296,
-  "catalogSha256": "3827d87ed81ad6ee4d749b27595b949dcf5f57a00637230d06f8addfaacf2d4b",
+  "totalSpecs": 297,
+  "catalogSha256": "a87108c6bac7becc16ddf4b66c200e93dda113070c745b3c71f2ec182f2dea0b",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2666,6 +2666,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-296-EBPF-OTLP-TELEMETRY.md",
       "sha256": "5bc3befed5e868f5fc096431cc01ab2edf96cba7c2374c06aa8b79119f3ca54b"
+    },
+    {
+      "id": "SPEC-297",
+      "title": "Cloudflare Durable Objects Persistent State & Actor Mesh",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-297-DURABLE-OBJECTS-EDGE-STATE.md",
+      "sha256": "5fd53faba9e87e306be66ccd36f99e54ea7c2db278eee63bdf81d660be3e2bcf"
     }
   ]
 }

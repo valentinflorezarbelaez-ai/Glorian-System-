@@ -28,6 +28,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:durable:", file: "./cliDurableEngine.mjs", fn: "handleDurableCommands" },
   { prefix: "toolchain:microvm:", file: "./cliMicroVmEngine.mjs", fn: "handleMicroVmCommands" },
   { prefix: "toolchain:ebpf:", file: "./cliEbpfOtlpGovernor.mjs", fn: "handleEbpfCommands" },
+  { prefix: "toolchain:edge:", file: "./cliDurableBridge.mjs", fn: "handleEdgeCommands" },
 ];
 
 export async function handleToolchainCommands(commandContext) {

@@ -2594,3 +2594,16 @@
   - `docs/plans/PLAN-158-EBPF-OTLP-TELEMETRY.md`
   - `docs/tasks/TASKS-158-EBPF-OTLP-TELEMETRY.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-DURABLE-OBJECTS-EDGE-STATE
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-159` (`SPEC-297`), Phase 3.3 Cloudflare Durable Objects Persistent State & Actor Mesh: `src/core/eosCloudflareDurableBridge.types.ts` and `src/core/eosCloudflareDurableBridge.ts` with stateful actor lifecycle transitions (`INITIALIZED`, `ACTIVE`, `HIBERNATED`, `TERMINATED`), WebSocket hibernation, transactional embedded edge storage with atomic rollback, semantic prompt vector cache matching (cosine similarity $> 0.96$), HMAC-SHA256 authenticated edge bridge dispatch, and cryptographic receipt emission at `docs/evidence/DURABLE_OBJECTS_RECEIPT.json`. Wire subcommands `toolchain:edge:actor`, `toolchain:edge:state`, `toolchain:edge:cache`, `toolchain:edge:audit` in `bin/commands/cliDurableBridge.mjs` and `bin/commands/cliToolchainRouter.mjs`. Verify BDD-1557..BDD-1562.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-159-DURABLE-OBJECTS-EDGE-STATE.md`
+  - `openspec/changes/CHANGE-159-durable-objects-edge-state.md`
+  - `openspec/specs/SPEC-297-DURABLE-OBJECTS-EDGE-STATE.md`
+  - `docs/plans/PLAN-159-DURABLE-OBJECTS-EDGE-STATE.md`
+  - `docs/tasks/TASKS-159-DURABLE-OBJECTS-EDGE-STATE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
