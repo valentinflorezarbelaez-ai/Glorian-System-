@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-16T22:47:18.877Z",
+  "timestampIso": "2026-11-16T23:20:02.700Z",
   "specRef": "SPEC-299",
   "totalRepositoriesScored": 9,
   "averageFleetScore": 92.75,
@@ -7,5 +7,5 @@
   "goldTiersCount": 8,
   "silverTiersCount": 0,
   "bronzeTiersCount": 0,
-  "sha256Signature": "f538ca1a30492764aad7974cf462a67a8a7e929d2f930539feda81a507999e0c"
+  "sha256Signature": "6e25d7493a776a3b0c05bcb65168c75ee5a8225a5a4ec8733dc8cc6f4cc87c5a"
 }

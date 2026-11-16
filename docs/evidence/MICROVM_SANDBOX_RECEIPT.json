@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-16T22:49:13.452Z",
+  "timestampIso": "2026-11-16T23:21:17.108Z",
   "specRef": "SPEC-295",
   "hardwareVirtTier": "ISOLATED_PROCESS_JAIL",
   "isolationEnforced": true,
   "networkEscapeBlocked": true,
   "timeoutContained": true,
-  "sha256Signature": "7f287f5a082c971f215366624f9d2387629c2fcf4e81bf18819005fa95001ecc"
+  "sha256Signature": "ef4234e234812381857056182a090e4476b52dc3bf5d4b9f23587280fa4011d2"
 }

@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-16T22:52:54.324Z",
+  "timestampIso": "2026-11-16T23:23:33.140Z",
   "specRef": "SPEC-309",
   "changeRef": "CHANGE-171",
   "status": "POLYGLOT_WASM_VERIFIED",
@@ -10,7 +10,7 @@
     "wasmByteLength": 319,
     "wasmMagicValid": true,
     "sha256Digest": "e92616bd461455a56693651d9b9619b6e38187956146e945d1cfae8c84a2ba7f",
-    "durationMs": 931
+    "durationMs": 272
   },
   "zigCompileReport": {
     "language": "ZIG",
@@ -19,7 +19,7 @@
     "wasmByteLength": 247,
     "wasmMagicValid": true,
     "sha256Digest": "988b469e653eb69836bad708152e6a31ee9061b270d4fe851777fc4b632eb7cc",
-    "durationMs": 1264
+    "durationMs": 546
   },
   "vectorJoinVerified": true,
   "fnv1aVerified": true,
@@ -27,11 +27,11 @@
   "benchmark": {
     "iterations": 250,
     "vectorDimension": 128,
-    "wasmTotalNs": 26295200,
-    "wasmNsPerOp": 821.73,
-    "jsTotalNs": 274700,
-    "jsNsPerOp": 8.58,
+    "wasmTotalNs": 15788800,
+    "wasmNsPerOp": 493.4,
+    "jsTotalNs": 185500,
+    "jsNsPerOp": 5.8,
     "deterministicMatch": true
   },
-  "cryptographicSignature": "d6d0e0912d4566108340f6a98c4f94f5735c95413a8004f5db1f13803f44ac42"
+  "cryptographicSignature": "8ae5fbf011963066dc52d0763678227866edfe3da4a783d101c46e8728aa7065"
 }

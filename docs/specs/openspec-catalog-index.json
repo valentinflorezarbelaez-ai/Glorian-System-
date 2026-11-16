@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 312,
-  "catalogSha256": "1df6c3fd16700e255e7e620aa1f977e8ddc0ccb5951cdddba46abbf1a54b69d2",
+  "totalSpecs": 313,
+  "catalogSha256": "460161467bdc9424f1ea8f590e0727b254b2898c80ad1bbf9ec4ca423587110c",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2810,6 +2810,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-312-zero-copy-ring-buffer-telemetry.md",
       "sha256": "e2e254a60ce1625704e86c1fd1230e1b045756399d2f50403d502a08a64ad33d"
+    },
+    {
+      "id": "SPEC-313",
+      "title": "— Jepsen-Grade Distributed Network Partition & Chaos Simulator",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-313-jepsen-distributed-chaos.md",
+      "sha256": "36479809f51dd6f01320f1adef93f7c90023d9a20a5578819b75d946b03ba0b0"
     }
   ]
 }

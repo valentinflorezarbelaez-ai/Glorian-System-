@@ -2802,3 +2802,16 @@
   - `docs/plans/PLAN-174-zero-copy-ring-buffer-telemetry.md`
   - `docs/tasks/TASKS-174-zero-copy-ring-buffer-telemetry.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-16-JEPSEN-DISTRIBUTED-CHAOS
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-175` (`SPEC-313`), Jepsen-Grade Distributed Network Partition & Chaos Simulator: author TLA+ formal model `docs/formal/JepsenDistributedChaos.tla` and configuration `docs/formal/JepsenDistributedChaos.cfg` (Model 57), implement `src/core/eosJepsenDistributedChaos.types.ts` and `src/core/eosJepsenDistributedChaos.ts` featuring deterministic PRNG-seeded discrete-event network simulation, symmetric/asymmetric network partitions, probabilistic packet drops, clock drift/skew injection, anti-entropy state convergence upon healing ($\forall i, j: \text{state}_i = \text{state}_j$), Knossos-style operation history consistency auditing, and signed receipt emission at `docs/evidence/JEPSEN_DISTRIBUTED_CHAOS_RECEIPT.json`. Wire `toolchain:jepsen:simulate`, `toolchain:jepsen:partition`, `toolchain:jepsen:heal`, `toolchain:jepsen:verify`, `toolchain:jepsen:audit` in `bin/commands/cliJepsenDistributedChaos.mjs` and `bin/commands/cliToolchainRouter.mjs` (`488 -> 493` commands, 100% catalog parity). Verify `BDD-1653`..`BDD-1658`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-175-JEPSEN-DISTRIBUTED-CHAOS.md`
+  - `openspec/changes/CHANGE-175-jepsen-distributed-chaos.md`
+  - `openspec/specs/SPEC-313-jepsen-distributed-chaos.md`
+  - `docs/plans/PLAN-175-jepsen-distributed-chaos.md`
+  - `docs/tasks/TASKS-175-jepsen-distributed-chaos.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

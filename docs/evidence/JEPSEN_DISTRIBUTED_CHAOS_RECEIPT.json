@@ -1,0 +1,12 @@
+{
+  "timestampIso": "2026-11-16T23:27:56.307Z",
+  "specRef": "SPEC-313",
+  "seed": 500,
+  "nodeCount": 3,
+  "totalOperations": 2,
+  "totalPackets": 2,
+  "droppedPackets": 0,
+  "linearizabilityViolations": 0,
+  "converged": true,
+  "sha256": "900d351d455109cb61cc1cc69358a176b38ba2cb2fe0f9411166cf8fac8dc42d"
+}

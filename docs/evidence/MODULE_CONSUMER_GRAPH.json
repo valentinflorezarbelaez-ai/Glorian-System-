@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-16T22:53:47.942Z",
-  "totalModules": 499,
-  "consumedModules": 436,
+  "timestampIso": "2026-11-16T23:24:22.024Z",
+  "totalModules": 501,
+  "consumedModules": 438,
   "unconsumedModules": 63,
-  "graphDensity": 0.8737,
+  "graphDensity": 0.8743,
   "modules": {
     "EosAin": {
       "file": "src/core/EosAin.ts",
@@ -3582,6 +3582,30 @@
         {
           "consumerPath": "bin/commands/cliFrontier.mjs",
           "category": "bin"
+        }
+      ]
+    },
+    "eosJepsenDistributedChaos": {
+      "file": "src/core/eosJepsenDistributedChaos.ts",
+      "baseName": "eosJepsenDistributedChaos",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliJepsenDistributedChaos.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosJepsenDistributedChaos.types": {
+      "file": "src/core/eosJepsenDistributedChaos.types.ts",
+      "baseName": "eosJepsenDistributedChaos.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosJepsenDistributedChaos.ts",
+          "category": "core"
         }
       ]
     },

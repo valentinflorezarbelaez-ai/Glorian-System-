@@ -46,6 +46,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:simd:", file: "./cliWasmSimd128Arena.mjs", fn: "handleWasmSimd128Command" },
   { prefix: "toolchain:workers:", file: "./cliSharedMemoryWorkerPool.mjs", fn: "handleSharedMemoryWorkerPoolCommand" },
   { prefix: "toolchain:ringbuffer:", file: "./cliZeroCopyRingBuffer.mjs", fn: "handleRingBufferCommand" },
+  { prefix: "toolchain:jepsen:", file: "./cliJepsenDistributedChaos.mjs", fn: "handleJepsenChaosCommand" },
 ];
 
 export async function handleToolchainCommands(commandContext) {

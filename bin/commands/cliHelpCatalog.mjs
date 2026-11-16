@@ -154,6 +154,11 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:ringbuffer:drain [--json] Vaciado y decodificación de eventos sin asignación de heap (SPEC-312)
   eos toolchain:ringbuffer:benchmark [--json] Benchmarking comparativo de throughput vs cola JS (SPEC-312)
   eos toolchain:ringbuffer:audit [--json] Auditoría integral de invariantes estructurales y recibo firmado (SPEC-312)
+  eos toolchain:jepsen:simulate [--json] Simulación determinista de red con particiones y caos (SPEC-313)
+  eos toolchain:jepsen:partition [--json] Inyección de partición de red simétrica o asimétrica (SPEC-313)
+  eos toolchain:jepsen:heal [--json] Sanación de red y convergencia anti-entropía de réplicas (SPEC-313)
+  eos toolchain:jepsen:verify [--json] Verificación Knossos de consistencia y linealizabilidad (SPEC-313)
+  eos toolchain:jepsen:audit [--json] Auditoría integral de caos distribuido y recibo firmado (SPEC-313)
 
 
 
@@ -469,6 +474,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:ringbuffer:drain [--json] Vaciado y decodificación de eventos sin asignación de heap (SPEC-312)
   eos toolchain:ringbuffer:benchmark [--json] Benchmarking comparativo de throughput vs cola JS (SPEC-312)
   eos toolchain:ringbuffer:audit [--json] Auditoría integral de invariantes estructurales y recibo firmado (SPEC-312)
+  eos toolchain:jepsen:simulate [--json] Simulación determinista de red con particiones y caos (SPEC-313)
+  eos toolchain:jepsen:partition [--json] Inyección de partición de red simétrica o asimétrica (SPEC-313)
+  eos toolchain:jepsen:heal [--json] Sanación de red y convergencia anti-entropía de réplicas (SPEC-313)
+  eos toolchain:jepsen:verify [--json] Verificación Knossos de consistencia y linealizabilidad (SPEC-313)
+  eos toolchain:jepsen:audit [--json] Auditoría integral de caos distribuido y recibo firmado (SPEC-313)
 
 
 

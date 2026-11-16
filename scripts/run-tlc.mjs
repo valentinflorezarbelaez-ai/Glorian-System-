@@ -30,6 +30,7 @@ export const CONFIGURED_SPECS = [
   "BftAgentSwarmSlashing",
   "CellBasedBulkheadGovernor",
   "ZeroCopyRingBuffer",
+  "JepsenDistributedChaos",
 ];
 
 /**

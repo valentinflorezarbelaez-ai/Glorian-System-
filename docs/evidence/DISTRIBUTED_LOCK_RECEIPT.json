@@ -5,6 +5,6 @@
   "fencingToken": 1,
   "state": "ACQUIRED",
   "quorumPassed": true,
-  "timestamp": "2026-11-16T22:48:26.759Z",
-  "sha256Signature": "6d7e9c21e2be3768039cbb2bb683579a613013b103e9492df97dbe203a4305a7"
+  "timestamp": "2026-11-16T23:20:50.585Z",
+  "sha256Signature": "a0c653a4cb614651ea5fba1bc18023ccece04c2adb2fe6afdfe587f447d9d124"
 }

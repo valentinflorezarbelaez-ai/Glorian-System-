@@ -731,3 +731,5 @@ export * from "./eosSharedMemoryWorkerPool.ts";
 export * from "./eosSharedMemoryWorkerPool.types.ts";
 export * from "./eosZeroCopyRingBuffer.ts";
 export * from "./eosZeroCopyRingBuffer.types.ts";
+export * from "./eosJepsenDistributedChaos.ts";
+export * from "./eosJepsenDistributedChaos.types.ts";
