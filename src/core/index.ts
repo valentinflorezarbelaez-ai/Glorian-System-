@@ -773,3 +773,5 @@ export * from "./eosSingleExecutableDistributionGovernor.ts";
 export * from "./eosSingleExecutableDistributionGovernor.types.ts";
 export * from "./eosFdirOntology.ts";
 export * from "./eosFdirOntology.types.ts";
+export * from "./eosWasmBytecodeSynthesizer.ts";
+export * from "./eosWasmBytecodeSynthesizer.types.ts";

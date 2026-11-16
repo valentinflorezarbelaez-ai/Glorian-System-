@@ -1,11 +1,11 @@
 {
   "receiptType": "EOS_FDIR_ONTOLOGY_AUDIT",
-  "timestampIso": "2026-11-16T15:40:11.712Z",
+  "timestampIso": "2026-11-16T15:42:48.731Z",
   "specRef": "SPEC-305",
   "totalNodesEvaluated": 4,
   "totalEdgesEvaluated": 4,
   "orphanLinksPurged": 2,
   "cyclesResolved": 1,
   "harmonyRestored": true,
-  "sha256Signature": "0fb0f117d83ac142f8be7cf114eb109de7a501d25aff7980ffac28644b68f4a4"
+  "sha256Signature": "ed7e147a2b12d059a38d82e5bda20494ce1850e61d65c29b1e3b0d6a173fdba9"
 }

@@ -2711,3 +2711,16 @@
   - `docs/plans/PLAN-167-FDIR-KNOWLEDGE-ONTOLOGY.md`
   - `docs/tasks/TASKS-167-FDIR-KNOWLEDGE-ONTOLOGY.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-16-WASM-SYNTHESIZER-ENGINE
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-168` (`SPEC-306`), Phase 5.2 Deterministic Bounded WebAssembly Binary Synthesis & Linear Memory Isolation Engine: `src/core/eosWasmBytecodeSynthesizer.types.ts` and `src/core/eosWasmBytecodeSynthesizer.ts` implementing pure byte-level W3C WebAssembly binary module synthesis, signed and unsigned LEB128 variable-length integer encoding, section assembly (Type, Function, Memory, Export, Code), dynamic arithmetic and loop kernel generation, hardware-enforced linear memory trapping, sub-microsecond vector dot-product execution, and cryptographic receipt emission at `docs/evidence/WASM_SYNTHESIZER_RECEIPT.json`. Wire subcommands `toolchain:wasm:synthesize`, `toolchain:wasm:execute`, `toolchain:wasm:benchmark`, `toolchain:wasm:audit` in `bin/commands/cliWasmSynthesizer.mjs` and `bin/commands/cliToolchainRouter.mjs`. Verify BDD-1611..BDD-1616.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-168-WASM-SYNTHESIZER-ENGINE.md`
+  - `openspec/changes/CHANGE-168-wasm-synthesizer-engine.md`
+  - `openspec/specs/SPEC-306-WASM-SYNTHESIZER-ENGINE.md`
+  - `docs/plans/PLAN-168-WASM-SYNTHESIZER-ENGINE.md`
+  - `docs/tasks/TASKS-168-WASM-SYNTHESIZER-ENGINE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

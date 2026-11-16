@@ -39,6 +39,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:shm:", file: "./cliSharedMemory.mjs", fn: "handleSharedMemoryCommands" },
   { prefix: "toolchain:sea:", file: "./cliSeaDistribution.mjs", fn: "handleSeaCommands" },
   { prefix: "toolchain:fdir:", file: "./cliFdirOntology.mjs", fn: "handleFdirCommands" },
+  { prefix: "toolchain:wasm:", file: "./cliWasmSynthesizer.mjs", fn: "handleWasmCommands" },
 ];
 
 export async function handleToolchainCommands(commandContext) {

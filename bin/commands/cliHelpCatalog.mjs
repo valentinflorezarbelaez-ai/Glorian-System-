@@ -125,6 +125,10 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:fdir:heal [--json] Aislamiento y purga quirúrgica de enlaces huérfanos con restitución (SPEC-305)
   eos toolchain:fdir:cycles [--json] Detección y resolución de dependencias circulares con Tarjan (SPEC-305)
   eos toolchain:fdir:audit [--json] Auditoría integral FDIR de ontología y emisión de recibo (SPEC-305)
+  eos toolchain:wasm:synthesize [--json] Síntesis de módulos WebAssembly binarios W3C puros en memoria (SPEC-306)
+  eos toolchain:wasm:execute [<kernel>] [--json] Ejecución aislada de kernel WASM sandboxed (SPEC-306)
+  eos toolchain:wasm:benchmark [--json] Benchmarking comparativo de ejecución WASM vs JS (SPEC-306)
+  eos toolchain:wasm:audit [--json] Auditoría integral de sintetizador WASM y emisión de recibo criptográfico (SPEC-306)
 
 
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
@@ -410,6 +414,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:fdir:heal [--json] Aislamiento y purga quirúrgica de enlaces huérfanos con restitución (SPEC-305)
   eos toolchain:fdir:cycles [--json] Detección y resolución de dependencias circulares con Tarjan (SPEC-305)
   eos toolchain:fdir:audit [--json] Auditoría integral FDIR de ontología y emisión de recibo (SPEC-305)
+  eos toolchain:wasm:synthesize [--json] Síntesis de módulos WebAssembly binarios W3C puros en memoria (SPEC-306)
+  eos toolchain:wasm:execute [<kernel>] [--json] Ejecución aislada de kernel WASM sandboxed (SPEC-306)
+  eos toolchain:wasm:benchmark [--json] Benchmarking comparativo de ejecución WASM vs JS (SPEC-306)
+  eos toolchain:wasm:audit [--json] Auditoría integral de sintetizador WASM y emisión de recibo criptográfico (SPEC-306)
 
 
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268

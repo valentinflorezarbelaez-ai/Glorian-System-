@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 305,
-  "catalogSha256": "c1bd2dbb555d877f2f64cd12b7a0bcaba125f1fbc2e5c258464123cb9f5ecd47",
+  "totalSpecs": 306,
+  "catalogSha256": "d0e14f0589cbd4627b798b236303cad87ba8c24d18ffb86f32ce5a42efdf7f21",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2747,6 +2747,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-305-FDIR-KNOWLEDGE-ONTOLOGY.md",
       "sha256": "93e975ffea60fe6e28176f7e0b80c75b2d9d2555500d36712c30a1c78c4f0114"
+    },
+    {
+      "id": "SPEC-306",
+      "title": "Deterministic Bounded WebAssembly Binary Synthesis & Linear Memory Isolation Engine",
+      "status": "STABLE_AND_ACTIVE",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-306-WASM-SYNTHESIZER-ENGINE.md",
+      "sha256": "1bbe94e7e2ed6bd236faae2ee8ced6f8975280a5477e1e039c9ef881c436c36a"
     }
   ]
 }

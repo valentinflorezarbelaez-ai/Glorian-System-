@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-16T14:31:14.750Z",
+  "timestampIso": "2026-11-16T15:43:37.501Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
