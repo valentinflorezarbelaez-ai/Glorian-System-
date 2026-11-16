@@ -1,0 +1,28 @@
+package(default_visibility = ["//visibility:public"])
+
+# Hermetic source filegroup with strict sandboxing
+filegroup(
+    name = "glorian_core_sources",
+    srcs = glob([
+        "src/core/**/*.ts",
+        "bin/**/*.mjs",
+        "docs/**/*.md",
+        "package.json",
+    ]),
+)
+
+# Deterministic tarball packaging target with normalized timestamp
+genrule(
+    name = "glorian_hermetic_archive",
+    srcs = [":glorian_core_sources"],
+    outs = ["glorian_system_reproducible.tar"],
+    cmd = """
+        export SOURCE_DATE_EPOCH=1700000000
+        tar --sort=name \
+            --mtime="@1700000000" \
+            --owner=0 --group=0 --numeric-owner \
+            --mode="go=rX,u+rw,a-s" \
+            -cf $@ $(SRCS)
+    """,
+    tags = ["no-remote", "requires-network:no"],
+)

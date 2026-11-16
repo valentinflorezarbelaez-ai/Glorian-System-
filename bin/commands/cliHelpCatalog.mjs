@@ -109,6 +109,10 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:enclave:seal [--secret=S] [--json] Sellado de secretos ligado a mediciones PCR0/PCR2 vía HKDF y AES-GCM (SPEC-301)
   eos toolchain:enclave:unseal [--json] Desellado seguro y verificación de anti-tamper en mediciones de hardware (SPEC-301)
   eos toolchain:enclave:verify [--json] Auditoría integral del gobernador de enclaves confidenciales y recibo TEE (SPEC-301)
+  eos toolchain:nix:flake [--json] Declaración hermética Nix Flake y devshell aislado (SPEC-302)
+  eos toolchain:bazel:build [--json] Configuración de compilación hermética Bazel sin acceso a red (SPEC-302)
+  eos toolchain:build:normalize [--json] Normalización canónica de archivos con SOURCE_DATE_EPOCH y permisos fijos (SPEC-302)
+  eos toolchain:build:verify [--json] Verificación de compilación reproducible bit-a-bit e informe de deriva (SPEC-302)
 
 
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
@@ -378,6 +382,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:enclave:seal [--secret=S] [--json] Sellado de secretos ligado a mediciones PCR0/PCR2 vía HKDF y AES-GCM (SPEC-301)
   eos toolchain:enclave:unseal [--json] Desellado seguro y verificación de anti-tamper en mediciones de hardware (SPEC-301)
   eos toolchain:enclave:verify [--json] Auditoría integral del gobernador de enclaves confidenciales y recibo TEE (SPEC-301)
+  eos toolchain:nix:flake [--json] Declaración hermética Nix Flake y devshell aislado (SPEC-302)
+  eos toolchain:bazel:build [--json] Configuración de compilación hermética Bazel sin acceso a red (SPEC-302)
+  eos toolchain:build:normalize [--json] Normalización canónica de archivos con SOURCE_DATE_EPOCH y permisos fijos (SPEC-302)
+  eos toolchain:build:verify [--json] Verificación de compilación reproducible bit-a-bit e informe de deriva (SPEC-302)
 
 
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268

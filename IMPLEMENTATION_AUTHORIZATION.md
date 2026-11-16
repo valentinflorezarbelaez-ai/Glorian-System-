@@ -2659,3 +2659,16 @@
   - `docs/plans/PLAN-163-CONFIDENTIAL-ENCLAVE-TEE.md`
   - `docs/tasks/TASKS-163-CONFIDENTIAL-ENCLAVE-TEE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-16-HERMETIC-REPRODUCIBLE-BUILDS
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-164` (`SPEC-302`), Phase 4.3 Bit-for-Bit Hermetic Reproducible Builds (Nix Flakes & Bazel Containers): `deploy/nix/flake.nix`, `deploy/nix/default.nix`, `deploy/bazel/WORKSPACE`, `deploy/bazel/BUILD.bazel`, `src/core/eosHermeticReproducibleBuildGovernor.types.ts`, and `src/core/eosHermeticReproducibleBuildGovernor.ts` with declarative toolchain pinning (Node.js 22.18+), zero-network compilation sandboxing, byte-level archive canonical normalization (`SOURCE_DATE_EPOCH`, sorted paths, clamped `0644`/`0755` permissions, 0 UID/GID), dual-build multi-environment reproducibility verification, and cryptographic receipt emission at `docs/evidence/HERMETIC_BUILD_RECEIPT.json`. Wire subcommands `toolchain:nix:flake`, `toolchain:bazel:build`, `toolchain:build:normalize`, `toolchain:build:verify` in `bin/commands/cliHermeticBuild.mjs` and `bin/commands/cliToolchainRouter.mjs`. Verify BDD-1587..BDD-1592.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-164-HERMETIC-REPRODUCIBLE-BUILDS.md`
+  - `openspec/changes/CHANGE-164-hermetic-reproducible-builds.md`
+  - `openspec/specs/SPEC-302-HERMETIC-REPRODUCIBLE-BUILDS.md`
+  - `docs/plans/PLAN-164-HERMETIC-REPRODUCIBLE-BUILDS.md`
+  - `docs/tasks/TASKS-164-HERMETIC-REPRODUCIBLE-BUILDS.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

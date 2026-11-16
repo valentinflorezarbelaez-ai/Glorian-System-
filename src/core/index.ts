@@ -765,3 +765,5 @@ export * from "./eosAutomergeCrdtMesh.ts";
 export * from "./eosAutomergeCrdtMesh.types.ts";
 export * from "./eosConfidentialEnclaveGovernor.ts";
 export * from "./eosConfidentialEnclaveGovernor.types.ts";
+export * from "./eosHermeticReproducibleBuildGovernor.ts";
+export * from "./eosHermeticReproducibleBuildGovernor.types.ts";

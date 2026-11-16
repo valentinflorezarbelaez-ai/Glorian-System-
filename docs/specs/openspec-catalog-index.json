@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 301,
-  "catalogSha256": "c0d89e578009c2780f07d2617e7d88fb5d4579a9333f24c92c27e50ec42bf426",
+  "totalSpecs": 302,
+  "catalogSha256": "6c2f965c0c6cc2f7a8baaeb4003977d7568e6041af76ac09cea629ee44b943fe",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2711,6 +2711,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-301-CONFIDENTIAL-ENCLAVE-TEE.md",
       "sha256": "24915d396e0ff4d7229ca0194c331409d0109952def788cb1a5041dc45f3b2b3"
+    },
+    {
+      "id": "SPEC-302",
+      "title": "Bit-for-Bit Hermetic Reproducible Builds (Nix Flakes & Bazel Containers)",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-302-HERMETIC-REPRODUCIBLE-BUILDS.md",
+      "sha256": "f8bec050a4a428b8155753adb7a4ae35a3248fa96f752ea55ffd6834c9f419a1"
     }
   ]
 }

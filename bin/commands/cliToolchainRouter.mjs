@@ -33,6 +33,9 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:soundcheck:", file: "./cliSoundcheckScorecard.mjs", fn: "handleSoundcheckCommands" },
   { prefix: "toolchain:crdt:", file: "./cliAutomergeCrdt.mjs", fn: "handleCrdtCommands" },
   { prefix: "toolchain:enclave:", file: "./cliConfidentialEnclave.mjs", fn: "handleEnclaveCommands" },
+  { prefix: "toolchain:nix:", file: "./cliHermeticBuild.mjs", fn: "handleHermeticBuildCommands" },
+  { prefix: "toolchain:bazel:", file: "./cliHermeticBuild.mjs", fn: "handleHermeticBuildCommands" },
+  { prefix: "toolchain:build:", file: "./cliHermeticBuild.mjs", fn: "handleHermeticBuildCommands" },
 ];
 
 export async function handleToolchainCommands(commandContext) {
