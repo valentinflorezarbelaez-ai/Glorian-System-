@@ -13,7 +13,7 @@
 
 - **FR-297-01 (Event-Driven Stateful Actor Lifecycle & Hibernation)**: WHEN an actor receives an activation or sleep trigger, THE SYSTEM SHALL execute deterministic state transitions (`INITIALIZED`, `ACTIVE`, `HIBERNATED`, `TERMINATED`) and preserve in-memory WebSocket connections with zero idle compute cost.
 - **FR-297-02 (State-Driven Embedded Edge Storage Transactions)**: MIENTRAS actor storage operations execute, THE SYSTEM SHALL provide atomic transactions supporting key-value updates and SQL execution with complete isolation and rollback upon failure.
-- **FR-297-03 (State-Driven Semantic Vector Cache Matching)**: MIENTRAS incoming prompt queries are evaluated against cached vectors, THE SYSTEM SHALL return cached responses in $< 5$ ms whenever cosine similarity exceeds the $0.96$ threshold.
+- **FR-297-03 (State-Driven Semantic Vector Cache Matching)**: MIENTRAS incoming prompt queries are evaluated against cached vectors, THE SYSTEM SHALL return cached responses whenever cosine similarity exceeds the $0.96$ threshold. The reported `latencyMs` SHALL be the measured elapsed time of that match, with no floor and no ceiling. The acceptance budget is a median under 5 ms across repeated matches.
 - **FR-297-04 (Error / Unwanted Condition: Stale State & Cache Invalidation)**: SI a prompt entry exceeds its configured TTL or undergoes manual purge, ENTONCES EL SISTEMA SHALL evict the vector and record a cache miss.
 - **FR-297-05 (Ubiquitous HMAC-SHA256 Edge Security Binding)**: EL SISTEMA SHALL sign and verify every cross-tier payload exchanged between Vercel serverless endpoints and edge actors using HMAC-SHA256 message authentication codes.
 - **FR-297-06 (Cryptographic Proof Receipt)**: WHEN a Durable Objects edge pipeline audit completes, THE SYSTEM SHALL emit a verification receipt at `docs/evidence/DURABLE_OBJECTS_RECEIPT.json` sealed with a SHA-256 signature.
@@ -38,7 +38,9 @@ SCENARIO: BDD-1558 Transactional Embedded Edge Storage with Rollback
 SCENARIO: BDD-1559 Semantic Vector Prompt Cache Matching with Cosine Similarity
   GIVEN a semantic cache populated with prompt embeddings and completion outputs
   WHEN a new query with cosine similarity >= 0.96 is queried
-  THEN SemanticPromptVectorCache returns a cache HIT with latency < 5ms
+  THEN SemanticPromptVectorCache returns a cache HIT
+  AND latencyMs is the measured elapsed time with no ceiling
+  AND the median of repeated matches is under 5ms
   AND queries with similarity < 0.96 trigger a cache MISS.
 
 SCENARIO: BDD-1560 Cache Eviction, TTL Expiration, and Invalidation

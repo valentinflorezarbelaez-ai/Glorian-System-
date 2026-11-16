@@ -15,6 +15,7 @@ import {
   SemanticPromptVectorCache,
   EdgeControlPlaneBridge,
   auditDurableObjectsPipeline,
+  uncappedLatencyMs,
 } from "../src/core/eosCloudflareDurableBridge.ts";
 
 describe("SPEC-297: Cloudflare Durable Objects Persistent State & Actor Mesh", () => {
@@ -101,12 +102,26 @@ describe("SPEC-297: Cloudflare Durable Objects Persistent State & Actor Mesh", (
       guideline: "Use node: built-ins and type-stripping",
     });
 
-    // Exact or near-identical prompt
-    const hit = cache.match("How to configure zero runtime dependencies in Node.js 22", 0.96);
-    assert.equal(hit.hit, true);
-    assert.ok(hit.similarity >= 0.96);
-    assert.ok(hit.response);
-    assert.ok(hit.latencyMs < 5); // Sub-5ms SLA
+    // A duration above the old 4ms ceiling must stay visible.
+    assert.equal(uncappedLatencyMs(12.5), 12.5);
+    assert.equal(uncappedLatencyMs(4.2), 4.2);
+    assert.equal(uncappedLatencyMs(-1), 0);
+    assert.equal(uncappedLatencyMs(Number.NaN), 0);
+
+    const prompt = "How to configure zero runtime dependencies in Node.js 22";
+    const samples = [];
+    for (let i = 0; i < 21; i++) {
+      const sample = cache.match(prompt, 0.96);
+      assert.equal(sample.hit, true);
+      assert.ok(sample.similarity >= 0.96);
+      assert.ok(sample.response);
+      assert.equal(Number.isFinite(sample.latencyMs), true);
+      assert.ok(sample.latencyMs >= 0);
+      samples.push(sample.latencyMs);
+    }
+    const ordered = [...samples].sort((a, b) => a - b);
+    const median = ordered[Math.floor(ordered.length / 2)];
+    assert.ok(median < 5, `median cache match was ${median}ms; samples=${ordered.join(",")}`);
 
     // Different prompt
     const miss = cache.match("What is the recipe for chocolate cake?", 0.96);

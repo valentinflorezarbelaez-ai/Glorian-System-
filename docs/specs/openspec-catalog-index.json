@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
   "totalSpecs": 311,
-  "catalogSha256": "130a979092a9abb8d9e002e161c16fdb0c90310d087c26b0212bb82bb5273c2b",
+  "catalogSha256": "2521f026175d871475d959136cabccc6aeb4d760e5f3d2cd260637ff5c3a51d1",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2674,7 +2674,7 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-297-DURABLE-OBJECTS-EDGE-STATE.md",
-      "sha256": "5fd53faba9e87e306be66ccd36f99e54ea7c2db278eee63bdf81d660be3e2bcf"
+      "sha256": "b2bd520d8dbbcd2dac582cd07f778ccd1b69280d15b866c201c9774312318774"
     },
     {
       "id": "SPEC-298",

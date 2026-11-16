@@ -21,6 +21,17 @@ import type {
   DurableObjectsAuditReceipt,
 } from "./eosCloudflareDurableBridge.types.ts";
 
+/**
+ * Report a measured duration in milliseconds.
+ * The value is not floored and not capped, so an SLA miss stays visible.
+ */
+export function uncappedLatencyMs(elapsedMs: number): number {
+  if (!Number.isFinite(elapsedMs) || elapsedMs < 0) {
+    return 0;
+  }
+  return Math.round(elapsedMs * 1000) / 1000;
+}
+
 export class EdgeSqliteStorageEngine {
   private data: Map<string, EdgeStorageEntry> = new Map();
   private version: number = 0;
@@ -219,7 +230,7 @@ export class SemanticPromptVectorCache {
   }
 
   public match(query: string, threshold: number = 0.96): SemanticVectorMatch {
-    const cpu0 = process.cpuUsage();
+    const startedAt = performance.now();
     const queryVec = SemanticPromptVectorCache.embedPrompt(query);
     const now = Date.now();
 
@@ -237,9 +248,7 @@ export class SemanticPromptVectorCache {
       }
     }
 
-    const cpuDelta = process.cpuUsage(cpu0);
-    const cpuMs = (cpuDelta.user + cpuDelta.system) / 1000;
-    const latencyMs = Math.min(4, Math.max(1, Math.round(cpuMs)));
+    const latencyMs = uncappedLatencyMs(performance.now() - startedAt);
 
     if (bestEntry && bestSimilarity >= threshold) {
       return {
