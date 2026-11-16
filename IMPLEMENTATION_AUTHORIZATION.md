@@ -2685,3 +2685,16 @@
   - `docs/plans/PLAN-165-ZERO-COPY-SHARED-MEMORY.md`
   - `docs/tasks/TASKS-165-ZERO-COPY-SHARED-MEMORY.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-16-SEA-BINARY-DISTRIBUTION
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-166` (`SPEC-304`), Phase 4.5 Single Executable Applications (SEA) Automated Binary Distribution Engine: `src/core/eosSingleExecutableDistributionGovernor.types.ts` and `src/core/eosSingleExecutableDistributionGovernor.ts` with 5-target architecture matrix resolution (`linux-x64`, `linux-arm64`, `darwin-arm64`, `darwin-x64`, `win32-x64`), deterministic `sea-config.json` synthesis, SEA blob compilation and verification, dual cryptographic code signing (Ed25519 + ML-DSA post-quantum signature envelope), tamper-evident binary verification, in-toto v1.0 distribution packaging, and cryptographic receipt emission at `docs/evidence/SEA_BINARY_RECEIPT.json`. Wire subcommands `toolchain:sea:matrix`, `toolchain:sea:bundle`, `toolchain:sea:sign`, `toolchain:sea:audit` in `bin/commands/cliSeaDistribution.mjs` and `bin/commands/cliToolchainRouter.mjs`. Verify BDD-1599..BDD-1604.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-166-SEA-BINARY-DISTRIBUTION.md`
+  - `openspec/changes/CHANGE-166-sea-binary-distribution.md`
+  - `openspec/specs/SPEC-304-SEA-BINARY-DISTRIBUTION.md`
+  - `docs/plans/PLAN-166-SEA-BINARY-DISTRIBUTION.md`
+  - `docs/tasks/TASKS-166-SEA-BINARY-DISTRIBUTION.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

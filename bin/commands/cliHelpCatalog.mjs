@@ -117,6 +117,10 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:shm:produce [--msg=M] [--count=N] [--json] Escritura lock-free zero-copy en buffer circular con Atomics (SPEC-303)
   eos toolchain:shm:consume [--json] Lectura in-place zero-copy sin pausas de Garbage Collector (SPEC-303)
   eos toolchain:shm:audit [--json] Auditoría y benchmark de latencia de transferencia en memoria compartida (SPEC-303)
+  eos toolchain:sea:matrix [--json] Matrices de compilación multiplataforma SEA y compatibilidad (SPEC-304)
+  eos toolchain:sea:bundle [--platform=P] [--json] Generación de blob inyectable SEA y empaquetado de distribución (SPEC-304)
+  eos toolchain:sea:sign [--binary=B] [--json] Doble firma criptográfica Ed25519 y Post-Cuántica (ML-DSA) de binarios (SPEC-304)
+  eos toolchain:sea:audit [--json] Auditoría integral de distribución de binarios SEA y emisión de recibo (SPEC-304)
 
 
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
@@ -394,6 +398,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:shm:produce [--msg=M] [--count=N] [--json] Escritura lock-free zero-copy en buffer circular con Atomics (SPEC-303)
   eos toolchain:shm:consume [--json] Lectura in-place zero-copy sin pausas de Garbage Collector (SPEC-303)
   eos toolchain:shm:audit [--json] Auditoría y benchmark de latencia de transferencia en memoria compartida (SPEC-303)
+  eos toolchain:sea:matrix [--json] Matrices de compilación multiplataforma SEA y compatibilidad (SPEC-304)
+  eos toolchain:sea:bundle [--platform=P] [--json] Generación de blob inyectable SEA y empaquetado de distribución (SPEC-304)
+  eos toolchain:sea:sign [--binary=B] [--json] Doble firma criptográfica Ed25519 y Post-Cuántica (ML-DSA) de binarios (SPEC-304)
+  eos toolchain:sea:audit [--json] Auditoría integral de distribución de binarios SEA y emisión de recibo (SPEC-304)
 
 
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268

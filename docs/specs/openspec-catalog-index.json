@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 303,
-  "catalogSha256": "9f3c33286f4a873b225d8f5dfcd138ccc99bc8a8cfaa07b835f5a20d8c2b0003",
+  "totalSpecs": 304,
+  "catalogSha256": "d51e318077c20cf7c67893a8d1cc138e69843041ac698808e332034bc3a2f4e7",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2729,6 +2729,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-303-ZERO-COPY-SHARED-MEMORY.md",
       "sha256": "fdf4c62ff325e71cafb0ec1e9e48115dc3798099a4736ce26037c052fe2bb97d"
+    },
+    {
+      "id": "SPEC-304",
+      "title": "Single Executable Applications (SEA) Automated Binary Distribution",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-304-SEA-BINARY-DISTRIBUTION.md",
+      "sha256": "efdefe999aa4f2a2527870662cd2c84aec3cab20f152bc7d287575b2c7799795"
     }
   ]
 }

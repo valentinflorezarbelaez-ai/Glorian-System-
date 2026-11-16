@@ -769,3 +769,5 @@ export * from "./eosHermeticReproducibleBuildGovernor.ts";
 export * from "./eosHermeticReproducibleBuildGovernor.types.ts";
 export * from "./eosSharedMemoryArena.ts";
 export * from "./eosSharedMemoryArena.types.ts";
+export * from "./eosSingleExecutableDistributionGovernor.ts";
+export * from "./eosSingleExecutableDistributionGovernor.types.ts";
