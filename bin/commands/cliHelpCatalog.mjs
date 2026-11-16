@@ -71,6 +71,9 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:sapfix:mutate [FILE] [--json] Pruebas de mutación AST y cálculo de mutation score (SPEC-291)
   eos toolchain:sapfix:heal [FILE] [--line=N] [--json] Síntesis de parches candidatos y remediación en bucle cerrado (SPEC-291)
   eos toolchain:sapfix:audit [--json] Auditoría criptográfica de autorreparación y emisión de recibo (SPEC-291)
+  eos toolchain:z3:prove [--json] Demostrador SMT en proceso de lógica proposicional e invariantes inductivos (SPEC-292)
+  eos toolchain:z3:tlc [SPEC] [--json] Verificación formal de modelos concurrentes con Leslie Lamport TLC (SPEC-292)
+  eos toolchain:z3:audit [--json] Auditoría criptográfica de demostración formal y emisión de recibo (SPEC-292)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -300,6 +303,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:sapfix:mutate [FILE] [--json] Pruebas de mutación AST y cálculo de mutation score (SPEC-291)
   eos toolchain:sapfix:heal [FILE] [--line=N] [--json] Síntesis de parches candidatos y remediación en bucle cerrado (SPEC-291)
   eos toolchain:sapfix:audit [--json] Auditoría criptográfica de autorreparación y emisión de recibo (SPEC-291)
+  eos toolchain:z3:prove [--json] Demostrador SMT en proceso de lógica proposicional e invariantes inductivos (SPEC-292)
+  eos toolchain:z3:tlc [SPEC] [--json] Verificación formal de modelos concurrentes con Leslie Lamport TLC (SPEC-292)
+  eos toolchain:z3:audit [--json] Auditoría criptográfica de demostración formal y emisión de recibo (SPEC-292)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

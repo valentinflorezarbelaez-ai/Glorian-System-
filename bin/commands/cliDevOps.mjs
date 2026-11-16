@@ -60,21 +60,16 @@ async function cmd_eval_21(commandContext) {
   console.log(`Tiempo de Evaluación    : ${result.durationUs.toFixed(2)} µs\n`);
   console.log("=== DESGLOSE DE LAS 5 DIMENSIONES SOBERANAS ===");
   const dims = result.dimensions;
-  console.log(
-    `  1. Seguridad & Cero Secretos (30%) : ${dims.securityOwasp.score}/100 [${dims.securityOwasp.passed ? "PASS" : "FAIL"}]`,
-  );
-  console.log(
-    `  2. Pureza Hexagonal Capa 0 (25%)   : ${dims.hexagonalPurity.score}/100 [${dims.hexagonalPurity.passed ? "PASS" : "FAIL"}]`,
-  );
-  console.log(
-    `  3. Sintaxis AST & Tipado (20%)     : ${dims.astSyntax.score}/100 [${dims.astSyntax.passed ? "PASS" : "FAIL"}]`,
-  );
-  console.log(
-    `  4. Conformidad EARS & BDD (15%)    : ${dims.earsBddConformance.score}/100 [${dims.earsBddConformance.passed ? "PASS" : "FAIL"}]`,
-  );
-  console.log(
-    `  5. Índice Anti-Alucinación (10%)   : ${dims.hallucinationRisk.score}/100 [${dims.hallucinationRisk.passed ? "PASS" : "FAIL"}]`,
-  );
+  const dimList = [
+    ["1. Seguridad & Cero Secretos (30%)", dims.securityOwasp],
+    ["2. Pureza Hexagonal Capa 0 (25%)", dims.hexagonalPurity],
+    ["3. Sintaxis AST & Tipado (20%)", dims.astSyntax],
+    ["4. Conformidad EARS & BDD (15%)", dims.earsBddConformance],
+    ["5. Índice Anti-Alucinación (10%)", dims.hallucinationRisk],
+  ];
+  for (const [title, d] of dimList) {
+    console.log(`  ${title} : ${d.score}/100 [${d.passed ? "PASS" : "FAIL"}]`);
+  }
   const proof = result.resultFingerprintSha256 || result.sha256Proof || "e3b0c44298fc1c149afbf4c8996fb924";
   console.log(`\nSello Criptográfico Merkle : ${proof.slice(0, 32)}... (Exit Code 0)`);
 }
@@ -781,6 +776,9 @@ export async function handleDevOpsCommands(commandContext) {
   }
   if (commandContext.command.startsWith("toolchain:sapfix:")) {
     return (await import("./cliSapFix.mjs")).handleSapFixCommands(commandContext);
+  }
+  if (commandContext.command.startsWith("toolchain:z3:")) {
+    return (await import("./cliZ3Prover.mjs")).handleZ3Commands(commandContext);
   }
   return false;
 }
