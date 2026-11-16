@@ -20,7 +20,7 @@ const ENDPOINT_CONTRACTS = {
     method: "POST",
     fields: ["status", "intent", "execution"],
     body: { directive: "estado general del sistema" },
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", "idempotency-key": "contract-jarvis-001" },
   },
   "api/kernel.js": { method: "GET", fields: ["status"] },
   "api/memory.js": { method: "GET", fields: ["status"] },
@@ -149,7 +149,7 @@ describe("API Contract Tests — Response Shape Validation", () => {
           method: "POST",
           url: "/api/finops",
           body: { directive: "Optimize distributed database indexes and audit queries", estimatedTokens: 4000 },
-          headers: { "content-type": "application/json" },
+          headers: { "content-type": "application/json", "idempotency-key": "contract-finops-001" },
         },
         res5,
       );

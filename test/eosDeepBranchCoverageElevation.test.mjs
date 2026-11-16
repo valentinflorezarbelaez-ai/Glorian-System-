@@ -151,6 +151,18 @@ function createMockResponse() {
   };
 }
 
+let idempotencySerial = 0;
+
+function withIdempotencyKey(req) {
+  return {
+    ...req,
+    headers: {
+      ...(req.headers || {}),
+      "idempotency-key": `bdd-290-${++idempotencySerial}`,
+    },
+  };
+}
+
 describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
   describe("1. api/fleet.js branch coverage", () => {
     it("handles OPTIONS, 405, and probe parameter variations", async () => {
@@ -321,31 +333,31 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
 
       // INVALID_JSON
       const resBadJson = createMockResponse();
-      await memMod.default({ method: "POST", body: "{ malformed json " }, resBadJson);
+      await memMod.default(withIdempotencyKey({ method: "POST", body: "{ malformed json " }), resBadJson);
       assert.equal(resBadJson.getStatusCode(), 400);
       assert.equal(resBadJson.getBody()?.status, "INVALID_JSON");
 
       // INVALID_BODY (not an object)
       const resBadBody = createMockResponse();
-      await memMod.default({ method: "POST", body: [1, 2, 3] }, resBadBody);
+      await memMod.default(withIdempotencyKey({ method: "POST", body: [1, 2, 3] }), resBadBody);
       assert.equal(resBadBody.getStatusCode(), 400);
       assert.equal(resBadBody.getBody()?.status, "INVALID_BODY");
 
       // BODY_TOO_LARGE
       const resTooLarge = createMockResponse();
-      await memMod.default({ method: "POST", body: { big: "x".repeat(17000) } }, resTooLarge);
+      await memMod.default(withIdempotencyKey({ method: "POST", body: { big: "x".repeat(17000) } }), resTooLarge);
       assert.equal(resTooLarge.getStatusCode(), 413);
       assert.equal(resTooLarge.getBody()?.status, "BODY_TOO_LARGE");
 
       // INVALID_ACTION (action too long)
       const resBadAct = createMockResponse();
-      await memMod.default({ method: "POST", body: { action: "a".repeat(50) } }, resBadAct);
+      await memMod.default(withIdempotencyKey({ method: "POST", body: { action: "a".repeat(50) } }), resBadAct);
       assert.equal(resBadAct.getStatusCode(), 400);
       assert.equal(resBadAct.getBody()?.status, "INVALID_ACTION");
 
       // QUERY_TOO_LONG
       const resLongQ = createMockResponse();
-      await memMod.default({ method: "POST", body: { query: "q".repeat(300) } }, resLongQ);
+      await memMod.default(withIdempotencyKey({ method: "POST", body: { query: "q".repeat(300) } }), resLongQ);
       assert.equal(resLongQ.getStatusCode(), 400);
       assert.equal(resLongQ.getBody()?.status, "QUERY_TOO_LONG");
 
@@ -358,7 +370,7 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       // mem_save valid
       const resSave = createMockResponse();
       await memMod.default(
-        {
+        withIdempotencyKey({
           method: "POST",
           body: {
             action: "mem_save",
@@ -367,7 +379,7 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
             what: "Increased branch coverage to >=75%",
             why: "Big Tech quality doctrine",
           },
-        },
+        }),
         resSave,
       );
       assert.equal(resSave.getStatusCode(), 200);
@@ -377,13 +389,13 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       // mem_save invalid field length (> 4096)
       const resSaveBad = createMockResponse();
       await memMod.default(
-        {
+        withIdempotencyKey({
           method: "POST",
           body: {
             action: "mem_save",
             title: "x".repeat(5000),
           },
-        },
+        }),
         resSaveBad,
       );
       assert.equal(resSaveBad.getStatusCode(), 400);
@@ -392,10 +404,10 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       // mem_judge valid
       const resJudge = createMockResponse();
       await memMod.default(
-        {
+        withIdempotencyKey({
           method: "POST",
           body: { action: "mem_judge", relation: "supersedes", reasoning: "Elevates coverage from 70% to 75%" },
-        },
+        }),
         resJudge,
       );
       assert.equal(resJudge.getStatusCode(), 200);
@@ -404,10 +416,10 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       // mem_judge invalid reasoning
       const resJudgeBad = createMockResponse();
       await memMod.default(
-        {
+        withIdempotencyKey({
           method: "POST",
           body: { action: "mem_judge", reasoning: "x".repeat(5000) },
-        },
+        }),
         resJudgeBad,
       );
       assert.equal(resJudgeBad.getStatusCode(), 400);
@@ -508,37 +520,52 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
 
       // INVALID_DIRECTIVE (> 4096)
       const resBadDir = createMockResponse();
-      jarvisMod.default({ method: "POST", body: { directive: "a".repeat(5000) } }, resBadDir);
+      jarvisMod.default(withIdempotencyKey({ method: "POST", body: { directive: "a".repeat(5000) } }), resBadDir);
       assert.equal(resBadDir.getStatusCode(), 400);
       assert.equal(resBadDir.getBody()?.status, "INVALID_DIRECTIVE");
 
       // 1. DEPLOYMENT_REQUEST_NOT_EXECUTED
       const resDeploy = createMockResponse();
-      jarvisMod.default({ method: "POST", body: { directive: "despliega a produccion" } }, resDeploy);
+      jarvisMod.default(
+        withIdempotencyKey({ method: "POST", body: { directive: "despliega a produccion" } }),
+        resDeploy,
+      );
       assert.equal(resDeploy.getStatusCode(), 200);
       assert.equal(resDeploy.getBody()?.intent, "DEPLOYMENT_REQUEST_NOT_EXECUTED");
 
       // 2. STATUS_REQUEST_NOT_PROBED
       const resStatus = createMockResponse();
-      jarvisMod.default({ method: "POST", body: { directive: "estado de salud del sistema" } }, resStatus);
+      jarvisMod.default(
+        withIdempotencyKey({ method: "POST", body: { directive: "estado de salud del sistema" } }),
+        resStatus,
+      );
       assert.equal(resStatus.getStatusCode(), 200);
       assert.equal(resStatus.getBody()?.intent, "STATUS_REQUEST_NOT_PROBED");
 
       // 3. AUDIT_REQUEST_NOT_EXECUTED
       const resAudit = createMockResponse();
-      jarvisMod.default({ method: "POST", body: { directive: "audita la flota de repositorios" } }, resAudit);
+      jarvisMod.default(
+        withIdempotencyKey({ method: "POST", body: { directive: "audita la flota de repositorios" } }),
+        resAudit,
+      );
       assert.equal(resAudit.getStatusCode(), 200);
       assert.equal(resAudit.getBody()?.intent, "AUDIT_REQUEST_NOT_EXECUTED");
 
       // 4. SECURITY_REQUEST_NOT_EXECUTED
       const resSec = createMockResponse();
-      jarvisMod.default({ method: "POST", body: { directive: "ejecuta sast y escaneo de secretos" } }, resSec);
+      jarvisMod.default(
+        withIdempotencyKey({ method: "POST", body: { directive: "ejecuta sast y escaneo de secretos" } }),
+        resSec,
+      );
       assert.equal(resSec.getStatusCode(), 200);
       assert.equal(resSec.getBody()?.intent, "SECURITY_REQUEST_NOT_EXECUTED");
 
       // 5. UNCLASSIFIED_DIRECTIVE
       const resUnclass = createMockResponse();
-      jarvisMod.default({ method: "POST", body: { directive: "consulta general sin palabras clave" } }, resUnclass);
+      jarvisMod.default(
+        withIdempotencyKey({ method: "POST", body: { directive: "consulta general sin palabras clave" } }),
+        resUnclass,
+      );
       assert.equal(resUnclass.getStatusCode(), 200);
       assert.equal(resUnclass.getBody()?.intent, "UNCLASSIFIED_DIRECTIVE");
     });
@@ -1896,18 +1923,18 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
 
       // POST with missing directive -> 400
       const resEmpty = createMockResponse();
-      await finopsMod.default({ method: "POST", body: {} }, resEmpty);
+      await finopsMod.default(withIdempotencyKey({ method: "POST", body: {} }), resEmpty);
       assert.equal(resEmpty.getStatusCode(), 400);
 
       // POST with oversized directive -> 413
       const resHuge = createMockResponse();
-      await finopsMod.default({ method: "POST", body: { directive: "A".repeat(33000) } }, resHuge);
+      await finopsMod.default(withIdempotencyKey({ method: "POST", body: { directive: "A".repeat(33000) } }), resHuge);
       assert.equal(resHuge.getStatusCode(), 413);
 
       // POST valid with explicit tokens
       const resValid = createMockResponse();
       await finopsMod.default(
-        { method: "POST", body: { directive: "Format and lint code", estimatedTokens: 2000 } },
+        withIdempotencyKey({ method: "POST", body: { directive: "Format and lint code", estimatedTokens: 2000 } }),
         resValid,
       );
       assert.equal(resValid.getStatusCode(), 200);
@@ -1916,7 +1943,7 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       // POST valid without explicit tokens
       const resValidAuto = createMockResponse();
       await finopsMod.default(
-        { method: "POST", body: { directive: "Adjudicate formal TLA+ theorem proof" } },
+        withIdempotencyKey({ method: "POST", body: { directive: "Adjudicate formal TLA+ theorem proof" } }),
         resValidAuto,
       );
       assert.equal(resValidAuto.getStatusCode(), 200);
@@ -1938,18 +1965,18 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
 
       // POST with invalid json string
       const resBadJson = createMockResponse();
-      await compileMod.default({ method: "POST", body: "invalid-json{" }, resBadJson);
+      await compileMod.default(withIdempotencyKey({ method: "POST", body: "invalid-json{" }), resBadJson);
       assert.equal(resBadJson.getStatusCode(), 400);
 
       // POST with invalid body (array)
       const resBadBody = createMockResponse();
-      await compileMod.default({ method: "POST", body: [1, 2, 3] }, resBadBody);
+      await compileMod.default(withIdempotencyKey({ method: "POST", body: [1, 2, 3] }), resBadBody);
       assert.equal(resBadBody.getStatusCode(), 400);
 
       // Amplify mode (valid)
       const resAmp = createMockResponse();
       await compileMod.default(
-        { method: "POST", body: { mode: "amplify", prompt: "Build secure authenticator" } },
+        withIdempotencyKey({ method: "POST", body: { mode: "amplify", prompt: "Build secure authenticator" } }),
         resAmp,
       );
       assert.equal(resAmp.getStatusCode(), 200);
@@ -1958,7 +1985,10 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       // Amplify mode (invalid model)
       const resBadModel = createMockResponse();
       await compileMod.default(
-        { method: "POST", body: { mode: "amplify", prompt: "Hello", model: "unsupported-model-xyz" } },
+        withIdempotencyKey({
+          method: "POST",
+          body: { mode: "amplify", prompt: "Hello", model: "unsupported-model-xyz" },
+        }),
         resBadModel,
       );
       assert.equal(resBadModel.getStatusCode(), 400);
