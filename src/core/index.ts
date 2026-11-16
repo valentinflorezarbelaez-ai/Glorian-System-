@@ -763,3 +763,5 @@ export * from "./eosBackstageSoundcheckScorecard.ts";
 export * from "./eosBackstageSoundcheckScorecard.types.ts";
 export * from "./eosAutomergeCrdtMesh.ts";
 export * from "./eosAutomergeCrdtMesh.types.ts";
+export * from "./eosConfidentialEnclaveGovernor.ts";
+export * from "./eosConfidentialEnclaveGovernor.types.ts";

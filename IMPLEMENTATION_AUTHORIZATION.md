@@ -2646,3 +2646,16 @@
   - `docs/plans/PLAN-162-AUTOMERGE-CRDT-MESH.md`
   - `docs/tasks/TASKS-162-AUTOMERGE-CRDT-MESH.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-16-CONFIDENTIAL-ENCLAVE-TEE
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-163` (`SPEC-301`), Phase 4.2 Confidential Computing in Hardware TEEs (AWS Nitro / AMD SEV-SNP): `src/core/eosConfidentialEnclaveGovernor.types.ts` and `src/core/eosConfidentialEnclaveGovernor.ts` with deterministic Platform Configuration Register calculation (`PCR0`, `PCR1`, `PCR2`, `PCR8`), hardware Root-of-Trust attestation document generation with nonce freshness and Ed25519 signatures, remote attestation verification against PCR baselines, hardware-bound secret sealing via HKDF-SHA256 ($K_{seal}$) and AES-256-GCM authenticated encryption, fail-closed anti-tamper and measurement drift rejection, and cryptographic receipt emission at `docs/evidence/TEE_ENCLAVE_RECEIPT.json`. Wire subcommands `toolchain:enclave:attest`, `toolchain:enclave:seal`, `toolchain:enclave:unseal`, `toolchain:enclave:verify` in `bin/commands/cliConfidentialEnclave.mjs` and `bin/commands/cliToolchainRouter.mjs`. Verify BDD-1581..BDD-1586.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-163-CONFIDENTIAL-ENCLAVE-TEE.md`
+  - `openspec/changes/CHANGE-163-confidential-enclave-tee.md`
+  - `openspec/specs/SPEC-301-CONFIDENTIAL-ENCLAVE-TEE.md`
+  - `docs/plans/PLAN-163-CONFIDENTIAL-ENCLAVE-TEE.md`
+  - `docs/tasks/TASKS-163-CONFIDENTIAL-ENCLAVE-TEE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

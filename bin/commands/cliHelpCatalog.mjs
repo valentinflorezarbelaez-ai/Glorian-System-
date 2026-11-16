@@ -105,6 +105,10 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:crdt:sync [--peer=P] [--json] Sincronización diferencial P2P Have/Need sin conflictos (SPEC-300)
   eos toolchain:crdt:merge [--key=K] [--valA=A] [--valB=B] [--json] Resolución determinista de conflictos en DAG concurrente (SPEC-300)
   eos toolchain:crdt:audit [--json] Auditoría de convergencia matemática P2P y cola DTN (SPEC-300)
+  eos toolchain:enclave:attest [--nonce=N] [--json] Generación y verificación de atestación remota en enclave TEE (SPEC-301)
+  eos toolchain:enclave:seal [--secret=S] [--json] Sellado de secretos ligado a mediciones PCR0/PCR2 vía HKDF y AES-GCM (SPEC-301)
+  eos toolchain:enclave:unseal [--json] Desellado seguro y verificación de anti-tamper en mediciones de hardware (SPEC-301)
+  eos toolchain:enclave:verify [--json] Auditoría integral del gobernador de enclaves confidenciales y recibo TEE (SPEC-301)
 
 
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
@@ -370,6 +374,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:crdt:sync [--peer=P] [--json] Sincronización diferencial P2P Have/Need sin conflictos (SPEC-300)
   eos toolchain:crdt:merge [--key=K] [--valA=A] [--valB=B] [--json] Resolución determinista de conflictos en DAG concurrente (SPEC-300)
   eos toolchain:crdt:audit [--json] Auditoría de convergencia matemática P2P y cola DTN (SPEC-300)
+  eos toolchain:enclave:attest [--nonce=N] [--json] Generación y verificación de atestación remota en enclave TEE (SPEC-301)
+  eos toolchain:enclave:seal [--secret=S] [--json] Sellado de secretos ligado a mediciones PCR0/PCR2 vía HKDF y AES-GCM (SPEC-301)
+  eos toolchain:enclave:unseal [--json] Desellado seguro y verificación de anti-tamper en mediciones de hardware (SPEC-301)
+  eos toolchain:enclave:verify [--json] Auditoría integral del gobernador de enclaves confidenciales y recibo TEE (SPEC-301)
 
 
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268

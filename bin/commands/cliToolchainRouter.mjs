@@ -32,6 +32,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:gateway:", file: "./cliAiGateway.mjs", fn: "handleAiGatewayCommands" },
   { prefix: "toolchain:soundcheck:", file: "./cliSoundcheckScorecard.mjs", fn: "handleSoundcheckCommands" },
   { prefix: "toolchain:crdt:", file: "./cliAutomergeCrdt.mjs", fn: "handleCrdtCommands" },
+  { prefix: "toolchain:enclave:", file: "./cliConfidentialEnclave.mjs", fn: "handleEnclaveCommands" },
 ];
 
 export async function handleToolchainCommands(commandContext) {

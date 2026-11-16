@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 300,
-  "catalogSha256": "d232bc95bb15e6ab8d249ad3a443338a26372e24f489892a350ddf887b26c262",
+  "totalSpecs": 301,
+  "catalogSha256": "c0d89e578009c2780f07d2617e7d88fb5d4579a9333f24c92c27e50ec42bf426",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2702,6 +2702,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-300-AUTOMERGE-CRDT-MESH.md",
       "sha256": "1dc7d40ae00e20a3969e5db6fd3a7ff13ca511c3aaae389f31180813c63cd2f6"
+    },
+    {
+      "id": "SPEC-301",
+      "title": "Confidential Computing in Hardware TEEs (AWS Nitro / AMD SEV-SNP)",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-301-CONFIDENTIAL-ENCLAVE-TEE.md",
+      "sha256": "24915d396e0ff4d7229ca0194c331409d0109952def788cb1a5041dc45f3b2b3"
     }
   ]
 }
