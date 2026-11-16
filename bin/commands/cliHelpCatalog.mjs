@@ -101,6 +101,10 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:soundcheck:matrix [--json] Matriz de salud institucional de los 9 repositorios de la flota (SPEC-299)
   eos toolchain:soundcheck:drift [--project=P] [--json] Detección de drift arquitectónico y plan de remediación (SPEC-299)
   eos toolchain:soundcheck:audit [--json] Auditoría del scorecard Soundcheck y emisión de recibo criptográfico (SPEC-299)
+  eos toolchain:crdt:state [--key=K] [--val=V] [--json] Inspección de estado y heads del DAG CRDT Automerge (SPEC-300)
+  eos toolchain:crdt:sync [--peer=P] [--json] Sincronización diferencial P2P Have/Need sin conflictos (SPEC-300)
+  eos toolchain:crdt:merge [--key=K] [--valA=A] [--valB=B] [--json] Resolución determinista de conflictos en DAG concurrente (SPEC-300)
+  eos toolchain:crdt:audit [--json] Auditoría de convergencia matemática P2P y cola DTN (SPEC-300)
 
 
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
@@ -362,6 +366,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:soundcheck:matrix [--json] Matriz de salud institucional de los 9 repositorios de la flota (SPEC-299)
   eos toolchain:soundcheck:drift [--project=P] [--json] Detección de drift arquitectónico y plan de remediación (SPEC-299)
   eos toolchain:soundcheck:audit [--json] Auditoría del scorecard Soundcheck y emisión de recibo criptográfico (SPEC-299)
+  eos toolchain:crdt:state [--key=K] [--val=V] [--json] Inspección de estado y heads del DAG CRDT Automerge (SPEC-300)
+  eos toolchain:crdt:sync [--peer=P] [--json] Sincronización diferencial P2P Have/Need sin conflictos (SPEC-300)
+  eos toolchain:crdt:merge [--key=K] [--valA=A] [--valB=B] [--json] Resolución determinista de conflictos en DAG concurrente (SPEC-300)
+  eos toolchain:crdt:audit [--json] Auditoría de convergencia matemática P2P y cola DTN (SPEC-300)
 
 
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268

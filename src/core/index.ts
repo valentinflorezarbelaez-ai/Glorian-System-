@@ -761,3 +761,5 @@ export * from "./eosSovereignAiGateway.ts";
 export * from "./eosSovereignAiGateway.types.ts";
 export * from "./eosBackstageSoundcheckScorecard.ts";
 export * from "./eosBackstageSoundcheckScorecard.types.ts";
+export * from "./eosAutomergeCrdtMesh.ts";
+export * from "./eosAutomergeCrdtMesh.types.ts";

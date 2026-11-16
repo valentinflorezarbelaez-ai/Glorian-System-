@@ -31,6 +31,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:edge:", file: "./cliDurableBridge.mjs", fn: "handleEdgeCommands" },
   { prefix: "toolchain:gateway:", file: "./cliAiGateway.mjs", fn: "handleAiGatewayCommands" },
   { prefix: "toolchain:soundcheck:", file: "./cliSoundcheckScorecard.mjs", fn: "handleSoundcheckCommands" },
+  { prefix: "toolchain:crdt:", file: "./cliAutomergeCrdt.mjs", fn: "handleCrdtCommands" },
 ];
 
 export async function handleToolchainCommands(commandContext) {

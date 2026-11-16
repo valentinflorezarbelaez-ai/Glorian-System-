@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 299,
-  "catalogSha256": "f9f042f635091288865964d30b01bac608170cdb257c38bd8ed11174bfa6ce89",
+  "totalSpecs": 300,
+  "catalogSha256": "d232bc95bb15e6ab8d249ad3a443338a26372e24f489892a350ddf887b26c262",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2693,6 +2693,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-299-BACKSTAGE-SOUNDCHECK-SCORECARD.md",
       "sha256": "83ace8d4fade389c8533539f8327c52154468316ddf45e0cbf6b92a9881a7c33"
+    },
+    {
+      "id": "SPEC-300",
+      "title": "Conflict-Free P2P Mesh Synchronization with Automerge Wasm",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-300-AUTOMERGE-CRDT-MESH.md",
+      "sha256": "1dc7d40ae00e20a3969e5db6fd3a7ff13ca511c3aaae389f31180813c63cd2f6"
     }
   ]
 }

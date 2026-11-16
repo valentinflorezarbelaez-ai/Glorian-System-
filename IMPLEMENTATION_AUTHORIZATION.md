@@ -2633,3 +2633,16 @@
   - `docs/plans/PLAN-161-BACKSTAGE-SOUNDCHECK-SCORECARD.md`
   - `docs/tasks/TASKS-161-BACKSTAGE-SOUNDCHECK-SCORECARD.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-AUTOMERGE-CRDT-MESH
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-162` (`SPEC-300`), Phase 4.1 Conflict-Free P2P Mesh Synchronization with Automerge Wasm / CRDTs: `src/core/eosAutomergeCrdtMesh.types.ts` and `src/core/eosAutomergeCrdtMesh.ts` with immutable content-addressed change operation DAGs (SHA-256 parent chaining), Lamport vector clock causal ordering and deterministic tie-breaking, Have/Need differential synchronization protocol (`generateSyncMessage`, `applySyncMessage`), Delay-Tolerant Networking (DTN) store-and-forward outbox buffer, tamper-evident hash validation, and cryptographic receipt emission at `docs/evidence/CRDT_MESH_RECEIPT.json`. Wire subcommands `toolchain:crdt:sync`, `toolchain:crdt:merge`, `toolchain:crdt:state`, `toolchain:crdt:audit` in `bin/commands/cliAutomergeCrdt.mjs` and `bin/commands/cliToolchainRouter.mjs`. Verify BDD-1575..BDD-1580.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-162-AUTOMERGE-CRDT-MESH.md`
+  - `openspec/changes/CHANGE-162-automerge-crdt-mesh.md`
+  - `openspec/specs/SPEC-300-AUTOMERGE-CRDT-MESH.md`
+  - `docs/plans/PLAN-162-AUTOMERGE-CRDT-MESH.md`
+  - `docs/tasks/TASKS-162-AUTOMERGE-CRDT-MESH.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
