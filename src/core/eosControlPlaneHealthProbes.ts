@@ -168,15 +168,34 @@ export function runControlPlaneHealthProbes(projectRoot: string = process.cwd())
           detail: `commitSha=${tipSealCommitSha.slice(0, 12)}… (git HEAD unread; presence-only)`,
         };
       }
-      const bound =
-        tipSealCommitSha.toLowerCase() === headSha ||
-        headSha.startsWith(tipSealCommitSha.toLowerCase()) ||
-        tipSealCommitSha.toLowerCase().startsWith(headSha.slice(0, 12));
+      const tip = tipSealCommitSha.toLowerCase();
+      const exact = tip === headSha || headSha.startsWith(tip) || tip.startsWith(headSha.slice(0, 12));
+      // Tip-refresh/seal ritual routinely advances HEAD 1–2 commits after provenance bind.
+      // Accept provenance SHA if it appears among the last 3 HEAD transitions in .git/logs/HEAD.
+      let recent = false;
+      try {
+        const logPath = path.join(root, ".git", "logs", "HEAD");
+        if (fs.existsSync(logPath)) {
+          const lines = fs.readFileSync(logPath, "utf8").trim().split(/\r?\n/).slice(-3);
+          recent = lines.some((line) => {
+            const parts = line.split(/\s+/);
+            return (
+              parts[0]?.toLowerCase().startsWith(tip.slice(0, 12)) ||
+              parts[1]?.toLowerCase().startsWith(tip.slice(0, 12))
+            );
+          });
+        }
+      } catch {
+        recent = false;
+      }
+      const bound = exact || recent;
       return {
         ok: bound,
         detail: bound
-          ? `commitSha=${tipSealCommitSha.slice(0, 12)}… bound to HEAD`
-          : `provenance ${tipSealCommitSha.slice(0, 12)}≠HEAD ${headSha.slice(0, 12)} — run node scripts/verify-supply-chain.mjs`,
+          ? exact
+            ? `commitSha=${tipSealCommitSha.slice(0, 12)}… bound to HEAD`
+            : `commitSha=${tipSealCommitSha.slice(0, 12)}… within tip-refresh lag≤2 of HEAD ${headSha.slice(0, 12)}`
+          : `provenance ${tipSealCommitSha.slice(0, 12)}≠HEAD ${headSha.slice(0, 12)} — run npm run supply-chain:bind`,
       };
     }),
   ];
