@@ -40,6 +40,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:sea:", file: "./cliSeaDistribution.mjs", fn: "handleSeaCommands" },
   { prefix: "toolchain:fdir:", file: "./cliFdirOntology.mjs", fn: "handleFdirCommands" },
   { prefix: "toolchain:wasm:", file: "./cliWasmSynthesizer.mjs", fn: "handleWasmCommands" },
+  { prefix: "toolchain:reconcile:", file: "./cliReconciliationLoop.mjs", fn: "handleReconcileCommands" },
 ];
 
 export async function handleToolchainCommands(commandContext) {

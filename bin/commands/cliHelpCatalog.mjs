@@ -129,6 +129,10 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:wasm:execute [<kernel>] [--json] Ejecución aislada de kernel WASM sandboxed (SPEC-306)
   eos toolchain:wasm:benchmark [--json] Benchmarking comparativo de ejecución WASM vs JS (SPEC-306)
   eos toolchain:wasm:audit [--json] Auditoría integral de sintetizador WASM y emisión de recibo criptográfico (SPEC-306)
+  eos toolchain:reconcile:observe [--json] Ingesta y observación de telemetría de los 9 proyectos de flota (SPEC-307)
+  eos toolchain:reconcile:plan [--json] Formulación de DAG atómico de convergencia y remediación (SPEC-307)
+  eos toolchain:reconcile:heal [--json] Ejecución quirúrgica autónoma de auto-sanación sobre la flota (SPEC-307)
+  eos toolchain:reconcile:audit [--json] Auditoría integral del bucle de reconciliación y emisión de recibo (SPEC-307)
 
 
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
@@ -418,6 +422,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:wasm:execute [<kernel>] [--json] Ejecución aislada de kernel WASM sandboxed (SPEC-306)
   eos toolchain:wasm:benchmark [--json] Benchmarking comparativo de ejecución WASM vs JS (SPEC-306)
   eos toolchain:wasm:audit [--json] Auditoría integral de sintetizador WASM y emisión de recibo criptográfico (SPEC-306)
+  eos toolchain:reconcile:observe [--json] Ingesta y observación de telemetría de los 9 proyectos de flota (SPEC-307)
+  eos toolchain:reconcile:plan [--json] Formulación de DAG atómico de convergencia y remediación (SPEC-307)
+  eos toolchain:reconcile:heal [--json] Ejecución quirúrgica autónoma de auto-sanación sobre la flota (SPEC-307)
+  eos toolchain:reconcile:audit [--json] Auditoría integral del bucle de reconciliación y emisión de recibo (SPEC-307)
 
 
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268

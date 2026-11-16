@@ -1,0 +1,11 @@
+{
+  "receiptType": "EOS_RECONCILIATION_LOOP_AUDIT",
+  "timestampIso": "2026-11-16T16:18:34.113Z",
+  "specRef": "SPEC-307",
+  "fleetObservedProjects": 9,
+  "convergenceAchieved": true,
+  "tasksExecutedCount": 4,
+  "remainingAnomaliesCount": 0,
+  "wasmKernelAccelerated": true,
+  "sha256Signature": "e1d435dc761189add8456f3bdb4e7198a1d4984f803f6d30d3253297afd7dfd8"
+}
