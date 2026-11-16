@@ -186,7 +186,7 @@ test("BDD-1502: Cryptographic audit receipt verification", () => {
   const report = store.auditStorage();
 
   assert.equal(report.totalDocuments, 1);
-  assert.equal(report.fts5Enabled, true);
+  assert.equal(report.fts5Enabled, store.fts5Enabled);
   assert.equal(report.vectorIndexedCount, 1);
   assert.match(report.sha256Signature, /^[a-f0-9]{64}$/);
 
@@ -196,4 +196,54 @@ test("BDD-1502: Cryptographic audit receipt verification", () => {
   assert.equal(raw.sha256Signature, report.sha256Signature);
 
   store.close();
+});
+
+test("BDD-1503: Lexical token-rank fallback when FTS5 is compiled out", () => {
+  const store = new EosNativeSqliteStore(":memory:", { forceLexicalFallback: true });
+  assert.equal(store.fts5Enabled, false);
+
+  store.insertDocument({
+    id: "doc-quantum",
+    category: "physics",
+    title: "Surface Code Quantum Error Correction",
+    content: "Surface code rotated lattice topology with minimum weight perfect matching.",
+  });
+  store.insertDocument({
+    id: "doc-orbit",
+    category: "space",
+    title: "LEO Constellation Optical Routing",
+    content: "Laser inter-satellite optical link with Walker-Delta orbital constellation.",
+  });
+
+  const resultsPhysics = store.searchFts("Quantum");
+  assert.equal(resultsPhysics.length, 1);
+  assert.equal(resultsPhysics[0].id, "doc-quantum");
+  assert.equal(resultsPhysics[0].rank, 1);
+
+  const hybridStore = new EosNativeSqliteStore(":memory:", { forceLexicalFallback: true });
+  hybridStore.insertDocument({
+    id: "hybrid-1",
+    category: "compiler",
+    title: "TurboFan JIT Optimizations",
+    content: "Monomorphic inlining, escape analysis, and loop peeling in V8.",
+    vector: [0.7, 0.6, 0.8, 0.2, 0.1, 0.3, 0.4, 0.5],
+  });
+  hybridStore.insertDocument({
+    id: "hybrid-2",
+    category: "memory",
+    title: "Zero-Allocation Buffer Pools",
+    content: "Slab memory allocation and byte scanning with zero heap churn.",
+    vector: [0.65, 0.55, 0.75, 0.25, 0.15, 0.35, 0.45, 0.5],
+  });
+
+  const queryVec = [0.68, 0.58, 0.78, 0.22, 0.12, 0.32, 0.42, 0.5];
+  const hybrid = hybridStore.searchHybrid("TurboFan JIT", queryVec, 2);
+  assert.equal(hybrid[0].id, "hybrid-1");
+  assert.equal(hybrid[0].ftsRank, 1);
+
+  const report = hybridStore.auditStorage();
+  assert.equal(report.fts5Enabled, false);
+
+  store.close();
+  hybridStore.close();
 });

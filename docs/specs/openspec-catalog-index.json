@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
   "totalSpecs": 308,
-  "catalogSha256": "17e100f85da8a3cd757fb181f60a6184fec83a01aa11c7a2be65a89d1e9ec520",
+  "catalogSha256": "2a94204412e9c1e4d433af3e1db88002bbc58180560e31a1c59e7240ef5b4ede",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2584,7 +2584,7 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-287-NATIVE-SQLITE-VECTOR-STORAGE.md",
-      "sha256": "3b9014a1e2d091e11110fce82a13e5b63f8aef7dd9407adcd6ae7ee31628dbfe"
+      "sha256": "fe28a37635691a37ac9cfbe97cfcf9c8adcc07b1ebc7b1d9648d2861843e8381"
     },
     {
       "id": "SPEC-288",

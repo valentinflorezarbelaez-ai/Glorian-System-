@@ -70,11 +70,18 @@ export interface SqliteStorageAuditReport {
   sha256Signature: string;
 }
 
+export interface EosNativeSqliteStoreOptions {
+  /** Use the token-rank lexical path even when this Node build includes FTS5. */
+  forceLexicalFallback?: boolean;
+}
+
 export class EosNativeSqliteStore {
   private readonly db: DatabaseSync;
   private readonly dbPath: string;
+  /** True only when this process's node:sqlite was compiled with ENABLE_FTS5. */
+  public readonly fts5Enabled: boolean;
 
-  constructor(dbPath: string = ":memory:") {
+  constructor(dbPath: string = ":memory:", options: EosNativeSqliteStoreOptions = {}) {
     this.dbPath = dbPath;
     if (dbPath !== ":memory:") {
       const dir = path.dirname(path.resolve(dbPath));
@@ -84,7 +91,7 @@ export class EosNativeSqliteStore {
     }
     this.db = new DatabaseSync(dbPath);
     this.configurePragmas();
-    this.initSchema();
+    this.fts5Enabled = this.initSchema(options.forceLexicalFallback === true);
   }
 
   /**
@@ -99,9 +106,11 @@ export class EosNativeSqliteStore {
   }
 
   /**
-   * Initializes relational tables and FTS5 virtual tables.
+   * Initializes relational tables. FTS5 is created only when this Node build
+   * compiled node:sqlite with SQLITE_ENABLE_FTS5. Official Node 23 builds and
+   * some Windows builds omit that module (`no such module: fts5`).
    */
-  private initSchema(): void {
+  private initSchema(forceLexicalFallback: boolean): boolean {
     this.db.exec(`
       CREATE TABLE IF NOT EXISTS documents (
         id TEXT PRIMARY KEY,
@@ -115,16 +124,32 @@ export class EosNativeSqliteStore {
 
       CREATE INDEX IF NOT EXISTS idx_documents_category ON documents(category);
       CREATE INDEX IF NOT EXISTS idx_documents_created ON documents(created_at);
-
-      CREATE VIRTUAL TABLE IF NOT EXISTS documents_fts USING fts5(
-        id UNINDEXED,
-        title,
-        content,
-        category,
-        content='documents',
-        content_rowid='rowid'
-      );
     `);
+
+    if (forceLexicalFallback) {
+      return false;
+    }
+
+    try {
+      const row = this.db.prepare("SELECT sqlite_compileoption_used('ENABLE_FTS5') AS enabled").get() as
+        { enabled?: number } | undefined;
+      if (Number(row?.enabled) !== 1) {
+        return false;
+      }
+      this.db.exec(`
+        CREATE VIRTUAL TABLE IF NOT EXISTS documents_fts USING fts5(
+          id UNINDEXED,
+          title,
+          content,
+          category,
+          content='documents',
+          content_rowid='rowid'
+        );
+      `);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -228,12 +253,13 @@ export class EosNativeSqliteStore {
       `);
       stmtDoc.run(doc.id, doc.category, doc.title, doc.content, vectorBuffer, metadataJson, createdAt);
 
-      // 2. Synchronize FTS5 virtual table
-      const stmtFts = this.db.prepare(`
-        INSERT INTO documents_fts (id, title, content, category)
-        VALUES (?, ?, ?, ?);
-      `);
-      stmtFts.run(doc.id, doc.title, doc.content, doc.category);
+      if (this.fts5Enabled) {
+        const stmtFts = this.db.prepare(`
+          INSERT INTO documents_fts (id, title, content, category)
+          VALUES (?, ?, ?, ?);
+        `);
+        stmtFts.run(doc.id, doc.title, doc.content, doc.category);
+      }
     });
   }
 
@@ -281,6 +307,10 @@ export class EosNativeSqliteStore {
     const sanitized = query.replace(/[^\w\s-]/g, " ").trim();
     if (!sanitized) return [];
 
+    if (!this.fts5Enabled) {
+      return this.searchLexicalFallback(sanitized, limit);
+    }
+
     const stmt = this.db.prepare(`
       SELECT id, title, content, category, rank
       FROM documents_fts
@@ -295,6 +325,44 @@ export class EosNativeSqliteStore {
       title: String(r.title),
       content: String(r.content),
       category: String(r.category),
+      rank: index + 1,
+    }));
+  }
+
+  /**
+   * Token-rank lexical search for node:sqlite builds without the FTS5 module.
+   * Title hits weigh more than body hits. Ties break by document id.
+   */
+  private searchLexicalFallback(sanitized: string, limit: number): SqliteFtsSearchResult[] {
+    const tokens = sanitized
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((token) => token.length > 0);
+    if (tokens.length === 0) return [];
+
+    const rows = this.db.prepare("SELECT id, title, content, category FROM documents;").all() as Array<
+      Record<string, unknown>
+    >;
+
+    const scored = rows
+      .map((row) => {
+        const title = String(row.title).toLowerCase();
+        const content = String(row.content).toLowerCase();
+        let score = 0;
+        for (const token of tokens) {
+          if (title.includes(token)) score += 3;
+          if (content.includes(token)) score += 1;
+        }
+        return { row, score };
+      })
+      .filter((entry) => entry.score > 0)
+      .sort((a, b) => b.score - a.score || String(a.row.id).localeCompare(String(b.row.id)));
+
+    return scored.slice(0, limit).map((entry, index) => ({
+      id: String(entry.row.id),
+      title: String(entry.row.title),
+      content: String(entry.row.content),
+      category: String(entry.row.category),
       rank: index + 1,
     }));
   }
@@ -431,7 +499,7 @@ export class EosNativeSqliteStore {
       journalMode,
       synchronous,
       totalDocuments: countRow ? Number(countRow.cnt) : 0,
-      fts5Enabled: true,
+      fts5Enabled: this.fts5Enabled,
       vectorIndexedCount: vecRow ? Number(vecRow.cnt) : 0,
       categories,
     };
