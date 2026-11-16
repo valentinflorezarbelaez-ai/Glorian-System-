@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 287,
-  "catalogSha256": "d606293cd18a764bed93e1801c40000ed480e28cb10566651c9033c9a1050b42",
+  "totalSpecs": 288,
+  "catalogSha256": "7d43a895ae31e542e5edcbe2d2083b3efc099d9ef8298bf75e4f5bae1dee1e81",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2585,6 +2585,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-287-NATIVE-SQLITE-VECTOR-STORAGE.md",
       "sha256": "3b9014a1e2d091e11110fce82a13e5b63f8aef7dd9407adcd6ae7ee31628dbfe"
+    },
+    {
+      "id": "SPEC-288",
+      "title": "Pure REST Kubernetes Client via Native node:https",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-288-NATIVE-KUBERNETES-CLIENT.md",
+      "sha256": "8083c6222fd6ca13dace9466c764b46b3ad90246c8832f592b2f344268fa72a3"
     }
   ]
 }

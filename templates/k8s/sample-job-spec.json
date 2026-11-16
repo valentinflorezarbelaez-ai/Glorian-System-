@@ -1,0 +1,50 @@
+{
+  "apiVersion": "batch/v1",
+  "kind": "Job",
+  "metadata": {
+    "name": "glorian-agent-verification",
+    "namespace": "default",
+    "labels": {
+      "app.kubernetes.io/name": "glorian-agent-job",
+      "app.kubernetes.io/managed-by": "glorian-system",
+      "glorian.io/spec-id": "SPEC-288"
+    }
+  },
+  "spec": {
+    "backoffLimit": 3,
+    "activeDeadlineSeconds": 600,
+    "ttlSecondsAfterFinished": 300,
+    "template": {
+      "metadata": {
+        "labels": {
+          "app.kubernetes.io/name": "glorian-agent-job",
+          "glorian.io/workload": "verification"
+        }
+      },
+      "spec": {
+        "restartPolicy": "Never",
+        "containers": [
+          {
+            "name": "verifier",
+            "image": "node:22-alpine",
+            "command": [
+              "node",
+              "-e",
+              "console.log('GLORIAN_AGENT_VERIFICATION_PASS'); process.exit(0);"
+            ],
+            "resources": {
+              "limits": {
+                "cpu": "500m",
+                "memory": "512Mi"
+              },
+              "requests": {
+                "cpu": "100m",
+                "memory": "128Mi"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

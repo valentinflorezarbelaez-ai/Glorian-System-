@@ -773,5 +773,8 @@ export async function handleDevOpsCommands(commandContext) {
   if (commandContext.command.startsWith("toolchain:sqlite:")) {
     return (await import("./cliSqliteStore.mjs")).handleSqliteCommands(commandContext);
   }
+  if (commandContext.command.startsWith("toolchain:k8s:")) {
+    return (await import("./cliK8sNative.mjs")).handleK8sNativeCommands(commandContext);
+  }
   return false;
 }

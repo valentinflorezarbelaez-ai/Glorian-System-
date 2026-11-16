@@ -59,6 +59,9 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:sqlite:audit [--json] Auditoría criptográfica de almacenamiento embebido SQLite y FTS5 (SPEC-287)
   eos toolchain:sqlite:query [--q=T] Búsqueda léxica FTS5 tokenizada con ranking BM25 (SPEC-287)
   eos toolchain:sqlite:vector [--json] Búsqueda de vecinos más cercanos k-NN con vectores BLOB cuantizados (SPEC-287)
+  eos toolchain:k8s:audit [--json] Auditoría del plano de control Kubernetes REST y emisión de recibo (SPEC-288)
+  eos toolchain:k8s:pods [--namespace=N] [--json] Listado e inspección de pods con aislamiento de espacio (SPEC-288)
+  eos toolchain:k8s:job [--spec=F] [--json] Despacho y sondeo de tareas por lotes efímeras batch/v1 (SPEC-288)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -276,6 +279,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:sqlite:audit [--json] Auditoría criptográfica de almacenamiento embebido SQLite y FTS5 (SPEC-287)
   eos toolchain:sqlite:query [--q=T] Búsqueda léxica FTS5 tokenizada con ranking BM25 (SPEC-287)
   eos toolchain:sqlite:vector [--json] Búsqueda de vecinos más cercanos k-NN con vectores BLOB cuantizados (SPEC-287)
+  eos toolchain:k8s:audit [--json] Auditoría del plano de control Kubernetes REST y emisión de recibo (SPEC-288)
+  eos toolchain:k8s:pods [--namespace=N] [--json] Listado e inspección de pods con aislamiento de espacio (SPEC-288)
+  eos toolchain:k8s:job [--spec=F] [--json] Despacho y sondeo de tareas por lotes efímeras batch/v1 (SPEC-288)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

@@ -745,3 +745,4 @@ export * from "./eosDistributedLockGovernor.ts";
 export * from "./eosDeadlockDetectionGovernor.ts";
 export * from "./eosRateLimitingGovernor.ts";
 export * from "./eosNativeSqliteStore.ts";
+export * from "./eosKubernetesNativeClient.ts";

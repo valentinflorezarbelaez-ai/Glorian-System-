@@ -2477,3 +2477,16 @@
   - `docs/plans/PLAN-149-NATIVE-SQLITE-VECTOR-STORAGE.md`
   - `docs/tasks/TASKS-149-NATIVE-SQLITE-VECTOR-STORAGE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-NATIVE-KUBERNETES-CLIENT
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-150` (`SPEC-288`), Phase 1.2 Pure REST Kubernetes Client via Native `node:https`: `src/core/eosKubernetesNativeClient.ts` with in-cluster credential resolution (`/var/run/secrets/kubernetes.io/serviceaccount/`), custom `https.Agent` with CA certificate trust, Pod lifecycle endpoints (`listPods`, `getPod`, `deletePod`), Batch Job orchestration (`createJob`, `getJobStatus`, `deleteJob`), high-fidelity in-memory deterministic simulation mode for air-gapped environments, and cryptographic receipt emission at `docs/evidence/K8S_NATIVE_RECEIPT.json`. Wire subcommands `toolchain:k8s:audit`, `toolchain:k8s:pods`, `toolchain:k8s:job` in `bin/commands/cliK8sNative.mjs` and `bin/commands/cliDevOps.mjs`. Verify BDD-1503..BDD-1508.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-150-NATIVE-KUBERNETES-CLIENT.md`
+  - `openspec/changes/CHANGE-150-native-kubernetes-client.md`
+  - `openspec/specs/SPEC-288-NATIVE-KUBERNETES-CLIENT.md`
+  - `docs/plans/PLAN-150-NATIVE-KUBERNETES-CLIENT.md`
+  - `docs/tasks/TASKS-150-NATIVE-KUBERNETES-CLIENT.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
