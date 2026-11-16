@@ -726,62 +726,8 @@ export async function handleDevOpsCommands(commandContext) {
     await handler(commandContext);
     return true;
   }
-  if (commandContext.command.startsWith("toolchain:helm:")) {
-    return (await import("./cliHelm.mjs")).handleHelmCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:tf:")) {
-    return (await import("./cliTerraform.mjs")).handleTerraformCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:db:")) {
-    return (await import("./cliDatabase.mjs")).handleDatabaseCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:otel:")) {
-    return (await import("./cliOtelGateway.mjs")).handleOtelCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:chaos:")) {
-    return (await import("./cliChaos.mjs")).handleChaosCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:canary:")) {
-    return (await import("./cliCanaryEval.mjs")).handleCanaryCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:events:")) {
-    return (await import("./cliEventStore.mjs")).handleEventStoreCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:merkle:")) {
-    return (await import("./cliMerkleSnapshot.mjs")).handleMerkleCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:vector:")) {
-    return (await import("./cliVectorIndex.mjs")).handleVectorCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:lock:")) {
-    return (await import("./cliDistributedLock.mjs")).handleLockCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:deadlock:")) {
-    return (await import("./cliDeadlock.mjs")).handleDeadlockCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:ratelimit:")) {
-    return (await import("./cliRateLimit.mjs")).handleRateLimitCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:sqlite:")) {
-    return (await import("./cliSqliteStore.mjs")).handleSqliteCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:k8s:")) {
-    return (await import("./cliK8sNative.mjs")).handleK8sNativeCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:dst:")) {
-    return (await import("./cliDstEngine.mjs")).handleDstCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:ast:")) {
-    return (await import("./cliAstEngine.mjs")).handleAstCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:sapfix:")) {
-    return (await import("./cliSapFix.mjs")).handleSapFixCommands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:z3:")) {
-    return (await import("./cliZ3Prover.mjs")).handleZ3Commands(commandContext);
-  }
-  if (commandContext.command.startsWith("toolchain:slsa:")) {
-    return (await import("./cliSlsaGovernor.mjs")).handleSlsaCommands(commandContext);
+  if (commandContext.command.startsWith("toolchain:")) {
+    return (await import("./cliToolchainRouter.mjs")).handleToolchainCommands(commandContext);
   }
   return false;
 }

@@ -2555,3 +2555,16 @@
   - `docs/plans/PLAN-155-SLSA-PROVENANCE-SBOM.md`
   - `docs/tasks/TASKS-155-SLSA-PROVENANCE-SBOM.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-DURABLE-EXECUTION-ENGINE
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-156` (`SPEC-294`), Phase 2.4 Event-Sourced Durable Execution Engine (Temporal Model over SQLite/Kafka): `src/core/eosDurableExecutionEngine.types.ts` and `src/core/eosDurableExecutionEngine.ts` with append-only event sourcing in SQLite/WAL, deterministic replay without side effects, Saga pattern reverse compensation on failure, durable pause and multi-process resumption, native HTTP sidecar outbox emitter for Kafka/Dapr, and cryptographic receipt emission at `docs/evidence/DURABLE_EXECUTION_RECEIPT.json`. Wire subcommands `toolchain:durable:start`, `toolchain:durable:resume`, `toolchain:durable:replay`, `toolchain:durable:audit` in `bin/commands/cliDurableEngine.mjs` and `bin/commands/cliDevOps.mjs`. Verify BDD-1539..BDD-1544.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-156-DURABLE-EXECUTION-ENGINE.md`
+  - `openspec/changes/CHANGE-156-durable-execution-engine.md`
+  - `openspec/specs/SPEC-294-DURABLE-EXECUTION-ENGINE.md`
+  - `docs/plans/PLAN-156-DURABLE-EXECUTION-ENGINE.md`
+  - `docs/tasks/TASKS-156-DURABLE-EXECUTION-ENGINE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

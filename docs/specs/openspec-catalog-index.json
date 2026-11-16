@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 293,
-  "catalogSha256": "7e0203d7d05d2d91d62c6d9ca913af2baf19bea31f7ac49995c46f4324e1d3a5",
+  "totalSpecs": 294,
+  "catalogSha256": "6d4154bcfc746afc56a0463242cdfe4591f69a3d46a9012a3f802f56b6b14008",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2639,6 +2639,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-293-SLSA-PROVENANCE-SBOM.md",
       "sha256": "62f4d2aa419adb2303a45b06acfb3242b6353a564e9098ec73245b41237037d3"
+    },
+    {
+      "id": "SPEC-294",
+      "title": "Event-Sourced Durable Execution Engine (Temporal Model)",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-294-DURABLE-EXECUTION-ENGINE.md",
+      "sha256": "a725ee9f51976f0028b7e70c543fff786e9f308524683601630d0429eca84bee"
     }
   ]
 }
