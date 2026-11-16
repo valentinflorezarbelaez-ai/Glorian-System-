@@ -599,7 +599,12 @@ const apiEndpoints = [
   ),
   { file: "api/kernel.js", query: { module: "specs" } },
   { file: "api/kernel.js", query: { module: "metrics" } },
-  { file: "api/jarvis.js", method: "POST", body: { directive: "status check" } },
+  {
+    file: "api/jarvis.js",
+    method: "POST",
+    headers: { "idempotency-key": "stage6-jarvis-smoke-001" },
+    body: { directive: "status check" },
+  },
   ...["api/health.js", "api/graph.js", "api/eval.js", "api/spotify.js"].map((file) => ({ file })),
   {
     file: "api/mcp.js",
