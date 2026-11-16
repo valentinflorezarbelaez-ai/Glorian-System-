@@ -50,9 +50,24 @@ npm run fleet:cwv-static
 | 7   | Bounded scale proof          | `docs/evidence/BOUNDED_SCALE_PROOF_RECEIPT.json`   |
 | 8   | SBOM                         | `docs/evidence/sbom.cdx.json`                      |
 | 9   | Freeze gate                  | `docs/releases/EOS_FREEZE_GATE_STATUS.md`          |
+| 10  | Provenance HEAD bind         | `docs/evidence/provenance.intoto.jsonl`            |
+| 11  | Fleet production SLO         | `docs/evidence/FLEET_PRODUCTION_SLO_RECEIPT.json`  |
+| 12  | Soundcheck dual attestation  | `docs/assurance/SOUNDCHECK_DUAL_ATTESTATION.md`    |
+| 13  | ATO-lite NIST packet         | `docs/assurance/ATO_LITE_NIST.md`                  |
+| 14  | Incident honesty ledger      | `docs/evidence/INCIDENT_LEDGER.jsonl`              |
+
+### Additional mandatory commands (2026-11-16 remediations)
+
+```bash
+node scripts/verify-supply-chain.mjs   # provenance commitSha MUST equal git rev-parse HEAD
+npm run fleet:dogfood
+npm run fleet:slo
+npm run incident:drill
+```
 
 ## Anti-self-certification rules
 
 - Do not accept MCP narrative alone as accreditation.
 - Require independent re-run of gates above with captured stdout.
 - Any claim of `NSA_GRADE` / `AEROSPACE_CERTIFIED` / federal ATO without external letter is **REJECT**.
+- Soundcheck 100 alone is **INTERNAL_SOUNDCHECK** until `SOUNDCHECK_DUAL_ATTESTATION.md` is satisfied.

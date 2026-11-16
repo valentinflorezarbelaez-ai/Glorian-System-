@@ -1,14 +1,14 @@
 {
-  "measuredAt": "2026-11-16T21:16:36.293Z",
+  "measuredAt": "2026-11-16T21:39:16.387Z",
   "windowDays": 30,
   "deploymentFrequency": {
-    "commitsInWindow": 562,
-    "perDay": "18.73",
+    "commitsInWindow": 566,
+    "perDay": "18.87",
     "rating": "ELITE",
     "eliteThreshold": "1+ deploys/day"
   },
   "leadTimeForChanges": {
-    "verifiedReceipts": 53,
+    "verifiedReceipts": 54,
     "github": {
       "averageHours": 0.34,
       "sampleSize": 20,
@@ -19,16 +19,16 @@
     "eliteThreshold": "< 1 day"
   },
   "changeFailureRate": {
-    "incidents": 0,
-    "deploysInWindow": 562,
-    "percent": "0.00%",
+    "incidents": 1,
+    "deploysInWindow": 566,
+    "percent": "0.18%",
     "rating": "ELITE",
     "eliteThreshold": "≤ 5%"
   },
   "mttr": {
-    "incidentReports": 0,
-    "value": "No incidents recorded",
-    "rating": "ELITE",
+    "incidentReports": 1,
+    "value": "1 incident(s) — review docs/postmortems/",
+    "rating": "HIGH",
     "eliteThreshold": "< 1 hour"
   },
   "acaLive": {
@@ -39,6 +39,6 @@
     "generatedAt": "2026-11-15T00:22:22.602Z",
     "sha256Receipt": "2792ccf7049af49791de960046bfa58aa589c529878d3e3a29458802e177ec52"
   },
-  "overallRating": "ELITE",
-  "sha256": "d78d704dd1ff0ffa78fe5e7e16f25b7be9a6707a79d3706b410d5dcc67c8021c"
+  "overallRating": "HIGH",
+  "sha256": "8844c3983f2b4af2f0920f82865c88540a400e98f7048decd734c574ad15ded7"
 }

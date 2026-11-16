@@ -31,4 +31,14 @@ Epistemic label until exit criteria: `WONT_FIX_UNTIL_2026-12-15` (not `VERIFIED`
 
 - Tracking issue: [#628](https://github.com/valentinflorezarbelaez-ai/Glorian-System-/issues/628) — OPEN through revisit date.
 - Non-major Dependabot PRs held (7-stage SecDevOps FAIL on Node 22/23 matrix): `#637` (dev-deps group), `#638` (github-actions group). Do not merge until 7-stage is green.
-- Majors remain closed under won’t-fix; no migration branch opened yet — start `deps/eslint10-types-node26` after 2026-12-01 with exit criteria above.
+- Majors remain closed under won’t-fix.
+
+### Migration branch checklist (open on/after 2026-12-01)
+
+Branch name: `deps/eslint10-types-node26`
+
+1. Enable ESLint flat-config migration on Node 22 + 24 CI matrix only.
+2. Bump `eslint` / `@eslint/js` / `eslint-plugin-n` together; keep Layer-0 `dependencies: {}`.
+3. Bump `@types/node` to 26 only after engines declaration still matches Node 24 LTS reality.
+4. Gates: `npm run verify:strict` + 7-stage SecDevOps green on ubuntu/windows × Node 22/24.
+5. Close #628 with receipt links; lift won’t-fix window in this file.

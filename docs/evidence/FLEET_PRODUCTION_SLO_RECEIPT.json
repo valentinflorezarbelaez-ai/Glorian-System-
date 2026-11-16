@@ -1,0 +1,140 @@
+{
+  "epistemicState": "SYNTHETIC_EDGE_PROBE_WITHIN_TESTED_SCOPE",
+  "claimsDenied": [
+    "browser RUM",
+    "CrUX field data",
+    "multi-region SRE",
+    "Level-5",
+    "FEDERAL_ATO"
+  ],
+  "measuredAt": "2026-11-16T21:39:14.661Z",
+  "availabilitySlo": 0.999,
+  "ttfbBudgetMs": 1500,
+  "services": [
+    {
+      "serviceId": "aberamentho",
+      "productionUrlHost": "aberamentosprelomamusic.vercel.app",
+      "probes": 3,
+      "errors": 0,
+      "availability": 1,
+      "ttfbP50Ms": 109,
+      "ttfbBudgetMs": 1500,
+      "errorBudgetRemainingPct": 100,
+      "healthState": "NOMINAL_HEALTHY",
+      "isDeploymentFrozen": false,
+      "samplePolicy": "SMALL_N_SOFT"
+    },
+    {
+      "serviceId": "atp-strength",
+      "productionUrlHost": "atp-strength.vercel.app",
+      "probes": 3,
+      "errors": 0,
+      "availability": 1,
+      "ttfbP50Ms": 119,
+      "ttfbBudgetMs": 1500,
+      "errorBudgetRemainingPct": 100,
+      "healthState": "NOMINAL_HEALTHY",
+      "isDeploymentFrozen": false,
+      "samplePolicy": "SMALL_N_SOFT"
+    },
+    {
+      "serviceId": "biblioteca-gnostica-1",
+      "productionUrlHost": "biblioteca-gnostica.vercel.app",
+      "probes": 3,
+      "errors": 0,
+      "availability": 1,
+      "ttfbP50Ms": 124,
+      "ttfbBudgetMs": 1500,
+      "errorBudgetRemainingPct": 100,
+      "healthState": "NOMINAL_HEALTHY",
+      "isDeploymentFrozen": false,
+      "samplePolicy": "SMALL_N_SOFT"
+    },
+    {
+      "serviceId": "control-de-asistencia-abopack",
+      "productionUrlHost": "avo-pack.vercel.app",
+      "probes": 3,
+      "errors": 0,
+      "availability": 1,
+      "ttfbP50Ms": 112,
+      "ttfbBudgetMs": 1500,
+      "errorBudgetRemainingPct": 100,
+      "healthState": "NOMINAL_HEALTHY",
+      "isDeploymentFrozen": false,
+      "samplePolicy": "SMALL_N_SOFT"
+    },
+    {
+      "serviceId": "crud-slack",
+      "productionUrlHost": "crud-slack.vercel.app",
+      "probes": 3,
+      "errors": 0,
+      "availability": 1,
+      "ttfbP50Ms": 118,
+      "ttfbBudgetMs": 1500,
+      "errorBudgetRemainingPct": 100,
+      "healthState": "NOMINAL_HEALTHY",
+      "isDeploymentFrozen": false,
+      "samplePolicy": "SMALL_N_SOFT"
+    },
+    {
+      "serviceId": "donaciones",
+      "productionUrlHost": "donaciones-drab.vercel.app",
+      "probes": 3,
+      "errors": 0,
+      "availability": 1,
+      "ttfbP50Ms": 109,
+      "ttfbBudgetMs": 1500,
+      "errorBudgetRemainingPct": 100,
+      "healthState": "NOMINAL_HEALTHY",
+      "isDeploymentFrozen": false,
+      "samplePolicy": "SMALL_N_SOFT"
+    },
+    {
+      "serviceId": "eos-system",
+      "productionUrlHost": "glorian-system.vercel.app",
+      "probes": 3,
+      "errors": 0,
+      "availability": 1,
+      "ttfbP50Ms": 125,
+      "ttfbBudgetMs": 1500,
+      "errorBudgetRemainingPct": 100,
+      "healthState": "NOMINAL_HEALTHY",
+      "isDeploymentFrozen": false,
+      "samplePolicy": "SMALL_N_SOFT"
+    },
+    {
+      "serviceId": "performance-talent-group",
+      "productionUrlHost": "ptg-performance-talent-group.vercel.app",
+      "probes": 3,
+      "errors": 0,
+      "availability": 1,
+      "ttfbP50Ms": 105,
+      "ttfbBudgetMs": 1500,
+      "errorBudgetRemainingPct": 100,
+      "healthState": "NOMINAL_HEALTHY",
+      "isDeploymentFrozen": false,
+      "samplePolicy": "SMALL_N_SOFT"
+    },
+    {
+      "serviceId": "portafolio",
+      "productionUrlHost": "portafolio-valentin.vercel.app",
+      "probes": 3,
+      "errors": 0,
+      "availability": 1,
+      "ttfbP50Ms": 122,
+      "ttfbBudgetMs": 1500,
+      "errorBudgetRemainingPct": 100,
+      "healthState": "NOMINAL_HEALTHY",
+      "isDeploymentFrozen": false,
+      "samplePolicy": "SMALL_N_SOFT"
+    }
+  ],
+  "metrics": {
+    "targets": 9,
+    "nominal": 9,
+    "degraded": 0,
+    "frozen": 0,
+    "allOk": true
+  },
+  "sha256": "869872268e6d3d28e7c50aa83fafdf2f4b110e42e979bfe7c0e4a3641c498b1b"
+}

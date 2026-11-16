@@ -1,14 +1,37 @@
 # External IV&V Execution Receipt — Independent Verifier Lane
 
-<!-- Epistemic: independent agent re-ran packet; supply-chain CLI restored; owner letter seals PRODUCTION_READY -->
+<!-- Epistemic: OPEN_SEAT_FOR_HUMAN_VERIFIER · prior agent lane is historical only · builder ≠ verifier -->
 
-## Packet
+## Open seat (required for EXTERNAL_SOUNDCHECK_OK)
+
+| Field            | Value                                                            |
+| ---------------- | ---------------------------------------------------------------- |
+| Status           | **WAITING_HUMAN_OR_ORG_VERIFIER**                                |
+| Tip to re-attest | current `main` after Big Tech remediation wave                   |
+| Packet           | `docs/assurance/EXTERNAL_IVV_AUDITOR_PACKET.md`                  |
+| Dual Soundcheck  | `docs/assurance/SOUNDCHECK_DUAL_ATTESTATION.md`                  |
+| ATO-lite         | `docs/assurance/ATO_LITE_NIST.md`                                |
+| Pen-test         | Not yet filed — scope MCP + fleet production URLs when scheduled |
+
+Until a named human/org completes the packet against the tip SHA and signs below, public claims remain `WITHIN_TESTED_SCOPE` / `INTERNAL_SOUNDCHECK` only.
+
+### Sign-off block (fill by external verifier)
+
+- Verifier name / org:
+- Date (UTC):
+- Tip SHA verified:
+- Soundcheck dual attestation: PASS / FAIL
+- Notes:
+
+---
+
+## Historical packet (2026-11-10 agent lane — not a human ATO)
 
 - Binder: `docs/assurance/EXTERNAL_IVV_AUDITOR_PACKET.md`
 - Date opened: 2026-11-10
 - Verifier re-run (UTC): 2026-11-10T13:07–13:18Z (initial) + 13:25Z (gate 4 revalidation)
 - Verifier SHA (under test): `68743456debc3c8e436e44398396b074881d548b` (+ supply-chain CLI fix on follow-up commit)
-- Verifier identity: independent agent (IV&V lane; builder ≠ verifier)
+- Verifier identity: independent agent (IV&V lane; builder ≠ verifier) — **does not satisfy human dual attestation**
 - Truncated stdout: `docs/evidence/EXTERNAL_IVV_VERIFIER_STDOUT.md`
 
 ## Mandatory gates (verifier re-execution)

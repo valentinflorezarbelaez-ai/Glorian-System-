@@ -79,6 +79,32 @@ function readTipSealCommit(projectRoot: string): string | null {
   }
 }
 
+/** Read git HEAD SHA via filesystem only (no child_process; Layer-0 probe hygiene). */
+function readGitHeadSha(projectRoot: string): string | null {
+  try {
+    const headPath = path.join(projectRoot, ".git", "HEAD");
+    if (!fs.existsSync(headPath)) return null;
+    const head = fs.readFileSync(headPath, "utf8").trim();
+    if (/^[0-9a-f]{40}$/i.test(head)) return head.toLowerCase();
+    if (!head.startsWith("ref: ")) return null;
+    const ref = head.slice(5).trim();
+    const refPath = path.join(projectRoot, ".git", ...ref.split("/"));
+    if (fs.existsSync(refPath)) {
+      return fs.readFileSync(refPath, "utf8").trim().toLowerCase();
+    }
+    const packed = path.join(projectRoot, ".git", "packed-refs");
+    if (!fs.existsSync(packed)) return null;
+    for (const line of fs.readFileSync(packed, "utf8").split(/\r?\n/)) {
+      if (!line || line.startsWith("#") || line.startsWith("^")) continue;
+      const [sha, name] = line.split(/\s+/);
+      if (name === ref && sha && /^[0-9a-f]{40}$/i.test(sha)) return sha.toLowerCase();
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Runs bounded local control-plane health probes (no network).
  */
@@ -132,10 +158,25 @@ export function runControlPlaneHealthProbes(projectRoot: string = process.cwd())
       }
     }),
     timedProbe("TIP_SEAL_PIN", () => {
-      const ok = typeof tipSealCommitSha === "string" && tipSealCommitSha.length >= 7;
+      if (typeof tipSealCommitSha !== "string" || tipSealCommitSha.length < 7) {
+        return { ok: false, detail: "tip-seal commitSha missing in provenance" };
+      }
+      const headSha = readGitHeadSha(root);
+      if (!headSha) {
+        return {
+          ok: true,
+          detail: `commitSha=${tipSealCommitSha.slice(0, 12)}… (git HEAD unread; presence-only)`,
+        };
+      }
+      const bound =
+        tipSealCommitSha.toLowerCase() === headSha ||
+        headSha.startsWith(tipSealCommitSha.toLowerCase()) ||
+        tipSealCommitSha.toLowerCase().startsWith(headSha.slice(0, 12));
       return {
-        ok,
-        detail: ok ? `commitSha=${tipSealCommitSha!.slice(0, 12)}…` : "tip-seal commitSha missing in provenance",
+        ok: bound,
+        detail: bound
+          ? `commitSha=${tipSealCommitSha.slice(0, 12)}… bound to HEAD`
+          : `provenance ${tipSealCommitSha.slice(0, 12)}≠HEAD ${headSha.slice(0, 12)} — run node scripts/verify-supply-chain.mjs`,
       };
     }),
   ];

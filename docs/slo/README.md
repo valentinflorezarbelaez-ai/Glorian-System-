@@ -53,9 +53,18 @@ The `eosSLOErrorBudgetGovernor.ts` module (Layer-0, zero deps) implements:
 - SHA-256 receipt for every SLO evaluation
 - Append-only SQLite WAL ledger for audit trail
 
+## Fleet customer-facing edge SLO (synthetic)
+
+Run `npm run fleet:slo` to probe every registered `productionUrl` for availability + TTFB and seal
+`docs/evidence/FLEET_PRODUCTION_SLO_RECEIPT.json`.
+
+Epistemic label: `SYNTHETIC_EDGE_PROBE_WITHIN_TESTED_SCOPE` — **not** browser RUM / CrUX field data.
+Catalog freeze (`docs/governance/CATALOG_FREEZE.md`) requires this receipt green before new OpenSpec ids after SPEC-308.
+
 ## Related
 
 - Module: `src/core/eosSLOErrorBudgetGovernor.ts`
 - Spec: `openspec/specs/SPEC-145.md`
 - Tests: `test/eosSLOErrorBudgetGovernor.test.mjs`
 - State: `.eos/slo-events.jsonl`
+- Fleet edge probe: `scripts/fleet-production-slo.mjs`

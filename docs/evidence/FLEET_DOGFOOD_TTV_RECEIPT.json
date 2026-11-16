@@ -1,6 +1,6 @@
 {
   "epistemicState": "FLEET_DOGFOOD_TTV_WITHIN_TESTED_SCOPE",
-  "generatedAt": "2026-11-10T00:34:26.720Z",
+  "generatedAt": "2026-11-16T21:38:15.616Z",
   "catalogFreeze": {
     "active": false,
     "rule": "No new OpenSpec ids after 185 until fleet dogfood has >=1 AVAILABLE sibling and this receipt stays green.",
@@ -90,16 +90,16 @@
     {
       "id": "CONTROL_PLANE_PRODUCT_FACTORY",
       "ok": true,
-      "durationMs": 32.49,
+      "durationMs": 14.82,
       "status": "SUCCESS",
-      "sha256Receipt": "dcb01e01e9b5286869f1afdd7a76af5c5b3ce3fff6ad39594715df52ff72a391"
+      "sha256Receipt": "a7d058b68a830d7496e14581a15f384aac6b4be7df520f677772ec3b0e15a4ed"
     },
     {
       "id": "FLOW_INSPECT:aberamentho",
       "ok": true,
       "skipped": false,
       "status": "SUCCESS",
-      "durationMs": 1162,
+      "durationMs": 1592,
       "path": "Aberamentho-s-Pleroma-music",
       "exitCode": 0
     },
@@ -108,7 +108,7 @@
       "ok": true,
       "skipped": false,
       "status": "SUCCESS",
-      "durationMs": 791,
+      "durationMs": 1328,
       "path": "ATP-STRENGTH-1",
       "exitCode": 0
     },
@@ -117,7 +117,7 @@
       "ok": true,
       "skipped": false,
       "status": "SUCCESS",
-      "durationMs": 842,
+      "durationMs": 1961,
       "path": "Biblioteca-gnostica-1",
       "exitCode": 0
     },
@@ -126,7 +126,7 @@
       "ok": true,
       "skipped": false,
       "status": "SUCCESS",
-      "durationMs": 609,
+      "durationMs": 928,
       "path": "Control-De-Asistencia-Abopack",
       "exitCode": 0
     },
@@ -135,7 +135,7 @@
       "ok": true,
       "skipped": false,
       "status": "SUCCESS",
-      "durationMs": 774,
+      "durationMs": 1210,
       "path": "Crud-slack",
       "exitCode": 0
     },
@@ -144,7 +144,7 @@
       "ok": true,
       "skipped": false,
       "status": "SUCCESS",
-      "durationMs": 1385,
+      "durationMs": 795,
       "path": "Donaciones",
       "exitCode": 0
     },
@@ -153,7 +153,7 @@
       "ok": true,
       "skipped": false,
       "status": "SUCCESS",
-      "durationMs": 935,
+      "durationMs": 883,
       "path": "Glorian-System-",
       "exitCode": 0
     },
@@ -162,7 +162,7 @@
       "ok": true,
       "skipped": false,
       "status": "SUCCESS",
-      "durationMs": 966,
+      "durationMs": 1041,
       "path": "Performance-Talent-Group-1",
       "exitCode": 0
     },
@@ -171,7 +171,7 @@
       "ok": true,
       "skipped": false,
       "status": "SUCCESS",
-      "durationMs": 906,
+      "durationMs": 1510,
       "path": "portafolio",
       "exitCode": 0
     }
@@ -179,11 +179,11 @@
   "metrics": {
     "pathCount": 10,
     "allOk": true,
-    "totalDurationMs": 8402.49,
-    "maxPathDurationMs": 1385,
+    "totalDurationMs": 11262.82,
+    "maxPathDurationMs": 1961,
     "p99BudgetMs": 180000,
     "withinBudget": true,
     "siblingDogfoodReady": true
   },
-  "sha256Receipt": "fc0bc7b3335baa9af6bc61e192ef754aa966012505bb33d2d06e8947acc99033"
+  "sha256Receipt": "c4a0e0be190302e0db4315d5031f5561cfd7c36a6938ff6025537790e0722b12"
 }
