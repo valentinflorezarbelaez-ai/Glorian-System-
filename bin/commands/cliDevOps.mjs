@@ -776,5 +776,8 @@ export async function handleDevOpsCommands(commandContext) {
   if (commandContext.command.startsWith("toolchain:k8s:")) {
     return (await import("./cliK8sNative.mjs")).handleK8sNativeCommands(commandContext);
   }
+  if (commandContext.command.startsWith("toolchain:dst:")) {
+    return (await import("./cliDstEngine.mjs")).handleDstCommands(commandContext);
+  }
   return false;
 }

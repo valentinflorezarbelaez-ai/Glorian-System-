@@ -1,0 +1,11 @@
+{
+  "timestampIso": "2026-11-16T00:56:59.088Z",
+  "seed": 42,
+  "status": "COMPLETED",
+  "totalStepsExecuted": 144,
+  "virtualTimeElapsedMs": 252,
+  "totalEventsProcessed": 144,
+  "totalFaultsInjected": 100,
+  "executionTraceHash": "98a8cae3a7ac5d7ae00da6b071e90508fc700da61f5c3007dd4869c87aa20153",
+  "sha256Signature": "e358f88e953e46882b4d1f91f7893af22afbf5faf07473dbd5b54ffa31f3c544"
+}

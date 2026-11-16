@@ -62,6 +62,9 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:k8s:audit [--json] Auditoría del plano de control Kubernetes REST y emisión de recibo (SPEC-288)
   eos toolchain:k8s:pods [--namespace=N] [--json] Listado e inspección de pods con aislamiento de espacio (SPEC-288)
   eos toolchain:k8s:job [--spec=F] [--json] Despacho y sondeo de tareas por lotes efímeras batch/v1 (SPEC-288)
+  eos toolchain:dst:run [--seed=S] [--steps=N] [--json] Simulación determinista basada en eventos y fallos (SPEC-289)
+  eos toolchain:dst:fuzz [--seeds=N] [--json] Fuzzing determinista de invariantes explorando múltiples semillas (SPEC-289)
+  eos toolchain:dst:audit [--json] Auditoría criptográfica y emisión de recibo DST (SPEC-289)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -282,6 +285,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:k8s:audit [--json] Auditoría del plano de control Kubernetes REST y emisión de recibo (SPEC-288)
   eos toolchain:k8s:pods [--namespace=N] [--json] Listado e inspección de pods con aislamiento de espacio (SPEC-288)
   eos toolchain:k8s:job [--spec=F] [--json] Despacho y sondeo de tareas por lotes efímeras batch/v1 (SPEC-288)
+  eos toolchain:dst:run [--seed=S] [--steps=N] [--json] Simulación determinista basada en eventos y fallos (SPEC-289)
+  eos toolchain:dst:fuzz [--seeds=N] [--json] Fuzzing determinista de invariantes explorando múltiples semillas (SPEC-289)
+  eos toolchain:dst:audit [--json] Auditoría criptográfica y emisión de recibo DST (SPEC-289)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

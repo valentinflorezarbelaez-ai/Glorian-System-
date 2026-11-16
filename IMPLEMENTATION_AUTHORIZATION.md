@@ -2490,3 +2490,16 @@
   - `docs/plans/PLAN-150-NATIVE-KUBERNETES-CLIENT.md`
   - `docs/tasks/TASKS-150-NATIVE-KUBERNETES-CLIENT.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-DETERMINISTIC-SIMULATION-ENGINE
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-151` (`SPEC-289`), Phase 1.3 FoundationDB / Antithesis-Style Deterministic Simulation Testing (DST) Engine: `src/core/eosDeterministicSimulationEngine.ts` with virtual time progression, SplitMix64/Mulberry32 PRNG entropy, discrete event scheduler queue, synthetic network fault injection (delays, drops, duplicates, partitions), continuous state invariant evaluation gates, bit-for-bit deterministic replay, and cryptographic receipt emission at `docs/evidence/DST_SIMULATION_RECEIPT.json`. Wire subcommands `toolchain:dst:run`, `toolchain:dst:fuzz`, `toolchain:dst:audit` in `bin/commands/cliDstEngine.mjs` and `bin/commands/cliDevOps.mjs`. Verify BDD-1509..BDD-1514.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-151-DETERMINISTIC-SIMULATION-ENGINE.md`
+  - `openspec/changes/CHANGE-151-deterministic-simulation-engine.md`
+  - `openspec/specs/SPEC-289-DETERMINISTIC-SIMULATION-ENGINE.md`
+  - `docs/plans/PLAN-151-DETERMINISTIC-SIMULATION-ENGINE.md`
+  - `docs/tasks/TASKS-151-DETERMINISTIC-SIMULATION-ENGINE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

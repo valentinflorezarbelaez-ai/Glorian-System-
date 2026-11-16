@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 288,
-  "catalogSha256": "7d43a895ae31e542e5edcbe2d2083b3efc099d9ef8298bf75e4f5bae1dee1e81",
+  "totalSpecs": 289,
+  "catalogSha256": "9606f524197c16775e5734f91efa43697c0c53d82cebdb21890d91817a3f51de",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2594,6 +2594,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-288-NATIVE-KUBERNETES-CLIENT.md",
       "sha256": "8083c6222fd6ca13dace9466c764b46b3ad90246c8832f592b2f344268fa72a3"
+    },
+    {
+      "id": "SPEC-289",
+      "title": "FoundationDB / Antithesis-Style Deterministic Simulation Testing (DST) Engine",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-289-DETERMINISTIC-SIMULATION-ENGINE.md",
+      "sha256": "fea15e9785fa65f5c01f6572fe498df941ba85f7bddbacfa181c2d9443fe59cd"
     }
   ]
 }
