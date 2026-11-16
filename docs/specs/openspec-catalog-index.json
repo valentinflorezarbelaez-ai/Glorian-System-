@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 309,
-  "catalogSha256": "414cbcdcbc794ffd0e5d7d35831bba8c09faf1d0f3ee3a0e202d7b36a0b565a0",
+  "totalSpecs": 310,
+  "catalogSha256": "31f642f95f783adeaed3ea40b43fb95450238c366335dfded6de22322ac9c287",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2783,6 +2783,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-309-polyglot-rust-zig-wasm-kernel.md",
       "sha256": "70ff31725eb08dcf7f6100c7767fc0a384a827b76f77d19825ee32acd1e9cc8a"
+    },
+    {
+      "id": "SPEC-310",
+      "title": "WebAssembly SIMD 128-Bit (`v128`) Vectorized Compute, Zero-Copy Ring-Buffer Arena & Elastic Fleet Capacity Engine",
+      "status": "STABLE_AND_ACTIVE",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-310-wasm-simd128-vector-arena.md",
+      "sha256": "f25ff82a67d086dea3bb1643af8b4e5a5893ed3798ae5c695756474531e98ac9"
     }
   ]
 }

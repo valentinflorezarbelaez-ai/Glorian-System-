@@ -141,6 +141,10 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:rustzig:execute [--json] Ejecución de joins CRDT, FNV-1a y ring-buffer en WebAssembly.Memory (SPEC-309)
   eos toolchain:rustzig:benchmark [--json] Benchmark determinista de arena lineal WASM vs arreglo JS (SPEC-309)
   eos toolchain:rustzig:audit [--json] Auditoría integral políglota Rust/Zig WASM y recibo firmado (SPEC-309)
+  eos toolchain:simd:compile [--json] Compilación o síntesis hermética WASM SIMD128 v128 Zig/Rust (SPEC-310)
+  eos toolchain:simd:execute [--json] Ejecución vectorial i32x4.max_s e i32x4.mul sobre memoria alineada 16B (SPEC-310)
+  eos toolchain:simd:arena [--json] Framing zero-copy con paridad v128.xor y capacidad elástica de flota (SPEC-310)
+  eos toolchain:simd:audit [--json] Auditoría integral WebAssembly SIMD128 y recibo criptográfico (SPEC-310)
 
 
 
@@ -443,6 +447,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:rustzig:execute [--json] Ejecución de joins CRDT, FNV-1a y ring-buffer en WebAssembly.Memory (SPEC-309)
   eos toolchain:rustzig:benchmark [--json] Benchmark determinista de arena lineal WASM vs arreglo JS (SPEC-309)
   eos toolchain:rustzig:audit [--json] Auditoría integral políglota Rust/Zig WASM y recibo firmado (SPEC-309)
+  eos toolchain:simd:compile [--json] Compilación o síntesis hermética WASM SIMD128 v128 Zig/Rust (SPEC-310)
+  eos toolchain:simd:execute [--json] Ejecución vectorial i32x4.max_s e i32x4.mul sobre memoria alineada 16B (SPEC-310)
+  eos toolchain:simd:arena [--json] Framing zero-copy con paridad v128.xor y capacidad elástica de flota (SPEC-310)
+  eos toolchain:simd:audit [--json] Auditoría integral WebAssembly SIMD128 y recibo criptográfico (SPEC-310)
 
 
 

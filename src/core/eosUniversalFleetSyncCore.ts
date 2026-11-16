@@ -14,6 +14,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { pureSha256, assertPrecondition, assertPostcondition, deepFreeze } from "./eosKernelPrimitives.ts";
+import { EosWasmSimd128VectorArenaCore } from "./eosWasmSimd128VectorArena.ts";
+import type { ElasticFleetCapacityAssessment } from "./eosWasmSimd128VectorArena.types.ts";
 import type {
   FleetRegistryData,
   FleetProjectRegistryEntry,
@@ -549,5 +551,17 @@ export class EosUniversalFleetSyncCore {
     }
 
     return current[0];
+  }
+
+  /**
+   * Evaluates elastic multi-repository fleet capacity bounds (9..1,000 projects)
+   * backed by SPEC-310 SIMD128 arena sharding telemetry.
+   */
+  public static evaluateElasticFleetCapacity(
+    projectCount: number,
+    minProjects: number = this.EXPECTED_PROJECT_COUNT,
+    maxProjects: number = 1000,
+  ): ElasticFleetCapacityAssessment {
+    return EosWasmSimd128VectorArenaCore.evaluateElasticFleetCapacity(projectCount, minProjects, maxProjects);
   }
 }

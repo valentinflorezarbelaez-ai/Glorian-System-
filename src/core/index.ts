@@ -654,76 +654,20 @@ export type {
   CryogenicJosephsonSfqOptions,
   CryogenicJosephsonSfqAssessment,
 } from "./eosCryogenicJosephsonSfqControlCore.types.ts";
-export {
-  DEFAULT_SUBSEA_DWDM_SHANNON_OPTIONS,
-  EosSubseaCoherentDwdmNonlinearShannonCore,
-  evaluateSubseaCoherentDwdmNonlinearShannon,
-} from "./eosSubseaCoherentDwdmNonlinearShannonCore.ts";
-export type {
-  SubseaDwdmRegime,
-  SubseaDwdmShannonOptions,
-  SubseaDwdmShannonAssessment,
-} from "./eosSubseaCoherentDwdmNonlinearShannonCore.types.ts";
-export {
-  DEFAULT_HYPERSONIC_SCRAMJET_OPTIONS,
-  EosHypersonicAerothermodynamicsScramjetCore,
-  evaluateHypersonicAerothermodynamicsScramjet,
-} from "./eosHypersonicAerothermodynamicsScramjetCore.ts";
-export type {
-  HypersonicScramjetRegime,
-  HypersonicScramjetOptions,
-  HypersonicScramjetAssessment,
-} from "./eosHypersonicAerothermodynamicsScramjetCore.types.ts";
-export {
-  DEFAULT_CBDC_RTGS_GRIDLOCK_OPTIONS,
-  EosCbdcRtgsGridlockResolutionCore,
-  evaluateCbdcRtgsGridlockResolution,
-} from "./eosCbdcRtgsGridlockResolutionCore.ts";
-export type {
-  CbdcRtgsRegime,
-  CbdcRtgsGridlockOptions,
-  CbdcRtgsGridlockAssessment,
-} from "./eosCbdcRtgsGridlockResolutionCore.types.ts";
-export {
-  DEFAULT_OPTICAL_LATTICE_CLOCK_OPTIONS,
-  EosOpticalLatticeAtomicClockRelativisticSyncCore,
-  evaluateOpticalLatticeAtomicClockRelativisticSync,
-} from "./eosOpticalLatticeAtomicClockRelativisticSyncCore.ts";
-export type {
-  OpticalClockRegime,
-  OpticalLatticeClockOptions,
-  OpticalLatticeClockAssessment,
-} from "./eosOpticalLatticeAtomicClockRelativisticSyncCore.types.ts";
-export {
-  DEFAULT_INSAR_DEFORMATION_OPTIONS,
-  EosInterferometricSarDeformationCore,
-  evaluateInterferometricSarDeformation,
-} from "./eosInterferometricSarDeformationCore.ts";
-export type {
-  InSarDeformationRegime,
-  InSarDeformationOptions,
-  InSarDeformationAssessment,
-} from "./eosInterferometricSarDeformationCore.types.ts";
-export {
-  DEFAULT_MPD_THRUSTER_MHD_OPTIONS,
-  EosMagnetoplasmadynamicThrusterMhdCore,
-  evaluateMagnetoplasmadynamicThrusterMhd,
-} from "./eosMagnetoplasmadynamicThrusterMhdCore.ts";
-export type {
-  MpdThrusterRegime,
-  MpdThrusterMhdOptions,
-  MpdThrusterMhdAssessment,
-} from "./eosMagnetoplasmadynamicThrusterMhdCore.types.ts";
-export {
-  DEFAULT_QUANTUM_REPEATER_BBPSSW_OPTIONS,
-  EosQuantumEntanglementRepeaterBbpsswCore,
-  evaluateQuantumEntanglementRepeaterBbpssw,
-} from "./eosQuantumEntanglementRepeaterBbpsswCore.ts";
-export type {
-  QuantumRepeaterRegime,
-  QuantumRepeaterBbpsswOptions,
-  QuantumRepeaterBbpsswAssessment,
-} from "./eosQuantumEntanglementRepeaterBbpsswCore.types.ts";
+export * from "./eosSubseaCoherentDwdmNonlinearShannonCore.ts";
+export * from "./eosSubseaCoherentDwdmNonlinearShannonCore.types.ts";
+export * from "./eosHypersonicAerothermodynamicsScramjetCore.ts";
+export * from "./eosHypersonicAerothermodynamicsScramjetCore.types.ts";
+export * from "./eosCbdcRtgsGridlockResolutionCore.ts";
+export * from "./eosCbdcRtgsGridlockResolutionCore.types.ts";
+export * from "./eosOpticalLatticeAtomicClockRelativisticSyncCore.ts";
+export * from "./eosOpticalLatticeAtomicClockRelativisticSyncCore.types.ts";
+export * from "./eosInterferometricSarDeformationCore.ts";
+export * from "./eosInterferometricSarDeformationCore.types.ts";
+export * from "./eosMagnetoplasmadynamicThrusterMhdCore.ts";
+export * from "./eosMagnetoplasmadynamicThrusterMhdCore.types.ts";
+export * from "./eosQuantumEntanglementRepeaterBbpsswCore.ts";
+export * from "./eosQuantumEntanglementRepeaterBbpsswCore.types.ts";
 export * from "./eosSmartContractBytecodeGasSymbolicVerifierCore.ts";
 export * from "./eosSmartContractBytecodeGasSymbolicVerifierCore.types.ts";
 export * from "./eosToolchainDoctor.ts";
@@ -781,3 +725,5 @@ export * from "./eosCrdtStateReplicator.ts";
 export * from "./eosCrdtStateReplicator.types.ts";
 export * from "./eosPolyglotRustZigWasmKernel.ts";
 export * from "./eosPolyglotRustZigWasmKernel.types.ts";
+export * from "./eosWasmSimd128VectorArena.ts";
+export * from "./eosWasmSimd128VectorArena.types.ts";
