@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 289,
-  "catalogSha256": "9606f524197c16775e5734f91efa43697c0c53d82cebdb21890d91817a3f51de",
+  "totalSpecs": 290,
+  "catalogSha256": "827f0348eb9d51cc701aaee8ad6167ddc37eff7fdaf0b43b5e527ccf253fd33c",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2603,6 +2603,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-289-DETERMINISTIC-SIMULATION-ENGINE.md",
       "sha256": "fea15e9785fa65f5c01f6572fe498df941ba85f7bddbacfa181c2d9443fe59cd"
+    },
+    {
+      "id": "SPEC-290",
+      "title": "High-Speed AST Code Graph with Tree-sitter WebAssembly Engine",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-290-TREE-SITTER-WASM-AST.md",
+      "sha256": "d6ee042fa2cc65e0dbc42388f3ca6cccd102bcb3e4f1fb52d12382efb479f0e5"
     }
   ]
 }

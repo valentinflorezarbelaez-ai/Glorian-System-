@@ -779,5 +779,8 @@ export async function handleDevOpsCommands(commandContext) {
   if (commandContext.command.startsWith("toolchain:dst:")) {
     return (await import("./cliDstEngine.mjs")).handleDstCommands(commandContext);
   }
+  if (commandContext.command.startsWith("toolchain:ast:")) {
+    return (await import("./cliAstEngine.mjs")).handleAstCommands(commandContext);
+  }
   return false;
 }

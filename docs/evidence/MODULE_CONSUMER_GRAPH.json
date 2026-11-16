@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-15T19:41:04.139Z",
-  "totalModules": 440,
-  "consumedModules": 376,
+  "timestampIso": "2026-11-16T01:35:21.891Z",
+  "totalModules": 454,
+  "consumedModules": 390,
   "unconsumedModules": 64,
-  "graphDensity": 0.8545,
+  "graphDensity": 0.859,
   "modules": {
     "EosAin": {
       "file": "src/core/EosAin.ts",
@@ -693,6 +693,18 @@
       "consumerCount": 0,
       "consumers": []
     },
+    "eosBayesianCanaryEvaluator": {
+      "file": "src/core/eosBayesianCanaryEvaluator.ts",
+      "baseName": "eosBayesianCanaryEvaluator",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliCanaryEval.mjs",
+          "category": "bin"
+        }
+      ]
+    },
     "eosBenchmarkTracker": {
       "file": "src/core/eosBenchmarkTracker.ts",
       "baseName": "eosBenchmarkTracker",
@@ -812,6 +824,18 @@
         {
           "consumerPath": "src/mcp/tools/eosMcpPhase7FrontierExt3.ts",
           "category": "mcp"
+        }
+      ]
+    },
+    "eosBitemporalEventStore": {
+      "file": "src/core/eosBitemporalEventStore.ts",
+      "baseName": "eosBitemporalEventStore",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliEventStore.mjs",
+          "category": "bin"
         }
       ]
     },
@@ -963,6 +987,18 @@
       "isConsumed": false,
       "consumerCount": 0,
       "consumers": []
+    },
+    "eosChaosCircuitBreaker": {
+      "file": "src/core/eosChaosCircuitBreaker.ts",
+      "baseName": "eosChaosCircuitBreaker",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliChaos.mjs",
+          "category": "bin"
+        }
+      ]
     },
     "eosCicdPipeline": {
       "file": "src/core/eosCicdPipeline.ts",
@@ -1462,6 +1498,18 @@
       "consumerCount": 0,
       "consumers": []
     },
+    "eosDatabaseMigrationGovernor": {
+      "file": "src/core/eosDatabaseMigrationGovernor.ts",
+      "baseName": "eosDatabaseMigrationGovernor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliDatabase.mjs",
+          "category": "bin"
+        }
+      ]
+    },
     "eosDatalogVerifier": {
       "file": "src/core/eosDatalogVerifier.ts",
       "baseName": "eosDatalogVerifier",
@@ -1483,6 +1531,18 @@
         {
           "consumerPath": "scripts/verify-fast.mjs",
           "category": "scripts"
+        }
+      ]
+    },
+    "eosDeadlockDetectionGovernor": {
+      "file": "src/core/eosDeadlockDetectionGovernor.ts",
+      "baseName": "eosDeadlockDetectionGovernor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliDeadlock.mjs",
+          "category": "bin"
         }
       ]
     },
@@ -1567,6 +1627,18 @@
         }
       ]
     },
+    "eosDeterministicSimulationEngine": {
+      "file": "src/core/eosDeterministicSimulationEngine.ts",
+      "baseName": "eosDeterministicSimulationEngine",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliDstEngine.mjs",
+          "category": "bin"
+        }
+      ]
+    },
     "eosDeterministicSimulator": {
       "file": "src/core/eosDeterministicSimulator.ts",
       "baseName": "eosDeterministicSimulator",
@@ -1630,6 +1702,18 @@
         },
         {
           "consumerPath": "bin/commands/cliFrontier.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosDistributedLockGovernor": {
+      "file": "src/core/eosDistributedLockGovernor.ts",
+      "baseName": "eosDistributedLockGovernor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliDistributedLock.mjs",
           "category": "bin"
         }
       ]
@@ -3268,7 +3352,7 @@
       "file": "src/core/eosKernelPrimitives.ts",
       "baseName": "eosKernelPrimitives",
       "isConsumed": true,
-      "consumerCount": 211,
+      "consumerCount": 212,
       "consumers": [
         {
           "consumerPath": "src/core/eosActiveKernelProcessEnforcer.ts",
@@ -3432,6 +3516,10 @@
         },
         {
           "consumerPath": "src/core/eosDagJobScheduler.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosDatabaseMigrationGovernor.ts",
           "category": "core"
         },
         {
@@ -4195,6 +4283,18 @@
       "consumerCount": 0,
       "consumers": []
     },
+    "eosKubernetesNativeClient": {
+      "file": "src/core/eosKubernetesNativeClient.ts",
+      "baseName": "eosKubernetesNativeClient",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliK8sNative.mjs",
+          "category": "bin"
+        }
+      ]
+    },
     "eosKzgPolynomialCommitmentCore": {
       "file": "src/core/eosKzgPolynomialCommitmentCore.ts",
       "baseName": "eosKzgPolynomialCommitmentCore",
@@ -4674,6 +4774,18 @@
         }
       ]
     },
+    "eosMerkleSnapshotGovernor": {
+      "file": "src/core/eosMerkleSnapshotGovernor.ts",
+      "baseName": "eosMerkleSnapshotGovernor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliMerkleSnapshot.mjs",
+          "category": "bin"
+        }
+      ]
+    },
     "eosMeshTrafficPolicyEngine": {
       "file": "src/core/eosMeshTrafficPolicyEngine.ts",
       "baseName": "eosMeshTrafficPolicyEngine",
@@ -4939,6 +5051,18 @@
       "isConsumed": false,
       "consumerCount": 0,
       "consumers": []
+    },
+    "eosNativeSqliteStore": {
+      "file": "src/core/eosNativeSqliteStore.ts",
+      "baseName": "eosNativeSqliteStore",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliSqliteStore.mjs",
+          "category": "bin"
+        }
+      ]
     },
     "eosNeuralVectorCore": {
       "file": "src/core/eosNeuralVectorCore.ts",
@@ -5278,6 +5402,18 @@
         },
         {
           "consumerPath": "bin/commands/cliPlatform.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosOtlpCollectorGateway": {
+      "file": "src/core/eosOtlpCollectorGateway.ts",
+      "baseName": "eosOtlpCollectorGateway",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliOtelGateway.mjs",
           "category": "bin"
         }
       ]
@@ -5944,6 +6080,18 @@
       "consumers": [
         {
           "consumerPath": "bin/commands/cliPlatform.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosRateLimitingGovernor": {
+      "file": "src/core/eosRateLimitingGovernor.ts",
+      "baseName": "eosRateLimitingGovernor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliRateLimit.mjs",
           "category": "bin"
         }
       ]
@@ -7039,6 +7187,18 @@
         }
       ]
     },
+    "eosTreeSitterWasmEngine": {
+      "file": "src/core/eosTreeSitterWasmEngine.ts",
+      "baseName": "eosTreeSitterWasmEngine",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliAstEngine.mjs",
+          "category": "bin"
+        }
+      ]
+    },
     "eosTrivyScannerAdapter": {
       "file": "src/core/eosTrivyScannerAdapter.ts",
       "baseName": "eosTrivyScannerAdapter",
@@ -7348,6 +7508,18 @@
       "isConsumed": false,
       "consumerCount": 0,
       "consumers": []
+    },
+    "eosVectorQuantizationGovernor": {
+      "file": "src/core/eosVectorQuantizationGovernor.ts",
+      "baseName": "eosVectorQuantizationGovernor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliVectorIndex.mjs",
+          "category": "bin"
+        }
+      ]
     },
     "eosVercelCanaryObservability": {
       "file": "src/core/eosVercelCanaryObservability.ts",

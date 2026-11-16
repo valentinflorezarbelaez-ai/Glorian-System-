@@ -93,6 +93,7 @@ describe("SPEC-273: Toolchain Adapters, OPA Policy Governor & Kind Context Guard
     const benignReport = EosTrivyScannerAdapter.scan(samplePodPath, {
       failClosedOnCritical: true,
       workingDirectory: ROOT,
+      mockRawOutput: { Results: [] },
     });
 
     assert.equal(benignReport.status, "PASS");
@@ -123,6 +124,14 @@ describe("SPEC-273: Toolchain Adapters, OPA Policy Governor & Kind Context Guard
     const normCritical = EosTrivyScannerAdapter.normalizeTrivyResults(criticalMock);
     assert.equal(normCritical.length, 1);
     assert.equal(normCritical[0].severity, "CRITICAL");
+
+    // Verify scan fails closed on critical
+    const criticalReport = EosTrivyScannerAdapter.scan("Dockerfile", {
+      failClosedOnCritical: true,
+      mockRawOutput: criticalMock,
+    });
+    assert.equal(criticalReport.status, "FAIL_CLOSED");
+    assert.equal(criticalReport.criticalCount, 1);
 
     // Verify SARIF conversion maps CRITICAL to error level
     const sarifCritical = EosTrivyScannerAdapter.convertToSarif(normCritical, "Dockerfile");

@@ -2503,3 +2503,16 @@
   - `docs/plans/PLAN-151-DETERMINISTIC-SIMULATION-ENGINE.md`
   - `docs/tasks/TASKS-151-DETERMINISTIC-SIMULATION-ENGINE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-TREE-SITTER-WASM-AST
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-152` (`SPEC-290`), Phase 1.4 High-Speed AST Code Graph with Tree-sitter WebAssembly Engine: `src/core/eosTreeSitterWasmEngine.ts` with zero-dependency polyglot AST parsing (TypeScript, JavaScript, Go, Rust, Python), byte ranges and line spans, symbol table indexing (`getSymbolTable`), incremental AST diffing (`diffAst`), transitive downstream blast radius calculation (`calculateBlastRadius`) with depth and fan-out score, sub-15ms performance benchmark, and cryptographic receipt emission at `docs/evidence/AST_TREE_SITTER_RECEIPT.json`. Wire subcommands `toolchain:ast:parse`, `toolchain:ast:diff`, `toolchain:ast:audit` in `bin/commands/cliAstEngine.mjs` and `bin/commands/cliDevOps.mjs`. Verify BDD-1515..BDD-1520.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-152-TREE-SITTER-WASM-AST.md`
+  - `openspec/changes/CHANGE-152-tree-sitter-wasm-ast.md`
+  - `openspec/specs/SPEC-290-TREE-SITTER-WASM-AST.md`
+  - `docs/plans/PLAN-152-TREE-SITTER-WASM-AST.md`
+  - `docs/tasks/TASKS-152-TREE-SITTER-WASM-AST.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

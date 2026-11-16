@@ -65,6 +65,9 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:dst:run [--seed=S] [--steps=N] [--json] Simulación determinista basada en eventos y fallos (SPEC-289)
   eos toolchain:dst:fuzz [--seeds=N] [--json] Fuzzing determinista de invariantes explorando múltiples semillas (SPEC-289)
   eos toolchain:dst:audit [--json] Auditoría criptográfica y emisión de recibo DST (SPEC-289)
+  eos toolchain:ast:parse [FILE] [--json] Parseo políglota AST, extracción de símbolos y spans (SPEC-290)
+  eos toolchain:ast:diff [FILE] [--json] Cálculo de diff incremental y blast radius transitivo (SPEC-290)
+  eos toolchain:ast:audit [--json] Auditoría criptográfica del grafo AST del repositorio (SPEC-290)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -288,6 +291,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:dst:run [--seed=S] [--steps=N] [--json] Simulación determinista basada en eventos y fallos (SPEC-289)
   eos toolchain:dst:fuzz [--seeds=N] [--json] Fuzzing determinista de invariantes explorando múltiples semillas (SPEC-289)
   eos toolchain:dst:audit [--json] Auditoría criptográfica y emisión de recibo DST (SPEC-289)
+  eos toolchain:ast:parse [FILE] [--json] Parseo políglota AST, extracción de símbolos y spans (SPEC-290)
+  eos toolchain:ast:diff [FILE] [--json] Cálculo de diff incremental y blast radius transitivo (SPEC-290)
+  eos toolchain:ast:audit [--json] Auditoría criptográfica del grafo AST del repositorio (SPEC-290)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

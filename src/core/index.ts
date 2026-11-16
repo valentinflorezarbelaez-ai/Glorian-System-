@@ -747,3 +747,4 @@ export * from "./eosRateLimitingGovernor.ts";
 export * from "./eosNativeSqliteStore.ts";
 export * from "./eosKubernetesNativeClient.ts";
 export * from "./eosDeterministicSimulationEngine.ts";
+export * from "./eosTreeSitterWasmEngine.ts";
