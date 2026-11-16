@@ -15,6 +15,8 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { getFleetNodes } from "./eosFleetTopology.ts";
+import type { EosOntologyCyclotron } from "./eosOntologyCyclotron.ts";
+import { EosFdirOntology } from "./eosFdirOntology.ts";
 
 export interface SentinelTickReport {
   status: "SENTINEL_PULSE_HEALTHY" | "REMEDIATION_REQUIRED";
@@ -49,7 +51,7 @@ export class EosSentinelDaemon {
   /**
    * Executes a single discrete sentinel heartbeat pulse (tick).
    */
-  public tick(): SentinelTickReport {
+  public tick(cyclotron?: EosOntologyCyclotron): SentinelTickReport {
     this.pulseCount++;
     const anomalies: string[] = [];
 
@@ -98,6 +100,17 @@ export class EosSentinelDaemon {
         anomalies.push(`Invalid ring assignment for node: ${node.id}`);
       }
       ringSet.add(node.ring);
+    }
+
+    if (cyclotron) {
+      const graphReport = EosFdirOntology.scanGraphIntegrity(cyclotron);
+      orphans += graphReport.orphanLinksCount;
+      for (const orphan of graphReport.orphanAnomalies) {
+        anomalies.push(`Orphan link detected: ${orphan.edgeId} (${orphan.reason})`);
+      }
+      for (const cycle of graphReport.cycles) {
+        anomalies.push(`Cycle deadlock detected: SCC of length ${cycle.length} (${cycle.nodes.join(" -> ")})`);
+      }
     }
 
     const isHealthy = anomalies.length === 0;

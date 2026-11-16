@@ -121,6 +121,10 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:sea:bundle [--platform=P] [--json] Generación de blob inyectable SEA y empaquetado de distribución (SPEC-304)
   eos toolchain:sea:sign [--binary=B] [--json] Doble firma criptográfica Ed25519 y Post-Cuántica (ML-DSA) de binarios (SPEC-304)
   eos toolchain:sea:audit [--json] Auditoría integral de distribución de binarios SEA y emisión de recibo (SPEC-304)
+  eos toolchain:fdir:scan [--json] Escaneo clínico de anomalías y enlaces huérfanos en la ontología (SPEC-305)
+  eos toolchain:fdir:heal [--json] Aislamiento y purga quirúrgica de enlaces huérfanos con restitución (SPEC-305)
+  eos toolchain:fdir:cycles [--json] Detección y resolución de dependencias circulares con Tarjan (SPEC-305)
+  eos toolchain:fdir:audit [--json] Auditoría integral FDIR de ontología y emisión de recibo (SPEC-305)
 
 
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
@@ -402,6 +406,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:sea:bundle [--platform=P] [--json] Generación de blob inyectable SEA y empaquetado de distribución (SPEC-304)
   eos toolchain:sea:sign [--binary=B] [--json] Doble firma criptográfica Ed25519 y Post-Cuántica (ML-DSA) de binarios (SPEC-304)
   eos toolchain:sea:audit [--json] Auditoría integral de distribución de binarios SEA y emisión de recibo (SPEC-304)
+  eos toolchain:fdir:scan [--json] Escaneo clínico de anomalías y enlaces huérfanos en la ontología (SPEC-305)
+  eos toolchain:fdir:heal [--json] Aislamiento y purga quirúrgica de enlaces huérfanos con restitución (SPEC-305)
+  eos toolchain:fdir:cycles [--json] Detección y resolución de dependencias circulares con Tarjan (SPEC-305)
+  eos toolchain:fdir:audit [--json] Auditoría integral FDIR de ontología y emisión de recibo (SPEC-305)
 
 
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268

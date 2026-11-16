@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 304,
-  "catalogSha256": "d51e318077c20cf7c67893a8d1cc138e69843041ac698808e332034bc3a2f4e7",
+  "totalSpecs": 305,
+  "catalogSha256": "c1bd2dbb555d877f2f64cd12b7a0bcaba125f1fbc2e5c258464123cb9f5ecd47",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2738,6 +2738,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-304-SEA-BINARY-DISTRIBUTION.md",
       "sha256": "efdefe999aa4f2a2527870662cd2c84aec3cab20f152bc7d287575b2c7799795"
+    },
+    {
+      "id": "SPEC-305",
+      "title": "FDIR Clinical Firewall for Knowledge Ontology & Sentinel Integration",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-305-FDIR-KNOWLEDGE-ONTOLOGY.md",
+      "sha256": "93e975ffea60fe6e28176f7e0b80c75b2d9d2555500d36712c30a1c78c4f0114"
     }
   ]
 }

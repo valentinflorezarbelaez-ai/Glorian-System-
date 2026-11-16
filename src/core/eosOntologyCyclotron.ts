@@ -196,4 +196,48 @@ export class EosOntologyCyclotron {
       merkleProof,
     };
   }
+
+  /**
+   * Retrieves all active node IDs as of a specific timestamp.
+   */
+  public getAllNodeIds(timestamp: number = Date.now()): string[] {
+    const activeNodeIds: string[] = [];
+    for (const [id, versions] of this.nodes) {
+      if (versions.some((v) => timestamp >= v.validFrom && timestamp <= v.validTo)) {
+        activeNodeIds.push(id);
+      }
+    }
+    return activeNodeIds;
+  }
+
+  /**
+   * Retrieves all active edges as of a specific timestamp.
+   */
+  public getAllEdges(timestamp: number = Date.now()): OntologyEdge[] {
+    const activeEdges: OntologyEdge[] = [];
+    for (const [, edges] of this.outgoingEdges) {
+      for (const edge of edges) {
+        if (timestamp >= edge.validFrom && timestamp <= edge.validTo) {
+          activeEdges.push(edge);
+        }
+      }
+    }
+    return activeEdges;
+  }
+
+  /**
+   * Surgically removes an edge from the graph by its unique ID.
+   */
+  public removeEdge(edgeId: string): boolean {
+    let removed = false;
+    for (const [fromId, edges] of this.outgoingEdges) {
+      const initialLen = edges.length;
+      const filtered = edges.filter((e) => e.id !== edgeId);
+      if (filtered.length !== initialLen) {
+        this.outgoingEdges.set(fromId, filtered);
+        removed = true;
+      }
+    }
+    return removed;
+  }
 }

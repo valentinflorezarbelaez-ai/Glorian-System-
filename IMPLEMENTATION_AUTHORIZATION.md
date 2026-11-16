@@ -2698,3 +2698,16 @@
   - `docs/plans/PLAN-166-SEA-BINARY-DISTRIBUTION.md`
   - `docs/tasks/TASKS-166-SEA-BINARY-DISTRIBUTION.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-16-FDIR-KNOWLEDGE-ONTOLOGY
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-167` (`SPEC-305`), Phase 5.1 FDIR Clinical Firewall for Knowledge Ontology & Sentinel Integration: `src/core/eosFdirOntology.types.ts` and `src/core/eosFdirOntology.ts` implementing bi-temporal semantic graph integrity scanning, orphan link detection and quarantine isolation (`ORPHAN_LINK_DETECTED`), autonomous surgical purging, Tarjan's Strongly Connected Components (SCC) circular deadlock detection and isolation, real-time pulse synchronization with `EosSentinelDaemon`, and cryptographic receipt emission at `docs/evidence/FDIR_ONTOLOGY_RECEIPT.json`. Wire subcommands `toolchain:fdir:scan`, `toolchain:fdir:heal`, `toolchain:fdir:cycles`, `toolchain:fdir:audit` in `bin/commands/cliFdirOntology.mjs` and `bin/commands/cliToolchainRouter.mjs`. Verify BDD-1605..BDD-1610.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-167-FDIR-KNOWLEDGE-ONTOLOGY.md`
+  - `openspec/changes/CHANGE-167-fdir-knowledge-ontology.md`
+  - `openspec/specs/SPEC-305-FDIR-KNOWLEDGE-ONTOLOGY.md`
+  - `docs/plans/PLAN-167-FDIR-KNOWLEDGE-ONTOLOGY.md`
+  - `docs/tasks/TASKS-167-FDIR-KNOWLEDGE-ONTOLOGY.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

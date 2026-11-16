@@ -38,6 +38,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:build:", file: "./cliHermeticBuild.mjs", fn: "handleHermeticBuildCommands" },
   { prefix: "toolchain:shm:", file: "./cliSharedMemory.mjs", fn: "handleSharedMemoryCommands" },
   { prefix: "toolchain:sea:", file: "./cliSeaDistribution.mjs", fn: "handleSeaCommands" },
+  { prefix: "toolchain:fdir:", file: "./cliFdirOntology.mjs", fn: "handleFdirCommands" },
 ];
 
 export async function handleToolchainCommands(commandContext) {

@@ -771,3 +771,5 @@ export * from "./eosSharedMemoryArena.ts";
 export * from "./eosSharedMemoryArena.types.ts";
 export * from "./eosSingleExecutableDistributionGovernor.ts";
 export * from "./eosSingleExecutableDistributionGovernor.types.ts";
+export * from "./eosFdirOntology.ts";
+export * from "./eosFdirOntology.types.ts";
