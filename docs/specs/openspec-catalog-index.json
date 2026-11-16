@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 290,
-  "catalogSha256": "827f0348eb9d51cc701aaee8ad6167ddc37eff7fdaf0b43b5e527ccf253fd33c",
+  "totalSpecs": 291,
+  "catalogSha256": "23eae249a20d328782ac31e07778116ea9300812bf87de92d5bb57c5203cc097",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2612,6 +2612,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-290-TREE-SITTER-WASM-AST.md",
       "sha256": "d6ee042fa2cc65e0dbc42388f3ca6cccd102bcb3e4f1fb52d12382efb479f0e5"
+    },
+    {
+      "id": "SPEC-291",
+      "title": "Meta SapFix-Style Closed-Loop Autonomous Healer & Mutation Testing Engine",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-291-SAPFIX-CLOSED-LOOP-HEALER.md",
+      "sha256": "7c4fcfe47683d75e141fc0b55857411ff1450fc70e7c7267d785b992c4d01447"
     }
   ]
 }

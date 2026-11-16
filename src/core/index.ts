@@ -748,3 +748,4 @@ export * from "./eosNativeSqliteStore.ts";
 export * from "./eosKubernetesNativeClient.ts";
 export * from "./eosDeterministicSimulationEngine.ts";
 export * from "./eosTreeSitterWasmEngine.ts";
+export * from "./eosSapFixAutoRemediator.ts";

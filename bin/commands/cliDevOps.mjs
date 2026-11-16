@@ -11,13 +11,11 @@ async function cmd_worktree_20(commandContext) {
   const orchestrator = new EosWorktreeOrchestrator(root);
 
   if (subAction === "list") {
-    const list = orchestrator.listWorktrees();
     console.log("[EOS WORKTREE] Árboles de Trabajo Aislados (Estándar Xirp):\n");
-    list.forEach((w) => {
-      const flag = w.isMain ? "(PRINCIPAL)" : "(AGENTE)";
-      console.log(`  ● [${w.branch}] ${flag}`);
-      console.log(`    Ruta: ${w.path}`);
-      console.log(`    Commit: ${w.headCommit.slice(0, 10)}\n`);
+    orchestrator.listWorktrees().forEach((w) => {
+      console.log(
+        `  ● [${w.branch}] ${w.isMain ? "(PRINCIPAL)" : "(AGENTE)"}\n    Ruta: ${w.path}\n    Commit: ${w.headCommit.slice(0, 10)}\n`,
+      );
     });
   } else if (subAction === "add" || subAction === "create") {
     const branchName = args[2];
@@ -27,8 +25,7 @@ async function cmd_worktree_20(commandContext) {
     }
     console.log(`[EOS WORKTREE] Creando espacio de trabajo físico para agente en rama '${branchName}'...`);
     const created = orchestrator.createWorktree(branchName);
-    console.log(`✔ Worktree creado en: ${created.path}`);
-    console.log(`✔ Rama aislada: ${created.branch} (Exit Code 0)`);
+    console.log(`✔ Worktree creado en: ${created.path}\n✔ Rama aislada: ${created.branch} (Exit Code 0)`);
   } else if (subAction === "remove" || subAction === "rm") {
     const targetPath = args[2];
     if (!targetPath) {
@@ -781,6 +778,9 @@ export async function handleDevOpsCommands(commandContext) {
   }
   if (commandContext.command.startsWith("toolchain:ast:")) {
     return (await import("./cliAstEngine.mjs")).handleAstCommands(commandContext);
+  }
+  if (commandContext.command.startsWith("toolchain:sapfix:")) {
+    return (await import("./cliSapFix.mjs")).handleSapFixCommands(commandContext);
   }
   return false;
 }

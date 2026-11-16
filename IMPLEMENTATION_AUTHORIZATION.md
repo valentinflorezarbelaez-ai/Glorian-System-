@@ -2516,3 +2516,16 @@
   - `docs/plans/PLAN-152-TREE-SITTER-WASM-AST.md`
   - `docs/tasks/TASKS-152-TREE-SITTER-WASM-AST.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-SAPFIX-CLOSED-LOOP-HEALER
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-153` (`SPEC-291`), Phase 2.1 Meta SapFix-Style Closed-Loop Autonomous Healer & Mutation Testing Engine: `src/core/eosSapFixAutoRemediator.types.ts` and `src/core/eosSapFixAutoRemediator.ts` with AST-level mutation saboteur altering operators (`+`, `-`, `>`, `<`, `===`, `!==`, `&&`, `||`, booleans), mutation score evaluation (`killed` vs `surviving`), multi-candidate patch synthesis, closed-loop regression verification, deterministic approval-hash and diff generation, and cryptographic receipt emission at `docs/evidence/SAPFIX_HEAL_RECEIPT.json`. Wire subcommands `toolchain:sapfix:mutate`, `toolchain:sapfix:heal`, `toolchain:sapfix:audit` in `bin/commands/cliSapFix.mjs` and `bin/commands/cliDevOps.mjs`. Verify BDD-1521..BDD-1526.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-153-SAPFIX-CLOSED-LOOP-HEALER.md`
+  - `openspec/changes/CHANGE-153-sapfix-closed-loop-healer.md`
+  - `openspec/specs/SPEC-291-SAPFIX-CLOSED-LOOP-HEALER.md`
+  - `docs/plans/PLAN-153-SAPFIX-CLOSED-LOOP-HEALER.md`
+  - `docs/tasks/TASKS-153-SAPFIX-CLOSED-LOOP-HEALER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
