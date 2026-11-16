@@ -12,6 +12,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { EosPolyglotRustZigWasmKernelCore } from "./eosPolyglotRustZigWasmKernel.ts";
 import type {
   AntiEntropySyncResult,
   CrdtOrSetElement,
@@ -203,30 +204,19 @@ export class EosCrdtStateReplicatorCore {
 
   /**
    * High-Performance Linear Memory Vector Merge (Rust/Zig/WASM execution paradigm).
-   * Executes element-wise maximum over zero-copy memory arrays with sub-microsecond latency.
+   * Executes element-wise maximum inside hardware-isolated WebAssembly.Memory (SPEC-309).
    */
   public static mergeLinearMemoryVectors(
     vecA: number[] | Int32Array,
     vecB: number[] | Int32Array,
   ): LinearMemoryVectorMergeResult {
-    const startNs = process.hrtime.bigint();
-    const len = Math.max(vecA.length, vecB.length);
-    const buffer = new ArrayBuffer(len * 4);
-    const view = new Int32Array(buffer);
-
-    for (let i = 0; i < len; i++) {
-      const valA = i < vecA.length ? vecA[i] : 0;
-      const valB = i < vecB.length ? vecB[i] : 0;
-      view[i] = valA >= valB ? valA : valB;
-    }
-
-    const endNs = process.hrtime.bigint();
+    const wasmRes = EosPolyglotRustZigWasmKernelCore.executeRustVectorJoinWasm(vecA, vecB);
     return {
-      dimension: len,
-      mergedElements: Array.from(view),
-      operationsCount: len,
-      durationNs: Number(endNs - startNs),
-      memoryBytesUsed: len * 4,
+      dimension: wasmRes.dimension,
+      mergedElements: [...wasmRes.mergedElements],
+      operationsCount: wasmRes.dimension,
+      durationNs: wasmRes.durationNs,
+      memoryBytesUsed: wasmRes.dimension * 4,
     };
   }
 

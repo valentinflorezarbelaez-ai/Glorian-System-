@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 308,
-  "catalogSha256": "2a94204412e9c1e4d433af3e1db88002bbc58180560e31a1c59e7240ef5b4ede",
+  "totalSpecs": 309,
+  "catalogSha256": "414cbcdcbc794ffd0e5d7d35831bba8c09faf1d0f3ee3a0e202d7b36a0b565a0",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2774,6 +2774,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-308-merkle-crdt-state-replication.md",
       "sha256": "ab3267fa016a0890bbd3b72cc5e0bd83eb2c8d97df3440e9bcd5bf93a89c0d69"
+    },
+    {
+      "id": "SPEC-309",
+      "title": "Polyglot Rust & Zig Native WebAssembly Linear-Memory Kernel Engine",
+      "status": "STABLE_AND_ACTIVE",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-309-polyglot-rust-zig-wasm-kernel.md",
+      "sha256": "70ff31725eb08dcf7f6100c7767fc0a384a827b76f77d19825ee32acd1e9cc8a"
     }
   ]
 }

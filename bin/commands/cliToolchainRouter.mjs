@@ -42,6 +42,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:wasm:", file: "./cliWasmSynthesizer.mjs", fn: "handleWasmCommands" },
   { prefix: "toolchain:reconcile:", file: "./cliReconciliationLoop.mjs", fn: "handleReconcileCommands" },
   { prefix: "toolchain:replicator:", file: "./cliCrdtStateReplicator.mjs", fn: "handleCrdtCommand" },
+  { prefix: "toolchain:rustzig:", file: "./cliPolyglotRustZigWasm.mjs", fn: "handleRustZigWasmCommand" },
 ];
 
 export async function handleToolchainCommands(commandContext) {

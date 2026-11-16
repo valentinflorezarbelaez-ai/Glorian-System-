@@ -137,6 +137,10 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:replicator:merge [--json] Fusión algebraica determinista en semirretículo de unión (SPEC-308)
   eos toolchain:replicator:anti-entropy [--json] Sincronización anti-entropía logarítmica O(log N) (SPEC-308)
   eos toolchain:replicator:audit [--json] Auditoría integral de replicación de estado y emisión de recibo (SPEC-308)
+  eos toolchain:rustzig:compile [--json] Compilación o síntesis hermética WASM desde kernels Rust y Zig (SPEC-309)
+  eos toolchain:rustzig:execute [--json] Ejecución de joins CRDT, FNV-1a y ring-buffer en WebAssembly.Memory (SPEC-309)
+  eos toolchain:rustzig:benchmark [--json] Benchmark determinista de arena lineal WASM vs arreglo JS (SPEC-309)
+  eos toolchain:rustzig:audit [--json] Auditoría integral políglota Rust/Zig WASM y recibo firmado (SPEC-309)
 
 
 
@@ -435,6 +439,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:replicator:merge [--json] Fusión algebraica determinista en semirretículo de unión (SPEC-308)
   eos toolchain:replicator:anti-entropy [--json] Sincronización anti-entropía logarítmica O(log N) (SPEC-308)
   eos toolchain:replicator:audit [--json] Auditoría integral de replicación de estado y emisión de recibo (SPEC-308)
+  eos toolchain:rustzig:compile [--json] Compilación o síntesis hermética WASM desde kernels Rust y Zig (SPEC-309)
+  eos toolchain:rustzig:execute [--json] Ejecución de joins CRDT, FNV-1a y ring-buffer en WebAssembly.Memory (SPEC-309)
+  eos toolchain:rustzig:benchmark [--json] Benchmark determinista de arena lineal WASM vs arreglo JS (SPEC-309)
+  eos toolchain:rustzig:audit [--json] Auditoría integral políglota Rust/Zig WASM y recibo firmado (SPEC-309)
 
 
 

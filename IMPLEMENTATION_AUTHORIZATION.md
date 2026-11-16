@@ -2750,3 +2750,16 @@
   - `docs/plans/PLAN-170-merkle-crdt-state-replication.md`
   - `docs/tasks/TASKS-170-merkle-crdt-state-replication.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-16-POLYGLOT-RUST-ZIG-WASM-KERNEL
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-171` (`SPEC-309`), Polyglot Rust & Zig Native WebAssembly Linear-Memory Kernel Engine: `templates/polyglot-wasm/kernel.rs`, `templates/polyglot-wasm/kernel.zig`, `src/core/eosPolyglotRustZigWasmKernel.types.ts`, and `src/core/eosPolyglotRustZigWasmKernel.ts` implementing `#![no_std]` Rust and freestanding Zig WASM compilation/hermetic synthesis, hardware-isolated `WebAssembly.Memory` linear arenas for CRDT vector joins, 32-bit FNV-1a hashing, bounded ring-buffer backpressure arithmetic, deterministic benchmarking, active integration in `src/core/eosCrdtStateReplicator.ts`, and signed receipt emission at `docs/evidence/POLYGLOT_RUST_ZIG_WASM_RECEIPT.json`. Wire `toolchain:rustzig:compile`, `toolchain:rustzig:execute`, `toolchain:rustzig:benchmark`, `toolchain:rustzig:audit` in `bin/commands/cliPolyglotRustZigWasm.mjs` and `bin/commands/cliToolchainRouter.mjs`. Verify `BDD-1629`..`BDD-1634`. Harden `eosNativeSqliteStore.ts` (Node 23 FTS5 fallback) and `eosHelmReleaseGovernor.ts` (Windows CI Helm fallback).
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-171-POLYGLOT-RUST-ZIG-WASM-KERNEL.md`
+  - `openspec/changes/CHANGE-171-polyglot-rust-zig-wasm-kernel.md`
+  - `openspec/specs/SPEC-309-polyglot-rust-zig-wasm-kernel.md`
+  - `docs/plans/PLAN-171-polyglot-rust-zig-wasm-kernel.md`
+  - `docs/tasks/TASKS-171-polyglot-rust-zig-wasm-kernel.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
