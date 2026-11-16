@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
   "totalSpecs": 308,
-  "catalogSha256": "4d3605dd2dd99a3d6d1ff5c0b6c91bae37c8ebd31231b8a6ad9e9ecdbe6c14f1",
+  "catalogSha256": "17e100f85da8a3cd757fb181f60a6184fec83a01aa11c7a2be65a89d1e9ec520",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2773,7 +2773,7 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-308-merkle-crdt-state-replication.md",
-      "sha256": "06e770b6cbf2d592de71ae2f0a97d40434da5b319f2d6e9995ef5c2dd2d7e184"
+      "sha256": "ab3267fa016a0890bbd3b72cc5e0bd83eb2c8d97df3440e9bcd5bf93a89c0d69"
     }
   ]
 }

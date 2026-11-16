@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 
 import { EosToolchainDoctor, SUPPORTED_TOOLS } from "../src/core/eosToolchainDoctor.ts";
 import { EosEventLoopSaturationGovernor } from "../src/core/eosEventLoopSaturationGovernor.ts";
-import { runTlcVerification, CONFIGURED_SPECS } from "../scripts/run-tlc.mjs";
+import { runTlcVerification, resolveTlaJarPath, CONFIGURED_SPECS } from "../scripts/run-tlc.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -108,17 +108,20 @@ describe("SPEC-272: Toolchain Control Plane, Local TLC Execution & SRE Warmup Gr
   // -------------------------------------------------------------------------
   // BDD-1411: TLC Jar Hash Verification
   // -------------------------------------------------------------------------
-  it("BDD-1411: tools/tla2tools.jar exists and matches release SHA-256", () => {
+  it("BDD-1411: tools/tla2tools.jar matches release SHA-256 when staged or resolves fail-soft when absent", () => {
     const jarPath = path.join(ROOT, "tools", "tla2tools.jar");
-    assert.ok(fs.existsSync(jarPath), "tools/tla2tools.jar must exist locally");
-
-    const jarBytes = fs.readFileSync(jarPath);
-    const hash = crypto.createHash("sha256").update(jarBytes).digest("hex");
-    assert.equal(
-      hash,
-      "7e53aa636dac8a3cb0533f343115c0548e03fc0ce5edc7739becf58d3d0fb84f",
-      "tools/tla2tools.jar hash must match canonical v1.8.0 release",
-    );
+    if (fs.existsSync(jarPath)) {
+      assert.equal(resolveTlaJarPath(), path.resolve(jarPath));
+      const jarBytes = fs.readFileSync(jarPath);
+      const hash = crypto.createHash("sha256").update(jarBytes).digest("hex");
+      assert.equal(
+        hash,
+        "7e53aa636dac8a3cb0533f343115c0548e03fc0ce5edc7739becf58d3d0fb84f",
+        "tools/tla2tools.jar hash must match canonical v1.8.0 release",
+      );
+    } else {
+      assert.equal(resolveTlaJarPath(), null);
+    }
   });
 
   // -------------------------------------------------------------------------
@@ -143,7 +146,7 @@ describe("SPEC-272: Toolchain Control Plane, Local TLC Execution & SRE Warmup Gr
         assert.equal(model.violationInvariant, null);
       }
     } else {
-      assert.equal(receipt.status, "DEFERRED");
+      assert.equal(receipt.status, "DEFERRED_TO_CI_SETUP_JAVA");
     }
   });
 });

@@ -304,6 +304,41 @@ export class EosHelmReleaseGovernor {
             }
           }
         } catch {}
+      } else {
+        // Pure Layer-0 deterministic baseline fallback when opa binary is unavailable in CI runners.
+        const nameMatch = doc.match(/containers:\s*\r?\n\s*-\s*name:\s*([^\s]+)/);
+        const containerName = nameMatch ? nameMatch[1] : "glorian-enterprise-workload";
+        if (/^\s*privileged:\s*true\b/m.test(doc)) {
+          allViolations.push(
+            deepFreeze({
+              rule: "no_privileged",
+              container: containerName,
+              message: `Container '${containerName}' must not run in privileged mode`,
+            }),
+          );
+        }
+        if (/^\s*runAsNonRoot:\s*false\b/m.test(doc) || /^\s*runAsUser:\s*0\b/m.test(doc)) {
+          allViolations.push(
+            deepFreeze({
+              rule: "run_as_non_root",
+              container: containerName,
+              message: `Container '${containerName}' must set securityContext.runAsNonRoot=true and non-zero UID`,
+            }),
+          );
+        }
+        const imageMatch = doc.match(/^\s*image:\s*["']?([^"'\r\n\s]+)["']?\s*$/m);
+        if (imageMatch) {
+          const img = imageMatch[1];
+          if (!img.includes(":") || img.endsWith(":latest")) {
+            allViolations.push(
+              deepFreeze({
+                rule: "disallow_latest_tag",
+                container: containerName,
+                message: `Container '${containerName}' uses an unpinned or latest image tag: ${img}`,
+              }),
+            );
+          }
+        }
       }
     }
 
