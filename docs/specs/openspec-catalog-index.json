@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 286,
-  "catalogSha256": "18c4573f4a77aa23157bb2601c731e8ce4cc85e4d5298914bb64cb917cf4df07",
+  "totalSpecs": 287,
+  "catalogSha256": "d606293cd18a764bed93e1801c40000ed480e28cb10566651c9033c9a1050b42",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2576,6 +2576,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-286-HIERARCHICAL-RATE-LIMITER.md",
       "sha256": "c15af13d3c44220133e9b89e5d868c8230be46a4544a7fc666c4c97557e53ffd"
+    },
+    {
+      "id": "SPEC-287",
+      "title": "Native node:sqlite Storage, FTS5 Search & Quantized Vector Governor",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-287-NATIVE-SQLITE-VECTOR-STORAGE.md",
+      "sha256": "3b9014a1e2d091e11110fce82a13e5b63f8aef7dd9407adcd6ae7ee31628dbfe"
     }
   ]
 }

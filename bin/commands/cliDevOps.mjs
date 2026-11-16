@@ -770,5 +770,8 @@ export async function handleDevOpsCommands(commandContext) {
   if (commandContext.command.startsWith("toolchain:ratelimit:")) {
     return (await import("./cliRateLimit.mjs")).handleRateLimitCommands(commandContext);
   }
+  if (commandContext.command.startsWith("toolchain:sqlite:")) {
+    return (await import("./cliSqliteStore.mjs")).handleSqliteCommands(commandContext);
+  }
   return false;
 }

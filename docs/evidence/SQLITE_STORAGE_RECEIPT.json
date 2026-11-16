@@ -1,0 +1,13 @@
+{
+  "timestampIso": "2026-11-16T00:16:58.627Z",
+  "dbPath": ":memory:",
+  "journalMode": "memory",
+  "synchronous": "2",
+  "totalDocuments": 1,
+  "fts5Enabled": true,
+  "vectorIndexedCount": 1,
+  "categories": {
+    "governance": 1
+  },
+  "sha256Signature": "ed778c7fd48af2bae0fa0d9609a780d39ab779e411312fdbd251433b7c31acf7"
+}

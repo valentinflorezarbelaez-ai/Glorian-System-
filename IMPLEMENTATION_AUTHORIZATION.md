@@ -2464,3 +2464,16 @@
   - `docs/plans/PLAN-148-HIERARCHICAL-RATE-LIMITER.md`
   - `docs/tasks/TASKS-148-HIERARCHICAL-RATE-LIMITER.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-NATIVE-SQLITE-VECTOR-STORAGE
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-149` (`SPEC-287`), Phase 1.1 Native `node:sqlite` Storage, FTS5 Search & Quantized Vector Governor: `src/core/eosNativeSqliteStore.ts` with built-in `node:sqlite` (`DatabaseSync`), Write-Ahead Logging (WAL) configuration, ACID atomic transaction execution, FTS5 virtual table full-text search, BLOB storage for scalar quantized Uint8 vectors (`SPEC-283`), k-NN cosine similarity search, hybrid Reciprocal Rank Fusion (RRF), and cryptographic receipt emission at `docs/evidence/SQLITE_STORAGE_RECEIPT.json`. Wire subcommands `toolchain:sqlite:audit`, `toolchain:sqlite:query`, `toolchain:sqlite:vector` in `bin/commands/cliSqliteStore.mjs` and `bin/commands/cliDevOps.mjs`. Verify BDD-1497..BDD-1502.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-149-NATIVE-SQLITE-VECTOR-STORAGE.md`
+  - `openspec/changes/CHANGE-149-native-sqlite-vector-storage.md`
+  - `openspec/specs/SPEC-287-NATIVE-SQLITE-VECTOR-STORAGE.md`
+  - `docs/plans/PLAN-149-NATIVE-SQLITE-VECTOR-STORAGE.md`
+  - `docs/tasks/TASKS-149-NATIVE-SQLITE-VECTOR-STORAGE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
