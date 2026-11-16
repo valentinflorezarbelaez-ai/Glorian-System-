@@ -23,10 +23,24 @@ assert.ok(
   htmlText.includes('type="speculationrules"'),
   "LCP Violation: Speculation rules must be active for 0ms navigation",
 );
-assert.ok(
-  htmlText.includes('preconnect" href="https://fonts.googleapis.com"'),
-  "LCP Violation: Preconnect to font domains required",
-);
+// Absolute-Max W2: prefer zero third-party font RTT (system/DESIGN.md stacks).
+// If Google Fonts are present they MUST preconnect; if absent, require local CSS preload.
+const usesGoogleFonts = htmlText.includes("fonts.googleapis.com");
+if (usesGoogleFonts) {
+  assert.ok(
+    htmlText.includes('preconnect" href="https://fonts.googleapis.com"'),
+    "LCP Violation: Preconnect to font domains required when Google Fonts are loaded",
+  );
+} else {
+  assert.ok(
+    htmlText.includes('rel="preload"') && htmlText.includes("/css/eos.css"),
+    "LCP Violation: Local CSS preload required when third-party fonts are omitted",
+  );
+  assert.ok(
+    !htmlText.includes('href="https://fonts.googleapis.com/css'),
+    "LCP Violation: Render-blocking Google Fonts stylesheet must stay removed",
+  );
+}
 console.log("[PASS] 1/4 Critical-asset preload and speculation-rule markup present.");
 
 // 2. CLS (Cumulative Layout Shift < 0.1) Invariants
