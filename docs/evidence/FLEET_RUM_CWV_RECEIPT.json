@@ -1,0 +1,188 @@
+{
+  "epistemicState": "NAVIGATION_TIMING_PROXY_WITHIN_TESTED_SCOPE",
+  "claimsDenied": [
+    "CrUX field data",
+    "multi-device Lighthouse lab",
+    "Level-5",
+    "FEDERAL_ATO"
+  ],
+  "measuredAt": "2026-11-16T22:06:19.464Z",
+  "budgets": {
+    "ttfbMs": 800,
+    "lcpMs": 2500,
+    "cls": 0.1
+  },
+  "browserPayloadAttached": true,
+  "services": [
+    {
+      "serviceId": "aberamentho",
+      "host": "aberamentosprelomamusic.vercel.app",
+      "ok": true,
+      "statusCode": 200,
+      "ttfbMs": 448,
+      "transferBytes": 115477,
+      "lcpMs": null,
+      "cls": null,
+      "inpMs": null,
+      "source": "EDGE_FETCH",
+      "budgets": {
+        "ttfbOk": true,
+        "lcpOk": null,
+        "clsOk": null
+      },
+      "healthState": "NOMINAL_HEALTHY"
+    },
+    {
+      "serviceId": "atp-strength",
+      "host": "atp-strength.vercel.app",
+      "ok": true,
+      "statusCode": 200,
+      "ttfbMs": 310,
+      "transferBytes": 19344,
+      "lcpMs": null,
+      "cls": null,
+      "inpMs": null,
+      "source": "EDGE_FETCH",
+      "budgets": {
+        "ttfbOk": true,
+        "lcpOk": null,
+        "clsOk": null
+      },
+      "healthState": "NOMINAL_HEALTHY"
+    },
+    {
+      "serviceId": "biblioteca-gnostica-1",
+      "host": "biblioteca-gnostica.vercel.app",
+      "ok": true,
+      "statusCode": 200,
+      "ttfbMs": 319,
+      "transferBytes": 406094,
+      "lcpMs": null,
+      "cls": null,
+      "inpMs": null,
+      "source": "EDGE_FETCH",
+      "budgets": {
+        "ttfbOk": true,
+        "lcpOk": null,
+        "clsOk": null
+      },
+      "healthState": "NOMINAL_HEALTHY"
+    },
+    {
+      "serviceId": "control-de-asistencia-abopack",
+      "host": "avo-pack.vercel.app",
+      "ok": true,
+      "statusCode": 200,
+      "ttfbMs": 296,
+      "transferBytes": 100022,
+      "lcpMs": null,
+      "cls": null,
+      "inpMs": null,
+      "source": "EDGE_FETCH",
+      "budgets": {
+        "ttfbOk": true,
+        "lcpOk": null,
+        "clsOk": null
+      },
+      "healthState": "NOMINAL_HEALTHY"
+    },
+    {
+      "serviceId": "crud-slack",
+      "host": "crud-slack.vercel.app",
+      "ok": true,
+      "statusCode": 200,
+      "ttfbMs": 294,
+      "transferBytes": 70320,
+      "lcpMs": null,
+      "cls": null,
+      "inpMs": null,
+      "source": "EDGE_FETCH",
+      "budgets": {
+        "ttfbOk": true,
+        "lcpOk": null,
+        "clsOk": null
+      },
+      "healthState": "NOMINAL_HEALTHY"
+    },
+    {
+      "serviceId": "donaciones",
+      "host": "donaciones-drab.vercel.app",
+      "ok": true,
+      "statusCode": 200,
+      "ttfbMs": 289,
+      "transferBytes": 64438,
+      "lcpMs": null,
+      "cls": null,
+      "inpMs": null,
+      "source": "EDGE_FETCH",
+      "budgets": {
+        "ttfbOk": true,
+        "lcpOk": null,
+        "clsOk": null
+      },
+      "healthState": "NOMINAL_HEALTHY"
+    },
+    {
+      "serviceId": "eos-system",
+      "host": "glorian-system.vercel.app",
+      "ok": true,
+      "statusCode": 200,
+      "ttfbMs": 305,
+      "transferBytes": 275236,
+      "lcpMs": null,
+      "cls": null,
+      "inpMs": null,
+      "source": "EDGE_FETCH",
+      "budgets": {
+        "ttfbOk": true,
+        "lcpOk": null,
+        "clsOk": null
+      },
+      "healthState": "NOMINAL_HEALTHY"
+    },
+    {
+      "serviceId": "performance-talent-group",
+      "host": "ptg-performance-talent-group.vercel.app",
+      "ok": true,
+      "statusCode": 200,
+      "ttfbMs": 315,
+      "transferBytes": 123608,
+      "lcpMs": null,
+      "cls": null,
+      "inpMs": null,
+      "source": "EDGE_FETCH",
+      "budgets": {
+        "ttfbOk": true,
+        "lcpOk": null,
+        "clsOk": null
+      },
+      "healthState": "NOMINAL_HEALTHY"
+    },
+    {
+      "serviceId": "portafolio",
+      "host": "portafolio-valentin.vercel.app",
+      "ok": true,
+      "statusCode": 200,
+      "ttfbMs": 295,
+      "transferBytes": 171485,
+      "lcpMs": null,
+      "cls": null,
+      "inpMs": null,
+      "source": "EDGE_FETCH",
+      "budgets": {
+        "ttfbOk": true,
+        "lcpOk": null,
+        "clsOk": null
+      },
+      "healthState": "NOMINAL_HEALTHY"
+    }
+  ],
+  "metrics": {
+    "targets": 9,
+    "nominal": 9,
+    "degraded": 0,
+    "unreachable": 0,
+    "withBrowserLcp": 0
+  },
+  "sha256": "5dce7dec2d57f3e81c514800ac772c3bf6ecbc8dcd81139b3230256411a575a5"
+}

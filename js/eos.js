@@ -1981,7 +1981,7 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
     { label: "💼 Abrir Portafolio Oficial — Valentín Flórez", badge: "PROD L3", url: "https://portafolio-valentin.vercel.app" },
     { label: "🤝 Abrir Fundación Donaciones en Producción", badge: "PROD L1", url: "https://donaciones-drab.vercel.app" },
     { label: "📡 Ir al Radar Táctico de Telemetría de la Flota", badge: "RADAR", href: "#fleet-synapse-radar" },
-    { label: "📑 Explorar las 129 OpenSpecs Formales (IEEE 830)", badge: "OPENSPECS", href: "#openspecs-explorer" },
+    { label: "📑 Explorar OpenSpecs formales (IEEE 830)", badge: "OPENSPECS", href: "#openspecs-explorer" },
     { label: "🎨 Ejecutar Gobernador Visual Tier S-0 (npm run design:govern)", badge: "DISEÑO S-0", cmd: "design:govern" },
     { label: "🔒 Ejecutar Escaneo Canónico de Secretos (npm run secret-scan)", badge: "SEGURIDAD", cmd: "secret:scan" },
     { label: "🏛️ Abrir herramientas locales de ingeniería EOS", badge: "HERRAMIENTAS LOCALES", href: "#tier1-control-nexus" },
@@ -2523,7 +2523,7 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
     });
   }
 
-  // 129 OpenSpecs Interactive Explorer (SPEC-129)
+  // OpenSpecs Interactive Explorer (SPEC-129)
   let allSpecsCatalog = [];
   let currentSpecFilter = "ALL";
   const specsGrid = document.getElementById("specs-grid-container");

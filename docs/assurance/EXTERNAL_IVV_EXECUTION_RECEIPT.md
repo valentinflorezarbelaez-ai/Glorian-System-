@@ -4,24 +4,26 @@
 
 ## Open seat (required for EXTERNAL_SOUNDCHECK_OK)
 
-| Field            | Value                                                            |
-| ---------------- | ---------------------------------------------------------------- |
-| Status           | **WAITING_HUMAN_OR_ORG_VERIFIER**                                |
-| Tip to re-attest | current `main` after Big Tech remediation wave                   |
-| Packet           | `docs/assurance/EXTERNAL_IVV_AUDITOR_PACKET.md`                  |
-| Dual Soundcheck  | `docs/assurance/SOUNDCHECK_DUAL_ATTESTATION.md`                  |
-| ATO-lite         | `docs/assurance/ATO_LITE_NIST.md`                                |
-| Pen-test         | Not yet filed — scope MCP + fleet production URLs when scheduled |
+| Field            | Value                                                     |
+| ---------------- | --------------------------------------------------------- |
+| Status           | **WAITING_HUMAN_OR_ORG_VERIFIER** (owner preflight ready) |
+| Tip to re-attest | `main` @ post Big Tech remediation + provenance re-bind   |
+| Packet           | `docs/assurance/EXTERNAL_IVV_AUDITOR_PACKET.md`           |
+| Dual Soundcheck  | `docs/assurance/SOUNDCHECK_DUAL_ATTESTATION.md`           |
+| ATO-lite         | `docs/assurance/ATO_LITE_NIST.md`                         |
+| Pen-test         | `docs/assurance/PENTEST_REPORT_20261116.md` (defensive)   |
+| Owner preflight  | `docs/evidence/IVV_OWNER_PREFLIGHT_20261116.md`           |
 
 Until a named human/org completes the packet against the tip SHA and signs below, public claims remain `WITHIN_TESTED_SCOPE` / `INTERNAL_SOUNDCHECK` only.
 
-### Sign-off block (fill by external verifier)
+### Sign-off block (fill by external verifier — or System Owner for OWNER_ATTESTATION only)
 
-- Verifier name / org:
-- Date (UTC):
-- Tip SHA verified:
+- Verifier name / org: _Valentín Flórez Arbeláez / System Owner — fill to attest_
+- Date (UTC): _pending owner signature_
+- Tip SHA verified: _paste `git rev-parse HEAD`_
 - Soundcheck dual attestation: PASS / FAIL
-- Notes:
+- Attestation class: `OWNER_ATTESTATION` (not third-party) / `EXTERNAL_ORG`
+- Notes: Preflight gates listed in `IVV_OWNER_PREFLIGHT_20261116.md` passed; signature still required.
 
 ---
 

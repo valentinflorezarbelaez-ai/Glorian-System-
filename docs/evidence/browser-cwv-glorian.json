@@ -1,0 +1,17 @@
+{
+  "services": [
+    {
+      "serviceId": "eos-system",
+      "lcpMs": null,
+      "cls": null,
+      "inpMs": null,
+      "fcpMs": 3260,
+      "ttfbMs": 433,
+      "domContentLoadedMs": 2004,
+      "loadEventMs": 2366,
+      "source": "BROWSER_CDP",
+      "measuredAt": "2026-11-16T22:05:30.000Z",
+      "note": "LCP entry unavailable in CDP snapshot; FCP measured via Performance paint timing"
+    }
+  ]
+}

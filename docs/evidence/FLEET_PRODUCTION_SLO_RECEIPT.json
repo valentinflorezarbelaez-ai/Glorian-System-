@@ -7,14 +7,14 @@
     "Level-5",
     "FEDERAL_ATO"
   ],
-  "measuredAt": "2026-11-16T21:39:14.661Z",
+  "measuredAt": "2026-11-16T22:04:01.147Z",
   "availabilitySlo": 0.999,
   "ttfbBudgetMs": 1500,
   "services": [
     {
       "serviceId": "aberamentho",
       "productionUrlHost": "aberamentosprelomamusic.vercel.app",
-      "probes": 3,
+      "probes": 5,
       "errors": 0,
       "availability": 1,
       "ttfbP50Ms": 109,
@@ -27,10 +27,10 @@
     {
       "serviceId": "atp-strength",
       "productionUrlHost": "atp-strength.vercel.app",
-      "probes": 3,
+      "probes": 5,
       "errors": 0,
       "availability": 1,
-      "ttfbP50Ms": 119,
+      "ttfbP50Ms": 114,
       "ttfbBudgetMs": 1500,
       "errorBudgetRemainingPct": 100,
       "healthState": "NOMINAL_HEALTHY",
@@ -40,10 +40,10 @@
     {
       "serviceId": "biblioteca-gnostica-1",
       "productionUrlHost": "biblioteca-gnostica.vercel.app",
-      "probes": 3,
+      "probes": 5,
       "errors": 0,
       "availability": 1,
-      "ttfbP50Ms": 124,
+      "ttfbP50Ms": 117,
       "ttfbBudgetMs": 1500,
       "errorBudgetRemainingPct": 100,
       "healthState": "NOMINAL_HEALTHY",
@@ -53,7 +53,33 @@
     {
       "serviceId": "control-de-asistencia-abopack",
       "productionUrlHost": "avo-pack.vercel.app",
-      "probes": 3,
+      "probes": 5,
+      "errors": 0,
+      "availability": 1,
+      "ttfbP50Ms": 127,
+      "ttfbBudgetMs": 1500,
+      "errorBudgetRemainingPct": 100,
+      "healthState": "NOMINAL_HEALTHY",
+      "isDeploymentFrozen": false,
+      "samplePolicy": "SMALL_N_SOFT"
+    },
+    {
+      "serviceId": "crud-slack",
+      "productionUrlHost": "crud-slack.vercel.app",
+      "probes": 5,
+      "errors": 0,
+      "availability": 1,
+      "ttfbP50Ms": 117,
+      "ttfbBudgetMs": 1500,
+      "errorBudgetRemainingPct": 100,
+      "healthState": "NOMINAL_HEALTHY",
+      "isDeploymentFrozen": false,
+      "samplePolicy": "SMALL_N_SOFT"
+    },
+    {
+      "serviceId": "donaciones",
+      "productionUrlHost": "donaciones-drab.vercel.app",
+      "probes": 5,
       "errors": 0,
       "availability": 1,
       "ttfbP50Ms": 112,
@@ -64,38 +90,12 @@
       "samplePolicy": "SMALL_N_SOFT"
     },
     {
-      "serviceId": "crud-slack",
-      "productionUrlHost": "crud-slack.vercel.app",
-      "probes": 3,
-      "errors": 0,
-      "availability": 1,
-      "ttfbP50Ms": 118,
-      "ttfbBudgetMs": 1500,
-      "errorBudgetRemainingPct": 100,
-      "healthState": "NOMINAL_HEALTHY",
-      "isDeploymentFrozen": false,
-      "samplePolicy": "SMALL_N_SOFT"
-    },
-    {
-      "serviceId": "donaciones",
-      "productionUrlHost": "donaciones-drab.vercel.app",
-      "probes": 3,
-      "errors": 0,
-      "availability": 1,
-      "ttfbP50Ms": 109,
-      "ttfbBudgetMs": 1500,
-      "errorBudgetRemainingPct": 100,
-      "healthState": "NOMINAL_HEALTHY",
-      "isDeploymentFrozen": false,
-      "samplePolicy": "SMALL_N_SOFT"
-    },
-    {
       "serviceId": "eos-system",
       "productionUrlHost": "glorian-system.vercel.app",
-      "probes": 3,
+      "probes": 5,
       "errors": 0,
       "availability": 1,
-      "ttfbP50Ms": 125,
+      "ttfbP50Ms": 108,
       "ttfbBudgetMs": 1500,
       "errorBudgetRemainingPct": 100,
       "healthState": "NOMINAL_HEALTHY",
@@ -105,10 +105,10 @@
     {
       "serviceId": "performance-talent-group",
       "productionUrlHost": "ptg-performance-talent-group.vercel.app",
-      "probes": 3,
+      "probes": 5,
       "errors": 0,
       "availability": 1,
-      "ttfbP50Ms": 105,
+      "ttfbP50Ms": 116,
       "ttfbBudgetMs": 1500,
       "errorBudgetRemainingPct": 100,
       "healthState": "NOMINAL_HEALTHY",
@@ -118,10 +118,10 @@
     {
       "serviceId": "portafolio",
       "productionUrlHost": "portafolio-valentin.vercel.app",
-      "probes": 3,
+      "probes": 5,
       "errors": 0,
       "availability": 1,
-      "ttfbP50Ms": 122,
+      "ttfbP50Ms": 126,
       "ttfbBudgetMs": 1500,
       "errorBudgetRemainingPct": 100,
       "healthState": "NOMINAL_HEALTHY",
@@ -136,5 +136,5 @@
     "frozen": 0,
     "allOk": true
   },
-  "sha256": "869872268e6d3d28e7c50aa83fafdf2f4b110e42e979bfe7c0e4a3641c498b1b"
+  "sha256": "c96aae71beb47826c71e64c6e0de44b788d886a2052e45ef906ca2e03fae4845"
 }

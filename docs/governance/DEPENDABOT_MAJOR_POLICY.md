@@ -30,7 +30,7 @@ Epistemic label until exit criteria: `WONT_FIX_UNTIL_2026-12-15` (not `VERIFIED`
 ## Prep log (2026-11-16)
 
 - Tracking issue: [#628](https://github.com/valentinflorezarbelaez-ai/Glorian-System-/issues/628) — OPEN through revisit date.
-- Non-major Dependabot PRs held (7-stage SecDevOps FAIL on Node 22/23 matrix): `#637` (dev-deps group), `#638` (github-actions group). Do not merge until 7-stage is green.
+- Non-major Dependabot PRs `#637` / `#638` **closed 2026-11-16** as stale tips (TLC Java deferral assertion drift). Reopen only after rebase onto current `main` with green 7-stage.
 - Majors remain closed under won’t-fix.
 
 ### Migration branch checklist (open on/after 2026-12-01)
