@@ -727,3 +727,5 @@ export * from "./eosPolyglotRustZigWasmKernel.ts";
 export * from "./eosPolyglotRustZigWasmKernel.types.ts";
 export * from "./eosWasmSimd128VectorArena.ts";
 export * from "./eosWasmSimd128VectorArena.types.ts";
+export * from "./eosSharedMemoryWorkerPool.ts";
+export * from "./eosSharedMemoryWorkerPool.types.ts";

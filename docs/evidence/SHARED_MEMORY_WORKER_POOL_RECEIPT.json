@@ -1,0 +1,89 @@
+{
+  "timestampIso": "2026-11-16T22:25:48.704Z",
+  "specRef": "SPEC-311",
+  "changeRef": "CHANGE-173",
+  "status": "SHARED_MEMORY_WORKERS_AND_JEPSEN_VERIFIED",
+  "sharedArenaReport": {
+    "initialPages": 4,
+    "maxPages": 16,
+    "byteLength": 262144,
+    "isSharedArrayBuffer": true,
+    "atomicHeaderOffsetBytes": 0,
+    "payloadOffsetBytes": 64
+  },
+  "parallelReductionReport": {
+    "elementCount": 8,
+    "workerCount": 2,
+    "totalSum": 360,
+    "maxElement": 80,
+    "atomicCompletedWorkers": 2,
+    "sharedMemoryVerified": true,
+    "durationMs": 102
+  },
+  "fleetShardReport": {
+    "totalProjects": 16,
+    "shardCount": 4,
+    "atomicProgressCount": 16,
+    "shards": [
+      {
+        "shardId": 0,
+        "projectIds": [
+          "fleet-svc-1",
+          "fleet-svc-2",
+          "fleet-svc-3",
+          "fleet-svc-4"
+        ],
+        "projectsAudited": 4,
+        "shardDigestSha256": "d57fa1dd701ab2d56c4f6779272e1e2745b19c6a14118c2f15528ee528ae4fde"
+      },
+      {
+        "shardId": 1,
+        "projectIds": [
+          "fleet-svc-5",
+          "fleet-svc-6",
+          "fleet-svc-7",
+          "fleet-svc-8"
+        ],
+        "projectsAudited": 4,
+        "shardDigestSha256": "44ca80cff4c74116068aa7c9f17603074fa7d5ed2bcf1143551292edacd4dc88"
+      },
+      {
+        "shardId": 2,
+        "projectIds": [
+          "fleet-svc-9",
+          "fleet-svc-10",
+          "fleet-svc-11",
+          "fleet-svc-12"
+        ],
+        "projectsAudited": 4,
+        "shardDigestSha256": "ee2d0c986f487bc8bbaa9a95d4aa3f8ef36df64f7d28a9a6011e30e4362a5009"
+      },
+      {
+        "shardId": 3,
+        "projectIds": [
+          "fleet-svc-13",
+          "fleet-svc-14",
+          "fleet-svc-15",
+          "fleet-svc-16"
+        ],
+        "projectsAudited": 4,
+        "shardDigestSha256": "e18b9a9a4e59fbaaee84ef35ae96ff9b975ce1a4a5b930b6b1c8fb0c20f71c82"
+      }
+    ],
+    "fleetMerkleRoot": "350cef2f56322474218d900fa836172c8862a3135d0a19af68eb3df2339b515f",
+    "durationMs": 133
+  },
+  "walCrashRecoveryReport": {
+    "committedRecordsExpected": 4,
+    "committedRecordsRecovered": 4,
+    "uncommittedDirtyRecordsLeaked": 0,
+    "walModeVerified": true,
+    "crashSignalSimulated": "PROCESS_EXIT_137_MID_TXN",
+    "merkleRootBeforeCrash": "461b9dc70fca7312615680c2adfd85443de3e87326c1cbfc335b86abb1eecc24",
+    "merkleRootAfterRecovery": "461b9dc70fca7312615680c2adfd85443de3e87326c1cbfc335b86abb1eecc24",
+    "zeroDataLossVerified": true,
+    "durationMs": 472
+  },
+  "inWasmSimdLoopNsPerOp": 3.67,
+  "cryptographicSignature": "101db5c9076c3dbdcbbc443ba47bf45df2a18a9a4091341bfd94f8397983a32e"
+}

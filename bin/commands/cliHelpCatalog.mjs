@@ -145,6 +145,10 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:simd:execute [--json] Ejecución vectorial i32x4.max_s e i32x4.mul sobre memoria alineada 16B (SPEC-310)
   eos toolchain:simd:arena [--json] Framing zero-copy con paridad v128.xor y capacidad elástica de flota (SPEC-310)
   eos toolchain:simd:audit [--json] Auditoría integral WebAssembly SIMD128 y recibo criptográfico (SPEC-310)
+  eos toolchain:workers:arena [--json] Reserva de WebAssembly.Memory compartida SharedArrayBuffer (SPEC-311)
+  eos toolchain:workers:reduce [--json] Reducción multi-core Atomics y auditoría paralela por shards (SPEC-311)
+  eos toolchain:workers:jepsen [--json] Simulacro multi-proceso SQLite WAL ante caída abrupta de proceso (SPEC-311)
+  eos toolchain:workers:audit [--json] Auditoría integral workers compartidos + Jepsen WAL y recibo firmado (SPEC-311)
 
 
 
@@ -451,6 +455,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:simd:execute [--json] Ejecución vectorial i32x4.max_s e i32x4.mul sobre memoria alineada 16B (SPEC-310)
   eos toolchain:simd:arena [--json] Framing zero-copy con paridad v128.xor y capacidad elástica de flota (SPEC-310)
   eos toolchain:simd:audit [--json] Auditoría integral WebAssembly SIMD128 y recibo criptográfico (SPEC-310)
+  eos toolchain:workers:arena [--json] Reserva de WebAssembly.Memory compartida SharedArrayBuffer (SPEC-311)
+  eos toolchain:workers:reduce [--json] Reducción multi-core Atomics y auditoría paralela por shards (SPEC-311)
+  eos toolchain:workers:jepsen [--json] Simulacro multi-proceso SQLite WAL ante caída abrupta de proceso (SPEC-311)
+  eos toolchain:workers:audit [--json] Auditoría integral workers compartidos + Jepsen WAL y recibo firmado (SPEC-311)
 
 
 

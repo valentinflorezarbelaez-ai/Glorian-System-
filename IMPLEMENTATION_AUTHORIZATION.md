@@ -2776,3 +2776,16 @@
   - `docs/plans/PLAN-172-wasm-simd128-vector-arena.md`
   - `docs/tasks/TASKS-172-wasm-simd128-vector-arena.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-16-SHARED-MEMORY-WORKER-POOL-JEPSEN
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-173` (`SPEC-311`), Shared-Memory Worker Pool, In-WASM SIMD128 Loops & Multi-Process SQLite WAL Crash Recovery: upgrade `src/core/eosWasmSimd128VectorArena.ts` with `simd_i32x4_max_join_loop`, implement `src/core/eosSharedMemoryWorkerPool.types.ts` and `src/core/eosSharedMemoryWorkerPool.ts`, harden `.github/workflows/eos-sovereign-cicd.yml` concurrency and Node 24 JS actions, export via `src/core/index.ts`, emit signed `docs/evidence/SHARED_MEMORY_WORKER_POOL_RECEIPT.json`, and wire CLI `toolchain:workers:arena`, `toolchain:workers:reduce`, `toolchain:workers:jepsen`, `toolchain:workers:audit` (`479 -> 483`). Verify `BDD-1641`..`BDD-1646`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-173-SHARED-MEMORY-WORKER-POOL-JEPSEN.md`
+  - `openspec/changes/CHANGE-173-shared-memory-worker-pool-jepsen.md`
+  - `openspec/specs/SPEC-311-shared-memory-worker-pool-jepsen.md`
+  - `docs/plans/PLAN-173-shared-memory-worker-pool-jepsen.md`
+  - `docs/tasks/TASKS-173-shared-memory-worker-pool-jepsen.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

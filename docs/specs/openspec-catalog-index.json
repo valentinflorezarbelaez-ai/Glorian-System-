@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 310,
-  "catalogSha256": "31f642f95f783adeaed3ea40b43fb95450238c366335dfded6de22322ac9c287",
+  "totalSpecs": 311,
+  "catalogSha256": "130a979092a9abb8d9e002e161c16fdb0c90310d087c26b0212bb82bb5273c2b",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2792,6 +2792,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-310-wasm-simd128-vector-arena.md",
       "sha256": "f25ff82a67d086dea3bb1643af8b4e5a5893ed3798ae5c695756474531e98ac9"
+    },
+    {
+      "id": "SPEC-311",
+      "title": "Shared-Memory Worker Pool, In-WASM SIMD128 Loops & Multi-Process SQLite WAL Crash Recovery",
+      "status": "STABLE_AND_ACTIVE",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-311-shared-memory-worker-pool-jepsen.md",
+      "sha256": "df602b214bebb847f48c3550ba21d57a65be673d5433915e381dbbde1760ebfa"
     }
   ]
 }

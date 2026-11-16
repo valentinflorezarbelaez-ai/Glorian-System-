@@ -44,6 +44,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:replicator:", file: "./cliCrdtStateReplicator.mjs", fn: "handleCrdtCommand" },
   { prefix: "toolchain:rustzig:", file: "./cliPolyglotRustZigWasm.mjs", fn: "handleRustZigWasmCommand" },
   { prefix: "toolchain:simd:", file: "./cliWasmSimd128Arena.mjs", fn: "handleWasmSimd128Command" },
+  { prefix: "toolchain:workers:", file: "./cliSharedMemoryWorkerPool.mjs", fn: "handleSharedMemoryWorkerPoolCommand" },
 ];
 
 export async function handleToolchainCommands(commandContext) {

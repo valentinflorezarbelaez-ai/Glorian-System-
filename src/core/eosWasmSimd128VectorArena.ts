@@ -39,6 +39,7 @@ interface Simd128WasmExports {
   simd_i32x4_max_join: (offsetA: number, offsetB: number, offsetOut: number) => number;
   simd_i32x4_dot: (offsetA: number, offsetB: number) => number;
   simd_v128_xor_tag: (offsetA: number, offsetB: number) => number;
+  simd_i32x4_max_join_loop: (offsetA: number, offsetB: number, offsetOut: number, byteLen: number) => number;
 }
 
 const WASM_MAGIC = [0x00, 0x61, 0x73, 0x6d] as const;
@@ -73,14 +74,24 @@ export class EosWasmSimd128VectorArenaCore {
 
     const sigMaxJoin = [0x60, 3, WASM_TYPE_BYTE.i32, WASM_TYPE_BYTE.i32, WASM_TYPE_BYTE.i32, 1, WASM_TYPE_BYTE.i32];
     const sigPair = [0x60, 2, WASM_TYPE_BYTE.i32, WASM_TYPE_BYTE.i32, 1, WASM_TYPE_BYTE.i32];
+    const sigLoop = [
+      0x60,
+      4,
+      WASM_TYPE_BYTE.i32,
+      WASM_TYPE_BYTE.i32,
+      WASM_TYPE_BYTE.i32,
+      WASM_TYPE_BYTE.i32,
+      1,
+      WASM_TYPE_BYTE.i32,
+    ];
 
     const typeSection = EosWasmBytecodeSynthesizerCore.makeSection(
       WASM_SECTION.TYPE,
-      EosWasmBytecodeSynthesizerCore.makeVector([sigMaxJoin, sigPair]),
+      EosWasmBytecodeSynthesizerCore.makeVector([sigMaxJoin, sigPair, sigLoop]),
     );
     const funcSection = EosWasmBytecodeSynthesizerCore.makeSection(
       WASM_SECTION.FUNCTION,
-      EosWasmBytecodeSynthesizerCore.makeVector([[0], [1], [1]]),
+      EosWasmBytecodeSynthesizerCore.makeVector([[0], [1], [1], [2]]),
     );
     const memSection = EosWasmBytecodeSynthesizerCore.makeSection(
       WASM_SECTION.MEMORY,
@@ -93,14 +104,16 @@ export class EosWasmSimd128VectorArenaCore {
         this.makeExportEntry("simd_i32x4_max_join", 0x00, 0),
         this.makeExportEntry("simd_i32x4_dot", 0x00, 1),
         this.makeExportEntry("simd_v128_xor_tag", 0x00, 2),
+        this.makeExportEntry("simd_i32x4_max_join_loop", 0x00, 3),
       ]),
     );
     const codeSection = EosWasmBytecodeSynthesizerCore.makeSection(
       WASM_SECTION.CODE,
       EosWasmBytecodeSynthesizerCore.makeVector([
         this.encodeSimdMaxJoinBody(),
-        this.encodeSimdDotBody(),
-        this.encodeSimdXorTagBody(),
+        this.encodePairSimdBody(0xb5, 0x6a), // i32x4.mul + i32.add
+        this.encodePairSimdBody(0x51, 0x73), // v128.xor + i32.xor
+        this.encodeSimdMaxJoinLoopBody(),
       ]),
     );
 
@@ -128,37 +141,18 @@ export class EosWasmSimd128VectorArenaCore {
   }
 
   private static encodeLaneReduce(localIndex: number, combineOpcode: number): number[] {
-    const extractOp = encodeUleb128(27); // i32x4.extract_lane
-    return [
-      0x20,
-      localIndex,
-      SIMD_PREFIX,
-      ...extractOp,
-      0,
-      0x20,
-      localIndex,
-      SIMD_PREFIX,
-      ...extractOp,
-      1,
-      combineOpcode,
-      0x20,
-      localIndex,
-      SIMD_PREFIX,
-      ...extractOp,
-      2,
-      combineOpcode,
-      0x20,
-      localIndex,
-      SIMD_PREFIX,
-      ...extractOp,
-      3,
-      combineOpcode,
-      0x0b,
-    ];
+    const extractOp = encodeUleb128(27);
+    const out: number[] = [];
+    for (let lane = 0; lane < 4; lane++) {
+      out.push(0x20, localIndex, SIMD_PREFIX, ...extractOp, lane);
+      if (lane > 0) out.push(combineOpcode);
+    }
+    out.push(0x0b);
+    return out;
   }
 
   private static encodeSimdMaxJoinBody(): number[] {
-    // params: 0=offsetA, 1=offsetB, 2=offsetOut; local 3: v128
+    const loadOp = encodeUleb128(0);
     const body = [
       1,
       1,
@@ -168,30 +162,128 @@ export class EosWasmSimd128VectorArenaCore {
       0x20,
       0,
       SIMD_PREFIX,
-      ...encodeUleb128(0), // v128.load
+      ...loadOp,
       2,
       0,
       0x20,
       1,
       SIMD_PREFIX,
-      ...encodeUleb128(0), // v128.load
+      ...loadOp,
       2,
       0,
       SIMD_PREFIX,
-      ...encodeUleb128(0xb8), // i32x4.max_s
+      ...encodeUleb128(0xb8),
       0x22,
       3,
       SIMD_PREFIX,
-      ...encodeUleb128(11), // v128.store
+      ...encodeUleb128(11),
       2,
       0,
-      ...this.encodeLaneReduce(3, 0x6a), // i32.add
+      ...this.encodeLaneReduce(3, 0x6a),
     ];
     return [...encodeUleb128(body.length), ...body];
   }
 
-  private static encodeSimdDotBody(): number[] {
-    // params: 0=offsetA, 1=offsetB; local 2: v128
+  private static encodeSimdMaxJoinLoopBody(): number[] {
+    const loadOp = encodeUleb128(0);
+    const body: number[] = [
+      2,
+      1,
+      WASM_TYPE_BYTE.i32,
+      2,
+      WASM_TYPE_V128,
+      0x41,
+      0,
+      0x21,
+      4,
+      SIMD_PREFIX,
+      ...encodeUleb128(12),
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0x21,
+      5,
+      0x02,
+      0x40,
+      0x03,
+      0x40,
+      0x20,
+      4,
+      0x20,
+      3,
+      0x4e,
+      0x0d,
+      1,
+      0x20,
+      2,
+      0x20,
+      4,
+      0x6a,
+      0x20,
+      0,
+      0x20,
+      4,
+      0x6a,
+      SIMD_PREFIX,
+      ...loadOp,
+      2,
+      0,
+      0x20,
+      1,
+      0x20,
+      4,
+      0x6a,
+      SIMD_PREFIX,
+      ...loadOp,
+      2,
+      0,
+      SIMD_PREFIX,
+      ...encodeUleb128(0xb8),
+      0x22,
+      6,
+      SIMD_PREFIX,
+      ...encodeUleb128(11),
+      2,
+      0,
+      0x20,
+      5,
+      0x20,
+      6,
+      SIMD_PREFIX,
+      ...encodeUleb128(0xae),
+      0x21,
+      5,
+      0x20,
+      4,
+      0x41,
+      16,
+      0x6a,
+      0x21,
+      4,
+      0x0c,
+      0,
+      0x0b,
+      0x0b,
+      ...this.encodeLaneReduce(5, 0x6a),
+    ];
+    return [...encodeUleb128(body.length), ...body];
+  }
+
+  private static encodePairSimdBody(simdOp: number, reduceOp: number): number[] {
+    const loadOp = encodeUleb128(0);
     const body = [
       1,
       1,
@@ -199,47 +291,20 @@ export class EosWasmSimd128VectorArenaCore {
       0x20,
       0,
       SIMD_PREFIX,
-      ...encodeUleb128(0), // v128.load
+      ...loadOp,
       2,
       0,
       0x20,
       1,
       SIMD_PREFIX,
-      ...encodeUleb128(0), // v128.load
+      ...loadOp,
       2,
       0,
       SIMD_PREFIX,
-      ...encodeUleb128(0xb5), // i32x4.mul
+      ...encodeUleb128(simdOp),
       0x21,
       2,
-      ...this.encodeLaneReduce(2, 0x6a), // i32.add
-    ];
-    return [...encodeUleb128(body.length), ...body];
-  }
-
-  private static encodeSimdXorTagBody(): number[] {
-    // params: 0=offsetA, 1=offsetB; local 2: v128
-    const body = [
-      1,
-      1,
-      WASM_TYPE_V128,
-      0x20,
-      0,
-      SIMD_PREFIX,
-      ...encodeUleb128(0), // v128.load
-      2,
-      0,
-      0x20,
-      1,
-      SIMD_PREFIX,
-      ...encodeUleb128(0), // v128.load
-      2,
-      0,
-      SIMD_PREFIX,
-      ...encodeUleb128(0x51), // v128.xor
-      0x21,
-      2,
-      ...this.encodeLaneReduce(2, 0x73), // i32.xor
+      ...this.encodeLaneReduce(2, reduceOp),
     ];
     return [...encodeUleb128(body.length), ...body];
   }
@@ -385,13 +450,12 @@ export class EosWasmSimd128VectorArenaCore {
       view[wordB + i] = vectorB[i] | 0;
     }
 
+    const simdLanesProcessed = Math.floor(dim / 4) * 4;
     const startNs = process.hrtime.bigint();
-    let sumMerged = 0;
-    let simdLanesProcessed = 0;
-    for (; simdLanesProcessed + 4 <= dim; simdLanesProcessed += 4) {
-      const byteDisp = simdLanesProcessed * 4;
-      sumMerged += exports.simd_i32x4_max_join(offsetA + byteDisp, offsetB + byteDisp, offsetOut + byteDisp);
-    }
+    let sumMerged =
+      simdLanesProcessed > 0
+        ? exports.simd_i32x4_max_join_loop(offsetA, offsetB, offsetOut, simdLanesProcessed * 4)
+        : 0;
 
     const mergedElements = new Array<number>(dim);
     for (let i = 0; i < simdLanesProcessed; i++) {
@@ -579,14 +643,45 @@ export class EosWasmSimd128VectorArenaCore {
       vecB[i] = (dimension - i) * 3 - 20;
     }
 
-    const simdWarm = this.executeSimdVectorMaxJoin(vecA, vecB);
+    const { exports } = this.getSimd128WasmRuntime();
+    const offsetA = 0;
+    const offsetB = this.align16(dimension * 4);
+    const offsetOut = this.align16(offsetB + dimension * 4);
+    this.ensureLinearMemoryBytes(exports.memory, offsetOut + this.align16(dimension * 4));
+    const view = new Int32Array(exports.memory.buffer);
+    const wordA = offsetA >> 2;
+    const wordB = offsetB >> 2;
+    const wordOut = offsetOut >> 2;
+    for (let i = 0; i < dimension; i++) {
+      view[wordA + i] = vecA[i];
+      view[wordB + i] = vecB[i];
+    }
+
+    const simdLanes = Math.floor(dimension / 4) * 4;
+    const simdByteLen = simdLanes * 4;
+    if (simdByteLen > 0) {
+      for (let w = 0; w < 25; w++) {
+        exports.simd_i32x4_max_join_loop(offsetA, offsetB, offsetOut, simdByteLen);
+      }
+    }
+
     const simdStart = process.hrtime.bigint();
     for (let r = 0; r < iterations; r++) {
-      this.executeSimdVectorMaxJoin(vecA, vecB);
+      if (simdByteLen > 0) {
+        exports.simd_i32x4_max_join_loop(offsetA, offsetB, offsetOut, simdByteLen);
+      }
+      for (let i = simdLanes; i < dimension; i++) {
+        const a = view[wordA + i];
+        const b = view[wordB + i];
+        view[wordOut + i] = a >= b ? a : b;
+      }
     }
     const simdTotalNs = Number(process.hrtime.bigint() - simdStart);
 
     const scalarOut = new Array<number>(dimension);
+    for (let i = 0; i < dimension; i++) {
+      scalarOut[i] = vecA[i] >= vecB[i] ? vecA[i] : vecB[i];
+    }
     const scalarStart = process.hrtime.bigint();
     for (let r = 0; r < iterations; r++) {
       for (let i = 0; i < dimension; i++) {
@@ -595,9 +690,13 @@ export class EosWasmSimd128VectorArenaCore {
     }
     const scalarTotalNs = Number(process.hrtime.bigint() - scalarStart);
 
-    const deterministicMatch =
-      simdWarm.mergedElements.length === scalarOut.length &&
-      simdWarm.mergedElements.every((val, idx) => val === scalarOut[idx]);
+    let deterministicMatch = true;
+    for (let i = 0; i < dimension; i++) {
+      if (view[wordOut + i] !== scalarOut[i]) {
+        deterministicMatch = false;
+        break;
+      }
+    }
 
     return deepFreeze({
       dimension,

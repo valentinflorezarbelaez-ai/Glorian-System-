@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-16T22:00:37.859Z",
+  "timestampIso": "2026-11-16T22:25:49.003Z",
   "specRef": "SPEC-310",
   "changeRef": "CHANGE-172",
   "status": "SIMD128_VECTOR_ARENA_VERIFIED",
@@ -11,17 +11,17 @@
     "wasmMagicValid": true,
     "simdOpcodesPresent": true,
     "sha256Digest": "f133be731784289a239d5e0789c6f24ffc4ba5a5c89e25860865af5868999e1e",
-    "durationMs": 455
+    "durationMs": 572
   },
   "rustSimdCompileReport": {
     "language": "RUST",
     "sourcePath": "templates/polyglot-wasm/simd_kernel.rs",
     "compilerBackend": "HERMETIC_W3C_SIMD128_SYNTHESIZER",
-    "wasmByteLength": 250,
+    "wasmByteLength": 403,
     "wasmMagicValid": true,
     "simdOpcodesPresent": true,
-    "sha256Digest": "11409f81a913a4ee42e9464a46ca10cfd26740aec0350323a8378ca79c95a8ac",
-    "durationMs": 198
+    "sha256Digest": "251e29994d70878f7dfc2b75731a7f865ebd10f6ee8f2d84f47b9343aa48836c",
+    "durationMs": 169
   },
   "maxJoinVerified": true,
   "dotProductVerified": true,
@@ -30,11 +30,11 @@
   "benchmark": {
     "dimension": 128,
     "iterations": 250,
-    "simdTotalNs": 15174700,
-    "simdNsPerOp": 474.21,
-    "scalarTotalNs": 281500,
-    "scalarNsPerOp": 8.8,
+    "simdTotalNs": 104400,
+    "simdNsPerOp": 3.26,
+    "scalarTotalNs": 456400,
+    "scalarNsPerOp": 14.26,
     "deterministicMatch": true
   },
-  "cryptographicSignature": "b4aa7b11bf117edf1dfc9117ef1ca64e1d273f9aee512b9b704990a8892da183"
+  "cryptographicSignature": "88596e0dcc655bd0d3dbb637772fc98c9a8b941ddb0555276a4a5cda9df113ef"
 }
