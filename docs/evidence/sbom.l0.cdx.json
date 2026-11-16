@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:87e792de-b754-53d5-8886-bd75b8604ce1",
+  "serialNumber": "urn:uuid:1fbb5c4e-8e96-5a96-b4e1-adc024dfc7f6",
   "version": 1,
   "metadata": {
-    "timestamp": "2022-03-30T01:16:14.000Z",
+    "timestamp": "2026-11-13T17:15:58.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -1339,7 +1339,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "a60fc3a8c2e921c29ff4f2f36b124fd6af0f4f63ecd8f636863be1bc94beac91"
+          "content": "183647ac0bc805910de607bba52fcbd55bc55e30f557bd5641cb58e8048a671e"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosControlPlaneHealthProbes.ts"
@@ -6493,5 +6493,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "e96b4d5c1f48eb78356bca4741c8124aba9db23de7b0bea552a524fdf761844f"
+  "sha256Receipt": "b61665f95b00179e8f591b0a453fa5f2eec0d570c9fc7904afa5a91ea193271a"
 }
