@@ -36,17 +36,18 @@ describe("Local Audio DSP Example", () => {
   });
 
   describe("Suite 2: Sample-Peak Clamp", () => {
-    it("clamps samples that exceed the configured amplitude ceiling", () => {
-      // Create a buffer with extreme overshoot (+3.0 dB, linear ~1.41)
+    it("hard-clamps samples to the -1.0 dBFS linear ceiling and reports post-clamp peak", () => {
+      const ceiling = EosAudioDspKernel.SAMPLE_PEAK_CEILING_LINEAR;
       const buffer = new Float32Array([1.5, -1.8, 0.5, -0.2, 2.0]);
       const result = dsp.applySamplePeakLimiterInPlace(buffer);
       assert.equal(result.clamped, true);
-      assert.ok(result.maxPeakDb > 0.0);
+      assert.ok(result.maxPeakDb <= -1.0 + 1e-6, `post-clamp peak ${result.maxPeakDb} dBFS exceeds -1.0`);
 
-      // Verify all samples are now within safe bound
       for (const val of buffer) {
-        assert.ok(Math.abs(val) <= 1.0, `Sample exceeded 1.0: ${val}`);
+        assert.ok(Math.abs(val) <= ceiling + 1e-9, `Sample ${val} exceeded ceiling ${ceiling}`);
       }
+      assert.throws(() => dsp.applySamplePeakLimiterInPlace(buffer, 0), RangeError);
+      assert.throws(() => dsp.applySamplePeakLimiterInPlace(buffer, 1.5), RangeError);
     });
   });
 
@@ -62,7 +63,10 @@ describe("Local Audio DSP Example", () => {
         `Expected real-time-capable throughput (> 44.1k samples/sec), got ${bench.throughputSamplesSec}`,
       );
       assert.ok(bench.realTimeSpeedFactor >= 1, `Expected at least 1x real-time, got ${bench.realTimeSpeedFactor}x`);
-      assert.ok(bench.samplePeakOutputDbfs <= 0.0);
+      assert.ok(
+        bench.samplePeakOutputDbfs <= -1.0 + 1e-6,
+        `Expected sample-peak ≤ -1.0 dBFS, got ${bench.samplePeakOutputDbfs}`,
+      );
       assert.ok(bench.sha256Proof.length === 64);
     });
 

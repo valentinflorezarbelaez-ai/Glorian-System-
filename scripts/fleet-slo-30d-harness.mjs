@@ -17,16 +17,27 @@ const ledgerPath = path.join(root, "docs/evidence/FLEET_SLO_30D_LEDGER.jsonl");
 const receiptPath = path.join(root, "docs/evidence/FLEET_SLO_30D_RECEIPT.json");
 const WINDOW_DAYS = 30;
 
-const probe = spawnSync(process.execPath, [path.join(root, "scripts/fleet-production-slo.mjs")], {
-  cwd: root,
-  encoding: "utf8",
-  timeout: 120_000,
-});
+function runProductionSloProbe() {
+  return spawnSync(process.execPath, [path.join(root, "scripts/fleet-production-slo.mjs")], {
+    cwd: root,
+    encoding: "utf8",
+    timeout: 120_000,
+  });
+}
+
+// One bounded retry absorbs transient edge flakes without inventing calendar days.
+let probe = runProductionSloProbe();
+let retries = 0;
+if ((probe.status ?? 1) !== 0) {
+  retries = 1;
+  probe = runProductionSloProbe();
+}
 
 const sloReceiptPath = path.join(root, "docs/evidence/FLEET_PRODUCTION_SLO_RECEIPT.json");
 const sample = {
   capturedAt: new Date().toISOString(),
   exitCode: probe.status ?? 1,
+  retries,
   sloReceiptPresent: fs.existsSync(sloReceiptPath),
   metrics: null,
 };

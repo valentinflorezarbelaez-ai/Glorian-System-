@@ -4,7 +4,7 @@
  *
  * Implements local audio-processing examples over synthetic buffers:
  * 1. Biquad IIR Filter Engine: Low-Pass, High-Pass, Peaking EQ (Direct Form II Transposed).
- * 2. In-place sample-peak clamp. This is not a true-peak oversampling limiter or loudness standard implementation.
+ * 2. In-place sample-peak hard clamp at ≈ -1.0 dBFS. Not an oversampled true-peak / full BS.1770 limiter.
  * 3. Stereo Planar / Interleaved SIMD Float32 buffer conversions.
  * 4. Local throughput measurement of a synthetic Float32Array buffer.
  *
@@ -129,26 +129,30 @@ export class EosAudioDspKernel {
   }
 
   /**
-   * Sample-peak clamp. This function does not oversample to estimate inter-sample peaks.
+   * Sample-peak hard clamp at the configured linear ceiling (default ≈ -1.0 dBFS).
+   * Soft-knee curves that could exceed the ceiling are forbidden — the output peak
+   * must never surpass `ceilingLinear`. This is still NOT an oversampled true-peak
+   * (inter-sample) limiter and does not claim full ITU-R BS.1770 conformance alone.
    */
   public applySamplePeakLimiterInPlace(
     buffer: Float32Array,
     ceilingLinear: number = EosAudioDspKernel.SAMPLE_PEAK_CEILING_LINEAR,
   ): { clamped: boolean; maxPeakDb: number } {
+    if (!(ceilingLinear > 0) || ceilingLinear > 1) {
+      throw new RangeError("ceilingLinear must be in (0, 1].");
+    }
     let clamped = false;
     let maxAbs = 0.0;
 
     for (let i = 0; i < buffer.length; i++) {
       const absVal = Math.abs(buffer[i]);
-      if (absVal > maxAbs) maxAbs = absVal;
-
       if (absVal > ceilingLinear) {
         clamped = true;
-        // Smooth soft-knee saturation curve
         const sign = buffer[i] > 0 ? 1 : -1;
-        buffer[i] =
-          sign * (ceilingLinear + (1 - ceilingLinear) * Math.tanh((absVal - ceilingLinear) / (1 - ceilingLinear)));
+        buffer[i] = sign * ceilingLinear;
       }
+      const postAbs = Math.abs(buffer[i]);
+      if (postAbs > maxAbs) maxAbs = postAbs;
     }
 
     const maxPeakDb = maxAbs > 0 ? Number((20 * Math.log10(maxAbs)).toFixed(2)) : -100.0;

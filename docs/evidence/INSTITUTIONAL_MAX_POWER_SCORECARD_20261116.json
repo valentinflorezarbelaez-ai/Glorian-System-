@@ -101,13 +101,14 @@
       "rank": 3,
       "id": "G3_SLO_30D_FILL",
       "track": "A",
-      "action": "Populate fleet-slo-30d receipts with continuous RUM/error-budget samples"
+      "action": "Keep daily npm run fleet:slo:30d until sampleCountInWindow≥30 (coverageRatio now 0.67; harness retries once)"
     },
     {
       "rank": 4,
-      "id": "G4_DSP_TRUE_PEAK_DRILL",
+      "id": "G4_DSP_SAMPLE_PEAK",
       "track": "A",
-      "action": "Tighten eos_audio_dsp_benchmark sample-peak evidence toward -1.0 dBTP (advisory; Aberamentho targets already correct)"
+      "status": "DONE_20261116",
+      "action": "Hard-capped eosAudioDspKernel sample-peak ≤ -1.0 dBFS (still not oversampled true-peak)"
     }
   ],
   "compositeInstitutionalIndex": {

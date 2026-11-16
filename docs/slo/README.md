@@ -61,6 +61,25 @@ Run `npm run fleet:slo` to probe every registered `productionUrl` for availabili
 Epistemic label: `SYNTHETIC_EDGE_PROBE_WITHIN_TESTED_SCOPE` — **not** browser RUM / CrUX field data.
 Catalog freeze (`docs/governance/CATALOG_FREEZE.md`) requires this receipt green before new OpenSpec ids after SPEC-308.
 
+### 30-day continuous ledger (local, no external firm)
+
+Run **once per calendar day** (owner machine or CI cron):
+
+```bash
+npm run fleet:slo:30d
+```
+
+- Appends one sample to `docs/evidence/FLEET_SLO_30D_LEDGER.jsonl`
+- Seals rolling receipt `docs/evidence/FLEET_SLO_30D_RECEIPT.json`
+- One bounded retry absorbs transient edge flakes; does **not** invent missing calendar days
+- `readyForAtoExitCriteria` stays `false` until ≥30 distinct daily ok samples exist in-window
+
+Windows Task Scheduler example (daily 06:00 local):
+
+```text
+schtasks /Create /TN "GlorianFleetSlo30d" /SC DAILY /ST 06:00 /TR "npm run fleet:slo:30d" /WD "<repo-root>"
+```
+
 ## Related
 
 - Module: `src/core/eosSLOErrorBudgetGovernor.ts`
