@@ -2737,3 +2737,16 @@
   - `docs/plans/PLAN-169-AUTONOMOUS-RECONCILIATION-LOOP.md`
   - `docs/tasks/TASKS-169-AUTONOMOUS-RECONCILIATION-LOOP.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-16-MERKLE-CRDT-STATE-REPLICATION
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-170` (`SPEC-308`), Decentralized Cross-Fleet Merkle-CRDT State Replication Protocol: `src/core/eosCrdtStateReplicator.types.ts` and `src/core/eosCrdtStateReplicator.ts` implementing immutable Merkle-DAG content addressing, join-semilattice CRDT convergence (LWW-Register, PN-Counter, OR-Set), high-performance WASM linear memory vector merge acceleration, logarithmic anti-entropy root divergence detection and delta exchange, and cryptographic receipt emission at `docs/evidence/CRDT_REPLICATION_RECEIPT.json`. Wire subcommands `toolchain:crdt:replicate`, `toolchain:crdt:merge`, `toolchain:crdt:anti-entropy`, `toolchain:crdt:audit` in `bin/commands/cliCrdtStateReplicator.mjs` and `bin/commands/cliToolchainRouter.mjs`. Verify BDD-1623..BDD-1628. Fix test fallback in `test/eosToolchainControlPlaneAndTlcLocal.test.mjs` and enable `setup-java@v4` in `.github/workflows/eos-sovereign-cicd.yml`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-170-MERKLE-CRDT-STATE-REPLICATION.md`
+  - `openspec/changes/CHANGE-170-merkle-crdt-state-replication.md`
+  - `openspec/specs/SPEC-308-merkle-crdt-state-replication.md`
+  - `docs/plans/PLAN-170-merkle-crdt-state-replication.md`
+  - `docs/tasks/TASKS-170-merkle-crdt-state-replication.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

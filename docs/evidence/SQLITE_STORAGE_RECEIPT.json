@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-16T01:34:07.956Z",
+  "timestampIso": "2026-11-16T16:37:44.831Z",
   "dbPath": ":memory:",
   "journalMode": "memory",
   "synchronous": "2",
@@ -9,5 +9,5 @@
   "categories": {
     "governance": 1
   },
-  "sha256Signature": "056d0d65632a9041f820b397238ae8f6c0b2b26805afb417f2cbf4a6c3aa996f"
+  "sha256Signature": "03604757be3be308be5a491ffe441e3c51067ab74a475134717f6abbf6731a84"
 }

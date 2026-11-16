@@ -272,7 +272,6 @@
     "verify:fast": "node scripts/verify-fast.mjs",
     "verify:references": "node scripts/verify-reference-integrity.mjs",
     "typecheck": "tsc --project tsconfig.typecheck.json",
-    "cicd:gate": "node scripts/verify-cicd-pipeline.mjs",
     "ship:sovereign": "node scripts/ship-sovereign.mjs",
     "fleet:verify": "node scripts/fleet-autonomous-cicd.mjs",
     "fleet:ship": "node scripts/fleet-autonomous-cicd.mjs --ship",

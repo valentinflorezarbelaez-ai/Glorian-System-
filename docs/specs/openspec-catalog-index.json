@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 307,
-  "catalogSha256": "174bd333dd02eb316b4aa9099bdd62c51c3b808b83853054c41d2898bd0e03d5",
+  "totalSpecs": 308,
+  "catalogSha256": "4d3605dd2dd99a3d6d1ff5c0b6c91bae37c8ebd31231b8a6ad9e9ecdbe6c14f1",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2765,6 +2765,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-307-AUTONOMOUS-RECONCILIATION-LOOP.md",
       "sha256": "aac4afbc87ee86ba5831f4a7559543d0d184426a0a89af28cb45abb1631267f0"
+    },
+    {
+      "id": "SPEC-308",
+      "title": "Decentralized Cross-Fleet Merkle-CRDT State Replication Protocol",
+      "status": "STABLE_AND_ACTIVE",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-308-merkle-crdt-state-replication.md",
+      "sha256": "06e770b6cbf2d592de71ae2f0a97d40434da5b319f2d6e9995ef5c2dd2d7e184"
     }
   ]
 }

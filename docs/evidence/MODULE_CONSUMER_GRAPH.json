@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-16T01:35:21.891Z",
-  "totalModules": 454,
-  "consumedModules": 390,
+  "timestampIso": "2026-11-16T16:38:38.436Z",
+  "totalModules": 491,
+  "consumedModules": 427,
   "unconsumedModules": 64,
-  "graphDensity": 0.859,
+  "graphDensity": 0.8697,
   "modules": {
     "EosAin": {
       "file": "src/core/EosAin.ts",
@@ -603,6 +603,30 @@
         }
       ]
     },
+    "eosAutomergeCrdtMesh": {
+      "file": "src/core/eosAutomergeCrdtMesh.ts",
+      "baseName": "eosAutomergeCrdtMesh",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliAutomergeCrdt.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosAutomergeCrdtMesh.types": {
+      "file": "src/core/eosAutomergeCrdtMesh.types.ts",
+      "baseName": "eosAutomergeCrdtMesh.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosAutomergeCrdtMesh.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosAutonomousChaosRunner": {
       "file": "src/core/eosAutonomousChaosRunner.ts",
       "baseName": "eosAutonomousChaosRunner",
@@ -651,6 +675,30 @@
         }
       ]
     },
+    "eosAutonomousReconciliationLoop": {
+      "file": "src/core/eosAutonomousReconciliationLoop.ts",
+      "baseName": "eosAutonomousReconciliationLoop",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliReconciliationLoop.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosAutonomousReconciliationLoop.types": {
+      "file": "src/core/eosAutonomousReconciliationLoop.types.ts",
+      "baseName": "eosAutonomousReconciliationLoop.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosAutonomousReconciliationLoop.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosAutonomousSelfHealingEngine": {
       "file": "src/core/eosAutonomousSelfHealingEngine.ts",
       "baseName": "eosAutonomousSelfHealingEngine",
@@ -685,6 +733,30 @@
       "isConsumed": false,
       "consumerCount": 0,
       "consumers": []
+    },
+    "eosBackstageSoundcheckScorecard": {
+      "file": "src/core/eosBackstageSoundcheckScorecard.ts",
+      "baseName": "eosBackstageSoundcheckScorecard",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliSoundcheckScorecard.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosBackstageSoundcheckScorecard.types": {
+      "file": "src/core/eosBackstageSoundcheckScorecard.types.ts",
+      "baseName": "eosBackstageSoundcheckScorecard.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosBackstageSoundcheckScorecard.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosBatchAggregator": {
       "file": "src/core/eosBatchAggregator.ts",
@@ -1046,6 +1118,30 @@
       "consumerCount": 0,
       "consumers": []
     },
+    "eosCloudflareDurableBridge": {
+      "file": "src/core/eosCloudflareDurableBridge.ts",
+      "baseName": "eosCloudflareDurableBridge",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliDurableBridge.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosCloudflareDurableBridge.types": {
+      "file": "src/core/eosCloudflareDurableBridge.types.ts",
+      "baseName": "eosCloudflareDurableBridge.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosCloudflareDurableBridge.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosCognitiveEval": {
       "file": "src/core/eosCognitiveEval.ts",
       "baseName": "eosCognitiveEval",
@@ -1163,6 +1259,30 @@
         {
           "consumerPath": "src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt2.ts",
           "category": "mcp"
+        }
+      ]
+    },
+    "eosConfidentialEnclaveGovernor": {
+      "file": "src/core/eosConfidentialEnclaveGovernor.ts",
+      "baseName": "eosConfidentialEnclaveGovernor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliConfidentialEnclave.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosConfidentialEnclaveGovernor.types": {
+      "file": "src/core/eosConfidentialEnclaveGovernor.types.ts",
+      "baseName": "eosConfidentialEnclaveGovernor.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosConfidentialEnclaveGovernor.ts",
+          "category": "core"
         }
       ]
     },
@@ -1380,6 +1500,30 @@
         {
           "consumerPath": "src/mcp/tools/eosMcpCoreUtilitarianHandlers.ts",
           "category": "mcp"
+        }
+      ]
+    },
+    "eosCrdtStateReplicator": {
+      "file": "src/core/eosCrdtStateReplicator.ts",
+      "baseName": "eosCrdtStateReplicator",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliCrdtStateReplicator.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosCrdtStateReplicator.types": {
+      "file": "src/core/eosCrdtStateReplicator.types.ts",
+      "baseName": "eosCrdtStateReplicator.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosCrdtStateReplicator.ts",
+          "category": "core"
         }
       ]
     },
@@ -1753,6 +1897,30 @@
         }
       ]
     },
+    "eosDurableExecutionEngine": {
+      "file": "src/core/eosDurableExecutionEngine.ts",
+      "baseName": "eosDurableExecutionEngine",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliDurableEngine.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosDurableExecutionEngine.types": {
+      "file": "src/core/eosDurableExecutionEngine.types.ts",
+      "baseName": "eosDurableExecutionEngine.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosDurableExecutionEngine.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosDurableSqliteLedger": {
       "file": "src/core/eosDurableSqliteLedger.ts",
       "baseName": "eosDurableSqliteLedger",
@@ -2024,6 +2192,30 @@
       "consumerCount": 0,
       "consumers": []
     },
+    "eosEbpfOtlpTelemetryGovernor": {
+      "file": "src/core/eosEbpfOtlpTelemetryGovernor.ts",
+      "baseName": "eosEbpfOtlpTelemetryGovernor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliEbpfOtlpGovernor.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosEbpfOtlpTelemetryGovernor.types": {
+      "file": "src/core/eosEbpfOtlpTelemetryGovernor.types.ts",
+      "baseName": "eosEbpfOtlpTelemetryGovernor.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEbpfOtlpTelemetryGovernor.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosEdaEquivalenceTimingProverCore": {
       "file": "src/core/eosEdaEquivalenceTimingProverCore.ts",
       "baseName": "eosEdaEquivalenceTimingProverCore",
@@ -2185,6 +2377,42 @@
       "consumerCount": 0,
       "consumers": []
     },
+    "eosFdirOntology": {
+      "file": "src/core/eosFdirOntology.ts",
+      "baseName": "eosFdirOntology",
+      "isConsumed": true,
+      "consumerCount": 3,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosAutonomousReconciliationLoop.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosSentinelDaemon.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "bin/commands/cliFdirOntology.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosFdirOntology.types": {
+      "file": "src/core/eosFdirOntology.types.ts",
+      "baseName": "eosFdirOntology.types",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosAutonomousReconciliationLoop.types.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosFdirOntology.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosFeatureFlagEngine": {
       "file": "src/core/eosFeatureFlagEngine.ts",
       "baseName": "eosFeatureFlagEngine",
@@ -2226,6 +2454,30 @@
       "isConsumed": false,
       "consumerCount": 0,
       "consumers": []
+    },
+    "eosFirecrackerMicroVmEngine": {
+      "file": "src/core/eosFirecrackerMicroVmEngine.ts",
+      "baseName": "eosFirecrackerMicroVmEngine",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliMicroVmEngine.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosFirecrackerMicroVmEngine.types": {
+      "file": "src/core/eosFirecrackerMicroVmEngine.types.ts",
+      "baseName": "eosFirecrackerMicroVmEngine.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosFirecrackerMicroVmEngine.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosFlakyTestQuarantine": {
       "file": "src/core/eosFlakyTestQuarantine.ts",
@@ -2732,6 +2984,30 @@
         {
           "consumerPath": "bin/commands/cliPlatform.mjs",
           "category": "bin"
+        }
+      ]
+    },
+    "eosHermeticReproducibleBuildGovernor": {
+      "file": "src/core/eosHermeticReproducibleBuildGovernor.ts",
+      "baseName": "eosHermeticReproducibleBuildGovernor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliHermeticBuild.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosHermeticReproducibleBuildGovernor.types": {
+      "file": "src/core/eosHermeticReproducibleBuildGovernor.types.ts",
+      "baseName": "eosHermeticReproducibleBuildGovernor.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosHermeticReproducibleBuildGovernor.ts",
+          "category": "core"
         }
       ]
     },
@@ -3352,7 +3628,7 @@
       "file": "src/core/eosKernelPrimitives.ts",
       "baseName": "eosKernelPrimitives",
       "isConsumed": true,
-      "consumerCount": 212,
+      "consumerCount": 220,
       "consumers": [
         {
           "consumerPath": "src/core/eosActiveKernelProcessEnforcer.ts",
@@ -3400,6 +3676,10 @@
         },
         {
           "consumerPath": "src/core/eosAutonomousCodeSynthesizer.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosAutonomousReconciliationLoop.ts",
           "category": "core"
         },
         {
@@ -3472,6 +3752,10 @@
         },
         {
           "consumerPath": "src/core/eosComputeGraphRooflinePlannerCore.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosConfidentialEnclaveGovernor.ts",
           "category": "core"
         },
         {
@@ -3599,6 +3883,10 @@
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosFdirOntology.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosFeatureFlagEngine.ts",
           "category": "core"
         },
@@ -3680,6 +3968,10 @@
         },
         {
           "consumerPath": "src/core/eosHermeticReleaseSealer.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosHermeticReproducibleBuildGovernor.ts",
           "category": "core"
         },
         {
@@ -4003,7 +4295,15 @@
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosSharedMemoryArena.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosSimdVectorAccelerator.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosSingleExecutableDistributionGovernor.ts",
           "category": "core"
         },
         {
@@ -4148,6 +4448,14 @@
         },
         {
           "consumerPath": "src/core/eosWasmBytecodeDecompilerProver.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosWasmBytecodeSynthesizer.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosWasmBytecodeSynthesizer.types.ts",
           "category": "core"
         },
         {
@@ -5274,15 +5582,35 @@
       "file": "src/core/eosOntologyCyclotron.ts",
       "baseName": "eosOntologyCyclotron",
       "isConsumed": true,
-      "consumerCount": 3,
+      "consumerCount": 8,
       "consumers": [
+        {
+          "consumerPath": "src/core/eosAutonomousReconciliationLoop.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosFdirOntology.ts",
+          "category": "core"
+        },
         {
           "consumerPath": "src/core/eosKnowledgeGraphEngine.ts",
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosSentinelDaemon.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/mcp/dispatch/eosLegacyRuntimeHandlers.ts",
           "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliFdirOntology.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliReconciliationLoop.mjs",
+          "category": "bin"
         },
         {
           "consumerPath": "bin/commands/cliSovereign.mjs",
@@ -6261,6 +6589,30 @@
         }
       ]
     },
+    "eosSapFixAutoRemediator": {
+      "file": "src/core/eosSapFixAutoRemediator.ts",
+      "baseName": "eosSapFixAutoRemediator",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliSapFix.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosSapFixAutoRemediator.types": {
+      "file": "src/core/eosSapFixAutoRemediator.types.ts",
+      "baseName": "eosSapFixAutoRemediator.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosSapFixAutoRemediator.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosSapFixAutoshipper": {
       "file": "src/core/eosSapFixAutoshipper.ts",
       "baseName": "eosSapFixAutoshipper",
@@ -6446,6 +6798,30 @@
         }
       ]
     },
+    "eosSharedMemoryArena": {
+      "file": "src/core/eosSharedMemoryArena.ts",
+      "baseName": "eosSharedMemoryArena",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliSharedMemory.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosSharedMemoryArena.types": {
+      "file": "src/core/eosSharedMemoryArena.types.ts",
+      "baseName": "eosSharedMemoryArena.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosSharedMemoryArena.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosSimdVectorAccelerator": {
       "file": "src/core/eosSimdVectorAccelerator.ts",
       "baseName": "eosSimdVectorAccelerator",
@@ -6458,6 +6834,30 @@
         }
       ]
     },
+    "eosSingleExecutableDistributionGovernor": {
+      "file": "src/core/eosSingleExecutableDistributionGovernor.ts",
+      "baseName": "eosSingleExecutableDistributionGovernor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliSeaDistribution.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosSingleExecutableDistributionGovernor.types": {
+      "file": "src/core/eosSingleExecutableDistributionGovernor.types.ts",
+      "baseName": "eosSingleExecutableDistributionGovernor.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosSingleExecutableDistributionGovernor.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosSingleExecutablePackager": {
       "file": "src/core/eosSingleExecutablePackager.ts",
       "baseName": "eosSingleExecutablePackager",
@@ -6467,6 +6867,30 @@
         {
           "consumerPath": "scripts/build-sea-binary.mjs",
           "category": "scripts"
+        }
+      ]
+    },
+    "eosSlsaProvenanceGovernor": {
+      "file": "src/core/eosSlsaProvenanceGovernor.ts",
+      "baseName": "eosSlsaProvenanceGovernor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliSlsaGovernor.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosSlsaProvenanceGovernor.types": {
+      "file": "src/core/eosSlsaProvenanceGovernor.types.ts",
+      "baseName": "eosSlsaProvenanceGovernor.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosSlsaProvenanceGovernor.ts",
+          "category": "core"
         }
       ]
     },
@@ -6571,6 +6995,30 @@
         {
           "consumerPath": "scripts/verify-security-hardening.mjs",
           "category": "scripts"
+        }
+      ]
+    },
+    "eosSovereignAiGateway": {
+      "file": "src/core/eosSovereignAiGateway.ts",
+      "baseName": "eosSovereignAiGateway",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliAiGateway.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosSovereignAiGateway.types": {
+      "file": "src/core/eosSovereignAiGateway.types.ts",
+      "baseName": "eosSovereignAiGateway.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosSovereignAiGateway.ts",
+          "category": "core"
         }
       ]
     },
@@ -7199,6 +7647,18 @@
         }
       ]
     },
+    "eosTreeSitterWasmEngine.types": {
+      "file": "src/core/eosTreeSitterWasmEngine.types.ts",
+      "baseName": "eosTreeSitterWasmEngine.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosTreeSitterWasmEngine.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosTrivyScannerAdapter": {
       "file": "src/core/eosTrivyScannerAdapter.ts",
       "baseName": "eosTrivyScannerAdapter",
@@ -7708,6 +8168,34 @@
         }
       ]
     },
+    "eosWasmBytecodeSynthesizer": {
+      "file": "src/core/eosWasmBytecodeSynthesizer.ts",
+      "baseName": "eosWasmBytecodeSynthesizer",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosAutonomousReconciliationLoop.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "bin/commands/cliWasmSynthesizer.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosWasmBytecodeSynthesizer.types": {
+      "file": "src/core/eosWasmBytecodeSynthesizer.types.ts",
+      "baseName": "eosWasmBytecodeSynthesizer.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosWasmBytecodeSynthesizer.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosWasmEngine": {
       "file": "src/core/eosWasmEngine.ts",
       "baseName": "eosWasmEngine",
@@ -7811,6 +8299,30 @@
         {
           "consumerPath": "bin/commands/cliDevOps.mjs",
           "category": "bin"
+        }
+      ]
+    },
+    "eosZ3WasmProver": {
+      "file": "src/core/eosZ3WasmProver.ts",
+      "baseName": "eosZ3WasmProver",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliZ3Prover.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosZ3WasmProver.types": {
+      "file": "src/core/eosZ3WasmProver.types.ts",
+      "baseName": "eosZ3WasmProver.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosZ3WasmProver.ts",
+          "category": "core"
         }
       ]
     },

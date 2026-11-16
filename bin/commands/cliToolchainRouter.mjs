@@ -41,6 +41,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:fdir:", file: "./cliFdirOntology.mjs", fn: "handleFdirCommands" },
   { prefix: "toolchain:wasm:", file: "./cliWasmSynthesizer.mjs", fn: "handleWasmCommands" },
   { prefix: "toolchain:reconcile:", file: "./cliReconciliationLoop.mjs", fn: "handleReconcileCommands" },
+  { prefix: "toolchain:replicator:", file: "./cliCrdtStateReplicator.mjs", fn: "handleCrdtCommand" },
 ];
 
 export async function handleToolchainCommands(commandContext) {

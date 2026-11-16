@@ -133,6 +133,11 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:reconcile:plan [--json] Formulación de DAG atómico de convergencia y remediación (SPEC-307)
   eos toolchain:reconcile:heal [--json] Ejecución quirúrgica autónoma de auto-sanación sobre la flota (SPEC-307)
   eos toolchain:reconcile:audit [--json] Auditoría integral del bucle de reconciliación y emisión de recibo (SPEC-307)
+  eos toolchain:replicator:replicate [--json] Replicación de mutaciones de estado Merkle-CRDT a la flota (SPEC-308)
+  eos toolchain:replicator:merge [--json] Fusión algebraica determinista en semirretículo de unión (SPEC-308)
+  eos toolchain:replicator:anti-entropy [--json] Sincronización anti-entropía logarítmica O(log N) (SPEC-308)
+  eos toolchain:replicator:audit [--json] Auditoría integral de replicación de estado y emisión de recibo (SPEC-308)
+
 
 
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
@@ -426,6 +431,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:reconcile:plan [--json] Formulación de DAG atómico de convergencia y remediación (SPEC-307)
   eos toolchain:reconcile:heal [--json] Ejecución quirúrgica autónoma de auto-sanación sobre la flota (SPEC-307)
   eos toolchain:reconcile:audit [--json] Auditoría integral del bucle de reconciliación y emisión de recibo (SPEC-307)
+  eos toolchain:replicator:replicate [--json] Replicación de mutaciones de estado Merkle-CRDT a la flota (SPEC-308)
+  eos toolchain:replicator:merge [--json] Fusión algebraica determinista en semirretículo de unión (SPEC-308)
+  eos toolchain:replicator:anti-entropy [--json] Sincronización anti-entropía logarítmica O(log N) (SPEC-308)
+  eos toolchain:replicator:audit [--json] Auditoría integral de replicación de estado y emisión de recibo (SPEC-308)
+
 
 
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268

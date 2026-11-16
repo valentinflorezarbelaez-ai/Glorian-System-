@@ -75,7 +75,7 @@ export const JARVIS_INTENT_REGISTRY: readonly JarvisIntentMapping[] = [
   {
     intent: "VERIFY_SECURITY_GATES",
     triggerKeywords: ["seguridad", "aduanas", "sast", "secretos", "gates", "cicd"],
-    actionCommand: "npm run cicd:gate",
+    actionCommand: "npm run test:ci",
     spokenResponse: "Preparando el escaneo local de patrones de credenciales; no es un análisis SAST general.",
     targetSubsystem: "EosCicdPipeline",
   },

@@ -777,3 +777,5 @@ export * from "./eosWasmBytecodeSynthesizer.ts";
 export * from "./eosWasmBytecodeSynthesizer.types.ts";
 export * from "./eosAutonomousReconciliationLoop.ts";
 export * from "./eosAutonomousReconciliationLoop.types.ts";
+export * from "./eosCrdtStateReplicator.ts";
+export * from "./eosCrdtStateReplicator.types.ts";
