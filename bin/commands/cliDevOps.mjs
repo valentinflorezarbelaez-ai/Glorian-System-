@@ -780,5 +780,8 @@ export async function handleDevOpsCommands(commandContext) {
   if (commandContext.command.startsWith("toolchain:z3:")) {
     return (await import("./cliZ3Prover.mjs")).handleZ3Commands(commandContext);
   }
+  if (commandContext.command.startsWith("toolchain:slsa:")) {
+    return (await import("./cliSlsaGovernor.mjs")).handleSlsaCommands(commandContext);
+  }
   return false;
 }

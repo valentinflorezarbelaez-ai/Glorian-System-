@@ -654,29 +654,7 @@ HANDLERS["heal:repo"] = cmd_fix_135;
 HANDLERS["project:fix"] = cmd_fix_135;
 
 import { handleAutonomousCommands } from "./cliAutonomous.mjs";
-import { handleFrontierMeshCommands } from "./cliFrontierMesh.mjs";
-import { handleZkR1csCommands } from "./cliZkR1csMesh.mjs";
-import { handleCrdtCommands } from "./cliCrdtMesh.mjs";
-import { handleMmrCommands } from "./cliMmrMesh.mjs";
-import { handleVrfCommands } from "./cliVrfMesh.mjs";
-import { handleSmtCommands } from "./cliSmtMesh.mjs";
-import { handleFrostCommands } from "./cliFrostMesh.mjs";
-import { handleKzgCommands } from "./cliKzgMesh.mjs";
-import { handleMlKemCommands } from "./cliMlKemMesh.mjs";
-import { handleBulletproofsCommands } from "./cliBulletproofsMesh.mjs";
-import { handleHotStuffCommands } from "./cliHotStuffMesh.mjs";
-import { handleTensorCommands } from "./cliTensorMesh.mjs";
-import { handleFleetMeshCommands } from "./cliFleetMesh.mjs";
-import { handleOtlpCommands } from "./cliOtlpMesh.mjs";
-import { handleMlDsaCommands } from "./cliMlDsaMesh.mjs";
-import { handleCongestionCommands } from "./cliCongestionMesh.mjs";
-import { handleTrieCommands } from "./cliTrieMesh.mjs";
-import { handleTimeLockCommands } from "./cliTimeLockMesh.mjs";
-import { handleCuckooCommands } from "./cliCuckooMesh.mjs";
-import { handleHllCommands } from "./cliHllMesh.mjs";
-import { handleVssCommands } from "./cliVssMesh.mjs";
-import { handleJarvisSdlcCommands } from "./cliJarvisSdlcMesh.mjs";
-import { handleJarvisPolyglotFrontierCommands } from "./cliJarvisPolyglotFrontierMesh.mjs";
+import { handleMeshCommands } from "./cliMesh.mjs";
 
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
@@ -685,28 +663,6 @@ export async function handlePlatformCommands(commandContext) {
     return true;
   }
   if (await handleAutonomousCommands(commandContext)) return true;
-  if (await handleFrontierMeshCommands(commandContext)) return true;
-  if (await handleZkR1csCommands(commandContext)) return true;
-  if (await handleCrdtCommands(commandContext)) return true;
-  if (await handleMmrCommands(commandContext)) return true;
-  if (await handleVrfCommands(commandContext)) return true;
-  if (await handleSmtCommands(commandContext)) return true;
-  if (await handleFrostCommands(commandContext)) return true;
-  if (await handleKzgCommands(commandContext)) return true;
-  if (await handleMlKemCommands(commandContext)) return true;
-  if (await handleBulletproofsCommands(commandContext)) return true;
-  if (await handleHotStuffCommands(commandContext)) return true;
-  if (await handleTensorCommands(commandContext)) return true;
-  if (await handleFleetMeshCommands(commandContext)) return true;
-  if (await handleOtlpCommands(commandContext)) return true;
-  if (await handleMlDsaCommands(commandContext.command, commandContext)) return true;
-  if (await handleCongestionCommands(commandContext.command, commandContext)) return true;
-  if (await handleTrieCommands(commandContext.command, commandContext)) return true;
-  if (await handleTimeLockCommands(commandContext.command, commandContext)) return true;
-  if (await handleCuckooCommands(commandContext.command, commandContext)) return true;
-  if (await handleHllCommands(commandContext.command, commandContext)) return true;
-  if (await handleVssCommands(commandContext.command, commandContext)) return true;
-  if (await handleJarvisSdlcCommands(commandContext.command, commandContext)) return true;
-  if (await handleJarvisPolyglotFrontierCommands(commandContext.command, commandContext)) return true;
+  if (await handleMeshCommands(commandContext)) return true;
   return false;
 }

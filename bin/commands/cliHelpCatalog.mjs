@@ -74,6 +74,9 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:z3:prove [--json] Demostrador SMT en proceso de lógica proposicional e invariantes inductivos (SPEC-292)
   eos toolchain:z3:tlc [SPEC] [--json] Verificación formal de modelos concurrentes con Leslie Lamport TLC (SPEC-292)
   eos toolchain:z3:audit [--json] Auditoría criptográfica de demostración formal y emisión de recibo (SPEC-292)
+  eos toolchain:slsa:sbom [--spdx] [--json] Generación de SBOM CycloneDX v1.5 y SPDX 2.3 sin dependencias (SPEC-293)
+  eos toolchain:slsa:attest [--json] Emisión de atestación In-Toto v1 y sobre DSSE con firma Ed25519 (SPEC-293)
+  eos toolchain:slsa:verify [--json] Auditoría criptográfica de procedencia SLSA Nivel 3 y emisión de recibo (SPEC-293)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -306,6 +309,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:z3:prove [--json] Demostrador SMT en proceso de lógica proposicional e invariantes inductivos (SPEC-292)
   eos toolchain:z3:tlc [SPEC] [--json] Verificación formal de modelos concurrentes con Leslie Lamport TLC (SPEC-292)
   eos toolchain:z3:audit [--json] Auditoría criptográfica de demostración formal y emisión de recibo (SPEC-292)
+  eos toolchain:slsa:sbom [--spdx] [--json] Generación de SBOM CycloneDX v1.5 y SPDX 2.3 sin dependencias (SPEC-293)
+  eos toolchain:slsa:attest [--json] Emisión de atestación In-Toto v1 y sobre DSSE con firma Ed25519 (SPEC-293)
+  eos toolchain:slsa:verify [--json] Auditoría criptográfica de procedencia SLSA Nivel 3 y emisión de recibo (SPEC-293)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

@@ -2542,3 +2542,16 @@
   - `docs/plans/PLAN-154-LIVE-TLC-Z3-WASM-PROVER.md`
   - `docs/tasks/TASKS-154-LIVE-TLC-Z3-WASM-PROVER.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-SLSA-PROVENANCE-SBOM
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-155` (`SPEC-293`), Phase 2.3 SLSA Level 3/4 Attestations, In-Toto Provenance & Cryptographic SBOM Governor: `src/core/eosSlsaProvenanceGovernor.types.ts` and `src/core/eosSlsaProvenanceGovernor.ts` with in-process CycloneDX v1.5 & SPDX 2.3 SBOM generation, in-toto v1 Statement with SLSA v1.0 Provenance predicate (`https://slsa.dev/provenance/v1`), DSSE signing and verification with Ed25519 keypairs via native `node:crypto`, SLSA level evaluation, and cryptographic receipt emission at `docs/evidence/SLSA_PROVENANCE_RECEIPT.json`. Wire subcommands `toolchain:slsa:sbom`, `toolchain:slsa:attest`, `toolchain:slsa:verify` in `bin/commands/cliSlsaGovernor.mjs` and `bin/commands/cliDevOps.mjs`. Verify BDD-1533..BDD-1538.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-155-SLSA-PROVENANCE-SBOM.md`
+  - `openspec/changes/CHANGE-155-slsa-provenance-sbom.md`
+  - `openspec/specs/SPEC-293-SLSA-PROVENANCE-SBOM.md`
+  - `docs/plans/PLAN-155-SLSA-PROVENANCE-SBOM.md`
+  - `docs/tasks/TASKS-155-SLSA-PROVENANCE-SBOM.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

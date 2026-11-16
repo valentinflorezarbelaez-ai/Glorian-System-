@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 292,
-  "catalogSha256": "179b977b57d6aaf9a5301522d1d62ce2874a99394f7660a613f742a8e913dac3",
+  "totalSpecs": 293,
+  "catalogSha256": "7e0203d7d05d2d91d62c6d9ca913af2baf19bea31f7ac49995c46f4324e1d3a5",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2630,6 +2630,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-292-LIVE-TLC-Z3-WASM-PROVER.md",
       "sha256": "0861c6cc49f6b011630599689adc6ec01266fac972a7673a1614a346a26c348a"
+    },
+    {
+      "id": "SPEC-293",
+      "title": "SLSA Level 3/4 Attestations, In-Toto Provenance & Cryptographic SBOM Governor",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-293-SLSA-PROVENANCE-SBOM.md",
+      "sha256": "62f4d2aa419adb2303a45b06acfb3242b6353a564e9098ec73245b41237037d3"
     }
   ]
 }

@@ -750,3 +750,4 @@ export * from "./eosDeterministicSimulationEngine.ts";
 export * from "./eosTreeSitterWasmEngine.ts";
 export * from "./eosSapFixAutoRemediator.ts";
 export * from "./eosZ3WasmProver.ts";
+export * from "./eosSlsaProvenanceGovernor.ts";
