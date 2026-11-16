@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-16T16:38:38.436Z",
-  "totalModules": 491,
-  "consumedModules": 427,
-  "unconsumedModules": 64,
-  "graphDensity": 0.8697,
+  "timestampIso": "2026-11-16T22:53:47.942Z",
+  "totalModules": 499,
+  "consumedModules": 436,
+  "unconsumedModules": 63,
+  "graphDensity": 0.8737,
   "modules": {
     "EosAin": {
       "file": "src/core/EosAin.ts",
@@ -3340,9 +3340,14 @@
     "eosIncidentSeverityClassifier": {
       "file": "src/core/eosIncidentSeverityClassifier.ts",
       "baseName": "eosIncidentSeverityClassifier",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "scripts/incident-honesty-pipeline.mjs",
+          "category": "scripts"
+        }
+      ]
     },
     "eosInertialFusionLawsonIgnitionCore": {
       "file": "src/core/eosInertialFusionLawsonIgnitionCore.ts",
@@ -3628,7 +3633,7 @@
       "file": "src/core/eosKernelPrimitives.ts",
       "baseName": "eosKernelPrimitives",
       "isConsumed": true,
-      "consumerCount": 220,
+      "consumerCount": 223,
       "consumers": [
         {
           "consumerPath": "src/core/eosActiveKernelProcessEnforcer.ts",
@@ -4199,6 +4204,10 @@
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosPolyglotRustZigWasmKernel.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosPostQuantumCryptography.ts",
           "category": "core"
         },
@@ -4296,6 +4305,10 @@
         },
         {
           "consumerPath": "src/core/eosSharedMemoryArena.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosSharedMemoryWorkerPool.ts",
           "category": "core"
         },
         {
@@ -4456,6 +4469,10 @@
         },
         {
           "consumerPath": "src/core/eosWasmBytecodeSynthesizer.types.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosWasmSimd128VectorArena.ts",
           "category": "core"
         },
         {
@@ -5970,6 +5987,38 @@
         }
       ]
     },
+    "eosPolyglotRustZigWasmKernel": {
+      "file": "src/core/eosPolyglotRustZigWasmKernel.ts",
+      "baseName": "eosPolyglotRustZigWasmKernel",
+      "isConsumed": true,
+      "consumerCount": 3,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosCrdtStateReplicator.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosWasmSimd128VectorArena.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "bin/commands/cliPolyglotRustZigWasm.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosPolyglotRustZigWasmKernel.types": {
+      "file": "src/core/eosPolyglotRustZigWasmKernel.types.ts",
+      "baseName": "eosPolyglotRustZigWasmKernel.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosPolyglotRustZigWasmKernel.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosPolyglotToolchainAdapterCore": {
       "file": "src/core/eosPolyglotToolchainAdapterCore.ts",
       "baseName": "eosPolyglotToolchainAdapterCore",
@@ -6153,7 +6202,7 @@
       "file": "src/core/eosProductionChaosMonkey.ts",
       "baseName": "eosProductionChaosMonkey",
       "isConsumed": true,
-      "consumerCount": 2,
+      "consumerCount": 3,
       "consumers": [
         {
           "consumerPath": "src/mcp/dispatch/eosLegacyGovernanceHandlers.ts",
@@ -6162,6 +6211,10 @@
         {
           "consumerPath": "bin/commands/cliSentinel.mjs",
           "category": "bin"
+        },
+        {
+          "consumerPath": "scripts/incident-honesty-pipeline.mjs",
+          "category": "scripts"
         }
       ]
     },
@@ -6818,6 +6871,30 @@
       "consumers": [
         {
           "consumerPath": "src/core/eosSharedMemoryArena.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosSharedMemoryWorkerPool": {
+      "file": "src/core/eosSharedMemoryWorkerPool.ts",
+      "baseName": "eosSharedMemoryWorkerPool",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliSharedMemoryWorkerPool.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosSharedMemoryWorkerPool.types": {
+      "file": "src/core/eosSharedMemoryWorkerPool.types.ts",
+      "baseName": "eosSharedMemoryWorkerPool.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosSharedMemoryWorkerPool.ts",
           "category": "core"
         }
       ]
@@ -7862,8 +7939,12 @@
       "file": "src/core/eosUniversalFleetSyncCore.ts",
       "baseName": "eosUniversalFleetSyncCore",
       "isConsumed": true,
-      "consumerCount": 2,
+      "consumerCount": 3,
       "consumers": [
+        {
+          "consumerPath": "src/core/eosSharedMemoryWorkerPool.ts",
+          "category": "core"
+        },
         {
           "consumerPath": "src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlersExt.ts",
           "category": "mcp"
@@ -8172,10 +8253,18 @@
       "file": "src/core/eosWasmBytecodeSynthesizer.ts",
       "baseName": "eosWasmBytecodeSynthesizer",
       "isConsumed": true,
-      "consumerCount": 2,
+      "consumerCount": 4,
       "consumers": [
         {
           "consumerPath": "src/core/eosAutonomousReconciliationLoop.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosPolyglotRustZigWasmKernel.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosWasmSimd128VectorArena.ts",
           "category": "core"
         },
         {
@@ -8237,6 +8326,42 @@
         {
           "consumerPath": "bin/commands/cliAutonomous.mjs",
           "category": "bin"
+        }
+      ]
+    },
+    "eosWasmSimd128VectorArena": {
+      "file": "src/core/eosWasmSimd128VectorArena.ts",
+      "baseName": "eosWasmSimd128VectorArena",
+      "isConsumed": true,
+      "consumerCount": 3,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosSharedMemoryWorkerPool.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosUniversalFleetSyncCore.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "bin/commands/cliWasmSimd128Arena.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosWasmSimd128VectorArena.types": {
+      "file": "src/core/eosWasmSimd128VectorArena.types.ts",
+      "baseName": "eosWasmSimd128VectorArena.types",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosUniversalFleetSyncCore.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosWasmSimd128VectorArena.ts",
+          "category": "core"
         }
       ]
     },
@@ -8322,6 +8447,30 @@
       "consumers": [
         {
           "consumerPath": "src/core/eosZ3WasmProver.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosZeroCopyRingBuffer": {
+      "file": "src/core/eosZeroCopyRingBuffer.ts",
+      "baseName": "eosZeroCopyRingBuffer",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliZeroCopyRingBuffer.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosZeroCopyRingBuffer.types": {
+      "file": "src/core/eosZeroCopyRingBuffer.types.ts",
+      "baseName": "eosZeroCopyRingBuffer.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosZeroCopyRingBuffer.ts",
           "category": "core"
         }
       ]

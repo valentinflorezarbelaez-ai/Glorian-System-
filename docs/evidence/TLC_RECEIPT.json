@@ -1,55 +1,76 @@
 {
-  "timestampIso": "2026-11-16T21:40:45.249Z",
+  "timestampIso": "2026-11-16T22:57:39.110Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
-  "executionMode": "DEFERRED_TO_CI_SETUP_JAVA",
-  "status": "DEFERRED_TO_CI_SETUP_JAVA",
+  "executionMode": "LIVE_LOCAL_TLC",
+  "status": "VERIFIED",
   "allPassed": true,
   "hasJavaRuntime": true,
-  "tlaJarPath": "NOT_DETECTED_LOCALLY",
-  "totalConfiguredSpecs": 6,
+  "tlaJarPath": "C:\\Users\\valen\\Documents\\Glorian-System\\tools\\tla2tools.jar",
+  "totalConfiguredSpecs": 7,
   "models": [
     {
       "specName": "LmaxDisruptor",
-      "verifiedLive": false,
-      "syntaxValid": true,
-      "tlaBytes": 2416,
-      "cfgBytes": 252
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 20425,
+      "statesGenerated": 84397,
+      "violationInvariant": null,
+      "exitCode": 0
     },
     {
       "specName": "HermesConsensusMesh",
-      "verifiedLive": false,
-      "syntaxValid": true,
-      "tlaBytes": 3121,
-      "cfgBytes": 258
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 6,
+      "statesGenerated": 12,
+      "violationInvariant": null,
+      "exitCode": 0
     },
     {
       "specName": "DatomicBitemporalLedger",
-      "verifiedLive": false,
-      "syntaxValid": true,
-      "tlaBytes": 2354,
-      "cfgBytes": 259
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 3481,
+      "statesGenerated": 9817,
+      "violationInvariant": null,
+      "exitCode": 0
     },
     {
       "specName": "AutonomousChaosDisruptor",
-      "verifiedLive": false,
-      "syntaxValid": true,
-      "tlaBytes": 2503,
-      "cfgBytes": 256
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 42,
+      "statesGenerated": 90,
+      "violationInvariant": null,
+      "exitCode": 0
     },
     {
       "specName": "BftAgentSwarmSlashing",
-      "verifiedLive": false,
-      "syntaxValid": true,
-      "tlaBytes": 1992,
-      "cfgBytes": 290
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 2421,
+      "statesGenerated": 13227,
+      "violationInvariant": null,
+      "exitCode": 0
     },
     {
       "specName": "CellBasedBulkheadGovernor",
-      "verifiedLive": false,
-      "syntaxValid": true,
-      "tlaBytes": 4156,
-      "cfgBytes": 366
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 504,
+      "statesGenerated": 1499,
+      "violationInvariant": null,
+      "exitCode": 0
+    },
+    {
+      "specName": "ZeroCopyRingBuffer",
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 39865,
+      "statesGenerated": 154381,
+      "violationInvariant": null,
+      "exitCode": 0
     }
   ]
 }

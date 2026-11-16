@@ -1,13 +1,14 @@
 {
-  "timestampIso": "2026-11-16T16:37:44.831Z",
+  "timestampIso": "2026-11-16T22:52:26.156Z",
   "dbPath": ":memory:",
   "journalMode": "memory",
   "synchronous": "2",
-  "totalDocuments": 1,
-  "fts5Enabled": true,
-  "vectorIndexedCount": 1,
+  "totalDocuments": 2,
+  "fts5Enabled": false,
+  "vectorIndexedCount": 2,
   "categories": {
-    "governance": 1
+    "compiler": 1,
+    "memory": 1
   },
-  "sha256Signature": "03604757be3be308be5a491ffe441e3c51067ab74a475134717f6abbf6731a84"
+  "sha256Signature": "c3b36b2a7ed54a9138dd7ffc2f15bbd6ba6e777844880d234c109f9dd9c19e9c"
 }

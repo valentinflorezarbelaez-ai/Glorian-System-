@@ -2789,3 +2789,16 @@
   - `docs/plans/PLAN-173-shared-memory-worker-pool-jepsen.md`
   - `docs/tasks/TASKS-173-shared-memory-worker-pool-jepsen.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-16-ZERO-COPY-RING-BUFFER-TELEMETRY
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-174` (`SPEC-312`), Zero-Copy Circular Ring-Buffer Telemetry & OTLP Streaming Bridge: author TLA+ formal model `docs/formal/ZeroCopyRingBuffer.tla` and configuration `docs/formal/ZeroCopyRingBuffer.cfg`, implement `src/core/eosZeroCopyRingBuffer.types.ts` and `src/core/eosZeroCopyRingBuffer.ts` with lock-free atomic sequencers over `SharedArrayBuffer` / `ArrayBuffer`, 64-byte cache-line aligned headers, bitwise power-of-2 slot masking, backpressure policies (`DROP_OLDEST`, `FAIL_FAST`), zero-allocation binary telemetry streaming to OTLP / Prometheus metrics, microsecond benchmarking, and signed receipt emission at `docs/evidence/ZERO_COPY_RING_BUFFER_RECEIPT.json`. Wire `toolchain:ringbuffer:create`, `toolchain:ringbuffer:push`, `toolchain:ringbuffer:drain`, `toolchain:ringbuffer:benchmark`, `toolchain:ringbuffer:audit` in `bin/commands/cliZeroCopyRingBuffer.mjs` and `bin/commands/cliToolchainRouter.mjs` (`483 -> 488` commands, 100% catalog parity). Verify `BDD-1647`..`BDD-1652`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-174-ZERO-COPY-RING-BUFFER-TELEMETRY.md`
+  - `openspec/changes/CHANGE-174-zero-copy-ring-buffer-telemetry.md`
+  - `openspec/specs/SPEC-312-zero-copy-ring-buffer-telemetry.md`
+  - `docs/plans/PLAN-174-zero-copy-ring-buffer-telemetry.md`
+  - `docs/tasks/TASKS-174-zero-copy-ring-buffer-telemetry.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

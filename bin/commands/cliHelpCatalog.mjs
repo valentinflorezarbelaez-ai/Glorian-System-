@@ -149,6 +149,11 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:workers:reduce [--json] Reducción multi-core Atomics y auditoría paralela por shards (SPEC-311)
   eos toolchain:workers:jepsen [--json] Simulacro multi-proceso SQLite WAL ante caída abrupta de proceso (SPEC-311)
   eos toolchain:workers:audit [--json] Auditoría integral workers compartidos + Jepsen WAL y recibo firmado (SPEC-311)
+  eos toolchain:ringbuffer:create [--json] Reserva o inspección de arena RingBuffer circular lock-free (SPEC-312)
+  eos toolchain:ringbuffer:push [--json] Inserción atómica de telemetría binaria zero-copy (SPEC-312)
+  eos toolchain:ringbuffer:drain [--json] Vaciado y decodificación de eventos sin asignación de heap (SPEC-312)
+  eos toolchain:ringbuffer:benchmark [--json] Benchmarking comparativo de throughput vs cola JS (SPEC-312)
+  eos toolchain:ringbuffer:audit [--json] Auditoría integral de invariantes estructurales y recibo firmado (SPEC-312)
 
 
 
@@ -459,6 +464,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:workers:reduce [--json] Reducción multi-core Atomics y auditoría paralela por shards (SPEC-311)
   eos toolchain:workers:jepsen [--json] Simulacro multi-proceso SQLite WAL ante caída abrupta de proceso (SPEC-311)
   eos toolchain:workers:audit [--json] Auditoría integral workers compartidos + Jepsen WAL y recibo firmado (SPEC-311)
+  eos toolchain:ringbuffer:create [--json] Reserva o inspección de arena RingBuffer circular lock-free (SPEC-312)
+  eos toolchain:ringbuffer:push [--json] Inserción atómica de telemetría binaria zero-copy (SPEC-312)
+  eos toolchain:ringbuffer:drain [--json] Vaciado y decodificación de eventos sin asignación de heap (SPEC-312)
+  eos toolchain:ringbuffer:benchmark [--json] Benchmarking comparativo de throughput vs cola JS (SPEC-312)
+  eos toolchain:ringbuffer:audit [--json] Auditoría integral de invariantes estructurales y recibo firmado (SPEC-312)
 
 
 

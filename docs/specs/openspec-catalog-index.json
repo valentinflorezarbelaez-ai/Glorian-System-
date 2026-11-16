@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 311,
-  "catalogSha256": "2521f026175d871475d959136cabccc6aeb4d760e5f3d2cd260637ff5c3a51d1",
+  "totalSpecs": 312,
+  "catalogSha256": "1df6c3fd16700e255e7e620aa1f977e8ddc0ccb5951cdddba46abbf1a54b69d2",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2801,6 +2801,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-311-shared-memory-worker-pool-jepsen.md",
       "sha256": "df602b214bebb847f48c3550ba21d57a65be673d5433915e381dbbde1760ebfa"
+    },
+    {
+      "id": "SPEC-312",
+      "title": "— Zero-Copy Circular Ring-Buffer Telemetry & OTLP Streaming Bridge",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-312-zero-copy-ring-buffer-telemetry.md",
+      "sha256": "e2e254a60ce1625704e86c1fd1230e1b045756399d2f50403d502a08a64ad33d"
     }
   ]
 }

@@ -729,3 +729,5 @@ export * from "./eosWasmSimd128VectorArena.ts";
 export * from "./eosWasmSimd128VectorArena.types.ts";
 export * from "./eosSharedMemoryWorkerPool.ts";
 export * from "./eosSharedMemoryWorkerPool.types.ts";
+export * from "./eosZeroCopyRingBuffer.ts";
+export * from "./eosZeroCopyRingBuffer.types.ts";

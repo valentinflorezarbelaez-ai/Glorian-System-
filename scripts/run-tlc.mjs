@@ -29,6 +29,7 @@ export const CONFIGURED_SPECS = [
   "AutonomousChaosDisruptor",
   "BftAgentSwarmSlashing",
   "CellBasedBulkheadGovernor",
+  "ZeroCopyRingBuffer",
 ];
 
 /**

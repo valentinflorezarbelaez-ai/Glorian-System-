@@ -5,6 +5,7 @@
     "src/core/eosAdaptiveRateLimiter.ts": { "lines": 90.0, "branches": 85.0 },
     "src/core/eosCycloneDxSbomGenerator.ts": { "lines": 90.0, "branches": 85.0 },
     "src/core/eosEventLoopSaturationGovernor.ts": { "lines": 90.0, "branches": 85.0 },
-    "src/core/eosIdempotencyKeyStore.ts": { "lines": 90.0, "branches": 85.0 }
+    "src/core/eosIdempotencyKeyStore.ts": { "lines": 90.0, "branches": 85.0 },
+    "src/core/index.ts": { "lines": 65.0, "branches": 60.0 }
   }
 }
