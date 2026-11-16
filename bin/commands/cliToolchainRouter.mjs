@@ -26,6 +26,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:z3:", file: "./cliZ3Prover.mjs", fn: "handleZ3Commands" },
   { prefix: "toolchain:slsa:", file: "./cliSlsaGovernor.mjs", fn: "handleSlsaCommands" },
   { prefix: "toolchain:durable:", file: "./cliDurableEngine.mjs", fn: "handleDurableCommands" },
+  { prefix: "toolchain:microvm:", file: "./cliMicroVmEngine.mjs", fn: "handleMicroVmCommands" },
 ];
 
 export async function handleToolchainCommands(commandContext) {

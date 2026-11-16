@@ -2568,3 +2568,16 @@
   - `docs/plans/PLAN-156-DURABLE-EXECUTION-ENGINE.md`
   - `docs/tasks/TASKS-156-DURABLE-EXECUTION-ENGINE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-FIRECRACKER-GVISOR-MICROVM
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-157` (`SPEC-295`), Phase 3.1 MicroVM Hardware Sandboxing via Firecracker & gVisor (runsc): `src/core/eosFirecrackerMicroVmEngine.types.ts` and `src/core/eosFirecrackerMicroVmEngine.ts` with KVM and hypervisor hardware virtualization probing, declarative Firecracker JSON configuration synthesis (`boot-source`, `drives`, `machine-config`, `vsock`), Google gVisor OCI `config.json` application kernel synthesis, hermetic isolated process jail execution fallback, outbound network egress blocking, watchdog timeout and memory bounds containment, and cryptographic receipt emission at `docs/evidence/MICROVM_SANDBOX_RECEIPT.json`. Wire subcommands `toolchain:microvm:launch`, `toolchain:microvm:config`, `toolchain:microvm:diag`, `toolchain:microvm:audit` in `bin/commands/cliMicroVmEngine.mjs` and `bin/commands/cliToolchainRouter.mjs`. Verify BDD-1545..BDD-1550.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-157-FIRECRACKER-GVISOR-MICROVM.md`
+  - `openspec/changes/CHANGE-157-firecracker-gvisor-microvm.md`
+  - `openspec/specs/SPEC-295-FIRECRACKER-GVISOR-MICROVM.md`
+  - `docs/plans/PLAN-157-FIRECRACKER-GVISOR-MICROVM.md`
+  - `docs/tasks/TASKS-157-FIRECRACKER-GVISOR-MICROVM.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

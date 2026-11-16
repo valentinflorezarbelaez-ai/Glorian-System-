@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 294,
-  "catalogSha256": "6d4154bcfc746afc56a0463242cdfe4591f69a3d46a9012a3f802f56b6b14008",
+  "totalSpecs": 295,
+  "catalogSha256": "2abfcb1739f15225b518fce916330b6251c232b52d3cd0a8684a684e2c197e48",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2648,6 +2648,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-294-DURABLE-EXECUTION-ENGINE.md",
       "sha256": "a725ee9f51976f0028b7e70c543fff786e9f308524683601630d0429eca84bee"
+    },
+    {
+      "id": "SPEC-295",
+      "title": "MicroVM Hardware Sandboxing via Firecracker & gVisor (runsc)",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-295-FIRECRACKER-GVISOR-MICROVM.md",
+      "sha256": "76cf1d2224bad6e9956ad70300840124ee089aecc284d528e03c10b79bf415b3"
     }
   ]
 }

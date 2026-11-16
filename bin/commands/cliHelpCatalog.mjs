@@ -81,6 +81,10 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:durable:resume [ID] [--json] Reanudación resiliente de flujos pausados o suspendidos (SPEC-294)
   eos toolchain:durable:replay [ID] [--json] Replay determinista bit a bit de historial sin efectos secundarios (SPEC-294)
   eos toolchain:durable:audit [--json] Auditoría del motor durable, rollback Saga y emisión de recibo (SPEC-294)
+  eos toolchain:microvm:launch [CODE] [--timeout=N] [--json] Ejecución aislada en microVM Firecracker / sandbox gVisor (SPEC-295)
+  eos toolchain:microvm:config [--gvisor] [--json] Emisión de especificación JSON de microVM Firecracker u OCI gVisor (SPEC-295)
+  eos toolchain:microvm:diag [--json] Diagnóstico de aceleración por hardware KVM y binarios de virtualización (SPEC-295)
+  eos toolchain:microvm:audit [--json] Auditoría de sandboxing, contención de timeout y bloqueo de red (SPEC-295)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -320,6 +324,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:durable:resume [ID] [--json] Reanudación resiliente de flujos pausados o suspendidos (SPEC-294)
   eos toolchain:durable:replay [ID] [--json] Replay determinista bit a bit de historial sin efectos secundarios (SPEC-294)
   eos toolchain:durable:audit [--json] Auditoría del motor durable, rollback Saga y emisión de recibo (SPEC-294)
+  eos toolchain:microvm:launch [CODE] [--timeout=N] [--json] Ejecución aislada en microVM Firecracker / sandbox gVisor (SPEC-295)
+  eos toolchain:microvm:config [--gvisor] [--json] Emisión de especificación JSON de microVM Firecracker u OCI gVisor (SPEC-295)
+  eos toolchain:microvm:diag [--json] Diagnóstico de aceleración por hardware KVM y binarios de virtualización (SPEC-295)
+  eos toolchain:microvm:audit [--json] Auditoría de sandboxing, contención de timeout y bloqueo de red (SPEC-295)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

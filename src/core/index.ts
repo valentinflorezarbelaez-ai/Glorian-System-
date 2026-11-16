@@ -752,3 +752,4 @@ export * from "./eosSapFixAutoRemediator.ts";
 export * from "./eosZ3WasmProver.ts";
 export * from "./eosSlsaProvenanceGovernor.ts";
 export * from "./eosDurableExecutionEngine.ts";
+export * from "./eosFirecrackerMicroVmEngine.ts";

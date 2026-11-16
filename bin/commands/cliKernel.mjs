@@ -405,13 +405,12 @@ async function cmd_loadtest_142(commandContext) {
 
 HANDLERS["loadtest"] = cmd_loadtest_142;
 
-import { EXHAUSTIVE_HELP_TEXT, QUICK_HELP_TEXT } from "./cliHelpCatalog.mjs";
-
 async function cmd_help_143(commandContext) {
   const { args, printBanner } = commandContext;
   printBanner();
   const showAll = args.includes("--all");
-  console.log(showAll ? EXHAUSTIVE_HELP_TEXT : QUICK_HELP_TEXT);
+  const catalog = await import("./cliHelpCatalog.mjs");
+  console.log(showAll ? catalog.EXHAUSTIVE_HELP_TEXT : catalog.QUICK_HELP_TEXT);
 }
 
 HANDLERS["help"] = cmd_help_143;
