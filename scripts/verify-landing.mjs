@@ -48,6 +48,8 @@ check("PWA manifest references existing local assets", () => {
 const html = read("index.html");
 const css = read("css/eos.css");
 const js = read("js/eos.js");
+const cliCatalog = exists("js/eos-cli-catalog.js") ? read("js/eos-cli-catalog.js") : "";
+const commandRegistrySource = `${js}\n${cliCatalog}`;
 
 check("HTML landmarks, metadata, and in-page links are coherent", () => {
   assert.match(html, /<html\b[^>]*\blang="es"/i, "Document language must be declared");
@@ -67,8 +69,8 @@ check("HTML landmarks, metadata, and in-page links are coherent", () => {
 });
 
 check("Visible command controls map to registered local actions", () => {
-  const commandKeys = new Set([...js.matchAll(/^\s*"([^"\n]+)"\s*:/gm)].map((match) => match[1]));
-  assert.ok(commandKeys.size > 0, "No command registry entries found in js/eos.js");
+  const commandKeys = new Set([...commandRegistrySource.matchAll(/^\s*"([^"\n]+)"\s*:/gm)].map((match) => match[1]));
+  assert.ok(commandKeys.size > 0, "No command registry entries found in js/eos.js or js/eos-cli-catalog.js");
   const pageCommands = [...html.matchAll(/\bdata-cmd="([^"]+)"/g)].map((match) => match[1]);
   assert.ok(pageCommands.length > 0, "Landing page does not expose any command controls");
   for (const command of pageCommands) {
@@ -77,6 +79,8 @@ check("Visible command controls map to registered local actions", () => {
   assert.match(html, /<dialog\b[^>]*id="eos-cmdk-dialog"/i, "Accessible command dialog is required");
   assert.match(js, /getElementById\("eos-cmdk-dialog"\)/, "Command dialog must be wired to the page script");
   assert.ok(exists("js/eos.js"));
+  assert.ok(exists("js/eos-cli-catalog.js"), "CLI catalog split (Absolute-Max W3) must exist");
+  assert.match(html, /eos-cli-catalog\.js/, "Landing must load the CLI catalog before eos.js");
 });
 
 check("Performance claims have corresponding implementation", () => {
