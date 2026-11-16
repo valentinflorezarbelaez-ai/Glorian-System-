@@ -97,6 +97,10 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:gateway:consensus [--prompt=P] [--json] Consenso adversarial dual-modelo y verificación de invariantes (SPEC-298)
   eos toolchain:gateway:circuit [--provider=P] [--reset] [--json] Monitor de circuit breakers y failover resiliente (SPEC-298)
   eos toolchain:gateway:audit [--json] Auditoría del gateway de IA soberano y emisión de recibo criptográfico (SPEC-298)
+  eos toolchain:soundcheck:score [--project=P] [--json] Evaluación 5 pilares Backstage Soundcheck y nivel de madurez (SPEC-299)
+  eos toolchain:soundcheck:matrix [--json] Matriz de salud institucional de los 9 repositorios de la flota (SPEC-299)
+  eos toolchain:soundcheck:drift [--project=P] [--json] Detección de drift arquitectónico y plan de remediación (SPEC-299)
+  eos toolchain:soundcheck:audit [--json] Auditoría del scorecard Soundcheck y emisión de recibo criptográfico (SPEC-299)
 
 
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
@@ -354,6 +358,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:gateway:consensus [--prompt=P] [--json] Consenso adversarial dual-modelo y verificación de invariantes (SPEC-298)
   eos toolchain:gateway:circuit [--provider=P] [--reset] [--json] Monitor de circuit breakers y failover resiliente (SPEC-298)
   eos toolchain:gateway:audit [--json] Auditoría del gateway de IA soberano y emisión de recibo criptográfico (SPEC-298)
+  eos toolchain:soundcheck:score [--project=P] [--json] Evaluación 5 pilares Backstage Soundcheck y nivel de madurez (SPEC-299)
+  eos toolchain:soundcheck:matrix [--json] Matriz de salud institucional de los 9 repositorios de la flota (SPEC-299)
+  eos toolchain:soundcheck:drift [--project=P] [--json] Detección de drift arquitectónico y plan de remediación (SPEC-299)
+  eos toolchain:soundcheck:audit [--json] Auditoría del scorecard Soundcheck y emisión de recibo criptográfico (SPEC-299)
 
 
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268

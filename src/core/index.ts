@@ -759,3 +759,5 @@ export * from "./eosCloudflareDurableBridge.ts";
 export * from "./eosCloudflareDurableBridge.types.ts";
 export * from "./eosSovereignAiGateway.ts";
 export * from "./eosSovereignAiGateway.types.ts";
+export * from "./eosBackstageSoundcheckScorecard.ts";
+export * from "./eosBackstageSoundcheckScorecard.types.ts";

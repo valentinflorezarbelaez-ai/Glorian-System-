@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 298,
-  "catalogSha256": "804fed96b0b9d444ebed4cb0e301d2b5c2bd2cbdba5bde7db3fb7a5d33b9303f",
+  "totalSpecs": 299,
+  "catalogSha256": "f9f042f635091288865964d30b01bac608170cdb257c38bd8ed11174bfa6ce89",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2684,6 +2684,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-298-SOVEREIGN-AI-GATEWAY.md",
       "sha256": "71c0adac72ba4deafa36c9094c4d3794c7a9c8866303193e5803a964007e27f2"
+    },
+    {
+      "id": "SPEC-299",
+      "title": "Spotify Backstage Soundcheck Real-Time Fleet Scorecards",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-299-BACKSTAGE-SOUNDCHECK-SCORECARD.md",
+      "sha256": "83ace8d4fade389c8533539f8327c52154468316ddf45e0cbf6b92a9881a7c33"
     }
   ]
 }

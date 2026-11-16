@@ -30,6 +30,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:ebpf:", file: "./cliEbpfOtlpGovernor.mjs", fn: "handleEbpfCommands" },
   { prefix: "toolchain:edge:", file: "./cliDurableBridge.mjs", fn: "handleEdgeCommands" },
   { prefix: "toolchain:gateway:", file: "./cliAiGateway.mjs", fn: "handleAiGatewayCommands" },
+  { prefix: "toolchain:soundcheck:", file: "./cliSoundcheckScorecard.mjs", fn: "handleSoundcheckCommands" },
 ];
 
 export async function handleToolchainCommands(commandContext) {
