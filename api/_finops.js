@@ -3,6 +3,8 @@
  * Estimate only — not a live provider invoice. WITHIN_TESTED_SCOPE.
  */
 
+import { requireIdempotencyKeyForPost, recordIdempotentResponse } from "./_shield.js";
+
 const MAX_DIRECTIVE_BYTES = 32 * 1024;
 
 async function _handler(req, res) {
@@ -10,7 +12,7 @@ async function _handler(req, res) {
   res.setHeader("Cache-Control", "no-store, max-age=0, must-revalidate");
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Idempotency-Key, x-idempotency-key");
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
@@ -56,6 +58,7 @@ async function _handler(req, res) {
     res.setHeader("Allow", "GET, POST, OPTIONS");
     return res.status(405).json({ ok: false, error: "METHOD_NOT_ALLOWED" });
   }
+  if (!requireIdempotencyKeyForPost(req, res)) return;
 
   try {
     const body = req.body && typeof req.body === "object" ? req.body : {};
@@ -75,7 +78,7 @@ async function _handler(req, res) {
 
     const routing = EosAgenticFinOpsGovernor.getInstance().classifyTaskCostTier(directive, estimatedTokens);
 
-    return res.status(200).json({
+    const payload = {
       ok: true,
       epistemicState: "FINOPS_COST_RECEIPT_WITHIN_TESTED_SCOPE",
       note: "Estimate only — subscription chat ≠ production API invoice",
@@ -86,7 +89,9 @@ async function _handler(req, res) {
       ratePerMillionUsd: routing.ratePerMillionUsd,
       rationale: routing.rationale,
       sha256Attestation: routing.sha256Attestation,
-    });
+    };
+    recordIdempotentResponse(req, payload);
+    return res.status(200).json(payload);
   } catch {
     return res.status(503).json({ ok: false, error: "FINOPS_ENGINE_UNAVAILABLE" });
   }

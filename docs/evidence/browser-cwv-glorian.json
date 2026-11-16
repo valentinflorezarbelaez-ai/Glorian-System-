@@ -1,17 +1,26 @@
 {
+  "epistemicState": "BROWSER_CWV_LAB_WITHIN_TESTED_SCOPE",
+  "claimsDenied": [
+    "CrUX field data",
+    "multi-device Lighthouse lab",
+    "Level-5"
+  ],
   "services": [
     {
       "serviceId": "eos-system",
-      "lcpMs": null,
-      "cls": null,
+      "fcpMs": 1616,
+      "lcpMs": 1616,
+      "cls": 0,
       "inpMs": null,
-      "fcpMs": 3260,
-      "ttfbMs": 433,
-      "domContentLoadedMs": 2004,
-      "loadEventMs": 2366,
+      "ttfbMs": 103,
+      "domContentLoadedMs": 1410,
+      "loadEventMs": 2038,
       "source": "BROWSER_CDP",
-      "measuredAt": "2026-11-16T22:05:30.000Z",
-      "note": "LCP entry unavailable in CDP snapshot; FCP measured via Performance paint timing"
+      "measuredAt": "2026-11-16T22:30:32.196Z",
+      "hasHero": true,
+      "hasCwvHook": true,
+      "note": "Local static checkout via headless CDP; production CrUX still denied"
     }
-  ]
+  ],
+  "sha256": "3d99f498ea9078efe4d8504bdfc815d7753c8c0b43a2bbb77fa98e2d5dbe66ad"
 }

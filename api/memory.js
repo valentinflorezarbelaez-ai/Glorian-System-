@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { getQueryParam } from "./_safeQuery.js";
+import { requireIdempotencyKeyForPost, recordIdempotentResponse } from "./_shield.js";
 
 /**
  * ============================================================================
@@ -108,7 +109,7 @@ const GENESIS_AKASHIC_OBSERVATIONS = [
 export default function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Idempotency-Key, x-idempotency-key");
   res.setHeader("Cache-Control", "no-store");
 
   if (req.method === "OPTIONS") {
@@ -118,6 +119,10 @@ export default function handler(req, res) {
   if (req.method !== "GET" && req.method !== "POST") {
     res.setHeader("Allow", "GET, POST, OPTIONS");
     return res.status(405).json({ status: "METHOD_NOT_ALLOWED" });
+  }
+
+  if (req.method === "POST" && !requireIdempotencyKeyForPost(req, res)) {
+    return;
   }
 
   let body = {};
@@ -182,7 +187,7 @@ export default function handler(req, res) {
     const learned = (body.learned || "").trim();
     const previewSha256 = computeSha256(JSON.stringify({ type, topic_key, title, what, why, where, learned }));
 
-    return res.status(200).json({
+    const payload = {
       status: "PREVIEW_ONLY",
       persisted: false,
       action: "mem_save",
@@ -197,7 +202,9 @@ export default function handler(req, res) {
       },
       previewSha256: `sha256:${previewSha256}`,
       note: "Nothing was saved here. Browser-local records are stored only in this user's localStorage.",
-    });
+    };
+    recordIdempotentResponse(req, payload);
+    return res.status(200).json(payload);
   }
 
   if (action === "mem_judge" || action === "mem_compare") {

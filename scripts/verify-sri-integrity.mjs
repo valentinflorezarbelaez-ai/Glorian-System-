@@ -26,19 +26,18 @@ const shouldFix = process.argv.includes("--fix");
 // (\s+ spans newlines), so reformatting index.html never silently breaks --fix.
 const CSS_TAG_RE =
   /<link\s+rel="stylesheet"\s+href="\/css\/eos\.css(?:\?[^"]*)?"(?:\s+integrity="[^"]*")?(?:\s+crossorigin="[^"]*")?\s*\/>/;
-const JS_TAG_RE =
-  /<script\s+src="\/js\/eos\.js(?:\?[^"]*)?"(?:\s+integrity="[^"]*")?(?:\s+crossorigin="[^"]*")?\s+defer\s*><\/script>/;
+const JS_TAG_RE = /<script(?:\s+[^>]*)?src="\/js\/eos\.js(?:\?[^"]*)?"(?:\s+[^>]*)?>\s*<\/script>/;
 
 if (shouldFix) {
   assert.ok(CSS_TAG_RE.test(html), "SRI fix found no <link> stylesheet tag for /css/eos.css in index.html");
   html = html.replace(
     CSS_TAG_RE,
-    `<link rel="stylesheet" href="/css/eos.css?v=15.0" integrity="${cssSri}" crossorigin="anonymous" />`,
+    `<link rel="stylesheet" href="/css/eos.css?v=15.3" integrity="${cssSri}" crossorigin="anonymous" />`,
   );
   assert.ok(JS_TAG_RE.test(html), "SRI fix found no deferred <script> tag for /js/eos.js in index.html");
   html = html.replace(
     JS_TAG_RE,
-    `<script src="/js/eos.js?v=18.0" integrity="${jsSri}" crossorigin="anonymous" defer></script>`,
+    `<script src="/js/eos.js?v=18.1" integrity="${jsSri}" crossorigin="anonymous" defer></script>`,
   );
   fs.writeFileSync(path.join(root, "index.html"), html, "utf8");
   console.log(`[SRI FIX] Injected CSS SRI: ${cssSri.slice(0, 24)}...`);

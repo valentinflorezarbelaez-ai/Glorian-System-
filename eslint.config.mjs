@@ -55,6 +55,9 @@ export default [
       ".coverage/**",
       // Generated / vendored JS that we don't own
       "js/eos.js",
+      "js/eos-cli-catalog.js",
+      "js/eos-openspecs.js",
+      "js/eos-cwv.js",
       "js/wasm_exec.js", // Vendored Go wasm runtime shim
       // Templates are self-contained sub-projects with their own tooling
       "templates/**",

@@ -125,6 +125,7 @@
     "factory:e2e": "node scripts/eos-bigtech-product-factory-e2e.mjs",
     "fleet:dogfood": "node scripts/eos-fleet-dogfood-ttv.mjs",
     "fleet:slo": "node scripts/fleet-production-slo.mjs",
+    "fleet:slo:30d": "node scripts/fleet-slo-30d-harness.mjs",
     "fleet:rum": "node scripts/fleet-rum-cwv.mjs",
     "incident:drill": "node scripts/incident-honesty-pipeline.mjs",
     "ops:seal": "node scripts/eos-bigtech-ops-seal.mjs",

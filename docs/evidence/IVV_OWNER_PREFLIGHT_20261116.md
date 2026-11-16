@@ -4,7 +4,7 @@ Epistemic: `OWNER_PREFLIGHT_WITHIN_TESTED_SCOPE` · **not** `EXTERNAL_SOUNDCHECK
 
 ## Tip under test
 
-- SHA: `3daa5a45` (post provenance re-bind + tip-seal; re-bind tip may advance)
+- SHA: `3ea103ea` (SPEC-311 tip + Absolute-Max W1–W5 wave; re-attest if HEAD advances)
 - Command: owner/agent preflight of `docs/assurance/EXTERNAL_IVV_AUDITOR_PACKET.md`
 
 ## Gates executed (this session)

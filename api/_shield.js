@@ -97,6 +97,26 @@ export function applyKernelShield(req, res) {
 }
 
 /**
+ * Absolute-Max W5 / Nubank pillar: require Idempotency-Key on mutating POSTs.
+ * Returns false if the response was already written (400 missing key).
+ */
+export function requireIdempotencyKeyForPost(req, res) {
+  if (!req || req.method !== "POST") return true;
+  const idempKey = extractIdempotencyKey(req);
+  if (!idempKey) {
+    res.setHeader("X-Idempotency", "REQUIRED");
+    res.status(400).json({
+      status: "IDEMPOTENCY_KEY_REQUIRED",
+      error: "Mutating POST requires Idempotency-Key (or x-idempotency-key) header.",
+      maxKeyBytes: 128,
+    });
+    return false;
+  }
+  if (!applyKernelShield(req, res)) return false;
+  return true;
+}
+
+/**
  * Completes an idempotent record with its generated response.
  */
 export function recordIdempotentResponse(req, payload) {

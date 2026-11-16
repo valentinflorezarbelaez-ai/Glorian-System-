@@ -1,3 +1,5 @@
+import { requireIdempotencyKeyForPost, recordIdempotentResponse } from "./_shield.js";
+
 const MAX_DIRECTIVE_LENGTH = 4096;
 
 function classifyDirective(directive) {
@@ -17,7 +19,7 @@ export default function handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Idempotency-Key, x-idempotency-key");
   res.setHeader("Cache-Control", "no-store");
 
   if (req.method === "OPTIONS") return res.status(200).end();
@@ -25,6 +27,7 @@ export default function handler(req, res) {
     res.setHeader("Allow", "POST, OPTIONS");
     return res.status(405).json({ status: "METHOD_NOT_ALLOWED" });
   }
+  if (!requireIdempotencyKeyForPost(req, res)) return;
 
   const body = req.body && typeof req.body === "object" && !Array.isArray(req.body) ? req.body : {};
   const directive = body.directive ?? "";
@@ -40,7 +43,7 @@ export default function handler(req, res) {
         ? "La solicitud fue clasificada como consulta de estado. Este endpoint no sondea procesos, subsistemas ni producción."
         : "Directiva recibida y clasificada localmente por reglas de palabras clave. No se llamó a un modelo de IA.";
 
-  return res.status(200).json({
+  const payload = {
     status: "INTENT_CLASSIFIED",
     directiveReceived: directive,
     intent,
@@ -54,5 +57,7 @@ export default function handler(req, res) {
       deploymentRun: false,
       consensusRun: false,
     },
-  });
+  };
+  recordIdempotentResponse(req, payload);
+  return res.status(200).json(payload);
 }

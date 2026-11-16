@@ -1,0 +1,17 @@
+{
+  "epistemicState": "SYNTHETIC_EDGE_SLO_CONTINUOUS_WITHIN_TESTED_SCOPE",
+  "claimsDenied": [
+    "CrUX field data",
+    "multi-region SRE",
+    "FEDERAL_ATO",
+    "Level-5"
+  ],
+  "windowDays": 30,
+  "measuredAt": "2026-11-16T22:30:54.048Z",
+  "sampleCountInWindow": 1,
+  "okSampleCount": 1,
+  "coverageRatio": 1,
+  "readyForAtoExitCriteria": false,
+  "ledgerPath": "docs/evidence/FLEET_SLO_30D_LEDGER.jsonl",
+  "sha256": "bf389c5681e25c0a4d83d7b2a094e3a4f1f1ad6cc0e277e1bbac1558d6b2ec40"
+}

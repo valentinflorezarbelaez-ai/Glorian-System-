@@ -35,22 +35,11 @@
     />
     <meta name="twitter:image" content="https://eos-system.vercel.app/assets/eos-system.webp" />
 
-    <!-- Typography & Critical Asset Preload -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" href="/css/eos.css?v=15.2" as="style" />
-    <link rel="preload" href="/js/eos.js?v=18.0" as="script" />
+    <!-- Typography: DESIGN.md Geist + OS fallbacks — no render-blocking Google Fonts (Absolute-Max W2) -->
+    <link rel="preload" href="/css/eos.css?v=15.3" as="style" />
+    <link rel="preload" href="/js/eos.js?v=18.1" as="script" />
     <link rel="serviceworker" href="/sw.js" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="/css/eos.css?v=15.0"
-      integrity="sha384-ONNE1ZPijbqpuKkfgvTeIHBzO9014eZx9gi9eNt244z0994aA37YAiLEwzRCQUpm"
-      crossorigin="anonymous"
-    />
+    <link rel="stylesheet" href="/css/eos.css?v=15.3" integrity="sha384-REXm+2wGa+oV0cogPeOjHhvmQTNdGL56f5YJhbBIEDhdVREApMBvQpmhYr0Sl5WW" crossorigin="anonymous" />
 
     <!-- Xirp-Grade Speculative Prerendering (0ms Instant Navigation) -->
     <script type="speculationrules" src="/js/speculation-rules.json"></script>
@@ -142,7 +131,7 @@
             <div class="eyebrow">
               <span>HERRAMIENTAS LOCALES PARA REPOSITORIOS</span>
             </div>
-            <h1 class="hero__title">
+            <h1 class="hero__title" id="lcp-hero" data-lcp-candidate="true">
               Revisa cambios de código con un <span class="text-gradient-cyan">flujo local y controlado</span>
             </h1>
             <p class="hero__lead">
@@ -4633,7 +4622,14 @@ Probes, hooks, gates, commits, pushes, and deployments are not run by this page.
                 aria-label="Buscar en el catálogo de 130 especificaciones"
               />
               <div class="specs-filter-group" role="group" aria-label="Filtro de especificaciones">
-                <button type="button" class="btn btn--ghost btn--sm active" data-spec-filter="ALL">Todas (130)</button>
+                <button
+                  type="button"
+                  class="btn btn--ghost btn--sm active"
+                  data-spec-filter="ALL"
+                  id="specs-filter-all"
+                >
+                  Todas (311)
+                </button>
                 <button type="button" class="btn btn--ghost btn--sm" data-spec-filter="APPROVED">Approved</button>
                 <button type="button" class="btn btn--ghost btn--sm" data-spec-filter="PRODUCTION_READY">
                   Production Ready
@@ -5576,11 +5572,8 @@ No se ejecutan comandos, auditorías, sondeos ni despliegues.</pre>
       </div>
     </dialog>
 
-    <script
-      src="/js/eos.js?v=18.0"
-      integrity="sha384-vRSA09A4uN6+Z23fCsQQakZWVWO8ukTNh0tzWExSJSZWLeawE+P9ZyEKVk7ZXBso"
-      crossorigin="anonymous"
-      defer
-    ></script>
+    <script src="/js/eos-cwv.js?v=1.0" defer></script>
+    <script src="/js/eos-cli-catalog.js?v=1.0" defer></script>
+    <script src="/js/eos.js?v=18.1" integrity="sha384-RgIf53gX2Om7NE+0axlTZkkaKwlWMXiEAupeAPzkusbOR5Pof5gKyGHe0yARvPVc" crossorigin="anonymous" defer></script>
   </body>
 </html>

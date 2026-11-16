@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import { getQueryObject } from "./_safeQuery.js";
+import { requireIdempotencyKeyForPost, recordIdempotentResponse } from "./_shield.js";
 
 /**
  * ============================================================================
@@ -93,7 +94,7 @@ async function handleAmplify(req, res, body = {}) {
   const endTime = process.hrtime.bigint();
   const latencyMicros = Number(endTime - startTime) / 1000;
 
-  return res.status(200).json({
+  const payload = {
     status: "LOCAL_DRAFT_GENERATED",
     version: "17.0.0",
     engine: "EOS local prompt scaffolder",
@@ -102,14 +103,16 @@ async function handleAmplify(req, res, body = {}) {
     remoteModelCalled: false,
     amplification: amplified,
     note: "The requested model name is metadata only. This route does not call an external language model or verify the generated draft.",
-  });
+  };
+  recordIdempotentResponse(req, payload);
+  return res.status(200).json(payload);
 }
 
 export default async function handler(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Idempotency-Key, x-idempotency-key");
   res.setHeader("Cache-Control", "no-store");
 
   if (req.method === "OPTIONS") {
@@ -119,6 +122,9 @@ export default async function handler(req, res) {
   if (req.method !== "GET" && req.method !== "POST") {
     res.setHeader("Allow", "GET, POST, OPTIONS");
     return res.status(405).json({ status: "METHOD_NOT_ALLOWED" });
+  }
+  if (req.method === "POST" && !requireIdempotencyKeyForPost(req, res)) {
+    return;
   }
 
   const query = getQueryObject(req);
