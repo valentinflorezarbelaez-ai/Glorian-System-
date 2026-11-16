@@ -36,6 +36,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:nix:", file: "./cliHermeticBuild.mjs", fn: "handleHermeticBuildCommands" },
   { prefix: "toolchain:bazel:", file: "./cliHermeticBuild.mjs", fn: "handleHermeticBuildCommands" },
   { prefix: "toolchain:build:", file: "./cliHermeticBuild.mjs", fn: "handleHermeticBuildCommands" },
+  { prefix: "toolchain:shm:", file: "./cliSharedMemory.mjs", fn: "handleSharedMemoryCommands" },
 ];
 
 export async function handleToolchainCommands(commandContext) {

@@ -2672,3 +2672,16 @@
   - `docs/plans/PLAN-164-HERMETIC-REPRODUCIBLE-BUILDS.md`
   - `docs/tasks/TASKS-164-HERMETIC-REPRODUCIBLE-BUILDS.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-16-ZERO-COPY-SHARED-MEMORY
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-165` (`SPEC-303`), Phase 4.4 Zero-Copy Shared Memory Arena (`SharedArrayBuffer` + `Atomics`): `src/core/eosSharedMemoryArena.types.ts` and `src/core/eosSharedMemoryArena.ts` with pre-allocated off-heap memory arena layout, 64-byte atomic control header (`0x454F534D` Magic, version, capacity, head, tail, sequences, drop counters), lock-free single-producer single-consumer (SPSC) ring buffer, wait-free framed message enqueue/dequeue, circular wrap-around, buffer overrun drop tracking, and cryptographic receipt emission at `docs/evidence/SHARED_MEMORY_RECEIPT.json`. Wire subcommands `toolchain:shm:alloc`, `toolchain:shm:produce`, `toolchain:shm:consume`, `toolchain:shm:audit` in `bin/commands/cliSharedMemory.mjs` and `bin/commands/cliToolchainRouter.mjs`. Verify BDD-1593..BDD-1598.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-165-ZERO-COPY-SHARED-MEMORY.md`
+  - `openspec/changes/CHANGE-165-zero-copy-shared-memory.md`
+  - `openspec/specs/SPEC-303-ZERO-COPY-SHARED-MEMORY.md`
+  - `docs/plans/PLAN-165-ZERO-COPY-SHARED-MEMORY.md`
+  - `docs/tasks/TASKS-165-ZERO-COPY-SHARED-MEMORY.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

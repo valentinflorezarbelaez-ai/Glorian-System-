@@ -113,6 +113,10 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:bazel:build [--json] Configuración de compilación hermética Bazel sin acceso a red (SPEC-302)
   eos toolchain:build:normalize [--json] Normalización canónica de archivos con SOURCE_DATE_EPOCH y permisos fijos (SPEC-302)
   eos toolchain:build:verify [--json] Verificación de compilación reproducible bit-a-bit e informe de deriva (SPEC-302)
+  eos toolchain:shm:alloc [--capacity=B] [--json] Asignación de arena de memoria compartida off-heap (SPEC-303)
+  eos toolchain:shm:produce [--msg=M] [--count=N] [--json] Escritura lock-free zero-copy en buffer circular con Atomics (SPEC-303)
+  eos toolchain:shm:consume [--json] Lectura in-place zero-copy sin pausas de Garbage Collector (SPEC-303)
+  eos toolchain:shm:audit [--json] Auditoría y benchmark de latencia de transferencia en memoria compartida (SPEC-303)
 
 
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
@@ -386,6 +390,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:bazel:build [--json] Configuración de compilación hermética Bazel sin acceso a red (SPEC-302)
   eos toolchain:build:normalize [--json] Normalización canónica de archivos con SOURCE_DATE_EPOCH y permisos fijos (SPEC-302)
   eos toolchain:build:verify [--json] Verificación de compilación reproducible bit-a-bit e informe de deriva (SPEC-302)
+  eos toolchain:shm:alloc [--capacity=B] [--json] Asignación de arena de memoria compartida off-heap (SPEC-303)
+  eos toolchain:shm:produce [--msg=M] [--count=N] [--json] Escritura lock-free zero-copy en buffer circular con Atomics (SPEC-303)
+  eos toolchain:shm:consume [--json] Lectura in-place zero-copy sin pausas de Garbage Collector (SPEC-303)
+  eos toolchain:shm:audit [--json] Auditoría y benchmark de latencia de transferencia en memoria compartida (SPEC-303)
 
 
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268

@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 302,
-  "catalogSha256": "6c2f965c0c6cc2f7a8baaeb4003977d7568e6041af76ac09cea629ee44b943fe",
+  "totalSpecs": 303,
+  "catalogSha256": "9f3c33286f4a873b225d8f5dfcd138ccc99bc8a8cfaa07b835f5a20d8c2b0003",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2720,6 +2720,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-302-HERMETIC-REPRODUCIBLE-BUILDS.md",
       "sha256": "f8bec050a4a428b8155753adb7a4ae35a3248fa96f752ea55ffd6834c9f419a1"
+    },
+    {
+      "id": "SPEC-303",
+      "title": "Zero-Copy Shared Memory Arena (SharedArrayBuffer + Atomics)",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-303-ZERO-COPY-SHARED-MEMORY.md",
+      "sha256": "fdf4c62ff325e71cafb0ec1e9e48115dc3798099a4736ce26037c052fe2bb97d"
     }
   ]
 }
