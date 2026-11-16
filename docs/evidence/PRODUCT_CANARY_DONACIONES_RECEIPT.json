@@ -1,0 +1,99 @@
+{
+  "schema": "eos.product-canary.v1",
+  "siblingId": "donaciones",
+  "productionUrl": "https://donaciones-drab.vercel.app",
+  "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
+  "measuredAt": "2026-11-16T21:16:33.023Z",
+  "probes": [
+    {
+      "latencyMs": 128,
+      "statusCode": 200,
+      "isError": false
+    },
+    {
+      "latencyMs": 285,
+      "statusCode": 200,
+      "isError": false
+    },
+    {
+      "latencyMs": 159,
+      "statusCode": 200,
+      "isError": false
+    },
+    {
+      "latencyMs": 97,
+      "statusCode": 200,
+      "isError": false
+    },
+    {
+      "latencyMs": 109,
+      "statusCode": 200,
+      "isError": false
+    },
+    {
+      "latencyMs": 95,
+      "statusCode": 200,
+      "isError": false
+    },
+    {
+      "latencyMs": 103,
+      "statusCode": 200,
+      "isError": false
+    },
+    {
+      "latencyMs": 96,
+      "statusCode": 200,
+      "isError": false
+    },
+    {
+      "latencyMs": 98,
+      "statusCode": 200,
+      "isError": false
+    },
+    {
+      "latencyMs": 100,
+      "statusCode": 200,
+      "isError": false
+    },
+    {
+      "latencyMs": 102,
+      "statusCode": 200,
+      "isError": false
+    },
+    {
+      "latencyMs": 99,
+      "statusCode": 200,
+      "isError": false
+    }
+  ],
+  "metrics": {
+    "requestCount": 12,
+    "errorCount": 0,
+    "errorRate5xx": 0,
+    "latencyP99Ms": 285
+  },
+  "evaluation": {
+    "evaluatedTimestamp": 1794863793023,
+    "deploymentId": "live_donaciones_2026-11-16T21-16-33-022Z",
+    "stage": "CANARY_5_PCT",
+    "canaryHealthIndex": 95,
+    "decision": "PROCEED_TO_NEXT_STAGE",
+    "errorRateObserved": 0,
+    "latencyP99Ms": 285,
+    "requestCount": 12,
+    "errorBudgetRemainingPercent": 100,
+    "rationale": "Canary is healthy (CHI: 95/100, Error Rate: 0.00%, Latency P99: 285ms). Promotion to next progressive stage authorized.",
+    "sha256Receipt": "3109de5e32747ad1feb599429fb34a957d562f8f168d2d31c023c58fdbac2500"
+  },
+  "rollbackPlan": {
+    "trigger": false,
+    "actions": [
+      "Freeze progressive delivery (hold canary stage).",
+      "vercel rollback --yes for project donaciones to last READY production deployment (operator).",
+      "Open GitHub incident with label incident; page on-call via docs/runbooks/ON_CALL.md.",
+      "Re-run npm run canary:product after fix; require PROCEED_TO_NEXT_STAGE before 25%/100%."
+    ]
+  },
+  "epistemic": "WITHIN_TESTED_SCOPE",
+  "sha256": "f6a6a97201e3d1403750a484082274ee31348a122e095334c3a061683f9bd2b6"
+}

@@ -1,14 +1,14 @@
 {
-  "measuredAt": "2026-11-15T01:15:00.244Z",
+  "measuredAt": "2026-11-16T21:16:36.293Z",
   "windowDays": 30,
   "deploymentFrequency": {
-    "commitsInWindow": 462,
-    "perDay": "15.40",
+    "commitsInWindow": 562,
+    "perDay": "18.73",
     "rating": "ELITE",
     "eliteThreshold": "1+ deploys/day"
   },
   "leadTimeForChanges": {
-    "verifiedReceipts": 14,
+    "verifiedReceipts": 53,
     "github": {
       "averageHours": 0.34,
       "sampleSize": 20,
@@ -20,7 +20,7 @@
   },
   "changeFailureRate": {
     "incidents": 0,
-    "deploysInWindow": 462,
+    "deploysInWindow": 562,
     "percent": "0.00%",
     "rating": "ELITE",
     "eliteThreshold": "≤ 5%"
@@ -40,5 +40,5 @@
     "sha256Receipt": "2792ccf7049af49791de960046bfa58aa589c529878d3e3a29458802e177ec52"
   },
   "overallRating": "ELITE",
-  "sha256": "32bd0a51541888ee1e09e7150fe957dc015a6a2a1b872c65c5fbb96cd611748f"
+  "sha256": "d78d704dd1ff0ffa78fe5e7e16f25b7be9a6707a79d3706b410d5dcc67c8021c"
 }

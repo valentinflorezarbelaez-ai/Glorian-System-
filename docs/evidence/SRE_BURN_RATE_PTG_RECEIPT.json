@@ -1,7 +1,7 @@
 {
-  "measuredAt": "2026-11-12T02:00:50.395Z",
+  "measuredAt": "2026-11-16T21:16:33.629Z",
   "serviceId": "performance-talent-group",
-  "canarySha256": "fc8939105517830d4d3fc7589fa501e6838cf7ce14224b8b83ae7415a75bf04f",
+  "canarySha256": "fc60f043c7e4f28515fd61b13e7dfe4818b9ed05bcb8625693e174e91ac443e6",
   "report": {
     "serviceId": "performance-talent-group",
     "availabilitySlo": 0.999,
@@ -21,7 +21,7 @@
       "window30m": {
         "windowLabel": "30m",
         "windowMs": 1800000,
-        "totalEvents": 30,
+        "totalEvents": 12,
         "totalErrors": 0,
         "errorRate": 0,
         "burnRate": 0
@@ -29,7 +29,7 @@
       "window1h": {
         "windowLabel": "1h",
         "windowMs": 3600000,
-        "totalEvents": 50,
+        "totalEvents": 12,
         "totalErrors": 0,
         "errorRate": 0,
         "burnRate": 0
@@ -37,14 +37,14 @@
       "window6h": {
         "windowLabel": "6h",
         "windowMs": 21600000,
-        "totalEvents": 50,
+        "totalEvents": 12,
         "totalErrors": 0,
         "errorRate": 0,
         "burnRate": 0
       }
     },
     "activeAlerts": [],
-    "sha256Receipt": "57db3df97c83a6b436ffa5c8c3cb8f0326973e1ed6106a158a35b0985b4c5fac"
+    "sha256Receipt": "d5729aaea1d89344dddba218705aaac137c356cac5ab3c381711ecfcf59ffb02"
   },
   "onCallRunbook": "docs/runbooks/ON_CALL.md"
 }

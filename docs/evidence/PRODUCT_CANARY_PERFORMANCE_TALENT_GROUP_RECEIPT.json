@@ -3,165 +3,15 @@
   "siblingId": "performance-talent-group",
   "productionUrl": "https://ptg-performance-talent-group.vercel.app",
   "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
-  "measuredAt": "2026-11-12T00:13:58.520Z",
+  "measuredAt": "2026-11-16T21:16:30.743Z",
   "probes": [
     {
-      "latencyMs": 325,
+      "latencyMs": 112,
       "statusCode": 200,
       "isError": false
     },
     {
-      "latencyMs": 293,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 126,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 95,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 114,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 99,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 97,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 97,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 130,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 97,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 105,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 99,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 110,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 100,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 97,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 109,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 96,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 109,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 101,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 95,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 108,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 105,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 124,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 93,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 101,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 100,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 106,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 101,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 102,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 101,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 95,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 103,
+      "latencyMs": 276,
       "statusCode": 200,
       "isError": false
     },
@@ -171,17 +21,7 @@
       "isError": false
     },
     {
-      "latencyMs": 109,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 102,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 89,
+      "latencyMs": 114,
       "statusCode": 200,
       "isError": false
     },
@@ -191,7 +31,12 @@
       "isError": false
     },
     {
-      "latencyMs": 96,
+      "latencyMs": 107,
+      "statusCode": 200,
+      "isError": false
+    },
+    {
+      "latencyMs": 102,
       "statusCode": 200,
       "isError": false
     },
@@ -201,79 +46,44 @@
       "isError": false
     },
     {
-      "latencyMs": 92,
+      "latencyMs": 104,
       "statusCode": 200,
       "isError": false
     },
     {
-      "latencyMs": 111,
+      "latencyMs": 103,
       "statusCode": 200,
       "isError": false
     },
     {
-      "latencyMs": 93,
+      "latencyMs": 105,
       "statusCode": 200,
       "isError": false
     },
     {
-      "latencyMs": 115,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 95,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 100,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 100,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 100,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 95,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 99,
-      "statusCode": 200,
-      "isError": false
-    },
-    {
-      "latencyMs": 92,
+      "latencyMs": 97,
       "statusCode": 200,
       "isError": false
     }
   ],
   "metrics": {
-    "requestCount": 50,
+    "requestCount": 12,
     "errorCount": 0,
     "errorRate5xx": 0,
-    "latencyP99Ms": 325
+    "latencyP99Ms": 276
   },
   "evaluation": {
-    "evaluatedTimestamp": 1794442438518,
-    "deploymentId": "live_performance-talent-group_2026-11-12T00-13-58-516Z",
+    "evaluatedTimestamp": 1794863790742,
+    "deploymentId": "live_performance-talent-group_2026-11-16T21-16-30-740Z",
     "stage": "CANARY_5_PCT",
-    "canaryHealthIndex": 100,
+    "canaryHealthIndex": 95,
     "decision": "PROCEED_TO_NEXT_STAGE",
     "errorRateObserved": 0,
-    "latencyP99Ms": 325,
-    "requestCount": 50,
+    "latencyP99Ms": 276,
+    "requestCount": 12,
     "errorBudgetRemainingPercent": 100,
-    "rationale": "Canary is healthy (CHI: 100/100, Error Rate: 0.00%, Latency P99: 325ms). Promotion to next progressive stage authorized.",
-    "sha256Receipt": "5c7fc54f56bde4e0e7898237c06c7537f5c82b9bd73bc3e8fa2dea4dbb3b7fdf"
+    "rationale": "Canary is healthy (CHI: 95/100, Error Rate: 0.00%, Latency P99: 276ms). Promotion to next progressive stage authorized.",
+    "sha256Receipt": "c0c90bcb165e2b0adf08411d7fa984fec97f7d098fc2c6caf3470a25d69d5379"
   },
   "rollbackPlan": {
     "trigger": false,
@@ -285,5 +95,5 @@
     ]
   },
   "epistemic": "WITHIN_TESTED_SCOPE",
-  "sha256": "fc8939105517830d4d3fc7589fa501e6838cf7ce14224b8b83ae7415a75bf04f"
+  "sha256": "fc60f043c7e4f28515fd61b13e7dfe4818b9ed05bcb8625693e174e91ac443e6"
 }

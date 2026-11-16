@@ -26,3 +26,9 @@ ESLint 10 / `@eslint/js` 10 / `eslint-plugin-n` 18 and `@types/node` 26 majors r
 - ADR or delta-spec note under `openspec/` if lint semantics change.
 
 Epistemic label until exit criteria: `WONT_FIX_UNTIL_2026-12-15` (not `VERIFIED` for majors).
+
+## Prep log (2026-11-16)
+
+- Tracking issue: [#628](https://github.com/valentinflorezarbelaez-ai/Glorian-System-/issues/628) — OPEN through revisit date.
+- Non-major Dependabot PRs held (7-stage SecDevOps FAIL on Node 22/23 matrix): `#637` (dev-deps group), `#638` (github-actions group). Do not merge until 7-stage is green.
+- Majors remain closed under won’t-fix; no migration branch opened yet — start `deps/eslint10-types-node26` after 2026-12-01 with exit criteria above.
