@@ -29,6 +29,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:microvm:", file: "./cliMicroVmEngine.mjs", fn: "handleMicroVmCommands" },
   { prefix: "toolchain:ebpf:", file: "./cliEbpfOtlpGovernor.mjs", fn: "handleEbpfCommands" },
   { prefix: "toolchain:edge:", file: "./cliDurableBridge.mjs", fn: "handleEdgeCommands" },
+  { prefix: "toolchain:gateway:", file: "./cliAiGateway.mjs", fn: "handleAiGatewayCommands" },
 ];
 
 export async function handleToolchainCommands(commandContext) {

@@ -757,3 +757,5 @@ export * from "./eosEbpfOtlpTelemetryGovernor.ts";
 export * from "./eosEbpfOtlpTelemetryGovernor.types.ts";
 export * from "./eosCloudflareDurableBridge.ts";
 export * from "./eosCloudflareDurableBridge.types.ts";
+export * from "./eosSovereignAiGateway.ts";
+export * from "./eosSovereignAiGateway.types.ts";

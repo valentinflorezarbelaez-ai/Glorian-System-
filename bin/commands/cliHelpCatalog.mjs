@@ -93,6 +93,10 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:edge:state [ID] [--key=K] [--val=V] [--json] Almacenamiento transaccional ACID en el borde (SPEC-297)
   eos toolchain:edge:cache [QUERY] [--json] Caché semántico vectorial sub-5ms con similitud coseno >0.96 (SPEC-297)
   eos toolchain:edge:audit [--json] Auditoría del plano de estado de borde y emisión de recibo (SPEC-297)
+  eos toolchain:gateway:route [--intent=I] [--prompt=P] [--json] Enrutamiento soberano multi-modelo frontier (SPEC-298)
+  eos toolchain:gateway:consensus [--prompt=P] [--json] Consenso adversarial dual-modelo y verificación de invariantes (SPEC-298)
+  eos toolchain:gateway:circuit [--provider=P] [--reset] [--json] Monitor de circuit breakers y failover resiliente (SPEC-298)
+  eos toolchain:gateway:audit [--json] Auditoría del gateway de IA soberano y emisión de recibo criptográfico (SPEC-298)
 
 
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
@@ -346,6 +350,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:edge:state [ID] [--key=K] [--val=V] [--json] Almacenamiento transaccional ACID en el borde (SPEC-297)
   eos toolchain:edge:cache [QUERY] [--json] Caché semántico vectorial sub-5ms con similitud coseno >0.96 (SPEC-297)
   eos toolchain:edge:audit [--json] Auditoría del plano de estado de borde y emisión de recibo (SPEC-297)
+  eos toolchain:gateway:route [--intent=I] [--prompt=P] [--json] Enrutamiento soberano multi-modelo frontier (SPEC-298)
+  eos toolchain:gateway:consensus [--prompt=P] [--json] Consenso adversarial dual-modelo y verificación de invariantes (SPEC-298)
+  eos toolchain:gateway:circuit [--provider=P] [--reset] [--json] Monitor de circuit breakers y failover resiliente (SPEC-298)
+  eos toolchain:gateway:audit [--json] Auditoría del gateway de IA soberano y emisión de recibo criptográfico (SPEC-298)
 
 
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268

@@ -2607,3 +2607,16 @@
   - `docs/plans/PLAN-159-DURABLE-OBJECTS-EDGE-STATE.md`
   - `docs/tasks/TASKS-159-DURABLE-OBJECTS-EDGE-STATE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-15-SOVEREIGN-AI-GATEWAY
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-160` (`SPEC-298`), Phase 3.4 Sovereign Multi-Model AI Gateway & Adversarial Consensus Engine: `src/core/eosSovereignAiGateway.types.ts` and `src/core/eosSovereignAiGateway.ts` with intent-based frontier model routing (Gemini, Claude, GPT, Grok, DeepSeek), adversarial dual-model consensus synthesis with symbolic architectural verification against `ARCHITECTURE-S0.md`, three-state circuit breaker failover matrix (`CLOSED`, `OPEN`, `HALF_OPEN`), sub-5ms semantic prompt vector cache matching (cosine similarity $> 0.96$), token budget and spend tracking, and cryptographic receipt emission at `docs/evidence/AI_GATEWAY_RECEIPT.json`. Wire subcommands `toolchain:gateway:route`, `toolchain:gateway:consensus`, `toolchain:gateway:circuit`, `toolchain:gateway:audit` in `bin/commands/cliAiGateway.mjs` and `bin/commands/cliToolchainRouter.mjs`. Verify BDD-1563..BDD-1568.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-160-SOVEREIGN-AI-GATEWAY.md`
+  - `openspec/changes/CHANGE-160-sovereign-ai-gateway.md`
+  - `openspec/specs/SPEC-298-SOVEREIGN-AI-GATEWAY.md`
+  - `docs/plans/PLAN-160-SOVEREIGN-AI-GATEWAY.md`
+  - `docs/tasks/TASKS-160-SOVEREIGN-AI-GATEWAY.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

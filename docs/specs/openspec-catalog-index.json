@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 297,
-  "catalogSha256": "a87108c6bac7becc16ddf4b66c200e93dda113070c745b3c71f2ec182f2dea0b",
+  "totalSpecs": 298,
+  "catalogSha256": "804fed96b0b9d444ebed4cb0e301d2b5c2bd2cbdba5bde7db3fb7a5d33b9303f",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2675,6 +2675,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-297-DURABLE-OBJECTS-EDGE-STATE.md",
       "sha256": "5fd53faba9e87e306be66ccd36f99e54ea7c2db278eee63bdf81d660be3e2bcf"
+    },
+    {
+      "id": "SPEC-298",
+      "title": "Sovereign Multi-Model AI Gateway & Adversarial Consensus Engine",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-298-SOVEREIGN-AI-GATEWAY.md",
+      "sha256": "71c0adac72ba4deafa36c9094c4d3794c7a9c8866303193e5803a964007e27f2"
     }
   ]
 }

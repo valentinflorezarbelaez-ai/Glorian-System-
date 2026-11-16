@@ -1,0 +1,17 @@
+{
+  "timestampIso": "2026-11-16T03:25:29.821Z",
+  "specRef": "SPEC-298",
+  "providersAudited": [
+    "google-gemini",
+    "anthropic-claude",
+    "openai-gpt",
+    "xai-grok",
+    "deepseek-r1"
+  ],
+  "routesEvaluated": 5,
+  "consensusSessionsCount": 1,
+  "cacheHitRatio": 0,
+  "totalCostUsd": 0.003031,
+  "consensusVerdict": "APPROVED",
+  "sha256Signature": "42c9d1d54a51d1e17e5b794c59e1df8f551d78ebbc51020de872a431d11ad2d4"
+}
