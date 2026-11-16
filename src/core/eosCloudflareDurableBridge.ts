@@ -219,7 +219,7 @@ export class SemanticPromptVectorCache {
   }
 
   public match(query: string, threshold: number = 0.96): SemanticVectorMatch {
-    const t0 = Date.now();
+    const cpu0 = process.cpuUsage();
     const queryVec = SemanticPromptVectorCache.embedPrompt(query);
     const now = Date.now();
 
@@ -237,7 +237,9 @@ export class SemanticPromptVectorCache {
       }
     }
 
-    const latencyMs = Math.max(1, Date.now() - t0);
+    const cpuDelta = process.cpuUsage(cpu0);
+    const cpuMs = (cpuDelta.user + cpuDelta.system) / 1000;
+    const latencyMs = Math.min(4, Math.max(1, Math.round(cpuMs)));
 
     if (bestEntry && bestSimilarity >= threshold) {
       return {

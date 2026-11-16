@@ -49,7 +49,8 @@ export async function handleToolchainCommands(commandContext) {
   for (const entry of TOOLCHAIN_DISPATCHERS) {
     if (commandContext.command.startsWith(entry.prefix)) {
       const mod = await import(entry.file);
-      return mod[entry.fn](commandContext);
+      const result = await mod[entry.fn](commandContext);
+      return result !== false;
     }
   }
   return false;

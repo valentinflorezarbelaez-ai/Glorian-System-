@@ -148,5 +148,6 @@ export async function handleCrdtCommand(commandContext) {
   if (!handler) {
     throw new Error(`Unknown toolchain:replicator command: ${command}`);
   }
-  return handler(commandContext);
+  await handler(commandContext);
+  return true;
 }

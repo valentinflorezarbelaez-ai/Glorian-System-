@@ -118,5 +118,6 @@ export async function handleRustZigWasmCommand(commandContext) {
   if (!handler) {
     throw new Error(`Unknown toolchain:rustzig command: ${command}`);
   }
-  return handler(commandContext);
+  await handler(commandContext);
+  return true;
 }
