@@ -1,1 +1,2 @@
 {"capturedAt":"2026-11-16T22:30:54.018Z","exitCode":0,"sloReceiptPresent":true,"metrics":{"targets":9,"nominal":9,"degraded":0,"frozen":0,"allOk":true}}
+{"capturedAt":"2026-11-16T23:01:09.038Z","exitCode":2,"sloReceiptPresent":true,"metrics":{"targets":9,"nominal":6,"degraded":3,"frozen":0,"allOk":false}}
