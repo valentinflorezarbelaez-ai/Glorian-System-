@@ -69,7 +69,11 @@ check("HTML landmarks, metadata, and in-page links are coherent", () => {
 });
 
 check("Visible command controls map to registered local actions", () => {
-  const commandKeys = new Set([...commandRegistrySource.matchAll(/^\s*"([^"\n]+)"\s*:/gm)].map((match) => match[1]));
+  const commandKeys = new Set(
+    [...commandRegistrySource.matchAll(/^\s*(?:"([^"\n]+)"|([A-Za-z_][\w:-]*))\s*:/gm)].map(
+      (match) => match[1] || match[2],
+    ),
+  );
   assert.ok(commandKeys.size > 0, "No command registry entries found in js/eos.js or js/eos-cli-catalog.js");
   const pageCommands = [...html.matchAll(/\bdata-cmd="([^"]+)"/g)].map((match) => match[1]);
   assert.ok(pageCommands.length > 0, "Landing page does not expose any command controls");
