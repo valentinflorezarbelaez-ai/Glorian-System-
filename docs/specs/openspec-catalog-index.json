@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 330,
-  "catalogSha256": "8f8bc4672344185db30c7fa325587abdda7bfa29ef32f944abcba8c1957c1455",
+  "totalSpecs": 331,
+  "catalogSha256": "19c90555f5259b58fb8f3623b4e1d19f08e34f4d8fc8781d0a43b2dff50e545f",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2972,6 +2972,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-330-tree-speculative-decoding.md",
       "sha256": "ee58bc8a05fc90e5227848ef2518280163d7244384765f853af44baf4702f443"
+    },
+    {
+      "id": "SPEC-331",
+      "title": "StreamingLLM, Attention Sinks & Infinite-Context Window Memory Compression Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-331-streaming-llm-attention-sinks.md",
+      "sha256": "1619bddd1e22d7ea277777ae984539e501e75f9772bc583e374a207271fe05dc"
     }
   ]
 }
