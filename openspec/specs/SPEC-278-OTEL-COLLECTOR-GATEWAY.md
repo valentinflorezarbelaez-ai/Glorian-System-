@@ -5,7 +5,7 @@
 - **Specification ID**: `SPEC-278`
 - **Change Reference**: `CHANGE-140`
 - **Component**: `EosOtlpCollectorGateway`
-- **Status**: `PROPOSED`
+- **Status**: `APPROVED`
 - **Version**: `1.0.0`
 - **Classification**: Layer 0 Sovereign Telemetry & Distributed Observability Core
 

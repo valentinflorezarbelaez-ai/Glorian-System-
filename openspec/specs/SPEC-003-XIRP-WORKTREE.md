@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: XIRP-GRADE WORKTREE ISOLATION (SPEC-003)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Defines physical filesystem isolation for concurrent multi-agent software engineering.

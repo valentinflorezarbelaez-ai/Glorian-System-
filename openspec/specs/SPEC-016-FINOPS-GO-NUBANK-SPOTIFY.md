@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: SPOTIFY & NUBANK DUAL-ENGINE FINOPS ARCHITECTURE (SPEC-016)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs the 90/10 architectural doctrine (90% Go cloud microservices, 10% Rust DSP kernels), FinOps cloud billing optimization, Distroless containerization (< 12MB images), atomic idempotency token validation (banking-grade Nubank & royalty-grade Spotify), race condition detection (`-race`), and zero-allocation memory benchmarks.

@@ -1,5 +1,7 @@
 # SPEC-333: Autonomous Ontological Hypergraph & Bitemporal Entity Resolution Engine
 
+**Status**: `APPROVED`  
+
 ## 1. Functional Requirements (EARS Syntax)
 
 - **FR-1 (Event-Driven)**: CUANDO se asienta una nueva afirmación o entidad en el grafo ontológico, EL SISTEMA indexa el registro con dos dimensiones temporales ortogonales: tiempo válido $[v_{\text{from}}, v_{\text{to}}]$ y tiempo de transacción $[t_{\text{from}}, t_{\text{to}}]$, preservando inmutabilidad histórica.

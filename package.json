@@ -199,6 +199,7 @@
     "changelog": "node scripts/changelog.mjs",
     "tip-refresh": "node scripts/tip-refresh.mjs",
     "tip-refresh:seal": "node scripts/tip-refresh.mjs --seal-pin",
+    "catalog:freshness": "node scripts/tip-refresh.mjs --check-catalog",
     "schema:prune": "node scripts/schema-prune.mjs",
     "size:budget": "node scripts/size-budget.mjs",
     "mutation:gate": "node scripts/mutation-gate.mjs",

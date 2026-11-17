@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: AUDIO DSP KERNEL & TRUE PEAK LIMITER (SPEC-013)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs real-time digital signal processing, Direct Form II Transposed Biquad filters, and ITU-R BS.1770 / EBU R128 Lookahead True Peak limiting.

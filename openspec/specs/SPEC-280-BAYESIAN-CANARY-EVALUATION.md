@@ -5,7 +5,7 @@
 - **Specification ID**: `SPEC-280`
 - **Change Reference**: `CHANGE-142`
 - **Component**: `EosBayesianCanaryEvaluator`
-- **Status**: `PROPOSED`
+- **Status**: `APPROVED`
 - **Version**: `1.0.0`
 - **Classification**: Layer 0 Sovereign Progressive Delivery & Automated Canary Analysis Core
 

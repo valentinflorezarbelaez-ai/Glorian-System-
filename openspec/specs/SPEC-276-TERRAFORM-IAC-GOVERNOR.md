@@ -1,5 +1,7 @@
 # SPEC-276: Terraform / OpenTofu Infrastructure as Code (IaC) Governor
 
+**Status**: `APPROVED`  
+
 ## 1. Specification Metadata
 
 - **Specification ID**: `SPEC-276`

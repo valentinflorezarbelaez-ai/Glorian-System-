@@ -11,20 +11,112 @@
  * Usage:
  *   node scripts/tip-refresh.mjs             # write updates
  *   node scripts/tip-refresh.mjs --dry-run   # print deltas only
+ *   node scripts/tip-refresh.mjs --check-catalog  # OpenSpec freshness gate (no writes)
  *   npm run tip-refresh                      # via package.json
+ *   npm run catalog:freshness                # alias → --check-catalog
  */
 
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 
 const root = process.cwd();
 const dryRun = process.argv.includes("--dry-run");
 const sealPinOnly = process.argv.includes("--seal-pin");
+const checkCatalog = process.argv.includes("--check-catalog");
 const outArg = process.argv.find((a) => a.startsWith("--out="));
 const customOutPath = outArg ? path.resolve(root, outArg.slice("--out=".length)) : null;
 
 const TRANSIENT_LOCK_CODES = new Set(["UNKNOWN", "EBUSY", "EPERM", "EACCES"]);
+
+/**
+ * OpenSpec catalog freshness gate (remediation P1-1 / PR-E).
+ * SHA parity is SoT; timestampIso is deterministic/reused (not wall-clock age).
+ * Fail-closed: index drift, UNKNOWN>0 on pinned tip, PROPOSED missing Owner/due.
+ */
+async function runCatalogFreshnessCheck() {
+  const { EosTacticalCommandEngine } = await import("../src/core/eosTacticalCommandEngine.ts");
+  const indexPath = path.join(root, "docs/specs/openspec-catalog-index.json");
+  const freezePath = path.join(root, "docs/releases/EOS_FREEZE_GATE_STATUS.md");
+  const fail = (message) => {
+    console.error(`catalog-freshness FAIL: ${message}`);
+    process.exit(1);
+  };
+
+  const engine = new EosTacticalCommandEngine(root);
+  const liveSpecs = engine.extractOpenSpecs();
+  const liveSha = crypto.createHash("sha256").update(JSON.stringify(liveSpecs)).digest("hex");
+  if (!fs.existsSync(indexPath)) fail(`missing committed index at docs/specs/openspec-catalog-index.json`);
+
+  const committed = JSON.parse(fs.readFileSync(indexPath, "utf8"));
+  const diskSpecCount = fs
+    .readdirSync(path.join(root, "openspec/specs"))
+    .filter((f) => f.endsWith(".md")).length;
+
+  if (committed.totalSpecs !== liveSpecs.length) {
+    fail(`totalSpecs drift: index=${committed.totalSpecs} live=${liveSpecs.length}`);
+  }
+  if (committed.totalSpecs !== diskSpecCount) {
+    fail(`totalSpecs vs disk: index=${committed.totalSpecs} openspec/specs md=${diskSpecCount}`);
+  }
+  if (committed.catalogSha256 !== liveSha) {
+    fail(`catalogSha256 drift: index=${committed.catalogSha256} live=${liveSha}`);
+  }
+  if (!Array.isArray(committed.specs) || committed.specs.length !== liveSpecs.length) {
+    fail(`specs[] length drift: index=${committed.specs?.length ?? 0} live=${liveSpecs.length}`);
+  }
+
+  const liveById = new Map(liveSpecs.map((s) => [s.id, s]));
+  for (const entry of committed.specs) {
+    const live = liveById.get(entry.id);
+    if (!live) fail(`index lists ${entry.id} missing from live extract`);
+    if (entry.file !== live.file) fail(`${entry.id} file drift`);
+    if (entry.sha256 !== live.sha256) fail(`${entry.id} sha256 drift vs openspec source`);
+    if (entry.status !== live.status) fail(`${entry.id} status drift`);
+  }
+
+  const unknown = liveSpecs.filter((s) => String(s.status).trim().toUpperCase() === "UNKNOWN");
+  const proposed = liveSpecs.filter((s) => String(s.status).trim().toUpperCase().startsWith("PROPOSED"));
+  const freezeDoc = fs.existsSync(freezePath) ? fs.readFileSync(freezePath, "utf8") : "";
+  const tipPinned = /ACTIVE_FREEZE_GATE_PINNED/.test(freezeDoc);
+
+  if (tipPinned && unknown.length > 0) {
+    fail(
+      `tip sealed/pinned requires UNKNOWN=0; found ${unknown.length}: ${unknown
+        .slice(0, 8)
+        .map((s) => s.id)
+        .join(", ")}`,
+    );
+  }
+
+  for (const spec of proposed) {
+    const body = fs.readFileSync(path.join(root, spec.file), "utf8");
+    if (!/\*\*Owner\*\*\s*:/i.test(body)) fail(`${spec.id} is PROPOSED without **Owner**`);
+    if (!/\*\*ProposedCloseBy\*\*\s*:/i.test(body)) fail(`${spec.id} is PROPOSED without **ProposedCloseBy**`);
+  }
+
+  console.log(
+    JSON.stringify(
+      {
+        ok: true,
+        totalSpecs: liveSpecs.length,
+        catalogSha256: liveSha,
+        unknown: unknown.length,
+        proposed: proposed.length,
+        timestampIso: committed.timestampIso,
+        policy: "sha-parity+unknown0-on-pin+proposed-owner-due",
+      },
+      null,
+      2,
+    ),
+  );
+}
+
+if (checkCatalog) {
+  await runCatalogFreshnessCheck();
+  process.exit(0);
+}
 
 function writeFileWithRetry(targetPath, content) {
   for (let attempt = 1; attempt <= 5; attempt++) {

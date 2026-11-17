@@ -1,5 +1,7 @@
 # BASE SPECIFICATION: SAFE AGENT HARNESS BOUNDARIES (SPEC-138)
 
+**Status**: `APPROVED`  
+
 ## 1. Scope
 
 Defines local MCP and agent-factory boundaries for untrusted tool arguments, repository context, filesystem writes, fleet checkout selection, and the optional Docker command runner. This specification does not claim a model-driven autonomous coding loop or microVM isolation; the Docker runner relies on the local engine and host kernel.

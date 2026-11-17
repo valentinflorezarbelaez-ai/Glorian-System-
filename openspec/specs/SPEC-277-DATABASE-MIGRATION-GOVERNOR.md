@@ -5,7 +5,7 @@
 - **Specification ID**: `SPEC-277`
 - **Change Reference**: `CHANGE-139`
 - **Component**: `EosDatabaseMigrationGovernor`
-- **Status**: `PROPOSED`
+- **Status**: `APPROVED`
 - **Version**: `1.0.0`
 - **Classification**: Layer 0 Sovereign Infrastructure & Reliability Core
 

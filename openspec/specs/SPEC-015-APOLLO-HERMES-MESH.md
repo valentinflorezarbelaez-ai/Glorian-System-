@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: SPOTIFY APOLLO / HERMES RPC & EVENT MESH (SPEC-015)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs high-throughput, low-latency inter-service RPC communication, event pub/sub routing, resilient circuit breaking, and W3C distributed tracing modeled after Spotify's Apollo framework and Hermes messaging mesh.

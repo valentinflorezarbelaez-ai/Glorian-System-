@@ -5,7 +5,7 @@
 - **Specification ID**: `SPEC-117`
 - **Title**: Elite Autonomous Design Engineering System & Multi-Archetype Studio
 - **Component ID**: `eos-elite-design-studio`
-- **Status**: `PROPOSED`
+- **Status**: `APPROVED`
 - **Target Version**: `69.0.0`
 - **Author Squad**: `squad:eos-design-engineering`
 - **Related Specs**: `SPEC-050` (Fleet Soundcheck), `SPEC-095` (Interactive Terminal), `SPEC-115` (Unified Kernel), `SPEC-116` (Transcendence Nexus)

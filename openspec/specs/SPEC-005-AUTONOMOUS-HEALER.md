@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: LOCAL HEALER BOUNDARIES (SPEC-005)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs local, heuristic formatting-remediation proposals and explicitly requested file writes. This component is not a model-driven autonomous repair loop, AST root-cause analyzer, or production FDIR system. Its local checks do not establish production readiness.

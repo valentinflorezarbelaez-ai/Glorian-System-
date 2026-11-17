@@ -5,7 +5,7 @@
 - **Specification ID**: `SPEC-115`
 - **Title**: Unified Autonomous Operating System Kernel & Omni-Control Orchestrator
 - **Component ID**: `eos-unified-kernel-orchestrator`
-- **Status**: `PROPOSED`
+- **Status**: `APPROVED`
 - **Target Version**: `67.0.0`
 - **Author Squad**: `squad:eos-core-architecture`
 - **Related Specs**: `SPEC-050` (Fleet Soundcheck), `SPEC-107` (Canary Telemetry), `SPEC-110` (Multi-Window SLO), `SPEC-111` (Hedged Requests), `SPEC-112` (Adaptive Concurrency), `SPEC-113` (Tail Trace Sampler), `SPEC-114` (Predictive Remediation)

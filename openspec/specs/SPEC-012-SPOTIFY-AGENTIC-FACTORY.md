@@ -1,5 +1,7 @@
 # BASE SPECIFICATION: LOCAL SDLC PLANNING TOOLS (SPEC-012)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope and capability status
 
 The Spotify names are design references, not vendor integrations. This specification describes the current local planning and template features. EOS does not implement a model-driven coding agent, background healing loop, fleet-wide codemod runner, or production canary controller.
