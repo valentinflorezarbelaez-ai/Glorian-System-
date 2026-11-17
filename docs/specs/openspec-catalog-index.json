@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 332,
-  "catalogSha256": "a57210a3c26aed3f3b20ae69d01985183a92d6140b4b2bf286223e653a2a6094",
+  "totalSpecs": 333,
+  "catalogSha256": "7ec660281828b8d5f47ac791b83c9faae2e6c89a078e25c311d4aada61b9a122",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2990,6 +2990,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-332-disaggregated-prefill-decode.md",
       "sha256": "87c3eb8d9c3a757ade171a8bdd728c666af24cc78887204da024812bdfc24bcb"
+    },
+    {
+      "id": "SPEC-333",
+      "title": "Autonomous Ontological Hypergraph & Bitemporal Entity Resolution Engine",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-333-ontological-hypergraph.md",
+      "sha256": "f8de060dae380ccf24cb90f257cea9762cae28d0b6284fa6a79a6b8b6f7104cb"
     }
   ]
 }
