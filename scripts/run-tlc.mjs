@@ -22,6 +22,22 @@ const FORMAL_DIR = path.join(ROOT, "docs/formal");
 const EVIDENCE_DIR = path.join(ROOT, "docs/evidence");
 const DEFAULT_RECEIPT_PATH = path.join(EVIDENCE_DIR, "TLC_RECEIPT.json");
 
+/** Windows parallel suites can lock evidence receipts (EBUSY / UNKNOWN / errno -4094). */
+const TRANSIENT_LOCK_CODES = new Set(["UNKNOWN", "EBUSY", "EPERM", "EACCES"]);
+
+function writeFileWithRetry(targetPath, content) {
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    try {
+      fs.writeFileSync(targetPath, content, "utf8");
+      return;
+    } catch (err) {
+      const transient = TRANSIENT_LOCK_CODES.has(err?.code) || err?.errno === -4094;
+      if (!transient || attempt === 5) throw err;
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 40 * attempt);
+    }
+  }
+}
+
 export const CONFIGURED_SPECS = [
   "LmaxDisruptor",
   "HermesConsensusMesh",
@@ -309,7 +325,7 @@ export function runTlcVerification(options = {}) {
   };
 
   fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
-  fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2), "utf8");
+  writeFileWithRetry(receiptPath, JSON.stringify(receipt, null, 2));
 
   return receipt;
 }
