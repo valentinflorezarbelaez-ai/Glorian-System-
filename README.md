@@ -1,3 +1,4 @@
+<img width="1024" height="572" alt="image" src="https://github.com/user-attachments/assets/90677219-3bc2-40bb-816e-5cf36ae418b6" />
 <div align="center">
 
 <img src="docs/assets/glorian-hero-banner.png" alt="Glorian System — Sovereign Software Engineering Control Plane" width="100%" />
