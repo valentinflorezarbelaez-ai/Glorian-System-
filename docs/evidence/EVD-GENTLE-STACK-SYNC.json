@@ -1,9 +1,9 @@
 {
   "status": "DEGRADED",
-  "timestamp": "2026-11-17T22:07:44.248Z",
+  "timestamp": "2026-11-17T22:19:27.506Z",
   "projectRoot": ".",
   "totalComponents": 4,
-  "synchronizedComponents": 2,
+  "synchronizedComponents": 3,
   "components": [
     {
       "name": "Engram Epistemic DAG Engine",
@@ -29,16 +29,16 @@
     {
       "name": "Canonical MCP Sovereign Tool Catalog",
       "category": "MCP_CATALOG",
-      "verified": false,
-      "sha256": "f07af4105bdff642672f4ef416114638002e25925f85611824cbc0270110770a",
-      "details": "Registered 0 tools in full profile and 2 tools in curated Tier-0 core profile."
+      "verified": true,
+      "sha256": "baf1f51ec5dbdccd2d22e4775d1cd06d14a8429f98db5c40ca1c2c725a9e07eb",
+      "details": "Registered 208 tools in full profile (eosMcpToolDefinitions) and 46 tools in curated Tier-0 core profile."
     }
   ],
   "mcpToolCount": {
-    "coreProfile": 2,
-    "fullProfile": 0
+    "coreProfile": 46,
+    "fullProfile": 208
   },
-  "sha256EvidenceSeal": "9764547aa13c7dccbd3d43a35644dd6f9aee48cb0cc994c17985e0a9d81e56e9",
+  "sha256EvidenceSeal": "8dd66a896fdbb438295382ad91fef4cdf3a0c92e6e81d04448aefbb8d3bcf300",
   "epistemicState": "LOCAL_SIMULATION",
   "executionMode": "LOCAL_SIMULATION",
   "reproducibleByMergeGate": false,
