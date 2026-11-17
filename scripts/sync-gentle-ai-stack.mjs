@@ -8,7 +8,7 @@
  * 1. Gentle-AI & Engram DAG (Grafo Epistémico Dirigido Acíclico con compactación por entropía)
  * 2. GGA (Git Governance Agent — hooks pre-commit activos)
  * 3. Espejos SpecBoot (.agents/skills/)
- * 4. Catálogo Canónico de 80 Herramientas MCP
+ * 4. Catálogo Canónico MCP (EOS_MCP_TOOL_DEFINITIONS — ~208 tools)
  *
  * Emite recibo sellado SHA-256 en docs/evidence/EVD-GENTLE-STACK-SYNC.json
  * Invariant: Pure Layer-0 Node.js (zero external dependencies).
@@ -18,7 +18,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { sanitizeEvidencePath, TLC_EVIDENCE_MODES } from "./run-tlc.mjs";
 
@@ -35,7 +35,66 @@ function redactPathInDetails(text, repoRoot) {
     .replace(/\\/g, "/");
 }
 
-export function syncGentleAiStack(options = {}) {
+/**
+ * Count MCP tools from the real definitions source of truth
+ * (`src/mcp/eosMcpToolDefinitions.ts` + partitioned slices), not from
+ * legacy regex scans of eosMcpServer.ts / annotation-only catalog text.
+ */
+async function resolveMcpToolCounts(root) {
+  const definitionsPath = path.join(root, "src", "mcp", "eosMcpToolDefinitions.ts");
+  const catalogPath = path.join(root, "src", "mcp", "eosMcpToolCatalog.ts");
+
+  let fullToolCount = 0;
+  let coreToolCount = 0;
+  let mcpDefinitionsHash = "NOT_FOUND";
+
+  if (!fs.existsSync(definitionsPath)) {
+    return { fullToolCount, coreToolCount, mcpDefinitionsHash };
+  }
+
+  const hash = crypto.createHash("sha256");
+  const entrySrc = fs.readFileSync(definitionsPath);
+  hash.update(entrySrc);
+
+  // Include every statically imported partition / phase slice in the seal hash.
+  const entryText = entrySrc.toString("utf8");
+  for (const m of entryText.matchAll(/from\s+"(\.\/[^"]+\.ts)"/g)) {
+    const abs = path.resolve(path.dirname(definitionsPath), m[1]);
+    if (fs.existsSync(abs)) {
+      hash.update(fs.readFileSync(abs));
+    }
+  }
+  mcpDefinitionsHash = hash.digest("hex");
+
+  try {
+    const defMod = await import(pathToFileURL(definitionsPath).href);
+    const tools = defMod.EOS_MCP_TOOL_DEFINITIONS;
+    if (Array.isArray(tools)) {
+      fullToolCount = new Set(tools.map((t) => t && t.name).filter(Boolean)).size;
+    }
+  } catch {
+    // Fail-closed count stays 0 when the definitions module cannot load.
+    fullToolCount = 0;
+  }
+
+  if (fs.existsSync(catalogPath)) {
+    try {
+      const catMod = await import(pathToFileURL(catalogPath).href);
+      const core = catMod.CORE_TIER0_TOOL_NAMES;
+      if (core && typeof core.size === "number") {
+        coreToolCount = core.size;
+      } else if (Array.isArray(core)) {
+        coreToolCount = new Set(core).size;
+      }
+    } catch {
+      coreToolCount = 0;
+    }
+  }
+
+  return { fullToolCount, coreToolCount, mcpDefinitionsHash };
+}
+
+export async function syncGentleAiStack(options = {}) {
   const root = path.resolve(options.projectRoot || projectRoot);
   const components = [];
 
@@ -107,52 +166,15 @@ export function syncGentleAiStack(options = {}) {
     details: `${skillCount} sovereign SDD and fleet operational skills active in .agents/skills/`,
   });
 
-  // 4. Canonical MCP Tools Catalog Verification
-  let coreToolCount = 0;
-  let fullToolCount = 0;
-  let mcpCatalogHash = "UNAVAILABLE";
-
-  const catalogPath = path.join(root, "src", "mcp", "eosMcpToolCatalog.ts");
-  const taxonomyPath = path.join(root, "src", "core", "eosMcpToolTaxonomy.ts");
-  const targetCatalog = fs.existsSync(taxonomyPath) ? taxonomyPath : catalogPath;
-  if (fs.existsSync(targetCatalog)) {
-    const catalogSource = fs.readFileSync(targetCatalog, "utf8");
-    mcpCatalogHash = crypto.createHash("sha256").update(catalogSource).digest("hex");
-
-    const coreMatches = catalogSource.match(/"eos_[a-z0-9_]+"/g) || [];
-    coreToolCount = new Set(coreMatches).size;
-  }
-
-  const serverPath = path.join(root, "src", "mcp", "eosMcpServer.ts");
-  const defsPath = path.join(root, "src", "mcp", "eosMcpToolDefinitions.ts");
-  const phase8Path = path.join(root, "src", "mcp", "tools", "eosMcpPhase8ToolDefinitions.ts");
-  const defsDir = path.join(root, "src", "mcp", "tools", "definitions");
-
-  const candidatePaths = [serverPath, defsPath, phase8Path];
-  if (fs.existsSync(defsDir)) {
-    for (const file of fs.readdirSync(defsDir)) {
-      if (file.endsWith(".ts")) {
-        candidatePaths.push(path.join(defsDir, file));
-      }
-    }
-  }
-
-  const allToolMatches = [];
-  for (const filePath of candidatePaths) {
-    if (fs.existsSync(filePath)) {
-      const source = fs.readFileSync(filePath, "utf8");
-      const matches = source.match(/name:\s*["'][a-z0-9_]+["']/g) || [];
-      allToolMatches.push(...matches);
-    }
-  }
-  fullToolCount = new Set(allToolMatches).size;
+  // 4. Canonical MCP Tools Catalog Verification (definitions source of truth)
+  const { fullToolCount, coreToolCount, mcpDefinitionsHash } = await resolveMcpToolCounts(root);
 
   components.push({
     name: "Canonical MCP Sovereign Tool Catalog",
     category: "MCP_CATALOG",
     verified: fullToolCount >= 70,
-    sha256: mcpCatalogHash,
-    details: `Registered ${fullToolCount} tools in full profile and ${coreToolCount} tools in curated Tier-0 core profile.`,
+    sha256: mcpDefinitionsHash,
+    details: `Registered ${fullToolCount} tools in full profile (eosMcpToolDefinitions) and ${coreToolCount} tools in curated Tier-0 core profile.`,
   });
 
   const total = components.length;
@@ -204,7 +226,7 @@ if (process.argv[1] && process.argv[1].replace(/\\/g, "/").endsWith("sync-gentle
   console.log(" EOS SYSTEM — GENTLEMAN AI STACK HERMETIC SYNC DAEMON                 ");
   console.log("======================================================================\n");
 
-  const receipt = syncGentleAiStack();
+  const receipt = await syncGentleAiStack();
   console.log(`Estado Global  : ${receipt.status}`);
   console.log(`Componentes    : ${receipt.synchronizedComponents}/${receipt.totalComponents} sincronizados`);
   console.log(

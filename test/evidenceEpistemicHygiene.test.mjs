@@ -112,7 +112,7 @@ test("run-tlc forceMock emits DEFERRED_TO_CI without host paths", () => {
   }
 });
 
-test("syncGentleAiStack writes sanitized Gentle receipt without host plumbing", () => {
+test("syncGentleAiStack writes sanitized Gentle receipt without host plumbing", async () => {
   const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "eos-gentle-sync-"));
   try {
     // Minimal repo-shaped tree so sync can write evidence under tmpRoot.
@@ -121,14 +121,28 @@ test("syncGentleAiStack writes sanitized Gentle receipt without host plumbing", 
     fs.mkdirSync(path.join(tmpRoot, ".githooks"), { recursive: true });
     fs.writeFileSync(path.join(tmpRoot, ".githooks", "pre-commit"), "#!/bin/sh\nexit 0\n");
     fs.mkdirSync(path.join(tmpRoot, "src", "mcp"), { recursive: true });
-    fs.writeFileSync(path.join(tmpRoot, "src", "mcp", "eosMcpToolCatalog.ts"), 'export const x = "eos_health_check";\n');
-    fs.writeFileSync(path.join(tmpRoot, "src", "mcp", "eosMcpServer.ts"), 'const tools = [{ name: "eos_health_check" }];\n');
+    // Stub the real definitions source of truth (not legacy server/catalog regex targets).
+    fs.writeFileSync(
+      path.join(tmpRoot, "src", "mcp", "eosMcpToolDefinitions.ts"),
+      [
+        "export const EOS_MCP_TOOL_DEFINITIONS = [",
+        '  { name: "eos_health_check", description: "stub", inputSchema: { type: "object" } },',
+        "];",
+        "",
+      ].join("\n"),
+    );
+    fs.writeFileSync(
+      path.join(tmpRoot, "src", "mcp", "eosMcpToolCatalog.ts"),
+      'export const CORE_TIER0_TOOL_NAMES = new Set(["eos_health_check"]);\n',
+    );
 
-    const receipt = syncGentleAiStack({ projectRoot: tmpRoot });
+    const receipt = await syncGentleAiStack({ projectRoot: tmpRoot });
     assert.equal(receipt.projectRoot, ".");
     assert.equal(receipt.reproducibleByMergeGate, false);
     assert.equal(receipt.executionMode, TLC_EVIDENCE_MODES.LOCAL_SIMULATION);
     assert.equal(receipt.epistemicState, TLC_EVIDENCE_MODES.LOCAL_SIMULATION);
+    assert.equal(receipt.mcpToolCount.fullProfile, 1);
+    assert.equal(receipt.mcpToolCount.coreProfile, 1);
     assert.equal(containsAbsoluteHostPath(JSON.stringify(receipt)), false);
 
     const onDisk = JSON.parse(
