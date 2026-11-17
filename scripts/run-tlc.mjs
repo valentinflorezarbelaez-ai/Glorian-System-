@@ -58,6 +58,7 @@ export const CONFIGURED_SPECS = [
   "PipelineParallelism1F1B",
   "TensorParallelAttention",
   "ZeroFsdpEngine",
+  "ExpertParallelMoERouter",
 ];
 
 /**

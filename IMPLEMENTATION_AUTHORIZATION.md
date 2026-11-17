@@ -2958,3 +2958,16 @@
   - `docs/plans/PLAN-186-zero-fsdp-engine.md`
   - `docs/tasks/TASKS-186-zero-fsdp-engine.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-EXPERT-PARALLEL-MOE-ROUTER
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-187` (`SPEC-325`), Expert Parallelism & Mixture-of-Experts (MoE) Routing Engine: author TLA+ formal model `docs/formal/ExpertParallelMoERouter.tla` and configuration `docs/formal/ExpertParallelMoERouter.cfg` (Model 69), implement `src/core/eosExpertParallelMoERouter.types.ts` and `src/core/eosExpertParallelMoERouter.ts` featuring Top-$K$ gating with softmax probability renormalization, expert capacity factor bounded token buffering, auxiliary load-balancing loss ($\mathcal{L}_{\text{aux}}$), two-phase All-to-All collective token dispatch and combine, worker-local parallel expert execution, exact mathematical parity against monolithic MoE evaluation ($\epsilon \le 10^{-6}$), and signed receipt emission at `docs/evidence/MOE_ROUTER_RECEIPT.json`. Wire `toolchain:moe:route`, `toolchain:moe:capacity`, `toolchain:moe:alltoall`, `toolchain:moe:auxloss`, `toolchain:moe:audit` in `bin/commands/cliExpertParallelMoERouter.mjs` and `bin/commands/cliToolchainRouter.mjs` (`548 -> 553` commands, 100% catalog parity). Verify `BDD-1725`..`BDD-1730`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-187-MOE-ROUTER.md`
+  - `openspec/changes/CHANGE-187-moe-router.md`
+  - `openspec/specs/SPEC-325-moe-router.md`
+  - `docs/plans/PLAN-187-moe-router.md`
+  - `docs/tasks/TASKS-187-moe-router.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

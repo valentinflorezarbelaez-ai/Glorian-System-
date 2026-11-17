@@ -571,6 +571,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:zero:stage3 [--workers=4] [--layers=4] [--layerparams=256] [--json] Particionamiento completo ZeRO-3/FSDP con All-Gather JIT y purga (SPEC-324)
   eos toolchain:zero:offload [--params=1024] [--json] Telemetría y amortiguación de descarga ZeRO-Offload en memoria CPU host (SPEC-324)
   eos toolchain:zero:audit [--workers=4] [--params=1024] [--json] Auditoría integral de cota O(Psi/P), paridad matemática y recibo SHA-256 (SPEC-324)
+  eos toolchain:moe:route [--experts=4] [--topk=2] [--tokens=4] [--dim=4] [--json] Enrutamiento sparse Top-K y normalización de probabilidades (SPEC-325)
+  eos toolchain:moe:capacity [--experts=4] [--topk=2] [--tokens=8] [--capacity=1.0] [--json] Inspección de factor de capacidad y descarte de tokens (SPEC-325)
+  eos toolchain:moe:alltoall [--workers=2] [--experts=4] [--tokens=4] [--dim=4] [--json] Comunicación colectiva All-to-All de despacho y recombinación (SPEC-325)
+  eos toolchain:moe:auxloss [--experts=4] [--alpha=0.01] [--json] Evaluación de pérdida auxiliar de balanceo de carga entre expertos (SPEC-325)
+  eos toolchain:moe:audit [--workers=2] [--experts=4] [--tokens=8] [--dim=4] [--json] Auditoría integral de capacidad, paridad matemática y recibo SHA-256 (SPEC-325)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

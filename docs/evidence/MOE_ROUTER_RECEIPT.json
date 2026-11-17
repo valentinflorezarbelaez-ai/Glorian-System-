@@ -1,0 +1,13 @@
+{
+  "status": "VERIFIED",
+  "numWorkers": 2,
+  "totalExperts": 4,
+  "topK": 2,
+  "tokensEvaluated": 8,
+  "capacityBoundedCertified": true,
+  "auxLossMinimaCertified": true,
+  "mathParityCertified": true,
+  "zeroLeakageCertified": true,
+  "sha256Receipt": "0ae1df4db8b5aa69a2ffc3fd3765022d4f843edbce169b1db6f4b712bbb3660b",
+  "timestamp": "2026-11-17T19:45:49.060Z"
+}

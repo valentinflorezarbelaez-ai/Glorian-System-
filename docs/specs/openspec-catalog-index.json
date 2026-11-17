@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 324,
-  "catalogSha256": "df2460dd3eebacb8ab8e2eb263422ce3bd3ba968361d8ec8cb3276f6badde42a",
+  "totalSpecs": 325,
+  "catalogSha256": "093ce908b8ea07bce0aab5f841bf5205ae690507ff5c2b5a6f3658391d192d3e",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2917,7 +2917,16 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-324-zero-fsdp-engine.md",
-      "sha256": "58db5d212bbe61940586529df082476f3fe1ec1c097a200c7cfae3be47b632d9"
+      "sha256": "db415a012304f544f99d1e1ddf1c9f013d7942c7d1689f01c13f00b3ff7048f7"
+    },
+    {
+      "id": "SPEC-325",
+      "title": "Expert Parallelism & Mixture-of-Experts (MoE) Routing Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-325-moe-router.md",
+      "sha256": "8e084b87ba4485d76347349c00145b1f8b8462692c1245c80d7858ac844738c9"
     }
   ]
 }

@@ -90,6 +90,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliZeroFsdpEngine.mjs",
     fn: "handleZeroFsdpCommand",
   },
+  {
+    prefix: "toolchain:moe:",
+    file: "./cliExpertParallelMoERouter.mjs",
+    fn: "handleMoeRouterCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

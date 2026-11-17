@@ -18,6 +18,7 @@
     "src/core/eosPipelineParallelism1F1B.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/eosTensorParallelAttention.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/eosZeroFsdpEngine.ts": { "lines": 80.0, "branches": 70.0 },
+    "src/core/eosExpertParallelMoERouter.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/index.ts": { "lines": 65.0, "branches": 60.0 }
   }
 }

@@ -755,3 +755,5 @@ export * from "./eosTensorParallelAttention.ts";
 export * from "./eosTensorParallelAttention.types.ts";
 export * from "./eosZeroFsdpEngine.ts";
 export * from "./eosZeroFsdpEngine.types.ts";
+export * from "./eosExpertParallelMoERouter.ts";
+export * from "./eosExpertParallelMoERouter.types.ts";
