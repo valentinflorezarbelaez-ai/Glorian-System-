@@ -576,6 +576,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:moe:alltoall [--workers=2] [--experts=4] [--tokens=4] [--dim=4] [--json] Comunicación colectiva All-to-All de despacho y recombinación (SPEC-325)
   eos toolchain:moe:auxloss [--experts=4] [--alpha=0.01] [--json] Evaluación de pérdida auxiliar de balanceo de carga entre expertos (SPEC-325)
   eos toolchain:moe:audit [--workers=2] [--experts=4] [--tokens=8] [--dim=4] [--json] Auditoría integral de capacidad, paridad matemática y recibo SHA-256 (SPEC-325)
+  eos toolchain:checkpoint:full [--layers=16] [--segments=4] [--dim=16] [--json] Particionamiento de fronteras de checkpointing de activaciones (SPEC-326)
+  eos toolchain:checkpoint:selective [--layers=16] [--dim=16] [--json] Recomputación selectiva y estimación de sobrecarga FLOP/memoria (SPEC-326)
+  eos toolchain:checkpoint:async-1f1b [--batches=8] [--stages=4] [--json] Cronograma 1F1B asíncrono con liberación temprana de micro-lotes (SPEC-326)
+  eos toolchain:checkpoint:memory [--layers=64] [--dim=64] [--json] Análisis de cota de memoria de activaciones O(sqrt(L)) (SPEC-326)
+  eos toolchain:checkpoint:audit [--layers=16] [--batches=4] [--dim=16] [--json] Auditoría integral de cota O(sqrt(L)), paridad de gradientes y recibo SHA-256 (SPEC-326)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

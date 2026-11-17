@@ -1,0 +1,17 @@
+{
+  "status": "VERIFIED",
+  "numLayers": 16,
+  "numSegments": 4,
+  "segmentSize": 4,
+  "policy": "FULL_CHECKPOINT",
+  "peakMemoryCeilingBounded": true,
+  "peakMemoryElements": 80,
+  "standardPeakMemoryElements": 528,
+  "memoryReductionPercent": 84.8484878540039,
+  "gradientParityCertified": true,
+  "maxGradientAbsDiff": 0,
+  "zeroResidualLeakage": true,
+  "residualElements": 0,
+  "timestamp": "2026-11-17T20:02:44.675Z",
+  "sha256": "41953caab9f6940c6ad6a5e16b05a8dbd0ee1b7d2396418f606cab44ccc48fc9"
+}

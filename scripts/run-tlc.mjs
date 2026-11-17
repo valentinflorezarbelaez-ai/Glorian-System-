@@ -59,6 +59,7 @@ export const CONFIGURED_SPECS = [
   "TensorParallelAttention",
   "ZeroFsdpEngine",
   "ExpertParallelMoERouter",
+  "ActivationCheckpointingEngine",
 ];
 
 /**

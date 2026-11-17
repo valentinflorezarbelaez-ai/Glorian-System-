@@ -2971,3 +2971,16 @@
   - `docs/plans/PLAN-187-moe-router.md`
   - `docs/tasks/TASKS-187-moe-router.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-ACTIVATION-CHECKPOINTING
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-188` (`SPEC-326`), Asynchronous Pipeline Parallelism & Activation Checkpointing / Recomputation Engine: author TLA+ formal model `docs/formal/ActivationCheckpointingEngine.tla` and configuration `docs/formal/ActivationCheckpointingEngine.cfg` (Model 70), implement `src/core/eosActivationCheckpointingEngine.types.ts` and `src/core/eosActivationCheckpointingEngine.ts` featuring full activation checkpointing boundary partitioning, selective activation recomputation for non-linear operations, asynchronous 1F1B micro-batch scheduling with early activation release, peak activation memory bounded to $O(\sqrt{L})$ with zero residual cache leakage, exact backward gradient mathematical parity ($\epsilon \le 10^{-6}$), and signed receipt emission at `docs/evidence/ACTIVATION_CHECKPOINTING_RECEIPT.json`. Wire `toolchain:checkpoint:full`, `toolchain:checkpoint:selective`, `toolchain:checkpoint:async-1f1b`, `toolchain:checkpoint:memory`, `toolchain:checkpoint:audit` in `bin/commands/cliActivationCheckpointingEngine.mjs` and `bin/commands/cliToolchainRouter.mjs` (`553 -> 558` commands, 100% catalog parity). Verify `BDD-1731`..`BDD-1736`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-188-ACTIVATION-CHECKPOINTING.md`
+  - `openspec/changes/CHANGE-188-activation-checkpointing.md`
+  - `openspec/specs/SPEC-326-activation-checkpointing.md`
+  - `docs/plans/PLAN-188-activation-checkpointing.md`
+  - `docs/tasks/TASKS-188-activation-checkpointing.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

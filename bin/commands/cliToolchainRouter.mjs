@@ -95,6 +95,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliExpertParallelMoERouter.mjs",
     fn: "handleMoeRouterCommand",
   },
+  {
+    prefix: "toolchain:checkpoint:",
+    file: "./cliActivationCheckpointingEngine.mjs",
+    fn: "handleActivationCheckpointingCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

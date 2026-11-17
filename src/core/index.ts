@@ -757,3 +757,5 @@ export * from "./eosZeroFsdpEngine.ts";
 export * from "./eosZeroFsdpEngine.types.ts";
 export * from "./eosExpertParallelMoERouter.ts";
 export * from "./eosExpertParallelMoERouter.types.ts";
+export * from "./eosActivationCheckpointingEngine.ts";
+export * from "./eosActivationCheckpointingEngine.types.ts";
