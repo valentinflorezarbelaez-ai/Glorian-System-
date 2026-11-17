@@ -55,6 +55,7 @@ export const CONFIGURED_SPECS = [
   "ContinuousDynamicBatching",
   "RingAllReduce",
   "MegatronTensorParallelism",
+  "PipelineParallelism1F1B",
 ];
 
 /**

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0.0",
+  "specRef": "SPEC-322",
+  "changeRef": "CHANGE-184",
+  "auditStatus": "VERIFIED",
+  "numStages": 4,
+  "numMicroBatches": 8,
+  "maxStashedActivations": 4,
+  "peakMemoryBoundedCertified": true,
+  "zeroLeakageCertified": true,
+  "bubbleFractionOptimal": true,
+  "sha256Receipt": "ccf4e4a8b065788585a101c8d92a2e58d1b7f1f723a4c02319d2193a84d17dac",
+  "timestampIso": "2026-11-17T17:19:21.506Z"
+}

@@ -2919,3 +2919,16 @@
   - `docs/plans/PLAN-183-megatron-tensor-parallelism.md`
   - `docs/tasks/TASKS-183-megatron-tensor-parallelism.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-PIPELINE-PARALLELISM-1F1B
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-184` (`SPEC-322`), Pipeline Parallelism Engine (1F1B Interleaved Activation Schedule): author TLA+ formal model `docs/formal/PipelineParallelism1F1B.tla` and configuration `docs/formal/PipelineParallelism1F1B.cfg` (Model 66), implement `src/core/eosPipelineParallelism1F1B.types.ts` and `src/core/eosPipelineParallelism1F1B.ts` featuring linear pipeline stage partitioning, warmup forward step scheduling (P - p - 1 passes), steady-state 1F1B interleaved forward/backward micro-batch stepping, cooldown drainage, bounded peak activation memory invariant (<= P), zero activation cache leakage, neighbor P2P gradient communication, and signed receipt emission at `docs/evidence/PIPELINE_PARALLELISM_1F1B_RECEIPT.json`. Wire `toolchain:pipeline:stages`, `toolchain:pipeline:warmup`, `toolchain:pipeline:1f1b`, `toolchain:pipeline:schedule`, `toolchain:pipeline:audit` in `bin/commands/cliPipelineParallelism1F1B.mjs` and `bin/commands/cliToolchainRouter.mjs` (`533 -> 538` commands, 100% catalog parity). Verify `BDD-1707`..`BDD-1712`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-184-PIPELINE-PARALLELISM-1F1B.md`
+  - `openspec/changes/CHANGE-184-pipeline-parallelism-1f1b.md`
+  - `openspec/specs/SPEC-322-pipeline-parallelism-1f1b.md`
+  - `docs/plans/PLAN-184-pipeline-parallelism-1f1b.md`
+  - `docs/tasks/TASKS-184-pipeline-parallelism-1f1b.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

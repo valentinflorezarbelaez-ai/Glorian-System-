@@ -75,6 +75,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliMegatronTensorParallelism.mjs",
     fn: "handleMegatronCommand",
   },
+  {
+    prefix: "toolchain:pipeline:",
+    file: "./cliPipelineParallelism1F1B.mjs",
+    fn: "handlePipelineCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

@@ -556,6 +556,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:megatron:mlp [--workers=4] [--batch=2] [--din=4] [--dhidden=8] [--dout=4] [--act=GELU] [--json] Bloque MLP completo con barrera única All-Reduce (SPEC-321)
   eos toolchain:megatron:vocab [--workers=4] [--vocab=16] [--batch=2] [--json] Pérdida de entropía cruzada particionada sobre vocabulario (SPEC-321)
   eos toolchain:megatron:audit [--workers=4] [--batch=2] [--json] Auditoría integral de barrera única, paridad numérica y recibo SHA-256 (SPEC-321)
+  eos toolchain:pipeline:stages [--stages=4] [--json] Inspección de topología lineal y enlaces P2P entre etapas (SPEC-322)
+  eos toolchain:pipeline:warmup [--stages=4] [--json] Planificación y ejecución de forward passes en fase warmup (SPEC-322)
+  eos toolchain:pipeline:1f1b [--stages=4] [--microbatches=8] [--json] Ejecución intercalada 1F1B forward/backward en estado estable (SPEC-322)
+  eos toolchain:pipeline:schedule [--stages=4] [--microbatches=8] [--json] Simulación completa de línea temporal y cálculo de burbuja (SPEC-322)
+  eos toolchain:pipeline:audit [--stages=4] [--microbatches=8] [--json] Auditoría integral de cota de memoria <= P, cero fugas y recibo SHA-256 (SPEC-322)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

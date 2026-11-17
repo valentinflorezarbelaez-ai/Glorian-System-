@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 321,
-  "catalogSha256": "01a011dade5b5432b802397939d90eb0c0afb366ef672383ca9c7592cd05f251",
+  "totalSpecs": 322,
+  "catalogSha256": "788e3ee0a72c0a7495e75b9a64c27f8c1bdcbf1a8afcc61aab7c273061a0d099",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2890,7 +2890,16 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-321-megatron-tensor-parallelism.md",
-      "sha256": "e1682be10d9b1bc456393bcc2ce343ff6256643099681081ca02f82cdda8be82"
+      "sha256": "cfcc49055a18e0140bf8a9104b64bf21dc808a0ecd090005e631b46618c29afd"
+    },
+    {
+      "id": "SPEC-322",
+      "title": "Pipeline Parallelism Engine (1F1B Interleaved Activation Schedule)",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-322-pipeline-parallelism-1f1b.md",
+      "sha256": "0de6b6374aca0f3b83b402d49d075ec89fa53e60ca8d623dc8f5b3e8a2f57b3f"
     }
   ]
 }

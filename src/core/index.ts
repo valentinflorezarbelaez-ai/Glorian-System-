@@ -749,3 +749,5 @@ export * from "./eosRingAllReduce.ts";
 export * from "./eosRingAllReduce.types.ts";
 export * from "./eosMegatronTensorParallelism.ts";
 export * from "./eosMegatronTensorParallelism.types.ts";
+export * from "./eosPipelineParallelism1F1B.ts";
+export * from "./eosPipelineParallelism1F1B.types.ts";
