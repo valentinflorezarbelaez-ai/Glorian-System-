@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 327,
-  "catalogSha256": "42fe835c9f731aed3c025356eedff7f9b3d91878451b1484db444f29bd1c2a02",
+  "totalSpecs": 328,
+  "catalogSha256": "fad66ed6b75fd31e7753320645810fe5ee571bb81f7b80a40df7ed59b4c5b053",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2945,6 +2945,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-327-reverse-engineering-anything.md",
       "sha256": "9a84179f1267602e1b8daa20841beb4aafe88fce33e66d4c632b0a6fb32914f3"
+    },
+    {
+      "id": "SPEC-328",
+      "title": "FP8 / INT8 Quantized Distributed Training & Mixed-Precision Gradient Scaling Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-328-quantized-distributed-training.md",
+      "sha256": "e71f5adcdfb179018642e0ab4a8e40d1c69607ab0b533f38de864c3a2c4781fe"
     }
   ]
 }
