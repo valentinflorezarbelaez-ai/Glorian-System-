@@ -56,6 +56,7 @@ export const CONFIGURED_SPECS = [
   "RingAllReduce",
   "MegatronTensorParallelism",
   "PipelineParallelism1F1B",
+  "TensorParallelAttention",
 ];
 
 /**

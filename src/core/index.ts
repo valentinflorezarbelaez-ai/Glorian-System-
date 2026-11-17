@@ -751,3 +751,5 @@ export * from "./eosMegatronTensorParallelism.ts";
 export * from "./eosMegatronTensorParallelism.types.ts";
 export * from "./eosPipelineParallelism1F1B.ts";
 export * from "./eosPipelineParallelism1F1B.types.ts";
+export * from "./eosTensorParallelAttention.ts";
+export * from "./eosTensorParallelAttention.types.ts";

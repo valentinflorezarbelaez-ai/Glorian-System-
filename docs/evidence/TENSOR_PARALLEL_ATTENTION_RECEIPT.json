@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0.0",
+  "specRef": "SPEC-323",
+  "changeRef": "CHANGE-185",
+  "auditStatus": "VERIFIED",
+  "workerCount": 2,
+  "totalQHeads": 4,
+  "totalKVHeads": 2,
+  "headConservationCertified": true,
+  "singleBarrierCertified": true,
+  "mathParityCertified": true,
+  "ringAttentionCertified": true,
+  "sha256Receipt": "d326352a2605243c2aeec3bdfacdcaa98c1ce3391c3ec8627cde80dfec3bf2ce",
+  "timestampIso": "2026-11-17T17:51:10.103Z"
+}

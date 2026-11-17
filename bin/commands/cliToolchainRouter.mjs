@@ -80,6 +80,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliPipelineParallelism1F1B.mjs",
     fn: "handlePipelineCommand",
   },
+  {
+    prefix: "toolchain:tp:",
+    file: "./cliTensorParallelAttention.mjs",
+    fn: "handleTpAttentionCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

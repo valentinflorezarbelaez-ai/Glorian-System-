@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 322,
-  "catalogSha256": "788e3ee0a72c0a7495e75b9a64c27f8c1bdcbf1a8afcc61aab7c273061a0d099",
+  "totalSpecs": 323,
+  "catalogSha256": "e8a6e41ca8975a5d1bd0bf7cf4f29728ae6d2dfbff8eecad932857374146ff6c",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2899,7 +2899,16 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-322-pipeline-parallelism-1f1b.md",
-      "sha256": "0de6b6374aca0f3b83b402d49d075ec89fa53e60ca8d623dc8f5b3e8a2f57b3f"
+      "sha256": "f97a3300d5d49a460733bcd416908ed074f2261fa4cb7b1cee3ae4e30fb11ebe"
+    },
+    {
+      "id": "SPEC-323",
+      "title": "Tensor Parallel Multi-Head & Grouped-Query Attention (TP-MHA / TP-GQA) with Sequence Parallelism & Ring Attention",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-323-tensor-parallel-attention.md",
+      "sha256": "a493af30eaf57aa16a80a63142c0256c8574503a67a7335c8425ed0c1a76e960"
     }
   ]
 }

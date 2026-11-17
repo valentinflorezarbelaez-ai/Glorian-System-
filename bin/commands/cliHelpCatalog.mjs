@@ -561,6 +561,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:pipeline:1f1b [--stages=4] [--microbatches=8] [--json] Ejecución intercalada 1F1B forward/backward en estado estable (SPEC-322)
   eos toolchain:pipeline:schedule [--stages=4] [--microbatches=8] [--json] Simulación completa de línea temporal y cálculo de burbuja (SPEC-322)
   eos toolchain:pipeline:audit [--stages=4] [--microbatches=8] [--json] Auditoría integral de cota de memoria <= P, cero fugas y recibo SHA-256 (SPEC-322)
+  eos toolchain:tp:mha [--workers=2] [--heads=4] [--headdim=4] [--json] Particionamiento y proyección paralela de atención multi-cabeza (SPEC-323)
+  eos toolchain:tp:gqa [--workers=2] [--qheads=8] [--kvheads=2] [--headdim=4] [--json] Particionamiento y conservación de ratio GQA (SPEC-323)
+  eos toolchain:tp:ring-attention [--workers=2] [--seqperworker=2] [--dim=4] [--json] Ejecución de Ring Attention con rotación circular de bloques KV (SPEC-323)
+  eos toolchain:tp:sequence [--workers=2] [--totalseq=8] [--dim=4] [--json] Particionamiento de activaciones temporales en secuencia (SPEC-323)
+  eos toolchain:tp:audit [--workers=2] [--qheads=4] [--kvheads=2] [--json] Auditoría integral de conservación de cabezas, barrera única y recibo SHA-256 (SPEC-323)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

@@ -2932,3 +2932,16 @@
   - `docs/plans/PLAN-184-pipeline-parallelism-1f1b.md`
   - `docs/tasks/TASKS-184-pipeline-parallelism-1f1b.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-TENSOR-PARALLEL-ATTENTION
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-185` (`SPEC-323`), Tensor Parallel Multi-Head & Grouped-Query Attention (TP-MHA / TP-GQA) with Sequence Parallelism & Ring Attention: author TLA+ formal model `docs/formal/TensorParallelAttention.tla` and configuration `docs/formal/TensorParallelAttention.cfg` (Model 67), implement `src/core/eosTensorParallelAttention.types.ts` and `src/core/eosTensorParallelAttention.ts` featuring multi-head and grouped-query attention head partitioning, column-parallel Q, K, V linear projections, local FlashAttention computation with online softmax, row-parallel output projection W_O with a single Ring All-Reduce collective barrier (`SPEC-320`), sequence parallelism activation slicing, ring attention circular shifting across long contexts, and signed receipt emission at `docs/evidence/TENSOR_PARALLEL_ATTENTION_RECEIPT.json`. Wire `toolchain:tp:mha`, `toolchain:tp:gqa`, `toolchain:tp:ring-attention`, `toolchain:tp:sequence`, `toolchain:tp:audit` in `bin/commands/cliTensorParallelAttention.mjs` and `bin/commands/cliToolchainRouter.mjs` (`538 -> 543` commands, 100% catalog parity). Verify `BDD-1713`..`BDD-1718`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-185-TENSOR-PARALLEL-ATTENTION.md`
+  - `openspec/changes/CHANGE-185-tensor-parallel-attention.md`
+  - `openspec/specs/SPEC-323-tensor-parallel-attention.md`
+  - `docs/plans/PLAN-185-tensor-parallel-attention.md`
+  - `docs/tasks/TASKS-185-tensor-parallel-attention.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
