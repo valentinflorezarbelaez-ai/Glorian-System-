@@ -1,256 +1,205 @@
 {
-  "timestampIso": "2026-11-17T22:08:31.528Z",
+  "timestampIso": "2026-11-17T22:20:05.335Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
-  "executionMode": "LIVE_LOCAL_TLC",
-  "status": "VERIFIED",
+  "executionMode": "DEFERRED_TO_CI",
+  "status": "DEFERRED_TO_CI",
+  "epistemicState": "DEFERRED_TO_CI",
   "allPassed": true,
   "hasJavaRuntime": true,
-  "tlaJarPath": "C:\\Users\\valen\\Documents\\Glorian-System\\tools\\tla2tools.jar",
+  "tlaJarPath": "NOT_DETECTED_LOCALLY",
+  "reproducibleByMergeGate": false,
   "totalConfiguredSpecs": 27,
   "models": [
     {
       "specName": "LmaxDisruptor",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 20425,
-      "statesGenerated": 84397,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2416,
+      "cfgBytes": 252
     },
     {
       "specName": "HermesConsensusMesh",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 6,
-      "statesGenerated": 12,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3121,
+      "cfgBytes": 258
     },
     {
       "specName": "DatomicBitemporalLedger",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 3481,
-      "statesGenerated": 9817,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2354,
+      "cfgBytes": 259
     },
     {
       "specName": "AutonomousChaosDisruptor",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 42,
-      "statesGenerated": 90,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2503,
+      "cfgBytes": 256
     },
     {
       "specName": "BftAgentSwarmSlashing",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 2421,
-      "statesGenerated": 13227,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 1992,
+      "cfgBytes": 290
     },
     {
       "specName": "CellBasedBulkheadGovernor",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 504,
-      "statesGenerated": 1499,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 4156,
+      "cfgBytes": 366
     },
     {
       "specName": "ZeroCopyRingBuffer",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 39865,
-      "statesGenerated": 154381,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2468,
+      "cfgBytes": 271
     },
     {
       "specName": "JepsenDistributedChaos",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 7116,
-      "statesGenerated": 23010,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 4896,
+      "cfgBytes": 277
     },
     {
       "specName": "SimdQuantizedHnsw",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 14000,
-      "statesGenerated": 231376,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3800,
+      "cfgBytes": 311
     },
     {
       "specName": "DistributedVectorMesh",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 636,
-      "statesGenerated": 5125,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 5060,
+      "cfgBytes": 341
     },
     {
       "specName": "VectorLsmStorage",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 2713,
-      "statesGenerated": 7933,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2698,
+      "cfgBytes": 191
     },
     {
       "specName": "SpeculativePagedKvCache",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 2639,
-      "statesGenerated": 16303,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 9303,
+      "cfgBytes": 191
     },
     {
       "specName": "FlashAttentionOnlineSoftmax",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 37,
-      "statesGenerated": 118,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 5343,
+      "cfgBytes": 197
     },
     {
       "specName": "ContinuousDynamicBatching",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 336,
-      "statesGenerated": 572,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 5184,
+      "cfgBytes": 200
     },
     {
       "specName": "RingAllReduce",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 5,
-      "statesGenerated": 6,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 4632,
+      "cfgBytes": 121
     },
     {
       "specName": "MegatronTensorParallelism",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 6,
-      "statesGenerated": 6,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3266,
+      "cfgBytes": 193
     },
     {
       "specName": "PipelineParallelism1F1B",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 140,
-      "statesGenerated": 295,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2524,
+      "cfgBytes": 170
     },
     {
       "specName": "TensorParallelAttention",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 20,
-      "statesGenerated": 30,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3316,
+      "cfgBytes": 185
     },
     {
       "specName": "ZeroFsdpEngine",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 484,
-      "statesGenerated": 1145,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 5678,
+      "cfgBytes": 178
     },
     {
       "specName": "ExpertParallelMoERouter",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 114,
-      "statesGenerated": 637,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3888,
+      "cfgBytes": 211
     },
     {
       "specName": "ActivationCheckpointingEngine",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 9,
-      "statesGenerated": 9,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 4478,
+      "cfgBytes": 193
     },
     {
       "specName": "ReverseEngineeringEngine",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 161,
-      "statesGenerated": 201,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3695,
+      "cfgBytes": 175
     },
     {
       "specName": "QuantizedDistributedTrainingEngine",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 95,
-      "statesGenerated": 352,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3260,
+      "cfgBytes": 178
     },
     {
       "specName": "DistributedKvCacheReplication",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 9261,
-      "statesGenerated": 44983,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3443,
+      "cfgBytes": 157
     },
     {
       "specName": "TreeSpeculativeDecoding",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 14,
-      "statesGenerated": 25,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3428,
+      "cfgBytes": 137
     },
     {
       "specName": "StreamingLlmAttentionSinks",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 9,
-      "statesGenerated": 9,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2685,
+      "cfgBytes": 181
     },
     {
       "specName": "DisaggregatedPrefillDecode",
-      "verifiedLive": true,
-      "passed": true,
-      "distinctStates": 45,
-      "statesGenerated": 74,
-      "violationInvariant": null,
-      "exitCode": 0
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 6108,
+      "cfgBytes": 263
     }
-  ]
+  ],
+  "note": "TLC deferred: Java and/or tla2tools.jar unavailable locally; exhaustive exploration belongs in CI (DEFERRED_TO_CI)."
 }

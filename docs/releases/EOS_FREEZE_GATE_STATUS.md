@@ -13,7 +13,7 @@
 | Invariant Dimension | Verified Ground-Truth | Gate Status |
 |---|---|---|
 | **Release Version (SSOT)** | `75.0.0` (`package.json`) | SEALED |
-| **Node.js Engine** | v24.21.0 | PASS |
+| **Node.js Engine** | v22.23.4 | PASS |
 | **Layer-0 Runtime Dependencies** | `dependencies: {}` (0 external npm packages) | SEALED |
 | **Active Formal Specs (OpenSpec)** | 332 Specifications (EARS IEEE 830 / BDD ISO 29148) | APPROVED |
 | **Formal TLA+ Models** | 76 Models (bounded simulation + invariant verification) | VERIFIED |

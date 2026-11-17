@@ -20,9 +20,20 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { sanitizeEvidencePath, TLC_EVIDENCE_MODES } from "./run-tlc.mjs";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "..");
+
+function redactPathInDetails(text, repoRoot) {
+  const raw = String(text ?? "");
+  // Replace absolute host / in-repo absolute spans with sanitized tokens.
+  return raw
+    .replace(/[A-Za-z]:\\(?:[^"'\n]+)/g, (m) => sanitizeEvidencePath(m, repoRoot))
+    .replace(/\/(?:Users|home|usr)\/[^\s"']+/g, (m) => sanitizeEvidencePath(m, repoRoot))
+    .replace(/\\/g, "/");
+}
 
 export function syncGentleAiStack(options = {}) {
   const root = path.resolve(options.projectRoot || projectRoot);
@@ -38,6 +49,7 @@ export function syncGentleAiStack(options = {}) {
   const engramHash = engramExists
     ? crypto.createHash("sha256").update(fs.readFileSync(engramPath)).digest("hex")
     : "NOT_FOUND";
+  const engramLabel = sanitizeEvidencePath(engramPath, root);
 
   components.push({
     name: "Engram Epistemic DAG Engine",
@@ -45,8 +57,8 @@ export function syncGentleAiStack(options = {}) {
     verified: engramExists,
     sha256: engramHash,
     details: engramExists
-      ? `Canonical binary found at ${engramPath} (${(fs.statSync(engramPath).size / 1024 / 1024).toFixed(1)} MB)`
-      : `Engram binary not found at ${engramPath}`,
+      ? `Canonical binary found at ${engramLabel} (${(fs.statSync(engramPath).size / 1024 / 1024).toFixed(1)} MB)`
+      : `Engram binary not found at ${engramLabel}`,
   });
 
   // 2. GGA Pre-commit Hooks Verification (.githooks or .git/hooks)
@@ -132,10 +144,15 @@ export function syncGentleAiStack(options = {}) {
   const sealInput = `${status}:${timestamp}:${synchronized}/${total}:${components.map((c) => c.sha256).join(":")}`;
   const sha256EvidenceSeal = crypto.createHash("sha256").update(sealInput).digest("hex");
 
+  // Sanitize component details so versioned evidence never embeds host plumbing.
+  for (const c of components) {
+    c.details = redactPathInDetails(c.details, root);
+  }
+
   const receipt = {
     status,
     timestamp,
-    projectRoot: root,
+    projectRoot: sanitizeEvidencePath(root, root),
     totalComponents: total,
     synchronizedComponents: synchronized,
     components,
@@ -144,12 +161,21 @@ export function syncGentleAiStack(options = {}) {
       fullProfile: fullToolCount,
     },
     sha256EvidenceSeal,
+    // Local stack probe is not merge-gate certified (Law III / FR-009 hygiene).
+    epistemicState: TLC_EVIDENCE_MODES.LOCAL_SIMULATION,
+    executionMode: TLC_EVIDENCE_MODES.LOCAL_SIMULATION,
+    reproducibleByMergeGate: false,
+    note: "Gentle-AI stack sync receipt with host paths sanitized; not merge-gate certified.",
   };
 
   // Write sealed evidence receipt to docs/evidence/EVD-GENTLE-STACK-SYNC.json
   const evidenceDir = path.join(root, "docs", "evidence");
   fs.mkdirSync(evidenceDir, { recursive: true });
-  fs.writeFileSync(path.join(evidenceDir, "EVD-GENTLE-STACK-SYNC.json"), JSON.stringify(receipt, null, 2), "utf8");
+  fs.writeFileSync(
+    path.join(evidenceDir, "EVD-GENTLE-STACK-SYNC.json"),
+    `${JSON.stringify(receipt, null, 2)}\n`,
+    "utf8",
+  );
 
   return receipt;
 }
