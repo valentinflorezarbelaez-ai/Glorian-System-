@@ -621,6 +621,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:desh:inject [--fault=NETWORK_PARTITION] [--json] Inyección activa de fallas bizantinas en malla de nodos virtuales (SPEC-334)
   eos toolchain:desh:rollback [--json] Punto de control global y reversión temporal (Time-Travel Debugging) (SPEC-334)
   eos toolchain:desh:audit [--seed=SEED] [--json] Auditoría determinista, evaluación de invariantes y recibo SHA-256 (SPEC-334)
+  eos toolchain:pqmpc:share [--secret=N] [--parties=5] [--threshold=3] [--json] Reparto Shamir T-de-N con compromisos SHA-256 (SPEC-335, referencia)
+  eos toolchain:pqmpc:keygen [--parties=5] [--threshold=3] [--json] Generación de claves Ring-LWE umbral con dealer confiable (SPEC-335, referencia)
+  eos toolchain:pqmpc:aggregate [--contributors=4] [--json] Agregación homomórfica aditiva y descifrado umbral (SPEC-335, referencia)
+  eos toolchain:pqmpc:threshold [--parties=5] [--threshold=3] [--json] Descifrado umbral, tolerancia a ausencias y rechazo bajo umbral (SPEC-335)
+  eos toolchain:pqmpc:audit [--seed=SEED] [--json] Autopruebas de corrección y recibo SHA-256 con aviso de seguridad (SPEC-335)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

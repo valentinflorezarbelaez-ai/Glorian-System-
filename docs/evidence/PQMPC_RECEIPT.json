@@ -1,0 +1,19 @@
+{
+  "specRef": "SPEC-335",
+  "parameters": {
+    "ringDegree": 64,
+    "ciphertextModulus": "2305843009213693951",
+    "plaintextModulus": "65537",
+    "parties": 5,
+    "threshold": 3
+  },
+  "shamirRoundTrip": true,
+  "belowThresholdRejected": true,
+  "tamperDetected": true,
+  "encryptionRandomized": true,
+  "homomorphicAggregation": true,
+  "thresholdDecryption": true,
+  "allPassed": true,
+  "securityNotice": "Reference implementation (SPEC-335). Not production cryptography: parameters are not security-validated, arithmetic is not constant-time, keys use a trusted dealer and partial decryptions carry no smudging noise. Do not use to protect real secrets.",
+  "sha256Digest": "281c58abd8eaf658d190453f6c745ea4b14dc8dc35a5fdb9f9699084621ed16b"
+}

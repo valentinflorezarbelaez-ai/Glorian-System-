@@ -3088,3 +3088,17 @@
   - `docs/plans/PLAN-196-discrete-event-simulation-hypervisor.md`
   - `docs/tasks/TASKS-196-discrete-event-simulation-hypervisor.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-POST-QUANTUM-THRESHOLD-MPC
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-197` (`SPEC-335`), Threshold Secret Sharing & Ring-LWE Homomorphic Secure Aggregation Engine (reference implementation): TLA+ Model 79 `docs/formal/ThresholdSecureAggregation.tla` / `.cfg`; `src/core/eosPostQuantumThresholdMpc.types.ts` and `src/core/eosPostQuantumThresholdMpc.ts` (Shamir T-of-N over `F_(2^61-1)`, SHA-256 share commitments, BFV-style Ring-LWE encryption, additive homomorphism, coefficient-wise threshold decryption); receipt `docs/evidence/PQMPC_RECEIPT.json`. Wire `toolchain:pqmpc:share`, `toolchain:pqmpc:keygen`, `toolchain:pqmpc:aggregate`, `toolchain:pqmpc:threshold`, `toolchain:pqmpc:audit` (`598 -> 603` commands). Verify `BDD-1785`..`BDD-1790`. Owner directive on 2026-11-17 ("SI ARRANQUEMOS").
+- **Security Constraint**: Not to be used to protect real secrets; outputs must carry the `securityNotice`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-197-POST-QUANTUM-THRESHOLD-MPC.md`
+  - `openspec/changes/CHANGE-197-post-quantum-threshold-mpc.md`
+  - `openspec/specs/SPEC-335-post-quantum-threshold-mpc.md`
+  - `docs/plans/PLAN-197-post-quantum-threshold-mpc.md`
+  - `docs/tasks/TASKS-197-post-quantum-threshold-mpc.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

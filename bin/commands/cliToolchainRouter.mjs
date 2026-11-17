@@ -140,6 +140,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliDiscreteEventSimulationHypervisor.mjs",
     fn: "handleDiscreteEventSimulationHypervisorCommand",
   },
+  {
+    prefix: "toolchain:pqmpc:",
+    file: "./cliPostQuantumThresholdMpc.mjs",
+    fn: "handlePostQuantumThresholdMpcCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

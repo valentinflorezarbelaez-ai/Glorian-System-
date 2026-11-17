@@ -68,6 +68,7 @@ export const CONFIGURED_SPECS = [
   "DisaggregatedPrefillDecode",
   "OntologicalHypergraph",
   "DiscreteEventSimulationHypervisor",
+  "ThresholdSecureAggregation",
 ];
 
 /**

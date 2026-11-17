@@ -775,3 +775,5 @@ export * from "./eosOntologicalHypergraph.ts";
 export * from "./eosOntologicalHypergraph.types.ts";
 export * from "./eosDiscreteEventSimulationHypervisor.ts";
 export * from "./eosDiscreteEventSimulationHypervisor.types.ts";
+export * from "./eosPostQuantumThresholdMpc.ts";
+export * from "./eosPostQuantumThresholdMpc.types.ts";
