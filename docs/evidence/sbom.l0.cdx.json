@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:ab595194-37b4-534c-94cb-c7c03d3f4f95",
+  "serialNumber": "urn:uuid:4e4776b9-f2fc-5fd7-9ba9-1f4c6bb985d2",
   "version": 1,
   "metadata": {
-    "timestamp": "2021-01-30T15:45:24.000Z",
+    "timestamp": "2021-08-11T07:18:17.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "aa304713f88e0d0dc0848418d3779daeba330aa38fb53d9a09a75d0ba8fedf5b"
+          "content": "889212c27d96d10456d00afe9f2c1a2b1b12d00bdfbb1285c17375df5ecafeef"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -1294,6 +1294,32 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosContinuousDynamicBatching.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosContinuousDynamicBatching.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a96f5d15870cd53685879577bc8b0e0795984da1e56321c0933e495c2fcfeef5"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosContinuousDynamicBatching.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosContinuousDynamicBatching.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosContinuousDynamicBatching.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f083c7b9335583eccef3f27f663a2b9cdd62eed522e4cb8ebdef5c080abecf29"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosContinuousDynamicBatching.types.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosContinuousRefactorEngine.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosContinuousRefactorEngine.ts@75.0.0",
@@ -1736,6 +1762,32 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosDistributedVectorMesh.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosDistributedVectorMesh.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "15fb50235b6ba21793894cb547e5d481197bbfd294ae216b1ba8f79f455dcbe5"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosDistributedVectorMesh.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosDistributedVectorMesh.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosDistributedVectorMesh.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "67faeaf145731999dadc8d98586d5c6b995e10cbde2a511a8caf4cf118929dee"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosDistributedVectorMesh.types.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosDocumentationSearch.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosDocumentationSearch.ts@75.0.0",
@@ -2136,6 +2188,32 @@
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosFlakyTestQuarantine.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosFlashAttentionOnlineSoftmax.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosFlashAttentionOnlineSoftmax.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5cdaa542d2fd9deaed4d944cc0563467472a841a598a996e5ccc8442279c6ee2"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosFlashAttentionOnlineSoftmax.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosFlashAttentionOnlineSoftmax.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosFlashAttentionOnlineSoftmax.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "585c07c065ef9be25f4575b5d6c8171af02af7ec72b9584a85cfeb5a95c009c5"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosFlashAttentionOnlineSoftmax.types.ts"
     },
     {
       "type": "file",
@@ -3569,6 +3647,32 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosMegatronTensorParallelism.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosMegatronTensorParallelism.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d7adeeeeae843e8036c902ab70ec4bace7eaa67c76f437f618ef14c09ac114b1"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosMegatronTensorParallelism.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosMegatronTensorParallelism.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosMegatronTensorParallelism.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1bc9b03ea9e46c6a3f2f1257bb069bc3d217d0b100bfcddb07445a0ef5711ead"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosMegatronTensorParallelism.types.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosMemoryZeroizer.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosMemoryZeroizer.ts@75.0.0",
@@ -4843,6 +4947,32 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosRingAllReduce.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosRingAllReduce.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f9c7fdb1d6674d16cead20a7c31fc66b24b389108afc724f2dcbfe3303f6d513"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosRingAllReduce.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosRingAllReduce.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosRingAllReduce.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "17e89f69bfc08c0f6ed728f7f90859861b968332d988433921f310aedd1d4316"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosRingAllReduce.types.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosS0DesignSystemGovernor.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosS0DesignSystemGovernor.ts@75.0.0",
@@ -5412,6 +5542,32 @@
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosSpecDriftDetector.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosSpeculativePagedKvCache.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosSpeculativePagedKvCache.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "84b6e3ebf848f30097dcae0bd924ad0baf1e49d6128a07cacaaf08614e1ceeb5"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosSpeculativePagedKvCache.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosSpeculativePagedKvCache.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosSpeculativePagedKvCache.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c811fb7b33d2c2cd1c249fec232cb1ed23b7c1a3d7a3150a5673039404ebf7ac"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosSpeculativePagedKvCache.types.ts"
     },
     {
       "type": "file",
@@ -6117,6 +6273,32 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosVectorLsmStorage.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosVectorLsmStorage.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ad00d70372d98116e2b3dcde47f5ba1575bfff0412cbf568f247429aeba50790"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosVectorLsmStorage.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosVectorLsmStorage.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosVectorLsmStorage.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ba4772c1e7e869f24101cfbf1a3f2efcc17f992473ddf8b94cfd1410a2df93bd"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosVectorLsmStorage.types.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosVectorQuantizationGovernor.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosVectorQuantizationGovernor.ts@75.0.0",
@@ -6552,7 +6734,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "dd953e173aaf88e4571a607209a58c05b81e6c24774961f56780e89a2c672d8a"
+          "content": "166fab7b8e69eaebd521d97b782f220893f703e0721cb06eec92a24e97beb798"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: index.ts"
@@ -6623,5 +6805,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "26e5332d7ddb22ff0e2662d56b0b69477d76d47de91971db98bce9dd6179228b"
+  "sha256Receipt": "b9f5e927efb796025b3ba96876ec367a16aa10e08f3d6ac52519f8b0a103270d"
 }
