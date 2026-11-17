@@ -46,4 +46,5 @@
 | `sdd-archive`           | Change consolidation & delta sync           | Spec archival and main spec consolidation         |
 | `branch-pr`             | Issue-first PR workflow                     | Safe Git branch and pull request generation       |
 | `issue-creation`        | Issue creation and traceability             | GitHub issue creation and bug reports             |
+| `modern-web-guidance`   | Google Chrome Modern Web Guidance           | Search/retrieve modern HTML/CSS/JS best practices |
 | `skill-registry`        | Skill inventory synchronizer                | Update registry, sync with Engram                 |
