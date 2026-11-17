@@ -6,6 +6,7 @@
  */
 
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import path from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -143,10 +144,24 @@ describe("SPEC-271: DevSecOps Platform Engineering, Kernel Shield & TLC Consensu
     const pairBulkhead = validateSpecConfigPair("CellBasedBulkheadGovernor", path.join(ROOT, "docs/formal"));
     assert.equal(pairBulkhead.syntaxValid, true);
 
-    const receipt = runTlcVerification({ forceMock: true });
-    assert.ok(receipt.totalConfiguredSpecs >= 6);
-    assert.ok(receipt.models.some((m) => m.specName === "BftAgentSwarmSlashing"));
-    assert.ok(receipt.models.some((m) => m.specName === "CellBasedBulkheadGovernor"));
+    const receiptPath = path.join(
+      ROOT,
+      "docs/evidence",
+      `.tlc-receipt-bdd1405-${process.pid}.json`,
+    );
+    try {
+      const receipt = runTlcVerification({ forceMock: true, receiptPath });
+      assert.ok(receipt.totalConfiguredSpecs >= 6);
+      assert.equal(receipt.executionMode, "DEFERRED_TO_CI");
+      assert.ok(receipt.models.some((m) => m.specName === "BftAgentSwarmSlashing"));
+      assert.ok(receipt.models.some((m) => m.specName === "CellBasedBulkheadGovernor"));
+    } finally {
+      try {
+        fs.unlinkSync(receiptPath);
+      } catch {
+        // temp receipt cleanup
+      }
+    }
   });
 
   // -------------------------------------------------------------------------

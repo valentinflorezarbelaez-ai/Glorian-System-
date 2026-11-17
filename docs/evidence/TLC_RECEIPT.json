@@ -1,0 +1,205 @@
+{
+  "timestampIso": "2026-11-17T22:20:05.335Z",
+  "specRef": "SPEC-270",
+  "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
+  "executionMode": "DEFERRED_TO_CI",
+  "status": "DEFERRED_TO_CI",
+  "epistemicState": "DEFERRED_TO_CI",
+  "allPassed": true,
+  "hasJavaRuntime": true,
+  "tlaJarPath": "NOT_DETECTED_LOCALLY",
+  "reproducibleByMergeGate": false,
+  "totalConfiguredSpecs": 27,
+  "models": [
+    {
+      "specName": "LmaxDisruptor",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2416,
+      "cfgBytes": 252
+    },
+    {
+      "specName": "HermesConsensusMesh",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3121,
+      "cfgBytes": 258
+    },
+    {
+      "specName": "DatomicBitemporalLedger",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2354,
+      "cfgBytes": 259
+    },
+    {
+      "specName": "AutonomousChaosDisruptor",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2503,
+      "cfgBytes": 256
+    },
+    {
+      "specName": "BftAgentSwarmSlashing",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 1992,
+      "cfgBytes": 290
+    },
+    {
+      "specName": "CellBasedBulkheadGovernor",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 4156,
+      "cfgBytes": 366
+    },
+    {
+      "specName": "ZeroCopyRingBuffer",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2468,
+      "cfgBytes": 271
+    },
+    {
+      "specName": "JepsenDistributedChaos",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 4896,
+      "cfgBytes": 277
+    },
+    {
+      "specName": "SimdQuantizedHnsw",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3800,
+      "cfgBytes": 311
+    },
+    {
+      "specName": "DistributedVectorMesh",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 5060,
+      "cfgBytes": 341
+    },
+    {
+      "specName": "VectorLsmStorage",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2698,
+      "cfgBytes": 191
+    },
+    {
+      "specName": "SpeculativePagedKvCache",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 9303,
+      "cfgBytes": 191
+    },
+    {
+      "specName": "FlashAttentionOnlineSoftmax",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 5343,
+      "cfgBytes": 197
+    },
+    {
+      "specName": "ContinuousDynamicBatching",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 5184,
+      "cfgBytes": 200
+    },
+    {
+      "specName": "RingAllReduce",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 4632,
+      "cfgBytes": 121
+    },
+    {
+      "specName": "MegatronTensorParallelism",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3266,
+      "cfgBytes": 193
+    },
+    {
+      "specName": "PipelineParallelism1F1B",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2524,
+      "cfgBytes": 170
+    },
+    {
+      "specName": "TensorParallelAttention",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3316,
+      "cfgBytes": 185
+    },
+    {
+      "specName": "ZeroFsdpEngine",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 5678,
+      "cfgBytes": 178
+    },
+    {
+      "specName": "ExpertParallelMoERouter",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3888,
+      "cfgBytes": 211
+    },
+    {
+      "specName": "ActivationCheckpointingEngine",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 4478,
+      "cfgBytes": 193
+    },
+    {
+      "specName": "ReverseEngineeringEngine",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3695,
+      "cfgBytes": 175
+    },
+    {
+      "specName": "QuantizedDistributedTrainingEngine",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3260,
+      "cfgBytes": 178
+    },
+    {
+      "specName": "DistributedKvCacheReplication",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3443,
+      "cfgBytes": 157
+    },
+    {
+      "specName": "TreeSpeculativeDecoding",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 3428,
+      "cfgBytes": 137
+    },
+    {
+      "specName": "StreamingLlmAttentionSinks",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 2685,
+      "cfgBytes": 181
+    },
+    {
+      "specName": "DisaggregatedPrefillDecode",
+      "verifiedLive": false,
+      "syntaxValid": true,
+      "tlaBytes": 6108,
+      "cfgBytes": 263
+    }
+  ],
+  "note": "TLC deferred: Java and/or tla2tools.jar unavailable locally; exhaustive exploration belongs in CI (DEFERRED_TO_CI)."
+}

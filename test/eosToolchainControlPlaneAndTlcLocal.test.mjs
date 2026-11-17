@@ -129,25 +129,41 @@ describe("SPEC-272: Toolchain Control Plane, Local TLC Execution & SRE Warmup Gr
   // BDD-1412: Local TLC Live Invariant Verification
   // -------------------------------------------------------------------------
   it("BDD-1412: Local TLC model checking executes live across all configured specs", () => {
-    const receipt = runTlcVerification();
-
-    assert.ok(
-      receipt.executionMode === "LIVE_LOCAL_TLC" || receipt.executionMode === "DEFERRED_TO_CI_SETUP_JAVA",
-      `Execution mode must be LIVE_LOCAL_TLC or DEFERRED_TO_CI_SETUP_JAVA (actual: ${receipt.executionMode})`,
+    const receiptPath = path.join(
+      ROOT,
+      "docs/evidence",
+      `.tlc-receipt-bdd1412-${process.pid}.json`,
     );
-    assert.equal(receipt.totalConfiguredSpecs, CONFIGURED_SPECS.length);
+    try {
+      const receipt = runTlcVerification({ receiptPath });
 
-    if (receipt.executionMode === "LIVE_LOCAL_TLC") {
-      assert.equal(receipt.status, "VERIFIED");
-      assert.equal(receipt.allPassed, true);
-      for (const model of receipt.models) {
-        assert.equal(model.verifiedLive, true);
-        assert.equal(model.passed, true);
-        assert.equal(model.exitCode, 0);
-        assert.equal(model.violationInvariant, null);
+      assert.ok(
+        receipt.executionMode === "LIVE_TLC" || receipt.executionMode === "DEFERRED_TO_CI",
+        `Execution mode must be LIVE_TLC or DEFERRED_TO_CI (actual: ${receipt.executionMode})`,
+      );
+      assert.equal(receipt.totalConfiguredSpecs, CONFIGURED_SPECS.length);
+      assert.notEqual(receipt.status, "VERIFIED", "VERIFIED reserved for external IV&V");
+      assert.equal(receipt.tlaJarPath.includes(":\\"), false, "receipt must not embed Windows drive paths");
+      assert.equal(receipt.tlaJarPath.startsWith("/Users/"), false);
+
+      if (receipt.executionMode === "LIVE_TLC") {
+        assert.equal(receipt.status, "LIVE_TLC_EXECUTED");
+        assert.equal(receipt.allPassed, true);
+        for (const model of receipt.models) {
+          assert.equal(model.verifiedLive, true);
+          assert.equal(model.passed, true);
+          assert.equal(model.exitCode, 0);
+          assert.equal(model.violationInvariant, null);
+        }
+      } else {
+        assert.equal(receipt.status, "DEFERRED_TO_CI");
       }
-    } else {
-      assert.equal(receipt.status, "DEFERRED_TO_CI_SETUP_JAVA");
+    } finally {
+      try {
+        fs.unlinkSync(receiptPath);
+      } catch {
+        // temp receipt cleanup
+      }
     }
   });
 });

@@ -2,8 +2,8 @@
   "spec": "SPEC-128",
   "title": "Tier S-0 Design Engineering Matrix & Machine-Readable Visual Governor",
   "version": "1.0.0",
-  "status": "VERIFIED",
-  "epistemicState": "PRODUCTION_READY",
+  "status": "HOST_HISTORICAL",
+  "epistemicState": "HOST_HISTORICAL",
   "timestamp": "2026-11-02T14:00:00Z",
   "project": "EOS System (Control Plane Core)",
   "compliance": {
@@ -24,7 +24,7 @@
     "testSuite": "test/eosS0DesignSystemGovernor.test.mjs"
   },
   "visualAuditResults": {
-    "targetDirectory": "c:\\Users\\valen\\Eos-System",
+    "targetDirectory": ".",
     "contractValid": true,
     "filesAudited": 3,
     "perfectionIndex": 100,
@@ -44,5 +44,7 @@
     "testsPassed": 8,
     "testsFailed": 0,
     "durationMs": 356.3
-  }
+  },
+  "reproducibleByMergeGate": false,
+  "note": "Retagged HOST_HISTORICAL: prior VERIFIED/PRODUCTION_READY self-cert with host plumbing path removed; design governor evidence remains under merge-gate LOCAL_CHECKS_EXECUTED scope."
 }
