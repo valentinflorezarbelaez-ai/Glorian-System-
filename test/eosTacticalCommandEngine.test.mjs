@@ -1,8 +1,10 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import path from "node:path";
 import fs from "node:fs";
 import os from "node:os";
+import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { EosTacticalCommandEngine } from "../src/core/eosTacticalCommandEngine.ts";
 import { writeDeterministicArtifact } from "../src/core/eosDeterministicArtifact.ts";
@@ -106,6 +108,68 @@ describe("SPEC-129: Tier S-0 Tactical Apex — Command Engine & OpenSpec Indexer
       } finally {
         fs.rmSync(tmp, { force: true });
       }
+    });
+  });
+
+  describe("BDD-OPENSPEC-FRESHNESS: catalog index SHA parity + UNKNOWN tip-seal gate", () => {
+    it("package.json catalog:freshness maps to tip-refresh --check-catalog", () => {
+      const pkg = JSON.parse(fs.readFileSync(path.join(projectRoot, "package.json"), "utf8"));
+      assert.equal(
+        pkg.scripts?.["catalog:freshness"]?.trim(),
+        "node scripts/tip-refresh.mjs --check-catalog",
+      );
+    });
+
+    it("committed OpenSpec index matches live extract (totalSpecs + catalogSha256 + digests)", () => {
+      const live = engine.extractOpenSpecs();
+      const liveSha = crypto.createHash("sha256").update(JSON.stringify(live)).digest("hex");
+      const indexPath = path.join(projectRoot, "docs/specs/openspec-catalog-index.json");
+      const committed = JSON.parse(fs.readFileSync(indexPath, "utf8"));
+      const diskCount = fs
+        .readdirSync(path.join(projectRoot, "openspec/specs"))
+        .filter((f) => f.endsWith(".md")).length;
+
+      assert.equal(committed.totalSpecs, live.length);
+      assert.equal(committed.totalSpecs, diskCount);
+      assert.equal(committed.catalogSha256, liveSha);
+
+      const byId = new Map(live.map((s) => [s.id, s]));
+      for (const entry of committed.specs) {
+        const liveEntry = byId.get(entry.id);
+        assert.ok(liveEntry, `missing live entry for ${entry.id}`);
+        assert.equal(entry.sha256, liveEntry.sha256);
+        assert.equal(entry.status, liveEntry.status);
+      }
+    });
+
+    it("pinned freeze tip requires UNKNOWN=0; PROPOSED declares Owner + ProposedCloseBy", () => {
+      const live = engine.extractOpenSpecs();
+      const unknown = live.filter((s) => String(s.status).toUpperCase() === "UNKNOWN");
+      const freezeDoc = fs.readFileSync(path.join(projectRoot, "docs/releases/EOS_FREEZE_GATE_STATUS.md"), "utf8");
+      assert.match(freezeDoc, /ACTIVE_FREEZE_GATE_PINNED/);
+      assert.equal(
+        unknown.length,
+        0,
+        `UNKNOWN must be 0 on pinned tip; got ${unknown.map((s) => s.id).join(", ")}`,
+      );
+
+      const proposed = live.filter((s) => String(s.status).toUpperCase().startsWith("PROPOSED"));
+      for (const spec of proposed) {
+        const body = fs.readFileSync(path.join(projectRoot, spec.file), "utf8");
+        assert.match(body, /\*\*Owner\*\*\s*:/i, `${spec.id} PROPOSED missing Owner`);
+        assert.match(body, /\*\*ProposedCloseBy\*\*\s*:/i, `${spec.id} PROPOSED missing ProposedCloseBy`);
+      }
+    });
+
+    it("catalog:freshness CLI exits 0 on tip", () => {
+      const out = execFileSync(process.execPath, ["scripts/tip-refresh.mjs", "--check-catalog"], {
+        cwd: projectRoot,
+        encoding: "utf8",
+      });
+      const report = JSON.parse(out);
+      assert.equal(report.ok, true);
+      assert.equal(report.unknown, 0);
+      assert.ok(report.totalSpecs >= 332);
     });
   });
 });

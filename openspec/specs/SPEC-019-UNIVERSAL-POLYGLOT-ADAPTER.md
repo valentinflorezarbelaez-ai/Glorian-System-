@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: UNIVERSAL POLYGLOT REPOSITORY ADAPTER (SPEC-019)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs bounded local repository inventory, polyglot stack fingerprinting (TypeScript, Go, Rust, Python, Flutter, C/C++, Java), structural file and pattern heuristics, and optional template drafts for recognized stacks. Inventory is limited to directory depth 3 and skips symbolic links; it is not a complete architectural or security analysis.

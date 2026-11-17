@@ -4,7 +4,7 @@
 
 - **Specification ID**: `SPEC-119`
 - **Standard**: IEEE 830 / ISO 29148 / NASA JPL Power of Ten / Google Rosie Standard
-- **Status**: `PROPOSED`
+- **Status**: `APPROVED`
 - **Layer**: Layer 0 (Core Planet-Scale Governance & Mission-Critical Safety)
 - **Runtime Dependencies**: `0` (`dependencies: {}`)
 

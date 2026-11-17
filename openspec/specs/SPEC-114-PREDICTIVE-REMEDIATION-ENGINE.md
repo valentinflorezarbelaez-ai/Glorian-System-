@@ -1,5 +1,7 @@
 # SPEC-114: Predictive Failure Correlator & Closed-Loop Auto-Remediation Engine
 
+**Status**: `APPROVED`  
+
 ## 1. Overview & Objective
 
 This specification establishes the architectural standard for autonomous failure correlation and closed-loop self-remediation across the EOS fleet. Modeled after the Google Autonomous SRE and Meta Sherlock/Aegis production engineering doctrines, this engine bridges telemetry signals across SLO burn rates, adaptive concurrency gradients, tail-sampled trace error densities, and hedged request rates. When system degradation is detected, the engine matches incident signatures to known failure archetypes and deterministically dispatches targeted, safe, and reversible mitigation playbooks within milliseconds, preventing cascading regional collapses.

@@ -1,5 +1,7 @@
 # SPEC-274: Kubernetes Gated Deployment Pipeline & k6 SLO Load Testing Engine
 
+**Status**: `APPROVED`  
+
 ## 1. Specification Metadata
 
 - **Specification ID**: `SPEC-274`

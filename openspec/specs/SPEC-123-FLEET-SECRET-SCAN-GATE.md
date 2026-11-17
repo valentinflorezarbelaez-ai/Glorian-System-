@@ -6,6 +6,8 @@
 - **Project ID**: `eos-system` (canonical tool) + fleet repositories listed in `docs/projects/registry.json` (read-only audit)
 - **Standard**: IEEE 830 / ISO 29148 · EOS Constitution Law III (Evidence over Claims) & Law VI (Zero Plain Secrets)
 - **Status**: `PROPOSED` — awaiting owner approval (Law II gate)
+- **Owner**: `user:valentin-florez-arbelaez`
+- **ProposedCloseBy**: `2026-12-15`
 - **Layer**: Layer-0 pure domain detectors + thin CLI adapter (`dependencies: {}`)
 - **Date**: `2026-11-02`
 

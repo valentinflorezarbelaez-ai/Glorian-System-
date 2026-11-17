@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: SOVEREIGN AKASHIC MEMORY & ENGRAM SYNTHESIS (SPEC-010)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs persistent epistemic memory, FTS5 inverted search, Anubic Tribunal conflict resolution, and complete absorption of all 27 Engram MCP memory tools.

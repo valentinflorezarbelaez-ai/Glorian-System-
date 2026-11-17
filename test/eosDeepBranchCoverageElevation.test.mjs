@@ -1375,9 +1375,12 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       assert.equal(resGet.getStatusCode(), 200);
       assert.ok(resGet.getBody().totalSpecs > 0);
 
-      // GET with query and status
+      // GET with query and status (tip-seal policy: UNKNOWN=0; SPEC-001 is STABLE_AND_ACTIVE)
       const resQuery = createMockResponse();
-      await specsMod.default({ method: "GET", query: { q: "SPEC-001", status: "UNKNOWN" } }, resQuery);
+      await specsMod.default(
+        { method: "GET", query: { q: "SPEC-001", status: "STABLE_AND_ACTIVE" } },
+        resQuery,
+      );
       assert.equal(resQuery.getStatusCode(), 200);
       assert.ok(resQuery.getBody().matchedSpecs >= 1);
 

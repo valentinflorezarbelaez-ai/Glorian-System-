@@ -5,7 +5,7 @@
 - **Specification ID**: `SPEC-281`
 - **Change Reference**: `CHANGE-143`
 - **Component**: `EosBitemporalEventStore`
-- **Status**: `PROPOSED`
+- **Status**: `APPROVED`
 - **Version**: `1.0.0`
 - **Classification**: Layer 0 Sovereign Event Sourcing & Bitemporal Data Core
 
