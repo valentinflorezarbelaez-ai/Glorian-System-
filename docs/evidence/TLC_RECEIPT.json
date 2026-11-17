@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-17T16:15:43.148Z",
+  "timestampIso": "2026-11-17T16:31:46.648Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -7,14 +7,14 @@
   "allPassed": true,
   "hasJavaRuntime": true,
   "tlaJarPath": "C:\\Users\\valen\\Documents\\Glorian-System\\tools\\tla2tools.jar",
-  "totalConfiguredSpecs": 13,
+  "totalConfiguredSpecs": 14,
   "models": [
     {
       "specName": "LmaxDisruptor",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 786,
-      "statesGenerated": 33,
+      "distinctStates": 20425,
+      "statesGenerated": 84397,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -123,6 +123,15 @@
       "passed": true,
       "distinctStates": 37,
       "statesGenerated": 118,
+      "violationInvariant": null,
+      "exitCode": 0
+    },
+    {
+      "specName": "ContinuousDynamicBatching",
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 336,
+      "statesGenerated": 572,
       "violationInvariant": null,
       "exitCode": 0
     }

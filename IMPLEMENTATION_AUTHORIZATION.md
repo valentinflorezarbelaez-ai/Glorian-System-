@@ -2880,3 +2880,16 @@
   - `docs/plans/PLAN-180-flash-attention-online-softmax-tiling.md`
   - `docs/tasks/TASKS-180-flash-attention-online-softmax-tiling.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-CONTINUOUS-DYNAMIC-SEQUENCE-BATCHING
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-181` (`SPEC-319`), Continuous Dynamic Sequence Batching & Iteration-Level Request Scheduler: author TLA+ formal model `docs/formal/ContinuousDynamicBatching.tla` and configuration `docs/formal/ContinuousDynamicBatching.cfg` (Model 63), implement `src/core/eosContinuousDynamicBatching.types.ts` and `src/core/eosContinuousDynamicBatching.ts` featuring dynamic slot assignment up to maxBatchSize, iteration-level single-token forward stepping, immediate eviction of finished sequences on EOS or max tokens, zero padding token injection, priority-aware queueing, memory preemption, and signed receipt emission at `docs/evidence/CONTINUOUS_DYNAMIC_BATCHING_RECEIPT.json`. Wire `toolchain:continuous:schedule`, `toolchain:continuous:step`, `toolchain:continuous:preempt`, `toolchain:continuous:metrics`, `toolchain:continuous:audit` in `bin/commands/cliContinuousDynamicBatching.mjs` and `bin/commands/cliToolchainRouter.mjs` (`518 -> 523` commands, 100% catalog parity). Verify `BDD-1689`..`BDD-1694`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-181-CONTINUOUS-DYNAMIC-SEQUENCE-BATCHING.md`
+  - `openspec/changes/CHANGE-181-continuous-dynamic-sequence-batching.md`
+  - `openspec/specs/SPEC-319-continuous-dynamic-sequence-batching.md`
+  - `docs/plans/PLAN-181-continuous-dynamic-sequence-batching.md`
+  - `docs/tasks/TASKS-181-continuous-dynamic-sequence-batching.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

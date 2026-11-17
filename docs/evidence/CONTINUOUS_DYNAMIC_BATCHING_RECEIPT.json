@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0.0",
+  "specRef": "SPEC-319",
+  "changeRef": "CHANGE-181",
+  "auditStatus": "VERIFIED",
+  "maxBatchSize": 4,
+  "totalRequestsTested": 6,
+  "completedRequestsCount": 6,
+  "activeSlotsBounded": true,
+  "zeroPaddingDensityVerified": true,
+  "noSlotLeaksVerified": true,
+  "preemptionRecoveryVerified": true,
+  "sha256Receipt": "845944c7547fedff534a8b83c1debf2889d2e058cee7607871353fc97ae69099",
+  "timestampIso": "2026-11-17T16:34:55.281Z"
+}

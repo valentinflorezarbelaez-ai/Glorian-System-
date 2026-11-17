@@ -60,6 +60,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliFlashAttentionOnlineSoftmax.mjs",
     fn: "handleFlashAttentionCommand",
   },
+  {
+    prefix: "toolchain:continuous:",
+    file: "./cliContinuousDynamicBatching.mjs",
+    fn: "handleContinuousBatchingCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

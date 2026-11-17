@@ -743,3 +743,5 @@ export * from "./eosSpeculativePagedKvCache.ts";
 export * from "./eosSpeculativePagedKvCache.types.ts";
 export * from "./eosFlashAttentionOnlineSoftmax.ts";
 export * from "./eosFlashAttentionOnlineSoftmax.types.ts";
+export * from "./eosContinuousDynamicBatching.ts";
+export * from "./eosContinuousDynamicBatching.types.ts";

@@ -52,6 +52,7 @@ export const CONFIGURED_SPECS = [
   "VectorLsmStorage",
   "SpeculativePagedKvCache",
   "FlashAttentionOnlineSoftmax",
+  "ContinuousDynamicBatching",
 ];
 
 /**

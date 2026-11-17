@@ -184,6 +184,12 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:flash:forward [--causal] [--json] Ejecución completa del kernel de atención FlashAttention por bloques (SPEC-318)
   eos toolchain:flash:parity [--causal] [--json] Verificación de paridad matemática contra atención ingenua cuadrática O(N^2) (SPEC-318)
   eos toolchain:flash:audit [--json] Auditoría integral de estabilidad numérica, memoria acotada y recibo SHA-256 (SPEC-318)
+  eos toolchain:continuous:schedule [--batch=4] [--requests=4] [--json] Planificación e inserción de solicitudes en lote continuo (SPEC-319)
+  eos toolchain:continuous:step [--batch=4] [--json] Avance de un paso iterativo de inferencia y desalojo inmediato (SPEC-319)
+  eos toolchain:continuous:preempt [--slot=0] [--json] Preempción de ranura bajo presión de memoria con reencolado (SPEC-319)
+  eos toolchain:continuous:metrics [--json] Telemetría de rendimiento, tasa de emisión y utilización de slots (SPEC-319)
+  eos toolchain:continuous:audit [--count=6] [--json] Auditoría integral de conservación de slots, ausencia de fugas y recibo SHA-256 (SPEC-319)
+
 
 
 
@@ -530,6 +536,12 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:flash:forward [--causal] [--json] Ejecución completa del kernel de atención FlashAttention por bloques (SPEC-318)
   eos toolchain:flash:parity [--causal] [--json] Verificación de paridad matemática contra atención ingenua cuadrática O(N^2) (SPEC-318)
   eos toolchain:flash:audit [--json] Auditoría integral de estabilidad numérica, memoria acotada y recibo SHA-256 (SPEC-318)
+  eos toolchain:continuous:schedule [--batch=4] [--requests=4] [--json] Planificación e inserción de solicitudes en lote continuo (SPEC-319)
+  eos toolchain:continuous:step [--batch=4] [--json] Avance de un paso iterativo de inferencia y desalojo inmediato (SPEC-319)
+  eos toolchain:continuous:preempt [--slot=0] [--json] Preempción de ranura bajo presión de memoria con reencolado (SPEC-319)
+  eos toolchain:continuous:metrics [--json] Telemetría de rendimiento, tasa de emisión y utilización de slots (SPEC-319)
+  eos toolchain:continuous:audit [--count=6] [--json] Auditoría integral de conservación de slots, ausencia de fugas y recibo SHA-256 (SPEC-319)
+
 
 
 

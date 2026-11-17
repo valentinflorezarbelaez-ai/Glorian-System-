@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 318,
-  "catalogSha256": "cb87bba9a8755390ff0f107beee0d9b3859de7a8b67ed4c9972379fb8d4e7964",
+  "totalSpecs": 319,
+  "catalogSha256": "b469d7e42a6d2d88a13a88202937b49ec4ff93fca1ea6eabf451cc141fc4a309",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2863,7 +2863,16 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-318-flash-attention-online-softmax-tiling.md",
-      "sha256": "cc77b71b14da75b340f01a988cb345d4328b2c658797637b2200245f8a9e4284"
+      "sha256": "14286b75ccc9f0792db377a618defa594d199018eca043d234ccb5d8b134d1f3"
+    },
+    {
+      "id": "SPEC-319",
+      "title": "Continuous Dynamic Sequence Batching & Iteration-Level Request Scheduler",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-319-continuous-dynamic-sequence-batching.md",
+      "sha256": "a1d692ba7153624593367d2c1b69a7ed3fad6ecd6ce5cd9d6280e6ac18561cd8"
     }
   ]
 }
