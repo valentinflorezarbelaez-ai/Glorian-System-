@@ -49,6 +49,17 @@ describe("Local Audio DSP Example", () => {
       assert.throws(() => dsp.applySamplePeakLimiterInPlace(buffer, 0), RangeError);
       assert.throws(() => dsp.applySamplePeakLimiterInPlace(buffer, 1.5), RangeError);
     });
+
+    it("4x true-peak limiter keeps inter-sample peaks at or below -1.0 dBTP", () => {
+      // Adjacent samples that swing through zero create inter-sample peaks above sample peaks.
+      const buffer = new Float32Array([0.95, -0.95, 0.92, -0.92, 0.88]);
+      const result = dsp.applyTruePeakLimiterInPlace(buffer);
+      assert.ok(result.truePeakDb <= -1.0 + 1e-6, `true-peak ${result.truePeakDb} exceeds -1.0 dBTP`);
+      for (const val of buffer) {
+        assert.ok(Math.abs(val) <= EosAudioDspKernel.SAMPLE_PEAK_CEILING_LINEAR + 1e-9);
+      }
+      assert.throws(() => dsp.applyTruePeakLimiterInPlace(buffer, 0.5, 1), RangeError);
+    });
   });
 
   describe("Suite 3: High-Throughput DSP Benchmark", () => {
@@ -66,6 +77,10 @@ describe("Local Audio DSP Example", () => {
       assert.ok(
         bench.samplePeakOutputDbfs <= -1.0 + 1e-6,
         `Expected sample-peak ≤ -1.0 dBFS, got ${bench.samplePeakOutputDbfs}`,
+      );
+      assert.ok(
+        bench.truePeakOutputDbtp <= -1.0 + 1e-6,
+        `Expected true-peak ≤ -1.0 dBTP, got ${bench.truePeakOutputDbtp}`,
       );
       assert.ok(bench.sha256Proof.length === 64);
     });

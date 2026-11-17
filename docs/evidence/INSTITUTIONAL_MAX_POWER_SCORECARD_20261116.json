@@ -101,14 +101,34 @@
       "rank": 3,
       "id": "G3_SLO_30D_FILL",
       "track": "A",
-      "action": "Keep daily npm run fleet:slo:30d until sampleCountInWindow≥30 (coverageRatio now 0.67; harness retries once)"
+      "action": "Keep daily npm run fleet:slo:30d until sampleCountInWindow≥30 (coverageRatio now 0.75; 4 samples)"
     },
     {
       "rank": 4,
-      "id": "G4_DSP_SAMPLE_PEAK",
+      "id": "G4_DSP_TRUE_PEAK",
       "track": "A",
-      "status": "DONE_20261116",
-      "action": "Hard-capped eosAudioDspKernel sample-peak ≤ -1.0 dBFS (still not oversampled true-peak)"
+      "status": "DONE_20261117",
+      "action": "4x linear true-peak limiter ≤ -1.0 dBTP proxy + sample-peak hard-cap"
+    },
+    {
+      "rank": 5,
+      "id": "G5_SERVERLESS_HEADROOM",
+      "track": "A",
+      "status": "DONE_20261117",
+      "action": "Consolidated teurgia under kernel — Hobby 11/12 (headroom 1)"
+    },
+    {
+      "rank": 6,
+      "id": "G6_VERIFY_DEEP_RUM",
+      "track": "A",
+      "status": "DONE_20261117",
+      "action": "npm run verify:deep + fleet:rum:browser CWV CDP receipt sealed"
+    },
+    {
+      "rank": 7,
+      "id": "G7_TWIN_EOS_SYSTEM",
+      "track": "OWNER",
+      "action": "Resolve Eos-System twin dirty Byzantine WIP before tip sync (see TWIN_EOS_SYSTEM_LAG_NOTE_20261117.md)"
     }
   ],
   "compositeInstitutionalIndex": {

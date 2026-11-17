@@ -17,6 +17,7 @@
     { "source": "/api/specs", "destination": "/api/kernel?module=specs" },
     { "source": "/api/finops", "destination": "/api/kernel?module=finops" },
     { "source": "/api/metrics", "destination": "/api/kernel?module=metrics" },
+    { "source": "/api/teurgia", "destination": "/api/kernel?module=teurgia" },
     { "source": "/mcp", "destination": "/api/mcp" }
   ],
   "headers": [

@@ -40,3 +40,6 @@ docs/consulting/
 :memory:
 nonexistent_dir_pulse/
 
+
+# Headless CWV capture ephemeral Chrome profiles
+docs/evidence/.chrome-cwv-*/

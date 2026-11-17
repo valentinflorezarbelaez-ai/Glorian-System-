@@ -6,6 +6,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import http from "node:http";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
@@ -62,7 +63,8 @@ async function startStaticServer() {
 
 async function cdpCapture(chromePath, url) {
   const debugPort = 9222 + Math.floor(Math.random() * 200);
-  const userData = fs.mkdtempSync(path.join(root, "docs/evidence/.chrome-cwv-"));
+  // Use OS temp — never write Chrome profiles under docs/evidence (Windows lock leftovers).
+  const userData = fs.mkdtempSync(path.join(os.tmpdir(), "eos-chrome-cwv-"));
   const child = spawn(
     chromePath,
     [

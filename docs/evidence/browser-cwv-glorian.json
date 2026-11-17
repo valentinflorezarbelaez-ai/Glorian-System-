@@ -8,19 +8,19 @@
   "services": [
     {
       "serviceId": "eos-system",
-      "fcpMs": 1616,
-      "lcpMs": 1616,
+      "fcpMs": 500,
+      "lcpMs": 500,
       "cls": 0,
       "inpMs": null,
-      "ttfbMs": 103,
-      "domContentLoadedMs": 1410,
-      "loadEventMs": 2038,
+      "ttfbMs": 8,
+      "domContentLoadedMs": 365,
+      "loadEventMs": 678,
       "source": "BROWSER_CDP",
-      "measuredAt": "2026-11-16T22:30:32.196Z",
+      "measuredAt": "2026-11-17T01:51:24.990Z",
       "hasHero": true,
       "hasCwvHook": true,
       "note": "Local static checkout via headless CDP; production CrUX still denied"
     }
   ],
-  "sha256": "3d99f498ea9078efe4d8504bdfc815d7753c8c0b43a2bbb77fa98e2d5dbe66ad"
+  "sha256": "3a9fbc828abd7e65ca964f234de795a3a6b45d042a59f5563bbb5dc8f4fbc7ac"
 }

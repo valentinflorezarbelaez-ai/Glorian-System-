@@ -2,7 +2,7 @@
  * GLORIAN SYSTEM — SPEC-269 SERVERLESS FUNCTION BUDGET & DEPLOYMENT TRUTH SUITE
  *
  * Verifies BDD-1391 through BDD-1395:
- * - BDD-1391: Exactly 12 active serverless functions conform to Hobby budget
+ * - BDD-1391: Active serverless functions stay within Hobby budget (≤12) with headroom
  * - BDD-1392: Fail-closed rejection when active functions exceed budget
  * - BDD-1393: Routed Prometheus metrics endpoint preserves content type and RED telemetry
  * - BDD-1394: Package.json engines bounds Node below major version 25
@@ -27,9 +27,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 
 describe("SPEC-269 — Serverless Function Budget Gate & Deployment Truth Engine (BDD-1391..BDD-1395)", () => {
-  it("BDD-1391: Exactly 12 active serverless functions conform to Hobby budget", () => {
+  it("BDD-1391: Active serverless functions stay within Hobby budget with headroom", () => {
     const active = listActiveServerlessFunctions(root);
-    assert.equal(active.length, 12, "Must contain exactly 12 active serverless functions");
+    assert.ok(active.length <= 12, `Must stay ≤12 active serverless functions, got ${active.length}`);
+    assert.ok(active.length >= 1, "Must expose at least one public api entrypoint");
+    // Teurgia consolidated under kernel → expect 11 public entrypoints (headroom ≥ 1).
+    assert.equal(active.length, 11, "Expected 11 after api/teurgia → api/_teurgia consolidation");
+    assert.ok(!active.includes("api/teurgia.js"), "teurgia must not be a public serverless entrypoint");
 
     // All active entrypoints must be non-private (no segment starting with _)
     for (const file of active) {
@@ -45,15 +49,19 @@ describe("SPEC-269 — Serverless Function Budget Gate & Deployment Truth Engine
     assert.equal(evaluation.specId, "SPEC-269");
     assert.equal(evaluation.passed, true);
     assert.equal(evaluation.verdict, "PASS");
-    assert.equal(evaluation.activeCount, 12);
+    assert.equal(evaluation.activeCount, 11);
     assert.equal(evaluation.budget, 12);
     assert.equal(evaluation.hardLimit, 12);
-    assert.equal(evaluation.headroom, 0);
+    assert.equal(evaluation.headroom, 1);
   });
 
   it("BDD-1392: Fail-closed rejection when active functions exceed budget", () => {
-    // Simulate exceeding budget via activeFunctionsOverride
-    const excessFunctions = [...listActiveServerlessFunctions(root), "api/temp_fictional_13th.js"];
+    // Simulate exceeding Hobby hard limit (12) via override — need 13 public entrypoints.
+    const excessFunctions = [
+      ...listActiveServerlessFunctions(root),
+      "api/temp_fictional_12th.js",
+      "api/temp_fictional_13th.js",
+    ];
 
     const evaluation = evaluateVercelFunctionBudget(root, {
       activeFunctionsOverride: excessFunctions,

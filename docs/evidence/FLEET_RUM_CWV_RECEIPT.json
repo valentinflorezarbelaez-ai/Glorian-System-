@@ -6,7 +6,7 @@
     "Level-5",
     "FEDERAL_ATO"
   ],
-  "measuredAt": "2026-11-16T22:30:39.727Z",
+  "measuredAt": "2026-11-17T01:51:35.558Z",
   "budgets": {
     "ttfbMs": 800,
     "lcpMs": 2500,
@@ -17,85 +17,81 @@
     {
       "serviceId": "aberamentho",
       "host": "aberamentosprelomamusic.vercel.app",
-      "ok": false,
-      "statusCode": 0,
-      "ttfbMs": 261,
-      "transferBytes": 0,
+      "ok": true,
+      "statusCode": 200,
+      "ttfbMs": 365,
+      "transferBytes": 115477,
       "lcpMs": null,
       "cls": null,
       "inpMs": null,
       "source": "EDGE_FETCH",
-      "error": "fetch failed",
       "budgets": {
         "ttfbOk": true,
         "lcpOk": null,
         "clsOk": null
       },
-      "healthState": "UNREACHABLE"
+      "healthState": "NOMINAL_HEALTHY"
     },
     {
       "serviceId": "atp-strength",
       "host": "atp-strength.vercel.app",
-      "ok": false,
-      "statusCode": 0,
-      "ttfbMs": 59,
-      "transferBytes": 0,
+      "ok": true,
+      "statusCode": 200,
+      "ttfbMs": 289,
+      "transferBytes": 19344,
       "lcpMs": null,
       "cls": null,
       "inpMs": null,
       "source": "EDGE_FETCH",
-      "error": "fetch failed",
       "budgets": {
         "ttfbOk": true,
         "lcpOk": null,
         "clsOk": null
       },
-      "healthState": "UNREACHABLE"
+      "healthState": "NOMINAL_HEALTHY"
     },
     {
       "serviceId": "biblioteca-gnostica-1",
       "host": "biblioteca-gnostica.vercel.app",
-      "ok": false,
-      "statusCode": 0,
-      "ttfbMs": 62,
-      "transferBytes": 0,
+      "ok": true,
+      "statusCode": 200,
+      "ttfbMs": 289,
+      "transferBytes": 406094,
       "lcpMs": null,
       "cls": null,
       "inpMs": null,
       "source": "EDGE_FETCH",
-      "error": "fetch failed",
       "budgets": {
         "ttfbOk": true,
         "lcpOk": null,
         "clsOk": null
       },
-      "healthState": "UNREACHABLE"
+      "healthState": "NOMINAL_HEALTHY"
     },
     {
       "serviceId": "control-de-asistencia-abopack",
       "host": "avo-pack.vercel.app",
-      "ok": false,
-      "statusCode": 0,
-      "ttfbMs": 57,
-      "transferBytes": 0,
+      "ok": true,
+      "statusCode": 200,
+      "ttfbMs": 290,
+      "transferBytes": 100022,
       "lcpMs": null,
       "cls": null,
       "inpMs": null,
       "source": "EDGE_FETCH",
-      "error": "fetch failed",
       "budgets": {
         "ttfbOk": true,
         "lcpOk": null,
         "clsOk": null
       },
-      "healthState": "UNREACHABLE"
+      "healthState": "NOMINAL_HEALTHY"
     },
     {
       "serviceId": "crud-slack",
       "host": "crud-slack.vercel.app",
       "ok": true,
       "statusCode": 200,
-      "ttfbMs": 359,
+      "ttfbMs": 287,
       "transferBytes": 70320,
       "lcpMs": null,
       "cls": null,
@@ -111,30 +107,29 @@
     {
       "serviceId": "donaciones",
       "host": "donaciones-drab.vercel.app",
-      "ok": false,
-      "statusCode": 0,
-      "ttfbMs": 61,
-      "transferBytes": 0,
+      "ok": true,
+      "statusCode": 200,
+      "ttfbMs": 283,
+      "transferBytes": 64438,
       "lcpMs": null,
       "cls": null,
       "inpMs": null,
       "source": "EDGE_FETCH",
-      "error": "fetch failed",
       "budgets": {
         "ttfbOk": true,
         "lcpOk": null,
         "clsOk": null
       },
-      "healthState": "UNREACHABLE"
+      "healthState": "NOMINAL_HEALTHY"
     },
     {
       "serviceId": "eos-system",
       "host": "glorian-system.vercel.app",
       "ok": true,
       "statusCode": 200,
-      "ttfbMs": 518,
-      "transferBytes": 275232,
-      "lcpMs": 1616,
+      "ttfbMs": 305,
+      "transferBytes": 275189,
+      "lcpMs": 500,
       "cls": 0,
       "inpMs": null,
       "source": "BROWSER_CDP+EDGE",
@@ -150,7 +145,7 @@
       "host": "ptg-performance-talent-group.vercel.app",
       "ok": true,
       "statusCode": 200,
-      "ttfbMs": 335,
+      "ttfbMs": 290,
       "transferBytes": 123608,
       "lcpMs": null,
       "cls": null,
@@ -168,7 +163,7 @@
       "host": "portafolio-valentin.vercel.app",
       "ok": true,
       "statusCode": 200,
-      "ttfbMs": 341,
+      "ttfbMs": 289,
       "transferBytes": 171485,
       "lcpMs": null,
       "cls": null,
@@ -184,10 +179,10 @@
   ],
   "metrics": {
     "targets": 9,
-    "nominal": 4,
+    "nominal": 9,
     "degraded": 0,
-    "unreachable": 5,
+    "unreachable": 0,
     "withBrowserLcp": 1
   },
-  "sha256": "e963f9965a03c92657edf950927fa6f08c66ee4007e18d2099845566d9517ba9"
+  "sha256": "cbf4e82ab30b1090a32632bd16ab685d21fa807a6da644a85823f079499cb41c"
 }

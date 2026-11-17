@@ -7,11 +7,11 @@
     "Level-5"
   ],
   "windowDays": 30,
-  "measuredAt": "2026-11-16T23:15:13.021Z",
-  "sampleCountInWindow": 3,
-  "okSampleCount": 2,
-  "coverageRatio": 0.6666666666666666,
+  "measuredAt": "2026-11-17T01:49:09.359Z",
+  "sampleCountInWindow": 4,
+  "okSampleCount": 3,
+  "coverageRatio": 0.75,
   "readyForAtoExitCriteria": false,
   "ledgerPath": "docs/evidence/FLEET_SLO_30D_LEDGER.jsonl",
-  "sha256": "ab033ae0531ab0dde10ee2b907baed65478ace1e115d89839ce4fe935539d5c5"
+  "sha256": "672dbcde3023fcecfe072e8ad838bea31ea640ff70efda03a6d39c039670f0d4"
 }

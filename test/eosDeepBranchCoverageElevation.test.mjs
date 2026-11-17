@@ -8,7 +8,7 @@
  * 4. api/memory.js (mem_save validation, mem_judge, mem_compare, mem_context/list/stats, search query, unsupported)
  * 5. api/spotify.js (OPTIONS, 405, invalid action, camelot validation, mix parameters, features, mesh, dsp)
  * 6. api/jarvis.js (OPTIONS, 405, directive length, 5 intent classifications)
- * 7. api/teurgia.js (405, invalid json, invalid body, payload too large, 7 sephirotic spheres, invalid sphere, dharma bounds)
+ * 7. api/_teurgia.js (405, invalid json, invalid body, payload too large, 7 sephirotic spheres, invalid sphere, dharma bounds)
  * 8. src/core/eosKernelPrimitives.ts (asserts throw ContractError, deepFreeze views/functions/null, pureSha256 1/2/3/4-byte UTF-8)
  * 9. src/core/eosDiffPatcher.ts (parseDiff edge cases, malformed headers, applyPatch error conditions)
  * 10. src/core/eosAdaptiveConcurrencyLimiter.ts (concurrency acquire overload, AIMD expand/contract on release)
@@ -571,9 +571,9 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
     });
   });
 
-  describe("7. api/teurgia.js branch coverage", () => {
+  describe("7. api/_teurgia.js branch coverage", () => {
     it("handles 405, invalid json, oversized payloads, invalid spheres, and all 7 sephirot", async () => {
-      const teurgiaMod = await import(pathToFileURL(path.join(root, "api/teurgia.js")).href);
+      const teurgiaMod = await import(pathToFileURL(path.join(root, "api/_teurgia.js")).href);
 
       // 405
       const resDelete = createMockResponse();

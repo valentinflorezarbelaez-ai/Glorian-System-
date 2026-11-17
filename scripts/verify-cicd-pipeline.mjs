@@ -594,11 +594,13 @@ console.log(
 // STAGE 6: IN-PROCESS SMOKE TESTS OF THE SERVERLESS API HANDLERS (/api/*)
 // ---------------------------------------------------------------------------
 const apiEndpoints = [
-  ...["api/teurgia.js", "api/compile.js", "api/memory.js", "api/kernel.js", "api/cicd.js", "api/fleet.js"].map(
-    (file) => ({ file }),
-  ),
+  ...["api/compile.js", "api/memory.js", "api/kernel.js", "api/cicd.js", "api/fleet.js"].map((file) => ({
+    file,
+  })),
   { file: "api/kernel.js", query: { module: "specs" } },
   { file: "api/kernel.js", query: { module: "metrics" } },
+  { file: "api/kernel.js", query: { module: "teurgia" } },
+  { file: "api/_teurgia.js" },
   {
     file: "api/jarvis.js",
     method: "POST",

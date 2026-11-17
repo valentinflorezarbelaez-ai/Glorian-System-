@@ -31,7 +31,7 @@ const ENDPOINT_CONTRACTS = {
     body: { jsonrpc: "2.0", id: "contract-1", method: "initialize", params: {} },
     headers: { "content-type": "application/json", accept: "application/json" },
   },
-  "api/teurgia.js": { method: "GET", fields: ["status"] },
+  "api/_teurgia.js": { method: "GET", fields: ["status"] },
 };
 
 describe("API Contract Tests — Response Shape Validation", () => {
