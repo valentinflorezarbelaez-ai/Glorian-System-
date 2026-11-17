@@ -55,6 +55,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliSpeculativePagedKvCache.mjs",
     fn: "handleSpeculativePagedKvCacheCommand",
   },
+  {
+    prefix: "toolchain:flash:",
+    file: "./cliFlashAttentionOnlineSoftmax.mjs",
+    fn: "handleFlashAttentionCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

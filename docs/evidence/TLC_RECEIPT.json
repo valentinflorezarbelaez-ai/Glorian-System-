@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-17T15:38:54.350Z",
+  "timestampIso": "2026-11-17T16:15:43.148Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -7,14 +7,14 @@
   "allPassed": true,
   "hasJavaRuntime": true,
   "tlaJarPath": "C:\\Users\\valen\\Documents\\Glorian-System\\tools\\tla2tools.jar",
-  "totalConfiguredSpecs": 12,
+  "totalConfiguredSpecs": 13,
   "models": [
     {
       "specName": "LmaxDisruptor",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 20425,
-      "statesGenerated": 84397,
+      "distinctStates": 786,
+      "statesGenerated": 33,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -114,6 +114,15 @@
       "passed": true,
       "distinctStates": 2639,
       "statesGenerated": 16303,
+      "violationInvariant": null,
+      "exitCode": 0
+    },
+    {
+      "specName": "FlashAttentionOnlineSoftmax",
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 37,
+      "statesGenerated": 118,
       "violationInvariant": null,
       "exitCode": 0
     }

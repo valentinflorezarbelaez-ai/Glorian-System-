@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 317,
-  "catalogSha256": "4695af83e8622a04d0a6f08a30537739af9d5f5750c8ea572d0e7c99a0ea6b3a",
+  "totalSpecs": 318,
+  "catalogSha256": "cb87bba9a8755390ff0f107beee0d9b3859de7a8b67ed4c9972379fb8d4e7964",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2855,6 +2855,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-317-speculative-draft-paged-kv-cache.md",
       "sha256": "c0bce42cf01bf1595581fa83217170914a281552e2606e398cae3741a2ea804f"
+    },
+    {
+      "id": "SPEC-318",
+      "title": "FlashAttention-Style Online Softmax Tiling & Block-Paged Attention Kernel",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-318-flash-attention-online-softmax-tiling.md",
+      "sha256": "cc77b71b14da75b340f01a988cb345d4328b2c658797637b2200245f8a9e4284"
     }
   ]
 }

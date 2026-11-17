@@ -2867,3 +2867,16 @@
   - `docs/plans/PLAN-179-speculative-draft-paged-kv-cache.md`
   - `docs/tasks/TASKS-179-speculative-draft-paged-kv-cache.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-FLASH-ATTENTION-ONLINE-SOFTMAX-TILING
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-180` (`SPEC-318`), FlashAttention-Style Online Softmax Tiling & Block-Paged Attention Kernel: author TLA+ formal model `docs/formal/FlashAttentionOnlineSoftmax.tla` and configuration `docs/formal/FlashAttentionOnlineSoftmax.cfg` (Model 62), implement `src/core/eosFlashAttentionOnlineSoftmax.types.ts` and `src/core/eosFlashAttentionOnlineSoftmax.ts` featuring tile-based scaled dot-product attention with row blocks $B_r$ and column blocks $B_c$, running online softmax numerical stabilization with running maximums ($m$) and rescaled sum updates ($l$), value output accumulation ($O$), block-level causal pruning fast-path, sub-millisecond execution, and signed receipt emission at `docs/evidence/FLASH_ATTENTION_ONLINE_SOFTMAX_RECEIPT.json`. Wire `toolchain:flash:tile`, `toolchain:flash:online-softmax`, `toolchain:flash:forward`, `toolchain:flash:parity`, `toolchain:flash:audit` in `bin/commands/cliFlashAttentionOnlineSoftmax.mjs` and `bin/commands/cliToolchainRouter.mjs` (`513 -> 518` commands, 100% catalog parity). Verify `BDD-1683`..`BDD-1688`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-180-FLASH-ATTENTION-ONLINE-SOFTMAX-TILING.md`
+  - `openspec/changes/CHANGE-180-flash-attention-online-softmax-tiling.md`
+  - `openspec/specs/SPEC-318-flash-attention-online-softmax-tiling.md`
+  - `docs/plans/PLAN-180-flash-attention-online-softmax-tiling.md`
+  - `docs/tasks/TASKS-180-flash-attention-online-softmax-tiling.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

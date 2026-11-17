@@ -179,6 +179,12 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:speculative:draft [--k=4] [--json] Proyección de tokens candidatos especulativos con el modelo borrador (SPEC-317)
   eos toolchain:speculative:verify [--k=4] [--json] Verificación paralela en pasada única contra el modelo objetivo y telemetría (SPEC-317)
   eos toolchain:speculative:audit [--json] Auditoría integral de conservación de bloques, monotonía de páginas y recibo SHA-256 (SPEC-317)
+  eos toolchain:flash:tile [--nq=64] [--nk=64] [--d=16] [--br=16] [--bc=16] [--causal] [--json] Inspección de partición en mosaico de memoria SRAM (SPEC-318)
+  eos toolchain:flash:online-softmax [--json] Paso individual de actualización reescalada de softmax online (SPEC-318)
+  eos toolchain:flash:forward [--causal] [--json] Ejecución completa del kernel de atención FlashAttention por bloques (SPEC-318)
+  eos toolchain:flash:parity [--causal] [--json] Verificación de paridad matemática contra atención ingenua cuadrática O(N^2) (SPEC-318)
+  eos toolchain:flash:audit [--json] Auditoría integral de estabilidad numérica, memoria acotada y recibo SHA-256 (SPEC-318)
+
 
 
 
@@ -519,6 +525,12 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:speculative:draft [--k=4] [--json] Proyección de tokens candidatos especulativos con el modelo borrador (SPEC-317)
   eos toolchain:speculative:verify [--k=4] [--json] Verificación paralela en pasada única contra el modelo objetivo y telemetría (SPEC-317)
   eos toolchain:speculative:audit [--json] Auditoría integral de conservación de bloques, monotonía de páginas y recibo SHA-256 (SPEC-317)
+  eos toolchain:flash:tile [--nq=64] [--nk=64] [--d=16] [--br=16] [--bc=16] [--causal] [--json] Inspección de partición en mosaico de memoria SRAM (SPEC-318)
+  eos toolchain:flash:online-softmax [--json] Paso individual de actualización reescalada de softmax online (SPEC-318)
+  eos toolchain:flash:forward [--causal] [--json] Ejecución completa del kernel de atención FlashAttention por bloques (SPEC-318)
+  eos toolchain:flash:parity [--causal] [--json] Verificación de paridad matemática contra atención ingenua cuadrática O(N^2) (SPEC-318)
+  eos toolchain:flash:audit [--json] Auditoría integral de estabilidad numérica, memoria acotada y recibo SHA-256 (SPEC-318)
+
 
 
 

@@ -51,6 +51,7 @@ export const CONFIGURED_SPECS = [
   "DistributedVectorMesh",
   "VectorLsmStorage",
   "SpeculativePagedKvCache",
+  "FlashAttentionOnlineSoftmax",
 ];
 
 /**

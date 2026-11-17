@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0.0",
+  "specRef": "SPEC-318",
+  "changeRef": "CHANGE-180",
+  "auditStatus": "VERIFIED",
+  "headDim": 16,
+  "sequenceLengthQ": 64,
+  "sequenceLengthK": 64,
+  "totalTiles": 16,
+  "evaluatedTiles": 10,
+  "prunedTiles": 6,
+  "workingMemoryBytes": 4096,
+  "maxAbsoluteError": 0,
+  "relativeError": 0,
+  "numericalStabilityCertified": true,
+  "workingMemoryBounded": true,
+  "sha256Receipt": "cdd78b51ec88846d7c827a7ede5288ff75448f7b99cc4d02cdd2074fa630d6b6",
+  "timestampIso": "2026-11-17T16:18:57.718Z"
+}

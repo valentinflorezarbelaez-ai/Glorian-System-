@@ -741,3 +741,5 @@ export * from "./eosVectorLsmStorage.ts";
 export * from "./eosVectorLsmStorage.types.ts";
 export * from "./eosSpeculativePagedKvCache.ts";
 export * from "./eosSpeculativePagedKvCache.types.ts";
+export * from "./eosFlashAttentionOnlineSoftmax.ts";
+export * from "./eosFlashAttentionOnlineSoftmax.types.ts";
