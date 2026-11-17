@@ -2997,3 +2997,16 @@
   - `docs/plans/PLAN-189-reverse-engineering-anything.md`
   - `docs/tasks/TASKS-189-reverse-engineering-anything.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-QUANTIZED-DISTRIBUTED-TRAINING
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-190` (`SPEC-328`), FP8 / INT8 Quantized Distributed Training & Mixed-Precision Gradient Scaling Engine: author TLA+ formal model `docs/formal/QuantizedDistributedTrainingEngine.tla` and configuration `docs/formal/QuantizedDistributedTrainingEngine.cfg` (Model 72), implement `src/core/eosQuantizedDistributedTrainingEngine.types.ts` and `src/core/eosQuantizedDistributedTrainingEngine.ts` featuring dual FP8 formats (E4M3 forward, E5M2 backward), symmetric INT8 quantization, delayed scaling factor history tracking with saturation guard, dynamic adaptive loss scaling with non-finite gradient backoff, distributed collective All-Reduce bandwidth optimization (50% to 75% savings), numerical reconstruction fidelity (SNR $\ge 40$ dB, gradient parity), and signed receipt emission at `docs/evidence/QUANTIZED_DISTRIBUTED_TRAINING_RECEIPT.json`. Wire `toolchain:quanttrain:fp8`, `toolchain:quanttrain:scaling`, `toolchain:quanttrain:backward`, `toolchain:quanttrain:bandwidth`, `toolchain:quanttrain:audit` in `bin/commands/cliQuantizedDistributedTrainingEngine.mjs` and `bin/commands/cliToolchainRouter.mjs` (`563 -> 568` commands, 100% catalog parity). Verify `BDD-1743`..`BDD-1748`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-190-QUANTIZED-DISTRIBUTED-TRAINING.md`
+  - `openspec/changes/CHANGE-190-quantized-distributed-training.md`
+  - `openspec/specs/SPEC-328-quantized-distributed-training.md`
+  - `docs/plans/PLAN-190-quantized-distributed-training.md`
+  - `docs/tasks/TASKS-190-quantized-distributed-training.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

@@ -105,6 +105,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliReverseEngineeringEngine.mjs",
     fn: "handleReverseEngineeringCommand",
   },
+  {
+    prefix: "toolchain:quanttrain:",
+    file: "./cliQuantizedDistributedTrainingEngine.mjs",
+    fn: "handleQuantizedDistributedTrainingCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

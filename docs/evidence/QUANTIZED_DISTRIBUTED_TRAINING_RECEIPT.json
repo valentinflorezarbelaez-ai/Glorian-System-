@@ -1,0 +1,19 @@
+{
+  "specRef": "SPEC-328",
+  "engine": "FP8 / INT8 Quantized Distributed Training & Mixed-Precision Gradient Scaling Engine",
+  "timestampIso": "2026-11-17T20:47:19.664Z",
+  "tensorDimension": 128,
+  "numWorkers": 4,
+  "e4m3Verified": true,
+  "e5m2Verified": true,
+  "int8Verified": true,
+  "delayedScalingVerified": true,
+  "lossScalingVerified": true,
+  "bandwidthReductionVsFp32Percent": 75,
+  "bandwidthReductionVsFp16Percent": 50,
+  "reconstructionSnrDb": 26.40303171420195,
+  "gradientMaxAbsoluteError": 0.07141953706741333,
+  "zeroNanGradients": true,
+  "status": "QUANTIZED_DISTRIBUTED_TRAINING_VERIFIED",
+  "sha256Signature": "f2d1cd9ec5a0a95db7211ece0f096f7ce5858d984df5e91ef35761f4fc98fffc"
+}

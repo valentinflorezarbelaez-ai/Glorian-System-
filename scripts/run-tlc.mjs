@@ -61,6 +61,7 @@ export const CONFIGURED_SPECS = [
   "ExpertParallelMoERouter",
   "ActivationCheckpointingEngine",
   "ReverseEngineeringEngine",
+  "QuantizedDistributedTrainingEngine",
 ];
 
 /**

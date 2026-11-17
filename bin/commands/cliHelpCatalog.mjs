@@ -586,6 +586,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:rea:entropy [--mode=mixed] [--json] Perfilado de entropía de Shannon por sección y detección de paquetes (SPEC-327)
   eos toolchain:rea:cfg [--json] Síntesis de Grafo de Flujo de Control (CFG) a partir de bloques básicos (SPEC-327)
   eos toolchain:rea:audit [--json] Auditoría integral de ingeniería inversa y emisión de recibo SHA-256 (SPEC-327)
+  eos toolchain:quanttrain:fp8 [--dim=16] [--format=E4M3|E5M2] [--json] Cuantización y decuantización exacta de doble formato FP8 (SPEC-328)
+  eos toolchain:quanttrain:scaling [--window=8] [--amax=12.5] [--json] Seguimiento histórico y ajuste de factor de escala demorado (SPEC-328)
+  eos toolchain:quanttrain:backward [--dim=16] [--nan] [--json] Retropropagación en precisión mixta y retroceso ante NaN (SPEC-328)
+  eos toolchain:quanttrain:bandwidth [--workers=4] [--dim=64] [--format=E5M2] [--json] Reducción colectiva All-Reduce y ahorro de ancho de banda (SPEC-328)
+  eos toolchain:quanttrain:audit [--workers=4] [--dim=128] [--json] Auditoría integral de cuantización distribuida y recibo SHA-256 (SPEC-328)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
