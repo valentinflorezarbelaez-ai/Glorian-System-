@@ -169,6 +169,11 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:mesh:search [--k=5] [--dim=64] [--json] Búsqueda federada scatter-gather entre particiones activas (SPEC-315)
   eos toolchain:mesh:rebalance [--initial=3] [--churn=join|leave] [--json] Simulación de churn y verificación de migración mínima K/N (SPEC-315)
   eos toolchain:mesh:audit [--json] Auditoría integral de continuidad del anillo, réplicas y quórum Raft (SPEC-315)
+  eos toolchain:lsm:memtable [--capacity=50] [--insert=10] [--json] Ingestión y estado de la MemTable activa en memoria (SPEC-316)
+  eos toolchain:lsm:flush [--count=30] [--json] Volcado a segmento SSTable L0 inmutable con filtro de Bloom e índice disperso (SPEC-316)
+  eos toolchain:lsm:compact [--l0count=3] [--json] Compactación k-vías de fondo hacia L1 con purga de tombstones (SPEC-316)
+  eos toolchain:lsm:search [--key=K] [--json] Búsqueda puntual sub-milisegundo con descarte Bloom y escaneo de bloques (SPEC-316)
+  eos toolchain:lsm:audit [--json] Auditoría integral de monotonía de claves, bloques y recibo firmado SHA-256 (SPEC-316)
 
 
 
@@ -499,6 +504,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:mesh:search [--k=5] [--dim=64] [--json] Búsqueda federada scatter-gather entre particiones activas (SPEC-315)
   eos toolchain:mesh:rebalance [--initial=3] [--churn=join|leave] [--json] Simulación de churn y verificación de migración mínima K/N (SPEC-315)
   eos toolchain:mesh:audit [--json] Auditoría integral de continuidad del anillo, réplicas y quórum Raft (SPEC-315)
+  eos toolchain:lsm:memtable [--capacity=50] [--insert=10] [--json] Ingestión y estado de la MemTable activa en memoria (SPEC-316)
+  eos toolchain:lsm:flush [--count=30] [--json] Volcado a segmento SSTable L0 inmutable con filtro de Bloom e índice disperso (SPEC-316)
+  eos toolchain:lsm:compact [--l0count=3] [--json] Compactación k-vías de fondo hacia L1 con purga de tombstones (SPEC-316)
+  eos toolchain:lsm:search [--key=K] [--json] Búsqueda puntual sub-milisegundo con descarte Bloom y escaneo de bloques (SPEC-316)
+  eos toolchain:lsm:audit [--json] Auditoría integral de monotonía de claves, bloques y recibo firmado SHA-256 (SPEC-316)
 
 
 

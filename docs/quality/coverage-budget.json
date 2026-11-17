@@ -9,6 +9,7 @@
     "src/core/eosJepsenDistributedChaos.ts": { "lines": 85.0, "branches": 75.0 },
     "src/core/eosSimdQuantizedHnsw.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/eosDistributedVectorMesh.ts": { "lines": 80.0, "branches": 70.0 },
+    "src/core/eosVectorLsmStorage.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/index.ts": { "lines": 65.0, "branches": 60.0 }
   }
 }

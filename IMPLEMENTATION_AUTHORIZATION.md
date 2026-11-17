@@ -2841,3 +2841,16 @@
   - `docs/plans/PLAN-177-distributed-consistent-hash-vector-mesh.md`
   - `docs/tasks/TASKS-177-distributed-consistent-hash-vector-mesh.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-16-VECTOR-LSM-SEGMENT-STORAGE
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-178` (`SPEC-316`), Vector LSM-Tree Segment Storage Engine, Sparse Block Index & Background Compaction: author TLA+ formal model `docs/formal/VectorLsmStorage.tla` and configuration `docs/formal/VectorLsmStorage.cfg` (Model 60), implement `src/core/eosVectorLsmStorage.types.ts` and `src/core/eosVectorLsmStorage.ts` featuring in-memory MemTable write buffering, tombstone deletion masking, immutable Level 0 SSTables with double-hashing Bloom filters and sparse block indexes, multi-level hierarchy, background k-way compaction with complete tombstone purging and deduplication, point-in-time snapshot read isolation, and signed receipt emission at `docs/evidence/VECTOR_LSM_STORAGE_RECEIPT.json`. Wire `toolchain:lsm:memtable`, `toolchain:lsm:flush`, `toolchain:lsm:compact`, `toolchain:lsm:search`, `toolchain:lsm:audit` in `bin/commands/cliVectorLsmStorage.mjs` and `bin/commands/cliToolchainRouter.mjs` (`503 -> 508` commands, 100% catalog parity). Verify `BDD-1671`..`BDD-1676`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-178-VECTOR-LSM-SEGMENT-STORAGE.md`
+  - `openspec/changes/CHANGE-178-vector-lsm-segment-storage.md`
+  - `openspec/specs/SPEC-316-vector-lsm-segment-storage.md`
+  - `docs/plans/PLAN-178-vector-lsm-segment-storage.md`
+  - `docs/tasks/TASKS-178-vector-lsm-segment-storage.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

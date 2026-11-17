@@ -49,6 +49,7 @@ export const CONFIGURED_SPECS = [
   "JepsenDistributedChaos",
   "SimdQuantizedHnsw",
   "DistributedVectorMesh",
+  "VectorLsmStorage",
 ];
 
 /**

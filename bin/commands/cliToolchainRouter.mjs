@@ -49,6 +49,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:jepsen:", file: "./cliJepsenDistributedChaos.mjs", fn: "handleJepsenChaosCommand" },
   { prefix: "toolchain:quant:", file: "./cliSimdQuantizedHnsw.mjs", fn: "handleSimdQuantizedHnswCommand" },
   { prefix: "toolchain:mesh:", file: "./cliDistributedVectorMesh.mjs", fn: "handleDistributedVectorMeshCommand" },
+  { prefix: "toolchain:lsm:", file: "./cliVectorLsmStorage.mjs", fn: "handleVectorLsmCommand" },
 ];
 
 export async function handleToolchainCommands(commandContext) {

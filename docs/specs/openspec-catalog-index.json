@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 315,
-  "catalogSha256": "e72242665a9ad7d67240370d6b618a94375cdc9db51113ef2a9131fe54f82d47",
+  "totalSpecs": 316,
+  "catalogSha256": "74c2c6b4e6a0ce7d8a02d8ff240a9b73ef1dbaec16e253c14fd716b303a2829d",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2837,6 +2837,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-315-distributed-consistent-hash-vector-mesh.md",
       "sha256": "6d3a5e1e776645590a7494fefefeed87d8e31879cf095766001f5865b3638aac"
+    },
+    {
+      "id": "SPEC-316",
+      "title": "Vector LSM-Tree Segment Storage Engine, Sparse Block Index & Background Compaction",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-316-vector-lsm-segment-storage.md",
+      "sha256": "710b6fec21bbb0a6569184a1bd10ed50ec510da472d3bbd2ffd4ac45523cd362"
     }
   ]
 }

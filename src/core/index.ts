@@ -737,3 +737,5 @@ export * from "./eosSimdQuantizedHnsw.ts";
 export * from "./eosSimdQuantizedHnsw.types.ts";
 export * from "./eosDistributedVectorMesh.ts";
 export * from "./eosDistributedVectorMesh.types.ts";
+export * from "./eosVectorLsmStorage.ts";
+export * from "./eosVectorLsmStorage.types.ts";
