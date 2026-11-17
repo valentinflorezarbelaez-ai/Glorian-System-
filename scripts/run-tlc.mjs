@@ -66,6 +66,7 @@ export const CONFIGURED_SPECS = [
   "TreeSpeculativeDecoding",
   "StreamingLlmAttentionSinks",
   "DisaggregatedPrefillDecode",
+  "OntologicalHypergraph",
 ];
 
 /**

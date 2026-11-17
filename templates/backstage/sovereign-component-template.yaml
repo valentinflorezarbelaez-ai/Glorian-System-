@@ -1,0 +1,105 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: glorian-sovereign-component-template
+  title: Glorian Sovereign Tier-0 Component (Golden Path)
+  description: Scaffolds a zero-runtime-dependency sovereign component compliant with the EOS Constitution, Spotify Soundcheck A+, and Big-Tech fail-closed architecture.
+  tags:
+    - sovereign
+    - layer-0
+    - zero-vibe-coding
+    - spotify-soundcheck
+    - golden-path
+    - tla-verified
+spec:
+  owner: user:valentin-florez-arbelaez
+  type: service
+
+  parameters:
+    - title: Component Identification
+      required:
+        - componentId
+        - componentTitle
+        - ownerSquad
+      properties:
+        componentId:
+          title: Component ID (kebab-case)
+          type: string
+          description: Unique machine-readable component name (e.g. quantum-telemetry-broker)
+          pattern: '^[a-z0-9-]+$'
+        componentTitle:
+          title: Human-readable Title
+          type: string
+          description: Display name of the sovereign system
+        ownerSquad:
+          title: Owner Identity / Squad
+          type: string
+          default: user:valentin-florez-arbelaez
+          description: Backstage user or group entity responsible for maintenance
+        systemDomain:
+          title: Fleet System Mesh
+          type: string
+          default: eos-sovereign-mesh
+          enum:
+            - eos-sovereign-mesh
+            - spotify-music-expression
+            - defense-intelligence-mesh
+    - title: Architecture & Runtime Standards
+      required:
+        - runtimeLanguage
+        - isolationTier
+      properties:
+        runtimeLanguage:
+          title: Core Implementation Language
+          type: string
+          default: typescript-layer0
+          enum:
+            - typescript-layer0
+            - go-systems
+            - rust-audio-core
+            - wasm-simd128
+        isolationTier:
+          title: Operational Security & FDIR Tier
+          type: string
+          default: TIER_0_SOVEREIGN_HEXAGONAL
+          enum:
+            - TIER_0_SOVEREIGN_HEXAGONAL
+            - TIER_1_AIR_GAPPED_ENCLAVE
+            - TIER_2_EXASCALE_DISTRIBUTED
+
+  steps:
+    - id: fetch-skeleton
+      name: Fetch Golden Path Scaffolding
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          componentId: ${{ parameters.componentId }}
+          componentTitle: ${{ parameters.componentTitle }}
+          ownerSquad: ${{ parameters.ownerSquad }}
+          systemDomain: ${{ parameters.systemDomain }}
+          runtimeLanguage: ${{ parameters.runtimeLanguage }}
+          isolationTier: ${{ parameters.isolationTier }}
+
+    - id: publish-github
+      name: Publish to GitHub Repository
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: Sovereign Tier-0 Component ${{ parameters.componentTitle }} governed by Glorian System.
+        repoUrl: github.com?owner=valentinflorezarbelaez-ai&repo=${{ parameters.componentId }}
+        defaultBranch: main
+        protectDefaultBranch: true
+
+    - id: register-backstage
+      name: Register in Backstage Catalog
+      action: catalog:register
+      input:
+        catalogInfoUrl: https://github.com/valentinflorezarbelaez-ai/${{ parameters.componentId }}/blob/main/catalog-info.yaml
+
+  output:
+    links:
+      - title: GitHub Repository
+        url: ${{ steps['publish-github'].output.remoteUrl }}
+      - title: Backstage Entity
+        url: ${{ steps['register-backstage'].output.entityRef }}

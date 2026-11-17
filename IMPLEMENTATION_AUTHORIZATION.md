@@ -3062,3 +3062,16 @@
   - `docs/plans/PLAN-194-disaggregated-prefill-decode.md`
   - `docs/tasks/TASKS-194-disaggregated-prefill-decode.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-ONTOLOGICAL-HYPERGRAPH
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-195` (`SPEC-333`), Autonomous Ontological Hypergraph & Bitemporal Entity Resolution Engine: author TLA+ formal model `docs/formal/OntologicalHypergraph.tla` and configuration `docs/formal/OntologicalHypergraph.cfg` (Model 77), implement `src/core/eosOntologicalHypergraph.types.ts` and `src/core/eosOntologicalHypergraph.ts` featuring bitemporal assertions ($v_{\text{from}}, v_{\text{to}}$ vs $t_{\text{from}}, t_{\text{to}}$) with point-in-time "as-of" snapshot querying, $N$-ary relational hyperedge synthesis with typed participant roles, deterministic entity deduplication clustering disparate records into canonical entities with alias lineage ($\ge 0.80$ confidence), Bell-LaPadula / Biba Multilevel Security (MLS) lattice filtering with fail-closed redaction, topological subgraph traversals and blast radius evaluation, and signed receipt emission at `docs/evidence/ONTOLOGICAL_HYPERGRAPH_RECEIPT.json`. Wire `toolchain:hypergraph:assert`, `toolchain:hypergraph:query`, `toolchain:hypergraph:traverse`, `toolchain:hypergraph:resolve`, `toolchain:hypergraph:audit` in `bin/commands/cliOntologicalHypergraph.mjs` and `bin/commands/cliToolchainRouter.mjs` (`588 -> 593` commands, 100% catalog parity). Verify `BDD-1773`..`BDD-1778`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-195-ONTOLOGICAL-HYPERGRAPH.md`
+  - `openspec/changes/CHANGE-195-ontological-hypergraph.md`
+  - `openspec/specs/SPEC-333-ontological-hypergraph.md`
+  - `docs/plans/PLAN-195-ontological-hypergraph.md`
+  - `docs/tasks/TASKS-195-ontological-hypergraph.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

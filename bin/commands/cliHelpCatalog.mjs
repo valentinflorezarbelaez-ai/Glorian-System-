@@ -611,6 +611,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:distpd:migrate [--prompt=512] [--json] Migración zero-copy de páginas KV cache y verificación SHA-256 (SPEC-332)
   eos toolchain:distpd:cluster [--prefill-nodes=2] [--decode-nodes=4] [--json] Telemetría de aislamiento SLA y ausencia de Head-of-Line blocking (SPEC-332)
   eos toolchain:distpd:audit [--requests=10] [--prompt=512] [--output=8] [--json] Auditoría integral de arquitectura desagregada Prefill/Decode (SPEC-332)
+  eos toolchain:hypergraph:assert [--entity=ID] [--kind=Component] [--classification=UNCLASSIFIED] [--json] Asentamiento bitemporal de entidades e hiperarcos (SPEC-333)
+  eos toolchain:hypergraph:query [--tx=5] [--valid=2000] [--clearance=SECRET] [--json] Consulta bitemporal As-Of con redacción MLS fail-closed (SPEC-333)
+  eos toolchain:hypergraph:traverse [--root=ID] [--depth=3] [--json] Recorrido de subgrafos y radio de impacto (Blast Radius) (SPEC-333)
+  eos toolchain:hypergraph:resolve [--source-id=ID] [--name=NAME] [--json] Deduplicación y resolución determinista de entidades canónicas (SPEC-333)
+  eos toolchain:hypergraph:audit [--json] Auditoría integral del hipergrafo ontológico y recibo SHA-256 (SPEC-333)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

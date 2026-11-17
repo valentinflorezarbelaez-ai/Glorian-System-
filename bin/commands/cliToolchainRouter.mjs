@@ -130,6 +130,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliDisaggregatedPrefillDecode.mjs",
     fn: "handleDisaggregatedPrefillDecodeCommand",
   },
+  {
+    prefix: "toolchain:hypergraph:",
+    file: "./cliOntologicalHypergraph.mjs",
+    fn: "handleOntologicalHypergraphCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

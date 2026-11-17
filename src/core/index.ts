@@ -771,3 +771,5 @@ export * from "./eosStreamingLlmAttentionSinks.ts";
 export * from "./eosStreamingLlmAttentionSinks.types.ts";
 export * from "./eosDisaggregatedPrefillDecode.ts";
 export * from "./eosDisaggregatedPrefillDecode.types.ts";
+export * from "./eosOntologicalHypergraph.ts";
+export * from "./eosOntologicalHypergraph.types.ts";

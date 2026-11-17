@@ -1,0 +1,19 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.componentId }}
+  title: ${{ values.componentTitle }}
+  description: Sovereign Tier-0 Component ${{ values.componentTitle }} governed by Glorian System.
+  annotations:
+    github.com/project-slug: valentinflorezarbelaez-ai/${{ values.componentId }}
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - sovereign
+    - layer-0
+    - ${{ values.runtimeLanguage }}
+    - ${{ values.isolationTier }}
+spec:
+  type: service
+  lifecycle: production
+  owner: ${{ values.ownerSquad }}
+  system: ${{ values.systemDomain }}

@@ -67,3 +67,14 @@ metadata:
       icon: docs
 spec:
   owner: user:valentin-florez-arbelaez
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: glorian-sovereign-templates
+  title: Glorian Sovereign Golden Path Templates
+  description: Official Scaffolder Golden Path templates for sovereign Tier-0 components.
+spec:
+  type: file
+  targets:
+    - ./templates/backstage/sovereign-component-template.yaml

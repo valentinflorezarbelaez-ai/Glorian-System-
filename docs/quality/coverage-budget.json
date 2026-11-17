@@ -26,6 +26,7 @@
     "src/core/eosTreeSpeculativeDecoding.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/eosStreamingLlmAttentionSinks.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/eosDisaggregatedPrefillDecode.ts": { "lines": 80.0, "branches": 70.0 },
+    "src/core/eosOntologicalHypergraph.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/index.ts": { "lines": 65.0, "branches": 60.0 }
   }
 }
