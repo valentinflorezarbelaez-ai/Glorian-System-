@@ -17,7 +17,7 @@
 | **Layer-0 Runtime Dependencies** | `dependencies: {}` (0 external npm packages) | SEALED |
 | **Active Formal Specs (OpenSpec)** | 332 Specifications (EARS IEEE 830 / BDD ISO 29148) | APPROVED |
 | **Formal TLA+ Models** | 76 Models (bounded simulation + invariant verification) | VERIFIED |
-| **Automated Test Suites** | 347 Node.js Test Suites (`test/*.test.mjs`) | 100.0% PASS |
+| **Automated Test Suites** | 348 Node.js Test Suites (`test/*.test.mjs`) | 100.0% PASS |
 | **V8 Code Coverage** | 94.32% lines / 85.92% branches / 93.61% functions                | ABOVE GATE (85% / 85% / 85%) |
 | **Core TypeScript Modules** | 539 Layer-0 Pure Modules (`src/core/`) | 100% TYPE-SAFE |
 | **JavaScript / MJS Modules** | 102 Validated Modules (`bin/`, `scripts/`, `api/`) | 100% SYNTAX-CLEAN |
@@ -26,7 +26,7 @@
 | **Monotonic Ledger WAL** | SQLite WAL + FTS5 + SHA-256 Block Chaining | VERIFIED |
 | **Big Tech Frontier Pillars** | 6/6 (SapFix, SLSA/SBOM, CAS, SMT, Chaos, BFT) | VERIFIED |
 | **CI Pipeline Stages** | 7 + 4.4-4.7 Deep Sub-Gates (SLO/Perf, Coverage, Mutation, Flaky) | GREEN |
-| **Freeze Pin (HEAD)** | `77c0f0e5` | PINNED |
+| **Freeze Pin (HEAD)** | `beb06e21` | PINNED |
 
 ---
 
