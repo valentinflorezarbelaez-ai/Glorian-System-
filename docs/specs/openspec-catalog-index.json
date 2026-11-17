@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 329,
-  "catalogSha256": "6dae59dd8f889003923397227dea7f0e9108c9010fc5d61a41df8af88aaed0db",
+  "totalSpecs": 330,
+  "catalogSha256": "8f8bc4672344185db30c7fa325587abdda7bfa29ef32f944abcba8c1957c1455",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2963,6 +2963,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-329-distributed-kv-cache-replication.md",
       "sha256": "317bd827cbdb423659941113f952924af135eee873fb5f1e0809dc5cdebb3483"
+    },
+    {
+      "id": "SPEC-330",
+      "title": "Tree-Structured Speculative Decoding, Multi-Candidate Rejection Sampling & Dynamic Draft-Target Verification Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-330-tree-speculative-decoding.md",
+      "sha256": "ee58bc8a05fc90e5227848ef2518280163d7244384765f853af44baf4702f443"
     }
   ]
 }
