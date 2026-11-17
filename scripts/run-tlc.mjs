@@ -53,6 +53,7 @@ export const CONFIGURED_SPECS = [
   "SpeculativePagedKvCache",
   "FlashAttentionOnlineSoftmax",
   "ContinuousDynamicBatching",
+  "RingAllReduce",
 ];
 
 /**

@@ -745,3 +745,5 @@ export * from "./eosFlashAttentionOnlineSoftmax.ts";
 export * from "./eosFlashAttentionOnlineSoftmax.types.ts";
 export * from "./eosContinuousDynamicBatching.ts";
 export * from "./eosContinuousDynamicBatching.types.ts";
+export * from "./eosRingAllReduce.ts";
+export * from "./eosRingAllReduce.types.ts";

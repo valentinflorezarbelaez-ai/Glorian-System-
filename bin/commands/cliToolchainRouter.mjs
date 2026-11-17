@@ -65,6 +65,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliContinuousDynamicBatching.mjs",
     fn: "handleContinuousBatchingCommand",
   },
+  {
+    prefix: "toolchain:allreduce:",
+    file: "./cliRingAllReduce.mjs",
+    fn: "handleRingAllReduceCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

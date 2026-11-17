@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 319,
-  "catalogSha256": "b469d7e42a6d2d88a13a88202937b49ec4ff93fca1ea6eabf451cc141fc4a309",
+  "totalSpecs": 320,
+  "catalogSha256": "f2dfbf26f145de208b96e707cbbd955502189fe1ec987e147263b507ee22d878",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2872,7 +2872,16 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-319-continuous-dynamic-sequence-batching.md",
-      "sha256": "a1d692ba7153624593367d2c1b69a7ed3fad6ecd6ce5cd9d6280e6ac18561cd8"
+      "sha256": "5e451addba41253279223d4572474a4f12d98c1bbca7b6f1bf3eed6ba707ba67"
+    },
+    {
+      "id": "SPEC-320",
+      "title": "Ring All-Reduce Distributed Tensor Parallelism & Collective Communication Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-320-ring-allreduce-tensor-parallelism.md",
+      "sha256": "d25c5545eeb616a0e81f89f4206d5aa7fe165179f9cb150c53425a2490ebb85d"
     }
   ]
 }

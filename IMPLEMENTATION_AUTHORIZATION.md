@@ -2893,3 +2893,16 @@
   - `docs/plans/PLAN-181-continuous-dynamic-sequence-batching.md`
   - `docs/tasks/TASKS-181-continuous-dynamic-sequence-batching.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-RING-ALLREDUCE-TENSOR-PARALLELISM
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-182` (`SPEC-320`), Ring All-Reduce Distributed Tensor Parallelism & Collective Communication Engine: author TLA+ formal model `docs/formal/RingAllReduce.tla` and configuration `docs/formal/RingAllReduce.cfg` (Model 64), implement `src/core/eosRingAllReduce.types.ts` and `src/core/eosRingAllReduce.ts` featuring circular ring worker topology, tensor chunking with zero-padding alignment, dual-phase Scatter-Reduce and All-Gather execution in 2(P-1) steps, constant bandwidth scaling per worker, exact mathematical parity with centralized reduction, and signed receipt emission at `docs/evidence/RING_ALLREDUCE_RECEIPT.json`. Wire `toolchain:allreduce:ring`, `toolchain:allreduce:scatter`, `toolchain:allreduce:gather`, `toolchain:allreduce:reduce`, `toolchain:allreduce:audit` in `bin/commands/cliRingAllReduce.mjs` and `bin/commands/cliToolchainRouter.mjs` (`523 -> 528` commands, 100% catalog parity). Verify `BDD-1695`..`BDD-1700`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-182-RING-ALLREDUCE-TENSOR-PARALLELISM.md`
+  - `openspec/changes/CHANGE-182-ring-allreduce-tensor-parallelism.md`
+  - `openspec/specs/SPEC-320-ring-allreduce-tensor-parallelism.md`
+  - `docs/plans/PLAN-182-ring-allreduce-tensor-parallelism.md`
+  - `docs/tasks/TASKS-182-ring-allreduce-tensor-parallelism.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

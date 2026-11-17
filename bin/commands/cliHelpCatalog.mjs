@@ -189,11 +189,11 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:continuous:preempt [--slot=0] [--json] Preempción de ranura bajo presión de memoria con reencolado (SPEC-319)
   eos toolchain:continuous:metrics [--json] Telemetría de rendimiento, tasa de emisión y utilización de slots (SPEC-319)
   eos toolchain:continuous:audit [--count=6] [--json] Auditoría integral de conservación de slots, ausencia de fugas y recibo SHA-256 (SPEC-319)
-
-
-
-
-
+  eos toolchain:allreduce:ring [--workers=4] [--json] Inspección de topología circular de anillo y vecindad de trabajadores (SPEC-320)
+  eos toolchain:allreduce:scatter [--workers=4] [--size=8] [--json] Ejecución de fase Scatter-Reduce con acumulación local de fragmentos (SPEC-320)
+  eos toolchain:allreduce:gather [--workers=4] [--size=8] [--json] Ejecución de fase All-Gather y replicación global de tensores (SPEC-320)
+  eos toolchain:allreduce:reduce [--workers=4] [--size=8] [--json] Ejecución completa de Ring All-Reduce con verificación de paridad y ancho de banda (SPEC-320)
+  eos toolchain:allreduce:audit [--workers=4] [--size=8] [--json] Auditoría integral de simetría de anillo, cota óptima de bytes y recibo SHA-256 (SPEC-320)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -541,11 +541,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:continuous:preempt [--slot=0] [--json] Preempción de ranura bajo presión de memoria con reencolado (SPEC-319)
   eos toolchain:continuous:metrics [--json] Telemetría de rendimiento, tasa de emisión y utilización de slots (SPEC-319)
   eos toolchain:continuous:audit [--count=6] [--json] Auditoría integral de conservación de slots, ausencia de fugas y recibo SHA-256 (SPEC-319)
-
-
-
-
-
+  eos toolchain:allreduce:ring [--workers=4] [--json] Inspección de topología circular de anillo y vecindad de trabajadores (SPEC-320)
+  eos toolchain:allreduce:scatter [--workers=4] [--size=8] [--json] Ejecución de fase Scatter-Reduce con acumulación local de fragmentos (SPEC-320)
+  eos toolchain:allreduce:gather [--workers=4] [--size=8] [--json] Ejecución de fase All-Gather y replicación global de tensores (SPEC-320)
+  eos toolchain:allreduce:reduce [--workers=4] [--size=8] [--json] Ejecución completa de Ring All-Reduce con verificación de paridad y ancho de banda (SPEC-320)
+  eos toolchain:allreduce:audit [--workers=4] [--size=8] [--json] Auditoría integral de simetría de anillo, cota óptima de bytes y recibo SHA-256 (SPEC-320)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
