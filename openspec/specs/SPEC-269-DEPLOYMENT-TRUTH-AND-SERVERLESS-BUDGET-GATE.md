@@ -45,10 +45,10 @@ WHEN `eos ship --remote` is invoked, THE SYSTEM SHALL query remote CI run status
 ```gherkin
 SCENARIO: Public serverless entrypoints stay within Hobby budget with headroom
   GIVEN api directory contains at most 12 public entrypoints and private modules prefixed with underscore
-  AND teurgia is consolidated as api/_teurgia.js routed via api/kernel.js
+  AND teurgia and spotify are consolidated as api/_teurgia.js and api/_spotify.js routed via api/kernel.js
   WHEN verify-vercel-function-budget.mjs is executed
   THEN the gate exits with code 0
-  AND reports activeCount <= 12, headroom >= 1, and status PASS
+  AND reports activeCount <= 12, headroom >= 2, and status PASS
 ```
 
 ### BDD-1392 — Fail-Closed Breach on Excess Serverless Functions

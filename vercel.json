@@ -18,6 +18,7 @@
     { "source": "/api/finops", "destination": "/api/kernel?module=finops" },
     { "source": "/api/metrics", "destination": "/api/kernel?module=metrics" },
     { "source": "/api/teurgia", "destination": "/api/kernel?module=teurgia" },
+    { "source": "/api/spotify", "destination": "/api/kernel?module=spotify" },
     { "source": "/mcp", "destination": "/api/mcp" }
   ],
   "headers": [

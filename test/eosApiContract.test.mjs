@@ -24,7 +24,7 @@ const ENDPOINT_CONTRACTS = {
   },
   "api/kernel.js": { method: "GET", fields: ["status"] },
   "api/memory.js": { method: "GET", fields: ["status"] },
-  "api/spotify.js": { method: "GET", fields: ["status"] },
+  "api/_spotify.js": { method: "GET", fields: ["status"] },
   "api/mcp.js": {
     method: "POST",
     fields: ["jsonrpc"],

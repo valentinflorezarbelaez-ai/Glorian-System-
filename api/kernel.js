@@ -3,6 +3,7 @@ import handleSpecs from "./_specs.js";
 import handleFinops from "./_finops.js";
 import handleMetrics from "./_metrics.js";
 import handleTeurgia from "./_teurgia.js";
+import handleSpotify from "./_spotify.js";
 import { applyKernelShield, recordIdempotentResponse } from "./_shield.js";
 import { createHash } from "node:crypto";
 import { getQueryObject, getQueryParam } from "./_safeQuery.js";
@@ -71,6 +72,11 @@ export default function handler(req, res) {
   // Consolidated from standalone api/teurgia.js → frees Hobby serverless headroom (SPEC-269).
   if (url.includes("/api/teurgia") || query.module === "teurgia" || query.mode === "teurgia") {
     return handleTeurgia(req, res);
+  }
+
+  // Consolidated from standalone api/spotify.js → second Hobby headroom slot (SPEC-269).
+  if (url.includes("/api/spotify") || query.module === "spotify" || query.mode === "spotify") {
+    return handleSpotify(req, res);
   }
 
   if (req.method !== "GET") {

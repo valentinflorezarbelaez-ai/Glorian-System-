@@ -6,7 +6,7 @@
  * 2. api/graph.js (OPTIONS, 405, invalid action, invalid file, traversal, 404, summary mode)
  * 3. api/cicd.js (OPTIONS, 405, invalid mode, invalid payload, payload too large, SAST blocked, SAST clean)
  * 4. api/memory.js (mem_save validation, mem_judge, mem_compare, mem_context/list/stats, search query, unsupported)
- * 5. api/spotify.js (OPTIONS, 405, invalid action, camelot validation, mix parameters, features, mesh, dsp)
+ * 5. api/_spotify.js (OPTIONS, 405, invalid action, camelot validation, mix parameters, features, mesh, dsp)
  * 6. api/jarvis.js (OPTIONS, 405, directive length, 5 intent classifications)
  * 7. api/_teurgia.js (405, invalid json, invalid body, payload too large, 7 sephirotic spheres, invalid sphere, dharma bounds)
  * 8. src/core/eosKernelPrimitives.ts (asserts throw ContractError, deepFreeze views/functions/null, pureSha256 1/2/3/4-byte UTF-8)
@@ -439,9 +439,9 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
     });
   });
 
-  describe("5. api/spotify.js branch coverage", () => {
+  describe("5. api/_spotify.js branch coverage", () => {
     it("handles OPTIONS, 405, actions, camelot validation, and mix parameters", async () => {
-      const spotifyMod = await import(pathToFileURL(path.join(root, "api/spotify.js")).href);
+      const spotifyMod = await import(pathToFileURL(path.join(root, "api/_spotify.js")).href);
 
       // OPTIONS
       const resOptions = createMockResponse();

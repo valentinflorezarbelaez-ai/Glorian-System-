@@ -115,14 +115,14 @@
       "id": "G5_SERVERLESS_HEADROOM",
       "track": "A",
       "status": "DONE_20261117",
-      "action": "Consolidated teurgia under kernel — Hobby 11/12 (headroom 1)"
+      "action": "Consolidated teurgia+spotify under kernel — Hobby 10/12 (headroom 2)"
     },
     {
       "rank": 6,
       "id": "G6_VERIFY_DEEP_RUM",
       "track": "A",
       "status": "DONE_20261117",
-      "action": "npm run verify:deep + fleet:rum:browser CWV CDP receipt sealed"
+      "action": "fleet:rum:browser sealed; verify:deep script + deep run receipt"
     },
     {
       "rank": 7,

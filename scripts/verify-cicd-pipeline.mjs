@@ -607,7 +607,9 @@ const apiEndpoints = [
     headers: { "idempotency-key": "stage6-jarvis-smoke-001" },
     body: { directive: "status check" },
   },
-  ...["api/health.js", "api/graph.js", "api/eval.js", "api/spotify.js"].map((file) => ({ file })),
+  ...["api/health.js", "api/graph.js", "api/eval.js"].map((file) => ({ file })),
+  { file: "api/kernel.js", query: { module: "spotify" } },
+  { file: "api/_spotify.js" },
   {
     file: "api/mcp.js",
     method: "POST",

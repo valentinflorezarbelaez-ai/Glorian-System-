@@ -31,9 +31,10 @@ describe("SPEC-269 — Serverless Function Budget Gate & Deployment Truth Engine
     const active = listActiveServerlessFunctions(root);
     assert.ok(active.length <= 12, `Must stay ≤12 active serverless functions, got ${active.length}`);
     assert.ok(active.length >= 1, "Must expose at least one public api entrypoint");
-    // Teurgia consolidated under kernel → expect 11 public entrypoints (headroom ≥ 1).
-    assert.equal(active.length, 11, "Expected 11 after api/teurgia → api/_teurgia consolidation");
+    // Teurgia + Spotify consolidated under kernel → expect 10 public entrypoints (headroom ≥ 2).
+    assert.equal(active.length, 10, "Expected 10 after teurgia+spotify consolidation under kernel");
     assert.ok(!active.includes("api/teurgia.js"), "teurgia must not be a public serverless entrypoint");
+    assert.ok(!active.includes("api/spotify.js"), "spotify must not be a public serverless entrypoint");
 
     // All active entrypoints must be non-private (no segment starting with _)
     for (const file of active) {
@@ -49,16 +50,17 @@ describe("SPEC-269 — Serverless Function Budget Gate & Deployment Truth Engine
     assert.equal(evaluation.specId, "SPEC-269");
     assert.equal(evaluation.passed, true);
     assert.equal(evaluation.verdict, "PASS");
-    assert.equal(evaluation.activeCount, 11);
+    assert.equal(evaluation.activeCount, 10);
     assert.equal(evaluation.budget, 12);
     assert.equal(evaluation.hardLimit, 12);
-    assert.equal(evaluation.headroom, 1);
+    assert.equal(evaluation.headroom, 2);
   });
 
   it("BDD-1392: Fail-closed rejection when active functions exceed budget", () => {
     // Simulate exceeding Hobby hard limit (12) via override — need 13 public entrypoints.
     const excessFunctions = [
       ...listActiveServerlessFunctions(root),
+      "api/temp_fictional_11th.js",
       "api/temp_fictional_12th.js",
       "api/temp_fictional_13th.js",
     ];
