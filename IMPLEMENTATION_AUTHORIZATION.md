@@ -3049,3 +3049,16 @@
   - `docs/plans/PLAN-193-streaming-llm-attention-sinks.md`
   - `docs/tasks/TASKS-193-streaming-llm-attention-sinks.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-DISAGGREGATED-PREFILL-DECODE
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-194` (`SPEC-332`), Disaggregated Prefill & Decode Serving Engine (PD Separation, Chunked Prefill & Zero-Copy KV Transfer): author TLA+ formal model `docs/formal/DisaggregatedPrefillDecode.tla` and configuration `docs/formal/DisaggregatedPrefillDecode.cfg` (Model 76), implement `src/core/eosDisaggregatedPrefillDecode.types.ts` and `src/core/eosDisaggregatedPrefillDecode.ts` featuring physical node role separation (`PREFILL_WORKER` vs `DECODE_WORKER`), deterministic chunked prefill scheduling with token budget $B_{\text{chunk}}$, zero-copy paged KV cache migration with cryptographic SHA-256 integrity verification, SLA isolation (TTFT $\le 150$ ms, TPOT $\le 15$ ms/token), elimination of head-of-line blocking, and signed receipt emission at `docs/evidence/DISAGGREGATED_PREFILL_DECODE_RECEIPT.json`. Wire `toolchain:distpd:schedule`, `toolchain:distpd:chunk`, `toolchain:distpd:migrate`, `toolchain:distpd:cluster`, `toolchain:distpd:audit` in `bin/commands/cliDisaggregatedPrefillDecode.mjs` and `bin/commands/cliToolchainRouter.mjs` (`583 -> 588` commands, 100% catalog parity). Verify `BDD-1767`..`BDD-1772`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-194-DISAGGREGATED-PREFILL-DECODE.md`
+  - `openspec/changes/CHANGE-194-disaggregated-prefill-decode.md`
+  - `openspec/specs/SPEC-332-disaggregated-prefill-decode.md`
+  - `docs/plans/PLAN-194-disaggregated-prefill-decode.md`
+  - `docs/tasks/TASKS-194-disaggregated-prefill-decode.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

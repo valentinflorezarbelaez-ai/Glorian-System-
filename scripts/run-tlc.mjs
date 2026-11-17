@@ -65,6 +65,7 @@ export const CONFIGURED_SPECS = [
   "DistributedKvCacheReplication",
   "TreeSpeculativeDecoding",
   "StreamingLlmAttentionSinks",
+  "DisaggregatedPrefillDecode",
 ];
 
 /**

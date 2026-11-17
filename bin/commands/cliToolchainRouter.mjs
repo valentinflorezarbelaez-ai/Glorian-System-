@@ -125,6 +125,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliStreamingLlmAttentionSinks.mjs",
     fn: "handleStreamingLlmCommand",
   },
+  {
+    prefix: "toolchain:distpd:",
+    file: "./cliDisaggregatedPrefillDecode.mjs",
+    fn: "handleDisaggregatedPrefillDecodeCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

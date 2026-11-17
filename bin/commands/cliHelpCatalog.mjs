@@ -606,6 +606,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:streamllm:rope [--sink=4] [--window=16] [--tokens=30] [--json] Re-indexación contigua dinámica de posiciones RoPE sin huecos (SPEC-331)
   eos toolchain:streamllm:evict [--sink=4] [--window=16] [--stream=50] [--json] Simulación de streaming y desalojo O(1) en buffer anular (SPEC-331)
   eos toolchain:streamllm:audit [--stream=1000] [--sink=4] [--window=16] [--json] Auditoría integral de StreamingLLM y recibo SHA-256 (SPEC-331)
+  eos toolchain:distpd:schedule [--requests=4] [--prompt=512] [--json] Admisión de solicitudes y planificación global desacoplada (SPEC-332)
+  eos toolchain:distpd:chunk [--prompt=1024] [--chunk=256] [--json] Procesamiento de chunked prefill sin bloqueo de decodificación (SPEC-332)
+  eos toolchain:distpd:migrate [--prompt=512] [--json] Migración zero-copy de páginas KV cache y verificación SHA-256 (SPEC-332)
+  eos toolchain:distpd:cluster [--prefill-nodes=2] [--decode-nodes=4] [--json] Telemetría de aislamiento SLA y ausencia de Head-of-Line blocking (SPEC-332)
+  eos toolchain:distpd:audit [--requests=10] [--prompt=512] [--output=8] [--json] Auditoría integral de arquitectura desagregada Prefill/Decode (SPEC-332)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

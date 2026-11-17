@@ -769,3 +769,5 @@ export * from "./eosTreeSpeculativeDecoding.ts";
 export * from "./eosTreeSpeculativeDecoding.types.ts";
 export * from "./eosStreamingLlmAttentionSinks.ts";
 export * from "./eosStreamingLlmAttentionSinks.types.ts";
+export * from "./eosDisaggregatedPrefillDecode.ts";
+export * from "./eosDisaggregatedPrefillDecode.types.ts";

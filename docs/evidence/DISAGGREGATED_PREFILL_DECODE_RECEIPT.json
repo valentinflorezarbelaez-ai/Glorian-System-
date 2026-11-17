@@ -1,0 +1,13 @@
+{
+  "specRef": "SPEC-332",
+  "engine": "Disaggregated Prefill & Decode Serving Engine (PD Separation, Chunked Prefill & Zero-Copy KV Transfer)",
+  "timestampIso": "2026-11-17T22:12:33.317Z",
+  "prefillNodes": 2,
+  "decodeNodes": 4,
+  "requestsServed": 6,
+  "noHeadOfLineBlocking": true,
+  "kvIntegrityVerified": true,
+  "slaIsolationVerified": true,
+  "status": "DISAGGREGATED_PREFILL_DECODE_VERIFIED",
+  "sha256Signature": "702c6be72295b6164330ef72405843ffe9b01fe99becdf1328d7f9dd5ca70abb"
+}
