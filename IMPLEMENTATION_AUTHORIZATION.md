@@ -3036,3 +3036,16 @@
   - `docs/plans/PLAN-192-tree-speculative-decoding.md`
   - `docs/tasks/TASKS-192-tree-speculative-decoding.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-STREAMING-LLM-ATTENTION-SINKS
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-193` (`SPEC-331`), StreamingLLM, Attention Sinks & Infinite-Context Window Memory Compression Engine: author TLA+ formal model `docs/formal/StreamingLlmAttentionSinks.tla` and configuration `docs/formal/StreamingLlmAttentionSinks.cfg` (Model 75), implement `src/core/eosStreamingLlmAttentionSinks.types.ts` and `src/core/eosStreamingLlmAttentionSinks.ts` featuring dual-region KV memory topology ($K_{\text{sink}}$ attention sinks + $W_{\text{local}}$ rolling window ring buffer), eviction immunity for initial sink tokens, $O(1)$ circular pointer roll-over, dynamic contiguous RoPE positional re-indexing, softmax attention score sum preservation ($\Delta \le 10^{-4}$), and signed receipt emission at `docs/evidence/STREAMING_LLM_ATTENTION_SINKS_RECEIPT.json`. Wire `toolchain:streamllm:sink`, `toolchain:streamllm:window`, `toolchain:streamllm:rope`, `toolchain:streamllm:evict`, `toolchain:streamllm:audit` in `bin/commands/cliStreamingLlmAttentionSinks.mjs` and `bin/commands/cliToolchainRouter.mjs` (`578 -> 583` commands, 100% catalog parity). Verify `BDD-1761`..`BDD-1766`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-193-STREAMING-LLM-ATTENTION-SINKS.md`
+  - `openspec/changes/CHANGE-193-streaming-llm-attention-sinks.md`
+  - `openspec/specs/SPEC-331-streaming-llm-attention-sinks.md`
+  - `docs/plans/PLAN-193-streaming-llm-attention-sinks.md`
+  - `docs/tasks/TASKS-193-streaming-llm-attention-sinks.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

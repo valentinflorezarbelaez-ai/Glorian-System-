@@ -601,6 +601,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:specdec:verify [--root=100] [--depth=3] [--branching=2] [--json] Muestreo con rechazo modificado y divergencia KL cero (SPEC-330)
   eos toolchain:specdec:speedup [--alpha=0.75] [--depth=3] [--branching=2] [--json] Modulación dinámica de topología de árbol y aceleración (SPEC-330)
   eos toolchain:specdec:audit [--vocab=1000] [--depth=3] [--branching=2] [--json] Auditoría integral de decodificación especulativa en árbol (SPEC-330)
+  eos toolchain:streamllm:sink [--sink=4] [--window=16] [--tokens=20] [--json] Inspección de anclajes de atención (Attention Sinks) e inmunidad (SPEC-331)
+  eos toolchain:streamllm:window [--sink=4] [--window=16] [--tokens=25] [--json] Inspección de ventana deslizante circular y techo de memoria (SPEC-331)
+  eos toolchain:streamllm:rope [--sink=4] [--window=16] [--tokens=30] [--json] Re-indexación contigua dinámica de posiciones RoPE sin huecos (SPEC-331)
+  eos toolchain:streamllm:evict [--sink=4] [--window=16] [--stream=50] [--json] Simulación de streaming y desalojo O(1) en buffer anular (SPEC-331)
+  eos toolchain:streamllm:audit [--stream=1000] [--sink=4] [--window=16] [--json] Auditoría integral de StreamingLLM y recibo SHA-256 (SPEC-331)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

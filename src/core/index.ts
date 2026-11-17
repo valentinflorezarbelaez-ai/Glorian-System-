@@ -767,3 +767,5 @@ export * from "./eosDistributedKvReplication.ts";
 export * from "./eosDistributedKvReplication.types.ts";
 export * from "./eosTreeSpeculativeDecoding.ts";
 export * from "./eosTreeSpeculativeDecoding.types.ts";
+export * from "./eosStreamingLlmAttentionSinks.ts";
+export * from "./eosStreamingLlmAttentionSinks.types.ts";

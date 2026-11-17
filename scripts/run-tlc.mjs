@@ -64,6 +64,7 @@ export const CONFIGURED_SPECS = [
   "QuantizedDistributedTrainingEngine",
   "DistributedKvCacheReplication",
   "TreeSpeculativeDecoding",
+  "StreamingLlmAttentionSinks",
 ];
 
 /**

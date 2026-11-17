@@ -120,6 +120,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliTreeSpeculativeDecoding.mjs",
     fn: "handleTreeSpeculativeDecodingCommand",
   },
+  {
+    prefix: "toolchain:streamllm:",
+    file: "./cliStreamingLlmAttentionSinks.mjs",
+    fn: "handleStreamingLlmCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {
