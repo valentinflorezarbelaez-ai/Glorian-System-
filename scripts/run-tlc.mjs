@@ -67,6 +67,7 @@ export const CONFIGURED_SPECS = [
   "StreamingLlmAttentionSinks",
   "DisaggregatedPrefillDecode",
   "OntologicalHypergraph",
+  "DiscreteEventSimulationHypervisor",
 ];
 
 /**

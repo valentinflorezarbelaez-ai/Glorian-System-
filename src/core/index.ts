@@ -773,3 +773,5 @@ export * from "./eosDisaggregatedPrefillDecode.ts";
 export * from "./eosDisaggregatedPrefillDecode.types.ts";
 export * from "./eosOntologicalHypergraph.ts";
 export * from "./eosOntologicalHypergraph.types.ts";
+export * from "./eosDiscreteEventSimulationHypervisor.ts";
+export * from "./eosDiscreteEventSimulationHypervisor.types.ts";

@@ -1,0 +1,15 @@
+{
+  "runId": "desh-run-audit-test-seed-step1",
+  "seed": "audit-test-seed",
+  "virtualTimeNs": 100,
+  "eventsProcessed": 1,
+  "faultsInjected": 0,
+  "checkpointsCreated": 1,
+  "virtualTimeMonotonicity": true,
+  "prngDeterminism": true,
+  "snapshotConsistency": true,
+  "invariantsEvaluated": 0,
+  "violationsCount": 0,
+  "auditHash": "cb55aec2c3646f6e188b62b877c6abe682f41fb8b6cf97d9664e5a0b28908604",
+  "timestamp": "2026-11-17T23:28:52.631Z"
+}

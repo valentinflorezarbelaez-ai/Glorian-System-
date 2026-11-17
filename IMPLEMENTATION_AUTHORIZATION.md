@@ -3075,3 +3075,16 @@
   - `docs/plans/PLAN-195-ontological-hypergraph.md`
   - `docs/tasks/TASKS-195-ontological-hypergraph.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-DISCRETE-EVENT-SIMULATION-HYPERVISOR
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-196` (`SPEC-334`), Deterministic Discrete-Event Simulation Hypervisor & Time-Travel Fault Injection Engine (DESH): author TLA+ formal model `docs/formal/DiscreteEventSimulationHypervisor.tla` and configuration `docs/formal/DiscreteEventSimulationHypervisor.cfg` (Model 78), implement `src/core/eosDiscreteEventSimulationHypervisor.types.ts` and `src/core/eosDiscreteEventSimulationHypervisor.ts` featuring virtual nanosecond monotonic clock decoupled from host wall-clock time, priority queue ordering, 64-bit seeded PRNG replayability (SplitMix64), virtual node/actor communication interception, active Byzantine fault injection matrix (partitions, drops, corruptions, node crash-reboots, clock drift), Chandy-Lamport time-travel global checkpointing and rollback, continuous invariant validation, and signed receipt emission at `docs/evidence/DESH_RECEIPT.json`. Wire `toolchain:desh:schedule`, `toolchain:desh:step`, `toolchain:desh:inject`, `toolchain:desh:rollback`, `toolchain:desh:audit` in `bin/commands/cliDiscreteEventSimulationHypervisor.mjs` and `bin/commands/cliToolchainRouter.mjs` (`593 -> 598` commands, 100% catalog parity). Verify `BDD-1779`..`BDD-1784`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-196-DISCRETE-EVENT-SIMULATION-HYPERVISOR.md`
+  - `openspec/changes/CHANGE-196-discrete-event-simulation-hypervisor.md`
+  - `openspec/specs/SPEC-334-discrete-event-simulation-hypervisor.md`
+  - `docs/plans/PLAN-196-discrete-event-simulation-hypervisor.md`
+  - `docs/tasks/TASKS-196-discrete-event-simulation-hypervisor.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

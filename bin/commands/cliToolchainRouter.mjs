@@ -135,6 +135,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliOntologicalHypergraph.mjs",
     fn: "handleOntologicalHypergraphCommand",
   },
+  {
+    prefix: "toolchain:desh:",
+    file: "./cliDiscreteEventSimulationHypervisor.mjs",
+    fn: "handleDiscreteEventSimulationHypervisorCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

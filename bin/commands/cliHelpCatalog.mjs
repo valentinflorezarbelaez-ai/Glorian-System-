@@ -616,6 +616,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:hypergraph:traverse [--root=ID] [--depth=3] [--json] Recorrido de subgrafos y radio de impacto (Blast Radius) (SPEC-333)
   eos toolchain:hypergraph:resolve [--source-id=ID] [--name=NAME] [--json] Deduplicación y resolución determinista de entidades canónicas (SPEC-333)
   eos toolchain:hypergraph:audit [--json] Auditoría integral del hipergrafo ontológico y recibo SHA-256 (SPEC-333)
+  eos toolchain:desh:schedule [--type=HEARTBEAT] [--delay=50000000] [--json] Planificación de evento discreto en cola de prioridad monótona (SPEC-334)
+  eos toolchain:desh:step [--steps=3] [--json] Despacho y avance temporal discreto con desacoplamiento de reloj físico (SPEC-334)
+  eos toolchain:desh:inject [--fault=NETWORK_PARTITION] [--json] Inyección activa de fallas bizantinas en malla de nodos virtuales (SPEC-334)
+  eos toolchain:desh:rollback [--json] Punto de control global y reversión temporal (Time-Travel Debugging) (SPEC-334)
+  eos toolchain:desh:audit [--seed=SEED] [--json] Auditoría determinista, evaluación de invariantes y recibo SHA-256 (SPEC-334)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
