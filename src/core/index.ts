@@ -747,3 +747,5 @@ export * from "./eosContinuousDynamicBatching.ts";
 export * from "./eosContinuousDynamicBatching.types.ts";
 export * from "./eosRingAllReduce.ts";
 export * from "./eosRingAllReduce.types.ts";
+export * from "./eosMegatronTensorParallelism.ts";
+export * from "./eosMegatronTensorParallelism.types.ts";

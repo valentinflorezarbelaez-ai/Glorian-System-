@@ -2906,3 +2906,16 @@
   - `docs/plans/PLAN-182-ring-allreduce-tensor-parallelism.md`
   - `docs/tasks/TASKS-182-ring-allreduce-tensor-parallelism.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-MEGATRON-TENSOR-PARALLELISM
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-183` (`SPEC-321`), Megatron-LM Style Tensor Parallelism (Column & Row Linear Sharding): author TLA+ formal model `docs/formal/MegatronTensorParallelism.tla` and configuration `docs/formal/MegatronTensorParallelism.cfg` (Model 65), implement `src/core/eosMegatronTensorParallelism.types.ts` and `src/core/eosMegatronTensorParallelism.ts` featuring column-parallel weight matrix partitioning, row-parallel weight matrix partitioning, fused element-wise activations (GeLU, SiLU), end-to-end MLP block execution with a single Ring All-Reduce collective communication barrier (`SPEC-320`), sharded vocabulary cross-entropy loss computation, and signed receipt emission at `docs/evidence/MEGATRON_TENSOR_PARALLELISM_RECEIPT.json`. Wire `toolchain:megatron:column`, `toolchain:megatron:row`, `toolchain:megatron:mlp`, `toolchain:megatron:vocab`, `toolchain:megatron:audit` in `bin/commands/cliMegatronTensorParallelism.mjs` and `bin/commands/cliToolchainRouter.mjs` (`528 -> 533` commands, 100% catalog parity). Verify `BDD-1701`..`BDD-1706`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-183-MEGATRON-TENSOR-PARALLELISM.md`
+  - `openspec/changes/CHANGE-183-megatron-tensor-parallelism.md`
+  - `openspec/specs/SPEC-321-megatron-tensor-parallelism.md`
+  - `docs/plans/PLAN-183-megatron-tensor-parallelism.md`
+  - `docs/tasks/TASKS-183-megatron-tensor-parallelism.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

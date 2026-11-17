@@ -54,6 +54,7 @@ export const CONFIGURED_SPECS = [
   "FlashAttentionOnlineSoftmax",
   "ContinuousDynamicBatching",
   "RingAllReduce",
+  "MegatronTensorParallelism",
 ];
 
 /**

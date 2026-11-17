@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 320,
-  "catalogSha256": "f2dfbf26f145de208b96e707cbbd955502189fe1ec987e147263b507ee22d878",
+  "totalSpecs": 321,
+  "catalogSha256": "01a011dade5b5432b802397939d90eb0c0afb366ef672383ca9c7592cd05f251",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2881,7 +2881,16 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-320-ring-allreduce-tensor-parallelism.md",
-      "sha256": "d25c5545eeb616a0e81f89f4206d5aa7fe165179f9cb150c53425a2490ebb85d"
+      "sha256": "52538c8c40a77569e20cb5f1e934ee24b74720c3dc4ce0b32c44dfcfb0a68647"
+    },
+    {
+      "id": "SPEC-321",
+      "title": "Megatron-LM Style Tensor Parallelism (Column & Row Linear Sharding)",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-321-megatron-tensor-parallelism.md",
+      "sha256": "e1682be10d9b1bc456393bcc2ce343ff6256643099681081ca02f82cdda8be82"
     }
   ]
 }

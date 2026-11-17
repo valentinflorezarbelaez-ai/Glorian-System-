@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0.0",
+  "specRef": "SPEC-321",
+  "changeRef": "CHANGE-183",
+  "auditStatus": "VERIFIED",
+  "workerCount": 4,
+  "batchSize": 2,
+  "inputDimension": 4,
+  "hiddenDimension": 8,
+  "outputDimension": 4,
+  "vocabularySize": 16,
+  "singleBarrierCertified": true,
+  "numericalParityCertified": true,
+  "shardedCrossEntropyCertified": true,
+  "sha256Receipt": "c818eac4c13d846d279b7f5ba87880140674f4ad8b4868b54251b03f5b866c64",
+  "timestampIso": "2026-11-17T17:05:28.052Z"
+}

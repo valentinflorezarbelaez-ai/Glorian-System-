@@ -14,6 +14,7 @@
     "src/core/eosFlashAttentionOnlineSoftmax.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/eosContinuousDynamicBatching.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/eosRingAllReduce.ts": { "lines": 80.0, "branches": 70.0 },
+    "src/core/eosMegatronTensorParallelism.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/index.ts": { "lines": 65.0, "branches": 60.0 }
   }
 }

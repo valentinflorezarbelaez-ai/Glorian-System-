@@ -70,6 +70,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliRingAllReduce.mjs",
     fn: "handleRingAllReduceCommand",
   },
+  {
+    prefix: "toolchain:megatron:",
+    file: "./cliMegatronTensorParallelism.mjs",
+    fn: "handleMegatronCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

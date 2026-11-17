@@ -194,6 +194,11 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:allreduce:gather [--workers=4] [--size=8] [--json] Ejecución de fase All-Gather y replicación global de tensores (SPEC-320)
   eos toolchain:allreduce:reduce [--workers=4] [--size=8] [--json] Ejecución completa de Ring All-Reduce con verificación de paridad y ancho de banda (SPEC-320)
   eos toolchain:allreduce:audit [--workers=4] [--size=8] [--json] Auditoría integral de simetría de anillo, cota óptima de bytes y recibo SHA-256 (SPEC-320)
+  eos toolchain:megatron:column [--workers=2] [--din=4] [--dhidden=8] [--json] Particionamiento y proyección lineal paralela por columnas (SPEC-321)
+  eos toolchain:megatron:row [--workers=2] [--dhidden=8] [--dout=4] [--json] Particionamiento y acumulación lineal paralela por filas (SPEC-321)
+  eos toolchain:megatron:mlp [--workers=4] [--batch=2] [--din=4] [--dhidden=8] [--dout=4] [--act=GELU] [--json] Bloque MLP completo con barrera única All-Reduce (SPEC-321)
+  eos toolchain:megatron:vocab [--workers=4] [--vocab=16] [--batch=2] [--json] Pérdida de entropía cruzada particionada sobre vocabulario (SPEC-321)
+  eos toolchain:megatron:audit [--workers=4] [--batch=2] [--json] Auditoría integral de barrera única, paridad numérica y recibo SHA-256 (SPEC-321)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
@@ -546,6 +551,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:allreduce:gather [--workers=4] [--size=8] [--json] Ejecución de fase All-Gather y replicación global de tensores (SPEC-320)
   eos toolchain:allreduce:reduce [--workers=4] [--size=8] [--json] Ejecución completa de Ring All-Reduce con verificación de paridad y ancho de banda (SPEC-320)
   eos toolchain:allreduce:audit [--workers=4] [--size=8] [--json] Auditoría integral de simetría de anillo, cota óptima de bytes y recibo SHA-256 (SPEC-320)
+  eos toolchain:megatron:column [--workers=2] [--din=4] [--dhidden=8] [--json] Particionamiento y proyección lineal paralela por columnas (SPEC-321)
+  eos toolchain:megatron:row [--workers=2] [--dhidden=8] [--dout=4] [--json] Particionamiento y acumulación lineal paralela por filas (SPEC-321)
+  eos toolchain:megatron:mlp [--workers=4] [--batch=2] [--din=4] [--dhidden=8] [--dout=4] [--act=GELU] [--json] Bloque MLP completo con barrera única All-Reduce (SPEC-321)
+  eos toolchain:megatron:vocab [--workers=4] [--vocab=16] [--batch=2] [--json] Pérdida de entropía cruzada particionada sobre vocabulario (SPEC-321)
+  eos toolchain:megatron:audit [--workers=4] [--batch=2] [--json] Auditoría integral de barrera única, paridad numérica y recibo SHA-256 (SPEC-321)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
