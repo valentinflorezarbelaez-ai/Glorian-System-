@@ -201,10 +201,17 @@ export async function computeDiagnosticsForFile(
 }
 
 /**
- * Writes diagnostics for all files in src/core to a JSON file.
+ * Writes diagnostics for files in src/core to a JSON file.
  * Compatible with any editor that watches for diagnostics.json changes.
+ *
+ * Optional `maxFiles` (or env `EOS_LSP_MAX_FILES`) bounds the scan so a full
+ * ~500-module pass cannot hang CI / local deep gates under load.
  */
-export async function writeDiagnosticsFile(projectRoot: string, outputPath?: string): Promise<string> {
+export async function writeDiagnosticsFile(
+  projectRoot: string,
+  outputPath?: string,
+  options?: { maxFiles?: number },
+): Promise<string> {
   const outPath = outputPath ?? path.join(projectRoot, ".eos-diagnostics.json");
   const graph = new EosSemanticGraph(projectRoot);
   const coreDir = path.join(projectRoot, "src", "core");
@@ -212,7 +219,18 @@ export async function writeDiagnosticsFile(projectRoot: string, outputPath?: str
   if (!fs.existsSync(coreDir)) return outPath;
 
   const results: EosDiagnosticsResult[] = [];
-  const files = fs.readdirSync(coreDir).filter((f) => f.endsWith(".ts"));
+  const envCap = Number(process.env.EOS_LSP_MAX_FILES || "");
+  const maxFiles =
+    typeof options?.maxFiles === "number" && options.maxFiles > 0
+      ? options.maxFiles
+      : Number.isFinite(envCap) && envCap > 0
+        ? envCap
+        : undefined;
+  let files = fs
+    .readdirSync(coreDir)
+    .filter((f) => f.endsWith(".ts"))
+    .sort();
+  if (maxFiles !== undefined) files = files.slice(0, maxFiles);
 
   for (const file of files) {
     const absPath = path.join(coreDir, file);
@@ -223,7 +241,12 @@ export async function writeDiagnosticsFile(projectRoot: string, outputPath?: str
   }
 
   fs.writeFileSync(outPath, JSON.stringify(results, null, 2), "utf8");
-  _log.info("Diagnostics written", { path: outPath, files: files.length, withDiagnostics: results.length });
+  _log.info("Diagnostics written", {
+    path: outPath,
+    files: files.length,
+    withDiagnostics: results.length,
+    maxFiles: maxFiles ?? "ALL",
+  });
   return outPath;
 }
 

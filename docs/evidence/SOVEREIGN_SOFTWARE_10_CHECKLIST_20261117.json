@@ -1,0 +1,43 @@
+{
+  "artifactId": "SOVEREIGN_SOFTWARE_10_CHECKLIST_20261117",
+  "epistemicState": "SOFTWARE_CEILING_IN_PROGRESS_WITHIN_TESTED_SCOPE",
+  "scope": "Sovereign software excellence only. External certification deliberately out of scope.",
+  "claimsDenied": [
+    "FEDERAL_ATO",
+    "FedRAMP",
+    "Level-5",
+    "NSA_GRADE",
+    "EXTERNAL_IVV",
+    "EXTERNAL_PENTEST",
+    "CrUX field data",
+    "multi-region SRE certification"
+  ],
+  "ownerDirective": "Discard external certification forever; drive sovereign software score from ~8.5 to 10 within tested scope.",
+  "definitionOfTen": {
+    "D1_tip_clean_synced": "HEAD == origin/main, working tree clean after seal",
+    "D2_prepush_7_of_7": "npm/pre-push local 7/7 stages exit 0",
+    "D3_layer0_purity": "runtimeDependenciesCount=0, architecture score 100, 0 cycles",
+    "D4_serverless_budget": "Hobby active functions <= 12 with headroom >= 1",
+    "D5_verify_deep_exit_0": "npm run verify:deep exit 0 including Stage 4.6 mutation + 4.7 flaky advisory",
+    "D6_supply_chain_bound": "npm run supply-chain:bind valid; provenance subjects aligned to tip within freeze lag policy",
+    "D7_no_known_stage4_hangers": "No unbounded Stage-4 scanners (e.g. LSP writeDiagnostics over full src/core in tests)",
+    "D8_openspec_catalog": "OpenSpec catalog integrity / freeze range coherent on tip"
+  },
+  "statusAtStart": {
+    "tip": "55b00a11",
+    "D1": "PASS",
+    "D2": "PASS",
+    "D3": "PASS",
+    "D4": "PASS (10/12 headroom 2)",
+    "D5": "PARTIAL — Stages 1-4.5 passed; 4.6 mutation aborted by user before completion",
+    "D6": "PASS_AFTER_REBIND (lag may recur after subsequent tip moves)",
+    "D7": "PASS_FOR_TEST_FIXTURE — production writeDiagnosticsFile still scans all src/core",
+    "D8": "PASS (SPEC range through 321 on tip)"
+  },
+  "blockingForTen": ["D5_verify_deep_exit_0"],
+  "optionalHardening": [
+    "Bound production writeDiagnosticsFile with maxFiles/default slice to prevent CLI hang",
+    "Twin Eos-System sync (Law IV owner choice — not required for software-10 if primary tip is Glorian-System-)"
+  ],
+  "measuredAt": "2026-11-17T17:40:00.000Z"
+}
