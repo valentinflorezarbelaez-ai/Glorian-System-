@@ -186,14 +186,18 @@ describe("EosLspDiagnostics — Language Server Protocol 3.17 (Cursor/VS Code)",
   });
 
   it("writeDiagnosticsFile creates a valid JSON file", async () => {
+    // Bound the scan to a tiny fixture — full src/core (~500 modules) hangs Stage 4
+    // under parallel load (observed ~438s timeout on writeDiagnosticsFile).
+    const fixtureRoot = path.join(tmpDir, "fixture-project");
+    const coreDir = path.join(fixtureRoot, "src", "core");
+    fs.mkdirSync(coreDir, { recursive: true });
+    fs.writeFileSync(path.join(coreDir, "sampleModule.ts"), "export function sample(): number { return 1; }\n", "utf8");
     const outPath = path.join(tmpDir, "test-diagnostics.json");
-    const result = await writeDiagnosticsFile(root, outPath);
-    // The function returns the path
+    const result = await writeDiagnosticsFile(fixtureRoot, outPath);
     assert.equal(result, outPath);
-    if (fs.existsSync(outPath)) {
-      const content = JSON.parse(fs.readFileSync(outPath, "utf8"));
-      assert.ok(Array.isArray(content), "diagnostics file must be an array");
-    }
+    assert.ok(fs.existsSync(outPath), "diagnostics file must exist");
+    const content = JSON.parse(fs.readFileSync(outPath, "utf8"));
+    assert.ok(Array.isArray(content), "diagnostics file must be an array");
   });
 });
 
