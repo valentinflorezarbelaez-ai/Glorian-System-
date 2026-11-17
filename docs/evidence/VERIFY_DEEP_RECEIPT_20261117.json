@@ -12,44 +12,41 @@
     {
       "measuredAt": "2026-11-17T02:33:00.000Z",
       "fullPipelineExitCode": 1,
-      "note": "Stage 4 failed while api/spotify.js was renamed mid-run to api/_spotify.js; stdout truncated at 1 MiB."
+      "note": "Stage 4 failed mid spotify rename"
     },
     {
       "measuredAt": "2026-11-17T02:41:21.415Z",
       "fullPipelineExitCode": 1,
       "tip": "4d2f0fd3",
-      "stage4Failure": {
-        "suite": "test/eosToolchainControlPlaneAndTlcLocal.test.mjs",
-        "test": "BDD-1412",
-        "error": "TLC_RECEIPT.json writeFileSync race (mitigated later via writeFileWithRetry)"
-      }
+      "note": "BDD-1412 TLC_RECEIPT write race (later mitigated)"
     },
     {
       "measuredAt": "2026-11-17T03:08:00.000Z",
       "fullPipelineExitCode": 1,
       "tip": "6e752b85",
-      "stage4Failure": {
-        "suite": "test/eosTreeSitterWasmEngine.test.mjs",
-        "test": "BDD-1519: Sub-15ms Incremental Processing Performance Benchmark",
-        "error": "elapsed 17.84ms under parallel Stage-4 load (ceiling 15ms); solo re-run 6/6 pass @ 13.78ms",
-        "perfAdvisory": "29 suites above 2x p95 (non-blocking)"
+      "note": "BDD-1519 AST perf flake 17.84ms (later hardened best-of-3)"
+    },
+    {
+      "measuredAt": "2026-11-17T15:35:09.379Z",
+      "fullPipelineExitCode": 1,
+      "tip": "e5eb5523",
+      "wallClockMs": 44523850,
+      "stage4Junit": {
+        "failures": 0,
+        "note": "328 suites; no <failure> tags; BDD-1519 no longer failing"
       },
-      "mutationGate": "not reached — Stage 4 failed before Stage 4.6",
-      "flakyGate": "not reached — Stage 4 failed before Stage 4.7"
+      "stage44": "advisory only — 2 suites >2x p95",
+      "likelyHang": "Stage 4.5 full V8 coverage (verify:deep does not set SKIP_COVERAGE=1; pre-push uses incremental ratchet). Silent stdout accumulation ~12h then exit 1. Mutation 4.6 / flaky 4.7 not observed.",
+      "mutationGate": "not reached / not observed in truncated log",
+      "flakyGate": "not reached / not observed in truncated log"
     }
   ],
-  "standaloneGates": {
-    "mutationGate": "not scored on clean tip yet",
-    "flakyGate": "not scored on clean tip yet",
-    "tlcSuiteSoloRerun": "BDD-1412 green after writeFileWithRetry",
-    "astPerfSoloRerun": "eosTreeSitterWasmEngine.test.mjs 6/6 pass after Stage 4 fail — flaky under parallel contention; BDD-1519 hardened with warmup+best-of-3"
-  },
+  "ownerFollowUp": "Re-run with SKIP_COVERAGE=1 npm run verify:deep to engage Stage 4.6/4.7 advisory without full V8 coverage wall; or set coverage concurrency + timeout",
   "serverlessBudgetAfterWave": {
     "activeCount": 10,
     "budget": 12,
     "headroom": 2,
     "consolidated": ["teurgia", "spotify"]
   },
-  "ownerFollowUp": "Commit BDD-1519 hardening; re-run npm run verify:deep for mutation/flaky advisory seal",
-  "measuredAt": "2026-11-17T03:08:00.000Z"
+  "measuredAt": "2026-11-17T15:35:09.379Z"
 }
