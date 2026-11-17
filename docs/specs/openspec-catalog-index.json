@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 331,
-  "catalogSha256": "19c90555f5259b58fb8f3623b4e1d19f08e34f4d8fc8781d0a43b2dff50e545f",
+  "totalSpecs": 332,
+  "catalogSha256": "a57210a3c26aed3f3b20ae69d01985183a92d6140b4b2bf286223e653a2a6094",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2981,6 +2981,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-331-streaming-llm-attention-sinks.md",
       "sha256": "1619bddd1e22d7ea277777ae984539e501e75f9772bc583e374a207271fe05dc"
+    },
+    {
+      "id": "SPEC-332",
+      "title": "Disaggregated Prefill & Decode Serving Engine (PD Separation, Chunked Prefill & Zero-Copy KV Transfer)",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-332-disaggregated-prefill-decode.md",
+      "sha256": "87c3eb8d9c3a757ade171a8bdd728c666af24cc78887204da024812bdfc24bcb"
     }
   ]
 }
