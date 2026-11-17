@@ -28,6 +28,7 @@ Until a formal PagerDuty/Opsgenie bridge is funded, **GitHub Issues with label `
 - Fast burn (5m/30m) → page immediately; freeze deploys.
 - Slow burn (1h/6h) → ticket within 1 business hour; no tip-seal until budget recovers.
 - Enforcement: CI may set `EOS_SLO_ENFORCE=1` on `main` (see sovereign CI workflow).
+- Flakes: on `main`, the Ubuntu Node 22 leg sets `EOS_FLAKY=1` and `EOS_FLAKY_ENFORCE=1` and re-runs the suite three times. A new flake or a stale quarantine fails that leg. The other three matrix cells stay single-pass.
 
 ## Off-call hygiene
 

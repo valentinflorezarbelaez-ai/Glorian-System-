@@ -122,7 +122,14 @@ export async function runFlakyGate({
   const runs = [];
   for (let i = 0; i < repeats; i++) {
     const reportPath = path.join(tmpDir, `run-${i}.xml`);
-    const args = ["--test", "--test-reporter=junit", `--test-reporter-destination=${reportPath}`, ...suites];
+    const concurrency = Math.min(8, Math.max(4, (os.cpus()?.length ?? 8) - 2));
+    const args = [
+      "--test",
+      `--test-concurrency=${concurrency}`,
+      "--test-reporter=junit",
+      `--test-reporter-destination=${reportPath}`,
+      ...suites,
+    ];
     const run = spawnSync(process.execPath, args, {
       cwd: root,
       timeout: timeoutMs,

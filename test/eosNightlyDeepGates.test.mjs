@@ -1,11 +1,9 @@
 /**
  * Test Suite: EOS Nightly Deep Quality Gates (SPEC-177)
  *
- * Guards the scheduled deep-gate wiring. The expensive gates (mutation, flaky)
- * are opt-in inside the per-commit pipeline, so they only protect the repository
- * if something actually runs them on a fixed cadence. This suite asserts the
- * nightly workflow keeps that promise — a schedule, the two deep gates, and a
- * write-capable refresh path reachable only by an explicit manual dispatch.
+ * Guards the scheduled deep-gate wiring. Mutation stays opt-in on the per-commit
+ * pipeline. The flaky gate is fail-closed on the main Ubuntu Node 22 leg and
+ * still runs on the nightly cadence for Node 24. This suite asserts both.
  */
 
 import test from "node:test";
@@ -27,6 +25,23 @@ test("SPEC-177: The nightly workflow schedules both opt-in deep gates", () => {
   assert.match(source, /workflow_dispatch:/, "must remain manually dispatchable");
   assert.match(source, /node scripts\/mutation-gate\.mjs/, "must run the mutation gate");
   assert.match(source, /node scripts\/flaky-gate\.mjs/, "must run the flaky gate");
+});
+
+test("SPEC-131: main Ubuntu Node 22 fails closed on the flaky budget", () => {
+  const sovereign = fs.readFileSync(path.join(root, ".github/workflows/eos-sovereign-cicd.yml"), "utf8");
+  assert.match(sovereign, /timeout-minutes:\s*35/, "the matrix job must budget time for three suite repeats");
+  assert.match(
+    sovereign,
+    /EOS_FLAKY:\s*\$\{\{ github\.ref == 'refs\/heads\/main' && matrix\.os == 'ubuntu-latest' && matrix\.node == '22' && '1' \|\| '' \}\}/,
+  );
+  assert.match(
+    sovereign,
+    /EOS_FLAKY_ENFORCE:\s*\$\{\{ github\.ref == 'refs\/heads\/main' && matrix\.os == 'ubuntu-latest' && matrix\.node == '22' && '1' \|\| '' \}\}/,
+  );
+  assert.match(
+    sovereign,
+    /EOS_FLAKY_REPEATS:\s*\$\{\{ github\.ref == 'refs\/heads\/main' && matrix\.os == 'ubuntu-latest' && matrix\.node == '22' && '3' \|\| '' \}\}/,
+  );
 });
 
 test("SPEC-177: The write-capable ratchet refresh is manual-dispatch only", () => {

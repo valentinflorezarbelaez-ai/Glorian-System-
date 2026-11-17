@@ -78,7 +78,8 @@ jobs:
   sovereign-gate:
     name: "7-Stage SecDevOps Gate (${{ matrix.os }} · Node ${{ matrix.node }})"
     needs: [typecheck]
-    timeout-minutes: 20
+    # Ubuntu Node 22 re-runs the suite 3x for the flaky gate. The other cells stay single-pass.
+    timeout-minutes: 35
     strategy:
       fail-fast: false
       matrix:
@@ -115,6 +116,11 @@ jobs:
           SKIP_COVERAGE: ${{ matrix.os == 'windows-latest' && '1' || '' }}
           # Google SRE burn-rate fail-closed on main Linux (advisory elsewhere).
           EOS_SLO_ENFORCE: ${{ github.ref == 'refs/heads/main' && matrix.os == 'ubuntu-latest' && '1' || '' }}
+          # SPEC-131: one trunk leg re-runs the suite 3x and fails closed on a new flake
+          # or a stale quarantine. The other three cells, pull requests, and local pre-push stay single-pass.
+          EOS_FLAKY: ${{ github.ref == 'refs/heads/main' && matrix.os == 'ubuntu-latest' && matrix.node == '22' && '1' || '' }}
+          EOS_FLAKY_ENFORCE: ${{ github.ref == 'refs/heads/main' && matrix.os == 'ubuntu-latest' && matrix.node == '22' && '1' || '' }}
+          EOS_FLAKY_REPEATS: ${{ github.ref == 'refs/heads/main' && matrix.os == 'ubuntu-latest' && matrix.node == '22' && '3' || '' }}
 
       - name: Git History Secret Scan (Cognition/Anthropic standard)
         # Scans for leaked credentials in all commits, not just the working tree

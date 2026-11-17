@@ -494,8 +494,8 @@ if (process.env.EOS_MUTATION === "1") {
 // not deterministic carries no signal — a green pipeline built on it can lie.
 // Detected flakiness must be fixed or explicitly quarantined; the quarantine is
 // an allow-list (`docs/quality/flaky-budget.json`) that may only shrink. Re-running
-// the suite is expensive, so this is opt-in (`EOS_FLAKY=1`); enforcement is opt-in
-// (`EOS_FLAKY_ENFORCE=1`) and advisory by default to keep the local gate noise-free.
+// the suite is expensive, so local pre-push and three of the four CI cells skip it.
+// Main CI sets EOS_FLAKY=1 and EOS_FLAKY_ENFORCE=1 on Ubuntu Node 22 only.
 // ---------------------------------------------------------------------------
 if (process.env.EOS_FLAKY === "1") {
   const flakyStart = Date.now();
