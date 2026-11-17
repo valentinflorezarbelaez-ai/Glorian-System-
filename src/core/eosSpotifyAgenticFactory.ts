@@ -376,15 +376,18 @@ export class EosSpotifyAgenticFactory {
       "- Consider Go for network services and Rust for performance-sensitive components; this snapshot has not measured the repository's language mix.",
       "- Select audio loudness and peak targets per product requirements; no mastering or conformance check is performed here.",
       "",
-      "## 3. Review Checklist (Suggestions Only)",
-      "1. Link planned changes to project requirements.\n2. Run appropriate formatting, tests, and security checks before release.\n3. Define audio and financial correctness criteria with the relevant product owners.\n4. Treat this generated context as a starting point and verify every recommendation.\n",
+      "## 3. Canonical merge gate",
+      "- **Public entrypoint:** `npm run verify:strict` (declared in `package.json`; aliases `node bin/eos.mjs verify`, the 7-stage SecDevOps gate). Prefer this over ad-hoc stage scripts for release and pre-push checks.",
+      "",
+      "## 4. Review Checklist (Suggestions Only)",
+      "1. Link planned changes to project requirements.\n2. Run `npm run verify:strict` (or matching formatting/tests/security checks) before release.\n3. Define audio and financial correctness criteria with the relevant product owners.\n4. Treat this generated context as a starting point and verify every recommendation.\n",
     ].join("\n");
 
     const claudeMd = [
       "# CLAUDE.md — Local Project Notes",
       "<!-- Generated from local metadata; no vendor, CI, or production integration was queried. -->\n",
       "## Locally available command examples (not executed by this generator)",
-      '- Full Strict SecDevOps Gate: `npm run verify:strict`\n- Unit & Chaos Tests: `node --test test/*.test.mjs`\n- Go Canonical Format: `gofmt -s -w .`\n- Go Unit Tests: `go test -v ./...`\n- Go Race Condition Detector: `go test -race ./...`\n- Go Memory Allocation Benchmark: `go test -bench=. -benchmem ./...`\n- Go Titan Native Benchmark: `node bin/eos.mjs go benchmark`\n- Honk Local Draft: `node bin/eos.mjs honk "<directive>"` (plan only; no files changed)\n- Xirp Context Sync: `node bin/eos.mjs xirp sync`\n',
+      '- Full Strict SecDevOps Gate (canonical 7-stage): `npm run verify:strict` → `node bin/eos.mjs verify`\n- Unit & Chaos Tests: `node --test test/*.test.mjs`\n- Go Canonical Format: `gofmt -s -w .`\n- Go Unit Tests: `go test -v ./...`\n- Go Race Condition Detector: `go test -race ./...`\n- Go Memory Allocation Benchmark: `go test -bench=. -benchmem ./...`\n- Go Titan Native Benchmark: `node bin/eos.mjs go benchmark`\n- Honk Local Draft: `node bin/eos.mjs honk "<directive>"` (plan only; no files changed)\n- Xirp Context Sync: `node bin/eos.mjs xirp sync`\n',
       "## Code & Architecture Standards",
       "These are repository notes, not verified vendor standards. Review requirements and run matching checks before applying them.\n",
     ].join("\n");
