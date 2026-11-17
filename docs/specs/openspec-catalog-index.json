@@ -1,7 +1,7 @@
 {
   "timestampIso": "2026-11-14T21:26:00.000Z",
   "totalSpecs": 313,
-  "catalogSha256": "460161467bdc9424f1ea8f590e0727b254b2898c80ad1bbf9ec4ca423587110c",
+  "catalogSha256": "4b6b11480ec7abb9603e45f90ee25f8693e291e4f90411805cf0bb9a100e442d",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2422,7 +2422,7 @@
       "frCount": 1,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-269-DEPLOYMENT-TRUTH-AND-SERVERLESS-BUDGET-GATE.md",
-      "sha256": "e5b4a19a7fd299411e6a594665411ebcae7c62fc1efb4d555e61ee6877557c20"
+      "sha256": "d3502bc5b6a92b792f8ed23ed3b4a579772fec2852e9a343af2dd8d803323cc4"
     },
     {
       "id": "SPEC-270",
