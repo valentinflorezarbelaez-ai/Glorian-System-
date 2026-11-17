@@ -115,6 +115,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliDistributedKvReplication.mjs",
     fn: "handleDistributedKvReplicationCommand",
   },
+  {
+    prefix: "toolchain:specdec:",
+    file: "./cliTreeSpeculativeDecoding.mjs",
+    fn: "handleTreeSpeculativeDecodingCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

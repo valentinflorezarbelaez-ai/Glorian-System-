@@ -765,3 +765,5 @@ export * from "./eosQuantizedDistributedTrainingEngine.ts";
 export * from "./eosQuantizedDistributedTrainingEngine.types.ts";
 export * from "./eosDistributedKvReplication.ts";
 export * from "./eosDistributedKvReplication.types.ts";
+export * from "./eosTreeSpeculativeDecoding.ts";
+export * from "./eosTreeSpeculativeDecoding.types.ts";

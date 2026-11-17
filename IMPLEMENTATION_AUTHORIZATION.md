@@ -3023,3 +3023,16 @@
   - `docs/plans/PLAN-191-distributed-kv-cache-replication.md`
   - `docs/tasks/TASKS-191-distributed-kv-cache-replication.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-TREE-SPECULATIVE-DECODING
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-192` (`SPEC-330`), Tree-Structured Speculative Decoding, Multi-Candidate Rejection Sampling & Dynamic Draft-Target Verification Engine: author TLA+ formal model `docs/formal/TreeSpeculativeDecoding.tla` and configuration `docs/formal/TreeSpeculativeDecoding.cfg` (Model 74), implement `src/core/eosTreeSpeculativeDecoding.types.ts` and `src/core/eosTreeSpeculativeDecoding.ts` featuring hierarchical tree candidate construction with 1D depth-aware positional encoding, 2D causal tree attention mask synthesis ($M_{i, j} = 1 \iff j \in \text{Ancestors}(i) \cup \{i\}$), modified rejection sampling guaranteeing zero distributional shift ($D_{KL} = 0.0$), multi-branch topological traversal with guaranteed forward progress ($\ge 1$ token/step), adaptive tree topology modulation driven by historical acceptance rates ($\alpha$), and signed receipt emission at `docs/evidence/TREE_SPECULATIVE_DECODING_RECEIPT.json`. Wire `toolchain:specdec:draft`, `toolchain:specdec:mask`, `toolchain:specdec:verify`, `toolchain:specdec:speedup`, `toolchain:specdec:audit` in `bin/commands/cliTreeSpeculativeDecoding.mjs` and `bin/commands/cliToolchainRouter.mjs` (`573 -> 578` commands, 100% catalog parity). Verify `BDD-1755`..`BDD-1760`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-192-TREE-SPECULATIVE-DECODING.md`
+  - `openspec/changes/CHANGE-192-tree-speculative-decoding.md`
+  - `openspec/specs/SPEC-330-tree-speculative-decoding.md`
+  - `docs/plans/PLAN-192-tree-speculative-decoding.md`
+  - `docs/tasks/TASKS-192-tree-speculative-decoding.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

@@ -63,6 +63,7 @@ export const CONFIGURED_SPECS = [
   "ReverseEngineeringEngine",
   "QuantizedDistributedTrainingEngine",
   "DistributedKvCacheReplication",
+  "TreeSpeculativeDecoding",
 ];
 
 /**

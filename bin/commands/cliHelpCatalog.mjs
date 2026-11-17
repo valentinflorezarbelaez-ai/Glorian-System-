@@ -596,6 +596,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:kvcache:prefetch [--beams=3] [--limit=8] [--json] Prefetching especulativo de candidatos de decodificación (SPEC-329)
   eos toolchain:kvcache:evict [--count=4] [--json] Desalojo ponderado LRU/LFU bajo presión con inmunidad de bloques anclados (SPEC-329)
   eos toolchain:kvcache:audit [--workers=3] [--sessions=4] [--capacity=64] [--json] Auditoría integral de replicación de caché KV y recibo SHA-256 (SPEC-329)
+  eos toolchain:specdec:draft [--root=100] [--depth=3] [--branching=2] [--json] Topología de árbol especulativo y aplanamiento posicional (SPEC-330)
+  eos toolchain:specdec:mask [--root=100] [--depth=3] [--branching=2] [--json] Síntesis de máscara de atención causal 2D de linaje ancestral (SPEC-330)
+  eos toolchain:specdec:verify [--root=100] [--depth=3] [--branching=2] [--json] Muestreo con rechazo modificado y divergencia KL cero (SPEC-330)
+  eos toolchain:specdec:speedup [--alpha=0.75] [--depth=3] [--branching=2] [--json] Modulación dinámica de topología de árbol y aceleración (SPEC-330)
+  eos toolchain:specdec:audit [--vocab=1000] [--depth=3] [--branching=2] [--json] Auditoría integral de decodificación especulativa en árbol (SPEC-330)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

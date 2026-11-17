@@ -23,6 +23,7 @@
     "src/core/eosReverseEngineeringEngine.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/eosQuantizedDistributedTrainingEngine.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/eosDistributedKvReplication.ts": { "lines": 80.0, "branches": 70.0 },
+    "src/core/eosTreeSpeculativeDecoding.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/index.ts": { "lines": 65.0, "branches": 60.0 }
   }
 }

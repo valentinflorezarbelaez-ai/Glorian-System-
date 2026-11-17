@@ -1,0 +1,15 @@
+{
+  "specRef": "SPEC-330",
+  "engine": "Tree-Structured Speculative Decoding, Multi-Candidate Rejection Sampling & Dynamic Draft Verification",
+  "timestampIso": "2026-11-17T21:44:22.193Z",
+  "vocabSize": 1000,
+  "treeDepth": 3,
+  "branchingFactor": 2,
+  "totalCandidateNodes": 15,
+  "treeMaskAncestryVerified": true,
+  "guaranteedProgressVerified": true,
+  "zeroKLDivergenceVerified": true,
+  "speedupRatio": 10,
+  "status": "TREE_SPECULATIVE_DECODING_VERIFIED",
+  "sha256Signature": "7b2c24fcbfba77a4c336dd0f42284ba23f7265c5bbfec4f24c07b21e736befb5"
+}
