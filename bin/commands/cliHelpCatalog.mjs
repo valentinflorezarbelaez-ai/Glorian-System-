@@ -164,6 +164,11 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:quant:cosine [--dim=128] [--json] Distancia coseno sobre vectores cuantizados acotada en [0.0, 2.0] (SPEC-314)
   eos toolchain:quant:hnsw [--dim=64] [--count=100] [--k=5] [--json] Inserción multi-capa y búsqueda beam search sub-milisegundo (SPEC-314)
   eos toolchain:quant:audit [--json] Auditoría integral de alineación, límites e invariantes con recibo SHA-256 (SPEC-314)
+  eos toolchain:mesh:ring [--nodes=3] [--vnodes=64] [--replication=2] [--json] Anillo de tokens virtuales y varianza de carga (SPEC-315)
+  eos toolchain:mesh:insert [--key=K] [--dim=128] [--json] Asignación determinista a nodo primario y réplicas (SPEC-315)
+  eos toolchain:mesh:search [--k=5] [--dim=64] [--json] Búsqueda federada scatter-gather entre particiones activas (SPEC-315)
+  eos toolchain:mesh:rebalance [--initial=3] [--churn=join|leave] [--json] Simulación de churn y verificación de migración mínima K/N (SPEC-315)
+  eos toolchain:mesh:audit [--json] Auditoría integral de continuidad del anillo, réplicas y quórum Raft (SPEC-315)
 
 
 
@@ -489,6 +494,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:quant:cosine [--dim=128] [--json] Distancia coseno sobre vectores cuantizados acotada en [0.0, 2.0] (SPEC-314)
   eos toolchain:quant:hnsw [--dim=64] [--count=100] [--k=5] [--json] Inserción multi-capa y búsqueda beam search sub-milisegundo (SPEC-314)
   eos toolchain:quant:audit [--json] Auditoría integral de alineación, límites e invariantes con recibo SHA-256 (SPEC-314)
+  eos toolchain:mesh:ring [--nodes=3] [--vnodes=64] [--replication=2] [--json] Anillo de tokens virtuales y varianza de carga (SPEC-315)
+  eos toolchain:mesh:insert [--key=K] [--dim=128] [--json] Asignación determinista a nodo primario y réplicas (SPEC-315)
+  eos toolchain:mesh:search [--k=5] [--dim=64] [--json] Búsqueda federada scatter-gather entre particiones activas (SPEC-315)
+  eos toolchain:mesh:rebalance [--initial=3] [--churn=join|leave] [--json] Simulación de churn y verificación de migración mínima K/N (SPEC-315)
+  eos toolchain:mesh:audit [--json] Auditoría integral de continuidad del anillo, réplicas y quórum Raft (SPEC-315)
 
 
 

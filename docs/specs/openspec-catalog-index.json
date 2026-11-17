@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 314,
-  "catalogSha256": "d878e05b523a14e53c02f6808f954e73639afecd072f6c84d1bd750d3364f600",
+  "totalSpecs": 315,
+  "catalogSha256": "e72242665a9ad7d67240370d6b618a94375cdc9db51113ef2a9131fe54f82d47",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2828,6 +2828,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-314-simd-quantized-hnsw-embeddings.md",
       "sha256": "6b248ac598030c406351c89b5caa56bdb84240d53639aaf9bd6e604741fc0c68"
+    },
+    {
+      "id": "SPEC-315",
+      "title": "— Distributed Consistent Hashing Vector Partition Mesh & Raft Sharding Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-315-distributed-consistent-hash-vector-mesh.md",
+      "sha256": "6d3a5e1e776645590a7494fefefeed87d8e31879cf095766001f5865b3638aac"
     }
   ]
 }

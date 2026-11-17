@@ -48,6 +48,7 @@ export const CONFIGURED_SPECS = [
   "ZeroCopyRingBuffer",
   "JepsenDistributedChaos",
   "SimdQuantizedHnsw",
+  "DistributedVectorMesh",
 ];
 
 /**

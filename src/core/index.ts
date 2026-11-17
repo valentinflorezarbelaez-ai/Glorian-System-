@@ -735,3 +735,5 @@ export * from "./eosJepsenDistributedChaos.ts";
 export * from "./eosJepsenDistributedChaos.types.ts";
 export * from "./eosSimdQuantizedHnsw.ts";
 export * from "./eosSimdQuantizedHnsw.types.ts";
+export * from "./eosDistributedVectorMesh.ts";
+export * from "./eosDistributedVectorMesh.types.ts";

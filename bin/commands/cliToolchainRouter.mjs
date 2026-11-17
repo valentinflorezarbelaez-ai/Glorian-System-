@@ -48,6 +48,7 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:ringbuffer:", file: "./cliZeroCopyRingBuffer.mjs", fn: "handleRingBufferCommand" },
   { prefix: "toolchain:jepsen:", file: "./cliJepsenDistributedChaos.mjs", fn: "handleJepsenChaosCommand" },
   { prefix: "toolchain:quant:", file: "./cliSimdQuantizedHnsw.mjs", fn: "handleSimdQuantizedHnswCommand" },
+  { prefix: "toolchain:mesh:", file: "./cliDistributedVectorMesh.mjs", fn: "handleDistributedVectorMeshCommand" },
 ];
 
 export async function handleToolchainCommands(commandContext) {
