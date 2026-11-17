@@ -2815,3 +2815,16 @@
   - `docs/plans/PLAN-175-jepsen-distributed-chaos.md`
   - `docs/tasks/TASKS-175-jepsen-distributed-chaos.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-16-SIMD-QUANTIZED-HNSW-EMBEDDINGS
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-176` (`SPEC-314`), SIMD Quantized Vector Embedding Engine (i8x16 / f32x4) for Sub-Millisecond HNSW Search: author TLA+ formal model `docs/formal/SimdQuantizedHnsw.tla` and configuration `docs/formal/SimdQuantizedHnsw.cfg` (Model 58), implement `src/core/eosSimdQuantizedHnsw.types.ts` and `src/core/eosSimdQuantizedHnsw.ts` with 8-bit asymmetric scalar quantization (SQ8), 16-byte aligned `Int8Array` chunk storage for zero-copy SIMD vectorized loads (`i8x16`), integer dot-product accumulation without float array allocation, quantized cosine distance calculation within 2% of float32 precision, quantized HNSW multi-layer graph indexing with sub-millisecond ($p99 < 350\,\mu\text{s}$) k-NN query turnaround, and signed receipt emission at `docs/evidence/SIMD_QUANTIZED_HNSW_RECEIPT.json`. Wire `toolchain:quant:quantize`, `toolchain:quant:dot`, `toolchain:quant:cosine`, `toolchain:quant:hnsw`, `toolchain:quant:audit` in `bin/commands/cliSimdQuantizedHnsw.mjs` and `bin/commands/cliToolchainRouter.mjs` (`493 -> 498` commands, 100% catalog parity). Verify `BDD-1659`..`BDD-1664`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-176-SIMD-QUANTIZED-HNSW-EMBEDDINGS.md`
+  - `openspec/changes/CHANGE-176-simd-quantized-hnsw-embeddings.md`
+  - `openspec/specs/SPEC-314-simd-quantized-hnsw-embeddings.md`
+  - `docs/plans/PLAN-176-simd-quantized-hnsw-embeddings.md`
+  - `docs/tasks/TASKS-176-simd-quantized-hnsw-embeddings.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

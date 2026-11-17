@@ -733,3 +733,5 @@ export * from "./eosZeroCopyRingBuffer.ts";
 export * from "./eosZeroCopyRingBuffer.types.ts";
 export * from "./eosJepsenDistributedChaos.ts";
 export * from "./eosJepsenDistributedChaos.types.ts";
+export * from "./eosSimdQuantizedHnsw.ts";
+export * from "./eosSimdQuantizedHnsw.types.ts";

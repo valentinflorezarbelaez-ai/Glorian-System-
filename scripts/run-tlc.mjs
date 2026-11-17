@@ -31,6 +31,7 @@ export const CONFIGURED_SPECS = [
   "CellBasedBulkheadGovernor",
   "ZeroCopyRingBuffer",
   "JepsenDistributedChaos",
+  "SimdQuantizedHnsw",
 ];
 
 /**

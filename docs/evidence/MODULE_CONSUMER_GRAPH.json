@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-16T23:24:22.024Z",
-  "totalModules": 501,
-  "consumedModules": 438,
+  "timestampIso": "2026-11-17T02:01:02.380Z",
+  "totalModules": 503,
+  "consumedModules": 440,
   "unconsumedModules": 63,
-  "graphDensity": 0.8743,
+  "graphDensity": 0.8748,
   "modules": {
     "EosAin": {
       "file": "src/core/EosAin.ts",
@@ -6919,6 +6919,30 @@
       "consumers": [
         {
           "consumerPath": "src/core/eosSharedMemoryWorkerPool.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosSimdQuantizedHnsw": {
+      "file": "src/core/eosSimdQuantizedHnsw.ts",
+      "baseName": "eosSimdQuantizedHnsw",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliSimdQuantizedHnsw.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosSimdQuantizedHnsw.types": {
+      "file": "src/core/eosSimdQuantizedHnsw.types.ts",
+      "baseName": "eosSimdQuantizedHnsw.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosSimdQuantizedHnsw.ts",
           "category": "core"
         }
       ]

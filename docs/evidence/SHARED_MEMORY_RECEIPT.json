@@ -1,10 +1,10 @@
 {
   "receiptType": "EOS_ZERO_COPY_SHARED_MEMORY_AUDIT",
-  "timestampIso": "2026-11-16T23:23:50.430Z",
+  "timestampIso": "2026-11-17T02:00:11.445Z",
   "specRef": "SPEC-303",
   "totalAllocatedBytes": 65536,
   "messagesProcessed": 1000,
   "zeroCopyVerified": true,
-  "avgLatencyNanos": 7500,
-  "sha256Signature": "5f2987e231eb064e6ab876459ed3fdd100897a37198608863cebcf0893843250"
+  "avgLatencyNanos": 8404,
+  "sha256Signature": "a1f6968c0fffc11f763937fc9c0eba7a827c687cab784f9e3f0fd8c1f99ce6a1"
 }

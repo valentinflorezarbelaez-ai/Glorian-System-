@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-14T21:26:00.000Z",
-  "totalSpecs": 313,
-  "catalogSha256": "4b6b11480ec7abb9603e45f90ee25f8693e291e4f90411805cf0bb9a100e442d",
+  "timestampIso": "2025-10-09T19:43:37.266Z",
+  "totalSpecs": 314,
+  "catalogSha256": "a0a83b45e9a03af3290bed4a6926bdfe5b7e9cb7e0f78baa0f1eecadb4fe8846",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2819,6 +2819,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-313-jepsen-distributed-chaos.md",
       "sha256": "36479809f51dd6f01320f1adef93f7c90023d9a20a5578819b75d946b03ba0b0"
+    },
+    {
+      "id": "SPEC-314",
+      "title": "— SIMD Quantized Vector Embedding Engine (i8x16 / f32x4) for Sub-Millisecond HNSW Search",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-314-simd-quantized-hnsw-embeddings.md",
+      "sha256": "6b248ac598030c406351c89b5caa56bdb84240d53639aaf9bd6e604741fc0c68"
     }
   ]
 }

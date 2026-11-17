@@ -159,6 +159,11 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:jepsen:heal [--json] Sanación de red y convergencia anti-entropía de réplicas (SPEC-313)
   eos toolchain:jepsen:verify [--json] Verificación Knossos de consistencia y linealizabilidad (SPEC-313)
   eos toolchain:jepsen:audit [--json] Auditoría integral de caos distribuido y recibo firmado (SPEC-313)
+  eos toolchain:quant:quantize [--dim=128] [--json] Cuantización escalar asimétrica de 8-bit con alineación de 16 bytes (SPEC-314)
+  eos toolchain:quant:dot [--dim=256] [--json] Producto punto SIMD entero de 16 carriles y error relativo < 2% (SPEC-314)
+  eos toolchain:quant:cosine [--dim=128] [--json] Distancia coseno sobre vectores cuantizados acotada en [0.0, 2.0] (SPEC-314)
+  eos toolchain:quant:hnsw [--dim=64] [--count=100] [--k=5] [--json] Inserción multi-capa y búsqueda beam search sub-milisegundo (SPEC-314)
+  eos toolchain:quant:audit [--json] Auditoría integral de alineación, límites e invariantes con recibo SHA-256 (SPEC-314)
 
 
 
@@ -479,6 +484,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:jepsen:heal [--json] Sanación de red y convergencia anti-entropía de réplicas (SPEC-313)
   eos toolchain:jepsen:verify [--json] Verificación Knossos de consistencia y linealizabilidad (SPEC-313)
   eos toolchain:jepsen:audit [--json] Auditoría integral de caos distribuido y recibo firmado (SPEC-313)
+  eos toolchain:quant:quantize [--dim=128] [--json] Cuantización escalar asimétrica de 8-bit con alineación de 16 bytes (SPEC-314)
+  eos toolchain:quant:dot [--dim=256] [--json] Producto punto SIMD entero de 16 carriles y error relativo < 2% (SPEC-314)
+  eos toolchain:quant:cosine [--dim=128] [--json] Distancia coseno sobre vectores cuantizados acotada en [0.0, 2.0] (SPEC-314)
+  eos toolchain:quant:hnsw [--dim=64] [--count=100] [--k=5] [--json] Inserción multi-capa y búsqueda beam search sub-milisegundo (SPEC-314)
+  eos toolchain:quant:audit [--json] Auditoría integral de alineación, límites e invariantes con recibo SHA-256 (SPEC-314)
 
 
 
