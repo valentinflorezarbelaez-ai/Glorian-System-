@@ -15,6 +15,7 @@ import { EosFlakyTestQuarantine } from "../src/core/eosFlakyTestQuarantine.ts";
 import {
   runFlakyGate,
   parseJUnitOutcomes,
+  assertReportsComplete,
   loadFlakyBudget,
   evaluateFlakyBudget,
   updateFlakyBudget,
@@ -169,6 +170,18 @@ describe("SPEC-131: Flaky gate (de-islanding)", () => {
     const verdict = report.tests.find((t) => t.classification === "flaky");
     assert.ok(verdict, "the toggling test must be classified flaky");
     assert.ok(verdict.passes >= 1 && verdict.failures >= 1);
+  });
+
+  it("rejects a JUnit run that dropped a large share of the suite", () => {
+    const full = Array.from({ length: 100 }, (_, index) => obs(`suite::t${index}`, true));
+    const short = full.slice(0, 40);
+    assert.throws(() => assertReportsComplete([full, full, short]), /incomplete JUnit report/);
+  });
+
+  it("leaves a single missing test for the classifier", () => {
+    const full = [obs("suite::a", true), obs("suite::b", true)];
+    const short = [obs("suite::a", true)];
+    assert.doesNotThrow(() => assertReportsComplete([full, full, short]));
   });
 });
 

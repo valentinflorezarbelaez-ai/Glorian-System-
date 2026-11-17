@@ -77,6 +77,29 @@ export function parseJUnitOutcomes(xml, root) {
   return outcomes;
 }
 
+/**
+ * A hole of one or two tests can be a suite that failed to load, which the
+ * classifier reports as flaky. A run that loses a large share of the suite
+ * is a broken JUnit report. That must fail the runner, not the budget.
+ *
+ * @param {Array<Array<{ testId: string }>>} runs parsed repetitions
+ */
+export function assertReportsComplete(runs) {
+  const counts = runs.map((run) => new Set(run.map((obs) => obs.testId)).size);
+  const fullest = counts.reduce((max, count) => Math.max(max, count), 0);
+  if (fullest === 0) {
+    throw new Error("flaky gate produced an empty JUnit report. This is a runner failure, not flakiness.");
+  }
+  counts.forEach((count, index) => {
+    const shortfall = fullest - count;
+    if (shortfall > 5 && count / fullest < 0.95) {
+      throw new Error(
+        `flaky repetition ${index} produced an incomplete JUnit report (${count} tests; fullest run has ${fullest}). This is a runner failure, not flakiness.`,
+      );
+    }
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Runner
 // ---------------------------------------------------------------------------
@@ -122,10 +145,11 @@ export async function runFlakyGate({
   const runs = [];
   for (let i = 0; i < repeats; i++) {
     const reportPath = path.join(tmpDir, `run-${i}.xml`);
-    const concurrency = Math.min(8, Math.max(4, (os.cpus()?.length ?? 8) - 2));
+    // Serial on purpose. A parallel JUnit write on the CI runner dropped about
+    // half the tests from one repeat, and those holes were then scored as flakes.
     const args = [
       "--test",
-      `--test-concurrency=${concurrency}`,
+      "--test-concurrency=1",
       "--test-reporter=junit",
       `--test-reporter-destination=${reportPath}`,
       ...suites,
@@ -137,14 +161,23 @@ export async function runFlakyGate({
       env: childEnv,
     });
     // A non-zero exit just means some tests failed in this repetition — those
-    // verdicts are exactly what flakiness detection needs. Only a missing report
-    // (a crash) is fatal.
+    // verdicts are exactly what flakiness detection needs. A missing or truncated
+    // report is a runner failure.
     if (!fs.existsSync(reportPath)) {
-      throw new Error(`flaky repetition ${i} produced no JUnit report (exit ${run.status})`);
+      throw new Error(
+        `flaky repetition ${i} produced no JUnit report (exit ${run.status}). This is a runner failure, not flakiness.`,
+      );
     }
-    runs.push(parseJUnitOutcomes(fs.readFileSync(reportPath, "utf8"), root));
+    const xml = fs.readFileSync(reportPath, "utf8");
+    if (!/<\/testsuites>\s*$/.test(xml)) {
+      throw new Error(
+        `flaky repetition ${i} produced a truncated JUnit report (exit ${run.status}). This is a runner failure, not flakiness.`,
+      );
+    }
+    runs.push(parseJUnitOutcomes(xml, root));
   }
 
+  assertReportsComplete(runs);
   return { report: engine.classify(runs), runs, tmpDir };
 }
 
