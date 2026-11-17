@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 328,
-  "catalogSha256": "fad66ed6b75fd31e7753320645810fe5ee571bb81f7b80a40df7ed59b4c5b053",
+  "totalSpecs": 329,
+  "catalogSha256": "6dae59dd8f889003923397227dea7f0e9108c9010fc5d61a41df8af88aaed0db",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2954,6 +2954,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-328-quantized-distributed-training.md",
       "sha256": "e71f5adcdfb179018642e0ab4a8e40d1c69607ab0b533f38de864c3a2c4781fe"
+    },
+    {
+      "id": "SPEC-329",
+      "title": "Distributed Key-Value Cache Replication, Prefix Caching & Speculative KV Prefetching Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-329-distributed-kv-cache-replication.md",
+      "sha256": "317bd827cbdb423659941113f952924af135eee873fb5f1e0809dc5cdebb3483"
     }
   ]
 }
