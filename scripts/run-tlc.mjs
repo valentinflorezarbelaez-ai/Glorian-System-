@@ -60,6 +60,7 @@ export const CONFIGURED_SPECS = [
   "ZeroFsdpEngine",
   "ExpertParallelMoERouter",
   "ActivationCheckpointingEngine",
+  "ReverseEngineeringEngine",
 ];
 
 /**

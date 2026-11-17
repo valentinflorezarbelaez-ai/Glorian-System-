@@ -2984,3 +2984,16 @@
   - `docs/plans/PLAN-188-activation-checkpointing.md`
   - `docs/tasks/TASKS-188-activation-checkpointing.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-REVERSE-ENGINEERING-ANYTHING
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-189` (`SPEC-327`), Universal Reverse Engineering Anything (REA) Engine: author TLA+ formal model `docs/formal/ReverseEngineeringEngine.tla` and configuration `docs/formal/ReverseEngineeringEngine.cfg` (Model 71), implement `src/core/eosReverseEngineeringEngine.types.ts` and `src/core/eosReverseEngineeringEngine.ts` featuring multi-target format identification (WASM, ELF, PE, ASAR, JS), pure in-memory Electron ASAR archive unpacking, minified JS bundle module decomposition and identifier frequency mapping, sliding-window section Shannon entropy profiling ($H \ge 7.2\text{ bits/byte}$ packed anomaly detection), basic block Control-Flow Graph (CFG) DAG synthesis, and signed receipt emission at `docs/evidence/REVERSE_ENGINEERING_RECEIPT.json`. Wire `toolchain:rea:detect`, `toolchain:rea:unpack`, `toolchain:rea:entropy`, `toolchain:rea:cfg`, `toolchain:rea:audit` in `bin/commands/cliReverseEngineeringEngine.mjs` and `bin/commands/cliToolchainRouter.mjs` (`558 -> 563` commands, 100% catalog parity). Verify `BDD-1737`..`BDD-1742`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-189-REVERSE-ENGINEERING-ANYTHING.md`
+  - `openspec/changes/CHANGE-189-reverse-engineering-anything.md`
+  - `openspec/specs/SPEC-327-reverse-engineering-anything.md`
+  - `docs/plans/PLAN-189-reverse-engineering-anything.md`
+  - `docs/tasks/TASKS-189-reverse-engineering-anything.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

@@ -100,6 +100,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliActivationCheckpointingEngine.mjs",
     fn: "handleActivationCheckpointingCommand",
   },
+  {
+    prefix: "toolchain:rea:",
+    file: "./cliReverseEngineeringEngine.mjs",
+    fn: "handleReverseEngineeringCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

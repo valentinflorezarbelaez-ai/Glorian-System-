@@ -1,0 +1,15 @@
+{
+  "status": "VERIFIED",
+  "formatsDetected": [
+    "WASM",
+    "ELF",
+    "PE_COFF",
+    "ASAR"
+  ],
+  "asarExtractionVerified": true,
+  "entropyAnalysisVerified": true,
+  "cfgSynthesisVerified": true,
+  "zeroHostContamination": true,
+  "timestamp": "2026-11-17T20:16:07.612Z",
+  "sha256": "3d0d3d18d031fbba8fdfa7c963e3476f9669014e420578947333feba6b92fcab"
+}

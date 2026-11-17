@@ -759,3 +759,5 @@ export * from "./eosExpertParallelMoERouter.ts";
 export * from "./eosExpertParallelMoERouter.types.ts";
 export * from "./eosActivationCheckpointingEngine.ts";
 export * from "./eosActivationCheckpointingEngine.types.ts";
+export * from "./eosReverseEngineeringEngine.ts";
+export * from "./eosReverseEngineeringEngine.types.ts";

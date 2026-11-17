@@ -20,6 +20,7 @@
     "src/core/eosZeroFsdpEngine.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/eosExpertParallelMoERouter.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/eosActivationCheckpointingEngine.ts": { "lines": 80.0, "branches": 70.0 },
+    "src/core/eosReverseEngineeringEngine.ts": { "lines": 80.0, "branches": 70.0 },
     "src/core/index.ts": { "lines": 65.0, "branches": 60.0 }
   }
 }

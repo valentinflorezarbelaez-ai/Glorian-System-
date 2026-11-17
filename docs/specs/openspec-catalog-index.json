@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 326,
-  "catalogSha256": "b9baadf9c8313f05364fab317eba1800e66607afb7483b14065c6dd2decff2f4",
+  "totalSpecs": 327,
+  "catalogSha256": "42fe835c9f731aed3c025356eedff7f9b3d91878451b1484db444f29bd1c2a02",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2936,6 +2936,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-326-activation-checkpointing.md",
       "sha256": "946e7094fe36b58c71824a5d03ba323dc2fa057edd7e441c8338042e481b3bc6"
+    },
+    {
+      "id": "SPEC-327",
+      "title": "Universal Reverse Engineering Anything (REA) Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-327-reverse-engineering-anything.md",
+      "sha256": "9a84179f1267602e1b8daa20841beb4aafe88fce33e66d4c632b0a6fb32914f3"
     }
   ]
 }

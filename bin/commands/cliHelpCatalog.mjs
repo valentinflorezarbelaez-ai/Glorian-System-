@@ -581,6 +581,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:checkpoint:async-1f1b [--batches=8] [--stages=4] [--json] Cronograma 1F1B asíncrono con liberación temprana de micro-lotes (SPEC-326)
   eos toolchain:checkpoint:memory [--layers=64] [--dim=64] [--json] Análisis de cota de memoria de activaciones O(sqrt(L)) (SPEC-326)
   eos toolchain:checkpoint:audit [--layers=16] [--batches=4] [--dim=16] [--json] Auditoría integral de cota O(sqrt(L)), paridad de gradientes y recibo SHA-256 (SPEC-326)
+  eos toolchain:rea:detect [--target=wasm|elf|pe|js] [--json] Identificación determinista de formato y bytes mágicos (SPEC-327)
+  eos toolchain:rea:unpack [--json] Desempaquetado virtual en memoria de archivos Electron ASAR (SPEC-327)
+  eos toolchain:rea:entropy [--mode=mixed] [--json] Perfilado de entropía de Shannon por sección y detección de paquetes (SPEC-327)
+  eos toolchain:rea:cfg [--json] Síntesis de Grafo de Flujo de Control (CFG) a partir de bloques básicos (SPEC-327)
+  eos toolchain:rea:audit [--json] Auditoría integral de ingeniería inversa y emisión de recibo SHA-256 (SPEC-327)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
