@@ -739,3 +739,5 @@ export * from "./eosDistributedVectorMesh.ts";
 export * from "./eosDistributedVectorMesh.types.ts";
 export * from "./eosVectorLsmStorage.ts";
 export * from "./eosVectorLsmStorage.types.ts";
+export * from "./eosSpeculativePagedKvCache.ts";
+export * from "./eosSpeculativePagedKvCache.types.ts";

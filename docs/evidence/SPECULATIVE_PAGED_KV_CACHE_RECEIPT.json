@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0.0",
+  "specRef": "SPEC-317",
+  "changeRef": "CHANGE-179",
+  "auditStatus": "VERIFIED",
+  "totalBlocks": 32,
+  "allocatedBlocks": 5,
+  "freeBlocks": 27,
+  "activeSequences": 2,
+  "externalFragmentationRatio": 0.8438,
+  "conservationVerified": true,
+  "pageTableMonotonicityVerified": true,
+  "noSharedBlocksVerified": true,
+  "sha256Receipt": "f72ecfd662244668f6c2cc881e7383dca2878b0cc3268bb1885d1692a4d66974",
+  "timestampIso": "2026-11-17T15:50:12.008Z"
+}

@@ -174,6 +174,11 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:lsm:compact [--l0count=3] [--json] Compactación k-vías de fondo hacia L1 con purga de tombstones (SPEC-316)
   eos toolchain:lsm:search [--key=K] [--json] Búsqueda puntual sub-milisegundo con descarte Bloom y escaneo de bloques (SPEC-316)
   eos toolchain:lsm:audit [--json] Auditoría integral de monotonía de claves, bloques y recibo firmado SHA-256 (SPEC-316)
+  eos toolchain:speculative:pagetable [--tokens=28] [--json] Inspección de tabla de páginas, mapeo de bloques físicos y ratio de fragmentación (SPEC-317)
+  eos toolchain:speculative:allocate [--tokens=35] [--json] Asignación de bloques físicos de memoria virtual para secuencias (SPEC-317)
+  eos toolchain:speculative:draft [--k=4] [--json] Proyección de tokens candidatos especulativos con el modelo borrador (SPEC-317)
+  eos toolchain:speculative:verify [--k=4] [--json] Verificación paralela en pasada única contra el modelo objetivo y telemetría (SPEC-317)
+  eos toolchain:speculative:audit [--json] Auditoría integral de conservación de bloques, monotonía de páginas y recibo SHA-256 (SPEC-317)
 
 
 
@@ -509,6 +514,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:lsm:compact [--l0count=3] [--json] Compactación k-vías de fondo hacia L1 con purga de tombstones (SPEC-316)
   eos toolchain:lsm:search [--key=K] [--json] Búsqueda puntual sub-milisegundo con descarte Bloom y escaneo de bloques (SPEC-316)
   eos toolchain:lsm:audit [--json] Auditoría integral de monotonía de claves, bloques y recibo firmado SHA-256 (SPEC-316)
+  eos toolchain:speculative:pagetable [--tokens=28] [--json] Inspección de tabla de páginas, mapeo de bloques físicos y ratio de fragmentación (SPEC-317)
+  eos toolchain:speculative:allocate [--tokens=35] [--json] Asignación de bloques físicos de memoria virtual para secuencias (SPEC-317)
+  eos toolchain:speculative:draft [--k=4] [--json] Proyección de tokens candidatos especulativos con el modelo borrador (SPEC-317)
+  eos toolchain:speculative:verify [--k=4] [--json] Verificación paralela en pasada única contra el modelo objetivo y telemetría (SPEC-317)
+  eos toolchain:speculative:audit [--json] Auditoría integral de conservación de bloques, monotonía de páginas y recibo SHA-256 (SPEC-317)
 
 
 

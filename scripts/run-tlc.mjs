@@ -50,6 +50,7 @@ export const CONFIGURED_SPECS = [
   "SimdQuantizedHnsw",
   "DistributedVectorMesh",
   "VectorLsmStorage",
+  "SpeculativePagedKvCache",
 ];
 
 /**

@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-17T15:29:05.341Z",
+  "timestampIso": "2026-11-17T15:50:17.999Z",
   "specRef": "SPEC-310",
   "changeRef": "CHANGE-172",
   "status": "SIMD128_VECTOR_ARENA_VERIFIED",
@@ -11,7 +11,7 @@
     "wasmMagicValid": true,
     "simdOpcodesPresent": true,
     "sha256Digest": "f133be731784289a239d5e0789c6f24ffc4ba5a5c89e25860865af5868999e1e",
-    "durationMs": 320
+    "durationMs": 463
   },
   "rustSimdCompileReport": {
     "language": "RUST",
@@ -21,7 +21,7 @@
     "wasmMagicValid": true,
     "simdOpcodesPresent": true,
     "sha256Digest": "251e29994d70878f7dfc2b75731a7f865ebd10f6ee8f2d84f47b9343aa48836c",
-    "durationMs": 140
+    "durationMs": 173
   },
   "maxJoinVerified": true,
   "dotProductVerified": true,
@@ -30,11 +30,11 @@
   "benchmark": {
     "dimension": 128,
     "iterations": 250,
-    "simdTotalNs": 83400,
-    "simdNsPerOp": 2.61,
-    "scalarTotalNs": 133400,
-    "scalarNsPerOp": 4.17,
+    "simdTotalNs": 99400,
+    "simdNsPerOp": 3.11,
+    "scalarTotalNs": 145300,
+    "scalarNsPerOp": 4.54,
     "deterministicMatch": true
   },
-  "cryptographicSignature": "d79f3a45da9c9d8b0405c3f77b563585919f59a42388645c6b4b8ced3f9b9817"
+  "cryptographicSignature": "5ebf2820d96d18a1ab03979e30f5596f90b2b336759e583d80914c25992c2a17"
 }

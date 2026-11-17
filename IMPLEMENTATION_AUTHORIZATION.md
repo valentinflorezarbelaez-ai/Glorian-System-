@@ -2854,3 +2854,16 @@
   - `docs/plans/PLAN-178-vector-lsm-segment-storage.md`
   - `docs/tasks/TASKS-178-vector-lsm-segment-storage.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-SPECULATIVE-DRAFT-PAGED-KV-CACHE
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-179` (`SPEC-317`), Speculative Multi-Token Draft Verification & Paged KV-Cache Attention Engine: author TLA+ formal model `docs/formal/SpeculativePagedKvCache.tla` and configuration `docs/formal/SpeculativePagedKvCache.cfg` (Model 61), implement `src/core/eosSpeculativePagedKvCache.types.ts` and `src/core/eosSpeculativePagedKvCache.ts` featuring virtual paged KV-cache block allocation with fixed-size blocks (16 tokens/block), per-sequence page tables with sub-microsecond logical-to-physical block translation, free block conservation ($F + A = T$), speculative candidate multi-token draft projection ($K \in [2, 8]$), single-forward parallel target model verification with greedy/calibrated token prefix acceptance, sub-millisecond inference turnaround, and signed receipt emission at `docs/evidence/SPECULATIVE_PAGED_KV_CACHE_RECEIPT.json`. Wire `toolchain:speculative:pagetable`, `toolchain:speculative:allocate`, `toolchain:speculative:draft`, `toolchain:speculative:verify`, `toolchain:speculative:audit` in `bin/commands/cliSpeculativePagedKvCache.mjs` and `bin/commands/cliToolchainRouter.mjs` (`508 -> 513` commands, 100% catalog parity). Verify `BDD-1677`..`BDD-1682`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-179-SPECULATIVE-DRAFT-PAGED-KV-CACHE.md`
+  - `openspec/changes/CHANGE-179-speculative-draft-paged-kv-cache.md`
+  - `openspec/specs/SPEC-317-speculative-draft-paged-kv-cache.md`
+  - `docs/plans/PLAN-179-speculative-draft-paged-kv-cache.md`
+  - `docs/tasks/TASKS-179-speculative-draft-paged-kv-cache.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

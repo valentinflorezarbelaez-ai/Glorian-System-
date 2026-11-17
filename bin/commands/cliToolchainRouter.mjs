@@ -50,6 +50,11 @@ const TOOLCHAIN_DISPATCHERS = [
   { prefix: "toolchain:quant:", file: "./cliSimdQuantizedHnsw.mjs", fn: "handleSimdQuantizedHnswCommand" },
   { prefix: "toolchain:mesh:", file: "./cliDistributedVectorMesh.mjs", fn: "handleDistributedVectorMeshCommand" },
   { prefix: "toolchain:lsm:", file: "./cliVectorLsmStorage.mjs", fn: "handleVectorLsmCommand" },
+  {
+    prefix: "toolchain:speculative:",
+    file: "./cliSpeculativePagedKvCache.mjs",
+    fn: "handleSpeculativePagedKvCacheCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

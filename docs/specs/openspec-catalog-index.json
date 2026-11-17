@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 316,
-  "catalogSha256": "74c2c6b4e6a0ce7d8a02d8ff240a9b73ef1dbaec16e253c14fd716b303a2829d",
+  "totalSpecs": 317,
+  "catalogSha256": "4695af83e8622a04d0a6f08a30537739af9d5f5750c8ea572d0e7c99a0ea6b3a",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2846,6 +2846,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-316-vector-lsm-segment-storage.md",
       "sha256": "710b6fec21bbb0a6569184a1bd10ed50ec510da472d3bbd2ffd4ac45523cd362"
+    },
+    {
+      "id": "SPEC-317",
+      "title": "Speculative Multi-Token Draft Verification & Paged KV-Cache Attention Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-317-speculative-draft-paged-kv-cache.md",
+      "sha256": "c0bce42cf01bf1595581fa83217170914a281552e2606e398cae3741a2ea804f"
     }
   ]
 }
