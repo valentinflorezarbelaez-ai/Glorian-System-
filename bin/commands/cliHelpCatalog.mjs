@@ -591,6 +591,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:quanttrain:backward [--dim=16] [--nan] [--json] Retropropagación en precisión mixta y retroceso ante NaN (SPEC-328)
   eos toolchain:quanttrain:bandwidth [--workers=4] [--dim=64] [--format=E5M2] [--json] Reducción colectiva All-Reduce y ahorro de ancho de banda (SPEC-328)
   eos toolchain:quanttrain:audit [--workers=4] [--dim=128] [--json] Auditoría integral de cuantización distribuida y recibo SHA-256 (SPEC-328)
+  eos toolchain:kvcache:prefix [--tokens=32] [--pinned] [--match] [--json] Árbol Radix de prefijos compartidos y estimación TTFT (SPEC-329)
+  eos toolchain:kvcache:replicate [--source=W1] [--target=W2] [--json] Replicación P2P distribuida de bloques KV con verificación SHA-256 (SPEC-329)
+  eos toolchain:kvcache:prefetch [--beams=3] [--limit=8] [--json] Prefetching especulativo de candidatos de decodificación (SPEC-329)
+  eos toolchain:kvcache:evict [--count=4] [--json] Desalojo ponderado LRU/LFU bajo presión con inmunidad de bloques anclados (SPEC-329)
+  eos toolchain:kvcache:audit [--workers=3] [--sessions=4] [--capacity=64] [--json] Auditoría integral de replicación de caché KV y recibo SHA-256 (SPEC-329)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

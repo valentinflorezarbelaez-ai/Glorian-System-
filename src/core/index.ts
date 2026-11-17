@@ -763,3 +763,5 @@ export * from "./eosReverseEngineeringEngine.ts";
 export * from "./eosReverseEngineeringEngine.types.ts";
 export * from "./eosQuantizedDistributedTrainingEngine.ts";
 export * from "./eosQuantizedDistributedTrainingEngine.types.ts";
+export * from "./eosDistributedKvReplication.ts";
+export * from "./eosDistributedKvReplication.types.ts";

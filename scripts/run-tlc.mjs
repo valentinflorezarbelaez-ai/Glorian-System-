@@ -62,6 +62,7 @@ export const CONFIGURED_SPECS = [
   "ActivationCheckpointingEngine",
   "ReverseEngineeringEngine",
   "QuantizedDistributedTrainingEngine",
+  "DistributedKvCacheReplication",
 ];
 
 /**

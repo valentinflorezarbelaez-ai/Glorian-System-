@@ -110,6 +110,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliQuantizedDistributedTrainingEngine.mjs",
     fn: "handleQuantizedDistributedTrainingCommand",
   },
+  {
+    prefix: "toolchain:kvcache:",
+    file: "./cliDistributedKvReplication.mjs",
+    fn: "handleDistributedKvReplicationCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

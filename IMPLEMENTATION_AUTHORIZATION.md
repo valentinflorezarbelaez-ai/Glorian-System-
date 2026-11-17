@@ -3010,3 +3010,16 @@
   - `docs/plans/PLAN-190-quantized-distributed-training.md`
   - `docs/tasks/TASKS-190-quantized-distributed-training.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-DISTRIBUTED-KV-CACHE-REPLICATION
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-191` (`SPEC-329`), Distributed Key-Value Cache Replication, Prefix Caching & Speculative KV Prefetching Engine: author TLA+ formal model `docs/formal/DistributedKvCacheReplication.tla` and configuration `docs/formal/DistributedKvCacheReplication.cfg` (Model 73), implement `src/core/eosDistributedKvReplication.types.ts` and `src/core/eosDistributedKvReplication.ts` featuring hierarchical Radix Tree prefix caching with zero-copy ancestor block sharing, longest-prefix-match fast path retrieval, distributed P2P KV page block replication with cryptographic SHA-256 integrity verification, speculative draft token prefix prefetching, context-aware weighted LRU/LFU memory eviction with pinned system prompt protection, exact attention state reconstruction identity ($\epsilon = 0.0$), and signed receipt emission at `docs/evidence/DISTRIBUTED_KV_CACHE_REPLICATION_RECEIPT.json`. Wire `toolchain:kvcache:prefix`, `toolchain:kvcache:replicate`, `toolchain:kvcache:prefetch`, `toolchain:kvcache:evict`, `toolchain:kvcache:audit` in `bin/commands/cliDistributedKvReplication.mjs` and `bin/commands/cliToolchainRouter.mjs` (`568 -> 573` commands, 100% catalog parity). Verify `BDD-1749`..`BDD-1754`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-191-DISTRIBUTED-KV-CACHE-REPLICATION.md`
+  - `openspec/changes/CHANGE-191-distributed-kv-cache-replication.md`
+  - `openspec/specs/SPEC-329-distributed-kv-cache-replication.md`
+  - `docs/plans/PLAN-191-distributed-kv-cache-replication.md`
+  - `docs/tasks/TASKS-191-distributed-kv-cache-replication.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
