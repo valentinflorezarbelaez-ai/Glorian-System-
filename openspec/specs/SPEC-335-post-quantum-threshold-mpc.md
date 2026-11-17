@@ -1,5 +1,7 @@
 # SPEC-335: Threshold Secret Sharing & Ring-LWE Homomorphic Secure Aggregation Engine (PQ-MPC)
 
+**Status**: `APPROVED`
+
 > **Scope notice**: reference implementation. Default parameters are not secure; see `INTAKE-197` §3.
 
 ## 1. Functional Requirements (EARS Syntax)

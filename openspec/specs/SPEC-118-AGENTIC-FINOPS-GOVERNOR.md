@@ -4,7 +4,7 @@
 
 - **Specification ID**: `SPEC-118`
 - **Standard**: IEEE 830 / ISO 29148 / Big Tech FinOps & Tokenmaxxing Defense Standard
-- **Status**: `PROPOSED`
+- **Status**: `APPROVED`
 - **Layer**: Layer 0 (Core Governance & Financial Invariants)
 - **Runtime Dependencies**: `0` (`dependencies: {}`)
 

@@ -1,5 +1,7 @@
 # SPEC-113: Dynamic Tail-Based Distributed Trace Sampler
 
+**Status**: `APPROVED`  
+
 ## 1. Overview & Objective
 
 This specification establishes the architectural standard for autonomous tail-based distributed trace sampling across the EOS fleet. Operating on the Google Dapper and Honeycomb tail-sampling doctrines, this sampler captures 100% of anomalies, errors, and tail latency stragglers while discarding over 99.9% of nominal repetitive spans. By evaluating sampling decisions at the conclusion of a trace rather than its inception, this system eliminates critical diagnostic blindness, bounds egress bandwidth, and guarantees cryptographic auditability.

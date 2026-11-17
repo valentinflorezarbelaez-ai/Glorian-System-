@@ -1,5 +1,7 @@
 # SPEC-337: Autonomous EUV Optical Proximity Correction & Inverse Lithography Wavefront Engine (EUV-OPC)
 
+**Status**: `APPROVED`
+
 ## 1. Functional Requirements (EARS Syntax)
 
 - **FR-1 (Event-Driven)**: CUANDO se evalúa el frente de onda en la pupila de un sistema EUV ($\lambda = 13.5\text{ nm}$, $\text{NA} \in [0.25, 0.55]$) a partir de coeficientes de polinomios ortonormales de Zernike ($Z_4$ desenfoque, $Z_5/Z_6$ astigmatismo, $Z_7/Z_8$ coma, $Z_{11}$ aberración esférica), EL SISTEMA calcula el error de fase RMS $\sigma_\phi$, la razón de Strehl de Maréchal $S = \exp(-\sigma_\phi^2)$ y dictamina si el sistema cumple el límite de difracción de Maréchal ($S \ge 0.80$).

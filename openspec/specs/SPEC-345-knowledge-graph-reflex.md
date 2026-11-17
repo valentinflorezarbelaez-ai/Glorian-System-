@@ -1,5 +1,7 @@
 # SPEC-345: Closed-Loop Knowledge Graph & Semantic Reflex Engine
 
+**Status**: `APPROVED`
+
 ## 0. Intent
 
 Modern agentic ecosystems require a living, bitemporal semantic knowledge graph connecting specifications, invariants, source files, fleet repositories, architectural decisions, and findings. When any graph entity mutates, the system must deterministically detect circular dependencies, compute topological DAG schedules, calculate blast radii, and dispatch bounded semantic reflex hooks. This specification defines an autonomous, pure Layer-0 Knowledge Graph and Semantic Reflex Engine (`EosKnowledgeGraphReflexCore`) that guarantees cycle-free execution DAGs, bounded reflex propagation, and topological certainty.

@@ -1,5 +1,7 @@
 # BASE SPECIFICATION: UNTRUSTED BROWSER DATA (SPEC-136)
 
+**Status**: `APPROVED`  
+
 ## 1. Scope
 
 Governs rendering and recovery of data originating from user input, browser storage, URL parameters, and API responses in the EOS landing page and interactive control plane.

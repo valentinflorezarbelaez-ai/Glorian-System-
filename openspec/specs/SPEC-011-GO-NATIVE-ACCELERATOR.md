@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: GO NATIVE TITAN ACCELERATOR (SPEC-011)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs high-concurrency native Go execution, goroutine-based audio streaming buffers, SIMD acoustic vector operations, and Spotify BaRT (Bandits for Recommendations as Treatments) algorithms.

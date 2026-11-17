@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: LMAX DISRUPTOR LOCK-FREE RING BUFFER & SPEED ENGINE (SPEC-022)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs high-throughput, zero-allocation in-memory event streaming, lock-free circular ring buffer sequencing, 64-byte cache line padding to prevent false sharing, and nanosecond structural byte scanning across the EOS control plane and sovereign fleet.

@@ -1,5 +1,7 @@
 # SPEC-340: Sovereign Closed-Loop Repository Autopilot Engine
 
+**Status**: `APPROVED`
+
 ## 1. Functional Requirements (EARS Syntax)
 
 - **FR-1 (Event-Driven)**: CUANDO se invoca `ingestRepositoryOntology` sobre un repositorio válido, EL SISTEMA lee `docs/projects/registry.json`, `docs/quality/mutation-budget.json` y `docs/evidence/TLC_RECEIPT.json` e ingesta proyectos de flota, módulos ratificados por mutación y modelos formales verificados dentro de `EosOntologicalHypergraphCore`, generando hiperaristas relacionales y un recibo bitemporal auditado.

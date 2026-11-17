@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: SAMAELIAN CYBER-THEURGIC SYNTHESIS — IBM SYSPLEX & NVIDIA WARP (SPEC-021)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs the deep integration of the Samaelian Gnostic Alchemical Doctrine (Law of Octaves, Two Conscious Shocks, Three Factors of Consciousness) with the apex architectures of IBM (Parallel Sysplex 99.99999% Seven-Nines Availability, Two-Phase Commit XA transactions, live microcode hot-patching) and NVIDIA (CUDA 32-thread SIMT Warp Scheduler, lock-free warp shuffling, and zero-allocation Tensor Core matrix operations).

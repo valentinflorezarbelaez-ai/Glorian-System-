@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: SPOTIFY XIRP & AUDIO CODEX (SPEC-004)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs Spotify-grade engineering excellence, Backstage RFC-42 Golden Paths, ITU-R BS.1770 -14 LUFS loudness normalization, and 8D acoustic vector recommendation math.

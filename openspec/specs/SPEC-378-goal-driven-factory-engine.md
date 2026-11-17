@@ -1,6 +1,6 @@
 # SPEC-378: Goal-Driven Development Loop, Immutable Verifier Guard, Parallel Worktree Software Factory & 3-Gate Pre-PR Engine
 
-**Status:** APPROVED  
+**Status**: `APPROVED`
 **Version:** 1.0.0  
 **Phase:** 8 (Layer-0 Pure Agentic Harness & Software Factory Governance)  
 **TLA+ Model:** Model 121 (`docs/formal/GoalDrivenFactory.tla`)  

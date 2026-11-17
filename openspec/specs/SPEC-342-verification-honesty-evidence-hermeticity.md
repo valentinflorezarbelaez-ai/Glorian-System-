@@ -1,5 +1,7 @@
 # SPEC-342: Verification Honesty, Evidence Hermeticity & Measured Telemetry
 
+**Status**: `APPROVED`
+
 ## 0. Intent
 
 A verification gate is only as trustworthy as its weakest `PASS`. This specification removes every

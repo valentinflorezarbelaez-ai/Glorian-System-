@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: FLEET GOLDEN PATH ELEVATOR (SPEC-014)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs the systematic discovery, architectural audit, and elevation of all fleet repositories (including Aberamentho, Portafolio, Performance Talent Group, and EOS Sovereign Control Plane) to Spotify Backstage RFC-42 Golden Path standards.

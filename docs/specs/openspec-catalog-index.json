@@ -1,223 +1,223 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
   "totalSpecs": 378,
-  "catalogSha256": "4560e777793eea9936043649038a92f0c817358b7e7d4a467ff0955ca828e9ab",
+  "catalogSha256": "85e8eb7327ea519829edd9789b5b6338faf56a48bd08e5e48482e2274564bdca",
   "specs": [
     {
       "id": "SPEC-001",
       "title": "OPENPEC BASE SPECIFICATION: CONSTITUTIONAL GOVERNANCE (SPEC-001)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-001-CONSTITUTION.md",
-      "sha256": "5c8df1a1ffc5f30af49d1ae4c26add4f57c023b8aa740c74a606e2aa24dd5edb"
+      "sha256": "0c6d6b3e634e56cbff0c944b5f53cd132dcbeef2fc223cc1bc4c03958d1fdf5d"
     },
     {
       "id": "SPEC-002",
       "title": "OPENSPEC BASE SPECIFICATION: HEXAGONAL LAYER-0 PURITY (SPEC-002)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-002-HEXAGONAL-L0.md",
-      "sha256": "69b707cdb43ab8fb483be3a26c581e0498cf53e1048d84e9fa8c9a1592afeeb9"
+      "sha256": "9806d0b41dad668240ee3565ac34623ab3b9721b364c29c70a9991ae4c46d64e"
     },
     {
       "id": "SPEC-003",
       "title": "OPENSPEC BASE SPECIFICATION: XIRP-GRADE WORKTREE ISOLATION (SPEC-003)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-003-XIRP-WORKTREE.md",
-      "sha256": "9811f70ec4bbaa63974a38882ab4fc3b045808c3dee97837697f9e6a3a0584d5"
+      "sha256": "0e95f043d041f78b6f5c512fac79fa639a1dffcbc9e03bd9e1837151212bfb33"
     },
     {
       "id": "SPEC-004",
       "title": "OPENSPEC BASE SPECIFICATION: SPOTIFY XIRP & AUDIO CODEX (SPEC-004)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-004-SPOTIFY-XIRP-ENGINE.md",
-      "sha256": "7d26f20862580060bef90c8520f94a7581f227878e31bd952350a22e03a9aadc"
+      "sha256": "a86cb522aa1ed73ff24ecf51ed7780c6666a76dec63b9266d1ec62bd50b4ea40"
     },
     {
       "id": "SPEC-005",
       "title": "OPENSPEC BASE SPECIFICATION: LOCAL HEALER BOUNDARIES (SPEC-005)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-005-AUTONOMOUS-HEALER.md",
-      "sha256": "7b453ac43f7ed7ae63e442cedca18510d4453873debc8081a95a38f5d991e7b6"
+      "sha256": "50652534fe5336bda6ce73bc2413e2cbb5d946c94adbd97ad30f0fb4f8bd85a8"
     },
     {
       "id": "SPEC-006",
       "title": "OPENSPEC BASE SPECIFICATION: SOVEREIGN TITANS MATRIX (SPEC-006)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-006-TITANS-MATRIX.md",
-      "sha256": "c35a8efe31d18b258e0c3eace3bdd21999cdcc87548242544e33e8e1c5b5116e"
+      "sha256": "58a847a602f0253a8ed69cfd435e19a869bfeaa38bfd40fe92664b8e80ddfd1f"
     },
     {
       "id": "SPEC-007",
       "title": "OPENSPEC BASE SPECIFICATION: TURBO ENGINE & SEMANTIC CODE GRAPH (SPEC-007)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-007-TURBO-SEMANTIC-GRAPH.md",
-      "sha256": "e0be5dd855313583fe688399579f48299123e97d9413acb6595a0355ab9710db"
+      "sha256": "5172c88f6dea42cda1a4393531110c0c35ca034900a391a2ccc64e51d289c09f"
     },
     {
       "id": "SPEC-008",
       "title": "OPENSPEC BASE SPECIFICATION: COGNITIVE EVALUATION & SAST (SPEC-008)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-008-COGNITIVE-EVAL.md",
-      "sha256": "7ca3738ed15b77be0b6bcb1b30d77bb2ae22428dbd002ab701ef3c1153f5e255"
+      "sha256": "0c1ce739c08d73c123debfe776e0955ace5c4e475bde0886cd5c9f54d5f2f772"
     },
     {
       "id": "SPEC-009",
       "title": "OPENSPEC BASE SPECIFICATION: JARVIS SOVEREIGN MONAD (SPEC-009)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-009-JARVIS-SOVEREIGN-MONAD.md",
-      "sha256": "e511f4ec05bc2c1d8568052df02c442e1be9b0dfabc0f93ee420dc12daa6c712"
+      "sha256": "aa38c110027d054b56db92beb402eecccc0fbb120733b8e492949f7b7689c4b8"
     },
     {
       "id": "SPEC-010",
       "title": "OPENSPEC BASE SPECIFICATION: SOVEREIGN AKASHIC MEMORY & ENGRAM SYNTHESIS (SPEC-010)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-010-AKASHIC-MEMORY.md",
-      "sha256": "0708917f1507c46d7561f7dda6c4b7605c240c2113d825b942491b8a6a5e89c7"
+      "sha256": "e9b3eea44323f321e76ce232d86c474a7b6c6ec19bfb9433b33cfc82b11b621a"
     },
     {
       "id": "SPEC-011",
       "title": "OPENSPEC BASE SPECIFICATION: GO NATIVE TITAN ACCELERATOR (SPEC-011)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-011-GO-NATIVE-ACCELERATOR.md",
-      "sha256": "85bc496c364f49a5c0242ecc6527742138cc52f58e05474d1ec4afe2224a1788"
+      "sha256": "ebb25e71ad825f85e8e19bc0eea34bdd467bbc20ac2b5f1e901e71aab8d51564"
     },
     {
       "id": "SPEC-012",
       "title": "BASE SPECIFICATION: LOCAL SDLC PLANNING TOOLS (SPEC-012)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-012-SPOTIFY-AGENTIC-FACTORY.md",
-      "sha256": "79e07a371c0f5f73b2308f652609e39ae7a9770d93c103b36079506a09d26bcf"
+      "sha256": "9b62a4f23a215e7c7af7db33e1ae998a297fe782aec7ee97175f3654041d8914"
     },
     {
       "id": "SPEC-013",
       "title": "OPENSPEC BASE SPECIFICATION: AUDIO DSP KERNEL & TRUE PEAK LIMITER (SPEC-013)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-013-AUDIO-DSP-KERNEL.md",
-      "sha256": "60518ea45636c3e6514a6f16bbca0e7114da091d7f883c44c9195601d25d79e8"
+      "sha256": "4b3844a031dc77218a0ae166007e2f62ec78ba7e794ca556b6c75821db8ba401"
     },
     {
       "id": "SPEC-014",
       "title": "OPENSPEC BASE SPECIFICATION: FLEET GOLDEN PATH ELEVATOR (SPEC-014)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-014-FLEET-GOLDEN-PATH-ELEVATOR.md",
-      "sha256": "d6a0a4f362457dc55aa6ee572ac31218d580d8a15e64d71f4170689028ab8b25"
+      "sha256": "59f752f4b0fe560d35948f615035e09a86ae85bcbf68b049d74ca28abff991ed"
     },
     {
       "id": "SPEC-015",
       "title": "OPENSPEC BASE SPECIFICATION: SPOTIFY APOLLO / HERMES RPC & EVENT MESH (SPEC-015)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-015-APOLLO-HERMES-MESH.md",
-      "sha256": "0435b78bc1e9cd1ed4a27172198da1b01cea80b746cf2ab573664024f5b95dd1"
+      "sha256": "3d16dbb4da897142a8be690d2ae9898b86890dbaf4c6dbb053b701adb776b782"
     },
     {
       "id": "SPEC-016",
       "title": "OPENSPEC BASE SPECIFICATION: SPOTIFY & NUBANK DUAL-ENGINE FINOPS ARCHITECTURE (SPEC-016)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-016-FINOPS-GO-NUBANK-SPOTIFY.md",
-      "sha256": "9d630f238b31369d47af8c634fd60cadb0c23902204a4e96596dd35c080b4f82"
+      "sha256": "24f8da5fea7d241594c992c1f77d3395dcf937d0f67fd15c42b29f2bf2ecb9a4"
     },
     {
       "id": "SPEC-017",
       "title": "OPENSPEC BASE SPECIFICATION: GAPLESS DJ AUTOMIX & 3-BAND CROSSFADER (SPEC-017)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-017-GAPLESS-DJ-CROSSFADER.md",
-      "sha256": "4ea7023c620fa3063880e6fb9deee9ea97c86ac5547b05b008428615c96b4e40"
+      "sha256": "faa1b1938a8e9fe5787a754d072eff8d7e26004c619193f2309ace24b162c19c"
     },
     {
       "id": "SPEC-018",
       "title": "OPENSPEC BASE SPECIFICATION: REAL-TIME ACOUSTIC FEATURE STORE (SPEC-018)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-018-ACOUSTIC-FEATURE-STORE.md",
-      "sha256": "d48fa26df80af7828dcc5c378cec8eda3100ebf8e72e1c5633bb996b69c6e443"
+      "sha256": "b770a2300ce99260e5e9dc5677b92749342076310923c76a0ceb9e1462dab3a6"
     },
     {
       "id": "SPEC-019",
       "title": "OPENSPEC BASE SPECIFICATION: UNIVERSAL POLYGLOT REPOSITORY ADAPTER (SPEC-019)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-019-UNIVERSAL-POLYGLOT-ADAPTER.md",
-      "sha256": "7c05d62b22d9ec612727202e180d5abb31063ade0a57b00191202e2ac6cf8d8e"
+      "sha256": "e0e07b21ad65102756d471c70e2e650a60064beb4a79f4d32a1648660291fbd9"
     },
     {
       "id": "SPEC-020",
       "title": "OPENSPEC BASE SPECIFICATION: GLOBAL EDGE ANYCAST ARBITER & DISTRIBUTED MESH (SPEC-020)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-020-GLOBAL-EDGE-ARBITER.md",
-      "sha256": "8bc279f2506377d71f30ef7487f644144651d45bbf1d5dc7fb8193be647ed811"
+      "sha256": "f200630ecae41e483996af62bb7a694941078d6c8f3be7a173bbda6e2211dde6"
     },
     {
       "id": "SPEC-021",
       "title": "OPENSPEC BASE SPECIFICATION: SAMAELIAN CYBER-THEURGIC SYNTHESIS — IBM SYSPLEX & NVIDIA WARP (SPEC-021)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-021-SAMAEL-IBM-NVIDIA.md",
-      "sha256": "12645744de390405471f634a94a65402c8b2991d7fe5c573b932f7485c424b5b"
+      "sha256": "cddfc7f9a278a1f021a7b6d06574ca00c0d9e35a69eca5961236486d4f324c1a"
     },
     {
       "id": "SPEC-022",
       "title": "OPENSPEC BASE SPECIFICATION: LMAX DISRUPTOR LOCK-FREE RING BUFFER & SPEED ENGINE (SPEC-022)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-022-DISRUPTOR-RING-BUFFER.md",
-      "sha256": "3bfe9a48cf3d09e0bf6e0485ea6fe161c3aac153676201caa26564bf8bf0e299"
+      "sha256": "d983993f744a448c5cd0fa7024a9c42ee365997b7d8a0fb1ae5277499f1f113f"
     },
     {
       "id": "SPEC-023",
       "title": "OPENSPEC BASE SPECIFICATION: NUBANK INSTITUTIONAL ENGINEERING CODEX (SPEC-023)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-023-NUBANK-INSTITUTIONAL-CODEX.md",
-      "sha256": "852dae01ea986ba18631ac9e68b83ce9cd3b6a2f64dcd793ee0683b897b69630"
+      "sha256": "74b6a260423752a12a77a3e8aa96d714299bdf80551c59ec5b23063858e0c14f"
     },
     {
       "id": "SPEC-024",
       "title": "OPENSPEC BASE SPECIFICATION: SPOTIFY INSTITUTIONAL ENGINEERING CODEX (SPEC-024)",
-      "status": "UNKNOWN",
+      "status": "STABLE_AND_ACTIVE",
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-024-SPOTIFY-INSTITUTIONAL-CODEX.md",
-      "sha256": "1c3d52634a047919476f7fd6f3f218f7a3ab5b3e8ab7a62a3932ea796600ab7c"
+      "sha256": "07f1d0e0a1f4b9ad92b72d35f04f0ba7ee136128eb4706e541d87d6a5d6a4edc"
     },
     {
       "id": "SPEC-025",
@@ -996,101 +996,101 @@
     {
       "id": "SPEC-111",
       "title": "Distributed Adaptive Hedged Requests & Deadline Propagation Mesh",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-111-HEDGED-REQUESTS-DEADLINE-MESH.md",
-      "sha256": "5bdbe213da1394847fe56ca0dae0e7a23a4c15b3fd9299ace6abc3974899fec6"
+      "sha256": "6fca410ef02850677e3a39f8e48758a13f100a04b86cdc7a5dd7d1e10847123d"
     },
     {
       "id": "SPEC-112",
       "title": "Distributed Adaptive Concurrency Control & Priority-Tier Load Shedding",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-112-ADAPTIVE-CONCURRENCY-GOVERNOR.md",
-      "sha256": "f84175ef918b1228a2f3c10ae3485ace286e99411c42e279601752fd1606718b"
+      "sha256": "5311ceb305678c556e1baa26efa95e2130e0880756eafff9573f744192052905"
     },
     {
       "id": "SPEC-113",
       "title": "Dynamic Tail-Based Distributed Trace Sampler",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-113-TAIL-BASED-TRACE-SAMPLER.md",
-      "sha256": "b384ea234c0dd0c98853c83338c8fe8f69eaf9f888b9e1e1e5ee9648dfae072e"
+      "sha256": "6f85a328a3d578fac825e7ec4e10a3e64b56e6ca1b5b6b82ef75c61d9bb22713"
     },
     {
       "id": "SPEC-114",
       "title": "Predictive Failure Correlator & Closed-Loop Auto-Remediation Engine",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-114-PREDICTIVE-REMEDIATION-ENGINE.md",
-      "sha256": "0f5440ad33c3e5c393357ffc5f598b97513515f9206f90af10c4285c66de38eb"
+      "sha256": "df34927b91259437917eef096aaa4e5858c9fcaa4ca14bfdc2caf439b56b1a6a"
     },
     {
       "id": "SPEC-115",
       "title": "Unified Autonomous Operating System Kernel & Omni-Control Orchestrator",
-      "status": "PROPOSED",
+      "status": "APPROVED",
       "frCount": 5,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-115-UNIFIED-KERNEL-ORCHESTRATOR.md",
-      "sha256": "f331c27da28a601724f202298f5ed5bc3bf9320361ebdb6a96202b6035b8e25a"
+      "sha256": "79b9d1089f8361d05b72a67b2cb0a3f4c47318b2692d5d78050b87aab086215b"
     },
     {
       "id": "SPEC-116",
       "title": "Big Tech Transcendence Nexus & Autonomous Multi-Pillar Engine",
-      "status": "PROPOSED",
+      "status": "APPROVED",
       "frCount": 7,
       "bddCount": 7,
       "file": "openspec/specs/SPEC-116-BIG-TECH-TRANSCENDENCE-NEXUS.md",
-      "sha256": "63e88673bbcbc82866b42530ed65be287a846adc02333335acb8317a033d82e5"
+      "sha256": "aed654c550aafd2c1cc55188a304d84fa4ce663311ac2c1eec97d5c55a9cfc73"
     },
     {
       "id": "SPEC-117",
       "title": "Elite Autonomous Design Engineering System & Multi-Archetype Studio",
-      "status": "PROPOSED",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-117-ELITE-DESIGN-STUDIO-ENGINE.md",
-      "sha256": "12e87f8f5961c8e7ac76ffcc014790a225fae00a9e5b0c24ba64e641c28bd6da"
+      "sha256": "8ed7e060f8ded61865953e592ee9b2b5b84f265704ff2ba7767b76c5c5bc0e0c"
     },
     {
       "id": "SPEC-118",
       "title": "Autonomous Agentic FinOps Governor & Cognitive Stagnation Breaker",
-      "status": "PROPOSED",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-118-AGENTIC-FINOPS-GOVERNOR.md",
-      "sha256": "54a501776ba7395918478e058ea644ac69519eadf6db8384e2a965f7d96c8b14"
+      "sha256": "f3c8c0fdaf813d8d43476454622d45945406958fa6e6335ff0fb7062613ca57b"
     },
     {
       "id": "SPEC-119",
       "title": "Planetary Monorepo Engine & Aerospace Mission-Critical Governor",
-      "status": "PROPOSED",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-119-PLANETARY-MONOREPO-GOVERNOR.md",
-      "sha256": "4037e3d4730fcdc18407faaf88a87b92ada4659b1c38914a1d0c38836605a111"
+      "sha256": "a5d429770c61e449341cf906b48d9a897b3c95a9554751cf178b58bb1fe37ea3"
     },
     {
       "id": "SPEC-120",
       "title": "Autonomous Cross-Fleet Neural Synapse & Dynamic Knowledge Synthesis",
-      "status": "PROPOSED",
+      "status": "APPROVED",
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-120-CROSS-FLEET-NEURAL-SYNAPSE.md",
-      "sha256": "73afff071e0c036f602700255f233cf93257399641bcd1697e18e135de870fc4"
+      "sha256": "41e456b5a727ec14b3c6df5feb28b5f7f3ebceed567d38c2833cd998a900d2f8"
     },
     {
       "id": "SPEC-121",
       "title": "Planetary Multi-Cloud Disaster Resilience & Auto-Evacuation Mesh",
-      "status": "PROPOSED",
+      "status": "APPROVED",
       "frCount": 5,
       "bddCount": 5,
       "file": "openspec/specs/SPEC-121-PLANETARY-MULTI-CLOUD-EVACUATION.md",
-      "sha256": "1feafc2710ad65f797ed7e2facb2e7a2b614d891e571478b8f95bd2d3db7b5a2"
+      "sha256": "3f139d693c1802ad17f18bc445414478dda030f7aaed412552fcc220e672cc7c"
     },
     {
       "id": "SPEC-122",
@@ -1108,7 +1108,7 @@
       "frCount": 11,
       "bddCount": 10,
       "file": "openspec/specs/SPEC-123-FLEET-SECRET-SCAN-GATE.md",
-      "sha256": "10ea2111186bc15e036faf9bc7e7206ed2673c9458c41790da8efa6a3fb9e4e5"
+      "sha256": "696603dd343cf73337f0fb90ca7c1f7a5a08cb9453571ff5a09f77ba345bfec8"
     },
     {
       "id": "SPEC-124",
@@ -1117,7 +1117,7 @@
       "frCount": 8,
       "bddCount": 7,
       "file": "openspec/specs/SPEC-124-AUTONOMOUS-FLEET-REGISTRY-SYNC.md",
-      "sha256": "971f9425b8ddf8ff99b3dd26f65527bc19ed1315be17c5931049412945a1736c"
+      "sha256": "6be2d878ca9dc86aaefcee2383695e2bf320b87f24afdec5f77e4b6b248d2a2b"
     },
     {
       "id": "SPEC-125",
@@ -1167,11 +1167,11 @@
     {
       "id": "SPEC-130",
       "title": "Glorian Sovereign Identity, Solar Design Archetype & Unified CLI Elevation",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 1,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-130-GLORIAN-SOVEREIGN-IDENTITY-ELEVATION.md",
-      "sha256": "2fbfb970bc8b75b7730c0ac84c2e519f99a180c43bdaa44b741a42d312330f3a"
+      "sha256": "947af31700c309878f54562b7fbbaef2f819dfd7ccf2c7d780230e5b7bf075ed"
     },
     {
       "id": "SPEC-131",
@@ -1221,29 +1221,29 @@
     {
       "id": "SPEC-136",
       "title": "BASE SPECIFICATION: UNTRUSTED BROWSER DATA (SPEC-136)",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-136-UNTRUSTED-BROWSER-DATA.md",
-      "sha256": "dd24ccad912e0dd7261515c16464fe79d24729ff9f64d20d171048271e416338"
+      "sha256": "09608ee3b9e6919cb0d9209d325e3ecb46f3ba74389b3b3b072316201c1e01a5"
     },
     {
       "id": "SPEC-137",
       "title": "BASE SPECIFICATION: VERIFIABLE API RESULTS (SPEC-137)",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-137-VERIFIABLE-API-RESULTS.md",
-      "sha256": "8519bacab7009efbe52b07db019370562d4efc8de8776498e8f51a624ce1a522"
+      "sha256": "b026d679125cd853b25a688a908420e7f1e63e2c7d8eca16bda36e93b09d18f1"
     },
     {
       "id": "SPEC-138",
       "title": "BASE SPECIFICATION: SAFE AGENT HARNESS BOUNDARIES (SPEC-138)",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-138-SAFE-AGENT-HARNESS.md",
-      "sha256": "037ee66809a54d84ea9891b4495bb9a7ef4838dc7e7476038e441ff88b2aec5f"
+      "sha256": "b13a1ffacaffa41ee24339c746ef6d8405342ccc4110fa6e7325eb639a3b4297"
     },
     {
       "id": "SPEC-139",
@@ -2463,74 +2463,74 @@
     {
       "id": "SPEC-274",
       "title": "Kubernetes Gated Deployment Pipeline & k6 SLO Load Testing Engine",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-274-K8S-DEPLOYMENT-AND-K6-LOADTEST.md",
-      "sha256": "0d234f7bbec0bdb00f7d1497828415b03d7f9d20f59d1f00061fb2d6f73b267e"
+      "sha256": "bb4d92d38fe8f223e0611cdf40c8aeed94c9defd77b61d211da1bd38856618c4"
     },
     {
       "id": "SPEC-275",
       "title": "Helm Packaging & Release Governor",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-275-HELM-RELEASE-GOVERNOR.md",
-      "sha256": "1a535fe9bf7b39233a946ff4cef2173ef58f11b8a4276bf8ad1c8633744e58e2"
+      "sha256": "b833ce7082359b8144d51c92092953a46389745a5f4947949e45c5eba9191350"
     },
     {
       "id": "SPEC-276",
       "title": "Terraform / OpenTofu Infrastructure as Code (IaC) Governor",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-276-TERRAFORM-IAC-GOVERNOR.md",
-      "sha256": "7d1cf2cc3d4e8337316c110f02ca36d1f8bd0b9b9e90d5a695996e4bd228a1a6"
+      "sha256": "19d47ba10d39ca77948858d16323f50736b1f6449d6d1d2af02bbb6a2b89882c"
     },
     {
       "id": "SPEC-277",
       "title": "ZERO-DOWNTIME DATABASE MIGRATION GOVERNOR & DDL SAFETY ENGINE",
-      "status": "PROPOSED",
+      "status": "APPROVED",
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-277-DATABASE-MIGRATION-GOVERNOR.md",
-      "sha256": "267dddafe0b86af299d9cc6fbbff8bca3f73e9cb11b34aa4739256e4f35151d6"
+      "sha256": "1996f165f388d0d844533730490d475f4b334853934475c41ffa457891f23a84"
     },
     {
       "id": "SPEC-278",
       "title": "OPENTELEMETRY DISTRIBUTED TRACING & HIGH-THROUGHPUT OTLP COLLECTOR GATEWAY",
-      "status": "PROPOSED",
+      "status": "APPROVED",
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-278-OTEL-COLLECTOR-GATEWAY.md",
-      "sha256": "6e5edca99e86a251475ad8a4acbce953afe31462e7173455ca65485e65773842"
+      "sha256": "bb52eb65b3188a4680ac0d5f662154f2ffb7e65a5095213bc35ff5072712f5e3"
     },
     {
       "id": "SPEC-279",
       "title": "CHAOS ENGINEERING & CIRCUIT BREAKER FAULT INJECTION GATEWAY",
-      "status": "PROPOSED",
+      "status": "APPROVED",
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-279-CHAOS-CIRCUIT-BREAKER.md",
-      "sha256": "9228f5dd0401ded2d22e2ceaf1d62a5454049456602e8fbd66eed2346064d0ee"
+      "sha256": "ca8952ea59a37a3d6af73d1d760adcfbddeda7e6fb51181f3dc2c79a1b9a7d2f"
     },
     {
       "id": "SPEC-280",
       "title": "BAYESIAN DYNAMIC CANARY EVALUATION & AUTOMATED ROLLBACK GATEWAY",
-      "status": "PROPOSED",
+      "status": "APPROVED",
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-280-BAYESIAN-CANARY-EVALUATION.md",
-      "sha256": "98c2a604be1220c2330211c2814ecb5dcd106a4545ef6756d4d00643de73a37c"
+      "sha256": "bde41d393516480c119e9bd07387f692412dc7fdce480e2163983552c7444aa6"
     },
     {
       "id": "SPEC-281",
       "title": "BITEMPORAL EVENT STORE & CHANGE DATA CAPTURE (CDC) GOVERNOR",
-      "status": "PROPOSED",
+      "status": "APPROVED",
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-281-BITEMPORAL-EVENT-STORE-CDC.md",
-      "sha256": "697139c5bcf88ab1465b9c793c5382beb7486d7940ba60f09857eed04dff5872"
+      "sha256": "3e86b009b1bd3be0505897cafc3ccb6b006f2ab9e94d184748a81a70369c113e"
     },
     {
       "id": "SPEC-282",
@@ -2841,11 +2841,11 @@
     {
       "id": "SPEC-316",
       "title": "Vector LSM-Tree Segment Storage Engine, Sparse Block Index & Background Compaction",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-316-vector-lsm-segment-storage.md",
-      "sha256": "710b6fec21bbb0a6569184a1bd10ed50ec510da472d3bbd2ffd4ac45523cd362"
+      "sha256": "ba2f01d276ec7e493cc5a450d014b121ead43e6eaaeb38b9573b07bb62f9b121"
     },
     {
       "id": "SPEC-317",
@@ -2886,20 +2886,20 @@
     {
       "id": "SPEC-321",
       "title": "Megatron-LM Style Tensor Parallelism (Column & Row Linear Sharding)",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-321-megatron-tensor-parallelism.md",
-      "sha256": "cfcc49055a18e0140bf8a9104b64bf21dc808a0ecd090005e631b46618c29afd"
+      "sha256": "ec21d65a96508ca9233d9c845302f90d2a42e2e8a2c00cb38f8ed8a533aa2c4e"
     },
     {
       "id": "SPEC-322",
       "title": "Pipeline Parallelism Engine (1F1B Interleaved Activation Schedule)",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-322-pipeline-parallelism-1f1b.md",
-      "sha256": "f97a3300d5d49a460733bcd416908ed074f2261fa4cb7b1cee3ae4e30fb11ebe"
+      "sha256": "ca6607c0481d63f7dd46facd60ebc1e4f40ba8108aaec093570e8bbd55116f6b"
     },
     {
       "id": "SPEC-323",
@@ -2985,155 +2985,155 @@
     {
       "id": "SPEC-332",
       "title": "Disaggregated Prefill & Decode Serving Engine (PD Separation, Chunked Prefill & Zero-Copy KV Transfer)",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-332-disaggregated-prefill-decode.md",
-      "sha256": "87c3eb8d9c3a757ade171a8bdd728c666af24cc78887204da024812bdfc24bcb"
+      "sha256": "edcbb9b77e01e6865c68adcb2bba7ef401bfc42d0c23abe0a0769c3e95f6cee1"
     },
     {
       "id": "SPEC-333",
       "title": "Autonomous Ontological Hypergraph & Bitemporal Entity Resolution Engine",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-333-ontological-hypergraph.md",
-      "sha256": "f8de060dae380ccf24cb90f257cea9762cae28d0b6284fa6a79a6b8b6f7104cb"
+      "sha256": "d560b0076d2ea94df6ab742c433167e56d9655208090662ef8a2d455da367ec8"
     },
     {
       "id": "SPEC-334",
       "title": "Deterministic Discrete-Event Simulation Hypervisor & Time-Travel Fault Injection Engine",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-334-discrete-event-simulation-hypervisor.md",
-      "sha256": "63bfecb02be75158f683c6fe3f574f977e0eb650ee365c5624efec6f4985de19"
+      "sha256": "49b3dc7facf2fbe1b5de179bb1cd6a213fbe3307f3c39db61acf01554e570104"
     },
     {
       "id": "SPEC-335",
       "title": "Threshold Secret Sharing & Ring-LWE Homomorphic Secure Aggregation Engine (PQ-MPC)",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-335-post-quantum-threshold-mpc.md",
-      "sha256": "07a1b79d081be8a59c085c84874aa974e1e6ddf76c0a6edd45ff2eb68d4f6e27"
+      "sha256": "8c8c061c14da26fa8e9a38a80a35cd4e719219419b7142cbb7cf55dd2e0430e0"
     },
     {
       "id": "SPEC-336",
       "title": "Autonomous Physics-Informed Neural Network (PINN) & Symplectic Hamiltonian PDE Integrator",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-336-physics-informed-hamiltonian-pde.md",
-      "sha256": "30ef5710198fe0651e07948e2e5d4014e16fdb1d20f7c93c0579e521687aa8ba"
+      "sha256": "a2a0b3bd6d009bdda4f198694bc5e08359f0ee8f946cefb7a66a39e13cc74e01"
     },
     {
       "id": "SPEC-337",
       "title": "Autonomous EUV Optical Proximity Correction & Inverse Lithography Wavefront Engine (EUV-OPC)",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-337-euv-inverse-lithography-wavefront.md",
-      "sha256": "20f82675f51aff113c143e6510674d179cce0e50ae1b0358d5b08dba8654b3a1"
+      "sha256": "4c748ba3627b1532719187d9cc3881bec93e2777cd41aea4f155475db8bc3d53"
     },
     {
       "id": "SPEC-338",
       "title": "Autonomous Causal Discovery & Structural Equation Modeling Engine (SCM)",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-338-causal-discovery-structural-equation.md",
-      "sha256": "2033b4d05c32bd58a38b6b42c3d3b9a44e0b9b950957d920967f71b182a38c67"
+      "sha256": "7458cf668c8b0307489d8bd69008d840940b73ec33b20aa8039b06a50be995c2"
     },
     {
       "id": "SPEC-339",
       "title": "Agentic Harness Engineering, First-Pass PR Yield & Token Rework Telemetry Engine",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 9,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-339-agentic-harness-yield.md",
-      "sha256": "0e2ad108cd2c90893baf37d833d376e6dedeb97fcf569c6a14adf5a93960bb49"
+      "sha256": "bf16e3125f7193d1dc0ab21b990b64dd9abb5e2fa5e41a7f1e017be1a138b072"
     },
     {
       "id": "SPEC-340",
       "title": "Sovereign Closed-Loop Repository Autopilot Engine",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-340-closed-loop-repo-autopilot.md",
-      "sha256": "e035ae07648720f85ae0021daf2dc8c84e4349966b0411a68b9db10feaae2d99"
+      "sha256": "c03425b92e9a8ca3941204d9a3b434dddb58f6ea474a9dd95f248739c768e2e7"
     },
     {
       "id": "SPEC-341",
       "title": "Metamorphic, Differential & Structural-Shrinking Blind-Spot Hunter Engine",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-341-metamorphic-differential-blindspot.md",
-      "sha256": "6f20285b899f96f92982febff40d6cc81146e4726fb85a72ddca5e540c68a759"
+      "sha256": "dc396f8a2b2a2d0fa8396d01cf76fbff728f685e430a36a5870496130758c1a6"
     },
     {
       "id": "SPEC-342",
       "title": "Verification Honesty, Evidence Hermeticity & Measured Telemetry",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 10,
       "bddCount": 9,
       "file": "openspec/specs/SPEC-342-verification-honesty-evidence-hermeticity.md",
-      "sha256": "9bf6de2d4fc3edcf7f9d05186d90db6ff3e63788a76e2a0554ee1f76ee074fbb"
+      "sha256": "c13bff0796ab918bbb9e7628d7b22a76f5498372a16e7262c8507c09ea40246f"
     },
     {
       "id": "SPEC-343",
       "title": "Autonomous Sovereign Web Application & High-Converting SaaS Compiler",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 7,
       "bddCount": 7,
       "file": "openspec/specs/SPEC-343-sovereign-web-compiler.md",
-      "sha256": "2be59413ed5b7593498ac53b930d5260be64c9f76c54e90a5ada50f9c872c00d"
+      "sha256": "7e98e3117eea63b5099066ff0bb363e497609e22c936efaca449863387f00a74"
     },
     {
       "id": "SPEC-344",
       "title": "Autonomous Agentic Context Engine & Multimodal Prompt Ingestion",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-344-agentic-context-engine.md",
-      "sha256": "a917ea083446b8881d5963b9d2c8c5f94a45213737c3e8586a005887a9dbe672"
+      "sha256": "fe63bfae9fcace7ceffd5d80946868da7ce60cff813b1906019b791e935b3c5b"
     },
     {
       "id": "SPEC-345",
       "title": "Closed-Loop Knowledge Graph & Semantic Reflex Engine",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 8,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-345-knowledge-graph-reflex.md",
-      "sha256": "ad89deaf89ac7f278cd424da688a36766cc903490fe7061f8c0d0273a2257222"
+      "sha256": "b309296e642e0e90f7c8feacc6bb5e51dabc3fe6bac1cd76d93ebbd845e3108b"
     },
     {
       "id": "SPEC-346",
       "title": "Autonomous Multi-Agent Swarm Orchestrator with Byzantine Fault Tolerance",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-346-agentic-swarm-bft.md",
-      "sha256": "455841f4966690f2d229e1cc84fd6bc9cb65874bf5ff0241847948251c84cd4c"
+      "sha256": "132988e3fa3dc8b3aece605b058d9d3ad0b6f4466104d7be72cb696c918bc989"
     },
     {
       "id": "SPEC-347",
       "title": "Autonomous Dynamic WebAssembly JIT Compiler & Zero-Dependency Binary Synthesizer",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-347-wasm-jit-compiler.md",
-      "sha256": "b22982bb9658558f8bfacfa3c95c4545a73a41c9b472975030d17048dda85af6"
+      "sha256": "cef2343623aa323fb8604567e1bf0ba0c37bc0ccefbdf2389fae00a2657d3913"
     },
     {
       "id": "SPEC-348",
       "title": "Distributed Bitemporal CRDT Memory Synchronizer",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-348-distributed-crdt-memory.md",
-      "sha256": "0ba0d39e0968497845c2cd9657f16d6b92a15aef4724db53edf4756961de5f9c"
+      "sha256": "c929d1aa6db4470490c9ed563fe383a7e18435a7e80dfd166b9617c620bf610d"
     },
     {
       "id": "SPEC-349",
@@ -3336,11 +3336,11 @@
     {
       "id": "SPEC-371",
       "title": "Sovereign Institutional Quantitative Trading Engine & Byzantine Consensus Crucible",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-371-institutional-quantitative-trading-engine.md",
-      "sha256": "77aa2c8d69dc0ce0468229c1b635c6bb90ee71d686ee0feae25042e6bebdde29"
+      "sha256": "35a88bbd6b8af61a8949f5bad1b8d4067cfa5aefad5d50e038db900f55716a01"
     },
     {
       "id": "SPEC-372",
@@ -3372,38 +3372,38 @@
     {
       "id": "SPEC-375",
       "title": "Universal Multi-Asset Universe, Dynamic Payout Optimizer & 1-Minute Precision Engine",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 1,
       "bddCount": 8,
       "file": "openspec/specs/SPEC-375-universal-asset-payout-optimizer-engine.md",
-      "sha256": "23999b862e6a85a9e46a0bc8b01bf5b0af37f9a4f48864ef1c9b426f2470fc89"
+      "sha256": "92cbaeb22d89f73a4476825749ef4fe5f51fa75b2229d76527c7efcb44b5ba82"
     },
     {
       "id": "SPEC-376",
       "title": "Autonomous Quant Cockpit, Second-59.8 Trigger & Walk-Forward Calibrator Engine",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 1,
       "bddCount": 8,
       "file": "openspec/specs/SPEC-376-quant-cockpit-walk-forward-engine.md",
-      "sha256": "13b4b9dee0e8be795fd5a185a84ffe6ac4f02c30f373c2e7a0a6a4d7f020b172"
+      "sha256": "8a93ebaeb479013d561d7792984d04524f66caffc163d2db2b4cdf5dead23698"
     },
     {
       "id": "SPEC-377",
       "title": "Harness Boundaries, Structured Token Economics & Deterministic Decision Router Engine",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 1,
       "bddCount": 8,
       "file": "openspec/specs/SPEC-377-harness-token-economics-engine.md",
-      "sha256": "aac07f0605e9f673ea60fabc08a0a3907c85baa6762e649f033f42d8efd471c2"
+      "sha256": "aeda9e8a8d476abad656c06f1afad18e27ba12a30d39c2d08a804e96a693a603"
     },
     {
       "id": "SPEC-378",
       "title": "Goal-Driven Development Loop, Immutable Verifier Guard, Parallel Worktree Software Factory & 3-Gate Pre-PR Engine",
-      "status": "UNKNOWN",
+      "status": "APPROVED",
       "frCount": 1,
       "bddCount": 8,
       "file": "openspec/specs/SPEC-378-goal-driven-factory-engine.md",
-      "sha256": "11400a4cdcfafca2f2b6b6cd076ec7b59bfc7a4f2da9fd8f597df46915c6a261"
+      "sha256": "2440a968047b757bb09f6c0f31303c4bde82581ca8e6d8e8d716efed63b597dc"
     }
   ]
 }
