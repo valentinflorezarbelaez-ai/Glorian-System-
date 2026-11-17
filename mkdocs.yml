@@ -1,0 +1,13 @@
+site_name: Glorian System Control Plane
+site_description: TechDocs stub for the Glorian/EOS sovereign control plane (Backstage discovery).
+repo_url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-
+edit_uri: edit/main/docs
+
+nav:
+  - Home: index.md
+  - Verify: verify.md
+  - Fleet: fleet.md
+  - Backstage: backstage/README.md
+
+plugins:
+  - techdocs-core
