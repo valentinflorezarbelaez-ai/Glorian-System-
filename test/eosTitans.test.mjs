@@ -30,6 +30,51 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
       assert.ok(content.includes("kind: Component"));
       assert.ok(content.includes("name: eos-system-control-plane"));
     });
+
+    it("asserts Glorian remote slug, System relation, and TechDocs stub (BDD-BS-001)", () => {
+      const catalogPath = path.join(process.cwd(), "catalog-info.yaml");
+      const mkdocsPath = path.join(process.cwd(), "mkdocs.yml");
+      const techdocsHome = path.join(process.cwd(), "docs", "index.md");
+      const backstageNotes = path.join(process.cwd(), "docs", "backstage", "README.md");
+
+      assert.ok(fs.existsSync(catalogPath), "catalog-info.yaml must exist at repo root");
+      assert.ok(fs.existsSync(mkdocsPath), "mkdocs.yml must exist for techdocs-ref dir:.");
+      assert.ok(fs.existsSync(techdocsHome), "docs/index.md TechDocs home stub must exist");
+      assert.ok(fs.existsSync(backstageNotes), "docs/backstage/README.md operator notes must exist");
+
+      const content = fs.readFileSync(catalogPath, "utf8");
+      const expectedSlug = "valentinflorezarbelaez-ai/Glorian-System-";
+
+      assert.ok(content.includes("kind: Component"));
+      assert.ok(content.includes("kind: System"));
+      assert.ok(content.includes("name: eos-system-control-plane"));
+      assert.ok(content.includes("name: eos-sovereign-mesh"));
+      assert.ok(
+        content.includes(`github.com/project-slug: ${expectedSlug}`),
+        `github.com/project-slug must match live Glorian remote (${expectedSlug})`,
+      );
+      assert.ok(
+        content.includes(
+          `backstage.io/managed-by-location: url:https://github.com/${expectedSlug}/blob/main/catalog-info.yaml`,
+        ),
+        "managed-by-location must point at the Glorian catalog URL",
+      );
+      assert.ok(content.includes("system: eos-sovereign-mesh"));
+      assert.ok(content.includes("owner: user:valentin-florez-arbelaez"));
+      assert.ok(content.includes("backstage.io/techdocs-ref: dir:."));
+      assert.equal(content.includes("Eos-System"), false, "legacy Eos-System slug must not remain in catalog");
+      assert.equal(
+        /(?:api[_-]?key|bearer\s+[a-z0-9]|-----BEGIN)/i.test(content),
+        false,
+        "catalog-info.yaml must not contain plaintext secrets",
+      );
+
+      const mkdocs = fs.readFileSync(mkdocsPath, "utf8");
+      assert.ok(mkdocs.includes("techdocs-core"));
+      assert.ok(mkdocs.includes("Home:"));
+      assert.ok(mkdocs.includes("Verify:"));
+      assert.ok(mkdocs.includes("Fleet:"));
+    });
   });
 
   describe("Suite 2: SpaceX Dragon / Starship Flight Computer 60Hz TMR (BDD-034)", () => {

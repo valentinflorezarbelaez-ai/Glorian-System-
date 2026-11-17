@@ -5,9 +5,9 @@ metadata:
   title: Glorian System (formerly EOS System)
   description: Sovereign deterministic control plane for AI-assisted engineering. Zero Vibe Coding, Layer-0 Hexagonal (0-Deps), Xirp Worktrees, and SpaceX/NVIDIA/Google/xAI Tier-1 Synthesis.
   annotations:
-    github.com/project-slug: valentinflorezarbelaez-ai/Eos-System
+    github.com/project-slug: valentinflorezarbelaez-ai/Glorian-System-
     backstage.io/techdocs-ref: dir:.
-    backstage.io/managed-by-location: url:https://github.com/valentinflorezarbelaez-ai/Eos-System/blob/main/catalog-info.yaml
+    backstage.io/managed-by-location: url:https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/catalog-info.yaml
     vercel.com/project-url: https://glorian-system.vercel.app
   tags:
     - control-plane
@@ -27,9 +27,18 @@ metadata:
     - url: https://glorian-system.vercel.app
       title: Production Control Plane
       icon: dashboard
-    - url: https://github.com/valentinflorezarbelaez-ai/Eos-System
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-
       title: Source Code Repository
       icon: github
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/DEVELOPER_GUIDE.md
+      title: Developer Guide
+      icon: docs
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/runbooks/eos-operational-runbook.md
+      title: Verify / Operational Runbook
+      icon: catalog
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/README.md
+      title: Backstage Integration Notes
+      icon: docs
     - url: https://portafolio-valentin.vercel.app
       title: Architect Portfolio
       icon: user
@@ -49,5 +58,12 @@ metadata:
   name: eos-sovereign-mesh
   title: EOS Sovereign Fleet Mesh
   description: Planetary network of sovereign applications governed by the EOS Agent Constitution.
+  links:
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/projects/registry.json
+      title: Fleet Registry (SoT)
+      icon: catalog
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/README.md
+      title: Backstage Integration Notes
+      icon: docs
 spec:
   owner: user:valentin-florez-arbelaez
