@@ -2,7 +2,7 @@
 <!-- Generated from local metadata; no vendor, CI, or production integration was queried. -->
 
 ## Locally available command examples (not executed by this generator)
-- Full Strict SecDevOps Gate: `npm run verify:strict`
+- Full Strict SecDevOps Gate (canonical 7-stage): `npm run verify:strict` → `node bin/eos.mjs verify`
 - Unit & Chaos Tests: `node --test test/*.test.mjs`
 - Go Canonical Format: `gofmt -s -w .`
 - Go Unit Tests: `go test -v ./...`
