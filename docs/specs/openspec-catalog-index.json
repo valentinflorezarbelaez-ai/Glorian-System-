@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 333,
-  "catalogSha256": "7ec660281828b8d5f47ac791b83c9faae2e6c89a078e25c311d4aada61b9a122",
+  "totalSpecs": 334,
+  "catalogSha256": "7134ebb51f33fc9a3620733ca298be074e0074af48253c7d0185efffb63a2b12",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2999,6 +2999,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-333-ontological-hypergraph.md",
       "sha256": "f8de060dae380ccf24cb90f257cea9762cae28d0b6284fa6a79a6b8b6f7104cb"
+    },
+    {
+      "id": "SPEC-334",
+      "title": "Deterministic Discrete-Event Simulation Hypervisor & Time-Travel Fault Injection Engine",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-334-discrete-event-simulation-hypervisor.md",
+      "sha256": "63bfecb02be75158f683c6fe3f574f977e0eb650ee365c5624efec6f4985de19"
     }
   ]
 }
