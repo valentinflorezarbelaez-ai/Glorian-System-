@@ -1,0 +1,25 @@
+{
+  "artifactId": "VERIFY_DEEP_RECEIPT_20261117",
+  "epistemicState": "DEEP_GATES_PARTIAL_WITHIN_TESTED_SCOPE",
+  "claimsDenied": [
+    "FEDERAL_ATO",
+    "Level-5",
+    "full mutation score production certification",
+    "clean verify:deep exit 0 on this tip"
+  ],
+  "script": "npm run verify:deep",
+  "fullPipelineExitCode": 1,
+  "fullPipelineNote": "Stage 4 failed while api/spotify.js was renamed mid-run to api/_spotify.js; stdout truncated at 1 MiB. Re-run verify:deep on a clean tree for a clean seal.",
+  "standaloneGates": {
+    "mutationGate": "started EOS_MUTATION=1 scripts/mutation-gate.mjs; aborted after long hang under PowerShell Select-Object buffering — not scored",
+    "flakyGate": "not reached in that shell session"
+  },
+  "serverlessBudgetAfterWave": {
+    "activeCount": 10,
+    "budget": 12,
+    "headroom": 2,
+    "consolidated": ["teurgia", "spotify"]
+  },
+  "ownerFollowUp": "npm run verify:deep on clean HEAD (no concurrent file renames)",
+  "measuredAt": "2026-11-17T02:33:00.000Z"
+}
