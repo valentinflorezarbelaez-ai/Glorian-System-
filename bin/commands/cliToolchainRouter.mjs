@@ -85,6 +85,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliTensorParallelAttention.mjs",
     fn: "handleTpAttentionCommand",
   },
+  {
+    prefix: "toolchain:zero:",
+    file: "./cliZeroFsdpEngine.mjs",
+    fn: "handleZeroFsdpCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

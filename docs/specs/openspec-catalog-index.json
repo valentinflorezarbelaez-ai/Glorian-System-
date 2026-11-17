@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 323,
-  "catalogSha256": "e8a6e41ca8975a5d1bd0bf7cf4f29728ae6d2dfbff8eecad932857374146ff6c",
+  "totalSpecs": 324,
+  "catalogSha256": "df2460dd3eebacb8ab8e2eb263422ce3bd3ba968361d8ec8cb3276f6badde42a",
   "specs": [
     {
       "id": "SPEC-001",
@@ -2908,7 +2908,16 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-323-tensor-parallel-attention.md",
-      "sha256": "a493af30eaf57aa16a80a63142c0256c8574503a67a7335c8425ed0c1a76e960"
+      "sha256": "f9e1b1b068b86f5ee24b1b5c5474c5a2f162aee21015c7eee257bacf9f441a8f"
+    },
+    {
+      "id": "SPEC-324",
+      "title": "ZeRO (Zero Redundancy Optimizer) & Fully Sharded Data Parallel (FSDP) Engine",
+      "status": "APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-324-zero-fsdp-engine.md",
+      "sha256": "58db5d212bbe61940586529df082476f3fe1ec1c097a200c7cfae3be47b632d9"
     }
   ]
 }

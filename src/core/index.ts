@@ -753,3 +753,5 @@ export * from "./eosPipelineParallelism1F1B.ts";
 export * from "./eosPipelineParallelism1F1B.types.ts";
 export * from "./eosTensorParallelAttention.ts";
 export * from "./eosTensorParallelAttention.types.ts";
+export * from "./eosZeroFsdpEngine.ts";
+export * from "./eosZeroFsdpEngine.types.ts";

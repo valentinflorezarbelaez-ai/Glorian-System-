@@ -566,6 +566,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:tp:ring-attention [--workers=2] [--seqperworker=2] [--dim=4] [--json] Ejecución de Ring Attention con rotación circular de bloques KV (SPEC-323)
   eos toolchain:tp:sequence [--workers=2] [--totalseq=8] [--dim=4] [--json] Particionamiento de activaciones temporales en secuencia (SPEC-323)
   eos toolchain:tp:audit [--workers=2] [--qheads=4] [--kvheads=2] [--json] Auditoría integral de conservación de cabezas, barrera única y recibo SHA-256 (SPEC-323)
+  eos toolchain:zero:stage1 [--workers=4] [--params=1024] [--json] Inspección de particionamiento de estados de optimizador ZeRO-1 (SPEC-324)
+  eos toolchain:zero:stage2 [--workers=4] [--params=1024] [--json] Particionamiento de estados y gradientes Reduce-Scatter ZeRO-2 (SPEC-324)
+  eos toolchain:zero:stage3 [--workers=4] [--layers=4] [--layerparams=256] [--json] Particionamiento completo ZeRO-3/FSDP con All-Gather JIT y purga (SPEC-324)
+  eos toolchain:zero:offload [--params=1024] [--json] Telemetría y amortiguación de descarga ZeRO-Offload en memoria CPU host (SPEC-324)
+  eos toolchain:zero:audit [--workers=4] [--params=1024] [--json] Auditoría integral de cota O(Psi/P), paridad matemática y recibo SHA-256 (SPEC-324)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

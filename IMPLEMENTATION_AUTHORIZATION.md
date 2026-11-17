@@ -2945,3 +2945,16 @@
   - `docs/plans/PLAN-185-tensor-parallel-attention.md`
   - `docs/tasks/TASKS-185-tensor-parallel-attention.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-ZERO-FSDP-ENGINE
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-186` (`SPEC-324`), ZeRO (Zero Redundancy Optimizer) & Fully Sharded Data Parallel (FSDP) Engine: author TLA+ formal model `docs/formal/ZeroFsdpEngine.tla` and configuration `docs/formal/ZeroFsdpEngine.cfg` (Model 68), implement `src/core/eosZeroFsdpEngine.types.ts` and `src/core/eosZeroFsdpEngine.ts` featuring ZeRO-Stage 1 (optimizer state sharding $P_{os}$), ZeRO-Stage 2 (gradient sharding $P_{os+g}$ with Reduce-Scatter), ZeRO-Stage 3 / FSDP (parameter sharding $P_{os+g+p}$ with dynamic layer All-Gather and immediate post-execution deallocation), host CPU RAM memory offloading, bounded memory scaling invariant ($O(\Psi / P)$), zero memory leakage, and signed receipt emission at `docs/evidence/ZERO_FSDP_RECEIPT.json`. Wire `toolchain:zero:stage1`, `toolchain:zero:stage2`, `toolchain:zero:stage3`, `toolchain:zero:offload`, `toolchain:zero:audit` in `bin/commands/cliZeroFsdpEngine.mjs` and `bin/commands/cliToolchainRouter.mjs` (`543 -> 548` commands, 100% catalog parity). Verify `BDD-1719`..`BDD-1724`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-186-ZERO-FSDP-ENGINE.md`
+  - `openspec/changes/CHANGE-186-zero-fsdp-engine.md`
+  - `openspec/specs/SPEC-324-zero-fsdp-engine.md`
+  - `docs/plans/PLAN-186-zero-fsdp-engine.md`
+  - `docs/tasks/TASKS-186-zero-fsdp-engine.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
