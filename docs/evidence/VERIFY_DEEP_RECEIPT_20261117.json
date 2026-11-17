@@ -8,11 +8,30 @@
     "clean verify:deep exit 0 on this tip"
   ],
   "script": "npm run verify:deep",
-  "fullPipelineExitCode": 1,
-  "fullPipelineNote": "Stage 4 failed while api/spotify.js was renamed mid-run to api/_spotify.js; stdout truncated at 1 MiB. Re-run verify:deep on a clean tree for a clean seal.",
+  "attempts": [
+    {
+      "measuredAt": "2026-11-17T02:33:00.000Z",
+      "fullPipelineExitCode": 1,
+      "note": "Stage 4 failed while api/spotify.js was renamed mid-run to api/_spotify.js; stdout truncated at 1 MiB."
+    },
+    {
+      "measuredAt": "2026-11-17T02:41:21.415Z",
+      "fullPipelineExitCode": 1,
+      "tip": "4d2f0fd3",
+      "stage4Failure": {
+        "suite": "test/eosToolchainControlPlaneAndTlcLocal.test.mjs",
+        "test": "BDD-1412: Local TLC model checking executes live across all configured specs",
+        "error": "UNKNOWN: unknown error, open docs/evidence/TLC_RECEIPT.json (writeFileSync race under parallel node --test)",
+        "perfAdvisory": "12 suites above 2x p95 (non-blocking); eosMicroVmSandbox 10.44x"
+      },
+      "mutationGate": "not reached — Stage 4 failed before Stage 4.6",
+      "flakyGate": "not reached — Stage 4 failed before Stage 4.7"
+    }
+  ],
   "standaloneGates": {
     "mutationGate": "started EOS_MUTATION=1 scripts/mutation-gate.mjs; aborted after long hang under PowerShell Select-Object buffering — not scored",
-    "flakyGate": "not reached in that shell session"
+    "flakyGate": "not reached in that shell session",
+    "tlcSuiteSoloRerun": "eosTlcFormalChecker.test.mjs 7/7 pass; eosToolchainControlPlaneAndTlcLocal.test.mjs 6/6 pass (BDD-1412 green solo — Stage 4 fail was parallel TLC_RECEIPT write race)"
   },
   "serverlessBudgetAfterWave": {
     "activeCount": 10,
@@ -20,6 +39,6 @@
     "headroom": 2,
     "consolidated": ["teurgia", "spotify"]
   },
-  "ownerFollowUp": "npm run verify:deep on clean HEAD (no concurrent file renames)",
-  "measuredAt": "2026-11-17T02:33:00.000Z"
+  "ownerFollowUp": "Re-run npm run verify:deep with quieter concurrency or serialize TLC evidence writers; then Stage 4.6/4.7 advisory",
+  "measuredAt": "2026-11-17T02:41:21.415Z"
 }
