@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 339,
-  "catalogSha256": "d699b94d46e6eb4b0569ad778b704467d73a4dd89c0df8fe883a0428a1500c17",
+  "totalSpecs": 340,
+  "catalogSha256": "2e2572a3d42e6a91ee2082bb3aa87b1b13965bafd51b8ab8165ee0ea2d923ddc",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3053,6 +3053,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-339-agentic-harness-yield.md",
       "sha256": "05d5c63a904da6abb959b048b90e2b6876e392507afeecf7cee6cf0ed9480593"
+    },
+    {
+      "id": "SPEC-340",
+      "title": "Sovereign Closed-Loop Repository Autopilot Engine",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-340-closed-loop-repo-autopilot.md",
+      "sha256": "e035ae07648720f85ae0021daf2dc8c84e4349966b0411a68b9db10feaae2d99"
     }
   ]
 }
