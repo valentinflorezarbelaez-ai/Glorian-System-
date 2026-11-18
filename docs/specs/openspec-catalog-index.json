@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 338,
-  "catalogSha256": "65d6cf60e78d5c0050068c340be17f2cbb5158b35a097959cf707930c2698d13",
+  "totalSpecs": 339,
+  "catalogSha256": "d699b94d46e6eb4b0569ad778b704467d73a4dd89c0df8fe883a0428a1500c17",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3044,6 +3044,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-338-causal-discovery-structural-equation.md",
       "sha256": "2033b4d05c32bd58a38b6b42c3d3b9a44e0b9b950957d920967f71b182a38c67"
+    },
+    {
+      "id": "SPEC-339",
+      "title": "Agentic Harness Engineering, First-Pass PR Yield & Token Rework Telemetry Engine",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-339-agentic-harness-yield.md",
+      "sha256": "05d5c63a904da6abb959b048b90e2b6876e392507afeecf7cee6cf0ed9480593"
     }
   ]
 }
