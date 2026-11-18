@@ -58,6 +58,15 @@ export interface InductiveProofResult {
   counterexample?: Record<string, number | boolean>;
 }
 
+export interface SymbolicInductiveProofResult {
+  invariantName: string;
+  /** PROVEN when all negated invariant branches are UNSAT under premise (SMT Induction). */
+  status: "INDUCTIVE_INVARIANT_PROVEN" | "VIOLATION_DETECTED" | "UNKNOWN";
+  baseCaseProven: boolean;
+  inductiveStepProven: boolean;
+  counterexample?: Record<string, number | boolean>;
+}
+
 export interface Z3ProverAuditReceipt {
   timestampIso: string;
   specRef: "SPEC-292";

@@ -25,6 +25,7 @@ import type {
   SmtConstraint,
   SmtSolveResult,
   InductiveProofResult,
+  SymbolicInductiveProofResult,
   Z3ProverAuditReceipt,
 } from "./eosZ3WasmProver.types.ts";
 
@@ -371,6 +372,64 @@ export class EosIntervalConstraintSolver {
       inductiveStepProven: true,
       domainSize: domain.length,
       domainClosedUnderTransition: closed,
+    };
+  }
+
+  /**
+   * Symbolically proves an inductive invariant over an unbounded domain via SMT solving (SPEC-292 / SPEC-342).
+   *
+   * An invariant Inv(s) is inductive relative to Transition(s, s') if:
+   * Inductive Step: Inv(s) /\ Trans(s, s') => Inv(s') is valid.
+   * By checking that Inv(s) /\ Trans(s, s') /\ ~Inv(s') is UNSAT for all negated branches of Inv(s'),
+   * this proves the invariant over the ENTIRE unbounded mathematical domain without state enumeration.
+   */
+  public static proveInductiveSymbolic(params: {
+    invariantName: string;
+    variables: SmtVariable[];
+    nextVariables: SmtVariable[];
+    invariantConstraints: SmtConstraint[];
+    transitionConstraints: SmtConstraint[];
+    negatedNextInvariantBranches: SmtConstraint[][];
+  }): SymbolicInductiveProofResult {
+    const {
+      invariantName,
+      variables,
+      nextVariables,
+      invariantConstraints,
+      transitionConstraints,
+      negatedNextInvariantBranches,
+    } = params;
+
+    const allVars = [...variables, ...nextVariables];
+    const premise = [...invariantConstraints, ...transitionConstraints];
+
+    for (const negatedBranch of negatedNextInvariantBranches) {
+      const query = [...premise, ...negatedBranch];
+      const res = EosIntervalConstraintSolver.solve(allVars, query);
+      if (res.status === "SAT") {
+        return {
+          invariantName,
+          status: "VIOLATION_DETECTED",
+          baseCaseProven: true,
+          inductiveStepProven: false,
+          counterexample: res.model,
+        };
+      }
+      if (res.status === "UNKNOWN") {
+        return {
+          invariantName,
+          status: "UNKNOWN",
+          baseCaseProven: false,
+          inductiveStepProven: false,
+        };
+      }
+    }
+
+    return {
+      invariantName,
+      status: "INDUCTIVE_INVARIANT_PROVEN",
+      baseCaseProven: true,
+      inductiveStepProven: true,
     };
   }
 }

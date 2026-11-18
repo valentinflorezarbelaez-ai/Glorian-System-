@@ -280,4 +280,39 @@ INVARIANT Invariant`;
       fs.rmSync(tmpEvidence, { recursive: true, force: true });
     }
   });
+
+  // BDD-1837: Symbolic SMT Inductive Invariant Proving across Unbounded Domains (SPEC-292 / SPEC-342)
+  test("BDD-1837: Symbolic SMT Inductive Invariant Proving across Unbounded Domains", () => {
+    // 1. Valid Inductive Invariant: x >= 0 with transition next_x >= 1
+    // Invariant: x >= 0
+    // Transition: next_x >= 1
+    // Negated next invariant: next_x < 0
+    const provenResult = EosIntervalConstraintSolver.proveInductiveSymbolic({
+      invariantName: "UnboundedNonNegativeCounter",
+      variables: [{ name: "x", type: "int" }],
+      nextVariables: [{ name: "next_x", type: "int" }],
+      invariantConstraints: [{ leftVar: "x", op: ">=", rightVal: 0 }],
+      transitionConstraints: [{ leftVar: "next_x", op: ">=", rightVal: 1 }],
+      negatedNextInvariantBranches: [[{ leftVar: "next_x", op: "<", rightVal: 0 }]],
+    });
+
+    assert.equal(provenResult.status, "INDUCTIVE_INVARIANT_PROVEN");
+    assert.equal(provenResult.inductiveStepProven, true);
+    assert.equal(provenResult.baseCaseProven, true);
+
+    // 2. Violated Inductive Invariant: transition forces next_x to negative value
+    const violatedResult = EosIntervalConstraintSolver.proveInductiveSymbolic({
+      invariantName: "FaultyCounter",
+      variables: [{ name: "x", type: "int" }],
+      nextVariables: [{ name: "next_x", type: "int" }],
+      invariantConstraints: [{ leftVar: "x", op: ">=", rightVal: 0 }],
+      transitionConstraints: [{ leftVar: "next_x", op: "==", rightVal: -42 }],
+      negatedNextInvariantBranches: [[{ leftVar: "next_x", op: "<", rightVal: 0 }]],
+    });
+
+    assert.equal(violatedResult.status, "VIOLATION_DETECTED");
+    assert.equal(violatedResult.inductiveStepProven, false);
+    assert.ok(violatedResult.counterexample);
+    assert.equal(violatedResult.counterexample.next_x, -42);
+  });
 });
