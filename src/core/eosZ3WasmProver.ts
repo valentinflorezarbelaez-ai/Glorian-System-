@@ -83,13 +83,29 @@ export class EosTlcModelChecker {
 
     // Isolated metadata directory: TLC must never write state files into the repository.
     const metaDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-tlc-meta-"));
+    const specDir = path.dirname(fullPath);
+    const specBase = path.basename(fullPath);
+    const cfgBase = specBase.replace(/\.tla$/, ".cfg");
+    const hasCfg = fs.existsSync(path.join(specDir, cfgBase));
     try {
-      const tlcArgs = ["-cp", jarPath, "tlc2.TLC", "-deadlock", "-workers", "1", "-metadir", metaDir, fullPath];
+      const tlcArgs = [
+        "-cp",
+        jarPath,
+        "tlc2.TLC",
+        "-deadlock",
+        "-workers",
+        "1",
+        "-cleanup",
+        "-metadir",
+        metaDir,
+        ...(hasCfg ? ["-config", cfgBase] : []),
+        specBase,
+      ];
       const res = spawnSync(javaCommand, tlcArgs, {
         encoding: "utf8",
         timeout: timeoutMs,
         windowsHide: true,
-        cwd: path.dirname(fullPath),
+        cwd: specDir,
         maxBuffer: 32 * 1024 * 1024,
       });
       const durationMs = Date.now() - startTime;
