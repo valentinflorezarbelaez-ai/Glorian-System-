@@ -154,13 +154,8 @@ export class EosClosedLoopRepoAutopilotCore {
     const dSepReport = scm.isDSeparated("TASK_COMPLEXITY", "PR_FIRST_PASS_YIELD", ["TASK_COMPLEXITY"]);
     const ateReport = scm.computeInterventionalAte("SPEC_CLARITY", "PR_FIRST_PASS_YIELD", 0.95, 0.25);
 
-    const factualEvidence: Record<string, number> = {
-      TASK_COMPLEXITY: 0.6,
-      SPEC_CLARITY: 0.3,
-      CODE_CHURN: 0.54,
-      MUTATION_SCORE: 0.72,
-      PR_FIRST_PASS_YIELD: 0.35,
-    };
+    const derived = this.deriveRepositoryEvidence();
+    const factualEvidence = derived.evidence;
     const cfReport = scm.inferCounterfactual({
       factualEvidence,
       interventions: { SPEC_CLARITY: 0.95 },
@@ -180,6 +175,8 @@ export class EosClosedLoopRepoAutopilotCore {
       counterfactualFirstPassYield: Number(cfReport.counterfactualTargetValue.toFixed(6)),
       individualTreatmentEffect: Number(cfReport.individualTreatmentEffect.toFixed(6)),
       scmSelfAuditPassed: scmAudit.allPassed,
+      evidence: factualEvidence,
+      evidenceProvenance: derived.provenance,
     };
   }
 
@@ -542,5 +539,45 @@ export class EosClosedLoopRepoAutopilotCore {
         { sha: "canon002", subject: "docs(release): seal freeze pin", category: "DOCS_SYNC" },
       ],
     };
+  }
+
+  public deriveRepositoryEvidence(): {
+    evidence: Record<string, number>;
+    provenance: Record<string, "MEASURED" | "PRIOR">;
+  } {
+    const evidence: Record<string, number> = {
+      TASK_COMPLEXITY: 0.6,
+      SPEC_CLARITY: 0.3,
+      CODE_CHURN: 0.54,
+      MUTATION_SCORE: 0.72,
+      PR_FIRST_PASS_YIELD: 0.35,
+    };
+    const provenance: Record<string, "MEASURED" | "PRIOR"> = {
+      TASK_COMPLEXITY: "PRIOR",
+      SPEC_CLARITY: "PRIOR",
+      CODE_CHURN: "PRIOR",
+      MUTATION_SCORE: "PRIOR",
+      PR_FIRST_PASS_YIELD: "PRIOR",
+    };
+
+    try {
+      const budgetPath = path.join(this.projectRoot, "docs", "quality", "mutation-budget.json");
+      if (fs.existsSync(budgetPath)) {
+        const budget = JSON.parse(fs.readFileSync(budgetPath, "utf8"));
+        const targets = budget?.targets ?? {};
+        const floors = Object.values(targets)
+          .map((t: any) => t?.baselineFloor)
+          .filter((n) => typeof n === "number" && Number.isFinite(n));
+        if (floors.length > 0) {
+          const avg = floors.reduce((a, b) => a + b, 0) / floors.length;
+          evidence.MUTATION_SCORE = Number(avg.toFixed(4));
+          provenance.MUTATION_SCORE = "MEASURED";
+        }
+      }
+    } catch {
+      // retain prior
+    }
+
+    return { evidence, provenance };
   }
 }

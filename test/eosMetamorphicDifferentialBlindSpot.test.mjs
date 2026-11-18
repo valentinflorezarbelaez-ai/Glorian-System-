@@ -682,13 +682,22 @@ test("SPEC-341 / CHANGE-203: Metamorphic, Differential & Structural-Shrinking Bl
 
   await t.test("BDD-1827: Fleet Repositories Metamorphic Audit & MCP Dispatch (SPEC-341 / SPEC-124)", async () => {
     const core = new EosMetamorphicDifferentialBlindSpotCore();
+    const mockTransport = (_url, input) => {
+      if (input === null || typeof input !== "object" || Array.isArray(input)) {
+        return { statusCode: 400 };
+      }
+      return { statusCode: 200 };
+    };
+
     const fleetReceipt = core.auditFleetProjects({
       projectRoot: ROOT,
       iterationsPerProject: 20,
+      probeTransport: mockTransport,
     });
 
     assert.strictEqual(fleetReceipt.specRef, "SPEC-341");
     assert.strictEqual(fleetReceipt.command, "toolchain:blindspot:fleet");
+    assert.strictEqual(fleetReceipt.mode, "LIVE_PROBED");
     assert.strictEqual(fleetReceipt.totalFleetProjects, 9);
     assert.strictEqual(fleetReceipt.auditedProjects, 9);
     assert.strictEqual(fleetReceipt.allPassed, true);
@@ -696,7 +705,7 @@ test("SPEC-341 / CHANGE-203: Metamorphic, Differential & Structural-Shrinking Bl
     assert.strictEqual(typeof fleetReceipt.sha256Digest, "string");
     assert.strictEqual(fleetReceipt.sha256Digest.length, 64);
 
-    // Verify CLI invocation
+    // Verify CLI invocation (honestly returns OFFLINE_NOT_VERIFIED when no live probe transport is provided)
     assert.strictEqual(
       await handleMetamorphicDifferentialBlindSpotCommand({
         command: "toolchain:blindspot:fleet",
@@ -723,6 +732,48 @@ test("SPEC-341 / CHANGE-203: Metamorphic, Differential & Structural-Shrinking Bl
     const parsed = JSON.parse(mcpRes.result.content[0].text);
     assert.strictEqual(parsed.command, "toolchain:blindspot:fleet");
     assert.strictEqual(parsed.auditedProjects, 9);
-    assert.strictEqual(parsed.allPassed, true);
+    assert.strictEqual(parsed.mode, "OFFLINE_NOT_VERIFIED");
+    assert.strictEqual(parsed.allPassed, false);
+  });
+
+  await t.test("BDD-1833: Fleet Audit Offline Mode Never Reports PASS (SPEC-342 FR-7)", () => {
+    const core = new EosMetamorphicDifferentialBlindSpotCore();
+    const offlineReceipt = core.auditFleetProjects({ projectRoot: ROOT });
+
+    assert.strictEqual(offlineReceipt.mode, "OFFLINE_NOT_VERIFIED");
+    assert.strictEqual(offlineReceipt.allPassed, false);
+    assert.strictEqual(offlineReceipt.meanStabilityScore, 0.0);
+    assert.strictEqual(offlineReceipt.totalFleetProjects, 9);
+    assert.strictEqual(offlineReceipt.auditedProjects, 9);
+    assert.ok(offlineReceipt.projects.every((p) => p.verdict === "NOT_VERIFIED" && p.passed === false));
+    assert.ok(offlineReceipt.projects.every((p) => typeof p.reason === "string" && p.reason.includes("Law III")));
+  });
+
+  await t.test("BDD-1834: Fleet Audit Live Mode Classifies Findings (SPEC-342 FR-6)", () => {
+    const core = new EosMetamorphicDifferentialBlindSpotCore();
+    const classifiedTransport = (_url, _input, projectId) => {
+      if (projectId === "aberamentho") return { statusCode: 200 };
+      if (projectId === "atp-strength") return { statusCode: 502 };
+      return { statusCode: 0, error: "ECONNREFUSED" };
+    };
+
+    const receipt = core.auditFleetProjects({
+      projectRoot: ROOT,
+      iterationsPerProject: 10,
+      probeTransport: classifiedTransport,
+    });
+
+    assert.strictEqual(receipt.mode, "LIVE_PROBED");
+    assert.strictEqual(receipt.allPassed, false);
+    const aber = receipt.projects.find((p) => p.projectId === "aberamentho");
+    const atp = receipt.projects.find((p) => p.projectId === "atp-strength");
+    const bio = receipt.projects.find((p) => p.projectId === "biblioteca-gnostica-1");
+
+    assert.strictEqual(aber?.verdict, "VERIFIED");
+    assert.strictEqual(aber?.passed, true);
+    assert.strictEqual(atp?.verdict, "FINDINGS");
+    assert.strictEqual(atp?.passed, false);
+    assert.strictEqual(bio?.verdict, "UNREACHABLE");
+    assert.strictEqual(bio?.passed, false);
   });
 });

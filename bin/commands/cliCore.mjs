@@ -9,7 +9,8 @@ async function cmd_verify_0(commandContext) {
   printBanner();
   console.log("[EOS] Executing configured local repository checks...\n");
   try {
-    execFileSync(process.execPath, [path.join(root, "scripts/verify-cicd-pipeline.mjs")], {
+    const extraArgs = Array.isArray(commandContext.args) ? commandContext.args.slice(1) : [];
+    execFileSync(process.execPath, [path.join(root, "scripts/verify-cicd-pipeline.mjs"), ...extraArgs], {
       cwd: root,
       stdio: "inherit",
     });

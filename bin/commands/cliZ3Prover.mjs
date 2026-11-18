@@ -9,7 +9,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { EosTlcModelChecker, EosZ3SmtSolver, auditFormalProver } from "../../src/core/eosZ3WasmProver.ts";
+import { EosTlcModelChecker, EosIntervalConstraintSolver, auditFormalProver } from "../../src/core/eosZ3WasmProver.ts";
 
 const HANDLERS = {};
 
@@ -17,22 +17,22 @@ async function cmd_z3_prove(commandContext) {
   const args = commandContext.args || [];
   const isJson = args.includes("--json");
 
-  // Sample SMT theorem: x > 100 AND x < 50 is UNSAT (contradiction theorem)
+  // Sample contradiction: x > 100 AND x < 50 is UNSAT.
   const variables = [{ name: "x", type: "int" }];
   const constraints = [
     { leftVar: "x", op: ">", rightVal: 100 },
     { leftVar: "x", op: "<", rightVal: 50 },
   ];
 
-  const solveResult = EosZ3SmtSolver.solve(variables, constraints);
+  const solveResult = EosIntervalConstraintSolver.solve(variables, constraints);
 
-  // Inductive invariant test
-  const domain = [{ counter: 0 }, { counter: 1 }, { counter: 5 }, { counter: 100 }];
-  const inductiveResult = EosZ3SmtSolver.proveInductiveInvariant({
-    invariantName: "MonotonicNonNegativeCounter",
+  // Inductive invariant on a transition-closed domain: counter' = (counter + 1) mod 4.
+  const domain = [0, 1, 2, 3].map((counter) => ({ counter }));
+  const inductiveResult = EosIntervalConstraintSolver.proveInductiveInvariant({
+    invariantName: "BoundedModularCounter",
     initialPredicate: (s) => s.counter === 0,
-    transition: (s) => ({ counter: Number(s.counter) + 1 }),
-    invariant: (s) => Number(s.counter) >= 0,
+    transition: (s) => ({ counter: (Number(s.counter) + 1) % 4 }),
+    invariant: (s) => Number(s.counter) >= 0 && Number(s.counter) < 4,
     domain,
   });
 
@@ -51,14 +51,17 @@ async function cmd_z3_prove(commandContext) {
   }
 
   console.log("\n===============================================================");
-  console.log(" 📐  EOS Z3 SMT THEOREM PROVER & INDUCTIVE INVARIANTS (SPEC-292) ");
+  console.log(" 📐  EOS INTERVAL CONSTRAINT SOLVER & INDUCTIVE INVARIANTS (SPEC-292) ");
   console.log("===============================================================");
-  console.log("  SMT System Theorem  : (x > 100) ∧ (x < 50)");
-  console.log(`  Satisfiability      : ${solveResult.status} (Contradiction Refuted)`);
-  console.log(`  Proof Reason        : ${solveResult.reason || "No satisfying model exists"}`);
+  console.log("  Constraint System   : (x > 100) ∧ (x < 50)");
+  console.log(`  Satisfiability      : ${solveResult.status}`);
+  console.log(`  Reason              : ${solveResult.reason || "Satisfying model found"}`);
   console.log("---------------------------------------------------------------");
   console.log(`  Inductive Invariant : ${inductiveResult.invariantName}`);
   console.log(`  Proof Status        : ${inductiveResult.status}`);
+  console.log(
+    `  Domain Closed       : ${inductiveResult.domainClosedUnderTransition} (${inductiveResult.domainSize} states)`,
+  );
   console.log(`  Base Case Proven    : ${inductiveResult.baseCaseProven}`);
   console.log(`  Inductive Step      : ${inductiveResult.inductiveStepProven}`);
   console.log("===============================================================\n");
@@ -93,6 +96,7 @@ async function cmd_z3_tlc(commandContext) {
   console.log(`  Distinct States     : ${result.distinctStates}`);
   console.log(`  Violations Detected : ${result.invariantViolations}`);
   console.log(`  Model Check Status  : ${result.status}`);
+  console.log(`  Verified            : ${result.verified}${result.reason ? ` (${result.reason})` : ""}`);
   console.log(`  Duration Elapsed    : ${result.durationMs} ms`);
   console.log("===============================================================\n");
 }
@@ -109,9 +113,12 @@ async function cmd_z3_audit(commandContext) {
   }
 
   console.log("\n===============================================================");
-  console.log(" 📜  EOS Z3 & TLC FORMAL VERIFICATION AUDIT (SPEC-292)         ");
+  console.log(" 📜  EOS TLC & CONSTRAINT SOLVER FORMAL AUDIT (SPEC-292)       ");
   console.log("===============================================================");
-  console.log(`  TLA+ Specs Checked  : ${receipt.totalTlaSpecsChecked}`);
+  console.log(`  TLA+ Specs Inventory: ${receipt.totalTlaSpecsInventoried}`);
+  console.log(
+    `  TLA+ Specs Checked  : ${receipt.totalTlaSpecsChecked} live (sample status: ${receipt.tlcSampleStatus})`,
+  );
   console.log(`  SMT Theorems Proven : ${receipt.totalSmtTheoremsProven}`);
   console.log(`  Inductive Invariants: ${receipt.inductiveInvariantsVerified}`);
   console.log(`  SHA-256 Signature   : ${receipt.sha256Signature}`);

@@ -1,8 +1,10 @@
 {
-  "timestampIso": "2026-11-18T15:25:05.699Z",
+  "timestampIso": "2026-11-18T16:14:29.138Z",
   "specRef": "SPEC-292",
-  "totalTlaSpecsChecked": 85,
+  "totalTlaSpecsInventoried": 85,
+  "totalTlaSpecsChecked": 1,
+  "tlcSampleStatus": "PASS",
   "totalSmtTheoremsProven": 1,
   "inductiveInvariantsVerified": 1,
-  "sha256Signature": "396100a7ca1611da7a2d5ac13caeb0ce5ea8b40e103eec68fdbb0f3bd41fcdc9"
+  "sha256Signature": "dce051f19efdb3ea4200e2b79d5c05dacc4ff8757afa59be912bc1d0299cf279"
 }

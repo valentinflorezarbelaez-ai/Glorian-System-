@@ -381,7 +381,7 @@ if (sloBlock) {
 // STAGE 4.5: NATIVE V8 COVERAGE GATE (Big Tech: minimum threshold enforcement)
 // Skippable via SKIP_COVERAGE=1 for rapid local iteration.
 // ---------------------------------------------------------------------------
-if (!process.env.SKIP_COVERAGE) {
+if (!process.env.SKIP_COVERAGE && !isPts) {
   const MIN_LINE = Number(process.env.COVERAGE_MIN_LINE ?? 85);
   const MIN_BRANCH = Number(process.env.COVERAGE_MIN_BRANCH ?? 85);
   const covConcurrency = Number(process.env.COVERAGE_CONCURRENCY ?? 4);

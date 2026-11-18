@@ -73,7 +73,22 @@ export function resolveTestForSource(srcFile, root = ROOT) {
 /**
  * Parses node --experimental-test-coverage output for line and branch percentages.
  */
-export function parseCoverageOutput(stdout) {
+export function parseCoverageOutput(stdout, targetFile = null) {
+  if (targetFile) {
+    const baseName = path.basename(targetFile);
+    const escaped = baseName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(`${escaped}\\s*\\|\\s*([\\d.]+)\\s*\\|\\s*([\\d.]+)\\s*\\|\\s*([\\d.]+)`, "i");
+    const fileMatch = stdout.match(regex);
+    if (fileMatch) {
+      return {
+        linePercent: parseFloat(fileMatch[1]),
+        branchPercent: parseFloat(fileMatch[2]),
+        funcPercent: parseFloat(fileMatch[3]),
+        parsed: true,
+      };
+    }
+  }
+
   const linesMatch = stdout.match(/all files\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)/i);
   if (linesMatch) {
     return {
@@ -148,7 +163,7 @@ export function runIncrementalCoverage(options = {}) {
       timeout: 30000,
     });
 
-    const parsed = parseCoverageOutput(`${res.stdout || ""}\n${res.stderr || ""}`);
+    const parsed = parseCoverageOutput(`${res.stdout || ""}\n${res.stderr || ""}`, srcFile);
     const evaluated = evaluateCoverageReport(srcFile, parsed, budget);
     if (!evaluated.passed) allPassed = false;
     reports.push(evaluated);

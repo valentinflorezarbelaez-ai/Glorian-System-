@@ -139,21 +139,27 @@ export interface BlindSpotHunterAuditReceipt {
   readonly sha256Digest: string;
 }
 
+export type FleetProjectVerdict = "VERIFIED" | "FINDINGS" | "UNREACHABLE" | "NOT_VERIFIED";
+
 export interface FleetProjectBlindSpotReport {
   readonly projectId: string;
   readonly projectName: string;
   readonly status: string;
   readonly authorization: string;
+  readonly targetUrl?: string;
+  readonly verdict: FleetProjectVerdict;
   readonly fuzzIterations: number;
   readonly passed: boolean;
   readonly stabilityScore: number;
   readonly unhandledExceptions: number;
   readonly http5xxCount: number;
+  readonly reason?: string;
 }
 
 export interface FleetBlindSpotAuditReceipt {
   readonly specRef: "SPEC-341";
   readonly command: "toolchain:blindspot:fleet";
+  readonly mode: "LIVE_PROBED" | "OFFLINE_NOT_VERIFIED";
   readonly totalFleetProjects: number;
   readonly auditedProjects: number;
   readonly allPassed: boolean;

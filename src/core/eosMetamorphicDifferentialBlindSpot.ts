@@ -50,17 +50,7 @@ const ADVERSARIAL_STRINGS: readonly string[] = [
   "",
   "   ",
   "\t\n",
-  "0",
-  "18",
-  "17.99999",
-  "1e5",
-  "NaN",
-  "Infinity",
-  "__proto__",
-  "constructor",
-  "\0null",
-  "🚀",
-  "SELECT 1; --",
+  ..."0|18|17.99999|1e5|NaN|Infinity|__proto__|constructor|\0null|🚀|SELECT 1; --".split("|"),
 ];
 
 interface FuzzAccumulator {
@@ -101,25 +91,26 @@ function initFuzzAccumulator(
   };
 }
 
+function recordFuzzFailure(acc: FuzzAccumulator, payload: unknown, reason: string): void {
+  if (acc.firstFailureReason === undefined) {
+    acc.firstFailingPayload = payload;
+    acc.firstFailureReason = reason;
+  }
+}
+
 function recordFuzzOutcome(acc: FuzzAccumulator, payload: unknown, outcome: BoundaryFuzzOutcome): void {
   const code = Number.isInteger(outcome?.statusCode) ? outcome.statusCode : 500;
   acc.statusCounts[String(code)] = (acc.statusCounts[String(code)] ?? 0) + 1;
   if (code >= 500) {
     acc.http5xxCount++;
-    if (acc.firstFailureReason === undefined) {
-      acc.firstFailingPayload = payload;
-      acc.firstFailureReason = `HTTP_${code}`;
-    }
+    recordFuzzFailure(acc, payload, `HTTP_${code}`);
   }
 }
 
 function recordFuzzException(acc: FuzzAccumulator, payload: unknown, err: unknown): void {
   acc.unhandledExceptionCount++;
   acc.statusCounts.EXCEPTION = (acc.statusCounts.EXCEPTION ?? 0) + 1;
-  if (acc.firstFailureReason === undefined) {
-    acc.firstFailingPayload = payload;
-    acc.firstFailureReason = err instanceof Error ? err.message : String(err);
-  }
+  recordFuzzFailure(acc, payload, err instanceof Error ? err.message : String(err));
 }
 
 function finalizeFuzzAccumulator(acc: FuzzAccumulator): BoundaryFuzzCampaignResult {
@@ -202,15 +193,11 @@ export function canonicalSerialize(value: unknown, seen = new WeakSet<object>())
 
 function generateArbitraryIntArray(nextFloat: () => number, minLen = 0, maxLen = 12): number[] {
   const len = minLen + Math.floor(nextFloat() * (maxLen - minLen + 1));
-  const out: number[] = [];
-  for (let i = 0; i < len; i++) {
-    if (nextFloat() < 0.35) {
-      out.push(Math.trunc(ADVERSARIAL_NUMBERS[Math.floor(nextFloat() * ADVERSARIAL_NUMBERS.length)]) || 0);
-    } else {
-      out.push(Math.floor((nextFloat() - 0.5) * 400) || 0);
-    }
-  }
-  return out;
+  return Array.from({ length: len }, () =>
+    nextFloat() < 0.35
+      ? Math.trunc(ADVERSARIAL_NUMBERS[Math.floor(nextFloat() * ADVERSARIAL_NUMBERS.length)]) || 0
+      : Math.floor((nextFloat() - 0.5) * 400) || 0,
+  );
 }
 
 /** Generate arbitrary structural JSON trees (null, booleans, boundary numbers, strings, arrays, objects). */
@@ -231,19 +218,20 @@ export function generateArbitraryJsonValue(nextFloat: () => number, depth = 0, m
         return ADVERSARIAL_STRINGS[Math.floor(nextFloat() * ADVERSARIAL_STRINGS.length)];
       }
       return `token_${Math.floor(nextFloat() * 100000)}`;
-    case 4: {
-      const len = Math.floor(nextFloat() * 7);
-      const arr: unknown[] = [];
-      for (let i = 0; i < len; i++) arr.push(generateArbitraryJsonValue(nextFloat, depth + 1, maxDepth));
-      return arr;
-    }
+    case 4:
+      return Array.from({ length: Math.floor(nextFloat() * 7) }, () =>
+        generateArbitraryJsonValue(nextFloat, depth + 1, maxDepth),
+      );
     default: {
-      const keys = Math.floor(nextFloat() * 5);
-      const obj: Record<string, unknown> = {};
       const keyPool = ["id", "age", "seed", "method", "params", "name", "tag", "value", "commitSha"];
+      const obj: Record<string, unknown> = {};
+      const keys = Math.floor(nextFloat() * 5);
       for (let i = 0; i < keys; i++) {
-        const key = keyPool[Math.floor(nextFloat() * keyPool.length)];
-        obj[key] = generateArbitraryJsonValue(nextFloat, depth + 1, maxDepth);
+        obj[keyPool[Math.floor(nextFloat() * keyPool.length)]] = generateArbitraryJsonValue(
+          nextFloat,
+          depth + 1,
+          maxDepth,
+        );
       }
       return obj;
     }
@@ -634,36 +622,25 @@ export class EosMetamorphicDifferentialBlindSpotCore {
       Array.isArray(naiveSortCheck.minimalCounterexample) &&
       naiveSortCheck.minimalCounterexample.length === 2;
 
-    const diffBug = EosMetamorphicDifferentialBlindSpotCore.runDifferentialCampaign<number[]>({
-      targetName: "naive_vs_numeric_sort",
-      seed,
-      runs: 120,
-      referenceFn: (arr) => [...arr].sort((a, b) => a - b),
-      candidateFn: (arr) => [...arr].sort(),
-    });
-    const diffOk = EosMetamorphicDifferentialBlindSpotCore.runDifferentialCampaign<number[]>({
-      targetName: "numeric_sort_parity",
-      seed,
-      runs: 120,
-      referenceFn: (arr) => [...arr].sort((a, b) => a - b),
-      candidateFn: (arr) => [...arr].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)),
-    });
+    const runDiff = (targetName: string, candidateFn: (arr: number[]) => number[]) =>
+      EosMetamorphicDifferentialBlindSpotCore.runDifferentialCampaign<number[]>({
+        targetName,
+        seed,
+        runs: 120,
+        referenceFn: (arr) => [...arr].sort((a, b) => a - b),
+        candidateFn,
+      });
+    const diffBug = runDiff("naive_vs_numeric_sort", (arr) => [...arr].sort());
+    const diffOk = runDiff("numeric_sort_parity", (arr) => [...arr].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)));
 
-    const metaSort = EosMetamorphicDifferentialBlindSpotCore.verifyMetamorphicRelation({
-      relation: "SORT_PERMUTATION_IDEMPOTENCE",
-      seed,
-      runs: 120,
-    });
-    const metaFilter = EosMetamorphicDifferentialBlindSpotCore.verifyMetamorphicRelation({
-      relation: "FILTER_SUBSET_MONOTONICITY",
-      seed: seed + 1,
-      runs: 120,
-    });
-    const metaRoundtrip = EosMetamorphicDifferentialBlindSpotCore.verifyMetamorphicRelation({
-      relation: "JSON_ROUNDTRIP_INVERTIBILITY",
-      seed: seed + 2,
-      runs: 120,
-    });
+    const runMeta = (
+      relation: "SORT_PERMUTATION_IDEMPOTENCE" | "FILTER_SUBSET_MONOTONICITY" | "JSON_ROUNDTRIP_INVERTIBILITY",
+      offset: number,
+    ) =>
+      EosMetamorphicDifferentialBlindSpotCore.verifyMetamorphicRelation({ relation, seed: seed + offset, runs: 120 });
+    const metaSort = runMeta("SORT_PERMUTATION_IDEMPOTENCE", 0);
+    const metaFilter = runMeta("FILTER_SUBSET_MONOTONICITY", 1);
+    const metaRoundtrip = runMeta("JSON_ROUNDTRIP_INVERTIBILITY", 2);
 
     const fuzzRes = EosMetamorphicDifferentialBlindSpotCore.runBoundaryFuzzCampaignSync({
       targetName: "hardened_registration_validator",
@@ -712,10 +689,15 @@ export class EosMetamorphicDifferentialBlindSpotCore {
 
   /**
    * Audits registered fleet projects from docs/projects/registry.json with boundary fuzzing
-   * and structural validation (SPEC-341 / SPEC-124 Fleet Extension).
+   * (SPEC-341 / SPEC-124 Fleet Extension / SPEC-342 Verification Honesty).
    */
   public auditFleetProjects(
-    options: { projectRoot?: string; seed?: number; iterationsPerProject?: number } = {},
+    options: {
+      projectRoot?: string;
+      seed?: number;
+      iterationsPerProject?: number;
+      probeTransport?: (url: string, payload: unknown, projectId: string) => { statusCode: number; error?: string };
+    } = {},
   ): FleetBlindSpotAuditReceipt {
     const root = options.projectRoot ?? process.cwd();
     const registryPath = path.join(root, "docs/projects/registry.json");
@@ -731,30 +713,49 @@ export class EosMetamorphicDifferentialBlindSpotCore {
       projectsData = [];
     }
 
+    const hasLiveTransport = typeof options.probeTransport === "function";
+    const mode = hasLiveTransport ? ("LIVE_PROBED" as const) : ("OFFLINE_NOT_VERIFIED" as const);
+
     let stabilitySum = 0;
     const reports: FleetProjectBlindSpotReport[] = projectsData.map((p, i) => {
       const pId = typeof p.id === "string" ? p.id : `project-${i + 1}`;
-      const pName = typeof p.name === "string" ? p.name : pId;
-      const status = typeof p.status === "string" ? p.status : "UNVERIFIED";
-      const auth = typeof p.authorization === "string" ? p.authorization : "UNAUTHORIZED";
+      const base = {
+        projectId: pId,
+        projectName: typeof p.name === "string" ? p.name : pId,
+        status: typeof p.status === "string" ? p.status : "UNVERIFIED",
+        authorization: typeof p.authorization === "string" ? p.authorization : "UNAUTHORIZED",
+        targetUrl: typeof p.productionUrl === "string" ? p.productionUrl : undefined,
+      };
+      if (!hasLiveTransport) {
+        return {
+          ...base,
+          verdict: "NOT_VERIFIED",
+          fuzzIterations: 0,
+          passed: false,
+          stabilityScore: 0,
+          unhandledExceptions: 0,
+          http5xxCount: 0,
+          reason: "No live probe transport provided; synthetic stubs prohibited under Law III (SPEC-342)",
+        };
+      }
       const fuzz = EosMetamorphicDifferentialBlindSpotCore.runBoundaryFuzzCampaignSync({
         targetName: `fleet:${pId}`,
         seed: seed + i * 37,
         iterations,
-        handler: (input) =>
-          input === null || typeof input !== "object" || Array.isArray(input)
-            ? { statusCode: 400, body: { error: "bad_request" } }
-            : { statusCode: 200, body: { ok: true, projectId: pId } },
+        handler: (input) => {
+          const res = options.probeTransport!(base.targetUrl ?? `https://${pId}.local`, input, pId);
+          if (res.error) throw new Error(`Transport error: ${res.error}`);
+          return { statusCode: res.statusCode, body: { projectId: pId } };
+        },
       });
-      const passed = fuzz.unhandledExceptionCount === 0 && fuzz.http5xxCount === 0;
+      const verdict =
+        fuzz.unhandledExceptionCount > 0 ? "UNREACHABLE" : fuzz.http5xxCount > 0 ? "FINDINGS" : "VERIFIED";
       stabilitySum += fuzz.stabilityScore;
       return {
-        projectId: pId,
-        projectName: pName,
-        status,
-        authorization: auth,
+        ...base,
+        verdict,
         fuzzIterations: iterations,
-        passed,
+        passed: verdict === "VERIFIED",
         stabilityScore: fuzz.stabilityScore,
         unhandledExceptions: fuzz.unhandledExceptionCount,
         http5xxCount: fuzz.http5xxCount,
@@ -763,11 +764,13 @@ export class EosMetamorphicDifferentialBlindSpotCore {
 
     const totalFleetProjects = projectsData.length;
     const auditedProjects = reports.length;
-    const allPassed = auditedProjects > 0 && reports.every((r) => r.passed);
-    const meanStabilityScore = auditedProjects > 0 ? Number((stabilitySum / auditedProjects).toFixed(4)) : 1.0;
+    const allPassed = hasLiveTransport && auditedProjects > 0 && reports.every((r) => r.passed);
+    const meanStabilityScore =
+      hasLiveTransport && auditedProjects > 0 ? Number((stabilitySum / auditedProjects).toFixed(4)) : 0.0;
     const body = {
       specRef: "SPEC-341" as const,
       command: "toolchain:blindspot:fleet" as const,
+      mode,
       totalFleetProjects,
       auditedProjects,
       allPassed,

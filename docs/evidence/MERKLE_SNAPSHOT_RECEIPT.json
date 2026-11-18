@@ -1,9 +1,9 @@
 {
-  "snapshotId": "snap-1795015353842",
-  "timestamp": "2026-11-18T15:22:33.842Z",
+  "snapshotId": "snap-1795017256551",
+  "timestamp": "2026-11-18T15:54:16.551Z",
   "rootHash": "9475dbea242c82d3566c85f20a81774534ed8b13c1501c1ee09bc658575a0fbb",
   "leafCount": 5,
   "depth": 3,
   "domainSeparation": "RFC-6962-Compatible (0x00=Leaf, 0x01=Interior)",
-  "sha256Signature": "4a3820972dc07ba06817ddc570d7bd0c76e252f3dfe757f7517fc394ea6e8a73"
+  "sha256Signature": "1009acc0a44f0e8ef90db73313521f8ad02ef8ef05b46201fda64fc3ec95f571"
 }

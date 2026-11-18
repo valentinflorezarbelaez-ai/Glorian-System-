@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 341,
-  "catalogSha256": "d8d68d61baf724d860635444ce4fc2738d4e9cb0a889f4c272fb343e7c104f19",
+  "totalSpecs": 342,
+  "catalogSha256": "85e2375699d89b9500d85d6ab510d196add40b471ead872a6b999b9e78d88492",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3071,6 +3071,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-341-metamorphic-differential-blindspot.md",
       "sha256": "6f20285b899f96f92982febff40d6cc81146e4726fb85a72ddca5e540c68a759"
+    },
+    {
+      "id": "SPEC-342",
+      "title": "Verification Honesty, Evidence Hermeticity & Measured Telemetry",
+      "status": "UNKNOWN",
+      "frCount": 10,
+      "bddCount": 9,
+      "file": "openspec/specs/SPEC-342-verification-honesty-evidence-hermeticity.md",
+      "sha256": "9bf6de2d4fc3edcf7f9d05186d90db6ff3e63788a76e2a0554ee1f76ee074fbb"
     }
   ]
 }

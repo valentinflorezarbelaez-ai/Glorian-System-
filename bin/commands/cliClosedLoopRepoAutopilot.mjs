@@ -7,11 +7,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { EosClosedLoopRepoAutopilotCore } from "../../src/core/eosClosedLoopRepoAutopilot.ts";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "../..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/CLOSED_LOOP_AUTOPILOT_RECEIPT.json");
+const getReceiptPath = () => resolveEvidencePath("CLOSED_LOOP_AUTOPILOT_RECEIPT.json", ROOT);
 
 function parseFlagValue(args, prefix, defaultValue) {
   const arg = args.find((a) => a.startsWith(prefix));
@@ -96,8 +97,9 @@ async function cmd_autopilot_audit(commandContext) {
   const core = new EosClosedLoopRepoAutopilotCore({ projectRoot: ROOT });
   const receipt = core.audit();
 
-  fs.mkdirSync(path.dirname(RECEIPT_PATH), { recursive: true });
-  fs.writeFileSync(RECEIPT_PATH, JSON.stringify(receipt, null, 2), "utf8");
+  const receiptPath = getReceiptPath();
+  fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
+  fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2), "utf8");
 
   if (isJson) {
     console.log(JSON.stringify(receipt, null, 2));

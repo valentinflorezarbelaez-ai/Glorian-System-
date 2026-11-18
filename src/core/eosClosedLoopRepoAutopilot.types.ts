@@ -28,6 +28,8 @@ export interface RepositoryIngestionReport {
   readonly ontologicalAudit: HypergraphAuditReceipt;
 }
 
+export type EvidenceProvenance = "MEASURED" | "PRIOR";
+
 export interface CausalDiagnosisReport {
   readonly topologicalOrder: readonly string[];
   readonly backdoorSet: readonly string[];
@@ -40,6 +42,8 @@ export interface CausalDiagnosisReport {
   readonly counterfactualFirstPassYield: number;
   readonly individualTreatmentEffect: number;
   readonly scmSelfAuditPassed: boolean;
+  readonly evidence?: Readonly<Record<string, number>>;
+  readonly evidenceProvenance?: Readonly<Record<string, EvidenceProvenance>>;
 }
 
 export interface DeshPreFlightReport {

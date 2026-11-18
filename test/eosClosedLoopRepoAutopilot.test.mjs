@@ -285,4 +285,19 @@ test("SPEC-340 / CHANGE-202: Sovereign Closed-Loop Repository Autopilot Engine",
     assert.strictEqual(mcpPayload.specRef, "SPEC-340");
     assert.strictEqual(mcpPayload.allPassed, true);
   });
+
+  await t.test("BDD-1835: Autopilot Causal Evidence Carries Provenance (SPEC-342 FR-8)", () => {
+    const core = new EosClosedLoopRepoAutopilotCore({ projectRoot: ROOT });
+    const causal = core.diagnoseCausalRootCause();
+
+    assert.ok(causal.evidence);
+    assert.ok(causal.evidenceProvenance);
+    assert.strictEqual(typeof causal.evidence.SPEC_CLARITY, "number");
+    assert.strictEqual(typeof causal.evidence.PR_FIRST_PASS_YIELD, "number");
+    assert.strictEqual(typeof causal.evidence.MUTATION_SCORE, "number");
+    assert.ok(
+      causal.evidenceProvenance.MUTATION_SCORE === "MEASURED" || causal.evidenceProvenance.MUTATION_SCORE === "PRIOR",
+    );
+    assert.ok(causal.evidenceProvenance.PR_FIRST_PASS_YIELD === "PRIOR");
+  });
 });

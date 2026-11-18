@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-18T15:25:53.864Z",
+  "timestampIso": "2026-11-18T16:12:45.744Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -85,8 +85,8 @@
       "specName": "SimdQuantizedHnsw",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 14000,
-      "statesGenerated": 231376,
+      "distinctStates": 669,
+      "statesGenerated": 342,
       "violationInvariant": null,
       "exitCode": 0
     },

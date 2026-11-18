@@ -33,6 +33,9 @@
     "src/core/eosEuvInverseLithographyWavefront.ts": { "lines": 85.0, "branches": 75.0 },
     "src/core/eosCausalStructuralModel.ts": { "lines": 85.0, "branches": 75.0 },
     "src/core/eosAgenticHarnessYield.ts": { "lines": 85.0, "branches": 75.0 },
+    "src/core/eosClosedLoopRepoAutopilot.ts": { "lines": 90.0, "branches": 80.0 },
+    "src/core/eosMetamorphicDifferentialBlindSpot.ts": { "lines": 90.0, "branches": 80.0 },
+    "src/core/eosZ3WasmProver.ts": { "lines": 85.0, "branches": 65.0 },
     "src/core/index.ts": { "lines": 65.0, "branches": 60.0 }
   }
 }

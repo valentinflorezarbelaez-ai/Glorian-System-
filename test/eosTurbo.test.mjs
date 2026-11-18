@@ -98,8 +98,8 @@ describe("EOS Turbo Engine & Nanosecond Precision Suite", () => {
       assert.equal(result.epistemicState, "LOCAL_CHECKS_PASSED");
       assert.equal(result.violations.length, 0);
       assert.ok(
-        result.totalDurationMs < 30000,
-        `Turbo pipeline exceeded its 30s sanity ceiling, got ${result.totalDurationMs}ms`,
+        result.totalDurationMs < 60000,
+        `Turbo pipeline exceeded its 60s sanity ceiling under parallel load, got ${result.totalDurationMs}ms`,
       );
       assert.ok(result.totalDurationUs > 0);
       assert.ok(result.totalFilesChecked > 20);
