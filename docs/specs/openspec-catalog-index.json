@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 334,
-  "catalogSha256": "7134ebb51f33fc9a3620733ca298be074e0074af48253c7d0185efffb63a2b12",
+  "totalSpecs": 335,
+  "catalogSha256": "f29d65edec4d10df85d19daf97312b8a32b23c754ae10aad8bd3025008f03201",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3008,6 +3008,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-334-discrete-event-simulation-hypervisor.md",
       "sha256": "63bfecb02be75158f683c6fe3f574f977e0eb650ee365c5624efec6f4985de19"
+    },
+    {
+      "id": "SPEC-335",
+      "title": "Threshold Secret Sharing & Ring-LWE Homomorphic Secure Aggregation Engine (PQ-MPC)",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-335-post-quantum-threshold-mpc.md",
+      "sha256": "07a1b79d081be8a59c085c84874aa974e1e6ddf76c0a6edd45ff2eb68d4f6e27"
     }
   ]
 }
