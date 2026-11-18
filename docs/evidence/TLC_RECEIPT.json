@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-18T16:50:30.855Z",
+  "timestampIso": "2026-11-18T18:25:40.393Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -67,8 +67,8 @@
       "specName": "ZeroCopyRingBuffer",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 762,
-      "statesGenerated": 332,
+      "distinctStates": 39865,
+      "statesGenerated": 154381,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -76,8 +76,8 @@
       "specName": "JepsenDistributedChaos",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 275,
-      "statesGenerated": 136,
+      "distinctStates": 7116,
+      "statesGenerated": 23010,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -94,8 +94,8 @@
       "specName": "DistributedVectorMesh",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 529,
-      "statesGenerated": 881,
+      "distinctStates": 636,
+      "statesGenerated": 5125,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -112,8 +112,8 @@
       "specName": "SpeculativePagedKvCache",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 384,
-      "statesGenerated": 88,
+      "distinctStates": 2639,
+      "statesGenerated": 16303,
       "violationInvariant": null,
       "exitCode": 0
     },
