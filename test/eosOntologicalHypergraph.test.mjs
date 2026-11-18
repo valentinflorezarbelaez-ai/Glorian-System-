@@ -377,7 +377,7 @@ test("SPEC-333 / CHANGE-195: Autonomous Ontological Hypergraph & Bitemporal Enti
         validFrom: 0,
         validTo: 100,
       });
-    }, /Referential integrity violation/);
+    }, /Referential integrity violation: Participant entity 'comp:ghost' not found/);
   });
 
   await t.test("Edge Case: Superevaluation and Supremum Classification on Hyperedges", () => {
@@ -412,5 +412,305 @@ test("SPEC-333 / CHANGE-195: Autonomous Ontological Hypergraph & Bitemporal Enti
 
     // Supremum of UNCLASSIFIED (1) and SECRET (3) must be SECRET (3)
     assert.strictEqual(edge.classification, "SECRET");
+  });
+
+  await t.test("BDD-1778B: Mutation-Hardening Classification, Bitemporal & Lexical Edges", () => {
+    const engine = new EosOntologicalHypergraphCore();
+    assert.strictEqual(engine.getTxClock(), 1);
+    assert.strictEqual(engine.advanceTxClock(), 2);
+
+    // Empty graph audit -> deduplicationResolved = false
+    const emptyAudit = engine.auditHypergraph();
+    assert.strictEqual(emptyAudit.deduplicationResolved, false);
+
+    // Empty-graph traverse exercises entities.length === 0 guard
+    assert.deepStrictEqual(engine.traverse("none", 1, { clearance: "UNCLASSIFIED", compartments: [] }), []);
+
+    // Exercise default source, confidenceScore = 1.0, CONFIDENTIAL, SECRET, TOP_SECRET supremum
+    const eUnclass = engine.assertEntity(
+      {
+        entityId: "svc:alpha9",
+        name: "Service Alpha 9",
+        kind: "Component",
+        attributes: { repo: "org/alpha-9", port: 8080 },
+        classification: "UNCLASSIFIED",
+        validFrom: 10,
+        validTo: 50,
+      },
+      10,
+    );
+    assert.strictEqual(eUnclass.source, "sovereign-control-plane");
+    assert.strictEqual(eUnclass.confidenceScore, 1.0);
+
+    // Supersede entity at txTime = 11 to test entity txTo upper bound (asOfTxTime === 11 excludes old name)
+    engine.assertEntity(
+      {
+        entityId: "svc:alpha9",
+        name: "Service Alpha 9 V2",
+        kind: "Component",
+        attributes: { repo: "org/alpha-9", port: 8080 },
+        classification: "UNCLASSIFIED",
+        validFrom: 10,
+        validTo: 50,
+      },
+      11,
+    );
+    const qSupersededEnt = engine.queryAsOf(
+      { validTime: 25, asOfTxTime: 11 },
+      { clearance: "UNCLASSIFIED", compartments: [] },
+    );
+    assert.strictEqual(qSupersededEnt.entities.length, 1);
+    assert.strictEqual(qSupersededEnt.entities[0].name, "Service Alpha 9 V2");
+
+    engine.assertEntity(
+      {
+        entityId: "svc:conf",
+        name: "Service Conf",
+        kind: "Component",
+        classification: "CONFIDENTIAL",
+        compartments: ["COMP_A"],
+        validFrom: 10,
+        validTo: 50,
+      },
+      11,
+    );
+
+    engine.assertEntity(
+      {
+        entityId: "svc:top",
+        name: "Service Top",
+        kind: "Service",
+        classification: "TOP_SECRET",
+        compartments: ["COMP_B"],
+        validFrom: 10,
+        validTo: 50,
+      },
+      12,
+    );
+
+    // Single entity in 1-item audit -> size === 1 => deduplicationResolved === true
+    const confEdge = engine.assertHyperedge(
+      {
+        edgeId: "edge:conf",
+        relation: "CONF_LINK",
+        participants: [
+          { entityId: "svc:alpha9", role: "A" },
+          { entityId: "svc:conf", role: "B" },
+        ],
+        validFrom: 10,
+        validTo: 50,
+      },
+      15,
+    );
+    assert.strictEqual(confEdge.classification, "CONFIDENTIAL");
+
+    // Supersede hyperedge at tx = 20 with TOP_SECRET supremum
+    const topEdge = engine.assertHyperedge(
+      {
+        edgeId: "edge:conf",
+        relation: "TOP_LINK",
+        participants: [
+          { entityId: "svc:alpha9", role: "A" },
+          { entityId: "svc:top", role: "B" },
+        ],
+        validFrom: 10,
+        validTo: 50,
+      },
+      20,
+    );
+    assert.strictEqual(topEdge.classification, "TOP_SECRET");
+
+    // Bitemporal boundary queries: txTo boundary (tx=20 must see ONLY new edge, not old) & validTime out of bounds
+    const qAt15 = engine.queryAsOf(
+      { validTime: 25, asOfTxTime: 15, relation: "CONF_LINK" },
+      { clearance: "CONFIDENTIAL", compartments: ["COMP_A"] },
+    );
+    assert.strictEqual(qAt15.hyperedges.length, 1);
+
+    const qAt20OldRel = engine.queryAsOf(
+      { validTime: 25, asOfTxTime: 20, relation: "CONF_LINK" },
+      { clearance: "TOP_SECRET", compartments: ["COMP_A", "COMP_B"] },
+    );
+    assert.strictEqual(qAt20OldRel.hyperedges.length, 0);
+
+    // Missing compartment blocks edge even when entity clearance matches
+    const qNoComp = engine.queryAsOf(
+      { validTime: 25, asOfTxTime: 16 },
+      { clearance: "CONFIDENTIAL", compartments: [] },
+    );
+    assert.strictEqual(qNoComp.hyperedges.length, 0);
+
+    // Out of validTime range & kind filter
+    assert.strictEqual(
+      engine.queryAsOf(
+        { validTime: 5, asOfTxTime: 25 },
+        { clearance: "TOP_SECRET", compartments: ["COMP_A", "COMP_B"] },
+      ).entities.length,
+      0,
+    );
+    assert.strictEqual(
+      engine.queryAsOf(
+        { validTime: 60, asOfTxTime: 25 },
+        { clearance: "TOP_SECRET", compartments: ["COMP_A", "COMP_B"] },
+      ).entities.length,
+      0,
+    );
+    assert.strictEqual(
+      engine.queryAsOf(
+        { validTime: 25, asOfTxTime: 25, kind: "Database" },
+        { clearance: "TOP_SECRET", compartments: ["COMP_A", "COMP_B"] },
+      ).entities.length,
+      0,
+    );
+
+    // Single-entity traverse default validFrom & root depth === 0; missing root returns []
+    assert.deepStrictEqual(
+      engine.traverse("missing", 2, { clearance: "TOP_SECRET", compartments: ["COMP_A", "COMP_B"] }),
+      [],
+    );
+    const singleEngine = new EosOntologicalHypergraphCore();
+    singleEngine.assertEntity({ entityId: "solo:1", name: "Solo", kind: "Component", validFrom: 10, validTo: 20 });
+    assert.strictEqual(singleEngine.auditHypergraph().deduplicationResolved, true);
+    assert.deepStrictEqual(singleEngine.traverse("solo:1", 0, { clearance: "UNCLASSIFIED", compartments: [] }), [
+      { entityId: "solo:1", depth: 0, path: ["solo:1"] },
+    ]);
+
+    // Explicit SECRET hyperedge over UNCLASSIFIED wide-window entities tests edge MLS & validFrom/validTo + redacted participant
+    const edgeWindowEng = new EosOntologicalHypergraphCore();
+    edgeWindowEng.assertEntity({ entityId: "w:a", name: "WA", kind: "C", validFrom: 0, validTo: 100 });
+    edgeWindowEng.assertEntity({ entityId: "w:b", name: "WB", kind: "C", validFrom: 20, validTo: 40 });
+    edgeWindowEng.assertHyperedge({
+      edgeId: "w:edge-secret",
+      relation: "SPAN",
+      participants: [
+        { entityId: "w:a", role: "A" },
+        { entityId: "w:b", role: "B" },
+      ],
+      classification: "SECRET",
+      validFrom: 15,
+      validTo: 50,
+    });
+    const txW = edgeWindowEng.getTxClock();
+    // Before hyperedge validFrom (valid=10 <= validTo 50, so OR bug wrongly passes)
+    assert.strictEqual(
+      edgeWindowEng.queryAsOf({ validTime: 10, asOfTxTime: txW }, { clearance: "SECRET", compartments: [] }).hyperedges
+        .length,
+      0,
+    );
+    // After hyperedge validTo (valid=60 >= validFrom 15, so OR bug wrongly passes)
+    assert.strictEqual(
+      edgeWindowEng.queryAsOf({ validTime: 60, asOfTxTime: txW }, { clearance: "SECRET", compartments: [] }).hyperedges
+        .length,
+      0,
+    );
+    // Valid time inside hyperedge (16) but participant w:b starts at 20 -> participant redacted hides hyperedge
+    assert.strictEqual(
+      edgeWindowEng.queryAsOf({ validTime: 16, asOfTxTime: txW }, { clearance: "SECRET", compartments: [] }).hyperedges
+        .length,
+      0,
+    );
+    // Valid time 25 inside both entities, queried as UNCLASSIFIED -> explicit SECRET edge blocked
+    assert.strictEqual(
+      edgeWindowEng.queryAsOf({ validTime: 25, asOfTxTime: txW }, { clearance: "UNCLASSIFIED", compartments: [] })
+        .hyperedges.length,
+      0,
+    );
+    // Valid time 25 inside both entities, queried as SECRET -> allowed
+    assert.strictEqual(
+      edgeWindowEng.queryAsOf({ validTime: 25, asOfTxTime: txW }, { clearance: "SECRET", compartments: [] }).hyperedges
+        .length,
+      1,
+    );
+
+    // ResolveEntity contracts: exact, attr non-string ignored, different kind rejected, lexical threshold & bigrams/digits
+    const lexEng = new EosOntologicalHypergraphCore();
+    lexEng.assertEntity({
+      entityId: "node:num2",
+      name: "Cluster Node 2",
+      kind: "Node",
+      attributes: { port: 8080, tag: "primary" },
+      validFrom: 0,
+      validTo: 100,
+    });
+    lexEng.assertEntity({ entityId: "twin:1", name: "Twin Zeta", kind: "Twin", validFrom: 0, validTo: 100 });
+    lexEng.assertEntity({ entityId: "twin:2", name: "Twin Zeta", kind: "Twin", validFrom: 0, validTo: 100 });
+    lexEng.assertEntity({ entityId: "bg:core", name: "hypergraphcorex", kind: "Kernel", validFrom: 0, validTo: 100 });
+
+    // Non-string candidate attribute (port: 8080) must NOT crash when incoming attribute port is a string
+    const nonStrAttr = lexEng.resolveEntity({
+      sourceId: "ext:port-probe",
+      name: "Unrelated Name ZZZ",
+      kind: "Node",
+      attributes: { port: "8080" },
+    });
+    assert.strictEqual(nonStrAttr.canonicalId, "ext:port-probe");
+
+    // Digit sensitivity: "Cluster Node 3" shares 2 words of 4 -> 0.5/bigrams; wait: single token "n2" vs "n3"
+    lexEng.assertEntity({ entityId: "dig:2", name: "n2", kind: "Digit", validFrom: 0, validTo: 100 });
+    const digMismatch = lexEng.resolveEntity({ sourceId: "ext:dig3", name: "n3", kind: "Digit" });
+    assert.strictEqual(digMismatch.canonicalId, "ext:dig3");
+
+    // Empty cleaned alphanumeric ("---") vs "Twin Zeta" must not merge (returns 0.0 -> self-provisioned)
+    const punctMismatch = lexEng.resolveEntity({ sourceId: "ext:punct", name: "--- +++", kind: "Twin" });
+    assert.strictEqual(punctMismatch.canonicalId, "ext:punct");
+
+    // Tied scores keep first candidate (score > highestScore, not >=)
+    const twinRes = lexEng.resolveEntity({ sourceId: "ext:twin", name: "Twin Zeta", kind: "Twin" });
+    assert.strictEqual(twinRes.canonicalId, "twin:1");
+
+    // Single-token bigram similarity: 13/15 = 0.87, exercises bigram loop, wordInter=0, union calculation
+    const bgRes = lexEng.resolveEntity({ sourceId: "ext:bg", name: "hypergraphcorey", kind: "Kernel" });
+    assert.strictEqual(bgRes.canonicalId, "bg:core");
+    assert.strictEqual(bgRes.method, "LEXICAL_SIMILARITY");
+    assert.strictEqual(bgRes.confidenceScore, 0.87);
+
+    const rExact = engine.resolveEntity({ sourceId: "svc:alpha9", name: "X", kind: "Component" });
+    assert.deepStrictEqual(rExact.matchedAttributes, ["id_exact_match"]);
+
+    const rDiffKind = engine.resolveEntity({
+      sourceId: "other:alpha9",
+      name: "Completely Different Name",
+      kind: "Database",
+      attributes: { repo: "org/alpha-9", port: 8080 },
+    });
+    assert.strictEqual(rDiffKind.method, "EXACT_IDENTIFIER");
+    assert.strictEqual(rDiffKind.confidenceScore, 1.0);
+    assert.deepStrictEqual(rDiffKind.matchedAttributes, ["self_canonical_provisioning"]);
+
+    const rLexExact = engine.resolveEntity({
+      sourceId: "ext:alpha9-punct",
+      name: "Service Alpha 9 V2!",
+      kind: "Component",
+    });
+    assert.strictEqual(rLexExact.method, "LEXICAL_SIMILARITY");
+    assert.strictEqual(rLexExact.confidenceScore, 1.0);
+    assert.deepStrictEqual(rLexExact.matchedAttributes, ["name_lexical_similarity"]);
+
+    const rDigitDiff = engine.resolveEntity({
+      sourceId: "ext:alpha10",
+      name: "X",
+      kind: "Component",
+    });
+    assert.strictEqual(rDigitDiff.canonicalId, "ext:alpha10");
+
+    // Audit failure paths: invalid entity validFrom >= validTo and invalid hyperedge validFrom >= validTo
+    const badEntEngine = new EosOntologicalHypergraphCore();
+    badEntEngine.assertEntity({ entityId: "bad:e", name: "Bad", kind: "C", validFrom: 10, validTo: 10 });
+    assert.strictEqual(badEntEngine.auditHypergraph().bitemporalMonotonicity, false);
+
+    const badEdgeEngine = new EosOntologicalHypergraphCore();
+    badEdgeEngine.assertEntity({ entityId: "ok:1", name: "O1", kind: "C", validFrom: 1, validTo: 20 });
+    badEdgeEngine.assertEntity({ entityId: "ok:2", name: "O2", kind: "C", validFrom: 1, validTo: 20 });
+    badEdgeEngine.assertHyperedge({
+      edgeId: "bad:h",
+      relation: "R",
+      participants: [
+        { entityId: "ok:1", role: "A" },
+        { entityId: "ok:2", role: "B" },
+      ],
+      validFrom: 5,
+      validTo: 5,
+    });
+    assert.strictEqual(badEdgeEngine.auditHypergraph().bitemporalMonotonicity, false);
   });
 });

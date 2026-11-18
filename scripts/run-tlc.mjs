@@ -73,6 +73,17 @@ export const CONFIGURED_SPECS = [
   "EuvInverseLithographyWavefront",
   "CausalDoCalculusScm",
   "AgenticHarnessYield",
+  "CbdcRtgsGridlock",
+  "CryogenicJosephsonSfq",
+  "DeepSpaceOpticalNav",
+  "HypersonicScramjetAero",
+  "SubseaDwdmShannon",
+  "HighNaEuvLithoOpc",
+  "LeoOpticalIslRouting",
+  "SurfaceCodeQec",
+  "UnifiedMemoryDvfsQos",
+  "DifferentialPrivacyAbac",
+  "AdaptiveHedgedDeadlineMesh",
 ];
 
 /**

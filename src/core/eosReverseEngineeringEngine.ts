@@ -30,6 +30,8 @@ import type {
   TerminatorType,
 } from "./eosReverseEngineeringEngine.types.js";
 
+export * from "./eosReverseEngineeringEngine.types.ts";
+
 export class EosReverseEngineeringCore {
   /**
    * Identifies target binary or package format via magic bytes and structural heuristics.

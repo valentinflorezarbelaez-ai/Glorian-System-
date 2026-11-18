@@ -16,6 +16,8 @@ import type {
   PipelinePhase,
 } from "./eosPipelineParallelism1F1B.types.js";
 
+export * from "./eosPipelineParallelism1F1B.types.ts";
+
 export class EosPipelineParallelism1F1BCore {
   /**
    * Constructs linear pipeline stage topology with point-to-point (P2P) links.

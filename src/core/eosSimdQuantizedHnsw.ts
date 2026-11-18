@@ -19,6 +19,8 @@ import type {
   SimdQuantizedVector,
 } from "./eosSimdQuantizedHnsw.types.ts";
 
+export * from "./eosSimdQuantizedHnsw.types.ts";
+
 export class EosSimdQuantizedHnswCore {
   private readonly config: Required<SimdQuantizedHnswConfig>;
   private readonly nodes: Map<string, SimdHnswNode> = new Map();

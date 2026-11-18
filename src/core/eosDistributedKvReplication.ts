@@ -17,6 +17,8 @@ import type {
   SpeculativePrefetchResult,
 } from "./eosDistributedKvReplication.types.js";
 
+export * from "./eosDistributedKvReplication.types.ts";
+
 export class EosDistributedKvReplicationCore {
   private readonly blockSize: number;
   private readonly maxBlocks: number;

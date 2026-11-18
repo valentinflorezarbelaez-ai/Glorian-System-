@@ -59,6 +59,8 @@ Next ==
   \/ DispatchExpiredDeadlineShed
   \/ HedgingStormSuppressed
 
+Spec == Init /\ [][Next]_vars
+
 HedgingRateBoundedInvariant ==
   /\ (hedgesDispatched * 100) <= (requestsDispatched * MaxHedgeCapPercent)
 

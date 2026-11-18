@@ -26,6 +26,8 @@ import type {
   PnCounterState,
 } from "./eosCrdtStateReplicator.types.ts";
 
+export * from "./eosCrdtStateReplicator.types.ts";
+
 export class EosCrdtStateReplicatorCore {
   private readonly actorId: string;
   private lamportClock: number = 0;

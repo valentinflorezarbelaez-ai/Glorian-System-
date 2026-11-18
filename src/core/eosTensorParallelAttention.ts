@@ -16,6 +16,8 @@ import type {
   TensorParallelAttentionAuditReceipt,
 } from "./eosTensorParallelAttention.types.js";
 
+export * from "./eosTensorParallelAttention.types.ts";
+
 export class EosTensorParallelAttentionCore {
   public readonly workerCount: number;
   public readonly totalQHeads: number;

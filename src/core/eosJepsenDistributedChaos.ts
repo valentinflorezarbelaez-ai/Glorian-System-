@@ -19,6 +19,8 @@ import {
   type JepsenAuditReceipt,
 } from "./eosJepsenDistributedChaos.types.ts";
 
+export * from "./eosJepsenDistributedChaos.types.ts";
+
 /**
  * Deterministic PRNG using 32-bit LCG algorithm.
  * Guarantees 100% reproducible chaos simulation runs given the same seed.

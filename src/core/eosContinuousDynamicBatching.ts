@@ -15,6 +15,8 @@ import type {
   BatchAuditReceipt,
 } from "./eosContinuousDynamicBatching.types.js";
 
+export * from "./eosContinuousDynamicBatching.types.ts";
+
 const PRIORITY_WEIGHTS: Record<BatchRequestPriority, number> = {
   HIGH: 3,
   NORMAL: 2,

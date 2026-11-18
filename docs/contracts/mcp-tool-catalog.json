@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "a8c982494a7908684e70c2b923841698f4e1421579fa43f96558475b0dc4b1e8",
-  "totalTools": 208,
+  "catalogSha256": "1d0e797412d4bcdd13bb8d01f860db36e9ac6368843c75d437e0fc077e0a0da4",
+  "totalTools": 215,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -6664,6 +6664,116 @@
       },
       "annotations": {
         "title": "EOS spec Drift",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_ontological_hypergraph_audit",
+      "description": "Audits bitemporal N-ary ontological hypergraph invariants, entity resolution deduplication, and fail-closed MLS lattice containment (SPEC-333).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS ontological Hypergraph Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_desh_simulation_audit",
+      "description": "Executes a deterministic discrete-event simulation hypervisor run with snapshot checkpointing and virtual-time monotonicity verification (SPEC-334).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "seed": {
+            "type": "string",
+            "description": "Deterministic PRNG seed"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS desh Simulation Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_pqmpc_threshold_audit",
+      "description": "Audits post-quantum threshold secret sharing, ciphertext additive homomorphism, and quorum decryption bounds (SPEC-335).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS pqmpc Threshold Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_pinn_hamiltonian_audit",
+      "description": "Audits physics-informed neural collocation solver residuals, CFL stability bounds, and symplectic Hamiltonian Liouville volume conservation (SPEC-336).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS pinn Hamiltonian Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_euv_ilt_wavefront_audit",
+      "description": "Audits High-NA EUV optical proximity correction, Zernike aberration compensation, Marechal Strehl ratio guards, and inverse mask synthesis (SPEC-337).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS euv Ilt Wavefront Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_causal_scm_audit",
+      "description": "Audits Pearl do-calculus causal structural equation models, d-separation, backdoor adjustment, and three-step counterfactual inference (SPEC-338).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS causal Scm Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_agentic_harness_audit",
+      "description": "Audits SDD specification readiness gates, bounded harness retry loops, first-pass PR yield telemetry, and FinOps rework token amplification (SPEC-339).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS agentic Harness Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

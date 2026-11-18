@@ -24,6 +24,8 @@ import type {
   SeaDistributionAuditReceipt,
 } from "./eosSingleExecutableDistributionGovernor.types.ts";
 
+export * from "./eosSingleExecutableDistributionGovernor.types.ts";
+
 function sha256Digest(data: Buffer | Uint8Array | string): string {
   return createHash("sha256").update(data).digest("hex");
 }

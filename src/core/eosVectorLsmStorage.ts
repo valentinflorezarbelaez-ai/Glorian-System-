@@ -19,6 +19,8 @@ import type {
   VectorLsmStorageStats,
 } from "./eosVectorLsmStorage.types.ts";
 
+export * from "./eosVectorLsmStorage.types.ts";
+
 export class EosVectorLsmStorageCore {
   private readonly config: VectorLsmConfig;
   private memTable: Map<string, LsmVectorRecord> = new Map();

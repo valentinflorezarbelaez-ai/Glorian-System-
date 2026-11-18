@@ -13,6 +13,8 @@ import type {
   RingAuditReceipt,
 } from "./eosRingAllReduce.types.js";
 
+export * from "./eosRingAllReduce.types.ts";
+
 export class EosRingAllReduceCore {
   private readonly workerCount: number;
   private readonly tolerance: number;

@@ -26,6 +26,8 @@ import {
   type WasmSynthesizerAuditReceipt,
 } from "./eosWasmBytecodeSynthesizer.types.ts";
 
+export * from "./eosWasmBytecodeSynthesizer.types.ts";
+
 export { WASM_SECTION, WASM_OP, WASM_TYPE_BYTE, encodeUleb128, decodeUleb128, encodeSleb128, decodeSleb128 };
 
 /**

@@ -27,6 +27,8 @@ import {
   TelemetryEventType,
 } from "./eosZeroCopyRingBuffer.types.ts";
 
+export * from "./eosZeroCopyRingBuffer.types.ts";
+
 const IDX_MAGIC = 0;
 const IDX_VERSION = 1;
 const IDX_CAPACITY = 2;

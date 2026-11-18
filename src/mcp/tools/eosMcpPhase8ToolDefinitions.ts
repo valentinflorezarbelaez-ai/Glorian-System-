@@ -130,4 +130,69 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       },
     },
   },
+  {
+    name: "eos_ontological_hypergraph_audit",
+    description:
+      "Audits bitemporal N-ary ontological hypergraph invariants, entity resolution deduplication, and fail-closed MLS lattice containment (SPEC-333).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
+  {
+    name: "eos_desh_simulation_audit",
+    description:
+      "Executes a deterministic discrete-event simulation hypervisor run with snapshot checkpointing and virtual-time monotonicity verification (SPEC-334).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        seed: { type: "string", description: "Deterministic PRNG seed" },
+      },
+    },
+  },
+  {
+    name: "eos_pqmpc_threshold_audit",
+    description:
+      "Audits post-quantum threshold secret sharing, ciphertext additive homomorphism, and quorum decryption bounds (SPEC-335).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
+  {
+    name: "eos_pinn_hamiltonian_audit",
+    description:
+      "Audits physics-informed neural collocation solver residuals, CFL stability bounds, and symplectic Hamiltonian Liouville volume conservation (SPEC-336).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
+  {
+    name: "eos_euv_ilt_wavefront_audit",
+    description:
+      "Audits High-NA EUV optical proximity correction, Zernike aberration compensation, Marechal Strehl ratio guards, and inverse mask synthesis (SPEC-337).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
+  {
+    name: "eos_causal_scm_audit",
+    description:
+      "Audits Pearl do-calculus causal structural equation models, d-separation, backdoor adjustment, and three-step counterfactual inference (SPEC-338).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
+  {
+    name: "eos_agentic_harness_audit",
+    description:
+      "Audits SDD specification readiness gates, bounded harness retry loops, first-pass PR yield telemetry, and FinOps rework token amplification (SPEC-339).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

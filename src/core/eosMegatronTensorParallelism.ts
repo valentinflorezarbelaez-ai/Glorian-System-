@@ -17,6 +17,8 @@ import type {
   MegatronAuditReceipt,
 } from "./eosMegatronTensorParallelism.types.ts";
 
+export * from "./eosMegatronTensorParallelism.types.ts";
+
 export class EosMegatronTensorParallelismCore {
   private readonly workerCount: number;
   private readonly inputDimension: number;

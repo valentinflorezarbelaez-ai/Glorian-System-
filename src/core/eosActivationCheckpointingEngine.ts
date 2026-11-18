@@ -27,6 +27,8 @@ import type {
   StandardPassResult,
 } from "./eosActivationCheckpointingEngine.types.js";
 
+export * from "./eosActivationCheckpointingEngine.types.ts";
+
 export class EosActivationCheckpointingCore {
   private cloneFloat32(src: Float32Array): Float32Array {
     const copy = new Float32Array(src.length);

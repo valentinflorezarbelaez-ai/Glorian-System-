@@ -314,4 +314,165 @@ test("SPEC-334 / CHANGE-196: Deterministic Discrete-Event Simulation Hypervisor 
     fs.writeFileSync(RECEIPT_PATH, JSON.stringify(receipt, null, 2), "utf8");
     assert.ok(fs.existsSync(RECEIPT_PATH));
   });
+
+  await t.test("BDD-1784B: Mutation-Hardening PRNG Seeds, Monotonicity, Bounding & Fault Predicates", () => {
+    // 1. Default seed, default node role/status/offset, initial counters, 16-char runId slice
+    const def = new EosDiscreteEventSimulationHypervisorCore();
+    assert.strictEqual(def.getSeed(), "eos-desh-sovereign-seed-42");
+    const initAudit = def.audit();
+    assert.strictEqual(initAudit.runId, "desh-run-eos-desh-soverei-step0");
+    assert.strictEqual(initAudit.faultsInjected, 0);
+    assert.strictEqual(initAudit.invariantsEvaluated, 0);
+    assert.strictEqual(initAudit.violationsCount, 0);
+
+    const defNode = def.registerNode("n-def");
+    assert.strictEqual(defNode.role, "WORKER");
+    assert.strictEqual(defNode.status, "RUNNING");
+    assert.strictEqual(defNode.clockOffsetNs, 0);
+
+    const evDef = def.sendEvent("n-def", "n-def", "PING", {});
+    assert.strictEqual(evDef.id, "ev-n-def-n-def-1");
+    assert.strictEqual(evDef.sequenceId, 2);
+    assert.strictEqual(evDef.scheduledTimeNs, 0);
+    assert.strictEqual(evDef.priority, 2);
+
+    // 2. Single-character string seeds and numeric 0 vs 1 SplitMix64 seed distinction
+    const sA = new EosDiscreteEventSimulationHypervisorCore({ seed: "A" });
+    const sB = new EosDiscreteEventSimulationHypervisorCore({ seed: "B" });
+    sA.registerNode("x", "N");
+    sA.registerNode("y", "N");
+    sB.registerNode("x", "N");
+    sB.registerNode("y", "N");
+    sA.addFaultRule({ type: "PACKET_DROP", probability: 0.5, active: true });
+    sB.addFaultRule({ type: "PACKET_DROP", probability: 0.5, active: true });
+    for (let i = 1; i <= 15; i++) {
+      sA.sendEvent("x", "y", "M", {}, i);
+      sB.sendEvent("x", "y", "M", {}, i);
+    }
+    sA.runAll();
+    sB.runAll();
+    assert.notStrictEqual(sA.audit().auditHash, sB.audit().auditHash);
+
+    const sZero = new EosDiscreteEventSimulationHypervisorCore({ seed: 0 });
+    const sOne = new EosDiscreteEventSimulationHypervisorCore({ seed: 1 });
+    const seq0 = [];
+    const seq1 = [];
+    sZero.addFaultRule({ type: "PACKET_DROP", probability: 0.5, active: true });
+    sOne.addFaultRule({ type: "PACKET_DROP", probability: 0.5, active: true });
+    for (let i = 1; i <= 12; i++) {
+      sZero.sendEvent("a", "b", "M", {}, i);
+      sOne.sendEvent("a", "b", "M", {}, i);
+      seq0.push(sZero.step().faultApplied ?? "OK");
+      seq1.push(sOne.step().faultApplied ?? "OK");
+    }
+    assert.notDeepStrictEqual(seq0, seq1);
+
+    // 3. Virtual clock equal timestamp (allowed) vs past timestamp (monotonicity violation)
+    const mono = new EosDiscreteEventSimulationHypervisorCore({ seed: "mono-test" });
+    mono.registerNode("m", "N", { eventCount: 0 });
+    mono.sendEvent("m", "m", "T100", {}, 100);
+    mono.step();
+    mono.scheduleEvent({
+      id: "eq-ts",
+      scheduledTimeNs: 100,
+      priority: 1,
+      sourceNodeId: "m",
+      targetNodeId: "m",
+      eventType: "EQ",
+      payload: null,
+    });
+    assert.strictEqual(mono.audit().virtualTimeMonotonicity, true);
+    const eqStep = mono.step();
+    assert.strictEqual(eqStep.stepped, true);
+    assert.strictEqual(eqStep.invariantViolation, undefined);
+    assert.strictEqual(mono.getNode("m").customState.eventCount, 2);
+
+    mono.scheduleEvent({
+      id: "past-ts",
+      scheduledTimeNs: 50,
+      priority: 1,
+      sourceNodeId: "m",
+      targetNodeId: "m",
+      eventType: "PAST",
+      payload: null,
+    });
+    assert.strictEqual(mono.audit().virtualTimeMonotonicity, false);
+    const pastStep = mono.step();
+    assert.strictEqual(pastStep.stepped, true);
+    assert.ok(
+      pastStep.invariantViolation.includes("Monotonicity violated") && pastStep.invariantViolation.includes("< clock"),
+    );
+
+    // 4. Default faultId, setPartition reverse direction, runUntil/runAll maxSteps & loop bounds
+    const fSim = new EosDiscreteEventSimulationHypervisorCore({ seed: "fault-bounds" });
+    fSim.registerNode("s1", "N");
+    fSim.registerNode("s2", "N");
+    fSim.registerNode("t1", "N", { eventCount: "not-a-number" });
+    const autoFault = fSim.addFaultRule({
+      type: "PACKET_DROP",
+      probability: 1.0,
+      sourceNodeId: "s1",
+      targetNodeId: "t1",
+      active: true,
+    });
+    assert.strictEqual(autoFault.faultId, "fault-1");
+    const autoPart = fSim.setPartition(["pA"], ["pB"]);
+    assert.strictEqual(autoPart.faultId, "partition-rule");
+
+    fSim.registerNode("pA", "N");
+    fSim.registerNode("pB", "N");
+    fSim.sendEvent("pB", "pA", "REV_PART", {}, 10);
+    assert.strictEqual(fSim.step().faultApplied, "PACKET_DROP");
+    fSim.removeFaultRule("partition-rule");
+
+    // Source matches only (t1 -> t2), Target matches only (s2 -> t1), both match (s1 -> t1)
+    fSim.sendEvent("s1", "s2", "SRC_ONLY", {}, 20);
+    assert.strictEqual(fSim.step().faultApplied, undefined);
+    fSim.sendEvent("s2", "t1", "TGT_ONLY", {}, 30);
+    assert.strictEqual(fSim.step().faultApplied, undefined);
+    assert.strictEqual(fSim.getNode("t1").customState.eventCount, "not-a-number");
+    fSim.sendEvent("s1", "t1", "BOTH_MATCH", {}, 40);
+    assert.strictEqual(fSim.step().faultApplied, "PACKET_DROP");
+    fSim.removeFaultRule("fault-1");
+
+    // Corruption with null payload must not throw or mutate non-object
+    fSim.addFaultRule({ type: "PACKET_CORRUPTION", probability: 1.0, targetNodeId: "t1", active: true });
+    fSim.sendEvent("s1", "t1", "NULL_PL", null, 50);
+    const nullStep = fSim.step();
+    assert.strictEqual(nullStep.faultApplied, "PACKET_CORRUPTION");
+    assert.strictEqual(fSim.getNode("t1").inbox.at(-1).payload, null);
+
+    // Crashed node clears inbox on crash and ignores subsequent deliveries
+    fSim.addFaultRule({ type: "NODE_CRASH", probability: 1.0, targetNodeId: "s2", active: true });
+    assert.strictEqual(fSim.getNode("s2").inbox.length, 1);
+    fSim.sendEvent("s1", "s2", "CRASH_NOW", {}, 60);
+    fSim.step();
+    assert.strictEqual(fSim.getNode("s2").inbox.length, 0);
+    fSim.sendEvent("s1", "s2", "AFTER_CRASH", {}, 70);
+    fSim.step();
+    assert.strictEqual(fSim.getNode("s2").inbox.length, 0);
+
+    // runUntil / runAll maxSteps bounds & stop-at-targetVirtualTimeNs
+    const loopSim = new EosDiscreteEventSimulationHypervisorCore({ seed: "loops" });
+    loopSim.registerNode("a", "N");
+    loopSim.sendEvent("a", "a", "E1", {}, 10);
+    loopSim.sendEvent("a", "a", "E2", {}, 20);
+    loopSim.sendEvent("a", "a", "E3", {}, 30);
+    assert.strictEqual(loopSim.runUntil(20, 0).length, 0);
+    assert.strictEqual(loopSim.runUntil(20, 1).length, 1);
+    assert.strictEqual(loopSim.runUntil(20, 5).length, 1);
+    assert.strictEqual(loopSim.getQueueLength(), 1);
+
+    loopSim.sendEvent("a", "a", "E4", {}, 40);
+    assert.strictEqual(loopSim.runAll(0).length, 0);
+    assert.strictEqual(loopSim.runAll(1).length, 1);
+    assert.strictEqual(loopSim.runAll().length, 1);
+
+    // Rollback missing checkpoint and tampered checkpoint hash
+    assert.strictEqual(loopSim.rollback("does-not-exist"), false);
+    const cp = loopSim.createCheckpoint("tamper-cp");
+    loopSim.checkpoints.set("tamper-cp", { ...cp, stateHash: "0".repeat(64) });
+    assert.strictEqual(loopSim.rollback("tamper-cp"), false);
+    assert.strictEqual(loopSim.audit().snapshotConsistency, false);
+  });
 });

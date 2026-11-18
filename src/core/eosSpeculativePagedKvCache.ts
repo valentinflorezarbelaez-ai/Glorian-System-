@@ -19,6 +19,8 @@ import type {
   PagedKvCacheAuditReport,
 } from "./eosSpeculativePagedKvCache.types.js";
 
+export * from "./eosSpeculativePagedKvCache.types.ts";
+
 export class EosSpeculativePagedKvCacheCore {
   public readonly totalBlocks: number;
   public readonly blockSizeTokens: number;

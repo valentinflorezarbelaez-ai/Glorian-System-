@@ -14,6 +14,8 @@ import type {
   FlashAttentionAuditReceipt,
 } from "./eosFlashAttentionOnlineSoftmax.types.js";
 
+export * from "./eosFlashAttentionOnlineSoftmax.types.ts";
+
 export class EosFlashAttentionOnlineSoftmaxCore {
   private readonly headDim: number;
   private readonly blockSizeRow: number;

@@ -21,6 +21,8 @@ import type {
   FdirOntologyAuditReceipt,
 } from "./eosFdirOntology.types.ts";
 
+export * from "./eosFdirOntology.types.ts";
+
 export class EosFdirOntology {
   /**
    * Scans an ontology cyclotron graph for orphan links, missing endpoints, and cyclic deadlocks.

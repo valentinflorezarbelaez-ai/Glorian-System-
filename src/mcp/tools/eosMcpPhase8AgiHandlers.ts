@@ -4,11 +4,18 @@
  * context-window assembly and spec-drift detection.
  */
 
+import { EosAgenticHarnessYieldCore } from "../../core/eosAgenticHarnessYield.ts";
 import { EosAgiCore } from "../../core/eosAgiCore.ts";
+import { EosCausalStructuralModelCore } from "../../core/eosCausalStructuralModel.ts";
 import { EosConsultantCore } from "../../core/eosConsultantCore.ts";
 import { EosContextWindowManager } from "../../core/eosContextWindowManager.ts";
+import { EosDiscreteEventSimulationHypervisorCore } from "../../core/eosDiscreteEventSimulationHypervisor.ts";
 import { EosDynamicToolForge } from "../../core/eosDynamicToolForge.ts";
+import { EosEuvInverseLithographyWavefrontCore } from "../../core/eosEuvInverseLithographyWavefront.ts";
+import { EosOntologicalHypergraphCore } from "../../core/eosOntologicalHypergraph.ts";
+import { EosPhysicsInformedHamiltonianPdeCore } from "../../core/eosPhysicsInformedHamiltonianPde.ts";
 import { EosPipeline } from "../../core/eosPipeline.ts";
+import { EosPostQuantumThresholdMpcCore } from "../../core/eosPostQuantumThresholdMpc.ts";
 import { EosSpecDriftDetector } from "../../core/eosSpecDriftDetector.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 import { PHASE8_MIGRATED_TOOL_NAMES } from "./eosMcpPhase8ToolNames.ts";
@@ -118,5 +125,46 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
         timeoutMs: args.timeoutMs ? Number(args.timeoutMs) : undefined,
       });
     },
+
+    eos_ontological_hypergraph_audit: () => {
+      const engine = new EosOntologicalHypergraphCore();
+      engine.assertEntity({ entityId: "comp:alpha", name: "Alpha", kind: "Component", validFrom: 1, validTo: 10 });
+      engine.assertEntity({ entityId: "comp:beta", name: "Beta", kind: "Component", validFrom: 1, validTo: 10 });
+      engine.assertHyperedge({
+        edgeId: "edge:alpha-beta",
+        relation: "DIRECT_LINK",
+        participants: [
+          { entityId: "comp:alpha", role: "SOURCE" },
+          { entityId: "comp:beta", role: "TARGET" },
+        ],
+        validFrom: 1,
+        validTo: 10,
+      });
+      engine.resolveEntity({ sourceId: "ext:alpha", name: "Alpha", kind: "Component" });
+      return engine.auditHypergraph();
+    },
+
+    eos_desh_simulation_audit: (args) => {
+      const seed = args.seed ? String(args.seed) : "sovereign-audit-seed-42";
+      const hypervisor = new EosDiscreteEventSimulationHypervisorCore({ seed });
+      hypervisor.registerNode("alpha", "COORDINATOR", { eventCount: 0 });
+      hypervisor.registerNode("beta", "WORKER", { eventCount: 0 });
+      hypervisor.sendEvent("alpha", "beta", "JOB-1", { task: "compute" }, 100);
+      hypervisor.sendEvent("beta", "alpha", "JOB-DONE", { status: "OK" }, 200);
+      hypervisor.step();
+      hypervisor.createCheckpoint("audit-cp-1");
+      hypervisor.step();
+      return hypervisor.audit();
+    },
+
+    eos_pqmpc_threshold_audit: () => new EosPostQuantumThresholdMpcCore().audit(),
+
+    eos_pinn_hamiltonian_audit: () => new EosPhysicsInformedHamiltonianPdeCore().audit(),
+
+    eos_euv_ilt_wavefront_audit: () => new EosEuvInverseLithographyWavefrontCore().audit(),
+
+    eos_causal_scm_audit: () => new EosCausalStructuralModelCore().audit(),
+
+    eos_agentic_harness_audit: () => new EosAgenticHarnessYieldCore().audit(),
   };
 }

@@ -160,10 +160,11 @@ export class EosMutationTestingEngine {
     const seen = new Set<string>();
 
     let inTypeBlock = false;
+    let inImportTypeBlock = false;
     for (let lineIdx = 0; lineIdx < lines.length && mutants.length < this.maxPerFile; lineIdx++) {
       const line = lines[lineIdx];
       const trimmed = line.trim();
-      // Skip comments, blank lines, and compile-time-only TypeScript interface/type declarations
+      // Skip comments, blank lines, and compile-time-only TypeScript interface/type/import-type declarations
       if (
         trimmed.startsWith("//") ||
         trimmed.startsWith("*") ||
@@ -171,6 +172,14 @@ export class EosMutationTestingEngine {
         trimmed.length === 0 ||
         /^(?:export\s+)?type\s+/.test(trimmed)
       ) {
+        continue;
+      }
+      if (/^import\s+type\b/.test(trimmed)) {
+        if (!trimmed.endsWith(";")) inImportTypeBlock = true;
+        continue;
+      }
+      if (inImportTypeBlock) {
+        if (trimmed.endsWith(";")) inImportTypeBlock = false;
         continue;
       }
       if (/^(?:export\s+)?interface\s+/.test(trimmed)) {

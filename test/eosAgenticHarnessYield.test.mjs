@@ -14,6 +14,8 @@ import { fileURLToPath } from "node:url";
 import {
   EosAgenticHarnessYieldCore,
   HarnessError,
+  MAX_SPEC_AMBIGUITY,
+  MIN_SPEC_READINESS_SCORE,
   ORDERED_HARNESS_STAGES,
 } from "../src/core/eosAgenticHarnessYield.ts";
 
@@ -204,5 +206,311 @@ test("SPEC-339 / CHANGE-201: Agentic Harness Engineering, First-Pass PR Yield & 
     fs.mkdirSync(path.dirname(RECEIPT_PATH), { recursive: true });
     fs.writeFileSync(RECEIPT_PATH, JSON.stringify(receiptA, null, 2), "utf8");
     assert.ok(fs.existsSync(RECEIPT_PATH));
+  });
+
+  await t.test("BDD-1814B: Mutation-Hardening Boundary, Error Contract & FinOps Accounting", () => {
+    const core = new EosAgenticHarnessYieldCore();
+    assert.strictEqual(MIN_SPEC_READINESS_SCORE, 80);
+    assert.strictEqual(MAX_SPEC_AMBIGUITY, 0.15);
+
+    // Exact rounding precision at 6 decimals (not 7)
+    const precisionLoop = core.runHarnessLoop({
+      spec: {
+        taskId: "   ",
+        earsRequirements: 1,
+        bddScenarios: 1,
+        adrCount: 1,
+        hasFormalTlaModel: true,
+        ambiguityScore: 0,
+      },
+      firstPassStageTokens: { TYPECHECK: 1, LINT_FORMAT: 1, UNIT_BDD: 1, FORMAL_TLC: 1, SECURITY_HYGIENE: 1 },
+      repairTokensPerRetry: 0,
+      tokenCostPer1kUsd: 0.333333,
+    });
+    assert.strictEqual(precisionLoop.taskId, "task-unnamed");
+    assert.strictEqual(precisionLoop.firstPassTokens, 5);
+    assert.strictEqual(precisionLoop.estimatedCostUsd, 0.001667);
+
+    // Exact boundary ambiguity 0, 0.15, 1.0 (valid) vs 1.5 (throws)
+    const zeroAmb = core.evaluateSpecReadiness({
+      taskId: "AMB-0",
+      earsRequirements: 1,
+      bddScenarios: 1,
+      adrCount: 1,
+      hasFormalTlaModel: true,
+      ambiguityScore: 0,
+    });
+    assert.strictEqual(zeroAmb.readinessScore, 100);
+    assert.strictEqual(zeroAmb.approved, true);
+
+    const exactAmbThreshold = core.evaluateSpecReadiness({
+      taskId: "AMB-15",
+      earsRequirements: 1,
+      bddScenarios: 1,
+      adrCount: 1,
+      hasFormalTlaModel: false,
+      ambiguityScore: 0.15,
+    });
+    assert.strictEqual(exactAmbThreshold.readinessScore, 82);
+    assert.strictEqual(exactAmbThreshold.missingCriteria.length, 0);
+
+    const exactly80 = core.evaluateSpecReadiness({
+      taskId: "SCORE-80",
+      earsRequirements: 1,
+      bddScenarios: 1,
+      adrCount: 1,
+      hasFormalTlaModel: false,
+      ambiguityScore: 0.25,
+    });
+    assert.strictEqual(exactly80.readinessScore, 80);
+    assert.deepStrictEqual(exactly80.missingCriteria, ["AMBIGUITY_ABOVE_THRESHOLD"]);
+
+    const oneAmb = core.evaluateSpecReadiness({
+      taskId: "AMB-1",
+      earsRequirements: 1,
+      bddScenarios: 1,
+      adrCount: 1,
+      hasFormalTlaModel: false,
+      ambiguityScore: 1,
+    });
+    assert.strictEqual(oneAmb.readinessScore, 65);
+    assert.ok(oneAmb.missingCriteria.includes("READINESS_SCORE_BELOW_80"));
+
+    const allMissing = core.evaluateSpecReadiness({
+      taskId: "NONE",
+      earsRequirements: 0,
+      bddScenarios: 0,
+      adrCount: 0,
+      hasFormalTlaModel: false,
+      ambiguityScore: 0,
+    });
+    assert.strictEqual(allMissing.readinessScore, 20);
+    assert.deepStrictEqual(allMissing.missingCriteria, [
+      "EARS_REQUIREMENTS_MISSING",
+      "BDD_SCENARIOS_MISSING",
+      "ADR_DECISION_MISSING",
+      "READINESS_SCORE_BELOW_80",
+    ]);
+
+    assert.throws(
+      () =>
+        core.evaluateSpecReadiness({
+          earsRequirements: 1,
+          bddScenarios: 1,
+          adrCount: 1,
+          hasFormalTlaModel: false,
+          ambiguityScore: 1.5,
+        }),
+      (err) =>
+        err instanceof HarnessError && err.name === "HarnessError" && err.message.includes("invalid specification"),
+    );
+
+    assert.throws(
+      () =>
+        core.assertSpecReadiness({
+          earsRequirements: 0,
+          bddScenarios: 1,
+          adrCount: 1,
+          hasFormalTlaModel: false,
+          ambiguityScore: 0.5,
+        }),
+      (err) => err instanceof HarnessError && err.message.includes(", AMBIGUITY_ABOVE_THRESHOLD"),
+    );
+
+    // Default tokens, durations, attempts, maxRetries boundary (0, 3, 50 accepted; 51 throws)
+    const nominalDefaults = core.runHarnessLoop({
+      spec: {
+        taskId: "DEF",
+        earsRequirements: 1,
+        bddScenarios: 1,
+        adrCount: 1,
+        hasFormalTlaModel: true,
+        ambiguityScore: 0,
+      },
+    });
+    assert.strictEqual(nominalDefaults.firstPassTokens, 7200);
+    assert.strictEqual(nominalDefaults.estimatedCostUsd, 0.0216);
+    assert.deepStrictEqual(
+      nominalDefaults.attempts.map((a) => a.durationMs),
+      [950, 620, 1850, 2400, 780],
+    );
+    assert.deepStrictEqual(
+      nominalDefaults.attempts.map((a) => [a.attempt, a.passed, a.reworkTokens, a.tokensConsumed]),
+      [
+        [1, true, 0, 1200],
+        [1, true, 0, 800],
+        [1, true, 0, 2400],
+        [1, true, 0, 1800],
+        [1, true, 0, 1000],
+      ],
+    );
+
+    const exactRetries = core.runHarnessLoop({
+      spec: {
+        taskId: "R3",
+        earsRequirements: 1,
+        bddScenarios: 1,
+        adrCount: 1,
+        hasFormalTlaModel: true,
+        ambiguityScore: 0,
+      },
+      stageFailures: { TYPECHECK: 2 },
+    });
+    assert.strictEqual(exactRetries.totalRetries, 2);
+    assert.strictEqual(exactRetries.reworkTokens, 6800);
+    assert.deepStrictEqual(exactRetries.attempts.slice(0, 3), [
+      { stage: "TYPECHECK", attempt: 1, passed: false, tokensConsumed: 1200, reworkTokens: 0, durationMs: 950 },
+      { stage: "TYPECHECK", attempt: 2, passed: false, tokensConsumed: 3400, reworkTokens: 3400, durationMs: 1093 },
+      { stage: "TYPECHECK", attempt: 3, passed: true, tokensConsumed: 3400, reworkTokens: 3400, durationMs: 1093 },
+    ]);
+
+    assert.strictEqual(
+      core.runHarnessLoop({
+        spec: {
+          taskId: "R0",
+          earsRequirements: 1,
+          bddScenarios: 1,
+          adrCount: 1,
+          hasFormalTlaModel: true,
+          ambiguityScore: 0,
+        },
+        maxRetries: 0,
+      }).prReady,
+      true,
+    );
+    assert.strictEqual(
+      core.runHarnessLoop({
+        spec: {
+          taskId: "R50",
+          earsRequirements: 1,
+          bddScenarios: 1,
+          adrCount: 1,
+          hasFormalTlaModel: true,
+          ambiguityScore: 0,
+        },
+        maxRetries: 50,
+      }).prReady,
+      true,
+    );
+
+    assert.throws(() => core.runHarnessLoop(null), /HARNESS_INVALID_PARAMETERS.*spec is required/);
+    assert.throws(
+      () =>
+        core.runHarnessLoop({
+          spec: {
+            taskId: "R51",
+            earsRequirements: 1,
+            bddScenarios: 1,
+            adrCount: 1,
+            hasFormalTlaModel: true,
+            ambiguityScore: 0,
+          },
+          maxRetries: 51,
+        }),
+      /HARNESS_INVALID_PARAMETERS.*invalid retry or FinOps/,
+    );
+    assert.throws(
+      () =>
+        core.runHarnessLoop({
+          spec: {
+            taskId: "NEG",
+            earsRequirements: 1,
+            bddScenarios: 1,
+            adrCount: 1,
+            hasFormalTlaModel: true,
+            ambiguityScore: 0,
+          },
+          repairTokensPerRetry: -1,
+        }),
+      /HARNESS_INVALID_PARAMETERS.*invalid retry or FinOps/,
+    );
+    assert.throws(
+      () =>
+        core.runHarnessLoop({
+          spec: {
+            taskId: "BADSTAGE",
+            earsRequirements: 1,
+            bddScenarios: 1,
+            adrCount: 1,
+            hasFormalTlaModel: true,
+            ambiguityScore: 0,
+          },
+          firstPassStageTokens: { TYPECHECK: 0 },
+        }),
+      /HARNESS_INVALID_PARAMETERS.*invalid token budget/,
+    );
+    assert.throws(
+      () =>
+        core.runHarnessLoop({
+          spec: {
+            taskId: "NEGFAIL",
+            earsRequirements: 1,
+            bddScenarios: 1,
+            adrCount: 1,
+            hasFormalTlaModel: true,
+            ambiguityScore: 0,
+          },
+          stageFailures: { TYPECHECK: -1 },
+        }),
+      /HARNESS_INVALID_PARAMETERS.*negative failure count/,
+    );
+
+    // Cohort edge boundaries & default canonical cohorts
+    assert.throws(() => core.evaluateCohortTelemetry([]), /HARNESS_INVALID_PARAMETERS.*non-empty/);
+    assert.throws(
+      () =>
+        core.evaluateCohortTelemetry([
+          {
+            prId: "X",
+            methodology: "SDD_HARNESS",
+            firstPassSuccess: true,
+            retries: 0,
+            firstPassTokens: 100,
+            reworkTokens: 0,
+            totalTokens: 50,
+            costUsd: 0,
+          },
+        ]),
+      /HARNESS_INVALID_PARAMETERS.*invalid telemetry record X/,
+    );
+    const singleZeroCost = core.evaluateCohortTelemetry([
+      {
+        prId: "SINGLE",
+        methodology: "SDD_HARNESS",
+        firstPassSuccess: true,
+        retries: 0,
+        firstPassTokens: 1,
+        reworkTokens: 0,
+        totalTokens: 1,
+        costUsd: 0,
+      },
+    ]);
+    assert.strictEqual(singleZeroCost.totalCostUsd, 0);
+    assert.strictEqual(singleZeroCost.firstPassTokens, 1);
+
+    // Canonical cohorts & partial override fallback (sddRecords only -> uses buildCanonicalBenchmarkCohorts)
+    const cohorts = core.buildCanonicalBenchmarkCohorts();
+    assert.deepStrictEqual(
+      cohorts.sdd.map((r) => [r.prId, r.methodology, r.retries, r.totalTokens, r.costUsd]),
+      [
+        ["PR-SDD-01", "SDD_HARNESS", 0, 7200, 0.0216],
+        ["PR-SDD-02", "SDD_HARNESS", 0, 7200, 0.0216],
+        ["PR-SDD-03", "SDD_HARNESS", 1, 10400, 0.0312],
+        ["PR-SDD-04", "SDD_HARNESS", 0, 7200, 0.0216],
+        ["PR-SDD-05", "SDD_HARNESS", 0, 7200, 0.0216],
+      ],
+    );
+    assert.deepStrictEqual(
+      cohorts.vibe.map((r) => [r.prId, r.methodology, r.retries]),
+      [
+        ["PR-VIBE-01", "VIBE_CODING", 3],
+        ["PR-VIBE-02", "VIBE_CODING", 2],
+        ["PR-VIBE-03", "VIBE_CODING", 4],
+        ["PR-VIBE-04", "VIBE_CODING", 3],
+        ["PR-VIBE-05", "VIBE_CODING", 2],
+      ],
+    );
+    const partialOverrideBench = core.compareSddVsVibeCohorts([cohorts.sdd[0]]);
+    assert.strictEqual(partialOverrideBench.sddCohort.cohortSize, 5);
   });
 });

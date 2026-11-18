@@ -182,12 +182,19 @@ export const PHASE7_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
 
 /** Phase-8 AGI / forge handlers. */
 export const PHASE8_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
+  "eos_agentic_harness_audit",
   "eos_agi_axioms",
   "eos_agi_solve",
+  "eos_causal_scm_audit",
   "eos_consult",
   "eos_context_window",
+  "eos_desh_simulation_audit",
+  "eos_euv_ilt_wavefront_audit",
   "eos_forge_list",
   "eos_forge_tool",
+  "eos_ontological_hypergraph_audit",
+  "eos_pinn_hamiltonian_audit",
   "eos_pipeline",
+  "eos_pqmpc_threshold_audit",
   "eos_spec_drift",
 ]);

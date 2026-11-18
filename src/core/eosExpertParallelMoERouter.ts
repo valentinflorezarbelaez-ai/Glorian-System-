@@ -20,6 +20,8 @@ import type {
   MoEAuditReceipt,
 } from "./eosExpertParallelMoERouter.types.js";
 
+export * from "./eosExpertParallelMoERouter.types.ts";
+
 export class EosExpertParallelMoECore {
   private config: Required<MoEConfig>;
 

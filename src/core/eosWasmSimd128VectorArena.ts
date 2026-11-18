@@ -34,6 +34,8 @@ import type {
   ZeroCopyArenaFrameReport,
 } from "./eosWasmSimd128VectorArena.types.ts";
 
+export * from "./eosWasmSimd128VectorArena.types.ts";
+
 interface Simd128WasmExports {
   memory: WebAssembly.Memory;
   simd_i32x4_max_join: (offsetA: number, offsetB: number, offsetOut: number) => number;

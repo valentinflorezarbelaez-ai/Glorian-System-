@@ -27,6 +27,8 @@ import type {
   ReconciliationAuditReceipt,
 } from "./eosAutonomousReconciliationLoop.types.ts";
 
+export * from "./eosAutonomousReconciliationLoop.types.ts";
+
 export class EosAutonomousReconciliationLoopCore {
   /**
    * Observes the live registered sovereign fleet state from registry.json.

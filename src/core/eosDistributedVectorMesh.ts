@@ -22,6 +22,8 @@ import type {
   VirtualToken,
 } from "./eosDistributedVectorMesh.types.ts";
 
+export * from "./eosDistributedVectorMesh.types.ts";
+
 export class EosDistributedVectorMeshCore {
   private readonly config: Required<ConsistentHashRingConfig>;
   private readonly nodes: Map<string, MeshNode> = new Map();

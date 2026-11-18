@@ -19,6 +19,8 @@ import type {
   QuantizedAuditReceipt,
 } from "./eosQuantizedDistributedTrainingEngine.types.js";
 
+export * from "./eosQuantizedDistributedTrainingEngine.types.ts";
+
 export const FP8_E4M3_MAX = 448.0;
 export const FP8_E5M2_MAX = 57344.0;
 export const INT8_MAX = 127;

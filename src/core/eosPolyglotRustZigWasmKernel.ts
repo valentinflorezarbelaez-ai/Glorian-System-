@@ -35,6 +35,8 @@ import type {
   PolyglotWasmCompileReport,
 } from "./eosPolyglotRustZigWasmKernel.types.ts";
 
+export * from "./eosPolyglotRustZigWasmKernel.types.ts";
+
 interface PolyglotWasmExports {
   memory: WebAssembly.Memory;
   crdt_vector_join: (offsetA: number, offsetB: number, offsetOut: number, len: number) => number;

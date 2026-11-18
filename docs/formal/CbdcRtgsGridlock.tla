@@ -41,6 +41,7 @@ Next ==
       IF throughputRatioX100' < MIN_THROUGHPUT_RATIO_X100 THEN "SYSTEMIC_LIQUIDITY_GRIDLOCK"
       ELSE IF throughputRatioX100' < 100 \/ herfindahlIndex' > 2500 THEN "PARTIAL_QUEUE_COMPRESSION"
       ELSE "MULTILATERAL_LSM_CLEARED"
+  /\ UNCHANGED <<bankCount, queuedGrossUsdM>>
 
 Spec == Init /\ [][Next]_<<step, bankCount, queuedGrossUsdM, settledGrossUsdM, unsettledGrossUsdM, conservationResidualUsdM, throughputRatioX100, herfindahlIndex, regime>>
 

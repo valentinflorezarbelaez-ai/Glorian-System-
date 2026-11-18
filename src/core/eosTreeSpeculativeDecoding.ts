@@ -18,6 +18,8 @@ import type {
   TreeTopologyModulation,
 } from "./eosTreeSpeculativeDecoding.types.js";
 
+export * from "./eosTreeSpeculativeDecoding.types.ts";
+
 export class EosTreeSpeculativeDecodingCore {
   private readonly vocabSize: number;
   private readonly draftCostRatio: number;

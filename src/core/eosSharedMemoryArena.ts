@@ -23,6 +23,8 @@ import {
   type SharedMemoryAuditReceipt,
 } from "./eosSharedMemoryArena.types.ts";
 
+export * from "./eosSharedMemoryArena.types.ts";
+
 export class EosSharedMemoryArena {
   public readonly buffer: SharedArrayBuffer;
   private readonly ctrl: Int32Array;

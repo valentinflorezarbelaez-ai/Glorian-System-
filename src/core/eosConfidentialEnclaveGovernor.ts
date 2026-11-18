@@ -32,6 +32,8 @@ import type {
   EnclaveAuditReceipt,
 } from "./eosConfidentialEnclaveGovernor.types.ts";
 
+export * from "./eosConfidentialEnclaveGovernor.types.ts";
+
 export class EosConfidentialEnclaveGovernor {
   private static defaultRoTKeyPair: { privateKeyPem: string; publicKeyPem: string } | null = null;
 

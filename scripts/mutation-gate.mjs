@@ -56,6 +56,9 @@ const DEFAULT_TARGETS = [
   "src/core/eosThreeMountainsCompass.ts",
   "src/core/eosUniversalProductFoundry.ts",
   "src/core/eosVercelCanaryObservability.ts",
+  "src/core/eosOntologicalHypergraph.ts",
+  "src/core/eosDiscreteEventSimulationHypervisor.ts",
+  "src/core/eosAgenticHarnessYield.ts",
   "scripts/verify-vercel-function-budget.mjs",
 ];
 

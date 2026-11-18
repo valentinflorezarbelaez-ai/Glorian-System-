@@ -20,6 +20,8 @@ import type {
   ZeROAuditReceipt,
 } from "./eosZeroFsdpEngine.types.js";
 
+export * from "./eosZeroFsdpEngine.types.ts";
+
 export class EosZeroFsdpCore {
   private config: Required<ZeROConfig>;
   private optShards: Map<number, OptimizerShard[]> = new Map(); // key: stage

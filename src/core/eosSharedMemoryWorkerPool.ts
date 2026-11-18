@@ -27,6 +27,8 @@ import type {
   SharedWasmArenaReport,
 } from "./eosSharedMemoryWorkerPool.types.ts";
 
+export * from "./eosSharedMemoryWorkerPool.types.ts";
+
 const HEADER_WORDS = 16; // 64 bytes reserved for Atomics counters & locks
 const REDUCTION_WORKER_CODE = [
   'const { workerData } = require("node:worker_threads");',

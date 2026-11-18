@@ -22,6 +22,8 @@ import type {
   HermeticBuildAuditReceipt,
 } from "./eosHermeticReproducibleBuildGovernor.types.ts";
 
+export * from "./eosHermeticReproducibleBuildGovernor.types.ts";
+
 export const DEFAULT_SOURCE_DATE_EPOCH = 1700000000;
 
 export class EosHermeticReproducibleBuildGovernor {
