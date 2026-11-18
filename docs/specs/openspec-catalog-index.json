@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 340,
-  "catalogSha256": "2e2572a3d42e6a91ee2082bb3aa87b1b13965bafd51b8ab8165ee0ea2d923ddc",
+  "totalSpecs": 341,
+  "catalogSha256": "d8d68d61baf724d860635444ce4fc2738d4e9cb0a889f4c272fb343e7c104f19",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3062,6 +3062,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-340-closed-loop-repo-autopilot.md",
       "sha256": "e035ae07648720f85ae0021daf2dc8c84e4349966b0411a68b9db10feaae2d99"
+    },
+    {
+      "id": "SPEC-341",
+      "title": "Metamorphic, Differential & Structural-Shrinking Blind-Spot Hunter Engine",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-341-metamorphic-differential-blindspot.md",
+      "sha256": "6f20285b899f96f92982febff40d6cc81146e4726fb85a72ddca5e540c68a759"
     }
   ]
 }
