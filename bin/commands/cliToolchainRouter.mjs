@@ -145,6 +145,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliPostQuantumThresholdMpc.mjs",
     fn: "handlePostQuantumThresholdMpcCommand",
   },
+  {
+    prefix: "toolchain:pinn:",
+    file: "./cliPhysicsInformedHamiltonianPde.mjs",
+    fn: "handlePhysicsInformedHamiltonianPdeCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

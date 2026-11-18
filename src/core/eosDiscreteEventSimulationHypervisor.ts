@@ -20,6 +20,8 @@ import type {
   VirtualNodeState,
 } from "./eosDiscreteEventSimulationHypervisor.types.js";
 
+export * from "./eosDiscreteEventSimulationHypervisor.types.ts";
+
 /**
  * Pure 64-bit SplitMix64 deterministic pseudo-random number generator.
  */

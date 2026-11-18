@@ -626,6 +626,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:pqmpc:aggregate [--contributors=4] [--json] Agregación homomórfica aditiva y descifrado umbral (SPEC-335, referencia)
   eos toolchain:pqmpc:threshold [--parties=5] [--threshold=3] [--json] Descifrado umbral, tolerancia a ausencias y rechazo bajo umbral (SPEC-335)
   eos toolchain:pqmpc:audit [--seed=SEED] [--json] Autopruebas de corrección y recibo SHA-256 con aviso de seguridad (SPEC-335)
+  eos toolchain:pinn:symplectic [--steps=300] [--dt=0.05] [--scheme=YOSHIDA_4] [--json] Integración simpléctica Störmer-Verlet y Yoshida de 4to orden (SPEC-336)
+  eos toolchain:pinn:cfl [--velocity=1.0] [--viscosity=0.02] [--dx=0.05] [--dt=0.01] [--json] Evaluación fail-closed de estabilidad CFL y difusión de Fourier (SPEC-336)
+  eos toolchain:pinn:residual [--viscosity=0.05] [--json] Evaluación de residuo diferencial EDP y condiciones de frontera (SPEC-336)
+  eos toolchain:pinn:solve [--modes=3] [--json] Solucionador PINN por colocación física regularizada (SPEC-336)
+  eos toolchain:pinn:audit [--json] Auditoría determinista simpléctica/PINN y recibo SHA-256 (SPEC-336)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

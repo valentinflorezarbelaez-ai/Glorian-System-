@@ -69,6 +69,7 @@ export const CONFIGURED_SPECS = [
   "OntologicalHypergraph",
   "DiscreteEventSimulationHypervisor",
   "ThresholdSecureAggregation",
+  "SymplecticHamiltonianPde",
 ];
 
 /**

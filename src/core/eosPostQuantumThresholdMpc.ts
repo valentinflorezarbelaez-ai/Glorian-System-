@@ -26,6 +26,8 @@ import type {
   PqmpcThresholdKeySet,
 } from "./eosPostQuantumThresholdMpc.types.ts";
 
+export * from "./eosPostQuantumThresholdMpc.types.ts";
+
 /** Mersenne prime M61 = 2^61 - 1: Shamir field and Ring-LWE ciphertext modulus (ADR-197-001). */
 export const PQMPC_FIELD_MODULUS: bigint = (1n << 61n) - 1n;
 

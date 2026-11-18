@@ -3102,3 +3102,16 @@
   - `docs/plans/PLAN-197-post-quantum-threshold-mpc.md`
   - `docs/tasks/TASKS-197-post-quantum-threshold-mpc.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-PHYSICS-INFORMED-HAMILTONIAN-PDE
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-198` (`SPEC-336`), Autonomous Physics-Informed Neural Network (PINN) & Symplectic Hamiltonian PDE Integrator: TLA+ Model 80 `docs/formal/SymplecticHamiltonianPde.tla` / `.cfg`; `src/core/eosPhysicsInformedHamiltonianPde.types.ts` and `src/core/eosPhysicsInformedHamiltonianPde.ts` (Störmer-Verlet 2nd-order and Yoshida 4th-order symplectic integrators, Liouville phase-space volume check, fail-closed CFL & Fourier diffusion stability guard, physics-informed collocation residual evaluator and regularized Fourier-feature PINN solver); receipt `docs/evidence/PINN_HAMILTONIAN_PDE_RECEIPT.json`. Wire `toolchain:pinn:symplectic`, `toolchain:pinn:cfl`, `toolchain:pinn:residual`, `toolchain:pinn:solve`, `toolchain:pinn:audit` (`603 -> 608` commands). Verify `BDD-1791`..`BDD-1796`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-198-PHYSICS-INFORMED-HAMILTONIAN-PDE.md`
+  - `openspec/changes/CHANGE-198-physics-informed-hamiltonian-pde.md`
+  - `openspec/specs/SPEC-336-physics-informed-hamiltonian-pde.md`
+  - `docs/plans/PLAN-198-physics-informed-hamiltonian-pde.md`
+  - `docs/tasks/TASKS-198-physics-informed-hamiltonian-pde.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

@@ -1,0 +1,14 @@
+{
+  "specRef": "SPEC-336",
+  "verletMaxEnergyDrift": 0.000713316098,
+  "yoshidaMaxEnergyDrift": 5.51156727e-7,
+  "eulerMaxEnergyDrift": 4.84020089,
+  "symplecticEnergyBounded": true,
+  "yoshidaBeatsVerlet": true,
+  "liouvilleVolumePreserved": true,
+  "cflGuardEnforced": true,
+  "pinnLossConverged": true,
+  "pinnL2Error": 1.9471927e-8,
+  "allPassed": true,
+  "sha256Digest": "9a00d21e36cd504fb318c9cd8eff2af35c5ced64a4f7a36c766506449d99c93e"
+}
