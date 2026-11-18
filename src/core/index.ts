@@ -747,3 +747,4 @@ export * from "./eosEuvInverseLithographyWavefront.ts";
 export * from "./eosCausalStructuralModel.ts";
 export * from "./eosAgenticHarnessYield.ts";
 export * from "./eosClosedLoopRepoAutopilot.ts";
+export * from "./eosMetamorphicDifferentialBlindSpot.ts";

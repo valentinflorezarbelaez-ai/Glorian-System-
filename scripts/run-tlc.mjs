@@ -86,6 +86,7 @@ export const CONFIGURED_SPECS = [
   "DifferentialPrivacyAbac",
   "AdaptiveHedgedDeadlineMesh",
   "ClosedLoopRepoAutopilot",
+  "MetamorphicDifferentialBlindSpot",
 ];
 
 /**

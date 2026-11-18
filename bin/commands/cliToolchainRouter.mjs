@@ -170,6 +170,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliClosedLoopRepoAutopilot.mjs",
     fn: "handleClosedLoopRepoAutopilotCommand",
   },
+  {
+    prefix: "toolchain:blindspot:",
+    file: "./cliMetamorphicDifferentialBlindSpot.mjs",
+    fn: "handleMetamorphicDifferentialBlindSpotCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

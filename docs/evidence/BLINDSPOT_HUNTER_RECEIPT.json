@@ -1,0 +1,17 @@
+{
+  "specRef": "SPEC-341",
+  "seed": 2026341,
+  "structuralShrinkCaughtSortBug": true,
+  "minimalSortCounterexampleLength": 2,
+  "differentialCaughtDivergence": true,
+  "differentialParityConfirmed": true,
+  "metamorphicSortPassed": true,
+  "metamorphicFilterPassed": true,
+  "metamorphicRoundtripPassed": true,
+  "fuzzCampaignIterations": 500,
+  "fuzzUnhandledExceptions": 0,
+  "fuzzHttp5xxCount": 0,
+  "fuzzStabilityScore": 1,
+  "allPassed": true,
+  "sha256Digest": "382324dcbab355ea2eef2f41bea6869d1222776eb86eef2499e2ef90325878f6"
+}

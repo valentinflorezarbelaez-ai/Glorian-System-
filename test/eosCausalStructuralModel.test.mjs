@@ -157,4 +157,232 @@ test("SPEC-338 / CHANGE-200: Autonomous Causal Discovery & Structural Equation M
     fs.writeFileSync(RECEIPT_PATH, JSON.stringify(receiptA, null, 2), "utf8");
     assert.ok(fs.existsSync(RECEIPT_PATH));
   });
+
+  await t.test("BDD-1808B: Mutation-Hardening ScmError Boundaries, Graph Queries & Exact Numerics", () => {
+    const scm = new EosCausalStructuralModelCore();
+
+    // addVariable fail-closed parameter, unknown-parent & cycle guards
+    assert.throws(
+      () => scm.addVariable(null),
+      (err) => err instanceof ScmError && err.name === "ScmError" && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () => scm.addVariable({ name: "   ", parents: [], mechanism: () => 0 }),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () => scm.addVariable({ name: "A", parents: null, mechanism: () => 0 }),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () => scm.addVariable({ name: "A", parents: [], mechanism: "not-fn" }),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () => scm.addVariable({ name: "A", parents: ["A"], mechanism: () => 0 }),
+      (err) => err instanceof ScmError && err.code === "SCM_CYCLE_DETECTED",
+    );
+    assert.throws(
+      () => scm.addVariable({ name: "A", parents: ["GHOST"], mechanism: () => 0 }),
+      (err) => err instanceof ScmError && err.code === "SCM_UNKNOWN_VARIABLE",
+    );
+    assert.throws(
+      () => scm.addVariable({ name: "A", parents: ["  "], mechanism: () => 0 }),
+      (err) => err instanceof ScmError && err.code === "SCM_UNKNOWN_VARIABLE",
+    );
+
+    scm.addVariable({ name: "P1", parents: [], mechanism: () => 1 });
+    scm.addVariable({ name: "P2", parents: [], mechanism: () => 2 });
+    // Duplicate parents deduplicated & updating existing node clears old parent links
+    scm.addVariable({ name: "CH", parents: ["P1", "P1"], mechanism: (pa) => pa.P1 * 3 });
+    assert.deepStrictEqual(scm.getParents("CH"), ["P1"]);
+    scm.addVariable({ name: "CH", parents: ["P2"], mechanism: (pa) => pa.P2 * 5 });
+    assert.deepStrictEqual(scm.getParents("CH"), ["P2"]);
+    assert.strictEqual(scm.getDescendants("P1").has("CH"), false);
+    assert.strictEqual(scm.getDescendants("P2").has("CH"), true);
+    assert.throws(
+      () => scm.addVariable({ name: "P2", parents: ["CH"], mechanism: () => 0 }),
+      (err) => err instanceof ScmError && err.code === "SCM_CYCLE_DETECTED",
+    );
+
+    // addDirectedEdge default weight, duplicate suppression, and guards
+    scm.addDirectedEdge("P1", "CH");
+    scm.addDirectedEdge("P1", "CH", 2);
+    assert.deepStrictEqual(scm.getParents("CH"), ["P2", "P1"]);
+    const edgeEval = scm.evaluateForward({ P1: 1, P2: 1, CH: 0 });
+    assert.strictEqual(edgeEval.CH, 21);
+    assert.throws(
+      () => scm.addDirectedEdge("NOPE", "CH"),
+      (err) => err instanceof ScmError && err.code === "SCM_UNKNOWN_VARIABLE",
+    );
+    assert.throws(
+      () => scm.addDirectedEdge("CH", "NOPE"),
+      (err) => err instanceof ScmError && err.code === "SCM_UNKNOWN_VARIABLE",
+    );
+
+    // getParents / getAncestors / getDescendants boundaries
+    const bench = EosCausalStructuralModelCore.createBenchmarkConfoundedColliderScm();
+    assert.throws(
+      () => bench.getParents("NOPE"),
+      (err) => err instanceof ScmError && err.code === "SCM_UNKNOWN_VARIABLE",
+    );
+    assert.throws(
+      () => bench.getAncestors(null),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () => bench.getAncestors(["NOPE"]),
+      (err) => err instanceof ScmError && err.code === "SCM_UNKNOWN_VARIABLE",
+    );
+    assert.deepStrictEqual([...bench.getAncestors(["C"])].sort(), ["C", "X", "Y", "Z"]);
+    assert.deepStrictEqual([...bench.getDescendants("Y")].sort(), ["C", "D"]);
+
+    // isDSeparated & verifyBackdoorCriterion guards
+    assert.throws(
+      () => bench.isDSeparated("X", "Y", null),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () => bench.isDSeparated("BAD", "Y", []),
+      (err) => err instanceof ScmError && err.code === "SCM_UNKNOWN_VARIABLE",
+    );
+    assert.throws(
+      () => bench.isDSeparated("X", "Y", ["BAD"]),
+      (err) => err instanceof ScmError && err.code === "SCM_UNKNOWN_VARIABLE",
+    );
+    const selfCond = bench.isDSeparated("X", "Y", ["X"]);
+    assert.strictEqual(selfCond.dSeparated, true);
+    assert.ok(selfCond.ancestralSubgraphNodes.includes("Z"));
+    assert.strictEqual(selfCond.ancestralSubgraphNodes.includes("D"), false);
+
+    assert.throws(
+      () => bench.verifyBackdoorCriterion("X", "Y", null),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () => bench.verifyBackdoorCriterion("BAD", "Y", ["Z"]),
+      (err) => err instanceof ScmError && err.code === "SCM_UNKNOWN_VARIABLE",
+    );
+    const selfBackdoor = bench.verifyBackdoorCriterion("X", "Y", ["X"]);
+    assert.strictEqual(selfBackdoor.containsDescendantsOfTreatment, true);
+    assert.strictEqual(selfBackdoor.validBackdoorSet, false);
+
+    // mutilateGraph, evaluateForward, computeInterventionalAte
+    assert.throws(
+      () => bench.mutilateGraph([]),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () => bench.mutilateGraph({ GHOST: 1 }),
+      (err) => err instanceof ScmError && err.code === "SCM_UNKNOWN_VARIABLE",
+    );
+    assert.throws(
+      () => bench.mutilateGraph({ X: Number.POSITIVE_INFINITY }),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () => bench.evaluateForward([], {}),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () => bench.evaluateForward({ Z: Number.NaN }, {}),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () => bench.computeInterventionalAte("X", "MISSING", 1, 0),
+      (err) => err instanceof ScmError && err.code === "SCM_UNKNOWN_VARIABLE",
+    );
+    assert.throws(
+      () => bench.computeInterventionalAte("X", "Y", Number.NaN, 0),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    const defaultAte = bench.computeInterventionalAte("X", "Y");
+    assert.strictEqual(defaultAte.treatedValue, 1);
+    assert.strictEqual(defaultAte.controlValue, 0);
+    assert.strictEqual(defaultAte.expectedOutcomeTreated, 2);
+    assert.strictEqual(defaultAte.expectedOutcomeControl, 0);
+    assert.deepStrictEqual(defaultAte.severedParents, ["Z"]);
+
+    // estimateBackdoorAdjustedAte & inferCounterfactual guards
+    assert.throws(
+      () =>
+        bench.estimateBackdoorAdjustedAte({
+          treatment: "X",
+          outcome: "Y",
+          adjustmentSet: ["Z"],
+          samples: [{ Z: 1, X: 1, Y: 2 }],
+          trueInterventionalAte: 2.0,
+        }),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () =>
+        bench.estimateBackdoorAdjustedAte({
+          treatment: "X",
+          outcome: "Y",
+          adjustmentSet: ["Z"],
+          samples: [
+            { Z: 1, X: 1, Y: 2 },
+            { Z: 2, X: 2, Y: Number.NaN },
+          ],
+          trueInterventionalAte: 2.0,
+        }),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () =>
+        bench.estimateBackdoorAdjustedAte({
+          treatment: "X",
+          outcome: "Y",
+          adjustmentSet: ["Z", "C"],
+          samples: [
+            { Z: 1, X: 1, Y: 2, C: 1 },
+            { Z: 2, X: 2, Y: 4, C: 2 },
+          ],
+          trueInterventionalAte: 2.0,
+        }),
+      (err) => err instanceof ScmError && err.code === "SCM_BACKDOOR_VIOLATION",
+    );
+    const twoSamplesEst = bench.estimateBackdoorAdjustedAte({
+      treatment: "X",
+      outcome: "Y",
+      adjustmentSet: ["Z"],
+      samples: [
+        { Z: 0, X: 0, Y: 0 },
+        { Z: 1, X: 2, Y: 7 },
+        { Z: 2, X: 1, Y: 8 },
+      ],
+      trueInterventionalAte: 2.0,
+    });
+    assert.strictEqual(twoSamplesEst.sampleCount, 3);
+    assert.ok(twoSamplesEst.adjustedEstimationError < 0.01);
+
+    const factual = bench.evaluateForward({ Z: 1, X: 0.5, Y: 0.1, C: 0, D: 0 });
+    assert.throws(
+      () => bench.inferCounterfactual({ factualEvidence: null, interventions: {}, targetVariable: "Y" }),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () => bench.inferCounterfactual({ factualEvidence: { Z: 1 }, interventions: {}, targetVariable: "Y" }),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () =>
+        bench.inferCounterfactual({
+          factualEvidence: { ...factual, Y: Number.NaN },
+          interventions: { X: 1 },
+          targetVariable: "Y",
+        }),
+      (err) => err instanceof ScmError && err.code === "SCM_INVALID_PARAMETERS",
+    );
+    assert.throws(
+      () => bench.inferCounterfactual({ factualEvidence: factual, interventions: { X: 1 }, targetVariable: "NOPE" }),
+      (err) => err instanceof ScmError && err.code === "SCM_UNKNOWN_VARIABLE",
+    );
+
+    const auditSummary = bench.audit();
+    assert.strictEqual(auditSummary.trueAte, 2);
+    assert.ok(Math.abs(auditSummary.naiveBiasedSlope) > 3);
+    assert.ok(Math.abs(auditSummary.backdoorAdjustedAte - 2) < 0.02);
+  });
 });

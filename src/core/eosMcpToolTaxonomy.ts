@@ -185,6 +185,7 @@ export const PHASE8_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
   "eos_agentic_harness_audit",
   "eos_agi_axioms",
   "eos_agi_solve",
+  "eos_blindspot_hunter_audit",
   "eos_causal_scm_audit",
   "eos_closed_loop_autopilot_audit",
   "eos_consult",

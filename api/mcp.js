@@ -35,7 +35,9 @@ function rpcError(id, code, message) {
 
 function boundedString(value, maximumBytes, allowEmpty = false) {
   return (
-    typeof value === "string" && Buffer.byteLength(value, "utf8") <= maximumBytes && (allowEmpty || value.length > 0)
+    typeof value === "string" &&
+    Buffer.byteLength(value, "utf8") <= maximumBytes &&
+    (allowEmpty || value.trim().length > 0)
   );
 }
 
@@ -138,10 +140,18 @@ function validatePublicTool(toolName, rawArguments) {
       ) {
         return { error: rpcError(null, -32602, "mode must be one of: verify, sbom, slsa, both.") };
       }
-      if (args.commitSha !== undefined && typeof args.commitSha !== "string") {
-        return { error: rpcError(null, -32602, "commitSha must be a string.") };
+      if (
+        args.commitSha !== undefined &&
+        (!boundedString(args.commitSha, 64) || !/^[0-9a-fA-F]{7,64}$/.test(args.commitSha.trim()))
+      ) {
+        return { error: rpcError(null, -32602, "commitSha must be a 7-64 character hexadecimal SHA.") };
       }
-      break;
+      return {
+        args: {
+          ...(args.mode !== undefined ? { mode: args.mode } : {}),
+          ...(args.commitSha !== undefined ? { commitSha: args.commitSha.trim() } : {}),
+        },
+      };
     case "eos_semantic_search":
       if (!boundedString(args.query, MAX_TEXT_BYTES)) {
         return { error: rpcError(null, -32602, "query must be a non-empty string no larger than 16 KiB.") };
@@ -301,9 +311,10 @@ const STATIC_ALLOWED_ORIGINS = new Set([
 function isAllowedOrigin(origin) {
   if (typeof origin !== "string" || !origin || /[\r\n]/.test(origin)) return false;
   if (STATIC_ALLOWED_ORIGINS.has(origin)) return true;
-  if (/^https:\/\/(?:[a-zA-Z0-9-]+\.)*vercel\.app$/i.test(origin)) return true;
   if (process.env.EOS_ALLOWED_ORIGINS) {
-    const custom = process.env.EOS_ALLOWED_ORIGINS.split(",").map((s) => s.trim());
+    const custom = process.env.EOS_ALLOWED_ORIGINS.split(",")
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0 && s !== "*");
     if (custom.includes(origin)) return true;
   }
   return false;
@@ -405,7 +416,7 @@ async function _handler(req, res) {
     !hasId ||
     message.id === null ||
     (typeof message.id !== "string" && (typeof message.id !== "number" || !Number.isFinite(message.id))) ||
-    (typeof message.id === "string" && Buffer.byteLength(message.id, "utf8") > 128)
+    (typeof message.id === "string" && (message.id.trim().length === 0 || Buffer.byteLength(message.id, "utf8") > 128))
   ) {
     return res.status(400).json(rpcError(requestId(message), -32600, "A bounded JSON-RPC request ID is required."));
   }
@@ -426,7 +437,7 @@ async function _handler(req, res) {
 
   try {
     const server = await getServer();
-    let response = server.handleRequest(message);
+    let response = await server.handleRequest(message);
     if (!response) return res.status(202).end();
     if (message.method === "tools/list") response = limitPublicTools(response);
     if (message.method === "initialize" && response.result) {

@@ -58,8 +58,10 @@ const DEFAULT_TARGETS = [
   "src/core/eosVercelCanaryObservability.ts",
   "src/core/eosOntologicalHypergraph.ts",
   "src/core/eosDiscreteEventSimulationHypervisor.ts",
+  "src/core/eosCausalStructuralModel.ts",
   "src/core/eosAgenticHarnessYield.ts",
   "src/core/eosClosedLoopRepoAutopilot.ts",
+  "src/core/eosMetamorphicDifferentialBlindSpot.ts",
   "scripts/verify-vercel-function-budget.mjs",
 ];
 

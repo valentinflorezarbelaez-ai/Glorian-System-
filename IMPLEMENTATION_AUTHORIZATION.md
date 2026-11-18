@@ -3167,3 +3167,16 @@
   - `docs/plans/PLAN-202-closed-loop-repo-autopilot.md`
   - `docs/tasks/TASKS-202-closed-loop-repo-autopilot.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-METAMORPHIC-DIFFERENTIAL-BLINDSPOT
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-203` (`SPEC-341`), Metamorphic, Differential & Structural-Shrinking Blind-Spot Hunter Engine, paired with remediation of 31 confirmed Judgment Day blind spots (`ALPHA-01..09`, `ALPHA-11..18`, `BETA-01..14`): TLA+ Model 85 `docs/formal/MetamorphicDifferentialBlindSpot.tla` / `.cfg`; `src/core/eosMetamorphicDifferentialBlindSpot.types.ts` and `src/core/eosMetamorphicDifferentialBlindSpot.ts` (recursive structural JSON tree generator & shrinker, differential oracle comparison, metamorphic relation verifier, and 500-payload API/handler boundary fuzzer); receipt `docs/evidence/BLINDSPOT_HUNTER_RECEIPT.json`. Wire `toolchain:blindspot:shrink`, `toolchain:blindspot:differential`, `toolchain:blindspot:metamorphic`, `toolchain:blindspot:fuzz`, `toolchain:blindspot:audit` (`628 -> 633` commands) and MCP tool `eos_blindspot_hunter_audit`. Verify `BDD-1821`..`BDD-1826` and mutation gate (`>= 85%`).
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-203-METAMORPHIC-DIFFERENTIAL-BLINDSPOT.md`
+  - `openspec/changes/CHANGE-203-metamorphic-differential-blindspot.md`
+  - `openspec/specs/SPEC-341-metamorphic-differential-blindspot.md`
+  - `docs/plans/PLAN-203-metamorphic-differential-blindspot.md`
+  - `docs/tasks/TASKS-203-metamorphic-differential-blindspot.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

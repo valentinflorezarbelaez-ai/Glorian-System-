@@ -42,6 +42,10 @@ function sha256Hex(payload: string): string {
   return createHash("sha256").update(payload).digest("hex");
 }
 
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
 /**
  * Autonomous Causal Discovery & Structural Equation Modeling Core.
  */
@@ -51,11 +55,22 @@ export class EosCausalStructuralModelCore {
 
   /** Register a variable and its parent links, failing closed if a cycle is created. */
   public addVariable(spec: StructuralVariableSpec): void {
-    if (!spec || !spec.name || typeof spec.mechanism !== "function") {
-      throw new ScmError("SCM_INVALID_PARAMETERS", "variable name and mechanism function are required");
+    if (
+      !spec ||
+      typeof spec.name !== "string" ||
+      !spec.name.trim() ||
+      !Array.isArray(spec.parents) ||
+      typeof spec.mechanism !== "function"
+    ) {
+      throw new ScmError("SCM_INVALID_PARAMETERS", "variable name, parents array, and mechanism function are required");
     }
     if (spec.parents.includes(spec.name)) {
       throw new ScmError("SCM_CYCLE_DETECTED", `self-loop detected on variable ${spec.name}`);
+    }
+    for (const parent of spec.parents) {
+      if (typeof parent !== "string" || !parent.trim() || !this.variables.has(parent)) {
+        throw new ScmError("SCM_UNKNOWN_VARIABLE", `unknown parent variable ${String(parent)} for ${spec.name}`);
+      }
     }
     // Check if any parent is a descendant of spec.name
     const descendants = this.getDescendants(spec.name);
@@ -118,6 +133,9 @@ export class EosCausalStructuralModelCore {
   }
 
   public getAncestors(nodes: Iterable<string>): Set<string> {
+    if (nodes === null || nodes === undefined || typeof (nodes as Iterable<string>)[Symbol.iterator] !== "function") {
+      throw new ScmError("SCM_INVALID_PARAMETERS", "nodes must be an iterable");
+    }
     const visited = new Set<string>();
     const queue: string[] = [];
     for (const n of nodes) {
@@ -214,6 +232,9 @@ export class EosCausalStructuralModelCore {
     conditionedOn: ReadonlyArray<string>,
     ignoredDirectedEdges: Set<string>,
   ): DSeparationQueryResult {
+    if (!Array.isArray(conditionedOn)) {
+      throw new ScmError("SCM_INVALID_PARAMETERS", "conditionedOn must be an array");
+    }
     if (!this.variables.has(source) || !this.variables.has(target)) {
       throw new ScmError("SCM_UNKNOWN_VARIABLE", `unknown endpoint (${source}, ${target})`);
     }
@@ -315,6 +336,9 @@ export class EosCausalStructuralModelCore {
     outcome: string,
     candidateSet: ReadonlyArray<string>,
   ): BackdoorCriterionReport {
+    if (!Array.isArray(candidateSet)) {
+      throw new ScmError("SCM_INVALID_PARAMETERS", "candidateSet must be an array");
+    }
     if (!this.variables.has(treatment) || !this.variables.has(outcome)) {
       throw new ScmError("SCM_UNKNOWN_VARIABLE", `unknown treatment or outcome (${treatment}, ${outcome})`);
     }
@@ -344,9 +368,15 @@ export class EosCausalStructuralModelCore {
    * into each intervened variable and replaces its mechanism with the clamped constant.
    */
   public mutilateGraph(interventions: Record<string, number>): EosCausalStructuralModelCore {
-    for (const k of Object.keys(interventions)) {
+    if (!isPlainRecord(interventions)) {
+      throw new ScmError("SCM_INVALID_PARAMETERS", "interventions must be a plain object");
+    }
+    for (const [k, v] of Object.entries(interventions)) {
       if (!this.variables.has(k)) {
         throw new ScmError("SCM_UNKNOWN_VARIABLE", `cannot intervene on unknown variable ${k}`);
+      }
+      if (typeof v !== "number" || !Number.isFinite(v)) {
+        throw new ScmError("SCM_INVALID_PARAMETERS", `non-finite intervention for ${k}`);
       }
     }
     const mutilated = new EosCausalStructuralModelCore();
@@ -375,6 +405,14 @@ export class EosCausalStructuralModelCore {
     exogenousNoise: Record<string, number> = {},
     interventions: Record<string, number> = {},
   ): Record<string, number> {
+    if (!isPlainRecord(exogenousNoise) || !isPlainRecord(interventions)) {
+      throw new ScmError("SCM_INVALID_PARAMETERS", "exogenousNoise and interventions must be plain objects");
+    }
+    for (const [k, v] of Object.entries(exogenousNoise)) {
+      if (v !== undefined && (typeof v !== "number" || !Number.isFinite(v))) {
+        throw new ScmError("SCM_INVALID_PARAMETERS", `non-finite exogenous noise for ${k}`);
+      }
+    }
     const model = Object.keys(interventions).length > 0 ? this.mutilateGraph(interventions) : this;
     const values: Record<string, number> = {};
     for (const name of model.getTopologicalOrder()) {
@@ -398,6 +436,12 @@ export class EosCausalStructuralModelCore {
     controlValue = 0,
     exogenousMeans: Record<string, number> = {},
   ): InterventionalAteReport {
+    if (!this.variables.has(outcome)) {
+      throw new ScmError("SCM_UNKNOWN_VARIABLE", `unknown variable ${outcome}`);
+    }
+    if (!Number.isFinite(treatedValue) || !Number.isFinite(controlValue)) {
+      throw new ScmError("SCM_INVALID_PARAMETERS", "treatedValue and controlValue must be finite numbers");
+    }
     const severedParents = this.getParents(treatment);
     const treatedRun = this.evaluateForward(exogenousMeans, { [treatment]: treatedValue });
     const controlRun = this.evaluateForward(exogenousMeans, { [treatment]: controlValue });
@@ -427,6 +471,17 @@ export class EosCausalStructuralModelCore {
     samples: ReadonlyArray<Record<string, number>>;
     trueInterventionalAte: number;
   }): ObservationalBackdoorAdjustmentReport {
+    if (
+      !params ||
+      !Array.isArray(params.samples) ||
+      params.samples.length < 2 ||
+      !Number.isFinite(params.trueInterventionalAte)
+    ) {
+      throw new ScmError(
+        "SCM_INVALID_PARAMETERS",
+        "at least 2 observational samples and finite trueInterventionalAte are required",
+      );
+    }
     const { treatment, outcome, adjustmentSet, samples, trueInterventionalAte } = params;
     const check = this.verifyBackdoorCriterion(treatment, outcome, adjustmentSet);
     if (!check.validBackdoorSet) {
@@ -434,6 +489,18 @@ export class EosCausalStructuralModelCore {
         "SCM_BACKDOOR_VIOLATION",
         `set {${adjustmentSet.join(", ")}} violates the backdoor criterion for (${treatment}, ${outcome})`,
       );
+    }
+    for (const row of samples) {
+      if (
+        !isPlainRecord(row) ||
+        typeof row[treatment] !== "number" ||
+        !Number.isFinite(row[treatment]) ||
+        typeof row[outcome] !== "number" ||
+        !Number.isFinite(row[outcome]) ||
+        adjustmentSet.some((z) => typeof row[z] !== "number" || !Number.isFinite(row[z]))
+      ) {
+        throw new ScmError("SCM_INVALID_PARAMETERS", "sample contains missing or non-finite variable values");
+      }
     }
 
     // 1. Naive simple linear regression Y ~ 1 + X
@@ -503,11 +570,18 @@ export class EosCausalStructuralModelCore {
     interventions: Record<string, number>;
     targetVariable: string;
   }): CounterfactualInferenceReport {
+    if (!params || !isPlainRecord(params.factualEvidence) || !isPlainRecord(params.interventions)) {
+      throw new ScmError("SCM_INVALID_PARAMETERS", "factualEvidence and interventions must be plain objects");
+    }
     const { factualEvidence, interventions, targetVariable } = params;
     const order = this.getTopologicalOrder();
     for (const v of order) {
-      if (!Object.prototype.hasOwnProperty.call(factualEvidence, v)) {
-        throw new ScmError("SCM_INVALID_PARAMETERS", `missing factual value for variable ${v}`);
+      if (
+        !Object.prototype.hasOwnProperty.call(factualEvidence, v) ||
+        typeof factualEvidence[v] !== "number" ||
+        !Number.isFinite(factualEvidence[v])
+      ) {
+        throw new ScmError("SCM_INVALID_PARAMETERS", `missing or non-finite factual value for variable ${v}`);
       }
     }
     if (!this.variables.has(targetVariable)) {

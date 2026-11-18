@@ -13,6 +13,7 @@ import { EosContextWindowManager } from "../../core/eosContextWindowManager.ts";
 import { EosDiscreteEventSimulationHypervisorCore } from "../../core/eosDiscreteEventSimulationHypervisor.ts";
 import { EosDynamicToolForge } from "../../core/eosDynamicToolForge.ts";
 import { EosEuvInverseLithographyWavefrontCore } from "../../core/eosEuvInverseLithographyWavefront.ts";
+import { EosMetamorphicDifferentialBlindSpotCore } from "../../core/eosMetamorphicDifferentialBlindSpot.ts";
 import { EosOntologicalHypergraphCore } from "../../core/eosOntologicalHypergraph.ts";
 import { EosPhysicsInformedHamiltonianPdeCore } from "../../core/eosPhysicsInformedHamiltonianPde.ts";
 import { EosPipeline } from "../../core/eosPipeline.ts";
@@ -27,20 +28,27 @@ export interface Phase8AgiHandlerDeps {
   readonly projectRoot: string;
 }
 
+function positiveFiniteNumber(value: unknown, fallback?: number): number | undefined {
+  if (value === undefined || value === null || value === "") return fallback;
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
 export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Record<string, McpToolHandler>> {
   const { projectRoot } = deps;
 
   return {
     eos_consult: (args) => {
       const consultant = new EosConsultantCore(projectRoot);
-      const problem = String(args.problem || "");
+      const problem = typeof args.problem === "string" ? args.problem.trim() : "";
       if (!problem) return { error: "problem field is required" };
       const deliverable = consultant.engage({
         problem,
-        engagementType: args.engagementType as any,
-        techStack: args.techStack as any,
-        context: args.context ? String(args.context) : undefined,
-        constraints: args.constraints ? String(args.constraints) : undefined,
+        engagementType: typeof args.engagementType === "string" ? (args.engagementType as any) : undefined,
+        techStack:
+          typeof args.techStack === "string" || Array.isArray(args.techStack) ? (args.techStack as any) : undefined,
+        context: typeof args.context === "string" ? args.context : undefined,
+        constraints: typeof args.constraints === "string" ? args.constraints : undefined,
       });
       const filePath = consultant.saveDeliverable(deliverable);
       return { ...deliverable, savedTo: filePath };
@@ -48,18 +56,23 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
 
     eos_agi_solve: (args, ctx) => {
       const core = new EosAgiCore(projectRoot);
-      const branches = Array.isArray(args.branches) ? args.branches : [];
-      const objective = String(args.objective || "");
-      const testCommand = String(args.testCommand || "node scripts/verify-cicd-pipeline.mjs");
+      const branches = Array.isArray(args.branches)
+        ? args.branches.filter((b) => b !== null && typeof b === "object")
+        : [];
+      const objective = typeof args.objective === "string" ? args.objective.trim() : "";
+      const testCommand =
+        typeof args.testCommand === "string" && args.testCommand.trim()
+          ? args.testCommand.trim()
+          : "node scripts/verify-cicd-pipeline.mjs";
 
       const progressEvents: unknown[] = [];
       const result = core.solve(objective, branches, {
         testCommand,
         testCwd: projectRoot,
-        timeoutMs: Number(args.timeoutMs) || 60_000,
+        timeoutMs: positiveFiniteNumber(args.timeoutMs, 60_000)!,
         onProgress: (event) => {
           progressEvents.push(event);
-          ctx.onProgress?.(progressEvents.length, branches.length, event.message);
+          ctx?.onProgress?.(progressEvents.length, branches.length, event.message);
         },
       });
       return result.then((solved) => ({ ...solved, progressEvents }));
@@ -86,11 +99,15 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
 
     eos_forge_tool: (args) => {
       const forge = new EosDynamicToolForge(projectRoot);
+      const inputSchema =
+        args.inputSchema !== null && typeof args.inputSchema === "object" && !Array.isArray(args.inputSchema)
+          ? (args.inputSchema as Record<string, unknown>)
+          : { type: "object", properties: {} };
       const result = forge.forge({
-        toolName: String(args.toolName || ""),
-        description: String(args.description || ""),
-        inputSchema: (args.inputSchema as Record<string, unknown>) || { type: "object", properties: {} },
-        moduleSource: String(args.moduleSource || ""),
+        toolName: typeof args.toolName === "string" ? args.toolName.trim() : "",
+        description: typeof args.description === "string" ? args.description.trim() : "",
+        inputSchema,
+        moduleSource: typeof args.moduleSource === "string" ? args.moduleSource.trim() : "",
         requestedBy: "eos_mcp_server",
       });
       if (!result.ok) return { success: false, error: result.error.message };
@@ -99,17 +116,21 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
 
     eos_context_window: (args) => {
       const mgr = new EosContextWindowManager(projectRoot);
-      return mgr.assemble(String(args.objective || ""), String(args.targetFile || ""), {
-        tokenBudget: args.tokenBudget ? Number(args.tokenBudget) : undefined,
-        includeTests: args.includeTests !== false,
-        includeSpecs: args.includeSpecs !== false,
-      });
+      return mgr.assemble(
+        typeof args.objective === "string" ? args.objective.trim() : "",
+        typeof args.targetFile === "string" ? args.targetFile.trim() : "",
+        {
+          tokenBudget: positiveFiniteNumber(args.tokenBudget),
+          includeTests: args.includeTests !== false,
+          includeSpecs: args.includeSpecs !== false,
+        },
+      );
     },
 
     eos_spec_drift: (args) => {
       const detector = new EosSpecDriftDetector(projectRoot);
       return detector.detect({
-        driftThresholdDays: args.driftThresholdDays ? Number(args.driftThresholdDays) : undefined,
+        driftThresholdDays: positiveFiniteNumber(args.driftThresholdDays),
         checkOrphanSpecs: args.checkOrphanSpecs !== false,
       });
     },
@@ -117,13 +138,16 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_pipeline: (args) => {
       const pipeline = new EosPipeline(projectRoot);
       return pipeline.solve({
-        problem: String(args.problem || ""),
-        targetFile: String(args.targetFile || ""),
-        testCommand: String(args.testCommand || "node scripts/verify-cicd-pipeline.mjs"),
+        problem: typeof args.problem === "string" ? args.problem.trim() : "",
+        targetFile: typeof args.targetFile === "string" ? args.targetFile.trim() : "",
+        testCommand:
+          typeof args.testCommand === "string" && args.testCommand.trim()
+            ? args.testCommand.trim()
+            : "node scripts/verify-cicd-pipeline.mjs",
         testCwd: projectRoot,
-        tokenBudget: args.tokenBudget ? Number(args.tokenBudget) : undefined,
-        branchCount: args.branchCount ? Number(args.branchCount) : undefined,
-        timeoutMs: args.timeoutMs ? Number(args.timeoutMs) : undefined,
+        tokenBudget: positiveFiniteNumber(args.tokenBudget),
+        branchCount: positiveFiniteNumber(args.branchCount),
+        timeoutMs: positiveFiniteNumber(args.timeoutMs),
       });
     },
 
@@ -146,7 +170,8 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     },
 
     eos_desh_simulation_audit: (args) => {
-      const seed = args.seed ? String(args.seed) : "sovereign-audit-seed-42";
+      const rawSeed = typeof args.seed === "string" ? args.seed.trim() : "";
+      const seed = rawSeed || "sovereign-audit-seed-42";
       const hypervisor = new EosDiscreteEventSimulationHypervisorCore({ seed });
       hypervisor.registerNode("alpha", "COORDINATOR", { eventCount: 0 });
       hypervisor.registerNode("beta", "WORKER", { eventCount: 0 });
@@ -169,5 +194,7 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_agentic_harness_audit: () => new EosAgenticHarnessYieldCore().audit(),
 
     eos_closed_loop_autopilot_audit: () => new EosClosedLoopRepoAutopilotCore({ projectRoot }).audit(),
+
+    eos_blindspot_hunter_audit: () => new EosMetamorphicDifferentialBlindSpotCore().audit(),
   };
 }

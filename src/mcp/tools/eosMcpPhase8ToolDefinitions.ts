@@ -204,4 +204,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_blindspot_hunter_audit",
+    description:
+      "Runs recursive structural tree shrinking, differential oracle divergence hunting, metamorphic invariant checks, and 500-payload boundary fuzzing (SPEC-341).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

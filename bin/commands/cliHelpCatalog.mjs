@@ -651,6 +651,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:autopilot:simulate [--seed=...] [--json] Simulación DESH pre-flight con checkpoint y rollback (SPEC-340)
   eos toolchain:autopilot:yield [--commits=20] [--json] Telemetría viva de Git FPY/RAF y arnés de 5 etapas (SPEC-340)
   eos toolchain:autopilot:audit [--json] Auditoría integral en bucle cerrado y recibo SHA-256 (SPEC-340)
+  eos toolchain:blindspot:shrink [--seed=2026341] [--runs=120] [--json] Generación estructural Mulberry32 y shrinking recursivo (SPEC-341)
+  eos toolchain:blindspot:differential [--seed=2026341] [--runs=120] [--json] Oráculo diferencial referencia vs candidato (SPEC-341)
+  eos toolchain:blindspot:metamorphic [--seed=2026341] [--json] Verificador de relaciones metamórficas sin oráculo exacto (SPEC-341)
+  eos toolchain:blindspot:fuzz [--iterations=500] [--seed=2026341] [--json] Campaña de fuzzing de 500+ cargas útiles sin HTTP 500 (SPEC-341)
+  eos toolchain:blindspot:audit [--json] Auditoría determinista del cazador de puntos ciegos y recibo SHA-256 (SPEC-341)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

@@ -83,6 +83,7 @@ export class EosAgenticHarnessYieldCore {
   public evaluateSpecReadiness(input: SpecReadinessInput): SpecReadinessReport {
     if (
       !input ||
+      (input.taskId !== undefined && typeof input.taskId !== "string") ||
       !Number.isInteger(input.earsRequirements) ||
       input.earsRequirements < 0 ||
       !Number.isInteger(input.bddScenarios) ||
@@ -269,8 +270,26 @@ export class EosAgenticHarnessYieldCore {
     let totalCostUsd = 0;
 
     for (const r of records) {
-      if (r.firstPassTokens <= 0 || r.totalTokens < r.firstPassTokens || r.reworkTokens < 0 || r.costUsd < 0) {
-        throw new HarnessError("HARNESS_INVALID_PARAMETERS", `invalid telemetry record ${r.prId}`);
+      if (
+        !r ||
+        typeof r !== "object" ||
+        typeof r.prId !== "string" ||
+        !r.prId.trim() ||
+        typeof r.firstPassSuccess !== "boolean" ||
+        !Number.isInteger(r.retries) ||
+        r.retries < 0 ||
+        !Number.isFinite(r.firstPassTokens) ||
+        !Number.isFinite(r.reworkTokens) ||
+        !Number.isFinite(r.totalTokens) ||
+        !Number.isFinite(r.costUsd) ||
+        r.firstPassTokens <= 0 ||
+        r.reworkTokens < 0 ||
+        r.totalTokens < r.firstPassTokens ||
+        r.totalTokens !== r.firstPassTokens + r.reworkTokens ||
+        r.costUsd < 0 ||
+        (r.firstPassSuccess && (r.retries > 0 || r.reworkTokens > 0))
+      ) {
+        throw new HarnessError("HARNESS_INVALID_PARAMETERS", `invalid telemetry record ${r?.prId ?? "unknown"}`);
       }
       if (r.firstPassSuccess) firstPassCount++;
       totalTokens += r.totalTokens;

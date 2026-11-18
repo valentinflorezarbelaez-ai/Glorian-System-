@@ -48,10 +48,19 @@ function sha256Hex(payload: string): string {
   return createHash("sha256").update(payload).digest("hex");
 }
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
 function readJsonIfExists(filePath: string): Record<string, unknown> | null {
-  if (!fs.existsSync(filePath)) return null;
-  const raw = fs.readFileSync(filePath, "utf8");
-  return JSON.parse(raw) as Record<string, unknown>;
+  try {
+    if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) return null;
+    const raw = fs.readFileSync(filePath, "utf8");
+    const parsed: unknown = JSON.parse(raw);
+    return isPlainObject(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -64,6 +73,15 @@ export class EosClosedLoopRepoAutopilotCore {
   private readonly simulationSeed: string;
 
   constructor(config: ClosedLoopAutopilotConfig = {}) {
+    if (config === null || typeof config !== "object" || Array.isArray(config)) {
+      throw new AutopilotError("AUTOPILOT_INVALID_PARAMETERS", "config must be a plain object");
+    }
+    if (config.projectRoot !== undefined && (typeof config.projectRoot !== "string" || !config.projectRoot.trim())) {
+      throw new AutopilotError("AUTOPILOT_INVALID_ROOT", "invalid project root directory: expected non-empty string");
+    }
+    if (config.simulationSeed !== undefined && typeof config.simulationSeed !== "string") {
+      throw new AutopilotError("AUTOPILOT_INVALID_PARAMETERS", "simulationSeed must be a string");
+    }
     const resolvedRoot = path.resolve(config.projectRoot ?? process.cwd());
     if (!fs.existsSync(resolvedRoot) || !fs.statSync(resolvedRoot).isDirectory()) {
       throw new AutopilotError("AUTOPILOT_INVALID_ROOT", `invalid project root directory: ${resolvedRoot}`);
@@ -120,7 +138,13 @@ export class EosClosedLoopRepoAutopilotCore {
 
   /** Stage 2 (SPEC-338): Causal root-cause DAG, backdoor deconfounding, do(SPEC_CLARITY) & counterfactual. */
   public diagnoseCausalRootCause(ingestion?: RepositoryIngestionReport): CausalDiagnosisReport {
-    if (ingestion && ingestion.totalHypergraphEntities < 1) {
+    if (
+      ingestion &&
+      (!Number.isInteger(ingestion.totalHypergraphEntities) ||
+        ingestion.totalHypergraphEntities < 1 ||
+        !ingestion.ontologicalAudit?.bitemporalMonotonicity ||
+        !ingestion.ontologicalAudit?.referentialIntegrity)
+    ) {
       throw new AutopilotError("AUTOPILOT_STAGE_VIOLATION", "cannot run causal diagnosis before ontology ingestion");
     }
     const scm = this.buildRepositoryQualityScm();
@@ -163,6 +187,15 @@ export class EosClosedLoopRepoAutopilotCore {
   public simulateRemediationPreFlight(causal?: CausalDiagnosisReport): DeshPreFlightReport {
     if (causal && !causal.backdoorValid) {
       throw new AutopilotError("AUTOPILOT_STAGE_VIOLATION", "cannot simulate remediation when causal backdoor invalid");
+    }
+    if (
+      causal &&
+      (!causal.scmSelfAuditPassed || !Number.isFinite(causal.interventionalAte) || causal.interventionalAte <= 0)
+    ) {
+      throw new AutopilotError(
+        "AUTOPILOT_STAGE_VIOLATION",
+        "cannot simulate remediation when causal diagnosis invalid",
+      );
     }
     const desh = new EosDiscreteEventSimulationHypervisorCore({ seed: this.simulationSeed });
     desh.registerNode("ingest-node", "ONTOLOGY", { eventCount: 0 });
@@ -329,18 +362,24 @@ export class EosClosedLoopRepoAutopilotCore {
 
   private ingestFleetRegistry(graph: EosOntologicalHypergraphCore, controlId: string): number {
     const registry = readJsonIfExists(path.join(this.projectRoot, "docs/projects/registry.json"));
-    const rawProjects = Array.isArray(registry?.projects) ? registry.projects.slice(0, this.maxEntitiesPerSource) : [];
-    const items =
+    const rawProjects = Array.isArray(registry?.projects)
+      ? registry.projects.filter(isPlainObject).slice(0, this.maxEntitiesPerSource)
+      : [];
+    const items: Array<Record<string, unknown>> =
       rawProjects.length > 0 ? rawProjects : [{ id: "eos-system", name: "Glorian System", authorization: "LEVEL_3" }];
 
+    const seenIds = new Set<string>();
     let count = 0;
-    for (const proj of items) {
-      const p = proj as Record<string, unknown>;
-      const id = String(p.id || `project-${count + 1}`);
+    for (const p of items) {
+      const rawId = typeof p.id === "string" ? p.id.trim() : "";
+      let id = rawId || `project-${count + 1}`;
+      if (seenIds.has(id)) id = `${id}-${count + 1}`;
+      seenIds.add(id);
+      const rawName = typeof p.name === "string" ? p.name.trim() : "";
       const entityId = `fleet:${id}`;
       graph.assertEntity({
         entityId,
-        name: String(p.name || id),
+        name: rawName || id,
         kind: "FleetProject",
         classification: "UNCLASSIFIED",
         validFrom: 0,
@@ -363,22 +402,35 @@ export class EosClosedLoopRepoAutopilotCore {
 
   private ingestMutationBudget(graph: EosOntologicalHypergraphCore, controlId: string): number {
     const budget = readJsonIfExists(path.join(this.projectRoot, "docs/quality/mutation-budget.json"));
-    const floors = (budget?.floors ?? { "src/core/eosKernelPrimitives.ts": 0.87 }) as Record<string, unknown>;
-    const entries = Object.entries(floors).slice(0, this.maxEntitiesPerSource);
+    const rawFloors = isPlainObject(budget?.floors) ? budget.floors : null;
+    const validEntries = Object.entries(rawFloors ?? {}).filter(
+      ([modPath, floor]) =>
+        modPath.trim().length > 0 && typeof floor === "number" && Number.isFinite(floor) && floor >= 0 && floor <= 1,
+    );
+    const entries: Array<[string, number]> =
+      validEntries.length > 0
+        ? (validEntries.slice(0, this.maxEntitiesPerSource) as Array<[string, number]>)
+        : [["src/core/eosKernelPrimitives.ts", 0.87]];
 
-    for (const [modPath, floor] of entries) {
-      const entityId = `mod:${path.basename(modPath, ".ts")}`;
+    const seenSlugs = new Set<string>();
+    for (let idx = 0; idx < entries.length; idx++) {
+      const [rawPath, floor] = entries[idx];
+      const modPath = rawPath.trim();
+      let slug = modPath.replace(/\.ts$/, "").replace(/[^a-zA-Z0-9_-]/g, "_");
+      if (seenSlugs.has(slug)) slug = `${slug}_${idx + 1}`;
+      seenSlugs.add(slug);
+      const entityId = `mod:${slug}`;
       graph.assertEntity({
         entityId,
         name: modPath,
         kind: "GovernedModule",
-        attributes: { floor: Number(floor) },
+        attributes: { floor },
         classification: "CONFIDENTIAL",
         validFrom: 0,
         validTo: 100000,
       });
       graph.assertHyperedge({
-        edgeId: `edge:mut-${path.basename(modPath, ".ts")}`,
+        edgeId: `edge:mut-${slug}`,
         relation: "MUTATION_RATCHET",
         participants: [
           { entityId: controlId, role: "QUALITY_GATE" },
@@ -393,13 +445,20 @@ export class EosClosedLoopRepoAutopilotCore {
 
   private ingestTlcReceipt(graph: EosOntologicalHypergraphCore, controlId: string): number {
     const receipt = readJsonIfExists(path.join(this.projectRoot, "docs/evidence/TLC_RECEIPT.json"));
-    const rawModels = Array.isArray(receipt?.models) ? receipt.models.slice(0, this.maxEntitiesPerSource) : [];
-    const items = rawModels.length > 0 ? rawModels : [{ specName: "ClosedLoopRepoAutopilot", passed: true }];
+    const rawModels = Array.isArray(receipt?.models)
+      ? receipt.models.filter(isPlainObject).slice(0, this.maxEntitiesPerSource)
+      : [];
+    const items: Array<Record<string, unknown>> =
+      rawModels.length > 0 ? rawModels : [{ specName: "ClosedLoopRepoAutopilot", passed: true }];
 
+    const seenNames = new Set<string>();
     let verifiedCount = 0;
-    for (const item of items) {
-      const m = item as Record<string, unknown>;
-      const specName = String(m.specName || `Model-${verifiedCount + 1}`);
+    for (let idx = 0; idx < items.length; idx++) {
+      const m = items[idx];
+      const rawName = typeof m.specName === "string" ? m.specName.trim() : "";
+      let specName = rawName || `Model-${idx + 1}`;
+      if (seenNames.has(specName)) specName = `${specName}-${idx + 1}`;
+      seenNames.add(specName);
       const entityId = `tla:${specName}`;
       graph.assertEntity({
         entityId,
@@ -419,7 +478,7 @@ export class EosClosedLoopRepoAutopilotCore {
         validFrom: 0,
         validTo: 100000,
       });
-      if (m.passed !== false) verifiedCount++;
+      if (m.passed === true) verifiedCount++;
     }
     return verifiedCount;
   }
@@ -465,7 +524,7 @@ export class EosClosedLoopRepoAutopilotCore {
       const samples: GitCommitTelemetrySample[] = lines.map((line) => {
         const spaceIdx = line.indexOf(" ");
         const sha = spaceIdx > 0 ? line.slice(0, spaceIdx) : line;
-        const subject = spaceIdx > 0 ? line.slice(spaceIdx + 1) : line;
+        const subject = (spaceIdx > 0 ? line.slice(spaceIdx + 1) : line).trim() || sha;
         const category = /^fix(\(|:)/i.test(subject)
           ? "BUGFIX_REWORK"
           : /^docs(\(|:)/i.test(subject)
