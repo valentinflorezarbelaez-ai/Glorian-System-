@@ -72,6 +72,7 @@ export const CONFIGURED_SPECS = [
   "SymplecticHamiltonianPde",
   "EuvInverseLithographyWavefront",
   "CausalDoCalculusScm",
+  "AgenticHarnessYield",
 ];
 
 /**

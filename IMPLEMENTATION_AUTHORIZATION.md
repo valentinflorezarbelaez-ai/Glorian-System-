@@ -3141,3 +3141,16 @@
   - `docs/plans/PLAN-200-causal-discovery-structural-equation.md`
   - `docs/tasks/TASKS-200-causal-discovery-structural-equation.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-AGENTIC-HARNESS-YIELD
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-201` (`SPEC-339`), Agentic Harness Engineering, First-Pass PR Yield & Token Rework Telemetry Engine: TLA+ Model 83 `docs/formal/AgenticHarnessYield.tla` / `.cfg`; `src/core/eosAgenticHarnessYield.types.ts` and `src/core/eosAgenticHarnessYield.ts` (fail-closed SDD readiness gate, deterministic 5-stage validation harness loop with bounded self-repair retries, First-Pass PR Yield, Rework Amplification Factor, FinOps cost-per-PR telemetry, and SDD vs Vibe cohort benchmarking); receipt `docs/evidence/AGENTIC_HARNESS_YIELD_RECEIPT.json`. Wire `toolchain:harness:specgate`, `toolchain:harness:loop`, `toolchain:harness:yield`, `toolchain:harness:benchmark`, `toolchain:harness:audit` (`618 -> 623` commands). Verify `BDD-1809`..`BDD-1814`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-201-AGENTIC-HARNESS-YIELD.md`
+  - `openspec/changes/CHANGE-201-agentic-harness-yield.md`
+  - `openspec/specs/SPEC-339-agentic-harness-yield.md`
+  - `docs/plans/PLAN-201-agentic-harness-yield.md`
+  - `docs/tasks/TASKS-201-agentic-harness-yield.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

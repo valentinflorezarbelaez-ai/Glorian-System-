@@ -160,6 +160,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliCausalStructuralModel.mjs",
     fn: "handleCausalStructuralModelCommand",
   },
+  {
+    prefix: "toolchain:harness:",
+    file: "./cliAgenticHarnessYield.mjs",
+    fn: "handleAgenticHarnessYieldCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

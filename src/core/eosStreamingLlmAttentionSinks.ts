@@ -16,6 +16,8 @@ import type {
   StreamingTokenBlock,
 } from "./eosStreamingLlmAttentionSinks.types.js";
 
+export * from "./eosStreamingLlmAttentionSinks.types.ts";
+
 export class EosStreamingLlmCore {
   private readonly sinkCapacity: number;
   private readonly windowCapacity: number;

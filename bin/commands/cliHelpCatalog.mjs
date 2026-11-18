@@ -641,6 +641,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:scm:intervene [--treated=1] [--control=0] [--json] Cirugía de grafo mutilado e intervención do(X := x) (SPEC-338)
   eos toolchain:scm:counterfactual [--do-x=3.0] [--json] Inferencia contrafáctica en 3 pasos (Abducción, Acción, Predicción) (SPEC-338)
   eos toolchain:scm:audit [--json] Auditoría determinista de inferencia causal SCM y recibo SHA-256 (SPEC-338)
+  eos toolchain:harness:specgate [--ears=4] [--bdd=6] [--adrs=3] [--ambiguity=0.05] [--json] Puerta fail-closed de preparación Spec-Driven (SPEC-339)
+  eos toolchain:harness:loop [--max-retries=3] [--unit-failures=1] [--json] Bucle multi-etapa del arnés agéntico y contabilidad de retrabajo (SPEC-339)
+  eos toolchain:harness:yield [--json] Telemetría FinOps de First-Pass PR Yield y Rework Amplification Factor (SPEC-339)
+  eos toolchain:harness:benchmark [--json] Comparativa de cohorte Spec-Driven Harness vs Vibe Coding sin restricciones (SPEC-339)
+  eos toolchain:harness:audit [--json] Auditoría determinista del arnés agéntico y recibo SHA-256 (SPEC-339)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
