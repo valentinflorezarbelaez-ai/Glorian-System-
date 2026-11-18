@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 335,
-  "catalogSha256": "f29d65edec4d10df85d19daf97312b8a32b23c754ae10aad8bd3025008f03201",
+  "totalSpecs": 336,
+  "catalogSha256": "fd61ebbf2591b16c0758ffe2671306c78bd5408de461e540dd0c824946b97634",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3017,6 +3017,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-335-post-quantum-threshold-mpc.md",
       "sha256": "07a1b79d081be8a59c085c84874aa974e1e6ddf76c0a6edd45ff2eb68d4f6e27"
+    },
+    {
+      "id": "SPEC-336",
+      "title": "Autonomous Physics-Informed Neural Network (PINN) & Symplectic Hamiltonian PDE Integrator",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-336-physics-informed-hamiltonian-pde.md",
+      "sha256": "30ef5710198fe0651e07948e2e5d4014e16fdb1d20f7c93c0579e521687aa8ba"
     }
   ]
 }
