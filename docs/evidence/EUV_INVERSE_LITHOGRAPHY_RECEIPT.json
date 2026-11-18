@@ -1,0 +1,14 @@
+{
+  "specRef": "SPEC-337",
+  "standardEuvHalfPitchNm": 10.227273,
+  "highNaEuvHalfPitchNm": 6.136364,
+  "zernikeOrthonormal": true,
+  "marechalGuardEnforced": true,
+  "wavefrontCompensated": true,
+  "iltLossReduced": true,
+  "epeImproved": true,
+  "initialEpePixels": 4,
+  "finalEpePixels": 0,
+  "allPassed": true,
+  "sha256Digest": "3abfad86a6f1d43448505f55d631d9e7afd3027a6a4970d7001a28310599f7db"
+}

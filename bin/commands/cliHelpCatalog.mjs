@@ -631,6 +631,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:pinn:residual [--viscosity=0.05] [--json] Evaluación de residuo diferencial EDP y condiciones de frontera (SPEC-336)
   eos toolchain:pinn:solve [--modes=3] [--json] Solucionador PINN por colocación física regularizada (SPEC-336)
   eos toolchain:pinn:audit [--json] Auditoría determinista simpléctica/PINN y recibo SHA-256 (SPEC-336)
+  eos toolchain:euvilt:wavefront [--na=0.33] [--z4=0.4] [--z7=0.3] [--z11=0.2] [--json] Metrología de frente de onda pupilar de Zernike y Strehl de Maréchal (SPEC-337)
+  eos toolchain:euvilt:compensate [--efficiency=0.94] [--json] Compensación activa de fase conjugada de espejo EUV (SPEC-337)
+  eos toolchain:euvilt:aerial [--grid=11] [--json] Simulación 2D de imagen aérea difractiva y contorno de fotorresina (SPEC-337)
+  eos toolchain:euvilt:synthesize [--iterations=35] [--json] Síntesis de máscara por litografía inversa (ILT) con gradiente adjunto (SPEC-337)
+  eos toolchain:euvilt:audit [--json] Auditoría determinista EUV-ILT y recibo SHA-256 (SPEC-337)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

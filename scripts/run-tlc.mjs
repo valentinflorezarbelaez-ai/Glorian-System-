@@ -70,6 +70,7 @@ export const CONFIGURED_SPECS = [
   "DiscreteEventSimulationHypervisor",
   "ThresholdSecureAggregation",
   "SymplecticHamiltonianPde",
+  "EuvInverseLithographyWavefront",
 ];
 
 /**

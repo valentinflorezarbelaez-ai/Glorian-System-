@@ -150,6 +150,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliPhysicsInformedHamiltonianPde.mjs",
     fn: "handlePhysicsInformedHamiltonianPdeCommand",
   },
+  {
+    prefix: "toolchain:euvilt:",
+    file: "./cliEuvInverseLithographyWavefront.mjs",
+    fn: "handleEuvInverseLithographyWavefrontCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

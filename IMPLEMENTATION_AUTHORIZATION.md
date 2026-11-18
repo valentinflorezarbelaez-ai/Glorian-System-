@@ -3115,3 +3115,16 @@
   - `docs/plans/PLAN-198-physics-informed-hamiltonian-pde.md`
   - `docs/tasks/TASKS-198-physics-informed-hamiltonian-pde.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-EUV-INVERSE-LITHOGRAPHY-WAVEFRONT
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-199` (`SPEC-337`), Autonomous EUV Optical Proximity Correction & Inverse Lithography Wavefront Engine: TLA+ Model 81 `docs/formal/EuvInverseLithographyWavefront.tla` / `.cfg`; `src/core/eosEuvInverseLithographyWavefront.types.ts` and `src/core/eosEuvInverseLithographyWavefront.ts` (Zernike pupil wavefront metrology, Maréchal Strehl gate, active phase compensation, 2D diffraction PSF aerial image simulator, and adjoint-gradient pixel-based Inverse Lithography Technology mask synthesis); receipt `docs/evidence/EUV_INVERSE_LITHOGRAPHY_RECEIPT.json`. Wire `toolchain:euvilt:wavefront`, `toolchain:euvilt:compensate`, `toolchain:euvilt:aerial`, `toolchain:euvilt:synthesize`, `toolchain:euvilt:audit` (`608 -> 613` commands). Verify `BDD-1797`..`BDD-1802`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-199-EUV-INVERSE-LITHOGRAPHY-WAVEFRONT.md`
+  - `openspec/changes/CHANGE-199-euv-inverse-lithography-wavefront.md`
+  - `openspec/specs/SPEC-337-euv-inverse-lithography-wavefront.md`
+  - `docs/plans/PLAN-199-euv-inverse-lithography-wavefront.md`
+  - `docs/tasks/TASKS-199-euv-inverse-lithography-wavefront.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

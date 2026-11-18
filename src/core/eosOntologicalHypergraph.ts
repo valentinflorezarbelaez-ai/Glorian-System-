@@ -22,6 +22,8 @@ import type {
   SecurityContext,
 } from "./eosOntologicalHypergraph.types.js";
 
+export * from "./eosOntologicalHypergraph.types.ts";
+
 const CLASSIFICATION_LEVELS: Record<SecurityClassification, number> = {
   UNCLASSIFIED: 1,
   CONFIDENTIAL: 2,
