@@ -19,18 +19,26 @@ import {
 } from "../src/core/eosZ3WasmProver.ts";
 
 describe("SPEC-292 & SPEC-342: Live TLC Model Checking & Verification Honesty", () => {
+  const hasTlcJar = fs.existsSync(path.join(process.cwd(), "tools", "tla2tools.jar"));
+
   // BDD-1527: Live Leslie Lamport TLC Model Checking Execution
   test("BDD-1527: Live Leslie Lamport TLC Model Checking Execution", async () => {
     const specPath = "docs/formal/LmaxDisruptor.tla";
     const result = await EosTlcModelChecker.runTlc(specPath);
 
     assert.equal(result.specFile, specPath);
-    assert.equal(result.executionMode, "LIVE_LOCAL_TLC");
-    assert.equal(result.verified, true);
-    assert.ok(result.generatedStates > 0);
-    assert.ok(result.distinctStates > 0);
-    assert.equal(result.invariantViolations, 0);
-    assert.equal(result.status, "PASS");
+    if (hasTlcJar) {
+      assert.equal(result.executionMode, "LIVE_LOCAL_TLC");
+      assert.equal(result.verified, true);
+      assert.ok(result.generatedStates > 0);
+      assert.ok(result.distinctStates > 0);
+      assert.equal(result.invariantViolations, 0);
+      assert.equal(result.status, "PASS");
+    } else {
+      assert.equal(result.executionMode, "UNAVAILABLE");
+      assert.equal(result.verified, false);
+      assert.equal(result.status, "NOT_VERIFIED");
+    }
   });
 
   // BDD-1528: In-Process Constraint Solving (SAT / UNSAT)
@@ -119,7 +127,11 @@ describe("SPEC-292 & SPEC-342: Live TLC Model Checking & Verification Honesty", 
 
     assert.equal(receipt.specRef, "SPEC-292");
     assert.ok(receipt.totalTlaSpecsInventoried >= 50);
-    assert.ok(receipt.totalTlaSpecsChecked >= 1);
+    if (hasTlcJar) {
+      assert.ok(receipt.totalTlaSpecsChecked >= 1);
+    } else {
+      assert.equal(receipt.totalTlaSpecsChecked, 0);
+    }
     assert.ok(receipt.totalSmtTheoremsProven >= 1);
     assert.ok(receipt.inductiveInvariantsVerified >= 1);
     assert.equal(receipt.sha256Signature.length, 64);
@@ -165,11 +177,16 @@ INVARIANT Invariant`;
       fs.writeFileSync(cfgPath, cfgContent, "utf8");
 
       const res = await EosTlcModelChecker.runTlc(tlaPath);
-      assert.equal(res.status, "INVARIANT_VIOLATION");
-      assert.equal(res.verified, true);
-      assert.equal(res.invariantViolations, 1);
-      assert.ok(res.generatedStates > 0);
-      assert.ok(typeof res.reason === "string" && res.reason.includes("Invariant Invariant is violated"));
+      if (hasTlcJar) {
+        assert.equal(res.status, "INVARIANT_VIOLATION");
+        assert.equal(res.verified, true);
+        assert.equal(res.invariantViolations, 1);
+        assert.ok(res.generatedStates > 0);
+        assert.ok(typeof res.reason === "string" && res.reason.includes("Invariant Invariant is violated"));
+      } else {
+        assert.equal(res.status, "NOT_VERIFIED");
+        assert.equal(res.verified, false);
+      }
 
       // Ensure no "states/" directory was left in process.cwd()
       const cwdStates = path.join(process.cwd(), "states");
@@ -250,8 +267,14 @@ INVARIANT Invariant`;
 
       assert.equal(r1.specRef, "SPEC-292");
       assert.ok(r1.totalTlaSpecsInventoried >= 50);
-      assert.equal(r1.totalTlaSpecsChecked, 1);
-      assert.equal(r1.tlcSampleStatus, "PASS");
+      assert.ok(r1.totalTlaSpecsChecked <= 1);
+      if (hasTlcJar) {
+        assert.equal(r1.totalTlaSpecsChecked, 1);
+        assert.equal(r1.tlcSampleStatus, "PASS");
+      } else {
+        assert.equal(r1.totalTlaSpecsChecked, 0);
+        assert.equal(r1.tlcSampleStatus, "NOT_VERIFIED");
+      }
       assert.equal(r1.sha256Signature, r2.sha256Signature);
     } finally {
       fs.rmSync(tmpEvidence, { recursive: true, force: true });
