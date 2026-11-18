@@ -39,6 +39,26 @@ function parseTlcCounter(output: string, pattern: RegExp): number | null {
   return Number.isFinite(n) && n >= 0 ? n : null;
 }
 
+function resolveJava(override?: string): string | null {
+  if (override) return override;
+  if (process.env.JAVA_HOME) {
+    const bin = process.platform === "win32" ? "java.exe" : "java";
+    const p = path.join(process.env.JAVA_HOME, "bin", bin);
+    if (fs.existsSync(p)) return p;
+  }
+  try {
+    const check = spawnSync("java", ["-version"], { encoding: "utf8", timeout: 5000, windowsHide: true });
+    if (check.status === 0) return "java";
+  } catch {
+    // not in path
+  }
+  const nix = ["/usr/lib/jvm/java-21-openjdk/bin/java", "/usr/lib/jvm/java-21-openjdk-amd64/bin/java", "/usr/bin/java"];
+  for (const c of nix) {
+    if (fs.existsSync(c)) return c;
+  }
+  return null;
+}
+
 /**
  * Leslie Lamport TLC Model Checker Runner.
  * Executes live TLC verification when available. When it is not available the result is
@@ -58,25 +78,18 @@ export class EosTlcModelChecker {
     }
 
     const jarPath = options.jarPath ?? path.join(process.cwd(), "tools", "tla2tools.jar");
-    const javaCommand = options.javaCommand ?? "java";
+    const javaCommand = resolveJava(options.javaCommand);
     const hasJar = fs.existsSync(jarPath);
-    let hasJava = false;
-    try {
-      const jCheck = spawnSync(javaCommand, ["-version"], { encoding: "utf8", timeout: 5000, windowsHide: true });
-      hasJava = jCheck.status === 0;
-    } catch {
-      hasJava = false;
-    }
 
     const base = { specFile: specPath, generatedStates: 0, distinctStates: 0, invariantViolations: 0 };
 
-    if (!hasJava || !hasJar) {
+    if (!javaCommand || !hasJar) {
       return {
         ...base,
         executionMode: "UNAVAILABLE",
         status: "NOT_VERIFIED",
         verified: false,
-        reason: !hasJava ? "Java runtime not found on PATH" : `TLC jar not staged at ${jarPath}`,
+        reason: !javaCommand ? "Java runtime not found on PATH or JAVA_HOME" : `TLC jar not staged at ${jarPath}`,
         durationMs: Date.now() - startTime,
       };
     }
