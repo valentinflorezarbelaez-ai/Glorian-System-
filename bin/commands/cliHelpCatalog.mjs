@@ -227,10 +227,12 @@ export const QUICK_HELP_TEXT = `
 
 ⚡ RESILIENCIA BIG TECH & AUTO-REPARACIÓN:
   eos jarvis:demo [--json]   Demostración completa SDLC Modo Jarvis (ADN Spotify + Soundcheck 100)
+  eos fleet:doctor [--dry]   Audita en paralelo concurrente los 9 proyectos de la flota (SPEC-134)
   eos fleet:ship [--probe]   Audita los 9 repositorios de la flota bajo Ley IV de EOS (SPEC-243)
   eos sapfix                 Bucle FDIR de auto-reparación AST y generación de PR (Meta SapFix)
   eos swarm                  Consenso BFT (3f+1) con veto de seguridad y slashing (DeepMind)
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
+  eos top                    Monitor de cabina soberana en tiempo real (memoria, latido, flota y ledger)
 
 📖 AYUDA Y GLOSARIO:
   eos guide                  Muestra el glosario de arquitectura y equivalencias de la industria
@@ -674,7 +676,7 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   mind, mountains, autotune, nsa:encrypt, nsa:audit, nsa:zeroize, consensus, truetime:bounded, concurrency,
   hashring, antientropy, ratelimit, hft, zerocopy, chaos:run, chaos, vector, risk, aladdin, chain,
   product:create, product, product:deliver, factory:e2e, product:validate, loop, sovereign, invariant,
-  contract, heal:surgical, tlc, pr:check, sandbox:vm, fleet:verify, ontology, quantum:seal, refactor, dst,
+  contract, heal:surgical, tlc, pr:check, sandbox:vm, fleet:verify, fleet:doctor, top, ontology, quantum:seal, refactor, dst,
   synapse, fleet:soundcheck, mcts:tune, canary:rollout, antigravity, gentleman, gentle-ai, ledger, ast,
   nocturnal, evolve, mesh, agent-topology, sandbox, timetravel, truetime, lsm, threshold, microvm, simd, enforce,
   sparse-tree, enterprise:health, otel:metrics, mmr, raft, fuzzer, seccomp, zk:verify, aca, intercept,

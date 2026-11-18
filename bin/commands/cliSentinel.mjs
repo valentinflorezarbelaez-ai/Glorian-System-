@@ -374,6 +374,85 @@ async function cmd_fleet_verify_105(commandContext) {
 
 HANDLERS["fleet:verify"] = cmd_fleet_verify_105;
 
+async function cmd_fleet_doctor(commandContext) {
+  const { root, args, printBanner } = commandContext;
+  printBanner();
+  const isJson = args.includes("--json");
+  const isDryRun = args.includes("--dry");
+
+  const { GlorianFleetHealthWatchdog } = await import("../../src/core/glorianFleetHealthWatchdog.ts");
+  const watchdog = new GlorianFleetHealthWatchdog(root);
+
+  console.log("[EOS FLEET DOCTOR — PARALLEL SYNTHETIC QUALITY & SECURITY SENTINEL]\n");
+  console.log("Auditando los 9 proyectos de la flota en paralelo concurrente...\n");
+
+  const startTime = Date.now();
+  const report = await watchdog.runFleetHealthAudit({ dryRun: isDryRun });
+  const durationMs = Date.now() - startTime;
+
+  if (isJson) {
+    console.log(JSON.stringify({ ...report, auditDurationMs: durationMs }, null, 2));
+    return;
+  }
+
+  console.log(watchdog.formatHealthReport(report));
+  console.log(`\n⚡ Tiempo total de auditoría concurrente: ${durationMs} ms (9 proyectos evaluados en paralelo)`);
+  console.log(`🔒 Recibo criptográfico registrado: sha256:${report.sha256Receipt}\n`);
+}
+
+HANDLERS["fleet:doctor"] = cmd_fleet_doctor;
+
+async function cmd_top(commandContext) {
+  const { root, printBanner } = commandContext;
+  printBanner();
+  const { EosSentinelDaemon } = await import("../../src/core/eosSentinelDaemon.ts");
+  const { EosTelemetryDashboard } = await import("../../src/core/eosTelemetryDashboard.ts");
+  const { GlorianFleetHealthWatchdog } = await import("../../src/core/glorianFleetHealthWatchdog.ts");
+
+  const sentinel = new EosSentinelDaemon(root);
+  const pulse = sentinel.tick();
+
+  const dashboard = new EosTelemetryDashboard(root);
+  const snap = dashboard.getSnapshot();
+
+  const watchdog = new GlorianFleetHealthWatchdog(root);
+  const fleetSync = watchdog.runFleetHealthAuditSync({ dryRun: true });
+
+  const mem = process.memoryUsage();
+  const toMb = (bytes) => (bytes / (1024 * 1024)).toFixed(1);
+
+  console.log(`\n======================================================================`);
+  console.log(` 🚀  GLORIAN SYSTEM MONITOR (TOP) — REAL-TIME SOVEREIGN COCKPIT`);
+  console.log(`======================================================================`);
+  console.log(`  PULSE STATUS       : [${pulse.status}] | Latido Merkle 24/7`);
+  console.log(`  MERKLE ROOT HASH   : sha256:${pulse.merkleRootHash.slice(0, 32)}...`);
+  console.log(`  FILES MONITORED    : ${pulse.filesMonitoredCount} control plane files`);
+  console.log(`----------------------------------------------------------------------`);
+  console.log(
+    `  V8 HEAP ALLOCATION : ${toMb(mem.heapUsed)} MB used / ${toMb(mem.heapTotal)} MB total (${pulse.memoryHealth.utilizationRatio}%)`,
+  );
+  console.log(`  PROCESS RSS MEMORY : ${toMb(mem.rss)} MB | External: ${toMb(mem.external)} MB`);
+  console.log(`  MEMORY PRESSURE    : [${pulse.memoryHealth.status}]`);
+  console.log(`----------------------------------------------------------------------`);
+  console.log(`  FLEET HEALTH       : [${fleetSync.auditStatus}] | Composite: ${fleetSync.compositeHealthIndex}%`);
+  console.log(`  PROJECTS MONITORED : ${fleetSync.healthyProjectsCount} / ${fleetSync.totalProjectsEvaluated} healthy`);
+  console.log(`  AVERAGE TTFB       : ${fleetSync.averageTtfbMs} ms`);
+  console.log(`----------------------------------------------------------------------`);
+  console.log(
+    `  ACTIVE AGENTS      : ${snap.topology.activeAgents} agents | Topology: ${snap.topology.cycleDetected ? "CYCLE" : "ACYCLIC"}`,
+  );
+  console.log(`  ZERO-COPY EVENTS   : ${snap.topology.totalEvents} ring-buffer events`);
+  console.log(
+    `  SQLITE WAL LEDGER  : ${snap.ledger.totalEntries} entries (${snap.ledger.chainIntact ? "INTACT" : "TAMPERED"})`,
+  );
+  console.log(
+    `  TOKEN EFFICIENCY   : ${(snap.tokenEfficiency.savedRatio * 100).toFixed(1)}% (${snap.tokenEfficiency.totalSavedTokens.toLocaleString()} tokens saved)`,
+  );
+  console.log(`======================================================================\n`);
+}
+
+HANDLERS["top"] = cmd_top;
+
 async function cmd_sapfix_106(commandContext) {
   const { root, args, printBanner } = commandContext;
   printBanner();

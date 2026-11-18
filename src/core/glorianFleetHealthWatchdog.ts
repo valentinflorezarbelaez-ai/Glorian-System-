@@ -10,7 +10,32 @@ import * as fs from "node:fs";
 import * as https from "node:https";
 import * as http from "node:http";
 import * as path from "node:path";
+import * as dns from "node:dns";
 import { URL } from "node:url";
+
+const fallbackResolver = new dns.Resolver();
+try {
+  fallbackResolver.setServers(["8.8.8.8", "1.1.1.1"]);
+} catch {
+  // Graceful fallback if network sockets are restricted
+}
+
+function resilientLookup(hostname: string, options: any, callback: any): void {
+  const cb = typeof options === "function" ? options : callback;
+  const opts = typeof options === "object" && options !== null ? options : {};
+
+  dns.lookup(hostname, opts, (err: NodeJS.ErrnoException | null, address: any, family: any) => {
+    if (!err && address) {
+      return cb(null, address, family);
+    }
+    fallbackResolver.resolve4(hostname, (rErr: NodeJS.ErrnoException | null, addresses: string[]) => {
+      if (!rErr && addresses && addresses.length > 0) {
+        return cb(null, addresses[0], 4);
+      }
+      return cb(err || rErr);
+    });
+  });
+}
 
 export interface TargetSafetyResult {
   allowed: boolean;
@@ -199,54 +224,52 @@ export class GlorianFleetHealthWatchdog {
       projects.push({ id, targetUrl });
     }
 
-    const probes: ProjectProbeResult[] = [];
-
-    for (const proj of projects) {
+    const probePromises = projects.map(async (proj) => {
       const safety = this.validateTargetSafety(proj.targetUrl);
       if (!safety.allowed) {
-        probes.push({
+        return {
           projectId: proj.id,
           url: proj.targetUrl,
           status: 0,
           ttfbMs: 0,
           securityScore: 0,
           safetyReason: safety.reason,
-        });
-        continue;
+        };
       }
 
       if (options?.dryRun) {
         // High-fidelity dry-run nominal response
-        probes.push({
+        return {
           projectId: proj.id,
           url: proj.targetUrl,
           status: 200,
           ttfbMs: Math.floor(25 + Math.random() * 45),
           securityScore: 100,
-        });
-      } else {
-        try {
-          const probe = await this.probeEndpoint(proj.targetUrl);
-          const sec = this.evaluateSecurityHeaders(probe.headers);
-          probes.push({
-            projectId: proj.id,
-            url: proj.targetUrl,
-            status: probe.status,
-            ttfbMs: probe.ttfbMs,
-            securityScore: sec.score,
-          });
-        } catch {
-          probes.push({
-            projectId: proj.id,
-            url: proj.targetUrl,
-            status: 504,
-            ttfbMs: 4000,
-            securityScore: 0,
-          });
-        }
+        };
       }
-    }
 
+      try {
+        const probe = await this.probeEndpoint(proj.targetUrl);
+        const sec = this.evaluateSecurityHeaders(probe.headers);
+        return {
+          projectId: proj.id,
+          url: proj.targetUrl,
+          status: probe.status,
+          ttfbMs: probe.ttfbMs,
+          securityScore: sec.score,
+        };
+      } catch {
+        return {
+          projectId: proj.id,
+          url: proj.targetUrl,
+          status: 504,
+          ttfbMs: 4000,
+          securityScore: 0,
+        };
+      }
+    });
+
+    const probes = await Promise.all(probePromises);
     return this.evaluateFleetHealth(probes);
   }
 
@@ -316,6 +339,7 @@ export class GlorianFleetHealthWatchdog {
         targetUrl,
         {
           method: "HEAD",
+          lookup: resilientLookup,
           headers: {
             "User-Agent": "Glorian-Fleet-Watchdog/1.0 (+https://glorian-system.vercel.app)",
             Accept: "*/*",
