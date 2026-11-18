@@ -646,6 +646,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:harness:yield [--json] Telemetría FinOps de First-Pass PR Yield y Rework Amplification Factor (SPEC-339)
   eos toolchain:harness:benchmark [--json] Comparativa de cohorte Spec-Driven Harness vs Vibe Coding sin restricciones (SPEC-339)
   eos toolchain:harness:audit [--json] Auditoría determinista del arnés agéntico y recibo SHA-256 (SPEC-339)
+  eos toolchain:autopilot:ingest [--limit=12] [--json] Ingesta ontológica bitemporal de artefactos reales del repositorio (SPEC-340)
+  eos toolchain:autopilot:diagnose [--json] Diagnóstico causal estructural do(SPEC_CLARITY) y contrafácticos del repo (SPEC-340)
+  eos toolchain:autopilot:simulate [--seed=...] [--json] Simulación DESH pre-flight con checkpoint y rollback (SPEC-340)
+  eos toolchain:autopilot:yield [--commits=20] [--json] Telemetría viva de Git FPY/RAF y arnés de 5 etapas (SPEC-340)
+  eos toolchain:autopilot:audit [--json] Auditoría integral en bucle cerrado y recibo SHA-256 (SPEC-340)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

@@ -8,15 +8,12 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { fileURLToPath } from "node:url";
 import { EosOntologicalHypergraphCore } from "../src/core/eosOntologicalHypergraph.ts";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/ONTOLOGICAL_HYPERGRAPH_RECEIPT.json");
+const RECEIPT_PATH = path.join(os.tmpdir(), `eos-test-ONTOLOGICAL_HYPERGRAPH_RECEIPT-${process.pid}.json`);
 
 test("SPEC-333 / CHANGE-195: Autonomous Ontological Hypergraph & Bitemporal Entity Resolution Engine", async (t) => {
   await t.test("BDD-1773: Bitemporal Assertion and Point-in-Time As-Of Snapshot Querying", () => {

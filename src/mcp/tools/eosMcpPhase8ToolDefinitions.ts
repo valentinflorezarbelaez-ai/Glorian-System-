@@ -195,4 +195,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_closed_loop_autopilot_audit",
+    description:
+      "Executes the Sovereign Closed-Loop Repository Autopilot uniting SPEC-333 ontology, SPEC-338 causal SCM, SPEC-334 DESH replay, and SPEC-339 Git harness yield (SPEC-340).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

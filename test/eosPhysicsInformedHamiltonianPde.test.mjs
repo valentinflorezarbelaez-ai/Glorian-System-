@@ -8,19 +8,16 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { fileURLToPath } from "node:url";
 import {
   EosPhysicsInformedHamiltonianPdeCore,
   PinnError,
   createAnharmonicHamiltonianSystem,
 } from "../src/core/eosPhysicsInformedHamiltonianPde.ts";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/PINN_HAMILTONIAN_PDE_RECEIPT.json");
+const RECEIPT_PATH = path.join(os.tmpdir(), `eos-test-PINN_HAMILTONIAN_PDE_RECEIPT-${process.pid}.json`);
 
 test("SPEC-336 / CHANGE-198: Autonomous Physics-Informed Neural Network (PINN) & Symplectic Hamiltonian PDE Integrator", async (t) => {
   await t.test("BDD-1791: Symplectic Störmer-Verlet & 4th-Order Yoshida vs Explicit Euler Energy Conservation", () => {

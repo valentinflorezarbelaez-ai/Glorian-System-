@@ -59,6 +59,7 @@ const DEFAULT_TARGETS = [
   "src/core/eosOntologicalHypergraph.ts",
   "src/core/eosDiscreteEventSimulationHypervisor.ts",
   "src/core/eosAgenticHarnessYield.ts",
+  "src/core/eosClosedLoopRepoAutopilot.ts",
   "scripts/verify-vercel-function-budget.mjs",
 ];
 

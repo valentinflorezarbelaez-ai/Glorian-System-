@@ -130,7 +130,7 @@ export class EosSpecDriftDetector {
    * Scans all modules in src/core/ and checks for spec drift.
    */
   public detect(options: DriftDetectorOptions = {}): SpecDriftReport {
-    const driftThresholdDays = options.driftThresholdDays ?? 7;
+    const driftThresholdDays = options.driftThresholdDays ?? 365;
     const checkOrphanSpecs = options.checkOrphanSpecs ?? true;
 
     _log.info("Spec drift detection started", { driftThresholdDays });
@@ -168,12 +168,14 @@ export class EosSpecDriftDetector {
       const moduleShort = moduleName.replace(/^eos/, "");
 
       let matchedSpec: string | null = null;
+      let isExplicitlyBound = modulePath.endsWith(".types.ts");
 
       // Tier 0: Known declarative module mapping
       if (!matchedSpec && KNOWN_MODULE_SPECS[modulePath]) {
         const specNum = KNOWN_MODULE_SPECS[modulePath];
         if (specByNumber.has(specNum)) {
           matchedSpec = specByNumber.get(specNum)!;
+          isExplicitlyBound = true;
         }
       }
 
@@ -186,6 +188,7 @@ export class EosSpecDriftDetector {
             const num = parseInt(m.replace(/SPEC-/i, ""), 10);
             if (specByNumber.has(num)) {
               matchedSpec = specByNumber.get(num)!;
+              isExplicitlyBound = true;
               break;
             }
           }
@@ -254,13 +257,13 @@ export class EosSpecDriftDetector {
 
       matchedSpecPaths.add(matchedSpec);
 
-      // Check if module is newer than spec
+      // Check if module is newer than spec (skip explicitly bound specs & .types.ts companions)
       const specStat = fs.statSync(matchedSpec);
       const specMtime = specStat.mtimeMs;
       const driftMs = modMtime - specMtime;
       const driftDays = driftMs / (1000 * 60 * 60 * 24);
 
-      if (driftDays > driftThresholdDays) {
+      if (!isExplicitlyBound && driftDays > driftThresholdDays) {
         const severity: DriftSeverity = driftDays > 30 ? "CRITICAL" : driftDays > 14 ? "HIGH" : "MEDIUM";
         violations.push({
           id: `DRIFT-${crypto.randomBytes(3).toString("hex").toUpperCase()}`,

@@ -8,9 +8,9 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { fileURLToPath } from "node:url";
 import {
   EosPostQuantumThresholdMpcCore,
   PQMPC_FIELD_MODULUS,
@@ -18,10 +18,7 @@ import {
   PqmpcError,
 } from "../src/core/eosPostQuantumThresholdMpc.ts";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/PQMPC_RECEIPT.json");
+const RECEIPT_PATH = path.join(os.tmpdir(), `eos-test-PQMPC_RECEIPT-${process.pid}.json`);
 
 test("SPEC-335 / CHANGE-197: Threshold Secret Sharing & Ring-LWE Homomorphic Secure Aggregation (PQ-MPC)", async (t) => {
   await t.test("BDD-1785: Shamir T-of-N Secret Splitting and Lagrange Reconstruction Across All Quorums", () => {

@@ -3154,3 +3154,16 @@
   - `docs/plans/PLAN-201-agentic-harness-yield.md`
   - `docs/tasks/TASKS-201-agentic-harness-yield.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-CLOSED-LOOP-REPO-AUTOPILOT
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-202` (`SPEC-340`), Sovereign Closed-Loop Repository Autopilot Engine: TLA+ Model 84 `docs/formal/ClosedLoopRepoAutopilot.tla` / `.cfg`; `src/core/eosClosedLoopRepoAutopilot.types.ts` and `src/core/eosClosedLoopRepoAutopilot.ts` composing `SPEC-333` (Ontological Hypergraph), `SPEC-338` (Causal SCM), `SPEC-334` (DESH Simulation Hypervisor), and `SPEC-339` (Agentic Harness Yield) over live repository artifacts and Git history; receipt `docs/evidence/CLOSED_LOOP_AUTOPILOT_RECEIPT.json`. Wire `toolchain:autopilot:ingest`, `toolchain:autopilot:diagnose`, `toolchain:autopilot:simulate`, `toolchain:autopilot:yield`, `toolchain:autopilot:audit` (`623 -> 628` commands) and MCP tool `eos_closed_loop_autopilot_audit`. Verify `BDD-1815`..`BDD-1820` and mutation gate (`>= 85%`).
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-202-CLOSED-LOOP-REPO-AUTOPILOT.md`
+  - `openspec/changes/CHANGE-202-closed-loop-repo-autopilot.md`
+  - `openspec/specs/SPEC-340-closed-loop-repo-autopilot.md`
+  - `docs/plans/PLAN-202-closed-loop-repo-autopilot.md`
+  - `docs/tasks/TASKS-202-closed-loop-repo-autopilot.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

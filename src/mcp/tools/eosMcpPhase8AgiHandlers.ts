@@ -7,6 +7,7 @@
 import { EosAgenticHarnessYieldCore } from "../../core/eosAgenticHarnessYield.ts";
 import { EosAgiCore } from "../../core/eosAgiCore.ts";
 import { EosCausalStructuralModelCore } from "../../core/eosCausalStructuralModel.ts";
+import { EosClosedLoopRepoAutopilotCore } from "../../core/eosClosedLoopRepoAutopilot.ts";
 import { EosConsultantCore } from "../../core/eosConsultantCore.ts";
 import { EosContextWindowManager } from "../../core/eosContextWindowManager.ts";
 import { EosDiscreteEventSimulationHypervisorCore } from "../../core/eosDiscreteEventSimulationHypervisor.ts";
@@ -166,5 +167,7 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_causal_scm_audit: () => new EosCausalStructuralModelCore().audit(),
 
     eos_agentic_harness_audit: () => new EosAgenticHarnessYieldCore().audit(),
+
+    eos_closed_loop_autopilot_audit: () => new EosClosedLoopRepoAutopilotCore({ projectRoot }).audit(),
   };
 }

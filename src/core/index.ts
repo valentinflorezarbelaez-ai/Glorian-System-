@@ -746,3 +746,4 @@ export * from "./eosPhysicsInformedHamiltonianPde.ts";
 export * from "./eosEuvInverseLithographyWavefront.ts";
 export * from "./eosCausalStructuralModel.ts";
 export * from "./eosAgenticHarnessYield.ts";
+export * from "./eosClosedLoopRepoAutopilot.ts";

@@ -8,6 +8,7 @@
     "src/core/eosAutonomousTlaModelChecker.ts": 1,
     "src/core/eosBftAgentSwarmSlashing.ts": 0.85,
     "src/core/eosCellBasedBulkheadGovernor.ts": 1,
+    "src/core/eosClosedLoopRepoAutopilot.ts": 1,
     "src/core/eosContractEvolutionGovernor.ts": 0.85,
     "src/core/eosDiscreteEventSimulationHypervisor.ts": 0.901,
     "src/core/eosDurableSqliteLedger.ts": 0.89,

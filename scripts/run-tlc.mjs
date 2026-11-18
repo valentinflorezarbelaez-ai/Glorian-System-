@@ -10,8 +10,9 @@
  * Invariant: Zero external npm dependencies. Max cyclomatic complexity <= 15.
  */
 
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -84,6 +85,7 @@ export const CONFIGURED_SPECS = [
   "UnifiedMemoryDvfsQos",
   "DifferentialPrivacyAbac",
   "AdaptiveHedgedDeadlineMesh",
+  "ClosedLoopRepoAutopilot",
 ];
 
 /**
@@ -239,41 +241,48 @@ export function parseTlcOutput(output) {
   };
 }
 
+function buildTlcArgs(specName, jarPath, metaDir) {
+  return [
+    "-cp",
+    jarPath,
+    "tlc2.TLC",
+    "-metadir",
+    metaDir,
+    "-workers",
+    "1",
+    "-cleanup",
+    "-deadlock",
+    "-config",
+    `${specName}.cfg`,
+    `${specName}.tla`,
+  ];
+}
+
+function cleanupMetaDir(metaDir) {
+  try {
+    fs.rmSync(metaDir, { recursive: true, force: true });
+  } catch {
+    // metadir cleanup fallback
+  }
+}
+
 /**
- * Executes TLC on a given spec using the Java CLI.
+ * Executes TLC on a given spec using the Java CLI (synchronous).
  */
 export function runTlcExecutable(specName, jarPath, formalDir = FORMAL_DIR, opts = {}) {
   const javaExec = resolveJavaExecutable() || "java";
+  const metaDir = fs.mkdtempSync(path.join(os.tmpdir(), `tlc-${specName}-`));
+  const args = buildTlcArgs(specName, jarPath, metaDir);
 
-  const args = ["-cp", jarPath, "tlc2.TLC", "-cleanup", "-deadlock", "-config", `${specName}.cfg`, `${specName}.tla`];
-
-  const res = spawnSync(javaExec, args, {
-    cwd: formalDir,
-    encoding: "utf8",
-    timeout: opts.timeoutMs || 30000,
-  });
-
-  const statesDir = path.join(formalDir, "states");
-  if (fs.existsSync(statesDir)) {
-    try {
-      fs.rmSync(statesDir, { recursive: true, force: true });
-    } catch {
-      // states directory cleanup fallback
-    }
-  }
+  let res;
   try {
-    const formalFiles = fs.readdirSync(formalDir);
-    for (const f of formalFiles) {
-      if (f.includes("_TTrace_")) {
-        try {
-          fs.rmSync(path.join(formalDir, f), { force: true });
-        } catch {
-          // trace file cleanup fallback
-        }
-      }
-    }
-  } catch {
-    // formal dir readdir fallback
+    res = spawnSync(javaExec, args, {
+      cwd: formalDir,
+      encoding: "utf8",
+      timeout: opts.timeoutMs || 30000,
+    });
+  } finally {
+    cleanupMetaDir(metaDir);
   }
 
   const combinedOutput = `${res.stdout || ""}\n${res.stderr || ""}`;
@@ -287,22 +296,52 @@ export function runTlcExecutable(specName, jarPath, formalDir = FORMAL_DIR, opts
   };
 }
 
-function evaluateSingleModel(specName, canExecuteLive, jarPath, formalDir, options) {
-  const pair = validateSpecConfigPair(specName, formalDir);
-  if (!canExecuteLive) {
-    return {
-      passed: true,
-      result: {
-        specName,
-        verifiedLive: false,
-        syntaxValid: pair.syntaxValid,
-        tlaBytes: pair.tlaBytes,
-        cfgBytes: pair.cfgBytes,
-      },
-    };
-  }
+/**
+ * Executes TLC on a given spec asynchronously in an isolated -metadir.
+ */
+export function runTlcExecutableAsync(specName, jarPath, formalDir = FORMAL_DIR, opts = {}) {
+  const javaExec = resolveJavaExecutable() || "java";
+  const metaDir = fs.mkdtempSync(path.join(os.tmpdir(), `tlc-${specName}-`));
+  const args = buildTlcArgs(specName, jarPath, metaDir);
+  const timeoutMs = opts.timeoutMs || 30000;
 
-  const execResult = runTlcExecutable(specName, jarPath, formalDir, options);
+  return new Promise((resolve) => {
+    let stdout = "";
+    let stderr = "";
+    const child = spawn(javaExec, args, { cwd: formalDir });
+    const timer = setTimeout(() => {
+      child.kill("SIGKILL");
+    }, timeoutMs);
+
+    child.stdout?.on("data", (chunk) => {
+      stdout += String(chunk);
+    });
+    child.stderr?.on("data", (chunk) => {
+      stderr += String(chunk);
+    });
+    const finalize = (exitCode) => {
+      clearTimeout(timer);
+      cleanupMetaDir(metaDir);
+      const combinedOutput = `${stdout}\n${stderr}`;
+      const parsed = parseTlcOutput(combinedOutput);
+      resolve({
+        specName,
+        exitCode,
+        ...parsed,
+        rawOutput: combinedOutput,
+      });
+    };
+    child.on("error", (err) => {
+      stderr += `\n${err.message}`;
+      finalize(1);
+    });
+    child.on("close", (code) => {
+      finalize(code ?? 1);
+    });
+  });
+}
+
+function formatTlcOutcome(specName, execResult) {
   return {
     passed: execResult.passed,
     result: {
@@ -317,13 +356,75 @@ function evaluateSingleModel(specName, canExecuteLive, jarPath, formalDir, optio
   };
 }
 
+function buildDeferredResult(specName, pair) {
+  return {
+    passed: true,
+    result: {
+      specName,
+      verifiedLive: false,
+      syntaxValid: pair.syntaxValid,
+      tlaBytes: pair.tlaBytes,
+      cfgBytes: pair.cfgBytes,
+    },
+  };
+}
+
+function evaluateSingleModel(specName, canExecuteLive, jarPath, formalDir, options) {
+  const pair = validateSpecConfigPair(specName, formalDir);
+  if (!canExecuteLive) {
+    return buildDeferredResult(specName, pair);
+  }
+  const execResult = runTlcExecutable(specName, jarPath, formalDir, options);
+  return formatTlcOutcome(specName, execResult);
+}
+
+async function evaluateSingleModelAsync(specName, canExecuteLive, jarPath, formalDir, options) {
+  const pair = validateSpecConfigPair(specName, formalDir);
+  if (!canExecuteLive) {
+    return buildDeferredResult(specName, pair);
+  }
+  const execResult = await runTlcExecutableAsync(specName, jarPath, formalDir, options);
+  return formatTlcOutcome(specName, execResult);
+}
+
 function resolveTlcStatus(canExecuteLive, allPassed) {
   if (!canExecuteLive) return "DEFERRED_TO_CI_SETUP_JAVA";
   return allPassed ? "VERIFIED" : "INVARIANT_BREACH_DETECTED";
 }
 
+function assembleTlcReceipt({
+  specs,
+  modelResults,
+  allPassed,
+  canExecuteLive,
+  hasJava,
+  jarPath,
+  receiptPath,
+  writeReceipt = true,
+}) {
+  const status = resolveTlcStatus(canExecuteLive, allPassed);
+  const executionMode = canExecuteLive ? "LIVE_LOCAL_TLC" : "DEFERRED_TO_CI_SETUP_JAVA";
+  const receipt = {
+    timestampIso: new Date().toISOString(),
+    specRef: "SPEC-270",
+    engine: "Leslie Lamport TLC Model Checker (tla2tools.jar)",
+    executionMode,
+    status,
+    allPassed: canExecuteLive ? allPassed : true,
+    hasJavaRuntime: hasJava,
+    tlaJarPath: jarPath || "NOT_DETECTED_LOCALLY",
+    totalConfiguredSpecs: specs.length,
+    models: modelResults,
+  };
+  if (writeReceipt) {
+    fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
+    writeFileWithRetry(receiptPath, JSON.stringify(receipt, null, 2));
+  }
+  return receipt;
+}
+
 /**
- * Executes formal TLC verification across all configured specs or defers to CI.
+ * Executes formal TLC verification across all configured specs synchronously.
  */
 export function runTlcVerification(options = {}) {
   const formalDir = options.formalDir || FORMAL_DIR;
@@ -344,26 +445,59 @@ export function runTlcVerification(options = {}) {
     modelResults.push(outcome.result);
   }
 
-  const status = resolveTlcStatus(canExecuteLive, allPassed);
-  const executionMode = canExecuteLive ? "LIVE_LOCAL_TLC" : "DEFERRED_TO_CI_SETUP_JAVA";
+  return assembleTlcReceipt({
+    specs,
+    modelResults,
+    allPassed,
+    canExecuteLive,
+    hasJava,
+    jarPath,
+    receiptPath,
+    writeReceipt: options.writeReceipt !== false,
+  });
+}
 
-  const receipt = {
-    timestampIso: new Date().toISOString(),
-    specRef: "SPEC-270",
-    engine: "Leslie Lamport TLC Model Checker (tla2tools.jar)",
-    executionMode,
-    status,
-    allPassed: canExecuteLive ? allPassed : true,
-    hasJavaRuntime: hasJava,
-    tlaJarPath: jarPath || "NOT_DETECTED_LOCALLY",
-    totalConfiguredSpecs: specs.length,
-    models: modelResults,
-  };
+/**
+ * Executes formal TLC verification across all configured specs in a bounded multi-core pool.
+ */
+export async function runTlcVerificationParallel(options = {}) {
+  const formalDir = options.formalDir || FORMAL_DIR;
+  const receiptPath = options.receiptPath || DEFAULT_RECEIPT_PATH;
+  const specs = options.specs || CONFIGURED_SPECS;
+  const forceMock = options.forceMock || false;
 
-  fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
-  writeFileWithRetry(receiptPath, JSON.stringify(receipt, null, 2));
+  const hasJava = !forceMock && detectJavaRuntime();
+  const jarPath = !forceMock ? resolveTlaJarPath(options.jarPath) : null;
+  const canExecuteLive = hasJava && Boolean(jarPath);
 
-  return receipt;
+  const hwConcurrency = os.availableParallelism ? os.availableParallelism() : 4;
+  const concurrency = Math.max(1, Math.min(options.concurrency || hwConcurrency, 6));
+  const modelResults = new Array(specs.length);
+  let allPassed = true;
+  let nextIdx = 0;
+
+  async function worker() {
+    while (nextIdx < specs.length) {
+      const idx = nextIdx++;
+      const outcome = await evaluateSingleModelAsync(specs[idx], canExecuteLive, jarPath, formalDir, options);
+      if (!outcome.passed) allPassed = false;
+      modelResults[idx] = outcome.result;
+    }
+  }
+
+  const workerCount = canExecuteLive ? Math.min(concurrency, specs.length) : 1;
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
+
+  return assembleTlcReceipt({
+    specs,
+    modelResults,
+    allPassed,
+    canExecuteLive,
+    hasJava,
+    jarPath,
+    receiptPath,
+    writeReceipt: options.writeReceipt !== false,
+  });
 }
 
 /**
@@ -391,11 +525,14 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename
     }
   }
 
-  const receipt = runTlcVerification({ forceMock });
+  const startMs = Date.now();
+  const receipt = await runTlcVerificationParallel({ forceMock });
+  const elapsedMs = Date.now() - startMs;
   console.log(`=== Leslie Lamport TLC Formal Verification Gate (SPEC-270) ===`);
   console.log(`Execution Mode : ${receipt.executionMode}`);
   console.log(`Status         : ${receipt.status}`);
   console.log(`Configured Specs: ${receipt.totalConfiguredSpecs}`);
+  console.log(`Elapsed Time   : ${elapsedMs} ms`);
   console.log(`Evidence Receipt: ${DEFAULT_RECEIPT_PATH}`);
 
   if (receipt.status === "DEFERRED_TO_CI_SETUP_JAVA") {

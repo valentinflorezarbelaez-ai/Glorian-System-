@@ -8,9 +8,9 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { fileURLToPath } from "node:url";
 import {
   EosAgenticHarnessYieldCore,
   HarnessError,
@@ -19,10 +19,7 @@ import {
   ORDERED_HARNESS_STAGES,
 } from "../src/core/eosAgenticHarnessYield.ts";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/AGENTIC_HARNESS_YIELD_RECEIPT.json");
+const RECEIPT_PATH = path.join(os.tmpdir(), `eos-test-AGENTIC_HARNESS_YIELD_RECEIPT-${process.pid}.json`);
 
 test("SPEC-339 / CHANGE-201: Agentic Harness Engineering, First-Pass PR Yield & Token Rework Telemetry Engine", async (t) => {
   await t.test("BDD-1809: Spec-Driven Readiness Gate & Fail-Closed Rejection of Underspecified Vibe Prompts", () => {

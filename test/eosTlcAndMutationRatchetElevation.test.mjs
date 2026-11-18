@@ -7,6 +7,7 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -57,7 +58,7 @@ describe("SPEC-270: Formal TLC Model Checking, Mutation Ratchet & Consumer Gover
   // -------------------------------------------------------------------------
   it("BDD-1397: scripts/run-tlc.mjs generates valid TLC verification evidence receipt", () => {
     assert.equal(typeof detectJavaRuntime(), "boolean");
-    const receiptPath = path.join(ROOT, "docs/evidence", "TLC_RECEIPT.json");
+    const receiptPath = path.join(os.tmpdir(), `eos-test-tlc-receipt-${process.pid}.json`);
     const receipt = runTlcVerification({ receiptPath, forceMock: true });
 
     assert.equal(receipt.specRef, "SPEC-270");
@@ -142,10 +143,11 @@ describe("SPEC-270: Formal TLC Model Checking, Mutation Ratchet & Consumer Gover
     const directGraph = buildConsumerGraph(ROOT);
     assert.ok(directGraph.totalModules >= 400);
 
-    const graph = verifyModuleConsumers({ root: ROOT });
+    const tempGraphPath = path.join(os.tmpdir(), `eos-test-consumer-graph-${process.pid}.json`);
+    const graph = verifyModuleConsumers({ root: ROOT, receiptPath: tempGraphPath });
     assert.ok(graph.totalModules >= 400, "Core module count must be at least 400");
     assert.ok(graph.consumedModules >= 300, "Consumed module count must be at least 300");
     assert.ok(graph.graphDensity > 0.8, "Consumer graph density must exceed 80%");
-    assert.ok(fs.existsSync(path.join(ROOT, "docs/evidence", "MODULE_CONSUMER_GRAPH.json")));
+    assert.ok(fs.existsSync(tempGraphPath));
   });
 });

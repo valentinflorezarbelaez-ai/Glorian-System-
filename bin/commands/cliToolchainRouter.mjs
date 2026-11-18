@@ -165,6 +165,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliAgenticHarnessYield.mjs",
     fn: "handleAgenticHarnessYieldCommand",
   },
+  {
+    prefix: "toolchain:autopilot:",
+    file: "./cliClosedLoopRepoAutopilot.mjs",
+    fn: "handleClosedLoopRepoAutopilotCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

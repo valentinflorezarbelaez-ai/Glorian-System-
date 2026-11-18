@@ -8,15 +8,12 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { fileURLToPath } from "node:url";
 import { EosEuvInverseLithographyWavefrontCore, EuvIltError } from "../src/core/eosEuvInverseLithographyWavefront.ts";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/EUV_INVERSE_LITHOGRAPHY_RECEIPT.json");
+const RECEIPT_PATH = path.join(os.tmpdir(), `eos-test-EUV_INVERSE_LITHOGRAPHY_RECEIPT-${process.pid}.json`);
 
 test("SPEC-337 / CHANGE-199: Autonomous EUV Optical Proximity Correction & Inverse Lithography Wavefront Engine (EUV-OPC)", async (t) => {
   await t.test("BDD-1797: Zernike Pupil Wavefront Metrology, Quadrature Orthonormality & Maréchal Strehl Ratio", () => {

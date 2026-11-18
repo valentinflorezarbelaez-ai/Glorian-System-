@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "1d0e797412d4bcdd13bb8d01f860db36e9ac6368843c75d437e0fc077e0a0da4",
-  "totalTools": 215,
+  "catalogSha256": "03d7a6e635653bdd594560201cb9e4b7fc43313f67e1b1ad0d14bd257b503e03",
+  "totalTools": 216,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -6774,6 +6774,21 @@
       },
       "annotations": {
         "title": "EOS agentic Harness Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_closed_loop_autopilot_audit",
+      "description": "Executes the Sovereign Closed-Loop Repository Autopilot uniting SPEC-333 ontology, SPEC-338 causal SCM, SPEC-334 DESH replay, and SPEC-339 Git harness yield (SPEC-340).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS closed Loop Autopilot Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
