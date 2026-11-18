@@ -71,6 +71,7 @@ export const CONFIGURED_SPECS = [
   "ThresholdSecureAggregation",
   "SymplecticHamiltonianPde",
   "EuvInverseLithographyWavefront",
+  "CausalDoCalculusScm",
 ];
 
 /**

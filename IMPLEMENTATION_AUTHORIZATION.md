@@ -3128,3 +3128,16 @@
   - `docs/plans/PLAN-199-euv-inverse-lithography-wavefront.md`
   - `docs/tasks/TASKS-199-euv-inverse-lithography-wavefront.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-17-CAUSAL-DISCOVERY-STRUCTURAL-EQUATION
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-200` (`SPEC-338`), Autonomous Causal Discovery & Structural Equation Modeling Engine (SCM): TLA+ Model 82 `docs/formal/CausalDoCalculusScm.tla` / `.cfg`; `src/core/eosCausalStructuralModel.types.ts` and `src/core/eosCausalStructuralModel.ts` (DAG acyclicity guard, Lauritzen-Spiegelhalter ancestral moralization $d$-separation, backdoor criterion verifier and de-confounded OLS estimator, $\text{do}(X := x)$ graph mutilation, and Judea Pearl's 3-step Abduction-Action-Prediction counterfactual engine); receipt `docs/evidence/CAUSAL_SCM_RECEIPT.json`. Wire `toolchain:scm:dsep`, `toolchain:scm:backdoor`, `toolchain:scm:intervene`, `toolchain:scm:counterfactual`, `toolchain:scm:audit` (`613 -> 618` commands). Verify `BDD-1803`..`BDD-1808`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-200-CAUSAL-DISCOVERY-STRUCTURAL-EQUATION.md`
+  - `openspec/changes/CHANGE-200-causal-discovery-structural-equation.md`
+  - `openspec/specs/SPEC-338-causal-discovery-structural-equation.md`
+  - `docs/plans/PLAN-200-causal-discovery-structural-equation.md`
+  - `docs/tasks/TASKS-200-causal-discovery-structural-equation.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

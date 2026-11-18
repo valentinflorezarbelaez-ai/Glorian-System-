@@ -1,0 +1,13 @@
+{
+  "specRef": "SPEC-338",
+  "dagAcyclicEnforced": true,
+  "colliderDsepVerified": true,
+  "backdoorDeconfounded": true,
+  "doInterventionExact": true,
+  "counterfactualConsistent": true,
+  "trueAte": 2,
+  "naiveBiasedSlope": 3.875913,
+  "backdoorAdjustedAte": 1.999291,
+  "allPassed": true,
+  "sha256Digest": "9bfb69062a6d1ea79bf11cab51c05d85efa50ef1678ff3f8e081fc47eb8f6488"
+}

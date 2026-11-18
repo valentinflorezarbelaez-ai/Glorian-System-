@@ -155,6 +155,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliEuvInverseLithographyWavefront.mjs",
     fn: "handleEuvInverseLithographyWavefrontCommand",
   },
+  {
+    prefix: "toolchain:scm:",
+    file: "./cliCausalStructuralModel.mjs",
+    fn: "handleCausalStructuralModelCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

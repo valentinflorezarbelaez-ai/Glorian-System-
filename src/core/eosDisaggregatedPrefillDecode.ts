@@ -18,6 +18,8 @@ import type {
   WorkerNodeState,
 } from "./eosDisaggregatedPrefillDecode.types.js";
 
+export * from "./eosDisaggregatedPrefillDecode.types.ts";
+
 export class EosDisaggregatedPrefillDecodeCore {
   private readonly chunkBudget: number;
   private readonly pageSizeTokens: number;

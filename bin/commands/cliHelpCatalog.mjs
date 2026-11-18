@@ -636,6 +636,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:euvilt:aerial [--grid=11] [--json] Simulación 2D de imagen aérea difractiva y contorno de fotorresina (SPEC-337)
   eos toolchain:euvilt:synthesize [--iterations=35] [--json] Síntesis de máscara por litografía inversa (ILT) con gradiente adjunto (SPEC-337)
   eos toolchain:euvilt:audit [--json] Auditoría determinista EUV-ILT y recibo SHA-256 (SPEC-337)
+  eos toolchain:scm:dsep [--source=X] [--target=D] [--given=C] [--json] Evaluación de d-separación por moralización ancestral y colisionadores (SPEC-338)
+  eos toolchain:scm:backdoor [--treatment=X] [--outcome=Y] [--set=Z] [--json] Verificación del criterio de puerta trasera (Backdoor Criterion) (SPEC-338)
+  eos toolchain:scm:intervene [--treated=1] [--control=0] [--json] Cirugía de grafo mutilado e intervención do(X := x) (SPEC-338)
+  eos toolchain:scm:counterfactual [--do-x=3.0] [--json] Inferencia contrafáctica en 3 pasos (Abducción, Acción, Predicción) (SPEC-338)
+  eos toolchain:scm:audit [--json] Auditoría determinista de inferencia causal SCM y recibo SHA-256 (SPEC-338)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
