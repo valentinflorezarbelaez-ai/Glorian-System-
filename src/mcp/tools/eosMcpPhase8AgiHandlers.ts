@@ -195,6 +195,16 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
 
     eos_closed_loop_autopilot_audit: () => new EosClosedLoopRepoAutopilotCore({ projectRoot }).audit(),
 
+    eos_blindspot_fleet_audit: (args: Record<string, unknown>) => {
+      const iters = positiveFiniteNumber(args?.iterations, 50);
+      const seed = positiveFiniteNumber(args?.seed, 2026341);
+      return new EosMetamorphicDifferentialBlindSpotCore().auditFleetProjects({
+        projectRoot,
+        iterationsPerProject: iters,
+        seed,
+      });
+    },
+
     eos_blindspot_hunter_audit: () => new EosMetamorphicDifferentialBlindSpotCore().audit(),
   };
 }

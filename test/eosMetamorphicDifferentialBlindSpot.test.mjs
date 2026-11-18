@@ -679,4 +679,50 @@ test("SPEC-341 / CHANGE-203: Metamorphic, Differential & Structural-Shrinking Bl
       fs.rmSync(tmpReceipt, { force: true });
     },
   );
+
+  await t.test("BDD-1827: Fleet Repositories Metamorphic Audit & MCP Dispatch (SPEC-341 / SPEC-124)", async () => {
+    const core = new EosMetamorphicDifferentialBlindSpotCore();
+    const fleetReceipt = core.auditFleetProjects({
+      projectRoot: ROOT,
+      iterationsPerProject: 20,
+    });
+
+    assert.strictEqual(fleetReceipt.specRef, "SPEC-341");
+    assert.strictEqual(fleetReceipt.command, "toolchain:blindspot:fleet");
+    assert.strictEqual(fleetReceipt.totalFleetProjects, 9);
+    assert.strictEqual(fleetReceipt.auditedProjects, 9);
+    assert.strictEqual(fleetReceipt.allPassed, true);
+    assert.strictEqual(fleetReceipt.projects.length, 9);
+    assert.strictEqual(typeof fleetReceipt.sha256Digest, "string");
+    assert.strictEqual(fleetReceipt.sha256Digest.length, 64);
+
+    // Verify CLI invocation
+    assert.strictEqual(
+      await handleMetamorphicDifferentialBlindSpotCommand({
+        command: "toolchain:blindspot:fleet",
+        args: ["--json", "--iterations=10"],
+      }),
+      true,
+    );
+
+    // Verify Native MCP Tool dispatch
+    const mcpServer = new EosMcpServer(ROOT);
+    const mcpRes = await mcpServer.handleRequest({
+      jsonrpc: "2.0",
+      id: "test-mcp-blindspot-fleet",
+      method: "tools/call",
+      params: {
+        name: "eos_blindspot_fleet_audit",
+        arguments: { iterations: 10 },
+      },
+    });
+    assert.strictEqual(mcpRes.jsonrpc, "2.0");
+    assert.strictEqual(mcpRes.id, "test-mcp-blindspot-fleet");
+    assert.ok(!mcpRes.error, `Unexpected MCP error: ${JSON.stringify(mcpRes.error)}`);
+    assert.ok(mcpRes.result);
+    const parsed = JSON.parse(mcpRes.result.content[0].text);
+    assert.strictEqual(parsed.command, "toolchain:blindspot:fleet");
+    assert.strictEqual(parsed.auditedProjects, 9);
+    assert.strictEqual(parsed.allPassed, true);
+  });
 });

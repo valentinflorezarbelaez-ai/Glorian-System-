@@ -205,6 +205,18 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
     },
   },
   {
+    name: "eos_blindspot_fleet_audit",
+    description:
+      "Audits all 9 registered fleet repositories with metamorphic boundary fuzzing campaigns and structural invariants (SPEC-341 / SPEC-124).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        iterations: { type: "number", description: "Fuzz iterations per project (default: 50)" },
+        seed: { type: "number", description: "PRNG seed (default: 2026341)" },
+      },
+    },
+  },
+  {
     name: "eos_blindspot_hunter_audit",
     description:
       "Runs recursive structural tree shrinking, differential oracle divergence hunting, metamorphic invariant checks, and 500-payload boundary fuzzing (SPEC-341).",

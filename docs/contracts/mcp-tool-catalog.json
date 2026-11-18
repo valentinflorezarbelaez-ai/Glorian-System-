@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "f290846cf3b39a90fc51687ae40d8fe6769b933d8ad59e4aa75070c969870fdd",
-  "totalTools": 217,
+  "catalogSha256": "69513fece073ef7468aaea650225a7ed9a6dfd0254579d0fceaaa78f7ed1387b",
+  "totalTools": 218,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -6789,6 +6789,30 @@
       },
       "annotations": {
         "title": "EOS closed Loop Autopilot Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_blindspot_fleet_audit",
+      "description": "Audits all 9 registered fleet repositories with metamorphic boundary fuzzing campaigns and structural invariants (SPEC-341 / SPEC-124).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "iterations": {
+            "type": "number",
+            "description": "Fuzz iterations per project (default: 50)"
+          },
+          "seed": {
+            "type": "number",
+            "description": "PRNG seed (default: 2026341)"
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS blindspot Fleet Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

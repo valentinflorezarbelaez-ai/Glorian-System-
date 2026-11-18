@@ -157,11 +157,40 @@ async function cmd_blindspot_audit(commandContext) {
   }
 }
 
+async function cmd_blindspot_fleet(commandContext) {
+  const args = commandContext.args || [];
+  const isJson = args.includes("--json");
+  const seed = parseIntFlag(args, "--seed=", 2026341);
+  const iterations = parseIntFlag(args, "--iterations=", 50);
+  const receipt = new EosMetamorphicDifferentialBlindSpotCore().auditFleetProjects({
+    projectRoot: ROOT,
+    seed,
+    iterationsPerProject: iterations,
+  });
+
+  if (isJson) {
+    console.log(JSON.stringify(receipt, null, 2));
+  } else {
+    console.log("=== Blind-Spot Hunter: Fleet Repositories Audit (SPEC-341 / SPEC-124) ===");
+    console.log(`Total Fleet Projects: ${receipt.totalFleetProjects}`);
+    console.log(`Audited Projects    : ${receipt.auditedProjects}`);
+    console.log(`All Passed          : ${receipt.allPassed}`);
+    console.log(`Mean Stability Score: ${receipt.meanStabilityScore}`);
+    console.log(`SHA-256 Digest      : ${receipt.sha256Digest}`);
+    for (const p of receipt.projects) {
+      console.log(
+        `  - [${p.passed ? "PASS" : "FAIL"}] ${p.projectId} (stability: ${p.stabilityScore}, 5xx: ${p.http5xxCount})`,
+      );
+    }
+  }
+}
+
 HANDLERS["toolchain:blindspot:shrink"] = cmd_blindspot_shrink;
 HANDLERS["toolchain:blindspot:differential"] = cmd_blindspot_differential;
 HANDLERS["toolchain:blindspot:metamorphic"] = cmd_blindspot_metamorphic;
 HANDLERS["toolchain:blindspot:fuzz"] = cmd_blindspot_fuzz;
 HANDLERS["toolchain:blindspot:audit"] = cmd_blindspot_audit;
+HANDLERS["toolchain:blindspot:fleet"] = cmd_blindspot_fleet;
 
 export async function handleMetamorphicDifferentialBlindSpotCommand(commandContext) {
   const command = commandContext.command;

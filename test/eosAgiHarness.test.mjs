@@ -31,7 +31,13 @@ function ensureTmpDir() {
 }
 
 function cleanTmpDir() {
-  if (fs.existsSync(tmpDir)) fs.rmSync(tmpDir, { recursive: true, force: true });
+  if (fs.existsSync(tmpDir)) {
+    try {
+      fs.rmSync(tmpDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+    } catch {
+      // Ignore transient EPERM during test cleanup on Windows
+    }
+  }
 }
 
 // ============================================================================

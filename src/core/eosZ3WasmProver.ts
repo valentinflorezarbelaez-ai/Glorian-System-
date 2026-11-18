@@ -32,7 +32,7 @@ export class EosTlcModelChecker {
     options: { maxStates?: number; timeoutMs?: number } = {},
   ): Promise<TlcExecutionResult> {
     const startTime = Date.now();
-    const timeoutMs = options.timeoutMs ?? 10000;
+    const timeoutMs = options.timeoutMs ?? 60000;
     const fullPath = path.resolve(process.cwd(), specPath);
 
     if (!fs.existsSync(fullPath)) {
@@ -56,6 +56,9 @@ export class EosTlcModelChecker {
       try {
         const tlcArgs = ["-cp", jarCandidate, "tlc2.TLC", "-deadlock", "-workers", "1", fullPath];
         const res = spawnSync("java", tlcArgs, { encoding: "utf8", timeout: timeoutMs, windowsHide: true });
+        if (res.error) {
+          throw res.error;
+        }
         const stdout = res.stdout || "";
         const elapsed = Date.now() - startTime;
 

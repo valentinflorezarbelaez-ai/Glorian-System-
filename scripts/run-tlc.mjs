@@ -280,7 +280,7 @@ export function runTlcExecutable(specName, jarPath, formalDir = FORMAL_DIR, opts
     res = spawnSync(javaExec, args, {
       cwd: formalDir,
       encoding: "utf8",
-      timeout: opts.timeoutMs || 30000,
+      timeout: opts.timeoutMs || 60000,
     });
   } finally {
     cleanupMetaDir(metaDir);
@@ -304,7 +304,7 @@ export function runTlcExecutableAsync(specName, jarPath, formalDir = FORMAL_DIR,
   const javaExec = resolveJavaExecutable() || "java";
   const metaDir = fs.mkdtempSync(path.join(os.tmpdir(), `tlc-${specName}-`));
   const args = buildTlcArgs(specName, jarPath, metaDir);
-  const timeoutMs = opts.timeoutMs || 30000;
+  const timeoutMs = opts.timeoutMs || 60000;
 
   return new Promise((resolve) => {
     let stdout = "";

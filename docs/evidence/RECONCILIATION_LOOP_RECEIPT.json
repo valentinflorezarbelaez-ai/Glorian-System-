@@ -1,6 +1,6 @@
 {
   "receiptType": "EOS_RECONCILIATION_LOOP_AUDIT",
-  "timestampIso": "2026-11-18T10:18:54.107Z",
+  "timestampIso": "2026-11-18T15:18:34.413Z",
   "specRef": "SPEC-307",
   "fleetObservedProjects": 9,
   "convergenceAchieved": true,

@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-18T10:19:54.910Z",
+  "timestampIso": "2026-11-18T15:19:59.498Z",
   "specRef": "SPEC-294",
   "totalEventsRecorded": 22,
   "replayDeterministicMatch": true,
   "sagaCompensationsVerified": true,
   "sidecarOutboxTested": true,
-  "sha256Signature": "1859479bfb9d9fc465ee9766ae1e8be535ca6af5973a13eef10c6d0778698357"
+  "sha256Signature": "ae2142fa310655d8fa0f86990776a49d7e34b9769746293801b1e94f75321ab4"
 }

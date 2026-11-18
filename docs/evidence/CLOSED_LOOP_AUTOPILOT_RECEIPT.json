@@ -20,7 +20,7 @@
     "totalHypergraphEntities": 34,
     "totalHyperedges": 33,
     "ontologicalAudit": {
-      "timestampIso": "2026-11-18T03:56:02.270Z",
+      "timestampIso": "2026-11-18T14:26:38.402Z",
       "specRef": "SPEC-333",
       "totalEntities": 34,
       "totalHyperedges": 33,
@@ -71,7 +71,7 @@
       "invariantsEvaluated": 3,
       "violationsCount": 0,
       "auditHash": "28414812be092ff2b6317ded0b2bf9480f6944ef8da6bb6d0e7f8cad2f946959",
-      "timestamp": "2026-11-18T03:56:02.279Z"
+      "timestamp": "2026-11-18T14:26:38.408Z"
     }
   },
   "harness": {
@@ -79,14 +79,14 @@
     "commitsSampled": 20,
     "cohortTelemetry": {
       "cohortSize": 20,
-      "firstPassCount": 20,
-      "firstPassYieldRatio": 1,
-      "meanReworkAmplificationFactor": 1,
-      "totalTokens": 144000,
+      "firstPassCount": 19,
+      "firstPassYieldRatio": 0.95,
+      "meanReworkAmplificationFactor": 1.023611,
+      "totalTokens": 147400,
       "firstPassTokens": 144000,
-      "wastedReworkTokens": 0,
-      "totalCostUsd": 0.432,
-      "meanCostPerMergedPrUsd": 0.0216
+      "wastedReworkTokens": 3400,
+      "totalCostUsd": 0.4422,
+      "meanCostPerMergedPrUsd": 0.02211
     },
     "harnessLoopResult": {
       "taskId": "SPEC-340-CLOSED-LOOP-AUTOPILOT",
@@ -161,6 +161,31 @@
     },
     "sampleCommits": [
       {
+        "sha": "8082d6c3",
+        "subject": "docs(release): seal freeze pin",
+        "category": "DOCS_SYNC"
+      },
+      {
+        "sha": "69ffcc46",
+        "subject": "fix(tlc): ensure deferred TLC receipts include passed status and autopilot falls back gracefully",
+        "category": "BUGFIX_REWORK"
+      },
+      {
+        "sha": "cf8e10a1",
+        "subject": "docs(release): seal freeze pin",
+        "category": "DOCS_SYNC"
+      },
+      {
+        "sha": "a76b96d6",
+        "subject": "docs(release): sync freeze gate for SPEC-341",
+        "category": "DOCS_SYNC"
+      },
+      {
+        "sha": "a11a574d",
+        "subject": "feat(blindspot): implement SPEC-341 metamorphic/differential fuzzer and remediate 31 Judgment Day findings",
+        "category": "SDD_SPEC"
+      },
+      {
         "sha": "d35ca6d0",
         "subject": "docs(release): seal freeze pin",
         "category": "DOCS_SYNC"
@@ -234,33 +259,8 @@
         "sha": "b72fc00e",
         "subject": "feat(pqmpc): implement threshold secret sharing and ring-lwe homomorphic secure aggregation engine (SPEC-335)",
         "category": "SDD_SPEC"
-      },
-      {
-        "sha": "93519d63",
-        "subject": "docs: sync capability matrix, freeze gate, and catalog index for SPEC-334",
-        "category": "DOCS_SYNC"
-      },
-      {
-        "sha": "d6c3cc01",
-        "subject": "feat(desh): implement deterministic discrete-event simulation hypervisor and time-travel fault injection engine (SPEC-334)",
-        "category": "SDD_SPEC"
-      },
-      {
-        "sha": "f31fea1d",
-        "subject": "feat(skills): integrate Google Chrome Modern Web Guidance agent skill",
-        "category": "SDD_SPEC"
-      },
-      {
-        "sha": "923e958e",
-        "subject": "docs: sync capability matrix, freeze gate, and catalog index for SPEC-333",
-        "category": "DOCS_SYNC"
-      },
-      {
-        "sha": "2372b40d",
-        "subject": "feat(hypergraph): implement autonomous ontological hypergraph and bitemporal entity resolution engine (SPEC-333)",
-        "category": "SDD_SPEC"
       }
     ]
   },
-  "sha256Digest": "a78ae7c53bf3320f5fc4f88296592228f51b9e69a842e4fba7c579693b573a56"
+  "sha256Digest": "492cc3f84908d823fc4e9f617b132b3043dea79dbf02149c9aec6da10f787ae1"
 }

@@ -143,13 +143,18 @@ export async function runFlakyGate({
   }
 
   const runs = [];
+  const concurrency = Math.min(6, Math.max(2, (os.cpus()?.length ?? 4) - 1));
+  const configuredConcurrency = process.env.EOS_FLAKY_CONCURRENCY
+    ? Number(process.env.EOS_FLAKY_CONCURRENCY)
+    : concurrency;
+
   for (let i = 0; i < repeats; i++) {
     const reportPath = path.join(tmpDir, `run-${i}.xml`);
-    // Serial on purpose. A parallel JUnit write on the CI runner dropped about
-    // half the tests from one repeat, and those holes were then scored as flakes.
+    // Run with bounded worker pool and 4GB heap headroom to complete repetitions reliably within timeout
     const args = [
+      "--max-old-space-size=4096",
       "--test",
-      "--test-concurrency=1",
+      `--test-concurrency=${configuredConcurrency}`,
       "--test-reporter=junit",
       `--test-reporter-destination=${reportPath}`,
       ...suites,
@@ -160,6 +165,14 @@ export async function runFlakyGate({
       stdio: "ignore",
       env: childEnv,
     });
+    if (run.error) {
+      throw new Error(
+        `flaky repetition ${i} failed to execute: ${run.error.message}${run.error.code === "ETIMEDOUT" ? " (process timed out)" : ""}`,
+      );
+    }
+    if (run.signal) {
+      throw new Error(`flaky repetition ${i} was terminated by signal ${run.signal}`);
+    }
     // A non-zero exit just means some tests failed in this repetition — those
     // verdicts are exactly what flakiness detection needs. A missing or truncated
     // report is a runner failure.

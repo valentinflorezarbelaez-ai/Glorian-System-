@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-18T10:22:38.395Z",
+  "timestampIso": "2026-11-18T15:23:20.774Z",
   "specRef": "SPEC-298",
   "providersAudited": [
     "google-gemini",
@@ -13,5 +13,5 @@
   "cacheHitRatio": 0,
   "totalCostUsd": 0.003031,
   "consensusVerdict": "APPROVED",
-  "sha256Signature": "f52c45ada8119218958a05fb70c868738f7dfe59a34ed34a52c1a4af354ba392"
+  "sha256Signature": "dc1b49169ecad37e8b3226c452652996c90a7d694089e2d1f7909285fa9bd76c"
 }

@@ -656,6 +656,7 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:blindspot:metamorphic [--seed=2026341] [--json] Verificador de relaciones metamórficas sin oráculo exacto (SPEC-341)
   eos toolchain:blindspot:fuzz [--iterations=500] [--seed=2026341] [--json] Campaña de fuzzing de 500+ cargas útiles sin HTTP 500 (SPEC-341)
   eos toolchain:blindspot:audit [--json] Auditoría determinista del cazador de puntos ciegos y recibo SHA-256 (SPEC-341)
+  eos toolchain:blindspot:fleet [--seed=2026341] [--iterations=50] [--json] Auditoría metamórfica y boundary fuzzing sobre los 9 repositorios de la flota (SPEC-341)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

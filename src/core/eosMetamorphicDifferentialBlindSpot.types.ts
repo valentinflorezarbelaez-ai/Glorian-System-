@@ -138,3 +138,26 @@ export interface BlindSpotHunterAuditReceipt {
   readonly allPassed: boolean;
   readonly sha256Digest: string;
 }
+
+export interface FleetProjectBlindSpotReport {
+  readonly projectId: string;
+  readonly projectName: string;
+  readonly status: string;
+  readonly authorization: string;
+  readonly fuzzIterations: number;
+  readonly passed: boolean;
+  readonly stabilityScore: number;
+  readonly unhandledExceptions: number;
+  readonly http5xxCount: number;
+}
+
+export interface FleetBlindSpotAuditReceipt {
+  readonly specRef: "SPEC-341";
+  readonly command: "toolchain:blindspot:fleet";
+  readonly totalFleetProjects: number;
+  readonly auditedProjects: number;
+  readonly allPassed: boolean;
+  readonly meanStabilityScore: number;
+  readonly projects: ReadonlyArray<FleetProjectBlindSpotReport>;
+  readonly sha256Digest: string;
+}
