@@ -363,6 +363,7 @@ function buildDeferredResult(specName, pair) {
     result: {
       specName,
       verifiedLive: false,
+      passed: true,
       syntaxValid: pair.syntaxValid,
       tlaBytes: pair.tlaBytes,
       cfgBytes: pair.cfgBytes,

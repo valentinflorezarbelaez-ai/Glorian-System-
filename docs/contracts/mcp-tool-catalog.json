@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "03d7a6e635653bdd594560201cb9e4b7fc43313f67e1b1ad0d14bd257b503e03",
-  "totalTools": 216,
+  "catalogSha256": "f290846cf3b39a90fc51687ae40d8fe6769b933d8ad59e4aa75070c969870fdd",
+  "totalTools": 217,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -6789,6 +6789,21 @@
       },
       "annotations": {
         "title": "EOS closed Loop Autopilot Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_blindspot_hunter_audit",
+      "description": "Runs recursive structural tree shrinking, differential oracle divergence hunting, metamorphic invariant checks, and 500-payload boundary fuzzing (SPEC-341).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS blindspot Hunter Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

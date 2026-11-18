@@ -1,8 +1,8 @@
 {
-  "indexId": "vec-idx-1794880925989",
+  "indexId": "vec-idx-1794997413610",
   "totalVectors": 5,
   "dimension": 8,
   "shardsCount": 3,
   "compressionRatio": "4.0x (32-bit FP32 -> 8-bit SQ8)",
-  "sha256Signature": "bedd5e0819e2735934f5a53af3a2f9642766103b42f02e1c65683483068311e3"
+  "sha256Signature": "0e4246bf3d8246d57ed7caa3390208455a78fc788570ccdfcc4064b2f38ab77a"
 }

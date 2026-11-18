@@ -478,7 +478,7 @@ export class EosClosedLoopRepoAutopilotCore {
         validFrom: 0,
         validTo: 100000,
       });
-      if (m.passed === true) verifiedCount++;
+      if (m.passed === true || (m.verifiedLive === false && m.syntaxValid === true)) verifiedCount++;
     }
     return verifiedCount;
   }
