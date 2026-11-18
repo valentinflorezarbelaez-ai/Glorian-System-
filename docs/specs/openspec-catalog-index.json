@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 336,
-  "catalogSha256": "fd61ebbf2591b16c0758ffe2671306c78bd5408de461e540dd0c824946b97634",
+  "totalSpecs": 338,
+  "catalogSha256": "65d6cf60e78d5c0050068c340be17f2cbb5158b35a097959cf707930c2698d13",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3026,6 +3026,24 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-336-physics-informed-hamiltonian-pde.md",
       "sha256": "30ef5710198fe0651e07948e2e5d4014e16fdb1d20f7c93c0579e521687aa8ba"
+    },
+    {
+      "id": "SPEC-337",
+      "title": "Autonomous EUV Optical Proximity Correction & Inverse Lithography Wavefront Engine (EUV-OPC)",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-337-euv-inverse-lithography-wavefront.md",
+      "sha256": "20f82675f51aff113c143e6510674d179cce0e50ae1b0358d5b08dba8654b3a1"
+    },
+    {
+      "id": "SPEC-338",
+      "title": "Autonomous Causal Discovery & Structural Equation Modeling Engine (SCM)",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-338-causal-discovery-structural-equation.md",
+      "sha256": "2033b4d05c32bd58a38b6b42c3d3b9a44e0b9b950957d920967f71b182a38c67"
     }
   ]
 }
