@@ -1,15 +1,15 @@
 {
   "specId": "SPEC-357",
   "changeId": "CHANGE-219",
-  "timestamp": "2026-11-19T18:23:06.801Z",
+  "timestamp": "2026-11-19T20:29:44.345Z",
   "blocksCount": 5,
   "totalDatomsCount": 16,
   "lidrEventsTracked": 4,
   "benchmark": {
     "transactionsAppended": 5000,
-    "totalDurationUs": 141901.4,
-    "throughputTps": 35235.734108331555,
-    "avgQueryLatencyUs": 1410.9,
+    "totalDurationUs": 209860.9,
+    "throughputTps": 23825.305237898057,
+    "avgQueryLatencyUs": 1764.7,
     "merkleVerified": true
   },
   "tlcModelVerified": true,

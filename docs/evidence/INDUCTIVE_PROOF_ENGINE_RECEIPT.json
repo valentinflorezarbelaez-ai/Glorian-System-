@@ -1,7 +1,7 @@
 {
   "specId": "SPEC-360",
   "changeId": "CHANGE-222",
-  "timestamp": "2026-11-19T18:57:54.953Z",
+  "timestamp": "2026-11-19T20:32:32.707Z",
   "cegisResult": {
     "converged": true,
     "iterations": 1,
@@ -19,9 +19,9 @@
   "benchmark": {
     "transitionsEvaluated": 200,
     "lemmasSynthesized": 600,
-    "totalDurationUs": 988.9,
-    "avgLemmaSynthesisLatencyUs": 1.6481666666666666,
-    "throughputTransitionsSec": 202244.91859642026
+    "totalDurationUs": 2273.5,
+    "avgLemmaSynthesisLatencyUs": 3.7891666666666666,
+    "throughputTransitionsSec": 87970.09016934242
   },
   "tlcModelVerified": true,
   "verdict": "CONFORMANT",

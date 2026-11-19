@@ -1,7 +1,7 @@
 {
-  "receiptId": "ZK_CIRC_EVD_1795112372806",
+  "receiptId": "ZK_CIRC_EVD_1795120564062",
   "specId": "SPEC-350",
-  "timestamp": "2026-11-19T18:19:32.804Z",
+  "timestamp": "2026-11-19T20:36:04.060Z",
   "fieldArithmeticVerified": true,
   "r1csSynthesisVerified": true,
   "booleanEnforcementVerified": true,
@@ -10,5 +10,5 @@
   "constraintsCount": 6,
   "activeField": "BN254_SCALAR_FIELD",
   "status": "VERIFIED",
-  "proofCertificateSha256": "4372872421ed30034dfcef7d2454ee689fa7147a33592285896bfe9ca1ae70a1"
+  "proofCertificateSha256": "2adc0783d9cd1fe5205ce1467d08710eb0fd74fb1ed63784c4a107df9a558eb6"
 }

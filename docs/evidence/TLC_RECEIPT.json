@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-19T20:15:56.726Z",
+  "timestampIso": "2026-11-19T20:36:57.807Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -67,8 +67,8 @@
       "specName": "ZeroCopyRingBuffer",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 405,
-      "statesGenerated": 99,
+      "distinctStates": 39865,
+      "statesGenerated": 154381,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -76,8 +76,8 @@
       "specName": "JepsenDistributedChaos",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 594,
-      "statesGenerated": 180,
+      "distinctStates": 7116,
+      "statesGenerated": 23010,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -85,8 +85,8 @@
       "specName": "SimdQuantizedHnsw",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 528,
-      "statesGenerated": 895,
+      "distinctStates": 14000,
+      "statesGenerated": 231376,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -220,8 +220,8 @@
       "specName": "DistributedKvCacheReplication",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 154,
-      "statesGenerated": 213,
+      "distinctStates": 9261,
+      "statesGenerated": 44983,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -265,8 +265,8 @@
       "specName": "DiscreteEventSimulationHypervisor",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 821,
-      "statesGenerated": 966,
+      "distinctStates": 2850,
+      "statesGenerated": 11721,
       "violationInvariant": null,
       "exitCode": 0
     },

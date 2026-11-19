@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
   "totalSpecs": 365,
-  "catalogSha256": "86a4a8b0123a1d0440337682a8fff7bde1ca0d4f670f65b34d1441c982c2cee0",
+  "catalogSha256": "7629cf72fa80aaa6fd1de8b247c5f7b654a08bc3e962f50258bbaeb9ea0b1ed5",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3286,7 +3286,7 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-365-multi-node-swarm-mesh.md",
-      "sha256": "0cac89f2633f64c318813fd36e7b596814fddeacc4917e296d3421878800dcc6"
+      "sha256": "c9c804abf54ae3045a4e82c2616a2bff350191ba3cf3db7e4183ac37149d19c0"
     }
   ]
 }

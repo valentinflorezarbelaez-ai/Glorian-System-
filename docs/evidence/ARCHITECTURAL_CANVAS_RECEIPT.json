@@ -1,15 +1,15 @@
 {
   "specId": "SPEC-358",
   "changeId": "CHANGE-220",
-  "timestamp": "2026-11-19T18:34:09.155Z",
+  "timestamp": "2026-11-19T20:29:04.503Z",
   "nodesHarvested": 68,
   "edgesHarvested": 67,
   "benchmark": {
     "nodeCount": 500,
     "edgeCount": 375,
-    "layoutDurationUs": 1883.3,
-    "blastRadiusDurationUs": 503.8,
-    "svgRenderDurationUs": 771.6,
+    "layoutDurationUs": 4169.7,
+    "blastRadiusDurationUs": 3561.7,
+    "svgRenderDurationUs": 1517.1,
     "cyclesDetected": 0
   },
   "tlcModelVerified": true,

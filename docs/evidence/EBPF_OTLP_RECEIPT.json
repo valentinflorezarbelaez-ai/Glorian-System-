@@ -1,11 +1,11 @@
 {
   "specId": "SPEC-296",
   "changeId": "CHANGE-158",
-  "timestamp": "2026-11-19T18:13:53.953Z",
+  "timestamp": "2026-11-19T20:30:50.794Z",
   "probesGenerated": 4,
   "eventsDecoded": 3,
   "violationsBlocked": 2,
   "otlpSpansExported": 3,
   "collectorEndpoint": "http://localhost:4318/v1/traces",
-  "sha256Signature": "34c7c1ff5ba80ebe6a032d7a3addfed57417c873cd73badd2524bc8728270383"
+  "sha256Signature": "ad83fa47cdba892f88f8a4cf31c640a3380484e146813ad77eca86635ec60338"
 }

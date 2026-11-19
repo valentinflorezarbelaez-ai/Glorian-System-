@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-19T18:17:23.482Z",
+  "timestampIso": "2026-11-19T20:34:14.053Z",
   "specRef": "SPEC-293",
   "totalArtifactsAttested": 5,
   "sbomComponentsCount": 50,
   "slsaLevelAchieved": "SLSA_LEVEL_3",
   "envelopeSignatureValid": true,
-  "sha256Signature": "9c1b42d2770a0752670484abb06bc6d16855466e73cc81c051297cf4a154bb63"
+  "sha256Signature": "42e00fb3d5fc6a3b9c15f4dacb37f8917fcaaed922e3e8594f3459da927447dc"
 }
