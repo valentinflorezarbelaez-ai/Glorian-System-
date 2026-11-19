@@ -403,8 +403,10 @@ async function cmd_fleet_doctor(commandContext) {
 HANDLERS["fleet:doctor"] = cmd_fleet_doctor;
 
 async function cmd_top(commandContext) {
-  const { root, printBanner } = commandContext;
-  printBanner();
+  const { root, args, printBanner } = commandContext;
+  const isJson = args.includes("--json");
+  if (!isJson) printBanner();
+
   const { EosSentinelDaemon } = await import("../../src/core/eosSentinelDaemon.ts");
   const { EosTelemetryDashboard } = await import("../../src/core/eosTelemetryDashboard.ts");
   const { GlorianFleetHealthWatchdog } = await import("../../src/core/glorianFleetHealthWatchdog.ts");
@@ -420,6 +422,43 @@ async function cmd_top(commandContext) {
 
   const mem = process.memoryUsage();
   const toMb = (bytes) => (bytes / (1024 * 1024)).toFixed(1);
+
+  if (isJson) {
+    const payload = {
+      timestampIso: new Date().toISOString(),
+      sentinelPulse: pulse,
+      memory: {
+        heapUsedMb: parseFloat(toMb(mem.heapUsed)),
+        heapTotalMb: parseFloat(toMb(mem.heapTotal)),
+        rssMb: parseFloat(toMb(mem.rss)),
+        externalMb: parseFloat(toMb(mem.external)),
+        utilizationRatio: pulse.memoryHealth.utilizationRatio,
+        pressureStatus: pulse.memoryHealth.status,
+      },
+      fleetHealth: {
+        auditStatus: fleetSync.auditStatus,
+        compositeHealthIndex: fleetSync.compositeHealthIndex,
+        healthyProjectsCount: fleetSync.healthyProjectsCount,
+        totalProjectsEvaluated: fleetSync.totalProjectsEvaluated,
+        averageTtfbMs: fleetSync.averageTtfbMs,
+      },
+      topology: {
+        activeAgents: snap.topology.activeAgents,
+        cycleDetected: snap.topology.cycleDetected,
+        totalEvents: snap.topology.totalEvents,
+      },
+      ledger: {
+        totalEntries: snap.ledger.totalEntries,
+        chainIntact: snap.ledger.chainIntact,
+      },
+      tokenEfficiency: {
+        savedRatio: snap.tokenEfficiency.savedRatio,
+        totalSavedTokens: snap.tokenEfficiency.totalSavedTokens,
+      },
+    };
+    console.log(JSON.stringify(payload, null, 2));
+    return;
+  }
 
   console.log(`\n======================================================================`);
   console.log(` 🚀  GLORIAN SYSTEM MONITOR (TOP) — REAL-TIME SOVEREIGN COCKPIT`);

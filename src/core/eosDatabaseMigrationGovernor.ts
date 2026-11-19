@@ -15,6 +15,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { resolveEvidencePath } from "./eosEvidencePaths.ts";
 import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
 export type MigrationHazardSeverity = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
@@ -52,12 +53,29 @@ export interface MigrationAuditReport {
   readonly sha256Receipt: string;
 }
 
+export interface RollbackReversibilityPair {
+  readonly forward: string;
+  readonly reverse: string;
+  readonly targetObject: string;
+  readonly actionType: "CREATE_TABLE" | "CREATE_INDEX" | "ADD_COLUMN" | "ADD_CONSTRAINT";
+}
+
+export interface RollbackReversibilityReport {
+  readonly reversible: boolean;
+  readonly forwardOperationsCount: number;
+  readonly reverseOperationsCount: number;
+  readonly matchedPairs: readonly RollbackReversibilityPair[];
+  readonly unhandledForwardOperations: readonly string[];
+}
+
 export interface MigrationPlanReport {
   readonly timestampIso: string;
   readonly status: "PASS" | "HAZARD_DETECTED";
   readonly clean: boolean;
   readonly executionOrder: readonly string[];
   readonly downMigrations: Readonly<Record<string, string>>;
+  readonly reversibility?: Readonly<Record<string, RollbackReversibilityReport>>;
+  readonly allReversible?: boolean;
   readonly totalSteps: number;
   readonly latencyMs: number;
   readonly sha256Receipt: string;
@@ -251,7 +269,9 @@ export class EosDatabaseMigrationGovernor {
       .sort();
 
     const downMigrations: Record<string, string> = {};
+    const reversibilityReports: Record<string, RollbackReversibilityReport> = {};
     let totalViolations = 0;
+    let allReversible = true;
 
     for (const file of sqlFiles) {
       const fullPath = path.join(resolvedDir, file);
@@ -261,17 +281,25 @@ export class EosDatabaseMigrationGovernor {
 
       const downSql = this.synthesizeDownMigration(rawSql);
       downMigrations[file] = downSql;
+
+      const rev = this.verifyRollbackReversibility(rawSql, downSql);
+      reversibilityReports[file] = rev;
+      if (!rev.reversible) {
+        allReversible = false;
+      }
     }
 
-    const clean = totalViolations === 0;
+    const clean = totalViolations === 0 && allReversible;
     const latencyMs = Date.now() - startTime;
 
     const payload = {
       timestampIso: new Date().toISOString(),
       status: (clean ? "PASS" : "HAZARD_DETECTED") as "PASS" | "HAZARD_DETECTED",
       clean,
+      allReversible,
       executionOrder: deepFreeze(sqlFiles),
       downMigrations: deepFreeze(downMigrations),
+      reversibility: deepFreeze(reversibilityReports),
       totalSteps: sqlFiles.length,
       latencyMs,
     };
@@ -284,6 +312,129 @@ export class EosDatabaseMigrationGovernor {
 
     this.writeReceipt(finalPlan);
     return finalPlan;
+  }
+
+  /**
+   * Proves that a generated down migration accurately inverts the forward up migration
+   * in strict LIFO (reverse) dependency order with zero dangling objects.
+   */
+  public static verifyRollbackReversibility(upSql: string, downSql: string): RollbackReversibilityReport {
+    assertPrecondition(typeof upSql === "string", "upSql must be a string");
+    assertPrecondition(typeof downSql === "string", "downSql must be a string");
+
+    const upStatements = this.splitStatements(this.stripComments(upSql));
+    const downStatements = this.splitStatements(this.stripComments(downSql));
+
+    interface DetectedOp {
+      actionType: "CREATE_TABLE" | "CREATE_INDEX" | "ADD_COLUMN" | "ADD_CONSTRAINT";
+      targetObject: string;
+      statement: string;
+    }
+
+    const forwardOps: DetectedOp[] = [];
+    for (const stmt of upStatements) {
+      const trimmed = stmt.trim();
+      const idx = trimmed.match(
+        /CREATE\s+(?:UNIQUE\s+)?INDEX\s+(?:CONCURRENTLY\s+)?(?:IF\s+NOT\s+EXISTS\s+)?([a-zA-Z0-9_]+)/i,
+      );
+      if (idx?.[1]) {
+        forwardOps.push({ actionType: "CREATE_INDEX", targetObject: idx[1].toLowerCase(), statement: trimmed });
+        continue;
+      }
+      const col = trimmed.match(
+        /ALTER\s+TABLE\s+([a-zA-Z0-9_]+)\s+ADD\s+COLUMN\s+(?:IF\s+NOT\s+EXISTS\s+)?([a-zA-Z0-9_]+)/i,
+      );
+      if (col?.[1] && col?.[2]) {
+        forwardOps.push({
+          actionType: "ADD_COLUMN",
+          targetObject: `${col[1]}.${col[2]}`.toLowerCase(),
+          statement: trimmed,
+        });
+        continue;
+      }
+      const cst = trimmed.match(/ALTER\s+TABLE\s+([a-zA-Z0-9_]+)\s+ADD\s+CONSTRAINT\s+([a-zA-Z0-9_]+)/i);
+      if (cst?.[1] && cst?.[2]) {
+        forwardOps.push({
+          actionType: "ADD_CONSTRAINT",
+          targetObject: `${cst[1]}.${cst[2]}`.toLowerCase(),
+          statement: trimmed,
+        });
+        continue;
+      }
+      const tbl = trimmed.match(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?([a-zA-Z0-9_]+)/i);
+      if (tbl?.[1]) {
+        forwardOps.push({ actionType: "CREATE_TABLE", targetObject: tbl[1].toLowerCase(), statement: trimmed });
+        continue;
+      }
+    }
+
+    const reverseOps: DetectedOp[] = [];
+    for (const stmt of downStatements) {
+      const trimmed = stmt.trim();
+      const idx = trimmed.match(/DROP\s+INDEX\s+(?:CONCURRENTLY\s+)?(?:IF\s+EXISTS\s+)?([a-zA-Z0-9_]+)/i);
+      if (idx?.[1]) {
+        reverseOps.push({ actionType: "CREATE_INDEX", targetObject: idx[1].toLowerCase(), statement: trimmed });
+        continue;
+      }
+      const col = trimmed.match(
+        /ALTER\s+TABLE\s+([a-zA-Z0-9_]+)\s+DROP\s+COLUMN\s+(?:IF\s+EXISTS\s+)?([a-zA-Z0-9_]+)/i,
+      );
+      if (col?.[1] && col?.[2]) {
+        reverseOps.push({
+          actionType: "ADD_COLUMN",
+          targetObject: `${col[1]}.${col[2]}`.toLowerCase(),
+          statement: trimmed,
+        });
+        continue;
+      }
+      const cst = trimmed.match(
+        /ALTER\s+TABLE\s+([a-zA-Z0-9_]+)\s+DROP\s+CONSTRAINT\s+(?:IF\s+EXISTS\s+)?([a-zA-Z0-9_]+)/i,
+      );
+      if (cst?.[1] && cst?.[2]) {
+        reverseOps.push({
+          actionType: "ADD_CONSTRAINT",
+          targetObject: `${cst[1]}.${cst[2]}`.toLowerCase(),
+          statement: trimmed,
+        });
+        continue;
+      }
+      const tbl = trimmed.match(/DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?([a-zA-Z0-9_]+)/i);
+      if (tbl?.[1]) {
+        reverseOps.push({ actionType: "CREATE_TABLE", targetObject: tbl[1].toLowerCase(), statement: trimmed });
+        continue;
+      }
+    }
+
+    const matchedPairs: RollbackReversibilityPair[] = [];
+    const unhandledForward: string[] = [];
+
+    // LIFO (reverse order) check
+    const reversedForward = [...forwardOps].reverse();
+    for (let i = 0; i < reversedForward.length; i++) {
+      const fwd = reversedForward[i];
+      const rev = reverseOps[i];
+      if (rev && rev.actionType === fwd.actionType && rev.targetObject === fwd.targetObject) {
+        matchedPairs.push({
+          forward: fwd.statement,
+          reverse: rev.statement,
+          targetObject: fwd.targetObject,
+          actionType: fwd.actionType,
+        });
+      } else {
+        unhandledForward.push(fwd.statement);
+      }
+    }
+
+    const reversible =
+      forwardOps.length === 0 || (unhandledForward.length === 0 && reverseOps.length === forwardOps.length);
+
+    return deepFreeze({
+      reversible,
+      forwardOperationsCount: forwardOps.length,
+      reverseOperationsCount: reverseOps.length,
+      matchedPairs: deepFreeze(matchedPairs),
+      unhandledForwardOperations: deepFreeze(unhandledForward),
+    });
   }
 
   /**
@@ -351,7 +502,7 @@ export class EosDatabaseMigrationGovernor {
   }
 
   private static writeReceipt(report: MigrationLintReport | MigrationAuditReport | MigrationPlanReport): void {
-    const receiptPath = path.resolve(process.cwd(), "docs", "evidence", "MIGRATION_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("MIGRATION_RECEIPT.json");
     try {
       const dir = path.dirname(receiptPath);
       if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });

@@ -135,8 +135,8 @@ jobs:
         # Scans for leaked credentials in all commits, not just the working tree
         if: runner.os == 'Linux'
         run: |
-          git log --all --oneline --format="%H" | head -100 | while read sha; do
-            if git show "$sha" | grep -qE '(sk-[a-zA-Z0-9]{20,}|ghp_[a-zA-Z0-9]{36}|AKIA[0-9A-Z]{16}|xoxb-[0-9a-zA-Z-]+|-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY)'; then
+          git log --all -n 100 --format="%H" | while read -r sha; do
+            if git show "$sha" 2>/dev/null | grep -qE '(sk-[a-zA-Z0-9]{20,}|ghp_[a-zA-Z0-9]{36}|AKIA[0-9A-Z]{16}|xoxb-[0-9a-zA-Z-]+|-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY)'; then
               echo "FAIL: Potential secret in commit $sha" && exit 1
             fi
           done

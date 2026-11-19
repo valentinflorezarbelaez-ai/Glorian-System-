@@ -103,6 +103,9 @@ async function cmd_toolchain_db_plan(commandContext) {
   console.log(`  Total Steps          : ${report.totalSteps}`);
   console.log(`  Execution Order      : ${report.executionOrder.join(" -> ")}`);
   console.log(`  Rollbacks Generated  : ${Object.keys(report.downMigrations).length}`);
+  console.log(
+    `  Reversibility Proof  : ${report.allReversible ? "✔ 100% LIFO INVERSE PROVEN" : "✖ IRREVERSIBLE_STEP"}`,
+  );
   console.log(`  Receipt SHA-256      : sha256:${report.sha256Receipt}`);
   console.log(`===============================================================\n`);
   if (!report.clean) process.exitCode = 1;

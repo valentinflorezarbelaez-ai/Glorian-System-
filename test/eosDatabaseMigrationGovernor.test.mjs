@@ -12,6 +12,7 @@ import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 
 import { EosDatabaseMigrationGovernor } from "../src/core/eosDatabaseMigrationGovernor.ts";
+import { resolveEvidencePath } from "../src/core/eosEvidencePaths.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -129,10 +130,46 @@ describe("SPEC-277: Database Migration Governor & DDL Safety Engine", () => {
     assert.ok(down002.includes("ALTER TABLE users DROP COLUMN IF EXISTS email"));
 
     // Verify receipt on disk
-    const receiptPath = path.join(ROOT, "docs", "evidence", "MIGRATION_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("MIGRATION_RECEIPT.json");
     assert.ok(fs.existsSync(receiptPath), "Expected receipt file to be created");
     const receipt = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.equal(receipt.status, "PASS");
     assert.equal(receipt.sha256Receipt, report.sha256Receipt);
+  });
+
+  // -------------------------------------------------------------------------
+  // BDD-1443: Mathematical LIFO Rollback Reversibility Proving
+  // -------------------------------------------------------------------------
+  it("BDD-1443: proves exact inverse LIFO ordering and rejects asymmetric rollback", () => {
+    const upSql = `
+      SET lock_timeout = '2s';
+      SET statement_timeout = '5s';
+      CREATE TABLE IF NOT EXISTS audit_logs (id UUID PRIMARY KEY);
+      ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS severity VARCHAR(32);
+      CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_audit_severity ON audit_logs(severity);
+    `;
+
+    // 1. Synthesize down migration
+    const downSql = EosDatabaseMigrationGovernor.synthesizeDownMigration(upSql);
+    const validRev = EosDatabaseMigrationGovernor.verifyRollbackReversibility(upSql, downSql);
+
+    assert.equal(validRev.reversible, true);
+    assert.equal(validRev.forwardOperationsCount, 3);
+    assert.equal(validRev.reverseOperationsCount, 3);
+    assert.equal(validRev.unhandledForwardOperations.length, 0);
+    assert.equal(validRev.matchedPairs.length, 3);
+
+    // Verify LIFO order: index dropped first, then column, then table
+    assert.equal(validRev.matchedPairs[0].actionType, "CREATE_INDEX");
+    assert.equal(validRev.matchedPairs[1].actionType, "ADD_COLUMN");
+    assert.equal(validRev.matchedPairs[2].actionType, "CREATE_TABLE");
+
+    // 2. Asymmetric / incomplete down migration must fail reversibility proof
+    const incompleteDown = `
+      DROP TABLE IF EXISTS audit_logs CASCADE;
+    `;
+    const invalidRev = EosDatabaseMigrationGovernor.verifyRollbackReversibility(upSql, incompleteDown);
+    assert.equal(invalidRev.reversible, false);
+    assert.ok(invalidRev.unhandledForwardOperations.length > 0);
   });
 });
