@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:9319de53-5945-4244-923a-50f7ecf64471",
+  "serialNumber": "urn:uuid:65fdcbb7-136a-459d-a57a-15cafb71c3a3",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-15T01:20:22.859Z",
+    "timestamp": "2026-11-19T15:15:12.012Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -31,6 +31,34 @@
         {
           "alg": "SHA-256",
           "content": "d6c50bb057cef3ad79c1d9ffd0b93628f6c30edde7b9e57a12c2bf8df7805015"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ActivationCheckpointingEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ActivationCheckpointingEngine@1.0.0",
+      "description": "Layer-0 module eosActivationCheckpointingEngine.ts",
+      "purl": "pkg:npm/glorian/ActivationCheckpointingEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "14232679a8d6fe176ad7f64fa5f408d4032e84ae9b003a9b5a8faf7fdb197997"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ActivationCheckpointingEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ActivationCheckpointingEngine@1.0.0",
+      "description": "Layer-0 module eosActivationCheckpointingEngine.types.ts",
+      "purl": "pkg:npm/glorian/ActivationCheckpointingEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6556928a0dce1158532a913b17c869964686b07f460d0d98192ecfa907875d25"
         }
       ]
     },
@@ -148,6 +176,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:AgenticContextEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AgenticContextEngine@1.0.0",
+      "description": "Layer-0 module eosAgenticContextEngine.ts",
+      "purl": "pkg:npm/glorian/AgenticContextEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c856a992f3bd060e5fbcae0f0025dcc816c91fb4d0e9876776c7a872d8ffc000"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AgenticContextEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AgenticContextEngine@1.0.0",
+      "description": "Layer-0 module eosAgenticContextEngine.types.ts",
+      "purl": "pkg:npm/glorian/AgenticContextEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9a8bd4e4ec0c596a94e39bcdb9375437e44890afe594f8fa7a1e17aa9873a71c"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:AgenticFinOpsGovernor",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/AgenticFinOpsGovernor@1.0.0",
@@ -157,6 +213,62 @@
         {
           "alg": "SHA-256",
           "content": "5b17c639312b88c0217b789ddd49b66937cd4e462972ae32e2b6d4e3fbe483af"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AgenticHarnessYield",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AgenticHarnessYield@1.0.0",
+      "description": "Layer-0 module eosAgenticHarnessYield.ts",
+      "purl": "pkg:npm/glorian/AgenticHarnessYield@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1a652bf65d006f5db165e6e64a943ec41583f97b6b0a8495afc9ff499a1158f5"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AgenticHarnessYield",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AgenticHarnessYield@1.0.0",
+      "description": "Layer-0 module eosAgenticHarnessYield.types.ts",
+      "purl": "pkg:npm/glorian/AgenticHarnessYield@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a2416be85c8d3d9d2ce41ef8b5309a449ce9dd4b47036ef635fcadca79ef4acd"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AgenticSwarmBft",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AgenticSwarmBft@1.0.0",
+      "description": "Layer-0 module eosAgenticSwarmBft.ts",
+      "purl": "pkg:npm/glorian/AgenticSwarmBft@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c3e4add17e468d23f5c3c964d8378e6b34a9cd6c055e8ce7b7d5d43745722207"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AgenticSwarmBft",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AgenticSwarmBft@1.0.0",
+      "description": "Layer-0 module eosAgenticSwarmBft.types.ts",
+      "purl": "pkg:npm/glorian/AgenticSwarmBft@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "476fbfa340fa1f213fefcacd83882dd9514b8fabdc5c691c05fe7e75add38c38"
         }
       ]
     },
@@ -492,7 +604,35 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "fce8177dccc1a97aa6d519519df6e3460af680174ccfa224977184b5bcb8d5fc"
+          "content": "f1f093b100e58bbe78656c5849beb190bf1ea70aaee9beaccf99cac175f35938"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AutomergeCrdtMesh",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AutomergeCrdtMesh@1.0.0",
+      "description": "Layer-0 module eosAutomergeCrdtMesh.ts",
+      "purl": "pkg:npm/glorian/AutomergeCrdtMesh@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "93c0034fcf4d01703929ac36ef6ef61d08a28eec5e91c7668cbf35119cee4cfc"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AutomergeCrdtMesh",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AutomergeCrdtMesh@1.0.0",
+      "description": "Layer-0 module eosAutomergeCrdtMesh.types.ts",
+      "purl": "pkg:npm/glorian/AutomergeCrdtMesh@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b136d83a03d0b59dd31bcd80475d5a1040669234683084b73b58c709602f7fee"
         }
       ]
     },
@@ -540,6 +680,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:AutonomousReconciliationLoop",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AutonomousReconciliationLoop@1.0.0",
+      "description": "Layer-0 module eosAutonomousReconciliationLoop.ts",
+      "purl": "pkg:npm/glorian/AutonomousReconciliationLoop@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7e6d590d32d47dd1b97387a00f4a828da9501d232eb015602775057eafe08fb2"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AutonomousReconciliationLoop",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AutonomousReconciliationLoop@1.0.0",
+      "description": "Layer-0 module eosAutonomousReconciliationLoop.types.ts",
+      "purl": "pkg:npm/glorian/AutonomousReconciliationLoop@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "335111aea1900bf8c4f9bdc60205b3c14aaa2eaa5940fabe7e058c8e671fd4d3"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:AutonomousSelfHealingEngine",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/AutonomousSelfHealingEngine@1.0.0",
@@ -568,6 +736,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:AutonomousWasmJit",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AutonomousWasmJit@1.0.0",
+      "description": "Layer-0 module eosAutonomousWasmJit.ts",
+      "purl": "pkg:npm/glorian/AutonomousWasmJit@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "699cfc85879f723c31a3a7d6cc4568f75eee9080dc59a3667af455d31e8ef2b6"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AutonomousWasmJit",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AutonomousWasmJit@1.0.0",
+      "description": "Layer-0 module eosAutonomousWasmJit.types.ts",
+      "purl": "pkg:npm/glorian/AutonomousWasmJit@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7914595f7d9f4ada350f00d32db3a6d7eae76eb4d50382c8842f441b807c22ce"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:BackpressureFlowController",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/BackpressureFlowController@1.0.0",
@@ -582,6 +778,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:BackstageSoundcheckScorecard",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/BackstageSoundcheckScorecard@1.0.0",
+      "description": "Layer-0 module eosBackstageSoundcheckScorecard.ts",
+      "purl": "pkg:npm/glorian/BackstageSoundcheckScorecard@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b8f8e83ceea08bb74cf21904e02571937ecbb2e951166f42f92848dd9fe6aca1"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:BackstageSoundcheckScorecard",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/BackstageSoundcheckScorecard@1.0.0",
+      "description": "Layer-0 module eosBackstageSoundcheckScorecard.types.ts",
+      "purl": "pkg:npm/glorian/BackstageSoundcheckScorecard@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8c16bdd616940dd6a140446ec4611916039645ac831efd9814678a93d1cdcb4d"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:BatchAggregator",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/BatchAggregator@1.0.0",
@@ -591,6 +815,20 @@
         {
           "alg": "SHA-256",
           "content": "1f6c0607d6e0920eb77a2e25703c53ede69546ef764f1b8f733acbbb1d11f241"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:BayesianCanaryEvaluator",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/BayesianCanaryEvaluator@1.0.0",
+      "description": "Layer-0 module eosBayesianCanaryEvaluator.ts",
+      "purl": "pkg:npm/glorian/BayesianCanaryEvaluator@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3fc59f6c7d70e298e3155d77ac0a91661ef5d2b606c338b76bee332fb588612c"
         }
       ]
     },
@@ -708,6 +946,20 @@
     },
     {
       "type": "library",
+      "name": "glorian:BitemporalEventStore",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/BitemporalEventStore@1.0.0",
+      "description": "Layer-0 module eosBitemporalEventStore.ts",
+      "purl": "pkg:npm/glorian/BitemporalEventStore@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5c5c59989e65edbdc9611cfcc9bc3e88f89ef3ce451f91e369003f5a9dfe35ff"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:BitwiseAccelerator",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/BitwiseAccelerator@1.0.0",
@@ -730,7 +982,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "71fc63f04aaea694b8f482d0cc042e48c9c5ecdd0db583f430dae1162fc01fc0"
+          "content": "8979ff18cf5d492b9dcb11323c2a776c9939d8f664a95a7df3898925d620acde"
         }
       ]
     },
@@ -820,6 +1072,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:CausalStructuralModel",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/CausalStructuralModel@1.0.0",
+      "description": "Layer-0 module eosCausalStructuralModel.ts",
+      "purl": "pkg:npm/glorian/CausalStructuralModel@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b0f17995439e63635f89ba95d9ed2953ef9e4d001a903ab254389b8c4a4f9d17"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:CausalStructuralModel",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/CausalStructuralModel@1.0.0",
+      "description": "Layer-0 module eosCausalStructuralModel.types.ts",
+      "purl": "pkg:npm/glorian/CausalStructuralModel@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "dae22a4110351dbcccd602e58cf752d70eb35bb4a5ab647e0510ed7938b8e47b"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:CbdcRtgsGridlockResolutionCore",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/CbdcRtgsGridlockResolutionCore@1.0.0",
@@ -876,6 +1156,20 @@
     },
     {
       "type": "library",
+      "name": "glorian:ChaosCircuitBreaker",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ChaosCircuitBreaker@1.0.0",
+      "description": "Layer-0 module eosChaosCircuitBreaker.ts",
+      "purl": "pkg:npm/glorian/ChaosCircuitBreaker@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "320d464b7aa369056c60891c53477db8b14cde340f3bf21d2b073ce476b02ee7"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:CicdPipeline",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/CicdPipeline@1.0.0",
@@ -927,6 +1221,62 @@
         {
           "alg": "SHA-256",
           "content": "f901a48d0240c3196ab770266729f57272654bcd0ea9e689279687241c3e0479"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ClosedLoopRepoAutopilot",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ClosedLoopRepoAutopilot@1.0.0",
+      "description": "Layer-0 module eosClosedLoopRepoAutopilot.ts",
+      "purl": "pkg:npm/glorian/ClosedLoopRepoAutopilot@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d5065624b499cde29ae3560f99a010d32d9c376538b7362e48dcc061da8e496d"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ClosedLoopRepoAutopilot",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ClosedLoopRepoAutopilot@1.0.0",
+      "description": "Layer-0 module eosClosedLoopRepoAutopilot.types.ts",
+      "purl": "pkg:npm/glorian/ClosedLoopRepoAutopilot@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d005fe9824b611ad5d7679bc2fa0ba86843fae34fa6eb06cdfadd6ae23dcc1ef"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:CloudflareDurableBridge",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/CloudflareDurableBridge@1.0.0",
+      "description": "Layer-0 module eosCloudflareDurableBridge.ts",
+      "purl": "pkg:npm/glorian/CloudflareDurableBridge@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1b64c17bb166f13fd1f48fa1b8ad99b341277d31491dc1d8ee3b041e0ffc6710"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:CloudflareDurableBridge",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/CloudflareDurableBridge@1.0.0",
+      "description": "Layer-0 module eosCloudflareDurableBridge.types.ts",
+      "purl": "pkg:npm/glorian/CloudflareDurableBridge@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e6e96de9bb5fcfaad6e6e2953a1cb488dd62d7ee91382ab132719e2752155ab6"
         }
       ]
     },
@@ -1025,6 +1375,34 @@
         {
           "alg": "SHA-256",
           "content": "100bda32e8eeea7ce26577ec32e1760c57f4d5b945302fd80ddb1d15636233e6"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ConfidentialEnclaveGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ConfidentialEnclaveGovernor@1.0.0",
+      "description": "Layer-0 module eosConfidentialEnclaveGovernor.ts",
+      "purl": "pkg:npm/glorian/ConfidentialEnclaveGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "25f2a9581ce5597c6246a272739e19f5344677319c789a1ceba3d776cfebc343"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ConfidentialEnclaveGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ConfidentialEnclaveGovernor@1.0.0",
+      "description": "Layer-0 module eosConfidentialEnclaveGovernor.types.ts",
+      "purl": "pkg:npm/glorian/ConfidentialEnclaveGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ce0cd83b2f395d5c6d12344f2026581a1f55ae4943c5d63840542f10e3222f11"
         }
       ]
     },
@@ -1184,6 +1562,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:ContinuousDynamicBatching",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ContinuousDynamicBatching@1.0.0",
+      "description": "Layer-0 module eosContinuousDynamicBatching.ts",
+      "purl": "pkg:npm/glorian/ContinuousDynamicBatching@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ca508425ca7f43b2eb29b08ba4877bb6119c0f554f0171f75836e346d461092c"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ContinuousDynamicBatching",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ContinuousDynamicBatching@1.0.0",
+      "description": "Layer-0 module eosContinuousDynamicBatching.types.ts",
+      "purl": "pkg:npm/glorian/ContinuousDynamicBatching@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f083c7b9335583eccef3f27f663a2b9cdd62eed522e4cb8ebdef5c080abecf29"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:ContinuousRefactorEngine",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/ContinuousRefactorEngine@1.0.0",
@@ -1234,7 +1640,35 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0e3bc5d39b513338482fc341971f5691ecf546f19214b37027ccc9680c213a48"
+          "content": "183647ac0bc805910de607bba52fcbd55bc55e30f557bd5641cb58e8048a671e"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:CrdtStateReplicator",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/CrdtStateReplicator@1.0.0",
+      "description": "Layer-0 module eosCrdtStateReplicator.ts",
+      "purl": "pkg:npm/glorian/CrdtStateReplicator@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "bf5d13c86435696dd83872cd055379281a425c18f7670bcdca845d6d5d694f26"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:CrdtStateReplicator",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/CrdtStateReplicator@1.0.0",
+      "description": "Layer-0 module eosCrdtStateReplicator.types.ts",
+      "purl": "pkg:npm/glorian/CrdtStateReplicator@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "13dbc0c7c2592ccd4838cc5fc78ce7afc9c389764c35eca2210171f9a163f27e"
         }
       ]
     },
@@ -1366,6 +1800,20 @@
     },
     {
       "type": "library",
+      "name": "glorian:DatabaseMigrationGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DatabaseMigrationGovernor@1.0.0",
+      "description": "Layer-0 module eosDatabaseMigrationGovernor.ts",
+      "purl": "pkg:npm/glorian/DatabaseMigrationGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "05874c9d14b20d973cddc6b702d947c35bb81e3b496fd7c8bb60841efe9b6663"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:DatalogVerifier",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/DatalogVerifier@1.0.0",
@@ -1375,6 +1823,20 @@
         {
           "alg": "SHA-256",
           "content": "4275e4b0f118959b40413aee669261e47064cfe8b789d8880249d77b68defb5e"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:DeadlockDetectionGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DeadlockDetectionGovernor@1.0.0",
+      "description": "Layer-0 module eosDeadlockDetectionGovernor.ts",
+      "purl": "pkg:npm/glorian/DeadlockDetectionGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "cdf2c0a2689de1af4eb8666209dedaf4fb0aac4d01471cb8d6a19dae6acadc5e"
         }
       ]
     },
@@ -1478,6 +1940,20 @@
     },
     {
       "type": "library",
+      "name": "glorian:DeterministicSimulationEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DeterministicSimulationEngine@1.0.0",
+      "description": "Layer-0 module eosDeterministicSimulationEngine.ts",
+      "purl": "pkg:npm/glorian/DeterministicSimulationEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ee7a7ef49e7e0a3efb007fe2362bf08df6ef747b10d76979dbc7d5c7a5a16109"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:DeterministicSimulator",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/DeterministicSimulator@1.0.0",
@@ -1534,6 +2010,62 @@
     },
     {
       "type": "library",
+      "name": "glorian:DisaggregatedPrefillDecode",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DisaggregatedPrefillDecode@1.0.0",
+      "description": "Layer-0 module eosDisaggregatedPrefillDecode.ts",
+      "purl": "pkg:npm/glorian/DisaggregatedPrefillDecode@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ad2baef837ea62713dd38516f543bb1c1dab1c8763afdbcfc7971654f0bf77bf"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:DisaggregatedPrefillDecode",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DisaggregatedPrefillDecode@1.0.0",
+      "description": "Layer-0 module eosDisaggregatedPrefillDecode.types.ts",
+      "purl": "pkg:npm/glorian/DisaggregatedPrefillDecode@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7b9eecda5d2d9598e4357130378f0731169cae88eb3e15f4cead6e0769147faf"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:DiscreteEventSimulationHypervisor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DiscreteEventSimulationHypervisor@1.0.0",
+      "description": "Layer-0 module eosDiscreteEventSimulationHypervisor.ts",
+      "purl": "pkg:npm/glorian/DiscreteEventSimulationHypervisor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e0231e4266586e26fd8b131a1775901e42c66e465e55a07753ca3a0c5543b85d"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:DiscreteEventSimulationHypervisor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DiscreteEventSimulationHypervisor@1.0.0",
+      "description": "Layer-0 module eosDiscreteEventSimulationHypervisor.types.ts",
+      "purl": "pkg:npm/glorian/DiscreteEventSimulationHypervisor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c528c1b1e8e34c5abd45a887ceab3828b21bf1053d94223ec5d2384ba2304491"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:DisruptorRingEngine",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/DisruptorRingEngine@1.0.0",
@@ -1543,6 +2075,76 @@
         {
           "alg": "SHA-256",
           "content": "eae87f5a86d0a3327fb1501cfedc451935428d1c9e0ab12b5aeb65817d28a18b"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:DistributedCrdtMemory",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DistributedCrdtMemory@1.0.0",
+      "description": "Layer-0 module eosDistributedCrdtMemory.ts",
+      "purl": "pkg:npm/glorian/DistributedCrdtMemory@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6e9ae3ee75ee99916f26a6710e51b8c5c611468795b5f220178b3e6f62c01acc"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:DistributedCrdtMemory",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DistributedCrdtMemory@1.0.0",
+      "description": "Layer-0 module eosDistributedCrdtMemory.types.ts",
+      "purl": "pkg:npm/glorian/DistributedCrdtMemory@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "785f41725d98254dca8b6ae831bdb205e57f90e2142fa0537619e50d11e5ed35"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:DistributedKvReplication",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DistributedKvReplication@1.0.0",
+      "description": "Layer-0 module eosDistributedKvReplication.ts",
+      "purl": "pkg:npm/glorian/DistributedKvReplication@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2185b5df43a274bbb7e0aa14b8923629d8966a510d1a6325598a24bbaaf99a76"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:DistributedKvReplication",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DistributedKvReplication@1.0.0",
+      "description": "Layer-0 module eosDistributedKvReplication.types.ts",
+      "purl": "pkg:npm/glorian/DistributedKvReplication@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6f3b115653a1d8412144cdf0d1cdfddee8199c5a0c17cce3d9dc3e9a078314d5"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:DistributedLockGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DistributedLockGovernor@1.0.0",
+      "description": "Layer-0 module eosDistributedLockGovernor.ts",
+      "purl": "pkg:npm/glorian/DistributedLockGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "67d3c1a033e55352f1be059ac6f3bfbdd04879ca33c6abd507c77ab09ad7ce19"
         }
       ]
     },
@@ -1576,6 +2178,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:DistributedVectorMesh",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DistributedVectorMesh@1.0.0",
+      "description": "Layer-0 module eosDistributedVectorMesh.ts",
+      "purl": "pkg:npm/glorian/DistributedVectorMesh@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0ee9f1a1be5a792c9d79510478ca8f4ca591485897a3b32053910919a2348c31"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:DistributedVectorMesh",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DistributedVectorMesh@1.0.0",
+      "description": "Layer-0 module eosDistributedVectorMesh.types.ts",
+      "purl": "pkg:npm/glorian/DistributedVectorMesh@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "67faeaf145731999dadc8d98586d5c6b995e10cbde2a511a8caf4cf118929dee"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:DocumentationSearch",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/DocumentationSearch@1.0.0",
@@ -1585,6 +2215,34 @@
         {
           "alg": "SHA-256",
           "content": "da04f6de027006dd1795f5bc8d5d21c29527a1a8a623478ce7bc693d0314ce8b"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:DurableExecutionEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DurableExecutionEngine@1.0.0",
+      "description": "Layer-0 module eosDurableExecutionEngine.ts",
+      "purl": "pkg:npm/glorian/DurableExecutionEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5f6d9b9ac2c425853cd6d7159489c79bcf8ada3bfe39765732c7f59712917c57"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:DurableExecutionEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DurableExecutionEngine@1.0.0",
+      "description": "Layer-0 module eosDurableExecutionEngine.types.ts",
+      "purl": "pkg:npm/glorian/DurableExecutionEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f88274a5501d09d9dac279177d100b53861a4a770189f302cdfeb5c0a7ba60a7"
         }
       ]
     },
@@ -1655,6 +2313,34 @@
         {
           "alg": "SHA-256",
           "content": "2830ba262de6f157e09aeca51d01ff977f9640b5251ba3779ff62e1a9fd7b30b"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:EbpfOtlpTelemetryGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/EbpfOtlpTelemetryGovernor@1.0.0",
+      "description": "Layer-0 module eosEbpfOtlpTelemetryGovernor.ts",
+      "purl": "pkg:npm/glorian/EbpfOtlpTelemetryGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e9c9d6360233b4f5b57d8f43e3d9ab344c66a2792c8025982988e9dfb5276392"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:EbpfOtlpTelemetryGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/EbpfOtlpTelemetryGovernor@1.0.0",
+      "description": "Layer-0 module eosEbpfOtlpTelemetryGovernor.types.ts",
+      "purl": "pkg:npm/glorian/EbpfOtlpTelemetryGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e7a9184e5af3775c56d1c6e9f7c58d52b4f9d45efc0c359ce73f955c51ad2e8b"
         }
       ]
     },
@@ -1766,7 +2452,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "357c1f41a1eb62b7fa99934351b8857f80b60abaaba7ed274a22c5fa670b1f35"
+          "content": "52af41ed29d60558f53111e154af0e11b416ed28c05b106b15fd2f67e61ecf8e"
         }
       ]
     },
@@ -1786,6 +2472,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:EuvInverseLithographyWavefront",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/EuvInverseLithographyWavefront@1.0.0",
+      "description": "Layer-0 module eosEuvInverseLithographyWavefront.ts",
+      "purl": "pkg:npm/glorian/EuvInverseLithographyWavefront@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "51f50e46f8b611af3b27badfb77d0df039df243dcedb286eb68bd2c3bea8ec90"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:EuvInverseLithographyWavefront",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/EuvInverseLithographyWavefront@1.0.0",
+      "description": "Layer-0 module eosEuvInverseLithographyWavefront.types.ts",
+      "purl": "pkg:npm/glorian/EuvInverseLithographyWavefront@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d27e2a59606135b03ed05172581623fd17e930842154b962f71b0b94799cea6d"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:EventLoopSaturationGovernor",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/EventLoopSaturationGovernor@1.0.0",
@@ -1794,7 +2508,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "218d5939cd75b561cd02c5c3bd3e4ec175be104a5a5d6fa9aacb4539db1b623f"
+          "content": "021d720c4755bc535c021fdcbf90f59d2691fd2c7df448fd3fd5dff3ffc22983"
         }
       ]
     },
@@ -1814,6 +2528,20 @@
     },
     {
       "type": "library",
+      "name": "glorian:EvidencePaths",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/EvidencePaths@1.0.0",
+      "description": "Layer-0 module eosEvidencePaths.ts",
+      "purl": "pkg:npm/glorian/EvidencePaths@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a928d0c0d7d9a86e0d3ef352be25ba183f3c6b81774d3703e727150a314dd0ef"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:EvolutionaryHarness",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/EvolutionaryHarness@1.0.0",
@@ -1828,6 +2556,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:ExpertParallelMoERouter",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ExpertParallelMoERouter@1.0.0",
+      "description": "Layer-0 module eosExpertParallelMoERouter.ts",
+      "purl": "pkg:npm/glorian/ExpertParallelMoERouter@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2caecf20b43c63a2f2b74d075be826d70958a4967731e6d55f38c03f1991e77f"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ExpertParallelMoERouter",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ExpertParallelMoERouter@1.0.0",
+      "description": "Layer-0 module eosExpertParallelMoERouter.types.ts",
+      "purl": "pkg:npm/glorian/ExpertParallelMoERouter@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2df803c8bd2075939b3c02f0058233a1fafa474b99d19b048829a387b31a1667"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:FairShareScheduler",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/FairShareScheduler@1.0.0",
@@ -1837,6 +2593,34 @@
         {
           "alg": "SHA-256",
           "content": "e6a6086a9b74a42843f5af7eecf7d739b58fd8541cac958ea24e12f59b111439"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:FdirOntology",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/FdirOntology@1.0.0",
+      "description": "Layer-0 module eosFdirOntology.ts",
+      "purl": "pkg:npm/glorian/FdirOntology@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "14f1332cce2e52ce70a69acf9787f238c254a8b864db0a19eac0a76e3b0d1f64"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:FdirOntology",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/FdirOntology@1.0.0",
+      "description": "Layer-0 module eosFdirOntology.types.ts",
+      "purl": "pkg:npm/glorian/FdirOntology@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3d3ccadacf32160fc1f725b830cbd2e7c1d508aa18e970e3d9e758b493043571"
         }
       ]
     },
@@ -1898,6 +2682,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:FirecrackerMicroVmEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/FirecrackerMicroVmEngine@1.0.0",
+      "description": "Layer-0 module eosFirecrackerMicroVmEngine.ts",
+      "purl": "pkg:npm/glorian/FirecrackerMicroVmEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ba23919567d8a230a5b8c5b55d136c60fe1c3caa28b0e0183d7913aaa9faf023"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:FirecrackerMicroVmEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/FirecrackerMicroVmEngine@1.0.0",
+      "description": "Layer-0 module eosFirecrackerMicroVmEngine.types.ts",
+      "purl": "pkg:npm/glorian/FirecrackerMicroVmEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1c5aecb8cd1a24836f31ee8027cb3dc886faa878d0aa7fa49cd36b302fa67425"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:FlakyTestQuarantine",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/FlakyTestQuarantine@1.0.0",
@@ -1907,6 +2719,34 @@
         {
           "alg": "SHA-256",
           "content": "446bd1f469855df3a2da3efbb9ba75c8eaf963313d63975c409ff30439f5c036"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:FlashAttentionOnlineSoftmax",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/FlashAttentionOnlineSoftmax@1.0.0",
+      "description": "Layer-0 module eosFlashAttentionOnlineSoftmax.ts",
+      "purl": "pkg:npm/glorian/FlashAttentionOnlineSoftmax@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b0911cdadf1e5cf4c085c4bfa51d503a0f01fa6ffdf73ce1943eb3582f31100f"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:FlashAttentionOnlineSoftmax",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/FlashAttentionOnlineSoftmax@1.0.0",
+      "description": "Layer-0 module eosFlashAttentionOnlineSoftmax.types.ts",
+      "purl": "pkg:npm/glorian/FlashAttentionOnlineSoftmax@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "585c07c065ef9be25f4575b5d6c8171af02af7ec72b9584a85cfeb5a95c009c5"
         }
       ]
     },
@@ -2346,6 +3186,20 @@
     },
     {
       "type": "library",
+      "name": "glorian:HelmReleaseGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/HelmReleaseGovernor@1.0.0",
+      "description": "Layer-0 module eosHelmReleaseGovernor.ts",
+      "purl": "pkg:npm/glorian/HelmReleaseGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5cc2a035680e527fdc06d7dc5af49c13b81325553d150fa92eee65316c2a7cec"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:HermeticReleaseSealer",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/HermeticReleaseSealer@1.0.0",
@@ -2355,6 +3209,34 @@
         {
           "alg": "SHA-256",
           "content": "ae09369d95e13b4522a08ff316c97a66935454afc1b0c5adbd4eaa473c358cbf"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:HermeticReproducibleBuildGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/HermeticReproducibleBuildGovernor@1.0.0",
+      "description": "Layer-0 module eosHermeticReproducibleBuildGovernor.ts",
+      "purl": "pkg:npm/glorian/HermeticReproducibleBuildGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "136a95139321eb934562402be7e617ec469ab341493b5761e207629cd98b649e"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:HermeticReproducibleBuildGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/HermeticReproducibleBuildGovernor@1.0.0",
+      "description": "Layer-0 module eosHermeticReproducibleBuildGovernor.types.ts",
+      "purl": "pkg:npm/glorian/HermeticReproducibleBuildGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e02e537a2276050dfd24d5e7e9a13c182b26ef4854eb964dde720ad3a5926f0f"
         }
       ]
     },
@@ -2816,7 +3698,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "18848f628c5711b360ec9aa83d894b6377a5dd055509e5217891e426ae8f304a"
+          "content": "07525514fd023a38673095334957acb8db3bd1c85dceb0f37ddc73c4cec4d685"
         }
       ]
     },
@@ -2859,6 +3741,48 @@
         {
           "alg": "SHA-256",
           "content": "8a941f39d96bb7ea320e3b8008541ee29f317d528ce2d9cdf6ee725eeddf4bcf"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:JepsenDistributedChaos",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/JepsenDistributedChaos@1.0.0",
+      "description": "Layer-0 module eosJepsenDistributedChaos.ts",
+      "purl": "pkg:npm/glorian/JepsenDistributedChaos@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "cd86200b0457c0f17364f13138d39fa14e82bd346db8d9d2e281afc78d18a1bd"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:JepsenDistributedChaos",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/JepsenDistributedChaos@1.0.0",
+      "description": "Layer-0 module eosJepsenDistributedChaos.types.ts",
+      "purl": "pkg:npm/glorian/JepsenDistributedChaos@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0e0fab1397439343ed070d9c00676999763d36263a2dd86378c56cd54867dcf5"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:K6LoadTestAdapter",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/K6LoadTestAdapter@1.0.0",
+      "description": "Layer-0 module eosK6LoadTestAdapter.ts",
+      "purl": "pkg:npm/glorian/K6LoadTestAdapter@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "10ab245c62f6e4497b8ef977f95259eab1a57bf14cb62fdc44a6c3782749ab88"
         }
       ]
     },
@@ -2948,6 +3872,62 @@
     },
     {
       "type": "library",
+      "name": "glorian:KnowledgeGraphReflex",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/KnowledgeGraphReflex@1.0.0",
+      "description": "Layer-0 module eosKnowledgeGraphReflex.ts",
+      "purl": "pkg:npm/glorian/KnowledgeGraphReflex@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4df06dfc24ffb8a658e1ef10753f55afa06249cd033ddb12d14473fb07ebaca4"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:KnowledgeGraphReflex",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/KnowledgeGraphReflex@1.0.0",
+      "description": "Layer-0 module eosKnowledgeGraphReflex.types.ts",
+      "purl": "pkg:npm/glorian/KnowledgeGraphReflex@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7b1e93ddd6a9bf0f565f5c35fe1c6550a71dff83830af0b83f5ed0d0c3aa5c50"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:KubectlClusterInspector",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/KubectlClusterInspector@1.0.0",
+      "description": "Layer-0 module eosKubectlClusterInspector.ts",
+      "purl": "pkg:npm/glorian/KubectlClusterInspector@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "03cc8d102eadaef28d105517d2bbe8c473284fa0c4151e2f8f53682f060f86b0"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:KubernetesDeployGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/KubernetesDeployGovernor@1.0.0",
+      "description": "Layer-0 module eosKubernetesDeployGovernor.ts",
+      "purl": "pkg:npm/glorian/KubernetesDeployGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1c6ce6a43cceea651c7fcb6e1c8b333d56581d09946649fd54c88eb1090dc237"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:KubernetesFleetOperator",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/KubernetesFleetOperator@1.0.0",
@@ -2957,6 +3937,20 @@
         {
           "alg": "SHA-256",
           "content": "07e1bdefcf4ff13045609214e5c10c31416eb900d8ec19c31db9d7472ca52b9a"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:KubernetesNativeClient",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/KubernetesNativeClient@1.0.0",
+      "description": "Layer-0 module eosKubernetesNativeClient.ts",
+      "purl": "pkg:npm/glorian/KubernetesNativeClient@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "535c47f63137113493a4f4b2d0d318eb90fc8a96a9eb68ade4f75ebf649a49ff"
         }
       ]
     },
@@ -3208,7 +4202,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "18ad98c86054ac47d341cfef8000649eea5b9d7043365fff1d75bbb4c14a8691"
+          "content": "37e7e9f9e299d2f04e32072cbb4ae8e8e526740ea1f893f90208045cb7382ccf"
         }
       ]
     },
@@ -3292,7 +4286,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "f7bdcb65631a78ac31f8bd7d7a5a4fdd09a49c414e398520cfa069762f9dc4a0"
+          "content": "b8e3ca79964fadbc2848a20e7b00d8c66a7ec03eada1abbfb59ae55f7e24e794"
         }
       ]
     },
@@ -3321,6 +4315,34 @@
         {
           "alg": "SHA-256",
           "content": "a9869c4a0628c8113958982974ad989ba316cbe7ed17f1cd6a7279a5947a4d17"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:MegatronTensorParallelism",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/MegatronTensorParallelism@1.0.0",
+      "description": "Layer-0 module eosMegatronTensorParallelism.ts",
+      "purl": "pkg:npm/glorian/MegatronTensorParallelism@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ec3eb7d157e1b9b78aec338e3098bc2033923ad5d91c343433e631c2d285c67e"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:MegatronTensorParallelism",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/MegatronTensorParallelism@1.0.0",
+      "description": "Layer-0 module eosMegatronTensorParallelism.types.ts",
+      "purl": "pkg:npm/glorian/MegatronTensorParallelism@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1bc9b03ea9e46c6a3f2f1257bb069bc3d217d0b100bfcddb07445a0ef5711ead"
         }
       ]
     },
@@ -3410,6 +4432,20 @@
     },
     {
       "type": "library",
+      "name": "glorian:MerkleSnapshotGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/MerkleSnapshotGovernor@1.0.0",
+      "description": "Layer-0 module eosMerkleSnapshotGovernor.ts",
+      "purl": "pkg:npm/glorian/MerkleSnapshotGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "07c7a22d0c2f939cca93721efaea4ff23e0f23bb01a36887262ac2cc77baf376"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:MeshTrafficPolicyEngine",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/MeshTrafficPolicyEngine@1.0.0",
@@ -3433,6 +4469,34 @@
         {
           "alg": "SHA-256",
           "content": "3f0c4eae558c472593035845e97ba370432b63e011c1bc0569b038190c689408"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:MetamorphicDifferentialBlindSpot",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/MetamorphicDifferentialBlindSpot@1.0.0",
+      "description": "Layer-0 module eosMetamorphicDifferentialBlindSpot.ts",
+      "purl": "pkg:npm/glorian/MetamorphicDifferentialBlindSpot@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "938931d0692f716e7556c571bf18136014bbb1e43bce09812a31f925e33f6c10"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:MetamorphicDifferentialBlindSpot",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/MetamorphicDifferentialBlindSpot@1.0.0",
+      "description": "Layer-0 module eosMetamorphicDifferentialBlindSpot.types.ts",
+      "purl": "pkg:npm/glorian/MetamorphicDifferentialBlindSpot@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7d6347f3115ffbfcccd68b4f0eacc3f965bbfa86dcb8c948b35512fe070b329f"
         }
       ]
     },
@@ -3600,7 +4664,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "a0679fff3e6c888429c697aa7d7f95afc8b4f3ffd4124d3f6053a92bd6303df1"
+          "content": "c02285f48a5f3d61a5f87862463dd859ea716757911c83cd41ee127e6576be29"
         }
       ]
     },
@@ -3634,6 +4698,48 @@
     },
     {
       "type": "library",
+      "name": "glorian:NativeSqliteStore",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/NativeSqliteStore@1.0.0",
+      "description": "Layer-0 module eosNativeSqliteStore.ts",
+      "purl": "pkg:npm/glorian/NativeSqliteStore@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b654c4db417da43c7253ade7e1319ebc4d695e63c9fcdcb2dcb7572097adffd5"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:NeuralSymbolicProver",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/NeuralSymbolicProver@1.0.0",
+      "description": "Layer-0 module eosNeuralSymbolicProver.ts",
+      "purl": "pkg:npm/glorian/NeuralSymbolicProver@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2059f4ea64db02f289b07767d3e1b52dce34df651283ba66ea6df0864bb96747"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:NeuralSymbolicProver",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/NeuralSymbolicProver@1.0.0",
+      "description": "Layer-0 module eosNeuralSymbolicProver.types.ts",
+      "purl": "pkg:npm/glorian/NeuralSymbolicProver@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3a27f5ff2321a84b4859e3c8f084e479193e86453378dfb710312c600b88af3c"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:NeuralVectorCore",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/NeuralVectorCore@1.0.0",
@@ -3643,6 +4749,34 @@
         {
           "alg": "SHA-256",
           "content": "c16ff91f3336fdece4051ee637bc824c6253ea944143bbc789a67116d9e6c1c1"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:NeuromorphicPlanner",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/NeuromorphicPlanner@1.0.0",
+      "description": "Layer-0 module eosNeuromorphicPlanner.ts",
+      "purl": "pkg:npm/glorian/NeuromorphicPlanner@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "03d79db9fc184885a5a2369f982bb06fc07a1958f4ad7d08b406f21799d8a91c"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:NeuromorphicPlanner",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/NeuromorphicPlanner@1.0.0",
+      "description": "Layer-0 module eosNeuromorphicPlanner.types.ts",
+      "purl": "pkg:npm/glorian/NeuromorphicPlanner@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ad34bb3f7526e4cd29e5c9c0807d612600d2c5d19f0f86a1f290986e7cfbdefa"
         }
       ]
     },
@@ -3774,6 +4908,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:OntologicalHypergraph",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/OntologicalHypergraph@1.0.0",
+      "description": "Layer-0 module eosOntologicalHypergraph.ts",
+      "purl": "pkg:npm/glorian/OntologicalHypergraph@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "be45f8ae096211b19c2455ec62c42ac5c924aa4de88301989089de090f451af3"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:OntologicalHypergraph",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/OntologicalHypergraph@1.0.0",
+      "description": "Layer-0 module eosOntologicalHypergraph.types.ts",
+      "purl": "pkg:npm/glorian/OntologicalHypergraph@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9b1267bb1eab0a8e8e7debee661bee0d6348355b72094fa08583412bc5a877e1"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:OntologyCyclotron",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/OntologyCyclotron@1.0.0",
@@ -3782,7 +4944,21 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "aa4972111736bc2348618d5c9cae052481605a49d5a1c96f2b2b723dfb7a6385"
+          "content": "11a8e30ab4f42a79baefc19ad5b9f33646a0241d3c631e5ee57132381d15b7b0"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:OpaPolicyGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/OpaPolicyGovernor@1.0.0",
+      "description": "Layer-0 module eosOpaPolicyGovernor.ts",
+      "purl": "pkg:npm/glorian/OpaPolicyGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a6943114bd5f64953dd130a6fb0c61e72d0e01efabb90c011163ce57d74154f8"
         }
       ]
     },
@@ -3867,6 +5043,20 @@
         {
           "alg": "SHA-256",
           "content": "717edaa528c868105e1157149ea4213fe83c51e4c8ce46fefcb5721d7af38a90"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:OtlpCollectorGateway",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/OtlpCollectorGateway@1.0.0",
+      "description": "Layer-0 module eosOtlpCollectorGateway.ts",
+      "purl": "pkg:npm/glorian/OtlpCollectorGateway@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4ec56d2c42f9647fb5851b913f0831e1b7e2d62e9e82deae72f58d2d77418be6"
         }
       ]
     },
@@ -3998,6 +5188,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:PhysicsInformedHamiltonianPde",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/PhysicsInformedHamiltonianPde@1.0.0",
+      "description": "Layer-0 module eosPhysicsInformedHamiltonianPde.ts",
+      "purl": "pkg:npm/glorian/PhysicsInformedHamiltonianPde@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0ecb32884e9a94a806ce106288b21e9fc9a6c857179dfc79806161b7713fe296"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:PhysicsInformedHamiltonianPde",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/PhysicsInformedHamiltonianPde@1.0.0",
+      "description": "Layer-0 module eosPhysicsInformedHamiltonianPde.types.ts",
+      "purl": "pkg:npm/glorian/PhysicsInformedHamiltonianPde@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4ba803f656d4ad64b6b2717526d883f8dc9af23567bdd7a82347c07e8744280d"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:Pipeline",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/Pipeline@1.0.0",
@@ -4007,6 +5225,34 @@
         {
           "alg": "SHA-256",
           "content": "0e9c61065d76eb0787a185e89d6c79cdb2f8155f1e748f5c4697f3dba01ced61"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:PipelineParallelism1F1B",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/PipelineParallelism1F1B@1.0.0",
+      "description": "Layer-0 module eosPipelineParallelism1F1B.ts",
+      "purl": "pkg:npm/glorian/PipelineParallelism1F1B@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "fb91ba9e5abfb1fcc45fa05b79aaf7f2df046a75dbc52373e85148a75dda7169"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:PipelineParallelism1F1B",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/PipelineParallelism1F1B@1.0.0",
+      "description": "Layer-0 module eosPipelineParallelism1F1B.types.ts",
+      "purl": "pkg:npm/glorian/PipelineParallelism1F1B@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b89eec55040e0b6a0d9664bdccb9a867844c7d5f7b2e4d3618dfa7ed8bc2a623"
         }
       ]
     },
@@ -4110,6 +5356,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:PolyglotRustZigWasmKernel",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/PolyglotRustZigWasmKernel@1.0.0",
+      "description": "Layer-0 module eosPolyglotRustZigWasmKernel.ts",
+      "purl": "pkg:npm/glorian/PolyglotRustZigWasmKernel@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "db805ade1d7d10f25119fefa01b25adb2807e6b1bc8959f308627e2c9f3cd98a"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:PolyglotRustZigWasmKernel",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/PolyglotRustZigWasmKernel@1.0.0",
+      "description": "Layer-0 module eosPolyglotRustZigWasmKernel.types.ts",
+      "purl": "pkg:npm/glorian/PolyglotRustZigWasmKernel@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7accbf7191b3126beabdc80875b5791066c6dc64f2b5de6eab2c3e1c3fc33edc"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:PolyglotToolchainAdapterCore",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/PolyglotToolchainAdapterCore@1.0.0",
@@ -4160,7 +5434,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "035afcaacbd74fa26d1acb89ab0731283e8c930ae37768b6e858e9f58f26de9d"
+          "content": "cf9c016123ba24695741602a8f0b9926057119b2610dfdae7d181daa7e00a787"
         }
       ]
     },
@@ -4203,6 +5477,34 @@
         {
           "alg": "SHA-256",
           "content": "4765e7139c6b6bb11cfd8c447a4b2e466a65233f467ca9154fe87ffa839584a6"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:PostQuantumThresholdMpc",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/PostQuantumThresholdMpc@1.0.0",
+      "description": "Layer-0 module eosPostQuantumThresholdMpc.ts",
+      "purl": "pkg:npm/glorian/PostQuantumThresholdMpc@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "91ea11e11efb487ff187b3ab18e54ae92dba64c7e95a735c1b36b67016c1674d"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:PostQuantumThresholdMpc",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/PostQuantumThresholdMpc@1.0.0",
+      "description": "Layer-0 module eosPostQuantumThresholdMpc.types.ts",
+      "purl": "pkg:npm/glorian/PostQuantumThresholdMpc@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1d27928197eeddf3aaa2beeac4ebf2cb50c46470784e5d533a350eb45b55afbe"
         }
       ]
     },
@@ -4342,7 +5644,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "9c19a771dda2756892bcf5aa28e7e830a016644c6fed0b0fa0c4eb49d7f961e3"
+          "content": "1c4ee6311c4bd215c391eb2e4bfd37fb9c789acfe3982164442386c681a6d3b0"
         }
       ]
     },
@@ -4385,6 +5687,34 @@
         {
           "alg": "SHA-256",
           "content": "8b3e832ae98a3f039cc3d6b93e5cbdbf484127b1d107356887f654359cd7387f"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:QuantizedDistributedTrainingEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/QuantizedDistributedTrainingEngine@1.0.0",
+      "description": "Layer-0 module eosQuantizedDistributedTrainingEngine.ts",
+      "purl": "pkg:npm/glorian/QuantizedDistributedTrainingEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ca6a3c8387ae624b15286d07a8e7e5d998f840ec7bad84ac332e51bbd7f609ba"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:QuantizedDistributedTrainingEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/QuantizedDistributedTrainingEngine@1.0.0",
+      "description": "Layer-0 module eosQuantizedDistributedTrainingEngine.types.ts",
+      "purl": "pkg:npm/glorian/QuantizedDistributedTrainingEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "80af009edfe425658cff525f3a77d6cc8d2f81846a725ead00fc73a166aea1f5"
         }
       ]
     },
@@ -4502,6 +5832,20 @@
     },
     {
       "type": "library",
+      "name": "glorian:RateLimitingGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/RateLimitingGovernor@1.0.0",
+      "description": "Layer-0 module eosRateLimitingGovernor.ts",
+      "purl": "pkg:npm/glorian/RateLimitingGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a91fba2c1b7754ec8c71dc4343df384c59bbf6ba02fb4a305c58d381440ac3c7"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:ReactiveStreamEngine",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/ReactiveStreamEngine@1.0.0",
@@ -4586,6 +5930,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:ReverseEngineeringEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ReverseEngineeringEngine@1.0.0",
+      "description": "Layer-0 module eosReverseEngineeringEngine.ts",
+      "purl": "pkg:npm/glorian/ReverseEngineeringEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2f6a011515941fab5733000e0e8f8a0a9980fe89036f3dfb122690d11a5ecae5"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ReverseEngineeringEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ReverseEngineeringEngine@1.0.0",
+      "description": "Layer-0 module eosReverseEngineeringEngine.types.ts",
+      "purl": "pkg:npm/glorian/ReverseEngineeringEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d323c399698f460cc69c7f160ebc20b6b079f9fd0e2d767c238cc2bc4c748262"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:ReverseModeAutodiff",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/ReverseModeAutodiff@1.0.0",
@@ -4595,6 +5967,34 @@
         {
           "alg": "SHA-256",
           "content": "0225b93805a2a9cf125dd4d7e9fbf982eb7752f14b63d4087adbc00004f41375"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:RingAllReduce",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/RingAllReduce@1.0.0",
+      "description": "Layer-0 module eosRingAllReduce.ts",
+      "purl": "pkg:npm/glorian/RingAllReduce@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e7de995b917e3194c17269f8ed70e119ab003ddf92f60c31a453ab3715daae9a"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:RingAllReduce",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/RingAllReduce@1.0.0",
+      "description": "Layer-0 module eosRingAllReduce.types.ts",
+      "purl": "pkg:npm/glorian/RingAllReduce@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "17e89f69bfc08c0f6ed728f7f90859861b968332d988433921f310aedd1d4316"
         }
       ]
     },
@@ -4651,6 +6051,34 @@
         {
           "alg": "SHA-256",
           "content": "927066dd05c4d4942d7a8765bda7c9e6a75c6cb99967e85d94290557b47783ef"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SapFixAutoRemediator",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SapFixAutoRemediator@1.0.0",
+      "description": "Layer-0 module eosSapFixAutoRemediator.ts",
+      "purl": "pkg:npm/glorian/SapFixAutoRemediator@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "00f5e14b20d1e662a2415670f86530b3650b3cf6c589526e3a5e6d799efad5cf"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SapFixAutoRemediator",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SapFixAutoRemediator@1.0.0",
+      "description": "Layer-0 module eosSapFixAutoRemediator.types.ts",
+      "purl": "pkg:npm/glorian/SapFixAutoRemediator@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "11b5df402013ce520a7ceae43fa00298b90401e367a564c8a4adb3714dd16650"
         }
       ]
     },
@@ -4818,7 +6246,119 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "47c8b67a8e73d6244bcf52eec860d8b82395f39598034061e30a003cf3fa7867"
+          "content": "bd648085e3c722c1693f4e2a08d7557356ff61ea36b20050bc646d5c1309ed94"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ShardedTransactionFabric",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ShardedTransactionFabric@1.0.0",
+      "description": "Layer-0 module eosShardedTransactionFabric.ts",
+      "purl": "pkg:npm/glorian/ShardedTransactionFabric@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7cecc5cfd60e3e5a14c88899aea0e45840d2a1147c410cef9bceceda820bfe6a"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ShardedTransactionFabric",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ShardedTransactionFabric@1.0.0",
+      "description": "Layer-0 module eosShardedTransactionFabric.types.ts",
+      "purl": "pkg:npm/glorian/ShardedTransactionFabric@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7bdc2f774d26868951746fd92b72b808fbd9a09c1a2ecd02a2241f58e31943d9"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SharedMemoryArena",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SharedMemoryArena@1.0.0",
+      "description": "Layer-0 module eosSharedMemoryArena.ts",
+      "purl": "pkg:npm/glorian/SharedMemoryArena@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "52c5e34d36921e31e5eb26077ea81cf9d080032b2a9b2c07b6dc67fa32d7147c"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SharedMemoryArena",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SharedMemoryArena@1.0.0",
+      "description": "Layer-0 module eosSharedMemoryArena.types.ts",
+      "purl": "pkg:npm/glorian/SharedMemoryArena@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "dc1610737a2c8856dfd726f910b60c1a6785ed5bc13104869d3c57aa4b6ea613"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SharedMemoryWorkerPool",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SharedMemoryWorkerPool@1.0.0",
+      "description": "Layer-0 module eosSharedMemoryWorkerPool.ts",
+      "purl": "pkg:npm/glorian/SharedMemoryWorkerPool@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "013d4a2fb7cd09581b474bfe47b3a3140d8450fe3cb8adf4e554e50bd885914d"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SharedMemoryWorkerPool",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SharedMemoryWorkerPool@1.0.0",
+      "description": "Layer-0 module eosSharedMemoryWorkerPool.types.ts",
+      "purl": "pkg:npm/glorian/SharedMemoryWorkerPool@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9a2e64f92b0d17f74b3169ad6299fd4ee4558c8564a2af0c535871ad181981fe"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SimdQuantizedHnsw",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SimdQuantizedHnsw@1.0.0",
+      "description": "Layer-0 module eosSimdQuantizedHnsw.ts",
+      "purl": "pkg:npm/glorian/SimdQuantizedHnsw@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "425c0227b4f5919de30d7058b022070d359fe7c4e16fdfa25ed405be9fa0c16a"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SimdQuantizedHnsw",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SimdQuantizedHnsw@1.0.0",
+      "description": "Layer-0 module eosSimdQuantizedHnsw.types.ts",
+      "purl": "pkg:npm/glorian/SimdQuantizedHnsw@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "689286e4662941fc986e1521e998ae8da7ce117ace523211f422a500a5b81816"
         }
       ]
     },
@@ -4833,6 +6373,34 @@
         {
           "alg": "SHA-256",
           "content": "b2995b3ddab723d773bb1478bab5ee8a28c530316c755a64532ffcb45702197c"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SingleExecutableDistributionGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SingleExecutableDistributionGovernor@1.0.0",
+      "description": "Layer-0 module eosSingleExecutableDistributionGovernor.ts",
+      "purl": "pkg:npm/glorian/SingleExecutableDistributionGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0a4ab97c033880f28206e2228ec3b1c400723a6fd8e53f09c87d91e823e39b99"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SingleExecutableDistributionGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SingleExecutableDistributionGovernor@1.0.0",
+      "description": "Layer-0 module eosSingleExecutableDistributionGovernor.types.ts",
+      "purl": "pkg:npm/glorian/SingleExecutableDistributionGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5dfb1a5916c58e67ae8518c4e53d4d1979a72e743819abf3b3a1f209b99be50e"
         }
       ]
     },
@@ -4861,6 +6429,34 @@
         {
           "alg": "SHA-256",
           "content": "378fde37a9db5db2e394aa4078e4b11e19be60aa13dac450325023e1ff72bef0"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SlsaProvenanceGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SlsaProvenanceGovernor@1.0.0",
+      "description": "Layer-0 module eosSlsaProvenanceGovernor.ts",
+      "purl": "pkg:npm/glorian/SlsaProvenanceGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "aef5ed8ae510e743d2264d1adf883e1380d73aa6c3a56015770c31704d68eaa6"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SlsaProvenanceGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SlsaProvenanceGovernor@1.0.0",
+      "description": "Layer-0 module eosSlsaProvenanceGovernor.types.ts",
+      "purl": "pkg:npm/glorian/SlsaProvenanceGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d0f86bc27e1d78fffeeb4d5332ef9f54394f939cc74eac252aae38c8b1ac9ea9"
         }
       ]
     },
@@ -4936,6 +6532,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:SovereignAiGateway",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SovereignAiGateway@1.0.0",
+      "description": "Layer-0 module eosSovereignAiGateway.ts",
+      "purl": "pkg:npm/glorian/SovereignAiGateway@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5b1b6c2ec8d6cde79734bf04c73ecda7e528ac92e7965dae2f047257ee6ccd38"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SovereignAiGateway",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SovereignAiGateway@1.0.0",
+      "description": "Layer-0 module eosSovereignAiGateway.types.ts",
+      "purl": "pkg:npm/glorian/SovereignAiGateway@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d709ede1edfe3f0b9d2fbfecc07470a088a786ff42008b9c36e692d7482c9a22"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:SovereignFiveScorecard",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/SovereignFiveScorecard@1.0.0",
@@ -4959,6 +6583,34 @@
         {
           "alg": "SHA-256",
           "content": "7a407e1637ab3b6849417ee9ca3112b7328be5f1f3258ab509136702f866b2be"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SovereignWebCompiler",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SovereignWebCompiler@1.0.0",
+      "description": "Layer-0 module eosSovereignWebCompiler.ts",
+      "purl": "pkg:npm/glorian/SovereignWebCompiler@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "479951624271c9f81e4595d5575bf7849c161df8667177e9a424ce8088d06863"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SovereignWebCompiler",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SovereignWebCompiler@1.0.0",
+      "description": "Layer-0 module eosSovereignWebCompiler.types.ts",
+      "purl": "pkg:npm/glorian/SovereignWebCompiler@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d3af1a3b1684b73a6f78da7fc27dc4af2084d63c69c03d0c7b3738addc10a047"
         }
       ]
     },
@@ -5014,7 +6666,35 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "3a847340721d5211ece45e77d38482f838e525ee31fe1a75e026f301dd6f2302"
+          "content": "603f19924c9fff5ce2138c51668b0b5dffc43201da323ec66c50670014c3bfb4"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SpeculativePagedKvCache",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SpeculativePagedKvCache@1.0.0",
+      "description": "Layer-0 module eosSpeculativePagedKvCache.ts",
+      "purl": "pkg:npm/glorian/SpeculativePagedKvCache@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ea23b92086d22526d67c49c438c64cb1181b6ec52d0da3e599664c8befac5644"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SpeculativePagedKvCache",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SpeculativePagedKvCache@1.0.0",
+      "description": "Layer-0 module eosSpeculativePagedKvCache.types.ts",
+      "purl": "pkg:npm/glorian/SpeculativePagedKvCache@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c811fb7b33d2c2cd1c249fec232cb1ed23b7c1a3d7a3150a5673039404ebf7ac"
         }
       ]
     },
@@ -5028,7 +6708,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "d5492b39a697c6efc48f8aeb78669f148700eb03d6b39c325dc6a04dc8f312a4"
+          "content": "61daf52a6fdd4bc831350bfb1230a4a2d82096a671a919d9140ad9fb32b26bc2"
         }
       ]
     },
@@ -5155,6 +6835,34 @@
         {
           "alg": "SHA-256",
           "content": "ce42ca410f4fd7e703c486d1e3ca5682e305519204d2e9d4f0f6911801a61663"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:StreamingLlmAttentionSinks",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/StreamingLlmAttentionSinks@1.0.0",
+      "description": "Layer-0 module eosStreamingLlmAttentionSinks.ts",
+      "purl": "pkg:npm/glorian/StreamingLlmAttentionSinks@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b48824a909bfa5315a0ad270a41015c192052557feb911283777874c5e546715"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:StreamingLlmAttentionSinks",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/StreamingLlmAttentionSinks@1.0.0",
+      "description": "Layer-0 module eosStreamingLlmAttentionSinks.types.ts",
+      "purl": "pkg:npm/glorian/StreamingLlmAttentionSinks@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7aa50f7681f33355adf11b4fa95487b89221ce5a6bb08dce59e39b54a099cbce"
         }
       ]
     },
@@ -5314,6 +7022,48 @@
     },
     {
       "type": "library",
+      "name": "glorian:TensorParallelAttention",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/TensorParallelAttention@1.0.0",
+      "description": "Layer-0 module eosTensorParallelAttention.ts",
+      "purl": "pkg:npm/glorian/TensorParallelAttention@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "513393b358d72f11b91323e7f77a0a3fa025512175e849d876d1e8280e28722e"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:TensorParallelAttention",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/TensorParallelAttention@1.0.0",
+      "description": "Layer-0 module eosTensorParallelAttention.types.ts",
+      "purl": "pkg:npm/glorian/TensorParallelAttention@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "849046c5b3396e59de20a6ce2170366d7aa0677a65966f0d2133bb4a58d13b9d"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:TerraformIaCGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/TerraformIaCGovernor@1.0.0",
+      "description": "Layer-0 module eosTerraformIaCGovernor.ts",
+      "purl": "pkg:npm/glorian/TerraformIaCGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3caf33da5cf6042718d0b27545a4108877bd85f19eab7d0f4c9c18fd57fadf67"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:ThreeMountainsCompass",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/ThreeMountainsCompass@1.0.0",
@@ -5406,7 +7156,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "8e65da478f68b9fd5da62a638a764b1b07e22968dae027f13fe26c03105cd0e4"
+          "content": "a5f66f76448bd8846e3f304a6c73b3bdbf3384d8604865243c82e3236278718f"
         }
       ]
     },
@@ -5440,6 +7190,20 @@
     },
     {
       "type": "library",
+      "name": "glorian:ToolchainDoctor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ToolchainDoctor@1.0.0",
+      "description": "Layer-0 module eosToolchainDoctor.ts",
+      "purl": "pkg:npm/glorian/ToolchainDoctor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2f217f8bb7a3cbeb63c48e86c226c04be7f4695d55e55226546a54daadba0c5d"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:Tracer",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/Tracer@1.0.0",
@@ -5449,6 +7213,76 @@
         {
           "alg": "SHA-256",
           "content": "17221e919782f2ffae51f988e80886219dd4037623b08886086aa490388c3ac3"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:TreeSitterWasmEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/TreeSitterWasmEngine@1.0.0",
+      "description": "Layer-0 module eosTreeSitterWasmEngine.ts",
+      "purl": "pkg:npm/glorian/TreeSitterWasmEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3d8cc3bac8b3a10bf77146a72270361b13dc2257920b386daceacf7e21acf4b7"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:TreeSitterWasmEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/TreeSitterWasmEngine@1.0.0",
+      "description": "Layer-0 module eosTreeSitterWasmEngine.types.ts",
+      "purl": "pkg:npm/glorian/TreeSitterWasmEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "134dcfeda9394d4ead2557b6ca5792a02e5a4c57e7342fbdcb4739b4455c2151"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:TreeSpeculativeDecoding",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/TreeSpeculativeDecoding@1.0.0",
+      "description": "Layer-0 module eosTreeSpeculativeDecoding.ts",
+      "purl": "pkg:npm/glorian/TreeSpeculativeDecoding@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b4e889e1ca159a8bb18415d01a649f23f6ae8ee99725c677641bbfb557f934f9"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:TreeSpeculativeDecoding",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/TreeSpeculativeDecoding@1.0.0",
+      "description": "Layer-0 module eosTreeSpeculativeDecoding.types.ts",
+      "purl": "pkg:npm/glorian/TreeSpeculativeDecoding@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9b764f1d1ad835db46126ea7a846b8ab349dc5facb88a28cc3a1884281269528"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:TrivyScannerAdapter",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/TrivyScannerAdapter@1.0.0",
+      "description": "Layer-0 module eosTrivyScannerAdapter.ts",
+      "purl": "pkg:npm/glorian/TrivyScannerAdapter@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d8ed9672b650efb82af652cc1aac52d84d84e65410ae97e1dd001e99350e9ce7"
         }
       ]
     },
@@ -5490,7 +7324,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "d554ed4761865412f90f016754922374412041b40b97cbc4ea2cb8a77373357d"
+          "content": "b47594ce6ad55a3900b96871d818177a171cb76f8e0b754e6fc1fee455a49211"
         }
       ]
     },
@@ -5616,7 +7450,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "9953e007ae84796064e5b3118cb328a1ba191af092708b4cf5fc557e6e0ae461"
+          "content": "e53e0b772212262f153de21f7301f2a3894d155e624fe9667dacc8c4be66f8b2"
         }
       ]
     },
@@ -5701,6 +7535,48 @@
         {
           "alg": "SHA-256",
           "content": "08ed92638615534aabef76712264871fa6d6e6d4e5bdbb85c67d14f1867f776c"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:VectorLsmStorage",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/VectorLsmStorage@1.0.0",
+      "description": "Layer-0 module eosVectorLsmStorage.ts",
+      "purl": "pkg:npm/glorian/VectorLsmStorage@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "53993e53339741dcb88b20ba5e0565adc0990d6c87f9abf8ad122ebdac12172c"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:VectorLsmStorage",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/VectorLsmStorage@1.0.0",
+      "description": "Layer-0 module eosVectorLsmStorage.types.ts",
+      "purl": "pkg:npm/glorian/VectorLsmStorage@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ba4772c1e7e869f24101cfbf1a3f2efcc17f992473ddf8b94cfd1410a2df93bd"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:VectorQuantizationGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/VectorQuantizationGovernor@1.0.0",
+      "description": "Layer-0 module eosVectorQuantizationGovernor.ts",
+      "purl": "pkg:npm/glorian/VectorQuantizationGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e2cf4b2cc0977532bd73b8d84b152cebb375704ff00ac333867953b67f962a7d"
         }
       ]
     },
@@ -5846,6 +7722,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:WasmBytecodeSynthesizer",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/WasmBytecodeSynthesizer@1.0.0",
+      "description": "Layer-0 module eosWasmBytecodeSynthesizer.ts",
+      "purl": "pkg:npm/glorian/WasmBytecodeSynthesizer@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "36c0ab56d06807c98cdf3ca8e34f77f7778facee3f5668695437621ca59bbf18"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:WasmBytecodeSynthesizer",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/WasmBytecodeSynthesizer@1.0.0",
+      "description": "Layer-0 module eosWasmBytecodeSynthesizer.types.ts",
+      "purl": "pkg:npm/glorian/WasmBytecodeSynthesizer@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0b4588cc28649f1b91e05cb9ec1e779d04f0eed7f73666639b4246b39a009d3a"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:WasmEngine",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/WasmEngine@1.0.0",
@@ -5869,6 +7773,34 @@
         {
           "alg": "SHA-256",
           "content": "99eddcad5cab94c5504c6d8064ad6fafe6ec61503eeee18901aa9c5cc3fc15cf"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:WasmSimd128VectorArena",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/WasmSimd128VectorArena@1.0.0",
+      "description": "Layer-0 module eosWasmSimd128VectorArena.ts",
+      "purl": "pkg:npm/glorian/WasmSimd128VectorArena@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "86a9dfba84047bfa1c06bffaf1222779ca5dbe4ce9f7875c9df486c7b1c74726"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:WasmSimd128VectorArena",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/WasmSimd128VectorArena@1.0.0",
+      "description": "Layer-0 module eosWasmSimd128VectorArena.types.ts",
+      "purl": "pkg:npm/glorian/WasmSimd128VectorArena@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "336ddb6af61086b41005a3e377a2d0b382ccf95db6855192dd49f3de4f3090a2"
         }
       ]
     },
@@ -5944,6 +7876,62 @@
     },
     {
       "type": "library",
+      "name": "glorian:Z3WasmProver",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/Z3WasmProver@1.0.0",
+      "description": "Layer-0 module eosZ3WasmProver.ts",
+      "purl": "pkg:npm/glorian/Z3WasmProver@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "bca327495856cb83cca8483d05a99d95ebf6869eead517982be62140cc9b2b58"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:Z3WasmProver",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/Z3WasmProver@1.0.0",
+      "description": "Layer-0 module eosZ3WasmProver.types.ts",
+      "purl": "pkg:npm/glorian/Z3WasmProver@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1bc5fca640b28265151ab9bcc9160b530d2cb9c58d354c38e1c0e16aeb7c7d71"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ZeroCopyRingBuffer",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ZeroCopyRingBuffer@1.0.0",
+      "description": "Layer-0 module eosZeroCopyRingBuffer.ts",
+      "purl": "pkg:npm/glorian/ZeroCopyRingBuffer@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7ba9f2de96b007ad33f764f05c266e26a7578e68d0aab28d3466c9282f9e96b1"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ZeroCopyRingBuffer",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ZeroCopyRingBuffer@1.0.0",
+      "description": "Layer-0 module eosZeroCopyRingBuffer.types.ts",
+      "purl": "pkg:npm/glorian/ZeroCopyRingBuffer@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "63006b4ec890bbba8f0c42549b29766b2fa27206087155802e8cdbc1db11a89d"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:ZeroCopyScanner",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/ZeroCopyScanner@1.0.0",
@@ -5953,6 +7941,34 @@
         {
           "alg": "SHA-256",
           "content": "946791c807df2135f1e704e927fea55328b38a54ef1969b9d24095fcb29fbe62"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ZeroFsdpEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ZeroFsdpEngine@1.0.0",
+      "description": "Layer-0 module eosZeroFsdpEngine.ts",
+      "purl": "pkg:npm/glorian/ZeroFsdpEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e080c4b1657afa84d78493df5e31acd59f6b47632c7e0bb3ac5b72698c43ba30"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ZeroFsdpEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ZeroFsdpEngine@1.0.0",
+      "description": "Layer-0 module eosZeroFsdpEngine.types.ts",
+      "purl": "pkg:npm/glorian/ZeroFsdpEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e52f8d67c5d91610d6e27b86b75d81e3f28822a14f7cefcb26aea5594d571a26"
         }
       ]
     },
@@ -6000,6 +8016,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:ZkCircuitSynthesizer",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ZkCircuitSynthesizer@1.0.0",
+      "description": "Layer-0 module eosZkCircuitSynthesizer.ts",
+      "purl": "pkg:npm/glorian/ZkCircuitSynthesizer@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "70e27a20248017a22630363ea4ba51db7e69194fa4537ba30976bc66ee81c6f6"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ZkCircuitSynthesizer",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ZkCircuitSynthesizer@1.0.0",
+      "description": "Layer-0 module eosZkCircuitSynthesizer.types.ts",
+      "purl": "pkg:npm/glorian/ZkCircuitSynthesizer@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1a8aef427b9c1f7fad031253d7774baa84e67e4f728254eb3320a8c9df962582"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:ZkStateProof",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/ZkStateProof@1.0.0",
@@ -6036,7 +8080,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "ca7d8d93f2703b12207e2d681ff4628e25e7da002fb6ac9de0f2ccc26faaf2fa"
+          "content": "6b186fdc3a361fd3503c5df4e528409528417b3115be73e58100c90e20a2e6e4"
         }
       ]
     },
@@ -6050,7 +8094,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "12b03be90d9e7545a6a76119d77b88b8cca2a6bc8b69592ff45d6e16e8b2896a"
+          "content": "73ad25a43439873a698bec09c2be5a2c7d3083c0e31026769551a43ac3b9792c"
         }
       ]
     },
@@ -6081,6 +8125,18 @@
       "ref": "pkg:npm/glorian/AdaptiveRateLimiter@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/AgenticContextEngine@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/AgenticSwarmBft@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -6164,6 +8220,15 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/AutonomousReconciliationLoop@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0",
+        "pkg:npm/glorian/FdirOntology@1.0.0",
+        "pkg:npm/glorian/OntologyCyclotron@1.0.0",
+        "pkg:npm/glorian/WasmBytecodeSynthesizer@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/AutonomousSelfHealingEngine@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/OtelDistributedTracing@1.0.0"
@@ -6173,6 +8238,12 @@
       "ref": "pkg:npm/glorian/AutonomousTlaModelChecker@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/AutonomousWasmJit@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -6277,6 +8348,15 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/ClosedLoopRepoAutopilot@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/AgenticHarnessYield@1.0.0",
+        "pkg:npm/glorian/CausalStructuralModel@1.0.0",
+        "pkg:npm/glorian/DiscreteEventSimulationHypervisor@1.0.0",
+        "pkg:npm/glorian/OntologicalHypergraph@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/ColumnarTelemetryEngine@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
@@ -6291,6 +8371,12 @@
     },
     {
       "ref": "pkg:npm/glorian/ComputeGraphRooflinePlannerCore@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/ConfidentialEnclaveGovernor@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
       ]
@@ -6362,6 +8448,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/CrdtStateReplicator@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/PolyglotRustZigWasmKernel@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/CryogenicJosephsonSfqControlCore@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
@@ -6371,6 +8463,13 @@
     {
       "ref": "pkg:npm/glorian/DagJobScheduler@1.0.0",
       "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/DatabaseMigrationGovernor@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
       ]
     },
@@ -6413,6 +8512,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/DistributedCrdtMemory@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/DistributedLockManager@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
@@ -6422,6 +8527,12 @@
       "ref": "pkg:npm/glorian/DistributedPeerMesh@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/DistributedVectorMesh@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/SimdQuantizedHnsw@1.0.0"
       ]
     },
     {
@@ -6520,6 +8631,13 @@
       "ref": "pkg:npm/glorian/FairShareScheduler@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/FdirOntology@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0",
+        "pkg:npm/glorian/OntologyCyclotron@1.0.0"
       ]
     },
     {
@@ -6673,10 +8791,24 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/HelmReleaseGovernor@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0",
+        "pkg:npm/glorian/KubectlClusterInspector@1.0.0",
+        "pkg:npm/glorian/OpaPolicyGovernor@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/HermeticReleaseSealer@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
         "pkg:npm/glorian/DurableSqliteLedger@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/HermeticReproducibleBuildGovernor@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0"
       ]
     },
     {
@@ -6782,6 +8914,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/K6LoadTestAdapter@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/KalmanStateEstimatorAndQuadVoterCore@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
@@ -6798,6 +8936,27 @@
       "ref": "pkg:npm/glorian/KnowledgeGraphEngine@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/OntologyCyclotron@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/KnowledgeGraphReflex@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/KubectlClusterInspector@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/KubernetesDeployGovernor@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0",
+        "pkg:npm/glorian/KubectlClusterInspector@1.0.0",
+        "pkg:npm/glorian/OpaPolicyGovernor@1.0.0",
+        "pkg:npm/glorian/TrivyScannerAdapter@1.0.0"
       ]
     },
     {
@@ -6915,6 +9074,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/MegatronTensorParallelism@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/RingAllReduce@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/MemoryZeroizer@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
@@ -6929,6 +9094,12 @@
     },
     {
       "ref": "pkg:npm/glorian/MeshTrafficPolicyEngine@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/MetamorphicDifferentialBlindSpot@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
       ]
@@ -6982,6 +9153,18 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/NeuralSymbolicProver@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/NeuromorphicPlanner@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/NeuroSymbolicFleetHealingEngine@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
@@ -7018,6 +9201,12 @@
     },
     {
       "ref": "pkg:npm/glorian/NumericContractGuards@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/OpaPolicyGovernor@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
       ]
@@ -7090,6 +9279,13 @@
       "ref": "pkg:npm/glorian/PluginLoader@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/Logger@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/PolyglotRustZigWasmKernel@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0",
+        "pkg:npm/glorian/WasmBytecodeSynthesizer@1.0.0"
       ]
     },
     {
@@ -7267,7 +9463,29 @@
     {
       "ref": "pkg:npm/glorian/SentinelDaemon@1.0.0",
       "dependsOn": [
-        "pkg:npm/glorian/FleetTopology@1.0.0"
+        "pkg:npm/glorian/FleetTopology@1.0.0",
+        "pkg:npm/glorian/OntologyCyclotron@1.0.0",
+        "pkg:npm/glorian/FdirOntology@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/ShardedTransactionFabric@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/SharedMemoryArena@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/SharedMemoryWorkerPool@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0",
+        "pkg:npm/glorian/UniversalFleetSyncCore@1.0.0",
+        "pkg:npm/glorian/WasmSimd128VectorArena@1.0.0"
       ]
     },
     {
@@ -7275,6 +9493,12 @@
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
         "pkg:npm/glorian/DurableSqliteLedger@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/SingleExecutableDistributionGovernor@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0"
       ]
     },
     {
@@ -7321,6 +9545,12 @@
       "ref": "pkg:npm/glorian/SovereignLoop@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/MonotonicHashChain@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/SovereignWebCompiler@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -7402,6 +9632,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/TerraformIaCGovernor@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/ThresholdCryptography@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
@@ -7429,9 +9665,21 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/ToolchainDoctor@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/Tracer@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/Logger@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/TrivyScannerAdapter@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0"
       ]
     },
     {
@@ -7484,7 +9732,8 @@
     {
       "ref": "pkg:npm/glorian/UniversalFleetSyncCore@1.0.0",
       "dependsOn": [
-        "pkg:npm/glorian/KernelPrimitives@1.0.0"
+        "pkg:npm/glorian/KernelPrimitives@1.0.0",
+        "pkg:npm/glorian/WasmSimd128VectorArena@1.0.0"
       ]
     },
     {
@@ -7531,6 +9780,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/WasmBytecodeSynthesizer@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/WasmEngine@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/FleetTopology@1.0.0"
@@ -7540,6 +9795,14 @@
       "ref": "pkg:npm/glorian/WasmSandboxEngine@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/DurableSqliteLedger@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/WasmSimd128VectorArena@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0",
+        "pkg:npm/glorian/PolyglotRustZigWasmKernel@1.0.0",
+        "pkg:npm/glorian/WasmBytecodeSynthesizer@1.0.0"
       ]
     },
     {
@@ -7572,6 +9835,12 @@
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
         "pkg:npm/glorian/DurableSqliteLedger@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/ZkCircuitSynthesizer@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -7785,7 +10054,81 @@
         "pkg:npm/glorian/InterferometricSarDeformationCore@1.0.0",
         "pkg:npm/glorian/MagnetoplasmadynamicThrusterMhdCore@1.0.0",
         "pkg:npm/glorian/QuantumEntanglementRepeaterBbpsswCore@1.0.0",
-        "pkg:npm/glorian/SmartContractBytecodeGasSymbolicVerifierCore@1.0.0"
+        "pkg:npm/glorian/SmartContractBytecodeGasSymbolicVerifierCore@1.0.0",
+        "pkg:npm/glorian/ToolchainDoctor@1.0.0",
+        "pkg:npm/glorian/TrivyScannerAdapter@1.0.0",
+        "pkg:npm/glorian/OpaPolicyGovernor@1.0.0",
+        "pkg:npm/glorian/KubectlClusterInspector@1.0.0",
+        "pkg:npm/glorian/KubernetesDeployGovernor@1.0.0",
+        "pkg:npm/glorian/K6LoadTestAdapter@1.0.0",
+        "pkg:npm/glorian/HelmReleaseGovernor@1.0.0",
+        "pkg:npm/glorian/TerraformIaCGovernor@1.0.0",
+        "pkg:npm/glorian/DatabaseMigrationGovernor@1.0.0",
+        "pkg:npm/glorian/OtlpCollectorGateway@1.0.0",
+        "pkg:npm/glorian/ChaosCircuitBreaker@1.0.0",
+        "pkg:npm/glorian/BayesianCanaryEvaluator@1.0.0",
+        "pkg:npm/glorian/BitemporalEventStore@1.0.0",
+        "pkg:npm/glorian/MerkleSnapshotGovernor@1.0.0",
+        "pkg:npm/glorian/VectorQuantizationGovernor@1.0.0",
+        "pkg:npm/glorian/DistributedLockGovernor@1.0.0",
+        "pkg:npm/glorian/DeadlockDetectionGovernor@1.0.0",
+        "pkg:npm/glorian/RateLimitingGovernor@1.0.0",
+        "pkg:npm/glorian/NativeSqliteStore@1.0.0",
+        "pkg:npm/glorian/KubernetesNativeClient@1.0.0",
+        "pkg:npm/glorian/DeterministicSimulationEngine@1.0.0",
+        "pkg:npm/glorian/TreeSitterWasmEngine@1.0.0",
+        "pkg:npm/glorian/SapFixAutoRemediator@1.0.0",
+        "pkg:npm/glorian/Z3WasmProver@1.0.0",
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
+        "pkg:npm/glorian/SlsaProvenanceGovernor@1.0.0",
+        "pkg:npm/glorian/DurableExecutionEngine@1.0.0",
+        "pkg:npm/glorian/FirecrackerMicroVmEngine@1.0.0",
+        "pkg:npm/glorian/EbpfOtlpTelemetryGovernor@1.0.0",
+        "pkg:npm/glorian/CloudflareDurableBridge@1.0.0",
+        "pkg:npm/glorian/SovereignAiGateway@1.0.0",
+        "pkg:npm/glorian/BackstageSoundcheckScorecard@1.0.0",
+        "pkg:npm/glorian/AutomergeCrdtMesh@1.0.0",
+        "pkg:npm/glorian/ConfidentialEnclaveGovernor@1.0.0",
+        "pkg:npm/glorian/HermeticReproducibleBuildGovernor@1.0.0",
+        "pkg:npm/glorian/SharedMemoryArena@1.0.0",
+        "pkg:npm/glorian/SingleExecutableDistributionGovernor@1.0.0",
+        "pkg:npm/glorian/FdirOntology@1.0.0",
+        "pkg:npm/glorian/WasmBytecodeSynthesizer@1.0.0",
+        "pkg:npm/glorian/AutonomousReconciliationLoop@1.0.0",
+        "pkg:npm/glorian/CrdtStateReplicator@1.0.0",
+        "pkg:npm/glorian/PolyglotRustZigWasmKernel@1.0.0",
+        "pkg:npm/glorian/WasmSimd128VectorArena@1.0.0",
+        "pkg:npm/glorian/SharedMemoryWorkerPool@1.0.0",
+        "pkg:npm/glorian/ZeroCopyRingBuffer@1.0.0",
+        "pkg:npm/glorian/JepsenDistributedChaos@1.0.0",
+        "pkg:npm/glorian/SimdQuantizedHnsw@1.0.0",
+        "pkg:npm/glorian/DistributedVectorMesh@1.0.0",
+        "pkg:npm/glorian/VectorLsmStorage@1.0.0",
+        "pkg:npm/glorian/SpeculativePagedKvCache@1.0.0",
+        "pkg:npm/glorian/FlashAttentionOnlineSoftmax@1.0.0",
+        "pkg:npm/glorian/ContinuousDynamicBatching@1.0.0",
+        "pkg:npm/glorian/RingAllReduce@1.0.0",
+        "pkg:npm/glorian/MegatronTensorParallelism@1.0.0",
+        "pkg:npm/glorian/PipelineParallelism1F1B@1.0.0",
+        "pkg:npm/glorian/TensorParallelAttention@1.0.0",
+        "pkg:npm/glorian/ZeroFsdpEngine@1.0.0",
+        "pkg:npm/glorian/ExpertParallelMoERouter@1.0.0",
+        "pkg:npm/glorian/ActivationCheckpointingEngine@1.0.0",
+        "pkg:npm/glorian/ReverseEngineeringEngine@1.0.0",
+        "pkg:npm/glorian/QuantizedDistributedTrainingEngine@1.0.0",
+        "pkg:npm/glorian/DistributedKvReplication@1.0.0",
+        "pkg:npm/glorian/TreeSpeculativeDecoding@1.0.0",
+        "pkg:npm/glorian/StreamingLlmAttentionSinks@1.0.0",
+        "pkg:npm/glorian/DisaggregatedPrefillDecode@1.0.0",
+        "pkg:npm/glorian/OntologicalHypergraph@1.0.0",
+        "pkg:npm/glorian/DiscreteEventSimulationHypervisor@1.0.0",
+        "pkg:npm/glorian/PostQuantumThresholdMpc@1.0.0",
+        "pkg:npm/glorian/PhysicsInformedHamiltonianPde@1.0.0",
+        "pkg:npm/glorian/EuvInverseLithographyWavefront@1.0.0",
+        "pkg:npm/glorian/CausalStructuralModel@1.0.0",
+        "pkg:npm/glorian/AgenticHarnessYield@1.0.0",
+        "pkg:npm/glorian/ClosedLoopRepoAutopilot@1.0.0",
+        "pkg:npm/glorian/MetamorphicDifferentialBlindSpot@1.0.0"
       ]
     }
   ]
