@@ -696,6 +696,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:txfabric:audit [--json] Auditoría de la malla de transacciones fragmentadas con aislamiento MVCC y 2PC (SPEC-351)
   eos toolchain:txfabric:route [key] [--json] Enrutamiento consistente sobre anillo hash con vnodes (SPEC-351)
   eos toolchain:txfabric:commit [--json] Ejecución atómica distribuida en dos fases con firma post-cuántica (SPEC-351)
+  eos toolchain:neuro:audit [--json] Auditoría del planificador hiper-heurístico neuromórfico SNN/LIF/STDP (SPEC-352)
+  eos toolchain:neuro:spike [--json] Simulación de potencial de membrana LIF y emisión de spikes all-or-nothing (SPEC-352)
+  eos toolchain:neuro:plan [--json] Selección dinámica de heurística de bajo nivel basada en trenes de spikes (SPEC-352)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

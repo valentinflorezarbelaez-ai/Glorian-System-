@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 351,
-  "catalogSha256": "0a4b7345ac211babc3b53aa47aa95d41889eba2da9c308aa50f1147b029ee1ee",
+  "totalSpecs": 352,
+  "catalogSha256": "a4f484586555b1c72389dfb585608b8850f76652f0b4614c4c5660da1cf42d92",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3160,7 +3160,16 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-351-sharded-transaction-fabric.md",
-      "sha256": "9640223c2cf280b887aa1a535e62e18116858149ec868e2711c42022af739d96"
+      "sha256": "5b1c0d6976359e77ceedb2b9e64a0cadeddea80826d08ebd0963c87a616ab91d"
+    },
+    {
+      "id": "SPEC-352",
+      "title": "Autonomous Multi-Modal Neuromorphic Hyper-Heuristic Planner",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-352-neuromorphic-hyper-heuristic-planner.md",
+      "sha256": "d157a9f17a0b8f845fdbd088648a037c398b4294e4542757494817955a2871c1"
     }
   ]
 }

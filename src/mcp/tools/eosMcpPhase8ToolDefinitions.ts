@@ -306,4 +306,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_neuromorphic_planner_audit",
+    description:
+      "Audits the Autonomous Multi-Modal Neuromorphic Hyper-Heuristic Planner verifying Leaky Integrate-and-Fire (LIF) dynamics, STDP synaptic plasticity, rate/temporal encoding, and closed-loop feedback convergence (SPEC-352).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

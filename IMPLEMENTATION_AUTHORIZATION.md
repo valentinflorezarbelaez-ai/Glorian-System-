@@ -3297,3 +3297,16 @@
   - `docs/plans/PLAN-213-sharded-transaction-fabric.md`
   - `docs/tasks/TASKS-213-sharded-transaction-fabric.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-19-NEUROMORPHIC-PLANNER
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-214` (`SPEC-352`), Autonomous Multi-Modal Neuromorphic Hyper-Heuristic Planner: TLA+ Model 95 `docs/formal/NeuromorphicPlanner.tla` / `.cfg`; `src/core/eosNeuromorphicPlanner.types.ts` and `src/core/eosNeuromorphicPlanner.ts` (pure Layer-0 Spiking Neural Network, Leaky Integrate-and-Fire neurons with integer micro-volt potential, STDP Hebbian synaptic plasticity, rate and temporal sensory encoding, adaptive hyper-heuristic action selection over low-level operational portfolio, closed-loop feedback reward engine); receipt `docs/evidence/NEUROMORPHIC_PLANNER_RECEIPT.json`. Wire `toolchain:neuro:spike`, `toolchain:neuro:plan`, `toolchain:neuro:audit` and Phase 8 MCP tool `eos_neuromorphic_planner_audit`. Verify `BDD-1891`..`BDD-1896`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-214-NEUROMORPHIC-HYPER-HEURISTIC-PLANNER.md`
+  - `openspec/changes/CHANGE-214-neuromorphic-hyper-heuristic-planner.md`
+  - `openspec/specs/SPEC-352-neuromorphic-hyper-heuristic-planner.md`
+  - `docs/plans/PLAN-214-neuromorphic-hyper-heuristic-planner.md`
+  - `docs/tasks/TASKS-214-neuromorphic-hyper-heuristic-planner.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

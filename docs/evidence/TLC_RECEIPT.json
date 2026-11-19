@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-19T14:21:36.185Z",
+  "timestampIso": "2026-11-19T14:29:33.918Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -13,8 +13,8 @@
       "specName": "LmaxDisruptor",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 20425,
-      "statesGenerated": 84397,
+      "distinctStates": 310,
+      "statesGenerated": 371,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -67,8 +67,8 @@
       "specName": "ZeroCopyRingBuffer",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 583,
-      "statesGenerated": 471,
+      "distinctStates": 39865,
+      "statesGenerated": 154381,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -76,8 +76,8 @@
       "specName": "JepsenDistributedChaos",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 987,
-      "statesGenerated": 874,
+      "distinctStates": 465,
+      "statesGenerated": 26,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -85,8 +85,8 @@
       "specName": "SimdQuantizedHnsw",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 1,
-      "statesGenerated": 883,
+      "distinctStates": 730,
+      "statesGenerated": 211,
       "violationInvariant": null,
       "exitCode": 0
     },

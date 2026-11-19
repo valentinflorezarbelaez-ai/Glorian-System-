@@ -96,6 +96,7 @@ export const CONFIGURED_SPECS = [
   "NeuralSymbolicProver",
   "ZkCircuitSynthesizer",
   "ShardedTransactionFabric",
+  "NeuromorphicPlanner",
 ];
 
 /**

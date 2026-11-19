@@ -220,6 +220,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliShardedTransactionFabric.mjs",
     fn: "handleShardedTransactionFabricCommand",
   },
+  {
+    prefix: "toolchain:neuro:",
+    file: "./cliNeuromorphicPlanner.mjs",
+    fn: "handleNeuromorphicPlannerCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

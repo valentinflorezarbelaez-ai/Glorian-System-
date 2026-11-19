@@ -28,6 +28,7 @@ import { EosSovereignWebCompilerCore } from "../../core/eosSovereignWebCompiler.
 import { EosSpecDriftDetector } from "../../core/eosSpecDriftDetector.ts";
 import { EosZkCircuitSynthesizerCore } from "../../core/eosZkCircuitSynthesizer.ts";
 import { EosShardedTransactionFabricCore } from "../../core/eosShardedTransactionFabric.ts";
+import { EosHyperHeuristicPlannerCore } from "../../core/eosNeuromorphicPlanner.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 import { PHASE8_MIGRATED_TOOL_NAMES } from "./eosMcpPhase8ToolNames.ts";
 
@@ -233,5 +234,7 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_zk_circuit_synthesizer_audit: () => EosZkCircuitSynthesizerCore.audit(projectRoot),
 
     eos_sharded_transaction_mesh_audit: () => EosShardedTransactionFabricCore.audit(projectRoot),
+
+    eos_neuromorphic_planner_audit: () => EosHyperHeuristicPlannerCore.audit(projectRoot),
   };
 }

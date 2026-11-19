@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "a54cc38d2866ca213802408546425c3f3cfbe0b4c6d6dffe9ab026cf9eaa18ca",
-  "totalTools": 227,
+  "catalogSha256": "b93d981749520792f9d6e37dc0503d4e4804cdd30fc94fbb2049eff5aa4a8ffd",
+  "totalTools": 228,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -6963,6 +6963,21 @@
       },
       "annotations": {
         "title": "EOS sharded Transaction Mesh Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_neuromorphic_planner_audit",
+      "description": "Audits the Autonomous Multi-Modal Neuromorphic Hyper-Heuristic Planner verifying Leaky Integrate-and-Fire (LIF) dynamics, STDP synaptic plasticity, rate/temporal encoding, and closed-loop feedback convergence (SPEC-352).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS neuromorphic Planner Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
