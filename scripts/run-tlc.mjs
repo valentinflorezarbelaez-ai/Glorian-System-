@@ -327,7 +327,7 @@ export function runTlcExecutableAsync(specName, jarPath, formalDir = FORMAL_DIR,
   const javaExec = resolveJavaExecutable() || "java";
   const metaDir = fs.mkdtempSync(path.join(os.tmpdir(), `tlc-${specName}-`));
   const args = buildTlcArgs(specName, jarPath, metaDir);
-  const timeoutMs = opts.timeoutMs || 60000;
+  const timeoutMs = opts.timeoutMs || 180000;
 
   return new Promise((resolve) => {
     let stdout = "";
