@@ -31,8 +31,8 @@ function loadSampleStream(root) {
 
 async function cmd_toolchain_events_append(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const fileArg =
     args.slice(1).find((a) => !a.startsWith("-")) || "templates/events/sample-bitemporal-event-stream.json";
 
@@ -82,8 +82,8 @@ async function cmd_toolchain_events_append(commandContext) {
 
 async function cmd_toolchain_events_replay(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const streamId = args.slice(1).find((a) => !a.startsWith("-")) || "account-vault-88992";
 
   // Pre-load sample if empty
@@ -113,8 +113,8 @@ async function cmd_toolchain_events_replay(commandContext) {
 
 async function cmd_toolchain_events_cdc(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const streamId = args.slice(1).find((a) => !a.startsWith("-")) || "account-vault-88992";
 
   if (defaultStore.getEvents(streamId).length === 0) {
