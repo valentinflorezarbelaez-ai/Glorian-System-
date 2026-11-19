@@ -333,4 +333,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_zero_copy_ipc_audit",
+    description:
+      "Audits the Deterministic Zero-Copy Shared Memory Ring Buffer verifying power-of-2 allocation, 64-byte cache padding, binary framing, lock-free SPSC/MPSC, and sub-microsecond IPC (SPEC-355).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

@@ -31,6 +31,7 @@ import { EosShardedTransactionFabricCore } from "../../core/eosShardedTransactio
 import { EosHyperHeuristicPlannerCore } from "../../core/eosNeuromorphicPlanner.ts";
 import { EosCausalMetaLearningCore } from "../../core/eosCausalMetaLearning.ts";
 import { EosWebGpuTensorEngineCore } from "../../core/eosWebGpuTensorAcceleration.ts";
+import { EosZeroCopyIpcCore } from "../../core/eosZeroCopyIpcRingBuffer.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 import { PHASE8_MIGRATED_TOOL_NAMES } from "./eosMcpPhase8ToolNames.ts";
 
@@ -240,5 +241,6 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_neuromorphic_planner_audit: () => EosHyperHeuristicPlannerCore.audit(projectRoot),
     eos_causal_meta_learning_audit: () => EosCausalMetaLearningCore.audit(projectRoot),
     eos_webgpu_tensor_audit: () => EosWebGpuTensorEngineCore.audit(projectRoot),
+    eos_zero_copy_ipc_audit: () => EosZeroCopyIpcCore.audit(projectRoot),
   };
 }

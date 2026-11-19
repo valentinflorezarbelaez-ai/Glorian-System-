@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 354,
-  "catalogSha256": "eb86482682b5b34558c9e3b087cbe9a17c6d8b1753295c21d650926f98febeed",
+  "totalSpecs": 355,
+  "catalogSha256": "387d405ad902d7835679bc50ec6a6d9de2cb1fca7ac5d4e85b3f52a4c89d8cb4",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3188,6 +3188,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-354-webgpu-wgsl-tensor-acceleration.md",
       "sha256": "f993381a06cab7a2912e953063484384f9f51e16de19ff834ca72087dcf9d537"
+    },
+    {
+      "id": "SPEC-355",
+      "title": "Deterministic Zero-Copy Shared Memory Inter-Process Ring Buffer (IPC) Architecture",
+      "status": "SPECIFICATION_APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-355-zero-copy-ipc-ringbuffer.md",
+      "sha256": "320723738bb1d46a75a1a07db2da31e372516e9f09d4daf3e29046834e2ca49c"
     }
   ]
 }

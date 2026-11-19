@@ -212,4 +212,5 @@ export const PHASE8_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
   "eos_neuromorphic_planner_audit",
   "eos_causal_meta_learning_audit",
   "eos_webgpu_tensor_audit",
+  "eos_zero_copy_ipc_audit",
 ]);

@@ -3336,3 +3336,16 @@
   - `docs/plans/PLAN-216-WEBGPU-TENSOR-ACCELERATION.md`
   - `docs/tasks/TASKS-216-WEBGPU-TENSOR-ACCELERATION.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-19-ZERO-COPY-IPC-RINGBUFFER
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-217` (`SPEC-355`), Deterministic Zero-Copy Shared Memory Inter-Process Ring Buffer (IPC) Architecture: TLA+ Model 98 `docs/formal/ZeroCopyIpcRingBuffer.tla` / `.cfg`; `src/core/eosZeroCopyIpcRingBuffer.types.ts` and `src/core/eosZeroCopyIpcRingBuffer.ts` (power-of-2 `SharedArrayBuffer` allocation, 64-byte cache-line aligned atomic sequence cursors, 20-byte binary frame codec with CRC32 integrity verification, lock-free SPSC/MPSC coordination with `Atomics` memory fences, sub-microsecond zero-copy direct read/write, backpressure policies); receipt `docs/evidence/ZERO_COPY_IPC_RINGBUFFER_RECEIPT.json`. Wire `toolchain:ipc:write`, `toolchain:ipc:read`, `toolchain:ipc:bench`, `toolchain:ipc:audit` and Phase 8 MCP tool `eos_zero_copy_ipc_audit`. Verify `BDD-1909`..`BDD-1914`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-217-ZERO-COPY-IPC-RINGBUFFER.md`
+  - `openspec/changes/CHANGE-217-zero-copy-ipc-ringbuffer.md`
+  - `openspec/specs/SPEC-355-zero-copy-ipc-ringbuffer.md`
+  - `docs/plans/PLAN-217-ZERO-COPY-IPC-RINGBUFFER.md`
+  - `docs/tasks/TASKS-217-ZERO-COPY-IPC-RINGBUFFER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

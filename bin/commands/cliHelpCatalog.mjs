@@ -705,6 +705,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:gpu:audit [--json] Auditoría del motor de aceleración tensorial WebGPU WGSL y recibo SHA-256 (SPEC-354)
   eos toolchain:gpu:compile [shader] [--json] Síntesis de shaders WGSL con tiling en memoria compartida (SPEC-354)
   eos toolchain:gpu:bench [--json] Benchmark de GEMM, activaciones vectoriales y covarianza tensorial (SPEC-354)
+  eos toolchain:ipc:audit [--json] Auditoría del ring buffer de memoria compartida zero-copy (SPEC-355)
+  eos toolchain:ipc:bench [--json] Benchmark de latencia sub-microsegundo y throughput de IPC (SPEC-355)
+  eos toolchain:ipc:write [--json] Escritura directa de marco binario con cabecera de 20 bytes (SPEC-355)
+  eos toolchain:ipc:read [--json] Lectura zero-copy con verificación de integridad CRC32 (SPEC-355)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

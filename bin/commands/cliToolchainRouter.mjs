@@ -235,6 +235,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliWebGpuTensorAcceleration.mjs",
     fn: "handleWebGpuTensorAccelerationCommand",
   },
+  {
+    prefix: "toolchain:ipc:",
+    file: "./cliZeroCopyIpcRingBuffer.mjs",
+    fn: "handleZeroCopyIpcCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-19T16:42:37.438Z",
+  "timestampIso": "2026-11-19T17:17:50.146Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -7,14 +7,14 @@
   "allPassed": true,
   "hasJavaRuntime": true,
   "tlaJarPath": "C:\\Users\\valen\\Documents\\Glorian-System\\tools\\tla2tools.jar",
-  "totalConfiguredSpecs": 59,
+  "totalConfiguredSpecs": 60,
   "models": [
     {
       "specName": "LmaxDisruptor",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 20425,
-      "statesGenerated": 84397,
+      "distinctStates": 178,
+      "statesGenerated": 223,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -67,8 +67,8 @@
       "specName": "ZeroCopyRingBuffer",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 39865,
-      "statesGenerated": 154381,
+      "distinctStates": 317,
+      "statesGenerated": 171,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -76,8 +76,8 @@
       "specName": "JepsenDistributedChaos",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 7116,
-      "statesGenerated": 23010,
+      "distinctStates": 977,
+      "statesGenerated": 362,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -85,8 +85,8 @@
       "specName": "SimdQuantizedHnsw",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 14000,
-      "statesGenerated": 231376,
+      "distinctStates": 993,
+      "statesGenerated": 139,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -537,6 +537,15 @@
       "passed": true,
       "distinctStates": 17,
       "statesGenerated": 17,
+      "violationInvariant": null,
+      "exitCode": 0
+    },
+    {
+      "specName": "ZeroCopyIpcRingBuffer",
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 63,
+      "statesGenerated": 85,
       "violationInvariant": null,
       "exitCode": 0
     }

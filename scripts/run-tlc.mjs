@@ -99,6 +99,7 @@ export const CONFIGURED_SPECS = [
   "NeuromorphicPlanner",
   "CausalMetaLearning",
   "WebGpuTensorAcceleration",
+  "ZeroCopyIpcRingBuffer",
 ];
 
 /**

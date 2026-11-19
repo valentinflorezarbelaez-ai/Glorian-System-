@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:2d0c7c0e-b3fd-5d64-a58e-017ba65af864",
+  "serialNumber": "urn:uuid:14f6722a-e93b-5a2d-8fd2-0bc7f9227017",
   "version": 1,
   "metadata": {
-    "timestamp": "2023-12-12T14:28:30.000Z",
+    "timestamp": "2021-02-21T13:10:02.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "afad01c5b007200d7b66e3a1eeb2f4bed4785396fed1df10e16463f97b75bfba"
+          "content": "38ae956777f7336e7a4b1ba6714a6071b07e5cecaeef84d75c386b89a8b18438"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -4017,7 +4017,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "cce9ff88254d50f7cc98ccd9f148a66cc7eb26873551bd7b522162368767ed63"
+          "content": "17b8fb17916af8edb512735ddbf47514960ee162023dbd20cbe005488c9400de"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosMcpToolTaxonomy.ts"
@@ -7293,7 +7293,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5d03bac0b40a4c9f4f9b3f1b1b909808266cd1bdba0c5199fdeaa05064998526"
+          "content": "dbcfbd6a92424a7658f51d7eba62d52914098065afdd0da61fd6783c1324cf38"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosWebGpuTensorAcceleration.ts"
@@ -7306,7 +7306,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "1ccfa26d1671477e3c5bb790a93a53028e15c340d034ab54e7f099c601198ea3"
+          "content": "212e64ac4c2d418ca19d2db08d5e8f1dcd8025cb127184ed4172852ac20d7d44"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosWebGpuTensorAcceleration.types.ts"
@@ -7401,6 +7401,32 @@
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosZ3WasmProver.types.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosZeroCopyIpcRingBuffer.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosZeroCopyIpcRingBuffer.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "39e6b5bd636c5dbc1c2715753c6b4e91e5b21acf4d5c26d40c431390fe96b00c"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosZeroCopyIpcRingBuffer.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosZeroCopyIpcRingBuffer.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosZeroCopyIpcRingBuffer.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a9105542c4b0fabf743d3294e2fad06879fc6f3e858dcecc66eb076766c25c1c"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosZeroCopyIpcRingBuffer.types.ts"
     },
     {
       "type": "file",
@@ -7579,7 +7605,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "d519214a753564d20cb24601f0b7de8aabc4212374687a649c0d1ccf028a3e43"
+          "content": "4f43f2b637348c25ce04942663ea954e6bf5d57e5f98e22d3c5a44071e52c47e"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: index.ts"
@@ -7650,5 +7676,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "35c5be7e2797636d66f369ceab67f7a89cd4865de842ce474dde0a2911a31453"
+  "sha256Receipt": "62373cb46d7ada902c2efd30a6231627974d1240555a765071ed670dbde8245d"
 }
