@@ -768,3 +768,5 @@ export * from "./eosFleetChaosMonkey.ts";
 export * from "./eosFleetChaosMonkey.types.ts";
 export * from "./eosMultiNodeSwarmMesh.ts";
 export * from "./eosMultiNodeSwarmMesh.types.ts";
+export * from "./eosSweBenchEvalFlywheel.ts";
+export * from "./eosSweBenchEvalFlywheel.types.ts";

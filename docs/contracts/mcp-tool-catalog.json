@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "c224accc26204461506c77782458c55073e88f81edc40bfa643aef5323a735a2",
-  "totalTools": 241,
+  "catalogSha256": "9c9f51f9b9258fa9f21e5467931e25ba186cfe7d98a23079d7bc3dc94906af72",
+  "totalTools": 242,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7173,6 +7173,21 @@
       },
       "annotations": {
         "title": "EOS multi Node Swarm Mesh Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_swe_bench_eval_flywheel_audit",
+      "description": "Audits the SWE-Bench Autonomous Evaluation Harness & Fleet Eval Flywheel verifying hermetic task sandboxing, oracle grading integrity, synthetic challenge mining from git PR history, and statistical pass@k estimators (SPEC-366).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS swe Bench Eval Flywheel Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

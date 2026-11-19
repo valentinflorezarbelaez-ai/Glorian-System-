@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 365,
-  "catalogSha256": "7629cf72fa80aaa6fd1de8b247c5f7b654a08bc3e962f50258bbaeb9ea0b1ed5",
+  "totalSpecs": 366,
+  "catalogSha256": "bcef353ca2178780dd3bc8efeb9f40732842c54f11296e9f1f5a34bcc334437f",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3287,6 +3287,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-365-multi-node-swarm-mesh.md",
       "sha256": "c9c804abf54ae3045a4e82c2616a2bff350191ba3cf3db7e4183ac37149d19c0"
+    },
+    {
+      "id": "SPEC-366",
+      "title": "SWE-Bench Autonomous Evaluation Harness & Fleet Eval Flywheel",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-366-swe-bench-evals-flywheel.md",
+      "sha256": "3fd02ad39f4ef7bf967de71a15b9d0e0766b20a257053f6cc9504360c6d528a3"
     }
   ]
 }

@@ -290,6 +290,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliMultiNodeSwarmMesh.mjs",
     fn: "handleMultiNodeSwarmMeshCommand",
   },
+  {
+    prefix: "toolchain:eval:",
+    file: "./cliSweBenchEvalFlywheel.mjs",
+    fn: "handleSweBenchEvalFlywheelCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

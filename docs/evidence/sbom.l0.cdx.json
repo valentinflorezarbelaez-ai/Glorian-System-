@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:520b4ac7-63c1-56dc-8cd6-6128eb36c074",
+  "serialNumber": "urn:uuid:e7dd2cad-d15d-5ed7-8e5e-46280072766f",
   "version": 1,
   "metadata": {
-    "timestamp": "2023-08-12T09:15:51.000Z",
+    "timestamp": "2023-04-02T12:23:09.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "fc31f931737d7597998532d8201b9642531a323fb13b7497b1d25784f59ee5c6"
+          "content": "ca57dfe719443591433114dc953cd6efc857cdf47aafd88223c3611164fba83d"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -4199,7 +4199,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5537c60613dc55a6df3f075f53382225d74aa76dfe81de2add3e9042197d04b6"
+          "content": "7afbe5491bf2154e208132063420608d4575acf1abe0497c9df06c36d043ac2a"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosMcpToolTaxonomy.ts"
@@ -4511,7 +4511,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "ad372da53865d1eaa39a86950b6139e6c8b6e2702ef518547d0f3a6eced3f0e0"
+          "content": "b9c2ac6e0899013964558b7766bab530d9fcd1b05710c73e881bf73c6df71923"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosMultiNodeSwarmMesh.ts"
@@ -4524,7 +4524,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "07c41c22a2224caf4dc192e1f732eb59bd97431710bccf6cc2fc57c1bf842cc6"
+          "content": "0af91b20424179870977d95f9410c4637756de5533acdd52bc7c1c1800ecb3a6"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosMultiNodeSwarmMesh.types.ts"
@@ -6715,6 +6715,32 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosSweBenchEvalFlywheel.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosSweBenchEvalFlywheel.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "765c08bb9ff98e097395eaa3bb29a334a6220d8620a5f1bc49aef3abc6c2c47c"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosSweBenchEvalFlywheel.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosSweBenchEvalFlywheel.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosSweBenchEvalFlywheel.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "fa695e6e3ea6bb428454dd7eb2f2fd5a7fd48fcc607fb2835f892f9d7f05a90e"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosSweBenchEvalFlywheel.types.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosTacticalCommandEngine.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosTacticalCommandEngine.ts@75.0.0",
@@ -7865,7 +7891,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5e2f316af28bd8523483ba816e5f964ea4e089c4d61ea72b33d864df5ce3afd9"
+          "content": "b9283c0aaa4579bad2c988aefbc79d564b0d3a3c68006cfd3ae503db2cb2cfd8"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: index.ts"
@@ -7936,5 +7962,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "0c0c20ac2047d90339f525d83329564833484d9290fdb9f0e4b71133a5326c97"
+  "sha256Receipt": "8b5269cf82ff8c3f6ad21e39c69c5cd36db638ca6b1cb6b87fee149c40d476de"
 }

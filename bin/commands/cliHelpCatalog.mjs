@@ -748,6 +748,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:mesh:gossip [--json] Difusión de compendio de chisme epidémico y vectores de versión (SPEC-365)
   eos toolchain:mesh:status [--json] Estado topológico, raíz de Merkle y profundidad de colas de tareas (SPEC-365)
   eos toolchain:mesh:audit [--json] Auditoría formal de convergencia P2P, Merkle-DAG y Work-Steal (SPEC-365)
+  eos toolchain:eval:run [--json] Ejecución hermética de tarea SWE-bench y evaluación de oráculo (SPEC-366)
+  eos toolchain:eval:synthetic [REPO] Minería de desafío sintético desde el historial de Git (SPEC-366)
+  eos toolchain:eval:matrix [--json] Matriz comparativa de desempeño pass@k en los 9 repositorios (SPEC-366)
+  eos toolchain:eval:audit [--json] Auditoría del harness de evaluación y recibo formal SHA-256 (SPEC-366)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

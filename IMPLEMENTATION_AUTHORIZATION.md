@@ -3519,3 +3519,21 @@
   - `docs/plans/PLAN-227-MULTI-NODE-SWARM-MESH.md`
   - `docs/tasks/TASKS-227-MULTI-NODE-SWARM-MESH.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-SWE-BENCH-EVALS-FLYWHEEL`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-228` / `SPEC-366`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-228` (`SPEC-366`), SWE-Bench Autonomous Evaluation Harness & Fleet Eval Flywheel: TLA+ Model 109 `docs/formal/SweBenchEvalFlywheel.tla` / `.cfg`; `src/core/eosSweBenchEvalFlywheel.types.ts` and `src/core/eosSweBenchEvalFlywheel.ts` (pure Layer-0 hermetic challenge execution, synthetic eval mining from 9 fleet git repos, oracle double-blind grading, statistical pass@k estimators); receipt `docs/evidence/SWE_BENCH_EVAL_FLYWHEEL_RECEIPT.json`. Wire `toolchain:eval:run`, `toolchain:eval:synthetic`, `toolchain:eval:matrix`, `toolchain:eval:audit` and Phase 8 MCP tool `eos_swe_bench_eval_flywheel_audit`. Verify `BDD-1975`..`BDD-1980`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-228-SWE-BENCH-EVALS-FLYWHEEL.md`
+  - `openspec/changes/CHANGE-228-swe-bench-evals-flywheel.md`
+  - `openspec/specs/SPEC-366-swe-bench-evals-flywheel.md`
+  - `docs/plans/PLAN-228-SWE-BENCH-EVALS-FLYWHEEL.md`
+  - `docs/tasks/TASKS-228-SWE-BENCH-EVALS-FLYWHEEL.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

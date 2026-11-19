@@ -110,6 +110,7 @@ export const CONFIGURED_SPECS = [
   "VoiceNeuralInterface",
   "FleetChaosFdirEngine",
   "MultiNodeSwarmMesh",
+  "SweBenchEvalFlywheel",
 ];
 
 /**

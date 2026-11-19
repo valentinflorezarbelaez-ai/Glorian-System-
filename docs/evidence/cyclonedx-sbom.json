@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:0b6682ba-f92b-46ca-9553-a9ec758a01c7",
+  "serialNumber": "urn:uuid:a98b6891-5ae5-40d2-812b-4f94ee032280",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T20:18:18.735Z",
+    "timestamp": "2026-11-19T23:41:45.337Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -4510,7 +4510,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5537c60613dc55a6df3f075f53382225d74aa76dfe81de2add3e9042197d04b6"
+          "content": "7afbe5491bf2154e208132063420608d4575acf1abe0497c9df06c36d043ac2a"
         }
       ]
     },
@@ -4846,7 +4846,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "ad372da53865d1eaa39a86950b6139e6c8b6e2702ef518547d0f3a6eced3f0e0"
+          "content": "b9c2ac6e0899013964558b7766bab530d9fcd1b05710c73e881bf73c6df71923"
         }
       ]
     },
@@ -4860,7 +4860,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "07c41c22a2224caf4dc192e1f732eb59bd97431710bccf6cc2fc57c1bf842cc6"
+          "content": "0af91b20424179870977d95f9410c4637756de5533acdd52bc7c1c1800ecb3a6"
         }
       ]
     },
@@ -7218,6 +7218,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:SweBenchEvalFlywheel",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SweBenchEvalFlywheel@1.0.0",
+      "description": "Layer-0 module eosSweBenchEvalFlywheel.ts",
+      "purl": "pkg:npm/glorian/SweBenchEvalFlywheel@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "765c08bb9ff98e097395eaa3bb29a334a6220d8620a5f1bc49aef3abc6c2c47c"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:SweBenchEvalFlywheel",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/SweBenchEvalFlywheel@1.0.0",
+      "description": "Layer-0 module eosSweBenchEvalFlywheel.types.ts",
+      "purl": "pkg:npm/glorian/SweBenchEvalFlywheel@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "fa695e6e3ea6bb428454dd7eb2f2fd5a7fd48fcc607fb2835f892f9d7f05a90e"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:TacticalCommandEngine",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/TacticalCommandEngine@1.0.0",
@@ -8458,7 +8486,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5e2f316af28bd8523483ba816e5f964ea4e089c4d61ea72b33d864df5ce3afd9"
+          "content": "b9283c0aaa4579bad2c988aefbc79d564b0d3a3c68006cfd3ae503db2cb2cfd8"
         }
       ]
     },
@@ -10554,7 +10582,8 @@
         "pkg:npm/glorian/AutonomousSentinelDaemon@1.0.0",
         "pkg:npm/glorian/VoiceNeuralInterface@1.0.0",
         "pkg:npm/glorian/FleetChaosMonkey@1.0.0",
-        "pkg:npm/glorian/MultiNodeSwarmMesh@1.0.0"
+        "pkg:npm/glorian/MultiNodeSwarmMesh@1.0.0",
+        "pkg:npm/glorian/SweBenchEvalFlywheel@1.0.0"
       ]
     }
   ]

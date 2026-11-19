@@ -432,4 +432,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_swe_bench_eval_flywheel_audit",
+    description:
+      "Audits the SWE-Bench Autonomous Evaluation Harness & Fleet Eval Flywheel verifying hermetic task sandboxing, oracle grading integrity, synthetic challenge mining from git PR history, and statistical pass@k estimators (SPEC-366).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];
