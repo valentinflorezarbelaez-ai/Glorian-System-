@@ -6,13 +6,14 @@
 import fs from "node:fs";
 import path from "node:path";
 import { EosVectorQuantizationGovernor } from "../../src/core/eosVectorQuantizationGovernor.ts";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 export const HANDLERS = {};
 
 async function cmd_toolchain_vector_quantize(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const fileArg = args.slice(1).find((a) => !a.startsWith("-")) || "templates/vectors/sample-embeddings.json";
 
   const filePath = path.isAbsolute(fileArg) ? fileArg : path.join(root, fileArg);
@@ -67,8 +68,8 @@ async function cmd_toolchain_vector_quantize(commandContext) {
 
 async function cmd_toolchain_vector_index(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const fileArg = args.slice(1).find((a) => !a.startsWith("-")) || "templates/vectors/sample-embeddings.json";
 
   const filePath = path.isAbsolute(fileArg) ? fileArg : path.join(root, fileArg);
@@ -81,7 +82,7 @@ async function cmd_toolchain_vector_index(commandContext) {
   const items = JSON.parse(fs.readFileSync(filePath, "utf8"));
   const rawList = Array.isArray(items) ? items : [items];
   const index = EosVectorQuantizationGovernor.buildIndex(rawList);
-  const receiptPath = path.join(root, "docs/evidence/VECTOR_INDEX_RECEIPT.json");
+  const receiptPath = resolveEvidencePath("VECTOR_INDEX_RECEIPT.json", root);
   const receipt = EosVectorQuantizationGovernor.generateReceipt(index, receiptPath);
 
   if (isJson) {
@@ -92,7 +93,7 @@ async function cmd_toolchain_vector_index(commandContext) {
           dimension: index.dimension,
           totalVectors: index.totalVectors,
           shardsCount: Object.keys(index.shards).length,
-          receiptPath: "docs/evidence/VECTOR_INDEX_RECEIPT.json",
+          receiptPath,
           receiptSha256: receipt.sha256Signature,
         },
         null,
@@ -119,8 +120,8 @@ async function cmd_toolchain_vector_index(commandContext) {
 
 async function cmd_toolchain_vector_search(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const fileArg = args.slice(1).find((a) => !a.startsWith("-")) || "templates/vectors/sample-embeddings.json";
 
   const topArg = args.find((a) => a.startsWith("--top="));

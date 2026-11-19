@@ -6,13 +6,14 @@
 import fs from "node:fs";
 import path from "node:path";
 import { EosDeadlockDetectionGovernor } from "../../src/core/eosDeadlockDetectionGovernor.ts";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 export const HANDLERS = {};
 
 async function cmd_toolchain_deadlock_audit(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const fileArg = args.slice(1).find((a) => !a.startsWith("-")) || "templates/concurrency/sample-deadlock-wfg.json";
 
   const filePath = path.isAbsolute(fileArg) ? fileArg : path.join(root, fileArg);
@@ -27,7 +28,7 @@ async function cmd_toolchain_deadlock_audit(commandContext) {
   const graph = EosDeadlockDetectionGovernor.buildWfg(transactions, raw.graphId);
   const report = EosDeadlockDetectionGovernor.detectDeadlocks(graph);
 
-  const receiptPath = path.join(root, "docs/evidence/DEADLOCK_RECEIPT.json");
+  const receiptPath = resolveEvidencePath("DEADLOCK_RECEIPT.json", root);
   const receipt = EosDeadlockDetectionGovernor.generateReceipt(report, receiptPath);
 
   if (isJson) {
@@ -39,7 +40,7 @@ async function cmd_toolchain_deadlock_audit(commandContext) {
           cyclesCount: report.cycles.length,
           cycles: report.cycles,
           victims: report.victims,
-          receiptPath: "docs/evidence/DEADLOCK_RECEIPT.json",
+          receiptPath,
           receiptSha256: receipt.sha256Signature,
         },
         null,
@@ -70,8 +71,8 @@ async function cmd_toolchain_deadlock_audit(commandContext) {
 
 async function cmd_toolchain_deadlock_wfg(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const fileArg = args.slice(1).find((a) => !a.startsWith("-")) || "templates/concurrency/sample-deadlock-wfg.json";
 
   const filePath = path.isAbsolute(fileArg) ? fileArg : path.join(root, fileArg);
@@ -104,8 +105,8 @@ async function cmd_toolchain_deadlock_wfg(commandContext) {
 
 async function cmd_toolchain_deadlock_resolve(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const fileArg = args.slice(1).find((a) => !a.startsWith("-")) || "templates/concurrency/sample-deadlock-wfg.json";
 
   const stratArg = args.find((a) => a.startsWith("--strategy="));

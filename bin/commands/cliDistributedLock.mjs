@@ -6,6 +6,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { EosDistributedLockGovernor } from "../../src/core/eosDistributedLockGovernor.ts";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 export const HANDLERS = {};
 
@@ -26,8 +27,8 @@ function loadTopology(root) {
 
 async function cmd_toolchain_lock_acquire(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const resourceArg = args.slice(1).find((a) => !a.startsWith("-")) || "db-migration-lock";
 
   const ownerArg = args.find((a) => a.startsWith("--owner="));
@@ -41,7 +42,7 @@ async function cmd_toolchain_lock_acquire(commandContext) {
 
   let receiptSha = "";
   if (result.success && result.lease) {
-    const receiptPath = path.join(root, "docs/evidence/DISTRIBUTED_LOCK_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("DISTRIBUTED_LOCK_RECEIPT.json", root);
     const receipt = governor.generateReceipt(result.lease, receiptPath);
     receiptSha = receipt.sha256Signature;
   }
@@ -87,8 +88,8 @@ async function cmd_toolchain_lock_acquire(commandContext) {
 
 async function cmd_toolchain_lock_renew(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const resourceArg = args.slice(1).find((a) => !a.startsWith("-")) || "db-migration-lock";
 
   const ownerArg = args.find((a) => a.startsWith("--owner="));
@@ -124,8 +125,8 @@ async function cmd_toolchain_lock_renew(commandContext) {
 
 async function cmd_toolchain_lock_release(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const resourceArg = args.slice(1).find((a) => !a.startsWith("-")) || "db-migration-lock";
 
   const ownerArg = args.find((a) => a.startsWith("--owner="));

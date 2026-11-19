@@ -1,6 +1,6 @@
 {
   "receiptType": "EOS_WASM_SYNTHESIZER_AUDIT",
-  "timestampIso": "2026-11-19T00:28:25.581Z",
+  "timestampIso": "2026-11-19T01:33:47.255Z",
   "specRef": "SPEC-306",
   "validWasmMagicVerified": true,
   "leb128FidelityVerified": true,
@@ -8,7 +8,7 @@
   "loopFactorialKernelVerified": true,
   "linearMemoryTrapCaught": true,
   "vectorDotProductVerified": true,
-  "benchmarkSpeedupRatio": 2.31,
+  "benchmarkSpeedupRatio": 4.13,
   "modulesEvaluated": 4,
   "sha256Signature": "6577deb9becf3a8fa688e8a7ba1096e6d7e5ba61657d1c830949786f536e078c"
 }

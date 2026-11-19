@@ -6,13 +6,14 @@
 import fs from "node:fs";
 import path from "node:path";
 import { EosMerkleSnapshotGovernor } from "../../src/core/eosMerkleSnapshotGovernor.ts";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 export const HANDLERS = {};
 
 async function cmd_toolchain_merkle_build(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const fileArg = args.slice(1).find((a) => !a.startsWith("-")) || "templates/snapshots/sample-state-snapshot.json";
 
   const filePath = path.isAbsolute(fileArg) ? fileArg : path.join(root, fileArg);
@@ -24,7 +25,7 @@ async function cmd_toolchain_merkle_build(commandContext) {
 
   const items = JSON.parse(fs.readFileSync(filePath, "utf8"));
   const tree = EosMerkleSnapshotGovernor.buildTree(Array.isArray(items) ? items : [items]);
-  const receiptPath = path.join(root, "docs/evidence/MERKLE_SNAPSHOT_RECEIPT.json");
+  const receiptPath = resolveEvidencePath("MERKLE_SNAPSHOT_RECEIPT.json", root);
   const receipt = EosMerkleSnapshotGovernor.generateReceipt(tree, receiptPath);
 
   if (isJson) {
@@ -35,7 +36,7 @@ async function cmd_toolchain_merkle_build(commandContext) {
           rootHash: tree.rootHash,
           leafCount: tree.leafCount,
           depth: tree.depth,
-          receiptPath: "docs/evidence/MERKLE_SNAPSHOT_RECEIPT.json",
+          receiptPath,
           receiptSha256: receipt.sha256Signature,
         },
         null,
@@ -59,8 +60,8 @@ async function cmd_toolchain_merkle_build(commandContext) {
 
 async function cmd_toolchain_merkle_proof(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const fileArg = args.slice(1).find((a) => !a.startsWith("-")) || "templates/snapshots/sample-state-snapshot.json";
 
   const indexArg = args.find((a) => a.startsWith("--index="));
@@ -97,8 +98,8 @@ async function cmd_toolchain_merkle_proof(commandContext) {
 
 async function cmd_toolchain_merkle_verify(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const fileArg = args.slice(1).find((a) => !a.startsWith("-")) || "templates/snapshots/sample-state-snapshot.json";
 
   const indexArg = args.find((a) => a.startsWith("--index="));
