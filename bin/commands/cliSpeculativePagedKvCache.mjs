@@ -12,12 +12,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { EosSpeculativePagedKvCacheCore } from "../../src/core/eosSpeculativePagedKvCache.ts";
+import { resolveEvidenceDir, resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "../..");
-const EVIDENCE_DIR = path.join(ROOT, "docs/evidence");
-const DEFAULT_RECEIPT_PATH = path.join(EVIDENCE_DIR, "SPECULATIVE_PAGED_KV_CACHE_RECEIPT.json");
+const EVIDENCE_DIR = resolveEvidenceDir(ROOT);
+const DEFAULT_RECEIPT_PATH = resolveEvidencePath("SPECULATIVE_PAGED_KV_CACHE_RECEIPT.json", ROOT);
 
 const HANDLERS = {};
 

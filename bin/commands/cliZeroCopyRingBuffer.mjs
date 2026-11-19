@@ -12,12 +12,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { EosZeroCopyRingBufferCore } from "../../src/core/eosZeroCopyRingBuffer.ts";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "../..");
-const EVIDENCE_DIR = path.join(ROOT, "docs/evidence");
-const RECEIPT_PATH = path.join(EVIDENCE_DIR, "ZERO_COPY_RING_BUFFER_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("ZERO_COPY_RING_BUFFER_RECEIPT.json", ROOT);
 
 const HANDLERS = {};
 
@@ -241,8 +241,9 @@ async function cmd_ringbuffer_audit(commandContext) {
     cryptographicSignature: auditReport.sha256Receipt,
   };
 
-  if (!fs.existsSync(EVIDENCE_DIR)) {
-    fs.mkdirSync(EVIDENCE_DIR, { recursive: true });
+  const receiptDir = path.dirname(RECEIPT_PATH);
+  if (!fs.existsSync(receiptDir)) {
+    fs.mkdirSync(receiptDir, { recursive: true });
   }
   fs.writeFileSync(RECEIPT_PATH, JSON.stringify(receipt, null, 2), "utf8");
 
