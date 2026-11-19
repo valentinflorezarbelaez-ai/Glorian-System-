@@ -755,3 +755,4 @@ export * from "./eosWebGpuTensorAcceleration.ts";
 export * from "./eosZeroCopyIpcRingBuffer.ts";
 export * from "./eosWorkStealingScheduler.ts";
 export * from "./eosBitemporalEventSourcingLedger.ts";
+export * from "./eosArchitecturalCanvas.ts";

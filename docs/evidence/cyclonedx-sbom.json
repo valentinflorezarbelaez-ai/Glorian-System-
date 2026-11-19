@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:2eb3af9e-d0d3-43c5-a4b6-c367127420f6",
+  "serialNumber": "urn:uuid:2bb0c646-1dbe-4be5-90d0-6b4c35d44c8f",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T18:03:35.553Z",
+    "timestamp": "2026-11-19T18:32:27.713Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -563,6 +563,34 @@
         {
           "alg": "SHA-256",
           "content": "75a6c0a063d9bca51529f31a6df6ffb1042e0af295e9a871f441ceef299feecc"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ArchitecturalCanvas",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ArchitecturalCanvas@1.0.0",
+      "description": "Layer-0 module eosArchitecturalCanvas.ts",
+      "purl": "pkg:npm/glorian/ArchitecturalCanvas@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "55539212ec15b44e567ae8957ffb5d3497745fd11dd805a35c082bfa8e4275df"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ArchitecturalCanvas",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ArchitecturalCanvas@1.0.0",
+      "description": "Layer-0 module eosArchitecturalCanvas.types.ts",
+      "purl": "pkg:npm/glorian/ArchitecturalCanvas@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "442816ea926c056f0f8b4eb17c5b9bdc7d822727c9141ebb80d22634ec732517"
         }
       ]
     },
@@ -4342,7 +4370,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "a37a204451f5cbfa9409a2412062845ee7c3031ef15f8e8ab49c218f695c9d7c"
+          "content": "80d196972b9f0a22f61dbe58b1ecad7ac0e765f868a50f5e7a30c6f397fbd6b8"
         }
       ]
     },
@@ -8234,7 +8262,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "06b6ee8166cef12a76d5ac0511b0d04a520f678df75c9fd438f084b9e8209a93"
+          "content": "e9fb68455935d5b690c5be4e198482c32ec48b101493b6d4cad0d8a7863aa0ba"
         }
       ]
     },
@@ -8343,6 +8371,12 @@
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
         "pkg:npm/glorian/InTotoSlsaEd25519AttestorCore@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/ArchitecturalCanvas@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -10304,7 +10338,8 @@
         "pkg:npm/glorian/WebGpuTensorAcceleration@1.0.0",
         "pkg:npm/glorian/ZeroCopyIpcRingBuffer@1.0.0",
         "pkg:npm/glorian/WorkStealingScheduler@1.0.0",
-        "pkg:npm/glorian/BitemporalEventSourcingLedger@1.0.0"
+        "pkg:npm/glorian/BitemporalEventSourcingLedger@1.0.0",
+        "pkg:npm/glorian/ArchitecturalCanvas@1.0.0"
       ]
     }
   ]

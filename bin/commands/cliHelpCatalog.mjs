@@ -717,6 +717,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:ledger:bench [--json] Benchmark de rendimiento de ingestión de datoms y latencia asOf (SPEC-357)
   eos toolchain:ledger:append [--json] Ingestión de bloque de datoms bitemporales con Merkle root SHA-256 (SPEC-357)
   eos toolchain:ledger:asof [--json] Consulta de viaje en el tiempo 2D en TxTime y ValidTime (SPEC-357)
+  eos toolchain:canvas:audit [--json] Auditoría del canvas arquitectónico vivo y topología interactiva (SPEC-358)
+  eos toolchain:canvas:graph [--json] Extracción de grafo topológico DAG y capas jerárquicas Sugiyama (SPEC-358)
+  eos toolchain:canvas:render [--json] Renderizado vectorial SVG puro con tokens de diseño Tier S-0 (SPEC-358)
+  eos toolchain:canvas:blast [node] [--json] Análisis del radio de impacto causal aguas arriba y abajo (SPEC-358)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

@@ -360,4 +360,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_architectural_canvas_audit",
+    description:
+      "Audits the Live Self-Introspecting Architectural Canvas verifying dynamic DAG harvesting, pure Layer-0 Sugiyama layout, bi-directional cycle detection, and causal blast radius analysis (SPEC-358).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

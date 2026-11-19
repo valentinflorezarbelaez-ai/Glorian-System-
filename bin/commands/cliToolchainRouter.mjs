@@ -250,6 +250,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliBitemporalEventLedger.mjs",
     fn: "handleBitemporalEventLedgerCommand",
   },
+  {
+    prefix: "toolchain:canvas:",
+    file: "./cliArchitecturalCanvas.mjs",
+    fn: "handleArchitecturalCanvasCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

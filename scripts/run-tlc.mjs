@@ -102,6 +102,7 @@ export const CONFIGURED_SPECS = [
   "ZeroCopyIpcRingBuffer",
   "WorkStealingScheduler",
   "BitemporalEventLedger",
+  "ArchitecturalCanvasTopology",
 ];
 
 /**

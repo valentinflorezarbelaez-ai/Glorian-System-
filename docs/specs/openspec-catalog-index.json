@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 357,
-  "catalogSha256": "2e6e9ed5780813abbd5c97d58b3d39a73cd23ed8c1207635aa4622a5e44ed86c",
+  "totalSpecs": 358,
+  "catalogSha256": "90099a4c55a13b2dac1568c9a9a007950355befa08bab18e16a11538a9683250",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3215,6 +3215,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-357-bitemporal-event-sourcing-ledger.md",
       "sha256": "0526e152fc28eadfa2d3f6dd1a9446b5325e238ea61c7a0847c516d2d4533b15"
+    },
+    {
+      "id": "SPEC-358",
+      "title": "Live Self-Introspecting Architectural Canvas & Bi-Directional Interactive Topology Engine",
+      "status": "SPECIFICATION_APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-358-architectural-canvas-topology.md",
+      "sha256": "c11ee510578c2dfc525e4fe1305edbe8b76ce6b04fc8a3aa0ed17196d96c723a"
     }
   ]
 }

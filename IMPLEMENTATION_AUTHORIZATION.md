@@ -3375,3 +3375,21 @@
   - `docs/plans/PLAN-219-BITEMPORAL-EVENT-SOURCING-LEDGER.md`
   - `docs/tasks/TASKS-219-BITEMPORAL-EVENT-SOURCING-LEDGER.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-ARCHITECTURAL-CANVAS-TOPOLOGY`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-220` / `SPEC-358`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-220` (`SPEC-358`), Live Self-Introspecting Architectural Canvas & Bi-Directional Interactive Topology Engine: TLA+ Model 101 `docs/formal/ArchitecturalCanvasTopology.tla` / `.cfg`; `src/core/eosArchitecturalCanvas.types.ts` and `src/core/eosArchitecturalCanvas.ts` (introspective topology harvester across modules, OpenSpecs, and TLA+ models; pure Layer-0 Sugiyama layered DAG layout engine; bi-directional topology manager with cycle detection and causal blast-radius analysis; pure SVG vector renderer with Tier S-0 tokens); receipt `docs/evidence/ARCHITECTURAL_CANVAS_RECEIPT.json`. Wire `toolchain:canvas:audit`, `toolchain:canvas:graph`, `toolchain:canvas:render`, `toolchain:canvas:blast` and Phase 8 MCP tool `eos_architectural_canvas_audit`. Verify `BDD-1927`..`BDD-1932`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-220-ARCHITECTURAL-CANVAS-TOPOLOGY.md`
+  - `openspec/changes/CHANGE-220-architectural-canvas-topology.md`
+  - `openspec/specs/SPEC-358-architectural-canvas-topology.md`
+  - `docs/plans/PLAN-220-ARCHITECTURAL-CANVAS-TOPOLOGY.md`
+  - `docs/tasks/TASKS-220-ARCHITECTURAL-CANVAS-TOPOLOGY.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
