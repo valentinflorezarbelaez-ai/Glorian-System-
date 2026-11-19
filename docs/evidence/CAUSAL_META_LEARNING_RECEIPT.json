@@ -1,0 +1,19 @@
+{
+  "status": "HEALTHY",
+  "specId": "SPEC-353",
+  "changeId": "CHANGE-215",
+  "scmNodesCount": 4,
+  "scmEdgesCount": 4,
+  "topologicalOrder": [
+    "W_workload",
+    "X_policy",
+    "M_queue",
+    "Y_latency"
+  ],
+  "backdoorVerified": true,
+  "counterfactualVerified": true,
+  "ateVerified": true,
+  "tlcModelPass": true,
+  "timestampIso": "2026-11-19T16:06:40.560Z",
+  "sha256Receipt": "226aa15d6671bb3fb0795f3d41261520e11409637a2e922f74a05e5b2d3728b2"
+}

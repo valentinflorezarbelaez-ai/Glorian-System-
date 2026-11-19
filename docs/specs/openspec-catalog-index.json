@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 352,
-  "catalogSha256": "a4f484586555b1c72389dfb585608b8850f76652f0b4614c4c5660da1cf42d92",
+  "totalSpecs": 353,
+  "catalogSha256": "ded2649e6be09dbe9bd4702212627f66c165c518411ba886738dd749baf40413",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3170,6 +3170,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-352-neuromorphic-hyper-heuristic-planner.md",
       "sha256": "d157a9f17a0b8f845fdbd088648a037c398b4294e4542757494817955a2871c1"
+    },
+    {
+      "id": "SPEC-353",
+      "title": "Autonomous Causal Meta-Learning & Counterfactual Policy Engine",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-353-causal-meta-learning-counterfactual-engine.md",
+      "sha256": "0c7851b867e7c6502ae7544c6e11f4ef79c570d75ac08b1d9818f97f3796d30d"
     }
   ]
 }

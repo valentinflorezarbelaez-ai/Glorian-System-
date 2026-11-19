@@ -749,3 +749,5 @@ export * from "./eosCausalStructuralModel.ts";
 export * from "./eosAgenticHarnessYield.ts";
 export * from "./eosClosedLoopRepoAutopilot.ts";
 export * from "./eosMetamorphicDifferentialBlindSpot.ts";
+export * from "./eosNeuromorphicPlanner.ts";
+export * from "./eosCausalMetaLearning.ts";

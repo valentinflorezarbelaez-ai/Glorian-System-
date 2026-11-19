@@ -12,7 +12,7 @@
 - **Tribe**: ` NOT_DECLARED `
 - **Lifecycle Tier**: ` production `
 - **Registered Fleet Repositories**: 9
-- **Active Formal Architectural Specs (OpenSpec)**: 352
+- **Active Formal Architectural Specs (OpenSpec)**: 353
 
 ## 2. Proposed Engineering Conventions (Not Audited)
 - Consider Go for network services and Rust for performance-sensitive components; this snapshot has not measured the repository's language mix.

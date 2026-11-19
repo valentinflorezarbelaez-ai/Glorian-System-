@@ -97,6 +97,7 @@ export const CONFIGURED_SPECS = [
   "ZkCircuitSynthesizer",
   "ShardedTransactionFabric",
   "NeuromorphicPlanner",
+  "CausalMetaLearning",
 ];
 
 /**

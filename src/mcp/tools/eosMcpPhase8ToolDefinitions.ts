@@ -315,4 +315,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_causal_meta_learning_audit",
+    description:
+      "Audits the Autonomous Causal Meta-Learning & Counterfactual Policy Engine verifying SCM DAG acyclicity, Pearl's Do-calculus graph mutilation, backdoor criterion, and 3-step counterfactuals (SPEC-353).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

@@ -699,6 +699,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:neuro:audit [--json] Auditoría del planificador hiper-heurístico neuromórfico SNN/LIF/STDP (SPEC-352)
   eos toolchain:neuro:spike [--json] Simulación de potencial de membrana LIF y emisión de spikes all-or-nothing (SPEC-352)
   eos toolchain:neuro:plan [--json] Selección dinámica de heurística de bajo nivel basada en trenes de spikes (SPEC-352)
+  eos toolchain:causal:audit [--json] Auditoría del motor causal meta-learning SCM/Do-calculus/contrafácticos (SPEC-353)
+  eos toolchain:causal:intervene [--json] Simulación de cirugía de grafos Pearl G_X_bar bajo intervenciones do(X=x) (SPEC-353)
+  eos toolchain:causal:counterfactual [--json] Evaluación algorítmica contrafactual en 3 pasos (Abducción->Acción->Predicción) (SPEC-353)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

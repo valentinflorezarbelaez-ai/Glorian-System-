@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:65fdcbb7-136a-459d-a57a-15cafb71c3a3",
+  "serialNumber": "urn:uuid:bdc0a586-d0c7-4408-96b5-aacd98e5b42d",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T15:15:12.012Z",
+    "timestamp": "2026-11-19T16:14:42.045Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -1067,6 +1067,34 @@
         {
           "alg": "SHA-256",
           "content": "e08672faa2099ecad8937e9ed016aeec854ebb95a5a5141b1aede0070238e242"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:CausalMetaLearning",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/CausalMetaLearning@1.0.0",
+      "description": "Layer-0 module eosCausalMetaLearning.ts",
+      "purl": "pkg:npm/glorian/CausalMetaLearning@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e29ce349c1ffb3bb3e341b7677099b2c896e53e4112bd9cf56a510bf74e48a6c"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:CausalMetaLearning",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/CausalMetaLearning@1.0.0",
+      "description": "Layer-0 module eosCausalMetaLearning.types.ts",
+      "purl": "pkg:npm/glorian/CausalMetaLearning@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f3b1592bdb522d3a01e30ba3568c4da6771bec33f339a7f763c1673bd135a10a"
         }
       ]
     },
@@ -4286,7 +4314,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b8e3ca79964fadbc2848a20e7b00d8c66a7ec03eada1abbfb59ae55f7e24e794"
+          "content": "97c9170c3754209bb588a696fbfc3a564e6f22bb1504f123a67bb9cd962a37aa"
         }
       ]
     },
@@ -8094,7 +8122,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "73ad25a43439873a698bec09c2be5a2c7d3083c0e31026769551a43ac3b9792c"
+          "content": "4225d44dd15568c462cea89723a820ab64add997b8f22da45ad85cc0a9bf6ecf"
         }
       ]
     },
@@ -8326,6 +8354,12 @@
       "ref": "pkg:npm/glorian/CanaryAnalysisEngine@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/CausalMetaLearning@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -10128,7 +10162,9 @@
         "pkg:npm/glorian/CausalStructuralModel@1.0.0",
         "pkg:npm/glorian/AgenticHarnessYield@1.0.0",
         "pkg:npm/glorian/ClosedLoopRepoAutopilot@1.0.0",
-        "pkg:npm/glorian/MetamorphicDifferentialBlindSpot@1.0.0"
+        "pkg:npm/glorian/MetamorphicDifferentialBlindSpot@1.0.0",
+        "pkg:npm/glorian/NeuromorphicPlanner@1.0.0",
+        "pkg:npm/glorian/CausalMetaLearning@1.0.0"
       ]
     }
   ]

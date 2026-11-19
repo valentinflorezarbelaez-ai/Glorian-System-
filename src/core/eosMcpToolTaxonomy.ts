@@ -210,4 +210,5 @@ export const PHASE8_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
   "eos_zk_circuit_synthesizer_audit",
   "eos_sharded_transaction_mesh_audit",
   "eos_neuromorphic_planner_audit",
+  "eos_causal_meta_learning_audit",
 ]);

@@ -1,7 +1,7 @@
 {
-  "receiptId": "NSP_EVD_1795100940930",
+  "receiptId": "NSP_EVD_1795104586975",
   "specId": "SPEC-349",
-  "timestamp": "2026-11-19T15:09:00.927Z",
+  "timestamp": "2026-11-19T16:09:46.973Z",
   "satSolverVerified": true,
   "boundPropagationVerified": true,
   "inductiveSynthesisVerified": true,
@@ -13,5 +13,5 @@
     "CegarRefinementLoop"
   ],
   "status": "VERIFIED",
-  "proofCertificateSha256": "dd29ccd6d7a154802583a4392a80ed835a96bc427a1393812ac8a687578dbe60"
+  "proofCertificateSha256": "35cc61d240440590e71ccbe2069ab4dd75c84d47e8bf1cbd11930ca32b08f65a"
 }

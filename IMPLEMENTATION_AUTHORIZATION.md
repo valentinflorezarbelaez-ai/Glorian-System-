@@ -3310,3 +3310,16 @@
   - `docs/plans/PLAN-214-neuromorphic-hyper-heuristic-planner.md`
   - `docs/tasks/TASKS-214-neuromorphic-hyper-heuristic-planner.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-19-CAUSAL-META-LEARNING
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-215` (`SPEC-353`), Autonomous Causal Meta-Learning & Counterfactual Policy Engine: TLA+ Model 96 `docs/formal/CausalMetaLearning.tla` / `.cfg`; `src/core/eosCausalMetaLearning.types.ts` and `src/core/eosCausalMetaLearning.ts` (pure Layer-0 Structural Causal Model DAG validator, Pearl's Do-Calculus graph surgery with parent mutilation, Backdoor Criterion admissible adjustment set blocking, 3-step algorithmic counterfactual evaluator Abduction-Action-Prediction, and invariant causal policy meta-distillation); receipt `docs/evidence/CAUSAL_META_LEARNING_RECEIPT.json`. Wire `toolchain:causal:intervene`, `toolchain:causal:counterfactual`, `toolchain:causal:audit` and Phase 8 MCP tool `eos_causal_meta_learning_audit`. Verify `BDD-1897`..`BDD-1902`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-215-CAUSAL-META-LEARNING.md`
+  - `openspec/changes/CHANGE-215-causal-meta-learning-counterfactual-engine.md`
+  - `openspec/specs/SPEC-353-causal-meta-learning-counterfactual-engine.md`
+  - `docs/plans/PLAN-215-CAUSAL-META-LEARNING.md`
+  - `docs/tasks/TASKS-215-CAUSAL-META-LEARNING.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

@@ -29,6 +29,7 @@ import { EosSpecDriftDetector } from "../../core/eosSpecDriftDetector.ts";
 import { EosZkCircuitSynthesizerCore } from "../../core/eosZkCircuitSynthesizer.ts";
 import { EosShardedTransactionFabricCore } from "../../core/eosShardedTransactionFabric.ts";
 import { EosHyperHeuristicPlannerCore } from "../../core/eosNeuromorphicPlanner.ts";
+import { EosCausalMetaLearningCore } from "../../core/eosCausalMetaLearning.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 import { PHASE8_MIGRATED_TOOL_NAMES } from "./eosMcpPhase8ToolNames.ts";
 
@@ -236,5 +237,6 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_sharded_transaction_mesh_audit: () => EosShardedTransactionFabricCore.audit(projectRoot),
 
     eos_neuromorphic_planner_audit: () => EosHyperHeuristicPlannerCore.audit(projectRoot),
+    eos_causal_meta_learning_audit: () => EosCausalMetaLearningCore.audit(projectRoot),
   };
 }

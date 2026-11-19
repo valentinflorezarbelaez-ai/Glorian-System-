@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "b93d981749520792f9d6e37dc0503d4e4804cdd30fc94fbb2049eff5aa4a8ffd",
-  "totalTools": 228,
+  "catalogSha256": "e8610025adca2a7fa6f8551c5dcd59916dedcad1097d299b02930d6f86ef483f",
+  "totalTools": 229,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -6978,6 +6978,21 @@
       },
       "annotations": {
         "title": "EOS neuromorphic Planner Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_causal_meta_learning_audit",
+      "description": "Audits the Autonomous Causal Meta-Learning & Counterfactual Policy Engine verifying SCM DAG acyclicity, Pearl's Do-calculus graph mutilation, backdoor criterion, and 3-step counterfactuals (SPEC-353).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS causal Meta Learning Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

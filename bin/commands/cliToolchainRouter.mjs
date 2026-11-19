@@ -225,6 +225,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliNeuromorphicPlanner.mjs",
     fn: "handleNeuromorphicPlannerCommand",
   },
+  {
+    prefix: "toolchain:causal:",
+    file: "./cliCausalMetaLearning.mjs",
+    fn: "handleCausalMetaLearningCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {
