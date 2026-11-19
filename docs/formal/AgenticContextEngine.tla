@@ -13,7 +13,7 @@ VARIABLES
 
 vars == <<phase, injectionDetected, tokenBudgetPreserved, semanticRecallValid, quarantineTaintCount, auditsSealed>>
 
-PHASES == {"IDLE", "SANITIZED", "CHUNKED", "RETRIEVED", "COMPACTED", "SEALED"}
+PHASES == {"IDLE", "SANITIZED", "CHUNKED", "RETRIEVED", "COMPACTED", "TAINT_QUARANTINED", "SEALED"}
 
 Init ==
   /\ phase = "IDLE"
@@ -33,9 +33,17 @@ SanitizePromptClean ==
 
 SanitizePromptInjection ==
   /\ phase = "IDLE"
-  /\ phase' = "IDLE"
+  /\ auditsSealed < MaxAudits
+  /\ phase' = "TAINT_QUARANTINED"
   /\ injectionDetected' = TRUE
-  /\ quarantineTaintCount' = quarantineTaintCount + 1
+  /\ quarantineTaintCount' = 1
+  /\ UNCHANGED <<tokenBudgetPreserved, semanticRecallValid, auditsSealed>>
+
+ResetFromTaint ==
+  /\ phase = "TAINT_QUARANTINED"
+  /\ phase' = "IDLE"
+  /\ injectionDetected' = FALSE
+  /\ quarantineTaintCount' = 0
   /\ UNCHANGED <<tokenBudgetPreserved, semanticRecallValid, auditsSealed>>
 
 ChunkCorpus ==
@@ -79,6 +87,7 @@ ResetEngine ==
 Next ==
   \/ SanitizePromptClean
   \/ SanitizePromptInjection
+  \/ ResetFromTaint
   \/ ChunkCorpus
   \/ IndexAndRetrieve
   \/ CompactContext
@@ -92,7 +101,7 @@ TypeOK ==
   /\ injectionDetected \in BOOLEAN
   /\ tokenBudgetPreserved \in BOOLEAN
   /\ semanticRecallValid \in BOOLEAN
-  /\ quarantineTaintCount \in Nat
+  /\ quarantineTaintCount \in 0..1
   /\ auditsSealed \in 0..MaxAudits
 
 ZeroTaintInvariant ==
