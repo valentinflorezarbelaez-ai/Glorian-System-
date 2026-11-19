@@ -8,11 +8,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { EosRingAllReduceCore } from "../../src/core/eosRingAllReduce.ts";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "../..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/RING_ALLREDUCE_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("RING_ALLREDUCE_RECEIPT.json", ROOT);
 
 function parseFlagValue(args, prefix, defaultValue) {
   const arg = args.find((a) => a.startsWith(prefix));
