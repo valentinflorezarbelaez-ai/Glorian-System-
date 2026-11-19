@@ -423,4 +423,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_multi_node_swarm_mesh_audit",
+    description:
+      "Audits the Decentralized Multi-Node Swarm Clustering & P2P Mesh Gossip engine verifying discrete node identity, P2P handshake, Scuttlebutt epidemic anti-entropy gossip, Merkle-DAG distributed transaction replication, and cross-node task work-stealing (SPEC-365).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

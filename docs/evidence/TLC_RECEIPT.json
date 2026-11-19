@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-19T19:39:56.368Z",
+  "timestampIso": "2026-11-19T20:15:56.726Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -7,7 +7,7 @@
   "allPassed": true,
   "hasJavaRuntime": true,
   "tlaJarPath": "C:\\Users\\valen\\Documents\\Glorian-System\\tools\\tla2tools.jar",
-  "totalConfiguredSpecs": 66,
+  "totalConfiguredSpecs": 70,
   "models": [
     {
       "specName": "LmaxDisruptor",
@@ -67,8 +67,8 @@
       "specName": "ZeroCopyRingBuffer",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 569,
-      "statesGenerated": 782,
+      "distinctStates": 405,
+      "statesGenerated": 99,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -76,8 +76,8 @@
       "specName": "JepsenDistributedChaos",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 116,
-      "statesGenerated": 10,
+      "distinctStates": 594,
+      "statesGenerated": 180,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -85,8 +85,8 @@
       "specName": "SimdQuantizedHnsw",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 319,
-      "statesGenerated": 889,
+      "distinctStates": 528,
+      "statesGenerated": 895,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -220,8 +220,8 @@
       "specName": "DistributedKvCacheReplication",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 9261,
-      "statesGenerated": 44983,
+      "distinctStates": 154,
+      "statesGenerated": 213,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -265,8 +265,8 @@
       "specName": "DiscreteEventSimulationHypervisor",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 2850,
-      "statesGenerated": 11721,
+      "distinctStates": 821,
+      "statesGenerated": 966,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -600,6 +600,42 @@
       "passed": true,
       "distinctStates": 1224,
       "statesGenerated": 4014,
+      "violationInvariant": null,
+      "exitCode": 0
+    },
+    {
+      "specName": "AutonomousSentinelDaemon",
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 175,
+      "statesGenerated": 388,
+      "violationInvariant": null,
+      "exitCode": 0
+    },
+    {
+      "specName": "VoiceNeuralInterface",
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 172,
+      "statesGenerated": 326,
+      "violationInvariant": null,
+      "exitCode": 0
+    },
+    {
+      "specName": "FleetChaosFdirEngine",
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 183,
+      "statesGenerated": 406,
+      "violationInvariant": null,
+      "exitCode": 0
+    },
+    {
+      "specName": "MultiNodeSwarmMesh",
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 20307,
+      "statesGenerated": 87183,
       "violationInvariant": null,
       "exitCode": 0
     }

@@ -744,6 +744,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:chaos:fdir [--json] Estado actual de aislamiento y auto-sanación en los 9 repositorios (SPEC-364)
   eos toolchain:chaos:fleet [--json] Batería de resiliencia de flota y certificación MTTR < 500ms (SPEC-364)
   eos toolchain:chaos:audit [--json] Auditoría determinista del motor de caos y recibo formal SHA-256 (SPEC-364)
+  eos toolchain:mesh:peer [NODE_ID] Handshake P2P y registro de pares en la malla distribuida (SPEC-365)
+  eos toolchain:mesh:gossip [--json] Difusión de compendio de chisme epidémico y vectores de versión (SPEC-365)
+  eos toolchain:mesh:status [--json] Estado topológico, raíz de Merkle y profundidad de colas de tareas (SPEC-365)
+  eos toolchain:mesh:audit [--json] Auditoría formal de convergencia P2P, Merkle-DAG y Work-Steal (SPEC-365)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

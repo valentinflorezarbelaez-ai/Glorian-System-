@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "399f2a95637c62f31ca215e0c9d73b3eff3c7ef55fdf7a39f35157b97b4cb6f6",
-  "totalTools": 240,
+  "catalogSha256": "c224accc26204461506c77782458c55073e88f81edc40bfa643aef5323a735a2",
+  "totalTools": 241,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7158,6 +7158,21 @@
       },
       "annotations": {
         "title": "EOS fleet Chaos Monkey Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_multi_node_swarm_mesh_audit",
+      "description": "Audits the Decentralized Multi-Node Swarm Clustering & P2P Mesh Gossip engine verifying discrete node identity, P2P handshake, Scuttlebutt epidemic anti-entropy gossip, Merkle-DAG distributed transaction replication, and cross-node task work-stealing (SPEC-365).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS multi Node Swarm Mesh Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

@@ -766,3 +766,5 @@ export * from "./eosVoiceNeuralInterface.ts";
 export * from "./eosVoiceNeuralInterface.types.ts";
 export * from "./eosFleetChaosMonkey.ts";
 export * from "./eosFleetChaosMonkey.types.ts";
+export * from "./eosMultiNodeSwarmMesh.ts";
+export * from "./eosMultiNodeSwarmMesh.types.ts";

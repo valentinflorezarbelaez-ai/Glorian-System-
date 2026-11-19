@@ -109,6 +109,7 @@ export const CONFIGURED_SPECS = [
   "AutonomousSentinelDaemon",
   "VoiceNeuralInterface",
   "FleetChaosFdirEngine",
+  "MultiNodeSwarmMesh",
 ];
 
 /**

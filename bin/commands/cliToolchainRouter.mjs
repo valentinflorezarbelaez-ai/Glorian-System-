@@ -285,6 +285,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliFleetChaosMonkey.mjs",
     fn: "handleFleetChaosMonkeyCommand",
   },
+  {
+    prefix: "toolchain:mesh:",
+    file: "./cliMultiNodeSwarmMesh.mjs",
+    fn: "handleMultiNodeSwarmMeshCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

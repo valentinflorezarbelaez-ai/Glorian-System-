@@ -3501,3 +3501,21 @@
   - `docs/plans/PLAN-226-FLEET-CHAOS-FDIR.md`
   - `docs/tasks/TASKS-226-FLEET-CHAOS-FDIR.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-MULTI-NODE-SWARM-MESH`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-227` / `SPEC-365`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-227` (`SPEC-365`), Decentralized Multi-Node Swarm Clustering & P2P Mesh Gossip: TLA+ Model 108 `docs/formal/MultiNodeSwarmMesh.tla` / `.cfg`; `src/core/eosMultiNodeSwarmMesh.types.ts` and `src/core/eosMultiNodeSwarmMesh.ts` (pure Layer-0 decentralized P2P transport, Scuttlebutt epidemic anti-entropy gossip, BFT distributed consensus, Merkle-DAG state replication, cross-node task work-stealing); receipt `docs/evidence/MULTI_NODE_SWARM_MESH_RECEIPT.json`. Wire `toolchain:mesh:peer`, `toolchain:mesh:gossip`, `toolchain:mesh:status`, `toolchain:mesh:audit` and Phase 8 MCP tool `eos_multi_node_swarm_mesh_audit`. Verify `BDD-1969`..`BDD-1974`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-227-MULTI-NODE-SWARM-MESH.md`
+  - `openspec/changes/CHANGE-227-multi-node-swarm-mesh.md`
+  - `openspec/specs/SPEC-365-multi-node-swarm-mesh.md`
+  - `docs/plans/PLAN-227-MULTI-NODE-SWARM-MESH.md`
+  - `docs/tasks/TASKS-227-MULTI-NODE-SWARM-MESH.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

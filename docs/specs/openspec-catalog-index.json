@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 364,
-  "catalogSha256": "db87aa8429e0f4cd75dfba653dbfa50936194c95bda543bf6103eb7f3a2e5384",
+  "totalSpecs": 365,
+  "catalogSha256": "86a4a8b0123a1d0440337682a8fff7bde1ca0d4f670f65b34d1441c982c2cee0",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3277,7 +3277,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-364-fleet-chaos-fdir.md",
-      "sha256": "0098687f3b3715646df5f4c386924519c98aae3ad31aa7a6e40d0e45c14a453c"
+      "sha256": "e2d533a0552c00702e43f1f07431b10d1abd66908005188d813250b4caf48b8c"
+    },
+    {
+      "id": "SPEC-365",
+      "title": "Decentralized Multi-Node Swarm Clustering & P2P Mesh Gossip",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-365-multi-node-swarm-mesh.md",
+      "sha256": "0cac89f2633f64c318813fd36e7b596814fddeacc4917e296d3421878800dcc6"
     }
   ]
 }

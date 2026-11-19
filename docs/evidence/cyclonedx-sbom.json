@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:c24e870b-a67d-4d7c-abce-32acaa76f575",
+  "serialNumber": "urn:uuid:0b6682ba-f92b-46ca-9553-a9ec758a01c7",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T20:06:04.567Z",
+    "timestamp": "2026-11-19T20:18:18.735Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -2900,7 +2900,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b891804429097e4ada9dfd7e275e47ee123c97901b4c4b7f28254df835fe9b40"
+          "content": "096a3ee64085ed6d3f54bf1c44e43957746359b8833a067e16c9b71330246ab5"
         }
       ]
     },
@@ -2914,7 +2914,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "50ba5162ba7427b26494b04b977a939a721e5d052a08ed740f446db7505dbd4f"
+          "content": "de2985d866f37c63f8ec00fbfb81ccf69ec8bd561630c9f06bf111576b6043ac"
         }
       ]
     },
@@ -4510,7 +4510,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "fe78deaf6a97e23510634ad1df23ffd8aec2b9c88307a037de0482d9cbaae3ba"
+          "content": "5537c60613dc55a6df3f075f53382225d74aa76dfe81de2add3e9042197d04b6"
         }
       ]
     },
@@ -4833,6 +4833,34 @@
         {
           "alg": "SHA-256",
           "content": "efcbc194fd0f74edd3fb17d7877e6f51e456dce720a75585ac34d9d72a448fe5"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:MultiNodeSwarmMesh",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/MultiNodeSwarmMesh@1.0.0",
+      "description": "Layer-0 module eosMultiNodeSwarmMesh.ts",
+      "purl": "pkg:npm/glorian/MultiNodeSwarmMesh@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ad372da53865d1eaa39a86950b6139e6c8b6e2702ef518547d0f3a6eced3f0e0"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:MultiNodeSwarmMesh",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/MultiNodeSwarmMesh@1.0.0",
+      "description": "Layer-0 module eosMultiNodeSwarmMesh.types.ts",
+      "purl": "pkg:npm/glorian/MultiNodeSwarmMesh@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "07c41c22a2224caf4dc192e1f732eb59bd97431710bccf6cc2fc57c1bf842cc6"
         }
       ]
     },
@@ -8430,7 +8458,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0475c6aa8a02ae4ee0fe3d15b05549ae188fde8579ab512668d8c32b84454b82"
+          "content": "5e2f316af28bd8523483ba816e5f964ea4e089c4d61ea72b33d864df5ce3afd9"
         }
       ]
     },
@@ -10525,7 +10553,8 @@
         "pkg:npm/glorian/GlorianLiveStudio@1.0.0",
         "pkg:npm/glorian/AutonomousSentinelDaemon@1.0.0",
         "pkg:npm/glorian/VoiceNeuralInterface@1.0.0",
-        "pkg:npm/glorian/FleetChaosMonkey@1.0.0"
+        "pkg:npm/glorian/FleetChaosMonkey@1.0.0",
+        "pkg:npm/glorian/MultiNodeSwarmMesh@1.0.0"
       ]
     }
   ]

@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:cffd909a-f12a-51c6-bdcc-0a07cfcc316d",
+  "serialNumber": "urn:uuid:520b4ac7-63c1-56dc-8cd6-6128eb36c074",
   "version": 1,
   "metadata": {
-    "timestamp": "2020-07-23T17:55:38.000Z",
+    "timestamp": "2023-08-12T09:15:51.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "625a8b252c622cdd7267e6d969c7ae99273fef47753ff4cc0c04a3435654928e"
+          "content": "fc31f931737d7597998532d8201b9642531a323fb13b7497b1d25784f59ee5c6"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -2704,7 +2704,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b891804429097e4ada9dfd7e275e47ee123c97901b4c4b7f28254df835fe9b40"
+          "content": "096a3ee64085ed6d3f54bf1c44e43957746359b8833a067e16c9b71330246ab5"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosFleetChaosMonkey.ts"
@@ -2717,7 +2717,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "50ba5162ba7427b26494b04b977a939a721e5d052a08ed740f446db7505dbd4f"
+          "content": "de2985d866f37c63f8ec00fbfb81ccf69ec8bd561630c9f06bf111576b6043ac"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosFleetChaosMonkey.types.ts"
@@ -4199,7 +4199,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "fe78deaf6a97e23510634ad1df23ffd8aec2b9c88307a037de0482d9cbaae3ba"
+          "content": "5537c60613dc55a6df3f075f53382225d74aa76dfe81de2add3e9042197d04b6"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosMcpToolTaxonomy.ts"
@@ -4502,6 +4502,32 @@
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosMultiModelRouter.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosMultiNodeSwarmMesh.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosMultiNodeSwarmMesh.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ad372da53865d1eaa39a86950b6139e6c8b6e2702ef518547d0f3a6eced3f0e0"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosMultiNodeSwarmMesh.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosMultiNodeSwarmMesh.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosMultiNodeSwarmMesh.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "07c41c22a2224caf4dc192e1f732eb59bd97431710bccf6cc2fc57c1bf842cc6"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosMultiNodeSwarmMesh.types.ts"
     },
     {
       "type": "file",
@@ -7839,7 +7865,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0475c6aa8a02ae4ee0fe3d15b05549ae188fde8579ab512668d8c32b84454b82"
+          "content": "5e2f316af28bd8523483ba816e5f964ea4e089c4d61ea72b33d864df5ce3afd9"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: index.ts"
@@ -7910,5 +7936,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "e6ef25bb8da8c946f600e77969b220e75d740a42fbe958fae83720224fb6e4d0"
+  "sha256Receipt": "0c0c20ac2047d90339f525d83329564833484d9290fdb9f0e4b71133a5326c97"
 }
