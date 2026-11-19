@@ -770,3 +770,5 @@ export * from "./eosMultiNodeSwarmMesh.ts";
 export * from "./eosMultiNodeSwarmMesh.types.ts";
 export * from "./eosSweBenchEvalFlywheel.ts";
 export * from "./eosSweBenchEvalFlywheel.types.ts";
+export * from "./eosDynamicToolSynthesis.ts";
+export * from "./eosDynamicToolSynthesis.types.ts";

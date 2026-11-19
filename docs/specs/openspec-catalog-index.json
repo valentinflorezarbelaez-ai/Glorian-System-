@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 366,
-  "catalogSha256": "bcef353ca2178780dd3bc8efeb9f40732842c54f11296e9f1f5a34bcc334437f",
+  "totalSpecs": 367,
+  "catalogSha256": "a78661f9186a17ce42f5e347d84047cc45a1b9cd06cb05941af56a944338db44",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3295,7 +3295,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-366-swe-bench-evals-flywheel.md",
-      "sha256": "3fd02ad39f4ef7bf967de71a15b9d0e0766b20a257053f6cc9504360c6d528a3"
+      "sha256": "ea89b834e9577de85a80f61ab2c5565390b3f9f90492b0b2c11d84b9016923e8"
+    },
+    {
+      "id": "SPEC-367",
+      "title": "Autonomous Dynamic Tool Synthesis & JIT Skill Compiler",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-367-dynamic-tool-synthesis.md",
+      "sha256": "8ff9d1c2ec8eea8641e1a789b96daaf53c374befcd0017b16d5692d23f013053"
     }
   ]
 }

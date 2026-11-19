@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "9c9f51f9b9258fa9f21e5467931e25ba186cfe7d98a23079d7bc3dc94906af72",
-  "totalTools": 242,
+  "catalogSha256": "5396caff111bd25c395fea82e01e185af0195ee76f64db666dafeb16f2a30416",
+  "totalTools": 243,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7188,6 +7188,21 @@
       },
       "annotations": {
         "title": "EOS swe Bench Eval Flywheel Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_dynamic_tool_synthesis_audit",
+      "description": "Audits the Autonomous Dynamic Tool Synthesis & JIT Skill Compiler verifying OpenAPI/CLI schema parsing, sandboxed execution security, zero-downtime hot registration, and atomic rollback safety (SPEC-367).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS dynamic Tool Synthesis Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

@@ -3537,3 +3537,21 @@
   - `docs/plans/PLAN-228-SWE-BENCH-EVALS-FLYWHEEL.md`
   - `docs/tasks/TASKS-228-SWE-BENCH-EVALS-FLYWHEEL.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-DYNAMIC-TOOL-SYNTHESIS`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-229` / `SPEC-367`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-229` (`SPEC-367`), Autonomous Dynamic Tool Synthesis & JIT Skill Compiler: TLA+ Model 110 `docs/formal/DynamicToolSynthesis.tla` / `.cfg`; `src/core/eosDynamicToolSynthesis.types.ts` and `src/core/eosDynamicToolSynthesis.ts` (pure Layer-0 OpenAPI/CLI schema parsing, sandbox handler verification, zero-downtime hot dispatch registration, invocation telemetry); receipt `docs/evidence/DYNAMIC_TOOL_SYNTHESIS_RECEIPT.json`. Wire `toolchain:jit:synthesize`, `toolchain:jit:compile`, `toolchain:jit:tools`, `toolchain:jit:audit` and Phase 8 MCP tool `eos_dynamic_tool_synthesis_audit`. Verify `BDD-1981`..`BDD-1986`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-229-DYNAMIC-TOOL-SYNTHESIS.md`
+  - `openspec/changes/CHANGE-229-dynamic-tool-synthesis.md`
+  - `openspec/specs/SPEC-367-dynamic-tool-synthesis.md`
+  - `docs/plans/PLAN-229-DYNAMIC-TOOL-SYNTHESIS.md`
+  - `docs/tasks/TASKS-229-DYNAMIC-TOOL-SYNTHESIS.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

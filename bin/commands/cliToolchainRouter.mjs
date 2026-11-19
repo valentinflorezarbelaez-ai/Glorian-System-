@@ -295,6 +295,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliSweBenchEvalFlywheel.mjs",
     fn: "handleSweBenchEvalFlywheelCommand",
   },
+  {
+    prefix: "toolchain:jit:",
+    file: "./cliDynamicToolSynthesis.mjs",
+    fn: "handleDynamicToolSynthesisCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

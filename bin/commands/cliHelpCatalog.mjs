@@ -752,6 +752,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:eval:synthetic [REPO] Minería de desafío sintético desde el historial de Git (SPEC-366)
   eos toolchain:eval:matrix [--json] Matriz comparativa de desempeño pass@k en los 9 repositorios (SPEC-366)
   eos toolchain:eval:audit [--json] Auditoría del harness de evaluación y recibo formal SHA-256 (SPEC-366)
+  eos toolchain:jit:synthesize [NAME] Síntesis autónoma de herramienta desde OpenAPI o esquema (SPEC-367)
+  eos toolchain:jit:compile [NAME] Compilación JIT, validación en sandbox y registro en vivo (SPEC-367)
+  eos toolchain:jit:tools [--json] Lista de herramientas dinámicas registradas en la tabla de despacho (SPEC-367)
+  eos toolchain:jit:audit [--json] Auditoría diagnóstica completa del compilador JIT y recibo formal (SPEC-367)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

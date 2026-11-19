@@ -441,4 +441,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_dynamic_tool_synthesis_audit",
+    description:
+      "Audits the Autonomous Dynamic Tool Synthesis & JIT Skill Compiler verifying OpenAPI/CLI schema parsing, sandboxed execution security, zero-downtime hot registration, and atomic rollback safety (SPEC-367).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

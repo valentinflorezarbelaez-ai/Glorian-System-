@@ -111,6 +111,7 @@ export const CONFIGURED_SPECS = [
   "FleetChaosFdirEngine",
   "MultiNodeSwarmMesh",
   "SweBenchEvalFlywheel",
+  "DynamicToolSynthesis",
 ];
 
 /**
