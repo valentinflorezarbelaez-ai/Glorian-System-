@@ -414,4 +414,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_fleet_chaos_monkey_audit",
+    description:
+      "Audits the Fleet Chaos Monkey and Autonomous FDIR Engine verifying multi-vector chaos injection across 6 failure modes, reversible overlay mutation, automated MTTR tracking, and safe unquench rollbacks (SPEC-364).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

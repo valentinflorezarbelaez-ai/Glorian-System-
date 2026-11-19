@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:aa9543f7-2311-4d5a-a213-729d62585e62",
+  "serialNumber": "urn:uuid:c24e870b-a67d-4d7c-abce-32acaa76f575",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T19:55:36.257Z",
+    "timestamp": "2026-11-19T20:06:04.567Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -2892,6 +2892,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:FleetChaosMonkey",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/FleetChaosMonkey@1.0.0",
+      "description": "Layer-0 module eosFleetChaosMonkey.ts",
+      "purl": "pkg:npm/glorian/FleetChaosMonkey@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b891804429097e4ada9dfd7e275e47ee123c97901b4c4b7f28254df835fe9b40"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:FleetChaosMonkey",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/FleetChaosMonkey@1.0.0",
+      "description": "Layer-0 module eosFleetChaosMonkey.types.ts",
+      "purl": "pkg:npm/glorian/FleetChaosMonkey@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "50ba5162ba7427b26494b04b977a939a721e5d052a08ed740f446db7505dbd4f"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:FleetDispatcher",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/FleetDispatcher@1.0.0",
@@ -4482,7 +4510,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0b30d5c11113fe84dcebbfcbd1a0db726f6b4c9889237088a34e9e2007356895"
+          "content": "fe78deaf6a97e23510634ad1df23ffd8aec2b9c88307a037de0482d9cbaae3ba"
         }
       ]
     },
@@ -8402,7 +8430,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5502c04437f1c4736bf56fdc59a2b020f33b04d95269a8c5ffaafce39b37ba31"
+          "content": "0475c6aa8a02ae4ee0fe3d15b05549ae188fde8579ab512668d8c32b84454b82"
         }
       ]
     },
@@ -10496,7 +10524,8 @@
         "pkg:npm/glorian/InductiveProofEngine@1.0.0",
         "pkg:npm/glorian/GlorianLiveStudio@1.0.0",
         "pkg:npm/glorian/AutonomousSentinelDaemon@1.0.0",
-        "pkg:npm/glorian/VoiceNeuralInterface@1.0.0"
+        "pkg:npm/glorian/VoiceNeuralInterface@1.0.0",
+        "pkg:npm/glorian/FleetChaosMonkey@1.0.0"
       ]
     }
   ]

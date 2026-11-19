@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "2bdf0c62fd36737086342aa386820d066f96573f60689baeca0bee77e9b0647a",
-  "totalTools": 239,
+  "catalogSha256": "399f2a95637c62f31ca215e0c9d73b3eff3c7ef55fdf7a39f35157b97b4cb6f6",
+  "totalTools": 240,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7143,6 +7143,21 @@
       },
       "annotations": {
         "title": "EOS voice Neural Interface Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_fleet_chaos_monkey_audit",
+      "description": "Audits the Fleet Chaos Monkey and Autonomous FDIR Engine verifying multi-vector chaos injection across 6 failure modes, reversible overlay mutation, automated MTTR tracking, and safe unquench rollbacks (SPEC-364).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS fleet Chaos Monkey Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

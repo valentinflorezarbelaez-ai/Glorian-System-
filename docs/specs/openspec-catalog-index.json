@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 363,
-  "catalogSha256": "55a40345d8e5f2d85de1179f01d0c7ce253232726f104e90d36210e599669b40",
+  "totalSpecs": 364,
+  "catalogSha256": "db87aa8429e0f4cd75dfba653dbfa50936194c95bda543bf6103eb7f3a2e5384",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3268,7 +3268,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-363-voice-neural-interface.md",
-      "sha256": "6e4edaa9160733b553b8a7e256064d2bb575b157f395bf2016f26c46fe6eed80"
+      "sha256": "c0287966839820e1e4df99fd67e731201ab797700ee46ad2f7322d23d0dc1a74"
+    },
+    {
+      "id": "SPEC-364",
+      "title": "Fleet Chaos Monkey & Autonomous FDIR Engine",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-364-fleet-chaos-fdir.md",
+      "sha256": "0098687f3b3715646df5f4c386924519c98aae3ad31aa7a6e40d0e45c14a453c"
     }
   ]
 }

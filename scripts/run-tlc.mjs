@@ -108,6 +108,7 @@ export const CONFIGURED_SPECS = [
   "GlorianLiveStudio",
   "AutonomousSentinelDaemon",
   "VoiceNeuralInterface",
+  "FleetChaosFdirEngine",
 ];
 
 /**

@@ -221,4 +221,5 @@ export const PHASE8_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
   "eos_glorian_live_studio_audit",
   "eos_autonomous_sentinel_audit",
   "eos_voice_neural_interface_audit",
+  "eos_fleet_chaos_monkey_audit",
 ]);

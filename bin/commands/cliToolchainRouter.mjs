@@ -280,6 +280,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliVoiceNeuralInterface.mjs",
     fn: "handleVoiceNeuralInterfaceCommand",
   },
+  {
+    prefix: "toolchain:chaos:",
+    file: "./cliFleetChaosMonkey.mjs",
+    fn: "handleFleetChaosMonkeyCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

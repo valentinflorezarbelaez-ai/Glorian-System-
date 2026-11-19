@@ -764,3 +764,5 @@ export * from "./eosAutonomousSentinelDaemon.ts";
 export * from "./eosAutonomousSentinelDaemon.types.ts";
 export * from "./eosVoiceNeuralInterface.ts";
 export * from "./eosVoiceNeuralInterface.types.ts";
+export * from "./eosFleetChaosMonkey.ts";
+export * from "./eosFleetChaosMonkey.types.ts";

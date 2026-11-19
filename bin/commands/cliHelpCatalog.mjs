@@ -740,6 +740,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:voice:vad [--json] Evaluación matemática de Voice Activity Detection (RMS + ZCR) (SPEC-363)
   eos toolchain:voice:stream [--json] Negociación de token efímero de streaming de voz (SPEC-363)
   eos toolchain:voice:audit [--json] Auditoría formal del motor de voz, framing PCM y recibo (SPEC-363)
+  eos toolchain:chaos:inject [--vector=V] [--repo=R] Inyección de fallos controlados y medición de FDIR (SPEC-364)
+  eos toolchain:chaos:fdir [--json] Estado actual de aislamiento y auto-sanación en los 9 repositorios (SPEC-364)
+  eos toolchain:chaos:fleet [--json] Batería de resiliencia de flota y certificación MTTR < 500ms (SPEC-364)
+  eos toolchain:chaos:audit [--json] Auditoría determinista del motor de caos y recibo formal SHA-256 (SPEC-364)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

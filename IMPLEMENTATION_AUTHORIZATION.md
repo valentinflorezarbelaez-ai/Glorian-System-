@@ -3483,3 +3483,21 @@
   - `docs/plans/PLAN-225-VOICE-NEURAL-INTERFACE.md`
   - `docs/tasks/TASKS-225-VOICE-NEURAL-INTERFACE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-FLEET-CHAOS-FDIR`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-226` / `SPEC-364`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-226` (`SPEC-364`), Fleet Chaos Monkey & Autonomous FDIR Engine: TLA+ Model 107 `docs/formal/FleetChaosFdirEngine.tla` / `.cfg`; `src/core/eosFleetChaosMonkey.types.ts` and `src/core/eosFleetChaosMonkey.ts` (pure Layer-0 controlled fault injection across 6 vectors, sub-50ms anomaly detection, sandboxed blast-radius isolation, Raft swarm self-healing, quantitative MTTR < 500ms certification across all 9 fleet repositories); receipt `docs/evidence/FLEET_CHAOS_MONKEY_RECEIPT.json`. Wire `toolchain:chaos:inject`, `toolchain:chaos:fdir`, `toolchain:chaos:fleet`, `toolchain:chaos:audit` and Phase 8 MCP tool `eos_fleet_chaos_monkey_audit`. Verify `BDD-1963`..`BDD-1968`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-226-FLEET-CHAOS-FDIR.md`
+  - `openspec/changes/CHANGE-226-fleet-chaos-fdir.md`
+  - `openspec/specs/SPEC-364-fleet-chaos-fdir.md`
+  - `docs/plans/PLAN-226-FLEET-CHAOS-FDIR.md`
+  - `docs/tasks/TASKS-226-FLEET-CHAOS-FDIR.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
