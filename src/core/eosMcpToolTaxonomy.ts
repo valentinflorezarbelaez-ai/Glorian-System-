@@ -199,6 +199,7 @@ export const PHASE8_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
   "eos_forge_list",
   "eos_forge_tool",
   "eos_knowledge_graph_reflex_audit",
+  "eos_neural_symbolic_prover_audit",
   "eos_ontological_hypergraph_audit",
   "eos_pinn_hamiltonian_audit",
   "eos_pipeline",

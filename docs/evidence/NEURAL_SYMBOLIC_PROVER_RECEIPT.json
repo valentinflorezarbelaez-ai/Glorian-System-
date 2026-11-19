@@ -1,0 +1,17 @@
+{
+  "receiptId": "NSP_EVD_1795095912122",
+  "specId": "SPEC-349",
+  "timestamp": "2026-11-19T13:45:12.121Z",
+  "satSolverVerified": true,
+  "boundPropagationVerified": true,
+  "inductiveSynthesisVerified": true,
+  "cegarRefinementVerified": true,
+  "activeSynthesizers": [
+    "DPLL_CDCL_Solver",
+    "LinearIntervalPropagator",
+    "TraceGuidedInvariantInducer",
+    "CegarRefinementLoop"
+  ],
+  "status": "VERIFIED",
+  "proofCertificateSha256": "59fe553fba482591a5d8f866efeb4e7085b225a40bdad1698c1f212baddfd843"
+}

@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "c1cdeb3be91bfbd99a4db3bbd32128c74a8484abd3b446a431895311dbe16150",
-  "totalTools": 224,
+  "catalogSha256": "54329b7142c6693f8e973ca9b8be5b5fee1e1e76063e263bbbe452ddc17e2a54",
+  "totalTools": 225,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -6918,6 +6918,21 @@
       },
       "annotations": {
         "title": "EOS crdt Memory Sync Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_neural_symbolic_prover_audit",
+      "description": "Audits the Self-Synthesizing Neural-Symbolic Prover verifying DPLL/CDCL SAT solving, linear bound propagation, and CEGAR inductive invariant synthesis (SPEC-349).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS neural Symbolic Prover Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

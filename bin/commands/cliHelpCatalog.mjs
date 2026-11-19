@@ -687,6 +687,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:wasmjit:audit [--json] Auditoría determinista del compilador JIT WebAssembly y recibo SHA-256 (SPEC-347)
   eos toolchain:crdtmem:audit [--json] Auditoría criptográfica de memoria CRDT distribuida y convergencia SEC (SPEC-348)
   eos toolchain:crdtmem:demo [--json] Demostración de sincronización multi-nodo y convergencia eventual fuerte (SPEC-348)
+  eos toolchain:prover:audit [--json] Auditoría del demostrador neural-simbólico e inducción de invariantes (SPEC-349)
+  eos toolchain:prover:sat [--json] Evaluación de satisfacibilidad proposicional con solver CDCL / DPLL (SPEC-349)
+  eos toolchain:prover:synth [--json] Síntesis automática de invariantes inductivos mediante bucle CEGAR (SPEC-349)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

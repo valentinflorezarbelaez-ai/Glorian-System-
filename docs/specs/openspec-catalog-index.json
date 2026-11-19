@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 348,
-  "catalogSha256": "c40aaa927314ecf9eae62250cae10b118fae2fcfa1f4748be472e76e38aa2d63",
+  "totalSpecs": 349,
+  "catalogSha256": "2edc6f7ab88f516643fed80c098eac661c20dc43521dc4088f72df5b08ae0513",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3134,6 +3134,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-348-distributed-crdt-memory.md",
       "sha256": "0ba0d39e0968497845c2cd9657f16d6b92a15aef4724db53edf4756961de5f9c"
+    },
+    {
+      "id": "SPEC-349",
+      "title": "Self-Synthesizing Neural-Symbolic Prover & Inductive Invariant Engine",
+      "status": "SPECIFICATION_APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-349-neural-symbolic-prover.md",
+      "sha256": "66b3fc6cc6fd26be034d5f938dcbd73780768f219382967b8218a557a94ec480"
     }
   ]
 }

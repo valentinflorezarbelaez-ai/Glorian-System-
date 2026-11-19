@@ -93,6 +93,7 @@ export const CONFIGURED_SPECS = [
   "AgenticSwarmBft",
   "AutonomousWasmJitCompiler",
   "DistributedCrdtMemory",
+  "NeuralSymbolicProver",
 ];
 
 /**

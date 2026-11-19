@@ -3258,3 +3258,16 @@
   - `docs/plans/PLAN-210-distributed-crdt-memory.md`
   - `docs/tasks/TASKS-210-distributed-crdt-memory.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-19-NEURAL-SYMBOLIC-PROVER
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-211` (`SPEC-349`), Self-Synthesizing Neural-Symbolic Prover & Inductive Invariant Engine: TLA+ Model 92 `docs/formal/NeuralSymbolicProver.tla` / `.cfg`; `src/core/eosNeuralSymbolicProver.types.ts` and `src/core/eosNeuralSymbolicProver.ts` (pure Layer-0 CDCL SAT solver, 2-watched literals, linear integer interval propagation, trace-guided invariant induction, initiation/consecution/safety verification, CEGAR loop); receipt `docs/evidence/NEURAL_SYMBOLIC_PROVER_RECEIPT.json`. Wire `toolchain:prover:synthesize`, `toolchain:prover:prove`, `toolchain:prover:audit` and Phase 8 MCP tool `eos_neural_symbolic_prover_audit`. Verify `BDD-1873`..`BDD-1878`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-211-NEURAL-SYMBOLIC-PROVER.md`
+  - `openspec/changes/CHANGE-211-neural-symbolic-prover.md`
+  - `openspec/specs/SPEC-349-neural-symbolic-prover.md`
+  - `docs/plans/PLAN-211-neural-symbolic-prover.md`
+  - `docs/tasks/TASKS-211-neural-symbolic-prover.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

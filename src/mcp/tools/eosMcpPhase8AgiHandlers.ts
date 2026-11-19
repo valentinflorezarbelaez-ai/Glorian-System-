@@ -19,6 +19,7 @@ import { EosDynamicToolForge } from "../../core/eosDynamicToolForge.ts";
 import { EosEuvInverseLithographyWavefrontCore } from "../../core/eosEuvInverseLithographyWavefront.ts";
 import { auditKnowledgeGraphReflex } from "../../core/eosKnowledgeGraphReflex.ts";
 import { EosMetamorphicDifferentialBlindSpotCore } from "../../core/eosMetamorphicDifferentialBlindSpot.ts";
+import { EosNeuralSymbolicProverCore } from "../../core/eosNeuralSymbolicProver.ts";
 import { EosOntologicalHypergraphCore } from "../../core/eosOntologicalHypergraph.ts";
 import { EosPhysicsInformedHamiltonianPdeCore } from "../../core/eosPhysicsInformedHamiltonianPde.ts";
 import { EosPipeline } from "../../core/eosPipeline.ts";
@@ -224,5 +225,7 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_wasmjit_compiler_audit: () => EosAutonomousWasmJitCore.audit(projectRoot),
 
     eos_crdt_memory_sync_audit: () => EosDistributedCrdtMemoryCore.auditDistributedCrdtMemory(projectRoot),
+
+    eos_neural_symbolic_prover_audit: () => EosNeuralSymbolicProverCore.audit(projectRoot),
   };
 }

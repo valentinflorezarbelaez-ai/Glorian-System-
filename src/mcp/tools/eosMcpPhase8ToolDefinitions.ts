@@ -279,4 +279,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_neural_symbolic_prover_audit",
+    description:
+      "Audits the Self-Synthesizing Neural-Symbolic Prover verifying DPLL/CDCL SAT solving, linear bound propagation, and CEGAR inductive invariant synthesis (SPEC-349).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

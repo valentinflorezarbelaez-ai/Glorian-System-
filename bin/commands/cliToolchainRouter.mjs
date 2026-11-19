@@ -205,6 +205,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliDistributedCrdtMemory.mjs",
     fn: "handleDistributedCrdtMemoryCommand",
   },
+  {
+    prefix: "toolchain:prover:",
+    file: "./cliNeuralSymbolicProver.mjs",
+    fn: "handleNeuralSymbolicProverCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {
