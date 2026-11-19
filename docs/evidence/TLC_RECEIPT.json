@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-19T13:38:28.667Z",
+  "timestampIso": "2026-11-19T13:48:44.596Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -7,14 +7,14 @@
   "allPassed": true,
   "hasJavaRuntime": true,
   "tlaJarPath": "C:\\Users\\valen\\Documents\\Glorian-System\\tools\\tla2tools.jar",
-  "totalConfiguredSpecs": 53,
+  "totalConfiguredSpecs": 54,
   "models": [
     {
       "specName": "LmaxDisruptor",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 874,
-      "statesGenerated": 266,
+      "distinctStates": 20425,
+      "statesGenerated": 84397,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -67,8 +67,8 @@
       "specName": "ZeroCopyRingBuffer",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 393,
-      "statesGenerated": 141,
+      "distinctStates": 621,
+      "statesGenerated": 326,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -76,8 +76,8 @@
       "specName": "JepsenDistributedChaos",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 7116,
-      "statesGenerated": 23010,
+      "distinctStates": 974,
+      "statesGenerated": 342,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -85,8 +85,8 @@
       "specName": "SimdQuantizedHnsw",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 140,
-      "statesGenerated": 65,
+      "distinctStates": 832,
+      "statesGenerated": 816,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -483,6 +483,15 @@
       "passed": true,
       "distinctStates": 11,
       "statesGenerated": 11,
+      "violationInvariant": null,
+      "exitCode": 0
+    },
+    {
+      "specName": "NeuralSymbolicProver",
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 13,
+      "statesGenerated": 13,
       "violationInvariant": null,
       "exitCode": 0
     }

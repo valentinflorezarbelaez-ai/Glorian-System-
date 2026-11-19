@@ -207,4 +207,5 @@ export const PHASE8_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
   "eos_spec_drift",
   "eos_wasmjit_compiler_audit",
   "eos_web_compiler_audit",
+  "eos_zk_circuit_synthesizer_audit",
 ]);

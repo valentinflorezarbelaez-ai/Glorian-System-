@@ -210,6 +210,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliNeuralSymbolicProver.mjs",
     fn: "handleNeuralSymbolicProverCommand",
   },
+  {
+    prefix: "toolchain:zkcirc:",
+    file: "./cliZkCircuitSynthesizer.mjs",
+    fn: "handleZkCircuitSynthesizerCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

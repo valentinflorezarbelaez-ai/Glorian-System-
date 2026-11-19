@@ -690,6 +690,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:prover:audit [--json] Auditoría del demostrador neural-simbólico e inducción de invariantes (SPEC-349)
   eos toolchain:prover:sat [--json] Evaluación de satisfacibilidad proposicional con solver CDCL / DPLL (SPEC-349)
   eos toolchain:prover:synth [--json] Síntesis automática de invariantes inductivos mediante bucle CEGAR (SPEC-349)
+  eos toolchain:zkcirc:audit [--json] Auditoría del sintetizador de circuitos Zero-Knowledge R1CS y recibo SHA-256 (SPEC-350)
+  eos toolchain:zkcirc:compile [--json] Compilación de grafo aritmético a sistema de restricciones R1CS sobre BN254 (SPEC-350)
+  eos toolchain:zkcirc:verify [--json] Verificación determinista de satisfacción de testigos en circuitos ZK (SPEC-350)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

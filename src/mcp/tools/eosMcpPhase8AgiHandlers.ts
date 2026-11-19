@@ -26,6 +26,7 @@ import { EosPipeline } from "../../core/eosPipeline.ts";
 import { EosPostQuantumThresholdMpcCore } from "../../core/eosPostQuantumThresholdMpc.ts";
 import { EosSovereignWebCompilerCore } from "../../core/eosSovereignWebCompiler.ts";
 import { EosSpecDriftDetector } from "../../core/eosSpecDriftDetector.ts";
+import { EosZkCircuitSynthesizerCore } from "../../core/eosZkCircuitSynthesizer.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 import { PHASE8_MIGRATED_TOOL_NAMES } from "./eosMcpPhase8ToolNames.ts";
 
@@ -227,5 +228,7 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_crdt_memory_sync_audit: () => EosDistributedCrdtMemoryCore.auditDistributedCrdtMemory(projectRoot),
 
     eos_neural_symbolic_prover_audit: () => EosNeuralSymbolicProverCore.audit(projectRoot),
+
+    eos_zk_circuit_synthesizer_audit: () => EosZkCircuitSynthesizerCore.audit(projectRoot),
   };
 }

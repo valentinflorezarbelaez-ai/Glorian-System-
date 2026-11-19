@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 349,
-  "catalogSha256": "2edc6f7ab88f516643fed80c098eac661c20dc43521dc4088f72df5b08ae0513",
+  "totalSpecs": 350,
+  "catalogSha256": "e48196628cfbf11f3691fb8e8db011b975cc2df379e1fb7c7e313f21cf9c5adf",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3143,6 +3143,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-349-neural-symbolic-prover.md",
       "sha256": "66b3fc6cc6fd26be034d5f938dcbd73780768f219382967b8218a557a94ec480"
+    },
+    {
+      "id": "SPEC-350",
+      "title": "Autonomous Zero-Knowledge Circuit Synthesizer & Arithmetization Engine",
+      "status": "SPECIFICATION_APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-350-zk-circuit-synthesizer.md",
+      "sha256": "aeb435c3abe4e3002cf9fa29bc40f58505d6e274a092dc893c772f79a75811d7"
     }
   ]
 }

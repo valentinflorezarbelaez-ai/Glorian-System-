@@ -3271,3 +3271,16 @@
   - `docs/plans/PLAN-211-neural-symbolic-prover.md`
   - `docs/tasks/TASKS-211-neural-symbolic-prover.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-19-ZK-CIRCUIT-SYNTHESIZER
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-212` (`SPEC-350`), Autonomous Zero-Knowledge Circuit Synthesizer & Arithmetization Engine: TLA+ Model 93 `docs/formal/ZkCircuitSynthesizer.tla` / `.cfg`; `src/core/eosZkCircuitSynthesizer.types.ts` and `src/core/eosZkCircuitSynthesizer.ts` (pure Layer-0 BN254 BigInt finite field arithmetic, sparse linear combinations, R1CS constraint generation, boolean enforcement, conditional multiplexer arithmetization, automated witness synthesis, constraint satisfiability verification); receipt `docs/evidence/ZK_CIRCUIT_SYNTHESIZER_RECEIPT.json`. Wire `toolchain:zkcirc:synthesize`, `toolchain:zkcirc:witness`, `toolchain:zkcirc:audit` and Phase 8 MCP tool `eos_zk_circuit_synthesizer_audit`. Verify `BDD-1879`..`BDD-1884`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-212-ZK-CIRCUIT-SYNTHESIZER.md`
+  - `openspec/changes/CHANGE-212-zk-circuit-synthesizer.md`
+  - `openspec/specs/SPEC-350-zk-circuit-synthesizer.md`
+  - `docs/plans/PLAN-212-zk-circuit-synthesizer.md`
+  - `docs/tasks/TASKS-212-zk-circuit-synthesizer.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

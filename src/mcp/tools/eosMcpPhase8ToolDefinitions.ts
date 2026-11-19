@@ -288,4 +288,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_zk_circuit_synthesizer_audit",
+    description:
+      "Audits the Autonomous Zero-Knowledge Circuit Synthesizer verifying BN254 finite field arithmetic, R1CS arithmetization, boolean enforcement, and witness satisfiability (SPEC-350).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

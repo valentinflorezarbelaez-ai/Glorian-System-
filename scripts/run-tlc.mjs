@@ -94,6 +94,7 @@ export const CONFIGURED_SPECS = [
   "AutonomousWasmJitCompiler",
   "DistributedCrdtMemory",
   "NeuralSymbolicProver",
+  "ZkCircuitSynthesizer",
 ];
 
 /**

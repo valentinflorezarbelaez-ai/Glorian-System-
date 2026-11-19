@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "54329b7142c6693f8e973ca9b8be5b5fee1e1e76063e263bbbe452ddc17e2a54",
-  "totalTools": 225,
+  "catalogSha256": "02e85eb792210f025ae5b9d0a085f82f5ef5ad4390b369bf5e8cdca0014f520d",
+  "totalTools": 226,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -6933,6 +6933,21 @@
       },
       "annotations": {
         "title": "EOS neural Symbolic Prover Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_zk_circuit_synthesizer_audit",
+      "description": "Audits the Autonomous Zero-Knowledge Circuit Synthesizer verifying BN254 finite field arithmetic, R1CS arithmetization, boolean enforcement, and witness satisfiability (SPEC-350).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS zk Circuit Synthesizer Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
