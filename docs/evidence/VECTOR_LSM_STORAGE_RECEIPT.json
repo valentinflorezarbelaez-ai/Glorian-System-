@@ -1,12 +1,12 @@
 {
   "specRef": "SPEC-316",
   "engine": "Vector LSM-Tree Segment Storage Engine",
-  "timestampIso": "2026-11-19T16:41:14.464Z",
+  "timestampIso": "2026-11-19T16:46:36.035Z",
   "totalLiveVectors": 30,
   "l0Segments": 0,
   "l1Segments": 1,
   "bloomFilterAccuracy": 0.99,
   "monotonicityVerified": true,
   "status": "VERIFIED",
-  "sha256Signature": "dc23955b0c03a360b34df2e33bd7c76c9a6dfd187378e264f4e0d40cf0cb0d4f"
+  "sha256Signature": "b740b36be0b16c0badd241db1eb2fa81e38c742a21ec51e519295bcaea2031ce"
 }
