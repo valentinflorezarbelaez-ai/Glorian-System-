@@ -387,4 +387,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_glorian_live_studio_audit",
+    description:
+      "Audits the Glorian Live Studio & Interactive Visual HUD verifying zero-dependency HTTP server startup, reactive HTML HUD delivery, SSE telemetry streaming, and bitemporal projection (SPEC-361).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

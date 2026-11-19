@@ -105,6 +105,7 @@ export const CONFIGURED_SPECS = [
   "ArchitecturalCanvasTopology",
   "AgentSwarmMicroKernel",
   "InductiveProofEngine",
+  "GlorianLiveStudio",
 ];
 
 /**

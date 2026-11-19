@@ -265,6 +265,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliInductiveProofEngine.mjs",
     fn: "handleInductiveProofEngineCommand",
   },
+  {
+    prefix: "toolchain:studio:",
+    file: "./cliGlorianLiveStudio.mjs",
+    fn: "handleGlorianLiveStudioCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

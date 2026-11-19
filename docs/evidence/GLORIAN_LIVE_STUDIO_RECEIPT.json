@@ -1,0 +1,19 @@
+{
+  "receiptId": "REC-STUDIO-MWNY48M6",
+  "specId": "SPEC-361",
+  "changeId": "CHANGE-223",
+  "timestamp": 1795116671646,
+  "serverState": "RUNNING",
+  "boundAddress": "http://127.0.0.1:43120",
+  "activeSseClients": 0,
+  "totalEventsBroadcast": 1,
+  "checks": {
+    "httpHealthRoute": "PASS",
+    "hudHtmlDelivery": "PASS",
+    "sseStreamMonotonicity": "PASS",
+    "bitemporalProjection": "PASS",
+    "blastRadiusComputation": "PASS",
+    "zeroDependencyPurity": "PASS"
+  },
+  "integrityHash": "2ba0e0e22c0e64d6a86681532e917aeebbb10b80048f92f0ce4a30cdc2252e69"
+}

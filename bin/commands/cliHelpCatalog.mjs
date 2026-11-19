@@ -729,6 +729,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:proof:synthesize [--json] Síntesis de lemas conjuntivos auxiliares para invariantes inductivos (SPEC-360)
   eos toolchain:proof:verify [--json] Verificación de simetría metamórfica y equivalencia algebraica (SPEC-360)
   eos toolchain:proof:bench [--json] Benchmark de throughput de transiciones y latencia de lemas (SPEC-360)
+  eos toolchain:studio:start [--port=PORT] Inicio del servidor web local y HUD interactivo reactivo (SPEC-361)
+  eos toolchain:studio:snapshot [--json] Instantánea determinista de telemetría y topología arquitectónica (SPEC-361)
+  eos toolchain:studio:audit [--json] Auditoría formal del motor de estudio HTTP/SSE y emisión de recibo (SPEC-361)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:8a8dff8f-f669-53d4-9593-06b9ce7fa5f1",
+  "serialNumber": "urn:uuid:2f127cb2-c689-5ad2-986b-cf945a3e65b7",
   "version": 1,
   "metadata": {
-    "timestamp": "2023-08-26T15:36:47.000Z",
+    "timestamp": "2025-01-08T12:25:22.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "2ab02d9fac759298d9bc728a46875197ac65e40c0b5a64dc7eada73e48b890b4"
+          "content": "9a48ebe88790edf0daa1061d841d315f55640d8870afbe94237b1d2020b64898"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -2971,6 +2971,32 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosGlorianLiveStudio.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosGlorianLiveStudio.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6d20596409184ff193044c4b8eca0ff29cb19e13867c10acf7f692953d7eb862"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosGlorianLiveStudio.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosGlorianLiveStudio.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosGlorianLiveStudio.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8b00e1d339af7dfdd57e7bea0005aad4ba2200e9cc483dfa7fbfac8e288b03ab"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosGlorianLiveStudio.types.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosGnosticTemple.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosGnosticTemple.ts@75.0.0",
@@ -4121,7 +4147,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "de2deb5f0afec4fef6595e271d67a5263d997da13c414447b8f428e9f07f758b"
+          "content": "b6a0089013f0d3d0769131d69ba1c56e6a31609b0d475713010bb346142cf2c0"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosMcpToolTaxonomy.ts"
@@ -7735,7 +7761,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5d5aba2649bfd70c6af4bb5ea85bf47604f9f7395ae3ef06240c1f91227672d8"
+          "content": "3d6f14e7db5a42fab0df492f64591897136129b73454b16902df7fa1bb8770de"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: index.ts"
@@ -7806,5 +7832,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "4d0f6f19bbc863d7ec2a4052671c0f63a0940dd014895133a03d4b58e46b89ed"
+  "sha256Receipt": "4e6eb7150e766db17a0bc198056ac9f24028a29949ef3312e65a5bfe0176e5e5"
 }

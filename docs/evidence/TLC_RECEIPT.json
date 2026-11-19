@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-19T18:53:06.354Z",
+  "timestampIso": "2026-11-19T19:27:57.738Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -7,7 +7,7 @@
   "allPassed": true,
   "hasJavaRuntime": true,
   "tlaJarPath": "C:\\Users\\valen\\Documents\\Glorian-System\\tools\\tla2tools.jar",
-  "totalConfiguredSpecs": 65,
+  "totalConfiguredSpecs": 66,
   "models": [
     {
       "specName": "LmaxDisruptor",
@@ -31,8 +31,8 @@
       "specName": "DatomicBitemporalLedger",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 494,
-      "statesGenerated": 862,
+      "distinctStates": 3481,
+      "statesGenerated": 9817,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -67,8 +67,8 @@
       "specName": "ZeroCopyRingBuffer",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 646,
-      "statesGenerated": 398,
+      "distinctStates": 569,
+      "statesGenerated": 348,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -76,8 +76,8 @@
       "specName": "JepsenDistributedChaos",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 293,
-      "statesGenerated": 588,
+      "distinctStates": 959,
+      "statesGenerated": 270,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -85,8 +85,8 @@
       "specName": "SimdQuantizedHnsw",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 845,
-      "statesGenerated": 680,
+      "distinctStates": 436,
+      "statesGenerated": 467,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -94,8 +94,8 @@
       "specName": "DistributedVectorMesh",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 302,
-      "statesGenerated": 327,
+      "distinctStates": 636,
+      "statesGenerated": 5125,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -112,8 +112,8 @@
       "specName": "SpeculativePagedKvCache",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 2639,
-      "statesGenerated": 16303,
+      "distinctStates": 989,
+      "statesGenerated": 730,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -591,6 +591,15 @@
       "passed": true,
       "distinctStates": 12,
       "statesGenerated": 16,
+      "violationInvariant": null,
+      "exitCode": 0
+    },
+    {
+      "specName": "GlorianLiveStudio",
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 1224,
+      "statesGenerated": 4014,
       "violationInvariant": null,
       "exitCode": 0
     }

@@ -758,3 +758,5 @@ export * from "./eosBitemporalEventSourcingLedger.ts";
 export * from "./eosArchitecturalCanvas.ts";
 export * from "./eosAgentSwarmMicroKernel.ts";
 export * from "./eosInductiveProofEngine.ts";
+export * from "./eosGlorianLiveStudio.ts";
+export * from "./eosGlorianLiveStudio.types.ts";

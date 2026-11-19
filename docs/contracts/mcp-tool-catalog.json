@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "70d30ed2d300f6d2f5a5b0710dccf66903c7323fbc61a3f1e02aed9610f83479",
-  "totalTools": 233,
+  "catalogSha256": "3ee0dea21675ca22a5745b31f1b62f0bbedc78f88411f877c8df575da8b8a6c6",
+  "totalTools": 237,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7067,7 +7067,7 @@
         "properties": {}
       },
       "annotations": {
-        "title": "EOS Architectural Canvas Audit",
+        "title": "EOS architectural Canvas Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
@@ -7082,7 +7082,7 @@
         "properties": {}
       },
       "annotations": {
-        "title": "EOS Agent Swarm Microkernel Audit",
+        "title": "EOS agent Swarm Microkernel Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
@@ -7097,7 +7097,22 @@
         "properties": {}
       },
       "annotations": {
-        "title": "EOS Inductive Proof Engine Audit",
+        "title": "EOS inductive Proof Engine Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_glorian_live_studio_audit",
+      "description": "Audits the Glorian Live Studio & Interactive Visual HUD verifying zero-dependency HTTP server startup, reactive HTML HUD delivery, SSE telemetry streaming, and bitemporal projection (SPEC-361).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS glorian Live Studio Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 360,
-  "catalogSha256": "881a17948cfa542ead4913dfbb3459161e64b1474a14bb602cbc2401587530ab",
+  "totalSpecs": 361,
+  "catalogSha256": "dd5b6b4ea17e153eb1b7dc34467b8a76fd6cc334d0304e5b77c483cc36f34f9d",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3241,7 +3241,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-360-inductive-proof-engine.md",
-      "sha256": "1adf08acfeac55422ec8383777608e3cee3eb29cea35524ff686fc1e754a5854"
+      "sha256": "0a792300b3ad357c2abdeb9ef2880063e43436be5176f390d2e9652b129e234a"
+    },
+    {
+      "id": "SPEC-361",
+      "title": "Glorian Live Studio & Interactive Visual HUD",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-361-glorian-live-studio.md",
+      "sha256": "8c34ba71e7c178eeaed2198619fe1677c179e067f2e6b9b7f18a75b82b6a5c93"
     }
   ]
 }

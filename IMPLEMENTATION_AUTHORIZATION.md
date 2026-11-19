@@ -3429,3 +3429,21 @@
   - `docs/plans/PLAN-222-INDUCTIVE-PROOF-ENGINE.md`
   - `docs/tasks/TASKS-222-INDUCTIVE-PROOF-ENGINE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-GLORIAN-LIVE-STUDIO`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-223` / `SPEC-361`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-223` (`SPEC-361`), Glorian Live Studio & Interactive Visual HUD: TLA+ Model 104 `docs/formal/GlorianLiveStudio.tla` / `.cfg`; `src/core/eosGlorianLiveStudio.types.ts` and `src/core/eosGlorianLiveStudio.ts` (pure Layer-0 native HTTP/SSE server, reactive self-contained single-file HUD, vector SVG topology renderer, 2D bitemporal time-travel replay projection, live blast-radius dependency inspector, real-time monotonic telemetry streaming); receipt `docs/evidence/GLORIAN_LIVE_STUDIO_RECEIPT.json`. Wire `toolchain:studio:start`, `toolchain:studio:snapshot`, `toolchain:studio:audit` and Phase 8 MCP tool `eos_glorian_live_studio_audit`. Verify `BDD-1945`..`BDD-1950`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-223-GLORIAN-LIVE-STUDIO.md`
+  - `openspec/changes/CHANGE-223-glorian-live-studio.md`
+  - `openspec/specs/SPEC-361-glorian-live-studio.md`
+  - `docs/plans/PLAN-223-GLORIAN-LIVE-STUDIO.md`
+  - `docs/tasks/TASKS-223-GLORIAN-LIVE-STUDIO.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

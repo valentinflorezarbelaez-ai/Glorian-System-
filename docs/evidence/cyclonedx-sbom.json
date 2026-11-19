@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:5caa510f-2063-4d3f-9ecb-f01c35262b42",
+  "serialNumber": "urn:uuid:84819338-eab1-40c9-b3b5-6a24f84a157a",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T18:55:43.186Z",
+    "timestamp": "2026-11-19T19:35:11.074Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -3186,6 +3186,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:GlorianLiveStudio",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/GlorianLiveStudio@1.0.0",
+      "description": "Layer-0 module eosGlorianLiveStudio.ts",
+      "purl": "pkg:npm/glorian/GlorianLiveStudio@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6d20596409184ff193044c4b8eca0ff29cb19e13867c10acf7f692953d7eb862"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:GlorianLiveStudio",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/GlorianLiveStudio@1.0.0",
+      "description": "Layer-0 module eosGlorianLiveStudio.types.ts",
+      "purl": "pkg:npm/glorian/GlorianLiveStudio@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8b00e1d339af7dfdd57e7bea0005aad4ba2200e9cc483dfa7fbfac8e288b03ab"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:GnosticTemple",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/GnosticTemple@1.0.0",
@@ -4426,7 +4454,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "de2deb5f0afec4fef6595e271d67a5263d997da13c414447b8f428e9f07f758b"
+          "content": "b6a0089013f0d3d0769131d69ba1c56e6a31609b0d475713010bb346142cf2c0"
         }
       ]
     },
@@ -8318,7 +8346,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5d5aba2649bfd70c6af4bb5ea85bf47604f9f7395ae3ef06240c1f91227672d8"
+          "content": "3d6f14e7db5a42fab0df492f64591897136129b73454b16902df7fa1bb8770de"
         }
       ]
     },
@@ -10409,7 +10437,8 @@
         "pkg:npm/glorian/BitemporalEventSourcingLedger@1.0.0",
         "pkg:npm/glorian/ArchitecturalCanvas@1.0.0",
         "pkg:npm/glorian/AgentSwarmMicroKernel@1.0.0",
-        "pkg:npm/glorian/InductiveProofEngine@1.0.0"
+        "pkg:npm/glorian/InductiveProofEngine@1.0.0",
+        "pkg:npm/glorian/GlorianLiveStudio@1.0.0"
       ]
     }
   ]
