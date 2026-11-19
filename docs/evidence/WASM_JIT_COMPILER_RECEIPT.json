@@ -1,9 +1,9 @@
 {
   "spec": "SPEC-347",
-  "timestamp": "2026-11-19T16:06:21.393Z",
+  "timestamp": "2026-11-19T16:36:07.528Z",
   "validModuleEmitted": true,
   "kernelsVerified": true,
-  "benchmarkOpsPerSec": 51221636,
+  "benchmarkOpsPerSec": 20066219,
   "allPassed": true,
-  "sha256": "aca30df23a765b66f22826fd5b36628e16f659b8cdcaa27cde266bc65d900ec8"
+  "sha256": "62b6528fa1574af69c42541199fffdb29cdaf7be4ba366c90bb2f32e84ba1639"
 }

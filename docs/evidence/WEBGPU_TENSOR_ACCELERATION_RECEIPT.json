@@ -1,0 +1,99 @@
+{
+  "specId": "SPEC-354",
+  "changeId": "CHANGE-216",
+  "timestamp": "2026-11-19T16:44:17.958Z",
+  "environment": {
+    "nodeVersion": "v24.21.0",
+    "platform": "win32",
+    "isHeadless": true
+  },
+  "adapter": {
+    "available": false,
+    "backend": "layer0-software",
+    "maxBufferSize": 268435456,
+    "maxComputeWorkgroupStorageSize": 32768,
+    "maxComputeInvocationsPerWorkgroup": 256,
+    "vendor": "Glorian Pure L0 Software Grid",
+    "architecture": "SIMD-Float32Array-Fallback"
+  },
+  "benchmarks": [
+    {
+      "op": "gemm",
+      "shape": [
+        32,
+        32
+      ],
+      "emulatorTimeUs": 1558.3,
+      "emulatorGflops": 0.04205608676121415,
+      "checksumMatch": true,
+      "maxRelativeDelta": 0
+    },
+    {
+      "op": "activation",
+      "shape": [
+        1,
+        128
+      ],
+      "emulatorTimeUs": 69.2,
+      "emulatorGflops": 0.018497109826589597,
+      "checksumMatch": true,
+      "maxRelativeDelta": 0
+    },
+    {
+      "op": "covariance",
+      "shape": [
+        8,
+        8
+      ],
+      "emulatorTimeUs": 279.5,
+      "emulatorGflops": 0.031141323792486585,
+      "checksumMatch": true,
+      "maxRelativeDelta": 0
+    },
+    {
+      "op": "softmax",
+      "shape": [
+        16,
+        10
+      ],
+      "emulatorTimeUs": 47.7,
+      "emulatorGflops": 0.010062893081761006,
+      "checksumMatch": true,
+      "maxRelativeDelta": 0
+    }
+  ],
+  "shadersSynthesized": [
+    {
+      "id": "wgsl-gemm-16x16",
+      "entryPoint": "main",
+      "lines": 56,
+      "sha256": "7cdd4abb98f45737325f256a12c637c98348d805d3677d34960208d02d0cfee3"
+    },
+    {
+      "id": "wgsl-vector-relu-vec4",
+      "entryPoint": "main",
+      "lines": 16,
+      "sha256": "706afcf65b0308b2b0192364fc1e6f193a49d9f3d9fc76c5fe0c5bce046512f5"
+    },
+    {
+      "id": "wgsl-vector-gelu-vec4",
+      "entryPoint": "main",
+      "lines": 18,
+      "sha256": "2df39629d633f8fc659478a9e805c0d09a744c6b681ae30419a97edcec5cb66d"
+    },
+    {
+      "id": "wgsl-covariance-16x16",
+      "entryPoint": "main",
+      "lines": 29,
+      "sha256": "db83b843b9c60ac21a520f968c1d2e7ecdf11b977dd6e5a8799d2e91ffed6616"
+    },
+    {
+      "id": "wgsl-softmax-rowwise",
+      "entryPoint": "main",
+      "lines": 34,
+      "sha256": "af51b6287f0684cd3de1fb9248374d31ba6d743eba396a1c3f53086d4ce4b949"
+    }
+  ],
+  "verdict": "CONFORMANT",
+  "epistemicState": "PRODUCTION_READY_WITHIN_TESTED_SCOPE"
+}

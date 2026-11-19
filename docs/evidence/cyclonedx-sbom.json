@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:763604b2-13d9-46ba-867d-d865997b9bdf",
+  "serialNumber": "urn:uuid:b0f84ab9-0916-4588-b775-b5e943a2e596",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T16:18:08.321Z",
+    "timestamp": "2026-11-19T16:44:23.500Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -4314,7 +4314,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "97c9170c3754209bb588a696fbfc3a564e6f22bb1504f123a67bb9cd962a37aa"
+          "content": "cce9ff88254d50f7cc98ccd9f148a66cc7eb26873551bd7b522162368767ed63"
         }
       ]
     },
@@ -7834,6 +7834,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:WebGpuTensorAcceleration",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/WebGpuTensorAcceleration@1.0.0",
+      "description": "Layer-0 module eosWebGpuTensorAcceleration.ts",
+      "purl": "pkg:npm/glorian/WebGpuTensorAcceleration@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5d03bac0b40a4c9f4f9b3f1b1b909808266cd1bdba0c5199fdeaa05064998526"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:WebGpuTensorAcceleration",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/WebGpuTensorAcceleration@1.0.0",
+      "description": "Layer-0 module eosWebGpuTensorAcceleration.types.ts",
+      "purl": "pkg:npm/glorian/WebGpuTensorAcceleration@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1ccfa26d1671477e3c5bb790a93a53028e15c340d034ab54e7f099c601198ea3"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:WebGpuTensorEngine",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/WebGpuTensorEngine@1.0.0",
@@ -8122,7 +8150,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "4225d44dd15568c462cea89723a820ab64add997b8f22da45ad85cc0a9bf6ecf"
+          "content": "d519214a753564d20cb24601f0b7de8aabc4212374687a649c0d1ccf028a3e43"
         }
       ]
     },
@@ -9840,6 +9868,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/WebGpuTensorAcceleration@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/WebGpuTensorEngine@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
@@ -10164,7 +10198,8 @@
         "pkg:npm/glorian/ClosedLoopRepoAutopilot@1.0.0",
         "pkg:npm/glorian/MetamorphicDifferentialBlindSpot@1.0.0",
         "pkg:npm/glorian/NeuromorphicPlanner@1.0.0",
-        "pkg:npm/glorian/CausalMetaLearning@1.0.0"
+        "pkg:npm/glorian/CausalMetaLearning@1.0.0",
+        "pkg:npm/glorian/WebGpuTensorAcceleration@1.0.0"
       ]
     }
   ]

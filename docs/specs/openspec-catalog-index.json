@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 353,
-  "catalogSha256": "ded2649e6be09dbe9bd4702212627f66c165c518411ba886738dd749baf40413",
+  "totalSpecs": 354,
+  "catalogSha256": "eb86482682b5b34558c9e3b087cbe9a17c6d8b1753295c21d650926f98febeed",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3179,6 +3179,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-353-causal-meta-learning-counterfactual-engine.md",
       "sha256": "0c7851b867e7c6502ae7544c6e11f4ef79c570d75ac08b1d9818f97f3796d30d"
+    },
+    {
+      "id": "SPEC-354",
+      "title": "Autonomous WebGPU WGSL Compute & SIMD Tensor Acceleration Engine",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-354-webgpu-wgsl-tensor-acceleration.md",
+      "sha256": "f993381a06cab7a2912e953063484384f9f51e16de19ff834ca72087dcf9d537"
     }
   ]
 }

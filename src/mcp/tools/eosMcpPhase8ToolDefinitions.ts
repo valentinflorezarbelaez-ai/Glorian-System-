@@ -324,4 +324,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_webgpu_tensor_audit",
+    description:
+      "Audits the Autonomous WebGPU WGSL Compute & SIMD Tensor Acceleration Engine verifying WGSL compute shaders, shared memory tiling, SIMD vectorization, and bit-exact software emulation (SPEC-354).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

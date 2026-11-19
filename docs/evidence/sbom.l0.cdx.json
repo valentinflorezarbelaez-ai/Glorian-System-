@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:8fa8b3b9-c699-57ae-83b6-e09818d3b878",
+  "serialNumber": "urn:uuid:2d0c7c0e-b3fd-5d64-a58e-017ba65af864",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-05-13T19:25:45.000Z",
+    "timestamp": "2023-12-12T14:28:30.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "dcd10f6476977727d5e92188d8cc888d913068ad8294f1dd66f948fc94e78f31"
+          "content": "afad01c5b007200d7b66e3a1eeb2f4bed4785396fed1df10e16463f97b75bfba"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -4017,7 +4017,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "97c9170c3754209bb588a696fbfc3a564e6f22bb1504f123a67bb9cd962a37aa"
+          "content": "cce9ff88254d50f7cc98ccd9f148a66cc7eb26873551bd7b522162368767ed63"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosMcpToolTaxonomy.ts"
@@ -7287,6 +7287,32 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosWebGpuTensorAcceleration.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosWebGpuTensorAcceleration.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5d03bac0b40a4c9f4f9b3f1b1b909808266cd1bdba0c5199fdeaa05064998526"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosWebGpuTensorAcceleration.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosWebGpuTensorAcceleration.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosWebGpuTensorAcceleration.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1ccfa26d1671477e3c5bb790a93a53028e15c340d034ab54e7f099c601198ea3"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosWebGpuTensorAcceleration.types.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosWebGpuTensorEngine.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosWebGpuTensorEngine.ts@75.0.0",
@@ -7553,7 +7579,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "4225d44dd15568c462cea89723a820ab64add997b8f22da45ad85cc0a9bf6ecf"
+          "content": "d519214a753564d20cb24601f0b7de8aabc4212374687a649c0d1ccf028a3e43"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: index.ts"
@@ -7624,5 +7650,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "5ddce52ab37635a0f4392cd8498323176da4cb34a3b5fd2945b2e5c8c0f3e0fd"
+  "sha256Receipt": "35c5be7e2797636d66f369ceab67f7a89cd4865de842ce474dde0a2911a31453"
 }

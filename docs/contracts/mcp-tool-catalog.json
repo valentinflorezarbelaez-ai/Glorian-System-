@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "e8610025adca2a7fa6f8551c5dcd59916dedcad1097d299b02930d6f86ef483f",
-  "totalTools": 229,
+  "catalogSha256": "9cf1c6e785fdaafed6f64f1af60f20006f0d9621f0ce30e24876f37eedcf0e95",
+  "totalTools": 230,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -6993,6 +6993,21 @@
       },
       "annotations": {
         "title": "EOS causal Meta Learning Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_webgpu_tensor_audit",
+      "description": "Audits the Autonomous WebGPU WGSL Compute & SIMD Tensor Acceleration Engine verifying WGSL compute shaders, shared memory tiling, SIMD vectorization, and bit-exact software emulation (SPEC-354).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS webgpu Tensor Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

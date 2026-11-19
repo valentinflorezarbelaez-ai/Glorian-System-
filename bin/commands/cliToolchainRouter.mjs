@@ -230,6 +230,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliCausalMetaLearning.mjs",
     fn: "handleCausalMetaLearningCommand",
   },
+  {
+    prefix: "toolchain:gpu:",
+    file: "./cliWebGpuTensorAcceleration.mjs",
+    fn: "handleWebGpuTensorAccelerationCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

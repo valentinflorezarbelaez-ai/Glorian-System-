@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-19T16:07:23.593Z",
+  "timestampIso": "2026-11-19T16:36:59.385Z",
   "seed": 42,
   "status": "COMPLETED",
   "totalStepsExecuted": 144,
@@ -7,5 +7,5 @@
   "totalEventsProcessed": 144,
   "totalFaultsInjected": 100,
   "executionTraceHash": "98a8cae3a7ac5d7ae00da6b071e90508fc700da61f5c3007dd4869c87aa20153",
-  "sha256Signature": "5a597b0fa31b6fa4ab9f95691204201df41d4675e56952bc42f6797fec2f915c"
+  "sha256Signature": "d1fe63eb4e2fa1645b8d873af917d48b1909390f88f2c2910690773dd03a9e0a"
 }

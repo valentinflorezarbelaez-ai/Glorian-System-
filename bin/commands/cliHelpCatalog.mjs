@@ -702,6 +702,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:causal:audit [--json] Auditoría del motor causal meta-learning SCM/Do-calculus/contrafácticos (SPEC-353)
   eos toolchain:causal:intervene [--json] Simulación de cirugía de grafos Pearl G_X_bar bajo intervenciones do(X=x) (SPEC-353)
   eos toolchain:causal:counterfactual [--json] Evaluación algorítmica contrafactual en 3 pasos (Abducción->Acción->Predicción) (SPEC-353)
+  eos toolchain:gpu:audit [--json] Auditoría del motor de aceleración tensorial WebGPU WGSL y recibo SHA-256 (SPEC-354)
+  eos toolchain:gpu:compile [shader] [--json] Síntesis de shaders WGSL con tiling en memoria compartida (SPEC-354)
+  eos toolchain:gpu:bench [--json] Benchmark de GEMM, activaciones vectoriales y covarianza tensorial (SPEC-354)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

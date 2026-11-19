@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-19T16:11:21.489Z",
+  "timestampIso": "2026-11-19T16:40:28.374Z",
   "status": "DESTRUCTION_REJECTED",
   "allowed": false,
   "totalViolations": 2,
@@ -17,6 +17,6 @@
   ],
   "evaluatedResources": 2,
   "executionEngine": "NATIVE_AST_FALLBACK",
-  "latencyMs": 1,
-  "sha256Receipt": "e598ad64147a20864f444632d1f05cf24578ef9f0df4365ba75363ceaf8f4e42"
+  "latencyMs": 0,
+  "sha256Receipt": "5d1eb310ff74ec71081e740289b32a316a658fb2e960ff0d5d4469e2ca46f70e"
 }

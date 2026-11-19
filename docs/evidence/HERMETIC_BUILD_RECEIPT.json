@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-19T16:08:32.538Z",
+  "timestampIso": "2026-11-19T16:38:24.706Z",
   "specRef": "SPEC-302",
   "totalArtifactsVerified": 4,
   "reproducibilityRatio": 1,
   "bitForBitIdentical": true,
   "rootDigestSha256": "680d4c6dde4cc72c205182af7b0fca2554a1e134e29fd293919b8f06cdc009be",
-  "sha256Signature": "cea9e79a398f8f6cd1e6f290768f53327556a4355ba696e8ce4b548529d43a05"
+  "sha256Signature": "b4630378a61bdc9a17b047be94fe496c68436f39f43a0dc2bd26912ac989f110"
 }

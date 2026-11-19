@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-19T16:06:16.315Z",
+  "timestampIso": "2026-11-19T16:36:04.075Z",
   "specRef": "SPEC-300",
   "totalPeersTested": 3,
   "changesApplied": 6,
   "convergenceVerified": true,
   "dtnPacketsDelivered": 1,
-  "sha256Signature": "9a962bdbccb04ca34497dc71fe2f440cc036e604ca46f14b0f7bf1953bec411a"
+  "sha256Signature": "1cea70e08ed0e50e0ae3df00f3641b7b7d46741e5eb015a7136d0742de35de6f"
 }

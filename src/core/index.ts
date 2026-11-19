@@ -751,3 +751,4 @@ export * from "./eosClosedLoopRepoAutopilot.ts";
 export * from "./eosMetamorphicDifferentialBlindSpot.ts";
 export * from "./eosNeuromorphicPlanner.ts";
 export * from "./eosCausalMetaLearning.ts";
+export * from "./eosWebGpuTensorAcceleration.ts";

@@ -98,6 +98,7 @@ export const CONFIGURED_SPECS = [
   "ShardedTransactionFabric",
   "NeuromorphicPlanner",
   "CausalMetaLearning",
+  "WebGpuTensorAcceleration",
 ];
 
 /**
