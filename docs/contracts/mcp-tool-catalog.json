@@ -7073,6 +7073,21 @@
         "idempotentHint": true,
         "openWorldHint": false
       }
+    },
+    {
+      "name": "eos_agent_swarm_microkernel_audit",
+      "description": "Audits the Autonomous Self-Assembling Agent Swarm Micro-Kernel verifying Raft consensus, election terms, majority quorums, dynamic capability bidding, and anti-split-brain step-down (SPEC-359).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS Agent Swarm Microkernel Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
     }
   ]
 }

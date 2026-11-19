@@ -35,6 +35,7 @@ import { EosZeroCopyIpcCore } from "../../core/eosZeroCopyIpcRingBuffer.ts";
 import { EosWorkStealingScheduler } from "../../core/eosWorkStealingScheduler.ts";
 import { EosBitemporalLedgerCore } from "../../core/eosBitemporalEventSourcingLedger.ts";
 import { EosArchitecturalCanvasCore } from "../../core/eosArchitecturalCanvas.ts";
+import { EosSwarmMicroKernelCore } from "../../core/eosAgentSwarmMicroKernel.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 import { PHASE8_MIGRATED_TOOL_NAMES } from "./eosMcpPhase8ToolNames.ts";
 
@@ -248,5 +249,6 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_work_stealing_scheduler_audit: () => EosWorkStealingScheduler.audit(projectRoot),
     eos_bitemporal_ledger_audit: () => EosBitemporalLedgerCore.audit(projectRoot),
     eos_architectural_canvas_audit: () => EosArchitecturalCanvasCore.audit(projectRoot),
+    eos_agent_swarm_microkernel_audit: () => EosSwarmMicroKernelCore.audit(projectRoot),
   };
 }

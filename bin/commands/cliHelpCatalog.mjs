@@ -721,6 +721,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:canvas:graph [--json] Extracción de grafo topológico DAG y capas jerárquicas Sugiyama (SPEC-358)
   eos toolchain:canvas:render [--json] Renderizado vectorial SVG puro con tokens de diseño Tier S-0 (SPEC-358)
   eos toolchain:canvas:blast [node] [--json] Análisis del radio de impacto causal aguas arriba y abajo (SPEC-358)
+  eos toolchain:kernel:audit [--json] Auditoría del micro-kernel de enjambres de agentes y consenso Raft (SPEC-359)
+  eos toolchain:kernel:status [--json] Estado operacional del enjambre, líder actual y roles asignados (SPEC-359)
+  eos toolchain:kernel:elect [agent] [--json] Ejecución de ronda de elección Raft con quórum mayoritario (SPEC-359)
+  eos toolchain:kernel:propose [cmd] [--json] Propuesta y replicación de comandos de cambio en log de quórum (SPEC-359)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

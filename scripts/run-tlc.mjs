@@ -103,6 +103,7 @@ export const CONFIGURED_SPECS = [
   "WorkStealingScheduler",
   "BitemporalEventLedger",
   "ArchitecturalCanvasTopology",
+  "AgentSwarmMicroKernel",
 ];
 
 /**

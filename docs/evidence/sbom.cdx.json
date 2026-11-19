@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:0d32f8f5-0743-4e19-a3ef-d6f3833f63ee",
+  "serialNumber": "urn:uuid:27e76537-fcc1-48ea-8359-d5638bc4780d",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T18:32:26.747Z",
+    "timestamp": "2026-11-19T18:43:55.181Z",
     "tools": [
       {
         "type": "application",
@@ -51,7 +51,7 @@
       },
       {
         "name": "eos:sbomReceipt",
-        "value": "sha256:832187c778bf4fbe51565f930d9c2ed2084f6bb9389425ad4d973060f8d7853f"
+        "value": "sha256:50434629fa61a068de2734f64eea47ae59366e3898de59d0ec95da2f19ec577c"
       }
     ]
   },

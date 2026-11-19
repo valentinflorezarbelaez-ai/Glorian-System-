@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-19T18:28:56.574Z",
+  "timestampIso": "2026-11-19T18:39:59.186Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -7,7 +7,7 @@
   "allPassed": true,
   "hasJavaRuntime": true,
   "tlaJarPath": "C:\\Users\\valen\\Documents\\Glorian-System\\tools\\tla2tools.jar",
-  "totalConfiguredSpecs": 63,
+  "totalConfiguredSpecs": 64,
   "models": [
     {
       "specName": "LmaxDisruptor",
@@ -67,8 +67,8 @@
       "specName": "ZeroCopyRingBuffer",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 852,
-      "statesGenerated": 338,
+      "distinctStates": 434,
+      "statesGenerated": 618,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -76,8 +76,8 @@
       "specName": "JepsenDistributedChaos",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 896,
-      "statesGenerated": 506,
+      "distinctStates": 795,
+      "statesGenerated": 849,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -85,8 +85,8 @@
       "specName": "SimdQuantizedHnsw",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 366,
-      "statesGenerated": 255,
+      "distinctStates": 536,
+      "statesGenerated": 537,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -220,8 +220,8 @@
       "specName": "DistributedKvCacheReplication",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 696,
-      "statesGenerated": 547,
+      "distinctStates": 9261,
+      "statesGenerated": 44983,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -265,8 +265,8 @@
       "specName": "DiscreteEventSimulationHypervisor",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 276,
-      "statesGenerated": 159,
+      "distinctStates": 2850,
+      "statesGenerated": 11721,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -573,6 +573,15 @@
       "passed": true,
       "distinctStates": 124,
       "statesGenerated": 238,
+      "violationInvariant": null,
+      "exitCode": 0
+    },
+    {
+      "specName": "AgentSwarmMicroKernel",
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 587,
+      "statesGenerated": 2485,
       "violationInvariant": null,
       "exitCode": 0
     }

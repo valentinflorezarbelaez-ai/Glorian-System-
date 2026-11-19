@@ -255,6 +255,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliArchitecturalCanvas.mjs",
     fn: "handleArchitecturalCanvasCommand",
   },
+  {
+    prefix: "toolchain:kernel:",
+    file: "./cliAgentSwarmMicroKernel.mjs",
+    fn: "handleAgentSwarmMicroKernelCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

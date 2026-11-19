@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 358,
-  "catalogSha256": "90099a4c55a13b2dac1568c9a9a007950355befa08bab18e16a11538a9683250",
+  "totalSpecs": 359,
+  "catalogSha256": "e9a94ce70a5f1c42ddc07b70188e1392cee9334b8ebbbaba3e803bf42272c91c",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3223,7 +3223,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-358-architectural-canvas-topology.md",
-      "sha256": "c11ee510578c2dfc525e4fe1305edbe8b76ce6b04fc8a3aa0ed17196d96c723a"
+      "sha256": "ea7ba8934fb96b5cfa49c60966db1adfa9f8eba598109a0f995042f8ed6e5078"
+    },
+    {
+      "id": "SPEC-359",
+      "title": "Autonomous Self-Assembling Agent Swarm Micro-Kernel with Raft/Paxos Formal Leadership & Dynamic Capability Mesh",
+      "status": "SPECIFICATION_APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-359-agent-swarm-microkernel.md",
+      "sha256": "f670df24ed9205382b5012643c403116c3b7bac88205d1bd85cda4538aa6f1a2"
     }
   ]
 }

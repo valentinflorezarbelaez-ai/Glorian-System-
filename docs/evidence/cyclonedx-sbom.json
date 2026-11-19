@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:2bb0c646-1dbe-4be5-90d0-6b4c35d44c8f",
+  "serialNumber": "urn:uuid:c139fc61-2c53-4fcc-b900-80c69d1a96d5",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T18:32:27.713Z",
+    "timestamp": "2026-11-19T18:43:55.977Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -269,6 +269,34 @@
         {
           "alg": "SHA-256",
           "content": "476fbfa340fa1f213fefcacd83882dd9514b8fabdc5c691c05fe7e75add38c38"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AgentSwarmMicroKernel",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AgentSwarmMicroKernel@1.0.0",
+      "description": "Layer-0 module eosAgentSwarmMicroKernel.ts",
+      "purl": "pkg:npm/glorian/AgentSwarmMicroKernel@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "62c03e031107634260de972e211a222651d517f3705810790f86081b83fb3a87"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AgentSwarmMicroKernel",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AgentSwarmMicroKernel@1.0.0",
+      "description": "Layer-0 module eosAgentSwarmMicroKernel.types.ts",
+      "purl": "pkg:npm/glorian/AgentSwarmMicroKernel@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "30833cfc15758c1999056dfbaa280bf5f3093a646860d98f12709be67383aa26"
         }
       ]
     },
@@ -4370,7 +4398,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "80d196972b9f0a22f61dbe58b1ecad7ac0e765f868a50f5e7a30c6f397fbd6b8"
+          "content": "d248fb97660047ea842a858bd6be95df04b513e626386b48e4b04a5ed0bca8f4"
         }
       ]
     },
@@ -8262,7 +8290,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "e9fb68455935d5b690c5be4e198482c32ec48b101493b6d4cad0d8a7863aa0ba"
+          "content": "5ebbf2325bb93ac086f447669655a964902e639f93f96a4f9ec0ab222e48e430"
         }
       ]
     },
@@ -8303,6 +8331,12 @@
     },
     {
       "ref": "pkg:npm/glorian/AgenticSwarmBft@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/AgentSwarmMicroKernel@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
@@ -10339,7 +10373,8 @@
         "pkg:npm/glorian/ZeroCopyIpcRingBuffer@1.0.0",
         "pkg:npm/glorian/WorkStealingScheduler@1.0.0",
         "pkg:npm/glorian/BitemporalEventSourcingLedger@1.0.0",
-        "pkg:npm/glorian/ArchitecturalCanvas@1.0.0"
+        "pkg:npm/glorian/ArchitecturalCanvas@1.0.0",
+        "pkg:npm/glorian/AgentSwarmMicroKernel@1.0.0"
       ]
     }
   ]

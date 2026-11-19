@@ -369,4 +369,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_agent_swarm_microkernel_audit",
+    description:
+      "Audits the Autonomous Self-Assembling Agent Swarm Micro-Kernel verifying Raft consensus, election terms, majority quorums, dynamic capability bidding, and anti-split-brain step-down (SPEC-359).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];
