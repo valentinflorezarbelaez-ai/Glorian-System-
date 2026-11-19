@@ -1,7 +1,7 @@
 {
   "specId": "SPEC-356",
   "changeId": "CHANGE-218",
-  "timestamp": "2026-11-19T17:32:28.986Z",
+  "timestamp": "2026-11-19T17:36:03.821Z",
   "workerCount": 4,
   "tasksTested": 10000,
   "metrics": {
@@ -9,8 +9,8 @@
     "totalTasksProcessed": 10000,
     "totalSteals": 0,
     "stealSuccessRate": 0,
-    "throughputTasksPerSec": 4969437.956567112,
-    "avgExecutionLatencyNs": 201.23,
+    "throughputTasksPerSec": 3918802.413982287,
+    "avgExecutionLatencyNs": 255.18,
     "loadImbalanceFactor": 0
   },
   "tlcModelVerified": true,
