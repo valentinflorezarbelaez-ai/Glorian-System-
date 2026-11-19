@@ -685,6 +685,8 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:wasmjit:exec [--a=7] [--b=6] [--json] Ejecución nativa en V8 de rutinas matemáticas JIT en WebAssembly (SPEC-347)
   eos toolchain:wasmjit:bench [--iters=200000] [--json] Benchmark de rendimiento y throughput de operaciones por segundo (SPEC-347)
   eos toolchain:wasmjit:audit [--json] Auditoría determinista del compilador JIT WebAssembly y recibo SHA-256 (SPEC-347)
+  eos toolchain:crdtmem:audit [--json] Auditoría criptográfica de memoria CRDT distribuida y convergencia SEC (SPEC-348)
+  eos toolchain:crdtmem:demo [--json] Demostración de sincronización multi-nodo y convergencia eventual fuerte (SPEC-348)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

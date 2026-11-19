@@ -193,6 +193,7 @@ export const PHASE8_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
   "eos_closed_loop_autopilot_audit",
   "eos_consult",
   "eos_context_window",
+  "eos_crdt_memory_sync_audit",
   "eos_desh_simulation_audit",
   "eos_euv_ilt_wavefront_audit",
   "eos_forge_list",

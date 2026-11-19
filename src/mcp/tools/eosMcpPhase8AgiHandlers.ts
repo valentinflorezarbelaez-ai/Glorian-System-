@@ -14,6 +14,7 @@ import { EosClosedLoopRepoAutopilotCore } from "../../core/eosClosedLoopRepoAuto
 import { EosConsultantCore } from "../../core/eosConsultantCore.ts";
 import { EosContextWindowManager } from "../../core/eosContextWindowManager.ts";
 import { EosDiscreteEventSimulationHypervisorCore } from "../../core/eosDiscreteEventSimulationHypervisor.ts";
+import { EosDistributedCrdtMemoryCore } from "../../core/eosDistributedCrdtMemory.ts";
 import { EosDynamicToolForge } from "../../core/eosDynamicToolForge.ts";
 import { EosEuvInverseLithographyWavefrontCore } from "../../core/eosEuvInverseLithographyWavefront.ts";
 import { auditKnowledgeGraphReflex } from "../../core/eosKnowledgeGraphReflex.ts";
@@ -221,5 +222,7 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_agentic_swarm_bft_audit: () => auditAgenticSwarmBft(projectRoot),
 
     eos_wasmjit_compiler_audit: () => EosAutonomousWasmJitCore.audit(projectRoot),
+
+    eos_crdt_memory_sync_audit: () => EosDistributedCrdtMemoryCore.auditDistributedCrdtMemory(projectRoot),
   };
 }

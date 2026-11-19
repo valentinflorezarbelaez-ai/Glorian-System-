@@ -200,6 +200,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliAutonomousWasmJit.mjs",
     fn: "handleAutonomousWasmJitCommand",
   },
+  {
+    prefix: "toolchain:crdtmem:",
+    file: "./cliDistributedCrdtMemory.mjs",
+    fn: "handleDistributedCrdtMemoryCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

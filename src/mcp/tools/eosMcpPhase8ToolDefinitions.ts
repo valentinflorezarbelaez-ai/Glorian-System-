@@ -270,4 +270,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_crdt_memory_sync_audit",
+    description:
+      "Audits the Distributed Bitemporal CRDT Memory Synchronizer verifying Strong Eventual Consistency, join-semilattice merges, and bitemporal fidelity (SPEC-348).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

@@ -92,6 +92,7 @@ export const CONFIGURED_SPECS = [
   "KnowledgeGraphReflex",
   "AgenticSwarmBft",
   "AutonomousWasmJitCompiler",
+  "DistributedCrdtMemory",
 ];
 
 /**

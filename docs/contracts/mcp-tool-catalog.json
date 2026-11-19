@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "dd29dad97f9e6fe86ab7989ff2c462ecbd769a69653fd2087f1c3c9ab3fdf0c3",
-  "totalTools": 223,
+  "catalogSha256": "c1cdeb3be91bfbd99a4db3bbd32128c74a8484abd3b446a431895311dbe16150",
+  "totalTools": 224,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -6903,6 +6903,21 @@
       },
       "annotations": {
         "title": "EOS wasmjit Compiler Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_crdt_memory_sync_audit",
+      "description": "Audits the Distributed Bitemporal CRDT Memory Synchronizer verifying Strong Eventual Consistency, join-semilattice merges, and bitemporal fidelity (SPEC-348).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS crdt Memory Sync Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

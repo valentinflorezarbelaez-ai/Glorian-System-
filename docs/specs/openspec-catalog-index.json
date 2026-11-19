@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 347,
-  "catalogSha256": "a26bed738a4dfb3f5a00f5d833991f94bb1f18390b2a24e5bca55966de85e54c",
+  "totalSpecs": 348,
+  "catalogSha256": "c40aaa927314ecf9eae62250cae10b118fae2fcfa1f4748be472e76e38aa2d63",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3125,6 +3125,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-347-wasm-jit-compiler.md",
       "sha256": "b22982bb9658558f8bfacfa3c95c4545a73a41c9b472975030d17048dda85af6"
+    },
+    {
+      "id": "SPEC-348",
+      "title": "Distributed Bitemporal CRDT Memory Synchronizer",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-348-distributed-crdt-memory.md",
+      "sha256": "0ba0d39e0968497845c2cd9657f16d6b92a15aef4724db53edf4756961de5f9c"
     }
   ]
 }

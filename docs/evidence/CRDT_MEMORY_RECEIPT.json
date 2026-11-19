@@ -1,0 +1,19 @@
+{
+  "receiptId": "CRDT_EVD_1795095306018",
+  "specId": "SPEC-348",
+  "timestamp": "2026-11-19T13:35:06.017Z",
+  "convergenceVerified": true,
+  "commutativityVerified": true,
+  "bitemporalFidelityVerified": true,
+  "activeNodes": [
+    "node-alpha",
+    "node-beta",
+    "node-gamma"
+  ],
+  "registerCount": 1,
+  "setCount": 1,
+  "counterCount": 1,
+  "ledgerRecordCount": 5,
+  "status": "VERIFIED",
+  "checksumSha256": "043db890841d55aa11106fecf8243525a14e02fb05544f1067f02b9c014a126e"
+}

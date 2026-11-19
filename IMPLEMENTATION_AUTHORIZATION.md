@@ -3245,3 +3245,16 @@
   - `docs/plans/PLAN-209-wasm-jit-compiler.md`
   - `docs/tasks/TASKS-209-wasm-jit-compiler.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-19-DISTRIBUTED-CRDT-MEMORY
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-210` (`SPEC-348`), Distributed Bitemporal CRDT Memory Synchronizer: TLA+ Model 91 `docs/formal/DistributedCrdtMemory.tla` / `.cfg`; `src/core/eosDistributedCrdtMemory.types.ts` and `src/core/eosDistributedCrdtMemory.ts` (pure Layer-0 CRDTs: ORSet, LWW-Map, PN-Counter, Hybrid Logical Clocks, bitemporal transaction anchoring, commutative join-semilattice merge); receipt `docs/evidence/DISTRIBUTED_CRDT_MEMORY_RECEIPT.json`. Wire `toolchain:crdtmem:put`, `toolchain:crdtmem:get`, `toolchain:crdtmem:merge`, `toolchain:crdtmem:sync`, `toolchain:crdtmem:audit` and Phase 8 MCP tool `eos_crdt_memory_sync_audit`. Verify `BDD-1867`..`BDD-1872`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-210-DISTRIBUTED-CRDT-MEMORY.md`
+  - `openspec/changes/CHANGE-210-distributed-crdt-memory.md`
+  - `openspec/specs/SPEC-348-distributed-crdt-memory.md`
+  - `docs/plans/PLAN-210-distributed-crdt-memory.md`
+  - `docs/tasks/TASKS-210-distributed-crdt-memory.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
