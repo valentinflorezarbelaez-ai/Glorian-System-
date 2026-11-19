@@ -1,15 +1,15 @@
 {
   "specId": "SPEC-359",
   "changeId": "CHANGE-221",
-  "timestamp": "2026-11-19T18:43:17.825Z",
+  "timestamp": "2026-11-19T18:47:14.058Z",
   "swarmSize": 3,
   "currentLeader": "agent-lead",
   "currentTerm": 1,
   "benchmark": {
     "electionsExecuted": 200,
-    "totalDurationUs": 291.6,
-    "avgConvergenceTimeUs": 1.4580000000000002,
-    "consensusThroughputOpsSec": 685871.0562414266,
+    "totalDurationUs": 306,
+    "avgConvergenceTimeUs": 1.53,
+    "consensusThroughputOpsSec": 653594.7712418301,
     "splitBrainViolations": 0
   },
   "tlcModelVerified": true,
