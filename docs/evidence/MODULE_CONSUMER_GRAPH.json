@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-19T02:22:31.233Z",
-  "totalModules": 560,
-  "consumedModules": 497,
+  "timestampIso": "2026-11-19T02:35:13.474Z",
+  "totalModules": 562,
+  "consumedModules": 499,
   "unconsumedModules": 63,
-  "graphDensity": 0.8875,
+  "graphDensity": 0.8879,
   "modules": {
     "EosAin": {
       "file": "src/core/EosAin.ts",
@@ -222,6 +222,34 @@
         {
           "consumerPath": "bin/commands/cliSovereign.mjs",
           "category": "bin"
+        }
+      ]
+    },
+    "eosAgenticContextEngine": {
+      "file": "src/core/eosAgenticContextEngine.ts",
+      "baseName": "eosAgenticContextEngine",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliAgenticContextEngine.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosAgenticContextEngine.types": {
+      "file": "src/core/eosAgenticContextEngine.types.ts",
+      "baseName": "eosAgenticContextEngine.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosAgenticContextEngine.ts",
+          "category": "core"
         }
       ]
     },
@@ -2642,8 +2670,12 @@
       "file": "src/core/eosEvidencePaths.ts",
       "baseName": "eosEvidencePaths",
       "isConsumed": true,
-      "consumerCount": 40,
+      "consumerCount": 42,
       "consumers": [
+        {
+          "consumerPath": "src/core/eosAgenticContextEngine.ts",
+          "category": "core"
+        },
         {
           "consumerPath": "src/core/eosDatabaseMigrationGovernor.ts",
           "category": "core"
@@ -2654,6 +2686,10 @@
         },
         {
           "consumerPath": "bin/commands/cliActivationCheckpointingEngine.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliAgenticContextEngine.mjs",
           "category": "bin"
         },
         {

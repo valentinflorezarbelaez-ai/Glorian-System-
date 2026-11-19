@@ -3193,3 +3193,16 @@
   - `docs/plans/PLAN-205-sovereign-web-compiler.md`
   - `docs/tasks/TASKS-205-sovereign-web-compiler.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-18-AGENTIC-CONTEXT-ENGINE
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-206` (`SPEC-344`), Autonomous Agentic Context Engine & Multimodal Prompt Ingestion: TLA+ Model 87 `docs/formal/AgenticContextEngine.tla` / `.cfg`; `src/core/eosAgenticContextEngine.types.ts` and `src/core/eosAgenticContextEngine.ts` (sliding-window semantic chunking with hysteresis, fail-closed prompt-injection defense barrier, priority-driven token budget compaction, and pure Layer-0 BM25/Cosine retrieval); receipt `docs/evidence/AGENTIC_CONTEXT_ENGINE_RECEIPT.json`. Wire `toolchain:agentic:ingest`, `toolchain:agentic:chunk`, `toolchain:agentic:compress`, `toolchain:agentic:eval`, `toolchain:agentic:audit` and Phase 8 MCP tool `eos_agentic_context_audit`. Verify `BDD-1843`..`BDD-1848`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-206-AGENTIC-CONTEXT-ENGINE.md`
+  - `openspec/changes/CHANGE-206-agentic-context-engine.md`
+  - `openspec/specs/SPEC-344-agentic-context-engine.md`
+  - `docs/plans/PLAN-206-agentic-context-engine.md`
+  - `docs/tasks/TASKS-206-agentic-context-engine.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

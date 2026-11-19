@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0.0",
+  "spec": "SPEC-344",
+  "timestamp": "2026-11-19T02:35:40.551Z",
+  "totalChunksEvaluated": 2,
+  "meanRecallScore": 1,
+  "promptInjectionDefensePassed": true,
+  "tokenBudgetCompactionPassed": true,
+  "allPassed": true,
+  "sha256": "ad9e8355d2779d77b14e92c1f31889069fadeff32573bbbe73af1c8144284e96"
+}

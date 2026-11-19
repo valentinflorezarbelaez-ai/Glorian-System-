@@ -180,6 +180,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliWebCompiler.mjs",
     fn: "handleWebCompilerCommand",
   },
+  {
+    prefix: "toolchain:agentic:",
+    file: "./cliAgenticContextEngine.mjs",
+    fn: "handleAgenticContextCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

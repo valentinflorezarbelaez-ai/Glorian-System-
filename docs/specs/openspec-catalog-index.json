@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 343,
-  "catalogSha256": "4e99009ebc9ce7b367601e44d9f8aee5a401ce4eb9d343bcee72026daec12221",
+  "totalSpecs": 344,
+  "catalogSha256": "29aea8f27c340730e4ad608fd4ad13a8a962b6b0dfb1b6de5c9fafdfaea36af0",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3089,6 +3089,15 @@
       "bddCount": 7,
       "file": "openspec/specs/SPEC-343-sovereign-web-compiler.md",
       "sha256": "2be59413ed5b7593498ac53b930d5260be64c9f76c54e90a5ada50f9c872c00d"
+    },
+    {
+      "id": "SPEC-344",
+      "title": "Autonomous Agentic Context Engine & Multimodal Prompt Ingestion",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-344-agentic-context-engine.md",
+      "sha256": "a917ea083446b8881d5963b9d2c8c5f94a45213737c3e8586a005887a9dbe672"
     }
   ]
 }

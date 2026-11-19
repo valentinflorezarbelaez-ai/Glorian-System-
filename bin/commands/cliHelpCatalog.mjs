@@ -664,6 +664,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:web:sri [--content=TEXT] [--json] Generador criptográfico de integridad de subrecursos SRI SHA-384 (SPEC-343)
   eos toolchain:web:seo [--name=NAME] [--domain=DOMAIN] [--json] Sintetizador de grafo Schema.org JSON-LD y metaetiquetas (SPEC-343)
   eos toolchain:web:audit [--json] Auditoría determinista del compilador web soberano y recibo SHA-256 (SPEC-343)
+  eos toolchain:agentic:ingest [--id=ID] [--text=TEXT] [--json] Ingesta semántica de prompts y extracción de invariantes (SPEC-344)
+  eos toolchain:agentic:chunk [--text=TEXT] [--max-tokens=256] [--overlap=32] [--json] Segmentación con ventana deslizante e histéresis (SPEC-344)
+  eos toolchain:agentic:compress [--text=TEXT] [--budget=TOKENS] [--json] Compactación de contexto gobernada por presupuesto y preservación de contratos (SPEC-344)
+  eos toolchain:agentic:eval [--query=QUERY] [--json] Evaluación de recuperación semántica BM25 y recall (SPEC-344)
+  eos toolchain:agentic:audit [--json] Auditoría determinista del motor de contexto agéntico y recibo SHA-256 (SPEC-344)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

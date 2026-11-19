@@ -4,6 +4,7 @@
  * context-window assembly and spec-drift detection.
  */
 
+import { EosAgenticContextEngineCore } from "../../core/eosAgenticContextEngine.ts";
 import { EosAgenticHarnessYieldCore } from "../../core/eosAgenticHarnessYield.ts";
 import { EosAgiCore } from "../../core/eosAgiCore.ts";
 import { EosCausalStructuralModelCore } from "../../core/eosCausalStructuralModel.ts";
@@ -209,5 +210,7 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_blindspot_hunter_audit: () => new EosMetamorphicDifferentialBlindSpotCore().audit(),
 
     eos_web_compiler_audit: () => EosSovereignWebCompilerCore.auditCompiler(projectRoot),
+
+    eos_agentic_context_audit: () => EosAgenticContextEngineCore.audit(projectRoot),
   };
 }

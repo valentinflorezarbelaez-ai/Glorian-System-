@@ -88,6 +88,7 @@ export const CONFIGURED_SPECS = [
   "ClosedLoopRepoAutopilot",
   "MetamorphicDifferentialBlindSpot",
   "SovereignWebCompiler",
+  "AgenticContextEngine",
 ];
 
 /**

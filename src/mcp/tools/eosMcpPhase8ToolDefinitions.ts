@@ -234,4 +234,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_agentic_context_audit",
+    description:
+      "Audits the Autonomous Agentic Context Engine verifying sliding-window chunking, prompt-injection defense barrier, token budget compaction, and semantic retrieval recall (SPEC-344).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];
