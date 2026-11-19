@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:c139fc61-2c53-4fcc-b900-80c69d1a96d5",
+  "serialNumber": "urn:uuid:5caa510f-2063-4d3f-9ecb-f01c35262b42",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T18:43:55.977Z",
+    "timestamp": "2026-11-19T18:55:43.186Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -282,7 +282,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "62c03e031107634260de972e211a222651d517f3705810790f86081b83fb3a87"
+          "content": "c1d464c62d1f3430f6952ef396966a13805c131c43a0e243a6755db202a3854f"
         }
       ]
     },
@@ -296,7 +296,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "30833cfc15758c1999056dfbaa280bf5f3093a646860d98f12709be67383aa26"
+          "content": "d786610d3e9f479ba519af0fd53a0f28706382a7651ee0adff82cc708c864e72"
         }
       ]
     },
@@ -3648,6 +3648,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:InductiveProofEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/InductiveProofEngine@1.0.0",
+      "description": "Layer-0 module eosInductiveProofEngine.ts",
+      "purl": "pkg:npm/glorian/InductiveProofEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "82980e37e1d889c93f29c074d0e8a7112a0f18e047d17bcdcddcf1a4c1c9bc99"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:InductiveProofEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/InductiveProofEngine@1.0.0",
+      "description": "Layer-0 module eosInductiveProofEngine.types.ts",
+      "purl": "pkg:npm/glorian/InductiveProofEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b14ce515af1d7cc9456c152183d6b39cd2ed4b3e4f4720623140185f323e93da"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:InertialFusionLawsonIgnitionCore",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/InertialFusionLawsonIgnitionCore@1.0.0",
@@ -4398,7 +4426,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "d248fb97660047ea842a858bd6be95df04b513e626386b48e4b04a5ed0bca8f4"
+          "content": "de2deb5f0afec4fef6595e271d67a5263d997da13c414447b8f428e9f07f758b"
         }
       ]
     },
@@ -8290,7 +8318,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5ebbf2325bb93ac086f447669655a964902e639f93f96a4f9ec0ab222e48e430"
+          "content": "5d5aba2649bfd70c6af4bb5ea85bf47604f9f7395ae3ef06240c1f91227672d8"
         }
       ]
     },
@@ -9099,6 +9127,12 @@
       "ref": "pkg:npm/glorian/IncidentSeverityClassifier@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/InductiveProofEngine@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -10374,7 +10408,8 @@
         "pkg:npm/glorian/WorkStealingScheduler@1.0.0",
         "pkg:npm/glorian/BitemporalEventSourcingLedger@1.0.0",
         "pkg:npm/glorian/ArchitecturalCanvas@1.0.0",
-        "pkg:npm/glorian/AgentSwarmMicroKernel@1.0.0"
+        "pkg:npm/glorian/AgentSwarmMicroKernel@1.0.0",
+        "pkg:npm/glorian/InductiveProofEngine@1.0.0"
       ]
     }
   ]

@@ -725,6 +725,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:kernel:status [--json] Estado operacional del enjambre, líder actual y roles asignados (SPEC-359)
   eos toolchain:kernel:elect [agent] [--json] Ejecución de ronda de elección Raft con quórum mayoritario (SPEC-359)
   eos toolchain:kernel:propose [cmd] [--json] Propuesta y replicación de comandos de cambio en log de quórum (SPEC-359)
+  eos toolchain:proof:audit [--json] Auditoría del motor de prueba inductiva y síntesis CEGIS (SPEC-360)
+  eos toolchain:proof:synthesize [--json] Síntesis de lemas conjuntivos auxiliares para invariantes inductivos (SPEC-360)
+  eos toolchain:proof:verify [--json] Verificación de simetría metamórfica y equivalencia algebraica (SPEC-360)
+  eos toolchain:proof:bench [--json] Benchmark de throughput de transiciones y latencia de lemas (SPEC-360)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

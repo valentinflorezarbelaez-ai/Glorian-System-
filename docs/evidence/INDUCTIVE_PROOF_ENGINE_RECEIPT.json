@@ -1,0 +1,29 @@
+{
+  "specId": "SPEC-360",
+  "changeId": "CHANGE-222",
+  "timestamp": "2026-11-19T18:55:07.697Z",
+  "cegisResult": {
+    "converged": true,
+    "iterations": 1,
+    "baseCaseVerified": true,
+    "inductiveStepVerified": true,
+    "synthesizedLemmas": [],
+    "totalCounterexamplesPruned": 0
+  },
+  "metamorphicReport": {
+    "transformationsTested": 2,
+    "symmetryPreserved": true,
+    "invariantsChecked": 2,
+    "violations": []
+  },
+  "benchmark": {
+    "transitionsEvaluated": 200,
+    "lemmasSynthesized": 600,
+    "totalDurationUs": 1030.4,
+    "avgLemmaSynthesisLatencyUs": 1.7173333333333334,
+    "throughputTransitionsSec": 194099.3788819876
+  },
+  "tlcModelVerified": true,
+  "verdict": "CONFORMANT",
+  "epistemicState": "PRODUCTION_READY_WITHIN_TESTED_SCOPE"
+}

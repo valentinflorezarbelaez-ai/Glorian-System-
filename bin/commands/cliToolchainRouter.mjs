@@ -260,6 +260,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliAgentSwarmMicroKernel.mjs",
     fn: "handleAgentSwarmMicroKernelCommand",
   },
+  {
+    prefix: "toolchain:proof:",
+    file: "./cliInductiveProofEngine.mjs",
+    fn: "handleInductiveProofEngineCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

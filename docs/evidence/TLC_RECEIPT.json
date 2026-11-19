@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-19T18:39:59.186Z",
+  "timestampIso": "2026-11-19T18:53:06.354Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -7,7 +7,7 @@
   "allPassed": true,
   "hasJavaRuntime": true,
   "tlaJarPath": "C:\\Users\\valen\\Documents\\Glorian-System\\tools\\tla2tools.jar",
-  "totalConfiguredSpecs": 64,
+  "totalConfiguredSpecs": 65,
   "models": [
     {
       "specName": "LmaxDisruptor",
@@ -31,8 +31,8 @@
       "specName": "DatomicBitemporalLedger",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 3481,
-      "statesGenerated": 9817,
+      "distinctStates": 494,
+      "statesGenerated": 862,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -67,8 +67,8 @@
       "specName": "ZeroCopyRingBuffer",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 434,
-      "statesGenerated": 618,
+      "distinctStates": 646,
+      "statesGenerated": 398,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -76,8 +76,8 @@
       "specName": "JepsenDistributedChaos",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 795,
-      "statesGenerated": 849,
+      "distinctStates": 293,
+      "statesGenerated": 588,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -85,8 +85,8 @@
       "specName": "SimdQuantizedHnsw",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 536,
-      "statesGenerated": 537,
+      "distinctStates": 845,
+      "statesGenerated": 680,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -94,8 +94,8 @@
       "specName": "DistributedVectorMesh",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 636,
-      "statesGenerated": 5125,
+      "distinctStates": 302,
+      "statesGenerated": 327,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -582,6 +582,15 @@
       "passed": true,
       "distinctStates": 587,
       "statesGenerated": 2485,
+      "violationInvariant": null,
+      "exitCode": 0
+    },
+    {
+      "specName": "InductiveProofEngine",
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 12,
+      "statesGenerated": 16,
       "violationInvariant": null,
       "exitCode": 0
     }

@@ -104,6 +104,7 @@ export const CONFIGURED_SPECS = [
   "BitemporalEventLedger",
   "ArchitecturalCanvasTopology",
   "AgentSwarmMicroKernel",
+  "InductiveProofEngine",
 ];
 
 /**

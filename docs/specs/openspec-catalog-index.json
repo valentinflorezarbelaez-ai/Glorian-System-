@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 359,
-  "catalogSha256": "e9a94ce70a5f1c42ddc07b70188e1392cee9334b8ebbbaba3e803bf42272c91c",
+  "totalSpecs": 360,
+  "catalogSha256": "881a17948cfa542ead4913dfbb3459161e64b1474a14bb602cbc2401587530ab",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3232,7 +3232,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-359-agent-swarm-microkernel.md",
-      "sha256": "f670df24ed9205382b5012643c403116c3b7bac88205d1bd85cda4538aa6f1a2"
+      "sha256": "b8e0ff90c5772681bee6c05e684e018aae150ee0c7da3ec52ff9248ffc70f9da"
+    },
+    {
+      "id": "SPEC-360",
+      "title": "Autonomous Formal Verification & Metamorphic Proof Engine (Automated Inductive Invariant Synthesizer & Z3/TLC Hybrid Co-Prover)",
+      "status": "SPECIFICATION_APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-360-inductive-proof-engine.md",
+      "sha256": "1adf08acfeac55422ec8383777608e3cee3eb29cea35524ff686fc1e754a5854"
     }
   ]
 }

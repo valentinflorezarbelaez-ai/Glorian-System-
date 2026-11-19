@@ -378,4 +378,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_inductive_proof_engine_audit",
+    description:
+      "Audits the Autonomous Formal Verification & Metamorphic Proof Engine verifying CEGIS inductive invariant synthesis, transition counterexample pruning, and metamorphic symmetry preservation (SPEC-360).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

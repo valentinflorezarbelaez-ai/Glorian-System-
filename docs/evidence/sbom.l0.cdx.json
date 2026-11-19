@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:c2470714-bfb5-570f-82da-3c24d0f88083",
+  "serialNumber": "urn:uuid:8a8dff8f-f669-53d4-9593-06b9ce7fa5f1",
   "version": 1,
   "metadata": {
-    "timestamp": "2023-04-09T22:32:52.000Z",
+    "timestamp": "2023-08-26T15:36:47.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "c09f9242665dc6f2e2c2ec37c936d6cc73ef01b0b12d372809d851666d231b76"
+          "content": "2ab02d9fac759298d9bc728a46875197ac65e40c0b5a64dc7eada73e48b890b4"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -221,7 +221,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "62c03e031107634260de972e211a222651d517f3705810790f86081b83fb3a87"
+          "content": "c1d464c62d1f3430f6952ef396966a13805c131c43a0e243a6755db202a3854f"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosAgentSwarmMicroKernel.ts"
@@ -234,7 +234,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "30833cfc15758c1999056dfbaa280bf5f3093a646860d98f12709be67383aa26"
+          "content": "d786610d3e9f479ba519af0fd53a0f28706382a7651ee0adff82cc708c864e72"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosAgentSwarmMicroKernel.types.ts"
@@ -3426,6 +3426,32 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosInductiveProofEngine.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosInductiveProofEngine.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "82980e37e1d889c93f29c074d0e8a7112a0f18e047d17bcdcddcf1a4c1c9bc99"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosInductiveProofEngine.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosInductiveProofEngine.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosInductiveProofEngine.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b14ce515af1d7cc9456c152183d6b39cd2ed4b3e4f4720623140185f323e93da"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosInductiveProofEngine.types.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosInertialFusionLawsonIgnitionCore.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosInertialFusionLawsonIgnitionCore.ts@75.0.0",
@@ -4095,7 +4121,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "d248fb97660047ea842a858bd6be95df04b513e626386b48e4b04a5ed0bca8f4"
+          "content": "de2deb5f0afec4fef6595e271d67a5263d997da13c414447b8f428e9f07f758b"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosMcpToolTaxonomy.ts"
@@ -7709,7 +7735,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5ebbf2325bb93ac086f447669655a964902e639f93f96a4f9ec0ab222e48e430"
+          "content": "5d5aba2649bfd70c6af4bb5ea85bf47604f9f7395ae3ef06240c1f91227672d8"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: index.ts"
@@ -7780,5 +7806,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "2232215a15190215f868434fb1ed1a1cc5f36cc90c9f4b1f79252467e65db879"
+  "sha256Receipt": "4d0f6f19bbc863d7ec2a4052671c0f63a0940dd014895133a03d4b58e46b89ed"
 }

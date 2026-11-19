@@ -757,3 +757,4 @@ export * from "./eosWorkStealingScheduler.ts";
 export * from "./eosBitemporalEventSourcingLedger.ts";
 export * from "./eosArchitecturalCanvas.ts";
 export * from "./eosAgentSwarmMicroKernel.ts";
+export * from "./eosInductiveProofEngine.ts";

@@ -7088,6 +7088,21 @@
         "idempotentHint": true,
         "openWorldHint": false
       }
+    },
+    {
+      "name": "eos_inductive_proof_engine_audit",
+      "description": "Audits the Autonomous Formal Verification & Metamorphic Proof Engine verifying CEGIS inductive invariant synthesis, transition counterexample pruning, and metamorphic symmetry preservation (SPEC-360).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS Inductive Proof Engine Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
     }
   ]
 }
