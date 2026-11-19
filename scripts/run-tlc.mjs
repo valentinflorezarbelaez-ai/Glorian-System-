@@ -95,6 +95,7 @@ export const CONFIGURED_SPECS = [
   "DistributedCrdtMemory",
   "NeuralSymbolicProver",
   "ZkCircuitSynthesizer",
+  "ShardedTransactionFabric",
 ];
 
 /**

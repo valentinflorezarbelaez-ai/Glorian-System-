@@ -297,4 +297,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_sharded_transaction_mesh_audit",
+    description:
+      "Audits the Autonomous Quantum-Resilient Distributed Transaction Fabric & Sharded State Mesh verifying consistent hash ring balancing, MVCC snapshot isolation, 2PC atomic commits, and post-quantum HMAC-SHA384 receipts (SPEC-351).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

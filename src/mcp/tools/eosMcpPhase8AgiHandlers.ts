@@ -27,6 +27,7 @@ import { EosPostQuantumThresholdMpcCore } from "../../core/eosPostQuantumThresho
 import { EosSovereignWebCompilerCore } from "../../core/eosSovereignWebCompiler.ts";
 import { EosSpecDriftDetector } from "../../core/eosSpecDriftDetector.ts";
 import { EosZkCircuitSynthesizerCore } from "../../core/eosZkCircuitSynthesizer.ts";
+import { EosShardedTransactionFabricCore } from "../../core/eosShardedTransactionFabric.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 import { PHASE8_MIGRATED_TOOL_NAMES } from "./eosMcpPhase8ToolNames.ts";
 
@@ -230,5 +231,7 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_neural_symbolic_prover_audit: () => EosNeuralSymbolicProverCore.audit(projectRoot),
 
     eos_zk_circuit_synthesizer_audit: () => EosZkCircuitSynthesizerCore.audit(projectRoot),
+
+    eos_sharded_transaction_mesh_audit: () => EosShardedTransactionFabricCore.audit(projectRoot),
   };
 }

@@ -215,6 +215,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliZkCircuitSynthesizer.mjs",
     fn: "handleZkCircuitSynthesizerCommand",
   },
+  {
+    prefix: "toolchain:txfabric:",
+    file: "./cliShardedTransactionFabric.mjs",
+    fn: "handleShardedTransactionFabricCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

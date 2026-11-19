@@ -693,6 +693,9 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:zkcirc:audit [--json] Auditoría del sintetizador de circuitos Zero-Knowledge R1CS y recibo SHA-256 (SPEC-350)
   eos toolchain:zkcirc:compile [--json] Compilación de grafo aritmético a sistema de restricciones R1CS sobre BN254 (SPEC-350)
   eos toolchain:zkcirc:verify [--json] Verificación determinista de satisfacción de testigos en circuitos ZK (SPEC-350)
+  eos toolchain:txfabric:audit [--json] Auditoría de la malla de transacciones fragmentadas con aislamiento MVCC y 2PC (SPEC-351)
+  eos toolchain:txfabric:route [key] [--json] Enrutamiento consistente sobre anillo hash con vnodes (SPEC-351)
+  eos toolchain:txfabric:commit [--json] Ejecución atómica distribuida en dos fases con firma post-cuántica (SPEC-351)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

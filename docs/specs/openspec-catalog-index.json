@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 350,
-  "catalogSha256": "e48196628cfbf11f3691fb8e8db011b975cc2df379e1fb7c7e313f21cf9c5adf",
+  "totalSpecs": 351,
+  "catalogSha256": "0a4b7345ac211babc3b53aa47aa95d41889eba2da9c308aa50f1147b029ee1ee",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3152,6 +3152,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-350-zk-circuit-synthesizer.md",
       "sha256": "aeb435c3abe4e3002cf9fa29bc40f58505d6e274a092dc893c772f79a75811d7"
+    },
+    {
+      "id": "SPEC-351",
+      "title": "Autonomous Quantum-Resilient Distributed Transaction Fabric & Sharded State Mesh",
+      "status": "SPECIFICATION_APPROVED",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-351-sharded-transaction-fabric.md",
+      "sha256": "9640223c2cf280b887aa1a535e62e18116858149ec868e2711c42022af739d96"
     }
   ]
 }

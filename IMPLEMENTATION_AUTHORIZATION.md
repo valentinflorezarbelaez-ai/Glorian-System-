@@ -3284,3 +3284,16 @@
   - `docs/plans/PLAN-212-zk-circuit-synthesizer.md`
   - `docs/tasks/TASKS-212-zk-circuit-synthesizer.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-19-SHARDED-TRANSACTION-FABRIC
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-213` (`SPEC-351`), Autonomous Quantum-Resilient Distributed Transaction Fabric & Sharded State Mesh: TLA+ Model 94 `docs/formal/ShardedTransactionFabric.tla` / `.cfg`; `src/core/eosShardedTransactionFabric.types.ts` and `src/core/eosShardedTransactionFabric.ts` (consistent hash ring with vnode balancing, MVCC snapshot isolation, post-quantum HMAC-SHA384 sign/verify, deterministic 2PC atomic commitment, automated rollback compensation, partition healing); receipt `docs/evidence/SHARDED_TRANSACTION_FABRIC_RECEIPT.json`. Wire `toolchain:txfabric:route`, `toolchain:txfabric:commit`, `toolchain:txfabric:audit` and Phase 8 MCP tool `eos_sharded_transaction_mesh_audit`. Verify `BDD-1885`..`BDD-1890`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-213-SHARDED-TRANSACTION-FABRIC.md`
+  - `openspec/changes/CHANGE-213-sharded-transaction-fabric.md`
+  - `openspec/specs/SPEC-351-sharded-transaction-fabric.md`
+  - `docs/plans/PLAN-213-sharded-transaction-fabric.md`
+  - `docs/tasks/TASKS-213-sharded-transaction-fabric.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
