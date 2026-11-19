@@ -190,6 +190,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliKnowledgeGraphReflex.mjs",
     fn: "handleKnowledgeGraphCommand",
   },
+  {
+    prefix: "toolchain:swarm:",
+    file: "./cliAgenticSwarmBft.mjs",
+    fn: "handleAgenticSwarmCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

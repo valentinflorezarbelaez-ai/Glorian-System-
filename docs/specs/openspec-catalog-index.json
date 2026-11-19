@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 345,
-  "catalogSha256": "937831d5744528e45945c3cf43d99b4059f7451b92df013ad6e8e72902384c3a",
+  "totalSpecs": 346,
+  "catalogSha256": "5238aa5a03f14cadce522b1f35288569742b1431f33b6615e3fd1a0d2677fc03",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3107,6 +3107,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-345-knowledge-graph-reflex.md",
       "sha256": "ad89deaf89ac7f278cd424da688a36766cc903490fe7061f8c0d0273a2257222"
+    },
+    {
+      "id": "SPEC-346",
+      "title": "Autonomous Multi-Agent Swarm Orchestrator with Byzantine Fault Tolerance",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-346-agentic-swarm-bft.md",
+      "sha256": "455841f4966690f2d229e1cc84fd6bc9cb65874bf5ff0241847948251c84cd4c"
     }
   ]
 }

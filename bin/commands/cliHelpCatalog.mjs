@@ -675,6 +675,12 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:graph:pagerank [--json] Centralidad y criticidad arquitectónica mediante power iteration de PageRank (SPEC-345)
   eos toolchain:graph:reflex [--node=ID] [--json] Despacho reactivo de ganchos semánticos con cota de profundidad <= 10 (SPEC-345)
   eos toolchain:graph:audit [--json] Auditoría determinista del grafo de conocimiento y recibo SHA-256 (SPEC-345)
+  eos toolchain:swarm:spawn [--nodes=4] [--json] Despliegue de cluster agéntico y cálculo de tolerancia bizantina 3f+1 (SPEC-346)
+  eos toolchain:swarm:task [--author=ID] [--type=TYPE] [--json] Envío de propuesta arquitectónica bajo consenso PBFT (SPEC-346)
+  eos toolchain:swarm:vote [--voter=ID] [--decision=ACCEPT|REJECT] [--json] Emisión de voto firmado y verificación de equivocación (SPEC-346)
+  eos toolchain:swarm:status [--json] Estado del enjambre, miembros activos y cuórum BFT (SPEC-346)
+  eos toolchain:swarm:slash [--agent=ID] [--reason=REASON] [--json] Penalización por falta bizantina y cuarentena de nodo (SPEC-346)
+  eos toolchain:swarm:audit [--json] Auditoría determinista del orquestador de enjambre y recibo SHA-256 (SPEC-346)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

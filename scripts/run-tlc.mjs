@@ -90,6 +90,7 @@ export const CONFIGURED_SPECS = [
   "SovereignWebCompiler",
   "AgenticContextEngine",
   "KnowledgeGraphReflex",
+  "AgenticSwarmBft",
 ];
 
 /**

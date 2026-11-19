@@ -3219,3 +3219,16 @@
   - `docs/plans/PLAN-207-knowledge-graph-reflex.md`
   - `docs/tasks/TASKS-207-knowledge-graph-reflex.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-18-AGENTIC-SWARM-BFT
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-208` (`SPEC-346`), Autonomous Multi-Agent Swarm Orchestrator with Byzantine Fault Tolerance: TLA+ Model 89 `docs/formal/AgenticSwarmBft.tla` / `.cfg`; `src/core/eosAgenticSwarmBft.types.ts` and `src/core/eosAgenticSwarmBft.ts` (PBFT 3-phase consensus, 3f+1 quorum calculation, byzantine slashing and quarantine, role-specialized multi-agent scheduling); receipt `docs/evidence/AGENTIC_SWARM_BFT_RECEIPT.json`. Wire `toolchain:swarm:spawn`, `toolchain:swarm:task`, `toolchain:swarm:vote`, `toolchain:swarm:status`, `toolchain:swarm:slash`, `toolchain:swarm:audit` and Phase 8 MCP tool `eos_agentic_swarm_bft_audit`. Verify `BDD-1855`..`BDD-1860`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-208-AGENTIC-SWARM-BFT.md`
+  - `openspec/changes/CHANGE-208-agentic-swarm-bft.md`
+  - `openspec/specs/SPEC-346-agentic-swarm-bft.md`
+  - `docs/plans/PLAN-208-agentic-swarm-bft.md`
+  - `docs/tasks/TASKS-208-agentic-swarm-bft.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

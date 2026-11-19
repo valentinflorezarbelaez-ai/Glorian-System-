@@ -6,6 +6,7 @@
 
 import { EosAgenticContextEngineCore } from "../../core/eosAgenticContextEngine.ts";
 import { EosAgenticHarnessYieldCore } from "../../core/eosAgenticHarnessYield.ts";
+import { auditAgenticSwarmBft } from "../../core/eosAgenticSwarmBft.ts";
 import { EosAgiCore } from "../../core/eosAgiCore.ts";
 import { EosCausalStructuralModelCore } from "../../core/eosCausalStructuralModel.ts";
 import { EosClosedLoopRepoAutopilotCore } from "../../core/eosClosedLoopRepoAutopilot.ts";
@@ -215,5 +216,7 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_agentic_context_audit: () => EosAgenticContextEngineCore.audit(projectRoot),
 
     eos_knowledge_graph_reflex_audit: () => auditKnowledgeGraphReflex(projectRoot),
+
+    eos_agentic_swarm_bft_audit: () => auditAgenticSwarmBft(projectRoot),
   };
 }

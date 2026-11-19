@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "fe5319ef1159a261f00a8b6a83022214fcb58e298c279a3a696f10d19f7caa8c",
-  "totalTools": 221,
+  "catalogSha256": "ff50beb24764212e918cf058256585e7469cf06a0b17e5be67a8455baffc090b",
+  "totalTools": 222,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -6873,6 +6873,21 @@
       },
       "annotations": {
         "title": "EOS knowledge Graph Reflex Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_agentic_swarm_bft_audit",
+      "description": "Audits the Autonomous Multi-Agent Swarm Orchestrator verifying PBFT 3-phase consensus, 3f+1 quorum thresholds, and byzantine slashing resilience (SPEC-346).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS agentic Swarm BFT Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

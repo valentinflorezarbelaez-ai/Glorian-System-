@@ -252,4 +252,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_agentic_swarm_bft_audit",
+    description:
+      "Audits the Autonomous Multi-Agent Swarm Orchestrator verifying PBFT 3-phase consensus, 3f+1 quorum thresholds, and byzantine slashing resilience (SPEC-346).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];
