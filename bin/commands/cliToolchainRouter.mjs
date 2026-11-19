@@ -240,6 +240,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliZeroCopyIpcRingBuffer.mjs",
     fn: "handleZeroCopyIpcCommand",
   },
+  {
+    prefix: "toolchain:sched:",
+    file: "./cliWorkStealingScheduler.mjs",
+    fn: "handleWorkStealingSchedulerCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

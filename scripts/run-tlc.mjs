@@ -100,6 +100,7 @@ export const CONFIGURED_SPECS = [
   "CausalMetaLearning",
   "WebGpuTensorAcceleration",
   "ZeroCopyIpcRingBuffer",
+  "WorkStealingScheduler",
 ];
 
 /**

@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:14f6722a-e93b-5a2d-8fd2-0bc7f9227017",
+  "serialNumber": "urn:uuid:dde576b9-3a31-552a-9db2-e1088dbbe37d",
   "version": 1,
   "metadata": {
-    "timestamp": "2021-02-21T13:10:02.000Z",
+    "timestamp": "2027-12-14T23:54:33.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "38ae956777f7336e7a4b1ba6714a6071b07e5cecaeef84d75c386b89a8b18438"
+          "content": "1e625060d3b331ad2297df30ba728646f2018e67d95f5b3cf21e1189adc33851"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -4017,7 +4017,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "17b8fb17916af8edb512735ddbf47514960ee162023dbd20cbe005488c9400de"
+          "content": "865e4744f8c71f212cfdba8634273a05d25fcc10ba55f1620f2a7f38fd9988f7"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosMcpToolTaxonomy.ts"
@@ -7352,6 +7352,32 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosWorkStealingScheduler.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosWorkStealingScheduler.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4d63f621feebf0eaab548a31abdc5cab6a7e25c542cf909c54e5c0f825ff8387"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosWorkStealingScheduler.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosWorkStealingScheduler.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosWorkStealingScheduler.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1934cd824af0da34366298be5daf2c5299db74efca28bd6ad04df8f3431111de"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosWorkStealingScheduler.types.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosWorkerTribunal.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosWorkerTribunal.ts@75.0.0",
@@ -7410,7 +7436,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "39e6b5bd636c5dbc1c2715753c6b4e91e5b21acf4d5c26d40c431390fe96b00c"
+          "content": "12e52ef78db5a98affb49b789a31a75242222d306f235237a7445285598c1351"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosZeroCopyIpcRingBuffer.ts"
@@ -7423,7 +7449,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "a9105542c4b0fabf743d3294e2fad06879fc6f3e858dcecc66eb076766c25c1c"
+          "content": "5b7c69025d224827543b464eff9a1142fce919e1cd02cd2eccc40540fa134c42"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosZeroCopyIpcRingBuffer.types.ts"
@@ -7605,7 +7631,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "4f43f2b637348c25ce04942663ea954e6bf5d57e5f98e22d3c5a44071e52c47e"
+          "content": "3da64ba6935ebdc15d7bd491c38b90927fe6f0dc1ad7732607237d2579452d03"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: index.ts"
@@ -7676,5 +7702,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "62373cb46d7ada902c2efd30a6231627974d1240555a765071ed670dbde8245d"
+  "sha256Receipt": "92cac89ceebb0dd3df9ebfbcaf49d05592538ac0359e04032f19817974c01d4f"
 }

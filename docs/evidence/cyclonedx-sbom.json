@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:5ec25b03-cc77-4c60-8e5d-0e6fe9c95186",
+  "serialNumber": "urn:uuid:fb082be0-4f9d-400f-9091-55e62e24d91f",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T17:18:04.003Z",
+    "timestamp": "2026-11-19T17:33:36.974Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -4314,7 +4314,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "17b8fb17916af8edb512735ddbf47514960ee162023dbd20cbe005488c9400de"
+          "content": "865e4744f8c71f212cfdba8634273a05d25fcc10ba55f1620f2a7f38fd9988f7"
         }
       ]
     },
@@ -7918,6 +7918,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:WorkStealingScheduler",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/WorkStealingScheduler@1.0.0",
+      "description": "Layer-0 module eosWorkStealingScheduler.ts",
+      "purl": "pkg:npm/glorian/WorkStealingScheduler@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4d63f621feebf0eaab548a31abdc5cab6a7e25c542cf909c54e5c0f825ff8387"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:WorkStealingScheduler",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/WorkStealingScheduler@1.0.0",
+      "description": "Layer-0 module eosWorkStealingScheduler.types.ts",
+      "purl": "pkg:npm/glorian/WorkStealingScheduler@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1934cd824af0da34366298be5daf2c5299db74efca28bd6ad04df8f3431111de"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:WorktreeOrchestrator",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/WorktreeOrchestrator@1.0.0",
@@ -7968,7 +7996,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "39e6b5bd636c5dbc1c2715753c6b4e91e5b21acf4d5c26d40c431390fe96b00c"
+          "content": "12e52ef78db5a98affb49b789a31a75242222d306f235237a7445285598c1351"
         }
       ]
     },
@@ -7982,7 +8010,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "a9105542c4b0fabf743d3294e2fad06879fc6f3e858dcecc66eb076766c25c1c"
+          "content": "5b7c69025d224827543b464eff9a1142fce919e1cd02cd2eccc40540fa134c42"
         }
       ]
     },
@@ -8178,7 +8206,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "4f43f2b637348c25ce04942663ea954e6bf5d57e5f98e22d3c5a44071e52c47e"
+          "content": "3da64ba6935ebdc15d7bd491c38b90927fe6f0dc1ad7732607237d2579452d03"
         }
       ]
     },
@@ -9927,6 +9955,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/WorkStealingScheduler@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/ZeroCopyIpcRingBuffer@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/EvidencePaths@1.0.0"
@@ -10234,7 +10268,8 @@
         "pkg:npm/glorian/NeuromorphicPlanner@1.0.0",
         "pkg:npm/glorian/CausalMetaLearning@1.0.0",
         "pkg:npm/glorian/WebGpuTensorAcceleration@1.0.0",
-        "pkg:npm/glorian/ZeroCopyIpcRingBuffer@1.0.0"
+        "pkg:npm/glorian/ZeroCopyIpcRingBuffer@1.0.0",
+        "pkg:npm/glorian/WorkStealingScheduler@1.0.0"
       ]
     }
   ]

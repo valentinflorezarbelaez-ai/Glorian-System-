@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-19T17:17:50.146Z",
+  "timestampIso": "2026-11-19T17:33:25.870Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -7,14 +7,14 @@
   "allPassed": true,
   "hasJavaRuntime": true,
   "tlaJarPath": "C:\\Users\\valen\\Documents\\Glorian-System\\tools\\tla2tools.jar",
-  "totalConfiguredSpecs": 60,
+  "totalConfiguredSpecs": 61,
   "models": [
     {
       "specName": "LmaxDisruptor",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 178,
-      "statesGenerated": 223,
+      "distinctStates": 20425,
+      "statesGenerated": 84397,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -67,8 +67,8 @@
       "specName": "ZeroCopyRingBuffer",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 317,
-      "statesGenerated": 171,
+      "distinctStates": 456,
+      "statesGenerated": 191,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -76,8 +76,8 @@
       "specName": "JepsenDistributedChaos",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 977,
-      "statesGenerated": 362,
+      "distinctStates": 258,
+      "statesGenerated": 739,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -85,8 +85,8 @@
       "specName": "SimdQuantizedHnsw",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 993,
-      "statesGenerated": 139,
+      "distinctStates": 991,
+      "statesGenerated": 153,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -546,6 +546,15 @@
       "passed": true,
       "distinctStates": 63,
       "statesGenerated": 85,
+      "violationInvariant": null,
+      "exitCode": 0
+    },
+    {
+      "specName": "WorkStealingScheduler",
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 47,
+      "statesGenerated": 65,
       "violationInvariant": null,
       "exitCode": 0
     }

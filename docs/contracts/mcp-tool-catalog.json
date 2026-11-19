@@ -7028,6 +7028,21 @@
         "idempotentHint": true,
         "openWorldHint": false
       }
+    },
+    {
+      "name": "eos_work_stealing_scheduler_audit",
+      "description": "Audits the Self-Rebalancing Work-Stealing Scheduler verifying Chase-Lev lock-free deques, randomized peer stealing, starvation-free priority aging, and micro-task throughput (SPEC-356).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS work Stealing Scheduler Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
     }
   ]
 }

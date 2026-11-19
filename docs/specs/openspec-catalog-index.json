@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 355,
-  "catalogSha256": "387d405ad902d7835679bc50ec6a6d9de2cb1fca7ac5d4e85b3f52a4c89d8cb4",
+  "totalSpecs": 356,
+  "catalogSha256": "8210900d2278282464cbe7334a6c6cefb0aedb9756037e5e1636d61241b259e9",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3196,7 +3196,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-355-zero-copy-ipc-ringbuffer.md",
-      "sha256": "320723738bb1d46a75a1a07db2da31e372516e9f09d4daf3e29046834e2ca49c"
+      "sha256": "1563c36f0a867b6ece31a8f360f13c68067249e603f89cdc461830ab4740deb4"
+    },
+    {
+      "id": "SPEC-356",
+      "title": "Self-Rebalancing Ephemeral Micro-Thread Work-Stealing Scheduler",
+      "status": "SPECIFICATION_APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-356-work-stealing-scheduler.md",
+      "sha256": "fd536155406299ef8adc568c2b0ad5c6f0afe15386482bfd5e0a3bf0046d7ad2"
     }
   ]
 }

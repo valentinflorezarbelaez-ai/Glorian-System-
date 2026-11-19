@@ -3349,3 +3349,16 @@
   - `docs/plans/PLAN-217-ZERO-COPY-IPC-RINGBUFFER.md`
   - `docs/tasks/TASKS-217-ZERO-COPY-IPC-RINGBUFFER.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-19-WORK-STEALING-SCHEDULER
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-218` (`SPEC-356`), Self-Rebalancing Ephemeral Micro-Thread Work-Stealing Scheduler: TLA+ Model 99 `docs/formal/WorkStealingScheduler.tla` / `.cfg`; `src/core/eosWorkStealingScheduler.types.ts` and `src/core/eosWorkStealingScheduler.ts` (Chase-Lev lock-free circular array deque with LIFO owner push/pop and FIFO thief steal, randomized victim selection, cooperative fiber yielding, starvation-free priority aging, multi-worker pool orchestration, sub-millisecond dispatch); receipt `docs/evidence/WORK_STEALING_SCHEDULER_RECEIPT.json`. Wire `toolchain:sched:spawn`, `toolchain:sched:steal`, `toolchain:sched:bench`, `toolchain:sched:audit` and Phase 8 MCP tool `eos_work_stealing_scheduler_audit`. Verify `BDD-1915`..`BDD-1920`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-218-WORK-STEALING-SCHEDULER.md`
+  - `openspec/changes/CHANGE-218-work-stealing-scheduler.md`
+  - `openspec/specs/SPEC-356-work-stealing-scheduler.md`
+  - `docs/plans/PLAN-218-WORK-STEALING-SCHEDULER.md`
+  - `docs/tasks/TASKS-218-WORK-STEALING-SCHEDULER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

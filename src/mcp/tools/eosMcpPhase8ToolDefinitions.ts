@@ -342,4 +342,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_work_stealing_scheduler_audit",
+    description:
+      "Audits the Self-Rebalancing Work-Stealing Scheduler verifying Chase-Lev lock-free deques, randomized peer stealing, starvation-free priority aging, and micro-task throughput (SPEC-356).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];
