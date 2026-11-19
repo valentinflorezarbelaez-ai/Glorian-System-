@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 342,
-  "catalogSha256": "85e2375699d89b9500d85d6ab510d196add40b471ead872a6b999b9e78d88492",
+  "totalSpecs": 343,
+  "catalogSha256": "4e99009ebc9ce7b367601e44d9f8aee5a401ce4eb9d343bcee72026daec12221",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3080,6 +3080,15 @@
       "bddCount": 9,
       "file": "openspec/specs/SPEC-342-verification-honesty-evidence-hermeticity.md",
       "sha256": "9bf6de2d4fc3edcf7f9d05186d90db6ff3e63788a76e2a0554ee1f76ee074fbb"
+    },
+    {
+      "id": "SPEC-343",
+      "title": "Autonomous Sovereign Web Application & High-Converting SaaS Compiler",
+      "status": "UNKNOWN",
+      "frCount": 7,
+      "bddCount": 7,
+      "file": "openspec/specs/SPEC-343-sovereign-web-compiler.md",
+      "sha256": "2be59413ed5b7593498ac53b930d5260be64c9f76c54e90a5ada50f9c872c00d"
     }
   ]
 }

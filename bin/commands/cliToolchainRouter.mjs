@@ -175,6 +175,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliMetamorphicDifferentialBlindSpot.mjs",
     fn: "handleMetamorphicDifferentialBlindSpotCommand",
   },
+  {
+    prefix: "toolchain:web:",
+    file: "./cliWebCompiler.mjs",
+    fn: "handleWebCompilerCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

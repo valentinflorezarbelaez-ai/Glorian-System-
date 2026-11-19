@@ -18,6 +18,7 @@ import { EosOntologicalHypergraphCore } from "../../core/eosOntologicalHypergrap
 import { EosPhysicsInformedHamiltonianPdeCore } from "../../core/eosPhysicsInformedHamiltonianPde.ts";
 import { EosPipeline } from "../../core/eosPipeline.ts";
 import { EosPostQuantumThresholdMpcCore } from "../../core/eosPostQuantumThresholdMpc.ts";
+import { EosSovereignWebCompilerCore } from "../../core/eosSovereignWebCompiler.ts";
 import { EosSpecDriftDetector } from "../../core/eosSpecDriftDetector.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 import { PHASE8_MIGRATED_TOOL_NAMES } from "./eosMcpPhase8ToolNames.ts";
@@ -206,5 +207,7 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     },
 
     eos_blindspot_hunter_audit: () => new EosMetamorphicDifferentialBlindSpotCore().audit(),
+
+    eos_web_compiler_audit: () => EosSovereignWebCompilerCore.auditCompiler(projectRoot),
   };
 }

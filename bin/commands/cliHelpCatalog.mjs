@@ -659,6 +659,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:blindspot:fuzz [--iterations=500] [--seed=2026341] [--json] Campaña de fuzzing de 500+ cargas útiles sin HTTP 500 (SPEC-341)
   eos toolchain:blindspot:audit [--json] Auditoría determinista del cazador de puntos ciegos y recibo SHA-256 (SPEC-341)
   eos toolchain:blindspot:fleet [--seed=2026341] [--iterations=50] [--json] Auditoría metamórfica y boundary fuzzing sobre los 9 repositorios de la flota (SPEC-341)
+  eos toolchain:web:compile [--name=NAME] [--domain=DOMAIN] [--archetype=ARCH] [--json] Compilador web y SaaS institucional con prueba de contraste WCAG AAA y SRI SHA-384 (SPEC-343)
+  eos toolchain:web:contrast [--fg=HEX] [--bg=HEX] [--archetype=ARCH] [--json] Analizador matemático de luminancia sRGB y contraste WCAG 2.1 AAA (SPEC-343)
+  eos toolchain:web:sri [--content=TEXT] [--json] Generador criptográfico de integridad de subrecursos SRI SHA-384 (SPEC-343)
+  eos toolchain:web:seo [--name=NAME] [--domain=DOMAIN] [--json] Sintetizador de grafo Schema.org JSON-LD y metaetiquetas (SPEC-343)
+  eos toolchain:web:audit [--json] Auditoría determinista del compilador web soberano y recibo SHA-256 (SPEC-343)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

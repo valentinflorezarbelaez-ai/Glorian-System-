@@ -225,4 +225,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_web_compiler_audit",
+    description:
+      "Audits the Sovereign Web Application & SaaS Compiler verifying WCAG 2.1 AAA contrast, SRI SHA-384 asset integrity, and Schema.org JSON-LD completeness (SPEC-343).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

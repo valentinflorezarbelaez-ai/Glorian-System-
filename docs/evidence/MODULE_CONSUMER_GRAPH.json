@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-18T01:47:29.344Z",
-  "totalModules": 553,
-  "consumedModules": 490,
+  "timestampIso": "2026-11-19T02:22:31.233Z",
+  "totalModules": 560,
+  "consumedModules": 497,
   "unconsumedModules": 63,
-  "graphDensity": 0.8861,
+  "graphDensity": 0.8875,
   "modules": {
     "EosAin": {
       "file": "src/core/EosAin.ts",
@@ -249,8 +249,12 @@
       "file": "src/core/eosAgenticHarnessYield.ts",
       "baseName": "eosAgenticHarnessYield",
       "isConsumed": true,
-      "consumerCount": 2,
+      "consumerCount": 3,
       "consumers": [
+        {
+          "consumerPath": "src/core/eosClosedLoopRepoAutopilot.ts",
+          "category": "core"
+        },
         {
           "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
           "category": "mcp"
@@ -265,10 +269,18 @@
       "file": "src/core/eosAgenticHarnessYield.types.ts",
       "baseName": "eosAgenticHarnessYield.types",
       "isConsumed": true,
-      "consumerCount": 1,
+      "consumerCount": 3,
       "consumers": [
         {
           "consumerPath": "src/core/eosAgenticHarnessYield.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosClosedLoopRepoAutopilot.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosClosedLoopRepoAutopilot.types.ts",
           "category": "core"
         }
       ]
@@ -1065,8 +1077,12 @@
       "file": "src/core/eosCausalStructuralModel.ts",
       "baseName": "eosCausalStructuralModel",
       "isConsumed": true,
-      "consumerCount": 2,
+      "consumerCount": 3,
       "consumers": [
+        {
+          "consumerPath": "src/core/eosClosedLoopRepoAutopilot.ts",
+          "category": "core"
+        },
         {
           "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
           "category": "mcp"
@@ -1197,6 +1213,34 @@
       "isConsumed": false,
       "consumerCount": 0,
       "consumers": []
+    },
+    "eosClosedLoopRepoAutopilot": {
+      "file": "src/core/eosClosedLoopRepoAutopilot.ts",
+      "baseName": "eosClosedLoopRepoAutopilot",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliClosedLoopRepoAutopilot.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosClosedLoopRepoAutopilot.types": {
+      "file": "src/core/eosClosedLoopRepoAutopilot.types.ts",
+      "baseName": "eosClosedLoopRepoAutopilot.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosClosedLoopRepoAutopilot.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosCloudflareDurableBridge": {
       "file": "src/core/eosCloudflareDurableBridge.ts",
@@ -1966,8 +2010,12 @@
       "file": "src/core/eosDiscreteEventSimulationHypervisor.ts",
       "baseName": "eosDiscreteEventSimulationHypervisor",
       "isConsumed": true,
-      "consumerCount": 2,
+      "consumerCount": 3,
       "consumers": [
+        {
+          "consumerPath": "src/core/eosClosedLoopRepoAutopilot.ts",
+          "category": "core"
+        },
         {
           "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
           "category": "mcp"
@@ -1982,8 +2030,12 @@
       "file": "src/core/eosDiscreteEventSimulationHypervisor.types.ts",
       "baseName": "eosDiscreteEventSimulationHypervisor.types",
       "isConsumed": true,
-      "consumerCount": 1,
+      "consumerCount": 2,
       "consumers": [
+        {
+          "consumerPath": "src/core/eosClosedLoopRepoAutopilot.types.ts",
+          "category": "core"
+        },
         {
           "consumerPath": "src/core/eosDiscreteEventSimulationHypervisor.ts",
           "category": "core"
@@ -2585,6 +2637,174 @@
       "isConsumed": false,
       "consumerCount": 0,
       "consumers": []
+    },
+    "eosEvidencePaths": {
+      "file": "src/core/eosEvidencePaths.ts",
+      "baseName": "eosEvidencePaths",
+      "isConsumed": true,
+      "consumerCount": 40,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosDatabaseMigrationGovernor.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosSovereignWebCompiler.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "bin/commands/cliActivationCheckpointingEngine.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliAgenticHarnessYield.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliCausalStructuralModel.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliClosedLoopRepoAutopilot.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliContinuousDynamicBatching.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliDeadlock.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliDevOps.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliDisaggregatedPrefillDecode.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliDiscreteEventSimulationHypervisor.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliDistributedKvReplication.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliDistributedLock.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliDistributedVectorMesh.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliEuvInverseLithographyWavefront.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliExpertParallelMoERouter.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliFlashAttentionOnlineSoftmax.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliHelm.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliJepsenDistributedChaos.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliMegatronTensorParallelism.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliMerkleSnapshot.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliMetamorphicDifferentialBlindSpot.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliOntologicalHypergraph.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliPhysicsInformedHamiltonianPde.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliPipelineParallelism1F1B.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliPostQuantumThresholdMpc.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliQuantizedDistributedTrainingEngine.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliReverseEngineeringEngine.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliRingAllReduce.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliSimdQuantizedHnsw.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliSpeculativePagedKvCache.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliStreamingLlmAttentionSinks.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliTensorParallelAttention.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliTerraform.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliTreeSpeculativeDecoding.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliVectorIndex.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliVectorLsmStorage.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliWebCompiler.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliZeroCopyRingBuffer.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliZeroFsdpEngine.mjs",
+          "category": "bin"
+        }
+      ]
     },
     "eosEvolutionaryHarness": {
       "file": "src/core/eosEvolutionaryHarness.ts",
@@ -3937,7 +4157,7 @@
       "file": "src/core/eosKernelPrimitives.ts",
       "baseName": "eosKernelPrimitives",
       "isConsumed": true,
-      "consumerCount": 223,
+      "consumerCount": 224,
       "consumers": [
         {
           "consumerPath": "src/core/eosActiveKernelProcessEnforcer.ts",
@@ -4429,6 +4649,10 @@
         },
         {
           "consumerPath": "src/core/eosMeshTrafficPolicyEngine.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosMetamorphicDifferentialBlindSpot.ts",
           "category": "core"
         },
         {
@@ -5462,6 +5686,34 @@
         }
       ]
     },
+    "eosMetamorphicDifferentialBlindSpot": {
+      "file": "src/core/eosMetamorphicDifferentialBlindSpot.ts",
+      "baseName": "eosMetamorphicDifferentialBlindSpot",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliMetamorphicDifferentialBlindSpot.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosMetamorphicDifferentialBlindSpot.types": {
+      "file": "src/core/eosMetamorphicDifferentialBlindSpot.types.ts",
+      "baseName": "eosMetamorphicDifferentialBlindSpot.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosMetamorphicDifferentialBlindSpot.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosMicroScheduler": {
       "file": "src/core/eosMicroScheduler.ts",
       "baseName": "eosMicroScheduler",
@@ -5927,8 +6179,12 @@
       "file": "src/core/eosOntologicalHypergraph.ts",
       "baseName": "eosOntologicalHypergraph",
       "isConsumed": true,
-      "consumerCount": 2,
+      "consumerCount": 3,
       "consumers": [
+        {
+          "consumerPath": "src/core/eosClosedLoopRepoAutopilot.ts",
+          "category": "core"
+        },
         {
           "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
           "category": "mcp"
@@ -5943,8 +6199,12 @@
       "file": "src/core/eosOntologicalHypergraph.types.ts",
       "baseName": "eosOntologicalHypergraph.types",
       "isConsumed": true,
-      "consumerCount": 1,
+      "consumerCount": 2,
       "consumers": [
+        {
+          "consumerPath": "src/core/eosClosedLoopRepoAutopilot.types.ts",
+          "category": "core"
+        },
         {
           "consumerPath": "src/core/eosOntologicalHypergraph.ts",
           "category": "core"
@@ -7351,7 +7611,7 @@
       "file": "src/core/eosSentinelDaemon.ts",
       "baseName": "eosSentinelDaemon",
       "isConsumed": true,
-      "consumerCount": 2,
+      "consumerCount": 3,
       "consumers": [
         {
           "consumerPath": "src/mcp/dispatch/eosLegacySovereignHandlers.ts",
@@ -7359,6 +7619,10 @@
         },
         {
           "consumerPath": "bin/commands/cliCore.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliSentinel.mjs",
           "category": "bin"
         }
       ]
@@ -7415,7 +7679,7 @@
       "file": "src/core/eosSimdQuantizedHnsw.ts",
       "baseName": "eosSimdQuantizedHnsw",
       "isConsumed": true,
-      "consumerCount": 2,
+      "consumerCount": 3,
       "consumers": [
         {
           "consumerPath": "src/core/eosDistributedVectorMesh.ts",
@@ -7424,6 +7688,10 @@
         {
           "consumerPath": "bin/commands/cliSimdQuantizedHnsw.mjs",
           "category": "bin"
+        },
+        {
+          "consumerPath": "scripts/bench.mjs",
+          "category": "scripts"
         }
       ]
     },
@@ -7667,6 +7935,34 @@
         {
           "consumerPath": "bin/commands/cliResilience.mjs",
           "category": "bin"
+        }
+      ]
+    },
+    "eosSovereignWebCompiler": {
+      "file": "src/core/eosSovereignWebCompiler.ts",
+      "baseName": "eosSovereignWebCompiler",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliWebCompiler.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosSovereignWebCompiler.types": {
+      "file": "src/core/eosSovereignWebCompiler.types.ts",
+      "baseName": "eosSovereignWebCompiler.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosSovereignWebCompiler.ts",
+          "category": "core"
         }
       ]
     },
@@ -9095,11 +9391,15 @@
       "file": "src/core/eosZ3WasmProver.ts",
       "baseName": "eosZ3WasmProver",
       "isConsumed": true,
-      "consumerCount": 1,
+      "consumerCount": 2,
       "consumers": [
         {
           "consumerPath": "bin/commands/cliZ3Prover.mjs",
           "category": "bin"
+        },
+        {
+          "consumerPath": "scripts/bench.mjs",
+          "category": "scripts"
         }
       ]
     },
@@ -9119,11 +9419,15 @@
       "file": "src/core/eosZeroCopyRingBuffer.ts",
       "baseName": "eosZeroCopyRingBuffer",
       "isConsumed": true,
-      "consumerCount": 1,
+      "consumerCount": 2,
       "consumers": [
         {
           "consumerPath": "bin/commands/cliZeroCopyRingBuffer.mjs",
           "category": "bin"
+        },
+        {
+          "consumerPath": "scripts/bench.mjs",
+          "category": "scripts"
         }
       ]
     },
@@ -9255,11 +9559,15 @@
       "file": "src/core/glorianFleetHealthWatchdog.ts",
       "baseName": "glorianFleetHealthWatchdog",
       "isConsumed": true,
-      "consumerCount": 1,
+      "consumerCount": 2,
       "consumers": [
         {
           "consumerPath": "src/mcp/tools/eosMcpPhase3CoreHandlers.ts",
           "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliSentinel.mjs",
+          "category": "bin"
         }
       ]
     },

@@ -87,6 +87,7 @@ export const CONFIGURED_SPECS = [
   "AdaptiveHedgedDeadlineMesh",
   "ClosedLoopRepoAutopilot",
   "MetamorphicDifferentialBlindSpot",
+  "SovereignWebCompiler",
 ];
 
 /**
