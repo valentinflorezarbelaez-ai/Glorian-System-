@@ -195,6 +195,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliAgenticSwarmBft.mjs",
     fn: "handleAgenticSwarmCommand",
   },
+  {
+    prefix: "toolchain:wasmjit:",
+    file: "./cliAutonomousWasmJit.mjs",
+    fn: "handleAutonomousWasmJitCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

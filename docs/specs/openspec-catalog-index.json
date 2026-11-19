@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 346,
-  "catalogSha256": "5238aa5a03f14cadce522b1f35288569742b1431f33b6615e3fd1a0d2677fc03",
+  "totalSpecs": 347,
+  "catalogSha256": "a26bed738a4dfb3f5a00f5d833991f94bb1f18390b2a24e5bca55966de85e54c",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3116,6 +3116,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-346-agentic-swarm-bft.md",
       "sha256": "455841f4966690f2d229e1cc84fd6bc9cb65874bf5ff0241847948251c84cd4c"
+    },
+    {
+      "id": "SPEC-347",
+      "title": "Autonomous Dynamic WebAssembly JIT Compiler & Zero-Dependency Binary Synthesizer",
+      "status": "UNKNOWN",
+      "frCount": 6,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-347-wasm-jit-compiler.md",
+      "sha256": "b22982bb9658558f8bfacfa3c95c4545a73a41c9b472975030d17048dda85af6"
     }
   ]
 }

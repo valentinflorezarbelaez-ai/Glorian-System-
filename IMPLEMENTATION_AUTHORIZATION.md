@@ -3232,3 +3232,16 @@
   - `docs/plans/PLAN-208-agentic-swarm-bft.md`
   - `docs/tasks/TASKS-208-agentic-swarm-bft.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-19-WASM-JIT-COMPILER
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-209` (`SPEC-347`), Autonomous Dynamic WebAssembly JIT Compiler & Zero-Dependency Binary Synthesizer: TLA+ Model 90 `docs/formal/AutonomousWasmJitCompiler.tla` / `.cfg`; `src/core/eosAutonomousWasmJit.types.ts` and `src/core/eosAutonomousWasmJit.ts` (pure Layer-0 binary WASM encoder, LEB128 unsigned/signed codec, pre-baked vector dot-product/cosine/CRC32 kernels, arithmetic AST JIT compiler, and V8 in-memory validator); receipt `docs/evidence/WASM_JIT_COMPILER_RECEIPT.json`. Wire `toolchain:wasmjit:emit`, `toolchain:wasmjit:exec`, `toolchain:wasmjit:bench`, `toolchain:wasmjit:audit` and Phase 8 MCP tool `eos_wasmjit_compiler_audit`. Verify `BDD-1861`..`BDD-1866`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-209-WASM-JIT-COMPILER.md`
+  - `openspec/changes/CHANGE-209-wasm-jit-compiler.md`
+  - `openspec/specs/SPEC-347-wasm-jit-compiler.md`
+  - `docs/plans/PLAN-209-wasm-jit-compiler.md`
+  - `docs/tasks/TASKS-209-wasm-jit-compiler.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

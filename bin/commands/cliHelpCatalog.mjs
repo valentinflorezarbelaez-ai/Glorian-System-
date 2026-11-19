@@ -681,6 +681,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:swarm:status [--json] Estado del enjambre, miembros activos y cuórum BFT (SPEC-346)
   eos toolchain:swarm:slash [--agent=ID] [--reason=REASON] [--json] Penalización por falta bizantina y cuarentena de nodo (SPEC-346)
   eos toolchain:swarm:audit [--json] Auditoría determinista del orquestador de enjambre y recibo SHA-256 (SPEC-346)
+  eos toolchain:wasmjit:emit [--kernel=math|dot|xor] [--json] Síntesis directa de binario WebAssembly y volcado hexadecimal (SPEC-347)
+  eos toolchain:wasmjit:exec [--a=7] [--b=6] [--json] Ejecución nativa en V8 de rutinas matemáticas JIT en WebAssembly (SPEC-347)
+  eos toolchain:wasmjit:bench [--iters=200000] [--json] Benchmark de rendimiento y throughput de operaciones por segundo (SPEC-347)
+  eos toolchain:wasmjit:audit [--json] Auditoría determinista del compilador JIT WebAssembly y recibo SHA-256 (SPEC-347)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

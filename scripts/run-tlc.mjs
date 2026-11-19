@@ -91,6 +91,7 @@ export const CONFIGURED_SPECS = [
   "AgenticContextEngine",
   "KnowledgeGraphReflex",
   "AgenticSwarmBft",
+  "AutonomousWasmJitCompiler",
 ];
 
 /**

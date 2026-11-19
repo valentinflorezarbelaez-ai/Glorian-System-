@@ -261,4 +261,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_wasmjit_compiler_audit",
+    description:
+      "Audits the Autonomous Dynamic WebAssembly JIT Compiler verifying binary synthesis, stack-safe AST compilation, and high-throughput execution (SPEC-347).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];
