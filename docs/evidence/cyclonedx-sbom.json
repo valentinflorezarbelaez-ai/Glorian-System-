@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:bdc0a586-d0c7-4408-96b5-aacd98e5b42d",
+  "serialNumber": "urn:uuid:763604b2-13d9-46ba-867d-d865997b9bdf",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T16:14:42.045Z",
+    "timestamp": "2026-11-19T16:18:08.321Z",
     "tools": [
       {
         "vendor": "Glorian",
