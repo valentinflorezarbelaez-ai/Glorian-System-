@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "f0d84903bd2ee5b87cace112a1d1004b7b7475e3daf1edccf8ec539b456bcfcd",
-  "totalTools": 238,
+  "catalogSha256": "2bdf0c62fd36737086342aa386820d066f96573f60689baeca0bee77e9b0647a",
+  "totalTools": 239,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7128,6 +7128,21 @@
       },
       "annotations": {
         "title": "EOS autonomous Sentinel Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_voice_neural_interface_audit",
+      "description": "Audits the Voice Neural Interface with Gemini Live API verifying linear PCM framing, mathematical VAD (RMS and ZCR), binary message serialization, and ephemeral session isolation (SPEC-363).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS voice Neural Interface Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

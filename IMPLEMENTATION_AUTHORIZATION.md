@@ -3465,3 +3465,21 @@
   - `docs/plans/PLAN-224-AUTONOMOUS-SENTINEL-DAEMON.md`
   - `docs/tasks/TASKS-224-AUTONOMOUS-SENTINEL-DAEMON.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-VOICE-NEURAL-INTERFACE`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-225` / `SPEC-363`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-225` (`SPEC-363`), Voice Neural Interface with Gemini Live API: TLA+ Model 106 `docs/formal/VoiceNeuralInterface.tla` / `.cfg`; `src/core/eosVoiceNeuralInterface.types.ts` and `src/core/eosVoiceNeuralInterface.ts` (pure Layer-0 native PCM audio framing, mathematical RMS energy and Zero-Crossing Rate Voice Activity Detection, circular audio buffering with bounded backpressure, Gemini Live binary message serialization, Web Audio HUD bridge); receipt `docs/evidence/VOICE_NEURAL_INTERFACE_RECEIPT.json`. Wire `toolchain:voice:start`, `toolchain:voice:vad`, `toolchain:voice:stream`, `toolchain:voice:audit` and Phase 8 MCP tool `eos_voice_neural_interface_audit`. Verify `BDD-1957`..`BDD-1962`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-225-VOICE-NEURAL-INTERFACE.md`
+  - `openspec/changes/CHANGE-225-voice-neural-interface.md`
+  - `openspec/specs/SPEC-363-voice-neural-interface.md`
+  - `docs/plans/PLAN-225-VOICE-NEURAL-INTERFACE.md`
+  - `docs/tasks/TASKS-225-VOICE-NEURAL-INTERFACE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

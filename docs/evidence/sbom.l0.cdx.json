@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:191dfd03-b773-5c7f-9f9f-252a455e1ffd",
+  "serialNumber": "urn:uuid:a3a138f3-8dfb-5949-ba33-8c4729031324",
   "version": 1,
   "metadata": {
-    "timestamp": "2023-05-09T06:21:55.000Z",
+    "timestamp": "2026-12-24T18:01:23.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "fc7cfe4ea34be153041ded6099510b1d57dd7968e2b421e3028460fdecdc33c0"
+          "content": "6cb7d1b650782107f9f4084a4fb6dfe9bfdb01f33371fc1c5513759324e6ad76"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -4173,7 +4173,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "fdf31f1e273e64024d130afeb9d2d2e51158aa15e68027570e682e7fc870e2d0"
+          "content": "0b30d5c11113fe84dcebbfcbd1a0db726f6b4c9889237088a34e9e2007356895"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosMcpToolTaxonomy.ts"
@@ -7339,6 +7339,32 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosVoiceNeuralInterface.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosVoiceNeuralInterface.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a08fdb5ea531fffc1b6763034579fa08c06186d96240cbda228dab2a5fc0000b"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosVoiceNeuralInterface.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosVoiceNeuralInterface.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosVoiceNeuralInterface.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e108109f8146597731e9818f0430dc7027e5535aa64719342c74660d4858dc3e"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosVoiceNeuralInterface.types.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosWanKademliaMesh.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosWanKademliaMesh.ts@75.0.0",
@@ -7787,7 +7813,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0bb33226d63a43636f891b84ad8db1c744774e70553548e53b7b044ed0d89d4d"
+          "content": "5502c04437f1c4736bf56fdc59a2b020f33b04d95269a8c5ffaafce39b37ba31"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: index.ts"
@@ -7858,5 +7884,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "0453b74c1cc2935172badcf08c4cd803bba08437bd6822ecb2e92401ff686cdb"
+  "sha256Receipt": "6db619c1e4cddc6485fc616299dade701a3c6871036a3ddcdc12e564cdb9d328"
 }

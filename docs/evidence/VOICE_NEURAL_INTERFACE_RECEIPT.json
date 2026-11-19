@@ -1,0 +1,19 @@
+{
+  "receiptId": "REC-VOICE-MWNYWW8H",
+  "specId": "SPEC-363",
+  "changeId": "CHANGE-225",
+  "timestamp": 1795118008625,
+  "sampleRate": 16000,
+  "activeVadState": "SILENCE",
+  "framesProcessedCount": 33,
+  "speechFramesCount": 2,
+  "checks": {
+    "pcmFramingNormalization": "PASS",
+    "vadMathematicalHysteresis": "PASS",
+    "geminiLiveMessageSerialization": "PASS",
+    "circularBufferBackpressure": "PASS",
+    "ephemeralSessionIsolation": "PASS",
+    "zeroDependencyPurity": "PASS"
+  },
+  "integrityHash": "56f9e223df3adab77e869771a230e2db6a90a06a60232b9701c059eb52137528"
+}

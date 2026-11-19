@@ -107,6 +107,7 @@ export const CONFIGURED_SPECS = [
   "InductiveProofEngine",
   "GlorianLiveStudio",
   "AutonomousSentinelDaemon",
+  "VoiceNeuralInterface",
 ];
 
 /**

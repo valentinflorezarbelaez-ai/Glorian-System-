@@ -405,4 +405,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_voice_neural_interface_audit",
+    description:
+      "Audits the Voice Neural Interface with Gemini Live API verifying linear PCM framing, mathematical VAD (RMS and ZCR), binary message serialization, and ephemeral session isolation (SPEC-363).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

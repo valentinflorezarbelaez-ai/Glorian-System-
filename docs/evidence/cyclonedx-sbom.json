@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:2b25e8bf-1f21-4d11-8709-6e07cde4fb59",
+  "serialNumber": "urn:uuid:aa9543f7-2311-4d5a-a213-729d62585e62",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T19:46:29.812Z",
+    "timestamp": "2026-11-19T19:55:36.257Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -4482,7 +4482,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "fdf31f1e273e64024d130afeb9d2d2e51158aa15e68027570e682e7fc870e2d0"
+          "content": "0b30d5c11113fe84dcebbfcbd1a0db726f6b4c9889237088a34e9e2007356895"
         }
       ]
     },
@@ -7890,6 +7890,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:VoiceNeuralInterface",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/VoiceNeuralInterface@1.0.0",
+      "description": "Layer-0 module eosVoiceNeuralInterface.ts",
+      "purl": "pkg:npm/glorian/VoiceNeuralInterface@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a08fdb5ea531fffc1b6763034579fa08c06186d96240cbda228dab2a5fc0000b"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:VoiceNeuralInterface",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/VoiceNeuralInterface@1.0.0",
+      "description": "Layer-0 module eosVoiceNeuralInterface.types.ts",
+      "purl": "pkg:npm/glorian/VoiceNeuralInterface@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e108109f8146597731e9818f0430dc7027e5535aa64719342c74660d4858dc3e"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:WanKademliaMesh",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/WanKademliaMesh@1.0.0",
@@ -8374,7 +8402,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0bb33226d63a43636f891b84ad8db1c744774e70553548e53b7b044ed0d89d4d"
+          "content": "5502c04437f1c4736bf56fdc59a2b020f33b04d95269a8c5ffaafce39b37ba31"
         }
       ]
     },
@@ -10467,7 +10495,8 @@
         "pkg:npm/glorian/AgentSwarmMicroKernel@1.0.0",
         "pkg:npm/glorian/InductiveProofEngine@1.0.0",
         "pkg:npm/glorian/GlorianLiveStudio@1.0.0",
-        "pkg:npm/glorian/AutonomousSentinelDaemon@1.0.0"
+        "pkg:npm/glorian/AutonomousSentinelDaemon@1.0.0",
+        "pkg:npm/glorian/VoiceNeuralInterface@1.0.0"
       ]
     }
   ]

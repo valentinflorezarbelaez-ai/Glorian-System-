@@ -762,3 +762,5 @@ export * from "./eosGlorianLiveStudio.ts";
 export * from "./eosGlorianLiveStudio.types.ts";
 export * from "./eosAutonomousSentinelDaemon.ts";
 export * from "./eosAutonomousSentinelDaemon.types.ts";
+export * from "./eosVoiceNeuralInterface.ts";
+export * from "./eosVoiceNeuralInterface.types.ts";

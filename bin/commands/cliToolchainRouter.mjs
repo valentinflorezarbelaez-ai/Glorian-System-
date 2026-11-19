@@ -275,6 +275,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliAutonomousSentinelDaemon.mjs",
     fn: "handleAutonomousSentinelDaemonCommand",
   },
+  {
+    prefix: "toolchain:voice:",
+    file: "./cliVoiceNeuralInterface.mjs",
+    fn: "handleVoiceNeuralInterfaceCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

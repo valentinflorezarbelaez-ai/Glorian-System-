@@ -736,6 +736,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:sentinel:status [--json] Reporte de salud multi-dimensional y estado del centinela (SPEC-362)
   eos toolchain:sentinel:probe [--json] Ejecución puntual de las 5 sondas ortogonales de salud (SPEC-362)
   eos toolchain:sentinel:audit [--json] Auditoría formal del centinela, detección de deriva y PR (SPEC-362)
+  eos toolchain:voice:start [--rate=16000|24000] Inicio de sesión neural de voz Gemini Live (SPEC-363)
+  eos toolchain:voice:vad [--json] Evaluación matemática de Voice Activity Detection (RMS + ZCR) (SPEC-363)
+  eos toolchain:voice:stream [--json] Negociación de token efímero de streaming de voz (SPEC-363)
+  eos toolchain:voice:audit [--json] Auditoría formal del motor de voz, framing PCM y recibo (SPEC-363)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

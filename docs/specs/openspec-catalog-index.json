@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 362,
-  "catalogSha256": "9cc1147ad0ab2bc859fb4f6476fec3780d962c52683f1d21a3c53c808fd9c4a1",
+  "totalSpecs": 363,
+  "catalogSha256": "55a40345d8e5f2d85de1179f01d0c7ce253232726f104e90d36210e599669b40",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3259,7 +3259,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-362-autonomous-sentinel-daemon.md",
-      "sha256": "07d30acff3fd9ab44ad88046a3f427f20317789f89ee4680dd6bcb3ba2b7ae37"
+      "sha256": "6076051c728dded5a4817e933066b1f5edb660b91bcbcdc03868401f5373d81f"
+    },
+    {
+      "id": "SPEC-363",
+      "title": "Voice Neural Interface with Gemini Live API",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-363-voice-neural-interface.md",
+      "sha256": "6e4edaa9160733b553b8a7e256064d2bb575b157f395bf2016f26c46fe6eed80"
     }
   ]
 }

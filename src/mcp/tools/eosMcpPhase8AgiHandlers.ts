@@ -39,6 +39,7 @@ import { EosSwarmMicroKernelCore } from "../../core/eosAgentSwarmMicroKernel.ts"
 import { EosInductiveProofEngineCore } from "../../core/eosInductiveProofEngine.ts";
 import { EosGlorianLiveStudio } from "../../core/eosGlorianLiveStudio.ts";
 import { EosAutonomousSentinelDaemon } from "../../core/eosAutonomousSentinelDaemon.ts";
+import { EosVoiceNeuralInterface } from "../../core/eosVoiceNeuralInterface.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 import { PHASE8_MIGRATED_TOOL_NAMES } from "./eosMcpPhase8ToolNames.ts";
 
@@ -256,5 +257,6 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_inductive_proof_engine_audit: () => EosInductiveProofEngineCore.audit(projectRoot),
     eos_glorian_live_studio_audit: () => new EosGlorianLiveStudio({ port: 0 }).audit(),
     eos_autonomous_sentinel_audit: () => EosAutonomousSentinelDaemon.audit(projectRoot),
+    eos_voice_neural_interface_audit: () => EosVoiceNeuralInterface.audit(),
   };
 }
