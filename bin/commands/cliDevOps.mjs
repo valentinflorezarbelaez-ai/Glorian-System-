@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 const HANDLERS = {};
 
@@ -445,9 +446,9 @@ HANDLERS["honk"] = cmd_honk_28;
 
 async function cmd_toolchain_doctor(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
-  const receiptPath = path.join(root, "docs/evidence/TOOLCHAIN_RECEIPT.json");
+  if (!isJson) printBanner();
+  const receiptPath = resolveEvidencePath("TOOLCHAIN_RECEIPT.json", root);
 
   const { EosToolchainDoctor } = await import("../../src/core/eosToolchainDoctor.ts");
   const report = EosToolchainDoctor.diagnose({ receiptPath });
@@ -480,12 +481,12 @@ HANDLERS["toolchain"] = cmd_toolchain_doctor;
 
 async function cmd_toolchain_scan(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
   const isSarif = args.includes("--sarif");
+  if (!isJson && !isSarif) printBanner();
   const noFail = args.includes("--no-fail");
   const target = args.slice(1).find((a) => !a.startsWith("-")) || ".";
-  const receiptPath = path.join(root, "docs/evidence/TRIVY_RECEIPT.json");
+  const receiptPath = resolveEvidencePath("TRIVY_RECEIPT.json", root);
 
   const { EosTrivyScannerAdapter } = await import("../../src/core/eosTrivyScannerAdapter.ts");
   const report = EosTrivyScannerAdapter.scan(target, {
@@ -522,8 +523,8 @@ async function cmd_toolchain_scan(commandContext) {
 
 async function cmd_toolchain_policy(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const regoArg = args.find((a) => a.startsWith("--rego="));
   const regoPath = regoArg ? regoArg.split("=")[1] : undefined;
   const manifestArg = args.slice(1).find((a) => !a.startsWith("-")) || "policies/k8s/sample_pod.json";
@@ -570,11 +571,11 @@ async function cmd_toolchain_policy(commandContext) {
 
 async function cmd_toolchain_k8s(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const nsArg = args.find((a) => a.startsWith("--namespace="));
   const namespace = nsArg ? nsArg.split("=")[1] : undefined;
-  const receiptPath = path.join(root, "docs/evidence/KUBECTL_RECEIPT.json");
+  const receiptPath = resolveEvidencePath("KUBECTL_RECEIPT.json", root);
 
   const { EosKubectlClusterInspector } = await import("../../src/core/eosKubectlClusterInspector.ts");
   const report = EosKubectlClusterInspector.inspectCluster({
@@ -621,14 +622,14 @@ HANDLERS["toolchain:k8s"] = cmd_toolchain_k8s;
 
 async function cmd_toolchain_deploy(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const isLiveApply = args.includes("--yes");
   const ctxArg = args.find((a) => a.startsWith("--context="));
   const customContext = ctxArg ? ctxArg.split("=")[1] : undefined;
   const manifestArg = args.slice(1).find((a) => !a.startsWith("-")) || "policies/k8s/sample_pod.json";
   const manifestPath = path.isAbsolute(manifestArg) ? manifestArg : path.join(root, manifestArg);
-  const receiptPath = path.join(root, "docs/evidence/DEPLOY_RECEIPT.json");
+  const receiptPath = resolveEvidencePath("DEPLOY_RECEIPT.json", root);
 
   const { EosKubernetesDeployGovernor } = await import("../../src/core/eosKubernetesDeployGovernor.ts");
   const report = EosKubernetesDeployGovernor.deployWorkload(manifestPath, {
@@ -666,8 +667,8 @@ async function cmd_toolchain_deploy(commandContext) {
 
 async function cmd_toolchain_loadtest(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const vusArg = args.find((a) => a.startsWith("--vus="));
   const vus = vusArg ? Number(vusArg.split("=")[1]) : 5;
   const durArg = args.find((a) => a.startsWith("--duration="));
@@ -675,7 +676,7 @@ async function cmd_toolchain_loadtest(commandContext) {
   const p95Arg = args.find((a) => a.startsWith("--p95="));
   const targetP95Ms = p95Arg ? Number(p95Arg.split("=")[1]) : 250;
   const targetUrl = args.slice(1).find((a) => !a.startsWith("-")) || "http://localhost:3000/api/health";
-  const receiptPath = path.join(root, "docs/evidence/K6_RECEIPT.json");
+  const receiptPath = resolveEvidencePath("K6_RECEIPT.json", root);
 
   const { EosK6LoadTestAdapter } = await import("../../src/core/eosK6LoadTestAdapter.ts");
   const report = EosK6LoadTestAdapter.runLoadTest(targetUrl, {

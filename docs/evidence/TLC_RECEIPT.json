@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-19T01:37:43.527Z",
+  "timestampIso": "2026-11-19T02:01:43.059Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -31,8 +31,8 @@
       "specName": "DatomicBitemporalLedger",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 455,
-      "statesGenerated": 728,
+      "distinctStates": 3481,
+      "statesGenerated": 9817,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -67,8 +67,8 @@
       "specName": "ZeroCopyRingBuffer",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 569,
-      "statesGenerated": 203,
+      "distinctStates": 39865,
+      "statesGenerated": 154381,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -76,8 +76,8 @@
       "specName": "JepsenDistributedChaos",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 571,
-      "statesGenerated": 419,
+      "distinctStates": 7116,
+      "statesGenerated": 23010,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -85,8 +85,8 @@
       "specName": "SimdQuantizedHnsw",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 937,
-      "statesGenerated": 233,
+      "distinctStates": 14000,
+      "statesGenerated": 231376,
       "violationInvariant": null,
       "exitCode": 0
     },

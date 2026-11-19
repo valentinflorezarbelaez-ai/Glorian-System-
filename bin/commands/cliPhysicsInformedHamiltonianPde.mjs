@@ -11,11 +11,15 @@ import {
   EosPhysicsInformedHamiltonianPdeCore,
   createAnharmonicHamiltonianSystem,
 } from "../../src/core/eosPhysicsInformedHamiltonianPde.ts";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "../..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/PINN_HAMILTONIAN_PDE_RECEIPT.json");
+
+function getReceiptPath(root = ROOT) {
+  return resolveEvidencePath("PINN_HAMILTONIAN_PDE_RECEIPT.json", root);
+}
 
 function parseFlagValue(args, prefix, defaultValue) {
   const arg = args.find((a) => a.startsWith(prefix));
@@ -163,13 +167,15 @@ async function cmd_pinn_solve(commandContext) {
 
 async function cmd_pinn_audit(commandContext) {
   const args = commandContext.args || [];
+  const root = commandContext.root || ROOT;
   const isJson = args.includes("--json");
 
   const core = new EosPhysicsInformedHamiltonianPdeCore();
   const receipt = core.audit();
+  const receiptPath = getReceiptPath(root);
 
-  fs.mkdirSync(path.dirname(RECEIPT_PATH), { recursive: true });
-  fs.writeFileSync(RECEIPT_PATH, JSON.stringify(receipt, null, 2), "utf8");
+  fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
+  fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2), "utf8");
 
   if (isJson) {
     console.log(JSON.stringify(receipt, null, 2));
@@ -183,7 +189,7 @@ async function cmd_pinn_audit(commandContext) {
     console.log(`PINN L2 Error      : ${receipt.pinnL2Error}`);
     console.log(`All Passed         : ${receipt.allPassed}`);
     console.log(`SHA-256 Digest     : ${receipt.sha256Digest}`);
-    console.log(`Receipt Saved      : ${RECEIPT_PATH}`);
+    console.log(`Receipt Saved      : ${receiptPath}`);
   }
 }
 

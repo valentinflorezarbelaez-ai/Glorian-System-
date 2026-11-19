@@ -8,11 +8,15 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { EosPostQuantumThresholdMpcCore, PQMPC_SECURITY_NOTICE } from "../../src/core/eosPostQuantumThresholdMpc.ts";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "../..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/PQMPC_RECEIPT.json");
+
+function getReceiptPath(root = ROOT) {
+  return resolveEvidencePath("PQMPC_RECEIPT.json", root);
+}
 
 function parseFlagValue(args, prefix, defaultValue) {
   const arg = args.find((a) => a.startsWith(prefix));
@@ -175,12 +179,14 @@ async function cmd_pqmpc_threshold(commandContext) {
 
 async function cmd_pqmpc_audit(commandContext) {
   const args = commandContext.args || [];
+  const root = commandContext.root || ROOT;
   const isJson = args.includes("--json");
   const engine = buildEngine(args.some((a) => a.startsWith("--seed=")) ? args : [...args, "--seed=pqmpc-audit"]);
   const receipt = engine.audit();
+  const receiptPath = getReceiptPath(root);
 
-  fs.mkdirSync(path.dirname(RECEIPT_PATH), { recursive: true });
-  fs.writeFileSync(RECEIPT_PATH, JSON.stringify(receipt, null, 2), "utf8");
+  fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
+  fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2), "utf8");
 
   if (isJson) {
     printJson(receipt);
@@ -195,7 +201,7 @@ async function cmd_pqmpc_audit(commandContext) {
     console.log(`All passed             : ${receipt.allPassed}`);
     console.log(`SHA-256 digest         : ${receipt.sha256Digest}`);
     console.log(`Notice                 : ${receipt.securityNotice}`);
-    console.log(`Receipt saved          : ${RECEIPT_PATH}`);
+    console.log(`Receipt saved          : ${receiptPath}`);
   }
 }
 

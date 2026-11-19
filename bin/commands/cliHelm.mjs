@@ -5,13 +5,14 @@
 
 import path from "node:path";
 import { EosHelmReleaseGovernor } from "../../src/core/eosHelmReleaseGovernor.ts";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 export const HANDLERS = {};
 
 async function cmd_toolchain_helm_lint(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const chartArg = args.slice(1).find((a) => !a.startsWith("-")) || "templates/k8s/glorian-enterprise-workload";
   const chartPath = path.isAbsolute(chartArg) ? chartArg : path.join(root, chartArg);
 
@@ -38,8 +39,8 @@ async function cmd_toolchain_helm_lint(commandContext) {
 
 async function cmd_toolchain_helm_template(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const chartArg = args.slice(1).find((a) => !a.startsWith("-")) || "templates/k8s/glorian-enterprise-workload";
   const chartPath = path.isAbsolute(chartArg) ? chartArg : path.join(root, chartArg);
   const releaseArg = args.find((a) => a.startsWith("--release="));
@@ -75,8 +76,8 @@ async function cmd_toolchain_helm_template(commandContext) {
 
 async function cmd_toolchain_helm_deploy(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const isLiveApply = args.includes("--yes");
   const chartArg = args.slice(1).find((a) => !a.startsWith("-")) || "templates/k8s/glorian-enterprise-workload";
   const chartPath = path.isAbsolute(chartArg) ? chartArg : path.join(root, chartArg);
@@ -90,7 +91,7 @@ async function cmd_toolchain_helm_deploy(commandContext) {
       ? valArg.split("=")[1]
       : path.join(root, valArg.split("=")[1])
     : undefined;
-  const receiptPath = path.join(root, "docs/evidence/HELM_RECEIPT.json");
+  const receiptPath = resolveEvidencePath("HELM_RECEIPT.json", root);
 
   const report = EosHelmReleaseGovernor.deployChart(chartPath, releaseName, {
     customContext,

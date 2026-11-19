@@ -1,8 +1,8 @@
 {
-  "runId": "desh-run-audit-test-seed-step1",
-  "seed": "audit-test-seed",
-  "virtualTimeNs": 100,
-  "eventsProcessed": 1,
+  "runId": "desh-run-sovereign-audit--step2",
+  "seed": "sovereign-audit-seed-42",
+  "virtualTimeNs": 200,
+  "eventsProcessed": 2,
   "faultsInjected": 0,
   "checkpointsCreated": 1,
   "virtualTimeMonotonicity": true,
@@ -10,6 +10,6 @@
   "snapshotConsistency": true,
   "invariantsEvaluated": 0,
   "violationsCount": 0,
-  "auditHash": "cb55aec2c3646f6e188b62b877c6abe682f41fb8b6cf97d9664e5a0b28908604",
-  "timestamp": "2026-11-18T01:40:04.583Z"
+  "auditHash": "02788b3a6b0ab27ba60beede66e6029d5135addef3bbf0138c2f2c5217593078",
+  "timestamp": "2026-11-19T01:41:19.293Z"
 }

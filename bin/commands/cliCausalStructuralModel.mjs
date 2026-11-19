@@ -8,11 +8,15 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { EosCausalStructuralModelCore } from "../../src/core/eosCausalStructuralModel.ts";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "../..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/CAUSAL_SCM_RECEIPT.json");
+
+function getReceiptPath(root = ROOT) {
+  return resolveEvidencePath("CAUSAL_SCM_RECEIPT.json", root);
+}
 
 function parseFlagValue(args, prefix, defaultValue) {
   const arg = args.find((a) => a.startsWith(prefix));
@@ -132,13 +136,15 @@ async function cmd_scm_counterfactual(commandContext) {
 
 async function cmd_scm_audit(commandContext) {
   const args = commandContext.args || [];
+  const root = commandContext.root || ROOT;
   const isJson = args.includes("--json");
 
   const scm = EosCausalStructuralModelCore.createBenchmarkConfoundedColliderScm();
   const receipt = scm.audit();
+  const receiptPath = getReceiptPath(root);
 
-  fs.mkdirSync(path.dirname(RECEIPT_PATH), { recursive: true });
-  fs.writeFileSync(RECEIPT_PATH, JSON.stringify(receipt, null, 2), "utf8");
+  fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
+  fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2), "utf8");
 
   if (isJson) {
     console.log(JSON.stringify(receipt, null, 2));
@@ -152,7 +158,7 @@ async function cmd_scm_audit(commandContext) {
     console.log(`Counterfactual Cons.: ${receipt.counterfactualConsistent}`);
     console.log(`All Passed          : ${receipt.allPassed}`);
     console.log(`SHA-256 Digest      : ${receipt.sha256Digest}`);
-    console.log(`Receipt Saved       : ${RECEIPT_PATH}`);
+    console.log(`Receipt Saved       : ${receiptPath}`);
   }
 }
 

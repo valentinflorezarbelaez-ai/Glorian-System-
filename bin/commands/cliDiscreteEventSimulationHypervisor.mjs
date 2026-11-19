@@ -8,11 +8,15 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { EosDiscreteEventSimulationHypervisorCore } from "../../src/core/eosDiscreteEventSimulationHypervisor.ts";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "../..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/DESH_RECEIPT.json");
+
+function getReceiptPath(root = ROOT) {
+  return resolveEvidencePath("DESH_RECEIPT.json", root);
+}
 
 function parseFlagValue(args, prefix, defaultValue) {
   const arg = args.find((a) => a.startsWith(prefix));
@@ -194,9 +198,11 @@ async function cmd_desh_audit(commandContext) {
   hypervisor.step();
 
   const receipt = hypervisor.audit();
+  const root = commandContext.root || ROOT;
+  const receiptPath = getReceiptPath(root);
 
-  fs.mkdirSync(path.dirname(RECEIPT_PATH), { recursive: true });
-  fs.writeFileSync(RECEIPT_PATH, JSON.stringify(receipt, null, 2), "utf8");
+  fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
+  fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2), "utf8");
 
   if (isJson) {
     console.log(JSON.stringify(receipt, null, 2));
@@ -212,7 +218,7 @@ async function cmd_desh_audit(commandContext) {
     console.log(`PRNG Determinism     : ${receipt.prngDeterminism}`);
     console.log(`Snapshot Consistency : ${receipt.snapshotConsistency}`);
     console.log(`Audit Hash SHA-256   : ${receipt.auditHash}`);
-    console.log(`Receipt Saved        : ${RECEIPT_PATH}`);
+    console.log(`Receipt Saved        : ${receiptPath}`);
   }
 }
 

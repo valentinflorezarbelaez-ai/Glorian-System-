@@ -7,11 +7,15 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { EosMetamorphicDifferentialBlindSpotCore } from "../../src/core/eosMetamorphicDifferentialBlindSpot.ts";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "../..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/BLINDSPOT_HUNTER_RECEIPT.json");
+
+function getReceiptPath(root = ROOT) {
+  return resolveEvidencePath("BLINDSPOT_HUNTER_RECEIPT.json", root);
+}
 
 function parseIntFlag(args, prefix, defaultValue) {
   const arg = args.find((a) => a.startsWith(prefix));
@@ -135,12 +139,14 @@ async function cmd_blindspot_fuzz(commandContext) {
 
 async function cmd_blindspot_audit(commandContext) {
   const args = commandContext.args || [];
+  const root = commandContext.root || ROOT;
   const isJson = args.includes("--json");
   const seed = parseIntFlag(args, "--seed=", 2026341);
   const receipt = new EosMetamorphicDifferentialBlindSpotCore().audit(seed);
+  const receiptPath = getReceiptPath(root);
 
-  fs.mkdirSync(path.dirname(RECEIPT_PATH), { recursive: true });
-  fs.writeFileSync(RECEIPT_PATH, JSON.stringify(receipt, null, 2), "utf8");
+  fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
+  fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2), "utf8");
 
   if (isJson) {
     console.log(JSON.stringify(receipt, null, 2));
@@ -154,6 +160,7 @@ async function cmd_blindspot_audit(commandContext) {
     console.log(`Fuzz 500 Zero-500s  : ${receipt.fuzzHttp5xxCount === 0 && receipt.fuzzUnhandledExceptions === 0}`);
     console.log(`All Passed          : ${receipt.allPassed}`);
     console.log(`SHA-256 Digest      : ${receipt.sha256Digest}`);
+    console.log(`Receipt Saved       : ${receiptPath}`);
   }
 }
 

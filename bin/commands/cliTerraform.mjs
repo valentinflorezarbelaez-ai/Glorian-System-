@@ -5,13 +5,14 @@
 
 import path from "node:path";
 import { EosTerraformIaCGovernor } from "../../src/core/eosTerraformIaCGovernor.ts";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 export const HANDLERS = {};
 
 async function cmd_toolchain_tf_validate(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const moduleArg = args.slice(1).find((a) => !a.startsWith("-")) || "templates/iac/glorian-enterprise-infra";
   const modulePath = path.isAbsolute(moduleArg) ? moduleArg : path.join(root, moduleArg);
 
@@ -38,11 +39,11 @@ async function cmd_toolchain_tf_validate(commandContext) {
 
 async function cmd_toolchain_tf_audit(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const allowDestroy = args.includes("--allow-destroy");
   const planArg = args.slice(1).find((a) => !a.startsWith("-"));
-  const receiptPath = path.join(root, "docs/evidence/TERRAFORM_RECEIPT.json");
+  const receiptPath = resolveEvidencePath("TERRAFORM_RECEIPT.json", root);
 
   if (!planArg) {
     console.error("Error: Please provide a plan JSON file path to audit.");
@@ -81,8 +82,8 @@ async function cmd_toolchain_tf_audit(commandContext) {
 
 async function cmd_toolchain_tf_plan(commandContext) {
   const { args, root, printBanner } = commandContext;
-  printBanner();
   const isJson = args.includes("--json");
+  if (!isJson) printBanner();
   const moduleArg = args.slice(1).find((a) => !a.startsWith("-")) || "templates/iac/glorian-enterprise-infra";
   const modulePath = path.isAbsolute(moduleArg) ? moduleArg : path.join(root, moduleArg);
 

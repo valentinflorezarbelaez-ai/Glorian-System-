@@ -8,11 +8,15 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { EosReverseEngineeringCore } from "../../src/core/eosReverseEngineeringEngine.ts";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "../..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/REVERSE_ENGINEERING_RECEIPT.json");
+
+function getReceiptPath(root = ROOT) {
+  return resolveEvidencePath("REVERSE_ENGINEERING_RECEIPT.json", root);
+}
 
 function parseFlagValue(args, prefix, defaultValue) {
   const arg = args.find((a) => a.startsWith(prefix));
@@ -179,13 +183,15 @@ async function cmd_rea_cfg(commandContext) {
 
 async function cmd_rea_audit(commandContext) {
   const args = commandContext.args || [];
+  const root = commandContext.root || ROOT;
   const isJson = args.includes("--json");
 
   const engine = new EosReverseEngineeringCore();
   const receipt = engine.audit();
+  const receiptPath = getReceiptPath(root);
 
-  fs.mkdirSync(path.dirname(RECEIPT_PATH), { recursive: true });
-  fs.writeFileSync(RECEIPT_PATH, JSON.stringify(receipt, null, 2), "utf8");
+  fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
+  fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2), "utf8");
 
   if (isJson) {
     console.log(JSON.stringify(receipt, null, 2));
@@ -197,7 +203,7 @@ async function cmd_rea_audit(commandContext) {
     console.log(`Entropy Profile: ${receipt.entropyAnalysisVerified}`);
     console.log(`CFG Synthesis  : ${receipt.cfgSynthesisVerified}`);
     console.log(`SHA-256 Seal   : ${receipt.sha256}`);
-    console.log(`Receipt Saved  : ${RECEIPT_PATH}`);
+    console.log(`Receipt Saved  : ${receiptPath}`);
   }
 }
 

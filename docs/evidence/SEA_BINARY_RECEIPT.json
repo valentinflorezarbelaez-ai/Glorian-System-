@@ -1,9 +1,9 @@
 {
   "receiptType": "EOS_SEA_BINARY_DISTRIBUTION_AUDIT",
-  "timestampIso": "2026-11-19T01:32:11.117Z",
+  "timestampIso": "2026-11-19T01:59:08.105Z",
   "specRef": "SPEC-304",
   "totalPlatforms": 5,
   "binariesVerified": 5,
   "dualSigningVerified": true,
-  "sha256Signature": "f3a2a7f8615580c4db9f2a09ca4f99919a17eea82cb0621ff2ce135beb8cd82e"
+  "sha256Signature": "5e82f9fda1b6039753592b752602286a2cfa39fcbdedcfe7c60899d578e05597"
 }

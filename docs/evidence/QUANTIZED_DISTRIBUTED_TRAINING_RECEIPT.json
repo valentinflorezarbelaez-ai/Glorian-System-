@@ -1,7 +1,7 @@
 {
   "specRef": "SPEC-328",
   "engine": "FP8 / INT8 Quantized Distributed Training & Mixed-Precision Gradient Scaling Engine",
-  "timestampIso": "2026-11-19T01:32:01.026Z",
+  "timestampIso": "2026-11-19T01:59:00.381Z",
   "tensorDimension": 128,
   "numWorkers": 4,
   "e4m3Verified": true,

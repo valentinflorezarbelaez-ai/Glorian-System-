@@ -1,7 +1,7 @@
 {
   "specRef": "SPEC-331",
   "engine": "StreamingLLM, Attention Sinks & Infinite-Context Window Memory Compression Engine",
-  "timestampIso": "2026-11-19T01:32:18.128Z",
+  "timestampIso": "2026-11-19T01:59:15.268Z",
   "streamLength": 200,
   "sinkSize": 4,
   "windowSize": 16,
