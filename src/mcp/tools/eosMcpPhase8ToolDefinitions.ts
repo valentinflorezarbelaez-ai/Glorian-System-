@@ -396,4 +396,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_autonomous_sentinel_audit",
+    description:
+      "Audits the Autonomous Continuous Sentinel Daemon 24/7 verifying background heartbeat execution, 5-dimensional health probes, AST drift detection, Raft swarm remediation leasing, and CEGIS-verified PR synthesis (SPEC-362).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-19T19:27:57.738Z",
+  "timestampIso": "2026-11-19T19:39:56.368Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -68,7 +68,7 @@
       "verifiedLive": true,
       "passed": true,
       "distinctStates": 569,
-      "statesGenerated": 348,
+      "statesGenerated": 782,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -76,8 +76,8 @@
       "specName": "JepsenDistributedChaos",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 959,
-      "statesGenerated": 270,
+      "distinctStates": 116,
+      "statesGenerated": 10,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -85,8 +85,8 @@
       "specName": "SimdQuantizedHnsw",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 436,
-      "statesGenerated": 467,
+      "distinctStates": 319,
+      "statesGenerated": 889,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -112,8 +112,8 @@
       "specName": "SpeculativePagedKvCache",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 989,
-      "statesGenerated": 730,
+      "distinctStates": 2639,
+      "statesGenerated": 16303,
       "violationInvariant": null,
       "exitCode": 0
     },

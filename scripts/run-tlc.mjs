@@ -106,6 +106,7 @@ export const CONFIGURED_SPECS = [
   "AgentSwarmMicroKernel",
   "InductiveProofEngine",
   "GlorianLiveStudio",
+  "AutonomousSentinelDaemon",
 ];
 
 /**

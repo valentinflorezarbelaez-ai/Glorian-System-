@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "3ee0dea21675ca22a5745b31f1b62f0bbedc78f88411f877c8df575da8b8a6c6",
-  "totalTools": 237,
+  "catalogSha256": "f0d84903bd2ee5b87cace112a1d1004b7b7475e3daf1edccf8ec539b456bcfcd",
+  "totalTools": 238,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7113,6 +7113,21 @@
       },
       "annotations": {
         "title": "EOS glorian Live Studio Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_autonomous_sentinel_audit",
+      "description": "Audits the Autonomous Continuous Sentinel Daemon 24/7 verifying background heartbeat execution, 5-dimensional health probes, AST drift detection, Raft swarm remediation leasing, and CEGIS-verified PR synthesis (SPEC-362).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS autonomous Sentinel Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

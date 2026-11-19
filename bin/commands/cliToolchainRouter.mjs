@@ -270,6 +270,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliGlorianLiveStudio.mjs",
     fn: "handleGlorianLiveStudioCommand",
   },
+  {
+    prefix: "toolchain:sentinel:",
+    file: "./cliAutonomousSentinelDaemon.mjs",
+    fn: "handleAutonomousSentinelDaemonCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

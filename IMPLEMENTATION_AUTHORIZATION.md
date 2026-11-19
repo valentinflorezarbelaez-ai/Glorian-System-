@@ -3447,3 +3447,21 @@
   - `docs/plans/PLAN-223-GLORIAN-LIVE-STUDIO.md`
   - `docs/tasks/TASKS-223-GLORIAN-LIVE-STUDIO.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-AUTONOMOUS-SENTINEL-DAEMON`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-224` / `SPEC-362`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-224` (`SPEC-362`), Autonomous Continuous Sentinel Daemon 24/7: TLA+ Model 105 `docs/formal/AutonomousSentinelDaemon.tla` / `.cfg`; `src/core/eosAutonomousSentinelDaemon.types.ts` and `src/core/eosAutonomousSentinelDaemon.ts` (pure Layer-0 native background daemon heartbeat loop, 5-dimensional health probes, AST specification drift detector, Raft swarm remediation leasing, CEGIS inductive invariant patch verification, autonomous PR synthesizer); receipt `docs/evidence/AUTONOMOUS_SENTINEL_DAEMON_RECEIPT.json`. Wire `toolchain:sentinel:start`, `toolchain:sentinel:status`, `toolchain:sentinel:probe`, `toolchain:sentinel:audit` and Phase 8 MCP tool `eos_autonomous_sentinel_audit`. Verify `BDD-1951`..`BDD-1956`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-224-AUTONOMOUS-SENTINEL-DAEMON.md`
+  - `openspec/changes/CHANGE-224-autonomous-sentinel-daemon.md`
+  - `openspec/specs/SPEC-362-autonomous-sentinel-daemon.md`
+  - `docs/plans/PLAN-224-AUTONOMOUS-SENTINEL-DAEMON.md`
+  - `docs/tasks/TASKS-224-AUTONOMOUS-SENTINEL-DAEMON.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

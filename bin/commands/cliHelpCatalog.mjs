@@ -732,6 +732,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:studio:start [--port=PORT] Inicio del servidor web local y HUD interactivo reactivo (SPEC-361)
   eos toolchain:studio:snapshot [--json] Instantánea determinista de telemetría y topología arquitectónica (SPEC-361)
   eos toolchain:studio:audit [--json] Auditoría formal del motor de estudio HTTP/SSE y emisión de recibo (SPEC-361)
+  eos toolchain:sentinel:start [--interval=MS] Inicio del demonio centinela autónomo continuo 24/7 (SPEC-362)
+  eos toolchain:sentinel:status [--json] Reporte de salud multi-dimensional y estado del centinela (SPEC-362)
+  eos toolchain:sentinel:probe [--json] Ejecución puntual de las 5 sondas ortogonales de salud (SPEC-362)
+  eos toolchain:sentinel:audit [--json] Auditoría formal del centinela, detección de deriva y PR (SPEC-362)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

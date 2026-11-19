@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:84819338-eab1-40c9-b3b5-6a24f84a157a",
+  "serialNumber": "urn:uuid:2b25e8bf-1f21-4d11-8709-6e07cde4fb59",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T19:35:11.074Z",
+    "timestamp": "2026-11-19T19:46:29.812Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -773,6 +773,34 @@
         {
           "alg": "SHA-256",
           "content": "fc7c66ad0a6e2ceb48fffad1fd611ba24870e7590e620828faf7e01bebce5ca2"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AutonomousSentinelDaemon",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AutonomousSentinelDaemon@1.0.0",
+      "description": "Layer-0 module eosAutonomousSentinelDaemon.ts",
+      "purl": "pkg:npm/glorian/AutonomousSentinelDaemon@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9957d885bcdb50aba5bb4800a5058c31b523d5a9f2b1b6bfae61037d82635c3a"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AutonomousSentinelDaemon",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AutonomousSentinelDaemon@1.0.0",
+      "description": "Layer-0 module eosAutonomousSentinelDaemon.types.ts",
+      "purl": "pkg:npm/glorian/AutonomousSentinelDaemon@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "16b4d231d8439dac7c8967c349337ca833f97c515eb50e3c9d66fc9441bf4655"
         }
       ]
     },
@@ -4454,7 +4482,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b6a0089013f0d3d0769131d69ba1c56e6a31609b0d475713010bb346142cf2c0"
+          "content": "fdf31f1e273e64024d130afeb9d2d2e51158aa15e68027570e682e7fc870e2d0"
         }
       ]
     },
@@ -8346,7 +8374,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "3d6f14e7db5a42fab0df492f64591897136129b73454b16902df7fa1bb8770de"
+          "content": "0bb33226d63a43636f891b84ad8db1c744774e70553548e53b7b044ed0d89d4d"
         }
       ]
     },
@@ -10438,7 +10466,8 @@
         "pkg:npm/glorian/ArchitecturalCanvas@1.0.0",
         "pkg:npm/glorian/AgentSwarmMicroKernel@1.0.0",
         "pkg:npm/glorian/InductiveProofEngine@1.0.0",
-        "pkg:npm/glorian/GlorianLiveStudio@1.0.0"
+        "pkg:npm/glorian/GlorianLiveStudio@1.0.0",
+        "pkg:npm/glorian/AutonomousSentinelDaemon@1.0.0"
       ]
     }
   ]

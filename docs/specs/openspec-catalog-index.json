@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 361,
-  "catalogSha256": "dd5b6b4ea17e153eb1b7dc34467b8a76fd6cc334d0304e5b77c483cc36f34f9d",
+  "totalSpecs": 362,
+  "catalogSha256": "9cc1147ad0ab2bc859fb4f6476fec3780d962c52683f1d21a3c53c808fd9c4a1",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3250,7 +3250,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-361-glorian-live-studio.md",
-      "sha256": "8c34ba71e7c178eeaed2198619fe1677c179e067f2e6b9b7f18a75b82b6a5c93"
+      "sha256": "0f499300849f5d532386d8c2d6e32900278be79d4f90f67d1f9d0507c4dd8fed"
+    },
+    {
+      "id": "SPEC-362",
+      "title": "Autonomous Continuous Sentinel Daemon 24/7",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-362-autonomous-sentinel-daemon.md",
+      "sha256": "07d30acff3fd9ab44ad88046a3f427f20317789f89ee4680dd6bcb3ba2b7ae37"
     }
   ]
 }

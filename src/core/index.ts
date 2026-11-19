@@ -760,3 +760,5 @@ export * from "./eosAgentSwarmMicroKernel.ts";
 export * from "./eosInductiveProofEngine.ts";
 export * from "./eosGlorianLiveStudio.ts";
 export * from "./eosGlorianLiveStudio.types.ts";
+export * from "./eosAutonomousSentinelDaemon.ts";
+export * from "./eosAutonomousSentinelDaemon.types.ts";
