@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "69513fece073ef7468aaea650225a7ed9a6dfd0254579d0fceaaa78f7ed1387b",
-  "totalTools": 218,
+  "catalogSha256": "fe5319ef1159a261f00a8b6a83022214fcb58e298c279a3a696f10d19f7caa8c",
+  "totalTools": 221,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -6828,6 +6828,51 @@
       },
       "annotations": {
         "title": "EOS blindspot Hunter Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_web_compiler_audit",
+      "description": "Audits the Sovereign Web Application & SaaS Compiler verifying WCAG 2.1 AAA contrast, SRI SHA-384 asset integrity, and Schema.org JSON-LD completeness (SPEC-343).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS web Compiler Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_agentic_context_audit",
+      "description": "Audits the Autonomous Agentic Context Engine verifying sliding-window chunking, prompt-injection defense barrier, token budget compaction, and semantic retrieval recall (SPEC-344).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS agentic Context Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_knowledge_graph_reflex_audit",
+      "description": "Audits the Closed-Loop Knowledge Graph & Semantic Reflex Engine verifying Tarjan SCC cycle detection, Kahn topological DAG sequencing, blast radius computation, and bounded reflex cascade depth (SPEC-345).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS knowledge Graph Reflex Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

@@ -669,6 +669,12 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:agentic:compress [--text=TEXT] [--budget=TOKENS] [--json] Compactación de contexto gobernada por presupuesto y preservación de contratos (SPEC-344)
   eos toolchain:agentic:eval [--query=QUERY] [--json] Evaluación de recuperación semántica BM25 y recall (SPEC-344)
   eos toolchain:agentic:audit [--json] Auditoría determinista del motor de contexto agéntico y recibo SHA-256 (SPEC-344)
+  eos toolchain:graph:query [--node=ID] [--json] Consulta de nodos y aristas del grafo semántico bitemporal (SPEC-345)
+  eos toolchain:graph:blast-radius [--node=ID] [--depth=N] [--direction=DIR] [--json] Cálculo determinista de radio de impacto (SPEC-345)
+  eos toolchain:graph:cycles [--cyclic] [--json] Detección de dependencias circulares mediante algoritmo SCC de Tarjan (SPEC-345)
+  eos toolchain:graph:pagerank [--json] Centralidad y criticidad arquitectónica mediante power iteration de PageRank (SPEC-345)
+  eos toolchain:graph:reflex [--node=ID] [--json] Despacho reactivo de ganchos semánticos con cota de profundidad <= 10 (SPEC-345)
+  eos toolchain:graph:audit [--json] Auditoría determinista del grafo de conocimiento y recibo SHA-256 (SPEC-345)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

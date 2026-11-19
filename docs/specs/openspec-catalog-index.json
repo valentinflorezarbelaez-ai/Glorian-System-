@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 344,
-  "catalogSha256": "29aea8f27c340730e4ad608fd4ad13a8a962b6b0dfb1b6de5c9fafdfaea36af0",
+  "totalSpecs": 345,
+  "catalogSha256": "937831d5744528e45945c3cf43d99b4059f7451b92df013ad6e8e72902384c3a",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3098,6 +3098,15 @@
       "bddCount": 6,
       "file": "openspec/specs/SPEC-344-agentic-context-engine.md",
       "sha256": "a917ea083446b8881d5963b9d2c8c5f94a45213737c3e8586a005887a9dbe672"
+    },
+    {
+      "id": "SPEC-345",
+      "title": "Closed-Loop Knowledge Graph & Semantic Reflex Engine",
+      "status": "UNKNOWN",
+      "frCount": 8,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-345-knowledge-graph-reflex.md",
+      "sha256": "ad89deaf89ac7f278cd424da688a36766cc903490fe7061f8c0d0273a2257222"
     }
   ]
 }

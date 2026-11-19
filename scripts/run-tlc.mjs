@@ -89,6 +89,7 @@ export const CONFIGURED_SPECS = [
   "MetamorphicDifferentialBlindSpot",
   "SovereignWebCompiler",
   "AgenticContextEngine",
+  "KnowledgeGraphReflex",
 ];
 
 /**

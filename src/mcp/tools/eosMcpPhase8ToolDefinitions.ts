@@ -243,4 +243,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_knowledge_graph_reflex_audit",
+    description:
+      "Audits the Closed-Loop Knowledge Graph & Semantic Reflex Engine verifying Tarjan SCC cycle detection, Kahn topological DAG sequencing, blast radius computation, and bounded reflex cascade depth (SPEC-345).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

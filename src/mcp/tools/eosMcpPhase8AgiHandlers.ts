@@ -14,6 +14,7 @@ import { EosContextWindowManager } from "../../core/eosContextWindowManager.ts";
 import { EosDiscreteEventSimulationHypervisorCore } from "../../core/eosDiscreteEventSimulationHypervisor.ts";
 import { EosDynamicToolForge } from "../../core/eosDynamicToolForge.ts";
 import { EosEuvInverseLithographyWavefrontCore } from "../../core/eosEuvInverseLithographyWavefront.ts";
+import { auditKnowledgeGraphReflex } from "../../core/eosKnowledgeGraphReflex.ts";
 import { EosMetamorphicDifferentialBlindSpotCore } from "../../core/eosMetamorphicDifferentialBlindSpot.ts";
 import { EosOntologicalHypergraphCore } from "../../core/eosOntologicalHypergraph.ts";
 import { EosPhysicsInformedHamiltonianPdeCore } from "../../core/eosPhysicsInformedHamiltonianPde.ts";
@@ -212,5 +213,7 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_web_compiler_audit: () => EosSovereignWebCompilerCore.auditCompiler(projectRoot),
 
     eos_agentic_context_audit: () => EosAgenticContextEngineCore.audit(projectRoot),
+
+    eos_knowledge_graph_reflex_audit: () => auditKnowledgeGraphReflex(projectRoot),
   };
 }

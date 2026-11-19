@@ -185,6 +185,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliAgenticContextEngine.mjs",
     fn: "handleAgenticContextCommand",
   },
+  {
+    prefix: "toolchain:graph:",
+    file: "./cliKnowledgeGraphReflex.mjs",
+    fn: "handleKnowledgeGraphCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {
