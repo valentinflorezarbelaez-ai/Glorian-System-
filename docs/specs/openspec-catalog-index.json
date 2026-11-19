@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 356,
-  "catalogSha256": "8210900d2278282464cbe7334a6c6cefb0aedb9756037e5e1636d61241b259e9",
+  "totalSpecs": 357,
+  "catalogSha256": "2e6e9ed5780813abbd5c97d58b3d39a73cd23ed8c1207635aa4622a5e44ed86c",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3205,7 +3205,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-356-work-stealing-scheduler.md",
-      "sha256": "fd536155406299ef8adc568c2b0ad5c6f0afe15386482bfd5e0a3bf0046d7ad2"
+      "sha256": "72486275d2a40b582f4e3973ba6441425eb7c93395bdad4155cdda6000f14ac3"
+    },
+    {
+      "id": "SPEC-357",
+      "title": "Autonomous Bitemporal Dynamic State Machine & Event Sourcing Hyper-Ledger",
+      "status": "SPECIFICATION_APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-357-bitemporal-event-sourcing-ledger.md",
+      "sha256": "0526e152fc28eadfa2d3f6dd1a9446b5325e238ea61c7a0847c516d2d4533b15"
     }
   ]
 }

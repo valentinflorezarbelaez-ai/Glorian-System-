@@ -101,6 +101,7 @@ export const CONFIGURED_SPECS = [
   "WebGpuTensorAcceleration",
   "ZeroCopyIpcRingBuffer",
   "WorkStealingScheduler",
+  "BitemporalEventLedger",
 ];
 
 /**

@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "9cf1c6e785fdaafed6f64f1af60f20006f0d9621f0ce30e24876f37eedcf0e95",
-  "totalTools": 230,
+  "catalogSha256": "70d30ed2d300f6d2f5a5b0710dccf66903c7323fbc61a3f1e02aed9610f83479",
+  "totalTools": 233,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7038,6 +7038,21 @@
       },
       "annotations": {
         "title": "EOS work Stealing Scheduler Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_bitemporal_ledger_audit",
+      "description": "Audits the Autonomous Bitemporal Event Sourcing Hyper-Ledger verifying Datomic dual-time coordinates, append-only SHA-256 blocks, Merkle root verification, and LIDR SDLC event auditability (SPEC-357).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS bitemporal Ledger Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

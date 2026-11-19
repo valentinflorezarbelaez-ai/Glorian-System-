@@ -351,4 +351,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_bitemporal_ledger_audit",
+    description:
+      "Audits the Autonomous Bitemporal Event Sourcing Hyper-Ledger verifying Datomic dual-time coordinates, append-only SHA-256 blocks, Merkle root verification, and LIDR SDLC event auditability (SPEC-357).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

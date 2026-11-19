@@ -1,15 +1,15 @@
 {
   "specId": "SPEC-355",
   "changeId": "CHANGE-217",
-  "timestamp": "2026-11-19T17:21:12.132Z",
+  "timestamp": "2026-11-19T18:19:28.615Z",
   "capacity": 512,
   "slotSize": 64,
   "concurrencyMode": "SPSC",
   "benchmark": {
     "operations": 20000,
-    "totalDurationUs": 12835.1,
-    "avgLatencyNs": 641.755,
-    "throughputOpsSec": 1558227.049263348,
+    "totalDurationUs": 39658.1,
+    "avgLatencyNs": 1982.905,
+    "throughputOpsSec": 504310.594809131,
     "zeroCopyEfficiency": 1
   },
   "tlcModelVerified": true,

@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-19T16:36:56.173Z",
+  "timestampIso": "2026-11-19T18:13:35.195Z",
   "status": "PASS",
   "clean": true,
   "allReversible": true,
@@ -64,6 +64,6 @@
     }
   },
   "totalSteps": 3,
-  "latencyMs": 17,
-  "sha256Receipt": "39cfc8840082ba5dd645f3a6bf347ef0a56ca98357f836fe43f332833127cc4c"
+  "latencyMs": 12,
+  "sha256Receipt": "c9c6493b679d05557bc186571d0e4b68817d4e73e2a23a8f56c0145988dced16"
 }

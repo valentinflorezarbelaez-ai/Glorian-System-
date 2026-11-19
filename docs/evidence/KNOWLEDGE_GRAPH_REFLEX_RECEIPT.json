@@ -1,6 +1,6 @@
 {
   "spec": "SPEC-345",
-  "timestamp": "2026-11-19T16:38:45.457Z",
+  "timestamp": "2026-11-19T18:15:41.689Z",
   "nodeCount": 4,
   "edgeCount": 3,
   "cyclesDetected": true,
@@ -8,5 +8,5 @@
   "blastRadiusVerified": true,
   "reflexCascadeBounded": true,
   "allPassed": true,
-  "sha256": "0fe58b4f8795ad42d80cdba0276f3f2869547b233498f12b97228a179b093db8"
+  "sha256": "628a143ab2e03b01d6563e43ae4093d886df543825d5de58f8e7380253e0b3c5"
 }

@@ -713,6 +713,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:sched:bench [--json] Benchmark de throughput de micro-tareas y rebalanceo de carga (SPEC-356)
   eos toolchain:sched:spawn [--json] Creación e inserción de micro-tarea en el deque de un trabajador (SPEC-356)
   eos toolchain:sched:steal [--json] Demostración de robo atómico desde el tope de un deque víctima (SPEC-356)
+  eos toolchain:ledger:audit [--json] Auditoría formal del hyper-ledger bitemporal y event sourcing (SPEC-357)
+  eos toolchain:ledger:bench [--json] Benchmark de rendimiento de ingestión de datoms y latencia asOf (SPEC-357)
+  eos toolchain:ledger:append [--json] Ingestión de bloque de datoms bitemporales con Merkle root SHA-256 (SPEC-357)
+  eos toolchain:ledger:asof [--json] Consulta de viaje en el tiempo 2D en TxTime y ValidTime (SPEC-357)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

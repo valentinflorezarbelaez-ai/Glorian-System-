@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:fb082be0-4f9d-400f-9091-55e62e24d91f",
+  "serialNumber": "urn:uuid:2eb3af9e-d0d3-43c5-a4b6-c367127420f6",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T17:33:36.974Z",
+    "timestamp": "2026-11-19T18:03:35.553Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -941,6 +941,34 @@
         {
           "alg": "SHA-256",
           "content": "f6b5a55dc6fd6c01a44b39e60531aa6e663194ac80214c09e9f1acbd1eb7cd90"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:BitemporalEventSourcingLedger",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/BitemporalEventSourcingLedger@1.0.0",
+      "description": "Layer-0 module eosBitemporalEventSourcingLedger.ts",
+      "purl": "pkg:npm/glorian/BitemporalEventSourcingLedger@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "64fe4c5cfb3eb2a13c745edf5476d53ffbc7fc75efbd9fd58ecea03162f567a7"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:BitemporalEventSourcingLedger",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/BitemporalEventSourcingLedger@1.0.0",
+      "description": "Layer-0 module eosBitemporalEventSourcingLedger.types.ts",
+      "purl": "pkg:npm/glorian/BitemporalEventSourcingLedger@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c0c4136bf0c2180bb19dd0a5c970dd376de3d8eaa79ba387fa70ef3a3a2d5c34"
         }
       ]
     },
@@ -4314,7 +4342,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "865e4744f8c71f212cfdba8634273a05d25fcc10ba55f1620f2a7f38fd9988f7"
+          "content": "a37a204451f5cbfa9409a2412062845ee7c3031ef15f8e8ab49c218f695c9d7c"
         }
       ]
     },
@@ -7926,7 +7954,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "4d63f621feebf0eaab548a31abdc5cab6a7e25c542cf909c54e5c0f825ff8387"
+          "content": "03d178d2b23e06e7ab0d859340c60c1a30a5ff9b37d327942706935a0ce04e49"
         }
       ]
     },
@@ -7940,7 +7968,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "1934cd824af0da34366298be5daf2c5299db74efca28bd6ad04df8f3431111de"
+          "content": "c46111e39aff3126fc3a2b856c88baa99f02dd06eba7a4b967a3d64161134302"
         }
       ]
     },
@@ -8206,7 +8234,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "3da64ba6935ebdc15d7bd491c38b90927fe6f0dc1ad7732607237d2579452d03"
+          "content": "06b6ee8166cef12a76d5ac0511b0d04a520f678df75c9fd438f084b9e8209a93"
         }
       ]
     },
@@ -8407,6 +8435,12 @@
       "ref": "pkg:npm/glorian/BioSequenceFoldingConfidenceCore@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/BitemporalEventSourcingLedger@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -10269,7 +10303,8 @@
         "pkg:npm/glorian/CausalMetaLearning@1.0.0",
         "pkg:npm/glorian/WebGpuTensorAcceleration@1.0.0",
         "pkg:npm/glorian/ZeroCopyIpcRingBuffer@1.0.0",
-        "pkg:npm/glorian/WorkStealingScheduler@1.0.0"
+        "pkg:npm/glorian/WorkStealingScheduler@1.0.0",
+        "pkg:npm/glorian/BitemporalEventSourcingLedger@1.0.0"
       ]
     }
   ]

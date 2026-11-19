@@ -754,3 +754,4 @@ export * from "./eosCausalMetaLearning.ts";
 export * from "./eosWebGpuTensorAcceleration.ts";
 export * from "./eosZeroCopyIpcRingBuffer.ts";
 export * from "./eosWorkStealingScheduler.ts";
+export * from "./eosBitemporalEventSourcingLedger.ts";

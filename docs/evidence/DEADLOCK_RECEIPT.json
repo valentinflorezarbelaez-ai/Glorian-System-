@@ -1,8 +1,8 @@
 {
-  "graphId": "wfg-1795106216157",
+  "graphId": "wfg-1795112015512",
   "hasDeadlock": true,
   "cyclesCount": 1,
   "victimsCount": 1,
-  "timestamp": "2026-11-19T16:36:56.157Z",
-  "sha256Signature": "e1c7ecaba2686491ea9b4c2dce12ba7bf4b27d6f9e289257ad3ddb8d2010a340"
+  "timestamp": "2026-11-19T18:13:35.512Z",
+  "sha256Signature": "02961a6e8e8d5be318f4eacd1b121cfe02f106b9b18630e3fbdce98789a5b37e"
 }

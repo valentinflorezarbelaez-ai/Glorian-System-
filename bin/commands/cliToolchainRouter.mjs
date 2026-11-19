@@ -245,6 +245,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliWorkStealingScheduler.mjs",
     fn: "handleWorkStealingSchedulerCommand",
   },
+  {
+    prefix: "toolchain:ledger:",
+    file: "./cliBitemporalEventLedger.mjs",
+    fn: "handleBitemporalEventLedgerCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

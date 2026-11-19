@@ -3362,3 +3362,16 @@
   - `docs/plans/PLAN-218-WORK-STEALING-SCHEDULER.md`
   - `docs/tasks/TASKS-218-WORK-STEALING-SCHEDULER.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+## AUTH-2026-11-19-BITEMPORAL-EVENT-SOURCING-LEDGER
+
+- **Authorization Level**: LEVEL 3
+- **Scope**: Author and integrate `CHANGE-219` (`SPEC-357`), Autonomous Bitemporal Dynamic State Machine & Event Sourcing Hyper-Ledger: TLA+ Model 100 `docs/formal/BitemporalEventLedger.tla` / `.cfg`; `src/core/eosBitemporalEventSourcingLedger.types.ts` and `src/core/eosBitemporalEventSourcingLedger.ts` (immutable Datom model with 2D bitemporal coordinates `txTime` vs `validTime`, append-only log with SHA-256 block chaining and Merkle checkpoints, LIDR agentic SDLC lifecycle event schemas `SPEC_PROPOSED`..`GATE_SEALED`, 2D `asOf` time-travel query projection, and sub-millisecond snapshot replay); receipt `docs/evidence/BITEMPORAL_EVENT_SOURCING_LEDGER_RECEIPT.json`. Wire `toolchain:ledger:append`, `toolchain:ledger:asof`, `toolchain:ledger:bench`, `toolchain:ledger:audit` and Phase 8 MCP tool `eos_bitemporal_ledger_audit`. Verify `BDD-1921`..`BDD-1926`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-219-BITEMPORAL-EVENT-SOURCING-LEDGER.md`
+  - `openspec/changes/CHANGE-219-bitemporal-event-sourcing-ledger.md`
+  - `openspec/specs/SPEC-357-bitemporal-event-sourcing-ledger.md`
+  - `docs/plans/PLAN-219-BITEMPORAL-EVENT-SOURCING-LEDGER.md`
+  - `docs/tasks/TASKS-219-BITEMPORAL-EVENT-SOURCING-LEDGER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
