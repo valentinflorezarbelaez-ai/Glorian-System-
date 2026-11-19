@@ -45,7 +45,7 @@ const ctx = {
   packageMetadata,
   args,
   command,
-  printBanner: () => printBanner(packageMetadata),
+  printBanner: () => printBanner(packageMetadata, args),
 };
 
 async function main() {
