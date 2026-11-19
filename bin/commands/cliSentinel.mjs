@@ -405,89 +405,110 @@ HANDLERS["fleet:doctor"] = cmd_fleet_doctor;
 async function cmd_top(commandContext) {
   const { root, args, printBanner } = commandContext;
   const isJson = args.includes("--json");
-  if (!isJson) printBanner();
+  const isWatch = args.includes("--watch");
+  const intervalArg = args.find((a) => a.startsWith("--interval="));
+  const iterArg = args.find((a) => a.startsWith("--iterations="));
+  const intervalMs = intervalArg ? Math.max(100, Number(intervalArg.split("=")[1]) || 1000) : 1000;
+  const maxIterations = iterArg ? Math.max(1, Number(iterArg.split("=")[1]) || 1) : isWatch ? Infinity : 1;
+
+  if (!isJson && !isWatch) printBanner();
 
   const { EosSentinelDaemon } = await import("../../src/core/eosSentinelDaemon.ts");
   const { EosTelemetryDashboard } = await import("../../src/core/eosTelemetryDashboard.ts");
   const { GlorianFleetHealthWatchdog } = await import("../../src/core/glorianFleetHealthWatchdog.ts");
 
   const sentinel = new EosSentinelDaemon(root);
-  const pulse = sentinel.tick();
-
   const dashboard = new EosTelemetryDashboard(root);
-  const snap = dashboard.getSnapshot();
-
   const watchdog = new GlorianFleetHealthWatchdog(root);
-  const fleetSync = watchdog.runFleetHealthAuditSync({ dryRun: true });
 
-  const mem = process.memoryUsage();
-  const toMb = (bytes) => (bytes / (1024 * 1024)).toFixed(1);
+  let iteration = 0;
+  while (iteration < maxIterations) {
+    iteration++;
+    const pulse = sentinel.tick();
+    const snap = dashboard.getSnapshot();
+    const fleetSync = watchdog.runFleetHealthAuditSync({ dryRun: true });
 
-  if (isJson) {
-    const payload = {
-      timestampIso: new Date().toISOString(),
-      sentinelPulse: pulse,
-      memory: {
-        heapUsedMb: parseFloat(toMb(mem.heapUsed)),
-        heapTotalMb: parseFloat(toMb(mem.heapTotal)),
-        rssMb: parseFloat(toMb(mem.rss)),
-        externalMb: parseFloat(toMb(mem.external)),
-        utilizationRatio: pulse.memoryHealth.utilizationRatio,
-        pressureStatus: pulse.memoryHealth.status,
-      },
-      fleetHealth: {
-        auditStatus: fleetSync.auditStatus,
-        compositeHealthIndex: fleetSync.compositeHealthIndex,
-        healthyProjectsCount: fleetSync.healthyProjectsCount,
-        totalProjectsEvaluated: fleetSync.totalProjectsEvaluated,
-        averageTtfbMs: fleetSync.averageTtfbMs,
-      },
-      topology: {
-        activeAgents: snap.topology.activeAgents,
-        cycleDetected: snap.topology.cycleDetected,
-        totalEvents: snap.topology.totalEvents,
-      },
-      ledger: {
-        totalEntries: snap.ledger.totalEntries,
-        chainIntact: snap.ledger.chainIntact,
-      },
-      tokenEfficiency: {
-        savedRatio: snap.tokenEfficiency.savedRatio,
-        totalSavedTokens: snap.tokenEfficiency.totalSavedTokens,
-      },
-    };
-    console.log(JSON.stringify(payload, null, 2));
-    return;
+    const mem = process.memoryUsage();
+    const toMb = (bytes) => (bytes / (1024 * 1024)).toFixed(1);
+
+    if (isJson) {
+      const payload = {
+        timestampIso: new Date().toISOString(),
+        iteration,
+        sentinelPulse: pulse,
+        memory: {
+          heapUsedMb: parseFloat(toMb(mem.heapUsed)),
+          heapTotalMb: parseFloat(toMb(mem.heapTotal)),
+          rssMb: parseFloat(toMb(mem.rss)),
+          externalMb: parseFloat(toMb(mem.external)),
+          utilizationRatio: pulse.memoryHealth.utilizationRatio,
+          pressureStatus: pulse.memoryHealth.status,
+        },
+        fleetHealth: {
+          auditStatus: fleetSync.auditStatus,
+          compositeHealthIndex: fleetSync.compositeHealthIndex,
+          healthyProjectsCount: fleetSync.healthyProjectsCount,
+          totalProjectsEvaluated: fleetSync.totalProjectsEvaluated,
+          averageTtfbMs: fleetSync.averageTtfbMs,
+        },
+        topology: {
+          activeAgents: snap.topology.activeAgents,
+          cycleDetected: snap.topology.cycleDetected,
+          totalEvents: snap.topology.totalEvents,
+        },
+        ledger: {
+          totalEntries: snap.ledger.totalEntries,
+          chainIntact: snap.ledger.chainIntact,
+        },
+        tokenEfficiency: {
+          savedRatio: snap.tokenEfficiency.savedRatio,
+          totalSavedTokens: snap.tokenEfficiency.totalSavedTokens,
+        },
+      };
+      console.log(JSON.stringify(payload, null, 2));
+      if (!isWatch) return;
+    } else {
+      if (isWatch && process.stdout.isTTY) {
+        process.stdout.write("\x1b[2J\x1b[H");
+      }
+      console.log(`\n======================================================================`);
+      console.log(
+        ` 🚀  GLORIAN SYSTEM MONITOR (TOP) — REAL-TIME SOVEREIGN COCKPIT ${isWatch ? `[WATCH #${iteration}]` : ""}`,
+      );
+      console.log(`======================================================================`);
+      console.log(`  PULSE STATUS       : [${pulse.status}] | Latido Merkle 24/7`);
+      console.log(`  MERKLE ROOT HASH   : sha256:${pulse.merkleRootHash.slice(0, 32)}...`);
+      console.log(`  FILES MONITORED    : ${pulse.filesMonitoredCount} control plane files`);
+      console.log(`----------------------------------------------------------------------`);
+      console.log(
+        `  V8 HEAP ALLOCATION : ${toMb(mem.heapUsed)} MB used / ${toMb(mem.heapTotal)} MB total (${pulse.memoryHealth.utilizationRatio}%)`,
+      );
+      console.log(`  PROCESS RSS MEMORY : ${toMb(mem.rss)} MB | External: ${toMb(mem.external)} MB`);
+      console.log(`  MEMORY PRESSURE    : [${pulse.memoryHealth.status}]`);
+      console.log(`----------------------------------------------------------------------`);
+      console.log(`  FLEET HEALTH       : [${fleetSync.auditStatus}] | Composite: ${fleetSync.compositeHealthIndex}%`);
+      console.log(
+        `  PROJECTS MONITORED : ${fleetSync.healthyProjectsCount} / ${fleetSync.totalProjectsEvaluated} healthy`,
+      );
+      console.log(`  AVERAGE TTFB       : ${fleetSync.averageTtfbMs} ms`);
+      console.log(`----------------------------------------------------------------------`);
+      console.log(
+        `  ACTIVE AGENTS      : ${snap.topology.activeAgents} agents | Topology: ${snap.topology.cycleDetected ? "CYCLE" : "ACYCLIC"}`,
+      );
+      console.log(`  ZERO-COPY EVENTS   : ${snap.topology.totalEvents} ring-buffer events`);
+      console.log(
+        `  SQLITE WAL LEDGER  : ${snap.ledger.totalEntries} entries (${snap.ledger.chainIntact ? "INTACT" : "TAMPERED"})`,
+      );
+      console.log(
+        `  TOKEN EFFICIENCY   : ${(snap.tokenEfficiency.savedRatio * 100).toFixed(1)}% (${snap.tokenEfficiency.totalSavedTokens.toLocaleString()} tokens saved)`,
+      );
+      console.log(`======================================================================\n`);
+    }
+
+    if (iteration < maxIterations) {
+      await new Promise((resolve) => setTimeout(resolve, intervalMs));
+    }
   }
-
-  console.log(`\n======================================================================`);
-  console.log(` 🚀  GLORIAN SYSTEM MONITOR (TOP) — REAL-TIME SOVEREIGN COCKPIT`);
-  console.log(`======================================================================`);
-  console.log(`  PULSE STATUS       : [${pulse.status}] | Latido Merkle 24/7`);
-  console.log(`  MERKLE ROOT HASH   : sha256:${pulse.merkleRootHash.slice(0, 32)}...`);
-  console.log(`  FILES MONITORED    : ${pulse.filesMonitoredCount} control plane files`);
-  console.log(`----------------------------------------------------------------------`);
-  console.log(
-    `  V8 HEAP ALLOCATION : ${toMb(mem.heapUsed)} MB used / ${toMb(mem.heapTotal)} MB total (${pulse.memoryHealth.utilizationRatio}%)`,
-  );
-  console.log(`  PROCESS RSS MEMORY : ${toMb(mem.rss)} MB | External: ${toMb(mem.external)} MB`);
-  console.log(`  MEMORY PRESSURE    : [${pulse.memoryHealth.status}]`);
-  console.log(`----------------------------------------------------------------------`);
-  console.log(`  FLEET HEALTH       : [${fleetSync.auditStatus}] | Composite: ${fleetSync.compositeHealthIndex}%`);
-  console.log(`  PROJECTS MONITORED : ${fleetSync.healthyProjectsCount} / ${fleetSync.totalProjectsEvaluated} healthy`);
-  console.log(`  AVERAGE TTFB       : ${fleetSync.averageTtfbMs} ms`);
-  console.log(`----------------------------------------------------------------------`);
-  console.log(
-    `  ACTIVE AGENTS      : ${snap.topology.activeAgents} agents | Topology: ${snap.topology.cycleDetected ? "CYCLE" : "ACYCLIC"}`,
-  );
-  console.log(`  ZERO-COPY EVENTS   : ${snap.topology.totalEvents} ring-buffer events`);
-  console.log(
-    `  SQLITE WAL LEDGER  : ${snap.ledger.totalEntries} entries (${snap.ledger.chainIntact ? "INTACT" : "TAMPERED"})`,
-  );
-  console.log(
-    `  TOKEN EFFICIENCY   : ${(snap.tokenEfficiency.savedRatio * 100).toFixed(1)}% (${snap.tokenEfficiency.totalSavedTokens.toLocaleString()} tokens saved)`,
-  );
-  console.log(`======================================================================\n`);
 }
 
 HANDLERS["top"] = cmd_top;

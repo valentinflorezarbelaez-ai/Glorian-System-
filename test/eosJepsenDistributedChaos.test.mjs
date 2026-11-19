@@ -11,11 +11,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createJepsenCluster, EosJepsenDistributedChaosCore } from "../src/core/index.ts";
+import { resolveEvidencePath } from "../src/core/eosEvidencePaths.ts";
+import { handleJepsenChaosCommand } from "../bin/commands/cliJepsenDistributedChaos.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/JEPSEN_DISTRIBUTED_CHAOS_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("JEPSEN_DISTRIBUTED_CHAOS_RECEIPT.json", ROOT);
 
 describe("SPEC-313: Jepsen-Grade Distributed Network Partition & Chaos Simulator", () => {
   // -------------------------------------------------------------------------
@@ -209,5 +211,51 @@ describe("SPEC-313: Jepsen-Grade Distributed Network Partition & Chaos Simulator
 
     fs.writeFileSync(RECEIPT_PATH, JSON.stringify(receipt, null, 2), "utf8");
     assert.ok(fs.existsSync(RECEIPT_PATH));
+  });
+
+  // -------------------------------------------------------------------------
+  // BDD-1658b: CLI Dispatch, Dynamic Topologies & Asymmetric Partitions
+  // -------------------------------------------------------------------------
+  it("BDD-1658b: CLI dispatch, dynamic topologies & asymmetric partitions", async () => {
+    // 1. toolchain:jepsen:simulate with dynamic partitions and json
+    await handleJepsenChaosCommand({
+      command: "toolchain:jepsen:simulate",
+      args: ["--nodes=6", '--partitions="0,1|2,3,4,5"', "--loss=0.05", "--skew=10", "--json"],
+    });
+
+    // 2. toolchain:jepsen:partition with asymmetric severed links
+    await handleJepsenChaosCommand({
+      command: "toolchain:jepsen:partition",
+      args: ["--nodes=4", "--type=ASYMMETRIC", '--sever="0->2"', "--json"],
+    });
+
+    // 3. toolchain:jepsen:heal with custom subsets
+    await handleJepsenChaosCommand({
+      command: "toolchain:jepsen:heal",
+      args: ["--nodes=4", '--partitions="0,1|2,3"', "--json"],
+    });
+
+    // 4. toolchain:jepsen:verify
+    await handleJepsenChaosCommand({
+      command: "toolchain:jepsen:verify",
+      args: ["--nodes=3", "--json"],
+    });
+
+    // 5. toolchain:jepsen:audit and receipt writing
+    await handleJepsenChaosCommand({
+      command: "toolchain:jepsen:audit",
+      args: ["--json"],
+    });
+    assert.ok(fs.existsSync(RECEIPT_PATH));
+
+    // 6. Unknown command rejection
+    await assert.rejects(
+      async () =>
+        handleJepsenChaosCommand({
+          command: "toolchain:jepsen:unknown",
+          args: [],
+        }),
+      /Unknown toolchain:jepsen command/,
+    );
   });
 });

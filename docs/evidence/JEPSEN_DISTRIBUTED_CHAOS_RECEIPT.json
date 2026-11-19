@@ -1,12 +1,12 @@
 {
-  "timestampIso": "2026-11-19T00:05:09.327Z",
+  "timestampIso": "2026-11-19T00:24:02.397Z",
   "specRef": "SPEC-313",
-  "seed": 500,
-  "nodeCount": 3,
-  "totalOperations": 2,
-  "totalPackets": 2,
-  "droppedPackets": 0,
+  "seed": 999,
+  "nodeCount": 5,
+  "totalOperations": 4,
+  "totalPackets": 16,
+  "droppedPackets": 5,
   "linearizabilityViolations": 0,
   "converged": true,
-  "sha256": "900d351d455109cb61cc1cc69358a176b38ba2cb2fe0f9411166cf8fac8dc42d"
+  "sha256": "7a5225c94121b8d5e8d5394e4aaa0f40f2aaa551856aa3732df23eb2eb8c62b7"
 }

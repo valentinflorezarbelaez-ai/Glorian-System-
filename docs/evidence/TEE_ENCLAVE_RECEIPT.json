@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-18T23:56:05.728Z",
+  "timestampIso": "2026-11-19T00:21:13.177Z",
   "specRef": "SPEC-301",
   "totalEnclavesAudited": 1,
   "attestationValid": true,
   "sealingVerified": true,
   "pcrIntegrityGuarded": true,
-  "sha256Signature": "e4f1abf2138add9f9b0a07bc8e6f374744fcf16f3f55f89de4e006b489bd79f7"
+  "sha256Signature": "9e2364b57e2c612c560443fe13ea0e0cd52ded3414492e6e646e42917c152b21"
 }

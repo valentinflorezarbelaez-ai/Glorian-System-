@@ -1,7 +1,7 @@
 {
   "specRef": "SPEC-329",
   "engine": "Distributed Key-Value Cache Replication, Prefix Caching & Speculative KV Prefetching Engine",
-  "timestampIso": "2026-11-18T23:56:40.319Z",
+  "timestampIso": "2026-11-19T00:21:47.249Z",
   "numWorkers": 4,
   "totalPhysicalBlocks": 59,
   "maxBlockCapacity": 64,

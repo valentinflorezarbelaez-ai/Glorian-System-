@@ -294,11 +294,17 @@ HANDLERS["guide"] = cmd_guide_137;
 HANDLERS["cheat-sheet"] = cmd_guide_137;
 
 async function cmd_slo_138(commandContext) {
-  const { root, printBanner } = commandContext;
-  printBanner();
+  const { root, args, printBanner } = commandContext;
+  const isJson = args && args.includes("--json");
+  if (!isJson) printBanner();
   const { EosSLOErrorBudgetGovernor } = await import("../../src/core/eosSLOErrorBudgetGovernor.ts");
   const gov = new EosSLOErrorBudgetGovernor({ stateDir: path.join(root, ".eos") });
   const report = gov.evaluate();
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    process.exitCode = report.gateVerdict === "BLOCK" ? 1 : 0;
+    return;
+  }
   console.log("[EOS SLO ERROR-BUDGET GATE]\n");
   console.log(`  SLO Target           : ${report.sloTarget}%`);
   console.log(`  Budget Total         : ${report.errorBudgetTotal}`);
@@ -317,11 +323,22 @@ async function cmd_slo_138(commandContext) {
 HANDLERS["slo"] = cmd_slo_138;
 
 async function cmd_perf_139(commandContext) {
-  const { root, printBanner } = commandContext;
-  printBanner();
+  const { root, args, printBanner } = commandContext;
+  const isJson = args && args.includes("--json");
+  if (!isJson) printBanner();
   const { EosPerformanceRegressionTracker } = await import("../../src/core/eosPerformanceRegressionTracker.ts");
   const tracker = new EosPerformanceRegressionTracker(path.join(root, ".eos"));
   const regressions = tracker.checkAll(2.0);
+  if (isJson) {
+    const payload = {
+      status: regressions.length === 0 ? "CONFORMING" : "REGRESSIONS_DETECTED",
+      regressionsCount: regressions.length,
+      regressions,
+    };
+    console.log(JSON.stringify(payload, null, 2));
+    process.exitCode = regressions.length > 0 ? 1 : 0;
+    return;
+  }
   console.log("[EOS PERFORMANCE REGRESSION GATE]\n");
   if (regressions.length === 0) {
     console.log("  Status: NO REGRESSIONS DETECTED (all suites within 2x p95 baseline)\n");
@@ -337,11 +354,16 @@ async function cmd_perf_139(commandContext) {
 HANDLERS["perf"] = cmd_perf_139;
 
 async function cmd_drift_140(commandContext) {
-  const { root, printBanner } = commandContext;
-  printBanner();
+  const { root, args, printBanner } = commandContext;
+  const isJson = args && args.includes("--json");
+  if (!isJson) printBanner();
   const { EosSpecDriftDetector } = await import("../../src/core/eosSpecDriftDetector.ts");
   const detector = new EosSpecDriftDetector(root);
   const report = detector.detect({ driftThresholdDays: 7 });
+  if (isJson) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
   console.log("[EOS SPEC-DRIFT GATE — LAW I SPECIFICATION AS SUPREME TRUTH]\n");
   console.log(`  Modules Scanned      : ${report.totalModulesScanned}`);
   console.log(`  Specs Scanned        : ${report.totalSpecsScanned}`);

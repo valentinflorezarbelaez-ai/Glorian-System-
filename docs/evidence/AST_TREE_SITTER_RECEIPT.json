@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-19T00:00:48.887Z",
+  "timestampIso": "2026-11-19T00:27:11.759Z",
   "specRef": "SPEC-290",
   "totalFilesParsed": 967,
   "totalSymbolsIndexed": 27019,
-  "graphEdgesCount": 1109,
-  "averageParseTimeMs": 4.2,
-  "sha256Signature": "6af9c09022d1ebeba7838fbc7bd23a17e929a99cc4a0ba503b34aaae9e82f218"
+  "graphEdgesCount": 1110,
+  "averageParseTimeMs": 7.28,
+  "sha256Signature": "51905b2ca6f88ea85010fb979173459d3de8bf9bbd5377e63f46fbf89b7a3f48"
 }
