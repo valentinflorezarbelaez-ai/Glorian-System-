@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 367,
-  "catalogSha256": "a78661f9186a17ce42f5e347d84047cc45a1b9cd06cb05941af56a944338db44",
+  "totalSpecs": 370,
+  "catalogSha256": "158f70e91d473fb62c0c799335fabb8ce14220ad03435528cb8e79998cff0883",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3304,7 +3304,34 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-367-dynamic-tool-synthesis.md",
-      "sha256": "8ff9d1c2ec8eea8641e1a789b96daaf53c374befcd0017b16d5692d23f013053"
+      "sha256": "6a4e0f9e43ab18e8f41774cd39bb59750ff5a2bfcbdd57f77f59608454da5142"
+    },
+    {
+      "id": "SPEC-368",
+      "title": "Adversarial Red-Team Crucible & Minimax Exploit-Patch Game",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-368-adversarial-red-team-crucible.md",
+      "sha256": "14b2e65532dd92e37468674240541a0236560573e92c9de35f8fd39ac9fb3775"
+    },
+    {
+      "id": "SPEC-369",
+      "title": "Episodic Memory Graph & Cross-Project Experience Synapse",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-369-episodic-memory-graph.md",
+      "sha256": "61d05fb4214085b50ce6dbb6c78a666737876f573d3328a80f4bb7fa4deedf6b"
+    },
+    {
+      "id": "SPEC-370",
+      "title": "Deterministic Replay Debugger & MCTS Time-Travel Studio",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-370-deterministic-replay-debugger.md",
+      "sha256": "f0063df383a4db654c7f922d9ed931cbbe99475175fb04f6c07ade27fe42aab4"
     }
   ]
 }

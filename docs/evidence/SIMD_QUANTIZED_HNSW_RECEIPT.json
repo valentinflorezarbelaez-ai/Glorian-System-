@@ -1,14 +1,14 @@
 {
   "specRef": "SPEC-314",
   "engine": "SIMD Quantized HNSW Vector Index",
-  "timestampIso": "2026-11-19T23:43:59.662Z",
+  "timestampIso": "2026-11-20T00:18:12.259Z",
   "totalNodes": 50,
   "maxActiveLevel": 1,
-  "entryPointId": "audit-node-15",
+  "entryPointId": "audit-node-31",
   "quantizationErrorMean": 0.007673,
   "alignmentChecked16Bytes": true,
   "monotonicityVerified": true,
   "degreeBoundsVerified": true,
   "status": "VERIFIED",
-  "sha256Signature": "6bcd90425342aeb9e0b8a0b473162dcb7f811aa40ef575bbd1ca167af66de8af"
+  "sha256Signature": "75fdec7443636ff43abeca1984aef95eec78a3bdff03e288fde4c955547134d1"
 }

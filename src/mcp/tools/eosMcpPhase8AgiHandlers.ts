@@ -44,6 +44,9 @@ import { EosFleetChaosMonkey } from "../../core/eosFleetChaosMonkey.ts";
 import { EosMultiNodeSwarmMesh } from "../../core/eosMultiNodeSwarmMesh.ts";
 import { EosSweBenchEvalFlywheel } from "../../core/eosSweBenchEvalFlywheel.ts";
 import { EosDynamicToolSynthesis } from "../../core/eosDynamicToolSynthesis.ts";
+import { EosAdversarialRedTeamCrucible } from "../../core/eosAdversarialRedTeamCrucible.ts";
+import { EosEpisodicMemoryGraph } from "../../core/eosEpisodicMemoryGraph.ts";
+import { EosDeterministicReplayDebugger } from "../../core/eosDeterministicReplayDebugger.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 import { PHASE8_MIGRATED_TOOL_NAMES } from "./eosMcpPhase8ToolNames.ts";
 
@@ -266,5 +269,9 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_multi_node_swarm_mesh_audit: () => EosMultiNodeSwarmMesh.audit(),
     eos_swe_bench_eval_flywheel_audit: () => EosSweBenchEvalFlywheel.audit(),
     eos_dynamic_tool_synthesis_audit: () => EosDynamicToolSynthesis.audit(),
+    eos_adversarial_red_team_crucible_audit: (params) =>
+      EosAdversarialRedTeamCrucible.audit(params?.target as string | undefined),
+    eos_episodic_memory_graph_audit: (params) => EosEpisodicMemoryGraph.audit(params?.repo as string | undefined),
+    eos_deterministic_replay_debugger_audit: () => EosDeterministicReplayDebugger.audit(),
   };
 }

@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:0d80aad6-d0eb-5332-a467-968456644787",
+  "serialNumber": "urn:uuid:8d09aee1-cea1-5d8b-bd70-54ab6204a011",
   "version": 1,
   "metadata": {
-    "timestamp": "2027-03-06T22:42:30.000Z",
+    "timestamp": "2024-12-20T19:54:09.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -13,7 +13,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "8e3744c583b86d4da772f77a68131d8f3c89bd1dd946cf05b8c8c6c51259f439"
+          "content": "ce83b65f98999a6eaf08ce8986877e6d62602f6caf0fecc8dd830ea961ae6bcd"
         }
       ],
       "description": "Glorian System (formerly EOS System) Layer-0 Control Plane Core"
@@ -212,6 +212,32 @@
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosAdaptiveRateLimiter.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosAdversarialRedTeamCrucible.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosAdversarialRedTeamCrucible.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c33ae9adeea59e85fd20ade616049172df8173c31a0814eb57e6a8b60cf82d81"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosAdversarialRedTeamCrucible.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosAdversarialRedTeamCrucible.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosAdversarialRedTeamCrucible.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b99a26257dd46e6e6716b05c5f42ef431687b35c686e62a505cff20f40484c43"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosAdversarialRedTeamCrucible.types.ts"
     },
     {
       "type": "file",
@@ -1957,6 +1983,32 @@
     },
     {
       "type": "file",
+      "name": "src/core/eosDeterministicReplayDebugger.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosDeterministicReplayDebugger.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "68e0082a3520c632e7735c0f089e10741d31ede28ef0d6a68b6c2da98eb0e07e"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosDeterministicReplayDebugger.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosDeterministicReplayDebugger.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosDeterministicReplayDebugger.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5e30d1b7a7b1bc24c526a863d853fc4bf89d90948f8b50e169e2d98a62b3ddff"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosDeterministicReplayDebugger.types.ts"
+    },
+    {
+      "type": "file",
       "name": "src/core/eosDeterministicSimulationEngine.ts",
       "version": "75.0.0",
       "purl": "pkg:eos/src/core/eosDeterministicSimulationEngine.ts@75.0.0",
@@ -2301,7 +2353,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0ef735e4994d4124a90ebe7849ad0c06444408ba766b48e366d042ff4d4cf031"
+          "content": "aef0c5207d1346881da392dd3a3075f1e35a6d3d2a4ba70bb1a8526eb37d1122"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosDynamicToolSynthesis.ts"
@@ -2314,7 +2366,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b3ae7e4fd63682d34e1db55d1bb0654e476417860af8a9fe9fc3cc3b1d5170c3"
+          "content": "5631afb7a480cca11cf2e62323fa53d682ad952f2676febb588d1e2c1c9669df"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosDynamicToolSynthesis.types.ts"
@@ -2448,6 +2500,32 @@
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosEnterpriseWorkspaceGovernor.types.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosEpisodicMemoryGraph.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosEpisodicMemoryGraph.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c5d5897a49a27208df2aabb65942cdb9280b4e5cd461fcc3a13ffa716801e78a"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosEpisodicMemoryGraph.ts"
+    },
+    {
+      "type": "file",
+      "name": "src/core/eosEpisodicMemoryGraph.types.ts",
+      "version": "75.0.0",
+      "purl": "pkg:eos/src/core/eosEpisodicMemoryGraph.types.ts@75.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e82d65133f6fece8f1a95a3cf31fae1749aa7373a821c0e2033dd730da18b69d"
+        }
+      ],
+      "description": "Glorian System pure Layer-0 kernel module: eosEpisodicMemoryGraph.types.ts"
     },
     {
       "type": "file",
@@ -4225,7 +4303,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "ae5edf7c535f2ea40c01c5046c68c783b7b14f3e20618f15f60266124a5deb5c"
+          "content": "c0a8528e8bbbe08a5ac0545e374b7b43f28fdfc676a0a79574df935d39de4f4a"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosMcpToolTaxonomy.ts"
@@ -7917,7 +7995,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "d75a9316b28cbb969d01dad41ba51c20c864237fc74830cd7595fd4a4bde023a"
+          "content": "3c75aa3502ebd17e46a9c3d0da341149bc02b6ac5722f722d66e5b9ee7f4761d"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: index.ts"
@@ -7988,5 +8066,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "9148a7c71e4da43b5e3e40c53aa651a4969f7b441a9a9c9ea5da565eddb61419"
+  "sha256Receipt": "0271ad15fa7ff829577a146de32d2f641fd5e6324ad1d53c4b91ea5b7d56768f"
 }

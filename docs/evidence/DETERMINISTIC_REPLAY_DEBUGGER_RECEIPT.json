@@ -1,0 +1,34 @@
+{
+  "receiptId": "RCP-REPLAY-MWO8HGRE",
+  "sha256": "040ad5dfc59ae486925f6a9e64325a103c5c8219e8a594633fb21598c5bf0418",
+  "totalCheckpoints": 3,
+  "totalBranches": 1,
+  "bitExactVerification": true,
+  "winningBranch": {
+    "branchId": "BRANCH-MWO8HGRD-001",
+    "parentTick": 1,
+    "name": "WHAT_IF_CONCURRENCY",
+    "alternativeAction": "SPAWN_WORKER_THREADS",
+    "checkpoints": [
+      {
+        "tick": 1,
+        "actionType": "BRANCH_FORK",
+        "actionPayload": {
+          "branchId": "BRANCH-MWO8HGRD-001",
+          "alternativeAction": "SPAWN_WORKER_THREADS"
+        },
+        "stateSnapshot": {
+          "step": 1,
+          "errors": 0
+        },
+        "stateHash": "7ef28f78bd8a956a01af45380497402b2f25680342e3ff2366454763f3e614e0",
+        "timestamp": 1795134084889
+      }
+    ],
+    "visits": 2,
+    "cumulativeReward": 1.45,
+    "uctScore": 1.557,
+    "status": "ACTIVE"
+  },
+  "generatedAt": "2026-11-20T00:21:24.890Z"
+}

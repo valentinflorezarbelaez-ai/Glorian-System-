@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "5396caff111bd25c395fea82e01e185af0195ee76f64db666dafeb16f2a30416",
-  "totalTools": 243,
+  "catalogSha256": "a64d271277606f9d09aad435ff5b6a2ab8a2a0088d252042f2dd435e9e95973b",
+  "totalTools": 246,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7203,6 +7203,61 @@
       },
       "annotations": {
         "title": "EOS dynamic Tool Synthesis Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_adversarial_red_team_crucible_audit",
+      "description": "Audits the Adversarial Red-Team Crucible & Minimax Exploit-Patch Game verifying autonomous attack generation, CEGIS defensive patch synthesis, isolated execution harness, and minimax tournament convergence (SPEC-368).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Target component or repository for the adversarial tournament audit."
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS adversarial Red Team Crucible Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_episodic_memory_graph_audit",
+      "description": "Audits the Episodic Memory Graph & Cross-Project Experience Synapse verifying episodic episode ingestion, cross-repo associative retrieval, causal graph traversal, and temporal decay (SPEC-369).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "repo": {
+            "type": "string",
+            "description": "Target fleet repository for the associative memory graph audit."
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS episodic Memory Graph Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_deterministic_replay_debugger_audit",
+      "description": "Audits the Deterministic Replay Debugger & MCTS Time-Travel Studio verifying execution checkpointing, bit-exact time-slider rewind, and counterfactual alternative tree branching (SPEC-370).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS deterministic Replay Debugger Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

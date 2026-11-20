@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:0fde4504-6907-4b74-9008-bfab4b370322",
+  "serialNumber": "urn:uuid:e0c81a6a-e9df-4701-af8c-15a338ff9478",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-19T23:51:46.701Z",
+    "timestamp": "2026-11-20T00:22:43.983Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -171,6 +171,34 @@
         {
           "alg": "SHA-256",
           "content": "c57044f2ec4d07be5a7ccb7a9048a131392e8a3595dcaa6d3a36c3d8feff55f9"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AdversarialRedTeamCrucible",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AdversarialRedTeamCrucible@1.0.0",
+      "description": "Layer-0 module eosAdversarialRedTeamCrucible.ts",
+      "purl": "pkg:npm/glorian/AdversarialRedTeamCrucible@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c33ae9adeea59e85fd20ade616049172df8173c31a0814eb57e6a8b60cf82d81"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AdversarialRedTeamCrucible",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AdversarialRedTeamCrucible@1.0.0",
+      "description": "Layer-0 module eosAdversarialRedTeamCrucible.types.ts",
+      "purl": "pkg:npm/glorian/AdversarialRedTeamCrucible@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b99a26257dd46e6e6716b05c5f42ef431687b35c686e62a505cff20f40484c43"
         }
       ]
     },
@@ -2080,6 +2108,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:DeterministicReplayDebugger",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DeterministicReplayDebugger@1.0.0",
+      "description": "Layer-0 module eosDeterministicReplayDebugger.ts",
+      "purl": "pkg:npm/glorian/DeterministicReplayDebugger@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "68e0082a3520c632e7735c0f089e10741d31ede28ef0d6a68b6c2da98eb0e07e"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:DeterministicReplayDebugger",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/DeterministicReplayDebugger@1.0.0",
+      "description": "Layer-0 module eosDeterministicReplayDebugger.types.ts",
+      "purl": "pkg:npm/glorian/DeterministicReplayDebugger@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5e30d1b7a7b1bc24c526a863d853fc4bf89d90948f8b50e169e2d98a62b3ddff"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:DeterministicSimulationEngine",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/DeterministicSimulationEngine@1.0.0",
@@ -2452,7 +2508,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0ef735e4994d4124a90ebe7849ad0c06444408ba766b48e366d042ff4d4cf031"
+          "content": "aef0c5207d1346881da392dd3a3075f1e35a6d3d2a4ba70bb1a8526eb37d1122"
         }
       ]
     },
@@ -2466,7 +2522,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b3ae7e4fd63682d34e1db55d1bb0654e476417860af8a9fe9fc3cc3b1d5170c3"
+          "content": "5631afb7a480cca11cf2e62323fa53d682ad952f2676febb588d1e2c1c9669df"
         }
       ]
     },
@@ -2621,6 +2677,34 @@
         {
           "alg": "SHA-256",
           "content": "52af41ed29d60558f53111e154af0e11b416ed28c05b106b15fd2f67e61ecf8e"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:EpisodicMemoryGraph",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/EpisodicMemoryGraph@1.0.0",
+      "description": "Layer-0 module eosEpisodicMemoryGraph.ts",
+      "purl": "pkg:npm/glorian/EpisodicMemoryGraph@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c5d5897a49a27208df2aabb65942cdb9280b4e5cd461fcc3a13ffa716801e78a"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:EpisodicMemoryGraph",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/EpisodicMemoryGraph@1.0.0",
+      "description": "Layer-0 module eosEpisodicMemoryGraph.types.ts",
+      "purl": "pkg:npm/glorian/EpisodicMemoryGraph@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e82d65133f6fece8f1a95a3cf31fae1749aa7373a821c0e2033dd730da18b69d"
         }
       ]
     },
@@ -4538,7 +4622,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "ae5edf7c535f2ea40c01c5046c68c783b7b14f3e20618f15f60266124a5deb5c"
+          "content": "c0a8528e8bbbe08a5ac0545e374b7b43f28fdfc676a0a79574df935d39de4f4a"
         }
       ]
     },
@@ -8514,7 +8598,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "d75a9316b28cbb969d01dad41ba51c20c864237fc74830cd7595fd4a4bde023a"
+          "content": "3c75aa3502ebd17e46a9c3d0da341149bc02b6ac5722f722d66e5b9ee7f4761d"
         }
       ]
     },
@@ -10612,7 +10696,10 @@
         "pkg:npm/glorian/FleetChaosMonkey@1.0.0",
         "pkg:npm/glorian/MultiNodeSwarmMesh@1.0.0",
         "pkg:npm/glorian/SweBenchEvalFlywheel@1.0.0",
-        "pkg:npm/glorian/DynamicToolSynthesis@1.0.0"
+        "pkg:npm/glorian/DynamicToolSynthesis@1.0.0",
+        "pkg:npm/glorian/AdversarialRedTeamCrucible@1.0.0",
+        "pkg:npm/glorian/EpisodicMemoryGraph@1.0.0",
+        "pkg:npm/glorian/DeterministicReplayDebugger@1.0.0"
       ]
     }
   ]

@@ -300,6 +300,21 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliDynamicToolSynthesis.mjs",
     fn: "handleDynamicToolSynthesisCommand",
   },
+  {
+    prefix: "toolchain:crucible:",
+    file: "./cliAdversarialRedTeamCrucible.mjs",
+    fn: "handleAdversarialRedTeamCrucibleCommand",
+  },
+  {
+    prefix: "toolchain:memory:",
+    file: "./cliEpisodicMemoryGraph.mjs",
+    fn: "handleEpisodicMemoryGraphCommand",
+  },
+  {
+    prefix: "toolchain:replay:",
+    file: "./cliDeterministicReplayDebugger.mjs",
+    fn: "handleDeterministicReplayDebuggerCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

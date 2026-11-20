@@ -112,6 +112,9 @@ export const CONFIGURED_SPECS = [
   "MultiNodeSwarmMesh",
   "SweBenchEvalFlywheel",
   "DynamicToolSynthesis",
+  "AdversarialRedTeamCrucible",
+  "EpisodicMemoryGraph",
+  "DeterministicReplayDebugger",
 ];
 
 /**

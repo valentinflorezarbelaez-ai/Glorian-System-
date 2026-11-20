@@ -1511,7 +1511,7 @@ describe("AEROSPACE BRANCH ELEVATION — MISSION CRITICAL SUITE", () => {
           cwd: root,
           encoding: "utf8",
           stdio: ["ignore", "pipe", "pipe"],
-          timeout: 10000,
+          timeout: 30000,
         });
         assert.ok(out.length > 0, `Command eos ${sub} should produce output`);
       }

@@ -450,4 +450,41 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_adversarial_red_team_crucible_audit",
+    description:
+      "Audits the Adversarial Red-Team Crucible & Minimax Exploit-Patch Game verifying autonomous attack generation, CEGIS defensive patch synthesis, isolated execution harness, and minimax tournament convergence (SPEC-368).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        target: {
+          type: "string",
+          description: "Target component or repository for the adversarial tournament audit.",
+        },
+      },
+    },
+  },
+  {
+    name: "eos_episodic_memory_graph_audit",
+    description:
+      "Audits the Episodic Memory Graph & Cross-Project Experience Synapse verifying episodic episode ingestion, cross-repo associative retrieval, causal graph traversal, and temporal decay (SPEC-369).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        repo: {
+          type: "string",
+          description: "Target fleet repository for the associative memory graph audit.",
+        },
+      },
+    },
+  },
+  {
+    name: "eos_deterministic_replay_debugger_audit",
+    description:
+      "Audits the Deterministic Replay Debugger & MCTS Time-Travel Studio verifying execution checkpointing, bit-exact time-slider rewind, and counterfactual alternative tree branching (SPEC-370).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

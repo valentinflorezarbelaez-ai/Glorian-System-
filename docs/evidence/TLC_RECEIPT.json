@@ -1,13 +1,13 @@
 {
-  "timestampIso": "2026-11-19T23:47:04.850Z",
+  "timestampIso": "2026-11-19T23:57:36.472Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
-  "status": "VERIFIED",
-  "allPassed": true,
+  "status": "INVARIANT_BREACH_DETECTED",
+  "allPassed": false,
   "hasJavaRuntime": true,
   "tlaJarPath": "C:\\Users\\valen\\Documents\\Glorian-System\\tools\\tla2tools.jar",
-  "totalConfiguredSpecs": 72,
+  "totalConfiguredSpecs": 73,
   "models": [
     {
       "specName": "LmaxDisruptor",
@@ -76,8 +76,8 @@
       "specName": "JepsenDistributedChaos",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 801,
-      "statesGenerated": 685,
+      "distinctStates": 401,
+      "statesGenerated": 529,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -85,8 +85,8 @@
       "specName": "SimdQuantizedHnsw",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 566,
-      "statesGenerated": 102,
+      "distinctStates": 0,
+      "statesGenerated": 761,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -95,7 +95,7 @@
       "verifiedLive": true,
       "passed": true,
       "distinctStates": 636,
-      "statesGenerated": 5125,
+      "statesGenerated": 925,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -656,6 +656,15 @@
       "statesGenerated": 883,
       "violationInvariant": null,
       "exitCode": 0
+    },
+    {
+      "specName": "AdversarialRedTeamCrucible",
+      "verifiedLive": true,
+      "passed": false,
+      "distinctStates": 0,
+      "statesGenerated": 0,
+      "violationInvariant": null,
+      "exitCode": 76
     }
   ]
 }

@@ -756,27 +756,26 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:jit:compile [NAME] Compilación JIT, validación en sandbox y registro en vivo (SPEC-367)
   eos toolchain:jit:tools [--json] Lista de herramientas dinámicas registradas en la tabla de despacho (SPEC-367)
   eos toolchain:jit:audit [--json] Auditoría diagnóstica completa del compilador JIT y recibo formal (SPEC-367)
+  eos toolchain:crucible:attack [TARGET] Generación de vectores adversarios mutados estructurados (SPEC-368)
+  eos toolchain:crucible:patch [TARGET] Síntesis de parches defensivos CEGIS contra contraejemplos (SPEC-368)
+  eos toolchain:crucible:tournament [TARGET] Torneo minimax atacante-defensor y matriz de pagos (SPEC-368)
+  eos toolchain:crucible:audit [TARGET] Auditoría formal del crisol adversarial y recibo SHA-256 (SPEC-368)
+  eos toolchain:memory:record [REPO] Ingesta de episodio de resolución y cálculo de aristas sinápticas (SPEC-369)
+  eos toolchain:memory:query [QUERY] Consulta asociativa transversal en los 9 repositorios de la flota (SPEC-369)
+  eos toolchain:memory:graph [--json] Topología del grafo de memoria episódica y aristas causales (SPEC-369)
+  eos toolchain:memory:audit [REPO] Auditoría formal del grafo sináptico y recibo SHA-256 (SPEC-369)
+  eos toolchain:replay:record [ACTION] Captura de checkpoint de estado discreto determinista (SPEC-370)
+  eos toolchain:replay:step [--back|--rewind] Navegación interactiva por el slider de tiempo (SPEC-370)
+  eos toolchain:replay:branch [NAME] Bifurcación contrafactual MCTS y exploración de árbol UCT (SPEC-370)
+  eos toolchain:replay:audit [--json] Auditoría diagnóstica del depurador y recibo de reproducibilidad (SPEC-370)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 
 📦 ÍNDICE DE ALIAS Y SUBCOMANDOS ESPECIALIZADOS (100% REGISTRADOS):
-  fast, wal, bench:nano, daemon, transmute, optimize:v8, fuzz:target, swarm:arena, zk:attest, sea:compile,
-  pq:encap, ast:synthesize, hnsw:search, graph:datalog, wasm:disasm, titans, anycast, octave, warp, apex,
-  disruptor, ring, nubank, nu, frontier, router, squeezer, topology, wasm, soul, architect, introspect,
-  evolution, shield, defense, mangle, sabotage, simulate:models, formal, tla, jepsen, chaos:net, vault,
-  memory, temple, sol, mcts:plan, tla:model-check, raft:consensus, ans:compress, ans:decompress, pbft:status,
-  pbft:slash, homomorphic:decrypt, mpc:add, mpc:multiply, vdf:beacon, unitotal:audit, fuzz:hypervisor,
-  replay:ledger, sync-stack, witness:interrogate, hotpatch, project, cheat-sheet, slo, perf, drift, flags,
-  loadtest, canary:stat, ledger:replay, ledger:timetravel, raft:elect, sandbox:profile, smt:tree, zk,
-  truetime:spanner, spanner:time, tss, enterprise:audit, enterprise, red:metrics, prom:red, action:verify,
-  provenance:attest, project:doctor, remediate, doctor:fix, heal:repo, project:fix, diary, budget, finops,
-  mind, mountains, autotune, nsa:encrypt, nsa:audit, nsa:zeroize, consensus, truetime:bounded, concurrency,
-  hashring, antientropy, ratelimit, hft, zerocopy, chaos:run, chaos, vector, risk, aladdin, chain,
-  product:create, product, product:deliver, factory:e2e, product:validate, loop, sovereign, invariant,
-  contract, heal:surgical, tlc, pr:check, sandbox:vm, fleet:verify, fleet:doctor, top, ontology, quantum:seal, refactor, dst,
-  synapse, fleet:soundcheck, mcts:tune, canary:rollout, antigravity, gentleman, gentle-ai, ledger, ast,
-  nocturnal, evolve, mesh, agent-topology, sandbox, timetravel, truetime, lsm, threshold, microvm, simd, enforce,
-  sparse-tree, enterprise:health, otel:metrics, mmr, raft, fuzzer, seccomp, zk:verify, aca, intercept,
-  toolchain, toolchain:doctor, toolchain:scan, toolchain:policy, toolchain:k8s, toolchain:deploy, toolchain:loadtest,
-  toolchain:helm:lint, toolchain:helm:template, toolchain:helm:deploy
+  fast, wal, bench:nano, daemon, transmute, optimize:v8, fuzz:target, swarm:arena, zk:attest, sea:compile, pq:encap, ast:synthesize, hnsw:search, graph:datalog, wasm:disasm, titans, anycast, octave, warp, apex, disruptor, ring, nubank, nu, frontier, router, squeezer, topology, wasm, soul, architect, introspect,
+  evolution, shield, defense, mangle, sabotage, simulate:models, formal, tla, jepsen, chaos:net, vault, memory, temple, sol, mcts:plan, tla:model-check, raft:consensus, ans:compress, ans:decompress, pbft:status, pbft:slash, homomorphic:decrypt, mpc:add, mpc:multiply, vdf:beacon, unitotal:audit, fuzz:hypervisor,
+  replay:ledger, sync-stack, witness:interrogate, hotpatch, project, cheat-sheet, slo, perf, drift, flags, loadtest, canary:stat, ledger:replay, ledger:timetravel, raft:elect, sandbox:profile, smt:tree, zk, truetime:spanner, spanner:time, tss, enterprise:audit, enterprise, red:metrics, prom:red, action:verify,
+  provenance:attest, project:doctor, remediate, doctor:fix, heal:repo, project:fix, diary, budget, finops, mind, mountains, autotune, nsa:encrypt, nsa:audit, nsa:zeroize, consensus, truetime:bounded, concurrency, hashring, antientropy, ratelimit, hft, zerocopy, chaos:run, chaos, vector, risk, aladdin, chain,
+  product:create, product, product:deliver, factory:e2e, product:validate, loop, sovereign, invariant, contract, heal:surgical, tlc, pr:check, sandbox:vm, fleet:verify, fleet:doctor, top, ontology, quantum:seal, refactor, dst, synapse, fleet:soundcheck, mcts:tune, canary:rollout, antigravity, gentleman, gentle-ai, ledger, ast,
+  nocturnal, evolve, mesh, agent-topology, sandbox, timetravel, truetime, lsm, threshold, microvm, simd, enforce, sparse-tree, enterprise:health, otel:metrics, mmr, raft, fuzzer, seccomp, zk:verify, aca, intercept, toolchain, toolchain:doctor, toolchain:scan, toolchain:policy, toolchain:k8s, toolchain:deploy, toolchain:loadtest, toolchain:helm:lint, toolchain:helm:template, toolchain:helm:deploy
 `;

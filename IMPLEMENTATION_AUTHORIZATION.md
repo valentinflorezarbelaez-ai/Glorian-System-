@@ -3555,3 +3555,57 @@
   - `docs/plans/PLAN-229-DYNAMIC-TOOL-SYNTHESIS.md`
   - `docs/tasks/TASKS-229-DYNAMIC-TOOL-SYNTHESIS.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-ADVERSARIAL-RED-TEAM-CRUCIBLE`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-230` / `SPEC-368`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-230` (`SPEC-368`), Adversarial Red-Team Crucible & Minimax Exploit-Patch Game: TLA+ Model 111 `docs/formal/AdversarialRedTeamCrucible.tla` / `.cfg`; `src/core/eosAdversarialRedTeamCrucible.types.ts` and `src/core/eosAdversarialRedTeamCrucible.ts` (pure Layer-0 attack generation, CEGIS defensive patch synthesis, isolated execution harness, minimax tournament convergence); receipt `docs/evidence/ADVERSARIAL_RED_TEAM_CRUCIBLE_RECEIPT.json`. Wire `toolchain:crucible:attack`, `toolchain:crucible:patch`, `toolchain:crucible:tournament`, `toolchain:crucible:audit` and Phase 8 MCP tool `eos_adversarial_red_team_crucible_audit`. Verify `BDD-1987`..`BDD-1992`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-230-ADVERSARIAL-RED-TEAM-CRUCIBLE.md`
+  - `openspec/changes/CHANGE-230-adversarial-red-team-crucible.md`
+  - `openspec/specs/SPEC-368-adversarial-red-team-crucible.md`
+  - `docs/plans/PLAN-230-ADVERSARIAL-RED-TEAM-CRUCIBLE.md`
+  - `docs/tasks/TASKS-230-ADVERSARIAL-RED-TEAM-CRUCIBLE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-EPISODIC-MEMORY-GRAPH`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-231` / `SPEC-369`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-231` (`SPEC-369`), Episodic Memory Graph & Cross-Project Experience Synapse: TLA+ Model 112 `docs/formal/EpisodicMemoryGraph.tla` / `.cfg`; `src/core/eosEpisodicMemoryGraph.types.ts` and `src/core/eosEpisodicMemoryGraph.ts` (pure Layer-0 episodic ingestion, associative cross-project retrieval across 9 fleet repos, causal graph traversal, Ebbinghaus decay, capacity pruning); receipt `docs/evidence/EPISODIC_MEMORY_GRAPH_RECEIPT.json`. Wire `toolchain:memory:record`, `toolchain:memory:query`, `toolchain:memory:graph`, `toolchain:memory:audit` and Phase 8 MCP tool `eos_episodic_memory_graph_audit`. Verify `BDD-1993`..`BDD-1998`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-231-EPISODIC-MEMORY-GRAPH.md`
+  - `openspec/changes/CHANGE-231-episodic-memory-graph.md`
+  - `openspec/specs/SPEC-369-episodic-memory-graph.md`
+  - `docs/plans/PLAN-231-EPISODIC-MEMORY-GRAPH.md`
+  - `docs/tasks/TASKS-231-EPISODIC-MEMORY-GRAPH.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-DETERMINISTIC-REPLAY-DEBUGGER`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-232` / `SPEC-370`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-232` (`SPEC-370`), Deterministic Replay Debugger & MCTS Time-Travel Studio: TLA+ Model 113 `docs/formal/DeterministicReplayDebugger.tla` / `.cfg`; `src/core/eosDeterministicReplayDebugger.types.ts` and `src/core/eosDeterministicReplayDebugger.ts` (pure Layer-0 execution trajectory recording, bit-exact time-slider rewind, MCTS counterfactual branching, UCT path scoring); receipt `docs/evidence/DETERMINISTIC_REPLAY_DEBUGGER_RECEIPT.json`. Wire `toolchain:replay:record`, `toolchain:replay:step`, `toolchain:replay:branch`, `toolchain:replay:audit` and Phase 8 MCP tool `eos_deterministic_replay_debugger_audit`. Verify `BDD-1999`..`BDD-2004`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-232-DETERMINISTIC-REPLAY-DEBUGGER.md`
+  - `openspec/changes/CHANGE-232-deterministic-replay-debugger.md`
+  - `openspec/specs/SPEC-370-deterministic-replay-debugger.md`
+  - `docs/plans/PLAN-232-DETERMINISTIC-REPLAY-DEBUGGER.md`
+  - `docs/tasks/TASKS-232-DETERMINISTIC-REPLAY-DEBUGGER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

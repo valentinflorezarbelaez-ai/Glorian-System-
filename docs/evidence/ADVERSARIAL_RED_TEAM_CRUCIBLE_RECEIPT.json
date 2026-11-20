@@ -1,0 +1,38 @@
+{
+  "receiptId": "RCP-CRUCIBLE-MWO7TMVU",
+  "sha256": "6a6f6e5e1980230625d57a8fbc49fcc8257594e0515b9050946d99e1a5f1318e",
+  "target": "eos-system-control-plane",
+  "rounds": [
+    {
+      "roundNumber": 1,
+      "attacksLaunched": 4,
+      "attacksPenetrated": 4,
+      "attacksDefended": 0,
+      "patchesSynthesized": 7,
+      "penetrationRate": 100,
+      "durationMs": 4
+    },
+    {
+      "roundNumber": 4,
+      "attacksLaunched": 4,
+      "attacksPenetrated": 1,
+      "attacksDefended": 3,
+      "patchesSynthesized": 0,
+      "penetrationRate": 25,
+      "durationMs": 3
+    }
+  ],
+  "scorecard": {
+    "tournamentId": "TRN-MWO7TMVS",
+    "target": "eos-system-control-plane",
+    "totalRounds": 4,
+    "finalState": "EXHAUSTED",
+    "initialPenetrationRate": 100,
+    "finalPenetrationRate": 25,
+    "robustnessScore": 75,
+    "counterexamplesCount": 7,
+    "patchesCount": 7,
+    "converged": false
+  },
+  "generatedAt": "2026-11-20T00:02:53.082Z"
+}
