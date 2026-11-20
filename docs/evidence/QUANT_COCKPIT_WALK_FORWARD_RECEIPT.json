@@ -1,5 +1,5 @@
 {
-  "receiptId": "cockpit-wf-rcpt-1795187235586",
+  "receiptId": "cockpit-wf-rcpt-1795191225037",
   "status": "VERIFIED",
   "invariants": {
     "dynamicUniverseUnbounded": true,
@@ -11,12 +11,12 @@
     "singleConcurrency60sEnforced": true
   },
   "metrics": {
-    "liveSampleAssetsIngested": 8,
+    "liveSampleAssetsIngested": 158,
     "categoriesCovered": 6,
     "rejectedSpikesAndNoiseCount": 2,
     "recommendedKellyPercent": 0.5,
     "quarantinedStrategyCount": 3
   },
-  "receiptHash": "ea069d7ecd2fb3a7043bbd18ed37f3ca25e1dcaec30fd37f05389b39f5ff079b",
-  "timestamp": 1795187235587
+  "receiptHash": "fbfc8d2f1b9dfdfe11263c6a8137bea10495db6d91853e03e16d1285439e9297",
+  "timestamp": 1795191225037
 }

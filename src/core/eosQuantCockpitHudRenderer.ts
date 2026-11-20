@@ -1,16 +1,25 @@
 /**
- * EOS Quant Cockpit Asset Classifier, Timezone Formatter & HUD Renderer
+ * EOS Quant Cockpit Asset Classifier, Timezone Formatter, Universe Catalog, Ledger & HUD Renderer
  * Part of SPEC-376 / CHANGE-238 (Layer-0 Pure Financial Architecture)
  *
  * Extracted from eosQuantCockpitWalkForwardEngine.ts to maintain clean modularity and SPEC-250 headroom.
  */
 
+import fs from "node:fs";
+import path from "node:path";
+import { EosUniversalAssetPayoutOptimizerEngine } from "./eosUniversalAssetPayoutOptimizerEngine.ts";
 import type { NewsBlackoutStatus } from "./eosMultiAssetMacroFilterEngine.types.ts";
 import type {
   AtomicTriggerDecision,
+  ClassifiedIqOptionAsset,
   ExpertAssetVerdict,
+  ExpertStrategyType,
   IqOptionAssetCategory,
+  IqOptionRawAsset,
+  MarketRegimeType,
+  WalkForwardBucketStats,
   WalkForwardCalibrationReport,
+  WalkForwardTradeSample,
 } from "./eosQuantCockpitWalkForwardEngine.types.ts";
 
 const COMMODITY_KEYWORDS = "GOLD|XAU|SILVER|XAG|CRUDE OIL|WTI|BRENT|PLATINUM|PALLADIUM|COCOA|COFFEE|COTTON|SUGAR".split(
@@ -28,6 +37,200 @@ const CRYPTO_KEYWORDS = (
   "COSMOS|BONK|DOGWIFHAT|JUPITER|TRUMP COIN|ONDO|SUI|HBAR|RENDER|TAO|TERRA|WORLDCOIN|" +
   "1000SATS|ARBITRUM|SEI|FET|HYPERLIQUID|RAYDIUM|FARTCOIN|PUDGY|VAULTA"
 ).split("|");
+
+const FOREX_UNIVERSE_36 = (
+  "EUR/USD|GBP/USD|USD/JPY|AUD/USD|USD/CAD|USD/CHF|NZD/USD|EUR/GBP|EUR/JPY|GBP/JPY|EUR/AUD|EUR/CAD|" +
+  "EUR/CHF|EUR/NZD|GBP/AUD|GBP/CAD|GBP/CHF|GBP/NZD|AUD/CAD|AUD/CHF|AUD/JPY|AUD/NZD|CAD/CHF|CAD/JPY|" +
+  "CHF/JPY|NZD/CAD|NZD/CHF|NZD/JPY|USD/MXN|USD/SGD|USD/SEK|USD/NOK|USD/ZAR|USD/TRY|EUR/PLN|EUR/SEK"
+).split("|");
+
+const COMMODITIES_UNIVERSE_14 = (
+  "Gold|Silver|Crude Oil WTI|Crude Oil Brent|Platinum|Palladium|Cocoa|Coffee|Cotton|Sugar|" +
+  "XAU/USD|XAG/USD|Gold Spot|Silver Spot"
+).split("|");
+
+const CRYPTO_UNIVERSE_32 = (
+  "Bitcoin|Ethereum|Solana|Ripple|Dash|Pepe|Dogecoin|Shiba Inu|Litecoin|Polkadot|Cosmos|Bonk|" +
+  "Dogwifhat|Jupiter|Trump Coin|Ondo|Sui|Hbar|Render|Tao|Terra|Worldcoin|1000Sats|Arbitrum|" +
+  "Sei|Fet|Hyperliquid|Raydium|Fartcoin|Pudgy Penguins|Vaulta|BTC/USD"
+).split("|");
+
+const EQUITIES_UNIVERSE_36 = (
+  "Apple Inc.|Microsoft|Tesla|NVIDIA|Amazon|Meta Platforms|Alphabet|Netflix|AMD|Intel|Oracle|IBM|" +
+  "Adobe|Salesforce|Cisco|PayPal|Visa|Mastercard|JPMorgan Chase|Bank of America|Coca-Cola|PepsiCo|" +
+  "McDonald's|Disney|Nike|Boeing|Pfizer|Johnson & Johnson|Exxon Mobil|Chevron|Walmart|Costco|" +
+  "Uber|Airbnb|Palantir|Broadcom"
+).split("|");
+
+const INDICES_ETF_UNIVERSE_20 = (
+  "US 500|US 100|US 30|US 2000|UK 100|JP 225|HK 33|GER 30|FR 40|AU 200|Dollar Index|Yen Index|" +
+  "Euro Index|Pound Index|SPDR S&P 500 ETF|iShares Russell 2000 ETF|UltraPro QQQ ETF|Magnificent 7|" +
+  "AI Power Index|Luxury Brands Index"
+).split("|");
+
+const OTC_UNIVERSE_18 = (
+  "Pepe (OTC)|EUR/USD (OTC)|GBP/USD (OTC)|USD/JPY (OTC)|AUD/USD (OTC)|USD/CAD (OTC)|Gold (OTC)|" +
+  "Silver (OTC)|Bitcoin (OTC)|Ethereum (OTC)|Solana (OTC)|Apple Inc. (OTC)|Tesla (OTC)|Amazon (OTC)|" +
+  "NVIDIA (OTC)|US 500 (OTC)|US 100 (OTC)|EUR/JPY (OTC)"
+).split("|");
+
+/** Generates the full 156-instrument multi-class IQ Option catalog across all 6 asset classes. */
+export function generateFullIqOptionUniverse153(): IqOptionRawAsset[] {
+  const fixedIds: Record<string, number> = {
+    "EUR/USD": 1861,
+    Gold: 1912,
+    Bitcoin: 1916,
+    "Apple Inc.": 1910,
+    "US 500": 1470,
+    "Pepe (OTC)": 2145,
+  };
+  const assets: IqOptionRawAsset[] = [];
+  let nextId = 2200;
+  const groups = [
+    { names: FOREX_UNIVERSE_36, precision: 6, payout: 92 },
+    { names: COMMODITIES_UNIVERSE_14, precision: 5, payout: 92 },
+    { names: CRYPTO_UNIVERSE_32, precision: 4, payout: 90 },
+    { names: EQUITIES_UNIVERSE_36, precision: 4, payout: 91 },
+    { names: INDICES_ETF_UNIVERSE_20, precision: 6, payout: 92 },
+    { names: OTC_UNIVERSE_18, precision: 6, payout: 92 },
+  ];
+  for (const grp of groups) {
+    grp.names.forEach((name, idx) => {
+      const id = fixedIds[name] ?? nextId++;
+      assets.push({
+        asset_id: id,
+        name,
+        is_open: true,
+        profit_percent: idx === grp.names.length - 1 ? 85 : grp.payout,
+        precision: grp.precision,
+      });
+    });
+  }
+  return assets;
+}
+
+/** Appends an optional trade sample to WALK_FORWARD_TRADE_LEDGER.jsonl and returns merged trade history. */
+export function recordAndLoadWalkForwardLedger(
+  rootDir: string,
+  newSample?: WalkForwardTradeSample,
+): WalkForwardTradeSample[] {
+  const evidenceDir = path.join(rootDir, "docs", "evidence");
+  const wfPath = path.join(evidenceDir, "WALK_FORWARD_TRADE_LEDGER.jsonl");
+  const paperPath = path.join(evidenceDir, "PAPER_TRADING_LEDGER.json");
+
+  if (newSample) {
+    if (!fs.existsSync(evidenceDir)) fs.mkdirSync(evidenceDir, { recursive: true });
+    fs.appendFileSync(wfPath, `${JSON.stringify(newSample)}\n`, "utf8");
+  }
+
+  const samples: WalkForwardTradeSample[] = [];
+  if (fs.existsSync(paperPath)) {
+    try {
+      const raw = JSON.parse(fs.readFileSync(paperPath, "utf8"));
+      if (Array.isArray(raw)) {
+        for (const r of raw) {
+          samples.push({
+            timestampMs: Number(r.timestamp ?? Date.now()),
+            assetName: String(r.pair ?? "EUR/USD"),
+            strategy: "TREND_PULLBACK",
+            direction: r.direction === "PUT" ? "PUT" : "CALL",
+            stakeUsd: Number(r.stakeUsd ?? 40),
+            payoutPercent: Number(((Number(r.payoutMultiplier ?? 1.85) - 1) * 100).toFixed(2)),
+            pnlUsd: Number(r.pnlUsd ?? 0),
+            result: r.status === "WIN" ? "win" : r.status === "LOSS" ? "loss" : "equal",
+          });
+        }
+      }
+    } catch {
+      /* ignore corrupt paper ledger */
+    }
+  }
+  if (fs.existsSync(wfPath)) {
+    const lines = fs.readFileSync(wfPath, "utf8").split(/\r?\n/).filter(Boolean);
+    for (const line of lines) {
+      try {
+        const parsed = JSON.parse(line) as WalkForwardTradeSample;
+        if (parsed && typeof parsed.assetName === "string") samples.push(parsed);
+      } catch {
+        /* skip malformed line */
+      }
+    }
+  }
+  return samples;
+}
+
+/** Computes Walk-Forward bucket statistics and Alpha-Decay quarantine flag. */
+export function buildWalkForwardBucketStats(
+  key: string,
+  items: readonly WalkForwardTradeSample[],
+): WalkForwardBucketStats {
+  let wins = 0;
+  let losses = 0;
+  let grossWin = 0;
+  let grossLoss = 0;
+  let netPnl = 0;
+  for (const t of items) {
+    netPnl += t.pnlUsd;
+    if (t.result === "win") {
+      wins += 1;
+      grossWin += Math.max(0, t.pnlUsd);
+    } else if (t.result === "loss") {
+      losses += 1;
+      grossLoss += Math.abs(t.pnlUsd);
+    }
+  }
+  const trades = wins + losses;
+  const winRatePercent = trades === 0 ? 0 : Number(((wins / trades) * 100).toFixed(2));
+  const profitFactor = grossLoss === 0 ? (grossWin > 0 ? 99.0 : 0) : Number((grossWin / grossLoss).toFixed(2));
+  const expectancyUsd = trades === 0 ? 0 : Number((netPnl / trades).toFixed(2));
+  return {
+    key,
+    trades,
+    wins,
+    losses,
+    winRatePercent,
+    netPnlUsd: Number(netPnl.toFixed(2)),
+    profitFactor,
+    expectancyUsd,
+    quarantined: trades >= 20 && winRatePercent < 52.0,
+  };
+}
+
+/** Builds a standardized rejection verdict for an evaluated IQ Option asset. */
+export function buildRejectedExpertVerdict(
+  asset: ClassifiedIqOptionAsset,
+  spotPrice: number,
+  regime: MarketRegimeType,
+  strategy: ExpertStrategyType,
+  status: ExpertAssetVerdict["status"],
+  reason: string,
+  extra?: Partial<
+    Pick<ExpertAssetVerdict, "adx" | "rsi" | "estimatedWinRate" | "expectedValuePerDollar" | "confluenceScore">
+  >,
+): ExpertAssetVerdict {
+  return {
+    assetId: asset.assetId,
+    name: asset.name,
+    category: asset.category,
+    isOpen: asset.isOpen,
+    isOtc: asset.isOtc,
+    payoutPercent: asset.payoutPercent,
+    spotPrice,
+    regime,
+    strategy,
+    direction: null,
+    estimatedWinRate: extra?.estimatedWinRate ?? 0,
+    breakEvenWinRate: asset.breakEvenWinRate,
+    expectedValuePerDollar: extra?.expectedValuePerDollar ?? 0,
+    keyLevel: EosUniversalAssetPayoutOptimizerEngine.detectKeyLevel(spotPrice),
+    adx: extra?.adx ?? 0,
+    rsi: extra?.rsi ?? 50,
+    confluenceScore: extra?.confluenceScore ?? 0,
+    expertScore: 0,
+    status,
+    reason,
+  };
+}
 
 /**
  * Classifies an IQ Option asset name dynamically into its financial asset class.

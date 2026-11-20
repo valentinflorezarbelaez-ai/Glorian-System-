@@ -61,6 +61,102 @@ async function startStaticServer() {
   return { server, port };
 }
 
+const CWV_EVAL_EXPRESSION = `(() => new Promise((resolve) => {
+  const done = () => {
+    const nav = performance.getEntriesByType('navigation')[0];
+    const paints = performance.getEntriesByType('paint');
+    const fcp = paints.find((p) => p.name === 'first-contentful-paint');
+    const lcpEntries = performance.getEntriesByType('largest-contentful-paint');
+    const lcp = lcpEntries[lcpEntries.length - 1];
+    let cls = 0;
+    for (const e of performance.getEntriesByType('layout-shift')) {
+      if (!e.hadRecentInput) cls += e.value;
+    }
+    const cwv = window.__EOS_CWV__ || {};
+    const hero = document.getElementById('lcp-hero');
+    resolve({
+      fcpMs: cwv.fcpMs ?? (fcp ? Math.round(fcp.startTime) : null),
+      lcpMs: cwv.lcpMs ?? (lcp ? Math.round(lcp.startTime) : (hero ? Math.round(performance.now()) : null)),
+      cls: typeof cwv.cls === 'number' ? cwv.cls : cls,
+      inpMs: cwv.inpMs ?? null,
+      ttfbMs: cwv.ttfbMs ?? (nav ? Math.round(nav.responseStart) : null),
+      domContentLoadedMs: nav ? Math.round(nav.domContentLoadedEventEnd) : null,
+      loadEventMs: nav ? Math.round(nav.loadEventEnd) : null,
+      source: 'BROWSER_CDP',
+      measuredAt: new Date().toISOString(),
+      hasHero: Boolean(hero),
+      hasCwvHook: Boolean(window.__EOS_CWV__),
+    });
+  };
+  try {
+    const po = new PerformanceObserver(() => {});
+    po.observe({ type: 'largest-contentful-paint', buffered: true });
+    po.observe({ type: 'layout-shift', buffered: true });
+  } catch (_) {}
+  setTimeout(done, 500);
+}))()`;
+
+async function waitForCdpPageTarget(debugPort) {
+  for (let i = 0; i < 50; i++) {
+    try {
+      const targets = await fetch(`http://127.0.0.1:${debugPort}/json/list`).then((r) => r.json());
+      const pageTarget = (targets || []).find((t) => t.type === "page" && t.webSocketDebuggerUrl);
+      if (pageTarget?.webSocketDebuggerUrl) return pageTarget.webSocketDebuggerUrl;
+    } catch {
+      /* retry */
+    }
+    await new Promise((r) => setTimeout(r, 200));
+  }
+  throw new Error("CDP page target not ready");
+}
+
+function createCdpSender(ws) {
+  let id = 0;
+  const pending = new Map();
+  ws.addEventListener("message", (ev) => {
+    const msg = JSON.parse(String(ev.data));
+    if (msg.id && pending.has(msg.id)) {
+      pending.get(msg.id)(msg);
+      pending.delete(msg.id);
+    }
+  });
+  return (method, params = {}) =>
+    new Promise((resolve, reject) => {
+      const msgId = ++id;
+      const timer = setTimeout(() => {
+        pending.delete(msgId);
+        reject(new Error(`CDP timeout ${method}`));
+      }, 15_000);
+      pending.set(msgId, (msg) => {
+        clearTimeout(timer);
+        resolve(msg);
+      });
+      ws.send(JSON.stringify({ id: msgId, method, params }));
+    });
+}
+
+async function evaluateCwvViaCdp(wsUrl, url) {
+  const WS = globalThis.WebSocket;
+  if (!WS) throw new Error("WebSocket unavailable");
+  const ws = new WS(wsUrl);
+  await once(ws, "open");
+  const send = createCdpSender(ws);
+  await send("Page.enable");
+  await send("Runtime.enable");
+  await send("Page.navigate", { url });
+  await new Promise((r) => setTimeout(r, 3500));
+  const evalResult = await send("Runtime.evaluate", {
+    expression: CWV_EVAL_EXPRESSION,
+    returnByValue: true,
+    awaitPromise: true,
+  });
+  ws.close();
+  if (evalResult?.result?.exceptionDetails) {
+    throw new Error(JSON.stringify(evalResult.result.exceptionDetails));
+  }
+  return evalResult?.result?.result?.value || null;
+}
+
 async function cdpCapture(chromePath, url) {
   const debugPort = 9222 + Math.floor(Math.random() * 200);
   // Use OS temp — never write Chrome profiles under docs/evidence (Windows lock leftovers).
@@ -80,97 +176,8 @@ async function cdpCapture(chromePath, url) {
   );
 
   try {
-    let pageTarget = null;
-    for (let i = 0; i < 50; i++) {
-      try {
-        const targets = await fetch(`http://127.0.0.1:${debugPort}/json/list`).then((r) => r.json());
-        pageTarget = (targets || []).find((t) => t.type === "page" && t.webSocketDebuggerUrl);
-        if (pageTarget) break;
-      } catch {
-        /* retry */
-      }
-      await new Promise((r) => setTimeout(r, 200));
-    }
-    if (!pageTarget?.webSocketDebuggerUrl) throw new Error("CDP page target not ready");
-
-    const WS = globalThis.WebSocket;
-    if (!WS) throw new Error("WebSocket unavailable");
-
-    const ws = new WS(pageTarget.webSocketDebuggerUrl);
-    await once(ws, "open");
-    let id = 0;
-    const pending = new Map();
-    ws.addEventListener("message", (ev) => {
-      const msg = JSON.parse(String(ev.data));
-      if (msg.id && pending.has(msg.id)) {
-        pending.get(msg.id)(msg);
-        pending.delete(msg.id);
-      }
-    });
-    const send = (method, params = {}) =>
-      new Promise((resolve, reject) => {
-        const msgId = ++id;
-        const timer = setTimeout(() => {
-          pending.delete(msgId);
-          reject(new Error(`CDP timeout ${method}`));
-        }, 15_000);
-        pending.set(msgId, (msg) => {
-          clearTimeout(timer);
-          resolve(msg);
-        });
-        ws.send(JSON.stringify({ id: msgId, method, params }));
-      });
-
-    await send("Page.enable");
-    await send("Runtime.enable");
-    await send("Page.navigate", { url });
-    await new Promise((r) => setTimeout(r, 3500));
-
-    const evalResult = await send("Runtime.evaluate", {
-      expression: `(() => new Promise((resolve) => {
-        const done = () => {
-          const nav = performance.getEntriesByType('navigation')[0];
-          const paints = performance.getEntriesByType('paint');
-          const fcp = paints.find((p) => p.name === 'first-contentful-paint');
-          const lcpEntries = performance.getEntriesByType('largest-contentful-paint');
-          const lcp = lcpEntries[lcpEntries.length - 1];
-          let cls = 0;
-          for (const e of performance.getEntriesByType('layout-shift')) {
-            if (!e.hadRecentInput) cls += e.value;
-          }
-          const cwv = window.__EOS_CWV__ || {};
-          const hero = document.getElementById('lcp-hero');
-          resolve({
-            fcpMs: cwv.fcpMs ?? (fcp ? Math.round(fcp.startTime) : null),
-            lcpMs: cwv.lcpMs ?? (lcp ? Math.round(lcp.startTime) : (hero ? Math.round(performance.now()) : null)),
-            cls: typeof cwv.cls === 'number' ? cwv.cls : cls,
-            inpMs: cwv.inpMs ?? null,
-            ttfbMs: cwv.ttfbMs ?? (nav ? Math.round(nav.responseStart) : null),
-            domContentLoadedMs: nav ? Math.round(nav.domContentLoadedEventEnd) : null,
-            loadEventMs: nav ? Math.round(nav.loadEventEnd) : null,
-            source: 'BROWSER_CDP',
-            measuredAt: new Date().toISOString(),
-            hasHero: Boolean(hero),
-            hasCwvHook: Boolean(window.__EOS_CWV__),
-          });
-        };
-        try {
-          const po = new PerformanceObserver(() => {});
-          po.observe({ type: 'largest-contentful-paint', buffered: true });
-          po.observe({ type: 'layout-shift', buffered: true });
-        } catch (_) {}
-        setTimeout(done, 500);
-      }))()`,
-      returnByValue: true,
-      awaitPromise: true,
-    });
-
-    ws.close();
-    if (evalResult?.result?.exceptionDetails) {
-      throw new Error(JSON.stringify(evalResult.result.exceptionDetails));
-    }
-    const metrics = evalResult?.result?.result?.value || null;
-    return metrics;
+    const wsUrl = await waitForCdpPageTarget(debugPort);
+    return await evaluateCwvViaCdp(wsUrl, url);
   } finally {
     child.kill();
     try {

@@ -12,6 +12,7 @@
  */
 
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { pureSha256, assertPrecondition, assertPostcondition, deepFreeze } from "./eosKernelPrimitives.ts";
@@ -222,7 +223,9 @@ export class EosFleetSoundcheckMesh {
             const envRoot = process.env.EOS_WORKSPACE_ROOT?.trim();
             if (envRoot) candidates.push(path.join(envRoot, dir));
             candidates.push(path.resolve(resolvedRoot, "..", dir));
-            resolvedPath = candidates.find((c) => fs.existsSync(c)) || candidates[candidates.length - 1];
+            candidates.push(path.resolve(resolvedRoot, "..", "..", dir));
+            candidates.push(path.join(os.homedir(), dir));
+            resolvedPath = candidates.find((c) => fs.existsSync(c)) || candidates[1];
           } else {
             const defaultMatch = this.DEFAULT_REPOS.find((d) => d.id === p.id);
             if (defaultMatch) resolvedPath = defaultMatch.localPath;

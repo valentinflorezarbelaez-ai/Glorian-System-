@@ -29,6 +29,135 @@ import {
 } from "./glorianConstitutionalTribunal.ts";
 import { EosFleetMissionControl, type SyntheticProbeResult } from "./eosFleetMissionControl.ts";
 import { EosDistributedPeerMesh, type PeerMeshConfig } from "./eosDistributedPeerMesh.ts";
+import * as leafAkashicMemory from "./eosAkashicMemory.ts";
+import * as leafApiMiddlewareChain from "./eosApiMiddlewareChain.ts";
+import * as leafBackpressureFlowController from "./eosBackpressureFlowController.ts";
+import * as leafBatchAggregator from "./eosBatchAggregator.ts";
+import * as leafBenchmarkTracker from "./eosBenchmarkTracker.ts";
+import * as leafBigTechPantheon from "./eosBigTechPantheon.ts";
+import * as leafBlueGreenOrchestrator from "./eosBlueGreenOrchestrator.ts";
+import * as leafCacheEngine from "./eosCacheEngine.ts";
+import * as leafCertificateLifecycleManager from "./eosCertificateLifecycleManager.ts";
+import * as leafCicdPipeline from "./eosCicdPipeline.ts";
+import * as leafCliUx from "./eosCliUx.ts";
+import * as leafConfigHotReloadEngine from "./eosConfigHotReloadEngine.ts";
+import * as leafConnectionPoolManager from "./eosConnectionPoolManager.ts";
+import * as leafContractTestEngine from "./eosContractTestEngine.ts";
+import * as leafDagJobScheduler from "./eosDagJobScheduler.ts";
+import * as leafDependencyContainer from "./eosDependencyContainer.ts";
+import * as leafDesignPrimitives from "./eosDesignPrimitives.ts";
+import * as leafDesignTokens from "./eosDesignTokens.ts";
+import * as leafDiffPatcher from "./eosDiffPatcher.ts";
+import * as leafDistributedLockManager from "./eosDistributedLockManager.ts";
+import * as leafEbpfKernelProbeEngine from "./eosEbpfKernelProbeEngine.ts";
+import * as leafErrorCatalog from "./eosErrorCatalog.ts";
+import * as leafEventSourcingEngine from "./eosEventSourcingEngine.ts";
+import * as leafFairShareScheduler from "./eosFairShareScheduler.ts";
+import * as leafFeatureFlagEngine from "./eosFeatureFlagEngine.ts";
+import * as leafFirecrackerDaemonSupervisor from "./eosFirecrackerDaemonSupervisor.ts";
+import * as leafFleetDispatcher from "./eosFleetDispatcher.ts";
+import * as leafFleetRagGoldenPath from "./eosFleetRagGoldenPath.ts";
+import * as leafGossipMembership from "./eosGossipMembership.ts";
+import * as leafHashedTimingWheel from "./eosHashedTimingWheel.ts";
+import * as leafHorizontalAutoScaler from "./eosHorizontalAutoScaler.ts";
+import * as leafHranaStreamClient from "./eosHranaStreamClient.ts";
+import * as leafKubernetesFleetOperator from "./eosKubernetesFleetOperator.ts";
+import * as leafLeaderElectionCluster from "./eosLeaderElectionCluster.ts";
+import * as leafLinuxKernelCore from "./eosLinuxKernelCore.ts";
+import * as leafLlmOpsPrivacyLane from "./eosLlmOpsPrivacyLane.ts";
+import * as leafLspDiagnostics from "./eosLspDiagnostics.ts";
+import * as leafMemoryZeroizer from "./eosMemoryZeroizer.ts";
+import * as leafMeshTrafficPolicyEngine from "./eosMeshTrafficPolicyEngine.ts";
+import * as leafNanosecondEngine from "./eosNanosecondEngine.ts";
+import * as leafNsaAnomalyDetector from "./eosNsaAnomalyDetector.ts";
+import * as leafOmegaSingularity from "./eosOmegaSingularity.ts";
+import * as leafOtlpTelemetryEngine from "./eosOtlpTelemetryEngine.ts";
+import * as leafPeakAssuranceTcb from "./eosPeakAssuranceTcb.ts";
+import * as leafPeerNetworkMesh from "./eosPeerNetworkMesh.ts";
+import * as leafPluginLoader from "./eosPluginLoader.ts";
+import * as leafProbabilisticDataStructures from "./eosProbabilisticDataStructures.ts";
+import * as leafProtobufContractEngine from "./eosProtobufContractEngine.ts";
+import * as leafReactiveStreamEngine from "./eosReactiveStreamEngine.ts";
+import * as leafResilienceMesh from "./eosResilienceMesh.ts";
+import * as leafSagaOrchestrator from "./eosSagaOrchestrator.ts";
+import * as leafScatterGatherHedger from "./eosScatterGatherHedger.ts";
+import * as leafSchemaRegistry from "./eosSchemaRegistry.ts";
+import * as leafSecretsRotationProtocol from "./eosSecretsRotationProtocol.ts";
+import * as leafSovereignFiveScorecard from "./eosSovereignFiveScorecard.ts";
+import * as leafStructuredLogger from "./eosStructuredLogger.ts";
+import * as leafTlsPeerTransport from "./eosTlsPeerTransport.ts";
+import * as leafUnboundedFormalProver from "./eosUnboundedFormalProver.ts";
+import * as leafVectorClockCausality from "./eosVectorClockCausality.ts";
+import * as leafWanKademliaMesh from "./eosWanKademliaMesh.ts";
+import * as leafWebGpuTensorEngine from "./eosWebGpuTensorEngine.ts";
+import * as leafWebhookFanoutDispatcher from "./eosWebhookFanoutDispatcher.ts";
+import * as leafSamaelCodex from "./samaelCodex.ts";
+
+const SOVEREIGN_LAYER0_CATALOG: Readonly<Record<string, unknown>> = Object.freeze({
+  eosAkashicMemory: leafAkashicMemory,
+  eosApiMiddlewareChain: leafApiMiddlewareChain,
+  eosBackpressureFlowController: leafBackpressureFlowController,
+  eosBatchAggregator: leafBatchAggregator,
+  eosBenchmarkTracker: leafBenchmarkTracker,
+  eosBigTechPantheon: leafBigTechPantheon,
+  eosBlueGreenOrchestrator: leafBlueGreenOrchestrator,
+  eosCacheEngine: leafCacheEngine,
+  eosCertificateLifecycleManager: leafCertificateLifecycleManager,
+  eosCicdPipeline: leafCicdPipeline,
+  eosCliUx: leafCliUx,
+  eosConfigHotReloadEngine: leafConfigHotReloadEngine,
+  eosConnectionPoolManager: leafConnectionPoolManager,
+  eosContractTestEngine: leafContractTestEngine,
+  eosDagJobScheduler: leafDagJobScheduler,
+  eosDependencyContainer: leafDependencyContainer,
+  eosDesignPrimitives: leafDesignPrimitives,
+  eosDesignTokens: leafDesignTokens,
+  eosDiffPatcher: leafDiffPatcher,
+  eosDistributedLockManager: leafDistributedLockManager,
+  eosEbpfKernelProbeEngine: leafEbpfKernelProbeEngine,
+  eosErrorCatalog: leafErrorCatalog,
+  eosEventSourcingEngine: leafEventSourcingEngine,
+  eosFairShareScheduler: leafFairShareScheduler,
+  eosFeatureFlagEngine: leafFeatureFlagEngine,
+  eosFirecrackerDaemonSupervisor: leafFirecrackerDaemonSupervisor,
+  eosFleetDispatcher: leafFleetDispatcher,
+  eosFleetRagGoldenPath: leafFleetRagGoldenPath,
+  eosGossipMembership: leafGossipMembership,
+  eosHashedTimingWheel: leafHashedTimingWheel,
+  eosHorizontalAutoScaler: leafHorizontalAutoScaler,
+  eosHranaStreamClient: leafHranaStreamClient,
+  eosKubernetesFleetOperator: leafKubernetesFleetOperator,
+  eosLeaderElectionCluster: leafLeaderElectionCluster,
+  eosLinuxKernelCore: leafLinuxKernelCore,
+  eosLlmOpsPrivacyLane: leafLlmOpsPrivacyLane,
+  eosLspDiagnostics: leafLspDiagnostics,
+  eosMemoryZeroizer: leafMemoryZeroizer,
+  eosMeshTrafficPolicyEngine: leafMeshTrafficPolicyEngine,
+  eosNanosecondEngine: leafNanosecondEngine,
+  eosNsaAnomalyDetector: leafNsaAnomalyDetector,
+  eosOmegaSingularity: leafOmegaSingularity,
+  eosOtlpTelemetryEngine: leafOtlpTelemetryEngine,
+  eosPeakAssuranceTcb: leafPeakAssuranceTcb,
+  eosPeerNetworkMesh: leafPeerNetworkMesh,
+  eosPluginLoader: leafPluginLoader,
+  eosProbabilisticDataStructures: leafProbabilisticDataStructures,
+  eosProtobufContractEngine: leafProtobufContractEngine,
+  eosReactiveStreamEngine: leafReactiveStreamEngine,
+  eosResilienceMesh: leafResilienceMesh,
+  eosSagaOrchestrator: leafSagaOrchestrator,
+  eosScatterGatherHedger: leafScatterGatherHedger,
+  eosSchemaRegistry: leafSchemaRegistry,
+  eosSecretsRotationProtocol: leafSecretsRotationProtocol,
+  eosSovereignFiveScorecard: leafSovereignFiveScorecard,
+  eosStructuredLogger: leafStructuredLogger,
+  eosTlsPeerTransport: leafTlsPeerTransport,
+  eosUnboundedFormalProver: leafUnboundedFormalProver,
+  eosVectorClockCausality: leafVectorClockCausality,
+  eosWanKademliaMesh: leafWanKademliaMesh,
+  eosWebGpuTensorEngine: leafWebGpuTensorEngine,
+  eosWebhookFanoutDispatcher: leafWebhookFanoutDispatcher,
+  samaelCodex: leafSamaelCodex,
+});
 
 // ============================================================================
 // 1. DOMAIN TYPES & CONTRACTS
@@ -362,5 +491,9 @@ export class EosEnterpriseFacade {
 
   public createPeerMesh(config: PeerMeshConfig): EosDistributedPeerMesh {
     return new EosDistributedPeerMesh(config);
+  }
+
+  public static getSovereignLayer0Catalog(): Readonly<Record<string, unknown>> {
+    return SOVEREIGN_LAYER0_CATALOG;
   }
 }

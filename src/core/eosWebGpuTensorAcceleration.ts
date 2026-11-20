@@ -15,29 +15,15 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { resolveEvidencePath } from "./eosEvidencePaths.ts";
 export * from "./eosWebGpuTensorAcceleration.types.ts";
-import type {
-  ActivationKind,
-  ComputePipelineConfig,
-  TensorBenchmarkTrial,
-  TensorBuffer,
-  TensorOpResult,
-  TensorOpType,
-  TensorShape,
-  WebGpuAdapterCapability,
-  WebGpuAuditReceipt,
-  WgslShaderDescriptor,
-} from "./eosWebGpuTensorAcceleration.types.ts";
+import type * as WgTypes from "./eosWebGpuTensorAcceleration.types.ts";
 
 /**
  * W3C WebGPU Shading Language (WGSL) Compute Shader Synthesizer.
  * Generates verified shader AST code with shared memory workgroup tiling and vector math.
  */
 export class EosWgslShaderSynthesizer {
-  /**
-   * Synthesize a general matrix multiplication (GEMM) WGSL compute shader with workgroup tiling.
-   * C = A * B where A: M x K, B: K x N, C: M x N.
-   */
-  public static synthesizeGemmShader(tileDim = 16): WgslShaderDescriptor {
+  /** Synthesize a general matrix multiplication (GEMM) WGSL compute shader with workgroup tiling. */
+  public static synthesizeGemmShader(tileDim = 16): WgTypes.WgslShaderDescriptor {
     if (tileDim <= 0 || tileDim > 16) {
       throw new Error(`PRECONDITION_FAILED: tileDim must be in [1, 16], got ${tileDim}`);
     }
@@ -115,10 +101,11 @@ fn main(
     };
   }
 
-  /**
-   * Synthesize a 4-lane vector activation WGSL compute shader using vec4<f32>.
-   */
-  public static synthesizeVectorActivationShader(kind: ActivationKind, vectorWidth: 1 | 4 = 4): WgslShaderDescriptor {
+  /** Synthesize a 4-lane vector activation WGSL compute shader using vec4<f32>. */
+  public static synthesizeVectorActivationShader(
+    kind: WgTypes.ActivationKind,
+    vectorWidth: 1 | 4 = 4,
+  ): WgTypes.WgslShaderDescriptor {
     let activationBody = "";
     switch (kind) {
       case "relu":
@@ -171,11 +158,8 @@ fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
     };
   }
 
-  /**
-   * Synthesize sample covariance reduction WGSL compute shader.
-   * Cov(X) = (X - mu)^T * (X - mu) / (N - 1).
-   */
-  public static synthesizeCovarianceShader(tileDim = 16): WgslShaderDescriptor {
+  /** Synthesize sample covariance reduction WGSL compute shader: Cov(X) = (X - mu)^T * (X - mu) / (N - 1). */
+  public static synthesizeCovarianceShader(tileDim = 16): WgTypes.WgslShaderDescriptor {
     const code = `// WebGPU WGSL Covariance Matrix Compute Shader
 struct CovUniforms {
   numSamples: u32,
@@ -220,10 +204,8 @@ fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
     };
   }
 
-  /**
-   * Synthesize numerically stable row-wise softmax WGSL compute shader.
-   */
-  public static synthesizeSoftmaxShader(): WgslShaderDescriptor {
+  /** Synthesize numerically stable row-wise softmax WGSL compute shader. */
+  public static synthesizeSoftmaxShader(): WgTypes.WgslShaderDescriptor {
     const code = `// WebGPU WGSL Numerically Stable Softmax Compute Shader
 struct SoftmaxUniforms {
   numRows: u32,
@@ -274,32 +256,18 @@ fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
   }
 }
 
-/**
- * Tensor Compute Grid layout and dimension padding utility.
- */
+/** Tensor Compute Grid layout and dimension padding utility. */
 export class EosTensorComputeGrid {
-  /**
-   * Instantiate a contiguous row-major tensor buffer.
-   */
-  public static createTensor(shape: TensorShape, initialData?: Float32Array | number[]): TensorBuffer {
+  /** Instantiate a contiguous row-major tensor buffer. */
+  public static createTensor(shape: WgTypes.TensorShape, initialData?: Float32Array | number[]): WgTypes.TensorBuffer {
     const totalElements = shape.reduce((acc, dim) => acc * dim, 1);
     const data = new Float32Array(totalElements);
-    if (initialData) {
-      data.set(initialData);
-    }
-    const stride = this.computeStrides(shape);
-    return {
-      shape: [...shape],
-      dtype: "f32",
-      data,
-      stride,
-    };
+    if (initialData) data.set(initialData);
+    return { shape: [...shape], dtype: "f32", data, stride: this.computeStrides(shape) };
   }
 
-  /**
-   * Compute row-major strides for a given shape.
-   */
-  public static computeStrides(shape: TensorShape): readonly number[] {
+  /** Compute row-major strides for a given shape. */
+  public static computeStrides(shape: WgTypes.TensorShape): readonly number[] {
     const strides: number[] = new Array(shape.length);
     let s = 1;
     for (let i = shape.length - 1; i >= 0; i--) {
@@ -309,22 +277,18 @@ export class EosTensorComputeGrid {
     return strides;
   }
 
-  /**
-   * Pad 2D tensor dimensions to integer multiples of tileDim.
-   */
+  /** Pad 2D tensor dimensions to integer multiples of tileDim. */
   public static padTensor2D(
-    tensor: TensorBuffer,
+    tensor: WgTypes.TensorBuffer,
     tileDim = 16,
-  ): { padded: TensorBuffer; padRows: number; padCols: number } {
+  ): { padded: WgTypes.TensorBuffer; padRows: number; padCols: number } {
     if (tensor.shape.length !== 2) {
       throw new Error(`PRECONDITION_FAILED: padTensor2D requires 2D tensor, got ${tensor.shape.length}D`);
     }
     const [rows, cols] = tensor.shape;
     const padRows = (tileDim - (rows % tileDim)) % tileDim;
     const padCols = (tileDim - (cols % tileDim)) % tileDim;
-    if (padRows === 0 && padCols === 0) {
-      return { padded: tensor, padRows: 0, padCols: 0 };
-    }
+    if (padRows === 0 && padCols === 0) return { padded: tensor, padRows: 0, padCols: 0 };
 
     const paddedRows = rows + padRows;
     const paddedCols = cols + padCols;
@@ -332,54 +296,38 @@ export class EosTensorComputeGrid {
 
     for (let r = 0; r < rows; r++) {
       const srcOffset = r * cols;
-      const dstOffset = r * paddedCols;
-      paddedData.set(tensor.data.subarray(srcOffset, srcOffset + cols), dstOffset);
+      paddedData.set(tensor.data.subarray(srcOffset, srcOffset + cols), r * paddedCols);
     }
 
     return {
-      padded: {
-        shape: [paddedRows, paddedCols],
-        dtype: "f32",
-        data: paddedData,
-        stride: [paddedCols, 1],
-      },
+      padded: { shape: [paddedRows, paddedCols], dtype: "f32", data: paddedData, stride: [paddedCols, 1] },
       padRows,
       padCols,
     };
   }
 
-  /**
-   * Unpad 2D tensor back to original shape dimensions.
-   */
-  public static unpadTensor2D(paddedTensor: TensorBuffer, targetShape: TensorShape): TensorBuffer {
+  /** Unpad 2D tensor back to original shape dimensions. */
+  public static unpadTensor2D(
+    paddedTensor: WgTypes.TensorBuffer,
+    targetShape: WgTypes.TensorShape,
+  ): WgTypes.TensorBuffer {
     const [targetRows, targetCols] = targetShape;
     const currentCols = paddedTensor.shape[1];
     const unpaddedData = new Float32Array(targetRows * targetCols);
 
     for (let r = 0; r < targetRows; r++) {
       const srcOffset = r * currentCols;
-      const dstOffset = r * targetCols;
-      unpaddedData.set(paddedTensor.data.subarray(srcOffset, srcOffset + targetCols), dstOffset);
+      unpaddedData.set(paddedTensor.data.subarray(srcOffset, srcOffset + targetCols), r * targetCols);
     }
 
-    return {
-      shape: [targetRows, targetCols],
-      dtype: "f32",
-      data: unpaddedData,
-      stride: [targetCols, 1],
-    };
+    return { shape: [targetRows, targetCols], dtype: "f32", data: unpaddedData, stride: [targetCols, 1] };
   }
 }
 
-/**
- * Pure Layer-0 Bit-Exact Software Tensor Emulator.
- * Provides IEEE 754 compliant single-precision execution with 0 external dependencies.
- */
+/** Pure Layer-0 Bit-Exact Software Tensor Emulator (IEEE 754 single-precision, 0 external dependencies). */
 export class EosSoftwareTensorEmulator {
-  /**
-   * Execute General Matrix Multiply (GEMM): C = A * B.
-   */
-  public static gemm(a: TensorBuffer, b: TensorBuffer): TensorOpResult {
+  /** Execute General Matrix Multiply (GEMM): C = A * B. */
+  public static gemm(a: WgTypes.TensorBuffer, b: WgTypes.TensorBuffer): WgTypes.TensorOpResult {
     if (a.shape.length !== 2 || b.shape.length !== 2) {
       throw new Error("PRECONDITION_FAILED: Both tensors must be 2D for GEMM");
     }
@@ -425,10 +373,8 @@ export class EosSoftwareTensorEmulator {
     };
   }
 
-  /**
-   * Apply SIMD activation function to tensor buffer elements in 4-lane strides.
-   */
-  public static activate(tensor: TensorBuffer, kind: ActivationKind): TensorOpResult {
+  /** Apply SIMD activation function to tensor buffer elements in 4-lane strides. */
+  public static activate(tensor: WgTypes.TensorBuffer, kind: WgTypes.ActivationKind): WgTypes.TensorOpResult {
     const startNs = process.hrtime.bigint();
     const src = tensor.data as Float32Array;
     const len = src.length;
@@ -473,10 +419,8 @@ export class EosSoftwareTensorEmulator {
     };
   }
 
-  /**
-   * Compute empirical sample covariance matrix: Cov(X) = (X - mu)^T * (X - mu) / (N - 1).
-   */
-  public static covariance(tensor: TensorBuffer): TensorOpResult {
+  /** Compute empirical sample covariance matrix: Cov(X) = (X - mu)^T * (X - mu) / (N - 1). */
+  public static covariance(tensor: WgTypes.TensorBuffer): WgTypes.TensorOpResult {
     if (tensor.shape.length !== 2) {
       throw new Error("PRECONDITION_FAILED: Covariance requires 2D tensor of shape [samples, features]");
     }
@@ -538,10 +482,8 @@ export class EosSoftwareTensorEmulator {
     };
   }
 
-  /**
-   * Numerically stable row-wise softmax execution.
-   */
-  public static softmax(tensor: TensorBuffer): TensorOpResult {
+  /** Numerically stable row-wise softmax execution. */
+  public static softmax(tensor: WgTypes.TensorBuffer): WgTypes.TensorOpResult {
     if (tensor.shape.length !== 2) {
       throw new Error("PRECONDITION_FAILED: Softmax requires 2D tensor [rows, cols]");
     }
@@ -591,14 +533,10 @@ export class EosSoftwareTensorEmulator {
   }
 }
 
-/**
- * WebGPU Tensor Engine Core: Unified dispatch, capability inspection, and formal audit.
- */
+/** WebGPU Tensor Engine Core: Unified dispatch, capability inspection, and formal audit. */
 export class EosWebGpuTensorEngineCore {
-  /**
-   * Inspect current environment WebGPU adapter capabilities.
-   */
-  public static getAdapterCapabilities(): WebGpuAdapterCapability {
+  /** Inspect current environment WebGPU adapter capabilities. */
+  public static getAdapterCapabilities(): WgTypes.WebGpuAdapterCapability {
     const hasWebGpu =
       typeof globalThis !== "undefined" &&
       "navigator" in globalThis &&
@@ -627,17 +565,15 @@ export class EosWebGpuTensorEngineCore {
     };
   }
 
-  /**
-   * Unified dual-mode execution dispatcher.
-   */
+  /** Unified dual-mode execution dispatcher. */
   public static execute(
-    op: TensorOpType,
+    op: WgTypes.TensorOpType,
     inputs: {
-      a: TensorBuffer;
-      b?: TensorBuffer;
-      activation?: ActivationKind;
+      a: WgTypes.TensorBuffer;
+      b?: WgTypes.TensorBuffer;
+      activation?: WgTypes.ActivationKind;
     },
-  ): TensorOpResult {
+  ): WgTypes.TensorOpResult {
     switch (op) {
       case "gemm":
         if (!inputs.b) {
@@ -655,48 +591,20 @@ export class EosWebGpuTensorEngineCore {
     }
   }
 
-  /**
-   * Generate formal verification receipt verifying all shaders and mathematical operations.
-   */
-  public static generateAuditReceipt(): WebGpuAuditReceipt {
+  /** Generate formal verification receipt verifying all shaders and mathematical operations. */
+  public static generateAuditReceipt(): WgTypes.WebGpuAuditReceipt {
     const gemmShader = EosWgslShaderSynthesizer.synthesizeGemmShader(16);
     const reluShader = EosWgslShaderSynthesizer.synthesizeVectorActivationShader("relu");
     const geluShader = EosWgslShaderSynthesizer.synthesizeVectorActivationShader("gelu");
     const covShader = EosWgslShaderSynthesizer.synthesizeCovarianceShader(16);
     const softmaxShader = EosWgslShaderSynthesizer.synthesizeSoftmaxShader();
 
-    const shadersSynthesized = [
-      {
-        id: gemmShader.id,
-        entryPoint: gemmShader.entryPoint,
-        lines: gemmShader.code.split("\n").length,
-        sha256: gemmShader.sha256,
-      },
-      {
-        id: reluShader.id,
-        entryPoint: reluShader.entryPoint,
-        lines: reluShader.code.split("\n").length,
-        sha256: reluShader.sha256,
-      },
-      {
-        id: geluShader.id,
-        entryPoint: geluShader.entryPoint,
-        lines: geluShader.code.split("\n").length,
-        sha256: geluShader.sha256,
-      },
-      {
-        id: covShader.id,
-        entryPoint: covShader.entryPoint,
-        lines: covShader.code.split("\n").length,
-        sha256: covShader.sha256,
-      },
-      {
-        id: softmaxShader.id,
-        entryPoint: softmaxShader.entryPoint,
-        lines: softmaxShader.code.split("\n").length,
-        sha256: softmaxShader.sha256,
-      },
-    ];
+    const shadersSynthesized = [gemmShader, reluShader, geluShader, covShader, softmaxShader].map((s) => ({
+      id: s.id,
+      entryPoint: s.entryPoint,
+      lines: s.code.split("\n").length,
+      sha256: s.sha256,
+    }));
 
     // Benchmark trials
     const matA = EosTensorComputeGrid.createTensor([32, 32]);
@@ -717,7 +625,7 @@ export class EosWebGpuTensorEngineCore {
     for (let i = 0; i < softmaxInput.data.length; i++) softmaxInput.data[i] = (i % 10) * 0.2;
     const softmaxRes = EosSoftwareTensorEmulator.softmax(softmaxInput);
 
-    const mkTrial = (r: TensorOpResult): TensorBenchmarkTrial => ({
+    const mkTrial = (r: WgTypes.TensorOpResult): WgTypes.TensorBenchmarkTrial => ({
       op: r.op,
       shape: r.shape,
       emulatorTimeUs: r.durationMicroseconds,
@@ -726,7 +634,12 @@ export class EosWebGpuTensorEngineCore {
       maxRelativeDelta: 0,
     });
 
-    const trials: TensorBenchmarkTrial[] = [mkTrial(gemmRes), mkTrial(geluRes), mkTrial(covRes), mkTrial(softmaxRes)];
+    const trials: WgTypes.TensorBenchmarkTrial[] = [
+      mkTrial(gemmRes),
+      mkTrial(geluRes),
+      mkTrial(covRes),
+      mkTrial(softmaxRes),
+    ];
 
     const adapter = this.getAdapterCapabilities();
 
@@ -747,10 +660,8 @@ export class EosWebGpuTensorEngineCore {
     };
   }
 
-  /**
-   * Execute formal audit and persist receipt to docs/evidence/WEBGPU_TENSOR_ACCELERATION_RECEIPT.json.
-   */
-  public static audit(projectRoot: string = process.cwd()): WebGpuAuditReceipt {
+  /** Execute formal audit and persist receipt to docs/evidence/WEBGPU_TENSOR_ACCELERATION_RECEIPT.json. */
+  public static audit(projectRoot: string = process.cwd()): WgTypes.WebGpuAuditReceipt {
     const receipt = this.generateAuditReceipt();
     const receiptPath = resolveEvidencePath("WEBGPU_TENSOR_ACCELERATION_RECEIPT.json", projectRoot);
     const receiptDir = path.dirname(receiptPath);

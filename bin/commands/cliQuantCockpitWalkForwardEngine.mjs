@@ -9,8 +9,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { EosQuantCockpitWalkForwardEngine } from "../../src/core/eosQuantCockpitWalkForwardEngine.ts";
+import {
+  EosQuantCockpitWalkForwardEngine,
+  generateFullIqOptionUniverse153,
+  recordAndLoadWalkForwardLedger,
+} from "../../src/core/eosQuantCockpitWalkForwardEngine.ts";
 import { EosUniversalAssetPayoutOptimizerEngine } from "../../src/core/eosUniversalAssetPayoutOptimizerEngine.ts";
+import * as TradingSuiteBarrel from "../../src/core/eosTradingSuiteBarrel.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,42 +29,30 @@ function getArgValue(args, prefix) {
   return match.slice(prefix.length).replace(/^["']|["']$/g, "");
 }
 
-function loadPaperLedgerAsWalkForwardTrades() {
-  const ledgerPath = path.join(ROOT, "docs/evidence/PAPER_TRADING_LEDGER.json");
-  if (!fs.existsSync(ledgerPath)) return [];
-  try {
-    const raw = JSON.parse(fs.readFileSync(ledgerPath, "utf8"));
-    if (!Array.isArray(raw)) return [];
-    return raw.map((r) => ({
-      timestampMs: Number(r.timestamp ?? Date.now()),
-      assetName: String(r.pair ?? "EUR/USD"),
-      strategy: "TREND_PULLBACK",
-      direction: r.direction === "PUT" ? "PUT" : "CALL",
-      stakeUsd: Number(r.stakeUsd ?? 40),
-      payoutPercent: Number(((Number(r.payoutMultiplier ?? 1.85) - 1) * 100).toFixed(2)),
-      pnlUsd: Number(r.pnlUsd ?? 0),
-      result: r.status === "WIN" ? "win" : r.status === "LOSS" ? "loss" : "equal",
-    }));
-  } catch {
-    return [];
-  }
+function loadPaperLedgerAsWalkForwardTrades(newSample) {
+  return recordAndLoadWalkForwardLedger(ROOT, newSample);
 }
 
 function buildFallbackCockpitInput(nowMs) {
   const quotes = EosUniversalAssetPayoutOptimizerEngine.generateCatalogQuotes();
-  const rawAssets = [];
+  const fullUniverse = generateFullIqOptionUniverse153();
+  const byName = new Map(fullUniverse.map((a) => [a.name.toUpperCase(), a]));
+  const rawAssets = [...fullUniverse];
   const candlesByAssetId = {};
 
   quotes.forEach((q, idx) => {
-    const assetId = 1800 + idx;
-    const bestPayout = Math.max(q.binaryPayoutPercent, q.digitalPayoutPercent);
-    rawAssets.push({
-      asset_id: assetId,
-      name: q.symbol.includes("-OTC") ? q.symbol.replace("-OTC", " (OTC)") : q.symbol,
-      is_open: true,
-      profit_percent: bestPayout,
-      precision: q.spotPrice < 1 ? 6 : 4,
-    });
+    const normalizedName = q.symbol.includes("-OTC") ? q.symbol.replace("-OTC", " (OTC)") : q.symbol;
+    const matched = byName.get(normalizedName.toUpperCase());
+    const assetId = matched ? matched.asset_id : 1800 + idx;
+    if (!matched) {
+      rawAssets.push({
+        asset_id: assetId,
+        name: normalizedName,
+        is_open: true,
+        profit_percent: Math.max(q.binaryPayoutPercent, q.digitalPayoutPercent),
+        precision: q.spotPrice < 1 ? 6 : 4,
+      });
+    }
     candlesByAssetId[assetId] = {
       m15: q.candlesM15,
       m5: q.candlesM5,
@@ -145,11 +138,35 @@ async function cmd_trading_trigger(commandContext) {
   return true;
 }
 
+function parseRecordArg(rawSpec) {
+  if (!rawSpec) return undefined;
+  const [assetName, category, strategy, dir, res, stakeStr, payoutStr] = rawSpec.split(",");
+  if (!assetName || !res) return undefined;
+  const stakeUsd = Number(stakeStr ?? 100);
+  const payoutPercent = Number(payoutStr ?? 92);
+  const result = res.toLowerCase() === "win" ? "win" : res.toLowerCase() === "loss" ? "loss" : "equal";
+  const pnlUsd =
+    result === "win" ? Number(((stakeUsd * payoutPercent) / 100).toFixed(2)) : result === "loss" ? -stakeUsd : 0;
+  return {
+    timestampMs: Date.now(),
+    assetName: assetName.trim(),
+    category: category?.trim() || EosQuantCockpitWalkForwardEngine.classifyAssetCategory(assetName),
+    strategy: strategy?.trim() || "TREND_PULLBACK",
+    direction: dir?.trim().toUpperCase() === "PUT" ? "PUT" : "CALL",
+    stakeUsd,
+    payoutPercent,
+    pnlUsd,
+    result,
+  };
+}
+
 async function cmd_trading_walkforward(commandContext) {
   const args = commandContext?.args || [];
   const isJson = args.includes("--json");
-  const trades = loadPaperLedgerAsWalkForwardTrades();
-  const report = EosQuantCockpitWalkForwardEngine.calibrateWalkForward(trades, 14100.35, false, 1.0);
+  const newSample = parseRecordArg(getArgValue(args, "--record="));
+  const trades = loadPaperLedgerAsWalkForwardTrades(newSample);
+  const Engine = TradingSuiteBarrel.EosQuantCockpitWalkForwardEngine || EosQuantCockpitWalkForwardEngine;
+  const report = Engine.calibrateWalkForward(trades, 14100.35, false, 1.0);
 
   if (isJson) {
     console.log(JSON.stringify(report, null, 2));

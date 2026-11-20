@@ -1,9 +1,9 @@
 {
-  "timestampIso": "2026-11-19T02:35:13.474Z",
-  "totalModules": 562,
-  "consumedModules": 499,
-  "unconsumedModules": 63,
-  "graphDensity": 0.8879,
+  "timestampIso": "2026-11-20T16:07:15.157Z",
+  "totalModules": 628,
+  "consumedModules": 628,
+  "unconsumedModules": 0,
+  "graphDensity": 1,
   "modules": {
     "EosAin": {
       "file": "src/core/EosAin.ts",
@@ -201,6 +201,62 @@
         }
       ]
     },
+    "eosAdversarialRedTeamCrucible": {
+      "file": "src/core/eosAdversarialRedTeamCrucible.ts",
+      "baseName": "eosAdversarialRedTeamCrucible",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliAdversarialRedTeamCrucible.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosAdversarialRedTeamCrucible.types": {
+      "file": "src/core/eosAdversarialRedTeamCrucible.types.ts",
+      "baseName": "eosAdversarialRedTeamCrucible.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosAdversarialRedTeamCrucible.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosAgentSwarmMicroKernel": {
+      "file": "src/core/eosAgentSwarmMicroKernel.ts",
+      "baseName": "eosAgentSwarmMicroKernel",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliAgentSwarmMicroKernel.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosAgentSwarmMicroKernel.types": {
+      "file": "src/core/eosAgentSwarmMicroKernel.types.ts",
+      "baseName": "eosAgentSwarmMicroKernel.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosAgentSwarmMicroKernel.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosAgentTopologyMesh": {
       "file": "src/core/eosAgentTopologyMesh.ts",
       "baseName": "eosAgentTopologyMesh",
@@ -313,6 +369,34 @@
         }
       ]
     },
+    "eosAgenticSwarmBft": {
+      "file": "src/core/eosAgenticSwarmBft.ts",
+      "baseName": "eosAgenticSwarmBft",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliAgenticSwarmBft.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosAgenticSwarmBft.types": {
+      "file": "src/core/eosAgenticSwarmBft.types.ts",
+      "baseName": "eosAgenticSwarmBft.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosAgenticSwarmBft.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosAgiCore": {
       "file": "src/core/eosAgiCore.ts",
       "baseName": "eosAgiCore",
@@ -352,9 +436,42 @@
     "eosAkashicMemory": {
       "file": "src/core/eosAkashicMemory.ts",
       "baseName": "eosAkashicMemory",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosAladdinPortfolioRiskEngine": {
+      "file": "src/core/eosAladdinPortfolioRiskEngine.ts",
+      "baseName": "eosAladdinPortfolioRiskEngine",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliAladdinRiskEngine.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosAladdinPortfolioRiskEngine.types": {
+      "file": "src/core/eosAladdinPortfolioRiskEngine.types.ts",
+      "baseName": "eosAladdinPortfolioRiskEngine.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosAladdinPortfolioRiskEngine.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosAladdinSystemicRiskStressCore": {
       "file": "src/core/eosAladdinSystemicRiskStressCore.ts",
@@ -559,9 +676,14 @@
     "eosApiMiddlewareChain": {
       "file": "src/core/eosApiMiddlewareChain.ts",
       "baseName": "eosApiMiddlewareChain",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosApiRateLimit": {
       "file": "src/core/eosApiRateLimit.ts",
@@ -636,6 +758,34 @@
         {
           "consumerPath": "bin/commands/cliSpotify.mjs",
           "category": "bin"
+        }
+      ]
+    },
+    "eosArchitecturalCanvas": {
+      "file": "src/core/eosArchitecturalCanvas.ts",
+      "baseName": "eosArchitecturalCanvas",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliArchitecturalCanvas.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosArchitecturalCanvas.types": {
+      "file": "src/core/eosArchitecturalCanvas.types.ts",
+      "baseName": "eosArchitecturalCanvas.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosArchitecturalCanvas.ts",
+          "category": "core"
         }
       ]
     },
@@ -803,6 +953,34 @@
         }
       ]
     },
+    "eosAutonomousSentinelDaemon": {
+      "file": "src/core/eosAutonomousSentinelDaemon.ts",
+      "baseName": "eosAutonomousSentinelDaemon",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliAutonomousSentinelDaemon.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosAutonomousSentinelDaemon.types": {
+      "file": "src/core/eosAutonomousSentinelDaemon.types.ts",
+      "baseName": "eosAutonomousSentinelDaemon.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosAutonomousSentinelDaemon.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosAutonomousTlaModelChecker": {
       "file": "src/core/eosAutonomousTlaModelChecker.ts",
       "baseName": "eosAutonomousTlaModelChecker",
@@ -819,12 +997,45 @@
         }
       ]
     },
+    "eosAutonomousWasmJit": {
+      "file": "src/core/eosAutonomousWasmJit.ts",
+      "baseName": "eosAutonomousWasmJit",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliAutonomousWasmJit.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosAutonomousWasmJit.types": {
+      "file": "src/core/eosAutonomousWasmJit.types.ts",
+      "baseName": "eosAutonomousWasmJit.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosAutonomousWasmJit.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosBackpressureFlowController": {
       "file": "src/core/eosBackpressureFlowController.ts",
       "baseName": "eosBackpressureFlowController",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosBackstageSoundcheckScorecard": {
       "file": "src/core/eosBackstageSoundcheckScorecard.ts",
@@ -853,9 +1064,14 @@
     "eosBatchAggregator": {
       "file": "src/core/eosBatchAggregator.ts",
       "baseName": "eosBatchAggregator",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosBayesianCanaryEvaluator": {
       "file": "src/core/eosBayesianCanaryEvaluator.ts",
@@ -872,9 +1088,14 @@
     "eosBenchmarkTracker": {
       "file": "src/core/eosBenchmarkTracker.ts",
       "baseName": "eosBenchmarkTracker",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosBftAgentSwarmSlashing": {
       "file": "src/core/eosBftAgentSwarmSlashing.ts",
@@ -911,9 +1132,14 @@
     "eosBigTechPantheon": {
       "file": "src/core/eosBigTechPantheon.ts",
       "baseName": "eosBigTechPantheon",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosBigTechProductFactory": {
       "file": "src/core/eosBigTechProductFactory.ts",
@@ -991,6 +1217,34 @@
         }
       ]
     },
+    "eosBitemporalEventSourcingLedger": {
+      "file": "src/core/eosBitemporalEventSourcingLedger.ts",
+      "baseName": "eosBitemporalEventSourcingLedger",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliBitemporalEventLedger.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosBitemporalEventSourcingLedger.types": {
+      "file": "src/core/eosBitemporalEventSourcingLedger.types.ts",
+      "baseName": "eosBitemporalEventSourcingLedger.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosBitemporalEventSourcingLedger.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosBitemporalEventStore": {
       "file": "src/core/eosBitemporalEventStore.ts",
       "baseName": "eosBitemporalEventStore",
@@ -1034,9 +1288,14 @@
     "eosBlueGreenOrchestrator": {
       "file": "src/core/eosBlueGreenOrchestrator.ts",
       "baseName": "eosBlueGreenOrchestrator",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosBufferPool": {
       "file": "src/core/eosBufferPool.ts",
@@ -1085,9 +1344,14 @@
     "eosCacheEngine": {
       "file": "src/core/eosCacheEngine.ts",
       "baseName": "eosCacheEngine",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosCanaryAnalysisEngine": {
       "file": "src/core/eosCanaryAnalysisEngine.ts",
@@ -1097,6 +1361,34 @@
       "consumers": [
         {
           "consumerPath": "src/core/eosBigTechAcaCanaryGate.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosCausalMetaLearning": {
+      "file": "src/core/eosCausalMetaLearning.ts",
+      "baseName": "eosCausalMetaLearning",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliCausalMetaLearning.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosCausalMetaLearning.types": {
+      "file": "src/core/eosCausalMetaLearning.types.ts",
+      "baseName": "eosCausalMetaLearning.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosCausalMetaLearning.ts",
           "category": "core"
         }
       ]
@@ -1180,9 +1472,14 @@
     "eosCertificateLifecycleManager": {
       "file": "src/core/eosCertificateLifecycleManager.ts",
       "baseName": "eosCertificateLifecycleManager",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosChaosCircuitBreaker": {
       "file": "src/core/eosChaosCircuitBreaker.ts",
@@ -1199,9 +1496,14 @@
     "eosCicdPipeline": {
       "file": "src/core/eosCicdPipeline.ts",
       "baseName": "eosCicdPipeline",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosCliCatalogAndHygieneGovernorCore": {
       "file": "src/core/eosCliCatalogAndHygieneGovernorCore.ts",
@@ -1238,9 +1540,14 @@
     "eosCliUx": {
       "file": "src/core/eosCliUx.ts",
       "baseName": "eosCliUx",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosClosedLoopRepoAutopilot": {
       "file": "src/core/eosClosedLoopRepoAutopilot.ts",
@@ -1441,16 +1748,26 @@
     "eosConfigHotReloadEngine": {
       "file": "src/core/eosConfigHotReloadEngine.ts",
       "baseName": "eosConfigHotReloadEngine",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosConnectionPoolManager": {
       "file": "src/core/eosConnectionPoolManager.ts",
       "baseName": "eosConnectionPoolManager",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosConsciousWitness": {
       "file": "src/core/eosConsciousWitness.ts",
@@ -1663,9 +1980,14 @@
     "eosContractTestEngine": {
       "file": "src/core/eosContractTestEngine.ts",
       "baseName": "eosContractTestEngine",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosControlPlaneHealthProbes": {
       "file": "src/core/eosControlPlaneHealthProbes.ts",
@@ -1814,9 +2136,14 @@
     "eosDagJobScheduler": {
       "file": "src/core/eosDagJobScheduler.ts",
       "baseName": "eosDagJobScheduler",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosDatabaseMigrationGovernor": {
       "file": "src/core/eosDatabaseMigrationGovernor.ts",
@@ -1909,23 +2236,38 @@
     "eosDependencyContainer": {
       "file": "src/core/eosDependencyContainer.ts",
       "baseName": "eosDependencyContainer",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosDesignPrimitives": {
       "file": "src/core/eosDesignPrimitives.ts",
       "baseName": "eosDesignPrimitives",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosDesignTokens": {
       "file": "src/core/eosDesignTokens.ts",
       "baseName": "eosDesignTokens",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosDeterministicArtifact": {
       "file": "src/core/eosDeterministicArtifact.ts",
@@ -1943,6 +2285,34 @@
         },
         {
           "consumerPath": "src/core/eosTacticalCommandEngine.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosDeterministicReplayDebugger": {
+      "file": "src/core/eosDeterministicReplayDebugger.ts",
+      "baseName": "eosDeterministicReplayDebugger",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliDeterministicReplayDebugger.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosDeterministicReplayDebugger.types": {
+      "file": "src/core/eosDeterministicReplayDebugger.types.ts",
+      "baseName": "eosDeterministicReplayDebugger.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosDeterministicReplayDebugger.ts",
           "category": "core"
         }
       ]
@@ -1978,9 +2348,14 @@
     "eosDiffPatcher": {
       "file": "src/core/eosDiffPatcher.ts",
       "baseName": "eosDiffPatcher",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosDifferentialPrivacyAbacGovernorCore": {
       "file": "src/core/eosDifferentialPrivacyAbacGovernorCore.ts",
@@ -2086,6 +2461,34 @@
         }
       ]
     },
+    "eosDistributedCrdtMemory": {
+      "file": "src/core/eosDistributedCrdtMemory.ts",
+      "baseName": "eosDistributedCrdtMemory",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliDistributedCrdtMemory.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosDistributedCrdtMemory.types": {
+      "file": "src/core/eosDistributedCrdtMemory.types.ts",
+      "baseName": "eosDistributedCrdtMemory.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosDistributedCrdtMemory.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosDistributedKvReplication": {
       "file": "src/core/eosDistributedKvReplication.ts",
       "baseName": "eosDistributedKvReplication",
@@ -2125,9 +2528,14 @@
     "eosDistributedLockManager": {
       "file": "src/core/eosDistributedLockManager.ts",
       "baseName": "eosDistributedLockManager",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosDistributedPeerMesh": {
       "file": "src/core/eosDistributedPeerMesh.ts",
@@ -2469,12 +2877,45 @@
         }
       ]
     },
+    "eosDynamicToolSynthesis": {
+      "file": "src/core/eosDynamicToolSynthesis.ts",
+      "baseName": "eosDynamicToolSynthesis",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliDynamicToolSynthesis.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosDynamicToolSynthesis.types": {
+      "file": "src/core/eosDynamicToolSynthesis.types.ts",
+      "baseName": "eosDynamicToolSynthesis.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosDynamicToolSynthesis.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosEbpfKernelProbeEngine": {
       "file": "src/core/eosEbpfKernelProbeEngine.ts",
       "baseName": "eosEbpfKernelProbeEngine",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosEbpfOtlpTelemetryGovernor": {
       "file": "src/core/eosEbpfOtlpTelemetryGovernor.ts",
@@ -2612,12 +3053,45 @@
         }
       ]
     },
+    "eosEpisodicMemoryGraph": {
+      "file": "src/core/eosEpisodicMemoryGraph.ts",
+      "baseName": "eosEpisodicMemoryGraph",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliEpisodicMemoryGraph.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosEpisodicMemoryGraph.types": {
+      "file": "src/core/eosEpisodicMemoryGraph.types.ts",
+      "baseName": "eosEpisodicMemoryGraph.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEpisodicMemoryGraph.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosErrorCatalog": {
       "file": "src/core/eosErrorCatalog.ts",
       "baseName": "eosErrorCatalog",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosEuvInverseLithographyWavefront": {
       "file": "src/core/eosEuvInverseLithographyWavefront.ts",
@@ -2662,18 +3136,47 @@
     "eosEventSourcingEngine": {
       "file": "src/core/eosEventSourcingEngine.ts",
       "baseName": "eosEventSourcingEngine",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosEvidencePaths": {
       "file": "src/core/eosEvidencePaths.ts",
       "baseName": "eosEvidencePaths",
       "isConsumed": true,
-      "consumerCount": 42,
+      "consumerCount": 85,
       "consumers": [
         {
           "consumerPath": "src/core/eosAgenticContextEngine.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosAgenticSwarmBft.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosAgentSwarmMicroKernel.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosArchitecturalCanvas.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosAutonomousWasmJit.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosBitemporalEventSourcingLedger.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosCausalMetaLearning.ts",
           "category": "core"
         },
         {
@@ -2681,11 +3184,55 @@
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosDistributedCrdtMemory.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosInductiveProofEngine.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosKnowledgeGraphReflex.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosNeuralSymbolicProver.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosNeuromorphicPlanner.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosShardedTransactionFabric.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosSovereignWebCompiler.ts",
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosWebGpuTensorAcceleration.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosWorkStealingScheduler.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosZeroCopyIpcRingBuffer.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosZkCircuitSynthesizer.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "bin/commands/cliActivationCheckpointingEngine.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliAdversarialRedTeamCrucible.mjs",
           "category": "bin"
         },
         {
@@ -2694,6 +3241,34 @@
         },
         {
           "consumerPath": "bin/commands/cliAgenticHarnessYield.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliAgenticSwarmBft.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliAgentSwarmMicroKernel.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliArchitecturalCanvas.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliAutonomousSentinelDaemon.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliAutonomousWasmJit.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliBitemporalEventLedger.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliCausalMetaLearning.mjs",
           "category": "bin"
         },
         {
@@ -2713,6 +3288,10 @@
           "category": "bin"
         },
         {
+          "consumerPath": "bin/commands/cliDeterministicReplayDebugger.mjs",
+          "category": "bin"
+        },
+        {
           "consumerPath": "bin/commands/cliDevOps.mjs",
           "category": "bin"
         },
@@ -2722,6 +3301,10 @@
         },
         {
           "consumerPath": "bin/commands/cliDiscreteEventSimulationHypervisor.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliDistributedCrdtMemory.mjs",
           "category": "bin"
         },
         {
@@ -2737,6 +3320,14 @@
           "category": "bin"
         },
         {
+          "consumerPath": "bin/commands/cliDynamicToolSynthesis.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliEpisodicMemoryGraph.mjs",
+          "category": "bin"
+        },
+        {
           "consumerPath": "bin/commands/cliEuvInverseLithographyWavefront.mjs",
           "category": "bin"
         },
@@ -2749,11 +3340,31 @@
           "category": "bin"
         },
         {
+          "consumerPath": "bin/commands/cliFleetChaosMonkey.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliGlorianLiveStudio.mjs",
+          "category": "bin"
+        },
+        {
           "consumerPath": "bin/commands/cliHelm.mjs",
           "category": "bin"
         },
         {
+          "consumerPath": "bin/commands/cliInductiveProofEngine.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliInstitutionalTradingEngine.mjs",
+          "category": "bin"
+        },
+        {
           "consumerPath": "bin/commands/cliJepsenDistributedChaos.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliKnowledgeGraphReflex.mjs",
           "category": "bin"
         },
         {
@@ -2766,6 +3377,18 @@
         },
         {
           "consumerPath": "bin/commands/cliMetamorphicDifferentialBlindSpot.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliMultiNodeSwarmMesh.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliNeuralSymbolicProver.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliNeuromorphicPlanner.mjs",
           "category": "bin"
         },
         {
@@ -2797,6 +3420,10 @@
           "category": "bin"
         },
         {
+          "consumerPath": "bin/commands/cliShardedTransactionFabric.mjs",
+          "category": "bin"
+        },
+        {
           "consumerPath": "bin/commands/cliSimdQuantizedHnsw.mjs",
           "category": "bin"
         },
@@ -2806,6 +3433,10 @@
         },
         {
           "consumerPath": "bin/commands/cliStreamingLlmAttentionSinks.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliSweBenchEvalFlywheel.mjs",
           "category": "bin"
         },
         {
@@ -2829,7 +3460,23 @@
           "category": "bin"
         },
         {
+          "consumerPath": "bin/commands/cliVoiceNeuralInterface.mjs",
+          "category": "bin"
+        },
+        {
           "consumerPath": "bin/commands/cliWebCompiler.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliWebGpuTensorAcceleration.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliWorkStealingScheduler.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliZeroCopyIpcRingBuffer.mjs",
           "category": "bin"
         },
         {
@@ -2838,6 +3485,10 @@
         },
         {
           "consumerPath": "bin/commands/cliZeroFsdpEngine.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliZkCircuitSynthesizer.mjs",
           "category": "bin"
         }
       ]
@@ -2885,9 +3536,14 @@
     "eosFairShareScheduler": {
       "file": "src/core/eosFairShareScheduler.ts",
       "baseName": "eosFairShareScheduler",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosFdirOntology": {
       "file": "src/core/eosFdirOntology.ts",
@@ -2928,9 +3584,14 @@
     "eosFeatureFlagEngine": {
       "file": "src/core/eosFeatureFlagEngine.ts",
       "baseName": "eosFeatureFlagEngine",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosFeatureFlags": {
       "file": "src/core/eosFeatureFlags.ts",
@@ -2963,9 +3624,14 @@
     "eosFirecrackerDaemonSupervisor": {
       "file": "src/core/eosFirecrackerDaemonSupervisor.ts",
       "baseName": "eosFirecrackerDaemonSupervisor",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosFirecrackerMicroVmEngine": {
       "file": "src/core/eosFirecrackerMicroVmEngine.ts",
@@ -3027,12 +3693,45 @@
         }
       ]
     },
+    "eosFleetChaosMonkey": {
+      "file": "src/core/eosFleetChaosMonkey.ts",
+      "baseName": "eosFleetChaosMonkey",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliFleetChaosMonkey.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosFleetChaosMonkey.types": {
+      "file": "src/core/eosFleetChaosMonkey.types.ts",
+      "baseName": "eosFleetChaosMonkey.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosFleetChaosMonkey.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosFleetDispatcher": {
       "file": "src/core/eosFleetDispatcher.ts",
       "baseName": "eosFleetDispatcher",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosFleetDogfoodingEngine": {
       "file": "src/core/eosFleetDogfoodingEngine.ts",
@@ -3173,9 +3872,14 @@
     "eosFleetRagGoldenPath": {
       "file": "src/core/eosFleetRagGoldenPath.ts",
       "baseName": "eosFleetRagGoldenPath",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosFleetSoundcheckMesh": {
       "file": "src/core/eosFleetSoundcheckMesh.ts",
@@ -3389,6 +4093,34 @@
         }
       ]
     },
+    "eosGlorianLiveStudio": {
+      "file": "src/core/eosGlorianLiveStudio.ts",
+      "baseName": "eosGlorianLiveStudio",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliGlorianLiveStudio.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosGlorianLiveStudio.types": {
+      "file": "src/core/eosGlorianLiveStudio.types.ts",
+      "baseName": "eosGlorianLiveStudio.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosGlorianLiveStudio.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosGnosticTemple": {
       "file": "src/core/eosGnosticTemple.ts",
       "baseName": "eosGnosticTemple",
@@ -3476,9 +4208,14 @@
     "eosGossipMembership": {
       "file": "src/core/eosGossipMembership.ts",
       "baseName": "eosGossipMembership",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosHardwareMemoryArena": {
       "file": "src/core/eosHardwareMemoryArena.ts",
@@ -3495,9 +4232,14 @@
     "eosHashedTimingWheel": {
       "file": "src/core/eosHashedTimingWheel.ts",
       "baseName": "eosHashedTimingWheel",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosHelmReleaseGovernor": {
       "file": "src/core/eosHelmReleaseGovernor.ts",
@@ -3650,9 +4392,14 @@
     "eosHorizontalAutoScaler": {
       "file": "src/core/eosHorizontalAutoScaler.ts",
       "baseName": "eosHorizontalAutoScaler",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosHotPatchEngine": {
       "file": "src/core/eosHotPatchEngine.ts",
@@ -3697,9 +4444,14 @@
     "eosHranaStreamClient": {
       "file": "src/core/eosHranaStreamClient.ts",
       "baseName": "eosHranaStreamClient",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosHybridKnowledgeEngine": {
       "file": "src/core/eosHybridKnowledgeEngine.ts",
@@ -3885,6 +4637,34 @@
         }
       ]
     },
+    "eosInductiveProofEngine": {
+      "file": "src/core/eosInductiveProofEngine.ts",
+      "baseName": "eosInductiveProofEngine",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliInductiveProofEngine.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosInductiveProofEngine.types": {
+      "file": "src/core/eosInductiveProofEngine.types.ts",
+      "baseName": "eosInductiveProofEngine.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosInductiveProofEngine.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosInertialFusionLawsonIgnitionCore": {
       "file": "src/core/eosInertialFusionLawsonIgnitionCore.ts",
       "baseName": "eosInertialFusionLawsonIgnitionCore",
@@ -3909,6 +4689,46 @@
       "consumers": [
         {
           "consumerPath": "src/core/eosInertialFusionLawsonIgnitionCore.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosInstitutionalTradingEngine": {
+      "file": "src/core/eosInstitutionalTradingEngine.ts",
+      "baseName": "eosInstitutionalTradingEngine",
+      "isConsumed": true,
+      "consumerCount": 5,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosMultiAssetMacroFilterEngine.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosQuantCockpitWalkForwardEngine.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosTriTemporalPropFirmEngine.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliInstitutionalTradingEngine.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosInstitutionalTradingEngine.types": {
+      "file": "src/core/eosInstitutionalTradingEngine.types.ts",
+      "baseName": "eosInstitutionalTradingEngine.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosInstitutionalTradingEngine.ts",
           "category": "core"
         }
       ]
@@ -5133,6 +5953,34 @@
         }
       ]
     },
+    "eosKnowledgeGraphReflex": {
+      "file": "src/core/eosKnowledgeGraphReflex.ts",
+      "baseName": "eosKnowledgeGraphReflex",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliKnowledgeGraphReflex.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosKnowledgeGraphReflex.types": {
+      "file": "src/core/eosKnowledgeGraphReflex.types.ts",
+      "baseName": "eosKnowledgeGraphReflex.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosKnowledgeGraphReflex.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosKubectlClusterInspector": {
       "file": "src/core/eosKubectlClusterInspector.ts",
       "baseName": "eosKubectlClusterInspector",
@@ -5168,9 +6016,14 @@
     "eosKubernetesFleetOperator": {
       "file": "src/core/eosKubernetesFleetOperator.ts",
       "baseName": "eosKubernetesFleetOperator",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosKubernetesNativeClient": {
       "file": "src/core/eosKubernetesNativeClient.ts",
@@ -5215,9 +6068,14 @@
     "eosLeaderElectionCluster": {
       "file": "src/core/eosLeaderElectionCluster.ts",
       "baseName": "eosLeaderElectionCluster",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosLedgerTimeTravelEngine": {
       "file": "src/core/eosLedgerTimeTravelEngine.ts",
@@ -5266,9 +6124,14 @@
     "eosLinuxKernelCore": {
       "file": "src/core/eosLinuxKernelCore.ts",
       "baseName": "eosLinuxKernelCore",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosLiveGitContractEvolutionCore": {
       "file": "src/core/eosLiveGitContractEvolutionCore.ts",
@@ -5337,9 +6200,14 @@
     "eosLlmOpsPrivacyLane": {
       "file": "src/core/eosLlmOpsPrivacyLane.ts",
       "baseName": "eosLlmOpsPrivacyLane",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosLoadTestEngine": {
       "file": "src/core/eosLoadTestEngine.ts",
@@ -5452,9 +6320,14 @@
     "eosLspDiagnostics": {
       "file": "src/core/eosLspDiagnostics.ts",
       "baseName": "eosLspDiagnostics",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosMagnetoplasmadynamicThrusterMhdCore": {
       "file": "src/core/eosMagnetoplasmadynamicThrusterMhdCore.ts",
@@ -5615,9 +6488,14 @@
     "eosMemoryZeroizer": {
       "file": "src/core/eosMemoryZeroizer.ts",
       "baseName": "eosMemoryZeroizer",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosMerkleMountainRange": {
       "file": "src/core/eosMerkleMountainRange.ts",
@@ -5702,9 +6580,14 @@
     "eosMeshTrafficPolicyEngine": {
       "file": "src/core/eosMeshTrafficPolicyEngine.ts",
       "baseName": "eosMeshTrafficPolicyEngine",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosMetaCognitiveSynapse": {
       "file": "src/core/eosMetaCognitiveSynapse.ts",
@@ -5862,6 +6745,50 @@
         }
       ]
     },
+    "eosMultiAssetMacroFilterEngine": {
+      "file": "src/core/eosMultiAssetMacroFilterEngine.ts",
+      "baseName": "eosMultiAssetMacroFilterEngine",
+      "isConsumed": true,
+      "consumerCount": 3,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosQuantCockpitWalkForwardEngine.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliMultiAssetMacroEngine.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosMultiAssetMacroFilterEngine.types": {
+      "file": "src/core/eosMultiAssetMacroFilterEngine.types.ts",
+      "baseName": "eosMultiAssetMacroFilterEngine.types",
+      "isConsumed": true,
+      "consumerCount": 4,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosMultiAssetMacroFilterEngine.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosQuantCockpitHudRenderer.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosQuantCockpitWalkForwardEngine.types.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosTriTemporalPropFirmEngine.types.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosMultiModelRouter": {
       "file": "src/core/eosMultiModelRouter.ts",
       "baseName": "eosMultiModelRouter",
@@ -5870,6 +6797,34 @@
       "consumers": [
         {
           "consumerPath": "src/core/eosPipeline.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosMultiNodeSwarmMesh": {
+      "file": "src/core/eosMultiNodeSwarmMesh.ts",
+      "baseName": "eosMultiNodeSwarmMesh",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliMultiNodeSwarmMesh.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosMultiNodeSwarmMesh.types": {
+      "file": "src/core/eosMultiNodeSwarmMesh.types.ts",
+      "baseName": "eosMultiNodeSwarmMesh.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosMultiNodeSwarmMesh.ts",
           "category": "core"
         }
       ]
@@ -5989,9 +6944,14 @@
     "eosNanosecondEngine": {
       "file": "src/core/eosNanosecondEngine.ts",
       "baseName": "eosNanosecondEngine",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosNativeSqliteStore": {
       "file": "src/core/eosNativeSqliteStore.ts",
@@ -6002,6 +6962,34 @@
         {
           "consumerPath": "bin/commands/cliSqliteStore.mjs",
           "category": "bin"
+        }
+      ]
+    },
+    "eosNeuralSymbolicProver": {
+      "file": "src/core/eosNeuralSymbolicProver.ts",
+      "baseName": "eosNeuralSymbolicProver",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliNeuralSymbolicProver.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosNeuralSymbolicProver.types": {
+      "file": "src/core/eosNeuralSymbolicProver.types.ts",
+      "baseName": "eosNeuralSymbolicProver.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosNeuralSymbolicProver.ts",
+          "category": "core"
         }
       ]
     },
@@ -6049,6 +7037,34 @@
         }
       ]
     },
+    "eosNeuromorphicPlanner": {
+      "file": "src/core/eosNeuromorphicPlanner.ts",
+      "baseName": "eosNeuromorphicPlanner",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliNeuromorphicPlanner.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosNeuromorphicPlanner.types": {
+      "file": "src/core/eosNeuromorphicPlanner.types.ts",
+      "baseName": "eosNeuromorphicPlanner.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosNeuromorphicPlanner.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosNocturnalEvolutionEngine": {
       "file": "src/core/eosNocturnalEvolutionEngine.ts",
       "baseName": "eosNocturnalEvolutionEngine",
@@ -6068,9 +7084,14 @@
     "eosNsaAnomalyDetector": {
       "file": "src/core/eosNsaAnomalyDetector.ts",
       "baseName": "eosNsaAnomalyDetector",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosNsaCryptoSuite": {
       "file": "src/core/eosNsaCryptoSuite.ts",
@@ -6207,9 +7228,14 @@
     "eosOmegaSingularity": {
       "file": "src/core/eosOmegaSingularity.ts",
       "baseName": "eosOmegaSingularity",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosOntologicalHypergraph": {
       "file": "src/core/eosOntologicalHypergraph.ts",
@@ -6450,9 +7476,14 @@
     "eosOtlpTelemetryEngine": {
       "file": "src/core/eosOtlpTelemetryEngine.ts",
       "baseName": "eosOtlpTelemetryEngine",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosPatchValidator": {
       "file": "src/core/eosPatchValidator.ts",
@@ -6505,16 +7536,26 @@
     "eosPeakAssuranceTcb": {
       "file": "src/core/eosPeakAssuranceTcb.ts",
       "baseName": "eosPeakAssuranceTcb",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosPeerNetworkMesh": {
       "file": "src/core/eosPeerNetworkMesh.ts",
       "baseName": "eosPeerNetworkMesh",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosPerformanceRegressionTracker": {
       "file": "src/core/eosPerformanceRegressionTracker.ts",
@@ -6675,9 +7716,14 @@
     "eosPluginLoader": {
       "file": "src/core/eosPluginLoader.ts",
       "baseName": "eosPluginLoader",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosPolyglotAdapter": {
       "file": "src/core/eosPolyglotAdapter.ts",
@@ -6906,9 +7952,14 @@
     "eosProbabilisticDataStructures": {
       "file": "src/core/eosProbabilisticDataStructures.ts",
       "baseName": "eosProbabilisticDataStructures",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosProductDeliveryOrchestrator": {
       "file": "src/core/eosProductDeliveryOrchestrator.ts",
@@ -7081,9 +8132,58 @@
     "eosProtobufContractEngine": {
       "file": "src/core/eosProtobufContractEngine.ts",
       "baseName": "eosProtobufContractEngine",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosQuantCockpitHudRenderer": {
+      "file": "src/core/eosQuantCockpitHudRenderer.ts",
+      "baseName": "eosQuantCockpitHudRenderer",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosQuantCockpitWalkForwardEngine.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosQuantCockpitWalkForwardEngine": {
+      "file": "src/core/eosQuantCockpitWalkForwardEngine.ts",
+      "baseName": "eosQuantCockpitWalkForwardEngine",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliQuantCockpitWalkForwardEngine.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosQuantCockpitWalkForwardEngine.types": {
+      "file": "src/core/eosQuantCockpitWalkForwardEngine.types.ts",
+      "baseName": "eosQuantCockpitWalkForwardEngine.types",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosQuantCockpitHudRenderer.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosQuantCockpitWalkForwardEngine.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosQuantizedDistributedTrainingEngine": {
       "file": "src/core/eosQuantizedDistributedTrainingEngine.ts",
@@ -7236,9 +8336,14 @@
     "eosReactiveStreamEngine": {
       "file": "src/core/eosReactiveStreamEngine.ts",
       "baseName": "eosReactiveStreamEngine",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosRelativisticBeamTwissLuminosityCore": {
       "file": "src/core/eosRelativisticBeamTwissLuminosityCore.ts",
@@ -7303,9 +8408,14 @@
     "eosResilienceMesh": {
       "file": "src/core/eosResilienceMesh.ts",
       "baseName": "eosResilienceMesh",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosReverseEngineeringEngine": {
       "file": "src/core/eosReverseEngineeringEngine.ts",
@@ -7410,9 +8520,14 @@
     "eosSagaOrchestrator": {
       "file": "src/core/eosSagaOrchestrator.ts",
       "baseName": "eosSagaOrchestrator",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosSamaelIbmNvidiaCore": {
       "file": "src/core/eosSamaelIbmNvidiaCore.ts",
@@ -7529,16 +8644,26 @@
     "eosScatterGatherHedger": {
       "file": "src/core/eosScatterGatherHedger.ts",
       "baseName": "eosScatterGatherHedger",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosSchemaRegistry": {
       "file": "src/core/eosSchemaRegistry.ts",
       "baseName": "eosSchemaRegistry",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosSecretsManager": {
       "file": "src/core/eosSecretsManager.ts",
@@ -7555,9 +8680,14 @@
     "eosSecretsRotationProtocol": {
       "file": "src/core/eosSecretsRotationProtocol.ts",
       "baseName": "eosSecretsRotationProtocol",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosSecureMemoryVault": {
       "file": "src/core/eosSecureMemoryVault.ts",
@@ -7660,6 +8790,34 @@
         {
           "consumerPath": "bin/commands/cliSentinel.mjs",
           "category": "bin"
+        }
+      ]
+    },
+    "eosShardedTransactionFabric": {
+      "file": "src/core/eosShardedTransactionFabric.ts",
+      "baseName": "eosShardedTransactionFabric",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliShardedTransactionFabric.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosShardedTransactionFabric.types": {
+      "file": "src/core/eosShardedTransactionFabric.types.ts",
+      "baseName": "eosShardedTransactionFabric.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosShardedTransactionFabric.ts",
+          "category": "core"
         }
       ]
     },
@@ -7950,9 +9108,14 @@
     "eosSovereignFiveScorecard": {
       "file": "src/core/eosSovereignFiveScorecard.ts",
       "baseName": "eosSovereignFiveScorecard",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosSovereignLoop": {
       "file": "src/core/eosSovereignLoop.ts",
@@ -8289,9 +9452,14 @@
     "eosStructuredLogger": {
       "file": "src/core/eosStructuredLogger.ts",
       "baseName": "eosStructuredLogger",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosSubseaCoherentDwdmNonlinearShannonCore": {
       "file": "src/core/eosSubseaCoherentDwdmNonlinearShannonCore.ts",
@@ -8390,6 +9558,34 @@
         {
           "consumerPath": "bin/commands/cliAutonomous.mjs",
           "category": "bin"
+        }
+      ]
+    },
+    "eosSweBenchEvalFlywheel": {
+      "file": "src/core/eosSweBenchEvalFlywheel.ts",
+      "baseName": "eosSweBenchEvalFlywheel",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliSweBenchEvalFlywheel.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosSweBenchEvalFlywheel.types": {
+      "file": "src/core/eosSweBenchEvalFlywheel.types.ts",
+      "baseName": "eosSweBenchEvalFlywheel.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosSweBenchEvalFlywheel.ts",
+          "category": "core"
         }
       ]
     },
@@ -8612,9 +9808,14 @@
     "eosTlsPeerTransport": {
       "file": "src/core/eosTlsPeerTransport.ts",
       "baseName": "eosTlsPeerTransport",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosTokenBucketRateLimiter": {
       "file": "src/core/eosTokenBucketRateLimiter.ts",
@@ -8657,6 +9858,18 @@
         {
           "consumerPath": "src/core/eosPipeline.ts",
           "category": "core"
+        }
+      ]
+    },
+    "eosTradingSuiteBarrel": {
+      "file": "src/core/eosTradingSuiteBarrel.ts",
+      "baseName": "eosTradingSuiteBarrel",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliQuantCockpitWalkForwardEngine.mjs",
+          "category": "bin"
         }
       ]
     },
@@ -8704,6 +9917,50 @@
       "consumers": [
         {
           "consumerPath": "src/core/eosTreeSpeculativeDecoding.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosTriTemporalPropFirmEngine": {
+      "file": "src/core/eosTriTemporalPropFirmEngine.ts",
+      "baseName": "eosTriTemporalPropFirmEngine",
+      "isConsumed": true,
+      "consumerCount": 6,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosQuantCockpitWalkForwardEngine.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosQuantCockpitWalkForwardEngine.types.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosUniversalAssetPayoutOptimizerEngine.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosUniversalAssetPayoutOptimizerEngine.types.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliTriTemporalPropFirmEngine.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosTriTemporalPropFirmEngine.types": {
+      "file": "src/core/eosTriTemporalPropFirmEngine.types.ts",
+      "baseName": "eosTriTemporalPropFirmEngine.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosTriTemporalPropFirmEngine.ts",
           "category": "core"
         }
       ]
@@ -8823,9 +10080,14 @@
     "eosUnboundedFormalProver": {
       "file": "src/core/eosUnboundedFormalProver.ts",
       "baseName": "eosUnboundedFormalProver",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosUnifiedKernelOrchestrator": {
       "file": "src/core/eosUnifiedKernelOrchestrator.ts",
@@ -8888,6 +10150,50 @@
         {
           "consumerPath": "src/mcp/tools/eosMcpPhase3CoreHandlers.ts",
           "category": "mcp"
+        }
+      ]
+    },
+    "eosUniversalAssetPayoutOptimizerEngine": {
+      "file": "src/core/eosUniversalAssetPayoutOptimizerEngine.ts",
+      "baseName": "eosUniversalAssetPayoutOptimizerEngine",
+      "isConsumed": true,
+      "consumerCount": 5,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosQuantCockpitHudRenderer.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosQuantCockpitWalkForwardEngine.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliQuantCockpitWalkForwardEngine.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliUniversalAssetPayoutEngine.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosUniversalAssetPayoutOptimizerEngine.types": {
+      "file": "src/core/eosUniversalAssetPayoutOptimizerEngine.types.ts",
+      "baseName": "eosUniversalAssetPayoutOptimizerEngine.types",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosQuantCockpitWalkForwardEngine.types.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosUniversalAssetPayoutOptimizerEngine.ts",
+          "category": "core"
         }
       ]
     },
@@ -9018,9 +10324,14 @@
     "eosVectorClockCausality": {
       "file": "src/core/eosVectorClockCausality.ts",
       "baseName": "eosVectorClockCausality",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosVectorLsmStorage": {
       "file": "src/core/eosVectorLsmStorage.ts",
@@ -9222,12 +10533,45 @@
         }
       ]
     },
+    "eosVoiceNeuralInterface": {
+      "file": "src/core/eosVoiceNeuralInterface.ts",
+      "baseName": "eosVoiceNeuralInterface",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliVoiceNeuralInterface.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosVoiceNeuralInterface.types": {
+      "file": "src/core/eosVoiceNeuralInterface.types.ts",
+      "baseName": "eosVoiceNeuralInterface.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosVoiceNeuralInterface.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosWanKademliaMesh": {
       "file": "src/core/eosWanKademliaMesh.ts",
       "baseName": "eosWanKademliaMesh",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosWasmBytecodeDecompilerProver": {
       "file": "src/core/eosWasmBytecodeDecompilerProver.ts",
@@ -9361,12 +10705,45 @@
         }
       ]
     },
+    "eosWebGpuTensorAcceleration": {
+      "file": "src/core/eosWebGpuTensorAcceleration.ts",
+      "baseName": "eosWebGpuTensorAcceleration",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliWebGpuTensorAcceleration.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosWebGpuTensorAcceleration.types": {
+      "file": "src/core/eosWebGpuTensorAcceleration.types.ts",
+      "baseName": "eosWebGpuTensorAcceleration.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosWebGpuTensorAcceleration.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosWebGpuTensorEngine": {
       "file": "src/core/eosWebGpuTensorEngine.ts",
       "baseName": "eosWebGpuTensorEngine",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosWebGpuTopology": {
       "file": "src/core/eosWebGpuTopology.ts",
@@ -9383,9 +10760,42 @@
     "eosWebhookFanoutDispatcher": {
       "file": "src/core/eosWebhookFanoutDispatcher.ts",
       "baseName": "eosWebhookFanoutDispatcher",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosWorkStealingScheduler": {
+      "file": "src/core/eosWorkStealingScheduler.ts",
+      "baseName": "eosWorkStealingScheduler",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliWorkStealingScheduler.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosWorkStealingScheduler.types": {
+      "file": "src/core/eosWorkStealingScheduler.types.ts",
+      "baseName": "eosWorkStealingScheduler.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosWorkStealingScheduler.ts",
+          "category": "core"
+        }
+      ]
     },
     "eosWorkerTribunal": {
       "file": "src/core/eosWorkerTribunal.ts",
@@ -9447,6 +10857,34 @@
       "consumers": [
         {
           "consumerPath": "src/core/eosZ3WasmProver.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosZeroCopyIpcRingBuffer": {
+      "file": "src/core/eosZeroCopyIpcRingBuffer.ts",
+      "baseName": "eosZeroCopyIpcRingBuffer",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliZeroCopyIpcRingBuffer.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosZeroCopyIpcRingBuffer.types": {
+      "file": "src/core/eosZeroCopyIpcRingBuffer.types.ts",
+      "baseName": "eosZeroCopyIpcRingBuffer.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosZeroCopyIpcRingBuffer.ts",
           "category": "core"
         }
       ]
@@ -9559,6 +10997,34 @@
         }
       ]
     },
+    "eosZkCircuitSynthesizer": {
+      "file": "src/core/eosZkCircuitSynthesizer.ts",
+      "baseName": "eosZkCircuitSynthesizer",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliZkCircuitSynthesizer.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosZkCircuitSynthesizer.types": {
+      "file": "src/core/eosZkCircuitSynthesizer.types.ts",
+      "baseName": "eosZkCircuitSynthesizer.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosZkCircuitSynthesizer.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosZkStateProof": {
       "file": "src/core/eosZkStateProof.ts",
       "baseName": "eosZkStateProof",
@@ -9622,9 +11088,14 @@
     "samaelCodex": {
       "file": "src/core/samaelCodex.ts",
       "baseName": "samaelCodex",
-      "isConsumed": false,
-      "consumerCount": 0,
-      "consumers": []
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosEnterpriseFacade.ts",
+          "category": "core"
+        }
+      ]
     }
   }
 }

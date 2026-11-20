@@ -16,11 +16,16 @@ import { EosMultiAssetMacroFilterEngine } from "./eosMultiAssetMacroFilterEngine
 import { EosTriTemporalPropFirmEngine, type Candle } from "./eosTriTemporalPropFirmEngine.ts";
 import { EosUniversalAssetPayoutOptimizerEngine } from "./eosUniversalAssetPayoutOptimizerEngine.ts";
 import {
+  buildRejectedExpertVerdict as rejectVerdict,
+  buildWalkForwardBucketStats as buildBucketStats,
   classifyIqOptionAssetCategory,
   formatCotIso,
+  generateFullIqOptionUniverse153,
   getCotHourLabel,
+  recordAndLoadWalkForwardLedger,
   renderQuantCockpitHud,
 } from "./eosQuantCockpitHudRenderer.ts";
+export { generateFullIqOptionUniverse153, recordAndLoadWalkForwardLedger };
 import type {
   AssetTimeframeCandles,
   AtomicTriggerDecision,
@@ -36,85 +41,12 @@ import type {
   MarketRegimeType,
   QuantCockpitReport,
   QuantCockpitWalkForwardReceipt,
-  WalkForwardBucketStats,
   WalkForwardCalibrationReport,
   WalkForwardTradeSample,
 } from "./eosQuantCockpitWalkForwardEngine.types.ts";
 
 function clamp(v: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, v));
-}
-
-function buildBucketStats(key: string, items: readonly WalkForwardTradeSample[]): WalkForwardBucketStats {
-  let wins = 0;
-  let losses = 0;
-  let grossWin = 0;
-  let grossLoss = 0;
-  let netPnl = 0;
-
-  for (const t of items) {
-    netPnl += t.pnlUsd;
-    if (t.result === "win") {
-      wins += 1;
-      grossWin += Math.max(0, t.pnlUsd);
-    } else if (t.result === "loss") {
-      losses += 1;
-      grossLoss += Math.abs(t.pnlUsd);
-    }
-  }
-
-  const trades = wins + losses;
-  const winRatePercent = trades === 0 ? 0 : Number(((wins / trades) * 100).toFixed(2));
-  const profitFactor = grossLoss === 0 ? (grossWin > 0 ? 99.0 : 0) : Number((grossWin / grossLoss).toFixed(2));
-  const expectancyUsd = trades === 0 ? 0 : Number((netPnl / trades).toFixed(2));
-  const quarantined = trades >= 20 && winRatePercent < 52.0;
-
-  return {
-    key,
-    trades,
-    wins,
-    losses,
-    winRatePercent,
-    netPnlUsd: Number(netPnl.toFixed(2)),
-    profitFactor,
-    expectancyUsd,
-    quarantined,
-  };
-}
-
-function rejectVerdict(
-  asset: ClassifiedIqOptionAsset,
-  spotPrice: number,
-  regime: MarketRegimeType,
-  strategy: ExpertStrategyType,
-  status: ExpertAssetVerdict["status"],
-  reason: string,
-  extra?: Partial<
-    Pick<ExpertAssetVerdict, "adx" | "rsi" | "estimatedWinRate" | "expectedValuePerDollar" | "confluenceScore">
-  >,
-): ExpertAssetVerdict {
-  return {
-    assetId: asset.assetId,
-    name: asset.name,
-    category: asset.category,
-    isOpen: asset.isOpen,
-    isOtc: asset.isOtc,
-    payoutPercent: asset.payoutPercent,
-    spotPrice,
-    regime,
-    strategy,
-    direction: null,
-    estimatedWinRate: extra?.estimatedWinRate ?? 0,
-    breakEvenWinRate: asset.breakEvenWinRate,
-    expectedValuePerDollar: extra?.expectedValuePerDollar ?? 0,
-    keyLevel: EosUniversalAssetPayoutOptimizerEngine.detectKeyLevel(spotPrice),
-    adx: extra?.adx ?? 0,
-    rsi: extra?.rsi ?? 50,
-    confluenceScore: extra?.confluenceScore ?? 0,
-    expertScore: 0,
-    status,
-    reason,
-  };
 }
 
 export class EosQuantCockpitWalkForwardEngine {
@@ -653,17 +585,10 @@ export class EosQuantCockpitWalkForwardEngine {
     };
   }
 
-  /**
-   * FR-376-07: Non-Vacuous Audit of all 7 SPEC-376 Invariants & SHA-256 Receipt.
-   */
+  /** FR-376-07: Non-Vacuous Audit of all 7 SPEC-376 Invariants & SHA-256 Receipt (Full 156+ Universe). */
   public static audit(targetDir = process.cwd()): QuantCockpitWalkForwardReceipt {
     const sampleAssets: IqOptionRawAsset[] = [
-      { asset_id: 1861, name: "EUR/USD", is_open: true, profit_percent: 92, precision: 6 },
-      { asset_id: 1912, name: "Gold", is_open: true, profit_percent: 92, precision: 5 },
-      { asset_id: 1916, name: "Bitcoin", is_open: true, profit_percent: 90, precision: 4 },
-      { asset_id: 1910, name: "Apple Inc.", is_open: true, profit_percent: 92, precision: 4 },
-      { asset_id: 1470, name: "US 500", is_open: true, profit_percent: 92, precision: 6 },
-      { asset_id: 2145, name: "Pepe (OTC)", is_open: true, profit_percent: 92, precision: 6 },
+      ...generateFullIqOptionUniverse153(),
       { asset_id: 9901, name: "USD/CHF Spike Test", is_open: true, profit_percent: 88, precision: 5 },
       { asset_id: 9902, name: "Low Payout Test", is_open: true, profit_percent: 72, precision: 5 },
     ];

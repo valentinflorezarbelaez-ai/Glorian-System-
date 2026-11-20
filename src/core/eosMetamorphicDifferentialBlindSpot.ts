@@ -15,29 +15,14 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { createMulberry32 } from "./eosKernelPrimitives.ts";
-import type {
-  BlindSpotErrorCode,
-  BlindSpotHunterAuditReceipt,
-  BoundaryFuzzCampaignOptions,
-  BoundaryFuzzCampaignResult,
-  BoundaryFuzzOutcome,
-  DifferentialCampaignOptions,
-  DifferentialCampaignResult,
-  FleetBlindSpotAuditReceipt,
-  FleetProjectBlindSpotReport,
-  MetamorphicCampaignOptions,
-  MetamorphicCampaignResult,
-  StructuralPropertyOptions,
-  StructuralPropertyReport,
-  SyncBoundaryFuzzCampaignOptions,
-} from "./eosMetamorphicDifferentialBlindSpot.types.ts";
+import type * as BS from "./eosMetamorphicDifferentialBlindSpot.types.ts";
 
 export * from "./eosMetamorphicDifferentialBlindSpot.types.ts";
 
 export class BlindSpotError extends Error {
-  public readonly code: BlindSpotErrorCode;
+  public readonly code: BS.BlindSpotErrorCode;
 
-  constructor(code: BlindSpotErrorCode, message: string) {
+  constructor(code: BS.BlindSpotErrorCode, message: string) {
     super(`${code}: ${message}`);
     this.code = code;
     this.name = "BlindSpotError";
@@ -45,7 +30,6 @@ export class BlindSpotError extends Error {
 }
 
 const ADVERSARIAL_NUMBERS: readonly number[] = [0, -0, 1, -1, 2, -2, 9, 10, 11, 17.99999, 18, 100, -100, 1e9, -1e9];
-
 const ADVERSARIAL_STRINGS: readonly string[] = [
   "",
   "   ",
@@ -67,7 +51,7 @@ interface FuzzAccumulator {
 }
 
 function initFuzzAccumulator(
-  options: Pick<BoundaryFuzzCampaignOptions, "targetName" | "seed" | "iterations" | "customCorpus"> & {
+  options: Pick<BS.BoundaryFuzzCampaignOptions, "targetName" | "seed" | "iterations" | "customCorpus"> & {
     handler: unknown;
   },
 ): FuzzAccumulator {
@@ -98,7 +82,7 @@ function recordFuzzFailure(acc: FuzzAccumulator, payload: unknown, reason: strin
   }
 }
 
-function recordFuzzOutcome(acc: FuzzAccumulator, payload: unknown, outcome: BoundaryFuzzOutcome): void {
+function recordFuzzOutcome(acc: FuzzAccumulator, payload: unknown, outcome: BS.BoundaryFuzzOutcome): void {
   const code = Number.isInteger(outcome?.statusCode) ? outcome.statusCode : 500;
   acc.statusCounts[String(code)] = (acc.statusCounts[String(code)] ?? 0) + 1;
   if (code >= 500) {
@@ -113,7 +97,7 @@ function recordFuzzException(acc: FuzzAccumulator, payload: unknown, err: unknow
   recordFuzzFailure(acc, payload, err instanceof Error ? err.message : String(err));
 }
 
-function finalizeFuzzAccumulator(acc: FuzzAccumulator): BoundaryFuzzCampaignResult {
+function finalizeFuzzAccumulator(acc: FuzzAccumulator): BS.BoundaryFuzzCampaignResult {
   const totalFailures = acc.unhandledExceptionCount + acc.http5xxCount;
   const stabilityScore = Number(((acc.iterations - totalFailures) / acc.iterations).toFixed(6));
   const body = {
@@ -170,19 +154,16 @@ export function canonicalSerialize(value: unknown, seen = new WeakSet<object>())
   if (typeof value === "number") {
     if (Object.is(value, -0)) return "-0";
     if (Number.isNaN(value)) return '"[NaN]"';
-    if (!Number.isFinite(value)) return value > 0 ? '"[Infinity]"' : '"[-Infinity]"';
-    return String(value);
+    return Number.isFinite(value) ? String(value) : value > 0 ? '"[Infinity]"' : '"[-Infinity]"';
   }
-  if (typeof value === "boolean" || typeof value === "bigint") return JSON.stringify(String(value));
-  if (typeof value === "string") return JSON.stringify(value);
+  if (typeof value === "boolean" || typeof value === "bigint" || typeof value === "string") {
+    return JSON.stringify(typeof value === "string" ? value : String(value));
+  }
   if (typeof value === "function" || typeof value === "symbol") return JSON.stringify(`[${typeof value}]`);
   if (typeof value === "object") {
     if (seen.has(value)) return '"[Circular]"';
     seen.add(value);
-    if (Array.isArray(value)) {
-      const items = value.map((v) => canonicalSerialize(v, seen));
-      return `[${items.join(",")}]`;
-    }
+    if (Array.isArray(value)) return `[${value.map((v) => canonicalSerialize(v, seen)).join(",")}]`;
     const entries = Object.entries(value as Record<string, unknown>)
       .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
       .map(([k, v]) => `${JSON.stringify(k)}:${canonicalSerialize(v, seen)}`);
@@ -202,40 +183,31 @@ function generateArbitraryIntArray(nextFloat: () => number, minLen = 0, maxLen =
 
 /** Generate arbitrary structural JSON trees (null, booleans, boundary numbers, strings, arrays, objects). */
 export function generateArbitraryJsonValue(nextFloat: () => number, depth = 0, maxDepth = 3): unknown {
-  const allowComposite = depth < maxDepth;
-  const pick = Math.floor(nextFloat() * (allowComposite ? 6 : 4));
-  switch (pick) {
-    case 0:
-      return null;
-    case 1:
-      return nextFloat() < 0.5;
-    case 2:
-      return nextFloat() < 0.5
-        ? ADVERSARIAL_NUMBERS[Math.floor(nextFloat() * ADVERSARIAL_NUMBERS.length)]
-        : Number(((nextFloat() - 0.5) * 10000).toFixed(4));
-    case 3:
-      if (nextFloat() < 0.6) {
-        return ADVERSARIAL_STRINGS[Math.floor(nextFloat() * ADVERSARIAL_STRINGS.length)];
-      }
-      return `token_${Math.floor(nextFloat() * 100000)}`;
-    case 4:
-      return Array.from({ length: Math.floor(nextFloat() * 7) }, () =>
-        generateArbitraryJsonValue(nextFloat, depth + 1, maxDepth),
-      );
-    default: {
-      const keyPool = ["id", "age", "seed", "method", "params", "name", "tag", "value", "commitSha"];
-      const obj: Record<string, unknown> = {};
-      const keys = Math.floor(nextFloat() * 5);
-      for (let i = 0; i < keys; i++) {
-        obj[keyPool[Math.floor(nextFloat() * keyPool.length)]] = generateArbitraryJsonValue(
-          nextFloat,
-          depth + 1,
-          maxDepth,
-        );
-      }
-      return obj;
-    }
+  const pick = Math.floor(nextFloat() * (depth < maxDepth ? 6 : 4));
+  if (pick === 0) return null;
+  if (pick === 1) return nextFloat() < 0.5;
+  if (pick === 2) {
+    return nextFloat() < 0.5
+      ? ADVERSARIAL_NUMBERS[Math.floor(nextFloat() * ADVERSARIAL_NUMBERS.length)]
+      : Number(((nextFloat() - 0.5) * 10000).toFixed(4));
   }
+  if (pick === 3) {
+    return nextFloat() < 0.6
+      ? ADVERSARIAL_STRINGS[Math.floor(nextFloat() * ADVERSARIAL_STRINGS.length)]
+      : `token_${Math.floor(nextFloat() * 100000)}`;
+  }
+  if (pick === 4) {
+    return Array.from({ length: Math.floor(nextFloat() * 7) }, () =>
+      generateArbitraryJsonValue(nextFloat, depth + 1, maxDepth),
+    );
+  }
+  const keyPool = ["id", "age", "seed", "method", "params", "name", "tag", "value", "commitSha"];
+  const obj: Record<string, unknown> = {};
+  const keys = Math.floor(nextFloat() * 5);
+  for (let i = 0; i < keys; i++) {
+    obj[keyPool[Math.floor(nextFloat() * keyPool.length)]] = generateArbitraryJsonValue(nextFloat, depth + 1, maxDepth);
+  }
+  return obj;
 }
 
 function safePredicate<T>(predicate: (v: T) => boolean, value: T): boolean {
@@ -336,19 +308,19 @@ export function shrinkJsonValue(
   return { minimal: current, steps };
 }
 
+function validateRequiredStringsAndFns(cond: boolean, msg: string): void {
+  if (cond) throw new BlindSpotError("BLINDSPOT_INVALID_PARAMETERS", msg);
+}
+
 export class EosMetamorphicDifferentialBlindSpotCore {
   /** Pillar 1: Check invariant over seeded structural values and shrink counterexamples recursively. */
   public static checkStructuralProperty<T = unknown>(
-    options: StructuralPropertyOptions<T>,
-  ): StructuralPropertyReport<T> {
-    if (
-      !options ||
-      typeof options.name !== "string" ||
-      !options.name.trim() ||
-      typeof options.predicate !== "function"
-    ) {
-      throw new BlindSpotError("BLINDSPOT_INVALID_PARAMETERS", "name and predicate function are required");
-    }
+    options: BS.StructuralPropertyOptions<T>,
+  ): BS.StructuralPropertyReport<T> {
+    validateRequiredStringsAndFns(
+      !options || typeof options.name !== "string" || !options.name.trim() || typeof options.predicate !== "function",
+      "name and predicate function are required",
+    );
     const seed = normalizeSeed(options.seed);
     const runs = normalizePositiveInt(options.runs, 200, 1, 5000, "runs");
     const maxDepth = normalizePositiveInt(options.maxDepth, 3, 0, 6, "maxDepth");
@@ -377,34 +349,29 @@ export class EosMetamorphicDifferentialBlindSpotCore {
         return { ...body, sha256Digest: sha256Hex(body) };
       }
     }
-
     const body = { name: options.name.trim(), seed, runsExecuted: runs, passed: true, shrinkStepsTaken: 0 };
     return { ...body, sha256Digest: sha256Hex(body) };
   }
 
   /** Pillar 2: Execute Differential Testing Oracle comparing reference vs candidate outputs. */
   public static runDifferentialCampaign<T = number[]>(
-    options: DifferentialCampaignOptions<T>,
-  ): DifferentialCampaignResult {
-    if (
+    options: BS.DifferentialCampaignOptions<T>,
+  ): BS.DifferentialCampaignResult {
+    validateRequiredStringsAndFns(
       !options ||
-      typeof options.targetName !== "string" ||
-      !options.targetName.trim() ||
-      typeof options.referenceFn !== "function" ||
-      typeof options.candidateFn !== "function"
-    ) {
-      throw new BlindSpotError("BLINDSPOT_INVALID_PARAMETERS", "targetName, referenceFn, and candidateFn are required");
-    }
+        typeof options.targetName !== "string" ||
+        !options.targetName.trim() ||
+        typeof options.referenceFn !== "function" ||
+        typeof options.candidateFn !== "function",
+      "targetName, referenceFn, and candidateFn are required",
+    );
     const seed = normalizeSeed(options.seed);
     const runs = normalizePositiveInt(options.runs, 200, 1, 5000, "runs");
     const maxShrinkSteps = normalizePositiveInt(options.maxShrinkSteps, 128, 1, 1024, "maxShrinkSteps");
     const nextFloat = createBlindSpotPrng(seed);
-
     const isEquivalentOn = (val: unknown): boolean => {
       try {
-        const ref = options.referenceFn(val as T);
-        const cand = options.candidateFn(val as T);
-        return canonicalSerialize(ref) === canonicalSerialize(cand);
+        return canonicalSerialize(options.referenceFn(val as T)) === canonicalSerialize(options.candidateFn(val as T));
       } catch {
         return false;
       }
@@ -435,19 +402,18 @@ export class EosMetamorphicDifferentialBlindSpotCore {
     }
 
     const shrunk = shrinkJsonValue(firstDiverging, isEquivalentOn, maxShrinkSteps);
-    let referenceOutput: unknown;
-    let candidateOutput: unknown;
-    let candidateError: string | undefined;
-    try {
-      referenceOutput = options.referenceFn(shrunk.minimal as T);
-    } catch (err) {
-      referenceOutput = `[Error: ${err instanceof Error ? err.message : String(err)}]`;
-    }
-    try {
-      candidateOutput = options.candidateFn(shrunk.minimal as T);
-    } catch (err) {
-      candidateError = err instanceof Error ? err.message : String(err);
-    }
+    const evalSafe = (fn: (x: T) => unknown) => {
+      try {
+        return { value: fn(shrunk.minimal as T), error: undefined };
+      } catch (err) {
+        return {
+          value: `[Error: ${err instanceof Error ? err.message : String(err)}]`,
+          error: err instanceof Error ? err.message : String(err),
+        };
+      }
+    };
+    const refRes = evalSafe(options.referenceFn);
+    const candRes = evalSafe(options.candidateFn);
 
     const body = {
       targetName: options.targetName.trim(),
@@ -457,16 +423,16 @@ export class EosMetamorphicDifferentialBlindSpotCore {
       equivalent: false,
       initialDivergingInput: firstDiverging,
       minimalDivergingInput: shrunk.minimal,
-      referenceOutput,
-      candidateOutput,
-      ...(candidateError !== undefined ? { candidateError } : {}),
+      referenceOutput: refRes.value,
+      candidateOutput: candRes.error === undefined ? candRes.value : undefined,
+      ...(candRes.error !== undefined ? { candidateError: candRes.error } : {}),
       shrinkStepsTaken: shrunk.steps,
     };
     return { ...body, sha256Digest: sha256Hex(body) };
   }
 
   /** Pillar 3: Verify mathematical Metamorphic Relations without precomputed ground-truth labels. */
-  public static verifyMetamorphicRelation(options: MetamorphicCampaignOptions): MetamorphicCampaignResult {
+  public static verifyMetamorphicRelation(options: BS.MetamorphicCampaignOptions): BS.MetamorphicCampaignResult {
     if (!options || typeof options.relation !== "string") {
       throw new BlindSpotError("BLINDSPOT_INVALID_PARAMETERS", "metamorphic relation name is required");
     }
@@ -574,7 +540,9 @@ export class EosMetamorphicDifferentialBlindSpotCore {
   }
 
   /** Synchronous 500-payload boundary fuzzing campaign (zero unhandled 500s). */
-  public static runBoundaryFuzzCampaignSync(options: SyncBoundaryFuzzCampaignOptions): BoundaryFuzzCampaignResult {
+  public static runBoundaryFuzzCampaignSync(
+    options: BS.SyncBoundaryFuzzCampaignOptions,
+  ): BS.BoundaryFuzzCampaignResult {
     const acc = initFuzzAccumulator(options);
     for (let i = 0; i < acc.iterations; i++) {
       const payload = i < acc.corpus.length ? acc.corpus[i] : generateArbitraryJsonValue(acc.nextFloat, 0, 3);
@@ -589,8 +557,8 @@ export class EosMetamorphicDifferentialBlindSpotCore {
 
   /** Pillar 4: Async 500-payload API/handler boundary fuzzing campaign (zero unhandled 500s). */
   public static async runBoundaryFuzzCampaign(
-    options: BoundaryFuzzCampaignOptions,
-  ): Promise<BoundaryFuzzCampaignResult> {
+    options: BS.BoundaryFuzzCampaignOptions,
+  ): Promise<BS.BoundaryFuzzCampaignResult> {
     const acc = initFuzzAccumulator(options);
     for (let i = 0; i < acc.iterations; i++) {
       const payload = i < acc.corpus.length ? acc.corpus[i] : generateArbitraryJsonValue(acc.nextFloat, 0, 3);
@@ -604,7 +572,7 @@ export class EosMetamorphicDifferentialBlindSpotCore {
   }
 
   /** Pillar 5: Deterministic full self-audit across shrinking, differential, metamorphic, and 500-payload fuzzing. */
-  public audit(seedInput = 2026341): BlindSpotHunterAuditReceipt {
+  public audit(seedInput = 2026341): BS.BlindSpotHunterAuditReceipt {
     const seed = normalizeSeed(seedInput);
 
     const naiveSortCheck = EosMetamorphicDifferentialBlindSpotCore.checkStructuralProperty<number[]>({
@@ -612,10 +580,7 @@ export class EosMetamorphicDifferentialBlindSpotCore {
       seed,
       runs: 120,
       generatorMode: "INT_ARRAY",
-      predicate: (arr) => {
-        const sorted = [...arr].sort();
-        return sorted.every((v, idx) => idx === 0 || sorted[idx - 1] <= v);
-      },
+      predicate: (arr) => [...arr].sort().every((v, idx, s) => idx === 0 || s[idx - 1] <= v),
     });
     const structuralShrinkCaughtSortBug =
       !naiveSortCheck.passed &&
@@ -687,10 +652,7 @@ export class EosMetamorphicDifferentialBlindSpotCore {
     return { ...body, sha256Digest: sha256Hex(body) };
   }
 
-  /**
-   * Audits registered fleet projects from docs/projects/registry.json with boundary fuzzing
-   * (SPEC-341 / SPEC-124 Fleet Extension / SPEC-342 Verification Honesty).
-   */
+  /** Audits registered fleet projects from docs/projects/registry.json with boundary fuzzing (SPEC-341 / SPEC-342). */
   public auditFleetProjects(
     options: {
       projectRoot?: string;
@@ -698,7 +660,7 @@ export class EosMetamorphicDifferentialBlindSpotCore {
       iterationsPerProject?: number;
       probeTransport?: (url: string, payload: unknown, projectId: string) => { statusCode: number; error?: string };
     } = {},
-  ): FleetBlindSpotAuditReceipt {
+  ): BS.FleetBlindSpotAuditReceipt {
     const root = options.projectRoot ?? process.cwd();
     const registryPath = path.join(root, "docs/projects/registry.json");
     const seed = options.seed ?? 2026341;
@@ -717,7 +679,7 @@ export class EosMetamorphicDifferentialBlindSpotCore {
     const mode = hasLiveTransport ? ("LIVE_PROBED" as const) : ("OFFLINE_NOT_VERIFIED" as const);
 
     let stabilitySum = 0;
-    const reports: FleetProjectBlindSpotReport[] = projectsData.map((p, i) => {
+    const reports: BS.FleetProjectBlindSpotReport[] = projectsData.map((p, i) => {
       const pId = typeof p.id === "string" ? p.id : `project-${i + 1}`;
       const base = {
         projectId: pId,

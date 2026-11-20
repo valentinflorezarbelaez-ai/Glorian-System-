@@ -272,22 +272,7 @@ export type {
   TensorBenchmarkResult,
 } from "./eosQuantizedTensorInferenceCore.types.ts";
 export { EosUniversalFleetSyncCore } from "./eosUniversalFleetSyncCore.ts";
-export type {
-  FleetSyncState,
-  SoundcheckGrade,
-  FleetProjectRegistryEntry,
-  FleetRegistryData,
-  FleetProjectResolved,
-  FleetProjectSyncResult,
-  FleetProjectSoundcheck,
-  FleetSyncOptions,
-  FleetSyncReport,
-  FleetAuditReport,
-  FleetHealingResult,
-  FleetHealAllReport,
-  FleetSyncOperationType,
-  FleetSyncReceipt,
-} from "./eosUniversalFleetSyncCore.types.ts";
+export * from "./eosUniversalFleetSyncCore.types.ts";
 export { EosOtlpDistributedTracingCore, ActiveSpan } from "./eosOtlpDistributedTracingCore.ts";
 export type {
   SpanKind,
@@ -373,54 +358,13 @@ export type {
   VssReconstructionResult,
 } from "./eosVerifiableSecretSharingCore.types.ts";
 export { EosJarvisSdlcOrchestratorCore } from "./eosJarvisSdlcOrchestratorCore.ts";
-export type {
-  CompanyPresetId,
-  SdlcExecutionTrack,
-  JarvisMissionStatus,
-  JarvisFailureCategory,
-  AssimilateCompanyDnaOptions,
-  CompanyDnaProfile,
-  JarvisSdlcDirective,
-  FeatureFlagGuardContract,
-  JarvisValidationInput,
-  JarvisHealDiagnosis,
-  SoundcheckEvaluation,
-  JarvisMissionState,
-  CompileAutopilotRulesOptions,
-  IdeAutopilotRulesPackage,
-} from "./eosJarvisSdlcOrchestratorCore.types.ts";
+export * from "./eosJarvisSdlcOrchestratorCore.types.ts";
 export { EosPolyglotToolchainAdapterCore } from "./eosPolyglotToolchainAdapterCore.ts";
-export type {
-  PolyglotStackId,
-  DetectPolyglotStackOptions,
-  PolyglotCommandMatrix,
-  HexagonalDirectoryMap,
-  PolyglotToolchainProfile,
-  NormalizePolyglotReportInput,
-  NormalizedPolyglotVerification,
-} from "./eosPolyglotToolchainAdapterCore.types.ts";
+export * from "./eosPolyglotToolchainAdapterCore.types.ts";
 export { EosIssueToPrCanaryBridgeCore } from "./eosIssueToPrCanaryBridgeCore.ts";
-export type {
-  IssueSourceSystem,
-  IssuePriorityLevel,
-  MigrationSafetyPattern,
-  RawIssuePayloadInput,
-  CanonicalIssueDescriptor,
-  DiffFileEntry,
-  AnalyzeDiffAndMigrationInput,
-  DiffAndMigrationAuditReport,
-  CompileCanaryPlanInput,
-  CanaryStageDescriptor,
-  CanaryRolloutAndRollbackPlan,
-} from "./eosIssueToPrCanaryBridgeCore.types.ts";
+export * from "./eosIssueToPrCanaryBridgeCore.types.ts";
 export { EosStaffEngineerAdversarialJudgeCore } from "./eosStaffEngineerAdversarialJudgeCore.ts";
-export type {
-  AdversarialVerdictStatus,
-  StaffPillarScores,
-  StaffJudgeInput,
-  JudgePersonaEvaluation,
-  StaffAdversarialVerdictReport,
-} from "./eosStaffEngineerAdversarialJudgeCore.types.ts";
+export * from "./eosStaffEngineerAdversarialJudgeCore.types.ts";
 export { EosLiveGitDiffPrInspectorCore } from "./eosLiveGitDiffPrInspectorCore.ts";
 export type { InspectLiveGitDiffOptions, LiveGitDiffInspectionReport } from "./eosLiveGitDiffPrInspectorCore.types.ts";
 export { EosRepoMapSymbolCompressorCore } from "./eosRepoMapSymbolCompressorCore.ts";

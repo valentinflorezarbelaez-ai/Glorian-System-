@@ -153,41 +153,19 @@ export class EosWasmSimd128VectorArenaCore {
     return out;
   }
 
+  private static simdOp(op: number): number[] {
+    return [SIMD_PREFIX, ...encodeUleb128(op)];
+  }
+
   private static encodeSimdMaxJoinBody(): number[] {
-    const loadOp = encodeUleb128(0);
-    const body = [
-      1,
-      1,
-      WASM_TYPE_V128,
-      0x20,
-      2,
-      0x20,
-      0,
-      SIMD_PREFIX,
-      ...loadOp,
-      2,
-      0,
-      0x20,
-      1,
-      SIMD_PREFIX,
-      ...loadOp,
-      2,
-      0,
-      SIMD_PREFIX,
-      ...encodeUleb128(0xb8),
-      0x22,
-      3,
-      SIMD_PREFIX,
-      ...encodeUleb128(11),
-      2,
-      0,
-      ...this.encodeLaneReduce(3, 0x6a),
-    ];
+    const ld = this.simdOp(0);
+    const body = [1, 1, WASM_TYPE_V128, 0x20, 2, 0x20, 0, ...ld, 2, 0, 0x20, 1, ...ld, 2, 0, ...this.simdOp(0xb8)];
+    body.push(0x22, 3, ...this.simdOp(11), 2, 0, ...this.encodeLaneReduce(3, 0x6a));
     return [...encodeUleb128(body.length), ...body];
   }
 
   private static encodeSimdMaxJoinLoopBody(): number[] {
-    const loadOp = encodeUleb128(0);
+    const ld = this.simdOp(0);
     const body: number[] = [
       2,
       1,
@@ -198,24 +176,8 @@ export class EosWasmSimd128VectorArenaCore {
       0,
       0x21,
       4,
-      SIMD_PREFIX,
-      ...encodeUleb128(12),
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
+      ...this.simdOp(12),
+      ...new Array<number>(16).fill(0),
       0x21,
       5,
       0x02,
@@ -239,8 +201,7 @@ export class EosWasmSimd128VectorArenaCore {
       0x20,
       4,
       0x6a,
-      SIMD_PREFIX,
-      ...loadOp,
+      ...ld,
       2,
       0,
       0x20,
@@ -248,24 +209,20 @@ export class EosWasmSimd128VectorArenaCore {
       0x20,
       4,
       0x6a,
-      SIMD_PREFIX,
-      ...loadOp,
+      ...ld,
       2,
       0,
-      SIMD_PREFIX,
-      ...encodeUleb128(0xb8),
+      ...this.simdOp(0xb8),
       0x22,
       6,
-      SIMD_PREFIX,
-      ...encodeUleb128(11),
+      ...this.simdOp(11),
       2,
       0,
       0x20,
       5,
       0x20,
       6,
-      SIMD_PREFIX,
-      ...encodeUleb128(0xae),
+      ...this.simdOp(0xae),
       0x21,
       5,
       0x20,
@@ -284,30 +241,10 @@ export class EosWasmSimd128VectorArenaCore {
     return [...encodeUleb128(body.length), ...body];
   }
 
-  private static encodePairSimdBody(simdOp: number, reduceOp: number): number[] {
-    const loadOp = encodeUleb128(0);
-    const body = [
-      1,
-      1,
-      WASM_TYPE_V128,
-      0x20,
-      0,
-      SIMD_PREFIX,
-      ...loadOp,
-      2,
-      0,
-      0x20,
-      1,
-      SIMD_PREFIX,
-      ...loadOp,
-      2,
-      0,
-      SIMD_PREFIX,
-      ...encodeUleb128(simdOp),
-      0x21,
-      2,
-      ...this.encodeLaneReduce(2, reduceOp),
-    ];
+  private static encodePairSimdBody(simdOpCode: number, reduceOp: number): number[] {
+    const ld = this.simdOp(0);
+    const body = [1, 1, WASM_TYPE_V128, 0x20, 0, ...ld, 2, 0, 0x20, 1, ...ld, 2, 0, ...this.simdOp(simdOpCode)];
+    body.push(0x21, 2, ...this.encodeLaneReduce(2, reduceOp));
     return [...encodeUleb128(body.length), ...body];
   }
 

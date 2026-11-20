@@ -3,9 +3,16 @@
  * Verifies SPEC-376 / CHANGE-238 (BDD-2041..BDD-2048)
  */
 
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { EosQuantCockpitWalkForwardEngine } from "../src/core/eosQuantCockpitWalkForwardEngine.ts";
+import {
+  EosQuantCockpitWalkForwardEngine,
+  generateFullIqOptionUniverse153,
+  recordAndLoadWalkForwardLedger,
+} from "../src/core/eosQuantCockpitWalkForwardEngine.ts";
 import { EosUniversalAssetPayoutOptimizerEngine } from "../src/core/eosUniversalAssetPayoutOptimizerEngine.ts";
 import { PHASE8_TOOL_DEFINITIONS } from "../src/mcp/tools/eosMcpPhase8ToolDefinitions.ts";
 import { createPhase8AgiHandlers } from "../src/mcp/tools/eosMcpPhase8AgiHandlers.ts";
@@ -256,9 +263,33 @@ describe("SPEC-376: Autonomous Quant Cockpit, Second-59.8 Trigger & Walk-Forward
     );
   });
 
-  it("BDD-2048: Cryptographic Audit Receipt & Phase-8 MCP Registration", () => {
+  it("BDD-2048: Cryptographic Audit Receipt, 156+ Universe, Durable Ledger & Phase-8 MCP Registration", () => {
+    const fullCatalog = generateFullIqOptionUniverse153();
+    assert.ok(fullCatalog.length >= 153, `Expected >= 153 assets, got ${fullCatalog.length}`);
+
+    const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "eos-wf-ledger-"));
+    try {
+      const trades = recordAndLoadWalkForwardLedger(tmpRoot, {
+        timestampMs: Date.UTC(2026, 10, 20, 15, 0, 0),
+        assetName: "EUR/USD",
+        category: "FOREX",
+        strategy: "TREND_PULLBACK",
+        direction: "CALL",
+        stakeUsd: 100,
+        payoutPercent: 92,
+        pnlUsd: 92,
+        result: "win",
+      });
+      assert.equal(trades.length, 1);
+      assert.equal(trades[0].assetName, "EUR/USD");
+    } finally {
+      fs.rmSync(tmpRoot, { recursive: true, force: true });
+    }
+
     const receipt = EosQuantCockpitWalkForwardEngine.audit();
     assert.equal(receipt.status, "VERIFIED");
+    assert.ok(receipt.metrics.liveSampleAssetsIngested >= 153);
+    assert.equal(receipt.metrics.categoriesCovered, 6);
     assert.equal(receipt.receiptHash.length, 64);
     for (const [k, v] of Object.entries(receipt.invariants)) {
       assert.equal(v, true, `Invariant ${k} must hold true`);
