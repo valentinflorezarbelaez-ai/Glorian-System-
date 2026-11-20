@@ -1,7 +1,7 @@
 {
   "specId": "SPEC-354",
   "changeId": "CHANGE-216",
-  "timestamp": "2026-11-20T16:14:06.331Z",
+  "timestamp": "2026-11-20T16:25:54.556Z",
   "environment": {
     "nodeVersion": "v24.19.0",
     "platform": "win32",
@@ -23,8 +23,8 @@
         32,
         32
       ],
-      "emulatorTimeUs": 2645.7,
-      "emulatorGflops": 0.024770760101296446,
+      "emulatorTimeUs": 3568.9,
+      "emulatorGflops": 0.018363081061391465,
       "checksumMatch": true,
       "maxRelativeDelta": 0
     },
@@ -34,8 +34,8 @@
         1,
         128
       ],
-      "emulatorTimeUs": 110.5,
-      "emulatorGflops": 0.011583710407239819,
+      "emulatorTimeUs": 108,
+      "emulatorGflops": 0.011851851851851851,
       "checksumMatch": true,
       "maxRelativeDelta": 0
     },
@@ -45,8 +45,8 @@
         8,
         8
       ],
-      "emulatorTimeUs": 536.6,
-      "emulatorGflops": 0.016220648527767424,
+      "emulatorTimeUs": 435,
+      "emulatorGflops": 0.02000919540229885,
       "checksumMatch": true,
       "maxRelativeDelta": 0
     },
@@ -56,8 +56,8 @@
         16,
         10
       ],
-      "emulatorTimeUs": 113.5,
-      "emulatorGflops": 0.004229074889867841,
+      "emulatorTimeUs": 67.5,
+      "emulatorGflops": 0.007111111111111111,
       "checksumMatch": true,
       "maxRelativeDelta": 0
     }
