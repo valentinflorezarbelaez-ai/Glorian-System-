@@ -214,7 +214,6 @@ export const QUICK_HELP_TEXT = `
   eos dvfs:qos [--json]      Árbitro DMA memoria unificada, potencia CMOS y P-State DVFS (SPEC-257)
   eos beam:twiss [--json]    Óptica simpléctica FODO relativista, luminosidad IP y U0 (SPEC-258)
   eos ship [--ticket=ID]     Pipeline maestro pre-PR (SPEC-101..105 + SPEC-236..258 + Hygiene)
-
 🛡️ SEGURIDAD, CADENA DE SUMINISTRO & FORMAL METHODS:
   eos sbom                   Genera inventario CycloneDX v1.5 con atestación SHA-256
   eos attest:ship [--write]  Statement v1 In-Toto + Provenance SLSA v1.0 firmado Ed25519 (SPEC-245)
@@ -224,7 +223,6 @@ export const QUICK_HELP_TEXT = `
   eos bench:swe [--json]     Corpus dorado SWE-Bench adversarial con Recall, F1 y FPR (SPEC-246)
   eos staff:judge [--json]   Juicio dual adversarial Staff Engineer bloqueante pre-merge (SPEC-237)
   eos verify                 Ejecuta las 7 aduanas de seguridad SecDevOps (fail-closed)
-
 ⚡ RESILIENCIA BIG TECH & AUTO-REPARACIÓN:
   eos jarvis:demo [--json]   Demostración completa SDLC Modo Jarvis (ADN Spotify + Soundcheck 100)
   eos fleet:doctor [--dry]   Audita en paralelo concurrente los 9 proyectos de la flota (SPEC-134)
@@ -233,7 +231,6 @@ export const QUICK_HELP_TEXT = `
   eos swarm                  Consenso BFT (3f+1) con veto de seguridad y slashing (DeepMind)
   eos dashboard [start]      Inicia el panel visual de telemetría en tiempo real (localhost:4321)
   eos top                    Monitor de cabina soberana en tiempo real (memoria, latido, flota y ledger)
-
 📖 AYUDA Y GLOSARIO:
   eos guide                  Muestra el glosario de arquitectura y equivalencias de la industria
   eos help --all             Muestra la lista exhaustiva de todos los subcomandos registrados
@@ -772,9 +769,12 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:trading:status Estado de aislamiento demo, candados de riesgo y piso de trailing profit (SPEC-371)
   eos toolchain:trading:confluence Matriz de confluencia técnica de las 4 estrategias institucionales (SPEC-371)
   eos toolchain:trading:audit Auditoría formal de los 9 invariantes de riesgo y recibo SHA-256 (SPEC-371)
+  eos toolchain:aladdin:stress-test Prueba de estrés de cisnes negros históricos estilo Aladdin (SPEC-372)
+  eos toolchain:aladdin:allocate Asignación institucional All-Weather de Ray Dalio y deriva (SPEC-372)
+  eos toolchain:aladdin:var Métricas de riesgo VaR/CVaR y simulación Monte Carlo 10,000 rutas (SPEC-372)
+  eos toolchain:aladdin:audit Auditoría formal de preservación fiduciaria y recibo SHA-256 (SPEC-372)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
-
 📦 ÍNDICE DE ALIAS Y SUBCOMANDOS ESPECIALIZADOS (100% REGISTRADOS):
   fast, wal, bench:nano, daemon, transmute, optimize:v8, fuzz:target, swarm:arena, zk:attest, sea:compile, pq:encap, ast:synthesize, hnsw:search, graph:datalog, wasm:disasm, titans, anycast, octave, warp, apex, disruptor, ring, nubank, nu, frontier, router, squeezer, topology, wasm, soul, architect, introspect,
   evolution, shield, defense, mangle, sabotage, simulate:models, formal, tla, jepsen, chaos:net, vault, memory, temple, sol, mcts:plan, tla:model-check, raft:consensus, ans:compress, ans:decompress, pbft:status, pbft:slash, homomorphic:decrypt, mpc:add, mpc:multiply, vdf:beacon, unitotal:audit, fuzz:hypervisor,

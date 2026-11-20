@@ -780,3 +780,5 @@ export * from "./eosDeterministicReplayDebugger.ts";
 export * from "./eosDeterministicReplayDebugger.types.ts";
 export * from "./eosInstitutionalTradingEngine.ts";
 export * from "./eosInstitutionalTradingEngine.types.ts";
+export * from "./eosAladdinPortfolioRiskEngine.ts";
+export * from "./eosAladdinPortfolioRiskEngine.types.ts";

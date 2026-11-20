@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-20T01:04:43.956Z",
+  "timestampIso": "2026-11-20T01:24:58.060Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -7,14 +7,14 @@
   "allPassed": true,
   "hasJavaRuntime": true,
   "tlaJarPath": "C:\\Users\\valen\\Documents\\Glorian-System\\tools\\tla2tools.jar",
-  "totalConfiguredSpecs": 76,
+  "totalConfiguredSpecs": 77,
   "models": [
     {
       "specName": "LmaxDisruptor",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 20425,
-      "statesGenerated": 84397,
+      "distinctStates": 251,
+      "statesGenerated": 969,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -67,8 +67,8 @@
       "specName": "ZeroCopyRingBuffer",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 201,
-      "statesGenerated": 301,
+      "distinctStates": 39865,
+      "statesGenerated": 154381,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -76,8 +76,8 @@
       "specName": "JepsenDistributedChaos",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 116,
-      "statesGenerated": 10,
+      "distinctStates": 261,
+      "statesGenerated": 113,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -85,8 +85,8 @@
       "specName": "SimdQuantizedHnsw",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 624,
-      "statesGenerated": 560,
+      "distinctStates": 765,
+      "statesGenerated": 351,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -94,8 +94,8 @@
       "specName": "DistributedVectorMesh",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 636,
-      "statesGenerated": 5125,
+      "distinctStates": 486,
+      "statesGenerated": 573,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -690,6 +690,15 @@
       "passed": true,
       "distinctStates": 1020,
       "statesGenerated": 3093,
+      "violationInvariant": null,
+      "exitCode": 0
+    },
+    {
+      "specName": "AladdinPortfolioRiskEngine",
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 4,
+      "statesGenerated": 7,
       "violationInvariant": null,
       "exitCode": 0
     }

@@ -116,6 +116,7 @@ export const CONFIGURED_SPECS = [
   "EpisodicMemoryGraph",
   "DeterministicReplayDebugger",
   "InstitutionalTradingEngine",
+  "AladdinPortfolioRiskEngine",
 ];
 
 /**

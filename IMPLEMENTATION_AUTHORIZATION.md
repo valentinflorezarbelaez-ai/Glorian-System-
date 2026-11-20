@@ -3627,3 +3627,21 @@
   - `docs/plans/PLAN-233-INSTITUTIONAL-QUANTITATIVE-TRADING-ENGINE.md`
   - `docs/tasks/TASKS-233-INSTITUTIONAL-QUANTITATIVE-TRADING-ENGINE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-ALADDIN-PORTFOLIO-ENGINE`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-234` / `SPEC-372`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-234` (`SPEC-372`), Aladdin Institutional Portfolio & Multi-Factor Risk Engine: TLA+ Model 115 `docs/formal/AladdinPortfolioRiskEngine.tla` / `.cfg`; `src/core/eosAladdinPortfolioRiskEngine.types.ts` and `src/core/eosAladdinPortfolioRiskEngine.ts` (pure Layer-0 Dual-Vault Fiduciary Isolation, Parametric/Historical VaR/CVaR, 10,000-path Monte Carlo stochastic simulation via seeded Box-Muller PRNG, historical crisis stress testing for 2008/2020/1987/1970s, Ray Dalio All-Weather risk parity allocator with drift detection, and fractional Kelly capital governor); receipt `docs/evidence/ALADDIN_PORTFOLIO_RISK_RECEIPT.json`. Wire `toolchain:aladdin:stress-test`, `toolchain:aladdin:allocate`, `toolchain:aladdin:var`, `toolchain:aladdin:audit` and Phase 8 MCP tool `eos_aladdin_risk_audit`. Verify `BDD-2012`..`BDD-2018`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-234-ALADDIN-INSTITUTIONAL-PORTFOLIO-RISK-ENGINE.md`
+  - `openspec/changes/CHANGE-234-aladdin-institutional-portfolio-risk-engine.md`
+  - `openspec/specs/SPEC-372-aladdin-institutional-portfolio-risk-engine.md`
+  - `docs/plans/PLAN-234-ALADDIN-INSTITUTIONAL-PORTFOLIO-RISK-ENGINE.md`
+  - `docs/tasks/TASKS-234-ALADDIN-INSTITUTIONAL-PORTFOLIO-RISK-ENGINE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

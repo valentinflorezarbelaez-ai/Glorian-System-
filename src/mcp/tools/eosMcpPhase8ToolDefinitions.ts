@@ -501,4 +501,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       },
     },
   },
+  {
+    name: "eos_aladdin_risk_audit",
+    description:
+      "Audits the Aladdin Institutional Portfolio & Multi-Factor Risk Engine verifying dual-vault fiduciary isolation, Monte Carlo ruin probabilities, and All-Weather risk parity (SPEC-372).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

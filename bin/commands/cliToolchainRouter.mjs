@@ -320,6 +320,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliInstitutionalTradingEngine.mjs",
     fn: "handleInstitutionalTradingCommand",
   },
+  {
+    prefix: "toolchain:aladdin:",
+    file: "./cliAladdinRiskEngine.mjs",
+    fn: "handleAladdinCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

@@ -1,0 +1,19 @@
+{
+  "receiptId": "aladdin-rcpt-1795138229466",
+  "status": "VERIFIED",
+  "fiduciaryVaultSecurity": "SECURED",
+  "invariants": {
+    "zeroFiduciaryRuin": true,
+    "varThresholdBound": true,
+    "maxDrawdownGuard": true,
+    "deterministicAllocationSum": true
+  },
+  "metrics": {
+    "vaultAlphaPrincipal": 3000,
+    "probabilityOfRuin": 0,
+    "var99Percent": 7.39,
+    "cvar99Percent": 9.51
+  },
+  "receiptHash": "95353b6a5b2b75f4bcf8bc047f6f91398ce155eb4a6a068a0d32a0daecf26907",
+  "timestamp": 1795138229467
+}

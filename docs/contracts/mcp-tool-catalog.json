@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "863553577439ed61669a510e38e2a91c01d0d769e2d382e7120ebe5c25868db1",
-  "totalTools": 247,
+  "catalogSha256": "c1d267ecf3287ece3090a11d49551e5520209687cf3e194c27b4f8131a105ed3",
+  "totalTools": 248,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7278,6 +7278,21 @@
       },
       "annotations": {
         "title": "EOS institutional Trading Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_aladdin_risk_audit",
+      "description": "Audits the Aladdin Institutional Portfolio & Multi-Factor Risk Engine verifying dual-vault fiduciary isolation, Monte Carlo ruin probabilities, and All-Weather risk parity (SPEC-372).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS aladdin Risk Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

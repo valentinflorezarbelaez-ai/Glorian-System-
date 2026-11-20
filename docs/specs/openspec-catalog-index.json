@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 371,
-  "catalogSha256": "42115a0a5a9c93af9d70fcaeab3605775645700157babc48b9c9bf3e7cab160e",
+  "totalSpecs": 372,
+  "catalogSha256": "034b24703c5dc78cd3083e27b6e997ae58ebc5c29dbbcf2c8bdce188f20b6496",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3340,7 +3340,16 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-371-institutional-quantitative-trading-engine.md",
-      "sha256": "48536baa998e0636a4666937e4854afd96e7ff2310e1cffcf7427fa8fdfc17aa"
+      "sha256": "77aa2c8d69dc0ce0468229c1b635c6bb90ee71d686ee0feae25042e6bebdde29"
+    },
+    {
+      "id": "SPEC-372",
+      "title": "Aladdin Institutional Portfolio & Multi-Factor Risk Engine",
+      "status": "FORMALIZED",
+      "frCount": 1,
+      "bddCount": 7,
+      "file": "openspec/specs/SPEC-372-aladdin-institutional-portfolio-risk-engine.md",
+      "sha256": "4c37a7efa30c32661c4809fb88933d5b15c4fb79e61b7fced24bd06d90fccd82"
     }
   ]
 }
