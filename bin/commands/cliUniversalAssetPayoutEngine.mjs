@@ -17,6 +17,12 @@ const ROOT = path.resolve(__dirname, "../..");
 
 const HANDLERS = Object.create(null);
 
+function formatSpotPrice(price) {
+  if (price < 0.01) return price.toFixed(8);
+  if (price < 2.0) return price.toFixed(5);
+  return price.toFixed(2);
+}
+
 async function cmd_trading_universe(_ctx) {
   console.log("========================================================================");
   console.log("🌐 EOS SYSTEM — UNIVERSAL MULTI-ASSET CATALOG & DYNAMIC PAYOUT MATRIX");
@@ -42,7 +48,7 @@ async function cmd_trading_universe(_ctx) {
     );
     for (const q of catQuotes) {
       const evalResult = EosUniversalAssetPayoutOptimizerEngine.evaluateAssetQuote(q);
-      const spotStr = q.spotPrice < 1 ? q.spotPrice.toFixed(6) : q.spotPrice.toFixed(2);
+      const spotStr = formatSpotPrice(q.spotPrice);
       const digStr = `${q.digitalPayoutPercent}%`;
       const binStr = `${q.binaryPayoutPercent}%`;
       const bestStr = `${evalResult.optimalPayoutPercent}% (${evalResult.optimalMode})`;
@@ -62,13 +68,13 @@ async function cmd_trading_universe(_ctx) {
 }
 
 async function cmd_trading_payout_scan(_ctx) {
+  const quotes = EosUniversalAssetPayoutOptimizerEngine.generateCatalogQuotes();
+  const scanResult = EosUniversalAssetPayoutOptimizerEngine.scanUniversalMarket(quotes);
+
   console.log("========================================================================");
   console.log("⚡ EOS SYSTEM — ESCANEO UNIVERSAL CONCURRENTE & OPTIMIZADOR TOP-1");
   console.log("========================================================================");
-  console.log("  Analizando los 28 activos a 1 minuto (60s) con filtro de payout >= 80%...\n");
-
-  const quotes = EosUniversalAssetPayoutOptimizerEngine.generateCatalogQuotes();
-  const scanResult = EosUniversalAssetPayoutOptimizerEngine.scanUniversalMarket(quotes);
+  console.log(`  Analizando los ${quotes.length} activos a 1 minuto (60s) con filtro de payout >= 80%...\n`);
 
   console.log(
     `📊 Activos evaluados: ${scanResult.totalAssetsEvaluated} | Calificados (payout >= 80% + alineación): ${scanResult.qualifiedAssetsCount}`,
@@ -78,7 +84,7 @@ async function cmd_trading_payout_scan(_ctx) {
     "---------------------------------------------------------------------------------------------------------",
   );
   console.log(
-    `  ${"RANK".padEnd(4)} | ${"SÍMBOLO".padEnd(14)} | ${"MODO".padEnd(8)} | ${"PAYOUT".padEnd(8)} | ${"DIR".padEnd(6)} | ${"CONF".padEnd(6)} | ${"NIVEL CLAVE".padEnd(20)} | ${"SCORE".padEnd(6)}`,
+    `  ${"RANK".padEnd(4)} | ${"SÍMBOLO".padEnd(14)} | ${"MODO".padEnd(8)} | ${"PAYOUT".padEnd(8)} | ${"DIR".padEnd(6)} | ${"CONF".padEnd(6)} | ${"NIVEL CLAVE".padEnd(24)} | ${"SCORE".padEnd(6)}`,
   );
   console.log(
     "---------------------------------------------------------------------------------------------------------",
@@ -93,10 +99,10 @@ async function cmd_trading_payout_scan(_ctx) {
     const dirStr = (
       s.harmonicDirection === "CALL" ? "🟢 CALL" : s.harmonicDirection === "PUT" ? "🔴 PUT" : "⚪ N/A"
     ).padEnd(6);
-    const confStr = `${s.confluenceScore}/100`.padEnd(6);
+    const confStr = `${(s.confluenceScore * 100).toFixed(0)}%`.padEnd(6);
     const lvlStr = s.keyLevel.isNearKeyLevel
-      ? `${s.keyLevel.levelType} (${s.keyLevel.nearestLevel.toFixed(2)})`.padEnd(20)
-      : "NINGUNO".padEnd(20);
+      ? `${s.keyLevel.levelType} (${formatSpotPrice(s.keyLevel.nearestLevel)})`.padEnd(24)
+      : "NINGUNO".padEnd(24);
     const scoreStr = s.compositeQualityIndex.toFixed(2).padEnd(6);
     console.log(`  ${rStr} | ${symStr} | ${modeStr} | ${payStr} | ${dirStr} | ${confStr} | ${lvlStr} | ${scoreStr}`);
     rank++;
@@ -110,7 +116,7 @@ async function cmd_trading_payout_scan(_ctx) {
     console.log(`  - Modalidad Óptima    : ${el.optimalMode} (Payout: ${el.optimalPayoutPercent}%)`);
     console.log(`  - Dirección Operativa : ${el.harmonicDirection} a 60 segundos (M1)`);
     console.log(`  - Índice de Calidad   : ${el.compositeQualityIndex.toFixed(4)} pts`);
-    console.log(`  - Confluencia Fractal : ${el.confluenceScore}/100`);
+    console.log(`  - Confluencia Fractal : ${(el.confluenceScore * 100).toFixed(1)}%`);
     console.log(
       `  - Nivel Institucional : ${el.keyLevel.levelType} (${(el.keyLevel.distancePercent * 100).toFixed(4)}% distancia)`,
     );
@@ -153,6 +159,7 @@ async function cmd_trading_payout_audit(_ctx) {
   );
   console.log(`  - Activos Auditados       : ${auditResult.metrics.assetsAuditedCount}`);
   console.log(`  - Mayor Payout Observado  : ${auditResult.metrics.highestPayoutObserved}%`);
+  console.log(`  - Índice Calidad Top-1    : ${auditResult.metrics.topConfluenceObserved}`);
   console.log(`  - Firma SHA-256 Recibo    : ${auditResult.receiptHash}`);
 
   const receiptPath = path.join(ROOT, "docs/evidence/UNIVERSAL_ASSET_PAYOUT_RECEIPT.json");

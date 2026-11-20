@@ -1,5 +1,5 @@
 {
-  "receiptId": "payout-rcpt-1795147201578",
+  "receiptId": "payout-rcpt-1795185689969",
   "status": "VERIFIED",
   "invariants": {
     "minimumPayoutThreshold": true,
@@ -9,10 +9,10 @@
     "multiClassCoverageVerified": true
   },
   "metrics": {
-    "assetsAuditedCount": 4,
-    "highestPayoutObserved": 92,
-    "topConfluenceObserved": 0
+    "assetsAuditedCount": 33,
+    "highestPayoutObserved": 95,
+    "topConfluenceObserved": 0.9614
   },
-  "receiptHash": "8d344f95f084aa911970ec641f77356d8121896aefb4407ad772775c04a46a63",
-  "timestamp": 1795147201578
+  "receiptHash": "bc08bcc312ae9b69fbcc9dde8666c785dfd84191ab8e46d7f22f7db632d27f12",
+  "timestamp": 1795185689970
 }

@@ -528,4 +528,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_universal_asset_payout_audit",
+    description:
+      "Audits the Universal Multi-Asset Universe & Dynamic Payout Optimizer Engine verifying >=80% payout filtering, 60s expiry, scale-invariant key-level detection, Top-1 concurrency lock, and Vault Alpha segregation (SPEC-375).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

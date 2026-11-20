@@ -42,10 +42,13 @@ export class EosUniversalAssetPayoutOptimizerEngine {
     { symbol: "GBP/JPY", category: "FOREX" }, // The Dragon
     { symbol: "EUR/GBP", category: "FOREX" },
     { symbol: "AUD/CAD", category: "FOREX" },
+    { symbol: "CAD/JPY", category: "FOREX" },
+    { symbol: "EUR/AUD", category: "FOREX" },
 
     // Commodities
     { symbol: "XAU/USD", category: "COMMODITIES" }, // Gold
     { symbol: "XAG/USD", category: "COMMODITIES" }, // Silver
+    { symbol: "WTI/USD", category: "COMMODITIES" }, // Crude Oil (WTI)
 
     // Cryptocurrencies
     { symbol: "BTC/USD", category: "CRYPTO" },
@@ -53,6 +56,7 @@ export class EosUniversalAssetPayoutOptimizerEngine {
     { symbol: "DASH/USD", category: "CRYPTO" },
     { symbol: "SOL/USD", category: "CRYPTO" },
     { symbol: "XRP/USD", category: "CRYPTO" },
+    { symbol: "DOGE/USD", category: "CRYPTO" },
     { symbol: "PEPE/USD", category: "CRYPTO" },
 
     // Equities / Big Tech
@@ -70,7 +74,7 @@ export class EosUniversalAssetPayoutOptimizerEngine {
   ];
 
   /**
-   * Generates realistic multi-asset quotes for the entire 28-asset catalog.
+   * Generates realistic multi-asset quotes for the entire multi-class catalog.
    */
   public static generateCatalogQuotes(): AssetQuote[] {
     const assetMeta: Record<string, { basePrice: number; binPayout: number; digPayout: number }> = {
@@ -85,13 +89,17 @@ export class EosUniversalAssetPayoutOptimizerEngine {
       "GBP/JPY": { basePrice: 200.0, binPayout: 85, digPayout: 92 },
       "EUR/GBP": { basePrice: 0.835, binPayout: 78, digPayout: 84 },
       "AUD/CAD": { basePrice: 0.91, binPayout: 80, digPayout: 85 },
+      "CAD/JPY": { basePrice: 111.0, binPayout: 81, digPayout: 87 },
+      "EUR/AUD": { basePrice: 1.655, binPayout: 80, digPayout: 86 },
       "XAU/USD": { basePrice: 2650.0, binPayout: 86, digPayout: 93 },
       "XAG/USD": { basePrice: 31.5, binPayout: 82, digPayout: 88 },
+      "WTI/USD": { basePrice: 70.0, binPayout: 83, digPayout: 89 },
       "BTC/USD": { basePrice: 91500.0, binPayout: 75, digPayout: 88 },
       "ETH/USD": { basePrice: 3350.0, binPayout: 78, digPayout: 89 },
       "DASH/USD": { basePrice: 34.5, binPayout: 72, digPayout: 82 },
       "SOL/USD": { basePrice: 245.0, binPayout: 76, digPayout: 86 },
       "XRP/USD": { basePrice: 1.15, binPayout: 75, digPayout: 85 },
+      "DOGE/USD": { basePrice: 0.385, binPayout: 74, digPayout: 84 },
       "PEPE/USD": { basePrice: 0.0000215, binPayout: 70, digPayout: 83 },
       AAPL: { basePrice: 228.5, binPayout: 80, digPayout: 87 },
       MSFT: { basePrice: 425.0, binPayout: 82, digPayout: 89 },
@@ -200,10 +208,15 @@ export class EosUniversalAssetPayoutOptimizerEngine {
 
     // Determine scale magnitude
     let step = 0.01;
-    if (price < 2.0) {
+    if (price < 0.01) {
+      const mag = Math.pow(10, Math.floor(Math.log10(price)));
+      step = mag * 0.05; // Micro-cap crypto (e.g. PEPE 0.00002150 -> step 5e-7)
+    } else if (price < 2.0) {
       step = 0.005; // Forex 50-pip intervals (.000 and .500)
     } else if (price < 100) {
-      step = 0.5;
+      step = 0.5; // Commodities / mid-crypto (Silver, WTI, DASH)
+    } else if (price < 1000) {
+      step = 5.0; // Equities / JPY crosses / SOL ($5 half-round, $10 round)
     } else if (price < 10000) {
       step = 50.0; // Gold / ETH: e.g. 2600 (triple zero) vs 2650 (half round)
     } else {
@@ -219,10 +232,11 @@ export class EosUniversalAssetPayoutOptimizerEngine {
     // Detect if triple-zero or half-round
     const scaled = Math.round(nearestLevel / step);
     const levelType = scaled % 2 === 0 ? "TRIPLE_ZERO" : "HALF_ROUND";
+    const roundedNearest = price < 0.01 ? Number(nearestLevel.toPrecision(8)) : Number(nearestLevel.toFixed(5));
 
     return {
       isNearKeyLevel: isNear,
-      nearestLevel: Number(nearestLevel.toFixed(5)),
+      nearestLevel: roundedNearest,
       distancePercent: Number(distancePercent.toFixed(6)),
       levelType: isNear ? levelType : "STANDARD",
     };
@@ -311,77 +325,38 @@ export class EosUniversalAssetPayoutOptimizerEngine {
    * FR-375-08: Invariant Auditing & Cryptographic Receipt Generation
    */
   public static audit(targetDir = process.cwd()): UniversalAssetPayoutReceipt {
-    const mockM15 = new Array(60).fill(0).map((_, i) => ({
-      open: 1.1 + i * 0.0001,
-      high: 1.1 + i * 0.0001 + 0.0002,
-      low: 1.1 + i * 0.0001 - 0.0001,
-      close: 1.1 + i * 0.0001 + 0.0001,
-    }));
-    const mockM5 = new Array(60).fill(0).map((_, i) => {
-      const delta = i % 2 === 0 ? 0.0002 : -0.0002;
-      return { open: 1.1 - delta, high: 1.1 + 0.0001, low: 1.1 - 0.0001, close: 1.1 };
-    });
-    const mockM1 = new Array(60).fill(0).map((_, i) => ({
-      open: 1.1 + i * 0.0001,
-      high: 1.1 + i * 0.0001 + 0.0002,
-      low: 1.1 + i * 0.0001 - 0.0008,
-      close: 1.1 + i * 0.0001 + 0.0001,
-    }));
+    const catalogQuotes = this.generateCatalogQuotes();
+    const referenceQuotes = catalogQuotes[0];
+    const lowPayoutProbe: AssetQuote = {
+      symbol: "AUDIT/LOW-PAYOUT",
+      category: "FOREX",
+      spotPrice: 1.09001,
+      binaryPayoutPercent: 70,
+      digitalPayoutPercent: 74,
+      candlesM15: referenceQuotes.candlesM15,
+      candlesM5: referenceQuotes.candlesM5,
+      candlesM1: referenceQuotes.candlesM1,
+    };
 
-    const quotes: AssetQuote[] = [
-      {
-        symbol: "EUR/USD",
-        category: "FOREX",
-        spotPrice: 1.09001, // Near triple zero
-        binaryPayoutPercent: 82,
-        digitalPayoutPercent: 92,
-        candlesM15: mockM15,
-        candlesM5: mockM5,
-        candlesM1: mockM1,
-      },
-      {
-        symbol: "BTC/USD",
-        category: "CRYPTO",
-        spotPrice: 91500.25,
-        binaryPayoutPercent: 74,
-        digitalPayoutPercent: 78, // Low payout < 80
-        candlesM15: mockM15,
-        candlesM5: mockM5,
-        candlesM1: mockM1,
-      },
-      {
-        symbol: "XAU/USD",
-        category: "COMMODITIES",
-        spotPrice: 2650.02,
-        binaryPayoutPercent: 85,
-        digitalPayoutPercent: 89,
-        candlesM15: mockM15,
-        candlesM5: mockM5,
-        candlesM1: mockM1,
-      },
-      {
-        symbol: "AAPL",
-        category: "EQUITIES",
-        spotPrice: 228.5,
-        binaryPayoutPercent: 80,
-        digitalPayoutPercent: 86,
-        candlesM15: mockM15,
-        candlesM5: mockM5,
-        candlesM1: mockM1,
-      },
-    ];
+    const report = this.scanUniversalMarket([...catalogQuotes, lowPayoutProbe]);
 
-    const report = this.scanUniversalMarket(quotes);
-
-    const invPayout = report.topElectedAsset
-      ? report.topElectedAsset.optimalPayoutPercent >= this.MIN_PAYOUT_THRESHOLD
-      : true;
+    const lowPayoutRejected = report.rankings.some(
+      (r) => r.symbol === "AUDIT/LOW-PAYOUT" && r.status === "REJECTED_LOW_PAYOUT",
+    );
+    const invPayout =
+      report.topElectedAsset !== null &&
+      report.topElectedAsset.optimalPayoutPercent >= this.MIN_PAYOUT_THRESHOLD &&
+      lowPayoutRejected;
     const invExpiry = report.activeExpirySeconds === 60;
-    const invConcurrency = report.concurrencyLockPreserved;
+    const electedCount = report.rankings.filter((r) => r.status === "TOP_ELECTION").length;
+    const invConcurrency = report.concurrencyLockPreserved && electedCount <= 1;
     const invVaultAlpha = true; // Untouchable $3,000 USD
-    const invMultiClass = this.UNIVERSAL_CATALOG.length >= 20;
+    const invMultiClass =
+      this.UNIVERSAL_CATALOG.length >= 20 && new Set(this.UNIVERSAL_CATALOG.map((c) => c.category)).size === 5;
 
     const allPassed = invPayout && invExpiry && invConcurrency && invVaultAlpha && invMultiClass;
+    const highestPayoutObserved = Math.max(...report.rankings.map((r) => r.optimalPayoutPercent));
+    const topConfluenceObserved = report.topElectedAsset?.compositeQualityIndex ?? 0;
 
     const receiptId = `payout-rcpt-${Date.now()}`;
     const payload = JSON.stringify({
@@ -408,9 +383,9 @@ export class EosUniversalAssetPayoutOptimizerEngine {
         multiClassCoverageVerified: invMultiClass,
       },
       metrics: {
-        assetsAuditedCount: quotes.length,
-        highestPayoutObserved: 92,
-        topConfluenceObserved: report.topElectedAsset?.compositeQualityIndex || 0,
+        assetsAuditedCount: catalogQuotes.length + 1,
+        highestPayoutObserved,
+        topConfluenceObserved,
       },
       receiptHash,
       timestamp: Date.now(),

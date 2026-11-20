@@ -51,6 +51,7 @@ import { EosInstitutionalTradingEngine } from "../../core/eosInstitutionalTradin
 import { EosAladdinPortfolioRiskEngine } from "../../core/eosAladdinPortfolioRiskEngine.ts";
 import { EosMultiAssetMacroFilterEngine } from "../../core/eosMultiAssetMacroFilterEngine.ts";
 import { EosTriTemporalPropFirmEngine } from "../../core/eosTriTemporalPropFirmEngine.ts";
+import { EosUniversalAssetPayoutOptimizerEngine } from "../../core/eosUniversalAssetPayoutOptimizerEngine.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 import { PHASE8_MIGRATED_TOOL_NAMES } from "./eosMcpPhase8ToolNames.ts";
 
@@ -282,5 +283,6 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_aladdin_risk_audit: () => EosAladdinPortfolioRiskEngine.audit(projectRoot),
     eos_multi_asset_macro_audit: () => EosMultiAssetMacroFilterEngine.audit(projectRoot),
     eos_tri_temporal_propfirm_audit: () => EosTriTemporalPropFirmEngine.audit(projectRoot),
+    eos_universal_asset_payout_audit: () => EosUniversalAssetPayoutOptimizerEngine.audit(projectRoot),
   };
 }

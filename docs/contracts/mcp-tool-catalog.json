@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "ac73dfd98d426f762f17602133c28716c2f585aa1b79822f6286fc3ffd2f9d6a",
-  "totalTools": 250,
+  "catalogSha256": "b335f4bc7bfd36621224d773aa0f1a1698d6d5b67122341f3d6adeab6f899976",
+  "totalTools": 251,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7323,6 +7323,21 @@
       },
       "annotations": {
         "title": "EOS tri Temporal Propfirm Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_universal_asset_payout_audit",
+      "description": "Audits the Universal Multi-Asset Universe & Dynamic Payout Optimizer Engine verifying >=80% payout filtering, 60s expiry, scale-invariant key-level detection, Top-1 concurrency lock, and Vault Alpha segregation (SPEC-375).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS universal Asset Payout Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

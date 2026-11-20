@@ -6,26 +6,32 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { EosUniversalAssetPayoutOptimizerEngine } from "../src/core/eosUniversalAssetPayoutOptimizerEngine.ts";
+import { PHASE8_TOOL_DEFINITIONS } from "../src/mcp/tools/eosMcpPhase8ToolDefinitions.ts";
+import { createPhase8AgiHandlers } from "../src/mcp/tools/eosMcpPhase8AgiHandlers.ts";
 
 describe("SPEC-375: Universal Multi-Asset Universe & Dynamic Payout Optimizer Engine", () => {
   it("BDD-2033: Universal Multi-Asset Catalog Ingestion", () => {
     const catalog = EosUniversalAssetPayoutOptimizerEngine.UNIVERSAL_CATALOG;
-    assert.ok(catalog.length >= 20, "Catalog must contain at least 20 multi-class assets");
+    assert.ok(catalog.length >= 30, "Catalog must contain at least 30 multi-class assets");
 
     const categories = new Set(catalog.map((a) => a.category));
     assert.ok(categories.has("FOREX"), "Catalog must contain Forex assets");
-    assert.ok(categories.has("COMMODITIES"), "Catalog must contain Commodities (Gold/Silver)");
-    assert.ok(categories.has("CRYPTO"), "Catalog must contain Cryptocurrencies (BTC, ETH, DASH, PEPE)");
+    assert.ok(categories.has("COMMODITIES"), "Catalog must contain Commodities (Gold/Silver/WTI)");
+    assert.ok(categories.has("CRYPTO"), "Catalog must contain Cryptocurrencies (BTC, ETH, DASH, DOGE, PEPE)");
     assert.ok(categories.has("EQUITIES"), "Catalog must contain Equities (AAPL, MSFT, TSLA, NVDA)");
     assert.ok(categories.has("OTC"), "Catalog must contain OTC assets");
 
     // Specific asset checks requested by user
     const symbols = catalog.map((a) => a.symbol);
     assert.ok(symbols.includes("XAU/USD"), "Must include Gold (XAU/USD)");
+    assert.ok(symbols.includes("WTI/USD"), "Must include Crude Oil (WTI/USD)");
     assert.ok(symbols.includes("DASH/USD"), "Must include DASH");
+    assert.ok(symbols.includes("DOGE/USD"), "Must include DOGE");
     assert.ok(symbols.includes("PEPE/USD"), "Must include PEPE");
     assert.ok(symbols.includes("AAPL"), "Must include Apple");
     assert.ok(symbols.includes("MSFT"), "Must include Microsoft");
+    assert.ok(symbols.includes("CAD/JPY"), "Must include CAD/JPY");
+    assert.ok(symbols.includes("EUR/AUD"), "Must include EUR/AUD");
   });
 
   it("BDD-2034: Dynamic Payout Evaluator (Digital vs Binary)", () => {
@@ -68,6 +74,22 @@ describe("SPEC-375: Universal Multi-Asset Universe & Dynamic Payout Optimizer En
     assert.equal(btcKey.isNearKeyLevel, true, "Must detect half-round on BTC");
     assert.equal(btcKey.levelType, "HALF_ROUND");
 
+    // Micro-cap Crypto Half-Round (PEPE/USD at $0.00002150)
+    const pepeKey = EosUniversalAssetPayoutOptimizerEngine.detectKeyLevel(0.0000215);
+    assert.equal(pepeKey.isNearKeyLevel, true, "Must detect key level on micro-cap PEPE/USD");
+    assert.equal(pepeKey.levelType, "HALF_ROUND");
+    assert.equal(pepeKey.nearestLevel, 0.0000215);
+
+    // Commodity Half-Round (Gold at $2,650.02)
+    const goldKey = EosUniversalAssetPayoutOptimizerEngine.detectKeyLevel(2650.02);
+    assert.equal(goldKey.isNearKeyLevel, true, "Must detect half-round on Gold");
+    assert.equal(goldKey.levelType, "HALF_ROUND");
+
+    // Equity Half-Round (NVDA at $145.00)
+    const equityKey = EosUniversalAssetPayoutOptimizerEngine.detectKeyLevel(145.0);
+    assert.equal(equityKey.isNearKeyLevel, true, "Must detect half-round on Equity");
+    assert.equal(equityKey.levelType, "HALF_ROUND");
+
     // Far from round level
     const standardKey = EosUniversalAssetPayoutOptimizerEngine.detectKeyLevel(1.08273);
     assert.equal(standardKey.isNearKeyLevel, false, "Points far from round levels must be standard");
@@ -106,7 +128,7 @@ describe("SPEC-375: Universal Multi-Asset Universe & Dynamic Payout Optimizer En
     assert.ok(Number.isFinite(scan.timestamp), "Must have numeric timestamp");
   });
 
-  it("BDD-2040: Cryptographic Audit Receipt Generation", () => {
+  it("BDD-2040: Cryptographic Audit Receipt Generation & MCP Registration", () => {
     const receipt = EosUniversalAssetPayoutOptimizerEngine.audit();
     assert.equal(receipt.status, "VERIFIED", "Audit status must be VERIFIED");
     assert.ok(receipt.receiptHash.length === 64, "Receipt hash must be 64-char SHA-256");
@@ -115,7 +137,16 @@ describe("SPEC-375: Universal Multi-Asset Universe & Dynamic Payout Optimizer En
     assert.ok(receipt.invariants.singleConcurrencyLock, "Single concurrency lock must be verified");
     assert.ok(receipt.invariants.fiduciaryVaultAlphaIntact, "Fiduciary vault alpha must be verified");
     assert.ok(receipt.invariants.multiClassCoverageVerified, "Multi-class coverage must be verified");
-    assert.ok(receipt.metrics.assetsAuditedCount >= 4, "Must audit multiple asset quotes");
+    assert.ok(receipt.metrics.assetsAuditedCount >= 32, "Must audit full catalog + low-payout probe");
     assert.ok(receipt.metrics.highestPayoutObserved >= 80, "Highest payout must be >= 80%");
+    assert.ok(receipt.metrics.topConfluenceObserved > 0, "Top confluence index must be strictly positive");
+
+    const toolDef = PHASE8_TOOL_DEFINITIONS.find((t) => t.name === "eos_universal_asset_payout_audit");
+    assert.ok(toolDef, "MCP Phase 8 definition for eos_universal_asset_payout_audit must exist");
+
+    const handlers = createPhase8AgiHandlers({ projectRoot: process.cwd() });
+    assert.equal(typeof handlers.eos_universal_asset_payout_audit, "function");
+    const mcpReceipt = handlers.eos_universal_asset_payout_audit({});
+    assert.equal(mcpReceipt.status, "VERIFIED");
   });
 });
