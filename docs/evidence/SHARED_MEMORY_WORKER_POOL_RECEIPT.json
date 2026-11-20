@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-20T20:22:37.602Z",
+  "timestampIso": "2026-11-20T20:23:41.005Z",
   "specRef": "SPEC-311",
   "changeRef": "CHANGE-173",
   "status": "SHARED_MEMORY_WORKERS_AND_JEPSEN_VERIFIED",
@@ -71,7 +71,7 @@
       }
     ],
     "fleetMerkleRoot": "350cef2f56322474218d900fa836172c8862a3135d0a19af68eb3df2339b515f",
-    "durationMs": 62
+    "durationMs": 60
   },
   "walCrashRecoveryReport": {
     "committedRecordsExpected": 4,
@@ -84,6 +84,6 @@
     "zeroDataLossVerified": true,
     "durationMs": 143
   },
-  "inWasmSimdLoopNsPerOp": 1.43,
-  "cryptographicSignature": "72371fc90bdd6969e13167e20b6d42b7e68d58360d9d86ffb4eced12f67f1221"
+  "inWasmSimdLoopNsPerOp": 1.38,
+  "cryptographicSignature": "9acb87e13e320c5dce349649fc995894823b42f1ee0333ea44b5c55a0872c493"
 }
