@@ -205,10 +205,65 @@ async function cmd_trading_notify_audit(commandContext) {
   return true;
 }
 
+async function cmd_trading_notify_test(commandContext) {
+  const args = commandContext.args || [];
+  const isJson = args.includes("--json");
+
+  let phone = "573239704883";
+  let apiKey = process.env.WHATSAPP_APIKEY;
+
+  for (const arg of args) {
+    if (arg.startsWith("--phone=")) {
+      phone = arg.split("=")[1].replace(/[^0-9]/g, "");
+    } else if (arg.startsWith("--apikey=")) {
+      apiKey = arg.split("=")[1];
+    }
+  }
+
+  const testAlert = EosTriTemporalPropFirmEngine.formatTradeOpenAlert({
+    pair: "EUR/USD",
+    direction: "CALL",
+    entryPrice: 1.09265,
+    strikeSeconds: 60,
+    confidence: 0.94,
+    m15Reason: "M15 tendencia alcista confirmada (EMA 9>20>50)",
+    m5Reason: "M5 retroceso técnico en zona dorada Fibonacci 61.8%",
+    m1Reason: "M1 BinaryTeach rechazo con mecha inferior del 62%",
+  });
+
+  const res = await EosTriTemporalPropFirmEngine.dispatchWhatsAppLive(testAlert, { phone, apiKey });
+
+  if (isJson) {
+    console.log(JSON.stringify({ phone, ...res }, null, 2));
+    return true;
+  }
+
+  console.log("=== Prueba de Despacho en Vivo a WhatsApp (SPEC-374) ===");
+  console.log(`Destinatario           : +${phone}`);
+  console.log(`Estado de Entrega      : ${res.status}`);
+  console.log(`Resultado              : ${res.success ? "ÉXITO" : "PENDIENTE_CREDENCIAL"}`);
+  console.log(`Detalle                : ${res.detail || "Entregado a la pasarela"}`);
+  console.log("------------------------------------------------------------------------");
+  if (!apiKey) {
+    console.log("📱 CÓMO ACTIVAR TU ENTREGA INMEDIATA A WHATSAPP (+57 3239704883):");
+    console.log("1. Abre WhatsApp y envía este mensaje al número oficial de CallMeBot (+34 644 20 55 51):");
+    console.log('   👉 "I allow callmebot to send me messages"');
+    console.log("   (O toca el enlace: https://wa.me/34644205551?text=I+allow+callmebot+to+send+me+messages)");
+    console.log("2. En 2 segundos, el bot te enviará tu API Key de activación.");
+    console.log("3. Ejecuta:");
+    console.log(`   node bin/eos.mjs toolchain:trading:notify-test --phone=${phone} --apikey=TU_API_KEY`);
+    console.log("------------------------------------------------------------------------");
+  } else {
+    console.log("🎉 Alerta enviada exitosamente a tu WhatsApp.");
+  }
+  return true;
+}
+
 HANDLERS["toolchain:trading:fractal"] = cmd_trading_fractal;
 HANDLERS["toolchain:trading:propfirm"] = cmd_trading_propfirm;
 HANDLERS["toolchain:trading:daemon"] = cmd_trading_daemon;
 HANDLERS["toolchain:trading:notify-audit"] = cmd_trading_notify_audit;
+HANDLERS["toolchain:trading:notify-test"] = cmd_trading_notify_test;
 
 export async function handleTriTemporalPropFirmCommand(commandContext) {
   const handler = HANDLERS[commandContext.command];

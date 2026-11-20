@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
   "totalSpecs": 374,
-  "catalogSha256": "ed6a5af4d85679d740a909aa34cb2e47808a7ec72b55d11c9e7def6ee8162973",
+  "catalogSha256": "a8d71dc82001337f013fdfcfaa960fdc987def026f244a892d1789b64ba4f919",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3367,7 +3367,7 @@
       "frCount": 1,
       "bddCount": 7,
       "file": "openspec/specs/SPEC-374-tri-temporal-prop-firm-whatsapp-engine.md",
-      "sha256": "9c1e64c81ef5271a7857b6bf8b0cb68daa6cdfb0a762642da7bb49d52a08cf08"
+      "sha256": "c759e9300b95b519c13d08dadbee86152ad1c8716a8982316663f5cbe2e553d0"
     }
   ]
 }

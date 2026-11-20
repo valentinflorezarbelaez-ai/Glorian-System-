@@ -282,6 +282,61 @@ export class EosTriTemporalPropFirmEngine {
   }
 
   /**
+   * Dispatches live WhatsApp notification via CallMeBot or generic webhook
+   */
+  public static async dispatchWhatsAppLive(
+    payload: WhatsAppMessagePayload,
+    options?: {
+      phone?: string;
+      apiKey?: string;
+      webhookUrl?: string;
+    },
+  ): Promise<{ success: boolean; status: string; detail?: string }> {
+    const phone = options?.phone || process.env.WHATSAPP_PHONE || "573239704883";
+    const apiKey = options?.apiKey || process.env.WHATSAPP_APIKEY;
+    const webhookUrl = options?.webhookUrl || process.env.WHATSAPP_WEBHOOK_URL;
+
+    // 1. Always persist to local evidence log
+    this.dispatchWhatsAppMessage(payload);
+
+    // 2. Generic Webhook dispatch (e.g. Evolution API, Zapier, Twilio, custom proxy)
+    if (webhookUrl) {
+      try {
+        const res = await fetch(webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone, message: payload.formattedText, timestamp: payload.timestamp }),
+        });
+        return { success: res.ok, status: res.ok ? "DELIVERED_WEBHOOK" : `HTTP_${res.status}` };
+      } catch (err: any) {
+        return { success: false, status: "WEBHOOK_ERROR", detail: err?.message || String(err) };
+      }
+    }
+
+    // 3. Direct CallMeBot WhatsApp Gateway dispatch
+    if (apiKey) {
+      const cleanPhone = phone.replace(/[^0-9]/g, "");
+      const encodedText = encodeURIComponent(payload.formattedText);
+      const url = `https://api.callmebot.com/whatsapp.php?phone=${cleanPhone}&text=${encodedText}&apikey=${apiKey}`;
+      try {
+        const res = await fetch(url);
+        const text = await res.text();
+        const ok = res.ok && !text.toLowerCase().includes("error");
+        return { success: ok, status: ok ? "DELIVERED_CALLMEBOT" : "CALLMEBOT_ERROR", detail: text.trim() };
+      } catch (err: any) {
+        return { success: false, status: "NETWORK_ERROR", detail: err?.message || String(err) };
+      }
+    }
+
+    // 4. Standby mode: Evidence ledger logged, awaiting gateway credentials
+    return {
+      success: true,
+      status: "LOCAL_DISPATCH_RECORDED",
+      detail: "Alert recorded to WHATSAPP_DISPATCH_LOG.json. Set WHATSAPP_APIKEY to enable live mobile delivery.",
+    };
+  }
+
+  /**
    * FR-374-07: Invariant Auditing & Cryptographic Receipt Generation
    */
   public static audit(targetDir = process.cwd()): TriTemporalPropFirmAuditReceipt {

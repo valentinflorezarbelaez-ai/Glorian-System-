@@ -23,5 +23,20 @@
     "messageType": "TRADE_OPEN",
     "formattedText": "*🚨 GLORIAN TRADE EJECUTADO (MODO DEMO)*\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n*Par:* `EUR/USD` | *Acción:* *CALL* 🟢 📈\n*Precio de Entrada:* `1.08620`\n*Expiración:* `60 segundos (1 min)`\n*Confluencia Algorítmica:* `50%`\n\n*🧬 CONFLUENCIA TRI-TEMPORAL FRACTAL:*\n• *M15 (Macro):* M15 institutional bull trend aligned (EMA 9>20>50)\n• *M5 (Estructura):* M5 intermediate range\n• *M1 (BinaryTeach Trigger):* M1 BinaryTeach strong lower rejection wick (60%)\n\n*🛡️ Gestión:* 1 operación concurrente | 0% Martingala | Capital Real 100% Protegido\n_Glorian System Sovereign Quant Engine v75.0.0_",
     "timestamp": 1795142810155
+  },
+  {
+    "messageType": "TRADE_OPEN",
+    "formattedText": "*🚨 GLORIAN TRADE EJECUTADO (MODO DEMO)*\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n*Par:* `EUR/USD` | *Acción:* *CALL* 🟢 📈\n*Precio de Entrada:* `1.09265`\n*Expiración:* `60 segundos (1 min)`\n*Confluencia Algorítmica:* `94%`\n\n*🧬 CONFLUENCIA TRI-TEMPORAL FRACTAL:*\n• *M15 (Macro):* M15 tendencia alcista confirmada (EMA 9>20>50)\n• *M5 (Estructura):* M5 retroceso técnico en zona dorada Fibonacci 61.8%\n• *M1 (BinaryTeach Trigger):* M1 BinaryTeach rechazo con mecha inferior del 62%\n\n*🛡️ Gestión:* 1 operación concurrente | 0% Martingala | Capital Real 100% Protegido\n_Glorian System Sovereign Quant Engine v75.0.0_",
+    "timestamp": 1795143420709
+  },
+  {
+    "messageType": "TRADE_OPEN",
+    "formattedText": "*🚨 GLORIAN TRADE EJECUTADO (MODO DEMO)*\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n*Par:* `EUR/USD` | *Acción:* *CALL* 🟢 📈\n*Precio de Entrada:* `1.09265`\n*Expiración:* `60 segundos (1 min)`\n*Confluencia Algorítmica:* `94%`\n\n*🧬 CONFLUENCIA TRI-TEMPORAL FRACTAL:*\n• *M15 (Macro):* M15 bull trend\n• *M5 (Estructura):* M5 pullback\n• *M1 (BinaryTeach Trigger):* M1 wick rejection\n\n*🛡️ Gestión:* 1 operación concurrente | 0% Martingala | Capital Real 100% Protegido\n_Glorian System Sovereign Quant Engine v75.0.0_",
+    "timestamp": 1795143441309
+  },
+  {
+    "messageType": "TRADE_OPEN",
+    "formattedText": "*🚨 GLORIAN TRADE EJECUTADO (MODO DEMO)*\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n*Par:* `EUR/USD` | *Acción:* *CALL* 🟢 📈\n*Precio de Entrada:* `1.08620`\n*Expiración:* `60 segundos (1 min)`\n*Confluencia Algorítmica:* `50%`\n\n*🧬 CONFLUENCIA TRI-TEMPORAL FRACTAL:*\n• *M15 (Macro):* M15 institutional bull trend aligned (EMA 9>20>50)\n• *M5 (Estructura):* M5 intermediate range\n• *M1 (BinaryTeach Trigger):* M1 BinaryTeach strong lower rejection wick (60%)\n\n*🛡️ Gestión:* 1 operación concurrente | 0% Martingala | Capital Real 100% Protegido\n_Glorian System Sovereign Quant Engine v75.0.0_",
+    "timestamp": 1795143441312
   }
 ]

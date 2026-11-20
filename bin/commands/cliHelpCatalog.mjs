@@ -771,6 +771,7 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:trading:propfirm [LOSS] Reglas de drawdown diario (-4.5%), total (-9.0%) y objetivo (+10%) FTMO (SPEC-374)
   eos toolchain:trading:daemon Demonio autónomo de escaneo multi-par y despacho a WhatsApp (SPEC-374)
   eos toolchain:trading:notify-audit Auditoría formal del despachador a WhatsApp y recibo SHA-256 (SPEC-374)
+  eos toolchain:trading:notify-test [--phone] [--apikey] Prueba de despacho en vivo a WhatsApp personal (SPEC-374)
   eos toolchain:aladdin:stress-test Prueba de estrés de cisnes negros históricos estilo Aladdin (SPEC-372)
   eos toolchain:aladdin:allocate Asignación institucional All-Weather de Ray Dalio y deriva (SPEC-372)
   eos toolchain:aladdin:var Métricas de riesgo VaR/CVaR y simulación Monte Carlo 10,000 rutas (SPEC-372)
