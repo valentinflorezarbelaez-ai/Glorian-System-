@@ -337,6 +337,49 @@ export class EosTriTemporalPropFirmEngine {
   }
 
   /**
+   * Dispatches live notification to Telegram Bot
+   */
+  public static async dispatchTelegramLive(
+    payload: WhatsAppMessagePayload,
+    options?: {
+      botToken?: string;
+      chatId?: string | number;
+    },
+  ): Promise<{ success: boolean; status: string; detail?: string }> {
+    const token = options?.botToken || process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = options?.chatId || process.env.TELEGRAM_CHAT_ID;
+
+    if (!token || !chatId) {
+      return {
+        success: false,
+        status: "TELEGRAM_NOT_CONFIGURED",
+        detail: "TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not provided.",
+      };
+    }
+
+    try {
+      const url = `https://api.telegram.org/bot${token}/sendMessage`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: payload.formattedText,
+          parse_mode: "Markdown",
+        }),
+      });
+      const data: any = await res.json();
+      return {
+        success: Boolean(data?.ok),
+        status: data?.ok ? "DELIVERED_TELEGRAM" : "TELEGRAM_API_ERROR",
+        detail: data?.ok ? `Message ID: ${data.result?.message_id}` : data?.description,
+      };
+    } catch (err: any) {
+      return { success: false, status: "NETWORK_ERROR", detail: err?.message || String(err) };
+    }
+  }
+
+  /**
    * FR-374-07: Invariant Auditing & Cryptographic Receipt Generation
    */
   public static audit(targetDir = process.cwd()): TriTemporalPropFirmAuditReceipt {

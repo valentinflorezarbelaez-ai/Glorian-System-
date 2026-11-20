@@ -5,6 +5,7 @@
  * Invariant: Pure Layer-0, zero external runtime dependencies, <= 800 lines.
  */
 
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { EosTriTemporalPropFirmEngine } from "../../src/core/eosTriTemporalPropFirmEngine.ts";
@@ -12,6 +13,25 @@ import { EosTriTemporalPropFirmEngine } from "../../src/core/eosTriTemporalPropF
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "../..");
+
+// Load local uncommitted .env if present
+const envPath = path.join(ROOT, ".env");
+if (fs.existsSync(envPath)) {
+  try {
+    const lines = fs.readFileSync(envPath, "utf8").split("\n");
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith("#")) {
+        const [k, ...v] = trimmed.split("=");
+        if (k && !process.env[k]) {
+          process.env[k] = v.join("=").trim();
+        }
+      }
+    }
+  } catch {
+    void 0;
+  }
+}
 
 function generateCandles(count = 60, basePrice = 1.0925, trend = 0.0003, wickType = "rejection_bullish") {
   const candles = [];
@@ -151,6 +171,7 @@ async function cmd_trading_daemon(commandContext) {
   });
 
   const dispatched = EosTriTemporalPropFirmEngine.dispatchWhatsAppMessage(openAlert, ROOT);
+  const tgResult = await EosTriTemporalPropFirmEngine.dispatchTelegramLive(openAlert);
 
   const daemonReport = {
     cycleId: `daemon-cycle-${Date.now()}`,
@@ -161,6 +182,7 @@ async function cmd_trading_daemon(commandContext) {
     fractalAlignment: fractal.isAligned,
     propFirmStatus: propFirm.status,
     tradeDispatched: dispatched,
+    telegramStatus: tgResult.status,
     sampleAlertMessage: openAlert.formattedText,
   };
 
@@ -169,16 +191,19 @@ async function cmd_trading_daemon(commandContext) {
     return true;
   }
 
-  console.log("=== Autonomous Trading Daemon & WhatsApp Notification Bridge (SPEC-374) ===");
+  console.log("=== Autonomous Trading Daemon & Multi-Channel Notification Bridge (SPEC-374) ===");
   console.log(`Cycle ID              : ${daemonReport.cycleId}`);
   console.log(`Daemon Status         : ${daemonReport.status}`);
   console.log(`Account Mode          : ${daemonReport.accountMode}`);
   console.log(`Target Asset          : ${daemonReport.assetScanned}`);
   console.log(`Tri-Temporal Confluence: ${daemonReport.fractalAlignment ? "ALIGNED (CALL Triggered)" : "NO SETUP"}`);
   console.log(`Prop-Firm Circuit     : ${daemonReport.propFirmStatus}`);
-  console.log(`WhatsApp Notification : ${daemonReport.tradeDispatched ? "DISPATCHED TO DISPATCH_LOG" : "FAILED"}`);
+  console.log(`WhatsApp Ledger       : ${daemonReport.tradeDispatched ? "RECORDED TO DISPATCH_LOG" : "FAILED"}`);
+  console.log(
+    `Telegram Notification : ${daemonReport.telegramStatus === "DELIVERED_TELEGRAM" ? "DELIVERED_LIVE_PUSH" : daemonReport.telegramStatus}`,
+  );
   console.log("------------------------------------------------------------------------");
-  console.log("Formatted WhatsApp Message Payload Preview:");
+  console.log("Formatted Message Payload Preview:");
   console.log(daemonReport.sampleAlertMessage);
   console.log("------------------------------------------------------------------------");
   return true;
@@ -231,31 +256,24 @@ async function cmd_trading_notify_test(commandContext) {
     m1Reason: "M1 BinaryTeach rechazo con mecha inferior del 62%",
   });
 
-  const res = await EosTriTemporalPropFirmEngine.dispatchWhatsAppLive(testAlert, { phone, apiKey });
+  const resWa = await EosTriTemporalPropFirmEngine.dispatchWhatsAppLive(testAlert, { phone, apiKey });
+  const resTg = await EosTriTemporalPropFirmEngine.dispatchTelegramLive(testAlert);
 
   if (isJson) {
-    console.log(JSON.stringify({ phone, ...res }, null, 2));
+    console.log(JSON.stringify({ phone, whatsApp: resWa, telegram: resTg }, null, 2));
     return true;
   }
 
-  console.log("=== Prueba de Despacho en Vivo a WhatsApp (SPEC-374) ===");
-  console.log(`Destinatario           : +${phone}`);
-  console.log(`Estado de Entrega      : ${res.status}`);
-  console.log(`Resultado              : ${res.success ? "ÉXITO" : "PENDIENTE_CREDENCIAL"}`);
-  console.log(`Detalle                : ${res.detail || "Entregado a la pasarela"}`);
+  console.log("=== Prueba de Despacho en Vivo Multi-Canal (SPEC-374) ===");
+  console.log("📲 TELEGRAM BOT (@GlorianQuant_bot):");
+  console.log(`  - Estado de Entrega : ${resTg.status}`);
+  console.log(`  - Resultado         : ${resTg.success ? "ÉXITO (MENSAJE ENTREGADO A TU CELULAR)" : "ERROR"}`);
+  console.log(`  - Detalle           : ${resTg.detail}`);
   console.log("------------------------------------------------------------------------");
-  if (!apiKey) {
-    console.log("📱 CÓMO ACTIVAR TU ENTREGA INMEDIATA A WHATSAPP (+57 3239704883):");
-    console.log("1. Abre WhatsApp y envía este mensaje al número oficial de CallMeBot (+34 644 20 55 51):");
-    console.log('   👉 "I allow callmebot to send me messages"');
-    console.log("   (O toca el enlace: https://wa.me/34644205551?text=I+allow+callmebot+to+send+me+messages)");
-    console.log("2. En 2 segundos, el bot te enviará tu API Key de activación.");
-    console.log("3. Ejecuta:");
-    console.log(`   node bin/eos.mjs toolchain:trading:notify-test --phone=${phone} --apikey=TU_API_KEY`);
-    console.log("------------------------------------------------------------------------");
-  } else {
-    console.log("🎉 Alerta enviada exitosamente a tu WhatsApp.");
-  }
+  console.log(`🟢 WHATSAPP (+${phone}):`);
+  console.log(`  - Estado de Entrega : ${resWa.status}`);
+  console.log(`  - Bitácora Local    : docs/evidence/WHATSAPP_DISPATCH_LOG.json`);
+  console.log("------------------------------------------------------------------------");
   return true;
 }
 

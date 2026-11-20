@@ -172,6 +172,27 @@ describe("SPEC-374: Tri-Temporal Fractal Prop-Firm Engine & WhatsApp Dispatcher"
     assert.ok(res.detail?.includes("WHATSAPP_DISPATCH_LOG.json"));
   });
 
+  it("BDD-2031c: Telegram Live Dispatcher returns fail-safe status when unconfigured", async () => {
+    const alert = EosTriTemporalPropFirmEngine.formatTradeOpenAlert({
+      pair: "EUR/USD",
+      direction: "CALL",
+      entryPrice: 1.09265,
+      strikeSeconds: 60,
+      confidence: 0.94,
+      m15Reason: "M15 bull trend",
+      m5Reason: "M5 pullback",
+      m1Reason: "M1 wick rejection",
+    });
+
+    const res = await EosTriTemporalPropFirmEngine.dispatchTelegramLive(alert, {
+      botToken: "",
+      chatId: "",
+    });
+
+    assert.equal(res.success, false);
+    assert.equal(res.status, "TELEGRAM_NOT_CONFIGURED");
+  });
+
   it("BDD-2032: Invariant Audit and Receipt Generation", () => {
     const receipt = EosTriTemporalPropFirmEngine.audit();
     assert.equal(receipt.status, "VERIFIED");
