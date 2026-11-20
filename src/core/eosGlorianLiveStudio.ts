@@ -452,6 +452,16 @@ export class EosGlorianLiveStudio {
       <div class="val" id="fleet-score">${snapshot.fleet.averageSoundcheckScore}%</div>
       <div class="sub">${snapshot.fleet.verifiedCount}/${snapshot.fleet.registeredCount} Repos Verified</div>
     </div>
+    <div class="metric-card" style="border-color: #10b981;">
+      <h3 style="color: #10b981;">Byzantine Council (SPEC-371)</h3>
+      <div class="val" style="color: #10b981;">DEMO SHIELD</div>
+      <div class="sub">4-Judge BFT Consensus | 0% Martingale</div>
+    </div>
+    <div class="metric-card" style="border-color: #38bdf8;">
+      <h3 style="color: #38bdf8;">Aladdin Vault Alpha (SPEC-372)</h3>
+      <div class="val" style="color: #38bdf8;">$3,000 USD</div>
+      <div class="sub">P(ruin): 0.00% | All-Weather Parity</div>
+    </div>
   </div>
 
   <div class="bitemporal-controls">

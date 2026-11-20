@@ -782,3 +782,5 @@ export * from "./eosInstitutionalTradingEngine.ts";
 export * from "./eosInstitutionalTradingEngine.types.ts";
 export * from "./eosAladdinPortfolioRiskEngine.ts";
 export * from "./eosAladdinPortfolioRiskEngine.types.ts";
+export * from "./eosMultiAssetMacroFilterEngine.ts";
+export * from "./eosMultiAssetMacroFilterEngine.types.ts";

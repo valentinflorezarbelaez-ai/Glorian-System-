@@ -14,6 +14,7 @@ import {
   auditRiskInvariants,
 } from "../../src/core/eosInstitutionalTradingEngine.ts";
 import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
+import { handleMultiAssetMacroCommand } from "./cliMultiAssetMacroEngine.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -185,9 +186,8 @@ HANDLERS["toolchain:trading:confluence"] = cmd_trading_confluence;
 
 export async function handleInstitutionalTradingCommand(commandContext) {
   const handler = HANDLERS[commandContext.command];
-  if (!handler) {
-    console.error(`Unknown trading toolchain command: ${commandContext.command}`);
-    return false;
+  if (handler) {
+    return handler(commandContext);
   }
-  return handler(commandContext);
+  return handleMultiAssetMacroCommand(commandContext);
 }

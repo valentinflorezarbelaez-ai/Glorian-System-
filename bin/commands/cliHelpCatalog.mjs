@@ -2,12 +2,10 @@
  * Synchronized CLI Help Catalog for `eos help` and `eos help --all` (v75.0.0, SPEC-001..SPEC-258).
  * Audited for 100% handler parity by EosCliCatalogAndHygieneGovernorCore (SPEC-250).
  */
-
 export const QUICK_HELP_TEXT = `
 ======================================================================
  EOS SYSTEM — MANUAL RÁPIDO Y ERGONOMÍA DE DESARROLLO (v75.0.0)
 ======================================================================
-
 🎯 DESARROLLO RÁPIDO & PRUEBAS (DAILY WORKFLOW):
   eos pts                    Corre únicamente las pruebas impactadas por el diff (~350ms)
   eos search <termino>       Búsqueda instantánea FTS5 en specs, plans y ADRs (~100ms)
@@ -235,7 +233,6 @@ export const QUICK_HELP_TEXT = `
   eos guide                  Muestra el glosario de arquitectura y equivalencias de la industria
   eos help --all             Muestra la lista exhaustiva de todos los subcomandos registrados
 `;
-
 export const EXHAUSTIVE_HELP_TEXT = `
 Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos turbo                      Verificación ultrarrápida en memoria con telemetría en microsegundos
@@ -769,6 +766,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:trading:status Estado de aislamiento demo, candados de riesgo y piso de trailing profit (SPEC-371)
   eos toolchain:trading:confluence Matriz de confluencia técnica de las 4 estrategias institucionales (SPEC-371)
   eos toolchain:trading:audit Auditoría formal de los 9 invariantes de riesgo y recibo SHA-256 (SPEC-371)
+  eos toolchain:trading:multipair Escaneo concurrente de 6 pares mayores y elección de mejor setup (SPEC-373)
+  eos toolchain:trading:news Calendario macroeconómico y estado de ventana de blackout (SPEC-373)
+  eos toolchain:trading:paperlog Bitácora de operaciones simuladas en sombra y analítica PnL (SPEC-373)
+  eos toolchain:trading:macro-audit Auditoría formal del motor macro y recibo criptográfico SHA-256 (SPEC-373)
   eos toolchain:aladdin:stress-test Prueba de estrés de cisnes negros históricos estilo Aladdin (SPEC-372)
   eos toolchain:aladdin:allocate Asignación institucional All-Weather de Ray Dalio y deriva (SPEC-372)
   eos toolchain:aladdin:var Métricas de riesgo VaR/CVaR y simulación Monte Carlo 10,000 rutas (SPEC-372)

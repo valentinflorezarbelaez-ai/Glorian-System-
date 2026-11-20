@@ -510,4 +510,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_multi_asset_macro_audit",
+    description:
+      "Audits the Multi-Asset Scanner, Macro Economic News Filter & Paper-Trading Ledger verifying news blackout enforcement and single-asset election (SPEC-373).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

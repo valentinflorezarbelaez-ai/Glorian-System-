@@ -230,4 +230,5 @@ export const PHASE8_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
   "eos_deterministic_replay_debugger_audit",
   "eos_institutional_trading_audit",
   "eos_aladdin_risk_audit",
+  "eos_multi_asset_macro_audit",
 ]);

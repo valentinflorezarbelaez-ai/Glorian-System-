@@ -49,6 +49,7 @@ import { EosEpisodicMemoryGraph } from "../../core/eosEpisodicMemoryGraph.ts";
 import { EosDeterministicReplayDebugger } from "../../core/eosDeterministicReplayDebugger.ts";
 import { EosInstitutionalTradingEngine } from "../../core/eosInstitutionalTradingEngine.ts";
 import { EosAladdinPortfolioRiskEngine } from "../../core/eosAladdinPortfolioRiskEngine.ts";
+import { EosMultiAssetMacroFilterEngine } from "../../core/eosMultiAssetMacroFilterEngine.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 import { PHASE8_MIGRATED_TOOL_NAMES } from "./eosMcpPhase8ToolNames.ts";
 
@@ -278,5 +279,6 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_institutional_trading_audit: (params) =>
       EosInstitutionalTradingEngine.audit(params?.asset as string | undefined),
     eos_aladdin_risk_audit: () => EosAladdinPortfolioRiskEngine.audit(projectRoot),
+    eos_multi_asset_macro_audit: () => EosMultiAssetMacroFilterEngine.audit(projectRoot),
   };
 }

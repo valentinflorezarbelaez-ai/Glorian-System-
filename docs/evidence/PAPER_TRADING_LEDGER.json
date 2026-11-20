@@ -1,0 +1,41 @@
+[
+  {
+    "timestamp": 1795139570629,
+    "pair": "EUR/USD",
+    "direction": "CALL",
+    "entryPrice": 1.0862,
+    "exitPrice": 1.0865,
+    "strikeTimeSeconds": 60,
+    "stakeUsd": 50,
+    "payoutMultiplier": 1.85,
+    "status": "WIN",
+    "tradeId": "paper-1795139570630-1",
+    "pnlUsd": 42.5
+  },
+  {
+    "timestamp": 1795139600498,
+    "pair": "GBP/USD",
+    "direction": "PUT",
+    "entryPrice": 1.293,
+    "exitPrice": 1.291,
+    "strikeTimeSeconds": 60,
+    "stakeUsd": 100,
+    "payoutMultiplier": 1.8,
+    "status": "WIN",
+    "tradeId": "paper-1795139600498-2",
+    "pnlUsd": 80
+  },
+  {
+    "timestamp": 1795139615199,
+    "pair": "GBP/USD",
+    "direction": "PUT",
+    "entryPrice": 1.293,
+    "exitPrice": 1.291,
+    "strikeTimeSeconds": 60,
+    "stakeUsd": 100,
+    "payoutMultiplier": 1.8,
+    "status": "WIN",
+    "tradeId": "paper-1795139615200-3",
+    "pnlUsd": 80
+  }
+]

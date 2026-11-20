@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "c1d267ecf3287ece3090a11d49551e5520209687cf3e194c27b4f8131a105ed3",
-  "totalTools": 248,
+  "catalogSha256": "f5acfe9408ae592aa9825ebc8b13601e6620bd5920616a5674971b9a6b023ab1",
+  "totalTools": 249,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7293,6 +7293,21 @@
       },
       "annotations": {
         "title": "EOS aladdin Risk Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_multi_asset_macro_audit",
+      "description": "Audits the Multi-Asset Scanner, Macro Economic News Filter & Paper-Trading Ledger verifying news blackout enforcement and single-asset election (SPEC-373).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS multi Asset Macro Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

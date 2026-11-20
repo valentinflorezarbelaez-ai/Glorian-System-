@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-20T01:24:58.060Z",
+  "timestampIso": "2026-11-20T01:49:29.032Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
   "executionMode": "LIVE_LOCAL_TLC",
@@ -7,14 +7,14 @@
   "allPassed": true,
   "hasJavaRuntime": true,
   "tlaJarPath": "C:\\Users\\valen\\Documents\\Glorian-System\\tools\\tla2tools.jar",
-  "totalConfiguredSpecs": 77,
+  "totalConfiguredSpecs": 78,
   "models": [
     {
       "specName": "LmaxDisruptor",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 251,
-      "statesGenerated": 969,
+      "distinctStates": 20425,
+      "statesGenerated": 84397,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -67,8 +67,8 @@
       "specName": "ZeroCopyRingBuffer",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 39865,
-      "statesGenerated": 154381,
+      "distinctStates": 915,
+      "statesGenerated": 936,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -76,8 +76,8 @@
       "specName": "JepsenDistributedChaos",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 261,
-      "statesGenerated": 113,
+      "distinctStates": 676,
+      "statesGenerated": 279,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -85,8 +85,8 @@
       "specName": "SimdQuantizedHnsw",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 765,
-      "statesGenerated": 351,
+      "distinctStates": 34,
+      "statesGenerated": 657,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -94,8 +94,8 @@
       "specName": "DistributedVectorMesh",
       "verifiedLive": true,
       "passed": true,
-      "distinctStates": 486,
-      "statesGenerated": 573,
+      "distinctStates": 636,
+      "statesGenerated": 5125,
       "violationInvariant": null,
       "exitCode": 0
     },
@@ -699,6 +699,15 @@
       "passed": true,
       "distinctStates": 4,
       "statesGenerated": 7,
+      "violationInvariant": null,
+      "exitCode": 0
+    },
+    {
+      "specName": "MultiAssetMacroFilterEngine",
+      "verifiedLive": true,
+      "passed": true,
+      "distinctStates": 5,
+      "statesGenerated": 8,
       "violationInvariant": null,
       "exitCode": 0
     }

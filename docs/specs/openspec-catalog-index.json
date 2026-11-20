@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 372,
-  "catalogSha256": "034b24703c5dc78cd3083e27b6e997ae58ebc5c29dbbcf2c8bdce188f20b6496",
+  "totalSpecs": 373,
+  "catalogSha256": "655f0944b4d3cc6e740e5337aed2ec5f2d277f3ad94f05e403052a1bd4597221",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3350,6 +3350,15 @@
       "bddCount": 7,
       "file": "openspec/specs/SPEC-372-aladdin-institutional-portfolio-risk-engine.md",
       "sha256": "4c37a7efa30c32661c4809fb88933d5b15c4fb79e61b7fced24bd06d90fccd82"
+    },
+    {
+      "id": "SPEC-373",
+      "title": "Autonomous Multi-Asset Scanner, Macro Economic News Filter & Paper-Trading Ledger",
+      "status": "FORMALIZED",
+      "frCount": 1,
+      "bddCount": 7,
+      "file": "openspec/specs/SPEC-373-multi-asset-scanner-macro-filter.md",
+      "sha256": "a63c4b8a590fdc90ae410f27ed37a123f5ce361de564950ef01629e0901ac331"
     }
   ]
 }

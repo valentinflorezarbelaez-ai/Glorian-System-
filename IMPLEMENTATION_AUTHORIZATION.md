@@ -3645,3 +3645,21 @@
   - `docs/plans/PLAN-234-ALADDIN-INSTITUTIONAL-PORTFOLIO-RISK-ENGINE.md`
   - `docs/tasks/TASKS-234-ALADDIN-INSTITUTIONAL-PORTFOLIO-RISK-ENGINE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-MULTI-ASSET-MACRO-ENGINE`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-235` / `SPEC-373`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-235` (`SPEC-373`), Autonomous Multi-Asset Scanner, Macro Economic News Filter & Paper-Trading Ledger: TLA+ Model 116 `docs/formal/MultiAssetMacroFilterEngine.tla` / `.cfg`; `src/core/eosMultiAssetMacroFilterEngine.types.ts` and `src/core/eosMultiAssetMacroFilterEngine.ts` (pure Layer-0 concurrent scanning across 6 major pairs, economic calendar matching, 30-min pre/post news blackout window, single best asset election to prevent correlated currency risk, and autonomous paper-trading ledger); receipt `docs/evidence/MULTI_ASSET_MACRO_RECEIPT.json`. Wire `toolchain:trading:multipair`, `toolchain:trading:news`, `toolchain:trading:paperlog`, `toolchain:trading:macro-audit` and Phase 8 MCP tool `eos_multi_asset_macro_audit`. Verify `BDD-2019`..`BDD-2025`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-235-MULTI-ASSET-SCANNER-MACRO-FILTER.md`
+  - `openspec/changes/CHANGE-235-multi-asset-scanner-macro-filter.md`
+  - `openspec/specs/SPEC-373-multi-asset-scanner-macro-filter.md`
+  - `docs/plans/PLAN-235-MULTI-ASSET-SCANNER-MACRO-FILTER.md`
+  - `docs/tasks/TASKS-235-MULTI-ASSET-SCANNER-MACRO-FILTER.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

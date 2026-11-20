@@ -117,6 +117,7 @@ export const CONFIGURED_SPECS = [
   "DeterministicReplayDebugger",
   "InstitutionalTradingEngine",
   "AladdinPortfolioRiskEngine",
+  "MultiAssetMacroFilterEngine",
 ];
 
 /**
