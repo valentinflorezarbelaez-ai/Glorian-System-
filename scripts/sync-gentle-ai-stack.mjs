@@ -101,8 +101,10 @@ export function syncGentleAiStack(options = {}) {
   let mcpCatalogHash = "UNAVAILABLE";
 
   const catalogPath = path.join(root, "src", "mcp", "eosMcpToolCatalog.ts");
-  if (fs.existsSync(catalogPath)) {
-    const catalogSource = fs.readFileSync(catalogPath, "utf8");
+  const taxonomyPath = path.join(root, "src", "core", "eosMcpToolTaxonomy.ts");
+  const targetCatalog = fs.existsSync(taxonomyPath) ? taxonomyPath : catalogPath;
+  if (fs.existsSync(targetCatalog)) {
+    const catalogSource = fs.readFileSync(targetCatalog, "utf8");
     mcpCatalogHash = crypto.createHash("sha256").update(catalogSource).digest("hex");
 
     const coreMatches = catalogSource.match(/"eos_[a-z0-9_]+"/g) || [];
@@ -110,11 +112,28 @@ export function syncGentleAiStack(options = {}) {
   }
 
   const serverPath = path.join(root, "src", "mcp", "eosMcpServer.ts");
-  if (fs.existsSync(serverPath)) {
-    const serverSource = fs.readFileSync(serverPath, "utf8");
-    const allMatches = serverSource.match(/name:\s*"eos_[a-z0-9_]+"/g) || [];
-    fullToolCount = new Set(allMatches).size;
+  const defsPath = path.join(root, "src", "mcp", "eosMcpToolDefinitions.ts");
+  const phase8Path = path.join(root, "src", "mcp", "tools", "eosMcpPhase8ToolDefinitions.ts");
+  const defsDir = path.join(root, "src", "mcp", "tools", "definitions");
+
+  const candidatePaths = [serverPath, defsPath, phase8Path];
+  if (fs.existsSync(defsDir)) {
+    for (const file of fs.readdirSync(defsDir)) {
+      if (file.endsWith(".ts")) {
+        candidatePaths.push(path.join(defsDir, file));
+      }
+    }
   }
+
+  const allToolMatches = [];
+  for (const filePath of candidatePaths) {
+    if (fs.existsSync(filePath)) {
+      const source = fs.readFileSync(filePath, "utf8");
+      const matches = source.match(/name:\s*["'][a-z0-9_]+["']/g) || [];
+      allToolMatches.push(...matches);
+    }
+  }
+  fullToolCount = new Set(allToolMatches).size;
 
   components.push({
     name: "Canonical MCP Sovereign Tool Catalog",
@@ -149,7 +168,11 @@ export function syncGentleAiStack(options = {}) {
   // Write sealed evidence receipt to docs/evidence/EVD-GENTLE-STACK-SYNC.json
   const evidenceDir = path.join(root, "docs", "evidence");
   fs.mkdirSync(evidenceDir, { recursive: true });
-  fs.writeFileSync(path.join(evidenceDir, "EVD-GENTLE-STACK-SYNC.json"), JSON.stringify(receipt, null, 2), "utf8");
+  fs.writeFileSync(
+    path.join(evidenceDir, "EVD-GENTLE-STACK-SYNC.json"),
+    `${JSON.stringify(receipt, null, 2)}\n`,
+    "utf8",
+  );
 
   return receipt;
 }

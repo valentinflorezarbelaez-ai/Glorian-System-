@@ -1,7 +1,7 @@
 {
   "status": "SYNCHRONIZED_HERMETIC",
-  "timestamp": "2026-10-31T04:16:40.813Z",
-  "projectRoot": "C:\\Users\\valen\\Eos-System",
+  "timestamp": "2026-11-20T20:34:19.185Z",
+  "projectRoot": "C:\\Users\\valen\\Documents\\Glorian-System",
   "totalComponents": 4,
   "synchronizedComponents": 4,
   "components": [
@@ -9,34 +9,34 @@
       "name": "Engram Epistemic DAG Engine",
       "category": "ENGRAM_DAG",
       "verified": true,
-      "sha256": "4c4c584397ae36960ca1b6f28f4693bdb0f27e861d26d39480d772af16725419",
-      "details": "Canonical binary found at C:\\Users\\valen\\AppData\\Local\\engram\\bin\\engram.exe (21.9 MB)"
+      "sha256": "207a1a56d0a277ca4f84427130c5aafbdeddd0f698b246736b54cde9b3c08098",
+      "details": "Canonical binary found at C:\\Users\\valen\\AppData\\Local\\engram\\bin\\engram.exe (22.1 MB)"
     },
     {
       "name": "GGA Git Governance Agent Hook",
       "category": "GGA_HOOKS",
       "verified": true,
-      "sha256": "892d2d3b43d016fa483261ebdbd6bbffaa815704d02c52da1413b2fd87ddbfc1",
+      "sha256": "b735d7319887f51a805a8565f5be65efc9d642f9f77330675ee898902e58d084",
       "details": "Active pre-commit verification gate present in .githooks\\pre-commit"
     },
     {
       "name": "SpecBoot Mirrored SDD Skills",
       "category": "SPECBOOT_SKILLS",
       "verified": true,
-      "sha256": "fe79ea3371ff279e012518c4f32025519f43756cb3f96705944d1b87146fbfdf",
-      "details": "19 sovereign SDD and fleet operational skills active in .agents/skills/"
+      "sha256": "7dd0ed98516b3469d4387fab7378365cbbdd6064bd96d168c043e42d65f04278",
+      "details": "20 sovereign SDD and fleet operational skills active in .agents/skills/"
     },
     {
       "name": "Canonical MCP Sovereign Tool Catalog",
       "category": "MCP_CATALOG",
       "verified": true,
-      "sha256": "8623a17bc59e02734b0d10a272b2d75ad99a84fa077fc5cf1c9712c972b130d5",
-      "details": "Registered 134 tools in full profile and 48 tools in curated Tier-0 core profile."
+      "sha256": "9db7281ec0452d9149fa2a3f2faf5781931c08d63901bdcb77d2e7384449b92b",
+      "details": "Registered 255 tools in full profile and 157 tools in curated Tier-0 core profile."
     }
   ],
   "mcpToolCount": {
-    "coreProfile": 48,
-    "fullProfile": 134
+    "coreProfile": 157,
+    "fullProfile": 255
   },
-  "sha256EvidenceSeal": "f668732824872b5210697c3eab9583bc18c5ee1362c2b12a7123d7b45d215051"
+  "sha256EvidenceSeal": "4cc39a843c62a8325a20e99171e18a246a79cc300c53d6705b992e46b0b781f9"
 }
