@@ -3,7 +3,7 @@
   "updatedAt": "2026-11-12T13:54:05.046Z",
   "masterOrchestrator": "EOS System control plane (SPEC-124)",
   "complianceStandard": "EOS_CONSTITUTION_LAW_IV_EXTERNAL_WRITE_BARRIER",
-  "totalFleetProjects": 9,
+  "totalFleetProjects": 10,
   "projects": [
     {
       "id": "aberamentho",
@@ -175,6 +175,24 @@
       "currentBranch": "main",
       "headCommitSha": "1ed120dc7be8b25ef611f7b621d4dc8511c1071e",
       "ownerApproval": "OWNER_APPROVAL"
+    },
+    {
+      "id": "trading-family-office",
+      "name": "Trading Family Office — Aladdin & Vanguard Governance Dashboard",
+      "resolvedLocalDir": "TRADING-FAMILY-OFFICE-",
+      "localPathEnv": "EOS_FLEET_TRADING_FAMILY_OFFICE_PATH",
+      "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/TRADING-FAMILY-OFFICE-.git",
+      "productionUrl": "https://trading-family-office.vercel.app",
+      "type": "executive-family-office-app",
+      "status": "REGISTERED",
+      "intake": "INTAKE_COMPLETE",
+      "specification": "SPECIFICATION_APPROVED",
+      "audit": "AUDIT_COMPLETE",
+      "authorization": "LEVEL_3_PRODUCTION_AUTHORIZED",
+      "cicdGateScript": "npm run build",
+      "autoShipScript": "git push origin main",
+      "ownerApproval": "OWNER_APPROVAL",
+      "currentBranch": "main"
     }
   ],
   "registrySha256": "4f8da39c226f3a8df5e42801bb4ff32e72a5a26cdf499fc7eda2859398180338"
