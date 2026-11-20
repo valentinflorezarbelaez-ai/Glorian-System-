@@ -13,10 +13,10 @@
   "liveProbe": {
     "reachable": true,
     "httpStatus": 200,
-    "latencyMs": 284,
-    "probedAt": "2026-11-12T01:59:36.195Z",
+    "latencyMs": 292,
+    "probedAt": "2026-11-20T20:00:48.073Z",
     "policy": "ALLOWED"
   },
   "epistemicState": "FLEET_PRODUCT_SCORECARD_WITHIN_TESTED_SCOPE",
-  "sha256Receipt": "cf1a54be72b0ca93f14e82b2876a0aa655df3531b70484af49b95bd719967b3e"
+  "sha256Receipt": "199b78c6904ba5d56cd718566abe403662c27a8a22bfa2df0e9a11563faabf6e"
 }

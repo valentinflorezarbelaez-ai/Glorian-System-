@@ -46,6 +46,29 @@ function isAllowedProductionUrl(urlString) {
   }
 }
 
+async function probeRedirectTarget(location, baseUrl, signal, started, probedAt) {
+  try {
+    const resolved = new URL(location, baseUrl).href;
+    if (!isAllowedProductionUrl(resolved)) {
+      return { reachable: false, httpStatus: 308, latencyMs: Date.now() - started, probedAt };
+    }
+    const redirected = await fetch(resolved, {
+      method: "HEAD",
+      redirect: "manual",
+      signal,
+      headers: { "user-agent": "eos-fleet-scorecard-probe/1.0" },
+    });
+    return {
+      reachable: redirected.status > 0 && redirected.status < 500,
+      httpStatus: redirected.status,
+      latencyMs: Date.now() - started,
+      probedAt,
+    };
+  } catch {
+    return { reachable: false, httpStatus: 0, latencyMs: Date.now() - started, probedAt };
+  }
+}
+
 /**
  * @param {string} url
  * @returns {Promise<{ reachable: boolean, httpStatus: number, latencyMs: number, probedAt: string }>}
@@ -66,8 +89,12 @@ async function probeUrl(url) {
       headers: { "user-agent": "eos-fleet-scorecard-probe/1.0" },
     });
     clearTimeout(timer);
-    // Reject redirects — never follow to runner-local / private targets.
+    // Allow single-hop redirect if destination is an allowed production URL
     if (response.status >= 300 && response.status < 400) {
+      const loc = response.headers.get("location");
+      if (loc) {
+        return await probeRedirectTarget(loc, url, controller.signal, started, probedAt);
+      }
       return {
         reachable: false,
         httpStatus: response.status,

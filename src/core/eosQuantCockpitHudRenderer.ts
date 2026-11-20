@@ -159,6 +159,55 @@ export function recordAndLoadWalkForwardLedger(
   return samples;
 }
 
+/** Institutional Risk Metrics (Sortino, Calmar, Max Drawdown). */
+export interface InstitutionalRiskMetrics {
+  readonly sortinoRatio: number;
+  readonly calmarRatio: number;
+  readonly maxDrawdownUsd: number;
+  readonly maxDrawdownPercent: number;
+}
+
+/** Computes institutional downside-risk metrics (Sortino, Calmar, and peak-to-trough Drawdown). */
+export function computeInstitutionalRiskMetrics(
+  trades: readonly WalkForwardTradeSample[],
+  startingEquityUsd = 10000,
+): InstitutionalRiskMetrics {
+  if (trades.length === 0) {
+    return { sortinoRatio: 0, calmarRatio: 0, maxDrawdownUsd: 0, maxDrawdownPercent: 0 };
+  }
+  let cum = Math.max(100, startingEquityUsd);
+  let peak = cum;
+  let maxDdUsd = 0;
+  let maxDdPct = 0;
+  let totalPnl = 0;
+  let sumSquaredDownside = 0;
+
+  for (const t of trades) {
+    totalPnl += t.pnlUsd;
+    cum += t.pnlUsd;
+    if (cum > peak) peak = cum;
+    const dd = peak - cum;
+    if (dd > maxDdUsd) maxDdUsd = dd;
+    const ddPct = peak > 0 ? (dd / peak) * 100 : 0;
+    if (ddPct > maxDdPct) maxDdPct = ddPct;
+    if (t.pnlUsd < 0) sumSquaredDownside += t.pnlUsd * t.pnlUsd;
+  }
+
+  const meanReturn = totalPnl / trades.length;
+  const downsideDeviation = Math.sqrt(sumSquaredDownside / trades.length);
+  const sortinoRatio =
+    downsideDeviation > 0 ? Number((meanReturn / downsideDeviation).toFixed(2)) : meanReturn > 0 ? 99.0 : 0;
+
+  const calmarRatio = maxDdUsd > 0 ? Number((Math.max(0, totalPnl) / maxDdUsd).toFixed(2)) : totalPnl > 0 ? 99.0 : 0;
+
+  return {
+    sortinoRatio,
+    calmarRatio,
+    maxDrawdownUsd: Number(maxDdUsd.toFixed(2)),
+    maxDrawdownPercent: Number(maxDdPct.toFixed(2)),
+  };
+}
+
 /** Computes Walk-Forward bucket statistics and Alpha-Decay quarantine flag. */
 export function buildWalkForwardBucketStats(
   key: string,
@@ -183,6 +232,7 @@ export function buildWalkForwardBucketStats(
   const winRatePercent = trades === 0 ? 0 : Number(((wins / trades) * 100).toFixed(2));
   const profitFactor = grossLoss === 0 ? (grossWin > 0 ? 99.0 : 0) : Number((grossWin / grossLoss).toFixed(2));
   const expectancyUsd = trades === 0 ? 0 : Number((netPnl / trades).toFixed(2));
+  const risk = computeInstitutionalRiskMetrics(items, 1000);
   return {
     key,
     trades,
@@ -192,6 +242,8 @@ export function buildWalkForwardBucketStats(
     netPnlUsd: Number(netPnl.toFixed(2)),
     profitFactor,
     expectancyUsd,
+    sortinoRatio: risk.sortinoRatio,
+    maxDrawdownUsd: risk.maxDrawdownUsd,
     quarantined: trades >= 20 && winRatePercent < 52.0,
   };
 }
@@ -305,6 +357,7 @@ export function renderQuantCockpitHud(p: QuantCockpitHudParams): string {
     sub,
     "⚖️ WALK-FORWARD QUARTER-KELLY SIZER & ALPHA-DECAY:",
     `  Closed Sample : ${p.walkForward.totalClosedTrades} trades | WR: ${p.walkForward.winRatePercent}% | PF: ${p.walkForward.profitFactor} | Net PnL: $${p.walkForward.netPnlUsd.toFixed(2)}`,
+    `  Risk Metrics  : Sortino: ${p.walkForward.sortinoRatio} | Calmar: ${p.walkForward.calmarRatio} | MaxDD: $${p.walkForward.maxDrawdownUsd.toFixed(2)} (${p.walkForward.maxDrawdownPercent.toFixed(2)}%)`,
     `  Stake Sizing  : ${p.walkForward.recommendedKellyPercent}% ($${p.walkForward.recommendedFlatStakeUsd.toFixed(2)} USD) [Zero-Martingale: ${p.walkForward.zeroMartingaleEnforced ? "ON" : "OFF"}]`,
     `  Quarantined   : ${p.walkForward.quarantinedBuckets.length > 0 ? p.walkForward.quarantinedBuckets.join(", ") : "NONE"}`,
     sub,

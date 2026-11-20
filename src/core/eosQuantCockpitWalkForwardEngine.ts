@@ -19,13 +19,14 @@ import {
   buildRejectedExpertVerdict as rejectVerdict,
   buildWalkForwardBucketStats as buildBucketStats,
   classifyIqOptionAssetCategory,
+  computeInstitutionalRiskMetrics,
   formatCotIso,
   generateFullIqOptionUniverse153,
   getCotHourLabel,
   recordAndLoadWalkForwardLedger,
   renderQuantCockpitHud,
 } from "./eosQuantCockpitHudRenderer.ts";
-export { generateFullIqOptionUniverse153, recordAndLoadWalkForwardLedger };
+export { computeInstitutionalRiskMetrics, generateFullIqOptionUniverse153, recordAndLoadWalkForwardLedger };
 import type {
   AssetTimeframeCandles,
   AtomicTriggerDecision,
@@ -434,6 +435,7 @@ export class EosQuantCockpitWalkForwardEngine {
     }
 
     const recommendedFlatStakeUsd = Number(((Math.max(0, demoBalanceUsd) * recommendedKellyPercent) / 100).toFixed(2));
+    const risk = computeInstitutionalRiskMetrics(settled, demoBalanceUsd);
 
     return {
       totalClosedTrades: overall.trades,
@@ -445,6 +447,10 @@ export class EosQuantCockpitWalkForwardEngine {
       recommendedKellyPercent,
       recommendedFlatStakeUsd,
       zeroMartingaleEnforced: true,
+      sortinoRatio: risk.sortinoRatio,
+      calmarRatio: risk.calmarRatio,
+      maxDrawdownUsd: risk.maxDrawdownUsd,
+      maxDrawdownPercent: risk.maxDrawdownPercent,
       quarantinedBuckets,
       byHourCot,
       byStrategy,

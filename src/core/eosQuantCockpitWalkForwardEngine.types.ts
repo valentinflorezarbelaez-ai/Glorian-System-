@@ -136,6 +136,8 @@ export interface WalkForwardBucketStats {
   readonly netPnlUsd: number;
   readonly profitFactor: number;
   readonly expectancyUsd: number;
+  readonly sortinoRatio: number;
+  readonly maxDrawdownUsd: number;
   readonly quarantined: boolean;
 }
 
@@ -149,6 +151,10 @@ export interface WalkForwardCalibrationReport {
   readonly recommendedKellyPercent: number;
   readonly recommendedFlatStakeUsd: number;
   readonly zeroMartingaleEnforced: boolean;
+  readonly sortinoRatio: number;
+  readonly calmarRatio: number;
+  readonly maxDrawdownUsd: number;
+  readonly maxDrawdownPercent: number;
   readonly quarantinedBuckets: readonly string[];
   readonly byHourCot: readonly WalkForwardBucketStats[];
   readonly byStrategy: readonly WalkForwardBucketStats[];

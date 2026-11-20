@@ -1,6 +1,6 @@
 {
   "epistemicState": "FLEET_PRODUCT_SCORECARDS_WITHIN_TESTED_SCOPE",
-  "generatedAt": "2026-11-12T01:59:36.801Z",
+  "generatedAt": "2026-11-20T20:00:48.709Z",
   "probeEnabled": true,
   "probedCount": 8,
   "ssrfPolicy": "https-vercel-app-allowlist-no-redirect",
@@ -23,8 +23,8 @@
       "liveProbe": {
         "reachable": true,
         "httpStatus": 200,
-        "latencyMs": 348,
-        "probedAt": "2026-11-12T01:59:34.387Z",
+        "latencyMs": 377,
+        "probedAt": "2026-11-20T20:00:46.209Z",
         "policy": "ALLOWED"
       }
     },
@@ -35,8 +35,8 @@
       "liveProbe": {
         "reachable": true,
         "httpStatus": 200,
-        "latencyMs": 309,
-        "probedAt": "2026-11-12T01:59:34.735Z",
+        "latencyMs": 310,
+        "probedAt": "2026-11-20T20:00:46.586Z",
         "policy": "ALLOWED"
       }
     },
@@ -47,8 +47,8 @@
       "liveProbe": {
         "reachable": true,
         "httpStatus": 200,
-        "latencyMs": 307,
-        "probedAt": "2026-11-12T01:59:35.044Z",
+        "latencyMs": 297,
+        "probedAt": "2026-11-20T20:00:46.896Z",
         "policy": "ALLOWED"
       }
     },
@@ -59,8 +59,8 @@
       "liveProbe": {
         "reachable": true,
         "httpStatus": 200,
-        "latencyMs": 277,
-        "probedAt": "2026-11-12T01:59:35.351Z",
+        "latencyMs": 294,
+        "probedAt": "2026-11-20T20:00:47.193Z",
         "policy": "ALLOWED"
       }
     },
@@ -71,8 +71,8 @@
       "liveProbe": {
         "reachable": true,
         "httpStatus": 200,
-        "latencyMs": 290,
-        "probedAt": "2026-11-12T01:59:35.628Z",
+        "latencyMs": 289,
+        "probedAt": "2026-11-20T20:00:47.487Z",
         "policy": "ALLOWED"
       }
     },
@@ -83,8 +83,8 @@
       "liveProbe": {
         "reachable": true,
         "httpStatus": 200,
-        "latencyMs": 277,
-        "probedAt": "2026-11-12T01:59:35.918Z",
+        "latencyMs": 297,
+        "probedAt": "2026-11-20T20:00:47.776Z",
         "policy": "ALLOWED"
       }
     },
@@ -95,8 +95,8 @@
       "liveProbe": {
         "reachable": true,
         "httpStatus": 200,
-        "latencyMs": 284,
-        "probedAt": "2026-11-12T01:59:36.195Z",
+        "latencyMs": 292,
+        "probedAt": "2026-11-20T20:00:48.073Z",
         "policy": "ALLOWED"
       }
     },
@@ -107,11 +107,11 @@
       "liveProbe": {
         "reachable": true,
         "httpStatus": 200,
-        "latencyMs": 318,
-        "probedAt": "2026-11-12T01:59:36.479Z",
+        "latencyMs": 339,
+        "probedAt": "2026-11-20T20:00:48.365Z",
         "policy": "ALLOWED"
       }
     }
   },
-  "sha256Receipt": "c1eb5d07b6bb715fb2f1b4d83733c8c783ff145755040606dd2e514e728716f0"
+  "sha256Receipt": "d0447d683b54ce6af5983767e997fbc313ec0c344bf3014194c73cf69c48a4a5"
 }
