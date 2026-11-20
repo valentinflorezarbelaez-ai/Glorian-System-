@@ -119,6 +119,7 @@ export const CONFIGURED_SPECS = [
   "AladdinPortfolioRiskEngine",
   "MultiAssetMacroFilterEngine",
   "TriTemporalPropFirmEngine",
+  "UniversalAssetPayoutOptimizer",
 ];
 
 /**

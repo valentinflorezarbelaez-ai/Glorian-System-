@@ -1,0 +1,18 @@
+{
+  "receiptId": "payout-rcpt-1795147201578",
+  "status": "VERIFIED",
+  "invariants": {
+    "minimumPayoutThreshold": true,
+    "strictOneMinuteExpiry": true,
+    "singleConcurrencyLock": true,
+    "fiduciaryVaultAlphaIntact": true,
+    "multiClassCoverageVerified": true
+  },
+  "metrics": {
+    "assetsAuditedCount": 4,
+    "highestPayoutObserved": 92,
+    "topConfluenceObserved": 0
+  },
+  "receiptHash": "8d344f95f084aa911970ec641f77356d8121896aefb4407ad772775c04a46a63",
+  "timestamp": 1795147201578
+}

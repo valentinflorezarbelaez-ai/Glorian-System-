@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 374,
-  "catalogSha256": "a8d71dc82001337f013fdfcfaa960fdc987def026f244a892d1789b64ba4f919",
+  "totalSpecs": 375,
+  "catalogSha256": "aeca09a25ac7f3bfc4501db7f6d52728b8e5343307fadc6d658380b29a718788",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3368,6 +3368,15 @@
       "bddCount": 7,
       "file": "openspec/specs/SPEC-374-tri-temporal-prop-firm-whatsapp-engine.md",
       "sha256": "c759e9300b95b519c13d08dadbee86152ad1c8716a8982316663f5cbe2e553d0"
+    },
+    {
+      "id": "SPEC-375",
+      "title": "Universal Multi-Asset Universe, Dynamic Payout Optimizer & 1-Minute Precision Engine",
+      "status": "UNKNOWN",
+      "frCount": 1,
+      "bddCount": 8,
+      "file": "openspec/specs/SPEC-375-universal-asset-payout-optimizer-engine.md",
+      "sha256": "8fbceea4140c2efe6d0aac3350076cbccb616ce111cbe4597114b7254f9123ad"
     }
   ]
 }

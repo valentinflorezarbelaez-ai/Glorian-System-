@@ -1,5 +1,6 @@
 /**
  * Glorian System — Institutional Quantitative Trading Engine & Byzantine Consensus Crucible
+ * Part of SPEC-371 / CHANGE-233 (Layer-0 Pure Financial Architecture)
  * Pure Layer-0 implementation of multi-strategy confluence, indicator mathematics,
  * Byzantine Council voting, and cryptographic execution safety.
  *

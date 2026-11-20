@@ -113,6 +113,11 @@ const KNOWN_MODULE_SPECS: Readonly<Record<string, number>> = Object.freeze({
   "samaelCodex.ts": 21,
   "eosThreeMountainsCompass.ts": 10,
   "eosAdaptiveL0Autotuner.ts": 19,
+  "eosInstitutionalTradingEngine.ts": 371,
+  "eosAladdinPortfolioRiskEngine.ts": 372,
+  "eosMultiAssetMacroFilterEngine.ts": 373,
+  "eosTriTemporalPropFirmEngine.ts": 374,
+  "eosUniversalAssetPayoutOptimizerEngine.ts": 375,
 });
 
 export class EosSpecDriftDetector {

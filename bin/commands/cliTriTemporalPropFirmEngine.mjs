@@ -9,6 +9,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { EosTriTemporalPropFirmEngine } from "../../src/core/eosTriTemporalPropFirmEngine.ts";
+import { handleUniversalAssetPayoutCommand } from "./cliUniversalAssetPayoutEngine.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -285,9 +286,8 @@ HANDLERS["toolchain:trading:notify-test"] = cmd_trading_notify_test;
 
 export async function handleTriTemporalPropFirmCommand(commandContext) {
   const handler = HANDLERS[commandContext.command];
-  if (!handler) {
-    console.error(`Unknown Tri-Temporal Prop-Firm command: ${commandContext.command}`);
-    return false;
+  if (handler) {
+    return handler(commandContext);
   }
-  return handler(commandContext);
+  return handleUniversalAssetPayoutCommand(commandContext);
 }

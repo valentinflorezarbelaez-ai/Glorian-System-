@@ -1,5 +1,5 @@
 {
-  "receiptId": "propfirm-rcpt-1795144742126",
+  "receiptId": "propfirm-rcpt-1795147201337",
   "status": "VERIFIED",
   "invariants": {
     "triTemporalHarmonicAlignment": true,
@@ -13,6 +13,6 @@
     "totalDrawdownPercent": 0,
     "dispatchesRecorded": 1
   },
-  "receiptHash": "f00e1b65c3836e654dc26258fc9226c5c072c7fce12cc90decedaa9f66f4da31",
-  "timestamp": 1795144742127
+  "receiptHash": "45697f6617325ff732e86f51e89cfec3887e4d99b9aa937b4f36352426fbe644",
+  "timestamp": 1795147201338
 }

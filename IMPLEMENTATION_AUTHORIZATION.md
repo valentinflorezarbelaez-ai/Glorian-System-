@@ -3681,3 +3681,21 @@
   - `docs/plans/PLAN-236-TRI-TEMPORAL-PROP-FIRM-WHATSAPP-ENGINE.md`
   - `docs/tasks/TASKS-236-TRI-TEMPORAL-PROP-FIRM-WHATSAPP-ENGINE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-UNIVERSAL-ASSET-PAYOUT-OPTIMIZER`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-237` / `SPEC-375`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-237` (`SPEC-375`), Universal Multi-Asset Universe, Dynamic Payout Optimizer & 1-Minute Precision Engine: TLA+ Model 118 `docs/formal/UniversalAssetPayoutOptimizer.tla` / `.cfg`; `src/core/eosUniversalAssetPayoutOptimizerEngine.types.ts` and `src/core/eosUniversalAssetPayoutOptimizerEngine.ts` (multi-class universe covering Forex, Commodities Gold/Silver, Crypto BTC/ETH/DASH/PEPE, Equities AAPL/MSFT/TSLA/NVDA/AMZN/META/GOOGL; dynamic payout optimizer comparing Binary vs Digital with >=80% threshold; relative-distance institutional round-number .000/.500 key-level detector; strict 60s expiry; Top-1 confluence ranking and election preserving single concurrency lock; dual-vault segregation preserving father's $3,000 USD Vault Alpha); receipt `docs/evidence/UNIVERSAL_ASSET_PAYOUT_RECEIPT.json`. Wire `toolchain:trading:universe`, `toolchain:trading:payout-audit`, `toolchain:trading:payout-scan` and Phase 8 MCP tool `eos_universal_asset_payout_audit`. Verify `BDD-2033`..`BDD-2040`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-237-UNIVERSAL-ASSET-PAYOUT-OPTIMIZER-ENGINE.md`
+  - `openspec/changes/CHANGE-237-universal-asset-payout-optimizer-engine.md`
+  - `openspec/specs/SPEC-375-universal-asset-payout-optimizer-engine.md`
+  - `docs/plans/PLAN-237-UNIVERSAL-ASSET-PAYOUT-OPTIMIZER-ENGINE.md`
+  - `docs/tasks/TASKS-237-UNIVERSAL-ASSET-PAYOUT-OPTIMIZER-ENGINE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
