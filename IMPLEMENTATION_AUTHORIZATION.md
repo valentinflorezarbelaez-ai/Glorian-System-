@@ -3609,3 +3609,21 @@
   - `docs/plans/PLAN-232-DETERMINISTIC-REPLAY-DEBUGGER.md`
   - `docs/tasks/TASKS-232-DETERMINISTIC-REPLAY-DEBUGGER.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-INSTITUTIONAL-TRADING-ENGINE`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-233` / `SPEC-371`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-233` (`SPEC-371`), Sovereign Institutional Quantitative Trading Engine & Byzantine Consensus Crucible: TLA+ Model 114 `docs/formal/InstitutionalTradingEngine.tla` / `.cfg`; `src/core/eosInstitutionalTradingEngine.types.ts` and `src/core/eosInstitutionalTradingEngine.ts` (pure Layer-0 deterministic indicators, multi-strategy confluence for Liquidity Sweeps, Trend Pullback, Volatility Squeeze, and Mean Reversion, 4-Judge Byzantine Council, strict demo isolation, 1-op concurrency lock, anti-Martingale flat stake, and trailing profit lock); receipt `docs/evidence/INSTITUTIONAL_TRADING_ENGINE_RECEIPT.json`. Wire `trading:scan`, `trading:status`, `trading:confluence`, `trading:audit` and Phase 8 MCP tool `eos_institutional_trading_audit`. Verify `BDD-2005`..`BDD-2010`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-233-INSTITUTIONAL-QUANTITATIVE-TRADING-ENGINE.md`
+  - `openspec/changes/CHANGE-233-institutional-quantitative-trading-engine.md`
+  - `openspec/specs/SPEC-371-institutional-quantitative-trading-engine.md`
+  - `docs/plans/PLAN-233-INSTITUTIONAL-QUANTITATIVE-TRADING-ENGINE.md`
+  - `docs/tasks/TASKS-233-INSTITUTIONAL-QUANTITATIVE-TRADING-ENGINE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

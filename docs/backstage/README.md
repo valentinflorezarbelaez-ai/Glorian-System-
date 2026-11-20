@@ -5,11 +5,11 @@
 
 ## What lives here
 
-| Artifact | Role |
-|---|---|
+| Artifact                                            | Role                                                                             |
+| --------------------------------------------------- | -------------------------------------------------------------------------------- |
 | Root [`catalog-info.yaml`](../../catalog-info.yaml) | Backstage `Component` `eos-system-control-plane` + `System` `eos-sovereign-mesh` |
-| Root [`mkdocs.yml`](../../mkdocs.yml) | Satisfies `backstage.io/techdocs-ref: dir:.` |
-| This folder | Operator notes for discovery until a portal host exists |
+| Root [`mkdocs.yml`](../../mkdocs.yml)               | Satisfies `backstage.io/techdocs-ref: dir:.`                                     |
+| This folder                                         | Operator notes for discovery until a portal host exists                          |
 
 ## Ownership
 

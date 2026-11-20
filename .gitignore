@@ -32,6 +32,8 @@ pipeline-run.log
 .eos-vfast.log
 .eos-graph-cache.json
 data/
+*.csv
+bitacora_trading.csv
 *.db
 # Runtime forge + consulting fixtures left by hermetic MCP/AGI suites.
 src/dynamic_tools/*.tool.mjs

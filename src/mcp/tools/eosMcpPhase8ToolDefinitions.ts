@@ -487,4 +487,18 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_institutional_trading_audit",
+    description:
+      "Audits the Sovereign Institutional Quantitative Trading Engine & Byzantine Consensus Crucible verifying multi-strategy confluence, 4-judge consensus, practice mode isolation, and concurrency locking (SPEC-371).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        asset: {
+          type: "string",
+          description: "Target asset pair to scan and audit (default: EUR/USD).",
+        },
+      },
+    },
+  },
 ];

@@ -768,6 +768,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:replay:step [--back|--rewind] Navegación interactiva por el slider de tiempo (SPEC-370)
   eos toolchain:replay:branch [NAME] Bifurcación contrafactual MCTS y exploración de árbol UCT (SPEC-370)
   eos toolchain:replay:audit [--json] Auditoría diagnóstica del depurador y recibo de reproducibilidad (SPEC-370)
+  eos toolchain:trading:scan [ASSET] Escaneo cuantitativo institucional y veredicto del Concilio Bizantino (SPEC-371)
+  eos toolchain:trading:status Estado de aislamiento demo, candados de riesgo y piso de trailing profit (SPEC-371)
+  eos toolchain:trading:confluence Matriz de confluencia técnica de las 4 estrategias institucionales (SPEC-371)
+  eos toolchain:trading:audit Auditoría formal de los 9 invariantes de riesgo y recibo SHA-256 (SPEC-371)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 

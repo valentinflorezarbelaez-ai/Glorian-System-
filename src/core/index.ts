@@ -778,3 +778,5 @@ export * from "./eosEpisodicMemoryGraph.ts";
 export * from "./eosEpisodicMemoryGraph.types.ts";
 export * from "./eosDeterministicReplayDebugger.ts";
 export * from "./eosDeterministicReplayDebugger.types.ts";
+export * from "./eosInstitutionalTradingEngine.ts";
+export * from "./eosInstitutionalTradingEngine.types.ts";

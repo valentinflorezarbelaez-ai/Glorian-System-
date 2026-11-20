@@ -315,6 +315,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliDeterministicReplayDebugger.mjs",
     fn: "handleDeterministicReplayDebuggerCommand",
   },
+  {
+    prefix: "toolchain:trading:",
+    file: "./cliInstitutionalTradingEngine.mjs",
+    fn: "handleInstitutionalTradingCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

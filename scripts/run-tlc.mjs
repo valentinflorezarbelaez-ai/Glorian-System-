@@ -115,6 +115,7 @@ export const CONFIGURED_SPECS = [
   "AdversarialRedTeamCrucible",
   "EpisodicMemoryGraph",
   "DeterministicReplayDebugger",
+  "InstitutionalTradingEngine",
 ];
 
 /**

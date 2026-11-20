@@ -1,0 +1,13 @@
+{
+  "receiptId": "trading-rcpt-1795136530770",
+  "timestampIso": "2026-11-20T01:02:10.770Z",
+  "specRef": "SPEC-371",
+  "engine": "EosInstitutionalTradingEngine",
+  "accountType": "training",
+  "concurrencyConforming": true,
+  "riskInvariantsConforming": true,
+  "strategiesRegistered": 4,
+  "byzantineJudgesCount": 4,
+  "sampleReceiptHash": "69bb080a6a70dbf3ed236715d6bae115361874766109c00612667ddb9605f090",
+  "status": "VERIFIED"
+}

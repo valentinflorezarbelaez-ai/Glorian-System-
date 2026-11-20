@@ -47,6 +47,7 @@ import { EosDynamicToolSynthesis } from "../../core/eosDynamicToolSynthesis.ts";
 import { EosAdversarialRedTeamCrucible } from "../../core/eosAdversarialRedTeamCrucible.ts";
 import { EosEpisodicMemoryGraph } from "../../core/eosEpisodicMemoryGraph.ts";
 import { EosDeterministicReplayDebugger } from "../../core/eosDeterministicReplayDebugger.ts";
+import { EosInstitutionalTradingEngine } from "../../core/eosInstitutionalTradingEngine.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 import { PHASE8_MIGRATED_TOOL_NAMES } from "./eosMcpPhase8ToolNames.ts";
 
@@ -273,5 +274,7 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
       EosAdversarialRedTeamCrucible.audit(params?.target as string | undefined),
     eos_episodic_memory_graph_audit: (params) => EosEpisodicMemoryGraph.audit(params?.repo as string | undefined),
     eos_deterministic_replay_debugger_audit: () => EosDeterministicReplayDebugger.audit(),
+    eos_institutional_trading_audit: (params) =>
+      EosInstitutionalTradingEngine.audit(params?.asset as string | undefined),
   };
 }

@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "a64d271277606f9d09aad435ff5b6a2ab8a2a0088d252042f2dd435e9e95973b",
-  "totalTools": 246,
+  "catalogSha256": "863553577439ed61669a510e38e2a91c01d0d769e2d382e7120ebe5c25868db1",
+  "totalTools": 247,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7258,6 +7258,26 @@
       },
       "annotations": {
         "title": "EOS deterministic Replay Debugger Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_institutional_trading_audit",
+      "description": "Audits the Sovereign Institutional Quantitative Trading Engine & Byzantine Consensus Crucible verifying multi-strategy confluence, 4-judge consensus, practice mode isolation, and concurrency locking (SPEC-371).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "asset": {
+            "type": "string",
+            "description": "Target asset pair to scan and audit (default: EUR/USD)."
+          }
+        }
+      },
+      "annotations": {
+        "title": "EOS institutional Trading Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
