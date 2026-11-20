@@ -553,6 +553,85 @@ async function cmd_heal_19(commandContext) {
 HANDLERS["heal"] = cmd_heal_19;
 HANDLERS["fix"] = cmd_heal_19;
 
+function generateShellCompletion(shell, commands) {
+  const sorted = [...commands].sort();
+  const cmdListStr = sorted.join(" ");
+  if (shell === "powershell" || shell === "pwsh") {
+    const psList = sorted.map((c) => `'${c}'`).join(", ");
+    return `# Glorian / EOS CLI PowerShell Autocompletion Script
+Register-ArgumentCompleter -Native -CommandName 'glorian', 'eos' -ScriptBlock {
+    param($wordToComplete, $commandAst, $cursorPosition)
+    $commands = @(${psList})
+    $commands | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+        [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+    }
+}
+`;
+  }
+  if (shell === "bash") {
+    return `# Glorian / EOS CLI Bash Autocompletion Script
+_glorian_completions() {
+    local cur="\${COMP_WORDS[COMP_CWORD]}"
+    local commands="${cmdListStr}"
+    COMPREPLY=( $(compgen -W "\${commands}" -- "\${cur}") )
+}
+complete -F _glorian_completions glorian eos
+`;
+  }
+  if (shell === "zsh") {
+    const zshLines = sorted.map((c) => `        '${c}:EOS CLI command'`).join("\n");
+    return `#compdef glorian eos
+# Glorian / EOS CLI Zsh Autocompletion Script
+_glorian() {
+    local -a commands
+    commands=(
+${zshLines}
+    )
+    _describe 'command' commands
+}
+compdef _glorian glorian eos
+`;
+  }
+  if (shell === "fish") {
+    return `# Glorian / EOS CLI Fish Autocompletion Script
+for cmd in ${cmdListStr}
+    complete -c glorian -a $cmd
+    complete -c eos -a $cmd
+end
+`;
+  }
+  return sorted.join("\n");
+}
+
+async function cmd_completion_20(commandContext) {
+  const { root, args } = commandContext;
+  const shell = (args[1] || "").toLowerCase();
+  const commandsDir = path.join(root, "bin", "commands");
+  const entries = fs.readdirSync(commandsDir, { withFileTypes: true });
+  const commands = new Set();
+  const handlerRegex = /HANDLERS\["([^"]+)"\]/g;
+  for (const entry of entries) {
+    if (!entry.isFile() || !entry.name.endsWith(".mjs")) continue;
+    const raw = fs.readFileSync(path.join(commandsDir, entry.name), "utf8");
+    let match = handlerRegex.exec(raw);
+    while (match !== null) {
+      if (!["help", "--help", "-h", "__default__"].includes(match[1])) {
+        commands.add(match[1]);
+      }
+      match = handlerRegex.exec(raw);
+    }
+  }
+  commands.add("completion");
+
+  if (!shell || shell === "--list") {
+    console.log([...commands].sort().join("\n"));
+    return;
+  }
+  console.log(generateShellCompletion(shell, commands));
+}
+
+HANDLERS["completion"] = cmd_completion_20;
+
 export async function handleCoreCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {

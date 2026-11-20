@@ -20,13 +20,21 @@ import {
   buildWalkForwardBucketStats as buildBucketStats,
   classifyIqOptionAssetCategory,
   computeInstitutionalRiskMetrics,
+  computeSlippageStress,
+  computeStatisticalSignificance,
   formatCotIso,
   generateFullIqOptionUniverse153,
   getCotHourLabel,
   recordAndLoadWalkForwardLedger,
   renderQuantCockpitHud,
 } from "./eosQuantCockpitHudRenderer.ts";
-export { computeInstitutionalRiskMetrics, generateFullIqOptionUniverse153, recordAndLoadWalkForwardLedger };
+export {
+  computeInstitutionalRiskMetrics,
+  computeSlippageStress,
+  computeStatisticalSignificance,
+  generateFullIqOptionUniverse153,
+  recordAndLoadWalkForwardLedger,
+};
 import type {
   AssetTimeframeCandles,
   AtomicTriggerDecision,
@@ -434,6 +442,12 @@ export class EosQuantCockpitWalkForwardEngine {
       recommendedKellyPercent = clamp(recommendedKellyPercent, this.MIN_KELLY_PERCENT, this.MAX_KELLY_PERCENT);
     }
 
+    const statisticalSignificance = computeStatisticalSignificance(overall.wins, overall.trades);
+    const slippageStress = computeSlippageStress(settled, 52.0);
+    if (!statisticalSignificance.isSignificant && settled.length >= 10) {
+      recommendedKellyPercent = Math.min(recommendedKellyPercent, this.DEFAULT_CONSERVATIVE_STAKE_PERCENT);
+    }
+
     const recommendedFlatStakeUsd = Number(((Math.max(0, demoBalanceUsd) * recommendedKellyPercent) / 100).toFixed(2));
     const risk = computeInstitutionalRiskMetrics(settled, demoBalanceUsd);
 
@@ -451,6 +465,8 @@ export class EosQuantCockpitWalkForwardEngine {
       calmarRatio: risk.calmarRatio,
       maxDrawdownUsd: risk.maxDrawdownUsd,
       maxDrawdownPercent: risk.maxDrawdownPercent,
+      statisticalSignificance,
+      slippageStress,
       quarantinedBuckets,
       byHourCot,
       byStrategy,

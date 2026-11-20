@@ -8,6 +8,7 @@ export const QUICK_HELP_TEXT = `
   eos search <termino>       Búsqueda instantánea FTS5 en specs, plans y ADRs (~100ms)
   eos test                   Ejecuta todas las suites automatizadas (node:test)
   eos turbo                  Verificación en memoria con telemetría en microsegundos (<350ms)
+  eos completion [shell]     Generador de autocompletado nativo (powershell, bash, zsh, fish) (SPEC-250)
   eos diff:live [--json]     Inspecciona el git diff vivo (secretos, SQL DDL, Regla Beyoncé)
   eos toolchain:doctor [--json] Audita 13 herramientas fundacionales de ingeniería (SPEC-272)
   eos toolchain:scan [path]  Escaneo de vulnerabilidades Trivy y SARIF v2.1.0 (SPEC-273)
@@ -195,6 +196,7 @@ export const QUICK_HELP_TEXT = `
   eos toolchain:megatron:vocab [--workers=4] [--vocab=16] [--batch=2] [--json] Pérdida de entropía cruzada particionada sobre vocabulario (SPEC-321)
   eos toolchain:megatron:audit [--workers=4] [--batch=2] [--json] Auditoría integral de barrera única, paridad numérica y recibo SHA-256 (SPEC-321)
   eos hygiene:audit [--json] Audita paridad 100% del catálogo CLI y margen <=800 líneas (SPEC-250)
+  eos completion [shell]     Genera scripts de autocompletado nativo (powershell, bash, zsh, fish) (SPEC-250)
   eos roofline:plan [--json] Modelo Roofline NVIDIA, fusión y arena 64B sin fragmentación (SPEC-251)
   eos spc:audit [--json]     Control Six-Sigma SPC (Shewhart/Cpk/CUSUM/EWMA) y yield (SPEC-252)
   eos kalman:estimate [--json] Estimador Kalman cinemático + votador 4-canales QMR (SPEC-253)
@@ -740,5 +742,5 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 📦 ÍNDICE DE ALIAS Y SUBCOMANDOS ESPECIALIZADOS (100% REGISTRADOS):
   fast, wal, bench:nano, daemon, transmute, optimize:v8, fuzz:target, swarm:arena, zk:attest, sea:compile, pq:encap, ast:synthesize, hnsw:search, graph:datalog, wasm:disasm, titans, anycast, octave, warp, apex, disruptor, ring, nubank, nu, frontier, router, squeezer, topology, wasm, soul, architect, introspect, evolution, shield, defense, mangle, sabotage, simulate:models, formal, tla, jepsen, chaos:net, vault, memory, temple, sol, mcts:plan, tla:model-check, raft:consensus, ans:compress, ans:decompress, pbft:status, pbft:slash, homomorphic:decrypt, mpc:add, mpc:multiply, vdf:beacon, unitotal:audit, fuzz:hypervisor, replay:ledger, sync-stack, witness:interrogate, hotpatch, project, cheat-sheet, slo, perf, drift, flags, loadtest, canary:stat, ledger:replay, ledger:timetravel, raft:elect, sandbox:profile, smt:tree, zk, truetime:spanner, spanner:time, tss, enterprise:audit, enterprise, red:metrics, prom:red, action:verify, provenance:attest, project:doctor, remediate, doctor:fix, heal:repo, project:fix, diary, budget, finops, mind, mountains, autotune, nsa:encrypt, nsa:audit, nsa:zeroize, consensus, truetime:bounded, concurrency, hashring, antientropy, ratelimit, hft, zerocopy, chaos:run, chaos, vector, risk, aladdin, chain,
-  product:create, product, product:deliver, factory:e2e, product:validate, loop, sovereign, invariant, contract, heal:surgical, tlc, pr:check, sandbox:vm, fleet:verify, fleet:doctor, top, ontology, quantum:seal, refactor, dst, synapse, fleet:soundcheck, mcts:tune, canary:rollout, antigravity, gentleman, gentle-ai, ledger, ast, nocturnal, evolve, mesh, agent-topology, sandbox, timetravel, truetime, lsm, threshold, microvm, simd, enforce, sparse-tree, enterprise:health, otel:metrics, mmr, raft, fuzzer, seccomp, zk:verify, aca, intercept, toolchain, toolchain:doctor, toolchain:scan, toolchain:policy, toolchain:k8s, toolchain:deploy, toolchain:loadtest, toolchain:helm:lint, toolchain:helm:template, toolchain:helm:deploy
+  product:create, product, product:deliver, factory:e2e, product:validate, loop, sovereign, invariant, contract, heal:surgical, tlc, pr:check, sandbox:vm, fleet:verify, fleet:doctor, top, ontology, quantum:seal, refactor, dst, synapse, fleet:soundcheck, mcts:tune, canary:rollout, antigravity, gentleman, gentle-ai, ledger, ast, nocturnal, evolve, mesh, agent-topology, sandbox, timetravel, truetime, lsm, threshold, microvm, simd, enforce, sparse-tree, enterprise:health, otel:metrics, mmr, raft, fuzzer, seccomp, zk:verify, aca, intercept, toolchain, completion, toolchain:doctor, toolchain:scan, toolchain:policy, toolchain:k8s, toolchain:deploy, toolchain:loadtest, toolchain:helm:lint, toolchain:helm:template, toolchain:helm:deploy
 `;

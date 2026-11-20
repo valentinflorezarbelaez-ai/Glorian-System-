@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-20T20:07:47.570Z",
+  "timestampIso": "2026-11-20T20:22:37.602Z",
   "specRef": "SPEC-311",
   "changeRef": "CHANGE-173",
   "status": "SHARED_MEMORY_WORKERS_AND_JEPSEN_VERIFIED",
@@ -18,7 +18,7 @@
     "maxElement": 80,
     "atomicCompletedWorkers": 2,
     "sharedMemoryVerified": true,
-    "durationMs": 44
+    "durationMs": 41
   },
   "fleetShardReport": {
     "totalProjects": 16,
@@ -71,7 +71,7 @@
       }
     ],
     "fleetMerkleRoot": "350cef2f56322474218d900fa836172c8862a3135d0a19af68eb3df2339b515f",
-    "durationMs": 57
+    "durationMs": 62
   },
   "walCrashRecoveryReport": {
     "committedRecordsExpected": 4,
@@ -82,8 +82,8 @@
     "merkleRootBeforeCrash": "461b9dc70fca7312615680c2adfd85443de3e87326c1cbfc335b86abb1eecc24",
     "merkleRootAfterRecovery": "461b9dc70fca7312615680c2adfd85443de3e87326c1cbfc335b86abb1eecc24",
     "zeroDataLossVerified": true,
-    "durationMs": 135
+    "durationMs": 143
   },
-  "inWasmSimdLoopNsPerOp": 1.49,
-  "cryptographicSignature": "0ed47b5429ad1671ad841bb39a3c05ca1fcd7045b3a4d7300f20fea5c1b1769d"
+  "inWasmSimdLoopNsPerOp": 1.43,
+  "cryptographicSignature": "72371fc90bdd6969e13167e20b6d42b7e68d58360d9d86ffb4eced12f67f1221"
 }

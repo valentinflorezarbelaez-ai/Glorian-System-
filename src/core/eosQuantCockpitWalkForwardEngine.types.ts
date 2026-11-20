@@ -127,6 +127,20 @@ export interface WalkForwardTradeSample {
   readonly result: "win" | "loss" | "equal" | "canceled";
 }
 
+export interface StatisticalSignificanceReport {
+  readonly zScore: number;
+  readonly pValue: number;
+  readonly isSignificant: boolean;
+  readonly confidenceLevelPercent: number;
+}
+
+export interface SlippageStressReport {
+  readonly adversePipsSimulated: number;
+  readonly stressWinRatePercent: number;
+  readonly stressNetPnlUsd: number;
+  readonly edgeSurvived: boolean;
+}
+
 export interface WalkForwardBucketStats {
   readonly key: string;
   readonly trades: number;
@@ -155,6 +169,8 @@ export interface WalkForwardCalibrationReport {
   readonly calmarRatio: number;
   readonly maxDrawdownUsd: number;
   readonly maxDrawdownPercent: number;
+  readonly statisticalSignificance: StatisticalSignificanceReport;
+  readonly slippageStress: SlippageStressReport;
   readonly quarantinedBuckets: readonly string[];
   readonly byHourCot: readonly WalkForwardBucketStats[];
   readonly byStrategy: readonly WalkForwardBucketStats[];

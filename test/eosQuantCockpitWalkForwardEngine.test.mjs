@@ -193,6 +193,17 @@ describe("SPEC-376: Autonomous Quant Cockpit, Second-59.8 Trigger & Walk-Forward
     assert.ok(wfAfterWin.calmarRatio >= 0, "Calmar ratio must be non-negative");
     assert.ok(wfAfterWin.maxDrawdownUsd >= 0, "Max drawdown must be non-negative");
     assert.ok(wfAfterWin.byStrategy[0].sortinoRatio !== undefined);
+    assert.equal(
+      wfAfterWin.statisticalSignificance.isSignificant,
+      true,
+      "16/20 wins must be statistically significant at 95% confidence",
+    );
+    assert.ok(wfAfterWin.statisticalSignificance.pValue < 0.05, "p-value must be < 0.05");
+    assert.equal(
+      wfAfterWin.slippageStress.edgeSurvived,
+      true,
+      "Strong win rate must survive 1-pip adverse broker slippage",
+    );
 
     const wfAfterLoss = EosQuantCockpitWalkForwardEngine.calibrateWalkForward(strongHistory, 14100.35, true, 1.0);
     assert.equal(wfAfterLoss.zeroMartingaleEnforced, true);

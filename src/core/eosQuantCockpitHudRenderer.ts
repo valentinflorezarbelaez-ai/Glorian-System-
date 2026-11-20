@@ -17,6 +17,8 @@ import type {
   IqOptionAssetCategory,
   IqOptionRawAsset,
   MarketRegimeType,
+  SlippageStressReport,
+  StatisticalSignificanceReport,
   WalkForwardBucketStats,
   WalkForwardCalibrationReport,
   WalkForwardTradeSample,
@@ -208,6 +210,65 @@ export function computeInstitutionalRiskMetrics(
   };
 }
 
+/** Approximate erf(x) via Abramowitz and Stegun 7.1.26. */
+function approxErf(x: number): number {
+  const sign = x < 0 ? -1 : 1;
+  const ax = Math.abs(x);
+  const p = 0.3275911;
+  const t = 1.0 / (1.0 + p * ax);
+  const poly = t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429))));
+  return sign * (1.0 - poly * Math.exp(-ax * ax));
+}
+
+/** Computes Z-score and binomial one-tailed p-value against random chance (p0 = 0.50). */
+export function computeStatisticalSignificance(wins: number, trades: number): StatisticalSignificanceReport {
+  if (trades < 5) {
+    return { zScore: 0, pValue: 1.0, isSignificant: false, confidenceLevelPercent: 0 };
+  }
+  const p0 = 0.5;
+  const stdErr = Math.sqrt(trades * p0 * (1 - p0));
+  const zScore = stdErr > 0 ? Number(((wins - trades * p0) / stdErr).toFixed(3)) : 0;
+  const phi = 0.5 * (1 + approxErf(zScore / Math.SQRT2));
+  const pValue = Number(Math.max(0, Math.min(1, 1 - phi)).toFixed(4));
+  const isSignificant = zScore >= 1.645 && pValue <= 0.05;
+  const confidenceLevelPercent = Number((phi * 100).toFixed(1));
+  return { zScore, pValue, isSignificant, confidenceLevelPercent };
+}
+
+/** Evaluates broker execution friction (1 pip adverse slippage & execution lag). */
+export function computeSlippageStress(
+  trades: readonly WalkForwardTradeSample[],
+  breakEvenWinRate = 52.0,
+): SlippageStressReport {
+  const closed = trades.filter((t) => t.result === "win" || t.result === "loss");
+  if (closed.length === 0) {
+    return { adversePipsSimulated: 1.0, stressWinRatePercent: 0, stressNetPnlUsd: 0, edgeSurvived: false };
+  }
+  let wins = 0;
+  let netPnl = 0;
+  let totalStake = 0;
+  let totalPayout = 0;
+  for (const t of closed) {
+    netPnl += t.pnlUsd;
+    totalStake += t.stakeUsd;
+    totalPayout += t.payoutPercent;
+    if (t.result === "win") wins += 1;
+  }
+  const flippedWins = Math.round(wins * 0.12);
+  const stressWins = Math.max(0, wins - flippedWins);
+  const stressWinRate = Number(((stressWins / closed.length) * 100).toFixed(2));
+  const avgStake = totalStake / closed.length;
+  const avgPayout = totalPayout / closed.length / 100;
+  const pnlDeduction = flippedWins * avgStake * (1 + avgPayout);
+  const stressNetPnl = Number((netPnl - pnlDeduction).toFixed(2));
+  return {
+    adversePipsSimulated: 1.0,
+    stressWinRatePercent: stressWinRate,
+    stressNetPnlUsd: stressNetPnl,
+    edgeSurvived: stressWinRate >= breakEvenWinRate && stressNetPnl > 0,
+  };
+}
+
 /** Computes Walk-Forward bucket statistics and Alpha-Decay quarantine flag. */
 export function buildWalkForwardBucketStats(
   key: string,
@@ -358,6 +419,8 @@ export function renderQuantCockpitHud(p: QuantCockpitHudParams): string {
     "⚖️ WALK-FORWARD QUARTER-KELLY SIZER & ALPHA-DECAY:",
     `  Closed Sample : ${p.walkForward.totalClosedTrades} trades | WR: ${p.walkForward.winRatePercent}% | PF: ${p.walkForward.profitFactor} | Net PnL: $${p.walkForward.netPnlUsd.toFixed(2)}`,
     `  Risk Metrics  : Sortino: ${p.walkForward.sortinoRatio} | Calmar: ${p.walkForward.calmarRatio} | MaxDD: $${p.walkForward.maxDrawdownUsd.toFixed(2)} (${p.walkForward.maxDrawdownPercent.toFixed(2)}%)`,
+    `  Statistical   : p-value: ${p.walkForward.statisticalSignificance.pValue} (Z=${p.walkForward.statisticalSignificance.zScore}) [${p.walkForward.statisticalSignificance.isSignificant ? "SIGNIFICANT EDGE (p<0.05)" : "UNCERTAIN EDGE (p>=0.05)"}] | Conf: ${p.walkForward.statisticalSignificance.confidenceLevelPercent}%`,
+    `  Slippage Stress: 1-Pip Stress WR: ${p.walkForward.slippageStress.stressWinRatePercent}% | Net PnL: $${p.walkForward.slippageStress.stressNetPnlUsd.toFixed(2)} [Edge Survived: ${p.walkForward.slippageStress.edgeSurvived ? "YES" : "NO"}]`,
     `  Stake Sizing  : ${p.walkForward.recommendedKellyPercent}% ($${p.walkForward.recommendedFlatStakeUsd.toFixed(2)} USD) [Zero-Martingale: ${p.walkForward.zeroMartingaleEnforced ? "ON" : "OFF"}]`,
     `  Quarantined   : ${p.walkForward.quarantinedBuckets.length > 0 ? p.walkForward.quarantinedBuckets.join(", ") : "NONE"}`,
     sub,
