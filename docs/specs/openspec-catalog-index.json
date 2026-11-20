@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 373,
-  "catalogSha256": "655f0944b4d3cc6e740e5337aed2ec5f2d277f3ad94f05e403052a1bd4597221",
+  "totalSpecs": 374,
+  "catalogSha256": "ed6a5af4d85679d740a909aa34cb2e47808a7ec72b55d11c9e7def6ee8162973",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3358,7 +3358,16 @@
       "frCount": 1,
       "bddCount": 7,
       "file": "openspec/specs/SPEC-373-multi-asset-scanner-macro-filter.md",
-      "sha256": "a63c4b8a590fdc90ae410f27ed37a123f5ce361de564950ef01629e0901ac331"
+      "sha256": "ad73b2bac626bebe744867b868ada1a918b2f21e4774231786eceecde4e3553f"
+    },
+    {
+      "id": "SPEC-374",
+      "title": "Sovereign Autonomous Prop-Firm Trader, Tri-Temporal Fractal Engine & Real-Time WhatsApp Dispatcher",
+      "status": "FORMALIZED",
+      "frCount": 1,
+      "bddCount": 7,
+      "file": "openspec/specs/SPEC-374-tri-temporal-prop-firm-whatsapp-engine.md",
+      "sha256": "9c1e64c81ef5271a7857b6bf8b0cb68daa6cdfb0a762642da7bb49d52a08cf08"
     }
   ]
 }

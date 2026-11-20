@@ -519,4 +519,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_tri_temporal_propfirm_audit",
+    description:
+      "Audits the Tri-Temporal Fractal Alignment Engine (M15->M5->M1), FTMO Prop-Firm Drawdown Governor, and WhatsApp Notification Dispatcher (SPEC-374).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

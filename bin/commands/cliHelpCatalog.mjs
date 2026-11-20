@@ -1,7 +1,4 @@
-/**
- * Synchronized CLI Help Catalog for `eos help` and `eos help --all` (v75.0.0, SPEC-001..SPEC-258).
- * Audited for 100% handler parity by EosCliCatalogAndHygieneGovernorCore (SPEC-250).
- */
+// Synchronized CLI Help Catalog for `eos help` and `eos help --all` (v75.0.0, SPEC-001..SPEC-374).
 export const QUICK_HELP_TEXT = `
 ======================================================================
  EOS SYSTEM — MANUAL RÁPIDO Y ERGONOMÍA DE DESARROLLO (v75.0.0)
@@ -770,6 +767,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:trading:news Calendario macroeconómico y estado de ventana de blackout (SPEC-373)
   eos toolchain:trading:paperlog Bitácora de operaciones simuladas en sombra y analítica PnL (SPEC-373)
   eos toolchain:trading:macro-audit Auditoría formal del motor macro y recibo criptográfico SHA-256 (SPEC-373)
+  eos toolchain:trading:fractal [ASSET] Alineación fractal tri-temporal M15->M5->M1 y gatillo BinaryTeach (SPEC-374)
+  eos toolchain:trading:propfirm [LOSS] Reglas de drawdown diario (-4.5%), total (-9.0%) y objetivo (+10%) FTMO (SPEC-374)
+  eos toolchain:trading:daemon Demonio autónomo de escaneo multi-par y despacho a WhatsApp (SPEC-374)
+  eos toolchain:trading:notify-audit Auditoría formal del despachador a WhatsApp y recibo SHA-256 (SPEC-374)
   eos toolchain:aladdin:stress-test Prueba de estrés de cisnes negros históricos estilo Aladdin (SPEC-372)
   eos toolchain:aladdin:allocate Asignación institucional All-Weather de Ray Dalio y deriva (SPEC-372)
   eos toolchain:aladdin:var Métricas de riesgo VaR/CVaR y simulación Monte Carlo 10,000 rutas (SPEC-372)
@@ -777,10 +778,8 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest
 📦 ÍNDICE DE ALIAS Y SUBCOMANDOS ESPECIALIZADOS (100% REGISTRADOS):
-  fast, wal, bench:nano, daemon, transmute, optimize:v8, fuzz:target, swarm:arena, zk:attest, sea:compile, pq:encap, ast:synthesize, hnsw:search, graph:datalog, wasm:disasm, titans, anycast, octave, warp, apex, disruptor, ring, nubank, nu, frontier, router, squeezer, topology, wasm, soul, architect, introspect,
-  evolution, shield, defense, mangle, sabotage, simulate:models, formal, tla, jepsen, chaos:net, vault, memory, temple, sol, mcts:plan, tla:model-check, raft:consensus, ans:compress, ans:decompress, pbft:status, pbft:slash, homomorphic:decrypt, mpc:add, mpc:multiply, vdf:beacon, unitotal:audit, fuzz:hypervisor,
-  replay:ledger, sync-stack, witness:interrogate, hotpatch, project, cheat-sheet, slo, perf, drift, flags, loadtest, canary:stat, ledger:replay, ledger:timetravel, raft:elect, sandbox:profile, smt:tree, zk, truetime:spanner, spanner:time, tss, enterprise:audit, enterprise, red:metrics, prom:red, action:verify,
-  provenance:attest, project:doctor, remediate, doctor:fix, heal:repo, project:fix, diary, budget, finops, mind, mountains, autotune, nsa:encrypt, nsa:audit, nsa:zeroize, consensus, truetime:bounded, concurrency, hashring, antientropy, ratelimit, hft, zerocopy, chaos:run, chaos, vector, risk, aladdin, chain,
+  fast, wal, bench:nano, daemon, transmute, optimize:v8, fuzz:target, swarm:arena, zk:attest, sea:compile, pq:encap, ast:synthesize, hnsw:search, graph:datalog, wasm:disasm, titans, anycast, octave, warp, apex, disruptor, ring, nubank, nu, frontier, router, squeezer, topology, wasm, soul, architect, introspect, evolution, shield, defense, mangle, sabotage, simulate:models, formal, tla, jepsen, chaos:net, vault, memory, temple, sol, mcts:plan, tla:model-check, raft:consensus, ans:compress, ans:decompress, pbft:status, pbft:slash, homomorphic:decrypt, mpc:add, mpc:multiply, vdf:beacon, unitotal:audit, fuzz:hypervisor,
+  replay:ledger, sync-stack, witness:interrogate, hotpatch, project, cheat-sheet, slo, perf, drift, flags, loadtest, canary:stat, ledger:replay, ledger:timetravel, raft:elect, sandbox:profile, smt:tree, zk, truetime:spanner, spanner:time, tss, enterprise:audit, enterprise, red:metrics, prom:red, action:verify, provenance:attest, project:doctor, remediate, doctor:fix, heal:repo, project:fix, diary, budget, finops, mind, mountains, autotune, nsa:encrypt, nsa:audit, nsa:zeroize, consensus, truetime:bounded, concurrency, hashring, antientropy, ratelimit, hft, zerocopy, chaos:run, chaos, vector, risk, aladdin, chain,
   product:create, product, product:deliver, factory:e2e, product:validate, loop, sovereign, invariant, contract, heal:surgical, tlc, pr:check, sandbox:vm, fleet:verify, fleet:doctor, top, ontology, quantum:seal, refactor, dst, synapse, fleet:soundcheck, mcts:tune, canary:rollout, antigravity, gentleman, gentle-ai, ledger, ast,
   nocturnal, evolve, mesh, agent-topology, sandbox, timetravel, truetime, lsm, threshold, microvm, simd, enforce, sparse-tree, enterprise:health, otel:metrics, mmr, raft, fuzzer, seccomp, zk:verify, aca, intercept, toolchain, toolchain:doctor, toolchain:scan, toolchain:policy, toolchain:k8s, toolchain:deploy, toolchain:loadtest, toolchain:helm:lint, toolchain:helm:template, toolchain:helm:deploy
 `;

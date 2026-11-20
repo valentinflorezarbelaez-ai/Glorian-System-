@@ -1,7 +1,4 @@
-/**
- * EOS SYSTEM — CORE LAYER-0 UNIFIED EXPORT BARREL (SPEC-085..SPEC-268 / v75.0.0).
- * Foundational Layer-0 sovereign engines, Zenith, Frontier & National Labs modules. Zero dependencies.
- */
+// EOS SYSTEM — CORE LAYER-0 UNIFIED EXPORT BARREL (SPEC-085..SPEC-374). Zero dependencies.
 export * from "./eosKernelPrimitives.ts";
 export * from "./EosAstral.ts";
 export * from "./EosElohim.ts";
@@ -784,3 +781,5 @@ export * from "./eosAladdinPortfolioRiskEngine.ts";
 export * from "./eosAladdinPortfolioRiskEngine.types.ts";
 export * from "./eosMultiAssetMacroFilterEngine.ts";
 export * from "./eosMultiAssetMacroFilterEngine.types.ts";
+export * from "./eosTriTemporalPropFirmEngine.ts";
+export * from "./eosTriTemporalPropFirmEngine.types.ts";

@@ -118,6 +118,7 @@ export const CONFIGURED_SPECS = [
   "InstitutionalTradingEngine",
   "AladdinPortfolioRiskEngine",
   "MultiAssetMacroFilterEngine",
+  "TriTemporalPropFirmEngine",
 ];
 
 /**

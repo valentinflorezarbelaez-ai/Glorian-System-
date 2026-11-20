@@ -3663,3 +3663,21 @@
   - `docs/plans/PLAN-235-MULTI-ASSET-SCANNER-MACRO-FILTER.md`
   - `docs/tasks/TASKS-235-MULTI-ASSET-SCANNER-MACRO-FILTER.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-19-TRI-TEMPORAL-PROP-FIRM-ENGINE`
+
+- **Authorization Date**: 2026-11-19
+- **Change Identifier**: `CHANGE-236` / `SPEC-374`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-236` (`SPEC-374`), Sovereign Autonomous Prop-Firm Trader, Tri-Temporal Fractal Engine & Real-Time WhatsApp Dispatcher: TLA+ Model 117 `docs/formal/TriTemporalPropFirmEngine.tla` / `.cfg`; `src/core/eosTriTemporalPropFirmEngine.types.ts` and `src/core/eosTriTemporalPropFirmEngine.ts` (pure Layer-0 Tri-Temporal Fractal Matrix across M15/M5/M1, FTMO Prop-Firm Drawdown Governor with -4.5% daily and -9.0% cumulative hard stops, +10% target tracker, and autonomous WhatsApp webhook alert dispatcher for open, close, and daily executive summaries); receipt `docs/evidence/TRI_TEMPORAL_PROP_FIRM_RECEIPT.json`. Wire `toolchain:trading:fractal`, `toolchain:trading:propfirm`, `toolchain:trading:daemon`, `toolchain:trading:notify-audit` and Phase 8 MCP tool `eos_tri_temporal_propfirm_audit`. Verify `BDD-2026`..`BDD-2032`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-236-TRI-TEMPORAL-PROP-FIRM-WHATSAPP-ENGINE.md`
+  - `openspec/changes/CHANGE-236-tri-temporal-prop-firm-whatsapp-engine.md`
+  - `openspec/specs/SPEC-374-tri-temporal-prop-firm-whatsapp-engine.md`
+  - `docs/plans/PLAN-236-TRI-TEMPORAL-PROP-FIRM-WHATSAPP-ENGINE.md`
+  - `docs/tasks/TASKS-236-TRI-TEMPORAL-PROP-FIRM-WHATSAPP-ENGINE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

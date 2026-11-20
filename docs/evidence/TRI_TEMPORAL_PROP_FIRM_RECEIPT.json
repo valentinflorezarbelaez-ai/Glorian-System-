@@ -1,0 +1,18 @@
+{
+  "receiptId": "propfirm-rcpt-1795142810156",
+  "status": "VERIFIED",
+  "invariants": {
+    "triTemporalHarmonicAlignment": true,
+    "propFirmSurvivalInvariant": true,
+    "singleExecutionLock": true,
+    "practiceModeIsolation": true
+  },
+  "metrics": {
+    "harmonicConfidence": 0.5,
+    "dailyDrawdownPercent": 0,
+    "totalDrawdownPercent": 0,
+    "dispatchesRecorded": 1
+  },
+  "receiptHash": "af6dcf8984dd070330ace7f8d152fffe5e069233ac31b1c95de0dcc55794b42f",
+  "timestamp": 1795142810157
+}

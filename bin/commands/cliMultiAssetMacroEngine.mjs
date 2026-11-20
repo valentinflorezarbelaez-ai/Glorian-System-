@@ -8,6 +8,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { EosMultiAssetMacroFilterEngine } from "../../src/core/eosMultiAssetMacroFilterEngine.ts";
+import { handleTriTemporalPropFirmCommand } from "./cliTriTemporalPropFirmEngine.mjs";
 
 const HANDLERS = Object.create(null);
 
@@ -184,9 +185,8 @@ HANDLERS["toolchain:trading:macro-audit"] = cmd_trading_macro_audit;
 
 export async function handleMultiAssetMacroCommand(commandContext) {
   const handler = HANDLERS[commandContext.command];
-  if (!handler) {
-    console.error(`Unknown Multi-Asset Macro command: ${commandContext.command}`);
-    return false;
+  if (handler) {
+    return handler(commandContext);
   }
-  return handler(commandContext);
+  return handleTriTemporalPropFirmCommand(commandContext);
 }

@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "f5acfe9408ae592aa9825ebc8b13601e6620bd5920616a5674971b9a6b023ab1",
-  "totalTools": 249,
+  "catalogSha256": "ac73dfd98d426f762f17602133c28716c2f585aa1b79822f6286fc3ffd2f9d6a",
+  "totalTools": 250,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7308,6 +7308,21 @@
       },
       "annotations": {
         "title": "EOS multi Asset Macro Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_tri_temporal_propfirm_audit",
+      "description": "Audits the Tri-Temporal Fractal Alignment Engine (M15->M5->M1), FTMO Prop-Firm Drawdown Governor, and WhatsApp Notification Dispatcher (SPEC-374).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS tri Temporal Propfirm Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
