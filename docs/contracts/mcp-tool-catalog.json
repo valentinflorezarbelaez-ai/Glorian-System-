@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "b335f4bc7bfd36621224d773aa0f1a1698d6d5b67122341f3d6adeab6f899976",
-  "totalTools": 251,
+  "catalogSha256": "5d2460afc0a7802596af177e075c325d728874983e3decac39f665a114c95c29",
+  "totalTools": 252,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7338,6 +7338,21 @@
       },
       "annotations": {
         "title": "EOS universal Asset Payout Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_quant_cockpit_walk_forward_audit",
+      "description": "Audits the Autonomous Quant Cockpit, Second-59.8 Atomic Trigger, and Walk-Forward Quarter-Kelly Calibrator verifying unbounded 153+ IQ Option ingestion, 6-factor spike/noise filtering, Alpha-Decay <52% quarantine, and regular-account exclusion (SPEC-376).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS quant Cockpit Walk Forward Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

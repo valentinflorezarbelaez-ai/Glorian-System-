@@ -3699,3 +3699,21 @@
   - `docs/plans/PLAN-237-UNIVERSAL-ASSET-PAYOUT-OPTIMIZER-ENGINE.md`
   - `docs/tasks/TASKS-237-UNIVERSAL-ASSET-PAYOUT-OPTIMIZER-ENGINE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-20-QUANT-COCKPIT-WALK-FORWARD`
+
+- **Authorization Date**: 2026-11-20
+- **Change Identifier**: `CHANGE-238` / `SPEC-376`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-238` (`SPEC-376`), Autonomous Quant Cockpit, Second-59.8 Atomic Trigger & Walk-Forward Quarter-Kelly Calibrator: TLA+ Model 119 `docs/formal/QuantCockpitWalkForwardEngine.tla` / `.cfg`; `src/core/eosQuantCockpitWalkForwardEngine.types.ts`, `src/core/eosQuantCockpitWalkForwardEngine.ts`, and `src/core/eosTradingSuiteBarrel.ts` (unbounded IQ Option 153+ live asset ingestion across 6 classes, 6-factor institutional filter, second-59.8/00 boundary trigger, Quarter-Kelly `[0.5%, 2.0%]` + Zero-Martingale + Alpha-Decay quarantine `< 52%` over `>= 20` trades, dual-vault regular-balance lock preserving `$3,000 USD` Vault Alpha, live Antigravity Cockpit HUD); CLI handlers `toolchain:trading:cockpit`, `toolchain:trading:trigger`, `toolchain:trading:walkforward`, `toolchain:trading:cockpit-audit`; Phase-8 MCP tool `eos_quant_cockpit_walk_forward_audit`; receipt `docs/evidence/QUANT_COCKPIT_WALK_FORWARD_RECEIPT.json`; verify `BDD-2041`..`BDD-2048`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-238-QUANT-COCKPIT-WALK-FORWARD-ENGINE.md`
+  - `openspec/changes/CHANGE-238-quant-cockpit-walk-forward-engine.md`
+  - `openspec/specs/SPEC-376-quant-cockpit-walk-forward-engine.md`
+  - `docs/plans/PLAN-238-QUANT-COCKPIT-WALK-FORWARD-ENGINE.md`
+  - `docs/tasks/TASKS-238-QUANT-COCKPIT-WALK-FORWARD-ENGINE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

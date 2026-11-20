@@ -537,4 +537,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_quant_cockpit_walk_forward_audit",
+    description:
+      "Audits the Autonomous Quant Cockpit, Second-59.8 Atomic Trigger, and Walk-Forward Quarter-Kelly Calibrator verifying unbounded 153+ IQ Option ingestion, 6-factor spike/noise filtering, Alpha-Decay <52% quarantine, and regular-account exclusion (SPEC-376).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

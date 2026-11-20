@@ -120,6 +120,7 @@ export const CONFIGURED_SPECS = [
   "MultiAssetMacroFilterEngine",
   "TriTemporalPropFirmEngine",
   "UniversalAssetPayoutOptimizer",
+  "QuantCockpitWalkForwardEngine",
 ];
 
 /**

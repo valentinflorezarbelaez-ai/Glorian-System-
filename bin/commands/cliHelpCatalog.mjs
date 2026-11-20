@@ -1,4 +1,4 @@
-// Synchronized CLI Help Catalog for `eos help` and `eos help --all` (v75.0.0, SPEC-001..SPEC-374).
+// Synchronized CLI Help Catalog for `eos help` and `eos help --all` (v75.0.0, SPEC-001..SPEC-376).
 export const QUICK_HELP_TEXT = `
 ======================================================================
  EOS SYSTEM — MANUAL RÁPIDO Y ERGONOMÍA DE DESARROLLO (v75.0.0)
@@ -759,22 +759,11 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:replay:step [--back|--rewind] Navegación interactiva por el slider de tiempo (SPEC-370)
   eos toolchain:replay:branch [NAME] Bifurcación contrafactual MCTS y exploración de árbol UCT (SPEC-370)
   eos toolchain:replay:audit [--json] Auditoría diagnóstica del depurador y recibo de reproducibilidad (SPEC-370)
-  eos toolchain:trading:scan [ASSET] Escaneo cuantitativo institucional y veredicto del Concilio Bizantino (SPEC-371)
-  eos toolchain:trading:status Estado de aislamiento demo, candados de riesgo y piso de trailing profit (SPEC-371)
-  eos toolchain:trading:confluence Matriz de confluencia técnica de las 4 estrategias institucionales (SPEC-371)
-  eos toolchain:trading:audit Auditoría formal de los 9 invariantes de riesgo y recibo SHA-256 (SPEC-371)
-  eos toolchain:trading:multipair Escaneo concurrente de 6 pares mayores y elección de mejor setup (SPEC-373)
-  eos toolchain:trading:news Calendario macroeconómico y estado de ventana de blackout (SPEC-373)
-  eos toolchain:trading:paperlog Bitácora de operaciones simuladas en sombra y analítica PnL (SPEC-373)
-  eos toolchain:trading:macro-audit Auditoría formal del motor macro y recibo criptográfico SHA-256 (SPEC-373)
-  eos toolchain:trading:fractal [ASSET] Alineación fractal tri-temporal M15->M5->M1 y gatillo BinaryTeach (SPEC-374)
-  eos toolchain:trading:propfirm [LOSS] Reglas de drawdown diario (-4.5%), total (-9.0%) y objetivo (+10%) FTMO (SPEC-374)
-  eos toolchain:trading:daemon Demonio autónomo de escaneo multi-par y despacho a WhatsApp (SPEC-374)
-  eos toolchain:trading:notify-audit Auditoría formal del despachador a WhatsApp y recibo SHA-256 (SPEC-374)
-  eos toolchain:trading:notify-test [--phone] [--apikey] Prueba de despacho en vivo a WhatsApp personal (SPEC-374)
-  eos toolchain:trading:universe Catálogo universal multi-activo (Forex, Crypto, Commodities, Acciones, OTC) (SPEC-375)
-  eos toolchain:trading:payout-scan Escaneo concurrente de payouts >=80% y elección de mejor activo a 60s (SPEC-375)
-  eos toolchain:trading:payout-audit Auditoría formal del optimizador universal y recibo SHA-256 (SPEC-375)
+  eos toolchain:trading:scan | toolchain:trading:status | toolchain:trading:confluence | toolchain:trading:audit Escaneo cuantitativo y auditoría (SPEC-371)
+  eos toolchain:trading:multipair | toolchain:trading:news | toolchain:trading:paperlog | toolchain:trading:macro-audit Scanner multi-par, noticias y bitácora (SPEC-373)
+  eos toolchain:trading:fractal | toolchain:trading:propfirm | toolchain:trading:daemon | toolchain:trading:notify-audit | toolchain:trading:notify-test Fractal M15->M5->M1 y FTMO (SPEC-374)
+  eos toolchain:trading:universe | toolchain:trading:payout-scan | toolchain:trading:payout-audit Catálogo multi-activo y payouts >=80% (SPEC-375)
+  eos toolchain:trading:cockpit | toolchain:trading:trigger | toolchain:trading:walkforward | toolchain:trading:cockpit-audit Cockpit 153+ activos, disparo 59.8s y Kelly Walk-Forward (SPEC-376)
   eos toolchain:aladdin:stress-test Prueba de estrés de cisnes negros históricos estilo Aladdin (SPEC-372)
   eos toolchain:aladdin:allocate Asignación institucional All-Weather de Ray Dalio y deriva (SPEC-372)
   eos toolchain:aladdin:var Métricas de riesgo VaR/CVaR y simulación Monte Carlo 10,000 rutas (SPEC-372)

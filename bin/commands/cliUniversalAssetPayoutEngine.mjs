@@ -10,6 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { EosUniversalAssetPayoutOptimizerEngine } from "../../src/core/eosUniversalAssetPayoutOptimizerEngine.ts";
+import { handleQuantCockpitWalkForwardCommand } from "./cliQuantCockpitWalkForwardEngine.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -176,9 +177,8 @@ HANDLERS["toolchain:trading:payout-audit"] = cmd_trading_payout_audit;
 
 export async function handleUniversalAssetPayoutCommand(commandContext) {
   const handler = HANDLERS[commandContext.command];
-  if (!handler) {
-    console.error(`Unknown Universal Asset Payout command: ${commandContext.command}`);
-    return false;
+  if (handler) {
+    return handler(commandContext);
   }
-  return handler(commandContext);
+  return handleQuantCockpitWalkForwardCommand(commandContext);
 }
