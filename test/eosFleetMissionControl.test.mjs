@@ -14,10 +14,10 @@ describe("SPEC-125: EOS Fleet Mission Control Dashboard & Synthetic Health Senti
   const missionControl = new EosFleetMissionControl(projectRoot);
 
   describe("BDD-368: Dynamic Fleet Telemetry Retrieval", () => {
-    it("retrieves the complete fleet inventory of 9 projects", () => {
+    it("retrieves the complete fleet inventory of 10 projects", () => {
       const overview = missionControl.getFleetOverview();
       assert.ok(Array.isArray(overview));
-      assert.equal(overview.length, 9, "Expected exactly 9 projects in fleet");
+      assert.equal(overview.length, 10, "Expected exactly 10 projects in fleet");
 
       const ids = overview.map((p) => p.id);
       assert.ok(ids.includes("eos-system"));
@@ -29,6 +29,7 @@ describe("SPEC-125: EOS Fleet Mission Control Dashboard & Synthetic Health Senti
       assert.ok(ids.includes("performance-talent-group"));
       assert.ok(ids.includes("portafolio"));
       assert.ok(ids.includes("donaciones"));
+      assert.ok(ids.includes("trading-family-office"));
     });
   });
 
@@ -40,9 +41,9 @@ describe("SPEC-125: EOS Fleet Mission Control Dashboard & Synthetic Health Senti
 
       // Sanity ceiling: 2s tolerates parallel-CI file I/O scheduling.
       assert.ok(durationMs < 2000, `Hermetic report ceiling: took ${durationMs}ms`);
-      assert.equal(report.totalProjects, 9);
-      assert.equal(report.productionEndpointsCount, 9);
-      assert.equal(report.healthyEndpointsCount, 9);
+      assert.equal(report.totalProjects, 10);
+      assert.equal(report.productionEndpointsCount, 10);
+      assert.equal(report.healthyEndpointsCount, 10);
       assert.equal(report.fleetQuorumPercentage, 100);
       assert.ok(/^[0-9a-f]{64}$/.test(report.registrySha256));
     });
@@ -99,8 +100,8 @@ describe("SPEC-125: EOS Fleet Mission Control Dashboard & Synthetic Health Senti
       assert.ok(response.result, "Must contain result");
       assert.ok(Array.isArray(response.result.content));
       const body = JSON.parse(response.result.content[0].text);
-      assert.equal(body.totalProjects, 9);
-      assert.equal(body.productionEndpointsCount, 9);
+      assert.equal(body.totalProjects, 10);
+      assert.equal(body.productionEndpointsCount, 10);
       assert.ok(/^[0-9a-f]{64}$/.test(body.registrySha256));
     });
   });
@@ -109,7 +110,7 @@ describe("SPEC-125: EOS Fleet Mission Control Dashboard & Synthetic Health Senti
     it("exercises generateReportSync and missing registry errors", async () => {
       // 1. generateReportSync
       const syncReport = missionControl.generateReportSync();
-      assert.equal(syncReport.totalProjects, 9);
+      assert.equal(syncReport.totalProjects, 10);
       assert.equal(syncReport.fleetQuorumPercentage, 100);
       assert.equal(syncReport.averageLatencyMs, 0);
 
@@ -137,7 +138,7 @@ describe("SPEC-125: EOS Fleet Mission Control Dashboard & Synthetic Health Senti
         // Success probe
         globalThis.fetch = async () => ({ status: 200 });
         const liveReport = await missionControl.generateReport({ probe: true });
-        assert.equal(liveReport.healthyEndpointsCount, 9);
+        assert.equal(liveReport.healthyEndpointsCount, 10);
         assert.equal(liveReport.fleetQuorumPercentage, 100);
         assert.ok(liveReport.averageLatencyMs >= 0);
 

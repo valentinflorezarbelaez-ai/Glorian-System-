@@ -158,9 +158,9 @@ test("SPEC-247..SPEC-249 / CHANGE-124 — EDA Formal Prover, Apollo Air-Gap & Al
     assert.equal(b1.bundleDigestSha256, b2.bundleDigestSha256);
   });
 
-  await t.test("BDD-1266: runs Aladdin Monte Carlo stress across 9-project fleet non-critical", () => {
+  await t.test("BDD-1266: runs Aladdin Monte Carlo stress across 10-project fleet non-critical", () => {
     const report = EosAladdinSystemicRiskStressCore.runSystemicStressSimulation({ projectRoot: ROOT });
-    assert.equal(report.portfolioSize, 9);
+    assert.equal(report.portfolioSize, 10);
     assert.equal(report.trialsExecuted, 200);
     assert.notEqual(report.riskTier, "SYSTEMIC_CRITICAL");
     assert.ok(report.expectedShortfall99Percent >= report.valueAtRisk99Percent);
@@ -234,7 +234,7 @@ test("SPEC-247..SPEC-249 / CHANGE-124 — EDA Formal Prover, Apollo Air-Gap & Al
         encoding: "utf8",
       }),
     );
-    assert.equal(aladdin.portfolioSize, 9);
+    assert.equal(aladdin.portfolioSize, 10);
 
     const shipOut = JSON.parse(
       execFileSync(process.execPath, [path.join(ROOT, "bin/eos.mjs"), "ship", "--ticket=SPOT-249", "--json"], {
@@ -244,7 +244,7 @@ test("SPEC-247..SPEC-249 / CHANGE-124 — EDA Formal Prover, Apollo Air-Gap & Al
     );
     assert.equal(shipOut.edaFormalProof.verdict, "SILICON_FORMAL_VERIFIED");
     assert.equal(shipOut.apolloAirGapBundle.verdict, "AIRGAP_DEPLOY_READY");
-    assert.equal(shipOut.aladdinSystemicRisk.portfolioSize, 9);
+    assert.equal(shipOut.aladdinSystemicRisk.portfolioSize, 10);
 
     const mcpDeps = { projectRoot: ROOT, mcpCalls: 0, auditEntries: [] };
     assert.equal(
@@ -252,6 +252,6 @@ test("SPEC-247..SPEC-249 / CHANGE-124 — EDA Formal Prover, Apollo Air-Gap & Al
       "SILICON_FORMAL_VERIFIED",
     );
     assert.equal(dispatchPhase7FrontierActionExt2("apollo_airgap_bundle", {}, mcpDeps).verdict, "AIRGAP_DEPLOY_READY");
-    assert.equal(dispatchPhase7FrontierActionExt2("aladdin_systemic_stress", {}, mcpDeps).portfolioSize, 9);
+    assert.equal(dispatchPhase7FrontierActionExt2("aladdin_systemic_stress", {}, mcpDeps).portfolioSize, 10);
   });
 });

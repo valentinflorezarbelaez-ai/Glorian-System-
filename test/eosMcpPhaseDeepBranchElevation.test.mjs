@@ -243,7 +243,7 @@ describe("MCP PHASE HANDLERS — DEEP BRANCH ELEVATION SUITE", () => {
     it("evaluates eos_spotify_xirp_context with syncFiles=false and syncFiles=true", () => {
       const compileOnly = phase5.eos_spotify_xirp_context({ syncFiles: false });
       assert.ok(compileOnly);
-      assert.equal(compileOnly.registeredFleetProjects, 9);
+      assert.equal(compileOnly.registeredFleetProjects, 10);
 
       const syncFiles = phase5.eos_spotify_xirp_context({ syncFiles: true });
       assert.ok(syncFiles);
@@ -321,14 +321,14 @@ describe("MCP PHASE HANDLERS — DEEP BRANCH ELEVATION SUITE", () => {
       const syncRes = phase6.eos_fleet_registry_sync({ dryRun: true });
       assert.ok(syncRes);
       assert.equal(syncRes.dryRun, true);
-      assert.equal(syncRes.totalRegistered, 9);
+      assert.equal(syncRes.totalRegistered, 10);
     });
 
     it("evaluates eos_fleet_mission_control with probe=false", () => {
       const mcRes = phase6.eos_fleet_mission_control({ probe: false });
       assert.ok(mcRes);
       assert.ok(mcRes.registrySha256);
-      assert.equal(mcRes.totalProjects, 9);
+      assert.equal(mcRes.totalProjects, 10);
     });
 
     it("evaluates eos_fleet_elevate apply=false and bounds validation on apply=true", () => {

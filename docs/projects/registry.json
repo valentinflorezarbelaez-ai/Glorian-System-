@@ -1,6 +1,6 @@
 {
   "version": "11.0.0-autonomous-fleet-registry",
-  "updatedAt": "2026-11-12T13:54:05.046Z",
+  "updatedAt": "2026-11-21T00:09:18.648Z",
   "masterOrchestrator": "EOS System control plane (SPEC-124)",
   "complianceStandard": "EOS_CONSTITUTION_LAW_IV_EXTERNAL_WRITE_BARRIER",
   "totalFleetProjects": 10,
@@ -135,7 +135,7 @@
       "cicdGateScript": "scripts/verify-cicd-pipeline.mjs",
       "autoShipScript": "scripts/ship-sovereign.mjs",
       "currentBranch": "main",
-      "headCommitSha": "f73324a22b57c841b7d8460754c7e519c6f5589d",
+      "headCommitSha": "de11be77a3004f97c5aeb57ad07ea4b3d4467c5b",
       "ownerApproval": "OWNER_APPROVAL"
     },
     {
@@ -155,7 +155,7 @@
       "autoShipScript": "git push origin main",
       "ownerApproval": "OWNER_APPROVAL",
       "currentBranch": "main",
-      "headCommitSha": "6f125c27a43ff160f0ee328a01b3686c0e2860f0"
+      "headCommitSha": "b6d8ddc2f30ac0bdaf8d33f20e79c30a36b5fc6c"
     },
     {
       "id": "portafolio",
@@ -195,5 +195,5 @@
       "currentBranch": "main"
     }
   ],
-  "registrySha256": "4f8da39c226f3a8df5e42801bb4ff32e72a5a26cdf499fc7eda2859398180338"
+  "registrySha256": "416ff251146760042c77881e661df7cbcd4d1ecfea12f9ae293e89cb2addce5d"
 }

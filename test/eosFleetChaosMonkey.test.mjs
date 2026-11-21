@@ -99,7 +99,7 @@ test("BDD-1967: Sub-500ms Quantitative MTTR Certification across Fleet", async (
   assert.equal(benchmark.successfulRecoveries, REGISTERED_FLEET_REPOS.length);
   assert.ok(benchmark.averageMttrMs < 500, `Average MTTR ${benchmark.averageMttrMs}ms must be strictly < 500ms`);
   assert.equal(benchmark.mttrTargetConforming, true);
-  assert.equal(benchmark.evaluatedRepos.length, 9);
+  assert.equal(benchmark.evaluatedRepos.length, 10);
   assert.equal(benchmark.integrityHash.length, 64);
 });
 
@@ -108,7 +108,7 @@ test("BDD-1968: Full Diagnostic Audit & Fleet Resilience Receipt", async () => {
 
   assert.equal(receipt.specId, "SPEC-364");
   assert.equal(receipt.changeId, "CHANGE-226");
-  assert.equal(receipt.fleetRepositoriesCount, 9);
+  assert.equal(receipt.fleetRepositoriesCount, 10);
   assert.ok(receipt.certifiedAverageMttrMs < 500);
   assert.equal(receipt.checks.multiVectorFaultInjection, "PASS");
   assert.equal(receipt.checks.sub50msAnomalyDetection, "PASS");

@@ -206,12 +206,12 @@ test("SPEC-241..SPEC-243 / CHANGE-122 — Contract Diff, SARIF 2.1.0 & Fleet Shi
     assert.equal(r1.sarifDigestSha256, r2.sarifDigestSha256);
   });
 
-  await t.test("BDD-1236: validates all 9 registered fleet projects as FLEET_SHIP_READY", () => {
+  await t.test("BDD-1236: validates all 10 registered fleet projects as FLEET_SHIP_READY", () => {
     const fleet = EosFleetMultiRepoShipOrchestratorCore.orchestrateFleetShipReadiness({
       projectRoot: root,
     });
-    assert.equal(fleet.totalProjects, 9);
-    assert.equal(fleet.authorizedProjects, 9);
+    assert.equal(fleet.totalProjects, 10);
+    assert.equal(fleet.authorizedProjects, 10);
     assert.equal(fleet.blockedProjects, 0);
     assert.equal(fleet.averageReadinessScore, 100);
     assert.equal(fleet.fleetVerdict, "FLEET_SHIP_READY");

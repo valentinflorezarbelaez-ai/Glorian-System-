@@ -780,7 +780,7 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
     assert.equal(callFacade({ action: "tensor_embed", text: "facade-tensor" }).dimensions, 64);
 
     // 37. fleet_sync_all & fleet_audit_all (SPEC-225)
-    assert.equal(callFacade({ action: "fleet_sync_all" }).totalProjects, 9);
+    assert.equal(callFacade({ action: "fleet_sync_all" }).totalProjects, 10);
     assert.ok(callFacade({ action: "fleet_audit_all" }).fleetAverageScore >= 70);
 
     // 38. otlp_trace_create & otlp_trace_export (SPEC-226)
@@ -1050,7 +1050,7 @@ describe("SPEC-186: Big Tech Enterprise Domain Facade", () => {
 
     const aladdinStress = callFacade({ action: "aladdin_systemic_stress", trials: 100, seed: 77 });
     assert.equal(aladdinStress.action, "aladdin_systemic_stress");
-    assert.equal(aladdinStress.portfolioSize, 9);
+    assert.equal(aladdinStress.portfolioSize, 10);
     assert.ok(aladdinStress.expectedShortfall99Percent >= aladdinStress.valueAtRisk99Percent);
 
     // 52. cli_hygiene_audit (SPEC-250)

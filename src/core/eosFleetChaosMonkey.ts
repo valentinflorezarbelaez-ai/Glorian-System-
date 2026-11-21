@@ -26,6 +26,7 @@ export const REGISTERED_FLEET_REPOS: readonly FleetRepositoryId[] = Object.freez
   "eos-system",
   "performance-talent-group",
   "portafolio",
+  "trading-family-office",
 ]);
 
 export class EosFleetChaosMonkey {
@@ -153,7 +154,7 @@ export class EosFleetChaosMonkey {
     const benchmark = await this.runFleetBenchmark(1);
 
     const checks = {
-      multiVectorFaultInjection: (benchmark.totalExperiments >= 9 ? "PASS" : "FAIL") as "PASS" | "FAIL",
+      multiVectorFaultInjection: (benchmark.totalExperiments >= 10 ? "PASS" : "FAIL") as "PASS" | "FAIL",
       sub50msAnomalyDetection: (benchmark.averageMttrMs < 500 ? "PASS" : "FAIL") as "PASS" | "FAIL",
       sandboxedBlastRadiusIsolation: (benchmark.successfulRecoveries === benchmark.totalExperiments
         ? "PASS"

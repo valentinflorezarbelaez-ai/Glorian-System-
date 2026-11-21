@@ -157,7 +157,7 @@ describe("SPEC-308: Decentralized Cross-Fleet Merkle-CRDT State Replication Prot
     assert.equal(receipt.specRef, "SPEC-308");
     assert.equal(receipt.changeRef, "CHANGE-170");
     assert.equal(receipt.status, "CRDT_CONVERGENCE_VERIFIED");
-    assert.equal(receipt.fleetProjectsAudited, 9);
+    assert.equal(receipt.fleetProjectsAudited, 10);
     assert.equal(receipt.semilatticePropertiesVerified.associativity, true);
     assert.equal(receipt.semilatticePropertiesVerified.commutativity, true);
     assert.equal(receipt.semilatticePropertiesVerified.idempotency, true);

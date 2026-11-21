@@ -27,11 +27,11 @@ test("SPEC-340 / CHANGE-202: Sovereign Closed-Loop Repository Autopilot Engine",
     assert.strictEqual(core.getProjectRoot(), ROOT);
 
     const ingestion = core.ingestRepositoryOntology();
-    assert.strictEqual(ingestion.fleetProjectsCount, 9);
+    assert.strictEqual(ingestion.fleetProjectsCount, 10);
     assert.strictEqual(ingestion.mutationTargetsCount, 12);
     assert.strictEqual(ingestion.tlcModelsVerifiedCount, 12);
-    assert.strictEqual(ingestion.totalHypergraphEntities, 34);
-    assert.strictEqual(ingestion.totalHyperedges, 33);
+    assert.strictEqual(ingestion.totalHypergraphEntities, 35);
+    assert.strictEqual(ingestion.totalHyperedges, 34);
     assert.strictEqual(ingestion.ontologicalAudit.bitemporalMonotonicity, true);
     assert.strictEqual(ingestion.ontologicalAudit.referentialIntegrity, true);
     assert.strictEqual(ingestion.ontologicalAudit.mlsLatticeContainment, true);

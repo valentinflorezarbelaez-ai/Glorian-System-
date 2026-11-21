@@ -232,7 +232,7 @@ export class EosAutonomousReconciliationLoopCore {
 
     // 1. Observe fleet
     const observation = this.observeFleetState(root);
-    assertPrecondition(observation.totalProjectsCount === 9, "Fleet must contain exactly 9 projects");
+    assertPrecondition(observation.totalProjectsCount === 10, "Fleet must contain exactly 10 projects");
 
     // 2. Synthesize infected cyclotron with 2 orphan links and 1 cycle
     const cyclotron = new EosOntologyCyclotron();

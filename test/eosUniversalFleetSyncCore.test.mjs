@@ -7,11 +7,11 @@ import { dispatchPhase7FrontierActionExt } from "../src/mcp/tools/eosMcpPhase7En
 test("BDD-1144: Registry Parsing and Deterministic Path Resolution", () => {
   const root = process.cwd();
   const registry = EosUniversalFleetSyncCore.loadRegistry(root);
-  assert.equal(registry.projects.length, 9, "Registry must declare exactly 9 projects");
+  assert.equal(registry.projects.length, 10, "Registry must declare exactly 10 projects");
   assert.ok(registry.version.length > 0);
 
   const resolved = EosUniversalFleetSyncCore.resolveFleetProjects(root);
-  assert.equal(resolved.length, 9);
+  assert.equal(resolved.length, 10);
 
   const eosSystem = resolved.find((p) => p.id === "eos-system");
   assert.ok(eosSystem, "eos-system control plane must be present in registry");
@@ -30,7 +30,7 @@ test("BDD-1145: Cross-Fleet Git Synchronization and Divergence Detection", () =>
   const root = process.cwd();
   const report = EosUniversalFleetSyncCore.syncFleet(root);
 
-  assert.equal(report.totalProjects, 9);
+  assert.equal(report.totalProjects, 10);
   assert.ok(report.fleetMerkleRoot.length === 64, "Merkle root must be a 64-char SHA-256 hex string");
   assert.ok(report.receipt.length === 64);
 
@@ -45,7 +45,7 @@ test("BDD-1145: Cross-Fleet Git Synchronization and Divergence Detection", () =>
 
   // Check federated and sibling projects
   const federatedResults = report.results.filter((r) => r.id !== "eos-system");
-  assert.equal(federatedResults.length, 8);
+  assert.equal(federatedResults.length, 9);
   const validStates = ["IN_SYNC", "DIRTY_TREE", "LOCAL_AHEAD", "REMOTE_AHEAD", "DIVERGED", "FEDERATED_ATTESTED"];
   for (const r of federatedResults) {
     assert.ok(validStates.includes(r.syncState), `Unexpected state ${r.syncState} for ${r.id}`);
@@ -63,7 +63,7 @@ test("BDD-1146: Autonomous Healing of Manifest Drift and Directory Markers", () 
   }
 
   const healAllReport = EosUniversalFleetSyncCore.healAll(root);
-  assert.equal(healAllReport.totalEvaluated, 9);
+  assert.equal(healAllReport.totalEvaluated, 10);
   assert.ok(healAllReport.receipt.length === 64);
 });
 
@@ -71,7 +71,7 @@ test("BDD-1147: 4-Pillar Spotify Soundcheck Scoring and Fleet Health Index", () 
   const root = process.cwd();
   const auditReport = EosUniversalFleetSyncCore.auditFleetHealth(root);
 
-  assert.equal(auditReport.totalProjects, 9);
+  assert.equal(auditReport.totalProjects, 10);
   assert.ok(auditReport.fleetAverageScore >= 70, `Fleet average score ${auditReport.fleetAverageScore} must be >= 70`);
   assert.equal(auditReport.deploymentAuthorizedQuorum, true);
   assert.ok(auditReport.fleetMerkleRoot.length === 64);
@@ -99,13 +99,13 @@ test("BDD-1148: SHA-256 Merkle Root Attestation and CLI/MCP Dispatch", () => {
   const mcpSync = dispatchPhase7FrontierActionExt("fleet_sync_all", { root }, {});
   assert.ok(mcpSync);
   assert.equal(mcpSync.action, "fleet_sync_all");
-  assert.equal(mcpSync.totalProjects, 9);
+  assert.equal(mcpSync.totalProjects, 10);
   assert.ok(mcpSync.fleetMerkleRoot.length === 64);
 
   const mcpAudit = dispatchPhase7FrontierActionExt("fleet_audit_all", { root }, {});
   assert.ok(mcpAudit);
   assert.equal(mcpAudit.action, "fleet_audit_all");
-  assert.equal(mcpAudit.totalProjects, 9);
+  assert.equal(mcpAudit.totalProjects, 10);
   assert.ok(mcpAudit.fleetAverageScore >= 70);
 
   // 3. CLI command execution
@@ -114,7 +114,7 @@ test("BDD-1148: SHA-256 Merkle Root Attestation and CLI/MCP Dispatch", () => {
     encoding: "utf-8",
   });
   const parsedSync = JSON.parse(cliSyncJson);
-  assert.equal(parsedSync.totalProjects, 9);
+  assert.equal(parsedSync.totalProjects, 10);
   assert.ok(parsedSync.fleetMerkleRoot);
 
   const cliAuditJson = execSync("node bin/eos.mjs fleet:audit-all --json", {
@@ -122,6 +122,6 @@ test("BDD-1148: SHA-256 Merkle Root Attestation and CLI/MCP Dispatch", () => {
     encoding: "utf-8",
   });
   const parsedAudit = JSON.parse(cliAuditJson);
-  assert.equal(parsedAudit.totalProjects, 9);
+  assert.equal(parsedAudit.totalProjects, 10);
   assert.ok(parsedAudit.fleetAverageScore >= 70);
 });

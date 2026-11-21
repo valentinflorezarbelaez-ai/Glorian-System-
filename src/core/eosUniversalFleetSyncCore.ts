@@ -33,7 +33,7 @@ import type {
 
 export class EosUniversalFleetSyncCore {
   public static readonly CANONICAL_REGISTRY_REL = "docs/projects/registry.json";
-  public static readonly EXPECTED_PROJECT_COUNT = 9;
+  public static readonly EXPECTED_PROJECT_COUNT = 10;
 
   /**
    * Load and validate canonical fleet registry.

@@ -83,12 +83,12 @@ describe("SPEC-310: WebAssembly SIMD 128-Bit (v128) Vector Arena & Elastic Fleet
   // -------------------------------------------------------------------------
   // BDD-1639: Elastic Fleet Capacity Scaling Across EosUniversalFleetSyncCore
   // -------------------------------------------------------------------------
-  it("BDD-1639: Validates elastic fleet capacity scaling (9..1000 projects) fail-closed", () => {
-    const c9 = EosUniversalFleetSyncCore.evaluateElasticFleetCapacity(9);
-    assert.equal(c9.withinBounds, true);
-    assert.equal(c9.recommendedWorkerShards, 2);
-    assert.equal(c9.vssThresholdGroupsRequired, 1);
-    assert.equal(c9.vercelHobbyAccountFits, true);
+  it("BDD-1639: Validates elastic fleet capacity scaling (10..1000 projects) fail-closed", () => {
+    const c10 = EosUniversalFleetSyncCore.evaluateElasticFleetCapacity(10);
+    assert.equal(c10.withinBounds, true);
+    assert.equal(c10.recommendedWorkerShards, 2);
+    assert.equal(c10.vssThresholdGroupsRequired, 1);
+    assert.equal(c10.vercelHobbyAccountFits, true);
 
     const c200 = EosUniversalFleetSyncCore.evaluateElasticFleetCapacity(200);
     assert.equal(c200.withinBounds, true);
@@ -101,7 +101,7 @@ describe("SPEC-310: WebAssembly SIMD 128-Bit (v128) Vector Arena & Elastic Fleet
     assert.equal(c1000.antiEntropyRoundsLog2, 10);
     assert.equal(c1000.vercelHobbyAccountFits, false);
 
-    assert.throws(() => EosUniversalFleetSyncCore.evaluateElasticFleetCapacity(8), /PRECONDITION_FAILED/);
+    assert.throws(() => EosUniversalFleetSyncCore.evaluateElasticFleetCapacity(9), /PRECONDITION_FAILED/);
     assert.throws(() => EosUniversalFleetSyncCore.evaluateElasticFleetCapacity(1001), /PRECONDITION_FAILED/);
   });
 

@@ -20,7 +20,7 @@ describe("SPEC-307: Autonomous Continuous Reconciliation Loop & High-Assurance S
   it("BDD-1617: Telemetry Observation Across Registered Sovereign Fleet", () => {
     const observation = EosAutonomousReconciliationLoopCore.observeFleetState(process.cwd());
 
-    assert.strictEqual(observation.totalProjectsCount, 9, "Fleet must contain exactly 9 registered projects");
+    assert.strictEqual(observation.totalProjectsCount, 10, "Fleet must contain exactly 10 registered projects");
     assert.strictEqual(typeof observation.fleetMerkleRoot, "string");
     assert.strictEqual(observation.fleetMerkleRoot.length, 64);
 
@@ -34,6 +34,7 @@ describe("SPEC-307: Autonomous Continuous Reconciliation Loop & High-Assurance S
       "eos-system",
       "performance-talent-group",
       "portafolio",
+      "trading-family-office",
     ];
 
     for (const id of expectedProjectIds) {
@@ -134,7 +135,7 @@ describe("SPEC-307: Autonomous Continuous Reconciliation Loop & High-Assurance S
 
     assert.strictEqual(receipt.receiptType, "EOS_RECONCILIATION_LOOP_AUDIT");
     assert.strictEqual(receipt.specRef, "SPEC-307");
-    assert.strictEqual(receipt.fleetObservedProjects, 9);
+    assert.strictEqual(receipt.fleetObservedProjects, 10);
     assert.strictEqual(receipt.convergenceAchieved, true);
     assert.strictEqual(receipt.remainingAnomaliesCount, 0);
     assert.strictEqual(receipt.wasmKernelAccelerated, true);

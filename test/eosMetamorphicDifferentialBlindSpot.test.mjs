@@ -698,10 +698,10 @@ test("SPEC-341 / CHANGE-203: Metamorphic, Differential & Structural-Shrinking Bl
     assert.strictEqual(fleetReceipt.specRef, "SPEC-341");
     assert.strictEqual(fleetReceipt.command, "toolchain:blindspot:fleet");
     assert.strictEqual(fleetReceipt.mode, "LIVE_PROBED");
-    assert.strictEqual(fleetReceipt.totalFleetProjects, 9);
-    assert.strictEqual(fleetReceipt.auditedProjects, 9);
+    assert.strictEqual(fleetReceipt.totalFleetProjects, 10);
+    assert.strictEqual(fleetReceipt.auditedProjects, 10);
     assert.strictEqual(fleetReceipt.allPassed, true);
-    assert.strictEqual(fleetReceipt.projects.length, 9);
+    assert.strictEqual(fleetReceipt.projects.length, 10);
     assert.strictEqual(typeof fleetReceipt.sha256Digest, "string");
     assert.strictEqual(fleetReceipt.sha256Digest.length, 64);
 
@@ -731,7 +731,7 @@ test("SPEC-341 / CHANGE-203: Metamorphic, Differential & Structural-Shrinking Bl
     assert.ok(mcpRes.result);
     const parsed = JSON.parse(mcpRes.result.content[0].text);
     assert.strictEqual(parsed.command, "toolchain:blindspot:fleet");
-    assert.strictEqual(parsed.auditedProjects, 9);
+    assert.strictEqual(parsed.auditedProjects, 10);
     assert.strictEqual(parsed.mode, "OFFLINE_NOT_VERIFIED");
     assert.strictEqual(parsed.allPassed, false);
   });
@@ -743,8 +743,8 @@ test("SPEC-341 / CHANGE-203: Metamorphic, Differential & Structural-Shrinking Bl
     assert.strictEqual(offlineReceipt.mode, "OFFLINE_NOT_VERIFIED");
     assert.strictEqual(offlineReceipt.allPassed, false);
     assert.strictEqual(offlineReceipt.meanStabilityScore, 0.0);
-    assert.strictEqual(offlineReceipt.totalFleetProjects, 9);
-    assert.strictEqual(offlineReceipt.auditedProjects, 9);
+    assert.strictEqual(offlineReceipt.totalFleetProjects, 10);
+    assert.strictEqual(offlineReceipt.auditedProjects, 10);
     assert.ok(offlineReceipt.projects.every((p) => p.verdict === "NOT_VERIFIED" && p.passed === false));
     assert.ok(offlineReceipt.projects.every((p) => typeof p.reason === "string" && p.reason.includes("Law III")));
   });

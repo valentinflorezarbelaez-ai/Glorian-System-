@@ -11,7 +11,7 @@
 - **Owner Squad**: ` user:valentin-florez-arbelaez `
 - **Tribe**: ` NOT_DECLARED `
 - **Lifecycle Tier**: ` production `
-- **Registered Fleet Repositories**: 9
+- **Registered Fleet Repositories**: 10
 - **Active Formal Architectural Specs (OpenSpec)**: 376
 
 ## 2. Proposed Engineering Conventions (Not Audited)

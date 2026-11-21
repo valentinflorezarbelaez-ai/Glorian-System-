@@ -384,11 +384,12 @@ async function cmd_fleet_doctor(commandContext) {
   const watchdog = new GlorianFleetHealthWatchdog(root);
 
   console.log("[EOS FLEET DOCTOR — PARALLEL SYNTHETIC QUALITY & SECURITY SENTINEL]\n");
-  console.log("Auditando los 9 proyectos de la flota en paralelo concurrente...\n");
+  console.log("Auditando los proyectos de la flota en paralelo concurrente...\n");
 
   const startTime = Date.now();
   const report = await watchdog.runFleetHealthAudit({ dryRun: isDryRun });
   const durationMs = Date.now() - startTime;
+  const projectCount = Array.isArray(report?.projects) ? report.projects.length : 10;
 
   if (isJson) {
     console.log(JSON.stringify({ ...report, auditDurationMs: durationMs }, null, 2));
@@ -396,7 +397,9 @@ async function cmd_fleet_doctor(commandContext) {
   }
 
   console.log(watchdog.formatHealthReport(report));
-  console.log(`\n⚡ Tiempo total de auditoría concurrente: ${durationMs} ms (9 proyectos evaluados en paralelo)`);
+  console.log(
+    `\n⚡ Tiempo total de auditoría concurrente: ${durationMs} ms (${projectCount} proyectos evaluados en paralelo)`,
+  );
   console.log(`🔒 Recibo criptográfico registrado: sha256:${report.sha256Receipt}\n`);
 }
 

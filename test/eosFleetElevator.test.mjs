@@ -35,7 +35,7 @@ describe("EOS Sovereign Fleet Golden Path Elevator Suite", () => {
   describe("Suite 2: Spotify Soundcheck Mesh Fleet Dimensions (BDD-119)", () => {
     it("audits all registered fleet repositories and verifies Grade A quorum", () => {
       const report = EosFleetSoundcheckMesh.auditFleet(root);
-      assert.equal(report.totalRepositories, 9);
+      assert.equal(report.totalRepositories, 10);
       assert.ok(report.fleetAverageScore >= 70, `Expected fleet average >= 70, got ${report.fleetAverageScore}`);
       assert.equal(report.deploymentAuthorizedQuorum, true);
       assert.ok(report.reposAtGradeA >= 5);

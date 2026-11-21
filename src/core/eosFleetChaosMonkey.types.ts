@@ -24,7 +24,8 @@ export type FleetRepositoryId =
   | "donaciones"
   | "eos-system"
   | "performance-talent-group"
-  | "portafolio";
+  | "portafolio"
+  | "trading-family-office";
 
 export interface ChaosExperimentConfig {
   /** Vector of chaos perturbation to inject */
