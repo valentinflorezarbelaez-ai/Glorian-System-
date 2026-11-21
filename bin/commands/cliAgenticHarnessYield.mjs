@@ -180,9 +180,94 @@ async function cmd_harness_audit(commandContext) {
     console.log(
       `SDD > Vibe      : ${receipt.sddOutperformsVibe} (savings=${(receipt.tokenSavingsRatio * 100).toFixed(2)}%)`,
     );
+    console.log(
+      `Specboot Suite  : enrich=${receipt.storyEnrichmentVerified}, multiagent=${receipt.smartSpecMultiAgentVerified}, rtk=${receipt.rtkTokenCompressionVerified}`,
+    );
     console.log(`All Passed      : ${receipt.allPassed}`);
     console.log(`SHA-256 Digest  : ${receipt.sha256Digest}`);
     console.log(`Receipt Saved   : ${RECEIPT_PATH}`);
+  }
+}
+
+async function cmd_harness_enrich(commandContext) {
+  const args = commandContext.args || [];
+  const isJson = args.includes("--json");
+  const ticketId = parseFlagValue(args, "--ticket=", "SPECBOOT-101");
+  const title = parseFlagValue(args, "--title=", "Filter Candidates Endpoint");
+  const rawStory = parseFlagValue(
+    args,
+    "--story=",
+    "Expose GET /positions/:id/candidates with pagination and role validation.",
+  );
+  const layersRaw = parseFlagValue(args, "--layers=", "BACKEND,FRONTEND");
+  const affectedLayers = layersRaw
+    .split(",")
+    .map((s) => s.trim().toUpperCase())
+    .filter((s) => s === "BACKEND" || s === "FRONTEND" || s === "DATABASE");
+  const forceReEnrich = args.includes("--force");
+
+  const core = new EosAgenticHarnessYieldCore();
+  const report = core.enrichUserStory({ ticketId, title, rawStory, affectedLayers, forceReEnrich });
+  const payload = { command: "toolchain:harness:enrich", ...report };
+
+  if (isJson) {
+    console.log(JSON.stringify(payload, null, 2));
+  } else {
+    console.log("=== Agentic Harness: LIDR /enrich-us Technical Contract ===");
+    console.log(`Ticket / Status : ${report.ticketId} -> ${report.status} (${report.targetJiraStatus})`);
+    console.log(`Decisions Closed: ${report.decisionsClosed} | QA Scenarios: ${report.playwrightQaCatalog.length}`);
+    console.log(`Verification    : ${report.mandatoryVerificationSteps.length} mandatory steps synthesized`);
+  }
+}
+
+async function cmd_harness_multiagent(commandContext) {
+  const args = commandContext.args || [];
+  const isJson = args.includes("--json");
+  const taskId = parseFlagValue(args, "--task=", "SPECBOOT-4AGENT-01");
+  const architectureDocLines = Number(parseFlagValue(args, "--arch-lines=", "180"));
+  const rawRepoExplorationTokens = Number(parseFlagValue(args, "--explore-tokens=", "48000"));
+
+  const core = new EosAgenticHarnessYieldCore();
+  const report = core.planSmartSpecCheapExecution({ taskId, architectureDocLines, rawRepoExplorationTokens });
+  const payload = { command: "toolchain:harness:multiagent", ...report };
+
+  if (isJson) {
+    console.log(JSON.stringify(payload, null, 2));
+  } else {
+    console.log("=== Agentic Harness: 4-Agent Smart Spec, Cheap Execution ===");
+    console.log(
+      `Arch Memory     : ${report.architectureDocLines}/${report.maxArchitectureDocLines} lines (compliant=${report.architectureMemoryCompliant})`,
+    );
+    console.log(
+      `Tokens Savings  : ${(report.tokenSavingsRatio * 100).toFixed(2)}% (${report.smartSpecTotalTokens} vs ${report.monolithicExplorationTokens})`,
+    );
+    console.log(
+      `Cost Savings    : ${(report.costSavingsRatio * 100).toFixed(2)}% ($${report.smartSpecCostUsd.toFixed(4)} vs $${report.monolithicFrontierCostUsd.toFixed(4)})`,
+    );
+  }
+}
+
+async function cmd_harness_rtk(commandContext) {
+  const args = commandContext.args || [];
+  const isJson = args.includes("--json");
+  const commandType = parseFlagValue(args, "--cmd=", "test");
+  const inlineRaw = parseFlagValue(args, "--input=", "");
+  const defaultStream = `${Array.from({ length: 40 }, (_, i) => `  ✔ suite check #${i + 1} passed in 1.1ms`).join("\n")}\n✖ assertion failed in src/sample.ts:42`;
+  const rawOutput = inlineRaw || defaultStream;
+
+  const core = new EosAgenticHarnessYieldCore();
+  const report = core.compressCliOutputRtk({ commandType, rawOutput });
+  const payload = { command: "toolchain:harness:rtk", ...report };
+
+  if (isJson) {
+    console.log(JSON.stringify(payload, null, 2));
+  } else {
+    console.log("=== Agentic Harness: RTK CLI Token Compression Proxy ===");
+    console.log(`Command Type    : ${report.commandType}`);
+    console.log(
+      `Token Savings   : ${report.savingsPercent}% (${report.rawTokensEstimate} -> ${report.compressedTokensEstimate})`,
+    );
+    console.log(`Target >= 60%   : ${report.targetBandMet}`);
   }
 }
 
@@ -191,6 +276,9 @@ HANDLERS["toolchain:harness:loop"] = cmd_harness_loop;
 HANDLERS["toolchain:harness:yield"] = cmd_harness_yield;
 HANDLERS["toolchain:harness:benchmark"] = cmd_harness_benchmark;
 HANDLERS["toolchain:harness:audit"] = cmd_harness_audit;
+HANDLERS["toolchain:harness:enrich"] = cmd_harness_enrich;
+HANDLERS["toolchain:harness:multiagent"] = cmd_harness_multiagent;
+HANDLERS["toolchain:harness:rtk"] = cmd_harness_rtk;
 
 export async function handleAgenticHarnessYieldCommand(commandContext) {
   const command = commandContext.command;

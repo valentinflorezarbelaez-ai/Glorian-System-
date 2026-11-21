@@ -608,7 +608,7 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:harness:loop [--max-retries=3] [--unit-failures=1] [--json] Bucle multi-etapa del arnés agéntico y contabilidad de retrabajo (SPEC-339)
   eos toolchain:harness:yield [--json] Telemetría FinOps de First-Pass PR Yield y Rework Amplification Factor (SPEC-339)
   eos toolchain:harness:benchmark [--json] Comparativa de cohorte Spec-Driven Harness vs Vibe Coding sin restricciones (SPEC-339)
-  eos toolchain:harness:audit [--json] Auditoría determinista del arnés agéntico y recibo SHA-256 (SPEC-339)
+  eos toolchain:harness:audit | toolchain:harness:enrich | toolchain:harness:multiagent | toolchain:harness:rtk [--json] Auditoría del arnés, enriquecimiento /enrich-us, Smart Spec 4-Agentes y compresión RTK (SPEC-339)
   eos toolchain:autopilot:ingest [--limit=12] [--json] Ingesta ontológica bitemporal de artefactos reales del repositorio (SPEC-340)
   eos toolchain:autopilot:diagnose [--json] Diagnóstico causal estructural do(SPEC_CLARITY) y contrafácticos del repo (SPEC-340)
   eos toolchain:autopilot:simulate [--seed=...] [--json] Simulación DESH pre-flight con checkpoint y rollback (SPEC-340)

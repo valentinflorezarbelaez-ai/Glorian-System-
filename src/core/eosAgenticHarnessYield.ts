@@ -12,6 +12,16 @@
  */
 
 import { createHash } from "node:crypto";
+import {
+  MAX_ARCHITECTURE_SHARED_MEMORY_LINES,
+  buildMandatorySteps,
+  buildPlaywrightCatalog,
+  detectStoryAmbiguities,
+  isCriticalRtkLine,
+  isRoutineRtkLine,
+  isStoryAlreadyEnriched,
+  stripAnsiControlCodes,
+} from "./eosAgenticHarnessYield.types.ts";
 import type {
   AgenticHarnessAuditReceipt,
   CohortBenchmarkReport,
@@ -21,9 +31,17 @@ import type {
   HarnessExecutionResult,
   HarnessStageAttempt,
   HarnessStageName,
+  MultiAgentRoleAllocation,
   PrTelemetryRecord,
+  RtkCompressionInput,
+  RtkCompressionReport,
+  SmartSpecPipelineInput,
+  SmartSpecPipelineReport,
   SpecReadinessInput,
   SpecReadinessReport,
+  StoryTargetLayer,
+  UserStoryEnrichmentInput,
+  UserStoryEnrichmentReport,
 } from "./eosAgenticHarnessYield.types.ts";
 
 export * from "./eosAgenticHarnessYield.types.ts";
@@ -55,6 +73,14 @@ const DEFAULT_STAGE_DURATION_MS: Record<HarnessStageName, number> = {
 export const MIN_SPEC_READINESS_SCORE = 80;
 export const MAX_SPEC_AMBIGUITY = 0.15;
 
+function round6(value: number): number {
+  return Number(value.toFixed(6));
+}
+
+function sha256Hex(payload: string): string {
+  return createHash("sha256").update(payload).digest("hex");
+}
+
 export class HarnessError extends Error {
   public readonly code: HarnessErrorCode;
 
@@ -63,14 +89,6 @@ export class HarnessError extends Error {
     this.code = code;
     this.name = "HarnessError";
   }
-}
-
-function sha256Hex(payload: string): string {
-  return createHash("sha256").update(payload).digest("hex");
-}
-
-function round6(value: number): number {
-  return Number(value.toFixed(6));
 }
 
 /**
@@ -414,6 +432,218 @@ export class EosAgenticHarnessYieldCore {
   }
 
   /**
+   * Idempotent user-story enrichment & Close-Decisions-First gate (FR-7).
+   */
+  public enrichUserStory(input: UserStoryEnrichmentInput): UserStoryEnrichmentReport {
+    if (
+      !input ||
+      typeof input.ticketId !== "string" ||
+      !input.ticketId.trim() ||
+      typeof input.title !== "string" ||
+      !input.title.trim() ||
+      typeof input.rawStory !== "string" ||
+      !input.rawStory.trim()
+    ) {
+      throw new HarnessError("HARNESS_INVALID_PARAMETERS", "ticketId, title, and rawStory must be non-empty strings");
+    }
+
+    const ticketId = input.ticketId.trim();
+    const title = input.title.trim();
+    const layers: StoryTargetLayer[] = input.affectedLayers?.length ? [...input.affectedLayers] : ["BACKEND"];
+    const hasFrontend = layers.includes("FRONTEND");
+
+    if (isStoryAlreadyEnriched(input) && input.forceReEnrich !== true) {
+      return {
+        ticketId,
+        status: "SKIPPED_ALREADY_ENRICHED",
+        decisionsClosed: true,
+        forbiddenHedgesFound: [],
+        compoundCriteriaFound: [],
+        blockingQuestions: [],
+        affectedLayers: layers,
+        originalSection: input.rawStory,
+        enhancedSection: "Skipped: already enriched ([original] & [enhanced] detected).",
+        playwrightQaCatalog: [],
+        mandatoryVerificationSteps: [],
+        targetJiraStatus: "Unchanged",
+      };
+    }
+
+    const { hedges, compounds, questions } = detectStoryAmbiguities(input.rawStory);
+    const decisionsClosed = questions.length === 0;
+    const mandatoryVerificationSteps = buildMandatorySteps(ticketId, hasFrontend);
+    const playwrightQaCatalog = buildPlaywrightCatalog(ticketId, title, hasFrontend);
+    const enhancedSection = [
+      `## [enhanced] Technical Contract — ${ticketId}: ${title}`,
+      `Layers: ${layers.join(", ")} | Security: SQLi/XSS/AuthZ bounds enforced`,
+      `Decisions Closed: ${decisionsClosed}`,
+      ...mandatoryVerificationSteps.map((s) => `- ${s}`),
+    ].join("\n");
+
+    return {
+      ticketId,
+      status: decisionsClosed ? "ENRICHED" : "BLOCKED_ON_CLARIFICATIONS",
+      decisionsClosed,
+      forbiddenHedgesFound: hedges,
+      compoundCriteriaFound: compounds,
+      blockingQuestions: questions,
+      affectedLayers: layers,
+      originalSection: `[original]\n${input.rawStory}`,
+      enhancedSection,
+      playwrightQaCatalog,
+      mandatoryVerificationSteps,
+      targetJiraStatus: decisionsClosed ? "Pending refinement validation" : "To refine",
+    };
+  }
+
+  /**
+   * 4-Agent Smart Spec, Cheap Execution planner with <=200-line Architecture Shared Memory (FR-8).
+   */
+  public planSmartSpecCheapExecution(input: SmartSpecPipelineInput): SmartSpecPipelineReport {
+    const rawRepoExplorationTokens = input?.rawRepoExplorationTokens ?? 48000;
+    const frontierCostPer1kUsd = input?.frontierCostPer1kUsd ?? 0.015;
+    const cheapCostPer1kUsd = input?.cheapExecutionCostPer1kUsd ?? 0.003;
+    if (
+      !input ||
+      !Number.isInteger(input.architectureDocLines) ||
+      input.architectureDocLines <= 0 ||
+      !Number.isFinite(rawRepoExplorationTokens) ||
+      rawRepoExplorationTokens <= 0 ||
+      !Number.isFinite(frontierCostPer1kUsd) ||
+      frontierCostPer1kUsd <= 0 ||
+      !Number.isFinite(cheapCostPer1kUsd) ||
+      cheapCostPer1kUsd <= 0
+    ) {
+      throw new HarnessError("HARNESS_INVALID_PARAMETERS", "invalid Smart Spec multi-agent parameters");
+    }
+
+    const taskId = input.taskId?.trim() || "SPECBOOT-MULTIAGENT";
+    const sharedMemoryTokens = input.architectureDocLines * 12;
+    const baseRoles: MultiAgentRoleAllocation[] = [
+      { role: "REFINER", modelTier: "FRONTIER_HIGH_REASONING", tokensConsumed: sharedMemoryTokens + 1400, costUsd: 0 },
+      {
+        role: "ARCHITECT_PLANNER",
+        modelTier: "FRONTIER_HIGH_REASONING",
+        tokensConsumed: sharedMemoryTokens + 2600,
+        costUsd: 0,
+      },
+      { role: "IMPLEMENTER", modelTier: "FAST_EXECUTION", tokensConsumed: 3800, costUsd: 0 },
+      { role: "INDEPENDENT_REVIEWER", modelTier: "FAST_EXECUTION", tokensConsumed: 2200, costUsd: 0 },
+    ];
+    const roles: MultiAgentRoleAllocation[] = baseRoles.map((r) => ({
+      ...r,
+      costUsd: round6(
+        (r.tokensConsumed / 1000) *
+          (r.modelTier === "FRONTIER_HIGH_REASONING" ? frontierCostPer1kUsd : cheapCostPer1kUsd),
+      ),
+    }));
+
+    const smartSpecTotalTokens = roles.reduce((acc, r) => acc + r.tokensConsumed, 0);
+    const smartSpecCostUsd = round6(roles.reduce((acc, r) => acc + r.costUsd, 0));
+    const monolithicExplorationTokens = rawRepoExplorationTokens + 14000;
+    const monolithicFrontierCostUsd = round6((monolithicExplorationTokens / 1000) * frontierCostPer1kUsd);
+    const costSavingsUsd = round6(monolithicFrontierCostUsd - smartSpecCostUsd);
+
+    return {
+      taskId,
+      architectureMemoryCompliant: input.architectureDocLines <= MAX_ARCHITECTURE_SHARED_MEMORY_LINES,
+      architectureDocLines: input.architectureDocLines,
+      maxArchitectureDocLines: MAX_ARCHITECTURE_SHARED_MEMORY_LINES,
+      roles,
+      smartSpecTotalTokens,
+      monolithicExplorationTokens,
+      smartSpecCostUsd,
+      monolithicFrontierCostUsd,
+      costSavingsUsd,
+      costSavingsRatio: round6(costSavingsUsd / monolithicFrontierCostUsd),
+      tokenSavingsRatio: round6((monolithicExplorationTokens - smartSpecTotalTokens) / monolithicExplorationTokens),
+    };
+  }
+
+  /**
+   * RTK CLI output token-compression proxy for verbose test, git, and grep streams (FR-9).
+   */
+  public compressCliOutputRtk(input: RtkCompressionInput): RtkCompressionReport {
+    const validCmd = input?.commandType === "test" || input?.commandType === "git" || input?.commandType === "grep";
+    if (!input || !validCmd || typeof input.rawOutput !== "string" || !input.rawOutput.trim()) {
+      throw new HarnessError("HARNESS_INVALID_PARAMETERS", "invalid RTK commandType or empty rawOutput");
+    }
+
+    const stripped = stripAnsiControlCodes(input.rawOutput);
+    const lines = stripped.split(/\r?\n/);
+    const keptLines: string[] = [];
+    const preservedSignals: string[] = [];
+    let collapsedCount = 0;
+
+    for (const line of lines) {
+      if (isRoutineRtkLine(line)) {
+        collapsedCount++;
+      } else if (isCriticalRtkLine(line)) {
+        keptLines.push(line.trimEnd());
+        preservedSignals.push(line.trim().slice(0, 80));
+      } else {
+        keptLines.push(line.trim().slice(0, 120));
+      }
+    }
+
+    if (collapsedCount > 0) {
+      keptLines.unshift(`[RTK compressed ${collapsedCount} routine lines]`);
+    }
+    const compressedOutput = keptLines.join("\n").trim();
+    const rawChars = input.rawOutput.length;
+    const compressedChars = compressedOutput.length;
+    const rawTokensEstimate = Math.max(1, Math.ceil(rawChars / 4));
+    const compressedTokensEstimate = Math.max(1, Math.ceil(compressedChars / 4));
+    const savingsRatio = round6(Math.max(0, (rawTokensEstimate - compressedTokensEstimate) / rawTokensEstimate));
+
+    return {
+      commandType: input.commandType,
+      rawChars,
+      compressedChars,
+      rawTokensEstimate,
+      compressedTokensEstimate,
+      savingsRatio,
+      savingsPercent: round6(savingsRatio * 100),
+      targetBandMet: savingsRatio >= 0.6,
+      preservedSignals: preservedSignals.slice(0, 20),
+      compressedOutput,
+    };
+  }
+
+  private runExtensionSelfChecks(): {
+    storyEnrichmentVerified: boolean;
+    smartSpecMultiAgentVerified: boolean;
+    rtkTokenCompressionVerified: boolean;
+  } {
+    const blocked = this.enrichUserStory({
+      ticketId: "AUDIT-1",
+      title: "Ambiguous Filter",
+      rawStory: "Filter candidates si aplica y ademas export CSV.",
+      affectedLayers: ["BACKEND", "FRONTEND"],
+    });
+    const skipped = this.enrichUserStory({
+      ticketId: "AUDIT-2",
+      title: "Enriched",
+      rawStory: "[original]\nOld\n[enhanced]\nNew",
+    });
+    const storyEnrichmentVerified =
+      blocked.status === "BLOCKED_ON_CLARIFICATIONS" &&
+      blocked.playwrightQaCatalog.length === 4 &&
+      skipped.status === "SKIPPED_ALREADY_ENRICHED";
+
+    const smartPlan = this.planSmartSpecCheapExecution({ architectureDocLines: 180 });
+    const smartSpecMultiAgentVerified =
+      smartPlan.architectureMemoryCompliant && smartPlan.costSavingsRatio > 0.5 && smartPlan.tokenSavingsRatio > 0.5;
+
+    const verboseTest = `${Array.from({ length: 45 }, (_, i) => `  ✔ test case ${i + 1} passed in 1.2ms`).join("\n")}\n✖ failing test case 46`;
+    const rtkReport = this.compressCliOutputRtk({ commandType: "test", rawOutput: verboseTest });
+    const rtkTokenCompressionVerified =
+      rtkReport.targetBandMet && rtkReport.compressedOutput.includes("failing test case 46");
+
+    return { storyEnrichmentVerified, smartSpecMultiAgentVerified, rtkTokenCompressionVerified };
+  }
+
+  /**
    * Run structural self-tests and emit SHA-256 signed receipt (FR-6).
    */
   public audit(): AgenticHarnessAuditReceipt {
@@ -477,9 +707,17 @@ export class EosAgenticHarnessYieldCore {
       bench.sddCohort.firstPassYieldRatio > bench.vibeCohort.firstPassYieldRatio &&
       bench.sddCohort.meanReworkAmplificationFactor < bench.vibeCohort.meanReworkAmplificationFactor &&
       bench.tokenSavingsRatio > 0.5;
+    const ext = this.runExtensionSelfChecks();
 
     const allPassed =
-      specGateEnforced && harnessLoopConverged && retryCeilingEnforced && firstPassYieldComputed && sddOutperformsVibe;
+      specGateEnforced &&
+      harnessLoopConverged &&
+      retryCeilingEnforced &&
+      firstPassYieldComputed &&
+      sddOutperformsVibe &&
+      ext.storyEnrichmentVerified &&
+      ext.smartSpecMultiAgentVerified &&
+      ext.rtkTokenCompressionVerified;
 
     const body = {
       specRef: "SPEC-339" as const,
@@ -488,6 +726,7 @@ export class EosAgenticHarnessYieldCore {
       retryCeilingEnforced,
       firstPassYieldComputed,
       sddOutperformsVibe,
+      ...ext,
       sddFirstPassYieldRatio: bench.sddCohort.firstPassYieldRatio,
       vibeFirstPassYieldRatio: bench.vibeCohort.firstPassYieldRatio,
       tokenSavingsRatio: bench.tokenSavingsRatio,

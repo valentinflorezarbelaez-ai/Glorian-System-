@@ -47,3 +47,16 @@ Before creating or modifying production modules under `src/`, `api/`, or `bin/`:
 2. Run `npm run typecheck` (`tsc --project tsconfig.typecheck.json`) — treat any warning or error as blocking.
 3. Add a dedicated `node:test` suite `test/<feature>.test.mjs` covering every `BDD-XXX` scenario.
 4. Run `npm run test` (`scripts/verify-cicd-pipeline.mjs`) and confirm all 7/7 stages exit with code `0`.
+
+## 4. LIDR Specboot 6-Phase Cycle & Javier Vargas's 4 Production SDD Laws
+
+Integrate the production workflow patterns from `LIDR-academy-temp/lidr-specboot` (`SPEC-339` FR-7..FR-9):
+
+1. **6-Phase OpenSpec + Specboot Cycle**:
+   - **User Story** $\to$ **Refined User Story** (`/enrich-us` / `eos toolchain:harness:enrich`) $\to$ **Proposal** (`proposal.md`, `specs/`, `design.md`, `tasks.md`) $\to$ **Apply** (feature branch, TDD, mandatory pre/post DB baseline & restoration, agent-executed `curl` verification, Playwright MCP 4-category E2E suite when frontend is impacted) $\to$ **Review + PR** (`judgment-day` / independent adversarial review before archive) $\to$ **Verify + Archive**.
+   - Idempotency check: skip re-enrichment when `[original]`/`[enhanced]` (or `## Original`/`## Enhanced`) already exist unless `forceReEnrich: true`.
+2. **Javier Vargas's 4 Production SDD Laws**:
+   - **Close Decisions First**: Ban vague hedges (`"si aplica"`, `"si es necesario"`, `"if applicable"`, `"if needed"`, `"maybe"`) and multi-goal sentences; block and emit clarifying questions until all business/technical decisions are closed.
+   - **Smart Spec, Cheap Execution** (`eos toolchain:harness:multiagent`): Allocate Frontier high-reasoning models to `REFINER` and `ARCHITECT_PLANNER`, and fast/economical models to `IMPLEMENTER` and `INDEPENDENT_REVIEWER`.
+   - **Architecture Shared Memory ($\le 200$ lines)**: Keep a compact living architecture contract ($\le 200$ lines) to avoid blind repo exploration tokens.
+   - **Real Agent Self-Verification**: Pair unit suites with real integration/CLI/E2E verification and RTK token-compressed CLI diagnostics (`eos toolchain:harness:rtk`, targeting $\ge 60\%$ savings).

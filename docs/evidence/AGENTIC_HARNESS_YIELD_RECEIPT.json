@@ -5,9 +5,12 @@
   "retryCeilingEnforced": true,
   "firstPassYieldComputed": true,
   "sddOutperformsVibe": true,
+  "storyEnrichmentVerified": true,
+  "smartSpecMultiAgentVerified": true,
+  "rtkTokenCompressionVerified": true,
   "sddFirstPassYieldRatio": 0.8,
   "vibeFirstPassYieldRatio": 0,
   "tokenSavingsRatio": 0.70122,
   "allPassed": true,
-  "sha256Digest": "02e17d10605836100e31fb6a863e33841c28e31ed47c31cf32c1013cb7a95940"
+  "sha256Digest": "298cc8bdebff0d8e910ffaf83b183d05a917de6b15af1935c3ef5656941bd689"
 }

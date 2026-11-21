@@ -8,6 +8,9 @@
 - **FR-4 (Event-Driven)**: CUANDO se evalúa una cohorte de Pull Requests agénticos, EL SISTEMA calcula la Tasa de Éxito al Primer Intento (`firstPassYieldRatio`), el Factor de Amplificación de Retrabajo ($\text{RAF} = \text{totalTokens} / \text{firstPassTokens}$), el total de tokens desperdiciados en retrabajo y el costo medio en USD por PR verificado.
 - **FR-5 (State-Driven)**: MIENTRAS se comparan cohortes gobernadas por Desarrollo Guiado por Especificaciones (SDD + Harness) frente a cohortes sin restricciones ("Vibe Coding"), EL SISTEMA demuestra una mayor tasa de éxito al primer intento, menor RAF y ahorro neto de tokens (`tokenSavingsRatio > 0`).
 - **FR-6 (Ubiquitous)**: EL SISTEMA expone una auditoría determinista que ejecuta todas las autopruebas estructurales del arnés y emite un recibo criptográfico firmado con SHA-256 en `docs/evidence/AGENTIC_HARNESS_YIELD_RECEIPT.json`.
+- **FR-7 (Event-Driven)**: CUANDO se invoca `enrichUserStory` sobre una historia de usuario o ticket, EL SISTEMA verifica idempotencia (`[original]`/`[enhanced]`), detecta términos ambiguos prohibidos (`"si aplica"`, `"si es necesario"`, `"if applicable"`, `"if needed"`) y criterios compuestos, genera el contrato técnico enriquecido y sintetiza el catálogo de escenarios Playwright QA (`HAPPY_PATH`, `BOUNDARY`, `NEGATIVE`, `BUSINESS_RULE`) cuando incluye capa `FRONTEND`.
+- **FR-8 (State-Driven)**: MIENTRAS se planifica el flujo Multi-Agente de 4 roles (`REFINER` $\to$ `ARCHITECT_PLANNER` $\to$ `IMPLEMENTER` $\to$ `INDEPENDENT_REVIEWER`) bajo la doctrina Smart Spec, Cheap Execution con Memoria Compartida de Arquitectura $\le 200$ líneas, EL SISTEMA verifica el límite de líneas de arquitectura y demuestra ahorro neto de tokens y costo frente a la ejecución monolítica con exploración ciega.
+- **FR-9 (Event-Driven)**: CUANDO el proxy compresor RTK procesa salidas verbosas de comandos CLI (`test`, `git`, `grep`), EL SISTEMA poda líneas repetitivas de éxito y ruido ANSI preservando el 100% de señales de error y métricas de resumen, alcanzando una reducción de tokens de entre el 60% y el 95%.
 
 ---
 
@@ -46,6 +49,25 @@ ESCENARIO: BDD-1813 Comparativa de Cohorte: Spec-Driven Harness vs Vibe Coding S
 ESCENARIO: BDD-1814 Auditoría Determinista y Recibo Criptográfico SHA-256
   DADO el motor EosAgenticHarnessYieldCore
   CUANDO se ejecuta audit()
-  ENTONCES todas las verificaciones (specGateEnforced, harnessLoopConverged, retryCeilingEnforced, firstPassYieldComputed, sddOutperformsVibe) son true
+  ENTONCES todas las verificaciones (specGateEnforced, harnessLoopConverged, retryCeilingEnforced, firstPassYieldComputed, sddOutperformsVibe, storyEnrichmentVerified, smartSpecMultiAgentVerified, rtkTokenCompressionVerified) son true
   Y se emite el recibo firmado en docs/evidence/AGENTIC_HARNESS_YIELD_RECEIPT.json.
+
+ESCENARIO: BDD-1814C Enriquecimiento Idempotente de Historias de Usuario y Catálogo Playwright QA
+  DADO una historia de usuario cruda o ya enriquecida con secciones [original] y [enhanced]
+  CUANDO se invoca enrichUserStory
+  ENTONCES omite el reprocesamiento si ya está enriquecida salvo forceReEnrich=true
+  Y bloquea decisiones ambiguas con preguntas de clarificación si detecta términos prohibidos o criterios compuestos
+  Y genera 4 categorías de escenarios Playwright QA (HAPPY_PATH, BOUNDARY, NEGATIVE, BUSINESS_RULE) cuando toca FRONTEND.
+
+ESCENARIO: BDD-1814D Pipeline Multi-Agente Smart Spec, Cheap Execution y Memoria Compartida <= 200 líneas
+  DADO un documento vivo de arquitectura y costos diferenciados entre razonamiento Frontier y ejecución rápida
+  CUANDO se invoca planSmartSpecCheapExecution
+  ENTONCES valida el límite <= 200 líneas de Memoria Compartida de Arquitectura
+  Y asigna modelos Frontier a REFINER y ARCHITECT_PLANNER y ejecución rápida a IMPLEMENTER e INDEPENDENT_REVIEWER con ahorro neto de tokens y costo.
+
+ESCENARIO: BDD-1814E Proxy Compresor RTK para Salidas Verbosas de CLI
+  DADO una salida extensa de terminal de tipo test, git o grep con líneas rutinarias y señales críticas
+  CUANDO se invoca compressCliOutputRtk
+  ENTONCES elimina ruido ANSI y colapsa líneas de éxito repetitivas conservando los fallos y resúmenes
+  Y logra un ahorro de tokens superior o igual al 60%.
 ```

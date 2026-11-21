@@ -7,6 +7,7 @@
  */
 
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -14,6 +15,7 @@ import test from "node:test";
 import {
   EosAgenticHarnessYieldCore,
   HarnessError,
+  MAX_ARCHITECTURE_SHARED_MEMORY_LINES,
   MAX_SPEC_AMBIGUITY,
   MIN_SPEC_READINESS_SCORE,
   ORDERED_HARNESS_STAGES,
@@ -184,6 +186,9 @@ test("SPEC-339 / CHANGE-201: Agentic Harness Engineering, First-Pass PR Yield & 
     assert.strictEqual(receiptA.retryCeilingEnforced, true);
     assert.strictEqual(receiptA.firstPassYieldComputed, true);
     assert.strictEqual(receiptA.sddOutperformsVibe, true);
+    assert.strictEqual(receiptA.storyEnrichmentVerified, true);
+    assert.strictEqual(receiptA.smartSpecMultiAgentVerified, true);
+    assert.strictEqual(receiptA.rtkTokenCompressionVerified, true);
     assert.strictEqual(receiptA.allPassed, true);
     assert.strictEqual(receiptA.sha256Digest.length, 64);
     assert.strictEqual(receiptA.sha256Digest, receiptB.sha256Digest);
@@ -509,5 +514,115 @@ test("SPEC-339 / CHANGE-201: Agentic Harness Engineering, First-Pass PR Yield & 
     );
     const partialOverrideBench = core.compareSddVsVibeCohorts([cohorts.sdd[0]]);
     assert.strictEqual(partialOverrideBench.sddCohort.cohortSize, 5);
+  });
+
+  await t.test("BDD-1814C: Idempotent /enrich-us Gate, Ambiguity Blocking & 4-Category Playwright QA Catalog", () => {
+    const core = new EosAgenticHarnessYieldCore();
+    const skipped = core.enrichUserStory({
+      ticketId: "PER-101",
+      title: "Already Enriched Ticket",
+      rawStory: "[original]\nFilter list\n[enhanced]\nStrict spec contract",
+    });
+    assert.strictEqual(skipped.status, "SKIPPED_ALREADY_ENRICHED");
+    assert.strictEqual(skipped.targetJiraStatus, "Unchanged");
+
+    const forced = core.enrichUserStory({
+      ticketId: "PER-101",
+      title: "Re-enriched Clean Ticket",
+      rawStory: "## Original\nOld\n## Enhanced\nAllow filtering candidates by stage.",
+      affectedLayers: ["BACKEND"],
+      forceReEnrich: true,
+    });
+    assert.strictEqual(forced.status, "ENRICHED");
+    assert.strictEqual(forced.decisionsClosed, true);
+    assert.strictEqual(forced.targetJiraStatus, "Pending refinement validation");
+    assert.strictEqual(forced.playwrightQaCatalog.length, 0);
+
+    const blocked = core.enrichUserStory({
+      ticketId: "PER-102",
+      title: "Frontend Candidate Table",
+      rawStory: "Add status filter si aplica y además export CSV if needed.",
+      affectedLayers: ["BACKEND", "FRONTEND"],
+    });
+    assert.strictEqual(blocked.status, "BLOCKED_ON_CLARIFICATIONS");
+    assert.strictEqual(blocked.decisionsClosed, false);
+    assert.strictEqual(blocked.targetJiraStatus, "To refine");
+    assert.ok(blocked.forbiddenHedgesFound.includes("si aplica"));
+    assert.ok(blocked.forbiddenHedgesFound.includes("if needed"));
+    assert.ok(blocked.compoundCriteriaFound.length >= 1);
+    assert.ok(blocked.blockingQuestions.length >= 3);
+    assert.deepStrictEqual(
+      blocked.playwrightQaCatalog.map((q) => q.category),
+      ["HAPPY_PATH", "BOUNDARY", "NEGATIVE", "BUSINESS_RULE"],
+    );
+    assert.ok(blocked.mandatoryVerificationSteps.some((s) => s.includes("Playwright MCP")));
+    assert.throws(
+      () => core.enrichUserStory({ ticketId: "", title: "X", rawStory: "Y" }),
+      (err) => err instanceof HarnessError && err.code === "HARNESS_INVALID_PARAMETERS",
+    );
+  });
+
+  await t.test("BDD-1814D: 4-Agent Smart Spec, Cheap Execution & <=200-Line Architecture Shared Memory", () => {
+    const core = new EosAgenticHarnessYieldCore();
+    assert.strictEqual(MAX_ARCHITECTURE_SHARED_MEMORY_LINES, 200);
+    const compliant = core.planSmartSpecCheapExecution({ architectureDocLines: 180 });
+    assert.strictEqual(compliant.architectureMemoryCompliant, true);
+    assert.deepStrictEqual(
+      compliant.roles.map((r) => [r.role, r.modelTier]),
+      [
+        ["REFINER", "FRONTIER_HIGH_REASONING"],
+        ["ARCHITECT_PLANNER", "FRONTIER_HIGH_REASONING"],
+        ["IMPLEMENTER", "FAST_EXECUTION"],
+        ["INDEPENDENT_REVIEWER", "FAST_EXECUTION"],
+      ],
+    );
+    assert.ok(compliant.costSavingsRatio > 0.5);
+    assert.ok(compliant.tokenSavingsRatio > 0.5);
+
+    const oversized = core.planSmartSpecCheapExecution({ architectureDocLines: 240 });
+    assert.strictEqual(oversized.architectureMemoryCompliant, false);
+    assert.throws(
+      () => core.planSmartSpecCheapExecution({ architectureDocLines: 0 }),
+      (err) => err instanceof HarnessError && err.code === "HARNESS_INVALID_PARAMETERS",
+    );
+  });
+
+  await t.test("BDD-1814E: RTK CLI Output Token Compression & Sovereign CLI JSON Dispatch", () => {
+    const core = new EosAgenticHarnessYieldCore();
+    const esc = String.fromCharCode(27);
+    for (const commandType of ["test", "git", "grep"]) {
+      const routine = Array.from({ length: 50 }, (_, i) => `${esc}[32m  ✔ routine line #${i + 1} ok${esc}[0m`).join(
+        "\n",
+      );
+      const rawOutput = `${routine}\nFAIL: critical defect in src/app.ts:88\nmodified: src/app.ts`;
+      const report = core.compressCliOutputRtk({ commandType, rawOutput });
+      assert.strictEqual(report.targetBandMet, true, `${commandType} missed >=60% compression`);
+      assert.ok(report.savingsPercent >= 60);
+      assert.ok(report.compressedOutput.includes("FAIL: critical defect"));
+      assert.ok(!report.compressedOutput.includes(`${esc}[32m`));
+    }
+    assert.throws(
+      () => core.compressCliOutputRtk({ commandType: "invalid", rawOutput: "abc" }),
+      (err) => err instanceof HarnessError && err.code === "HARNESS_INVALID_PARAMETERS",
+    );
+
+    const cliPath = path.resolve(process.cwd(), "bin/eos.mjs");
+    const enrichJson = JSON.parse(
+      execFileSync(process.execPath, [cliPath, "toolchain:harness:enrich", "--json"], { encoding: "utf8" }),
+    );
+    assert.strictEqual(enrichJson.command, "toolchain:harness:enrich");
+    assert.strictEqual(enrichJson.status, "ENRICHED");
+
+    const multiJson = JSON.parse(
+      execFileSync(process.execPath, [cliPath, "toolchain:harness:multiagent", "--json"], { encoding: "utf8" }),
+    );
+    assert.strictEqual(multiJson.command, "toolchain:harness:multiagent");
+    assert.strictEqual(multiJson.architectureMemoryCompliant, true);
+
+    const rtkJson = JSON.parse(
+      execFileSync(process.execPath, [cliPath, "toolchain:harness:rtk", "--json"], { encoding: "utf8" }),
+    );
+    assert.strictEqual(rtkJson.command, "toolchain:harness:rtk");
+    assert.strictEqual(rtkJson.targetBandMet, true);
   });
 });
