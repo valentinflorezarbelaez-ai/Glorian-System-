@@ -22,6 +22,13 @@
               "shortDescription": {
                 "text": "Verifies fleet projects maintain zero plain secrets and valid contracts"
               }
+            },
+            {
+              "id": "FLEET-RULE-003",
+              "name": "FleetPathPostureHonesty",
+              "shortDescription": {
+                "text": "Refuses FLEET_VERIFIED / live Soundcheck success when any EOS_FLEET_*_PATH is unset"
+              }
             }
           ]
         }
@@ -30,7 +37,11 @@
       "invocations": [
         {
           "executionSuccessful": true,
-          "endTimeUtc": "2026-11-06T02:47:58.433Z"
+          "endTimeUtc": "2026-11-06T02:47:58.433Z",
+          "properties": {
+            "fleetPosture": "CONTROL_PLANE_ONLY",
+            "fleetLiveAudit": false
+          }
         }
       ]
     }

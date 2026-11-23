@@ -598,6 +598,15 @@ console.log(
 // STAGE 7: LOCAL CHECK RECEIPT AND CONFIGURED-CHECKS SARIF REPORT
 // ---------------------------------------------------------------------------
 const elapsedMs = Date.now() - startTime;
+// Fleet posture honesty (P1-2 / PR-G): advertise CONTROL_PLANE_ONLY when paths unset.
+const { evaluateFleetPosture, fleetPostureReceiptFields } = await import(
+  pathToFileURL(path.join(root, "src/core/eosFleetPathResolver.ts")).href
+);
+const fleetRegistry = JSON.parse(
+  fs.readFileSync(path.join(root, "docs/projects/registry.json"), "utf8"),
+);
+const fleetPostureSnapshot = evaluateFleetPosture(root, fleetRegistry.projects || []);
+const fleetPosture = fleetPostureReceiptFields(fleetPostureSnapshot);
 const receipt = {
   pipelineId: "EOS-LOCAL-REPOSITORY-CHECKS",
   epistemicState: "LOCAL_CHECKS_EXECUTED",
@@ -612,6 +621,8 @@ const receipt = {
   hookConfigurationProbed: false,
   deploymentRun: false,
   liveHealthProbeRun: false,
+  fleetPosture,
+  fleetLiveAudit: fleetPosture.fleetLiveAudit === true,
 };
 const writeEvdJson = (rel, data) =>
   fs.writeFileSync(path.join(root, rel), JSON.stringify(data, null, 2) + "\n", "utf8");
