@@ -45,3 +45,8 @@ nonexistent_dir_pulse/
 
 # Headless CWV capture ephemeral Chrome profiles
 docs/evidence/.chrome-cwv-*/
+
+# Agentic workspace local state & secrets
+.claude/
+.claude/*
+settings.local.json
