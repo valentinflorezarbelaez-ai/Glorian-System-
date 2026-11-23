@@ -10,7 +10,7 @@
     "value": 0
   },
   "check": {
-    "command": "node scripts/import-boundary-gate.mjs && node scripts/verify-module-consumers.mjs --fail-on-unconsumed",
+    "command": "node scripts/import-boundary-gate.mjs && node scripts/verify-module-consumers.mjs --check-only --fail-on-unconsumed",
     "timeoutMs": 120000
   },
   "caps": {

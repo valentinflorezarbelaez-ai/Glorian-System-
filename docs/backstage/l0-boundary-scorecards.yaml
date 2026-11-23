@@ -79,7 +79,7 @@ kind: Resource
 metadata:
   name: eos-l0-pillar-consumer-moratorium
   title: L0 Pillar — Consumer Moratorium
-  description: Fail-closed unconsumedModules=0 ratchet (SPEC-270). Gate npm run consumers:audit -- --fail-on-unconsumed.
+  description: Fail-closed unconsumedModules=0 ratchet (SPEC-270). Gate npm run consumers:audit (--check-only; no receipt mutate).
   annotations:
     eos.glorian/pillar-id: L0_CONSUMER_MORATORIUM
     eos.glorian/pillar-weight: "0.5"

@@ -385,11 +385,14 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
 
       assert.ok(pipeline.includes("scripts/import-boundary-gate.mjs"), "verify:strict must run boundary gate");
       assert.ok(
-        pipeline.includes("scripts/verify-module-consumers.mjs") && pipeline.includes("--fail-on-unconsumed"),
-        "verify:strict must run consumers audit fail-closed",
+        pipeline.includes("scripts/verify-module-consumers.mjs") &&
+          pipeline.includes("--fail-on-unconsumed") &&
+          pipeline.includes("--check-only"),
+        "verify:strict must run consumers audit fail-closed in check-only mode (no receipt mutate)",
       );
       assert.ok(String(pkg.scripts["boundary:check"] || "").includes("import-boundary-gate.mjs"));
       assert.ok(String(pkg.scripts["consumers:audit"] || "").includes("--fail-on-unconsumed"));
+      assert.ok(String(pkg.scripts["consumers:audit"] || "").includes("--check-only"));
     });
   });
 

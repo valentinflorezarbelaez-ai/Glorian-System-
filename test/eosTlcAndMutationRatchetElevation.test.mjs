@@ -167,6 +167,19 @@ describe("SPEC-270: Formal TLC Model Checking, Mutation Ratchet & Consumer Gover
       failOnUnconsumed: true,
     });
     assert.equal(healthy.unconsumedModules, 0, "tip must keep unconsumedModules at 0");
+
+    // Check-only against committed receipt must not mutate the tracked file.
+    const committedPath = path.join(ROOT, "docs/evidence", "MODULE_CONSUMER_GRAPH.json");
+    const before = fs.readFileSync(committedPath, "utf8");
+    const checked = verifyModuleConsumers({
+      root: ROOT,
+      receiptPath: committedPath,
+      failOnUnconsumed: true,
+      checkOnly: true,
+    });
+    const after = fs.readFileSync(committedPath, "utf8");
+    assert.equal(after, before, "check-only must not rewrite MODULE_CONSUMER_GRAPH.json");
+    assert.equal(checked.unconsumedModules, 0);
   });
 });
 

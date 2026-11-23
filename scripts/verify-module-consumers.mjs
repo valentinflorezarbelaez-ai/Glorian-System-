@@ -134,17 +134,59 @@ export function buildConsumerGraph(root = ROOT) {
 }
 
 /**
- * Generates consumer graph evidence receipt and returns the graph.
+ * Audits consumer graph. By default writes the evidence receipt.
+ * When checkOnly is true, compares live graph against the committed receipt
+ * without mutating disk (required for verify:strict — avoids dirtying
+ * MODULE_CONSUMER_GRAPH.json and invalidating Stage 3 sourceInventoryDigest).
  * When failOnUnconsumed is true and unconsumedModules > 0, throws (caller exits 1).
  */
 export function verifyModuleConsumers(options = {}) {
   const root = options.root || ROOT;
   const receiptPath = options.receiptPath || DEFAULT_RECEIPT_PATH;
   const failOnUnconsumed = options.failOnUnconsumed === true;
+  const checkOnly = options.checkOnly === true;
   const graph = buildConsumerGraph(root);
 
-  fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
-  fs.writeFileSync(receiptPath, JSON.stringify(graph, null, 2), "utf8");
+  if (checkOnly) {
+    if (!fs.existsSync(receiptPath)) {
+      const err = new Error(
+        `Check-only consumer gate requires committed receipt at ${path.relative(root, receiptPath)}. Regenerate with: node scripts/verify-module-consumers.mjs`,
+      );
+      throw err;
+    }
+    let committed;
+    try {
+      committed = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
+    } catch (parseErr) {
+      const err = new Error(`Committed MODULE_CONSUMER_GRAPH.json is not valid JSON: ${parseErr.message}`);
+      throw err;
+    }
+    const required = ["timestampIso", "totalModules", "consumedModules", "unconsumedModules", "graphDensity", "modules"];
+    for (const field of required) {
+      if (!(field in committed)) {
+        throw new Error(`Committed MODULE_CONSUMER_GRAPH.json missing required field: ${field}`);
+      }
+    }
+    // Live moratorium is authoritative; committed receipt must also advertise unconsumed=0.
+    if (typeof committed.unconsumedModules === "number" && committed.unconsumedModules > 0) {
+      throw new Error(
+        `Committed MODULE_CONSUMER_GRAPH.json advertises unconsumedModules=${committed.unconsumedModules}; regenerate after wiring consumers.`,
+      );
+    }
+    if (graph.totalModules !== committed.totalModules) {
+      throw new Error(
+        `Consumer graph drift: live totalModules=${graph.totalModules} vs committed ${committed.totalModules}. Regenerate receipt intentionally (omit --check-only).`,
+      );
+    }
+    if (graph.consumedModules !== committed.consumedModules) {
+      throw new Error(
+        `Consumer graph drift: live consumedModules=${graph.consumedModules} vs committed ${committed.consumedModules}. Regenerate receipt intentionally (omit --check-only).`,
+      );
+    }
+  } else {
+    fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
+    fs.writeFileSync(receiptPath, JSON.stringify(graph, null, 2), "utf8");
+  }
 
   if (failOnUnconsumed && graph.unconsumedModules > 0) {
     const orphans = Object.values(graph.modules)
@@ -166,20 +208,23 @@ export function verifyModuleConsumers(options = {}) {
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename)) {
   const showUnconsumed = process.argv.includes("--unconsumed-only");
   const failOnUnconsumed = process.argv.includes("--fail-on-unconsumed");
+  const checkOnly = process.argv.includes("--check-only");
 
   console.log("======================================================================");
   console.log(" GLORIAN SYSTEM — Module Consumer Governance & Moratorium Audit");
   console.log("======================================================================");
+  console.log(` Mode                       : ${checkOnly ? "CHECK-ONLY (no receipt write)" : "WRITE receipt"}`);
 
   let graph;
   try {
-    graph = verifyModuleConsumers({ failOnUnconsumed });
+    graph = verifyModuleConsumers({ failOnUnconsumed, checkOnly });
   } catch (err) {
     console.error(` FAIL — ${err.message}`);
     if (Array.isArray(err.unconsumedFiles)) {
       for (const file of err.unconsumedFiles) console.error(`  [UNCONSUMED] ${file}`);
     }
     console.error("Re-run without --fail-on-unconsumed for advisory inventory only.");
+    console.error("To regenerate the committed receipt: node scripts/verify-module-consumers.mjs (omit --check-only).");
     process.exit(1);
   }
 
@@ -187,7 +232,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename
   console.log(` Consumed Modules           : ${graph.consumedModules}`);
   console.log(` Unconsumed Leaf Modules    : ${graph.unconsumedModules}`);
   console.log(` Graph Consumption Density  : ${(graph.graphDensity * 100).toFixed(1)}%`);
-  console.log(` Evidence Receipt           : ${DEFAULT_RECEIPT_PATH}`);
+  console.log(` Evidence Receipt           : ${DEFAULT_RECEIPT_PATH}${checkOnly ? " (read-only)" : " (updated)"}`);
   console.log("----------------------------------------------------------------------");
 
   if (showUnconsumed) {

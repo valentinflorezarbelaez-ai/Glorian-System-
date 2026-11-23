@@ -44,8 +44,8 @@ TechDocs page: [`docs/ownership.md`](../ownership.md). Catalog SoT: [`ownership.
 
 ## Layer-0 boundary + consumer scorecards (P2 / PR-I)
 
-1. **Gates (SoT):** `npm run boundary:check` and `npm run consumers:audit -- --fail-on-unconsumed` — wired into `verify:strict` as Stage 3.02 / 3.03.
-2. **Receipt:** [`docs/evidence/MODULE_CONSUMER_GRAPH.json`](../evidence/MODULE_CONSUMER_GRAPH.json). Portal **reads** it — does not rescore.
+1. **Gates (SoT):** `npm run boundary:check` and `npm run consumers:audit` (`--check-only --fail-on-unconsumed`) — wired into `verify:strict` as Stage 3.02 / 3.03. Check-only does **not** rewrite the committed receipt.
+2. **Receipt:** [`docs/evidence/MODULE_CONSUMER_GRAPH.json`](../evidence/MODULE_CONSUMER_GRAPH.json). Portal **reads** it — does not rescore. Regenerate intentionally with `node scripts/verify-module-consumers.mjs` (omit `--check-only`).
 3. **Catalog:** [`l0-boundary-scorecards.yaml`](./l0-boundary-scorecards.yaml) via Location `glorian-l0-boundary-scorecards` (URL target only; not duplicated in app-config).
 4. **Ownership blast radius:** Core maintainers / control-plane squad own L0 boundary failures (see remediation plan P2-1).
 

@@ -40,7 +40,7 @@
       "verifyStage": "3.03"
     }
   ],
-  "cli": "npm run boundary:check && npm run consumers:audit -- --fail-on-unconsumed",
+  "cli": "npm run boundary:check && npm run consumers:audit",
   "npmScripts": ["boundary:check", "consumers:audit"],
   "ownerSquad": "group:glorian-control-plane-squad"
 }
