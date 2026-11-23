@@ -236,19 +236,21 @@ function resolveRemoveTarget(branch, customSlug) {
     return resolveWorktreePath(branch, customSlug);
   }
 
-  const defaultTarget = resolveWorktreePath(branch);
-  if (fs.existsSync(defaultTarget)) {
-    return defaultTarget;
-  }
-
-  // Fallback: locate the registered worktree for this branch (covers create --path).
+  // Prefer the registered worktree for this branch over a stray default-slug
+  // directory (orphan dir / a/b vs a-b slug collision must not block --path creates).
   const porcelain = git(["worktree", "list", "--porcelain"]);
   const entries = parsePorcelainWorktrees(porcelain);
   const match = entries.find((e) => e.branch === branch);
-  if (!match) {
-    fail(`Worktree path does not exist: ${defaultTarget}`);
+  if (match) {
+    return assertUnderWorktrees(match.path);
   }
-  return assertUnderWorktrees(match.path);
+
+  const defaultTarget = resolveWorktreePath(branch);
+  if (fs.existsSync(defaultTarget)) {
+    // Path exists but is not registered — findRegisteredWorktree fails closed next.
+    return defaultTarget;
+  }
+  fail(`Worktree path does not exist: ${defaultTarget}`);
 }
 
 function cmdRemove(args) {

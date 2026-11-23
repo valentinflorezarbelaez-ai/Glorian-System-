@@ -87,6 +87,44 @@ describe("software-factory-worktree", () => {
     }
   });
 
+  it("remove prefers registered --path worktree over stray default-slug dir", () => {
+    const branch = `cursor/sf-path-pref-${process.pid}`;
+    const customSlug = `sf-custom-${process.pid}`;
+    const defaultSlug = branch.replace(/\//g, "-");
+    const customDir = path.join(root, ".worktrees", customSlug);
+    const strayDefault = path.join(root, ".worktrees", defaultSlug);
+
+    // Create registered worktree under custom --path.
+    const created = JSON.parse(
+      run(["create", "--branch", branch, "--base", "main", "--path", customSlug]),
+    );
+    assert.equal(created.path, customDir);
+    // Stray orphan at the default slug must not win over the registered path.
+    fs.mkdirSync(strayDefault, { recursive: true });
+
+    try {
+      const removed = JSON.parse(run(["remove", "--branch", branch, "--force"]));
+      assert.equal(removed.path, customDir);
+      assert.equal(fs.existsSync(customDir), false);
+      assert.equal(fs.existsSync(strayDefault), true, "stray default-slug dir should remain");
+    } finally {
+      fs.rmSync(strayDefault, { recursive: true, force: true });
+      try {
+        run(["remove", "--branch", branch, "--path", customSlug, "--force"]);
+      } catch {
+        // already removed
+      }
+      try {
+        execFileSync("git", ["branch", "-D", branch], {
+          cwd: root,
+          stdio: ["ignore", "pipe", "pipe"],
+        });
+      } catch {
+        // branch may already be gone
+      }
+    }
+  });
+
   it("keeps runtime dependencies empty", () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
     assert.equal(Object.keys(pkg.dependencies || {}).length, 0);
