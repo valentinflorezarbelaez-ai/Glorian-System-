@@ -114,35 +114,32 @@ function realOrResolve(p) {
 function assertUnderWorktrees(targetPath) {
   const repoReal = realOrResolve(REPO_ROOT);
   const worktreesLexical = path.resolve(WORKTREES_ROOT);
-  // If .worktrees exists, it must resolve inside the repo (reject symlink escape).
-  if (fs.existsSync(WORKTREES_ROOT)) {
-    const worktreesReal = realOrResolve(WORKTREES_ROOT);
-    const wtRel = path.relative(repoReal, worktreesReal);
-    if (wtRel.startsWith("..") || path.isAbsolute(wtRel)) {
-      fail(`Refusing .worktrees symlink/escape outside repo: ${worktreesReal}`);
-    }
+  // Prefer realpath for .worktrees so symlink checkouts compare on the same side.
+  const worktreesReal = fs.existsSync(WORKTREES_ROOT)
+    ? realOrResolve(WORKTREES_ROOT)
+    : path.join(repoReal, ".worktrees");
+
+  const wtRelToRepo = path.relative(repoReal, worktreesReal);
+  if (wtRelToRepo.startsWith("..") || path.isAbsolute(wtRelToRepo)) {
+    fail(`Refusing .worktrees symlink/escape outside repo: ${worktreesReal}`);
   }
 
   const resolved = path.resolve(targetPath);
-  const rel = path.relative(worktreesLexical, resolved);
+  const targetExists = fs.existsSync(resolved);
+  const targetReal = targetExists ? realOrResolve(resolved) : resolved;
+  // Map not-yet-created lexical paths onto the realpath(.worktrees) root for comparison.
+  const compareTarget = targetExists
+    ? targetReal
+    : path.resolve(worktreesReal, path.relative(worktreesLexical, resolved));
+
+  const rel = path.relative(worktreesReal, compareTarget);
   if (rel.startsWith("..") || path.isAbsolute(rel)) {
     fail(`Refusing path outside .worktrees/: ${resolved}`);
   }
-  if (resolved === worktreesLexical) {
+  if (compareTarget === worktreesReal) {
     fail("Refusing to operate on .worktrees root itself");
   }
-
-  // When the destination already exists, re-check via realpath (symlink bypass).
-  if (fs.existsSync(resolved)) {
-    const targetReal = realOrResolve(resolved);
-    const worktreesReal = realOrResolve(WORKTREES_ROOT);
-    const realRel = path.relative(worktreesReal, targetReal);
-    if (realRel.startsWith("..") || path.isAbsolute(realRel) || targetReal === worktreesReal) {
-      fail(`Refusing path that realpath-escapes .worktrees/: ${targetReal}`);
-    }
-    return targetReal;
-  }
-  return resolved;
+  return targetExists ? targetReal : resolved;
 }
 
 function parsePorcelainWorktrees(porcelain) {
@@ -197,7 +194,8 @@ function cmdList() {
 
 function cmdCreate(args) {
   const branch = sanitizeBranch(args.branch);
-  const base = sanitizeBranch(args.base || "main");
+  // Default HEAD so create works on detached CI checkouts (no local `main` required).
+  const base = sanitizeBranch(args.base || "HEAD");
   const target = resolveWorktreePath(branch, args.path);
 
   if (!fs.existsSync(WORKTREES_ROOT)) {

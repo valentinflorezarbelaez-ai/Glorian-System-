@@ -93,18 +93,25 @@ describe("software-factory-worktree", () => {
     const defaultSlug = branch.replace(/\//g, "-");
     const customDir = path.join(root, ".worktrees", customSlug);
     const strayDefault = path.join(root, ".worktrees", defaultSlug);
+    const real = (p) => {
+      try {
+        return fs.realpathSync(p);
+      } catch {
+        return path.resolve(p);
+      }
+    };
 
-    // Create registered worktree under custom --path.
+    // Use HEAD (not `main`) so the test stays hermetic on detached CI checkouts.
     const created = JSON.parse(
-      run(["create", "--branch", branch, "--base", "main", "--path", customSlug]),
+      run(["create", "--branch", branch, "--base", "HEAD", "--path", customSlug]),
     );
-    assert.equal(created.path, customDir);
+    assert.equal(real(created.path), real(customDir));
     // Stray orphan at the default slug must not win over the registered path.
     fs.mkdirSync(strayDefault, { recursive: true });
 
     try {
       const removed = JSON.parse(run(["remove", "--branch", branch, "--force"]));
-      assert.equal(removed.path, customDir);
+      assert.equal(real(removed.path), real(customDir));
       assert.equal(fs.existsSync(customDir), false);
       assert.equal(fs.existsSync(strayDefault), true, "stray default-slug dir should remain");
     } finally {
