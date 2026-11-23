@@ -1,10 +1,10 @@
 {
-  "timestampIso": "2026-11-19T20:32:44.929Z",
+  "timestampIso": "2026-11-23T17:39:16.701Z",
   "clusterEndpoint": "https://kubernetes.default.svc",
   "inClusterAuth": false,
   "simulationMode": true,
   "defaultNamespace": "default",
   "totalPods": 2,
   "activeJobs": 0,
-  "sha256Signature": "c792a0edb1c467e6514379886b8f228a1a15335e4e754b9af244d87c9bdd9893"
+  "sha256Signature": "26001cff9ef46070b92674b0f35eb886dd2c121944da017e631b34d6f6c8cf6a"
 }

@@ -1,5 +1,5 @@
 {
-  "receiptId": "payout-rcpt-1795185689969",
+  "receiptId": "payout-rcpt-1795455577385",
   "status": "VERIFIED",
   "invariants": {
     "minimumPayoutThreshold": true,
@@ -13,6 +13,6 @@
     "highestPayoutObserved": 95,
     "topConfluenceObserved": 0.9614
   },
-  "receiptHash": "bc08bcc312ae9b69fbcc9dde8666c785dfd84191ab8e46d7f22f7db632d27f12",
-  "timestamp": 1795185689970
+  "receiptHash": "5355a05224855ed3aa4be617361041400bc46fc50e509b6d0f5523242770d58e",
+  "timestamp": 1795455577385
 }

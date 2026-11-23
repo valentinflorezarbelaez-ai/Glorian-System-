@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-21T00:23:03.627Z",
+  "timestampIso": "2026-11-23T17:38:51.968Z",
   "specRef": "SPEC-308",
   "changeRef": "CHANGE-170",
   "status": "CRDT_CONVERGENCE_VERIFIED",
@@ -7,70 +7,70 @@
   "projects": [
     {
       "projectId": "aberamentho",
-      "merkleRoot": "ad66d216ed4e323347c0f55c4e9577690e8bda06f324754196d9043a800a4432",
+      "merkleRoot": "e81c7621bd089102f26426b689a30eb426c63460a69767e2883077d5e4b737e7",
       "nodeCount": 1,
       "lamportHead": 1,
       "inSyncWithMesh": true
     },
     {
       "projectId": "atp-strength",
-      "merkleRoot": "285f4029049ae20b137b84d0b352c4b1d1a8b2fbd82e01954b1f164dd87431fa",
+      "merkleRoot": "945c2b29fccecfc8f8b5c0972175286d71c6cba16fe6e23f13a39db38f2c293c",
       "nodeCount": 2,
       "lamportHead": 2,
       "inSyncWithMesh": true
     },
     {
       "projectId": "biblioteca-gnostica-1",
-      "merkleRoot": "286f5135275a919d7b34df308b867f8a28b78c57d71c564e4cc6680901076537",
+      "merkleRoot": "6ed50cf0d68e6ab57d5bd62b0f433e09200a1b41f65632a10f86465f5a8a586e",
       "nodeCount": 3,
       "lamportHead": 3,
       "inSyncWithMesh": true
     },
     {
       "projectId": "control-de-asistencia-abopack",
-      "merkleRoot": "38b9b494ef58c18dbe38185a9aca6a725c906a01937859f988303f7245116254",
+      "merkleRoot": "896df8360ec1166e283a20fca70366cecf168bb6ba89bd0d85a0bba22c6af72c",
       "nodeCount": 4,
       "lamportHead": 4,
       "inSyncWithMesh": true
     },
     {
       "projectId": "crud-slack",
-      "merkleRoot": "b42a59ea25a7551fe18cd56f600c47c6ed741e11d5d0265ab7121cbe6595d756",
+      "merkleRoot": "d326ff969a123073839c367ac14d86b01bd68fc2b8cf8678df29ac331c41184f",
       "nodeCount": 5,
       "lamportHead": 5,
       "inSyncWithMesh": true
     },
     {
       "projectId": "donaciones",
-      "merkleRoot": "293911d0222efae1a9508e4fa9dfca8919eac3135a43322ab10c5ed89cd967ae",
+      "merkleRoot": "1fc5e3cfbe4d81d66d8266a71f64e56fbcc8c058e80d062802379e99d11d131e",
       "nodeCount": 6,
       "lamportHead": 6,
       "inSyncWithMesh": true
     },
     {
       "projectId": "eos-system",
-      "merkleRoot": "f6c7db67239d044630c38cf3624ed3db4d4caec8965aa7f9322c9b670dadbd0d",
+      "merkleRoot": "32fd0a47b900c77fff45ad86178dc2319a1c7b5b551b4372a0785678f799ef5b",
       "nodeCount": 7,
       "lamportHead": 7,
       "inSyncWithMesh": true
     },
     {
       "projectId": "performance-talent-group",
-      "merkleRoot": "25bfa8f8c70749f9b730d5e662ff00ff1555bad14abf0665103d623631703acb",
+      "merkleRoot": "a4b5de8ec4d30c7179428d8289fd0e0f7e92db1686c17db81c1dc8855a1af8aa",
       "nodeCount": 8,
       "lamportHead": 8,
       "inSyncWithMesh": true
     },
     {
       "projectId": "portafolio",
-      "merkleRoot": "3b8fd60464b43f71d8437828f25af2e86e8f18f5c784e2540638d2e907020cdc",
+      "merkleRoot": "ffd318502bd8ae7da51d05377564ef2ba20eefbbd9e43cf48fa773865bd6130b",
       "nodeCount": 9,
       "lamportHead": 9,
       "inSyncWithMesh": true
     },
     {
       "projectId": "trading-family-office",
-      "merkleRoot": "02dc07be130dff3bac163989fef8a7c28be4772d6f9374255153bb1c79c5dc2f",
+      "merkleRoot": "7a4b961572e9c5c24f6f8710533cfcfc16526b89b3f97b739ecd4596e74a6d98",
       "nodeCount": 10,
       "lamportHead": 10,
       "inSyncWithMesh": true
@@ -81,6 +81,6 @@
     "commutativity": true,
     "idempotency": true
   },
-  "linearMemoryBenchmarkNsPerOp": 147.12,
-  "cryptographicSignature": "2469c24af1bcdc2e0e359c9e812790a5bda9ed4dcae306042aeb79968ce1cfc1"
+  "linearMemoryBenchmarkNsPerOp": 108.12,
+  "cryptographicSignature": "f9d1aff1e82423fc9c13afd6aa092f544a659b15d139f9612ba064ba1cb292dc"
 }

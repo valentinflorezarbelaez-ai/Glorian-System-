@@ -1,5 +1,5 @@
 {
-  "receiptId": "macro-rcpt-1795147193567",
+  "receiptId": "macro-rcpt-1795455562263",
   "status": "VERIFIED",
   "invariants": {
     "newsBlackoutStrictness": true,
@@ -12,6 +12,6 @@
     "blackoutActive": true,
     "paperTradesRecorded": 0
   },
-  "receiptHash": "71796f8538bcb90696d571bf9de4178ec24c5c2312fc9f50f8d40b383706ad8f",
-  "timestamp": 1795147193568
+  "receiptHash": "503cd2e30c75d26799e94ab81e8dc106fb7cf9ea134ff95fae42861b366d2e3f",
+  "timestamp": 1795455562263
 }
