@@ -18,11 +18,12 @@ import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 import { EosSpeculativePagedKvCacheCore } from "../src/core/eosSpeculativePagedKvCache.ts";
+import { resolveEvidencePath } from "../src/core/eosEvidencePaths.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/SPECULATIVE_PAGED_KV_CACHE_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("SPECULATIVE_PAGED_KV_CACHE_RECEIPT.json", ROOT);
 
 describe("SPEC-317: Speculative Multi-Token Draft Verification & Paged KV-Cache Engine", () => {
   it("BDD-1677: Physical Block Allocation & Virtual Page Table Mapping", () => {

@@ -190,7 +190,7 @@ jobs:
           mkdir -p tools
           if [ ! -f tools/tla2tools.jar ]; then
             echo "Downloading Leslie Lamport TLC tla2tools.jar..."
-            curl -sSL -o tools/tla2tools.jar https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar
+            curl -fsSL -o tools/tla2tools.jar https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar
           fi
 
       - name: Run TLC formal verification and negative calibration

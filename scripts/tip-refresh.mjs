@@ -61,7 +61,7 @@ function measure() {
       if ([".git", "node_modules", "_sandbox"].includes(e.name)) continue;
       const f = path.join(d, e.name);
       if (e.isDirectory()) walk(f);
-      else if (f.endsWith(".tla")) tlaCount++;
+      else if (f.endsWith(".tla") && !f.includes("_TTrace_")) tlaCount++;
     }
   })(root);
 

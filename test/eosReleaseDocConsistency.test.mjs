@@ -29,7 +29,7 @@ function measureMetrics() {
       if ([".git", "node_modules", "_sandbox", ".worktrees"].includes(entry.name)) continue;
       const abs = path.join(dir, entry.name);
       if (entry.isDirectory()) walk(abs);
-      else if (abs.endsWith(".tla")) tla++;
+      else if (abs.endsWith(".tla") && !abs.includes("_TTrace_")) tla++;
     }
   })(root);
 
