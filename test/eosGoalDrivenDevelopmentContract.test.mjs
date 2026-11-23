@@ -1,0 +1,191 @@
+/**
+ * Contract tests for Goal-Driven Development (LIDR M7) harness.
+ * Vague goals fail; good goals pass; protected-path rewrites are blocked.
+ */
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
+
+import {
+  assertMutationAllowed,
+  assertWithinCaps,
+  evaluateMetric,
+  extractGoalFenceFromPrBody,
+  parseGoalDocument,
+  summarizeValidation,
+  validateGoalDocument,
+} from "../src/core/eosGoalDrivenDevelopmentContract.ts";
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+
+const GOOD_GOAL_JSON = `{
+  "id": "GOAL-L0-DEPS",
+  "title": "Layer-0 runtime dependency count stays at zero",
+  "metric": { "name": "runtime_dependencies_count", "unit": "count" },
+  "threshold": { "op": "eq", "value": 0 },
+  "check": { "command": "node -e \\"const p=require('./package.json'); process.exit(Object.keys(p.dependencies||{}).length===0?0:1)\\"", "timeoutMs": 30000 },
+  "caps": { "maxAttempts": 3, "maxCostUsd": 5 },
+  "protectedPaths": ["test/**", ".github/workflows/**", "package.json", "scripts/validate-gdd-goal.mjs"],
+  "doneWhen": "check exits 0 and runtime_dependencies_count eq 0"
+}`;
+
+const GOOD_GOAL_YAML = `
+id: GOAL-VERIFY-STRICT
+title: Canonical verify strict gate remains wired
+metric:
+  name: verify_strict_exit_code
+  unit: exit_code
+threshold:
+  op: eq
+  value: 0
+check:
+  command: node -e "const p=require('./package.json'); process.exit(p.scripts['verify:strict']==='node bin/eos.mjs verify'?0:1)"
+  timeoutMs: 30000
+caps:
+  maxAttempts: 3
+  maxCostUsd: 2.5
+protectedPaths:
+  - test/**
+  - .github/workflows/**
+  - package.json
+doneWhen: package.json verify:strict maps to node bin/eos.mjs verify
+`.trim();
+
+test("BDD-GDD-01: good JSON goal passes fail-closed schema", () => {
+  const result = validateGoalDocument(GOOD_GOAL_JSON);
+  assert.equal(result.ok, true, summarizeValidation(result));
+  assert.equal(result.goal.id, "GOAL-L0-DEPS");
+  assert.equal(result.goal.metric.name, "runtime_dependencies_count");
+  assert.equal(result.goal.threshold.op, "eq");
+  assert.equal(result.goal.caps.maxAttempts, 3);
+  assert.equal(result.receiptSha256.length, 64);
+});
+
+test("BDD-GDD-02: good YAML-subset goal passes", () => {
+  const result = validateGoalDocument(GOOD_GOAL_YAML);
+  assert.equal(result.ok, true, summarizeValidation(result));
+  assert.equal(result.goal.id, "GOAL-VERIFY-STRICT");
+  assert.ok(result.goal.protectedPaths.includes("test/**"));
+});
+
+test("BDD-GDD-03: vague prose goal fails closed", () => {
+  const vague = JSON.stringify({
+    title: "Make the system better somehow",
+    description: "Agents should improve quality until it feels done.",
+  });
+  const result = validateGoalDocument(vague);
+  assert.equal(result.ok, false);
+  assert.ok(result.issues.some((i) => i.code === "VAGUE_GOAL"));
+  assert.equal(result.goal, null);
+});
+
+test("BDD-GDD-04: missing caps fails closed (unbounded loop anti-trap)", () => {
+  const noCaps = JSON.parse(GOOD_GOAL_JSON);
+  delete noCaps.caps;
+  const result = validateGoalDocument(JSON.stringify(noCaps));
+  assert.equal(result.ok, false);
+  assert.ok(result.issues.some((i) => i.path === "caps" || i.path.startsWith("caps.")));
+});
+
+test("BDD-GDD-05: empty / unparseable documents fail", () => {
+  assert.equal(validateGoalDocument("").ok, false);
+  assert.equal(validateGoalDocument("   ").ok, false);
+  assert.equal(validateGoalDocument("{not-json").ok, false);
+});
+
+test("BDD-GDD-06: metric evaluation respects threshold ops", () => {
+  assert.equal(evaluateMetric(0, { op: "eq", value: 0 }).passed, true);
+  assert.equal(evaluateMetric(1, { op: "eq", value: 0 }).passed, false);
+  assert.equal(evaluateMetric(95, { op: "gte", value: 90 }).passed, true);
+  assert.equal(evaluateMetric(89, { op: "gte", value: 90 }).passed, false);
+  assert.equal(evaluateMetric(0.1, { op: "lte", value: 0.15 }).passed, true);
+});
+
+test("BDD-GDD-07: attempt and cost caps stop unbounded loops", () => {
+  const caps = { maxAttempts: 3, maxCostUsd: 1.0 };
+  assert.equal(assertWithinCaps({ attempt: 3, costUsdAccumulated: 0.5 }, caps).ok, true);
+  const overAttempts = assertWithinCaps({ attempt: 4, costUsdAccumulated: 0.1 }, caps);
+  assert.equal(overAttempts.ok, false);
+  assert.ok(overAttempts.issues.some((i) => i.code === "ATTEMPT_CAP_EXCEEDED"));
+  const overCost = assertWithinCaps({ attempt: 1, costUsdAccumulated: 1.5 }, caps);
+  assert.equal(overCost.ok, false);
+  assert.ok(overCost.issues.some((i) => i.code === "COST_CAP_EXCEEDED"));
+});
+
+test("BDD-GDD-08: rewriting tests/CI/check is blocked (builder ≠ verifier)", () => {
+  const blocked = assertMutationAllowed(
+    ["test/eosFoo.test.mjs", "src/core/eosFoo.ts"],
+    ["test/**", ".github/workflows/**", "scripts/validate-gdd-goal.mjs"],
+  );
+  assert.equal(blocked.allowed, false);
+  assert.ok(blocked.blockedPaths.includes("test/eosFoo.test.mjs"));
+
+  const ciBlocked = assertMutationAllowed(
+    [".github/workflows/ci.yml"],
+    ["test/**", ".github/workflows/**"],
+  );
+  assert.equal(ciBlocked.allowed, false);
+
+  const allowed = assertMutationAllowed(
+    ["src/core/eosFoo.ts", "docs/goals/example.json"],
+    ["test/**", ".github/workflows/**", "scripts/validate-gdd-goal.mjs"],
+  );
+  assert.equal(allowed.allowed, true);
+  assert.equal(allowed.blockedPaths.length, 0);
+});
+
+test("BDD-GDD-09: PR body fence extraction prefers metric+threshold+check block", () => {
+  const body = `
+## Summary
+Stuff
+
+## Goal Contract
+\`\`\`yaml
+id: GOAL-DEMO
+title: Demo measurable goal
+metric:
+  name: demo_metric
+  unit: count
+threshold:
+  op: eq
+  value: 1
+check:
+  command: node -e "process.exit(0)"
+  timeoutMs: 5000
+caps:
+  maxAttempts: 2
+  maxCostUsd: 1
+doneWhen: demo_metric eq 1
+\`\`\`
+`;
+  const fence = extractGoalFenceFromPrBody(body);
+  assert.ok(fence);
+  const result = validateGoalDocument(fence);
+  assert.equal(result.ok, true, summarizeValidation(result));
+});
+
+test("BDD-GDD-10: docs/goals fixtures validate via CLI", () => {
+  const goalsDir = path.join(root, "docs/goals");
+  assert.ok(fs.existsSync(goalsDir), "docs/goals must exist");
+  const script = path.join(root, "scripts/validate-gdd-goal.mjs");
+  const run = spawnSync(process.execPath, [script, "--dir", "docs/goals"], {
+    cwd: root,
+    encoding: "utf8",
+  });
+  assert.equal(run.status, 0, run.stderr || run.stdout);
+  assert.match(run.stdout, /GDD_PASS/);
+});
+
+test("BDD-GDD-11: package.json declares goal:validate script", () => {
+  const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
+  assert.equal(typeof pkg.scripts["goal:validate"], "string");
+  assert.match(pkg.scripts["goal:validate"], /validate-gdd-goal\.mjs/);
+});
+
+test("BDD-GDD-12: parseGoalDocument distinguishes json vs yaml", () => {
+  assert.equal(parseGoalDocument(GOOD_GOAL_JSON).format, "json");
+  assert.equal(parseGoalDocument(GOOD_GOAL_YAML).format, "yaml");
+});

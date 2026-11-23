@@ -1,0 +1,28 @@
+{
+  "id": "GOAL-L0-DEPS",
+  "title": "Layer-0 runtime dependency count stays at zero",
+  "metric": {
+    "name": "runtime_dependencies_count",
+    "unit": "count"
+  },
+  "threshold": {
+    "op": "eq",
+    "value": 0
+  },
+  "check": {
+    "command": "node -e \"const p=require('./package.json'); process.exit(Object.keys(p.dependencies||{}).length===0?0:1)\"",
+    "timeoutMs": 30000
+  },
+  "caps": {
+    "maxAttempts": 3,
+    "maxCostUsd": 5
+  },
+  "protectedPaths": [
+    "test/**",
+    ".github/workflows/**",
+    "package.json",
+    "scripts/validate-gdd-goal.mjs",
+    "src/core/eosGoalDrivenDevelopmentContract.ts"
+  ],
+  "doneWhen": "check exits 0 and runtime_dependencies_count eq 0"
+}

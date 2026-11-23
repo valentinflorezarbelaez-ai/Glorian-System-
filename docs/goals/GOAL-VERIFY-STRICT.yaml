@@ -1,0 +1,20 @@
+id: GOAL-VERIFY-STRICT
+title: Canonical verify strict gate remains wired
+metric:
+  name: verify_strict_exit_code
+  unit: exit_code
+threshold:
+  op: eq
+  value: 0
+check:
+  command: node -e "const p=require('./package.json'); process.exit(p.scripts['verify:strict']==='node bin/eos.mjs verify'?0:1)"
+  timeoutMs: 30000
+caps:
+  maxAttempts: 3
+  maxCostUsd: 2.5
+protectedPaths:
+  - test/**
+  - .github/workflows/**
+  - package.json
+  - scripts/validate-gdd-goal.mjs
+doneWhen: package.json verify:strict maps to node bin/eos.mjs verify
