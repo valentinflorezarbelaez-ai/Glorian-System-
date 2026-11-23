@@ -280,6 +280,7 @@
     "verify:cwv": "node scripts/verify-cwv-budget.mjs",
     "verify:sri": "node scripts/verify-sri-integrity.mjs",
     "verify:fast": "node scripts/verify-fast.mjs",
+    "goal:validate": "node scripts/validate-gdd-goal.mjs --dir docs/goals",
     "verify:strict": "node bin/eos.mjs verify",
     "verify:deep": "node scripts/verify-deep.mjs",
     "verify:references": "node scripts/verify-reference-integrity.mjs",
