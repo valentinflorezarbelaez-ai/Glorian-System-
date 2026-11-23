@@ -17,12 +17,22 @@ import { execFile } from "node:child_process";
 import os from "node:os";
 
 const root = process.cwd();
-const npmBin = process.platform === "win32" ? "npm.cmd" : "npm";
 
 const CHECKS = [
-  { name: "Typecheck", cmd: [npmBin, ["run", "typecheck"]], blocking: true },
-  { name: "ESLint", cmd: [npmBin, ["run", "lint"]], blocking: true },
-  { name: "Prettier Format", cmd: [npmBin, ["run", "format:check"]], blocking: true },
+  {
+    name: "Typecheck",
+    cmd: [process.execPath, ["node_modules/typescript/bin/tsc", "--project", "tsconfig.typecheck.json"]],
+    blocking: true,
+  },
+  { name: "ESLint", cmd: [process.execPath, ["node_modules/eslint/bin/eslint.js", "."]], blocking: true },
+  {
+    name: "Prettier Format",
+    cmd: [
+      process.execPath,
+      ["node_modules/prettier/bin/prettier.cjs", "--check", "--cache", "--cache-location", ".eos/.prettiercache", "."],
+    ],
+    blocking: true,
+  },
   { name: "Import Boundary (Law V)", cmd: [process.execPath, ["scripts/import-boundary-gate.mjs"]], blocking: true },
   { name: "Code Complexity ≤15", cmd: [process.execPath, ["scripts/complexity-gate.mjs"]], blocking: true },
   { name: "License Audit", cmd: [process.execPath, ["scripts/license-audit.mjs"]], blocking: true },
@@ -44,7 +54,6 @@ const CHECKS = [
 function runSingleCheck(check) {
   return new Promise((resolve) => {
     const started = Date.now();
-    const isNpm = check.cmd[0] === npmBin;
     execFile(
       check.cmd[0],
       check.cmd[1],
@@ -52,7 +61,6 @@ function runSingleCheck(check) {
         cwd: root,
         timeout: 120_000,
         maxBuffer: 10 * 1024 * 1024,
-        shell: isNpm && process.platform === "win32",
       },
       (err, _stdout, stderr) => {
         const durationMs = Date.now() - started;

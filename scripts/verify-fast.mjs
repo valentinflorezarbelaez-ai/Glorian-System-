@@ -92,14 +92,31 @@ const suites = Array.from(selected)
 if (suites.length === 0) {
   console.log("[PASS] 3/3 — No impacted suites for this change set.");
 } else {
+  // Isolate test-generated receipts from tracked docs/evidence/* (matches Stage 4 runner)
+  const testEvidenceDir = process.env.EOS_EVIDENCE_DIR || path.join(root, ".eos", "test-evidence");
+  fs.mkdirSync(testEvidenceDir, { recursive: true });
+  const testEnv = { ...process.env, EOS_EVIDENCE_DIR: testEvidenceDir };
+
   console.log(`[RUN] 3/3 — ${suites.length} impacted suite(s): ${suites.join(", ")}`);
   for (const suite of suites) {
     execFileSync(process.execPath, ["--test", path.join(root, suite)], {
       cwd: root,
       stdio: "inherit",
+      env: testEnv,
     });
   }
   console.log(`[PASS] 3/3 — ${suites.length} impacted suite(s).`);
+}
+
+if (changed.length > 0 && fs.existsSync(path.join(root, "bin/eos.mjs"))) {
+  try {
+    execFileSync(process.execPath, [path.join(root, "bin/eos.mjs"), "toolchain:token-econ:diff", "--advisory"], {
+      cwd: root,
+      stdio: "inherit",
+    });
+  } catch (err) {
+    console.log(`[WARN] Advisory SPEC-377 token-econ diff check skipped: ${err?.message || err}`);
+  }
 }
 
 console.log(` FAST LANE PASSED in ${Date.now() - startTime} ms — run the full gate before pushing.`);
