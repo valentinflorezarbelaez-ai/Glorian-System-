@@ -93,3 +93,72 @@ test("BDD-MCP-TIER0-006: governance doc and AGENTS/CLAUDE pointers exist", () =>
   const claude = fs.readFileSync(path.join(projectRoot, "CLAUDE.md"), "utf8");
   assert.match(claude, /MCP Tier-0|MCP_TIER0_TOKEN_ECONOMY|EOS_MCP_PROFILE=core/);
 });
+
+test("BDD-MCP-TIER0-007: public serverless api/mcp.js keeps EXPOSED_TOOLS (incl. shuffle) via full profile", async () => {
+  const src = fs.readFileSync(path.join(projectRoot, "api", "mcp.js"), "utf8");
+  assert.match(
+    src,
+    /new EosMcpServer\(\s*process\.cwd\(\)\s*,\s*["']full["']\s*\)/,
+    "api/mcp.js must construct EosMcpServer with profile full",
+  );
+
+  const { pathToFileURL } = await import("node:url");
+  const mcpMod = await import(pathToFileURL(path.join(projectRoot, "api", "mcp.js")).href);
+
+  function mockRes() {
+    const state = { statusCode: 200, body: null };
+    return {
+      statusCode: 200,
+      setHeader() {},
+      status(code) {
+        state.statusCode = code;
+        this.statusCode = code;
+        return this;
+      },
+      json(payload) {
+        state.body = payload;
+        return this;
+      },
+      end() {
+        return this;
+      },
+      getStatusCode: () => state.statusCode,
+      getBody: () => state.body,
+    };
+  }
+
+  async function post(body) {
+    const res = mockRes();
+    await mcpMod.default(
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          accept: "application/json",
+          "x-forwarded-for": "127.0.0.1",
+        },
+        body,
+      },
+      res,
+    );
+    return res;
+  }
+
+  const listRes = await post({ jsonrpc: "2.0", id: "pub-list", method: "tools/list" });
+  assert.equal(listRes.getStatusCode(), 200);
+  const names = (listRes.getBody()?.result?.tools || []).map((t) => t.name);
+  assert.ok(names.includes("eos_spotify_shuffle"), "public tools/list must include eos_spotify_shuffle");
+  assert.ok(names.includes("eos_health_check"));
+  assert.ok(!names.includes("eos_spotify_honk_dispatch"), "public surface stays allowlist-bounded");
+
+  const callRes = await post({
+    jsonrpc: "2.0",
+    id: "pub-shuffle",
+    method: "tools/call",
+    params: { name: "eos_spotify_shuffle", arguments: { seed: 7 } },
+  });
+  assert.equal(callRes.getStatusCode(), 200);
+  const callBody = callRes.getBody();
+  assert.ok(!callBody?.error, `public shuffle call must succeed, got ${JSON.stringify(callBody?.error)}`);
+  assert.ok(callBody?.result?.content?.[0]?.text);
+});

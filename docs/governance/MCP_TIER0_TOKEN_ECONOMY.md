@@ -45,6 +45,8 @@ export EOS_MCP_PROFILE=full
 
 Installer (`scripts/install-antigravity-mcp.mjs`) and `EosAntigravityDirector.synthesizeAntigravityMcpEntry` default `EOS_MCP_PROFILE=core`.
 
+Public HTTP entrypoints (`api/mcp.js`, `EosMcpStreamServer`) construct the underlying server with **`full`** because their allowlists include tools outside Tier-0 (e.g. `eos_spotify_shuffle`); the HTTP layer still bounds what is advertised/callable.
+
 ## Pointers
 
 - Catalog filter: `src/mcp/eosMcpToolCatalog.ts` (`normalizeToolProfile`, `annotateAndFilterTools`)
