@@ -1,6 +1,6 @@
 {
   "status": "DEGRADED",
-  "timestamp": "2026-11-17T22:19:27.506Z",
+  "timestamp": "2026-11-23T17:38:11.441Z",
   "projectRoot": ".",
   "totalComponents": 4,
   "synchronizedComponents": 3,
@@ -23,22 +23,22 @@
       "name": "SpecBoot Mirrored SDD Skills",
       "category": "SPECBOOT_SKILLS",
       "verified": true,
-      "sha256": "388e4727ec143e5855449c813ce53d04c0d3e68a6e60c9bfcc1696286b56c823",
-      "details": "19 sovereign SDD and fleet operational skills active in .agents/skills/"
+      "sha256": "0fda37c354e2fdedb75aa3cb794661ab7e4a34e3456e033a9e50337a04be1224",
+      "details": "20 sovereign SDD and fleet operational skills active in .agents/skills/"
     },
     {
       "name": "Canonical MCP Sovereign Tool Catalog",
       "category": "MCP_CATALOG",
       "verified": true,
-      "sha256": "baf1f51ec5dbdccd2d22e4775d1cd06d14a8429f98db5c40ca1c2c725a9e07eb",
-      "details": "Registered 208 tools in full profile (eosMcpToolDefinitions) and 46 tools in curated Tier-0 core profile."
+      "sha256": "0e07663a08cbd5821fce7344e9beecc14c45916370d6b50f3865f4bdfdef7190",
+      "details": "Registered 254 tools in full profile (eosMcpToolDefinitions) and 46 tools in curated Tier-0 core profile."
     }
   ],
   "mcpToolCount": {
     "coreProfile": 46,
-    "fullProfile": 208
+    "fullProfile": 254
   },
-  "sha256EvidenceSeal": "8dd66a896fdbb438295382ad91fef4cdf3a0c92e6e81d04448aefbb8d3bcf300",
+  "sha256EvidenceSeal": "10aee7b959d5e72f2e0b69dd71d3cdca4ec5fbb7709a14853cbf3af1338a235c",
   "epistemicState": "LOCAL_SIMULATION",
   "executionMode": "LOCAL_SIMULATION",
   "reproducibleByMergeGate": false,

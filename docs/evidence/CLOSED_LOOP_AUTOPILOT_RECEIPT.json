@@ -1,6 +1,6 @@
 {
   "specRef": "SPEC-340",
-  "projectRoot": "C:\\Users\\valen\\Documents\\Glorian-System",
+  "projectRoot": ".",
   "stageOrder": [
     "INGESTION",
     "CAUSAL",
