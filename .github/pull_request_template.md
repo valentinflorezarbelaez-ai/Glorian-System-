@@ -33,6 +33,7 @@
 <!-- Agents MUST NOT rewrite check/tests/CI (protectedPaths) to go green. -->
 
 ```yaml
+# TEMPLATE — fails schema until filled (GOAL-TODO / example_metric / trivial checks rejected).
 id: GOAL-TODO
 title: Replace with a measurable outcome
 metric:
@@ -42,7 +43,7 @@ threshold:
   op: eq
   value: 0
 check:
-  command: node -e "process.exit(0)"
+  command: "<replace with a real measurable check command>"
   timeoutMs: 30000
 caps:
   maxAttempts: 3
@@ -52,7 +53,7 @@ protectedPaths:
   - .github/workflows/**
   - package.json
   - scripts/validate-gdd-goal.mjs
-doneWhen: check exits 0 and example_metric eq 0
+doneWhen: check exits 0 and <metric> satisfies threshold
 ```
 
 - Goal file (optional): `docs/goals/`

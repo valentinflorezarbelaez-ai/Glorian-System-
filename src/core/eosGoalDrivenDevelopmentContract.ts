@@ -109,6 +109,12 @@ export const DEFAULT_PROTECTED_PATHS: readonly string[] = Object.freeze([
 ]);
 
 const GOAL_ID_RE = /^GOAL-[A-Z0-9][A-Z0-9_-]{1,63}$/;
+/** Template / sample IDs that must never validate as Done (fail-closed). */
+const PLACEHOLDER_GOAL_ID_RE = /^GOAL-(TODO|EXAMPLE|SAMPLE|PLACEHOLDER)(-|$)/i;
+const PLACEHOLDER_METRIC_RE = /^(example_metric|snake_case_metric|todo_metric|metric_name)$/i;
+const DESTRUCTIVE_CHECK_RE = /\brm\s+-rf\b|\bsudo\b|\bcurl\b.*\|\s*(ba)?sh\b/i;
+/** Trivial always-green checks — agents must not use these as measurable Done. */
+const TRIVIAL_CHECK_RE = /process\.exit\s*\(\s*0\s*\)/;
 const METRIC_NAME_RE = /^[a-z][a-z0-9_]{1,63}$/;
 const MAX_COMMAND_CHARS = 512;
 const MAX_TITLE_CHARS = 160;
@@ -119,6 +125,39 @@ const MIN_COST_USD = 0.01;
 const MAX_COST_USD = 100;
 const MIN_TIMEOUT_MS = 1_000;
 const MAX_TIMEOUT_MS = 600_000;
+
+function isPlaceholderGoalId(id: string): boolean {
+  return PLACEHOLDER_GOAL_ID_RE.test(id.trim());
+}
+
+/** Returns null when command is safe; otherwise an INVALID_FIELD message. */
+function checkCommandSafetyMessage(command: string): string | null {
+  const trimmed = command.trim();
+  if (trimmed.length === 0) {
+    return "check.command must be a non-empty string.";
+  }
+  if (trimmed.length > MAX_COMMAND_CHARS) {
+    return `check.command must be a non-empty string <= ${MAX_COMMAND_CHARS} chars.`;
+  }
+  if (DESTRUCTIVE_CHECK_RE.test(trimmed)) {
+    return "check.command contains a blocked destructive pattern.";
+  }
+  if (TRIVIAL_CHECK_RE.test(trimmed)) {
+    return "check.command is a trivial always-green stub (e.g. process.exit(0)); replace with a measurable check.";
+  }
+  return null;
+}
+
+function extractGoalIdFromFence(block: string): string | null {
+  const jsonMatch = block.match(/"id"\s*:\s*"([^"]+)"/);
+  if (jsonMatch) return jsonMatch[1].trim();
+  const yamlMatch = block.match(/(?:^|\n)\s*id\s*:\s*["']?([A-Za-z0-9_-]+)["']?/);
+  return yamlMatch ? yamlMatch[1].trim() : null;
+}
+
+function fenceLooksLikeGoal(block: string): boolean {
+  return /\bmetric\b/i.test(block) && /\bthreshold\b/i.test(block) && /\bcheck\b/i.test(block);
+}
 
 function sha256Hex(payload: string): string {
   return createHash("sha256").update(payload).digest("hex");
@@ -273,13 +312,13 @@ export function parseGoalDocument(raw: string): { value: unknown; format: "json"
 }
 
 /**
- * Extract a fenced ```goal / ```yaml / ```json block under a Goal Contract heading,
- * or the first fenced block labeled goal|yaml|json in the PR body.
+ * Extract a fenced ```goal / ```yaml / ```json block from a PR body.
+ * Skips EXAMPLE/TODO/SAMPLE/PLACEHOLDER template fences; prefers the last
+ * real goal fence (metric+threshold+check with a non-placeholder id).
  */
 export function extractGoalFenceFromPrBody(markdown: string): string | null {
   assertPrecondition(typeof markdown === "string", "markdown must be a string");
-  const fenceRe =
-    /```(?:goal|yaml|yml|json)\s*\r?\n([\s\S]*?)```/gi;
+  const fenceRe = /```(?:goal|yaml|yml|json)\s*\r?\n([\s\S]*?)```/gi;
   let match: RegExpExecArray | null;
   const blocks: string[] = [];
   while ((match = fenceRe.exec(markdown)) !== null) {
@@ -287,13 +326,20 @@ export function extractGoalFenceFromPrBody(markdown: string): string | null {
   }
   if (blocks.length === 0) return null;
 
-  // Prefer a block that looks like a goal (has metric/threshold/check keys).
+  const realGoals: string[] = [];
   for (const block of blocks) {
-    if (/\bmetric\b/i.test(block) && /\bthreshold\b/i.test(block) && /\bcheck\b/i.test(block)) {
-      return block;
-    }
+    if (!fenceLooksLikeGoal(block)) continue;
+    const id = extractGoalIdFromFence(block);
+    if (id !== null && isPlaceholderGoalId(id)) continue;
+    realGoals.push(block);
   }
-  return blocks[0];
+
+  if (realGoals.length > 0) {
+    return realGoals[realGoals.length - 1];
+  }
+
+  // No real goal — return last fence only so callers can fail-closed on placeholders.
+  return blocks[blocks.length - 1];
 }
 
 function normalizeProtectedPaths(value: unknown): string[] {
@@ -367,12 +413,24 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
     issues.push(
       issue("INVALID_FIELD", "id", 'id must match GOAL-[A-Z0-9_-]{2,64} (e.g. "GOAL-L0-DEPS").'),
     );
+  } else if (isPlaceholderGoalId(parsed.id)) {
+    issues.push(
+      issue(
+        "VAGUE_GOAL",
+        "id",
+        `id "${parsed.id.trim()}" is a template placeholder (TODO/EXAMPLE/SAMPLE/PLACEHOLDER); replace with a real GOAL-* id.`,
+      ),
+    );
   }
 
   // title
   if (!isNonEmptyString(parsed.title) || parsed.title.trim().length > MAX_TITLE_CHARS) {
     issues.push(
       issue("INVALID_FIELD", "title", `title must be a non-empty string <= ${MAX_TITLE_CHARS} chars.`),
+    );
+  } else if (/^replace with/i.test(parsed.title.trim()) || /<.+>/.test(parsed.title)) {
+    issues.push(
+      issue("VAGUE_GOAL", "title", "title still contains a template placeholder; replace before Done."),
     );
   }
 
@@ -385,11 +443,26 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
       issues.push(
         issue("INVALID_FIELD", "metric.name", "metric.name must be snake_case [a-z][a-z0-9_]{1,63}."),
       );
+    } else if (PLACEHOLDER_METRIC_RE.test(name.trim())) {
+      issues.push(
+        issue("VAGUE_GOAL", "metric.name", `metric.name "${String(name).trim()}" is a template placeholder.`),
+      );
     }
-    if (!isNonEmptyString(unit) || unit.trim().length > 32) {
-      issues.push(issue("INVALID_FIELD", "metric.unit", "metric.unit must be a non-empty string <= 32 chars."));
+    if (!isNonEmptyString(unit) || unit.trim().length > 32 || /\|/.test(String(unit))) {
+      issues.push(
+        issue(
+          "INVALID_FIELD",
+          "metric.unit",
+          "metric.unit must be a single non-empty unit string <= 32 chars (not a placeholder enum list).",
+        ),
+      );
     }
-    if (issues.every((x) => !x.path.startsWith("metric"))) {
+    if (
+      issues.every((x) => !x.path.startsWith("metric")) &&
+      isNonEmptyString(name) &&
+      METRIC_NAME_RE.test(name.trim()) &&
+      !PLACEHOLDER_METRIC_RE.test(name.trim())
+    ) {
       metric = { name: String(name).trim(), unit: String(unit).trim() };
     }
   } else {
@@ -421,21 +494,16 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
     issues.push(issue("INVALID_FIELD", "threshold", "threshold must be an object { op, value }."));
   }
 
-  // check
+  // check (object and shorthand string share the same safety filters)
   let check: GoalCheck | null = null;
   if (isPlainObject(parsed.check)) {
     const command = parsed.check.command;
     const timeoutMs = parsed.check.timeoutMs;
-    if (!isNonEmptyString(command) || command.trim().length > MAX_COMMAND_CHARS) {
-      issues.push(
-        issue(
-          "INVALID_FIELD",
-          "check.command",
-          `check.command must be a non-empty string <= ${MAX_COMMAND_CHARS} chars.`,
-        ),
-      );
-    } else if (/\brm\s+-rf\b|\bsudo\b|\bcurl\b.*\|\s*(ba)?sh\b/i.test(command)) {
-      issues.push(issue("INVALID_FIELD", "check.command", "check.command contains a blocked destructive pattern."));
+    if (!isNonEmptyString(command)) {
+      issues.push(issue("INVALID_FIELD", "check.command", "check.command must be a non-empty string."));
+    } else {
+      const safety = checkCommandSafetyMessage(command);
+      if (safety) issues.push(issue("INVALID_FIELD", "check.command", safety));
     }
     if (
       typeof timeoutMs !== "number" ||
@@ -453,18 +521,22 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
     }
     if (
       isNonEmptyString(command) &&
-      command.trim().length <= MAX_COMMAND_CHARS &&
+      checkCommandSafetyMessage(command) === null &&
       typeof timeoutMs === "number" &&
       Number.isInteger(timeoutMs) &&
       timeoutMs >= MIN_TIMEOUT_MS &&
-      timeoutMs <= MAX_TIMEOUT_MS &&
-      !/\brm\s+-rf\b|\bsudo\b|\bcurl\b.*\|\s*(ba)?sh\b/i.test(command)
+      timeoutMs <= MAX_TIMEOUT_MS
     ) {
       check = { command: command.trim(), timeoutMs };
     }
   } else if (isNonEmptyString(parsed.check)) {
-    // Shorthand: check: "npm test"
-    check = { command: parsed.check.trim(), timeoutMs: 120_000 };
+    // Shorthand: check: "npm test" — same denylist / length / trivial filters as object form.
+    const safety = checkCommandSafetyMessage(parsed.check);
+    if (safety) {
+      issues.push(issue("INVALID_FIELD", "check", safety));
+    } else {
+      check = { command: parsed.check.trim(), timeoutMs: 120_000 };
+    }
   } else {
     issues.push(issue("INVALID_FIELD", "check", "check must be { command, timeoutMs } or a command string."));
   }

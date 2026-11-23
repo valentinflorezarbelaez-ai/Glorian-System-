@@ -137,12 +137,30 @@ test("BDD-GDD-08: rewriting tests/CI/check is blocked (builder ≠ verifier)", (
   assert.equal(allowed.blockedPaths.length, 0);
 });
 
-test("BDD-GDD-09: PR body fence extraction prefers metric+threshold+check block", () => {
+test("BDD-GDD-09: PR body fence extraction prefers last real goal over TODO template", () => {
   const body = `
 ## Summary
 Stuff
 
 ## Goal Contract
+\`\`\`yaml
+id: GOAL-TODO
+title: Replace with a measurable outcome
+metric:
+  name: example_metric
+  unit: count
+threshold:
+  op: eq
+  value: 0
+check:
+  command: "<replace with a real measurable check command>"
+  timeoutMs: 30000
+caps:
+  maxAttempts: 3
+  maxCostUsd: 5
+doneWhen: check exits 0 and example_metric eq 0
+\`\`\`
+
 \`\`\`yaml
 id: GOAL-DEMO
 title: Demo measurable goal
@@ -153,7 +171,7 @@ threshold:
   op: eq
   value: 1
 check:
-  command: node -e "process.exit(0)"
+  command: node -e "process.exit(Number(process.env.DEMO_OK||0)===1?0:1)"
   timeoutMs: 5000
 caps:
   maxAttempts: 2
@@ -163,6 +181,8 @@ doneWhen: demo_metric eq 1
 `;
   const fence = extractGoalFenceFromPrBody(body);
   assert.ok(fence);
+  assert.match(fence, /GOAL-DEMO/);
+  assert.doesNotMatch(fence, /GOAL-TODO/);
   const result = validateGoalDocument(fence);
   assert.equal(result.ok, true, summarizeValidation(result));
 });
@@ -188,4 +208,56 @@ test("BDD-GDD-11: package.json declares goal:validate script", () => {
 test("BDD-GDD-12: parseGoalDocument distinguishes json vs yaml", () => {
   assert.equal(parseGoalDocument(GOOD_GOAL_JSON).format, "json");
   assert.equal(parseGoalDocument(GOOD_GOAL_YAML).format, "yaml");
+});
+
+test("BDD-GDD-13: unfilled PR template goal fails closed", () => {
+  const templatePath = path.join(root, ".github/pull_request_template.md");
+  const template = fs.readFileSync(templatePath, "utf8");
+  const fence = extractGoalFenceFromPrBody(template);
+  assert.ok(fence, "PR template must still contain a goal fence for authors to fill");
+  const result = validateGoalDocument(fence);
+  assert.equal(result.ok, false, "unfilled template must not validate as Done");
+  assert.ok(
+    result.issues.some((i) => i.code === "VAGUE_GOAL" || i.path === "id" || i.path === "check.command"),
+    summarizeValidation(result),
+  );
+});
+
+test("BDD-GDD-14: GOAL-TODO / example_metric / trivial exit(0) rejected", () => {
+  const stub = {
+    id: "GOAL-TODO",
+    title: "Replace with a measurable outcome",
+    metric: { name: "example_metric", unit: "count" },
+    threshold: { op: "eq", value: 0 },
+    check: { command: 'node -e "process.exit(0)"', timeoutMs: 30000 },
+    caps: { maxAttempts: 3, maxCostUsd: 5 },
+    doneWhen: "check exits 0 and example_metric eq 0",
+  };
+  const result = validateGoalDocument(JSON.stringify(stub));
+  assert.equal(result.ok, false);
+  assert.ok(result.issues.some((i) => i.path === "id" && i.code === "VAGUE_GOAL"));
+  assert.ok(result.issues.some((i) => i.path === "metric.name"));
+  assert.ok(result.issues.some((i) => i.path === "check.command"));
+});
+
+test("BDD-GDD-15: shorthand string check applies denylist and length cap", () => {
+  const base = JSON.parse(GOOD_GOAL_JSON);
+  base.check = "sudo rm -rf /";
+  const destructive = validateGoalDocument(JSON.stringify(base));
+  assert.equal(destructive.ok, false);
+  assert.ok(destructive.issues.some((i) => /destructive|blocked/i.test(i.message)));
+
+  base.check = "x".repeat(600);
+  const tooLong = validateGoalDocument(JSON.stringify(base));
+  assert.equal(tooLong.ok, false);
+  assert.ok(tooLong.issues.some((i) => /512/.test(i.message) || i.path === "check"));
+
+  base.check = 'node -e "process.exit(0)"';
+  const trivial = validateGoalDocument(JSON.stringify(base));
+  assert.equal(trivial.ok, false);
+  assert.ok(trivial.issues.some((i) => /trivial|always-green/i.test(i.message)));
+
+  base.check = "npm run verify:strict";
+  const ok = validateGoalDocument(JSON.stringify(base));
+  assert.equal(ok.ok, true, summarizeValidation(ok));
 });

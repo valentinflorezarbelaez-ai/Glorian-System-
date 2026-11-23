@@ -19,16 +19,16 @@ condition that an agent cannot silently move.
 ## Required goal schema
 
 ```yaml
-id: GOAL-EXAMPLE
-title: Short measurable outcome
+id: GOAL-L0-DEPS
+title: Layer-0 runtime dependency count stays at zero
 metric:
-  name: snake_case_metric
-  unit: count|percent|exit_code|ms|usd
+  name: runtime_dependencies_count
+  unit: count
 threshold:
-  op: eq|neq|lte|gte|lt|gt
+  op: eq
   value: 0
 check:
-  command: node -e "process.exit(0)"
+  command: node -e "const p=require('./package.json'); process.exit(Object.keys(p.dependencies||{}).length===0?0:1)"
   timeoutMs: 30000
 caps:
   maxAttempts: 3
@@ -38,11 +38,12 @@ protectedPaths:
   - .github/workflows/**
   - package.json
   - scripts/validate-gdd-goal.mjs
-doneWhen: check exits 0 and metric satisfies threshold
+doneWhen: check exits 0 and runtime_dependencies_count eq 0
 ```
 
 Vague titles / descriptions without `metric` + `threshold` + `check` are
-**rejected fail-closed**.
+**rejected fail-closed**. Template ids (`GOAL-TODO`, `GOAL-EXAMPLE`, …),
+placeholder metric names, and trivial `process.exit(0)` checks also fail closed.
 
 ## Agent rules (anti-traps)
 
