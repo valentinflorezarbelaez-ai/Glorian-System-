@@ -4,12 +4,12 @@
   "description": "${{ values.componentTitle }} - Sovereign Tier-0 Component",
   "type": "module",
   "scripts": {
-    "test": "node --test",
+    "test": "node bin/verify.mjs",
     "verify:strict": "node bin/verify.mjs"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {},
-  "devDependencies": {
-    "@types/node": "^24.0.0",
-    "typescript": "^5.9.3"
-  }
+  "devDependencies": {}
 }

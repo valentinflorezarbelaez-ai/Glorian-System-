@@ -9,6 +9,14 @@
 - **Isolation Tier**: `${{ values.isolationTier }}`
 
 ## Golden Path Compliance
+
 - Zero external runtime npm dependencies (`dependencies: {}`).
-- Deterministic fail-closed architecture.
-- Integrated with Spotify Backstage Software Catalog and Soundcheck scorecards.
+- Canonical gate: `npm run verify:strict` → `bin/verify.mjs` (deps empty + `node --test`).
+- Agent stub: `AGENTS.md` (owner / system / gate pointers).
+- CI: `.github/workflows/ci.yml` runs `verify:strict` on PR/push.
+- Catalog: `catalog-info.yaml` + TechDocs (`mkdocs.yaml`).
+
+```bash
+npm install --include=dev
+npm run verify:strict
+```
