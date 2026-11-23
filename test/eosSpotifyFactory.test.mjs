@@ -96,6 +96,10 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
         ctx.squad.includes("glorian-control-plane-squad"),
         "Xirp squad must reflect declared Backstage Group owner (P2)",
       );
+      assert.ok(
+        ctx.tribe.includes("glorian-platform-tribe"),
+        "Xirp tribe must read eos.glorian/owner-tribe (not hardcode NOT_DECLARED)",
+      );
       assert.ok(ctx.tags.includes("layer-0-sovereign"));
       assert.ok(ctx.registeredFleetProjects >= 3);
       assert.ok(ctx.adrCount >= 5);

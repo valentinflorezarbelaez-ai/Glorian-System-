@@ -19,4 +19,4 @@ Backstage ownership for the Glorian/EOS control plane is **declared** in catalog
 
 1. Do **not** re-list `ownership.yaml` as a sibling `catalog.locations` entry (double ingestion).
 2. Fleet posture remains `CONTROL_PLANE_ONLY` until live dogfood proves otherwise.
-3. `AGENTS.md` is a generated snapshot — if it still shows Tribe `NOT_DECLARED`, re-run `eos xirp sync` after this catalog lands; catalog Groups are authoritative for Backstage.
+3. `AGENTS.md` is a generated snapshot from `eos xirp sync` / `compileXirpContext`, which reads `eos.glorian/owner-squad` and `eos.glorian/owner-tribe`. Catalog Groups remain authoritative for Backstage.
