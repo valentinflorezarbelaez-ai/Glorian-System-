@@ -325,6 +325,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliAladdinRiskEngine.mjs",
     fn: "handleAladdinCommand",
   },
+  {
+    prefix: "toolchain:token-econ:",
+    file: "./cliHarnessTokenEconomics.mjs",
+    fn: "handleHarnessTokenEconomicsCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

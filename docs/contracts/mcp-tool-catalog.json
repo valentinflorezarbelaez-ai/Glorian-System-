@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "5d2460afc0a7802596af177e075c325d728874983e3decac39f665a114c95c29",
-  "totalTools": 252,
+  "catalogSha256": "dc388665fd283d50c56835ebc13c0b3fd04db6db61fa844f738917f93b944891",
+  "totalTools": 253,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7353,6 +7353,21 @@
       },
       "annotations": {
         "title": "EOS quant Cockpit Walk Forward Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_harness_token_economics_audit",
+      "description": "Audits the Harness Boundaries, Structured Token Economics & Deterministic Decision Router Engine verifying forbidden-touch blocking, Headroom columnar MCP/JSON compression, JEV cache-safe milestone routing, prompt-cache breaker detection, and anti-overengineering enforcement (SPEC-377).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS harness Token Economics Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

@@ -53,6 +53,7 @@ import { EosMultiAssetMacroFilterEngine } from "../../core/eosMultiAssetMacroFil
 import { EosTriTemporalPropFirmEngine } from "../../core/eosTriTemporalPropFirmEngine.ts";
 import { EosUniversalAssetPayoutOptimizerEngine } from "../../core/eosUniversalAssetPayoutOptimizerEngine.ts";
 import { EosQuantCockpitWalkForwardEngine } from "../../core/eosQuantCockpitWalkForwardEngine.ts";
+import { EosHarnessTokenEconomicsCore } from "../../core/eosHarnessTokenEconomicsCore.ts";
 import type { McpToolHandler } from "../eosMcpDispatchRegistry.ts";
 import { PHASE8_MIGRATED_TOOL_NAMES } from "./eosMcpPhase8ToolNames.ts";
 
@@ -286,5 +287,6 @@ export function createPhase8AgiHandlers(deps: Phase8AgiHandlerDeps): Readonly<Re
     eos_tri_temporal_propfirm_audit: () => EosTriTemporalPropFirmEngine.audit(projectRoot),
     eos_universal_asset_payout_audit: () => EosUniversalAssetPayoutOptimizerEngine.audit(projectRoot),
     eos_quant_cockpit_walk_forward_audit: () => EosQuantCockpitWalkForwardEngine.audit(projectRoot),
+    eos_harness_token_economics_audit: () => EosHarnessTokenEconomicsCore.audit(projectRoot),
   };
 }

@@ -1,0 +1,19 @@
+{
+  "specId": "SPEC-377",
+  "changeId": "CHANGE-239",
+  "status": "VERIFIED",
+  "generatedAt": "2026-11-23T00:56:12.943Z",
+  "invariants": {
+    "boundaryEnforced": true,
+    "structuredCompressionEffective": true,
+    "decisionRouterCacheSafe": true,
+    "cacheBreakerDetected": true,
+    "minimalismGateEnforced": true
+  },
+  "sampleMetrics": {
+    "jsonSavingsPercent": 90.72,
+    "ipcSavingsPercent": 52.87,
+    "sessionCostSavingsPercent": 70.04
+  },
+  "receiptHash": "53af89bf431f6659d5255479e8750545bfcc939c0e2c3c79bf7b15b2c3860eea"
+}

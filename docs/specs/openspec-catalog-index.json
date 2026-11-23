@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 376,
-  "catalogSha256": "74354ba5eaae27ae723a0a7d3881478a819900c24ce2972531385995cd6d069e",
+  "totalSpecs": 377,
+  "catalogSha256": "f5ca01e7210eeef1ef348aff2655a18c61263a37d68f91e394170af5d0674d5a",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3049,10 +3049,10 @@
       "id": "SPEC-339",
       "title": "Agentic Harness Engineering, First-Pass PR Yield & Token Rework Telemetry Engine",
       "status": "UNKNOWN",
-      "frCount": 6,
+      "frCount": 9,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-339-agentic-harness-yield.md",
-      "sha256": "05d5c63a904da6abb959b048b90e2b6876e392507afeecf7cee6cf0ed9480593"
+      "sha256": "0e2ad108cd2c90893baf37d833d376e6dedeb97fcf569c6a14adf5a93960bb49"
     },
     {
       "id": "SPEC-340",
@@ -3386,6 +3386,15 @@
       "bddCount": 8,
       "file": "openspec/specs/SPEC-376-quant-cockpit-walk-forward-engine.md",
       "sha256": "13b4b9dee0e8be795fd5a185a84ffe6ac4f02c30f373c2e7a0a6a4d7f020b172"
+    },
+    {
+      "id": "SPEC-377",
+      "title": "Harness Boundaries, Structured Token Economics & Deterministic Decision Router Engine",
+      "status": "UNKNOWN",
+      "frCount": 1,
+      "bddCount": 8,
+      "file": "openspec/specs/SPEC-377-harness-token-economics-engine.md",
+      "sha256": "aac07f0605e9f673ea60fabc08a0a3907c85baa6762e649f033f42d8efd471c2"
     }
   ]
 }

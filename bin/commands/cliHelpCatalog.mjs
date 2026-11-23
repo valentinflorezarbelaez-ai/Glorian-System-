@@ -1,4 +1,4 @@
-// Synchronized CLI Help Catalog for `eos help` and `eos help --all` (v75.0.0, SPEC-001..SPEC-376).
+// Synchronized CLI Help Catalog for `eos help` and `eos help --all` (v75.0.0, SPEC-001..SPEC-377).
 export const QUICK_HELP_TEXT = `
 ======================================================================
  EOS SYSTEM — MANUAL RÁPIDO Y ERGONOMÍA DE DESARROLLO (v75.0.0)
@@ -734,6 +734,7 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:trading:fractal | toolchain:trading:propfirm | toolchain:trading:daemon | toolchain:trading:notify-audit | toolchain:trading:notify-test Fractal M15->M5->M1 y FTMO (SPEC-374)
   eos toolchain:trading:universe | toolchain:trading:payout-scan | toolchain:trading:payout-audit Catálogo multi-activo y payouts >=80% (SPEC-375)
   eos toolchain:trading:cockpit | toolchain:trading:trigger | toolchain:trading:walkforward | toolchain:trading:cockpit-audit Cockpit 153+ activos, disparo 59.8s y Kelly Walk-Forward (SPEC-376)
+  eos toolchain:token-econ:boundary | toolchain:token-econ:compress | toolchain:token-econ:route | toolchain:token-econ:cache | toolchain:token-econ:minimal | toolchain:token-econ:audit Harness Forbidden-Touch, Headroom JSON, JEV Router, Prompt Cache y Minimal-Diff (SPEC-377)
   eos toolchain:aladdin:stress-test Prueba de estrés de cisnes negros históricos estilo Aladdin (SPEC-372)
   eos toolchain:aladdin:allocate Asignación institucional All-Weather de Ray Dalio y deriva (SPEC-372)
   eos toolchain:aladdin:var Métricas de riesgo VaR/CVaR y simulación Monte Carlo 10,000 rutas (SPEC-372)

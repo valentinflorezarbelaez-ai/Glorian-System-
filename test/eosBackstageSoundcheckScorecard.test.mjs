@@ -157,11 +157,11 @@ test("BDD-1573: Fleet-Wide Matrix Aggregation", () => {
   const engine = new BackstageSoundcheckEngine();
   const matrix = engine.generateFleetMatrix();
 
-  assert.equal(matrix.totalRepositoriesScored, 9);
+  assert.equal(matrix.totalRepositoriesScored, 10);
   assert.ok(matrix.averageFleetScore >= 90);
   assert.equal(matrix.tierDistribution.LEVEL_4_PLATINUM, 1);
-  assert.equal(matrix.tierDistribution.LEVEL_3_GOLD, 8);
-  assert.equal(matrix.scorecards.length, 9);
+  assert.equal(matrix.tierDistribution.LEVEL_3_GOLD, 9);
+  assert.equal(matrix.scorecards.length, 10);
 });
 
 test("BDD-1574: Cryptographic Soundcheck Audit Receipt Generation", async () => {
@@ -172,7 +172,7 @@ test("BDD-1574: Cryptographic Soundcheck Audit Receipt Generation", async () => 
   });
 
   assert.equal(receipt.specRef, "SPEC-299");
-  assert.equal(receipt.totalRepositoriesScored, 9);
+  assert.equal(receipt.totalRepositoriesScored, 10);
   assert.ok(receipt.averageFleetScore >= 90);
   assert.equal(receipt.sha256Signature.length, 64);
 

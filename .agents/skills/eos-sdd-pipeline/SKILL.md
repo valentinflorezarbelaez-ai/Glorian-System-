@@ -60,3 +60,13 @@ Integrate the production workflow patterns from `LIDR-academy-temp/lidr-specboot
    - **Smart Spec, Cheap Execution** (`eos toolchain:harness:multiagent`): Allocate Frontier high-reasoning models to `REFINER` and `ARCHITECT_PLANNER`, and fast/economical models to `IMPLEMENTER` and `INDEPENDENT_REVIEWER`.
    - **Architecture Shared Memory ($\le 200$ lines)**: Keep a compact living architecture contract ($\le 200$ lines) to avoid blind repo exploration tokens.
    - **Real Agent Self-Verification**: Pair unit suites with real integration/CLI/E2E verification and RTK token-compressed CLI diagnostics (`eos toolchain:harness:rtk`, targeting $\ge 60\%$ savings).
+
+## 5. Harness Engineering & Token Economics Discipline (SPEC-377 / LIDR M5+M6)
+
+Enforce Big Tech harness boundaries and token efficiency across Glorian and all 10 fleet repositories via `eos toolchain:token-econ:*` (Layer-0 pure, zero third-party proxy bloat):
+
+1. **Forbidden-Touch & Blast-Radius Boundary (`eos toolchain:token-econ:boundary`)**: Before modifying code, declare `allowedPaths`, `forbiddenPaths`, `maxFilesTouched`, `maxDiffLines`, and `allowTestMutation`. Any violation fails closed (`HARD_BLOCK`) with a SHA-256 attestation.
+2. **Structured MCP/JSON Payload Compression (`eos toolchain:token-econ:compress`)**: Fold homogeneous arrays into columnar tables, prune null/empty fields, and digest opaque hashes/base64 blobs (Headroom pattern, targeting $\ge 50\%$ token reduction).
+3. **Closed-Set Deterministic Routing & Milestone Switching (`eos toolchain:token-econ:route`)**: Resolve closed-set triage deterministically (JEV pattern) with calibrated confidence; escalate to Frontier only when `confidence < threshold`, and switch models strictly at milestone boundaries (`PLANNING -> EXECUTION -> VERIFICATION`) to protect 90% prompt caching.
+4. **Prompt Cache Prefix Hygiene & Context-Rot Guard (`eos toolchain:token-econ:cache`)**: Keep static prefixes (Constitution, `AGENTS.md`, `/docs`) free of timestamps, UUIDs, and dynamic counters; trigger compaction checkpoints whenever context fill reaches $\ge 70\%$.
+5. **Anti-Overengineering Gate & Compact Agent IPC (`eos toolchain:token-econ:minimal`)**: Reject single-use speculative abstractions, pass-through wrappers, and unauthorized runtime dependencies (Ponytail pattern). Use compact telegraphic IPC frames strictly for agent-to-agent handoffs while preserving full Law VII professional English in all repository artifacts.

@@ -3717,3 +3717,21 @@
   - `docs/plans/PLAN-238-QUANT-COCKPIT-WALK-FORWARD-ENGINE.md`
   - `docs/tasks/TASKS-238-QUANT-COCKPIT-WALK-FORWARD-ENGINE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-22-HARNESS-TOKEN-ECONOMICS`
+
+- **Authorization Date**: 2026-11-22
+- **Change Identifier**: `CHANGE-239` / `SPEC-377`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-239` (`SPEC-377`), Harness Boundaries, Structured Token Economics & Deterministic Decision Router Engine (LIDR M5 + M6 Big Tech Synthesis): TLA+ Model 120 `docs/formal/HarnessTokenEconomics.tla` / `.cfg`; `src/core/eosHarnessTokenEconomicsCore.types.ts` and `src/core/eosHarnessTokenEconomicsCore.ts` (Declarative Harness Forbidden-Touch & Blast-Radius Boundary Enforcer, Headroom-style MCP/JSON Columnar Payload Compressor, JEV-style Closed-Set Decision Classifier & Milestone-Boundary Prompt-Cache-Safe Router, Prompt Cache Prefix Stability & Session Token Economics Auditor, Ponytail Anti-Overengineering Minimal-Diff Gate & Caveman Compact Agent IPC Encoder); CLI handlers `toolchain:token-econ:*`; Phase-8 MCP tool `eos_harness_token_economics_audit`; SDD Skill Section 5 policy; receipt `docs/evidence/HARNESS_TOKEN_ECONOMICS_RECEIPT.json`; verify `BDD-2049`..`BDD-2056`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-239-HARNESS-TOKEN-ECONOMICS-ENGINE.md`
+  - `openspec/changes/CHANGE-239-harness-token-economics-engine.md`
+  - `openspec/specs/SPEC-377-harness-token-economics-engine.md`
+  - `docs/plans/PLAN-239-HARNESS-TOKEN-ECONOMICS-ENGINE.md`
+  - `docs/tasks/TASKS-239-HARNESS-TOKEN-ECONOMICS-ENGINE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

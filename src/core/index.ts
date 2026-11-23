@@ -1,4 +1,4 @@
-// EOS SYSTEM — CORE LAYER-0 UNIFIED EXPORT BARREL (SPEC-085..SPEC-376). Zero dependencies.
+// EOS SYSTEM — CORE LAYER-0 UNIFIED EXPORT BARREL (SPEC-085..SPEC-377). Zero dependencies.
 export * from "./eosKernelPrimitives.ts";
 export * from "./EosAstral.ts";
 export * from "./EosElohim.ts";
@@ -720,3 +720,4 @@ export * from "./eosEpisodicMemoryGraph.types.ts";
 export * from "./eosDeterministicReplayDebugger.ts";
 export * from "./eosDeterministicReplayDebugger.types.ts";
 export * from "./eosTradingSuiteBarrel.ts";
+export * from "./eosHarnessTokenEconomicsCore.ts";

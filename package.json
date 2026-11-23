@@ -101,6 +101,7 @@
     "./insar-deform": "./src/core/eosInterferometricSarDeformationCore.ts",
     "./mpd-thruster": "./src/core/eosMagnetoplasmadynamicThrusterMhdCore.ts",
     "./evm-symbolic-prover": "./src/core/eosSmartContractBytecodeGasSymbolicVerifierCore.ts",
+    "./harness-economics": "./src/core/eosHarnessTokenEconomicsCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

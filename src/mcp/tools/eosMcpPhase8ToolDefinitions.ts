@@ -546,4 +546,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_harness_token_economics_audit",
+    description:
+      "Audits the Harness Boundaries, Structured Token Economics & Deterministic Decision Router Engine verifying forbidden-touch blocking, Headroom columnar MCP/JSON compression, JEV cache-safe milestone routing, prompt-cache breaker detection, and anti-overengineering enforcement (SPEC-377).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];
