@@ -1,0 +1,152 @@
+# EOS / Spotify Soundcheck scorecard Resources for Backstage (P1).
+# Presentation mapping only — scoring SoT remains Layer-0:
+#   src/core/eosBackstageSoundcheckScorecard.ts (SPEC-299)
+# Receipt SoT:
+#   docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
+# Portal plugins MUST display receipt values; MUST NOT invent a second score engine.
+# Default fleet posture is CONTROL_PLANE_ONLY until dogfood proves FLEET_VERIFIED.
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: eos-soundcheck-fleet-matrix
+  title: EOS Soundcheck Fleet Matrix
+  description: Aggregate fleet Soundcheck matrix (pillars, tiers, DORA). Values come from the EOS receipt — never recomputed in Backstage.
+  annotations:
+    eos.glorian/scorecard-engine: src/core/eosBackstageSoundcheckScorecard.ts
+    eos.glorian/spec-ref: SPEC-299
+    eos.glorian/receipt-path: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
+    eos.glorian/pillar-map: docs/backstage/scorecard-pillar-map.json
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/portal-must-not-rescore: "true"
+  tags:
+    - soundcheck
+    - scorecard
+    - fleet
+  links:
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
+      title: Soundcheck Receipt (JSON)
+      icon: catalog
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/scorecard-pillar-map.json
+      title: Pillar → Scorecard Map
+      icon: docs
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/openspec/specs/SPEC-299-BACKSTAGE-SOUNDCHECK-SCORECARD.md
+      title: SPEC-299
+      icon: docs
+spec:
+  type: scorecard
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh
+  dependsOn:
+    - component:default/eos-system-control-plane
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: eos-soundcheck-pillar-law-v
+  title: Soundcheck Pillar — Law V Conformance
+  description: Weighted pillar LAW_V_CONFORMANCE (0.25). Backstage check id eos.soundcheck.law-v-conformance.
+  annotations:
+    eos.glorian/pillar-id: LAW_V_CONFORMANCE
+    eos.glorian/pillar-weight: "0.25"
+    eos.glorian/backstage-check-id: eos.soundcheck.law-v-conformance
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+  tags:
+    - soundcheck
+    - pillar
+spec:
+  type: scorecard-pillar
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh
+  dependencyOf:
+    - resource:default/eos-soundcheck-fleet-matrix
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: eos-soundcheck-pillar-test-coverage
+  title: Soundcheck Pillar — Test Coverage
+  description: Weighted pillar TEST_COVERAGE (0.25). Backstage check id eos.soundcheck.test-coverage.
+  annotations:
+    eos.glorian/pillar-id: TEST_COVERAGE
+    eos.glorian/pillar-weight: "0.25"
+    eos.glorian/backstage-check-id: eos.soundcheck.test-coverage
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+  tags:
+    - soundcheck
+    - pillar
+spec:
+  type: scorecard-pillar
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh
+  dependencyOf:
+    - resource:default/eos-soundcheck-fleet-matrix
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: eos-soundcheck-pillar-security
+  title: Soundcheck Pillar — Security Posture
+  description: Weighted pillar SECURITY_POSTURE (0.20). Backstage check id eos.soundcheck.security-posture.
+  annotations:
+    eos.glorian/pillar-id: SECURITY_POSTURE
+    eos.glorian/pillar-weight: "0.2"
+    eos.glorian/backstage-check-id: eos.soundcheck.security-posture
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+  tags:
+    - soundcheck
+    - pillar
+spec:
+  type: scorecard-pillar
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh
+  dependencyOf:
+    - resource:default/eos-soundcheck-fleet-matrix
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: eos-soundcheck-pillar-spec-drift
+  title: Soundcheck Pillar — Specification Drift
+  description: Weighted pillar SPECIFICATION_DRIFT (0.15). Backstage check id eos.soundcheck.specification-drift.
+  annotations:
+    eos.glorian/pillar-id: SPECIFICATION_DRIFT
+    eos.glorian/pillar-weight: "0.15"
+    eos.glorian/backstage-check-id: eos.soundcheck.specification-drift
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+  tags:
+    - soundcheck
+    - pillar
+spec:
+  type: scorecard-pillar
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh
+  dependencyOf:
+    - resource:default/eos-soundcheck-fleet-matrix
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: eos-soundcheck-pillar-dora
+  title: Soundcheck Pillar — DORA Velocity
+  description: Weighted pillar DORA_VELOCITY (0.15). Backstage check id eos.soundcheck.dora-velocity.
+  annotations:
+    eos.glorian/pillar-id: DORA_VELOCITY
+    eos.glorian/pillar-weight: "0.15"
+    eos.glorian/backstage-check-id: eos.soundcheck.dora-velocity
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+  tags:
+    - soundcheck
+    - pillar
+spec:
+  type: scorecard-pillar
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh
+  dependencyOf:
+    - resource:default/eos-soundcheck-fleet-matrix

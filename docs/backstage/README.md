@@ -1,28 +1,44 @@
 # Backstage integration (control plane)
 
-**Status:** P0 catalog + TechDocs stub only.  
+**Status:** P0 catalog + TechDocs stub landed; **P1 Soundcheck scorecard entities + fleet mapping** in this folder.  
 **Portal host:** TBD — separate package/repo (for example `apps/backstage/` or sibling `glorian-backstage`). **Never** as a runtime dependency inside `src/core/` (Law V / `dependencies: {}`).
 
 ## What lives here
 
-| Artifact                                            | Role                                                                             |
-| --------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Root [`catalog-info.yaml`](../../catalog-info.yaml) | Backstage `Component` `eos-system-control-plane` + `System` `eos-sovereign-mesh` |
-| Root [`mkdocs.yml`](../../mkdocs.yml)               | Satisfies `backstage.io/techdocs-ref: dir:.`                                     |
-| This folder                                         | Operator notes for discovery until a portal host exists                          |
+| Artifact | Role |
+| --- | --- |
+| Root [`catalog-info.yaml`](../../catalog-info.yaml) | Backstage `Component` `eos-system-control-plane` + `System` `eos-sovereign-mesh` + Locations |
+| Root [`mkdocs.yml`](../../mkdocs.yml) | Satisfies `backstage.io/techdocs-ref: dir:.` |
+| [`app-config.snippet.yaml`](./app-config.snippet.yaml) | Portal snippet: **only** root `catalog-info.yaml` (Locations cascade) |
+| [`fleet-components.yaml`](./fleet-components.yaml) | Component stubs — `metadata.name` = `docs/projects/registry.json` id |
+| [`soundcheck-scorecards.yaml`](./soundcheck-scorecards.yaml) | Resource entities for fleet matrix + five Soundcheck pillars |
+| [`scorecard-pillar-map.json`](./scorecard-pillar-map.json) | Pillar → Backstage check ids; receipt shape; posture rules |
+| This folder | Operator notes until a portal host exists |
+
+## Catalog ingestion (single path)
+
+1. Portal `catalog.locations` registers **one** URL: root [`catalog-info.yaml`](../../catalog-info.yaml).
+2. Nested `Location` entities inside that file use `spec.type: url` + absolute GitHub blob targets for fleet stubs, Soundcheck Resources, and templates.
+3. **Do not** also list `fleet-components.yaml` / `soundcheck-scorecards.yaml` as sibling `catalog.locations` — that double-registers entities.
+
+## Soundcheck presentation rules (P1)
+
+1. **Single writer:** `src/core/eosBackstageSoundcheckScorecard.ts` (SPEC-299). Portal **reads** `docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json` — does not rescore.
+2. **Posture honesty:** default annotation `eos.glorian/fleet-posture: CONTROL_PLANE_ONLY`. Advertise `FLEET_VERIFIED` only when fleet paths are mounted and `npm run fleet:audit` exits 0.
+3. **No LEVEL_3 inflation:** registry `LEVEL_3_PRODUCTION_AUTHORIZED` ≠ live fleet Soundcheck success.
+4. **No secrets** in catalog YAML or this snippet (Law VI).
 
 ## Ownership
 
 - `spec.owner`: `user:valentin-florez-arbelaez`
 - Tribe: not declared yet (AGENTS snapshot); Group entities land in a later ownership phase
 
-## Explicit non-goals (this stub)
+## Explicit non-goals (still deferred)
 
-- Full Backstage create-app / yarn workspaces
-- `@backstage/*` packages in root `package.json`
-- Fleet sibling `catalog-info.yaml` PRs
-- Soundcheck UI plugin / MCP bridge
-- TLC evidence or OpenSpec remediation work (orthogonal)
+- Full Backstage create-app / yarn workspaces / `@backstage/*` in root `package.json`
+- Nine sibling `catalog-info.yaml` PRs (Law IV external writes — HITL per sibling)
+- Soundcheck UI plugin runtime / MCP bridge
+- TLC evidence or unrelated OpenSpec remediation
 
 ## Plan pointer
 

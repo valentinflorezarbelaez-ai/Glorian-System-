@@ -75,6 +75,163 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
       assert.ok(mkdocs.includes("Verify:"));
       assert.ok(mkdocs.includes("Fleet:"));
     });
+
+    it("keeps Layer-0 free of @backstage runtime deps (BDD-BS-002)", () => {
+      const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
+      const runtimeDeps = pkg.dependencies ?? {};
+      assert.deepEqual(runtimeDeps, {}, "root package.json dependencies must remain {}");
+      const serialized = JSON.stringify(pkg);
+      assert.equal(
+        serialized.includes("@backstage/"),
+        false,
+        "@backstage packages must stay outside root package.json",
+      );
+      assert.equal(
+        fs.existsSync(path.join(process.cwd(), "src", "core", "node_modules")),
+        false,
+        "src/core must not carry node_modules",
+      );
+    });
+
+    it("maps Soundcheck receipt + fleet registry to Backstage entities (BDD-BS-003)", () => {
+      const registry = JSON.parse(
+        fs.readFileSync(path.join(process.cwd(), "docs", "projects", "registry.json"), "utf8"),
+      );
+      const receipt = JSON.parse(
+        fs.readFileSync(
+          path.join(process.cwd(), "docs", "evidence", "SOUNDCHECK_SCORECARD_RECEIPT.json"),
+          "utf8",
+        ),
+      );
+      const pillarMap = JSON.parse(
+        fs.readFileSync(path.join(process.cwd(), "docs", "backstage", "scorecard-pillar-map.json"), "utf8"),
+      );
+      const fleetYaml = fs.readFileSync(
+        path.join(process.cwd(), "docs", "backstage", "fleet-components.yaml"),
+        "utf8",
+      );
+      const scorecardsYaml = fs.readFileSync(
+        path.join(process.cwd(), "docs", "backstage", "soundcheck-scorecards.yaml"),
+        "utf8",
+      );
+      const appConfig = fs.readFileSync(
+        path.join(process.cwd(), "docs", "backstage", "app-config.snippet.yaml"),
+        "utf8",
+      );
+      const catalog = fs.readFileSync(path.join(process.cwd(), "catalog-info.yaml"), "utf8");
+
+      const requiredReceiptFields = [
+        "timestampIso",
+        "specRef",
+        "totalRepositoriesScored",
+        "averageFleetScore",
+        "platinumTiersCount",
+        "goldTiersCount",
+        "silverTiersCount",
+        "bronzeTiersCount",
+        "sha256Signature",
+      ];
+      for (const field of requiredReceiptFields) {
+        assert.ok(field in receipt, `Soundcheck receipt missing ${field}`);
+      }
+      assert.equal(receipt.specRef, "SPEC-299");
+      assert.equal(pillarMap.portalMustNotRescore, true);
+      assert.equal(pillarMap.fleetPosture.defaultWhenPathsUnset, "CONTROL_PLANE_ONLY");
+      assert.equal(pillarMap.receiptPath, "docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json");
+      assert.equal(pillarMap.pillars.length, 5);
+
+      const pillarIds = pillarMap.pillars.map((p) => p.pillarId).sort();
+      assert.deepEqual(pillarIds, [
+        "DORA_VELOCITY",
+        "LAW_V_CONFORMANCE",
+        "SECURITY_POSTURE",
+        "SPECIFICATION_DRIFT",
+        "TEST_COVERAGE",
+      ]);
+
+      assert.ok(Array.isArray(registry.projects) && registry.projects.length >= 9);
+      for (const project of registry.projects) {
+        assert.ok(
+          fleetYaml.includes(`name: ${project.id}`),
+          `fleet-components.yaml must declare Component metadata.name=${project.id}`,
+        );
+        assert.ok(
+          fleetYaml.includes("system: eos-sovereign-mesh"),
+          "fleet Components must belong to eos-sovereign-mesh",
+        );
+        assert.ok(
+          fleetYaml.includes("eos.glorian/fleet-posture: CONTROL_PLANE_ONLY"),
+          "fleet stubs must advertise CONTROL_PLANE_ONLY by default",
+        );
+      }
+
+      assert.ok(scorecardsYaml.includes("kind: Resource"));
+      assert.ok(scorecardsYaml.includes("name: eos-soundcheck-fleet-matrix"));
+      assert.ok(scorecardsYaml.includes("eos.glorian/fleet-posture: CONTROL_PLANE_ONLY"));
+      assert.equal(
+        /eos\.glorian\/fleet-posture:\s*FLEET_VERIFIED/.test(scorecardsYaml),
+        false,
+        "scorecard YAML must not set fleet-posture annotation to FLEET_VERIFIED without dogfood",
+      );
+      assert.equal(
+        /eos\.glorian\/fleet-posture:\s*FLEET_VERIFIED/.test(fleetYaml),
+        false,
+        "fleet stubs must not set fleet-posture annotation to FLEET_VERIFIED without dogfood",
+      );
+      assert.ok(appConfig.includes("catalog:"));
+      assert.ok(
+        appConfig.includes(
+          "https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/catalog-info.yaml",
+        ),
+        "app-config snippet must register only the root catalog-info.yaml",
+      );
+      assert.equal(
+        /locations:[\s\S]*target:\s*https:\/\/github\.com\/valentinflorezarbelaez-ai\/Glorian-System-\/blob\/main\/docs\/backstage\/fleet-components\.yaml/.test(
+          appConfig,
+        ),
+        false,
+        "app-config must not duplicate fleet-components as a sibling catalog location",
+      );
+      assert.equal(
+        /locations:[\s\S]*target:\s*https:\/\/github\.com\/valentinflorezarbelaez-ai\/Glorian-System-\/blob\/main\/docs\/backstage\/soundcheck-scorecards\.yaml/.test(
+          appConfig,
+        ),
+        false,
+        "app-config must not duplicate soundcheck-scorecards as a sibling catalog location",
+      );
+      assert.ok(appConfig.includes("CONTROL_PLANE_ONLY"));
+      assert.equal(
+        /(?:api[_-]?key|bearer\s+[a-z0-9]|-----BEGIN)/i.test(`${fleetYaml}\n${scorecardsYaml}\n${appConfig}`),
+        false,
+        "Backstage P1 YAML must not contain plaintext secrets",
+      );
+
+      assert.ok(catalog.includes("name: glorian-fleet-component-stubs"));
+      assert.ok(catalog.includes("name: glorian-soundcheck-scorecards"));
+      assert.ok(catalog.includes("eos.glorian/fleet-posture: CONTROL_PLANE_ONLY"));
+      assert.ok(
+        catalog.includes(
+          "https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/fleet-components.yaml",
+        ),
+        "fleet Location must use absolute GitHub URL target (resolves under URL parent)",
+      );
+      assert.ok(
+        catalog.includes(
+          "https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/soundcheck-scorecards.yaml",
+        ),
+        "soundcheck Location must use absolute GitHub URL target (resolves under URL parent)",
+      );
+      assert.equal(
+        catalog.includes("./docs/backstage/fleet-components.yaml"),
+        false,
+        "relative file Location targets must not remain for fleet stubs",
+      );
+      assert.equal(
+        catalog.includes("./docs/backstage/soundcheck-scorecards.yaml"),
+        false,
+        "relative file Location targets must not remain for scorecards",
+      );
+    });
   });
 
   describe("Suite 2: SpaceX Dragon / Starship Flight Computer 60Hz TMR (BDD-034)", () => {
