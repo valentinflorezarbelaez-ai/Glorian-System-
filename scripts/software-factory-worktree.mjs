@@ -6,7 +6,7 @@
  * Usage:
  *   node scripts/software-factory-worktree.mjs list
  *   node scripts/software-factory-worktree.mjs create --branch <name> [--base main] [--path <slug>]
- *   node scripts/software-factory-worktree.mjs remove --branch <name> [--force]
+ *   node scripts/software-factory-worktree.mjs remove --branch <name> [--path <slug>] [--force]
  */
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
@@ -27,7 +27,7 @@ function usage() {
   process.stdout.write(`Usage:
   node scripts/software-factory-worktree.mjs list
   node scripts/software-factory-worktree.mjs create --branch <name> [--base main] [--path <slug>]
-  node scripts/software-factory-worktree.mjs remove --branch <name> [--force]
+  node scripts/software-factory-worktree.mjs remove --branch <name> [--path <slug>] [--force]
 `);
 }
 
@@ -230,9 +230,30 @@ function cmdCreate(args) {
   );
 }
 
+function resolveRemoveTarget(branch, customSlug) {
+  // Explicit --path always wins (must match create --path).
+  if (customSlug) {
+    return resolveWorktreePath(branch, customSlug);
+  }
+
+  const defaultTarget = resolveWorktreePath(branch);
+  if (fs.existsSync(defaultTarget)) {
+    return defaultTarget;
+  }
+
+  // Fallback: locate the registered worktree for this branch (covers create --path).
+  const porcelain = git(["worktree", "list", "--porcelain"]);
+  const entries = parsePorcelainWorktrees(porcelain);
+  const match = entries.find((e) => e.branch === branch);
+  if (!match) {
+    fail(`Worktree path does not exist: ${defaultTarget}`);
+  }
+  return assertUnderWorktrees(match.path);
+}
+
 function cmdRemove(args) {
   const branch = sanitizeBranch(args.branch);
-  const target = resolveWorktreePath(branch, args.path);
+  const target = resolveRemoveTarget(branch, args.path);
 
   if (!fs.existsSync(target)) {
     fail(`Worktree path does not exist: ${target}`);

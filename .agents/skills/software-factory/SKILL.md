@@ -56,6 +56,9 @@ node scripts/software-factory-worktree.mjs create \
 
 ```bash
 node scripts/software-factory-worktree.mjs remove --branch cursor/<slug>
+# If create used --path <slug>, pass the same --path on remove (or omit
+# --path and let remove look up the registered worktree for the branch).
+node scripts/software-factory-worktree.mjs remove --branch cursor/<slug> --path <slug>
 ```
 
 Fail-closed: the helper refuses paths outside `.worktrees/`, empty/unsafe
@@ -162,6 +165,7 @@ remove worktree
 node scripts/software-factory-worktree.mjs list
 node scripts/software-factory-worktree.mjs create --branch cursor/example --base main
 node scripts/software-factory-worktree.mjs remove --branch cursor/example
+node scripts/software-factory-worktree.mjs remove --branch cursor/example --path custom-slug
 
 # Evidence
 npm run verify:strict

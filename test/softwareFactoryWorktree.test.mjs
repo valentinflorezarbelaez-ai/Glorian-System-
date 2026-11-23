@@ -63,16 +63,23 @@ describe("software-factory-worktree", () => {
   });
 
   it("fail-closed when remove path is not a registered worktree for branch", () => {
+    // Use --path so the orphan dir matches resolveWorktreePath (not branchSlug mismatch).
     const orphanDir = path.join(root, ".worktrees", "sf-orphan-unregistered");
     fs.mkdirSync(orphanDir, { recursive: true });
     try {
       let failed = false;
       try {
-        run(["remove", "--branch", "cursor/sf-orphan-unregistered"]);
+        run([
+          "remove",
+          "--branch",
+          "cursor/sf-orphan-unregistered",
+          "--path",
+          "sf-orphan-unregistered",
+        ]);
       } catch (err) {
         failed = true;
         assert.equal(err.status, 1);
-        assert.match(String(err.stderr || ""), /No registered git worktree|FAIL/);
+        assert.match(String(err.stderr || ""), /No registered git worktree/);
       }
       assert.equal(failed, true);
     } finally {
