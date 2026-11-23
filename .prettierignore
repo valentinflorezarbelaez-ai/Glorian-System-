@@ -17,3 +17,8 @@ data/
 # generator owns their byte layout, so the formatter must not fight it.
 AGENTS.md
 CLAUDE.md
+
+# Vendored Google Chrome Modern Web Guidance skill + guides
+# (`npx modern-web-guidance@latest install` → skills-lock.json pin).
+# Keep upstream byte layout; do not reformat on install/refresh.
+.agents/skills/modern-web-guidance/**

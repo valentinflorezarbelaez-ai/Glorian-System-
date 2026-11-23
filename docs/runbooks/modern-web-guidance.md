@@ -24,6 +24,8 @@ npm run mwg:gate
 
 Install target: `./.agents/skills/modern-web-guidance` (universal Cursor / Amp / Cline / Codex skill layout). Review skill changes before committing.
 
+**Prettier:** the skill tree is listed in `.prettierignore` (`.agents/skills/modern-web-guidance/**`) so `format:check` does not rewrite vendored upstream guides. Do not remove that ignore to “fix” formatting — refresh via the install command instead.
+
 ## Agent workflow (mandatory for UI / client JS)
 
 1. **Search** (2–5 word action-oriented English query for one UI/platform capability):
