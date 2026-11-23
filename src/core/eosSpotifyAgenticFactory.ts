@@ -333,7 +333,12 @@ export class EosSpotifyAgenticFactory {
       const content = fs.readFileSync(this.resolveProjectFile(catalogPath, safeTargetDir), "utf8");
       serviceName = content.match(/metadata:\s*\n\s*name:\s*([^\s\n]+)/)?.[1] || serviceName;
       title = content.match(/title:\s*([^\n]+)/)?.[1]?.trim() || title;
-      squad = content.match(/owner:\s*([^\n]+)/)?.[1]?.trim() || squad;
+      // Prefer explicit ownership annotations (P2 Groups) over the first bare owner: match.
+      squad =
+        content.match(/eos\.glorian\/owner-squad:\s*([^\n]+)/)?.[1]?.trim() ||
+        content.match(/owner:\s*([^\n]+)/)?.[1]?.trim() ||
+        squad;
+      tribe = content.match(/eos\.glorian\/owner-tribe:\s*([^\n]+)/)?.[1]?.trim() || tribe;
       lifecycle = content.match(/lifecycle:\s*([^\n]+)/)?.[1]?.trim() || lifecycle;
       for (const m of content.matchAll(/- ([a-z0-9-]+)/g)) {
         if (!tags.includes(m[1])) tags.push(m[1]);

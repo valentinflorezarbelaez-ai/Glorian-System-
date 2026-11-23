@@ -19,6 +19,8 @@ metadata:
     eos.glorian/receipt-path: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
     eos.glorian/pillar-map: docs/backstage/scorecard-pillar-map.json
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
     eos.glorian/portal-must-not-rescore: "true"
   tags:
     - soundcheck
@@ -36,7 +38,7 @@ metadata:
       icon: docs
 spec:
   type: scorecard
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
   dependsOn:
     - component:default/eos-system-control-plane
@@ -53,12 +55,14 @@ metadata:
     eos.glorian/pillar-weight: "0.25"
     eos.glorian/backstage-check-id: eos.soundcheck.law-v-conformance
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
     - soundcheck
     - pillar
 spec:
   type: scorecard-pillar
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
   dependencyOf:
     - resource:default/eos-soundcheck-fleet-matrix
@@ -75,12 +79,14 @@ metadata:
     eos.glorian/pillar-weight: "0.25"
     eos.glorian/backstage-check-id: eos.soundcheck.test-coverage
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
     - soundcheck
     - pillar
 spec:
   type: scorecard-pillar
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
   dependencyOf:
     - resource:default/eos-soundcheck-fleet-matrix
@@ -97,12 +103,14 @@ metadata:
     eos.glorian/pillar-weight: "0.2"
     eos.glorian/backstage-check-id: eos.soundcheck.security-posture
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
     - soundcheck
     - pillar
 spec:
   type: scorecard-pillar
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
   dependencyOf:
     - resource:default/eos-soundcheck-fleet-matrix
@@ -119,12 +127,14 @@ metadata:
     eos.glorian/pillar-weight: "0.15"
     eos.glorian/backstage-check-id: eos.soundcheck.specification-drift
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
     - soundcheck
     - pillar
 spec:
   type: scorecard-pillar
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
   dependencyOf:
     - resource:default/eos-soundcheck-fleet-matrix
@@ -141,12 +151,14 @@ metadata:
     eos.glorian/pillar-weight: "0.15"
     eos.glorian/backstage-check-id: eos.soundcheck.dora-velocity
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
     - soundcheck
     - pillar
 spec:
   type: scorecard-pillar
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
   dependencyOf:
     - resource:default/eos-soundcheck-fleet-matrix

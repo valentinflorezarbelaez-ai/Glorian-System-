@@ -1,0 +1,29 @@
+{
+  "id": "GOAL-BACKSTAGE-P2-OWNERSHIP",
+  "title": "TechDocs nav + ownership Groups declared without Layer-0 deps",
+  "metric": {
+    "name": "backstage_p2_contract_pass",
+    "unit": "count"
+  },
+  "threshold": {
+    "op": "eq",
+    "value": 0
+  },
+  "check": {
+    "command": "node --test --test-name-pattern=\"BDD-BS-004|BDD-BS-001|BDD-BS-002\" test/eosTitans.test.mjs",
+    "timeoutMs": 60000
+  },
+  "caps": {
+    "maxAttempts": 3,
+    "maxCostUsd": 5
+  },
+  "protectedPaths": [
+    "test/**",
+    ".github/workflows/**",
+    "package.json",
+    "scripts/validate-gdd-goal.mjs",
+    "src/core/eosGoalDrivenDevelopmentContract.ts",
+    "src/core/eosGoalDrivenDevelopmentContract.types.ts"
+  ],
+  "doneWhen": "check exits 0 and backstage_p2_contract_pass eq 0"
+}
