@@ -4,7 +4,7 @@
  *
  * Big Tech standard (Google "repo-doctor", Meta "health-check"): a single
  * command that produces a comprehensive health report of the repository,
- * running every validation script and reporting pass/fail for each.
+ * running independent validation scripts in a bounded parallel worker pool.
  *
  * Usage:
  *   node scripts/repo-health.mjs
@@ -13,7 +13,8 @@
  * Zero external dependencies (Law V).
  */
 
-import { execFileSync } from "node:child_process";
+import { execFile } from "node:child_process";
+import os from "node:os";
 
 const root = process.cwd();
 const npmBin = process.platform === "win32" ? "npm.cmd" : "npm";
@@ -40,33 +41,65 @@ const CHECKS = [
   { name: "MCP Smoke Test", cmd: [process.execPath, ["scripts/mcp-smoke-test.mjs"]], blocking: true },
 ];
 
+function runSingleCheck(check) {
+  return new Promise((resolve) => {
+    const started = Date.now();
+    const isNpm = check.cmd[0] === npmBin;
+    execFile(
+      check.cmd[0],
+      check.cmd[1],
+      {
+        cwd: root,
+        timeout: 120_000,
+        maxBuffer: 10 * 1024 * 1024,
+        shell: isNpm && process.platform === "win32",
+      },
+      (err, _stdout, stderr) => {
+        const durationMs = Date.now() - started;
+        if (!err) {
+          resolve({ ...check, status: "PASS", durationMs, errorSnippet: "" });
+          return;
+        }
+        const raw = String(stderr || err.message || "").trim();
+        const snippet = raw.split("\n").slice(0, 3).join("\n").slice(0, 120);
+        resolve({ ...check, status: "FAIL", durationMs, errorSnippet: snippet });
+      },
+    );
+  });
+}
+
+async function runChecksInParallel(checks, maxWorkers) {
+  const results = new Array(checks.length);
+  let cursor = 0;
+
+  async function worker() {
+    while (cursor < checks.length) {
+      const idx = cursor++;
+      results[idx] = await runSingleCheck(checks[idx]);
+    }
+  }
+
+  const workers = Math.max(1, Math.min(maxWorkers, checks.length));
+  await Promise.all(Array.from({ length: workers }, () => worker()));
+  return results;
+}
+
 const startTime = Date.now();
-const results = [];
+const hwCores = os.availableParallelism ? os.availableParallelism() : 4;
+const poolSize = Math.max(2, Math.min(hwCores, 6));
 
 console.log("======================================================================");
-console.log(" EOS REPOSITORY HEALTH CHECK");
+console.log(` EOS REPOSITORY HEALTH CHECK (parallel pool=${poolSize})`);
 console.log(` ${new Date().toISOString()}`);
 console.log("======================================================================\n");
 
-for (const check of CHECKS) {
-  process.stdout.write(`  ${check.name}...`);
-  try {
-    const isNpm = check.cmd[0] === npmBin;
-    execFileSync(check.cmd[0], check.cmd[1], {
-      cwd: root,
-      stdio: ["ignore", "pipe", "pipe"],
-      timeout: 120_000,
-      shell: isNpm && process.platform === "win32",
-    });
-    results.push({ ...check, status: "PASS" });
-    console.log(" ✅ PASS");
-  } catch (err) {
-    results.push({ ...check, status: "FAIL" });
-    console.log(" ❌ FAIL");
-    if (err.stderr) {
-      const msg = err.stderr.toString().trim().split("\n").slice(0, 3).join("\n");
-      if (msg) console.log(`         ${msg.slice(0, 120)}`);
-    }
+const results = await runChecksInParallel(CHECKS, poolSize);
+
+for (const res of results) {
+  const icon = res.status === "PASS" ? "✅ PASS" : "❌ FAIL";
+  console.log(`  ${res.name}... ${icon} (${res.durationMs}ms)`);
+  if (res.status === "FAIL" && res.errorSnippet) {
+    console.log(`         ${res.errorSnippet}`);
   }
 }
 

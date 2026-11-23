@@ -17,6 +17,7 @@ import {
   CounterexampleTranslator,
   auditFormalProver,
 } from "../src/core/eosZ3WasmProver.ts";
+import { resolveEvidencePath } from "../src/core/eosEvidencePaths.ts";
 
 describe("SPEC-292 & SPEC-342: Live TLC Model Checking & Verification Honesty", () => {
   const hasTlcJar = fs.existsSync(path.join(process.cwd(), "tools", "tla2tools.jar"));
@@ -136,7 +137,7 @@ describe("SPEC-292 & SPEC-342: Live TLC Model Checking & Verification Honesty", 
     assert.ok(receipt.inductiveInvariantsVerified >= 1);
     assert.equal(receipt.sha256Signature.length, 64);
 
-    const receiptPath = path.join(process.cwd(), "docs", "evidence", "Z3_PROVER_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("Z3_PROVER_RECEIPT.json", process.cwd());
     assert.ok(fs.existsSync(receiptPath));
     const saved = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.equal(saved.sha256Signature, receipt.sha256Signature);

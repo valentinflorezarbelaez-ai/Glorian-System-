@@ -9,6 +9,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { existsSync, readFileSync } from "node:fs";
 import { BackstageSoundcheckEngine } from "../src/core/eosBackstageSoundcheckScorecard.ts";
+import { resolveEvidencePath } from "../src/core/eosEvidencePaths.ts";
 
 test("BDD-1569: Five-Pillar Real-Time Fleet Scoring", () => {
   const engine = new BackstageSoundcheckEngine();
@@ -154,29 +155,32 @@ test("BDD-1572: Architectural Drift Detection and Remediation Generation", () =>
 });
 
 test("BDD-1573: Fleet-Wide Matrix Aggregation", () => {
+  const expectedFleetCount = JSON.parse(readFileSync("docs/projects/registry.json", "utf8")).projects.length;
   const engine = new BackstageSoundcheckEngine();
   const matrix = engine.generateFleetMatrix();
 
-  assert.equal(matrix.totalRepositoriesScored, 10);
+  assert.equal(matrix.totalRepositoriesScored, expectedFleetCount);
   assert.ok(matrix.averageFleetScore >= 90);
   assert.equal(matrix.tierDistribution.LEVEL_4_PLATINUM, 1);
-  assert.equal(matrix.tierDistribution.LEVEL_3_GOLD, 9);
-  assert.equal(matrix.scorecards.length, 10);
+  assert.equal(matrix.tierDistribution.LEVEL_3_GOLD, expectedFleetCount - 1);
+  assert.equal(matrix.scorecards.length, expectedFleetCount);
 });
 
 test("BDD-1574: Cryptographic Soundcheck Audit Receipt Generation", async () => {
+  const expectedFleetCount = JSON.parse(readFileSync("docs/projects/registry.json", "utf8")).projects.length;
+  const receiptPath = resolveEvidencePath("SOUNDCHECK_SCORECARD_RECEIPT.json");
   const engine = new BackstageSoundcheckEngine();
   const receipt = await engine.auditFleetSoundcheckPipeline({
     writeReceipt: true,
-    receiptPath: "docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json",
+    receiptPath,
   });
 
   assert.equal(receipt.specRef, "SPEC-299");
-  assert.equal(receipt.totalRepositoriesScored, 10);
+  assert.equal(receipt.totalRepositoriesScored, expectedFleetCount);
   assert.ok(receipt.averageFleetScore >= 90);
   assert.equal(receipt.sha256Signature.length, 64);
 
-  assert.ok(existsSync("docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json"));
-  const diskReceipt = JSON.parse(readFileSync("docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json", "utf8"));
+  assert.ok(existsSync(receiptPath));
+  const diskReceipt = JSON.parse(readFileSync(receiptPath, "utf8"));
   assert.equal(diskReceipt.sha256Signature, receipt.sha256Signature);
 });

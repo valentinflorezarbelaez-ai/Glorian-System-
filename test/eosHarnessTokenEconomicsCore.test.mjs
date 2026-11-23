@@ -252,6 +252,7 @@ describe("SPEC-377: Harness Boundaries, Structured Token Economics & Determinist
       ["toolchain:token-econ:route", "--json"],
       ["toolchain:token-econ:cache", "--json"],
       ["toolchain:token-econ:minimal", "--json"],
+      ["toolchain:token-econ:diff", "--json", "--advisory"],
       ["toolchain:token-econ:audit", "--json"],
     ];
 
@@ -262,6 +263,9 @@ describe("SPEC-377: Harness Boundaries, Structured Token Economics & Determinist
       });
       const parsed = JSON.parse(stdout);
       assert.equal(parsed.command, args[0]);
+      if (args[0] === "toolchain:token-econ:diff") {
+        assert.ok(parsed.boundary && parsed.minimalism && parsed.promptCache);
+      }
     }
   });
 

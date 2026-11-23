@@ -1,13 +1,10 @@
 import assert from "node:assert/strict";
-import { execFile, execFileSync, spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { promisify } from "node:util";
-
-const execFileAsync = promisify(execFile);
+import { runStage4SyntaxAndTests } from "./lib/cicdStage4Runner.mjs";
 
 const root = process.cwd();
 const startTime = Date.now();
@@ -171,156 +168,14 @@ execFileSync(process.execPath, [path.join(root, "scripts/run-tlc.mjs")], {
 console.log("[PASS] Stage 3.6/7 — Leslie Lamport TLC formal model checker gate & receipt verification (SPEC-270).");
 
 // ---------------------------------------------------------------------------
-// STAGE 4: STATIC AST, SYNTAX & BYTECODE VERIFICATION (node --check + L0 TS)
+// STAGE 4: STATIC AST, SYNTAX & HERMETIC TEST RUNNER (node --check + L0 TS)
 // ---------------------------------------------------------------------------
-// Big Tech pattern: parallel syntax verification via worker pool.
-// Test files are excluded here — the parallel test runner validates their
-// syntax intrinsically upon module loading.
-const CONCURRENCY = Math.min(8, Math.max(4, (os.cpus()?.length ?? 8) - 2));
-const testFileSet = new Set(
-  fs
-    .readdirSync(path.join(root, "test"))
-    .filter((f) => f.endsWith(".test.mjs"))
-    .map((f) => path.join(root, "test", f)),
-);
-const jsFilesToCheck = allFiles.filter((f) => (f.endsWith(".js") || f.endsWith(".mjs")) && !testFileSet.has(f));
-const syntaxErrors = [];
-{
-  let idx = 0;
-  async function syntaxWorker() {
-    while (idx < jsFilesToCheck.length) {
-      const file = jsFilesToCheck[idx++];
-      if (!fs.existsSync(file)) continue;
-      try {
-        await execFileAsync(process.execPath, ["--check", file], { cwd: root, maxBuffer: 4 * 1024 * 1024 });
-      } catch (err) {
-        const msg = err.stderr?.toString().trim() || err.message;
-        syntaxErrors.push({ file: path.relative(root, file), message: msg });
-      }
-    }
-  }
-  await Promise.all(Array.from({ length: CONCURRENCY }, () => syntaxWorker()));
-}
-assert.equal(
-  syntaxErrors.length,
-  0,
-  `[STAGE 4 FAIL] ${syntaxErrors.length} JavaScript syntax error(s):\n` +
-    syntaxErrors.map((e) => `  ${e.file}: ${e.message}`).join("\n"),
-);
-
-const typeScriptCompiler = path.join(root, "node_modules", "typescript", "bin", "tsc");
-assert.ok(
-  fs.existsSync(typeScriptCompiler),
-  "TypeScript compiler is missing; install the locked dev toolchain with npm ci.",
-);
-execFileSync(process.execPath, [typeScriptCompiler, "--project", path.join(root, "tsconfig.typecheck.json")], {
-  cwd: root,
-  stdio: "inherit",
-});
-const tsCoreFiles = fs.readdirSync(path.join(root, "src/core")).filter((f) => f.endsWith(".ts"));
-assert.ok(tsCoreFiles.length >= 6, "Expected at least 6 Layer-0 TypeScript core modules in src/core/");
-
-// Discover test suites
-const testFiles = fs
-  .readdirSync(path.join(root, "test"))
-  .filter((file) => file.endsWith(".test.mjs"))
-  .map((file) => `test/${file}`)
-  .sort();
-assert.ok(testFiles.length > 0, "No Node test suites were found under test/.");
-
-// PTS impact-scoped selection (unchanged logic)
 const isPts = process.argv.includes("--pts");
-let filesToRun = testFiles;
-
-function collectPtsChangedFiles(repoRoot) {
-  const porcelain = execFileSync("git", ["status", "--porcelain"], { cwd: repoRoot, encoding: "utf8" });
-  const workingChanged = porcelain
-    .split("\n")
-    .filter(Boolean)
-    .map((l) => l.slice(3).trim())
-    .map((l) => (l.includes(" -> ") ? l.slice(l.indexOf(" -> ") + 4) : l))
-    .filter(Boolean);
-  if (workingChanged.length > 0) return workingChanged;
-  try {
-    const commitDiff = execFileSync("git", ["diff", "--name-only", "HEAD~2..HEAD"], {
-      cwd: repoRoot,
-      encoding: "utf8",
-    });
-    return commitDiff
-      .split("\n")
-      .map((l) => l.trim())
-      .filter(Boolean);
-  } catch {
-    return [];
-  }
-}
-
-if (isPts) {
-  try {
-    const changed = collectPtsChangedFiles(root);
-    if (changed.length > 0) {
-      const { EosDatalogVerifier } = await import("../src/core/eosDatalogVerifier.ts");
-      const verifier = new EosDatalogVerifier(root);
-      const selected = new Set([
-        "test/eosCore.test.mjs",
-        "test/eosReleaseDocConsistency.test.mjs",
-        "test/eosModuleSizeBudget.test.mjs",
-      ]);
-
-      for (const item of changed) {
-        const norm = item.replace(/\\/g, "/");
-        if (norm.startsWith("test/") && norm.endsWith(".test.mjs")) {
-          selected.add(norm);
-        } else if (norm.startsWith("src/core/") && norm.endsWith(".ts")) {
-          verifier.queryBlastRadius(norm).predictiveTestSuites.forEach((s) => selected.add(s));
-        } else if (norm.startsWith("bin/") || norm.startsWith("src/mcp/")) {
-          selected.add("test/eosEnterpriseFacade.test.mjs");
-          selected.add("test/eosMcpSchemaValidator.test.mjs");
-        }
-      }
-
-      filesToRun = testFiles.filter((f) => selected.has(f));
-      console.log(
-        `[STAGE 4 PTS] Datalog Smart Selection activated: ${filesToRun.length} of ${testFiles.length} suites selected.`,
-      );
-    }
-  } catch {
-    filesToRun = testFiles;
-  }
-}
-
-// Big Tech pattern: single parallel test-runner invocation (eliminates
-// 140 × serial process spawn; Node test runner internally parallelizes).
-const testStart = Date.now();
-// The JUnit XML report is the machine-readable feed for the Stage 4.4 telemetry
-// gates. It lives under the gitignored `.eos/` state dir, so it never dirties
-// the working tree nor perturbs the Stage 3 source-inventory digest.
-const testReportPath = path.join(root, ".eos", "test-report.xml");
-fs.mkdirSync(path.dirname(testReportPath), { recursive: true });
-console.log(
-  `[STAGE 4 RUNNER] Launching ${filesToRun.length} suites in parallel via node --test (concurrency=${CONCURRENCY})...`,
-);
-const testArgs = [
-  "--test",
-  `--test-concurrency=${CONCURRENCY}`,
-  "--test-reporter=spec",
-  "--test-reporter-destination=stdout",
-  "--test-reporter=junit",
-  `--test-reporter-destination=${testReportPath}`,
-  ...filesToRun,
-];
-const exitCode = await new Promise((resolve) => {
-  const child = spawn(process.execPath, testArgs, { cwd: root, stdio: "inherit" });
-  child.on("close", (code) => resolve(code ?? 1));
-  child.on("error", () => resolve(1));
+const { exitCode, filesToRun, testReportPath, testEnv } = await runStage4SyntaxAndTests({
+  root,
+  allFiles,
+  isPts,
 });
-if (exitCode !== 0) {
-  console.error(`[STAGE 4 FAILED] Parallel test suite exited with code ${exitCode} in ${Date.now() - testStart} ms.`);
-} else {
-  console.log(
-    `[PASS] Stage 4/7 — JavaScript syntax (${jsFilesToCheck.length} non-test modules, pool=${CONCURRENCY}), TypeScript type-check, and parallel Node test suites (${tsCoreFiles.length} core TS modules; ${testFiles.length} suites in ${Date.now() - testStart} ms).`,
-  );
-}
 
 // ---------------------------------------------------------------------------
 // STAGE 4.4: QUALITY TELEMETRY GATES — SLO ERROR-BUDGET + PERF REGRESSION
@@ -399,7 +254,7 @@ if (!process.env.SKIP_COVERAGE && !isPts) {
   ];
   const covOutput = await new Promise((resolve) => {
     let stdout = "";
-    const child = spawn(process.execPath, covArgs, { cwd: root, stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn(process.execPath, covArgs, { cwd: root, stdio: ["ignore", "pipe", "pipe"], env: testEnv });
     child.stdout.on("data", (c) => {
       stdout += c;
     });

@@ -4,6 +4,8 @@
  * Structured Token Economics & Deterministic Decision Router Engine.
  */
 
+import { execFileSync } from "node:child_process";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { EosHarnessTokenEconomicsCore } from "../../src/core/eosHarnessTokenEconomicsCore.ts";
@@ -179,6 +181,114 @@ async function cmdMinimal(commandContext) {
   console.log(`Compact IPC : ${ipc.compactFrame} (${ipc.savingsPercent}% saved)`);
 }
 
+function parseDiffNumstat(rawNumstat) {
+  const changedFiles = [];
+  let totalLinesAdded = 0;
+  let totalLinesDeleted = 0;
+  for (const line of rawNumstat.split(/\r?\n/)) {
+    if (!line.trim()) continue;
+    const parts = line.split("\t");
+    if (parts.length < 3) continue;
+    const added = parts[0] === "-" ? 0 : Number(parts[0]) || 0;
+    const deleted = parts[1] === "-" ? 0 : Number(parts[1]) || 0;
+    changedFiles.push(parts[2].trim());
+    totalLinesAdded += added;
+    totalLinesDeleted += deleted;
+  }
+  return { changedFiles, totalLinesAdded, totalLinesDeleted };
+}
+
+function loadBoundaryContract() {
+  const customPath = path.join(ROOT, ".eos", "harness-boundary.json");
+  if (fs.existsSync(customPath)) {
+    try {
+      return JSON.parse(fs.readFileSync(customPath, "utf8"));
+    } catch {
+      // Fallback to default contract on parse failure
+    }
+  }
+  return {
+    missionId: "LIVE-GIT-DIFF-SPEC-377",
+    allowedPaths: [],
+    forbiddenPaths: ["package-lock.json", ".env", ".env.*"],
+    maxFilesTouched: 25,
+    maxDiffLines: 1500,
+    allowTestMutation: true,
+  };
+}
+
+function collectGitDiffSnapshot(preferUnstaged) {
+  const cachedStat = preferUnstaged
+    ? ""
+    : execFileSync("git", ["diff", "--cached", "--numstat"], { cwd: ROOT, encoding: "utf8" });
+  const useStaged = Boolean(cachedStat.trim()) && !preferUnstaged;
+  const numstatArgs = useStaged ? ["diff", "--cached", "--numstat"] : ["diff", "--numstat"];
+  const patchArgs = useStaged
+    ? ["diff", "--cached", "-U0", "--", "*.ts", "*.mjs", "*.js"]
+    : ["diff", "-U0", "--", "*.ts", "*.mjs", "*.js"];
+  const rawNumstat = useStaged ? cachedStat : execFileSync("git", numstatArgs, { cwd: ROOT, encoding: "utf8" });
+  const rawPatch = execFileSync("git", patchArgs, { cwd: ROOT, encoding: "utf8" });
+  const addedCodeLines = rawPatch
+    .split(/\r?\n/)
+    .filter((l) => l.startsWith("+") && !l.startsWith("+++"))
+    .map((l) => l.slice(1))
+    .join("\n");
+  return {
+    diffMode: useStaged ? "staged" : "working-tree",
+    changeSet: parseDiffNumstat(rawNumstat),
+    addedCodeLines,
+  };
+}
+
+async function cmdDiff(commandContext) {
+  const args = commandContext.args || [];
+  const isJson = args.includes("--json");
+  const isStrict = args.includes("--strict") && !args.includes("--advisory");
+  const preferUnstaged = args.includes("--unstaged");
+
+  const contract = loadBoundaryContract();
+  const snapshot = collectGitDiffSnapshot(preferUnstaged);
+  const boundary = EosHarnessTokenEconomicsCore.evaluateBoundary(contract, snapshot.changeSet);
+  const minimalism = EosHarnessTokenEconomicsCore.evaluateMinimalDiff({
+    patchId: `LIVE-DIFF-${snapshot.diffMode.toUpperCase()}`,
+    sourceSnippet: snapshot.addedCodeLines,
+    linesAdded: snapshot.changeSet.totalLinesAdded,
+    requirementsCount: Math.max(1, snapshot.changeSet.changedFiles.length),
+  });
+  const staticPaths = ["AGENTS.md", ".agents/skills/eos-sdd-pipeline/SKILL.md"]
+    .map((rel) => path.join(ROOT, rel))
+    .filter((p) => fs.existsSync(p));
+  const staticSegments = staticPaths.map((p) => fs.readFileSync(p, "utf8"));
+  const promptCache = EosHarnessTokenEconomicsCore.auditCacheAndEconomics({
+    sessionId: "LIVE-STATIC-PREFIX-AUDIT",
+    staticPrefixSegments: staticSegments.length > 0 ? staticSegments : ["empty"],
+    dynamicSuffixSegments: [snapshot.addedCodeLines.slice(0, 2000)],
+    turns: 10,
+    contextWindowTokens: 128000,
+  });
+
+  if (isStrict && boundary.verdict === "HARD_BLOCK") {
+    process.exitCode = 1;
+  }
+
+  const payload = {
+    command: "toolchain:token-econ:diff",
+    diffMode: snapshot.diffMode,
+    boundary,
+    minimalism,
+    promptCache,
+  };
+  if (isJson) {
+    console.log(JSON.stringify(payload, null, 2));
+    return;
+  }
+  console.log("=== Live Git-Diff Harness & Token Economics Check (SPEC-377) ===");
+  console.log(`Diff Mode    : ${snapshot.diffMode} (${snapshot.changeSet.changedFiles.length} file(s))`);
+  console.log(`Boundary     : ${boundary.verdict} (${boundary.violations.length} violation(s))`);
+  console.log(`Minimal-Diff : ${minimalism.minimalismVerdict} (${minimalism.findings.length} finding(s))`);
+  console.log(`Cache Prefix : ${promptCache.cachePrefixStable ? "STABLE" : "BREAKER_DETECTED"}`);
+}
+
 async function cmdAudit(commandContext) {
   const args = commandContext.args || [];
   const isJson = args.includes("--json");
@@ -202,6 +312,7 @@ const HANDLERS = {
   "toolchain:token-econ:route": cmdRoute,
   "toolchain:token-econ:cache": cmdCache,
   "toolchain:token-econ:minimal": cmdMinimal,
+  "toolchain:token-econ:diff": cmdDiff,
   "toolchain:token-econ:audit": cmdAudit,
 };
 

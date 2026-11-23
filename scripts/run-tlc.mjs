@@ -11,6 +11,7 @@
  */
 
 import { spawn, spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -22,6 +23,7 @@ const ROOT = path.resolve(__dirname, "..");
 const FORMAL_DIR = path.join(ROOT, "docs/formal");
 const EVIDENCE_DIR = path.join(ROOT, "docs/evidence");
 const DEFAULT_RECEIPT_PATH = path.join(EVIDENCE_DIR, "TLC_RECEIPT.json");
+const TLC_CACHE_PATH = path.join(ROOT, ".eos", "tlc-cache.json");
 
 /** Windows parallel suites can lock evidence receipts (EBUSY / UNKNOWN / errno -4094). */
 const TRANSIENT_LOCK_CODES = new Set(["UNKNOWN", "EBUSY", "EPERM", "EACCES"]);
@@ -121,6 +123,7 @@ export const CONFIGURED_SPECS = [
   "TriTemporalPropFirmEngine",
   "UniversalAssetPayoutOptimizer",
   "QuantCockpitWalkForwardEngine",
+  "HarnessTokenEconomics",
 ];
 
 /**
@@ -405,22 +408,94 @@ function buildDeferredResult(specName, pair) {
   };
 }
 
-function evaluateSingleModel(specName, canExecuteLive, jarPath, formalDir, options) {
-  const pair = validateSpecConfigPair(specName, formalDir);
-  if (!canExecuteLive) {
-    return buildDeferredResult(specName, pair);
+function computeModelCacheKey(specName, formalDir, jarPath) {
+  const tlaPath = path.join(formalDir, `${specName}.tla`);
+  const cfgPath = path.join(formalDir, `${specName}.cfg`);
+  const tlaContent = fs.readFileSync(tlaPath, "utf8");
+  const cfgContent = fs.readFileSync(cfgPath, "utf8");
+  let jarStamp = "none";
+  try {
+    const st = fs.statSync(jarPath);
+    jarStamp = `${st.size}:${Math.floor(st.mtimeMs)}`;
+  } catch {
+    jarStamp = "missing";
   }
-  const execResult = runTlcExecutable(specName, jarPath, formalDir, options);
-  return formatTlcOutcome(specName, execResult);
+  return createHash("sha256").update(`${specName}\0${tlaContent}\0${cfgContent}\0${jarStamp}`).digest("hex");
 }
 
-async function evaluateSingleModelAsync(specName, canExecuteLive, jarPath, formalDir, options) {
+function loadTlcCache(cachePath) {
+  try {
+    if (!fs.existsSync(cachePath)) return { version: 1, entries: {} };
+    const parsed = JSON.parse(fs.readFileSync(cachePath, "utf8"));
+    if (parsed && parsed.version === 1 && parsed.entries && typeof parsed.entries === "object") {
+      return parsed;
+    }
+  } catch {
+    // Fallback to empty cache on corruption
+  }
+  return { version: 1, entries: {} };
+}
+
+function saveTlcCache(cachePath, cache) {
+  try {
+    fs.mkdirSync(path.dirname(cachePath), { recursive: true });
+    writeFileWithRetry(cachePath, JSON.stringify(cache, null, 2));
+  } catch {
+    // Non-fatal cache write failure
+  }
+}
+
+function resolveDefaultTlcReceiptPath(explicitPath) {
+  if (explicitPath) return explicitPath;
+  const customDir = process.env.EOS_EVIDENCE_DIR;
+  if (customDir && customDir.trim()) {
+    return path.join(path.resolve(customDir.trim()), "TLC_RECEIPT.json");
+  }
+  return DEFAULT_RECEIPT_PATH;
+}
+
+function tryCacheLookup(specName, formalDir, jarPath, cacheContext) {
+  if (!cacheContext) return { cacheKey: null, hit: null };
+  const cacheKey = computeModelCacheKey(specName, formalDir, jarPath);
+  const entry = cacheContext.entries[cacheKey];
+  if (entry && entry.passed === true && entry.verifiedLive === true) {
+    return { cacheKey, hit: { passed: true, result: { ...entry, cached: true } } };
+  }
+  return { cacheKey, hit: null };
+}
+
+function evaluateSingleModel(specName, canExecuteLive, jarPath, formalDir, options, cacheContext) {
   const pair = validateSpecConfigPair(specName, formalDir);
   if (!canExecuteLive) {
     return buildDeferredResult(specName, pair);
   }
+  const { cacheKey, hit } = tryCacheLookup(specName, formalDir, jarPath, cacheContext);
+  if (hit) return hit;
+
+  const execResult = runTlcExecutable(specName, jarPath, formalDir, options);
+  const outcome = formatTlcOutcome(specName, execResult);
+  if (cacheContext && cacheKey && outcome.passed && outcome.result.verifiedLive) {
+    cacheContext.entries[cacheKey] = outcome.result;
+    cacheContext.dirty = true;
+  }
+  return outcome;
+}
+
+async function evaluateSingleModelAsync(specName, canExecuteLive, jarPath, formalDir, options, cacheContext) {
+  const pair = validateSpecConfigPair(specName, formalDir);
+  if (!canExecuteLive) {
+    return buildDeferredResult(specName, pair);
+  }
+  const { cacheKey, hit } = tryCacheLookup(specName, formalDir, jarPath, cacheContext);
+  if (hit) return hit;
+
   const execResult = await runTlcExecutableAsync(specName, jarPath, formalDir, options);
-  return formatTlcOutcome(specName, execResult);
+  const outcome = formatTlcOutcome(specName, execResult);
+  if (cacheContext && cacheKey && outcome.passed && outcome.result.verifiedLive) {
+    cacheContext.entries[cacheKey] = outcome.result;
+    cacheContext.dirty = true;
+  }
+  return outcome;
 }
 
 function resolveTlcStatus(canExecuteLive, allPassed) {
@@ -440,6 +515,7 @@ function assembleTlcReceipt({
 }) {
   const status = resolveTlcStatus(canExecuteLive, allPassed);
   const executionMode = canExecuteLive ? "LIVE_LOCAL_TLC" : "DEFERRED_TO_CI_SETUP_JAVA";
+  const cacheHits = modelResults.filter((m) => m?.cached === true).length;
   const receipt = {
     timestampIso: new Date().toISOString(),
     specRef: "SPEC-270",
@@ -450,6 +526,7 @@ function assembleTlcReceipt({
     hasJavaRuntime: hasJava,
     tlaJarPath: jarPath || "NOT_DETECTED_LOCALLY",
     totalConfiguredSpecs: specs.length,
+    cacheHits,
     models: modelResults,
   };
   if (writeReceipt) {
@@ -459,26 +536,41 @@ function assembleTlcReceipt({
   return receipt;
 }
 
+function buildCacheContext(canExecuteLive, formalDir, options) {
+  const noCache = Boolean(options.noCache) || process.env.EOS_TLC_NO_CACHE === "1";
+  if (!canExecuteLive || noCache || path.resolve(formalDir) !== path.resolve(FORMAL_DIR)) {
+    return null;
+  }
+  const cachePath = options.cachePath || TLC_CACHE_PATH;
+  const cache = loadTlcCache(cachePath);
+  return { cachePath, entries: cache.entries, dirty: false };
+}
+
 /**
  * Executes formal TLC verification across all configured specs synchronously.
  */
 export function runTlcVerification(options = {}) {
   const formalDir = options.formalDir || FORMAL_DIR;
-  const receiptPath = options.receiptPath || DEFAULT_RECEIPT_PATH;
+  const receiptPath = resolveDefaultTlcReceiptPath(options.receiptPath);
   const specs = options.specs || CONFIGURED_SPECS;
   const forceMock = options.forceMock || false;
 
   const hasJava = !forceMock && detectJavaRuntime();
   const jarPath = !forceMock ? resolveTlaJarPath(options.jarPath) : null;
   const canExecuteLive = hasJava && Boolean(jarPath);
+  const cacheContext = buildCacheContext(canExecuteLive, formalDir, options);
 
   const modelResults = [];
   let allPassed = true;
 
   for (const specName of specs) {
-    const outcome = evaluateSingleModel(specName, canExecuteLive, jarPath, formalDir, options);
+    const outcome = evaluateSingleModel(specName, canExecuteLive, jarPath, formalDir, options, cacheContext);
     if (!outcome.passed) allPassed = false;
     modelResults.push(outcome.result);
+  }
+
+  if (cacheContext?.dirty) {
+    saveTlcCache(cacheContext.cachePath, { version: 1, entries: cacheContext.entries });
   }
 
   return assembleTlcReceipt({
@@ -498,13 +590,14 @@ export function runTlcVerification(options = {}) {
  */
 export async function runTlcVerificationParallel(options = {}) {
   const formalDir = options.formalDir || FORMAL_DIR;
-  const receiptPath = options.receiptPath || DEFAULT_RECEIPT_PATH;
+  const receiptPath = resolveDefaultTlcReceiptPath(options.receiptPath);
   const specs = options.specs || CONFIGURED_SPECS;
   const forceMock = options.forceMock || false;
 
   const hasJava = !forceMock && detectJavaRuntime();
   const jarPath = !forceMock ? resolveTlaJarPath(options.jarPath) : null;
   const canExecuteLive = hasJava && Boolean(jarPath);
+  const cacheContext = buildCacheContext(canExecuteLive, formalDir, options);
 
   const hwConcurrency = os.availableParallelism ? os.availableParallelism() : 4;
   const concurrency = Math.max(1, Math.min(options.concurrency || hwConcurrency, 6));
@@ -515,7 +608,14 @@ export async function runTlcVerificationParallel(options = {}) {
   async function worker() {
     while (nextIdx < specs.length) {
       const idx = nextIdx++;
-      const outcome = await evaluateSingleModelAsync(specs[idx], canExecuteLive, jarPath, formalDir, options);
+      const outcome = await evaluateSingleModelAsync(
+        specs[idx],
+        canExecuteLive,
+        jarPath,
+        formalDir,
+        options,
+        cacheContext,
+      );
       if (!outcome.passed) allPassed = false;
       modelResults[idx] = outcome.result;
     }
@@ -523,6 +623,10 @@ export async function runTlcVerificationParallel(options = {}) {
 
   const workerCount = canExecuteLive ? Math.min(concurrency, specs.length) : 1;
   await Promise.all(Array.from({ length: workerCount }, () => worker()));
+
+  if (cacheContext?.dirty) {
+    saveTlcCache(cacheContext.cachePath, { version: 1, entries: cacheContext.entries });
+  }
 
   return assembleTlcReceipt({
     specs,
@@ -542,6 +646,7 @@ export async function runTlcVerificationParallel(options = {}) {
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename)) {
   const isNegative = process.argv.includes("--negative-calibration");
   const forceMock = process.argv.includes("--force-mock");
+  const noCache = process.argv.includes("--no-cache");
 
   if (isNegative) {
     console.log("=== TLC Negative Calibration Check ===");
@@ -562,14 +667,15 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename
   }
 
   const startMs = Date.now();
-  const receipt = await runTlcVerificationParallel({ forceMock });
+  const receipt = await runTlcVerificationParallel({ forceMock, noCache });
   const elapsedMs = Date.now() - startMs;
   console.log(`=== Leslie Lamport TLC Formal Verification Gate (SPEC-270) ===`);
   console.log(`Execution Mode : ${receipt.executionMode}`);
   console.log(`Status         : ${receipt.status}`);
   console.log(`Configured Specs: ${receipt.totalConfiguredSpecs}`);
+  console.log(`Cache Hits     : ${receipt.cacheHits} / ${receipt.totalConfiguredSpecs}`);
   console.log(`Elapsed Time   : ${elapsedMs} ms`);
-  console.log(`Evidence Receipt: ${DEFAULT_RECEIPT_PATH}`);
+  console.log(`Evidence Receipt: ${resolveDefaultTlcReceiptPath()}`);
 
   if (receipt.status === "DEFERRED_TO_CI_SETUP_JAVA") {
     console.log("ℹ️ Java 21 / tla2tools.jar will execute TLC exhaustive state exploration in CI.");

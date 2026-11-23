@@ -114,7 +114,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format:check": "prettier --check --cache --cache-location .eos/.prettiercache .",
     "fleet:mission": "node scripts/eos-fleet-mission-control.mjs",
     "fleet:sync": "node scripts/eos-fleet-registry-sync.mjs",
     "fleet:heal": "node scripts/fleet-autonomous-heal.mjs",
