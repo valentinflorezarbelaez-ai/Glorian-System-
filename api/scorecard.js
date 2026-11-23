@@ -7,9 +7,10 @@ import { getSearchParams } from "./_safeQuery.js";
 /**
  * EOS SYSTEM — READ-ONLY SOUNDCHECK / SCORECARD RECEIPT BRIDGE (/api/scorecard)
  *
- * Serves committed EOS Soundcheck / fleet scorecard receipts for a future
- * Backstage host. Does NOT rescore (single writer remains Layer-0 Soundcheck).
- * Fail-closed Host + Origin allowlists — never Access-Control-Allow-Origin: *.
+ * Serves committed EOS Soundcheck / fleet / L0-consumer receipts for a future
+ * Backstage host. Does NOT rescore; envelope metadata (singleWriter / MCP /
+ * npmScripts) is kind-specific. Fail-closed Host + Origin allowlists —
+ * never Access-Control-Allow-Origin: *.
  *
  * Zero external npm dependencies.
  */
@@ -21,14 +22,23 @@ const RECEIPT_KINDS = Object.freeze({
   soundcheck: {
     path: "docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json",
     postureDefault: "CONTROL_PLANE_ONLY",
+    singleWriter: "src/core/eosBackstageSoundcheckScorecard.ts",
+    mcpTier0Tools: Object.freeze(["eos_fleet_soundcheck", "eos_audit_fleet"]),
+    npmScripts: Object.freeze(["fleet:scorecards", "fleet:audit"]),
   },
   "fleet-products": {
     path: "docs/evidence/FLEET_PRODUCT_SCORECARDS_RECEIPT.json",
     postureDefault: "CONTROL_PLANE_ONLY",
+    singleWriter: "scripts/eos-fleet-product-scorecards.mjs",
+    mcpTier0Tools: Object.freeze(["eos_audit_fleet"]),
+    npmScripts: Object.freeze(["fleet:scorecards"]),
   },
   "l0-consumer": {
     path: "docs/evidence/MODULE_CONSUMER_GRAPH.json",
     postureDefault: "CONTROL_PLANE_ONLY",
+    singleWriter: "scripts/verify-module-consumers.mjs",
+    mcpTier0Tools: Object.freeze([]),
+    npmScripts: Object.freeze(["boundary:check", "consumers:audit"]),
   },
 });
 
@@ -184,9 +194,9 @@ export default async function handler(req, res) {
     receiptPath: meta.path,
     receiptSha256: `sha256:${receipt.digest}`,
     receiptBytes: receipt.bytes,
-    singleWriter: "src/core/eosBackstageSoundcheckScorecard.ts",
-    mcpTier0Tools: ["eos_fleet_soundcheck", "eos_audit_fleet"],
-    npmScripts: ["fleet:scorecards", "fleet:audit"],
+    singleWriter: meta.singleWriter,
+    mcpTier0Tools: [...meta.mcpTier0Tools],
+    npmScripts: [...meta.npmScripts],
     rawGithubUrl: `https://raw.githubusercontent.com/valentinflorezarbelaez-ai/Glorian-System-/main/${meta.path}`,
     receipt: receipt.json,
   };

@@ -485,6 +485,9 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
       assert.equal(ok.body.portalMustNotRescore, true);
       assert.equal(ok.body.kind, "soundcheck");
       assert.equal(ok.body.receiptPath, "docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json");
+      assert.equal(ok.body.singleWriter, "src/core/eosBackstageSoundcheckScorecard.ts");
+      assert.deepEqual(ok.body.mcpTier0Tools, ["eos_fleet_soundcheck", "eos_audit_fleet"]);
+      assert.deepEqual(ok.body.npmScripts, ["fleet:scorecards", "fleet:audit"]);
       assert.ok(ok.body.receipt?.sha256Signature || ok.body.receipt?.averageFleetScore !== undefined);
       assert.ok(String(ok.body.receiptSha256 || "").startsWith("sha256:"));
       assert.equal(ok.headers["access-control-allow-origin"], undefined);
@@ -496,6 +499,32 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
       });
       assert.equal(defaultKind.statusCode, 200);
       assert.equal(defaultKind.body.kind, "soundcheck");
+      assert.equal(defaultKind.body.singleWriter, "src/core/eosBackstageSoundcheckScorecard.ts");
+
+      const fleetProducts = await invoke({
+        method: "GET",
+        headers: { host: "glorian-system.vercel.app" },
+        url: "/api/scorecard?kind=fleet-products",
+      });
+      assert.equal(fleetProducts.statusCode, 200);
+      assert.equal(fleetProducts.body.kind, "fleet-products");
+      assert.equal(fleetProducts.body.receiptPath, "docs/evidence/FLEET_PRODUCT_SCORECARDS_RECEIPT.json");
+      assert.equal(fleetProducts.body.singleWriter, "scripts/eos-fleet-product-scorecards.mjs");
+      assert.deepEqual(fleetProducts.body.mcpTier0Tools, ["eos_audit_fleet"]);
+      assert.deepEqual(fleetProducts.body.npmScripts, ["fleet:scorecards"]);
+      assert.notEqual(fleetProducts.body.singleWriter, "src/core/eosBackstageSoundcheckScorecard.ts");
+
+      const l0Consumer = await invoke({
+        method: "GET",
+        headers: { host: "glorian-system.vercel.app" },
+        url: "/api/scorecard?kind=l0-consumer",
+      });
+      assert.equal(l0Consumer.statusCode, 200);
+      assert.equal(l0Consumer.body.kind, "l0-consumer");
+      assert.equal(l0Consumer.body.receiptPath, "docs/evidence/MODULE_CONSUMER_GRAPH.json");
+      assert.equal(l0Consumer.body.singleWriter, "scripts/verify-module-consumers.mjs");
+      assert.deepEqual(l0Consumer.body.mcpTier0Tools, []);
+      assert.deepEqual(l0Consumer.body.npmScripts, ["boundary:check", "consumers:audit"]);
 
       const duplicateKind = await invoke({
         method: "GET",

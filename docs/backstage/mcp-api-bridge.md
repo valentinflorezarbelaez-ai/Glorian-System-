@@ -17,11 +17,13 @@ A future Backstage host needs a fail-closed way to show Soundcheck / fleet score
 
 ## Receipt paths (single writer)
 
-| Kind | Path | Writer / gate |
-| --- | --- | --- |
-| `soundcheck` | [`docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json`](../evidence/SOUNDCHECK_SCORECARD_RECEIPT.json) | `src/core/eosBackstageSoundcheckScorecard.ts` (SPEC-299) |
-| `fleet-products` | [`docs/evidence/FLEET_PRODUCT_SCORECARDS_RECEIPT.json`](../evidence/FLEET_PRODUCT_SCORECARDS_RECEIPT.json) | `npm run fleet:scorecards` |
-| `l0-consumer` | [`docs/evidence/MODULE_CONSUMER_GRAPH.json`](../evidence/MODULE_CONSUMER_GRAPH.json) | `boundary:check` / `consumers:audit` (SPEC-270) |
+| Kind | Path | Writer / gate | Envelope metadata |
+| --- | --- | --- | --- |
+| `soundcheck` | [`docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json`](../evidence/SOUNDCHECK_SCORECARD_RECEIPT.json) | `src/core/eosBackstageSoundcheckScorecard.ts` (SPEC-299) | MCP `eos_fleet_soundcheck` + `eos_audit_fleet`; scripts `fleet:scorecards` / `fleet:audit` |
+| `fleet-products` | [`docs/evidence/FLEET_PRODUCT_SCORECARDS_RECEIPT.json`](../evidence/FLEET_PRODUCT_SCORECARDS_RECEIPT.json) | `scripts/eos-fleet-product-scorecards.mjs` | MCP `eos_audit_fleet`; script `fleet:scorecards` |
+| `l0-consumer` | [`docs/evidence/MODULE_CONSUMER_GRAPH.json`](../evidence/MODULE_CONSUMER_GRAPH.json) | `scripts/verify-module-consumers.mjs` (SPEC-270) | No MCP tools; scripts `boundary:check` / `consumers:audit` |
+
+`/api/scorecard` success envelopes set `singleWriter` / `mcpTier0Tools` / `npmScripts` **per `kind`** — never Soundcheck defaults for other kinds.
 
 Pillar map: [`scorecard-pillar-map.json`](./scorecard-pillar-map.json).  
 Posture default: `CONTROL_PLANE_ONLY` until fleet paths are mounted and `npm run fleet:audit` exits 0.
