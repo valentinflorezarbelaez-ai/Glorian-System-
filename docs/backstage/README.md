@@ -1,6 +1,6 @@
 # Backstage integration (control plane)
 
-**Status:** P0 catalog + TechDocs stub · P1 Soundcheck scorecard entities · P2 TechDocs curated nav + ownership Groups · P2 Layer-0 boundary/consumer scorecards · **P2 Software Template golden path (BS-PR-T)**.  
+**Status:** P0 catalog + TechDocs stub · P1 Soundcheck scorecard entities · P2 TechDocs curated nav + ownership Groups · P2 Layer-0 boundary/consumer scorecards · P2 Software Template golden path · **optional MCP/API scorecard bridge**.  
 **Portal host:** TBD — separate package/repo (for example `apps/backstage/` or sibling `glorian-backstage`). **Never** as a runtime dependency inside `src/core/` (Law V / `dependencies: {}`).
 
 ## What lives here
@@ -16,6 +16,7 @@
 | [`ownership.yaml`](./ownership.yaml)                                 | User + squad/tribe Group entities (P2)                                                       |
 | [`scorecard-pillar-map.json`](./scorecard-pillar-map.json)           | Soundcheck pillar → Backstage check ids; receipt shape; posture rules                        |
 | [`l0-boundary-scorecard-map.json`](./l0-boundary-scorecard-map.json) | L0 boundary/consumer → check ids; fail-closed rules; receipt shape                           |
+| [`mcp-api-bridge.md`](./mcp-api-bridge.md)                           | MCP Tier-0 + `/api/scorecard` consumption guide (Host/Origin fail-closed)                    |
 | [`templates/backstage/`](../../templates/backstage/)                 | Software Template + skeleton (catalog-info, AGENTS, verify:strict, CI) — **outside Layer-0** |
 | This folder                                                          | Operator notes until a portal host exists                                                    |
 
@@ -66,11 +67,21 @@ TechDocs page: [`docs/ownership.md`](../ownership.md). Catalog SoT: [`ownership.
 3. **Catalog:** [`l0-boundary-scorecards.yaml`](./l0-boundary-scorecards.yaml) via Location `glorian-l0-boundary-scorecards` (URL target only; not duplicated in app-config).
 4. **Ownership blast radius:** Core maintainers / control-plane squad own L0 boundary failures (see remediation plan P2-1).
 
+## MCP / API scorecard bridge (optional)
+
+Portal plugins should **read** EOS receipts — not rescore. Prefer:
+
+1. Catalog annotations + raw GitHub receipt URLs
+2. Tier-0 MCP tools `eos_fleet_soundcheck` / `eos_audit_fleet` (stdio; do not expand public HTTP MCP solely for this)
+3. Fail-closed `GET /api/scorecard?kind=soundcheck|fleet-products|l0-consumer` (Host/Origin allowlists; never `Access-Control-Allow-Origin: *`)
+
+Operator guide: [`mcp-api-bridge.md`](./mcp-api-bridge.md). Production: `https://glorian-system.vercel.app/api/scorecard`.
+
 ## Explicit non-goals (still deferred)
 
 - Full Backstage create-app / yarn workspaces / `@backstage/*` in root `package.json`
 - Nine sibling `catalog-info.yaml` PRs (Law IV external writes — HITL per sibling)
-- Soundcheck UI plugin runtime / MCP bridge
+- Soundcheck UI plugin runtime (host still TBD)
 - Weekly orphan report job / export-surface vanity ceilings (PR-J phase 2)
 - TLC evidence or unrelated OpenSpec / GDD / MCP Tier-0 remediations
 

@@ -28,10 +28,13 @@ catalog:
         - allow: [Component, System, Location, API, Resource, Template, Group, User]
 
 # Optional Scorecards plugin config — values MUST be read from EOS receipts, not recomputed.
+# Prefer raw GitHub URLs or fail-closed GET /api/scorecard (Host/Origin allowlists).
+# MCP Tier-0 (stdio): eos_fleet_soundcheck, eos_audit_fleet — see docs/backstage/mcp-api-bridge.md
 # scorecards:
 #   eosSoundcheck:
 #     receiptUrl: https://raw.githubusercontent.com/valentinflorezarbelaez-ai/Glorian-System-/main/docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
 #     pillarMapUrl: https://raw.githubusercontent.com/valentinflorezarbelaez-ai/Glorian-System-/main/docs/backstage/scorecard-pillar-map.json
+#     scorecardApiUrl: https://glorian-system.vercel.app/api/scorecard?kind=soundcheck
 #     fleetPostureDefault: CONTROL_PLANE_ONLY
 
 # Future sibling catalog-info.yaml URLs (enable after per-repo BS-PR-5..N land):
