@@ -3,7 +3,10 @@ kind: Template
 metadata:
   name: glorian-sovereign-component-template
   title: Glorian Sovereign Tier-0 Component (Golden Path)
-  description: Scaffolds a zero-runtime-dependency sovereign component compliant with the EOS Constitution, Spotify Soundcheck A+, and Big-Tech fail-closed architecture.
+  description: >-
+    Golden Path satellite scaffold — catalog-info.yaml, AGENTS.md stub,
+    npm run verify:strict (bin/verify.mjs), and .github/workflows/ci.yml.
+    Zero runtime npm deps; outside Glorian Layer-0 control plane.
   tags:
     - sovereign
     - layer-0

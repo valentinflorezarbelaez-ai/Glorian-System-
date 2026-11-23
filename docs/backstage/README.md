@@ -1,6 +1,6 @@
 # Backstage integration (control plane)
 
-**Status:** P0 catalog + TechDocs stub · P1 Soundcheck scorecard entities · P2 TechDocs curated nav + ownership Groups · **P2 Layer-0 boundary/consumer scorecards (PR-I)**.  
+**Status:** P0 catalog + TechDocs stub · P1 Soundcheck scorecard entities · P2 TechDocs curated nav + ownership Groups · P2 Layer-0 boundary/consumer scorecards · **P2 Software Template golden path (BS-PR-T)**.  
 **Portal host:** TBD — separate package/repo (for example `apps/backstage/` or sibling `glorian-backstage`). **Never** as a runtime dependency inside `src/core/` (Law V / `dependencies: {}`).
 
 ## What lives here
@@ -16,7 +16,24 @@
 | [`ownership.yaml`](./ownership.yaml)                                 | User + squad/tribe Group entities (P2)                                                       |
 | [`scorecard-pillar-map.json`](./scorecard-pillar-map.json)           | Soundcheck pillar → Backstage check ids; receipt shape; posture rules                        |
 | [`l0-boundary-scorecard-map.json`](./l0-boundary-scorecard-map.json) | L0 boundary/consumer → check ids; fail-closed rules; receipt shape                           |
+| [`templates/backstage/`](../../templates/backstage/)                 | Software Template + skeleton (catalog-info, AGENTS, verify:strict, CI) — **outside Layer-0** |
 | This folder                                                          | Operator notes until a portal host exists                                                    |
+
+## Software Templates (golden path)
+
+Registered via Location `glorian-sovereign-templates` → [`templates/backstage/sovereign-component-template.yaml`](../../templates/backstage/sovereign-component-template.yaml).
+
+Scaffolds a satellite with:
+
+| Artifact | Purpose |
+| --- | --- |
+| `catalog-info.yaml` | Component under `eos-sovereign-mesh` (or selected system) |
+| `AGENTS.md` | Agent stub (owner / system / gate) |
+| `bin/verify.mjs` + `npm run verify:strict` | Fail-closed empty `dependencies` + `node --test` |
+| `.github/workflows/ci.yml` | Runs `verify:strict` on PR/push |
+| TechDocs stubs | `mkdocs.yaml` + `docs/` |
+
+Portal host must load the Template entity; this control-plane repo only **publishes** the YAML/skeleton (no `@backstage/*` in root deps).
 
 ## Catalog ingestion (single path)
 
