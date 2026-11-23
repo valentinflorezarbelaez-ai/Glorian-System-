@@ -94,11 +94,14 @@ describe("SPEC-304: Single Executable Applications (SEA) Automated Binary Distri
     assert.strictEqual(result.valid, false, "Must reject tampered payload");
     assert.ok(result.error?.includes("TAMPERED_BINARY_DETECTED"), "Error must cite TAMPERED_BINARY_DETECTED");
 
-    // Tamper signature
+    // Tamper signature deterministically (never a no-op when byte 0 is already 0x00)
+    const sigBytes = Buffer.from(signature.signatureHex, "hex");
+    sigBytes[0] ^= 0xff;
     const corruptedSig = {
       ...signature,
-      signatureHex: signature.signatureHex.replace(/^../, "00"),
+      signatureHex: sigBytes.toString("hex"),
     };
+    assert.notStrictEqual(corruptedSig.signatureHex, signature.signatureHex, "Corrupted signature must differ");
     const sigResult = EosSingleExecutableDistributionGovernor.verifyBinaryArtifact(
       payload,
       corruptedSig,
