@@ -1,5 +1,7 @@
 # SPEC-346: Autonomous Multi-Agent Swarm Orchestrator with Byzantine Fault Tolerance
 
+**Status**: `APPROVED`
+
 ## 0. Intent
 
 Monolithic single-agent workflows are brittle against hallucinations, context degradation, and adversarial prompt poisoning. This specification formalizes `EosAgenticSwarmBftCore`, an autonomous multi-agent swarm orchestrator that coordinates heterogeneous agent roles (`ARCHITECT`, `CODER`, `SECURITY_AUDITOR`, `VERIFIER`, `ORCHESTRATOR`) and guarantees architectural safety via a mathematically proven $3f + 1$ Byzantine Fault Tolerant (PBFT) consensus protocol.

@@ -1,5 +1,7 @@
 # SPEC-339: Agentic Harness Engineering, First-Pass PR Yield & Token Rework Telemetry Engine
 
+**Status**: `APPROVED`
+
 ## 1. Functional Requirements (EARS Syntax)
 
 - **FR-1 (Error / Unwanted Condition)**: SI una tarea o solicitud carece de requisitos EARS suficientes ($\ge 1$), escenarios BDD ($\ge 1$), ADRs ($\ge 1$), o presenta una puntuación de ambigüedad $> 0.15$ (o puntaje compuesto de preparación $< 80$), ENTONCES EL SISTEMA bloquea la ejecución de forma fail-closed con el código `HARNESS_SPEC_INCOMPLETE` antes de iniciar etapas de generación o validación.

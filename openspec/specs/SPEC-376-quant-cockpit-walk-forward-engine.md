@@ -1,6 +1,6 @@
 # SPEC-376: Autonomous Quant Cockpit, Second-59.8 Trigger & Walk-Forward Calibrator Engine
 
-**Status:** APPROVED  
+**Status**: `APPROVED`
 **Version:** 1.0.0  
 **Phase:** 8 (Layer-0 Pure Financial Architecture)  
 **TLA+ Model:** Model 119 (`docs/formal/QuantCockpitWalkForwardEngine.tla`)  

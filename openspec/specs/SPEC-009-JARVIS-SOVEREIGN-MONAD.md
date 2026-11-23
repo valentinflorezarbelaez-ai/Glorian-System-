@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: JARVIS SOVEREIGN MONAD (SPEC-009)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs Triple-Modular Redundancy (TMR) consensus, semantic intent interpretation, autonomous goal dispatching, and Web Speech voice interaction.

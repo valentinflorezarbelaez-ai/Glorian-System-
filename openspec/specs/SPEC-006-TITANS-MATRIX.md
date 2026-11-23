@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: SOVEREIGN TITANS MATRIX (SPEC-006)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Synthesizes apex Big Tech architectures: Spotify Xirp, SpaceX 60Hz TMR, NVIDIA Tensor SIMD, Google Borg Reconciler, and xAI Colossus Fabric.

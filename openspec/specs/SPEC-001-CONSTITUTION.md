@@ -1,5 +1,7 @@
 # OPENPEC BASE SPECIFICATION: CONSTITUTIONAL GOVERNANCE (SPEC-001)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope & Authority
 
 Governs all engineering agents, automated pipelines, and human developers operating within the EOS System ecosystem.

@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: TURBO ENGINE & SEMANTIC CODE GRAPH (SPEC-007)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs content-addressed verification caching, microsecond telemetry, directed AST code graphs, downstream blast radius, and predictive test selection (PTS).

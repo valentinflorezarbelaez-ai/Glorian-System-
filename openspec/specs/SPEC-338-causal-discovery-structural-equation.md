@@ -1,5 +1,7 @@
 # SPEC-338: Autonomous Causal Discovery & Structural Equation Modeling Engine (SCM)
 
+**Status**: `APPROVED`
+
 ## 1. Functional Requirements (EARS Syntax)
 
 - **FR-1 (Error / Unwanted Condition)**: SI se intenta registrar una arista dirigida $u \to v$ que introduce un ciclo dirigido en el grafo causal, ENTONCES EL SISTEMA rechaza la operación de inmediato con el código `SCM_CYCLE_DETECTED`, preservando el invariante de aciclicidad (DAG).

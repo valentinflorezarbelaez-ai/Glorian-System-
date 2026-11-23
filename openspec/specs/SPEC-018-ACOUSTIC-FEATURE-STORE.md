@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: REAL-TIME ACOUSTIC FEATURE STORE (SPEC-018)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs the real-time sliding-window feature aggregation, user taste profile centroid tracking with exponential half-life decay, and online/offline point-in-time correctness modeled after Spotify Scio and Feast.

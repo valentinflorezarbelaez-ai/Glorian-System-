@@ -1,5 +1,7 @@
 # BASE SPECIFICATION: VERIFIABLE API RESULTS (SPEC-137)
 
+**Status**: `APPROVED`  
+
 ## 1. Scope
 
 Governs client-controlled input and reported evaluation, simulation, registry, and health state at the public serverless API boundary and in browser panels.

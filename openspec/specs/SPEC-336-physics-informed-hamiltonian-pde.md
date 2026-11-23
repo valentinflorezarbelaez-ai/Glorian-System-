@@ -1,5 +1,7 @@
 # SPEC-336: Autonomous Physics-Informed Neural Network (PINN) & Symplectic Hamiltonian PDE Integrator
 
+**Status**: `APPROVED`
+
 ## 1. Functional Requirements (EARS Syntax)
 
 - **FR-1 (Event-Driven)**: CUANDO se integra un sistema hamiltoniano separable $H(q, p) = T(p) + V(q)$ mediante el integrador simpléctico de Störmer-Verlet (orden 2) o Yoshida (orden 4), EL SISTEMA preserva el volumen de espacio de fases ($\det J = 1$) y mantiene la deriva de energía $|\Delta H|$ acotada sin crecimiento secular a largo plazo.

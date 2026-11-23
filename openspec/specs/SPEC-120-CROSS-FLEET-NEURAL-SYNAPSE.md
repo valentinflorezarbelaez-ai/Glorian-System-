@@ -4,7 +4,7 @@
 
 - **Specification ID**: `SPEC-120`
 - **Standard**: IEEE 830 / ISO 29148 / Spotify Fleetshift & Backstage Synapse Model
-- **Status**: `PROPOSED`
+- **Status**: `APPROVED`
 - **Layer**: Layer 0 (Core Fleet Knowledge & Cross-Repository Synchronization)
 - **Runtime Dependencies**: `0` (`dependencies: {}`)
 

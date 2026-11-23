@@ -1,5 +1,7 @@
 # SPEC-111: Distributed Adaptive Hedged Requests & Deadline Propagation Mesh
 
+**Status**: `APPROVED`  
+
 ## 1. Overview & Objective
 
 This specification establishes the architectural standard for tail latency mitigation across the EOS microservice and fleet network. Implementing the Google Research _"The Tail at Scale"_ doctrine (Jeff Dean & Luiz André Barroso), this mesh provides speculative hedged request dispatching, distributed deadline budget propagation, and token-bucket storm suppression with 100% Layer 0 purity.

@@ -1,5 +1,7 @@
 # SPEC-334: Deterministic Discrete-Event Simulation Hypervisor & Time-Travel Fault Injection Engine
 
+**Status**: `APPROVED`
+
 ## 1. Functional Requirements (EARS Syntax)
 
 - **FR-1 (Event-Driven)**: CUANDO se programa un nuevo evento discreto en el hipervisor de simulación, EL SISTEMA encola el evento en una cola de prioridad monótona ordenada estrictamente por tiempo virtual en nanosegundos, nivel de prioridad y número de secuencia determinista.

@@ -1,5 +1,7 @@
 # SPEC-341: Metamorphic, Differential & Structural-Shrinking Blind-Spot Hunter Engine
 
+**Status**: `APPROVED`
+
 ## 1. Functional Requirements (EARS Syntax)
 
 - **FR-1 (Event-Driven)**: CUANDO se invoca `checkStructuralProperty` con un predicado y una semilla determinista, EL SISTEMA genera valores JSON estructurales arbitrarios (`generateArbitraryJsonValue`) mediante un PRNG Mulberry32 sin dependencias externas y, ante cualquier contraejemplo que viole la propiedad, ejecuta _shrinking_ estructural recursivo (`shrinkJsonValue`) reduciendo arreglos, objetos, cadenas y números hasta obtener el contraejemplo mínimo reproducible.

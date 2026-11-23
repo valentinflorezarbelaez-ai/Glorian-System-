@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: GAPLESS DJ AUTOMIX & 3-BAND CROSSFADER (SPEC-017)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs the mathematical modeling and execution of seamless, gapless DJ transitions between audio tracks using 3-band frequency crossover separation (Linkwitz-Riley 2nd order at 250 Hz and 4 kHz), phase cancellation prevention, and Camelot harmonic distance optimization.

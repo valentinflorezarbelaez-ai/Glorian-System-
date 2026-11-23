@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: COGNITIVE EVALUATION & SAST (SPEC-008)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Governs 5-dimensional cognitive evaluation of code and design proposals: Hallucination Risk, EARS/BDD Conformance, Hexagonal Purity, Security SAST, and AST Syntax.

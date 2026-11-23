@@ -1,5 +1,7 @@
 # SPEC-316: Vector LSM-Tree Segment Storage Engine, Sparse Block Index & Background Compaction
 
+**Status**: `APPROVED`  
+
 ## 1. Requirements (IEEE 830 / ISO 29148 EARS)
 
 - **FR-1 (Event-Driven)**: CUANDO el cliente inserta o actualiza un vector cuantizado con clave $K$, EL SISTEMA DEBE registrar la entrada en la `MemTable` en memoria ordenada lexicográficamente y retornar confirmación con latencia sub-milisegundo.

@@ -1,5 +1,7 @@
 # OPENSPEC BASE SPECIFICATION: HEXAGONAL LAYER-0 PURITY (SPEC-002)
 
+**Status**: `STABLE_AND_ACTIVE`  
+
 ## 1. Scope
 
 Defines module boundaries, dependency flow, and external dependency invariants.

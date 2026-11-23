@@ -1,5 +1,7 @@
 # SPEC-112: Distributed Adaptive Concurrency Control & Priority-Tier Load Shedding
 
+**Status**: `APPROVED`  
+
 ## 1. Overview & Objective
 
 This specification establishes the architectural standard for autonomous self-tuning concurrency control and priority-tier load shedding across the EOS fleet. Implementing the Netflix Vegas / Little's Law congestion gradient and CoDel queue delay management doctrines, this governor eliminates manual thread pool tuning, prevents bufferbloat collapses, and preserves critical business operations during severe system degradation.

@@ -2,7 +2,7 @@
 
 **Component:** `eos-system-control-plane` (Glorian System)  
 **Lifecycle Tier:** Production Ready  
-**Status:** APPROVED  
+**Status**: `APPROVED`
 **Related Specs:** `SPEC-123`, `SPEC-124`, `SPEC-250`, `SPEC-270`
 
 ---

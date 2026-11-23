@@ -4,7 +4,7 @@
 
 - **Specification ID**: `SPEC-121`
 - **Standard**: IEEE 830 / ISO 29148 / AWS-GCP-Vercel Planetary Disaster Evacuation Model
-- **Status**: `PROPOSED`
+- **Status**: `APPROVED`
 - **Layer**: Layer 0 (Core Resilience, Multi-Cloud Active-Active Failover & Traffic Evacuation)
 - **Runtime Dependencies**: `0` (`dependencies: {}`)
 

@@ -1,5 +1,7 @@
 # SPEC-332: Disaggregated Prefill & Decode Serving Engine (PD Separation, Chunked Prefill & Zero-Copy KV Transfer)
 
+**Status**: `APPROVED`  
+
 ## 1. Functional Requirements (EARS Syntax)
 
 - **FR-1 (Event-Driven)**: CUANDO se recibe una solicitud de inferencia con longitud de prompt $T > B_{\text{chunk}}$, EL SISTEMA divide el procesamiento del prompt en micro-bloques discretos de tamaño máximo $B_{\text{chunk}}$ y programa su ejecución sin bloquear las colas de generación de decodificación activa.

@@ -1,5 +1,7 @@
 # SPEC-344: Autonomous Agentic Context Engine & Multimodal Prompt Ingestion
 
+**Status**: `APPROVED`
+
 ## 0. Intent
 
 Agentic engineering workflows ingest diverse external materials (educational curriculum, architecture blueprints, Notion databases, API specifications, and conversational turn logs). Unchecked prompt ingestion leads to context bloat, prompt injection vulnerabilities, and token budget exhaustion. This specification defines an autonomous, pure Layer-0 Agentic Context Engine (`EosAgenticContextEngineCore`) that deterministically ingests, sanitizes, chunks, compresses, and retrieves agentic knowledge under strict token ceilings with mathematical recall verification.

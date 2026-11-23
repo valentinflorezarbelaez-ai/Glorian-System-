@@ -1,5 +1,7 @@
 # SPEC-348: Distributed Bitemporal CRDT Memory Synchronizer
 
+**Status**: `APPROVED`
+
 ## 0. Intent
 
 In distributed multi-agent clusters and edge swarms, concurrent memory modifications must reconcile without central locks or data loss. This specification formalizes `EosDistributedCrdtMemoryCore`, a pure Layer-0 conflict-free replicated data type (CRDT) engine providing Observed-Remove Sets, Last-Write-Wins Maps, and PN-Counters anchored in bitemporal valid/transaction time with mathematical Strong Eventual Consistency (SEC).
