@@ -105,13 +105,16 @@ describe("software-factory-worktree", () => {
     const created = JSON.parse(
       run(["create", "--branch", branch, "--base", "HEAD", "--path", customSlug]),
     );
-    assert.equal(real(created.path), real(customDir));
+    const createdReal = real(created.path);
+    assert.equal(createdReal, real(customDir));
     // Stray orphan at the default slug must not win over the registered path.
     fs.mkdirSync(strayDefault, { recursive: true });
 
     try {
+      // Capture realpaths before remove — after teardown realpathSync may fail.
+      const expectedRemovedReal = createdReal;
       const removed = JSON.parse(run(["remove", "--branch", branch, "--force"]));
-      assert.equal(real(removed.path), real(customDir));
+      assert.equal(removed.path, expectedRemovedReal);
       assert.equal(fs.existsSync(customDir), false);
       assert.equal(fs.existsSync(strayDefault), true, "stray default-slug dir should remain");
     } finally {
