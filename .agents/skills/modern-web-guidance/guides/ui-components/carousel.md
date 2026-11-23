@@ -39,28 +39,16 @@ This example uses full-width horizontal slides. Adapt the slide sizing for a pee
   </div>
 
   <div class="carousel-track" tabindex="0" role="group" aria-label="Slides">
-    <div
-      role="group"
-      aria-roledescription="slide"
-      aria-label="1 of 3"
-      data-marker-name="Go to slide 1"
-    >
+    <div role="group" aria-roledescription="slide" aria-label="1 of 3"
+        data-marker-name="Go to slide 1">
       <h3>Product one</h3>
     </div>
-    <div
-      role="group"
-      aria-roledescription="slide"
-      aria-label="2 of 3"
-      data-marker-name="Go to slide 2"
-    >
+    <div role="group" aria-roledescription="slide" aria-label="2 of 3"
+        data-marker-name="Go to slide 2">
       <h3>Product two</h3>
     </div>
-    <div
-      role="group"
-      aria-roledescription="slide"
-      aria-label="3 of 3"
-      data-marker-name="Go to slide 3"
-    >
+    <div role="group" aria-roledescription="slide" aria-label="3 of 3"
+        data-marker-name="Go to slide 3">
       <h3>Product three</h3>
     </div>
   </div>

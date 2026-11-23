@@ -189,6 +189,7 @@
     "bundle:budget": "node scripts/bundle-budget.mjs",
     "license:audit": "node scripts/license-audit.mjs",
     "boundary:check": "node scripts/import-boundary-gate.mjs",
+    "mwg:gate": "node scripts/modern-web-guidance-gate.mjs",
     "lint:staged": "node scripts/lint-staged.mjs",
     "complexity:check": "node scripts/complexity-gate.mjs",
     "snapshot:check": "node scripts/snapshot-gate.mjs",

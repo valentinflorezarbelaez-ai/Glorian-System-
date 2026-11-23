@@ -21,10 +21,16 @@ If the media is intended to autoplay, with audio playing for longer than 3 secon
 ```html
 <!-- Above-the-fold hero video: DO NOT use loading="lazy".
      Omit loading (defaults to "eager") so the poster and initial media load immediately. -->
-<video controls width="1280" height="720" poster="/images/hero-poster.jpg" preload="metadata">
-  <source src="/media/keynote.webm" type="video/webm" />
-  <source src="/media/keynote.mp4" type="video/mp4" />
-  <track src="/media/keynote-en.vtt" kind="captions" srclang="en" label="English" />
+<video
+  controls
+  width="1280"
+  height="720"
+  poster="/images/hero-poster.jpg"
+  preload="metadata"
+>
+  <source src="/media/keynote.webm" type="video/webm">
+  <source src="/media/keynote.mp4" type="video/mp4">
+  <track src="/media/keynote-en.vtt" kind="captions" srclang="en" label="English">
 </video>
 
 <!-- Below-the-fold video player:
@@ -39,9 +45,9 @@ If the media is intended to autoplay, with audio playing for longer than 3 secon
   poster="/images/tutorial-poster.jpg"
   preload="metadata"
 >
-  <source src="/media/tutorial.webm" type="video/webm" />
-  <source src="/media/tutorial.mp4" type="video/mp4" />
-  <track src="/media/tutorial-en.vtt" kind="captions" srclang="en" label="English" />
+  <source src="/media/tutorial.webm" type="video/webm">
+  <source src="/media/tutorial.mp4" type="video/mp4">
+  <track src="/media/tutorial-en.vtt" kind="captions" srclang="en" label="English">
 </video>
 
 <!-- Below-the-fold inline product loop:
@@ -58,9 +64,9 @@ If the media is intended to autoplay, with audio playing for longer than 3 secon
   height="360"
   poster="/images/feature-loop-poster.jpg"
 >
-  <source src="/media/feature-loop.webm" type="video/webm" />
-  <source src="/media/feature-loop.mp4" type="video/mp4" />
-  <track src="/media/feature-loop-en.vtt" kind="captions" srclang="en" label="English" />
+  <source src="/media/feature-loop.webm" type="video/webm">
+  <source src="/media/feature-loop.mp4" type="video/mp4">
+  <track src="/media/feature-loop-en.vtt" kind="captions" srclang="en" label="English">
 </video>
 
 <!-- Below-the-fold audio player:
@@ -85,19 +91,19 @@ If the media is intended to autoplay, with audio playing for longer than 3 secon
 
 ```javascript
 // Pause autoplaying videos when the user prefers reduced motion
-const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 function syncReducedMotion(prefersReducedMotion) {
-  for (const video of document.querySelectorAll("video[autoplay]")) {
+  for (const video of document.querySelectorAll('video[autoplay]')) {
     if (prefersReducedMotion) {
-      video.removeAttribute("autoplay");
+      video.removeAttribute('autoplay');
       video.pause();
     }
   }
 }
 
 syncReducedMotion(reducedMotionQuery.matches);
-reducedMotionQuery.addEventListener("change", (event) => {
+reducedMotionQuery.addEventListener('change', (event) => {
   syncReducedMotion(event.matches);
 });
 ```
@@ -129,7 +135,7 @@ When your Baseline target requires strictly deferring `<video poster>` downloads
 
 ```javascript
 // Feature-detect native media lazy loading on HTMLMediaElement.prototype
-const supportsLazyMedia = Object.hasOwn(HTMLMediaElement.prototype, "loading");
+const supportsLazyMedia = Object.hasOwn(HTMLMediaElement.prototype, 'loading');
 
 if (!supportsLazyMedia) {
   const lazyMediaElements = document.querySelectorAll(
@@ -160,7 +166,7 @@ if (!supportsLazyMedia) {
           delete media.dataset.src;
         }
 
-        for (const source of media.querySelectorAll("source[data-src]")) {
+        for (const source of media.querySelectorAll('source[data-src]')) {
           source.src = source.dataset.src;
           delete source.dataset.src;
         }
@@ -169,19 +175,19 @@ if (!supportsLazyMedia) {
         observer.unobserve(media);
       }
     },
-    { rootMargin: "200px 0px" },
+    { rootMargin: '200px 0px' },
   );
 
   for (const media of lazyMediaElements) {
     // Hold back network fetches in unsupported browsers until intersection
-    if (media.hasAttribute("poster")) {
-      media.dataset.poster = media.getAttribute("poster");
-      media.removeAttribute("poster");
+    if (media.hasAttribute('poster')) {
+      media.dataset.poster = media.getAttribute('poster');
+      media.removeAttribute('poster');
     }
-    if (media.hasAttribute("preload") && media.getAttribute("preload") !== "none") {
-      media.dataset.preload = media.getAttribute("preload");
+    if (media.hasAttribute('preload') && media.getAttribute('preload') !== 'none') {
+      media.dataset.preload = media.getAttribute('preload');
     }
-    media.preload = "none";
+    media.preload = 'none';
     mediaObserver.observe(media);
   }
 }

@@ -34,6 +34,11 @@ const CHECKS = [
     blocking: true,
   },
   { name: "Import Boundary (Law V)", cmd: [process.execPath, ["scripts/import-boundary-gate.mjs"]], blocking: true },
+  {
+    name: "Modern Web Guidance Skill Gate",
+    cmd: [process.execPath, ["scripts/modern-web-guidance-gate.mjs"]],
+    blocking: true,
+  },
   { name: "Code Complexity ≤15", cmd: [process.execPath, ["scripts/complexity-gate.mjs"]], blocking: true },
   { name: "License Audit", cmd: [process.execPath, ["scripts/license-audit.mjs"]], blocking: true },
   { name: "CODEOWNERS Validation", cmd: [process.execPath, ["scripts/codeowners-validate.mjs"]], blocking: true },

@@ -19,7 +19,7 @@ To support global calendar systems using Temporal:
 // 1. Helper to check calendar support
 function isCalendarSupported(calendarId) {
   try {
-    return Intl.supportedValuesOf("calendar").includes(calendarId);
+    return Intl.supportedValuesOf('calendar').includes(calendarId);
   } catch {
     // Fallback for environments where supportedValuesOf is not available
     return false;
@@ -30,8 +30,10 @@ function isCalendarSupported(calendarId) {
 const isoDate = Temporal.Now.plainDateISO();
 
 // 3. Convert to Hebrew calendar if supported
-const calendarId = "hebrew";
-const targetDate = isCalendarSupported(calendarId) ? isoDate.withCalendar(calendarId) : isoDate; // Fallback to ISO if not supported
+const calendarId = 'hebrew';
+const targetDate = isCalendarSupported(calendarId) 
+  ? isoDate.withCalendar(calendarId)
+  : isoDate; // Fallback to ISO if not supported
 
 if (targetDate.calendarId !== calendarId) {
   console.warn(`Calendar ${calendarId} not supported; falling back to ISO 8601`);
@@ -50,15 +52,15 @@ for (let m = 1; m <= targetDate.monthsInYear; m++) {
 // 6. Compare dates within the same calendar
 const today = Temporal.Now.plainDateISO().withCalendar(targetDate.calendarId);
 const comparison = Temporal.PlainDate.compare(targetDate, today);
-const relative = comparison < 0 ? "Past" : comparison > 0 ? "Future" : "Today";
+const relative = comparison < 0 ? 'Past' : comparison > 0 ? 'Future' : 'Today';
 console.log(`Timeline: ${relative}`);
 
 // 7. Format for display using toLocaleString (including era for era-based calendars like 'japanese')
 const localizedDisplay = targetDate.toLocaleString(`en-u-ca-${targetDate.calendarId}`, {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-  era: "long",
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  era: 'long'
 });
 ```
 
@@ -89,9 +91,9 @@ Note that importing `temporal-polyfill` does not automatically assign the `Tempo
 ```javascript
 // Check if Temporal is supported natively
 (async () => {
-  if (typeof Temporal === "undefined") {
+  if (typeof Temporal === 'undefined') {
     // Load the polyfill conditionally
-    const module = await import("https://esm.sh/temporal-polyfill");
+    const module = await import('https://esm.sh/temporal-polyfill');
     globalThis.Temporal = module.Temporal;
     // Extend Date.prototype if needed
     Date.prototype.toTemporalInstant = module.toTemporalInstant;

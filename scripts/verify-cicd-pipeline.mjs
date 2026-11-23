@@ -140,6 +140,15 @@ console.log(
 );
 
 // ---------------------------------------------------------------------------
+// STAGE 3.05: MODERN WEB GUIDANCE SKILL + LAYER-0 ISOLATION GATE
+// ---------------------------------------------------------------------------
+execFileSync(process.execPath, [path.join(root, "scripts/modern-web-guidance-gate.mjs")], {
+  cwd: root,
+  stdio: "inherit",
+});
+console.log("[PASS] Stage 3.05/7 — Modern Web Guidance skill presence, skills-lock pin, and Layer-0 isolation.");
+
+// ---------------------------------------------------------------------------
 // STAGE 3.1: SPEC-269 SERVERLESS FUNCTION BUDGET & HOST QUOTA GATE
 // ---------------------------------------------------------------------------
 execFileSync(process.execPath, [path.join(root, "scripts/verify-vercel-function-budget.mjs")], {

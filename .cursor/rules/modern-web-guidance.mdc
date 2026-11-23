@@ -1,0 +1,20 @@
+---
+description: Google Chrome Modern Web Guidance for HTML/CSS/client-side JS (outside Layer-0)
+globs:
+  - "**/*.html"
+  - "**/*.css"
+  - "css/**"
+  - "index.html"
+  - "**/eosStudioConsole.html"
+alwaysApply: false
+---
+
+# Modern Web Guidance (MWG)
+
+For HTML/CSS and client-side JS UI work, follow `.agents/skills/modern-web-guidance/SKILL.md` **before** inventing patterns:
+
+1. `npx -y modern-web-guidance@latest search "<2-5 word query>"`
+2. `npx -y modern-web-guidance@latest retrieve "<id>"`
+3. Apply guide fallbacks for non-Baseline Widely available features.
+
+**Layer-0 boundary:** Never add `modern-web-guidance` to `package.json` dependencies. Never import it from `src/core/`. Skill + guides live under `.agents/skills/modern-web-guidance/`; runbook at `docs/runbooks/modern-web-guidance.md`; fail-closed gate `npm run mwg:gate`.

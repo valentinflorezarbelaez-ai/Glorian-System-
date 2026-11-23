@@ -23,7 +23,9 @@ Use a wrapper to hold both the visual ring and the optional center content. The 
   <progress value="75" max="100" aria-label="Task progress" class="progress-ring"></progress>
   <!-- Optional: Content to display in the center. Hidden from assistive
        technologies because it repeats the value of the <progress> element. -->
-  <div class="progress-ring-content" aria-hidden="true">75%</div>
+  <div class="progress-ring-content" aria-hidden="true">
+    75%
+  </div>
 </div>
 ```
 
@@ -34,7 +36,6 @@ If the center content shows the value in another form, such as "3 of 5 files" or
 ### 2. Styles
 
 #### Hiding Native UI
-
 To style the `<progress>` element as a progress ring, first hide the default browser styling for progress bars.
 
 ```css
@@ -80,7 +81,10 @@ progress.progress-ring {
   transition: --value 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 50%;
 
-  background: conic-gradient(var(--fill-color) calc(var(--value) * 1%), var(--track-color) 0);
+  background: conic-gradient(
+    var(--fill-color) calc(var(--value) * 1%),
+    var(--track-color) 0
+  );
 
   /* MANDATORY: Clip the background to the border-area. */
   background-clip: border-area;
@@ -105,13 +109,14 @@ You can also use a `radial-gradient` to make rounded end caps.
 
 #### Enable smooth transitions with `@property`
 
-To animate the progress ring smoothly when the value changes, register `--value` as a numeric custom property.
+To animate the progress ring smoothly when the value changes, register `--value` as a numeric custom property. 
 
 Users with motion sensitivities may find the transition between values disorienting. Respect the `prefers-reduced-motion` media query by having a 0 second (immediate) duration by default, and setting a longer time for users with no preference.
 
+
 ```css
 @property --value {
-  syntax: "<number>";
+  syntax: '<number>';
   inherits: true;
   initial-value: 0;
 }
@@ -122,6 +127,7 @@ progress.progress-ring {
     transition-duration: 0.4s;
   }
 }
+
 ```
 
 ### 3. Progress Updates
@@ -159,12 +165,15 @@ Unsupported in: Firefox.
 For browsers that don't yet support `background-clip: border-area`, fall back to a `mask-image` to hollow out the center of the `<progress>` element.
 
 ```css
+/* Declarations inside a top-level @supports need a selector, or the parser drops them. */
 @supports not (background-clip: border-area) {
-  mask-image: radial-gradient(
-    transparent calc(50% - var(--thickness)),
-    black calc(50% - var(--thickness) + 0.5px)
-  );
-  border: 0;
+  progress.progress-ring {
+    mask-image: radial-gradient(
+      transparent calc(50% - var(--thickness)),
+      black calc(50% - var(--thickness) + 0.5px)
+    );
+    border: 0;
+  }
 }
 ```
 

@@ -26,6 +26,15 @@
 - **EARS & BDD Compliance (Laws I & II)**: Functional requirements must follow formal EARS patterns; acceptance criteria must use `ESCENARIO / DADO / CUANDO / ENTONCES / Y` and map 1:1 to `test/*.test.mjs`.
 - **Artifact Language (Law VII)**: Write all code, comments, identifiers, schemas, ADRs, and commit messages in standard professional English.
 
+### `modern-web-guidance` (HTML/CSS/client-side JS)
+
+- **Mandatory first step** for HTML/CSS and client-side JS UI work: `npx -y modern-web-guidance@latest search "<2-5 word query>"` then `retrieve "<id>"` before inventing patterns.
+- Keep queries focused on one UI/platform capability; omit framework/app nouns; split compound features into separate searches.
+- **Never** add `modern-web-guidance` to `package.json` dependencies/devDependencies; skill lives under `.agents/skills/modern-web-guidance/` + `skills-lock.json`.
+- **Layer-0 purity**: `src/core/` must not import or reference MWG; runtime `dependencies` stay empty.
+- Baseline Widely available features need no custom fallbacks; non-Baseline features must follow the guide's fallback recommendations.
+- Fail-closed: `npm run mwg:gate` (wired into `verify:strict`). Runbook: `docs/runbooks/modern-web-guidance.md`.
+
 ## Active Skills Roster
 
 | Skill                   | Role                                        | Primary Command / Trigger                         |

@@ -87,7 +87,9 @@ function runScopedTransition(scopeEl, updateDOM) {
 // 2. Reorder items by moving existing DOM nodes (required for `match-element`)
 // Scope to `listEl` since only the list order changes, keeping controls outside `listEl` interactive
 function reorderItems(listEl, orderedIds) {
-  const existing = new Map(Array.from(listEl.children, (li) => [li.dataset.id, li]));
+  const existing = new Map(
+    Array.from(listEl.children, (li) => [li.dataset.id, li]),
+  );
 
   runScopedTransition(listEl, () => {
     for (const id of orderedIds) {
@@ -102,9 +104,9 @@ function reorderItems(listEl, orderedIds) {
 function removeItem(cardEl, itemEl) {
   const hadFocus = itemEl.contains(document.activeElement);
   const nextFocusTarget =
-    itemEl.nextElementSibling?.querySelector("button") ??
-    itemEl.previousElementSibling?.querySelector("button") ??
-    cardEl.querySelector("button");
+    itemEl.nextElementSibling?.querySelector('button') ??
+    itemEl.previousElementSibling?.querySelector('button') ??
+    cardEl.querySelector('button');
 
   runScopedTransition(cardEl, () => {
     itemEl.remove();
@@ -143,7 +145,7 @@ To prevent this from happening, wrap the scope element in a separate wrapper ele
 ```
 
 ```javascript
-document.querySelector("#page").startViewTransition(() => {
+document.querySelector('#page').startViewTransition(() => {
   // do your DOM updates here...
 });
 ```
@@ -208,7 +210,7 @@ If your Baseline target does not support element-scoped view transitions, degrad
 
 ```javascript
 // Feature detect specifically on Element.prototype (not document.startViewTransition)
-const supportsScopedTransition = "startViewTransition" in Element.prototype;
+const supportsScopedTransition = 'startViewTransition' in Element.prototype;
 
 function runWithTransition(scopeEl, updateDOM) {
   if (!supportsScopedTransition) {

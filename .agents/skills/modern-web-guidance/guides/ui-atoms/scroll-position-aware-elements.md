@@ -58,6 +58,7 @@ Use the `@container` rule with the `scroll-state` function. To check if the user
 
 When hiding elements that are dependent on scroll position, account for loss of focus when the control disappears. For example, if someone is focused on a "Back to Top" control and uses `Page Up` or `Home` to scroll the container in the background without activating the control directly, the control becomes hidden (`visibility: hidden`) at the top of the scrollable region and focus would otherwise reset to the `<body>` element. Listen for `focusout` and move focus to the scrollable region when the hidden control loses focus without transferring focus to another element:
 
+
 ## Fallback strategies
 
 Browser support for Container scroll-state queries: Limited availability.
@@ -65,7 +66,6 @@ Supported by: Chrome 144 (Jan 2026) and Edge 144 (Jan 2026).
 Unsupported in: Firefox and Safari.
 
 ### Basic Fallback
-
 If `container-scroll-state-queries` is not supported, the floating element will remain invisible because of the default `visibility: hidden`. To ensure functionality, you can choose to make the element always visible in unsupported browsers.
 
 ```css
@@ -81,7 +81,7 @@ If `container-scroll-state-queries` is not supported, the floating element will 
     visibility: hidden;
     opacity: 0;
   }
-
+  
   @container scroll-state(scrollable: top) {
     .back-to-top {
       visibility: visible;
@@ -93,7 +93,6 @@ If `container-scroll-state-queries` is not supported, the floating element will 
 ```
 
 ### Advanced Fallback (Intersection Observer)
-
 If dynamic visibility is required, use an `IntersectionObserver` to toggle a class when a sentinel element at the top of the scroller goes out of view.
 
 ```html
@@ -117,23 +116,20 @@ If dynamic visibility is required, use an `IntersectionObserver` to toggle a cla
 ```
 
 ```javascript
-if (!CSS.supports("container-type", "scroll-state")) {
-  const sentinel = document.querySelector(".scroll-sentinel");
-  const scroller = document.querySelector(".scroller");
+if (!CSS.supports('container-type', 'scroll-state')) {
+  const sentinel = document.querySelector('.scroll-sentinel');
+  const scroller = document.querySelector('.scroller');
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        // If the sentinel is NOT intersecting, it means the user has scrolled down
-        if (!entry.isIntersecting) {
-          scroller.classList.add("scrolled");
-        } else {
-          scroller.classList.remove("scrolled");
-        }
-      });
-    },
-    { root: scroller },
-  );
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      // If the sentinel is NOT intersecting, it means the user has scrolled down
+      if (!entry.isIntersecting) {
+        scroller.classList.add('scrolled');
+      } else {
+        scroller.classList.remove('scrolled');
+      }
+    });
+  }, { root: scroller });
 
   observer.observe(sentinel);
 }

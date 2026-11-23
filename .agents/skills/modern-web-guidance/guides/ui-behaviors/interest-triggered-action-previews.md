@@ -2,6 +2,8 @@
 
 It can be beneficial to provide users a preview of their actions before they commit to them. Interest invokers are an experimental web platform feature that provides a declarative-based way of creating interest relationships between an interest source (i.e. a button or a link) and an interest target. Once the declarative relationship has been established there are a number of methods a developer can respond to based on interest and loss of interest using both CSS and JavaScript. For this use case, we can leverage the `interest` and `loseinterest` events to preview various effects for an interest target.
 
+Interest Triggered Action Previews are not intended to be used as a way of providing additional information, and should only be used to provide secondary information that is available elsewhere in the UI, or available upon selection of a control that does not trigger a submission. This is because information displayed in Interest Triggered Action Previews may not be available to everyone, particularly people using assistive technologies, and **MUST** therefore, not be used as the single way to access information.
+
 ## How to implement
 
 An interest relationship is created by setting the `interestfor` attribute on a button or link (i.e. the interest source). The attribute takes an ID reference to another element (i.e. the interest target). Interest invokers or sources can only have a single interest target, but an interest target can have multiple interest invokers.
@@ -16,12 +18,12 @@ An interest relationship is created by setting the `interestfor` attribute on a 
 For the sake of this use case, we can leverage the `interest` and `loseinterest` events to preview various effects for an interest target. Both of these events are `InterestEvent`s which has a `source` property which is the source of the interest (i.e. the element with the `interestfor` attribute).
 
 ```javascript
-interestingElement.addEventListener("interest", (event) => {
+interestingElement.addEventListener("interest", event => {
   // Apply the preview based on `event.source`
   event.target.dataset.preview = event.source.dataset.effect;
 });
 
-interestingElement.addEventListener("loseinterest", (event) => {
+interestingElement.addEventListener("loseinterest", event => {
   // Unapply the preview
   delete event.target.dataset.preview;
 });
@@ -34,10 +36,8 @@ Active interest sources and targets can be selected with CSS using the `:interes
 
 ```css
 /* Styles to apply when the effect is being previewed */
-:interest-source {
-}
-:interest-target {
-}
+:interest-source {}
+:interest-target {}
 ```
 
 The start and end delay for an interest invoker (i.e. the element with the `interestfor` attribute) can be set with the `interest-delay-start` and `interest-delay-end` CSS properties or the shorthand `interest-delay` property.
@@ -78,12 +78,8 @@ When using the polyfill, the CSS API changes slightly to account for the lack of
 
 ```css
 /* Styles to apply when the effect is being previewed */
-:is(:interest-source, .interest-source) {
-  /* ... */
-}
-:is(:interest-target, .interest-target) {
-  /* ... */
-}
+:is(:interest-source, .interest-source) { /* ... */ }
+:is(:interest-target, .interest-target) { /* ... */ }
 ```
 
 - **CSS Properties:** For `interest-delay`, `interest-delay-start`, and `interest-delay-end`, the polyfill requires using CSS variables as it cannot read the custom properties directly in all browsers.

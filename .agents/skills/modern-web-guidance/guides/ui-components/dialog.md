@@ -19,7 +19,7 @@ Use `<dialog>` opened as a modal, declaratively with `command="show-modal"` (see
 
 <!-- MANDATORY: no role="dialog" or aria-modal; the native modal already provides them -->
 <dialog id="confirm" aria-labelledby="confirm-title">
-  <h2 id="confirm-title">Delete this item?</h2>
+  <h1 id="confirm-title">Delete this item?</h1>
   <form method="dialog">
     <button value="cancel" autofocus>Cancel</button>
     <button value="delete">Delete</button>
@@ -57,7 +57,7 @@ Use `<dialog popover>` for a top-layer panel with popover dismissal (`auto` ligh
 <button type="button" popovertarget="find">Find</button>
 <dialog id="find" popover="manual" aria-labelledby="find-title">
   <h2 id="find-title">Find</h2>
-  <input type="search" aria-label="Search" />
+  <input type="search" aria-label="Search">
   <button type="button" popovertarget="find" popovertargetaction="hide">Close</button>
 </dialog>
 ```
@@ -135,6 +135,8 @@ The default depends on how the dialog is opened. If `closedby` is absent or inva
 - **DON'T** add `role="dialog"`, `aria-modal`, a manual focus trap or `inert` toggling to a native modal.
 - **DO** use a native `<button>` with an accessible name for close controls.
 - **DO** use one consistent heading level for dialog titles.
+- **DO** use a level-1 heading for the main heading in modal dialogs, as it's the first heading in scope.
+- **DO** Ensure that non-modal dialogs are displayed where there is no or minimal content. To adhere to WCAG 2.4.11, ensure that focused elements are completely obscured by the non-modal dialog.
 
 ## Fallback strategies
 
@@ -147,7 +149,7 @@ Unsupported in: Safari.
 Without `closedby`, a modal still closes with `Esc` and the back gesture; only click-outside is lost, so this is graceful degradation. `closedby="none"` is ignored the same way: `Esc` fires `cancel` and then closes the dialog. Keep the unsaved-changes guard in a `cancel` handler, not in `closedby="none"` alone, so it also protects where `closedby` is missing. If your Baseline target requires light dismiss, add this where `closedby` is missing:
 
 ```js
-if (!("closedBy" in HTMLDialogElement.prototype)) {
+if (!('closedBy' in HTMLDialogElement.prototype)) {
   // Test the pointer position, not event.target: the <dialog> is also the target for its own
   // padding and the gaps between its children, so a target check would close on those clicks
   const outside = (e, dialog) => {
@@ -156,13 +158,9 @@ if (!("closedBy" in HTMLDialogElement.prototype)) {
   };
   for (const dialog of document.querySelectorAll('dialog[closedby="any"]')) {
     let pressedOutside = false;
-    dialog.addEventListener("pointerdown", (e) => {
-      pressedOutside = outside(e, dialog);
-    });
+    dialog.addEventListener('pointerdown', (e) => { pressedOutside = outside(e, dialog); });
     // Require the press and the release outside, so a text-selection drag that ends on the backdrop does not dismiss
-    dialog.addEventListener("pointerup", (e) => {
-      if (pressedOutside && outside(e, dialog)) dialog.close();
-    });
+    dialog.addEventListener('pointerup', (e) => { if (pressedOutside && outside(e, dialog)) dialog.close(); });
   }
 }
 ```
@@ -184,8 +182,8 @@ If your Baseline target does not include Invoker Commands, keep the same markup 
 
 ```js
 // MANDATORY: feature detect on HTMLButtonElement.prototype and load only when native support is missing
-if (!("commandForElement" in HTMLButtonElement.prototype)) {
-  import("invokers-polyfill"); // npm install invokers-polyfill
+if (!('commandForElement' in HTMLButtonElement.prototype)) {
+  import('invokers-polyfill'); // npm install invokers-polyfill
 }
 ```
 
@@ -212,12 +210,21 @@ if (!Object.hasOwn(HTMLElement.prototype, "popover")) {
 If not using a package manager, import from a CDN, e.g. `"https://unpkg.com/@oddbird/popover-polyfill@latest/dist/popover.min.js"`.
 
 Caveats when using the polyfill:
-
 - Do NOT use the `popover` IDL attribute for any code that may run before the polyfill is fully loaded. It will not be mirrored as an attribute, the popover will not be picked up by the polyfill, and the property will be shadowing the accessor the polyfill adds forever. Use `setAttribute()`/`removeAttribute()` instead.
 - **Styling caveat:** The polyfill cannot define the real `:popover-open` pseudo-class, so it applies a `.\:popover-open` class instead. **MANDATORY:** Combine the two with `:is()` or `:where()`, otherwise browsers that lack `:popover-open` discard the entire rule:
 
 ```css
 [popover]:is(:popover-open, .\:popover-open) {
   display: block;
+}
+```
+
+To prevent popovers from showing before the polyfill loads, hide them with CSS:
+
+```css
+@supports not selector(:popover-open) {
+  [popover]:not(.\:popover-open) {
+    display: none;
+  }
 }
 ```

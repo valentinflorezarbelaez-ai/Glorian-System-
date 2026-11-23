@@ -46,31 +46,31 @@ To run Gemini Nano and associated models, the system needs:
 ```javascript
 // Language pair options passed to both availability() and create()
 const options = {
-  sourceLanguage: "es", // Example BCP 47 language code
-  targetLanguage: "fr", // Example BCP 47 language code
+  sourceLanguage: 'es', // Example BCP 47 language code
+  targetLanguage: 'fr', // Example BCP 47 language code
 };
 
 // 1. Check availability for the language pair
 const availability = await Translator.availability(options);
 
-if (availability === "available") {
+if (availability === 'available') {
   // Model is ready immediately on device
   const translator = await Translator.create(options);
-} else if (availability === "downloadable" || availability === "downloading") {
+} else if (availability === 'downloadable' || availability === 'downloading') {
   // User gesture is strictly required before create() triggers or attaches to download
-  document.getElementById("start-translation-btn").addEventListener("click", async () => {
+  document.getElementById('start-translation-btn').addEventListener('click', async () => {
     const translator = await Translator.create({
       ...options,
       monitor(m) {
-        m.addEventListener("downloadprogress", (e) => {
+        m.addEventListener('downloadprogress', (e) => {
           console.log(`Downloaded ${Math.round(e.loaded * 100)}%`);
         });
       },
     });
   });
-} else if (availability === "unavailable") {
+} else if (availability === 'unavailable') {
   // Language pair or hardware unsupported; execute fallback
-  console.warn("Translation model is unavailable on this device.");
+  console.warn('Translation model is unavailable on this device.');
 }
 ```
 
@@ -83,16 +83,18 @@ The API supports both static and streaming responses. Always include download pr
 ```javascript
 // Default to including a progress monitor when creating translator
 const translator = await Translator.create({
-  sourceLanguage: "en",
-  targetLanguage: "fr",
+  sourceLanguage: 'en',
+  targetLanguage: 'fr',
   monitor(m) {
-    m.addEventListener("downloadprogress", (e) => {
+    m.addEventListener('downloadprogress', (e) => {
       console.log(`Downloaded ${Math.round(e.loaded * 100)}%`);
     });
   },
 });
 
-const result = await translator.translate("Where is the next bus stop, please?");
+const result = await translator.translate(
+  'Where is the next bus stop, please?',
+);
 console.log(result);
 // Output: "Où est le prochain arrêt de bus, s'il vous plaît ?"
 ```
@@ -176,7 +178,7 @@ Unsupported in: Firefox and Safari.
 Before use, check if the `Translator` object is available in the global scope:
 
 ```javascript
-if ("Translator" in self) {
+if ('Translator' in self) {
   // The Translator API is supported.
 } else {
   // Execute fallback strategy (do not fall back to window.ai.translator).

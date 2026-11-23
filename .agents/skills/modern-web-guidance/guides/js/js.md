@@ -25,14 +25,14 @@ Modern JavaScript and Web platform runtimes provide built-in primitives for deep
 
 For specialized temporal, scheduling, and security workflows, consult the dedicated guides below:
 
-| Workflow / Domain                                                                                                          | Guide                                                                                                                  |
-| :------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| Calculating exact calendar durations (`years`, `months`, `days`) between dates or events                                   | `calculate-event-differentials` (via `npx -y modern-web-guidance@latest retrieve "calculate-event-differentials"`)     |
-| Representing calendar dates (`PlainDate`), wall-clock times (`PlainTime`), or recurring rules without time-zone shift bugs | `capture-location-agnostic-data` (via `npx -y modern-web-guidance@latest retrieve "capture-location-agnostic-data"`)   |
-| Converting instants across IANA time zones (`ZonedDateTime`) with DST disambiguation                                       | `coordinate-global-events` (via `npx -y modern-web-guidance@latest retrieve "coordinate-global-events"`)               |
-| Sorting and comparing nanosecond-precision timestamps (`Temporal.Instant.compare`)                                         | `sort-high-precision-timestamps` (via `npx -y modern-web-guidance@latest retrieve "sort-high-precision-timestamps"`)   |
-| Projecting dates into non-Gregorian calendar systems (`hebrew`, `islamic-civil`, `japanese`, `chinese`)                    | `support-global-calendar-systems` (via `npx -y modern-web-guidance@latest retrieve "support-global-calendar-systems"`) |
-| Sanitizing untrusted HTML strings before DOM insertion                                                                     | `sanitize-untrusted-html` (via `npx -y modern-web-guidance@latest retrieve "sanitize-untrusted-html"`)                 |
+| Workflow / Domain | Guide |
+| :--- | :--- |
+| Calculating exact calendar durations (`years`, `months`, `days`) between dates or events | `calculate-event-differentials` (via `npx -y modern-web-guidance@latest retrieve "calculate-event-differentials"`) |
+| Representing calendar dates (`PlainDate`), wall-clock times (`PlainTime`), or recurring rules without time-zone shift bugs | `capture-location-agnostic-data` (via `npx -y modern-web-guidance@latest retrieve "capture-location-agnostic-data"`) |
+| Converting instants across IANA time zones (`ZonedDateTime`) with DST disambiguation | `coordinate-global-events` (via `npx -y modern-web-guidance@latest retrieve "coordinate-global-events"`) |
+| Sorting and comparing nanosecond-precision timestamps (`Temporal.Instant.compare`) | `sort-high-precision-timestamps` (via `npx -y modern-web-guidance@latest retrieve "sort-high-precision-timestamps"`) |
+| Projecting dates into non-Gregorian calendar systems (`hebrew`, `islamic-civil`, `japanese`, `chinese`) | `support-global-calendar-systems` (via `npx -y modern-web-guidance@latest retrieve "support-global-calendar-systems"`) |
+| Sanitizing untrusted HTML strings before DOM insertion | `sanitize-untrusted-html` (via `npx -y modern-web-guidance@latest retrieve "sanitize-untrusted-html"`) |
 
 ---
 
@@ -64,9 +64,9 @@ Use `structuredClone(value)` to deep-copy nested objects, arrays, and built-in p
 
 ```js
 const original = {
-  id: "session-42",
-  createdAt: new Date("2026-03-15T12:00:00Z"),
-  tags: new Set(["admin", "audit"]),
+  id: 'session-42',
+  createdAt: new Date('2026-03-15T12:00:00Z'),
+  tags: new Set(['admin', 'audit']),
   metrics: new Float64Array([0.98, 0.99]),
   optionalNote: undefined,
 };
@@ -78,7 +78,7 @@ console.assert(copy !== original);
 console.assert(copy.createdAt instanceof Date);
 console.assert(copy.tags instanceof Set && copy.tags !== original.tags);
 console.assert(copy.self === copy);
-console.assert("optionalNote" in copy && copy.optionalNote === undefined);
+console.assert('optionalNote' in copy && copy.optionalNote === undefined);
 ```
 
 ---
@@ -105,18 +105,18 @@ Use the copying array methods (`.toSorted()`, `.toReversed()`, `.toSpliced()`, `
 
 ```js
 const tasks = [
-  { id: 1, priority: 2, status: "done" },
-  { id: 2, priority: 5, status: "open" },
-  { id: 3, priority: 1, status: "done" },
+  { id: 1, priority: 2, status: 'done' },
+  { id: 2, priority: 5, status: 'open' },
+  { id: 3, priority: 1, status: 'done' },
 ];
 
 // Immutable sort and single-element update without mutating `tasks`
 const byPriority = tasks.toSorted((a, b) => b.priority - a.priority);
-const reopened = tasks.with(-1, { ...tasks.at(-1), status: "open" });
+const reopened = tasks.with(-1, { ...tasks.at(-1), status: 'open' });
 
 // Reverse search without allocating a reversed copy
-const lastCompleted = tasks.findLast((task) => task.status === "done");
-const lastCompletedIndex = tasks.findLastIndex((task) => task.status === "done");
+const lastCompleted = tasks.findLast((task) => task.status === 'done');
+const lastCompletedIndex = tasks.findLastIndex((task) => task.status === 'done');
 ```
 
 ---
@@ -137,19 +137,21 @@ Use `Object.groupBy(items, callbackFn)` and `Map.groupBy(items, callbackFn)` to 
 
 ```js
 const deliveries = [
-  { id: "d1", region: "eu-west", weightKg: 4.2 },
-  { id: "d2", region: "us-east", weightKg: 1.1 },
-  { id: "d3", region: "eu-west", weightKg: 8.5 },
+  { id: 'd1', region: 'eu-west', weightKg: 4.2 },
+  { id: 'd2', region: 'us-east', weightKg: 1.1 },
+  { id: 'd3', region: 'eu-west', weightKg: 8.5 },
 ];
 
 // String-keyed null-prototype dictionary of arrays
 const byRegion = Object.groupBy(deliveries, (item) => item.region);
-const euShipments = byRegion["eu-west"] ?? [];
+const euShipments = byRegion['eu-west'] ?? [];
 
 // Non-string or object keys preserved in a Map
-const heavyKey = { tier: "heavy" };
-const standardKey = { tier: "standard" };
-const byTier = Map.groupBy(deliveries, (item) => (item.weightKg >= 5 ? heavyKey : standardKey));
+const heavyKey = { tier: 'heavy' };
+const standardKey = { tier: 'standard' };
+const byTier = Map.groupBy(deliveries, (item) =>
+  item.weightKg >= 5 ? heavyKey : standardKey,
+);
 ```
 
 ---
@@ -208,7 +210,7 @@ export async function fetchJsonWithDeadline(url, userSignal, timeoutMs = 5_000) 
     }
     return await response.json();
   } catch (err) {
-    if (err instanceof DOMException && err.name === "TimeoutError") {
+    if (err instanceof DOMException && err.name === 'TimeoutError') {
       throw new Error(`Request to ${url} timed out after ${timeoutMs}ms`, { cause: err });
     }
     throw err;
@@ -234,7 +236,7 @@ Attach the original caught error via the `{ cause }` options parameter whenever 
 export class ProfileLoadError extends Error {
   constructor(message, options) {
     super(message, options);
-    this.name = "ProfileLoadError";
+    this.name = 'ProfileLoadError';
   }
 }
 
@@ -243,9 +245,10 @@ export async function loadUserProfile(userId, readRecord) {
     const raw = await readRecord(`users:${userId}`);
     return JSON.parse(raw);
   } catch (err) {
-    throw new ProfileLoadError(`Failed to load profile for user "${userId}": ${err.message}`, {
-      cause: err,
-    });
+    throw new ProfileLoadError(
+      `Failed to load profile for user "${userId}": ${err.message}`,
+      { cause: err },
+    );
   }
 }
 ```
@@ -275,17 +278,17 @@ Use `URLSearchParams` (and `new URL(input, base).searchParams`) to parse, inspec
 
 ```js
 // Parsing a query string into a plain object (last value wins on duplicate keys)
-const query = "?filter=active&token=eyJhbGciOiJIUzI1NiJ9==&tag=js&tag=web";
+const query = '?filter=active&token=eyJhbGciOiJIUzI1NiJ9==&tag=js&tag=web';
 const params = new URLSearchParams(query);
 
-const token = params.get("token"); // 'eyJhbGciOiJIUzI1NiJ9==' (preserves trailing '==')
-const allTags = params.getAll("tag"); // ['js', 'web']
+const token = params.get('token'); // 'eyJhbGciOiJIUzI1NiJ9==' (preserves trailing '==')
+const allTags = params.getAll('tag'); // ['js', 'web']
 const lastWinsDict = Object.fromEntries(params); // { filter: 'active', token: '...', tag: 'web' }
 
 // Mutating query parameters on a full URL safely
-const endpoint = new URL("https://api.example.com/v1/items?page=1#results");
-endpoint.searchParams.set("page", "2");
-endpoint.searchParams.append("limit", "50");
+const endpoint = new URL('https://api.example.com/v1/items?page=1#results');
+endpoint.searchParams.set('page', '2');
+endpoint.searchParams.append('limit', '50');
 ```
 
 ---
@@ -307,16 +310,16 @@ Use `TextDecoder` and `TextEncoder` to convert between `Uint8Array` byte buffers
 
 ```js
 const encoder = new TextEncoder();
-const decoder = new TextDecoder("utf-8", { fatal: true });
+const decoder = new TextDecoder('utf-8', { fatal: true });
 
 // Encode string to UTF-8 Uint8Array and decode back without stack limits
-const bytes = encoder.encode("🚀 Modern Web Platform — 100% UTF-8");
+const bytes = encoder.encode('🚀 Modern Web Platform — 100% UTF-8');
 const text = decoder.decode(bytes);
 
 // Streaming decode across arbitrary chunk boundaries
 export async function readUtf8Stream(readableStream) {
   const streamDecoder = new TextDecoder();
-  let output = "";
+  let output = '';
   for await (const chunk of readableStream) {
     output += streamDecoder.decode(chunk, { stream: true });
   }
@@ -346,8 +349,8 @@ Use `element.replaceChildren(...nodesOrStrings)` to clear a container or replace
 ```js
 export function renderNotificationList(listElement, messages) {
   const items = messages.map((msg) => {
-    const li = document.createElement("li");
-    li.className = "notification-item";
+    const li = document.createElement('li');
+    li.className = 'notification-item';
     li.textContent = msg;
     return li;
   });
@@ -379,8 +382,8 @@ Use `new Event(type, options)`, `new CustomEvent(type, options)`, and specialize
 ```js
 // Dispatching a bubbling, shadow-piercing custom event with payload data
 export function notifyFilterChange(filterPanel) {
-  const filterChanged = new CustomEvent("filter-change", {
-    detail: { category: "architecture", minScore: 80 },
+  const filterChanged = new CustomEvent('filter-change', {
+    detail: { category: 'architecture', minScore: 80 },
     bubbles: true,
     cancelable: true,
     composed: true,

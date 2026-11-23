@@ -6,7 +6,7 @@ When building tooltips or popovers with CSS Anchor Positioning, the browser can 
 
 ## The problem
 
-Imagine a tooltip that appears above its anchor by default. It has a "down" arrow at the bottom. If the user scrolls and the tooltip flips to appear _below_ the anchor, the arrow is now pointing the wrong way and is on the wrong side of the tooltip.
+Imagine a tooltip that appears above its anchor by default. It has a "down" arrow at the bottom. If the user scrolls and the tooltip flips to appear *below* the anchor, the arrow is now pointing the wrong way and is on the wrong side of the tooltip.
 
 ## The solution: Anchored Container Queries
 
@@ -85,10 +85,11 @@ If you need to change properties on the container itself (like `margin` or `back
 1. Apply `container-type: anchored` to the outer positioned element.
 2. Target the inner element inside the `@container` block.
 
+
 ```css
 @container anchored(fallback: flip-block) {
   .tooltip-content {
-    border-radius: 0 0 0.5rem 0.5rem;
+    border-radius: 0 0 .5rem .5rem;
     margin-block-start: 0.25rem;
   }
 }
@@ -109,7 +110,7 @@ If the tooltip text is particularly long, use an inner container in the tooltip 
 .tooltip-content-inner {
   max-block-size: calc(50dvb - var(--trigger-height));
   overflow-block: auto;
-}
+} 
 ```
 
 ## Best practices
@@ -160,13 +161,22 @@ if (!Object.hasOwn(HTMLElement.prototype, "popover")) {
 If not using a package manager, import from a CDN, e.g. `"https://unpkg.com/@oddbird/popover-polyfill@latest/dist/popover.min.js"`.
 
 Caveats when using the polyfill:
-
 - Do NOT use the `popover` IDL attribute for any code that may run before the polyfill is fully loaded. It will not be mirrored as an attribute, the popover will not be picked up by the polyfill, and the property will be shadowing the accessor the polyfill adds forever. Use `setAttribute()`/`removeAttribute()` instead.
 - **Styling caveat:** The polyfill cannot define the real `:popover-open` pseudo-class, so it applies a `.\:popover-open` class instead. **MANDATORY:** Combine the two with `:is()` or `:where()`, otherwise browsers that lack `:popover-open` discard the entire rule:
 
 ```css
 [popover]:is(:popover-open, .\:popover-open) {
   display: block;
+}
+```
+
+To prevent popovers from showing before the polyfill loads, hide them with CSS:
+
+```css
+@supports not selector(:popover-open) {
+  [popover]:not(.\:popover-open) {
+    display: none;
+  }
 }
 ```
 

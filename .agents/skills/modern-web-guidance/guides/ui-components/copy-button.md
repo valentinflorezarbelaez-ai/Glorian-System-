@@ -8,16 +8,9 @@ Build a button that copies the text of another element (code block, inline value
 
 ```html
 <!-- Custom commands MUST start with "--". commandfor is the id of the element whose text is copied. -->
-<span class="copy">
-  <!-- positioning context for the bubble -->
+<span class="copy"> <!-- positioning context for the bubble -->
   <!-- aria-label names the content being copied; several bare "Copy" buttons are indistinguishable to screen readers -->
-  <button
-    type="button"
-    class="copy-button"
-    command="--copy"
-    commandfor="snippet"
-    aria-label="Copy CSS code"
-  >
+  <button type="button" class="copy-button" command="--copy" commandfor="snippet" aria-label="Copy CSS code">
     <!-- Decorative icon, rendered however the codebase renders icons -->
     <span class="icon" aria-hidden="true"></span>
   </button>
@@ -38,16 +31,13 @@ Build a button that copies the text of another element (code block, inline value
 Put the copy logic in one function so the native and fallback paths share it.
 
 ```js
-let selectedText = ""; // set by the optional selection popover (step 3)
+let selectedText = ''; // set by the optional selection popover (step 3)
 
-async function copy(button, target, command = "--copy") {
+async function copy(button, target, command = '--copy') {
   // Form controls expose text via .value; innerText (unlike textContent) keeps rendered line breaks
-  const text =
-    command === "--copy-selection"
-      ? selectedText
-      : target.matches("input, textarea")
-        ? target.value
-        : target.innerText.trim();
+  const text = command === '--copy-selection'
+    ? selectedText
+    : target.matches('input, textarea') ? target.value : target.innerText.trim();
   if (!text) return;
   try {
     await navigator.clipboard.writeText(text);
@@ -59,13 +49,9 @@ async function copy(button, target, command = "--copy") {
 
 // `command` events do not bubble: listen in the capture phase on document.
 // event.source is the clicked button; event.target is the commandfor element.
-document.addEventListener(
-  "command",
-  (event) => {
-    if (event.command.startsWith("--copy")) copy(event.source, event.target, event.command);
-  },
-  true,
-);
+document.addEventListener('command', (event) => {
+  if (event.command.startsWith('--copy')) copy(event.source, event.target, event.command);
+}, true);
 ```
 
 - **One element for sighted and screen reader users:** `report()` sets `data-copied` (or `data-failed`) on the button and writes the message into the bubble, which is both the visible feedback and the live region. Sighted and screen reader users then get the same message for both outcomes. Keep messages short ("Copied", "Copy failed").
@@ -81,22 +67,18 @@ const timers = new WeakMap();
 function report(button, ok) {
   const tip = button.nextElementSibling; // the role="status" bubble
   clearTimeout(timers.get(button));
-  button.removeAttribute("data-copied");
-  button.removeAttribute("data-failed");
-  const message = ok ? "Copied" : "Copy failed";
-  tip.textContent = "";
+  button.removeAttribute('data-copied');
+  button.removeAttribute('data-failed');
+  const message = ok ? 'Copied' : 'Copy failed';
+  tip.textContent = '';
   void button.offsetWidth; // restart the CSS animation
-  button.setAttribute(ok ? "data-copied" : "data-failed", "");
+  button.setAttribute(ok ? 'data-copied' : 'data-failed', '');
   requestAnimationFrame(() => (tip.textContent = message));
-  timers.set(
-    button,
-    setTimeout(() => {
-      // 2000ms is an example value
-      button.removeAttribute("data-copied");
-      button.removeAttribute("data-failed");
-      tip.textContent = "";
-    }, 2000),
-  );
+  timers.set(button, setTimeout(() => { // 2000ms is an example value
+    button.removeAttribute('data-copied');
+    button.removeAttribute('data-failed');
+    tip.textContent = '';
+  }, 2000));
 }
 ```
 
@@ -116,38 +98,19 @@ When a page repeats copyable elements (code blocks, list rows, token or ID cells
 
 ```css
 /* Touch devices (no hover): the button stays visible, so keep it in flow where it cannot cover content */
-.copyable {
-  display: flex;
-  align-items: start;
-  gap: 0.5rem;
-}
-.copyable .copy {
-  flex: none;
-  order: 1;
-}
+.copyable { display: flex; align-items: start; gap: .5rem; }
+.copyable .copy { flex: none; order: 1; }
 
 /* Only hide where hover exists; the overlay is then revealed on demand */
 @media (hover: hover) {
-  .copyable {
-    display: block;
-    position: relative;
-  }
-  .copyable .copy {
-    position: absolute;
-    inset-block-start: 0.5rem;
-    inset-inline-end: 0.5rem;
-  } /* .copy is the bubble's positioning context, so move it, not the button */
-  .copyable .copy-button {
-    opacity: 0;
-    transition: opacity 0.15s;
-  }
+  .copyable { display: block; position: relative; }
+  .copyable .copy { position: absolute; inset-block-start: .5rem; inset-inline-end: .5rem; } /* .copy is the bubble's positioning context, so move it, not the button */
+  .copyable .copy-button { opacity: 0; transition: opacity .15s; }
   .copyable:hover .copy-button,
   .copyable:focus-within .copy-button,
   .copyable .copy-button:focus-visible,
   .copyable .copy-button[data-copied],
-  .copyable .copy-button[data-failed] {
-    opacity: 1;
-  }
+  .copyable .copy-button[data-failed] { opacity: 1; }
 }
 ```
 
@@ -170,13 +133,15 @@ If your Baseline target does not include Invoker Commands, keep the same markup 
 
 ```js
 // Detect on the interface, not an instance
-if (!("CommandEvent" in window)) {
+if (!('CommandEvent' in window)) {
   // Resolve the target from commandfor, as the browser does for command events
-  document.addEventListener("click", (event) => {
+  document.addEventListener('click', (event) => {
+    // Respect handlers that already canceled the button's activation.
+    if (event.defaultPrevented) return;
     const button = event.target.closest('button[command^="--copy"]');
     if (!button) return;
-    const target = document.getElementById(button.getAttribute("commandfor"));
-    if (target) copy(button, target, button.getAttribute("command")); // a missing target would throw inside copy()
+    const target = document.getElementById(button.getAttribute('commandfor'));
+    if (target) copy(button, target, button.getAttribute('command')); // a missing target would throw inside copy()
   });
 }
 ```
@@ -194,15 +159,18 @@ Only as a last resort, when you cannot control the protocol of the host page (fo
 
 ```js
 function legacyCopy(text) {
-  const field = Object.assign(document.createElement("textarea"), { value: text });
-  field.setAttribute("readonly", "");
-  field.style.cssText = "position:fixed;inset-block-start:0;opacity:0";
+  const previousFocus = document.activeElement;
+  const field = Object.assign(document.createElement('textarea'), { value: text });
+  field.setAttribute('readonly', '');
+  field.style.cssText = 'position:fixed;inset-block-start:0;opacity:0';
   document.body.append(field);
   field.select();
   try {
-    return document.execCommand("copy");
+    return document.execCommand('copy');
   } finally {
     field.remove();
+    // Selecting the temporary field can move focus; restore it even if copying fails.
+    previousFocus?.focus({ preventScroll: true });
   }
 }
 
@@ -210,7 +178,7 @@ function legacyCopy(text) {
 try {
   await navigator.clipboard.writeText(text);
 } catch {
-  if (!legacyCopy(text)) throw new Error("Copy failed"); // reaches the existing failure path
+  if (!legacyCopy(text)) throw new Error('Copy failed'); // reaches the existing failure path
 }
 ```
 
@@ -237,7 +205,6 @@ if (!Object.hasOwn(HTMLElement.prototype, "popover")) {
 If not using a package manager, import from a CDN, e.g. `"https://unpkg.com/@oddbird/popover-polyfill@latest/dist/popover.min.js"`.
 
 Caveats when using the polyfill:
-
 - Do NOT use the `popover` IDL attribute for any code that may run before the polyfill is fully loaded. It will not be mirrored as an attribute, the popover will not be picked up by the polyfill, and the property will be shadowing the accessor the polyfill adds forever. Use `setAttribute()`/`removeAttribute()` instead.
 - **Styling caveat:** The polyfill cannot define the real `:popover-open` pseudo-class, so it applies a `.\:popover-open` class instead. **MANDATORY:** Combine the two with `:is()` or `:where()`, otherwise browsers that lack `:popover-open` discard the entire rule:
 
@@ -247,14 +214,25 @@ Caveats when using the polyfill:
 }
 ```
 
+To prevent popovers from showing before the polyfill loads, hide them with CSS:
+
+```css
+@supports not selector(:popover-open) {
+  [popover]:not(.\:popover-open) {
+    display: none;
+  }
+}
+```
+
 ### Repeated announcements (VoiceOver)
 
 VoiceOver skips a message identical to the previous one from the same region, even if the region was emptied in between. Track the last message in a variable (not by reading the bubble, which is cleared) and, when a message repeats, append a no-break space (`\u00A0`) so it differs. It is not read aloud. One page-wide value is the simplest way to track it: a message from another button's bubble gets the space too, which is harmless. Do not use `ariaNotify()` for this.
 
 ```js
-let lastMessage = "";
+let lastMessage = '';
 
 // In report(), replace `const message` with `let message`, then:
-if (message === lastMessage) message += "\u00A0"; // differs from the last one, so it is announced
+if (message === lastMessage) message += '\u00A0'; // differs from the last one, so it is announced
 lastMessage = message;
 ```
+

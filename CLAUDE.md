@@ -11,6 +11,15 @@
 - Go Titan Native Benchmark: `node bin/eos.mjs go benchmark`
 - Honk Local Draft: `node bin/eos.mjs honk "<directive>"` (plan only; no files changed)
 - Xirp Context Sync: `node bin/eos.mjs xirp sync`
+- Modern Web Guidance install (agent skill, outside Layer-0): `npx -y modern-web-guidance@latest install`
+- Modern Web Guidance fail-closed gate: `npm run mwg:gate`
+- Modern Web Guidance search/retrieve: `npx -y modern-web-guidance@latest search "<query>"` then `retrieve "<id>"`
+
+## Frontend / client-side JS (agentic engineers)
+- Skill path: `.agents/skills/modern-web-guidance/SKILL.md` (mandatory first for HTML/CSS/client JS).
+- Runbook: `docs/runbooks/modern-web-guidance.md`
+- Registry: `.atl/skill-registry.md` compact rules for `modern-web-guidance`
+- Never add MWG to `package.json` dependencies; keep `src/core/` at `dependencies: {}`.
 
 ## Code & Architecture Standards
 These are repository notes, not verified vendor standards. Review requirements and run matching checks before applying them.

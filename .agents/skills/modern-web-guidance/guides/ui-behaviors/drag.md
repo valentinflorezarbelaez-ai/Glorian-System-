@@ -33,8 +33,8 @@ Use a viewport-relative positioning model such as `position: fixed` when clampin
 With pointer capture, the movement listeners can remain on the handle:
 
 ```js
-handle.addEventListener("pointerdown", (event) => {
-  const control = event.target.closest("button, input, select, textarea, a");
+handle.addEventListener('pointerdown', (event) => {
+  const control = event.target.closest('button, input, select, textarea, a');
   if (event.button !== 0 || (control && control !== handle)) return;
 
   const rect = draggable.getBoundingClientRect();
@@ -43,14 +43,14 @@ handle.addEventListener("pointerdown", (event) => {
   handle.setPointerCapture(event.pointerId);
 });
 
-handle.addEventListener("pointermove", (event) => {
+handle.addEventListener('pointermove', (event) => {
   if (!handle.hasPointerCapture(event.pointerId)) return;
-  handle.classList.add("dragging");
+  handle.classList.add('dragging');
   moveTo(event.clientX - offsetX, event.clientY - offsetY);
 });
 
-handle.addEventListener("lostpointercapture", () => {
-  handle.classList.remove("dragging");
+handle.addEventListener('lostpointercapture', () => {
+  handle.classList.remove('dragging');
 });
 
 function moveTo(left, top) {
@@ -83,7 +83,6 @@ The drag handle that is exposed to assistive technologies must be a dedicated bu
 ```
 
 Ensure the draggable element can also be moved or operated using a single pointer without dragging (for example, clicks or taps). What the UI for this looks like depends on the use case. A few examples:
-
 - Kanban boards: a "move to column" menu or buttons
 - Maps: directional pan buttons
 - Sliders: clicking on the track, and sometimes adjusting the value via a linked `<input>`
@@ -98,7 +97,9 @@ Provide feedback for screen reader users when the draggable element is moved. Us
 Update the region when the draggable element is moved:
 
 ```html
-<div class="visually-hidden" aria-live="polite">[Name of element] moved [new position]</div>
+<div class="visually-hidden" aria-live="polite">
+  [Name of element] moved [new position]
+</div>
 ```
 
 Do not display raw coordinates for the position, prefer a descriptive name (e.g. "docked left", "moved left", "moved up", and so on) or omit it if there is no meaningful description.

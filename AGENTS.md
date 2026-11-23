@@ -17,6 +17,7 @@
 ## 2. Proposed Engineering Conventions (Not Audited)
 - Consider Go for network services and Rust for performance-sensitive components; this snapshot has not measured the repository's language mix.
 - Select audio loudness and peak targets per product requirements; no mastering or conformance check is performed here.
+- For HTML/CSS/client-side JS, prefer Google Chrome Modern Web Guidance via `.agents/skills/modern-web-guidance/` (`npm run mwg:gate`; `docs/runbooks/modern-web-guidance.md`). Never add MWG as a Layer-0/`package.json` runtime dependency.
 
 ## 3. Canonical merge gate
 - **Public entrypoint:** `npm run verify:strict` (declared in `package.json`; aliases `node bin/eos.mjs verify`, the 7-stage SecDevOps gate). Prefer this over ad-hoc stage scripts for release and pre-push checks.
@@ -26,3 +27,4 @@
 2. Run `npm run verify:strict` (or matching formatting/tests/security checks) before release.
 3. Define audio and financial correctness criteria with the relevant product owners.
 4. Treat this generated context as a starting point and verify every recommendation.
+5. For HTML/CSS/client-side JS: use `.agents/skills/modern-web-guidance/` (`npm run mwg:gate`; runbook `docs/runbooks/modern-web-guidance.md`) — never as a Layer-0 dependency.

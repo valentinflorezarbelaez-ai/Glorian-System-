@@ -7,7 +7,7 @@ Regular `<canvas>` content is not exposed to browser features such as screen rea
 1. Check if HTML-in-Canvas is supported in the browser:
 
 ```js
-if ("content" in HTMLCanvasElement.prototype) {
+if ('content' in HTMLCanvasElement.prototype) {
   // Use HTML in Canvas API
 } else {
   // Use fallback strategy
@@ -39,7 +39,9 @@ const observer = new ResizeObserver(([entry]) => {
 const supportsDevicePixelContentBox =
   typeof ResizeObserverEntry !== "undefined" &&
   "devicePixelContentBoxSize" in ResizeObserverEntry.prototype;
-const options = supportsDevicePixelContentBox ? { box: "device-pixel-content-box" } : {};
+const options = supportsDevicePixelContentBox
+  ? { box: "device-pixel-content-box" }
+  : {};
 observer.observe(canvas, options);
 ```
 
@@ -88,14 +90,14 @@ function allocateElementTexture(gl, texture, state, width, height) {
 
   gl.texImage2D(
     gl.TEXTURE_2D,
-    0, // Mipmap level
-    gl.RGBA8, // Internal format: 8 bits per RGBA channel
-    width, // Size in canvas grid pixels
+    0,                // Mipmap level
+    gl.RGBA8,         // Internal format: 8 bits per RGBA channel
+    width,            // Size in canvas grid pixels
     height,
-    0, // Border: must be 0
-    gl.RGBA, // Format and type that match RGBA8
+    0,                // Border: must be 0
+    gl.RGBA,          // Format and type that match RGBA8
     gl.UNSIGNED_BYTE,
-    null, // null reserves GPU memory without uploading pixels
+    null              // null reserves GPU memory without uploading pixels
   );
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   state.width = width;
@@ -128,7 +130,7 @@ canvas.onpaint = () => {
   try {
     uploadElementWebGL(gl, canvas, texture, uiElement, textureState);
   } catch (err) {
-    console.error("texElementSubImage2D copy failed:", err);
+    console.error('texElementSubImage2D copy failed:', err);
   }
 };
 ```
@@ -170,7 +172,7 @@ canvas.onpaint = () => {
   try {
     device.queue.drawElementImageToTexture({ source: uiElement }, { texture, size });
   } catch (err) {
-    console.error("drawElementImageToTexture copy failed:", err);
+    console.error('drawElementImageToTexture copy failed:', err);
   }
 };
 ```
@@ -236,16 +238,15 @@ The browser needs to know where the HTML element is drawn, so that its DOM posit
 
 Then pass the transform to `canvas.updateElementGeometry()` as `canvasTransform`. This moves the HTML element to sit directly on top of its rendered pixels. This ensures that when a user clicks a button or selects text, they are actually hitting the real HTML element. The browser also uses the transform for the element's accessibility bounds, for example, for screen reader focus rings:
 
-```js
-canvas.updateElementGeometry(targetHTMLElement, {
-  canvasTransform: computeCanvasTransform(canvas, targetHTMLElement, htmlElementMVP),
-});
-```
+  ```js
+  canvas.updateElementGeometry(targetHTMLElement, {
+    canvasTransform: computeCanvasTransform(canvas, targetHTMLElement, htmlElementMVP),
+  });
+  ```
 
 Use these options to control hit testing:
-
-- Each `updateElementGeometry()` call moves the element to the top of the hit-testing order. Pass `{ preserveHitTestOrder: true }` to keep its position.
-- Call `canvas.clearElementGeometry(element)` to remove an element from hit testing, for example, when you hide it.
+  - Each `updateElementGeometry()` call moves the element to the top of the hit-testing order. Pass `{ preserveHitTestOrder: true }` to keep its position.
+  - Call `canvas.clearElementGeometry(element)` to remove an element from hit testing, for example, when you hide it.
 
 ## Example code
 
@@ -254,7 +255,9 @@ Use these options to control hit testing:
 ```html
 <canvas id="canvas" content="drawable" style="width: 400px; height: 200px;">
   <div id="ui-element" drawable>
-    <p>This text is rendered inside the canvas but is present in the DOM tree.</p>
+    <p>
+      This text is rendered inside the canvas but is present in the DOM tree.
+    </p>
     <input type="email" name="email" placeholder="enter your email" />
     <button type="button">Submit</button>
   </div>
@@ -287,7 +290,9 @@ Use these options to control hit testing:
   const supportsDevicePixelContentBox =
     typeof ResizeObserverEntry !== "undefined" &&
     "devicePixelContentBoxSize" in ResizeObserverEntry.prototype;
-  const options = supportsDevicePixelContentBox ? { box: "device-pixel-content-box" } : {};
+  const options = supportsDevicePixelContentBox
+    ? { box: "device-pixel-content-box" }
+    : {};
   observer.observe(canvas, options);
 </script>
 ```
@@ -321,7 +326,7 @@ Use these options to control hit testing:
     try {
       uploadElementWebGL(gl, canvas, texture, uiElement, textureState);
     } catch (err) {
-      console.error("texElementSubImage2D copy failed:", err);
+      console.error('texElementSubImage2D copy failed:', err);
     }
 
     // ... Render your 3D scene here, calculating htmlElementMVP matrix ...
@@ -367,7 +372,7 @@ Use these options to control hit testing:
       try {
         device.queue.drawElementImageToTexture({ source: uiElement }, { texture, size });
       } catch (err) {
-        console.error("drawElementImageToTexture copy failed:", err);
+        console.error('drawElementImageToTexture copy failed:', err);
       }
     }
 
