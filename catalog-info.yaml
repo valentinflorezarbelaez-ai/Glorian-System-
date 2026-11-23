@@ -16,6 +16,8 @@ metadata:
     eos.glorian/pillar-map: docs/backstage/scorecard-pillar-map.json
     eos.glorian/l0-boundary-map: docs/backstage/l0-boundary-scorecard-map.json
     eos.glorian/l0-consumer-receipt: docs/evidence/MODULE_CONSUMER_GRAPH.json
+    eos.glorian/scorecard-api: /api/scorecard
+    eos.glorian/mcp-bridge: docs/backstage/mcp-api-bridge.md
     eos.glorian/owner-squad: group:glorian-control-plane-squad
     eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
@@ -48,6 +50,12 @@ metadata:
     - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/README.md
       title: Backstage Integration Notes
       icon: docs
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/mcp-api-bridge.md
+      title: Soundcheck MCP / API Bridge
+      icon: docs
+    - url: https://glorian-system.vercel.app/api/scorecard?kind=soundcheck
+      title: Scorecard Receipt API (read-only)
+      icon: catalog
     - url: https://portafolio-valentin.vercel.app
       title: Architect Portfolio
       icon: user
@@ -60,6 +68,7 @@ spec:
     - eos-control-plane-api
     - eos-health-api
     - eos-titans-api
+    - eos-scorecard-api
 ---
 apiVersion: backstage.io/v1alpha1
 kind: System

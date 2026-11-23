@@ -59,5 +59,16 @@
   ],
   "certificationTiers": ["LEVEL_1_BRONZE", "LEVEL_2_SILVER", "LEVEL_3_GOLD", "LEVEL_4_PLATINUM"],
   "cli": "node bin/eos.mjs toolchain:soundcheck:audit",
-  "npmScripts": ["fleet:scorecards", "fleet:audit"]
+  "npmScripts": ["fleet:scorecards", "fleet:audit"],
+  "mcpTier0Tools": ["eos_fleet_soundcheck", "eos_audit_fleet"],
+  "apiBridge": {
+    "path": "/api/scorecard",
+    "methods": ["GET", "HEAD", "OPTIONS"],
+    "queryKinds": ["soundcheck", "fleet-products", "l0-consumer"],
+    "hostOriginDiscipline": "fail-closed-allowlist",
+    "wildcardCorsForbidden": true,
+    "docs": "docs/backstage/mcp-api-bridge.md",
+    "productionUrl": "https://glorian-system.vercel.app/api/scorecard"
+  },
+  "rawReceiptUrl": "https://raw.githubusercontent.com/valentinflorezarbelaez-ai/Glorian-System-/main/docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json"
 }

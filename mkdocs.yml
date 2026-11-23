@@ -9,7 +9,9 @@ nav:
   - Fleet: fleet.md
   - Governance: governance.md
   - Ownership: ownership.md
-  - Backstage: backstage/README.md
+  - Backstage:
+      - Overview: backstage/README.md
+      - MCP / API bridge: backstage/mcp-api-bridge.md
 
 plugins:
   - techdocs-core

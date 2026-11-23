@@ -376,6 +376,119 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
       assert.ok(String(pkg.scripts["consumers:audit"] || "").includes("--fail-on-unconsumed"));
       assert.ok(String(pkg.scripts["consumers:audit"] || "").includes("--check-only"));
     });
+
+    it("documents MCP Tier-0 + fail-closed /api/scorecard bridge (BDD-BS-006)", async () => {
+      const catalog = fs.readFileSync(path.join(process.cwd(), "catalog-info.yaml"), "utf8");
+      const bridgeDoc = fs.readFileSync(
+        path.join(process.cwd(), "docs", "backstage", "mcp-api-bridge.md"),
+        "utf8",
+      );
+      const pillarMap = JSON.parse(
+        fs.readFileSync(path.join(process.cwd(), "docs", "backstage", "scorecard-pillar-map.json"), "utf8"),
+      );
+      const appConfig = fs.readFileSync(
+        path.join(process.cwd(), "docs", "backstage", "app-config.snippet.yaml"),
+        "utf8",
+      );
+      const readme = fs.readFileSync(path.join(process.cwd(), "docs", "backstage", "README.md"), "utf8");
+      const mkdocs = fs.readFileSync(path.join(process.cwd(), "mkdocs.yml"), "utf8");
+      const scorecardSrc = fs.readFileSync(path.join(process.cwd(), "api", "scorecard.js"), "utf8");
+
+      assert.ok(fs.existsSync(path.join(process.cwd(), "api", "scorecard.js")));
+      assert.ok(bridgeDoc.includes("eos_fleet_soundcheck"));
+      assert.ok(bridgeDoc.includes("eos_audit_fleet"));
+      assert.ok(bridgeDoc.includes("/api/scorecard"));
+      assert.ok(
+        bridgeDoc.includes("never `Access-Control-Allow-Origin: *`"),
+        "bridge doc must forbid wildcard CORS",
+      );
+      assert.ok(bridgeDoc.includes("CONTROL_PLANE_ONLY"));
+      assert.ok(
+        bridgeDoc.includes("docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json"),
+        "bridge doc must point at Soundcheck receipt path",
+      );
+
+      assert.deepEqual(pillarMap.mcpTier0Tools, ["eos_fleet_soundcheck", "eos_audit_fleet"]);
+      assert.equal(pillarMap.apiBridge.path, "/api/scorecard");
+      assert.equal(pillarMap.apiBridge.wildcardCorsForbidden, true);
+      assert.equal(pillarMap.portalMustNotRescore, true);
+
+      assert.ok(catalog.includes("eos.glorian/scorecard-api: /api/scorecard"));
+      assert.ok(catalog.includes("eos.glorian/mcp-bridge: docs/backstage/mcp-api-bridge.md"));
+      assert.ok(catalog.includes("eos-scorecard-api"));
+      assert.ok(catalog.includes("/api/scorecard?kind=soundcheck"));
+
+      assert.ok(appConfig.includes("scorecardApiUrl"));
+      assert.ok(appConfig.includes("eos_fleet_soundcheck"));
+      assert.ok(readme.includes("mcp-api-bridge.md"));
+      assert.ok(mkdocs.includes("backstage/mcp-api-bridge.md"));
+
+      assert.equal(scorecardSrc.includes("Access-Control-Allow-Origin\", \"*\""), false);
+      assert.equal(scorecardSrc.includes("Access-Control-Allow-Origin', '*'"), false);
+      assert.ok(scorecardSrc.includes("EOS_ALLOWED_HOSTS") && scorecardSrc.includes("EOS_ALLOWED_ORIGINS"));
+
+      const { default: scorecardHandler, __testOnly_isAllowedHost, __testOnly_isAllowedOrigin } = await import(
+        "../api/scorecard.js"
+      );
+
+      assert.equal(__testOnly_isAllowedHost("glorian-system.vercel.app"), true);
+      assert.equal(__testOnly_isAllowedHost("evil.example"), false);
+      assert.equal(__testOnly_isAllowedOrigin("https://glorian-system.vercel.app"), true);
+      assert.equal(__testOnly_isAllowedOrigin("https://evil.example"), false);
+
+      async function invoke(req) {
+        const headers = {};
+        let statusCode = 0;
+        let body = null;
+        const res = {
+          setHeader(name, val) {
+            headers[String(name).toLowerCase()] = val;
+          },
+          status(code) {
+            statusCode = code;
+            return this;
+          },
+          json(payload) {
+            body = payload;
+            return this;
+          },
+          end() {
+            return this;
+          },
+        };
+        await scorecardHandler(req, res);
+        return { statusCode, headers, body };
+      }
+
+      const deniedHost = await invoke({
+        method: "GET",
+        headers: { host: "evil.example" },
+        url: "/api/scorecard",
+      });
+      assert.equal(deniedHost.statusCode, 403);
+
+      const deniedOrigin = await invoke({
+        method: "GET",
+        headers: { host: "glorian-system.vercel.app", origin: "https://evil.example" },
+        url: "/api/scorecard",
+      });
+      assert.equal(deniedOrigin.statusCode, 403);
+
+      const ok = await invoke({
+        method: "GET",
+        headers: { host: "glorian-system.vercel.app" },
+        url: "/api/scorecard?kind=soundcheck",
+      });
+      assert.equal(ok.statusCode, 200);
+      assert.equal(ok.body.status, "SCORECARD_RECEIPT_AVAILABLE");
+      assert.equal(ok.body.readOnly, true);
+      assert.equal(ok.body.portalMustNotRescore, true);
+      assert.equal(ok.body.kind, "soundcheck");
+      assert.equal(ok.body.receiptPath, "docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json");
+      assert.ok(ok.body.receipt?.sha256Signature || ok.body.receipt?.averageFleetScore !== undefined);
+      assert.ok(String(ok.body.receiptSha256 || "").startsWith("sha256:"));
+      assert.equal(ok.headers["access-control-allow-origin"], undefined);
+    });
   });
 
   describe("Suite 2: SpaceX Dragon / Starship Flight Computer 60Hz TMR (BDD-034)", () => {
