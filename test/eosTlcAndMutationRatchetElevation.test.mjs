@@ -192,4 +192,3 @@ describe("SPEC-270: Formal TLC Model Checking, Mutation Ratchet & Consumer Gover
     );
   });
 });
-

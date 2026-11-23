@@ -10,11 +10,11 @@ Default agent turns must **not** load every MCP tool schema into context. The fu
 
 ## Profiles
 
-| Profile | Env / alias | Approx. count | When to use |
-|---|---|---|---|
-| **essential** | `EOS_MCP_PROFILE=essential` | 18 | Ultra-tight loops (director / verify / search) |
-| **core (Tier-0, default)** | unset, `core`, `tier0` | **≤46** | Default agent turns |
-| **full** | `EOS_MCP_PROFILE=full` | full catalog | Power users, dogfood, frontier tools |
+| Profile                    | Env / alias                 | Approx. count | When to use                                    |
+| -------------------------- | --------------------------- | ------------- | ---------------------------------------------- |
+| **essential**              | `EOS_MCP_PROFILE=essential` | 18            | Ultra-tight loops (director / verify / search) |
+| **core (Tier-0, default)** | unset, `core`, `tier0`      | **≤46**       | Default agent turns                            |
+| **full**                   | `EOS_MCP_PROFILE=full`      | full catalog  | Power users, dogfood, frontier tools           |
 
 - Default is **Tier-0 `core`**. Unset / empty / unknown → `core`.
 - The **full catalog remains available**; this is a gate/default profile change only.
@@ -24,12 +24,12 @@ Default agent turns must **not** load every MCP tool schema into context. The fu
 
 For routine GitHub **reads** (issues, PR metadata, file contents, search), prefer the **`gh` CLI** (or Cursor built-in GitHub tools) instead of expanding the EOS MCP surface with GitHub-read tools.
 
-| Task | Prefer |
-|---|---|
-| List / view issues & PRs | `gh issue …` / `gh pr …` |
-| Read file at ref | `gh api` / git |
-| Search code | `gh search` / ripgrep locally |
-| Mutating EOS control-plane work | EOS MCP Tier-0 tools |
+| Task                            | Prefer                        |
+| ------------------------------- | ----------------------------- |
+| List / view issues & PRs        | `gh issue …` / `gh pr …`      |
+| Read file at ref                | `gh api` / git                |
+| Search code                     | `gh search` / ripgrep locally |
+| Mutating EOS control-plane work | EOS MCP Tier-0 tools          |
 
 Keep `eos_github_gate` (PR gate) in Tier-0 — that is control-plane enforcement, not a substitute for `gh` reads.
 

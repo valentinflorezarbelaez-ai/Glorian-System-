@@ -129,11 +129,7 @@ describe("SPEC-272: Toolchain Control Plane, Local TLC Execution & SRE Warmup Gr
   // BDD-1412: Local TLC Live Invariant Verification
   // -------------------------------------------------------------------------
   it("BDD-1412: Local TLC model checking executes live across all configured specs", () => {
-    const receiptPath = path.join(
-      ROOT,
-      "docs/evidence",
-      `.tlc-receipt-bdd1412-${process.pid}.json`,
-    );
+    const receiptPath = path.join(ROOT, "docs/evidence", `.tlc-receipt-bdd1412-${process.pid}.json`);
     try {
       const receipt = runTlcVerification({ receiptPath });
 

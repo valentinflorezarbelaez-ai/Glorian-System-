@@ -3,12 +3,12 @@
 Agent-facing orchestration for isolated worktrees, Plan≠Execute, adversarial
 review, and attempt caps. **Not** a Layer-0 runtime module.
 
-| Artifact | Path |
-| --- | --- |
-| Skill | `.agents/skills/software-factory/SKILL.md` |
-| Worktree helper | `scripts/software-factory-worktree.mjs` |
-| Composed skills | `sdd-*`, `gdd-contract`, `judgment-day`, `issue-creation`, `branch-pr` |
-| Deterministic GDD harness | `eos toolchain:gdd:*` / SPEC-378 (Layer-0) |
+| Artifact                  | Path                                                                   |
+| ------------------------- | ---------------------------------------------------------------------- |
+| Skill                     | `.agents/skills/software-factory/SKILL.md`                             |
+| Worktree helper           | `scripts/software-factory-worktree.mjs`                                |
+| Composed skills           | `sdd-*`, `gdd-contract`, `judgment-day`, `issue-creation`, `branch-pr` |
+| Deterministic GDD harness | `eos toolchain:gdd:*` / SPEC-378 (Layer-0)                             |
 
 ## Invariants
 

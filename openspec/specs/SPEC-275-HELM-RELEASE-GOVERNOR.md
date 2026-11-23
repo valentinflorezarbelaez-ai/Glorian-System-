@@ -1,6 +1,6 @@
 # SPEC-275: Helm Packaging & Release Governor
 
-**Status**: `APPROVED`  
+**Status**: `APPROVED`
 
 ## 1. Specification Metadata
 

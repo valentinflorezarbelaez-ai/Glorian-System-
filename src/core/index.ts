@@ -722,3 +722,5 @@ export * from "./eosDeterministicReplayDebugger.types.ts";
 export * from "./eosTradingSuiteBarrel.ts";
 export * from "./eosHarnessTokenEconomicsCore.ts";
 export * from "./eosGoalDrivenFactoryCore.ts";
+export * from "./eosByzantineQuorumGovernor.ts";
+export * from "./eosByzantineQuorumGovernor.types.ts";

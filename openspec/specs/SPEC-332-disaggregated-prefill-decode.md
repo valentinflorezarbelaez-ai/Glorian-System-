@@ -1,6 +1,6 @@
 # SPEC-332: Disaggregated Prefill & Decode Serving Engine (PD Separation, Chunked Prefill & Zero-Copy KV Transfer)
 
-**Status**: `APPROVED`  
+**Status**: `APPROVED`
 
 ## 1. Functional Requirements (EARS Syntax)
 

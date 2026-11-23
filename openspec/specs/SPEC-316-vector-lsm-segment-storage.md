@@ -1,6 +1,6 @@
 # SPEC-316: Vector LSM-Tree Segment Storage Engine, Sparse Block Index & Background Compaction
 
-**Status**: `APPROVED`  
+**Status**: `APPROVED`
 
 ## 1. Requirements (IEEE 830 / ISO 29148 EARS)
 

@@ -3753,3 +3753,21 @@
   - `docs/plans/PLAN-240-GOAL-DRIVEN-FACTORY-ENGINE.md`
   - `docs/tasks/TASKS-240-GOAL-DRIVEN-FACTORY-ENGINE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-23-BYZANTINE-QUORUM-SPEC-379`
+
+- **Authorization Date**: 2026-11-23
+- **Change Identifier**: `CHANGE-241` / `SPEC-379`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Port and modernize `CHANGE-241` (`SPEC-379`), Byzantine Quorum Attestation, Cross-Fleet Deterministic Snapshot & Idempotent Receipt Governor: Layer-0 pure modules `src/core/eosByzantineQuorumGovernor.types.ts` and `src/core/eosByzantineQuorumGovernor.ts` (PBFT/HotStuff supermajority geometry `N = 3f + 1`, cryptographic vote attestation, double-signing equivocation detection & slashing proofs, WebAssembly.Memory SWAR popcount bitmask aggregation, hermetic `resolveEvidencePath` receipt persistence); CLI handlers `toolchain:quorum:propose|attest|slash|audit` in `bin/commands/cliByzantineQuorum.mjs`; receipt `docs/evidence/BYZANTINE_QUORUM_RECEIPT.json`; BDD tests `BDD-2065`..`BDD-2070` in `test/eosByzantineQuorumGovernor.test.mjs`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-241-BYZANTINE-QUORUM-ATTESTATION.md`
+  - `openspec/changes/CHANGE-241-byzantine-quorum-attestation.md`
+  - `openspec/specs/SPEC-379-byzantine-quorum-attestation.md`
+  - `docs/plans/PLAN-241-byzantine-quorum-attestation.md`
+  - `docs/tasks/TASKS-241-byzantine-quorum-attestation.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

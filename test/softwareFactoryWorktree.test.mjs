@@ -69,13 +69,7 @@ describe("software-factory-worktree", () => {
     try {
       let failed = false;
       try {
-        run([
-          "remove",
-          "--branch",
-          "cursor/sf-orphan-unregistered",
-          "--path",
-          "sf-orphan-unregistered",
-        ]);
+        run(["remove", "--branch", "cursor/sf-orphan-unregistered", "--path", "sf-orphan-unregistered"]);
       } catch (err) {
         failed = true;
         assert.equal(err.status, 1);
@@ -102,9 +96,7 @@ describe("software-factory-worktree", () => {
     };
 
     // Use HEAD (not `main`) so the test stays hermetic on detached CI checkouts.
-    const created = JSON.parse(
-      run(["create", "--branch", branch, "--base", "HEAD", "--path", customSlug]),
-    );
+    const created = JSON.parse(run(["create", "--branch", branch, "--base", "HEAD", "--path", customSlug]));
     const createdReal = real(created.path);
     assert.equal(createdReal, real(customDir));
     // Stray orphan at the default slug must not win over the registered path.

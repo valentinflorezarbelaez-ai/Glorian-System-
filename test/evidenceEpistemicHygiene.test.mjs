@@ -46,15 +46,9 @@ const ALLOWED_TLC_TIP_MODES = new Set([
 test("sanitizeEvidencePath redacts absolute host paths to repo-relative or REDACTED", () => {
   assert.equal(sanitizeEvidencePath("tools/tla2tools.jar"), "tools/tla2tools.jar");
   assert.equal(sanitizeEvidencePath(root), ".");
-  assert.equal(
-    sanitizeEvidencePath(path.join(root, "tools", "tla2tools.jar")),
-    "tools/tla2tools.jar",
-  );
+  assert.equal(sanitizeEvidencePath(path.join(root, "tools", "tla2tools.jar")), "tools/tla2tools.jar");
   // In-repo absolute under /home or /Users must become real relative path, not fake tools/.
-  assert.equal(
-    sanitizeEvidencePath(path.join(root, ".cache", "tla2tools.jar")),
-    ".cache/tla2tools.jar",
-  );
+  assert.equal(sanitizeEvidencePath(path.join(root, ".cache", "tla2tools.jar")), ".cache/tla2tools.jar");
   assert.equal(
     sanitizeEvidencePath("C:\\Users\\valen\\Documents\\Glorian-System\\tools\\tla2tools.jar"),
     "tools/tla2tools.jar",

@@ -50,9 +50,7 @@ async function runCatalogFreshnessCheck() {
   if (!fs.existsSync(indexPath)) fail(`missing committed index at docs/specs/openspec-catalog-index.json`);
 
   const committed = JSON.parse(fs.readFileSync(indexPath, "utf8"));
-  const diskSpecCount = fs
-    .readdirSync(path.join(root, "openspec/specs"))
-    .filter((f) => f.endsWith(".md")).length;
+  const diskSpecCount = fs.readdirSync(path.join(root, "openspec/specs")).filter((f) => f.endsWith(".md")).length;
 
   if (committed.totalSpecs !== liveSpecs.length) {
     fail(`totalSpecs drift: index=${committed.totalSpecs} live=${liveSpecs.length}`);

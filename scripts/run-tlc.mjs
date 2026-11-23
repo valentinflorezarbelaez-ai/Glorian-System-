@@ -580,9 +580,7 @@ function assembleTlcReceipt({
   writeReceipt = true,
 }) {
   const status = resolveTlcStatus(canExecuteLive, allPassed);
-  const executionMode = canExecuteLive
-    ? TLC_EVIDENCE_MODES.LIVE_TLC
-    : TLC_EVIDENCE_MODES.DEFERRED_TO_CI;
+  const executionMode = canExecuteLive ? TLC_EVIDENCE_MODES.LIVE_TLC : TLC_EVIDENCE_MODES.DEFERRED_TO_CI;
   const cacheHits = modelResults.filter((m) => m?.cached === true).length;
   const receipt = {
     timestampIso: new Date().toISOString(),

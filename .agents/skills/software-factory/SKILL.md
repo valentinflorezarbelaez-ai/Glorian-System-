@@ -17,15 +17,15 @@ metadata:
 Thin **orchestration** skill. Do **not** reinvent SDD, GDD, PR, or adversarial
 review — compose the skills already in `.agents/skills/`:
 
-| Phase | Delegate to |
-| --- | --- |
-| Issue / intake | `issue-creation` |
-| Measurable Done | `gdd-contract` |
-| Plan track | `sdd-explore` → `sdd-propose` → `sdd-spec` → `sdd-design` → `sdd-tasks` |
-| Apply track | `sdd-apply` (separate agent / worktree from planner) |
-| Verify | `sdd-verify` + `npm run verify:strict` |
-| Adversarial review | `judgment-day` (builder ≠ verifier) |
-| PR | `branch-pr` |
+| Phase              | Delegate to                                                             |
+| ------------------ | ----------------------------------------------------------------------- |
+| Issue / intake     | `issue-creation`                                                        |
+| Measurable Done    | `gdd-contract`                                                          |
+| Plan track         | `sdd-explore` → `sdd-propose` → `sdd-spec` → `sdd-design` → `sdd-tasks` |
+| Apply track        | `sdd-apply` (separate agent / worktree from planner)                    |
+| Verify             | `sdd-verify` + `npm run verify:strict`                                  |
+| Adversarial review | `judgment-day` (builder ≠ verifier)                                     |
+| PR                 | `branch-pr`                                                             |
 
 Layer-0 GDD / factory engines (`eos toolchain:gdd:*`, SPEC-378) remain the
 deterministic harness. This skill is the agent-facing playbook only.
@@ -87,12 +87,12 @@ Before opening or merging a factory PR:
 
 Halt and report when any of these fire:
 
-| Cap | Default | Action |
-| --- | --- | --- |
-| `maxAttempts` | 3 (from goal contract) | Stop loop; publish probe ledger |
-| Judgment-day fix rounds | 2 | `JUDGMENT: ESCALATED` |
-| `verify:strict` | must exit 0 | Do not open/merge PR red |
-| Vague goal | fail-closed | Refuse to start Apply |
+| Cap                     | Default                | Action                          |
+| ----------------------- | ---------------------- | ------------------------------- |
+| `maxAttempts`           | 3 (from goal contract) | Stop loop; publish probe ledger |
+| Judgment-day fix rounds | 2                      | `JUDGMENT: ESCALATED`           |
+| `verify:strict`         | must exit 0            | Do not open/merge PR red        |
+| Vague goal              | fail-closed            | Refuse to start Apply           |
 
 Do **not** edit `check.command`, tests, or CI to manufacture green.
 

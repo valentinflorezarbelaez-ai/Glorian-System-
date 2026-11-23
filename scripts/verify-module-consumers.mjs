@@ -173,7 +173,14 @@ export function verifyModuleConsumers(options = {}) {
       const err = new Error(`Committed MODULE_CONSUMER_GRAPH.json is not valid JSON: ${parseErr.message}`);
       throw err;
     }
-    const required = ["timestampIso", "totalModules", "consumedModules", "unconsumedModules", "graphDensity", "modules"];
+    const required = [
+      "timestampIso",
+      "totalModules",
+      "consumedModules",
+      "unconsumedModules",
+      "graphDensity",
+      "modules",
+    ];
     for (const field of required) {
       if (!(field in committed)) {
         throw new Error(`Committed MODULE_CONSUMER_GRAPH.json missing required field: ${field}`);

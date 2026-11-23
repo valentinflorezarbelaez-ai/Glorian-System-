@@ -392,6 +392,10 @@ Uso Universal Exhaustivo (v75.0.0 — SPEC-001..SPEC-253):
   eos toolchain:trading:cockpit | toolchain:trading:trigger | toolchain:trading:walkforward | toolchain:trading:cockpit-audit Cockpit 153+ activos, disparo 59.8s y Kelly Walk-Forward (SPEC-376)
   eos toolchain:token-econ:boundary | toolchain:token-econ:compress | toolchain:token-econ:route | toolchain:token-econ:cache | toolchain:token-econ:minimal | toolchain:token-econ:diff | toolchain:token-econ:audit Harness Forbidden-Touch, Headroom JSON, JEV Router, Prompt Cache y Minimal-Diff (SPEC-377)
   eos toolchain:gdd:goal | toolchain:gdd:verifier | toolchain:gdd:loop | toolchain:gdd:factory | toolchain:gdd:gates | toolchain:gdd:diff | toolchain:gdd:fleet | toolchain:gdd:audit Goal-Driven Output Loop, Immutable Verifier, Parallel Worktree Factory y Pre-PR Gates (SPEC-378)
+  eos toolchain:quorum:propose [--epoch=N] [--json] Propone snapshot determinista de época para comité bizantino (SPEC-379)
+  eos toolchain:quorum:attest [--epoch=N] [--votes=5] [--json] Síntesis de Certificado de Quórum con firmas de validadores honestos (SPEC-379)
+  eos toolchain:quorum:slash [--epoch=N] [--json] Detección de doble firma y emisión de prueba de penalización por equivocación (SPEC-379)
+  eos toolchain:quorum:audit [--json] Auditoría integral del gobernador de quórum bizantino y emisión de recibo (SPEC-379)
   eos toolchain:aladdin:stress-test | toolchain:aladdin:allocate | toolchain:aladdin:var | toolchain:aladdin:audit Aladdin All-Weather y VaR/CVaR (SPEC-372)
   eos ship [--ticket=ID]         Comando maestro pre-PR integrando SPEC-101..105 y SPEC-236..268
   eos dashboard [start] / ledger / metrics / guard / flow / release:seal / verify:action / slsa:attest

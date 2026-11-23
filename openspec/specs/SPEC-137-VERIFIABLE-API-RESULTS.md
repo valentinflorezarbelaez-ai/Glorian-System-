@@ -1,6 +1,6 @@
 # BASE SPECIFICATION: VERIFIABLE API RESULTS (SPEC-137)
 
-**Status**: `APPROVED`  
+**Status**: `APPROVED`
 
 ## 1. Scope
 

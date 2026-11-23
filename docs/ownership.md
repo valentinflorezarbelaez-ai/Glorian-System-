@@ -2,11 +2,11 @@
 
 Backstage ownership for the Glorian/EOS control plane is **declared** in catalog entities (not left blank / `NOT_DECLARED`).
 
-| Role | Entity ref | Kind |
-| --- | --- | --- |
-| Squad (primary `spec.owner`) | `group:glorian-control-plane-squad` | Group `type: team` |
-| Tribe | `group:glorian-platform-tribe` | Group `type: tribe` |
-| Architect (member) | `user:valentin-florez-arbelaez` | User |
+| Role                         | Entity ref                          | Kind                |
+| ---------------------------- | ----------------------------------- | ------------------- |
+| Squad (primary `spec.owner`) | `group:glorian-control-plane-squad` | Group `type: team`  |
+| Tribe                        | `group:glorian-platform-tribe`      | Group `type: tribe` |
+| Architect (member)           | `user:valentin-florez-arbelaez`     | User                |
 
 ## Source of truth
 

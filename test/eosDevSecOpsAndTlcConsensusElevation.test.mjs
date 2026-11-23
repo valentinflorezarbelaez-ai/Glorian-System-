@@ -144,11 +144,7 @@ describe("SPEC-271: DevSecOps Platform Engineering, Kernel Shield & TLC Consensu
     const pairBulkhead = validateSpecConfigPair("CellBasedBulkheadGovernor", path.join(ROOT, "docs/formal"));
     assert.equal(pairBulkhead.syntaxValid, true);
 
-    const receiptPath = path.join(
-      ROOT,
-      "docs/evidence",
-      `.tlc-receipt-bdd1405-${process.pid}.json`,
-    );
+    const receiptPath = path.join(ROOT, "docs/evidence", `.tlc-receipt-bdd1405-${process.pid}.json`);
     try {
       const receipt = runTlcVerification({ forceMock: true, receiptPath });
       assert.ok(receipt.totalConfiguredSpecs >= 6);

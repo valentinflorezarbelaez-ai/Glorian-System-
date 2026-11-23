@@ -163,9 +163,7 @@ execFileSync(
     stdio: "inherit",
   },
 );
-console.log(
-  "[PASS] Stage 3.03/7 — Module consumer graph check-only audit (npm run consumers:audit).",
-);
+console.log("[PASS] Stage 3.03/7 — Module consumer graph check-only audit (npm run consumers:audit).");
 
 // ---------------------------------------------------------------------------
 // STAGE 3.05: MODERN WEB GUIDANCE SKILL + LAYER-0 ISOLATION GATE

@@ -12,12 +12,11 @@
 - **Tribe**: ` group:glorian-platform-tribe `
 - **Lifecycle Tier**: ` production `
 - **Registered Fleet Repositories**: 10
-- **Active Formal Architectural Specs (OpenSpec)**: 378
+- **Active Formal Architectural Specs (OpenSpec)**: 379
 
 ## 2. Proposed Engineering Conventions (Not Audited)
 - Consider Go for network services and Rust for performance-sensitive components; this snapshot has not measured the repository's language mix.
 - Select audio loudness and peak targets per product requirements; no mastering or conformance check is performed here.
-- For HTML/CSS/client-side JS, prefer Google Chrome Modern Web Guidance via `.agents/skills/modern-web-guidance/` (`npm run mwg:gate`; `docs/runbooks/modern-web-guidance.md`). Never add MWG as a Layer-0/`package.json` runtime dependency.
 - Layer-0 purity: `docs/governance/DEPENDENCY_POLICY_L0.md` (formal SoT: `openspec/specs/SPEC-002-HEXAGONAL-L0.md`); keep `package.json` `dependencies: {}`.
 
 ## 3. Canonical merge gate
@@ -33,5 +32,4 @@
 2. Run `npm run verify:strict` (or matching formatting/tests/security checks) before release.
 3. Define audio and financial correctness criteria with the relevant product owners.
 4. Treat this generated context as a starting point and verify every recommendation.
-5. For HTML/CSS/client-side JS: use `.agents/skills/modern-web-guidance/` (`npm run mwg:gate`; runbook `docs/runbooks/modern-web-guidance.md`) — never as a Layer-0 dependency.
-6. Before adding npm packages: read `docs/governance/DEPENDENCY_POLICY_L0.md` and keep Layer-0 `dependencies: {}`.
+5. Before adding npm packages: read `docs/governance/DEPENDENCY_POLICY_L0.md` and keep Layer-0 `dependencies: {}`.

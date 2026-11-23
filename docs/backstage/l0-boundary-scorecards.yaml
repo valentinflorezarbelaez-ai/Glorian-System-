@@ -53,7 +53,7 @@ kind: Resource
 metadata:
   name: eos-l0-pillar-import-boundary
   title: L0 Pillar — Import Boundary (Law V)
-  description: Fail-closed hexagonal isolation for src/core/ (node: builtins + relative src/core only). Gate npm run boundary:check.
+  description: "Fail-closed hexagonal isolation for src/core/ (node: builtins + relative src/core only). Gate npm run boundary:check."
   annotations:
     eos.glorian/pillar-id: L0_IMPORT_BOUNDARY
     eos.glorian/pillar-weight: "0.5"

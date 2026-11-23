@@ -153,7 +153,10 @@ function parsePorcelainWorktrees(porcelain) {
     }
     if (!current) continue;
     if (line.startsWith("branch ")) {
-      current.branch = line.slice("branch ".length).trim().replace(/^refs\/heads\//, "");
+      current.branch = line
+        .slice("branch ".length)
+        .trim()
+        .replace(/^refs\/heads\//, "");
     }
   }
   if (current) entries.push(current);
@@ -169,9 +172,7 @@ function findRegisteredWorktree(targetPath, branch) {
     fail(`No registered git worktree at ${targetPath}`);
   }
   if (match.branch !== branch) {
-    fail(
-      `Worktree at ${targetPath} is registered for branch '${match.branch || "(detached)"}', not '${branch}'`,
-    );
+    fail(`Worktree at ${targetPath} is registered for branch '${match.branch || "(detached)"}', not '${branch}'`);
   }
   return match;
 }

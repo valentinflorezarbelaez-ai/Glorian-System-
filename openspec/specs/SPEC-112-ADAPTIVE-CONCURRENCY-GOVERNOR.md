@@ -1,6 +1,6 @@
 # SPEC-112: Distributed Adaptive Concurrency Control & Priority-Tier Load Shedding
 
-**Status**: `APPROVED`  
+**Status**: `APPROVED`
 
 ## 1. Overview & Objective
 

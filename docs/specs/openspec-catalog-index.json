@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 378,
-  "catalogSha256": "85e8eb7327ea519829edd9789b5b6338faf56a48bd08e5e48482e2274564bdca",
+  "totalSpecs": 379,
+  "catalogSha256": "88a10cf53633c49da5dae3bdec47431e1edc83339245df2f8c70ff6c72243baf",
   "specs": [
     {
       "id": "SPEC-001",
@@ -10,7 +10,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-001-CONSTITUTION.md",
-      "sha256": "0c6d6b3e634e56cbff0c944b5f53cd132dcbeef2fc223cc1bc4c03958d1fdf5d"
+      "sha256": "73712f38d757f41dae9ff119771c8a0cc5888f706c854d86c32432cd37f6ad11"
     },
     {
       "id": "SPEC-002",
@@ -19,7 +19,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-002-HEXAGONAL-L0.md",
-      "sha256": "9806d0b41dad668240ee3565ac34623ab3b9721b364c29c70a9991ae4c46d64e"
+      "sha256": "e05139d9448b0a46746d1b63ff6d86323d1f413c1a2a38165152805f4f713838"
     },
     {
       "id": "SPEC-003",
@@ -28,7 +28,7 @@
       "frCount": 0,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-003-XIRP-WORKTREE.md",
-      "sha256": "0e95f043d041f78b6f5c512fac79fa639a1dffcbc9e03bd9e1837151212bfb33"
+      "sha256": "4ea4de4d6b5ded1599d1421e03e1d79e3560d41ee7e6c5f453263a9f68992b18"
     },
     {
       "id": "SPEC-004",
@@ -37,7 +37,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-004-SPOTIFY-XIRP-ENGINE.md",
-      "sha256": "a86cb522aa1ed73ff24ecf51ed7780c6666a76dec63b9266d1ec62bd50b4ea40"
+      "sha256": "4916453546926a2850a7bbedfc7ace38436e2891872b3ad58cb133e61cdbdd21"
     },
     {
       "id": "SPEC-005",
@@ -46,7 +46,7 @@
       "frCount": 0,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-005-AUTONOMOUS-HEALER.md",
-      "sha256": "50652534fe5336bda6ce73bc2413e2cbb5d946c94adbd97ad30f0fb4f8bd85a8"
+      "sha256": "51bfbb55192d30ad9f7bfdf33b0730303649eebfcd71f9ac35aa2ddcc128f13e"
     },
     {
       "id": "SPEC-006",
@@ -55,7 +55,7 @@
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-006-TITANS-MATRIX.md",
-      "sha256": "58a847a602f0253a8ed69cfd435e19a869bfeaa38bfd40fe92664b8e80ddfd1f"
+      "sha256": "b5012888d537e258a45a1f94e7b36c251bc990b2f8712572c0359a94411c7ddd"
     },
     {
       "id": "SPEC-007",
@@ -64,7 +64,7 @@
       "frCount": 0,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-007-TURBO-SEMANTIC-GRAPH.md",
-      "sha256": "5172c88f6dea42cda1a4393531110c0c35ca034900a391a2ccc64e51d289c09f"
+      "sha256": "1dee82e93cd91ae907b51d83ae3643e47ec538f8543e263f64b9c19ee8bc9601"
     },
     {
       "id": "SPEC-008",
@@ -73,7 +73,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-008-COGNITIVE-EVAL.md",
-      "sha256": "0c1ce739c08d73c123debfe776e0955ace5c4e475bde0886cd5c9f54d5f2f772"
+      "sha256": "bba41441002e74fed63bd2414e891741eaa431f7fe189027065402183e0a68dc"
     },
     {
       "id": "SPEC-009",
@@ -82,7 +82,7 @@
       "frCount": 0,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-009-JARVIS-SOVEREIGN-MONAD.md",
-      "sha256": "aa38c110027d054b56db92beb402eecccc0fbb120733b8e492949f7b7689c4b8"
+      "sha256": "b9da8c8dad423b4b523120d57b9861dc7140ba67255361df509af3fb9738afa2"
     },
     {
       "id": "SPEC-010",
@@ -91,7 +91,7 @@
       "frCount": 0,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-010-AKASHIC-MEMORY.md",
-      "sha256": "e9b3eea44323f321e76ce232d86c474a7b6c6ec19bfb9433b33cfc82b11b621a"
+      "sha256": "f39271a95ae59a2c34442b6541f77b849e394faba8181f9177f303e065f4bade"
     },
     {
       "id": "SPEC-011",
@@ -100,7 +100,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-011-GO-NATIVE-ACCELERATOR.md",
-      "sha256": "ebb25e71ad825f85e8e19bc0eea34bdd467bbc20ac2b5f1e901e71aab8d51564"
+      "sha256": "d1070fbc24eff6a3052d0454b3b49406413b0069c38d92ccc1a9b2edf0a15941"
     },
     {
       "id": "SPEC-012",
@@ -109,7 +109,7 @@
       "frCount": 0,
       "bddCount": 2,
       "file": "openspec/specs/SPEC-012-SPOTIFY-AGENTIC-FACTORY.md",
-      "sha256": "9b62a4f23a215e7c7af7db33e1ae998a297fe782aec7ee97175f3654041d8914"
+      "sha256": "3d5728a6204ec45e6fad861e013c884cd230058a72c6753508dc8b5f918e8cad"
     },
     {
       "id": "SPEC-013",
@@ -118,7 +118,7 @@
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-013-AUDIO-DSP-KERNEL.md",
-      "sha256": "4b3844a031dc77218a0ae166007e2f62ec78ba7e794ca556b6c75821db8ba401"
+      "sha256": "def7b748553eb89d4c5f3be1793a3bcf18db790ca47304f4765b0d9a4b1cd3e4"
     },
     {
       "id": "SPEC-014",
@@ -127,7 +127,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-014-FLEET-GOLDEN-PATH-ELEVATOR.md",
-      "sha256": "59f752f4b0fe560d35948f615035e09a86ae85bcbf68b049d74ca28abff991ed"
+      "sha256": "d05fcb2ab4e2dfd0e57d70469b79548efc5a77367e6285f61c0d938d0e09d1ac"
     },
     {
       "id": "SPEC-015",
@@ -136,7 +136,7 @@
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-015-APOLLO-HERMES-MESH.md",
-      "sha256": "3d16dbb4da897142a8be690d2ae9898b86890dbaf4c6dbb053b701adb776b782"
+      "sha256": "daabab1b1755527f1271de2a014a310af0d76fd16aaaf652b5161eb66472c43e"
     },
     {
       "id": "SPEC-016",
@@ -145,7 +145,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-016-FINOPS-GO-NUBANK-SPOTIFY.md",
-      "sha256": "24f8da5fea7d241594c992c1f77d3395dcf937d0f67fd15c42b29f2bf2ecb9a4"
+      "sha256": "781cdedfee33152ee0bb5c02ef04ef32b2e54e5562e2f6d811439d71e3d08054"
     },
     {
       "id": "SPEC-017",
@@ -154,7 +154,7 @@
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-017-GAPLESS-DJ-CROSSFADER.md",
-      "sha256": "faa1b1938a8e9fe5787a754d072eff8d7e26004c619193f2309ace24b162c19c"
+      "sha256": "67ab2bdd2ef4013f3c275a4d70dbff04d4a05e9f9d46b8bc2f48d7c11047d5f6"
     },
     {
       "id": "SPEC-018",
@@ -163,7 +163,7 @@
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-018-ACOUSTIC-FEATURE-STORE.md",
-      "sha256": "b770a2300ce99260e5e9dc5677b92749342076310923c76a0ceb9e1462dab3a6"
+      "sha256": "12ac1bda71eea449e6218320588152699d84b592651e2f30112d38b14bf75c98"
     },
     {
       "id": "SPEC-019",
@@ -172,7 +172,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-019-UNIVERSAL-POLYGLOT-ADAPTER.md",
-      "sha256": "e0e07b21ad65102756d471c70e2e650a60064beb4a79f4d32a1648660291fbd9"
+      "sha256": "5a708668ba9c5b1d714d0860628d6dafac7ade6ca060fc1a3f3c4368c65ea0da"
     },
     {
       "id": "SPEC-020",
@@ -181,7 +181,7 @@
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-020-GLOBAL-EDGE-ARBITER.md",
-      "sha256": "f200630ecae41e483996af62bb7a694941078d6c8f3be7a173bbda6e2211dde6"
+      "sha256": "18d2ed5b2f8869df9dd96b98a0d0bc35b5e55e7f5a5d21ab2f32dd78c0fdace9"
     },
     {
       "id": "SPEC-021",
@@ -190,7 +190,7 @@
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-021-SAMAEL-IBM-NVIDIA.md",
-      "sha256": "cddfc7f9a278a1f021a7b6d06574ca00c0d9e35a69eca5961236486d4f324c1a"
+      "sha256": "32f55d3eafa85369444ac75802fb759b2968a5db91fe14253155b35098d0c3ec"
     },
     {
       "id": "SPEC-022",
@@ -199,7 +199,7 @@
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-022-DISRUPTOR-RING-BUFFER.md",
-      "sha256": "d983993f744a448c5cd0fa7024a9c42ee365997b7d8a0fb1ae5277499f1f113f"
+      "sha256": "9453947ef18f87277cee867d91cdc218859a666cf0baa4ba97458012d4a1be7c"
     },
     {
       "id": "SPEC-023",
@@ -208,7 +208,7 @@
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-023-NUBANK-INSTITUTIONAL-CODEX.md",
-      "sha256": "74b6a260423752a12a77a3e8aa96d714299bdf80551c59ec5b23063858e0c14f"
+      "sha256": "676d3e5627109eb2bd3269f9abf43a298708668ae1f11c7ddf43b972f4d520a9"
     },
     {
       "id": "SPEC-024",
@@ -217,7 +217,7 @@
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-024-SPOTIFY-INSTITUTIONAL-CODEX.md",
-      "sha256": "07f1d0e0a1f4b9ad92b72d35f04f0ba7ee136128eb4706e541d87d6a5d6a4edc"
+      "sha256": "534cd51578c6a7342fe2a81114df80056f2ae26818fbd8a6117ee881ded0e072"
     },
     {
       "id": "SPEC-025",
@@ -1000,7 +1000,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-111-HEDGED-REQUESTS-DEADLINE-MESH.md",
-      "sha256": "6fca410ef02850677e3a39f8e48758a13f100a04b86cdc7a5dd7d1e10847123d"
+      "sha256": "09a61ba57bb8344c507f09bf825342b708d6c7e9c5b18964f57ff507d6bef855"
     },
     {
       "id": "SPEC-112",
@@ -1009,7 +1009,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-112-ADAPTIVE-CONCURRENCY-GOVERNOR.md",
-      "sha256": "5311ceb305678c556e1baa26efa95e2130e0880756eafff9573f744192052905"
+      "sha256": "dc393ad55f4e19f594d0236fe43823ab1caa1e75b3ec100697dbebdaf7e0737f"
     },
     {
       "id": "SPEC-113",
@@ -1018,7 +1018,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-113-TAIL-BASED-TRACE-SAMPLER.md",
-      "sha256": "6f85a328a3d578fac825e7ec4e10a3e64b56e6ca1b5b6b82ef75c61d9bb22713"
+      "sha256": "036260b6606feebb415cf5feed940d5afde06fce29cf270be4e06343dff81258"
     },
     {
       "id": "SPEC-114",
@@ -1027,7 +1027,7 @@
       "frCount": 4,
       "bddCount": 3,
       "file": "openspec/specs/SPEC-114-PREDICTIVE-REMEDIATION-ENGINE.md",
-      "sha256": "df34927b91259437917eef096aaa4e5858c9fcaa4ca14bfdc2caf439b56b1a6a"
+      "sha256": "1cea59b9054c634f4365536d8467cc49f5c2353085bd075f5d632d275d61d890"
     },
     {
       "id": "SPEC-115",
@@ -1171,7 +1171,7 @@
       "frCount": 1,
       "bddCount": 4,
       "file": "openspec/specs/SPEC-130-GLORIAN-SOVEREIGN-IDENTITY-ELEVATION.md",
-      "sha256": "947af31700c309878f54562b7fbbaef2f819dfd7ccf2c7d780230e5b7bf075ed"
+      "sha256": "3ce536f92110077142f5d31d34b360ff0a243154cc9111e9a76f53d0c0f0e330"
     },
     {
       "id": "SPEC-131",
@@ -1225,7 +1225,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-136-UNTRUSTED-BROWSER-DATA.md",
-      "sha256": "09608ee3b9e6919cb0d9209d325e3ecb46f3ba74389b3b3b072316201c1e01a5"
+      "sha256": "efaf6063474b17d21409a311b167d5ec97167d164650ac36cd885cf15955e36a"
     },
     {
       "id": "SPEC-137",
@@ -1234,7 +1234,7 @@
       "frCount": 0,
       "bddCount": 0,
       "file": "openspec/specs/SPEC-137-VERIFIABLE-API-RESULTS.md",
-      "sha256": "b026d679125cd853b25a688a908420e7f1e63e2c7d8eca16bda36e93b09d18f1"
+      "sha256": "348f490b2e7c75733d547b83aa8dd1074fbedae60207801a14781e1c3c913637"
     },
     {
       "id": "SPEC-138",
@@ -1243,7 +1243,7 @@
       "frCount": 0,
       "bddCount": 1,
       "file": "openspec/specs/SPEC-138-SAFE-AGENT-HARNESS.md",
-      "sha256": "b13a1ffacaffa41ee24339c746ef6d8405342ccc4110fa6e7325eb639a3b4297"
+      "sha256": "bec27b76c3e6c9666e2538532b3b967975c6fd5f7b1f57263924088e89e96073"
     },
     {
       "id": "SPEC-139",
@@ -2467,7 +2467,7 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-274-K8S-DEPLOYMENT-AND-K6-LOADTEST.md",
-      "sha256": "bb4d92d38fe8f223e0611cdf40c8aeed94c9defd77b61d211da1bd38856618c4"
+      "sha256": "f67725eb1eb977421c8511c627de0b6aed66d30ff3c3eaab522ce4d1b81b1629"
     },
     {
       "id": "SPEC-275",
@@ -2476,7 +2476,7 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-275-HELM-RELEASE-GOVERNOR.md",
-      "sha256": "b833ce7082359b8144d51c92092953a46389745a5f4947949e45c5eba9191350"
+      "sha256": "32da2e569a6afc3027b5f553db7cc8d51e344e8a004d53bd9150d367a19d325b"
     },
     {
       "id": "SPEC-276",
@@ -2485,7 +2485,7 @@
       "frCount": 1,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-276-TERRAFORM-IAC-GOVERNOR.md",
-      "sha256": "19d47ba10d39ca77948858d16323f50736b1f6449d6d1d2af02bbb6a2b89882c"
+      "sha256": "e08440455b1f0d8cb350794457484d3a964d49b4aa7f6e3f90ef594b7f049b66"
     },
     {
       "id": "SPEC-277",
@@ -2845,7 +2845,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-316-vector-lsm-segment-storage.md",
-      "sha256": "ba2f01d276ec7e493cc5a450d014b121ead43e6eaaeb38b9573b07bb62f9b121"
+      "sha256": "ba8f3e1b34ba4f089d19172b178c45c4efb8c941203afb7790266b3d5ca8983e"
     },
     {
       "id": "SPEC-317",
@@ -2890,7 +2890,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-321-megatron-tensor-parallelism.md",
-      "sha256": "ec21d65a96508ca9233d9c845302f90d2a42e2e8a2c00cb38f8ed8a533aa2c4e"
+      "sha256": "4e20187b58e41496dd57c1d042fb9d4c4c0af78b9bec2b2b2316ef728d856068"
     },
     {
       "id": "SPEC-322",
@@ -2899,7 +2899,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-322-pipeline-parallelism-1f1b.md",
-      "sha256": "ca6607c0481d63f7dd46facd60ebc1e4f40ba8108aaec093570e8bbd55116f6b"
+      "sha256": "efcbd71ece6fd2e59411e7fbf5bb1e5ceda9616fabd46ada16a1c0b0134f62e9"
     },
     {
       "id": "SPEC-323",
@@ -2989,7 +2989,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-332-disaggregated-prefill-decode.md",
-      "sha256": "edcbb9b77e01e6865c68adcb2bba7ef401bfc42d0c23abe0a0769c3e95f6cee1"
+      "sha256": "42c3fb20cea5ac20c4a72ecc8d5b5e67af63dbf2e24d73b39256048f7fa94bc5"
     },
     {
       "id": "SPEC-333",
@@ -2998,7 +2998,7 @@
       "frCount": 6,
       "bddCount": 6,
       "file": "openspec/specs/SPEC-333-ontological-hypergraph.md",
-      "sha256": "d560b0076d2ea94df6ab742c433167e56d9655208090662ef8a2d455da367ec8"
+      "sha256": "131c5e379c05349df7d312a38c00da58c3b3c940dc8056380c5f45f31ebc5723"
     },
     {
       "id": "SPEC-334",
@@ -3404,6 +3404,15 @@
       "bddCount": 8,
       "file": "openspec/specs/SPEC-378-goal-driven-factory-engine.md",
       "sha256": "2440a968047b757bb09f6c0f31303c4bde82581ca8e6d8e8d716efed63b597dc"
+    },
+    {
+      "id": "SPEC-379",
+      "title": "Byzantine Quorum Attestation, Cross-Fleet Deterministic Snapshot & Idempotent Verification Gate Governor",
+      "status": "APPROVED",
+      "frCount": 1,
+      "bddCount": 6,
+      "file": "openspec/specs/SPEC-379-byzantine-quorum-attestation.md",
+      "sha256": "2a1d4b1603a4b4d2ac582c33c937bf518fc7807fc8bddfcbdd40d394324ae80f"
     }
   ]
 }

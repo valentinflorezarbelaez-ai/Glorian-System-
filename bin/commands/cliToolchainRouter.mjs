@@ -335,6 +335,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliGoalDrivenFactory.mjs",
     fn: "handleGoalDrivenFactoryCommand",
   },
+  {
+    prefix: "toolchain:quorum:",
+    file: "./cliByzantineQuorum.mjs",
+    fn: "handleQuorumCommands",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

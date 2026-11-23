@@ -150,17 +150,11 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
 
   const hasMetric = isPlainObject(parsed.metric) || typeof parsed.metric === "string";
   const hasThreshold = isPlainObject(parsed.threshold) || typeof parsed.threshold === "number";
-  const hasCheck =
-    isPlainObject(parsed.check) ||
-    (typeof parsed.check === "string" && parsed.check.trim().length > 0);
+  const hasCheck = isPlainObject(parsed.check) || (typeof parsed.check === "string" && parsed.check.trim().length > 0);
 
   if (!hasMetric || !hasThreshold || !hasCheck) {
     issues.push(
-      issue(
-        "VAGUE_GOAL",
-        "$",
-        "Vague goal rejected: metric, threshold, and check are all required (fail-closed).",
-      ),
+      issue("VAGUE_GOAL", "$", "Vague goal rejected: metric, threshold, and check are all required (fail-closed)."),
     );
     if (!hasMetric) issues.push(issue("MISSING_FIELD", "metric", "metric is required."));
     if (!hasThreshold) issues.push(issue("MISSING_FIELD", "threshold", "threshold is required."));
@@ -169,9 +163,7 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
   }
 
   if (!isNonEmptyString(parsed.id) || !GOAL_ID_RE.test(parsed.id.trim())) {
-    issues.push(
-      issue("INVALID_FIELD", "id", 'id must match GOAL-[A-Z0-9_-]{2,64} (e.g. "GOAL-L0-DEPS").'),
-    );
+    issues.push(issue("INVALID_FIELD", "id", 'id must match GOAL-[A-Z0-9_-]{2,64} (e.g. "GOAL-L0-DEPS").'));
   } else if (isPlaceholderGoalId(parsed.id)) {
     issues.push(
       issue(
@@ -183,16 +175,9 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
   }
 
   if (!isNonEmptyString(parsed.title) || parsed.title.trim().length > MAX_TITLE_CHARS) {
-    issues.push(
-      issue("INVALID_FIELD", "title", `title must be a non-empty string <= ${MAX_TITLE_CHARS} chars.`),
-    );
-  } else if (
-    /^replace with/i.test(parsed.title.trim()) ||
-    containsAngleBracketPlaceholder(parsed.title)
-  ) {
-    issues.push(
-      issue("VAGUE_GOAL", "title", "title still contains a template placeholder; replace before Done."),
-    );
+    issues.push(issue("INVALID_FIELD", "title", `title must be a non-empty string <= ${MAX_TITLE_CHARS} chars.`));
+  } else if (/^replace with/i.test(parsed.title.trim()) || containsAngleBracketPlaceholder(parsed.title)) {
+    issues.push(issue("VAGUE_GOAL", "title", "title still contains a template placeholder; replace before Done."));
   }
 
   let metric: GoalMetric | null = null;
@@ -200,9 +185,7 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
     const name = parsed.metric.name;
     const unit = parsed.metric.unit;
     if (!isNonEmptyString(name) || !METRIC_NAME_RE.test(name.trim())) {
-      issues.push(
-        issue("INVALID_FIELD", "metric.name", "metric.name must be snake_case [a-z][a-z0-9_]{1,63}."),
-      );
+      issues.push(issue("INVALID_FIELD", "metric.name", "metric.name must be snake_case [a-z][a-z0-9_]{1,63}."));
     } else if (PLACEHOLDER_METRIC_RE.test(name.trim()) || containsAngleBracketPlaceholder(name)) {
       issues.push(
         issue("VAGUE_GOAL", "metric.name", `metric.name "${String(name).trim()}" is a template placeholder.`),
@@ -308,9 +291,7 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
 
   let caps: GoalCaps | null = null;
   if (!isPlainObject(parsed.caps)) {
-    issues.push(
-      issue("MISSING_FIELD", "caps", "caps.maxAttempts and caps.maxCostUsd are required (fail-closed)."),
-    );
+    issues.push(issue("MISSING_FIELD", "caps", "caps.maxAttempts and caps.maxCostUsd are required (fail-closed)."));
   } else {
     const maxAttempts = parsed.caps.maxAttempts;
     const maxCostUsd = parsed.caps.maxCostUsd;
@@ -360,9 +341,7 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
   try {
     protectedPaths = normalizeProtectedPaths(parsed.protectedPaths);
   } catch (err) {
-    issues.push(
-      issue("INVALID_FIELD", "protectedPaths", err instanceof Error ? err.message : String(err)),
-    );
+    issues.push(issue("INVALID_FIELD", "protectedPaths", err instanceof Error ? err.message : String(err)));
   }
 
   if (!isNonEmptyString(parsed.doneWhen) || parsed.doneWhen.trim().length > MAX_DONE_WHEN_CHARS) {
@@ -401,11 +380,7 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
   return finalize(goal, issues, receiptBase);
 }
 
-function finalize(
-  goal: GoalContract | null,
-  issues: GoalValidationIssue[],
-  raw: string,
-): GoalValidationResult {
+function finalize(goal: GoalContract | null, issues: GoalValidationIssue[], raw: string): GoalValidationResult {
   const ok = goal !== null && issues.length === 0;
   const receiptSha256 = sha256Hex(
     JSON.stringify({
@@ -461,10 +436,7 @@ export function evaluateMetric(actual: number, threshold: GoalThreshold): Metric
 }
 
 /** Fail closed when attempt or cost caps are exceeded. */
-export function assertWithinCaps(
-  state: GoalAttemptState,
-  caps: GoalCaps,
-): GoalValidationResult {
+export function assertWithinCaps(state: GoalAttemptState, caps: GoalCaps): GoalValidationResult {
   assertPrecondition(Number.isInteger(state.attempt) && state.attempt >= 0, "attempt must be >= 0");
   assertPrecondition(Number.isFinite(state.costUsdAccumulated) && state.costUsdAccumulated >= 0, "cost must be >= 0");
 

@@ -1,0 +1,19 @@
+{
+  "specRef": "SPEC-379",
+  "changeRef": "CHANGE-241",
+  "status": "VERIFIED",
+  "timestampIso": "2026-11-23T20:29:05.496Z",
+  "fleetProjectsSnapshotCount": 9,
+  "geometryVerified": {
+    "totalValidators": 9,
+    "maxByzantineFaults": 2,
+    "supermajorityQuorum": 7,
+    "safetyIntersectionCount": 5
+  },
+  "quorumCommitted": true,
+  "equivocationSlashedCount": 1,
+  "linearMemoryPopcountVerified": true,
+  "linearMemoryDurationNs": 379200,
+  "idempotentReceiptVerified": true,
+  "sha256Signature": "17c8500ca60c0ea6cfca73d3d4d73225e6aaf600ea5000a648a1d4c330a5c236"
+}

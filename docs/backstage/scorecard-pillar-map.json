@@ -57,12 +57,7 @@
       "backstageCheckId": "eos.soundcheck.dora-velocity"
     }
   ],
-  "certificationTiers": [
-    "LEVEL_1_BRONZE",
-    "LEVEL_2_SILVER",
-    "LEVEL_3_GOLD",
-    "LEVEL_4_PLATINUM"
-  ],
+  "certificationTiers": ["LEVEL_1_BRONZE", "LEVEL_2_SILVER", "LEVEL_3_GOLD", "LEVEL_4_PLATINUM"],
   "cli": "node bin/eos.mjs toolchain:soundcheck:audit",
   "npmScripts": ["fleet:scorecards", "fleet:audit"]
 }

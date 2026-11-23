@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-23T20:07:45.803Z",
-  "totalModules": 634,
-  "consumedModules": 634,
+  "timestampIso": "2026-11-23T20:58:38.130Z",
+  "totalModules": 636,
+  "consumedModules": 636,
   "unconsumedModules": 0,
   "graphDensity": 1,
   "modules": {
@@ -692,19 +692,19 @@
       "consumerCount": 4,
       "consumers": [
         {
-          "consumerPath": "api/_finops.js",
-          "category": "api"
-        },
-        {
-          "consumerPath": "api/_metrics.js",
-          "category": "api"
-        },
-        {
           "consumerPath": "api/health.js",
           "category": "api"
         },
         {
           "consumerPath": "api/mcp.js",
+          "category": "api"
+        },
+        {
+          "consumerPath": "api/_finops.js",
+          "category": "api"
+        },
+        {
+          "consumerPath": "api/_metrics.js",
           "category": "api"
         }
       ]
@@ -1337,6 +1337,30 @@
       "consumers": [
         {
           "consumerPath": "src/core/eosBulletproofsRangeProofCore.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosByzantineQuorumGovernor": {
+      "file": "src/core/eosByzantineQuorumGovernor.ts",
+      "baseName": "eosByzantineQuorumGovernor",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "bin/commands/cliByzantineQuorum.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosByzantineQuorumGovernor.types": {
+      "file": "src/core/eosByzantineQuorumGovernor.types.ts",
+      "baseName": "eosByzantineQuorumGovernor.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosByzantineQuorumGovernor.ts",
           "category": "core"
         }
       ]
@@ -3149,18 +3173,18 @@
       "file": "src/core/eosEvidencePaths.ts",
       "baseName": "eosEvidencePaths",
       "isConsumed": true,
-      "consumerCount": 94,
+      "consumerCount": 95,
       "consumers": [
-        {
-          "consumerPath": "src/core/eosAgentSwarmMicroKernel.ts",
-          "category": "core"
-        },
         {
           "consumerPath": "src/core/eosAgenticContextEngine.ts",
           "category": "core"
         },
         {
           "consumerPath": "src/core/eosAgenticSwarmBft.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosAgentSwarmMicroKernel.ts",
           "category": "core"
         },
         {
@@ -3177,6 +3201,10 @@
         },
         {
           "consumerPath": "src/core/eosBitemporalEventSourcingLedger.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosByzantineQuorumGovernor.ts",
           "category": "core"
         },
         {
@@ -3272,10 +3300,6 @@
           "category": "bin"
         },
         {
-          "consumerPath": "bin/commands/cliAgentSwarmMicroKernel.mjs",
-          "category": "bin"
-        },
-        {
           "consumerPath": "bin/commands/cliAgenticContextEngine.mjs",
           "category": "bin"
         },
@@ -3285,6 +3309,10 @@
         },
         {
           "consumerPath": "bin/commands/cliAgenticSwarmBft.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliAgentSwarmMicroKernel.mjs",
           "category": "bin"
         },
         {
@@ -5133,7 +5161,7 @@
       "file": "src/core/eosKernelPrimitives.ts",
       "baseName": "eosKernelPrimitives",
       "isConsumed": true,
-      "consumerCount": 226,
+      "consumerCount": 228,
       "consumers": [
         {
           "consumerPath": "src/core/eosActiveKernelProcessEnforcer.ts",
@@ -5225,6 +5253,10 @@
         },
         {
           "consumerPath": "src/core/eosBlueGreenOrchestrator.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosByzantineQuorumGovernor.ts",
           "category": "core"
         },
         {
@@ -5412,11 +5444,11 @@
           "category": "core"
         },
         {
-          "consumerPath": "src/core/eosFleetProductScorecard.ts",
+          "consumerPath": "src/core/eosFleetProductionVerifier.ts",
           "category": "core"
         },
         {
-          "consumerPath": "src/core/eosFleetProductionVerifier.ts",
+          "consumerPath": "src/core/eosFleetProductScorecard.ts",
           "category": "core"
         },
         {
@@ -5524,10 +5556,6 @@
           "category": "core"
         },
         {
-          "consumerPath": "src/core/eosInTotoSlsaEd25519AttestorCore.ts",
-          "category": "core"
-        },
-        {
           "consumerPath": "src/core/eosIncidentSeverityClassifier.ts",
           "category": "core"
         },
@@ -5537,6 +5565,10 @@
         },
         {
           "consumerPath": "src/core/eosInterferometricSarDeformationCore.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosInTotoSlsaEd25519AttestorCore.ts",
           "category": "core"
         },
         {
@@ -5784,10 +5816,6 @@
           "category": "core"
         },
         {
-          "consumerPath": "src/core/eosSLOErrorBudgetGovernor.ts",
-          "category": "core"
-        },
-        {
           "consumerPath": "src/core/eosSagaOrchestrator.ts",
           "category": "core"
         },
@@ -5833,6 +5861,10 @@
         },
         {
           "consumerPath": "src/core/eosSingleExecutableDistributionGovernor.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosSLOErrorBudgetGovernor.ts",
           "category": "core"
         },
         {
@@ -6029,6 +6061,10 @@
         },
         {
           "consumerPath": "bin/commands/cliAutonomous.mjs",
+          "category": "bin"
+        },
+        {
+          "consumerPath": "bin/commands/cliByzantineQuorum.mjs",
           "category": "bin"
         },
         {

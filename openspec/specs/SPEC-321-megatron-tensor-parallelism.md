@@ -1,6 +1,6 @@
 # SPEC-321: Megatron-LM Style Tensor Parallelism (Column & Row Linear Sharding)
 
-**Status**: `APPROVED`  
+**Status**: `APPROVED`
 
 ---
 

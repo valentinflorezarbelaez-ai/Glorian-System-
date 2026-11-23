@@ -1,6 +1,6 @@
 # SPEC-130: Glorian Sovereign Identity, Solar Design Archetype & Unified CLI Elevation
 
-**Status**: `APPROVED`  
+**Status**: `APPROVED`
 
 ## 1. Metadata & Formal Intake
 

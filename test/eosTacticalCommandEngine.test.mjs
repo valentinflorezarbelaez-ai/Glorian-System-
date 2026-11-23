@@ -114,10 +114,7 @@ describe("SPEC-129: Tier S-0 Tactical Apex — Command Engine & OpenSpec Indexer
   describe("BDD-OPENSPEC-FRESHNESS: catalog index SHA parity + UNKNOWN tip-seal gate", () => {
     it("package.json catalog:freshness maps to tip-refresh --check-catalog", () => {
       const pkg = JSON.parse(fs.readFileSync(path.join(projectRoot, "package.json"), "utf8"));
-      assert.equal(
-        pkg.scripts?.["catalog:freshness"]?.trim(),
-        "node scripts/tip-refresh.mjs --check-catalog",
-      );
+      assert.equal(pkg.scripts?.["catalog:freshness"]?.trim(), "node scripts/tip-refresh.mjs --check-catalog");
     });
 
     it("committed OpenSpec index matches live extract (totalSpecs + catalogSha256 + digests)", () => {
@@ -147,11 +144,7 @@ describe("SPEC-129: Tier S-0 Tactical Apex — Command Engine & OpenSpec Indexer
       const unknown = live.filter((s) => String(s.status).toUpperCase() === "UNKNOWN");
       const freezeDoc = fs.readFileSync(path.join(projectRoot, "docs/releases/EOS_FREEZE_GATE_STATUS.md"), "utf8");
       assert.match(freezeDoc, /ACTIVE_FREEZE_GATE_PINNED/);
-      assert.equal(
-        unknown.length,
-        0,
-        `UNKNOWN must be 0 on pinned tip; got ${unknown.map((s) => s.id).join(", ")}`,
-      );
+      assert.equal(unknown.length, 0, `UNKNOWN must be 0 on pinned tip; got ${unknown.map((s) => s.id).join(", ")}`);
 
       const proposed = live.filter((s) => String(s.status).toUpperCase().startsWith("PROPOSED"));
       for (const spec of proposed) {

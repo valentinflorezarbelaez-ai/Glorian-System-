@@ -1,6 +1,6 @@
 # BASE SPECIFICATION: LOCAL SDLC PLANNING TOOLS (SPEC-012)
 
-**Status**: `STABLE_AND_ACTIVE`  
+**Status**: `STABLE_AND_ACTIVE`
 
 ## 1. Scope and capability status
 

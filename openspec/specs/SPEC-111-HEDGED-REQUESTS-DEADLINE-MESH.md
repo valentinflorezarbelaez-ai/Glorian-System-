@@ -1,6 +1,6 @@
 # SPEC-111: Distributed Adaptive Hedged Requests & Deadline Propagation Mesh
 
-**Status**: `APPROVED`  
+**Status**: `APPROVED`
 
 ## 1. Overview & Objective
 

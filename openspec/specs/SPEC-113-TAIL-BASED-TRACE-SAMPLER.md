@@ -1,6 +1,6 @@
 # SPEC-113: Dynamic Tail-Based Distributed Trace Sampler
 
-**Status**: `APPROVED`  
+**Status**: `APPROVED`
 
 ## 1. Overview & Objective
 

@@ -1,6 +1,6 @@
 # SPEC-333: Autonomous Ontological Hypergraph & Bitemporal Entity Resolution Engine
 
-**Status**: `APPROVED`  
+**Status**: `APPROVED`
 
 ## 1. Functional Requirements (EARS Syntax)
 

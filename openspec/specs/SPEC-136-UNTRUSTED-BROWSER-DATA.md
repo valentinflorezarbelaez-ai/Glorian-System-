@@ -1,6 +1,6 @@
 # BASE SPECIFICATION: UNTRUSTED BROWSER DATA (SPEC-136)
 
-**Status**: `APPROVED`  
+**Status**: `APPROVED`
 
 ## 1. Scope
 

@@ -107,18 +107,12 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
         fs.readFileSync(path.join(process.cwd(), "docs", "projects", "registry.json"), "utf8"),
       );
       const receipt = JSON.parse(
-        fs.readFileSync(
-          path.join(process.cwd(), "docs", "evidence", "SOUNDCHECK_SCORECARD_RECEIPT.json"),
-          "utf8",
-        ),
+        fs.readFileSync(path.join(process.cwd(), "docs", "evidence", "SOUNDCHECK_SCORECARD_RECEIPT.json"), "utf8"),
       );
       const pillarMap = JSON.parse(
         fs.readFileSync(path.join(process.cwd(), "docs", "backstage", "scorecard-pillar-map.json"), "utf8"),
       );
-      const fleetYaml = fs.readFileSync(
-        path.join(process.cwd(), "docs", "backstage", "fleet-components.yaml"),
-        "utf8",
-      );
+      const fleetYaml = fs.readFileSync(path.join(process.cwd(), "docs", "backstage", "fleet-components.yaml"), "utf8");
       const scorecardsYaml = fs.readFileSync(
         path.join(process.cwd(), "docs", "backstage", "soundcheck-scorecards.yaml"),
         "utf8",
@@ -189,9 +183,7 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
       );
       assert.ok(appConfig.includes("catalog:"));
       assert.ok(
-        appConfig.includes(
-          "https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/catalog-info.yaml",
-        ),
+        appConfig.includes("https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/catalog-info.yaml"),
         "app-config snippet must register only the root catalog-info.yaml",
       );
       assert.equal(
@@ -244,14 +236,8 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
 
     it("declares TechDocs curated nav + ownership Groups without duplicate Locations (BDD-BS-004)", () => {
       const catalog = fs.readFileSync(path.join(process.cwd(), "catalog-info.yaml"), "utf8");
-      const ownershipYaml = fs.readFileSync(
-        path.join(process.cwd(), "docs", "backstage", "ownership.yaml"),
-        "utf8",
-      );
-      const fleetYaml = fs.readFileSync(
-        path.join(process.cwd(), "docs", "backstage", "fleet-components.yaml"),
-        "utf8",
-      );
+      const ownershipYaml = fs.readFileSync(path.join(process.cwd(), "docs", "backstage", "ownership.yaml"), "utf8");
+      const fleetYaml = fs.readFileSync(path.join(process.cwd(), "docs", "backstage", "fleet-components.yaml"), "utf8");
       const scorecardsYaml = fs.readFileSync(
         path.join(process.cwd(), "docs", "backstage", "soundcheck-scorecards.yaml"),
         "utf8",
@@ -287,11 +273,7 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
         false,
         "relative file Location targets must not remain for ownership",
       );
-      assert.equal(
-        /type:\s*file\b/.test(catalog),
-        false,
-        "catalog Locations must not use type: file (URL discipline)",
-      );
+      assert.equal(/type:\s*file\b/.test(catalog), false, "catalog Locations must not use type: file (URL discipline)");
 
       assert.ok(fleetYaml.includes("owner: group:glorian-control-plane-squad"));
       assert.equal(
@@ -353,7 +335,7 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
       assert.ok(l0Yaml.includes("name: eos-l0-boundary-consumer-matrix"));
       assert.ok(l0Yaml.includes("name: eos-l0-pillar-import-boundary"));
       assert.ok(l0Yaml.includes("name: eos-l0-pillar-consumer-moratorium"));
-      assert.ok(l0Yaml.includes("eos.glorian/portal-must-not-rescore: \"true\""));
+      assert.ok(l0Yaml.includes('eos.glorian/portal-must-not-rescore: "true"'));
       assert.ok(l0Yaml.includes("owner: group:glorian-control-plane-squad"));
       assert.equal(
         /(?:api[_-]?key|bearer\s+[a-z0-9]|-----BEGIN)/i.test(l0Yaml),

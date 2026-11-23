@@ -5,18 +5,18 @@
 
 ## What lives here
 
-| Artifact | Role |
-| --- | --- |
-| Root [`catalog-info.yaml`](../../catalog-info.yaml) | Backstage `Component` `eos-system-control-plane` + `System` `eos-sovereign-mesh` + Locations |
-| Root [`mkdocs.yml`](../../mkdocs.yml) | TechDocs nav: Home / Verify / Fleet / Governance / Ownership / Backstage |
-| [`app-config.snippet.yaml`](./app-config.snippet.yaml) | Portal snippet: **only** root `catalog-info.yaml` (Locations cascade) |
-| [`fleet-components.yaml`](./fleet-components.yaml) | Component stubs — `metadata.name` = `docs/projects/registry.json` id |
-| [`soundcheck-scorecards.yaml`](./soundcheck-scorecards.yaml) | Resource entities for fleet matrix + five Soundcheck pillars |
-| [`l0-boundary-scorecards.yaml`](./l0-boundary-scorecards.yaml) | Resource entities for Layer-0 import boundary + consumer moratorium |
-| [`ownership.yaml`](./ownership.yaml) | User + squad/tribe Group entities (P2) |
-| [`scorecard-pillar-map.json`](./scorecard-pillar-map.json) | Soundcheck pillar → Backstage check ids; receipt shape; posture rules |
-| [`l0-boundary-scorecard-map.json`](./l0-boundary-scorecard-map.json) | L0 boundary/consumer → check ids; fail-closed rules; receipt shape |
-| This folder | Operator notes until a portal host exists |
+| Artifact                                                             | Role                                                                                         |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Root [`catalog-info.yaml`](../../catalog-info.yaml)                  | Backstage `Component` `eos-system-control-plane` + `System` `eos-sovereign-mesh` + Locations |
+| Root [`mkdocs.yml`](../../mkdocs.yml)                                | TechDocs nav: Home / Verify / Fleet / Governance / Ownership / Backstage                     |
+| [`app-config.snippet.yaml`](./app-config.snippet.yaml)               | Portal snippet: **only** root `catalog-info.yaml` (Locations cascade)                        |
+| [`fleet-components.yaml`](./fleet-components.yaml)                   | Component stubs — `metadata.name` = `docs/projects/registry.json` id                         |
+| [`soundcheck-scorecards.yaml`](./soundcheck-scorecards.yaml)         | Resource entities for fleet matrix + five Soundcheck pillars                                 |
+| [`l0-boundary-scorecards.yaml`](./l0-boundary-scorecards.yaml)       | Resource entities for Layer-0 import boundary + consumer moratorium                          |
+| [`ownership.yaml`](./ownership.yaml)                                 | User + squad/tribe Group entities (P2)                                                       |
+| [`scorecard-pillar-map.json`](./scorecard-pillar-map.json)           | Soundcheck pillar → Backstage check ids; receipt shape; posture rules                        |
+| [`l0-boundary-scorecard-map.json`](./l0-boundary-scorecard-map.json) | L0 boundary/consumer → check ids; fail-closed rules; receipt shape                           |
+| This folder                                                          | Operator notes until a portal host exists                                                    |
 
 ## Catalog ingestion (single path)
 
@@ -34,11 +34,11 @@
 
 ## Ownership (P2)
 
-| Role | Entity | Notes |
-| --- | --- | --- |
+| Role                 | Entity                              | Notes                                           |
+| -------------------- | ----------------------------------- | ----------------------------------------------- |
 | Squad (`spec.owner`) | `group:glorian-control-plane-squad` | Primary owner on Component / System / Resources |
-| Tribe | `group:glorian-platform-tribe` | Declared (replaces AGENTS `NOT_DECLARED`) |
-| Member | `user:valentin-florez-arbelaez` | Architect; `memberOf` the squad |
+| Tribe                | `group:glorian-platform-tribe`      | Declared (replaces AGENTS `NOT_DECLARED`)       |
+| Member               | `user:valentin-florez-arbelaez`     | Architect; `memberOf` the squad                 |
 
 TechDocs page: [`docs/ownership.md`](../ownership.md). Catalog SoT: [`ownership.yaml`](./ownership.yaml).
 

@@ -1,6 +1,6 @@
 # BASE SPECIFICATION: SAFE AGENT HARNESS BOUNDARIES (SPEC-138)
 
-**Status**: `APPROVED`  
+**Status**: `APPROVED`
 
 ## 1. Scope
 

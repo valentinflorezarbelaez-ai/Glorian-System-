@@ -1,6 +1,6 @@
 # SPEC-114: Predictive Failure Correlator & Closed-Loop Auto-Remediation Engine
 
-**Status**: `APPROVED`  
+**Status**: `APPROVED`
 
 ## 1. Overview & Objective
 

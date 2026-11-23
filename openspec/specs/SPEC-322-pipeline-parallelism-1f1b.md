@@ -1,6 +1,6 @@
 # SPEC-322: Pipeline Parallelism Engine (1F1B Interleaved Activation Schedule)
 
-**Status**: `APPROVED`  
+**Status**: `APPROVED`
 
 ---
 
