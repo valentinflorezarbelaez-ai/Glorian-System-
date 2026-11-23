@@ -12,11 +12,12 @@ import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { fileURLToPath } from "node:url";
 import { EosSimdQuantizedHnswCore } from "../src/core/index.ts";
+import { resolveEvidenceDir } from "../src/core/eosEvidencePaths.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const EVIDENCE_DIR = path.join(ROOT, "docs/evidence");
+const EVIDENCE_DIR = resolveEvidenceDir(ROOT);
 const RECEIPT_PATH = path.join(EVIDENCE_DIR, "SIMD_QUANTIZED_HNSW_RECEIPT.json");
 
 function generateTestVector(dim, seed = 1) {

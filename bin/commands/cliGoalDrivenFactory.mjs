@@ -4,6 +4,7 @@
  * Immutable Verifier Guard, Parallel Worktree Software Factory & 3-Gate Pre-PR Engine.
  */
 
+import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { EosGoalDrivenFactoryCore } from "../../src/core/eosGoalDrivenFactoryCore.ts";
@@ -187,6 +188,33 @@ async function cmdGates(commandContext) {
   ]);
 }
 
+async function cmdDiff(commandContext) {
+  const args = commandContext.args || [];
+  const isJson = args.includes("--json");
+  const isAdvisory = args.includes("--advisory");
+  const gitArgs = args.includes("--staged") ? ["diff", "--cached", "--name-only"] : ["diff", "--name-only"];
+  let changedFiles = [];
+  try {
+    const raw = execFileSync("git", gitArgs, { cwd: ROOT, encoding: "utf8" });
+    changedFiles = raw
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+  } catch {
+    changedFiles = [];
+  }
+  const report = EosGoalDrivenFactoryCore.verifyVerifierIntegrity({ changedFiles });
+  emitResult(isJson, "toolchain:gdd:diff", { advisory: isAdvisory, ...report }, [
+    "=== Live Git-Diff Verifier Integrity Check (SPEC-378) ===",
+    `Diff Mode   : ${args.includes("--staged") ? "staged" : "working-tree"} (${report.checkedFiles} file(s))`,
+    `Verdict     : ${report.verdict} (Intact: ${report.verifierIntact})`,
+    `Violations  : ${report.violations.length}`,
+  ]);
+  if (!isAdvisory && !report.verifierIntact) {
+    process.exitCode = 1;
+  }
+}
+
 async function cmdAudit(commandContext) {
   const args = commandContext.args || [];
   const receipt = EosGoalDrivenFactoryCore.audit(ROOT);
@@ -203,6 +231,7 @@ const HANDLERS = {
   "toolchain:gdd:loop": cmdLoop,
   "toolchain:gdd:factory": cmdFactory,
   "toolchain:gdd:gates": cmdGates,
+  "toolchain:gdd:diff": cmdDiff,
   "toolchain:gdd:audit": cmdAudit,
 };
 

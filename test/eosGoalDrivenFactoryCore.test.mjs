@@ -320,6 +320,7 @@ describe("SPEC-378: Goal-Driven Development Loop, Immutable Verifier & Parallel 
       ["toolchain:gdd:loop", "--json"],
       ["toolchain:gdd:factory", "--json"],
       ["toolchain:gdd:gates", "--json"],
+      ["toolchain:gdd:diff", "--json", "--advisory"],
       ["toolchain:gdd:audit", "--json"],
     ];
 

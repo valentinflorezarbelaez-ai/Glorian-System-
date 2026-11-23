@@ -217,7 +217,7 @@ main > section:not(.hero):not(#primeros-pasos) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
   min-height: 4.5rem;
   padding: 0.5rem 0;
 }
@@ -226,6 +226,7 @@ main > section:not(.hero):not(#primeros-pasos) {
   display: inline-flex;
   align-items: center;
   gap: 0.85rem;
+  flex-shrink: 0;
   text-decoration: none;
   color: var(--text-white);
 }
@@ -286,6 +287,7 @@ main > section:not(.hero):not(#primeros-pasos) {
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
+  white-space: nowrap;
   transition: all 0.2s ease;
 }
 
@@ -298,7 +300,29 @@ main > section:not(.hero):not(#primeros-pasos) {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  flex-shrink: 0;
+  gap: 0.5rem;
+}
+
+.header-actions .btn {
+  white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+  .nav-links {
+    flex-wrap: nowrap;
+    gap: 0.2rem;
+  }
+
+  .nav-links a {
+    padding: 0.4rem 0.62rem;
+    font-size: 0.82rem;
+  }
+
+  .header-actions .btn {
+    padding: 0.48rem 0.82rem;
+    font-size: 0.8rem;
+  }
 }
 
 /* Buttons */
@@ -2367,4 +2391,203 @@ main > section:not(.hero):not(#primeros-pasos) {
   width: 6px;
   height: 6px;
   border-radius: 50%;
+}
+
+.circulo-sealed {
+  color: #10b981;
+}
+
+.sanctum-item--row {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sanctum-row,
+.sanctum-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sanctum-row {
+  flex-wrap: wrap;
+}
+
+.sanctum-meta {
+  margin-top: 0.25rem;
+}
+
+.sanctum-title {
+  color: #fde68a;
+  font-size: 0.9rem;
+}
+
+.sanctum-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.sanctum-center {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+.sanctum-incinerate-btn {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.74rem;
+}
+
+.sanctum-dharma-desc {
+  font-size: 0.86rem;
+  color: var(--text-white);
+  font-weight: 500;
+}
+
+.sanctum-dharma-factor {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--gold-bright);
+}
+
+.sanctum-dharma-pts {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--emerald);
+  font-weight: 700;
+}
+
+.fleet-submeta {
+  font-size: 0.73rem;
+  opacity: 0.75;
+}
+
+.fleet-auth-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.fleet-auth-badge--l3 {
+  background: var(--emerald, #10b981);
+}
+
+.fleet-auth-badge--l2 {
+  background: var(--amber, #f59e0b);
+}
+
+.fleet-auth-badge--default {
+  background: var(--cyan, #06b6d4);
+}
+
+.fleet-probe--ok {
+  color: #10b981;
+  font-weight: 700;
+}
+
+.fleet-probe--err {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.fleet-prod-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  text-decoration: none;
+}
+
+.fleet-radar-id {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.fleet-radar-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.fleet-radar-dot--ok {
+  background: #10b981;
+}
+
+.fleet-radar-dot--online {
+  background: #38bdf8;
+}
+
+.fleet-radar-status {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.fleet-radar-latency {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin-left: auto;
+}
+
+.fleet-radar-btn {
+  flex: 1;
+  text-align: center;
+  padding: 4px 8px;
+  font-size: 0.72rem;
+  text-decoration: none;
+}
+
+.openspec-empty {
+  grid-column: 1 / -1;
+  padding: 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.openspec-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.openspec-status {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(245, 158, 11, 0.14);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.openspec-link {
+  margin-left: auto;
+  color: #38bdf8;
+  text-decoration: none;
+}
+
+.vss-share-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.vss-share-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  cursor: pointer;
 }

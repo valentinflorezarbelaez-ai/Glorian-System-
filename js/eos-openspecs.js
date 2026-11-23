@@ -21,8 +21,7 @@ window.initEosOpenSpecsExplorer = function initEosOpenSpecsExplorer() {
     specsGrid.replaceChildren();
     if (filtered.length === 0) {
       const empty = document.createElement("div");
-      empty.style.cssText =
-        "grid-column: 1 / -1; padding: 24px; text-align: center; color: var(--text-muted); font-family: var(--font-mono);";
+      empty.className = "openspec-empty";
       empty.textContent = "No se encontraron especificaciones que coincidan con la búsqueda.";
       specsGrid.appendChild(empty);
       return;
@@ -32,15 +31,15 @@ window.initEosOpenSpecsExplorer = function initEosOpenSpecsExplorer() {
       const card = document.createElement("div");
       card.className = "spec-card";
       card.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div class="openspec-head">
         <span class="spec-card__id">${spec.id}</span>
-        <span style="font-family:var(--font-mono);font-size:0.64rem;padding:2px 6px;border-radius:4px;background:rgba(245,158,11,0.14);color:#fbbf24;border:1px solid rgba(245,158,11,0.3);">${spec.status}</span>
+        <span class="openspec-status">${spec.status}</span>
       </div>
       <div class="spec-card__title">${spec.title}</div>
       <div class="spec-card__meta">
         <span>📐 ${spec.frCount} EARS</span>
         <span>🧪 ${spec.bddCount} BDD</span>
-        <a href="https://github.com/valentinflorezarbelaez-ai/Eos-System/blob/main/${spec.file}" target="_blank" rel="noopener noreferrer" style="margin-left:auto;color:#38bdf8;text-decoration:none;">Ver Spec ↗</a>
+        <a href="https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/${spec.file}" target="_blank" rel="noopener noreferrer" class="openspec-link">Ver Spec ↗</a>
       </div>
     `;
       specsGrid.appendChild(card);

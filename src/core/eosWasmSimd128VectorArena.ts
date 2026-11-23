@@ -14,6 +14,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosPolyglotRustZigWasmKernelCore } from "./eosPolyglotRustZigWasmKernel.ts";
 import {
@@ -701,7 +702,7 @@ export class EosWasmSimd128VectorArenaCore {
       cryptographicSignature: pureSha256(JSON.stringify(unsignedPayload)),
     });
 
-    const evidenceDir = path.join(projectRoot, "docs", "evidence");
+    const evidenceDir = resolveEvidenceDir(projectRoot);
     if (!fs.existsSync(evidenceDir)) {
       fs.mkdirSync(evidenceDir, { recursive: true });
     }

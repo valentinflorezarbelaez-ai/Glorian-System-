@@ -15,6 +15,7 @@ import os from "node:os";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { Worker } from "node:worker_threads";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import { EosUniversalFleetSyncCore } from "./eosUniversalFleetSyncCore.ts";
 import { EosWasmSimd128VectorArenaCore } from "./eosWasmSimd128VectorArena.ts";
@@ -354,7 +355,7 @@ export class EosSharedMemoryWorkerPoolCore {
       cryptographicSignature: pureSha256(JSON.stringify(unsignedPayload)),
     });
 
-    const evidenceDir = path.join(projectRoot, "docs", "evidence");
+    const evidenceDir = resolveEvidenceDir(projectRoot);
     if (!fs.existsSync(evidenceDir)) {
       fs.mkdirSync(evidenceDir, { recursive: true });
     }

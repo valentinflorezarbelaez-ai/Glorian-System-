@@ -9,8 +9,8 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
-import path from "node:path";
 import { EosSharedMemoryWorkerPoolCore, EosWasmSimd128VectorArenaCore } from "../src/core/index.ts";
+import { resolveEvidencePath } from "../src/core/eosEvidencePaths.ts";
 
 describe("SPEC-311: Shared-Memory Worker Pool, In-WASM SIMD128 Loops & Jepsen WAL Crash Recovery", () => {
   // -------------------------------------------------------------------------
@@ -105,7 +105,7 @@ describe("SPEC-311: Shared-Memory Worker Pool, In-WASM SIMD128 Loops & Jepsen WA
     assert.ok(receipt.inWasmSimdLoopNsPerOp < 150, `Expected < 150 ns/op, got ${receipt.inWasmSimdLoopNsPerOp}`);
     assert.equal(receipt.cryptographicSignature.length, 64);
 
-    const receiptPath = path.join(root, "docs", "evidence", "SHARED_MEMORY_WORKER_POOL_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("SHARED_MEMORY_WORKER_POOL_RECEIPT.json", root);
     assert.ok(fs.existsSync(receiptPath));
     const saved = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.equal(saved.cryptographicSignature, receipt.cryptographicSignature);

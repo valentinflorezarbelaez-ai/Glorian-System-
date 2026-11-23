@@ -262,7 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btnBelilin.addEventListener("click", () => {
       playSacredTone([432.0, 648.0, 864.0], 1.8);
       if (circuloPill) {
-        circuloPill.innerHTML = 'Círculo Mágico &amp; Belilin: <strong style="color:#10b981;">SELLADO POR EL INTERCESOR ELEMENTAL ★</strong>';
+        circuloPill.innerHTML = 'Círculo Mágico &amp; Belilin: <strong class="circulo-sealed">SELLADO POR EL INTERCESOR ELEMENTAL ★</strong>';
       }
     });
   }
@@ -297,18 +297,18 @@ document.addEventListener("DOMContentLoaded", () => {
       .map(
         (ag) => `
       <div class="sanctum-item">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;flex-wrap:wrap;">
-          <strong style="color:#fde68a;font-size:0.9rem;">${ag.nombre}</strong>
+        <div class="sanctum-row">
+          <strong class="sanctum-title">${ag.nombre}</strong>
           <span class="sanctum-badge ${
             ag.estado === "Incinerado por RAM-IO" ? "sanctum-badge--incinerated" : "sanctum-badge--trial"
           }">${ag.estado}</span>
         </div>
-        <p style="font-size:0.8rem;color:var(--text-muted);">${ag.comprension}</p>
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;margin-top:0.25rem;">
-          <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-dim);">${ag.centro}</span>
+        <p class="sanctum-desc">${ag.comprension}</p>
+        <div class="sanctum-meta">
+          <span class="sanctum-center">${ag.centro}</span>
           ${
             ag.estado === "En Juicio"
-              ? `<button type="button" class="btn btn--gold" data-incinerar-id="${ag.id}" style="padding:0.3rem 0.7rem;font-size:0.74rem;">⚡ Invocar Lanza de Eros (RAM-IO)</button>`
+              ? `<button type="button" class="btn btn--gold sanctum-incinerate-btn" data-incinerar-id="${ag.id}">⚡ Invocar Lanza de Eros (RAM-IO)</button>`
               : ""
           }
         </div>
@@ -382,12 +382,12 @@ document.addEventListener("DOMContentLoaded", () => {
     dharmaListEl.innerHTML = dharmaState
       .map(
         (item) => `
-      <div class="sanctum-item" style="flex-direction:row;justify-content:space-between;align-items:center;">
+      <div class="sanctum-item sanctum-item--row">
         <div>
-          <p style="font-size:0.86rem;color:var(--text-white);font-weight:500;">${item.descripcion}</p>
-          <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--gold-bright);">${item.factor}</span>
+          <p class="sanctum-dharma-desc">${item.descripcion}</p>
+          <span class="sanctum-dharma-factor">${item.factor}</span>
         </div>
-        <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--emerald);font-weight:700;">+${item.puntosLuz} Luz</span>
+        <span class="sanctum-dharma-pts">+${item.puntosLuz} Luz</span>
       </div>
     `
       )
@@ -2037,7 +2037,7 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
       for (const project of data.projects) {
         const row = document.createElement("tr");
         const nameCell = document.createElement("td");
-        nameCell.innerHTML = `<strong>${project.name || project.id}</strong><br><span style="font-size:0.73rem;opacity:0.75;">${project.id} · ${project.type || "app"}</span>`;
+        nameCell.innerHTML = `<strong>${project.name || project.id}</strong><br><span class="fleet-submeta">${project.id} · ${project.type || "app"}</span>`;
 
         const remoteCell = document.createElement("td");
         const remote = safeHttpsUrl(project.remote);
@@ -2055,14 +2055,18 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
         const registryCell = document.createElement("td");
         const isL3 = project.authorization === "LEVEL_3_PRODUCTION_AUTHORIZED";
         const isL2 = project.authorization === "LEVEL_2_AUTHORIZED";
-        const authColor = isL3 ? "var(--emerald, #10b981)" : (isL2 ? "var(--amber, #f59e0b)" : "var(--cyan, #06b6d4)");
-        registryCell.innerHTML = `<span style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:0.68rem;font-weight:700;color:#fff;background:${authColor};">${project.authorization || project.registryStatus || "REGISTERED"}</span>`;
+        const authClass = isL3
+          ? "fleet-auth-badge fleet-auth-badge--l3"
+          : isL2
+            ? "fleet-auth-badge fleet-auth-badge--l2"
+            : "fleet-auth-badge fleet-auth-badge--default";
+        registryCell.innerHTML = `<span class="${authClass}">${project.authorization || project.registryStatus || "REGISTERED"}</span>`;
 
         const operationsCell = document.createElement("td");
         if (project.productionProbe === "HEALTHY") {
-          operationsCell.innerHTML = `<span style="color:#10b981;font-weight:700;">🟢 ONLINE (${project.latencyMs || 0}ms)</span>`;
+          operationsCell.innerHTML = `<span class="fleet-probe--ok">🟢 ONLINE (${project.latencyMs || 0}ms)</span>`;
         } else if (project.productionProbe && project.productionProbe !== "NOT_PROBED") {
-          operationsCell.innerHTML = `<span style="color:#ef4444;font-weight:700;">🔴 ${project.productionProbe}</span>`;
+          operationsCell.innerHTML = `<span class="fleet-probe--err">🔴 ${project.productionProbe}</span>`;
         } else {
           operationsCell.textContent = `Configurado · CI: ${project.cicdGateStatus || "npm test"}`;
         }
@@ -2074,8 +2078,7 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
           link.href = production.href;
           link.target = "_blank";
           link.rel = "noopener noreferrer";
-          link.className = "btn btn--xs btn--primary";
-          link.style.cssText = "display:inline-flex;align-items:center;gap:4px;padding:3px 8px;font-size:0.72rem;text-decoration:none;";
+          link.className = "btn btn--xs btn--primary fleet-prod-btn";
           link.textContent = `🚀 Abrir App`;
           productionCell.append(link, document.createTextNode(" " + production.hostname));
         } else {
@@ -2103,17 +2106,17 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
           <div class="fleet-radar-card__head">
             <div>
               <div class="fleet-radar-card__name">${project.name || project.id}</div>
-              <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted); margin-top: 2px;">${project.id}</div>
+              <div class="fleet-radar-id">${project.id}</div>
             </div>
             <span class="fleet-radar-card__tier">${badgeText}</span>
           </div>
           <div class="fleet-radar-card__metrics">
-            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${isHealthy ? '#10b981' : '#38bdf8'};"></span>
-            <span style="font-family: var(--font-mono); font-size: 0.76rem; font-weight: 700; color: #fff;">${isHealthy ? '200 OK' : 'ONLINE'}</span>
-            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #94a3b8; margin-left: auto;">⏱ ${latency}</span>
+            <span class="fleet-radar-dot ${isHealthy ? "fleet-radar-dot--ok" : "fleet-radar-dot--online"}"></span>
+            <span class="fleet-radar-status">${isHealthy ? "200 OK" : "ONLINE"}</span>
+            <span class="fleet-radar-latency">⏱ ${latency}</span>
           </div>
           <div class="fleet-radar-card__actions">
-            <a href="${prodUrl}" target="_blank" rel="noopener noreferrer" class="btn btn--primary" style="flex:1;text-align:center;padding:4px 8px;font-size:0.72rem;text-decoration:none;">
+            <a href="${prodUrl}" target="_blank" rel="noopener noreferrer" class="btn btn--primary fleet-radar-btn">
               🚀 Abrir App ↗
             </a>
           </div>
@@ -3478,11 +3481,11 @@ func SovereignTransaction(ctx context.Context, id string) (*Receipt, error) {
 
         if (sharesView) {
           sharesView.innerHTML = `
-            <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+            <div class="vss-share-list">
               ${currentShares
                 .map(
                   (s) => `
-                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; cursor: pointer;">
+                <label class="vss-share-option">
                   <input type="checkbox" class="shamir-share-checkbox" data-share-id="${s.id}" checked />
                   <span>${s.label}</span>
                 </label>`

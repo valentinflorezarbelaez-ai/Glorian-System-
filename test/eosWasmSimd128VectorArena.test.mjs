@@ -9,8 +9,8 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
-import path from "node:path";
 import { EosUniversalFleetSyncCore, EosWasmSimd128VectorArenaCore } from "../src/core/index.ts";
+import { resolveEvidencePath } from "../src/core/eosEvidencePaths.ts";
 
 describe("SPEC-310: WebAssembly SIMD 128-Bit (v128) Vector Arena & Elastic Fleet Governor", () => {
   // -------------------------------------------------------------------------
@@ -124,7 +124,7 @@ describe("SPEC-310: WebAssembly SIMD 128-Bit (v128) Vector Arena & Elastic Fleet
     assert.equal(receipt.elasticFleetVerified, true);
     assert.equal(receipt.cryptographicSignature.length, 64);
 
-    const receiptPath = path.join(root, "docs", "evidence", "WASM_SIMD128_ARENA_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("WASM_SIMD128_ARENA_RECEIPT.json", root);
     assert.ok(fs.existsSync(receiptPath));
     const saved = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.equal(saved.cryptographicSignature, receipt.cryptographicSignature);
