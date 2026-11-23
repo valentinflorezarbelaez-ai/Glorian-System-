@@ -316,6 +316,84 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
       assert.ok(fs.existsSync(path.join(process.cwd(), "docs", "governance.md")));
       assert.ok(fs.existsSync(path.join(process.cwd(), "docs", "ownership.md")));
     });
+
+    it("maps Layer-0 boundary + consumer scorecards into catalog (BDD-BS-005)", () => {
+      const catalog = fs.readFileSync(path.join(process.cwd(), "catalog-info.yaml"), "utf8");
+      const l0Yaml = fs.readFileSync(
+        path.join(process.cwd(), "docs", "backstage", "l0-boundary-scorecards.yaml"),
+        "utf8",
+      );
+      const l0Map = JSON.parse(
+        fs.readFileSync(path.join(process.cwd(), "docs", "backstage", "l0-boundary-scorecard-map.json"), "utf8"),
+      );
+      const receipt = JSON.parse(
+        fs.readFileSync(path.join(process.cwd(), "docs", "evidence", "MODULE_CONSUMER_GRAPH.json"), "utf8"),
+      );
+      const appConfig = fs.readFileSync(
+        path.join(process.cwd(), "docs", "backstage", "app-config.snippet.yaml"),
+        "utf8",
+      );
+      const pipeline = fs.readFileSync(path.join(process.cwd(), "scripts", "verify-cicd-pipeline.mjs"), "utf8");
+      const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
+
+      assert.equal(l0Map.portalMustNotRescore, true);
+      assert.equal(l0Map.receiptPath, "docs/evidence/MODULE_CONSUMER_GRAPH.json");
+      assert.equal(l0Map.failClosed.unconsumedModules, 0);
+      assert.equal(l0Map.failClosed.importBoundaryViolations, 0);
+      assert.equal(l0Map.specRef, "SPEC-270");
+      assert.equal(l0Map.pillars.length, 2);
+
+      for (const field of l0Map.receiptShape.requiredFields) {
+        assert.ok(field in receipt, `MODULE_CONSUMER_GRAPH missing ${field}`);
+      }
+      assert.equal(receipt.unconsumedModules, 0, "consumer moratorium requires unconsumedModules === 0");
+      assert.ok(receipt.totalModules >= 400);
+
+      assert.ok(l0Yaml.includes("kind: Resource"));
+      assert.ok(l0Yaml.includes("name: eos-l0-boundary-consumer-matrix"));
+      assert.ok(l0Yaml.includes("name: eos-l0-pillar-import-boundary"));
+      assert.ok(l0Yaml.includes("name: eos-l0-pillar-consumer-moratorium"));
+      assert.ok(l0Yaml.includes("eos.glorian/portal-must-not-rescore: \"true\""));
+      assert.ok(l0Yaml.includes("owner: group:glorian-control-plane-squad"));
+      assert.equal(
+        /(?:api[_-]?key|bearer\s+[a-z0-9]|-----BEGIN)/i.test(l0Yaml),
+        false,
+        "l0-boundary-scorecards.yaml must not contain plaintext secrets",
+      );
+
+      assert.ok(catalog.includes("name: glorian-l0-boundary-scorecards"));
+      assert.ok(catalog.includes("eos.glorian/l0-boundary-map: docs/backstage/l0-boundary-scorecard-map.json"));
+      assert.ok(catalog.includes("eos.glorian/l0-consumer-receipt: docs/evidence/MODULE_CONSUMER_GRAPH.json"));
+      assert.ok(
+        catalog.includes(
+          "https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/l0-boundary-scorecards.yaml",
+        ),
+        "L0 Location must use absolute GitHub URL target",
+      );
+      assert.equal(
+        catalog.includes("./docs/backstage/l0-boundary-scorecards.yaml"),
+        false,
+        "relative file Location targets must not remain for L0 scorecards",
+      );
+      assert.equal(
+        /locations:[\s\S]*target:\s*https:\/\/github\.com\/valentinflorezarbelaez-ai\/Glorian-System-\/blob\/main\/docs\/backstage\/l0-boundary-scorecards\.yaml/.test(
+          appConfig,
+        ),
+        false,
+        "app-config must not duplicate l0-boundary-scorecards as a sibling catalog location",
+      );
+
+      assert.ok(pipeline.includes("scripts/import-boundary-gate.mjs"), "verify:strict must run boundary gate");
+      assert.ok(
+        pipeline.includes("scripts/verify-module-consumers.mjs") &&
+          pipeline.includes("--fail-on-unconsumed") &&
+          pipeline.includes("--check-only"),
+        "verify:strict must run consumers audit fail-closed in check-only mode (no receipt mutate)",
+      );
+      assert.ok(String(pkg.scripts["boundary:check"] || "").includes("import-boundary-gate.mjs"));
+      assert.ok(String(pkg.scripts["consumers:audit"] || "").includes("--fail-on-unconsumed"));
+      assert.ok(String(pkg.scripts["consumers:audit"] || "").includes("--check-only"));
+    });
   });
 
   describe("Suite 2: SpaceX Dragon / Starship Flight Computer 60Hz TMR (BDD-034)", () => {

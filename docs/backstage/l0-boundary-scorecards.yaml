@@ -1,0 +1,100 @@
+# EOS Layer-0 boundary + consumer scorecard Resources for Backstage (P2 remediation PR-I).
+# Presentation mapping only — scoring SoT remains existing zero-deps scripts:
+#   scripts/import-boundary-gate.mjs  (npm run boundary:check)
+#   scripts/verify-module-consumers.mjs (npm run consumers:audit)
+# Receipt SoT:
+#   docs/evidence/MODULE_CONSUMER_GRAPH.json
+# Portal plugins MUST display receipt / gate outcomes; MUST NOT invent a second score engine.
+# Wired into verify:strict as Stage 3.02 / 3.03 (fail-closed).
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: eos-l0-boundary-consumer-matrix
+  title: EOS Layer-0 Boundary + Consumer Matrix
+  description: Aggregate Layer-0 import-boundary and module-consumer moratorium status. Values come from EOS gates/receipts — never recomputed in Backstage.
+  annotations:
+    eos.glorian/scorecard-engine: scripts/import-boundary-gate.mjs+scripts/verify-module-consumers.mjs
+    eos.glorian/spec-ref: SPEC-270
+    eos.glorian/receipt-path: docs/evidence/MODULE_CONSUMER_GRAPH.json
+    eos.glorian/pillar-map: docs/backstage/l0-boundary-scorecard-map.json
+    eos.glorian/boundary-script: scripts/import-boundary-gate.mjs
+    eos.glorian/consumers-script: scripts/verify-module-consumers.mjs
+    eos.glorian/verify-stages: "3.02,3.03"
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
+    eos.glorian/portal-must-not-rescore: "true"
+  tags:
+    - layer-0
+    - boundary
+    - consumer-graph
+    - scorecard
+  links:
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/evidence/MODULE_CONSUMER_GRAPH.json
+      title: Module Consumer Graph Receipt (JSON)
+      icon: catalog
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/l0-boundary-scorecard-map.json
+      title: L0 Boundary → Scorecard Map
+      icon: docs
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/openspec/specs/SPEC-270-TLC-FORMAL-VERIFICATION-AND-MUTATION-RATCHET.md
+      title: SPEC-270
+      icon: docs
+spec:
+  type: scorecard
+  owner: group:glorian-control-plane-squad
+  system: eos-sovereign-mesh
+  dependsOn:
+    - component:default/eos-system-control-plane
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: eos-l0-pillar-import-boundary
+  title: L0 Pillar — Import Boundary (Law V)
+  description: Fail-closed hexagonal isolation for src/core/ (node: builtins + relative src/core only). Gate npm run boundary:check.
+  annotations:
+    eos.glorian/pillar-id: L0_IMPORT_BOUNDARY
+    eos.glorian/pillar-weight: "0.5"
+    eos.glorian/backstage-check-id: eos.l0.import-boundary
+    eos.glorian/npm-script: boundary:check
+    eos.glorian/verify-stage: "3.02"
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
+  tags:
+    - layer-0
+    - pillar
+    - boundary
+spec:
+  type: scorecard-pillar
+  owner: group:glorian-control-plane-squad
+  system: eos-sovereign-mesh
+  dependencyOf:
+    - resource:default/eos-l0-boundary-consumer-matrix
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: eos-l0-pillar-consumer-moratorium
+  title: L0 Pillar — Consumer Moratorium
+  description: Fail-closed unconsumedModules=0 ratchet (SPEC-270). Gate npm run consumers:audit (--check-only; no receipt mutate).
+  annotations:
+    eos.glorian/pillar-id: L0_CONSUMER_MORATORIUM
+    eos.glorian/pillar-weight: "0.5"
+    eos.glorian/backstage-check-id: eos.l0.consumer-moratorium
+    eos.glorian/npm-script: consumers:audit
+    eos.glorian/verify-stage: "3.03"
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
+  tags:
+    - layer-0
+    - pillar
+    - consumers
+spec:
+  type: scorecard-pillar
+  owner: group:glorian-control-plane-squad
+  system: eos-sovereign-mesh
+  dependencyOf:
+    - resource:default/eos-l0-boundary-consumer-matrix

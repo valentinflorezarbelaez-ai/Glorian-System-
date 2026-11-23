@@ -140,6 +140,34 @@ console.log(
 );
 
 // ---------------------------------------------------------------------------
+// STAGE 3.02: LAYER-0 IMPORT BOUNDARY GATE (Law V / hexagonal isolation)
+// Fail-closed: src/core/ may only import node: builtins or other src/core/ modules.
+// ---------------------------------------------------------------------------
+execFileSync(process.execPath, [path.join(root, "scripts/import-boundary-gate.mjs")], {
+  cwd: root,
+  stdio: "inherit",
+});
+console.log("[PASS] Stage 3.02/7 — Layer-0 import boundary gate (npm run boundary:check).");
+
+// ---------------------------------------------------------------------------
+// STAGE 3.03: MODULE CONSUMER GRAPH + MORATORIUM (SPEC-270)
+// Fail-closed when unconsumed Layer-0 modules appear (architectural moratorium).
+// --check-only: do not rewrite docs/evidence/MODULE_CONSUMER_GRAPH.json (keeps
+// Stage 3 sourceInventoryDigest stable and avoids dirtying the working tree).
+// ---------------------------------------------------------------------------
+execFileSync(
+  process.execPath,
+  [path.join(root, "scripts/verify-module-consumers.mjs"), "--check-only", "--fail-on-unconsumed"],
+  {
+    cwd: root,
+    stdio: "inherit",
+  },
+);
+console.log(
+  "[PASS] Stage 3.03/7 — Module consumer graph check-only audit (npm run consumers:audit).",
+);
+
+// ---------------------------------------------------------------------------
 // STAGE 3.05: MODERN WEB GUIDANCE SKILL + LAYER-0 ISOLATION GATE
 // ---------------------------------------------------------------------------
 execFileSync(process.execPath, [path.join(root, "scripts/modern-web-guidance-gate.mjs")], {

@@ -159,5 +159,37 @@ describe("SPEC-270: Formal TLC Model Checking, Mutation Ratchet & Consumer Gover
     assert.ok(graph.consumedModules >= 300, "Consumed module count must be at least 300");
     assert.ok(graph.graphDensity > 0.8, "Consumer graph density must exceed 80%");
     assert.ok(fs.existsSync(tempGraphPath));
+
+    // Fail-closed moratorium: healthy graph (unconsumed=0) must pass with flag.
+    const healthy = verifyModuleConsumers({
+      root: ROOT,
+      receiptPath: path.join(os.tmpdir(), `eos-test-consumer-graph-failclosed-${process.pid}.json`),
+      failOnUnconsumed: true,
+    });
+    assert.equal(healthy.unconsumedModules, 0, "tip must keep unconsumedModules at 0");
+
+    // Check-only against committed receipt must not mutate the tracked file.
+    const committedPath = path.join(ROOT, "docs/evidence", "MODULE_CONSUMER_GRAPH.json");
+    const before = fs.readFileSync(committedPath, "utf8");
+    const checked = verifyModuleConsumers({
+      root: ROOT,
+      receiptPath: committedPath,
+      failOnUnconsumed: true,
+      checkOnly: true,
+    });
+    const after = fs.readFileSync(committedPath, "utf8");
+    assert.equal(after, before, "check-only must not rewrite MODULE_CONSUMER_GRAPH.json");
+    assert.equal(checked.unconsumedModules, 0);
+
+    // Source-order contract: moratorium throw precedes drift checks (Bugbot #664).
+    const source = fs.readFileSync(path.join(ROOT, "scripts/verify-module-consumers.mjs"), "utf8");
+    const moratoriumIdx = source.indexOf("Architectural moratorium violated");
+    const driftIdx = source.indexOf("Consumer graph drift:");
+    assert.ok(moratoriumIdx > 0 && driftIdx > 0, "both error messages must exist");
+    assert.ok(
+      moratoriumIdx < driftIdx,
+      "failOnUnconsumed moratorium must be evaluated before check-only receipt drift",
+    );
   });
 });
+

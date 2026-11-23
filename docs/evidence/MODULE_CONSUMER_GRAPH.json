@@ -1,7 +1,7 @@
 {
-  "timestampIso": "2026-11-20T20:19:05.525Z",
-  "totalModules": 628,
-  "consumedModules": 628,
+  "timestampIso": "2026-11-23T20:07:45.803Z",
+  "totalModules": 634,
+  "consumedModules": 634,
   "unconsumedModules": 0,
   "graphDensity": 1,
   "modules": {
@@ -692,19 +692,19 @@
       "consumerCount": 4,
       "consumers": [
         {
-          "consumerPath": "api/health.js",
-          "category": "api"
-        },
-        {
-          "consumerPath": "api/mcp.js",
-          "category": "api"
-        },
-        {
           "consumerPath": "api/_finops.js",
           "category": "api"
         },
         {
           "consumerPath": "api/_metrics.js",
+          "category": "api"
+        },
+        {
+          "consumerPath": "api/health.js",
+          "category": "api"
+        },
+        {
+          "consumerPath": "api/mcp.js",
           "category": "api"
         }
       ]
@@ -1108,7 +1108,7 @@
           "category": "mcp"
         },
         {
-          "consumerPath": "bin/commands/cliSentinel.mjs",
+          "consumerPath": "bin/commands/cliSentinelExtra.mjs",
           "category": "bin"
         }
       ]
@@ -2172,7 +2172,7 @@
           "category": "bin"
         },
         {
-          "consumerPath": "scripts/verify-cicd-pipeline.mjs",
+          "consumerPath": "scripts/lib/cicdStage4Runner.mjs",
           "category": "scripts"
         },
         {
@@ -2580,7 +2580,7 @@
       "consumerCount": 2,
       "consumers": [
         {
-          "consumerPath": "bin/commands/cliSentinel.mjs",
+          "consumerPath": "bin/commands/cliSentinelExtra.mjs",
           "category": "bin"
         },
         {
@@ -3149,8 +3149,12 @@
       "file": "src/core/eosEvidencePaths.ts",
       "baseName": "eosEvidencePaths",
       "isConsumed": true,
-      "consumerCount": 85,
+      "consumerCount": 94,
       "consumers": [
+        {
+          "consumerPath": "src/core/eosAgentSwarmMicroKernel.ts",
+          "category": "core"
+        },
         {
           "consumerPath": "src/core/eosAgenticContextEngine.ts",
           "category": "core"
@@ -3160,7 +3164,7 @@
           "category": "core"
         },
         {
-          "consumerPath": "src/core/eosAgentSwarmMicroKernel.ts",
+          "consumerPath": "src/core/eosAladdinPortfolioRiskEngine.ts",
           "category": "core"
         },
         {
@@ -3188,11 +3192,23 @@
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosGoalDrivenFactoryCore.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosHarnessTokenEconomicsCore.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosInductiveProofEngine.ts",
           "category": "core"
         },
         {
           "consumerPath": "src/core/eosKnowledgeGraphReflex.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosMultiAssetMacroFilterEngine.ts",
           "category": "core"
         },
         {
@@ -3204,11 +3220,31 @@
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosQuantCockpitWalkForwardEngine.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosShardedTransactionFabric.ts",
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosSharedMemoryWorkerPool.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosSovereignWebCompiler.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosTriTemporalPropFirmEngine.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosUniversalAssetPayoutOptimizerEngine.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosWasmSimd128VectorArena.ts",
           "category": "core"
         },
         {
@@ -3236,6 +3272,10 @@
           "category": "bin"
         },
         {
+          "consumerPath": "bin/commands/cliAgentSwarmMicroKernel.mjs",
+          "category": "bin"
+        },
+        {
           "consumerPath": "bin/commands/cliAgenticContextEngine.mjs",
           "category": "bin"
         },
@@ -3245,10 +3285,6 @@
         },
         {
           "consumerPath": "bin/commands/cliAgenticSwarmBft.mjs",
-          "category": "bin"
-        },
-        {
-          "consumerPath": "bin/commands/cliAgentSwarmMicroKernel.mjs",
           "category": "bin"
         },
         {
@@ -4173,6 +4209,58 @@
         }
       ]
     },
+    "eosGoalDrivenDevelopmentContract": {
+      "file": "src/core/eosGoalDrivenDevelopmentContract.ts",
+      "baseName": "eosGoalDrivenDevelopmentContract",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "scripts/validate-gdd-goal.mjs",
+          "category": "scripts"
+        }
+      ]
+    },
+    "eosGoalDrivenDevelopmentContract.types": {
+      "file": "src/core/eosGoalDrivenDevelopmentContract.types.ts",
+      "baseName": "eosGoalDrivenDevelopmentContract.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosGoalDrivenDevelopmentContract.ts",
+          "category": "core"
+        }
+      ]
+    },
+    "eosGoalDrivenFactoryCore": {
+      "file": "src/core/eosGoalDrivenFactoryCore.ts",
+      "baseName": "eosGoalDrivenFactoryCore",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliGoalDrivenFactory.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosGoalDrivenFactoryCore.types": {
+      "file": "src/core/eosGoalDrivenFactoryCore.types.ts",
+      "baseName": "eosGoalDrivenFactoryCore.types",
+      "isConsumed": true,
+      "consumerCount": 1,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosGoalDrivenFactoryCore.ts",
+          "category": "core"
+        }
+      ]
+    },
     "eosGoldenSweBenchmarkHarnessCore": {
       "file": "src/core/eosGoldenSweBenchmarkHarnessCore.ts",
       "baseName": "eosGoldenSweBenchmarkHarnessCore",
@@ -4226,6 +4314,38 @@
         {
           "consumerPath": "src/mcp/tools/eosMcpPhase7EnterpriseFrontierHandlers.ts",
           "category": "mcp"
+        }
+      ]
+    },
+    "eosHarnessTokenEconomicsCore": {
+      "file": "src/core/eosHarnessTokenEconomicsCore.ts",
+      "baseName": "eosHarnessTokenEconomicsCore",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/mcp/tools/eosMcpPhase8AgiHandlers.ts",
+          "category": "mcp"
+        },
+        {
+          "consumerPath": "bin/commands/cliHarnessTokenEconomics.mjs",
+          "category": "bin"
+        }
+      ]
+    },
+    "eosHarnessTokenEconomicsCore.types": {
+      "file": "src/core/eosHarnessTokenEconomicsCore.types.ts",
+      "baseName": "eosHarnessTokenEconomicsCore.types",
+      "isConsumed": true,
+      "consumerCount": 2,
+      "consumers": [
+        {
+          "consumerPath": "src/core/eosGoalDrivenFactoryCore.types.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosHarnessTokenEconomicsCore.ts",
+          "category": "core"
         }
       ]
     },
@@ -5013,7 +5133,7 @@
       "file": "src/core/eosKernelPrimitives.ts",
       "baseName": "eosKernelPrimitives",
       "isConsumed": true,
-      "consumerCount": 224,
+      "consumerCount": 226,
       "consumers": [
         {
           "consumerPath": "src/core/eosActiveKernelProcessEnforcer.ts",
@@ -5292,11 +5412,11 @@
           "category": "core"
         },
         {
-          "consumerPath": "src/core/eosFleetProductionVerifier.ts",
+          "consumerPath": "src/core/eosFleetProductScorecard.ts",
           "category": "core"
         },
         {
-          "consumerPath": "src/core/eosFleetProductScorecard.ts",
+          "consumerPath": "src/core/eosFleetProductionVerifier.ts",
           "category": "core"
         },
         {
@@ -5329,6 +5449,14 @@
         },
         {
           "consumerPath": "src/core/eosGithubPrGate.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosGoalDrivenDevelopmentContract.ts",
+          "category": "core"
+        },
+        {
+          "consumerPath": "src/core/eosGoalDrivenDevelopmentContract.types.ts",
           "category": "core"
         },
         {
@@ -5396,6 +5524,10 @@
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosInTotoSlsaEd25519AttestorCore.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosIncidentSeverityClassifier.ts",
           "category": "core"
         },
@@ -5405,10 +5537,6 @@
         },
         {
           "consumerPath": "src/core/eosInterferometricSarDeformationCore.ts",
-          "category": "core"
-        },
-        {
-          "consumerPath": "src/core/eosInTotoSlsaEd25519AttestorCore.ts",
           "category": "core"
         },
         {
@@ -5656,6 +5784,10 @@
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosSLOErrorBudgetGovernor.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosSagaOrchestrator.ts",
           "category": "core"
         },
@@ -5701,10 +5833,6 @@
         },
         {
           "consumerPath": "src/core/eosSingleExecutableDistributionGovernor.ts",
-          "category": "core"
-        },
-        {
-          "consumerPath": "src/core/eosSLOErrorBudgetGovernor.ts",
           "category": "core"
         },
         {
@@ -7992,7 +8120,7 @@
           "category": "mcp"
         },
         {
-          "consumerPath": "bin/commands/cliSentinel.mjs",
+          "consumerPath": "bin/commands/cliSentinelExtra.mjs",
           "category": "bin"
         },
         {
@@ -9068,7 +9196,7 @@
           "category": "mcp"
         },
         {
-          "consumerPath": "bin/commands/cliSentinel.mjs",
+          "consumerPath": "bin/commands/cliSentinelExtra.mjs",
           "category": "bin"
         },
         {

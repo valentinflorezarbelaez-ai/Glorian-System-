@@ -6,7 +6,7 @@
 # Single ingestion path: register ONLY the root catalog-info.yaml here.
 # Nested Location entities inside catalog-info.yaml (type: url absolute GitHub
 # targets) pull fleet-components.yaml + soundcheck-scorecards.yaml +
-# ownership.yaml + templates.
+# l0-boundary-scorecards.yaml + ownership.yaml + templates.
 # Do NOT also list those YAML files as sibling catalog.locations — that double-
 # registers Components/Resources/Groups (Bugbot #654 / P2 ownership).
 
