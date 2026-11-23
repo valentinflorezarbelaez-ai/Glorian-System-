@@ -94,7 +94,7 @@ test("BDD-183: Fail-Closed Merge Barrier Enactment (Breaking Contract Detected)"
 });
 
 test("BDD-184: MCP Dispatch of eos_github_gate via EosMcpServer", () => {
-  const server = new EosMcpServer(projectRoot);
+  const server = new EosMcpServer(projectRoot, "full");
 
   // 1. Verify tools/list contains eos_github_gate
   const listRes = server.handleRequest({

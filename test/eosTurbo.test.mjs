@@ -172,7 +172,7 @@ describe("EOS Turbo Engine & Nanosecond Precision Suite", () => {
 
   describe("Suite 3: MCP eos_turbo_verify Dispatch", () => {
     it("advertises eos_turbo_verify in tools/list", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 201,
@@ -185,7 +185,7 @@ describe("EOS Turbo Engine & Nanosecond Precision Suite", () => {
     });
 
     it("dispatches eos_turbo_verify with local-check telemetry", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 202,

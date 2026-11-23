@@ -75,7 +75,7 @@ test("BDD-124: EosAntigravityDirector classifies all 6 mission profiles and enfo
 });
 
 test("BDD-125: EosMcpServer negotiates 2024-11-05 & 2025-03-26, serves instructions, ping, prompts, resources, and Antigravity tools", () => {
-  const server = new EosMcpServer(projectRoot);
+  const server = new EosMcpServer(projectRoot, "full");
 
   const init2024 = server.handleRequest({
     jsonrpc: "2.0",
@@ -299,7 +299,7 @@ test("BDD-127: Hermetic Antigravity installer heals dangling junctions, preserve
     assert.equal(fs.existsSync(path.join(tempAppDataMcp, "eos_antigravity_direct.json")), true);
     assert.equal(fs.existsSync(path.join(tempAppDataMcp, "eos_antigravity_doctor.json")), true);
 
-    const mcpDoctorCall = new EosMcpServer(projectRoot).handleRequest({
+    const mcpDoctorCall = new EosMcpServer(projectRoot, "full").handleRequest({
       jsonrpc: "2.0",
       id: 99,
       method: "tools/call",

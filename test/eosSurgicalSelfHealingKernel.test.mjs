@@ -171,7 +171,7 @@ test("BDD-171: Cryptographic Self-Healing Receipt and Durable SQLite Ledger Entr
 });
 
 test("BDD-172: MCP Dispatch of eos_surgical_healing via EosMcpServer", () => {
-  const server = new EosMcpServer(projectRoot);
+  const server = new EosMcpServer(projectRoot, "full");
 
   // 1. Verify tool registration in catalog
   const toolsRes = server.handleRequest({

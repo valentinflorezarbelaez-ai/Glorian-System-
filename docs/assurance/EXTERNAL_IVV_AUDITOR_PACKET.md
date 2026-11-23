@@ -34,7 +34,7 @@ Optional (ops excellence, not accreditation blockers):
 
 ```bash
 npm run fleet:cwv-static
-# EOS_MCP_PROFILE=essential for curated LLM surface
+# Default Tier-0: EOS_MCP_PROFILE=core (~46). Opt-in full or essential — docs/governance/MCP_TIER0_TOKEN_ECONOMY.md
 ```
 
 ## Binder checklist

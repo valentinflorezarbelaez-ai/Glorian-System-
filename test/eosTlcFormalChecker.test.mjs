@@ -99,7 +99,7 @@ test("BDD-177: Cryptographic Verification Receipt & Ledger Monotonic Chain", () 
 });
 
 test("BDD-178: MCP Dispatch of eos_tlc_checker via EosMcpServer", () => {
-  const server = new EosMcpServer(projectRoot);
+  const server = new EosMcpServer(projectRoot, "full");
 
   // 1. Check tools/list contains eos_tlc_checker
   const listRes = server.handleRequest({

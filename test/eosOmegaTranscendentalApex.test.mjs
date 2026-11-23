@@ -133,7 +133,7 @@ describe("SPEC-040: Omega Transcendental Apex Kernel Verification", () => {
 
   describe("BDD-113: Multi-Channel MCP & CLI Transcendental Dispatch", () => {
     it("dispatches eos_ontology_query via MCP server", () => {
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 1,
@@ -150,7 +150,7 @@ describe("SPEC-040: Omega Transcendental Apex Kernel Verification", () => {
     });
 
     it("dispatches eos_quantum_lattice_seal via MCP server", () => {
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 2,
@@ -168,7 +168,7 @@ describe("SPEC-040: Omega Transcendental Apex Kernel Verification", () => {
     });
 
     it("dispatches eos_synapse_arbitrate via MCP server", () => {
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 3,

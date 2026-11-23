@@ -204,7 +204,7 @@ describe("SPEC-030: Big Tech Tier-1 Apex Engineering Verification", () => {
     );
 
     // Test MCP tool integration for prometheus metrics
-    const mcp = new EosMcpServer(process.cwd());
+    const mcp = new EosMcpServer(process.cwd(), "full");
     const mcpRes = mcp.handleRequest({
       jsonrpc: "2.0",
       id: 99,

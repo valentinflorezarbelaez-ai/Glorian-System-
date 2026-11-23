@@ -2171,7 +2171,7 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
     });
 
     it("exercises src/mcp/eosMcpServer.ts validation, protocols, resources, and prompts", async () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
 
       // Protocol versions
       const init24 = server.handleRequest({
@@ -2392,7 +2392,7 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
     });
 
     it("exercises EosMcpServer legacy dispatch for knowledge tools", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
 
       // eos_query_knowledge_graph sync first to populate graph
       const resSync = server.handleRequest({
@@ -2497,7 +2497,7 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
     });
 
     it("exercises EosMcpServer legacy dispatch for sovereign tools", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
 
       const sovereignCalls = [
         { name: "eos_prometheus_metrics", arguments: {} },
@@ -2766,7 +2766,7 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
     });
 
     it("exercises EosMcpServer legacy dispatch for reliability handlers", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
 
       const reliabilityCalls = [
         { name: "eos_canary_rollout", arguments: {} },
@@ -2850,7 +2850,7 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
     });
 
     it("exercises EosMcpServer legacy dispatch for governance handlers", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
 
       const governanceCalls = [
         {
@@ -2882,7 +2882,7 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
     });
 
     it("exercises EosMcpServer legacy dispatch for runtime handlers", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
 
       const runtimeCalls = [
         { name: "eos_chaos_inject_eval", arguments: { experimentName: "resilience-test" } },
@@ -2918,7 +2918,7 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
     });
 
     it("exercises createPhase3CoreHandlers across Tier-0 tools", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
       const phase3 = createPhase3CoreHandlers({
         projectRoot: root,
         resolveProjectPath: (v, k, fallback) => path.resolve(root, String(v || fallback || ".")),

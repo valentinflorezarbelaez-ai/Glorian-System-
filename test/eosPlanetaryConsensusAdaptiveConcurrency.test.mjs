@@ -210,7 +210,7 @@ describe("SPEC-035: Planetary Consensus & Adaptive Concurrency Verification", ()
   // PILLAR 4: Multi-Channel CLI & MCP Tool Integration (BDD-093)
   // =========================================================================
   describe("BDD-093: Multi-Channel MCP Dispatching", () => {
-    const server = new EosMcpServer();
+    const server = new EosMcpServer(undefined, "full");
 
     test("dispatches eos_consensus_status via MCP", () => {
       const res = server.handleRequest({

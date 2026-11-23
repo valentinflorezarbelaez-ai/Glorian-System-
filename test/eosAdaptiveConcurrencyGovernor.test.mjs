@@ -113,7 +113,7 @@ describe("EOS SPEC-112: Adaptive Concurrency Control & Priority Load Shedder Sui
   });
 
   it("MCP Integration: Evaluates concurrency admission and queries status via JSON-RPC", async () => {
-    const server = new EosMcpServer();
+    const server = new EosMcpServer(undefined, "full");
 
     // 1. Evaluate admission for CRITICAL request
     const evalRes = await server.handleRequest({

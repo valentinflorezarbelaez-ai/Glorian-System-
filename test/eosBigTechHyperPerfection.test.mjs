@@ -185,7 +185,7 @@ describe("SPEC-037: Big Tech Tier-0 Hyper-Perfection Verification", () => {
 
   describe("BDD-103: Multi-Channel MCP & CLI Tool Dispatch", () => {
     it("dispatches eos_hft_ipc_dispatch via MCP server", () => {
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 1,
@@ -204,7 +204,7 @@ describe("SPEC-037: Big Tech Tier-0 Hyper-Perfection Verification", () => {
     });
 
     it("dispatches eos_zero_copy_scan via MCP server", () => {
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 2,
@@ -223,7 +223,7 @@ describe("SPEC-037: Big Tech Tier-0 Hyper-Perfection Verification", () => {
     });
 
     it("dispatches eos_chaos_inject_eval via MCP server", () => {
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 3,

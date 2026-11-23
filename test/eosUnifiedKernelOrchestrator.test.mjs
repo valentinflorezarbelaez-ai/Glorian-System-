@@ -91,7 +91,7 @@ test("BDD-301: Intermediate Degradation Triggering Adaptive Throttling & Canary 
 });
 
 test("BDD-302: EosMcpServer Kernel Orchestrator Tool Dispatch", async () => {
-  const server = new EosMcpServer(process.cwd());
+  const server = new EosMcpServer(process.cwd(), "full");
 
   // 1. Test reconcile dispatch
   const reconcileReq = {

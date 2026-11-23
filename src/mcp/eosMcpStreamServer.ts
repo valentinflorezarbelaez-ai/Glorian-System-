@@ -225,7 +225,11 @@ export class EosMcpStreamServer {
 
   constructor(projectRoot?: string, heartbeatIntervalMs = 15000, options: EosMcpStreamServerOptions = {}) {
     this.projectRoot = projectRoot || process.cwd();
-    this.mcpServer = new EosMcpServer(this.projectRoot);
+    // HTTP already bounds the advertised surface via MCP_HTTP_READ_ONLY_TOOLS.
+    // Use full underneath so allowlisted tools (e.g. eos_spotify_shuffle) remain callable;
+    // stdio Tier-0 default is unchanged (EOS_MCP_PROFILE / normalizeToolProfile).
+    this.mcpServer = new EosMcpServer(this.projectRoot, "full");
+
     this.sessionManager = new EosMcpSessionManager(heartbeatIntervalMs);
     const configuredToken = options.authToken ?? process.env.EOS_MCP_HTTP_TOKEN;
     if (configuredToken !== undefined && Buffer.byteLength(configuredToken, "utf8") < 32) {

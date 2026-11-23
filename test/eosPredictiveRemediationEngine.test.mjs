@@ -104,7 +104,7 @@ test("BDD-297: Anti-Flapping Cooldown Enforcement & Safe Health Recovery", () =>
 });
 
 test("BDD-298: EosMcpServer Integration for Predictive Remediation Tools", async () => {
-  const server = new EosMcpServer(process.cwd());
+  const server = new EosMcpServer(process.cwd(), "full");
 
   // Test eos_remediation_correlate_execute
   const correlateReq = {

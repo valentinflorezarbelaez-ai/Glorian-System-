@@ -715,7 +715,7 @@ test("SPEC-341 / CHANGE-203: Metamorphic, Differential & Structural-Shrinking Bl
     );
 
     // Verify Native MCP Tool dispatch
-    const mcpServer = new EosMcpServer(ROOT);
+    const mcpServer = new EosMcpServer(ROOT, "full");
     const mcpRes = await mcpServer.handleRequest({
       jsonrpc: "2.0",
       id: "test-mcp-blindspot-fleet",

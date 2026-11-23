@@ -166,7 +166,7 @@ describe("EOS Sovereign Spotify Apollo / Hermes RPC & Event Mesh Suite (SPEC-015
   describe("Suite 6: MCP Integration for Apollo, DSP & Fleet Elevator", () => {
     it("advertises eos_apollo_rpc, eos_audio_dsp_benchmark, and eos_fleet_elevate in tools/list", async () => {
       const { EosMcpServer } = await import("../src/mcp/eosMcpServer.ts");
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: "mcp-test-list",
@@ -182,7 +182,7 @@ describe("EOS Sovereign Spotify Apollo / Hermes RPC & Event Mesh Suite (SPEC-015
 
     it("dispatches eos_apollo_rpc via MCP", async () => {
       const { EosMcpServer } = await import("../src/mcp/eosMcpServer.ts");
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: "mcp-test-call-rpc",
@@ -206,7 +206,7 @@ describe("EOS Sovereign Spotify Apollo / Hermes RPC & Event Mesh Suite (SPEC-015
 
     it("dispatches eos_audio_dsp_benchmark via MCP", async () => {
       const { EosMcpServer } = await import("../src/mcp/eosMcpServer.ts");
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: "mcp-test-call-dsp",

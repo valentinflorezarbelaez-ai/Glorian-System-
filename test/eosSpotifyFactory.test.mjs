@@ -194,7 +194,7 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
 
   describe("Suite 5: MCP Tool Integration for Spotify Agentic SDLC", () => {
     it("advertises Spotify Honk, Xirp, Fleetshift, and Canary tools in tools/list", () => {
-      const server = new EosMcpServer(process.cwd());
+      const server = new EosMcpServer(process.cwd(), "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 701,
@@ -210,7 +210,7 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
     });
 
     it("dispatches eos_spotify_honk_dispatch as plan-only", () => {
-      const server = new EosMcpServer(process.cwd());
+      const server = new EosMcpServer(process.cwd(), "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 702,
@@ -234,7 +234,7 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
     });
 
     it("dispatches eos_spotify_xirp_context and returns catalog context", () => {
-      const server = new EosMcpServer(process.cwd());
+      const server = new EosMcpServer(process.cwd(), "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 703,

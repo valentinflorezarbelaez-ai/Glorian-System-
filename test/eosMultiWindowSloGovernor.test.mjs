@@ -127,7 +127,7 @@ describe("EOS SPEC-110: Multi-Window Multi-Burn-Rate SLO & Error Budget Governor
   });
 
   it("MCP Integration: Evaluates SLO and queries budget status via JSON-RPC handleRequest", async () => {
-    const server = new EosMcpServer();
+    const server = new EosMcpServer(undefined, "full");
     const serviceId = "eos-fleet-service";
 
     // 1. Evaluate burn rate via eos_slo_burn_rate_evaluate

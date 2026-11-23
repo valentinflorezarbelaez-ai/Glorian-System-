@@ -103,7 +103,7 @@ test("BDD-309: Consolidated Master Transcendence Nexus Execution & MCP Exposure"
   assert.equal(status.totalPillarsExecuted, 6);
 
   // MCP Server tools dispatch test
-  const server = new EosMcpServer(process.cwd());
+  const server = new EosMcpServer(process.cwd(), "full");
 
   const execReq = {
     jsonrpc: "2.0",

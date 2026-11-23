@@ -1,13 +1,18 @@
 /**
  * EOS SYSTEM — MODULAR MCP 2025-03-26 TOOL ANNOTATIONS & ANTI-BLOAT PROFILES (Layer 1)
  * Governed by SPEC-044, CHANGE-037, ADR-050, FR-133, BDD-129 (v50.0.0)
+ * Token economy (LIDR M6 / fazt.dev): default profile is Tier-0 `core` (~46 tools).
+ * Power users opt into `full` via `EOS_MCP_PROFILE=full` — the full catalog remains intact.
  *
  * Enriches every EOS MCP tool definition with standard Model Context Protocol (2025-03-26)
  * safety annotations (`readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint`)
- * and supports focused tool catalog profiles (`core` vs `full`) to prevent LLM tool-bloat.
+ * and supports focused tool catalog profiles (`essential` | `core` | `full`) to prevent LLM tool-bloat.
  */
 
 export type McpToolProfile = "essential" | "core" | "full";
+
+/** Hard ceiling for Tier-0 `core` tool count (token-economy contract). */
+export const MCP_TIER0_CORE_MAX_TOOLS = 46;
 
 export interface McpToolAnnotations {
   readonly title: string;
@@ -62,13 +67,21 @@ export function computeToolAnnotations(toolName: string): McpToolAnnotations {
   };
 }
 
+/**
+ * Resolve MCP tool profile.
+ * Default (unset/empty/unknown) → Tier-0 `core` so agent turns do not load the full catalog.
+ * Explicit `full` / `complete` / `all` preserves the power-user surface.
+ * Aliases: `tier0` / `tier-0` → `core`; `essentials` → `essential`.
+ */
 export function normalizeToolProfile(rawProfile?: string): McpToolProfile {
   const normalized = String(rawProfile || "")
     .trim()
     .toLowerCase();
+  if (!normalized) return "core";
   if (normalized === "essential" || normalized === "essentials") return "essential";
-  if (normalized === "core") return "core";
-  return "full";
+  if (normalized === "core" || normalized === "tier0" || normalized === "tier-0") return "core";
+  if (normalized === "full" || normalized === "complete" || normalized === "all") return "full";
+  return "core";
 }
 
 export function annotateAndFilterTools(
@@ -77,7 +90,7 @@ export function annotateAndFilterTools(
     readonly description: string;
     readonly inputSchema: Record<string, unknown>;
   }>,
-  profile: McpToolProfile = "full",
+  profile: McpToolProfile = "core",
 ): AnnotatedMcpToolDefinition[] {
   const filtered =
     profile === "essential"

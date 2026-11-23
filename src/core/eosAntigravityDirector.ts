@@ -272,6 +272,9 @@ export class EosAntigravityDirector {
 
     const env: Record<string, string> = {
       EOS_PROJECT_ROOT: resolvedRoot,
+      // Tier-0 token economy (LIDR M6): default agent surface is curated core (~46 tools).
+      // Power users may override with EOS_MCP_PROFILE=full in mcp_config.json.
+      EOS_MCP_PROFILE: String(process.env.EOS_MCP_PROFILE || fleetOverrides.EOS_MCP_PROFILE || "core"),
     };
 
     for (const [envKey, candidateTarget] of Object.entries(defaultFleetCandidates)) {

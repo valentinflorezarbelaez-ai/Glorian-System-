@@ -340,12 +340,13 @@ test("BDD-288: EosMcpToolCatalog annotations, profile normalization, and filteri
   const mcpAnnot = computeToolAnnotations("eos_run_mcp_tool");
   assert.equal(mcpAnnot.title, "EOS run MCP Tool");
 
-  // 2. Profile Normalization
+  // 2. Profile Normalization (Tier-0 default = core)
   assert.equal(normalizeToolProfile("core"), "core");
   assert.equal(normalizeToolProfile(" CORE "), "core");
+  assert.equal(normalizeToolProfile("tier0"), "core");
   assert.equal(normalizeToolProfile("full"), "full");
-  assert.equal(normalizeToolProfile(), "full");
-  assert.equal(normalizeToolProfile("unknown_profile"), "full");
+  assert.equal(normalizeToolProfile(), "core");
+  assert.equal(normalizeToolProfile("unknown_profile"), "core");
 
   // 3. annotateAndFilterTools
   const sampleTools = [

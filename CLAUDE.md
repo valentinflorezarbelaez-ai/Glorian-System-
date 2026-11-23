@@ -12,5 +12,9 @@
 - Honk Local Draft: `node bin/eos.mjs honk "<directive>"` (plan only; no files changed)
 - Xirp Context Sync: `node bin/eos.mjs xirp sync`
 
+## MCP Tier-0 (token economy)
+- Default: `EOS_MCP_PROFILE=core` (~46 tools). Full catalog: `EOS_MCP_PROFILE=full`.
+- Prefer `gh` for GitHub reads. Details: `docs/governance/MCP_TIER0_TOKEN_ECONOMY.md`.
+
 ## Code & Architecture Standards
 These are repository notes, not verified vendor standards. Review requirements and run matching checks before applying them.

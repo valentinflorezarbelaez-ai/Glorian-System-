@@ -125,7 +125,7 @@ test("BDD-323: Triple Modular Redundancy (TMR) 2-of-3 Byzantine Consensus Adjudi
 });
 
 test("BDD-324: EosMcpServer Integration for Planetary Monorepo and Aerospace Tools", async () => {
-  const server = new EosMcpServer(process.cwd());
+  const server = new EosMcpServer(process.cwd(), "full");
 
   // 1. Test eos_planetary_sparse_project
   const sparseReq = {
