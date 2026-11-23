@@ -124,10 +124,7 @@ test("BDD-GDD-08: rewriting tests/CI/check is blocked (builder ≠ verifier)", (
   assert.equal(blocked.allowed, false);
   assert.ok(blocked.blockedPaths.includes("test/eosFoo.test.mjs"));
 
-  const ciBlocked = assertMutationAllowed(
-    [".github/workflows/ci.yml"],
-    ["test/**", ".github/workflows/**"],
-  );
+  const ciBlocked = assertMutationAllowed([".github/workflows/ci.yml"], ["test/**", ".github/workflows/**"]);
   assert.equal(ciBlocked.allowed, false);
 
   const allowed = assertMutationAllowed(
@@ -293,4 +290,29 @@ test("BDD-GDD-17: DEFAULT_PROTECTED_PATHS includes GDD types companion", () => {
     DEFAULT_PROTECTED_PATHS,
   );
   assert.equal(verdict.allowed, false);
+});
+
+test("BDD-GDD-18: valid < and > comparison operators pass while <replace ...> placeholders fail", () => {
+  const validWithComparisons = {
+    id: "GOAL-COMPARISON-OPS",
+    title: "Latency and throughput stay within bounds",
+    metric: { name: "p95_latency_ms", unit: "ms" },
+    threshold: { op: "lt", value: 50 },
+    check: {
+      command: 'node -e "process.exit(10 < 50 && 200 > 100 ? 0 : 1)"',
+      timeoutMs: 30000,
+    },
+    caps: { maxAttempts: 3, maxCostUsd: 5 },
+    doneWhen: "latency_ms < 50 && throughput_rps > 100",
+  };
+  const validResult = validateGoalDocument(JSON.stringify(validWithComparisons));
+  assert.equal(validResult.ok, true, summarizeValidation(validResult));
+
+  const withReplaceDots = {
+    ...validWithComparisons,
+    doneWhen: "check exits 0 and <replace ...>",
+  };
+  const placeholderResult = validateGoalDocument(JSON.stringify(withReplaceDots));
+  assert.equal(placeholderResult.ok, false);
+  assert.ok(placeholderResult.issues.some((i) => i.path === "doneWhen" && /placeholder/i.test(i.message)));
 });

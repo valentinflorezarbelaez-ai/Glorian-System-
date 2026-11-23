@@ -10,14 +10,7 @@ import { assertPrecondition } from "./eosKernelPrimitives.ts";
 /** Comparison operators for a measurable metric threshold. */
 export type GoalThresholdOp = "eq" | "neq" | "lte" | "gte" | "lt" | "gt";
 
-export const GOAL_THRESHOLD_OPS: readonly GoalThresholdOp[] = Object.freeze([
-  "eq",
-  "neq",
-  "lte",
-  "gte",
-  "lt",
-  "gt",
-]);
+export const GOAL_THRESHOLD_OPS: readonly GoalThresholdOp[] = Object.freeze(["eq", "neq", "lte", "gte", "lt", "gt"]);
 
 export interface GoalMetric {
   readonly name: string;
@@ -105,8 +98,8 @@ export const DEFAULT_PROTECTED_PATHS: readonly string[] = Object.freeze([
   "src/core/eosGoalDrivenDevelopmentContract.types.ts",
 ]);
 
-/** Unfilled template tokens like `<metric>` / `<replace ...>`. */
-export const ANGLE_BRACKET_PLACEHOLDER_RE = /<[^<>]+>/;
+/** Unfilled template tokens like `<metric>` / `<replace ...>` without rejecting `<` ... `>` comparisons. */
+export const ANGLE_BRACKET_PLACEHOLDER_RE = /<[A-Za-z][A-Za-z0-9 _./-]{0,78}[A-Za-z0-9.]>/;
 
 export const GOAL_ID_RE = /^GOAL-[A-Z0-9][A-Z0-9_-]{1,63}$/;
 /** Template / sample IDs that must never validate as Done (fail-closed). */
@@ -174,10 +167,7 @@ export function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
 
-function peekNextMeaningful(
-  lines: string[],
-  from: number,
-): { indent: number; trimmed: string } | null {
+function peekNextMeaningful(lines: string[], from: number): { indent: number; trimmed: string } | null {
   for (let i = from; i < lines.length; i += 1) {
     const trimmed = lines[i].trim();
     if (trimmed.length === 0 || trimmed.startsWith("#")) continue;
@@ -188,10 +178,7 @@ function peekNextMeaningful(
 }
 
 function parseYamlScalar(raw: string): unknown {
-  if (
-    (raw.startsWith('"') && raw.endsWith('"')) ||
-    (raw.startsWith("'") && raw.endsWith("'"))
-  ) {
+  if ((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'"))) {
     return raw.slice(1, -1);
   }
   if (raw === "true") return true;
