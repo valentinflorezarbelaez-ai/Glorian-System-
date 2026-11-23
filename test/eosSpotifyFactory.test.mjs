@@ -92,7 +92,10 @@ describe("EOS Sovereign Spotify Agentic SDLC Factory Suite (Honk, Xirp, Fleetshi
 
       assert.equal(ctx.serviceName, "eos-system-control-plane");
       assert.ok(ctx.title.includes("EOS System"));
-      assert.ok(ctx.squad.includes("valentin-florez-arbelaez"));
+      assert.ok(
+        ctx.squad.includes("glorian-control-plane-squad"),
+        "Xirp squad must reflect declared Backstage Group owner (P2)",
+      );
       assert.ok(ctx.tags.includes("layer-0-sovereign"));
       assert.ok(ctx.registeredFleetProjects >= 3);
       assert.ok(ctx.adrCount >= 5);

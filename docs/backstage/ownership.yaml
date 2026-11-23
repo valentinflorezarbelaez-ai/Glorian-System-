@@ -1,0 +1,75 @@
+# Backstage ownership entities (P2).
+# Declares squad + tribe Groups and the architect User so catalog ownership is not blank.
+# AGENTS.md previously showed Tribe: NOT_DECLARED — this file is the catalog SoT for ownership.
+# Ingested once via catalog-info.yaml Location (URL target). Do not duplicate in app-config.snippet.
+# Law VI: public profile fields only — no secrets.
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: valentin-florez-arbelaez
+  title: Valentín Flórez Arbelaez
+  description: Glorian/EOS sovereign architect (HITL Level 2/3 gate authority).
+  links:
+    - url: https://portafolio-valentin.vercel.app
+      title: Architect Portfolio
+      icon: user
+    - url: https://github.com/valentinflorezarbelaez-ai
+      title: GitHub
+      icon: github
+spec:
+  profile:
+    displayName: Valentín Flórez Arbelaez
+  memberOf:
+    - group:default/glorian-control-plane-squad
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: glorian-control-plane-squad
+  title: Glorian Control Plane Squad
+  description: Declared owner squad for the Glorian/EOS control plane, Soundcheck Resources, and fleet Component stubs.
+  annotations:
+    eos.glorian/owner-role: squad
+    eos.glorian/owner-ref: group:glorian-control-plane-squad
+  tags:
+    - ownership
+    - squad
+  links:
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/ownership.md
+      title: Ownership TechDocs
+      icon: docs
+spec:
+  type: team
+  profile:
+    displayName: Glorian Control Plane Squad
+  parent: group:default/glorian-platform-tribe
+  children: []
+  members:
+    - user:default/valentin-florez-arbelaez
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: glorian-platform-tribe
+  title: Glorian Platform Tribe
+  description: Declared tribe for Glorian/EOS fleet ownership (replaces AGENTS snapshot NOT_DECLARED).
+  annotations:
+    eos.glorian/owner-role: tribe
+    eos.glorian/owner-ref: group:glorian-platform-tribe
+  tags:
+    - ownership
+    - tribe
+  links:
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/ownership.md
+      title: Ownership TechDocs
+      icon: docs
+spec:
+  type: tribe
+  profile:
+    displayName: Glorian Platform Tribe
+  children:
+    - group:default/glorian-control-plane-squad

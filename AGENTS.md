@@ -8,8 +8,8 @@
 ## 1. Declared Component Metadata
 - **Component ID**: ` eos-system-control-plane `
 - **Component Title**: ` Glorian System (formerly EOS System) `
-- **Owner Squad**: ` user:valentin-florez-arbelaez `
-- **Tribe**: ` NOT_DECLARED `
+- **Owner Squad**: ` group:glorian-control-plane-squad `
+- **Tribe**: ` group:glorian-platform-tribe `
 - **Lifecycle Tier**: ` production `
 - **Registered Fleet Repositories**: 10
 - **Active Formal Architectural Specs (OpenSpec)**: 378

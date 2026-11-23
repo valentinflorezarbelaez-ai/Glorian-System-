@@ -14,6 +14,8 @@ metadata:
     eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
     eos.glorian/pillar-map: docs/backstage/scorecard-pillar-map.json
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
     - control-plane
     - layer-0-sovereign
@@ -50,7 +52,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
   providesApis:
     - eos-control-plane-api
@@ -63,6 +65,9 @@ metadata:
   name: eos-sovereign-mesh
   title: EOS Sovereign Fleet Mesh
   description: Planetary network of sovereign applications governed by the EOS Agent Constitution.
+  annotations:
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   links:
     - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/projects/registry.json
       title: Fleet Registry (SoT)
@@ -70,8 +75,11 @@ metadata:
     - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/README.md
       title: Backstage Integration Notes
       icon: docs
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/ownership.md
+      title: Ownership Model
+      icon: user
 spec:
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Location
@@ -106,3 +114,14 @@ spec:
   type: url
   targets:
     - https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/soundcheck-scorecards.yaml
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: glorian-ownership-entities
+  title: Glorian Ownership Groups + User (P2)
+  description: Squad/tribe Group entities and architect User so Backstage ownership is not blank. Single ingestion path via this Location (not duplicated in app-config.snippet).
+spec:
+  type: url
+  targets:
+    - https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/ownership.yaml

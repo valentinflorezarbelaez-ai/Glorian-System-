@@ -20,6 +20,8 @@ metadata:
     eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
     eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
     - fleet
     - soundcheck
@@ -37,7 +39,7 @@ metadata:
 spec:
   type: website
   lifecycle: production
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
 
 ---
@@ -55,6 +57,8 @@ metadata:
     eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
     eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
     - fleet
     - soundcheck
@@ -72,7 +76,7 @@ metadata:
 spec:
   type: website
   lifecycle: production
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
 
 ---
@@ -90,6 +94,8 @@ metadata:
     eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
     eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
     - fleet
     - soundcheck
@@ -107,7 +113,7 @@ metadata:
 spec:
   type: website
   lifecycle: production
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
 
 ---
@@ -125,6 +131,8 @@ metadata:
     eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
     eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
     - fleet
     - soundcheck
@@ -142,7 +150,7 @@ metadata:
 spec:
   type: website
   lifecycle: production
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
 
 ---
@@ -160,6 +168,8 @@ metadata:
     eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
     eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
     - fleet
     - soundcheck
@@ -177,7 +187,7 @@ metadata:
 spec:
   type: website
   lifecycle: production
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
 
 ---
@@ -195,6 +205,8 @@ metadata:
     eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
     eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
     - fleet
     - soundcheck
@@ -212,7 +224,7 @@ metadata:
 spec:
   type: website
   lifecycle: production
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
 
 ---
@@ -230,6 +242,8 @@ metadata:
     eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
     eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
     eos.glorian/control-plane-component: eos-system-control-plane
   tags:
     - fleet
@@ -248,7 +262,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
 
 ---
@@ -266,6 +280,8 @@ metadata:
     eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
     eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
     - fleet
     - soundcheck
@@ -283,7 +299,7 @@ metadata:
 spec:
   type: website
   lifecycle: production
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
 
 ---
@@ -301,6 +317,8 @@ metadata:
     eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
     eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
     - fleet
     - soundcheck
@@ -318,7 +336,7 @@ metadata:
 spec:
   type: website
   lifecycle: production
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh
 
 ---
@@ -336,6 +354,8 @@ metadata:
     eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
     eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/owner-squad: group:glorian-control-plane-squad
+    eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
     - fleet
     - soundcheck
@@ -353,5 +373,5 @@ metadata:
 spec:
   type: website
   lifecycle: production
-  owner: user:valentin-florez-arbelaez
+  owner: group:glorian-control-plane-squad
   system: eos-sovereign-mesh

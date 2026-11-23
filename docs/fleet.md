@@ -9,4 +9,4 @@ npm run fleet:audit
 npm run fleet:scorecards
 ```
 
-Sibling repositories each own their own `catalog-info.yaml` (planned after this P0 catalog harden). The System entity for the mesh is `eos-sovereign-mesh`.
+The System entity for the mesh is `eos-sovereign-mesh`. Fleet Component stubs live in [backstage/fleet-components.yaml](backstage/fleet-components.yaml) until sibling repos land their own `catalog-info.yaml`. Default Soundcheck posture remains `CONTROL_PLANE_ONLY`. Ownership: [ownership.md](ownership.md).

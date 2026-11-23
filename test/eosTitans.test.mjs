@@ -60,7 +60,12 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
         "managed-by-location must point at the Glorian catalog URL",
       );
       assert.ok(content.includes("system: eos-sovereign-mesh"));
-      assert.ok(content.includes("owner: user:valentin-florez-arbelaez"));
+      assert.ok(
+        content.includes("owner: group:glorian-control-plane-squad"),
+        "control-plane Component/System must use declared squad Group owner",
+      );
+      assert.ok(content.includes("eos.glorian/owner-squad: group:glorian-control-plane-squad"));
+      assert.ok(content.includes("eos.glorian/owner-tribe: group:glorian-platform-tribe"));
       assert.ok(content.includes("backstage.io/techdocs-ref: dir:."));
       assert.equal(content.includes("Eos-System"), false, "legacy Eos-System slug must not remain in catalog");
       assert.equal(
@@ -74,6 +79,10 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
       assert.ok(mkdocs.includes("Home:"));
       assert.ok(mkdocs.includes("Verify:"));
       assert.ok(mkdocs.includes("Fleet:"));
+      assert.ok(mkdocs.includes("Governance:"));
+      assert.ok(mkdocs.includes("Ownership:"));
+      assert.ok(fs.existsSync(path.join(process.cwd(), "docs", "governance.md")));
+      assert.ok(fs.existsSync(path.join(process.cwd(), "docs", "ownership.md")));
     });
 
     it("keeps Layer-0 free of @backstage runtime deps (BDD-BS-002)", () => {
@@ -231,6 +240,81 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
         false,
         "relative file Location targets must not remain for scorecards",
       );
+    });
+
+    it("declares TechDocs curated nav + ownership Groups without duplicate Locations (BDD-BS-004)", () => {
+      const catalog = fs.readFileSync(path.join(process.cwd(), "catalog-info.yaml"), "utf8");
+      const ownershipYaml = fs.readFileSync(
+        path.join(process.cwd(), "docs", "backstage", "ownership.yaml"),
+        "utf8",
+      );
+      const fleetYaml = fs.readFileSync(
+        path.join(process.cwd(), "docs", "backstage", "fleet-components.yaml"),
+        "utf8",
+      );
+      const scorecardsYaml = fs.readFileSync(
+        path.join(process.cwd(), "docs", "backstage", "soundcheck-scorecards.yaml"),
+        "utf8",
+      );
+      const appConfig = fs.readFileSync(
+        path.join(process.cwd(), "docs", "backstage", "app-config.snippet.yaml"),
+        "utf8",
+      );
+      const mkdocs = fs.readFileSync(path.join(process.cwd(), "mkdocs.yml"), "utf8");
+
+      assert.ok(ownershipYaml.includes("kind: User"));
+      assert.ok(ownershipYaml.includes("name: valentin-florez-arbelaez"));
+      assert.ok(ownershipYaml.includes("kind: Group"));
+      assert.ok(ownershipYaml.includes("name: glorian-control-plane-squad"));
+      assert.ok(ownershipYaml.includes("name: glorian-platform-tribe"));
+      assert.ok(ownershipYaml.includes("type: team"));
+      assert.ok(ownershipYaml.includes("type: tribe"));
+      assert.equal(
+        /(?:api[_-]?key|bearer\s+[a-z0-9]|-----BEGIN)/i.test(ownershipYaml),
+        false,
+        "ownership.yaml must not contain plaintext secrets",
+      );
+
+      assert.ok(catalog.includes("name: glorian-ownership-entities"));
+      assert.ok(
+        catalog.includes(
+          "https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/ownership.yaml",
+        ),
+        "ownership Location must use absolute GitHub URL target",
+      );
+      assert.equal(
+        catalog.includes("./docs/backstage/ownership.yaml"),
+        false,
+        "relative file Location targets must not remain for ownership",
+      );
+      assert.equal(
+        /type:\s*file\b/.test(catalog),
+        false,
+        "catalog Locations must not use type: file (URL discipline)",
+      );
+
+      assert.ok(fleetYaml.includes("owner: group:glorian-control-plane-squad"));
+      assert.equal(
+        fleetYaml.includes("owner: user:valentin-florez-arbelaez"),
+        false,
+        "fleet stubs must not keep blank-style user-only owner",
+      );
+      assert.ok(scorecardsYaml.includes("owner: group:glorian-control-plane-squad"));
+
+      assert.ok(appConfig.includes("Group"));
+      assert.ok(appConfig.includes("User"));
+      assert.equal(
+        /locations:[\s\S]*target:\s*https:\/\/github\.com\/valentinflorezarbelaez-ai\/Glorian-System-\/blob\/main\/docs\/backstage\/ownership\.yaml/.test(
+          appConfig,
+        ),
+        false,
+        "app-config must not duplicate ownership.yaml as a sibling catalog location",
+      );
+
+      assert.ok(mkdocs.includes("Governance: governance.md"));
+      assert.ok(mkdocs.includes("Ownership: ownership.md"));
+      assert.ok(fs.existsSync(path.join(process.cwd(), "docs", "governance.md")));
+      assert.ok(fs.existsSync(path.join(process.cwd(), "docs", "ownership.md")));
     });
   });
 
