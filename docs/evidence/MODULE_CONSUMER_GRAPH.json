@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-23T21:29:15.593Z",
+  "timestampIso": "2026-11-23T22:47:45.934Z",
   "totalModules": 636,
   "consumedModules": 636,
   "unconsumedModules": 0,
@@ -692,19 +692,19 @@
       "consumerCount": 4,
       "consumers": [
         {
-          "consumerPath": "api/health.js",
-          "category": "api"
-        },
-        {
-          "consumerPath": "api/mcp.js",
-          "category": "api"
-        },
-        {
           "consumerPath": "api/_finops.js",
           "category": "api"
         },
         {
           "consumerPath": "api/_metrics.js",
+          "category": "api"
+        },
+        {
+          "consumerPath": "api/health.js",
+          "category": "api"
+        },
+        {
+          "consumerPath": "api/mcp.js",
           "category": "api"
         }
       ]
@@ -3176,15 +3176,15 @@
       "consumerCount": 95,
       "consumers": [
         {
+          "consumerPath": "src/core/eosAgentSwarmMicroKernel.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosAgenticContextEngine.ts",
           "category": "core"
         },
         {
           "consumerPath": "src/core/eosAgenticSwarmBft.ts",
-          "category": "core"
-        },
-        {
-          "consumerPath": "src/core/eosAgentSwarmMicroKernel.ts",
           "category": "core"
         },
         {
@@ -3300,6 +3300,10 @@
           "category": "bin"
         },
         {
+          "consumerPath": "bin/commands/cliAgentSwarmMicroKernel.mjs",
+          "category": "bin"
+        },
+        {
           "consumerPath": "bin/commands/cliAgenticContextEngine.mjs",
           "category": "bin"
         },
@@ -3309,10 +3313,6 @@
         },
         {
           "consumerPath": "bin/commands/cliAgenticSwarmBft.mjs",
-          "category": "bin"
-        },
-        {
-          "consumerPath": "bin/commands/cliAgentSwarmMicroKernel.mjs",
           "category": "bin"
         },
         {
@@ -3885,8 +3885,12 @@
       "file": "src/core/eosFleetPathResolver.ts",
       "baseName": "eosFleetPathResolver",
       "isConsumed": true,
-      "consumerCount": 1,
+      "consumerCount": 2,
       "consumers": [
+        {
+          "consumerPath": "src/core/eosFleetDogfoodingEngine.ts",
+          "category": "core"
+        },
         {
           "consumerPath": "scripts/eos-fleet-dogfood-ttv.mjs",
           "category": "scripts"
@@ -5444,11 +5448,11 @@
           "category": "core"
         },
         {
-          "consumerPath": "src/core/eosFleetProductionVerifier.ts",
+          "consumerPath": "src/core/eosFleetProductScorecard.ts",
           "category": "core"
         },
         {
-          "consumerPath": "src/core/eosFleetProductScorecard.ts",
+          "consumerPath": "src/core/eosFleetProductionVerifier.ts",
           "category": "core"
         },
         {
@@ -5556,6 +5560,10 @@
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosInTotoSlsaEd25519AttestorCore.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosIncidentSeverityClassifier.ts",
           "category": "core"
         },
@@ -5565,10 +5573,6 @@
         },
         {
           "consumerPath": "src/core/eosInterferometricSarDeformationCore.ts",
-          "category": "core"
-        },
-        {
-          "consumerPath": "src/core/eosInTotoSlsaEd25519AttestorCore.ts",
           "category": "core"
         },
         {
@@ -5816,6 +5820,10 @@
           "category": "core"
         },
         {
+          "consumerPath": "src/core/eosSLOErrorBudgetGovernor.ts",
+          "category": "core"
+        },
+        {
           "consumerPath": "src/core/eosSagaOrchestrator.ts",
           "category": "core"
         },
@@ -5861,10 +5869,6 @@
         },
         {
           "consumerPath": "src/core/eosSingleExecutableDistributionGovernor.ts",
-          "category": "core"
-        },
-        {
-          "consumerPath": "src/core/eosSLOErrorBudgetGovernor.ts",
           "category": "core"
         },
         {

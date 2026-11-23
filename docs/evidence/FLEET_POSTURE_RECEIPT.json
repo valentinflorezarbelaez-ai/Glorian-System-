@@ -1,0 +1,30 @@
+{
+  "epistemicState": "CONTROL_PLANE_ONLY",
+  "generatedAtIso": "2026-11-23T22:44:46.823Z",
+  "specRef": "SPEC-100",
+  "remediationRef": "P1-2/PR-G",
+  "posture": "CONTROL_PLANE_ONLY",
+  "fleetLiveAudit": false,
+  "envPathsDeclared": 10,
+  "envPathsUnsetCount": 10,
+  "envPathsUnset": [
+    "EOS_FLEET_ABERAMENTHO_PATH",
+    "EOS_FLEET_ATP_STRENGTH_PATH",
+    "EOS_FLEET_BIBLIOTECA_GNOSTICA_1_PATH",
+    "EOS_FLEET_CONTROL_DE_ASISTENCIA_ABOPACK_PATH",
+    "EOS_FLEET_CRUD_SLACK_PATH",
+    "EOS_FLEET_DONACIONES_PATH",
+    "EOS_FLEET_EOS_SYSTEM_PATH",
+    "EOS_FLEET_PTG_PATH",
+    "EOS_FLEET_PORTAFOLIO_PATH",
+    "EOS_FLEET_TRADING_FAMILY_OFFICE_PATH"
+  ],
+  "siblingsAvailable": 0,
+  "siblingsSkipped": 9,
+  "reason": "Unset fleet path env(s): EOS_FLEET_ABERAMENTHO_PATH, EOS_FLEET_ATP_STRENGTH_PATH, EOS_FLEET_BIBLIOTECA_GNOSTICA_1_PATH, EOS_FLEET_CONTROL_DE_ASISTENCIA_ABOPACK_PATH, EOS_FLEET_CRUD_SLACK_PATH, EOS_FLEET_DONACIONES_PATH, EOS_FLEET_EOS_SYSTEM_PATH, EOS_FLEET_PTG_PATH, EOS_FLEET_PORTAFOLIO_PATH, EOS_FLEET_TRADING_FAMILY_OFFICE_PATH. Advertise CONTROL_PLANE_ONLY; do not claim live Soundcheck success.",
+  "averageHealthScore": 100,
+  "totalProjects": 10,
+  "sarifPath": "docs/evidence/fleet-audit.sarif",
+  "sha256Seal": "d07e966b76f033b97c7b0a4e2a297a2044ee6822839d75af5f8a9db48053cf4d",
+  "sha256Receipt": "e5cc633258c8ac2628b7ca97047696110f4c03484040626dbb08571cc649bd31"
+}

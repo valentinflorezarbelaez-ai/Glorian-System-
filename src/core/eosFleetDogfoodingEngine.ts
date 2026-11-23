@@ -12,6 +12,12 @@ import path from "node:path";
 import crypto from "node:crypto";
 
 import { contentDerivedIso, writeDeterministicArtifact } from "./eosDeterministicArtifact.ts";
+import {
+  evaluateFleetPosture,
+  fleetPostureReceiptFields,
+  type FleetAuditPosture,
+  type FleetPostureSnapshot,
+} from "./eosFleetPathResolver.ts";
 
 export interface FleetProjectEntry {
   id: string;
@@ -58,6 +64,13 @@ export interface FleetAuditSummary {
   sarifPath: string;
   sha256Seal: string;
   generatedAtIso: string;
+  /** CONTROL_PLANE_ONLY | FLEET_VERIFIED — never FLEET_VERIFIED when paths unset. */
+  posture: FleetAuditPosture;
+  /** True only under FLEET_VERIFIED (mounted paths eligible for live Soundcheck). */
+  fleetLiveAudit: boolean;
+  epistemicState: string;
+  postureSnapshot: FleetPostureSnapshot;
+  postureReceipt: Record<string, unknown>;
 }
 
 export class LawIvExternalWriteBarrierViolation extends Error {
@@ -88,15 +101,19 @@ export class EosFleetDogfoodingEngine {
   }
 
   /**
-   * Audits a specific registered project non-invasively.
+   * Audits a specific registered project non-invasively (registry / Law IV only).
+   * Live Soundcheck success is gated by fleet posture — see auditEntireFleet().
    */
-  public auditTargetProject(projectId: string): ProjectAuditResult {
+  public auditTargetProject(projectId: string, posture?: FleetPostureSnapshot): ProjectAuditResult {
     const registry = this.loadRegistry();
     const project = registry.projects.find((p) => p.id === projectId);
 
     if (!project) {
       throw new Error(`Project ${projectId} not found in fleet registry.`);
     }
+
+    const postureSnapshot =
+      posture ?? evaluateFleetPosture(this.projectRoot, registry.projects as FleetProjectEntry[]);
 
     // Verify Law IV External Write Barrier preconditions
     const isLawIvAuthorized =
@@ -111,14 +128,20 @@ export class EosFleetDogfoodingEngine {
       "Secret & Credential Scan Pattern Check",
       "Contract Coherence & CI/CD Gate Verification",
       "Epistemic State & Spec Traceability",
+      "Fleet Path Posture (CONTROL_PLANE_ONLY vs FLEET_VERIFIED)",
     ];
 
     let healthScore = 95;
-    let epistemicState = "VERIFIED";
+    let epistemicState = "REGISTRY_AUTHORIZED_NOT_LIVE_AUDITED";
 
     if (project.authorization.includes("LEVEL_3_PRODUCTION_AUTHORIZED")) {
       healthScore = 100;
-      epistemicState = "PRODUCTION_READY_WITHIN_TESTED_SCOPE";
+      epistemicState =
+        postureSnapshot.posture === "FLEET_VERIFIED"
+          ? "PRODUCTION_READY_WITHIN_TESTED_SCOPE"
+          : "CONTROL_PLANE_REGISTRY_ONLY";
+    } else if (postureSnapshot.posture === "FLEET_VERIFIED") {
+      epistemicState = "VERIFIED";
     }
 
     return {
@@ -140,16 +163,22 @@ export class EosFleetDogfoodingEngine {
    */
   public auditEntireFleet(): FleetAuditSummary {
     const registry = this.loadRegistry();
+    const postureSnapshot = evaluateFleetPosture(this.projectRoot, registry.projects as FleetProjectEntry[]);
     const auditedProjects: ProjectAuditResult[] = [];
     let totalScore = 0;
 
     for (const p of registry.projects) {
-      const result = this.auditTargetProject(p.id);
+      const result = this.auditTargetProject(p.id, postureSnapshot);
       auditedProjects.push(result);
       totalScore += result.healthScore;
     }
 
     const avgScore = Math.round(totalScore / auditedProjects.length);
+    const postureReceipt = fleetPostureReceiptFields(postureSnapshot);
+    const epistemicState =
+      postureSnapshot.posture === "FLEET_VERIFIED"
+        ? "FLEET_VERIFIED_WITHIN_TESTED_SCOPE"
+        : "CONTROL_PLANE_ONLY";
 
     // Build unified OASIS SARIF v2.1.0 report
     const sarifReport = {
@@ -173,6 +202,13 @@ export class EosFleetDogfoodingEngine {
                   name: "ContractAndQualityAssurance",
                   shortDescription: { text: "Verifies fleet projects maintain zero plain secrets and valid contracts" },
                 },
+                {
+                  id: "FLEET-RULE-003",
+                  name: "FleetPathPostureHonesty",
+                  shortDescription: {
+                    text: "Refuses FLEET_VERIFIED / live Soundcheck success when any EOS_FLEET_*_PATH is unset",
+                  },
+                },
               ],
             },
           },
@@ -181,6 +217,10 @@ export class EosFleetDogfoodingEngine {
             {
               executionSuccessful: true,
               endTimeUtc: new Date().toISOString(),
+              properties: {
+                fleetPosture: postureSnapshot.posture,
+                fleetLiveAudit: postureSnapshot.fleetLiveAudit,
+              },
             },
           ],
         },
@@ -210,6 +250,11 @@ export class EosFleetDogfoodingEngine {
       sarifPath,
       sha256Seal,
       generatedAtIso: new Date().toISOString(),
+      posture: postureSnapshot.posture,
+      fleetLiveAudit: postureSnapshot.fleetLiveAudit,
+      epistemicState,
+      postureSnapshot,
+      postureReceipt,
     };
   }
 
