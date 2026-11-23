@@ -134,15 +134,28 @@ export function buildConsumerGraph(root = ROOT) {
 }
 
 /**
- * Generates consumer graph evidence receipt and exits.
+ * Generates consumer graph evidence receipt and returns the graph.
+ * When failOnUnconsumed is true and unconsumedModules > 0, throws (caller exits 1).
  */
 export function verifyModuleConsumers(options = {}) {
   const root = options.root || ROOT;
   const receiptPath = options.receiptPath || DEFAULT_RECEIPT_PATH;
+  const failOnUnconsumed = options.failOnUnconsumed === true;
   const graph = buildConsumerGraph(root);
 
   fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
   fs.writeFileSync(receiptPath, JSON.stringify(graph, null, 2), "utf8");
+
+  if (failOnUnconsumed && graph.unconsumedModules > 0) {
+    const orphans = Object.values(graph.modules)
+      .filter((m) => !m.isConsumed)
+      .map((m) => m.file);
+    const err = new Error(
+      `Architectural moratorium violated: ${graph.unconsumedModules} unconsumed Layer-0 module(s). Wire a consumer or archive before merge.`,
+    );
+    err.unconsumedFiles = orphans;
+    throw err;
+  }
 
   return graph;
 }
@@ -152,11 +165,24 @@ export function verifyModuleConsumers(options = {}) {
 // ---------------------------------------------------------------------------
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename)) {
   const showUnconsumed = process.argv.includes("--unconsumed-only");
-  const graph = verifyModuleConsumers();
+  const failOnUnconsumed = process.argv.includes("--fail-on-unconsumed");
 
   console.log("======================================================================");
   console.log(" GLORIAN SYSTEM — Module Consumer Governance & Moratorium Audit");
   console.log("======================================================================");
+
+  let graph;
+  try {
+    graph = verifyModuleConsumers({ failOnUnconsumed });
+  } catch (err) {
+    console.error(` FAIL — ${err.message}`);
+    if (Array.isArray(err.unconsumedFiles)) {
+      for (const file of err.unconsumedFiles) console.error(`  [UNCONSUMED] ${file}`);
+    }
+    console.error("Re-run without --fail-on-unconsumed for advisory inventory only.");
+    process.exit(1);
+  }
+
   console.log(` Total Modules in src/core/ : ${graph.totalModules}`);
   console.log(` Consumed Modules           : ${graph.consumedModules}`);
   console.log(` Unconsumed Leaf Modules    : ${graph.unconsumedModules}`);

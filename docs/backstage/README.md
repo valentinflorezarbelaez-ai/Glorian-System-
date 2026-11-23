@@ -1,6 +1,6 @@
 # Backstage integration (control plane)
 
-**Status:** P0 catalog + TechDocs stub · P1 Soundcheck scorecard entities · **P2 TechDocs curated nav + ownership Groups**.  
+**Status:** P0 catalog + TechDocs stub · P1 Soundcheck scorecard entities · P2 TechDocs curated nav + ownership Groups · **P2 Layer-0 boundary/consumer scorecards (PR-I)**.  
 **Portal host:** TBD — separate package/repo (for example `apps/backstage/` or sibling `glorian-backstage`). **Never** as a runtime dependency inside `src/core/` (Law V / `dependencies: {}`).
 
 ## What lives here
@@ -12,8 +12,10 @@
 | [`app-config.snippet.yaml`](./app-config.snippet.yaml) | Portal snippet: **only** root `catalog-info.yaml` (Locations cascade) |
 | [`fleet-components.yaml`](./fleet-components.yaml) | Component stubs — `metadata.name` = `docs/projects/registry.json` id |
 | [`soundcheck-scorecards.yaml`](./soundcheck-scorecards.yaml) | Resource entities for fleet matrix + five Soundcheck pillars |
+| [`l0-boundary-scorecards.yaml`](./l0-boundary-scorecards.yaml) | Resource entities for Layer-0 import boundary + consumer moratorium |
 | [`ownership.yaml`](./ownership.yaml) | User + squad/tribe Group entities (P2) |
-| [`scorecard-pillar-map.json`](./scorecard-pillar-map.json) | Pillar → Backstage check ids; receipt shape; posture rules |
+| [`scorecard-pillar-map.json`](./scorecard-pillar-map.json) | Soundcheck pillar → Backstage check ids; receipt shape; posture rules |
+| [`l0-boundary-scorecard-map.json`](./l0-boundary-scorecard-map.json) | L0 boundary/consumer → check ids; fail-closed rules; receipt shape |
 | This folder | Operator notes until a portal host exists |
 
 ## Catalog ingestion (single path)
@@ -40,11 +42,19 @@
 
 TechDocs page: [`docs/ownership.md`](../ownership.md). Catalog SoT: [`ownership.yaml`](./ownership.yaml).
 
+## Layer-0 boundary + consumer scorecards (P2 / PR-I)
+
+1. **Gates (SoT):** `npm run boundary:check` and `npm run consumers:audit -- --fail-on-unconsumed` — wired into `verify:strict` as Stage 3.02 / 3.03.
+2. **Receipt:** [`docs/evidence/MODULE_CONSUMER_GRAPH.json`](../evidence/MODULE_CONSUMER_GRAPH.json). Portal **reads** it — does not rescore.
+3. **Catalog:** [`l0-boundary-scorecards.yaml`](./l0-boundary-scorecards.yaml) via Location `glorian-l0-boundary-scorecards` (URL target only; not duplicated in app-config).
+4. **Ownership blast radius:** Core maintainers / control-plane squad own L0 boundary failures (see remediation plan P2-1).
+
 ## Explicit non-goals (still deferred)
 
 - Full Backstage create-app / yarn workspaces / `@backstage/*` in root `package.json`
 - Nine sibling `catalog-info.yaml` PRs (Law IV external writes — HITL per sibling)
 - Soundcheck UI plugin runtime / MCP bridge
+- Weekly orphan report job / export-surface vanity ceilings (PR-J phase 2)
 - TLC evidence or unrelated OpenSpec / GDD / MCP Tier-0 remediations
 
 ## Plan pointer

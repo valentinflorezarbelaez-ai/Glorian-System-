@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0.0",
+  "specRef": "SPEC-270",
+  "changeRef": "CHANGE-132",
+  "title": "EOS Layer-0 boundary + consumer → Backstage Scorecard map",
+  "singleWriter": "scripts/verify-module-consumers.mjs",
+  "boundaryGate": "scripts/import-boundary-gate.mjs",
+  "portalMustNotRescore": true,
+  "receiptPath": "docs/evidence/MODULE_CONSUMER_GRAPH.json",
+  "receiptShape": {
+    "requiredFields": [
+      "timestampIso",
+      "totalModules",
+      "consumedModules",
+      "unconsumedModules",
+      "graphDensity",
+      "modules"
+    ]
+  },
+  "failClosed": {
+    "importBoundaryViolations": 0,
+    "unconsumedModules": 0,
+    "rule": "IF src/core imports leave Layer-0 or unconsumedModules > 0, THEN verify:strict Stage 3.02/3.03 SHALL fail closed."
+  },
+  "pillars": [
+    {
+      "pillarId": "L0_IMPORT_BOUNDARY",
+      "name": "Layer-0 Import Boundary (Law V)",
+      "weight": 0.5,
+      "backstageCheckId": "eos.l0.import-boundary",
+      "npmScript": "boundary:check",
+      "verifyStage": "3.02"
+    },
+    {
+      "pillarId": "L0_CONSUMER_MORATORIUM",
+      "name": "Module Consumer Moratorium",
+      "weight": 0.5,
+      "backstageCheckId": "eos.l0.consumer-moratorium",
+      "npmScript": "consumers:audit",
+      "verifyStage": "3.03"
+    }
+  ],
+  "cli": "npm run boundary:check && npm run consumers:audit -- --fail-on-unconsumed",
+  "npmScripts": ["boundary:check", "consumers:audit"],
+  "ownerSquad": "group:glorian-control-plane-squad"
+}

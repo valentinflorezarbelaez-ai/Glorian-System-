@@ -159,5 +159,14 @@ describe("SPEC-270: Formal TLC Model Checking, Mutation Ratchet & Consumer Gover
     assert.ok(graph.consumedModules >= 300, "Consumed module count must be at least 300");
     assert.ok(graph.graphDensity > 0.8, "Consumer graph density must exceed 80%");
     assert.ok(fs.existsSync(tempGraphPath));
+
+    // Fail-closed moratorium: healthy graph (unconsumed=0) must pass with flag.
+    const healthy = verifyModuleConsumers({
+      root: ROOT,
+      receiptPath: path.join(os.tmpdir(), `eos-test-consumer-graph-failclosed-${process.pid}.json`),
+      failOnUnconsumed: true,
+    });
+    assert.equal(healthy.unconsumedModules, 0, "tip must keep unconsumedModules at 0");
   });
 });
+

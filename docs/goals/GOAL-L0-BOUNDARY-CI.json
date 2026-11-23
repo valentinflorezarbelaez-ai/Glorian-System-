@@ -1,0 +1,31 @@
+{
+  "id": "GOAL-L0-BOUNDARY-CI",
+  "title": "Layer-0 boundary + consumer moratorium fail closed on verify:strict",
+  "metric": {
+    "name": "l0_boundary_consumer_gate_exit",
+    "unit": "count"
+  },
+  "threshold": {
+    "op": "eq",
+    "value": 0
+  },
+  "check": {
+    "command": "node scripts/import-boundary-gate.mjs && node scripts/verify-module-consumers.mjs --fail-on-unconsumed",
+    "timeoutMs": 120000
+  },
+  "caps": {
+    "maxAttempts": 3,
+    "maxCostUsd": 5
+  },
+  "protectedPaths": [
+    "test/**",
+    ".github/workflows/**",
+    "package.json",
+    "scripts/validate-gdd-goal.mjs",
+    "scripts/import-boundary-gate.mjs",
+    "scripts/verify-module-consumers.mjs",
+    "src/core/eosGoalDrivenDevelopmentContract.ts",
+    "src/core/eosGoalDrivenDevelopmentContract.types.ts"
+  ],
+  "doneWhen": "check exits 0 and import violations eq 0 and unconsumedModules eq 0"
+}

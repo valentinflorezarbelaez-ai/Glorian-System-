@@ -14,6 +14,8 @@ metadata:
     eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
     eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
     eos.glorian/pillar-map: docs/backstage/scorecard-pillar-map.json
+    eos.glorian/l0-boundary-map: docs/backstage/l0-boundary-scorecard-map.json
+    eos.glorian/l0-consumer-receipt: docs/evidence/MODULE_CONSUMER_GRAPH.json
     eos.glorian/owner-squad: group:glorian-control-plane-squad
     eos.glorian/owner-tribe: group:glorian-platform-tribe
   tags:
@@ -125,3 +127,14 @@ spec:
   type: url
   targets:
     - https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/ownership.yaml
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: glorian-l0-boundary-scorecards
+  title: Glorian Layer-0 Boundary + Consumer Scorecard Resources (P2)
+  description: Backstage Resource entities mapping import-boundary and consumer-moratorium gates (SPEC-270). Single ingestion path via this Location (not duplicated in app-config.snippet).
+spec:
+  type: url
+  targets:
+    - https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/l0-boundary-scorecards.yaml
