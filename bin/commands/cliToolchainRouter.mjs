@@ -330,6 +330,11 @@ const TOOLCHAIN_DISPATCHERS = [
     file: "./cliHarnessTokenEconomics.mjs",
     fn: "handleHarnessTokenEconomicsCommand",
   },
+  {
+    prefix: "toolchain:gdd:",
+    file: "./cliGoalDrivenFactory.mjs",
+    fn: "handleGoalDrivenFactoryCommand",
+  },
 ];
 
 export async function handleToolchainCommands(commandContext) {

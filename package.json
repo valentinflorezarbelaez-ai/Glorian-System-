@@ -102,6 +102,7 @@
     "./mpd-thruster": "./src/core/eosMagnetoplasmadynamicThrusterMhdCore.ts",
     "./evm-symbolic-prover": "./src/core/eosSmartContractBytecodeGasSymbolicVerifierCore.ts",
     "./harness-economics": "./src/core/eosHarnessTokenEconomicsCore.ts",
+    "./goal-factory": "./src/core/eosGoalDrivenFactoryCore.ts",
     "./package.json": "./package.json"
   },
   "bin": {

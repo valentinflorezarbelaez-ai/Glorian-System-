@@ -1,0 +1,19 @@
+{
+  "specId": "SPEC-378",
+  "changeId": "CHANGE-240",
+  "status": "VERIFIED",
+  "generatedAt": "2026-11-23T16:37:17.116Z",
+  "invariants": {
+    "vagueGoalRejected": true,
+    "verifierTamperBlocked": true,
+    "boundedLoopHaltsOnBudget": true,
+    "parallelFactoryDisjointEnforced": true,
+    "prePrGatesCriticalOnlyVerified": true
+  },
+  "sampleMetrics": {
+    "convergingAttemptsUsed": 2,
+    "factoryWavesPlanned": 2,
+    "nonBlockingWarningsPreserved": 2
+  },
+  "receiptHash": "dc1958088d5fd350ea264666141b05fe37fb1c971308bbe50c7decbcdd4bbb3c"
+}

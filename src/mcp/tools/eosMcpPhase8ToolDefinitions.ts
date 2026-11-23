@@ -555,4 +555,13 @@ export const PHASE8_TOOL_DEFINITIONS: ReadonlyArray<Phase8ToolDefinition> = [
       properties: {},
     },
   },
+  {
+    name: "eos_goal_driven_factory_audit",
+    description:
+      "Audits the Goal-Driven Development Loop, Immutable Verifier Guard, Parallel Worktree Software Factory & 3-Gate Pre-PR Engine verifying concrete output contracts, immutable verifier protection, bounded loop termination, disjoint factory scheduling, and critical-only Pre-PR blocking (SPEC-378).",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];

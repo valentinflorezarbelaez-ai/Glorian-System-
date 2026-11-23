@@ -124,6 +124,7 @@ export const CONFIGURED_SPECS = [
   "UniversalAssetPayoutOptimizer",
   "QuantCockpitWalkForwardEngine",
   "HarnessTokenEconomics",
+  "GoalDrivenFactory",
 ];
 
 /**

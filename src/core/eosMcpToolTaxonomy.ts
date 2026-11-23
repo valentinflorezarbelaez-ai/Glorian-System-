@@ -235,4 +235,5 @@ export const PHASE8_MIGRATED_TOOL_NAMES: readonly string[] = Object.freeze([
   "eos_universal_asset_payout_audit",
   "eos_quant_cockpit_walk_forward_audit",
   "eos_harness_token_economics_audit",
+  "eos_goal_driven_factory_audit",
 ]);

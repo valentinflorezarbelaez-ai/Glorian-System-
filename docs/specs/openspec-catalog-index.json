@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
-  "totalSpecs": 377,
-  "catalogSha256": "f5ca01e7210eeef1ef348aff2655a18c61263a37d68f91e394170af5d0674d5a",
+  "totalSpecs": 378,
+  "catalogSha256": "4560e777793eea9936043649038a92f0c817358b7e7d4a467ff0955ca828e9ab",
   "specs": [
     {
       "id": "SPEC-001",
@@ -3395,6 +3395,15 @@
       "bddCount": 8,
       "file": "openspec/specs/SPEC-377-harness-token-economics-engine.md",
       "sha256": "aac07f0605e9f673ea60fabc08a0a3907c85baa6762e649f033f42d8efd471c2"
+    },
+    {
+      "id": "SPEC-378",
+      "title": "Goal-Driven Development Loop, Immutable Verifier Guard, Parallel Worktree Software Factory & 3-Gate Pre-PR Engine",
+      "status": "UNKNOWN",
+      "frCount": 1,
+      "bddCount": 8,
+      "file": "openspec/specs/SPEC-378-goal-driven-factory-engine.md",
+      "sha256": "11400a4cdcfafca2f2b6b6cd076ec7b59bfc7a4f2da9fd8f597df46915c6a261"
     }
   ]
 }

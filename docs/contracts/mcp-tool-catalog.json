@@ -3,8 +3,8 @@
   "title": "EOS System MCP Tool Catalog Contract",
   "version": "66.0.0",
   "generatedAt": "2026-11-02T19:56:07.008Z",
-  "catalogSha256": "dc388665fd283d50c56835ebc13c0b3fd04db6db61fa844f738917f93b944891",
-  "totalTools": 253,
+  "catalogSha256": "495c180b991ddaf0fccf264ed4907f34085d6c69c3427bc4d5d77f60ad180736",
+  "totalTools": 254,
   "coreTier0Count": 46,
   "tools": [
     {
@@ -7368,6 +7368,21 @@
       },
       "annotations": {
         "title": "EOS harness Token Economics Audit",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "eos_goal_driven_factory_audit",
+      "description": "Audits the Goal-Driven Development Loop, Immutable Verifier Guard, Parallel Worktree Software Factory & 3-Gate Pre-PR Engine verifying concrete output contracts, immutable verifier protection, bounded loop termination, disjoint factory scheduling, and critical-only Pre-PR blocking (SPEC-378).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "EOS goal Driven Factory Audit",
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,

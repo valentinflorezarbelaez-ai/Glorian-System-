@@ -3735,3 +3735,21 @@
   - `docs/plans/PLAN-239-HARNESS-TOKEN-ECONOMICS-ENGINE.md`
   - `docs/tasks/TASKS-239-HARNESS-TOKEN-ECONOMICS-ENGINE.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-23-GOAL-DRIVEN-FACTORY`
+
+- **Authorization Date**: 2026-11-23
+- **Change Identifier**: `CHANGE-240` / `SPEC-378`
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Author and integrate `CHANGE-240` (`SPEC-378`), Goal-Driven Development Loop, Immutable Verifier Guard, Parallel Worktree Software Factory & 3-Gate Pre-PR Engine (LIDR M7 Synthesis): TLA+ Model 121 `docs/formal/GoalDrivenFactory.tla` / `.cfg`; `src/core/eosGoalDrivenFactoryCore.types.ts` and `src/core/eosGoalDrivenFactoryCore.ts`; CLI handlers `toolchain:gdd:*`; Phase-8 MCP tool `eos_goal_driven_factory_audit`; SDD Skill Section 6 policy; hermetic receipt `GOAL_DRIVEN_FACTORY_RECEIPT.json`; verify `BDD-2057`..`BDD-2064`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Spec & Plan Artifacts**:
+  - `docs/intake/eos-system/INTAKE-240-GOAL-DRIVEN-FACTORY-ENGINE.md`
+  - `openspec/changes/CHANGE-240-goal-driven-factory-engine.md`
+  - `openspec/specs/SPEC-378-goal-driven-factory-engine.md`
+  - `docs/plans/PLAN-240-GOAL-DRIVEN-FACTORY-ENGINE.md`
+  - `docs/tasks/TASKS-240-GOAL-DRIVEN-FACTORY-ENGINE.md`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
