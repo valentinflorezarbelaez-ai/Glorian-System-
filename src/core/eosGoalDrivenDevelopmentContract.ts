@@ -6,158 +6,47 @@
  * tests, or CI to manufacture a green result (builder ≠ verifier).
  *
  * Invariant: Pure Layer-0 TypeScript — zero external runtime dependencies.
+ * Keep this module <= 800 lines (helpers live in `.types.ts`).
  */
 
 import { createHash } from "node:crypto";
 import { assertPrecondition, deepFreeze } from "./eosKernelPrimitives.ts";
+import {
+  DEFAULT_PROTECTED_PATHS,
+  GOAL_ID_RE,
+  GOAL_THRESHOLD_OPS,
+  MAX_DONE_WHEN_CHARS,
+  MAX_TITLE_CHARS,
+  MAX_ATTEMPTS,
+  MAX_COST_USD,
+  METRIC_NAME_RE,
+  MIN_ATTEMPTS,
+  MIN_COST_USD,
+  MIN_TIMEOUT_MS,
+  MAX_TIMEOUT_MS,
+  PLACEHOLDER_METRIC_RE,
+  checkCommandSafetyMessage,
+  extractGoalIdFromFence,
+  fenceLooksLikeGoal,
+  isNonEmptyString,
+  isPlaceholderGoalId,
+  isPlainObject,
+  parseGoalYamlSubset,
+  type GoalAttemptState,
+  type GoalCaps,
+  type GoalCheck,
+  type GoalContract,
+  type GoalMetric,
+  type GoalThreshold,
+  type GoalThresholdOp,
+  type GoalValidationCode,
+  type GoalValidationIssue,
+  type GoalValidationResult,
+  type MetricEvaluation,
+  type PathMutationVerdict,
+} from "./eosGoalDrivenDevelopmentContract.types.ts";
 
-/** Comparison operators for a measurable metric threshold. */
-export type GoalThresholdOp = "eq" | "neq" | "lte" | "gte" | "lt" | "gt";
-
-export const GOAL_THRESHOLD_OPS: readonly GoalThresholdOp[] = Object.freeze([
-  "eq",
-  "neq",
-  "lte",
-  "gte",
-  "lt",
-  "gt",
-]);
-
-export interface GoalMetric {
-  readonly name: string;
-  readonly unit: string;
-}
-
-export interface GoalThreshold {
-  readonly op: GoalThresholdOp;
-  readonly value: number;
-}
-
-export interface GoalCheck {
-  readonly command: string;
-  readonly timeoutMs: number;
-}
-
-export interface GoalCaps {
-  readonly maxAttempts: number;
-  readonly maxCostUsd: number;
-}
-
-export interface GoalContract {
-  readonly id: string;
-  readonly title: string;
-  readonly metric: GoalMetric;
-  readonly threshold: GoalThreshold;
-  readonly check: GoalCheck;
-  readonly caps: GoalCaps;
-  readonly protectedPaths: readonly string[];
-  readonly doneWhen: string;
-}
-
-export type GoalValidationCode =
-  | "OK"
-  | "EMPTY_DOCUMENT"
-  | "PARSE_ERROR"
-  | "VAGUE_GOAL"
-  | "MISSING_FIELD"
-  | "INVALID_FIELD"
-  | "ATTEMPT_CAP_EXCEEDED"
-  | "COST_CAP_EXCEEDED"
-  | "PROTECTED_PATH_MUTATION"
-  | "THRESHOLD_NOT_MET";
-
-export interface GoalValidationIssue {
-  readonly code: GoalValidationCode;
-  readonly path: string;
-  readonly message: string;
-}
-
-export interface GoalValidationResult {
-  readonly ok: boolean;
-  readonly goal: GoalContract | null;
-  readonly issues: readonly GoalValidationIssue[];
-  readonly receiptSha256: string;
-}
-
-export interface GoalAttemptState {
-  readonly attempt: number;
-  readonly costUsdAccumulated: number;
-}
-
-export interface PathMutationVerdict {
-  readonly allowed: boolean;
-  readonly blockedPaths: readonly string[];
-  readonly reason: string;
-}
-
-export interface MetricEvaluation {
-  readonly passed: boolean;
-  readonly actual: number;
-  readonly op: GoalThresholdOp;
-  readonly expected: number;
-  readonly message: string;
-}
-
-/** Default paths agents must not rewrite to force a green check. */
-export const DEFAULT_PROTECTED_PATHS: readonly string[] = Object.freeze([
-  "test/**",
-  ".github/workflows/**",
-  ".github/pull_request_template.md",
-  "package.json",
-  "scripts/validate-gdd-goal.mjs",
-  "src/core/eosGoalDrivenDevelopmentContract.ts",
-]);
-
-const GOAL_ID_RE = /^GOAL-[A-Z0-9][A-Z0-9_-]{1,63}$/;
-/** Template / sample IDs that must never validate as Done (fail-closed). */
-const PLACEHOLDER_GOAL_ID_RE = /^GOAL-(TODO|EXAMPLE|SAMPLE|PLACEHOLDER)(-|$)/i;
-const PLACEHOLDER_METRIC_RE = /^(example_metric|snake_case_metric|todo_metric|metric_name)$/i;
-const DESTRUCTIVE_CHECK_RE = /\brm\s+-rf\b|\bsudo\b|\bcurl\b.*\|\s*(ba)?sh\b/i;
-/** Trivial always-green checks — agents must not use these as measurable Done. */
-const TRIVIAL_CHECK_RE = /process\.exit\s*\(\s*0\s*\)/;
-const METRIC_NAME_RE = /^[a-z][a-z0-9_]{1,63}$/;
-const MAX_COMMAND_CHARS = 512;
-const MAX_TITLE_CHARS = 160;
-const MAX_DONE_WHEN_CHARS = 240;
-const MIN_ATTEMPTS = 1;
-const MAX_ATTEMPTS = 10;
-const MIN_COST_USD = 0.01;
-const MAX_COST_USD = 100;
-const MIN_TIMEOUT_MS = 1_000;
-const MAX_TIMEOUT_MS = 600_000;
-
-function isPlaceholderGoalId(id: string): boolean {
-  return PLACEHOLDER_GOAL_ID_RE.test(id.trim());
-}
-
-/** Returns null when command is safe; otherwise an INVALID_FIELD message. */
-function checkCommandSafetyMessage(command: string): string | null {
-  const trimmed = command.trim();
-  if (trimmed.length === 0) {
-    return "check.command must be a non-empty string.";
-  }
-  if (trimmed.length > MAX_COMMAND_CHARS) {
-    return `check.command must be a non-empty string <= ${MAX_COMMAND_CHARS} chars.`;
-  }
-  if (DESTRUCTIVE_CHECK_RE.test(trimmed)) {
-    return "check.command contains a blocked destructive pattern.";
-  }
-  if (TRIVIAL_CHECK_RE.test(trimmed)) {
-    return "check.command is a trivial always-green stub (e.g. process.exit(0)); replace with a measurable check.";
-  }
-  return null;
-}
-
-function extractGoalIdFromFence(block: string): string | null {
-  const jsonMatch = block.match(/"id"\s*:\s*"([^"]+)"/);
-  if (jsonMatch) return jsonMatch[1].trim();
-  const yamlMatch = block.match(/(?:^|\n)\s*id\s*:\s*["']?([A-Za-z0-9_-]+)["']?/);
-  return yamlMatch ? yamlMatch[1].trim() : null;
-}
-
-function fenceLooksLikeGoal(block: string): boolean {
-  return /\bmetric\b/i.test(block) && /\bthreshold\b/i.test(block) && /\bcheck\b/i.test(block);
-}
+export * from "./eosGoalDrivenDevelopmentContract.types.ts";
 
 function sha256Hex(payload: string): string {
   return createHash("sha256").update(payload).digest("hex");
@@ -165,135 +54,6 @@ function sha256Hex(payload: string): string {
 
 function issue(code: GoalValidationCode, path: string, message: string): GoalValidationIssue {
   return { code, path, message };
-}
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function isNonEmptyString(value: unknown): value is string {
-  return typeof value === "string" && value.trim().length > 0;
-}
-
-/**
- * Minimal YAML subset parser for GDD goals (maps, scalars, string lists).
- * Fail-closed on unsupported constructs — no external YAML dependency.
- */
-export function parseGoalYamlSubset(raw: string): unknown {
-  assertPrecondition(typeof raw === "string", "raw must be a string");
-  const text = raw.replace(/^\uFEFF/, "").replace(/\t/g, "  ");
-  if (text.trim().length === 0) {
-    throw new Error("EMPTY_YAML");
-  }
-
-  type Frame = { indent: number; container: Record<string, unknown> | unknown[] };
-  const root: Record<string, unknown> = {};
-  const stack: Frame[] = [{ indent: -1, container: root }];
-  let pendingKey: string | null = null;
-  let pendingIndent = 0;
-
-  const lines = text.split(/\r?\n/);
-  for (let i = 0; i < lines.length; i += 1) {
-    const line = lines[i];
-    const trimmed = line.trim();
-    if (trimmed.length === 0 || trimmed.startsWith("#")) continue;
-
-    const indent = line.match(/^ */)?.[0].length ?? 0;
-    if (indent % 2 !== 0) {
-      throw new Error(`INVALID_INDENT_LINE_${i + 1}`);
-    }
-
-    while (stack.length > 1 && indent <= stack[stack.length - 1].indent) {
-      stack.pop();
-      pendingKey = null;
-    }
-
-    const frame = stack[stack.length - 1];
-    const container = frame.container;
-
-    if (trimmed.startsWith("- ")) {
-      if (!Array.isArray(container)) {
-        if (pendingKey !== null && isPlainObject(container)) {
-          const list: unknown[] = [];
-          container[pendingKey] = list;
-          stack.push({ indent, container: list });
-          pendingKey = null;
-          const item = parseYamlScalar(trimmed.slice(2).trim());
-          (stack[stack.length - 1].container as unknown[]).push(item);
-          continue;
-        }
-        throw new Error(`LIST_WITHOUT_KEY_LINE_${i + 1}`);
-      }
-      container.push(parseYamlScalar(trimmed.slice(2).trim()));
-      continue;
-    }
-
-    const colon = trimmed.indexOf(":");
-    if (colon <= 0) {
-      throw new Error(`INVALID_MAPPING_LINE_${i + 1}`);
-    }
-
-    const key = trimmed.slice(0, colon).trim();
-    const rest = trimmed.slice(colon + 1).trim();
-    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) {
-      throw new Error(`INVALID_KEY_LINE_${i + 1}`);
-    }
-    if (!isPlainObject(container)) {
-      throw new Error(`MAPPING_INTO_LIST_LINE_${i + 1}`);
-    }
-
-    if (rest.length === 0) {
-      // Look ahead: list or nested map
-      const next = peekNextMeaningful(lines, i + 1);
-      if (next && next.trimmed.startsWith("- ") && next.indent > indent) {
-        const list: unknown[] = [];
-        container[key] = list;
-        stack.push({ indent, container: list });
-        pendingKey = null;
-      } else {
-        const nested: Record<string, unknown> = {};
-        container[key] = nested;
-        stack.push({ indent, container: nested });
-        pendingKey = key;
-        pendingIndent = indent;
-      }
-      continue;
-    }
-
-    container[key] = parseYamlScalar(rest);
-    pendingKey = key;
-    pendingIndent = indent;
-    void pendingIndent;
-  }
-
-  return root;
-}
-
-function peekNextMeaningful(
-  lines: string[],
-  from: number,
-): { indent: number; trimmed: string } | null {
-  for (let i = from; i < lines.length; i += 1) {
-    const trimmed = lines[i].trim();
-    if (trimmed.length === 0 || trimmed.startsWith("#")) continue;
-    const indent = lines[i].match(/^ */)?.[0].length ?? 0;
-    return { indent, trimmed };
-  }
-  return null;
-}
-
-function parseYamlScalar(raw: string): unknown {
-  if (
-    (raw.startsWith('"') && raw.endsWith('"')) ||
-    (raw.startsWith("'") && raw.endsWith("'"))
-  ) {
-    return raw.slice(1, -1);
-  }
-  if (raw === "true") return true;
-  if (raw === "false") return false;
-  if (raw === "null" || raw === "~") return null;
-  if (/^-?\d+(\.\d+)?$/.test(raw)) return Number(raw);
-  return raw;
 }
 
 /** Parse JSON or YAML-subset goal documents. */
@@ -387,7 +147,6 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
     return finalize(null, issues, receiptBase);
   }
 
-  // Prose-only / vague: description without executable fields
   const hasMetric = isPlainObject(parsed.metric) || typeof parsed.metric === "string";
   const hasThreshold = isPlainObject(parsed.threshold) || typeof parsed.threshold === "number";
   const hasCheck =
@@ -408,7 +167,6 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
     return finalize(null, issues, receiptBase);
   }
 
-  // id
   if (!isNonEmptyString(parsed.id) || !GOAL_ID_RE.test(parsed.id.trim())) {
     issues.push(
       issue("INVALID_FIELD", "id", 'id must match GOAL-[A-Z0-9_-]{2,64} (e.g. "GOAL-L0-DEPS").'),
@@ -423,7 +181,6 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
     );
   }
 
-  // title
   if (!isNonEmptyString(parsed.title) || parsed.title.trim().length > MAX_TITLE_CHARS) {
     issues.push(
       issue("INVALID_FIELD", "title", `title must be a non-empty string <= ${MAX_TITLE_CHARS} chars.`),
@@ -434,7 +191,6 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
     );
   }
 
-  // metric
   let metric: GoalMetric | null = null;
   if (isPlainObject(parsed.metric)) {
     const name = parsed.metric.name;
@@ -469,7 +225,6 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
     issues.push(issue("INVALID_FIELD", "metric", "metric must be an object { name, unit }."));
   }
 
-  // threshold
   let threshold: GoalThreshold | null = null;
   if (isPlainObject(parsed.threshold)) {
     const op = parsed.threshold.op;
@@ -530,7 +285,6 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
       check = { command: command.trim(), timeoutMs };
     }
   } else if (isNonEmptyString(parsed.check)) {
-    // Shorthand: check: "npm test" — same denylist / length / trivial filters as object form.
     const safety = checkCommandSafetyMessage(parsed.check);
     if (safety) {
       issues.push(issue("INVALID_FIELD", "check", safety));
@@ -541,7 +295,6 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
     issues.push(issue("INVALID_FIELD", "check", "check must be { command, timeoutMs } or a command string."));
   }
 
-  // caps (required — unbounded loops are an anti-trap)
   let caps: GoalCaps | null = null;
   if (!isPlainObject(parsed.caps)) {
     issues.push(
@@ -592,7 +345,6 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
     }
   }
 
-  // protectedPaths
   let protectedPaths: string[] | null = null;
   try {
     protectedPaths = normalizeProtectedPaths(parsed.protectedPaths);
@@ -602,7 +354,6 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
     );
   }
 
-  // doneWhen
   if (!isNonEmptyString(parsed.doneWhen) || parsed.doneWhen.trim().length > MAX_DONE_WHEN_CHARS) {
     issues.push(
       issue(
