@@ -105,8 +105,12 @@ export const DEFAULT_PROTECTED_PATHS: readonly string[] = Object.freeze([
   "src/core/eosGoalDrivenDevelopmentContract.types.ts",
 ]);
 
-/** Unfilled template tokens like `<metric>` / `<replace ...>`. */
-export const ANGLE_BRACKET_PLACEHOLDER_RE = /<[^<>]+>/;
+/**
+ * Unfilled template tokens like `<metric>` / `<replace with ...>`.
+ * Requires a letter immediately after `<` so bare comparisons
+ * (`latency_ms < 200`, `x > 0 && x < 10`) are not rejected.
+ */
+export const ANGLE_BRACKET_PLACEHOLDER_RE = /<[A-Za-z][^<>]*>/;
 
 export const GOAL_ID_RE = /^GOAL-[A-Z0-9][A-Z0-9_-]{1,63}$/;
 /** Template / sample IDs that must never validate as Done (fail-closed). */

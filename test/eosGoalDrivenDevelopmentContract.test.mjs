@@ -294,3 +294,31 @@ test("BDD-GDD-17: DEFAULT_PROTECTED_PATHS includes GDD types companion", () => {
   );
   assert.equal(verdict.allowed, false);
 });
+
+test("BDD-GDD-18: comparison operators pass; template tokens still fail", () => {
+  const base = JSON.parse(GOOD_GOAL_JSON);
+
+  base.check = {
+    command: 'node -e "const n=Number(process.env.LATENCY_MS||0); process.exit(n < 200 ? 0 : 1)"',
+    timeoutMs: 30000,
+  };
+  base.doneWhen = "latency_ms < 200";
+  assert.equal(validateGoalDocument(JSON.stringify(base)).ok, true, "latency_ms < 200 must pass");
+
+  base.check = {
+    command: 'node -e "const x=Number(process.env.X||0); process.exit(x > 0 && x < 10 ? 0 : 1)"',
+    timeoutMs: 30000,
+  };
+  base.doneWhen = "x > 0 && x < 10";
+  assert.equal(validateGoalDocument(JSON.stringify(base)).ok, true, "x > 0 && x < 10 must pass");
+
+  base.check = {
+    command: "<replace with a real measurable check command>",
+    timeoutMs: 30000,
+  };
+  base.doneWhen = "check exits 0 and <metric> satisfies threshold";
+  const template = validateGoalDocument(JSON.stringify(base));
+  assert.equal(template.ok, false);
+  assert.ok(template.issues.some((i) => i.path === "check.command"));
+  assert.ok(template.issues.some((i) => i.path === "doneWhen"));
+});
