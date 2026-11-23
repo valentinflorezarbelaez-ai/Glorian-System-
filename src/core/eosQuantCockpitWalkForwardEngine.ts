@@ -11,6 +11,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 import { computeIndicators } from "./eosInstitutionalTradingEngine.ts";
 import { EosMultiAssetMacroFilterEngine } from "./eosMultiAssetMacroFilterEngine.ts";
 import { EosTriTemporalPropFirmEngine, type Candle } from "./eosTriTemporalPropFirmEngine.ts";
@@ -707,7 +708,7 @@ export class EosQuantCockpitWalkForwardEngine {
       timestamp: Date.now(),
     };
 
-    const evidenceDir = join(targetDir, "docs", "evidence");
+    const evidenceDir = resolveEvidenceDir(targetDir);
     if (!existsSync(evidenceDir)) mkdirSync(evidenceDir, { recursive: true });
     writeFileSync(
       join(evidenceDir, "QUANT_COCKPIT_WALK_FORWARD_RECEIPT.json"),

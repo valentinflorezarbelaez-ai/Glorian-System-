@@ -117,6 +117,14 @@ if (changed.length > 0 && fs.existsSync(path.join(root, "bin/eos.mjs"))) {
   } catch (err) {
     console.log(`[WARN] Advisory SPEC-377 token-econ diff check skipped: ${err?.message || err}`);
   }
+  try {
+    execFileSync(process.execPath, [path.join(root, "bin/eos.mjs"), "toolchain:gdd:diff", "--advisory"], {
+      cwd: root,
+      stdio: "inherit",
+    });
+  } catch (err) {
+    console.log(`[WARN] Advisory SPEC-378 gdd diff check skipped: ${err?.message || err}`);
+  }
 }
 
 console.log(` FAST LANE PASSED in ${Date.now() - startTime} ms — run the full gate before pushing.`);

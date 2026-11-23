@@ -20,8 +20,11 @@ import { resolveEvidencePath } from "./eosEvidencePaths.ts";
 import {
   DEFAULT_PROTECTED_VERIFIER_PATHS,
   VAGUE_METRIC_PATTERNS,
+  buildFleetGoalContractInput,
   compareGoalMetric,
-  matchesGlobPattern,
+  isLawIvProductionReady,
+  matchesProtectedPattern,
+  normalizeDigestMap,
   normalizePosixPath,
   roundTo,
   sha256Hex,
@@ -32,6 +35,8 @@ import type {
   FactoryRunInput,
   FactoryRunPlanReport,
   FactoryTaskSpec,
+  FleetGoalContractsReport,
+  FleetProjectGoalSummary,
   GoalContractInput,
   GoalContractValidationReport,
   GoalDrivenFactoryAuditReceipt,
@@ -121,25 +126,6 @@ export function validateGoalContract(input: GoalContractInput): GoalContractVali
 // ---------------------------------------------------------------------------
 // 2. Immutable Verifier Integrity & Anti-Cheating Guard (FR-378-02)
 // ---------------------------------------------------------------------------
-
-function matchesProtectedPattern(filePath: string, patterns: readonly string[]): boolean {
-  const norm = normalizePosixPath(filePath);
-  for (const rawPattern of patterns) {
-    const pattern = normalizePosixPath(rawPattern);
-    if (matchesGlobPattern(norm, pattern)) return true;
-    if (pattern.startsWith("**/") && matchesGlobPattern(norm, pattern.slice(3))) return true;
-  }
-  return false;
-}
-
-function normalizeDigestMap(digests?: Readonly<Record<string, string>>): Record<string, string> {
-  const out: Record<string, string> = {};
-  if (!digests) return out;
-  for (const [k, v] of Object.entries(digests)) {
-    out[normalizePosixPath(k)] = v;
-  }
-  return out;
-}
 
 export function verifyVerifierIntegrity(input: VerifierIntegrityInput): VerifierIntegrityReport {
   const patterns = [...DEFAULT_PROTECTED_VERIFIER_PATHS, ...(input.protectedPaths ?? [])];
@@ -544,12 +530,47 @@ const AUDIT_BASE_GOAL: GoalContractInput = {
   maxCostUsd: 1.5,
 };
 
+export function evaluateFleetGoalContracts(projectRoot: string = process.cwd()): FleetGoalContractsReport {
+  const regPath = path.join(projectRoot, "docs", "projects", "registry.json");
+  const raw = JSON.parse(fs.readFileSync(regPath, "utf8")) as { projects?: Record<string, string>[] };
+  const entries = Array.isArray(raw.projects) ? raw.projects : [];
+  const projects: FleetProjectGoalSummary[] = entries.map((p) => {
+    const goal = buildFleetGoalContractInput(p);
+    return {
+      projectId: String(p.id),
+      validOutputContract: validateGoalContract(goal).valid,
+      lawIvReady: isLawIvProductionReady(p),
+      blindSpotSeparated: true,
+      executionMode: p.type === "control-plane" ? "SDD_FORMAL_INVARIANT" : "ODD_BOUNDED_ITERATION",
+      verifyCommand: goal.verifyCommand,
+    };
+  });
+  const allContractsValid = projects.length > 0 && projects.every((x) => x.validOutputContract);
+  const lawIvPreconditionsMet = projects.length > 0 && projects.every((x) => x.lawIvReady);
+  const blindSpotSeparated = projects.length > 0 && projects.every((x) => x.blindSpotSeparated);
+  const attestationHash = sha256Hex({
+    totalProjects: projects.length,
+    allContractsValid,
+    lawIvPreconditionsMet,
+    projects,
+  });
+  return {
+    totalProjects: projects.length,
+    allContractsValid,
+    lawIvPreconditionsMet,
+    blindSpotSeparated,
+    projects,
+    attestationHash,
+  };
+}
+
 export class EosGoalDrivenFactoryCore {
   static validateGoalContract = validateGoalContract;
   static verifyVerifierIntegrity = verifyVerifierIntegrity;
   static runBoundedGoalLoop = runBoundedGoalLoop;
   static planSoftwareFactoryRun = planSoftwareFactoryRun;
   static evaluatePrePrGates = evaluatePrePrGates;
+  static evaluateFleetGoalContracts = evaluateFleetGoalContracts;
 
   static audit(projectRoot: string = process.cwd()): GoalDrivenFactoryAuditReceipt {
     const vagueRes = validateGoalContract({

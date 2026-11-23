@@ -288,6 +288,24 @@ export interface GoalDrivenFactoryAuditReceipt {
   readonly receiptHash: string;
 }
 
+export interface FleetProjectGoalSummary {
+  readonly projectId: string;
+  readonly validOutputContract: boolean;
+  readonly lawIvReady: boolean;
+  readonly blindSpotSeparated: boolean;
+  readonly executionMode: "SDD_FORMAL_INVARIANT" | "ODD_BOUNDED_ITERATION";
+  readonly verifyCommand: string;
+}
+
+export interface FleetGoalContractsReport {
+  readonly totalProjects: number;
+  readonly allContractsValid: boolean;
+  readonly lawIvPreconditionsMet: boolean;
+  readonly blindSpotSeparated: boolean;
+  readonly projects: readonly FleetProjectGoalSummary[];
+  readonly attestationHash: string;
+}
+
 // ---------------------------------------------------------------------------
 // 7. Pure Comparator Utility
 // ---------------------------------------------------------------------------
@@ -300,4 +318,51 @@ export function compareGoalMetric(observed: number, operator: GoalComparator, th
   if (operator === ">=") return observed >= threshold;
   if (operator === "===") return observed === threshold;
   return observed !== threshold;
+}
+
+export function matchesProtectedPattern(filePath: string, patterns: readonly string[]): boolean {
+  const norm = normalizePosixPath(filePath);
+  for (const rawPattern of patterns) {
+    const pattern = normalizePosixPath(rawPattern);
+    if (matchesGlobPattern(norm, pattern)) return true;
+    if (pattern.startsWith("**/") && matchesGlobPattern(norm, pattern.slice(3))) return true;
+  }
+  return false;
+}
+
+export function normalizeDigestMap(digests?: Readonly<Record<string, string>>): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!digests) return out;
+  for (const [k, v] of Object.entries(digests)) {
+    out[normalizePosixPath(k)] = v;
+  }
+  return out;
+}
+
+export function isLawIvProductionReady(p: Readonly<Record<string, string>>): boolean {
+  return (
+    p.status === "REGISTERED" &&
+    p.intake === "INTAKE_COMPLETE" &&
+    p.specification === "SPECIFICATION_APPROVED" &&
+    p.audit === "AUDIT_COMPLETE" &&
+    p.ownerApproval === "OWNER_APPROVAL" &&
+    p.authorization === "LEVEL_3_PRODUCTION_AUTHORIZED"
+  );
+}
+
+export function buildFleetGoalContractInput(p: Readonly<Record<string, string>>): GoalContractInput {
+  return {
+    goalId: `GDD-${p.id}`,
+    kind: "OUTPUT",
+    description: `Production health SLA under 500 ms for ${p.id}`,
+    metricName: "p95LatencyMs",
+    operator: "<",
+    threshold: 500,
+    unit: "ms",
+    verifyCommand: p.cicdGateScript || "npm test",
+    maxAttempts: 3,
+    maxDurationMs: 180_000,
+    maxCostUsd: 2.0,
+    outcomeFollowUp: { metricsSource: "production-telemetry", reviewAfterDays: 15, decisionOwner: "product-owner" },
+  };
 }

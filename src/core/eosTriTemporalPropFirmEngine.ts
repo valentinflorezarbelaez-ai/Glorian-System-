@@ -9,6 +9,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 import { computeIndicators } from "./eosInstitutionalTradingEngine.ts";
 import type {
   FractalBias,
@@ -260,7 +261,7 @@ export class EosTriTemporalPropFirmEngine {
    * Dispatches WhatsApp alert to local dispatch ledger and stdout
    */
   public static dispatchWhatsAppMessage(payload: WhatsAppMessagePayload, targetDir = process.cwd()): boolean {
-    const evidenceDir = join(targetDir, "docs", "evidence");
+    const evidenceDir = resolveEvidenceDir(targetDir);
     const dispatchLogPath = join(evidenceDir, "WHATSAPP_DISPATCH_LOG.json");
 
     if (!existsSync(evidenceDir)) {
@@ -461,7 +462,7 @@ export class EosTriTemporalPropFirmEngine {
       timestamp: Date.now(),
     };
 
-    const evidenceDir = join(targetDir, "docs", "evidence");
+    const evidenceDir = resolveEvidenceDir(targetDir);
     if (!existsSync(evidenceDir)) {
       mkdirSync(evidenceDir, { recursive: true });
     }

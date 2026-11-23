@@ -9,6 +9,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 import { computeIndicators } from "./eosInstitutionalTradingEngine.ts";
 import type {
   CurrencyPair,
@@ -194,7 +195,7 @@ export class EosMultiAssetMacroFilterEngine {
     trade: Omit<PaperTradeRecord, "tradeId" | "pnlUsd">,
     targetDir = process.cwd(),
   ): PaperTradeRecord {
-    const evidenceDir = join(targetDir, "docs", "evidence");
+    const evidenceDir = resolveEvidenceDir(targetDir);
     const ledgerPath = join(evidenceDir, "PAPER_TRADING_LEDGER.json");
 
     if (!existsSync(evidenceDir)) {
@@ -358,7 +359,7 @@ export class EosMultiAssetMacroFilterEngine {
       timestamp: Date.now(),
     };
 
-    const evidenceDir = join(targetDir, "docs", "evidence");
+    const evidenceDir = resolveEvidenceDir(targetDir);
     if (!existsSync(evidenceDir)) {
       mkdirSync(evidenceDir, { recursive: true });
     }

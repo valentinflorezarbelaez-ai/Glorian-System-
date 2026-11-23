@@ -9,6 +9,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 import type {
   AladdinAuditReceipt,
   AllWeatherAllocationReport,
@@ -432,7 +433,7 @@ export class EosAladdinPortfolioRiskEngine {
       timestamp: Date.now(),
     };
 
-    const evidenceDir = join(targetDir, "docs", "evidence");
+    const evidenceDir = resolveEvidenceDir(targetDir);
     if (!existsSync(evidenceDir)) {
       mkdirSync(evidenceDir, { recursive: true });
     }

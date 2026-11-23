@@ -11,6 +11,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 import { EosTriTemporalPropFirmEngine, type Candle } from "./eosTriTemporalPropFirmEngine.ts";
 import type {
   AssetCategory,
@@ -391,7 +392,7 @@ export class EosUniversalAssetPayoutOptimizerEngine {
       timestamp: Date.now(),
     };
 
-    const evidenceDir = join(targetDir, "docs", "evidence");
+    const evidenceDir = resolveEvidenceDir(targetDir);
     if (!existsSync(evidenceDir)) {
       mkdirSync(evidenceDir, { recursive: true });
     }

@@ -6,7 +6,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import path from "node:path";
+import { resolveEvidencePath } from "../src/core/eosEvidencePaths.ts";
 import { EosTriTemporalPropFirmEngine } from "../src/core/eosTriTemporalPropFirmEngine.ts";
 
 function generateTestCandles(count = 60, startPrice = 1.09, step = 0.0001, lastWick = "none") {
@@ -203,7 +203,7 @@ describe("SPEC-374: Tri-Temporal Fractal Prop-Firm Engine & WhatsApp Dispatcher"
     assert.equal(typeof receipt.receiptHash, "string");
     assert.equal(receipt.receiptHash.length, 64);
 
-    const receiptPath = path.resolve(process.cwd(), "docs/evidence/TRI_TEMPORAL_PROP_FIRM_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("TRI_TEMPORAL_PROP_FIRM_RECEIPT.json", process.cwd());
     assert.ok(fs.existsSync(receiptPath));
   });
 });

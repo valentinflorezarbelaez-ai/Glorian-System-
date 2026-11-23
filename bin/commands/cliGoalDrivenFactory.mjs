@@ -215,6 +215,16 @@ async function cmdDiff(commandContext) {
   }
 }
 
+async function cmdFleet(commandContext) {
+  const args = commandContext.args || [];
+  const report = EosGoalDrivenFactoryCore.evaluateFleetGoalContracts(ROOT);
+  emitResult(args.includes("--json"), "toolchain:gdd:fleet", report, [
+    "=== 10-Repo Fleet Goal-Driven Contract Audit (SPEC-378) ===",
+    `Projects    : ${report.totalProjects} | All Valid: ${report.allContractsValid}`,
+    `Law IV Met  : ${report.lawIvPreconditionsMet} | Blind-Spot Separated: ${report.blindSpotSeparated}`,
+  ]);
+}
+
 async function cmdAudit(commandContext) {
   const args = commandContext.args || [];
   const receipt = EosGoalDrivenFactoryCore.audit(ROOT);
@@ -232,6 +242,7 @@ const HANDLERS = {
   "toolchain:gdd:factory": cmdFactory,
   "toolchain:gdd:gates": cmdGates,
   "toolchain:gdd:diff": cmdDiff,
+  "toolchain:gdd:fleet": cmdFleet,
   "toolchain:gdd:audit": cmdAudit,
 };
 

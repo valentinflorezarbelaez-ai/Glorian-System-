@@ -258,6 +258,12 @@ describe("SPEC-378: Goal-Driven Development Loop, Immutable Verifier & Parallel 
     assert.equal(clean.waves.length, 2);
     assert.equal(clean.waves[0].tasks.length, 2);
     assert.equal(clean.waves[1].tasks.length, 1);
+
+    const fleetReport = EosGoalDrivenFactoryCore.evaluateFleetGoalContracts(ROOT);
+    assert.equal(fleetReport.totalProjects, 10);
+    assert.equal(fleetReport.allContractsValid, true);
+    assert.equal(fleetReport.lawIvPreconditionsMet, true);
+    assert.equal(fleetReport.blindSpotSeparated, true);
   });
 
   it("BDD-2061: Three-Gate Pre-PR evaluator allows non-blocking warnings while blocking criticals and self-review", () => {
@@ -321,6 +327,7 @@ describe("SPEC-378: Goal-Driven Development Loop, Immutable Verifier & Parallel 
       ["toolchain:gdd:factory", "--json"],
       ["toolchain:gdd:gates", "--json"],
       ["toolchain:gdd:diff", "--json", "--advisory"],
+      ["toolchain:gdd:fleet", "--json"],
       ["toolchain:gdd:audit", "--json"],
     ];
 
