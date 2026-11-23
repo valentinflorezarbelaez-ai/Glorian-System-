@@ -9,11 +9,17 @@
 | --- | --- |
 | Root [`catalog-info.yaml`](../../catalog-info.yaml) | Backstage `Component` `eos-system-control-plane` + `System` `eos-sovereign-mesh` + Locations |
 | Root [`mkdocs.yml`](../../mkdocs.yml) | Satisfies `backstage.io/techdocs-ref: dir:.` |
-| [`app-config.snippet.yaml`](./app-config.snippet.yaml) | Catalog Location URLs for a future portal host (snippet only) |
+| [`app-config.snippet.yaml`](./app-config.snippet.yaml) | Portal snippet: **only** root `catalog-info.yaml` (Locations cascade) |
 | [`fleet-components.yaml`](./fleet-components.yaml) | Component stubs — `metadata.name` = `docs/projects/registry.json` id |
 | [`soundcheck-scorecards.yaml`](./soundcheck-scorecards.yaml) | Resource entities for fleet matrix + five Soundcheck pillars |
 | [`scorecard-pillar-map.json`](./scorecard-pillar-map.json) | Pillar → Backstage check ids; receipt shape; posture rules |
 | This folder | Operator notes until a portal host exists |
+
+## Catalog ingestion (single path)
+
+1. Portal `catalog.locations` registers **one** URL: root [`catalog-info.yaml`](../../catalog-info.yaml).
+2. Nested `Location` entities inside that file use `spec.type: url` + absolute GitHub blob targets for fleet stubs, Soundcheck Resources, and templates.
+3. **Do not** also list `fleet-components.yaml` / `soundcheck-scorecards.yaml` as sibling `catalog.locations` — that double-registers entities.
 
 ## Soundcheck presentation rules (P1)
 

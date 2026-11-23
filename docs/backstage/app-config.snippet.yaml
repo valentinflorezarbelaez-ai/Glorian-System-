@@ -2,6 +2,12 @@
 # Paste into a future portal app-config.yaml / app-config.production.yaml.
 # Law V: keep @backstage/* outside src/core and root package.json dependencies.
 # Law VI: public GitHub / Vercel URLs only — never embed tokens or PATs.
+#
+# Single ingestion path: register ONLY the root catalog-info.yaml here.
+# Nested Location entities inside catalog-info.yaml (type: url absolute GitHub
+# targets) pull fleet-components.yaml + soundcheck-scorecards.yaml + templates.
+# Do NOT also list those YAML files as sibling catalog.locations — that double-
+# registers Components/Resources (Bugbot #654).
 
 catalog:
   rules:
@@ -13,23 +19,10 @@ catalog:
         - Location
         - Template
   locations:
-    # Control plane root catalog (Component + System + Location)
     - type: url
       target: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/catalog-info.yaml
       rules:
-        - allow: [Component, System, Location, API]
-
-    # Fleet Component stubs hosted on the control plane until sibling catalogs land
-    - type: url
-      target: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/fleet-components.yaml
-      rules:
-        - allow: [Component]
-
-    # Soundcheck scorecard Resources (presentation mapping; EOS remains sole scorer)
-    - type: url
-      target: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/soundcheck-scorecards.yaml
-      rules:
-        - allow: [Resource]
+        - allow: [Component, System, Location, API, Resource, Template]
 
 # Optional Scorecards plugin config — values MUST be read from EOS receipts, not recomputed.
 # scorecards:

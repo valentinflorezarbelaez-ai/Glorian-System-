@@ -80,28 +80,29 @@ metadata:
   title: Glorian Sovereign Golden Path Templates
   description: Official Scaffolder Golden Path templates for sovereign Tier-0 components.
 spec:
-  type: file
+  # URL targets so nested Locations resolve when catalog-info is ingested via GitHub URL.
+  type: url
   targets:
-    - ./templates/backstage/sovereign-component-template.yaml
+    - https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/templates/backstage/sovereign-component-template.yaml
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
   name: glorian-fleet-component-stubs
   title: Glorian Fleet Component Stubs (P1)
-  description: Registry-aligned Component stubs for Backstage ingestion until sibling catalogs exist.
+  description: Registry-aligned Component stubs for Backstage ingestion until sibling catalogs exist. Single ingestion path via this Location (not duplicated in app-config.snippet).
 spec:
-  type: file
+  type: url
   targets:
-    - ./docs/backstage/fleet-components.yaml
+    - https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/fleet-components.yaml
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
   name: glorian-soundcheck-scorecards
   title: Glorian Soundcheck Scorecard Resources (P1)
-  description: Backstage Resource entities mapping EOS Soundcheck pillars and fleet matrix receipt.
+  description: Backstage Resource entities mapping EOS Soundcheck pillars and fleet matrix receipt. Single ingestion path via this Location (not duplicated in app-config.snippet).
 spec:
-  type: file
+  type: url
   targets:
-    - ./docs/backstage/soundcheck-scorecards.yaml
+    - https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/soundcheck-scorecards.yaml

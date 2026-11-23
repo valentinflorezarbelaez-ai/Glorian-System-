@@ -179,8 +179,26 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
         "fleet stubs must not set fleet-posture annotation to FLEET_VERIFIED without dogfood",
       );
       assert.ok(appConfig.includes("catalog:"));
-      assert.ok(appConfig.includes("fleet-components.yaml"));
-      assert.ok(appConfig.includes("soundcheck-scorecards.yaml"));
+      assert.ok(
+        appConfig.includes(
+          "https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/catalog-info.yaml",
+        ),
+        "app-config snippet must register only the root catalog-info.yaml",
+      );
+      assert.equal(
+        /locations:[\s\S]*target:\s*https:\/\/github\.com\/valentinflorezarbelaez-ai\/Glorian-System-\/blob\/main\/docs\/backstage\/fleet-components\.yaml/.test(
+          appConfig,
+        ),
+        false,
+        "app-config must not duplicate fleet-components as a sibling catalog location",
+      );
+      assert.equal(
+        /locations:[\s\S]*target:\s*https:\/\/github\.com\/valentinflorezarbelaez-ai\/Glorian-System-\/blob\/main\/docs\/backstage\/soundcheck-scorecards\.yaml/.test(
+          appConfig,
+        ),
+        false,
+        "app-config must not duplicate soundcheck-scorecards as a sibling catalog location",
+      );
       assert.ok(appConfig.includes("CONTROL_PLANE_ONLY"));
       assert.equal(
         /(?:api[_-]?key|bearer\s+[a-z0-9]|-----BEGIN)/i.test(`${fleetYaml}\n${scorecardsYaml}\n${appConfig}`),
@@ -191,8 +209,28 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
       assert.ok(catalog.includes("name: glorian-fleet-component-stubs"));
       assert.ok(catalog.includes("name: glorian-soundcheck-scorecards"));
       assert.ok(catalog.includes("eos.glorian/fleet-posture: CONTROL_PLANE_ONLY"));
-      assert.ok(catalog.includes("./docs/backstage/fleet-components.yaml"));
-      assert.ok(catalog.includes("./docs/backstage/soundcheck-scorecards.yaml"));
+      assert.ok(
+        catalog.includes(
+          "https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/fleet-components.yaml",
+        ),
+        "fleet Location must use absolute GitHub URL target (resolves under URL parent)",
+      );
+      assert.ok(
+        catalog.includes(
+          "https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/soundcheck-scorecards.yaml",
+        ),
+        "soundcheck Location must use absolute GitHub URL target (resolves under URL parent)",
+      );
+      assert.equal(
+        catalog.includes("./docs/backstage/fleet-components.yaml"),
+        false,
+        "relative file Location targets must not remain for fleet stubs",
+      );
+      assert.equal(
+        catalog.includes("./docs/backstage/soundcheck-scorecards.yaml"),
+        false,
+        "relative file Location targets must not remain for scorecards",
+      );
     });
   });
 
