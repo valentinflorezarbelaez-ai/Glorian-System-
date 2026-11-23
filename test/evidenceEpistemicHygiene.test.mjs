@@ -25,16 +25,15 @@ const evidenceDir = path.join(root, "docs/evidence");
 
 /** Versioned tip receipts only — skip gitignored machine-local outputs (e.g. TOOLCHAIN_RECEIPT). */
 function listTrackedEvidenceJson() {
-  const out = execFileSync("git", ["ls-files", "docs/evidence/*.json"], {
+  const out = execFileSync("git", ["ls-files", "-z", "--", "docs/evidence"], {
     cwd: root,
     encoding: "utf8",
   });
   return out
-    .split("\n")
+    .split("\0")
     .map((line) => line.trim())
     .filter(Boolean)
-    .map((rel) => path.basename(rel))
-    .filter((name) => name.endsWith(".json") && !name.startsWith(".tlc-receipt-"));
+    .filter((rel) => rel.endsWith(".json") && !path.basename(rel).startsWith(".tlc-receipt-"));
 }
 
 const ALLOWED_TLC_TIP_MODES = new Set([
@@ -69,9 +68,9 @@ test("docs/evidence tip JSON has zero absolute host / user plumbing paths", () =
   const files = listTrackedEvidenceJson();
   assert.ok(files.length > 0, "expected versioned (git-tracked) evidence JSON files");
   const offenders = [];
-  for (const file of files) {
-    const text = fs.readFileSync(path.join(evidenceDir, file), "utf8");
-    if (containsAbsoluteHostPath(text)) offenders.push(file);
+  for (const rel of files) {
+    const text = fs.readFileSync(path.join(root, rel), "utf8");
+    if (containsAbsoluteHostPath(text)) offenders.push(rel);
   }
   assert.deepEqual(offenders, [], `host plumbing paths in: ${offenders.join(", ")}`);
 });
