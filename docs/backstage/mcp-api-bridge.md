@@ -58,7 +58,7 @@ node bin/eos.mjs toolchain:soundcheck:audit
 | Item | Value |
 | --- | --- |
 | Method | `GET` / `HEAD` / `OPTIONS` only |
-| Query | `kind=soundcheck` (default) \| `fleet-products` \| `l0-consumer` |
+| Query | `kind=soundcheck` (default when absent) \| `fleet-products` \| `l0-consumer`; duplicate `kind` → **400** fail-closed |
 | CORS | Reflect allowlisted `Origin` only — never `Access-Control-Allow-Origin: *` |
 | Host | Fail-closed allowlist (`glorian-system.vercel.app`, localhost, + `EOS_ALLOWED_HOSTS`) |
 | Origin | Fail-closed when present (`EOS_ALLOWED_ORIGINS` + static set) |

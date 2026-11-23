@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { getQueryParam } from "./_safeQuery.js";
+import { getSearchParams } from "./_safeQuery.js";
 
 /**
  * EOS SYSTEM — READ-ONLY SOUNDCHECK / SCORECARD RECEIPT BRIDGE (/api/scorecard)
@@ -89,7 +89,11 @@ function isAllowedHost(rawHost) {
 }
 
 function resolveKind(req) {
-  const kind = getQueryParam(req, "kind") || "soundcheck";
+  // Absent kind → default soundcheck. Duplicate/ambiguous kind → fail closed (null).
+  const all = getSearchParams(req).getAll("kind");
+  if (all.length === 0) return "soundcheck";
+  if (all.length !== 1) return null;
+  const kind = all[0];
   if (typeof kind !== "string" || !Object.hasOwn(RECEIPT_KINDS, kind)) return null;
   return kind;
 }

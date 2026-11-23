@@ -488,6 +488,22 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
       assert.ok(ok.body.receipt?.sha256Signature || ok.body.receipt?.averageFleetScore !== undefined);
       assert.ok(String(ok.body.receiptSha256 || "").startsWith("sha256:"));
       assert.equal(ok.headers["access-control-allow-origin"], undefined);
+
+      const defaultKind = await invoke({
+        method: "GET",
+        headers: { host: "glorian-system.vercel.app" },
+        url: "/api/scorecard",
+      });
+      assert.equal(defaultKind.statusCode, 200);
+      assert.equal(defaultKind.body.kind, "soundcheck");
+
+      const duplicateKind = await invoke({
+        method: "GET",
+        headers: { host: "glorian-system.vercel.app" },
+        url: "/api/scorecard?kind=soundcheck&kind=fleet-products",
+      });
+      assert.equal(duplicateKind.statusCode, 400);
+      assert.equal(duplicateKind.body.status, "BAD_REQUEST");
     });
   });
 
