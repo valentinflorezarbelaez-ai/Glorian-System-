@@ -1,11 +1,13 @@
 name: EOS Nightly Deep Quality Gates
 
+# Ritual (P3-2 / PR-M — docs/governance/NIGHTLY_MUTATION_FLAKY.md):
 # The expensive gates (mutation ×N, flaky ×N) are opt-in inside the per-commit
-# pipeline so the developer loop stays fast. That opt-in is also their weakness:
-# if nobody sets the env flag, the gate never runs and protects nothing. This
-# workflow closes that gap with a fixed weekly schedule that exercises the deep
-# gates against the versioned ratchets (`docs/quality/*.json`) and publishes a
-# per-run report to the job summary. Fail-closed: ratchet drift fails the job.
+# pipeline (Stage 4.6 / 4.7) so the developer loop stays fast — PR / verify:strict
+# paths MUST leave EOS_MUTATION unset (SKIP). This scheduled workflow closes the
+# anti-tautology gap by enabling EOS_MUTATION=1 / EOS_FLAKY=1 with *_ENFORCE=1
+# (fail-closed), exercising the versioned ratchets (`docs/quality/*.json`), and
+# publishing MUTATION_NIGHTLY / FLAKY_NIGHTLY artifacts. Fail-closed: ratchet
+# drift fails the job.
 on:
   schedule:
     - cron: "0 2 * * *"
@@ -23,6 +25,14 @@ concurrency:
 
 permissions:
   contents: read
+
+# Stage 4.6 / 4.7 env contract — nightly only (do NOT copy onto PR paths).
+env:
+  EOS_MUTATION: "1"
+  EOS_MUTATION_ENFORCE: "1"
+  EOS_FLAKY: "1"
+  EOS_FLAKY_ENFORCE: "1"
+  EOS_FLAKY_REPEATS: "3"
 
 jobs:
   mutation-deep-gate:
@@ -43,21 +53,56 @@ jobs:
       - name: Install locked development toolchain
         run: npm ci --include=dev
 
-      - name: Run mutation gate against the frozen ratchet
+      - name: Run mutation gate against the frozen ratchet (fail-closed)
         run: |
           set -o pipefail
+          # Reuses scripts/mutation-gate.mjs (same engine Stage 4.6 loads when EOS_MUTATION=1).
           node scripts/mutation-gate.mjs 2>&1 | tee mutation-report.txt
+          node -e '
+            const fs = require("node:fs");
+            const crypto = require("node:crypto");
+            const report = fs.readFileSync("mutation-report.txt", "utf8");
+            const sha256 = crypto.createHash("sha256").update(report).digest("hex");
+            const receipt = {
+              kind: "MUTATION_NIGHTLY",
+              epistemicState: "NIGHTLY_FAIL_CLOSED",
+              stage: "4.6",
+              eosMutation: process.env.EOS_MUTATION === "1",
+              eosMutationEnforce: process.env.EOS_MUTATION_ENFORCE === "1",
+              workflow: process.env.GITHUB_WORKFLOW || "eos-nightly-deep-gates",
+              runId: process.env.GITHUB_RUN_ID || null,
+              runAttempt: process.env.GITHUB_RUN_ATTEMPT || null,
+              sha: process.env.GITHUB_SHA || null,
+              timestampIso: new Date().toISOString(),
+              reportSha256: sha256,
+              exitPolicy: "fail-closed",
+            };
+            fs.mkdirSync("docs/evidence", { recursive: true });
+            fs.writeFileSync("docs/evidence/MUTATION_NIGHTLY.json", JSON.stringify(receipt, null, 2) + "\n");
+            console.log("Wrote docs/evidence/MUTATION_NIGHTLY.json sha256=" + sha256.slice(0, 24) + "...");
+          '
 
       - name: Publish mutation report to the job summary
         if: ${{ !cancelled() }}
         run: |
           {
-            echo "### Mutation deep gate"
+            echo "### Mutation deep gate (MUTATION_NIGHTLY)"
             echo ""
             echo '```'
             cat mutation-report.txt 2>/dev/null || echo "(no report captured)"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload MUTATION_NIGHTLY artifact
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: MUTATION_NIGHTLY
+          path: |
+            mutation-report.txt
+            docs/evidence/MUTATION_NIGHTLY.json
+          if-no-files-found: error
+          retention-days: 30
 
   flaky-deep-gate:
     name: Flaky deep gate (SPEC-131)
@@ -77,21 +122,57 @@ jobs:
       - name: Install locked development toolchain
         run: npm ci --include=dev
 
-      - name: Re-run the suite N times against the frozen quarantine
+      - name: Re-run the suite N times against the frozen quarantine (fail-closed)
         run: |
           set -o pipefail
+          # Reuses scripts/flaky-gate.mjs (same engine Stage 4.7 loads when EOS_FLAKY=1).
           node scripts/flaky-gate.mjs --repeat="${EOS_FLAKY_REPEATS:-3}" 2>&1 | tee flaky-report.txt
+          node -e '
+            const fs = require("node:fs");
+            const crypto = require("node:crypto");
+            const report = fs.readFileSync("flaky-report.txt", "utf8");
+            const sha256 = crypto.createHash("sha256").update(report).digest("hex");
+            const receipt = {
+              kind: "FLAKY_NIGHTLY",
+              epistemicState: "NIGHTLY_FAIL_CLOSED",
+              stage: "4.7",
+              eosFlaky: process.env.EOS_FLAKY === "1",
+              eosFlakyEnforce: process.env.EOS_FLAKY_ENFORCE === "1",
+              repeats: Number(process.env.EOS_FLAKY_REPEATS) || 3,
+              workflow: process.env.GITHUB_WORKFLOW || "eos-nightly-deep-gates",
+              runId: process.env.GITHUB_RUN_ID || null,
+              runAttempt: process.env.GITHUB_RUN_ATTEMPT || null,
+              sha: process.env.GITHUB_SHA || null,
+              timestampIso: new Date().toISOString(),
+              reportSha256: sha256,
+              exitPolicy: "fail-closed",
+            };
+            fs.mkdirSync("docs/evidence", { recursive: true });
+            fs.writeFileSync("docs/evidence/FLAKY_NIGHTLY.json", JSON.stringify(receipt, null, 2) + "\n");
+            console.log("Wrote docs/evidence/FLAKY_NIGHTLY.json sha256=" + sha256.slice(0, 24) + "...");
+          '
 
       - name: Publish flaky report to the job summary
         if: ${{ !cancelled() }}
         run: |
           {
-            echo "### Flaky deep gate"
+            echo "### Flaky deep gate (FLAKY_NIGHTLY)"
             echo ""
             echo '```'
             cat flaky-report.txt 2>/dev/null || echo "(no report captured)"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload FLAKY_NIGHTLY artifact
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: FLAKY_NIGHTLY
+          path: |
+            flaky-report.txt
+            docs/evidence/FLAKY_NIGHTLY.json
+          if-no-files-found: error
+          retention-days: 30
 
   nocturnal-evolution-gate:
     name: Darwinian nocturnal evolution sweep (SPEC-133)

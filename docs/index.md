@@ -7,6 +7,7 @@ Sovereign deterministic control plane for AI-assisted engineering (formerly EOS 
 - **Owner squad:** `group:glorian-control-plane-squad` · **Tribe:** `group:glorian-platform-tribe`
 - **Canonical merge gate:** `npm run verify:strict` → `node bin/eos.mjs verify`
 - **Layer-0 purity:** `src/core/` keeps zero external runtime dependencies — [DEPENDENCY_POLICY_L0](governance/DEPENDENCY_POLICY_L0.md) (SoT: SPEC-002)
+- **Nightly quality deep gates:** mutation/flaky fail-closed on schedule — [NIGHTLY_MUTATION_FLAKY](governance/NIGHTLY_MUTATION_FLAKY.md) (PR path stays SKIP)
 - **Frontend agent skill:** [Modern Web Guidance runbook](runbooks/modern-web-guidance.md) (`.agents/skills/modern-web-guidance/`, `npm run mwg:gate`)
 - **Optional software factory:** [Software Factory skill](governance/SOFTWARE_FACTORY_SKILL.md) (`.agents/skills/software-factory/`, worktree helper under `scripts/`)
 
