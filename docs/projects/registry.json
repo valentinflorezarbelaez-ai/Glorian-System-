@@ -1,6 +1,6 @@
 {
   "version": "11.0.0-autonomous-fleet-registry",
-  "updatedAt": "2026-11-23T02:29:24.108Z",
+  "updatedAt": "2026-11-23T02:43:42.107Z",
   "masterOrchestrator": "EOS System control plane (SPEC-124)",
   "complianceStandard": "EOS_CONSTITUTION_LAW_IV_EXTERNAL_WRITE_BARRIER",
   "totalFleetProjects": 10,
@@ -67,7 +67,7 @@
       "name": "Avo Pack S.A.S. — Central de Asistencia y Liquidación Laboral",
       "resolvedLocalDir": "Control-De-Asistencia-Abopack",
       "localPathEnv": "EOS_FLEET_CONTROL_DE_ASISTENCIA_ABOPACK_PATH",
-      "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Control-De-Asistencia-Abopack.git",
+      "remoteUrl": "https://github.com/valentinflorezarbelaez-ai/Avo-pak.git",
       "productionUrl": "https://avo-pack.vercel.app",
       "type": "industrial-operations-suite",
       "status": "REGISTERED",
@@ -135,7 +135,7 @@
       "cicdGateScript": "scripts/verify-cicd-pipeline.mjs",
       "autoShipScript": "scripts/ship-sovereign.mjs",
       "currentBranch": "main",
-      "headCommitSha": "c4b6a6f3bb07e306c7908a7a049a4963ce436a51",
+      "headCommitSha": "c7280084429f86cfdd16f21eda6331c7f06ecdde",
       "ownerApproval": "OWNER_APPROVAL"
     },
     {
@@ -196,5 +196,5 @@
       "headCommitSha": "5106e5aeec8210d749891bcfd128088f9241f2c6"
     }
   ],
-  "registrySha256": "283eb0b5dcd9c7713a2820deecc869761fb7679d0be1a467839dd1dc66cba36b"
+  "registrySha256": "3a651914aabadb97292154950156b10189fbbf20a07505a4716a00630d36cb22"
 }
