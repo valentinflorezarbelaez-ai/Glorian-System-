@@ -1,0 +1,142 @@
+/**
+ * Hermetic coverage for scripts/software-factory-worktree.mjs (fail-closed helpers).
+ */
+import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
+import { describe, it } from "node:test";
+import { fileURLToPath } from "node:url";
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const script = path.join(root, "scripts/software-factory-worktree.mjs");
+const skill = path.join(root, ".agents/skills/software-factory/SKILL.md");
+const doc = path.join(root, "docs/governance/SOFTWARE_FACTORY_SKILL.md");
+
+function run(args, opts = {}) {
+  return execFileSync(process.execPath, [script, ...args], {
+    cwd: root,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+    ...opts,
+  });
+}
+
+describe("software-factory-worktree", () => {
+  it("ships skill + governance pointer + helper script", () => {
+    assert.ok(fs.existsSync(script));
+    assert.ok(fs.existsSync(skill));
+    assert.ok(fs.existsSync(doc));
+    const body = fs.readFileSync(skill, "utf8");
+    assert.match(body, /judgment-day/);
+    assert.match(body, /Plan ≠ Execute|Plan!=Execute|Plan≠Execute/);
+    assert.match(body, /verify:strict/);
+  });
+
+  it("lists worktrees with exit 0", () => {
+    const out = run(["list"]);
+    assert.match(out, /worktree|branch|HEAD/i);
+  });
+
+  it("fail-closed on missing branch for create", () => {
+    let failed = false;
+    try {
+      run(["create"]);
+    } catch (err) {
+      failed = true;
+      assert.equal(err.status, 1);
+      assert.match(String(err.stderr || ""), /FAIL|branch/i);
+    }
+    assert.equal(failed, true);
+  });
+
+  it("fail-closed on path traversal in --path", () => {
+    let failed = false;
+    try {
+      run(["create", "--branch", "cursor/sf-test-reject", "--path", "../escape"]);
+    } catch (err) {
+      failed = true;
+      assert.equal(err.status, 1);
+      assert.match(String(err.stderr || ""), /FAIL/);
+    }
+    assert.equal(failed, true);
+  });
+
+  it("fail-closed when remove path is not a registered worktree for branch", () => {
+    // Use --path so the orphan dir matches resolveWorktreePath (not branchSlug mismatch).
+    const orphanDir = path.join(root, ".worktrees", "sf-orphan-unregistered");
+    fs.mkdirSync(orphanDir, { recursive: true });
+    try {
+      let failed = false;
+      try {
+        run([
+          "remove",
+          "--branch",
+          "cursor/sf-orphan-unregistered",
+          "--path",
+          "sf-orphan-unregistered",
+        ]);
+      } catch (err) {
+        failed = true;
+        assert.equal(err.status, 1);
+        assert.match(String(err.stderr || ""), /No registered git worktree/);
+      }
+      assert.equal(failed, true);
+    } finally {
+      fs.rmSync(orphanDir, { recursive: true, force: true });
+    }
+  });
+
+  it("remove prefers registered --path worktree over stray default-slug dir", () => {
+    const branch = `cursor/sf-path-pref-${process.pid}`;
+    const customSlug = `sf-custom-${process.pid}`;
+    const defaultSlug = branch.replace(/\//g, "-");
+    const customDir = path.join(root, ".worktrees", customSlug);
+    const strayDefault = path.join(root, ".worktrees", defaultSlug);
+    const real = (p) => {
+      try {
+        return fs.realpathSync(p);
+      } catch {
+        return path.resolve(p);
+      }
+    };
+
+    // Use HEAD (not `main`) so the test stays hermetic on detached CI checkouts.
+    const created = JSON.parse(
+      run(["create", "--branch", branch, "--base", "HEAD", "--path", customSlug]),
+    );
+    const createdReal = real(created.path);
+    assert.equal(createdReal, real(customDir));
+    // Stray orphan at the default slug must not win over the registered path.
+    fs.mkdirSync(strayDefault, { recursive: true });
+
+    try {
+      // Capture realpaths before remove — after teardown realpathSync may fail.
+      const expectedRemovedReal = createdReal;
+      const removed = JSON.parse(run(["remove", "--branch", branch, "--force"]));
+      assert.equal(removed.path, expectedRemovedReal);
+      assert.equal(fs.existsSync(customDir), false);
+      assert.equal(fs.existsSync(strayDefault), true, "stray default-slug dir should remain");
+    } finally {
+      fs.rmSync(strayDefault, { recursive: true, force: true });
+      try {
+        run(["remove", "--branch", branch, "--path", customSlug, "--force"]);
+      } catch {
+        // already removed
+      }
+      try {
+        execFileSync("git", ["branch", "-D", branch], {
+          cwd: root,
+          stdio: ["ignore", "pipe", "pipe"],
+        });
+      } catch {
+        // branch may already be gone
+      }
+    }
+  });
+
+  it("keeps runtime dependencies empty", () => {
+    const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
+    assert.equal(Object.keys(pkg.dependencies || {}).length, 0);
+  });
+});
