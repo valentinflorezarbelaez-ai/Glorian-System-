@@ -1,5 +1,5 @@
 {
-  "receiptId": "aladdin-rcpt-1795142810273",
+  "receiptId": "aladdin-rcpt-1795455517484",
   "status": "VERIFIED",
   "fiduciaryVaultSecurity": "SECURED",
   "invariants": {
@@ -14,6 +14,6 @@
     "var99Percent": 7.39,
     "cvar99Percent": 9.51
   },
-  "receiptHash": "214bc734f055c56d24b303ebfb9ddedff69d2790d8abfb5e4098d7042f780c64",
-  "timestamp": 1795142810274
+  "receiptHash": "ff7252319d75e585eb539ea84af2a7a859b4f145581ec0df9ed13d191cad3df8",
+  "timestamp": 1795455517484
 }

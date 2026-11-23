@@ -1,5 +1,5 @@
 {
-  "timestampIso": "2026-11-19T20:32:28.963Z",
+  "timestampIso": "2026-11-23T17:39:13.269Z",
   "chartPath": "glorian-enterprise-workload",
   "releaseName": "glorian-enterprise-app",
   "targetContext": "kind-glorian-cluster",
@@ -24,9 +24,9 @@
     {
       "stage": "SERVER_DRY_RUN",
       "passed": false,
-      "message": "Server dry-run rejected: Error: kubernetes cluster unreachable: Get \"https://127.0.0.1:4600/version\": dial tcp 127.0.0.1:4600: connectex: No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión."
+      "message": "Server dry-run rejected: Server dry-run rejected"
     }
   ],
-  "sha256Receipt": "24f182f4483ea4f11e2c115e3705f7afe197d0126ef086e916440f2b77e18431",
-  "error": "Error: kubernetes cluster unreachable: Get \"https://127.0.0.1:4600/version\": dial tcp 127.0.0.1:4600: connectex: No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión."
+  "sha256Receipt": "a61ee3726bf5ba6e45dd32eb1489ed08f68f520731b9a298da7a51cc120a03c7",
+  "error": "Server dry-run rejected"
 }

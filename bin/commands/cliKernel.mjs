@@ -130,7 +130,7 @@ async function cmd_sync_stack_133(commandContext) {
   printBanner();
   const { syncGentleAiStack } = await import("../../scripts/sync-gentle-ai-stack.mjs");
   console.log("[EOS GENTLEMAN AI STACK HERMETIC SYNC DAEMON — PELDAÑO 3]\n");
-  const receipt = syncGentleAiStack({ projectRoot: root });
+  const receipt = await syncGentleAiStack({ projectRoot: root });
   console.log(`  Estado Global  : ${receipt.status}`);
   console.log(`  Componentes    : ${receipt.synchronizedComponents}/${receipt.totalComponents} sincronizados`);
   console.log(

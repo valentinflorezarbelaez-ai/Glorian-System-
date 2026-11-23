@@ -1,42 +1,46 @@
 {
-  "status": "SYNCHRONIZED_HERMETIC",
-  "timestamp": "2026-11-20T20:34:19.185Z",
-  "projectRoot": "C:\\Users\\valen\\Documents\\Glorian-System",
+  "status": "DEGRADED",
+  "timestamp": "2026-11-23T17:38:11.441Z",
+  "projectRoot": ".",
   "totalComponents": 4,
-  "synchronizedComponents": 4,
+  "synchronizedComponents": 3,
   "components": [
     {
       "name": "Engram Epistemic DAG Engine",
       "category": "ENGRAM_DAG",
-      "verified": true,
-      "sha256": "207a1a56d0a277ca4f84427130c5aafbdeddd0f698b246736b54cde9b3c08098",
-      "details": "Canonical binary found at C:\\Users\\valen\\AppData\\Local\\engram\\bin\\engram.exe (22.1 MB)"
+      "verified": false,
+      "sha256": "NOT_FOUND",
+      "details": "Engram binary not found at REDACTED_HOST_PATH"
     },
     {
       "name": "GGA Git Governance Agent Hook",
       "category": "GGA_HOOKS",
       "verified": true,
       "sha256": "b735d7319887f51a805a8565f5be65efc9d642f9f77330675ee898902e58d084",
-      "details": "Active pre-commit verification gate present in .githooks\\pre-commit"
+      "details": "Active pre-commit verification gate present in .githooks/pre-commit"
     },
     {
       "name": "SpecBoot Mirrored SDD Skills",
       "category": "SPECBOOT_SKILLS",
       "verified": true,
-      "sha256": "7dd0ed98516b3469d4387fab7378365cbbdd6064bd96d168c043e42d65f04278",
+      "sha256": "0fda37c354e2fdedb75aa3cb794661ab7e4a34e3456e033a9e50337a04be1224",
       "details": "20 sovereign SDD and fleet operational skills active in .agents/skills/"
     },
     {
       "name": "Canonical MCP Sovereign Tool Catalog",
       "category": "MCP_CATALOG",
       "verified": true,
-      "sha256": "9db7281ec0452d9149fa2a3f2faf5781931c08d63901bdcb77d2e7384449b92b",
-      "details": "Registered 255 tools in full profile and 157 tools in curated Tier-0 core profile."
+      "sha256": "0e07663a08cbd5821fce7344e9beecc14c45916370d6b50f3865f4bdfdef7190",
+      "details": "Registered 254 tools in full profile (eosMcpToolDefinitions) and 46 tools in curated Tier-0 core profile."
     }
   ],
   "mcpToolCount": {
-    "coreProfile": 157,
-    "fullProfile": 255
+    "coreProfile": 46,
+    "fullProfile": 254
   },
-  "sha256EvidenceSeal": "4cc39a843c62a8325a20e99171e18a246a79cc300c53d6705b992e46b0b781f9"
+  "sha256EvidenceSeal": "10aee7b959d5e72f2e0b69dd71d3cdca4ec5fbb7709a14853cbf3af1338a235c",
+  "epistemicState": "LOCAL_SIMULATION",
+  "executionMode": "LOCAL_SIMULATION",
+  "reproducibleByMergeGate": false,
+  "note": "Gentle-AI stack sync receipt with host paths sanitized; not merge-gate certified."
 }

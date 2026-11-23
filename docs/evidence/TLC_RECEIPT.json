@@ -1,0 +1,681 @@
+{
+  "timestampIso": "2026-11-23T17:38:31.395Z",
+  "specRef": "SPEC-270",
+  "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
+  "executionMode": "DEFERRED_TO_CI",
+  "status": "DEFERRED_TO_CI",
+  "epistemicState": "DEFERRED_TO_CI",
+  "allPassed": true,
+  "hasJavaRuntime": true,
+  "tlaJarPath": "NOT_DETECTED_LOCALLY",
+  "reproducibleByMergeGate": false,
+  "totalConfiguredSpecs": 83,
+  "cacheHits": 0,
+  "models": [
+    {
+      "specName": "LmaxDisruptor",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2416,
+      "cfgBytes": 252
+    },
+    {
+      "specName": "HermesConsensusMesh",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3121,
+      "cfgBytes": 258
+    },
+    {
+      "specName": "DatomicBitemporalLedger",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2354,
+      "cfgBytes": 259
+    },
+    {
+      "specName": "AutonomousChaosDisruptor",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2503,
+      "cfgBytes": 256
+    },
+    {
+      "specName": "BftAgentSwarmSlashing",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 1992,
+      "cfgBytes": 290
+    },
+    {
+      "specName": "CellBasedBulkheadGovernor",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 4156,
+      "cfgBytes": 366
+    },
+    {
+      "specName": "ZeroCopyRingBuffer",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2468,
+      "cfgBytes": 271
+    },
+    {
+      "specName": "JepsenDistributedChaos",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 4896,
+      "cfgBytes": 277
+    },
+    {
+      "specName": "SimdQuantizedHnsw",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3800,
+      "cfgBytes": 311
+    },
+    {
+      "specName": "DistributedVectorMesh",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 5060,
+      "cfgBytes": 341
+    },
+    {
+      "specName": "VectorLsmStorage",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2698,
+      "cfgBytes": 191
+    },
+    {
+      "specName": "SpeculativePagedKvCache",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 9303,
+      "cfgBytes": 191
+    },
+    {
+      "specName": "FlashAttentionOnlineSoftmax",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 5343,
+      "cfgBytes": 197
+    },
+    {
+      "specName": "ContinuousDynamicBatching",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 5184,
+      "cfgBytes": 200
+    },
+    {
+      "specName": "RingAllReduce",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 4632,
+      "cfgBytes": 121
+    },
+    {
+      "specName": "MegatronTensorParallelism",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3266,
+      "cfgBytes": 193
+    },
+    {
+      "specName": "PipelineParallelism1F1B",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2524,
+      "cfgBytes": 170
+    },
+    {
+      "specName": "TensorParallelAttention",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3316,
+      "cfgBytes": 185
+    },
+    {
+      "specName": "ZeroFsdpEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 5678,
+      "cfgBytes": 178
+    },
+    {
+      "specName": "ExpertParallelMoERouter",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3888,
+      "cfgBytes": 211
+    },
+    {
+      "specName": "ActivationCheckpointingEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 4478,
+      "cfgBytes": 193
+    },
+    {
+      "specName": "ReverseEngineeringEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3695,
+      "cfgBytes": 175
+    },
+    {
+      "specName": "QuantizedDistributedTrainingEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3260,
+      "cfgBytes": 178
+    },
+    {
+      "specName": "DistributedKvCacheReplication",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3443,
+      "cfgBytes": 157
+    },
+    {
+      "specName": "TreeSpeculativeDecoding",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3428,
+      "cfgBytes": 137
+    },
+    {
+      "specName": "StreamingLlmAttentionSinks",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2685,
+      "cfgBytes": 181
+    },
+    {
+      "specName": "DisaggregatedPrefillDecode",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 6108,
+      "cfgBytes": 263
+    },
+    {
+      "specName": "OntologicalHypergraph",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 5412,
+      "cfgBytes": 191
+    },
+    {
+      "specName": "DiscreteEventSimulationHypervisor",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 6086,
+      "cfgBytes": 211
+    },
+    {
+      "specName": "ThresholdSecureAggregation",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3788,
+      "cfgBytes": 204
+    },
+    {
+      "specName": "SymplecticHamiltonianPde",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3982,
+      "cfgBytes": 275
+    },
+    {
+      "specName": "EuvInverseLithographyWavefront",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3507,
+      "cfgBytes": 211
+    },
+    {
+      "specName": "CausalDoCalculusScm",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 4393,
+      "cfgBytes": 220
+    },
+    {
+      "specName": "AgenticHarnessYield",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 4576,
+      "cfgBytes": 222
+    },
+    {
+      "specName": "CbdcRtgsGridlock",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 1911,
+      "cfgBytes": 232
+    },
+    {
+      "specName": "CryogenicJosephsonSfq",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 1586,
+      "cfgBytes": 234
+    },
+    {
+      "specName": "DeepSpaceOpticalNav",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 1657,
+      "cfgBytes": 225
+    },
+    {
+      "specName": "HypersonicScramjetAero",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 1732,
+      "cfgBytes": 242
+    },
+    {
+      "specName": "SubseaDwdmShannon",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 1551,
+      "cfgBytes": 207
+    },
+    {
+      "specName": "HighNaEuvLithoOpc",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 1159,
+      "cfgBytes": 150
+    },
+    {
+      "specName": "LeoOpticalIslRouting",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 964,
+      "cfgBytes": 118
+    },
+    {
+      "specName": "SurfaceCodeQec",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 1275,
+      "cfgBytes": 141
+    },
+    {
+      "specName": "UnifiedMemoryDvfsQos",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 1235,
+      "cfgBytes": 148
+    },
+    {
+      "specName": "DifferentialPrivacyAbac",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 1217,
+      "cfgBytes": 151
+    },
+    {
+      "specName": "AdaptiveHedgedDeadlineMesh",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2463,
+      "cfgBytes": 123
+    },
+    {
+      "specName": "ClosedLoopRepoAutopilot",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2905,
+      "cfgBytes": 214
+    },
+    {
+      "specName": "MetamorphicDifferentialBlindSpot",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3009,
+      "cfgBytes": 168
+    },
+    {
+      "specName": "SovereignWebCompiler",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3149,
+      "cfgBytes": 180
+    },
+    {
+      "specName": "AgenticContextEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3481,
+      "cfgBytes": 174
+    },
+    {
+      "specName": "KnowledgeGraphReflex",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3780,
+      "cfgBytes": 230
+    },
+    {
+      "specName": "AgenticSwarmBft",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3241,
+      "cfgBytes": 210
+    },
+    {
+      "specName": "AutonomousWasmJitCompiler",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2938,
+      "cfgBytes": 173
+    },
+    {
+      "specName": "DistributedCrdtMemory",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 1942,
+      "cfgBytes": 155
+    },
+    {
+      "specName": "NeuralSymbolicProver",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2356,
+      "cfgBytes": 159
+    },
+    {
+      "specName": "ZkCircuitSynthesizer",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2203,
+      "cfgBytes": 151
+    },
+    {
+      "specName": "ShardedTransactionFabric",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2617,
+      "cfgBytes": 132
+    },
+    {
+      "specName": "NeuromorphicPlanner",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2769,
+      "cfgBytes": 159
+    },
+    {
+      "specName": "CausalMetaLearning",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2811,
+      "cfgBytes": 155
+    },
+    {
+      "specName": "WebGpuTensorAcceleration",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2971,
+      "cfgBytes": 142
+    },
+    {
+      "specName": "ZeroCopyIpcRingBuffer",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 1987,
+      "cfgBytes": 185
+    },
+    {
+      "specName": "WorkStealingScheduler",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3144,
+      "cfgBytes": 127
+    },
+    {
+      "specName": "BitemporalEventLedger",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2259,
+      "cfgBytes": 166
+    },
+    {
+      "specName": "ArchitecturalCanvasTopology",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2313,
+      "cfgBytes": 134
+    },
+    {
+      "specName": "AgentSwarmMicroKernel",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2193,
+      "cfgBytes": 102
+    },
+    {
+      "specName": "InductiveProofEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2291,
+      "cfgBytes": 105
+    },
+    {
+      "specName": "GlorianLiveStudio",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2098,
+      "cfgBytes": 154
+    },
+    {
+      "specName": "AutonomousSentinelDaemon",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2717,
+      "cfgBytes": 148
+    },
+    {
+      "specName": "VoiceNeuralInterface",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2557,
+      "cfgBytes": 118
+    },
+    {
+      "specName": "FleetChaosFdirEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 1920,
+      "cfgBytes": 129
+    },
+    {
+      "specName": "MultiNodeSwarmMesh",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2961,
+      "cfgBytes": 144
+    },
+    {
+      "specName": "SweBenchEvalFlywheel",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2022,
+      "cfgBytes": 143
+    },
+    {
+      "specName": "DynamicToolSynthesis",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 1960,
+      "cfgBytes": 154
+    },
+    {
+      "specName": "AdversarialRedTeamCrucible",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3404,
+      "cfgBytes": 173
+    },
+    {
+      "specName": "EpisodicMemoryGraph",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2664,
+      "cfgBytes": 153
+    },
+    {
+      "specName": "DeterministicReplayDebugger",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2731,
+      "cfgBytes": 138
+    },
+    {
+      "specName": "InstitutionalTradingEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 4020,
+      "cfgBytes": 172
+    },
+    {
+      "specName": "AladdinPortfolioRiskEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2030,
+      "cfgBytes": 100
+    },
+    {
+      "specName": "MultiAssetMacroFilterEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2085,
+      "cfgBytes": 137
+    },
+    {
+      "specName": "TriTemporalPropFirmEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 2904,
+      "cfgBytes": 141
+    },
+    {
+      "specName": "UniversalAssetPayoutOptimizer",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 3179,
+      "cfgBytes": 312
+    },
+    {
+      "specName": "QuantCockpitWalkForwardEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 5437,
+      "cfgBytes": 327
+    },
+    {
+      "specName": "HarnessTokenEconomics",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 4412,
+      "cfgBytes": 260
+    },
+    {
+      "specName": "GoalDrivenFactory",
+      "verifiedLive": false,
+      "passed": true,
+      "syntaxValid": true,
+      "tlaBytes": 4827,
+      "cfgBytes": 218
+    }
+  ],
+  "note": "TLC deferred: Java and/or tla2tools.jar unavailable locally; exhaustive exploration belongs in CI (DEFERRED_TO_CI)."
+}

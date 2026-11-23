@@ -63,5 +63,18 @@
     "status": "WIN",
     "tradeId": "paper-1795147193565-5",
     "pnlUsd": 80
+  },
+  {
+    "timestamp": 1795455562261,
+    "pair": "GBP/USD",
+    "direction": "PUT",
+    "entryPrice": 1.293,
+    "exitPrice": 1.291,
+    "strikeTimeSeconds": 60,
+    "stakeUsd": 100,
+    "payoutMultiplier": 1.8,
+    "status": "WIN",
+    "tradeId": "paper-1795455562261-6",
+    "pnlUsd": 80
   }
 ]

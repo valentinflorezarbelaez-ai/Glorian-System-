@@ -59,20 +59,30 @@ describe("SPEC-270: Formal TLC Model Checking, Mutation Ratchet & Consumer Gover
   it("BDD-1397: scripts/run-tlc.mjs generates valid TLC verification evidence receipt", () => {
     assert.equal(typeof detectJavaRuntime(), "boolean");
     const receiptPath = path.join(os.tmpdir(), `eos-test-tlc-receipt-${process.pid}.json`);
-    const receipt = runTlcVerification({ receiptPath, forceMock: true });
+    try {
+      const receipt = runTlcVerification({ receiptPath, forceMock: true });
 
-    assert.equal(receipt.specRef, "SPEC-270");
-    assert.equal(receipt.executionMode, "DEFERRED_TO_CI_SETUP_JAVA");
-    assert.equal(receipt.status, "DEFERRED_TO_CI_SETUP_JAVA");
-    assert.equal(receipt.allPassed, true);
-    assert.equal(receipt.totalConfiguredSpecs, CONFIGURED_SPECS.length);
-    assert.equal(receipt.models.length, CONFIGURED_SPECS.length);
+      assert.equal(receipt.specRef, "SPEC-270");
+      assert.equal(receipt.executionMode, "DEFERRED_TO_CI");
+      assert.equal(receipt.status, "DEFERRED_TO_CI");
+      assert.equal(receipt.epistemicState, "DEFERRED_TO_CI");
+      assert.equal(receipt.allPassed, true);
+      assert.equal(receipt.tlaJarPath, "NOT_DETECTED_LOCALLY");
+      assert.equal(receipt.totalConfiguredSpecs, CONFIGURED_SPECS.length);
+      assert.equal(receipt.models.length, CONFIGURED_SPECS.length);
 
-    for (const model of receipt.models) {
-      assert.ok(model.syntaxValid, `Model ${model.specName} must have valid syntax`);
+      for (const model of receipt.models) {
+        assert.ok(model.syntaxValid, `Model ${model.specName} must have valid syntax`);
+      }
+
+      assert.ok(fs.existsSync(receiptPath), "Receipt file must exist on disk");
+    } finally {
+      try {
+        fs.unlinkSync(receiptPath);
+      } catch {
+        // temp receipt cleanup
+      }
     }
-
-    assert.ok(fs.existsSync(receiptPath), "Receipt file must exist on disk");
   });
 
   // -------------------------------------------------------------------------

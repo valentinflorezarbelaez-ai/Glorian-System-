@@ -1,0 +1,278 @@
+{
+  "timestampIso": "2026-11-17T21:52:35.341Z",
+  "retainedFromHostRunAt": "2026-11-17T21:52:35.341Z",
+  "tipRetaggedAt": "2026-11-17T22:07:44.244Z",
+  "specRef": "SPEC-270",
+  "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
+  "executionMode": "HOST_HISTORICAL",
+  "status": "HOST_HISTORICAL",
+  "epistemicState": "HOST_HISTORICAL",
+  "allPassed": true,
+  "hasJavaRuntime": true,
+  "tlaJarPath": "tools/tla2tools.jar",
+  "reproducibleByMergeGate": false,
+  "totalConfiguredSpecs": 26,
+  "models": [
+    {
+      "specName": "LmaxDisruptor",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 20425,
+      "statesGenerated": 84397,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "HermesConsensusMesh",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 6,
+      "statesGenerated": 12,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "DatomicBitemporalLedger",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 3481,
+      "statesGenerated": 9817,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "AutonomousChaosDisruptor",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 42,
+      "statesGenerated": 90,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "BftAgentSwarmSlashing",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 2421,
+      "statesGenerated": 13227,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "CellBasedBulkheadGovernor",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 504,
+      "statesGenerated": 1499,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "ZeroCopyRingBuffer",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 39865,
+      "statesGenerated": 154381,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "JepsenDistributedChaos",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 7116,
+      "statesGenerated": 23010,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "SimdQuantizedHnsw",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 14000,
+      "statesGenerated": 231376,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "DistributedVectorMesh",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 636,
+      "statesGenerated": 5125,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "VectorLsmStorage",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 2713,
+      "statesGenerated": 7933,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "SpeculativePagedKvCache",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 2639,
+      "statesGenerated": 16303,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "FlashAttentionOnlineSoftmax",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 37,
+      "statesGenerated": 118,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "ContinuousDynamicBatching",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 336,
+      "statesGenerated": 572,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "RingAllReduce",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 5,
+      "statesGenerated": 6,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "MegatronTensorParallelism",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 6,
+      "statesGenerated": 6,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "PipelineParallelism1F1B",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 140,
+      "statesGenerated": 295,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "TensorParallelAttention",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 20,
+      "statesGenerated": 30,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "ZeroFsdpEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 484,
+      "statesGenerated": 1145,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "ExpertParallelMoERouter",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 114,
+      "statesGenerated": 637,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "ActivationCheckpointingEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 9,
+      "statesGenerated": 9,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "ReverseEngineeringEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 161,
+      "statesGenerated": 201,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "QuantizedDistributedTrainingEngine",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 95,
+      "statesGenerated": 352,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "DistributedKvCacheReplication",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 9261,
+      "statesGenerated": 44983,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "TreeSpeculativeDecoding",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 14,
+      "statesGenerated": 25,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    },
+    {
+      "specName": "StreamingLlmAttentionSinks",
+      "verifiedLive": false,
+      "passed": true,
+      "distinctStates": 9,
+      "statesGenerated": 9,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "historicalVerifiedLive": true
+    }
+  ],
+  "note": "Archived host TLC metrics (incl. SPEC-331). Tip regenerated as LIVE_TLC or DEFERRED_TO_CI. Not VERIFIED; FR-009."
+}

@@ -10,23 +10,23 @@
 
 ## 1. Ground-Truth Verified Metrics
 
-| Invariant Dimension                | Verified Ground-Truth                                            | Gate Status                  |
-| ---------------------------------- | ---------------------------------------------------------------- | ---------------------------- |
-| **Release Version (SSOT)**         | `75.0.0` (`package.json`)                                        | SEALED                       |
-| **Node.js Engine**                 | v24.19.0                                                         | PASS                         |
-| **Layer-0 Runtime Dependencies**   | `dependencies: {}` (0 external npm packages)                     | SEALED                       |
-| **Active Formal Specs (OpenSpec)** | 378 Specifications (EARS IEEE 830 / BDD ISO 29148)               | APPROVED                     |
-| **Formal TLA+ Models**             | 121 Models (bounded simulation + invariant verification)         | VERIFIED                     |
-| **Automated Test Suites**          | 394 Node.js Test Suites (`test/*.test.mjs`)                      | 100.0% PASS                  |
-| **V8 Code Coverage**               | 95.93% lines / 87.03% branches / 95.50% functions                | ABOVE GATE (85% / 85% / 85%) |
-| **Core TypeScript Modules**        | 632 Layer-0 Pure Modules (`src/core/`)                           | 100% TYPE-SAFE               |
-| **JavaScript / MJS Modules**       | 103 Validated Modules (`bin/`, `scripts/`, `api/`)               | 100% SYNTAX-CLEAN            |
-| **Subresource Integrity (SRI)**    | SHA-384 verified across CSS & JS bundles                         | VERIFIED                     |
-| **SSRF & Sandbox Defense**         | Loopback/Link-local/AWS-GCP metadata shielding                   | ENFORCED                     |
-| **Monotonic Ledger WAL**           | SQLite WAL + FTS5 + SHA-256 Block Chaining                       | VERIFIED                     |
-| **Big Tech Frontier Pillars**      | 6/6 (SapFix, SLSA/SBOM, CAS, SMT, Chaos, BFT)                    | VERIFIED                     |
-| **CI Pipeline Stages**             | 7 + 4.4-4.7 Deep Sub-Gates (SLO/Perf, Coverage, Mutation, Flaky) | GREEN                        |
-| **Freeze Pin (HEAD)**              | `1413b6e1`                                                       | PINNED                       |
+| Invariant Dimension | Verified Ground-Truth | Gate Status |
+|---|---|---|
+| **Release Version (SSOT)** | `75.0.0` (`package.json`) | SEALED |
+| **Node.js Engine** | v22.23.4 | PASS |
+| **Layer-0 Runtime Dependencies** | `dependencies: {}` (0 external npm packages) | SEALED |
+| **Active Formal Specs (OpenSpec)** | 378 Specifications (EARS IEEE 830 / BDD ISO 29148) | APPROVED |
+| **Formal TLA+ Models** | 121 Models (bounded simulation + invariant verification) | VERIFIED |
+| **Automated Test Suites** | 395 Node.js Test Suites (`test/*.test.mjs`) | 100.0% PASS |
+| **V8 Code Coverage** | 95.93% lines / 87.03% branches / 95.50% functions                | ABOVE GATE (85% / 85% / 85%) |
+| **Core TypeScript Modules** | 632 Layer-0 Pure Modules (`src/core/`) | 100% TYPE-SAFE |
+| **JavaScript / MJS Modules** | 103 Validated Modules (`bin/`, `scripts/`, `api/`) | 100% SYNTAX-CLEAN |
+| **Subresource Integrity (SRI)** | SHA-384 verified across CSS & JS bundles | VERIFIED |
+| **SSRF & Sandbox Defense** | Loopback/Link-local/AWS-GCP metadata shielding | ENFORCED |
+| **Monotonic Ledger WAL** | SQLite WAL + FTS5 + SHA-256 Block Chaining | VERIFIED |
+| **Big Tech Frontier Pillars** | 6/6 (SapFix, SLSA/SBOM, CAS, SMT, Chaos, BFT) | VERIFIED |
+| **CI Pipeline Stages** | 7 + 4.4-4.7 Deep Sub-Gates (SLO/Perf, Coverage, Mutation, Flaky) | GREEN |
+| **Freeze Pin (HEAD)** | `f275ff6f` | PINNED |
 
 ---
 

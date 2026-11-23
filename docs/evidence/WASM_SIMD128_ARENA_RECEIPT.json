@@ -1,17 +1,17 @@
 {
-  "timestampIso": "2026-11-21T00:24:41.497Z",
+  "timestampIso": "2026-11-23T17:39:40.601Z",
   "specRef": "SPEC-310",
   "changeRef": "CHANGE-172",
   "status": "SIMD128_VECTOR_ARENA_VERIFIED",
   "zigSimdCompileReport": {
     "language": "ZIG",
     "sourcePath": "templates/polyglot-wasm/simd_kernel.zig",
-    "compilerBackend": "ZIG_WASM32_SIMD128",
-    "wasmByteLength": 294,
+    "compilerBackend": "HERMETIC_W3C_SIMD128_SYNTHESIZER",
+    "wasmByteLength": 403,
     "wasmMagicValid": true,
     "simdOpcodesPresent": true,
-    "sha256Digest": "f133be731784289a239d5e0789c6f24ffc4ba5a5c89e25860865af5868999e1e",
-    "durationMs": 148
+    "sha256Digest": "302093c0197ad1e645c4390ab1c55ed417c4962159655257feb42aeb0445be3a",
+    "durationMs": 2
   },
   "rustSimdCompileReport": {
     "language": "RUST",
@@ -21,7 +21,7 @@
     "wasmMagicValid": true,
     "simdOpcodesPresent": true,
     "sha256Digest": "251e29994d70878f7dfc2b75731a7f865ebd10f6ee8f2d84f47b9343aa48836c",
-    "durationMs": 62
+    "durationMs": 20
   },
   "maxJoinVerified": true,
   "dotProductVerified": true,
@@ -30,11 +30,11 @@
   "benchmark": {
     "dimension": 128,
     "iterations": 250,
-    "simdTotalNs": 42400,
-    "simdNsPerOp": 1.33,
-    "scalarTotalNs": 69700,
-    "scalarNsPerOp": 2.18,
+    "simdTotalNs": 25235,
+    "simdNsPerOp": 0.79,
+    "scalarTotalNs": 834940,
+    "scalarNsPerOp": 26.09,
     "deterministicMatch": true
   },
-  "cryptographicSignature": "6dbe7f7e657fb67fb4869767e3dfa0f611d066636d9fec61e724e5269f06f27c"
+  "cryptographicSignature": "c39f77dc0aaea1e7c2c96cce60232eab7291a3a0564ffc867b05cb27e2a80cd2"
 }

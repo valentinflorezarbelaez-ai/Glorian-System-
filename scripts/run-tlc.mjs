@@ -25,8 +25,69 @@ const EVIDENCE_DIR = path.join(ROOT, "docs/evidence");
 const DEFAULT_RECEIPT_PATH = path.join(EVIDENCE_DIR, "TLC_RECEIPT.json");
 const TLC_CACHE_PATH = path.join(ROOT, ".eos", "tlc-cache.json");
 
+/**
+ * Closed epistemic taxonomy for TLC / formal evidence receipts (Law III).
+ * Simulation ≠ LIVE_TLC; VERIFIED is reserved for BUILDER≠VERIFIER / external IV&V.
+ */
+export const TLC_EVIDENCE_MODES = Object.freeze({
+  LOCAL_SIMULATION: "LOCAL_SIMULATION",
+  LIVE_TLC: "LIVE_TLC",
+  HOST_HISTORICAL: "HOST_HISTORICAL",
+  DEFERRED_TO_CI: "DEFERRED_TO_CI",
+});
+
+/**
+ * Absolute host / plumbing path patterns forbidden in versioned evidence.
+ * Targets user home / drive plumbing (C:\Users, /Users/, /home/, file:///C:),
+ * not https:// URLs or relative Windows separators like .githooks\pre-commit.
+ */
+const HOST_PATH_RE =
+  /(?:[A-Za-z]:[\\/]+(?:Users|Documents|home)[\\/]|file:\/\/\/[A-Za-z]:|(?:^|[\\"'\s(,[:{])\/(?:Users|home)\/)/i;
+
 /** Windows parallel suites can lock evidence receipts (EBUSY / UNKNOWN / errno -4094). */
 const TRANSIENT_LOCK_CODES = new Set(["UNKNOWN", "EBUSY", "EPERM", "EACCES"]);
+
+/**
+ * Redacts absolute host paths from evidence fields. In-repo absolute paths are
+ * converted to POSIX-relative first (even under /home or /Users checkouts);
+ * only paths outside the repo tree are redacted.
+ */
+export function sanitizeEvidencePath(rawPath, repoRoot = ROOT) {
+  if (rawPath == null) return "NOT_DETECTED_LOCALLY";
+  const value = String(rawPath).trim();
+  if (!value || value === "NOT_DETECTED_LOCALLY" || value === "REDACTED_HOST_PATH") {
+    return value || "NOT_DETECTED_LOCALLY";
+  }
+
+  const looksWindowsAbs = /^[A-Za-z]:[\\/]/.test(value);
+  if (!path.isAbsolute(value) && !looksWindowsAbs) {
+    return value.replace(/\\/g, "/");
+  }
+
+  // Convert in-repo absolute paths before any host-path redaction.
+  if (path.isAbsolute(value)) {
+    const resolvedRoot = path.resolve(repoRoot);
+    const resolvedValue = path.resolve(value);
+    if (resolvedValue === resolvedRoot) return ".";
+    const rel = path.relative(resolvedRoot, resolvedValue);
+    if (rel && !rel.startsWith("..") && !path.isAbsolute(rel)) {
+      return rel.split(path.sep).join("/");
+    }
+  }
+
+  // Outside the repo tree (or cross-OS absolute): redact plumbing.
+  // Historical jar paths outside the tree collapse to the canonical relative name.
+  if (/tla2tools\.jar$/i.test(value)) return "tools/tla2tools.jar";
+  if (HOST_PATH_RE.test(value) || looksWindowsAbs || path.isAbsolute(value)) {
+    return "REDACTED_HOST_PATH";
+  }
+  return value.replace(/\\/g, "/");
+}
+
+/** True when a string embeds absolute host / user plumbing paths. */
+export function containsAbsoluteHostPath(text) {
+  return HOST_PATH_RE.test(String(text ?? ""));
+}
 
 function writeFileWithRetry(targetPath, content) {
   for (let attempt = 1; attempt <= 5; attempt++) {
@@ -500,10 +561,14 @@ async function evaluateSingleModelAsync(specName, canExecuteLive, jarPath, forma
 }
 
 function resolveTlcStatus(canExecuteLive, allPassed) {
-  if (!canExecuteLive) return "DEFERRED_TO_CI_SETUP_JAVA";
-  return allPassed ? "VERIFIED" : "INVARIANT_BREACH_DETECTED";
+  if (!canExecuteLive) return TLC_EVIDENCE_MODES.DEFERRED_TO_CI;
+  return allPassed ? "LIVE_TLC_EXECUTED" : "INVARIANT_BREACH_DETECTED";
 }
 
+/**
+ * Assembles and optionally persists a TLC evidence receipt (Law III taxonomy).
+ * Does not emit VERIFIED (anti-self-cert). Live runs use LIVE_TLC executionMode.
+ */
 function assembleTlcReceipt({
   specs,
   modelResults,
@@ -515,7 +580,9 @@ function assembleTlcReceipt({
   writeReceipt = true,
 }) {
   const status = resolveTlcStatus(canExecuteLive, allPassed);
-  const executionMode = canExecuteLive ? "LIVE_LOCAL_TLC" : "DEFERRED_TO_CI_SETUP_JAVA";
+  const executionMode = canExecuteLive
+    ? TLC_EVIDENCE_MODES.LIVE_TLC
+    : TLC_EVIDENCE_MODES.DEFERRED_TO_CI;
   const cacheHits = modelResults.filter((m) => m?.cached === true).length;
   const receipt = {
     timestampIso: new Date().toISOString(),
@@ -523,12 +590,18 @@ function assembleTlcReceipt({
     engine: "Leslie Lamport TLC Model Checker (tla2tools.jar)",
     executionMode,
     status,
+    epistemicState: executionMode,
     allPassed: canExecuteLive ? allPassed : true,
     hasJavaRuntime: hasJava,
-    tlaJarPath: jarPath || "NOT_DETECTED_LOCALLY",
+    tlaJarPath: sanitizeEvidencePath(jarPath || "NOT_DETECTED_LOCALLY"),
+    // LIVE_TLC is host/CI optional (jar gitignored; gate does not install Java) — never merge-gate certified.
+    reproducibleByMergeGate: false,
     totalConfiguredSpecs: specs.length,
     cacheHits,
     models: modelResults,
+    note: canExecuteLive
+      ? "Live TLC executed with local Java + tla2tools.jar (host/CI optional). Not merge-gate certified: jar is gitignored and the Node gate does not install Java (docs/specs/spec.md FR-009)."
+      : "TLC deferred: Java and/or tla2tools.jar unavailable locally; exhaustive exploration belongs in CI (DEFERRED_TO_CI).",
   };
   if (writeReceipt) {
     fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
@@ -678,7 +751,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename
   console.log(`Elapsed Time   : ${elapsedMs} ms`);
   console.log(`Evidence Receipt: ${resolveDefaultTlcReceiptPath()}`);
 
-  if (receipt.status === "DEFERRED_TO_CI_SETUP_JAVA") {
+  if (receipt.status === TLC_EVIDENCE_MODES.DEFERRED_TO_CI) {
     console.log("ℹ️ Java 21 / tla2tools.jar will execute TLC exhaustive state exploration in CI.");
   }
 
