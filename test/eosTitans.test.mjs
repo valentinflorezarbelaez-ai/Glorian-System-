@@ -379,10 +379,7 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
 
     it("documents MCP Tier-0 + fail-closed /api/scorecard bridge (BDD-BS-006)", async () => {
       const catalog = fs.readFileSync(path.join(process.cwd(), "catalog-info.yaml"), "utf8");
-      const bridgeDoc = fs.readFileSync(
-        path.join(process.cwd(), "docs", "backstage", "mcp-api-bridge.md"),
-        "utf8",
-      );
+      const bridgeDoc = fs.readFileSync(path.join(process.cwd(), "docs", "backstage", "mcp-api-bridge.md"), "utf8");
       const pillarMap = JSON.parse(
         fs.readFileSync(path.join(process.cwd(), "docs", "backstage", "scorecard-pillar-map.json"), "utf8"),
       );
@@ -398,10 +395,7 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
       assert.ok(bridgeDoc.includes("eos_fleet_soundcheck"));
       assert.ok(bridgeDoc.includes("eos_audit_fleet"));
       assert.ok(bridgeDoc.includes("/api/scorecard"));
-      assert.ok(
-        bridgeDoc.includes("never `Access-Control-Allow-Origin: *`"),
-        "bridge doc must forbid wildcard CORS",
-      );
+      assert.ok(bridgeDoc.includes("never `Access-Control-Allow-Origin: *`"), "bridge doc must forbid wildcard CORS");
       assert.ok(bridgeDoc.includes("CONTROL_PLANE_ONLY"));
       assert.ok(
         bridgeDoc.includes("docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json"),
@@ -423,13 +417,15 @@ describe("EOS Sovereign Titans Matrix Suite (Spotify, SpaceX, NVIDIA, Google, xA
       assert.ok(readme.includes("mcp-api-bridge.md"));
       assert.ok(mkdocs.includes("backstage/mcp-api-bridge.md"));
 
-      assert.equal(scorecardSrc.includes("Access-Control-Allow-Origin\", \"*\""), false);
+      assert.equal(scorecardSrc.includes('Access-Control-Allow-Origin", "*"'), false);
       assert.equal(scorecardSrc.includes("Access-Control-Allow-Origin', '*'"), false);
       assert.ok(scorecardSrc.includes("EOS_ALLOWED_HOSTS") && scorecardSrc.includes("EOS_ALLOWED_ORIGINS"));
 
-      const { default: scorecardHandler, __testOnly_isAllowedHost, __testOnly_isAllowedOrigin } = await import(
-        "../api/scorecard.js"
-      );
+      const {
+        default: scorecardHandler,
+        __testOnly_isAllowedHost,
+        __testOnly_isAllowedOrigin,
+      } = await import("../api/scorecard.js");
 
       assert.equal(__testOnly_isAllowedHost("glorian-system.vercel.app"), true);
       assert.equal(__testOnly_isAllowedHost("evil.example"), false);
