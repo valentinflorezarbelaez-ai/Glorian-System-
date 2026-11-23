@@ -61,10 +61,7 @@ describe("SPEC-269 — Serverless Function Budget Gate & Deployment Truth Engine
     // Simulate exceeding Hobby hard limit (12) via override — pad to exactly 13 public entrypoints.
     const current = listActiveServerlessFunctions(root);
     const padCount = Math.max(0, 13 - current.length);
-    const excessFunctions = [
-      ...current,
-      ...Array.from({ length: padCount }, (_, i) => `api/temp_fictional_${i}.js`),
-    ];
+    const excessFunctions = [...current, ...Array.from({ length: padCount }, (_, i) => `api/temp_fictional_${i}.js`)];
 
     const evaluation = evaluateVercelFunctionBudget(root, {
       activeFunctionsOverride: excessFunctions,
