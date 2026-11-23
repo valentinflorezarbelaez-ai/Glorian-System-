@@ -54,7 +54,11 @@ test("BDD-BS-T-002: Skeleton scaffolds catalog-info, AGENTS, verify:strict, CI",
 
   const verify = fs.readFileSync(path.join(skeleton, "bin/verify.mjs"), "utf8");
   assert.match(verify, /dependencies/);
-  assert.match(verify, /--test/);
+  assert.match(verify, /\.test\.mjs/);
+  assert.match(verify, /readdirSync/, "must discover test/*.test.mjs (not hardcode one file)");
+
+  const template = fs.readFileSync(templateYaml, "utf8");
+  assert.match(template, /default:\s*javascript-layer0/, "default runtime must match JS skeleton");
 
   const ci = fs.readFileSync(path.join(skeleton, ".github/workflows/ci.yml"), "utf8");
   assert.match(ci, /npm run verify:strict/);

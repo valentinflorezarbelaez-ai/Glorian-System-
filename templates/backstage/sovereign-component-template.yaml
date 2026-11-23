@@ -55,8 +55,10 @@ spec:
         runtimeLanguage:
           title: Core Implementation Language
           type: string
-          default: typescript-layer0
+          # Skeleton ships plain Node ESM (index.mjs); keep default aligned.
+          default: javascript-layer0
           enum:
+            - javascript-layer0
             - typescript-layer0
             - go-systems
             - rust-audio-core

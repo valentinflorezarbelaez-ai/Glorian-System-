@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Thin satellite verify:strict — golden-path scaffold (outside Glorian Layer-0).
- * Fail-closed on non-empty package.json dependencies, then run node --test.
+ * Fail-closed on non-empty package.json dependencies, then run all test/*.test.mjs.
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
@@ -21,7 +21,26 @@ if (depKeys.length !== 0) {
 
 console.log("[PASS] dependencies: {}");
 
-const result = spawnSync(process.execPath, ["--test", "test/smoke.test.mjs"], {
+const testDir = path.join(root, "test");
+if (!fs.existsSync(testDir)) {
+  console.error("[verify:strict FAIL] missing test/ directory");
+  process.exit(1);
+}
+
+const testFiles = fs
+  .readdirSync(testDir)
+  .filter((name) => name.endsWith(".test.mjs"))
+  .map((name) => path.join("test", name))
+  .sort();
+
+if (testFiles.length === 0) {
+  console.error("[verify:strict FAIL] no test/*.test.mjs files found");
+  process.exit(1);
+}
+
+console.log(`[verify:strict] running ${testFiles.length} suite(s): ${testFiles.join(", ")}`);
+
+const result = spawnSync(process.execPath, ["--test", ...testFiles], {
   cwd: root,
   stdio: "inherit",
   env: process.env,

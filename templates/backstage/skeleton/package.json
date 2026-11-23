@@ -4,7 +4,7 @@
   "description": "${{ values.componentTitle }} - Sovereign Tier-0 Component",
   "type": "module",
   "scripts": {
-    "test": "node --test test/smoke.test.mjs",
+    "test": "node bin/verify.mjs",
     "verify:strict": "node bin/verify.mjs"
   },
   "engines": {
