@@ -16,6 +16,7 @@ Every AI agent interaction must uphold the following inviolable engineering stan
 ## 2. Hexagonal Layer-0 Purity (Law V)
 - Domain logic in `src/core/` must contain **ZERO external runtime dependencies** (`dependencies: {}`).
 - Rely strictly on native Node.js primitives and standard Web APIs.
+- Policy pointer: `docs/governance/DEPENDENCY_POLICY_L0.md` (formal SoT: `openspec/specs/SPEC-002-HEXAGONAL-L0.md`).
 
 ## 3. Absolute Security & Zero Plaintext Secrets (Law VI)
 - Never output, introduce, or commit API keys, private keys, bearer tokens, or plaintext credentials.
