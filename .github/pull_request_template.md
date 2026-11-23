@@ -53,6 +53,8 @@ protectedPaths:
   - .github/workflows/**
   - package.json
   - scripts/validate-gdd-goal.mjs
+  - src/core/eosGoalDrivenDevelopmentContract.ts
+  - src/core/eosGoalDrivenDevelopmentContract.types.ts
 doneWhen: check exits 0 and <metric> satisfies threshold
 ```
 

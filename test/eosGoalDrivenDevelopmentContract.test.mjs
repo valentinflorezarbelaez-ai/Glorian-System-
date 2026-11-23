@@ -10,6 +10,7 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
 import {
+  DEFAULT_PROTECTED_PATHS,
   assertMutationAllowed,
   assertWithinCaps,
   evaluateMetric,
@@ -260,4 +261,36 @@ test("BDD-GDD-15: shorthand string check applies denylist and length cap", () =>
   base.check = "npm run verify:strict";
   const ok = validateGoalDocument(JSON.stringify(base));
   assert.equal(ok.ok, true, summarizeValidation(ok));
+});
+
+test("BDD-GDD-16: angle-bracket placeholders rejected on check/doneWhen/metric even if id filled", () => {
+  const stub = {
+    id: "GOAL-REAL-FILLED",
+    title: "A real filled title",
+    metric: { name: "runtime_dependencies_count", unit: "count" },
+    threshold: { op: "eq", value: 0 },
+    check: { command: "<replace with a real measurable check command>", timeoutMs: 30000 },
+    caps: { maxAttempts: 3, maxCostUsd: 5 },
+    doneWhen: "check exits 0 and <metric> satisfies threshold",
+  };
+  const withCheck = validateGoalDocument(JSON.stringify(stub));
+  assert.equal(withCheck.ok, false);
+  assert.ok(withCheck.issues.some((i) => i.path === "check.command" && /placeholder/i.test(i.message)));
+  assert.ok(withCheck.issues.some((i) => i.path === "doneWhen" && /placeholder/i.test(i.message)));
+
+  stub.check = { command: "npm run verify:strict", timeoutMs: 30000 };
+  stub.doneWhen = "check exits 0 and runtime_dependencies_count eq 0";
+  stub.metric = { name: "<metric_name>", unit: "count" };
+  const withMetric = validateGoalDocument(JSON.stringify(stub));
+  assert.equal(withMetric.ok, false);
+  assert.ok(withMetric.issues.some((i) => i.path === "metric.name"));
+});
+
+test("BDD-GDD-17: DEFAULT_PROTECTED_PATHS includes GDD types companion", () => {
+  assert.ok(DEFAULT_PROTECTED_PATHS.includes("src/core/eosGoalDrivenDevelopmentContract.types.ts"));
+  const verdict = assertMutationAllowed(
+    ["src/core/eosGoalDrivenDevelopmentContract.types.ts"],
+    DEFAULT_PROTECTED_PATHS,
+  );
+  assert.equal(verdict.allowed, false);
 });

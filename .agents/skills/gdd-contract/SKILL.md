@@ -38,6 +38,8 @@ protectedPaths:
   - .github/workflows/**
   - package.json
   - scripts/validate-gdd-goal.mjs
+  - src/core/eosGoalDrivenDevelopmentContract.ts
+  - src/core/eosGoalDrivenDevelopmentContract.types.ts
 doneWhen: check exits 0 and runtime_dependencies_count eq 0
 ```
 

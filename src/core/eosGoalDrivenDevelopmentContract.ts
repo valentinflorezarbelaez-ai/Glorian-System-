@@ -26,6 +26,7 @@ import {
   MAX_TIMEOUT_MS,
   PLACEHOLDER_METRIC_RE,
   checkCommandSafetyMessage,
+  containsAngleBracketPlaceholder,
   extractGoalIdFromFence,
   fenceLooksLikeGoal,
   isNonEmptyString,
@@ -185,7 +186,10 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
     issues.push(
       issue("INVALID_FIELD", "title", `title must be a non-empty string <= ${MAX_TITLE_CHARS} chars.`),
     );
-  } else if (/^replace with/i.test(parsed.title.trim()) || /<.+>/.test(parsed.title)) {
+  } else if (
+    /^replace with/i.test(parsed.title.trim()) ||
+    containsAngleBracketPlaceholder(parsed.title)
+  ) {
     issues.push(
       issue("VAGUE_GOAL", "title", "title still contains a template placeholder; replace before Done."),
     );
@@ -199,7 +203,7 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
       issues.push(
         issue("INVALID_FIELD", "metric.name", "metric.name must be snake_case [a-z][a-z0-9_]{1,63}."),
       );
-    } else if (PLACEHOLDER_METRIC_RE.test(name.trim())) {
+    } else if (PLACEHOLDER_METRIC_RE.test(name.trim()) || containsAngleBracketPlaceholder(name)) {
       issues.push(
         issue("VAGUE_GOAL", "metric.name", `metric.name "${String(name).trim()}" is a template placeholder.`),
       );
@@ -212,12 +216,19 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
           "metric.unit must be a single non-empty unit string <= 32 chars (not a placeholder enum list).",
         ),
       );
+    } else if (containsAngleBracketPlaceholder(unit)) {
+      issues.push(
+        issue("VAGUE_GOAL", "metric.unit", "metric.unit still contains a template placeholder; replace before Done."),
+      );
     }
     if (
       issues.every((x) => !x.path.startsWith("metric")) &&
       isNonEmptyString(name) &&
       METRIC_NAME_RE.test(name.trim()) &&
-      !PLACEHOLDER_METRIC_RE.test(name.trim())
+      !PLACEHOLDER_METRIC_RE.test(name.trim()) &&
+      !containsAngleBracketPlaceholder(name) &&
+      isNonEmptyString(unit) &&
+      !containsAngleBracketPlaceholder(unit)
     ) {
       metric = { name: String(name).trim(), unit: String(unit).trim() };
     }
@@ -360,6 +371,14 @@ export function validateGoalDocument(raw: string): GoalValidationResult {
         "INVALID_FIELD",
         "doneWhen",
         `doneWhen must be a non-empty measurable statement <= ${MAX_DONE_WHEN_CHARS} chars.`,
+      ),
+    );
+  } else if (containsAngleBracketPlaceholder(parsed.doneWhen)) {
+    issues.push(
+      issue(
+        "VAGUE_GOAL",
+        "doneWhen",
+        "doneWhen still contains a template placeholder (angle brackets); replace before Done.",
       ),
     );
   }

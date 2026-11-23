@@ -17,4 +17,6 @@ protectedPaths:
   - .github/workflows/**
   - package.json
   - scripts/validate-gdd-goal.mjs
+  - src/core/eosGoalDrivenDevelopmentContract.ts
+  - src/core/eosGoalDrivenDevelopmentContract.types.ts
 doneWhen: package.json verify:strict maps to node bin/eos.mjs verify

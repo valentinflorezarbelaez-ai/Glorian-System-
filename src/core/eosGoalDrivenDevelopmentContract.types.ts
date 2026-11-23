@@ -102,7 +102,11 @@ export const DEFAULT_PROTECTED_PATHS: readonly string[] = Object.freeze([
   "package.json",
   "scripts/validate-gdd-goal.mjs",
   "src/core/eosGoalDrivenDevelopmentContract.ts",
+  "src/core/eosGoalDrivenDevelopmentContract.types.ts",
 ]);
+
+/** Unfilled template tokens like `<metric>` / `<replace ...>`. */
+export const ANGLE_BRACKET_PLACEHOLDER_RE = /<[^<>]+>/;
 
 export const GOAL_ID_RE = /^GOAL-[A-Z0-9][A-Z0-9_-]{1,63}$/;
 /** Template / sample IDs that must never validate as Done (fail-closed). */
@@ -126,6 +130,10 @@ export function isPlaceholderGoalId(id: string): boolean {
   return PLACEHOLDER_GOAL_ID_RE.test(id.trim());
 }
 
+export function containsAngleBracketPlaceholder(value: string): boolean {
+  return ANGLE_BRACKET_PLACEHOLDER_RE.test(value);
+}
+
 /** Returns null when command is safe; otherwise an INVALID_FIELD message. */
 export function checkCommandSafetyMessage(command: string): string | null {
   const trimmed = command.trim();
@@ -134,6 +142,9 @@ export function checkCommandSafetyMessage(command: string): string | null {
   }
   if (trimmed.length > MAX_COMMAND_CHARS) {
     return `check.command must be a non-empty string <= ${MAX_COMMAND_CHARS} chars.`;
+  }
+  if (containsAngleBracketPlaceholder(trimmed)) {
+    return "check.command still contains a template placeholder (angle brackets); replace before Done.";
   }
   if (DESTRUCTIVE_CHECK_RE.test(trimmed)) {
     return "check.command contains a blocked destructive pattern.";
