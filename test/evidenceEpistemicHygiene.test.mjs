@@ -5,6 +5,7 @@
  */
 
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -21,6 +22,20 @@ import { syncGentleAiStack } from "../scripts/sync-gentle-ai-stack.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const evidenceDir = path.join(root, "docs/evidence");
+
+/** Versioned tip receipts only — skip gitignored machine-local outputs (e.g. TOOLCHAIN_RECEIPT). */
+function listTrackedEvidenceJson() {
+  const out = execFileSync("git", ["ls-files", "docs/evidence/*.json"], {
+    cwd: root,
+    encoding: "utf8",
+  });
+  return out
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((rel) => path.basename(rel))
+    .filter((name) => name.endsWith(".json") && !name.startsWith(".tlc-receipt-"));
+}
 
 const ALLOWED_TLC_TIP_MODES = new Set([
   TLC_EVIDENCE_MODES.LOCAL_SIMULATION,
@@ -51,11 +66,10 @@ test("sanitizeEvidencePath redacts absolute host paths to repo-relative or REDAC
 });
 
 test("docs/evidence tip JSON has zero absolute host / user plumbing paths", () => {
-  const files = fs.readdirSync(evidenceDir).filter((f) => f.endsWith(".json"));
-  assert.ok(files.length > 0, "expected versioned evidence JSON files");
+  const files = listTrackedEvidenceJson();
+  assert.ok(files.length > 0, "expected versioned (git-tracked) evidence JSON files");
   const offenders = [];
   for (const file of files) {
-    if (file.startsWith(".tlc-receipt-")) continue;
     const text = fs.readFileSync(path.join(evidenceDir, file), "utf8");
     if (containsAbsoluteHostPath(text)) offenders.push(file);
   }
