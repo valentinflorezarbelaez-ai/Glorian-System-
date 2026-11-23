@@ -1,0 +1,357 @@
+# Fleet Component stubs for Backstage catalog ingestion (P1).
+# Source of truth for IDs / URLs: docs/projects/registry.json
+# metadata.name MUST equal registry project id.
+# Control-plane discovery entity remains root catalog-info.yaml (eos-system-control-plane).
+# These stubs are hosted on the control plane until sibling repos land their own catalog-info.yaml.
+# Law VI: public annotations only — no secrets.
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: aberamentho
+  title: Aberamentho Pleroma Music
+  description: Registry fleet project (sacred-acoustic-app). Soundcheck scored via SPEC-299; catalog stub until sibling catalog-info.yaml exists.
+  annotations:
+    github.com/project-slug: valentinflorezarbelaez-ai/Aberamentho-s-Pleroma-music
+    vercel.com/project-url: https://aberamentosprelomamusic.vercel.app
+    eos.glorian/registry-id: aberamentho
+    eos.glorian/local-path-env: EOS_FLEET_ABERAMENTHO_PATH
+    eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
+    eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+  tags:
+    - fleet
+    - soundcheck
+    - satellite
+  links:
+    - url: https://aberamentosprelomamusic.vercel.app
+      title: Production
+      icon: dashboard
+    - url: https://github.com/valentinflorezarbelaez-ai/Aberamentho-s-Pleroma-music
+      title: Source Repository
+      icon: github
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/projects/registry.json
+      title: Fleet Registry (SoT)
+      icon: catalog
+spec:
+  type: website
+  lifecycle: production
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: atp-strength
+  title: ATP Strength & Hypertrophy Platform
+  description: Registry fleet project (athletic-performance-monolith). Soundcheck scored via SPEC-299; catalog stub until sibling catalog-info.yaml exists.
+  annotations:
+    github.com/project-slug: valentinflorezarbelaez-ai/ATP-STRENGTH
+    vercel.com/project-url: https://atp-strength.vercel.app
+    eos.glorian/registry-id: atp-strength
+    eos.glorian/local-path-env: EOS_FLEET_ATP_STRENGTH_PATH
+    eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
+    eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+  tags:
+    - fleet
+    - soundcheck
+    - satellite
+  links:
+    - url: https://atp-strength.vercel.app
+      title: Production
+      icon: dashboard
+    - url: https://github.com/valentinflorezarbelaez-ai/ATP-STRENGTH
+      title: Source Repository
+      icon: github
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/projects/registry.json
+      title: Fleet Registry (SoT)
+      icon: catalog
+spec:
+  type: website
+  lifecycle: production
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: biblioteca-gnostica-1
+  title: Biblioteca Gnóstica — Preservación Digital de Textos Sagrados
+  description: Registry fleet project (cultural-archive-platform). Soundcheck scored via SPEC-299; catalog stub until sibling catalog-info.yaml exists.
+  annotations:
+    github.com/project-slug: valentinflorezarbelaez-ai/Biblioteca-gnostica
+    vercel.com/project-url: https://biblioteca-gnostica.vercel.app
+    eos.glorian/registry-id: biblioteca-gnostica-1
+    eos.glorian/local-path-env: EOS_FLEET_BIBLIOTECA_GNOSTICA_1_PATH
+    eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
+    eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+  tags:
+    - fleet
+    - soundcheck
+    - satellite
+  links:
+    - url: https://biblioteca-gnostica.vercel.app
+      title: Production
+      icon: dashboard
+    - url: https://github.com/valentinflorezarbelaez-ai/Biblioteca-gnostica
+      title: Source Repository
+      icon: github
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/projects/registry.json
+      title: Fleet Registry (SoT)
+      icon: catalog
+spec:
+  type: website
+  lifecycle: production
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: control-de-asistencia-abopack
+  title: Avo Pack S.A.S. — Central de Asistencia y Liquidación Laboral
+  description: Registry fleet project (industrial-operations-suite). Soundcheck scored via SPEC-299; catalog stub until sibling catalog-info.yaml exists.
+  annotations:
+    github.com/project-slug: valentinflorezarbelaez-ai/Avo-pak
+    vercel.com/project-url: https://avo-pack.vercel.app
+    eos.glorian/registry-id: control-de-asistencia-abopack
+    eos.glorian/local-path-env: EOS_FLEET_CONTROL_DE_ASISTENCIA_ABOPACK_PATH
+    eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
+    eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+  tags:
+    - fleet
+    - soundcheck
+    - satellite
+  links:
+    - url: https://avo-pack.vercel.app
+      title: Production
+      icon: dashboard
+    - url: https://github.com/valentinflorezarbelaez-ai/Avo-pak
+      title: Source Repository
+      icon: github
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/projects/registry.json
+      title: Fleet Registry (SoT)
+      icon: catalog
+spec:
+  type: website
+  lifecycle: production
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: crud-slack
+  title: TaskFlow AI — Omnichannel Request-to-Task CRUD & Triage
+  description: Registry fleet project (ai-productivity-workspace). Soundcheck scored via SPEC-299; catalog stub until sibling catalog-info.yaml exists.
+  annotations:
+    github.com/project-slug: valentinflorezarbelaez-ai/Crud-slack
+    vercel.com/project-url: https://crud-slack.vercel.app
+    eos.glorian/registry-id: crud-slack
+    eos.glorian/local-path-env: EOS_FLEET_CRUD_SLACK_PATH
+    eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
+    eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+  tags:
+    - fleet
+    - soundcheck
+    - satellite
+  links:
+    - url: https://crud-slack.vercel.app
+      title: Production
+      icon: dashboard
+    - url: https://github.com/valentinflorezarbelaez-ai/Crud-slack
+      title: Source Repository
+      icon: github
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/projects/registry.json
+      title: Fleet Registry (SoT)
+      icon: catalog
+spec:
+  type: website
+  lifecycle: production
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: donaciones
+  title: Portal de Donaciones — Sede AGEAC & Tercer Factor
+  description: Registry fleet project (general-application). Soundcheck scored via SPEC-299; catalog stub until sibling catalog-info.yaml exists.
+  annotations:
+    github.com/project-slug: valentinflorezarbelaez-ai/Donaciones
+    vercel.com/project-url: https://donaciones-drab.vercel.app
+    eos.glorian/registry-id: donaciones
+    eos.glorian/local-path-env: EOS_FLEET_DONACIONES_PATH
+    eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
+    eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+  tags:
+    - fleet
+    - soundcheck
+    - satellite
+  links:
+    - url: https://donaciones-drab.vercel.app
+      title: Production
+      icon: dashboard
+    - url: https://github.com/valentinflorezarbelaez-ai/Donaciones
+      title: Source Repository
+      icon: github
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/projects/registry.json
+      title: Fleet Registry (SoT)
+      icon: catalog
+spec:
+  type: website
+  lifecycle: production
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: eos-system
+  title: Glorian (Control Plane Core)
+  description: Registry fleet project (control-plane-monolith). Soundcheck scored via SPEC-299; catalog stub until sibling catalog-info.yaml exists.
+  annotations:
+    github.com/project-slug: valentinflorezarbelaez-ai/Glorian-System-
+    vercel.com/project-url: https://glorian-system.vercel.app
+    eos.glorian/registry-id: eos-system
+    eos.glorian/local-path-env: EOS_FLEET_EOS_SYSTEM_PATH
+    eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
+    eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/control-plane-component: eos-system-control-plane
+  tags:
+    - fleet
+    - soundcheck
+    - control-plane
+  links:
+    - url: https://glorian-system.vercel.app
+      title: Production
+      icon: dashboard
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-
+      title: Source Repository
+      icon: github
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/projects/registry.json
+      title: Fleet Registry (SoT)
+      icon: catalog
+spec:
+  type: service
+  lifecycle: production
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: performance-talent-group
+  title: PTG — Performance Talent Group
+  description: Registry fleet project (enterprise-operations). Soundcheck scored via SPEC-299; catalog stub until sibling catalog-info.yaml exists.
+  annotations:
+    github.com/project-slug: valentinflorezarbelaez-ai/Performance-Talent-Group
+    vercel.com/project-url: https://ptg-performance-talent-group.vercel.app
+    eos.glorian/registry-id: performance-talent-group
+    eos.glorian/local-path-env: EOS_FLEET_PTG_PATH
+    eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
+    eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+  tags:
+    - fleet
+    - soundcheck
+    - satellite
+  links:
+    - url: https://ptg-performance-talent-group.vercel.app
+      title: Production
+      icon: dashboard
+    - url: https://github.com/valentinflorezarbelaez-ai/Performance-Talent-Group
+      title: Source Repository
+      icon: github
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/projects/registry.json
+      title: Fleet Registry (SoT)
+      icon: catalog
+spec:
+  type: website
+  lifecycle: production
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: portafolio
+  title: Portafolio Oficial — Valentín Flórez
+  description: Registry fleet project (executive-showcase). Soundcheck scored via SPEC-299; catalog stub until sibling catalog-info.yaml exists.
+  annotations:
+    github.com/project-slug: valentinflorezarbelaez-ai/portafolio
+    vercel.com/project-url: https://portafolio-valentin.vercel.app
+    eos.glorian/registry-id: portafolio
+    eos.glorian/local-path-env: EOS_FLEET_PORTAFOLIO_PATH
+    eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
+    eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+  tags:
+    - fleet
+    - soundcheck
+    - satellite
+  links:
+    - url: https://portafolio-valentin.vercel.app
+      title: Production
+      icon: dashboard
+    - url: https://github.com/valentinflorezarbelaez-ai/portafolio
+      title: Source Repository
+      icon: github
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/projects/registry.json
+      title: Fleet Registry (SoT)
+      icon: catalog
+spec:
+  type: website
+  lifecycle: production
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: trading-family-office
+  title: Trading Family Office — Aladdin & Vanguard Governance Dashboard
+  description: Registry fleet project (executive-family-office-app). Soundcheck scored via SPEC-299; catalog stub until sibling catalog-info.yaml exists.
+  annotations:
+    github.com/project-slug: valentinflorezarbelaez-ai/TRADING-FAMILY-OFFICE-
+    vercel.com/project-url: https://trading-family-office.vercel.app
+    eos.glorian/registry-id: trading-family-office
+    eos.glorian/local-path-env: EOS_FLEET_TRADING_FAMILY_OFFICE_PATH
+    eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
+    eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+  tags:
+    - fleet
+    - soundcheck
+    - satellite
+  links:
+    - url: https://trading-family-office.vercel.app
+      title: Production
+      icon: dashboard
+    - url: https://github.com/valentinflorezarbelaez-ai/TRADING-FAMILY-OFFICE-
+      title: Source Repository
+      icon: github
+    - url: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/projects/registry.json
+      title: Fleet Registry (SoT)
+      icon: catalog
+spec:
+  type: website
+  lifecycle: production
+  owner: user:valentin-florez-arbelaez
+  system: eos-sovereign-mesh

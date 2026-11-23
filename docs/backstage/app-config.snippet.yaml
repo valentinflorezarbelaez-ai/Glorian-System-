@@ -1,0 +1,50 @@
+# Backstage app-config snippet (P1) — NOT a runnable Backstage host.
+# Paste into a future portal app-config.yaml / app-config.production.yaml.
+# Law V: keep @backstage/* outside src/core and root package.json dependencies.
+# Law VI: public GitHub / Vercel URLs only — never embed tokens or PATs.
+
+catalog:
+  rules:
+    - allow:
+        - Component
+        - System
+        - API
+        - Resource
+        - Location
+        - Template
+  locations:
+    # Control plane root catalog (Component + System + Location)
+    - type: url
+      target: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/catalog-info.yaml
+      rules:
+        - allow: [Component, System, Location, API]
+
+    # Fleet Component stubs hosted on the control plane until sibling catalogs land
+    - type: url
+      target: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/fleet-components.yaml
+      rules:
+        - allow: [Component]
+
+    # Soundcheck scorecard Resources (presentation mapping; EOS remains sole scorer)
+    - type: url
+      target: https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/docs/backstage/soundcheck-scorecards.yaml
+      rules:
+        - allow: [Resource]
+
+# Optional Scorecards plugin config — values MUST be read from EOS receipts, not recomputed.
+# scorecards:
+#   eosSoundcheck:
+#     receiptUrl: https://raw.githubusercontent.com/valentinflorezarbelaez-ai/Glorian-System-/main/docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
+#     pillarMapUrl: https://raw.githubusercontent.com/valentinflorezarbelaez-ai/Glorian-System-/main/docs/backstage/scorecard-pillar-map.json
+#     fleetPostureDefault: CONTROL_PLANE_ONLY
+
+# Future sibling catalog-info.yaml URLs (enable after per-repo BS-PR-5..N land):
+#   - https://github.com/valentinflorezarbelaez-ai/Aberamentho-s-Pleroma-music/blob/main/catalog-info.yaml
+#   - https://github.com/valentinflorezarbelaez-ai/ATP-STRENGTH/blob/main/catalog-info.yaml
+#   - https://github.com/valentinflorezarbelaez-ai/Biblioteca-gnostica/blob/main/catalog-info.yaml
+#   - https://github.com/valentinflorezarbelaez-ai/Avo-pak/blob/main/catalog-info.yaml
+#   - https://github.com/valentinflorezarbelaez-ai/Crud-slack/blob/main/catalog-info.yaml
+#   - https://github.com/valentinflorezarbelaez-ai/Donaciones/blob/main/catalog-info.yaml
+#   - https://github.com/valentinflorezarbelaez-ai/Performance-Talent-Group/blob/main/catalog-info.yaml
+#   - https://github.com/valentinflorezarbelaez-ai/portafolio/blob/main/catalog-info.yaml
+#   - https://github.com/valentinflorezarbelaez-ai/TRADING-FAMILY-OFFICE-/blob/main/catalog-info.yaml

@@ -9,6 +9,11 @@ metadata:
     backstage.io/techdocs-ref: dir:.
     backstage.io/managed-by-location: url:https://github.com/valentinflorezarbelaez-ai/Glorian-System-/blob/main/catalog-info.yaml
     vercel.com/project-url: https://glorian-system.vercel.app
+    eos.glorian/registry-id: eos-system
+    eos.glorian/soundcheck-engine: src/core/eosBackstageSoundcheckScorecard.ts
+    eos.glorian/soundcheck-receipt: docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json
+    eos.glorian/fleet-posture: CONTROL_PLANE_ONLY
+    eos.glorian/pillar-map: docs/backstage/scorecard-pillar-map.json
   tags:
     - control-plane
     - layer-0-sovereign
@@ -78,3 +83,25 @@ spec:
   type: file
   targets:
     - ./templates/backstage/sovereign-component-template.yaml
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: glorian-fleet-component-stubs
+  title: Glorian Fleet Component Stubs (P1)
+  description: Registry-aligned Component stubs for Backstage ingestion until sibling catalogs exist.
+spec:
+  type: file
+  targets:
+    - ./docs/backstage/fleet-components.yaml
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: glorian-soundcheck-scorecards
+  title: Glorian Soundcheck Scorecard Resources (P1)
+  description: Backstage Resource entities mapping EOS Soundcheck pillars and fleet matrix receipt.
+spec:
+  type: file
+  targets:
+    - ./docs/backstage/soundcheck-scorecards.yaml

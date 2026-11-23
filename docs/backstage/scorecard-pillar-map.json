@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0.0",
+  "specRef": "SPEC-299",
+  "changeRef": "CHANGE-161",
+  "title": "EOS Soundcheck → Backstage Scorecard pillar map",
+  "singleWriter": "src/core/eosBackstageSoundcheckScorecard.ts",
+  "portalMustNotRescore": true,
+  "receiptPath": "docs/evidence/SOUNDCHECK_SCORECARD_RECEIPT.json",
+  "receiptShape": {
+    "requiredFields": [
+      "timestampIso",
+      "specRef",
+      "totalRepositoriesScored",
+      "averageFleetScore",
+      "platinumTiersCount",
+      "goldTiersCount",
+      "silverTiersCount",
+      "bronzeTiersCount",
+      "sha256Signature"
+    ]
+  },
+  "fleetPosture": {
+    "defaultWhenPathsUnset": "CONTROL_PLANE_ONLY",
+    "verifiedWhenDogfoodGreen": "FLEET_VERIFIED",
+    "rule": "IF any EOS_FLEET_*_PATH is unset, THEN advertise CONTROL_PLANE_ONLY and SHALL NOT claim live fleet Soundcheck success. FLEET_VERIFIED requires mounted paths + npm run fleet:audit exit 0.",
+    "neverInflateLevel3": true
+  },
+  "pillars": [
+    {
+      "pillarId": "LAW_V_CONFORMANCE",
+      "name": "Law V Runtime Dependency Purity",
+      "weight": 0.25,
+      "backstageCheckId": "eos.soundcheck.law-v-conformance"
+    },
+    {
+      "pillarId": "TEST_COVERAGE",
+      "name": "Automated Test & PTS Coverage",
+      "weight": 0.25,
+      "backstageCheckId": "eos.soundcheck.test-coverage"
+    },
+    {
+      "pillarId": "SECURITY_POSTURE",
+      "name": "Zero Plain Secrets & Static Analysis",
+      "weight": 0.2,
+      "backstageCheckId": "eos.soundcheck.security-posture"
+    },
+    {
+      "pillarId": "SPECIFICATION_DRIFT",
+      "name": "OpenSpec Architectural Conformance",
+      "weight": 0.15,
+      "backstageCheckId": "eos.soundcheck.specification-drift"
+    },
+    {
+      "pillarId": "DORA_VELOCITY",
+      "name": "DORA Engineering Velocity",
+      "weight": 0.15,
+      "backstageCheckId": "eos.soundcheck.dora-velocity"
+    }
+  ],
+  "certificationTiers": [
+    "LEVEL_1_BRONZE",
+    "LEVEL_2_SILVER",
+    "LEVEL_3_GOLD",
+    "LEVEL_4_PLATINUM"
+  ],
+  "cli": "node bin/eos.mjs toolchain:soundcheck:audit",
+  "npmScripts": ["fleet:scorecards", "fleet:audit"]
+}
