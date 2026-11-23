@@ -180,6 +180,16 @@ describe("SPEC-270: Formal TLC Model Checking, Mutation Ratchet & Consumer Gover
     const after = fs.readFileSync(committedPath, "utf8");
     assert.equal(after, before, "check-only must not rewrite MODULE_CONSUMER_GRAPH.json");
     assert.equal(checked.unconsumedModules, 0);
+
+    // Source-order contract: moratorium throw precedes drift checks (Bugbot #664).
+    const source = fs.readFileSync(path.join(ROOT, "scripts/verify-module-consumers.mjs"), "utf8");
+    const moratoriumIdx = source.indexOf("Architectural moratorium violated");
+    const driftIdx = source.indexOf("Consumer graph drift:");
+    assert.ok(moratoriumIdx > 0 && driftIdx > 0, "both error messages must exist");
+    assert.ok(
+      moratoriumIdx < driftIdx,
+      "failOnUnconsumed moratorium must be evaluated before check-only receipt drift",
+    );
   });
 });
 

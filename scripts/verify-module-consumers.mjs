@@ -147,6 +147,18 @@ export function verifyModuleConsumers(options = {}) {
   const checkOnly = options.checkOnly === true;
   const graph = buildConsumerGraph(root);
 
+  // Moratorium first: never let receipt-drift messaging shadow unconsumedFiles.
+  if (failOnUnconsumed && graph.unconsumedModules > 0) {
+    const orphans = Object.values(graph.modules)
+      .filter((m) => !m.isConsumed)
+      .map((m) => m.file);
+    const err = new Error(
+      `Architectural moratorium violated: ${graph.unconsumedModules} unconsumed Layer-0 module(s). Wire a consumer or archive before merge.`,
+    );
+    err.unconsumedFiles = orphans;
+    throw err;
+  }
+
   if (checkOnly) {
     if (!fs.existsSync(receiptPath)) {
       const err = new Error(
@@ -186,17 +198,6 @@ export function verifyModuleConsumers(options = {}) {
   } else {
     fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
     fs.writeFileSync(receiptPath, JSON.stringify(graph, null, 2), "utf8");
-  }
-
-  if (failOnUnconsumed && graph.unconsumedModules > 0) {
-    const orphans = Object.values(graph.modules)
-      .filter((m) => !m.isConsumed)
-      .map((m) => m.file);
-    const err = new Error(
-      `Architectural moratorium violated: ${graph.unconsumedModules} unconsumed Layer-0 module(s). Wire a consumer or archive before merge.`,
-    );
-    err.unconsumedFiles = orphans;
-    throw err;
   }
 
   return graph;
