@@ -22,7 +22,12 @@
 ## 3. Canonical merge gate
 - **Public entrypoint:** `npm run verify:strict` (declared in `package.json`; aliases `node bin/eos.mjs verify`, the 7-stage SecDevOps gate). Prefer this over ad-hoc stage scripts for release and pre-push checks.
 
-## 4. Review Checklist (Suggestions Only)
+## 4. MCP Tier-0 token economy (default)
+- Default MCP profile is Tier-0 **`core` (~46 tools)**. Do not load the full catalog on routine agent turns.
+- Power users: `EOS_MCP_PROFILE=full`. Ultra-tight loops: `essential` (18).
+- Prefer **`gh` CLI** for GitHub reads; see `docs/governance/MCP_TIER0_TOKEN_ECONOMY.md`.
+
+## 5. Review Checklist (Suggestions Only)
 1. Link planned changes to project requirements.
 2. Run `npm run verify:strict` (or matching formatting/tests/security checks) before release.
 3. Define audio and financial correctness criteria with the relevant product owners.

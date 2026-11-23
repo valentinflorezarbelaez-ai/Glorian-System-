@@ -131,7 +131,7 @@ test("BDD-328: Cross-Fleet Merkle Digest & Soundcheck Elevation", () => {
 });
 
 test("BDD-329: MCP Tool Dispatch for Cross-Fleet Neural Synapse", async () => {
-  const mcpServer = new EosMcpServer();
+  const mcpServer = new EosMcpServer(undefined, "full");
 
   // Test 1: eos_synapse_propagate_golden_path
   const propagateRes = await mcpServer.handleRequest({

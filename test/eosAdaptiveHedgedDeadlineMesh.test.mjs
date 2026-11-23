@@ -128,7 +128,7 @@ describe("EOS SPEC-111: Distributed Adaptive Hedged Requests & Deadline Mesh Sui
   });
 
   it("MCP Integration: Dispatches synthetic probe and retrieves metrics via JSON-RPC", async () => {
-    const server = new EosMcpServer();
+    const server = new EosMcpServer(undefined, "full");
     const endpointId = "fleet-edge-proxy";
 
     // 1. Record sample latency

@@ -47,7 +47,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 
 describe("MCP PHASE HANDLERS — DEEP BRANCH ELEVATION SUITE", () => {
-  const server = new EosMcpServer(root);
+  const server = new EosMcpServer(root, "full");
 
   const sharedContext = {
     projectRoot: root,

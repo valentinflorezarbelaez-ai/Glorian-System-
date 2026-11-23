@@ -183,8 +183,11 @@ function validatePublicTool(toolName, rawArguments) {
 
 async function getServer() {
   if (!serverPromise) {
+    // Public HTTP surface is already bounded by EXPOSED_TOOLS (incl. eos_spotify_shuffle,
+    // which is outside Tier-0 core). Use "full" underneath so allowlisted tools remain
+    // callable — mirrors EosMcpStreamServer. Stdio Tier-0 default is unchanged.
     serverPromise = import("../src/mcp/eosMcpServer.ts")
-      .then(({ EosMcpServer }) => new EosMcpServer(process.cwd()))
+      .then(({ EosMcpServer }) => new EosMcpServer(process.cwd(), "full"))
       .catch((error) => {
         serverPromise = undefined;
         throw error;

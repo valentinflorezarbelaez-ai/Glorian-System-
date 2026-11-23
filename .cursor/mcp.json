@@ -2,7 +2,10 @@
   "mcpServers": {
     "eos-system": {
       "command": "node",
-      "args": ["c:\\Users\\valen\\Eos-System\\src\\mcp\\eosMcpServer.ts"]
+      "args": ["src/mcp/eosMcpServer.ts"],
+      "env": {
+        "EOS_MCP_PROFILE": "core"
+      }
     },
     "engram": {
       "command": "C:\\Users\\valen\\AppData\\Local\\engram\\bin\\engram.exe",

@@ -100,7 +100,7 @@ describe("EOS Sovereign Autonomous Healer & FDIR Suite", () => {
 
   describe("Suite 3: MCP Tool Integration", () => {
     it("advertises eos_autonomous_heal in tools/list", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 401,
@@ -113,7 +113,7 @@ describe("EOS Sovereign Autonomous Healer & FDIR Suite", () => {
     });
 
     it("dispatches eos_autonomous_heal via MCP in dry-run mode", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 402,

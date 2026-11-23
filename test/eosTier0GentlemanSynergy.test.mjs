@@ -55,7 +55,12 @@ test("BDD-128: MCP Path Confinement resolves relative to projectRoot when CWD is
 
   const proc = spawnSync(process.execPath, [path.join(projectRoot, "src", "mcp", "eosMcpServer.ts")], {
     cwd: os.tmpdir(),
-    env: { ...process.env, EOS_PROJECT_ROOT: projectRoot },
+    env: {
+      ...process.env,
+      EOS_PROJECT_ROOT: projectRoot,
+      // Path-confinement dogfood needs non-Tier-0 tools (eos_refactor_execute).
+      EOS_MCP_PROFILE: "full",
+    },
     input: requests,
     encoding: "utf8",
     timeout: 60_000, // generous: validates path confinement correctness, not subprocess speed
@@ -125,7 +130,7 @@ test("BDD-129: Modular MCP 2025-03-26 ToolAnnotations enrich 100% of tools and s
   const coreRes = coreServer.handleRequest({ jsonrpc: "2.0", id: 2, method: "tools/list" });
   const coreTools = coreRes?.result?.tools || [];
   assert.equal(coreTools.length, CORE_TIER0_TOOL_NAMES.size);
-  assert.ok(coreTools.length <= 50, `Expected <= 50 curated core tools, got ${coreTools.length}`);
+  assert.ok(coreTools.length <= 46, `Expected <= 46 curated Tier-0 core tools, got ${coreTools.length}`);
   const coreNames = new Set(coreTools.map((t) => t.name));
   assert.ok(coreNames.has("eos_antigravity_direct"));
   assert.ok(coreNames.has("eos_gentleman_audit"));
@@ -316,7 +321,7 @@ test("BDD-132: EosGentlemanStackBridge certifies 100/100 SOVEREIGN_GENTLEMAN_APE
     assert.equal(report.sha256Receipt.length, 64);
 
     // MCP dispatch verification against hermetic geminiConfigDir
-    const server = new EosMcpServer(projectRoot);
+    const server = new EosMcpServer(projectRoot, "full");
     const mcpRes = server.handleRequest({
       jsonrpc: "2.0",
       id: 99,

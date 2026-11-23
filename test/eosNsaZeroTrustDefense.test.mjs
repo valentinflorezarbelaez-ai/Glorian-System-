@@ -212,7 +212,7 @@ describe("SPEC-034: NSA Defense-in-Depth & CNSA 2.0 Verification", () => {
   // PILLAR 5: MCP Tool Dispatching Integration
   // =========================================================================
   describe("MCP Tools: eos_nsa_encrypt, eos_nsa_zero_trust_check, eos_nsa_audit_logs", () => {
-    const server = new EosMcpServer();
+    const server = new EosMcpServer(undefined, "full");
 
     test("dispatches eos_nsa_encrypt via MCP", () => {
       const res = server.handleRequest({

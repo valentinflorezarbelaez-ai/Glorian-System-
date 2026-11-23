@@ -173,7 +173,7 @@ describe("SPEC-039: Universal Product Foundry Engine Verification", () => {
 
   describe("BDD-108: Multi-Channel MCP & CLI Tool Dispatch", () => {
     it("dispatches eos_product_foundry_create via MCP server", () => {
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 1,
@@ -200,7 +200,7 @@ describe("SPEC-039: Universal Product Foundry Engine Verification", () => {
       const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "eos-mcp-foundry-"));
       try {
         fs.writeFileSync(path.join(tmpRoot, "package.json"), JSON.stringify({ name: "tmp-foundry", version: "1.0.0" }));
-        const server = new EosMcpServer(tmpRoot);
+        const server = new EosMcpServer(tmpRoot, "full");
         server.configureIamPolicies([
           {
             id: "allow-foundry-create",
@@ -248,7 +248,7 @@ describe("SPEC-039: Universal Product Foundry Engine Verification", () => {
     });
 
     it("dispatches eos_product_foundry_validate via MCP server", () => {
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 2,

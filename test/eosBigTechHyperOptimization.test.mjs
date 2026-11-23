@@ -156,7 +156,7 @@ describe("SPEC-032: Big Tech Hyper-Optimization Verification", () => {
   // PILLAR 4: Multi-Channel CLI & MCP Tool Dispatching (BDD-081)
   // =========================================================================
   test("BDD-081: EosMcpServer dispatches eos_bitwise_accelerate and eos_buffer_pool_stats", () => {
-    const mcp = new EosMcpServer(process.cwd());
+    const mcp = new EosMcpServer(process.cwd(), "full");
 
     // 1. eos_bitwise_accelerate (JIT warmup + generous floor for parallel host load)
     //    Functional correctness gate: checksum must match. Throughput floor is set

@@ -230,7 +230,7 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
 
   describe("Suite 4: Model Context Protocol (MCP) Omni-Tools Integration", () => {
     it("lists all omni-tools in MCP tools/list", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 101,
@@ -245,7 +245,7 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
     });
 
     it("dispatches eos_amplify_prompt via MCP", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 102,
@@ -266,7 +266,7 @@ describe("EOS Prometheus Omni-Model Amplification Suite", () => {
     });
 
     it("dispatches eos_check_architecture via MCP", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 103,

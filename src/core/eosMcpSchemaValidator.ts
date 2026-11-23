@@ -16,7 +16,8 @@ import { ENTERPRISE_WORKSPACE_EXTENDED_ACTIONS } from "./eosMcpEnterpriseActionR
 
 /**
  * Essential LLM surface — high-signal director / verify / tribunal tools only.
- * Use `EOS_MCP_PROFILE=essential` to maximize tool-selection precision.
+ * Use `EOS_MCP_PROFILE=essential` for maximum tool-selection precision (subset of core).
+ * See `docs/governance/MCP_TIER0_TOKEN_ECONOMY.md`.
  */
 export const ESSENTIAL_TIER0_TOOL_NAMES: ReadonlySet<string> = new Set([
   "eos_antigravity_direct",
@@ -40,9 +41,10 @@ export const ESSENTIAL_TIER0_TOOL_NAMES: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * Curated Tier-0 Core Engineering Profile (real, high-signal control-plane tools).
- * Keeps LLM tool-selection precision maximized when `EOS_MCP_PROFILE=core`.
- * Prefer `essential` for agent loops; `core` retains enterprise/frontier surface.
+ * Curated Tier-0 Core Engineering Profile (~46 high-signal control-plane tools).
+ * **Default** MCP profile (`EOS_MCP_PROFILE` unset or `core` / `tier0`).
+ * Prefer `essential` for ultra-tight agent loops; opt into `full` for the complete catalog.
+ * Bound enforced by `test/eosMcpTier0TokenEconomy.test.mjs` (≤46).
  */
 export const CORE_TIER0_TOOL_NAMES: ReadonlySet<string> = new Set([
   ...ESSENTIAL_TIER0_TOOL_NAMES,

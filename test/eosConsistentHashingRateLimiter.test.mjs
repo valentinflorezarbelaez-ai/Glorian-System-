@@ -174,7 +174,7 @@ describe("SPEC-036: Amazon Dynamo Consistent Hashing & Cloudflare Rate Limiting"
   });
 
   describe("BDD-098: Multi-Channel MCP Dispatching (Consistent Hashing & Rate Limiter)", () => {
-    const server = new EosMcpServer();
+    const server = new EosMcpServer(undefined, "full");
 
     it("dispatches eos_hash_ring_lookup via MCP", () => {
       const res = server.handleRequest({

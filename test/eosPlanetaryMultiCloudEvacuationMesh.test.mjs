@@ -116,7 +116,7 @@ test("BDD-333: Planetary Health Matrix & Multi-Cloud Cryptographic Snapshot", ()
 });
 
 test("BDD-334: MCP Tool Dispatch for Planetary Multi-Cloud Evacuation Mesh", async () => {
-  const mcpServer = new EosMcpServer();
+  const mcpServer = new EosMcpServer(undefined, "full");
 
   // Test 1: eos_planetary_mesh_health_matrix
   const matrixReq = {

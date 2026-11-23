@@ -172,7 +172,7 @@ describe("SPEC-042: Sovereign Fleet Soundcheck, MCTS & Progressive Canary Verifi
 
   describe("BDD-123: Multi-Channel MCP & CLI Tool Dispatch", () => {
     it("dispatches eos_fleet_soundcheck via MCP server", () => {
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 1,
@@ -190,7 +190,7 @@ describe("SPEC-042: Sovereign Fleet Soundcheck, MCTS & Progressive Canary Verifi
     });
 
     it("dispatches eos_mcts_tune via MCP server", () => {
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 2,
@@ -208,7 +208,7 @@ describe("SPEC-042: Sovereign Fleet Soundcheck, MCTS & Progressive Canary Verifi
     });
 
     it("dispatches eos_canary_rollout via MCP server", () => {
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 3,

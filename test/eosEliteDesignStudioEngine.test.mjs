@@ -104,7 +104,7 @@ test("BDD-313: Automated Design Markup & Contrast Invariants Audit", () => {
 });
 
 test("BDD-314: EosMcpServer Integration for Scaffold and Audit Tools", async () => {
-  const server = new EosMcpServer(process.cwd());
+  const server = new EosMcpServer(process.cwd(), "full");
 
   // Test scaffold tool
   const scaffoldReq = {

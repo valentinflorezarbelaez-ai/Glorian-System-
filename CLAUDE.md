@@ -21,5 +21,9 @@
 - Registry: `.atl/skill-registry.md` compact rules for `modern-web-guidance`
 - Never add MWG to `package.json` dependencies; keep `src/core/` at `dependencies: {}`.
 
+## MCP Tier-0 (token economy)
+- Default: `EOS_MCP_PROFILE=core` (~46 tools). Full catalog: `EOS_MCP_PROFILE=full`.
+- Prefer `gh` for GitHub reads. Details: `docs/governance/MCP_TIER0_TOKEN_ECONOMY.md`.
+
 ## Code & Architecture Standards
 These are repository notes, not verified vendor standards. Review requirements and run matching checks before applying them.

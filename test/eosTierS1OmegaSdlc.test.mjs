@@ -167,7 +167,7 @@ test("SPEC-028: 120Hz VSync Cooperative Scheduler & Constant-Time Security", asy
 });
 
 test("SPEC-028: MCP Sovereign SDLC Tools Integration", async (t) => {
-  const mcp = new EosMcpServer();
+  const mcp = new EosMcpServer(undefined, "full");
 
   await t.test("Subsuite 1: Tools Advertised in tools/list", () => {
     const listRes = mcp.handleRequest({ jsonrpc: "2.0", id: 1, method: "tools/list", params: {} });

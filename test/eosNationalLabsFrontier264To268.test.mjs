@@ -12,7 +12,7 @@ import {
 } from "../src/core/index.ts";
 import { EosMcpServer } from "../src/mcp/eosMcpServer.ts";
 
-const mcpServer = new EosMcpServer();
+const mcpServer = new EosMcpServer(undefined, "full");
 
 function runCliJson(command) {
   const stdout = execFileSync(process.execPath, [path.join(process.cwd(), "bin/eos.mjs"), command, "--json"], {

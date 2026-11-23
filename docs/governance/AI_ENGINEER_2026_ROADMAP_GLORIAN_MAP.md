@@ -18,7 +18,7 @@ Ordered by product value:
 
 1. Hexagonal Law V false-positive hardening (`window` ⊆ ContextWindow) + turbo 100% on disk.
 2. Golden-path TTV dogfood: `npm run ttv:golden` → `docs/evidence/GOLDEN_PATH_TTV_RECEIPT.json`.
-3. MCP profile curation: `EOS_MCP_PROFILE=essential` (18 tools) subset of `core` (46).
+3. MCP profile curation: default Tier-0 `core` (46); `essential` (18) subset; `full` opt-in — see `docs/governance/MCP_TIER0_TOKEN_ECONOMY.md`.
 4. LLMOps privacy continuous gate in nightly CI.
 5. Incident one-pager: `docs/runbooks/INCIDENT_ONE_PAGER.md`.
 6. IV&V auditor packet restored + refreshed under `docs/assurance/`.

@@ -170,7 +170,7 @@ test("EOS SRE & CNCF Health Endpoint (/api/health) — Observability Invariants"
 
 test("EOS MCP Native Server (Model Context Protocol) — JSON-RPC 2.0 Invariants", async () => {
   const { EosMcpServer } = await import("../src/mcp/eosMcpServer.ts");
-  const server = new EosMcpServer();
+  const server = new EosMcpServer(undefined, "full");
 
   // 1. initialize
   const initRes = server.handleRequest({

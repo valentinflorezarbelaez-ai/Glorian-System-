@@ -152,7 +152,7 @@ describe("SPEC-041: Autonomous Continuous Refactoring & DST Verification", () =>
 
   describe("BDD-118: Multi-Channel MCP & CLI Refactor Dispatch", () => {
     it("dispatches eos_refactor_audit via MCP server", () => {
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 1,
@@ -170,7 +170,7 @@ describe("SPEC-041: Autonomous Continuous Refactoring & DST Verification", () =>
     });
 
     it("dispatches eos_dst_simulate via MCP server", () => {
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 2,
@@ -188,7 +188,7 @@ describe("SPEC-041: Autonomous Continuous Refactoring & DST Verification", () =>
     });
 
     it("dispatches eos_dbc_verify via MCP server", () => {
-      const server = new EosMcpServer();
+      const server = new EosMcpServer(undefined, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 3,

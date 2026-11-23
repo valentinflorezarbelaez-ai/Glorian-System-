@@ -184,7 +184,7 @@ describe("SPEC-031: Tier-Zero Transcendental Apex Perfection Verification", () =
   // PILLAR 4: Multi-Channel CLI & MCP Tool Dispatching (BDD-077)
   // =========================================================================
   test("BDD-077: EosMcpServer dispatches Tier-0 tools (eos_nano_benchmark, eos_sentinel_tick, eos_alchemical_transmute)", () => {
-    const mcp = new EosMcpServer(process.cwd());
+    const mcp = new EosMcpServer(process.cwd(), "full");
 
     // 1. eos_nano_benchmark
     const nanoRes = mcp.handleRequest({

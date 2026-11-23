@@ -227,7 +227,7 @@ describe("EOS Big Tech Tier 1 Semantic Graph & Blast Radius Suite", () => {
 
   describe("Suite 5: MCP Tools Integration", () => {
     it("advertises eos_get_blast_radius and eos_query_code_graph in tools/list", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 301,
@@ -241,7 +241,7 @@ describe("EOS Big Tech Tier 1 Semantic Graph & Blast Radius Suite", () => {
     });
 
     it("dispatches eos_get_blast_radius via MCP", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 302,
@@ -261,7 +261,7 @@ describe("EOS Big Tech Tier 1 Semantic Graph & Blast Radius Suite", () => {
     });
 
     it("dispatches eos_query_code_graph via MCP", () => {
-      const server = new EosMcpServer(root);
+      const server = new EosMcpServer(root, "full");
       const res = server.handleRequest({
         jsonrpc: "2.0",
         id: 303,

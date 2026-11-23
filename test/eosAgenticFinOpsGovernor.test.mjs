@@ -109,7 +109,7 @@ test("BDD-318: 30-Day Code Survival & Human ROI Evaluation", () => {
 });
 
 test("BDD-319: EosMcpServer Integration for FinOps Tools Dispatch", async () => {
-  const server = new EosMcpServer(process.cwd());
+  const server = new EosMcpServer(process.cwd(), "full");
 
   // 1. Test eos_finops_route_task
   const routeReq = {

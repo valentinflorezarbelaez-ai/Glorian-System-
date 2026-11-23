@@ -104,7 +104,7 @@ test("BDD-189: Cryptographic Attestation & Ledger Chain Recording", () => {
 });
 
 test("BDD-190: MCP Dispatch of eos_microvm_sandbox via EosMcpServer", () => {
-  const server = new EosMcpServer(projectRoot);
+  const server = new EosMcpServer(projectRoot, "full");
 
   // 1. Check tools/list contains eos_microvm_sandbox
   const listRes = server.handleRequest({

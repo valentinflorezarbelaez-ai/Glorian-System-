@@ -130,7 +130,7 @@ test("BDD-293: Nominal Baseline Sampling and Sub-Linear Memory Footprint with Ev
 });
 
 test("BDD-294: EosMcpServer Integration for Trace Sampling Tools", async () => {
-  const server = new EosMcpServer(process.cwd());
+  const server = new EosMcpServer(process.cwd(), "full");
 
   // Test eos_trace_span_record with root span completion
   const recordReq = {
