@@ -62,6 +62,24 @@ describe("software-factory-worktree", () => {
     assert.equal(failed, true);
   });
 
+  it("fail-closed when remove path is not a registered worktree for branch", () => {
+    const orphanDir = path.join(root, ".worktrees", "sf-orphan-unregistered");
+    fs.mkdirSync(orphanDir, { recursive: true });
+    try {
+      let failed = false;
+      try {
+        run(["remove", "--branch", "cursor/sf-orphan-unregistered"]);
+      } catch (err) {
+        failed = true;
+        assert.equal(err.status, 1);
+        assert.match(String(err.stderr || ""), /No registered git worktree|FAIL/);
+      }
+      assert.equal(failed, true);
+    } finally {
+      fs.rmSync(orphanDir, { recursive: true, force: true });
+    }
+  });
+
   it("keeps runtime dependencies empty", () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
     assert.equal(Object.keys(pkg.dependencies || {}).length, 0);

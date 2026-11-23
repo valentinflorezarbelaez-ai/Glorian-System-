@@ -103,17 +103,80 @@ function branchSlug(branch) {
   return branch.replace(/\//g, "-");
 }
 
+function realOrResolve(p) {
+  try {
+    return fs.realpathSync(p);
+  } catch {
+    return path.resolve(p);
+  }
+}
+
 function assertUnderWorktrees(targetPath) {
+  const repoReal = realOrResolve(REPO_ROOT);
+  const worktreesLexical = path.resolve(WORKTREES_ROOT);
+  // If .worktrees exists, it must resolve inside the repo (reject symlink escape).
+  if (fs.existsSync(WORKTREES_ROOT)) {
+    const worktreesReal = realOrResolve(WORKTREES_ROOT);
+    const wtRel = path.relative(repoReal, worktreesReal);
+    if (wtRel.startsWith("..") || path.isAbsolute(wtRel)) {
+      fail(`Refusing .worktrees symlink/escape outside repo: ${worktreesReal}`);
+    }
+  }
+
   const resolved = path.resolve(targetPath);
-  const root = path.resolve(WORKTREES_ROOT);
-  const rel = path.relative(root, resolved);
+  const rel = path.relative(worktreesLexical, resolved);
   if (rel.startsWith("..") || path.isAbsolute(rel)) {
     fail(`Refusing path outside .worktrees/: ${resolved}`);
   }
-  if (resolved === root) {
+  if (resolved === worktreesLexical) {
     fail("Refusing to operate on .worktrees root itself");
   }
+
+  // When the destination already exists, re-check via realpath (symlink bypass).
+  if (fs.existsSync(resolved)) {
+    const targetReal = realOrResolve(resolved);
+    const worktreesReal = realOrResolve(WORKTREES_ROOT);
+    const realRel = path.relative(worktreesReal, targetReal);
+    if (realRel.startsWith("..") || path.isAbsolute(realRel) || targetReal === worktreesReal) {
+      fail(`Refusing path that realpath-escapes .worktrees/: ${targetReal}`);
+    }
+    return targetReal;
+  }
   return resolved;
+}
+
+function parsePorcelainWorktrees(porcelain) {
+  const entries = [];
+  let current = null;
+  for (const line of String(porcelain).split("\n")) {
+    if (line.startsWith("worktree ")) {
+      if (current) entries.push(current);
+      current = { path: line.slice("worktree ".length).trim(), branch: null };
+      continue;
+    }
+    if (!current) continue;
+    if (line.startsWith("branch ")) {
+      current.branch = line.slice("branch ".length).trim().replace(/^refs\/heads\//, "");
+    }
+  }
+  if (current) entries.push(current);
+  return entries;
+}
+
+function findRegisteredWorktree(targetPath, branch) {
+  const porcelain = git(["worktree", "list", "--porcelain"]);
+  const entries = parsePorcelainWorktrees(porcelain);
+  const targetReal = realOrResolve(targetPath);
+  const match = entries.find((e) => realOrResolve(e.path) === targetReal);
+  if (!match) {
+    fail(`No registered git worktree at ${targetPath}`);
+  }
+  if (match.branch !== branch) {
+    fail(
+      `Worktree at ${targetPath} is registered for branch '${match.branch || "(detached)"}', not '${branch}'`,
+    );
+  }
+  return match;
 }
 
 function resolveWorktreePath(branch, customSlug) {
@@ -174,6 +237,9 @@ function cmdRemove(args) {
   if (!fs.existsSync(target)) {
     fail(`Worktree path does not exist: ${target}`);
   }
+
+  // Fail-closed: path must be a registered worktree for THIS branch (slug collisions).
+  findRegisteredWorktree(target, branch);
 
   if (!args.force) {
     const status = git(["-C", target, "status", "--porcelain"]).trim();
