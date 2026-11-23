@@ -55,14 +55,11 @@ spec:
         runtimeLanguage:
           title: Core Implementation Language
           type: string
-          # Skeleton ships plain Node ESM (index.mjs); keep default aligned.
+          # Skeleton is plain Node ESM (index.mjs) only — do not offer labels
+          # for languages this template does not emit (Bugbot #668 honesty).
           default: javascript-layer0
           enum:
             - javascript-layer0
-            - typescript-layer0
-            - go-systems
-            - rust-audio-core
-            - wasm-simd128
         isolationTier:
           title: Operational Security & FDIR Tier
           type: string
