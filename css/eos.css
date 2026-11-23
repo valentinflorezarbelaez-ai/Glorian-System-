@@ -2466,7 +2466,7 @@ main > section:not(.hero):not(#primeros-pasos) {
 
 .fleet-auth-badge {
   display: inline-block;
-  padding: 2px 6px;
+  padding: 4px 8px;
   border-radius: 4px;
   font-size: 0.68rem;
   font-weight: 700;
@@ -2499,7 +2499,7 @@ main > section:not(.hero):not(#primeros-pasos) {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 8px;
+  padding: 4px 8px;
   font-size: 0.72rem;
   text-decoration: none;
 }
@@ -2508,7 +2508,7 @@ main > section:not(.hero):not(#primeros-pasos) {
   font-family: var(--font-mono);
   font-size: 0.68rem;
   color: var(--text-muted);
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .fleet-radar-dot {
@@ -2565,7 +2565,7 @@ main > section:not(.hero):not(#primeros-pasos) {
 .openspec-status {
   font-family: var(--font-mono);
   font-size: 0.64rem;
-  padding: 2px 6px;
+  padding: 4px 8px;
   border-radius: 4px;
   background: rgba(245, 158, 11, 0.14);
   color: #fbbf24;
