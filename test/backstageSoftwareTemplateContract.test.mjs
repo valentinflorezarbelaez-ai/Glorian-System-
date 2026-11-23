@@ -59,11 +59,7 @@ test("BDD-BS-T-002: Skeleton scaffolds catalog-info, AGENTS, verify:strict, CI",
 
   const template = fs.readFileSync(templateYaml, "utf8");
   assert.match(template, /default:\s*javascript-layer0/, "default runtime must match JS skeleton");
-  assert.doesNotMatch(
-    template,
-    /typescript-layer0/,
-    "must not offer typescript-layer0 while skeleton is JS-only",
-  );
+  assert.doesNotMatch(template, /typescript-layer0/, "must not offer typescript-layer0 while skeleton is JS-only");
   assert.match(fs.readFileSync(path.join(skeleton, "src/index.mjs"), "utf8"), /SovereignComponent/);
   assert.equal(fs.existsSync(path.join(skeleton, "src/index.ts")), false);
 

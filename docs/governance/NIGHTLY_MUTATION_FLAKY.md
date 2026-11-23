@@ -8,12 +8,12 @@
 
 Mutation and flaky re-runs are expensive. The per-commit 7-stage gate therefore leaves them opt-in:
 
-| Flag | Effect in `scripts/verify-cicd-pipeline.mjs` |
-| --- | --- |
-| `EOS_MUTATION=1` | Stage 4.6 runs `scripts/mutation-gate.mjs` |
-| `EOS_MUTATION_ENFORCE=1` | Ratchet violations fail closed (else advisory) |
-| `EOS_FLAKY=1` | Stage 4.7 runs `scripts/flaky-gate.mjs` |
-| `EOS_FLAKY_ENFORCE=1` | Flaky-budget violations fail closed (else advisory) |
+| Flag                     | Effect in `scripts/verify-cicd-pipeline.mjs`        |
+| ------------------------ | --------------------------------------------------- |
+| `EOS_MUTATION=1`         | Stage 4.6 runs `scripts/mutation-gate.mjs`          |
+| `EOS_MUTATION_ENFORCE=1` | Ratchet violations fail closed (else advisory)      |
+| `EOS_FLAKY=1`            | Stage 4.7 runs `scripts/flaky-gate.mjs`             |
+| `EOS_FLAKY_ENFORCE=1`    | Flaky-budget violations fail closed (else advisory) |
 
 **PR path:** leave `EOS_MUTATION` unset → Stage 4.6 prints `SKIP`. Do **not** force mutation on every PR.
 
@@ -23,10 +23,10 @@ Mutation and flaky re-runs are expensive. The per-commit 7-stage gate therefore 
 
 Workflow: [`.github/workflows/eos-nightly-deep-gates.yml`](../../.github/workflows/eos-nightly-deep-gates.yml)
 
-| Trigger | Behavior |
-| --- | --- |
-| `schedule` (`0 2 * * *` UTC) | Mutation + flaky jobs with `EOS_*=1` and `*_ENFORCE=1` |
-| `workflow_dispatch` | Same gates; optional ratchet-refresh PR (write token scoped to that job only) |
+| Trigger                      | Behavior                                                                      |
+| ---------------------------- | ----------------------------------------------------------------------------- |
+| `schedule` (`0 2 * * *` UTC) | Mutation + flaky jobs with `EOS_*=1` and `*_ENFORCE=1`                        |
+| `workflow_dispatch`          | Same gates; optional ratchet-refresh PR (write token scoped to that job only) |
 
 Jobs reuse existing scripts (zero new npm runtime deps / Law V):
 

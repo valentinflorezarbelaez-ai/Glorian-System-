@@ -47,11 +47,7 @@ test("SPEC-177 / P3-2: PR path must not force EOS_MUTATION=1", () => {
   const strict = fs.readFileSync(path.join(root, ".github/workflows/eos-strict-gate.yml"), "utf8");
   const sovereign = fs.readFileSync(path.join(root, ".github/workflows/eos-sovereign-cicd.yml"), "utf8");
 
-  assert.doesNotMatch(
-    strict,
-    /EOS_MUTATION:\s*["']?1["']?/,
-    "eos-strict-gate (PR) must leave mutation SKIP",
-  );
+  assert.doesNotMatch(strict, /EOS_MUTATION:\s*["']?1["']?/, "eos-strict-gate (PR) must leave mutation SKIP");
   // Sovereign may set flaky on main Ubuntu Node 22; mutation must stay unset on the matrix gate.
   assert.doesNotMatch(
     sovereign,

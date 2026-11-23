@@ -25,13 +25,13 @@ Registered via Location `glorian-sovereign-templates` → [`templates/backstage/
 
 Scaffolds a satellite with:
 
-| Artifact | Purpose |
-| --- | --- |
-| `catalog-info.yaml` | Component under `eos-sovereign-mesh` (or selected system) |
-| `AGENTS.md` | Agent stub (owner / system / gate) |
-| `bin/verify.mjs` + `npm run verify:strict` | Fail-closed empty `dependencies` + `node --test` |
-| `.github/workflows/ci.yml` | Runs `verify:strict` on PR/push |
-| TechDocs stubs | `mkdocs.yaml` + `docs/` |
+| Artifact                                   | Purpose                                                   |
+| ------------------------------------------ | --------------------------------------------------------- |
+| `catalog-info.yaml`                        | Component under `eos-sovereign-mesh` (or selected system) |
+| `AGENTS.md`                                | Agent stub (owner / system / gate)                        |
+| `bin/verify.mjs` + `npm run verify:strict` | Fail-closed empty `dependencies` + `node --test`          |
+| `.github/workflows/ci.yml`                 | Runs `verify:strict` on PR/push                           |
+| TechDocs stubs                             | `mkdocs.yaml` + `docs/`                                   |
 
 Portal host must load the Template entity; this control-plane repo only **publishes** the YAML/skeleton (no `@backstage/*` in root deps).
 
