@@ -2053,14 +2053,8 @@ Alcance       : no se inyectó una falla, ejecutó FDIR ni midió MTTR`;
         }
 
         const registryCell = document.createElement("td");
-        const isL3 = project.authorization === "LEVEL_3_PRODUCTION_AUTHORIZED";
-        const isL2 = project.authorization === "LEVEL_2_AUTHORIZED";
-        const authClass = isL3
-          ? "fleet-auth-badge fleet-auth-badge--l3"
-          : isL2
-            ? "fleet-auth-badge fleet-auth-badge--l2"
-            : "fleet-auth-badge fleet-auth-badge--default";
-        registryCell.innerHTML = `<span class="${authClass}">${project.authorization || project.registryStatus || "REGISTERED"}</span>`;
+        const authTier = project.authorization === "LEVEL_3_PRODUCTION_AUTHORIZED" ? "l3" : project.authorization === "LEVEL_2_AUTHORIZED" ? "l2" : "default";
+        registryCell.innerHTML = `<span class="fleet-auth-badge fleet-auth-badge--${authTier}">${project.authorization || project.registryStatus || "REGISTERED"}</span>`;
 
         const operationsCell = document.createElement("td");
         if (project.productionProbe === "HEALTHY") {
