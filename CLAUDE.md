@@ -25,5 +25,10 @@
 - Default: `EOS_MCP_PROFILE=core` (~46 tools). Full catalog: `EOS_MCP_PROFILE=full`.
 - Prefer `gh` for GitHub reads. Details: `docs/governance/MCP_TIER0_TOKEN_ECONOMY.md`.
 
+## Layer-0 dependency policy
+- Policy: `docs/governance/DEPENDENCY_POLICY_L0.md`
+- Formal SoT: `openspec/specs/SPEC-002-HEXAGONAL-L0.md` (SPEC-001 Law V).
+- Keep `package.json` `dependencies: {}`; `src/core/` may import only `node:` builtins and other `src/core/` modules (`npm run boundary:check`).
+
 ## Code & Architecture Standards
 These are repository notes, not verified vendor standards. Review requirements and run matching checks before applying them.

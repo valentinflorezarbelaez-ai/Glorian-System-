@@ -17,6 +17,7 @@ Every AI agent interaction must uphold the following inviolable engineering stan
 
 - Domain logic in `src/core/` must contain **ZERO external runtime dependencies** (`dependencies: {}`).
 - Rely strictly on native Node.js primitives and standard Web APIs.
+- Policy pointer: `docs/governance/DEPENDENCY_POLICY_L0.md` (formal SoT: `openspec/specs/SPEC-002-HEXAGONAL-L0.md`).
 
 ## 3. Absolute Security & Zero Plaintext Secrets (Law VI)
 

@@ -380,6 +380,7 @@ export class EosSpotifyAgenticFactory {
       "## 2. Proposed Engineering Conventions (Not Audited)",
       "- Consider Go for network services and Rust for performance-sensitive components; this snapshot has not measured the repository's language mix.",
       "- Select audio loudness and peak targets per product requirements; no mastering or conformance check is performed here.",
+      "- Layer-0 purity: `docs/governance/DEPENDENCY_POLICY_L0.md` (formal SoT: `openspec/specs/SPEC-002-HEXAGONAL-L0.md`); keep `package.json` `dependencies: {}`.",
       "",
       "## 3. Canonical merge gate",
       "- **Public entrypoint:** `npm run verify:strict` (declared in `package.json`; aliases `node bin/eos.mjs verify`, the 7-stage SecDevOps gate). Prefer this over ad-hoc stage scripts for release and pre-push checks.",
@@ -390,7 +391,7 @@ export class EosSpotifyAgenticFactory {
       "- Prefer **`gh` CLI** for GitHub reads; see `docs/governance/MCP_TIER0_TOKEN_ECONOMY.md`.",
       "",
       "## 5. Review Checklist (Suggestions Only)",
-      "1. Link planned changes to project requirements.\n2. Run `npm run verify:strict` (or matching formatting/tests/security checks) before release.\n3. Define audio and financial correctness criteria with the relevant product owners.\n4. Treat this generated context as a starting point and verify every recommendation.\n",
+      "1. Link planned changes to project requirements.\n2. Run `npm run verify:strict` (or matching formatting/tests/security checks) before release.\n3. Define audio and financial correctness criteria with the relevant product owners.\n4. Treat this generated context as a starting point and verify every recommendation.\n5. Before adding npm packages: read `docs/governance/DEPENDENCY_POLICY_L0.md` and keep Layer-0 `dependencies: {}`.\n",
     ].join("\n");
 
     const claudeMd = [
@@ -401,6 +402,10 @@ export class EosSpotifyAgenticFactory {
       "## MCP Tier-0 (token economy)",
       "- Default: `EOS_MCP_PROFILE=core` (~46 tools). Full catalog: `EOS_MCP_PROFILE=full`.",
       "- Prefer `gh` for GitHub reads. Details: `docs/governance/MCP_TIER0_TOKEN_ECONOMY.md`.\n",
+      "## Layer-0 dependency policy",
+      "- Policy: `docs/governance/DEPENDENCY_POLICY_L0.md`",
+      "- Formal SoT: `openspec/specs/SPEC-002-HEXAGONAL-L0.md` (SPEC-001 Law V).",
+      "- Keep `package.json` `dependencies: {}`; `src/core/` may import only `node:` builtins and other `src/core/` modules (`npm run boundary:check`).\n",
       "## Code & Architecture Standards",
       "These are repository notes, not verified vendor standards. Review requirements and run matching checks before applying them.\n",
     ].join("\n");
