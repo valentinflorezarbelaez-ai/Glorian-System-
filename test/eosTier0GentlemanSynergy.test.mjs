@@ -326,6 +326,35 @@ test("BDD-132: EosGentlemanStackBridge certifies 100/100 SOVEREIGN_GENTLEMAN_APE
     const parsedMcp = JSON.parse(mcpRes?.result?.content?.[0]?.text || "{}");
     assert.equal(parsedMcp.constitutionPreserved, true);
     assert.equal(parsedMcp.activeSddSkills.length, 11);
+
+    // Gentle-AI 5.0 Antigravity plugin layout (plugins/gentle-ai-engram/mcp_config.json)
+    fs.writeFileSync(
+      path.join(mockGemini, "mcp_config.json"),
+      JSON.stringify({
+        mcpServers: {
+          "eos-system": { command: "node", args: ["src/mcp/eosMcpServer.ts"] },
+          context7: { serverUrl: "https://mcp.context7.com/mcp" },
+        },
+      }),
+      "utf8",
+    );
+    fs.mkdirSync(path.join(mockGemini, "plugins", "gentle-ai-engram"), { recursive: true });
+    fs.writeFileSync(
+      path.join(mockGemini, "plugins", "gentle-ai-engram", "mcp_config.json"),
+      JSON.stringify({
+        mcpServers: {
+          engram: { command: "engram", args: ["mcp", "--tools=agent"] },
+        },
+      }),
+      "utf8",
+    );
+    const pluginLayoutReport = EosGentlemanStackBridge.auditStack(projectRoot, mockGemini, mockHome);
+    assert.equal(
+      pluginLayoutReport.readinessScore,
+      100,
+      `Plugin layout pillars: ${JSON.stringify(pluginLayoutReport.pillars)}`,
+    );
+    assert.equal(pluginLayoutReport.status, "SOVEREIGN_GENTLEMAN_APEX");
   } finally {
     try {
       fs.rmSync(tmpRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });

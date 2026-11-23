@@ -457,6 +457,17 @@ export class EosGentlemanStackBridge {
     return { found: false, executablePath: "", versionOutput: "not-found" };
   }
 
+  private static hasPluginMcpServer(geminiDir: string, pluginName: string, serverName: string): boolean {
+    const pluginMcpPath = path.join(geminiDir, "plugins", pluginName, "mcp_config.json");
+    if (!fs.existsSync(pluginMcpPath)) return false;
+    try {
+      const parsed = JSON.parse(fs.readFileSync(pluginMcpPath, "utf8"));
+      return Boolean(parsed?.mcpServers && typeof parsed.mcpServers === "object" && serverName in parsed.mcpServers);
+    } catch {
+      return false;
+    }
+  }
+
   public static auditStack(
     projectRoot: string = process.cwd(),
     geminiConfigDir: string = path.join(os.homedir(), ".gemini", "config"),
@@ -541,7 +552,8 @@ export class EosGentlemanStackBridge {
       ],
       resolvedHome,
     );
-    const engramMcpOk = mcpServerNames.has("engram");
+    const engramMcpOk =
+      mcpServerNames.has("engram") || this.hasPluginMcpServer(resolvedGemini, "gentle-ai-engram", "engram");
     const engramFullOk = engramProbe.found && engramMcpOk;
     pillars.push({
       id: "ENGRAM_MEMORY",
