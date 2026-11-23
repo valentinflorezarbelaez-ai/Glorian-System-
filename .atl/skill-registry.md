@@ -35,6 +35,14 @@
 - Baseline Widely available features need no custom fallbacks; non-Baseline features must follow the guide's fallback recommendations.
 - Fail-closed: `npm run mwg:gate` (wired into `verify:strict`). Runbook: `docs/runbooks/modern-web-guidance.md`.
 
+### `software-factory` (LIDR optional orchestration)
+
+- Compose existing skills only (`sdd-*`, `gdd-contract`, `judgment-day`, `issue-creation`, `branch-pr`); do not reinvent protocols.
+- Isolate Apply work in `.worktrees/` via `node scripts/software-factory-worktree.mjs` (fail-closed; no paths outside `.worktrees/`).
+- Plan ≠ Execute: planner must not be the Apply agent; builder ≠ verifier.
+- Stop on attempt caps / judgment-day escalation; never rewrite tests/CI/check to pass.
+- Evidence: `npm run verify:strict` exit 0. Outside Layer-0 — no new runtime deps.
+
 ## Active Skills Roster
 
 | Skill                   | Role                                        | Primary Command / Trigger                         |
@@ -56,4 +64,6 @@
 | `branch-pr`             | Issue-first PR workflow                     | Safe Git branch and pull request generation       |
 | `issue-creation`        | Issue creation and traceability             | GitHub issue creation and bug reports             |
 | `modern-web-guidance`   | Google Chrome Modern Web Guidance           | Search/retrieve modern HTML/CSS/JS best practices |
+| `gdd-contract`          | Goal-Driven Development measurable Done     | Goal schema, caps, `goal:validate`                |
+| `software-factory`      | Optional LIDR factory orchestration         | `/factory`, worktrees, Plan→Apply, judgment-day   |
 | `skill-registry`        | Skill inventory synchronizer                | Update registry, sync with Engram                 |
