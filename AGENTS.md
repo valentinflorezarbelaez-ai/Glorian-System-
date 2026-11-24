@@ -22,7 +22,8 @@
 ## 3. Canonical merge gate
 - **Public entrypoint:** `npm run verify:strict` (declared in `package.json`; aliases `node bin/eos.mjs verify`, the 7-stage SecDevOps gate). Prefer this over ad-hoc stage scripts for release and pre-push checks.
 
-## 4. MCP Tier-0 token economy (default)
+## 4. MCP / agent operability
+- **Gate SoT (always):** `npm run verify:strict` / `node bin/eos.mjs verify`. Do not invent MCP for gate truth when `eos-system` is unavailable — see `docs/governance/MCP_AGENT_OPERABILITY.md`.
 - Default MCP profile is Tier-0 **`core` (~46 tools)**. Do not load the full catalog on routine agent turns.
 - Power users: `EOS_MCP_PROFILE=full`. Ultra-tight loops: `essential` (18).
 - Prefer **`gh` CLI** for GitHub reads; see `docs/governance/MCP_TIER0_TOKEN_ECONOMY.md`.

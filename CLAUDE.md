@@ -12,8 +12,9 @@
 - Honk Local Draft: `node bin/eos.mjs honk "<directive>"` (plan only; no files changed)
 - Xirp Context Sync: `node bin/eos.mjs xirp sync`
 
-## MCP Tier-0 (token economy)
-- Default: `EOS_MCP_PROFILE=core` (~46 tools). Full catalog: `EOS_MCP_PROFILE=full`.
+## MCP / agent operability
+- Gate SoT: `npm run verify:strict` / `node bin/eos.mjs verify` — do not invent MCP for gate truth. Playbook: `docs/governance/MCP_AGENT_OPERABILITY.md`.
+- Tier-0 (token economy): default `EOS_MCP_PROFILE=core` (~46 tools). Full catalog: `EOS_MCP_PROFILE=full`.
 - Prefer `gh` for GitHub reads. Details: `docs/governance/MCP_TIER0_TOKEN_ECONOMY.md`.
 
 ## Layer-0 dependency policy
