@@ -26,7 +26,7 @@ function measureMetrics() {
   let tla = 0;
   (function walk(dir) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      if ([".git", "node_modules", "_sandbox", ".worktrees"].includes(entry.name)) continue;
+      if (entry.name.startsWith(".") || ["node_modules", "_sandbox"].includes(entry.name)) continue;
       const abs = path.join(dir, entry.name);
       if (entry.isDirectory()) walk(abs);
       else if (abs.endsWith(".tla") && !abs.includes("_TTrace_")) tla++;

@@ -173,7 +173,7 @@ function measure() {
   let tlaCount = 0;
   (function walk(d) {
     for (const e of fs.readdirSync(d, { withFileTypes: true })) {
-      if ([".git", "node_modules", "_sandbox"].includes(e.name)) continue;
+      if (e.name.startsWith(".") || ["node_modules", "_sandbox"].includes(e.name)) continue;
       const f = path.join(d, e.name);
       if (e.isDirectory()) walk(f);
       else if (f.endsWith(".tla") && !f.includes("_TTrace_")) tlaCount++;
