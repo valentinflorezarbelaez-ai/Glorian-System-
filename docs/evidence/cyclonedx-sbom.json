@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:72b3d747-a669-420e-a3ba-68943c6b3f38",
+  "serialNumber": "urn:uuid:44e8fb9e-a44e-483d-8cde-3b54e998fd64",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-24T08:45:20.678Z",
+    "timestamp": "2026-11-24T13:19:44.132Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -730,7 +730,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "93c0034fcf4d01703929ac36ef6ef61d08a28eec5e91c7668cbf35119cee4cfc"
+          "content": "442cf50fa0a571f404ec7fcc8f9ad27b07e470e69a036f7c7dbeaee051d8898a"
         }
       ]
     },
@@ -800,7 +800,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "3894ec534b2420a4c0de6df65646a9c13ecf4dcca30e54b2775e37a465339033"
+          "content": "16a188e56bfed99802e0243e675dae5a67569c80fd232b5470aca6ebd0c988df"
         }
       ]
     },
@@ -968,7 +968,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "3fc59f6c7d70e298e3155d77ac0a91661ef5d2b606c338b76bee332fb588612c"
+          "content": "4f276046f454112aacf64dbb8bf1517924f61bfc74008478a7bb932aa27345bb"
         }
       ]
     },
@@ -1122,7 +1122,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5c5c59989e65edbdc9611cfcc9bc3e88f89ef3ce451f91e369003f5a9dfe35ff"
+          "content": "611195b3f7e137037488093700093935649461de48681d052cd55974f9efb208"
         }
       ]
     },
@@ -1388,7 +1388,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "320d464b7aa369056c60891c53477db8b14cde340f3bf21d2b073ce476b02ee7"
+          "content": "e491f6efd119641d240253151e9fe2641d7b0222125802c245b95faf060d01be"
         }
       ]
     },
@@ -1486,7 +1486,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "1b64c17bb166f13fd1f48fa1b8ad99b341277d31491dc1d8ee3b041e0ffc6710"
+          "content": "07de2bde89008c38f113fcbac9c6bc6462be3feb917d5ab74f29f926436fe22c"
         }
       ]
     },
@@ -1612,7 +1612,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "25f2a9581ce5597c6246a272739e19f5344677319c789a1ceba3d776cfebc343"
+          "content": "df6cd8ef9b7e468089b566588e2775829171a6d35a0963e2a55d5d0b975709f2"
         }
       ]
     },
@@ -1878,7 +1878,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "bf5d13c86435696dd83872cd055379281a425c18f7670bcdca845d6d5d694f26"
+          "content": "cc92d10565acc88f9c03abc00ab8b4785e54b03ec0557bfa1d9295e316e6a583"
         }
       ]
     },
@@ -2046,7 +2046,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "4275e4b0f118959b40413aee669261e47064cfe8b789d8880249d77b68defb5e"
+          "content": "6d13bb121aa2630b90b6a926fe41b93441dbef8b4fcbb5b469440bca65310f82"
         }
       ]
     },
@@ -2200,7 +2200,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "ee7a7ef49e7e0a3efb007fe2362bf08df6ef747b10d76979dbc7d5c7a5a16109"
+          "content": "c5ecc2ad96cf0f2d1126c7de6fb32c6a73d837fa32b225847aacc271fa1fd2a4"
         }
       ]
     },
@@ -2480,7 +2480,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5f6d9b9ac2c425853cd6d7159489c79bcf8ada3bfe39765732c7f59712917c57"
+          "content": "7bf268073bc25a9bde6f212d8fb7204815fa90bdf2d89fd6749bf6f597c2f600"
         }
       ]
     },
@@ -2606,7 +2606,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "e9c9d6360233b4f5b57d8f43e3d9ab344c66a2792c8025982988e9dfb5276392"
+          "content": "b896925f320719d8e8b700f541ba9d23de4d05de3ec92f50c3d58cc194ee2daf"
         }
       ]
     },
@@ -2914,7 +2914,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "14f1332cce2e52ce70a69acf9787f238c254a8b864db0a19eac0a76e3b0d1f64"
+          "content": "4fff1b6859a2991c59a12d67dee932798138f821583534dbd6f2098c85ab0e56"
         }
       ]
     },
@@ -2998,7 +2998,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "ba23919567d8a230a5b8c5b55d136c60fe1c3caa28b0e0183d7913aaa9faf023"
+          "content": "db200f3053734f60bb14d6b55f53ed7937686e968a17a9e737b1fa26907dcd29"
         }
       ]
     },
@@ -3642,7 +3642,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5cc2a035680e527fdc06d7dc5af49c13b81325553d150fa92eee65316c2a7cec"
+          "content": "62c7ba9b13b01a7187cf4558f38d4ed81a2d7cabe36d1db0e49e75044521d298"
         }
       ]
     },
@@ -3670,7 +3670,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "136a95139321eb934562402be7e617ec469ab341493b5761e207629cd98b649e"
+          "content": "6fd4a5e90b9507469dc7578c81b3476247c80c2395022c4d6d03d14fd06f4c45"
         }
       ]
     },
@@ -4454,7 +4454,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "535c47f63137113493a4f4b2d0d318eb90fc8a96a9eb68ade4f75ebf649a49ff"
+          "content": "84db9c1112df5866d4f61653db2cf73de8a0dfacbbd8129cb2713e42cfe06b47"
         }
       ]
     },
@@ -5266,7 +5266,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b654c4db417da43c7253ade7e1319ebc4d695e63c9fcdcb2dcb7572097adffd5"
+          "content": "5d52463d17511281758102c89ba633fd548805e5e98fb457f2d6f5a6df4e8273"
         }
       ]
     },
@@ -5616,7 +5616,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "4ec56d2c42f9647fb5851b913f0831e1b7e2d62e9e82deae72f58d2d77418be6"
+          "content": "18522e93b57630d1bc2b9b64c2c940b64531e6122097cee992b41874d887dc77"
         }
       ]
     },
@@ -5924,7 +5924,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "db805ade1d7d10f25119fefa01b25adb2807e6b1bc8959f308627e2c9f3cd98a"
+          "content": "fef271082dbbd307db54f7330d44357639dd36dd31fefb7d50cbef40a5be876c"
         }
       ]
     },
@@ -6442,7 +6442,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "a91fba2c1b7754ec8c71dc4343df384c59bbf6ba02fb4a305c58d381440ac3c7"
+          "content": "db036fbbcb0905803c4279536ea3b989385ba60bb7c6bd635875ea0242de8c14"
         }
       ]
     },
@@ -6666,7 +6666,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "00f5e14b20d1e662a2415670f86530b3650b3cf6c589526e3a5e6d799efad5cf"
+          "content": "9049baff64cf5bfc9d1c1214ce14c75eeb2bf2f3253bfb75718520222ba6e337"
         }
       ]
     },
@@ -6890,7 +6890,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "52c5e34d36921e31e5eb26077ea81cf9d080032b2a9b2c07b6dc67fa32d7147c"
+          "content": "be1c875e6a8192c766df361b1ef75c1852b615b72153f6bd6bc136bf76f5af99"
         }
       ]
     },
@@ -7044,7 +7044,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "aef5ed8ae510e743d2264d1adf883e1380d73aa6c3a56015770c31704d68eaa6"
+          "content": "439e6f017bdeabf1ca48a0e67a01784f3aabc45c2c2fe201e30312900c4b8285"
         }
       ]
     },
@@ -7142,7 +7142,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5b1b6c2ec8d6cde79734bf04c73ecda7e528ac92e7965dae2f047257ee6ccd38"
+          "content": "fe3d1b61e03aa53499280f2cd77307638a19c0685cc6566fd0cf6e6e4417c05d"
         }
       ]
     },
@@ -7688,7 +7688,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "3caf33da5cf6042718d0b27545a4108877bd85f19eab7d0f4c9c18fd57fadf67"
+          "content": "99afe85a2c8de996c2fdd8f253c0d00c3bd771e1ac9c32b37eae51795e55124b"
         }
       ]
     },
@@ -8374,7 +8374,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "7e19ef76360f7410b7be92793e1f6ad36033aa6d1db668a673a4c8bafd9cf43b"
+          "content": "f4928d9c49c50df34b97ab7abd973b826a8f7ba7b66f33b4acbf7c450db5a19b"
         }
       ]
     },
@@ -8388,7 +8388,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0c66fda402401e9f6294593c406cf0ed1df82158f0672606d1ff604128f546b7"
+          "content": "68c429c12495ea6741adbe83d8b6a8148cab637d8dde62450ba4400a4aacc4ac"
         }
       ]
     },
@@ -8458,7 +8458,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "36c0ab56d06807c98cdf3ca8e34f77f7778facee3f5668695437621ca59bbf18"
+          "content": "b33a16a90e420bbb89d2c33a6b8f75ab4ca2c05b0c87326497b1f91f797fcbf8"
         }
       ]
     },
@@ -9042,6 +9042,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/AutomergeCrdtMesh@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/AutonomousCodeSynthesizer@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
@@ -9058,6 +9064,7 @@
     {
       "ref": "pkg:npm/glorian/AutonomousReconciliationLoop@1.0.0",
       "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
         "pkg:npm/glorian/FdirOntology@1.0.0",
         "pkg:npm/glorian/OntologyCyclotron@1.0.0",
@@ -9092,6 +9099,12 @@
       "ref": "pkg:npm/glorian/BatchAggregator@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/BayesianCanaryEvaluator@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -9135,6 +9148,12 @@
     },
     {
       "ref": "pkg:npm/glorian/BitemporalEventSourcingLedger@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/BitemporalEventStore@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
@@ -9197,6 +9216,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/ChaosCircuitBreaker@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/CliCatalogAndHygieneGovernorCore@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
@@ -9209,6 +9234,12 @@
         "pkg:npm/glorian/CausalStructuralModel@1.0.0",
         "pkg:npm/glorian/DiscreteEventSimulationHypervisor@1.0.0",
         "pkg:npm/glorian/OntologicalHypergraph@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/CloudflareDurableBridge@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -9233,6 +9264,7 @@
     {
       "ref": "pkg:npm/glorian/ConfidentialEnclaveGovernor@1.0.0",
       "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
       ]
     },
@@ -9305,6 +9337,7 @@
     {
       "ref": "pkg:npm/glorian/CrdtStateReplicator@1.0.0",
       "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
         "pkg:npm/glorian/PolyglotRustZigWasmKernel@1.0.0"
       ]
     },
@@ -9354,6 +9387,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/DeterministicSimulationEngine@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/DeterministicSimulator@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
@@ -9397,6 +9436,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/DurableExecutionEngine@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/DurableSqliteLedger@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
@@ -9419,6 +9464,12 @@
       "ref": "pkg:npm/glorian/EbpfKernelProbeEngine@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/EbpfOtlpTelemetryGovernor@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -9554,6 +9605,7 @@
     {
       "ref": "pkg:npm/glorian/FdirOntology@1.0.0",
       "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
         "pkg:npm/glorian/OntologyCyclotron@1.0.0"
       ]
@@ -9568,6 +9620,12 @@
       "ref": "pkg:npm/glorian/FirecrackerDaemonSupervisor@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/FirecrackerMicroVmEngine@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -9730,6 +9788,7 @@
     {
       "ref": "pkg:npm/glorian/HelmReleaseGovernor@1.0.0",
       "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
         "pkg:npm/glorian/KubectlClusterInspector@1.0.0",
         "pkg:npm/glorian/OpaPolicyGovernor@1.0.0"
@@ -9745,6 +9804,7 @@
     {
       "ref": "pkg:npm/glorian/HermeticReproducibleBuildGovernor@1.0.0",
       "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
       ]
     },
@@ -9906,6 +9966,12 @@
       "ref": "pkg:npm/glorian/KubernetesFleetOperator@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/KubernetesNativeClient@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -10103,6 +10169,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/NativeSqliteStore@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/NeuralSymbolicProver@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/EvidencePaths@1.0.0"
@@ -10175,6 +10247,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/OtlpCollectorGateway@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/OtlpDistributedTracingCore@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
@@ -10234,6 +10312,7 @@
     {
       "ref": "pkg:npm/glorian/PolyglotRustZigWasmKernel@1.0.0",
       "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
         "pkg:npm/glorian/WasmBytecodeSynthesizer@1.0.0"
       ]
@@ -10340,6 +10419,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/RateLimitingGovernor@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/ReactiveStreamEngine@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
@@ -10376,6 +10461,12 @@
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
         "pkg:npm/glorian/DurableSqliteLedger@1.0.0",
         "pkg:npm/glorian/EnterpriseWorkspaceGovernor@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/SapFixAutoRemediator@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -10445,6 +10536,7 @@
     {
       "ref": "pkg:npm/glorian/SharedMemoryArena@1.0.0",
       "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
       ]
     },
@@ -10478,6 +10570,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/SlsaProvenanceGovernor@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/SlsaProvenanceSbom@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
@@ -10502,6 +10600,12 @@
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
         "pkg:npm/glorian/DurableSqliteLedger@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/SovereignAiGateway@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -10604,6 +10708,7 @@
     {
       "ref": "pkg:npm/glorian/TerraformIaCGovernor@1.0.0",
       "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
       ]
     },
