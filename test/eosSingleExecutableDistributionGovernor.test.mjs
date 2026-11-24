@@ -132,7 +132,11 @@ describe("SPEC-304: Single Executable Applications (SEA) Automated Binary Distri
       bufSig,
     );
     assert.strictEqual(winBundle.binaryName, "eos-win32-x64.exe");
-    const winCfg = EosSingleExecutableDistributionGovernor.generateSeaConfig("win32-x64", "bin/sea-bootstrap.cjs");
+    const winCfg = EosSingleExecutableDistributionGovernor.generateSeaConfig(
+      "bin/sea-bootstrap.cjs",
+      "dist/eos-win32-x64.blob",
+    );
+    assert.strictEqual(winCfg.main, "bin/sea-bootstrap.cjs");
     assert.strictEqual(winCfg.output, "dist/eos-win32-x64.blob");
   });
 
