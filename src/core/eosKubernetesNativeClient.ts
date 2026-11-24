@@ -15,6 +15,7 @@ import * as fs from "node:fs";
 import * as https from "node:https";
 import * as path from "node:path";
 import { URL } from "node:url";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 
 export interface K8sClientOptions {
   endpoint?: string;
@@ -623,7 +624,7 @@ export class EosKubernetesNativeClient {
       sha256Signature,
     };
 
-    const receiptDir = path.resolve(process.cwd(), "docs", "evidence");
+    const receiptDir = resolveEvidenceDir();
     if (!fs.existsSync(receiptDir)) {
       fs.mkdirSync(receiptDir, { recursive: true });
     }

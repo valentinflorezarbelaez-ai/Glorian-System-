@@ -7,10 +7,11 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosDistributedLockGovernor } from "../src/core/eosDistributedLockGovernor.ts";
 
 const SAMPLE_PATH = path.resolve("templates/locks/sample-cluster-topology.json");
-const RECEIPT_PATH = path.resolve("docs/evidence/DISTRIBUTED_LOCK_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("DISTRIBUTED_LOCK_RECEIPT.json");
 
 describe("SPEC-284: Multi-Region Quorum Lease & Distributed Lock Governor", () => {
   const sampleTopo = JSON.parse(fs.readFileSync(SAMPLE_PATH, "utf8"));
@@ -121,7 +122,7 @@ describe("SPEC-284: Multi-Region Quorum Lease & Distributed Lock Governor", () =
     assert.ok(lock.lease);
 
     const receipt = governor.generateReceipt(lock.lease, RECEIPT_PATH);
-    assert.ok(fs.existsSync(RECEIPT_PATH));
+    assert.deepEqual(JSON.parse(fs.readFileSync(RECEIPT_PATH, "utf8")), receipt);
     assert.equal(receipt.resource, "audit-res");
     assert.equal(receipt.owner, "worker-audit");
     assert.equal(receipt.quorumPassed, true);

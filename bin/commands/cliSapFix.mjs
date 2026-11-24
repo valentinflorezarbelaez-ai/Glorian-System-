@@ -9,6 +9,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 import {
   AstMutationSaboteur,
   MutationRunner,
@@ -143,7 +144,7 @@ async function cmd_sapfix_audit(commandContext) {
   console.log(`  Winning Patches     : ${receipt.winningPatchesCount}`);
   console.log(`  Avg Mutation Score  : ${(receipt.averageMutationScore * 100).toFixed(1)}%`);
   console.log(`  SHA-256 Signature   : ${receipt.sha256Signature}`);
-  console.log(`  Receipt Location    : docs/evidence/SAPFIX_HEAL_RECEIPT.json`);
+  console.log(`  Receipt Location    : ${resolveEvidencePath("SAPFIX_HEAL_RECEIPT.json")}`);
   console.log("===============================================================\n");
 }
 

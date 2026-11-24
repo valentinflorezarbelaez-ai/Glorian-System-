@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
-import { execFileSync, spawn } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { runStage4SyntaxAndTests } from "./lib/cicdStage4Runner.mjs";
+import { runStage4Coverage, runStage4SyntaxAndTests } from "./lib/cicdStage4Runner.mjs";
+import { assertTrackedEvidenceUnchanged, snapshotTrackedEvidence } from "./lib/trackedEvidence.mjs";
 
 const root = process.cwd();
 const startTime = Date.now();
@@ -54,6 +55,7 @@ function listRepoFiles(dir, acc = []) {
 }
 
 const allFiles = listRepoFiles(root);
+const initialEvidence = snapshotTrackedEvidence(root);
 let inventoryBytes = 0;
 for (const file of allFiles) {
   const stat = fs.lstatSync(file);
@@ -196,6 +198,11 @@ console.log(
 // ---------------------------------------------------------------------------
 // STAGE 3.6: LESLIE LAMPORT TLC FORMAL MODEL CHECKER GATE (SPEC-270)
 // ---------------------------------------------------------------------------
+// Formal checks, coverage and optional reruns inherit the same isolated receipt directory.
+process.env.EOS_EVIDENCE_DIR = path.resolve(
+  process.env.EOS_EVIDENCE_DIR?.trim() || path.join(root, ".eos", "test-evidence"),
+);
+fs.mkdirSync(process.env.EOS_EVIDENCE_DIR, { recursive: true });
 execFileSync(process.execPath, [path.join(root, "scripts/run-tlc.mjs")], {
   cwd: root,
   stdio: "inherit",
@@ -261,7 +268,10 @@ try {
 
 // Stage 4's own failure is authoritative; the telemetry gates only add an
 // optional fail-closed path on top of it.
-if (exitCode !== 0) process.exit(1);
+if (exitCode !== 0) {
+  assertTrackedEvidenceUnchanged(initialEvidence, snapshotTrackedEvidence(root));
+  process.exit(1);
+}
 if (sloBlock) {
   console.error("[STAGE 4.4 FAIL] SLO error-budget BLOCK verdict (EOS_SLO_ENFORCE=1).");
   process.exit(1);
@@ -272,52 +282,7 @@ if (sloBlock) {
 // Skippable via SKIP_COVERAGE=1 for rapid local iteration.
 // ---------------------------------------------------------------------------
 if (!process.env.SKIP_COVERAGE && !isPts) {
-  const MIN_LINE = Number(process.env.COVERAGE_MIN_LINE ?? 85);
-  const MIN_BRANCH = Number(process.env.COVERAGE_MIN_BRANCH ?? 85);
-  const covConcurrency = Number(process.env.COVERAGE_CONCURRENCY ?? 4);
-  const covStart = Date.now();
-  console.log(
-    `[STAGE 4.5] Running native V8 coverage (threshold: ${MIN_LINE}% lines, ${MIN_BRANCH}% branches, concurrency: ${covConcurrency})...`,
-  );
-  const covArgs = [
-    "--test",
-    "--experimental-test-coverage",
-    "--test-coverage-exclude=bin/**",
-    "--test-coverage-exclude=scripts/**",
-    `--test-concurrency=${covConcurrency}`,
-    ...filesToRun,
-  ];
-  const covOutput = await new Promise((resolve) => {
-    let stdout = "";
-    const child = spawn(process.execPath, covArgs, { cwd: root, stdio: ["ignore", "pipe", "pipe"], env: testEnv });
-    child.stdout.on("data", (c) => {
-      stdout += c;
-    });
-    child.stderr.on("data", () => {});
-    child.on("close", () => resolve(stdout));
-  });
-  const covMatch = covOutput.match(/all files\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)\s*\|\s*([\d.]+)/);
-  if (covMatch) {
-    const linePct = Number(covMatch[1]);
-    const branchPct = Number(covMatch[2]);
-    const funcPct = Number(covMatch[3]);
-    console.log(
-      `[COVERAGE] Lines: ${linePct}% | Branches: ${branchPct}% | Functions: ${funcPct}% (${Date.now() - covStart} ms)`,
-    );
-    if (linePct < MIN_LINE) {
-      console.error(`[STAGE 4.5 FAIL] Line coverage ${linePct}% below gate minimum ${MIN_LINE}%.`);
-      process.exit(1);
-    }
-    if (branchPct < MIN_BRANCH) {
-      console.error(`[STAGE 4.5 FAIL] Branch coverage ${branchPct}% below gate minimum ${MIN_BRANCH}%.`);
-      process.exit(1);
-    }
-    console.log(
-      `[PASS] Stage 4.5/7 — Coverage gate: ${linePct}% lines >= ${MIN_LINE}%, ${branchPct}% branches >= ${MIN_BRANCH}%.`,
-    );
-  } else {
-    console.warn("[STAGE 4.5 WARN] Coverage output not parseable; skipping gate.");
-  }
+  runStage4Coverage({ root, filesToRun, testEnv });
 } else {
   console.log("[STAGE 4.5] Incremental PTS Coverage Ratchet active (SPEC-271)...");
   execFileSync(process.execPath, [path.join(root, "scripts/coverage-ratchet.mjs")], {
@@ -605,6 +570,9 @@ const { evaluateFleetPosture, fleetPostureReceiptFields } = await import(
 const fleetRegistry = JSON.parse(fs.readFileSync(path.join(root, "docs/projects/registry.json"), "utf8"));
 const fleetPostureSnapshot = evaluateFleetPosture(root, fleetRegistry.projects || []);
 const fleetPosture = fleetPostureReceiptFields(fleetPostureSnapshot);
+const finalEvidence = snapshotTrackedEvidence(root);
+assertTrackedEvidenceUnchanged(initialEvidence, finalEvidence);
+console.log(`[PASS] SPEC-342 — ${finalEvidence.size} tracked evidence files retained their working-tree contents.`);
 const receipt = {
   pipelineId: "EOS-LOCAL-REPOSITORY-CHECKS",
   epistemicState: "LOCAL_CHECKS_EXECUTED",

@@ -11,7 +11,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import path from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosSharedMemoryArena } from "../src/core/eosSharedMemoryArena.ts";
 import { ARENA_MAGIC, ARENA_VERSION, HEADER_SIZE_BYTES } from "../src/core/eosSharedMemoryArena.types.ts";
 
@@ -163,8 +163,8 @@ describe("SPEC-303: Zero-Copy Shared Memory Arena (SharedArrayBuffer + Atomics)"
     assert.strictEqual(typeof receipt.sha256Signature, "string", "Must generate SHA-256 signature");
     assert.strictEqual(receipt.sha256Signature.length, 64, "SHA-256 must be 64-hex string");
 
-    const receiptPath = path.join(process.cwd(), "docs", "evidence", "SHARED_MEMORY_RECEIPT.json");
-    assert.ok(fs.existsSync(receiptPath), "Receipt file docs/evidence/SHARED_MEMORY_RECEIPT.json must exist");
+    const receiptPath = resolveEvidencePath("SHARED_MEMORY_RECEIPT.json");
+    assert.ok(fs.existsSync(receiptPath), "Receipt file must exist");
 
     const content = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.strictEqual(content.receiptType, "EOS_ZERO_COPY_SHARED_MEMORY_AUDIT");

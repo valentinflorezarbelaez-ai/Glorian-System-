@@ -11,12 +11,13 @@ import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosTreeSpeculativeDecodingCore } from "../src/core/eosTreeSpeculativeDecoding.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/TREE_SPECULATIVE_DECODING_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("TREE_SPECULATIVE_DECODING_RECEIPT.json", ROOT);
 
 test("SPEC-330 / CHANGE-192: Tree-Structured Speculative Decoding & Multi-Candidate Rejection Sampling", async (t) => {
   const engine = new EosTreeSpeculativeDecodingCore(32000, 0.1);

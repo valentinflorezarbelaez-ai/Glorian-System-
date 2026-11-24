@@ -11,6 +11,7 @@
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { createHash } from "node:crypto";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 import { pureSha256, deepFreeze, assertPrecondition } from "./eosKernelPrimitives.ts";
 import {
   WASM_SECTION,
@@ -544,7 +545,7 @@ export class EosWasmBytecodeSynthesizerCore {
       sha256Signature,
     });
 
-    const outDir = join(root, "docs", "evidence");
+    const outDir = resolveEvidenceDir(root);
     mkdirSync(outDir, { recursive: true });
     writeFileSync(join(outDir, "WASM_SYNTHESIZER_RECEIPT.json"), JSON.stringify(receipt, null, 2), "utf8");
 

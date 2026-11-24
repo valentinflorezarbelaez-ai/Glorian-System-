@@ -7,6 +7,7 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { resolveEvidencePath } from "./eosEvidencePaths.ts";
 
 export interface CanaryTelemetryGroup {
   requestCount: number;
@@ -189,8 +190,7 @@ export class EosBayesianCanaryEvaluator {
         };
       }
 
-      const evidencePath =
-        evidencePathOverride ?? data.evidencePath ?? path.resolve("docs/evidence/CANARY_RECEIPT.json");
+      const evidencePath = evidencePathOverride ?? data.evidencePath ?? resolveEvidencePath("CANARY_RECEIPT.json");
 
       const partialReport: CanaryEvaluationReport = {
         status: "COMPLETED",

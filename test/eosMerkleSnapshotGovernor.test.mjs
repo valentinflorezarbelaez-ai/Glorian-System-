@@ -7,10 +7,11 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosMerkleSnapshotGovernor } from "../src/core/eosMerkleSnapshotGovernor.ts";
 
 const SAMPLE_PATH = path.resolve("templates/snapshots/sample-state-snapshot.json");
-const RECEIPT_PATH = path.resolve("docs/evidence/MERKLE_SNAPSHOT_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("MERKLE_SNAPSHOT_RECEIPT.json");
 
 describe("SPEC-282: Zero-Knowledge State Attestation & Merkle Tree Snapshot Governor", () => {
   const sampleItems = JSON.parse(fs.readFileSync(SAMPLE_PATH, "utf8"));
@@ -95,7 +96,7 @@ describe("SPEC-282: Zero-Knowledge State Attestation & Merkle Tree Snapshot Gove
     const tree = EosMerkleSnapshotGovernor.buildTree(sampleItems);
     const receipt = EosMerkleSnapshotGovernor.generateReceipt(tree, RECEIPT_PATH);
 
-    assert.ok(fs.existsSync(RECEIPT_PATH));
+    assert.deepEqual(JSON.parse(fs.readFileSync(RECEIPT_PATH, "utf8")), receipt);
     assert.equal(receipt.rootHash, tree.rootHash);
     assert.equal(receipt.leafCount, 5);
     assert.equal(receipt.depth, 3);

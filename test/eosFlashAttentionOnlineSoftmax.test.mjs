@@ -9,12 +9,13 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosFlashAttentionOnlineSoftmaxCore } from "../src/core/eosFlashAttentionOnlineSoftmax.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/FLASH_ATTENTION_ONLINE_SOFTMAX_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("FLASH_ATTENTION_ONLINE_SOFTMAX_RECEIPT.json", ROOT);
 
 describe("SPEC-318: FlashAttention Online Softmax Tiling & Block-Paged Attention Kernel", () => {
   test("BDD-1683: Tile Partitioning & Workspace Memory Bounds", () => {

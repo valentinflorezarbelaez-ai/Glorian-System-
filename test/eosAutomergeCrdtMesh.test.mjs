@@ -8,6 +8,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { existsSync, readFileSync } from "node:fs";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { CrdtDocument, DtnOutboxQueue, auditCrdtMeshPipeline } from "../src/core/eosAutomergeCrdtMesh.ts";
 
 test("BDD-1575: Concurrent Mutation and Content-Addressed Causal DAG", () => {
@@ -136,10 +137,8 @@ test("BDD-1579: Cryptographic Integrity and Tamper Detection in Operation DAG", 
 });
 
 test("BDD-1580: Cryptographic CRDT Mesh Audit Receipt Generation", async () => {
-  const receipt = await auditCrdtMeshPipeline({
-    writeReceipt: true,
-    receiptPath: "docs/evidence/CRDT_MESH_RECEIPT.json",
-  });
+  const receiptPath = resolveEvidencePath("CRDT_MESH_RECEIPT.json");
+  const receipt = await auditCrdtMeshPipeline({ writeReceipt: true });
 
   assert.equal(receipt.specRef, "SPEC-300");
   assert.equal(receipt.totalPeersTested, 3);
@@ -148,7 +147,7 @@ test("BDD-1580: Cryptographic CRDT Mesh Audit Receipt Generation", async () => {
   assert.ok(receipt.dtnPacketsDelivered > 0);
   assert.equal(receipt.sha256Signature.length, 64);
 
-  assert.ok(existsSync("docs/evidence/CRDT_MESH_RECEIPT.json"));
-  const diskReceipt = JSON.parse(readFileSync("docs/evidence/CRDT_MESH_RECEIPT.json", "utf8"));
+  assert.ok(existsSync(receiptPath));
+  const diskReceipt = JSON.parse(readFileSync(receiptPath, "utf8"));
   assert.equal(diskReceipt.sha256Signature, receipt.sha256Signature);
 });

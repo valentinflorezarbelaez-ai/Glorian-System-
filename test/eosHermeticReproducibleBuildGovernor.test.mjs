@@ -11,7 +11,9 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosHermeticReproducibleBuildGovernor } from "../src/core/eosHermeticReproducibleBuildGovernor.ts";
 
 describe("SPEC-302: Bit-for-Bit Hermetic Reproducible Builds (Nix Flakes & Bazel Containers)", () => {
@@ -137,9 +139,106 @@ describe("SPEC-302: Bit-for-Bit Hermetic Reproducible Builds (Nix Flakes & Bazel
     assert.match(receipt.rootDigestSha256, /^[0-9a-f]{64}$/);
     assert.match(receipt.sha256Signature, /^[0-9a-f]{64}$/);
 
-    const receiptPath = path.join(root, "docs", "evidence", "HERMETIC_BUILD_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("HERMETIC_BUILD_RECEIPT.json", root);
     assert.ok(fs.existsSync(receiptPath));
     const saved = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.equal(saved.sha256Signature, receipt.sha256Signature);
+  });
+
+  it("Edge cases: binary buffers, executable suffixes, normalizePermissions=false, missing/mode/epoch drift, and catch", () => {
+    // 1. Default options, binary Buffer/Uint8Array content, Windows backslash paths, and .sh/.mjs/.exe suffixes
+    const normalizedDefaults = EosHermeticReproducibleBuildGovernor.normalizeArtifacts([
+      { path: "scripts\\deploy.sh", content: Buffer.from("#!/bin/sh\necho ok\n") },
+      { path: "tools/runner.mjs", content: new Uint8Array([101, 120, 112, 111, 114, 116]) },
+      { path: "dist/app.exe", content: "MZ" },
+      { path: "README.md", content: "docs" },
+    ]);
+    assert.equal(normalizedDefaults.find((a) => a.path === "scripts/deploy.sh")?.mode, 0o755);
+    assert.equal(normalizedDefaults.find((a) => a.path === "tools/runner.mjs")?.mode, 0o755);
+    assert.equal(normalizedDefaults.find((a) => a.path === "dist/app.exe")?.mode, 0o755);
+    assert.equal(normalizedDefaults.find((a) => a.path === "README.md")?.mode, 0o644);
+
+    // 2. normalizePermissions: false preserves explicit mode and falls back to 0o644 when omitted
+    const preservedPerms = EosHermeticReproducibleBuildGovernor.normalizeArtifacts(
+      [
+        { path: "scripts/custom.sh", content: "echo", mode: 0o600 },
+        { path: "bin/no-mode.sh", content: "echo" },
+      ],
+      { normalizePermissions: false, sourceDateEpoch: 1700000123 },
+    );
+    assert.equal(preservedPerms[0].mode, 0o644);
+    assert.equal(preservedPerms[1].mode, 0o600);
+    assert.equal(preservedPerms[0].mtime, 1700000123);
+
+    // 3. Precondition checks
+    assert.throws(() => EosHermeticReproducibleBuildGovernor.normalizeArtifacts(null));
+    assert.throws(() => EosHermeticReproducibleBuildGovernor.computeReproducibleRootDigest(null));
+    assert.throws(() => EosHermeticReproducibleBuildGovernor.buildReproducibleBundle("", []));
+    assert.throws(() => EosHermeticReproducibleBuildGovernor.buildReproducibleBundle(123, []));
+    const sampleBundle = EosHermeticReproducibleBuildGovernor.buildReproducibleBundle("b-valid", []);
+    assert.throws(() => EosHermeticReproducibleBuildGovernor.verifyHermeticBuild(null, sampleBundle));
+    assert.throws(() => EosHermeticReproducibleBuildGovernor.verifyHermeticBuild(sampleBundle, null));
+
+    // 4. verifyHermeticBuild with missing artifacts on both sides and mode mismatch
+    const bundleLeft = EosHermeticReproducibleBuildGovernor.buildReproducibleBundle(
+      "left",
+      [
+        { path: "only-left.txt", content: "left" },
+        { path: "shared.txt", content: "same", mode: 0o644 },
+      ],
+      { normalizePermissions: false },
+    );
+    const bundleRight = EosHermeticReproducibleBuildGovernor.buildReproducibleBundle(
+      "right",
+      [
+        { path: "only-right.txt", content: "right" },
+        { path: "shared.txt", content: "same", mode: 0o755 },
+      ],
+      { normalizePermissions: false },
+    );
+    const driftReport = EosHermeticReproducibleBuildGovernor.verifyHermeticBuild(bundleLeft, bundleRight);
+    assert.equal(driftReport.reproducible, false);
+    assert.equal(driftReport.verdict, "NON_DETERMINISTIC_DRIFT");
+    assert.equal(driftReport.divergentArtifacts.find((d) => d.path === "only-left.txt")?.digestB, "MISSING");
+    assert.equal(driftReport.divergentArtifacts.find((d) => d.path === "only-right.txt")?.digestA, "MISSING");
+    assert.ok(driftReport.divergentArtifacts.some((d) => d.path === "shared.txt"));
+
+    // 5. Same artifact hashes & modes but differing rootDigestSha256 (different sourceDateEpoch)
+    const epochA = EosHermeticReproducibleBuildGovernor.buildReproducibleBundle(
+      "epoch-a",
+      [{ path: "a.txt", content: "same" }],
+      { sourceDateEpoch: 1700000000 },
+    );
+    const epochB = EosHermeticReproducibleBuildGovernor.buildReproducibleBundle(
+      "epoch-b",
+      [{ path: "a.txt", content: "same" }],
+      { sourceDateEpoch: 1700000001 },
+    );
+    const epochVerify = EosHermeticReproducibleBuildGovernor.verifyHermeticBuild(epochA, epochB);
+    assert.equal(epochVerify.divergentArtifacts.length, 0);
+    assert.equal(epochVerify.reproducible, false);
+    assert.equal(epochVerify.verdict, "NON_DETERMINISTIC_DRIFT");
+
+    // 6. auditHermeticBuildPipeline default arg + best-effort catch when evidence path is unwritable
+    const defaultReceipt = EosHermeticReproducibleBuildGovernor.auditHermeticBuildPipeline();
+    assert.equal(defaultReceipt.specRef, "SPEC-302");
+
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "glorian-hermetic-catch-"));
+    const blockerFile = path.join(tmpDir, "blocker-file");
+    fs.writeFileSync(blockerFile, "not-a-dir", "utf8");
+    const prevEvidenceDir = process.env.EOS_EVIDENCE_DIR;
+    try {
+      process.env.EOS_EVIDENCE_DIR = path.join(blockerFile, "nested");
+      const caughtReceipt = EosHermeticReproducibleBuildGovernor.auditHermeticBuildPipeline({ projectRoot: tmpDir });
+      assert.equal(caughtReceipt.specRef, "SPEC-302");
+      assert.equal(caughtReceipt.bitForBitIdentical, true);
+    } finally {
+      if (prevEvidenceDir !== undefined) {
+        process.env.EOS_EVIDENCE_DIR = prevEvidenceDir;
+      } else {
+        delete process.env.EOS_EVIDENCE_DIR;
+      }
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
   });
 });

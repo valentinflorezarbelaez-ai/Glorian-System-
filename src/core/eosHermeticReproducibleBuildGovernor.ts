@@ -11,7 +11,8 @@
 
 import { createHash } from "node:crypto";
 import { writeFileSync, mkdirSync } from "node:fs";
-import { join } from "node:path";
+import { dirname } from "node:path";
+import { resolveEvidencePath } from "./eosEvidencePaths.ts";
 import { pureSha256, deepFreeze, assertPrecondition } from "./eosKernelPrimitives.ts";
 import type {
   BuildArtifactEntry,
@@ -217,9 +218,9 @@ export class EosHermeticReproducibleBuildGovernor {
       sha256Signature: signature,
     });
 
-    const outPath = join(projectRoot, "docs", "evidence", "HERMETIC_BUILD_RECEIPT.json");
     try {
-      mkdirSync(join(projectRoot, "docs", "evidence"), { recursive: true });
+      const outPath = resolveEvidencePath("HERMETIC_BUILD_RECEIPT.json", projectRoot);
+      mkdirSync(dirname(outPath), { recursive: true });
       writeFileSync(outPath, JSON.stringify(receipt, null, 2) + "\n", "utf8");
     } catch {
       // Best-effort in sandbox environments

@@ -8,7 +8,7 @@
 import { test, describe } from "node:test";
 import * as assert from "node:assert/strict";
 import * as fs from "node:fs";
-import * as path from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import {
   AstMutationSaboteur,
   MutationRunner,
@@ -154,9 +154,101 @@ export function isAllowed(age: number): boolean {
     assert.ok(receipt.winningPatchesCount > 0);
     assert.equal(receipt.sha256Signature.length, 64);
 
-    const receiptPath = path.join(process.cwd(), "docs", "evidence", "SAPFIX_HEAL_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("SAPFIX_HEAL_RECEIPT.json");
     assert.ok(fs.existsSync(receiptPath));
     const saved = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.equal(saved.sha256Signature, receipt.sha256Signature);
+  });
+
+  test("Edge cases: comment/import/increment skips, exception handling, and boundary synthesis", async () => {
+    const saboteur = new AstMutationSaboteur();
+    const sourceWithSkips = [
+      "// single line comment",
+      "/* block comment */",
+      " * doc comment",
+      'import { foo } from "./foo.ts";',
+      'import type { Bar } from "./bar.ts";',
+      "",
+      "export function step(i: number, j: number, k: number, m: number): number {",
+      "  i++;",
+      "  ++j;",
+      "  k--;",
+      "  --m;",
+      "  const diff = i - j;",
+      "  const prod = diff * 2;",
+      "  return prod !== 0 || (k <= m && j >= 1) ? 1 : 0;",
+      "}",
+    ].join("\n");
+
+    const mutants = saboteur.generateMutants("edge.ts", sourceWithSkips);
+    assert.ok(mutants.some((m) => m.originalOperator === "-"));
+    assert.ok(mutants.some((m) => m.originalOperator === "*"));
+    assert.ok(mutants.some((m) => m.originalOperator === "!=="));
+    assert.ok(mutants.some((m) => m.originalOperator === "||"));
+    assert.ok(mutants.some((m) => m.originalOperator === "<="));
+    assert.ok(mutants.some((m) => m.originalOperator === ">="));
+    assert.ok(!mutants.some((m) => m.line <= 6));
+
+    // Empty mutant set scores 1.0
+    const emptyReport = await MutationRunner.evaluateMutants("empty.ts", [], () => true);
+    assert.equal(emptyReport.totalMutants, 0);
+    assert.equal(emptyReport.mutationScore, 1.0);
+
+    // Exceptions (Error and non-Error) during mutant evaluation count as KILLED
+    const evalReport = await MutationRunner.evaluateMutants("edge.ts", mutants.slice(0, 2), (_src, mutant) => {
+      if (mutant.id === "MUT_1") {
+        throw new Error("assertion failure");
+      }
+      throw "non-error-failure";
+    });
+    assert.equal(evalReport.killedMutants, 2);
+    assert.equal(evalReport.mutants[0].errorOutput, "assertion failure");
+    assert.equal(evalReport.mutants[1].errorOutput, "non-error-failure");
+
+    // Out-of-range failing lines
+    assert.deepEqual(SapFixSynthesizer.synthesizeCandidates("x.ts", "const x = 1;", 0), []);
+    assert.deepEqual(SapFixSynthesizer.synthesizeCandidates("x.ts", "const x = 1;", 99), []);
+
+    // All boundary operator combinations & already-safe expressions
+    assert.ok(
+      SapFixSynthesizer.synthesizeCandidates("b.ts", "if (a < b) return a;", 1).some((c) =>
+        c.description.includes("Relax boundary with <="),
+      ),
+    );
+    assert.ok(
+      SapFixSynthesizer.synthesizeCandidates("b.ts", "if (a <= b) return a;", 1).some((c) =>
+        c.description.includes("Strict boundary with <"),
+      ),
+    );
+    assert.ok(
+      SapFixSynthesizer.synthesizeCandidates("b.ts", "if (a >= b) return a;", 1).some((c) =>
+        c.description.includes("Strict boundary with >"),
+      ),
+    );
+    const safeLineCands = SapFixSynthesizer.synthesizeCandidates("b.ts", "return user?.score ?? 0;", 1);
+    assert.ok(!safeLineCands.some((c) => c.description.includes("optional chaining")));
+    assert.ok(!safeLineCands.some((c) => c.description.includes("nullish coalescing")));
+
+    const blankLineCands = SapFixSynthesizer.synthesizeCandidates("b.ts", "", 1);
+    assert.ok(blankLineCands.some((c) => c.replacementSnippet.includes("if (true)")));
+
+    // ClosedLoopRemediator: validator exceptions + NO_VIABLE_PATCH
+    let callIdx = 0;
+    const noPatch = await ClosedLoopRemediator.remediate("fail.ts", "if (a < b) return a;", 1, async () => {
+      callIdx++;
+      if (callIdx === 1) throw new Error("validator error");
+      if (callIdx === 2) throw "validator string crash";
+      return { pass: false };
+    });
+    assert.equal(noPatch.status, "NO_VIABLE_PATCH");
+    assert.equal(noPatch.winningPatch, undefined);
+    assert.ok(noPatch.rejectedCandidates.some((r) => r.reason === "EXCEPTION: validator error"));
+    assert.ok(noPatch.rejectedCandidates.some((r) => r.reason === "EXCEPTION: validator string crash"));
+
+    // auditHealingPipeline defaults & emitReceipt: false
+    const noEmitReceipt = await auditHealingPipeline({ emitReceipt: false });
+    assert.equal(noEmitReceipt.specRef, "SPEC-291");
+    const defaultReceipt = await auditHealingPipeline();
+    assert.equal(defaultReceipt.specRef, "SPEC-291");
   });
 });

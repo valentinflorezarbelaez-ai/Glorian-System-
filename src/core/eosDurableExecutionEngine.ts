@@ -10,6 +10,7 @@ import * as fs from "node:fs";
 import * as http from "node:http";
 import * as https from "node:https";
 import * as path from "node:path";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 import type {
   ActivityContext,
   ActivityDefinition,
@@ -446,7 +447,7 @@ export async function auditDurablePipeline(workspaceRoot: string = process.cwd()
     sha256Signature,
   };
 
-  const evidenceDir = path.join(workspaceRoot, "docs", "evidence");
+  const evidenceDir = resolveEvidenceDir(workspaceRoot);
   if (!fs.existsSync(evidenceDir)) {
     fs.mkdirSync(evidenceDir, { recursive: true });
   }

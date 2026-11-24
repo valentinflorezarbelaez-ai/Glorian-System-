@@ -9,8 +9,10 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosPolyglotRustZigWasmKernelCore } from "../src/core/eosPolyglotRustZigWasmKernel.ts";
 import { EosCrdtStateReplicatorCore } from "../src/core/eosCrdtStateReplicator.ts";
 
@@ -109,7 +111,7 @@ describe("SPEC-309: Polyglot Rust & Zig Native WebAssembly Linear-Memory Kernel 
     assert.equal(receipt.ringBufferVerified, true);
     assert.equal(receipt.cryptographicSignature.length, 64);
 
-    const receiptPath = path.join(root, "docs", "evidence", "POLYGLOT_RUST_ZIG_WASM_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("POLYGLOT_RUST_ZIG_WASM_RECEIPT.json", root);
     assert.ok(fs.existsSync(receiptPath));
     const disk = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.equal(disk.cryptographicSignature, receipt.cryptographicSignature);
@@ -118,5 +120,93 @@ describe("SPEC-309: Polyglot Rust & Zig Native WebAssembly Linear-Memory Kernel 
     const crdtMerge = EosCrdtStateReplicatorCore.mergeLinearMemoryVectors([3, 7, 1], [5, 2, 9]);
     assert.deepEqual(crdtMerge.mergedElements, [5, 7, 9]);
     assert.equal(crdtMerge.memoryBytesUsed, 12);
+  });
+
+  it("Edge cases: linear memory growth, unequal vectors, Uint8Array hashing, ring bounds, defaults, and mkdir", async () => {
+    // 1. Default projectRoot and missing source precondition
+    const defaultCompile = EosPolyglotRustZigWasmKernelCore.compilePolyglotKernel("RUST");
+    assert.equal(defaultCompile.language, "RUST");
+    assert.equal(defaultCompile.wasmMagicValid, true);
+
+    const emptyRoot = fs.mkdtempSync(path.join(os.tmpdir(), "glorian-polyglot-empty-"));
+    try {
+      assert.throws(
+        () => EosPolyglotRustZigWasmKernelCore.compilePolyglotKernel("RUST", emptyRoot),
+        /Missing polyglot kernel source/,
+      );
+    } finally {
+      fs.rmSync(emptyRoot, { recursive: true, force: true });
+    }
+
+    // 2. Unequal vector lengths, empty vectors, and large vector triggering memory.grow (> 65536 bytes)
+    const joinLeftLonger = EosPolyglotRustZigWasmKernelCore.executeRustVectorJoinWasm([10, 20, 30], [5]);
+    assert.deepEqual(joinLeftLonger.mergedElements, [10, 20, 30]);
+    const joinRightLonger = EosPolyglotRustZigWasmKernelCore.executeRustVectorJoinWasm([5], [10, 20, 30]);
+    assert.deepEqual(joinRightLonger.mergedElements, [10, 20, 30]);
+    const joinEmpty = EosPolyglotRustZigWasmKernelCore.executeRustVectorJoinWasm([], []);
+    assert.equal(joinEmpty.dimension, 0);
+    assert.equal(joinEmpty.sumMerged, 0);
+
+    const largeVecA = new Int32Array(6000).fill(3);
+    const largeVecB = new Int32Array(6000).fill(7);
+    const largeJoin = EosPolyglotRustZigWasmKernelCore.executeRustVectorJoinWasm(largeVecA, largeVecB);
+    assert.equal(largeJoin.dimension, 6000);
+    assert.equal(largeJoin.sumMerged, 6000 * 7);
+    assert.ok(largeJoin.memoryBytesUsed > 65536);
+
+    // 3. Uint8Array input to FNV-1a (including > 1 page payload)
+    const bufHash = EosPolyglotRustZigWasmKernelCore.executeZigFnv1aHashWasm(Buffer.from("foobar", "utf8"));
+    assert.equal(bufHash.hashHex, "bf9cf968");
+    const bigHash = EosPolyglotRustZigWasmKernelCore.executeZigFnv1aHashWasm(new Uint8Array(70000).fill(0x41));
+    assert.equal(bigHash.inputByteLength, 70000);
+    assert.equal(bigHash.hashHex.length, 8);
+
+    // 4. Ring buffer underflow (producer < consumer) and overflow (inFlight >= capacity)
+    const underflow = EosPolyglotRustZigWasmKernelCore.executeZigRingBufferCheckWasm(100, 200, 64);
+    assert.equal(underflow.freeSlots, 64);
+    assert.equal(underflow.utilizationRatio, 0);
+    assert.equal(underflow.backpressureActive, false);
+
+    const overflow = EosPolyglotRustZigWasmKernelCore.executeZigRingBufferCheckWasm(200, 100, 64);
+    assert.equal(overflow.freeSlots, 0);
+    assert.equal(overflow.utilizationRatio, 1);
+    assert.equal(overflow.backpressureActive, true);
+
+    // 5. Benchmark defaults and precondition checks
+    assert.throws(() => EosPolyglotRustZigWasmKernelCore.benchmarkPolyglotWasm(0, 10), /positive/);
+    assert.throws(() => EosPolyglotRustZigWasmKernelCore.benchmarkPolyglotWasm(10, 0), /positive/);
+    const defaultBench = EosPolyglotRustZigWasmKernelCore.benchmarkPolyglotWasm();
+    assert.equal(defaultBench.vectorDimension, 128);
+    assert.equal(defaultBench.iterations, 250);
+
+    // 6. auditPolyglotRustZigPipeline defaults + creating missing evidenceDir in temp dir
+    const defaultAudit = await EosPolyglotRustZigWasmKernelCore.auditPolyglotRustZigPipeline();
+    assert.equal(defaultAudit.status, "POLYGLOT_WASM_VERIFIED");
+
+    const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "glorian-polyglot-mkdir-"));
+    const prevEvidenceDir = process.env.EOS_EVIDENCE_DIR;
+    try {
+      const tplDir = path.join(tmpRoot, "templates", "polyglot-wasm");
+      fs.mkdirSync(tplDir, { recursive: true });
+      fs.copyFileSync(
+        path.join(process.cwd(), "templates", "polyglot-wasm", "kernel.rs"),
+        path.join(tplDir, "kernel.rs"),
+      );
+      fs.copyFileSync(
+        path.join(process.cwd(), "templates", "polyglot-wasm", "kernel.zig"),
+        path.join(tplDir, "kernel.zig"),
+      );
+      delete process.env.EOS_EVIDENCE_DIR;
+      const isolatedReceipt = await EosPolyglotRustZigWasmKernelCore.auditPolyglotRustZigPipeline(tmpRoot);
+      assert.equal(isolatedReceipt.status, "POLYGLOT_WASM_VERIFIED");
+      assert.ok(fs.existsSync(path.join(tmpRoot, "docs", "evidence", "POLYGLOT_RUST_ZIG_WASM_RECEIPT.json")));
+    } finally {
+      if (prevEvidenceDir !== undefined) {
+        process.env.EOS_EVIDENCE_DIR = prevEvidenceDir;
+      } else {
+        delete process.env.EOS_EVIDENCE_DIR;
+      }
+      fs.rmSync(tmpRoot, { recursive: true, force: true });
+    }
   });
 });

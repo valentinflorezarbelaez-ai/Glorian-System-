@@ -7,6 +7,7 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { resolveEvidencePath } from "./eosEvidencePaths.ts";
 
 export interface OtlpGatewaySpan {
   traceId: string;
@@ -89,7 +90,7 @@ export class EosOtlpCollectorGateway {
     this.maxBufferSize = options.maxBufferSize ?? 10000;
     this.defaultSampleRate = options.sampleRate ?? 0.05;
     this.defaultLatencyThresholdMs = options.latencyThresholdMs ?? 250;
-    this.evidencePath = options.evidencePath ?? path.resolve("docs/evidence/OTEL_RECEIPT.json");
+    this.evidencePath = options.evidencePath ?? resolveEvidencePath("OTEL_RECEIPT.json");
   }
 
   public parsePayload(payload: string | Record<string, unknown>): OtlpGatewaySpan[] {

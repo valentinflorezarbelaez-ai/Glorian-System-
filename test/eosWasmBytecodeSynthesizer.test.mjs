@@ -12,7 +12,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import path from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import {
   EosWasmBytecodeSynthesizerCore,
   encodeUleb128,
@@ -151,10 +151,70 @@ describe("SPEC-306: Pure WebAssembly Binary Synthesis & Linear Memory Isolation 
     assert.strictEqual(typeof receipt.sha256Signature, "string");
     assert.strictEqual(receipt.sha256Signature.length, 64);
 
-    const receiptPath = path.join(process.cwd(), "docs", "evidence", "WASM_SYNTHESIZER_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("WASM_SYNTHESIZER_RECEIPT.json");
     assert.ok(fs.existsSync(receiptPath), "Receipt file must exist on disk");
 
     const onDisk = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.strictEqual(onDisk.sha256Signature, receipt.sha256Signature);
+  });
+
+  it("Edge cases: invalid bytecode validation, non-Error traps, missing memory/exports, and defaults", () => {
+    // 1. Default minPages on buildMemoryTrapModule() and default args on executeModule()
+    const defaultMemMod = EosWasmBytecodeSynthesizerCore.buildMemoryTrapModule();
+    assert.strictEqual(defaultMemMod.memoryDeclared, true);
+    const defaultRead = EosWasmBytecodeSynthesizerCore.executeModule(defaultMemMod, "read_byte");
+    assert.strictEqual(defaultRead.status, "SUCCESS");
+    assert.strictEqual(defaultRead.returnedValue, 0);
+
+    // 2. Corrupted WASM module fails WebAssembly.validate -> VALIDATION_FAILED
+    const invalidModule = {
+      bytecode: new Uint8Array([0x00, 0x00, 0x00, 0x00]),
+      sha256: "0".repeat(64),
+      totalBytes: 4,
+      exportedNames: [],
+      memoryDeclared: false,
+    };
+    const invalidRes = EosWasmBytecodeSynthesizerCore.executeModule(invalidModule, "add", [1, 2]);
+    assert.strictEqual(invalidRes.status, "VALIDATION_FAILED");
+    assert.strictEqual(invalidRes.executionTimeNs, 0n);
+    assert.strictEqual(invalidRes.executionTimeUs, 0);
+    assert.match(invalidRes.trapMessage ?? "", /failed validation/);
+
+    // 3. setupMemory provided for module without exported memory (false branch of instanceof check)
+    const addMod = EosWasmBytecodeSynthesizerCore.buildAddModule();
+    let setupCalled = false;
+    const addWithSetup = EosWasmBytecodeSynthesizerCore.executeModule(addMod, "add", [3, 4], () => {
+      setupCalled = true;
+    });
+    assert.strictEqual(addWithSetup.status, "SUCCESS");
+    assert.strictEqual(addWithSetup.returnedValue, 7);
+    assert.strictEqual(setupCalled, false);
+
+    // 4. Missing export triggers precondition Error -> RUNTIME_TRAP
+    const missingExport = EosWasmBytecodeSynthesizerCore.executeModule(addMod, "nonexistent", []);
+    assert.strictEqual(missingExport.status, "RUNTIME_TRAP");
+    assert.match(missingExport.trapMessage ?? "", /is not a function/);
+
+    // 5. Non-Error thrown in setupMemory hits String(err) branch
+    const stringTrap = EosWasmBytecodeSynthesizerCore.executeModule(defaultMemMod, "read_byte", [0], () => {
+      throw "non-error-trap-value";
+    });
+    assert.strictEqual(stringTrap.status, "RUNTIME_TRAP");
+    assert.strictEqual(stringTrap.trapMessage, "non-error-trap-value");
+
+    // 6. LEB128 edge cases (negative ULEB128 error, non-zero offset, empty buffer)
+    assert.throws(() => encodeUleb128(-1), /non-negative/);
+    const decodedAtOffset = decodeUleb128([0xff, 0x80, 0x01], 1);
+    assert.strictEqual(decodedAtOffset.value, 128);
+    assert.strictEqual(decodedAtOffset.bytesRead, 2);
+    assert.deepStrictEqual(decodeUleb128([]), { value: 0, bytesRead: 0 });
+
+    // 7. Default benchmarkKernel() and default auditWasmSynthesizerPipeline()
+    const bench = EosWasmBytecodeSynthesizerCore.benchmarkKernel();
+    assert.strictEqual(bench.operationsCount, 20000);
+    const defaultReceipt = EosWasmBytecodeSynthesizerCore.auditWasmSynthesizerPipeline();
+    assert.strictEqual(defaultReceipt.specRef, "SPEC-306");
+    const emptyOptsReceipt = EosWasmBytecodeSynthesizerCore.auditWasmSynthesizerPipeline({});
+    assert.strictEqual(emptyOptsReceipt.specRef, "SPEC-306");
   });
 });

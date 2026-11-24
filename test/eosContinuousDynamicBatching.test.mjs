@@ -9,12 +9,13 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosContinuousDynamicBatchingCore } from "../src/core/eosContinuousDynamicBatching.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/CONTINUOUS_DYNAMIC_BATCHING_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("CONTINUOUS_DYNAMIC_BATCHING_RECEIPT.json", ROOT);
 
 describe("SPEC-319: Continuous Dynamic Sequence Batching & Iteration-Level Request Scheduler", () => {
   test("BDD-1689: Request Enqueueing & Priority Management", () => {

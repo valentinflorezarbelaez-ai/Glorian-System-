@@ -7,6 +7,7 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { resolveEvidencePath } from "./eosEvidencePaths.ts";
 
 export interface BitemporalEvent {
   streamId: string;
@@ -83,7 +84,7 @@ export class EosBitemporalEventStore {
   private evidencePath: string;
 
   constructor(evidencePath?: string) {
-    this.evidencePath = evidencePath ?? path.resolve("docs/evidence/EVENTSTORE_RECEIPT.json");
+    this.evidencePath = evidencePath ?? resolveEvidencePath("EVENTSTORE_RECEIPT.json");
   }
 
   public appendEvent(input: AppendEventInput): BitemporalEvent {

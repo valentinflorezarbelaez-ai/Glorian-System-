@@ -8,6 +8,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import { resolveEvidencePath } from "./eosEvidencePaths.ts";
 import type {
   AiGatewayReceipt,
   ConsensusSession,
@@ -406,7 +407,7 @@ export class SovereignAiGateway {
     };
 
     if (options?.writeReceipt !== false) {
-      const targetPath = options?.receiptPath || "docs/evidence/AI_GATEWAY_RECEIPT.json";
+      const targetPath = options?.receiptPath || resolveEvidencePath("AI_GATEWAY_RECEIPT.json");
       const dir = dirname(targetPath);
       if (!existsSync(dir)) {
         mkdirSync(dir, { recursive: true });

@@ -12,6 +12,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import * as http from "node:http";
 import * as https from "node:https";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 import type {
   EbpfGovSyscall,
   EbpfGovVerdict,
@@ -407,7 +408,7 @@ export async function auditEbpfTelemetryPipeline(projectRoot: string = process.c
   const otlpPayload = OtlpTracePayloadBuilder.eventsToOtlpSpans(events);
   const otlpSpansExported = otlpPayload.resourceSpans[0].scopeSpans[0].spans.length;
 
-  const evidenceDir = path.join(projectRoot, "docs", "evidence");
+  const evidenceDir = resolveEvidenceDir(projectRoot);
   if (!fs.existsSync(evidenceDir)) {
     fs.mkdirSync(evidenceDir, { recursive: true });
   }

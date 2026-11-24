@@ -10,7 +10,8 @@
  */
 
 import { writeFileSync, mkdirSync } from "node:fs";
-import { join } from "node:path";
+import { dirname } from "node:path";
+import { resolveEvidencePath } from "./eosEvidencePaths.ts";
 import { pureSha256, deepFreeze, assertPrecondition } from "./eosKernelPrimitives.ts";
 import { EosOntologyCyclotron, type OntologyEdge } from "./eosOntologyCyclotron.ts";
 import type {
@@ -273,9 +274,9 @@ export class EosFdirOntology {
       sha256Signature: signature,
     });
 
-    const outPath = join(projectRoot, "docs", "evidence", "FDIR_ONTOLOGY_RECEIPT.json");
     try {
-      mkdirSync(join(projectRoot, "docs", "evidence"), { recursive: true });
+      const outPath = resolveEvidencePath("FDIR_ONTOLOGY_RECEIPT.json", projectRoot);
+      mkdirSync(dirname(outPath), { recursive: true });
       writeFileSync(outPath, JSON.stringify(receipt, null, 2) + "\n", "utf8");
     } catch {
       // Best-effort in sandboxes

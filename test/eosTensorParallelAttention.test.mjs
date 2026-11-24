@@ -10,12 +10,13 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosTensorParallelAttentionCore } from "../src/core/eosTensorParallelAttention.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/TENSOR_PARALLEL_ATTENTION_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("TENSOR_PARALLEL_ATTENTION_RECEIPT.json", ROOT);
 
 describe("SPEC-323: Tensor Parallel Attention Engine (TP-MHA / TP-GQA)", () => {
   test("BDD-1713: Multi-Head & Grouped-Query Attention Head Partitioning", () => {

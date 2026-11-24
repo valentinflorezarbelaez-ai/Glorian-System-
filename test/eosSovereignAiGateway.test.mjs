@@ -7,8 +7,11 @@
 
 import assert from "node:assert/strict";
 import test from "node:test";
-import { existsSync, readFileSync } from "node:fs";
-import { SovereignAiGateway, CONSTITUTIONAL_INVARIANTS } from "../src/core/eosSovereignAiGateway.ts";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
+import { SovereignAiGateway, CONSTITUTIONAL_INVARIANTS, DEFAULT_AI_ROUTES } from "../src/core/eosSovereignAiGateway.ts";
 
 test("BDD-1563: Dynamic Multi-Model Intent-Based Routing", async () => {
   const gateway = new SovereignAiGateway();
@@ -138,10 +141,8 @@ test("BDD-1567: Token Consumption and Spend Ledger Accounting", async () => {
 test("BDD-1568: Cryptographic AI Gateway Audit Receipt Generation", async () => {
   const gateway = new SovereignAiGateway();
 
-  const receipt = await gateway.auditAiGatewayPipeline({
-    writeReceipt: true,
-    receiptPath: "docs/evidence/AI_GATEWAY_RECEIPT.json",
-  });
+  const receipt = await gateway.auditAiGatewayPipeline({ writeReceipt: true });
+  const receiptPath = resolveEvidencePath("AI_GATEWAY_RECEIPT.json");
 
   assert.equal(receipt.specRef, "SPEC-298");
   assert.ok(receipt.providersAudited.length >= 5);
@@ -149,7 +150,92 @@ test("BDD-1568: Cryptographic AI Gateway Audit Receipt Generation", async () => 
   assert.ok(receipt.consensusSessionsCount >= 1);
   assert.ok(receipt.sha256Signature.length === 64);
 
-  assert.ok(existsSync("docs/evidence/AI_GATEWAY_RECEIPT.json"));
-  const diskReceipt = JSON.parse(readFileSync("docs/evidence/AI_GATEWAY_RECEIPT.json", "utf8"));
+  assert.ok(existsSync(receiptPath));
+  const diskReceipt = JSON.parse(readFileSync(receiptPath, "utf8"));
   assert.equal(diskReceipt.sha256Signature, receipt.sha256Signature);
+});
+
+test("Edge cases: fallback routes, cooldown HALF_OPEN, cache TTL/clear, consensus, and nested dir", async () => {
+  // 1. Custom routes without TRIAGE_FAST exercises DEFAULT_AI_ROUTES[2] fallback + custom cacheTtlMs
+  const customGw = new SovereignAiGateway({
+    routes: [DEFAULT_AI_ROUTES[0]],
+    cacheTtlMs: 25,
+  });
+  const fallbackNoTriage = customGw.getRoute("UNKNOWN_INTENT");
+  assert.equal(fallbackNoTriage.intent, "TRIAGE_FAST");
+
+  const defaultGw = new SovereignAiGateway();
+  assert.equal(defaultGw.getRoute("UNKNOWN_INTENT").intent, "TRIAGE_FAST");
+
+  // 2. Dynamic unknown provider circuit creation, repeated OPEN failure, and cooldown -> HALF_OPEN
+  const dynCircuit = defaultGw.getCircuit("custom-unknown-provider");
+  assert.equal(dynCircuit.state, "CLOSED");
+
+  defaultGw.recordFailure("openai-gpt");
+  defaultGw.recordFailure("openai-gpt");
+  defaultGw.recordFailure("openai-gpt");
+  const tripsAtOpen = defaultGw.getMetrics().circuitBreakerTrips;
+  defaultGw.recordFailure("openai-gpt"); // 4th failure while already OPEN does not increment trips
+  assert.equal(defaultGw.getMetrics().circuitBreakerTrips, tripsAtOpen);
+
+  const openCircuit = defaultGw.getCircuit("openai-gpt");
+  openCircuit.lastFailureTime = Date.now() - openCircuit.cooldownDurationMs - 50;
+  const halfOpenCircuit = defaultGw.getCircuit("openai-gpt");
+  assert.equal(halfOpenCircuit.state, "HALF_OPEN");
+
+  // 3. Embedding zero-norm, cosineSimilarity edge cases, cache hit ranking, TTL expiry, clearCache, explicit embedding
+  const emptyVec = defaultGw.deterministicEmbedding("");
+  assert.equal(emptyVec.length, 32);
+  assert.equal(defaultGw.cosineSimilarity([1, 2], [1]), 0);
+  assert.equal(defaultGw.cosineSimilarity([0, 0], [1, 0]), 0);
+
+  defaultGw.putCache("prompt-a", [1, 0, 0], "comp-a", "google-gemini", "gemini-2.0-flash", 5000);
+  defaultGw.putCache("prompt-b", [0.99, 0.14, 0], "comp-b", "google-gemini", "gemini-2.0-flash", 5000);
+  defaultGw.putCache("prompt-c", [0, 1, 0], "comp-c", "google-gemini", "gemini-2.0-flash", 5000);
+  const bestMatch = defaultGw.queryCache([1, 0, 0], 0.96);
+  assert.equal(bestMatch?.completion, "comp-a");
+
+  defaultGw.putCache("short-ttl", [0, 0, 1], "comp-exp", "google-gemini", "gemini-2.0-flash", 1);
+  await new Promise((resolve) => setTimeout(resolve, 20));
+  assert.equal(defaultGw.queryCache([0, 0, 1], 0.96), null);
+
+  defaultGw.clearCache();
+  assert.equal(defaultGw.queryCache([1, 0, 0], 0.5), null);
+
+  const explicitEmbRes = await defaultGw.routeRequest({
+    requestId: "req-explicit-emb",
+    intent: "FORMAL_REASONING",
+    prompt: "Verify invariants with explicit embedding.",
+    embedding: [0, 0, 0, 1],
+  });
+  assert.equal(explicitEmbRes.cached, false);
+
+  // 4. Consensus defaults and FLAGGED_FOR_REVIEW on high divergence
+  const defaultConsensus = await defaultGw.runConsensusSession("Check default consensus behavior");
+  assert.equal(defaultConsensus.verdict, "APPROVED");
+
+  const divergentConsensus = await defaultGw.runConsensusSession("Divergence check", {
+    providerA: "google-gemini",
+    providerB: "Y".repeat(37),
+    invariants: [],
+  });
+  assert.ok(divergentConsensus.divergenceScore > 0.3);
+  assert.equal(divergentConsensus.verdict, "FLAGGED_FOR_REVIEW");
+
+  // 5. auditAiGatewayPipeline with writeReceipt: false and nested non-existent receiptPath dir
+  const noWriteReceipt = await defaultGw.auditAiGatewayPipeline({ writeReceipt: false });
+  assert.equal(noWriteReceipt.specRef, "SPEC-298");
+
+  const tmpDir = mkdtempSync(join(tmpdir(), "glorian-gateway-receipt-"));
+  try {
+    const nestedReceiptPath = join(tmpDir, "nested", "dir", "AI_GATEWAY_RECEIPT.json");
+    const customReceipt = await defaultGw.auditAiGatewayPipeline({
+      writeReceipt: true,
+      receiptPath: nestedReceiptPath,
+    });
+    assert.equal(existsSync(nestedReceiptPath), true);
+    assert.equal(customReceipt.specRef, "SPEC-298");
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
 });

@@ -11,6 +11,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 
 import { EosToolchainDoctor, SUPPORTED_TOOLS } from "../src/core/eosToolchainDoctor.ts";
 import { EosEventLoopSaturationGovernor } from "../src/core/eosEventLoopSaturationGovernor.ts";
@@ -25,7 +26,7 @@ describe("SPEC-272: Toolchain Control Plane, Local TLC Execution & SRE Warmup Gr
   // BDD-1407: Toolchain Doctor Audit Execution
   // -------------------------------------------------------------------------
   it("BDD-1407: EosToolchainDoctor audits tools and generates verified receipt", () => {
-    const receiptPath = path.join(ROOT, "docs/evidence/TOOLCHAIN_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("TOOLCHAIN_RECEIPT.json");
     const report = EosToolchainDoctor.diagnose({ receiptPath });
 
     assert.equal(report.totalTools, SUPPORTED_TOOLS.length);
@@ -129,7 +130,7 @@ describe("SPEC-272: Toolchain Control Plane, Local TLC Execution & SRE Warmup Gr
   // BDD-1412: Local TLC Live Invariant Verification
   // -------------------------------------------------------------------------
   it("BDD-1412: Local TLC model checking executes live across all configured specs", () => {
-    const receiptPath = path.join(ROOT, "docs/evidence", `.tlc-receipt-bdd1412-${process.pid}.json`);
+    const receiptPath = resolveEvidencePath(`.tlc-receipt-bdd1412-${process.pid}.json`);
     try {
       const receipt = runTlcVerification({ receiptPath });
 

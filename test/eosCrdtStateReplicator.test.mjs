@@ -9,8 +9,8 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import path from "node:path";
 import { describe, it } from "node:test";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosCrdtStateReplicatorCore } from "../src/core/eosCrdtStateReplicator.ts";
 
 describe("SPEC-308: Decentralized Cross-Fleet Merkle-CRDT State Replication Protocol", () => {
@@ -163,7 +163,7 @@ describe("SPEC-308: Decentralized Cross-Fleet Merkle-CRDT State Replication Prot
     assert.equal(receipt.semilatticePropertiesVerified.idempotency, true);
     assert.equal(receipt.cryptographicSignature.length, 64);
 
-    const receiptOnDisk = path.join(root, "docs/evidence/CRDT_REPLICATION_RECEIPT.json");
+    const receiptOnDisk = resolveEvidencePath("CRDT_REPLICATION_RECEIPT.json", root);
     assert.ok(fs.existsSync(receiptOnDisk));
     const diskContent = JSON.parse(fs.readFileSync(receiptOnDisk, "utf8"));
     assert.equal(diskContent.cryptographicSignature, receipt.cryptographicSignature);

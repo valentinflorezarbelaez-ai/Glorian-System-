@@ -9,12 +9,13 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosPipelineParallelism1F1BCore } from "../src/core/eosPipelineParallelism1F1B.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/PIPELINE_PARALLELISM_1F1B_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("PIPELINE_PARALLELISM_1F1B_RECEIPT.json", ROOT);
 
 describe("SPEC-322: Pipeline Parallelism Engine (1F1B Schedule)", () => {
   test("BDD-1707: Linear Pipeline Stage Topology & Neighbor Links", () => {

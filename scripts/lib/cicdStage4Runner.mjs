@@ -14,6 +14,29 @@ import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 
+export function runStage4Coverage({ root, filesToRun, testEnv }) {
+  const minLine = testEnv.COVERAGE_MIN_LINE ?? "85";
+  const minBranch = testEnv.COVERAGE_MIN_BRANCH ?? "85";
+  const concurrency = testEnv.COVERAGE_CONCURRENCY ?? "4";
+  console.log(`[STAGE 4.5] Running V8 coverage (lines >= ${minLine}%, branches >= ${minBranch}%).`);
+  execFileSync(
+    process.execPath,
+    [
+      "--test",
+      "--experimental-test-coverage",
+      "--test-coverage-exclude=bin/**",
+      "--test-coverage-exclude=scripts/**",
+      `--test-coverage-lines=${minLine}`,
+      `--test-coverage-branches=${minBranch}`,
+      `--test-concurrency=${concurrency}`,
+      `--test-reporter=${new URL("./cicdCoverageReporter.mjs", import.meta.url).href}`,
+      ...filesToRun,
+    ],
+    { cwd: root, env: testEnv, stdio: "inherit" },
+  );
+  console.log("[PASS] Stage 4.5/7 — Coverage test run passed and both V8 thresholds were met.");
+}
+
 function collectPtsChangedFiles(repoRoot) {
   const porcelain = execFileSync("git", ["status", "--porcelain"], { cwd: repoRoot, encoding: "utf8" });
   const workingChanged = porcelain

@@ -11,12 +11,13 @@ import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosDistributedKvReplicationCore } from "../src/core/eosDistributedKvReplication.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/DISTRIBUTED_KV_CACHE_REPLICATION_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("DISTRIBUTED_KV_CACHE_REPLICATION_RECEIPT.json", ROOT);
 
 test("SPEC-329 / CHANGE-191: Distributed KV Cache Replication, Prefix Caching & Speculative Prefetching", async (t) => {
   await t.test("BDD-1749: Radix Tree Hierarchical Prefix Matching & Token Prefill Avoidance", () => {

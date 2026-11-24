@@ -7,9 +7,11 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 
 import { EosBitemporalEventStore } from "../src/core/eosBitemporalEventStore.ts";
 
@@ -179,7 +181,7 @@ describe("SPEC-281: Bitemporal Event Store & Change Data Capture (CDC) Governor"
   // -------------------------------------------------------------------------
   it("BDD-1466: generates verifiable receipt sealed with authentic SHA-256 signature", () => {
     assert.ok(fs.existsSync(SAMPLE_STREAM_PATH));
-    const testReceiptPath = path.join(ROOT, "docs/evidence/EVENTSTORE_RECEIPT.json");
+    const testReceiptPath = resolveEvidencePath("EVENTSTORE_RECEIPT.json", ROOT);
     const store = new EosBitemporalEventStore(testReceiptPath);
 
     store.appendEvent({
@@ -198,5 +200,116 @@ describe("SPEC-281: Bitemporal Event Store & Change Data Capture (CDC) Governor"
 
     const onDisk = JSON.parse(fs.readFileSync(testReceiptPath, "utf8"));
     assert.equal(onDisk.evidenceSha256, receipt.sha256);
+  });
+
+  // -------------------------------------------------------------------------
+  // BDD-1467: Validation errors, chain break, CDC DELETE/no-op diffs, bitemporal tx replay & clear
+  // -------------------------------------------------------------------------
+  it("BDD-1467: enforces input validation, chain links, CDC DELETE, bitemporal txTime replay, and clear", () => {
+    const store = new EosBitemporalEventStore();
+
+    // Missing streamId / eventType
+    assert.throws(
+      () => store.appendEvent({ streamId: "", eventType: "TEST", payload: {} }),
+      /Invalid event: missing streamId or eventType/,
+    );
+    assert.throws(
+      () => store.appendEvent({ streamId: "s-1", eventType: "", payload: {} }),
+      /Invalid event: missing streamId or eventType/,
+    );
+
+    // Unknown stream defaults
+    assert.deepEqual(store.getEvents("missing-stream"), []);
+    assert.equal(store.verifyStreamIntegrity("missing-stream"), true);
+    assert.deepEqual(store.replayEvents("missing-stream"), {});
+    assert.deepEqual(store.getChangeStream("missing-stream"), []);
+
+    // Undefined payload fallback + CDC CREATE -> UPDATE (with unchanged & new keys) -> DELETE
+    const ev1 = store.appendEvent({
+      streamId: "entity-1",
+      eventType: "ENTITY_CREATED",
+      payload: undefined,
+      validTime: "2026-11-01T00:00:00Z",
+    });
+    assert.deepEqual(ev1.payload, {});
+
+    const ev2 = store.appendEvent({
+      streamId: "entity-1",
+      eventType: "ENTITY_UPDATED",
+      payload: { tier: "GOLD", status: "ACTIVE" },
+      validTime: "2026-11-02T00:00:00Z",
+      idempotencyKey: "k-update-1",
+    });
+
+    // Update setting tier to identical "GOLD" (skipped in diff) and introducing new key "region"
+    store.appendEvent({
+      streamId: "entity-1",
+      eventType: "ENTITY_UPDATED",
+      payload: { tier: "GOLD", region: "us-east" },
+      validTime: "2026-11-03T00:00:00Z",
+    });
+
+    // DELETE event triggers DELETE branch in getChangeStream
+    store.appendEvent({
+      streamId: "entity-1",
+      eventType: "ENTITY_DELETED",
+      payload: {},
+      validTime: "2026-11-04T00:00:00Z",
+    });
+
+    const cdc = store.getChangeStream("entity-1");
+    assert.equal(cdc.length, 4);
+    assert.equal(cdc[0].operation, "CREATE");
+    assert.equal(cdc[1].operation, "UPDATE");
+    assert.equal(cdc[2].operation, "UPDATE");
+    assert.equal("tier" in cdc[2].diff, false);
+    assert.deepEqual(cdc[2].diff.region, { before: null, after: "us-east" });
+    assert.equal(cdc[3].operation, "DELETE");
+    assert.equal(cdc[3].after, null);
+    assert.deepEqual(cdc[3].diff.tier, { before: "GOLD", after: null });
+
+    // Replay with asOfTransactionTime and custom initialState + reducer
+    const pastTxState = store.replayEvents("entity-1", {
+      asOfTransactionTime: "1970-01-01T00:00:00Z",
+    });
+    assert.deepEqual(pastTxState, {});
+
+    const customReduced = store.replayEvents("entity-1", {
+      asOfTransactionTime: ev2.transactionTime,
+      initialState: { count: 0, lastType: "" },
+      reducer: (acc, ev) => ({ count: acc.count + 1, lastType: ev.eventType }),
+    });
+    assert.ok(customReduced.count >= 2);
+    assert.ok(customReduced.lastType.length > 0);
+
+    // Broken previousEventHash chain detection
+    const brokenStore = new EosBitemporalEventStore();
+    brokenStore.appendEvent({ streamId: "chain-test", eventType: "EV1", payload: { a: 1 } });
+    brokenStore.appendEvent({ streamId: "chain-test", eventType: "EV2", payload: { a: 2 } });
+    brokenStore["streams"].get("chain-test")[1].previousEventHash = "a".repeat(64);
+    assert.equal(brokenStore.verifyStreamIntegrity("chain-test"), false);
+
+    // generateReceipt creating non-existent temp directory
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-evstore-rcpt-"));
+    try {
+      const nestedPath = path.join(tmpDir, "nested", "EVENTSTORE_RECEIPT.json");
+      const receipt = store.generateReceipt(nestedPath);
+      assert.ok(fs.existsSync(receipt.receiptPath));
+      assert.equal(receipt.totalEvents, 4);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+
+    // clear() removes streams and idempotency index
+    store.clear();
+    assert.deepEqual(store.getEvents("entity-1"), []);
+    const afterClear = store.appendEvent({
+      streamId: "entity-1",
+      eventType: "ENTITY_RECREATED",
+      payload: { fresh: true },
+      idempotencyKey: "k-update-1",
+    });
+    assert.equal(afterClear.sequenceNumber, 1);
+    assert.equal(afterClear.eventType, "ENTITY_RECREATED");
   });
 });

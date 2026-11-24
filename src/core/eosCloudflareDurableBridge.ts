@@ -10,6 +10,7 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 import type {
   DurableActorStatus,
   DurableActorMessage,
@@ -372,7 +373,7 @@ export async function auditDurableObjectsPipeline(
   const signed = EdgeControlPlaneBridge.signRequest({ op: "SYNC_ACTORS" }, secret);
   const edgeBridgeVerified = EdgeControlPlaneBridge.verifyRequest(signed, secret);
 
-  const evidenceDir = path.join(projectRoot, "docs", "evidence");
+  const evidenceDir = resolveEvidenceDir(projectRoot);
   if (!fs.existsSync(evidenceDir)) {
     fs.mkdirSync(evidenceDir, { recursive: true });
   }

@@ -8,7 +8,7 @@
 import { test, describe } from "node:test";
 import * as assert from "node:assert/strict";
 import * as fs from "node:fs";
-import * as path from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import {
   EdgeSqliteStorageEngine,
   DurableActorLifecycleManager,
@@ -194,7 +194,7 @@ describe("SPEC-297: Cloudflare Durable Objects Persistent State & Actor Mesh", (
     assert.equal(receipt.edgeBridgeVerified, true);
     assert.ok(receipt.sha256Signature.length === 64);
 
-    const receiptPath = path.join(process.cwd(), "docs", "evidence", "DURABLE_OBJECTS_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("DURABLE_OBJECTS_RECEIPT.json");
     assert.ok(fs.existsSync(receiptPath));
     const saved = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.equal(saved.specId, "SPEC-297");

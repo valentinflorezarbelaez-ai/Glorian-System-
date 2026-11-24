@@ -4,8 +4,9 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
-import { describe, it } from "node:test";
+import { after, before, describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -13,16 +14,35 @@ const script = path.join(root, "scripts/software-factory-worktree.mjs");
 const skill = path.join(root, ".agents/skills/software-factory/SKILL.md");
 const doc = path.join(root, "docs/governance/SOFTWARE_FACTORY_SKILL.md");
 
-function run(args, opts = {}) {
-  return execFileSync(process.execPath, [script, ...args], {
-    cwd: root,
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
-    ...opts,
-  });
-}
-
 describe("software-factory-worktree", () => {
+  let fixtureRoot;
+  let fixtureScript;
+
+  before(() => {
+    fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), "glorian-worktree-"));
+    fixtureScript = path.join(fixtureRoot, "scripts", path.basename(script));
+    fs.mkdirSync(path.dirname(fixtureScript));
+    fs.copyFileSync(script, fixtureScript);
+    const env = { ...process.env };
+    for (const name of ["GIT_INDEX_FILE", "GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"]) delete env[name];
+    const git = (args) => execFileSync("git", args, { cwd: fixtureRoot, env, stdio: "pipe" });
+    git(["init", "--quiet"]);
+    git(["add", "--", "scripts/software-factory-worktree.mjs"]);
+    git(["-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "--no-gpg-sign", "-qm", "Fixture"]);
+  });
+
+  after(() => {
+    if (fixtureRoot) fs.rmSync(fixtureRoot, { recursive: true, force: true });
+  });
+
+  function run(args) {
+    return execFileSync(process.execPath, [fixtureScript, ...args], {
+      cwd: fixtureRoot,
+      encoding: "utf8",
+      stdio: "pipe",
+    });
+  }
+
   it("ships skill + governance pointer + helper script", () => {
     assert.ok(fs.existsSync(script));
     assert.ok(fs.existsSync(skill));
@@ -64,67 +84,30 @@ describe("software-factory-worktree", () => {
 
   it("fail-closed when remove path is not a registered worktree for branch", () => {
     // Use --path so the orphan dir matches resolveWorktreePath (not branchSlug mismatch).
-    const orphanDir = path.join(root, ".worktrees", "sf-orphan-unregistered");
+    const orphanDir = path.join(fixtureRoot, ".worktrees", "sf-orphan-unregistered");
     fs.mkdirSync(orphanDir, { recursive: true });
-    try {
-      let failed = false;
-      try {
-        run(["remove", "--branch", "cursor/sf-orphan-unregistered", "--path", "sf-orphan-unregistered"]);
-      } catch (err) {
-        failed = true;
-        assert.equal(err.status, 1);
-        assert.match(String(err.stderr || ""), /No registered git worktree/);
-      }
-      assert.equal(failed, true);
-    } finally {
-      fs.rmSync(orphanDir, { recursive: true, force: true });
-    }
+    assert.throws(
+      () => run(["remove", "--branch", "cursor/sf-orphan-unregistered", "--path", "sf-orphan-unregistered"]),
+      (err) => err.status === 1 && /No registered git worktree/.test(String(err.stderr)),
+    );
+    assert.ok(fs.existsSync(orphanDir));
   });
 
   it("remove prefers registered --path worktree over stray default-slug dir", () => {
-    const branch = `cursor/sf-path-pref-${process.pid}`;
-    const customSlug = `sf-custom-${process.pid}`;
-    const defaultSlug = branch.replace(/\//g, "-");
-    const customDir = path.join(root, ".worktrees", customSlug);
-    const strayDefault = path.join(root, ".worktrees", defaultSlug);
-    const real = (p) => {
-      try {
-        return fs.realpathSync(p);
-      } catch {
-        return path.resolve(p);
-      }
-    };
+    const branch = "cursor/sf-path-pref";
+    const customSlug = "sf-custom";
+    const customDir = path.join(fixtureRoot, ".worktrees", customSlug);
+    const strayDefault = path.join(fixtureRoot, ".worktrees", branch.replace(/\//g, "-"));
 
-    // Use HEAD (not `main`) so the test stays hermetic on detached CI checkouts.
     const created = JSON.parse(run(["create", "--branch", branch, "--base", "HEAD", "--path", customSlug]));
-    const createdReal = real(created.path);
-    assert.equal(createdReal, real(customDir));
-    // Stray orphan at the default slug must not win over the registered path.
-    fs.mkdirSync(strayDefault, { recursive: true });
+    const registeredPath = fs.realpathSync(customDir);
+    assert.equal(fs.realpathSync(created.path), registeredPath);
+    fs.mkdirSync(strayDefault);
 
-    try {
-      // Capture realpaths before remove — after teardown realpathSync may fail.
-      const expectedRemovedReal = createdReal;
-      const removed = JSON.parse(run(["remove", "--branch", branch, "--force"]));
-      assert.equal(removed.path, expectedRemovedReal);
-      assert.equal(fs.existsSync(customDir), false);
-      assert.equal(fs.existsSync(strayDefault), true, "stray default-slug dir should remain");
-    } finally {
-      fs.rmSync(strayDefault, { recursive: true, force: true });
-      try {
-        run(["remove", "--branch", branch, "--path", customSlug, "--force"]);
-      } catch {
-        // already removed
-      }
-      try {
-        execFileSync("git", ["branch", "-D", branch], {
-          cwd: root,
-          stdio: ["ignore", "pipe", "pipe"],
-        });
-      } catch {
-        // branch may already be gone
-      }
-    }
+    const removed = JSON.parse(run(["remove", "--branch", branch, "--force"]));
+    assert.equal(removed.path, registeredPath);
+    assert.equal(fs.existsSync(customDir), false);
+    assert.equal(fs.existsSync(strayDefault), true, "stray default-slug dir should remain");
   });
 
   it("keeps runtime dependencies empty", () => {

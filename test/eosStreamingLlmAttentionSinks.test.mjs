@@ -11,12 +11,13 @@ import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosStreamingLlmCore } from "../src/core/eosStreamingLlmAttentionSinks.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/STREAMING_LLM_ATTENTION_SINKS_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("STREAMING_LLM_ATTENTION_SINKS_RECEIPT.json", ROOT);
 
 test("SPEC-331 / CHANGE-193: StreamingLLM, Attention Sinks & Infinite-Context Window Memory Compression", async (t) => {
   await t.test("BDD-1761: Attention Sink Permanent Allocation & Immutable Residency", () => {

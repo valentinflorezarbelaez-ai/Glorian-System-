@@ -12,6 +12,7 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 
 export type RateLimitAlgorithm = "token-bucket" | "leaky-bucket";
 
@@ -411,7 +412,7 @@ export class EosRateLimitingGovernor {
       sha256Signature,
     };
 
-    const receiptDir = path.resolve(process.cwd(), "docs", "evidence");
+    const receiptDir = resolveEvidenceDir();
     if (!fs.existsSync(receiptDir)) {
       fs.mkdirSync(receiptDir, { recursive: true });
     }

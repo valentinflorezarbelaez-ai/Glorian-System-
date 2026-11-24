@@ -8,6 +8,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import { resolveEvidencePath } from "./eosEvidencePaths.ts";
 import type {
   AutomergeCrdtReceipt,
   CrdtChange,
@@ -366,7 +367,7 @@ export async function auditCrdtMeshPipeline(options?: {
   };
 
   if (options?.writeReceipt !== false) {
-    const targetPath = options?.receiptPath || "docs/evidence/CRDT_MESH_RECEIPT.json";
+    const targetPath = options?.receiptPath || resolveEvidencePath("CRDT_MESH_RECEIPT.json");
     const dir = dirname(targetPath);
     if (!existsSync(dir)) {
       mkdirSync(dir, { recursive: true });

@@ -11,7 +11,7 @@
 import { test } from "node:test";
 import * as assert from "node:assert/strict";
 import * as fs from "node:fs";
-import * as path from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosRateLimitingGovernor } from "../src/core/eosRateLimitingGovernor.ts";
 
 test("BDD-1491: Token Bucket replenishment and burst capacity invariant", () => {
@@ -136,7 +136,7 @@ test("BDD-1496: Cryptographic audit receipt verification", async () => {
   assert.ok(report.rejectionRate >= 0 && report.rejectionRate <= 1);
   assert.match(report.sha256Signature, /^[a-f0-9]{64}$/);
 
-  const receiptPath = path.resolve(process.cwd(), "docs", "evidence", "RATE_LIMITER_RECEIPT.json");
+  const receiptPath = resolveEvidencePath("RATE_LIMITER_RECEIPT.json");
   assert.ok(fs.existsSync(receiptPath));
   const rawReceipt = JSON.parse(fs.readFileSync(receiptPath, "utf-8"));
   assert.equal(rawReceipt.sha256Signature, report.sha256Signature);

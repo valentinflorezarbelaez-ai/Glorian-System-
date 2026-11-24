@@ -12,6 +12,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 import { EosPolyglotRustZigWasmKernelCore } from "./eosPolyglotRustZigWasmKernel.ts";
 import type {
   AntiEntropySyncResult,
@@ -477,7 +478,7 @@ export class EosCrdtStateReplicatorCore {
       cryptographicSignature: signature,
     };
 
-    const evidenceDir = path.join(projectRoot, "docs/evidence");
+    const evidenceDir = resolveEvidenceDir(projectRoot);
     if (!fs.existsSync(evidenceDir)) {
       fs.mkdirSync(evidenceDir, { recursive: true });
     }

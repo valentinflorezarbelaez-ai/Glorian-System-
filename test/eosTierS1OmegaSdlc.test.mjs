@@ -27,6 +27,52 @@ test("SPEC-028 / BDD-064: Datalog Deductive Blast Radius Engine", async (t) => {
   });
 });
 
+test("SPEC-028 / BDD-064: Datalog preserves inference order across cycles and new facts", (t) => {
+  const verifier = new EosDatalogVerifier();
+  t.mock.method(verifier, "buildEdbFromFilesystem", () => 0);
+  verifier.addFact("depends_on", ["B", "A"]);
+  verifier.addFact("depends_on", ["C", "A"]);
+  verifier.addFact("depends_on", ["D", "B"]);
+  verifier.addFact("depends_on", ["D", "C"]);
+  verifier.addFact("depends_on", ["A", "D"]);
+  verifier.addFact("tests_module", ["suiteB", "B"]);
+  verifier.addFact("tests_module", ["suiteD", "D"]);
+  verifier.addFact("impacts", ["external", "B"]);
+
+  const first = verifier.queryBlastRadius("A");
+  assert.deepEqual(first.impactedModules, ["B", "C", "D", "A"]);
+  assert.deepEqual(first.predictiveTestSuites, ["suiteB", "suiteD"]);
+  assert.equal(first.totalFactsEvaluated, 37);
+  assert.equal(first.fixpointIterations, 5);
+
+  const seeded = verifier.queryBlastRadius("external");
+  assert.deepEqual(seeded.impactedModules, ["B", "D", "A", "C"]);
+  assert.deepEqual(seeded.predictiveTestSuites, ["suiteB", "suiteD"]);
+  assert.equal(seeded.fixpointIterations, 1);
+
+  verifier.addFact("depends_on", ["E", "D"]);
+  verifier.addFact("tests_module", ["suiteE", "E"]);
+  const expanded = verifier.queryBlastRadius("A");
+  assert.deepEqual(expanded.impactedModules, ["B", "C", "D", "A", "E"]);
+  assert.deepEqual(expanded.predictiveTestSuites, ["suiteB", "suiteD", "suiteE"]);
+  assert.equal(expanded.totalFactsEvaluated, 50);
+  assert.equal(expanded.fixpointIterations, 3);
+  assert.deepEqual(verifier.queryBlastRadius("E").predictiveTestSuites, ["suiteE"]);
+});
+
+test("SPEC-028 / BDD-064: Datalog resumes at the 50-round evaluation boundary", () => {
+  const verifier = new EosDatalogVerifier();
+  for (let end = 1; end <= 51; end++) {
+    verifier.addFact("depends_on", [String(end), String(end - 1)]);
+  }
+
+  assert.equal(verifier.evaluateFixpoint(), 50);
+  assert.equal(verifier.hasFact("impacts", ["0", "50"]), true);
+  assert.equal(verifier.hasFact("impacts", ["0", "51"]), false);
+  assert.equal(verifier.evaluateFixpoint(), 2);
+  assert.equal(verifier.hasFact("impacts", ["0", "51"]), true);
+});
+
 test("SPEC-028 / BDD-065: Automated Mutation Testing Saboteur", async (t) => {
   const tester = new EosMutationTester();
 

@@ -9,12 +9,13 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosMegatronTensorParallelismCore } from "../src/core/eosMegatronTensorParallelism.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/MEGATRON_TENSOR_PARALLELISM_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("MEGATRON_TENSOR_PARALLELISM_RECEIPT.json", ROOT);
 
 describe("SPEC-321: Megatron-LM Style Tensor Parallelism Engine", () => {
   test("BDD-1701: Column-Parallel Linear Projection & Dimension Partitioning", () => {

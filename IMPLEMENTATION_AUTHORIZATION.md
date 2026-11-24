@@ -3793,3 +3793,22 @@
   - `test/eosSingleExecutablePackager.test.mjs`, `test/eosSingleExecutableDistributionGovernor.test.mjs`
   - `test/eosTreeSitterWasmEngine.test.mjs`, `test/glorianCliBinary.test.mjs`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-24-GLORIAN-FINAL-BIGTECH-PERFECTION`
+
+- **Authorization Date**: 2026-11-24
+- **Change Identifier**: `ODD-GLORIAN-FINAL-PERFECTION` (`SPEC-061`, `SPEC-098`, `SPEC-124`, `SPEC-198`, `SPEC-233`, `SPEC-250`, `SPEC-270`, `SPEC-342`)
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Execute the final four-unit perfection pass (`T1`–`T4`) on `feat/glorian-final-bigtech-perfection` while keeping zero runtime npm dependencies, exact 636 Layer-0 `src/core/*.ts` module count, `<= 788` line limit per module, zero modifications to sealed landing assets, and zero writes to external sibling checkouts:
+  1. Hermetic test evidence isolation (`test/lib/testEvidence.mjs`, `scripts/lib/trackedEvidence.mjs`, structured `scripts/lib/cicdCoverageReporter.mjs`, `resolveEvidencePath` across core engines/suites) and pruning of abandoned `.qoder` worktrees.
+  2. Multi-platform signed SEA release asset synthesis (`scripts/build-sea-binary.mjs --bundle-release`), GitHub Releases publishing + attestation in `.github/workflows/eos-sovereign-cicd.yml`, and gVisor `--runtime=runc|runsc|auto` documentation in `README.md`.
+  3. Machine-readable experimental security boundary (`EXPERIMENTAL_NON_CONSTANT_TIME_BIGINT`, `approvedForProductionSecrets: false`, `EOS_VSS_DISALLOW_EXPERIMENTAL=1` fail-closed guard) in `src/core/eosVerifiableSecretSharingCore.ts` and `.types.ts`.
+  4. Automated 3-repository external fleet lifecycle pilot (`scripts/run-external-fleet-pilot.mjs`, `test/eosExternalFleetPilot.test.mjs`, canonical `docs/evidence/EXTERNAL_FLEET_PILOT_RECEIPT.json`, `README.md`, `docs/USABILITY-PILOT.md`).
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Tracking & Verification Artifacts**:
+  - `odd/tasks/glorian-final-bigtech-perfection.md`
+  - `test/eosEvidencePaths.test.mjs`, `test/eosVerifiableSecretSharingCore.test.mjs`, `test/eosExternalFleetPilot.test.mjs`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

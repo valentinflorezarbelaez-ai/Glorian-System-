@@ -7,6 +7,7 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -23,10 +24,45 @@ import {
   runIncrementalCoverage,
 } from "../scripts/coverage-ratchet.mjs";
 import { generateCycloneDxSbom } from "../src/core/eosCycloneDxSbomGenerator.ts";
+import { runStage4Coverage } from "../scripts/lib/cicdStage4Runner.mjs";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
+import coverageReporter from "../scripts/lib/cicdCoverageReporter.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
+
+it("requires a successful test process and both coverage thresholds in Stage 4.5", (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "glorian-v8-"));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const testEnv = { ...process.env, COVERAGE_MIN_LINE: "0", COVERAGE_MIN_BRANCH: "0" };
+  delete testEnv.NODE_TEST_CONTEXT;
+  const name = "example.test.mjs";
+  const run = () => runStage4Coverage({ root, filesToRun: [name], testEnv });
+  fs.writeFileSync(
+    path.join(root, "example.mjs"),
+    "export function score(x) {\n  if (x) {\n    return 1;\n  }\n  return 0;\n}\n",
+  );
+  const example = 'import { score } from "./example.mjs";\nscore(false);\n';
+  fs.writeFileSync(path.join(root, name), example);
+  run();
+  testEnv.COVERAGE_MIN_LINE = "100";
+  assert.throws(run, { status: 1 });
+  testEnv.COVERAGE_MIN_LINE = "0";
+  testEnv.COVERAGE_MIN_BRANCH = "100";
+  assert.throws(run, { status: 1 });
+  testEnv.COVERAGE_MIN_BRANCH = "0";
+  fs.writeFileSync(path.join(root, name), example + 'throw new Error("failing coverage fixture");\n');
+  assert.throws(run, { status: 1 });
+});
+
+it("rejects missing or invalid V8 totals even when a test prints a coverage table", async () => {
+  const output = { type: "test:stdout", data: { message: "all files | 100 | 100 | 100" } };
+  const invalid = { type: "test:coverage", data: { summary: { files: [{}], totals: {} } } };
+  for (const events of [[output], [invalid]]) {
+    await assert.rejects(Array.fromAsync(coverageReporter(events)), /requires a complete V8 coverage summary/);
+  }
+});
 
 function createMockRes() {
   const headers = {};
@@ -144,7 +180,7 @@ describe("SPEC-271: DevSecOps Platform Engineering, Kernel Shield & TLC Consensu
     const pairBulkhead = validateSpecConfigPair("CellBasedBulkheadGovernor", path.join(ROOT, "docs/formal"));
     assert.equal(pairBulkhead.syntaxValid, true);
 
-    const receiptPath = path.join(ROOT, "docs/evidence", `.tlc-receipt-bdd1405-${process.pid}.json`);
+    const receiptPath = resolveEvidencePath(`.tlc-receipt-bdd1405-${process.pid}.json`);
     try {
       const receipt = runTlcVerification({ forceMock: true, receiptPath });
       assert.ok(receipt.totalConfiguredSpecs >= 6);

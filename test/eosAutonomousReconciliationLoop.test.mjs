@@ -12,9 +12,12 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosAutonomousReconciliationLoopCore } from "../src/core/eosAutonomousReconciliationLoop.ts";
 import { EosOntologyCyclotron } from "../src/core/eosOntologyCyclotron.ts";
+import { EosWasmBytecodeSynthesizerCore } from "../src/core/eosWasmBytecodeSynthesizer.ts";
 
 describe("SPEC-307: Autonomous Continuous Reconciliation Loop & High-Assurance Self-Healing Engine", () => {
   it("BDD-1617: Telemetry Observation Across Registered Sovereign Fleet", () => {
@@ -142,10 +145,111 @@ describe("SPEC-307: Autonomous Continuous Reconciliation Loop & High-Assurance S
     assert.strictEqual(typeof receipt.sha256Signature, "string");
     assert.strictEqual(receipt.sha256Signature.length, 64);
 
-    const receiptPath = path.join(process.cwd(), "docs", "evidence", "RECONCILIATION_LOOP_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("RECONCILIATION_LOOP_RECEIPT.json");
     assert.ok(fs.existsSync(receiptPath), "Receipt file must exist on disk");
 
     const onDisk = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.strictEqual(onDisk.sha256Signature, receipt.sha256Signature);
+  });
+
+  it("handles registry formats, default arguments, unknown task types, and WASM failure catch path", () => {
+    // 1. Default parameter branches on observeFleetState, orientAnomalies, auditReconciliationPipeline
+    const defaultObs = EosAutonomousReconciliationLoopCore.observeFleetState();
+    assert.strictEqual(defaultObs.totalProjectsCount, 10);
+
+    const defaultAudit = EosAutonomousReconciliationLoopCore.auditReconciliationPipeline();
+    assert.strictEqual(defaultAudit.specRef, "SPEC-307");
+
+    const cleanCyclotron = new EosOntologyCyclotron();
+    cleanCyclotron.registerNode("solo", "CORE", {}, Date.now());
+    const defaultOrient = EosAutonomousReconciliationLoopCore.orientAnomalies(cleanCyclotron);
+    assert.strictEqual(defaultOrient.status, "OPTIMAL_HARMONY");
+
+    // 2. Object-map & empty registry.json shapes with fallback project fields
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "eos-reconcile-test-"));
+    try {
+      const regDir = path.join(tempRoot, "docs", "projects");
+      fs.mkdirSync(regDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(regDir, "registry.json"),
+        JSON.stringify({
+          projects: {
+            first: {
+              id: "proj-1",
+              name: "Project One",
+              productionUrl: "https://one.example",
+              authorization: "LEVEL_2",
+              status: "REGISTERED",
+            },
+            second: {
+              url: "https://two.example",
+              auth_tier: "LEVEL_1",
+              status: "PENDING",
+            },
+            third: {},
+          },
+        }),
+        "utf8",
+      );
+      const mapObs = EosAutonomousReconciliationLoopCore.observeFleetState(tempRoot);
+      assert.strictEqual(mapObs.totalProjectsCount, 3);
+      assert.strictEqual(mapObs.projects[0].status, "REGISTERED");
+      assert.strictEqual(mapObs.projects[1].projectId, "unknown");
+      assert.strictEqual(mapObs.projects[1].repoName, "unknown");
+      assert.strictEqual(mapObs.projects[1].productionUrl, "https://two.example");
+      assert.strictEqual(mapObs.projects[1].authorizedTier, "LEVEL_1");
+      assert.strictEqual(mapObs.projects[1].status, "UNKNOWN");
+      assert.strictEqual(mapObs.projects[2].productionUrl, "");
+      assert.strictEqual(mapObs.projects[2].authorizedTier, "UNKNOWN");
+
+      fs.writeFileSync(path.join(regDir, "registry.json"), JSON.stringify({}), "utf8");
+      const emptyObs = EosAutonomousReconciliationLoopCore.observeFleetState(tempRoot);
+      assert.strictEqual(emptyObs.totalProjectsCount, 0);
+    } finally {
+      fs.rmSync(tempRoot, { recursive: true, force: true });
+    }
+
+    // 3. Unknown task type branch + WASM integrity check failure (both status !== SUCCESS and returnedValue !== 300)
+    const origExecute = EosWasmBytecodeSynthesizerCore.executeModule;
+    try {
+      const planWithUnknown = {
+        planId: "plan-edge",
+        tasks: [
+          {
+            taskId: "t-wasm",
+            type: "ACTION_WASM_INTEGRITY_CHECK",
+            targetEntityId: "wasm:verify",
+            description: "Check WASM failure path",
+            dependencies: [],
+            status: "PENDING",
+          },
+          {
+            taskId: "t-noop",
+            type: "ACTION_UNKNOWN_NOOP",
+            targetEntityId: "noop",
+            description: "Unknown task type",
+            dependencies: [],
+            status: "PENDING",
+          },
+        ],
+        estimatedCycles: 200,
+        generatedAtIso: new Date().toISOString(),
+      };
+
+      EosWasmBytecodeSynthesizerCore.executeModule = () => ({ status: "FAILED", returnedValue: 0 });
+      const failStatusExec = EosAutonomousReconciliationLoopCore.actSurgicalRemediation(
+        cleanCyclotron,
+        planWithUnknown,
+      );
+      assert.strictEqual(failStatusExec.failedTasks, 1);
+      assert.strictEqual(failStatusExec.executedTasks, 0);
+
+      EosWasmBytecodeSynthesizerCore.executeModule = () => ({ status: "SUCCESS", returnedValue: 123 });
+      const badReturnExec = EosAutonomousReconciliationLoopCore.actSurgicalRemediation(cleanCyclotron, planWithUnknown);
+      assert.strictEqual(badReturnExec.failedTasks, 1);
+      assert.strictEqual(badReturnExec.executedTasks, 0);
+    } finally {
+      EosWasmBytecodeSynthesizerCore.executeModule = origExecute;
+    }
   });
 });

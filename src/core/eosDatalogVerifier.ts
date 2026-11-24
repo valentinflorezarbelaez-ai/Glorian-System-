@@ -133,84 +133,58 @@ export class EosDatalogVerifier {
   }
 
   /**
-   * Evaluates Datalog rules using naive fixpoint iteration.
+   * Evaluates the four rules in synchronous rounds, joining impacts by module.
    */
   public evaluateFixpoint(): number {
+    const consumersByModule = new Map<string, string[]>();
+    const testsByModule = new Map<string, string[]>();
+    let pending = Array.from(this.facts);
+
+    // Both joins read base facts only. Preserve insertion order within each module.
+    for (const fact of pending) {
+      const match = /^(depends_on|tests_module)\((.*)\)$/.exec(fact);
+      if (!match) continue;
+      const [dependent, module] = match[2].split(",");
+      if (module === undefined) continue;
+      const index = match[1] === "depends_on" ? consumersByModule : testsByModule;
+      const entries = index.get(module);
+      if (entries) entries.push(dependent);
+      else index.set(module, [dependent]);
+    }
+
     let iterations = 0;
-    let factsChanged = true;
-
-    while (factsChanged && iterations < 50) {
-      factsChanged = false;
+    do {
       iterations++;
-      const currentFacts = Array.from(this.facts);
-
-      for (const factStr of currentFacts) {
-        const m = factStr.match(/^(\w+)\((.*)\)$/);
-        if (!m) continue;
-        const [_, pred, argsRaw] = m;
-        const args = argsRaw.split(",");
-
-        // Direct impact rule: depends_on(Y, X) => impacts(X, Y)
-        if (pred === "depends_on" && args.length === 2) {
-          const [consumer, dependency] = args;
-          const newFact = this.factKey("impacts", [dependency, consumer]);
-          if (!this.facts.has(newFact)) {
-            this.facts.add(newFact);
-            factsChanged = true;
-          }
+      const next: string[] = [];
+      const derive = (predicate: string, left: string, right: string) => {
+        const key = this.factKey(predicate, [left, right]);
+        if (!this.facts.has(key)) {
+          this.facts.add(key);
+          next.push(key);
         }
+      };
 
-        // Transitive impact rule: impacts(X, Y) + depends_on(Z, Y) => impacts(X, Z)
-        if (pred === "impacts" && args.length === 2) {
-          const [source, intermediate] = args;
-          for (const otherFact of currentFacts) {
-            if (otherFact.startsWith("depends_on(")) {
-              const mOther = otherFact.match(/^depends_on\((.*)\)$/);
-              if (mOther) {
-                const [z, y] = mOther[1].split(",");
-                if (y === intermediate) {
-                  const transitive = this.factKey("impacts", [source, z]);
-                  if (!this.facts.has(transitive)) {
-                    this.facts.add(transitive);
-                    factsChanged = true;
-                  }
-                }
-              }
-            }
-          }
-        }
-
-        // Direct test trigger: tests_module(T, X) => triggers_test(X, T)
-        if (pred === "tests_module" && args.length === 2) {
-          const [testFile, module] = args;
-          const directTrigger = this.factKey("triggers_test", [module, testFile]);
-          if (!this.facts.has(directTrigger)) {
-            this.facts.add(directTrigger);
-            factsChanged = true;
-          }
-        }
-
-        // Test trigger rule: impacts(X, M) + tests_module(T, M) => triggers_test(X, T)
-        if (pred === "impacts" && args.length === 2) {
-          const [source, targetMod] = args;
-          for (const otherFact of currentFacts) {
-            if (otherFact.startsWith("tests_module(")) {
-              const mOther = otherFact.match(/^tests_module\((.*)\)$/);
-              if (mOther) {
-                const [t, mMod] = mOther[1].split(",");
-                if (mMod === targetMod) {
-                  const triggerFact = this.factKey("triggers_test", [source, t]);
-                  if (!this.facts.has(triggerFact)) {
-                    this.facts.add(triggerFact);
-                    factsChanged = true;
-                  }
-                }
-              }
-            }
-          }
+      for (const fact of pending) {
+        const match = /^(depends_on|tests_module|impacts)\((.*)\)$/.exec(fact);
+        if (!match) continue;
+        const args = match[2].split(",");
+        if (args.length !== 2) continue;
+        const [left, right] = args;
+        switch (match[1]) {
+          case "depends_on":
+            derive("impacts", right, left);
+            break;
+          case "tests_module":
+            derive("triggers_test", right, left);
+            break;
+          case "impacts":
+            for (const consumer of consumersByModule.get(right) ?? []) derive("impacts", left, consumer);
+            for (const test of testsByModule.get(right) ?? []) derive("triggers_test", left, test);
+            break;
         }
       }
-    }
+      pending = next;
+    } while (pending.length > 0 && iterations < 50);
 
     return iterations;
   }

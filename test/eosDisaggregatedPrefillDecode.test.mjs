@@ -11,12 +11,13 @@ import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosDisaggregatedPrefillDecodeCore } from "../src/core/eosDisaggregatedPrefillDecode.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/DISAGGREGATED_PREFILL_DECODE_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("DISAGGREGATED_PREFILL_DECODE_RECEIPT.json", ROOT);
 
 test("SPEC-332 / CHANGE-194: Disaggregated Prefill & Decode Serving Engine", async (t) => {
   await t.test("BDD-1767: Chunked Prefill Decomposition & Sequential Micro-Batches", () => {

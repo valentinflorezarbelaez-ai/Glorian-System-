@@ -17,6 +17,7 @@
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { resolveEvidencePath } from "./eosEvidencePaths.ts";
 
 import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
@@ -366,10 +367,8 @@ export class EosTerraformIaCGovernor {
       error,
     });
 
-    const defaultReceipt = path.resolve(process.cwd(), "docs", "evidence", "TERRAFORM_RECEIPT.json");
-    const targetReceipt = customReceiptPath || defaultReceipt;
-
     try {
+      const targetReceipt = customReceiptPath || resolveEvidencePath("TERRAFORM_RECEIPT.json");
       const dir = path.dirname(targetReceipt);
       if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
       fs.writeFileSync(targetReceipt, JSON.stringify(finalReport, null, 2), "utf8");

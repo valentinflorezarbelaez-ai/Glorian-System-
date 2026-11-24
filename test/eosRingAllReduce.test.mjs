@@ -9,12 +9,13 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosRingAllReduceCore } from "../src/core/eosRingAllReduce.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/RING_ALLREDUCE_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("RING_ALLREDUCE_RECEIPT.json", ROOT);
 
 describe("SPEC-320: Ring All-Reduce Distributed Tensor Parallelism Engine", () => {
   test("BDD-1695: Ring Topology Formation & Neighbor Adjacency", () => {

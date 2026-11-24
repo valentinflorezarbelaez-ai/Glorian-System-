@@ -12,7 +12,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import path from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosFdirOntology } from "../src/core/eosFdirOntology.ts";
 import { EosOntologyCyclotron } from "../src/core/eosOntologyCyclotron.ts";
 import { EosSentinelDaemon } from "../src/core/eosSentinelDaemon.ts";
@@ -148,8 +148,8 @@ describe("SPEC-305: FDIR Clinical Firewall for Knowledge Ontology & Sentinel Int
     assert.strictEqual(typeof receipt.sha256Signature, "string");
     assert.strictEqual(receipt.sha256Signature.length, 64);
 
-    const receiptPath = path.join(process.cwd(), "docs", "evidence", "FDIR_ONTOLOGY_RECEIPT.json");
-    assert.ok(fs.existsSync(receiptPath), "docs/evidence/FDIR_ONTOLOGY_RECEIPT.json must exist");
+    const receiptPath = resolveEvidencePath("FDIR_ONTOLOGY_RECEIPT.json");
+    assert.ok(fs.existsSync(receiptPath), "FDIR receipt must exist");
 
     const onDisk = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.strictEqual(onDisk.receiptType, "EOS_FDIR_ONTOLOGY_AUDIT");

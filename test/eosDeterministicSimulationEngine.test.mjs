@@ -12,8 +12,8 @@
 import * as assert from "node:assert/strict";
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
-import * as path from "node:path";
 import { test } from "node:test";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { DstPrng, EosDeterministicSimulationEngine } from "../src/core/eosDeterministicSimulationEngine.ts";
 
 test("BDD-1509: Virtual Clock Progression and Event Scheduling", async () => {
@@ -219,7 +219,7 @@ test("BDD-1514: Cryptographic Simulation Audit Receipt Verification", async () =
   assert.equal(receipt.sha256Signature.length, 64);
 
   // Validate on-disk receipt
-  const receiptPath = path.resolve(process.cwd(), "docs", "evidence", "DST_SIMULATION_RECEIPT.json");
+  const receiptPath = resolveEvidencePath("DST_SIMULATION_RECEIPT.json");
   assert.ok(fs.existsSync(receiptPath));
   const diskReceipt = JSON.parse(fs.readFileSync(receiptPath, "utf-8"));
 

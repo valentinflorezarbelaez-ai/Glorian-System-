@@ -8,6 +8,7 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 import type {
   ProvenanceAuditReceipt,
   SlsaCycloneDxDocument,
@@ -403,7 +404,7 @@ export function auditProvenancePipeline(workspaceRoot: string = process.cwd()): 
     sha256Signature,
   };
 
-  const evidenceDir = path.join(workspaceRoot, "docs", "evidence");
+  const evidenceDir = resolveEvidenceDir(workspaceRoot);
   if (!fs.existsSync(evidenceDir)) {
     fs.mkdirSync(evidenceDir, { recursive: true });
   }

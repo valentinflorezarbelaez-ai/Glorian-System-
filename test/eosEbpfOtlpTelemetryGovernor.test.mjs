@@ -8,8 +8,10 @@
 import { test, describe } from "node:test";
 import * as assert from "node:assert/strict";
 import * as fs from "node:fs";
-import * as path from "node:path";
 import * as http from "node:http";
+import * as os from "node:os";
+import * as path from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import {
   EbpfProbeSpecificationGenerator,
   KernelRingBufferTelemetryDecoder,
@@ -197,10 +199,167 @@ describe("SPEC-296: eBPF Kernel Probe Telemetry & Zero-Dependency Native OTLP Ga
     assert.equal(receipt.otlpSpansExported, 3);
     assert.ok(receipt.sha256Signature.length === 64);
 
-    const receiptPath = path.join(process.cwd(), "docs", "evidence", "EBPF_OTLP_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("EBPF_OTLP_RECEIPT.json");
     assert.ok(fs.existsSync(receiptPath));
     const saved = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.equal(saved.specId, "SPEC-296");
     assert.equal(saved.sha256Signature, receipt.sha256Signature);
+  });
+
+  test("Edge cases: kprobe synthesis, binary/policy corner cases, exporter errors/timeouts, and mkdir", async () => {
+    // 1. Non-sys_enter probe generates kprobe
+    const kprobe = EbpfProbeSpecificationGenerator.generateProbe("do_sys_openat2");
+    assert.equal(kprobe.hookType, "kprobe");
+    assert.equal(kprobe.targetSymbol, "do_sys_openat2");
+    assert.equal(kprobe.ringBufferName, "rb_do_sys_openat2");
+
+    // 2. Structured decoding: defaults, explicit eventId, blocked destination, and minimal policy without optional arrays
+    const defaultEv = KernelRingBufferTelemetryDecoder.decodeStructuredEvent({ eventId: "ev-custom-1" });
+    assert.equal(defaultEv.eventId, "ev-custom-1");
+    assert.equal(defaultEv.syscall, "sys_enter_execve");
+    assert.equal(defaultEv.pid, process.pid);
+    assert.equal(defaultEv.uid, 1000);
+    assert.equal(defaultEv.durationNs, 1500);
+    assert.equal(defaultEv.verdict, "ALLOW");
+
+    const blockedDest = KernelRingBufferTelemetryDecoder.decodeStructuredEvent({
+      syscall: "sys_enter_openat",
+      destinationAddress: "169.254.169.254",
+    });
+    assert.equal(blockedDest.verdict, "BLOCK");
+    assert.ok(blockedDest.violatedRule?.includes("Egress to blocked address"));
+
+    const minimalPolicy = { policyName: "MINIMAL", defaultVerdict: "AUDIT" };
+    const minimalEv = KernelRingBufferTelemetryDecoder.decodeStructuredEvent(
+      { syscall: "sys_enter_connect", path: "/etc/shadow", destinationAddress: "0.0.0.0" },
+      minimalPolicy,
+    );
+    assert.equal(minimalEv.verdict, "AUDIT");
+
+    // 3. Binary ring buffer decoding: short buffer throw, exact 24B, syscall codes 2/3/4/unknown, non-NUL & blank paths
+    assert.throws(() => KernelRingBufferTelemetryDecoder.decodeBinaryEvent(Buffer.alloc(10)), /payload too short/);
+
+    const exact24 = Buffer.alloc(24);
+    exact24.writeBigUInt64LE(123456n, 0);
+    exact24.writeUInt32LE(42, 8);
+    exact24.writeUInt32LE(43, 12);
+    exact24.writeUInt32LE(0, 16);
+    exact24.writeUInt16LE(2, 20); // sys_enter_connect
+    const dec24 = KernelRingBufferTelemetryDecoder.decodeBinaryEvent(exact24);
+    assert.equal(dec24.syscall, "sys_enter_connect");
+    assert.equal(dec24.path, undefined);
+    assert.equal(dec24.verdict, "BLOCK");
+
+    const bufCode3 = Buffer.concat([Buffer.from(exact24), Buffer.from("  /var/log/syslog  ")]);
+    bufCode3.writeUInt16LE(3, 20);
+    const dec3 = KernelRingBufferTelemetryDecoder.decodeBinaryEvent(bufCode3, minimalPolicy);
+    assert.equal(dec3.syscall, "sys_enter_openat");
+    assert.equal(dec3.path, "/var/log/syslog");
+
+    const bufCode4 = Buffer.alloc(32);
+    bufCode4.writeUInt16LE(4, 20); // sys_enter_socket + all-NUL trailing bytes -> undefined path
+    const dec4 = KernelRingBufferTelemetryDecoder.decodeBinaryEvent(bufCode4, minimalPolicy);
+    assert.equal(dec4.syscall, "sys_enter_socket");
+    assert.equal(dec4.path, undefined);
+
+    const bufUnknown = Buffer.alloc(24);
+    bufUnknown.writeUInt16LE(99, 20);
+    assert.equal(
+      KernelRingBufferTelemetryDecoder.decodeBinaryEvent(bufUnknown, minimalPolicy).syscall,
+      "sys_enter_execve",
+    );
+
+    // 4. NativeOtlpHttpExporter: empty payload fallback traceId, invalid URL catch, 500 response, HTTPS error, timeout
+    const emptyPayload = { resourceSpans: [] };
+    const invalidRes = await NativeOtlpHttpExporter.exportTracePayload(emptyPayload, {
+      endpoint: "not-a-valid-url",
+    });
+    assert.equal(invalidRes.exported, false);
+    assert.equal(invalidRes.statusCode, 500);
+    assert.equal(invalidRes.traceId, "00000000000000000000000000000000");
+    assert.ok(invalidRes.error);
+
+    // Non-2xx HTTP server response with default timeoutMs
+    const errServer = http.createServer((_req, res) => {
+      res.writeHead(500);
+      res.end("error");
+    });
+    await new Promise((resolve) => errServer.listen(0, "127.0.0.1", () => resolve()));
+    const errPort = errServer.address().port;
+    try {
+      const http500 = await NativeOtlpHttpExporter.exportTracePayload(emptyPayload, {
+        endpoint: `http://127.0.0.1:${errPort}/v1/traces`,
+      });
+      assert.equal(http500.exported, false);
+      assert.equal(http500.statusCode, 500);
+    } finally {
+      await new Promise((resolve) => errServer.close(() => resolve()));
+    }
+
+    // Closed port via HTTPS + default options via EOS_OTLP_ENDPOINT
+    const probeServer = http.createServer();
+    await new Promise((resolve) => probeServer.listen(0, "127.0.0.1", () => resolve()));
+    const closedPort = probeServer.address().port;
+    await new Promise((resolve) => probeServer.close(() => resolve()));
+
+    const httpsErr = await NativeOtlpHttpExporter.exportTracePayload(emptyPayload, {
+      endpoint: `https://127.0.0.1:${closedPort}/v1/traces`,
+    });
+    assert.equal(httpsErr.exported, false);
+    assert.equal(httpsErr.statusCode, 503);
+    assert.ok(httpsErr.error);
+
+    const prevEndpoint = process.env.EOS_OTLP_ENDPOINT;
+    try {
+      process.env.EOS_OTLP_ENDPOINT = `http://127.0.0.1:${closedPort}/v1/traces`;
+      const defaultOptsRes = await NativeOtlpHttpExporter.exportTracePayload(emptyPayload);
+      assert.equal(defaultOptsRes.exported, false);
+      assert.equal(defaultOptsRes.statusCode, 503);
+    } finally {
+      if (prevEndpoint !== undefined) {
+        process.env.EOS_OTLP_ENDPOINT = prevEndpoint;
+      } else {
+        delete process.env.EOS_OTLP_ENDPOINT;
+      }
+    }
+
+    // Timeout path
+    const slowServer = http.createServer(() => {
+      // Intentionally do not respond so client request times out
+    });
+    await new Promise((resolve) => slowServer.listen(0, "127.0.0.1", () => resolve()));
+    const slowPort = slowServer.address().port;
+    try {
+      const timeoutRes = await NativeOtlpHttpExporter.exportTracePayload(emptyPayload, {
+        endpoint: `http://127.0.0.1:${slowPort}/v1/traces`,
+        timeoutMs: 40,
+      });
+      assert.equal(timeoutRes.exported, false);
+      assert.equal(timeoutRes.statusCode, 504);
+      assert.equal(timeoutRes.error, "ETIMEDOUT");
+    } finally {
+      slowServer.closeAllConnections?.();
+      await new Promise((resolve) => slowServer.close(() => resolve()));
+    }
+
+    // 5. auditEbpfTelemetryPipeline default arg + creating non-existent evidenceDir in temp dir
+    const defaultAudit = await auditEbpfTelemetryPipeline();
+    assert.equal(defaultAudit.specId, "SPEC-296");
+
+    const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "glorian-ebpf-mkdir-"));
+    const prevEvidenceDir = process.env.EOS_EVIDENCE_DIR;
+    try {
+      delete process.env.EOS_EVIDENCE_DIR;
+      const createdReceipt = await auditEbpfTelemetryPipeline(tmpRoot);
+      assert.equal(createdReceipt.specId, "SPEC-296");
+      assert.ok(fs.existsSync(path.join(tmpRoot, "docs", "evidence", "EBPF_OTLP_RECEIPT.json")));
+    } finally {
+      if (prevEvidenceDir !== undefined) {
+        process.env.EOS_EVIDENCE_DIR = prevEvidenceDir;
+      } else {
+        delete process.env.EOS_EVIDENCE_DIR;
+      }
+      fs.rmSync(tmpRoot, { recursive: true, force: true });
+    }
   });
 });

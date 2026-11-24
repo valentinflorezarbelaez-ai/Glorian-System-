@@ -7,9 +7,11 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 
 import { EosBayesianCanaryEvaluator } from "../src/core/eosBayesianCanaryEvaluator.ts";
 
@@ -143,7 +145,7 @@ describe("SPEC-280: Bayesian Dynamic Canary Evaluation & Automated Rollback Gate
   // BDD-1460: Rollback Manifest Synthesis & Cryptographic SHA-256 Receipt
   // -------------------------------------------------------------------------
   it("BDD-1460: generates valid SHA-256 sealed receipt and rollback manifest on disk", () => {
-    const testReceiptPath = path.join(ROOT, "docs/evidence/CANARY_RECEIPT.json");
+    const testReceiptPath = resolveEvidencePath("CANARY_RECEIPT.json", ROOT);
     const dataset = {
       serviceName: "receipt-test-service",
       baselineRevision: "rev-1",
@@ -169,5 +171,100 @@ describe("SPEC-280: Bayesian Dynamic Canary Evaluation & Automated Rollback Gate
 
     const onDisk = JSON.parse(fs.readFileSync(testReceiptPath, "utf8"));
     assert.equal(onDisk.evidenceSha256, report.sha256Receipt);
+  });
+
+  // -------------------------------------------------------------------------
+  // BDD-1460B: MARGINAL verdicts, edge distributions, custom dirs & error handling
+  // -------------------------------------------------------------------------
+  it("BDD-1460B: handles empty/zero groups, MARGINAL & critical composite verdicts, and error paths", () => {
+    // Empty latency samples with requestCount > 0 and requestCount === 0, plus non-array samples
+    const emptyWithReq = EosBayesianCanaryEvaluator.computeDistributionMetrics({
+      requestCount: 50,
+      errorCount: 2,
+      latencySamplesMs: [],
+    });
+    assert.equal(emptyWithReq.sampleCount, 0);
+    assert.equal(emptyWithReq.p99Ms, 0);
+    assert.equal(emptyWithReq.errorRate, 0.04);
+
+    const emptyNoReq = EosBayesianCanaryEvaluator.computeDistributionMetrics({
+      requestCount: 0,
+      errorCount: 0,
+      latencySamplesMs: null,
+    });
+    assert.equal(emptyNoReq.errorRate, 0);
+
+    const zeroReqWithSamples = EosBayesianCanaryEvaluator.computeDistributionMetrics({
+      requestCount: 0,
+      errorCount: 1,
+      latencySamplesMs: [10, 20, 30],
+    });
+    assert.equal(zeroReqWithSamples.errorRate, 0);
+
+    // MARGINAL verdict: deltaP99 = 0.18 <= 0.20 => score = 82 (between 70 and 85)
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-canary-edge-"));
+    try {
+      const marginalPath = path.join(tmpDir, "marginal", "CANARY_RECEIPT.json");
+      const marginalReport = EosBayesianCanaryEvaluator.evaluateCanary({
+        serviceName: "marginal-svc",
+        baseline: { requestCount: 100, errorCount: 1, latencySamplesMs: [10, 50, 100] },
+        canary: { requestCount: 100, errorCount: 1, latencySamplesMs: [10, 50, 118] },
+        evidencePath: marginalPath,
+      });
+      assert.equal(marginalReport.verdict, "MARGINAL");
+      assert.equal(marginalReport.rollbackRequired, false);
+      assert.ok(fs.existsSync(marginalPath));
+
+      // Improved canary (negative deltas -> score stays 100)
+      const improvedReport = EosBayesianCanaryEvaluator.evaluateCanary(
+        {
+          serviceName: "improved-svc",
+          baseline: { requestCount: 100, errorCount: 5, latencySamplesMs: [50, 100] },
+          canary: { requestCount: 100, errorCount: 1, latencySamplesMs: [20, 60] },
+        },
+        path.join(tmpDir, "improved", "CANARY_RECEIPT.json"),
+      );
+      assert.equal(improvedReport.verdict, "PASS");
+      assert.equal(improvedReport.compositeScore, 100);
+
+      // Composite score critical without exceeding individual maxErrorRateDelta or maxP99LatencyShift
+      // deltaErrorRate = 0.01 (-20) and deltaP99 = 0.15 (-15) => score = 65 < 70, revisions omitted -> defaults
+      const criticalReport = EosBayesianCanaryEvaluator.evaluateCanary(
+        {
+          serviceName: "critical-composite-svc",
+          baseline: { requestCount: 1000, errorCount: 0, latencySamplesMs: [50, 100] },
+          canary: { requestCount: 1000, errorCount: 10, latencySamplesMs: [50, 115] },
+        },
+        path.join(tmpDir, "critical", "CANARY_RECEIPT.json"),
+      );
+      assert.equal(criticalReport.verdict, "ROLLBACK_TRIGGERED");
+      assert.deepEqual(criticalReport.failureReasons, ["COMPOSITE_SCORE_CRITICAL"]);
+      assert.equal(criticalReport.rollbackManifest?.targetRevision, "previous-stable");
+      assert.equal(criticalReport.rollbackManifest?.failedRevision, "current-canary");
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+
+    // Ingestion error paths: malformed JSON, missing groups, and non-Error throw
+    const badJsonReport = EosBayesianCanaryEvaluator.evaluateCanary("{bad-json");
+    assert.equal(badJsonReport.status, "ERROR");
+    assert.equal(badJsonReport.verdict, "ROLLBACK_TRIGGERED");
+    assert.deepEqual(badJsonReport.failureReasons, ["INGESTION_ERROR"]);
+
+    const missingGroupReport = EosBayesianCanaryEvaluator.evaluateCanary({
+      serviceName: "broken",
+      baseline: { requestCount: 1, errorCount: 0, latencySamplesMs: [1] },
+    });
+    assert.equal(missingGroupReport.status, "ERROR");
+    assert.match(missingGroupReport.errors[0], /Invalid canary dataset/);
+
+    const nonErrorThrowReport = EosBayesianCanaryEvaluator.evaluateCanary({
+      serviceName: "throw-str",
+      get baseline() {
+        throw "non-error-throw";
+      },
+    });
+    assert.equal(nonErrorThrowReport.status, "ERROR");
+    assert.deepEqual(nonErrorThrowReport.errors, ["non-error-throw"]);
   });
 });

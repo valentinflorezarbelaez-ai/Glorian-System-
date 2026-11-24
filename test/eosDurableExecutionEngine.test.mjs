@@ -9,7 +9,9 @@ import { test, describe } from "node:test";
 import * as assert from "node:assert/strict";
 import * as fs from "node:fs";
 import * as http from "node:http";
+import * as os from "node:os";
 import * as path from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import {
   DurableEventStore,
   DurableWorkflowEngine,
@@ -194,9 +196,171 @@ describe("SPEC-294: Event-Sourced Durable Execution Engine", () => {
     assert.equal(receipt.sidecarOutboxTested, true);
     assert.equal(receipt.sha256Signature.length, 64);
 
-    const receiptFilePath = path.join(process.cwd(), "docs", "evidence", "DURABLE_EXECUTION_RECEIPT.json");
+    const receiptFilePath = resolveEvidencePath("DURABLE_EXECUTION_RECEIPT.json");
     assert.ok(fs.existsSync(receiptFilePath));
     const saved = JSON.parse(fs.readFileSync(receiptFilePath, "utf8"));
     assert.equal(saved.sha256Signature, receipt.sha256Signature);
+  });
+
+  // BDD-1545
+  test("BDD-1545: Replay corruption checks, FAILED vs COMPENSATED states, best-effort compensation & store APIs", async () => {
+    // Default constructor + getStore() + empty replay + resumeWorkflow missing
+    const engine = new DurableWorkflowEngine();
+    const store = engine.getStore();
+    const emptyState = WorkflowReplayer.replay([]);
+    assert.equal(emptyState.workflowId, "unknown");
+    assert.equal(emptyState.currentSeq, 0);
+
+    await assert.rejects(() => engine.resumeWorkflow("missing-wf", []), /Workflow not found: missing-wf/);
+
+    // Workflow failing on first step (no completed activities -> status FAILED, not COMPENSATED)
+    // Also tests activity returning undefined and non-Error thrown value
+    const failFirstState = await engine.executeWorkflow(
+      "wf-fail-first",
+      "FailFirst",
+      [
+        {
+          name: "noOutputStep",
+          execute: () => undefined,
+        },
+        {
+          name: "rawStringThrowStep",
+          execute: () => {
+            throw "raw-string-failure";
+          },
+        },
+      ],
+      {},
+    );
+    assert.equal(failFirstState.status, "FAILED");
+    assert.equal(failFirstState.error, "raw-string-failure");
+    assert.deepEqual(failFirstState.compensatedActivities, []);
+
+    // Compensation error is swallowed (best-effort)
+    const compThrowState = await engine.executeWorkflow(
+      "wf-comp-throw",
+      "CompThrow",
+      [
+        {
+          name: "stepWithBadComp",
+          execute: () => ({ ok: true }),
+          compensate: () => {
+            throw new Error("Compensate failed");
+          },
+        },
+        {
+          name: "failNext",
+          execute: () => {
+            throw new Error("Boom");
+          },
+        },
+      ],
+      {},
+    );
+    assert.equal(compThrowState.status, "FAILED");
+
+    // Calling executeWorkflow on already COMPLETED workflow returns state idempotently
+    const doneState = await engine.executeWorkflow(
+      "wf-already-done",
+      "DoneFlow",
+      [{ name: "only", execute: () => ({ x: 1 }) }],
+      {},
+    );
+    assert.equal(doneState.status, "COMPLETED");
+    const repeatDone = await engine.executeWorkflow("wf-already-done", "DoneFlow", [], {});
+    assert.equal(repeatDone.status, "COMPLETED");
+    assert.equal(repeatDone.currentSeq, doneState.currentSeq);
+
+    assert.ok(store.getAllStreams().size >= 3);
+
+    // Replay edge cases: broken sequence, corrupted hash, fallback names/errors, duplicate completions
+    const baseEvents = store.getEvents("wf-already-done");
+    const brokenSeq = [{ ...baseEvents[0], seq: 2 }];
+    assert.throws(() => WorkflowReplayer.replay(brokenSeq), /Sequence invariant broken/);
+
+    const tamperedHash = [{ ...baseEvents[0], stateHash: "f".repeat(64) }];
+    assert.throws(() => WorkflowReplayer.replay(tamperedHash), /Corrupted state hash detected/);
+
+    const edgeStore = new DurableEventStore();
+    edgeStore.appendEvent("wf-edge", "WorkflowStarted");
+    edgeStore.appendEvent("wf-edge", "ActivityCompleted", { activityName: "a1" });
+    edgeStore.appendEvent("wf-edge", "ActivityCompleted", { activityName: "a1", output: 9 });
+    edgeStore.appendEvent("wf-edge", "ActivityCompensated", { activityName: "a1" });
+    edgeStore.appendEvent("wf-edge", "ActivityCompensated", { activityName: "a1" });
+    edgeStore.appendEvent("wf-edge", "ActivityFailed", {});
+    const edgeReplayed = WorkflowReplayer.replay(edgeStore.getEvents("wf-edge"));
+    assert.equal(edgeReplayed.workflowName, "unknown");
+    assert.equal(edgeReplayed.error, "Unknown error");
+    assert.deepEqual(edgeReplayed.completedActivities, ["a1"]);
+    assert.deepEqual(edgeReplayed.compensatedActivities, ["a1"]);
+  });
+
+  // BDD-1546
+  test("BDD-1546: Sidecar URL validation, HTTPS/error/timeout handling, and nested evidence dir creation", async () => {
+    const sampleEvent = {
+      workflowId: "wf-sidecar-edge",
+      seq: 1,
+      timestamp: new Date().toISOString(),
+      type: "WorkflowStarted",
+      payload: {},
+      stateHash: "0".repeat(64),
+    };
+
+    // Invalid URL triggers catch block
+    await assert.rejects(() => DurableEventStore.emitToSidecar("not-a-valid-url", sampleEvent));
+
+    // HTTPS protocol branch (connection refused on port 1)
+    await assert.rejects(() => DurableEventStore.emitToSidecar("https://127.0.0.1:1/events", sampleEvent));
+
+    // Sidecar timeout branch (server accepts socket and withholds response past 2000ms)
+    const slowSockets = new Set();
+    const slowServer = http.createServer((req) => {
+      req.resume();
+    });
+    slowServer.on("connection", (socket) => {
+      slowSockets.add(socket);
+      socket.on("close", () => slowSockets.delete(socket));
+    });
+    await new Promise((resolve) => slowServer.listen(0, "127.0.0.1", resolve));
+    const slowPort = slowServer.address().port;
+    try {
+      await assert.rejects(
+        () => DurableEventStore.emitToSidecar(`http://127.0.0.1:${slowPort}/slow`, sampleEvent),
+        /Sidecar timeout/,
+      );
+    } finally {
+      for (const s of slowSockets) s.destroy();
+      await new Promise((resolve) => slowServer.close(resolve));
+    }
+
+    // Automatic sidecar emission during appendEvent (fail-open on unreachable port) + auditDurablePipeline mkdirSync
+    const tmpBase = fs.mkdtempSync(path.join(os.tmpdir(), "eos-durable-evd-"));
+    const nestedEvd = path.join(tmpBase, "nested-evd");
+    const prevSidecar = process.env.EOS_KAFKA_SIDECAR_URL;
+    const prevEvd = process.env.EOS_EVIDENCE_DIR;
+    try {
+      process.env.EOS_KAFKA_SIDECAR_URL = "http://127.0.0.1:1/fail-open";
+      const sidecarStore = new DurableEventStore();
+      const ev = sidecarStore.appendEvent("wf-sidecar-env", "WorkflowStarted");
+      assert.equal(ev.seq, 1);
+      delete process.env.EOS_KAFKA_SIDECAR_URL;
+
+      process.env.EOS_EVIDENCE_DIR = nestedEvd;
+      const receipt = await auditDurablePipeline();
+      assert.equal(receipt.specRef, "SPEC-294");
+      assert.ok(fs.existsSync(path.join(nestedEvd, "DURABLE_EXECUTION_RECEIPT.json")));
+    } finally {
+      if (prevSidecar === undefined) {
+        delete process.env.EOS_KAFKA_SIDECAR_URL;
+      } else {
+        process.env.EOS_KAFKA_SIDECAR_URL = prevSidecar;
+      }
+      if (prevEvd === undefined) {
+        delete process.env.EOS_EVIDENCE_DIR;
+      } else {
+        process.env.EOS_EVIDENCE_DIR = prevEvd;
+      }
+      fs.rmSync(tmpBase, { recursive: true, force: true });
+    }
   });
 });

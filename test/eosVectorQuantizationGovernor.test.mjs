@@ -7,10 +7,11 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosVectorQuantizationGovernor } from "../src/core/eosVectorQuantizationGovernor.ts";
 
 const SAMPLE_PATH = path.resolve("templates/vectors/sample-embeddings.json");
-const RECEIPT_PATH = path.resolve("docs/evidence/VECTOR_INDEX_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("VECTOR_INDEX_RECEIPT.json");
 
 describe("SPEC-283: Sharded Vector Indexing & SIMD-Style Quantization Governor", () => {
   const sampleVectors = JSON.parse(fs.readFileSync(SAMPLE_PATH, "utf8"));
@@ -94,7 +95,7 @@ describe("SPEC-283: Sharded Vector Indexing & SIMD-Style Quantization Governor",
     const index = EosVectorQuantizationGovernor.buildIndex(sampleVectors);
     const receipt = EosVectorQuantizationGovernor.generateReceipt(index, RECEIPT_PATH);
 
-    assert.ok(fs.existsSync(RECEIPT_PATH));
+    assert.deepEqual(JSON.parse(fs.readFileSync(RECEIPT_PATH, "utf8")), receipt);
     assert.equal(receipt.totalVectors, 5);
     assert.equal(receipt.dimension, 8);
     assert.equal(receipt.shardsCount, 3);

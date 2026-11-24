@@ -7,10 +7,11 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosDeadlockDetectionGovernor } from "../src/core/eosDeadlockDetectionGovernor.ts";
 
 const SAMPLE_PATH = path.resolve("templates/concurrency/sample-deadlock-wfg.json");
-const RECEIPT_PATH = path.resolve("docs/evidence/DEADLOCK_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("DEADLOCK_RECEIPT.json");
 
 describe("SPEC-285: Distributed Deadlock Detection & Wait-For Graph (WFG) Cycle Governor", () => {
   const sampleWfg = JSON.parse(fs.readFileSync(SAMPLE_PATH, "utf8"));
@@ -115,7 +116,7 @@ describe("SPEC-285: Distributed Deadlock Detection & Wait-For Graph (WFG) Cycle 
     const report = EosDeadlockDetectionGovernor.detectDeadlocks(graph);
     const receipt = EosDeadlockDetectionGovernor.generateReceipt(report, RECEIPT_PATH);
 
-    assert.ok(fs.existsSync(RECEIPT_PATH));
+    assert.deepEqual(JSON.parse(fs.readFileSync(RECEIPT_PATH, "utf8")), receipt);
     assert.equal(receipt.hasDeadlock, true);
     assert.equal(receipt.cyclesCount, 1);
     assert.equal(receipt.victimsCount, 1);

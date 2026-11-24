@@ -12,6 +12,7 @@ import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { DatabaseSync } from "node:sqlite";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 
 export interface SqliteDocumentRecord {
   id: string;
@@ -513,7 +514,7 @@ export class EosNativeSqliteStore {
       sha256Signature,
     };
 
-    const receiptDir = path.resolve(process.cwd(), "docs", "evidence");
+    const receiptDir = resolveEvidenceDir();
     if (!fs.existsSync(receiptDir)) {
       fs.mkdirSync(receiptDir, { recursive: true });
     }

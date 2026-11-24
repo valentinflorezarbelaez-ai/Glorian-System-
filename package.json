@@ -178,7 +178,7 @@
     "swarm": "node bin/eos.mjs swarm",
     "search": "node bin/eos.mjs search",
     "coverage": "node scripts/run-coverage.mjs",
-    "test": "node --test --test-concurrency=4 \"test/*.test.mjs\"",
+    "test": "node --import ./test/lib/testEvidence.mjs --test --test-concurrency=4 \"test/*.test.mjs\"",
     "test:ci": "node scripts/verify-cicd-pipeline.mjs",
     "test:shard": "node scripts/test-shard.mjs",
     "test:coverage": "node scripts/coverage-gate.mjs",

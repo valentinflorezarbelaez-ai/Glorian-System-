@@ -13,6 +13,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { createHash } from "node:crypto";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 import { pureSha256, deepFreeze, assertPrecondition } from "./eosKernelPrimitives.ts";
 import { EosFdirOntology } from "./eosFdirOntology.ts";
 import { EosOntologyCyclotron } from "./eosOntologyCyclotron.ts";
@@ -286,7 +287,7 @@ export class EosAutonomousReconciliationLoopCore {
       sha256Signature,
     });
 
-    const outDir = join(root, "docs", "evidence");
+    const outDir = resolveEvidenceDir(root);
     mkdirSync(outDir, { recursive: true });
     writeFileSync(join(outDir, "RECONCILIATION_LOOP_RECEIPT.json"), JSON.stringify(receipt, null, 2), "utf8");
 

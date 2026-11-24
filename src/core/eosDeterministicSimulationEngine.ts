@@ -12,6 +12,7 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 
 export interface DstPrngOptions {
   seed: number;
@@ -517,7 +518,7 @@ export class EosDeterministicSimulationEngine {
       sha256Signature: signature,
     };
 
-    const receiptDir = path.resolve(process.cwd(), "docs", "evidence");
+    const receiptDir = resolveEvidenceDir();
     if (!fs.existsSync(receiptDir)) {
       fs.mkdirSync(receiptDir, { recursive: true });
     }

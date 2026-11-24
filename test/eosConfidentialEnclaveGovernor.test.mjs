@@ -11,7 +11,9 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosConfidentialEnclaveGovernor } from "../src/core/eosConfidentialEnclaveGovernor.ts";
 
 const SAMPLE_ENCLAVE = {
@@ -155,9 +157,118 @@ describe("SPEC-301: Confidential Computing in Hardware TEEs (AWS Nitro / AMD SEV
     assert.equal(receipt.pcrIntegrityGuarded, true);
     assert.match(receipt.sha256Signature, /^[0-9a-f]{64}$/);
 
-    const receiptPath = path.join(projectRoot, "docs", "evidence", "TEE_ENCLAVE_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("TEE_ENCLAVE_RECEIPT.json", projectRoot);
     assert.ok(fs.existsSync(receiptPath));
     const saved = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.equal(saved.sha256Signature, receipt.sha256Signature);
+  });
+
+  it("BDD-1587: Uint8Array inputs, default fields, custom Root-of-Trust, partial PCRs, and malformed PEM", () => {
+    // Buffer / Uint8Array inputs with omitted bootArgs and iamRoleArnOrContext
+    const binPcrs = EosConfidentialEnclaveGovernor.computePcrRegisters({
+      enclaveId: "enclave-bin-02",
+      imageBinaryOrPath: new Uint8Array([1, 2, 3, 4]),
+      applicationBundle: Buffer.from("binary-app-bundle"),
+    });
+    assert.match(binPcrs.pcr0, /^[0-9a-f]{64}$/);
+    assert.match(binPcrs.pcr1, /^[0-9a-f]{64}$/);
+    assert.match(binPcrs.pcr8, /^[0-9a-f]{64}$/);
+
+    // Precondition rejections for computePcrRegisters & generateAttestationDocument
+    assert.throws(() => EosConfidentialEnclaveGovernor.computePcrRegisters(null), /EnclaveDefinition is required/);
+    assert.throws(
+      () =>
+        EosConfidentialEnclaveGovernor.computePcrRegisters({
+          ...SAMPLE_ENCLAVE,
+          enclaveId: "",
+        }),
+      /enclaveId is required/,
+    );
+    assert.throws(
+      () => EosConfidentialEnclaveGovernor.generateAttestationDocument(SAMPLE_ENCLAVE, "short"),
+      /Nonce must be at least 8 characters/,
+    );
+
+    // Custom Root-of-Trust keypair and omitted expectedNonce + partial baselinePcrs
+    const customRoT = EosConfidentialEnclaveGovernor.generateRootOfTrustKeyPair();
+    const att = EosConfidentialEnclaveGovernor.generateAttestationDocument(
+      SAMPLE_ENCLAVE,
+      "nonce-custom-rot-1234",
+      customRoT,
+    );
+    assert.equal(att.rootOfTrustPublicKeyPem, customRoT.publicKeyPem);
+
+    const verifiedNoNonce = EosConfidentialEnclaveGovernor.verifyAttestationDocument(att, { pcr0: att.pcrs.pcr0 });
+    assert.equal(verifiedNoNonce.valid, true);
+    assert.equal(verifiedNoNonce.nonceVerified, true);
+
+    // Null attestation precondition
+    assert.throws(
+      () => EosConfidentialEnclaveGovernor.verifyAttestationDocument(null, {}),
+      /Attestation document is required/,
+    );
+
+    // Malformed Root-of-Trust PEM triggers verify() catch branch -> SIGNATURE_INVALID
+    const badPemAtt = {
+      ...att,
+      rootOfTrustPublicKeyPem: "NOT-A-VALID-PEM-KEY",
+    };
+    const badPemRes = EosConfidentialEnclaveGovernor.verifyAttestationDocument(badPemAtt, att.pcrs);
+    assert.equal(badPemRes.valid, false);
+    assert.equal(badPemRes.verdict, "SIGNATURE_INVALID");
+  });
+
+  it("BDD-1588: Sealing preconditions, binary secrets/rootSecret, PCR2 drift, and sandbox audit fallback", () => {
+    const pcrs = EosConfidentialEnclaveGovernor.computePcrRegisters(SAMPLE_ENCLAVE);
+    const customRoot = new Uint8Array(32).fill(7);
+    const plainBytes = Buffer.from("BINARY_SECRET_MATERIAL_99");
+
+    const sealed = EosConfidentialEnclaveGovernor.sealSecret(plainBytes, pcrs, customRoot);
+    const unsealed = EosConfidentialEnclaveGovernor.unsealSecret(sealed, pcrs, customRoot);
+    assert.equal(unsealed, "BINARY_SECRET_MATERIAL_99");
+
+    // Preconditions on sealSecret & unsealSecret
+    assert.throws(() => EosConfidentialEnclaveGovernor.sealSecret("", pcrs), /Plaintext payload is required/);
+    assert.throws(
+      () => EosConfidentialEnclaveGovernor.sealSecret("abc", { pcr0: "", pcr2: pcrs.pcr2 }),
+      /PCR0 and PCR2 measurements are required/,
+    );
+    assert.throws(() => EosConfidentialEnclaveGovernor.unsealSecret(null, pcrs), /SealedPayload is required/);
+    assert.throws(
+      () => EosConfidentialEnclaveGovernor.unsealSecret({ ...sealed, algorithm: "AES-128-CBC" }, pcrs),
+      /Unsupported algorithm/,
+    );
+
+    // PCR2-only mismatch (matching PCR0)
+    assert.throws(
+      () =>
+        EosConfidentialEnclaveGovernor.unsealSecret(sealed, {
+          pcr0: pcrs.pcr0,
+          pcr2: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        }),
+      /ENCLAVE_MEASUREMENT_MISMATCH/,
+    );
+
+    // Default audit options + best-effort sandbox write failure catch branch
+    const defaultReceipt = EosConfidentialEnclaveGovernor.auditConfidentialEnclavePipeline();
+    assert.equal(defaultReceipt.attestationValid, true);
+
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-enclave-ro-"));
+    const blockingFile = path.join(tmpDir, "not-a-dir");
+    fs.writeFileSync(blockingFile, "lock", "utf8");
+    const prevEnv = process.env.EOS_EVIDENCE_DIR;
+    try {
+      process.env.EOS_EVIDENCE_DIR = blockingFile;
+      const sandboxReceipt = EosConfidentialEnclaveGovernor.auditConfidentialEnclavePipeline();
+      assert.equal(sandboxReceipt.specRef, "SPEC-301");
+      assert.equal(sandboxReceipt.attestationValid, true);
+    } finally {
+      if (prevEnv === undefined) {
+        delete process.env.EOS_EVIDENCE_DIR;
+      } else {
+        process.env.EOS_EVIDENCE_DIR = prevEnv;
+      }
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
   });
 });

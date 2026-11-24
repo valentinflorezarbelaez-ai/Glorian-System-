@@ -7,6 +7,7 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { resolveEvidencePath } from "./eosEvidencePaths.ts";
 
 export type ChaosCircuitBreakerState = "CLOSED" | "OPEN" | "HALF_OPEN";
 
@@ -83,7 +84,7 @@ export class EosChaosCircuitBreaker {
       slowCallDurationThresholdMs: config.slowCallDurationThresholdMs ?? 500,
       waitDurationInOpenStateMs: config.waitDurationInOpenStateMs ?? 5000,
       permittedNumberOfCallsInHalfOpenState: config.permittedNumberOfCallsInHalfOpenState ?? 5,
-      evidencePath: config.evidencePath ?? path.resolve("docs/evidence/CHAOS_RECEIPT.json"),
+      evidencePath: config.evidencePath ?? resolveEvidencePath("CHAOS_RECEIPT.json"),
     };
     this.chaosPolicy = {
       enabled: false,

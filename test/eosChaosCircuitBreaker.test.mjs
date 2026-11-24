@@ -10,6 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 
 import { EosChaosCircuitBreaker } from "../src/core/eosChaosCircuitBreaker.ts";
 
@@ -156,7 +157,7 @@ describe("SPEC-279: Chaos Engineering & Circuit Breaker Fault Injection Gateway"
   // BDD-1454: Cryptographic SHA-256 Resilience Receipt Generation
   // -------------------------------------------------------------------------
   it("BDD-1454: writes authentic resilience receipt with valid SHA-256 signature to disk", async () => {
-    const testReceiptPath = path.join(ROOT, "docs/evidence/CHAOS_RECEIPT.json");
+    const testReceiptPath = resolveEvidencePath("CHAOS_RECEIPT.json", ROOT);
     const breaker = new EosChaosCircuitBreaker("metrics-service", {
       evidencePath: testReceiptPath,
     });

@@ -11,12 +11,13 @@ import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { EosQuantizedDistributedTrainingCore, INT8_MAX } from "../src/core/eosQuantizedDistributedTrainingEngine.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/QUANTIZED_DISTRIBUTED_TRAINING_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("QUANTIZED_DISTRIBUTED_TRAINING_RECEIPT.json", ROOT);
 
 test("SPEC-328 / CHANGE-190: FP8 / INT8 Quantized Distributed Training & Mixed-Precision Scaling Engine", async (t) => {
   const engine = new EosQuantizedDistributedTrainingCore();

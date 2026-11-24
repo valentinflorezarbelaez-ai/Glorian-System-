@@ -15,6 +15,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import {
   EosWasmBytecodeSynthesizerCore,
@@ -637,7 +638,7 @@ export class EosPolyglotRustZigWasmKernelCore {
       cryptographicSignature,
     });
 
-    const evidenceDir = path.join(projectRoot, "docs", "evidence");
+    const evidenceDir = resolveEvidenceDir(projectRoot);
     if (!fs.existsSync(evidenceDir)) {
       fs.mkdirSync(evidenceDir, { recursive: true });
     }

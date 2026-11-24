@@ -10,7 +10,8 @@
  */
 
 import { writeFileSync, mkdirSync } from "node:fs";
-import { join } from "node:path";
+import { dirname } from "node:path";
+import { resolveEvidencePath } from "./eosEvidencePaths.ts";
 import { pureSha256, deepFreeze, assertPrecondition } from "./eosKernelPrimitives.ts";
 import {
   ARENA_MAGIC,
@@ -277,9 +278,9 @@ export class EosSharedMemoryArena {
       sha256Signature: signature,
     });
 
-    const outPath = join(projectRoot, "docs", "evidence", "SHARED_MEMORY_RECEIPT.json");
     try {
-      mkdirSync(join(projectRoot, "docs", "evidence"), { recursive: true });
+      const outPath = resolveEvidencePath("SHARED_MEMORY_RECEIPT.json", projectRoot);
+      mkdirSync(dirname(outPath), { recursive: true });
       writeFileSync(outPath, JSON.stringify(receipt, null, 2) + "\n", "utf8");
     } catch {
       // Best-effort in sandboxes
