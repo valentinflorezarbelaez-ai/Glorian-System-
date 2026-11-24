@@ -1,7 +1,7 @@
 {
   "timestampIso": "2025-10-09T19:43:37.266Z",
   "totalSpecs": 379,
-  "catalogSha256": "88a10cf53633c49da5dae3bdec47431e1edc83339245df2f8c70ff6c72243baf",
+  "catalogSha256": "69268b898d30f55d01eed46920b0dfefd559837b78d8f2a3da7d458282abed0c",
   "freezePinBoundSha": "a24a1de0",
   "specs": [
     {
@@ -1105,20 +1105,20 @@
     {
       "id": "SPEC-123",
       "title": "FLEET SECRET-SCAN GATE — REAL HARDCODED-CREDENTIAL DETECTION FOR EVERY EOS-GOVERNED REPOSITORY",
-      "status": "PROPOSED — awaiting owner approval (Law II gate)",
+      "status": "APPROVED",
       "frCount": 11,
       "bddCount": 10,
       "file": "openspec/specs/SPEC-123-FLEET-SECRET-SCAN-GATE.md",
-      "sha256": "696603dd343cf73337f0fb90ca7c1f7a5a08cb9453571ff5a09f77ba345bfec8"
+      "sha256": "9220beb85be2dcbdfe37484b71b3350ef5429624d83a6f256784ef206488d54b"
     },
     {
       "id": "SPEC-124",
       "title": "AUTONOMOUS DYNAMIC FLEET REGISTRY & LAW IV MULTI-TENANT SENTINEL",
-      "status": "PROPOSED — awaiting Level 2 Authorization Gate",
+      "status": "APPROVED",
       "frCount": 8,
       "bddCount": 7,
       "file": "openspec/specs/SPEC-124-AUTONOMOUS-FLEET-REGISTRY-SYNC.md",
-      "sha256": "6be2d878ca9dc86aaefcee2383695e2bf320b87f24afdec5f77e4b6b248d2a2b"
+      "sha256": "7fd5b1ac2fcd254324d823d5ea08e305da773bd42ab7644555045e22281068c5"
     },
     {
       "id": "SPEC-125",

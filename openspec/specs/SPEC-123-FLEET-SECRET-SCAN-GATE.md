@@ -5,9 +5,10 @@
 - **Specification ID**: `SPEC-123`
 - **Project ID**: `eos-system` (canonical tool) + fleet repositories listed in `docs/projects/registry.json` (read-only audit)
 - **Standard**: IEEE 830 / ISO 29148 · EOS Constitution Law III (Evidence over Claims) & Law VI (Zero Plain Secrets)
-- **Status**: `PROPOSED` — awaiting owner approval (Law II gate)
+- **Status**: `APPROVED`
 - **Owner**: `user:valentin-florez-arbelaez`
-- **ProposedCloseBy**: `2026-12-15`
+- **ClosedAt**: `2026-11-23`
+- **CloseRationale**: Landed Layer-0 implementation (`scripts/eos-secret-scan.mjs`, `test/eos-secret-scan.test.mjs`) with `AUTH-2026-11-02-FLEET-SECRET-SCAN-123` LEVEL 2 + OWNER_APPROVAL; PR-F remediation closes PROPOSED catalog drift (Law I RTM).
 - **Layer**: Layer-0 pure domain detectors + thin CLI adapter (`dependencies: {}`)
 - **Date**: `2026-11-02`
 
@@ -196,5 +197,5 @@ flowchart LR
 
 ## 7. Authorization
 
-- **Current state**: `PROPOSED`. No implementation code may be written (Law II).
-- **Required to proceed**: Owner approval of this specification, then a `LEVEL 2` entry in `IMPLEMENTATION_AUTHORIZATION.md` scoped to EOS-System Phases 1–2.
+- **Current state**: `APPROVED` / `IMPLEMENTATION_AUTHORIZED` (`LEVEL 2`) via `AUTH-2026-11-02-FLEET-SECRET-SCAN-123`.
+- **Evidence**: Canonical scanner + BDD suite landed under `scripts/eos-secret-scan.mjs` and `test/eos-secret-scan.test.mjs`; wired into the EOS verify gate.
