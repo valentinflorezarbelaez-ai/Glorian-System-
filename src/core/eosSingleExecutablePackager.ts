@@ -8,9 +8,10 @@
  */
 
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import crypto from "node:crypto";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 export interface SeaConfig {
   main: string;
@@ -37,6 +38,7 @@ export interface SeaBuildResult {
   blobBytes: number;
   sha256: string;
   mainEntry: string;
+  compiledRealBlob: boolean;
   generatedAtIso: string;
 }
 
@@ -80,18 +82,54 @@ export class EosSingleExecutablePackager {
     }
 
     const blobPath = path.join(this.projectRoot, "dist", "eos.blob");
+    const cjsBootstrap = path.join(this.projectRoot, "bin", "sea-bootstrap.cjs");
+    let effectiveConfigPath = configPath;
+    let tempSeaConfig: string | null = null;
+    let effectiveMain = "bin/eos.mjs";
 
     try {
-      execSync(`"${process.execPath}" --experimental-sea-config "${configPath}"`, {
+      const declared = JSON.parse(fs.readFileSync(configPath, "utf8")) as Partial<SeaConfig>;
+      if (typeof declared.main === "string") effectiveMain = declared.main;
+      if (effectiveMain.endsWith(".mjs") && fs.existsSync(cjsBootstrap)) {
+        tempSeaConfig = path.join(os.tmpdir(), `eos-sea-${crypto.randomUUID()}.json`);
+        fs.writeFileSync(
+          tempSeaConfig,
+          JSON.stringify(
+            {
+              ...declared,
+              main: cjsBootstrap,
+              output: blobPath,
+            },
+            null,
+            2,
+          ),
+          "utf8",
+        );
+        effectiveConfigPath = tempSeaConfig;
+      }
+    } catch {
+      // Proceed with configPath directly if parsing fails
+    }
+
+    let compiledRealBlob = false;
+    try {
+      execFileSync(process.execPath, ["--experimental-sea-config", effectiveConfigPath], {
         cwd: this.projectRoot,
         stdio: "pipe",
         encoding: "utf8",
       });
+      compiledRealBlob = true;
     } catch {
-      // Deterministic Layer-0 fallback: generate self-contained valid SEA buffer envelope
+      // Deterministic Layer-0 fallback when Node binary lacks --experimental-sea-config
       const entryContent = fs.readFileSync(path.join(this.projectRoot, "bin", "eos.mjs"), "utf8");
       const envelope = Buffer.concat([Buffer.from("NODE_SEA_BLOB_V1\0", "utf8"), Buffer.from(entryContent, "utf8")]);
       fs.writeFileSync(blobPath, envelope);
+    } finally {
+      if (tempSeaConfig) {
+        try {
+          fs.unlinkSync(tempSeaConfig);
+        } catch {}
+      }
     }
 
     const blobBuffer = fs.readFileSync(blobPath);
@@ -102,7 +140,8 @@ export class EosSingleExecutablePackager {
       blobPath,
       blobBytes: blobBuffer.length,
       sha256,
-      mainEntry: "bin/eos.mjs",
+      mainEntry: effectiveMain,
+      compiledRealBlob,
       generatedAtIso: new Date().toISOString(),
     };
   }

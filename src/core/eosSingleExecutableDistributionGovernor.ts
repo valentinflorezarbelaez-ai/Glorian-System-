@@ -11,7 +11,8 @@
 
 import { generateKeyPairSync, sign, verify, createHash } from "node:crypto";
 import { writeFileSync, mkdirSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { resolveEvidencePath } from "./eosEvidencePaths.ts";
 import { pureSha256, deepFreeze, assertPrecondition } from "./eosKernelPrimitives.ts";
 import type {
   TargetPlatform,
@@ -327,9 +328,9 @@ export class EosSingleExecutableDistributionGovernor {
       sha256Signature: signatureDigest,
     });
 
-    const outPath = join(projectRoot, "docs", "evidence", "SEA_BINARY_RECEIPT.json");
+    const outPath = resolveEvidencePath("SEA_BINARY_RECEIPT.json", projectRoot);
     try {
-      mkdirSync(join(projectRoot, "docs", "evidence"), { recursive: true });
+      mkdirSync(dirname(outPath), { recursive: true });
       writeFileSync(outPath, JSON.stringify(receipt, null, 2) + "\n", "utf8");
     } catch {
       // Best-effort in sandboxes

@@ -9,11 +9,21 @@
 const path = require("node:path");
 const fs = require("node:fs");
 
+function getControlPlaneVersion() {
+  try {
+    const pkg = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../package.json"), "utf8"));
+    if (pkg && typeof pkg.version === "string" && pkg.version.trim()) return `v${pkg.version.trim()}`;
+  } catch {
+    // Hermetic fallback when executing standalone binary outside repo
+  }
+  return "v75.0.0";
+}
+
 function main() {
   const args = process.argv.slice(2);
 
   if (args.includes("--version") || args.includes("-v")) {
-    console.log("Glorian System Control Plane v68.0.0 (Standalone SEA Binary)");
+    console.log(`Glorian System Control Plane ${getControlPlaneVersion()} (Standalone SEA Binary)`);
     return;
   }
 

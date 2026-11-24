@@ -12,7 +12,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import path from "node:path";
+import { resolveEvidencePath } from "../src/core/eosEvidencePaths.ts";
 import { EosSingleExecutableDistributionGovernor } from "../src/core/eosSingleExecutableDistributionGovernor.ts";
 
 describe("SPEC-304: Single Executable Applications (SEA) Automated Binary Distribution", () => {
@@ -108,6 +108,32 @@ describe("SPEC-304: Single Executable Applications (SEA) Automated Binary Distri
       keypair.publicKeyPem,
     );
     assert.strictEqual(sigResult.valid, false, "Must reject invalid signature");
+
+    // Buffer & Uint8Array payloads plus invalid PEM catch branch and win32 bundle path
+    const bufSig = EosSingleExecutableDistributionGovernor.signBinaryArtifact(Buffer.from(payload), keypair);
+    const u8Check = EosSingleExecutableDistributionGovernor.verifyBinaryArtifact(
+      new Uint8Array(Buffer.from(payload)),
+      bufSig,
+      keypair.publicKeyPem,
+    );
+    assert.strictEqual(u8Check.valid, true);
+
+    const badPemCheck = EosSingleExecutableDistributionGovernor.verifyBinaryArtifact(
+      Buffer.from(payload),
+      bufSig,
+      "NOT-A-VALID-PEM",
+    );
+    assert.strictEqual(badPemCheck.valid, false);
+    assert.strictEqual(badPemCheck.signatureVerified, false);
+
+    const winBundle = EosSingleExecutableDistributionGovernor.createDistributionBundle(
+      "win32-x64",
+      Buffer.from(payload),
+      bufSig,
+    );
+    assert.strictEqual(winBundle.binaryName, "eos-win32-x64.exe");
+    const winCfg = EosSingleExecutableDistributionGovernor.generateSeaConfig("win32-x64", "bin/sea-bootstrap.cjs");
+    assert.strictEqual(winCfg.output, "dist/eos-win32-x64.blob");
   });
 
   it("BDD-1603: Distribution Bundle Packaging and In-Toto Provenance", () => {
@@ -140,8 +166,8 @@ describe("SPEC-304: Single Executable Applications (SEA) Automated Binary Distri
     assert.strictEqual(typeof receipt.sha256Signature, "string");
     assert.strictEqual(receipt.sha256Signature.length, 64);
 
-    const receiptPath = path.join(process.cwd(), "docs", "evidence", "SEA_BINARY_RECEIPT.json");
-    assert.ok(fs.existsSync(receiptPath), "docs/evidence/SEA_BINARY_RECEIPT.json must exist");
+    const receiptPath = resolveEvidencePath("SEA_BINARY_RECEIPT.json", process.cwd());
+    assert.ok(fs.existsSync(receiptPath), "SEA_BINARY_RECEIPT.json must exist at resolveEvidencePath");
 
     const onDisk = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.strictEqual(onDisk.receiptType, "EOS_SEA_BINARY_DISTRIBUTION_AUDIT");

@@ -18,13 +18,15 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const evidenceDir = path.join(root, "docs/evidence");
 const l0SbomPath = path.join(evidenceDir, "sbom.l0.cdx.json");
 const provenancePath = path.join(evidenceDir, "provenance.intoto.jsonl");
+const verifyOnly = process.argv.includes("--verify-only");
 
 console.log("======================================================================");
 console.log(" EOS SUPPLY CHAIN VERIFY — SBOM gate + Layer-0 SLSA");
 console.log("======================================================================");
 
-// Lane A: lockfile SBOM (generate then verify so IV&V hosts are never stale).
-const sbomGen = spawnSync(process.execPath, [path.join(root, "scripts/sbom-gate.mjs")], {
+// Lane A: lockfile SBOM (verify-only or generate+verify).
+const sbomArgs = [path.join(root, "scripts/sbom-gate.mjs"), ...(verifyOnly ? ["--verify-only"] : [])];
+const sbomGen = spawnSync(process.execPath, sbomArgs, {
   cwd: root,
   encoding: "utf8",
   stdio: ["ignore", "pipe", "pipe"],
@@ -37,12 +39,14 @@ if (sbomGen.status !== 0) {
 }
 
 // Lane B: Layer-0 CycloneDX 1.5 + SLSA provenance (SPEC-061).
-fs.mkdirSync(evidenceDir, { recursive: true });
-const l0Sbom = EosSlsaProvenanceSbom.generateCycloneDxSbom(root);
-const head = spawnSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).stdout?.trim() || "HEAD";
-const provenance = EosSlsaProvenanceSbom.generateSlsaProvenance(root, head);
-fs.writeFileSync(l0SbomPath, JSON.stringify(l0Sbom, null, 2) + "\n", "utf8");
-fs.writeFileSync(provenancePath, JSON.stringify(provenance) + "\n", "utf8");
+if (!verifyOnly) {
+  fs.mkdirSync(evidenceDir, { recursive: true });
+  const l0Sbom = EosSlsaProvenanceSbom.generateCycloneDxSbom(root);
+  const head = spawnSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).stdout?.trim() || "HEAD";
+  const provenance = EosSlsaProvenanceSbom.generateSlsaProvenance(root, head);
+  fs.writeFileSync(l0SbomPath, JSON.stringify(l0Sbom, null, 2) + "\n", "utf8");
+  fs.writeFileSync(provenancePath, JSON.stringify(provenance) + "\n", "utf8");
+}
 
 const result = EosSlsaProvenanceSbom.verifySupplyChain(root, l0SbomPath, provenancePath);
 console.log(

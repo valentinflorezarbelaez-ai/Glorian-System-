@@ -1,11 +1,15 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { EventEmitter } from "node:events";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { EosContainerSandbox } from "../src/core/eosContainerSandbox.ts";
+import {
+  EosContainerSandbox,
+  detectAvailableRuntimes,
+  resolveSandboxRuntime,
+} from "../src/core/eosContainerSandbox.ts";
 import {
   applyWorkspaceChanges,
   assertWorkspaceWithinLimits,
@@ -389,4 +393,82 @@ test("BDD-SANDBOX-FAULT-002: doctor and run enforce engine security policies, im
   await assert.rejects(() => sbRun.run({ worktreePath: wtRel, command: 123 }), /must be a string/);
   await assert.rejects(() => sbRun.run({ worktreePath: wtRel, command: "node", commandArgs: [1] }), /512 strings/);
   await assert.rejects(() => sbRun.run({ worktreePath: wtRel, command: "node", applyChanges: "yes" }), /boolean/);
+});
+
+test("BDD-SANDBOX-RUNTIME-001: detects gVisor runsc runtime, validates --runtime flags, and injects --runtime=runsc", async (t) => {
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "eos-sb-runsc-"));
+  const repoRoot = path.join(tmpRoot, "repo");
+  fs.mkdirSync(repoRoot, { recursive: true });
+  git(repoRoot, ["init", "--initial-branch=main"]);
+  git(repoRoot, ["config", "user.name", "Sandbox Test"]);
+  git(repoRoot, ["config", "user.email", "sandbox-test@example.invalid"]);
+  fs.writeFileSync(path.join(repoRoot, "file.txt"), "hello\n", "utf8");
+  git(repoRoot, ["add", "file.txt"]);
+  git(repoRoot, ["commit", "-m", "Init"]);
+  const wtRel = path.join(".worktrees", "wt-runsc");
+  git(repoRoot, ["worktree", "add", "-b", "eos/sb-runsc", wtRel]);
+
+  const prevImage = process.env.EOS_SANDBOX_IMAGE;
+  process.env.EOS_SANDBOX_IMAGE = VALID_IMAGE;
+  t.after(() => {
+    if (prevImage === undefined) delete process.env.EOS_SANDBOX_IMAGE;
+    else process.env.EOS_SANDBOX_IMAGE = prevImage;
+    try {
+      git(repoRoot, ["worktree", "remove", "--force", wtRel]);
+    } catch {
+      /* worktree already cleaned up */
+    }
+    fs.rmSync(tmpRoot, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 });
+  });
+
+  // 1. Unit rules for resolveSandboxRuntime & detectAvailableRuntimes
+  const withRunsc = new Set(["runc", "runsc"]);
+  const withoutRunsc = new Set(["runc"]);
+  assert.equal(resolveSandboxRuntime(undefined, withRunsc), "runc");
+  assert.equal(resolveSandboxRuntime("runc", withRunsc), "runc");
+  assert.equal(resolveSandboxRuntime("auto", withRunsc), "runsc");
+  assert.equal(resolveSandboxRuntime("auto", withoutRunsc), "runc");
+  assert.equal(resolveSandboxRuntime("runsc", withRunsc), "runsc");
+  assert.throws(() => resolveSandboxRuntime("runsc", withoutRunsc), /gVisor runtime 'runsc' is not registered/);
+  assert.throws(() => resolveSandboxRuntime("kvm-custom", withRunsc), /Sandbox runtime must be/);
+
+  const detected = detectAvailableRuntimes((args) =>
+    args.join(" ").includes("Runtimes") ? JSON.stringify({ runc: {}, runsc: {} }) : "",
+  );
+  assert.equal(detected.has("runsc"), true);
+
+  // 2. doctor() surfaces gvisorAvailable & runtimes, run() injects --runtime=runsc
+  const withRunscMock = (args) => {
+    if (args.join(" ").includes("{{json .Runtimes}}")) return JSON.stringify({ runc: {}, runsc: {} });
+    return makeDockerSyncMock()(args);
+  };
+  const captured = [];
+  const sbGvisor = new EosContainerSandbox(repoRoot, {
+    runDockerSync: withRunscMock,
+    spawnDocker: (_cmd, args) => {
+      captured.push(args);
+      const proc = new EventEmitter();
+      proc.kill = () => {};
+      queueMicrotask(() => proc.emit("close", 0, null));
+      return proc;
+    },
+  });
+  const doc = sbGvisor.doctor();
+  assert.equal(doc.ready, true);
+  assert.equal(doc.gvisorAvailable, true);
+  assert.deepEqual(doc.runtimes, ["runc", "runsc"]);
+
+  const repRunsc = await sbGvisor.run({ worktreePath: wtRel, command: "node", runtime: "runsc" });
+  assert.equal(repRunsc.success, true);
+  assert.equal(repRunsc.runtime, "runsc");
+  assert.ok(captured[0].includes("--runtime=runsc"));
+
+  // CLI validation rejects invalid --runtime with exit 2
+  const cliBad = spawnSync(
+    process.execPath,
+    [path.join(process.cwd(), "bin/eos.mjs"), "sandbox", "run", wtRel, "--runtime", "bogus", "--", "node"],
+    { encoding: "utf8", cwd: repoRoot },
+  );
+  assert.equal(cliBad.status, 2);
+  assert.match(cliBad.stderr || "", /runc.*runsc.*auto/);
 });

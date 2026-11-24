@@ -154,13 +154,18 @@ async function cmd_sandbox_30(commandContext) {
     console.log(`[EOS SANDBOX] ${report.ready ? "READY" : "NOT READY"}`);
     console.log(report.message);
     if (report.image) console.log(`Imagen fijada: ${report.image}`);
+    if (Array.isArray(report.runtimes) && report.runtimes.length > 0) {
+      console.log(
+        `Runtimes: ${report.runtimes.join(", ")} (gVisor runsc: ${report.gvisorAvailable ? "OK" : "no disponible"})`,
+      );
+    }
     if (!report.ready) process.exitCode = 1;
     return;
   }
 
   if (subcommand !== "run") {
     console.log(
-      "Uso: eos sandbox doctor | eos sandbox run <worktree> [--apply] [--timeout SEGUNDOS] -- <comando> [argumentos...]",
+      "Uso: eos sandbox doctor | eos sandbox run <worktree> [--apply] [--timeout SEGUNDOS] [--runtime runc|runsc|auto] -- <comando> [argumentos...]",
     );
     return;
   }
@@ -186,9 +191,27 @@ async function cmd_sandbox_30(commandContext) {
     }
     timeoutMs = seconds * 1000;
   }
+  let runtime;
+  const runtimeIndex = runOptions.findIndex((o) => o === "--runtime" || o.startsWith("--runtime="));
+  if (runtimeIndex >= 0) {
+    const rawRuntime =
+      runOptions[runtimeIndex] === "--runtime"
+        ? runOptions[runtimeIndex + 1]
+        : runOptions[runtimeIndex].slice("--runtime=".length);
+    if (!["runc", "runsc", "auto"].includes(rawRuntime || "")) {
+      console.error("--runtime debe ser 'runc', 'runsc' o 'auto'.");
+      process.exitCode = 2;
+      return;
+    }
+    runtime = rawRuntime;
+  }
   const unknownOptions = runOptions.filter(
     (option, index) =>
-      option !== "--apply" && option !== "--timeout" && (index === 0 || runOptions[index - 1] !== "--timeout"),
+      option !== "--apply" &&
+      option !== "--timeout" &&
+      option !== "--runtime" &&
+      !option.startsWith("--runtime=") &&
+      (index === 0 || (runOptions[index - 1] !== "--timeout" && runOptions[index - 1] !== "--runtime")),
   );
   if (unknownOptions.length > 0) {
     console.error(`Opción no reconocida: ${unknownOptions.join(" ")}`);
@@ -207,6 +230,7 @@ async function cmd_sandbox_30(commandContext) {
       commandArgs: commandArgs.slice(1),
       applyChanges,
       ...(timeoutMs === undefined ? {} : { timeoutMs }),
+      ...(runtime === undefined ? {} : { runtime }),
     });
     console.log(
       `Estado: ${report.status}; código: ${report.exitCode ?? "N/D"}; archivos cambiados en copia: ${report.changedFiles.length}`,

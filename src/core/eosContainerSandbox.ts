@@ -117,6 +117,40 @@ function verifyDockerEngine(runDockerSync: (args: readonly string[], timeout: nu
   }
 }
 
+export function detectAvailableRuntimes(
+  runDockerSync: (args: readonly string[], timeout: number) => string,
+): ReadonlySet<string> {
+  try {
+    const raw = runDockerSync(["info", "--format", "{{json .Runtimes}}"], 5_000);
+    if (!raw || raw === "null") return new Set(["runc"]);
+    const parsed = JSON.parse(raw) as unknown;
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      const names = Object.keys(parsed).filter(Boolean);
+      if (names.length > 0) return new Set(names);
+    }
+  } catch {}
+  return new Set(["runc"]);
+}
+
+export function resolveSandboxRuntime(
+  requested: SandboxContainerRuntime | undefined,
+  available: ReadonlySet<string>,
+): "runc" | "runsc" {
+  if (requested !== undefined && requested !== "runc" && requested !== "runsc" && requested !== "auto") {
+    throw new Error("Sandbox runtime must be 'runc', 'runsc', or 'auto'.");
+  }
+  if (requested === "runsc") {
+    if (!available.has("runsc")) {
+      throw new Error("Requested gVisor runtime 'runsc' is not registered in local Docker Engine.");
+    }
+    return "runsc";
+  }
+  if (requested === "auto") {
+    return available.has("runsc") ? "runsc" : "runc";
+  }
+  return "runc";
+}
+
 function getRegisteredWorktree(repoRoot: string, selectedPath: string): string {
   const root = fs.realpathSync(repoRoot);
   const candidate = path.resolve(root, selectedPath);
@@ -201,18 +235,36 @@ export class EosContainerSandbox {
     this.spawnDockerProcess = deps.spawnDocker ?? spawn;
   }
 
-  public doctor(): { readonly ready: boolean; readonly image: string | null; readonly message: string } {
+  public doctor(): {
+    readonly ready: boolean;
+    readonly image: string | null;
+    readonly runtimes: readonly string[];
+    readonly gvisorAvailable: boolean;
+    readonly message: string;
+  } {
     try {
       verifyDockerEngine(this.execDockerSync);
       const image = validatePinnedImage(process.env.EOS_SANDBOX_IMAGE);
       this.execDockerSync(["image", "inspect", "--format", "{{json .RepoDigests}}", image.ref], 8_000);
+      const availableRuntimes = detectAvailableRuntimes(this.execDockerSync);
+      const runtimes = [...availableRuntimes].sort();
       return {
         ready: true,
         image: image.ref,
-        message: "Docker Linux engine is reachable; pinned image is available locally.",
+        runtimes,
+        gvisorAvailable: availableRuntimes.has("runsc"),
+        message: availableRuntimes.has("runsc")
+          ? "Docker Linux engine is reachable (gVisor runsc registered); pinned image is available locally."
+          : "Docker Linux engine is reachable; pinned image is available locally.",
       };
     } catch (error) {
-      return { ready: false, image: null, message: error instanceof Error ? error.message : String(error) };
+      return {
+        ready: false,
+        image: null,
+        runtimes: [],
+        gvisorAvailable: false,
+        message: error instanceof Error ? error.message : String(error),
+      };
     }
   }
 
@@ -247,6 +299,8 @@ export class EosContainerSandbox {
 
     const image = validatePinnedImage(process.env.EOS_SANDBOX_IMAGE);
     verifyDockerEngine(this.execDockerSync);
+    const availableRuntimes = detectAvailableRuntimes(this.execDockerSync);
+    const effectiveRuntime = resolveSandboxRuntime(options.runtime, availableRuntimes);
     const repoRoot = fs.realpathSync(this.repoRoot);
     const worktree = getRegisteredWorktree(repoRoot, options.worktreePath);
     const inspectDigest = JSON.parse(
@@ -284,12 +338,14 @@ export class EosContainerSandbox {
 
       const baseDockerFlags =
         "run --rm --init --pull=never --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges=true --pids-limit=128 --memory=2g --memory-swap=2g --cpus=2";
+      const runtimeFlags = effectiveRuntime === "runsc" ? ["--runtime=runsc"] : [];
       const limitFlags =
         "--ulimit core=0 --ulimit nofile=1024:1024 --ulimit nproc=128:128 --ulimit fsize=67108864:67108864";
       const envFlags =
         "--tmpfs /tmp:rw,noexec,nosuid,nodev,size=128m --workdir /workspace --user 65532:65532 --env HOME=/tmp --env TMPDIR=/tmp --env LANG=C.UTF-8";
       const dockerArgs = [
         ...baseDockerFlags.split(" "),
+        ...runtimeFlags,
         "--name",
         containerName,
         ...limitFlags.split(" "),
@@ -416,6 +472,7 @@ export class EosContainerSandbox {
       finishedAt: new Date().toISOString(),
       worktree,
       image: image.ref,
+      runtime: effectiveRuntime,
       network: "disabled",
       limits: { timeoutMs, memory: "2g", cpus: 2, pids: 128, workspaceMiB: 512 },
       command: path.basename(command),
@@ -440,6 +497,7 @@ export class EosContainerSandbox {
       status,
       exitCode,
       timeoutMs,
+      runtime: effectiveRuntime,
       appliedChanges,
       changedFiles,
       conflicts,

@@ -284,13 +284,22 @@ jobs:
         env:
           NODE_ENV: "production"
 
+      - name: Verify Layer-0 Supply-Chain & In-Toto Provenance
+        run: node scripts/verify-supply-chain.mjs --verify-only
+
+      - name: Build & Verify Standalone Node SEA Blob
+        run: node scripts/build-sea-binary.mjs
+
       - name: Upload SBOM Evidence
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: eos-sbom-provenance-pr
           path: |
             docs/evidence/sbom.cdx.json
+            docs/evidence/sbom.l0.cdx.json
+            docs/evidence/provenance.intoto.jsonl
             docs/evidence/SBOM-CICD-RECEIPT.json
+            dist/eos.blob
           retention-days: 30
           if-no-files-found: warn
 
@@ -325,11 +334,19 @@ jobs:
         env:
           NODE_ENV: "production"
 
+      - name: Verify Layer-0 Supply-Chain & Build Standalone SEA Blob
+        run: |
+          node scripts/verify-supply-chain.mjs --verify-only
+          node scripts/build-sea-binary.mjs
+
       - name: Attest Build Provenance (GitHub native SLSA L2)
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
           subject-path: |
             docs/evidence/sbom.cdx.json
+            docs/evidence/sbom.l0.cdx.json
+            docs/evidence/provenance.intoto.jsonl
+            dist/eos.blob
             package.json
 
       - name: Upload SBOM Evidence
