@@ -56,6 +56,11 @@ export function resolveTestForSource(srcFile, root = ROOT) {
   const directTest = path.join(root, "test", `${baseName}.test.mjs`);
   if (fs.existsSync(directTest)) return path.relative(root, directTest).replace(/\\/g, "/");
 
+  // Check if baseName without Engine/Core suffix matches a direct test (e.g. eosTurboEngine -> eosTurbo.test.mjs)
+  const stripped = baseName.replace(/(?:Engine|Core)$/, "");
+  const strippedTest = path.join(root, "test", `${stripped}.test.mjs`);
+  if (fs.existsSync(strippedTest)) return path.relative(root, strippedTest).replace(/\\/g, "/");
+
   // Fallback: search test/ for files importing this module
   const testDir = path.join(root, "test");
   if (fs.existsSync(testDir)) {

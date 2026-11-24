@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "timestamp": "2026-11-23T17:38:41.111Z",
+  "timestamp": "2026-11-24T01:08:20.994Z",
   "report": {
     "status": "COMPLETED",
     "serviceName": "receipt-test-service",
@@ -44,8 +44,8 @@
         "P99_LATENCY_REGRESSION",
         "COMPOSITE_SCORE_CRITICAL"
       ],
-      "timestamp": "2026-11-23T17:38:41.111Z"
+      "timestamp": "2026-11-24T01:08:20.994Z"
     }
   },
-  "evidenceSha256": "4b738c8e2d46fc5c1031cd93b62a7471b801a9f5abc7b478a54d73fd01d0e467"
+  "evidenceSha256": "9e918b1b42c2a255f78e09d66b83fc1512467b34c3fcb1a363f930a80bb594b7"
 }

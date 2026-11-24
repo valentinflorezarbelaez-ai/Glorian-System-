@@ -125,6 +125,8 @@ export function collectSourceFiles(dir: string, projectRoot: string = dir): stri
     ".git",
     ".eos",
     ".worktrees",
+    ".qoder",
+    ".claude",
     "dist",
     ".next",
     "_sandbox",

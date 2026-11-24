@@ -17,21 +17,13 @@
  *   eos help                 - Display this operational manual
  *
  * Zero external runtime dependencies.
+ * PERFORMANCE: Lazy-loads only the required command handler module.
  */
 
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { printBanner } from "./commands/cliShared.mjs";
-import { handleCoreCommands } from "./commands/cliCore.mjs";
-import { handleDevOpsCommands } from "./commands/cliDevOps.mjs";
-import { handleSpotifyCommands } from "./commands/cliSpotify.mjs";
-import { handleFrontierCommands } from "./commands/cliFrontier.mjs";
-import { handleResilienceCommands } from "./commands/cliResilience.mjs";
-import { handleSovereignCommands } from "./commands/cliSovereign.mjs";
-import { handleSentinelCommands } from "./commands/cliSentinel.mjs";
-import { handlePlatformCommands } from "./commands/cliPlatform.mjs";
-import { handleKernelCommands } from "./commands/cliKernel.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,6 +32,22 @@ const packageMetadata = JSON.parse(fs.readFileSync(path.join(root, "package.json
 
 const args = process.argv.slice(2);
 const command = (args[0] || "help").toLowerCase();
+
+// PERFORMANCE: Lazy-load only the handler that matches the command.
+// Each handler module is imported on-demand, avoiding the cost of parsing
+// all 9 handler files (total ~4,000+ lines) for simple commands like "help".
+const HANDLER_MODULES = {
+  core: () => import("./commands/cliCore.mjs"),
+  devops: () => import("./commands/cliDevOps.mjs"),
+  spotify: () => import("./commands/cliSpotify.mjs"),
+  frontier: () => import("./commands/cliFrontier.mjs"),
+  resilience: () => import("./commands/cliResilience.mjs"),
+  sovereign: () => import("./commands/cliSovereign.mjs"),
+  sentinel: () => import("./commands/cliSentinel.mjs"),
+  platform: () => import("./commands/cliPlatform.mjs"),
+  kernel: () => import("./commands/cliKernel.mjs"),
+};
+
 const ctx = {
   root,
   packageMetadata,
@@ -49,15 +57,28 @@ const ctx = {
 };
 
 async function main() {
-  if (await handleCoreCommands(ctx)) return;
-  if (await handleDevOpsCommands(ctx)) return;
-  if (await handleSpotifyCommands(ctx)) return;
-  if (await handleFrontierCommands(ctx)) return;
-  if (await handleResilienceCommands(ctx)) return;
-  if (await handleSovereignCommands(ctx)) return;
-  if (await handleSentinelCommands(ctx)) return;
-  if (await handlePlatformCommands(ctx)) return;
-  await handleKernelCommands(ctx);
+  if (command === "help" || command === "--help" || command === "-h") {
+    const { handleKernelCommands } = await HANDLER_MODULES.kernel();
+    return handleKernelCommands(ctx);
+  }
+
+  const handlers = [
+    ["core", "handleCoreCommands"],
+    ["devops", "handleDevOpsCommands"],
+    ["spotify", "handleSpotifyCommands"],
+    ["frontier", "handleFrontierCommands"],
+    ["resilience", "handleResilienceCommands"],
+    ["sovereign", "handleSovereignCommands"],
+    ["sentinel", "handleSentinelCommands"],
+    ["platform", "handlePlatformCommands"],
+    ["kernel", "handleKernelCommands"],
+  ];
+
+  for (const [moduleKey, exportName] of handlers) {
+    const mod = await HANDLER_MODULES[moduleKey]();
+    const handler = mod[exportName];
+    if (await handler(ctx)) return;
+  }
 }
 
 await main();

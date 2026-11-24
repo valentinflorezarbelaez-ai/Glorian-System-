@@ -152,6 +152,7 @@ export class EosSpecDriftDetector {
     // 2. By cleaned name (e.g. "autonomoushealer" -> /.../SPEC-005-AUTONOMOUS-HEALER.md)
     const specByNumber = new Map<number, string>();
     const specByCleanName = new Map<string, string>();
+    const specTokens = new Map<string, string[]>();
     for (const specPath of specs) {
       const base = path.basename(specPath, ".md");
       const numMatch = base.match(/SPEC-(\d+)/i);
@@ -163,6 +164,14 @@ export class EosSpecDriftDetector {
         .replace(/^spec-\d+-/i, "")
         .replace(/[-_.]/g, "");
       specByCleanName.set(cleanName, specPath);
+      specTokens.set(
+        specPath,
+        base
+          .toLowerCase()
+          .replace(/^spec-\d+-/, "")
+          .split(/[^a-z0-9]+/)
+          .filter((word) => word.length >= 4),
+      );
     }
 
     const matchedSpecPaths = new Set<string>();
@@ -206,20 +215,20 @@ export class EosSpecDriftDetector {
       // Tier 2: Clean name exact or substring match
       if (!matchedSpec) {
         const moduleClean = moduleName.replace(/^(eos|glorian|samael)/i, "").replace(/[-_.]/g, "");
-        for (const [sClean, sPath] of specByCleanName.entries()) {
-          if (
-            sClean === moduleClean ||
-            (moduleClean.length >= 5 && (sClean.includes(moduleClean) || moduleClean.includes(sClean)))
-          ) {
-            matchedSpec = sPath;
-            break;
+        matchedSpec = specByCleanName.get(moduleClean) ?? null;
+        if (!matchedSpec && moduleClean.length >= 5) {
+          for (const [specClean, specPath] of specByCleanName) {
+            if (specClean.includes(moduleClean) || moduleClean.includes(specClean)) {
+              matchedSpec = specPath;
+              break;
+            }
           }
         }
       }
 
-      // Tier 3: Token-based overlap
+      // Tier 3: Most shared words, then longest shared prefix. Sorted spec order breaks remaining ties.
       if (!matchedSpec) {
-        const mTokens = modulePath
+        const moduleTokens = modulePath
           .replace(/([a-zA-Z])([A-Z][a-z])/g, "$1 $2")
           .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
           .toLowerCase()
@@ -227,18 +236,18 @@ export class EosSpecDriftDetector {
           .split(/\s+/)
           .filter((w) => w.length >= 4 && w !== "spec" && w !== "core" && w !== "types" && w !== "eos");
 
-        if (mTokens.length > 0) {
-          for (const sPath of specs) {
-            const sBase = path.basename(sPath, ".md").toLowerCase();
-            const sTokens = sBase
-              .replace(/[^a-z0-9]/g, " ")
-              .split(/\s+/)
-              .filter((w) => w.length >= 4);
-            const overlap = mTokens.filter((t) => sTokens.includes(t));
-            if (overlap.length >= 2 || (overlap.length === 1 && overlap[0].length >= 7)) {
-              matchedSpec = sPath;
-              break;
-            }
+        const uniqueTokens = [...new Set(moduleTokens)];
+        let bestOverlap = 0;
+        let bestPrefix = 0;
+        for (const [specPath, tokens] of specTokens) {
+          const overlap = uniqueTokens.filter((token) => tokens.includes(token));
+          if (!overlap.length || (overlap.length === 1 && overlap[0].length < 7)) continue;
+          let prefix = 0;
+          while (prefix < moduleTokens.length && moduleTokens[prefix] === tokens[prefix]) prefix++;
+          if (overlap.length > bestOverlap || (overlap.length === bestOverlap && prefix > bestPrefix)) {
+            matchedSpec = specPath;
+            bestOverlap = overlap.length;
+            bestPrefix = prefix;
           }
         }
       }

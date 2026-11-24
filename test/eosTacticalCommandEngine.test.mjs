@@ -6,10 +6,7 @@ import fs from "node:fs";
 import os from "node:os";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
-import {
-  EosTacticalCommandEngine,
-  parseFreezeGatePosture,
-} from "../src/core/eosTacticalCommandEngine.ts";
+import { EosTacticalCommandEngine, parseFreezeGatePosture } from "../src/core/eosTacticalCommandEngine.ts";
 import { writeDeterministicArtifact } from "../src/core/eosDeterministicArtifact.ts";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -194,7 +191,11 @@ describe("SPEC-129: Tier S-0 Tactical Apex — Command Engine & OpenSpec Indexer
     it("--seal-pin path re-exports OpenSpec catalog after rewriting Freeze Pin", () => {
       const tipRefresh = fs.readFileSync(path.join(projectRoot, "scripts/tip-refresh.mjs"), "utf8");
       const sealBlock = tipRefresh.split("if (sealPinOnly)")[1] ?? "";
-      assert.match(sealBlock, /exportOpenSpecsJson/, "seal-pin must call exportOpenSpecsJson for freezePinBoundSha lockstep");
+      assert.match(
+        sealBlock,
+        /exportOpenSpecsJson/,
+        "seal-pin must call exportOpenSpecsJson for freezePinBoundSha lockstep",
+      );
       assert.match(sealBlock, /freezePinBoundSha|catalog bind sync/i);
     });
   });

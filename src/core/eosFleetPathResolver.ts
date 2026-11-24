@@ -224,8 +224,7 @@ export function evaluateFleetPosture(
 
   let reason: string;
   if (verified) {
-    reason =
-      "All registered EOS_FLEET_*_PATH values are set and every sibling checkout resolves AVAILABLE.";
+    reason = "All registered EOS_FLEET_*_PATH values are set and every sibling checkout resolves AVAILABLE.";
   } else if (envPathsUnset.length > 0) {
     reason = `Unset fleet path env(s): ${envPathsUnset.join(", ")}. Advertise CONTROL_PLANE_ONLY; do not claim live Soundcheck success.`;
   } else if (envStatuses.length === 0) {

@@ -11,7 +11,7 @@ metadata:
     - sovereign
     - layer-0
     - ${{ values.runtimeLanguage }}
-    - ${{ values.isolationTier }}
+    - ${{ values.isolationTier | lower | replace('_', '-') }}
 spec:
   type: service
   lifecycle: production

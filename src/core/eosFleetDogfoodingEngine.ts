@@ -112,8 +112,7 @@ export class EosFleetDogfoodingEngine {
       throw new Error(`Project ${projectId} not found in fleet registry.`);
     }
 
-    const postureSnapshot =
-      posture ?? evaluateFleetPosture(this.projectRoot, registry.projects as FleetProjectEntry[]);
+    const postureSnapshot = posture ?? evaluateFleetPosture(this.projectRoot, registry.projects as FleetProjectEntry[]);
 
     // Verify Law IV External Write Barrier preconditions
     const isLawIvAuthorized =
@@ -176,9 +175,7 @@ export class EosFleetDogfoodingEngine {
     const avgScore = Math.round(totalScore / auditedProjects.length);
     const postureReceipt = fleetPostureReceiptFields(postureSnapshot);
     const epistemicState =
-      postureSnapshot.posture === "FLEET_VERIFIED"
-        ? "FLEET_VERIFIED_WITHIN_TESTED_SCOPE"
-        : "CONTROL_PLANE_ONLY";
+      postureSnapshot.posture === "FLEET_VERIFIED" ? "FLEET_VERIFIED_WITHIN_TESTED_SCOPE" : "CONTROL_PLANE_ONLY";
 
     // Build unified OASIS SARIF v2.1.0 report
     const sarifReport = {

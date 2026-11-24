@@ -14,17 +14,17 @@ npm run verify:strict
 node bin/eos.mjs verify
 ```
 
-| Claim | Allowed when |
-| --- | --- |
+| Claim                     | Allowed when                                                                     |
+| ------------------------- | -------------------------------------------------------------------------------- |
 | Gate green / 7-stage PASS | `npm run verify:strict` (or `node bin/eos.mjs verify`) exits **0** with receipts |
-| MCP tools available | Host actually wires stdio `eos-system` (see below) |
-| Live fleet Soundcheck | Only under `FLEET_VERIFIED` posture — see fleet posture doc |
+| MCP tools available       | Host actually wires stdio `eos-system` (see below)                               |
+| Live fleet Soundcheck     | Only under `FLEET_VERIFIED` posture — see fleet posture doc                      |
 
 **Do not** invent, simulate, or assume MCP tools (`eos_semantic_search`, `eos_audit_fleet`, `eos_health_check`, `eos_tmr_consensus`, …) as proof of gate truth. Missing MCP is **not** a broken gate; use the CLI.
 
 ## Optional: wire MCP stdio `eos-system`
 
-When the host can run a local Node subprocess (desktop IDE / Antigravity / configured cloud MCP), agents may attach the EOS MCP server for *assistive* tools. This is optional and never replaces `verify:strict`.
+When the host can run a local Node subprocess (desktop IDE / Antigravity / configured cloud MCP), agents may attach the EOS MCP server for _assistive_ tools. This is optional and never replaces `verify:strict`.
 
 ### Quick local start
 

@@ -11,6 +11,52 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "..");
 
+for (const scenario of [
+  {
+    name: "a shared phrase outranks generic contract matches",
+    module: "eosGoalDrivenDevelopmentContract.ts",
+    alternatives: ["SPEC-050-CONTRACT-EVOLUTION.md", "SPEC-163-CONSUMER-DRIVEN-CONTRACT.md"],
+    expected: "SPEC-378-goal-driven-factory-engine.md",
+  },
+  {
+    name: "an exact name outranks a shorter substring",
+    module: "eosMetricLedger.ts",
+    alternatives: ["SPEC-010-LEDGER.md"],
+    expected: "SPEC-020-METRIC-LEDGER.md",
+  },
+]) {
+  test(scenario.name, (t) => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "eos-drift-match-"));
+    t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+    const core = path.join(root, "src", "core");
+    const specs = path.join(root, "openspec", "specs");
+    fs.mkdirSync(core, { recursive: true });
+    fs.mkdirSync(specs, { recursive: true });
+    const old = new Date("2026-01-01T00:00:00Z");
+    const recent = new Date("2026-01-20T00:00:00Z");
+    const moduleFile = path.join(core, scenario.module);
+    fs.writeFileSync(moduleFile, "export const ready = true;\n");
+    fs.utimesSync(moduleFile, recent, recent);
+    for (const name of [...scenario.alternatives, scenario.expected]) {
+      const file = path.join(specs, name);
+      const date = name === scenario.expected ? recent : old;
+      fs.writeFileSync(file, `# ${name}\n`);
+      fs.utimesSync(file, date, date);
+    }
+    const detector = new EosSpecDriftDetector(root);
+    const options = { driftThresholdDays: 14, checkOrphanSpecs: false };
+    assert.deepEqual(detector.detect(options).violations, []);
+
+    const expectedSpec = path.join(specs, scenario.expected);
+    fs.utimesSync(expectedSpec, old, old);
+    const { violations } = detector.detect(options);
+    assert.equal(violations.length, 1);
+    assert.equal(violations[0].type, "CODE_NEWER_THAN_SPEC");
+    assert.equal(violations[0].specPath, path.relative(root, expectedSpec));
+    assert.equal(violations[0].driftDays, 19);
+  });
+}
+
 test("BDD-273: EosSpecDriftDetector enforces Constitutional Law I zero-drift invariant across all 261 core modules and 172 specs", () => {
   const detector = new EosSpecDriftDetector(projectRoot);
   const report = detector.detect({ driftThresholdDays: 14 });

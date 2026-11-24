@@ -6,10 +6,10 @@
 
 ## Modes
 
-| Mode | `fleetLiveAudit` | When |
-| --- | --- | --- |
-| **`CONTROL_PLANE_ONLY`** | `false` | Any registered `EOS_FLEET_*_PATH` is unset, **or** a sibling checkout is missing / unusable |
-| **`FLEET_VERIFIED`** | `true` | Every registered `EOS_FLEET_*_PATH` is set **and** every non-control-plane sibling resolves `AVAILABLE`, **and** `npm run fleet:audit` exits 0 |
+| Mode                     | `fleetLiveAudit` | When                                                                                                                                           |
+| ------------------------ | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`CONTROL_PLANE_ONLY`** | `false`          | Any registered `EOS_FLEET_*_PATH` is unset, **or** a sibling checkout is missing / unusable                                                    |
+| **`FLEET_VERIFIED`**     | `true`           | Every registered `EOS_FLEET_*_PATH` is set **and** every non-control-plane sibling resolves `AVAILABLE`, **and** `npm run fleet:audit` exits 0 |
 
 Registry `LEVEL_3_PRODUCTION_AUTHORIZED` is **documentary authorization**. It is **not** live Soundcheck success.
 

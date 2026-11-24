@@ -16,10 +16,10 @@ node --input-type=module -e "import { EosTacticalCommandEngine } from './src/cor
 
 ## Tip postures (thresholds)
 
-| Tip state | Detected by | UNKNOWN | SHA parity | Freeze-pin bind |
-| --- | --- | --- | --- | --- |
-| **Tip-sealed** | `ACTIVE_FREEZE_GATE_PINNED` in `docs/releases/EOS_FREEZE_GATE_STATUS.md` | **Fail-closed if > 0** | Fail-closed on drift | Fail-closed if `freezePinBoundSha` missing or ≠ Freeze Pin (HEAD) |
-| **Tip-open** | Any other freeze status (or missing pin) | **Advisory only** (no hard fail; threshold = unlimited until seal) | Fail-closed on drift | Not required (`freezePinBoundSha` may be `null`) |
+| Tip state      | Detected by                                                              | UNKNOWN                                                            | SHA parity           | Freeze-pin bind                                                   |
+| -------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------ | -------------------- | ----------------------------------------------------------------- |
+| **Tip-sealed** | `ACTIVE_FREEZE_GATE_PINNED` in `docs/releases/EOS_FREEZE_GATE_STATUS.md` | **Fail-closed if > 0**                                             | Fail-closed on drift | Fail-closed if `freezePinBoundSha` missing or ≠ Freeze Pin (HEAD) |
+| **Tip-open**   | Any other freeze status (or missing pin)                                 | **Advisory only** (no hard fail; threshold = unlimited until seal) | Fail-closed on drift | Not required (`freezePinBoundSha` may be `null`)                  |
 
 Drive UNKNOWN to 0 before tip-seal. PROPOSED specs always require `**Owner**` and `**ProposedCloseBy**` regardless of tip posture. Mass PROPOSED archive is a separate PR stream (PR-F).
 

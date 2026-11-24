@@ -1,4 +1,4 @@
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -72,50 +72,43 @@ HANDLERS["audit"] = cmd_audit_2;
 async function cmd_test_3(commandContext) {
   const { root, printBanner } = commandContext;
   printBanner();
-  console.log("[EOS] Running Native Unit & Chaos Resilience Test Suites...\n");
+  console.log("[EOS] Running Native Unit & Chaos Resilience Test Suites (parallel)...\n");
+
+  // PERFORMANCE: Run all independent test suites in parallel via spawn + Promise.all
+  const testFiles = [
+    "test/eosCore.test.mjs",
+    "test/chaosResilience.test.mjs",
+    "test/eosPrometheus.test.mjs",
+    "test/eosTurbo.test.mjs",
+    "test/eosSemanticGraph.test.mjs",
+    "test/eosAutonomousHealer.test.mjs",
+    "test/eosWorktree.test.mjs",
+    "test/eosCognitiveEval.test.mjs",
+    "test/eosOpenSpec.test.mjs",
+    "test/eosTitans.test.mjs",
+  ];
+
+  const testStart = Date.now();
+  const promises = testFiles.map((testFile) => {
+    return new Promise((resolve, reject) => {
+      const child = spawn(process.execPath, ["--test", path.join(root, testFile)], {
+        cwd: root,
+        stdio: "inherit",
+      });
+      child.on("close", (code) => {
+        if (code === 0) resolve();
+        else reject(new Error(`${testFile} exited with code ${code}`));
+      });
+      child.on("error", reject);
+    });
+  });
+
   try {
-    execFileSync(process.execPath, ["--test", path.join(root, "test/eosCore.test.mjs")], {
-      cwd: root,
-      stdio: "inherit",
-    });
-    execFileSync(process.execPath, ["--test", path.join(root, "test/chaosResilience.test.mjs")], {
-      cwd: root,
-      stdio: "inherit",
-    });
-    execFileSync(process.execPath, ["--test", path.join(root, "test/eosPrometheus.test.mjs")], {
-      cwd: root,
-      stdio: "inherit",
-    });
-    execFileSync(process.execPath, ["--test", path.join(root, "test/eosTurbo.test.mjs")], {
-      cwd: root,
-      stdio: "inherit",
-    });
-    execFileSync(process.execPath, ["--test", path.join(root, "test/eosSemanticGraph.test.mjs")], {
-      cwd: root,
-      stdio: "inherit",
-    });
-    execFileSync(process.execPath, ["--test", path.join(root, "test/eosAutonomousHealer.test.mjs")], {
-      cwd: root,
-      stdio: "inherit",
-    });
-    execFileSync(process.execPath, ["--test", path.join(root, "test/eosWorktree.test.mjs")], {
-      cwd: root,
-      stdio: "inherit",
-    });
-    execFileSync(process.execPath, ["--test", path.join(root, "test/eosCognitiveEval.test.mjs")], {
-      cwd: root,
-      stdio: "inherit",
-    });
-    execFileSync(process.execPath, ["--test", path.join(root, "test/eosOpenSpec.test.mjs")], {
-      cwd: root,
-      stdio: "inherit",
-    });
-    execFileSync(process.execPath, ["--test", path.join(root, "test/eosTitans.test.mjs")], {
-      cwd: root,
-      stdio: "inherit",
-    });
-    console.log("\n[PASS] All Unit, Chaos, Worktree, Eval, OpenSpec & Titans suites completed successfully (Exit 0).");
+    await Promise.all(promises);
+    const elapsed = Date.now() - testStart;
+    console.log(`\n[PASS] All ${testFiles.length} test suites completed in ${elapsed} ms (parallel, Exit 0).`);
   } catch {
+    console.error(`\n[FAIL] One or more test suites failed after ${Date.now() - testStart} ms.`);
     process.exit(1);
   }
 }

@@ -1,7 +1,7 @@
 {
   "specRef": "SPEC-330",
   "engine": "Tree-Structured Speculative Decoding, Multi-Candidate Rejection Sampling & Dynamic Draft Verification",
-  "timestampIso": "2026-11-23T17:39:35.576Z",
+  "timestampIso": "2026-11-24T01:14:55.591Z",
   "vocabSize": 1000,
   "treeDepth": 3,
   "branchingFactor": 2,

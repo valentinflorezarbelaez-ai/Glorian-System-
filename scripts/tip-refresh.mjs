@@ -41,9 +41,7 @@ const TRANSIENT_LOCK_CODES = new Set(["UNKNOWN", "EBUSY", "EPERM", "EACCES"]);
  * See docs/governance/OPENSPEC_CATALOG_FRESHNESS.md.
  */
 async function runCatalogFreshnessCheck() {
-  const { EosTacticalCommandEngine, parseFreezeGatePosture } = await import(
-    "../src/core/eosTacticalCommandEngine.ts"
-  );
+  const { EosTacticalCommandEngine, parseFreezeGatePosture } = await import("../src/core/eosTacticalCommandEngine.ts");
   const indexPath = path.join(root, "docs/specs/openspec-catalog-index.json");
   const freezePath = path.join(root, "docs/releases/EOS_FREEZE_GATE_STATUS.md");
   const fail = (message) => {

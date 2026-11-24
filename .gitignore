@@ -49,4 +49,5 @@ docs/evidence/.chrome-cwv-*/
 # Agentic workspace local state & secrets
 .claude/
 .claude/*
+.qoder/
 settings.local.json

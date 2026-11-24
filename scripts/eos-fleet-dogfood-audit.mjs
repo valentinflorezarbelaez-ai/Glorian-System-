@@ -78,11 +78,8 @@ if (summary.posture === "FLEET_VERIFIED" && summary.fleetLiveAudit) {
 }
 
 // Optional fail-closed for dogfood hosts that require mounted siblings.
-const strict =
-  process.env.EOS_FLEET_POSTURE_STRICT === "1" || process.env.EOS_FLEET_POSTURE_STRICT === "true";
+const strict = process.env.EOS_FLEET_POSTURE_STRICT === "1" || process.env.EOS_FLEET_POSTURE_STRICT === "true";
 if (strict && summary.posture !== "FLEET_VERIFIED") {
-  console.error(
-    `[FAIL] EOS_FLEET_POSTURE_STRICT=1 requires FLEET_VERIFIED; current posture=${summary.posture}`,
-  );
+  console.error(`[FAIL] EOS_FLEET_POSTURE_STRICT=1 requires FLEET_VERIFIED; current posture=${summary.posture}`);
   process.exit(1);
 }

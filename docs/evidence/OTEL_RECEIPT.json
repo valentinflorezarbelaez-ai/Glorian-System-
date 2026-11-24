@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "timestamp": "2026-11-23T17:39:24.395Z",
+  "timestamp": "2026-11-24T01:12:54.715Z",
   "metrics": {
     "totalIngested": 3,
     "totalRetained": 2,
@@ -17,5 +17,5 @@
     "maxDurationMs": 480,
     "minDurationMs": 25
   },
-  "evidenceSha256": "aa999e60bf440a4c3d5040c515a6560734c658dae4732ebb0edab44d1ea1bd15"
+  "evidenceSha256": "00996f8414b16f93da710cb5ddf9687cfb3742f45d7bc93443ac69f040883f17"
 }

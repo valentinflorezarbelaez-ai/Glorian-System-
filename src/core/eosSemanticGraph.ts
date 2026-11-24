@@ -250,9 +250,9 @@ export class EosSemanticGraph {
         if (entry.isDirectory()) {
           if (
             entry.name !== "node_modules" &&
-            entry.name !== ".git" &&
+            !entry.name.startsWith(".") &&
             entry.name !== "dist" &&
-            entry.name !== ".next"
+            entry.name !== "_sandbox"
           ) {
             walk(full);
           }

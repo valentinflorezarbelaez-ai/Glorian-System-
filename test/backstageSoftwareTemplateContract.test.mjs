@@ -81,3 +81,10 @@ test("BDD-BS-T-004: docs/backstage documents the Software Template path", () => 
   assert.match(readme, /AGENTS\.md/);
   assert.match(readme, /verify:strict/);
 });
+
+test("BDD-BS-T-005: the catalog formats the isolation tier as a Backstage tag", () => {
+  const catalog = fs.readFileSync(path.join(skeleton, "catalog-info.yaml"), "utf8");
+  const tags = catalog.match(/^ {2}tags:\r?\n((?: {4}- [^\r\n]+\r?\n)+)/m)?.[1];
+  assert.ok(tags, "the component descriptor must declare metadata.tags");
+  assert.ok(tags.includes("- ${{ values.isolationTier | lower | replace('_', '-') }}"));
+});

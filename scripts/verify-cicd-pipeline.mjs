@@ -602,9 +602,7 @@ const elapsedMs = Date.now() - startTime;
 const { evaluateFleetPosture, fleetPostureReceiptFields } = await import(
   pathToFileURL(path.join(root, "src/core/eosFleetPathResolver.ts")).href
 );
-const fleetRegistry = JSON.parse(
-  fs.readFileSync(path.join(root, "docs/projects/registry.json"), "utf8"),
-);
+const fleetRegistry = JSON.parse(fs.readFileSync(path.join(root, "docs/projects/registry.json"), "utf8"));
 const fleetPostureSnapshot = evaluateFleetPosture(root, fleetRegistry.projects || []);
 const fleetPosture = fleetPostureReceiptFields(fleetPostureSnapshot);
 const receipt = {

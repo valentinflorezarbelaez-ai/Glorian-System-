@@ -1,681 +1,847 @@
 {
-  "timestampIso": "2026-11-23T17:38:31.395Z",
+  "timestampIso": "2026-11-24T01:27:35.401Z",
   "specRef": "SPEC-270",
   "engine": "Leslie Lamport TLC Model Checker (tla2tools.jar)",
-  "executionMode": "DEFERRED_TO_CI",
-  "status": "DEFERRED_TO_CI",
-  "epistemicState": "DEFERRED_TO_CI",
+  "executionMode": "LIVE_TLC",
+  "status": "LIVE_TLC_EXECUTED",
+  "epistemicState": "LIVE_TLC",
   "allPassed": true,
   "hasJavaRuntime": true,
-  "tlaJarPath": "NOT_DETECTED_LOCALLY",
+  "tlaJarPath": "tools/tla2tools.jar",
   "reproducibleByMergeGate": false,
   "totalConfiguredSpecs": 83,
-  "cacheHits": 0,
+  "cacheHits": 83,
   "models": [
     {
       "specName": "LmaxDisruptor",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2416,
-      "cfgBytes": 252
+      "distinctStates": 20425,
+      "statesGenerated": 84397,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "HermesConsensusMesh",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3121,
-      "cfgBytes": 258
+      "distinctStates": 6,
+      "statesGenerated": 12,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "DatomicBitemporalLedger",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2354,
-      "cfgBytes": 259
+      "distinctStates": 3481,
+      "statesGenerated": 9817,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "AutonomousChaosDisruptor",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2503,
-      "cfgBytes": 256
+      "distinctStates": 42,
+      "statesGenerated": 90,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "BftAgentSwarmSlashing",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 1992,
-      "cfgBytes": 290
+      "distinctStates": 2421,
+      "statesGenerated": 13227,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "CellBasedBulkheadGovernor",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 4156,
-      "cfgBytes": 366
+      "distinctStates": 504,
+      "statesGenerated": 1499,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "ZeroCopyRingBuffer",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2468,
-      "cfgBytes": 271
+      "distinctStates": 39865,
+      "statesGenerated": 154381,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "JepsenDistributedChaos",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 4896,
-      "cfgBytes": 277
+      "distinctStates": 116,
+      "statesGenerated": 10,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "SimdQuantizedHnsw",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3800,
-      "cfgBytes": 311
+      "distinctStates": 340,
+      "statesGenerated": 194,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "DistributedVectorMesh",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 5060,
-      "cfgBytes": 341
+      "distinctStates": 636,
+      "statesGenerated": 5125,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "VectorLsmStorage",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2698,
-      "cfgBytes": 191
+      "distinctStates": 2713,
+      "statesGenerated": 7933,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "SpeculativePagedKvCache",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 9303,
-      "cfgBytes": 191
+      "distinctStates": 2639,
+      "statesGenerated": 16303,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "FlashAttentionOnlineSoftmax",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 5343,
-      "cfgBytes": 197
+      "distinctStates": 37,
+      "statesGenerated": 118,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "ContinuousDynamicBatching",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 5184,
-      "cfgBytes": 200
+      "distinctStates": 336,
+      "statesGenerated": 572,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "RingAllReduce",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 4632,
-      "cfgBytes": 121
+      "distinctStates": 5,
+      "statesGenerated": 6,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "MegatronTensorParallelism",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3266,
-      "cfgBytes": 193
+      "distinctStates": 6,
+      "statesGenerated": 6,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "PipelineParallelism1F1B",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2524,
-      "cfgBytes": 170
+      "distinctStates": 140,
+      "statesGenerated": 295,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "TensorParallelAttention",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3316,
-      "cfgBytes": 185
+      "distinctStates": 20,
+      "statesGenerated": 30,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "ZeroFsdpEngine",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 5678,
-      "cfgBytes": 178
+      "distinctStates": 484,
+      "statesGenerated": 1145,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "ExpertParallelMoERouter",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3888,
-      "cfgBytes": 211
+      "distinctStates": 114,
+      "statesGenerated": 637,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "ActivationCheckpointingEngine",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 4478,
-      "cfgBytes": 193
+      "distinctStates": 9,
+      "statesGenerated": 9,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "ReverseEngineeringEngine",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3695,
-      "cfgBytes": 175
+      "distinctStates": 161,
+      "statesGenerated": 201,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "QuantizedDistributedTrainingEngine",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3260,
-      "cfgBytes": 178
+      "distinctStates": 95,
+      "statesGenerated": 352,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "DistributedKvCacheReplication",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3443,
-      "cfgBytes": 157
+      "distinctStates": 9261,
+      "statesGenerated": 44983,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "TreeSpeculativeDecoding",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3428,
-      "cfgBytes": 137
+      "distinctStates": 14,
+      "statesGenerated": 25,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "StreamingLlmAttentionSinks",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2685,
-      "cfgBytes": 181
+      "distinctStates": 9,
+      "statesGenerated": 9,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "DisaggregatedPrefillDecode",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 6108,
-      "cfgBytes": 263
+      "distinctStates": 45,
+      "statesGenerated": 74,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "OntologicalHypergraph",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 5412,
-      "cfgBytes": 191
+      "distinctStates": 288,
+      "statesGenerated": 721,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "DiscreteEventSimulationHypervisor",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 6086,
-      "cfgBytes": 211
+      "distinctStates": 2850,
+      "statesGenerated": 11721,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "ThresholdSecureAggregation",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3788,
-      "cfgBytes": 204
+      "distinctStates": 757,
+      "statesGenerated": 1405,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "SymplecticHamiltonianPde",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3982,
-      "cfgBytes": 275
+      "distinctStates": 32,
+      "statesGenerated": 215,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "EuvInverseLithographyWavefront",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3507,
-      "cfgBytes": 211
+      "distinctStates": 6,
+      "statesGenerated": 7,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "CausalDoCalculusScm",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 4393,
-      "cfgBytes": 220
+      "distinctStates": 40,
+      "statesGenerated": 177,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "AgenticHarnessYield",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 4576,
-      "cfgBytes": 222
+      "distinctStates": 37,
+      "statesGenerated": 57,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "CbdcRtgsGridlock",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 1911,
-      "cfgBytes": 232
+      "distinctStates": 6,
+      "statesGenerated": 6,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "CryogenicJosephsonSfq",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 1586,
-      "cfgBytes": 234
+      "distinctStates": 6,
+      "statesGenerated": 6,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "DeepSpaceOpticalNav",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 1657,
-      "cfgBytes": 225
+      "distinctStates": 6,
+      "statesGenerated": 6,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "HypersonicScramjetAero",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 1732,
-      "cfgBytes": 242
+      "distinctStates": 6,
+      "statesGenerated": 6,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "SubseaDwdmShannon",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 1551,
-      "cfgBytes": 207
+      "distinctStates": 6,
+      "statesGenerated": 6,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "HighNaEuvLithoOpc",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 1159,
-      "cfgBytes": 150
+      "distinctStates": 406,
+      "statesGenerated": 164431,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "LeoOpticalIslRouting",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 964,
-      "cfgBytes": 118
+      "distinctStates": 168,
+      "statesGenerated": 28225,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "SurfaceCodeQec",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 1275,
-      "cfgBytes": 141
+      "distinctStates": 105,
+      "statesGenerated": 1630,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "UnifiedMemoryDvfsQos",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 1235,
-      "cfgBytes": 148
+      "distinctStates": 341,
+      "statesGenerated": 116282,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "DifferentialPrivacyAbac",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 1217,
-      "cfgBytes": 151
+      "distinctStates": 626,
+      "statesGenerated": 15651,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "AdaptiveHedgedDeadlineMesh",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2463,
-      "cfgBytes": 123
+      "distinctStates": 39,
+      "statesGenerated": 79,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "ClosedLoopRepoAutopilot",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2905,
-      "cfgBytes": 214
+      "distinctStates": 11,
+      "statesGenerated": 11,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "MetamorphicDifferentialBlindSpot",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3009,
-      "cfgBytes": 168
+      "distinctStates": 13,
+      "statesGenerated": 13,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "SovereignWebCompiler",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3149,
-      "cfgBytes": 180
+      "distinctStates": 13,
+      "statesGenerated": 13,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "AgenticContextEngine",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3481,
-      "cfgBytes": 174
+      "distinctStates": 15,
+      "statesGenerated": 17,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "KnowledgeGraphReflex",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3780,
-      "cfgBytes": 230
+      "distinctStates": 61,
+      "statesGenerated": 79,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "AgenticSwarmBft",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3241,
-      "cfgBytes": 210
+      "distinctStates": 101,
+      "statesGenerated": 137,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "AutonomousWasmJitCompiler",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2938,
-      "cfgBytes": 173
+      "distinctStates": 23,
+      "statesGenerated": 27,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "DistributedCrdtMemory",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 1942,
-      "cfgBytes": 155
+      "distinctStates": 11,
+      "statesGenerated": 11,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "NeuralSymbolicProver",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2356,
-      "cfgBytes": 159
+      "distinctStates": 13,
+      "statesGenerated": 13,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "ZkCircuitSynthesizer",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2203,
-      "cfgBytes": 151
+      "distinctStates": 11,
+      "statesGenerated": 11,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "ShardedTransactionFabric",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2617,
-      "cfgBytes": 132
+      "distinctStates": 15,
+      "statesGenerated": 17,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "NeuromorphicPlanner",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2769,
-      "cfgBytes": 159
+      "distinctStates": 13,
+      "statesGenerated": 13,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "CausalMetaLearning",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2811,
-      "cfgBytes": 155
+      "distinctStates": 15,
+      "statesGenerated": 15,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "WebGpuTensorAcceleration",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2971,
-      "cfgBytes": 142
+      "distinctStates": 17,
+      "statesGenerated": 17,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "ZeroCopyIpcRingBuffer",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 1987,
-      "cfgBytes": 185
+      "distinctStates": 63,
+      "statesGenerated": 85,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "WorkStealingScheduler",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3144,
-      "cfgBytes": 127
+      "distinctStates": 47,
+      "statesGenerated": 65,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "BitemporalEventLedger",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2259,
-      "cfgBytes": 166
+      "distinctStates": 44,
+      "statesGenerated": 68,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "ArchitecturalCanvasTopology",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2313,
-      "cfgBytes": 134
+      "distinctStates": 124,
+      "statesGenerated": 238,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "AgentSwarmMicroKernel",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2193,
-      "cfgBytes": 102
+      "distinctStates": 587,
+      "statesGenerated": 2485,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "InductiveProofEngine",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2291,
-      "cfgBytes": 105
+      "distinctStates": 12,
+      "statesGenerated": 16,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "GlorianLiveStudio",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2098,
-      "cfgBytes": 154
+      "distinctStates": 1224,
+      "statesGenerated": 4014,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "AutonomousSentinelDaemon",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2717,
-      "cfgBytes": 148
+      "distinctStates": 175,
+      "statesGenerated": 388,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "VoiceNeuralInterface",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2557,
-      "cfgBytes": 118
+      "distinctStates": 172,
+      "statesGenerated": 326,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "FleetChaosFdirEngine",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 1920,
-      "cfgBytes": 129
+      "distinctStates": 183,
+      "statesGenerated": 406,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "MultiNodeSwarmMesh",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2961,
-      "cfgBytes": 144
+      "distinctStates": 20307,
+      "statesGenerated": 87183,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "SweBenchEvalFlywheel",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2022,
-      "cfgBytes": 143
+      "distinctStates": 1331,
+      "statesGenerated": 3631,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "DynamicToolSynthesis",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 1960,
-      "cfgBytes": 154
+      "distinctStates": 343,
+      "statesGenerated": 883,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "AdversarialRedTeamCrucible",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3404,
-      "cfgBytes": 173
+      "distinctStates": 11,
+      "statesGenerated": 12,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "EpisodicMemoryGraph",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2664,
-      "cfgBytes": 153
+      "distinctStates": 1117,
+      "statesGenerated": 6196,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "DeterministicReplayDebugger",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2731,
-      "cfgBytes": 138
+      "distinctStates": 243,
+      "statesGenerated": 1631,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "InstitutionalTradingEngine",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 4020,
-      "cfgBytes": 172
+      "distinctStates": 1020,
+      "statesGenerated": 3093,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "AladdinPortfolioRiskEngine",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2030,
-      "cfgBytes": 100
+      "distinctStates": 4,
+      "statesGenerated": 7,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "MultiAssetMacroFilterEngine",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2085,
-      "cfgBytes": 137
+      "distinctStates": 5,
+      "statesGenerated": 8,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "TriTemporalPropFirmEngine",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 2904,
-      "cfgBytes": 141
+      "distinctStates": 10,
+      "statesGenerated": 20,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "UniversalAssetPayoutOptimizer",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 3179,
-      "cfgBytes": 312
+      "distinctStates": 10,
+      "statesGenerated": 19,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "QuantCockpitWalkForwardEngine",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 5437,
-      "cfgBytes": 327
+      "distinctStates": 441,
+      "statesGenerated": 5413,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "HarnessTokenEconomics",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 4412,
-      "cfgBytes": 260
+      "distinctStates": 360,
+      "statesGenerated": 5761,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     },
     {
       "specName": "GoalDrivenFactory",
-      "verifiedLive": false,
+      "verifiedLive": true,
       "passed": true,
-      "syntaxValid": true,
-      "tlaBytes": 4827,
-      "cfgBytes": 218
+      "distinctStates": 2113,
+      "statesGenerated": 38033,
+      "violationInvariant": null,
+      "exitCode": 0,
+      "cached": true
     }
   ],
-  "note": "TLC deferred: Java and/or tla2tools.jar unavailable locally; exhaustive exploration belongs in CI (DEFERRED_TO_CI)."
+  "note": "Live TLC executed with local Java + tla2tools.jar (host/CI optional). Not merge-gate certified: jar is gitignored and the Node gate does not install Java (docs/specs/spec.md FR-009)."
 }

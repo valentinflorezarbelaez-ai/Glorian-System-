@@ -86,6 +86,10 @@ const IGNORED_DIRS = new Set([
   ".eos",
   ".gemini",
   "tools",
+  ".worktrees",
+  ".fleet-siblings",
+  ".claude",
+  ".qoder",
 ]);
 
 export function maskSecret(secret) {
