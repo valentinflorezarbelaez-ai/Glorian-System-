@@ -154,4 +154,25 @@ describe("EosHermeticSeaCompiler (SPEC-198 / BDD-1009..BDD-1013)", () => {
     assert.ok(parsed.provenancePath.endsWith(".provenance.json"));
     assert.ok(parsed.sbomPath.endsWith(".sbom.json"));
   });
+
+  it("BDD-1014: CLI SEA release bundle synthesis emits SHA256SUMS.txt without mutating root sea-config.json", () => {
+    const root = process.cwd();
+    const rootConfigBefore = fs.readFileSync(path.join(root, "sea-config.json"), "utf8");
+    const output = execFileSync(process.execPath, ["scripts/build-sea-binary.mjs", "--bundle-release", "--dry-run"], {
+      cwd: root,
+      encoding: "utf8",
+    });
+
+    assert.match(output, /\[SEA BUNDLE\] SHA256SUMS:/);
+    const rootConfigAfter = fs.readFileSync(path.join(root, "sea-config.json"), "utf8");
+    assert.equal(rootConfigAfter, rootConfigBefore, "Root sea-config.json must stay unchanged");
+
+    const checksumPath = path.join(root, "dist", "SHA256SUMS.txt");
+    assert.ok(fs.existsSync(checksumPath), "dist/SHA256SUMS.txt must be emitted");
+    const lines = fs.readFileSync(checksumPath, "utf8").trim().split(/\r?\n/).filter(Boolean);
+    assert.ok(lines.length >= 4, "SHA256SUMS.txt must index eos.blob and generated release metadata");
+    for (const line of lines) {
+      assert.match(line, /^[0-9a-f]{64} {2}\S+$/);
+    }
+  });
 });

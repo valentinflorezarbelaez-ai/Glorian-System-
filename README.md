@@ -136,8 +136,8 @@ Commands that write files, change Git configuration, commit, or push should be r
 | `node bin/eos.mjs graph` / `blast <file>`     | Provenance     | Build a local source graph and report transitive dependencies.                                                                                          |
 | `node bin/eos.mjs heal <file> --dry-run`      | Remediation    | Request a local dry-run healer report (`src/core/eosAutonomousHealer.ts`).                                                                              |
 | `node bin/eos.mjs worktree list`              | Isolation      | List active Git worktrees for this repository.                                                                                                          |
-| `node bin/eos.mjs sandbox doctor`             | Sandbox        | Check local Linux Docker Engine, seccomp, cgroup v2, and pinned image digest.                                                                           |
-| `node bin/eos.mjs sandbox run <dir> -- <cmd>` | Sandbox        | Run a command offline in a filtered temporary worktree copy; add `--apply` for conflict-checked writeback on exit 0.                                    |
+| `node bin/eos.mjs sandbox doctor`             | Sandbox        | Check local Linux Docker Engine, registered runtimes (`runc` / gVisor `runsc`, `gvisorAvailable`), seccomp, cgroup v2, and pinned image digest.         |
+| `node bin/eos.mjs sandbox run <dir> -- <cmd>` | Sandbox        | Run a command offline in a filtered temporary worktree copy (`--runtime runc\|runsc\|auto`); add `--apply` for conflict-checked writeback on exit 0.    |
 | `node bin/eos.mjs honk "<task>"`              | Planning       | Produce a bounded local task draft without editing code, branching, or opening PRs.                                                                     |
 | `node bin/eos.mjs flow <action> ...`          | Governance     | Execute the `inspect → plan → start → validate → review → apply → close` lifecycle.                                                                     |
 | `npm run mcp`                                 | MCP Server     | Start the local MCP stdio server (1 MiB request ceiling).                                                                                               |
@@ -176,9 +176,22 @@ curl -H "Authorization: Bearer $EOS_MCP_HTTP_TOKEN" [http://127.0.0.1:3333/healt
 
 - **Local Planning Only (`Honk` & `Xirp`):** Provide local planning and context generation without running an external model or autonomous code-editing loop. Repository context is treated as untrusted data.
 - **Manual Read-Only GitHub Action:** The Honk GitHub Actions workflow is manually invoked, read-only, and restricted to `main`. It does not consume issue comments, commit, push, or open pull requests, and redacts directive text and repository metadata from logs.
-- **Worktree vs. Container Isolation:** Git worktrees isolate branches and working files, not processes, network access, or credentials. `eos sandbox run` enforces defense in depth using a local Linux Docker Engine (`EOS_SANDBOX_IMAGE` pinned by `repository@sha256:...`, built-in seccomp profile, cgroup v2 resource controllers, `--network none`, read-only rootfs, dropped capabilities, `no-new-privileges`, non-root UID, and a monitored 512 MiB workspace copy that excludes `.git`, the Docker socket, ignored files, and common secret paths). Container isolation still depends on the local Docker daemon and host kernel rather than a microVM boundary.
+- **Worktree vs. Container & gVisor (`runsc`) Isolation:** Git worktrees isolate branches and working files, not processes, network access, or credentials. `eos sandbox run` enforces defense in depth using a local Linux Docker Engine (`EOS_SANDBOX_IMAGE` pinned by `repository@sha256:...`, built-in seccomp profile, cgroup v2 resource controllers, `--network none`, read-only rootfs, dropped capabilities, `no-new-privileges`, non-root UID, and a monitored 512 MiB workspace copy that excludes `.git`, the Docker socket, ignored files, and common secret paths). Runtime selection via `--runtime=runc|runsc|auto` (or `--runtime <value>`) supports Google gVisor (`runsc`): `sandbox doctor` probes `gvisorAvailable` and registered Docker runtimes, `auto` selects `runsc` when installed (otherwise `runc`), and explicit `--runtime=runsc` fails closed when `runsc` is missing from the local Docker daemon. With default `runc`, container isolation still depends on the host Linux kernel rather than a user-space kernel/microVM boundary.
 - **Conflict-Checked Sandbox Writeback:** Sandbox output is discarded by default. Adding `--apply` writes back only after exit code `0`, rejects symlink output, and verifies that each target file still matches the copied baseline.
 - **Strict MCP Mutation Types:** Mutating MCP options in stdio mode require strict JSON booleans set to `true` (strings such as `"true"` are rejected). File reads are confined to the configured repository root after symlink resolution.
+
+### Standalone SEA Binaries & GitHub Releases
+
+Every push to `main` builds a Single Executable Application (`SEA`) bundle (`dist/glorian-linux-x64`, detached Ed25519 signature `glorian-linux-x64.sig`, `dist/eos.blob`, CycloneDX SBOMs, in-toto provenance, and `dist/SHA256SUMS.txt`), attests it via `actions/attest-build-provenance`, and publishes the signed bundle to the corresponding GitHub Release (`v<version>`):
+
+```sh
+# Build standalone SEA release assets + dist/SHA256SUMS.txt locally
+node scripts/build-sea-binary.mjs --bundle-release
+
+# Verify downloaded checksums and native GitHub SLSA Build Provenance
+sha256sum -c SHA256SUMS.txt
+gh attestation verify glorian-linux-x64 --repo valentinflorezarbelaez-ai/Glorian-System-
+```
 
 ---
 
