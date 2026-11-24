@@ -41,4 +41,12 @@ Before widening access, target at least four of five participants completing ins
 
 ## Limits of current evidence
 
-The landing-page guard checks markup and selected accessibility/usability invariants. It does not measure task completion, time, satisfaction, Core Web Vitals in a browser, or WCAG conformance. EOS has not passed this pilot until sessions are conducted and results are reviewed.
+The landing-page guard checks markup and selected accessibility/usability invariants. It does not measure task completion, time, satisfaction, Core Web Vitals in a browser, or WCAG conformance. EOS has not passed the **human first-use usability study** above until five human onboarding sessions are conducted and reviewed.
+
+## Automated multi-repository lifecycle receipt vs. human first-use study
+
+Separate from the human usability sessions, [`scripts/run-external-fleet-pilot.mjs`](../scripts/run-external-fleet-pilot.mjs) benchmarks the automated `inspect -> plan -> guard -> start -> commit -> validate -> review -> tamper-reject -> apply -> revert -> close` engine lifecycle against three external fleet repositories cloned inside `os.tmpdir()` (zero sibling checkout mutations). The recorded empirical receipt in [`docs/evidence/EXTERNAL_FLEET_PILOT_RECEIPT.json`](evidence/EXTERNAL_FLEET_PILOT_RECEIPT.json) confirms:
+
+- **Repositories benchmarked:** `trading-family-office` (`82` files scanned, `2` real circular dependencies flagged, `9,376.55 ms`), `aberamentho` (`127` files, `0` violations, `17,010.46 ms`), and `atp-strength` (`125` files, `0` violations, `19,382.56 ms`).
+- **Safety invariants observed:** `3/3` forged `--confirm-diff` hash rejections, `3/3` clean `git reset --hard` reversions to `baseCommit`, and `3/3` isolated `.worktrees/` teardowns.
+- **Boundary condition:** Run on Windows (`v24.19.0`) under `validationBackend: HOST_SUBPROCESS_DOCKER_OFFLINE` while local Docker Desktop Linux Engine was unavailable; this proves git-worktree, guard, tamper-digest, and rollback mechanics across three external repositories, not container escape resistance or human comprehension.

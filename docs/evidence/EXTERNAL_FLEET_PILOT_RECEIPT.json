@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "1.0.0",
+  "spec": "SPEC-124 / EXTERNAL-FLEET-PILOT",
+  "executedAtIso": "2026-11-24T13:17:51.119Z",
+  "environment": {
+    "platform": "win32",
+    "arch": "x64",
+    "nodeVersion": "v24.19.0",
+    "validationBackend": "HOST_SUBPROCESS_DOCKER_OFFLINE",
+    "dockerReady": false,
+    "dockerDoctorMessage": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: El sistema no puede encontrar el archivo especificado.",
+    "isolatedCloneRoot": "os.tmpdir() (removed in finally)"
+  },
+  "summary": {
+    "repositoriesTested": 3,
+    "lifecyclePassCount": 3,
+    "tamperRejectionsVerified": 3,
+    "reversibilityPassCount": 3,
+    "worktreeCleanupCount": 3
+  },
+  "repositories": [
+    {
+      "id": "trading-family-office",
+      "name": "Trading Family Office",
+      "sourceType": "local_no_local_clone",
+      "detectedStack": "typescript / npm / none",
+      "candidateValidationCommands": [
+        "npm run lint"
+      ],
+      "baseBranch": "main",
+      "baseCommit": "fcf04721c03146ecd6168c31f7a6dd06171a046c",
+      "dirtyOnEntry": 0,
+      "guardMetrics": {
+        "scannedFilesCount": 82,
+        "architecturePurityScore": 20,
+        "totalViolations": 2,
+        "circularDependencies": 2
+      },
+      "validationStatus": "COMPLETED",
+      "reviewedDiffSha256": "754a7c9ed7cd42ae0ba3c67c466b5ad14e851d7dba85fcbc8250dff7e8efa02d",
+      "tamperRejected": true,
+      "appliedFastForwardVerified": true,
+      "reversibilityVerified": true,
+      "worktreeRemoved": true,
+      "closeMessage": "Clean worktree removed; branch preserved.",
+      "timingsMs": {
+        "clone": 935.29,
+        "inspect": 1325.87,
+        "plan": 78.58,
+        "guard": 1961.55,
+        "start": 813.77,
+        "validate": 786.71,
+        "review": 908.41,
+        "apply": 1034.53,
+        "revert": 243.75,
+        "close": 844.37,
+        "total": 9376.55
+      },
+      "passed": true
+    },
+    {
+      "id": "aberamentho",
+      "name": "Aberamentho Pleroma Music",
+      "sourceType": "github_https_clone",
+      "detectedStack": "typescript / npm / none",
+      "candidateValidationCommands": [
+        "npm run typecheck"
+      ],
+      "baseBranch": "main",
+      "baseCommit": "ba6b3a1da7f24b027827547d9f9592d9d81e99f6",
+      "dirtyOnEntry": 0,
+      "guardMetrics": {
+        "scannedFilesCount": 127,
+        "architecturePurityScore": 100,
+        "totalViolations": 0,
+        "circularDependencies": 0
+      },
+      "validationStatus": "COMPLETED",
+      "reviewedDiffSha256": "d356387acdb0bff0cab7e6939210f8ba820bd106c4c4f2d4e800f5e5263367aa",
+      "tamperRejected": true,
+      "appliedFastForwardVerified": true,
+      "reversibilityVerified": true,
+      "worktreeRemoved": true,
+      "closeMessage": "Clean worktree removed; branch preserved.",
+      "timingsMs": {
+        "clone": 5177.06,
+        "inspect": 1074.73,
+        "plan": 325.39,
+        "guard": 3490.23,
+        "start": 1432.5,
+        "validate": 856.52,
+        "review": 919.47,
+        "apply": 1211.58,
+        "revert": 469.69,
+        "close": 1213.69,
+        "total": 17010.46
+      },
+      "passed": true
+    },
+    {
+      "id": "atp-strength",
+      "name": "ATP Strength",
+      "sourceType": "github_https_clone",
+      "detectedStack": "javascript / npm / none",
+      "candidateValidationCommands": [],
+      "baseBranch": "main",
+      "baseCommit": "0cd1bfe1564a0fe788fae0e0a42d6a96b5e02973",
+      "dirtyOnEntry": 0,
+      "guardMetrics": {
+        "scannedFilesCount": 125,
+        "architecturePurityScore": 100,
+        "totalViolations": 0,
+        "circularDependencies": 0
+      },
+      "validationStatus": "COMPLETED",
+      "reviewedDiffSha256": "144a2a5a7f2c2538c1aa839ecd7c66cddbdc6cbcb37dbb72d4e55aaacb7bde0c",
+      "tamperRejected": true,
+      "appliedFastForwardVerified": true,
+      "reversibilityVerified": true,
+      "worktreeRemoved": true,
+      "closeMessage": "Clean worktree removed; branch preserved.",
+      "timingsMs": {
+        "clone": 6914.52,
+        "inspect": 1529.22,
+        "plan": 84.72,
+        "guard": 3436.87,
+        "start": 1596.88,
+        "validate": 996.37,
+        "review": 1159.5,
+        "apply": 1248.99,
+        "revert": 280.55,
+        "close": 1160.05,
+        "total": 19382.56
+      },
+      "passed": true
+    }
+  ]
+}

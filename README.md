@@ -119,7 +119,20 @@ node bin/eos.mjs flow close "<repo-path>" <workflow-id>
 - **`validate`:** Requires a committed branch and runs the supplied executable in the network-disabled Docker sandbox. The command and dependencies must already be present in the locally available immutable image.
 - **`review`:** Requires successful validation of the exact branch `HEAD`, a clean worktree, and an unchanged base branch; prints the committed diff and its `SHA-256` hash.
 - **`apply`:** Accepts only the exact `SHA-256` review hash, rechecks the diff and base branch, and fast-forwards the base branch locally.
-- **`close`:** Removes the worktree only if clean by default, preserves the branch, and requires `--force` to discard uncommitted files. None of these commands pushes or deploys. An external project pilot is still needed to measure acceptance, false positives, failures, time, and reversibility.
+- **`close`:** Removes the worktree only if clean by default, preserves the branch, and requires `--force` to discard uncommitted files. None of these commands pushes or deploys.
+
+### Empirical External Fleet Lifecycle Benchmark (`SPEC-124`)
+
+Executed across 3 external fleet repositories cloned ephemerally into `os.tmpdir()` (`node scripts/run-external-fleet-pilot.mjs --live-fleet --write-receipt`, receipt at [`docs/evidence/EXTERNAL_FLEET_PILOT_RECEIPT.json`](docs/evidence/EXTERNAL_FLEET_PILOT_RECEIPT.json)) with zero writes to sibling checkouts:
+
+| Repository              | Stack Detected            | Guard Files / Cycles                     | Tamper Reject & Revert | Total Time     |
+| :---------------------- | :------------------------ | :--------------------------------------- | :--------------------- | :------------- |
+| `trading-family-office` | `typescript / npm / none` | 82 scanned · 2 cycles flagged (score 20) | PASS / PASS            | `9,376.55 ms`  |
+| `aberamentho`           | `typescript / npm / none` | 127 scanned · 0 cycles (score 100)       | PASS / PASS            | `17,010.46 ms` |
+| `atp-strength`          | `javascript / npm / none` | 125 scanned · 0 cycles (score 100)       | PASS / PASS            | `19,382.56 ms` |
+
+- **Result:** `3/3` lifecycle completions, `3/3` forged `--confirm-diff` tamper rejections, `3/3` clean `git reset --hard` reversions, and `3/3` isolated `.worktrees/` cleanups.
+- **Validation Backend Disclosure:** Measured locally under `HOST_SUBPROCESS_DOCKER_OFFLINE` (Windows Docker Desktop Linux Engine offline); live Linux container enforcement requires Docker Engine + pinned `EOS_SANDBOX_IMAGE` per [`docs/USABILITY-PILOT.md`](docs/USABILITY-PILOT.md).
 
 ---
 

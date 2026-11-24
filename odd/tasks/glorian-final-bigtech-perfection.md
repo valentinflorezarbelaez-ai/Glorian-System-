@@ -34,7 +34,7 @@ Branch: `feat/glorian-final-bigtech-perfection` | Delivery: `ask-on-risk` | Runn
 - [x] **T1** (`S1`) | Route: `inline+3-parallel-test-writers` | Risk: `High (item 3: shared test/CI harness & 27 src/core modules)` | Status: `done` | Evidence: `coverage-ratchet 27/27 PASS (>=87.5%L/>=80%B), typecheck/lint/format/boundary/consumers exit 0, docs/evidence clean`
 - [x] **T2** (`S2`) | Route: `inline` | Risk: `High (item 5: GitHub Release CI & SEA packaging workflow)` | Status: `done` | Evidence: `build-sea-binary.mjs --bundle-release (6 SHA256SUMS entries), 20/20 tests PASS, lint/format exit 0, sea-config.json clean`
 - [x] **T3** (`S3`) | Route: `inline` | Risk: `High (item 2 & 3: experimental crypto boundary types)` | Status: `done` | Evidence: `coverage-ratchet PASS (98.02%L / 96%B), typecheck/lint/format exit 0, BDD-1189..1190 PASS`
-- [ ] **T4** (`S4`) | Route: `inline` | Risk: `High (item 1 & 3: external clone harness, canonical receipt & docs)` | Status: `in_progress` | Evidence: pending
+- [x] **T4** (`S4`) | Route: `inline` | Risk: `High (item 1 & 3: external clone harness, canonical receipt & docs)` | Status: `done` | Evidence: `live 3-repo pilot 3/3 PASS (tamper=3, revert=3, HOST_SUBPROCESS_DOCKER_OFFLINE), BDD-1201 PASS, sibling untouched`
 
 ## Log
 
