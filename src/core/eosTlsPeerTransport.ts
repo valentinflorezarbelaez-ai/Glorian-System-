@@ -39,7 +39,8 @@ export interface SecurePeerMessage {
 export class EosTlsPeerTransport {
   private readonly nodeId: string;
   private readonly spiffeUri: string;
-  private readonly keyPair: crypto.KeyPairSyncResult<string, string>;
+  // @types/node 26 removed KeyPairSyncResult; PEM export yields string pair.
+  private readonly keyPair: { publicKey: string; privateKey: string };
   private readonly allowedSpiffePrefix: string;
   private server: net.Server | null = null;
   private localPort: number = 0;

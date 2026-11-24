@@ -1,44 +1,34 @@
 # Dependabot Major Upgrade Policy (Won’t-Fix Window)
 
-<!-- Epistemic: POLICY_SEALED · revisit required before PRODUCTION_READY claims on toolchain majors -->
+<!-- Epistemic: POLICY_SEALED · majors lifted 2026-11-24 after migration exit criteria -->
 
-## Decision (2026-11-10)
+## Decision (2026-11-10 → lifted 2026-11-24)
 
-ESLint 10 / `@eslint/js` 10 / `eslint-plugin-n` 18 and `@types/node` 26 majors remain **won’t-fix** on `main` until **2026-12-15**.
+ESLint 10 / `@eslint/js` 10 / `eslint-plugin-n` 18 and `@types/node` 26 majors were **won’t-fix** on `main` until **2026-12-15**. Exit criteria were met on the migration branch; the window is **lifted**.
 
-| Package              | Open Dependabot PRs | Status                    | Rationale                                                             |
-| -------------------- | ------------------- | ------------------------- | --------------------------------------------------------------------- |
-| `eslint` 10          | #599                | WONT_FIX_UNTIL_2026-12-15 | Node 22/24 CI matrix fails flat-config migration; keep ESLint 9 green |
-| `@eslint/js` 10      | #600                | WONT_FIX_UNTIL_2026-12-15 | Coupled to ESLint 10                                                  |
-| `eslint-plugin-n` 18 | #601                | WONT_FIX_UNTIL_2026-12-15 | Coupled to ESLint 10 peer range                                       |
-| `@types/node` 26     | #602                | WONT_FIX_UNTIL_2026-12-15 | Types ahead of engines; Node 24 LTS types stay on `@types/node` 24.x  |
+| Package              | Prior Dependabot PRs | Status                         | Notes                                                                 |
+| -------------------- | -------------------- | ------------------------------ | --------------------------------------------------------------------- |
+| `eslint` 10          | #599                 | LIFTED — on `main` via #628 PR | Flat-config + `no-useless-assignment` adopted; Node 22/24 CI green    |
+| `@eslint/js` 10      | #600                 | LIFTED — coupled to ESLint 10  | Same migration                                                        |
+| `eslint-plugin-n` 18 | #601                 | LIFTED — peer range OK         | Optional peers (`typescript`, `ts-declaration-location`) not required |
+| `@types/node` 26     | #602                 | LIFTED                         | Engines stay `>=22.18.0 <25` (Node 24 LTS); types may lead engines    |
 
-## Enforcement
+## Enforcement (post-lift)
 
-1. `.github/dependabot.yml` ignores semver-major for the packages above through the revisit date.
-2. Open major PRs are closed with a comment linking this policy (not merged, not silent).
-3. Revisit issue MUST be opened on or before **2026-12-15** titled `[deps] Revisit ESLint 10 + @types/node 26 majors`.
+1. `.github/dependabot.yml` no longer ignores semver-major for the packages above.
+2. Historical closed major PRs remain closed; do not reopen — tip is the migration PR that closes #628.
+3. Tracking issue [#628](https://github.com/valentinflorezarbelaez-ai/Glorian-System-/issues/628) closes with the migration merge receipt.
 
-## Exit criteria to lift won’t-fix
+## Exit criteria (satisfied)
 
 - Dedicated migration branch with `npm run verify:strict` + 7-stage CI green on Node 22 and 24.
-- No Layer-0 `dependencies: {}` regression.
-- ADR or delta-spec note under `openspec/` if lint semantics change.
+- No Layer-0 `dependencies: {}` regression (`dependencies` absent / empty; runtimeDependenciesCount = 0).
+- Lint semantics note: ESLint 10 recommended enables `no-useless-assignment`; call sites cleaned (see `openspec/changes/deps-eslint10-types-node26/`).
 
-Epistemic label until exit criteria: `WONT_FIX_UNTIL_2026-12-15` (not `VERIFIED` for majors).
+Epistemic label: `VERIFIED_WITHIN_TESTED_SCOPE` for these majors on Node 22/24 after green CI.
 
 ## Prep log (2026-11-16)
 
-- Tracking issue: [#628](https://github.com/valentinflorezarbelaez-ai/Glorian-System-/issues/628) — OPEN through revisit date.
-- Non-major Dependabot PRs `#637` / `#638` **closed 2026-11-16** as stale tips (TLC Java deferral assertion drift). Reopen only after rebase onto current `main` with green 7-stage.
-- Majors remain closed under won’t-fix.
-
-### Migration branch checklist (open on/after 2026-12-01)
-
-Branch name: `deps/eslint10-types-node26`
-
-1. Enable ESLint flat-config migration on Node 22 + 24 CI matrix only.
-2. Bump `eslint` / `@eslint/js` / `eslint-plugin-n` together; keep Layer-0 `dependencies: {}`.
-3. Bump `@types/node` to 26 only after engines declaration still matches Node 24 LTS reality.
-4. Gates: `npm run verify:strict` + 7-stage SecDevOps green on ubuntu/windows × Node 22/24.
-5. Close #628 with receipt links; lift won’t-fix window in this file.
+- Tracking issue: [#628](https://github.com/valentinflorezarbelaez-ai/Glorian-System-/issues/628).
+- Non-major Dependabot PRs `#637` / `#638` closed 2026-11-16 as stale tips.
+- Migration branch checklist executed 2026-11-24 (user-authorized early lift ahead of 2026-12-01 prep window).

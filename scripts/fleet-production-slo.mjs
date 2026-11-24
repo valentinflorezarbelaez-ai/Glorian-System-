@@ -63,8 +63,7 @@ for (const project of projects) {
   let isDeploymentFrozen = false;
   if (samples.length < 10) {
     if (errors === 0) {
-      healthState = "NOMINAL_HEALTHY";
-      remainingPct = 100;
+      // Defaults already NOMINAL_HEALTHY / 100 — keep for small-N green probes.
     } else if (availability > 0) {
       healthState = "DEGRADED";
       remainingPct = Number((availability * 100).toFixed(2));

@@ -475,7 +475,7 @@ function computeModelCacheKey(specName, formalDir, jarPath) {
   const cfgPath = path.join(formalDir, `${specName}.cfg`);
   const tlaContent = fs.readFileSync(tlaPath, "utf8");
   const cfgContent = fs.readFileSync(cfgPath, "utf8");
-  let jarStamp = "none";
+  let jarStamp;
   try {
     const st = fs.statSync(jarPath);
     jarStamp = `${st.size}:${Math.floor(st.mtimeMs)}`;

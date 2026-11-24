@@ -504,7 +504,7 @@ async function cmd_ship(commandContext) {
   const isRemote = args.includes("--remote");
   let remoteChecks = null;
   if (isRemote) {
-    let ghCiStatus = "UNKNOWN";
+    let ghCiStatus;
     let vercelDeploymentStatus = "UNKNOWN";
     try {
       const ghRaw = execFileSync("gh", ["run", "list", "--limit", "1", "--json", "conclusion"], {

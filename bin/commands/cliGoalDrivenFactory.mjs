@@ -193,7 +193,7 @@ async function cmdDiff(commandContext) {
   const isJson = args.includes("--json");
   const isAdvisory = args.includes("--advisory");
   const gitArgs = args.includes("--staged") ? ["diff", "--cached", "--name-only"] : ["diff", "--name-only"];
-  let changedFiles = [];
+  let changedFiles;
   try {
     const raw = execFileSync("git", gitArgs, { cwd: ROOT, encoding: "utf8" });
     changedFiles = raw

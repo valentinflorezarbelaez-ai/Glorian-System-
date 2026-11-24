@@ -207,7 +207,7 @@ export function verifyDifferentialPrivacyAbacModel(steps = 200) {
   const epsilonCeilingPermille = 3000;
   let sensitivityLevel = 10;
   let gaussianSigmaScale = 45;
-  let queryAdmitted = true;
+  let queryAdmitted;
   let stepsExecuted = 0;
 
   for (let i = 0; i < steps; i++) {
@@ -325,7 +325,7 @@ export function verifyRelativisticBeamTwissModel(steps = 200) {
   const parsed = parseTlaModule(filePath);
 
   let lorentzGamma = 7247;
-  let fodoTraceAbsPermille = 1410;
+  let fodoTraceAbsPermille;
   const symplecticDetPermille = 1000;
   let luminosityUnits = 240;
   let synchrotronLossKev = 7;
@@ -564,7 +564,7 @@ export function verifyCbdcRtgsGridlockModel(steps = 200) {
   let unsettledGross = 0;
   let residual = 0;
   let throughputRatio = 1.0;
-  let hhi = 1280;
+  let hhi;
   let regime = "MULTILATERAL_LSM_CLEARED";
   let stepsExecuted = 0;
 

@@ -374,7 +374,7 @@ export class EosWorkerTribunal {
             passed: false,
             exitCode: -1,
             stdout: "",
-            stderr: `Worker crashed: ${err.message.slice(0, 200)}`,
+            stderr: `Worker crashed: ${(err instanceof Error ? err.message : String(err)).slice(0, 200)}`,
             durationMs: Date.now() - t0,
             rollbackApplied: true,
           });

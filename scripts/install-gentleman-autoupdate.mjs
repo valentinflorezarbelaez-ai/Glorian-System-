@@ -92,7 +92,7 @@ export function installGentlemanAutoUpdateSchedule(options = {}) {
   const cronLine = synthesizePosixCronLine(nodeExePath, eosBinPath, intervalHours);
 
   if (!dryRun) {
-    let existingCron = "";
+    let existingCron;
     try {
       existingCron = execFileSync("crontab", ["-l"], {
         encoding: "utf8",

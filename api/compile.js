@@ -74,8 +74,7 @@ async function handleAmplify(req, res, body = {}) {
     return res.status(400).json({ status: "INVALID_OPTIONS" });
   }
 
-  let amplified = null;
-
+  let amplified;
   try {
     const { amplifyPrompt } = await import("../src/core/eosPromptAmplifier.ts");
     amplified = amplifyPrompt({

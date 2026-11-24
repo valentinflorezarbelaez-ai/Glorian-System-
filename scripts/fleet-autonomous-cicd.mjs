@@ -229,7 +229,7 @@ if (!fs.existsSync(registryFile)) {
           }
         } else {
           let checkoutRoot;
-          let changes = "";
+          let changes;
           try {
             const gitRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], {
               cwd: projectPath,

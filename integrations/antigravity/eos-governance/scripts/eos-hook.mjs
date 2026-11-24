@@ -124,7 +124,7 @@ export function evaluateHookEvent(eventName, rawStdin) {
 
 if (process.argv[1] && process.argv[1].replace(/\\/g, "/").endsWith("eos-hook.mjs")) {
   const eventName = process.argv[2] || "SessionStart";
-  let rawInput = "";
+  let rawInput;
   try {
     rawInput = fs.readFileSync(0, "utf8");
   } catch {

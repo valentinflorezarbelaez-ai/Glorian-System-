@@ -205,7 +205,7 @@ async function cmd_mesh_rebalance(commandContext) {
     mesh.insertVector(`item-${i}`, raw);
   }
 
-  let migratedKeys = 0;
+  let migratedKeys;
   if (churn === "join") {
     migratedKeys = mesh.rebalanceOnNodeJoin({
       nodeId: `node-${initialNodes + 1}`,

@@ -27,8 +27,8 @@ if (!project?.productionUrl) {
 
 async function probeOnce() {
   const started = Date.now();
-  let statusCode = 0;
-  let ok = false;
+  let statusCode;
+  let ok;
   try {
     const res = await fetch(project.productionUrl, {
       method: "GET",

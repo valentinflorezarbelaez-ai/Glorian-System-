@@ -139,7 +139,7 @@ async function cmd_jepsen_partition(commandContext) {
 
   const cluster = createJepsenCluster(nodeCount, 1337);
 
-  let isolatedDesc = "";
+  let isolatedDesc;
   let delivered = {};
 
   if (type === "ASYMMETRIC") {

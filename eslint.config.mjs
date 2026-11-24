@@ -1,4 +1,4 @@
-// eslint.config.mjs — Flat ESLint config (ESLint 9+)
+// eslint.config.mjs — Flat ESLint config (ESLint 10+)
 // Big Tech standard: lint catches runtime anti-patterns that TypeScript's
 // type-checker alone cannot detect (unused vars, no-constant-condition,
 // no-async-promise-executor, import patterns, Node.js-specific rules).
@@ -10,6 +10,7 @@
 //
 // Law V: zero external runtime dependencies. ESLint is a devDependency only,
 // and the Node globals below are declared inline to avoid pulling `globals`.
+// ESLint 10 recommended adds `no-useless-assignment` (adopted; see openspec change).
 
 // @ts-check
 import js from "@eslint/js";

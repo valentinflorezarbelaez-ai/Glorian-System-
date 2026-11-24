@@ -43,7 +43,7 @@ async function runQuickstart() {
   });
 
   // Check 3: Append-Only SQLite WAL Ledger
-  let ledgerOk = false;
+  let ledgerOk;
   let ledgerHash = "";
   try {
     const ledger = new EosDurableSqliteLedger(":memory:");
@@ -66,7 +66,7 @@ async function runQuickstart() {
   });
 
   // Check 4: Full-Text Architecture Search (FTS5)
-  let searchOk = false;
+  let searchOk;
   let searchResultsCount = 0;
   try {
     const searchEngine = new EosDocumentationSearch(rootDir, ":memory:");
@@ -85,7 +85,7 @@ async function runQuickstart() {
   });
 
   // Check 5: Formal Reasoning SMT Prover
-  let smtOk = false;
+  let smtOk;
   try {
     const rules = [
       { role: "guest", action: "ledger_read", allow: true },
