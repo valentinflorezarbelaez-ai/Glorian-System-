@@ -39,3 +39,4 @@ Branch: `feat/glorian-final-bigtech-perfection` | Delivery: `ask-on-risk` | Runn
 ## Log
 
 - **L1 (2026-11-24)**: User request verbatim: `"dejemos todo perfecto"`. Pruned abandoned `.qoder` worktrees (`agent-general-purpose-9e89d043`, `agent-supply-chain-sbom`) and created `feat/glorian-final-bigtech-perfection` from `1a7fc6e8`.
+- **L2 (2026-11-24)**: Independent audit caught omitted `dist/glorian.blob` in `.github/workflows/eos-sovereign-cicd.yml` `ASSETS` / `subject-path`; added `dist/glorian.blob` (plus `.provenance.json`/`.sbom.json` in `subject-path`) so `SHA256SUMS.txt` resolves 100% of assets on GitHub Releases.

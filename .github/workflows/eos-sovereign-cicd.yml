@@ -341,11 +341,11 @@ jobs:
       - name: Verify Layer-0 Supply-Chain & Build Standalone SEA Release Bundle
         run: |
           node scripts/verify-supply-chain.mjs --verify-only
-          node --experimental-sea-config sea-config.json
           node scripts/build-sea-binary.mjs --bundle-release
           node bin/sea-bootstrap.cjs --version
           node bin/sea-bootstrap.cjs --help
           test -x dist/glorian-linux-x64
+          test -f dist/glorian.blob
           test -f dist/glorian-linux-x64.sig
           test -f dist/SHA256SUMS.txt
           (cd dist && sha256sum -c SHA256SUMS.txt)
@@ -359,6 +359,9 @@ jobs:
             docs/evidence/provenance.intoto.jsonl
             dist/glorian-linux-x64
             dist/glorian-linux-x64.sig
+            dist/glorian-linux-x64.provenance.json
+            dist/glorian-linux-x64.sbom.json
+            dist/glorian.blob
             dist/SHA256SUMS.txt
             dist/eos.blob
             package.json
@@ -371,6 +374,7 @@ jobs:
             docs/evidence/
             dist/glorian-linux-x64.provenance.json
             dist/glorian-linux-x64.sbom.json
+            dist/glorian.blob
             dist/SHA256SUMS.txt
           retention-days: 90
 
@@ -383,6 +387,7 @@ jobs:
             dist/glorian-linux-x64.sig
             dist/glorian-linux-x64.provenance.json
             dist/glorian-linux-x64.sbom.json
+            dist/glorian.blob
             dist/eos.blob
             dist/SHA256SUMS.txt
             docs/evidence/sbom.cdx.json
