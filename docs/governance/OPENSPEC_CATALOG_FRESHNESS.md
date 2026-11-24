@@ -27,7 +27,7 @@ Drive UNKNOWN to 0 before tip-seal. PROPOSED specs always require `**Owner**` an
 
 `docs/specs/openspec-catalog-index.json` uses `writeDeterministicArtifact` / `contentDerivedIso`: `timestampIso` is reused for byte-stable regenerations when the logical catalog is unchanged. Comparing that stamp to the freeze pin commit date would false-fail a fresh tip.
 
-**Stale vs freeze pin** is therefore defined as: tip-sealed ∧ (`freezePinBoundSha` missing ∨ does not match Freeze Pin (HEAD)). Re-export after every tip-seal so the bind tracks the pin.
+**Stale vs freeze pin** is therefore defined as: tip-sealed ∧ (`freezePinBoundSha` missing ∨ does not match Freeze Pin (HEAD)). `node scripts/tip-refresh.mjs --seal-pin` rewrites the Freeze Pin cell **and** re-exports the catalog so `freezePinBoundSha` stays in lockstep.
 
 ## Invariants
 

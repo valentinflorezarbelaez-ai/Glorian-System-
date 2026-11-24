@@ -288,7 +288,17 @@ if (sealPinOnly) {
   }
   const sealOutPath = customOutPath ?? freezePath;
   writeFileWithRetry(sealOutPath, sealed);
-  console.log(`✅ Freeze Pin sealed to HEAD ${m.head} (amend this file into the tip-refresh commit for pin==HEAD).`);
+  // Keep openspec-catalog-index.json freezePinBoundSha in lockstep with the sealed pin
+  // so catalog:freshness does not fail closed on a stale bind after --seal-pin.
+  try {
+    const { EosTacticalCommandEngine } = await import("../src/core/eosTacticalCommandEngine.ts");
+    new EosTacticalCommandEngine(root).exportOpenSpecsJson();
+  } catch (err) {
+    console.warn(`⚠️ OpenSpec catalog bind sync after seal-pin skipped: ${err?.message ?? err}`);
+  }
+  console.log(
+    `✅ Freeze Pin sealed to HEAD ${m.head} (catalog freezePinBoundSha re-exported; amend freeze + catalog into tip-refresh commit for pin==HEAD).`,
+  );
   process.exit(0);
 }
 

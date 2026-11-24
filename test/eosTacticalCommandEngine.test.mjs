@@ -190,5 +190,12 @@ describe("SPEC-129: Tier S-0 Tactical Apex — Command Engine & OpenSpec Indexer
       assert.ok(report.freezePinBoundSha);
       assert.ok(report.totalSpecs >= 332);
     });
+
+    it("--seal-pin path re-exports OpenSpec catalog after rewriting Freeze Pin", () => {
+      const tipRefresh = fs.readFileSync(path.join(projectRoot, "scripts/tip-refresh.mjs"), "utf8");
+      const sealBlock = tipRefresh.split("if (sealPinOnly)")[1] ?? "";
+      assert.match(sealBlock, /exportOpenSpecsJson/, "seal-pin must call exportOpenSpecsJson for freezePinBoundSha lockstep");
+      assert.match(sealBlock, /freezePinBoundSha|catalog bind sync/i);
+    });
   });
 });
