@@ -12,6 +12,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
+import { extractModuleSyntax } from "./eosTypeScriptAstAnalyzer.ts";
 
 export type SymbolKind = "function" | "class" | "interface" | "type" | "const" | "variable";
 
@@ -89,41 +90,18 @@ const PTS_TEST_MAP: Record<string, string[]> = {
 };
 
 /**
- * Extracts exported symbols from source code.
+ * Extracts exported symbols from source code using the Layer-0 state-machine lexer.
  */
 export function extractExports(sourceCode: string, relativePath: string): ExportedSymbol[] {
-  const symbols: ExportedSymbol[] = [];
-  const lines = sourceCode.split(/\r?\n/);
-
-  const exportPatterns = [
-    { kind: "function" as SymbolKind, regex: /export\s+(?:async\s+)?function\s+([A-Za-z0-9_$]+)/ },
-    { kind: "class" as SymbolKind, regex: /export\s+class\s+([A-Za-z0-9_$]+)/ },
-    { kind: "interface" as SymbolKind, regex: /export\s+interface\s+([A-Za-z0-9_$]+)/ },
-    { kind: "type" as SymbolKind, regex: /export\s+type\s+([A-Za-z0-9_$]+)/ },
-    { kind: "const" as SymbolKind, regex: /export\s+const\s+([A-Za-z0-9_$]+)/ },
-  ];
-
-  lines.forEach((line, idx) => {
-    const trimmed = line.trim();
-    if (trimmed.startsWith("//") || trimmed.startsWith("*") || trimmed.startsWith("/*")) return;
-
-    for (const pat of exportPatterns) {
-      const match = pat.regex.exec(trimmed);
-      if (match) {
-        const symbolName = match[1];
-        if (symbolName.startsWith("$") || trimmed.includes("${")) continue;
-        symbols.push({
-          name: symbolName,
-          kind: pat.kind,
-          filePath: relativePath,
-          lineNumber: idx + 1,
-        });
-        break;
-      }
-    }
-  });
-
-  return symbols;
+  const syntax = extractModuleSyntax(sourceCode);
+  return syntax.exports
+    .filter((sym) => !sym.isReExport)
+    .map((sym) => ({
+      name: sym.name,
+      kind: sym.kind,
+      filePath: relativePath,
+      lineNumber: sym.line,
+    }));
 }
 
 /**
@@ -273,14 +251,20 @@ export class EosSemanticGraph {
       } catch {
         continue; // Skip file if temporarily locked by concurrent worker
       }
-      const exports = extractExports(content, relPath);
+      const syntax = extractModuleSyntax(content);
+      const exports: ExportedSymbol[] = syntax.exports
+        .filter((sym) => !sym.isReExport)
+        .map((sym) => ({
+          name: sym.name,
+          kind: sym.kind,
+          filePath: relPath,
+          lineNumber: sym.line,
+        }));
 
-      // Extract imports
+      // Extract imports & re-exports
       const imports: string[] = [];
-      const importRegex = /(?:import|from)\s+['"]([^'"]+)['"]/g;
-      let match: RegExpExecArray | null;
-      while ((match = importRegex.exec(content)) !== null) {
-        const resolved = resolveImportPath(match[1], fullPath, this.projectRoot);
+      for (const imp of syntax.imports) {
+        const resolved = resolveImportPath(imp.specifier, fullPath, this.projectRoot);
         if (resolved && !imports.includes(resolved)) {
           imports.push(resolved);
         }

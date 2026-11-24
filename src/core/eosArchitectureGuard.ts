@@ -13,6 +13,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { extractModuleSyntax } from "./eosTypeScriptAstAnalyzer.ts";
 
 export type ArchitecturalLayer = "DOMAIN" | "APPLICATION" | "INFRASTRUCTURE" | "PRESENTATION" | "UNKNOWN";
 
@@ -69,58 +70,37 @@ export function classifyLayer(relativePath: string): ArchitecturalLayer {
 }
 
 /**
- * Extracts import/require statements from source code text.
+ * Extracts import/re-export/dynamic/require statements from source code text using the Layer-0 token lexer.
  */
-export function extractImports(sourceCode: string, sourceFilePath: string, projectRoot: string): FileImport[] {
+export function extractImports(sourceCode: string, sourceFilePath: string, _projectRoot: string): FileImport[] {
   const imports: FileImport[] = [];
-  const lines = sourceCode.split(/\r?\n/);
+  const syntax = extractModuleSyntax(sourceCode);
+  const extensions = ["", ".ts", ".tsx", ".js", ".mjs", ".jsx", "/index.ts", "/index.js"];
 
-  // Regex patterns for static imports and dynamic imports/requires
-  const staticImportRegex = /import\s+(?:(?:[\w*\s{},]+)\s+from\s+)?['"]([^'"]+)['"]/g;
-  const requireRegex = /require\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
-  const dynamicImportRegex = /import\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
+  for (const entry of syntax.imports) {
+    const specifier = entry.specifier;
+    const isExternal = !specifier.startsWith(".") && !specifier.startsWith("/") && !specifier.startsWith("node:");
+    let resolved: string | null = null;
 
-  lines.forEach((line, idx) => {
-    const trimmed = line.trim();
-    if (trimmed.startsWith("//") || trimmed.startsWith("/*") || trimmed.startsWith("*")) {
-      return; // Skip comments
+    if (specifier.startsWith(".")) {
+      const sourceDir = path.dirname(sourceFilePath);
+      const candidate = path.resolve(sourceDir, specifier);
+      for (const ext of extensions) {
+        const testPath = candidate + ext;
+        if (fs.existsSync(testPath) && fs.statSync(testPath).isFile()) {
+          resolved = path.resolve(testPath);
+          break;
+        }
+      }
     }
 
-    const checkMatch = (regex: RegExp) => {
-      let match: RegExpExecArray | null;
-      while ((match = regex.exec(line)) !== null) {
-        const specifier = match[1];
-        const isExternal = !specifier.startsWith(".") && !specifier.startsWith("/") && !specifier.startsWith("node:");
-        let resolved: string | null = null;
-
-        if (specifier.startsWith(".")) {
-          // Resolve relative path
-          const sourceDir = path.dirname(sourceFilePath);
-          const candidate = path.resolve(sourceDir, specifier);
-
-          const extensions = ["", ".ts", ".tsx", ".js", ".mjs", ".jsx", "/index.ts", "/index.js"];
-          for (const ext of extensions) {
-            const testPath = candidate + ext;
-            if (fs.existsSync(testPath) && fs.statSync(testPath).isFile()) {
-              resolved = path.resolve(testPath);
-              break;
-            }
-          }
-        }
-
-        imports.push({
-          rawSpecifier: specifier,
-          resolvedPath: resolved,
-          isExternal,
-          lineNumber: idx + 1,
-        });
-      }
-    };
-
-    checkMatch(staticImportRegex);
-    checkMatch(requireRegex);
-    checkMatch(dynamicImportRegex);
-  });
+    imports.push({
+      rawSpecifier: specifier,
+      resolvedPath: resolved,
+      isExternal,
+      lineNumber: entry.line,
+    });
+  }
 
   return imports;
 }
@@ -273,7 +253,12 @@ export function scanArchitecture(targetDir: string, projectRoot: string = proces
     for (const entry of entries) {
       const fullPath = path.resolve(dir, entry.name);
       if (entry.isDirectory()) {
-        if (entry.name !== "node_modules" && entry.name !== ".git" && entry.name !== "dist" && entry.name !== ".next") {
+        if (
+          !entry.name.startsWith(".") &&
+          entry.name !== "node_modules" &&
+          entry.name !== "dist" &&
+          entry.name !== "_sandbox"
+        ) {
           walk(fullPath);
         }
       } else if (entry.isFile() && /\.(ts|tsx|js|mjs)$/.test(entry.name)) {

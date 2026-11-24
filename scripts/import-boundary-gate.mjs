@@ -23,6 +23,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { extractModuleSyntax } from "../src/core/eosTypeScriptAstAnalyzer.ts";
 
 const root = process.cwd();
 const coreDir = path.join(root, "src", "core");
@@ -38,50 +39,28 @@ for (const file of files) {
   const content = fs.readFileSync(filePath, "utf8");
   checked++;
 
-  // Extract all import statements
-  const importRegex = /^\s*import\s+.*?\s+from\s+["']([^"']+)["']/gm;
-  const matches = [...content.matchAll(importRegex)];
-
-  for (const m of matches) {
-    const importPath = m[1];
-    if (importPath.includes("${")) continue; // Template string inside code generator
+  const syntax = extractModuleSyntax(content);
+  for (const entry of syntax.imports) {
+    const importPath = entry.specifier;
+    const label = entry.kind === "dynamic" ? "dynamic import" : entry.kind === "require" ? "require" : "imports";
 
     // Allowed: node: builtins
     if (importPath.startsWith("node:")) continue;
 
     // Allowed: relative imports within src/core/
     if (importPath.startsWith("./") || importPath.startsWith("../")) {
-      // Resolve relative to the file's directory
       const resolved = path.resolve(path.dirname(filePath), importPath);
       const relToRoot = path.relative(root, resolved).replace(/\\/g, "/");
-
-      // Must stay inside src/core/
       if (relToRoot.startsWith("src/core/")) continue;
 
-      // If it resolves outside src/core/, it's a layer violation
-      violations.push(`${file}: imports "${importPath}" → resolves to "${relToRoot}" (outside src/core/)`);
+      violations.push(
+        `${file}:${entry.line}: ${label} "${importPath}" → resolves to "${relToRoot}" (outside src/core/)`,
+      );
       continue;
     }
 
     // Anything else is an external package → Law V violation
-    violations.push(`${file}: imports external package "${importPath}" (Law V — zero runtime deps)`);
-  }
-
-  // Also check dynamic imports (excluding non-JS syntax like @import or word characters preceding import)
-  const dynamicImportRegex = /(?<![@\w.$])import\s*\(\s*["']([^"']+)["']\s*\)/g;
-  const dynamicMatches = [...content.matchAll(dynamicImportRegex)];
-
-  for (const m of dynamicMatches) {
-    const importPath = m[1];
-    if (importPath.startsWith("node:")) continue;
-    if (importPath.startsWith("./") || importPath.startsWith("../")) {
-      const resolved = path.resolve(path.dirname(filePath), importPath);
-      const relToRoot = path.relative(root, resolved).replace(/\\/g, "/");
-      if (relToRoot.startsWith("src/core/")) continue;
-      violations.push(`${file}: dynamic import "${importPath}" → resolves to "${relToRoot}" (outside src/core/)`);
-      continue;
-    }
-    violations.push(`${file}: dynamic import external package "${importPath}" (Law V — zero runtime deps)`);
+    violations.push(`${file}:${entry.line}: ${label} external package "${importPath}" (Law V — zero runtime deps)`);
   }
 }
 

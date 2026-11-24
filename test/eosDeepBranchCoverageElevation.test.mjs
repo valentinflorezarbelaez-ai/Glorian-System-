@@ -35,7 +35,7 @@ import {
 } from "../src/core/eosKernelPrimitives.ts";
 import { parseDiff, applyDiff, generateDiff } from "../src/core/eosDiffPatcher.ts";
 import { EosAdaptiveConcurrencyLimiter } from "../src/core/eosAdaptiveConcurrencyLimiter.ts";
-import { EosTypeScriptAstAnalyzer } from "../src/core/eosTypeScriptAstAnalyzer.ts";
+import { EosTypeScriptAstAnalyzer, extractModuleSyntax } from "../src/core/eosTypeScriptAstAnalyzer.ts";
 import { EosEnterpriseWorkspaceGovernor } from "../src/core/eosEnterpriseWorkspaceGovernor.ts";
 import { EosUniversalProjectAdapter } from "../src/core/eosUniversalProjectAdapter.ts";
 import { EosContainerSandbox } from "../src/core/eosContainerSandbox.ts";
@@ -819,6 +819,55 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
       const dirReport = EosTypeScriptAstAnalyzer.analyzeDirectory(path.join(root, "src/core"), root);
       assert.ok(dirReport.filesAnalyzed >= 10);
       assert.equal(dirReport.layer0Pure, true);
+
+      // 8. Canonical extractModuleSyntax (multiline, re-exports, dynamic, require, namespace * as, type modifiers, comments/templates/regex noise)
+      const richSyntax = extractModuleSyntax(
+        [
+          "// import 'react';",
+          "/* import 'vue'; export function ghostCommentSymbol() {} */",
+          "const prose = \"import 'express' from 'express'\";",
+          "const tpl = `import 'koa'; export class GhostTemplateClass {}`;",
+          "const rx = /import\\s+'next'/g;",
+          "const metaUrl = import.meta.url;",
+          "import {",
+          "  readFileSync,",
+          "  writeFileSync,",
+          "} from 'node:fs';",
+          "import './sideEffect.ts';",
+          "export * from './reExportAll.ts';",
+          "export * as nsAll from './reExportNs.ts';",
+          "export type { TypeOnly } from './reExportType.ts';",
+          "export { alpha, type BetaType, beta as gamma } from './reExportNamed.ts';",
+          "const dyn = await import('./dynamicMod.ts');",
+          "const cjs = require('./legacyMod.cjs');",
+          "export abstract class AbstractKernel {}",
+          "export function* genValues() { yield 1; }",
+          "const localOne = 1;",
+          "const localTwo = 2;",
+          "export { localOne, localTwo as publishedTwo };",
+        ].join("\n"),
+      );
+      assert.deepEqual(
+        richSyntax.imports.map((entry) => entry.specifier),
+        [
+          "node:fs",
+          "./sideEffect.ts",
+          "./reExportAll.ts",
+          "./reExportNs.ts",
+          "./reExportType.ts",
+          "./reExportNamed.ts",
+          "./dynamicMod.ts",
+          "./legacyMod.cjs",
+        ],
+      );
+      const exportedNames = richSyntax.exports.map((entry) => entry.name);
+      assert.ok(exportedNames.includes("AbstractKernel"));
+      assert.ok(exportedNames.includes("genValues"));
+      assert.ok(exportedNames.includes("localOne"));
+      assert.ok(exportedNames.includes("publishedTwo"));
+      assert.ok(exportedNames.includes("nsAll"));
+      assert.ok(!exportedNames.includes("ghostCommentSymbol"));
+      assert.ok(!exportedNames.includes("GhostTemplateClass"));
     });
   });
 

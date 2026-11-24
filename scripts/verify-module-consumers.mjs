@@ -13,6 +13,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { extractModuleSyntax } from "../src/core/eosTypeScriptAstAnalyzer.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,14 +49,13 @@ export function scanFiles(dirPath, extensions) {
 }
 
 /**
- * Extracts import and require targets from source code text.
+ * Extracts import, re-export, dynamic import, and require targets using the Layer-0 token lexer.
  */
 export function extractImportTargets(sourceText) {
   const targets = new Set();
-  const importRegex = /(?:import\s+(?:[\s\S]*?from\s+)?|require\s*\(\s*|import\s*\(\s*)['"]([^'"]+)['"]/g;
-  let match;
-  while ((match = importRegex.exec(sourceText)) !== null) {
-    targets.add(match[1]);
+  const syntax = extractModuleSyntax(String(sourceText ?? ""));
+  for (const imp of syntax.imports) {
+    targets.add(imp.specifier);
   }
   return targets;
 }

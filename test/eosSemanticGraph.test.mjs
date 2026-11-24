@@ -65,6 +65,48 @@ describe("EOS Big Tech Tier 1 Semantic Graph & Blast Radius Suite", () => {
       assert.equal(symbols[0].name, "activeFunction");
       assert.equal(symbols[0].lineNumber, 4);
     });
+
+    it("ignores multiline block comments and template literals while capturing abstract classes, brace exports and re-export graph edges", () => {
+      const mockCode = [
+        "/*",
+        "export function insideBlockCommentWithoutStar() {}",
+        "*/",
+        "const tpl = `",
+        "export class InsideTemplateLiteral {}",
+        "import './nonexistentGhost.ts';",
+        "`;",
+        "export abstract class BaseGovernor {}",
+        "const helperOne = () => 1;",
+        "export { helperOne as publishedHelper };",
+      ].join("\n");
+
+      const symbols = extractExports(mockCode, "src/mock/lexer.ts");
+      const names = symbols.map((s) => s.name);
+      assert.deepEqual(names, ["BaseGovernor", "publishedHelper"]);
+
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-sem-graph-"));
+      try {
+        const srcDir = path.join(tmpDir, "src", "core");
+        fs.mkdirSync(srcDir, { recursive: true });
+        fs.writeFileSync(path.join(srcDir, "leaf.ts"), "export const LEAF = 1;\n", "utf8");
+        fs.writeFileSync(
+          path.join(srcDir, "barrel.ts"),
+          ["// import './ghost.ts';", "const fake = \"from './leaf.ts'\";", "export * from './leaf.ts';"].join("\n"),
+          "utf8",
+        );
+        fs.writeFileSync(
+          path.join(srcDir, "consumer.ts"),
+          "import {\n  LEAF\n} from './barrel.ts';\nexport const C = LEAF;\n",
+          "utf8",
+        );
+        const g = new EosSemanticGraph(tmpDir);
+        const leafBlast = g.calculateBlastRadius("src/core/leaf.ts");
+        assert.ok(leafBlast.directConsumers.includes("src/core/barrel.ts"));
+        assert.ok(leafBlast.transitiveConsumers.includes("src/core/consumer.ts"));
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
+    });
   });
 
   describe("Suite 2: Graph Construction & Reverse Adjacency", () => {

@@ -18,12 +18,18 @@ import path from "node:path";
 import { assertPrecondition, assertPostcondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 import {
   canStartRegexLiteral,
+  extractModuleSyntaxFromTokens,
   isAllowedLayer0Specifier,
   type AstEngineMode,
   type AstViolation,
   type AstViolationCode,
   type DirectoryAstAuditReport,
+  type ExportedDeclarationKind,
+  type ExtractedExportSymbol,
+  type ExtractedImportSpecifier,
   type FileAstMetrics,
+  type ModuleImportKind,
+  type ModuleSyntaxSummary,
   type TsToken,
 } from "./eosTypeScriptAstAnalyzer.types.ts";
 
@@ -31,8 +37,13 @@ export type {
   AstEngineMode,
   AstViolationCode,
   AstViolation,
-  FileAstMetrics,
   DirectoryAstAuditReport,
+  ExportedDeclarationKind,
+  ExtractedExportSymbol,
+  ExtractedImportSpecifier,
+  FileAstMetrics,
+  ModuleImportKind,
+  ModuleSyntaxSummary,
 } from "./eosTypeScriptAstAnalyzer.types.ts";
 
 let cachedTsModule: any | null | undefined;
@@ -264,6 +275,16 @@ export function tokenizeTypeScriptAstStream(source: string): TsToken[] {
   return tokens;
 }
 
+/**
+ * Extracts all module import/re-export/dynamic/require specifiers and exported symbols
+ * using the comment-, string-, regex-, and template-literal-aware Layer-0 token stream.
+ */
+export function extractModuleSyntax(sourceText: string): ModuleSyntaxSummary {
+  assertPrecondition(typeof sourceText === "string", "sourceText must be a string");
+  const tokens = tokenizeTypeScriptAstStream(sourceText);
+  return deepFreeze(extractModuleSyntaxFromTokens(tokens));
+}
+
 export class EosTypeScriptAstAnalyzer {
   /**
    * Analyzes a single TypeScript source string using compiler-grade AST parsing.
@@ -287,82 +308,29 @@ export class EosTypeScriptAstAnalyzer {
     enforceLayer0Purity: boolean,
   ): FileAstMetrics {
     const tokens = tokenizeTypeScriptAstStream(sourceText);
+    const moduleSyntax = extractModuleSyntaxFromTokens(tokens);
     const imports: string[] = [];
-    const exportedSymbols: string[] = [];
+    const exportedSymbols: string[] = moduleSyntax.exports.filter((e) => !e.isReExport).map((e) => e.name);
     const violations: AstViolation[] = [];
     let cyclomaticComplexity = 1;
 
-    const recordSpecifier = (specTok: TsToken): void => {
-      imports.push(specTok.value);
-      if (enforceLayer0Purity && !isAllowedLayer0Specifier(specTok.value)) {
+    for (const imp of moduleSyntax.imports) {
+      imports.push(imp.specifier);
+      if (enforceLayer0Purity && !isAllowedLayer0Specifier(imp.specifier)) {
         violations.push({
           file: virtualFilePath,
-          line: specTok.line,
-          column: specTok.column,
+          line: imp.line,
+          column: imp.column,
           code: "EXTERNAL_IMPORT_IN_LAYER0",
-          message: `External module '${specTok.value}' prohibited in Layer-0 (use 'node:*' built-ins or relative imports).`,
+          message: `External module '${imp.specifier}' prohibited in Layer-0 (use 'node:*' built-ins or relative imports).`,
         });
       }
-    };
+    }
 
     for (let idx = 0; idx < tokens.length; idx++) {
       const tok = tokens[idx]!;
       const prev = tokens[idx - 1];
       const next = tokens[idx + 1];
-
-      // 1. Static import / re-export declarations
-      if (tok.kind === "IDENT" && tok.value === "import" && !(prev?.kind === "PUNCT" && prev.value === ".")) {
-        // Side-effect import: import "specifier"
-        if (next?.kind === "STRING") {
-          recordSpecifier(next);
-        } else if (!(next?.kind === "PUNCT" && next.value === "(")) {
-          // Scan ahead to matching `from "specifier"`
-          for (let j = idx + 1; j < tokens.length; j++) {
-            const scan = tokens[j]!;
-            if (scan.kind === "PUNCT" && scan.value === ";") break;
-            if (scan.kind === "IDENT" && scan.value === "from" && tokens[j + 1]?.kind === "STRING") {
-              recordSpecifier(tokens[j + 1]!);
-              break;
-            }
-          }
-        }
-      }
-
-      // Re-exports & exported symbols
-      if (tok.kind === "IDENT" && tok.value === "export") {
-        let cursor = idx + 1;
-        if (tokens[cursor]?.kind === "IDENT" && tokens[cursor]!.value === "default") {
-          cursor++;
-        }
-        if (tokens[cursor]?.kind === "IDENT" && tokens[cursor]!.value === "abstract") {
-          cursor++;
-        }
-        if (tokens[cursor]?.kind === "IDENT" && tokens[cursor]!.value === "async") {
-          cursor++;
-        }
-        const declKw = tokens[cursor];
-        const declName = tokens[cursor + 1];
-        if (
-          declKw?.kind === "IDENT" &&
-          ["class", "function", "interface", "type", "const", "let", "var", "enum"].includes(declKw.value) &&
-          declName?.kind === "IDENT"
-        ) {
-          exportedSymbols.push(declName.value);
-        } else {
-          // Check export { ... } from "specifier" or export * from "specifier"
-          for (let j = idx + 1; j < tokens.length; j++) {
-            const scan = tokens[j]!;
-            if (scan.kind === "PUNCT" && scan.value === ";") break;
-            if (scan.kind === "IDENT" && ["class", "function", "interface", "const"].includes(scan.value)) {
-              break;
-            }
-            if (scan.kind === "IDENT" && scan.value === "from" && tokens[j + 1]?.kind === "STRING") {
-              recordSpecifier(tokens[j + 1]!);
-              break;
-            }
-          }
-        }
-      }
 
       // 2. Prohibited TypeScript `enum`
       if (
@@ -683,7 +651,7 @@ export class EosTypeScriptAstAnalyzer {
 
   private static collectTsFiles(dir: string, acc: string[] = []): string[] {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      if (entry.name === "node_modules" || entry.name === ".git" || entry.name.startsWith(".worktree")) {
+      if (entry.name.startsWith(".") || entry.name === "node_modules") {
         continue;
       }
       const full = path.join(dir, entry.name);
