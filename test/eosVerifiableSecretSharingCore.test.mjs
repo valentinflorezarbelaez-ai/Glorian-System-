@@ -120,4 +120,194 @@ describe("EosVerifiableSecretSharingCore (SPEC-233 / CHANGE-118)", () => {
     const reconstructed = EosVerifiableSecretSharingCore.reconstruct(subset, 3, restored.commitments);
     assert.equal(reconstructed.secretString, testSecret);
   });
+
+  // BDD-1189: Explicit Experimental Perimeter & EOS_VSS_DISALLOW_EXPERIMENTAL Fail-Closed Guard
+  it("BDD-1189: should stamp experimental security posture and fail closed when EOS_VSS_DISALLOW_EXPERIMENTAL=1", () => {
+    assert.equal(EosVerifiableSecretSharingCore.SECURITY_POSTURE, "EXPERIMENTAL_NON_CONSTANT_TIME_BIGINT");
+    assert.equal(EosVerifiableSecretSharingCore.APPROVED_FOR_PRODUCTION_SECRETS, false);
+
+    const deal = EosVerifiableSecretSharingCore.splitSecret(Buffer.from("PerimTest", "utf8"), 2, 3, "feldman");
+    assert.equal(deal.securityPosture, "EXPERIMENTAL_NON_CONSTANT_TIME_BIGINT");
+    assert.equal(deal.approvedForProductionSecrets, false);
+
+    const participantJson = EosVerifiableSecretSharingCore.serializeForParticipant(deal, 1);
+    const participantPayload = JSON.parse(participantJson);
+    assert.equal(participantPayload.securityPosture, "EXPERIMENTAL_NON_CONSTANT_TIME_BIGINT");
+    assert.equal(participantPayload.approvedForProductionSecrets, false);
+
+    const reconstructed = EosVerifiableSecretSharingCore.reconstruct(deal.shares.slice(0, 2), 2, deal.commitments);
+    assert.equal(reconstructed.secretString, "PerimTest");
+    assert.equal(reconstructed.securityPosture, "EXPERIMENTAL_NON_CONSTANT_TIME_BIGINT");
+    assert.equal(reconstructed.approvedForProductionSecrets, false);
+
+    // Legacy deals without explicit metadata stamp fail-safe posture on deserialize; forged approval fails closed
+    const legacyPayload = JSON.parse(EosVerifiableSecretSharingCore.serialize(deal));
+    delete legacyPayload.securityPosture;
+    delete legacyPayload.approvedForProductionSecrets;
+    const upgraded = EosVerifiableSecretSharingCore.deserialize(JSON.stringify(legacyPayload));
+    assert.equal(upgraded.securityPosture, "EXPERIMENTAL_NON_CONSTANT_TIME_BIGINT");
+    assert.equal(upgraded.approvedForProductionSecrets, false);
+
+    assert.throws(
+      () =>
+        EosVerifiableSecretSharingCore.deserialize(
+          JSON.stringify({ ...legacyPayload, approvedForProductionSecrets: true }),
+        ),
+      /cannot claim production secret approval/,
+    );
+    assert.throws(
+      () =>
+        EosVerifiableSecretSharingCore.deserialize(
+          JSON.stringify({ ...legacyPayload, securityPosture: "FIPS_140_3_AUDITED" }),
+        ),
+      /invalid security posture/,
+    );
+
+    const previousEnv = process.env.EOS_VSS_DISALLOW_EXPERIMENTAL;
+    process.env.EOS_VSS_DISALLOW_EXPERIMENTAL = "1";
+    try {
+      assert.throws(
+        () => EosVerifiableSecretSharingCore.splitSecret("blocked", 2, 3, "pedersen"),
+        /EOS_VSS_DISALLOW_EXPERIMENTAL=1/,
+      );
+      assert.throws(
+        () => EosVerifiableSecretSharingCore.reconstruct(deal.shares.slice(0, 2), 2, deal.commitments),
+        /EOS_VSS_DISALLOW_EXPERIMENTAL=1/,
+      );
+    } finally {
+      if (previousEnv === undefined) {
+        delete process.env.EOS_VSS_DISALLOW_EXPERIMENTAL;
+      } else {
+        process.env.EOS_VSS_DISALLOW_EXPERIMENTAL = previousEnv;
+      }
+    }
+  });
+
+  // BDD-1190: Fast Input-Validation & Boundary Error Paths (coverage without slow modPow loops)
+  it("BDD-1190: should validate algebraic bounds, commitment packages, and serialization error paths", () => {
+    assert.equal(EosVerifiableSecretSharingCore.modPow(4n, -1n, 11n), 3n);
+    assert.throws(() => EosVerifiableSecretSharingCore.modInverse(4n, 8n), /not coprime/);
+    assert.throws(() => EosVerifiableSecretSharingCore.randomScalar(1n), /greater than 1/);
+    assert.throws(() => EosVerifiableSecretSharingCore.randomScalar(1n << 4000n), /exceeds the supported group size/);
+
+    assert.equal(EosVerifiableSecretSharingCore.secretToScalar(7n), 7n);
+    assert.throws(() => EosVerifiableSecretSharingCore.secretToScalar(0n), /range \[1, q - 1\]/);
+    assert.throws(() => EosVerifiableSecretSharingCore.secretToScalar(123), /string, Buffer, or bigint/);
+    assert.throws(() => EosVerifiableSecretSharingCore.secretToScalar(""), /between 1 and/);
+    assert.throws(() => EosVerifiableSecretSharingCore.secretToScalar(Buffer.alloc(400, 1)), /between 1 and/);
+    assert.throws(() => EosVerifiableSecretSharingCore.secretToScalar(Buffer.from([0])), /scalar in the range/);
+
+    assert.equal(EosVerifiableSecretSharingCore.scalarToString(1n), undefined);
+    assert.equal(EosVerifiableSecretSharingCore.scalarToString(0x41n), "A");
+
+    assert.throws(() => EosVerifiableSecretSharingCore.splitSecret("ok", 1, 2), /2 <= k <= n/);
+    assert.throws(() => EosVerifiableSecretSharingCore.splitSecret("ok", 2, 65), /exceeds the configured limit/);
+    assert.throws(() => EosVerifiableSecretSharingCore.splitSecret("ok", 2.5, 3), /safe integers/);
+    assert.throws(() => EosVerifiableSecretSharingCore.splitSecret("ok", 2, 3, "shamir"), /Unsupported VSS scheme/);
+
+    const fastDeal = EosVerifiableSecretSharingCore.splitSecret(7n, 2, 2, "feldman");
+    const c = fastDeal.commitments;
+
+    assert.equal(EosVerifiableSecretSharingCore.verifyShare(null, c).valid, false);
+    assert.equal(EosVerifiableSecretSharingCore.verifyShare({ id: 99, valueHex: "1" }, c).valid, false);
+    assert.equal(EosVerifiableSecretSharingCore.verifyShare({ id: 1, valueHex: "1" }, null).valid, false);
+    assert.equal(
+      EosVerifiableSecretSharingCore.verifyShare(
+        { id: 1, valueHex: "1" },
+        { ...c, scheme: "pedersen", generatorHHex: "9" },
+      ).valid,
+      false,
+    );
+    assert.equal(
+      EosVerifiableSecretSharingCore.verifyShare({ id: 1, valueHex: "1" }, { ...c, primePHex: "b" }).valid,
+      false,
+    );
+    assert.equal(
+      EosVerifiableSecretSharingCore.verifyShare(
+        { id: 1, valueHex: "1" },
+        { ...c, scheme: "pedersen", generatorHHex: "5" },
+      ).valid,
+      false,
+    );
+    assert.equal(
+      EosVerifiableSecretSharingCore.verifyShare({ id: 1, valueHex: "1" }, { ...c, generatorHHex: "9" }).valid,
+      false,
+    );
+    assert.equal(
+      EosVerifiableSecretSharingCore.verifyShare(
+        { id: 1, valueHex: "1" },
+        { ...c, commitmentsHex: ["2", c.commitmentsHex[1]] },
+      ).valid,
+      false,
+    );
+    assert.equal(
+      EosVerifiableSecretSharingCore.verifyShare(
+        { id: 1, valueHex: "1" },
+        { ...c, commitmentsHex: [c.commitmentsHex[0]] },
+      ).valid,
+      false,
+    );
+
+    assert.throws(() => EosVerifiableSecretSharingCore.reconstruct([], 1), /Threshold k must be/);
+    assert.throws(() => EosVerifiableSecretSharingCore.reconstruct(null, 2), /Shares must be an array/);
+    assert.throws(() => EosVerifiableSecretSharingCore.reconstruct(fastDeal.shares, 3, c), /must match the commitment/);
+    assert.throws(
+      () => EosVerifiableSecretSharingCore.reconstruct([{ id: 0, valueHex: "1" }, fastDeal.shares[1]], 2),
+      /positive safe integers/,
+    );
+    assert.throws(
+      () => EosVerifiableSecretSharingCore.reconstruct([fastDeal.shares[0], fastDeal.shares[0]], 2),
+      /Duplicate participant share id/,
+    );
+
+    assert.throws(
+      () => EosVerifiableSecretSharingCore.serializeForParticipant({ ...fastDeal, k: 3 }, 1),
+      /2 <= k <= n|must match|Commitment count/,
+    );
+    assert.throws(
+      () => EosVerifiableSecretSharingCore.serializeForParticipant({ ...fastDeal, scheme: "pedersen" }, 1),
+      /must match/,
+    );
+    assert.throws(
+      () => EosVerifiableSecretSharingCore.serializeForParticipant({ ...fastDeal, shares: [] }, 1),
+      /exactly n shares/,
+    );
+    assert.throws(() => EosVerifiableSecretSharingCore.serializeForParticipant(fastDeal, 99), /outside the declared/);
+    assert.throws(
+      () =>
+        EosVerifiableSecretSharingCore.serializeForParticipant(
+          { ...fastDeal, shares: [{ id: 1, valueHex: "1" }, fastDeal.shares[1]] },
+          1,
+        ),
+      /No valid share exists/,
+    );
+
+    assert.throws(() => EosVerifiableSecretSharingCore.deserialize(123), /no larger than 1 MiB/);
+    assert.throws(() => EosVerifiableSecretSharingCore.deserialize("[]"), /Invalid VssDeal JSON object/);
+    assert.throws(
+      () => EosVerifiableSecretSharingCore.deserialize(JSON.stringify({ ...fastDeal, scheme: "bad" })),
+      /Invalid VSS scheme/,
+    );
+    assert.throws(
+      () => EosVerifiableSecretSharingCore.deserialize(JSON.stringify({ ...fastDeal, shares: [] })),
+      /inconsistent/,
+    );
+    assert.throws(
+      () =>
+        EosVerifiableSecretSharingCore.deserialize(
+          JSON.stringify({ ...fastDeal, shares: [fastDeal.shares[0], fastDeal.shares[0]] }),
+        ),
+      /invalid or duplicate participant id/,
+    );
+    assert.throws(
+      () =>
+        EosVerifiableSecretSharingCore.deserialize(
+          JSON.stringify({
+            ...fastDeal,
+            shares: [{ ...fastDeal.shares[0], blindingHex: "1" }, fastDeal.shares[1]],
+          }),
+        ),
+      /cannot contain a blinding scalar/,
+    );
+  });
 });

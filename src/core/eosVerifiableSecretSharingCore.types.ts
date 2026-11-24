@@ -6,6 +6,7 @@
  */
 
 export type VssScheme = "feldman" | "pedersen";
+export type VssSecurityPosture = "EXPERIMENTAL_NON_CONSTANT_TIME_BIGINT";
 
 export interface VssShare {
   /** 1-based participant identifier */
@@ -38,6 +39,8 @@ export interface VssDeal {
   n: number;
   shares: VssShare[];
   commitments: VssCommitmentPackage;
+  securityPosture: VssSecurityPosture;
+  approvedForProductionSecrets: false;
 }
 
 export interface VssVerificationResult {
@@ -51,4 +54,6 @@ export interface VssReconstructionResult {
   secretString?: string;
   cheatersIdentified: number[];
   validShareCount: number;
+  securityPosture: VssSecurityPosture;
+  approvedForProductionSecrets: false;
 }

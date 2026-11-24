@@ -9,6 +9,7 @@
 import { randomBytes } from "node:crypto";
 import type {
   VssScheme,
+  VssSecurityPosture,
   VssShare,
   VssCommitmentPackage,
   VssDeal,
@@ -42,6 +43,9 @@ export const VSS_GENERATOR_G = 4n;
 export const VSS_GENERATOR_H = 9n;
 /** Resource cap for a single share split or reconstruction operation. */
 export const VSS_MAX_SHARES = 64;
+/** Explicit non-constant-time posture marker; this module is experimental. */
+export const VSS_SECURITY_POSTURE: VssSecurityPosture = "EXPERIMENTAL_NON_CONSTANT_TIME_BIGINT";
+export const VSS_APPROVED_FOR_PRODUCTION_SECRETS = false as const;
 const VSS_MAX_SECRET_BYTES = 383;
 const VSS_MAX_GROUP_BITS = VSS_SUBGROUP_ORDER_Q.toString(2).length;
 
@@ -50,6 +54,16 @@ export class EosVerifiableSecretSharingCore {
   public static readonly Q: bigint = VSS_SUBGROUP_ORDER_Q;
   public static readonly G: bigint = VSS_GENERATOR_G;
   public static readonly H: bigint = VSS_GENERATOR_H;
+  public static readonly SECURITY_POSTURE: VssSecurityPosture = VSS_SECURITY_POSTURE;
+  public static readonly APPROVED_FOR_PRODUCTION_SECRETS = VSS_APPROVED_FOR_PRODUCTION_SECRETS;
+
+  private static assertExperimentalAllowed(): void {
+    if (process.env.EOS_VSS_DISALLOW_EXPERIMENTAL === "1") {
+      throw new Error(
+        "EosVerifiableSecretSharingCore is experimental (non-constant-time BigInt) and disabled by EOS_VSS_DISALLOW_EXPERIMENTAL=1.",
+      );
+    }
+  }
 
   /**
    * Modular exponentiation: (base^exp) mod modulus.
@@ -165,6 +179,7 @@ export class EosVerifiableSecretSharingCore {
     n: number,
     scheme: VssScheme = "pedersen",
   ): VssDeal {
+    this.assertExperimentalAllowed();
     this.assertVssConfig(k, n);
     if (scheme !== "feldman" && scheme !== "pedersen") {
       throw new TypeError("Unsupported VSS scheme.");
@@ -255,6 +270,8 @@ export class EosVerifiableSecretSharingCore {
       n,
       shares,
       commitments: commitmentPackage,
+      securityPosture: VSS_SECURITY_POSTURE,
+      approvedForProductionSecrets: VSS_APPROVED_FOR_PRODUCTION_SECRETS,
     };
   }
 
@@ -285,6 +302,7 @@ export class EosVerifiableSecretSharingCore {
     k: number,
     commitments?: VssCommitmentPackage,
   ): VssReconstructionResult {
+    this.assertExperimentalAllowed();
     if (!Number.isSafeInteger(k) || k < 2 || k > VSS_MAX_SHARES) {
       throw new RangeError("Threshold k must be an integer from 2 to " + VSS_MAX_SHARES + ".");
     }
@@ -366,6 +384,8 @@ export class EosVerifiableSecretSharingCore {
       secretString: this.scalarToString(secretScalar),
       cheatersIdentified: cheaters,
       validShareCount: distinctShares.length,
+      securityPosture: VSS_SECURITY_POSTURE,
+      approvedForProductionSecrets: VSS_APPROVED_FOR_PRODUCTION_SECRETS,
     };
   }
 
@@ -403,6 +423,8 @@ export class EosVerifiableSecretSharingCore {
       n: deal.n,
       share,
       commitments: deal.commitments,
+      securityPosture: VSS_SECURITY_POSTURE,
+      approvedForProductionSecrets: VSS_APPROVED_FOR_PRODUCTION_SECRETS,
     });
   }
 
@@ -419,6 +441,12 @@ export class EosVerifiableSecretSharingCore {
       throw new TypeError("Invalid VssDeal JSON object.");
     }
     const deal = parsed as Partial<VssDeal>;
+    if (deal.approvedForProductionSecrets !== undefined && deal.approvedForProductionSecrets !== false) {
+      throw new TypeError("Serialized VSS deal cannot claim production secret approval.");
+    }
+    if (deal.securityPosture !== undefined && deal.securityPosture !== VSS_SECURITY_POSTURE) {
+      throw new TypeError("Serialized VSS deal declares an invalid security posture.");
+    }
     this.assertVssConfig(deal.k, deal.n);
     if (deal.scheme !== "feldman" && deal.scheme !== "pedersen") {
       throw new TypeError("Invalid VSS scheme.");
@@ -440,7 +468,11 @@ export class EosVerifiableSecretSharingCore {
         throw new TypeError("Feldman shares cannot contain a blinding scalar.");
       }
     }
-    return deal as VssDeal;
+    return {
+      ...(deal as VssDeal),
+      securityPosture: VSS_SECURITY_POSTURE,
+      approvedForProductionSecrets: VSS_APPROVED_FOR_PRODUCTION_SECRETS,
+    };
   }
 
   private static assertVssConfig(k: unknown, n: unknown): asserts k is number {
