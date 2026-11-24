@@ -21,7 +21,9 @@ test("health prints the CLI banner before the status report", () => {
 test("O(1) CLI dispatch resolves version/help cleanly and EosMcpServer defers corpus/graph sync until RAG/graph calls", () => {
   const cli = fileURLToPath(new URL("../bin/eos.mjs", import.meta.url));
   const ver = execFileSync(process.execPath, [cli, "version"], { encoding: "utf8" });
-  assert.match(ver, /v\d+\.\d+\.\d+/);
+  assert.match(ver, /Glorian System v\d+\.\d+\.\d+/);
+  const verFlag = execFileSync(process.execPath, [cli, "--version"], { encoding: "utf8" });
+  assert.match(verFlag, /Glorian System v\d+\.\d+\.\d+/);
 
   const server = new EosMcpServer(process.cwd());
   assert.equal(server["corpusInitialized"], false);
@@ -51,4 +53,7 @@ test("O(1) CLI dispatch resolves version/help cleanly and EosMcpServer defers co
   assert.ok(searchRes.result.content[0].text.length > 0);
   assert.equal(server["corpusInitialized"], true);
   assert.equal(server["graphInitialized"], false);
+
+  const meshOut = execFileSync(process.execPath, [cli, "ml-dsa:keygen"], { encoding: "utf8" });
+  assert.ok(meshOut.length > 0);
 });

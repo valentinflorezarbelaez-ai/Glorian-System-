@@ -1,5 +1,5 @@
 {
-  "main": "bin/eos.mjs",
+  "main": "bin/sea-bootstrap.cjs",
   "output": "dist/eos.blob",
   "disableExperimentalSEAWarning": true,
   "useSnapshot": false,

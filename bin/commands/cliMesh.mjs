@@ -30,8 +30,22 @@ const meshHandlers = [
   { file: "./cliJarvisPolyglotFrontierMesh.mjs", handler: "handleJarvisPolyglotFrontierCommands", sig: "cmd_ctx" },
 ];
 
-const PREFIX_ROUTE = [
-  ["zk:", "./cliZkR1csMesh.mjs"],
+const MESH_ENTRY_BY_FILE = new Map(meshHandlers.map((entry) => [entry.file, entry]));
+
+const EXACT_MESH_ROUTE = new Map([
+  ["ship", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["fleet:ship", "./cliJarvisPolyglotFrontierMesh.mjs"],
+]);
+
+const PREFIX_MESH_ROUTE = new Map([
+  ["mcts", "./cliFrontierMesh.mjs"],
+  ["tla", "./cliFrontierMesh.mjs"],
+  ["raft", "./cliFrontierMesh.mjs"],
+  ["compress", "./cliFrontierMesh.mjs"],
+  ["decompress", "./cliFrontierMesh.mjs"],
+  ["ans", "./cliFrontierMesh.mjs"],
+  ["autodiff", "./cliFrontierMesh.mjs"],
+  ["anomaly", "./cliFrontierMesh.mjs"],
   ["r1cs", "./cliZkR1csMesh.mjs"],
   ["crdt", "./cliCrdtMesh.mjs"],
   ["mmr", "./cliMmrMesh.mjs"],
@@ -39,22 +53,58 @@ const PREFIX_ROUTE = [
   ["smt", "./cliSmtMesh.mjs"],
   ["frost", "./cliFrostMesh.mjs"],
   ["kzg", "./cliKzgMesh.mjs"],
-  ["mlkem", "./cliMlKemMesh.mjs"],
-  ["bulletproof", "./cliBulletproofsMesh.mjs"],
+  ["ml-kem", "./cliMlKemMesh.mjs"],
+  ["bp", "./cliBulletproofsMesh.mjs"],
   ["hotstuff", "./cliHotStuffMesh.mjs"],
   ["tensor", "./cliTensorMesh.mjs"],
-  ["fleet:", "./cliFleetMesh.mjs"],
-  ["otlp", "./cliOtlpMesh.mjs"],
-  ["mldsa", "./cliMlDsaMesh.mjs"],
+  ["fleet", "./cliFleetMesh.mjs"],
+  ["trace", "./cliOtlpMesh.mjs"],
+  ["ml-dsa", "./cliMlDsaMesh.mjs"],
   ["congestion", "./cliCongestionMesh.mjs"],
   ["trie", "./cliTrieMesh.mjs"],
   ["timelock", "./cliTimeLockMesh.mjs"],
   ["cuckoo", "./cliCuckooMesh.mjs"],
   ["hll", "./cliHllMesh.mjs"],
   ["vss", "./cliVssMesh.mjs"],
-  ["hygiene:", "./cliJarvisPolyglotFrontierMesh.mjs"],
-  ["diff:", "./cliJarvisPolyglotFrontierMesh.mjs"],
-];
+  ["jarvis", "./cliJarvisSdlcMesh.mjs"],
+  ["polyglot", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["bridge", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["staff", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["diff", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["repomap", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["pbt", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["contract", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["sarif", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["attest", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["bench", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["eda", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["apollo", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["aladdin", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["roofline", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["spc", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["kalman", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["qec", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["leo", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["grid", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["bio", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["fusion", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["litho", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["privacy", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["lob", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["dvfs", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["beam", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["nav", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["cryo", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["dwdm", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["aero", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["rtgs", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["clock", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["insar", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["mpd", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["qnet", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["evm", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["hygiene", "./cliJarvisPolyglotFrontierMesh.mjs"],
+]);
 
 async function invokeMeshEntry(entry, commandContext) {
   const mod = await import(entry.file);
@@ -67,10 +117,11 @@ async function invokeMeshEntry(entry, commandContext) {
 
 export async function handleMeshCommands(commandContext) {
   const cmd = String(commandContext.command || "").toLowerCase();
-  const matchedPrefix = PREFIX_ROUTE.find(([prefix]) => cmd.startsWith(prefix));
-  const fastFile = matchedPrefix?.[1];
+  const colonIdx = cmd.indexOf(":");
+  const ns = colonIdx > 0 ? cmd.slice(0, colonIdx) : "";
+  const fastFile = EXACT_MESH_ROUTE.get(cmd) ?? (ns ? PREFIX_MESH_ROUTE.get(ns) : undefined);
   if (fastFile) {
-    const fastEntry = meshHandlers.find((e) => e.file === fastFile);
+    const fastEntry = MESH_ENTRY_BY_FILE.get(fastFile);
     if (fastEntry && (await invokeMeshEntry(fastEntry, commandContext))) return true;
   }
   for (const entry of meshHandlers) {

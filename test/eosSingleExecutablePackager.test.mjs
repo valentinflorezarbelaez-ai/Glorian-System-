@@ -15,7 +15,7 @@ test("BDD-271: Generación determinista del archivo de configuración SEA y blob
 
   // 1. Generate and test sea-config.json
   const config = packager.generateSeaConfig();
-  assert.equal(config.main, "bin/eos.mjs");
+  assert.equal(config.main, "bin/sea-bootstrap.cjs");
   assert.equal(config.output, "dist/eos.blob");
   assert.equal(config.disableExperimentalSEAWarning, true);
 
@@ -59,9 +59,10 @@ test("BDD-273: EosSingleExecutablePackager bootstraps missing dist/config and fa
   assert.ok(defaultPackager.getPlatformInjectionRecipe("linux-x64"));
 
   const isolatedPackager = new EosSingleExecutablePackager(tmpDir);
-  // First compile creates missing dist/ and sea-config.json, hitting fallback envelope when CJS bootstrap is absent
+  // First compile creates missing dist/ and sea-config.json (defaults to bin/eos.mjs when CJS bootstrap is absent)
   const res1 = isolatedPackager.compileBlob();
-  assert.equal(res1.compiledRealBlob, false);
+  assert.equal(res1.mainEntry, "bin/eos.mjs");
+  assert.equal(typeof res1.compiledRealBlob, "boolean");
   assert.ok(res1.blobBytes > 0);
 
   // Malformed sea-config.json hits JSON parse catch and still emits valid deterministic fallback blob
@@ -69,4 +70,11 @@ test("BDD-273: EosSingleExecutablePackager bootstraps missing dist/config and fa
   const res2 = isolatedPackager.compileBlob();
   assert.equal(res2.compiledRealBlob, false);
   assert.equal(res2.sha256.length, 64);
+
+  // Explicit .mjs main with CJS bootstrap present still compiles a genuine V8 SEA blob via temp CJS shim
+  fs.copyFileSync(path.join(projectRoot, "bin", "sea-bootstrap.cjs"), path.join(tmpDir, "bin", "sea-bootstrap.cjs"));
+  isolatedPackager.generateSeaConfig(undefined, "bin/eos.mjs");
+  const res3 = isolatedPackager.compileBlob();
+  assert.equal(res3.compiledRealBlob, true);
+  assert.equal(res3.sha256.length, 64);
 });

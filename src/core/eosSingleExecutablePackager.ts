@@ -55,8 +55,11 @@ export class EosSingleExecutablePackager {
    */
   public generateSeaConfig(customPath?: string, customMain?: string): SeaConfig {
     const configPath = customPath || path.join(this.projectRoot, "sea-config.json");
+    const defaultMain = fs.existsSync(path.join(this.projectRoot, "bin", "sea-bootstrap.cjs"))
+      ? "bin/sea-bootstrap.cjs"
+      : "bin/eos.mjs";
     const config: SeaConfig = {
-      main: customMain || "bin/eos.mjs",
+      main: customMain || defaultMain,
       output: "dist/eos.blob",
       disableExperimentalSEAWarning: true,
       useSnapshot: false,

@@ -60,9 +60,6 @@ const FAST_ROUTE_BY_COMMAND = {
   help: ["kernel", "handleKernelCommands"],
   "--help": ["kernel", "handleKernelCommands"],
   "-h": ["kernel", "handleKernelCommands"],
-  version: ["kernel", "handleKernelCommands"],
-  "--version": ["kernel", "handleKernelCommands"],
-  "-v": ["kernel", "handleKernelCommands"],
   verify: ["core", "handleCoreCommands"],
   turbo: ["core", "handleCoreCommands"],
   fast: ["core", "handleCoreCommands"],
@@ -103,6 +100,11 @@ const FAST_ROUTE_BY_COMMAND = {
 };
 
 async function main() {
+  if (command === "version" || command === "--version" || command === "-v") {
+    console.log(`Glorian System v${packageMetadata.version} (EOS Control Plane)`);
+    return;
+  }
+
   const fastTarget = FAST_ROUTE_BY_COMMAND[command];
   if (fastTarget) {
     const [fastKey, fastExport] = fastTarget;

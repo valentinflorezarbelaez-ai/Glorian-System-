@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:1e8d55fc-ff94-5176-b732-69142e107769",
+  "serialNumber": "urn:uuid:7f3f44c0-9776-5115-82e2-3ea62e8e345f",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-03-29T15:04:28.000Z",
+    "timestamp": "2027-08-22T22:40:00.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -6539,7 +6539,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b8ca75b5510a517f776ce5cc50ee678b477d947ca293f142717297fef9b32540"
+          "content": "c4ca447a96bbc0db9094f843e3b5fc2d2710b753c143404d3fb40928bdd82af1"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosSingleExecutablePackager.ts"
@@ -8307,7 +8307,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "970dcca94bfbb96793405adf4d586f43ace42fdbd57702de9583c2187490ca27"
+          "content": "54c822575cf11cb104df4397850a1c1efd06763bd9e7ceda9fa23c992ed075f9"
         }
       ],
       "description": "Glorian System root entrypoint: bin/eos.mjs"
@@ -8352,5 +8352,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "0c3d7c6b038bc08509ffb9d5e9622872041b5d705bc12c3c91e93e4d0a0ab67c"
+  "sha256Receipt": "048da3b7bd456475432c90eb8f032cbbeb446c65dd69b4abc9a11085e5036826"
 }

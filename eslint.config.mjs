@@ -53,6 +53,10 @@ export default [
       "dist/**",
       ".eos/**",
       ".coverage/**",
+      ".worktrees/**",
+      ".fleet-siblings/**",
+      ".claude/**",
+      ".qoder/**",
       // Generated / vendored JS that we don't own
       "js/eos.js",
       "js/eos-cli-catalog.js",
