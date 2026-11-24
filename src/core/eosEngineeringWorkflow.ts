@@ -35,6 +35,33 @@ interface WorkflowRecord {
   readonly appliedHead?: string;
   readonly appliedAt?: string;
   readonly closedAt?: string;
+  readonly recordDigestSha256?: string;
+}
+
+const TRANSIENT_RENAME_CODES = new Set(["EPERM", "EBUSY", "EACCES"]);
+
+function computeRecordDigest(record: WorkflowRecord): string {
+  const canonical = {
+    schemaVersion: record.schemaVersion,
+    id: record.id,
+    repoRoot: record.repoRoot,
+    task: record.task,
+    branchName: record.branchName,
+    baseBranch: record.baseBranch,
+    baseCommit: record.baseCommit,
+    worktreePath: record.worktreePath,
+    createdAt: record.createdAt,
+    ...(record.validationStatus !== undefined ? { validationStatus: record.validationStatus } : {}),
+    ...(record.validationHead !== undefined ? { validationHead: record.validationHead } : {}),
+    ...(record.validationReceipt !== undefined ? { validationReceipt: record.validationReceipt } : {}),
+    ...(record.reviewedHead !== undefined ? { reviewedHead: record.reviewedHead } : {}),
+    ...(record.reviewedDiffSha256 !== undefined ? { reviewedDiffSha256: record.reviewedDiffSha256 } : {}),
+    ...(record.reviewedAt !== undefined ? { reviewedAt: record.reviewedAt } : {}),
+    ...(record.appliedHead !== undefined ? { appliedHead: record.appliedHead } : {}),
+    ...(record.appliedAt !== undefined ? { appliedAt: record.appliedAt } : {}),
+    ...(record.closedAt !== undefined ? { closedAt: record.closedAt } : {}),
+  };
+  return crypto.createHash("sha256").update(JSON.stringify(canonical)).digest("hex");
 }
 
 export interface EngineeringWorkflowPlan {
@@ -546,10 +573,23 @@ export class EosEngineeringWorkflow {
     const currentDiffHash = crypto.createHash("sha256").update(currentDiff).digest("hex");
     if (currentDiffHash !== confirmedDiffSha256)
       throw new Error("The diff changed after review; review it again before approval.");
-    if (
-      this.gitText(record.repoRoot, ["branch", "--show-current"]) !== record.baseBranch ||
-      this.gitText(record.repoRoot, ["rev-parse", "HEAD"]) !== record.baseCommit
-    ) {
+    const currentBranch = this.gitText(record.repoRoot, ["branch", "--show-current"]);
+    const currentHead = this.gitText(record.repoRoot, ["rev-parse", "HEAD"]);
+    if (currentBranch === record.baseBranch && currentHead === branchHead) {
+      if (this.gitStatus(record.repoRoot).length > 0) {
+        throw new Error("The base checkout must be clean before applying the reviewed workflow.");
+      }
+      // Idempotent post-merge crash recovery when `git merge --ff-only` succeeded before record seal.
+      execFileSync("git", ["merge-base", "--is-ancestor", record.baseCommit, branchHead], {
+        cwd: record.repoRoot,
+        stdio: ["ignore", "pipe", "pipe"],
+        env: getCleanGitEnv(),
+        windowsHide: true,
+      });
+      this.writeRecord({ ...record, appliedHead: branchHead, appliedAt: new Date().toISOString() });
+      return branchHead;
+    }
+    if (currentBranch !== record.baseBranch || currentHead !== record.baseCommit) {
       throw new Error("The base checkout changed after review; refusing to merge.");
     }
     if (this.gitStatus(record.repoRoot).length > 0)
@@ -649,10 +689,25 @@ export class EosEngineeringWorkflow {
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
     }
+    const sealed: WorkflowRecord = { ...record, recordDigestSha256: computeRecordDigest(record) };
     const temporary = `${target}.${crypto.randomUUID()}.tmp`;
-    fs.writeFileSync(temporary, `${JSON.stringify(record, null, 2)}\n`, { encoding: "utf8", flag: "wx", mode: 0o600 });
+    const fd = fs.openSync(temporary, "wx", 0o600);
     try {
-      fs.renameSync(temporary, target);
+      fs.writeFileSync(fd, `${JSON.stringify(sealed, null, 2)}\n`, "utf8");
+      fs.fsyncSync(fd);
+    } finally {
+      fs.closeSync(fd);
+    }
+    try {
+      for (let attempt = 0; attempt < 4; attempt++) {
+        try {
+          fs.renameSync(temporary, target);
+          return;
+        } catch (error) {
+          const code = (error as NodeJS.ErrnoException).code || "";
+          if (!TRANSIENT_RENAME_CODES.has(code) || attempt === 3) throw error;
+        }
+      }
     } catch (error) {
       try {
         fs.unlinkSync(temporary);
@@ -667,7 +722,12 @@ export class EosEngineeringWorkflow {
     const stat = fs.lstatSync(recordFile);
     if (!stat.isFile() || stat.isSymbolicLink() || stat.size > 64 * 1024)
       throw new Error("Workflow state is not a bounded regular file.");
-    const value: unknown = JSON.parse(fs.readFileSync(recordFile, "utf8"));
+    let value: unknown;
+    try {
+      value = JSON.parse(fs.readFileSync(recordFile, "utf8"));
+    } catch {
+      throw new Error("Workflow state JSON is corrupted or truncated.");
+    }
     if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Workflow state is invalid.");
     const record = value as WorkflowRecord;
     if (
@@ -680,6 +740,9 @@ export class EosEngineeringWorkflow {
       !/^[a-f0-9]{40,64}$/.test(record.baseCommit)
     ) {
       throw new Error("Workflow state does not match this repository or has an unsupported format.");
+    }
+    if (typeof record.recordDigestSha256 !== "string" || record.recordDigestSha256 !== computeRecordDigest(record)) {
+      throw new Error("Workflow state integrity digest mismatch; refusing tampered state.");
     }
     if (record.branchName !== `eos/${safeTaskSlug(record.task)}-${workflowId.slice(0, 8)}`) {
       throw new Error("Workflow branch name does not match its recorded task and ID.");

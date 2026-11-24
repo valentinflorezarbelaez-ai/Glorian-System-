@@ -31,13 +31,14 @@ Branch: `feat/glorian-engine-bigtech-hardening` | Delivery: `ask-on-risk` (forec
 
 ## Tasks
 
-- [x] **T1** (`S1`) | Route: `inline` | Risk: `High (item 2: import-boundary security guard; item 3: shared AST lexer)` | Status: `done` | Evidence: RED (`eosSemanticGraph.test.mjs` ghost exports) -> GREEN (`coverage-ratchet` 100%/100% `eosTypeScriptAstAnalyzer.ts`, 98.76%/93.44% `eosArchitectureGuard.ts`, 96.78%/89.11% `eosSemanticGraph.ts`, `boundary:check` 636/636 PASS, `consumers:audit` 636/636 PASS, `typecheck` PASS)
-- [ ] **T2** (`S2`) | Route: `inline` (sequential ordered pipeline; shares `eosContainerSandbox` surface with T3) | Status: `in_progress` | Evidence: pending RED/GREEN
-- [ ] **T3** (`S3`) | Route: `inline` (sequential ordered pipeline; builds on T2 sandbox changes) | Status: `pending` | Evidence: pending
+- [x] **T1** (`S1`) | Route: `inline` | Risk: `High (item 2: import-boundary security guard; item 3: shared AST lexer)` | Status: `done` | Evidence: `d4905227`, RED -> GREEN (`coverage-ratchet` 100%/100% `eosTypeScriptAstAnalyzer.ts`, 98.76%/93.44% `eosArchitectureGuard.ts`, 96.78%/89.11% `eosSemanticGraph.ts`, `boundary:check` 636/636 PASS, `consumers:audit` 636/636 PASS, `typecheck` PASS)
+- [x] **T2** (`S2`) | Route: `inline` | Risk: `High (item 2: sandbox symlink/writeback security & workflow state integrity)` | Status: `done` | Evidence: RED (`BDD-FLOW-FAULT-001/002`, `test/eosContainerSandbox.test.mjs`) -> GREEN (`eosEngineeringWorkflow.ts` 100%/100%, `eosContainerSandbox.ts` 88.47%/81.25%, `eosContainerSandbox.types.ts` 94.33%/80.5%, `typecheck` PASS, `eslint` PASS)
+- [ ] **T3** (`S3`) | Route: `inline` (sequential ordered pipeline; builds on T2 sandbox changes) | Status: `in_progress` | Evidence: pending
 - [ ] **T4** (`S4`) | Route: `inline` (sequential ordered pipeline; finalizes CLI/MCP/SPEC-342 + supply-chain seal) | Status: `pending` | Evidence: pending
 
 ## Log
 
 - **L1 (2026-11-23)**: User request verbatim: `"si vamos en orden como harian los mejores la landing no la toque nunca mas solo el motor de glorian solo eso vamos como harian los mas grandes"`
 - **L2 (2026-11-23)**: Read-only explorer (`odd-explorer`) mapped repo gates: `<= 788` lines per `.ts`/`.mjs` (`SPEC-250`), `636/636` Layer-0 consumer moratorium (`SPEC-270`), freeze-pin lag `<= 2` commits, MCP `core` = `46` / `essential` = `18` locked invariants, and zero landing touches. Proceeding with T1..T4 in order on `feat/glorian-engine-bigtech-hardening`.
-- **L3 (2026-11-23)**: Completed T1 (`S1`). Unified static import/re-export/dynamic/require and symbol extraction onto `extractModuleSyntax` in `eosTypeScriptAstAnalyzer.ts` across `eosArchitectureGuard.ts`, `eosSemanticGraph.ts`, `import-boundary-gate.mjs`, and `verify-module-consumers.mjs`.
+- **L3 (2026-11-23)**: Completed T1 (`S1`, commit `d4905227`). Unified static import/re-export/dynamic/require and symbol extraction onto `extractModuleSyntax` in `eosTypeScriptAstAnalyzer.ts` across `eosArchitectureGuard.ts`, `eosSemanticGraph.ts`, `import-boundary-gate.mjs`, and `verify-module-consumers.mjs`.
+- **L4 (2026-11-23)**: Completed T2 (`S2`). Hardened `eosEngineeringWorkflow.ts` (`fsyncSync`, Windows rename retry, `recordDigestSha256`, idempotent post-merge recovery) and `eosContainerSandbox.ts`/`.types.ts` (post-run symlink check before exclusions, two-phase atomic `applyWorkspaceChanges` rollback, `SandboxCommandDeps`), verified via `BDD-FLOW-FAULT-001..003` and `BDD-SANDBOX-FAULT-001..002`.

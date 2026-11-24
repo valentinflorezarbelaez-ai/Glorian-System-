@@ -10,30 +10,33 @@ import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type {
-  DockerImageInfo,
-  FileRecord,
-  SandboxRunOptions,
-  SandboxRunReport,
-  SnapshotManifest,
+import {
+  applyWorkspaceChanges,
+  assertWorkspaceWithinLimits,
+  copyFilteredWorkspace,
+  isPathWithin,
+  recordsEqual,
+  scanWorkspace,
+  type DockerImageInfo,
+  type SandboxCommandDeps,
+  type SandboxContainerRuntime,
+  type SandboxRunOptions,
+  type SandboxRunReport,
 } from "./eosContainerSandbox.types.ts";
 
-export type { SandboxRunOptions, SandboxRunReport } from "./eosContainerSandbox.types.ts";
+export {
+  applyWorkspaceChanges,
+  copyFilteredWorkspace,
+  scanWorkspace,
+  type SandboxCommandDeps,
+  type SandboxContainerRuntime,
+  type SandboxRunOptions,
+  type SandboxRunReport,
+} from "./eosContainerSandbox.types.ts";
 
-const MAX_SNAPSHOT_FILES = 20_000;
-const MAX_SNAPSHOT_BYTES = 512 * 1024 * 1024;
-const MAX_SINGLE_FILE_BYTES = 64 * 1024 * 1024;
 const MAX_RUN_TIMEOUT_MS = 15 * 60 * 1000;
 const DEFAULT_RUN_TIMEOUT_MS = 10 * 60 * 1000;
 const MAX_RUN_DISK_CHECK_MS = 1_000;
-const EXCLUDED_DIRS_CSV =
-  ".git,.worktrees,.eos,.vercel,.next,.turbo,.terraform,.secrets,secret,secrets,credentials,coverage,node_modules";
-const EXCLUDED_DIRECTORIES = new Set(EXCLUDED_DIRS_CSV.split(","));
-
-function isPathWithin(root: string, candidate: string): boolean {
-  const relative = path.relative(root, candidate);
-  return relative === "" || (relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative));
-}
 
 function sanitizeDockerEnv(): NodeJS.ProcessEnv {
   const allowed =
@@ -48,7 +51,7 @@ function sanitizeDockerEnv(): NodeJS.ProcessEnv {
   return env;
 }
 
-function runDockerSync(args: readonly string[], timeout: number): string {
+function runDockerSyncDefault(args: readonly string[], timeout: number): string {
   const result = spawnSync("docker", [...args], {
     encoding: "utf8",
     timeout,
@@ -76,7 +79,7 @@ function validatePinnedImage(imageRef: string | undefined): DockerImageInfo {
   return { ref: imageRef, digest: `sha256:${match[2]}` };
 }
 
-function verifyDockerEngine(): void {
+function verifyDockerEngine(runDockerSync: (args: readonly string[], timeout: number) => string): void {
   const osType = runDockerSync(["info", "--format", "{{.OSType}}"], 8_000);
   if (osType !== "linux")
     throw new Error("EOS sandbox requires a Linux container engine; no fallback execution is allowed.");
@@ -151,305 +154,6 @@ function listRegisteredGitWorktrees(root: string): string {
   return result.stdout || "";
 }
 
-function isExcluded(relativePath: string, isDirectory: boolean): boolean {
-  const parts = relativePath.split(/[\\/]/).filter(Boolean);
-  const name = parts[parts.length - 1] || "";
-  const lower = name.toLowerCase();
-  if (isDirectory && EXCLUDED_DIRECTORIES.has(lower)) return true;
-  if (parts.slice(0, -1).some((part) => EXCLUDED_DIRECTORIES.has(part.toLowerCase()))) return true;
-  if (
-    [".ssh", ".aws", ".azure", ".kube", ".config", ".docker"].some((secretDir) =>
-      parts.some((part) => part.toLowerCase() === secretDir),
-    )
-  )
-    return true;
-  if (lower.startsWith(".env") && ![".env.example", ".env.sample", ".env.template"].includes(lower)) return true;
-  if (
-    ".npmrc,.pypirc,.netrc,credentials,credentials.json,credential.json,credentials.yaml,credentials.yml,secrets,secrets.json,secrets.yaml,secrets.yml,secret.json,secret.yaml,secret.yml,service-account.json,service_account.json,terraform.tfstate,terraform.tfstate.backup"
-      .split(",")
-      .includes(lower)
-  )
-    return true;
-  if (/(secret|credential|service.account|firebase.adminsdk).+\.(json|ya?ml)$/i.test(name)) return true;
-  if (/^(id_rsa|id_ed25519|id_ecdsa|id_dsa)(\.pub)?$/i.test(name)) return true;
-  if (/\.(pem|key|p8|ppk|p12|pfx|jks|keystore|secret|token|tfstate)$/i.test(name)) return true;
-  return false;
-}
-
-function recordFile(filePath: string, relativePath: string): FileRecord {
-  const stat = fs.statSync(filePath);
-  if (!stat.isFile()) throw new Error(`Non-regular file encountered in sandbox workspace: ${relativePath}`);
-  if (stat.size > MAX_SINGLE_FILE_BYTES) throw new RangeError(`File exceeds the 64 MiB sandbox limit: ${relativePath}`);
-  const content = fs.readFileSync(filePath);
-  return {
-    sha256: crypto.createHash("sha256").update(content).digest("hex"),
-    size: content.byteLength,
-    mode: stat.mode & 0o777,
-    sandboxMode: stat.mode & 0o777,
-  };
-}
-
-function scanWorkspace(
-  workspacePath: string,
-  baseline?: SnapshotManifest,
-  originalModes?: ReadonlyMap<string, number>,
-): SnapshotManifest {
-  const files = new Map<string, FileRecord>();
-  const symlinks: string[] = [];
-  let bytes = 0;
-  const walk = (directory: string, relativeDirectory: string) => {
-    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-      const relativePath = relativeDirectory ? `${relativeDirectory}/${entry.name}` : entry.name;
-      const absolutePath = path.join(directory, entry.name);
-      if (isExcluded(relativePath, entry.isDirectory())) continue;
-      if (entry.isSymbolicLink()) {
-        symlinks.push(relativePath);
-        continue;
-      }
-      if (entry.isDirectory()) {
-        walk(absolutePath, relativePath);
-        continue;
-      }
-      if (!entry.isFile()) continue;
-      const observed = recordFile(absolutePath, relativePath);
-      const prior = baseline?.files.get(relativePath);
-      const originalMode = originalModes?.get(relativePath);
-      const mode = prior && observed.sandboxMode === prior.sandboxMode ? prior.mode : (originalMode ?? observed.mode);
-      const record = { ...observed, mode };
-      files.set(relativePath, record);
-      bytes += record.size;
-      if (files.size > MAX_SNAPSHOT_FILES || bytes > MAX_SNAPSHOT_BYTES) {
-        throw new RangeError("Sandbox workspace exceeded its 20,000-file or 512 MiB limit.");
-      }
-    }
-  };
-  walk(workspacePath, "");
-  return { files, bytes, symlinks };
-}
-
-function assertWorkspaceWithinLimits(workspacePath: string): void {
-  let files = 0;
-  let bytes = 0;
-  const walk = (directory: string) => {
-    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-      const absolutePath = path.join(directory, entry.name);
-      if (entry.isSymbolicLink()) continue;
-      if (entry.isDirectory()) {
-        walk(absolutePath);
-      } else if (entry.isFile()) {
-        const size = fs.statSync(absolutePath).size;
-        files += 1;
-        bytes += size;
-        if (size > MAX_SINGLE_FILE_BYTES || files > MAX_SNAPSHOT_FILES || bytes > MAX_SNAPSHOT_BYTES) {
-          throw new RangeError("Sandbox workspace exceeded its live 64 MiB/file, 20,000-file, or 512 MiB budget.");
-        }
-      }
-    }
-  };
-  walk(workspacePath);
-}
-
-function makeWritableForContainer(targetPath: string, isDirectory: boolean): void {
-  if (process.platform === "win32") return;
-  try {
-    fs.chmodSync(targetPath, isDirectory ? 0o777 : (fs.statSync(targetPath).mode & 0o777) | 0o222);
-  } catch {}
-}
-
-function copyFilteredWorkspace(
-  sourceRoot: string,
-  destinationRoot: string,
-): {
-  readonly excludedPaths: string[];
-  readonly originalModes: ReadonlyMap<string, number>;
-} {
-  const excluded: string[] = [];
-  const originalModes = new Map<string, number>();
-  let files = 0;
-  let bytes = 0;
-  const gitResult = spawnSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", "-z"], {
-    cwd: sourceRoot,
-    encoding: "utf8",
-    timeout: 8_000,
-    windowsHide: true,
-    maxBuffer: 8 * 1024 * 1024,
-  });
-  if (gitResult.error || gitResult.status !== 0) {
-    throw new Error(
-      `Unable to enumerate non-ignored worktree files: ${gitResult.error?.message || gitResult.stderr || "git failed"}`,
-    );
-  }
-
-  for (const relativePath of (gitResult.stdout || "").split("\0").filter(Boolean)) {
-    if (isExcluded(relativePath, false)) {
-      excluded.push(relativePath);
-      continue;
-    }
-    const components = relativePath.split("/").filter(Boolean);
-    const sourcePath = path.resolve(sourceRoot, ...components);
-    if (!isPathWithin(sourceRoot, sourcePath) || sourcePath === sourceRoot) {
-      excluded.push(`${relativePath} (unsafe path)`);
-      continue;
-    }
-    let cursor = sourceRoot;
-    let unsafeParent = false;
-    for (const component of components.slice(0, -1)) {
-      cursor = path.join(cursor, component);
-      try {
-        const parentStat = fs.lstatSync(cursor);
-        if (!parentStat.isDirectory() || parentStat.isSymbolicLink()) unsafeParent = true;
-      } catch {
-        unsafeParent = true;
-      }
-      if (unsafeParent) break;
-    }
-    if (unsafeParent) {
-      excluded.push(`${relativePath} (symlink parent or missing path)`);
-      continue;
-    }
-    let stat: fs.Stats;
-    try {
-      stat = fs.lstatSync(sourcePath);
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === "ENOENT") continue;
-      throw error;
-    }
-    if (stat.isSymbolicLink() || !stat.isFile()) {
-      excluded.push(`${relativePath} (symlink or non-regular file)`);
-      continue;
-    }
-    if (stat.size > MAX_SINGLE_FILE_BYTES)
-      throw new RangeError(`File exceeds the 64 MiB sandbox limit: ${relativePath}`);
-    files += 1;
-    bytes += stat.size;
-    if (files > MAX_SNAPSHOT_FILES || bytes > MAX_SNAPSHOT_BYTES) {
-      throw new RangeError("Sandbox input exceeded its 20,000-file or 512 MiB limit.");
-    }
-    const destinationPath = path.resolve(destinationRoot, ...components);
-    if (!isPathWithin(destinationRoot, destinationPath)) throw new Error(`Unsafe destination path: ${relativePath}`);
-    fs.mkdirSync(path.dirname(destinationPath), { recursive: true, mode: 0o777 });
-    fs.copyFileSync(sourcePath, destinationPath, fs.constants.COPYFILE_EXCL);
-    originalModes.set(relativePath, stat.mode & 0o777);
-    try {
-      fs.chmodSync(destinationPath, stat.mode & 0o777);
-    } catch {}
-    makeWritableForContainer(destinationPath, false);
-    for (
-      let directory = path.dirname(destinationPath);
-      isPathWithin(destinationRoot, directory) && directory !== destinationRoot;
-      directory = path.dirname(directory)
-    ) {
-      makeWritableForContainer(directory, true);
-    }
-  }
-  makeWritableForContainer(destinationRoot, true);
-  return { excludedPaths: excluded, originalModes };
-}
-
-function recordsEqual(a: FileRecord | undefined, b: FileRecord | undefined): boolean {
-  return a === b || (!!a && !!b && a.sha256 === b.sha256 && a.mode === b.mode);
-}
-
-function targetForRelativePath(root: string, relativePath: string): string {
-  const target = path.resolve(root, ...relativePath.split("/"));
-  if (!isPathWithin(root, target) || target === root)
-    throw new Error(`Unsafe workspace-relative path: ${relativePath}`);
-  return target;
-}
-
-function ensureSafeParentDirectories(root: string, targetPath: string): void {
-  const relativeParent = path.relative(root, path.dirname(targetPath));
-  let cursor = root;
-  for (const component of relativeParent.split(path.sep).filter(Boolean)) {
-    cursor = path.join(cursor, component);
-    try {
-      const stat = fs.lstatSync(cursor);
-      if (!stat.isDirectory() || stat.isSymbolicLink())
-        throw new Error(`Refusing symlink or non-directory parent: ${cursor}`);
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
-      fs.mkdirSync(cursor);
-    }
-  }
-}
-
-function targetMatchesBaseline(targetPath: string, baseline: FileRecord | undefined): boolean {
-  try {
-    const stat = fs.lstatSync(targetPath);
-    if (!baseline || !stat.isFile() || stat.isSymbolicLink()) return false;
-    return recordFile(targetPath, targetPath).sha256 === baseline.sha256 && (stat.mode & 0o777) === baseline.mode;
-  } catch (error) {
-    return !baseline && (error as NodeJS.ErrnoException).code === "ENOENT";
-  }
-}
-
-function applyWorkspaceChanges(
-  projectRoot: string,
-  snapshotRoot: string,
-  baseline: SnapshotManifest,
-  after: SnapshotManifest,
-): { applied: string[]; conflicts: string[] } {
-  const root = fs.realpathSync(projectRoot);
-  const names = [...new Set([...baseline.files.keys(), ...after.files.keys()])].sort();
-  const applied: string[] = [];
-  const conflicts: string[] = [];
-  if (after.symlinks.length > 0)
-    throw new Error(`Sandbox output contains symlinks; refusing writeback: ${after.symlinks.slice(0, 5).join(", ")}`);
-
-  for (const relativePath of names) {
-    const original = baseline.files.get(relativePath);
-    const proposed = after.files.get(relativePath);
-    if (recordsEqual(original, proposed)) continue;
-    const targetPath = targetForRelativePath(root, relativePath);
-    try {
-      ensureSafeParentDirectories(root, targetPath);
-    } catch {
-      conflicts.push(relativePath);
-      continue;
-    }
-    if (!targetMatchesBaseline(targetPath, original)) {
-      conflicts.push(relativePath);
-      continue;
-    }
-    if (!proposed) {
-      try {
-        fs.unlinkSync(targetPath);
-        applied.push(relativePath);
-      } catch {
-        conflicts.push(relativePath);
-      }
-      continue;
-    }
-
-    const sourcePath = targetForRelativePath(snapshotRoot, relativePath);
-    const temporaryPath = path.join(
-      path.dirname(targetPath),
-      `.${path.basename(targetPath)}.eos-sandbox-${crypto.randomUUID()}.tmp`,
-    );
-    try {
-      fs.copyFileSync(sourcePath, temporaryPath, fs.constants.COPYFILE_EXCL);
-      try {
-        fs.chmodSync(temporaryPath, proposed.mode & 0o777);
-      } catch {}
-      if (original) {
-        if (!targetMatchesBaseline(targetPath, original)) throw new Error("Target changed before replacement.");
-        fs.renameSync(temporaryPath, targetPath);
-      } else {
-        // Hard-link creation is exclusive: it cannot replace a newly appeared file.
-        fs.linkSync(temporaryPath, targetPath);
-        fs.unlinkSync(temporaryPath);
-      }
-      applied.push(relativePath);
-    } catch {
-      try {
-        fs.unlinkSync(temporaryPath);
-      } catch {}
-      conflicts.push(relativePath);
-    }
-  }
-  return { applied, conflicts };
-}
-
 function getTimeout(requested: number | undefined): number {
   if (requested === undefined) return DEFAULT_RUN_TIMEOUT_MS;
   if (!Number.isInteger(requested) || requested < 1_000 || requested > MAX_RUN_TIMEOUT_MS) {
@@ -488,16 +192,20 @@ function writeReceipt(data: Record<string, unknown>): string | null {
 
 export class EosContainerSandbox {
   private readonly repoRoot: string;
+  private readonly execDockerSync: (args: readonly string[], timeout: number) => string;
+  private readonly spawnDockerProcess: typeof spawn;
 
-  constructor(repoRoot: string = process.cwd()) {
+  constructor(repoRoot: string = process.cwd(), deps: SandboxCommandDeps = {}) {
     this.repoRoot = path.resolve(repoRoot);
+    this.execDockerSync = deps.runDockerSync ?? runDockerSyncDefault;
+    this.spawnDockerProcess = deps.spawnDocker ?? spawn;
   }
 
   public doctor(): { readonly ready: boolean; readonly image: string | null; readonly message: string } {
     try {
-      verifyDockerEngine();
+      verifyDockerEngine(this.execDockerSync);
       const image = validatePinnedImage(process.env.EOS_SANDBOX_IMAGE);
-      runDockerSync(["image", "inspect", "--format", "{{json .RepoDigests}}", image.ref], 8_000);
+      this.execDockerSync(["image", "inspect", "--format", "{{json .RepoDigests}}", image.ref], 8_000);
       return {
         ready: true,
         image: image.ref,
@@ -538,11 +246,11 @@ export class EosContainerSandbox {
     }
 
     const image = validatePinnedImage(process.env.EOS_SANDBOX_IMAGE);
-    verifyDockerEngine();
+    verifyDockerEngine(this.execDockerSync);
     const repoRoot = fs.realpathSync(this.repoRoot);
     const worktree = getRegisteredWorktree(repoRoot, options.worktreePath);
     const inspectDigest = JSON.parse(
-      runDockerSync(["image", "inspect", "--format", "{{json .RepoDigests}}", image.ref], 8_000),
+      this.execDockerSync(["image", "inspect", "--format", "{{json .RepoDigests}}", image.ref], 8_000),
     ) as string[] | null;
     if (!Array.isArray(inspectDigest) || !inspectDigest.some((digest) => digest.endsWith(`@${image.digest}`))) {
       throw new Error("Pinned image digest is not present in local Docker image metadata.");
@@ -595,7 +303,7 @@ export class EosContainerSandbox {
       ];
       const runResult = await new Promise<{ code: number | null; signal: NodeJS.Signals | null; spawnError?: Error }>(
         (resolve) => {
-          const child = spawn("docker", dockerArgs, {
+          const child = this.spawnDockerProcess("docker", dockerArgs, {
             cwd: tempRoot,
             stdio: "inherit",
             windowsHide: true,
@@ -605,7 +313,7 @@ export class EosContainerSandbox {
           let resourceLimitExceeded = false;
           const requestContainerStop = () => {
             try {
-              const killer = spawn("docker", ["kill", containerName], {
+              const killer = this.spawnDockerProcess("docker", ["kill", containerName], {
                 stdio: "ignore",
                 windowsHide: true,
                 env: sanitizeDockerEnv(),
@@ -621,7 +329,7 @@ export class EosContainerSandbox {
             requestContainerStop();
             setTimeout(() => {
               try {
-                const remover = spawn("docker", ["rm", "--force", containerName], {
+                const remover = this.spawnDockerProcess("docker", ["rm", "--force", containerName], {
                   stdio: "ignore",
                   windowsHide: true,
                   env: sanitizeDockerEnv(),
