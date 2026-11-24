@@ -353,7 +353,7 @@ export function applyWorkspaceChanges(
   after: SnapshotManifest,
   faultHook?: (relativePath: string, appliedCount: number) => void,
 ): { applied: string[]; conflicts: string[] } {
-  const root = fs.realpathSync(projectRoot);
+  const root = fs.realpathSync.native(projectRoot);
   if (after.symlinks.length > 0) {
     throw new Error(`Sandbox output contains symlinks; refusing writeback: ${after.symlinks.slice(0, 5).join(", ")}`);
   }

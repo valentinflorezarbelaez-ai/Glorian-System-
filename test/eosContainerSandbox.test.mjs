@@ -475,4 +475,52 @@ test("BDD-SANDBOX-RUNTIME-001: detects gVisor runsc runtime, validates --runtime
   );
   assert.equal(cliBad.status, 2);
   assert.match(cliBad.stderr || "", /runc.*runsc.*auto/);
+
+  // Windows 8.3 short-path canonicalization regression check (CI RUNNER~1 parity)
+  if (process.platform === "win32") {
+    const longBase = fs.mkdtempSync(path.join(os.tmpdir(), "verylongname_83_sandbox_"));
+    const shortRes = spawnSync(
+      "powershell",
+      [
+        "-NoProfile",
+        "-Command",
+        `(New-Object -ComObject Scripting.FileSystemObject).GetFolder('${longBase}').ShortPath`,
+      ],
+      { encoding: "utf8" },
+    );
+    const shortBase = (shortRes.stdout || "").trim();
+    if (shortBase.includes("~")) {
+      const shortRepo = path.join(shortBase, "repo");
+      try {
+        fs.mkdirSync(shortRepo, { recursive: true });
+        git(shortRepo, ["init", "--initial-branch=main"]);
+        git(shortRepo, ["config", "user.name", "Sandbox 83 Test"]);
+        git(shortRepo, ["config", "user.email", "sandbox-83@example.invalid"]);
+        fs.writeFileSync(path.join(shortRepo, "f.txt"), "ok\n", "utf8");
+        git(shortRepo, ["add", "f.txt"]);
+        git(shortRepo, ["commit", "-m", "Init 83"]);
+        git(shortRepo, ["worktree", "add", "-b", "eos/sb-83", ".worktrees/wt-83"]);
+        const sb83 = new EosContainerSandbox(shortRepo, {
+          runDockerSync: withRunscMock,
+          spawnDocker: () => {
+            const p = new EventEmitter();
+            p.kill = () => {};
+            queueMicrotask(() => p.emit("close", 0, null));
+            return p;
+          },
+        });
+        const rep83 = await sb83.run({ worktreePath: ".worktrees/wt-83", command: "node" });
+        assert.equal(rep83.success, true);
+      } finally {
+        try {
+          git(shortRepo, ["worktree", "remove", "--force", ".worktrees/wt-83"]);
+        } catch {
+          /* worktree already cleaned up */
+        }
+        fs.rmSync(longBase, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 });
+      }
+    } else {
+      fs.rmSync(longBase, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 });
+    }
+  }
 });

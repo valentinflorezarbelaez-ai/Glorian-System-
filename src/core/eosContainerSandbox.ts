@@ -152,12 +152,12 @@ export function resolveSandboxRuntime(
 }
 
 function getRegisteredWorktree(repoRoot: string, selectedPath: string): string {
-  const root = fs.realpathSync(repoRoot);
+  const root = fs.realpathSync.native(repoRoot);
   const candidate = path.resolve(root, selectedPath);
   if (!isPathWithin(root, candidate) || candidate === root) {
     throw new Error("Sandbox can run only in a non-primary worktree contained in this repository.");
   }
-  const realCandidate = fs.realpathSync(candidate);
+  const realCandidate = fs.realpathSync.native(candidate);
   if (!isPathWithin(root, realCandidate) || realCandidate === root) {
     throw new Error("Selected worktree resolves outside the repository boundary.");
   }
@@ -165,7 +165,7 @@ function getRegisteredWorktree(repoRoot: string, selectedPath: string): string {
     const resolved = path.resolve(targetPath);
     let canonical = resolved;
     try {
-      canonical = fs.realpathSync(resolved);
+      canonical = fs.realpathSync.native(resolved);
     } catch {
       // Stale/inaccessible worktree entry retains resolved path so comparison fails closed
     }
@@ -209,7 +209,7 @@ function getTimeout(requested: number | undefined): number {
 
 function writeReceipt(data: Record<string, unknown>): string | null {
   try {
-    const home = fs.realpathSync(os.homedir());
+    const home = fs.realpathSync.native(os.homedir());
     const baseDirectory = path.join(home, ".eos-system");
     const directory = path.join(baseDirectory, "sandbox-runs");
     for (const target of [baseDirectory, directory]) {
@@ -219,7 +219,7 @@ function writeReceipt(data: Record<string, unknown>): string | null {
         if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
       }
       const stat = fs.lstatSync(target);
-      if (!stat.isDirectory() || stat.isSymbolicLink() || !isPathWithin(home, fs.realpathSync(target))) {
+      if (!stat.isDirectory() || stat.isSymbolicLink() || !isPathWithin(home, fs.realpathSync.native(target))) {
         throw new Error("Sandbox receipt directory must be a real directory inside the user home.");
       }
     }
@@ -312,7 +312,7 @@ export class EosContainerSandbox {
     verifyDockerEngine(this.execDockerSync);
     const availableRuntimes = detectAvailableRuntimes(this.execDockerSync);
     const effectiveRuntime = resolveSandboxRuntime(options.runtime, availableRuntimes);
-    const repoRoot = fs.realpathSync(this.repoRoot);
+    const repoRoot = fs.realpathSync.native(this.repoRoot);
     const worktree = getRegisteredWorktree(repoRoot, options.worktreePath);
     const inspectDigest = JSON.parse(
       this.execDockerSync(["image", "inspect", "--format", "{{json .RepoDigests}}", image.ref], 8_000),
