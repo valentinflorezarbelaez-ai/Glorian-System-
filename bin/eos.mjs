@@ -56,10 +56,58 @@ const ctx = {
   printBanner: () => printBanner(packageMetadata, args),
 };
 
+const FAST_ROUTE_BY_COMMAND = {
+  help: ["kernel", "handleKernelCommands"],
+  "--help": ["kernel", "handleKernelCommands"],
+  "-h": ["kernel", "handleKernelCommands"],
+  version: ["kernel", "handleKernelCommands"],
+  "--version": ["kernel", "handleKernelCommands"],
+  "-v": ["kernel", "handleKernelCommands"],
+  verify: ["core", "handleCoreCommands"],
+  turbo: ["core", "handleCoreCommands"],
+  fast: ["core", "handleCoreCommands"],
+  audit: ["core", "handleCoreCommands"],
+  test: ["core", "handleCoreCommands"],
+  mcp: ["core", "handleCoreCommands"],
+  jarvis: ["core", "handleCoreCommands"],
+  health: ["core", "handleCoreCommands"],
+  guard: ["core", "handleCoreCommands"],
+  amplify: ["core", "handleCoreCommands"],
+  blast: ["core", "handleCoreCommands"],
+  graph: ["core", "handleCoreCommands"],
+  heal: ["core", "handleCoreCommands"],
+  fix: ["core", "handleCoreCommands"],
+  optimize: ["core", "handleCoreCommands"],
+  completion: ["core", "handleCoreCommands"],
+  worktree: ["devops", "handleDevOpsCommands"],
+  eval: ["devops", "handleDevOpsCommands"],
+  spec: ["devops", "handleDevOpsCommands"],
+  pts: ["devops", "handleDevOpsCommands"],
+  honk: ["devops", "handleDevOpsCommands"],
+  toolchain: ["devops", "handleDevOpsCommands"],
+  "toolchain:doctor": ["devops", "handleDevOpsCommands"],
+  flow: ["spotify", "handleSpotifyCommands"],
+  sandbox: ["spotify", "handleSpotifyCommands"],
+  xirp: ["spotify", "handleSpotifyCommands"],
+  fleetshift: ["spotify", "handleSpotifyCommands"],
+  "fleet:elevate": ["spotify", "handleSpotifyCommands"],
+  "hygiene:audit": ["platform", "handlePlatformCommands"],
+  "diff:live": ["platform", "handlePlatformCommands"],
+  remediate: ["platform", "handlePlatformCommands"],
+  "doctor:fix": ["platform", "handlePlatformCommands"],
+  "heal:repo": ["platform", "handlePlatformCommands"],
+  "project:fix": ["platform", "handlePlatformCommands"],
+  "slsa:attest": ["platform", "handlePlatformCommands"],
+  "provenance:attest": ["platform", "handlePlatformCommands"],
+  "release:seal": ["platform", "handlePlatformCommands"],
+};
+
 async function main() {
-  if (command === "help" || command === "--help" || command === "-h") {
-    const { handleKernelCommands } = await HANDLER_MODULES.kernel();
-    return handleKernelCommands(ctx);
+  const fastTarget = FAST_ROUTE_BY_COMMAND[command];
+  if (fastTarget) {
+    const [fastKey, fastExport] = fastTarget;
+    const mod = await HANDLER_MODULES[fastKey]();
+    if (await mod[fastExport](ctx)) return;
   }
 
   const handlers = [
@@ -75,6 +123,7 @@ async function main() {
   ];
 
   for (const [moduleKey, exportName] of handlers) {
+    if (fastTarget && moduleKey === fastTarget[0]) continue;
     const mod = await HANDLER_MODULES[moduleKey]();
     const handler = mod[exportName];
     if (await handler(ctx)) return;

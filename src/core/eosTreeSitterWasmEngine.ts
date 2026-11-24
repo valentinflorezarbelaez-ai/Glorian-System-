@@ -1,14 +1,17 @@
 /**
- * EOS High-Speed AST Code Graph Engine with Tree-sitter WebAssembly Emulation.
+ * EOS High-Speed Polyglot Structural AST Code Graph Engine.
  *
- * SPEC-290 / CHANGE-152: Zero-dependency polyglot AST parsing, symbol extraction,
- * incremental AST diffing, transitive blast radius traversal, and sub-15ms execution.
- * Pure Layer-0 TypeScript (Law V: zero npm runtime dependencies).
+ * SPEC-290 / CHANGE-152 & SPEC-342 (Verification Honesty & Evidence Hermeticity):
+ * Zero-dependency structural heuristic parser, symbol extraction, incremental AST
+ * diffing, transitive blast radius traversal, and deterministic evidence sealing.
+ * Note: does NOT load external Tree-sitter WASM native binaries in Layer-0.
  */
 
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as crypto from "node:crypto";
+import { contentDerivedIso } from "./eosDeterministicArtifact.ts";
+import { resolveEvidencePath } from "./eosEvidencePaths.ts";
 
 export * from "./eosTreeSitterWasmEngine.types.ts";
 import type {
@@ -433,32 +436,33 @@ export async function auditCodeGraph(options?: { rootDir?: string; emitReceipt?:
 
   const elapsedMs = Math.max(1, Date.now() - startTime);
   const averageParseTimeMs = Math.round((elapsedMs / Math.max(1, filesParsed)) * 100) / 100;
+  const graphEdgesCount = graph.getEdgesCount();
 
-  const rawPayload = JSON.stringify({
-    timestampIso: new Date().toISOString(),
+  // SPEC-342 determinism: exclude wall-clock time and execution duration from cryptographic seal.
+  const deterministicPayload = JSON.stringify({
     specRef: "SPEC-290",
     totalFilesParsed: filesParsed,
     totalSymbolsIndexed: totalSymbols,
-    graphEdgesCount: graph.getEdgesCount(),
-    averageParseTimeMs,
+    graphEdgesCount,
   });
 
-  const sha256Signature = crypto.createHash("sha256").update(rawPayload).digest("hex");
+  const sha256Signature = crypto.createHash("sha256").update(deterministicPayload).digest("hex");
+  const timestampIso = contentDerivedIso(sha256Signature);
 
   const receipt: AstAuditReceipt = {
-    timestampIso: new Date().toISOString(),
+    timestampIso,
     specRef: "SPEC-290",
     totalFilesParsed: filesParsed,
     totalSymbolsIndexed: totalSymbols,
-    graphEdgesCount: graph.getEdgesCount(),
+    graphEdgesCount,
     averageParseTimeMs,
     sha256Signature,
   };
 
   if (emitReceipt) {
-    const evidenceDir = path.join(rootDir, "docs", "evidence");
-    fs.mkdirSync(evidenceDir, { recursive: true });
-    fs.writeFileSync(path.join(evidenceDir, "AST_TREE_SITTER_RECEIPT.json"), JSON.stringify(receipt, null, 2), "utf8");
+    const receiptPath = resolveEvidencePath("AST_TREE_SITTER_RECEIPT.json", rootDir);
+    fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
+    fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2) + "\n", "utf8");
   }
 
   return receipt;

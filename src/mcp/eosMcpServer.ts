@@ -79,6 +79,8 @@ export class EosMcpServer {
   private toolProfile: McpToolProfile;
   private readonly dispatchRegistry = new EosMcpDispatchRegistry();
   private iam: EosMcpIamRuntime;
+  private corpusInitialized = false;
+  private graphInitialized = false;
 
   constructor(projectRoot?: string, profile?: McpToolProfile) {
     this.toolProfile = normalizeToolProfile(profile ?? process.env.EOS_MCP_PROFILE);
@@ -107,18 +109,9 @@ export class EosMcpServer {
     this.serverVersion = version;
     this.hybridKnowledge = getDefaultHybridKnowledgeEngine(this.projectRoot);
     this.wasmSandbox = getDefaultWasmSandboxEngine(this.projectRoot);
-    try {
-      this.hybridKnowledge.ensureCorpusIndexed();
-    } catch {
-      // Graceful degradation in read-only or confined file systems
-    }
     let kg: EosKnowledgeGraphEngine;
     try {
       kg = getDefaultKnowledgeGraphEngine(this.projectRoot);
-      const gStats = kg.getGraphStats();
-      if (gStats.totalNodes === 0) {
-        kg.syncGraph();
-      }
     } catch {
       kg = new EosKnowledgeGraphEngine(this.projectRoot, ":memory:");
     }
@@ -136,6 +129,7 @@ export class EosMcpServer {
         knowledgeStore: this.knowledgeStore,
         agentSessionContract: this.agentSessionContract,
         hnsw: EosMcpServer.globalHnsw,
+        ensureCorpusInitialized: () => this.ensureCorpusInitialized(),
       }),
     );
     this.dispatchRegistry.registerAll(createPhase4InstitutionalHandlers(this.projectRoot));
@@ -202,6 +196,29 @@ export class EosMcpServer {
 
   private resolveProjectPath(value: unknown, kind: "file" | "directory", defaultPath?: string): string {
     return resolveProjectPath(this.projectRoot, value, kind, defaultPath);
+  }
+
+  private ensureCorpusInitialized(): void {
+    if (this.corpusInitialized) return;
+    this.corpusInitialized = true;
+    try {
+      this.hybridKnowledge.ensureCorpusIndexed();
+    } catch {
+      // Graceful degradation in read-only or confined file systems
+    }
+  }
+
+  private ensureGraphInitialized(): void {
+    if (this.graphInitialized) return;
+    this.graphInitialized = true;
+    try {
+      const gStats = this.knowledgeGraph.getGraphStats();
+      if (gStats.totalNodes === 0) {
+        this.knowledgeGraph.syncGraph();
+      }
+    } catch {
+      // Graceful degradation when graph persistence is read-only
+    }
   }
 
   public handleRequest(
@@ -314,6 +331,12 @@ export class EosMcpServer {
             throw new TypeError("Tool name must contain 1 to 128 characters.");
           }
           if (!isPlainRecord(args)) throw new TypeError("Tool arguments must be a JSON object.");
+          if (toolName === "eos_semantic_search") {
+            this.ensureCorpusInitialized();
+          } else if (toolName === "eos_query_knowledge_graph") {
+            if (args.action === "sync") this.graphInitialized = true;
+            else this.ensureGraphInitialized();
+          }
 
           const catalog = annotateAndFilterTools(
             EOS_MCP_TOOL_DEFINITIONS,

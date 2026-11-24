@@ -48,11 +48,21 @@ export interface Phase3CoreHandlerDeps {
   };
   readonly agentSessionContract: EosUniversalAgentSessionContract;
   readonly hnsw: EosHnswVectorEngine;
+  readonly ensureCorpusInitialized?: () => void;
 }
 
 export function createPhase3CoreHandlers(deps: Phase3CoreHandlerDeps): Readonly<Record<string, McpToolHandler>> {
   return {
     eos_semantic_search: (args) => {
+      try {
+        if (deps.ensureCorpusInitialized) {
+          deps.ensureCorpusInitialized();
+        } else {
+          deps.hybridKnowledge.ensureCorpusIndexed();
+        }
+      } catch {
+        // Graceful degradation in read-only or confined file systems
+      }
       const query = String(args.query || "");
       const topK = Number(args.topK) || 5;
       const mode = args.mode === "vector" || args.mode === "lexical" ? args.mode : "hybrid";

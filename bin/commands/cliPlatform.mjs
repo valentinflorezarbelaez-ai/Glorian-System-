@@ -653,16 +653,15 @@ HANDLERS["doctor:fix"] = cmd_fix_135;
 HANDLERS["heal:repo"] = cmd_fix_135;
 HANDLERS["project:fix"] = cmd_fix_135;
 
-import { handleAutonomousCommands } from "./cliAutonomous.mjs";
-import { handleMeshCommands } from "./cliMesh.mjs";
-
 export async function handlePlatformCommands(commandContext) {
   const handler = HANDLERS[commandContext.command];
   if (handler) {
     await handler(commandContext);
     return true;
   }
+  const { handleAutonomousCommands } = await import("./cliAutonomous.mjs");
   if (await handleAutonomousCommands(commandContext)) return true;
+  const { handleMeshCommands } = await import("./cliMesh.mjs");
   if (await handleMeshCommands(commandContext)) return true;
   return false;
 }

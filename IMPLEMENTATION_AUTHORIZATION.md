@@ -3771,3 +3771,25 @@
   - `docs/plans/PLAN-241-byzantine-quorum-attestation.md`
   - `docs/tasks/TASKS-241-byzantine-quorum-attestation.md`
 - **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)
+
+---
+
+### `AUTH-2026-11-23-GLORIAN-ENGINE-BIGTECH-HARDENING`
+
+- **Authorization Date**: 2026-11-23
+- **Change Identifier**: `ODD-GLORIAN-ENGINE-HARDENING` (`SPEC-044`, `SPEC-061`, `SPEC-068`, `SPEC-098`, `SPEC-198`, `SPEC-250`, `SPEC-270`, `SPEC-290`, `SPEC-304`, `SPEC-342`)
+- **Component**: `eos-system-control-plane` (`Glorian System`)
+- **Authorization Level**: `LEVEL_3_PRODUCTION_AUTHORIZED`
+- **Scope**: Sequential four-unit hardening of the Layer-0/Layer-1 control-plane engine while keeping zero runtime dependencies (`dependencies: {}`), exact 636 Layer-0 module moratorium, `<= 788`-line module ceiling, and permanently sealed public landing assets untouched:
+  1. Canonical token-lexer module syntax extraction (`extractModuleSyntax`) unifying `eosTypeScriptAstAnalyzer.ts`, `eosArchitectureGuard.ts`, `eosSemanticGraph.ts`, `scripts/import-boundary-gate.mjs`, and `scripts/verify-module-consumers.mjs`.
+  2. Crash-safe workflow persistence (`fsyncSync`, bounded rename retry, `recordDigestSha256`, idempotent post-merge crash recovery) in `eosEngineeringWorkflow.ts` and atomic two-phase rollback writeback + pre-exclusion symlink rejection in `eosContainerSandbox.ts`/`.types.ts`.
+  3. gVisor `runsc`/`auto` container runtime support in `eosContainerSandbox.ts` and `bin/commands/cliSpotify.mjs`, real CJS-bootstrapped Node V8 SEA blob compilation in `eosSingleExecutablePackager.ts`, `resolveEvidencePath` hermeticity in `eosSingleExecutableDistributionGovernor.ts`, fail-closed `--verify-only` supply-chain checking in `scripts/verify-supply-chain.mjs`, and SEA/SLSA provenance subjects in `.github/workflows/eos-sovereign-cicd.yml`.
+  4. O(1) CLI dispatch across `bin/eos.mjs`, `bin/commands/cliPlatform.mjs`, and `bin/commands/cliMesh.mjs`, lazy MCP knowledge/graph initialization on `tools/call` in `src/mcp/eosMcpServer.ts`, and `SPEC-342` honest framing, deterministic receipt digest, and `resolveEvidencePath` hermeticity in `src/core/eosTreeSitterWasmEngine.ts`.
+- **Preconditions Verified**: `INTAKE_COMPLETE`, `SPECIFICATION_APPROVED`, `ARCHITECTURAL_INTERROGATION_COMPLETE`, `LEVEL_3_AUTHORIZED`.
+- **Tracking & Verification Artifacts**:
+  - `odd/tasks/glorian-engine-bigtech-hardening.md`
+  - `test/eosArchitectureWindowFalsePositive.test.mjs`, `test/eosSemanticGraph.test.mjs`
+  - `test/eosEngineeringWorkflow.test.mjs`, `test/eosContainerSandbox.test.mjs`
+  - `test/eosSingleExecutablePackager.test.mjs`, `test/eosSingleExecutableDistributionGovernor.test.mjs`
+  - `test/eosTreeSitterWasmEngine.test.mjs`, `test/glorianCliBinary.test.mjs`
+- **Authorized Sign-off**: Valentín Flórez Arbeláez (Principal Architect & System Owner)

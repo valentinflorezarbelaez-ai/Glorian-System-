@@ -30,16 +30,52 @@ const meshHandlers = [
   { file: "./cliJarvisPolyglotFrontierMesh.mjs", handler: "handleJarvisPolyglotFrontierCommands", sig: "cmd_ctx" },
 ];
 
+const PREFIX_ROUTE = [
+  ["zk:", "./cliZkR1csMesh.mjs"],
+  ["r1cs", "./cliZkR1csMesh.mjs"],
+  ["crdt", "./cliCrdtMesh.mjs"],
+  ["mmr", "./cliMmrMesh.mjs"],
+  ["vrf", "./cliVrfMesh.mjs"],
+  ["smt", "./cliSmtMesh.mjs"],
+  ["frost", "./cliFrostMesh.mjs"],
+  ["kzg", "./cliKzgMesh.mjs"],
+  ["mlkem", "./cliMlKemMesh.mjs"],
+  ["bulletproof", "./cliBulletproofsMesh.mjs"],
+  ["hotstuff", "./cliHotStuffMesh.mjs"],
+  ["tensor", "./cliTensorMesh.mjs"],
+  ["fleet:", "./cliFleetMesh.mjs"],
+  ["otlp", "./cliOtlpMesh.mjs"],
+  ["mldsa", "./cliMlDsaMesh.mjs"],
+  ["congestion", "./cliCongestionMesh.mjs"],
+  ["trie", "./cliTrieMesh.mjs"],
+  ["timelock", "./cliTimeLockMesh.mjs"],
+  ["cuckoo", "./cliCuckooMesh.mjs"],
+  ["hll", "./cliHllMesh.mjs"],
+  ["vss", "./cliVssMesh.mjs"],
+  ["hygiene:", "./cliJarvisPolyglotFrontierMesh.mjs"],
+  ["diff:", "./cliJarvisPolyglotFrontierMesh.mjs"],
+];
+
+async function invokeMeshEntry(entry, commandContext) {
+  const mod = await import(entry.file);
+  const fn = mod[entry.handler];
+  if (!fn) return false;
+  return entry.sig === "cmd_ctx"
+    ? Boolean(await fn(commandContext.command, commandContext))
+    : Boolean(await fn(commandContext));
+}
+
 export async function handleMeshCommands(commandContext) {
+  const cmd = String(commandContext.command || "").toLowerCase();
+  const matchedPrefix = PREFIX_ROUTE.find(([prefix]) => cmd.startsWith(prefix));
+  const fastFile = matchedPrefix?.[1];
+  if (fastFile) {
+    const fastEntry = meshHandlers.find((e) => e.file === fastFile);
+    if (fastEntry && (await invokeMeshEntry(fastEntry, commandContext))) return true;
+  }
   for (const entry of meshHandlers) {
-    const mod = await import(entry.file);
-    const fn = mod[entry.handler];
-    if (!fn) continue;
-    if (entry.sig === "cmd_ctx") {
-      if (await fn(commandContext.command, commandContext)) return true;
-    } else {
-      if (await fn(commandContext)) return true;
-    }
+    if (fastFile && entry.file === fastFile) continue;
+    if (await invokeMeshEntry(entry, commandContext)) return true;
   }
   return false;
 }

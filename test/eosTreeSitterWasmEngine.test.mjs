@@ -8,7 +8,9 @@
 import { test, describe } from "node:test";
 import * as assert from "node:assert/strict";
 import * as fs from "node:fs";
+import * as os from "node:os";
 import * as path from "node:path";
+import { resolveEvidencePath } from "../src/core/eosEvidencePaths.ts";
 import {
   PolyglotAstParser,
   getSymbolTable,
@@ -220,9 +222,22 @@ export function apiEndpoint() { return serviceHandler(); }`,
     assert.ok(receipt.averageParseTimeMs > 0);
     assert.equal(receipt.sha256Signature.length, 64);
 
-    const receiptPath = path.join(process.cwd(), "docs", "evidence", "AST_TREE_SITTER_RECEIPT.json");
+    const receiptPath = resolveEvidencePath("AST_TREE_SITTER_RECEIPT.json", process.cwd());
     assert.ok(fs.existsSync(receiptPath));
     const saved = JSON.parse(fs.readFileSync(receiptPath, "utf8"));
     assert.equal(saved.sha256Signature, receipt.sha256Signature);
+
+    // SPEC-342 determinism: consecutive audits over unchanged tree yield identical signature and timestampIso
+    const tmpFixture = fs.mkdtempSync(path.join(os.tmpdir(), "eos-ast-det-"));
+    try {
+      fs.mkdirSync(path.join(tmpFixture, "src"));
+      fs.writeFileSync(path.join(tmpFixture, "src", "a.ts"), "export function alpha() { return 1; }\n", "utf8");
+      const r1 = await auditCodeGraph({ rootDir: tmpFixture, emitReceipt: false });
+      const r2 = await auditCodeGraph({ rootDir: tmpFixture, emitReceipt: false });
+      assert.equal(r1.sha256Signature, r2.sha256Signature);
+      assert.equal(r1.timestampIso, r2.timestampIso);
+    } finally {
+      fs.rmSync(tmpFixture, { recursive: true, force: true });
+    }
   });
 });

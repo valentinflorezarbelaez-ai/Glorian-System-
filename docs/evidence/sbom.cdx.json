@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:b217e6af-9ab5-4654-8596-2b8d435e2fac",
+  "serialNumber": "urn:uuid:ef152e0a-a737-4ce9-8c9d-ea8aea1f8586",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-20T00:22:43.379Z",
+    "timestamp": "2026-11-24T03:57:50.662Z",
     "tools": [
       {
         "type": "application",
@@ -31,11 +31,11 @@
     "properties": [
       {
         "name": "eos:lockfileHash",
-        "value": "sha256:6a5014090e054c058e7e1407d46fdc715f91670e8ba35669e0b9acd0fc226a01"
+        "value": "sha256:40608f3b36427847dcbb6628962e2cb399c9f46a56634f5f2f0df5e2aceeb6ed"
       },
       {
         "name": "eos:nodeVersion",
-        "value": "v24.21.0"
+        "value": "v24.19.0"
       },
       {
         "name": "eos:platform",
@@ -51,18 +51,18 @@
       },
       {
         "name": "eos:sbomReceipt",
-        "value": "sha256:bd292b09e1e3e9c4f775a12d586e382d06e16c3ded8d02b22c4bf6ad0aa044b6"
+        "value": "sha256:b1a0ef9c116e45b71b24e1651107d2fb3a5b445d72015d3bc1f5258c32fde4f5"
       }
     ]
   },
   "components": [
     {
       "type": "platform",
-      "bom-ref": "node:v24.21.0",
+      "bom-ref": "node:v24.19.0",
       "name": "nodejs",
-      "version": "24.21.0",
+      "version": "24.19.0",
       "description": "Node.js runtime — win32/x64",
-      "purl": "pkg:generic/nodejs@24.21.0"
+      "purl": "pkg:generic/nodejs@24.19.0"
     },
     {
       "type": "library",
@@ -164,15 +164,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "npm:@eslint/js@9.28.0",
+      "bom-ref": "npm:@eslint/js@9.39.5",
       "name": "@eslint/js",
-      "version": "9.28.0",
+      "version": "9.39.5",
       "scope": "excluded",
-      "purl": "pkg:npm/%40eslint/js@9.28.0",
+      "purl": "pkg:npm/%40eslint/js@9.39.5",
       "hashes": [
         {
           "alg": "SHA512",
-          "content": "7e7a928c659dfc2a08a781172315952bfb0703a0ce1cde3ef08c76717e7270e63b2c6d1463c9c7094e69229d9e684d4c73b41df241eca583736174f6a233cbce"
+          "content": "432c10baccd087bee92170acabdf7c73c85b8524c8fdacd3b72d59e8de7776602e74a1e1cb9ef78f7caf44bb17d814a9f18a4bb680841bc13d0c97bef33521e0"
         }
       ]
     },
@@ -517,7 +517,7 @@
       "bom-ref": "npm:@typescript/typescript-linux-x64@7.0.2",
       "name": "@typescript/typescript-linux-x64",
       "version": "7.0.2",
-      "scope": "excluded",
+      "scope": "required",
       "purl": "pkg:npm/%40typescript/typescript-linux-x64@7.0.2",
       "hashes": [
         {
@@ -892,15 +892,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "npm:eslint-plugin-n@17.18.0",
+      "bom-ref": "npm:eslint-plugin-n@17.24.0",
       "name": "eslint-plugin-n",
-      "version": "17.18.0",
+      "version": "17.24.0",
       "scope": "excluded",
-      "purl": "pkg:npm/eslint-plugin-n@17.18.0",
+      "purl": "pkg:npm/eslint-plugin-n@17.24.0",
       "hashes": [
         {
           "alg": "SHA512",
-          "content": "86f67f1eeb2e7aa4c9ed50cba02a63374871e0de3e8c72164d70f84cc2c7cbd176dd79036a047dbfec50591591e7bc98e7918f17c3670f8a31f62193c62ad8f0"
+          "content": "fe00bbfca01899f3673cd39bddebbcbf0f937559d5d3385d4307b1b30e852d76e1ceba158f6d2f467daa2fc9435831a7010d89f0385d7ef5f15fd128c6f111bf"
         }
       ]
     },
@@ -943,6 +943,20 @@
         {
           "alg": "SHA512",
           "content": "521764e6c7ea71e7bff47feb08e262918cfaee8d1ad93c3684644f386d98d51d9d83b6eb45ed6e1b4c9a3500c7bbe4cefee40f17fe5e09aa6f612987523b7b25"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "npm:eslint/node_modules/@eslint/js@9.28.0",
+      "name": "eslint/node_modules/@eslint/js",
+      "version": "9.28.0",
+      "scope": "excluded",
+      "purl": "pkg:npm/eslint/node_modules/@eslint/js@9.28.0",
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "7e7a928c659dfc2a08a781172315952bfb0703a0ce1cde3ef08c76717e7270e63b2c6d1463c9c7094e69229d9e684d4c73b41df241eca583736174f6a233cbce"
         }
       ]
     },
@@ -1153,6 +1167,20 @@
         {
           "alg": "SHA512",
           "content": "a1a846bee3064253f0fe2bc86018d54ab5807d62c17a4bb9b693c4d9f38f2e2f961df7c859bba1dad0a38724214c13cc7f913d8c3107e053a64d8818c1b2b0b5"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "npm:globrex@0.1.2",
+      "name": "globrex",
+      "version": "0.1.2",
+      "scope": "excluded",
+      "purl": "pkg:npm/globrex@0.1.2",
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "b872606f000cc0d15fe662ecb7b2162cd835e31d4291eaa09496ff2b77688b8770eaad88bc002633f63cd647afcbcdf03fe4acb7e9eeb454d838683777596cc6"
         }
       ]
     },
@@ -1508,6 +1536,20 @@
     },
     {
       "type": "library",
+      "bom-ref": "npm:picomatch@4.0.7",
+      "name": "picomatch",
+      "version": "4.0.7",
+      "scope": "excluded",
+      "purl": "pkg:npm/picomatch@4.0.7",
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "a9c26ef3c436216a89b030f9dbd24a31dc069bf76f2275b81ef427470887f49b62849bf318eb1c0ed1c4df1d6904a794393cac43c91598b9c9da426eef285c18"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "bom-ref": "npm:prelude-ls@1.2.1",
       "name": "prelude-ls",
       "version": "1.2.1",
@@ -1522,15 +1564,15 @@
     },
     {
       "type": "library",
-      "bom-ref": "npm:prettier@3.9.10",
+      "bom-ref": "npm:prettier@3.10.1",
       "name": "prettier",
-      "version": "3.9.10",
+      "version": "3.10.1",
       "scope": "excluded",
-      "purl": "pkg:npm/prettier@3.9.10",
+      "purl": "pkg:npm/prettier@3.10.1",
       "hashes": [
         {
           "alg": "SHA512",
-          "content": "b241874c7d586fd42f6930b88569d14f3118b42a40a45d143013f3fadff464fccff2285e7e8fdbb4a77e400ee9504d1f13003549b4bf36687211cb2d75738874"
+          "content": "ef4be9dd9518a0f9456c5f6e8937571d4502184229edde3eea9fbc0d86e49b68cfef1ff78bfa5a5d517a768a52237cddfc2122b6b64dd6b7388bce715a699796"
         }
       ]
     },
@@ -1657,6 +1699,20 @@
         {
           "alg": "SHA512",
           "content": "bb173fce9a8583ac7b0bcbce13b961e8b6dd6bc7842fdce6566fcf2de4cf051861d710a0756690f89d42522786a487e6d8776db14a51bfe1ec8626ac04c71ce8"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "npm:ts-declaration-location@1.0.7",
+      "name": "ts-declaration-location",
+      "version": "1.0.7",
+      "scope": "excluded",
+      "purl": "pkg:npm/ts-declaration-location@1.0.7",
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "103c860301f580ed00bac9bd815e93da752f0605d3e641a808c24f96539aa2867ee15bc988a05d644ef02b5f0dd5d784a3085c529b52fb919764af14fdfbe9c0"
         }
       ]
     },

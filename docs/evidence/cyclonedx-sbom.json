@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:e0c81a6a-e9df-4701-af8c-15a338ff9478",
+  "serialNumber": "urn:uuid:d934da5c-d549-4a83-ba7c-92e54f8ff2e1",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-20T00:22:43.983Z",
+    "timestamp": "2026-11-24T03:57:51.041Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -254,7 +254,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "1a652bf65d006f5db165e6e64a943ec41583f97b6b0a8495afc9ff499a1158f5"
+          "content": "34dbc7d95be58288824f3de24f9042eed26ab7ebab15503b1b561e9c0d7a4b38"
         }
       ]
     },
@@ -268,7 +268,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "a2416be85c8d3d9d2ce41ef8b5309a449ce9dd4b47036ef635fcadca79ef4acd"
+          "content": "19784a3b1fe56ceb12263dc525dc4b1515991775626bb5ab7a962264d4ce5ccf"
         }
       ]
     },
@@ -400,6 +400,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:AladdinPortfolioRiskEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AladdinPortfolioRiskEngine@1.0.0",
+      "description": "Layer-0 module eosAladdinPortfolioRiskEngine.ts",
+      "purl": "pkg:npm/glorian/AladdinPortfolioRiskEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "593b5241ec8f5c3121c8b2d45690efa95c5c6865f70ca6410ece88eb3ca91a6a"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:AladdinPortfolioRiskEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/AladdinPortfolioRiskEngine@1.0.0",
+      "description": "Layer-0 module eosAladdinPortfolioRiskEngine.types.ts",
+      "purl": "pkg:npm/glorian/AladdinPortfolioRiskEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "25b8492aed5a2d4065fd1c0de2b697e42dcff24d3817c1e59d5afd8ffdeecca9"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:AladdinSystemicRiskStressCore",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/AladdinSystemicRiskStressCore@1.0.0",
@@ -478,7 +506,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "bb049f7234b047df0e0babb85d0891a4af5f6ca4bf539aebe42b17b99be3f0b1"
+          "content": "06ce1cecbe8efc8f42a1619f2d729fa97687f483b23bb8387a9861972e935611"
         }
       ]
     },
@@ -660,7 +688,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "299214d2f9ff8d262eb9ffd17a423f8a828ba7012c0895c3622400a98a655810"
+          "content": "f5dbac47884677a853a7a392f5a38bfd0c1f67144ea5e811fb0b6d396126bcfe"
         }
       ]
     },
@@ -772,7 +800,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "7e6d590d32d47dd1b97387a00f4a828da9501d232eb015602775057eafe08fb2"
+          "content": "3894ec534b2420a4c0de6df65646a9c13ecf4dcca30e54b2775e37a465339033"
         }
       ]
     },
@@ -1179,6 +1207,34 @@
         {
           "alg": "SHA-256",
           "content": "d3e3a03e9378a3c828958bdb738a8d23cbded0a03918dca6b691f4c956f34036"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ByzantineQuorumGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ByzantineQuorumGovernor@1.0.0",
+      "description": "Layer-0 module eosByzantineQuorumGovernor.ts",
+      "purl": "pkg:npm/glorian/ByzantineQuorumGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7863015a29cb3cf294d2f98bc36bfd28d0cddddf8517ec870a274ff35b54bc41"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:ByzantineQuorumGovernor",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/ByzantineQuorumGovernor@1.0.0",
+      "description": "Layer-0 module eosByzantineQuorumGovernor.types.ts",
+      "purl": "pkg:npm/glorian/ByzantineQuorumGovernor@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ed7ebc2f2bfd78a6fe21fe6842c9e7eca948ff9812b92fadb532fad1b0ef1515"
         }
       ]
     },
@@ -1668,7 +1724,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "18dfcde279872bd8704d434fd6dc6b7d197a98ef15f9957814d01e640c8a06ab"
+          "content": "1d65c75e56c4f5017979dfa58de269dd44c8fb3baea9f597245e694b42fffc02"
         }
       ]
     },
@@ -1682,7 +1738,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "e06b8542a09935c3da7441a9347fbd9ba711f8e36352b06c35bc0757a9f53f74"
+          "content": "de55181a485365a93e052ddd347531b616164b092c00ec130ca1ea591bb5768d"
         }
       ]
     },
@@ -2116,7 +2172,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "68e0082a3520c632e7735c0f089e10741d31ede28ef0d6a68b6c2da98eb0e07e"
+          "content": "a7248d6088570b0d3cde49913ebd605cac9d29bc702d82e95a83349ab9e53d58"
         }
       ]
     },
@@ -2130,7 +2186,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5e30d1b7a7b1bc24c526a863d853fc4bf89d90948f8b50e169e2d98a62b3ddff"
+          "content": "b09a91407c7dcdd7449059a90bf0fa9dc4207b0703a859f627972a2cb1c2b69a"
         }
       ]
     },
@@ -2634,7 +2690,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "17e8514441f26fb525e936d6df7eb0325ceb083dbd57a50b5539c181e73aef26"
+          "content": "ee7ceaad6929a7f1ceab7cbec85e97c382afa6387d7023a18f32c8d6a18f1100"
         }
       ]
     },
@@ -2648,7 +2704,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5d1947528805daa47f565d89e928a375754838ae58094a4c2352b9300f5ef5f8"
+          "content": "1457013b87640ce9739a41cc29f1ea2b02723efb0debb68d7ae47f29b71bbd22"
         }
       ]
     },
@@ -3012,7 +3068,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "096a3ee64085ed6d3f54bf1c44e43957746359b8833a067e16c9b71330246ab5"
+          "content": "76e81f3897249a4a3671c2f81407d39e3b3a55b1955860d34c4d4bf97dbf4ced"
         }
       ]
     },
@@ -3026,7 +3082,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "de2985d866f37c63f8ec00fbfb81ccf69ec8bd561630c9f06bf111576b6043ac"
+          "content": "eebffa8b7d0948a0a719634949ec81c7d7e301e6e2d5aee1b9829da767bb7b9e"
         }
       ]
     },
@@ -3054,7 +3110,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "75a9ff006c965341bdc6ae0d30b46c69240c61db40c6fe36776b1201eb998ba8"
+          "content": "d76ff3f8dfdb5cec18761e24644e8b6b6b13558a0f26ded7788658b203e99f12"
         }
       ]
     },
@@ -3124,7 +3180,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "6c41e9c08e37cf2d4fd0a07998bb6bd2e1ce9e53f81a876b511ca5074a523067"
+          "content": "8614d45c759aae5173469a579d4123e2c55ca1364a5714f05e8caf6ce1383cf0"
         }
       ]
     },
@@ -3194,7 +3250,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "351f5dd09a0e02ce6f3cea6e3e740e59b965aacb3aee9f544b328f314ca85944"
+          "content": "f6df172b4583c35d5f8e4ba2557816fd8ebbab016f5351fa123a72c674fdc9dc"
         }
       ]
     },
@@ -3320,7 +3376,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "94acd1dcabb5f482113ddb021bcb39edcca5c33513c8efcfa6d560e83650cba2"
+          "content": "b6678328b203aeaa8f7745faa926fc29c44b6123b318bc5115962b579b0fea44"
         }
       ]
     },
@@ -3362,7 +3418,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "6d20596409184ff193044c4b8eca0ff29cb19e13867c10acf7f692953d7eb862"
+          "content": "58e991059f87720c5bf3db5d1b0180b1e990a6ca16f78a4982e03ebba7f50ffb"
         }
       ]
     },
@@ -3405,6 +3461,62 @@
         {
           "alg": "SHA-256",
           "content": "2bdcc0a4ca8d63e415244cc89c6711a05d70226801a2a88fdddd418f943e7ff0"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:GoalDrivenDevelopmentContract",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/GoalDrivenDevelopmentContract@1.0.0",
+      "description": "Layer-0 module eosGoalDrivenDevelopmentContract.ts",
+      "purl": "pkg:npm/glorian/GoalDrivenDevelopmentContract@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "59f679fb8e4e512b12208782ae0a24ba9603f77700c5f8c22ac8db5df91f6377"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:GoalDrivenDevelopmentContract",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/GoalDrivenDevelopmentContract@1.0.0",
+      "description": "Layer-0 module eosGoalDrivenDevelopmentContract.types.ts",
+      "purl": "pkg:npm/glorian/GoalDrivenDevelopmentContract@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "162cf0197ad7afb1326004d3ca9f910ed13ccdf2cbd7cdd2bd9e5723c7f6dcde"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:GoalDrivenFactoryCore",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/GoalDrivenFactoryCore@1.0.0",
+      "description": "Layer-0 module eosGoalDrivenFactoryCore.ts",
+      "purl": "pkg:npm/glorian/GoalDrivenFactoryCore@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b104b37e9cad5c55ad1e9d565d79c45f96c67bb63287ea0e2618cde1abef2c20"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:GoalDrivenFactoryCore",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/GoalDrivenFactoryCore@1.0.0",
+      "description": "Layer-0 module eosGoalDrivenFactoryCore.types.ts",
+      "purl": "pkg:npm/glorian/GoalDrivenFactoryCore@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2ea6bf4f7e8466466684036226ada4f42c0c4be17272c059d955b92ae8072b29"
         }
       ]
     },
@@ -3475,6 +3587,34 @@
         {
           "alg": "SHA-256",
           "content": "df66b9f21310d8da0f80810c091f423c3c6561d292c910bde545b9fae16d8637"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:HarnessTokenEconomicsCore",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/HarnessTokenEconomicsCore@1.0.0",
+      "description": "Layer-0 module eosHarnessTokenEconomicsCore.ts",
+      "purl": "pkg:npm/glorian/HarnessTokenEconomicsCore@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "55e0875e26cf4d3d21f515bb253176c81aaa9dac3623f64dd5da6862aea48e4f"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:HarnessTokenEconomicsCore",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/HarnessTokenEconomicsCore@1.0.0",
+      "description": "Layer-0 module eosHarnessTokenEconomicsCore.types.ts",
+      "purl": "pkg:npm/glorian/HarnessTokenEconomicsCore@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "57a63de15960396399bd82676854aa7c97ed8ad7f51a43d5fb1553c961f9bcbf"
         }
       ]
     },
@@ -3895,6 +4035,34 @@
         {
           "alg": "SHA-256",
           "content": "b65ff9bab5360f5eae9257cc96e27dce81d8e5bd35610501851f4a96734bfcc9"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:InstitutionalTradingEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/InstitutionalTradingEngine@1.0.0",
+      "description": "Layer-0 module eosInstitutionalTradingEngine.ts",
+      "purl": "pkg:npm/glorian/InstitutionalTradingEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e655b7b4ca160d1949441c890536c94ad89e14162290dfe7990367ac37de2a8d"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:InstitutionalTradingEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/InstitutionalTradingEngine@1.0.0",
+      "description": "Layer-0 module eosInstitutionalTradingEngine.types.ts",
+      "purl": "pkg:npm/glorian/InstitutionalTradingEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6c1693da2036e0ebbce05d9429238c15af03d3ffdb7ca75efe30759b6a18ec68"
         }
       ]
     },
@@ -4608,7 +4776,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "a00695a9c1e320e5ed8708bec4b04b1625eab34ae3d1b19ac98bc81371b1f385"
+          "content": "14a600cc7d03b8a06cf8e59ba5576a7ead4b8911ec3595642cef26b48b6502a0"
         }
       ]
     },
@@ -4622,7 +4790,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "c0a8528e8bbbe08a5ac0545e374b7b43f28fdfc676a0a79574df935d39de4f4a"
+          "content": "2d45f17484f48cb9aa6acbf14fa49f461565f7dd31d1ef776c992c0c903adf81"
         }
       ]
     },
@@ -4818,7 +4986,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "938931d0692f716e7556c571bf18136014bbb1e43bce09812a31f925e33f6c10"
+          "content": "5eb3c3d2374fda3fca7d3fad72e9c013fde1be15538411bb384faf2345e5ddc7"
         }
       ]
     },
@@ -4931,6 +5099,34 @@
         {
           "alg": "SHA-256",
           "content": "e0926ea1403a9b196fd6ff20a6ea9dd85b1a36458f2013483afac873435f4084"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:MultiAssetMacroFilterEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/MultiAssetMacroFilterEngine@1.0.0",
+      "description": "Layer-0 module eosMultiAssetMacroFilterEngine.ts",
+      "purl": "pkg:npm/glorian/MultiAssetMacroFilterEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "101c902de5c38644a8e49c7e425fa8d648880ba6cf338dd91d40c9c7e034fa79"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:MultiAssetMacroFilterEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/MultiAssetMacroFilterEngine@1.0.0",
+      "description": "Layer-0 module eosMultiAssetMacroFilterEngine.types.ts",
+      "purl": "pkg:npm/glorian/MultiAssetMacroFilterEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b0909918d8882c9a956bdc02f93d64ee7c4b4fa21c28e8a8af2077642079113e"
         }
       ]
     },
@@ -6056,6 +6252,48 @@
     },
     {
       "type": "library",
+      "name": "glorian:QuantCockpitHudRenderer",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/QuantCockpitHudRenderer@1.0.0",
+      "description": "Layer-0 module eosQuantCockpitHudRenderer.ts",
+      "purl": "pkg:npm/glorian/QuantCockpitHudRenderer@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "abcc0d402e7d160c492a92f160265fce8a7e3d56540420c7fc25f12aa4880548"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:QuantCockpitWalkForwardEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/QuantCockpitWalkForwardEngine@1.0.0",
+      "description": "Layer-0 module eosQuantCockpitWalkForwardEngine.ts",
+      "purl": "pkg:npm/glorian/QuantCockpitWalkForwardEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f392d5c36cab46ca59548cefa0e4b069ebdc5a69d79fd02cc9c1b00faebfa73d"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:QuantCockpitWalkForwardEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/QuantCockpitWalkForwardEngine@1.0.0",
+      "description": "Layer-0 module eosQuantCockpitWalkForwardEngine.types.ts",
+      "purl": "pkg:npm/glorian/QuantCockpitWalkForwardEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e9a8bcb8bce8016f499472002c97978287cea5bf289a345a0cf258b9f43a25e8"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:QuantizedDistributedTrainingEngine",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/QuantizedDistributedTrainingEngine@1.0.0",
@@ -6596,7 +6834,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "da31e298cb752e03d86e620df5bdc6ecc25b2859e24d992d91610ba09e1c3313"
+          "content": "1a903896db614b376bbee7db983d02fc9908d1d4e1d223910deb5e7a1090410b"
         }
       ]
     },
@@ -6680,7 +6918,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "013d4a2fb7cd09581b474bfe47b3a3140d8450fe3cb8adf4e554e50bd885914d"
+          "content": "7c0d8883feee5b93e70cae76455a6436360183bb3f9fbb5b1eee30f1d1de81ad"
         }
       ]
     },
@@ -6750,7 +6988,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0a4ab97c033880f28206e2228ec3b1c400723a6fd8e53f09c87d91e823e39b99"
+          "content": "110494bec21a1548d3dd869d8c7765caa3de1e6ffdf96ea35f54b383efb3b5de"
         }
       ]
     },
@@ -6778,7 +7016,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "d8933829393850b51d5b41f648aa1ecb98e5169b9e42a079ff673c906e5a61a9"
+          "content": "b8ca75b5510a517f776ce5cc50ee678b477d947ca293f142717297fef9b32540"
         }
       ]
     },
@@ -7030,7 +7268,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "603f19924c9fff5ce2138c51668b0b5dffc43201da323ec66c50670014c3bfb4"
+          "content": "693d447ec544497ea4f6c5ec646fd195ca010c4725a71d872e96b97368a20fcf"
         }
       ]
     },
@@ -7072,7 +7310,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "61daf52a6fdd4bc831350bfb1230a4a2d82096a671a919d9140ad9fb32b26bc2"
+          "content": "2db1eb621d01121416ee1f19a5cdff536104309d5f0d59da37fa043bd891bdba"
         }
       ]
     },
@@ -7366,7 +7604,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "7142afd6cce3fad35b45e8da57b9b5241a5b5fc2af9a2cff4f8f98050ce56cff"
+          "content": "dc1062b08f9ce21171e32bba40f4929e5248fa98659e88ec8630897c40ac9925"
         }
       ]
     },
@@ -7610,6 +7848,20 @@
     },
     {
       "type": "library",
+      "name": "glorian:TradingSuiteBarrel",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/TradingSuiteBarrel@1.0.0",
+      "description": "Layer-0 module eosTradingSuiteBarrel.ts",
+      "purl": "pkg:npm/glorian/TradingSuiteBarrel@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "401b48e0b0a9e62ff3a0b2937ab93410e2cacfe952b955bb1ff5a876dca75358"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:TreeSitterWasmEngine",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/TreeSitterWasmEngine@1.0.0",
@@ -7618,7 +7870,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "3d8cc3bac8b3a10bf77146a72270361b13dc2257920b386daceacf7e21acf4b7"
+          "content": "1b6e27714af5185454b62d2e2d22da45eb2cf8e7a2617f4b175f328196eb2c75"
         }
       ]
     },
@@ -7661,6 +7913,34 @@
         {
           "alg": "SHA-256",
           "content": "9b764f1d1ad835db46126ea7a846b8ab349dc5facb88a28cc3a1884281269528"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:TriTemporalPropFirmEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/TriTemporalPropFirmEngine@1.0.0",
+      "description": "Layer-0 module eosTriTemporalPropFirmEngine.ts",
+      "purl": "pkg:npm/glorian/TriTemporalPropFirmEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "04602cedc7c6c18177a8281f54fadea506bdd98b6740a267829c3237831867c2"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:TriTemporalPropFirmEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/TriTemporalPropFirmEngine@1.0.0",
+      "description": "Layer-0 module eosTriTemporalPropFirmEngine.types.ts",
+      "purl": "pkg:npm/glorian/TriTemporalPropFirmEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "03a24fd3fab35273f65e0d9464dd66fe75d2d1a23e95f46b1240dd47a6ca7bbe"
         }
       ]
     },
@@ -7716,7 +7996,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b47594ce6ad55a3900b96871d818177a171cb76f8e0b754e6fc1fee455a49211"
+          "content": "46d93d651a1a71ded06e2f2297f6a2b7b818524af11a08d01f48c17b582e88a5"
         }
       ]
     },
@@ -7730,7 +8010,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b058b363a5b908d693aa4bf844c61ade910728b50561c977b8511a14220a9b27"
+          "content": "6fc7b6949dd46bcc56e5d566b308f9011db9990ddcef2e6d821d60989e838aeb"
         }
       ]
     },
@@ -7744,7 +8024,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "c1b6fc7b5f54217ff73c6650de2890803ed4dd71c17574a82a4fe138eda8ed90"
+          "content": "48f1f0dd13237eec5d5095f09c0ea1643263dfb3715ccd50dd1f24ca469725f5"
         }
       ]
     },
@@ -7820,6 +8100,34 @@
     },
     {
       "type": "library",
+      "name": "glorian:UniversalAssetPayoutOptimizerEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/UniversalAssetPayoutOptimizerEngine@1.0.0",
+      "description": "Layer-0 module eosUniversalAssetPayoutOptimizerEngine.ts",
+      "purl": "pkg:npm/glorian/UniversalAssetPayoutOptimizerEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "389b1139c8120409aa120d4879c5e685a1f26fcea22bff45fffb3b088b3c38a5"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "glorian:UniversalAssetPayoutOptimizerEngine",
+      "version": "1.0.0",
+      "bom_ref": "pkg:npm/glorian/UniversalAssetPayoutOptimizerEngine@1.0.0",
+      "description": "Layer-0 module eosUniversalAssetPayoutOptimizerEngine.types.ts",
+      "purl": "pkg:npm/glorian/UniversalAssetPayoutOptimizerEngine@1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8b879c186d7dd930a2d9cd219f85a6c2674f5203bfd9d91dc376235d439e7de2"
+        }
+      ]
+    },
+    {
+      "type": "library",
       "name": "glorian:UniversalCodeRemediator",
       "version": "1.0.0",
       "bom_ref": "pkg:npm/glorian/UniversalCodeRemediator@1.0.0",
@@ -7842,7 +8150,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "e53e0b772212262f153de21f7301f2a3894d155e624fe9667dacc8c4be66f8b2"
+          "content": "1b294d103eac1aedc832fff103ec541a76664b0ed978ffc60690b4d1f5698a0f"
         }
       ]
     },
@@ -8206,7 +8514,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "86a9dfba84047bfa1c06bffaf1222779ca5dbe4ce9f7875c9df486c7b1c74726"
+          "content": "ada624a3ae02d996c83d42edeab2370404321698b507d3bf2b7668d80f53c101"
         }
       ]
     },
@@ -8234,7 +8542,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "dbcfbd6a92424a7658f51d7eba62d52914098065afdd0da61fd6783c1324cf38"
+          "content": "a2ed1b4abc0907f73f6931c06be708cae074eea766a74a20158bcef6fd375063"
         }
       ]
     },
@@ -8598,7 +8906,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "3c75aa3502ebd17e46a9c3d0da341149bc02b6ac5722f722d66e5b9ee7f4761d"
+          "content": "933c0b1c09c20576e9dbf0c23e5b8fa83bf0383af86bd319891be4b3cae26943"
         }
       ]
     },
@@ -8666,6 +8974,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/AladdinPortfolioRiskEngine@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/AladdinSystemicRiskStressCore@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
@@ -8719,6 +9033,12 @@
       "ref": "pkg:npm/glorian/ArchitecturalCanvas@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/ArchitectureGuard@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/TypeScriptAstAnalyzer@1.0.0"
       ]
     },
     {
@@ -8836,6 +9156,13 @@
       "ref": "pkg:npm/glorian/BulletproofsRangeProofCore@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/VerifiableRandomFunctionCore@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/ByzantineQuorumGovernor@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
+        "pkg:npm/glorian/KernelPrimitives@1.0.0"
       ]
     },
     {
@@ -9118,7 +9445,70 @@
         "pkg:npm/glorian/EosAin@1.0.0",
         "pkg:npm/glorian/glorianConstitutionalTribunal@1.0.0",
         "pkg:npm/glorian/FleetMissionControl@1.0.0",
-        "pkg:npm/glorian/DistributedPeerMesh@1.0.0"
+        "pkg:npm/glorian/DistributedPeerMesh@1.0.0",
+        "pkg:npm/glorian/AkashicMemory@1.0.0",
+        "pkg:npm/glorian/ApiMiddlewareChain@1.0.0",
+        "pkg:npm/glorian/BackpressureFlowController@1.0.0",
+        "pkg:npm/glorian/BatchAggregator@1.0.0",
+        "pkg:npm/glorian/BenchmarkTracker@1.0.0",
+        "pkg:npm/glorian/BigTechPantheon@1.0.0",
+        "pkg:npm/glorian/BlueGreenOrchestrator@1.0.0",
+        "pkg:npm/glorian/CacheEngine@1.0.0",
+        "pkg:npm/glorian/CertificateLifecycleManager@1.0.0",
+        "pkg:npm/glorian/CicdPipeline@1.0.0",
+        "pkg:npm/glorian/CliUx@1.0.0",
+        "pkg:npm/glorian/ConfigHotReloadEngine@1.0.0",
+        "pkg:npm/glorian/ConnectionPoolManager@1.0.0",
+        "pkg:npm/glorian/ContractTestEngine@1.0.0",
+        "pkg:npm/glorian/DagJobScheduler@1.0.0",
+        "pkg:npm/glorian/DependencyContainer@1.0.0",
+        "pkg:npm/glorian/DesignPrimitives@1.0.0",
+        "pkg:npm/glorian/DesignTokens@1.0.0",
+        "pkg:npm/glorian/DiffPatcher@1.0.0",
+        "pkg:npm/glorian/DistributedLockManager@1.0.0",
+        "pkg:npm/glorian/EbpfKernelProbeEngine@1.0.0",
+        "pkg:npm/glorian/ErrorCatalog@1.0.0",
+        "pkg:npm/glorian/EventSourcingEngine@1.0.0",
+        "pkg:npm/glorian/FairShareScheduler@1.0.0",
+        "pkg:npm/glorian/FeatureFlagEngine@1.0.0",
+        "pkg:npm/glorian/FirecrackerDaemonSupervisor@1.0.0",
+        "pkg:npm/glorian/FleetDispatcher@1.0.0",
+        "pkg:npm/glorian/FleetRagGoldenPath@1.0.0",
+        "pkg:npm/glorian/GossipMembership@1.0.0",
+        "pkg:npm/glorian/HashedTimingWheel@1.0.0",
+        "pkg:npm/glorian/HorizontalAutoScaler@1.0.0",
+        "pkg:npm/glorian/HranaStreamClient@1.0.0",
+        "pkg:npm/glorian/KubernetesFleetOperator@1.0.0",
+        "pkg:npm/glorian/LeaderElectionCluster@1.0.0",
+        "pkg:npm/glorian/LinuxKernelCore@1.0.0",
+        "pkg:npm/glorian/LlmOpsPrivacyLane@1.0.0",
+        "pkg:npm/glorian/LspDiagnostics@1.0.0",
+        "pkg:npm/glorian/MemoryZeroizer@1.0.0",
+        "pkg:npm/glorian/MeshTrafficPolicyEngine@1.0.0",
+        "pkg:npm/glorian/NanosecondEngine@1.0.0",
+        "pkg:npm/glorian/NsaAnomalyDetector@1.0.0",
+        "pkg:npm/glorian/OmegaSingularity@1.0.0",
+        "pkg:npm/glorian/OtlpTelemetryEngine@1.0.0",
+        "pkg:npm/glorian/PeakAssuranceTcb@1.0.0",
+        "pkg:npm/glorian/PeerNetworkMesh@1.0.0",
+        "pkg:npm/glorian/PluginLoader@1.0.0",
+        "pkg:npm/glorian/ProbabilisticDataStructures@1.0.0",
+        "pkg:npm/glorian/ProtobufContractEngine@1.0.0",
+        "pkg:npm/glorian/ReactiveStreamEngine@1.0.0",
+        "pkg:npm/glorian/ResilienceMesh@1.0.0",
+        "pkg:npm/glorian/SagaOrchestrator@1.0.0",
+        "pkg:npm/glorian/ScatterGatherHedger@1.0.0",
+        "pkg:npm/glorian/SchemaRegistry@1.0.0",
+        "pkg:npm/glorian/SecretsRotationProtocol@1.0.0",
+        "pkg:npm/glorian/SovereignFiveScorecard@1.0.0",
+        "pkg:npm/glorian/StructuredLogger@1.0.0",
+        "pkg:npm/glorian/TlsPeerTransport@1.0.0",
+        "pkg:npm/glorian/UnboundedFormalProver@1.0.0",
+        "pkg:npm/glorian/VectorClockCausality@1.0.0",
+        "pkg:npm/glorian/WanKademliaMesh@1.0.0",
+        "pkg:npm/glorian/WebGpuTensorEngine@1.0.0",
+        "pkg:npm/glorian/WebhookFanoutDispatcher@1.0.0",
+        "pkg:npm/glorian/samaelCodex@1.0.0"
       ]
     },
     {
@@ -9189,7 +9579,8 @@
     {
       "ref": "pkg:npm/glorian/FleetDogfoodingEngine@1.0.0",
       "dependsOn": [
-        "pkg:npm/glorian/DeterministicArtifact@1.0.0"
+        "pkg:npm/glorian/DeterministicArtifact@1.0.0",
+        "pkg:npm/glorian/FleetPathResolver@1.0.0"
       ]
     },
     {
@@ -9291,6 +9682,18 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/GoalDrivenDevelopmentContract@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/GoalDrivenFactoryCore@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/GoldenSweBenchmarkHarnessCore@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
@@ -9310,6 +9713,12 @@
       "ref": "pkg:npm/glorian/HardwareMemoryArena@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/HarnessTokenEconomicsCore@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {
@@ -9668,6 +10077,13 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/MultiAssetMacroFilterEngine@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
+        "pkg:npm/glorian/InstitutionalTradingEngine@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/MultiModelRouter@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
@@ -9892,6 +10308,18 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/QuantCockpitHudRenderer@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/UniversalAssetPayoutOptimizerEngine@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/QuantCockpitWalkForwardEngine@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/TriTemporalPropFirmEngine@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/QuantumEntanglementRepeaterBbpsswCore@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
@@ -9995,6 +10423,12 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/SemanticGraph@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/TypeScriptAstAnalyzer@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/SentinelDaemon@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/FleetTopology@1.0.0",
@@ -10017,6 +10451,7 @@
     {
       "ref": "pkg:npm/glorian/SharedMemoryWorkerPool@1.0.0",
       "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
         "pkg:npm/glorian/UniversalFleetSyncCore@1.0.0",
         "pkg:npm/glorian/WasmSimd128VectorArena@1.0.0"
@@ -10032,6 +10467,7 @@
     {
       "ref": "pkg:npm/glorian/SingleExecutableDistributionGovernor@1.0.0",
       "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
       ]
     },
@@ -10211,6 +10647,31 @@
       ]
     },
     {
+      "ref": "pkg:npm/glorian/TradingSuiteBarrel@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/InstitutionalTradingEngine@1.0.0",
+        "pkg:npm/glorian/AladdinPortfolioRiskEngine@1.0.0",
+        "pkg:npm/glorian/MultiAssetMacroFilterEngine@1.0.0",
+        "pkg:npm/glorian/TriTemporalPropFirmEngine@1.0.0",
+        "pkg:npm/glorian/UniversalAssetPayoutOptimizerEngine@1.0.0",
+        "pkg:npm/glorian/QuantCockpitWalkForwardEngine@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/TreeSitterWasmEngine@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/DeterministicArtifact@1.0.0",
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/TriTemporalPropFirmEngine@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
+        "pkg:npm/glorian/InstitutionalTradingEngine@1.0.0"
+      ]
+    },
+    {
       "ref": "pkg:npm/glorian/TrivyScannerAdapter@1.0.0",
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0"
@@ -10254,6 +10715,12 @@
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
         "pkg:npm/glorian/AntigravityDirector@1.0.0",
         "pkg:npm/glorian/GentlemanStackBridge@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/UniversalAssetPayoutOptimizerEngine@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/TriTemporalPropFirmEngine@1.0.0"
       ]
     },
     {
@@ -10334,6 +10801,7 @@
     {
       "ref": "pkg:npm/glorian/WasmSimd128VectorArena@1.0.0",
       "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0",
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
         "pkg:npm/glorian/PolyglotRustZigWasmKernel@1.0.0",
         "pkg:npm/glorian/WasmBytecodeSynthesizer@1.0.0"
@@ -10699,7 +11167,11 @@
         "pkg:npm/glorian/DynamicToolSynthesis@1.0.0",
         "pkg:npm/glorian/AdversarialRedTeamCrucible@1.0.0",
         "pkg:npm/glorian/EpisodicMemoryGraph@1.0.0",
-        "pkg:npm/glorian/DeterministicReplayDebugger@1.0.0"
+        "pkg:npm/glorian/DeterministicReplayDebugger@1.0.0",
+        "pkg:npm/glorian/TradingSuiteBarrel@1.0.0",
+        "pkg:npm/glorian/HarnessTokenEconomicsCore@1.0.0",
+        "pkg:npm/glorian/GoalDrivenFactoryCore@1.0.0",
+        "pkg:npm/glorian/ByzantineQuorumGovernor@1.0.0"
       ]
     }
   ]
