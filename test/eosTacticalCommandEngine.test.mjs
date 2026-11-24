@@ -6,7 +6,10 @@ import fs from "node:fs";
 import os from "node:os";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
-import { EosTacticalCommandEngine } from "../src/core/eosTacticalCommandEngine.ts";
+import {
+  EosTacticalCommandEngine,
+  parseFreezeGatePosture,
+} from "../src/core/eosTacticalCommandEngine.ts";
 import { writeDeterministicArtifact } from "../src/core/eosDeterministicArtifact.ts";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -139,12 +142,24 @@ describe("SPEC-129: Tier S-0 Tactical Apex — Command Engine & OpenSpec Indexer
       }
     });
 
-    it("pinned freeze tip requires UNKNOWN=0; PROPOSED declares Owner + ProposedCloseBy", () => {
+    it("pinned freeze tip requires UNKNOWN=0, freezePinBoundSha, and PROPOSED Owner + ProposedCloseBy", () => {
       const live = engine.extractOpenSpecs();
       const unknown = live.filter((s) => String(s.status).toUpperCase() === "UNKNOWN");
       const freezeDoc = fs.readFileSync(path.join(projectRoot, "docs/releases/EOS_FREEZE_GATE_STATUS.md"), "utf8");
-      assert.match(freezeDoc, /ACTIVE_FREEZE_GATE_PINNED/);
+      const { tipPinned, pinSha } = parseFreezeGatePosture(freezeDoc);
+      const committed = JSON.parse(
+        fs.readFileSync(path.join(projectRoot, "docs/specs/openspec-catalog-index.json"), "utf8"),
+      );
+
+      assert.equal(tipPinned, true);
+      assert.ok(pinSha, "Freeze Pin (HEAD) must be parseable on sealed tip");
       assert.equal(unknown.length, 0, `UNKNOWN must be 0 on pinned tip; got ${unknown.map((s) => s.id).join(", ")}`);
+      assert.ok(committed.freezePinBoundSha, "catalog must bind freezePinBoundSha on sealed tip");
+      const bound = String(committed.freezePinBoundSha).toLowerCase();
+      assert.ok(
+        pinSha.startsWith(bound) || bound.startsWith(pinSha),
+        `freezePinBoundSha ${bound} must match freeze pin ${pinSha}`,
+      );
 
       const proposed = live.filter((s) => String(s.status).toUpperCase().startsWith("PROPOSED"));
       for (const spec of proposed) {
@@ -152,6 +167,15 @@ describe("SPEC-129: Tier S-0 Tactical Apex — Command Engine & OpenSpec Indexer
         assert.match(body, /\*\*Owner\*\*\s*:/i, `${spec.id} PROPOSED missing Owner`);
         assert.match(body, /\*\*ProposedCloseBy\*\*\s*:/i, `${spec.id} PROPOSED missing ProposedCloseBy`);
       }
+    });
+
+    it("tip-open UNKNOWN threshold is advisory (documented); tip-sealed threshold is 0", () => {
+      const policy = fs.readFileSync(path.join(projectRoot, "docs/governance/OPENSPEC_CATALOG_FRESHNESS.md"), "utf8");
+      assert.match(policy, /Tip-sealed/i);
+      assert.match(policy, /Tip-open/i);
+      assert.match(policy, /Fail-closed if > 0/);
+      assert.match(policy, /Advisory only/i);
+      assert.match(policy, /freezePinBoundSha/);
     });
 
     it("catalog:freshness CLI exits 0 on tip", () => {
@@ -162,7 +186,16 @@ describe("SPEC-129: Tier S-0 Tactical Apex — Command Engine & OpenSpec Indexer
       const report = JSON.parse(out);
       assert.equal(report.ok, true);
       assert.equal(report.unknown, 0);
+      assert.equal(report.tipPinned, true);
+      assert.ok(report.freezePinBoundSha);
       assert.ok(report.totalSpecs >= 332);
+    });
+
+    it("--seal-pin path re-exports OpenSpec catalog after rewriting Freeze Pin", () => {
+      const tipRefresh = fs.readFileSync(path.join(projectRoot, "scripts/tip-refresh.mjs"), "utf8");
+      const sealBlock = tipRefresh.split("if (sealPinOnly)")[1] ?? "";
+      assert.match(sealBlock, /exportOpenSpecsJson/, "seal-pin must call exportOpenSpecsJson for freezePinBoundSha lockstep");
+      assert.match(sealBlock, /freezePinBoundSha|catalog bind sync/i);
     });
   });
 });

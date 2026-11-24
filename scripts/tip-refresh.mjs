@@ -32,11 +32,18 @@ const TRANSIENT_LOCK_CODES = new Set(["UNKNOWN", "EBUSY", "EPERM", "EACCES"]);
 
 /**
  * OpenSpec catalog freshness gate (remediation P1-1 / PR-E).
- * SHA parity is SoT; timestampIso is deterministic/reused (not wall-clock age).
- * Fail-closed: index drift, UNKNOWN>0 on pinned tip, PROPOSED missing Owner/due.
+ *
+ * SHA parity is content SoT; timestampIso is content-derived (not wall-clock age).
+ * Stale-vs-freeze-pin is enforced via freezePinBoundSha === Freeze Pin (HEAD).
+ *
+ * Tip-sealed (ACTIVE_FREEZE_GATE_PINNED): fail-closed on UNKNOWN>0, SHA drift, or pin mismatch.
+ * Tip-open: SHA parity + PROPOSED Owner/due only; UNKNOWN is advisory (no hard fail).
+ * See docs/governance/OPENSPEC_CATALOG_FRESHNESS.md.
  */
 async function runCatalogFreshnessCheck() {
-  const { EosTacticalCommandEngine } = await import("../src/core/eosTacticalCommandEngine.ts");
+  const { EosTacticalCommandEngine, parseFreezeGatePosture } = await import(
+    "../src/core/eosTacticalCommandEngine.ts"
+  );
   const indexPath = path.join(root, "docs/specs/openspec-catalog-index.json");
   const freezePath = path.join(root, "docs/releases/EOS_FREEZE_GATE_STATUS.md");
   const fail = (message) => {
@@ -77,15 +84,32 @@ async function runCatalogFreshnessCheck() {
   const unknown = liveSpecs.filter((s) => String(s.status).trim().toUpperCase() === "UNKNOWN");
   const proposed = liveSpecs.filter((s) => String(s.status).trim().toUpperCase().startsWith("PROPOSED"));
   const freezeDoc = fs.existsSync(freezePath) ? fs.readFileSync(freezePath, "utf8") : "";
-  const tipPinned = /ACTIVE_FREEZE_GATE_PINNED/.test(freezeDoc);
+  const { tipPinned, pinSha } = parseFreezeGatePosture(freezeDoc);
 
-  if (tipPinned && unknown.length > 0) {
-    fail(
-      `tip sealed/pinned requires UNKNOWN=0; found ${unknown.length}: ${unknown
-        .slice(0, 8)
-        .map((s) => s.id)
-        .join(", ")}`,
-    );
+  if (tipPinned) {
+    if (unknown.length > 0) {
+      fail(
+        `tip sealed/pinned requires UNKNOWN=0; found ${unknown.length}: ${unknown
+          .slice(0, 8)
+          .map((s) => s.id)
+          .join(", ")}`,
+      );
+    }
+    if (!pinSha) {
+      fail(`tip sealed/pinned but Freeze Pin (HEAD) is missing or unparseable`);
+    }
+    const bound = typeof committed.freezePinBoundSha === "string" ? committed.freezePinBoundSha.toLowerCase() : null;
+    if (!bound) {
+      fail(
+        `tip sealed/pinned requires freezePinBoundSha in openspec-catalog-index.json (stale vs freeze pin); re-run exportOpenSpecsJson`,
+      );
+    }
+    // Prefix match: freeze doc may carry short SHA while bind stores the same tip.
+    if (!(pinSha.startsWith(bound) || bound.startsWith(pinSha))) {
+      fail(
+        `freezePinBoundSha stale vs freeze pin: catalog=${bound} freezeDoc=${pinSha} (regenerate catalog after tip-seal)`,
+      );
+    }
   }
 
   for (const spec of proposed) {
@@ -103,7 +127,10 @@ async function runCatalogFreshnessCheck() {
         unknown: unknown.length,
         proposed: proposed.length,
         timestampIso: committed.timestampIso,
-        policy: "sha-parity+unknown0-on-pin+proposed-owner-due",
+        freezePinBoundSha: committed.freezePinBoundSha ?? null,
+        tipPinned,
+        tipOpenUnknownThreshold: tipPinned ? 0 : "advisory-unlimited",
+        policy: "sha-parity+unknown0-on-pin+freeze-pin-bind+proposed-owner-due",
       },
       null,
       2,
@@ -261,7 +288,17 @@ if (sealPinOnly) {
   }
   const sealOutPath = customOutPath ?? freezePath;
   writeFileWithRetry(sealOutPath, sealed);
-  console.log(`✅ Freeze Pin sealed to HEAD ${m.head} (amend this file into the tip-refresh commit for pin==HEAD).`);
+  // Keep openspec-catalog-index.json freezePinBoundSha in lockstep with the sealed pin
+  // so catalog:freshness does not fail closed on a stale bind after --seal-pin.
+  try {
+    const { EosTacticalCommandEngine } = await import("../src/core/eosTacticalCommandEngine.ts");
+    new EosTacticalCommandEngine(root).exportOpenSpecsJson();
+  } catch (err) {
+    console.warn(`⚠️ OpenSpec catalog bind sync after seal-pin skipped: ${err?.message ?? err}`);
+  }
+  console.log(
+    `✅ Freeze Pin sealed to HEAD ${m.head} (catalog freezePinBoundSha re-exported; amend freeze + catalog into tip-refresh commit for pin==HEAD).`,
+  );
   process.exit(0);
 }
 
