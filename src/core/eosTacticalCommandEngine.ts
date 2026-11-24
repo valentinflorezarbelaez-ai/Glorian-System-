@@ -36,6 +36,29 @@ export interface OpenSpecMetadata {
   readonly sha256: string;
 }
 
+/** Committed OpenSpec catalog index envelope (docs/specs/openspec-catalog-index.json). */
+export interface OpenSpecCatalogIndex {
+  readonly timestampIso: string;
+  readonly totalSpecs: number;
+  readonly catalogSha256: string;
+  /** Short freeze-pin SHA when tip is ACTIVE_FREEZE_GATE_PINNED; null while tip-open. */
+  readonly freezePinBoundSha: string | null;
+  readonly specs: OpenSpecMetadata[];
+}
+
+/**
+ * Parse freeze-gate tip posture from EOS_FREEZE_GATE_STATUS.md.
+ * Pin bind replaces wall-clock timestampIso age (stamps are content-derived).
+ */
+export function parseFreezeGatePosture(freezeDoc: string): {
+  tipPinned: boolean;
+  pinSha: string | null;
+} {
+  const tipPinned = /ACTIVE_FREEZE_GATE_PINNED/.test(freezeDoc);
+  const pinMatch = freezeDoc.match(/\*\*Freeze Pin \(HEAD\)\*\*\s*\|\s*`([0-9a-f]{7,40})`/i);
+  return { tipPinned, pinSha: tipPinned && pinMatch ? pinMatch[1].toLowerCase() : null };
+}
+
 export interface TacticalQueryResult {
   readonly query: string;
   readonly totalMatches: number;
@@ -281,20 +304,26 @@ export class EosTacticalCommandEngine {
 
   /**
    * Exports the complete static JSON index of OpenSpecs for client-side embedding.
+   * Binds freezePinBoundSha from docs/releases/EOS_FREEZE_GATE_STATUS.md when tip-sealed.
    */
   public exportOpenSpecsJson(outputPath?: string): string {
     const specs = this.extractOpenSpecs();
     const target = outputPath || path.join(this.projectRoot, "docs/specs/openspec-catalog-index.json");
-    const payload = {
+    const freezePath = path.join(this.projectRoot, "docs/releases/EOS_FREEZE_GATE_STATUS.md");
+    const freezeDoc = fs.existsSync(freezePath) ? fs.readFileSync(freezePath, "utf8") : "";
+    const { tipPinned, pinSha } = parseFreezeGatePosture(freezeDoc);
+    const payload: OpenSpecCatalogIndex = {
       timestampIso: new Date().toISOString(),
       totalSpecs: specs.length,
       catalogSha256: crypto.createHash("sha256").update(JSON.stringify(specs)).digest("hex"),
+      freezePinBoundSha: tipPinned ? pinSha : null,
       specs,
     };
 
     // Deterministic artifact: the committed timestampIso is reused in place, so an
     // unchanged spec set yields a byte-identical index with no working-tree churn.
-    writeDeterministicArtifact(target, payload, {
+    // freezePinBoundSha is NOT a volatile stamp — tip-seal pin moves rewrite the index.
+    writeDeterministicArtifact(target, payload as unknown as Record<string, unknown>, {
       stampField: "timestampIso",
       stampFor: (seedSha) => contentDerivedIso(seedSha),
     });
