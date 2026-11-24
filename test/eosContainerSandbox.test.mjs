@@ -326,9 +326,13 @@ test("BDD-SANDBOX-FAULT-002: doctor and run enforce engine security policies, im
   // 4. Spawn error, timeout kill path, and non-zero exit
   const mockSpawnTimeout = () => {
     const proc = new EventEmitter();
+    const keepAlive = setTimeout(() => {}, 10_000);
     proc.kill = (sig) => {
       if (sig === "SIGTERM") {
-        setTimeout(() => proc.emit("close", null, "SIGTERM"), 10);
+        setTimeout(() => {
+          clearTimeout(keepAlive);
+          proc.emit("close", null, "SIGTERM");
+        }, 10);
       }
     };
     return proc;

@@ -161,12 +161,23 @@ function getRegisteredWorktree(repoRoot: string, selectedPath: string): string {
   if (!isPathWithin(root, realCandidate) || realCandidate === root) {
     throw new Error("Selected worktree resolves outside the repository boundary.");
   }
+  const canonicalize = (targetPath: string): string => {
+    const resolved = path.resolve(targetPath);
+    let canonical = resolved;
+    try {
+      canonical = fs.realpathSync(resolved);
+    } catch {
+      // Stale/inaccessible worktree entry retains resolved path so comparison fails closed
+    }
+    return process.platform === "win32" ? canonical.toLowerCase() : canonical;
+  };
   const output = listRegisteredGitWorktrees(root);
+  const expectedCandidate = canonicalize(realCandidate);
   const registered = output
     .split(/\r?\n/)
     .filter((line) => line.startsWith("worktree "))
-    .map((line) => path.resolve(line.slice("worktree ".length).trim()));
-  if (!registered.some((worktree) => path.resolve(worktree) === realCandidate)) {
+    .map((line) => canonicalize(line.slice("worktree ".length).trim()));
+  if (!registered.includes(expectedCandidate)) {
     throw new Error("Selected path is not a registered Git worktree of this repository.");
   }
   return realCandidate;
@@ -380,10 +391,11 @@ export class EosContainerSandbox {
               child.kill("SIGTERM");
             } catch {}
           };
+          let killEscalationTimer: ReturnType<typeof setTimeout> | null = null;
           const timer = setTimeout(() => {
             timedOut = true;
             requestContainerStop();
-            setTimeout(() => {
+            killEscalationTimer = setTimeout(() => {
               try {
                 const remover = this.spawnDockerProcess("docker", ["rm", "--force", containerName], {
                   stdio: "ignore",
@@ -395,9 +407,9 @@ export class EosContainerSandbox {
               try {
                 child.kill("SIGKILL");
               } catch {}
-            }, 2_000).unref();
+            }, 2_000);
+            killEscalationTimer.unref();
           }, timeoutMs);
-          timer.unref();
           const workspaceMonitor = setInterval(() => {
             try {
               assertWorkspaceWithinLimits(snapshotPath);
@@ -408,18 +420,21 @@ export class EosContainerSandbox {
             }
           }, MAX_RUN_DISK_CHECK_MS);
           workspaceMonitor.unref();
+          const clearTimers = () => {
+            clearTimeout(timer);
+            if (killEscalationTimer) clearTimeout(killEscalationTimer);
+            clearInterval(workspaceMonitor);
+          };
           child.once("error", (error) => {
             if (finished) return;
             finished = true;
-            clearTimeout(timer);
-            clearInterval(workspaceMonitor);
+            clearTimers();
             resolve({ code: null, signal: null, spawnError: error });
           });
           child.once("close", (code, signal) => {
             if (finished) return;
             finished = true;
-            clearTimeout(timer);
-            clearInterval(workspaceMonitor);
+            clearTimers();
             if (resourceLimitExceeded) errorMessage = "Sandbox exceeded its live workspace file or disk budget.";
             resolve({ code, signal });
           });
