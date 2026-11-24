@@ -5,9 +5,10 @@
 - **Specification ID**: `SPEC-124`
 - **Project ID**: `eos-system` (Control Plane Core) + Fleet Repositories in `c:\Users\valen\`
 - **Standard**: IEEE 830 / ISO 29148 · EOS Constitution Law I (Spec as Supreme Truth), Law II (Strict Gate), Law III (Evidence over Claims), Law IV (External Write Barrier), Law V (Hexagonal Purity), Law VI (Zero Plain Secrets)
-- **Status**: `PROPOSED` — awaiting Level 2 Authorization Gate
+- **Status**: `APPROVED`
 - **Owner**: `user:valentin-florez-arbelaez`
-- **ProposedCloseBy**: `2026-12-15`
+- **ClosedAt**: `2026-11-23`
+- **CloseRationale**: Landed Layer-0 implementation (`scripts/eos-fleet-registry-sync.mjs`, `test/eos-fleet-registry-sync.test.mjs`) with `AUTH-2026-11-02-FLEET-REGISTRY-SYNC-124` LEVEL 2 + OWNER_APPROVAL; PR-F remediation closes PROPOSED catalog drift (Law I RTM).
 - **Layer**: Layer-0 Pure Discovery & Reconciliation Engine + CLI / MCP Tool
 - **Date**: `2026-11-02`
 
