@@ -135,6 +135,26 @@ describe("SPEC-145: SLO Error-Budget Gate", () => {
       });
     }
 
+    const invalidRows = [
+      ["missing failure count", JSON.stringify({ timestamp: Date.now(), total: 10, passed: 9 })],
+      ["malformed JSON", '{"timestamp":'],
+      ["invalid timestamp", JSON.stringify({ timestamp: "yesterday", total: 10, passed: 9, failed: 1 })],
+    ];
+    for (const [reason, row] of invalidRows) {
+      it(`slo --json rejects a ledger row with ${reason} and identifies its line`, () => {
+        const ledger = path.join(stateDir, "slo-events.jsonl");
+        const valid = JSON.stringify({ timestamp: Date.now(), total: 1000, passed: 1000, failed: 0 });
+        const history = `${valid}\n${row}\n`;
+        fs.writeFileSync(ledger, history);
+        const result = spawnSync(process.execPath, [cli, "slo", "--json"], { encoding: "utf8" });
+        assert.ifError(result.error);
+        assert.equal(result.status, 2, result.stderr);
+        assert.match(result.stderr, /slo-events\.jsonl:2\b/);
+        assert.equal(result.stdout, "");
+        assert.equal(fs.readFileSync(ledger, "utf8"), history);
+      });
+    }
+
     it("slo prints a blocking verdict in the human-readable report and exits 1", () => {
       seedEvents(stateDir, [{ timestamp: Date.now(), total: 1000, passed: 800, failed: 200 }]);
       const result = spawnSync(process.execPath, [cli, "slo"], { encoding: "utf8" });
@@ -180,6 +200,44 @@ describe("SPEC-145: SLO Error-Budget Gate", () => {
     assert.throws(() => gov.recordCIEvent(0, 0, 0), /positive/);
     gov.recordCIEvent(1, 1, 0); // one test is a valid event
     assert.equal(gov.evaluate().gateVerdict, "PASS");
+  });
+
+  it("preserves the ledger when a writer supplies invalid CI event counts", () => {
+    const gov = new EosSLOErrorBudgetGovernor({ stateDir: tmpDir });
+    gov.recordCIEvent(1000, 997, 1); // Two tests have no pass/fail outcome.
+    const report = gov.evaluate();
+    assert.equal(report.gateVerdict, "PASS");
+    assert.equal(report.errorBudgetTotal, 5);
+    assert.equal(report.errorBudgetConsumed, 1);
+
+    const ledger = path.join(tmpDir, "slo-events.jsonl");
+    const before = fs.readFileSync(ledger, "utf8");
+    const invalidCounts = [
+      [Infinity, 0, 0],
+      [Number.MAX_SAFE_INTEGER + 1, 1, 0],
+      [10, 9.5, 0],
+      [10, -1, 0],
+      [10, 9, -1],
+      [10, 9, NaN],
+      [10, 9, "1"],
+      [10, 9, 2],
+    ];
+    for (const counts of invalidCounts) {
+      assert.throws(() => gov.recordCIEvent(...counts), `Expected rejection for ${counts.join(", ")}`);
+    }
+    assert.equal(fs.readFileSync(ledger, "utf8"), before);
+  });
+
+  it("appends a separate record when the last valid event has no trailing newline", () => {
+    const gov = new EosSLOErrorBudgetGovernor({ stateDir: tmpDir });
+    const file = path.join(tmpDir, "slo-events.jsonl");
+    const first = JSON.stringify({ timestamp: Date.now(), total: 100, passed: 99, failed: 1 });
+    fs.writeFileSync(file, first);
+    gov.recordCIEvent(100, 100, 0);
+    const rows = fs.readFileSync(file, "utf8").trimEnd().split("\n");
+    assert.equal(rows.length, 2);
+    assert.equal(rows[0], first);
+    assert.equal(gov.evaluate().errorBudgetConsumed, 1);
   });
 
   it("BDD-450: computes exact error-budget arithmetic", () => {

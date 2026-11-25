@@ -2635,7 +2635,6 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
         ["swarm"],
         ["enforce"],
         ["flags"],
-        ["perf"],
         ["drift"],
       ];
 

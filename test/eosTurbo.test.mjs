@@ -14,6 +14,8 @@
 
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -54,9 +56,7 @@ describe("EOS Turbo Engine & Nanosecond Precision Suite", () => {
       assert.equal(afterClear.fromCache, false);
     });
 
-    it("hits sha256 verification cache when file timestamp changes but content remains identical", async () => {
-      const fs = await import("node:fs");
-      const os = await import("node:os");
+    it("hits sha256 verification cache when file timestamp changes but content remains identical", () => {
       const tmpFile = path.join(os.tmpdir(), `test-sha-cache-${Date.now()}.txt`);
       fs.writeFileSync(tmpFile, "strictly clean content with zero secrets");
       try {
@@ -105,16 +105,16 @@ describe("EOS Turbo Engine & Nanosecond Precision Suite", () => {
       assert.ok(result.totalFilesChecked > 20);
       assert.ok(result.sourceInventoryDigest.startsWith("sha256:"));
 
-      // Second consecutive run must hit the inventory cache
       const warm = runTurboPipeline(root);
       assert.equal(warm.success, true);
-      assert.equal(warm.sourceInventoryDigest, result.sourceInventoryDigest);
-      assert.equal(warm.totalFilesChecked, result.totalFilesChecked);
+      assert.ok(warm.cacheHits > 0);
+      assert.ok(
+        warm.totalDurationMs < 20000,
+        `Expected the warm pipeline to stay under its 20s sanity ceiling, got ${warm.totalDurationMs}ms`,
+      );
     });
 
-    it("fails closed when external runtime dependencies are introduced into package.json (Law V)", async () => {
-      const fs = await import("node:fs");
-      const os = await import("node:os");
+    it("fails closed when external runtime dependencies are introduced into package.json (Law V)", () => {
       const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-turbo-deps-"));
       try {
         fs.writeFileSync(
@@ -150,23 +150,39 @@ describe("EOS Turbo Engine & Nanosecond Precision Suite", () => {
       }
     });
 
-    it("reuses the in-memory cache on secondary run", () => {
-      const firstResult = runTurboPipeline(root);
-      const secondResult = runTurboPipeline(root);
+    it("reuses the in-memory cache on an unchanged source inventory", (t) => {
+      const fixture = fs.mkdtempSync(path.join(os.tmpdir(), "eos-turbo-cache-"));
+      t.after(() => fs.rmSync(fixture, { recursive: true, force: true }));
+      for (const file of [
+        "package.json",
+        "index.html",
+        "css/eos.css",
+        "js/eos.js",
+        "sw.js",
+        "manifest.webmanifest",
+        "bin/eos.mjs",
+        "src/mcp/eosMcpServer.ts",
+      ]) {
+        const target = path.join(fixture, file);
+        fs.mkdirSync(path.dirname(target), { recursive: true });
+        fs.copyFileSync(path.join(root, file), target);
+      }
 
-      assert.equal(secondResult.success, true);
-      // Cache reuse is proven by hit counts, not by wall-clock deltas: the first
-      // run may already be warm from earlier cases, and scheduler noise dominates
-      // single-run timings.
-      assert.ok(secondResult.cacheHits > 0, "Expected non-zero cache hits on a primed cache");
-      assert.ok(
-        secondResult.cacheHits >= firstResult.cacheHits,
-        `Expected cache hits to not regress (first: ${firstResult.cacheHits}, second: ${secondResult.cacheHits})`,
-      );
-      assert.ok(
-        secondResult.totalDurationMs < 20000,
-        `Expected the pipeline to stay under its 20s sanity ceiling, got ${secondResult.totalDurationMs}ms`,
-      );
+      clearVerificationCache();
+      const cold = runTurboPipeline(fixture);
+      const warm = runTurboPipeline(fixture);
+      assert.equal(cold.success, true);
+      assert.equal(warm.success, true);
+      assert.ok(cold.freshScans > 0);
+      assert.equal(warm.freshScans, 0);
+      assert.equal(warm.cacheHits, cold.cacheHits + cold.freshScans);
+      assert.equal(warm.sourceInventoryDigest, cold.sourceInventoryDigest);
+      assert.equal(warm.totalFilesChecked, cold.totalFilesChecked);
+
+      fs.writeFileSync(path.join(fixture, "added.mjs"), "export {};\n");
+      const expanded = runTurboPipeline(fixture);
+      assert.equal(expanded.totalFilesChecked, warm.totalFilesChecked + 1);
+      assert.notEqual(expanded.sourceInventoryDigest, warm.sourceInventoryDigest);
     });
   });
 

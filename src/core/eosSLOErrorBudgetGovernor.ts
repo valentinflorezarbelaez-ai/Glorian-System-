@@ -82,6 +82,20 @@ const DEFAULT_SLO: SLOConfig = {
 // Engine
 // ---------------------------------------------------------------------------
 
+function isNonnegativeInteger(value: unknown): value is number {
+  return typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
+}
+
+function assertCIEvent(value: unknown): asserts value is CIEvent {
+  assertPrecondition(value !== null && typeof value === "object", "expected a CI event object");
+  const { timestamp, total, passed, failed } = value as Partial<CIEvent>;
+  assertPrecondition(isNonnegativeInteger(timestamp), "timestamp must be a nonnegative integer in milliseconds");
+  assertPrecondition(isNonnegativeInteger(total) && total > 0, "total must be a positive safe integer");
+  assertPrecondition(isNonnegativeInteger(passed), "passed must be a nonnegative safe integer");
+  assertPrecondition(isNonnegativeInteger(failed), "failed must be a nonnegative safe integer");
+  assertPrecondition(passed + failed <= total, "passed and failed counts exceed total");
+}
+
 export class EosSLOErrorBudgetGovernor {
   private readonly config: SLOConfig;
   private readonly eventsPath: string;
@@ -97,16 +111,19 @@ export class EosSLOErrorBudgetGovernor {
    * Records a CI run event (test pass/fail counts).
    */
   recordCIEvent(total: number, passed: number, failed: number): void {
-    assertPrecondition(total > 0, "total must be positive");
     const event: CIEvent = { timestamp: Date.now(), total, passed, failed };
-    fs.appendFileSync(this.eventsPath, `${JSON.stringify(event)}\n`);
+    assertCIEvent(event);
+    const history = this.readHistory();
+    this.parseHistory(history);
+    const separator = history && !history.endsWith("\n") ? "\n" : "";
+    fs.appendFileSync(this.eventsPath, `${separator}${JSON.stringify(event)}\n`);
   }
 
   /**
    * Evaluates the current SLO state and burn rates.
    */
   evaluate(): SLOStatusReport {
-    const events = this.loadEvents();
+    const events = this.parseHistory(this.readHistory());
     const now = Date.now();
     const budgetWindowMs = this.config.budgetDays * 86_400_000;
 
@@ -155,9 +172,29 @@ export class EosSLOErrorBudgetGovernor {
     });
   }
 
-  private loadEvents(): CIEvent[] {
-    if (!fs.existsSync(this.eventsPath)) return [];
-    const lines = fs.readFileSync(this.eventsPath, "utf8").split("\n").filter(Boolean);
-    return lines.map((l) => JSON.parse(l));
+  private readHistory(): string {
+    try {
+      return fs.readFileSync(this.eventsPath, "utf8");
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code === "ENOENT") return "";
+      throw err;
+    }
+  }
+
+  private parseHistory(history: string): CIEvent[] {
+    const events: CIEvent[] = [];
+    const lines = history.split("\n");
+    for (const [index, line] of lines.entries()) {
+      if (!line.trim()) continue;
+      try {
+        const event: unknown = JSON.parse(line);
+        assertCIEvent(event);
+        events.push(event);
+      } catch (err) {
+        const reason = err instanceof SyntaxError ? "invalid JSON" : String(err);
+        throw new Error(`Invalid SLO history at ${this.eventsPath}:${index + 1}: ${reason}`);
+      }
+    }
+    return events;
   }
 }

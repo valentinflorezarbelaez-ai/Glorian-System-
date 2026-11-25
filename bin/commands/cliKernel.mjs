@@ -298,8 +298,15 @@ async function cmd_slo_138(commandContext) {
   const isJson = args && args.includes("--json");
   if (!isJson) printBanner();
   const { EosSLOErrorBudgetGovernor } = await import("../../src/core/eosSLOErrorBudgetGovernor.ts");
-  const gov = new EosSLOErrorBudgetGovernor({ stateDir: path.join(root, ".eos") });
-  const report = gov.evaluate();
+  let report;
+  try {
+    const gov = new EosSLOErrorBudgetGovernor({ stateDir: path.join(root, ".eos") });
+    report = gov.evaluate();
+  } catch (err) {
+    console.error(`[EOS SLO] ${err instanceof Error ? err.message : String(err)}`);
+    process.exitCode = 2;
+    return;
+  }
   if (isJson) {
     console.log(JSON.stringify(report, null, 2));
     process.exitCode = report.gateVerdict === "BLOCK" ? 1 : 0;
@@ -327,28 +334,28 @@ async function cmd_perf_139(commandContext) {
   const isJson = args && args.includes("--json");
   if (!isJson) printBanner();
   const { EosPerformanceRegressionTracker } = await import("../../src/core/eosPerformanceRegressionTracker.ts");
-  const tracker = new EosPerformanceRegressionTracker(path.join(root, ".eos"));
-  const regressions = tracker.checkAll(2.0);
-  if (isJson) {
-    const payload = {
-      status: regressions.length === 0 ? "CONFORMING" : "REGRESSIONS_DETECTED",
-      regressionsCount: regressions.length,
-      regressions,
-    };
-    console.log(JSON.stringify(payload, null, 2));
-    process.exitCode = regressions.length > 0 ? 1 : 0;
+  let summary;
+  try {
+    summary = new EosPerformanceRegressionTracker(path.join(root, ".eos")).summarize();
+  } catch (err) {
+    console.error(`[EOS PERF] ${err instanceof Error ? err.message : String(err)}`);
+    process.exitCode = 2;
     return;
   }
-  console.log("[EOS PERFORMANCE REGRESSION GATE]\n");
-  if (regressions.length === 0) {
-    console.log("  Status: NO REGRESSIONS DETECTED (all suites within 2x p95 baseline)\n");
-  } else {
-    console.log(`  Status: ${regressions.length} REGRESSION(S) DETECTED\n`);
-    for (const r of regressions) {
-      console.log(`  ${r.suite.padEnd(35)} ${r.currentMs}ms (p95=${r.baselineP95}ms, ratio=${r.ratio}x)`);
-    }
-  }
+
+  const { status, comparedSuites, unmeasuredSuites, regressions } = summary;
   process.exitCode = regressions.length > 0 ? 1 : 0;
+  if (isJson) {
+    console.log(JSON.stringify({ ...summary, regressionsCount: regressions.length }, null, 2));
+    return;
+  }
+
+  console.log("[EOS PERFORMANCE REGRESSION GATE]\n");
+  console.log(`  Status: ${status}`);
+  console.log(`  Suites compared: ${comparedSuites}\n  Suites without a usable comparison: ${unmeasuredSuites}`);
+  for (const r of regressions) {
+    console.log(`  ${r.suite.padEnd(35)} ${r.currentMs}ms (p95=${r.baselineP95}ms, ratio=${r.ratio}x)`);
+  }
 }
 
 HANDLERS["perf"] = cmd_perf_139;

@@ -60,6 +60,7 @@ const FAST_ROUTE_BY_COMMAND = {
   help: ["kernel", "handleKernelCommands"],
   guide: ["kernel", "handleKernelCommands"],
   slo: ["kernel", "handleKernelCommands"],
+  perf: ["kernel", "handleKernelCommands"],
   "cheat-sheet": ["kernel", "handleKernelCommands"],
   "--help": ["kernel", "handleKernelCommands"],
   "-h": ["kernel", "handleKernelCommands"],

@@ -51,7 +51,32 @@ The `eosSLOErrorBudgetGovernor.ts` module (Layer-0, zero deps) implements:
 - Multi-window burn rate calculation (1h, 6h, 3d)
 - PASS / WARN / BLOCK verdicts
 - SHA-256 receipt for every SLO evaluation
-- Append-only SQLite WAL ledger for audit trail
+- Append-only JSONL history of CI test counts
+
+## Reading the local CI budget
+
+Run `eos slo --json` to read the test-count history in `.eos/slo-events.jsonl`.
+
+| Exit code | Meaning                                                                                                                                                             |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0         | The report on stdout contains `PASS` or `WARN`.                                                                                                                     |
+| 1         | The fast burn-rate window breached its threshold. The report contains `BLOCK`.                                                                                      |
+| 2         | The CLI could not read or validate the history. It leaves stdout empty and writes a diagnostic to stderr. A malformed record includes its filename and line number. |
+
+Each event needs a timestamp in epoch milliseconds, a positive total and nonnegative integer pass and fail counts. Their sum may be below the total when some tests were skipped. An empty history yields `PASS` with zero tests contributing to the budget. With `EOS_SLO_ENFORCE=1`, CI stops when it cannot evaluate the SLO.
+
+## Reading local test timings
+
+Run `eos perf --json` to compare each suite's latest duration with its own history in `.eos/perf-baseline.jsonl`. The report counts suites with a usable comparison in `comparedSuites` and the rest in `unmeasuredSuites`. CI stage 4.4 reports the same counts for suites in the current run.
+
+| Status                 | Meaning                                                                       | CLI exit code |
+| ---------------------- | ----------------------------------------------------------------------------- | ------------- |
+| `INSUFFICIENT_DATA`    | No suite has a usable comparison yet.                                         | 0             |
+| `PARTIAL`              | The measured suites are within the threshold. Others still lack a comparison. | 0             |
+| `CONFORMING`           | Every suite has a usable comparison and is within the threshold.              | 0             |
+| `REGRESSIONS_DETECTED` | At least one suite exceeded twice its baseline, even if coverage is partial.  | 1             |
+
+The baseline is the maximum of one to four prior measurements or the historical 95th percentile for five or more. Durations above five minutes are excluded because they can include machine suspension. A zero baseline or an excluded latest duration leaves that suite unmeasured. An unreadable or malformed history produces a diagnostic on stderr and exit code 2. CI reports performance findings as advisory.
 
 ## Fleet customer-facing edge SLO (synthetic)
 

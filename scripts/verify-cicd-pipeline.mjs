@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { runStage4Coverage, runStage4SyntaxAndTests } from "./lib/cicdStage4Runner.mjs";
+import { runStage4QualityTelemetry } from "./quality-gates.mjs";
 import { assertTrackedEvidenceUnchanged, snapshotTrackedEvidence } from "./lib/trackedEvidence.mjs";
 
 const root = process.cwd();
@@ -228,43 +229,11 @@ const { exitCode, filesToRun, testReportPath, testEnv } = await runStage4SyntaxA
 // multi-window burn-rate). Perf is always advisory; SLO enforcement is opt-in
 // (`EOS_SLO_ENFORCE=1`) to keep the local gate deterministic and noise-free.
 // ---------------------------------------------------------------------------
-let sloBlock = false;
-try {
-  const { runQualityGates } = await import("./quality-gates.mjs");
-  const { sloReport, regressions, total, suiteCount } = await runQualityGates({ root, reportPath: testReportPath });
-  console.log(`[STAGE 4.4] SLO error-budget: ${total} tests recorded across ${suiteCount} suites`);
-  console.log(
-    `[STAGE 4.4]   budget ${sloReport.errorBudgetPercent}% remaining | verdict [${sloReport.gateVerdict}] | receipt sha256:${sloReport.sha256Receipt.slice(0, 24)}...`,
-  );
-  for (const w of sloReport.windows) {
-    console.log(
-      `[STAGE 4.4]   ${w.windowLabel.padEnd(11)} burn=${w.actualBurnRate}x threshold=${w.thresholdBurnRate}x ${w.breached ? "BREACHED" : "ok"}`,
-    );
-  }
-  const sloEnforced = process.env.EOS_SLO_ENFORCE === "1";
-  if (sloReport.gateVerdict === "BLOCK") {
-    if (sloEnforced) {
-      sloBlock = true;
-    } else {
-      console.warn(
-        "[STAGE 4.4 ADVISORY] SLO BLOCK verdict (fast burn-rate breached); enforcement disabled locally — set EOS_SLO_ENFORCE=1 to fail-closed.",
-      );
-    }
-  }
-  if (regressions.length === 0) {
-    console.log("[STAGE 4.4] Performance regression: ADVISORY — no suite above 2x its p95 baseline.");
-  } else {
-    console.warn(
-      `[STAGE 4.4 ADVISORY] Performance regression: ${regressions.length} suite(s) above 2x p95 (does not block correctness):`,
-    );
-    for (const r of regressions) {
-      console.warn(`[STAGE 4.4]   ${r.suite}: ${r.currentMs}ms vs p95 ${r.baselineP95}ms (${r.ratio}x)`);
-    }
-  }
-  console.log(`[PASS] Stage 4.4/7 — Quality telemetry gates engaged (SLO ${sloReport.gateVerdict}; perf advisory).`);
-} catch (err) {
-  console.error(`[STAGE 4.4 WARN] Quality telemetry gates unavailable: ${err.message}`);
-}
+const sloBlocked = await runStage4QualityTelemetry({
+  root,
+  reportPath: testReportPath,
+  enforceSlo: process.env.EOS_SLO_ENFORCE === "1",
+});
 
 // Stage 4's own failure is authoritative; the telemetry gates only add an
 // optional fail-closed path on top of it.
@@ -272,10 +241,7 @@ if (exitCode !== 0) {
   assertTrackedEvidenceUnchanged(initialEvidence, snapshotTrackedEvidence(root));
   process.exit(1);
 }
-if (sloBlock) {
-  console.error("[STAGE 4.4 FAIL] SLO error-budget BLOCK verdict (EOS_SLO_ENFORCE=1).");
-  process.exit(1);
-}
+if (sloBlocked) process.exit(1);
 
 // ---------------------------------------------------------------------------
 // STAGE 4.5: NATIVE V8 COVERAGE GATE (Big Tech: minimum threshold enforcement)
