@@ -12,8 +12,14 @@ async function cmd_worktree_20(commandContext) {
   const orchestrator = new EosWorktreeOrchestrator(root);
 
   if (subAction === "list") {
+    const worktrees = orchestrator.listWorktrees();
+    if (worktrees.length === 0) {
+      console.error("[EOS WORKTREE] No se pudo obtener la lista de worktrees de Git.");
+      process.exitCode = 1;
+      return;
+    }
     console.log("[EOS WORKTREE] Árboles de Trabajo Aislados (Estándar Xirp):\n");
-    orchestrator.listWorktrees().forEach((w) => {
+    worktrees.forEach((w) => {
       console.log(
         `  ● [${w.branch}] ${w.isMain ? "(PRINCIPAL)" : "(AGENTE)"}\n    Ruta: ${w.path}\n    Commit: ${w.headCommit.slice(0, 10)}\n`,
       );

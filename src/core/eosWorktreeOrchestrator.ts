@@ -84,18 +84,8 @@ export class EosWorktreeOrchestrator {
       });
 
       return this.parsePorcelainList(output);
-    } catch (_err) {
-      // Fallback if not inside git or command failed
-      return [
-        {
-          path: this.rootDir,
-          headCommit: "HEAD",
-          branch: "main",
-          isBare: false,
-          isMain: true,
-          isLocked: false,
-        },
-      ];
+    } catch {
+      return [];
     }
   }
 

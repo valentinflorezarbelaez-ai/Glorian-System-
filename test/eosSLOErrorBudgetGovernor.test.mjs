@@ -4,16 +4,20 @@
 
 import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
+import { fileURLToPath } from "node:url";
 import { EosSLOErrorBudgetGovernor } from "../src/core/eosSLOErrorBudgetGovernor.ts";
 
 describe("SPEC-145: SLO Error-Budget Gate", () => {
   let tmpDir;
 
-  beforeEach(() => {
+  beforeEach((t) => {
     tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-slo-"));
+    const owned = tmpDir;
+    t.after(() => fs.rmSync(owned, { recursive: true, force: true }));
   });
 
   it("BDD-440: PASS verdict when all tests pass", () => {
@@ -88,6 +92,57 @@ describe("SPEC-145: SLO Error-Budget Gate", () => {
       "utf8",
     );
   }
+
+  describe("slo public CLI", () => {
+    let cli;
+    let stateDir;
+
+    beforeEach(() => {
+      const binDir = path.join(tmpDir, "bin");
+      fs.mkdirSync(binDir);
+      cli = path.join(binDir, "eos.mjs");
+      // The public entry point locates .eos relative to its installation.
+      fs.copyFileSync(new URL("../bin/eos.mjs", import.meta.url), cli);
+      fs.copyFileSync(new URL("../package.json", import.meta.url), path.join(tmpDir, "package.json"));
+      fs.symlinkSync(
+        fileURLToPath(new URL("../bin/commands/", import.meta.url)),
+        path.join(binDir, "commands"),
+        "junction",
+      );
+      stateDir = path.join(tmpDir, ".eos");
+      fs.mkdirSync(stateDir);
+    });
+
+    const cases = [
+      { verdict: "PASS", failed: 1, age: 0, code: 0, fastBurn: 0.2, slowBurn: 0.2 },
+      { verdict: "WARN", failed: 20, age: 2 * HOUR, code: 0, fastBurn: 0, slowBurn: 4 },
+      { verdict: "BLOCK", failed: 200, age: 0, code: 1, fastBurn: 40, slowBurn: 40 },
+    ];
+
+    for (const { verdict, failed, age, code, fastBurn, slowBurn } of cases) {
+      it(`slo --json reports ${verdict} with exit code ${code}`, () => {
+        seedEvents(stateDir, [{ timestamp: Date.now() - age, total: 1000, passed: 1000 - failed, failed }]);
+        const result = spawnSync(process.execPath, [cli, "slo", "--json"], { encoding: "utf8" });
+        assert.ifError(result.error);
+        assert.equal(result.status, code, result.stderr);
+        const report = JSON.parse(result.stdout);
+        assert.equal(report.gateVerdict, verdict);
+        assert.equal(report.errorBudgetTotal, 5);
+        assert.equal(report.errorBudgetConsumed, failed);
+        assert.equal(report.windows.find((w) => w.windowLabel === "1h-fast").actualBurnRate, fastBurn);
+        assert.equal(report.windows.find((w) => w.windowLabel === "3d-slow").actualBurnRate, slowBurn);
+        assert.match(report.sha256Receipt, /^[a-f0-9]{64}$/);
+      });
+    }
+
+    it("slo prints a blocking verdict in the human-readable report and exits 1", () => {
+      seedEvents(stateDir, [{ timestamp: Date.now(), total: 1000, passed: 800, failed: 200 }]);
+      const result = spawnSync(process.execPath, [cli, "slo"], { encoding: "utf8" });
+      assert.ifError(result.error);
+      assert.equal(result.status, 1, result.stderr);
+      assert.match(result.stdout, /Gate Verdict\s*:\s*\[BLOCK\]/);
+    });
+  });
 
   it("BDD-446: exposes the Google SRE defaults as a frozen contract", () => {
     const gov = new EosSLOErrorBudgetGovernor({ stateDir: tmpDir });
@@ -220,7 +275,7 @@ describe("SPEC-145: SLO Error-Budget Gate", () => {
 
   it("BDD-459: the default state directory is `.eos` under the cwd", () => {
     const cwd = process.cwd();
-    const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), "eos-slo-cwd-"));
+    const sandbox = tmpDir;
     try {
       process.chdir(sandbox);
       const gov = new EosSLOErrorBudgetGovernor();

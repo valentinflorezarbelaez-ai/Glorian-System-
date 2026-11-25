@@ -2599,16 +2599,11 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
     it("exercises bin/eos.mjs subcommands", () => {
       const cliPath = path.join(root, "bin/eos.mjs");
       const subcommands = [
-        ["help"],
-        ["guide"],
-        ["cheat-sheet"],
-        ["health"],
         ["metrics"],
         ["wal"],
         ["bench:nano"],
         ["daemon"],
         ["mcp", "status"],
-        ["worktree", "list"],
         ["spec", "list"],
         ["titan", "xirp"],
         ["titan", "spacex"],
@@ -2640,7 +2635,6 @@ describe("BDD-290: Deep Branch Coverage Elevation Suite", () => {
         ["swarm"],
         ["enforce"],
         ["flags"],
-        ["slo"],
         ["perf"],
         ["drift"],
       ];

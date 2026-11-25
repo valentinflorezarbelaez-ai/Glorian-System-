@@ -12,11 +12,37 @@ test("package.json exposes both glorian and eos binary entries", () => {
   assert.equal(pkg.bin.eos, "./bin/eos.mjs");
 });
 
-test("health prints the CLI banner before the status report", () => {
+test("help prints the quick manual with the glossary and full help commands", () => {
+  const cli = fileURLToPath(new URL("../bin/eos.mjs", import.meta.url));
+  const output = execFileSync(process.execPath, [cli, "help"], { encoding: "utf8" });
+  assert.match(output, /GLORIAN SYSTEM[\s\S]*MANUAL RÁPIDO/);
+  assert.match(output, /^\s+eos guide\s+\S/m);
+  assert.match(output, /^\s+eos help --all\s+\S/m);
+});
+
+test("health reports the local CLI process runtime, uptime and memory after the banner", () => {
   const cli = fileURLToPath(new URL("../bin/eos.mjs", import.meta.url));
   const output = execFileSync(process.execPath, [cli, "health"], { encoding: "utf8" });
-  assert.match(output, /GLORIAN SYSTEM[\s\S]*\[STATUS\]/);
+  assert.match(output, /GLORIAN SYSTEM[\s\S]*\[STATUS\]\s*:\s*UP \(local CLI process\)/);
+  assert.ok(output.includes(`Node.js ${process.version} (${process.platform}-${process.arch})`));
+  assert.match(output, /^Uptime\s*:\s*\d+s$/m);
+  for (const field of ["RSS Mem", "HeapUsed"]) {
+    const match = output.match(new RegExp(`^${field}\\s*:\\s*(\\d+(?:\\.\\d+)?) MB$`, "m"));
+    assert.ok(match && Number.isFinite(Number(match[1])) && Number(match[1]) > 0, `Expected positive ${field} in MB`);
+  }
+  assert.doesNotMatch(output, /Subsystems:\s*7\/7 Monitored Online/);
 });
+
+for (const command of ["guide", "cheat-sheet"]) {
+  test(`${command} prints the CLI banner followed by the architecture glossary`, () => {
+    const cli = fileURLToPath(new URL("../bin/eos.mjs", import.meta.url));
+    const glossary = fs.readFileSync(new URL("../docs/ARCHITECTURE_GLOSSARY.md", import.meta.url), "utf8");
+    const output = execFileSync(process.execPath, [cli, command], { encoding: "utf8" });
+    const glossaryStart = output.indexOf(glossary);
+    assert.ok(glossaryStart > 0, "Expected the full architecture glossary in stdout");
+    assert.match(output.slice(0, glossaryStart), /GLORIAN SYSTEM/);
+  });
+}
 
 test("O(1) CLI dispatch resolves version/help cleanly and EosMcpServer defers corpus/graph sync until RAG/graph calls", () => {
   const cli = fileURLToPath(new URL("../bin/eos.mjs", import.meta.url));

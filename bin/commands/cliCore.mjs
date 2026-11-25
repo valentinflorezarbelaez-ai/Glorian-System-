@@ -183,12 +183,11 @@ async function cmd_health_6(commandContext) {
   const { printBanner } = commandContext;
   printBanner();
   const mem = process.memoryUsage();
-  console.log("\n[STATUS] : UP (Big Tech Tier 1)");
+  console.log("\n[STATUS] : UP (local CLI process)");
   console.log(`Runtime  : Node.js ${process.version} (${process.platform}-${process.arch})`);
   console.log(`Uptime   : ${Math.floor(process.uptime())}s`);
-  console.log(`RSS Mem  : ${(mem.rss / (1024 * 1024)).toFixed(2)} MB`);
-  console.log(`HeapUsed : ${(mem.heapUsed / (1024 * 1024)).toFixed(2)} MB`);
-  console.log(`Subsystems: 7/7 Monitored Online (L0 Pure, 0-Deps)`);
+  console.log(`RSS Mem  : ${(mem.rss / 1_000_000).toFixed(2)} MB`);
+  console.log(`HeapUsed : ${(mem.heapUsed / 1_000_000).toFixed(2)} MB`);
 }
 
 HANDLERS["health"] = cmd_health_6;
