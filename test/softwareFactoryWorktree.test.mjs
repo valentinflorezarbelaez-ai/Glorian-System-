@@ -100,8 +100,8 @@ describe("software-factory-worktree", () => {
     const strayDefault = path.join(fixtureRoot, ".worktrees", branch.replace(/\//g, "-"));
 
     const created = JSON.parse(run(["create", "--branch", branch, "--base", "HEAD", "--path", customSlug]));
-    const registeredPath = fs.realpathSync(customDir);
-    assert.equal(fs.realpathSync(created.path), registeredPath);
+    const registeredPath = fs.realpathSync.native(customDir);
+    assert.equal(fs.realpathSync.native(created.path), registeredPath);
     fs.mkdirSync(strayDefault);
 
     const removed = JSON.parse(run(["remove", "--branch", branch, "--force"]));

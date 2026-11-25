@@ -105,7 +105,7 @@ function branchSlug(branch) {
 
 function realOrResolve(p) {
   try {
-    return fs.realpathSync(p);
+    return fs.realpathSync.native(p);
   } catch {
     return path.resolve(p);
   }
