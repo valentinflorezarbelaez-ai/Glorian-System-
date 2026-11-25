@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:55f3deb5-5661-41de-a984-b21d50b83a51",
+  "serialNumber": "urn:uuid:8fcec193-c7e4-442a-a095-9ff4b8d790b5",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-24T14:04:02.055Z",
+    "timestamp": "2026-11-25T00:24:19.816Z",
     "tools": [
       {
         "type": "application",
@@ -35,7 +35,7 @@
       },
       {
         "name": "eos:nodeVersion",
-        "value": "v24.19.0"
+        "value": "v24.21.0"
       },
       {
         "name": "eos:platform",
@@ -51,18 +51,18 @@
       },
       {
         "name": "eos:sbomReceipt",
-        "value": "sha256:57e33be91e5c35b76de66f6e3f4d569577c0f6269026c1bb337908188197651d"
+        "value": "sha256:a324c96a9f71239bc902a5fdc221721b05a3795d9a743ab09caa39528370c2e8"
       }
     ]
   },
   "components": [
     {
       "type": "platform",
-      "bom-ref": "node:v24.19.0",
+      "bom-ref": "node:v24.21.0",
       "name": "nodejs",
-      "version": "24.19.0",
+      "version": "24.21.0",
       "description": "Node.js runtime — win32/x64",
-      "purl": "pkg:generic/nodejs@24.19.0"
+      "purl": "pkg:generic/nodejs@24.21.0"
     },
     {
       "type": "library",

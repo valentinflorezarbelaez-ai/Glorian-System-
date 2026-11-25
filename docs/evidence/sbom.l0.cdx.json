@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:498438d5-9c19-5aa6-9466-ef472263eaec",
+  "serialNumber": "urn:uuid:d43b5180-4967-568b-a308-adb26626a932",
   "version": 1,
   "metadata": {
-    "timestamp": "2029-01-29T11:41:09.000Z",
+    "timestamp": "2022-10-25T07:28:00.000Z",
     "component": {
       "type": "application",
       "name": "glorian-system",
@@ -25,7 +25,7 @@
       },
       {
         "name": "Node.js",
-        "version": "v24.19.0"
+        "version": "v24.21.0"
       }
     ],
     "runtimeDependenciesCount": 0
@@ -8047,7 +8047,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "49edb41136aa0cd012aee6286e424c1df56c283650220ff476284a65840c9e79"
+          "content": "cd37e8f1060928ddaf4a3895a89393bb58891d055ba12e6740e46a12880c6405"
         }
       ],
       "description": "Glorian System pure Layer-0 kernel module: eosWorktreeOrchestrator.ts"
@@ -8307,7 +8307,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "54c822575cf11cb104df4397850a1c1efd06763bd9e7ceda9fa23c992ed075f9"
+          "content": "332b7e7d6e1c95920356811450e99ca1374ed1378754a1e006c7fcd86e6f9a2c"
         }
       ],
       "description": "Glorian System root entrypoint: bin/eos.mjs"
@@ -8352,5 +8352,5 @@
       "description": "Glorian System root entrypoint: index.html"
     }
   ],
-  "sha256Receipt": "a0578dce25cdfedb7468ec6985281610e92c782af16ebba73172a89b0a5992d0"
+  "sha256Receipt": "361385714667211a63c0e04e1d950a5d9298bd4d50f9eb70d3d6656e6f7b1601"
 }

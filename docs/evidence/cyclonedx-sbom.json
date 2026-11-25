@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:d163610f-b384-4529-ba8f-a5422bf45909",
+  "serialNumber": "urn:uuid:98819f8f-5d8e-4fea-bef9-df32b64fd042",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-24T14:04:02.220Z",
+    "timestamp": "2026-11-25T00:24:22.847Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -8654,7 +8654,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "49edb41136aa0cd012aee6286e424c1df56c283650220ff476284a65840c9e79"
+          "content": "cd37e8f1060928ddaf4a3895a89393bb58891d055ba12e6740e46a12880c6405"
         }
       ]
     },
