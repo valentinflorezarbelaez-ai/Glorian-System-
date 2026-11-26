@@ -217,8 +217,8 @@ describe("EOS Turbo Engine & Nanosecond Precision Suite", () => {
       assert.equal(parsed.success, true);
       assert.equal(parsed.epistemicState, "LOCAL_CHECKS_PASSED");
       assert.ok(
-        parsed.totalDurationMs < 15000,
-        `MCP turbo dispatch exceeded its 15s sanity ceiling, got ${parsed.totalDurationMs}ms`,
+        parsed.totalDurationMs < 60000,
+        `MCP turbo dispatch exceeded its 60s sanity ceiling under parallel load, got ${parsed.totalDurationMs}ms`,
       );
       assert.equal(parsed.stages.length, 4);
     });

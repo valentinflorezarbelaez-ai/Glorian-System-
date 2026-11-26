@@ -7,7 +7,7 @@
  * Pure JavaScript for native Node.js test runner (zero external dependencies).
  */
 
-import { describe, it } from "node:test";
+import { after, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
@@ -17,7 +17,10 @@ import { execFileSync } from "node:child_process";
 import { EosHermeticSeaCompiler } from "../src/core/eosHermeticSeaCompiler.ts";
 
 describe("EosHermeticSeaCompiler (SPEC-198 / BDD-1009..BDD-1013)", () => {
-  const testOutputDir = path.resolve(process.cwd(), "dist/test-sea");
+  const testOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-test-sea-"));
+  after(() => {
+    fs.rmSync(testOutputDir, { recursive: true, force: true });
+  });
 
   it("BDD-1009: Declarative SEA config and blob generation", () => {
     // 1. Generate declarative sea-config.json
@@ -29,7 +32,7 @@ describe("EosHermeticSeaCompiler (SPEC-198 / BDD-1009..BDD-1013)", () => {
     assert.ok(fs.existsSync(configPath));
     assert.equal(config.disableExperimentalSEAWarning, true);
     assert.ok(config.main.replace(/\\/g, "/").endsWith("bin/sea-bootstrap.cjs"));
-    assert.ok(config.output.replace(/\\/g, "/").endsWith("dist/test-sea/glorian.blob"));
+    assert.ok(config.output.replace(/\\/g, "/").endsWith("/glorian.blob"));
 
     // 2. Compile SEA blob
     const blobResult = EosHermeticSeaCompiler.compileBlob({

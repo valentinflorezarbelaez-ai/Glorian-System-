@@ -130,24 +130,45 @@ describe("EOS Big Tech Tier 1 Semantic Graph & Blast Radius Suite", () => {
     });
 
     it("hits semantic graph disk cache and detects dead symbols with predictive test fallback", () => {
-      const graph1 = new EosSemanticGraph(root);
-      const summary1 = graph1.getSummary();
-      assert.ok(summary1.totalFiles >= 20);
+      const cacheDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-sem-cache-"));
+      try {
+        const srcCore = path.join(cacheDir, "src", "core");
+        fs.mkdirSync(srcCore, { recursive: true });
+        fs.writeFileSync(
+          path.join(srcCore, "modA.ts"),
+          "export function usedFn(): number { return 1; }\nexport const UNUSED_CONST = 42;\n",
+          "utf8",
+        );
+        fs.writeFileSync(
+          path.join(srcCore, "modB.ts"),
+          "import { usedFn } from './modA.ts';\nexport const VAL = usedFn();\n",
+          "utf8",
+        );
 
-      // Second instance should hit disk cache cleanly
-      const graph2 = new EosSemanticGraph(root);
-      const summary2 = graph2.getSummary();
-      assert.equal(summary2.totalFiles, summary1.totalFiles);
-      assert.equal(summary2.totalExports, summary1.totalExports);
+        const graph1 = new EosSemanticGraph(cacheDir);
+        const summary1 = graph1.getSummary();
+        assert.equal(summary1.totalFiles, 2);
+        assert.equal(summary1.totalExports, 3);
+        assert.equal(summary1.totalEdges, 1);
+        assert.ok(fs.existsSync(path.join(cacheDir, ".eos-graph-cache.json")));
 
-      // Dead symbols detection
-      const deadSymbols = graph2.detectDeadSymbols();
-      assert.ok(Array.isArray(deadSymbols));
+        // Second instance hits disk cache deterministically without parallel root contention
+        const graph2 = new EosSemanticGraph(cacheDir);
+        const summary2 = graph2.getSummary();
+        assert.equal(summary2.totalFiles, summary1.totalFiles);
+        assert.equal(summary2.totalExports, summary1.totalExports);
 
-      // PTS test fallback when no tests are found for target
-      const pts = graph2.runPredictiveTests("nonexistent-file.ts");
-      assert.ok(pts.totalSuites > 0);
-      assert.ok(pts.executedSuites.includes("test/eosCore.test.mjs"));
+        // Dead symbols detection
+        const deadSymbols = graph2.detectDeadSymbols();
+        assert.ok(deadSymbols.some((s) => s.name === "VAL"));
+
+        // PTS test fallback when no tests are found for target
+        const pts = graph2.runPredictiveTests("nonexistent-file.ts");
+        assert.ok(pts.totalSuites > 0);
+        assert.ok(pts.executedSuites.includes("test/eosCore.test.mjs"));
+      } finally {
+        fs.rmSync(cacheDir, { recursive: true, force: true });
+      }
     });
   });
 
