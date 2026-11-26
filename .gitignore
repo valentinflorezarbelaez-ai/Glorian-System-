@@ -50,4 +50,6 @@ docs/evidence/.chrome-cwv-*/
 .claude/
 .claude/*
 .qoder/
+.engram/*
+!.engram/config.json
 settings.local.json

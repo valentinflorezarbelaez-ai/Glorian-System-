@@ -397,7 +397,13 @@ jobs:
             docs/evidence/provenance.intoto.jsonl
           )
           if gh release view "${TAG}" >/dev/null 2>&1; then
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/${TAG}" \
+              -f sha="${GITHUB_SHA}" -F force=true >/dev/null
             gh release upload "${TAG}" "${ASSETS[@]}" --clobber
+            gh release edit "${TAG}" \
+              --target "${GITHUB_SHA}" \
+              --title "Glorian System ${TAG} — SLSA-Attested SEA Release" \
+              --notes "SLSA-attested standalone Single Executable Application (SEA) bundle, detached Ed25519 signature, CycloneDX SBOMs, in-toto provenance, and SHA-256 checksums for commit ${GITHUB_SHA}."
           else
             gh release create "${TAG}" "${ASSETS[@]}" \
               --target "${GITHUB_SHA}" \

@@ -153,8 +153,8 @@ const CANONICAL_FLEET_PROFILES = [
   {
     match: (lower) => lower === "eos-system" || lower.startsWith("glorian-system"),
     id: "eos-system",
-    name: "EOS System (Control Plane Core)",
-    productionUrl: "https://eos-system-ten.vercel.app",
+    name: "Glorian (Control Plane Core)",
+    productionUrl: "https://glorian-system.vercel.app",
     type: "control-plane-monolith",
     cicdGateScript: "scripts/verify-cicd-pipeline.mjs",
   },
