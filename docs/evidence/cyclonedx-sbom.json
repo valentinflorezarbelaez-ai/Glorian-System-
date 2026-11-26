@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:14f00a05-7642-4773-b398-8b81fb4f770e",
+  "serialNumber": "urn:uuid:60defd5a-331a-4c9d-b5ce-40a6684bd0bd",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-25T00:57:29.333Z",
+    "timestamp": "2026-11-26T02:24:15.201Z",
     "tools": [
       {
         "vendor": "Glorian",
@@ -3712,7 +3712,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0c319e2c5c1142e8a8982f868f7ecba5cef7873eda82eef90e8f7aee5f52f67c"
+          "content": "0778a07e394fc5c6ad0b0dc2aae05d78d6f58e4c687f2ecce4d52abb361b9598"
         }
       ]
     },
@@ -5574,7 +5574,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5699de750826f0150eec423892ee1bd4b6816d9cb75e3101394cc1000bc9ad9d"
+          "content": "2ed6acb082f78bf373bbf4d1b62fb7f226aed913663c93bbc0bb5e8e9594824a"
         }
       ]
     },
@@ -5742,7 +5742,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "4a68a8ecb8f63d54b76bbfb308b626160f503e2217c11f7fcfe98c42e3a32937"
+          "content": "58906cdee6981a451131cafba1968e8c3ef8d54339fd06623cda1771035ebaea"
         }
       ]
     },
@@ -7030,7 +7030,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "378fde37a9db5db2e394aa4078e4b11e19be60aa13dac450325023e1ff72bef0"
+          "content": "8a0725168895a37d2562f8dccff85e4cf47bc4cded3692f65bb4504c2e7c7d6f"
         }
       ]
     },
@@ -7954,7 +7954,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "d8ed9672b650efb82af652cc1aac52d84d84e65410ae97e1dd001e99350e9ce7"
+          "content": "ea0ba372c8f7b78f2acdddd21968c1c65e75265ecefe4e742aedac962df1bd5e"
         }
       ]
     },
@@ -10238,6 +10238,12 @@
       "dependsOn": [
         "pkg:npm/glorian/KernelPrimitives@1.0.0",
         "pkg:npm/glorian/NumericContractGuards@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/glorian/OtelDistributedTracing@1.0.0",
+      "dependsOn": [
+        "pkg:npm/glorian/EvidencePaths@1.0.0"
       ]
     },
     {

@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:71900db7-f808-4675-bb26-10ae77a9af5e",
+  "serialNumber": "urn:uuid:ea4ce9ed-f199-4c2a-8dd9-d09ca86d9506",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-25T00:57:27.595Z",
+    "timestamp": "2026-11-26T02:24:14.236Z",
     "tools": [
       {
         "type": "application",
@@ -31,7 +31,7 @@
     "properties": [
       {
         "name": "eos:lockfileHash",
-        "value": "sha256:40608f3b36427847dcbb6628962e2cb399c9f46a56634f5f2f0df5e2aceeb6ed"
+        "value": "sha256:8ded73a09141c9ec392b1b0513c7bfe29bcb9e8f72cc7c2f057ed657a9fbddc4"
       },
       {
         "name": "eos:nodeVersion",
@@ -51,7 +51,7 @@
       },
       {
         "name": "eos:sbomReceipt",
-        "value": "sha256:a92cebfa370eca6ba3952f42ba422f1253102eb2f779a1da96d656896d7321ca"
+        "value": "sha256:036a44061770ffcd8d45b2b16a1c69a109b8937fcfa313442b9c57d6e050527e"
       }
     ]
   },
@@ -775,6 +775,20 @@
         {
           "alg": "SHA512",
           "content": "74ecbedc0b96ddadb035b64722e319a537208c6b8b53fb812ffb9b71917d3976c3a3c7dfe0ef32569e417f479f4bcb84a18a39ab8171edd63d3a04065e002c40"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "npm:commander@9.5.0",
+      "name": "commander",
+      "version": "9.5.0",
+      "scope": "excluded",
+      "purl": "pkg:npm/commander@9.5.0",
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "291b3b5950ca83ce8f5a2b80aa10eb0109d35d92ab69570273abc574bd78aab67f0dc5b0b91a3b5688985da9573bb4b918aa6a622544c026e01437f134728905"
         }
       ]
     },
@@ -1545,6 +1559,20 @@
         {
           "alg": "SHA512",
           "content": "a9c26ef3c436216a89b030f9dbd24a31dc069bf76f2275b81ef427470887f49b62849bf318eb1c0ed1c4df1d6904a794393cac43c91598b9c9da426eef285c18"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "npm:postject@1.0.0-alpha.6",
+      "name": "postject",
+      "version": "1.0.0-alpha.6",
+      "scope": "excluded",
+      "purl": "pkg:npm/postject@1.0.0-alpha.6",
+      "hashes": [
+        {
+          "alg": "SHA512",
+          "content": "6fd11bf21d9e56a344f1e76f29dc2a92b63a3bb900c2623c91c9c1bf535272895825ba39f57505d27a05abe9716c2d72376d1b982d160446c30b91ffec049bd0"
         }
       ]
     },
