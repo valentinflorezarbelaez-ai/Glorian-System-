@@ -2,7 +2,7 @@
   "timestampIso": "2025-10-09T19:43:37.266Z",
   "totalSpecs": 379,
   "catalogSha256": "69268b898d30f55d01eed46920b0dfefd559837b78d8f2a3da7d458282abed0c",
-  "freezePinBoundSha": "83ecfdc3",
+  "freezePinBoundSha": "c75f499a",
   "specs": [
     {
       "id": "SPEC-001",
