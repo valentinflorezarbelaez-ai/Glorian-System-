@@ -143,14 +143,14 @@ export async function runFlakyGate({
   }
 
   const runs = [];
-  const concurrency = Math.min(6, Math.max(2, (os.cpus()?.length ?? 4) - 1));
-  const configuredConcurrency = process.env.EOS_FLAKY_CONCURRENCY
-    ? Number(process.env.EOS_FLAKY_CONCURRENCY)
-    : concurrency;
+  // Serial by default: Node's JUnit reporter drops tests under parallel CPU
+  // pressure on CI runners (see commit a1e2e1fd). Override with
+  // EOS_FLAKY_CONCURRENCY for local experimentation only.
+  const configuredConcurrency = process.env.EOS_FLAKY_CONCURRENCY ? Number(process.env.EOS_FLAKY_CONCURRENCY) : 1;
 
   for (let i = 0; i < repeats; i++) {
     const reportPath = path.join(tmpDir, `run-${i}.xml`);
-    // Run with bounded worker pool and 4GB heap headroom to complete repetitions reliably within timeout
+    // Serial by default with 4GB heap headroom to complete repetitions reliably within timeout
     const args = [
       "--max-old-space-size=4096",
       "--test",
