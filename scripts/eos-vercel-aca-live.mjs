@@ -92,6 +92,21 @@ function mapDeploymentToSnapshot(dep) {
   return snapshot;
 }
 
+const TERMINAL_DEPLOY_STATES = new Set(["READY", "ERROR", "CANCELED"]);
+
+/**
+ * Skips in-flight BUILDING/QUEUED/INITIALIZING deployments so post-push ACA
+ * probes evaluate the latest settled production state (fail-closed on ERROR).
+ */
+function selectLatestTerminalDeployment(deployments) {
+  if (!Array.isArray(deployments) || deployments.length === 0) return null;
+  return (
+    deployments.find((d) => TERMINAL_DEPLOY_STATES.has(String(d?.readyState ?? d?.state ?? ""))) ??
+    deployments[0] ??
+    null
+  );
+}
+
 function tryFetchLiveVercelSnapshot() {
   const defaults = loadVercelProjectDefaults();
   const token = process.env.VERCEL_TOKEN?.trim();
@@ -99,7 +114,7 @@ function tryFetchLiveVercelSnapshot() {
   if (!token || !projectId) return null;
   try {
     const team = process.env.VERCEL_TEAM_ID?.trim() || defaults.teamId;
-    const qs = new URLSearchParams({ projectId, target: "production", limit: "1" });
+    const qs = new URLSearchParams({ projectId, target: "production", limit: "5" });
     if (team) qs.set("teamId", team);
     const url = `https://api.vercel.com/v6/deployments?${qs.toString()}`;
     const raw = execFileSync(
@@ -108,7 +123,7 @@ function tryFetchLiveVercelSnapshot() {
       { encoding: "utf8", timeout: 20_000, stdio: ["pipe", "pipe", "pipe"] },
     );
     const parsed = JSON.parse(raw);
-    const dep = Array.isArray(parsed.deployments) ? parsed.deployments[0] : null;
+    const dep = selectLatestTerminalDeployment(parsed.deployments);
     return mapDeploymentToSnapshot(dep);
   } catch {
     return null;
