@@ -36,6 +36,7 @@ function listRepoFiles(dir, acc = []) {
       entry.name === ".vercel" ||
       entry.name === "node_modules" ||
       entry.name === "dist" ||
+      entry.name === "data" ||
       entry.name === "_sandbox" ||
       entry.name === "dynamic_tools" ||
       entry.name.startsWith(".worktree")
@@ -241,7 +242,10 @@ if (exitCode !== 0) {
   assertTrackedEvidenceUnchanged(initialEvidence, snapshotTrackedEvidence(root));
   process.exit(1);
 }
-if (sloBlocked) process.exit(1);
+if (sloBlocked) {
+  assertTrackedEvidenceUnchanged(initialEvidence, snapshotTrackedEvidence(root));
+  process.exit(1);
+}
 
 // ---------------------------------------------------------------------------
 // STAGE 4.5: NATIVE V8 COVERAGE GATE (Big Tech: minimum threshold enforcement)

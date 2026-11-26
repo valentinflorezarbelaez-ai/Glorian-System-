@@ -6,6 +6,8 @@
  */
 
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -136,6 +138,13 @@ describe("SPEC-273: Toolchain Adapters, OPA Policy Governor & Kind Context Guard
     // Verify SARIF conversion maps CRITICAL to error level
     const sarifCritical = EosTrivyScannerAdapter.convertToSarif(normCritical, "Dockerfile");
     assert.equal(sarifCritical.runs[0].results[0].level, "error");
+
+    // 3. Live process fallback isolates and cleans up temporary Trivy directory
+    const deferred = EosTrivyScannerAdapter.scan("nonexistent-local-image:0.0.0", {
+      scanType: "IMAGE",
+      timeoutMs: 200,
+    });
+    assert.ok(["SCAN_DEFERRED", "PASS", "FAIL_CLOSED"].includes(deferred.status));
   });
 
   // -------------------------------------------------------------------------
@@ -326,5 +335,116 @@ describe("SPEC-273: Toolchain Adapters, OPA Policy Governor & Kind Context Guard
     assert.equal(mockReport.pods.total, 2);
     assert.equal(mockReport.pods.running, 2);
     assert.equal(mockReport.pods.failed, 0);
+  });
+
+  it("BDD-1419: covers Trivy normalization fallbacks, CLI stdout parsing, and receipt persistence", () => {
+    assert.deepEqual(EosTrivyScannerAdapter.normalizeTrivyResults(null), []);
+    assert.deepEqual(EosTrivyScannerAdapter.normalizeTrivyResults("not-an-object"), []);
+    assert.deepEqual(EosTrivyScannerAdapter.normalizeTrivyResults({}), []);
+
+    const partialVulns = EosTrivyScannerAdapter.normalizeTrivyResults({
+      Results: [
+        { Target: "empty-target" },
+        {
+          Vulnerabilities: [
+            {},
+            {
+              VulnerabilityID: "CVE-2026-1001",
+              PkgName: "demo",
+              InstalledVersion: "1.0.0",
+              Severity: "MEDIUM",
+              Description: "Description fallback only",
+            },
+          ],
+        },
+      ],
+    });
+    assert.equal(partialVulns.length, 2);
+    assert.equal(partialVulns[0].id, "CVE-UNKNOWN");
+    assert.equal(partialVulns[0].severity, "UNKNOWN");
+    assert.equal(partialVulns[0].fixedVersion, null);
+    assert.equal(partialVulns[0].title, "No description available");
+    assert.equal(partialVulns[1].title, "Description fallback only");
+
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "eos-trivy-shim-"));
+    const prevPath = process.env.PATH ?? "";
+    const prevMode = process.env.EOS_TEST_TRIVY_MODE;
+    try {
+      const shimJs = path.join(tmpDir, "trivy-shim.cjs");
+      fs.writeFileSync(
+        shimJs,
+        `if (process.env.EOS_TEST_TRIVY_MODE === "bad-json") { process.stdout.write("{invalid-json"); process.exit(0); }
+process.stdout.write(JSON.stringify({ Results: [{ Vulnerabilities: [{ VulnerabilityID: "CVE-2026-2002", PkgName: "zlib", InstalledVersion: "1.2.11", FixedVersion: "1.3.1", Severity: "HIGH", Title: "Buffer overflow" }] }] }));
+process.exit(0);
+`,
+        "utf8",
+      );
+      const posixShim = path.join(tmpDir, "trivy");
+      fs.writeFileSync(posixShim, `#!/usr/bin/env node\nrequire("./trivy-shim.cjs");\n`, "utf8");
+      try {
+        fs.chmodSync(posixShim, 0o755);
+      } catch {
+        // ignore on non-POSIX
+      }
+      const winShim = path.join(tmpDir, "trivy.cmd");
+      fs.writeFileSync(winShim, `@"${process.execPath}" "${shimJs}" %*\r\n`, "utf8");
+
+      process.env.PATH = `${tmpDir}${path.delimiter}${path.dirname(process.execPath)}`;
+      process.env.EOS_TEST_TRIVY_MODE = "valid";
+
+      // Verify receiptPath persistence + HIGH vulnerability branch deterministically via mockRawOutput
+      const receiptPath = path.join(tmpDir, "nested", "trivy-receipt.json");
+      const mockHighReport = EosTrivyScannerAdapter.scan("package.json", {
+        mockRawOutput: {
+          Results: [
+            {
+              Vulnerabilities: [
+                {
+                  VulnerabilityID: "CVE-2026-2002",
+                  PkgName: "zlib",
+                  InstalledVersion: "1.2.11",
+                  FixedVersion: "1.3.1",
+                  Severity: "HIGH",
+                  Title: "Buffer overflow",
+                },
+              ],
+            },
+          ],
+        },
+        receiptPath,
+      });
+      assert.equal(mockHighReport.status, "PASS");
+      assert.equal(mockHighReport.highCount, 1);
+      assert.equal(mockHighReport.criticalCount, 0);
+      assert.ok(fs.existsSync(receiptPath));
+
+      // Live spawnSync invocation (POSIX directly runs #!/usr/bin/env node shim; Windows Node rejects .cmd without shell:true)
+      const passReport = EosTrivyScannerAdapter.scan("package.json");
+      if (process.platform === "win32") {
+        assert.ok(["PASS", "SCAN_DEFERRED"].includes(passReport.status));
+      } else {
+        assert.equal(passReport.status, "PASS");
+        assert.equal(passReport.scanType, "FS");
+        assert.equal(passReport.highCount, 1);
+      }
+
+      process.env.EOS_TEST_TRIVY_MODE = "bad-json";
+      const badJsonReport = EosTrivyScannerAdapter.scan("package.json");
+      assert.equal(badJsonReport.status, "SCAN_DEFERRED");
+
+      // Receipt write failure is fail-soft when parent is an existing file
+      const blockingFile = path.join(tmpDir, "blocker-file");
+      fs.writeFileSync(blockingFile, "not-a-dir", "utf8");
+      const failSoftReport = EosTrivyScannerAdapter.scan("package.json", {
+        mockRawOutput: { Results: [] },
+        receiptPath: path.join(blockingFile, "subdir", "receipt.json"),
+      });
+      assert.equal(failSoftReport.status, "PASS");
+    } finally {
+      process.env.PATH = prevPath;
+      if (prevMode === undefined) delete process.env.EOS_TEST_TRIVY_MODE;
+      else process.env.EOS_TEST_TRIVY_MODE = prevMode;
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
   });
 });

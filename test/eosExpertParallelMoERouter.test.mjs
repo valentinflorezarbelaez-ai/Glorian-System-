@@ -5,6 +5,7 @@
  * Auxiliary Load-Balancing Loss, and All-to-All Token Dispatch & Combine).
  */
 
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -16,7 +17,7 @@ import { handleMoeRouterCommand } from "../bin/commands/cliExpertParallelMoERout
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/MOE_ROUTER_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("MOE_ROUTER_RECEIPT.json", ROOT);
 
 describe("SPEC-325: Expert Parallelism & Mixture-of-Experts (MoE) Routing Engine", () => {
   test("BDD-1725: Top-K Sparse Gating & Weight Normalization", () => {

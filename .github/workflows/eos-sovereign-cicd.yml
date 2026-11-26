@@ -345,6 +345,8 @@ jobs:
           node bin/sea-bootstrap.cjs --version
           node bin/sea-bootstrap.cjs --help
           test -x dist/glorian-linux-x64
+          ./dist/glorian-linux-x64 --version | grep -q "Standalone SEA Binary"
+          ./dist/glorian-linux-x64 --help | grep -q "Glorian System Control Plane"
           test -f dist/glorian.blob
           test -f dist/glorian-linux-x64.sig
           test -f dist/SHA256SUMS.txt

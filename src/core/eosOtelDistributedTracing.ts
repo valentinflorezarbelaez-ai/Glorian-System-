@@ -16,6 +16,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
+import { resolveEvidenceDir } from "./eosEvidencePaths.ts";
 
 // 1. TYPES & CONTRACTS (re-exported from .types.ts)
 export type {
@@ -252,7 +253,10 @@ export class EosOtelTraceEngine {
 
   constructor(options: TraceEngineOptions = {}) {
     this.projectRoot = path.resolve(options.projectRoot || process.cwd());
-    const defaultDb = path.join(this.projectRoot, "data", "eos_telemetry.db");
+    const defaultDb =
+      !options.projectRoot && process.env.EOS_EVIDENCE_DIR?.trim()
+        ? path.join(resolveEvidenceDir(this.projectRoot), "eos_telemetry.db")
+        : path.join(this.projectRoot, "data", "eos_telemetry.db");
     this.dbPath = options.dbPath || defaultDb;
 
     let db: DatabaseSync;

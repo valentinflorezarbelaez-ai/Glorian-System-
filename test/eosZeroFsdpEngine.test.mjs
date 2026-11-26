@@ -5,6 +5,7 @@
  * and Host Memory Offloading).
  */
 
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -16,7 +17,7 @@ import { handleZeroFsdpCommand } from "../bin/commands/cliZeroFsdpEngine.mjs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/ZERO_FSDP_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("ZERO_FSDP_RECEIPT.json", ROOT);
 
 describe("SPEC-324: ZeRO & Fully Sharded Data Parallel (FSDP) Engine", () => {
   test("BDD-1719: ZeRO-Stage 1 Optimizer State Sharding (P_os) & Parity", () => {

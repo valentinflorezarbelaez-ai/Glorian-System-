@@ -14,7 +14,10 @@ import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "../..");
-const RECEIPT_PATH = resolveEvidencePath("ZERO_FSDP_RECEIPT.json", ROOT);
+
+function getReceiptPath(root = ROOT) {
+  return resolveEvidencePath("ZERO_FSDP_RECEIPT.json", root);
+}
 
 function parseFlagValue(args, prefix, defaultValue) {
   const arg = args.find((a) => a.startsWith(prefix));
@@ -190,9 +193,10 @@ async function cmd_zero_audit(commandContext) {
 
   const engine = new EosZeroFsdpCore({ numWorkers });
   const receipt = engine.audit(numWorkers, numParams);
+  const receiptPath = getReceiptPath(commandContext.root || ROOT);
 
-  fs.mkdirSync(path.dirname(RECEIPT_PATH), { recursive: true });
-  fs.writeFileSync(RECEIPT_PATH, JSON.stringify(receipt, null, 2), "utf8");
+  fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
+  fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2), "utf8");
 
   if (isJson) {
     console.log(JSON.stringify(receipt, null, 2));
@@ -206,7 +210,7 @@ async function cmd_zero_audit(commandContext) {
     console.log(`Zero Leakage   : ${receipt.zeroLeakageCertified}`);
     console.log(`CPU Offload OK : ${receipt.hostOffloadVerified}`);
     console.log(`SHA-256 Seal   : ${receipt.receiptSha256}`);
-    console.log(`Receipt Saved  : ${RECEIPT_PATH}`);
+    console.log(`Receipt Saved  : ${receiptPath}`);
   }
 }
 

@@ -30,6 +30,7 @@ const TOOLING_PACKAGES = new Set([
   "eslint", // used via CLI, not imported
   "typescript", // used via tsc CLI, not imported
   "@types/node", // compile-time Node type declarations, not imported directly
+  "postject", // used via Node SEA binary injection CLI in EosHermeticSeaCompiler
 ]);
 
 // Scan all source files for import statements

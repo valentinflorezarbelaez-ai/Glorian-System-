@@ -13,7 +13,10 @@ import { resolveEvidencePath } from "../../src/core/eosEvidencePaths.ts";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "../..");
-const RECEIPT_PATH = resolveEvidencePath("ACTIVATION_CHECKPOINTING_RECEIPT.json", ROOT);
+
+function getReceiptPath(root = ROOT) {
+  return resolveEvidencePath("ACTIVATION_CHECKPOINTING_RECEIPT.json", root);
+}
 
 function parseFlagValue(args, prefix, defaultValue) {
   const arg = args.find((a) => a.startsWith(prefix));
@@ -169,9 +172,10 @@ async function cmd_checkpoint_audit(commandContext) {
 
   const engine = new EosActivationCheckpointingCore();
   const receipt = engine.audit(numLayers, numBatches, hiddenDim);
+  const receiptPath = getReceiptPath(commandContext.root || ROOT);
 
-  fs.mkdirSync(path.dirname(RECEIPT_PATH), { recursive: true });
-  fs.writeFileSync(RECEIPT_PATH, JSON.stringify(receipt, null, 2), "utf8");
+  fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
+  fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2), "utf8");
 
   if (isJson) {
     console.log(JSON.stringify(receipt, null, 2));
@@ -184,7 +188,7 @@ async function cmd_checkpoint_audit(commandContext) {
     console.log(`Gradient Parity: ${receipt.gradientParityCertified}`);
     console.log(`Zero Leakage   : ${receipt.zeroResidualLeakage}`);
     console.log(`SHA-256 Seal   : ${receipt.sha256}`);
-    console.log(`Receipt Saved  : ${RECEIPT_PATH}`);
+    console.log(`Receipt Saved  : ${receiptPath}`);
   }
 }
 

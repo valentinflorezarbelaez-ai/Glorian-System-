@@ -44,6 +44,7 @@ export interface SeaCompileOptions {
   builderId?: string;
   customConfigPath?: string;
   customEntryPath?: string;
+  postjectCliPath?: string;
 }
 
 export interface SeaBlobResult {
@@ -75,6 +76,7 @@ export interface SeaBinaryResult {
   provenance?: InTotoStatement;
   sbomPath?: string;
   sbom?: CycloneDxSbom;
+  blobInjected: boolean;
   dryRun: boolean;
   compiledAtIso: string;
   sha256Receipt: string;
@@ -294,6 +296,7 @@ export class EosHermeticSeaCompiler {
 
     let binarySizeBytes = 0;
     let binarySha256 = "";
+    let blobInjected = false;
 
     if (dryRun) {
       // In dry-run mode, simulate binary synthesis without full host runtime duplication
@@ -311,25 +314,38 @@ export class EosHermeticSeaCompiler {
 
       fs.copyFileSync(hostRuntime, binaryPath);
 
-      // Step 3: Inject SEA blob into binary
-      // On platforms where postject is available, invoke injection.
+      // Step 3: Inject SEA blob into binary via local postject CLI (fallback to npx)
+      const localPostjectCli = options.postjectCliPath
+        ? path.resolve(options.postjectCliPath)
+        : path.join(root, "node_modules", "postject", "dist", "cli.js");
+      const machoArgs = targetPlatform.includes("darwin") ? ["--macho-segment-name", "NODE_SEA"] : [];
+      const injectArgs = [
+        binaryPath,
+        this.SEA_RESOURCE_NAME,
+        blobResult.blobPath,
+        "--sentinel-fuse",
+        this.SENTINEL_FUSE,
+        "--overwrite",
+        ...machoArgs,
+      ];
       try {
-        execFileSync(
-          "npx",
-          [
-            "--no",
-            "postject",
-            binaryPath,
-            this.SEA_RESOURCE_NAME,
-            blobResult.blobPath,
-            "--sentinel-fuse",
-            this.SENTINEL_FUSE,
-          ],
-          { stdio: "ignore" },
-        );
+        if (process.platform === "darwin") {
+          try {
+            execFileSync("codesign", ["--remove-signature", binaryPath], { stdio: "ignore" });
+          } catch {
+            // Ignore when binary is unsigned or codesign is unavailable
+          }
+        }
+        if (fs.existsSync(localPostjectCli)) {
+          execFileSync(process.execPath, [localPostjectCli, ...injectArgs], { stdio: "ignore" });
+          blobInjected = true;
+        } else if (!options.postjectCliPath) {
+          execFileSync("npx", ["--no", "postject", ...injectArgs], { stdio: "ignore" });
+          blobInjected = true;
+        }
       } catch {
-        // Fallback: If postject is not globally installed or network is airgapped,
-        // the executable copy remains a hermetic runnable Node binary embedding the payload
+        // Fallback: If postject is absent in an isolated temp root, keep runnable runtime copy
+        blobInjected = false;
       }
 
       // Step 4: Ensure executable permissions (0o755)
@@ -425,6 +441,7 @@ export class EosHermeticSeaCompiler {
       provenance: provenanceStatement,
       sbomPath,
       sbom,
+      blobInjected,
       dryRun,
       compiledAtIso,
       sha256Receipt,

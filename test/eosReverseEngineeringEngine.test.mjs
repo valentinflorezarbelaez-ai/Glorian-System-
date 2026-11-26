@@ -4,6 +4,7 @@
  * Anything (REA) Engine (Format Detection, ASAR Unpacking, Shannon Entropy, and CFG).
  */
 
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -15,7 +16,7 @@ import { handleReverseEngineeringCommand } from "../bin/commands/cliReverseEngin
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/REVERSE_ENGINEERING_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("REVERSE_ENGINEERING_RECEIPT.json", ROOT);
 
 describe("SPEC-327: Universal Reverse Engineering Anything (REA) Engine", () => {
   test("BDD-1737: Magic Byte Identification & Format Classification", () => {

@@ -14,6 +14,7 @@
 
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { assertPrecondition, deepFreeze, pureSha256 } from "./eosKernelPrimitives.ts";
 
@@ -149,11 +150,13 @@ export class EosTrivyScannerAdapter {
         target,
       ];
 
+      const trivyTmp = fs.mkdtempSync(path.join(os.tmpdir(), "eos-trivy-tmp-"));
       try {
         const res = spawnSync("trivy", args, {
           encoding: "utf8",
           timeout: timeoutMs,
           windowsHide: true,
+          env: { ...process.env, TMPDIR: trivyTmp, TMP: trivyTmp, TEMP: trivyTmp },
         });
 
         if (res.status === 0 && res.stdout) {
@@ -162,6 +165,8 @@ export class EosTrivyScannerAdapter {
         }
       } catch {
         scanSuccess = false;
+      } finally {
+        fs.rmSync(trivyTmp, { recursive: true, force: true });
       }
     }
 

@@ -4,6 +4,7 @@
  * & Activation Checkpointing / Recomputation Engine.
  */
 
+import { resolveEvidencePath } from "./lib/testEvidence.mjs";
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -15,7 +16,7 @@ import { handleActivationCheckpointingCommand } from "../bin/commands/cliActivat
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const RECEIPT_PATH = path.join(ROOT, "docs/evidence/ACTIVATION_CHECKPOINTING_RECEIPT.json");
+const RECEIPT_PATH = resolveEvidencePath("ACTIVATION_CHECKPOINTING_RECEIPT.json", ROOT);
 
 describe("SPEC-326: Asynchronous Pipeline Parallelism & Activation Checkpointing Engine", () => {
   test("BDD-1731: Full Activation Checkpointing & Segment Boundary Partitioning", () => {
