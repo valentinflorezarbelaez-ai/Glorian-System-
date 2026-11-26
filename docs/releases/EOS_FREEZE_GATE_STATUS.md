@@ -13,7 +13,7 @@
 | Invariant Dimension                | Verified Ground-Truth                                            | Gate Status                  |
 | ---------------------------------- | ---------------------------------------------------------------- | ---------------------------- |
 | **Release Version (SSOT)**         | `75.0.0` (`package.json`)                                        | SEALED                       |
-| **Node.js Engine**                 | v24.21.0                                                         | PASS                         |
+| **Node.js Engine**                 | v24.19.0                                                         | PASS                         |
 | **Layer-0 Runtime Dependencies**   | `dependencies: {}` (0 external npm packages)                     | SEALED                       |
 | **Active Formal Specs (OpenSpec)** | 379 Specifications (EARS IEEE 830 / BDD ISO 29148)               | APPROVED                     |
 | **Formal TLA+ Models**             | 121 Models (bounded simulation + invariant verification)         | VERIFIED                     |
@@ -26,7 +26,7 @@
 | **Monotonic Ledger WAL**           | SQLite WAL + FTS5 + SHA-256 Block Chaining                       | VERIFIED                     |
 | **Big Tech Frontier Pillars**      | 6/6 (SapFix, SLSA/SBOM, CAS, SMT, Chaos, BFT)                    | VERIFIED                     |
 | **CI Pipeline Stages**             | 7 + 4.4-4.7 Deep Sub-Gates (SLO/Perf, Coverage, Mutation, Flaky) | GREEN                        |
-| **Freeze Pin (HEAD)**              | `ecc3a783`                                                       | PINNED                       |
+| **Freeze Pin (HEAD)**              | `2efd19e6`                                                       | PINNED                       |
 
 ---
 
