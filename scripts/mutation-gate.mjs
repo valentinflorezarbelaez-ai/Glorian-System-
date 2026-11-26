@@ -172,6 +172,10 @@ export function loadMutationBudget(root) {
   };
 }
 
+function roundScore(score) {
+  return Math.round(score * 1000) / 1000;
+}
+
 /**
  * Compares each report's score against its floor (per-target, else minScore).
  *
@@ -183,7 +187,8 @@ export function evaluateMutationBudget({ root, reports, targets }) {
   const reported = new Set(reports.map((r) => r.targetFile));
   for (const r of reports) {
     const floor = Object.hasOwn(floors, r.targetFile) ? floors[r.targetFile] : minScore;
-    if (r.score < floor) violations.push({ kind: "BELOW_FLOOR", target: r.targetFile, score: r.score, floor });
+    if (roundScore(r.score) < floor)
+      violations.push({ kind: "BELOW_FLOOR", target: r.targetFile, score: r.score, floor });
   }
   // A ratcheted target with no report is an unverified claim, not a pass: its
   // source or test may have been renamed/deleted, silently disabling the gate.
@@ -204,7 +209,7 @@ export function updateMutationBudget({ root, reports }) {
   const { minScore, floors } = loadMutationBudget(root);
   for (const r of reports) {
     const previous = Object.hasOwn(floors, r.targetFile) ? floors[r.targetFile] : minScore;
-    floors[r.targetFile] = Math.max(previous, Math.round(r.score * 1000) / 1000);
+    floors[r.targetFile] = Math.max(previous, roundScore(r.score));
   }
   const ordered = Object.fromEntries(Object.entries(floors).sort());
   fs.mkdirSync(path.dirname(budgetPath), { recursive: true });
@@ -222,38 +227,45 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToP
   const targets = specificTargets.length > 0 ? specificTargets : DEFAULT_TARGETS;
   const { reports, missingTargets, sandboxDir } = await runMutationGate({ targets });
 
-  console.log("======================================================================");
-  console.log(" EOS MUTATION GATE — Testing the Tests (isolated sandbox)  ");
-  console.log("======================================================================");
-  for (const r of reports) {
-    console.log(`  ${r.targetFile}`);
-    console.log(`    mutants=${r.totalMutants} killed=${r.killed} survived=${r.survived} score=${r.scorePercent}`);
-    console.log(`    receipt sha256:${r.sha256Receipt.slice(0, 24)}...`);
-  }
-  for (const m of missingTargets) {
-    console.error(`  MISSING ${m.targetFile}: ${m.reason}`);
-  }
-  console.log(`  sandbox: ${sandboxDir}`);
-
-  if (update) {
-    const { floors } = updateMutationBudget({ root: repoRoot, reports });
-    console.log(`✅ Mutation ratchet refreshed: ${Object.keys(floors).length} target floor(s).`);
-    process.exit(0);
-  }
-
-  const { violations, minScore } = evaluateMutationBudget({ root: repoRoot, reports, targets: specificTargets });
-  if (violations.length === 0 && missingTargets.length === 0) {
-    console.log(`✅ Mutation ratchet OK (default floor ${Math.round(minScore * 100)}%).`);
-    process.exit(0);
-  }
-  console.error("❌ Mutation gate failed (ratchet floor violated or target unmeasured):");
-  for (const v of violations) {
-    if (v.kind === "MISSING_TARGET_REPORT") {
-      console.error(`  ${v.target}: no report produced — ratchet floor ${(v.floor * 100).toFixed(1)}% unverified.`);
-    } else {
-      console.error(`  ${v.target}: ${(v.score * 100).toFixed(1)}% < floor ${(v.floor * 100).toFixed(1)}%`);
+  let exitCode = 0;
+  try {
+    console.log("======================================================================");
+    console.log(" EOS MUTATION GATE — Testing the Tests (isolated sandbox)  ");
+    console.log("======================================================================");
+    for (const r of reports) {
+      console.log(`  ${r.targetFile}`);
+      console.log(`    mutants=${r.totalMutants} killed=${r.killed} survived=${r.survived} score=${r.scorePercent}`);
+      console.log(`    receipt sha256:${r.sha256Receipt.slice(0, 24)}...`);
     }
+    for (const m of missingTargets) {
+      console.error(`  MISSING ${m.targetFile}: ${m.reason}`);
+    }
+    console.log(`  sandbox: ${sandboxDir}`);
+
+    if (update) {
+      const { floors } = updateMutationBudget({ root: repoRoot, reports });
+      console.log(`✅ Mutation ratchet refreshed: ${Object.keys(floors).length} target floor(s).`);
+    } else {
+      const { violations, minScore } = evaluateMutationBudget({ root: repoRoot, reports, targets: specificTargets });
+      if (violations.length === 0 && missingTargets.length === 0) {
+        console.log(`✅ Mutation ratchet OK (default floor ${Math.round(minScore * 100)}%).`);
+      } else {
+        console.error("❌ Mutation gate failed (ratchet floor violated or target unmeasured):");
+        for (const v of violations) {
+          if (v.kind === "MISSING_TARGET_REPORT") {
+            console.error(
+              `  ${v.target}: no report produced — ratchet floor ${(v.floor * 100).toFixed(1)}% unverified.`,
+            );
+          } else {
+            console.error(`  ${v.target}: ${(v.score * 100).toFixed(1)}% < floor ${(v.floor * 100).toFixed(1)}%`);
+          }
+        }
+        console.error("\nStrengthen the tests, or run `npm run mutation:gate -- --update` to raise the baseline.");
+        exitCode = 1;
+      }
+    }
+  } finally {
+    fs.rmSync(sandboxDir, { recursive: true, force: true });
   }
-  console.error("\nStrengthen the tests, or run `npm run mutation:gate -- --update` to raise the baseline.");
-  process.exit(1);
+  process.exit(exitCode);
 }

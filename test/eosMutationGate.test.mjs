@@ -131,6 +131,27 @@ describe("SPEC-143: Mutation score ratchet", () => {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), "eos-mut-nobudget-"));
     assert.equal(loadMutationBudget(root).minScore, 0.8);
   });
+
+  it("matches updateMutationBudget 3-decimal rounding on re-evaluation and catches real drops", () => {
+    const root = buildBudgetRoot({ minScore: 0.4, floors: { "src/core/a.ts": 0.4, "src/core/b.ts": 0.4 } });
+    try {
+      const fractionalA = { targetFile: "src/core/a.ts", score: 31 / 76 }; // 0.407894... -> 0.408
+      const fractionalB = { targetFile: "src/core/b.ts", score: 24 / 59 }; // 0.406779... -> 0.407
+      updateMutationBudget({ root, reports: [fractionalA, fractionalB] });
+
+      const cleanEval = evaluateMutationBudget({ root, reports: [fractionalA, fractionalB] });
+      assert.equal(cleanEval.violations.length, 0);
+
+      const regressionEval = evaluateMutationBudget({
+        root,
+        reports: [{ targetFile: "src/core/a.ts", score: 30 / 76 }, fractionalB], // 0.395 < 0.408
+      });
+      assert.equal(regressionEval.violations.length, 1);
+      assert.equal(regressionEval.violations[0].kind, "BELOW_FLOOR");
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
 });
 
 describe("SPEC-143: Mutation gate fail-closed on unmeasured targets", () => {
